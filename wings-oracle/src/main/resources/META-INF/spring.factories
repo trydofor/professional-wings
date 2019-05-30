@@ -1,0 +1,11 @@
+#
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  pro.fessional.wings.oracle.spring.boot.WingsDataSourceAutoConfiguration
+#
+org.springframework.boot.env.EnvironmentPostProcessor=\
+  pro.fessional.wings.oracle.spring.boot.WingsAutoPropertiesEnvsPostProcessor\
+, pro.fessional.wings.oracle.spring.boot.WingsShardingSphereEnvsPostProcessor
+#
+org.springframework.context.ApplicationListener=\
+  pro.fessional.wings.oracle.spring.boot.WingsDeferredLogFactory
+
