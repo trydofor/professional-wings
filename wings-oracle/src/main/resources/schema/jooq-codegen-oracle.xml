@@ -2,21 +2,21 @@
 <configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.11.0.xsd">
     <logging>INFO</logging>
     <jdbc>
-        <driver>com.mysql.cj.jdbc.Driver</driver>
-        <url>jdbc:mysql://127.0.0.1/wings</url>
-        <user>trydofor</user>
-        <password>moilioncircle</password>
+        <driver>!!your-config-here!!</driver>
+        <url>!!your-config-here!!</url>
+        <user>!!your-config-here!!</user>
+        <password>!!your-config-here!!</password>
     </jdbc>
 
     <generator>
         <target>
-            <packageName>pro.fessional.wings.oracle.database.autogen</packageName>
-            <directory>wings-oracle/src/main/java/</directory>
+            <packageName>!!your-config-here!!</packageName>
+            <directory>!!your-config-here!!</directory>
         </target>
         <database>
             <outputCatalog/>
 
-            <inputSchema>wings</inputSchema>
+            <inputSchema>!!your-config-here!!</inputSchema>
             <outputSchema/>
 
             <name>org.jooq.meta.mysql.MySQLDatabase</name>
@@ -28,7 +28,7 @@
             </excludes>
 
             <schemaVersionProvider>
-                SELECT MAX(REVISION) FROM SYS_SCHEMA_VERSION WHERE APPLY_DT > '1970-01-01'
+                SELECT MAX(REVISION) FROM SYS_SCHEMA_VERSION WHERE APPLY_DT > '1000-01-01'
             </schemaVersionProvider>
 
             <includeForeignKeys>false</includeForeignKeys>
@@ -83,8 +83,8 @@
         </generate>
 
         <strategy>
-            <name>pro.fessional.wings.silencer.jooqgen.JournalJavaStrategy</name>
+            <name>pro.fessional.wings.oracle.tool.jooqgen.JournalJavaStrategy</name>
         </strategy>
-        <name>pro.fessional.wings.silencer.jooqgen.JournalJavaGenerator</name>
+        <name>pro.fessional.wings.oracle.tool.jooqgen.JournalJavaGenerator</name>
     </generator>
 </configuration>

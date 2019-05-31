@@ -2,6 +2,7 @@ package pro.fessional.wings.oracle;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * @author trydofor
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class WingsOracelApplication {
     public static void main(String[] args) {
-        SpringApplication.run(WingsOracelApplication.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(WingsOracelApplication.class, args);
+        System.out.println(context.isActive());
     }
 }

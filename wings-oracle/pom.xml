@@ -25,6 +25,10 @@
             <groupId>javax.persistence</groupId>
             <artifactId>javax.persistence-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>mirana</artifactId>
+        </dependency>
         <!-- spring boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -95,10 +99,11 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!---->
+        <!-- optional -->
         <dependency>
-            <groupId>pro.fessional</groupId>
-            <artifactId>wings-silencer</artifactId>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-codegen</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>
