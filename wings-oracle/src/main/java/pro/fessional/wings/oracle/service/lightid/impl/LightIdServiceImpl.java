@@ -1,5 +1,8 @@
 package pro.fessional.wings.oracle.service.lightid.impl;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import pro.fessional.mirana.id.LightIdProvider;
 import pro.fessional.wings.oracle.service.lightid.LightIdService;
 
 import javax.validation.constraints.NotNull;
@@ -8,11 +11,15 @@ import javax.validation.constraints.NotNull;
  * @author trydofor
  * @since 2019-05-31
  */
+@Service
+@RequiredArgsConstructor
 public class LightIdServiceImpl implements LightIdService {
 
-    @Override
-    public long getId(int block, @NotNull String name) {
-        return 0;
-    }
+    private final LightIdProvider lightIdProvider;
 
+    @Override
+    public long getId(@NotNull String name, int block) {
+        return lightIdProvider.next(name, block);
+
+    }
 }

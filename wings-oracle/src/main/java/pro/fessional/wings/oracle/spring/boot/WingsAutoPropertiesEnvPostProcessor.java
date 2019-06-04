@@ -2,13 +2,10 @@ package pro.fessional.wings.oracle.spring.boot;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.context.event.ApplicationStartingEvent;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.boot.env.PropertiesPropertySourceLoader;
 import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.boot.logging.DeferredLog;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
@@ -35,9 +32,9 @@ import java.util.Map;
  * @author trydofor
  * @since 2019-05-21
  */
-public class WingsAutoPropertiesEnvsPostProcessor implements EnvironmentPostProcessor {
+public class WingsAutoPropertiesEnvPostProcessor implements EnvironmentPostProcessor {
 
-    private static final DeferredLog logger = WingsDeferredLogFactory.getLog(WingsAutoPropertiesEnvsPostProcessor.class);
+    private static final DeferredLog logger = WingsDeferredLogFactory.getLog(WingsAutoPropertiesEnvPostProcessor.class);
 
 
     @Override

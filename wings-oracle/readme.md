@@ -100,4 +100,29 @@ sql的书写规则详见[数据库约定](/wings-oracle/src/main/resources/schem
 
 使用Jooq，强类型，编程高于配置，并且SQL友好，又恰好能力有限。
 
+自动生成jooq代码，使用`WingsCodeGenerator`以编程的方式进行（不用maven）。
+自动生成的代码在 `database/autogen/`，手动编写的代码在`database/manual/`下。
 
+手动生成代码遵循一下约定，
+
+ * 任何对数据库的操作，都应该在`database`包内进行
+ * `simple` 表示单表，可含简单的条件子查询，一个包名一个表。
+ * `couple` 表示多表，一般为join查询或子查询，包名以主表命名。
+ * `insert|select|update|delete`分别对应数据库操作。
+ * 数据传递以Dto结尾，放到最临近使用的位子。
+ * Dto以静态内类形似存在，建议和方法同名，用lombok做@Value。
+ * `forUpdate`这种带锁操作，方法名以`Lock`结尾。
+ * 类名以`表名`+`Insert|Select|Update|Delete`。
+
+
+## 1.7.spring规则
+
+ * `/wings-conf` 放置拆分的配置文件，按字母顺序加载和覆盖。
+ * `**/spring/boot/` boot有关的配置，如`spring.factories`
+ * `**/spring/bean/` 和DI有关的bean。
+ * `**/spring/conf/` 和properties有关的配置。
+ 
+使用`idea`开发时，可能需要设置以下
+
+ * 识别bean， `WingsOracleAutoComponentScan`加入`Context`
+ * 识别配置，`Settings`/`Annotation Processors`/`Enable annotation processing`

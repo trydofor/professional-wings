@@ -1,17 +1,16 @@
 package pro.fessional.wings.oracle.spring.conf;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 /**
  * @author trydofor
  * @since 2019-05-30
  */
-@Configuration
-@EnableConfigurationProperties(WingsLightIdLoaderConfig.class)
+@Component
 @ConfigurationProperties("wings.light-id.loader")
-public class WingsLightIdLoaderConfig {
+public class WingsLightIdLoaderProperties {
+
     private long timeout = 1000;
     private int maxError = 5;
     private int maxCount = 10000;

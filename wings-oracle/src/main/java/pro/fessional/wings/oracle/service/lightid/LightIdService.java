@@ -11,11 +11,11 @@ public interface LightIdService {
     /**
      * 按Jooq的 pojo命名获得，按 大写_大写命名。
      *
-     * @param block 区块
      * @param po    jooq的Pojo
+     * @param block 区块
      * @return id
      */
-    default long getId(int block, @NotNull Class<LightIdAware> po) {
+    default long getId(@NotNull Class<LightIdAware> po, int block) {
         String name = po.getSimpleName();
         int len = name.length();
         StringBuilder sb = new StringBuilder(len + 10);
@@ -30,15 +30,15 @@ public interface LightIdService {
                 sb.append(c);
             }
         }
-        return getId(block, sb.toString());
+        return getId(sb.toString(), block);
     }
 
     /**
      * 按名字获得id，不区分大小写，默认全大写。
      *
-     * @param block 区块
      * @param name  名字
+     * @param block 区块
      * @return id
      */
-    long getId(int block, @NotNull String name);
+    long getId(@NotNull String name, int block);
 }
