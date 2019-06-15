@@ -42,7 +42,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.StandardEnvironment;
-import pro.fessional.wings.oracle.sharding.ActualDataSourceHolder;
+import pro.fessional.wings.oracle.flywave.FlywaveDataSources;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -50,6 +50,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * NOTE: copy most code from org.apache.shardingsphere.shardingjdbc.spring.boot.SpringBootConfiguration.
@@ -58,7 +60,7 @@ import java.util.Map;
  * @author trydofor
  *
  * <p>
- * Spring boot sharding and master-slave configuration.
+ * Spring boot flywave and master-slave configuration.
  * @author caohao
  * @author panjuan
  */
@@ -105,25 +107,38 @@ public class WingsDataSourceAutoConfiguration implements EnvironmentAware {
     @Bean
     public DataSource dataSource() throws SQLException {
         if (null != masterSlaveProperties.getMasterDataSourceName()) {
-            return MasterSlaveDataSourceFactory.createDataSource(dataSourceMap, masterSlaveSwapper.swap(masterSlaveProperties), propMapProperties.getProps());
+            DataSource ds = MasterSlaveDataSourceFactory.createDataSource(dataSourceMap, masterSlaveSwapper.swap(masterSlaveProperties), propMapProperties.getProps());
+            current.set(ds);
+            return ds;
         }
         if (!encryptProperties.getEncryptors().isEmpty()) {
-            return EncryptDataSourceFactory.createDataSource(dataSourceMap.values().iterator().next(), encryptSwapper.swap(encryptProperties));
+            DataSource ds = EncryptDataSourceFactory.createDataSource(dataSourceMap.values().iterator().next(), encryptSwapper.swap(encryptProperties));
+            current.set(ds);
+            return ds;
         }
 
         // trydofor
+        DataSource ds;
         if (needSharding()) {
             logger.info("Wings use shardingsphere datasource, ShardingDataSourceFactory");
-            return ShardingDataSourceFactory.createDataSource(dataSourceMap, shardingSwapper.swap(shardingProperties), propMapProperties.getProps());
+            ds = ShardingDataSourceFactory.createDataSource(dataSourceMap, shardingSwapper.swap(shardingProperties), propMapProperties.getProps());
         } else {
-            logger.info("Wings use actual datasource, because NOT need sharding");
-            return dataSourceMap.values().iterator().next();
+            logger.info("Wings use the first datasource, because NOT sharding");
+            sharding.set(false);
+            ds = dataSourceMap.values().iterator().next();
         }
+
+        current.set(ds);
+        return ds;
+
     }
 
+    private final AtomicBoolean sharding = new AtomicBoolean(true);
+    private final AtomicReference<DataSource> current = new AtomicReference<>();
+
     @Bean
-    public ActualDataSourceHolder actualDataSourceHolder() {
-        return new ActualDataSourceHolder(dataSourceMap);
+    public FlywaveDataSources wingsDataSources() {
+        return new FlywaveDataSources(dataSourceMap, current.get(), sharding.get());
     }
 
     @Override

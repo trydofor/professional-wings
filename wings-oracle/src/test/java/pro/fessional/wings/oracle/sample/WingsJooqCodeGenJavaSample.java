@@ -1,6 +1,6 @@
 package pro.fessional.wings.oracle.sample;
 
-import pro.fessional.wings.oracle.tool.jooqgen.WingsCodeGenerator;
+import pro.fessional.wings.oracle.jooqgen.WingsCodeGenerator;
 
 /**
  * @author trydofor

@@ -22,9 +22,12 @@
             <name>org.jooq.meta.mysql.MySQLDatabase</name>
             <includes>.*</includes>
             <excludes>
-                .*\$log # 日志表
-                | SPRING.* # Spring
-                | SYS_SCALE_SEQUENCE # 特殊处理
+                SPRING.* # Spring 自动创建
+                |.*\$LOG # 日志表
+                |.*\$UPD # 日志表
+                |.*\$DEL # 日志表
+                |SYS_SCHEMA_MANAGER # JDBC处理
+                |SYS_SCHEMA_VERSION # JDBC处理
             </excludes>
 
             <schemaVersionProvider>
@@ -83,8 +86,8 @@
         </generate>
 
         <strategy>
-            <name>pro.fessional.wings.oracle.tool.jooqgen.JournalJavaStrategy</name>
+            <name>pro.fessional.wings.oracle.jooqgen.JournalJavaStrategy</name>
         </strategy>
-        <name>pro.fessional.wings.oracle.tool.jooqgen.JournalJavaGenerator</name>
+        <name>pro.fessional.wings.oracle.jooqgen.JournalJavaGenerator</name>
     </generator>
 </configuration>

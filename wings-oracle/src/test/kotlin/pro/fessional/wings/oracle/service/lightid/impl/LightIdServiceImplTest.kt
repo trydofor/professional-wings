@@ -25,6 +25,6 @@ open class LightIdServiceImplTest {
         val id2 = lightIdService.getId("SYS_SCHEMA_VERSION", 0)
 
         Assert.assertEquals(1, id1 % 10)
-        Assert.assertEquals(1, id1)
+        Assert.assertEquals(1, id1 % 10)
     }
 }

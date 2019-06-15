@@ -1,4 +1,4 @@
-package pro.fessional.wings.oracle.tool.jooqgen
+package pro.fessional.wings.oracle.jooqgen
 
 import org.jooq.codegen.JavaGenerator
 

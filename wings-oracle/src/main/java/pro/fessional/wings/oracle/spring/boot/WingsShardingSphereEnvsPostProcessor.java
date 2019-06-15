@@ -9,7 +9,7 @@ import org.springframework.core.env.MapPropertySource;
 import java.util.Collections;
 
 /**
- * 依照 sharding-jdbc-spring-boot-starter 配置，构造数据源，
+ * 依照 flywave-jdbc-spring-boot-starter 配置，构造数据源，
  * 当只有一个数据源，且不存在分表时，直接使用原始数据源，而非sharding数据源。
  * 如果有多个数据源，使用sharding数据源，同时expose原始出来，可以独立使用。
  * <p/>
