@@ -9,33 +9,21 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>wings-silencer</artifactId>
+    <artifactId>wings-example</artifactId>
     <packaging>jar</packaging>
     <version>1.0.0-SNAPSHOT</version>
 
-    <name>wings-silencer</name>
-    <description>沉默术士</description>
+    <name>wings-example</name>
+    <description>演示例子</description>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot</artifactId>
+            <groupId>pro.fessional</groupId>
+            <artifactId>wings-faceless</artifactId>
         </dependency>
-        <!-- test -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <groupId>pro.fessional</groupId>
+            <artifactId>wings-slardar</artifactId>
         </dependency>
-
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>

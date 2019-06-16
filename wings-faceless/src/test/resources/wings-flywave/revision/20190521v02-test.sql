@@ -1,0 +1,21 @@
+-- @plain
+INSERT INTO `TST_中文也分表`(`ID`, `COMMIT_ID`, `LOGIN_INFO`, `OTHER_INFO`)
+VALUES (1, -1, 'LOGIN_INFO-1', 'OTHER_INFO-1'),
+       (2, -1, 'LOGIN_INFO-2', 'OTHER_INFO-2'),
+       (3, -1, 'LOGIN_INFO-3', 'OTHER_INFO-3'),
+       (4, -1, 'LOGIN_INFO-4', 'OTHER_INFO-4'),
+       (5, -1, 'LOGIN_INFO-5', 'OTHER_INFO-5'),
+       (6, -1, 'LOGIN_INFO-6', 'OTHER_INFO-6'),
+       (7, -1, 'LOGIN_INFO-7', 'OTHER_INFO-7'),
+       (8, -1, 'LOGIN_INFO-8', 'OTHER_INFO-8'),
+       (9, -1, 'LOGIN_INFO-9', 'OTHER_INFO-9'),
+       (10, -1, 'LOGIN_INFO-10', 'OTHER_INFO-10'),
+       (11, -1, 'LOGIN_INFO-11', 'OTHER_INFO-11'),
+       (12, -1, 'LOGIN_INFO-12', 'OTHER_INFO-12'),
+       (13, -1, 'LOGIN_INFO-13', 'OTHER_INFO-13'),
+       (14, -1, 'LOGIN_INFO-14', 'OTHER_INFO-14'),
+       (15, -1, 'LOGIN_INFO-15', 'OTHER_INFO-15'),
+       (16, -1, 'LOGIN_INFO-16', 'OTHER_INFO-16'),
+       (17, -1, 'LOGIN_INFO-17', 'OTHER_INFO-17'),
+       (18, -1, 'LOGIN_INFO-18', 'OTHER_INFO-18'),
+       (19, -1, 'LOGIN_INFO-19', 'OTHER_INFO-19');

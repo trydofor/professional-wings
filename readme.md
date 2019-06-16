@@ -5,13 +5,17 @@
  * 解决了软件开发中最难的命名问题。
  * 提供了一套油腻的约定和工程实践。
  * 功能池很深，对功能有独到的理解。
- * 看不懂代码的看文档，都看不懂的别用。
+ * 不懂代码的看文档，都看不懂别用。
+ * java-8, kotlin-1.3.x, springboot-2.1.x
 
 
 ## 项目构成
 
- * [神谕/oracle](wings-oracle/readme.md) 
- * [沉默/silencer](wings-silencer/readme.md)
+ * [演示例子/example](wings-example/readme.md) 集成了以上的例子
+ * [沉默术士/silencer](wings-silencer/readme.md) 自动的工程化的 starter
+ * [虚空假面/faceless](wings-faceless/readme.md) kotlin+sharding starter
+ * [鱼人守卫/slardar](wings-slardar/readme.md) servicecomb starter
+ 
  
 ## 涉及技术
 

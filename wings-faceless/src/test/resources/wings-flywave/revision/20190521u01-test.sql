@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS `TST_中文也分表`;

@@ -1,0 +1,9 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  pro.fessional.wings.silencer.spring.boot.WingsMessageConfiguration
+#
+org.springframework.boot.env.EnvironmentPostProcessor=\
+  pro.fessional.wings.silencer.spring.boot.WingsAutoConfigEnvPostProcessor
+#
+org.springframework.context.ApplicationListener=\
+  pro.fessional.wings.silencer.spring.boot.WingsDeferredLogFactory
+

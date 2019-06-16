@@ -1,0 +1,9 @@
+#
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  pro.fessional.wings.faceless.spring.boot.WingsDataSourceAutoConfiguration\
+, pro.fessional.wings.faceless.spring.boot.WingsFacelessAutoComponentScan
+#
+org.springframework.boot.env.EnvironmentPostProcessor=\
+  pro.fessional.wings.faceless.spring.boot.WingsShardingSphereEnvPostProcessor
+
+
