@@ -1,6 +1,8 @@
 package pro.fessional.wings.faceless.database.manual.single.select.lightsequence;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,6 +23,8 @@ public class LightSequenceSelect {
     private final JdbcTemplate jdbcTemplate;
 
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class NextStep {
         private long nextVal;
         private int stepVal;
@@ -47,6 +51,8 @@ public class LightSequenceSelect {
     }
 
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class NameNextStep {
         private String seqName;
         private long nextVal;

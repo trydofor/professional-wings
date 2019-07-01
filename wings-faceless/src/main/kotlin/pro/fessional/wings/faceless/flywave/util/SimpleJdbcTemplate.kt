@@ -2,6 +2,7 @@ package pro.fessional.wings.faceless.flywave.util
 
 import org.springframework.jdbc.core.JdbcTemplate
 import java.sql.ResultSet
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import javax.sql.DataSource
 
@@ -11,8 +12,12 @@ import javax.sql.DataSource
  * @since 2019-06-16
  */
 class SimpleJdbcTemplate(val dataSource: DataSource, val name: String = "unnamed") {
-    // 未来可能不使用任何依赖
-    private val jdbcTmpl: JdbcTemplate = JdbcTemplate(dataSource)
+
+    private val jdbcTmpl: JdbcTemplate
+
+    init {
+        this.jdbcTmpl = templates.computeIfAbsent(dataSource) { JdbcTemplate(dataSource) }
+    }
 
     fun count(sql: String, vararg args: Any?): Int {
         val count = AtomicInteger(0)
@@ -32,5 +37,9 @@ class SimpleJdbcTemplate(val dataSource: DataSource, val name: String = "unnamed
 
     fun execute(sql: String) {
         jdbcTmpl.execute(sql)
+    }
+
+    companion object {
+        private val templates = ConcurrentHashMap<DataSource, JdbcTemplate>()
     }
 }

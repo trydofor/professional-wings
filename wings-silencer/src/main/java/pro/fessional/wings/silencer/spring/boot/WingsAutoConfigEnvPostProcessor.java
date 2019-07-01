@@ -10,7 +10,7 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import pro.fessional.wings.silencer.util.Utf8ResourceDecorator;
+import pro.fessional.wings.silencer.spring.help.Utf8ResourceDecorator;
 
 import java.io.IOException;
 import java.util.Arrays;

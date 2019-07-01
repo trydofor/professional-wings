@@ -1,22 +1,29 @@
-package pro.fessional.wings.silencer.spring.boot;
+package pro.fessional.wings.silencer.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.context.MessageSourceProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.LinkedHashSet;
 
 /**
  * @author trydofor
+ * @see org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration
  * @since 2019-06-24
  */
 @Configuration
+@ConditionalOnClass(MessageSource.class)
 public class WingsMessageConfiguration {
 
     private static final Log logger = LogFactory.getLog(WingsMessageConfiguration.class);
@@ -24,11 +31,33 @@ public class WingsMessageConfiguration {
     public static final String WINGS_I18N = "wings-i18n/**/*.properties";
 
     @Bean
-    public MessageSource messageSource() {
+    @ConfigurationProperties(prefix = "spring.messages")
+    public MessageSourceProperties messageSourceProperties() {
+        return new MessageSourceProperties();
+    }
+
+    @Bean
+    public MessageSource messageSource(MessageSourceProperties properties) {
 
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setDefaultEncoding("UTF-8");
-        messageSource.setFallbackToSystemLocale(false);
+
+        if (StringUtils.hasText(properties.getBasename())) {
+            messageSource.addBasenames(StringUtils
+                    .commaDelimitedListToStringArray(StringUtils.trimAllWhitespace(properties.getBasename())));
+        }
+
+        if (properties.getEncoding() != null) {
+            messageSource.setDefaultEncoding(properties.getEncoding().name());
+        } else {
+            messageSource.setDefaultEncoding("UTF-8");
+        }
+        messageSource.setFallbackToSystemLocale(properties.isFallbackToSystemLocale());
+        Duration cacheDuration = properties.getCacheDuration();
+        if (cacheDuration != null) {
+            messageSource.setCacheMillis(cacheDuration.toMillis());
+        }
+        messageSource.setAlwaysUseMessageFormat(properties.isAlwaysUseMessageFormat());
+        messageSource.setUseCodeAsDefaultMessage(properties.isUseCodeAsDefaultMessage());
 
         final LinkedHashSet<String> baseNames = new LinkedHashSet<>();
         try {

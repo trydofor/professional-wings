@@ -1,11 +1,14 @@
 package pro.fessional.wings.faceless.spring.bean;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.id.LightIdBufferedProvider;
 import pro.fessional.mirana.id.LightIdProvider;
 import pro.fessional.wings.faceless.service.lightid.impl.LightIdMysqlLoader;
+import pro.fessional.wings.faceless.spring.conf.WingsLightIdInsertProperties;
 import pro.fessional.wings.faceless.spring.conf.WingsLightIdLoaderProperties;
 
 /**
@@ -13,6 +16,7 @@ import pro.fessional.wings.faceless.spring.conf.WingsLightIdLoaderProperties;
  * @since 2019-06-01
  */
 @Configuration
+@ConditionalOnProperty(prefix = "wings.lightid", name = "enabled", havingValue = "true")
 public class WingsLightIdConfiguration {
 
     @Bean
@@ -27,5 +31,17 @@ public class WingsLightIdConfiguration {
         provider.setMaxCount(config.getMaxCount());
 
         return provider;
+    }
+
+    @Bean
+    @ConfigurationProperties("wings.lightid.insert")
+    public WingsLightIdInsertProperties insertProperties() {
+        return new WingsLightIdInsertProperties();
+    }
+
+    @Bean
+    @ConfigurationProperties("wings.lightid.loader")
+    public WingsLightIdLoaderProperties loaderProperties() {
+        return new WingsLightIdLoaderProperties();
     }
 }

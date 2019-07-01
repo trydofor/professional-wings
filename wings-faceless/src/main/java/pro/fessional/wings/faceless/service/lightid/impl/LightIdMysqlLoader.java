@@ -52,9 +52,7 @@ public class LightIdMysqlLoader implements LightIdProvider.Loader {
                 }
 
                 log.warn("inserted and retry, name={}, block={}", name, block);
-                vo = new LightSequenceSelect.NextStep();
-                vo.setNextVal(properties.getNext());
-                vo.setStepVal(properties.getStep());
+                vo = new LightSequenceSelect.NextStep(properties.getNext(),properties.getStep());
             } else {
                 throw new NoSuchElementException("not existed name=" + name + ",block=" + block);
             }

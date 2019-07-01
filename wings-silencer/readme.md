@@ -5,7 +5,9 @@
  * 自动加载SpringBoot配置(wings-conf)
  * properties中的直接写中文，不需要unicode转码。
  * 自动加载i8n配置(wings-i18n)
-
+ * 工程化Jackson配置(wings-jackson-79.properties)
+ * 多时区
+ * 不支持webflux
  
 ## 1.1.spring命名规则
 
@@ -22,7 +24,7 @@
  
 打开以下配置，`Settings`/`Annotation Processors`/`Enable annotation processing`
  
-## 1.2.自动配置（wings-conf）
+## 1.2.自动配置(wings-conf)
 
 实际项目开发中，只有一个 `application.*`不利于分工和管理的，应该是，
 
@@ -61,10 +63,47 @@
  - "76.3 Customize the Environment or ApplicationContext Before It Starts"
 
  
-## 1.2.自动多国语（wings-i18n）
+## 1.3.自动多国语(wings-i18n)
 
 spring自身对多国语(I18N)支持的很好，稍加组织就可利用，就可以更好的工程化。
 自动扫描`classpath*:/wings-i18n/**/*.properties`，加载分隔成多份的配置。
 
 spring对MessageSource的加载与configuration的机制不同，不需要unicode转义。
 
+`LocaleContextResolver` 会俺以下优先级，获得多国语设置。
+
+ 1. request被设置好的`WINGS.I18N_CONTEXT`
+ 2. query string `locale`,`zoneid`
+ 3. cookie `WINGS_LOCALE`, `WINGS_ZONEID`
+ 4. http header `Accept-Language`,`Zone-Id`
+ 5. 系统默认值
+
+## 1.4.Json格式约定(jackson)
+
+考虑到java和js的差异，数据传递和功能上，有以下约定。
+
+ * 浮点数值，以java.BigDecimal与js.string互传。
+ * java.null 不输在Json中互传。
+ * java.整数，与js.number/string互传。
+ * java.时区日时，以时间戳形式与js.number互传。
+ * java.日时，都以`yyyy-MM-dd HH:mm:ss`格式与js.string互传。
+ * java.时区，以ZoneId字符串格式与js.string互传。
+
+此外，要注意js的特殊性，和一些宽松的json格式。
+
+ * Json中最好只有2种基本数据类型：boolean,string
+ * Js不应该有任何有精度要求的金额计算，只应负责显示服务器端计算结果。
+ * 因为时间的特殊性，还有时区和夏令时，在保证精度的同时要提供可读性。
+ * 51bits位的long，必须使用string，因为IEE754无法正确表示。
+ * 确保jsr310格式兼容，如依赖`jackson-datatype-jsr310`。
+ * ZoneId应首选`IANA TZDB`格式，如`America/New_York`。
+ * 带时区(`Z`)的序列化与反序列化过程，会丢失夏令时信息。
+ 
+[参考资料 docs.spring.io](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
+ 
+ - 79.3 Customize the Jackson ObjectMapper
+
+## 1.5.Controller约定
+
+要在方法上写全路径，不要相对于controller，这样搜索可以从URL直接匹配。
+controller所在package的名字，应该和url的目录保持相同的结构。

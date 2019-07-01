@@ -18,6 +18,9 @@ buildNumber.properties
 
 # Log file
 *.log
+*.pid
+*.gc
+*.heap
 
 # BlueJ files
 *.ctxt

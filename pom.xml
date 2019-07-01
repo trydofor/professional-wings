@@ -26,6 +26,7 @@
     </modules>
 
     <properties>
+        <maven.test.skip>true</maven.test.skip>
         <!--silencer-->
         <springboot.version>2.1.6.RELEASE</springboot.version>
         <wings.version>1.0.0-SNAPSHOT</wings.version>
@@ -43,11 +44,13 @@
     <dependencyManagement>
         <!-- do NOT import sprint-boot-dependencies, for kotlin.version override-->
         <dependencies>
+            <!-- pro.fessional -->
             <dependency>
                 <groupId>pro.fessional</groupId>
                 <artifactId>mirana</artifactId>
                 <version>${mirana.version}</version>
             </dependency>
+            <!-- pro.fessional.wings -->
             <dependency>
                 <groupId>pro.fessional</groupId>
                 <artifactId>wings-silencer</artifactId>
@@ -63,11 +66,7 @@
                 <artifactId>wings-slardar</artifactId>
                 <version>${wings.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.7</version>
-            </dependency>
+            <!-- redefine -->
             <!--flywave sphere-->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>

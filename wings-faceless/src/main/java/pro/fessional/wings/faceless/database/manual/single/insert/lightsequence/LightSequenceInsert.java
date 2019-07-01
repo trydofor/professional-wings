@@ -1,6 +1,8 @@
 package pro.fessional.wings.faceless.database.manual.single.insert.lightsequence;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Repository;
 public class LightSequenceInsert {
 
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class SysLightSequence {
         private static final long serialVersionUID = 299_792_458L; //m/s
         private String seqName;
