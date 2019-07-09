@@ -36,15 +36,20 @@ import java.util.regex.Pattern;
  * @author trydofor
  * @since 2019-05-21
  */
-public class WingsAutoConfigEnvPostProcessor implements EnvironmentPostProcessor {
+public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
-    private static final DeferredLog logger = WingsDeferredLogFactory.getLog(WingsAutoConfigEnvPostProcessor.class);
+    private static final DeferredLog logger = WingsDeferredLogFactory.getLog(WingsAutoConfigProcessor.class);
 
     public static final String WINGS_CONF = "wings-conf/**/*.*";
 
+
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+        processWingsConf(environment);
+    }
 
+    // ///////////////////////////////////////////////////////
+    private void processWingsConf(ConfigurableEnvironment environment) {
         final LinkedHashMap<String, Boolean> confPaths = new LinkedHashMap<>();
 
         MutablePropertySources sources = environment.getPropertySources();

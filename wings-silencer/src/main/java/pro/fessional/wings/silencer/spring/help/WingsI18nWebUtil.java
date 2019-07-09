@@ -1,5 +1,6 @@
 package pro.fessional.wings.silencer.spring.help;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
@@ -7,7 +8,6 @@ import pro.fessional.wings.silencer.context.WingsI18nContext;
 import pro.fessional.wings.silencer.http.TypedRequestUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 import java.time.ZoneId;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -30,6 +30,24 @@ public class WingsI18nWebUtil {
     @Nullable
     public static LocaleContext getLocaleContext(@NotNull HttpServletRequest request) {
         return TypedRequestUtil.getAttribute(request, LOCALE_CONTEXT, LocaleContext.class);
+    }
+
+    @NotNull
+    public static WingsI18nContext getI18nContextOrDefault(@NotNull HttpServletRequest request) {
+        WingsI18nContext context = TypedRequestUtil.getAttribute(request, LOCALE_CONTEXT, WingsI18nContext.class);
+        if (context == null) {
+            context = new Context(Locale.getDefault(), TimeZone.getDefault(), ZoneId.systemDefault());
+        }
+        return context;
+    }
+
+    @NotNull
+    public static LocaleContext getLocaleContextOrDefault(@NotNull HttpServletRequest request) {
+        LocaleContext context = TypedRequestUtil.getAttribute(request, LOCALE_CONTEXT, LocaleContext.class);
+        if (context == null) {
+            context = new Context(Locale.getDefault(), TimeZone.getDefault(), ZoneId.systemDefault());
+        }
+        return context;
     }
 
     @NotNull

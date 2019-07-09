@@ -1,6 +1,8 @@
 package pro.fessional.wings.silencer.context;
 
-import javax.validation.constraints.NotNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.time.ZoneId;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -11,14 +13,34 @@ import java.util.TimeZone;
  */
 public interface WingsI18nContext {
 
-    @NotNull
+    @Nullable
     Locale getLocale();
 
-    @NotNull
+    @Nullable
     TimeZone getTimeZone();
 
-    @NotNull
+    @Nullable
     default ZoneId getZoneId() {
-        return getTimeZone().toZoneId();
+        TimeZone t = getTimeZone();
+        return t == null ? null : t.toZoneId();
     }
+
+    @NotNull
+    default Locale getLocaleOrDefault() {
+        Locale l = getLocale();
+        return l == null ? Locale.getDefault() : l;
+    }
+
+    @NotNull
+    default TimeZone getTimeZoneOrDefault() {
+        TimeZone t = getTimeZone();
+        return t == null ? TimeZone.getDefault() : t;
+    }
+
+    @NotNull
+    default ZoneId getZoneIdOrDefault() {
+        ZoneId z = getZoneId();
+        return z == null ? ZoneId.systemDefault() : z;
+    }
+
 }

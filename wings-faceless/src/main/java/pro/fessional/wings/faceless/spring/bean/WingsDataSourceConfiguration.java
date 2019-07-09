@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package pro.fessional.wings.faceless.spring.boot;
+package pro.fessional.wings.faceless.spring.bean;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.logging.Log;
@@ -68,9 +68,9 @@ import java.util.concurrent.atomic.AtomicReference;
 @AutoConfigureBefore(org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class)
 @EnableConfigurationProperties({SpringBootShardingRuleConfigurationProperties.class, SpringBootMasterSlaveRuleConfigurationProperties.class, SpringBootEncryptRuleConfigurationProperties.class, SpringBootPropertiesConfigurationProperties.class})
 @ConditionalOnProperty(prefix = "spring.wings.datasource", name = "enabled", havingValue = "true", matchIfMissing = true)
-public class WingsDataSourceAutoConfiguration implements EnvironmentAware {
+public class WingsDataSourceConfiguration implements EnvironmentAware {
 
-    private static final Log logger = LogFactory.getLog(WingsDataSourceAutoConfiguration.class);
+    private static final Log logger = LogFactory.getLog(WingsDataSourceConfiguration.class);
 
     private final SpringBootShardingRuleConfigurationProperties shardingProperties;
 
@@ -88,7 +88,7 @@ public class WingsDataSourceAutoConfiguration implements EnvironmentAware {
 
     private final EncryptRuleConfigurationYamlSwapper encryptSwapper = new EncryptRuleConfigurationYamlSwapper();
 
-    public WingsDataSourceAutoConfiguration(SpringBootShardingRuleConfigurationProperties shardingProperties, SpringBootMasterSlaveRuleConfigurationProperties masterSlaveProperties, SpringBootEncryptRuleConfigurationProperties encryptProperties, SpringBootPropertiesConfigurationProperties propMapProperties) {
+    public WingsDataSourceConfiguration(SpringBootShardingRuleConfigurationProperties shardingProperties, SpringBootMasterSlaveRuleConfigurationProperties masterSlaveProperties, SpringBootEncryptRuleConfigurationProperties encryptProperties, SpringBootPropertiesConfigurationProperties propMapProperties) {
         this.shardingProperties = shardingProperties;
         this.masterSlaveProperties = masterSlaveProperties;
         this.encryptProperties = encryptProperties;

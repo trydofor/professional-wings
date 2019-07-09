@@ -182,9 +182,9 @@ object TemplateUtil {
             return txt
         }
 
+        var off: Int
+        var idx: Int
         var fnd = false
-        var off = 0
-        var idx = 0
         val buf = txt.toCharArray()
         for (chr in qto) {
             off = 0

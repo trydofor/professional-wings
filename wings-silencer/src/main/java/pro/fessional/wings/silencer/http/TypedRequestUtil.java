@@ -1,6 +1,7 @@
 package pro.fessional.wings.silencer.http;
 
 import org.jetbrains.annotations.Nullable;
+import pro.fessional.mirana.cast.TypedCastUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
@@ -21,7 +22,11 @@ public class TypedRequestUtil {
     }
 
     @Nullable
-    @SuppressWarnings("unchecked")
+    public static <T> T getAttribute(HttpServletRequest request, String name) {
+        return getAttribute(request, name, null, false);
+    }
+
+    @Nullable
     public static <T> T getAttribute(HttpServletRequest request, String name, Class<T> claz, boolean ignoreCase) {
         if (request == null || name == null) return null;
 
@@ -37,10 +42,6 @@ public class TypedRequestUtil {
         }
 
         Object obj = request.getAttribute(name);
-        if (claz.isInstance(obj)) {
-            return (T) obj;
-        } else {
-            return null;
-        }
+        return TypedCastUtil.castObject(obj, claz);
     }
 }

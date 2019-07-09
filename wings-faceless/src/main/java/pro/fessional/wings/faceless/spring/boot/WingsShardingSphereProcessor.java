@@ -19,9 +19,9 @@ import java.util.Collections;
  * @author trydofor
  * @since 2019-05-21
  */
-public class WingsShardingSphereEnvPostProcessor implements EnvironmentPostProcessor {
+public class WingsShardingSphereProcessor implements EnvironmentPostProcessor {
 
-    private static final DeferredLog logger = WingsDeferredLogFactory.getLog(WingsShardingSphereEnvPostProcessor.class);
+    private static final DeferredLog logger = WingsDeferredLogFactory.getLog(WingsShardingSphereProcessor.class);
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {

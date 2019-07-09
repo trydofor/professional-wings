@@ -1,11 +1,10 @@
+#
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  pro.fessional.wings.silencer.spring.bean.WingsJacksonConfiguration\
- ,pro.fessional.wings.silencer.spring.bean.WingsI18nWebConfiguration\
- ,pro.fessional.wings.silencer.spring.bean.WingsMessageConfiguration
+  pro.fessional.wings.silencer.spring.boot.WingsComponentScanner
 #
 org.springframework.boot.env.EnvironmentPostProcessor=\
-  pro.fessional.wings.silencer.spring.boot.WingsAutoConfigEnvPostProcessor
+  pro.fessional.wings.silencer.spring.boot.WingsAutoConfigProcessor
 #
 org.springframework.context.ApplicationListener=\
   pro.fessional.wings.silencer.spring.boot.WingsDeferredLogFactory
-
+# ,pro.fessional.wings.silencer.spring.boot.WingsSpringBeanScanner

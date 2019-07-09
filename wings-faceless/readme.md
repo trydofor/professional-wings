@@ -48,6 +48,7 @@ JDBC数据源(DataSource)，分为两种，他们会存在于`FlywaveDataSources
 `$`是命名中的特殊字符，定义`跟踪表`。比如替换时。
 sql的书写规则详见[数据库约定](/wings-faceless/src/main/resources/wings-flywave/readme.md)
 
+数据库中尽量不要`nullable`，约定默认值代替，如`convention.EmptyValue`类
 
 ## 2.2.数据的版本管理(journal)
 
@@ -140,10 +141,12 @@ DROP TRIGGER IF EXISTS `WGS_ORDER$BD`;
 参考[pro.fessioinal.mirana](https://gitee.com/trydofor/pro.fessional.mirana)项目。
 
 
-## 2.5.jooq做SqlMapping
+## 2.5.数据库操作
 
-轻量的MyBatis(Sql Mapping)能代替笨重的ORM，成为大部分项目的首选，固有其优秀之处。
-但开发人员的懒惰或约束力量的不足，使得项目不高效，偶尔很难维护。
+推荐使用SqlMapping，因为ORM太重了，工程内使用Jooq和JdbcTemplate
+
+MyBatis虽是大部分项目的首选，固有其优秀之处，但开发人员的懒惰或约束力量的不足，
+使得项目不高效，偶尔很难维护，项目中容易蔓生出以下问题。
 
  * 经常被 `select *`，带有大量无用信息。
  * 很容易写出复杂的大SQL，使得服务难以拆分。
@@ -167,4 +170,12 @@ DROP TRIGGER IF EXISTS `WGS_ORDER$BD`;
  * 类名以`表名`+`Insert|Select|Update|Delete`。
  * `Record`等同于`Dao`不应该在外部使用，应该用`Pojo`或`Dto`
 
+JdbcTemplate用于功能性或复杂的数据库操作，以自动注入Bean。
+参考 `JdbcTemplateConfiguration`的注入。
 
+命名上，接口直接命名，不需要前后缀，Dto放在接口之内。
+实现类，放到`impl/`包内，用后缀表示实现方式不同。
+
+ * `Jooq`，Jooq实现
+ * `Jdbc`，JdbcTemplate实现
+ * `Impl`，混合实现。

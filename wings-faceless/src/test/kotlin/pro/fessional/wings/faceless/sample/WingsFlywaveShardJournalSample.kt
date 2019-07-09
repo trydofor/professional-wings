@@ -34,14 +34,14 @@ class WingsFlywaveShardJournalSample {
     lateinit var wingsFlywaveVerProperties: WingsFlywaveVerProperties
 
     @Test
-    fun revisionShardJournal(){
+    fun revisionShardJournal() {
 
         // 初始
         val sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH)
         schemaRevisionManager.checkAndInitSql(sqls, 0)
 
         // 升级
-        schemaRevisionManager.publishRevision(2019052001, 0)
+        schemaRevisionManager.publishRevision(SchemaRevisionManager.INIT2ND_REVISION, 0)
         schemaRevisionManager.publishRevision(2019052101, 0)
 
         // 单库强升
@@ -70,6 +70,6 @@ class WingsFlywaveShardJournalSample {
         schemaJournalManager.publishDelete("TST_中文也分表", false, 0)
 
         // 降级
-        schemaRevisionManager.publishRevision(2019052001, 0)
+        schemaRevisionManager.publishRevision(SchemaRevisionManager.INIT1ST_REVISION, 0)
     }
 }

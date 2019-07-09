@@ -67,6 +67,11 @@
                 <version>${wings.version}</version>
             </dependency>
             <!-- redefine -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-kotlin</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
             <!--flywave sphere-->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>

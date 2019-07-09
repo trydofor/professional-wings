@@ -11,16 +11,16 @@
  
 ## 1.1.spring命名规则
 
- * `/wings-conf/` 放置拆分的配置文件，按字母顺序加载和覆盖。
- * `/wings-i18n/` 放置拆分的多国语的信息文件。
- * `**/spring/boot/` boot有关的配置，如`spring.factories`
- * `**/spring/bean/` 和DI有关的bean。
- * `**/spring/conf/` 和properties有关的配置。
+ * `/wings-conf/` 自动加载，放置拆分的配置文件，按字母顺序加载和覆盖。
+ * `/wings-i18n/` 自动加载，放置拆分的多国语的信息文件。
+ * `**/spring/boot/` 手动加载，boot有关的配置，如`spring.factories`
+ * `**/spring/bean/`  自动加载，比如@ComponentScan指定。
+ * `**/spring/conf/` 自动或手动加载，需要暴露的properties的配置。
  
 使用`idea`开发时，需要在`Project Structure`/`Facets`/`Spring`设置中加入
 
- * `boot/WingsSilencerAutoComponentScan`，用来识别`bean/*`， 
- * `boot/WingsDataSourceAutoConfiguration` 用来识别`FlywaveDataSources`
+ * `boot/WingsComponentScanner`或`/bean/*` 
+ * `boot/WingsDataSourceConfigAware` 用来识别`FlywaveDataSources`
  
 打开以下配置，`Settings`/`Annotation Processors`/`Enable annotation processing`
  
@@ -85,7 +85,8 @@ spring对MessageSource的加载与configuration的机制不同，不需要unicod
  * 浮点数值，以java.BigDecimal与js.string互传。
  * java.null 不输在Json中互传。
  * java.整数，与js.number/string互传。
- * java.时区日时，以时间戳形式与js.number互传。
+ * java.日时，包括`util.Date`,`sql.Date`,`time.Local*|Zoned*|Instant`
+ * java.日时，以时间戳形式与js.number互传。
  * java.日时，都以`yyyy-MM-dd HH:mm:ss`格式与js.string互传。
  * java.时区，以ZoneId字符串格式与js.string互传。
 
@@ -107,3 +108,11 @@ spring对MessageSource的加载与configuration的机制不同，不需要unicod
 
 要在方法上写全路径，不要相对于controller，这样搜索可以从URL直接匹配。
 controller所在package的名字，应该和url的目录保持相同的结构。
+
+## 1.6.Security预定
+
+引入spring security包时自动生效，没有魔法，都在官方文档，读3遍。
+
+[6.10 Multiple HttpSecurity](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#jc-authentication)
+[8. Architecture and Implementation](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#overall-architecture)
+[30. Security](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-security.html)
