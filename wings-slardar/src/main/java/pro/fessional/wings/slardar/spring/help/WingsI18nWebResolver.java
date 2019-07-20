@@ -1,4 +1,4 @@
-package pro.fessional.wings.silencer.spring.help;
+package pro.fessional.wings.slardar.spring.help;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.i18n.LocaleContext;
@@ -7,7 +7,7 @@ import org.springframework.web.servlet.i18n.AbstractLocaleContextResolver;
 import pro.fessional.mirana.i18n.LocaleResolver;
 import pro.fessional.mirana.i18n.ZoneIdResolver;
 import pro.fessional.wings.silencer.context.WingsI18nContext;
-import pro.fessional.wings.silencer.spring.conf.WingsI18nResolverProperties;
+import pro.fessional.wings.slardar.spring.conf.WingsI18nResolverProperties;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;

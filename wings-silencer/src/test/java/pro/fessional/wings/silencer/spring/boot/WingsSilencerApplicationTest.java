@@ -35,7 +35,7 @@ public class WingsSilencerApplicationTest {
     }
 
     @Test
-    public void print() {
+    public void cnEn() {
         assertEquals("沉默术士", module);
         String cn = message.getMessage("base.not-empty", new Object[]{"姓名"}, Locale.CHINA);
         String en = message.getMessage("base.not-empty", new Object[]{"name"}, Locale.US);

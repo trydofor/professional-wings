@@ -13,6 +13,7 @@
 
  * `/wings-conf/` 自动加载，放置拆分的配置文件，按字母顺序加载和覆盖。
  * `/wings-i18n/` 自动加载，放置拆分的多国语的信息文件。
+ * 所有`Configuration`必须条件加载，可以关闭。除WingsAutoConfigProcessor。
  * `**/spring/boot/` 手动加载，boot有关的配置，如`spring.factories`
  * `**/spring/bean/`  自动加载，比如@ComponentScan指定。
  * `**/spring/conf/` 自动或手动加载，需要暴露的properties的配置。
@@ -77,6 +78,8 @@ spring对MessageSource的加载与configuration的机制不同，不需要unicod
  3. cookie `WINGS_LOCALE`, `WINGS_ZONEID`
  4. http header `Accept-Language`,`Zone-Id`
  5. 系统默认值
+ 
+此处为行为约定，基于servlet或webflux的具体实现，在其他工程。
 
 ## 1.4.Json格式约定(jackson)
 
@@ -104,15 +107,3 @@ spring对MessageSource的加载与configuration的机制不同，不需要unicod
  
  - 79.3 Customize the Jackson ObjectMapper
 
-## 1.5.Controller约定
-
-要在方法上写全路径，不要相对于controller，这样搜索可以从URL直接匹配。
-controller所在package的名字，应该和url的目录保持相同的结构。
-
-## 1.6.Security预定
-
-引入spring security包时自动生效，没有魔法，都在官方文档，读3遍。
-
-[6.10 Multiple HttpSecurity](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#jc-authentication)
-[8. Architecture and Implementation](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#overall-architecture)
-[30. Security](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-security.html)

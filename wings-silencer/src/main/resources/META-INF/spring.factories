@@ -6,5 +6,5 @@ org.springframework.boot.env.EnvironmentPostProcessor=\
   pro.fessional.wings.silencer.spring.boot.WingsAutoConfigProcessor
 #
 org.springframework.context.ApplicationListener=\
-  pro.fessional.wings.silencer.spring.boot.WingsDeferredLogFactory
-# ,pro.fessional.wings.silencer.spring.boot.WingsSpringBeanScanner
+  pro.fessional.wings.silencer.spring.boot.WingsDeferredLogFactory\
+ ,pro.fessional.wings.silencer.spring.boot.WingsSpringBeanScanner

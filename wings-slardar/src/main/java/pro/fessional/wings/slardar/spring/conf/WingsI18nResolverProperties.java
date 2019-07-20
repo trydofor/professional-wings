@@ -1,4 +1,4 @@
-package pro.fessional.wings.silencer.spring.conf;
+package pro.fessional.wings.slardar.spring.conf;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import static java.util.Collections.emptyList;
 
 /**
  * @author trydofor
- * @since 2019-07-02
+ * @since 2019-07-20
  */
 @Data
 public class WingsI18nResolverProperties {

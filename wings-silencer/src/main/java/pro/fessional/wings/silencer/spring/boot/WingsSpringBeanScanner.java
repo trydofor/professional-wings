@@ -9,6 +9,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import pro.fessional.mirana.cast.StringCastUtil;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -30,6 +31,12 @@ public class WingsSpringBeanScanner implements ApplicationListener<ApplicationPr
     public void onApplicationEvent(ApplicationPreparedEvent event) {
         ConfigurableApplicationContext context = event.getApplicationContext();
         if (!(context instanceof BeanDefinitionRegistry)) return;
+
+        String enable = context.getEnvironment().getProperty("spring.wings.scanner.enabled");
+        if (!StringCastUtil.asTrue(enable)) {
+            logger.info("Wings bean scanner is disabled, skip it.");
+            return;
+        }
 
         final LinkedHashMap<String, String> pathPackage = new LinkedHashMap<>();
         final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();

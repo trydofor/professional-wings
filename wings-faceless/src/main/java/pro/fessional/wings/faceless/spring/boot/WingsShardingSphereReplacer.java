@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package pro.fessional.wings.faceless.spring.bean;
+package pro.fessional.wings.faceless.spring.boot;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.logging.Log;
@@ -36,12 +36,17 @@ import org.apache.shardingsphere.shardingjdbc.spring.boot.util.DataSourceUtil;
 import org.apache.shardingsphere.shardingjdbc.spring.boot.util.PropertyUtil;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.StandardEnvironment;
+import pro.fessional.mirana.cast.StringCastUtil;
 import pro.fessional.wings.faceless.flywave.FlywaveDataSources;
 
 import javax.sql.DataSource;
@@ -55,6 +60,13 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * NOTE: copy most code from org.apache.shardingsphere.shardingjdbc.spring.boot.SpringBootConfiguration.
  * because I CAN'T override.
+ * <p>
+ * /////
+ * 依照 flywave-jdbc-spring-boot-starter 配置，构造数据源，
+ * 当只有一个数据源，且不存在分表时，直接使用原始数据源，而非sharding数据源。
+ * 如果有多个数据源，使用sharding数据源，同时expose原始出来，可以独立使用。
+ * <p/>
+ * https://shardingsphere.apache.org/document/current/cn/manual/sharding-jdbc/configuration/config-java/ <br/>
  *
  * @author trydofor
  *
@@ -66,11 +78,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Configuration
 @AutoConfigureBefore(org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class)
+@ConditionalOnProperty(prefix = "spring.wings.shardingsphere", name = "enabled", havingValue = "true")
 @EnableConfigurationProperties({SpringBootShardingRuleConfigurationProperties.class, SpringBootMasterSlaveRuleConfigurationProperties.class, SpringBootEncryptRuleConfigurationProperties.class, SpringBootPropertiesConfigurationProperties.class})
-@ConditionalOnProperty(prefix = "spring.wings.datasource", name = "enabled", havingValue = "true", matchIfMissing = true)
-public class WingsDataSourceConfiguration implements EnvironmentAware {
+public class WingsShardingSphereReplacer implements EnvironmentAware {
 
-    private static final Log logger = LogFactory.getLog(WingsDataSourceConfiguration.class);
+    private static final Log logger = LogFactory.getLog(WingsShardingSphereReplacer.class);
 
     private final SpringBootShardingRuleConfigurationProperties shardingProperties;
 
@@ -88,12 +100,40 @@ public class WingsDataSourceConfiguration implements EnvironmentAware {
 
     private final EncryptRuleConfigurationYamlSwapper encryptSwapper = new EncryptRuleConfigurationYamlSwapper();
 
-    public WingsDataSourceConfiguration(SpringBootShardingRuleConfigurationProperties shardingProperties, SpringBootMasterSlaveRuleConfigurationProperties masterSlaveProperties, SpringBootEncryptRuleConfigurationProperties encryptProperties, SpringBootPropertiesConfigurationProperties propMapProperties) {
+    public WingsShardingSphereReplacer(SpringBootShardingRuleConfigurationProperties shardingProperties, SpringBootMasterSlaveRuleConfigurationProperties masterSlaveProperties, SpringBootEncryptRuleConfigurationProperties encryptProperties, SpringBootPropertiesConfigurationProperties propMapProperties) {
         this.shardingProperties = shardingProperties;
         this.masterSlaveProperties = masterSlaveProperties;
         this.encryptProperties = encryptProperties;
         this.propMapProperties = propMapProperties;
     }
+
+    @Override
+    public final void setEnvironment(final Environment environment) {
+        String prefix = "spring.shardingsphere.datasource.";
+        for (String each : getDataSourceNames(environment, prefix)) {
+            try {
+                dataSourceMap.put(each, getDataSource(environment, prefix, each));
+            } catch (final ReflectiveOperationException ex) {
+                throw new ShardingException("Can't find datasource type!", ex);
+            }
+        }
+    }
+
+    protected List<String> getDataSourceNames(final Environment environment, final String prefix) {
+        StandardEnvironment standardEnv = (StandardEnvironment) environment;
+        standardEnv.setIgnoreUnresolvableNestedPlaceholders(true);
+        return null == standardEnv.getProperty(prefix + "name") ? new InlineExpressionParser(standardEnv.getProperty(prefix + "names")).splitAndEvaluate() : Collections.singletonList(standardEnv.getProperty(prefix + "name"));
+    }
+
+    @SuppressWarnings("unchecked")
+    protected DataSource getDataSource(final Environment environment, final String prefix, final String dataSourceName) throws ReflectiveOperationException {
+        Map<String, Object> dataSourceProps = PropertyUtil.handle(environment, prefix + dataSourceName.trim(), Map.class);
+        Preconditions.checkState(!dataSourceProps.isEmpty(), "Wrong datasource properties!");
+        return DataSourceUtil.getDataSource(dataSourceProps.get("type").toString(), dataSourceProps);
+    }
+
+    // /////////////////////////////////////
+    // trydofor start
 
     /**
      * 如果只有一个 datasource，且无shardingProperties配置，则使用真实datasource，免去SQL解析。
@@ -137,29 +177,19 @@ public class WingsDataSourceConfiguration implements EnvironmentAware {
         return new FlywaveDataSources(dataSourceMap, shardDataSource.get());
     }
 
-    @Override
-    public final void setEnvironment(final Environment environment) {
-        String prefix = "spring.shardingsphere.datasource.";
-        for (String each : getDataSourceNames(environment, prefix)) {
-            try {
-                dataSourceMap.put(each, getDataSource(environment, prefix, each));
-            } catch (final ReflectiveOperationException ex) {
-                throw new ShardingException("Can't find datasource type!", ex);
+    public static class DisableDefault implements ApplicationListener<ApplicationPreparedEvent> {
+
+        @Override
+        public void onApplicationEvent(ApplicationPreparedEvent event) {
+            ConfigurableEnvironment environment = event.getApplicationContext().getEnvironment();
+            String enable = environment.getProperty("spring.wings.shardingsphere.enabled");
+            if (StringCastUtil.asTrue(enable)) {
+                environment.getPropertySources().addFirst(new MapPropertySource("wings-shardingsphere-disable", Collections.singletonMap("spring.shardingsphere.enabled", "false")));
+                logger.info("Wings shardingsphere replace default config, by adding first 'spring.shardingsphere.enabled=false'");
+            } else {
+                logger.info("Wings shardingsphere config is disabled, skip it.");
             }
         }
-    }
-
-    protected List<String> getDataSourceNames(final Environment environment, final String prefix) {
-        StandardEnvironment standardEnv = (StandardEnvironment) environment;
-        standardEnv.setIgnoreUnresolvableNestedPlaceholders(true);
-        return null == standardEnv.getProperty(prefix + "name") ? new InlineExpressionParser(standardEnv.getProperty(prefix + "names")).splitAndEvaluate() : Collections.singletonList(standardEnv.getProperty(prefix + "name"));
-    }
-
-    @SuppressWarnings("unchecked")
-    protected DataSource getDataSource(final Environment environment, final String prefix, final String dataSourceName) throws ReflectiveOperationException {
-        Map<String, Object> dataSourceProps = PropertyUtil.handle(environment, prefix + dataSourceName.trim(), Map.class);
-        Preconditions.checkState(!dataSourceProps.isEmpty(), "Wrong datasource properties!");
-        return DataSourceUtil.getDataSource(dataSourceProps.get("type").toString(), dataSourceProps);
     }
 
     private boolean needSharding() {
@@ -168,4 +198,6 @@ public class WingsDataSourceConfiguration implements EnvironmentAware {
                 || !shardingProperties.getBroadcastTables().isEmpty()
                 || shardingProperties.getEncryptRule() != null;
     }
+    // trydofor end
+    // /////////////////////////////////////
 }

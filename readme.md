@@ -13,9 +13,9 @@
 ## 0.1.项目构成
 
  * [演示例子/example](wings-example/readme.md) 集成了以上的例子
- * [沉默术士/silencer](wings-silencer/readme.md) 自动的工程化的 starter
- * [虚空假面/faceless](wings-faceless/readme.md) kotlin+sharding starter
- * [鱼人守卫/slardar](wings-slardar/readme.md) servicecomb starter
+ * [沉默术士/silencer](wings-silencer/readme.md) 工程化的自动装配
+ * [虚空假面/faceless](wings-faceless/readme.md) 分表分库，数据版本管理
+ * [鱼人守卫/slardar](wings-slardar/readme.md) 基于Servlet体系的控制
  
  
 ## 0.2.涉及技术

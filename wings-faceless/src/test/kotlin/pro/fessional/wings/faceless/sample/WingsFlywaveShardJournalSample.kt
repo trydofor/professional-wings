@@ -17,8 +17,8 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner
  * @since 2019-06-22
  */
 @RunWith(SpringRunner::class)
-@SpringBootTest
 @ActiveProfiles("shard")
+@SpringBootTest(properties = ["debug = true"])
 class WingsFlywaveShardJournalSample {
 
     @Autowired

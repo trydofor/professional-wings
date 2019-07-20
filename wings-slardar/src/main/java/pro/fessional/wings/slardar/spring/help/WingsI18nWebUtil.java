@@ -1,11 +1,11 @@
-package pro.fessional.wings.silencer.spring.help;
+package pro.fessional.wings.slardar.spring.help;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
 import pro.fessional.wings.silencer.context.WingsI18nContext;
-import pro.fessional.wings.silencer.http.TypedRequestUtil;
+import pro.fessional.wings.slardar.http.TypedRequestUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneId;

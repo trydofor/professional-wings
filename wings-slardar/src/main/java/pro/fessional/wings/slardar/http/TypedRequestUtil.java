@@ -1,4 +1,4 @@
-package pro.fessional.wings.silencer.http;
+package pro.fessional.wings.slardar.http;
 
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.cast.TypedCastUtil;

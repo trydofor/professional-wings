@@ -1,6 +1,7 @@
 #
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  pro.fessional.wings.faceless.spring.boot.WingsComponentScanner
+  pro.fessional.wings.faceless.spring.boot.WingsShardingSphereReplacer\
+ ,pro.fessional.wings.faceless.spring.boot.WingsComponentScanner
 #
-org.springframework.boot.env.EnvironmentPostProcessor=\
-  pro.fessional.wings.faceless.spring.boot.WingsShardingSphereProcessor
+org.springframework.context.ApplicationListener=\
+pro.fessional.wings.faceless.spring.boot.WingsShardingSphereReplacer.DisableDefault

@@ -3,11 +3,13 @@ package pro.fessional.wings.silencer.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.context.MessageSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -24,6 +26,7 @@ import java.util.LinkedHashSet;
  */
 @Configuration
 @ConditionalOnClass(MessageSource.class)
+@ConditionalOnProperty(prefix = "spring.wings.message", name = "enabled", havingValue = "true")
 public class WingsMessageConfiguration {
 
     private static final Log logger = LogFactory.getLog(WingsMessageConfiguration.class);
@@ -36,6 +39,7 @@ public class WingsMessageConfiguration {
         return new MessageSourceProperties();
     }
 
+    @Primary
     @Bean
     public MessageSource messageSource(MessageSourceProperties properties) {
 
