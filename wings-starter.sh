@@ -72,21 +72,21 @@ case "$1" in
         if [[ ${count} == 0 ]]; then
             echo -e "\e[0;33mNOTE: not found running $JAR_NAME\e[m"
         else
+            timeout=30
+            sleeptm=3
             pid=$(cat ${PID_FILE})
             echo -e "\e[0;33mNOTE: killing pid=$pid of $JAR_NAME\e[m"
             kill ${pid}
-            for (( i=0; i<10; i++)); do
+            for (( i = 0; i<timeout; i+=sleeptm)); do
                 echo "wait 3s for gracefully stopping."
-                sleep 3
+                sleep ${sleeptm}
                 if [[ $(ps -ef | grep ${JAR_NAME} | grep -v grep | wc -l) == 0 ]]; then
                     echo -e "\e[0;33mNOTE: successfully killed pid=$pid of $JAR_NAME\e[m"
                     exit
                 fi
             done
-            echo -e "\e[0;31mWARN: timeout of killing pid=$pid, force to kill it\e[m"
-            kill -9 ${pid}
-            sleep 3
-            echo -e "\e[0;31mWARN: need manually check the ps info\e[m"
+            echo -e "\e[0;31mWARN: stopping timeout[${timeout}s], pid=$pid\e[m"
+            echo -e "\e[0;31mWARN: need manually check the ${JAR_NAME}\e[m"
             ps -ef | grep ${JAR_NAME}| grep -v grep
         fi
         ;;
