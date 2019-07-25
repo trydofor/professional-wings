@@ -3,8 +3,8 @@
 BOOT_JAR=wings-example-1.0.0-SNAPSHOT.jar
 JAVA_ARG="
 -server
--Xms1536m
--Xmx1536m
+-Xms4096m
+-Xmx4096m
 -Duser.timezone=UTC
 -Djava.awt.headless=true
 -Dfile.encoding=UTF-8
@@ -52,10 +52,12 @@ count=$(ps -ef | grep ${JAR_NAME} | grep -v grep | wc -l)
 case "$1" in
     start)
         if [[ ${count} == 0 ]]; then
+            shift
             echo -e "\e[0;32mINFO: boot-jar=$JAR_FILE \e[m"
             echo -e "\e[0;33mNOTE: log-file=$LOG_FILE \e[m"
             echo -e "\e[0;33mNOTE: pid-file=$PID_FILE \e[m"
-            nohup java ${JAVA_ARG} -jar ${JAR_FILE} > ${LOG_FILE} 2>&1 &
+            echo -e "\e[0;33mNOTE: out-args=$* \e[m"
+            nohup java ${JAVA_ARG} -jar ${JAR_FILE} "$*" > ${LOG_FILE} 2>&1 &
             echo $! > ${PID_FILE}
             sleep 2
         else
@@ -72,16 +74,19 @@ case "$1" in
         if [[ ${count} == 0 ]]; then
             echo -e "\e[0;33mNOTE: not found running $JAR_NAME\e[m"
         else
-            timeout=30
-            sleeptm=3
+            timeout=60
             pid=$(cat ${PID_FILE})
             echo -e "\e[0;33mNOTE: killing pid=$pid of $JAR_NAME\e[m"
             kill ${pid}
-            for (( i = 0; i<timeout; i+=sleeptm)); do
-                echo "wait 3s for gracefully stopping."
-                sleep ${sleeptm}
+
+            icon=''
+            for (( i = 0; i < timeout; i++)); do
+                index=`echo ${i}%4`
+                printf "[%ds][%-${timeout}s]\r" "$i" "$icon"
+                icon='#'${icon}
+                sleep 1
                 if [[ $(ps -ef | grep ${JAR_NAME} | grep -v grep | wc -l) == 0 ]]; then
-                    echo -e "\e[0;33mNOTE: successfully killed pid=$pid of $JAR_NAME\e[m"
+                    echo -e "\e[0;33mNOTE: successfully stop in $i seconds, pid=$pid of $JAR_NAME\e[m"
                     exit
                 fi
             done
@@ -104,4 +109,5 @@ case "$1" in
 
     *)
         echo -e '\e[0;31mERROR: use start|stop|status\e[m'
+        echo -e '\e[0;31mEG ./wings-starter.sh start --spring.config.location=./\e[m'
 esac

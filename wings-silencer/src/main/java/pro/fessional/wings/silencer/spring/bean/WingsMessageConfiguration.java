@@ -10,7 +10,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StringUtils;
@@ -43,7 +43,9 @@ public class WingsMessageConfiguration {
     @Bean
     public MessageSource messageSource(MessageSourceProperties properties) {
 
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        // https://stackoverflow.com/questions/25121392/resourcebundle-not-found-for-messagesource
+        // WARN ResourceBundle [messages] not found for MessageSource: Can't find bundle for base name messages
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 
         if (StringUtils.hasText(properties.getBasename())) {
             messageSource.addBasenames(StringUtils

@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  * @since 2019-07-09
  */
 @Configuration
-@ConditionalOnProperty(prefix = "spirng.wings.security.blank", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "spring.wings.security.blank", name = "enabled", havingValue = "true")
 @ConditionalOnClass(WebSecurityConfigurerAdapter.class)
 public class WingsSecurityBlankConfiguration {
 
