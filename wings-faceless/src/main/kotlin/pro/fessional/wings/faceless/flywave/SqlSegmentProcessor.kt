@@ -48,7 +48,7 @@ class SqlSegmentProcessor(
         } else {
             this.singleComment = commentSingle.trim()
         }
-        logger.info("use single-comment= {}", this.singleComment)
+        logger.debug("use single-comment= {}", this.singleComment)
 
         // wings.flywave.sql.comment-multiple="/*   */"
         if (commentMultiple.isBlank()) {
@@ -59,7 +59,7 @@ class SqlSegmentProcessor(
             this.blockComment1 = spt[0].trim()
             this.blockComment2 = spt[1].trim()
         }
-        logger.info("use multiple-comment={} {}", this.blockComment1, this.blockComment2)
+        logger.debug("use multiple-comment={} {}", this.blockComment1, this.blockComment2)
 
         // wings.flywave.sql.delimiter-default=";"
         if (delimiterDefault.isBlank()) {
@@ -67,7 +67,7 @@ class SqlSegmentProcessor(
         } else {
             this.delimiterDefault = delimiterDefault.trim()
         }
-        logger.info("use delimiter={}", this.delimiterDefault)
+        logger.debug("use delimiter={}", this.delimiterDefault)
 
         // wings.flywave.sql.delimiter-command="DELIMITER"
         if (delimiterCommand.isBlank()) {
@@ -75,7 +75,7 @@ class SqlSegmentProcessor(
         } else {
             this.delimiterCommand = delimiterCommand.trim()
         }
-        logger.info("use delimiter command={}", this.delimiterCommand)
+        logger.debug("use delimiter command={}", this.delimiterCommand)
     }
 
     /**

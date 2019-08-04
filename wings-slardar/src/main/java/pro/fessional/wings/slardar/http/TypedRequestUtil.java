@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.http;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.cast.TypedCastUtil;
 
@@ -43,5 +44,16 @@ public class TypedRequestUtil {
 
         Object obj = request.getAttribute(name);
         return TypedCastUtil.castObject(obj, claz);
+    }
+
+    @NotNull
+    public static String getRemoteIp(HttpServletRequest request, String... header) {
+        if (header != null) {
+            for (String h : header) {
+                String ip = request.getHeader(h);
+                if (ip != null) return ip;
+            }
+        }
+        return request.getRemoteAddr();
     }
 }

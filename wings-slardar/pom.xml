@@ -24,7 +24,17 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <optional>true</optional>
+            <exclusions>
+                <!-- 测试上看 undertow 新能最好 -->
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -40,6 +50,14 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.cache2k</groupId>
+            <artifactId>cache2k-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.cache2k</groupId>
+            <artifactId>cache2k-core</artifactId>
         </dependency>
         <!-- test -->
         <dependency>

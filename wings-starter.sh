@@ -3,24 +3,34 @@
 BOOT_JAR=wings-example-1.0.0-SNAPSHOT.jar
 JAVA_ARG="
 -server
--Xms4096m
--Xmx4096m
 -Duser.timezone=UTC
 -Djava.awt.headless=true
 -Dfile.encoding=UTF-8
--XX:NewSize=256m
--XX:MaxNewSize=256m
--XX:+UseConcMarkSweepGC
--XX:+CMSClassUnloadingEnabled
--XX:MaxTenuringThreshold=5
--XX:+HeapDumpOnOutOfMemoryError
--XX:-OmitStackTraceInFastThrow
+
+-Xms6G
+-Xmx6G
+-XX:MetaspaceSize=128m
+-XX:+UseG1GC
+-XX:MaxGCPauseMillis=200
+-XX:ParallelGCThreads=8
+-XX:ConcGCThreads=8
+-XX:InitiatingHeapOccupancyPercent=70
+
 -XX:HeapDumpPath=${BOOT_JAR}.heap
 -Xloggc:${BOOT_JAR}.gc
 -XX:+PrintGC
 -XX:+PrintGCDetails
 -XX:+PrintGCDateStamps
 "
+
+#-XX:+UseConcMarkSweepGC
+#-XX:NewSize=256m
+#-XX:MaxNewSize=256m
+#-XX:+CMSClassUnloadingEnabled
+#-XX:MaxTenuringThreshold=5
+#-XX:+HeapDumpOnOutOfMemoryError
+#-XX:-OmitStackTraceInFastThrow
+
 ################ NO NEED to modify the following ################
 
 # check java

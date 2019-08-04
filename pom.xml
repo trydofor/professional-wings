@@ -39,6 +39,8 @@
         <jooq.version>3.11.11</jooq.version>
         <sharding-sphere.version>4.0.0-RC1</sharding-sphere.version>
         <!--slardar-->
+        <!--other-->
+        <cache2k-version>1.2.2.Final</cache2k-version>
     </properties>
 
     <dependencyManagement>
@@ -87,6 +89,22 @@
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
                 <version>${sharding-sphere.version}</version>
+            </dependency>
+            <!-- cache -->
+            <dependency>
+                <groupId>org.cache2k</groupId>
+                <artifactId>cache2k-api</artifactId>
+                <version>${cache2k-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.cache2k</groupId>
+                <artifactId>cache2k-core</artifactId>
+                <version>${cache2k-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.cache2k</groupId>
+                <artifactId>cache2k-spring</artifactId>
+                <version>${cache2k-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -76,3 +76,9 @@
 ### 0.4.6.lombok
 
 简化代码，开发时，需要自己在pom中引入
+
+### 0.4.7.git-flow
+
+使用`git flow`管理工程
+
+[git-flow-cheatsheet](http://danielkummer.github.io/git-flow-cheatsheet/)

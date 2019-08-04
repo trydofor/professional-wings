@@ -41,18 +41,18 @@ public class TestI18nController {
         model.addAttribute("userZoneId", zoneId);
         model.addAttribute("userDatetime", userDatetime);
         //
-        log.info("user.hello=" + messageSource.getMessage("user.hello", new Object[]{}, locale));
-        log.info("userLocale=" + locale);
-        log.info("userZoneId=" + zoneId);
-        log.info("userDatetime=" + userDatetime);
+        log.debug("user.hello=" + messageSource.getMessage("user.hello", new Object[]{}, locale));
+        log.debug("userLocale=" + locale);
+        log.debug("userZoneId=" + zoneId);
+        log.debug("userDatetime=" + userDatetime);
 
 
         model.addAttribute("systemZoneId", systemZoneId);
         String systemDatetime = DateFormatter.full19(now);
         model.addAttribute("systemDatetime", systemDatetime);
 
-        log.info("systemZoneId=" + systemZoneId);
-        log.info("systemDatetime=" + systemDatetime);
+        log.debug("systemZoneId=" + systemZoneId);
+        log.debug("systemDatetime=" + systemDatetime);
 
         return "index";
     }
