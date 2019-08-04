@@ -1,8 +1,9 @@
 package pro.fessional.wings.slardar.spring.bean;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
@@ -12,11 +13,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  */
 @Configuration
 @ConditionalOnProperty(prefix = "spring.wings.security.blank", name = "enabled", havingValue = "true")
-@ConditionalOnClass(WebSecurityConfigurerAdapter.class)
 public class WingsSecurityBlankConfiguration {
 
     @Configuration
-    public static class DisableSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+    @Order(SecurityProperties.BASIC_AUTH_ORDER - 7)
+    public class DisableSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
         @Override
         public void configure(HttpSecurity http) throws Exception {

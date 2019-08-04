@@ -1,10 +1,12 @@
 package pro.fessional.wings.example.controller;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Random;
 
 /**
  * @author trydofor
@@ -12,19 +14,20 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 
 @Controller
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class TestSleepController {
 
+    private final Random unsafeRandom = new Random();
+
     @RequestMapping("/sleep.html")
     public String sleep(@RequestParam("ms") long ms) {
-        long to = System.currentTimeMillis() + ms;
-        while (System.currentTimeMillis() < to) {
-            try {
-                Thread.sleep(ms);
-            } catch (InterruptedException e) {
-                // ignore
-            }
+        long half = ms / 2;
+        long slp = ((long) (unsafeRandom.nextDouble() * half)) + half;
+        try {
+            Thread.sleep(slp);
+        } catch (InterruptedException e) {
+            // ingore
         }
 
         return "index";

@@ -12,11 +12,10 @@ mvn clean package
 
 无界面启动Jmeter
 ```bash
-rm -rf wings-example/target/load-test/
-mkdir -p wings-example/target/load-test/report
-
 JVM_ARGS="-Xmx4G -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:G1ReservePercent=20"
 
+rm -rf wings-example/target/load-test/ &&\
+mkdir -p wings-example/target/load-test/report &&\
 jmeter -n \
 -t wings-example/src/test/jmeter/load-test.jmx \
 -l wings-example/target/load-test/load-test.jtl \

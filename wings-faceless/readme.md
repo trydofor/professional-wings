@@ -140,6 +140,9 @@ DROP TRIGGER IF EXISTS `WGS_ORDER$BD`;
 分布式主键有`snowflake`方案可选，但`LightId`支持CRC8做伪随机编码使用。
 参考[pro.fessioinal.mirana](https://gitee.com/trydofor/pro.fessional.mirana)项目。
 
+实现了基于JDBC的LightId，在Jooq生成pojo时，自动继承`LightIdAware`，可以当作key使用。
+具体细节参考`LightIdService`的实现。
+
 
 ## 2.5.数据库操作
 

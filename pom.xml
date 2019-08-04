@@ -28,7 +28,6 @@
     <properties>
         <maven.test.skip>true</maven.test.skip>
         <!--silencer-->
-        <springboot.version>2.1.6.RELEASE</springboot.version>
         <wings.version>1.0.0-SNAPSHOT</wings.version>
         <mirana.version>1.0.0-SNAPSHOT</mirana.version>
         <java.version>1.8</java.version>

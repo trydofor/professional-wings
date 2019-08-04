@@ -34,9 +34,16 @@ public class TestJsonControllerTest {
     }
 
     @Test
-    public void pressure() throws InterruptedException {
-        final int threads = 200;
-        final int loops = 10;
+    public void stressTestJson() {
+        stress("/test.json", 2000, 20);
+    }
+
+    @Test
+    public void stressSleep() {
+        stress("/sleep.html?ms=6000", 2000, 50);
+    }
+
+    private void stress(final String uri, final int threads, final int loops) {
         final CountDownLatch start = new CountDownLatch(1);
         final CountDownLatch latch = new CountDownLatch(threads);
         final AtomicInteger oks = new AtomicInteger(0);
@@ -48,7 +55,7 @@ public class TestJsonControllerTest {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                ResponseEntity<String> entity = tmpl.getForEntity("/test.json", String.class);
+                ResponseEntity<String> entity = tmpl.getForEntity(uri, String.class);
                 for (int j = 0; j < loops; j++) {
                     boolean ok = entity.getStatusCode().is2xxSuccessful();
                     if (ok) {
@@ -62,7 +69,11 @@ public class TestJsonControllerTest {
         start.countDown();
 
 
-        latch.await();
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         System.out.println("ok=" + oks.get());
         System.out.println("no=" + nos.get());
     }

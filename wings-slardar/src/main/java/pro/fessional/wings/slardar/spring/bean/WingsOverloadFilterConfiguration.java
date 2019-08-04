@@ -15,6 +15,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import pro.fessional.wings.slardar.http.TypedRequestUtil;
 
@@ -50,6 +52,7 @@ public class WingsOverloadFilterConfiguration {
     private final Log logger = LogFactory.getLog(WingsOverloadFilterConfiguration.class);
 
     @Component
+    @Order(Ordered.HIGHEST_PRECEDENCE)
     @RequiredArgsConstructor
     public class SafelyShutdown implements ApplicationListener<ContextClosedEvent> {
         private final OverloadFilter overloadFilter;
@@ -57,7 +60,16 @@ public class WingsOverloadFilterConfiguration {
         @Override
         public void onApplicationEvent(ContextClosedEvent event) {
             overloadFilter.requestCapacity.set(Integer.MIN_VALUE);
-            logger.warn("safely shutdown, deny any request");
+            AtomicInteger process = overloadFilter.requestProcess;
+            logger.warn("shutting down, deny new request, current=" + process.get());
+            while (process.get() > 0) {
+                try {
+                    Thread.sleep(30);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+            }
+            logger.warn("safely shutting down, no request in processing");
         }
     }
 
@@ -102,11 +114,13 @@ public class WingsOverloadFilterConfiguration {
 
         private final AtomicInteger requestCapacity = new AtomicInteger(0);
         private final AtomicInteger requestProcess = new AtomicInteger(0);
+
         private final ConcurrentHashMap<String, Long> lastWarnSlow = new ConcurrentHashMap<>();
         private final AtomicLong lastInfoStat = new AtomicLong(0);
 
-        private final AtomicLong totalResponse = new AtomicLong(0);
-        private final AtomicLong totalCostMils = new AtomicLong(0);
+        private final int costStep = 20;
+        private final AtomicLong[] responseCost; // 10s
+        private final AtomicLong responseTotal = new AtomicLong(0);
 
         private final FallBack fallBack;
         private final OverloadConfig config;
@@ -116,26 +130,38 @@ public class WingsOverloadFilterConfiguration {
             this.fallBack = fallBack;
             this.config = config;
 
-            if (config.requestInterval <= 0) {
+            if (config.requestInterval <= 0 || config.requestCalmdown <= 0) {
                 this.spiderCache = null;
             } else {
-                int capacity = config.requestCapacity > 0 ? config.requestCapacity : Integer.MAX_VALUE;
+                int capacity = initCapacity(config);
                 requestCapacity.set(capacity);
                 this.spiderCache = new Cache2kBuilder<String, CalmDown>() {}
                         .entryCapacity(capacity)
                         .expireAfterWrite(config.requestInterval * config.requestCalmdown * 2, MILLISECONDS)
                         .build();
             }
+            if (config.responseInfoStat <= 0) {
+                responseCost = new AtomicLong[0];
+            } else {
+                responseCost = new AtomicLong[500];
+            }
+            for (int i = 0; i < responseCost.length; i++) {
+                responseCost[i] = new AtomicLong(0);
+            }
+        }
+
+        private int initCapacity(OverloadConfig config) {
+            if (config.requestCapacity > 0) return config.requestCapacity;
+            if (config.requestCapacity < 0) return Integer.MAX_VALUE;
+
+            int cnt = Runtime.getRuntime().availableProcessors() * 300;
+            return cnt < 2000 ? 2000 : cnt;
         }
 
         @Override
         public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
             if (requestProcess.get() > requestCapacity.get()) {
-                try {
-                    fallBack.fallback(request, response);
-                } catch (Exception e) {
-                    // ignore all
-                }
+                fallBack.fallback(request, response);
                 return;
             }
 
@@ -147,13 +173,13 @@ public class WingsOverloadFilterConfiguration {
             // 只能处理http的，目前的情况
             final long now = System.currentTimeMillis();
             final HttpServletRequest httpReq = (HttpServletRequest) request;
-            final CalmDown calmDown = letCalmDown(httpReq, now);
+            final CalmDown calmDown = letCalmDown(httpReq);
 
             // 快请求，累积后清零
             if (calmDown != null) {
-                int rqs = calmDown.heardRequest.incrementAndGet(); // 等待处理的请求
-                boolean isCnt = rqs >= config.requestCalmdown;
-                boolean isFst = now - calmDown.firstRequest.get() < config.requestInterval;
+                final int rqs = calmDown.heardRequest.incrementAndGet(); // 等待处理的请求
+                final boolean isCnt = rqs >= config.requestCalmdown;
+                final boolean isFst = now - calmDown.firstRequest.get() < config.requestInterval;
                 if (isCnt && isFst) {
                     fallBack.fallback(request, response);
                     if (logger.isWarnEnabled() && now > config.getLoggerInterval() + lastWarnSlow.getOrDefault(calmDown.ip, 0L)) {
@@ -163,7 +189,7 @@ public class WingsOverloadFilterConfiguration {
                     return; // 直接返回
                 } else {
                     if (!isFst) calmDown.firstRequest.set(now);
-                    if (isCnt) calmDown.heardRequest.set(0);
+                    if (isCnt) calmDown.heardRequest.addAndGet(-rqs);
                 }
             }
 
@@ -184,7 +210,7 @@ public class WingsOverloadFilterConfiguration {
         public void destroy() {
         }
 
-        private CalmDown letCalmDown(HttpServletRequest httpReq, long now) {
+        private CalmDown letCalmDown(HttpServletRequest httpReq) {
             if (spiderCache == null) return null; // 不需要处理ip问题
 
             final String ip = TypedRequestUtil.getRemoteIp(httpReq, config.requestHeader);
@@ -195,7 +221,7 @@ public class WingsOverloadFilterConfiguration {
                 }
             }
 
-            return spiderCache.computeIfAbsent(ip, () -> new CalmDown(ip, now));
+            return spiderCache.computeIfAbsent(ip, () -> new CalmDown(ip));
         }
 
         //
@@ -218,28 +244,55 @@ public class WingsOverloadFilterConfiguration {
             }
 
             // 统计，已完成的请求，忽略并发误差。
-            final long totalReq = totalResponse.incrementAndGet();
-            final long totalCost = totalCostMils.addAndGet(cost);
-            if (logger.isInfoEnabled() && config.responseInfoStat > 0 && totalReq % 1000 == 0 && end - lastInfoStat.get() > config.responseInfoStat) {
-                logger.info("wings-snap-response, avg=" + (totalCost / totalReq)
-                        + ", sum=" + totalCost
-                        + ", now=" + requestProcess.get()
-                        + ", max=" + requestCapacity.get());
-                lastInfoStat.set(end);
+            if (responseCost.length > 0) {
+                int idx = (int) (cost % costStep);
+                if (idx >= responseCost.length) {
+                    responseCost[responseCost.length - 1].incrementAndGet();
+                } else {
+                    responseCost[idx].incrementAndGet();
+                }
+                long total = responseTotal.incrementAndGet();
+                if (logger.isInfoEnabled()
+                        && (config.responseInfoStat == 0 || total % config.responseInfoStat == 0)
+                        && end - lastInfoStat.get() > config.responseInfoStat) {
+
+                    long sum = 0;
+                    int p99 = 0;
+                    int p95 = 0;
+                    int p90 = 0;
+                    for (int i = 0; i < responseCost.length; i++) {
+                        sum += responseCost[i].get();
+                        long rate = sum * 100 / total;
+                        if (rate >= 99 && p99 == 0) {
+                            p99 = costStep * i;
+                        }
+                        if (rate >= 95 && p95 == 0) {
+                            p95 = costStep * i;
+                        }
+                        if (rate >= 90 && p90 == 0) {
+                            p90 = costStep * i;
+                        }
+                    }
+
+                    logger.info("wings-snap-response "
+                            + ", total-resp=" + total
+                            + ", p99=" + p99
+                            + ", p95=" + p95
+                            + ", p90=" + p90
+                            + ", process=" + requestProcess.get()
+                            + ", capacity=" + requestCapacity.get());
+                    lastInfoStat.set(end);
+                }
             }
         }
     }
 
 
+    @RequiredArgsConstructor
     private class CalmDown {
         private final String ip;
         private final AtomicLong firstRequest = new AtomicLong(0);
         private final AtomicInteger heardRequest = new AtomicInteger(0);
-
-        private CalmDown(String ip, long now) {
-            this.ip = ip;
-            firstRequest.set(now);
-        }
     }
 
     @Data

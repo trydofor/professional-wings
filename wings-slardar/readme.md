@@ -20,6 +20,9 @@ controller所在package的名字，应该和url的目录保持相同的结构。
 ## 3.3.Security预定
 
 引入spring security包时自动生效，没有魔法，都在官方文档，读3遍。
+默认 `spring.wings.security.blank.enabled=false` 不生效。
+
+在有多个`WebSecurityConfigurerAdapter`配置时，需要注意`Order`的顺序。 
 
 [6.10 Multiple HttpSecurity](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#jc-authentication)
 [8. Architecture and Implementation](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#overall-architecture)

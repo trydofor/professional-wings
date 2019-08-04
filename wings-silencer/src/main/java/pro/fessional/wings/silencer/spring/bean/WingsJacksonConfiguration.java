@@ -34,11 +34,11 @@ import java.util.Date;
  * @since 2019-06-26
  */
 @Configuration
-@ConditionalOnClass(Jackson2ObjectMapperBuilder.class)
 @ConditionalOnProperty(prefix = "spring.wings.jackson", name = "enabled", havingValue = "true")
 public class WingsJacksonConfiguration {
 
     @Bean
+    @ConditionalOnClass(Jackson2ObjectMapperBuilder.class)
     public Jackson2ObjectMapperBuilderCustomizer customizer() {
         return builder -> {
             DateFormat ud = new SimpleDateFormat(DateFormatter.PTN_FULL_19);

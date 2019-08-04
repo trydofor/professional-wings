@@ -29,15 +29,7 @@
 `wings-faceless/src/test/kotlin/`下的， 
 `pro/fessional/wings/faceless/sample/*`
 
-## 4.3.配置运行
-
- * 在`localhost:3306`配置数据库2个，`wings_0`和`wings_1`
- * 数据库用户名`trydofor`，密码`moilioncircle`，或者自己改配置
- * redis，密码`moilioncircle`，或者自己改配置
- * 运行example，访问 http://127.0.0.1:8080/
- * 配置一个本地redis做session和缓存，用docker的就好。
- 
-## 4.4.自建环境
+## 4.3.自建环境
 
 ``` bash
 # 设置变量
@@ -66,5 +58,58 @@ CREATE DATABASE IF NOT EXISTS wings_1;
 GRANT ALL PRIVILEGES ON wings_1.* TO ${USER}@'%';
 FLUSH PRIVILEGES;"
 
+```
 
+## 4.4.配置运行
+
+ * 在`localhost:3306`配置数据库2个，`wings_0`和`wings_1`
+ * 数据库用户名`trydofor`，密码`moilioncircle`，或者自己改配置
+ * redis，密码`moilioncircle`，或者自己改配置
+ * 运行example，访问 http://127.0.0.1:8080/
+ * 配置一个本地redis做session和缓存，用docker的就好。
+ 
+使用`maven`管理依赖，可以有下面3中方式。
+方式一，以`parent`形式，当前工程形式。
+ ``` xml
+ <parent>
+    <groupId>pro.fessional</groupId>
+    <artifactId>wings-home</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+</parent>
+ ```
+ 
+方式二，有其他`parent`以`import`形式，然后用啥填啥。
+``` xml
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>wings-home</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>import</scope>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+ ```
+
+方式三，直接依赖
+``` xml
+<dependencies>
+    <dependency>
+        <groupId>pro.fessional</groupId>
+        <artifactId>wings-faceless</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+</dependencies>
+```
+
+部署启动
+```
+cd wings-example
+mvn clean package
+cd ..
+./wings-starter.sh start
+# Ctrl-C停止日志输出
+./wings-starter.sh stop
 ```

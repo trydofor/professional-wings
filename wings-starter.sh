@@ -91,10 +91,15 @@ case "$1" in
 
             icon=''
             for (( i = 0; i < timeout; i++)); do
-                index=`echo ${i}%4`
-                printf "[%ds][%-${timeout}s]\r" "$i" "$icon"
-                icon='#'${icon}
-                sleep 1
+                for((j=0;j< 10;j++));do
+                    printf "[%ds][%-60s]\r" "$i" "$icon"
+                    if [[ ${#icon} -ge 60 ]]; then
+                        icon=''
+                    else
+                        icon='#'${icon}
+                    fi
+                    sleep 0.1
+                done
                 if [[ $(ps -ef | grep ${JAR_NAME} | grep -v grep | wc -l) == 0 ]]; then
                     echo -e "\e[0;33mNOTE: successfully stop in $i seconds, pid=$pid of $JAR_NAME\e[m"
                     exit
