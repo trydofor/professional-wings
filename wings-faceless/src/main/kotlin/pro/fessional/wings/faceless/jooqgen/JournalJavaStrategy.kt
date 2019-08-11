@@ -13,16 +13,19 @@ class JournalJavaStrategy : DefaultGeneratorStrategy() {
     override fun getJavaClassImplements(definition: Definition?, mode: GeneratorStrategy.Mode?): MutableList<String> {
         var impls = super.getJavaClassImplements(definition, mode)
 
-        if (mode == GeneratorStrategy.Mode.INTERFACE && definition is TableDefinition) {
+        if (definition !is TableDefinition) return impls
+
+        if (mode == GeneratorStrategy.Mode.INTERFACE) {
             val count = definition.columns.count {
                 val name = it.name.substringAfterLast(".").toUpperCase()
-                name.equals("MODIFY_DT") || name.equals("COMMIT_ID")
+                name == "CREATE_DT" || name == "MODIFY_DT" || name == "COMMIT_ID"
             }
-            if (count >= 2) {
-                impls.add("pro.fessional.wings.faceless.database.JournalPo")
+            if (count >= 3) {
+                impls.add("pro.fessional.wings.faceless.service.journal.JournalAware")
             }
+        } else if (mode == GeneratorStrategy.Mode.DEFAULT) {
+            impls.add("pro.fessional.wings.faceless.service.lightid.LightIdAware")
         }
-        impls.add("pro.fessional.wings.faceless.service.lightid.LightIdAware")
 
         return impls
     }

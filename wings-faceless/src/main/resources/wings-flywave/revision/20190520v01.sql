@@ -13,7 +13,7 @@ CREATE TABLE `SYS_COMMIT_JOURNAL`
 (
   `ID`         bigint(20)   NOT NULL COMMENT '主键',
   `CREATE_DT`  datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日时',
-  `EVENT_NAME` varchar(100) NOT NULL COMMENT '事件名称',
+  `EVENT_NAME` varchar(200) NOT NULL COMMENT '事件名称',
   `TARGET_KEY` varchar(200) NOT NULL DEFAULT '' COMMENT '目标数据特征',
   `LOGIN_INFO` text COMMENT '登陆信息，用户，终端等',
   `OTHER_INFO` text COMMENT '其他信息，业务侧自定义',
