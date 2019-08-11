@@ -15,7 +15,7 @@ public interface LightIdService {
      * @param block 区块
      * @return id
      */
-    default long getId(@NotNull Class<LightIdAware> po, int block) {
+    default long getId(@NotNull Class<? extends LightIdAware> po, int block) {
         String name = po.getSimpleName();
         int len = name.length();
         StringBuilder sb = new StringBuilder(len + 10);

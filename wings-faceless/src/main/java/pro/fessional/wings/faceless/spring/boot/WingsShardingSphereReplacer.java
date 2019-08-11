@@ -55,7 +55,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * NOTE: copy most code from org.apache.shardingsphere.shardingjdbc.spring.boot.SpringBootConfiguration.
@@ -136,7 +135,7 @@ public class WingsShardingSphereReplacer implements EnvironmentAware {
     // trydofor start
 
     /**
-     * 如果只有一个 datasource，且无shardingProperties配置，则使用真实datasource，免去SQL解析。
+     * 如果没有shardingProperties配置，则使用第一个真实datasource，免去SQL解析。
      * <p>
      * Get data source bean.
      *
@@ -146,14 +145,10 @@ public class WingsShardingSphereReplacer implements EnvironmentAware {
     @Bean
     public DataSource dataSource() throws SQLException {
         if (null != masterSlaveProperties.getMasterDataSourceName()) {
-            DataSource ds = MasterSlaveDataSourceFactory.createDataSource(dataSourceMap, masterSlaveSwapper.swap(masterSlaveProperties), propMapProperties.getProps());
-            shardDataSource.set(ds);
-            return ds;
+            return MasterSlaveDataSourceFactory.createDataSource(dataSourceMap, masterSlaveSwapper.swap(masterSlaveProperties), propMapProperties.getProps());
         }
         if (!encryptProperties.getEncryptors().isEmpty()) {
-            DataSource ds = EncryptDataSourceFactory.createDataSource(dataSourceMap.values().iterator().next(), encryptSwapper.swap(encryptProperties));
-            shardDataSource.set(ds);
-            return ds;
+            return EncryptDataSourceFactory.createDataSource(dataSourceMap.values().iterator().next(), encryptSwapper.swap(encryptProperties));
         }
 
         // trydofor
@@ -161,7 +156,6 @@ public class WingsShardingSphereReplacer implements EnvironmentAware {
         if (needSharding()) {
             logger.info("Wings use sharding datasource, ShardingDataSourceFactory");
             ds = ShardingDataSourceFactory.createDataSource(dataSourceMap, shardingSwapper.swap(shardingProperties), propMapProperties.getProps());
-            shardDataSource.set(ds);
         } else {
             logger.info("Wings use the first datasource, because NOT sharding config");
             ds = dataSourceMap.values().iterator().next();
@@ -170,11 +164,10 @@ public class WingsShardingSphereReplacer implements EnvironmentAware {
         return ds;
     }
 
-    private final AtomicReference<DataSource> shardDataSource = new AtomicReference<>();
-
     @Bean
-    public FlywaveDataSources wingsDataSources() {
-        return new FlywaveDataSources(dataSourceMap, shardDataSource.get());
+    public FlywaveDataSources wingsDataSources(DataSource dataSource) {
+        DataSource shard = dataSourceMap.values().iterator().next() == dataSource ? null : dataSource;
+        return new FlywaveDataSources(dataSourceMap, shard);
     }
 
     public static class DisableDefault implements ApplicationListener<ApplicationPreparedEvent> {
