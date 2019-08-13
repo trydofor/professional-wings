@@ -9,7 +9,7 @@ import org.jooq.meta.TableDefinition
  * @author trydofor
  * @since 2019-05-17
  */
-class JournalJavaStrategy : DefaultGeneratorStrategy() {
+class WingsJavaStrategy : DefaultGeneratorStrategy() {
     override fun getJavaClassImplements(definition: Definition?, mode: GeneratorStrategy.Mode?): MutableList<String> {
         var impls = super.getJavaClassImplements(definition, mode)
 
@@ -28,5 +28,10 @@ class JournalJavaStrategy : DefaultGeneratorStrategy() {
         }
 
         return impls
+    }
+
+    override fun getJavaClassName(definition: Definition?, mode: GeneratorStrategy.Mode?): String {
+        val name = super.getJavaClassName(definition, mode)
+        return if (mode == GeneratorStrategy.Mode.DEFAULT && definition is TableDefinition) name + "Table" else name
     }
 }

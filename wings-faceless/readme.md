@@ -182,3 +182,11 @@ JdbcTemplate用于功能性或复杂的数据库操作，以自动注入Bean。
  * `Jooq`，Jooq实现
  * `Jdbc`，JdbcTemplate实现
  * `Impl`，混合实现。
+ 
+注意，因jooq自动生成的代码，默认使用`table.column`作为列名，会在shardingJdbc解析时出错。
+所以，采用了自定义的`别名`方案生成table。在使用多表时**一定**要是有`别名`。
+
+[批量操作 record](https://www.jooq.org/doc/3.11/manual/sql-execution/crud-with-updatablerecords/batch-execution-for-crud/)
+[批量操作 jdbc](https://www.jooq.org/doc/3.11/manual/sql-execution/batch-execution/)
+[使用别名，支持分表](https://www.jooq.org/doc/3.11/manual/sql-building/table-expressions/aliased-tables/)
+

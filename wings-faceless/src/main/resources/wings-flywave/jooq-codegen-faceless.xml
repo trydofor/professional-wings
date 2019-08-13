@@ -14,10 +14,10 @@
             <directory>!!your-config-here!!</directory>
         </target>
         <database>
-            <outputCatalog/>
-
             <inputSchema>!!your-config-here!!</inputSchema>
-            <outputSchema/>
+
+            <outputCatalogToDefault>true</outputCatalogToDefault>
+            <outputSchemaToDefault>true</outputSchemaToDefault>
 
             <name>org.jooq.meta.mysql.MySQLDatabase</name>
             <includes>.*</includes>
@@ -87,8 +87,8 @@
         </generate>
 
         <strategy>
-            <name>pro.fessional.wings.faceless.jooqgen.JournalJavaStrategy</name>
+            <name>pro.fessional.wings.faceless.jooqgen.WingsJavaStrategy</name>
         </strategy>
-        <name>pro.fessional.wings.faceless.jooqgen.JournalJavaGenerator</name>
+        <name>pro.fessional.wings.faceless.jooqgen.WingsJavaGenerator</name>
     </generator>
 </configuration>
