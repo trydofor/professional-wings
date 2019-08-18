@@ -20,6 +20,5 @@ public class LightIdServiceImpl implements LightIdService {
     @Override
     public long getId(@NotNull String name, int block) {
         return lightIdProvider.next(name, block);
-
     }
 }

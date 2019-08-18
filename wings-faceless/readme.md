@@ -183,10 +183,38 @@ JdbcTemplate用于功能性或复杂的数据库操作，以自动注入Bean。
  * `Jdbc`，JdbcTemplate实现
  * `Impl`，混合实现。
  
+如`LightId`在读写分离时，需要强制master，可使用注解`MasterRouteOnly`。
+
+## 2.6.JOOQ与ShardingSphere的兼容问题
+
 注意，因jooq自动生成的代码，默认使用`table.column`作为列名，会在shardingJdbc解析时出错。
-所以，采用了自定义的`别名`方案生成table。在使用多表时**一定**要是有`别名`。
+如下ISSUE，短期内不会修复，所以要使用私有`jooq-a9m`(a9 mod)版本，或直接替换class。
 
-[批量操作 record](https://www.jooq.org/doc/3.11/manual/sql-execution/crud-with-updatablerecords/batch-execution-for-crud/)
-[批量操作 jdbc](https://www.jooq.org/doc/3.11/manual/sql-execution/batch-execution/)
-[使用别名，支持分表](https://www.jooq.org/doc/3.11/manual/sql-building/table-expressions/aliased-tables/)
+ * [JOOQ#9055 should NO table qualify if NO table alias](https://github.com/jOOQ/jOOQ/issues/9055)
+ * [ShardingSphere#2859 `table.column` can not sharding](https://github.com/apache/incubator-shardingsphere/issues/2859)
 
+在使用多表时**一定**要是有`别名`。**不要** 使用中文表面，以下只是极端测试。
+如代码`Tst中文也分表Table.java`所示。
+
+```
+public static final Tst中文也分表Table TST_中文也分表 = new Tst中文也分表Table(); // 本名
+public static final Tst中文也分表Table AS_F1 = TST_中文也分表.as("F1"); // 别名
+```
+ * INSERT 使用`本名`，不可使用`别名`
+ * DELETE 使用`本名`，不可使用`别名`
+ * UPDATE 使用`别名`优先于`本名`
+ * SELECT 使用`别名`优先于`本名`
+
+jooq-a9m替换，3个方法。
+
+ * 自行`mvn` [jooq-a9m](https://github.com/trydofor/jOOQ) 
+ * 用`/test/resources/patch/TableFieldImpl`替换原始类，然后发布私有库。
+ * 用`classloader`或`字节码修改术`搞黑科技，但有风险。
+
+JOOQ参考资料
+
+ * [Jooq patch](https://github.com/trydofor/jOOQ/commit/6554048950d046153688e86f4570fbb19af74875)
+ * [批量操作 record](https://www.jooq.org/doc/3.11/manual/sql-execution/crud-with-updatablerecords/batch-execution-for-crud/)
+ * [批量操作 jdbc](https://www.jooq.org/doc/3.11/manual/sql-execution/batch-execution/)
+ * [使用别名，支持分表](https://www.jooq.org/doc/3.11/manual/sql-building/table-expressions/aliased-tables/)
+ * [SQL的执行](https://www.jooq.org/doc/3.11/manual/sql-execution/)

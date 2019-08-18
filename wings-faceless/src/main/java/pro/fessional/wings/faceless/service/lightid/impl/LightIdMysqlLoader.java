@@ -10,6 +10,7 @@ import pro.fessional.mirana.id.LightIdProvider;
 import pro.fessional.wings.faceless.database.manual.single.insert.lightsequence.LightSequenceInsert;
 import pro.fessional.wings.faceless.database.manual.single.select.lightsequence.LightSequenceSelect;
 import pro.fessional.wings.faceless.database.manual.single.update.lightsequence.LightSequenceUpdate;
+import pro.fessional.wings.faceless.database.sharding.MasterRouteOnly;
 import pro.fessional.wings.faceless.spring.conf.WingsLightIdInsertProperties;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class LightIdMysqlLoader implements LightIdProvider.Loader {
 
     @NotNull
     @Override
+    @MasterRouteOnly
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public LightIdProvider.Segment require(@NotNull String name, int block, int count) {
         Optional<LightSequenceSelect.NextStep> one = select.selectOneLock(block, name);
@@ -52,7 +54,7 @@ public class LightIdMysqlLoader implements LightIdProvider.Loader {
                 }
 
                 log.warn("inserted and retry, name={}, block={}", name, block);
-                vo = new LightSequenceSelect.NextStep(properties.getNext(),properties.getStep());
+                vo = new LightSequenceSelect.NextStep(properties.getNext(), properties.getStep());
             } else {
                 throw new NoSuchElementException("not existed name=" + name + ",block=" + block);
             }
@@ -73,6 +75,7 @@ public class LightIdMysqlLoader implements LightIdProvider.Loader {
 
     @NotNull
     @Override
+    @MasterRouteOnly
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public List<LightIdProvider.Segment> preload(int block) {
         List<LightSequenceSelect.NameNextStep> all = select.selectAllLock(block);

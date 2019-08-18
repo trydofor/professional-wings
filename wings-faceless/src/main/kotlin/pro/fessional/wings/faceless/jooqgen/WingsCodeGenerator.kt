@@ -32,8 +32,8 @@ object WingsCodeGenerator {
         fun targetDirectory(str: String) = apply { this.conf.generator.target.directory = str }
 
         fun databaseSchema(str: String) = apply { this.conf.generator.database.inputSchema = str }
-        fun databaseIncludes(str: String) = apply { this.conf.generator.database.includes = str }
-        fun databaseExcludes(str: String) = apply { this.conf.generator.database.excludes = str }
+        fun databaseIncludes(reg: String) = apply { this.conf.generator.database.includes = reg }
+        fun databaseExcludes(reg: String) = apply { this.conf.generator.database.excludes = reg }
         fun databaseVersionProvider(str: String) = apply { this.conf.generator.database.schemaVersionProvider = str }
         fun forceRegenerate() = apply { this.conf.generator.database.schemaVersionProvider = "" }
     }

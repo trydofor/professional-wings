@@ -165,9 +165,10 @@ public class WingsShardingSphereReplacer implements EnvironmentAware {
     }
 
     @Bean
-    public FlywaveDataSources wingsDataSources(DataSource dataSource) {
-        DataSource shard = dataSourceMap.values().iterator().next() == dataSource ? null : dataSource;
-        return new FlywaveDataSources(dataSourceMap, shard);
+    public FlywaveDataSources wingsDataSources(DataSource inuse) {
+        DataSource shard = dataSourceMap.values().iterator().next() == inuse ? null : inuse;
+        boolean slave = null != masterSlaveProperties.getMasterDataSourceName() || !shardingProperties.getMasterSlaveRules().isEmpty();
+        return new FlywaveDataSources(dataSourceMap, inuse, shard, slave);
     }
 
     public static class DisableDefault implements ApplicationListener<ApplicationPreparedEvent> {

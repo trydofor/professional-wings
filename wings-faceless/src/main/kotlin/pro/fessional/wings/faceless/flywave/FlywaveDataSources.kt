@@ -4,11 +4,18 @@ import java.util.LinkedHashMap
 import javax.sql.DataSource
 
 /**
- * 包括了所有普通数据源，和
+ * 获得全部原始数据源`plains`
+ * 当前数据源  `inuse`
+ * shard数据源`shard`
+ * 是否读写分离`slave`
+ *
  * @author trydofor
  * @since 2019-05-24
  */
-class FlywaveDataSources(plains: Map<String, DataSource>, val shard: DataSource?) {
+class FlywaveDataSources(plains: Map<String, DataSource>,
+                         val inuse: DataSource,
+                         val shard: DataSource?,
+                         val slave: Boolean) {
     private val plainMap = LinkedHashMap<String, DataSource>()
 
     init {

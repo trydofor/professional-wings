@@ -1,6 +1,5 @@
 package pro.fessional.wings.faceless.spring.bean;
 
-import org.jooq.conf.RenderNameStyle;
 import org.jooq.conf.Settings;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,7 +20,6 @@ public class WingsJooqConfiguration {
         return new Settings()
                 .withRenderCatalog(false)
                 .withRenderSchema(false)
-                .withRenderNameStyle(RenderNameStyle.AS_IS) // 不使用转义，否则shardingjdbc解析错误。
                 ;
     }
 }

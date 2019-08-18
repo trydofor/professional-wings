@@ -14,7 +14,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import pro.fessional.mirana.time.DateFormatter;
 
 import java.text.DateFormat;
@@ -34,11 +33,11 @@ import java.util.Date;
  * @since 2019-06-26
  */
 @Configuration
+@ConditionalOnClass(DateSerializer.class)
 @ConditionalOnProperty(prefix = "spring.wings.jackson", name = "enabled", havingValue = "true")
 public class WingsJacksonConfiguration {
 
     @Bean
-    @ConditionalOnClass(Jackson2ObjectMapperBuilder.class)
     public Jackson2ObjectMapperBuilderCustomizer customizer() {
         return builder -> {
             DateFormat ud = new SimpleDateFormat(DateFormatter.PTN_FULL_19);
