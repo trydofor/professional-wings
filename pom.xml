@@ -107,4 +107,11 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <repositories>
+        <repository>
+            <id>trydofor-mvnrepo</id>
+            <name>trydofor-mvnrepo</name>
+            <url>https://github.com/trydofor/mvnrepo/raw/master</url>
+        </repository>
+    </repositories>
 </project>
