@@ -36,7 +36,7 @@
         <!--faceless-->
         <kotlin.version>1.3.40</kotlin.version>
         <jooq.version>3.11.11</jooq.version>
-        <sharding-sphere.version>4.0.0-RC1</sharding-sphere.version>
+        <sharding-sphere.version>4.0.0-RC2</sharding-sphere.version>
         <!--slardar-->
         <!--other-->
         <cache2k-version>1.2.2.Final</cache2k-version>

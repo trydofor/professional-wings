@@ -164,8 +164,8 @@ MyBatis虽是大部分项目的首选，固有其优秀之处，但开发人员�
 
  * 任何对数据库的操作，都应该在`database`包内进行。
  * DSLContext和DataSource不应该离开database层。
- * `simple` 表示单表，可含简单的条件子查询，一个包名一个表。
- * `couple` 表示多表，一般为join查询或子查询，包名以主表命名。
+ * `single/`包，表示单表，可含简单的条件子查询，一个包名一个表。
+ * `couple/`包， 表示多表，一般为join查询或子查询，包名以主表命名。
  * `insert|select|update|delete`分别对应数据库操作。
  * 数据传递以Dto结尾，放到最临近使用的位子。
  * Dto以静态内类形似存在，用lombok做@Value或@Data。
@@ -187,29 +187,27 @@ JdbcTemplate用于功能性或复杂的数据库操作，以自动注入Bean。
 
 ## 2.6.JOOQ与ShardingSphere的兼容问题
 
-注意，因jooq自动生成的代码，默认使用`table.column`作为列名，会在shardingJdbc解析时出错。
-如下ISSUE，短期内不会修复，所以要使用私有`jooq-a9m`(a9 mod)版本，或直接替换class。
+注意，jooq生成代码，默认使用`table.column`限定列名，而ShardingJdbc做当前版本不支持。
+最优解决办法是使ShardingJdbc支持，当前最简单的办法是修改Jooq生成策略，参考以下Issue。
 
  * [JOOQ#9055 should NO table qualify if NO table alias](https://github.com/jOOQ/jOOQ/issues/9055)
  * [ShardingSphere#2859 `table.column` can not sharding](https://github.com/apache/incubator-shardingsphere/issues/2859)
 
-在使用多表时**一定**要是有`别名`。**不要** 使用中文表面，以下只是极端测试。
-如代码`Tst中文也分表Table.java`所示。
+使用Jooq的主要原因之一是`限制的艺术`，避免写出比较复杂的SQL，所以约定如下
 
-```
-public static final Tst中文也分表Table TST_中文也分表 = new Tst中文也分表Table(); // 本名
-public static final Tst中文也分表Table AS_F1 = TST_中文也分表.as("F1"); // 别名
-```
+ * 鼓励单表操作，放在`single`包内，使用`本名`(如，TstDemoTable.TST_DEMO)
+ * 操作多表时，**一定** 使用`别名`(如，TstDemoTable.AS_F1)
  * INSERT 使用`本名`，不可使用`别名`
  * DELETE 使用`本名`，不可使用`别名`
  * UPDATE 使用`别名`优先于`本名`
  * SELECT 使用`别名`优先于`本名`
+ * **不要** 使用中文表名，例子代码只是极端测试。
 
-jooq-a9m替换，3个方法。
+使用patch版本的`jooq-a9m`(a9 mod)，参考pom中的私有库，或直接替换class，方法有三。
 
- * 自行`mvn` [jooq-a9m](https://github.com/trydofor/jOOQ) 
- * 用`/test/resources/patch/TableFieldImpl`替换原始类，然后发布私有库。
- * 用`classloader`或`字节码修改术`搞黑科技，但有风险。
+ * 自建私有库，自行`mvn install` [jooq-a9m](https://github.com/trydofor/jOOQ) 
+ * 静态替换，用`/test/resources/patch/TableFieldImpl`替换原始类，然后发布私有库。
+ * 动态替换，用`classloader`或`字节码修改术`搞黑科技，但有风险。
 
 JOOQ参考资料
 
