@@ -26,13 +26,12 @@ class SchemaShardingManagerTest {
 
     @Test
     fun manageSharding() {
-        schemaShardingManager.publishShard("SYS_COMMIT_JOURNAL", 2)
-        schemaShardingManager.publishShard("SYS_COMMIT_JOURNAL", 0)
+        schemaShardingManager.publishShard("SYS_SCHEMA_JOURNAL", 2)
+        schemaShardingManager.publishShard("SYS_SCHEMA_JOURNAL", 0)
     }
 
     @Test
     fun moveShardData() {
-
         val sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH)
         schemaRevisionManager.checkAndInitSql(sqls, 0)
         schemaRevisionManager.publishRevision(2019052001, 0)

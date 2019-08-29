@@ -51,7 +51,6 @@ class JooqShardingTest {
         schemaRevisionManager.publishRevision(2019052101, 0)
     }
 
-    @Test
     fun test2Code() {
         WingsCodeGenerator.builder()
                 .jdbcDriver("com.mysql.cj.jdbc.Driver")

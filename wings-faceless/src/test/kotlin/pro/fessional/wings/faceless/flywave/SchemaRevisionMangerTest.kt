@@ -80,5 +80,4 @@ open class SchemaRevisionMangerTest {
         schemaRevisionManager.forceApplyBreak(test3rdRevision, -3, true)
         schemaRevisionManager.forceApplyBreak(test3rdRevision, -4, false)
     }
-
 }

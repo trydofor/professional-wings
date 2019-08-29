@@ -1,13 +1,9 @@
 package pro.fessional.wings.faceless.flywave.impl
 
-import org.apache.shardingsphere.api.config.sharding.ShardingRuleConfiguration
-import org.apache.shardingsphere.core.constant.DatabaseType
-import org.apache.shardingsphere.core.constant.SQLType
-import org.apache.shardingsphere.core.metadata.table.ShardingTableMetaData
-import org.apache.shardingsphere.core.parse.antlr.AntlrParsingEngine
-import org.apache.shardingsphere.core.rule.ShardingRule
 import org.slf4j.LoggerFactory
 import pro.fessional.wings.faceless.flywave.SqlStatementParser
+import java.util.Optional
+import java.util.function.Function
 import java.util.regex.Pattern
 
 /**
@@ -33,59 +29,76 @@ class MySqlStatementParser : SqlStatementParser {
     private val dmlReplace = "^REPLACE\\s+(?:LOW_PRIORITY|DELAYED)?\\s*(?:INTO)?\\s*([^(\\s]+)".toPattern(options)
     private val dmlUpdate = "^UPDATE\\s+(?:LOW_PRIORITY)?\\s*(?:IGNORE)\\s*([^(\\s]+)".toPattern(options)
 
-    private val plainRegex = setOf(
-            ddlAlterTable
-            , ddlCreateIndex
-            , ddlCreateTable
-            , ddlCreateTrigger
-            , ddlDropIndex
-            , ddlDropTable
-            , ddlDropTrigger
-            , ddlTruncateTable)
+    private val plainRegex = linkedSetOf(
+            ddlAlterTable.toFunction()
+            , ddlCreateIndex.toFunction()
+            , ddlCreateTable.toFunction()
+            , ddlCreateTrigger.toFunction()
+            , ddlDropIndex.toFunction()
+            , ddlDropTable.toFunction()
+            , ddlDropTrigger.toFunction()
+            , ddlTruncateTable.toFunction()
+    )
 
-    private val shardRegex = setOf(
-            dmlDelete
-            , dmlInsert
-            , dmlReplace
-            , dmlUpdate)
+    private val shardRegex = linkedSetOf(
+            dmlDelete.toFunction()
+            , dmlInsert.toFunction()
+            , dmlReplace.toFunction()
+            , dmlUpdate.toFunction()
+    )
 
-    private val emptyRule = ShardingRule(ShardingRuleConfiguration(), listOf("empty-data-source"))
-    private val emptyMeta = ShardingTableMetaData(emptyMap())
+    /**
+     * append shard sql pattern
+     */
+    fun addShard(pattern: Pattern) = shardRegex.add(pattern.toFunction())
+
+    /**
+     * append plain sql pattern
+     */
+    fun addPlain(pattern: Pattern) = plainRegex.add(pattern.toFunction())
+
+    /**
+     * append shard sql function
+     */
+    fun addShard(function: Function<String, Optional<String>>) = shardRegex.add(function)
+
+    /**
+     * append plain sql function
+     */
+    fun addPlain(function: Function<String, Optional<String>>) = plainRegex.add(function)
+
+    private fun Pattern.toFunction(): Function<String, Optional<String>> {
+        return Function { sql ->
+            val m = this.matcher(sql)
+            if (m.find()) {
+                return@Function if (m.groupCount() > 0) {
+                    Optional.of(trimName(m.group(1)))
+                } else {
+                    Optional.of("")
+                }
+            } else {
+                return@Function Optional.empty<String>()
+            }
+        }
+    }
 
     override fun parseTypeAndTable(sql: String): SqlStatementParser.SqlType {
-        for (ddl in plainRegex) {
-            val m = ddl.matcher(sql)
-            if (m.find()) {
-                return if (m.groupCount() > 0) {
-                    val table = trimName(m.group(1))
-                    SqlStatementParser.SqlType.Plain(table)
-                } else {
-                    SqlStatementParser.SqlType.Plain("")
-                }
+        for (fnc in plainRegex) {
+            val m = fnc.apply(sql)
+            if (m.isPresent) {
+                return SqlStatementParser.SqlType.Plain(m.get())
             }
         }
-        for (ddl in shardRegex) {
-            val m = ddl.matcher(sql)
-            if (m.find() && m.groupCount() > 0) {
-                val table = trimName(m.group(1))
-                return SqlStatementParser.SqlType.Shard(table)
+        for (fnc in shardRegex) {
+            val m = fnc.apply(sql).orElse("")
+            if (m.isNotEmpty()) {
+                return SqlStatementParser.SqlType.Shard(m)
             }
         }
 
-        try {
-            val parser = AntlrParsingEngine(DatabaseType.MySQL, sql, emptyRule, emptyMeta)
-            val rst = parser.parse()
-            val table = trimName(rst.tables.singleTableName)
-            val type = rst.type
-            return if (type == SQLType.DDL || type == SQLType.DAL || type == SQLType.DCL) {
-                SqlStatementParser.SqlType.Plain(table)
-            } else {
-                SqlStatementParser.SqlType.Shard(table)
-            }
-        } catch (e: RuntimeException) {
-            logger.warn("failed to use AntlrParsingEngine, sql=$sql", e)
-        }
+        // 备用方案，一般不会到达。
 
+        logger.warn("unmatched sql type, return Other. sql=$sql")
         return SqlStatementParser.SqlType.Other
     }
 
@@ -121,5 +134,4 @@ class MySqlStatementParser : SqlStatementParser {
     } else {
         str
     }
-
 }

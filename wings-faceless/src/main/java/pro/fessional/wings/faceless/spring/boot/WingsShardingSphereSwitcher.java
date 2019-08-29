@@ -1,0 +1,206 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package pro.fessional.wings.faceless.spring.boot;
+
+import com.google.common.base.Preconditions;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.shardingsphere.core.exception.ShardingException;
+import org.apache.shardingsphere.core.util.InlineExpressionParser;
+import org.apache.shardingsphere.shardingjdbc.spring.boot.common.SpringBootPropertiesConfigurationProperties;
+import org.apache.shardingsphere.shardingjdbc.spring.boot.encrypt.SpringBootEncryptRuleConfigurationProperties;
+import org.apache.shardingsphere.shardingjdbc.spring.boot.masterslave.SpringBootMasterSlaveRuleConfigurationProperties;
+import org.apache.shardingsphere.shardingjdbc.spring.boot.sharding.SpringBootShardingRuleConfigurationProperties;
+import org.apache.shardingsphere.shardingjdbc.spring.boot.util.DataSourceUtil;
+import org.apache.shardingsphere.shardingjdbc.spring.boot.util.PropertyUtil;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.context.event.ApplicationPreparedEvent;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.StandardEnvironment;
+import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.jndi.JndiObjectFactoryBean;
+import pro.fessional.mirana.cast.StringCastUtil;
+import pro.fessional.wings.faceless.flywave.FlywaveDataSources;
+
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+/**
+ * NOTE: copy most code from org.apache.shardingsphere.shardingjdbc.spring.boot.SpringBootConfiguration.
+ * because I CAN'T override.
+ * <p>
+ * /////
+ * 依照 flywave-jdbc-spring-boot-starter 配置，构造数据源，
+ * 当只有一个数据源，且不存在分表时，直接使用原始数据源，而非sharding数据源。
+ * 如果有多个数据源，使用sharding数据源，同时expose原始出来，可以独立使用。
+ * <p/>
+ * https://shardingsphere.apache.org/document/current/cn/manual/sharding-jdbc/configuration/config-java/ <br/>
+ *
+ * @author trydofor
+ *
+ * <p>
+ * Spring boot flywave and master-slave configuration.
+ * @author caohao
+ * @author panjuan
+ */
+
+@ConditionalOnProperty(prefix = "spring.wings.shardingsphere", name = "enabled", havingValue = "true")
+//////////////// >>>>>>> BGN ShardingSphere code ////////////////
+@Configuration
+@AutoConfigureBefore(DataSourceAutoConfiguration.class)
+@EnableConfigurationProperties({
+        SpringBootShardingRuleConfigurationProperties.class,
+        SpringBootMasterSlaveRuleConfigurationProperties.class,
+        SpringBootEncryptRuleConfigurationProperties.class,
+        SpringBootPropertiesConfigurationProperties.class
+})
+@RequiredArgsConstructor
+public class WingsShardingSphereSwitcher implements EnvironmentAware {
+    private final LinkedHashMap<String, DataSource> dataSourceMap = new LinkedHashMap<>();
+    private final String jndiName = "jndi-name";
+
+    public final void setEnvironment(final Environment environment) {
+        String prefix = "spring.shardingsphere.datasource.";
+        for (String each : getDataSourceNames(environment, prefix)) {
+            try {
+                dataSourceMap.put(each, getDataSource(environment, prefix, each));
+            } catch (final ReflectiveOperationException ex) {
+                throw new ShardingException("Can't find datasource type!", ex);
+            } catch (final NamingException namingEx) {
+                throw new ShardingException("Can't find JNDI datasource!", namingEx);
+            }
+        }
+    }
+
+    private List<String> getDataSourceNames(final Environment environment, final String prefix) {
+        StandardEnvironment standardEnv = (StandardEnvironment) environment;
+        standardEnv.setIgnoreUnresolvableNestedPlaceholders(true);
+        return null == standardEnv.getProperty(prefix + "name")
+                ? new InlineExpressionParser(standardEnv.getProperty(prefix + "names")).splitAndEvaluate() : Collections.singletonList(standardEnv.getProperty(prefix + "name"));
+    }
+
+    @SuppressWarnings("unchecked")
+    private DataSource getDataSource(final Environment environment, final String prefix, final String dataSourceName) throws ReflectiveOperationException, NamingException {
+        Map<String, Object> dataSourceProps = PropertyUtil.handle(environment, prefix + dataSourceName.trim(), Map.class);
+        Preconditions.checkState(!dataSourceProps.isEmpty(), "Wrong datasource properties!");
+        if (dataSourceProps.containsKey(jndiName)) {
+            return getJndiDataSource(dataSourceProps.get(jndiName).toString());
+        }
+        return DataSourceUtil.getDataSource(dataSourceProps.get("type").toString(), dataSourceProps);
+    }
+
+    private DataSource getJndiDataSource(final String jndiName) throws NamingException {
+        JndiObjectFactoryBean bean = new JndiObjectFactoryBean();
+        bean.setResourceRef(true);
+        bean.setJndiName(jndiName);
+        bean.setProxyInterface(DataSource.class);
+        bean.afterPropertiesSet();
+        return (DataSource) bean.getObject();
+    }
+//////////////// <<<<<<< END ShardingSphere code ////////////////
+
+    /**
+     * 如果没有shardingProperties配置，则使用第一个真实datasource，免去SQL解析。
+     * @return data source bean
+     */
+    @Bean
+    @Conditional(Switcher.class)
+    public DataSource dataSource() {
+        return getDefault();
+    }
+
+    @Bean
+    public FlywaveDataSources wingsDataSources(DataSource inuse) {
+        DataSource shard = getDefault() == inuse ? null : inuse;
+        return new FlywaveDataSources(dataSourceMap, inuse, shard, hasSlave.get());
+    }
+
+    private DataSource getDefault() {
+        return dataSourceMap.values().iterator().next();
+    }
+
+    private static final Log logger = LogFactory.getLog(WingsShardingSphereSwitcher.class);
+    private static final AtomicBoolean hasSlave = new AtomicBoolean(false);
+    private static final AtomicBoolean notShard = new AtomicBoolean(true);
+
+    public static class Switcher extends SpringBootCondition implements ApplicationListener<ApplicationPreparedEvent> {
+
+        @Override
+        public void onApplicationEvent(ApplicationPreparedEvent event) {
+            ConfigurableEnvironment environment = event.getApplicationContext().getEnvironment();
+            String enable = environment.getProperty("spring.wings.shardingsphere.enabled");
+            if (StringCastUtil.asTrue(enable)) {
+                // 读写分离
+                boolean hasMasterSlaveName = environment.containsProperty("spring.shardingsphere.masterslave.name");
+                // 数据脱敏
+                boolean hasEncryptEncryptors = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.encrypt.encryptors");
+                boolean hasEncryptTables = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.encrypt.tables");
+                // 数据分片
+                boolean hasShardingTables = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.sharding.tables");
+                boolean hasShardingMasterSlave = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.sharding.master-slave-rules");
+                boolean hasShardingBroadcast = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.sharding.broadcast-tables");
+                boolean hasShardingEncrypt = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.sharding.encrypt-rule");
+
+                if (hasMasterSlaveName
+                        || hasEncryptEncryptors
+                        || hasEncryptTables
+                        || hasShardingTables
+                        || hasShardingMasterSlave
+                        || hasShardingBroadcast
+                        || hasShardingEncrypt
+                ) {
+                    notShard.set(false);
+                    if (hasMasterSlaveName || hasShardingMasterSlave) {
+                        logger.info("has master slaver config'");
+                        hasSlave.set(true);
+                    }
+                } else {
+                    environment.getPropertySources().addFirst(new MapPropertySource("wings-shardingsphere-disable", Collections.singletonMap("spring.shardingsphere.enabled", "false")));
+                    logger.info("switch off shardingsphere datasource, by adding first 'spring.shardingsphere.enabled=false'");
+                }
+
+            } else {
+                logger.info("Wings shardingsphere config is disabled, skip it.");
+            }
+        }
+
+        @Override
+        public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            return notShard.get() ? ConditionOutcome.match() : ConditionOutcome.noMatch("has sharding config");
+        }
+    }
+}

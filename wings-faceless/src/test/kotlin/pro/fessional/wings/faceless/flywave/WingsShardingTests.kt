@@ -3,16 +3,12 @@ package pro.fessional.wings.faceless.flywave
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.SpringBootConfiguration
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
 import javax.sql.DataSource
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
-@SpringBootConfiguration
-@EnableAutoConfiguration
 open class WingsShardingTests {
 
     @Autowired
@@ -26,7 +22,6 @@ open class WingsShardingTests {
         alterTable()
     }
 
-    @Test
     fun dropTable() {
         val statement = datasource.connection.prepareStatement("""
             DROP TABLE IF EXISTS `WG_ORDER`;
@@ -36,7 +31,6 @@ open class WingsShardingTests {
         println("=================== dropTable=$result")
     }
 
-    @Test
     fun createTable() {
         val statement = datasource.connection.prepareStatement("""
             CREATE TABLE `WG_ORDER`
@@ -54,7 +48,6 @@ open class WingsShardingTests {
         println("=================== createTable=$result")
     }
 
-    @Test
     fun insertDate() {
         val statement = datasource.connection.prepareStatement("""
             INSERT INTO `WG_ORDER` (`ID`,`COMMIT_ID`) VALUES
@@ -66,7 +59,6 @@ open class WingsShardingTests {
         println("=================== insertDate=$result")
     }
 
-    @Test
     fun alterTable() {
         val statement = datasource.connection.prepareStatement("""
             ALTER TABLE `WG_ORDER`
@@ -79,7 +71,6 @@ open class WingsShardingTests {
     }
 
 
-    @Test
     fun trigger() {
         val sts1 = datasource.connection.prepareStatement("""
             CREATE TABLE `WG_ORDER${"$"}LOG`

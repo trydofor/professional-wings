@@ -5,11 +5,10 @@ import pro.fessional.wings.faceless.flywave.FlywaveDataSources
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager.Companion.INIT1ST_REVISION
-import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.TYPE_PLAIN
 import pro.fessional.wings.faceless.flywave.SqlStatementParser
-import pro.fessional.wings.faceless.sugar.funs.md5
+import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
 import java.util.LinkedList
 import java.util.SortedMap
 import java.util.concurrent.atomic.AtomicLong
@@ -336,15 +335,13 @@ class DefaultRevisionManager(
     override fun forceUpdateSql(revision: Long, upto: String, undo: String, commitId: Long) {
         val insertSql = """
             INSERT INTO SYS_SCHEMA_VERSION
-            (REVISION, CREATE_DT, COMMIT_ID, UPTO_SQL, UPTO_MD5, UNDO_SQL, UNDO_MD5)
-            VALUES(?, NOW(), ?, ?, ?, ?, ?)
+            (REVISION, CREATE_DT, COMMIT_ID, UPTO_SQL, UNDO_SQL)
+            VALUES(?, NOW(), ?, ?, ?)
             """.trimIndent()
         val updateSql = """
             UPDATE SYS_SCHEMA_VERSION SET
                 UPTO_SQL = ?,
-                UPTO_MD5 = ?,
                 UNDO_SQL = ?,
-                UNDO_MD5 = ?,
                 MODIFY_DT = NOW(),
                 COMMIT_ID = ?
             WHERE REVISION = ?
@@ -358,10 +355,10 @@ class DefaultRevisionManager(
 
             val cnt = tmpl.count("SELECT COUNT(1) FROM SYS_SCHEMA_VERSION WHERE REVISION= ?", revision)
             if (cnt == 0) {
-                val rst = tmpl.update(insertSql, revision, commitId, upto, upto.md5(), undo, undo.md5())
+                val rst = tmpl.update(insertSql, revision, commitId, upto, undo)
                 logger.info("done force insert {} records, revi={}, on db={}", rst, revision, plainName)
             } else {
-                val rst = tmpl.update(updateSql, upto, upto.md5(), undo, undo.md5(), commitId, revision)
+                val rst = tmpl.update(updateSql, upto, undo, commitId, revision)
                 logger.info("done force update {} records, revi={}, on db={}", rst, revision, plainName)
             }
         }
