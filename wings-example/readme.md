@@ -65,6 +65,7 @@ FLUSH PRIVILEGES;"
  * 在`localhost:3306`配置数据库2个，`wings_0`和`wings_1`
  * 数据库用户名`trydofor`，密码`moilioncircle`，或者自己改配置
  * redis，密码`moilioncircle`，或者自己改配置
+ * 如果数据库未初始化，手动执行`pro.fessional.wings.example.init.WingsExampleDataBaseGenerator`。
  * 运行example，访问 http://127.0.0.1:8080/
  * 配置一个本地redis做session和缓存，用docker的就好。
  
@@ -78,7 +79,7 @@ FLUSH PRIVILEGES;"
 </parent>
  ```
  
-方式二，有其他`parent`以`import`形式，然后用啥填啥。
+方式二，有其他`parent`以`import`形式，可以集成wings的属性和配置。
 ``` xml
 <dependencyManagement>
     <dependencies>
@@ -93,7 +94,7 @@ FLUSH PRIVILEGES;"
 </dependencyManagement>
  ```
 
-方式三，直接依赖
+方式三，直接依赖，简单明了，推荐使用。
 ``` xml
 <dependencies>
     <dependency>

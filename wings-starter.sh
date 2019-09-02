@@ -3,7 +3,7 @@
 BOOT_JAR=wings-example-1.0.0-SNAPSHOT.jar
 JAVA_ARG="
 -server
--Duser.timezone=UTC
+-Duser.timezone=Asia/Shanghai
 -Djava.awt.headless=true
 -Dfile.encoding=UTF-8
 

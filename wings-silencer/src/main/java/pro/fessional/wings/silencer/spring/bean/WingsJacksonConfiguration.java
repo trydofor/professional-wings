@@ -1,5 +1,6 @@
 package pro.fessional.wings.silencer.spring.bean;
 
+import com.fasterxml.jackson.databind.deser.std.DateDeserializers;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -14,16 +15,15 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.mirana.time.DateFormatter;
+import pro.fessional.wings.silencer.datetime.DateTimePattern;
+import pro.fessional.wings.silencer.datetime.ZonedDeserializer;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -40,32 +40,22 @@ public class WingsJacksonConfiguration {
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer customizer() {
         return builder -> {
-            DateFormat ud = new SimpleDateFormat(DateFormatter.PTN_FULL_19);
+            DateFormat dateFormat = new SimpleDateFormat(DateTimePattern.PTN_FULL_19);
 
-            builder.serializerByType(ZonedDateTime.class, new ZonedDateTimeSerializer(DateFormatter.FMT_FULL_19));
-            builder.serializerByType(LocalDateTime.class, new LocalDateTimeSerializer(DateFormatter.FMT_FULL_19));
-            builder.serializerByType(LocalTime.class, new LocalTimeSerializer(DateFormatter.FMT_TIME_08));
-            builder.serializerByType(LocalDate.class, new LocalDateSerializer(DateFormatter.FMT_DATE_10));
-            builder.serializerByType(Date.class, new DateSerializer(false, ud));
+            builder.serializerByType(ZonedDateTime.class, new ZonedDateTimeSerializer(DateTimePattern.FMT_FULL_19));
+            builder.serializerByType(LocalDateTime.class, new LocalDateTimeSerializer(DateTimePattern.FMT_FULL_19));
+            builder.serializerByType(LocalTime.class, new LocalTimeSerializer(DateTimePattern.FMT_TIME_08));
+            builder.serializerByType(LocalDate.class, new LocalDateSerializer(DateTimePattern.FMT_DATE_10));
+            builder.serializerByType(Date.class, new DateSerializer(false, dateFormat));
 
-            builder.deserializerByType(ZonedDateTime.class, new ZonedDateTimeDeserializer(DateFormatter.FMT_FULL_19));
-            builder.deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer(DateFormatter.FMT_FULL_19));
-            builder.deserializerByType(LocalTime.class, new LocalTimeDeserializer(DateFormatter.FMT_TIME_08));
-            builder.deserializerByType(LocalDate.class, new LocalDateDeserializer(DateFormatter.FMT_DATE_10));
+            builder.deserializerByType(ZonedDateTime.class, new ZonedDeserializer(DateTimePattern.FMT_FULL_19));
+            builder.deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimePattern.FMT_FULL_19));
+            builder.deserializerByType(LocalTime.class, new LocalTimeDeserializer(DateTimePattern.FMT_TIME_08));
+            builder.deserializerByType(LocalDate.class, new LocalDateDeserializer(DateTimePattern.FMT_DATE_10));
+
+            DateDeserializers.DateDeserializer base = DateDeserializers.DateDeserializer.instance;
+            DateDeserializers.DateDeserializer dateDeserializer = new DateDeserializers.DateDeserializer(base, dateFormat, DateTimePattern.PTN_FULL_19);
+            builder.deserializerByType(Date.class, dateDeserializer);
         };
-    }
-
-
-    private class ZonedDateTimeDeserializer extends InstantDeserializer<ZonedDateTime> {
-        private ZonedDateTimeDeserializer(DateTimeFormatter formatter) {
-            super(ZonedDateTime.class,
-                    formatter,
-                    ZonedDateTime::from,
-                    a -> ZonedDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
-                    a -> ZonedDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
-                    ZonedDateTime::withZoneSameInstant,
-                    false // keep zero offset and Z separate since zones explicitly supported
-            );
-        }
     }
 }

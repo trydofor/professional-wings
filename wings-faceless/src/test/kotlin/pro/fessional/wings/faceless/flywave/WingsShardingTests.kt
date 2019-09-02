@@ -1,7 +1,9 @@
 package pro.fessional.wings.faceless.flywave
 
+import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.runners.MethodSorters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
@@ -9,20 +11,14 @@ import javax.sql.DataSource
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 open class WingsShardingTests {
 
     @Autowired
     lateinit var datasource: DataSource
 
     @Test
-    fun testAll() {
-        dropTable()
-        createTable()
-        insertDate()
-        alterTable()
-    }
-
-    fun dropTable() {
+    fun test1DropTable() {
         val statement = datasource.connection.prepareStatement("""
             DROP TABLE IF EXISTS `WG_ORDER`;
         """.trimIndent())
@@ -31,7 +27,8 @@ open class WingsShardingTests {
         println("=================== dropTable=$result")
     }
 
-    fun createTable() {
+    @Test
+    fun test2CreateTable() {
         val statement = datasource.connection.prepareStatement("""
             CREATE TABLE `WG_ORDER`
             (
@@ -48,7 +45,8 @@ open class WingsShardingTests {
         println("=================== createTable=$result")
     }
 
-    fun insertDate() {
+    @Test
+    fun test3InsertDate() {
         val statement = datasource.connection.prepareStatement("""
             INSERT INTO `WG_ORDER` (`ID`,`COMMIT_ID`) VALUES
             (1, 1),
@@ -59,7 +57,8 @@ open class WingsShardingTests {
         println("=================== insertDate=$result")
     }
 
-    fun alterTable() {
+    @Test
+    fun test4AlterTable() {
         val statement = datasource.connection.prepareStatement("""
             ALTER TABLE `WG_ORDER`
             DROP COLUMN `COMMIT_ID`,

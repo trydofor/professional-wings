@@ -1,13 +1,14 @@
 package pro.fessional.wings.faceless.flywave
 
+import org.junit.FixMethodOrder
 import org.junit.Test
-
 import org.junit.runner.RunWith
+import org.junit.runners.MethodSorters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
-import pro.fessional.wings.faceless.spring.conf.WingsFlywaveVerProperties
+import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner
 
 /**
  * @author trydofor
@@ -17,35 +18,32 @@ import pro.fessional.wings.faceless.spring.conf.WingsFlywaveVerProperties
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("shard")
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class SchemaJournalManagerTest {
 
     @Autowired
     lateinit var schemaJournalManager: SchemaJournalManager
 
     @Autowired
-    lateinit var wingsFlywaveVerProperties: WingsFlywaveVerProperties
-
+    lateinit var schemaRevisionManager: SchemaRevisionManager
 
     @Test
-    fun publishUpdate() {
+    fun test1InitSharding(){
+        val sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH)
+        schemaRevisionManager.checkAndInitSql(sqls, 0)
+        schemaRevisionManager.publishRevision(2019052001, 0)
+        schemaRevisionManager.publishRevision(2019052101, 0)
+    }
+
+    @Test
+    fun test2PublishUpdate() {
         schemaJournalManager.publishUpdate("TST_中文也分表", true, 0)
         schemaJournalManager.publishUpdate("TST_中文也分表", false, 0)
     }
 
     @Test
-    fun publishDelete() {
+    fun test3PublishDelete() {
         schemaJournalManager.publishDelete("TST_中文也分表", true, 0)
         schemaJournalManager.publishDelete("TST_中文也分表", false, 0)
-    }
-
-    @Test
-    fun checkAndInitDdl() {
-        val ddls = SchemaJournalManager.JournalDdl(
-                wingsFlywaveVerProperties.journalUpdate,
-                wingsFlywaveVerProperties.triggerUpdate,
-                wingsFlywaveVerProperties.journalDelete,
-                wingsFlywaveVerProperties.triggerDelete
-        )
-        schemaJournalManager.checkAndInitDdl("TST_中文也分表", ddls, 0)
     }
 }

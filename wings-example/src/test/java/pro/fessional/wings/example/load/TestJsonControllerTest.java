@@ -1,5 +1,6 @@
 package pro.fessional.wings.example.load;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +35,13 @@ public class TestJsonControllerTest {
     }
 
     @Test
+    @Ignore("手动执行，负载测试")
     public void stressTestJson() {
         stress("/test.json", 2000, 20);
     }
 
     @Test
+    @Ignore("手动执行，负载测试")
     public void stressSleep() {
         stress("/sleep.html?ms=6000", 2000, 50);
     }

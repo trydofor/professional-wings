@@ -12,8 +12,12 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import pro.fessional.wings.silencer.spring.help.Utf8ResourceDecorator;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -41,6 +45,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     private static final DeferredLog logger = WingsDeferredLogFactory.getLog(WingsAutoConfigProcessor.class);
 
     public static final String WINGS_CONF = "wings-conf/**/*.*";
+    public static final String BLACK_LIST = "wings-conf/wings-conf-black-list.cnf";
 
 
     @Override
@@ -53,8 +58,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         final LinkedHashMap<String, Boolean> confPaths = new LinkedHashMap<>();
 
         MutablePropertySources sources = environment.getPropertySources();
-        for (Iterator<PropertySource<?>> iterator = sources.iterator(); iterator.hasNext(); ) {
-            PropertySource<?> next = iterator.next();
+        for (PropertySource<?> next : sources) {
             Object property = next.getProperty("spring.config.location");
             if (property == null) {
                 property = next.getProperty("SPRING_CONFIG_LOCATION");
@@ -106,6 +110,8 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                     logger.info("remove inactive profile file=" + key);
                 }
                 iter.remove();
+
+
             }
         }
         //
@@ -118,17 +124,48 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         final YamlPropertySourceLoader yamlLoader = new YamlPropertySourceLoader();
         final PropertiesPropertySourceLoader propertyLoader = new PropertiesPropertySourceLoader();
 
+        final HashMap<String, String> blackList = new HashMap<>();
+        for (Iterator<Map.Entry<String, Resource>> it = pathRes.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<String, Resource> entry = it.next();
+            String file = entry.getKey();
+            if (isBlacklist(file)) {
+                try (InputStream is = entry.getValue().getInputStream()) {
+                    BufferedReader buf = new BufferedReader(new InputStreamReader(is));
+                    String line;
+                    int count = 0;
+                    while ((line = buf.readLine()) != null) {
+                        String s = line.trim();
+                        if (!s.startsWith("#")) {
+                            count++;
+                            blackList.put(s, file);
+                        }
+                    }
+
+                    logger.info("find " + count + " blacklist from file=" + file);
+                } catch (IOException e) {
+                    logger.warn("failed to read blacklist file:" + file, e);
+                }
+                it.remove();
+            }
+        }
+
         for (Map.Entry<String, Resource> entry : pathRes.entrySet()) {
             final String key = entry.getKey();
             final Resource res = entry.getValue();
             try {
                 List<PropertySource<?>> sourceList;
+                String blacked = isBlackedBy(blackList, key);
+                if (blacked != null) {
+                    logger.info("skip a blacked resource=" + key + " by " + blacked);
+                    continue;
+                }
 
                 if (isYml(key)) {
                     sourceList = yamlLoader.load(key, res);
                 } else if (isProperty(key)) {
                     sourceList = propertyLoader.load(key, Utf8ResourceDecorator.toUtf8(res));
                 } else {
+                    // never here
                     logger.info("skip unsupported resource=" + key);
                     continue;
                 }
@@ -162,7 +199,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
             for (Resource res : resources) {
                 String p = res.getURL().getPath();
-                if (isYml(p) || isProperty(p)) {
+                if (isYml(p) || isProperty(p) || isBlacklist(p)) {
                     pathRes.putIfAbsent(p, res);
                 }
             }
@@ -171,6 +208,19 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         }
     }
 
+
+    private String isBlackedBy(HashMap<String, String> blackList, String file) {
+        for (Map.Entry<String, String> entry : blackList.entrySet()) {
+            if (file.endsWith(entry.getKey())) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    private boolean isBlacklist(String file) {
+        return endsWithIgnoreCase(file, BLACK_LIST);
+    }
 
     private boolean isYml(String file) {
         return endsWithIgnoreCase(file, ".yml", ".yaml");

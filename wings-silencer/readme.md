@@ -30,6 +30,10 @@
  
 ## 1.2.自动配置(wings-conf)
 
+支持配置文件的`分割`，`禁用`和`profile`，更有利于工程化的管理。
+
+### 1.2.1.配置分割
+
 实际项目开发中，只有一个 `application.*`不利于分工和管理的，应该是，
 
  * shardingsphere-datasource-79.properties
@@ -51,6 +55,8 @@
 所有配置文件必须UTF8编码，这样才可以更好的支持unicode，可以直接写中文。
 自动配置时对非ascii进行自动转义，以支持spring默认的按byte读取行为。
 
+### 1.2.2.配置文件profile
+
 支持`profile`格式，但是从命名上，要求`profile`用`.`标识，和spring对比如下。
 文件名不建议使用`.`，`profile`不包括`.`，否则会造成解析错误。
 
@@ -58,6 +64,18 @@
  * `wings-conf/shardingsphere-datasource-79.properties`
  * `application-{profile}.properties`
  * `wings-conf/shardingsphere-datasource-79.{profile}.properties`
+
+
+### 1.2.3.配置禁用
+
+存在于`/wings-conf/wings-conf-black-list.cnf`的文件名，不会自动加载。
+
+ * 一行一个文件名，区分大小写。
+ * `#`开头标识注释，自动忽略首尾空白。
+ * 以`String.endWith`判断，全路径精确匹配。
+ * `profile`格式的配置文件，需要单独
+
+### 1.2.4.参考资料
 
 [参考资料 docs.spring.io](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
 

@@ -1,18 +1,17 @@
-package pro.fessional.wings.example.json;
+package pro.fessional.wings.silencer.json;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Maps;
-import kotlin.collections.MapsKt;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import pro.fessional.wings.silencer.spring.bean.WingsJacksonConfiguration;
+import pro.fessional.wings.silencer.datetime.DateTimePattern;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -36,6 +35,7 @@ import java.util.Map;
 @RunWith(SpringRunner.class)
 //@SpringBootTest(properties = {"debug = true"})
 @SpringBootTest
+//@AutoConfigureJsonTesters
 public class WingsJacksonMapperTest {
 
     private ObjectMapper objectMapper;
@@ -48,17 +48,23 @@ public class WingsJacksonMapperTest {
 
     @Test
     public void test() throws IOException {
+        System.out.println("=== ZoneId= " + ZoneId.systemDefault());
         JsonIt it = new JsonIt();
-        System.out.println("===========");
+        System.out.println("===== to string ======");
         System.out.println(it);
         String json = objectMapper.writeValueAsString(it);
-        System.out.println("===========");
+        System.out.println("===== write json ======");
         System.out.println(json);
         JsonIt obj = objectMapper.readValue(json, JsonIt.class);
-        System.out.println("===========");
+        System.out.println("===== read json ======");
         System.out.println(obj);
-    }
 
+        String json2 = objectMapper.writeValueAsString(obj);
+        JsonIt obj2 = objectMapper.readValue(json2, JsonIt.class);
+
+        Assert.assertEquals(json, json2);
+        Assert.assertEquals(obj, obj2);
+    }
 
     @Data
     @NoArgsConstructor
@@ -75,7 +81,11 @@ public class WingsJacksonMapperTest {
         private LocalDate localDateVal = LocalDate.now();
         private LocalTime localTimeVal = LocalTime.now();
         private LocalDateTime localDateTimeVal = LocalDateTime.now();
-        private ZonedDateTime zonedDateTimeVal = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("America/New_York"));
+        private ZonedDateTime zonedDateTimeVal = ZonedDateTime.now();
+        @JsonFormat(pattern = DateTimePattern.PTN_FULL_23V)
+        private ZonedDateTime zonedDateTimeValV = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("America/New_York"));
+        @JsonFormat(pattern = DateTimePattern.PTN_FULL_23Z)
+        private ZonedDateTime zonedDateTimeValZ = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("America/New_York"));
         private Instant instantVal = Instant.now();
         private Date utilDateVal = new Date();
         private Calendar calendarVal = Calendar.getInstance();

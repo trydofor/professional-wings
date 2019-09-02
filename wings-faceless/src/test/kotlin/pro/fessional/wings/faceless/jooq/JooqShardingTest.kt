@@ -2,8 +2,11 @@ package pro.fessional.wings.faceless.jooq
 
 import org.apache.shardingsphere.api.hint.HintManager
 import org.jooq.DSLContext
+import org.junit.FixMethodOrder
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.runners.MethodSorters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -27,6 +30,8 @@ import java.time.LocalDateTime
 @RunWith(SpringRunner::class)
 @SpringBootTest(properties = ["debug = true","logging.level.org.jooq.tools.LoggerListener=DEBUG"])
 @ActiveProfiles("shard")
+//@Ignore("手动执行，使用shard配置")
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class JooqShardingTest {
 
     @Autowired
@@ -51,6 +56,8 @@ class JooqShardingTest {
         schemaRevisionManager.publishRevision(2019052101, 0)
     }
 
+    @Test
+    @Ignore("手动执行，仅一次")
     fun test2Code() {
         WingsCodeGenerator.builder()
                 .jdbcDriver("com.mysql.cj.jdbc.Driver")

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pro.fessional.wings.silencer.context.WingsI18nContext;
+import pro.fessional.wings.silencer.datetime.DateTimePattern;
 import pro.fessional.wings.slardar.spring.help.WingsI18nWebUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -56,7 +57,7 @@ public class TestJsonController {
         private LocalTime localTimeVal = LocalTime.now();
         private LocalDateTime localDateTimeVal = LocalDateTime.now();
         private ZonedDateTime zonedDateTimeVal = ZonedDateTime.now();
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSZ")
+        @JsonFormat(pattern = DateTimePattern.PTN_FULL_19V)
         private ZonedDateTime zonedDateTimePtn = ZonedDateTime.now();
         private Instant instantVal = Instant.now();
         private Date utilDateVal = new Date();

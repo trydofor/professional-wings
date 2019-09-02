@@ -16,6 +16,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("init")
+//@Ignore("手动执行，使用init配置")
 class WingsFlywaveInitDatabaseSample {
 
     @Autowired
