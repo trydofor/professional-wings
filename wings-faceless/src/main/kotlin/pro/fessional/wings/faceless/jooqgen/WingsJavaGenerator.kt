@@ -22,6 +22,6 @@ class WingsJavaGenerator : JavaGenerator() {
         val alias = genAlias(identifier)
         out.tab(1).javadoc("The reference instance of <code>%s</code>", definition.qualifiedOutputName)
         out.tab(1).println("public static final %s %s = new %s();", className, identifier, className)
-        out.tab(1).println("public static final %s AS_%s = %s.as(\"%s\");", className, alias, identifier, alias)
+        out.tab(1).println("public static final %s as%s = %s.as(\"%s\");", className, alias, identifier, alias.toLowerCase())
     }
 }

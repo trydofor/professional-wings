@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.sample
 
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,7 +17,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("init")
-//@Ignore("手动执行，使用init配置")
+@Ignore("手动执行，使用init配置")
 class WingsFlywaveInitDatabaseSample {
 
     @Autowired

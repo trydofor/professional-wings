@@ -48,8 +48,10 @@ class WingsFlywaveShardJournalSample {
         schemaRevisionManager.forceApplyBreak(2019052102, 2, true, "master")
 
         // 分表
-        schemaShardingManager.publishShard("TST_中文也分表", 5)
-        schemaShardingManager.shardingData("TST_中文也分表", true)
+        val table = "tst_中文也分表"
+
+        schemaShardingManager.publishShard(table, 5)
+        schemaShardingManager.shardingData(table, true)
 
         // 跟踪
         val ddls = SchemaJournalManager.JournalDdl(
@@ -58,16 +60,16 @@ class WingsFlywaveShardJournalSample {
                 wingsFlywaveVerProperties.journalDelete,
                 wingsFlywaveVerProperties.triggerDelete
         )
-        schemaJournalManager.checkAndInitDdl("TST_中文也分表", ddls, 0)
+        schemaJournalManager.checkAndInitDdl(table, ddls, 0)
 
         // 开启关闭
-        schemaJournalManager.publishUpdate("TST_中文也分表", false, 0)
-        schemaJournalManager.publishUpdate("TST_中文也分表", true, 0)
-        schemaJournalManager.publishUpdate("TST_中文也分表", false, 0)
+        schemaJournalManager.publishUpdate(table, false, 0)
+        schemaJournalManager.publishUpdate(table, true, 0)
+        schemaJournalManager.publishUpdate(table, false, 0)
 
-        schemaJournalManager.publishDelete("TST_中文也分表", false, 0)
-        schemaJournalManager.publishDelete("TST_中文也分表", true, 0)
-        schemaJournalManager.publishDelete("TST_中文也分表", false, 0)
+        schemaJournalManager.publishDelete(table, false, 0)
+        schemaJournalManager.publishDelete(table, true, 0)
+        schemaJournalManager.publishDelete(table, false, 0)
 
         // 降级
         schemaRevisionManager.publishRevision(SchemaRevisionManager.INIT1ST_REVISION, 0)

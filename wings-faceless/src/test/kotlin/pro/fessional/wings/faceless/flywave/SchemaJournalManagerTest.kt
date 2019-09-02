@@ -37,13 +37,13 @@ class SchemaJournalManagerTest {
 
     @Test
     fun test2PublishUpdate() {
-        schemaJournalManager.publishUpdate("TST_中文也分表", true, 0)
-        schemaJournalManager.publishUpdate("TST_中文也分表", false, 0)
+        schemaJournalManager.publishUpdate("tst_中文也分表", true, 0)
+        schemaJournalManager.publishUpdate("tst_中文也分表", false, 0)
     }
 
     @Test
     fun test3PublishDelete() {
-        schemaJournalManager.publishDelete("TST_中文也分表", true, 0)
-        schemaJournalManager.publishDelete("TST_中文也分表", false, 0)
+        schemaJournalManager.publishDelete("tst_中文也分表", true, 0)
+        schemaJournalManager.publishDelete("tst_中文也分表", false, 0)
     }
 }

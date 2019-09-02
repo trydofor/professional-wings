@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS `TST_中文也分表`;
+DROP TABLE IF EXISTS `tst_中文也分表`;

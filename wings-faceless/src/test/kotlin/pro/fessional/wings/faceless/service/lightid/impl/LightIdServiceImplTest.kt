@@ -21,8 +21,8 @@ open class LightIdServiceImplTest {
 
     @Test
     fun getId() {
-        val id1 = lightIdService.getId("SYS_COMMIT_JOURNAL", 0)
-        val id2 = lightIdService.getId("SYS_SCHEMA_VERSION", 0)
+        val id1 = lightIdService.getId("sys_commit_journal", 0)
+        val id2 = lightIdService.getId("sys_schema_version", 0)
 
         Assert.assertEquals(1, id1 % 10)
         Assert.assertEquals(1, id2 % 10)

@@ -20,7 +20,7 @@ import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也
 
 
 /**
- * The table <code>wings_0.TST_中文也分表</code>.
+ * The table <code>wings_0.tst_中文也分表</code>.
  */
 @Generated(
     value = {
@@ -37,7 +37,7 @@ public class Tst中文也分表Dao extends DAOImpl<Tst中文也分表Record, Tst
      * Create a new Tst中文也分表Dao without any configuration
      */
     public Tst中文也分表Dao() {
-        super(Tst中文也分表Table.TST_中文也分表, Tst中文也分表.class);
+        super(Tst中文也分表Table.Tst中文也分表, Tst中文也分表.class);
     }
 
     /**
@@ -45,7 +45,7 @@ public class Tst中文也分表Dao extends DAOImpl<Tst中文也分表Record, Tst
      */
     @Autowired
     public Tst中文也分表Dao(Configuration configuration) {
-        super(Tst中文也分表Table.TST_中文也分表, Tst中文也分表.class, configuration);
+        super(Tst中文也分表Table.Tst中文也分表, Tst中文也分表.class, configuration);
     }
 
     /**
@@ -57,51 +57,51 @@ public class Tst中文也分表Dao extends DAOImpl<Tst中文也分表Record, Tst
     }
 
     /**
-     * Fetch records that have <code>ID IN (values)</code>
+     * Fetch records that have <code>id IN (values)</code>
      */
     public List<Tst中文也分表> fetchById(Long... values) {
-        return fetch(Tst中文也分表Table.TST_中文也分表.ID, values);
+        return fetch(Tst中文也分表Table.Tst中文也分表.Id, values);
     }
 
     /**
-     * Fetch a unique record that has <code>ID = value</code>
+     * Fetch a unique record that has <code>id = value</code>
      */
     public Tst中文也分表 fetchOneById(Long value) {
-        return fetchOne(Tst中文也分表Table.TST_中文也分表.ID, value);
+        return fetchOne(Tst中文也分表Table.Tst中文也分表.Id, value);
     }
 
     /**
-     * Fetch records that have <code>CREATE_DT IN (values)</code>
+     * Fetch records that have <code>create_dt IN (values)</code>
      */
     public List<Tst中文也分表> fetchByCreateDt(LocalDateTime... values) {
-        return fetch(Tst中文也分表Table.TST_中文也分表.CREATE_DT, values);
+        return fetch(Tst中文也分表Table.Tst中文也分表.CreateDt, values);
     }
 
     /**
-     * Fetch records that have <code>MODIFY_DT IN (values)</code>
+     * Fetch records that have <code>modify_dt IN (values)</code>
      */
     public List<Tst中文也分表> fetchByModifyDt(LocalDateTime... values) {
-        return fetch(Tst中文也分表Table.TST_中文也分表.MODIFY_DT, values);
+        return fetch(Tst中文也分表Table.Tst中文也分表.ModifyDt, values);
     }
 
     /**
-     * Fetch records that have <code>COMMIT_ID IN (values)</code>
+     * Fetch records that have <code>commit_id IN (values)</code>
      */
     public List<Tst中文也分表> fetchByCommitId(Long... values) {
-        return fetch(Tst中文也分表Table.TST_中文也分表.COMMIT_ID, values);
+        return fetch(Tst中文也分表Table.Tst中文也分表.CommitId, values);
     }
 
     /**
-     * Fetch records that have <code>LOGIN_INFO IN (values)</code>
+     * Fetch records that have <code>login_info IN (values)</code>
      */
     public List<Tst中文也分表> fetchByLoginInfo(String... values) {
-        return fetch(Tst中文也分表Table.TST_中文也分表.LOGIN_INFO, values);
+        return fetch(Tst中文也分表Table.Tst中文也分表.LoginInfo, values);
     }
 
     /**
-     * Fetch records that have <code>OTHER_INFO IN (values)</code>
+     * Fetch records that have <code>other_info IN (values)</code>
      */
     public List<Tst中文也分表> fetchByOtherInfo(String... values) {
-        return fetch(Tst中文也分表Table.TST_中文也分表.OTHER_INFO, values);
+        return fetch(Tst中文也分表Table.Tst中文也分表.OtherInfo, values);
     }
 }

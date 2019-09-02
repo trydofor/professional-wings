@@ -38,13 +38,13 @@ class SchemaShardingManagerTest {
 
     @Test
     fun test2ManageSharding() {
-        schemaShardingManager.publishShard("SYS_SCHEMA_JOURNAL", 2)
-        schemaShardingManager.publishShard("SYS_SCHEMA_JOURNAL", 0)
+        schemaShardingManager.publishShard("sys_schema_journal", 2)
+        schemaShardingManager.publishShard("sys_schema_journal", 0)
     }
 
     @Test
     fun test3MoveShardData() {
-        schemaShardingManager.publishShard("TST_中文也分表", 5)
-        schemaShardingManager.shardingData("TST_中文也分表", true)
+        schemaShardingManager.publishShard("tst_中文也分表", 5)
+        schemaShardingManager.shardingData("tst_中文也分表", true)
     }
 }

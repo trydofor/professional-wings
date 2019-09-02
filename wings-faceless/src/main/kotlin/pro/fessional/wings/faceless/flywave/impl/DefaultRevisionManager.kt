@@ -43,23 +43,23 @@ class DefaultRevisionManager(
         }
         val selectUpto = """
                 SELECT
-                    REVISION,
-                    UPTO_SQL,
-                    APPLY_DT
-                FROM SYS_SCHEMA_VERSION
-                WHERE REVISION > ?
-                    AND REVISION <= ?
-                ORDER BY REVISION ASC
+                    revision,
+                    upto_sql,
+                    apply_dt
+                FROM sys_schema_version
+                WHERE revision > ?
+                    AND revision <= ?
+                ORDER BY revision ASC
                 """.trimIndent()
         val selectUndo = """
                 SELECT
-                    REVISION,
-                    UNDO_SQL,
-                    APPLY_DT
-                FROM SYS_SCHEMA_VERSION
-                WHERE REVISION <= ?
-                    AND REVISION >= ?
-                ORDER BY REVISION DESC
+                    revision,
+                    undo_sql,
+                    apply_dt
+                FROM sys_schema_version
+                WHERE revision <= ?
+                    AND revision >= ?
+                ORDER BY revision DESC
                 """.trimIndent()
 
         val shardTmpl = flywaveDataSources.shard?.let { SimpleJdbcTemplate(it, "sharding") }
@@ -152,18 +152,18 @@ class DefaultRevisionManager(
         val reviQuery = if (isUpto) {
             """
                 SELECT
-                    UPTO_SQL,
-                    APPLY_DT
-                FROM SYS_SCHEMA_VERSION
-                WHERE REVISION = ?
+                    upto_sql,
+                    apply_dt
+                FROM sys_schema_version
+                WHERE revision = ?
                 """.trimIndent()
         } else {
             """
             SELECT
-                UNDO_SQL,
-                APPLY_DT
-            FROM SYS_SCHEMA_VERSION
-            WHERE REVISION = ?
+                undo_sql,
+                apply_dt
+            FROM sys_schema_version
+            WHERE revision = ?
             """.trimIndent()
         }
 
@@ -215,13 +215,13 @@ class DefaultRevisionManager(
             logger.warn("skip empty local sqls")
         }
         val selectSql = """
-                    SELECT UPTO_SQL, UNDO_SQL, APPLY_DT
-                    FROM SYS_SCHEMA_VERSION
-                    WHERE REVISION = ?
+                    SELECT upto_sql, undo_sql, apply_dt
+                    FROM sys_schema_version
+                    WHERE revision = ?
                     """.trimIndent()
         val insertSql = """
-                    INSERT INTO SYS_SCHEMA_VERSION
-                    (REVISION, CREATE_DT, COMMIT_ID, UPTO_SQL, UNDO_SQL)
+                    INSERT INTO sys_schema_version
+                    (revision, create_dt, commit_id, upto_sql, undo_sql)
                     VALUES(?, NOW(), ?, ?, ?)
                     """.trimIndent()
 
@@ -240,18 +240,18 @@ class DefaultRevisionManager(
 
                 try {
                     plainTmpl.query(selectSql, revi) {
-                        dbVal["UPTO_SQL"] = it.getString("UPTO_SQL")
-                        dbVal["UNDO_SQL"] = it.getString("UNDO_SQL")
-                        dbVal["APPLY_DT"] = it.getString("APPLY_DT")
+                        dbVal["upto_sql"] = it.getString("upto_sql")
+                        dbVal["undo_sql"] = it.getString("undo_sql")
+                        dbVal["apply_dt"] = it.getString("apply_dt")
                     }
                 } catch (e: Exception) {
                     if (revi <= INIT1ST_REVISION) {
                         assertNot1st(plainDs, e)
                         logger.warn("try to init first version, revi={}, on db={}", revi, plainName)
                         applyRevisionSql(revi, uptoSql, true, commitId, plainTmpl, null, emptyList())
-                        dbVal["UPTO_SQL"] = ""
-                        dbVal["UNDO_SQL"] = ""
-                        dbVal["APPLY_DT"] = ""
+                        dbVal["upto_sql"] = ""
+                        dbVal["undo_sql"] = ""
+                        dbVal["apply_dt"] = ""
                     } else {
                         throw e
                     }
@@ -269,15 +269,15 @@ class DefaultRevisionManager(
                 // check
                 val updSql = StringBuilder()
                 val updVal = LinkedList<Any>()
-                val applyd = dbVal["APPLY_DT"]
+                val applyd = dbVal["apply_dt"]
                 val notAly = notApply(applyd)
 
                 // check undo
-                val undoDbs = dbVal["UNDO_SQL"]
+                val undoDbs = dbVal["undo_sql"]
                 val undoBlk = undoDbs!!.isBlank()
                 if (undoSql != undoDbs) {
                     if (notAly || undoBlk) {
-                        updSql.append("UNDO_SQL = ?, ")
+                        updSql.append("undo_sql = ?, ")
                         updVal.add(undoSql)
                         if (undoBlk) {
                             logger.info("empty undo-sql, update it. revi={}, db={}", revi, plainName)
@@ -291,11 +291,11 @@ class DefaultRevisionManager(
                 }
 
                 // check upto
-                val uptoDbs = dbVal["UPTO_SQL"]
+                val uptoDbs = dbVal["upto_sql"]
                 val uptoBlk = uptoDbs!!.isBlank()
                 if (uptoSql != uptoDbs) {
                     if (notAly || uptoBlk) {
-                        updSql.append("UPTO_SQL = ?, ")
+                        updSql.append("upto_sql = ?, ")
                         updVal.add(uptoSql)
                         if (uptoBlk) {
                             logger.info("empty upto-sql, update it to revi={}, db={}", revi, plainName)
@@ -314,11 +314,11 @@ class DefaultRevisionManager(
                     updVal.add(commitId)
                     updVal.add(revi)
                     val rst = plainTmpl.update("""
-                        UPDATE SYS_SCHEMA_VERSION SET
+                        UPDATE sys_schema_version SET
                             $updSql
-                            MODIFY_DT = NOW(),
-                            COMMIT_ID = ?
-                        WHERE REVISION = ?
+                            modify_dt = NOW(),
+                            commit_id = ?
+                        WHERE revision = ?
                         """.trimIndent(), *updVal.toArray())
 
                     if (rst != 1) {
@@ -334,17 +334,17 @@ class DefaultRevisionManager(
 
     override fun forceUpdateSql(revision: Long, upto: String, undo: String, commitId: Long) {
         val insertSql = """
-            INSERT INTO SYS_SCHEMA_VERSION
-            (REVISION, CREATE_DT, COMMIT_ID, UPTO_SQL, UNDO_SQL)
+            INSERT INTO sys_schema_version
+            (revision, create_dt, commit_id, upto_sql, undo_sql)
             VALUES(?, NOW(), ?, ?, ?)
             """.trimIndent()
         val updateSql = """
-            UPDATE SYS_SCHEMA_VERSION SET
-                UPTO_SQL = ?,
-                UNDO_SQL = ?,
-                MODIFY_DT = NOW(),
-                COMMIT_ID = ?
-            WHERE REVISION = ?
+            UPDATE sys_schema_version SET
+                upto_sql = ?,
+                undo_sql = ?,
+                modify_dt = NOW(),
+                commit_id = ?
+            WHERE revision = ?
             """.trimIndent()
 
         for ((plainName, plainDs) in flywaveDataSources.plains()) {
@@ -353,7 +353,7 @@ class DefaultRevisionManager(
 
             // 不要使用msyql的REPLACE INTO，使用标准SQL
 
-            val cnt = tmpl.count("SELECT COUNT(1) FROM SYS_SCHEMA_VERSION WHERE REVISION= ?", revision)
+            val cnt = tmpl.count("SELECT COUNT(1) FROM sys_schema_version WHERE revision= ?", revision)
             if (cnt == 0) {
                 val rst = tmpl.update(insertSql, revision, commitId, upto, undo)
                 logger.info("done force insert {} records, revi={}, on db={}", rst, revision, plainName)
@@ -390,7 +390,7 @@ class DefaultRevisionManager(
             "'1000-01-01'"
         }
         val cnt = try {
-            plainTmpl.update("UPDATE SYS_SCHEMA_VERSION SET APPLY_DT=$applyDt, COMMIT_ID=? WHERE REVISION=?", commitId, revi)
+            plainTmpl.update("UPDATE sys_schema_version SET apply_dt=$applyDt, commit_id=? WHERE revision=?", commitId, revi)
         } catch (e: Exception) {
             assertNot1st(plainTmpl.dataSource, e)
             logger.warn("skip un-init-1st, revi={}, applyDt={}, db={}", revi, applyDt, plainName)
@@ -407,7 +407,7 @@ class DefaultRevisionManager(
 
     private fun getRevision(tmpl: SimpleJdbcTemplate): Long = try {
         val rst = AtomicLong()
-        tmpl.query("SELECT MAX(REVISION) FROM SYS_SCHEMA_VERSION WHERE APPLY_DT >'1000-01-01'") {
+        tmpl.query("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt >'1000-01-01'") {
             val r = it.getLong(1)
             if (it.wasNull()) {
                 rst.set(0)
@@ -453,8 +453,8 @@ class DefaultRevisionManager(
     private fun assertNot1st(ds: DataSource, er: Exception) {
         try {
             val tables = schemaDefinitionLoader.showTables(ds)
-            if (tables.find { it.equals("SYS_SCHEMA_VERSION", true) } != null) {
-                throw er // 存在 SYS_SCHEMA_VERSION 表，报出原异常
+            if (tables.find { it.equals("sys_schema_version", true) } != null) {
+                throw er // 存在 sys_schema_version 表，报出原异常
             }
         } catch (e: Exception) {
             // 报出原异常

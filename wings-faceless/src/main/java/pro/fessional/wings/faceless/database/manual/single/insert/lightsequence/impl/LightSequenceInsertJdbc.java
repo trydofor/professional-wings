@@ -18,7 +18,7 @@ public class LightSequenceInsertJdbc implements LightSequenceInsert {
 
     @Override
     public int insert(SysLightSequence po) {
-        String sql = "INSERT INTO SYS_LIGHT_SEQUENCE (SEQ_NAME, BLOCK_ID, NEXT_VAL, STEP_VAL, COMMENTS) VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO sys_light_sequence (seq_name, block_id, next_val, step_val, comments) VALUES (?,?,?,?,?)";
         return jdbcTemplate.update(sql, po.getSeqName(), po.getBlockId(), po.getNextVal(), po.getStepVal(), po.getComments());
     }
 }

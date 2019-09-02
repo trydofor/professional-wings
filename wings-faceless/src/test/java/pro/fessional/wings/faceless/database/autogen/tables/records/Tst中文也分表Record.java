@@ -25,7 +25,7 @@ import pro.fessional.wings.faceless.database.autogen.tables.interfaces.ITst中�
 
 
 /**
- * The table <code>wings_0.TST_中文也分表</code>.
+ * The table <code>wings_0.tst_中文也分表</code>.
  */
 @Generated(
     value = {
@@ -36,13 +36,13 @@ import pro.fessional.wings.faceless.database.autogen.tables.interfaces.ITst中�
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @Entity
-@Table(name = "TST_中文也分表")
+@Table(name = "tst_中文也分表")
 public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也分表Record> implements Record6<Long, LocalDateTime, LocalDateTime, Long, String, String>, ITst中文也分表 {
 
-    private static final long serialVersionUID = 1525883403;
+    private static final long serialVersionUID = 1577550226;
 
     /**
-     * Setter for <code>TST_中文也分表.ID</code>.
+     * Setter for <code>tst_中文也分表.id</code>.
      */
     @Override
     public void setId(Long value) {
@@ -50,10 +50,10 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     }
 
     /**
-     * Getter for <code>TST_中文也分表.ID</code>.
+     * Getter for <code>tst_中文也分表.id</code>.
      */
     @Id
-    @Column(name = "ID", unique = true, nullable = false, precision = 19)
+    @Column(name = "id", unique = true, nullable = false, precision = 19)
     @NotNull
     @Override
     public Long getId() {
@@ -61,7 +61,7 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     }
 
     /**
-     * Setter for <code>TST_中文也分表.CREATE_DT</code>.
+     * Setter for <code>tst_中文也分表.create_dt</code>.
      */
     @Override
     public void setCreateDt(LocalDateTime value) {
@@ -69,16 +69,16 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     }
 
     /**
-     * Getter for <code>TST_中文也分表.CREATE_DT</code>.
+     * Getter for <code>tst_中文也分表.create_dt</code>.
      */
-    @Column(name = "CREATE_DT", nullable = false)
+    @Column(name = "create_dt", nullable = false)
     @Override
     public LocalDateTime getCreateDt() {
         return (LocalDateTime) get(1);
     }
 
     /**
-     * Setter for <code>TST_中文也分表.MODIFY_DT</code>.
+     * Setter for <code>tst_中文也分表.modify_dt</code>.
      */
     @Override
     public void setModifyDt(LocalDateTime value) {
@@ -86,16 +86,16 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     }
 
     /**
-     * Getter for <code>TST_中文也分表.MODIFY_DT</code>.
+     * Getter for <code>tst_中文也分表.modify_dt</code>.
      */
-    @Column(name = "MODIFY_DT", nullable = false)
+    @Column(name = "modify_dt", nullable = false)
     @Override
     public LocalDateTime getModifyDt() {
         return (LocalDateTime) get(2);
     }
 
     /**
-     * Setter for <code>TST_中文也分表.COMMIT_ID</code>.
+     * Setter for <code>tst_中文也分表.commit_id</code>.
      */
     @Override
     public void setCommitId(Long value) {
@@ -103,9 +103,9 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     }
 
     /**
-     * Getter for <code>TST_中文也分表.COMMIT_ID</code>.
+     * Getter for <code>tst_中文也分表.commit_id</code>.
      */
-    @Column(name = "COMMIT_ID", nullable = false, precision = 19)
+    @Column(name = "commit_id", nullable = false, precision = 19)
     @NotNull
     @Override
     public Long getCommitId() {
@@ -113,7 +113,7 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     }
 
     /**
-     * Setter for <code>TST_中文也分表.LOGIN_INFO</code>.
+     * Setter for <code>tst_中文也分表.login_info</code>.
      */
     @Override
     public void setLoginInfo(String value) {
@@ -121,9 +121,9 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     }
 
     /**
-     * Getter for <code>TST_中文也分表.LOGIN_INFO</code>.
+     * Getter for <code>tst_中文也分表.login_info</code>.
      */
-    @Column(name = "LOGIN_INFO", length = 65535)
+    @Column(name = "login_info", length = 65535)
     @Size(max = 65535)
     @Override
     public String getLoginInfo() {
@@ -131,7 +131,7 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     }
 
     /**
-     * Setter for <code>TST_中文也分表.OTHER_INFO</code>.
+     * Setter for <code>tst_中文也分表.other_info</code>.
      */
     @Override
     public void setOtherInfo(String value) {
@@ -139,9 +139,9 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     }
 
     /**
-     * Getter for <code>TST_中文也分表.OTHER_INFO</code>.
+     * Getter for <code>tst_中文也分表.other_info</code>.
      */
-    @Column(name = "OTHER_INFO", length = 65535)
+    @Column(name = "other_info", length = 65535)
     @Size(max = 65535)
     @Override
     public String getOtherInfo() {
@@ -185,7 +185,7 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
      */
     @Override
     public Field<Long> field1() {
-        return Tst中文也分表Table.TST_中文也分表.ID;
+        return Tst中文也分表Table.Tst中文也分表.Id;
     }
 
     /**
@@ -193,7 +193,7 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
      */
     @Override
     public Field<LocalDateTime> field2() {
-        return Tst中文也分表Table.TST_中文也分表.CREATE_DT;
+        return Tst中文也分表Table.Tst中文也分表.CreateDt;
     }
 
     /**
@@ -201,7 +201,7 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
      */
     @Override
     public Field<LocalDateTime> field3() {
-        return Tst中文也分表Table.TST_中文也分表.MODIFY_DT;
+        return Tst中文也分表Table.Tst中文也分表.ModifyDt;
     }
 
     /**
@@ -209,7 +209,7 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
      */
     @Override
     public Field<Long> field4() {
-        return Tst中文也分表Table.TST_中文也分表.COMMIT_ID;
+        return Tst中文也分表Table.Tst中文也分表.CommitId;
     }
 
     /**
@@ -217,7 +217,7 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
      */
     @Override
     public Field<String> field5() {
-        return Tst中文也分表Table.TST_中文也分表.LOGIN_INFO;
+        return Tst中文也分表Table.Tst中文也分表.LoginInfo;
     }
 
     /**
@@ -225,7 +225,7 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
      */
     @Override
     public Field<String> field6() {
-        return Tst中文也分表Table.TST_中文也分表.OTHER_INFO;
+        return Tst中文也分表Table.Tst中文也分表.OtherInfo;
     }
 
     /**
@@ -426,14 +426,14 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
      * Create a detached Tst中文也分表Record
      */
     public Tst中文也分表Record() {
-        super(Tst中文也分表Table.TST_中文也分表);
+        super(Tst中文也分表Table.Tst中文也分表);
     }
 
     /**
      * Create a detached, initialised Tst中文也分表Record
      */
     public Tst中文也分表Record(Long id, LocalDateTime createDt, LocalDateTime modifyDt, Long commitId, String loginInfo, String otherInfo) {
-        super(Tst中文也分表Table.TST_中文也分表);
+        super(Tst中文也分表Table.Tst中文也分表);
 
         set(0, id);
         set(1, createDt);

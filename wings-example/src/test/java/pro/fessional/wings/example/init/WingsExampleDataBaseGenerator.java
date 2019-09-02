@@ -23,8 +23,8 @@ public class WingsExampleDataBaseGenerator {
     private SchemaRevisionManager schemaRevisionManager;
 
     @Autowired
-    public SchemaRevisionManager getSchemaRevisionManager() {
-        return schemaRevisionManager;
+    public void setSchemaRevisionManager(SchemaRevisionManager schemaRevisionManager) {
+        this.schemaRevisionManager = schemaRevisionManager;
     }
 
     @Test

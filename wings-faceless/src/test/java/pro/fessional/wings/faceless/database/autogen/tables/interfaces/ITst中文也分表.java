@@ -19,7 +19,7 @@ import pro.fessional.wings.faceless.service.journal.JournalAware;
 
 
 /**
- * The table <code>wings_0.TST_中文也分表</code>.
+ * The table <code>wings_0.tst_中文也分表</code>.
  */
 @Generated(
     value = {
@@ -30,77 +30,77 @@ import pro.fessional.wings.faceless.service.journal.JournalAware;
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @Entity
-@Table(name = "TST_中文也分表")
+@Table(name = "tst_中文也分表")
 public interface ITst中文也分表 extends JournalAware, Serializable {
 
     /**
-     * Setter for <code>TST_中文也分表.ID</code>.
+     * Setter for <code>tst_中文也分表.id</code>.
      */
     public void setId(Long value);
 
     /**
-     * Getter for <code>TST_中文也分表.ID</code>.
+     * Getter for <code>tst_中文也分表.id</code>.
      */
     @Id
-    @Column(name = "ID", unique = true, nullable = false, precision = 19)
+    @Column(name = "id", unique = true, nullable = false, precision = 19)
     @NotNull
     public Long getId();
 
     /**
-     * Setter for <code>TST_中文也分表.CREATE_DT</code>.
+     * Setter for <code>tst_中文也分表.create_dt</code>.
      */
     public void setCreateDt(LocalDateTime value);
 
     /**
-     * Getter for <code>TST_中文也分表.CREATE_DT</code>.
+     * Getter for <code>tst_中文也分表.create_dt</code>.
      */
-    @Column(name = "CREATE_DT", nullable = false)
+    @Column(name = "create_dt", nullable = false)
     public LocalDateTime getCreateDt();
 
     /**
-     * Setter for <code>TST_中文也分表.MODIFY_DT</code>.
+     * Setter for <code>tst_中文也分表.modify_dt</code>.
      */
     public void setModifyDt(LocalDateTime value);
 
     /**
-     * Getter for <code>TST_中文也分表.MODIFY_DT</code>.
+     * Getter for <code>tst_中文也分表.modify_dt</code>.
      */
-    @Column(name = "MODIFY_DT", nullable = false)
+    @Column(name = "modify_dt", nullable = false)
     public LocalDateTime getModifyDt();
 
     /**
-     * Setter for <code>TST_中文也分表.COMMIT_ID</code>.
+     * Setter for <code>tst_中文也分表.commit_id</code>.
      */
     public void setCommitId(Long value);
 
     /**
-     * Getter for <code>TST_中文也分表.COMMIT_ID</code>.
+     * Getter for <code>tst_中文也分表.commit_id</code>.
      */
-    @Column(name = "COMMIT_ID", nullable = false, precision = 19)
+    @Column(name = "commit_id", nullable = false, precision = 19)
     @NotNull
     public Long getCommitId();
 
     /**
-     * Setter for <code>TST_中文也分表.LOGIN_INFO</code>.
+     * Setter for <code>tst_中文也分表.login_info</code>.
      */
     public void setLoginInfo(String value);
 
     /**
-     * Getter for <code>TST_中文也分表.LOGIN_INFO</code>.
+     * Getter for <code>tst_中文也分表.login_info</code>.
      */
-    @Column(name = "LOGIN_INFO", length = 65535)
+    @Column(name = "login_info", length = 65535)
     @Size(max = 65535)
     public String getLoginInfo();
 
     /**
-     * Setter for <code>TST_中文也分表.OTHER_INFO</code>.
+     * Setter for <code>tst_中文也分表.other_info</code>.
      */
     public void setOtherInfo(String value);
 
     /**
-     * Getter for <code>TST_中文也分表.OTHER_INFO</code>.
+     * Getter for <code>tst_中文也分表.other_info</code>.
      */
-    @Column(name = "OTHER_INFO", length = 65535)
+    @Column(name = "other_info", length = 65535)
     @Size(max = 65535)
     public String getOtherInfo();
 

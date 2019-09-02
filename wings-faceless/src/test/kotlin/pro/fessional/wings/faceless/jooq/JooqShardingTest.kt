@@ -3,7 +3,6 @@ package pro.fessional.wings.faceless.jooq
 import org.apache.shardingsphere.api.hint.HintManager
 import org.jooq.DSLContext
 import org.junit.FixMethodOrder
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
@@ -28,9 +27,8 @@ import java.time.LocalDateTime
  */
 
 @RunWith(SpringRunner::class)
-@SpringBootTest(properties = ["debug = true","logging.level.org.jooq.tools.LoggerListener=DEBUG"])
+@SpringBootTest(properties = ["debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"])
 @ActiveProfiles("shard")
-//@Ignore("手动执行，使用shard配置")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class JooqShardingTest {
 
@@ -57,15 +55,16 @@ class JooqShardingTest {
     }
 
     @Test
-    @Ignore("手动执行，仅一次")
+    //@Ignore("手动执行，仅一次")
     fun test2Code() {
+        test1Init()
         WingsCodeGenerator.builder()
                 .jdbcDriver("com.mysql.cj.jdbc.Driver")
                 .jdbcUrl("jdbc:mysql://127.0.0.1/wings_0")
                 .jdbcUser("trydofor")
                 .jdbcPassword("moilioncircle")
                 .databaseSchema("wings_0")
-                .databaseIncludes("TST_中文也分表")
+                .databaseIncludes("tst_中文也分表")
                 .databaseVersionProvider("")
                 .targetPackage("pro.fessional.wings.faceless.database.autogen")
                 .targetDirectory("src/test/java/")
@@ -75,7 +74,7 @@ class JooqShardingTest {
 
     @Test
     fun test3Shard() {
-        schemaShardingManager.publishShard("TST_中文也分表", 5)
+        schemaShardingManager.publishShard("tst_中文也分表", 5)
     }
 
     val id by lazy { lightIdService.getId(Tst中文也分表Table::class.java, 0) }
@@ -99,11 +98,11 @@ class JooqShardingTest {
     fun test5Update() {
         //NG update `TST_中文也分表` set `TST_中文也分表`.`MODIFY_DT` = ?, `TST_中文也分表`.`LOGIN_INFO` = ? where `TST_中文也分表`.`ID` <= ?
         //OK update `TST_中文也分表` as `t1` set `t1`.`MODIFY_DT` = ?, `t1`.`LOGIN_INFO` = ? where `t1`.`ID` <= ?
-        val t = Tst中文也分表Table.TST_中文也分表
+        val t = Tst中文也分表Table.Tst中文也分表
         val r = dsl.update(t)
-                .set(t.MODIFY_DT, LocalDateTime.now())
-                .set(t.LOGIN_INFO, "update 5")
-                .where(t.ID.le(id))
+                .set(t.ModifyDt, LocalDateTime.now())
+                .set(t.LoginInfo, "update 5")
+                .where(t.Id.le(id))
                 .execute()
         println("============updated $r records")
     }
@@ -113,18 +112,18 @@ class JooqShardingTest {
         it.setMasterRouteOnly()
         //NG select `TST_中文也分表`.`ID` from `TST_中文也分表` where `TST_中文也分表`.`ID` <= ? limit ?
         //OK select `t1`.`ID` from `TST_中文也分表` as `t1` where `t1`.`ID` <= ? limit ?
-        val f1 = Tst中文也分表Table.AS_F1
-        val r1 = dsl.select(f1.ID)
+        val f1 = Tst中文也分表Table.asY1
+        val r1 = dsl.select(f1.Id)
                 .from(f1)
-                .where(f1.ID.le(id))
+                .where(f1.Id.le(id))
                 .limit(1)
                 .fetchOne().into(Long::class.java)
         println("============select id=$r1")
 
-        val t = Tst中文也分表Table.TST_中文也分表
-        val r2 = dsl.select(t.ID)
+        val t = Tst中文也分表Table.Tst中文也分表
+        val r2 = dsl.select(t.Id)
                 .from(t)
-                .where(t.ID.le(id))
+                .where(t.Id.le(id))
                 .limit(1)
                 .fetchOne().into(Long::class.java)
         println("============select id=$r2")
@@ -134,10 +133,10 @@ class JooqShardingTest {
     fun test7Delete() {
         //NG delete from `TST_中文也分表` where `TST_中文也分表`.`ID` <= ?
         //NG delete `t1` from `TST_中文也分表` as `t1` where `t1`.`ID` <= ?
-        val t = Tst中文也分表Table.TST_中文也分表
+        val t = Tst中文也分表Table.Tst中文也分表
         val r = dsl.delete(t)
-                .where(t.ID.le(id))
-                .and(t.COMMIT_ID.isNotNull)
+                .where(t.Id.le(id))
+                .and(t.CommitId.isNotNull)
 //                .getSQL()
                 .execute()
         println("============deleted $r records")

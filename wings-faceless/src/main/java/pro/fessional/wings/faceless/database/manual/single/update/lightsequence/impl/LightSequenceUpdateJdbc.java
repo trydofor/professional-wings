@@ -22,7 +22,7 @@ public class LightSequenceUpdateJdbc implements LightSequenceUpdate {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final String sqlUdp = "UPDATE SYS_LIGHT_SEQUENCE SET NEXT_VAL=? WHERE BLOCK_ID=? AND SEQ_NAME=? AND NEXT_VAL=?";
+    private final String sqlUdp = "UPDATE sys_light_sequence SET next_val=? WHERE block_id=? AND seq_name=? AND next_val=?";
 
     @Override
     public int updateNextVal(long newVal, int block, String name, long oldVal) {

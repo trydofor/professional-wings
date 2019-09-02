@@ -22,17 +22,17 @@
             <name>org.jooq.meta.mysql.MySQLDatabase</name>
             <includes>.*</includes>
             <excludes>
-                SPRING.* # Spring 自动创建
-                |.*\$LOG # 日志表
-                |.*\$UPD # 日志表
-                |.*\$DEL # 日志表
-                |SYS_SCHEMA_JOURNAL # JDBC处理
-                |SYS_SCHEMA_VERSION # JDBC处理
-                |SYS_LIGHT_SEQUENCE # JDBC处理
+                spring.* # Spring 自动创建
+                |.*\$log # 日志表
+                |.*\$upd # 日志表
+                |.*\$del # 日志表
+                |sys_schema_journal # jdbc处理
+                |sys_schema_version # jdbc处理
+                |sys_light_sequence # jdbc处理
             </excludes>
 
             <schemaVersionProvider>
-                SELECT MAX(REVISION) FROM SYS_SCHEMA_VERSION WHERE APPLY_DT > '1000-01-01'
+                SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'
             </schemaVersionProvider>
 
             <includeForeignKeys>false</includeForeignKeys>

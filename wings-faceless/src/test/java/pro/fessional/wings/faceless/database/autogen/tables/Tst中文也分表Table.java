@@ -26,7 +26,7 @@ import pro.fessional.wings.faceless.service.lightid.LightIdAware;
 
 
 /**
- * The table <code>wings_0.TST_中文也分表</code>.
+ * The table <code>wings_0.tst_中文也分表</code>.
  */
 @Generated(
     value = {
@@ -38,13 +38,13 @@ import pro.fessional.wings.faceless.service.lightid.LightIdAware;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record> implements LightIdAware {
 
-    private static final long serialVersionUID = 901348919;
+    private static final long serialVersionUID = -1894001759;
 
     /**
-     * The reference instance of <code>TST_中文也分表</code>
+     * The reference instance of <code>tst_中文也分表</code>
      */
-    public static final Tst中文也分表Table TST_中文也分表 = new Tst中文也分表Table();
-    public static final Tst中文也分表Table AS_F1 = TST_中文也分表.as("F1");
+    public static final Tst中文也分表Table Tst中文也分表 = new Tst中文也分表Table();
+    public static final Tst中文也分表Table asY1 = Tst中文也分表.as("y1");
 
     /**
      * The class holding records for this type
@@ -55,54 +55,54 @@ public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record>
     }
 
     /**
-     * The column <code>TST_中文也分表.ID</code>.
+     * The column <code>tst_中文也分表.id</code>.
      */
-    public final TableField<Tst中文也分表Record, Long> ID = createField("ID", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "主键");
+    public final TableField<Tst中文也分表Record, Long> Id = createField("id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "主键");
 
     /**
-     * The column <code>TST_中文也分表.CREATE_DT</code>.
+     * The column <code>tst_中文也分表.create_dt</code>.
      */
-    public final TableField<Tst中文也分表Record, LocalDateTime> CREATE_DT = createField("CREATE_DT", org.jooq.impl.SQLDataType.LOCALDATETIME.nullable(false).defaultValue(org.jooq.impl.DSL.field("CURRENT_TIMESTAMP", org.jooq.impl.SQLDataType.LOCALDATETIME)), this, "创建日时");
+    public final TableField<Tst中文也分表Record, LocalDateTime> CreateDt = createField("create_dt", org.jooq.impl.SQLDataType.LOCALDATETIME.nullable(false).defaultValue(org.jooq.impl.DSL.field("CURRENT_TIMESTAMP", org.jooq.impl.SQLDataType.LOCALDATETIME)), this, "创建日时");
 
     /**
-     * The column <code>TST_中文也分表.MODIFY_DT</code>.
+     * The column <code>tst_中文也分表.modify_dt</code>.
      */
-    public final TableField<Tst中文也分表Record, LocalDateTime> MODIFY_DT = createField("MODIFY_DT", org.jooq.impl.SQLDataType.LOCALDATETIME.nullable(false).defaultValue(org.jooq.impl.DSL.inline("1000-01-01 00:00:00", org.jooq.impl.SQLDataType.LOCALDATETIME)), this, "修改日时");
+    public final TableField<Tst中文也分表Record, LocalDateTime> ModifyDt = createField("modify_dt", org.jooq.impl.SQLDataType.LOCALDATETIME.nullable(false).defaultValue(org.jooq.impl.DSL.inline("1000-01-01 00:00:00", org.jooq.impl.SQLDataType.LOCALDATETIME)), this, "修改日时");
 
     /**
-     * The column <code>TST_中文也分表.COMMIT_ID</code>.
+     * The column <code>tst_中文也分表.commit_id</code>.
      */
-    public final TableField<Tst中文也分表Record, Long> COMMIT_ID = createField("COMMIT_ID", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "提交ID");
+    public final TableField<Tst中文也分表Record, Long> CommitId = createField("commit_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "提交ID");
 
     /**
-     * The column <code>TST_中文也分表.LOGIN_INFO</code>.
+     * The column <code>tst_中文也分表.login_info</code>.
      */
-    public final TableField<Tst中文也分表Record, String> LOGIN_INFO = createField("LOGIN_INFO", org.jooq.impl.SQLDataType.CLOB, this, "登陆信息，用户，终端等");
+    public final TableField<Tst中文也分表Record, String> LoginInfo = createField("login_info", org.jooq.impl.SQLDataType.CLOB, this, "登陆信息，用户，终端等");
 
     /**
-     * The column <code>TST_中文也分表.OTHER_INFO</code>.
+     * The column <code>tst_中文也分表.other_info</code>.
      */
-    public final TableField<Tst中文也分表Record, String> OTHER_INFO = createField("OTHER_INFO", org.jooq.impl.SQLDataType.CLOB, this, "其他信息，业务侧自定义");
+    public final TableField<Tst中文也分表Record, String> OtherInfo = createField("other_info", org.jooq.impl.SQLDataType.CLOB, this, "其他信息，业务侧自定义");
 
     /**
-     * Create a <code>TST_中文也分表</code> table reference
+     * Create a <code>tst_中文也分表</code> table reference
      */
     public Tst中文也分表Table() {
-        this(DSL.name("TST_中文也分表"), null);
+        this(DSL.name("tst_中文也分表"), null);
     }
 
     /**
-     * Create an aliased <code>TST_中文也分表</code> table reference
+     * Create an aliased <code>tst_中文也分表</code> table reference
      */
     public Tst中文也分表Table(String alias) {
-        this(DSL.name(alias), TST_中文也分表);
+        this(DSL.name(alias), Tst中文也分表);
     }
 
     /**
-     * Create an aliased <code>TST_中文也分表</code> table reference
+     * Create an aliased <code>tst_中文也分表</code> table reference
      */
     public Tst中文也分表Table(Name alias) {
-        this(alias, TST_中文也分表);
+        this(alias, Tst中文也分表);
     }
 
     private Tst中文也分表Table(Name alias, Table<Tst中文也分表Record> aliased) {
@@ -126,7 +126,7 @@ public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record>
      */
     @Override
     public UniqueKey<Tst中文也分表Record> getPrimaryKey() {
-        return Internal.createUniqueKey(pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table.TST_中文也分表, "KEY_TST_中文也分表_PRIMARY", pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table.TST_中文也分表.ID);
+        return Internal.createUniqueKey(pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table.Tst中文也分表, "KEY_tst_中文也分表_PRIMARY", pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table.Tst中文也分表.Id);
     }
 
     /**
@@ -135,7 +135,7 @@ public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record>
     @Override
     public List<UniqueKey<Tst中文也分表Record>> getKeys() {
         return Arrays.<UniqueKey<Tst中文也分表Record>>asList(
-              Internal.createUniqueKey(pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table.TST_中文也分表, "KEY_TST_中文也分表_PRIMARY", pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table.TST_中文也分表.ID)
+              Internal.createUniqueKey(pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table.Tst中文也分表, "KEY_tst_中文也分表_PRIMARY", pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table.Tst中文也分表.Id)
         );
     }
 

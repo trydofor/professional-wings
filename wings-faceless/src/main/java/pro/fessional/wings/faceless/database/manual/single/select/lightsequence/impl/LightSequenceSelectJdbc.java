@@ -22,14 +22,14 @@ public class LightSequenceSelectJdbc implements LightSequenceSelect {
 
     private RowMapper<NextStep> mapperNextStep = (rs, rowNum) -> {
         NextStep one = new NextStep();
-        one.setNextVal(rs.getLong("NEXT_VAL"));
-        one.setStepVal(rs.getInt("STEP_VAL"));
+        one.setNextVal(rs.getLong("next_val"));
+        one.setStepVal(rs.getInt("step_val"));
         return one;
     };
 
     @Override
     public Optional<NextStep> selectOneLock(int block, String name) {
-        String sql = "SELECT NEXT_VAL, STEP_VAL FROM SYS_LIGHT_SEQUENCE WHERE BLOCK_ID=? AND SEQ_NAME=? FOR UPDATE";
+        String sql = "SELECT next_val, step_val FROM sys_light_sequence WHERE block_id=? AND seq_name=? FOR UPDATE";
         List<NextStep> list = jdbcTemplate.query(sql, mapperNextStep, block, name);
         int size = list.size();
         if (size == 0) {
@@ -43,15 +43,15 @@ public class LightSequenceSelectJdbc implements LightSequenceSelect {
 
     private RowMapper<NameNextStep> mapperNameNextStep = (rs, rowNum) -> {
         NameNextStep one = new NameNextStep();
-        one.setSeqName(rs.getString("SEQ_NAME"));
-        one.setStepVal(rs.getInt("STEP_VAL"));
-        one.setStepVal(rs.getInt("STEP_VAL"));
+        one.setSeqName(rs.getString("seq_name"));
+        one.setStepVal(rs.getInt("step_val"));
+        one.setStepVal(rs.getInt("step_val"));
         return one;
     };
 
     @Override
     public List<NameNextStep> selectAllLock(int block) {
-        String sql = "SELECT SEQ_NAME, NEXT_VAL, STEP_VAL FROM SYS_LIGHT_SEQUENCE WHERE BLOCK_ID=? FOR UPDATE";
+        String sql = "SELECT seq_name, next_val, step_val FROM sys_light_sequence WHERE block_id=? FOR UPDATE";
         return jdbcTemplate.query(sql, mapperNameNextStep, block);
     }
 }

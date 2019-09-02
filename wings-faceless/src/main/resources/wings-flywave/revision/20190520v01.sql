@@ -1,30 +1,30 @@
-CREATE TABLE `SYS_LIGHT_SEQUENCE`
+CREATE TABLE `sys_light_sequence`
 (
-  `SEQ_NAME` varchar(100) NOT NULL COMMENT '序列名',
-  `BLOCK_ID` int(11)      NOT NULL DEFAULT 0 COMMENT '分块序号',
-  `NEXT_VAL` bigint(20)   NOT NULL DEFAULT '1' COMMENT '下一个序号',
-  `STEP_VAL` int(11)      NOT NULL DEFAULT '100' COMMENT '序列步长',
-  `COMMENTS` varchar(200) NOT NULL COMMENT '注释说明',
-  PRIMARY KEY (`SEQ_NAME`, `BLOCK_ID`)
+  `seq_name` varchar(100) NOT NULL COMMENT '序列名',
+  `block_id` int(11)      NOT NULL DEFAULT 0 COMMENT '分块序号',
+  `next_val` bigint(20)   NOT NULL DEFAULT '1' COMMENT '下一个序号',
+  `step_val` int(11)      NOT NULL DEFAULT '100' COMMENT '序列步长',
+  `comments` varchar(200) NOT NULL COMMENT '注释说明',
+  PRIMARY KEY (`seq_name`, `block_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='序号生成器';
 
-CREATE TABLE `SYS_COMMIT_JOURNAL`
+CREATE TABLE `sys_commit_journal`
 (
-  `ID`         bigint(20)   NOT NULL COMMENT '主键',
-  `CREATE_DT`  datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日时',
-  `EVENT_NAME` varchar(200) NOT NULL COMMENT '事件名称',
-  `TARGET_KEY` varchar(200) NOT NULL DEFAULT '' COMMENT '目标数据特征',
-  `LOGIN_INFO` text COMMENT '登陆信息，用户，终端等',
-  `OTHER_INFO` text COMMENT '其他信息，业务侧自定义',
-  PRIMARY KEY (`ID`)
+  `id`         bigint(20)   NOT NULL COMMENT '主键',
+  `create_dt`  datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日时',
+  `event_name` varchar(200) NOT NULL COMMENT '事件名称',
+  `target_key` varchar(200) NOT NULL DEFAULT '' COMMENT '目标数据特征',
+  `login_info` text COMMENT '登陆信息，用户，终端等',
+  `other_info` text COMMENT '其他信息，业务侧自定义',
+  PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='变更日志';
 
--- SYS_LIGHT_SEQUENCE@plain
-INSERT INTO `SYS_LIGHT_SEQUENCE` (`SEQ_NAME`, `BLOCK_ID`, `NEXT_VAL`, `STEP_VAL`, `COMMENTS`)
-VALUES ('SYS_COMMIT_JOURNAL', 0, 1, 100, 'SYS_COMMIT_JOURNAL');
+-- sys_light_sequence@plain
+INSERT INTO `sys_light_sequence` (`seq_name`, `block_id`, `next_val`, `step_val`, `comments`)
+VALUES ('sys_commit_journal', 0, 1, 100, 'sys_commit_journal');
 
--- SYS_COMMIT_JOURNAL@plain
-INSERT INTO `SYS_COMMIT_JOURNAL`(`ID`, `EVENT_NAME`)
-VALUES (0, 'SYSTEM_MANUAL_INIT');
+-- sys_commit_journal@plain
+INSERT INTO `sys_commit_journal`(`id`, `event_name`)
+VALUES (0, 'system_manual_init');

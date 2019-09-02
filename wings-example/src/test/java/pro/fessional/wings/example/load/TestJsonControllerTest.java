@@ -24,8 +24,12 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TestJsonControllerTest {
 
-    @Autowired
     private TestRestTemplate tmpl;
+
+    @Autowired
+    public void setTmpl(TestRestTemplate tmpl) {
+        this.tmpl = tmpl;
+    }
 
     @Test
     public void jsonIt() throws InterruptedException {

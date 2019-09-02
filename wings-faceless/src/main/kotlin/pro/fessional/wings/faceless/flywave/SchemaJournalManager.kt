@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicReference
 import javax.sql.DataSource
 
 /**
- * 控制`SYS_SCHEMA_JOURNAL`中的`LOG_UPDATE`和`LOG_DELETE`，
+ * 控制`sys_schema_journal`中的`log_update`和`log_delete`，
  * 进而实现自动的Trigger创建和删除。
  *
  * @author trydofor
@@ -75,13 +75,13 @@ class SchemaJournalManager(
     fun checkAndInitDdl(table: String, ddl: JournalDdl, commitId: Long) {
         logger.info("start check journal table={}", table)
         val selectSql = """
-                SELECT DDL_UPDTBL, DDL_UPDTRG, DDL_DELTBL, DDL_DELTRG, LOG_UPDATE, LOG_DELETE
-                FROM SYS_SCHEMA_JOURNAL
-                WHERE TABLE_NAME = ?
+                SELECT ddl_updtbl, ddl_updtrg, ddl_deltbl, ddl_deltrg, log_update, log_delete
+                FROM sys_schema_journal
+                WHERE table_name = ?
                 """.trimIndent()
         val insertSql = """
-                INSERT INTO SYS_SCHEMA_JOURNAL
-                (TABLE_NAME, COMMIT_ID, DDL_UPDTBL, DDL_UPDTRG, DDL_DELTBL, DDL_DELTRG)
+                INSERT INTO sys_schema_journal
+                (table_name, commit_id, ddl_updtbl, ddl_updtrg, ddl_deltbl, ddl_deltrg)
                 VALUES (?, ?, ?, ?, ?, ?)
                 """.trimIndent()
 
@@ -90,12 +90,12 @@ class SchemaJournalManager(
             val tmpl = SimpleJdbcTemplate(plainDs, plainName)
             val dbVal = HashMap<String, String>()
             tmpl.query(selectSql, table) {
-                dbVal["DDL_UPDTBL"] = it.getString("DDL_UPDTBL")
-                dbVal["DDL_UPDTRG"] = it.getString("DDL_UPDTRG")
-                dbVal["DDL_DELTBL"] = it.getString("DDL_DELTBL")
-                dbVal["DDL_DELTRG"] = it.getString("DDL_DELTRG")
-                dbVal["LOG_UPDATE"] = it.getString("LOG_UPDATE")
-                dbVal["LOG_DELETE"] = it.getString("LOG_DELETE")
+                dbVal["ddl_updtbl"] = it.getString("ddl_updtbl")
+                dbVal["ddl_updtrg"] = it.getString("ddl_updtrg")
+                dbVal["ddl_deltbl"] = it.getString("ddl_deltbl")
+                dbVal["ddl_deltrg"] = it.getString("ddl_deltrg")
+                dbVal["log_update"] = it.getString("log_update")
+                dbVal["log_delete"] = it.getString("log_delete")
             }
 
             if (dbVal.isEmpty()) {
@@ -110,12 +110,12 @@ class SchemaJournalManager(
             // check
             val updSql = StringBuilder()
             val updVal = LinkedList<Any>()
-            val updNot = notApply(dbVal["LOG_UPDATE"])
-            val delNot = notApply(dbVal["LOG_DELETE"])
+            val updNot = notApply(dbVal["log_update"])
+            val delNot = notApply(dbVal["log_delete"])
 
-            if (ddl.updTbl != dbVal["DDL_UPDTBL"]) {
+            if (ddl.updTbl != dbVal["ddl_updtbl"]) {
                 if (updNot) {
-                    updSql.append("DDL_UPDTBL = ?, ")
+                    updSql.append("ddl_updtbl = ?, ")
                     updVal.add(ddl.updTbl)
                     logger.warn("diff ddl-upd-tbl, update it. table={}, db={}", table, plainName)
                 } else {
@@ -124,9 +124,9 @@ class SchemaJournalManager(
                 }
             }
 
-            if (ddl.updTrg != dbVal["DDL_UPDTRG"]) {
+            if (ddl.updTrg != dbVal["ddl_updtrg"]) {
                 if (updNot) {
-                    updSql.append("DDL_UPDTRG = ?, ")
+                    updSql.append("ddl_updtrg = ?, ")
                     updVal.add(ddl.updTrg)
                     logger.warn("diff ddl-upd-trg, update it. table={}, db={}", table, plainName)
                 } else {
@@ -135,9 +135,9 @@ class SchemaJournalManager(
                 }
             }
 
-            if (ddl.delTbl != dbVal["DDL_DELTBL"]) {
+            if (ddl.delTbl != dbVal["ddl_deltbl"]) {
                 if (delNot) {
-                    updSql.append("DDL_DELTBL = ?, ")
+                    updSql.append("ddl_deltbl = ?, ")
                     updVal.add(ddl.delTbl)
                     logger.warn("diff ddl-del-tbl, update it. table={}, db={}", table, plainName)
                 } else {
@@ -145,9 +145,9 @@ class SchemaJournalManager(
                     continue
                 }
             }
-            if (ddl.delTrg != dbVal["DDL_DELTRG"]) {
+            if (ddl.delTrg != dbVal["ddl_deltrg"]) {
                 if (delNot) {
-                    updSql.append("DDL_DELTRG = ?, ")
+                    updSql.append("ddl_deltrg = ?, ")
                     updVal.add(ddl.delTrg)
                     logger.warn("diff ddl-del-trg, update it. table={}, db={}", table, plainName)
                 } else {
@@ -162,11 +162,11 @@ class SchemaJournalManager(
                 updVal.add(commitId)
                 updVal.add(table)
                 val rst = tmpl.update("""
-                        UPDATE SYS_SCHEMA_JOURNAL SET
+                        UPDATE sys_schema_journal SET
                             $updSql
-                            MODIFY_DT = NOW(),
-                            COMMIT_ID = ?
-                        WHERE TABLE_NAME = ?
+                            modify_dt = NOW(),
+                            commit_id = ?
+                        WHERE table_name = ?
                         """.trimIndent(), *updVal.toArray())
                 if (rst != 1) {
                     throw IllegalStateException("failed to update table=$table, db=$plainName")
@@ -185,36 +185,36 @@ class SchemaJournalManager(
         val selectSql = if (isUpdate) {
             """
             SELECT
-                DDL_UPDTBL DDL_TBL,
-                DDL_UPDTRG DDL_TRG,
-                LOG_UPDATE APPLY_DT
-            FROM SYS_SCHEMA_JOURNAL
-            WHERE TABLE_NAME = ?
+                ddl_updtbl ddl_tbl,
+                ddl_updtrg ddl_trg,
+                log_update apply_dt
+            FROM sys_schema_journal
+            WHERE table_name = ?
             """.trimIndent()
         } else {
             """
             SELECT
-                DDL_DELTBL DDL_TBL,
-                DDL_DELTRG DDL_TRG,
-                LOG_DELETE APPLY_DT
-            FROM SYS_SCHEMA_JOURNAL
-            WHERE TABLE_NAME = ?
+                ddl_deltbl ddl_tbl,
+                ddl_deltrg ddl_trg,
+                log_delete apply_dt
+            FROM sys_schema_journal
+            WHERE table_name = ?
             """.trimIndent()
         }
 
         val updateSql = if (isUpdate) {
             """
-            UPDATE SYS_SCHEMA_JOURNAL SET
-                LOG_UPDATE = NOW(),
-                COMMIT_ID = ?
-            WHERE TABLE_NAME = ?
+            UPDATE sys_schema_journal SET
+                log_update = NOW(),
+                commit_id = ?
+            WHERE table_name = ?
             """.trimIndent()
         } else {
             """
-            UPDATE SYS_SCHEMA_JOURNAL SET
-                LOG_DELETE = NOW(),
-                COMMIT_ID = ?
-            WHERE TABLE_NAME = ?
+            UPDATE sys_schema_journal SET
+                log_delete = NOW(),
+                commit_id = ?
+            WHERE table_name = ?
             """.trimIndent()
         }
 
@@ -224,9 +224,9 @@ class SchemaJournalManager(
             val tmpl = SimpleJdbcTemplate(plainDs, plainName)
             val vals = AtomicReference<Triple<String, String, String>>()
             tmpl.query(selectSql, table) {
-                vals.set(Triple(it.getString("DDL_TBL"),
-                        it.getString("DDL_TRG"),
-                        it.getString("APPLY_DT")
+                vals.set(Triple(it.getString("ddl_tbl"),
+                        it.getString("ddl_trg"),
+                        it.getString("apply_dt")
                 ))
             }
 

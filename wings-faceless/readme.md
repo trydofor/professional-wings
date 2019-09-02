@@ -14,8 +14,8 @@
 `flyway`是个不错的选择，但用它有点牛刀杀鸡，所以新造个轮子叫`flywave`，可以，
 
  * 根据 `/wings-flywave/revision/*.sql` 完成数据库和数据的统一管理。
- * 根据 `SYS_SCHEMA_VERSION`表，控制数据库版本，升级和降级。
- * 根据 `SYS_SCHEMA_JOURNAL`表，完成自动记录数据变更。
+ * 根据 `sys_schema_version`表，控制数据库版本，升级和降级。
+ * 根据 `sys_schema_journal`表，完成自动记录数据变更。
 
 实际项目经验中，数据库只存储数据，不存业务逻辑。所以，必须使用基本的SQL和数据库功能。
 这些功能包括，表，索引，触发器。不包括，视图，存储过程，外键约束及个别特性。
@@ -60,10 +60,10 @@ sql的书写规则详见[数据库约定](/wings-faceless/src/main/resources/win
 任何数据变动，都应该有`COMMIT_ID`，记录下事件信息（人，事件，业务信息等）。
 最新的数据留在`本表`，旧数据通过`trigger`插入`跟踪表`
 
-`journal`通过`SYS_SCHEMA_JOURNAL`生成`跟踪表`和`触发器`。
+`journal`通过`sys_schema_journal`生成`跟踪表`和`触发器`。
 
- * 根据`LOG_UPDATE`创建 `before update` 触发器。
- * 根据`LOG_DELETE`创建 `before delete` 触发器。
+ * 根据`log_update`创建 `before update` 触发器。
+ * 根据`log_delete`创建 `before delete` 触发器。
  
 通过配置文件指定模板来定义DDL，默认设置参考`wings-flywave.properties`。
 默认分表有自己的`更新表`(`TABLE_#$UPD`)，但共享同一个`删除表`(`TABLE$DEL`)。
@@ -97,12 +97,12 @@ sql的书写规则详见[数据库约定](/wings-faceless/src/main/resources/win
  * 指定`本表`在SQL语句中不存在时，不影响SQL执行，只是忽略`跟踪表`替换。
 
 ``` sql
--- @shard 强制使用shard数据源，自动解析本表为 SYS_LIGHT_SEQUENCE
-DROP TABLE IF EXISTS `SYS_LIGHT_SEQUENCE`;
--- @plain 强制使用原始数据源，自动解析本表为SYS_COMMIT_JOURNAL
-DROP TABLE IF EXISTS `SYS_COMMIT_JOURNAL`;
--- WGS_ORDER@plain 强制使用原始数据源，并直接指定本表为WGS_ORDER，因为语法中没有本表。
-DROP TRIGGER IF EXISTS `WGS_ORDER$BD`;
+-- @shard 强制使用shard数据源，自动解析本表为 sys_light_sequence
+DROP TABLE IF EXISTS `sys_light_sequence`;
+-- @plain 强制使用原始数据源，自动解析本表为sys_commit_journal
+DROP TABLE IF EXISTS `sys_commit_journal`;
+-- wgs_order@plain 强制使用原始数据源，并直接指定本表为wgs_order，因为语法中没有本表。
+DROP TRIGGER IF EXISTS `wgs_order$bd`;
 ```
 
 关于注释，只解析和忽略整行的，不处理行尾或行中的注释。

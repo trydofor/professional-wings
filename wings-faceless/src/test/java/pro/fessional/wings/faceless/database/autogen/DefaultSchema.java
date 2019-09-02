@@ -30,7 +30,7 @@ import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Ta
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class DefaultSchema extends SchemaImpl {
 
-    private static final long serialVersionUID = -1129370018;
+    private static final long serialVersionUID = 1028077625;
 
     /**
      * The reference instance of <code></code>
@@ -38,9 +38,9 @@ public class DefaultSchema extends SchemaImpl {
     public static final DefaultSchema DEFAULT_SCHEMA = new DefaultSchema();
 
     /**
-     * The table <code>TST_中文也分表</code>.
+     * The table <code>tst_中文也分表</code>.
      */
-    public final Tst中文也分表Table TST_中文也分表 = pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table.TST_中文也分表;
+    public final Tst中文也分表Table Tst中文也分表 = pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table.Tst中文也分表;
 
     /**
      * No further instances allowed
@@ -67,6 +67,6 @@ public class DefaultSchema extends SchemaImpl {
 
     private final List<Table<?>> getTables0() {
         return Arrays.<Table<?>>asList(
-            Tst中文也分表Table.TST_中文也分表);
+            Tst中文也分表Table.Tst中文也分表);
     }
 }

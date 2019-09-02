@@ -23,9 +23,7 @@ public interface LightIdService {
             char c = name.charAt(i);
             if (c >= 'A' && c <= 'Z') {
                 if (i > 0) sb.append('_');
-                sb.append(c);
-            } else if (c >= 'a' && c <= 'z') {
-                sb.append((char) (c - 32));
+                sb.append((char) (c + 32));
             } else {
                 sb.append(c);
             }

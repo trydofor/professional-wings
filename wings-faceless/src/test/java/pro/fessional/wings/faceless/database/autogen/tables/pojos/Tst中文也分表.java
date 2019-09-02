@@ -18,7 +18,7 @@ import pro.fessional.wings.faceless.database.autogen.tables.interfaces.ITst中�
 
 
 /**
- * The table <code>wings_0.TST_中文也分表</code>.
+ * The table <code>wings_0.tst_中文也分表</code>.
  */
 @Generated(
     value = {
@@ -29,10 +29,10 @@ import pro.fessional.wings.faceless.database.autogen.tables.interfaces.ITst中�
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @Entity
-@Table(name = "TST_中文也分表")
+@Table(name = "tst_中文也分表")
 public class Tst中文也分表 implements ITst中文也分表 {
 
-    private static final long serialVersionUID = -1660500908;
+    private static final long serialVersionUID = 2102880340;
 
     private Long          id;
     private LocalDateTime createDt;
@@ -69,7 +69,7 @@ public class Tst中文也分表 implements ITst中文也分表 {
     }
 
     @Id
-    @Column(name = "ID", unique = true, nullable = false, precision = 19)
+    @Column(name = "id", unique = true, nullable = false, precision = 19)
     @NotNull
     @Override
     public Long getId() {
@@ -81,7 +81,7 @@ public class Tst中文也分表 implements ITst中文也分表 {
         this.id = id;
     }
 
-    @Column(name = "CREATE_DT", nullable = false)
+    @Column(name = "create_dt", nullable = false)
     @Override
     public LocalDateTime getCreateDt() {
         return this.createDt;
@@ -92,7 +92,7 @@ public class Tst中文也分表 implements ITst中文也分表 {
         this.createDt = createDt;
     }
 
-    @Column(name = "MODIFY_DT", nullable = false)
+    @Column(name = "modify_dt", nullable = false)
     @Override
     public LocalDateTime getModifyDt() {
         return this.modifyDt;
@@ -103,7 +103,7 @@ public class Tst中文也分表 implements ITst中文也分表 {
         this.modifyDt = modifyDt;
     }
 
-    @Column(name = "COMMIT_ID", nullable = false, precision = 19)
+    @Column(name = "commit_id", nullable = false, precision = 19)
     @NotNull
     @Override
     public Long getCommitId() {
@@ -115,7 +115,7 @@ public class Tst中文也分表 implements ITst中文也分表 {
         this.commitId = commitId;
     }
 
-    @Column(name = "LOGIN_INFO", length = 65535)
+    @Column(name = "login_info", length = 65535)
     @Size(max = 65535)
     @Override
     public String getLoginInfo() {
@@ -127,7 +127,7 @@ public class Tst中文也分表 implements ITst中文也分表 {
         this.loginInfo = loginInfo;
     }
 
-    @Column(name = "OTHER_INFO", length = 65535)
+    @Column(name = "other_info", length = 65535)
     @Size(max = 65535)
     @Override
     public String getOtherInfo() {
