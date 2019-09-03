@@ -28,7 +28,7 @@ class SchemaShardingManagerTest {
     lateinit var schemaRevisionManager: SchemaRevisionManager
 
     @Test
-    fun test1InitSharding(){
+    fun test1InitSharding() {
         val sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH)
         schemaRevisionManager.checkAndInitSql(sqls, 0)
         schemaRevisionManager.publishRevision(2019052001, 0)

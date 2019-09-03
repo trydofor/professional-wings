@@ -216,3 +216,11 @@ JOOQ参考资料
  * [批量操作 jdbc](https://www.jooq.org/doc/3.11/manual/sql-execution/batch-execution/)
  * [使用别名，支持分表](https://www.jooq.org/doc/3.11/manual/sql-building/table-expressions/aliased-tables/)
  * [SQL的执行](https://www.jooq.org/doc/3.11/manual/sql-execution/)
+
+## 2.7.测试用例
+
+`kotlin`中的测试用例，主要是场景演示。需要单个执行，确保成功。
+统一执行时，springboot为了有效使用资源，不会全部重新初始化`context`，
+这样会使有些`ApplicationListener`得不到触发，可能导致部分TestCase失败。
+
+发生部分失败部分成功时，重新执行失败部分，直到成功即可。

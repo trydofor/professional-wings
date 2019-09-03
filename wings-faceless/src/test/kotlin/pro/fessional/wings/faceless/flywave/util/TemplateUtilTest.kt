@@ -10,7 +10,6 @@ import org.junit.Assert.*
  */
 class TemplateUtilTest {
 
-
     @Test
     fun one() {
         val txt = """CREATE TABLE `SYS_LIGHT_SEQUENCE` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'"""
