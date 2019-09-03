@@ -26,9 +26,10 @@
                 |.*\$log # 日志表
                 |.*\$upd # 日志表
                 |.*\$del # 日志表
+                |sys_commit_journal # 已近存在
+                |sys_light_sequence # jdbc处理
                 |sys_schema_journal # jdbc处理
                 |sys_schema_version # jdbc处理
-                |sys_light_sequence # jdbc处理
             </excludes>
 
             <schemaVersionProvider>

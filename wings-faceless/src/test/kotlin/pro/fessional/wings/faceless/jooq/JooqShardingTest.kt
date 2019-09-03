@@ -58,12 +58,13 @@ class JooqShardingTest {
     //@Ignore("手动执行，仅一次")
     fun test2Code() {
         test1Init()
+        val database = "wings_0"
         WingsCodeGenerator.builder()
                 .jdbcDriver("com.mysql.cj.jdbc.Driver")
-                .jdbcUrl("jdbc:mysql://127.0.0.1/wings_0")
+                .jdbcUrl("jdbc:mysql://127.0.0.1/${database}")
                 .jdbcUser("trydofor")
                 .jdbcPassword("moilioncircle")
-                .databaseSchema("wings_0")
+                .databaseSchema(database)
                 .databaseIncludes("tst_中文也分表")
                 .databaseVersionProvider("")
                 .targetPackage("pro.fessional.wings.faceless.database.autogen")

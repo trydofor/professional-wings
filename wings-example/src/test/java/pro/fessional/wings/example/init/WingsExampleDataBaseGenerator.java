@@ -17,7 +17,6 @@ import java.util.SortedMap;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Ignore("手动执行一次，初始化步骤")
 public class WingsExampleDataBaseGenerator {
 
     private SchemaRevisionManager schemaRevisionManager;
@@ -28,12 +27,24 @@ public class WingsExampleDataBaseGenerator {
     }
 
     @Test
+    @Ignore("手动执行一次，初始化步骤")
     public void initR520() {
         // 初始
         SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH);
         schemaRevisionManager.checkAndInitSql(sqls, 0);
 
-        // 升级
+        // 初始为可用状态
         schemaRevisionManager.publishRevision(SchemaRevisionManager.INIT2ND_REVISION, 0);
+    }
+
+    @Test
+    @Ignore("手动执行，版本更新时处理")
+    public void initOther() {
+//        String path = "classpath*:/wings-flywave/revision/**/*.sql"; // 全部类路径
+//        String path = "classpath:/wings-flywave/revision/**/*.sql";  // 当前类路径
+        String path = "file:src/main/resources/wings-flywave/revision/**/*.sql"; // 具体文件
+        SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionSqlScanner.scan(path);
+        schemaRevisionManager.checkAndInitSql(sqls, 0);
+        schemaRevisionManager.publishRevision(3L, 0);
     }
 }

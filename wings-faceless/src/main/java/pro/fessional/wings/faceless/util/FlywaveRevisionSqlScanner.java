@@ -23,6 +23,9 @@ public class FlywaveRevisionSqlScanner {
 
     /**
      * 把指定或默认位置的*.sql文件都加载进来，并按文件名的字母顺序排序。
+     * String path = "classpath*:/wings-flywave/revision/"; // 全部类路径
+     * String path = "classpath:/wings-flywave/revision/";  // 当前类路径
+     * String path = "file:src/main/resources/wings-flywave/revision/"; // 具体文件
      *
      * @param path 按Spring的格式写，classpath*:,classpath:等，默认[REVISIONSQL_PATH]
      * @see PathMatchingResourcePatternResolver

@@ -37,7 +37,7 @@ object WingsCodeGenerator {
                 logger.info("delete [$del] target dir=${dir.absolutePath}")
 
                 val rst = ren.copyRecursively(dir, true)
-                logger.info("rename [$rst] to ${dir.absolutePath}")
+                logger.info("copy [$rst] to ${dir.absolutePath}")
                 tmp.deleteRecursively()
             } catch (e: Exception) {
                 logger.error("failed to copy file from ${ren.absolutePath}", e)
