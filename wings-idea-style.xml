@@ -1,0 +1,41 @@
+<code_scheme name="Wings-Idea" version="173">
+  <option name="SOFT_MARGINS" value="72,120,180" />
+  <JavaCodeStyleSettings>
+    <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="500" />
+    <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="500" />
+  </JavaCodeStyleSettings>
+  <JetCodeStyleSettings>
+    <option name="PACKAGES_TO_USE_STAR_IMPORTS">
+      <value>
+        <package name="kotlinx.android.synthetic" withSubpackages="true" static="false" />
+      </value>
+    </option>
+    <option name="NAME_COUNT_TO_USE_STAR_IMPORT" value="2147483647" />
+    <option name="NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS" value="2147483647" />
+  </JetCodeStyleSettings>
+  <MarkdownNavigatorCodeStyleSettings>
+    <option name="RIGHT_MARGIN" value="72" />
+  </MarkdownNavigatorCodeStyleSettings>
+  <Properties>
+    <option name="KEEP_BLANK_LINES" value="true" />
+  </Properties>
+  <SqlCodeStyleSettings version="2">
+    <option name="KEYWORD_CASE" value="0" />
+    <option name="TYPE_CASE" value="0" />
+    <option name="TABLE_OPENING" value="1" />
+    <option name="TABLE_CONTENT" value="2" />
+    <option name="TABLE_CLOSING" value="3" />
+  </SqlCodeStyleSettings>
+  <codeStyleSettings language="JAVA">
+    <option name="RIGHT_MARGIN" value="180" />
+    <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
+    <option name="ALIGN_MULTILINE_ASSIGNMENT" value="true" />
+    <option name="ALIGN_MULTILINE_ARRAY_INITIALIZER_EXPRESSION" value="true" />
+    <option name="WRAP_FIRST_METHOD_IN_CALL_CHAIN" value="true" />
+    <option name="KEEP_SIMPLE_BLOCKS_IN_ONE_LINE" value="true" />
+    <option name="KEEP_SIMPLE_METHODS_IN_ONE_LINE" value="true" />
+    <option name="KEEP_SIMPLE_LAMBDAS_IN_ONE_LINE" value="true" />
+    <option name="KEEP_SIMPLE_CLASSES_IN_ONE_LINE" value="true" />
+    <option name="PLACE_ASSIGNMENT_SIGN_ON_NEXT_LINE" value="true" />
+  </codeStyleSettings>
+</code_scheme>
