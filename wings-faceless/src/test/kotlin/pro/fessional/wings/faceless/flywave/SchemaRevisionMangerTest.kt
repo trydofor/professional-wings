@@ -45,7 +45,7 @@ open class SchemaRevisionMangerTest {
         schemaRevisionManager.publishRevision(INIT1ST_REVISION, -1)
     }
 
-    private val test3rdRevision = 2019061501L
+    private val test3rdRevision = 20190615_01L
     @Test
     fun test4ForceUpdateSql() {
         schemaRevisionManager.forceUpdateSql(test3rdRevision, """

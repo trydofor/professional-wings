@@ -5,6 +5,7 @@ import org.jooq.meta.jaxb.Configuration
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.nio.file.Files
+import kotlin.text.Charsets.UTF_8
 
 /**
  * @author trydofor
@@ -15,35 +16,31 @@ object WingsCodeGenerator {
     val logger = LoggerFactory.getLogger(WingsCodeGenerator::class.java)
     const val JOOQ_XML = "/wings-flywave/jooq-codegen-faceless.xml"
 
+    /**
+     * 生成 Jooq 代码
+     *
+     * @param conf 配置文件，建议使用 #Builder 生产。
+     * @param incremental 是否增量生成，即不删除本次中不存在的文件。
+     */
     @JvmStatic
-    fun generate(conf: Configuration = config(), safe: Boolean = true) {
-        if (safe) {
-            val src = conf.generator.target.directory
-            val pkg = conf.generator.target.packageName.replace('.', '/')
-            // tmp dir
-            val tmp = Files.createTempDirectory("jooq-safe-gen").toFile()
+    fun generate(conf: Configuration = config(), incremental: Boolean = true) {
+        val src = conf.generator.target.directory
+        val pkg = conf.generator.target.packageName.replace('.', '/')
+        // tmp dir
+        val tmp = Files.createTempDirectory("jooq-safe-gen").toFile()
 
-            val tdr = tmp.absolutePath
-            conf.generator.target.directory = tdr
-            logger.info("safely generate, tmp-dir=$tdr")
+        val tdr = tmp.absolutePath
+        conf.generator.target.directory = tdr
+        logger.info("safely generate, tmp-dir=$tdr")
 
-            // generator
-            GenerationTool.generate(conf)
-            // clean and move
-            val ren = File(tmp, pkg)
-            try {
-                val dir = File(src, pkg)
-                val del = dir.deleteRecursively()
-                logger.info("delete [$del] target dir=${dir.absolutePath}")
-
-                val rst = ren.copyRecursively(dir, true)
-                logger.info("copy [$rst] to ${dir.absolutePath}")
-                tmp.deleteRecursively()
-            } catch (e: Exception) {
-                logger.error("failed to copy file from ${ren.absolutePath}", e)
-            }
-        } else {
-            GenerationTool.generate(conf)
+        // generator
+        GenerationTool.generate(conf)
+        // clean and move
+        try {
+            safeCopy(tmp.absolutePath, src, pkg, incremental)
+            tmp.deleteRecursively()
+        } catch (e: Exception) {
+            logger.error("failed to copy file from $tdr", e)
         }
     }
 
@@ -53,10 +50,60 @@ object WingsCodeGenerator {
     @JvmStatic
     fun config(): Configuration = GenerationTool.load(this.javaClass.getResourceAsStream(JOOQ_XML))
 
+    private fun safeCopy(tmp: String, src: String, pkg: String, inc: Boolean) {
+
+        val from = File(tmp, pkg).walkTopDown().filter { it.isFile }.map {
+            it.absolutePath.substringAfter(tmp).removePrefix("/") to it
+        }.toMap()
+
+        val srcf = File(src, pkg)
+        val dest = srcf.walkTopDown().filter { it.isFile }.map {
+            it.absolutePath.substringAfter(src).removePrefix("/") to it
+        }.toMap()
+
+        if (!inc) {
+            logger.info("not incremental, Removing excess files in $src")
+            val over = from.minus(dest.keys)
+            for ((k, f) in over) {
+                val r = f.delete()
+                logger.info("delete [$r] excess file=$k")
+            }
+        }
+
+        // date = "2019-09-09T01:33:51.762Z",
+        // serialVersionUID = 319604016;
+        val reg = """date\s*=\s*"[^"]+"|serialVersionUID\s*=\s*-?[0-9_,]+""".toRegex()
+        for ((k, f) in from) {
+            val d = dest[k]
+            if (d == null) {
+                val t = File(srcf, k)
+                f.copyTo(t, true)
+                logger.info("create new file=$k")
+            } else {
+                val ft = f.readText(UTF_8).replace(reg, "")
+                val dt = d.readText(UTF_8).replace(reg, "")
+                if (ft == dt) {
+                    logger.info("skip main same file=$k")
+                } else {
+                    f.copyTo(d, true)
+                    logger.info("copy new file=$k")
+                }
+            }
+        }
+    }
+
     class Builder(val conf: Configuration) {
-        private var safe = true
-        fun unsafe() = apply { safe = false }
-        fun buildAndGenerate() = generate(conf, safe)
+        private var incr = false
+        /**
+         * 增量生成，即不删除本次中不存在的文件
+         * @param t 是否增量生成
+         */
+        fun incremental(t: Boolean) = apply { incr = t }
+
+        /**
+         * 直接生成代码
+         */
+        fun buildAndGenerate() = generate(conf, incr)
 
         fun jdbcDriver(str: String) = apply { this.conf.jdbc.driver = str }
         fun jdbcUrl(str: String) = apply { this.conf.jdbc.url = str }

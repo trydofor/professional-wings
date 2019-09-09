@@ -3,6 +3,7 @@ package pro.fessional.wings.faceless.jooq
 import org.apache.shardingsphere.api.hint.HintManager
 import org.jooq.DSLContext
 import org.junit.FixMethodOrder
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
@@ -51,11 +52,11 @@ class JooqShardingTest {
     fun test1Init() {
         val sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH)
         schemaRevisionManager.checkAndInitSql(sqls, 0)
-        schemaRevisionManager.publishRevision(2019052101, 0)
+        schemaRevisionManager.publishRevision(20190521_01, 0)
     }
 
     @Test
-    //@Ignore("手动执行，仅一次")
+    @Ignore("手动执行，仅一次")
     fun test2Code() {
         test1Init()
         val database = "wings_0"

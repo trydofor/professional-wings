@@ -42,10 +42,10 @@ class WingsFlywaveShardJournalSample {
 
         // 升级
         schemaRevisionManager.publishRevision(SchemaRevisionManager.INIT2ND_REVISION, 0)
-        schemaRevisionManager.publishRevision(2019052101, 0)
+        schemaRevisionManager.publishRevision(20190521_01, 0)
 
         // 单库强升
-        schemaRevisionManager.forceApplyBreak(2019052102, 2, true, "master")
+        schemaRevisionManager.forceApplyBreak(20190521_02, 2, true, "master")
 
         // 分表
         val table = "tst_中文也分表"

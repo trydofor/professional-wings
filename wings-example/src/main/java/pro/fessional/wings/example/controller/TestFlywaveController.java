@@ -33,7 +33,7 @@ public class TestFlywaveController {
     @ResponseBody
     public String flywaveRevi(@RequestParam("revi") long revi) {
         StringBuilder sb = new StringBuilder();
-        if (revi <= 2019051201) {
+        if (revi <= 20190512_01) {
             sb.append("\n开始初始化");
             SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH);
             schemaRevisionManager.checkAndInitSql(sqls, 0);

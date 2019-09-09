@@ -1,4 +1,5 @@
 <code_scheme name="Wings-Idea" version="173">
+  <option name="RIGHT_MARGIN" value="180" />
   <option name="SOFT_MARGINS" value="72,120,180" />
   <JavaCodeStyleSettings>
     <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="500" />

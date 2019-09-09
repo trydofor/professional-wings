@@ -30,6 +30,6 @@ class WingsFlywaveInitDatabaseSample {
         schemaRevisionManager.checkAndInitSql(sqls, 0)
 
         // 升级
-        schemaRevisionManager.publishRevision(2019052001, 0)
+        schemaRevisionManager.publishRevision(20190520_01, 0)
     }
 }

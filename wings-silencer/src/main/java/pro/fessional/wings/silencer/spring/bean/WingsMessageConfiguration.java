@@ -48,8 +48,9 @@ public class WingsMessageConfiguration {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 
         if (StringUtils.hasText(properties.getBasename())) {
-            messageSource.addBasenames(StringUtils
-                    .commaDelimitedListToStringArray(StringUtils.trimAllWhitespace(properties.getBasename())));
+            String str = StringUtils.trimAllWhitespace(properties.getBasename());
+            String[] basename = StringUtils.commaDelimitedListToStringArray(str);
+            messageSource.addBasenames(basename);
         }
 
         if (properties.getEncoding() != null) {

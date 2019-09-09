@@ -19,8 +19,8 @@ interface SchemaRevisionManager {
 
     companion object {
         const val REVISIONSQL_PATH = "classpath*:/wings-flywave/revision/**/*.sql"
-        const val INIT1ST_REVISION = 2019051201L
-        const val INIT2ND_REVISION = 2019052001L
+        const val INIT1ST_REVISION = 2019_0512_01L
+        const val INIT2ND_REVISION = 2019_0520_01L
     }
 
     /**
@@ -56,7 +56,7 @@ interface SchemaRevisionManager {
      * 当存在但内容不一致，已APPLY则log error，否则更新
      * @param sqls 本地脚本
      * @param commitId 提交ID，参见Journal
-     * @see init1stRevision
+     * @see INIT1ST_REVISION
      */
     fun checkAndInitSql(sqls: SortedMap<Long, RevisionSql>, commitId: Long)
 

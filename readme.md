@@ -24,23 +24,36 @@
  * [Apache ShardingSphere](https://shardingsphere.apache.org/index_zh.html)
  * [Apache ServiceComb](http://servicecomb.apache.org/cn/)
 
-## 0.3.命名规范
+## 0.3.命名风格
 
-Java规范，遵循标准的java规范，但**可读性优先**。
+使用`idea`，可以直接在`Code Style`中导入`wings-idea-style.xml`。
+
+### 0.3.1.Java风格，遵循标准的java规范，但**可读性优先**。
 
  * `static final` 不一定全大写。如`logger`比`LOG`可读性好。
  * 全大写名词（缩写或专有）只首字母大写。`Json`,`Html`,`Id`。
  * 英文无法表达的业务词汇及行业黑话，不要用拼音，用中文。`落地配`。
- * 把4-8字母的单词都背会。
+ * 要求4-8字母的单词都记住。
  
-Sql规范，`snake_case`，即全小写，下划线分割，小写词比大写容易识别。
+### 0.3.2.Sql风格，`snake_case`，即全小写，下划线分割，小写词比大写容易识别。
 
  * 数据库，表名，字段名，全小写。
- * SQL关键词，内置词等建议大写，以区别。
+ * SQL关键词，内置词等建议`大写`，以区别。
  * `index`以`ix_`,'uq_',`ft_`,`pk_`区分索引类型。
  * `trigger`以`_bu`,`_bd`表示触发的时机。
+ 
+ **时间很神奇**
+ 
+系统内有2种时间`系统时间`和`本地时间`
 
-Spring规范，在`silencer`和`faceless`有详细说明。
+ * `系统日期时间`，目前采用固定时区，只使用`DATETIME`存储，字段以`_dt`结尾。
+ * `本地日期时间`，需要有`时区`信息配合才能表示准确的时间戳。
+ * `时区`使用`VARCHAR(100)`存储，以`_tz`结尾，内容为`ZoneId.getAvailableZoneIds()`。
+ * `日期时间`使用`DATETIME`存储，字段以`_ldt`结尾，推荐使用。
+ * `日期`使用`DATE`存储，字段以`_ldd`结尾，不推荐，使用`ldt`。
+ * `时间`使用`TIME`存储，字段以`_ltm`结尾，不推荐，使用`ldt`。
+
+### 0.3.3.Spring风格，在`silencer`和`faceless`有详细说明。
  * 不要使用`Field`注入，用`setter`或`constructor`，更好的测试。
 
 

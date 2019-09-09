@@ -31,8 +31,8 @@ class SchemaJournalManagerTest {
     fun test1InitSharding(){
         val sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH)
         schemaRevisionManager.checkAndInitSql(sqls, 0)
-        schemaRevisionManager.publishRevision(2019052001, 0)
-        schemaRevisionManager.publishRevision(2019052101, 0)
+        schemaRevisionManager.publishRevision(20190520_01, 0)
+        schemaRevisionManager.publishRevision(20190521_01, 0)
     }
 
     @Test
