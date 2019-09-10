@@ -63,7 +63,7 @@ object WingsCodeGenerator {
 
         if (!inc) {
             logger.info("not incremental, Removing excess files in $src")
-            val over = from.minus(dest.keys)
+            val over = dest.minus(from.keys)
             for ((k, f) in over) {
                 val r = f.delete()
                 logger.info("delete [$r] excess file=$k")
@@ -76,7 +76,7 @@ object WingsCodeGenerator {
         for ((k, f) in from) {
             val d = dest[k]
             if (d == null) {
-                val t = File(srcf, k)
+                val t = File(src, k)
                 f.copyTo(t, true)
                 logger.info("create new file=$k")
             } else {
