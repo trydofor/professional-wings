@@ -1,12 +1,16 @@
 package pro.fessional.wings.faceless.spring.bean;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.mirana.id.LightIdBufferedProvider;
 import pro.fessional.mirana.id.LightIdProvider;
+import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
+import pro.fessional.wings.faceless.service.lightid.impl.DefaultBlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.impl.LightIdMysqlLoader;
 import pro.fessional.wings.faceless.spring.conf.WingsLightIdInsertProperties;
 import pro.fessional.wings.faceless.spring.conf.WingsLightIdLoaderProperties;
@@ -31,6 +35,21 @@ public class WingsLightIdConfiguration {
         provider.setMaxCount(config.getMaxCount());
 
         return provider;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(BlockIdProvider.class)
+    @ConditionalOnProperty(prefix = "wings.lightid.block.provider", name = "type", havingValue = "sql")
+    public BlockIdProvider blockProviderSql(@Value("${wings.lightid.block.provider.para}") String sql,
+                                            JdbcTemplate template) {
+        return new DefaultBlockIdProvider(sql, template);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(BlockIdProvider.class)
+    @ConditionalOnProperty(prefix = "wings.lightid.block.provider", name = "type", havingValue = "fix")
+    public BlockIdProvider blockProviderSql(@Value("${wings.lightid.block.provider.para}") int id) {
+        return () -> id;
     }
 
     @Bean

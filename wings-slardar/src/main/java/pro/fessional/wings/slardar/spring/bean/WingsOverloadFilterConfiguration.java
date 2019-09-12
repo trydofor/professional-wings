@@ -1,11 +1,11 @@
 package pro.fessional.wings.slardar.spring.bean;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.cache2k.Cache;
-import org.cache2k.Cache2kBuilder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -135,10 +135,11 @@ public class WingsOverloadFilterConfiguration {
             } else {
                 int capacity = initCapacity(config);
                 requestCapacity.set(capacity);
-                this.spiderCache = new Cache2kBuilder<String, CalmDown>() {}
-                        .entryCapacity(capacity)
-                        .expireAfterWrite(config.requestInterval * config.requestCalmdown * 2, MILLISECONDS)
-                        .build();
+
+                this.spiderCache = Caffeine.newBuilder()
+                                           .maximumSize(capacity)
+                                           .expireAfterAccess(config.requestInterval * config.requestCalmdown * 2, MILLISECONDS)
+                                           .build();
             }
             if (config.responseInfoStat <= 0) {
                 responseCost = new AtomicLong[0];
@@ -204,10 +205,12 @@ public class WingsOverloadFilterConfiguration {
 
         @Override
         public void init(FilterConfig filterConfig) throws ServletException {
+            // ignore
         }
 
         @Override
         public void destroy() {
+            // ignore
         }
 
         private CalmDown letCalmDown(HttpServletRequest httpReq) {
@@ -221,7 +224,7 @@ public class WingsOverloadFilterConfiguration {
                 }
             }
 
-            return spiderCache.computeIfAbsent(ip, () -> new CalmDown(ip));
+            return spiderCache.get(ip, CalmDown::new);
         }
 
         //

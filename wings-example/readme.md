@@ -70,7 +70,8 @@ FLUSH PRIVILEGES;"
  * 配置一个本地redis做session和缓存，用docker的就好。
  
 使用`maven`管理依赖，可以有下面3中方式。
-方式一，以`parent`形式，当前工程形式。
+方式一，以`parent`形式，当前工程形式，可以继承wings的属性和配置。
+参考`pom.xml`，执行`mvn clean compile`，核心配置如下。
  ``` xml
  <parent>
     <groupId>pro.fessional</groupId>
@@ -79,7 +80,9 @@ FLUSH PRIVILEGES;"
 </parent>
  ```
  
-方式二，有其他`parent`以`import`形式，可以集成wings的属性和配置。
+方式二，有其他`parent`以`import`形式，也可以继承wings的属性和配置。
+参考`pom-import.xml`，执行`mvn -f pom-import.xml clean compile`，核心配置如下。
+
 ``` xml
 <dependencyManagement>
     <dependencies>
@@ -95,7 +98,14 @@ FLUSH PRIVILEGES;"
  ```
 
 方式三，直接依赖，简单明了，推荐使用。
+参考`pom-direct.xml`，执行`mvn -f pom-direct.xml clean compile`，核心配置如下。
+
 ``` xml
+<properties>
+    <wings.version>1.0.0-SNAPSHOT</wings.version>
+    <mirana.version>1.0.0-SNAPSHOT</mirana.version>
+</properties>
+
 <dependencies>
     <dependency>
         <groupId>pro.fessional</groupId>

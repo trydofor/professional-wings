@@ -12,70 +12,121 @@ import java.time.LocalTime
  * @author trydofor
  * @since 2019-05-13
  */
+@JvmName("isEmptyValue")
+fun String?.isEmptyValue(): Boolean {
+    return this == null || this == EmptyValue.VARCHAR
+}
 
-@JvmName("isEmptyInt")
+@JvmName("isEmptyValue")
 fun Int?.isEmptyValue(): Boolean {
     return this == null || this == EmptyValue.INT
 }
 
-@JvmName("isEmptyLong")
+@JvmName("isEmptyValue")
 fun Long?.isEmptyValue(): Boolean {
     return this == null || this == EmptyValue.BIGINT
 }
 
-@JvmName("isEmptyDouble")
+@JvmName("isEmptyValue")
 fun Double?.isEmptyValue(): Boolean {
     return this == null || this == EmptyValue.DOUBLE
 }
 
-@JvmName("isEmptyFloat")
+@JvmName("isEmptyValue")
 fun Float?.isEmptyValue(): Boolean {
     return this == null || this == EmptyValue.FLOAT
 }
 
-@JvmName("isEmptyDecimal")
+@JvmName("isEmptyValue")
 fun BigDecimal?.isEmptyValue(): Boolean {
     return this == null || this == EmptyValue.DECIMAL
 }
 
-@JvmName("isEmptyLocalDate")
+@JvmName("isEmptyValue")
 fun LocalDate?.isEmptyValue(): Boolean {
     return this == null || this == EmptyValue.DATE
 }
 
-@JvmName("isEmptyLocalTime")
+@JvmName("isEmptyValue")
 fun LocalTime?.isEmptyValue(): Boolean {
     return this == null || this == EmptyValue.TIME
 }
 
-@JvmName("isEmptyLocalDateTime")
+@JvmName("isEmptyValue")
 fun LocalDateTime?.isEmptyValue(): Boolean {
     return this == null || this == EmptyValue.DATE_TIME
 }
 
 // ///
+@JvmName("asEmptyValue")
+fun String?.asEmptyValue(): Boolean {
+    return this == null || this.trim().isEmpty()
+}
 
-@JvmName("asEmptyDouble")
+@JvmName("asEmptyValue")
+fun Int?.asEmptyValue(): Boolean {
+    return this == null || this == EmptyValue.INT
+}
+
+@JvmName("asEmptyValue")
+fun Long?.asEmptyValue(): Boolean {
+    return this == null || this == EmptyValue.BIGINT
+}
+
+@JvmName("asEmptyValue")
 fun Double?.asEmptyValue(): Boolean {
     return this == null || (this > EmptyValue.DOUBLE_AS_MIN && this < EmptyValue.DOUBLE_AS_MAX)
 }
 
-@JvmName("asEmptyFloat")
+@JvmName("asEmptyValue")
 fun Float?.asEmptyValue(): Boolean {
     return this == null || (this > EmptyValue.FLOAT_AS_MIN && this < EmptyValue.FLOAT_AS_MAX)
 }
 
-@JvmName("asEmptyDecimal")
+@JvmName("asEmptyValue")
 fun BigDecimal?.asEmptyValue(): Boolean {
     return this == null || (this > EmptyValue.DECIMAL_AS_MIN && this < EmptyValue.DECIMAL_AS_MAX)
 }
 
-@JvmName("asEmptyLocalTime")
+@JvmName("asEmptyValue")
+fun LocalDate?.asEmptyValue(): Boolean {
+    return this == null || (this.year == EmptyValue.DATE.year && this.month == EmptyValue.DATE.month && this.dayOfMonth == EmptyValue.DATE.dayOfMonth)
+}
+
+@JvmName("asEmptyValue")
 fun LocalTime?.asEmptyValue(): Boolean {
     return this == null || (this.hour == EmptyValue.TIME.hour && this.minute == EmptyValue.TIME.minute && this.second == EmptyValue.TIME.second)
 }
 
-@JvmName("asEmptyLocalDateTime")
+@JvmName("asEmptyValue")
 fun LocalDateTime?.asEmptyValue(): Boolean {
     return this == null || (this.toLocalDate().isEmptyValue() && this.toLocalTime().asEmptyValue())
 }
+
+//
+@JvmName("nullToEmpty")
+fun String?.nullToEmpty() = this ?: EmptyValue.VARCHAR
+
+@JvmName("nullToEmpty")
+fun Int?.nullToEmpty() = this ?: EmptyValue.INT
+
+@JvmName("nullToEmpty")
+fun Long?.nullToEmpty() = this ?: EmptyValue.BIGINT
+
+@JvmName("nullToEmpty")
+fun Double?.nullToEmpty() = this ?: EmptyValue.DOUBLE
+
+@JvmName("nullToEmpty")
+fun Float?.nullToEmpty() = this ?: EmptyValue.FLOAT
+
+@JvmName("nullToEmpty")
+fun BigDecimal?.nullToEmpty() = this ?: EmptyValue.DECIMAL
+
+@JvmName("nullToEmpty")
+fun LocalDate?.nullToEmpty() = this ?: EmptyValue.DATE
+
+@JvmName("nullToEmpty")
+fun LocalTime?.nullToEmpty() = this ?: EmptyValue.TIME
+
+@JvmName("nullToEmpty")
+fun LocalDateTime?.nullToEmpty() = this ?: EmptyValue.DATE_TIME
