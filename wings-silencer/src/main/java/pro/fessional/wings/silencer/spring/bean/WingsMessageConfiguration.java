@@ -14,6 +14,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StringUtils;
+import pro.fessional.wings.silencer.spring.help.CombinableMessageSource;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -41,30 +42,30 @@ public class WingsMessageConfiguration {
 
     @Primary
     @Bean
-    public MessageSource messageSource(MessageSourceProperties properties) {
+    public MessageSource messageSource(MessageSourceProperties properties, CombinableMessageSource parent) {
 
         // https://stackoverflow.com/questions/25121392/resourcebundle-not-found-for-messagesource
         // WARN ResourceBundle [messages] not found for MessageSource: Can't find bundle for base name messages
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        ReloadableResourceBundleMessageSource bootedSource = new ReloadableResourceBundleMessageSource();
 
         if (StringUtils.hasText(properties.getBasename())) {
             String str = StringUtils.trimAllWhitespace(properties.getBasename());
             String[] basename = StringUtils.commaDelimitedListToStringArray(str);
-            messageSource.addBasenames(basename);
+            bootedSource.addBasenames(basename);
         }
 
         if (properties.getEncoding() != null) {
-            messageSource.setDefaultEncoding(properties.getEncoding().name());
+            bootedSource.setDefaultEncoding(properties.getEncoding().name());
         } else {
-            messageSource.setDefaultEncoding("UTF-8");
+            bootedSource.setDefaultEncoding("UTF-8");
         }
-        messageSource.setFallbackToSystemLocale(properties.isFallbackToSystemLocale());
+        bootedSource.setFallbackToSystemLocale(properties.isFallbackToSystemLocale());
         Duration cacheDuration = properties.getCacheDuration();
         if (cacheDuration != null) {
-            messageSource.setCacheMillis(cacheDuration.toMillis());
+            bootedSource.setCacheMillis(cacheDuration.toMillis());
         }
-        messageSource.setAlwaysUseMessageFormat(properties.isAlwaysUseMessageFormat());
-        messageSource.setUseCodeAsDefaultMessage(properties.isUseCodeAsDefaultMessage());
+        bootedSource.setAlwaysUseMessageFormat(properties.isAlwaysUseMessageFormat());
+        bootedSource.setUseCodeAsDefaultMessage(properties.isUseCodeAsDefaultMessage());
 
         final LinkedHashSet<String> baseNames = new LinkedHashSet<>();
         try {
@@ -80,11 +81,19 @@ public class WingsMessageConfiguration {
 
         for (String bn : baseNames) {
             logger.info("add base-name=" + bn + " to message source");
-            messageSource.addBasenames(bn);
+            bootedSource.addBasenames(bn);
         }
 
-        return messageSource;
+        bootedSource.setParentMessageSource(parent);
+
+        return bootedSource;
     }
+
+    @Bean
+    public CombinableMessageSource combinedSource() {
+        return new CombinableMessageSource();
+    }
+
 
     private String parseBaseMessage(String path) {
         String lower = path.toLowerCase();

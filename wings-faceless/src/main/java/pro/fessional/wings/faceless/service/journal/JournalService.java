@@ -19,21 +19,29 @@ public interface JournalService {
     @AllArgsConstructor
     @NoArgsConstructor
     class Journal {
-        private long id;
-        private LocalDateTime createDt;
+        private long commitId;
+        private LocalDateTime commitDt;
         private String eventName = EmptyValue.VARCHAR;
         private String targetKey = EmptyValue.VARCHAR;
         private String loginInfo = EmptyValue.VARCHAR;
         private String otherInfo = EmptyValue.VARCHAR;
 
         public void commit(JournalAware po) {
-            po.setCommitId(id);
+            po.setCommitId(commitId);
             if (po.getCreateDt() == null) {
-                po.setCreateDt(createDt);
+                po.setCreateDt(commitDt);
                 po.setModifyDt(EmptyValue.DATE_TIME);
             } else {
-                po.setModifyDt(createDt);
+                po.setModifyDt(commitDt);
             }
+        }
+
+        public long getId() {
+            return commitId;
+        }
+
+        public LocalDateTime getCreateDt() {
+            return commitDt;
         }
     }
 

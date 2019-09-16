@@ -30,14 +30,14 @@ public class DefaultJournalService implements JournalService {
     public Journal commit(@NotNull String eventName, @Nullable String loginInfo, @Nullable String targetKey, @Nullable String otherInfo) {
 
         Journal journal = new Journal();
-        journal.setCreateDt(LocalDateTime.now());
+        journal.setCommitDt(LocalDateTime.now());
         journal.setEventName(eventName);
         journal.setLoginInfo(loginInfo);
         journal.setTargetKey(targetKey);
         journal.setOtherInfo(otherInfo);
 
         long id = lightIdService.getId(SysCommitJournalTable.class, blockIdProvider.getBlockId());
-        journal.setId(id);
+        journal.setCommitId(id);
 
         int rc = journalInsert.insert(journal);
         if (rc != 1) {

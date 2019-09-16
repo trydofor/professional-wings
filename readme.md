@@ -54,8 +54,18 @@
  * `时间`使用`TIME`存储，字段以`_ltm`结尾，不推荐，使用`ldt`。
 
 ### 0.3.3.Spring风格，在`silencer`和`faceless`有详细说明。
- * 不要使用`Field`注入，用`setter`或`constructor`，更好的测试。
 
+ * 不要使用`Field`注入，用`setter`或`constructor`，更好的测试。
+ * 优先使用`constructor`注入，用`lombok`的`@RequiredArgsConstructor`。
+ * 次之使用`setter`注入，`kotlin使用`@Autowired lateinit var`。
+
+### 0.3.4.属性文件风格
+
+ * 尽量使用`properties`和列编辑，`yml`的缩进有时会困扰。
+ * 一组关联属性，一个`properties`，分成文件便于管理。
+ * `conditional*`类spring配置开关，使用`spring.`前缀。
+ * `wings-`功能类配置，使用`wings.`前缀。
+ * 推荐`kebab-caseae`命名，即`key`全小写，使用`-`分割。
 
 ## 0.4.技术选型
 

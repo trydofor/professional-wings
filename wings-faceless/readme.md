@@ -166,7 +166,8 @@ MyBatis虽是大部分项目的首选，固有其优秀之处，但开发人员�
  * DSLContext和DataSource不应该离开database层。
  * `single/`包，表示单表，可含简单的条件子查询，一个包名一个表。
  * `couple/`包， 表示多表，一般为join查询或子查询，包名以主表命名。
- * `insert|select|update|delete`分别对应数据库操作。
+ * `select|insert|update|delete`分别对应数据库操作。
+ * `select|modify`是另外的一种分包规则，避免太分散。
  * 数据传递以Dto结尾，放到最临近使用的位子。
  * Dto以静态内类形似存在，用lombok做@Value或@Data。
  * `forUpdate`这种带锁操作，方法名以`Lock`结尾。

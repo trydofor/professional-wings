@@ -20,10 +20,17 @@ public class TestJournalController {
 
     private final JournalService journalService;
 
+    @RequestMapping("/string.json")
+    @ResponseBody
+    public String string() {
+        JournalService.Journal journal = journalService.commit(SysCommitJournalTable.class);
+        return journal.toString();
+    }
+
     @RequestMapping("/journal.json")
     @ResponseBody
-    public String journal() {
-        JournalService.Journal commit = journalService.commit(SysCommitJournalTable.class);
-        return commit.toString();
+    public JournalService.Journal journal() {
+        JournalService.Journal journal = journalService.commit(SysCommitJournalTable.class);
+        return journal;
     }
 }

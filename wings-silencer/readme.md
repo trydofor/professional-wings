@@ -102,6 +102,8 @@ spring对MessageSource的加载与configuration的机制不同，不需要unicod
  
 此处为行为约定，基于servlet或webflux的具体实现，在其他工程。
 
+通过注入`CombinableMessageSource`，可以动态添加和组合其他`MessageSource`。
+
 ## 1.4.Json格式约定(jackson)
 
 考虑到java和js的差异，数据传递和功能上，有以下约定。
