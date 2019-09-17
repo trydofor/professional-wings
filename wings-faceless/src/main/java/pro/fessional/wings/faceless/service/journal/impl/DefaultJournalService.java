@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.wings.faceless.database.autogen.tables.SysCommitJournalTable;
-import pro.fessional.wings.faceless.database.manual.single.insert.commitjournal.CommitJournalInsert;
+import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
@@ -22,7 +22,7 @@ public class DefaultJournalService implements JournalService {
 
     private final LightIdService lightIdService;
     private final BlockIdProvider blockIdProvider;
-    private final CommitJournalInsert journalInsert;
+    private final CommitJournalModify journalModify;
 
     @NotNull
     @Override
@@ -39,7 +39,7 @@ public class DefaultJournalService implements JournalService {
         long id = lightIdService.getId(SysCommitJournalTable.class, blockIdProvider.getBlockId());
         journal.setCommitId(id);
 
-        int rc = journalInsert.insert(journal);
+        int rc = journalModify.insert(journal);
         if (rc != 1) {
             throw new IllegalStateException("failed to insert Journal=" + journal);
         }

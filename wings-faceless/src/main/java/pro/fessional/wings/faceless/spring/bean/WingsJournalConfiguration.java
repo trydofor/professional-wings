@@ -6,9 +6,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
-import pro.fessional.wings.faceless.database.manual.single.insert.commitjournal.CommitJournalInsert;
-import pro.fessional.wings.faceless.database.manual.single.insert.commitjournal.impl.CommitJournalInsertJdbc;
-import pro.fessional.wings.faceless.database.manual.single.insert.commitjournal.impl.CommitJournalInsertJooq;
+import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
+import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.impl.CommitJournalModifyJdbc;
+import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.impl.CommitJournalModifyJooq;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.journal.impl.DefaultJournalService;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
@@ -27,23 +27,23 @@ public class WingsJournalConfiguration {
     public JournalService journalServiceJ(
             LightIdService lightIdService,
             BlockIdProvider blockIdProvider,
-            CommitJournalInsert journalInsert
+            CommitJournalModify journalModify
     ) {
-        return new DefaultJournalService(lightIdService, blockIdProvider, journalInsert);
+        return new DefaultJournalService(lightIdService, blockIdProvider, journalModify);
     }
 
 
     @Bean
-    @ConditionalOnMissingBean(CommitJournalInsert.class)
+    @ConditionalOnMissingBean(CommitJournalModify.class)
     @ConditionalOnProperty(prefix = "wings.journal.dao", name = "impl", havingValue = "jdbc")
-    public CommitJournalInsert commitJournalInsertJdbc(JdbcTemplate tpl) {
-        return new CommitJournalInsertJdbc(tpl);
+    public CommitJournalModify commitJournalInsertJdbc(JdbcTemplate tpl) {
+        return new CommitJournalModifyJdbc(tpl);
     }
 
     @Bean
-    @ConditionalOnMissingBean(CommitJournalInsert.class)
+    @ConditionalOnMissingBean(CommitJournalModify.class)
     @ConditionalOnProperty(prefix = "wings.journal.dao", name = "impl", havingValue = "jooq")
-    public CommitJournalInsert commitJournalInsertJooq(DSLContext dsl) {
-        return new CommitJournalInsertJooq(dsl);
+    public CommitJournalModify commitJournalInsertJooq(DSLContext dsl) {
+        return new CommitJournalModifyJooq(dsl);
     }
 }

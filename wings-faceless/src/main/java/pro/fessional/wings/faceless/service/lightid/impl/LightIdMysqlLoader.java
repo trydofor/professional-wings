@@ -7,9 +7,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.mirana.id.LightIdProvider;
-import pro.fessional.wings.faceless.database.manual.single.insert.lightsequence.LightSequenceInsert;
+import pro.fessional.wings.faceless.database.manual.single.modify.lightsequence.LightSequenceModify;
 import pro.fessional.wings.faceless.database.manual.single.select.lightsequence.LightSequenceSelect;
-import pro.fessional.wings.faceless.database.manual.single.update.lightsequence.LightSequenceUpdate;
 import pro.fessional.wings.faceless.database.sharding.MasterRouteOnly;
 import pro.fessional.wings.faceless.spring.conf.WingsLightIdInsertProperties;
 
@@ -28,8 +27,7 @@ import java.util.Optional;
 public class LightIdMysqlLoader implements LightIdProvider.Loader {
 
     private final LightSequenceSelect select;
-    private final LightSequenceUpdate update;
-    private final LightSequenceInsert insert;
+    private final LightSequenceModify modify;
     private final WingsLightIdInsertProperties properties;
 
     @NotNull
@@ -42,13 +40,13 @@ public class LightIdMysqlLoader implements LightIdProvider.Loader {
         if (!one.isPresent()) {
             if (properties.isAuto()) {
                 log.warn("not found and insert name={}, block={}", name, block);
-                LightSequenceInsert.SysLightSequence po = new LightSequenceInsert.SysLightSequence();
+                LightSequenceModify.SysLightSequence po = new LightSequenceModify.SysLightSequence();
                 po.setSeqName(name);
                 po.setBlockId(block);
                 po.setNextVal(properties.getNext());
                 po.setStepVal(properties.getStep());
                 po.setComments("Auto insert if Not found");
-                int cnt = insert.insert(po);
+                int cnt = modify.insert(po);
                 if (cnt != 1) {
                     throw new NoSuchElementException("not found and failed to insert. name=" + name + ",block=" + block);
                 }
@@ -65,7 +63,7 @@ public class LightIdMysqlLoader implements LightIdProvider.Loader {
         int page = (count - 1) / vo.getStepVal() + 1;
 
         long newNext = vo.getNextVal() + vo.getStepVal() * page;
-        int upd = update.updateNextVal(newNext, block, name, vo.getNextVal());
+        int upd = modify.updateNextVal(newNext, block, name, vo.getNextVal());
         if (upd != 1) {
             throw new IllegalStateException("failed to require, name=" + name + ",block=" + block);
         }
@@ -79,7 +77,7 @@ public class LightIdMysqlLoader implements LightIdProvider.Loader {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public List<LightIdProvider.Segment> preload(int block) {
         List<LightSequenceSelect.NameNextStep> all = select.selectAllLock(block);
-        int[] updates = update.updateNextPlusStep(all, block);
+        int[] updates = modify.updateNextPlusStep(all, block);
         List<LightIdProvider.Segment> result = new ArrayList<>(all.size());
 
         StringBuilder err = new StringBuilder();

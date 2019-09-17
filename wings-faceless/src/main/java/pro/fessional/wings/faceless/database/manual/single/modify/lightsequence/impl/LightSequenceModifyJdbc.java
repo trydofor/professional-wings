@@ -1,37 +1,48 @@
-package pro.fessional.wings.faceless.database.manual.single.update.lightsequence.impl;
+package pro.fessional.wings.faceless.database.manual.single.modify.lightsequence.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import pro.fessional.wings.faceless.database.manual.single.modify.lightsequence.LightSequenceModify;
 import pro.fessional.wings.faceless.database.manual.single.select.lightsequence.LightSequenceSelect;
-import pro.fessional.wings.faceless.database.manual.single.update.lightsequence.LightSequenceUpdate;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * @author trydofor
- * @since 2019-06-03
+ * @since 2019-06-04
  */
 @Repository
 @RequiredArgsConstructor
-public class LightSequenceUpdateJdbc implements LightSequenceUpdate {
+public class LightSequenceModifyJdbc implements LightSequenceModify {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final String sqlUdp = "UPDATE sys_light_sequence SET next_val=? WHERE block_id=? AND seq_name=? AND next_val=?";
+    /////////// insert ///////////
+    private static final String INS_SQL = "INSERT INTO sys_light_sequence (seq_name, block_id, next_val, step_val, comments) VALUES (?,?,?,?,?)";
+
+    @Override
+    public int insert(SysLightSequence po) {
+        return jdbcTemplate.update(INS_SQL, po.getSeqName(), po.getBlockId(), po.getNextVal(), po.getStepVal(), po.getComments());
+    }
+
+    /////////// update ///////////
+
+    private static final String UDP_SQL = "UPDATE sys_light_sequence SET next_val=? WHERE block_id=? AND seq_name=? AND next_val=?";
 
     @Override
     public int updateNextVal(long newVal, int block, String name, long oldVal) {
-        return jdbcTemplate.update(sqlUdp, newVal, block, name, oldVal);
+        return jdbcTemplate.update(UDP_SQL, newVal, block, name, oldVal);
     }
 
     @Override
     public int[] updateNextPlusStep(List<LightSequenceSelect.NameNextStep> all, final int block) {
-        return jdbcTemplate.batchUpdate(sqlUdp, new BatchPreparedStatementSetter() {
+        return jdbcTemplate.batchUpdate(UDP_SQL, new BatchPreparedStatementSetter() {
             private final ArrayList<LightSequenceSelect.NameNextStep> objs = new ArrayList<>(all);
 
             @Override
@@ -48,6 +59,8 @@ public class LightSequenceUpdateJdbc implements LightSequenceUpdate {
                 return objs.size();
             }
         });
-
     }
+
+    /////////// delete ///////////
+
 }

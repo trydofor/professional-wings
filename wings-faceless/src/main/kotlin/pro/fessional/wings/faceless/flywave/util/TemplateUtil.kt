@@ -30,8 +30,7 @@ object TemplateUtil {
     /**
      * 直接完成 parse和merge
      * @param txt 文本
-     * @param sub 查找文本
-     * @param rpl 替换文本
+     * @param rep 查找文本, 替换文本
      * @param qto 引号字符，默认`'`
      */
     fun replace(txt: String, rep: Map<String, String>, qto: String = "'"): String {
