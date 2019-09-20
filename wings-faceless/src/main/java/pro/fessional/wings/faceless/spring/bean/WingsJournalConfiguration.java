@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.impl.CommitJournalModifyJdbc;
@@ -23,6 +24,7 @@ import pro.fessional.wings.faceless.service.lightid.LightIdService;
 public class WingsJournalConfiguration {
 
     @Bean
+    @Order
     @ConditionalOnMissingBean(JournalService.class)
     public JournalService journalServiceJ(
             LightIdService lightIdService,
@@ -34,6 +36,7 @@ public class WingsJournalConfiguration {
 
 
     @Bean
+    @Order
     @ConditionalOnMissingBean(CommitJournalModify.class)
     @ConditionalOnProperty(prefix = "wings.journal.dao", name = "impl", havingValue = "jdbc")
     public CommitJournalModify commitJournalInsertJdbc(JdbcTemplate tpl) {
@@ -41,6 +44,7 @@ public class WingsJournalConfiguration {
     }
 
     @Bean
+    @Order
     @ConditionalOnMissingBean(CommitJournalModify.class)
     @ConditionalOnProperty(prefix = "wings.journal.dao", name = "impl", havingValue = "jooq")
     public CommitJournalModify commitJournalInsertJooq(DSLContext dsl) {

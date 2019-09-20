@@ -22,7 +22,7 @@
         <module>wings-silencer</module>
         <module>wings-faceless</module>
         <module>wings-slardar</module>
-        <module>wings-example</module>
+        <!--<module>wings-example</module>-->
     </modules>
 
     <properties>

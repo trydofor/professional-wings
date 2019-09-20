@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.mirana.id.LightIdBufferedProvider;
 import pro.fessional.mirana.id.LightIdProvider;
@@ -24,6 +25,7 @@ import pro.fessional.wings.faceless.spring.conf.WingsLightIdLoaderProperties;
 public class WingsLightIdConfiguration {
 
     @Bean
+    @Order
     @ConditionalOnMissingBean(LightIdProvider.class)
     public LightIdProvider lightIdProvider(LightIdMysqlLoader loader,
                                            WingsLightIdLoaderProperties config) {
@@ -38,6 +40,7 @@ public class WingsLightIdConfiguration {
     }
 
     @Bean
+    @Order
     @ConditionalOnMissingBean(BlockIdProvider.class)
     @ConditionalOnProperty(prefix = "wings.lightid.block.provider", name = "type", havingValue = "sql")
     public BlockIdProvider blockProviderSql(@Value("${wings.lightid.block.provider.para}") String sql,
@@ -46,6 +49,7 @@ public class WingsLightIdConfiguration {
     }
 
     @Bean
+    @Order
     @ConditionalOnMissingBean(BlockIdProvider.class)
     @ConditionalOnProperty(prefix = "wings.lightid.block.provider", name = "type", havingValue = "fix")
     public BlockIdProvider blockProviderSql(@Value("${wings.lightid.block.provider.para}") int id) {

@@ -43,4 +43,15 @@ public interface WingsI18nContext {
         return z == null ? ZoneId.systemDefault() : z;
     }
 
+    /**
+     * @param locale null表示remove
+     */
+    default void setLocale(Locale locale) {
+    }
+
+    /**
+     * @param timeZone null表示remove
+     */
+    default void setTimeZone(TimeZone timeZone) {
+    }
 }

@@ -1,4 +1,4 @@
-package pro.fessional.wings.silencer.spring.help;
+package pro.fessional.wings.silencer.message;
 
 
 import org.springframework.context.HierarchicalMessageSource;

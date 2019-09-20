@@ -3,6 +3,7 @@ package pro.fessional.wings.silencer.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.context.MessageSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -11,10 +12,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StringUtils;
-import pro.fessional.wings.silencer.spring.help.CombinableMessageSource;
+import pro.fessional.wings.silencer.context.DefaultI18nContext;
+import pro.fessional.wings.silencer.context.WingsI18nContext;
+import pro.fessional.wings.silencer.message.CombinableMessageSource;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -94,6 +98,12 @@ public class WingsMessageConfiguration {
         return new CombinableMessageSource();
     }
 
+    @Bean
+    @Order
+    @ConditionalOnMissingBean(WingsI18nContext.class)
+    public WingsI18nContext wingsI18nContext() {
+        return new DefaultI18nContext();
+    }
 
     private String parseBaseMessage(String path) {
         String lower = path.toLowerCase();

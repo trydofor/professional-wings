@@ -363,6 +363,31 @@ class DefaultRevisionManager(
             }
         }
     }
+
+    override fun forceExecuteSql(text: String) {
+        val shardTmpl = flywaveDataSources.shard?.let { SimpleJdbcTemplate(it, "sharding") }
+        val sqlSegs = sqlSegmentProcessor.parse(sqlStatementParser, text)
+
+        for ((plainName, plainDs) in flywaveDataSources.plains()) {
+            logger.info("ready force execute sql on db={}", plainName)
+            val plainTmpl = SimpleJdbcTemplate(plainDs, plainName)
+            val plainTbls = schemaDefinitionLoader.showTables(plainDs)
+
+            for (seg in sqlSegs) {
+                if (seg.sqlText.isBlank()) {
+                    continue
+                }
+                // 不使用事务，出错时，根据日志进行回滚或数据清理
+                if (seg.isPlain || shardTmpl == null) {
+                    logger.info("use plain to run sql-line from {} to {}, db={}", seg.lineBgn, seg.lineEnd, plainName)
+                    runSegment(plainTmpl, plainTbls, seg)
+                } else {
+                    logger.info("use shard to run sql-line from {} to {}", seg.lineBgn, seg.lineEnd)
+                    runSegment(shardTmpl, emptyList(), seg)
+                }
+            }
+        }
+    }
     //
 
     private fun applyRevisionSql(revi: Long, text: String, isUpto: Boolean, commitId: Long, plainTmpl: SimpleJdbcTemplate, shardTmpl: SimpleJdbcTemplate?, plainTbls: List<String>) {

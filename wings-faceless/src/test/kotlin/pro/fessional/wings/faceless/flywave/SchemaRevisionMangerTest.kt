@@ -80,4 +80,16 @@ open class SchemaRevisionMangerTest {
         schemaRevisionManager.publishRevision(INIT2ND_REVISION, 0)
 
     }
+
+    @Test
+    fun test7ForceExecuteSql() {
+        schemaRevisionManager.forceExecuteSql("""
+            CREATE TABLE `TEST_TEMP_X`(
+              `SEQ_NAME` varchar(100) NOT NULL COMMENT '序列名'
+            ) ENGINE = InnoDB
+              DEFAULT CHARSET = utf8mb4 COMMENT ='TEST_TEMP';
+
+            DROP TABLE IF EXISTS `TEST_TEMP_X`;
+            """.trimIndent())
+    }
 }

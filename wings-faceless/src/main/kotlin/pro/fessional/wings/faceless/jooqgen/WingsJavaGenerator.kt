@@ -3,17 +3,16 @@ package pro.fessional.wings.faceless.jooqgen
 import org.jooq.codegen.JavaGenerator
 import org.jooq.codegen.JavaWriter
 import org.jooq.meta.Definition
-import java.util.concurrent.atomic.AtomicInteger
 
 class WingsJavaGenerator : JavaGenerator() {
 
     private val chr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    private val seq = AtomicInteger(0)
 
     private fun genAlias(id: String): String {
         val ix = id.hashCode() % chr.length
         val cd = if (ix < 0) chr[-ix] else chr[ix]
-        return "$cd${seq.incrementAndGet()}"
+        val sq = id.length % 10
+        return "$cd$sq"
     }
 
     override fun printSingletonInstance(out: JavaWriter, definition: Definition) {

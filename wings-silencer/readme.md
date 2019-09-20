@@ -125,8 +125,22 @@ spring对MessageSource的加载与configuration的机制不同，不需要unicod
  * 确保jsr310格式兼容，如依赖`jackson-datatype-jsr310`。
  * ZoneId应首选`IANA TZDB`格式，如`America/New_York`。
  * 带时区(`Z`)的序列化与反序列化过程，会丢失夏令时信息。
+
+**Json内容的国际化**，通过注解和类型自动对内容进行i18n转换，以字符串输出。
+`I18nString`类型会自动转换。`CharSequence`要`@JsonI18nString`注解才转化。
+
+自动转化时，使用注入的`messageSource`和`WingsI18nContext`获得相应语言。
+使用`@JsonI18nString(false)`，可以关闭自动转换。
+
+常用的Jackson注解
+ * @JsonRawValue - 以字符串（已是json格式）本来的形式展现
+ * @JsonFormat - 指定格式
+ * @JsonIgnore/JsonProperty - 忽略该字段
+ * @JsonProperty - 重命名
+ * @JsonNaming - 命名规则
+ * @JsonRootName(value = "user") - 增加一个头key
+ * @JsonUnwrapped - 干掉包装类
  
-[参考资料 docs.spring.io](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
- 
- - 79.3 Customize the Jackson ObjectMapper
+[jackson注解](https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations)
+[spring定制jackson](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/) - 79.3 Customize the Jackson ObjectMapper
 

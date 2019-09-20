@@ -69,4 +69,9 @@ interface SchemaRevisionManager {
      */
     fun forceUpdateSql(revision: Long, upto: String, undo: String, commitId: Long)
 
+    /**
+     * 强制执行一个sql，不使用版本管理
+     * @param text sql文本
+     */
+    fun forceExecuteSql(text: String)
 }

@@ -27,6 +27,6 @@ public class CommitJournalModifyJooq implements CommitJournalModify {
         rc.setTargetKey(nullToEmpty(vo.getTargetKey()));
         rc.setLoginInfo(nullToEmpty(vo.getLoginInfo()));
         rc.setOtherInfo(nullToEmpty(vo.getOtherInfo()));
-        return rc.store();
+        return rc.insert();
     }
 }

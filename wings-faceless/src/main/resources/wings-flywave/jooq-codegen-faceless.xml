@@ -75,6 +75,7 @@
             <pojos>true</pojos>
             <pojosEqualsAndHashCode>true</pojosEqualsAndHashCode>
             <pojosToString>true</pojosToString>
+            <!-- 不要打开，否则JouralAware接口错误，你会列编辑，不差几个引用名 -->
             <fluentSetters>false</fluentSetters>
 
             <globalCatalogReferences>false</globalCatalogReferences>

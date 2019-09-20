@@ -75,6 +75,7 @@ public class WingsOverloadFilterConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(FallBack.class)
+    @Order
     public FallBack overloadFallback(OverloadConfig config) {
         return (request, response) -> {
             try {
