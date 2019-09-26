@@ -92,4 +92,14 @@ open class SchemaRevisionMangerTest {
             DROP TABLE IF EXISTS `TEST_TEMP_X`;
             """.trimIndent())
     }
+
+    @Test
+    fun test8PartlyUptoSql() {
+        schemaRevisionManager.publishRevision(INIT2ND_REVISION, 0)
+        schemaRevisionManager.forceExecuteSql("""
+            UPDATE `sys_schema_version` SET `apply_dt` = '1000-01-01 09:09:09' WHERE `revision` = '$INIT2ND_REVISION';
+            """.trimIndent())
+        schemaRevisionManager.publishRevision(20190521_01, 0)
+    }
+
 }

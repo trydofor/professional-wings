@@ -124,6 +124,32 @@ class DefaultRevisionManager(
                 reviText.removeLast()
             }
 
+            // 检查部分执行
+            val partUndo = LinkedList<Triple<Long, String, String>>()
+            val partRedo = LinkedList<Triple<Long, String, String>>()
+            plainTmpl.query("""
+                SELECT
+                    revision,
+                    upto_sql,
+                    undo_sql,
+                    apply_dt
+                FROM sys_schema_version
+                WHERE apply_dt > '1000-01-01 0:0:0' 
+                    AND  apply_dt <= '1000-01-01 23:23:59'
+                ORDER BY revision DESC
+            """.trimIndent()) {
+                val tplRedo = Triple(it.getLong(1), it.getString(2), it.getString(4))
+                val tplUndo = Triple(it.getLong(1), it.getString(3), it.getString(4))
+                logger.info("undo partly applied for name={} revi={} need undo it", plainName, tplRedo.first)
+                partRedo.add(tplRedo)
+                partUndo.add(tplUndo)
+            }
+
+            if (partRedo.size > 0) {
+                partUndo.addAll(partRedo)
+                reviText.addAll(0, partUndo)
+            }
+
             val plainTbls = schemaDefinitionLoader.showTables(plainDs)
             for ((revi, text) in reviText) {
                 logger.info("ready for name={} revi={}", plainName, revi)
@@ -391,9 +417,17 @@ class DefaultRevisionManager(
     //
 
     private fun applyRevisionSql(revi: Long, text: String, isUpto: Boolean, commitId: Long, plainTmpl: SimpleJdbcTemplate, shardTmpl: SimpleJdbcTemplate?, plainTbls: List<String>) {
-        logger.info("parse revi-sql, revi={}, isUpto={}", revi, isUpto)
+        logger.info("parse revi-sql, revi={}, isUpto={}, mark as '1000-01-01 09:09:09'", revi, isUpto)
 
         val plainName = plainTmpl.name
+        // 记录部分执行情况。
+        try {
+            plainTmpl.update("UPDATE sys_schema_version SET apply_dt='1000-01-01 09:09:09', commit_id=? WHERE revision=?", commitId, revi)
+        } catch (e: Exception) {
+            assertNot1st(plainTmpl.dataSource, e)
+            return
+        }
+
         for (seg in sqlSegmentProcessor.parse(sqlStatementParser, text)) {
             if (seg.sqlText.isBlank()) {
                 continue

@@ -33,7 +33,11 @@ public class I18nStringSerializer extends JsonSerializer implements ContextualSe
 
     @Override
     public void serialize(Object value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        if (value == null) return;
+
+        if (!(value instanceof CharSequence) && !(value instanceof I18nString)) {
+            provider.defaultSerializeValue(value, gen);
+            return;
+        }
 
         Locale locale = null;
         if (i18nContext != null) locale = i18nContext.getLocale();
@@ -43,7 +47,7 @@ public class I18nStringSerializer extends JsonSerializer implements ContextualSe
             String text = value.toString();
             if (enabled) text = messageSource.getMessage(text, new Object[]{}, locale);
             gen.writeString(text);
-        } else if (value instanceof I18nString) {
+        } else { // value instanceof I18nString
             I18nString i18n = (I18nString) value;
             if (enabled) {
                 String text = messageSource.getMessage(i18n.getCode(), i18n.getArgs(), locale);
@@ -59,8 +63,6 @@ public class I18nStringSerializer extends JsonSerializer implements ContextualSe
                 gen.writeObject(i18n.getArgs());
                 gen.writeEndObject();
             }
-        } else {
-            provider.defaultSerializeValue(value, gen);
         }
     }
 
@@ -71,6 +73,7 @@ public class I18nStringSerializer extends JsonSerializer implements ContextualSe
         if (ann == null || ann.value() == enabled) return this;
 
         I18nStringSerializer that = oppositeOne.get();
+        // 不需要同步，不影响结果
         if (that == null) {
             that = new I18nStringSerializer(messageSource, i18nContext, !enabled);
             oppositeOne.set(that);
