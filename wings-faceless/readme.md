@@ -57,7 +57,11 @@ sql的书写规则详见[数据库约定](/wings-faceless/src/main/resources/win
  * 破坏查询索引。每个查询都要`is_deleted=0`，且90%以上数据为true。
  * 破坏唯一约束。可以重复逻辑删除，所以无法简单有效的对数据unique。
 
-任何数据变动，都应该有`COMMIT_ID`，记录下事件信息（人，事件，业务信息等）。
+`逻辑删除`在wings中存在的唯一目的是解决数据的`溯源`问题，否则应该直接删除。
+它也叫`标记删除`，类似java的GC，在引用计数为0时，会被(立即或批处理)删除。
+
+
+任何数据变动，都应该有`commit_id`，记录下事件信息（人，事件，业务信息等）。
 最新的数据留在`本表`，旧数据通过`trigger`插入`跟踪表`
 
 `journal`通过`sys_schema_journal`生成`跟踪表`和`触发器`。
@@ -74,6 +78,14 @@ sql的书写规则详见[数据库约定](/wings-faceless/src/main/resources/win
  * `{{TABLE_BONE}}` 目标表字段(至少包含名字，类型，注释)，不含索引和约束
  * `{{TABLE_PKEY}}` 目标表的主键中字段名，用来创建原主键的普通索引。
 
+对于删除的数据，无法优雅的设置`commit_id`，此时若是需要journal，则要先更新再删除。
+目前，在不使用sql标记或解析的情况下，提供了2种方法，手工类优先于自动拦截。
+
+ * 通过工具类`JournalHelp`，手动执行`delete##`。
+ * 自动对`delete from ## where id=? and commit_id=?`格式进行拦截。
+
+自动拦截`spring.wings.trigger.journal-delete.enabled`默认关闭。
+因为违反`静态高于动态，编译时高于运行时`团队规则，且性能和限制不好控制。
 
 ## 2.3.分表分库功能(ShardingSphere)
 

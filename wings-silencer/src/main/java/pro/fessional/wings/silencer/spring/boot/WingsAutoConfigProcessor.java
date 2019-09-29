@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -78,19 +79,18 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         final LinkedHashMap<String, Resource> pathRes = new LinkedHashMap<>();
         final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
-        // files and current classpath
-        for (String path : confPaths.keySet()) {
-            logger.info("Wings scan files and current classpath, path=" + path);
-            putConfIfValid(pathRes, resolver, path);
-        }
-
         // depends classpath*:
         for (String path : confPaths.keySet()) {
             if (path.startsWith("classpath:")) {
-                logger.info("Wings scan depends classpath*, path=" + path);
-                putConfIfValid(pathRes, resolver, path.replace("classpath:", "classpath*:"));
+                String pax = path.replace("classpath:", "classpath*:");
+                logger.info("Wings scan classpath*, path=" + pax);
+                putConfIfValid(pathRes, resolver, pax);
+            } else {
+                logger.info("Wings scan classpath, path=" + path);
+                putConfIfValid(pathRes, resolver, path);
             }
         }
+
 
         // resort by profile
         Set<String> activeProfiles = new HashSet<>(Arrays.asList(environment.getActiveProfiles()));
@@ -110,8 +110,6 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                     logger.info("remove inactive profile file=" + key);
                 }
                 iter.remove();
-
-
             }
         }
         //
@@ -149,7 +147,18 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             }
         }
 
-        for (Map.Entry<String, Resource> entry : pathRes.entrySet()) {
+        logger.info("Wings adjust config precedence, first is higher then last");
+        LinkedList<Map.Entry<String, Resource>> sortedResources = new LinkedList<>(pathRes.entrySet());
+        sortedResources.sort((o1, o2) -> {
+            String f1 = o1.getKey();
+            String f2 = o2.getKey();
+            String b1 = extractBaseName(f1);
+            String b2 = extractBaseName(f2);
+            int p = b1.compareToIgnoreCase(b2);
+            return p != 0 ? p : f1.compareToIgnoreCase(f2);
+        });
+
+        for (Map.Entry<String, Resource> entry : sortedResources) {
             final String key = entry.getKey();
             final Resource res = entry.getValue();
             try {
@@ -180,6 +189,23 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         }
     }
 
+    private Pattern ptnSeq = Pattern.compile("-(\\d\\d)$");
+    private String extractBaseName(String p) {
+        int p1 = p.lastIndexOf('/');
+        int p2 = p.lastIndexOf('\\');
+        int pe = p.lastIndexOf('.');
+        int px = p1 > p2 ? p1 : p2;
+        if (px > 0 && pe > px) {
+            String sb = p.substring(px + 1, pe);
+            if (!ptnSeq.matcher(sb).find()) {
+                sb = sb + "-99";
+            }
+            return sb;
+        } else {
+            return p;
+        }
+    }
+
     private void putPathIfValid(LinkedHashMap<String, Boolean> path, String conf) {
         if (conf.isEmpty() || isYml(conf) || isProperty(conf)) {
             return;
@@ -200,6 +226,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             for (Resource res : resources) {
                 String p = res.getURL().getPath();
                 if (isYml(p) || isProperty(p) || isBlacklist(p)) {
+                    logger.info("Wings find resource=" + p);
                     pathRes.putIfAbsent(p, res);
                 }
             }

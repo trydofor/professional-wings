@@ -9,7 +9,36 @@ import javax.validation.constraints.NotNull;
 public interface LightIdService {
 
     /**
-     * 按Jooq的 pojo命名获得，按 大写_大写命名。
+     * 获得默认的BlockId
+     *
+     * @return 默认的BlockId
+     */
+    default int geBlockId() {
+        return 0;
+    }
+
+    /**
+     * 按Jooq的 pojo命名获得，按 小写_小写命名。
+     *
+     * @param po jooq的Pojo
+     * @return id
+     */
+    default long getId(@NotNull Class<? extends LightIdAware> po) {
+        return getId(po, geBlockId());
+    }
+
+    /**
+     * 按名字获得id，不区分大小写，默认全小写。
+     *
+     * @param name 名字
+     * @return id
+     */
+    default long getId(@NotNull String name) {
+        return getId(name, geBlockId());
+    }
+
+    /**
+     * 按Jooq的 pojo命名获得，按 小写_小写命名。
      *
      * @param po    jooq的Pojo
      * @param block 区块
@@ -32,7 +61,7 @@ public interface LightIdService {
     }
 
     /**
-     * 按名字获得id，不区分大小写，默认全大写。
+     * 按名字获得id，不区分大小写，默认全小写。
      *
      * @param name  名字
      * @param block 区块

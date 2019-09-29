@@ -1,4 +1,4 @@
+DROP TABLE IF EXISTS `tst_authority`;
+DROP TABLE IF EXISTS `tst_auth_role`;
 DROP TABLE IF EXISTS `tst_user`;
-DROP TABLE IF EXISTS `tst_login`;
-DROP TABLE IF EXISTS `tst_permit`;
-DROP TABLE IF EXISTS `tst_role`;
+DROP TABLE IF EXISTS `tst_user_login`;

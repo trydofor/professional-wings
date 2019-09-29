@@ -79,7 +79,7 @@ class JooqShardingTest {
         schemaShardingManager.publishShard("tst_中文也分表", 5)
     }
 
-    val id by lazy { lightIdService.getId(Tst中文也分表Table::class.java, 0) }
+    val id by lazy { lightIdService.getId(Tst中文也分表Table::class.java) }
 
     @Test
     fun test4Insert() {

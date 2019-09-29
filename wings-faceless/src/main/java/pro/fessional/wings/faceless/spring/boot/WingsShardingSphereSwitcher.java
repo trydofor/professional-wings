@@ -140,17 +140,21 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
     @Bean
     @Conditional(Switcher.class)
     public DataSource dataSource() {
-        return getDefault();
+        return defaultDataSource(true);
     }
 
     @Bean
     public FlywaveDataSources wingsDataSources(DataSource inuse, Environment environment) {
-        DataSource shard = getDefault() == inuse ? null : inuse;
+        DataSource shard = defaultDataSource(false) == inuse ? null : inuse;
         return new FlywaveDataSources(dataSourceMap, inuse, shard, hasSlave(environment));
     }
 
-    private DataSource getDefault() {
-        return dataSourceMap.values().iterator().next();
+    private DataSource defaultDataSource(boolean log) {
+        Map.Entry<String, DataSource> first = dataSourceMap.entrySet().iterator().next();
+        if (log) {
+            logger.info("Wings datasource use the first as default = " + first.getKey());
+        }
+        return first.getValue();
     }
 
     private static final Log logger = LogFactory.getLog(WingsShardingSphereSwitcher.class);
