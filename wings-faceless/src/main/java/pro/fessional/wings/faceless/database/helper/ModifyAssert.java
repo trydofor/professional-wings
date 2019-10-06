@@ -17,8 +17,12 @@ public class ModifyAssert {
         return aEqB(a, 1);
     }
 
+    public static boolean less(int a) {
+        return aLeB(a, 1);
+    }
+
     public static boolean more(int a) {
-        return aGeB(a, 2);
+        return aGeB(a, 1);
     }
 
     public static boolean aEqB(int a, int b) {
@@ -33,6 +37,14 @@ public class ModifyAssert {
         return a >= b;
     }
 
+    public static boolean aLtB(int a, int b) {
+        return a < b;
+    }
+
+    public static boolean aLeB(int a, int b) {
+        return a <= b;
+    }
+
     public static boolean zero(int[] a) {
         return aEqB(a, 0);
     }
@@ -41,8 +53,12 @@ public class ModifyAssert {
         return aEqB(a, 1);
     }
 
+    public static boolean less(int[] a) {
+        return aLeB(a, 1);
+    }
+
     public static boolean more(int[] a) {
-        return aGeB(a, 2);
+        return aGeB(a, 1);
     }
 
     public static boolean aEqB(int[] a, int b) {
@@ -69,6 +85,22 @@ public class ModifyAssert {
         return true;
     }
 
+    public static boolean aLtB(int[] a, int b) {
+        if (a == null || a.length == 0) return false;
+        for (int i : a) {
+            if (i >= b) return false;
+        }
+        return true;
+    }
+
+    public static boolean aLeB(int[] a, int b) {
+        if (a == null || a.length == 0) return false;
+        for (int i : a) {
+            if (i > b) return false;
+        }
+        return true;
+    }
+
     // ////
 
     public static boolean zeroOrThrow(int a, CodeEnum err) {
@@ -78,6 +110,11 @@ public class ModifyAssert {
 
     public static boolean oneOrThrow(int a, CodeEnum err) {
         if (!one(a)) throw new CodeException(err);
+        return true;
+    }
+
+    public static boolean lessOrThrow(int a, CodeEnum err) {
+        if (!less(a)) throw new CodeException(err);
         return true;
     }
 
@@ -108,6 +145,11 @@ public class ModifyAssert {
 
     public static boolean oneOrThrow(int[] a, CodeEnum err) {
         if (!one(a)) throw new CodeException(err);
+        return true;
+    }
+
+    public static boolean lessOrThrow(int[] a, CodeEnum err) {
+        if (!less(a)) throw new CodeException(err);
         return true;
     }
 

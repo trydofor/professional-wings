@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.faceless.convention.EmptyValue;
+import pro.fessional.wings.faceless.sugar.funs.EmptySugar;
 
 import java.time.LocalDateTime;
 
@@ -27,8 +28,10 @@ public interface JournalService {
         private String otherInfo = EmptyValue.VARCHAR;
 
         public void commit(JournalAware po) {
+            if (po == null) return;
+
             po.setCommitId(commitId);
-            if (po.getCreateDt() == null) {
+            if (EmptySugar.isEmptyValue(po.getCreateDt())) {
                 po.setCreateDt(commitDt);
                 po.setModifyDt(EmptyValue.DATE_TIME);
             } else {
