@@ -3,7 +3,6 @@ package pro.fessional.wings.faceless.jooq
 import org.apache.shardingsphere.api.hint.HintManager
 import org.jooq.DSLContext
 import org.junit.FixMethodOrder
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
@@ -17,7 +16,6 @@ import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager
-import pro.fessional.wings.faceless.jooqgen.WingsCodeGenerator
 import pro.fessional.wings.faceless.service.lightid.LightIdService
 import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner
 import java.time.LocalDateTime
@@ -53,25 +51,6 @@ class JooqShardingTest {
         val sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH)
         schemaRevisionManager.checkAndInitSql(sqls, 0)
         schemaRevisionManager.publishRevision(20190521_01, 0)
-    }
-
-    @Test
-    @Ignore("手动执行，仅一次")
-    fun test2Code() {
-        test1Init()
-        val database = "wings_0"
-        WingsCodeGenerator.builder()
-                .jdbcDriver("com.mysql.cj.jdbc.Driver")
-                .jdbcUrl("jdbc:mysql://127.0.0.1/${database}")
-                .jdbcUser("trydofor")
-                .jdbcPassword("moilioncircle")
-                .databaseSchema(database)
-                .databaseIncludes("tst_中文也分表")
-                .databaseVersionProvider("")
-                .targetPackage("pro.fessional.wings.faceless.database.autogen")
-                .targetDirectory("src/test/java/")
-                .forceRegenerate()
-                .buildAndGenerate()
     }
 
     @Test
@@ -114,7 +93,7 @@ class JooqShardingTest {
         it.setMasterRouteOnly()
         //NG select `TST_中文也分表`.`ID` from `TST_中文也分表` where `TST_中文也分表`.`ID` <= ? limit ?
         //OK select `t1`.`ID` from `TST_中文也分表` as `t1` where `t1`.`ID` <= ? limit ?
-        val f1 = Tst中文也分表Table.asY1
+        val f1 = Tst中文也分表Table.asY8
         val r1 = dsl.select(f1.Id)
                 .from(f1)
                 .where(f1.Id.le(id))
@@ -132,7 +111,25 @@ class JooqShardingTest {
     }
 
     @Test
-    fun test7Delete() {
+    fun test7Dao() {
+        //
+        val a = dao.tableForReader
+        val c = a.Id.eq(1L).and(a.CommitId.eq(2L))
+
+        val i = dao.count(c)
+        val fetch = dao.fetch(0, 10, c)
+        println("============count $i, fetch'size=${fetch.size}")
+
+        val t = dao.tableForWriter
+        val setter = hashMapOf<Any, Any>()
+        setter.put(t.Id, 1L)
+        setter.put(t.CommitId, t.Id)
+        val ui = dao.update(setter, t.Id.eq(2L))
+        println("============update $ui")
+    }
+
+    @Test
+    fun test8Delete() {
         //NG delete from `TST_中文也分表` where `TST_中文也分表`.`ID` <= ?
         //NG delete `t1` from `TST_中文也分表` as `t1` where `t1`.`ID` <= ?
         val t = Tst中文也分表Table.Tst中文也分表

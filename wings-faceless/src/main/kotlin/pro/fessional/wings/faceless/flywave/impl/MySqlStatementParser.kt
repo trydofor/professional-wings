@@ -16,7 +16,7 @@ class MySqlStatementParser : SqlStatementParser {
 
     private val options = Pattern.MULTILINE or Pattern.CASE_INSENSITIVE
     private val ddlAlterTable = "^ALTER\\s+TABLE\\s+([^(\\s]+)".toPattern(options)
-    private val ddlCreateIndex = "^CREATE\\s+(?:UNIQUE|FULLTEXT|SPATIAL)?\\s*INDEX\\s+\\S+\\s+(?:\\S+\\s+)?ON\\s+([^(\\s]+)".toPattern(options)
+    private val ddlCreateIndex = "^CREATE\\s+(?:UNIQUE\\s+|FULLTEXT\\s+|SPATIAL\\s+)?INDEX\\s+\\S+\\s+(?:\\S+\\s+)?ON\\s+([^(\\s]+)".toPattern(options)
     private val ddlCreateTable = "^CREATE\\s+(?:TEMPORARY\\s+)?TABLE\\s+(?:IF\\s+NOT\\s+EXISTS\\s+)?([^(\\s]+)".toPattern(options)
     private val ddlCreateTrigger = "^CREATE\\s+(?:DEFINER\\s*=\\s*\\S+\\s+)?TRIGGER\\s+(?:\\S+\\s+)*ON\\s+([^(\\s]+)".toPattern(options)
     private val ddlDropIndex = "^DROP\\s+INDEX\\s+\\S+\\s+ON\\s+([^(\\s]+)".toPattern(options)
@@ -25,9 +25,9 @@ class MySqlStatementParser : SqlStatementParser {
     private val ddlTruncateTable = "^TRUNCATE\\s+(?:TABLE\\s+)?([^(\\s]+)".toPattern(options)
 
     private val dmlDelete = "^DELETE\\s+(?:\\S+\\s)*FROM\\s+([^(\\s]+)".toPattern(options)
-    private val dmlInsert = "^INSERT\\s+(?:LOW_PRIORITY|DELAYED|HIGH_PRIORITY)?\\s*(?:IGNORE)?\\s*(?:INTO)?\\s*([^(\\s]+)".toPattern(options)
-    private val dmlReplace = "^REPLACE\\s+(?:LOW_PRIORITY|DELAYED)?\\s*(?:INTO)?\\s*([^(\\s]+)".toPattern(options)
-    private val dmlUpdate = "^UPDATE\\s+(?:LOW_PRIORITY)?\\s*(?:IGNORE)\\s*([^(\\s]+)".toPattern(options)
+    private val dmlInsert = "^INSERT\\s+(?:LOW_PRIORITY\\s+|DELAYED\\s+|HIGH_PRIORITY\\s+)?(?:IGNORE\\s+)?(?:INTO\\s+)?([^(\\s]+)".toPattern(options)
+    private val dmlReplace = "^REPLACE\\s+(?:LOW_PRIORITY|DELAYED)?\\s*(?:INTO\\s+)?([^(\\s]+)".toPattern(options)
+    private val dmlUpdate = "^UPDATE\\s+(?:LOW_PRIORITY\\s+)?(?:IGNORE\\s+)?([^(\\s]+)".toPattern(options)
 
     private val plainRegex = linkedSetOf(
             ddlAlterTable.toFunction()
@@ -97,8 +97,7 @@ class MySqlStatementParser : SqlStatementParser {
         }
 
         // 备用方案，一般不会到达。
-
-        logger.warn("unmatched sql type, return Other. sql=$sql")
+        logger.warn("unmatched sql type, return Other. sql=[$sql]")
         return SqlStatementParser.SqlType.Other
     }
 

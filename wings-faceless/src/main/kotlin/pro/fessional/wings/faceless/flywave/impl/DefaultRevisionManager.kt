@@ -420,12 +420,10 @@ class DefaultRevisionManager(
         logger.info("parse revi-sql, revi={}, isUpto={}, mark as '1000-01-01 09:09:09'", revi, isUpto)
 
         val plainName = plainTmpl.name
+
         // 记录部分执行情况。
-        try {
+        if (revi > INIT1ST_REVISION) {
             plainTmpl.update("UPDATE sys_schema_version SET apply_dt='1000-01-01 09:09:09', commit_id=? WHERE revision=?", commitId, revi)
-        } catch (e: Exception) {
-            assertNot1st(plainTmpl.dataSource, e)
-            return
         }
 
         for (seg in sqlSegmentProcessor.parse(sqlStatementParser, text)) {

@@ -10,13 +10,13 @@ import java.util.List;
 import javax.annotation.Generated;
 
 import org.jooq.Configuration;
-import org.jooq.impl.DAOImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
+import pro.fessional.wings.faceless.database.common.WingsJooqDaoImpl;
 
 
 /**
@@ -31,13 +31,13 @@ import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @Repository
-public class Tst中文也分表Dao extends DAOImpl<Tst中文也分表Record, Tst中文也分表, Long> {
+public class Tst中文也分表Dao extends WingsJooqDaoImpl<Tst中文也分表Table, Tst中文也分表Record, Tst中文也分表, Long> {
 
     /**
      * Create a new Tst中文也分表Dao without any configuration
      */
     public Tst中文也分表Dao() {
-        super(Tst中文也分表Table.Tst中文也分表, Tst中文也分表.class);
+        super(Tst中文也分表Table.Tst中文也分表, Tst中文也分表Table.asY8, Tst中文也分表.class);
     }
 
     /**
@@ -45,7 +45,7 @@ public class Tst中文也分表Dao extends DAOImpl<Tst中文也分表Record, Tst
      */
     @Autowired
     public Tst中文也分表Dao(Configuration configuration) {
-        super(Tst中文也分表Table.Tst中文也分表, Tst中文也分表.class, configuration);
+        super(Tst中文也分表Table.Tst中文也分表, Tst中文也分表Table.asY8, Tst中文也分表.class, configuration);
     }
 
     /**
@@ -60,48 +60,48 @@ public class Tst中文也分表Dao extends DAOImpl<Tst中文也分表Record, Tst
      * Fetch records that have <code>id IN (values)</code>
      */
     public List<Tst中文也分表> fetchById(Long... values) {
-        return fetch(Tst中文也分表Table.Tst中文也分表.Id, values);
+        return fetch(Tst中文也分表Table.asY8.Id, values);
     }
 
     /**
      * Fetch a unique record that has <code>id = value</code>
      */
     public Tst中文也分表 fetchOneById(Long value) {
-        return fetchOne(Tst中文也分表Table.Tst中文也分表.Id, value);
+        return fetchOne(Tst中文也分表Table.asY8.Id, value);
     }
 
     /**
      * Fetch records that have <code>create_dt IN (values)</code>
      */
     public List<Tst中文也分表> fetchByCreateDt(LocalDateTime... values) {
-        return fetch(Tst中文也分表Table.Tst中文也分表.CreateDt, values);
+        return fetch(Tst中文也分表Table.asY8.CreateDt, values);
     }
 
     /**
      * Fetch records that have <code>modify_dt IN (values)</code>
      */
     public List<Tst中文也分表> fetchByModifyDt(LocalDateTime... values) {
-        return fetch(Tst中文也分表Table.Tst中文也分表.ModifyDt, values);
+        return fetch(Tst中文也分表Table.asY8.ModifyDt, values);
     }
 
     /**
      * Fetch records that have <code>commit_id IN (values)</code>
      */
     public List<Tst中文也分表> fetchByCommitId(Long... values) {
-        return fetch(Tst中文也分表Table.Tst中文也分表.CommitId, values);
+        return fetch(Tst中文也分表Table.asY8.CommitId, values);
     }
 
     /**
      * Fetch records that have <code>login_info IN (values)</code>
      */
     public List<Tst中文也分表> fetchByLoginInfo(String... values) {
-        return fetch(Tst中文也分表Table.Tst中文也分表.LoginInfo, values);
+        return fetch(Tst中文也分表Table.asY8.LoginInfo, values);
     }
 
     /**
      * Fetch records that have <code>other_info IN (values)</code>
      */
     public List<Tst中文也分表> fetchByOtherInfo(String... values) {
-        return fetch(Tst中文也分表Table.Tst中文也分表.OtherInfo, values);
+        return fetch(Tst中文也分表Table.asY8.OtherInfo, values);
     }
 }

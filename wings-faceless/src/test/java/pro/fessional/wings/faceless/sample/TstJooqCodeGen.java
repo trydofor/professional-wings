@@ -4,12 +4,13 @@ import pro.fessional.wings.faceless.jooqgen.WingsCodeGenerator;
 
 /**
  * @author trydofor
- * @since 2019-05-31
+ * @since 2019-10-12
  */
-public class WingsJooqCodeGenJavaSample {
+public class TstJooqCodeGen {
 
-    // 需要 版本 20190520_01
+    // 需要 版本 20190521_01
     public static void main(String[] args) {
+
         String database = "wings_0";
         WingsCodeGenerator.builder()
                           .jdbcDriver("com.mysql.cj.jdbc.Driver")
@@ -17,11 +18,10 @@ public class WingsJooqCodeGenJavaSample {
                           .jdbcUser("trydofor")
                           .jdbcPassword("moilioncircle")
                           .databaseSchema(database)
-                          .databaseIncludes("sys_commit_journal")
-                          .databaseExcludes("")
-                          .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
+                          .databaseIncludes("tst_中文也分表")
+                          .databaseVersionProvider("")
                           .targetPackage("pro.fessional.wings.faceless.database.autogen")
-                          .targetDirectory("wings-faceless/src/main/java/")
+                          .targetDirectory("wings-faceless/src/test/java/")
                           .buildAndGenerate();
     }
 }

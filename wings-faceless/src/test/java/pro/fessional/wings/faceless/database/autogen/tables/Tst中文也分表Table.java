@@ -38,13 +38,13 @@ import pro.fessional.wings.faceless.service.lightid.LightIdAware;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record> implements LightIdAware {
 
-    private static final long serialVersionUID = -1894001759;
+    private static final long serialVersionUID = 1102638099;
 
     /**
      * The reference instance of <code>tst_中文也分表</code>
      */
     public static final Tst中文也分表Table Tst中文也分表 = new Tst中文也分表Table();
-    public static final Tst中文也分表Table asY1 = Tst中文也分表.as("y1");
+    public static final Tst中文也分表Table asY8 = Tst中文也分表.as("y8");
 
     /**
      * The class holding records for this type

@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
 import pro.fessional.wings.silencer.jackson.JsonI18nString;
@@ -120,4 +121,13 @@ public class WingsJacksonMapperTest {
         // 自动
         private Map<String, I18nString> mapAuto = Collections.singletonMap("i18n", textAuto);
     }
+
+
+    @Test
+    public void testCodeResult() throws IOException {
+        R<I18nJson> obj = R.ok("base.not-empty", new I18nJson());
+        String json = objectMapper.writeValueAsString(obj);
+        System.out.println(json.replace(",", ",\n"));
+    }
+
 }

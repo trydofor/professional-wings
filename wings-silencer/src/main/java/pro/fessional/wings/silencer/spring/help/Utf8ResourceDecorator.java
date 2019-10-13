@@ -2,6 +2,7 @@ package pro.fessional.wings.silencer.spring.help;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import pro.fessional.mirana.bits.Bytes;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -9,8 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-
-import static pro.fessional.mirana.bits.BytesUtil.escapeUnicodeJava;
 
 /**
  * @author trydofor
@@ -40,7 +39,7 @@ public class Utf8ResourceDecorator {
 
             for (int i = 0; i < tl.length(); i++) {
                 char c = tl.charAt(i);
-                int n = escapeUnicodeJava(c, buf);
+                int n = Bytes.unicode(c, buf);
                 bos.write(buf, 0, n);
             }
             bos.write('\n');

@@ -145,26 +145,27 @@ class SqlSegmentProcessor(
             if (line.endsWith(delimiter, true) || lineCur == total) {
                 builder.append(line.substringBeforeLast(delimiter))
                 val sql = builder.toString().trim()
-                if (tblName.isEmpty()) {
-                    logger.debug("use statementParser to get tableName and shard/plain")
-                    when (val st = statementParser.parseTypeAndTable(sql)) {
-                        is SqlStatementParser.SqlType.Plain -> {
-                            tblName = st.table
-                            if (annotate == 0) annotate = -1
+                if (sql.isNotEmpty()) {
+                    if (tblName.isEmpty()) {
+                        logger.debug("use statementParser to get tableName and shard/plain")
+                        when (val st = statementParser.parseTypeAndTable(sql)) {
+                            is SqlStatementParser.SqlType.Plain -> {
+                                tblName = st.table
+                                if (annotate == 0) annotate = -1
+                            }
+                            is SqlStatementParser.SqlType.Shard -> {
+                                tblName = st.table
+                                if (annotate == 0) annotate = 1
+                            }
+                            SqlStatementParser.SqlType.Other ->
+                                logger.warn("unsupported type, use shard datasource to run, sql=$sql")
                         }
-                        is SqlStatementParser.SqlType.Shard -> {
-                            tblName = st.table
-                            if (annotate == 0) annotate = 1
-                        }
-                        SqlStatementParser.SqlType.Other ->
-                            logger.warn("unsupported type, use shard datasource to run, sql=$sql")
                     }
+                    val isPlain = annotate < 0
+                    logger.debug("got a segment line from={}, to={}, tableName={}, plain={}", lineBgn, lineCur, tblName, isPlain)
+                    val tblIdx2 = TemplateUtil.parse(sql, tblName)
+                    result.add(Segment(isPlain, lineBgn, lineCur, tblName, tblIdx2, sql))
                 }
-                val isPlain = annotate < 0
-                logger.debug("got a segment line from={}, to={}, tableName={}, plain={}", lineBgn, lineCur, tblName, isPlain)
-                val tblIdx2 = TemplateUtil.parse(sql, tblName)
-                result.add(Segment(isPlain, lineBgn, lineCur, tblName, tblIdx2, sql))
-
                 // reset for next
                 lineBgn = -1
                 annotate = 0

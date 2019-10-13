@@ -206,17 +206,17 @@ JdbcTemplate用于功能性或复杂的数据库操作，以自动注入Bean。
  * [JOOQ#9055 should NO table qualify if NO table alias](https://github.com/jOOQ/jOOQ/issues/9055)
  * [ShardingSphere#2859 `table.column` can not sharding](https://github.com/apache/incubator-shardingsphere/issues/2859)
 
-使用Jooq的主要原因之一是`限制的艺术`，避免写出比较复杂的SQL，所以约定如下
+使用Jooq的主要原因之一是`限制的艺术`，避免写出比较复杂的SQL，所以约定如下，
 
  * 鼓励单表操作，放在`single`包内，使用`本名`(如，TstDemoTable.TST_DEMO)
  * 操作多表时，**一定** 使用`别名`(如，TstDemoTable.AS_F1)
- * INSERT 使用`本名`，不可使用`别名`
- * DELETE 使用`本名`，不可使用`别名`
- * UPDATE 使用`别名`优先于`本名`
- * SELECT 使用`别名`优先于`本名`
+ * INSERT 使用`本名`，不可使用`别名`，在a9m时，使用`本名`
+ * DELETE 使用`本名`，不可使用`别名`，在a9m时，使用`本名`
+ * UPDATE 使用`别名`优先于`本名`，在a9m时，使用`本名`
+ * SELECT 使用`别名`优先于`本名`，在a9m时，使用`本名`
  * **不要** 使用中文表名，例子代码只是极端测试。
 
-使用patch版本的`jooq-a9m`(a9 mod)，参考pom中的私有库，或直接替换class，方法有三。
+使用patch版本的`jooq-a9m`(a9 mod)，可以都是有`本名`，参考pom中的私有库，或直接替换class，方法有三。
 
  * 自建私有库，自行`mvn install` [jooq-a9m](https://github.com/trydofor/jOOQ) 
  * 静态替换，用`/test/resources/patch/TableFieldImpl`替换原始类，然后发布私有库。
