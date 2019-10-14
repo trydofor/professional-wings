@@ -8,8 +8,10 @@ import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilde
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.silencer.context.WingsI18nContext;
+import pro.fessional.wings.silencer.jackson.I18nResultSerializer;
 import pro.fessional.wings.silencer.jackson.I18nStringSerializer;
 
 /**
@@ -26,6 +28,7 @@ public class WingsJson18nConfiguration {
     @Bean("jackson2ObjectMapperBuilderCustomizer-Json18n")
     public Jackson2ObjectMapperBuilderCustomizer customizer(MessageSource messageSource, WingsI18nContext i18nContext) {
         return builder -> {
+            builder.serializerByType(R.I.class, new I18nResultSerializer(messageSource, i18nContext));
             builder.serializerByType(I18nString.class, new I18nStringSerializer(messageSource, i18nContext, true));
             builder.serializerByType(CharSequence.class, new I18nStringSerializer(messageSource, i18nContext, false));
         };

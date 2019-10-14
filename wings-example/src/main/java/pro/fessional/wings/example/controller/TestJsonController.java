@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import pro.fessional.mirana.data.R;
 import pro.fessional.wings.silencer.context.WingsI18nContext;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
 import pro.fessional.wings.slardar.spring.help.WingsI18nWebUtil;
@@ -35,8 +37,8 @@ import java.util.Map;
  */
 
 @Controller
-@AllArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class TestJsonController {
 
     private final MessageSource messageSource;
@@ -71,7 +73,7 @@ public class TestJsonController {
 
     @RequestMapping("/test.json")
     @ResponseBody
-    public JsonIt jsonIt(HttpServletRequest request) {
+    public R<JsonIt> jsonIt(HttpServletRequest request) {
         JsonIt json = new JsonIt();
         ZonedDateTime now = ZonedDateTime.now();
         @NotNull WingsI18nContext ctx = WingsI18nWebUtil.getI18nContextOrDefault(request);
@@ -80,6 +82,6 @@ public class TestJsonController {
         json.setHello(messageSource.getMessage("user.hello", new Object[]{}, ctx.getLocale()));
         json.setUserZoneId(ctx.getZoneId());
         json.setSystemZoneId(ZoneId.systemDefault());
-        return json;
+        return R.okData(json);
     }
 }

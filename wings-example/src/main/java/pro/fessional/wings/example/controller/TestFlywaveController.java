@@ -1,7 +1,7 @@
 package pro.fessional.wings.example.controller;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,14 +20,13 @@ import java.util.SortedMap;
  */
 
 @Controller
-@AllArgsConstructor
-@Slf4j
+@Setter(onMethod = @__({@Autowired}))
 public class TestFlywaveController {
 
-    private final SchemaShardingManager schemaShardingManager;
-    private final SchemaRevisionManager schemaRevisionManager;
-    private final SchemaJournalManager schemaJournalManager;
-    private final WingsFlywaveVerProperties wingsFlywaveVerProperties;
+    private SchemaShardingManager schemaShardingManager;
+    private SchemaRevisionManager schemaRevisionManager;
+    private SchemaJournalManager schemaJournalManager;
+    private WingsFlywaveVerProperties wingsFlywaveVerProperties;
 
     @RequestMapping("/flywave-revi.json")
     @ResponseBody
@@ -39,9 +38,9 @@ public class TestFlywaveController {
             schemaRevisionManager.checkAndInitSql(sqls, 0);
             sb.append("\n结束初始化");
         }
-        sb.append("\n开始执行版本=" + revi);
+        sb.append("\n开始执行版本=").append(revi);
         schemaRevisionManager.publishRevision(revi, 0);
-        sb.append("\n开始执行版本=" + revi);
+        sb.append("\n开始执行版本=").append(revi);
         return sb.toString();
     }
 
@@ -49,13 +48,13 @@ public class TestFlywaveController {
     @ResponseBody
     public String flywaveShard(@RequestParam("table") String table) {
         StringBuilder sb = new StringBuilder();
-        sb.append("\n开始分表=" + table + "，数量=2");
+        sb.append("\n开始分表=").append(table).append("，数量=2");
         schemaShardingManager.publishShard(table, 2);
-        sb.append("\n结束分表=" + table + "，数量=2");
+        sb.append("\n结束分表=").append(table).append("，数量=2");
 
-        sb.append("\n开始迁移数据=" + table + "，数量=2");
+        sb.append("\n开始迁移数据=").append(table).append("，数量=2");
         schemaShardingManager.shardingData(table, true);
-        sb.append("\n结束迁移数据=" + table + "，数量=2");
+        sb.append("\n结束迁移数据=").append(table).append("，数量=2");
 
         return sb.toString();
     }
@@ -65,7 +64,7 @@ public class TestFlywaveController {
     public String flywaveJournal(@RequestParam("table") String table, @RequestParam("enable") boolean enable) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("\n开始初始化跟踪配置=" + table);
+        sb.append("\n开始初始化跟踪配置=").append(table);
         SchemaJournalManager.JournalDdl ddls = new SchemaJournalManager.JournalDdl(
                 wingsFlywaveVerProperties.getJournalUpdate(),
                 wingsFlywaveVerProperties.getTriggerUpdate(),
@@ -73,16 +72,16 @@ public class TestFlywaveController {
                 wingsFlywaveVerProperties.getTriggerDelete()
         );
         schemaJournalManager.checkAndInitDdl(table, ddls, 0);
-        sb.append("\n结束初始化跟踪配置=" + table);
+        sb.append("\n结束初始化跟踪配置=").append(table);
 
         // 开启关闭
-        sb.append("\n开始更新追踪=" + table);
+        sb.append("\n开始更新追踪=").append(table);
         schemaJournalManager.publishUpdate(table, enable, 0);
-        sb.append("\n结束更新追踪=" + table);
+        sb.append("\n结束更新追踪=").append(table);
 
-        sb.append("\n开始删除追踪=" + table);
+        sb.append("\n开始删除追踪=").append(table);
         schemaJournalManager.publishDelete(table, enable, 0);
-        sb.append("\n结束删除追踪=" + table);
+        sb.append("\n结束删除追踪=").append(table);
 
         return sb.toString();
     }

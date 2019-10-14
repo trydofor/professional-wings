@@ -14,8 +14,8 @@ import java.util.Random;
  */
 
 @Controller
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class TestSleepController {
 
     private final Random unsafeRandom = new Random();

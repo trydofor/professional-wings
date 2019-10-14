@@ -135,6 +135,8 @@ spring对MessageSource的加载与configuration的机制不同，不需要unicod
 自动转化时，使用注入的`messageSource`和`WingsI18nContext`获得相应语言。
 使用`@JsonI18nString(false)`，可以关闭自动转换。
 
+`R.I<T>`为常用返回值类型，当存在`i18nCode`时，会用i18n信息自动替换`message`。
+
 常用的Jackson注解
  * @JsonRawValue - 以字符串（已是json格式）本来的形式展现
  * @JsonFormat - 指定格式

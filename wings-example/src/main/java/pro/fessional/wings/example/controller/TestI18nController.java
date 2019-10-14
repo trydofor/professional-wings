@@ -1,6 +1,6 @@
 package pro.fessional.wings.example.controller;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.MessageSource;
@@ -22,8 +22,8 @@ import java.util.Locale;
  */
 
 @Controller
-@AllArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class TestI18nController {
 
     private final MessageSource messageSource;

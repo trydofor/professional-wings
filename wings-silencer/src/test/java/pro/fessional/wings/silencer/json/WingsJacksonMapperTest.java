@@ -2,6 +2,7 @@ package pro.fessional.wings.silencer.json;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -99,8 +100,9 @@ public class WingsJacksonMapperTest {
     @Test
     public void testI18nString() throws IOException {
         I18nJson obj = new I18nJson();
-        String json = objectMapper.writeValueAsString(obj);
-        System.out.println(json.replace(",", ",\n"));
+        ObjectWriter jackson = objectMapper.writerWithDefaultPrettyPrinter();
+        String json = jackson.writeValueAsString(obj);
+        System.out.println(json);
     }
 
     @Data
@@ -124,10 +126,15 @@ public class WingsJacksonMapperTest {
 
 
     @Test
-    public void testCodeResult() throws IOException {
-        R<I18nJson> obj = R.ok("base.not-empty", new I18nJson());
-        String json = objectMapper.writeValueAsString(obj);
-        System.out.println(json.replace(",", ",\n"));
-    }
+    public void testI18nResult() throws IOException {
+        ObjectWriter jackson = objectMapper.writerWithDefaultPrettyPrinter();
 
+        R<I18nJson> r1 = R.ok("这是一个消息", new I18nJson());
+        String j1 = jackson.writeValueAsString(r1);
+        System.out.println(j1);
+
+        R<I18nJson> r2 = r1.toI18n("base.not-empty", "第一个参数");
+        String j2 = jackson.writeValueAsString(r2);
+        System.out.println(j2);
+    }
 }
