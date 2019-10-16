@@ -1,7 +1,10 @@
 package pro.fessional.wings.faceless.database.common;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jooq.Condition;
 import org.jooq.Configuration;
+import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.OrderField;
 import org.jooq.Record;
@@ -9,7 +12,10 @@ import org.jooq.Table;
 import org.jooq.UniqueKey;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
+import pro.fessional.mirana.data.CodeEnum;
+import pro.fessional.mirana.pain.CodeException;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -61,13 +67,8 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
         return (S) table.as(alias);
     }
 
-    @Override
-    public S getTable() {
-        return table;
-    }
-
     // ======= select =======
-    public long count(Condition... condition) {
+    public long count(Condition condition) {
         return using(configuration())
                 .selectCount()
                 .from(alias)
@@ -75,7 +76,8 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
                 .fetchOne(0, Long.class);
     }
 
-    public List<P> fetch(Condition... condition) {
+    @NotNull
+    public List<P> fetch(Condition condition) {
         return using(configuration())
                 .selectFrom(alias)
                 .where(condition)
@@ -97,7 +99,8 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
      * @param condition 条件
      * @return 结果集
      */
-    public List<P> fetch(int offset, int limit, Condition... condition) {
+    @NotNull
+    public List<P> fetch(int offset, int limit, Condition condition) {
         return using(configuration())
                 .selectFrom(alias)
                 .where(condition)
@@ -117,11 +120,12 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
      *
      * @param offset    offset
      * @param limit     size
-     * @param oderBy    排序字段
      * @param condition 条件
+     * @param oderBy    排序字段
      * @return 结果集
      */
-    public List<P> fetch(int offset, int limit, Collection<? extends OrderField<?>> oderBy, Condition... condition) {
+    @NotNull
+    public List<P> fetch(int offset, int limit, Condition condition, OrderField<?>... oderBy) {
         return using(configuration())
                 .selectFrom(alias)
                 .where(condition)
@@ -131,7 +135,8 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
                 .map(mapper());
     }
 
-    public P fetchOne(Condition... condition) {
+    @Nullable
+    public P fetchOne(Condition condition) {
         R record = using(configuration())
                 .selectFrom(alias)
                 .where(condition)
@@ -143,16 +148,84 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
     // ======= modify =======
 
     /**
+     * 必须插入一个，否则CodeException(orError)
+     *
+     * @param object  对象
+     * @param orError 异常code
+     */
+    public int insertOne(P object, CodeEnum orError) {
+        int rc = using(configuration()).newRecord(table, object).insert();
+        if (rc != 1) throw new CodeException(orError);
+        return rc;
+    }
+
+    /**
+     * 批量插入N，必须N条，否则CodeException(orError)
+     *
+     * @param objects 批量对象
+     * @param orError 异常code
+     */
+    public int[] insertEqN(Collection<P> objects, CodeEnum orError) {
+        DSLContext dsl = using(configuration());
+        List<R> records = new ArrayList<>(objects.size());
+        for (P po : objects) {
+            records.add(dsl.newRecord(table, po));
+        }
+
+        int[] rc = dsl.batchInsert(records).execute();
+        for (int i = 0; i < rc.length; i++) {
+            if (rc[i] != 1) throw new CodeException(orError);
+        }
+        return rc;
+    }
+
+    /**
      * 按条件删除
      *
      * @param condition 更新条件
      * @return 影响的数据条数
      */
-    public int delete(Condition... condition) {
+    public int delete(Condition condition) {
         return using(configuration())
                 .delete(table)
                 .where(condition)
                 .execute();
+    }
+
+    /**
+     * 必须删除一个，否则CodeException(orError)
+     *
+     * @param condition 条件
+     * @param orError   异常code
+     */
+    public int deleteOne(Condition condition, CodeEnum orError) {
+        return deleteEqN(condition, 1, orError);
+    }
+
+    /**
+     * 必须删除N个，否则CodeException(orError)
+     *
+     * @param condition 条件
+     * @param n         数字
+     * @param orError   异常code
+     */
+    public int deleteEqN(Condition condition, int n, CodeEnum orError) {
+        int rc = delete(condition);
+        if (rc != n) throw new CodeException(orError);
+        return rc;
+    }
+
+    /**
+     * 必须删除不多于N个，否则CodeException(orError)
+     *
+     * @param condition 条件
+     * @param n         数字
+     * @param orError   异常code
+     */
+    public int deleteLeN(Condition condition, int n, CodeEnum orError) {
+        int rc = delete(condition);
+        if (rc > n) throw new CodeException(orError);
+        return rc;
     }
 
     /**
@@ -168,13 +241,128 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
      * @param condition 更新条件
      * @return 影响的数据条数
      */
-    public int update(Map<?, ?> setter, Condition... condition) {
+    public int update(Map<?, ?> setter, Condition condition) {
         return using(configuration())
                 .update(table)
                 .set(setter)
                 .where(condition)
                 .execute();
     }
+
+    /**
+     * 按 对象更新
+     *
+     * @param object     对象
+     * @param ignoreNull null字段不被更新
+     * @return 更新数量
+     */
+    public int update(P object, boolean ignoreNull) {
+        DSLContext dsl = using(configuration());
+        R record = dsl.newRecord(table, object);
+        dealPkAndNull(record);
+        return record.update();
+    }
+
+
+    /**
+     * 按对象组更新
+     *
+     * @param objects    对象组
+     * @param ignoreNull null字段不被更新
+     * @return 更新数量
+     */
+    public int[] update(Collection<P> objects, boolean ignoreNull) {
+        List<R> records = new ArrayList<>(objects.size());
+        DSLContext dsl = using(configuration());
+        for (P object : objects) {
+            R record = dsl.newRecord(table, object);
+            dealPkAndNull(record);
+        }
+        return dsl.batchUpdate(records).execute();
+    }
+
+    /**
+     * 必须更新一个，否则CodeException(orError)
+     *
+     * @param setter    变更新
+     * @param condition 条件
+     * @param orError   异常code
+     */
+    public int updateOne(Map<?, ?> setter, Condition condition, CodeEnum orError) {
+        return updateEqN(setter, condition, 1, orError);
+    }
+
+    /**
+     * 必须更新N个，否则CodeException(orError)
+     *
+     * @param setter    变更新
+     * @param condition 条件
+     * @param n         数量
+     * @param orError   异常code
+     */
+    public int updateEqN(Map<?, ?> setter, Condition condition, int n, CodeEnum orError) {
+        int rc = update(setter, condition);
+        if (rc != n) throw new CodeException(orError);
+        return rc;
+    }
+
+    /**
+     * 必须更新不多于N个，否则CodeException(orError)
+     *
+     * @param setter    变更新
+     * @param condition 条件
+     * @param n         数量
+     * @param orError   异常code
+     */
+    public int updateLeN(Map<?, ?> setter, Condition condition, int n, CodeEnum orError) {
+        int rc = update(setter, condition);
+        if (rc > n) throw new CodeException(orError);
+        return rc;
+    }
+
+    /**
+     * 必须更新一个，否则CodeException(orError)
+     *
+     * @param object     被更新对象
+     * @param ignoreNull null值忽略
+     * @param orError    异常code
+     */
+    public int updateOne(P object, boolean ignoreNull, CodeEnum orError) {
+        int rc = update(object, ignoreNull);
+        if (rc != 1) throw new CodeException(orError);
+        return rc;
+    }
+
+    /**
+     * 必须更新N个，否则CodeException(orError)
+     *
+     * @param objects    被更新对象
+     * @param ignoreNull null值忽略
+     * @param orError    异常code
+     */
+    public int[] updateEqN(Collection<P> objects, boolean ignoreNull, CodeEnum orError) {
+        int[] rc = update(objects, ignoreNull);
+        for (int i = 0; i < rc.length; i++) {
+            if (rc[i] != 1) throw new CodeException(orError);
+        }
+        return rc;
+    }
+
+    /**
+     * 必须更新不多于N个，否则CodeException(orError)
+     *
+     * @param objects    被更新对象
+     * @param ignoreNull null值忽略
+     * @param orError    异常code
+     */
+    public int[] updateLeN(Collection<P> objects, boolean ignoreNull, CodeEnum orError) {
+        int[] rc = update(objects, ignoreNull);
+        for (int i = 0; i < rc.length; i++) {
+            if (rc[i] > 1) throw new CodeException(orError);
+        }
+        return rc;
+    }
+
 
     // ============
 
@@ -245,9 +433,11 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
     }
 
     // ==========
+    private static final Field<?>[] EMPTY_PK = new Field<?>[0];
+
     private Field<?>[] pk() {
         UniqueKey<?> key = alias.getPrimaryKey();
-        return key == null ? null : key.getFieldsArray();
+        return key == null ? EMPTY_PK : key.getFieldsArray();
     }
 
     @SuppressWarnings("unchecked")
@@ -259,6 +449,18 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
         // [#2573] Composite key T types are of type Record[N]
         else {
             return row(pk).equal((Record) id);
+        }
+    }
+
+    private void dealPkAndNull(R record) {
+        for (Field<?> field : pk()) {
+            record.changed(field, false);
+        }
+        int size = record.size();
+        for (int i = 0; i < size; i++) {
+            if (record.get(i) == null) {
+                record.changed(i, false);
+            }
         }
     }
 }
