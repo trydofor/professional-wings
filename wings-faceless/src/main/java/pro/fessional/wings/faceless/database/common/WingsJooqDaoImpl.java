@@ -17,6 +17,7 @@ import pro.fessional.mirana.pain.CodeException;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -249,17 +250,43 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
                 .execute();
     }
 
+
     /**
-     * 按 对象更新
+     * 按对象和条件更新，null被忽略
      *
-     * @param object     对象
-     * @param ignoreNull null字段不被更新
+     * @param object    对象
+     * @param condition 条件
      * @return 更新数量
      */
-    public int update(P object, boolean ignoreNull) {
+    private int update(P object, Condition condition) {
         DSLContext dsl = using(configuration());
         R record = dsl.newRecord(table, object);
-        dealPkAndNull(record);
+
+        Map<Field<?>, Object> setter = new LinkedHashMap<>();
+        int size = record.size();
+        for (int i = 0; i < size; i++) {
+            if (record.get(i) != null) {
+                setter.put(record.field(i), record.get(i));
+            }
+        }
+
+        return dsl.update(table)
+                  .set(setter)
+                  .where(condition)
+                  .execute();
+    }
+
+    /**
+     * 按对象和主键更新
+     *
+     * @param object   对象
+     * @param skipNull null字段不被更新
+     * @return 更新数量
+     */
+    public int update(P object, boolean skipNull) {
+        DSLContext dsl = using(configuration());
+        R record = dsl.newRecord(table, object);
+        dealPkAndNull(record, skipNull);
         return record.update();
     }
 
@@ -267,16 +294,16 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
     /**
      * 按对象组更新
      *
-     * @param objects    对象组
-     * @param ignoreNull null字段不被更新
+     * @param objects  对象组
+     * @param skipNull null字段不被更新
      * @return 更新数量
      */
-    public int[] update(Collection<P> objects, boolean ignoreNull) {
+    public int[] update(Collection<P> objects, boolean skipNull) {
         List<R> records = new ArrayList<>(objects.size());
         DSLContext dsl = using(configuration());
         for (P object : objects) {
             R record = dsl.newRecord(table, object);
-            dealPkAndNull(record);
+            dealPkAndNull(record, skipNull);
         }
         return dsl.batchUpdate(records).execute();
     }
@@ -321,14 +348,56 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
     }
 
     /**
+     * 把 object 中非null，非主键字段按setter更新。
      * 必须更新一个，否则CodeException(orError)
      *
-     * @param object     被更新对象
-     * @param ignoreNull null值忽略
-     * @param orError    异常code
+     * @param object    变更新
+     * @param condition 条件
+     * @param orError   异常code
      */
-    public int updateOne(P object, boolean ignoreNull, CodeEnum orError) {
-        int rc = update(object, ignoreNull);
+    public int updateOne(P object, Condition condition, CodeEnum orError) {
+        return updateEqN(object, condition, 1, orError);
+    }
+
+    /**
+     * 把 object 中非null，非主键字段按setter更新。
+     * 必须更新N个，否则CodeException(orError)
+     *
+     * @param object    变更新
+     * @param condition 条件
+     * @param n         数量
+     * @param orError   异常code
+     */
+    public int updateEqN(P object, Condition condition, int n, CodeEnum orError) {
+        int rc = update(object, condition);
+        if (rc != n) throw new CodeException(orError);
+        return rc;
+    }
+
+    /**
+     * 把 object 中非null，非主键字段按setter更新。
+     * 必须更新不多于N个，否则CodeException(orError)
+     *
+     * @param object    变更新
+     * @param condition 条件
+     * @param n         数量
+     * @param orError   异常code
+     */
+    public int updateLeN(P object, Condition condition, int n, CodeEnum orError) {
+        int rc = update(object, condition);
+        if (rc > n) throw new CodeException(orError);
+        return rc;
+    }
+
+    /**
+     * 必须更新一个，否则CodeException(orError)
+     *
+     * @param object   被更新对象
+     * @param skipNull null值忽略
+     * @param orError  异常code
+     */
+    public int updateOne(P object, boolean skipNull, CodeEnum orError) {
+        int rc = update(object, skipNull);
         if (rc != 1) throw new CodeException(orError);
         return rc;
     }
@@ -336,12 +405,12 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
     /**
      * 必须更新N个，否则CodeException(orError)
      *
-     * @param objects    被更新对象
-     * @param ignoreNull null值忽略
-     * @param orError    异常code
+     * @param objects  被更新对象
+     * @param skipNull null值忽略
+     * @param orError  异常code
      */
-    public int[] updateEqN(Collection<P> objects, boolean ignoreNull, CodeEnum orError) {
-        int[] rc = update(objects, ignoreNull);
+    public int[] updateEqN(Collection<P> objects, boolean skipNull, CodeEnum orError) {
+        int[] rc = update(objects, skipNull);
         for (int i = 0; i < rc.length; i++) {
             if (rc[i] != 1) throw new CodeException(orError);
         }
@@ -351,12 +420,12 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
     /**
      * 必须更新不多于N个，否则CodeException(orError)
      *
-     * @param objects    被更新对象
-     * @param ignoreNull null值忽略
-     * @param orError    异常code
+     * @param objects  被更新对象
+     * @param skipNull null值忽略
+     * @param orError  异常code
      */
-    public int[] updateLeN(Collection<P> objects, boolean ignoreNull, CodeEnum orError) {
-        int[] rc = update(objects, ignoreNull);
+    public int[] updateLeN(Collection<P> objects, boolean skipNull, CodeEnum orError) {
+        int[] rc = update(objects, skipNull);
         for (int i = 0; i < rc.length; i++) {
             if (rc[i] > 1) throw new CodeException(orError);
         }
@@ -452,10 +521,13 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
         }
     }
 
-    private void dealPkAndNull(R record) {
+    private void dealPkAndNull(R record, boolean skipNull) {
         for (Field<?> field : pk()) {
             record.changed(field, false);
         }
+
+        if (!skipNull) return;
+
         int size = record.size();
         for (int i = 0; i < size; i++) {
             if (record.get(i) == null) {
