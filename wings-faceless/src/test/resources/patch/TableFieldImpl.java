@@ -36,7 +36,7 @@
  *
  */
 
-package patch;
+package org.jooq.impl;
 
 import org.jooq.Binding;
 import org.jooq.Clause;
@@ -51,7 +51,7 @@ import org.jooq.tools.StringUtils;
 
 import static org.jooq.Clause.FIELD;
 import static org.jooq.Clause.FIELD_REFERENCE;
-import static org.jooq.impl.Tools.DataKey.DATA_OMIT_CLAUSE_EVENT_EMISSION;
+import static org.jooq.impl.Tools.BooleanDataKey.DATA_OMIT_CLAUSE_EVENT_EMISSION;
 
 /**
  * A common base type for table fields.
@@ -60,10 +60,10 @@ import static org.jooq.impl.Tools.DataKey.DATA_OMIT_CLAUSE_EVENT_EMISSION;
  */
 final class TableFieldImpl<R extends Record, T> extends AbstractField<T> implements TableField<R, T> {
 
-    private static final long serialVersionUID = -2211214195583539735L;
-    private static final Clause[] CLAUSES = {FIELD, FIELD_REFERENCE};
+    private static final long     serialVersionUID = -2211214195583539735L;
+    private static final Clause[] CLAUSES          = { FIELD, FIELD_REFERENCE };
 
-    private final Table<R> table;
+    private final Table<R>        table;
 
     TableFieldImpl(Name name, DataType<T> type, Table<R> table, Comment comment, Binding<?, T> binding) {
         super(qualify(table, name), type, comment, binding);
@@ -89,20 +89,16 @@ final class TableFieldImpl<R extends Record, T> extends AbstractField<T> impleme
     public final void accept(Context<?> ctx) {
         ctx.data(DATA_OMIT_CLAUSE_EVENT_EMISSION, true);
 
-        if (ctx.qualify()) {
+        if (ctx.qualify()
             // [#9055] should NO table qualify if NO table alias
-            boolean qualify = true;
-            if (table instanceof TableImpl) {
-                qualify = ((TableImpl) table).alias != null;
-            }
-            if (qualify) {
-                ctx.visit(table);
-                ctx.sql('.');
-            }
+            && (ctx.settings().isRenderTable() || table instanceof TableImpl && ((TableImpl) table).alias != null)
+        ) {
+            ctx.visit(table);
+            ctx.sql('.');
         }
 
         ctx.visit(getUnqualifiedName());
-        ctx.data(DATA_OMIT_CLAUSE_EVENT_EMISSION, null);
+        ctx.data().remove(DATA_OMIT_CLAUSE_EVENT_EMISSION);
     }
 
     // ------------------------------------------------------------------------
@@ -120,8 +116,8 @@ final class TableFieldImpl<R extends Record, T> extends AbstractField<T> impleme
         if (that instanceof TableField) {
             TableField<?, ?> other = (TableField<?, ?>) that;
             return
-                    StringUtils.equals(getTable(), other.getTable()) &&
-                            StringUtils.equals(getName(), other.getName());
+                StringUtils.equals(getTable(), other.getTable()) &&
+                StringUtils.equals(getName(), other.getName());
         }
 
         return super.equals(that);

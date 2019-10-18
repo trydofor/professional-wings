@@ -98,6 +98,7 @@ class JooqShardingTest {
                 .from(f1)
                 .where(f1.Id.le(id))
                 .limit(1)
+//                .getSQL()
                 .fetchOne().into(Long::class.java)
         println("============select id=$r1")
 
@@ -106,6 +107,7 @@ class JooqShardingTest {
                 .from(t)
                 .where(t.Id.le(id))
                 .limit(1)
+//                .getSQL()
                 .fetchOne().into(Long::class.java)
         println("============select id=$r2")
     }

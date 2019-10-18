@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.11.0.xsd">
+<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.12.0.xsd">
     <logging>INFO</logging>
     <jdbc>
         <driver>!!your-config-here!!</driver>
@@ -36,8 +36,6 @@
                 SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'
             </schemaVersionProvider>
 
-            <includeForeignKeys>false</includeForeignKeys>
-            <includeIndexes>false</includeIndexes>
             <includeTables>true</includeTables>
             <includeRoutines>false</includeRoutines>
             <includePackages>false</includePackages>
@@ -48,11 +46,14 @@
             <includeSequences>false</includeSequences>
             <includePrimaryKeys>true</includePrimaryKeys>
             <includeUniqueKeys>false</includeUniqueKeys>
+            <includeForeignKeys>false</includeForeignKeys>
+            <includeCheckConstraints>false</includeCheckConstraints>
+            <includeIndexes>false</includeIndexes>
 
             <forcedTypes>
                 <forcedType>
                     <name>BOOLEAN</name>
-                    <types>TINYINT</types>
+                    <includeTypes>TINYINT[0-9()]*</includeTypes>
                 </forcedType>
             </forcedTypes>
         </database>

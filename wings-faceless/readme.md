@@ -167,12 +167,16 @@ MyBatis虽是大部分项目的首选，固有其优秀之处，但开发人员�
  * 很容易写出复杂的大SQL，使得服务难以拆分。
  * 字符串及弱类型，IDE的眷顾有限。
 
-使用Jooq，强类型，编程高于配置，并且SQL友好，又恰好能力有限。
+使用Jooq，强类型，编程高于配置，并且SQL友好，又恰好有限制能力的能力。
 
 自动生成jooq代码，使用`WingsCodeGenerator`以编程的方式进行（不用maven）。
 自动生成的代码在 `database/autogen/`，手动编写的代码在`database/manual/`下。
 
-手动生成代码遵循一下约定，
+当自动生成代码时碰到wings或jooq断版功能导致编译错误，无法在当前工程生产代码时，
+需要建立一个新的小工程，依赖wings新版，然后执行代码生成类即可。
+
+自动生成的`*Dao`，有大量可直接使用的数据库操作方法，免去很多手写代码量。
+在复杂数据操作必须手写代码时，遵循以下约定，
 
  * 任何对数据库的操作，都应该在`database`包内进行。
  * DSLContext和DataSource不应该离开database层。
@@ -203,7 +207,8 @@ JdbcTemplate用于功能性或复杂的数据库操作，以自动注入Bean。
 注意，jooq生成代码，默认使用`table.column`限定列名，而ShardingJdbc做当前版本不支持。
 最优解决办法是使ShardingJdbc支持，当前最简单的办法是修改Jooq生成策略，参考以下Issue。
 
- * [JOOQ#9055 should NO table qualify if NO table alias](https://github.com/jOOQ/jOOQ/issues/9055)
+
+ * [JOOQ#9055 should NO table qualify if NO table alias](https://github.com/jOOQ/jOOQ/pull/9406)
  * [ShardingSphere#2859 `table.column` can not sharding](https://github.com/apache/incubator-shardingsphere/issues/2859)
 
 使用Jooq的主要原因之一是`限制的艺术`，避免写出比较复杂的SQL，所以约定如下，
@@ -218,17 +223,17 @@ JdbcTemplate用于功能性或复杂的数据库操作，以自动注入Bean。
 
 使用patch版本的`jooq-a9m`(a9 mod)，可以都是有`本名`，参考pom中的私有库，或直接替换class，方法有三。
 
- * 自建私有库，自行`mvn install` [jooq-a9m](https://github.com/trydofor/jOOQ) 
- * 静态替换，用`/test/resources/patch/TableFieldImpl`替换原始类，然后发布私有库。
- * 动态替换，用`classloader`或`字节码修改术`搞黑科技，但有风险。
+ * 私有库，`install`或`deploy` [jooq-a9m](https://github.com/trydofor/jOOQ) 
+ * 静态替换，用`/test/resources/patch/*`到对应位置。
+ * 动态替换，用`classloader`或`字节码修改术`搞黑科技，不推荐。
 
 JOOQ参考资料
 
- * [Jooq patch](https://github.com/trydofor/jOOQ/commit/6554048950d046153688e86f4570fbb19af74875)
- * [批量操作 record](https://www.jooq.org/doc/3.11/manual/sql-execution/crud-with-updatablerecords/batch-execution-for-crud/)
- * [批量操作 jdbc](https://www.jooq.org/doc/3.11/manual/sql-execution/batch-execution/)
- * [使用别名，支持分表](https://www.jooq.org/doc/3.11/manual/sql-building/table-expressions/aliased-tables/)
- * [SQL的执行](https://www.jooq.org/doc/3.11/manual/sql-execution/)
+ * [Jooq patch](https://github.com/trydofor/jOOQ/commit/0be23d2e90a1196def8916b9625fbe2ebffd4753)
+ * [批量操作 record](https://www.jooq.org/doc/3.12/manual/sql-execution/crud-with-updatablerecords/batch-execution-for-crud/)
+ * [批量操作 jdbc](https://www.jooq.org/doc/3.12/manual/sql-execution/batch-execution/)
+ * [使用别名，支持分表](https://www.jooq.org/doc/3.12/manual/sql-building/table-expressions/aliased-tables/)
+ * [SQL的执行](https://www.jooq.org/doc/3.12/manual/sql-execution/)
 
 ## 2.7.测试用例
 

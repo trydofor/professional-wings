@@ -107,7 +107,7 @@ class WingsJavaGenerator : JavaGenerator() {
         // Template method implementations
         // -------------------------------
         out.tab(1).overrideInherit()
-        out.tab(1).println("protected %s getId(%s object) {", tType, pType)
+        out.tab(1).println("public %s getId(%s object) {", tType, pType)
 
         if (keyColumns.size == 1) {
             out.tab(2).println("return object.%s();", getStrategy().getJavaGetterName(keyColumns[0], GeneratorStrategy.Mode.POJO))

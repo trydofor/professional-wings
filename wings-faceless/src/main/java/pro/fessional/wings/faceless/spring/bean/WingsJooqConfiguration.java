@@ -41,6 +41,7 @@ public class WingsJooqConfiguration {
         return new Settings()
                 .withRenderCatalog(false)
                 .withRenderSchema(false)
+                .withRenderTable(false)
                 ;
     }
 
