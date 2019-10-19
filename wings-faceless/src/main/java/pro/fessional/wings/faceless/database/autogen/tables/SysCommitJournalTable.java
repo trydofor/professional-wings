@@ -48,6 +48,8 @@ public class SysCommitJournalTable extends TableImpl<SysCommitJournalRecord> imp
      */
     public static final SysCommitJournalTable SysCommitJournal = new SysCommitJournalTable();
     public static final SysCommitJournalTable asN6 = SysCommitJournal.as("n6");
+    public static final SysCommitJournalTable SysCommitJournal$del = SysCommitJournal.rename("sys_commit_journal$del").as("n6d");
+    public static final SysCommitJournalTable SysCommitJournal$upd = SysCommitJournal.rename("sys_commit_journal$upd").as("n6u");
 
     /**
      * The class holding records for this type

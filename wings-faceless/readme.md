@@ -70,7 +70,7 @@ sql的书写规则详见[数据库约定](/wings-faceless/src/main/resources/win
  * 根据`log_delete`创建 `before delete` 触发器。
  
 通过配置文件指定模板来定义DDL，默认设置参考`wings-flywave.properties`。
-默认分表有自己的`更新表`(`TABLE_#$UPD`)，但共享同一个`删除表`(`TABLE$DEL`)。
+默认分表有自己的`更新表`(`TABLE_#$upd`)，但共享同一个`删除表`(`TABLE$del`)。
 模板中，预定义以下DDL变量，避开spring变量替换，使用胡子`{{}}`表示法，名字全大写。
 
  * `{{PLAIN_NAME}}` 目标表的`本表`名字
@@ -176,6 +176,12 @@ MyBatis虽是大部分项目的首选，固有其优秀之处，但开发人员�
 需要建立一个新的小工程，依赖wings新版，然后执行代码生成类即可。
 
 自动生成的`*Dao`，有大量可直接使用的数据库操作方法，免去很多手写代码量。
+
+ * `getAliasForReader` 获得select用的别名表，`Table as t1`
+ * `getTableForWriter` 获得modify用的不使用别名的表 `Table`
+ * `getTraceOfDeleted` 获得shadow用的删除的影子表`Table$del`
+ * `getTraceOfUpdated` 获得shadow用的更新的影子表`Table$upd`
+ 
 在复杂数据操作必须手写代码时，遵循以下约定，
 
  * 任何对数据库的操作，都应该在`database`包内进行。

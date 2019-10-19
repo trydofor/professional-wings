@@ -30,19 +30,41 @@ import static org.jooq.impl.DSL.using;
  */
 public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRecord<R>, P, T> extends DAOImpl<R, P, T> {
 
-    private final S alias;
     private final S table;
+    private final S alias;
+    private final S deleted;
+    private final S updated;
 
     protected WingsJooqDaoImpl(S table, S alias, Class<P> type) {
         super(table, type);
         this.table = table;
         this.alias = alias;
+        this.deleted = null;
+        this.updated = null;
     }
 
-    protected WingsJooqDaoImpl(S table, S alias, Class<P> type, Configuration configuration) {
-        super(table, type, configuration);
+    protected WingsJooqDaoImpl(S table, S alias, Class<P> type, Configuration conf) {
+        super(table, type, conf);
         this.table = table;
         this.alias = alias;
+        this.deleted = null;
+        this.updated = null;
+    }
+
+    protected WingsJooqDaoImpl(S table, S alias, Class<P> type, Configuration conf, S deleted, S updated) {
+        super(table, type, conf);
+        this.table = table;
+        this.alias = alias;
+        this.deleted = deleted;
+        this.updated = updated;
+    }
+
+    // ======= select =======
+
+    @SuppressWarnings("unchecked")
+    @NotNull
+    public S as(String alias) {
+        return (S) table.as(alias);
     }
 
     /**
@@ -50,103 +72,148 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
      *
      * @return 表
      */
-    public S getTableForReader() {
+    @NotNull
+    public S getAliasForReader() {
         return alias;
     }
+
+
+    public long count(Condition condition) {
+        return count(alias, condition);
+    }
+
+    @NotNull
+    public List<P> fetch(Condition condition, OrderField<?>... orderBy) {
+        return fetch(alias, condition, orderBy);
+    }
+
+    /**
+     * <pre>
+     * val a = dao.tableForReader
+     * val c = a.Id.eq(1L).and(a.CommitId.eq(2L))
+     *
+     * val i = dao.count(c)
+     * val fetch = dao.fetch(0, 10, c)
+     * </pre>
+     *
+     * @param offset  offset
+     * @param limit   size
+     * @param orderBy 排序字段
+     * @return 结果集
+     */
+    @NotNull
+    public List<P> fetch(int offset, int limit, OrderField<?>... orderBy) {
+        return fetch(alias, offset, limit, orderBy);
+    }
+
+    /**
+     * <pre>
+     * val a = dao.tableForReader
+     * val c = a.Id.eq(1L).and(a.CommitId.eq(2L))
+     *
+     * val i = dao.count(c)
+     * val fetch = dao.fetch(0, 10, c)
+     * </pre>
+     *
+     * @param offset    offset
+     * @param limit     size
+     * @param condition 条件
+     * @param orderBy   排序字段
+     * @return 结果集
+     */
+    @NotNull
+    public List<P> fetch(int offset, int limit, Condition condition, OrderField<?>... orderBy) {
+        return fetch(alias, offset, limit, condition, orderBy);
+    }
+
+    @Nullable
+    public P fetchOne(Condition condition) {
+        return fetch(alias, condition);
+    }
+
+    // ======= trace deleted =======
+
+    /**
+     * 获得删除影子表
+     *
+     * @return 表
+     */
+    @Nullable
+    public S getTraceOfDeleted() {
+        return deleted;
+    }
+
+    public long countDeleted(Condition condition) {
+        return count(deleted, condition);
+    }
+
+    @NotNull
+    public List<P> fetchDeleted(Condition condition, OrderField<?>... orderBy) {
+        return fetch(deleted, condition, orderBy);
+    }
+
+    @NotNull
+    public List<P> fetchDeleted(int offset, int limit, OrderField<?>... orderBy) {
+        return fetch(deleted, offset, limit, orderBy);
+    }
+
+    @NotNull
+    public List<P> fetchDeleted(int offset, int limit, Condition condition, OrderField<?>... orderBy) {
+        return fetch(deleted, offset, limit, condition, orderBy);
+    }
+
+    @Nullable
+    public P fetchOneDeleted(Condition condition) {
+        return fetch(deleted, condition);
+    }
+
+    // ======= trace updated =======
+
+    /**
+     * 获得更新影子表
+     *
+     * @return 表
+     */
+    @Nullable
+    public S getTraceOfUpdated() {
+        return updated;
+    }
+
+    public long countUpdated(Condition condition) {
+        return count(updated, condition);
+    }
+
+    @NotNull
+    public List<P> fetchUpdated(Condition condition, OrderField<?>... orderBy) {
+        return fetch(updated, condition, orderBy);
+    }
+
+    @NotNull
+    public List<P> fetchUpdated(int offset, int limit, OrderField<?>... orderBy) {
+        return fetch(updated, offset, limit, orderBy);
+    }
+
+    @NotNull
+    public List<P> fetchUpdated(int offset, int limit, Condition condition, OrderField<?>... orderBy) {
+        return fetch(updated, offset, limit, condition, orderBy);
+    }
+
+    @Nullable
+    public P fetchOneUpdated(Condition condition) {
+        return fetch(updated, condition);
+    }
+
+    // ======= modify =======
 
     /**
      * 获得为了写使用的table
      *
      * @return 表
      */
+    @NotNull
     public S getTableForWriter() {
         return table;
     }
-
-    @SuppressWarnings("unchecked")
-    public S as(String alias) {
-        return (S) table.as(alias);
-    }
-
-    // ======= select =======
-    public long count(Condition condition) {
-        return using(configuration())
-                .selectCount()
-                .from(alias)
-                .where(condition)
-                .fetchOne(0, Long.class);
-    }
-
-    @NotNull
-    public List<P> fetch(Condition condition) {
-        return using(configuration())
-                .selectFrom(alias)
-                .where(condition)
-                .fetch()
-                .map(mapper());
-    }
-
-    /**
-     * <pre>
-     * val a = dao.tableForReader
-     * val c = a.Id.eq(1L).and(a.CommitId.eq(2L))
-     *
-     * val i = dao.count(c)
-     * val fetch = dao.fetch(0, 10, c)
-     * </pre>
-     *
-     * @param offset    offset
-     * @param limit     size
-     * @param condition 条件
-     * @return 结果集
-     */
-    @NotNull
-    public List<P> fetch(int offset, int limit, Condition condition) {
-        return using(configuration())
-                .selectFrom(alias)
-                .where(condition)
-                .limit(offset, limit)
-                .fetch()
-                .map(mapper());
-    }
-
-    /**
-     * <pre>
-     * val a = dao.tableForReader
-     * val c = a.Id.eq(1L).and(a.CommitId.eq(2L))
-     *
-     * val i = dao.count(c)
-     * val fetch = dao.fetch(0, 10, c)
-     * </pre>
-     *
-     * @param offset    offset
-     * @param limit     size
-     * @param condition 条件
-     * @param oderBy    排序字段
-     * @return 结果集
-     */
-    @NotNull
-    public List<P> fetch(int offset, int limit, Condition condition, OrderField<?>... oderBy) {
-        return using(configuration())
-                .selectFrom(alias)
-                .where(condition)
-                .orderBy(oderBy)
-                .limit(offset, limit)
-                .fetch()
-                .map(mapper());
-    }
-
-    @Nullable
-    public P fetchOne(Condition condition) {
-        R record = using(configuration())
-                .selectFrom(alias)
-                .where(condition)
-                .fetchOne();
-
-        return record == null ? null : mapper().map(record);
-    }
-
-    // ======= modify =======
 
     /**
      * 必须插入一个，否则CodeException(orError)
@@ -258,7 +325,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
      * @param condition 条件
      * @return 更新数量
      */
-    private int update(P object, Condition condition) {
+    public int update(P object, Condition condition) {
         DSLContext dsl = using(configuration());
         R record = dsl.newRecord(table, object);
 
@@ -484,21 +551,13 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
     @SuppressWarnings("unchecked")
     @Override
     public <Z> List<P> fetch(Field<Z> field, Z... values) {
-        return using(configuration())
-                .selectFrom(alias)
-                .where(field.in(values))
-                .fetch()
-                .map(mapper());
+        return fetch(alias, field, values);
     }
+
 
     @Override
     public <Z> P fetchOne(Field<Z> field, Z value) {
-        R record = using(configuration())
-                .selectFrom(alias)
-                .where(field.equal(value))
-                .fetchOne();
-
-        return record == null ? null : mapper().map(record);
+        return fetch(alias, field.equal(value));
     }
 
     // ==========
@@ -533,6 +592,89 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
             if (record.get(i) == null) {
                 record.changed(i, false);
             }
+        }
+    }
+
+    // ===========
+
+    private P fetch(S alias, Condition condition) {
+        R record = using(configuration())
+                .selectFrom(alias)
+                .where(condition)
+                .fetchOne();
+
+        return record == null ? null : mapper().map(record);
+    }
+
+    private <Z> List<P> fetch(S t, Field<Z> field, Z[] values) {
+        return using(configuration())
+                .selectFrom(t)
+                .where(field.in(values))
+                .fetch()
+                .map(mapper());
+    }
+
+    private Long count(S alias, Condition condition) {
+        return using(configuration())
+                .selectCount()
+                .from(alias)
+                .where(condition)
+                .fetchOne(0, Long.class);
+    }
+
+    private List<P> fetch(S t, int offset, int limit, OrderField<?>[] orderBy) {
+        DSLContext dsl = using(configuration());
+        if (orderBy != null && orderBy.length > 0) {
+            return dsl
+                    .selectFrom(t)
+                    .orderBy(orderBy)
+                    .limit(offset, limit)
+                    .fetch()
+                    .map(mapper());
+        } else {
+            return dsl
+                    .selectFrom(t)
+                    .limit(offset, limit)
+                    .fetch()
+                    .map(mapper());
+        }
+    }
+
+    private List<P> fetch(S t, int offset, int limit, Condition condition, OrderField<?>[] orderBy) {
+        DSLContext dsl = using(configuration());
+        if (orderBy != null && orderBy.length > 0) {
+            return dsl
+                    .selectFrom(t)
+                    .where(condition)
+                    .orderBy(orderBy)
+                    .limit(offset, limit)
+                    .fetch()
+                    .map(mapper());
+        } else {
+            return dsl
+                    .selectFrom(t)
+                    .where(condition)
+                    .limit(offset, limit)
+                    .fetch()
+                    .map(mapper());
+        }
+    }
+
+    private List<P> fetch(S t, Condition condition, OrderField<?>[] orderBy) {
+        DSLContext dsl = using(configuration());
+        if (orderBy != null && orderBy.length > 0) {
+            return dsl
+                    .selectFrom(t)
+                    .where(condition)
+                    .orderBy(orderBy)
+                    .fetch()
+                    .map(mapper());
+        } else {
+            return dsl
+                    .selectFrom(t)
+                    .where(condition)
+                    .fetch()
+                    .map(mapper());
         }
     }
 }

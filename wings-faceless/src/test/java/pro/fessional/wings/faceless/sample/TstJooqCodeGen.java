@@ -8,6 +8,7 @@ import pro.fessional.wings.faceless.jooqgen.WingsCodeGenerator;
  */
 public class TstJooqCodeGen {
 
+    // WingsFlywaveInitDatabaseSample
     // 需要 版本 20190521_01
     public static void main(String[] args) {
 

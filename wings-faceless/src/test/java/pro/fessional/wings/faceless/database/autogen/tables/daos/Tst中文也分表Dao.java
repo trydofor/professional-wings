@@ -45,7 +45,7 @@ public class Tst中文也分表Dao extends WingsJooqDaoImpl<Tst中文也分表Ta
      */
     @Autowired
     public Tst中文也分表Dao(Configuration configuration) {
-        super(Tst中文也分表Table.Tst中文也分表, Tst中文也分表Table.asY8, Tst中文也分表.class, configuration);
+        super(Tst中文也分表Table.Tst中文也分表, Tst中文也分表Table.asY8, Tst中文也分表.class, configuration, Tst中文也分表Table.Tst中文也分表$del, Tst中文也分表Table.Tst中文也分表$upd);
     }
 
     @Override
