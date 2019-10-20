@@ -17,8 +17,8 @@ import javax.validation.constraints.Size;
 
 import org.jooq.Field;
 import org.jooq.Record1;
-import org.jooq.Record6;
-import org.jooq.Row6;
+import org.jooq.Record7;
+import org.jooq.Row7;
 import org.jooq.impl.UpdatableRecordImpl;
 
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
@@ -40,9 +40,9 @@ import pro.fessional.wings.faceless.database.autogen.tables.interfaces.ITst中�
 @Table(name = "tst_中文也分表", uniqueConstraints = {
     @UniqueConstraint(name = "KEY_tst_中文也分表_PRIMARY", columnNames = {"id"})
 })
-public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也分表Record> implements Record6<Long, LocalDateTime, LocalDateTime, Long, String, String>, ITst中文也分表 {
+public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也分表Record> implements Record7<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, String>, ITst中文也分表 {
 
-    private static final long serialVersionUID = -267039940;
+    private static final long serialVersionUID = 679998590;
 
     /**
      * Setter for <code>tst_中文也分表.id</code>.
@@ -98,11 +98,28 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     }
 
     /**
+     * Setter for <code>tst_中文也分表.delete_dt</code>.
+     */
+    @Override
+    public void setDeleteDt(LocalDateTime value) {
+        set(3, value);
+    }
+
+    /**
+     * Getter for <code>tst_中文也分表.delete_dt</code>.
+     */
+    @Column(name = "delete_dt", nullable = false)
+    @Override
+    public LocalDateTime getDeleteDt() {
+        return (LocalDateTime) get(3);
+    }
+
+    /**
      * Setter for <code>tst_中文也分表.commit_id</code>.
      */
     @Override
     public void setCommitId(Long value) {
-        set(3, value);
+        set(4, value);
     }
 
     /**
@@ -112,7 +129,7 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     @NotNull
     @Override
     public Long getCommitId() {
-        return (Long) get(3);
+        return (Long) get(4);
     }
 
     /**
@@ -120,7 +137,7 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
      */
     @Override
     public void setLoginInfo(String value) {
-        set(4, value);
+        set(5, value);
     }
 
     /**
@@ -130,7 +147,7 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     @Size(max = 65535)
     @Override
     public String getLoginInfo() {
-        return (String) get(4);
+        return (String) get(5);
     }
 
     /**
@@ -138,7 +155,7 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
      */
     @Override
     public void setOtherInfo(String value) {
-        set(5, value);
+        set(6, value);
     }
 
     /**
@@ -148,7 +165,7 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     @Size(max = 65535)
     @Override
     public String getOtherInfo() {
-        return (String) get(5);
+        return (String) get(6);
     }
 
     // -------------------------------------------------------------------------
@@ -161,17 +178,17 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     }
 
     // -------------------------------------------------------------------------
-    // Record6 type implementation
+    // Record7 type implementation
     // -------------------------------------------------------------------------
 
     @Override
-    public Row6<Long, LocalDateTime, LocalDateTime, Long, String, String> fieldsRow() {
-        return (Row6) super.fieldsRow();
+    public Row7<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, String> fieldsRow() {
+        return (Row7) super.fieldsRow();
     }
 
     @Override
-    public Row6<Long, LocalDateTime, LocalDateTime, Long, String, String> valuesRow() {
-        return (Row6) super.valuesRow();
+    public Row7<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, String> valuesRow() {
+        return (Row7) super.valuesRow();
     }
 
     @Override
@@ -190,17 +207,22 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     }
 
     @Override
-    public Field<Long> field4() {
+    public Field<LocalDateTime> field4() {
+        return Tst中文也分表Table.Tst中文也分表.DeleteDt;
+    }
+
+    @Override
+    public Field<Long> field5() {
         return Tst中文也分表Table.Tst中文也分表.CommitId;
     }
 
     @Override
-    public Field<String> field5() {
+    public Field<String> field6() {
         return Tst中文也分表Table.Tst中文也分表.LoginInfo;
     }
 
     @Override
-    public Field<String> field6() {
+    public Field<String> field7() {
         return Tst中文也分表Table.Tst中文也分表.OtherInfo;
     }
 
@@ -220,17 +242,22 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     }
 
     @Override
-    public Long component4() {
+    public LocalDateTime component4() {
+        return getDeleteDt();
+    }
+
+    @Override
+    public Long component5() {
         return getCommitId();
     }
 
     @Override
-    public String component5() {
+    public String component6() {
         return getLoginInfo();
     }
 
     @Override
-    public String component6() {
+    public String component7() {
         return getOtherInfo();
     }
 
@@ -250,17 +277,22 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     }
 
     @Override
-    public Long value4() {
+    public LocalDateTime value4() {
+        return getDeleteDt();
+    }
+
+    @Override
+    public Long value5() {
         return getCommitId();
     }
 
     @Override
-    public String value5() {
+    public String value6() {
         return getLoginInfo();
     }
 
     @Override
-    public String value6() {
+    public String value7() {
         return getOtherInfo();
     }
 
@@ -283,31 +315,38 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     }
 
     @Override
-    public Tst中文也分表Record value4(Long value) {
+    public Tst中文也分表Record value4(LocalDateTime value) {
+        setDeleteDt(value);
+        return this;
+    }
+
+    @Override
+    public Tst中文也分表Record value5(Long value) {
         setCommitId(value);
         return this;
     }
 
     @Override
-    public Tst中文也分表Record value5(String value) {
+    public Tst中文也分表Record value6(String value) {
         setLoginInfo(value);
         return this;
     }
 
     @Override
-    public Tst中文也分表Record value6(String value) {
+    public Tst中文也分表Record value7(String value) {
         setOtherInfo(value);
         return this;
     }
 
     @Override
-    public Tst中文也分表Record values(Long value1, LocalDateTime value2, LocalDateTime value3, Long value4, String value5, String value6) {
+    public Tst中文也分表Record values(Long value1, LocalDateTime value2, LocalDateTime value3, LocalDateTime value4, Long value5, String value6, String value7) {
         value1(value1);
         value2(value2);
         value3(value3);
         value4(value4);
         value5(value5);
         value6(value6);
+        value7(value7);
         return this;
     }
 
@@ -320,6 +359,7 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
         setId(from.getId());
         setCreateDt(from.getCreateDt());
         setModifyDt(from.getModifyDt());
+        setDeleteDt(from.getDeleteDt());
         setCommitId(from.getCommitId());
         setLoginInfo(from.getLoginInfo());
         setOtherInfo(from.getOtherInfo());
@@ -345,14 +385,15 @@ public class Tst中文也分表Record extends UpdatableRecordImpl<Tst中文也�
     /**
      * Create a detached, initialised Tst中文也分表Record
      */
-    public Tst中文也分表Record(Long id, LocalDateTime createDt, LocalDateTime modifyDt, Long commitId, String loginInfo, String otherInfo) {
+    public Tst中文也分表Record(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, String loginInfo, String otherInfo) {
         super(Tst中文也分表Table.Tst中文也分表);
 
         set(0, id);
         set(1, createDt);
         set(2, modifyDt);
-        set(3, commitId);
-        set(4, loginInfo);
-        set(5, otherInfo);
+        set(3, deleteDt);
+        set(4, commitId);
+        set(5, loginInfo);
+        set(6, otherInfo);
     }
 }

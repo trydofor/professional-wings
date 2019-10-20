@@ -12,7 +12,7 @@ import javax.annotation.Generated;
 
 import org.jooq.Field;
 import org.jooq.Name;
-import org.jooq.Row6;
+import org.jooq.Row7;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -39,7 +39,7 @@ import pro.fessional.wings.faceless.service.lightid.LightIdAware;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record> implements LightIdAware {
 
-    private static final long serialVersionUID = -1325662002;
+    private static final long serialVersionUID = -2003622164;
 
     /**
      * The reference instance of <code>tst_中文也分表</code>
@@ -71,6 +71,11 @@ public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record>
      * The column <code>tst_中文也分表.modify_dt</code>.
      */
     public final TableField<Tst中文也分表Record, LocalDateTime> ModifyDt = createField(DSL.name("modify_dt"), org.jooq.impl.SQLDataType.LOCALDATETIME.nullable(false).defaultValue(org.jooq.impl.DSL.inline("1000-01-01 00:00:00", org.jooq.impl.SQLDataType.LOCALDATETIME)), this, "修改日时");
+
+    /**
+     * The column <code>tst_中文也分表.delete_dt</code>.
+     */
+    public final TableField<Tst中文也分表Record, LocalDateTime> DeleteDt = createField(DSL.name("delete_dt"), org.jooq.impl.SQLDataType.LOCALDATETIME.nullable(false).defaultValue(org.jooq.impl.DSL.inline("1000-01-01 00:00:00", org.jooq.impl.SQLDataType.LOCALDATETIME)), this, "标记删除");
 
     /**
      * The column <code>tst_中文也分表.commit_id</code>.
@@ -160,11 +165,11 @@ public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record>
     }
 
     // -------------------------------------------------------------------------
-    // Row6 type methods
+    // Row7 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row6<Long, LocalDateTime, LocalDateTime, Long, String, String> fieldsRow() {
-        return (Row6) super.fieldsRow();
+    public Row7<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, String> fieldsRow() {
+        return (Row7) super.fieldsRow();
     }
 }

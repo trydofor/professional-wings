@@ -2,12 +2,16 @@ package pro.fessional.wings.faceless.jooq;
 
 import org.jooq.BatchBindStep;
 import org.jooq.DSLContext;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
 import pro.fessional.wings.faceless.database.helper.JournalHelp;
@@ -17,12 +21,16 @@ import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
+import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
+
 /**
  * @author trydofor
  * @since 2019-09-27
  */
 @RunWith(SpringRunner.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @SpringBootTest
+@ActiveProfiles("init")
 public class TestJooqDeleteListener {
 
     private SchemaRevisionManager revi;
@@ -77,7 +85,7 @@ public class TestJooqDeleteListener {
         // 无效
         LocalDateTime now = LocalDateTime.now();
         dsl.batchDelete(
-                new Tst中文也分表Record(9L, now, now, 9L, "", "")
+                new Tst中文也分表Record(9L, now, DATE_TIME, DATE_TIME, 9L, "", "")
         ).execute();
 
         BatchBindStep batch = dsl.batch(

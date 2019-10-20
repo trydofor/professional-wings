@@ -35,11 +35,12 @@ import pro.fessional.wings.faceless.database.autogen.tables.interfaces.ITst中�
 })
 public class Tst中文也分表 implements ITst中文也分表 {
 
-    private static final long serialVersionUID = -1518177772;
+    private static final long serialVersionUID = -447746215;
 
     private Long          id;
     private LocalDateTime createDt;
     private LocalDateTime modifyDt;
+    private LocalDateTime deleteDt;
     private Long          commitId;
     private String        loginInfo;
     private String        otherInfo;
@@ -50,6 +51,7 @@ public class Tst中文也分表 implements ITst中文也分表 {
         this.id = value.getId();
         this.createDt = value.getCreateDt();
         this.modifyDt = value.getModifyDt();
+        this.deleteDt = value.getDeleteDt();
         this.commitId = value.getCommitId();
         this.loginInfo = value.getLoginInfo();
         this.otherInfo = value.getOtherInfo();
@@ -59,6 +61,7 @@ public class Tst中文也分表 implements ITst中文也分表 {
         Long          id,
         LocalDateTime createDt,
         LocalDateTime modifyDt,
+        LocalDateTime deleteDt,
         Long          commitId,
         String        loginInfo,
         String        otherInfo
@@ -66,6 +69,7 @@ public class Tst中文也分表 implements ITst中文也分表 {
         this.id = id;
         this.createDt = createDt;
         this.modifyDt = modifyDt;
+        this.deleteDt = deleteDt;
         this.commitId = commitId;
         this.loginInfo = loginInfo;
         this.otherInfo = otherInfo;
@@ -104,6 +108,17 @@ public class Tst中文也分表 implements ITst中文也分表 {
     @Override
     public void setModifyDt(LocalDateTime modifyDt) {
         this.modifyDt = modifyDt;
+    }
+
+    @Column(name = "delete_dt", nullable = false)
+    @Override
+    public LocalDateTime getDeleteDt() {
+        return this.deleteDt;
+    }
+
+    @Override
+    public void setDeleteDt(LocalDateTime deleteDt) {
+        this.deleteDt = deleteDt;
     }
 
     @Column(name = "commit_id", nullable = false, precision = 19)
@@ -169,6 +184,12 @@ public class Tst中文也分表 implements ITst中文也分表 {
         }
         else if (!modifyDt.equals(other.modifyDt))
             return false;
+        if (deleteDt == null) {
+            if (other.deleteDt != null)
+                return false;
+        }
+        else if (!deleteDt.equals(other.deleteDt))
+            return false;
         if (commitId == null) {
             if (other.commitId != null)
                 return false;
@@ -197,6 +218,7 @@ public class Tst中文也分表 implements ITst中文也分表 {
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
         result = prime * result + ((this.createDt == null) ? 0 : this.createDt.hashCode());
         result = prime * result + ((this.modifyDt == null) ? 0 : this.modifyDt.hashCode());
+        result = prime * result + ((this.deleteDt == null) ? 0 : this.deleteDt.hashCode());
         result = prime * result + ((this.commitId == null) ? 0 : this.commitId.hashCode());
         result = prime * result + ((this.loginInfo == null) ? 0 : this.loginInfo.hashCode());
         result = prime * result + ((this.otherInfo == null) ? 0 : this.otherInfo.hashCode());
@@ -210,6 +232,7 @@ public class Tst中文也分表 implements ITst中文也分表 {
         sb.append(id);
         sb.append(", ").append(createDt);
         sb.append(", ").append(modifyDt);
+        sb.append(", ").append(deleteDt);
         sb.append(", ").append(commitId);
         sb.append(", ").append(loginInfo);
         sb.append(", ").append(otherInfo);
@@ -227,6 +250,7 @@ public class Tst中文也分表 implements ITst中文也分表 {
         setId(from.getId());
         setCreateDt(from.getCreateDt());
         setModifyDt(from.getModifyDt());
+        setDeleteDt(from.getDeleteDt());
         setCommitId(from.getCommitId());
         setLoginInfo(from.getLoginInfo());
         setOtherInfo(from.getOtherInfo());

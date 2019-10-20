@@ -68,6 +68,7 @@ class JooqShardingTest {
         val rd = Tst中文也分表(id,
                 LocalDateTime.now(),
                 EmptyValue.DATE_TIME,
+                EmptyValue.DATE_TIME,
                 0,
                 EmptyValue.VARCHAR,
                 EmptyValue.VARCHAR

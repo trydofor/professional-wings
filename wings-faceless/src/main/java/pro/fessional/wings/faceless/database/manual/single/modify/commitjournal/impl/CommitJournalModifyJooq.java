@@ -22,7 +22,7 @@ public class CommitJournalModifyJooq implements CommitJournalModify {
     public int insert(JournalService.Journal vo) {
         SysCommitJournalRecord rc = dsl.newRecord(SysCommitJournalTable.SysCommitJournal);
         rc.setId(vo.getId());
-        rc.setCreateDt(vo.getCreateDt());
+        rc.setCreateDt(vo.getCommitDt());
         rc.setEventName(nullToEmpty(vo.getEventName()));
         rc.setTargetKey(nullToEmpty(vo.getTargetKey()));
         rc.setLoginInfo(nullToEmpty(vo.getLoginInfo()));

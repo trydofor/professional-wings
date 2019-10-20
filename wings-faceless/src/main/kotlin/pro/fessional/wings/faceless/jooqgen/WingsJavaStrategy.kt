@@ -19,9 +19,9 @@ class WingsJavaStrategy : DefaultGeneratorStrategy() {
         if (mode == GeneratorStrategy.Mode.INTERFACE) {
             val count = definition.columns.count {
                 val name = it.name.substringAfterLast(".").toLowerCase()
-                name == "create_dt" || name == "modify_dt" || name == "commit_id"
+                name == "create_dt" || name == "modify_dt" || name == "delete_dt" || name == "commit_id"
             }
-            if (count >= 3) {
+            if (count >= 1) {
                 impls.add("pro.fessional.wings.faceless.service.journal.JournalAware")
             }
         } else if (mode == GeneratorStrategy.Mode.DEFAULT) {

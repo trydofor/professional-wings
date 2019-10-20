@@ -22,7 +22,7 @@ public class CommitJournalModifyJdbc implements CommitJournalModify {
     public int insert(JournalService.Journal vo) {
         return template.update(INS_SQL,
                 vo.getId(),
-                vo.getCreateDt(),
+                vo.getCommitDt(),
                 nullToEmpty(vo.getEventName()),
                 nullToEmpty(vo.getTargetKey()),
                 nullToEmpty(vo.getLoginInfo()),

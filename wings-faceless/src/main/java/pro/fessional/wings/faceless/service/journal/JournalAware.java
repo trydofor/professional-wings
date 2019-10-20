@@ -1,6 +1,8 @@
 package pro.fessional.wings.faceless.service.journal;
 
-import javax.persistence.Column;
+import pro.fessional.wings.faceless.convention.EmptyValue;
+import pro.fessional.wings.faceless.sugar.funs.EmptySugar;
+
 import java.time.LocalDateTime;
 
 /**
@@ -9,18 +11,31 @@ import java.time.LocalDateTime;
  */
 public interface JournalAware {
 
-    void setCreateDt(LocalDateTime value);
+    default void setCreateDt(LocalDateTime value) {}
 
-    @Column(name = "create_dt", nullable = false)
-    LocalDateTime getCreateDt();
+    default LocalDateTime getCreateDt() {
+        return EmptyValue.DATE_TIME;
+    }
 
-    void setModifyDt(LocalDateTime value);
+    default void setModifyDt(LocalDateTime value) { }
 
-    @Column(name = "modify_dt", nullable = false)
-    LocalDateTime getModifyDt();
+    default LocalDateTime getModifyDt() {
+        return EmptyValue.DATE_TIME;
+    }
 
-    void setCommitId(Long value);
+    default void setDeleteDt(LocalDateTime value) { }
 
-    @Column(name = "commit_id", nullable = false)
-    Long getCommitId();
+    default LocalDateTime getDeleteDt() {
+        return EmptyValue.DATE_TIME;
+    }
+
+    default void setCommitId(Long value) { }
+
+    default Long getCommitId() {
+        return EmptyValue.BIGINT;
+    }
+
+    default boolean isDeleted(){
+        return EmptySugar.isEmptyValue(getDeleteDt());
+    }
 }

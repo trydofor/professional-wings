@@ -1,8 +1,8 @@
 package pro.fessional.wings.faceless.spring.bean;
 
+import org.jooq.DSLContext;
 import org.jooq.ExecuteContext;
 import org.jooq.ExecuteListenerProvider;
-import org.jooq.ExecuteType;
 import org.jooq.Insert;
 import org.jooq.Merge;
 import org.jooq.Param;
@@ -19,6 +19,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import pro.fessional.wings.faceless.database.helper.JournalHelp;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -80,7 +81,7 @@ public class WingsJooqConfiguration {
                     }
                     params = new LinkedHashMap<>(params);
                 }
-                String updateSql = buildUpdateSql(sql, low, table, params);
+                String updateSql = buildUpdateSql(ctx.dsl(), sql, low, table, params);
                 if (updateSql == null) return;
 
                 logger.info("Wings journal-delete, sql={}", updateSql);
@@ -145,7 +146,7 @@ public class WingsJooqConfiguration {
                             "([`'\"]?commit_id[`'\"]?[\\s]*=[\\s]*([^()=\\s]+))\\s+and\\b"
                     , Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
-            private String buildUpdateSql(String deleteSql, String lower, String table, Map<String, Param<?>> params) {
+            private String buildUpdateSql(DSLContext dsl, String deleteSql, String lower, String table, Map<String, Param<?>> params) {
                 Matcher matcher = ptnCommitId.matcher(deleteSql);
                 if (!matcher.find()) return null;
                 String cidWhere = matcher.group();
@@ -184,9 +185,13 @@ public class WingsJooqConfiguration {
 
                 StringBuilder sql = new StringBuilder("UPDATE ");
                 sql.append(table);
-                sql.append(" SET modify_dt = NOW(), ");
+                sql.append(" SET ");
                 sql.append(cidSql);
                 sql.append(" ");
+                String jf = JournalHelp.getJournalField(dsl, table);
+                if (!jf.isEmpty()) {
+                    sql.append(",").append(jf).append(" = NOW() ");
+                }
                 String where = deleteSql.substring(lower.indexOf("where"));
                 sql.append(where.replace(cidWhere, ""));
                 return sql.toString();

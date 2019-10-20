@@ -82,6 +82,13 @@ public class Tst中文也分表Dao extends WingsJooqDaoImpl<Tst中文也分表Ta
     }
 
     /**
+     * Fetch records that have <code>delete_dt IN (values)</code>
+     */
+    public List<Tst中文也分表> fetchByDeleteDt(LocalDateTime... values) {
+        return fetch(Tst中文也分表Table.asY8.DeleteDt, values);
+    }
+
+    /**
      * Fetch records that have <code>commit_id IN (values)</code>
      */
     public List<Tst中文也分表> fetchByCommitId(Long... values) {

@@ -27,24 +27,45 @@ public interface JournalService {
         private String loginInfo = EmptyValue.VARCHAR;
         private String otherInfo = EmptyValue.VARCHAR;
 
-        public void commit(JournalAware po) {
+        /**
+         * 如果不存在createDt则设置全部，否则只更新modifyDt
+         *
+         * @param po 对象
+         */
+        public void commit(@Nullable JournalAware po) {
             if (po == null) return;
-
             po.setCommitId(commitId);
             if (EmptySugar.isEmptyValue(po.getCreateDt())) {
                 po.setCreateDt(commitDt);
                 po.setModifyDt(EmptyValue.DATE_TIME);
+                po.setDeleteDt(EmptyValue.DATE_TIME);
             } else {
                 po.setModifyDt(commitDt);
             }
         }
 
-        public long getId() {
-            return commitId;
+        public void create(@Nullable JournalAware po) {
+            if (po == null) return;
+            po.setCommitId(commitId);
+            po.setCreateDt(commitDt);
+            po.setModifyDt(EmptyValue.DATE_TIME);
+            po.setDeleteDt(EmptyValue.DATE_TIME);
         }
 
-        public LocalDateTime getCreateDt() {
-            return commitDt;
+        public void modify(@Nullable JournalAware po) {
+            if (po == null) return;
+            po.setCommitId(commitId);
+            po.setModifyDt(commitDt);
+        }
+
+        public void delete(@Nullable JournalAware po) {
+            if (po == null) return;
+            po.setCommitId(commitId);
+            po.setDeleteDt(commitDt);
+        }
+
+        public long getId() {
+            return commitId;
         }
     }
 

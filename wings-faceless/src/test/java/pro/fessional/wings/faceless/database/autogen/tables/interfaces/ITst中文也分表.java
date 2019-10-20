@@ -72,6 +72,17 @@ public interface ITst中文也分表 extends JournalAware, Serializable {
     public LocalDateTime getModifyDt();
 
     /**
+     * Setter for <code>tst_中文也分表.delete_dt</code>.
+     */
+    public void setDeleteDt(LocalDateTime value);
+
+    /**
+     * Getter for <code>tst_中文也分表.delete_dt</code>.
+     */
+    @Column(name = "delete_dt", nullable = false)
+    public LocalDateTime getDeleteDt();
+
+    /**
      * Setter for <code>tst_中文也分表.commit_id</code>.
      */
     public void setCommitId(Long value);
