@@ -213,7 +213,6 @@ JdbcTemplate用于功能性或复杂的数据库操作，以自动注入Bean。
 注意，jooq生成代码，默认使用`table.column`限定列名，而ShardingJdbc做当前版本不支持。
 最优解决办法是使ShardingJdbc支持，当前最简单的办法是修改Jooq生成策略，参考以下Issue。
 
-
  * [JOOQ#9055 should NO table qualify if NO table alias](https://github.com/jOOQ/jOOQ/pull/9406)
  * [ShardingSphere#2859 `table.column` can not sharding](https://github.com/apache/incubator-shardingsphere/issues/2859)
 
@@ -224,14 +223,37 @@ JdbcTemplate用于功能性或复杂的数据库操作，以自动注入Bean。
  * INSERT 使用`本名`，不可使用`别名`，在a9m时，使用`本名`
  * DELETE 使用`本名`，不可使用`别名`，在a9m时，使用`本名`
  * UPDATE 使用`别名`优先于`本名`，在a9m时，使用`本名`
- * SELECT 使用`别名`优先于`本名`，在a9m时，使用`本名`
+ * SELECT 使用`别名`优先于`本名`，在a9m时，使用`别名`优于`本名`
  * **不要** 使用中文表名，例子代码只是极端测试。
 
-使用patch版本的`jooq-a9m`(a9 mod)，可以都是有`本名`，参考pom中的私有库，或直接替换class，方法有三。
+a9m((a9 mod)版为`${jooq.version}.1-a9m`，方法有三，mvn私有库，或直接替换class。
 
  * 私有库，`install`或`deploy` [jooq-a9m](https://github.com/trydofor/jOOQ) 
  * 静态替换，用`/test/resources/patch/*`到对应位置。
  * 动态替换，用`classloader`或`字节码修改术`搞黑科技，不推荐。
+
+因为maven的版本号比较和依赖传递规则，对于间接依赖小于等于jooq版本的，需要显示声明依赖。
+方法是按springboot-starter-jooq的配置，写一份 a9m的，如下格式。
+
+```
+    <dependency>
+        <groupId>org.jooq</groupId>
+        <artifactId>jooq</artifactId>
+        <version>${jooq.version}.1-a9m</version>
+        <!-- https://github.com/jOOQ/jOOQ/pull/9406 -->
+        <!-- 查看readme，只有jooq sharding的时候需要这样-->
+        <exclusions>
+            <exclusion>
+                <artifactId>javax.activation-api</artifactId>
+                <groupId>javax.activation</groupId>
+            </exclusion>
+            <exclusion>
+                <artifactId>jaxb-api</artifactId>
+                <groupId>javax.xml.bind</groupId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+```
 
 JOOQ参考资料
 

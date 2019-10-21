@@ -41,6 +41,23 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>${jooq.version}.1-a9m</version>
+            <!-- https://github.com/jOOQ/jOOQ/pull/9406 -->
+            <!-- 查看readme，只有jooq sharding的时候需要这样-->
+            <exclusions>
+                <exclusion>
+                    <artifactId>javax.activation-api</artifactId>
+                    <groupId>javax.activation</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jaxb-api</artifactId>
+                    <groupId>javax.xml.bind</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>pro.fessional</groupId>
             <artifactId>wings-faceless</artifactId>
         </dependency>
