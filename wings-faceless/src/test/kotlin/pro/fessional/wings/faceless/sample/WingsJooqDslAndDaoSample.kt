@@ -1,22 +1,22 @@
 package pro.fessional.wings.faceless.sample
 
-import org.apache.shardingsphere.api.hint.HintManager
+import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.Field
+import org.jooq.OrderField
 import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import pro.fessional.wings.faceless.convention.EmptyValue
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
-import pro.fessional.wings.faceless.flywave.SchemaShardingManager
-import pro.fessional.wings.faceless.service.lightid.LightIdService
+import pro.fessional.wings.faceless.service.journal.JournalService
 import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner
 import java.time.LocalDateTime
 
@@ -28,13 +28,17 @@ import java.time.LocalDateTime
 @RunWith(SpringRunner::class)
 @SpringBootTest(properties = ["debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"])
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-class WingsJooqDaoSample {
+class WingsJooqDslAndDaoSample {
 
     @Autowired
     lateinit var schemaRevisionManager: SchemaRevisionManager
 
     @Autowired
     lateinit var dao: Tst中文也分表Dao
+
+    @Autowired
+    lateinit var dsl: DSLContext
+
 
     @Test
     fun test1Init() {
@@ -70,5 +74,57 @@ class WingsJooqDaoSample {
         // update `tst_中文也分表` set `commit_id` = ?, `login_info` = ? where `id` = ?
         val u2 = dao.update(po, t.Id.eq(2L))
         println("============update $u2")
+    }
+
+    @Test
+    fun test3Dsl() {
+        val nullCond: Condition? = null
+        val nullField: Field<Long>? = null
+        val nullOrder: OrderField<Long>? = null
+        val emptyOrder = Array<OrderField<Long>?>(0) { null }
+        val t = Tst中文也分表Table.Tst中文也分表
+        val sql = dsl
+                .select(t.Id, nullField) // null safe
+                .from(t)
+                .where(nullCond)  // null safe
+                .orderBy(*emptyOrder) // empty safe
+//                .orderBy(t.Id, nullOrder) // IllegalArgumentException: Field not supported : null
+//                .orderBy(nullOrder) // IllegalArgumentException: Field not supported : null
+                .getSQL()
+        print(sql)
+    }
+
+    @Test
+    fun test4Journal() {
+        val journal = JournalService.Journal()
+        val now = LocalDateTime.now()
+        journal.commitDt = now
+        journal.commitId = 1L
+
+        val s1 = HashMap<Any, Any>()
+        val t = Tst中文也分表Table.Tst中文也分表
+        journal.create(t, s1);
+        println(s1)
+
+        val s2 = HashMap<Any, Any>()
+        journal.modify(t, s2);
+        println(s2)
+        val s3 = HashMap<Any, Any>()
+        journal.delete(t, s3);
+        println(s3)
+
+        val s4 = HashMap<Any, Any>()
+        val ob = Tst中文也分表()
+        val start1 = System.currentTimeMillis()
+        for (i in 1..10000) {
+            journal.create(t, s4);
+        }
+        val start2 = System.currentTimeMillis()
+        for (i in 1..10000) {
+            journal.create(ob)
+        }
+        val start3 = System.currentTimeMillis()
+
+        println("cost1=${start2-start1}, cost2=${start3-start2}")
     }
 }

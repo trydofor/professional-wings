@@ -14,7 +14,10 @@ import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
 import pro.fessional.mirana.data.CodeEnum;
 import pro.fessional.mirana.pain.CodeException;
+import pro.fessional.wings.faceless.convention.EmptyValue;
+import pro.fessional.wings.faceless.database.helper.JournalHelp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -23,8 +26,25 @@ import java.util.Map;
 
 import static org.jooq.impl.DSL.row;
 import static org.jooq.impl.DSL.using;
+import static pro.fessional.wings.faceless.database.helper.JournalHelp.COL_DELETE_DT;
 
 /**
+ * <pre>
+ * val nullCond: Condition? = null
+ * val nullField: Field<Long>? = null
+ * val nullOrder: OrderField<Long>? = null
+ * val emptyOrder = Array<OrderField<Long>?>(0) { null }
+ * val t = Tst中文也分表Table.asY8
+ * val sql = dsl
+ * .select(t.Id, nullField) // null safe
+ * .from(t)
+ * .where(nullCond)  // null safe
+ * .orderBy(*emptyOrder) // empty safe
+ * // .orderBy(t.Id, nullOrder) // IllegalArgumentException: Field not supported : null
+ * // .orderBy(nullOrder) // IllegalArgumentException: Field not supported : null
+ * .getSQL()
+ * </pre>
+ *
  * @author trydofor
  * @since 2019-10-12
  */
@@ -34,29 +54,108 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
     private final S alias;
     private final S deleted;
     private final S updated;
+    private final Condition onlyDied;
+    private final Condition onlyLive;
 
     protected WingsJooqDaoImpl(S table, S alias, Class<P> type) {
-        super(table, type);
-        this.table = table;
-        this.alias = alias;
-        this.deleted = null;
-        this.updated = null;
+        this(table, alias, type, null, null, null);
     }
 
     protected WingsJooqDaoImpl(S table, S alias, Class<P> type, Configuration conf) {
-        super(table, type, conf);
-        this.table = table;
-        this.alias = alias;
-        this.deleted = null;
-        this.updated = null;
+        this(table, alias, type, conf, null, null);
     }
 
     protected WingsJooqDaoImpl(S table, S alias, Class<P> type, Configuration conf, S deleted, S updated) {
         super(table, type, conf);
         this.table = table;
-        this.alias = alias;
+        this.alias = alias == null ? table : alias;
         this.deleted = deleted;
         this.updated = updated;
+        Field<LocalDateTime> field = getDeleteDtField(this.alias);
+        if (field == null) {
+            onlyDied = null;
+            onlyLive = null;
+        } else {
+            onlyLive = field.eq(EmptyValue.DATE_TIME);
+            onlyDied = field.gt(EmptyValue.DATE_TIME);
+        }
+    }
+
+    public Condition onlyDiedData() {
+        return onlyDied;
+    }
+
+    public Condition onlyLiveData() {
+        return onlyLive;
+    }
+
+    public Condition onlyDiedData(@Nullable Condition cond) {
+        if (onlyDied == null) return cond;
+        return cond == null ? onlyLive : cond.and(onlyDied);
+    }
+
+    public Condition onlyLiveData(@Nullable Condition cond) {
+        if (onlyLive == null) return cond;
+        return cond == null ? onlyLive : cond.and(onlyLive);
+    }
+
+    // ============
+
+    /**
+     * 只选择未标记删除的
+     */
+    @Override
+    public boolean existsById(T id) {
+        Field<?>[] pk = pk();
+        if (pk != null) {
+            return count(alias, onlyLiveData(equal(pk, id))) > 0;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 只选择未标记删除的
+     */
+    @Override
+    public long count() {
+        return count(alias, onlyLive);
+    }
+
+    /**
+     * 只选择未标记删除的
+     */
+    @Override
+    public List<P> findAll() {
+        return fetch(alias, onlyLive);
+    }
+
+    /**
+     * 只选择未标记删除的
+     */
+    @Override
+    public P findById(T id) {
+        Field<?>[] pk = pk();
+        if (pk == null) return null;
+        return fetchOne(alias, onlyLiveData(equal(pk, id)));
+    }
+
+    /**
+     * 只选择未标记删除的
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public <Z> List<P> fetch(Field<Z> field, Z... values) {
+        return fetch(alias, onlyLiveData(field.in(values)));
+    }
+
+
+    /**
+     * 只选择未标记删除的
+     */
+    @Override
+    public <Z> P fetchOne(Field<Z> field, Z value) {
+        return fetchOne(alias, onlyLiveData(field.eq(value)));
     }
 
     // ======= select =======
@@ -103,7 +202,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
      */
     @NotNull
     public List<P> fetch(int offset, int limit, OrderField<?>... orderBy) {
-        return fetch(alias, offset, limit, orderBy);
+        return fetch(alias, offset, limit, null, orderBy);
     }
 
     /**
@@ -128,7 +227,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
 
     @Nullable
     public P fetchOne(Condition condition) {
-        return fetch(alias, condition);
+        return fetchOne(alias, condition);
     }
 
     // ======= trace deleted =======
@@ -154,7 +253,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
 
     @NotNull
     public List<P> fetchDeleted(int offset, int limit, OrderField<?>... orderBy) {
-        return fetch(deleted, offset, limit, orderBy);
+        return fetch(deleted, offset, limit, null, orderBy);
     }
 
     @NotNull
@@ -164,7 +263,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
 
     @Nullable
     public P fetchOneDeleted(Condition condition) {
-        return fetch(deleted, condition);
+        return fetchOne(deleted, condition);
     }
 
     // ======= trace updated =======
@@ -190,7 +289,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
 
     @NotNull
     public List<P> fetchUpdated(int offset, int limit, OrderField<?>... orderBy) {
-        return fetch(updated, offset, limit, orderBy);
+        return fetch(updated, offset, limit, null, orderBy);
     }
 
     @NotNull
@@ -200,7 +299,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
 
     @Nullable
     public P fetchOneUpdated(Condition condition) {
-        return fetch(updated, condition);
+        return fetchOne(updated, condition);
     }
 
     // ======= modify =======
@@ -499,67 +598,6 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
         return rc;
     }
 
-
-    // ============
-
-    @Override
-    public boolean existsById(T id) {
-        Field<?>[] pk = pk();
-
-        if (pk != null) {
-            return using(configuration())
-                    .selectCount()
-                    .from(alias)
-                    .where(equal(pk, id))
-                    .fetchOne(0, Integer.class) > 0;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public long count() {
-        return using(configuration())
-                .selectCount()
-                .from(alias)
-                .fetchOne(0, Long.class);
-    }
-
-    @Override
-    public List<P> findAll() {
-        return using(configuration())
-                .selectFrom(alias)
-                .fetch()
-                .map(mapper());
-    }
-
-    @Override
-    public P findById(T id) {
-        Field<?>[] pk = pk();
-        R record = null;
-
-        if (pk != null) {
-            record = using(configuration())
-                    .selectFrom(alias)
-                    .where(equal(pk, id))
-                    .fetchOne();
-        }
-
-        return record == null ? null : mapper().map(record);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <Z> List<P> fetch(Field<Z> field, Z... values) {
-        return fetch(alias, field, values);
-    }
-
-
-    @Override
-    public <Z> P fetchOne(Field<Z> field, Z value) {
-        return fetch(alias, field.equal(value));
-    }
-
     // ==========
     private static final Field<?>[] EMPTY_PK = new Field<?>[0];
 
@@ -597,84 +635,73 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
 
     // ===========
 
-    private P fetch(S alias, Condition condition) {
+    private Long count(S alias, Condition cond) {
+        return using(configuration())
+                .selectCount()
+                .from(alias)
+                .where(cond)
+                .fetchOne(0, Long.class);
+    }
+
+    private P fetchOne(S alias, Condition cond) {
         R record = using(configuration())
                 .selectFrom(alias)
-                .where(condition)
+                .where(cond)
                 .fetchOne();
 
         return record == null ? null : mapper().map(record);
     }
 
-    private <Z> List<P> fetch(S t, Field<Z> field, Z[] values) {
-        return using(configuration())
+    private List<P> fetch(S t, int offset, int limit, Condition cond, OrderField<?>[] orderBy) {
+        DSLContext dsl = using(configuration());
+        if (orderBy == null || orderBy.length == 0) {
+            return dsl
+                    .selectFrom(t)
+                    .where(cond)
+                    .limit(offset, limit)
+                    .fetch()
+                    .map(mapper());
+        } else {
+            return dsl
+                    .selectFrom(t)
+                    .where(cond)
+                    .orderBy(orderBy)
+                    .limit(offset, limit)
+                    .fetch()
+                    .map(mapper());
+        }
+    }
+
+    private List<P> fetch(S t, Condition cond) {
+        DSLContext dsl = using(configuration());
+        return dsl
                 .selectFrom(t)
-                .where(field.in(values))
+                .where(cond)
                 .fetch()
                 .map(mapper());
     }
 
-    private Long count(S alias, Condition condition) {
-        return using(configuration())
-                .selectCount()
-                .from(alias)
-                .where(condition)
-                .fetchOne(0, Long.class);
-    }
-
-    private List<P> fetch(S t, int offset, int limit, OrderField<?>[] orderBy) {
-        DSLContext dsl = using(configuration());
-        if (orderBy != null && orderBy.length > 0) {
-            return dsl
-                    .selectFrom(t)
-                    .orderBy(orderBy)
-                    .limit(offset, limit)
-                    .fetch()
-                    .map(mapper());
-        } else {
-            return dsl
-                    .selectFrom(t)
-                    .limit(offset, limit)
-                    .fetch()
-                    .map(mapper());
-        }
-    }
-
-    private List<P> fetch(S t, int offset, int limit, Condition condition, OrderField<?>[] orderBy) {
-        DSLContext dsl = using(configuration());
-        if (orderBy != null && orderBy.length > 0) {
-            return dsl
-                    .selectFrom(t)
-                    .where(condition)
-                    .orderBy(orderBy)
-                    .limit(offset, limit)
-                    .fetch()
-                    .map(mapper());
-        } else {
-            return dsl
-                    .selectFrom(t)
-                    .where(condition)
-                    .limit(offset, limit)
-                    .fetch()
-                    .map(mapper());
-        }
-    }
-
     private List<P> fetch(S t, Condition condition, OrderField<?>[] orderBy) {
         DSLContext dsl = using(configuration());
-        if (orderBy != null && orderBy.length > 0) {
+        if (orderBy == null || orderBy.length == 0) {
             return dsl
                     .selectFrom(t)
                     .where(condition)
-                    .orderBy(orderBy)
                     .fetch()
                     .map(mapper());
         } else {
             return dsl
                     .selectFrom(t)
                     .where(condition)
+                    .orderBy(orderBy)
                     .fetch()
                     .map(mapper());
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Field<LocalDateTime> getDeleteDtField(S table) {
+        Field<?>[] fields = JournalHelp.extractField(table.fields(), COL_DELETE_DT);
+        return (Field<LocalDateTime>) fields[0];
     }
 }

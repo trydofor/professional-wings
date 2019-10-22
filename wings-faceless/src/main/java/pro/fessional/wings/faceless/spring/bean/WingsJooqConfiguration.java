@@ -188,7 +188,7 @@ public class WingsJooqConfiguration {
                 sql.append(" SET ");
                 sql.append(cidSql);
                 sql.append(" ");
-                String jf = JournalHelp.getJournalField(dsl, table);
+                String jf = JournalHelp.getJournalColumn(dsl, table);
                 if (!jf.isEmpty()) {
                     sql.append(",").append(jf).append(" = NOW() ");
                 }

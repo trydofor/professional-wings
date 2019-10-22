@@ -29,19 +29,19 @@ import static org.jooq.impl.DSL.field;
  */
 public class JournalHelp {
 
-    private static final Map<String, String> tableJournal = new ConcurrentHashMap<>();
-    private static final ResultSetExtractor<String> filedJournal = rs -> getJournalField(rs, false);
+    public static final String COL_CREATE_DT = "create_dt";
+    public static final String COL_MODIFY_DT = "modify_dt";
+    public static final String COL_DELETE_DT = "delete_dt";
+    public static final String COL_COMMIT_ID = "commit_id";
 
-    private static String getJournalField(ResultSet rs, boolean needClose) {
-        boolean hasModifyFd = false;
+    private static final Map<String, String> tableJournal = new ConcurrentHashMap<>();
+    private static final ResultSetExtractor<String> filedJournal = rs -> getJournalColumn(rs, false);
+
+    private static String getJournalColumn(ResultSet rs, boolean needClose) {
         try {
-            ResultSetMetaData md = rs.getMetaData();
-            int count = md.getColumnCount();
-            for (int i = 1; i <= count; i++) {
-                String cn = md.getColumnName(i).toLowerCase();
-                if (cn.endsWith("delete_dt")) return "delete_dt";
-                if (cn.endsWith("modify_dt")) hasModifyFd = true;
-            }
+            String[] columns = extractColumn(rs.getMetaData(), COL_DELETE_DT, COL_MODIFY_DT);
+            if (columns[0] != null) return columns[0];
+            if (columns[1] != null) return columns[1];
         } catch (SQLException e) {
             //
         } finally {
@@ -53,29 +53,26 @@ public class JournalHelp {
                 }
             }
         }
-        return hasModifyFd ? "modify_dt" : "";
+        return "";
     }
 
-    public static String getJournalField(JdbcTemplate tmpl, String table) {
+    public static String getJournalColumn(JdbcTemplate tmpl, String table) {
         return tableJournal.computeIfAbsent(table, s -> tmpl.query("select * from " + s + " where 1 = 0", filedJournal));
     }
 
-    public static String getJournalField(DSLContext dsl, String table) {
+    public static String getJournalColumn(DSLContext dsl, String table) {
         return tableJournal.computeIfAbsent(table, s -> {
             ResultSet rs = dsl.selectFrom(s + " where 1 = 0").fetchResultSet();
-            return getJournalField(rs, true);
+            return getJournalColumn(rs, true);
         });
     }
 
-    public static String getJournalField(Table<? extends Record> table) {
+    public static String getJournalColumn(Table<? extends Record> table) {
         return tableJournal.computeIfAbsent(table.getName(), s -> {
-            boolean hasModifyFd = false;
-            for (Field<?> f : table.fields()) {
-                String cn = f.getName().toLowerCase();
-                if (cn.endsWith("delete_dt")) return "delete_dt";
-                if (cn.endsWith("modify_dt")) hasModifyFd = true;
-            }
-            return hasModifyFd ? "modify_dt" : "";
+            String[] columns = extractColumn(table.fields(), COL_DELETE_DT, COL_MODIFY_DT);
+            if (columns[0] != null) return columns[0];
+            if (columns[1] != null) return columns[1];
+            return "";
         });
     }
 
@@ -110,13 +107,13 @@ public class JournalHelp {
 
     public static int deleteWhere(JdbcTemplate tmpl, String table, Long commitId, LocalDateTime now, String where, Object... args) {
         checkTableName(table);
-        String jf = getJournalField(tmpl, table);
+        String jf = getJournalColumn(tmpl, table);
         String journalSetter = " ";
         if (!jf.isEmpty()) {
             String ldt = now == null ? "NOW()" : "'" + DateFormatter.full19(now) + "'";
             journalSetter = ", " + jf + "=" + ldt + " ";
         }
-        String update = "UPDATE " + table + " SET commit_id=" + commitId + journalSetter + where;
+        String update = "UPDATE " + table + " SET " + COL_COMMIT_ID + "=" + commitId + journalSetter + where;
         tmpl.update(update, args);
 
         String delete = "DELETE FROM " + table + " " + where;
@@ -150,9 +147,9 @@ public class JournalHelp {
     public static int deleteWhere(DSLContext dsl, Table<? extends Record> table, Long commitId, LocalDateTime now, Condition where) {
         UpdateSetMoreStep<? extends Record> update = dsl
                 .update(table)
-                .set(field("commit_id", Long.class), commitId);
+                .set(field(COL_COMMIT_ID, Long.class), commitId);
 
-        String jf = getJournalField(table);
+        String jf = getJournalColumn(table);
         if (!jf.isEmpty()) {
             if (now == null) {
                 update = update.set(field(jf, String.class), field("NOW()", String.class));
@@ -165,6 +162,51 @@ public class JournalHelp {
         return dsl.deleteFrom(table).where(where).execute();
     }
 
+
+    public static String[] extractColumn(ResultSetMetaData md, String... name) throws SQLException {
+        String[] result = new String[name.length];
+        int count = md.getColumnCount();
+        for (int i = 1; i <= count; i++) {
+            String cn = getFieldName(md.getColumnName(i));
+            for (int j = 0; j < name.length; j++) {
+                if (result[j] == null && cn.equalsIgnoreCase(name[j])) {
+                    result[j] = cn;
+                }
+            }
+        }
+        return result;
+    }
+
+    public static String[] extractColumn(Field<?>[] fields, String... name) {
+        String[] result = new String[name.length];
+        for (Field<?> fd : fields) {
+            String cn = getFieldName(fd.getName());
+            for (int j = 0; j < name.length; j++) {
+                if (result[j] == null && cn.equalsIgnoreCase(name[j])) {
+                    result[j] = cn;
+                }
+            }
+        }
+        return result;
+    }
+
+    public static Field<?>[] extractField(Field<?>[] fields, String... name) {
+        Field<?>[] result = new Field<?>[name.length];
+        for (Field<?> fd : fields) {
+            String cn = getFieldName(fd.getName());
+            for (int j = 0; j < name.length; j++) {
+                if (result[j] == null && cn.equalsIgnoreCase(name[j])) {
+                    result[j] = fd;
+                }
+            }
+        }
+        return result;
+    }
+
+    public static String getFieldName(String name) {
+        int dot = name.lastIndexOf('.');
+        return dot < 0 ? name : name.substring(dot + 1);
+    }
     // ////
 
     private static void checkTableName(String table) {

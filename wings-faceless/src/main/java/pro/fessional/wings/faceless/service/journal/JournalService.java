@@ -5,10 +5,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.Field;
+import org.jooq.Table;
 import pro.fessional.wings.faceless.convention.EmptyValue;
+import pro.fessional.wings.faceless.database.helper.JournalHelp;
 import pro.fessional.wings.faceless.sugar.funs.EmptySugar;
 
 import java.time.LocalDateTime;
+import java.util.Map;
+
+import static pro.fessional.wings.faceless.database.helper.JournalHelp.COL_COMMIT_ID;
+import static pro.fessional.wings.faceless.database.helper.JournalHelp.COL_CREATE_DT;
+import static pro.fessional.wings.faceless.database.helper.JournalHelp.COL_DELETE_DT;
+import static pro.fessional.wings.faceless.database.helper.JournalHelp.COL_MODIFY_DT;
+import static pro.fessional.wings.faceless.database.helper.JournalHelp.getFieldName;
 
 /**
  * @author trydofor
@@ -62,6 +72,54 @@ public interface JournalService {
             if (po == null) return;
             po.setCommitId(commitId);
             po.setDeleteDt(commitDt);
+        }
+
+        public <T extends Table> void create(@Nullable T table, @Nullable Map<?, ?> setter) {
+            commit(table, setter, COL_COMMIT_ID, COL_CREATE_DT, COL_MODIFY_DT, COL_DELETE_DT);
+        }
+
+        public <T extends Table> void modify(@Nullable T table, @Nullable Map<?, ?> setter) {
+            commit(table, setter, COL_COMMIT_ID, COL_MODIFY_DT);
+        }
+
+        public <T extends Table> void delete(@Nullable T table, @Nullable Map<?, ?> setter) {
+            commit(table, setter, COL_COMMIT_ID, COL_DELETE_DT);
+        }
+
+        public <T extends Table> void commit(@Nullable T table, @Nullable Map<?, ?> setter, String... field) {
+            if (table == null || setter == null || field == null) return;
+            Field<?>[] fields = JournalHelp.extractField(table.fields(), field);
+            commit(setter, fields);
+        }
+
+        public void commit(@Nullable Map<?, ?> setter, Field<?>... field) {
+            if (setter == null || field == null) return;
+            @SuppressWarnings("unchecked")
+            Map<Object, Object> putter = (Map<Object, Object>) setter;
+
+            Field createDt = null;
+            Field modifyDt = null;
+            Field deleteDt = null;
+            for (Field fd : field) {
+                String k = getFieldName(fd.getName());
+                if (k.equalsIgnoreCase(COL_COMMIT_ID)) {
+                    putter.put(fd, commitId);
+                } else if (k.equalsIgnoreCase(COL_CREATE_DT)) {
+                    createDt = fd;
+                } else if (k.equalsIgnoreCase(COL_MODIFY_DT)) {
+                    modifyDt = fd;
+                } else if (k.equalsIgnoreCase(COL_DELETE_DT)) {
+                    deleteDt = fd;
+                }
+            }
+            if (createDt == null) {
+                if (modifyDt != null) putter.put(modifyDt, commitDt);
+                if (deleteDt != null) putter.put(deleteDt, commitDt);
+            } else {
+                putter.put(createDt, commitDt);
+                if (modifyDt != null) putter.put(modifyDt, EmptyValue.DATE_TIME);
+                if (deleteDt != null) putter.put(deleteDt, EmptyValue.DATE_TIME);
+            }
         }
 
         public long getId() {
