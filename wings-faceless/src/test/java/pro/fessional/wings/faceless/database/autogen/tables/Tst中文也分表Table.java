@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.annotation.Generated;
 
+import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Name;
 import org.jooq.Row7;
@@ -21,6 +22,7 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 import org.jooq.impl.TableImpl;
 
+import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.autogen.DefaultSchema;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
 import pro.fessional.wings.faceless.service.lightid.LightIdAware;
@@ -39,7 +41,7 @@ import pro.fessional.wings.faceless.service.lightid.LightIdAware;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record> implements LightIdAware {
 
-    private static final long serialVersionUID = -2003622164;
+    private static final long serialVersionUID = 1637403646;
 
     /**
      * The reference instance of <code>tst_中文也分表</code>
@@ -172,4 +174,10 @@ public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record>
     public Row7<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, String> fieldsRow() {
         return (Row7) super.fieldsRow();
     }
+
+    /**
+     * The column <code>delete_dt</code> condition
+     */
+    public final Condition onlyDiedData = DeleteDt.gt(EmptyValue.DATE_TIME);
+    public final Condition onlyLiveData = DeleteDt.eq(EmptyValue.DATE_TIME);
 }

@@ -11,7 +11,6 @@ import org.junit.runners.MethodSorters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
-import pro.fessional.wings.faceless.convention.EmptyValue
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表
@@ -125,6 +124,18 @@ class WingsJooqDslAndDaoSample {
         }
         val start3 = System.currentTimeMillis()
 
-        println("cost1=${start2-start1}, cost2=${start3-start2}")
+        println("cost1=${start2 - start1}, cost2=${start3 - start2}")
+    }
+
+    @Test
+    fun test5DeleteDt() {
+        val c1 = dao.count()
+        println(c1)
+        val c2 = dao.count(dao.onlyDiedData())
+        println(c2)
+        val t = Tst中文也分表Table.Tst中文也分表
+
+        val c3 = dsl.selectCount().from(t).where(t.onlyLiveData).execute()
+        println(c3)
     }
 }

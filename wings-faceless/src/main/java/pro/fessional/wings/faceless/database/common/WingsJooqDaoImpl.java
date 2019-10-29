@@ -14,10 +14,7 @@ import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
 import pro.fessional.mirana.data.CodeEnum;
 import pro.fessional.mirana.pain.CodeException;
-import pro.fessional.wings.faceless.convention.EmptyValue;
-import pro.fessional.wings.faceless.database.helper.JournalHelp;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -26,7 +23,6 @@ import java.util.Map;
 
 import static org.jooq.impl.DSL.row;
 import static org.jooq.impl.DSL.using;
-import static pro.fessional.wings.faceless.database.helper.JournalHelp.COL_DELETE_DT;
 
 /**
  * <pre>
@@ -71,14 +67,24 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
         this.alias = alias == null ? table : alias;
         this.deleted = deleted;
         this.updated = updated;
-        Field<LocalDateTime> field = getDeleteDtField(this.alias);
-        if (field == null) {
-            onlyDied = null;
-            onlyLive = null;
-        } else {
-            onlyLive = field.eq(EmptyValue.DATE_TIME);
-            onlyDied = field.gt(EmptyValue.DATE_TIME);
+        //
+        Condition d = null;
+        Condition l = null;
+        for (java.lang.reflect.Field f : this.alias.getClass().getDeclaredFields()) {
+            if (Condition.class.isAssignableFrom(f.getType())) {
+                try {
+                    if (f.getName().equals("onlyDiedData")) {
+                        d = (Condition) f.get(this.alias);
+                    } else if (f.getName().equals("onlyLiveData")) {
+                        l = (Condition) f.get(this.alias);
+                    }
+                } catch (IllegalAccessException e) {
+                    // ignore
+                }
+            }
         }
+        onlyDied = d;
+        onlyLive = l;
     }
 
     public Condition onlyDiedData() {
@@ -470,6 +476,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
         for (P object : objects) {
             R record = dsl.newRecord(table, object);
             dealPkAndNull(record, skipNull);
+            records.add(record);
         }
         return dsl.batchUpdate(records).execute();
     }
@@ -697,11 +704,5 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
                     .fetch()
                     .map(mapper());
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private Field<LocalDateTime> getDeleteDtField(S table) {
-        Field<?>[] fields = JournalHelp.extractField(table.fields(), COL_DELETE_DT);
-        return (Field<LocalDateTime>) fields[0];
     }
 }

@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.jooqgen
 
+import org.jooq.Condition
 import org.jooq.Configuration
 import org.jooq.Constants
 import org.jooq.Record
@@ -11,7 +12,9 @@ import org.jooq.meta.TableDefinition
 import org.jooq.meta.TypedElementDefinition
 import org.jooq.meta.UDTDefinition
 import org.jooq.tools.JooqLogger
+import pro.fessional.wings.faceless.convention.EmptyValue
 import pro.fessional.wings.faceless.database.common.WingsJooqDaoImpl
+import pro.fessional.wings.faceless.database.helper.JournalHelp
 
 class WingsJavaGenerator : JavaGenerator() {
 
@@ -48,6 +51,19 @@ class WingsJavaGenerator : JavaGenerator() {
         if (shadowUpd.isNotEmpty()) {
             // public static final SysCommitJournalTable SysCommitJournal$upd = SysCommitJournal.rename("sys_commit_journal$upd").as("n6u");
             out.tab(1).println("public static final %s %s${'$'}upd = %s.rename(\"%s${'$'}upd\").as(\"%su\");", className, identifier, identifier, tableName, aliasLower)
+        }
+    }
+
+    override fun generateTableClassFooter(table: TableDefinition, out: JavaWriter) {
+        table.columns.find { it.outputName.equals(JournalHelp.COL_DELETE_DT, true) }?.let {
+            val col = it.outputName
+            out.ref(Condition::class.java)
+            out.ref(EmptyValue::class.java)
+            val columnId = reflectProtectRef(out, getStrategy().getJavaIdentifier(it), colRefSegments(it))
+
+            out.tab(1).javadoc("The column <code>%s</code> condition", col)
+            out.tab(1).println("public final Condition onlyDiedData = %s.gt(EmptyValue.DATE_TIME);",columnId)
+            out.tab(1).println("public final Condition onlyLiveData = %s.eq(EmptyValue.DATE_TIME);",columnId)
         }
     }
 

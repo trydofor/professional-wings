@@ -38,20 +38,22 @@ public interface JournalService {
         private String otherInfo = EmptyValue.VARCHAR;
 
         /**
-         * 如果不存在createDt则设置全部，否则只更新modifyDt
+         * 如果不存在commitId则设置CommitId=?,CreateDt=?,ModifyDt=NIL,DeleteDt=NIL;
+         * 否则设置CommitId=?,ModifyDt=?
          *
          * @param po 对象
          */
         public void commit(@Nullable JournalAware po) {
             if (po == null) return;
-            po.setCommitId(commitId);
-            if (EmptySugar.isEmptyValue(po.getCreateDt())) {
+            if (EmptySugar.isEmptyValue(po.getCommitId())) {
                 po.setCreateDt(commitDt);
                 po.setModifyDt(EmptyValue.DATE_TIME);
                 po.setDeleteDt(EmptyValue.DATE_TIME);
             } else {
                 po.setModifyDt(commitDt);
             }
+            //
+            po.setCommitId(commitId);
         }
 
         public void create(@Nullable JournalAware po) {
