@@ -1,0 +1,10 @@
+[mysqld]
+character-set-client-handshake = FALSE
+character-set-server = utf8mb4
+collation-server = utf8mb4_unicode_ci
+init_connect=’SET NAMES utf8mb4'
+max_allowed_packet          = 512M
+transaction-isolation       = READ-COMMITTED
+skip_ssl
+#default-time-zone='Asia/Shanghai'
+default-time-zone='+08:00'

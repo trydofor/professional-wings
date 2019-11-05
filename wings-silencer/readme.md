@@ -40,12 +40,15 @@
  * shardingsphere-sharding-79.properties
  * logger-logback-79.properties
 
-通过`EnvironmentPostProcessor`扫描`各路径`中`/wings-conf/*.*`，规则如下，
+通过`EnvironmentPostProcessor`扫描`各路径`中`/wings-conf/**/*.*`，规则如下，
 
  1. Command line arguments. `--spring.config.location`
  2. Java System properties `spring.config.location`
  3. OS environment variables. `SPRING_CONFIG_LOCATION`
  4. default `classpath:/,classpath:/config/,file:./,file:./config/`
+ 5. `classpath:/`会被以`classpath*:/`扫描
+ 6. 任何非`classpath:`,`classpath*:`的，都以`file:`扫描
+ 7. 以`/`结尾的当做目录，否则作为文件
 
 `各路径`指按照上述顺序，把路径拆分后，依次扫描，序号大的优先级高（默认值有关）。
 

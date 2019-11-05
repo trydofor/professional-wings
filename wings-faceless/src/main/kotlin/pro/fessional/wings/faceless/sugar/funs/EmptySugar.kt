@@ -128,5 +128,8 @@ fun LocalDate?.nullToEmpty() = this ?: EmptyValue.DATE
 @JvmName("nullToEmpty")
 fun LocalTime?.nullToEmpty() = this ?: EmptyValue.TIME
 
-@JvmName("nullToEmpty")
-fun LocalDateTime?.nullToEmpty() = this ?: EmptyValue.DATE_TIME
+@JvmName("nullToTrue")
+fun Boolean?.nullToTrue() = this ?: true
+
+@JvmName("nullToFalse")
+fun Boolean?.nullToFalse() = this ?: false

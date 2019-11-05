@@ -82,11 +82,17 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         // depends classpath*:
         for (String path : confPaths.keySet()) {
             if (path.startsWith("classpath:")) {
-                String pax = path.replace("classpath:", "classpath*:");
-                logger.info("Wings scan classpath*, path=" + pax);
-                putConfIfValid(pathRes, resolver, pax);
+                path = path.replace("classpath:", "classpath*:");
+            } else if (path.startsWith("file:") || path.startsWith("classpath*:")) {
+                // skip
+            }else{
+                path = "file:" + path;
+            }
+
+            logger.info("Wings scan classpath, path=" + path);
+            if (path.endsWith("/") || path.endsWith("\\")) {
+                putConfIfValid(pathRes, resolver, path + WINGS_CONF);
             } else {
-                logger.info("Wings scan classpath, path=" + path);
                 putConfIfValid(pathRes, resolver, path);
             }
         }
@@ -190,11 +196,12 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     }
 
     private Pattern ptnSeq = Pattern.compile("-(\\d\\d)$");
+
     private String extractBaseName(String p) {
         int p1 = p.lastIndexOf('/');
         int p2 = p.lastIndexOf('\\');
         int pe = p.lastIndexOf('.');
-        int px = p1 > p2 ? p1 : p2;
+        int px = Math.max(p1, p2);
         if (px > 0 && pe > px) {
             String sb = p.substring(px + 1, pe);
             if (!ptnSeq.matcher(sb).find()) {
@@ -218,12 +225,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
     private void putConfIfValid(LinkedHashMap<String, Resource> pathRes, PathMatchingResourcePatternResolver resolver, String path) {
         try {
-            Resource[] resources = resolver.getResources(path + WINGS_CONF);
-            if (resources == null || resources.length == 0) {
-                return;
-            }
-
-            for (Resource res : resources) {
+            for (Resource res : resolver.getResources(path)) {
                 String p = res.getURL().getPath();
                 if (isYml(p) || isProperty(p) || isBlacklist(p)) {
                     logger.info("Wings find resource=" + p);

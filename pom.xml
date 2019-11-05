@@ -114,6 +114,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <!-- 抛弃吃货
     <repositories>
         <repository>
             <id>trydofor-mvnrepo</id>
@@ -121,4 +122,5 @@
             <url>https://github.com/trydofor/mvnrepo/raw/master</url>
         </repository>
     </repositories>
+    -->
 </project>

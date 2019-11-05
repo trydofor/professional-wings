@@ -1,3 +1,6 @@
+-- 时区统一(GMT+8)，编码统一(utf8mb4)
+-- CREATE DATABASE `wings_0` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+
 CREATE TABLE `sys_schema_journal` (
     `table_name` VARCHAR(100) NOT NULL COMMENT '主表表名',
     `create_dt`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日时',
