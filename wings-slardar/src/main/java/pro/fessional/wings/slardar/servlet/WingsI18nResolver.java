@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.spring.help;
+package pro.fessional.wings.slardar.servlet;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.i18n.LocaleContext;
@@ -21,7 +21,7 @@ import java.util.TimeZone;
  * @since 2019-06-30
  */
 @RequiredArgsConstructor
-public class WingsI18nWebResolver extends AbstractLocaleContextResolver {
+public class WingsI18nResolver extends AbstractLocaleContextResolver {
 
     private final WingsI18nResolverProperties properties;
 

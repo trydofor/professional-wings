@@ -1,0 +1,126 @@
+# For a quick start check out our HTTP Requests collection (Tools|HTTP Client|Open HTTP Requests Collection) or
+# paste cURL into the file and request will be converted to HTTP Request format.
+#
+# Following HTTP Request Live Templates are available:
+# * 'gtrp' and 'gtr' create a GET request with or without query parameters;
+# * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
+# * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
+
+### 显示验证码
+# 输出 code=null
+GET http://localhost:8080/test/vcode.html
+
+### 验证码
+# 输出 captcha
+GET http://localhost:8080/test/captcha.html
+
+### 显示验证码
+# 输出 code=123
+GET http://localhost:8080/test/vcode.html
+
+### 不带验证码查看
+# 输出 bad captcha
+GET http://localhost:8080/test/verify.html
+
+### 带验证码查看
+# 输出 /test/verify.html?vc=123
+GET http://localhost:8080/test/verify.html?vc=123
+
+#####################################
+
+### query string access token
+# 输出 unauthorized
+GET http://localhost:8080/admin.html
+
+### wings oauth2x login
+
+### 别名cid
+# 输出 access_token
+POST localhost:8080/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+cid=wings-slardar-id&client_secret=wings-slardar-secret&scope=any&grant_type=client_credentials
+
+### 别名gtp,cst
+# 输出 access_token
+POST localhost:8080/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+cid=wings-slardar-id&cst=wings-slardar-secret&gtp=client_credentials&scope=any
+
+### 输出的access_token 要保留下列，给后续链接使用
+POST localhost:8080/oauth/token
+#POST wings-slardar-id:wings-slardar-secret@localhost:8080/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+cid=wings-slardar-id&scope=any&gtp=passwordx&username=wings-slardar-user&password=wings-slardar-pass
+
+### query string access token
+# 输出 admin
+GET http://localhost:8080/admin.html?access_token=33cc5ab0-42e5-4805-ba9d-729b8abdfc93
+
+
+### 检查token
+POST wings-slardar-id:wings-slardar-secret@localhost:8080/oauth/check_token
+Content-Type: application/x-www-form-urlencoded
+
+token=f416ede9-667d-4c72-8a25-ff0927e984f1
+
+
+### header access token
+# 输出 admin
+GET http://localhost:8080/admin.html
+Authorization: Bearer e8f4fb29-73a9-4cb2-8d6d-201e2641996d
+
+### basic 验证登录
+# 输出 access_token
+POST wings-slardar-id:wings-slardar-secret@localhost:8080/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&scope=any
+
+
+### 表单登录
+# 302 跳转到 http://localhost:8080/
+POST localhost:8080/login
+Content-Type: application/x-www-form-urlencoded
+
+username=wings-slardar-user&password=wings-slardar-pass
+
+############## OAuth2 ##############
+
+### 密码授权
+# 输出 access_token, refresh_token
+POST localhost:8080/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=wings-slardar-id&client_secret=wings-slardar-secret&scope=any&grant_type=password&username=wings-slardar-user&password=wings-slardar-pass
+
+### 刷新token
+# 输出 access_token, refresh_token
+POST localhost:8080/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=wings-slardar-id&client_secret=wings-slardar-secret&scope=any&grant_type=refresh_token&refresh_token=9645621f-3dd5-4d6a-8ac6-3a6e861aebe2
+
+### 客户端授权
+# 输出 access_token
+POST localhost:8080/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=wings-slardar-id&client_secret=wings-slardar-secret&scope=any&grant_type=client_credentials
+
+### 授权码
+# 需要先from登录
+POST localhost:8080/oauth/authorize
+Content-Type: application/x-www-form-urlencoded
+
+client_id=wings-slardar-id&response_type=code&scope=any&redirect_uri=http://www.moilioncircle.com
+
+### code换token
+#POST localhost:8080/oauth/token
+POST wings-slardar-id:wings-slardar-secret@localhost:8080/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=wings-slardar-id&client_secret=wings-slardar-secret&scope=any&grant_type=authorization_code&redirect_uri=http://www.moilioncircle.com&code=VA43Nv
+

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
 import pro.fessional.wings.slardar.spring.conf.WingsI18nResolverProperties;
-import pro.fessional.wings.slardar.spring.help.WingsI18nWebResolver;
+import pro.fessional.wings.slardar.servlet.WingsI18nResolver;
 
 /**
  * @author trydofor
@@ -20,7 +20,7 @@ public class WingsI18nWebConfiguration {
 
     @Bean
     public LocaleResolver localeResolver(WingsI18nResolverProperties properties) {
-        return new WingsI18nWebResolver(properties);
+        return new WingsI18nResolver(properties);
     }
 
     @Bean

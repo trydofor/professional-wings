@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
  * @since 2019-06-25
  */
 @SpringBootApplication
-open class FacelessApplication
+open class WingsFacelessApplication
 
 fun main(args: Array<String>) {
-    SpringApplication.run(FacelessApplication::class.java, *args)
+    SpringApplication.run(WingsFacelessApplication::class.java, *args)
 }

@@ -38,6 +38,7 @@
         <jooq.version>3.12.1</jooq.version>
         <sharding-sphere.version>4.0.0-RC2</sharding-sphere.version>
         <!--slardar-->
+        <spring-boot.version>2.2.0.RELEASE</spring-boot.version>
         <!--other-->
         <caffeine.version>2.8.0</caffeine.version>
         <guava.version>28.1-jre</guava.version>
@@ -89,6 +90,12 @@
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
                 <version>${sharding-sphere.version}</version>
+            </dependency>
+            <!-- oauth2 -->
+            <dependency>
+                <groupId>org.springframework.security.oauth.boot</groupId>
+                <artifactId>spring-security-oauth2-autoconfigure</artifactId>
+                <version>${spring-boot.version}</version>
             </dependency>
             <!-- cache -->
             <dependency>

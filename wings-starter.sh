@@ -10,7 +10,8 @@ EOF
 
 ################ modify the following params ################
 USER_RUN="$USER" # 用来启动程序的用户。
-EXEC_CMD="start" # 默认的行为。空时使用$1
+PORT_RUN=''      # 默认端口，空时
+ARGS_RUN="start" # 默认参数。空时使用$1
 BOOT_JAR="$2"    # 主程序。通过env覆盖
 BOOT_LOG=''      # 控制台日志，默认 $BOOT_JAR.log
 BOOT_PID=''      # 主程序pid，默认 $BOOT_JAR.pid
@@ -61,7 +62,7 @@ if [[ -f "$thie_envf" ]]; then
     source "$thie_envf"
 fi
 
-# refine env
+# calc env
 BOOT_CNF=$(eval "echo \"$BOOT_CNF\"")
 BOOT_ARG=$(eval "echo \"$BOOT_ARG\"")
 JAVA_ARG=$(eval "echo \"$JAVA_ARG\"")
@@ -80,44 +81,60 @@ if [[ "$?" != "0" ]]; then
     exit
 fi
 
-# search jar file
-JAR_FILE=$(find . -type f -name ${BOOT_JAR} | head -n 1)
-if [[ ! -f "$JAR_FILE" ]]; then
+# check jar
+if [[ ! -f "$BOOT_JAR" ]]; then
+    BOOT_JAR=$(find . -type f -name ${BOOT_JAR} | head -n 1)
+fi
+if [[ ! -f "$BOOT_JAR" ]]; then
     echo -e "\e[0;31mERROR: can not found jar file, ${BOOT_JAR}\e[m"
     exit
 fi
 
-JAR_NAME=$(basename ${JAR_FILE})
+# check log
+JAR_NAME=$(basename ${BOOT_JAR})
 if [[ "$BOOT_LOG" == "" ]]; then
     BOOT_LOG=${JAR_NAME}.log
 fi
 
+# check pid
 if [[ "$BOOT_PID" == "" ]]; then
     BOOT_PID=${JAR_NAME}.pid
 fi
 
-count=$(ps -ef | grep "$JAR_NAME" | grep -v grep | grep -v "$this_file" | wc -l)
+# check ps
+count=$(ps -ef -u $USER_RUN | grep -E "java.+$BOOT_JAR " | grep -v grep | wc -l)
+
+# check arg
 if [[ "$1" != "" ]]; then
-    EXEC_CMD="$1"
+    ARGS_RUN="$1"
 fi
-case "$EXEC_CMD" in
+case "$ARGS_RUN" in
     start)
         if [[ ${count} == 0 ]]; then
             if [ "$BOOT_CNF" != "" ];then
                 BOOT_ARG="--spring.config.location=$BOOT_CNF $BOOT_ARG"
             fi
-            echo -e "\e[0;32mINFO: boot-jar=$JAR_FILE \e[m"
-            echo -e "\e[0;33mNOTE: boot-pid=$BOOT_PID \e[m"
-            echo -e "\e[0;33mNOTE: boot-log=$BOOT_LOG \e[m"
-            echo -e "\e[0;33mNOTE: boot-arg=$BOOT_ARG \e[m"
-            echo -e "\e[0;33mNOTE: java-arg=$JAVA_ARG \e[m"
-            nohup java ${JAVA_ARG} -jar ${JAR_FILE} ${BOOT_ARG} > ${BOOT_LOG} 2>&1 &
+            if [ "$PORT_RUN" != "" ];then
+                BOOT_ARG="--server.port=$PORT_RUN $BOOT_ARG"
+            fi
+            echo -e "\e[0;32mINFO: boot-jar=$BOOT_JAR \e[m"
+            echo -e "\e[0;32mINFO: boot-pid=$BOOT_PID \e[m"
+            echo -e "\e[0;32mINFO: boot-log=$BOOT_LOG \e[m"
+            echo -e "\e[0;32mINFO: boot-arg=$BOOT_ARG \e[m"
+            echo -e "\e[0;32mINFO: java-arg=$JAVA_ARG \e[m"
+
+            if [[ -f "${BOOT_LOG}" ]];then
+                echo -e "\e[0;33mNOTE: backup old log \e[m"
+                mv "${BOOT_LOG}" "${BOOT_LOG}.$(date '+%y%m%d-%H%M%S')"
+            fi
+
+            nohup java ${JAVA_ARG} -jar ${BOOT_JAR} ${BOOT_ARG} > ${BOOT_LOG} 2>&1 &
             echo $! > ${BOOT_PID}
             sleep 2
         else
             echo -e "\e[0;31mERROR: already $count running of $JAR_NAME\e[m"
         fi
-        echo -e "\e[0;33mNOTE: current process info \e[m"
+        echo -e "\e[0;33mNOTE: current process aoubt $JAR_NAME \e[m"
         ps -ef | grep ${JAR_NAME}| grep -v grep
         
         echo -e "\e[0;33mNOTE: tail current log, Ctrl-C to skip \e[m"
@@ -128,9 +145,11 @@ case "$EXEC_CMD" in
         if [[ ${count} == 0 ]]; then
             echo -e "\e[0;33mNOTE: not found running $JAR_NAME\e[m"
         else
+            echo -e "\e[0;33mNOTE: current process aoubt $JAR_NAME \e[m"
+            ps -ef | grep ${JAR_NAME}| grep -v grep
             timeout=60
             pid=$(cat ${BOOT_PID})
-            echo -e "\e[0;33mNOTE: killing pid=$pid of $JAR_NAME\e[m"
+            echo -e "\e[0;33mNOTE: killing boot.pid=$pid of $JAR_NAME\e[m"
             kill ${pid}
 
             icon=''
@@ -144,7 +163,7 @@ case "$EXEC_CMD" in
                     fi
                     sleep 0.1
                 done
-                if [[ $(ps -ef | grep ${JAR_NAME} | grep -v grep | wc -l) == 0 ]]; then
+                if [[ $(ps -ef -u $USER_RUN | grep -E "java.+$BOOT_JAR " | grep -v grep | wc -l) == 0 ]]; then
                     echo -e "\e[0;33mNOTE: successfully stop in $i seconds, pid=$pid of $JAR_NAME\e[m"
                     exit
                 fi
@@ -159,7 +178,8 @@ case "$EXEC_CMD" in
         if [[ ${count} == 0 ]]; then
             echo -e "\e[0;33mNOTE: not found running $JAR_NAME\e[m"
         else
-            echo -e "\e[0;33mNOTE: $count running of $JAR_NAME\e[m"
+            echo -e "\e[0;33mNOTE: boot.pid=$(cat ${BOOT_PID}) \e[m"
+            echo -e "\e[0;33mNOTE: current process aoubt $JAR_NAME \e[m"
             ps -ef | grep ${JAR_NAME}| grep -v grep
             echo -e "\e[0;33mNOTE: last 20 lines of $BOOT_LOG\e[m"
             tail -n 20 ${BOOT_LOG}

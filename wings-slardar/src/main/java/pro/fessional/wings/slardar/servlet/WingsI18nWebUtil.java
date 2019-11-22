@@ -1,11 +1,10 @@
-package pro.fessional.wings.slardar.spring.help;
+package pro.fessional.wings.slardar.servlet;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
 import pro.fessional.wings.silencer.context.WingsI18nContext;
-import pro.fessional.wings.slardar.http.TypedRequestUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneId;
@@ -95,7 +94,8 @@ public class WingsI18nWebUtil {
         }
 
         @Override
-        public @NotNull ZoneId getZoneId() {
+        public @NotNull
+        ZoneId getZoneId() {
             return zoneId;
         }
     }

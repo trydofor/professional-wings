@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.silencer.context.WingsI18nContext;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
-import pro.fessional.wings.slardar.spring.help.WingsI18nWebUtil;
+import pro.fessional.wings.slardar.servlet.WingsI18nWebUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;

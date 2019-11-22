@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 /**
  * 自己配置SecurityConfiguration 要么禁止
+ *
  * @author trydofor
  * @since 2019-08-08
  */
