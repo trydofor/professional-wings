@@ -23,6 +23,16 @@ public class SecurityContextUtil {
     }
 
     /**
+     * 获得终端信息
+     *
+     * @return context
+     */
+    @Nullable
+    public static WingsTerminalContext.Context getTerminalContext() {
+        return WingsTerminalContext.get();
+    }
+
+    /**
      * 获得 OAuth2x的Context
      *
      * @return context

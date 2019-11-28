@@ -150,7 +150,7 @@ public class CombinableMessageSource extends AbstractMessageSource {
     }
 
 
-    private class OrderedMessageSource {
+    private static class OrderedMessageSource {
         private OrderedMessageSource(HierarchicalMessageSource source, int order) {
             this.order = order;
             this.source = source;

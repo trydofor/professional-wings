@@ -1,9 +1,7 @@
 # 3.鱼人守卫(slardar)
 
-为Servlet体系下的SpringMvc和WebSocket的提供权限等控制。
-默认 `spring.wings.security.oauth2.enabled=true` 自动生效。
+为Servlet体系下的SpringMvc和WebSocket的提供OAuth2的鉴/授权等控制。
 当有多个`WebSecurityConfigurerAdapter`时，需要注意`Order`的顺序。
-
 
 ## 3.1.OAuth2xFilter扩展
 
@@ -26,7 +24,8 @@ Slardar通过Filter增加`grant_type=password`的别名穿透机制，使
  * ClientDetailsService，默认从配置文件中加载(只能build)
  * UserDetailsService，自定义，全局注入即可。
  * WingsTokenStore，集合memory和Redis，在auth和res上缓存UserDetail。
- * UserDetail 自定义，内部保存需要的状态。
+ * WingsTokenEnhance，支持wing格式的token和第三方token。
+ * UserDetail和TypeIdI18nUserDetail自定义，内部保存需要的状态。
 
 实际项目中，每个工程会独立配置Security和OAuth的各个服务器。
 因此，提供了`WingsOAuth2xConfiguration.Helper`，注入后，协助配置。
@@ -41,13 +40,6 @@ public AuthenticationManager authenticationManagerBean() throws Exception {
     return super.authenticationManagerBean();
 }
 ```
-
-
-获得`access_token`后，UserDetail中会注入时区，语言等国际化信息。
-
-`ResourceServer`自动刷新`AccessToken`，自动获得`UserDetail`。
-
-
 
 ## 3.2.CaptchaFilter防扒
 
@@ -73,12 +65,21 @@ public AuthenticationManager authenticationManagerBean() throws Exception {
  
  `最大同时进行请求数`，指已经由Controller处理，但未完成的请求。
 
-## 3.4.WebSocket和STOMP
+## 3.4.TerminalFilter终端
+
+ * 设置 Locale 和 TimeZone
+ * 设置 remote ip
+ * 设置 user agent信息
+
+## 3.5.Session,Timezone和I18n
 
 用户登录后，自动生成时区和I18n有关的Context。
+通过`SecurityContextUtil`获得相关的Context。
 
+ * WingsOAuth2xContext.Context Oauth2有关的
+ * WingsTerminalContext.Context 登录终端有关的
 
-## 3.5.Controller约定
+## 3.6.Controller约定
 
 MVC中的RequestMapping约定如下
 
@@ -86,13 +87,8 @@ MVC中的RequestMapping约定如下
  * 在controller上写版本号`@RequestMapping("/v1")`
  * 不要相写相对路径，这样才可以通过URL直接搜索匹配。
 
-## 3.6.Session,Timezone和I18n
 
-用户登录后，自动生成时区和I18n有关的Context。
-没有Session，或者存在无状态的Session
-
-
-## 3.7.参考资料
+## 3.9.参考资料
 
 [OAuth 2 Developers Guide](https://projects.spring.io/spring-security-oauth/docs/oauth2.html)
 [OAuth2 boot](https://docs.spring.io/spring-security-oauth2-boot/docs/current/reference/htmlsingle/)

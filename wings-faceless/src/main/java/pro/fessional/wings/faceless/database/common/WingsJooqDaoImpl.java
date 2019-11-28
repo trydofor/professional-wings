@@ -346,8 +346,8 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
         }
 
         int[] rc = dsl.batchInsert(records).execute();
-        for (int i = 0; i < rc.length; i++) {
-            if (rc[i] != 1) throw new CodeException(orError);
+        for (int v : rc) {
+            if (v != 1) throw new CodeException(orError);
         }
         return rc;
     }
@@ -584,8 +584,8 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
      */
     public int[] updateEqN(Collection<P> objects, boolean skipNull, CodeEnum orError) {
         int[] rc = update(objects, skipNull);
-        for (int i = 0; i < rc.length; i++) {
-            if (rc[i] != 1) throw new CodeException(orError);
+        for (int v : rc) {
+            if (v != 1) throw new CodeException(orError);
         }
         return rc;
     }
@@ -599,8 +599,8 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
      */
     public int[] updateLeN(Collection<P> objects, boolean skipNull, CodeEnum orError) {
         int[] rc = update(objects, skipNull);
-        for (int i = 0; i < rc.length; i++) {
-            if (rc[i] > 1) throw new CodeException(orError);
+        for (int v : rc) {
+            if (v > 1) throw new CodeException(orError);
         }
         return rc;
     }

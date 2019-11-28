@@ -37,7 +37,7 @@ public class TestOAuth2xConfiguration {
     @EnableWebSecurity
     @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
     @RequiredArgsConstructor
-    public class WebSecurityConf extends WebSecurityConfigurerAdapter {
+    public static class WebSecurityConf extends WebSecurityConfigurerAdapter {
 
         private final WingsOAuth2xConfiguration.Helper helper;
 
@@ -60,14 +60,14 @@ public class TestOAuth2xConfiguration {
         @Override
         public void configure(HttpSecurity http) throws Exception {
             helper.configure(http)
-                  .httpBasic().disable()
+                  .httpBasic().and()
                   .csrf().disable()
             ;
         }
 
         // need AuthenticationManager Bean
         // password grants are switched on by injecting an AuthenticationManager
-        @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
+        @Bean(BeanIds.AUTHENTICATION_MANAGER)
         @Override
         public AuthenticationManager authenticationManagerBean() throws Exception {
             return super.authenticationManagerBean();
@@ -78,7 +78,7 @@ public class TestOAuth2xConfiguration {
     @Configuration
     @EnableAuthorizationServer
     @RequiredArgsConstructor
-    public class AuthServerConf extends AuthorizationServerConfigurerAdapter {
+    public static class AuthServerConf extends AuthorizationServerConfigurerAdapter {
         private final WingsOAuth2xConfiguration.Helper helper;
 
         @Override
@@ -101,7 +101,7 @@ public class TestOAuth2xConfiguration {
     @Configuration
     @EnableResourceServer
     @RequiredArgsConstructor
-    public class ResourceServerConf extends ResourceServerConfigurerAdapter {
+    public static class ResourceServerConf extends ResourceServerConfigurerAdapter {
 
         private final WingsOAuth2xConfiguration.Helper helper;
 

@@ -1,6 +1,8 @@
 package pro.fessional.wings.slardar.security;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -24,43 +26,37 @@ public class WingsOAuth2xContext {
 
     public static final ThreadLocal<Context> context = new ThreadLocal<>();
 
+    @Nullable
     public static Context get() {
         return context.get();
     }
 
-
-    public static WingsOAuth2xContext.Context set(Map<String, String> param) {
+    public static Context set(Map<String, String> param) {
         if (param == null) return null;
 
-        WingsOAuth2xContext.Context ctx = new WingsOAuth2xContext.Context();
-        ctx.setClientId(param.get(CLIENT_ID));
-        ctx.setClientIdAlias(param.get(CLIENT_ID_ALIAS));
-        ctx.setClientSecretAlias(param.get(CLIENT_SECRET_ALIAS));
-        ctx.setGrantType(param.get(GRANT_TYPE));
-        ctx.setGrantTypeAlias(param.get(GRANT_TYPE_ALIAS));
-        ctx.setOauthPasswordAlias(param.get(OAUTH_PASSWORD_ALIAS));
-        ctx.setRedirectUri(param.get(REDIRECT_URI));
-        ctx.setResponseType(param.get(RESPONSE_TYPE));
-        ctx.setScope(param.get(SCOPE));
-        ctx.setState(param.get(STATE));
+        Context ctx = new Context();
+        ctx.clientId = param.get(CLIENT_ID);
+        ctx.clientIdAlias = param.get(CLIENT_ID_ALIAS);
+        ctx.clientSecretAlias = param.get(CLIENT_SECRET_ALIAS);
+        ctx.grantType = param.get(GRANT_TYPE);
+        ctx.grantTypeAlias = param.get(GRANT_TYPE_ALIAS);
+        ctx.oauthPasswordAlias = param.get(OAUTH_PASSWORD_ALIAS);
+        ctx.redirectUri = param.get(REDIRECT_URI);
+        ctx.responseType = param.get(RESPONSE_TYPE);
+        ctx.scope = param.get(SCOPE);
+        ctx.state = param.get(STATE);
+        ctx.requestParam = param;
 
         context.set(ctx);
         return ctx;
-    }
-
-    public static void set(Context ctx) {
-        if (ctx == null) {
-            clear();
-        } else {
-            context.set(ctx);
-        }
     }
 
     public static void clear() {
         context.remove();
     }
 
-    @Data
+    @Getter
+    @ToString
     public static class Context {
 
         private String clientIdAlias;
@@ -74,5 +70,7 @@ public class WingsOAuth2xContext {
         private String redirectUri;
         private String scope;
         private String state;
+
+        private Map<String, String> requestParam;
     }
 }

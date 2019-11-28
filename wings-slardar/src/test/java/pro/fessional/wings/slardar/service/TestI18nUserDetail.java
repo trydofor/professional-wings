@@ -1,63 +1,80 @@
 package pro.fessional.wings.slardar.service;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import pro.fessional.wings.slardar.security.TypeIdI18nUserDetail;
 
-import java.util.Arrays;
+import java.time.ZoneId;
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * @author trydofor
  * @since 2019-11-20
  */
-public class TestI18nUserDetail implements UserDetails {
+public class TestI18nUserDetail implements TypeIdI18nUserDetail {
 
-    private final List<SimpleGrantedAuthority> auths = Arrays.asList(
-            new SimpleGrantedAuthority("ROLE_USER"),
-            new SimpleGrantedAuthority("ROLE_ADMIN"),
-            new SimpleGrantedAuthority("ROLE_CLURK"),
-            new SimpleGrantedAuthority("MENU_READ")
-    );
-
-    private final String pass = "{bcrypt}" + new BCryptPasswordEncoder().encode("wings-slardar-pass");
-
-    private TimeZone timezone = TimeZone.getDefault();
+    private long userType;
+    private long userId;
+    private String username;
+    private String password;
+    private Collection<? extends GrantedAuthority> authorities;
+    private ZoneId zoneId = ZoneId.systemDefault();
     private Locale locale = Locale.CHINA;
 
-    public TimeZone getTimezone() {
-        return timezone;
+
+    public void setUserType(long userType) {
+        this.userType = userType;
     }
 
-    public void setTimezone(TimeZone timezone) {
-        this.timezone = timezone;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        this.authorities = authorities;
+    }
+
+    @Override
+    public long getUserId() {
+        return userId;
+    }
+
+    @Override
+    public long getUserType() {
+        return userType;
+    }
+
+    @Override
     public Locale getLocale() {
         return locale;
     }
 
-    public void setLocale(Locale locale) {
-        this.locale = locale;
+    @Override
+    public ZoneId getZoneId() {
+        return zoneId;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return auths;
+        return authorities;
     }
 
     @Override
     public String getPassword() {
-        return pass;
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return "wings-slardar-user";
+        return username;
     }
 
     @Override

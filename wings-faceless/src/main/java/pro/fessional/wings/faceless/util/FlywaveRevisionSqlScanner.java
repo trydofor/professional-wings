@@ -7,6 +7,7 @@ import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 
 import javax.validation.constraints.NotNull;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -39,7 +40,7 @@ public class FlywaveRevisionSqlScanner {
             PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
             Resource[] resources = resolver.getResources(path);
             Pattern reviRegex = Pattern.compile("(\\d{8,})([uv])(\\d{2,})[^/]*\\.sql$", Pattern.CASE_INSENSITIVE);
-            Charset utf8 = Charset.forName("UTF8");
+            Charset utf8 = StandardCharsets.UTF_8;
 
             for (Resource res : resources) {
                 file = res.getURL().getPath();

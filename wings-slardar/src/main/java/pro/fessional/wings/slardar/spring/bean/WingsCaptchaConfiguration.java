@@ -14,17 +14,15 @@ import pro.fessional.wings.slardar.servlet.WingsFilterOrder;
  * @since 2019-07-09
  */
 @Configuration
-@ConditionalOnProperty(prefix = "spring.wings.filter.captcha", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "spring.wings.slardar.captcha", name = "enabled", havingValue = "true")
 public class WingsCaptchaConfiguration {
 
     private final Log logger = LogFactory.getLog(WingsCaptchaConfiguration.class);
 
     @Bean
-    @ConfigurationProperties("spring.wings.filter.captcha")
+    @ConfigurationProperties("wings.slardar.captcha")
     public WingsCaptchaFilter.Config wingsCaptchaFilterConfig() {
-        WingsCaptchaFilter.Config config = new WingsCaptchaFilter.Config();
-
-        return config;
+        return new WingsCaptchaFilter.Config();
     }
 
     @Bean

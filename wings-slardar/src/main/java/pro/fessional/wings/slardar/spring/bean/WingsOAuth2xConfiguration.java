@@ -1,8 +1,10 @@
 package pro.fessional.wings.slardar.spring.bean;
 
+import lombok.Data;
 import lombok.Setter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -29,10 +31,15 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 import org.springframework.util.Assert;
-import pro.fessional.wings.slardar.security.MemoryRedisTokenStore;
+import pro.fessional.mirana.code.LeapCode;
+import pro.fessional.wings.slardar.security.JdkSerializationStrategy;
+import pro.fessional.wings.slardar.security.WingsTokenEnhancer;
+import pro.fessional.wings.slardar.security.WingsTokenStore;
 import pro.fessional.wings.slardar.servlet.WingsFilterOrder;
 import pro.fessional.wings.slardar.servlet.WingsOAuth2xFilter;
 
@@ -44,14 +51,26 @@ import java.util.Map;
  * @since 2019-07-09
  */
 @Configuration
-@ConditionalOnProperty(prefix = "spring.wings.filter.oauth2x", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "spring.wings.slardar.oauth2x", name = "enabled", havingValue = "true")
 public class WingsOAuth2xConfiguration {
 
     private final Log logger = LogFactory.getLog(WingsOAuth2xConfiguration.class);
 
     @Bean
+    @ConfigurationProperties("wings.slardar.security")
+    public Security wingsOAuth2xConfigurationSecurity() {
+        return new Security();
+    }
+
+    /**
+     * #{bcrypt}$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG
+     * #{noop}password
+     * #{pbkdf2}5d923b44a6d129f3ddf3e3c8d29412723dcbde72445e8ef6bf3b508fbf17fa4ed4d6b99ca763d8dc
+     * #{scrypt}$e0801$8bWJaSu2IKSn9Z9kM+TPXfOc/9bdYSrN1oD9qfVThWEwdRTnO7re7Ei+fUZRJ68k9lTyuTeUp4of4g24hHnazw==$OAOec05+bXxvuu/1qZ6NUR+xQYvYv7BeL1QxwRpY5Pc=
+     */
+    @Bean
     @ConditionalOnMissingBean(PasswordEncoder.class)
-    public PasswordEncoder passwordEncoder(@Value("${wings.security.password-encoder}") String encoder) {
+    public PasswordEncoder passwordEncoder(@Value("${wings.slardar.security.password-encoder}") String encoder) {
         logger.info("Wings conf PasswordEncoder bean");
         Map<String, PasswordEncoder> encoders = new HashMap<>();
         encoders.put("noop", NoOpPasswordEncoder.getInstance());
@@ -62,28 +81,43 @@ public class WingsOAuth2xConfiguration {
         return new DelegatingPasswordEncoder(encoder, encoders);
     }
 
+    @Bean
+    @ConditionalOnMissingBean(TokenStore.class)
+    public TokenStore tokenStore() {
+        logger.info("Wings conf InMemoryTokenStore to WingsTokenStore");
+        WingsTokenStore store = new WingsTokenStore();
+        store.addStore(new InMemoryTokenStore());
+        return store;
+    }
+
     @Configuration
     @ConditionalOnClass(RedisConnectionFactory.class)
-    @ConditionalOnMissingBean(TokenStore.class)
     @Order(Ordered.LOWEST_PRECEDENCE - 100)
     public class Redis {
-        @Bean
-        public TokenStore tokenStore(RedisConnectionFactory factory) {
-            logger.info("Wings conf Memory-Redis token store");
-            return new MemoryRedisTokenStore(factory);
+        @Autowired
+        public void tokenStore(TokenStore tokenStore, RedisConnectionFactory factory) {
+            if (tokenStore instanceof WingsTokenStore) {
+                logger.info("Wings conf RedisTokenStore to WingsTokenStore");
+                RedisTokenStore redis = new RedisTokenStore(factory);
+                redis.setSerializationStrategy(new JdkSerializationStrategy());
+                ((WingsTokenStore) tokenStore).addStore(redis);
+            }
         }
     }
 
     @Bean
-    @Order(Ordered.LOWEST_PRECEDENCE)
-    @ConditionalOnMissingBean(TokenStore.class)
-    public TokenStore tokenStore() {
-        logger.info("Wings conf Memory token store");
-        return new InMemoryTokenStore();
+    @ConditionalOnProperty(prefix = "wings.slardar.actoken", name = "wings-enhance", havingValue = "true")
+    public WingsTokenEnhancer tokenEnhancer(Security security, LeapCode leapCode) {
+        logger.info("Wings conf WingsTokenEnhancer");
+        WingsTokenEnhancer enhancer = new WingsTokenEnhancer();
+        enhancer.setThirdTokenKey(security.getThirdTokenKey());
+        enhancer.setWingsPrefix(security.getWingsPrefix());
+        enhancer.setLeapCode(leapCode);
+        return enhancer;
     }
 
     @Bean
-    @ConfigurationProperties("spring.wings.filter.oauth2x")
+    @ConfigurationProperties("wings.slardar.oauth2x")
     public WingsOAuth2xFilter.Config wingsOAuth2exFilterConfig() {
         return new WingsOAuth2xFilter.Config();
     }
@@ -110,6 +144,7 @@ public class WingsOAuth2xConfiguration {
         private AuthenticationManager authenticationManager;
         private UserDetailsService userDetailsService;
         private PasswordEncoder passwordEncoder;
+        private ObjectProvider<TokenEnhancer> tokenEnhancer;
 
         public ClientDetailsServiceConfigurer configure(ClientDetailsServiceConfigurer clients) throws Exception {
             InMemoryClientDetailsServiceBuilder builder = clients.inMemory();
@@ -132,6 +167,7 @@ public class WingsOAuth2xConfiguration {
             endpoints.authenticationManager(authenticationManager)
                      .userDetailsService(userDetailsService)
                      .tokenStore(tokenStore)
+                     .tokenEnhancer(tokenEnhancer.getIfAvailable())
             ;
             return endpoints;
         }
@@ -158,5 +194,22 @@ public class WingsOAuth2xConfiguration {
             ;
             return resources;
         }
+    }
+
+    @Data
+    public static class Security {
+
+        /**
+         * 是否启用 wings token，是下2项的开关
+         */
+        private boolean wingsEnhance = true;
+        /**
+         * wing下access_token前缀，用以区分
+         */
+        private String wingsPrefix = "WG-";
+        /**
+         * 第三方token的parameter key
+         */
+        private String thirdTokenKey = "access_token_3rd";
     }
 }

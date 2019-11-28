@@ -75,23 +75,23 @@ fi
 
 # check java
 echo -e "\e[0;32mINFO: ==== java version ==== \e[m"
-java -version
-if [[ "$?" != "0" ]]; then
-    echo -e '\e[0;31mERROR: can not found `java` in the $PATH\e[m'
+
+if ! java -version; then
+    echo -e "\e[0;31mERROR: can not found 'java' in the $PATH\e[m"
     exit
 fi
 
 # check jar
 if [[ ! -f "$BOOT_JAR" ]]; then
-    BOOT_JAR=$(find . -type f -name ${BOOT_JAR} | head -n 1)
+    BOOT_JAR=$(find . -type f -name "$BOOT_JAR" | head -n 1)
 fi
 if [[ ! -f "$BOOT_JAR" ]]; then
-    echo -e "\e[0;31mERROR: can not found jar file, ${BOOT_JAR}\e[m"
+    echo -e "\e[0;31mERROR: can not found jar file, $BOOT_JAR\e[m"
     exit
 fi
 
 # check log
-JAR_NAME=$(basename ${BOOT_JAR})
+JAR_NAME=$(basename "$BOOT_JAR")
 if [[ "$BOOT_LOG" == "" ]]; then
     BOOT_LOG=${JAR_NAME}.log
 fi
@@ -102,7 +102,8 @@ if [[ "$BOOT_PID" == "" ]]; then
 fi
 
 # check ps
-count=$(ps -ef -u $USER_RUN | grep -E "java.+$BOOT_JAR " | grep -v grep | wc -l)
+#count=$(ps -ef -u $USER_RUN | grep -E "java.+$BOOT_JAR " | grep -v grep | wc -l)
+count=$(pgrep -fc -u "$USER_RUN"  "jar +$BOOT_JAR ")
 
 # check arg
 if [[ "$1" != "" ]]; then
@@ -129,16 +130,16 @@ case "$ARGS_RUN" in
             fi
 
             nohup java ${JAVA_ARG} -jar ${BOOT_JAR} ${BOOT_ARG} > ${BOOT_LOG} 2>&1 &
-            echo $! > ${BOOT_PID}
+            echo $! > "$BOOT_PID"
             sleep 2
         else
             echo -e "\e[0;31mERROR: already $count running of $JAR_NAME\e[m"
         fi
         echo -e "\e[0;33mNOTE: current process aoubt $JAR_NAME \e[m"
-        ps -ef | grep ${JAR_NAME}| grep -v grep
+        pgrep -af "$JAR_NAME"
         
         echo -e "\e[0;33mNOTE: tail current log, Ctrl-C to skip \e[m"
-        tail -n 50 -f ${BOOT_LOG}
+        tail -n 50 -f "$BOOT_LOG"
         ;;
 
     stop)
@@ -146,11 +147,20 @@ case "$ARGS_RUN" in
             echo -e "\e[0;33mNOTE: not found running $JAR_NAME\e[m"
         else
             echo -e "\e[0;33mNOTE: current process aoubt $JAR_NAME \e[m"
-            ps -ef | grep ${JAR_NAME}| grep -v grep
+            pgrep -af "$JAR_NAME"
             timeout=60
-            pid=$(cat ${BOOT_PID})
+            pid=$(cat "$BOOT_PID")
+            cpid=$(pgrep -f "$JAR_NAME")
+            if [[ "$pid" != "$cpid" ]]; then
+                echo -e "\e[0;31mWARN: pid not match, proc-pid=$cpid, file-pid=$pid\e[m"
+                echo -e "\e[0;31mWARN: press <y> to kill $cpid, ohters to kill $pid\e[m"
+                read -r yon
+                if [[ "$yon" == "y" ]]; then
+                  pid=$cpid
+                fi
+            fi
             echo -e "\e[0;33mNOTE: killing boot.pid=$pid of $JAR_NAME\e[m"
-            kill ${pid}
+            kill "$pid"
 
             icon=''
             for (( i = 0; i < timeout; i++)); do
@@ -163,14 +173,17 @@ case "$ARGS_RUN" in
                     fi
                     sleep 0.1
                 done
-                if [[ $(ps -ef -u $USER_RUN | grep -E "java.+$BOOT_JAR " | grep -v grep | wc -l) == 0 ]]; then
+                if [[ $(pgrep -fc -u "$USER_RUN"  "jar +$BOOT_JAR ") == 0 ]]; then
                     echo -e "\e[0;33mNOTE: successfully stop in $i seconds, pid=$pid of $JAR_NAME\e[m"
                     exit
                 fi
             done
             echo -e "\e[0;31mWARN: stopping timeout[${timeout}s], pid=$pid\e[m"
             echo -e "\e[0;31mWARN: need manually check the ${JAR_NAME}\e[m"
-            ps -ef | grep ${JAR_NAME}| grep -v grep
+            pgrep -af "$JAR_NAME"
+            echo -e "\e[0;33mNOTE: <ENTER> to 'kill -9 $pid', <Ctrl-C> to exit\e[m"
+            read -r
+            kill -9 "$pid"
         fi
         ;;
 
@@ -178,11 +191,16 @@ case "$ARGS_RUN" in
         if [[ ${count} == 0 ]]; then
             echo -e "\e[0;33mNOTE: not found running $JAR_NAME\e[m"
         else
-            echo -e "\e[0;33mNOTE: boot.pid=$(cat ${BOOT_PID}) \e[m"
-            echo -e "\e[0;33mNOTE: current process aoubt $JAR_NAME \e[m"
-            ps -ef | grep ${JAR_NAME}| grep -v grep
             echo -e "\e[0;33mNOTE: last 20 lines of $BOOT_LOG\e[m"
-            tail -n 20 ${BOOT_LOG}
+            tail -n 20 "$BOOT_LOG"
+            pid=$(cat "$BOOT_PID")
+            echo -e "\e[0;33mNOTE: boot.pid=$pid \e[m"
+            echo -e "\e[0;33mNOTE: current process aoubt $JAR_NAME \e[m"
+            pgrep -af "$JAR_NAME"
+            cpid=$(pgrep -f "$JAR_NAME")
+            if [[ "$pid" != "$cpid" ]]; then
+                echo -e "\e[0;31mWARN: pid not match, proc-pid=$cpid, file-pid=$pid\e[m"
+            fi
         fi
         ;;
 

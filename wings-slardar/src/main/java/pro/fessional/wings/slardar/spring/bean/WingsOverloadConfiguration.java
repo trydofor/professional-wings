@@ -16,6 +16,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import pro.fessional.wings.slardar.servlet.WingsFilterOrder;
 import pro.fessional.wings.slardar.servlet.WingsOverloadFilter;
+import pro.fessional.wings.slardar.servlet.WingsRemoteResolver;
 
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletResponse;
@@ -31,7 +32,7 @@ import java.io.PrintWriter;
  */
 
 @Configuration
-@ConditionalOnProperty(prefix = "spring.wings.filter.overload", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "spring.wings.slardar.overload", name = "enabled", havingValue = "true")
 @ConditionalOnClass(Filter.class)
 public class WingsOverloadConfiguration {
 
@@ -77,15 +78,17 @@ public class WingsOverloadConfiguration {
     }
 
     @Bean
-    public WingsOverloadFilter wingsOverloadFilter(WingsOverloadFilter.Config config, WingsOverloadFilter.FallBack fallBack) {
+    public WingsOverloadFilter wingsOverloadFilter(WingsOverloadFilter.Config config,
+                                                   WingsOverloadFilter.FallBack fallBack,
+                                                   WingsRemoteResolver resolver) {
         logger.info("Wings conf Overload filter");
-        WingsOverloadFilter filter = new WingsOverloadFilter(fallBack, config);
+        WingsOverloadFilter filter = new WingsOverloadFilter(fallBack, config, resolver);
         filter.setOrder(WingsFilterOrder.OVERLOAD);
         return filter;
     }
 
     @Bean
-    @ConfigurationProperties("spring.wings.filter.overload")
+    @ConfigurationProperties("wings.slardar.overload")
     public WingsOverloadFilter.Config wingsOverloadFilterConfig() {
         return new WingsOverloadFilter.Config();
     }

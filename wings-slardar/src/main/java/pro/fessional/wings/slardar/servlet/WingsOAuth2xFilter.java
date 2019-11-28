@@ -61,8 +61,8 @@ public class WingsOAuth2xFilter implements OrderedFilter {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest request = (HttpServletRequest) req;
-        PwxRequest nrq = needFilter(request);
-        if (nrq == null) {
+        ServletRequest nrq = needFilter(request);
+        if (nrq == request) {
             chain.doFilter(req, res);
             return;
         }
@@ -92,8 +92,8 @@ public class WingsOAuth2xFilter implements OrderedFilter {
         return null;
     }
 
-    private PwxRequest needFilter(HttpServletRequest request) {
-        if (!TypedRequestUtil.match(request, endpointUri)) return null;
+    private HttpServletRequest needFilter(HttpServletRequest request) {
+        if (!TypedRequestUtil.match(request, endpointUri)) return request;
 
         Map<String, String[]> param = new HashMap<>(4);
         String cid = request.getParameter(CLIENT_ID);
@@ -130,7 +130,7 @@ public class WingsOAuth2xFilter implements OrderedFilter {
             param.put(OAUTH_PASSWORD_ALIAS, new String[]{gtp});
         }
 
-        return param.isEmpty() ? null : new PwxRequest(request, param);
+        return param.isEmpty() ? request : new PwxRequest(request, param);
     }
 
     //

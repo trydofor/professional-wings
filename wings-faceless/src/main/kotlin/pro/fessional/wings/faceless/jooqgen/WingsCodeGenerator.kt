@@ -13,7 +13,7 @@ import kotlin.text.Charsets.UTF_8
  */
 object WingsCodeGenerator {
 
-    val logger = LoggerFactory.getLogger(WingsCodeGenerator::class.java)
+    val logger = LoggerFactory.getLogger(WingsCodeGenerator::class.java)!!
     const val JOOQ_XML = "/wings-flywave/jooq-codegen-faceless.xml"
 
     /**

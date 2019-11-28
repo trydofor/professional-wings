@@ -6,6 +6,8 @@
 # * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
 # * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
 
+POST http://localhost:8080/forward.html
+
 ### 显示验证码
 # 输出 code=null
 GET http://localhost:8080/test/vcode.html
@@ -48,16 +50,23 @@ Content-Type: application/x-www-form-urlencoded
 
 cid=wings-slardar-id&cst=wings-slardar-secret&gtp=client_credentials&scope=any
 
-### 输出的access_token 要保留下列，给后续链接使用
+### WingsToken access_token
 POST localhost:8080/oauth/token
 #POST wings-slardar-id:wings-slardar-secret@localhost:8080/oauth/token
 Content-Type: application/x-www-form-urlencoded
 
-cid=wings-slardar-id&scope=any&gtp=passwordx&username=wings-slardar-user&password=wings-slardar-pass
+cid=wings-slardar-id&scope=any&gtp=passwordx&username=wings-slardar-user1&password=wings-slardar-pass
+
+### 第三方token
+POST localhost:8080/oauth/token
+#POST wings-slardar-id:wings-slardar-secret@localhost:8080/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+cid=wings-slardar-id&scope=any&gtp=passwordx&username=wings-slardar-user2&password=wings-slardar-pass&access_token_3rd=bac0c873-e1cc-4740-8b9b-a903dcaaedfe
 
 ### query string access token
 # 输出 admin
-GET http://localhost:8080/admin.html?access_token=33cc5ab0-42e5-4805-ba9d-729b8abdfc93
+GET http://localhost:8080/admin.html?access_token=bac0c873-e1cc-4740-8b9b-a903dcaaedfe
 
 
 ### 检查token
@@ -70,7 +79,7 @@ token=f416ede9-667d-4c72-8a25-ff0927e984f1
 ### header access token
 # 输出 admin
 GET http://localhost:8080/admin.html
-Authorization: Bearer e8f4fb29-73a9-4cb2-8d6d-201e2641996d
+Authorization: Bearer bac0c873-e1cc-4740-8b9b-a903dcaaedfe
 
 ### basic 验证登录
 # 输出 access_token

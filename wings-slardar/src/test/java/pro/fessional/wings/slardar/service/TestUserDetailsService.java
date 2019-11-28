@@ -1,11 +1,16 @@
 package pro.fessional.wings.slardar.service;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import pro.fessional.wings.slardar.security.SecurityContextUtil;
 import pro.fessional.wings.slardar.security.WingsOAuth2xContext;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author trydofor
@@ -13,11 +18,28 @@ import pro.fessional.wings.slardar.security.WingsOAuth2xContext;
  */
 public class TestUserDetailsService implements UserDetailsService {
 
+    private final List<SimpleGrantedAuthority> auths = Arrays.asList(
+            new SimpleGrantedAuthority("ROLE_USER"),
+            new SimpleGrantedAuthority("ROLE_ADMIN"),
+            new SimpleGrantedAuthority("ROLE_CLURK"),
+            new SimpleGrantedAuthority("MENU_READ")
+    );
+
+    private final String password = "{bcrypt}" + new BCryptPasswordEncoder().encode("wings-slardar-pass");
+
     @Override
     public UserDetails loadUserByUsername(String username) {
-        System.out.println(username);
+        System.out.println("loadUserByUsername=" + username);
         WingsOAuth2xContext.Context ocx = SecurityContextUtil.getOauth2xContext();
         Authentication aut = SecurityContextHolder.getContext().getAuthentication();
-        return new TestI18nUserDetail();
+        System.out.println("WingsOAuth2xContext=" + ocx);
+        TestI18nUserDetail detail = new TestI18nUserDetail();
+        long idType = username.endsWith("2") ? 2L : 1L;
+        detail.setUserId(idType);
+        detail.setUserType(idType);
+        detail.setPassword(password);
+        detail.setUsername(username);
+        detail.setAuthorities(auths);
+        return detail;
     }
 }

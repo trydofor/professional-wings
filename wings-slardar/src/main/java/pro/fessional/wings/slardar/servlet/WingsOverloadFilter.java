@@ -43,11 +43,13 @@ public class WingsOverloadFilter implements OrderedFilter {
 
     private final FallBack fallBack;
     private final Config config;
+    private final WingsRemoteResolver terminalResolver;
     private final Cache<String, CalmDown> spiderCache;
 
-    public WingsOverloadFilter(FallBack fallBack, Config config) {
+    public WingsOverloadFilter(FallBack fallBack, Config config, WingsRemoteResolver terminalResolver) {
         this.fallBack = fallBack;
         this.config = config;
+        this.terminalResolver = terminalResolver;
 
         if (config.requestInterval <= 0 || config.requestCalmdown <= 0) {
             this.spiderCache = null;
@@ -135,6 +137,7 @@ public class WingsOverloadFilter implements OrderedFilter {
 
     //
     private int order = WingsFilterOrder.OVERLOAD;
+
     @Override
     public int getOrder() {
         return this.order;
@@ -163,7 +166,6 @@ public class WingsOverloadFilter implements OrderedFilter {
         private long requestInterval = -1;
         private int requestCalmdown = 50;
         private String[] requestPermit = {};
-        private String[] requestHeader = {};
 
         private long responseWarnSlow = 4000;
         private long responseInfoStat = 1000;
@@ -177,7 +179,7 @@ public class WingsOverloadFilter implements OrderedFilter {
     private CalmDown letCalmDown(HttpServletRequest httpReq) {
         if (spiderCache == null) return null; // 不需要处理ip问题
 
-        final String ip = TypedRequestUtil.getRemoteIp(httpReq, config.requestHeader);
+        final String ip = terminalResolver.resolveRemoteIp(httpReq);
 
         for (String p : config.requestPermit) {
             if (ip.startsWith(p)) {

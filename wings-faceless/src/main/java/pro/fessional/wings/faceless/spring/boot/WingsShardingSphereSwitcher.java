@@ -144,7 +144,7 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
     }
 
     @Bean
-    public FlywaveDataSources wingsDataSources(DataSource inuse, Environment environment) {
+    public FlywaveDataSources flywaveDataSources(DataSource inuse, Environment environment) {
         DataSource shard = defaultDataSource(false) == inuse ? null : inuse;
         return new FlywaveDataSources(dataSourceMap, inuse, shard, hasSlave(environment));
     }

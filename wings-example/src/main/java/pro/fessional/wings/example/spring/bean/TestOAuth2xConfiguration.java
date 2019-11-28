@@ -38,7 +38,7 @@ public class TestOAuth2xConfiguration {
     @EnableWebSecurity
     @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
     @RequiredArgsConstructor
-    public class WebSecurityConf extends WebSecurityConfigurerAdapter {
+    public static class WebSecurityConf extends WebSecurityConfigurerAdapter {
 
         private final WingsOAuth2xConfiguration.Helper helper;
 
@@ -79,7 +79,7 @@ public class TestOAuth2xConfiguration {
     @Configuration
     @EnableAuthorizationServer
     @RequiredArgsConstructor
-    public class AuthServerConf extends AuthorizationServerConfigurerAdapter {
+    public static class AuthServerConf extends AuthorizationServerConfigurerAdapter {
         private final WingsOAuth2xConfiguration.Helper helper;
 
         @Override
@@ -102,7 +102,7 @@ public class TestOAuth2xConfiguration {
     @Configuration
     @EnableResourceServer
     @RequiredArgsConstructor
-    public class ResourceServerConf extends ResourceServerConfigurerAdapter {
+    public static class ResourceServerConf extends ResourceServerConfigurerAdapter {
 
         private final WingsOAuth2xConfiguration.Helper helper;
 
