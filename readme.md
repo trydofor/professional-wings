@@ -26,7 +26,14 @@
 
 ## 0.3.命名风格
 
-使用`idea`，可以直接在`Code Style`中导入`wings-idea-style.xml`。
+使用`idea`作为开发`IDE`，可使用`code style`和`live templates`。
+`wings-idea-style.xml`在`Setting/Editor/Code Style`导入。
+
+`wings-idea-live.xml`需要手动放到`config/templates/`。
+
+ * WIN `%HOMEPATH%\.IntelliJIdea2019.2\config`
+ * LIN `~/.IntelliJIdea2019.2/config`
+ * MAC `~/Library/Preferences/IntelliJIdea2019.2`
 
 ### 0.3.1.Java风格，遵循标准的java规范，但**可读性优先**。
 
@@ -55,9 +62,10 @@
 
 ### 0.3.3.Spring风格，在`silencer`和`faceless`有详细说明。
 
- * 不要使用`Field`注入，用`setter`或`constructor`，更好的测试。
  * 优先使用`constructor`注入，用`lombok`的`@RequiredArgsConstructor`。
- * 次之使用`setter`注入，`kotlin使用`@Autowired lateinit var`。
+ * 次之使用`setter`注入，用`lombok`的`@Setter(onMethod = @__({@Autowired}))`
+   或`kotlin`的`@Autowired lateinit var`。
+ * 不要使用`Field`注入，坏处自己搜。
 
 ### 0.3.4.属性文件风格
 

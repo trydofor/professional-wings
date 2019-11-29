@@ -45,6 +45,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
     private static final DeferredLog logger = WingsDeferredLogFactory.getLog(WingsAutoConfigProcessor.class);
 
+    public static final String BOOTS_CONF = "application.*";
     public static final String WINGS_CONF = "wings-conf/**/*.*";
     public static final String BLACK_LIST = "wings-conf/wings-conf-black-list.cnf";
 
@@ -92,6 +93,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             logger.info("Wings scan classpath, path=" + path);
             if (path.endsWith("/") || path.endsWith("\\")) {
                 putConfIfValid(pathRes, resolver, path + WINGS_CONF);
+                putConfIfValid(pathRes, resolver, path + BOOTS_CONF);
             } else {
                 putConfIfValid(pathRes, resolver, path);
             }

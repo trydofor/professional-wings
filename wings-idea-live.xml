@@ -1,0 +1,7 @@
+<templateSet group="wings">
+  <template name="wgdi" value="@Setter(onMethod = @__({@Autowired}))" description="lombok autowired" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="JAVA_DECLARATION" value="true" />
+    </context>
+  </template>
+</templateSet>

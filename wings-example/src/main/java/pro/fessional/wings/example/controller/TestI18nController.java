@@ -9,7 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import pro.fessional.mirana.time.DateFormatter;
 import pro.fessional.wings.silencer.context.WingsI18nContext;
-import pro.fessional.wings.slardar.servlet.WingsI18nWebUtil;
+import pro.fessional.wings.slardar.security.SecurityContextUtil;
+import pro.fessional.wings.slardar.security.WingsTerminalContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneId;
@@ -32,7 +33,8 @@ public class TestI18nController {
     public String index(HttpServletRequest request, Model model) {
         ZonedDateTime now = ZonedDateTime.now();
         ZoneId systemZoneId = ZoneId.systemDefault();
-        WingsI18nContext ctx = WingsI18nWebUtil.getI18nContext(request);
+        WingsTerminalContext.Context sct = SecurityContextUtil.getTerminalContext();
+        WingsI18nContext ctx = sct.getI18nContext();
         @NotNull Locale locale = ctx.getLocaleOrDefault();
         @NotNull ZoneId zoneId = ctx.getZoneIdOrDefault();
         String userDatetime = DateFormatter.full19(now, zoneId);

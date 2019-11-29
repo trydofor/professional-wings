@@ -13,7 +13,8 @@ USER_RUN="$USER" # 用来启动程序的用户。
 PORT_RUN=''      # 默认端口，空时
 ARGS_RUN="start" # 默认参数。空时使用$1
 BOOT_JAR="$2"    # 主程序。通过env覆盖
-BOOT_LOG=''      # 控制台日志，默认 $BOOT_JAR.log
+BOOT_OUT=''      # 控制台日志，默认 $BOOT_JAR.out
+BOOT_LOG=''      # 程序日志，需要外部指定
 BOOT_PID=''      # 主程序pid，默认 $BOOT_JAR.pid
 BOOT_CNF=''      # 外部配置。通过env覆盖
 BOOT_ARG=''      # 启动参数。通过env覆盖
@@ -90,10 +91,10 @@ if [[ ! -f "$BOOT_JAR" ]]; then
     exit
 fi
 
-# check log
+# check out
 JAR_NAME=$(basename "$BOOT_JAR")
-if [[ "$BOOT_LOG" == "" ]]; then
-    BOOT_LOG=${JAR_NAME}.log
+if [[ "$BOOT_OUT" == "" ]]; then
+    BOOT_OUT=${JAR_NAME}.out
 fi
 
 # check pid
@@ -121,15 +122,16 @@ case "$ARGS_RUN" in
             echo -e "\e[0;32mINFO: boot-jar=$BOOT_JAR \e[m"
             echo -e "\e[0;32mINFO: boot-pid=$BOOT_PID \e[m"
             echo -e "\e[0;32mINFO: boot-log=$BOOT_LOG \e[m"
+            echo -e "\e[0;32mINFO: boot-out=$BOOT_OUT \e[m"
             echo -e "\e[0;32mINFO: boot-arg=$BOOT_ARG \e[m"
             echo -e "\e[0;32mINFO: java-arg=$JAVA_ARG \e[m"
 
-            if [[ -f "${BOOT_LOG}" ]];then
-                echo -e "\e[0;33mNOTE: backup old log \e[m"
-                mv "${BOOT_LOG}" "${BOOT_LOG}.$(date '+%y%m%d-%H%M%S')"
+            if [[ -f "${BOOT_OUT}" ]];then
+                echo -e "\e[0;33mNOTE: backup old output \e[m"
+                mv "${BOOT_OUT}" "${BOOT_OUT}.$(date '+%y%m%d-%H%M%S')"
             fi
 
-            nohup java ${JAVA_ARG} -jar ${BOOT_JAR} ${BOOT_ARG} > ${BOOT_LOG} 2>&1 &
+            nohup java ${JAVA_ARG} -jar ${BOOT_JAR} ${BOOT_ARG} > ${BOOT_OUT} 2>&1 &
             echo $! > "$BOOT_PID"
             sleep 2
         else
@@ -137,9 +139,13 @@ case "$ARGS_RUN" in
         fi
         echo -e "\e[0;33mNOTE: current process aoubt $JAR_NAME \e[m"
         pgrep -af "$JAR_NAME"
-        
-        echo -e "\e[0;33mNOTE: tail current log, Ctrl-C to skip \e[m"
-        tail -n 50 -f "$BOOT_LOG"
+
+        if [[ -f "$BOOT_LOG" ]];then
+            echo -e "\e[0;33mNOTE: tail 20 lines of log-file= $BOOT_LOG \e[m"
+            tail -n 20 "$BOOT_LOG"
+        fi
+        echo -e "\e[0;33mNOTE: tail current output, Ctrl-C to skip \e[m"
+        tail -n 50 -f "$BOOT_OUT"
         ;;
 
     stop)
@@ -191,8 +197,12 @@ case "$ARGS_RUN" in
         if [[ ${count} == 0 ]]; then
             echo -e "\e[0;33mNOTE: not found running $JAR_NAME\e[m"
         else
-            echo -e "\e[0;33mNOTE: last 20 lines of $BOOT_LOG\e[m"
-            tail -n 20 "$BOOT_LOG"
+            echo -e "\e[0;33mNOTE: last 20 lines of output=$BOOT_OUT\e[m"
+            tail -n 20 "$BOOT_OUT"
+            if [[ -f "$BOOT_LOG" ]];then
+                echo -e "\e[0;33mNOTE: tail 20 lines of log-file= $BOOT_LOG \e[m"
+                tail -n 20 "$BOOT_LOG"
+            fi
             pid=$(cat "$BOOT_PID")
             echo -e "\e[0;33mNOTE: boot.pid=$pid \e[m"
             echo -e "\e[0;33mNOTE: current process aoubt $JAR_NAME \e[m"

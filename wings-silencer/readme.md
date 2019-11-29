@@ -49,6 +49,7 @@
  5. `classpath:/`会被以`classpath*:/`扫描
  6. 任何非`classpath:`,`classpath*:`的，都以`file:`扫描
  7. 以`/`结尾的当做目录，否则作为文件
+ 8. 从以上路径，优先加载`application.*`，次之`wings-conf/**/*.*`
 
 `各路径`指按照上述顺序，把路径拆分后，依次扫描，序号大的优先级高（默认值有关）。
 
@@ -152,3 +153,12 @@ spring对MessageSource的加载与configuration的机制不同，不需要unicod
 [jackson注解](https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations)
 [spring定制jackson](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/) - 79.3 Customize the Jackson ObjectMapper
 
+## 1.5.logging/logback
+
+参考`wings-logging-79.properties`配置，默认使用springboot配置。
+
+ * 只需要console输出（如果docker内）不需要额外设置。
+ * 同时需要console和file，则增加以下配置`logging.file.name=/tmp/wings-example.log`
+ * 只需要file，则再增加`logging.config=classpath:logback-fileonly.xml`
+
+推荐使用`wings-starter.sh`启动，`wings-starter.env`配置基础参数。
