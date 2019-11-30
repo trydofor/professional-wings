@@ -9,11 +9,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -60,15 +57,12 @@ public class WingsOAuth2xFilter implements OrderedFilter {
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 
-        HttpServletRequest request = (HttpServletRequest) req;
-        ServletRequest nrq = needFilter(request);
-        if (nrq == request) {
-            chain.doFilter(req, res);
-            return;
-        }
-
-        WingsOAuth2xContext.set(TypedRequestUtil.getParameter(nrq.getParameterMap()));
         try {
+            HttpServletRequest request = (HttpServletRequest) req;
+            ServletRequest nrq = wrapIfNeed(request);
+            if (nrq != request) {
+                WingsOAuth2xContext.set(TypedRequestUtil.getParameter(nrq.getParameterMap()));
+            }
             chain.doFilter(nrq, res);
         } finally {
             WingsOAuth2xContext.clear();
@@ -92,7 +86,7 @@ public class WingsOAuth2xFilter implements OrderedFilter {
         return null;
     }
 
-    private HttpServletRequest needFilter(HttpServletRequest request) {
+    private HttpServletRequest wrapIfNeed(HttpServletRequest request) {
         if (!TypedRequestUtil.match(request, endpointUri)) return request;
 
         Map<String, String[]> param = new HashMap<>(4);
@@ -130,7 +124,7 @@ public class WingsOAuth2xFilter implements OrderedFilter {
             param.put(OAUTH_PASSWORD_ALIAS, new String[]{gtp});
         }
 
-        return param.isEmpty() ? request : new PwxRequest(request, param);
+        return param.isEmpty() ? request : new WingsRequestWrapper(request, param);
     }
 
     //
@@ -170,39 +164,5 @@ public class WingsOAuth2xFilter implements OrderedFilter {
         private boolean autoApprove;
         private String[] grantType;
         private String[] scope;
-    }
-    //
-
-    private static class PwxRequest extends HttpServletRequestWrapper {
-
-        private final Map<String, String[]> param;
-
-        public PwxRequest(HttpServletRequest request, Map<String, String[]> other) {
-            super(request);
-            Map<String, String[]> maps = request.getParameterMap();
-            param = new HashMap<>(maps.size() + other.size());
-            param.putAll(maps);
-            param.putAll(other);
-        }
-
-        @Override
-        public String getParameter(String name) {
-            return TypedRequestUtil.getParameter(param, name);
-        }
-
-        @Override
-        public Map<String, String[]> getParameterMap() {
-            return param;
-        }
-
-        @Override
-        public Enumeration<String> getParameterNames() {
-            return Collections.enumeration(param.keySet());
-        }
-
-        @Override
-        public String[] getParameterValues(String name) {
-            return param.get(name);
-        }
     }
 }

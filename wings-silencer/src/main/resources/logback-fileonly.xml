@@ -2,7 +2,6 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
-    <logger name="org.springframework.web" level="DEBUG"/>
     <root level="INFO">
         <appender-ref ref="FILE" />
     </root>

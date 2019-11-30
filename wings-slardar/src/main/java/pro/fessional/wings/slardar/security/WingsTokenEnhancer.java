@@ -7,7 +7,11 @@ import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import pro.fessional.mirana.cast.StringCastUtil;
 import pro.fessional.mirana.code.LeapCode;
+
+import java.util.Date;
+import java.util.Map;
 
 /**
  * （1）利用DefaultTokenServices特性，生成token
@@ -22,6 +26,7 @@ public class WingsTokenEnhancer implements TokenEnhancer {
 
     private String wingsPrefix = "WG-";
     private String thirdTokenKey = "access_token_3rd";
+    private String tokenLiveKey = "access_token_live";
     private LeapCode leapCode;
 
     @Override
@@ -33,9 +38,10 @@ public class WingsTokenEnhancer implements TokenEnhancer {
             token = new DefaultOAuth2AccessToken(accessToken);
         }
 
+        Map<String, String> requestParameters = authentication.getOAuth2Request().getRequestParameters();
         String newToken = null;
         if (thirdTokenKey != null && thirdTokenKey.length() > 0) {
-            newToken = authentication.getOAuth2Request().getRequestParameters().get(thirdTokenKey);
+            newToken = requestParameters.get(thirdTokenKey);
         }
         if (newToken == null) {
             final TypeIdI18nUserDetail detail;
@@ -47,6 +53,13 @@ public class WingsTokenEnhancer implements TokenEnhancer {
             }
 
             newToken = wingsToken(detail, wingsPrefix, token.getValue());
+        }
+
+        if (tokenLiveKey != null && tokenLiveKey.length() > 0) {
+            int live = StringCastUtil.asInt(requestParameters.get(tokenLiveKey), -1);
+            if (live > 0 && live < token.getExpiresIn()) {
+                token.setExpiration(new Date(System.currentTimeMillis() + live * 1000L));
+            }
         }
 
         token.setValue(newToken);

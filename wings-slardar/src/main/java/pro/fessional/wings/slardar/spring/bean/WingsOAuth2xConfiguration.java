@@ -17,6 +17,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -38,11 +40,13 @@ import org.springframework.security.oauth2.provider.token.store.redis.RedisToken
 import org.springframework.util.Assert;
 import pro.fessional.mirana.code.LeapCode;
 import pro.fessional.wings.slardar.security.JdkSerializationStrategy;
+import pro.fessional.wings.slardar.security.WingsOAuth2xLogin;
 import pro.fessional.wings.slardar.security.WingsTokenEnhancer;
 import pro.fessional.wings.slardar.security.WingsTokenStore;
 import pro.fessional.wings.slardar.servlet.WingsFilterOrder;
 import pro.fessional.wings.slardar.servlet.WingsOAuth2xFilter;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,8 +62,8 @@ public class WingsOAuth2xConfiguration {
 
     @Bean
     @ConfigurationProperties("wings.slardar.security")
-    public Security wingsOAuth2xConfigurationSecurity() {
-        return new Security();
+    public Actoken wingsOAuth2xConfigurationSecurity() {
+        return new Actoken();
     }
 
     /**
@@ -79,6 +83,15 @@ public class WingsOAuth2xConfiguration {
         encoders.put("scrypt", new SCryptPasswordEncoder());
         Assert.isTrue(encoders.containsKey(encoder), "unsupported encoder: " + encoder);
         return new DelegatingPasswordEncoder(encoder, encoders);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(WingsOAuth2xLogin.class)
+    public WingsOAuth2xLogin wingsOAuth2xLogin(Actoken actoken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        return new WingsOAuth2xLogin(actoken.thirdTokenKey, actoken.tokenLiveKey, headers);
     }
 
     @Bean
@@ -107,11 +120,12 @@ public class WingsOAuth2xConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = "wings.slardar.actoken", name = "wings-enhance", havingValue = "true")
-    public WingsTokenEnhancer tokenEnhancer(Security security, LeapCode leapCode) {
+    public WingsTokenEnhancer tokenEnhancer(Actoken actoken, LeapCode leapCode) {
         logger.info("Wings conf WingsTokenEnhancer");
         WingsTokenEnhancer enhancer = new WingsTokenEnhancer();
-        enhancer.setThirdTokenKey(security.getThirdTokenKey());
-        enhancer.setWingsPrefix(security.getWingsPrefix());
+        enhancer.setThirdTokenKey(actoken.getThirdTokenKey());
+        enhancer.setTokenLiveKey(actoken.getTokenLiveKey());
+        enhancer.setWingsPrefix(actoken.getWingsPrefix());
         enhancer.setLeapCode(leapCode);
         return enhancer;
     }
@@ -197,7 +211,7 @@ public class WingsOAuth2xConfiguration {
     }
 
     @Data
-    public static class Security {
+    public static class Actoken {
 
         /**
          * 是否启用 wings token，是下2项的开关
@@ -211,5 +225,10 @@ public class WingsOAuth2xConfiguration {
          * 第三方token的parameter key
          */
         private String thirdTokenKey = "access_token_3rd";
+
+        /**
+         * 定义更短的access-token-live，必须小于默认时长
+         */
+        private String tokenLiveKey = "access_token_live";
     }
 }

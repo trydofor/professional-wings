@@ -5,6 +5,9 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
+import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,7 +15,9 @@ import java.util.Collections;
 
 /**
  * 组合型的TokenStore：
- * （1）读的时候，前面的先读，写的时候，后面的先写
+ * (1) 读的时候，前面的先读，写的时候，后面的先写
+ * (2) 读异常则终端，写尽可能都写入。
+ * 不提供分布式功能，建议通过订阅或一致性hash解决脏读问题
  *
  * @author trydofor
  * @since 2019-11-21
@@ -23,8 +28,66 @@ public class WingsTokenStore implements TokenStore {
     private final ArrayList<TokenStore> tokenStores = new ArrayList<>();
 
     public WingsTokenStore addStore(TokenStore store) {
-        tokenStores.add(store);
+        if (!(store instanceof WingsTokenStore)) {
+            tokenStores.add(store);
+        }
         return this;
+    }
+
+    public void removeRefreshToken(String token) {
+        if (token == null) return;
+
+        RuntimeException err = null;
+        for (int i = tokenStores.size() - 1; i >= 0; i--) {
+            try {
+                removeRefreshToken(tokenStores.get(i), token);
+            } catch (RuntimeException e) {
+                err = e;
+                log.error("failed to removeRefreshToken, token=" + token, e);
+            }
+        }
+        if (err != null) throw err;
+    }
+
+    public void removeAccessToken(String token) {
+        if (token == null) return;
+        RuntimeException err = null;
+        for (int i = tokenStores.size() - 1; i >= 0; i--) {
+            try {
+                removeAccessToken(tokenStores.get(i), token);
+            } catch (RuntimeException e) {
+                err = e;
+                log.error("failed to removeAccessToken, token=" + token, e);
+            }
+        }
+        if (err != null) throw err;
+    }
+
+    public void removeRefreshToken(TokenStore store, String token) {
+        if (store instanceof InMemoryTokenStore) {
+            ((InMemoryTokenStore) store).removeRefreshToken(token);
+        } else if (store instanceof RedisTokenStore) {
+            ((RedisTokenStore) store).removeRefreshToken(token);
+        } else if (store instanceof JdbcTokenStore) {
+            ((JdbcTokenStore) store).removeRefreshToken(token);
+        } else {
+            OAuth2RefreshToken otk = store.readRefreshToken(token);
+            store.removeRefreshToken(otk);
+        }
+    }
+
+    public void removeAccessToken(TokenStore store, String token) {
+        if (token == null) return;
+        if (store instanceof InMemoryTokenStore) {
+            ((InMemoryTokenStore) store).removeAccessToken(token);
+        } else if (store instanceof RedisTokenStore) {
+            ((RedisTokenStore) store).removeAccessToken(token);
+        } else if (store instanceof JdbcTokenStore) {
+            ((JdbcTokenStore) store).removeAccessToken(token);
+        } else {
+            OAuth2AccessToken otk = store.readAccessToken(token);
+            store.removeAccessToken(otk);
+        }
     }
 
     //////////////////////////// READ ////////////////////////////
