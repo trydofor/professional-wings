@@ -55,14 +55,21 @@ POST localhost:8080/oauth/token
 #POST wings-slardar-id:wings-slardar-secret@localhost:8080/oauth/token
 Content-Type: application/x-www-form-urlencoded
 
-cid=wings-slardar-id&scope=any&gtp=passwordx&username=wings-slardar-user1&password=wings-slardar-pass
+cid=wings-slardar-id&scope=any&servier_type=buyer_mobile&username=wings-slardar-user1&password=wings-slardar-pass
 
 ### 第三方token
 POST localhost:8080/oauth/token
 #POST wings-slardar-id:wings-slardar-secret@localhost:8080/oauth/token
 Content-Type: application/x-www-form-urlencoded
 
-cid=wings-slardar-id&scope=any&gtp=passwordx&username=wings-slardar-user2&password=wings-slardar-pass&access_token_live=60&access_token_3rd=bac0c873-e1cc-4740-8b9b-a903dcaaedfe
+cid=wings-slardar-id&scope=any&gtp=passwordx&username=wings-slardar-user2&password=wings-slardar-pass&access_token_live=60&access_token_3rd=bac0c873-e1cc-4740-8b9b-a903dcaaedfex
+
+### 第三方token，强制更新
+POST localhost:8080/oauth/token
+#POST wings-slardar-id:wings-slardar-secret@localhost:8080/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+cid=wings-slardar-id&scope=any&gtp=passwordx&username=wings-slardar-user2&password=wings-slardar-pass&access_token_live=60&access_token_renew=true&access_token_3rd=bac0c873-e1cc-4740-8b9b-a903dcaaedfex
 
 ### query string access token
 # 输出 admin

@@ -1,7 +1,8 @@
 package pro.fessional.wings.slardar.security;
 
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,12 +35,14 @@ import static pro.fessional.wings.slardar.security.WingsOAuth2xContext.STATE;
  * @author trydofor
  * @since 2019-11-29
  */
-@RequiredArgsConstructor
+@Setter
+@Getter
 public class WingsOAuth2xLogin {
 
-    private final String thirdTokenKey;
-    private final String tokenLiveKey;
-    private final HttpHeaders headers;
+    private String thirdTokenKey;
+    private String renewTokenKey;
+    private String tokenLiveKey;
+    private HttpHeaders headers;
 
 
     public WingsRequestWrapper wrapRequest(HttpServletRequest request, Logout info) {
@@ -78,6 +81,7 @@ public class WingsOAuth2xLogin {
         result.putParameter(STATE, info.state);
         result.putParameter(tokenLiveKey, info.accessTokenLive);
         result.putParameter(thirdTokenKey, info.accessToken3rd);
+        result.putParameter(renewTokenKey, info.renewToken ? "true" : null);
 
         result.putParameter(info.params);
         result.setMethod("POST");
@@ -89,18 +93,18 @@ public class WingsOAuth2xLogin {
      * controller public void forwardLogin(HttpServletRequest request, HttpServletResponse response);
      * 实际返回值是 OAuth2AccessToken对应的Json
      *
-     * @see org.springframework.security.oauth2.provider.endpoint.TokenEndpoint#getAccessToken
      * @param request  请求
      * @param response 响应
      * @param info     登录信息
+     * @see org.springframework.security.oauth2.provider.endpoint.TokenEndpoint#getAccessToken
      */
     public void login(HttpServletRequest request, HttpServletResponse response, Login info) {
         String uri = info.loginUrl;
         try {
-            WingsOAuth2xContext.set(TypedRequestUtil.getParameter(request.getParameterMap()));
+            WingsRequestWrapper req = wrapRequest(request, info);
+            WingsOAuth2xContext.set(TypedRequestUtil.getParameter(req.getParameterMap()));
             Authentication auth = new UsernamePasswordAuthenticationToken(info.getClientId(), null, Collections.emptyList());
             SecurityContextHolder.getContext().setAuthentication(auth);
-            WingsRequestWrapper req = wrapRequest(request, info);
             req.getRequestDispatcher(uri).forward(req, response);
         } catch (Exception e) {
             throw new IllegalStateException("can not forward to " + uri, e);
@@ -126,6 +130,7 @@ public class WingsOAuth2xLogin {
         put(params, info.state, STATE);
         put(params, info.accessTokenLive, tokenLiveKey);
         put(params, info.accessToken3rd, thirdTokenKey);
+        put(params, info.renewToken ? "true" : null, renewTokenKey);
 
         params.setAll(info.params);
 
@@ -208,6 +213,7 @@ public class WingsOAuth2xLogin {
         private String state;
         private String accessTokenLive;
         private String accessToken3rd;
+        private boolean renewToken;
 
         private Map<String, String> params = new HashMap<>();
     }

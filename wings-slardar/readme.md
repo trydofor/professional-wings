@@ -21,6 +21,8 @@ Slardar通过Filter增加`grant_type=password`的别名穿透机制，使
 尽量使用`@Secured("IS_AUTHENTICATED_ANONYMOUSLY")`，这样会方便查找，
 尽量不要使用表达式`@PreAuthorize("hasAuthority('ROLE_TELLER')")`。
 
+一般情况下，不需要方法级的控制，在Security使用filter拦截更适合。
+
  * ClientDetailsService，默认从配置文件中加载(只能build)
  * UserDetailsService，自定义，全局注入即可。
  * WingsTokenStore，集合memory和Redis，在auth和res上缓存UserDetail。
@@ -29,6 +31,7 @@ Slardar通过Filter增加`grant_type=password`的别名穿透机制，使
 
 实际项目中，每个工程会独立配置Security和OAuth的各个服务器。
 因此，提供了`WingsOAuth2xConfiguration.Helper`，注入后，协助配置。
+当`WebSecurity`和`ResourceServer`共存时，以`ResourceServer`做配置即可
 
 ```
 // ======= extends WebSecurityConfigurerAdapter and expose Bean ====

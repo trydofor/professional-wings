@@ -20,7 +20,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
@@ -91,15 +90,22 @@ public class WingsOAuth2xConfiguration {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        return new WingsOAuth2xLogin(actoken.thirdTokenKey, actoken.tokenLiveKey, headers);
+        WingsOAuth2xLogin login = new WingsOAuth2xLogin();
+        login.setHeaders(headers);
+        login.setThirdTokenKey(actoken.thirdTokenKey);
+        login.setTokenLiveKey(actoken.tokenLiveKey);
+        login.setRenewTokenKey(actoken.renewTokenKey);
+
+        return login;
     }
 
     @Bean
     @ConditionalOnMissingBean(TokenStore.class)
-    public TokenStore tokenStore() {
+    public TokenStore tokenStore(Actoken actoken) {
         logger.info("Wings conf InMemoryTokenStore to WingsTokenStore");
         WingsTokenStore store = new WingsTokenStore();
         store.addStore(new InMemoryTokenStore());
+        store.setRenewTokenKey(actoken.renewTokenKey);
         return store;
     }
 
@@ -195,19 +201,24 @@ public class WingsOAuth2xConfiguration {
             return security;
         }
 
-        public HttpSecurity configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests()
-                .antMatchers("/oauth/**", "/error").permitAll()
-                .antMatchers("/login", "/logout").permitAll()
-            ;
-            return http;
-        }
-
         public ResourceServerSecurityConfigurer configure(ResourceServerSecurityConfigurer resources) {
             resources.tokenStore(tokenStore)
             ;
             return resources;
         }
+
+        public String[] oauth2AntPaths() {
+            return new String[]{"/oauth/**", "/error"};
+        }
+
+        public String[] loginAntPaths() {
+            return new String[]{"/login", "/login/**", "/logout"};
+        }
+
+        public String[] swagger2AntPaths() {
+            return new String[]{"/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**"};
+        }
+
     }
 
     @Data
@@ -225,6 +236,10 @@ public class WingsOAuth2xConfiguration {
          * 第三方token的parameter key
          */
         private String thirdTokenKey = "access_token_3rd";
+        /**
+         * 是否获取新的token，意味着作废老token
+         */
+        private String renewTokenKey = "access_token_renew";
 
         /**
          * 定义更短的access-token-live，必须小于默认时长

@@ -2,8 +2,6 @@ package pro.fessional.wings.slardar.controller;
 
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -39,21 +37,18 @@ public class TestOAuth2xController {
 
     @RequestMapping(value = {"/index.html", "/"})
     @ResponseBody
-    @Secured("ROLE_USER")
     public String index() {
         return "index";
     }
 
     @RequestMapping("/user.html")
     @ResponseBody
-    @Secured("ROLE_USER")
     public String user() {
         return "user";
     }
 
     @RequestMapping({"/admin.html"})
     @ResponseBody
-    @Secured("ROLE_ADMIN")
     public String admin() {
         WingsTerminalContext.Context tcx = SecurityContextUtil.getTerminalContext();
         WingsOAuth2xContext.Context ocx = SecurityContextUtil.getOauth2xContext();

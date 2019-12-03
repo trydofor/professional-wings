@@ -72,6 +72,8 @@
  * `application-{profile}.properties`
  * `wings-conf/shardingsphere-datasource-79.{profile}.properties`
 
+以`.`区分profile主要是因为，wings-conf文件名中存在`-`，避免造成误解析。
+在使用`spring.profiles.active`时，要确保配置文件按spring约定加载。
 
 ### 1.2.3.配置禁用
 
@@ -160,5 +162,12 @@ spring对MessageSource的加载与configuration的机制不同，不需要unicod
  * 只需要console输出（如果docker内）不需要额外设置。
  * 同时需要console和file，则增加以下配置`logging.file.name=/tmp/wings-example.log`
  * 只需要file，则再增加`logging.config=classpath:logback-fileonly.xml`
+
+推荐的logging配置
+
+ * logging.level.root=INFO
+ * logging.level.org.springframework.web=DEBUG
+ * logging.level.org.jooq=DEBUG
+ * logging.level.<忽略项>=OFF
 
 推荐使用`wings-starter.sh`启动，`wings-starter.env`配置基础参数。

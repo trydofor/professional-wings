@@ -1,9 +1,12 @@
 package pro.fessional.wings.slardar.security;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
@@ -12,6 +15,7 @@ import org.springframework.security.oauth2.provider.token.store.redis.RedisToken
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 /**
  * 组合型的TokenStore：
@@ -24,6 +28,10 @@ import java.util.Collections;
  */
 @Slf4j
 public class WingsTokenStore implements TokenStore {
+
+    @Setter
+    @Getter
+    private String renewTokenKey = null;
 
     private final ArrayList<TokenStore> tokenStores = new ArrayList<>();
 
@@ -139,11 +147,26 @@ public class WingsTokenStore implements TokenStore {
 
     @Override
     public OAuth2AccessToken getAccessToken(OAuth2Authentication authentication) {
+        if (needRenewToken(authentication)) return null;
+
         for (TokenStore store : tokenStores) {
             OAuth2AccessToken token = store.getAccessToken(authentication);
             if (token != null) return token;
         }
         return null;
+    }
+
+    private boolean needRenewToken(OAuth2Authentication authentication) {
+        if (renewTokenKey == null || renewTokenKey.length() == 0) return false;
+
+        OAuth2Request req = authentication.getOAuth2Request();
+        if (req == null) return false;
+
+        Map<String, String> param = req.getRequestParameters();
+        if (param == null) return false;
+
+        String t3d = param.get(renewTokenKey);
+        return t3d != null && t3d.length() > 0;
     }
 
     @Override

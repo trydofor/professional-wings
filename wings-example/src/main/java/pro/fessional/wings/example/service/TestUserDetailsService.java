@@ -4,12 +4,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Service;
 import pro.fessional.wings.slardar.security.WingsOAuth2xContext;
 
 /**
  * @author trydofor
  * @since 2019-11-14
  */
+@Service
 public class TestUserDetailsService implements UserDetailsService {
 
     @Override

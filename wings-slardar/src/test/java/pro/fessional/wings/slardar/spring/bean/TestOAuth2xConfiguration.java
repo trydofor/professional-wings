@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -35,11 +34,7 @@ public class TestOAuth2xConfiguration {
 
     @Configuration
     @EnableWebSecurity
-    @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
-    @RequiredArgsConstructor
     public static class WebSecurityConf extends WebSecurityConfigurerAdapter {
-
-        private final WingsOAuth2xConfiguration.Helper helper;
 
         /**
          * The URL paths provided by the framework are
@@ -59,9 +54,8 @@ public class TestOAuth2xConfiguration {
          */
         @Override
         public void configure(HttpSecurity http) throws Exception {
-            helper.configure(http)
-                  .httpBasic().and()
-                  .csrf().disable()
+            http.httpBasic().and()
+                .csrf().disable()
             ;
         }
 
@@ -112,9 +106,14 @@ public class TestOAuth2xConfiguration {
 
         @Override
         public void configure(HttpSecurity http) throws Exception {
-            helper.configure(http)
-                  .authorizeRequests()
-                  .antMatchers("/test/").permitAll()
+            http.authorizeRequests()
+                .antMatchers(helper.loginAntPaths()).permitAll()
+                .antMatchers(helper.oauth2AntPaths()).permitAll()
+                .antMatchers(helper.swagger2AntPaths()).permitAll()
+                .antMatchers("/user.html").hasAuthority("ROLE_USER")
+                .antMatchers("/admin.html").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/test/").permitAll()
+                .anyRequest().authenticated()
             ;
         }
     }

@@ -13,7 +13,7 @@
 实际项目中，schema结构的变更十分频繁，需要控制好local/dev/product的版本和节奏。
 `flyway`是个不错的选择，但用它有点牛刀杀鸡，所以新造个轮子叫`flywave`，可以，
 
- * 根据 `/wings-flywave/revision/*.sql` 完成数据库和数据的统一管理。
+ * 根据 `/wings-flywave/revision/**/*.sql` 完成数据库和数据的统一管理。
  * 根据 `sys_schema_version`表，控制数据库版本，升级和降级。
  * 根据 `sys_schema_journal`表，完成自动记录数据变更。
 
