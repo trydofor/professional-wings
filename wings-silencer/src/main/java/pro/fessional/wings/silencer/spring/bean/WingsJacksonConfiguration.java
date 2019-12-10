@@ -38,7 +38,7 @@ import java.util.Date;
 public class WingsJacksonConfiguration {
 
     @Bean
-    public Jackson2ObjectMapperBuilderCustomizer customizer() {
+    public Jackson2ObjectMapperBuilderCustomizer customizerFront() {
         return builder -> {
             DateFormat dateFormat = new SimpleDateFormat(DateTimePattern.PTN_FULL_19);
 

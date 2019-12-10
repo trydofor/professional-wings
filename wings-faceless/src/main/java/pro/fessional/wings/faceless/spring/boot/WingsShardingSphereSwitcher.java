@@ -29,6 +29,9 @@ import org.apache.shardingsphere.shardingjdbc.spring.boot.masterslave.SpringBoot
 import org.apache.shardingsphere.shardingjdbc.spring.boot.sharding.SpringBootShardingRuleConfigurationProperties;
 import org.apache.shardingsphere.shardingjdbc.spring.boot.util.DataSourceUtil;
 import org.apache.shardingsphere.shardingjdbc.spring.boot.util.PropertyUtil;
+// TODO RC3
+//import org.apache.shardingsphere.spring.boot.util.DataSourceUtil;
+//import org.apache.shardingsphere.spring.boot.util.PropertyUtil;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -149,6 +152,9 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
         return new FlywaveDataSources(dataSourceMap, inuse, shard, hasSlave(environment));
     }
 
+    //
+    private static final Log logger = LogFactory.getLog(WingsShardingSphereSwitcher.class);
+
     private DataSource defaultDataSource(boolean log) {
         Map.Entry<String, DataSource> first = dataSourceMap.entrySet().iterator().next();
         if (log) {
@@ -157,39 +163,11 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
         return first.getValue();
     }
 
-    private static final Log logger = LogFactory.getLog(WingsShardingSphereSwitcher.class);
-
-    private static boolean needShard(Environment environment) {
-        String enable = environment.getProperty("spring.wings.shardingsphere.enabled");
-        if (StringCastUtil.asFalse(enable)) {
-            return false;
-        }
-
-        boolean hasMasterSlaveName = environment.containsProperty("spring.shardingsphere.masterslave.name");
-        // 数据脱敏
-        boolean hasEncryptEncryptors = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.encrypt.encryptors");
-        boolean hasEncryptTables = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.encrypt.tables");
-        // 数据分片
-        boolean hasShardingTables = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.sharding.tables");
-        boolean hasShardingMasterSlave = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.sharding.master-slave-rules");
-        boolean hasShardingBroadcast = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.sharding.broadcast-tables");
-        boolean hasShardingEncrypt = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.sharding.encrypt-rule");
-
-        return hasMasterSlaveName
-                || hasEncryptEncryptors
-                || hasEncryptTables
-                || hasShardingTables
-                || hasShardingMasterSlave
-                || hasShardingBroadcast
-                || hasShardingEncrypt;
-    }
-
-    private static boolean hasSlave(Environment environment) {
+    private boolean hasSlave(Environment environment) {
         boolean hasMasterSlaveName = environment.containsProperty("spring.shardingsphere.masterslave.name");
         boolean hasShardingMasterSlave = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.sharding.master-slave-rules");
 
-        return hasMasterSlaveName
-                || hasShardingMasterSlave;
+        return hasMasterSlaveName || hasShardingMasterSlave;
     }
 
     public static class Switcher extends SpringBootCondition implements ApplicationListener<ApplicationPreparedEvent> {
@@ -208,6 +186,32 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
         @Override
         public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
             return needShard(context.getEnvironment()) ? ConditionOutcome.noMatch("has sharding config") : ConditionOutcome.match();
+        }
+
+        private boolean needShard(Environment environment) {
+            String enable = environment.getProperty("spring.wings.shardingsphere.enabled");
+            if (StringCastUtil.asFalse(enable)) {
+                return false;
+            }
+
+            boolean hasMasterSlaveName = environment.containsProperty("spring.shardingsphere.masterslave.name");
+            // 数据脱敏
+            boolean hasEncryptEncryptors = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.encrypt.encryptors");
+            boolean hasEncryptTables = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.encrypt.tables");
+            // 数据分片
+            boolean hasShardingTables = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.sharding.tables");
+            boolean hasShardingMasterSlave = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.sharding.master-slave-rules");
+            boolean hasShardingBroadcast = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.sharding.broadcast-tables");
+            boolean hasShardingEncrypt = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.sharding.encrypt-rule");
+
+            return hasMasterSlaveName
+                    || hasEncryptEncryptors
+                    || hasEncryptTables
+                    || hasShardingTables
+                    || hasShardingMasterSlave
+                    || hasShardingBroadcast
+                    || hasShardingEncrypt
+                    ;
         }
     }
 }

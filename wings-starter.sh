@@ -137,7 +137,7 @@ case "$ARGS_RUN" in
         else
             echo -e "\e[0;31mERROR: already $count running of $JAR_NAME\e[m"
         fi
-        echo -e "\e[0;33mNOTE: current process aoubt $JAR_NAME \e[m"
+        echo -e "\e[0;33mNOTE: current process about $JAR_NAME \e[m"
         pgrep -af "$JAR_NAME"
 
         if [[ -f "$BOOT_LOG" ]];then
@@ -152,7 +152,7 @@ case "$ARGS_RUN" in
         if [[ ${count} == 0 ]]; then
             echo -e "\e[0;33mNOTE: not found running $JAR_NAME\e[m"
         else
-            echo -e "\e[0;33mNOTE: current process aoubt $JAR_NAME \e[m"
+            echo -e "\e[0;33mNOTE: current process about $JAR_NAME \e[m"
             pgrep -af "$JAR_NAME"
             timeout=60
             pid=$(cat "$BOOT_PID")

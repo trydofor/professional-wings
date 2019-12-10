@@ -1,5 +1,10 @@
 <templateSet group="wings">
-  <template name="wgdi" value="@Setter(onMethod = @__({@Autowired}))" description="lombok autowired" toReformat="true" toShortenFQNames="true">
+  <template name="wgaw" value="@lombok.Setter(onMethod = @__({@org.springframework.beans.factory.annotation.Autowired}))" description="lombok &amp; Setter Autowired" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="JAVA_DECLARATION" value="true" />
+    </context>
+  </template>
+  <template name="wgvl" value="@lombok.Setter(onMethod = @__({@org.springframework.beans.factory.annotation.Value(&quot;${$END$}&quot;)}))" description="lombok &amp; Vaule Inject" toReformat="true" toShortenFQNames="true">
     <context>
       <option name="JAVA_DECLARATION" value="true" />
     </context>
