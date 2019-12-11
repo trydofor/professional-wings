@@ -110,9 +110,9 @@ public class TestOAuth2xConfiguration {
                 .antMatchers(helper.loginAntPaths()).permitAll()
                 .antMatchers(helper.oauth2AntPaths()).permitAll()
                 .antMatchers(helper.swagger2AntPaths()).permitAll()
+                .antMatchers("/test/**").permitAll()
                 .antMatchers("/user.html").hasAuthority("ROLE_USER")
                 .antMatchers("/admin.html").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/test/").permitAll()
                 .anyRequest().authenticated()
             ;
         }

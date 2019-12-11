@@ -18,6 +18,27 @@ import java.util.List;
  */
 public class TestUserDetailsService implements UserDetailsService {
 
+    private boolean accountNonExpired = true;
+    private boolean accountNonLocked = true;
+    private boolean credentialsNonExpired = true;
+    private boolean enabled = true;
+
+    public void setAccountNonExpired(boolean accountNonExpired) {
+        this.accountNonExpired = accountNonExpired;
+    }
+
+    public void setAccountNonLocked(boolean accountNonLocked) {
+        this.accountNonLocked = accountNonLocked;
+    }
+
+    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+        this.credentialsNonExpired = credentialsNonExpired;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     private final List<SimpleGrantedAuthority> auths = Arrays.asList(
             new SimpleGrantedAuthority("ROLE_USER"),
             new SimpleGrantedAuthority("ROLE_ADMIN"),
@@ -40,6 +61,12 @@ public class TestUserDetailsService implements UserDetailsService {
         detail.setPassword(password);
         detail.setUsername(username);
         detail.setAuthorities(auths);
+
+        detail.setEnabled(enabled);
+        detail.setAccountNonExpired(accountNonExpired);
+        detail.setAccountNonLocked(accountNonLocked);
+        detail.setCredentialsNonExpired(credentialsNonExpired);
+
         return detail;
     }
 }

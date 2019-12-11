@@ -8,7 +8,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.http.OAuth2ErrorHandler;
+import org.springframework.security.oauth2.client.token.grant.password.ResourceOwnerPasswordResourceDetails;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -113,10 +116,15 @@ public class WingsOAuth2xLogin {
 
     /**
      * 使用 RestTemplate 远程请求登录。
+     *     @ExceptionHandler(Exception.class)
+     *     public ResponseEntity<OAuth2Exception> handleException(Exception e) throws Exception {
+     *         return new DefaultWebResponseExceptionTranslator().translate(e);
+     *     }
      *
      * @param tmpl Rest模板
      * @param info 登录信息
      * @return 远程返回的token
+     * @throws OAuth2Exception
      */
     public OAuth2AccessToken login(RestTemplate tmpl, Login info) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -142,6 +150,11 @@ public class WingsOAuth2xLogin {
             head.add("User-Agent", ctx.getAgentInfo());
         }
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, head);
+        ResourceOwnerPasswordResourceDetails resource = new ResourceOwnerPasswordResourceDetails();
+        resource.setUsername(info.username);
+        resource.setPassword(info.password);
+        tmpl.setErrorHandler(new OAuth2ErrorHandler(resource));
+
         return tmpl.postForObject(info.loginUrl, entity, OAuth2AccessToken.class);
     }
 
