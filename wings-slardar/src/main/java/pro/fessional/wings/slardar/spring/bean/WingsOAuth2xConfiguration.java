@@ -20,6 +20,8 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
@@ -37,6 +39,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 import org.springframework.util.Assert;
+import org.springframework.web.cors.CorsUtils;
 import pro.fessional.mirana.code.LeapCode;
 import pro.fessional.wings.slardar.security.JdkSerializationStrategy;
 import pro.fessional.wings.slardar.security.WingsOAuth2xLogin;
@@ -205,6 +208,41 @@ public class WingsOAuth2xConfiguration {
             resources.tokenStore(tokenStore)
             ;
             return resources;
+        }
+
+        public ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry permitAll(HttpSecurity http) throws Exception {
+            // https://stackoverflow.com/questions/36968963
+            ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = permitAllCors(http);
+            permitLogin(registry);
+            permitOAuth2(registry);
+            permitSwagger2(registry);
+            return registry;
+        }
+
+        public ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry permitAllCors(HttpSecurity http) throws Exception {
+            // https://stackoverflow.com/questions/36968963
+            ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http.cors().and().authorizeRequests();
+            registry.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+            ;
+            return registry;
+        }
+
+        public ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry permitLogin(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) throws Exception {
+            registry.antMatchers(loginAntPaths()).permitAll()
+            ;
+            return registry;
+        }
+
+        public ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry permitOAuth2(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) throws Exception {
+            registry.antMatchers(oauth2AntPaths()).permitAll()
+            ;
+            return registry;
+        }
+
+        public ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry permitSwagger2(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) throws Exception {
+            registry.antMatchers(swagger2AntPaths()).permitAll()
+            ;
+            return registry;
         }
 
         public String[] oauth2AntPaths() {

@@ -106,14 +106,12 @@ public class TestOAuth2xConfiguration {
 
         @Override
         public void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests()
-                .antMatchers(helper.loginAntPaths()).permitAll()
-                .antMatchers(helper.oauth2AntPaths()).permitAll()
-                .antMatchers(helper.swagger2AntPaths()).permitAll()
-                .antMatchers("/test/**").permitAll()
-                .antMatchers("/user.html").hasAuthority("ROLE_USER")
-                .antMatchers("/admin.html").hasAuthority("ROLE_ADMIN")
-                .anyRequest().authenticated()
+            // https://stackoverflow.com/questions/36968963
+            helper.permitAll(http)
+                  .antMatchers("/test/**").permitAll()
+                  .antMatchers("/user.html").hasAuthority("ROLE_USER")
+                  .antMatchers("/admin.html").hasAuthority("ROLE_ADMIN")
+                  .anyRequest().authenticated()
             ;
         }
     }
