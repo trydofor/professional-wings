@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.servlet;
 
 import lombok.Data;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
+import pro.fessional.mirana.data.Nulls;
 import pro.fessional.wings.slardar.security.WingsOAuth2xContext;
 
 import javax.servlet.FilterChain;
@@ -32,8 +33,6 @@ public class WingsOAuth2xFilter implements OrderedFilter {
 
 
     private static final String[] OAUTH_PASSWORD = {"password"};
-    private static final String[] STR_ARR_NIL = new String[0];
-
 
     private final String[] endpointUri;
     private final String[] clientIdAlias;
@@ -71,11 +70,11 @@ public class WingsOAuth2xFilter implements OrderedFilter {
 
     //
     private String[] dealAlias(String[] arr, String ori) {
-        if (arr == null) return STR_ARR_NIL;
+        if (arr == null) return Nulls.StrArr;
         Set<String> set = new HashSet<>(arr.length);
         set.addAll(Arrays.asList(arr));
         set.remove(ori);
-        return set.toArray(STR_ARR_NIL);
+        return set.toArray(Nulls.StrArr);
     }
 
     private String[] getParam(HttpServletRequest request, String[] name) {

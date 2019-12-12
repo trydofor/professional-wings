@@ -6,30 +6,6 @@
 # * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
 # * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
 
-POST http://localhost:8080/forward.html
-
-### 显示验证码
-# 输出 code=null
-GET http://localhost:8080/test/vcode.html
-
-### 验证码
-# 输出 captcha
-GET http://localhost:8080/test/captcha.html
-
-### 显示验证码
-# 输出 code=123
-GET http://localhost:8080/test/vcode.html
-
-### 不带验证码查看
-# 输出 bad captcha
-GET http://localhost:8080/test/verify.html
-
-### 带验证码查看
-# 输出 /test/verify.html?vc=123
-GET http://localhost:8080/test/verify.html?vc=123
-
-#####################################
-
 ### query string access token
 # 输出 unauthorized
 GET http://localhost:8080/admin.html

@@ -35,9 +35,10 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class WingsCaptchaFilter implements OrderedFilter {
 
     private List<SessionPicker> sessionPicker = new ArrayList<>();
+    private List<CaptchaTrigger> captchaTrigger = new ArrayList<>();
     private final Cache<String, WingsCaptchaContext.Context> captchaHolder;
 
-    public WingsCaptchaFilter(Config config) {
+    public WingsCaptchaFilter(Config config, Collection<CaptchaTrigger> triggers) {
 
         Map<String, SessionPicker> pickers = new HashMap<>();
         if (config.externalPickers != null) {
@@ -62,6 +63,7 @@ public class WingsCaptchaFilter implements OrderedFilter {
         }
 
         this.sessionPicker.addAll(pickers.values());
+        this.captchaTrigger.addAll(triggers);
         //
         this.captchaHolder = Caffeine.newBuilder()
                                      .maximumSize(config.vholderCapacity)
@@ -91,11 +93,13 @@ public class WingsCaptchaFilter implements OrderedFilter {
         if (!handlers.isEmpty()) {
             HttpServletResponse res1 = (HttpServletResponse) res;
             for (Map.Entry<String, WingsCaptchaContext.Context> entry : handlers.entrySet()) {
-                BiFunction<HttpServletRequest, HttpServletResponse, WingsCaptchaContext.R> handler = entry.getValue().handler;
+                WingsCaptchaContext.Context ct = entry.getValue();
+                BiFunction<HttpServletRequest, HttpServletResponse, WingsCaptchaContext.R> handler = ct.handler;
                 if (handler == null) {
-                    captchaHolder.invalidate(entry.getKey());
-                    continue;
+                    // 只提供验证码，不处理，视为ban到超时，等同与FAIL。
+                    return;
                 }
+
                 WingsCaptchaContext.R rst = handler.apply(request, res1);
                 if (rst == WingsCaptchaContext.R.FAIL) {
                     return;
@@ -104,16 +108,26 @@ public class WingsCaptchaFilter implements OrderedFilter {
                     captchaHolder.invalidateAll(session);
                     break;
                 } else {
-                    ctx = entry.getValue();
+                    ctx = ct;
                 }
             }
         }
 
         WingsCaptchaContext.set(ctx);
         try {
+            // before controller
+            for (CaptchaTrigger trigger : captchaTrigger) {
+                WingsCaptchaContext.Context tx = trigger.trigger(request, session);
+                if (tx != null) {
+                    WingsCaptchaContext.set(tx);
+                    break;
+                }
+            }
+            //
             chain.doFilter(req, res);
+            // after controller
             ctx = WingsCaptchaContext.get();
-            if (ctx.handler != null) {
+            if (ctx != WingsCaptchaContext.Null) {
                 for (String s : session) {
                     captchaHolder.put(s, ctx);
                 }
@@ -200,7 +214,7 @@ public class WingsCaptchaFilter implements OrderedFilter {
 
     @RequiredArgsConstructor
     public static class BearerPicker implements SessionPicker {
-        private static String BEARER_LOWER = "bearer";
+        private static final String BEARER_LOWER = "bearer";
 
         private final Set<String> headerName;
 
@@ -241,5 +255,16 @@ public class WingsCaptchaFilter implements OrderedFilter {
          * @param session session
          */
         void pickSession(HttpServletRequest request, Set<String> session);
+    }
+
+    public interface CaptchaTrigger {
+        /**
+         * 是否触发验证码，如果不触发返回null即可
+         *
+         * @param request  当前request
+         * @param sessions 所有session信息
+         * @return context
+         */
+        WingsCaptchaContext.Context trigger(HttpServletRequest request, Set<String> sessions);
     }
 }

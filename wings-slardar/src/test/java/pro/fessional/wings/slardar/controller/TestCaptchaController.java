@@ -1,12 +1,10 @@
 package pro.fessional.wings.slardar.controller;
 
+import lombok.val;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pro.fessional.wings.slardar.security.WingsCaptchaContext;
-
-import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * @author trydofor
@@ -19,27 +17,8 @@ public class TestCaptchaController {
     @ResponseBody
     public String captcha() {
         String code = "123";
-        WingsCaptchaContext.set(code, (req, res) -> {
-                    if (code.equals(req.getParameter("vc"))) {
-                        return WingsCaptchaContext.R.PASS;
-                    } else {
-                        if (req.getRequestURI().contains("/vcode.html")) {
-                            return WingsCaptchaContext.R.NOOP;
-                        } else {
-                            try {
-                                PrintWriter writer = res.getWriter();
-                                writer.write("bad captcha");
-                                writer.flush();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                            return WingsCaptchaContext.R.FAIL;
-                        }
-                    }
-                }
-        );
-
+        val ctx = WingsCaptchaContext.Context.of(code, "vc", "bad captcha", "/test/vcode.html");
+        WingsCaptchaContext.set(ctx);
         return "captcha";
     }
 
