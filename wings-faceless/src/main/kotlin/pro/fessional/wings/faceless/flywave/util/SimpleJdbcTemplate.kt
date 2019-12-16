@@ -1,6 +1,8 @@
 package pro.fessional.wings.faceless.flywave.util
 
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.ResultSetExtractor
+import org.springframework.jdbc.core.RowCallbackHandler
 import java.sql.ResultSet
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
@@ -27,6 +29,10 @@ class SimpleJdbcTemplate(val dataSource: DataSource, val name: String = "unnamed
         return count.get()
     }
 
+    /**
+     * 处理每一条数据
+     * @param handler RowCallbackHandler
+     */
     fun query(sql: String, vararg args: Any?, handler: (ResultSet) -> Unit) {
         jdbcTmpl.query(sql, args, handler)
     }

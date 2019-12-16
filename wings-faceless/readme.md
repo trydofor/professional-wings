@@ -50,6 +50,12 @@ sql的书写规则详见[数据库约定](/wings-faceless/src/main/resources/win
 
 数据库中尽量不要`nullable`，约定默认值代替，如`convention.EmptyValue`类
 
+关于`/wings-flywave/`目录，有以下几种实践操作。
+ 
+ * 存在`fulldump/{db}/`目录，用来管理当前主要db的最新schema
+ * 存在`revision/init/`目录，最开始的初始化脚本
+ * 存在`revision/{m##}/`目录，用来按里程碑管理变更脚本
+
 ## 2.2.数据的版本管理(journal)
 
 `逻辑删除`已成为行业标配，但如果删除数据只在调查时使用，则不是最优解。

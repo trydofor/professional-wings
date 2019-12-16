@@ -1,7 +1,12 @@
 package pro.fessional.wings.faceless.flywave.impl
 
 import org.slf4j.LoggerFactory
+import pro.fessional.mirana.bits.Bytes
+import pro.fessional.mirana.time.DateFormatter
 import pro.fessional.wings.faceless.flywave.SqlStatementParser
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.Optional
 import java.util.function.Function
 import java.util.regex.Pattern
@@ -126,6 +131,63 @@ class MySqlStatementParser : SqlStatementParser {
             }
         }
         return "`$str`"
+    }
+
+    // https://dev.mysql.com/doc/refman/8.0/en/string-literals.html#character-escape-sequences
+    override fun safeValue(obj: Any?): String {
+
+        when (obj) {
+            null -> return "NULL"
+            is Boolean -> return if (obj) "1" else "0"
+            is Number -> return obj.toString()
+            is LocalDate -> return "'${DateFormatter.date10(obj)}'"
+            is LocalDateTime -> return "'${DateFormatter.full23(obj)}'"
+            is LocalTime -> return "'${DateFormatter.time12(obj)}'"
+            is java.sql.Time -> return "'$obj'"
+            is java.sql.Date -> return "'$obj'"
+            is java.sql.Timestamp -> return "'${DateFormatter.full23(obj.toLocalDateTime())}'"
+            is java.util.Date -> return "'${DateFormatter.full23(obj)}'"
+            is ByteArray -> return "0x${Bytes.hex(obj)}"
+            is java.sql.Blob -> return "0x${Bytes.hex(obj.getBytes(0, obj.length().toInt()))}"
+        }
+
+        val str = if (obj is java.sql.Clob) {
+            obj.getSubString(0, obj.length().toInt())
+        } else {
+            obj.toString()
+        }
+
+        /**
+        \0	An ASCII NUL (X'00') character
+        \'	A single quote (') character
+        \"	A double quote (") character
+        \b	A backspace character
+        \n	A newline (linefeed) character
+        \r	A carriage return character
+        \t	A tab character
+        \Z	ASCII 26 (Control+Z); see note following the table
+        \\	A backslash (\) character
+        \%	A % character; see note following the table
+        \_	A _ character; see note following the table
+         */
+        val sb = StringBuilder(str.length + 10)
+        sb.append('\'')
+        val c00 = 0x00.toChar()
+        val c26 = 0x26.toChar()
+        for (c in str) {
+            if (c == c00) sb.append("\\0")
+            else if (c == '\'') sb.append("\\'")
+            else if (c == '"') sb.append("\\\"")
+            else if (c == '\b') sb.append("\\b")
+            else if (c == '\n') sb.append("\\n")
+            else if (c == '\r') sb.append("\\r")
+            else if (c == '\t') sb.append("\\t")
+            else if (c == c26) sb.append("\\Z")
+            else if (c == '\\') sb.append("\\\\")
+            else sb.append(c)
+        }
+        sb.append('\'')
+        return sb.toString()
     }
 
     override fun trimName(str: String) = if (str.contains('`')) {

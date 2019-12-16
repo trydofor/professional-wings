@@ -25,6 +25,12 @@ interface SqlStatementParser {
     fun safeName(str: String): String
 
     /**
+     * 对sql类型，变成sql字面量
+     * @param str 值
+     */
+    fun safeValue(obj: Any?): String
+
+    /**
      * 去掉转义字符，还原本名
      * @param str 名字
      */
