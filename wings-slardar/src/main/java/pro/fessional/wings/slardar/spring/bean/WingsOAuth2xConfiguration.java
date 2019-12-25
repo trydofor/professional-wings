@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.spring.bean;
 
 import lombok.Data;
 import lombok.Setter;
+import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -39,7 +40,8 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 import org.springframework.util.Assert;
-import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import pro.fessional.mirana.code.LeapCode;
 import pro.fessional.wings.slardar.security.JdkSerializationStrategy;
 import pro.fessional.wings.slardar.security.WingsOAuth2xLogin;
@@ -211,8 +213,7 @@ public class WingsOAuth2xConfiguration {
         }
 
         public ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry permitAll(HttpSecurity http) throws Exception {
-            // https://stackoverflow.com/questions/36968963
-            ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = permitAllCors(http);
+            val registry = permitAllCors(http);
             permitLogin(registry);
             permitOAuth2(registry);
             permitSwagger2(registry);
@@ -221,10 +222,11 @@ public class WingsOAuth2xConfiguration {
 
         public ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry permitAllCors(HttpSecurity http) throws Exception {
             // https://stackoverflow.com/questions/36968963
-            ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http.cors().and().authorizeRequests();
-            registry.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-            ;
-            return registry;
+            // CorsConfiguration#applyPermitDefaultValues
+            return http
+                    .cors().configurationSource(corsAllowAll)
+                    .and()
+                    .authorizeRequests();
         }
 
         public ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry permitLogin(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) throws Exception {
@@ -244,6 +246,15 @@ public class WingsOAuth2xConfiguration {
             ;
             return registry;
         }
+
+        public CorsConfigurationSource corsAllowAll = request -> {
+            CorsConfiguration conf = new CorsConfiguration();
+            conf.addAllowedHeader("*");
+            conf.addAllowedOrigin("*");
+            conf.addAllowedMethod("*");
+            conf.setMaxAge(1800L);
+            return conf;
+        };
 
         public String[] oauth2AntPaths() {
             return new String[]{"/oauth/**", "/error"};
