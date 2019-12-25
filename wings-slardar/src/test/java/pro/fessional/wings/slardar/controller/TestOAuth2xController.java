@@ -101,7 +101,7 @@ public class TestOAuth2xController {
     @ResponseBody
     public OAuth2AccessToken restLogin(HttpServletRequest request) {
         WingsOAuth2xLogin.Login info = new WingsOAuth2xLogin.Login();
-        info.setLoginUrl("http://localhost:8080/oauth/token");
+        info.setLoginUrl("http://localhost:8081/oauth/token");
         info.setClientId("wings-slardar-id");
         info.setUsername(request.getParameter("username"));
         info.setPassword(request.getParameter("password"));

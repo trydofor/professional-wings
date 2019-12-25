@@ -106,7 +106,7 @@ public class WingsOAuth2xConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(TokenStore.class)
-    public TokenStore tokenStore(Actoken actoken) {
+    public WingsTokenStore tokenStore(Actoken actoken) {
         logger.info("Wings conf InMemoryTokenStore to WingsTokenStore");
         WingsTokenStore store = new WingsTokenStore();
         store.addStore(new InMemoryTokenStore());
@@ -164,11 +164,11 @@ public class WingsOAuth2xConfiguration {
     @Setter(onMethod = @__({@Autowired}))
     public static class Helper {
 
-        private TokenStore tokenStore;
         private WingsOAuth2xFilter.Config config;
-        private AuthenticationManager authenticationManager;
-        private UserDetailsService userDetailsService;
         private PasswordEncoder passwordEncoder;
+        private ObjectProvider<TokenStore> tokenStore;
+        private ObjectProvider<AuthenticationManager> authenticationManager;
+        private ObjectProvider<UserDetailsService> userDetailsService;
         private ObjectProvider<TokenEnhancer> tokenEnhancer;
 
         public ClientDetailsServiceConfigurer configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -189,9 +189,9 @@ public class WingsOAuth2xConfiguration {
         }
 
         public AuthorizationServerEndpointsConfigurer configure(AuthorizationServerEndpointsConfigurer endpoints) {
-            endpoints.authenticationManager(authenticationManager)
-                     .userDetailsService(userDetailsService)
-                     .tokenStore(tokenStore)
+            endpoints.authenticationManager(authenticationManager.getIfAvailable())
+                     .userDetailsService(userDetailsService.getIfAvailable())
+                     .tokenStore(tokenStore.getIfAvailable())
                      .tokenEnhancer(tokenEnhancer.getIfAvailable())
             ;
             return endpoints;
@@ -207,7 +207,7 @@ public class WingsOAuth2xConfiguration {
         }
 
         public ResourceServerSecurityConfigurer configure(ResourceServerSecurityConfigurer resources) {
-            resources.tokenStore(tokenStore)
+            resources.tokenStore(tokenStore.getIfAvailable())
             ;
             return resources;
         }

@@ -8,52 +8,52 @@
 
 ### query string access token
 # 输出 unauthorized
-GET http://localhost:8080/admin.html
+GET http://localhost:8081/admin.html
 
 ### wings oauth2x login
 
 ### 别名cid
 # 输出 access_token
-POST localhost:8080/oauth/token
+POST localhost:8081/oauth/token
 Content-Type: application/x-www-form-urlencoded
 
 cid=wings-slardar-id&client_secret=wings-slardar-secret&scope=any&grant_type=client_credentials
 
 ### 别名gtp,cst
 # 输出 access_token
-POST localhost:8080/oauth/token
+POST localhost:8081/oauth/token
 Content-Type: application/x-www-form-urlencoded
 
 cid=wings-slardar-id&cst=wings-slardar-secret&gtp=client_credentials&scope=any
 
 ### WingsToken access_token
-POST localhost:8080/oauth/token
-#POST wings-slardar-id:wings-slardar-secret@localhost:8080/oauth/token
+POST localhost:8081/oauth/token
+#POST wings-slardar-id:wings-slardar-secret@localhost:8081/oauth/token
 Content-Type: application/x-www-form-urlencoded
 
 cid=wings-slardar-id&scope=any&servier_type=buyer_mobile&username=wings-slardar-user1&password=wings-slardar-pass
 
 ### 第三方token
-POST localhost:8080/oauth/token
-#POST wings-slardar-id:wings-slardar-secret@localhost:8080/oauth/token
+POST localhost:8081/oauth/token
+#POST wings-slardar-id:wings-slardar-secret@localhost:8081/oauth/token
 Content-Type: application/x-www-form-urlencoded
 
-cid=wings-slardar-id&scope=any&gtp=passwordx&username=wings-slardar-user2&password=wings-slardar-pass&access_token_live=60&access_token_3rd=bac0c873-e1cc-4740-8b9b-a903dcaaedfex
+cid=wings-slardar-id&scope=any&gtp=passwordx&username=wings-slardar-user2&password=wings-slardar-pass&access_token_live=60&access_token_3rd=bac0c873-e1cc-4740-8b9b-a903dcaaedfe
 
 ### 第三方token，强制更新
-POST localhost:8080/oauth/token
-#POST wings-slardar-id:wings-slardar-secret@localhost:8080/oauth/token
+POST localhost:8081/oauth/token
+#POST wings-slardar-id:wings-slardar-secret@localhost:8081/oauth/token
 Content-Type: application/x-www-form-urlencoded
 
-cid=wings-slardar-id&scope=any&gtp=passwordx&username=wings-slardar-user2&password=wings-slardar-pass&access_token_live=60&access_token_renew=true&access_token_3rd=bac0c873-e1cc-4740-8b9b-a903dcaaedfex
+cid=wings-slardar-id&scope=any&gtp=passwordx&username=wings-slardar-user2&password=wings-slardar-pass&access_token_live=60&access_token_renew=true&access_token_3rd=bac0c873-e1cc-4740-8b9b-a903dcaaedfe
 
 ### query string access token
 # 输出 admin
-GET http://localhost:8080/admin.html?access_token=bac0c873-e1cc-4740-8b9b-a903dcaaedfe
+GET http://localhost:8081/admin.html?access_token=bac0c873-e1cc-4740-8b9b-a903dcaaedfe
 
 
 ### 检查token
-POST wings-slardar-id:wings-slardar-secret@localhost:8080/oauth/check_token
+POST wings-slardar-id:wings-slardar-secret@localhost:8081/oauth/check_token
 Content-Type: application/x-www-form-urlencoded
 
 token=f416ede9-667d-4c72-8a25-ff0927e984f1
@@ -61,20 +61,20 @@ token=f416ede9-667d-4c72-8a25-ff0927e984f1
 
 ### header access token
 # 输出 admin
-GET http://localhost:8080/admin.html
+GET http://localhost:8081/admin.html
 Authorization: Bearer bac0c873-e1cc-4740-8b9b-a903dcaaedfe
 
 ### basic 验证登录
 # 输出 access_token
-POST wings-slardar-id:wings-slardar-secret@localhost:8080/oauth/token
+POST wings-slardar-id:wings-slardar-secret@localhost:8081/oauth/token
 Content-Type: application/x-www-form-urlencoded
 
 grant_type=client_credentials&scope=any
 
 
 ### 表单登录
-# 302 跳转到 http://localhost:8080/
-POST localhost:8080/login
+# 302 跳转到 http://localhost:8081/
+POST localhost:8081/login
 Content-Type: application/x-www-form-urlencoded
 
 username=wings-slardar-user&password=wings-slardar-pass
@@ -83,35 +83,35 @@ username=wings-slardar-user&password=wings-slardar-pass
 
 ### 密码授权
 # 输出 access_token, refresh_token
-POST localhost:8080/oauth/token
+POST localhost:8081/oauth/token
 Content-Type: application/x-www-form-urlencoded
 
 client_id=wings-slardar-id&client_secret=wings-slardar-secret&scope=any&grant_type=password&username=wings-slardar-user&password=wings-slardar-pass
 
 ### 刷新token
 # 输出 access_token, refresh_token
-POST localhost:8080/oauth/token
+POST localhost:8081/oauth/token
 Content-Type: application/x-www-form-urlencoded
 
 client_id=wings-slardar-id&client_secret=wings-slardar-secret&scope=any&grant_type=refresh_token&refresh_token=9645621f-3dd5-4d6a-8ac6-3a6e861aebe2
 
 ### 客户端授权
 # 输出 access_token
-POST localhost:8080/oauth/token
+POST localhost:8081/oauth/token
 Content-Type: application/x-www-form-urlencoded
 
 client_id=wings-slardar-id&client_secret=wings-slardar-secret&scope=any&grant_type=client_credentials
 
 ### 授权码
 # 需要先from登录
-POST localhost:8080/oauth/authorize
+POST localhost:8081/oauth/authorize
 Content-Type: application/x-www-form-urlencoded
 
 client_id=wings-slardar-id&response_type=code&scope=any&redirect_uri=http://www.moilioncircle.com
 
 ### code换token
-#POST localhost:8080/oauth/token
-POST wings-slardar-id:wings-slardar-secret@localhost:8080/oauth/token
+#POST localhost:8081/oauth/token
+POST wings-slardar-id:wings-slardar-secret@localhost:8081/oauth/token
 Content-Type: application/x-www-form-urlencoded
 
 client_id=wings-slardar-id&client_secret=wings-slardar-secret&scope=any&grant_type=authorization_code&redirect_uri=http://www.moilioncircle.com&code=VA43Nv

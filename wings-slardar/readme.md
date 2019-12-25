@@ -44,6 +44,15 @@ public AuthenticationManager authenticationManagerBean() throws Exception {
 }
 ```
 
+对于ResourceServer与AuthorizationServer分开的情况，参考example工程，只需要提供
+ResourceServer和`@Bean RemoteTokenServices tokenService()`即可。
+
+对于使用`WingsOAuth2xLogin`登录功能，有时需要处理Oauth2信息，如下即可，
+```
+@ExceptionHandler(Exception.class)
+public ResponseEntity<OAuth2Exception> handleException(Exception e) 
+```
+
 ## 3.2.CaptchaFilter防扒
 
 通过`WingsCaptchaContext`设置规则，可以实现全局的防扒验证码。

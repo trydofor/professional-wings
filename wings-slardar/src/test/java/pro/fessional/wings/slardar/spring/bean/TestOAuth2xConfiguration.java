@@ -8,7 +8,6 @@ import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -27,7 +26,7 @@ import pro.fessional.wings.slardar.service.TestUserDetailsService;
 public class TestOAuth2xConfiguration {
 
     @Bean
-    public UserDetailsService testUserDetailsService() {
+    public TestUserDetailsService userDetailsService() {
         return new TestUserDetailsService();
     }
 

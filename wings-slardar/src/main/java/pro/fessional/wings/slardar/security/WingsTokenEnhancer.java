@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.security;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -43,13 +44,16 @@ public class WingsTokenEnhancer implements TokenEnhancer {
         if (thirdTokenKey != null && thirdTokenKey.length() > 0) {
             newToken = requestParameters.get(thirdTokenKey);
         }
+
         if (newToken == null) {
-            final TypeIdI18nUserDetail detail;
-            Object principal = authentication.getUserAuthentication().getPrincipal();
-            if (principal instanceof TypeIdI18nUserDetail) {
-                detail = (TypeIdI18nUserDetail) principal;
-            } else {
-                detail = null;
+            TypeIdI18nUserDetail detail = null;
+            Authentication auth = authentication.getUserAuthentication();
+
+            if (auth != null) {
+                Object pcp = auth.getPrincipal();
+                if (pcp instanceof TypeIdI18nUserDetail) {
+                    detail = (TypeIdI18nUserDetail) pcp;
+                }
             }
 
             newToken = wingsToken(detail, wingsPrefix, token.getValue());
@@ -62,7 +66,9 @@ public class WingsTokenEnhancer implements TokenEnhancer {
             }
         }
 
-        token.setValue(newToken);
+        if (newToken != null && newToken.length() > 0 && !"null".equalsIgnoreCase(newToken)) {
+            token.setValue(newToken);
+        }
 
         return token;
     }
