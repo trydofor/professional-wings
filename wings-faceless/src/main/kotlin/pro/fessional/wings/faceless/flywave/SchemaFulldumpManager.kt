@@ -2,8 +2,10 @@ package pro.fessional.wings.faceless.flywave
 
 import org.slf4j.LoggerFactory
 import pro.fessional.mirana.best.ArgsAssert
+import pro.fessional.mirana.time.DateFormatter
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
 import java.io.File
+import java.time.LocalDateTime
 import javax.sql.DataSource
 
 /**
@@ -30,7 +32,8 @@ class SchemaFulldumpManager(
     fun dumpDdl(fold: File, database: DataSource, vararg exclude: String = arrayOf(".*_\\d+$", ".*\\$\\w+$")) {
         ArgsAssert.isTrue(fold.isDirectory, "fold must be a directory, %s", fold)
 
-        val argddl = StringBuilder()
+        val argddl = StringBuilder("-- ")
+        argddl.append(DateFormatter.full19(LocalDateTime.now()))
         argddl.append("\n-- exclude")
         for (s in exclude) {
             argddl.append("\n").append(s)
@@ -43,7 +46,7 @@ class SchemaFulldumpManager(
         for (table in tables) {
 
             if (excludeRegex.find { it.matches(table) } != null) {
-                logger.info("skip the excluded table={}", table)
+                logger.info("skip the excluded ddl table={}", table)
                 continue
             }
 
@@ -69,7 +72,8 @@ class SchemaFulldumpManager(
     fun dumpRec(fold: File, database: DataSource, vararg include: String) {
         ArgsAssert.isTrue(fold.isDirectory, "fold must be a directory, %s", fold)
 
-        val argrec = StringBuilder()
+        val argrec = StringBuilder("-- ")
+        argrec.append(DateFormatter.full19(LocalDateTime.now()))
         argrec.append("\n-- include")
         for (s in include) {
             argrec.append("\n").append(s)
@@ -84,7 +88,7 @@ class SchemaFulldumpManager(
         for (table in tables) {
 
             if (includeRegex.find { it.matches(table) } == null) {
-                logger.info("skip the not include table={}", table)
+                logger.info("skip the not include rec table={}", table)
                 continue
             }
 
@@ -113,7 +117,7 @@ class SchemaFulldumpManager(
                 recode.append(",\n")
             }
 
-            recode.replace(recode.length - 2,recode.length - 1, ";")
+            recode.replace(recode.length - 2, recode.length - 1, ";")
         }
 
         File(fold, "record.sql").writeText(recode.toString())

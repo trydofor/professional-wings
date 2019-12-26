@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
-import pro.fessional.wings.faceless.spring.conf.WingsFlywaveVerProperties;
 import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner;
 
 import java.util.SortedMap;
@@ -28,8 +27,6 @@ public class TestFlywaveController {
     private SchemaRevisionManager schemaRevisionManager;
     @Setter(onMethod = @__({@Autowired}))
     private SchemaJournalManager schemaJournalManager;
-    @Setter(onMethod = @__({@Autowired}))
-    private WingsFlywaveVerProperties wingsFlywaveVerProperties;
 
     @RequestMapping("/flywave-revi.json")
     @ResponseBody
@@ -68,13 +65,8 @@ public class TestFlywaveController {
         StringBuilder sb = new StringBuilder();
 
         sb.append("\n开始初始化跟踪配置=").append(table);
-        SchemaJournalManager.JournalDdl ddls = new SchemaJournalManager.JournalDdl(
-                wingsFlywaveVerProperties.getJournalUpdate(),
-                wingsFlywaveVerProperties.getTriggerUpdate(),
-                wingsFlywaveVerProperties.getJournalDelete(),
-                wingsFlywaveVerProperties.getTriggerDelete()
-        );
-        schemaJournalManager.checkAndInitDdl(table, ddls, 0);
+
+        schemaJournalManager.checkAndInitDdl(table, 0);
         sb.append("\n结束初始化跟踪配置=").append(table);
 
         // 开启关闭

@@ -20,7 +20,8 @@ class SchemaJournalManager(
         private val flywaveDataSources: FlywaveDataSources,
         private val sqlStatementParser: SqlStatementParser,
         private val sqlSegmentProcessor: SqlSegmentProcessor,
-        private val schemaDefinitionLoader: SchemaDefinitionLoader
+        private val schemaDefinitionLoader: SchemaDefinitionLoader,
+        private val journalDdl: JournalDdl
 ) {
     data class JournalDdl(
             var updTbl: String = "",
@@ -69,10 +70,9 @@ class SchemaJournalManager(
      * 当不存在时，则把本地保存到数据库。
      * 当存在但内容不一致，已APPLY则log error，否则更新
      * @param table 主表
-     * @param ddl ddl模板
      * @param commitId 提交ID，参见Journal
      */
-    fun checkAndInitDdl(table: String, ddl: JournalDdl, commitId: Long) {
+    fun checkAndInitDdl(table: String, commitId: Long) {
         logger.info("start check journal table={}", table)
         val selectSql = """
                 SELECT ddl_updtbl, ddl_updtrg, ddl_deltbl, ddl_deltrg, log_update, log_delete
@@ -100,7 +100,7 @@ class SchemaJournalManager(
 
             if (dbVal.isEmpty()) {
                 logger.info("insert journal ddl, table=$table, db=$plainName")
-                val rst = tmpl.update(insertSql, table, commitId, ddl.updTbl, ddl.updTrg, ddl.delTbl, ddl.delTrg)
+                val rst = tmpl.update(insertSql, table, commitId, journalDdl.updTbl, journalDdl.updTrg, journalDdl.delTbl, journalDdl.delTrg)
                 if (rst != 1) {
                     throw IllegalStateException("failed to insert journal ddl, table=$table, db=$plainName")
                 }
@@ -113,10 +113,10 @@ class SchemaJournalManager(
             val updNot = notApply(dbVal["log_update"])
             val delNot = notApply(dbVal["log_delete"])
 
-            if (ddl.updTbl != dbVal["ddl_updtbl"]) {
+            if (journalDdl.updTbl != dbVal["ddl_updtbl"]) {
                 if (updNot) {
                     updSql.append("ddl_updtbl = ?, ")
-                    updVal.add(ddl.updTbl)
+                    updVal.add(journalDdl.updTbl)
                     logger.warn("diff ddl-upd-tbl, update it. table={}, db={}", table, plainName)
                 } else {
                     logger.error("skip diff ddl-upd-tbl but applied, should manually disable it first. table={}, db={}", table, plainName)
@@ -124,10 +124,10 @@ class SchemaJournalManager(
                 }
             }
 
-            if (ddl.updTrg != dbVal["ddl_updtrg"]) {
+            if (journalDdl.updTrg != dbVal["ddl_updtrg"]) {
                 if (updNot) {
                     updSql.append("ddl_updtrg = ?, ")
-                    updVal.add(ddl.updTrg)
+                    updVal.add(journalDdl.updTrg)
                     logger.warn("diff ddl-upd-trg, update it. table={}, db={}", table, plainName)
                 } else {
                     logger.error("skip diff ddl-upd-trg but applied, should manually disable it first. table={}, db={}", table, plainName)
@@ -135,20 +135,20 @@ class SchemaJournalManager(
                 }
             }
 
-            if (ddl.delTbl != dbVal["ddl_deltbl"]) {
+            if (journalDdl.delTbl != dbVal["ddl_deltbl"]) {
                 if (delNot) {
                     updSql.append("ddl_deltbl = ?, ")
-                    updVal.add(ddl.delTbl)
+                    updVal.add(journalDdl.delTbl)
                     logger.warn("diff ddl-del-tbl, update it. table={}, db={}", table, plainName)
                 } else {
                     logger.error("skip diff ddl-del-tbl but applied, should manually disable it first. table={}, db={}", table, plainName)
                     continue
                 }
             }
-            if (ddl.delTrg != dbVal["ddl_deltrg"]) {
+            if (journalDdl.delTrg != dbVal["ddl_deltrg"]) {
                 if (delNot) {
                     updSql.append("ddl_deltrg = ?, ")
-                    updVal.add(ddl.delTrg)
+                    updVal.add(journalDdl.delTrg)
                     logger.warn("diff ddl-del-trg, update it. table={}, db={}", table, plainName)
                 } else {
                     logger.error("skip diff ddl-del-trg but applied, should manually disable it first. table={}, db={}", table, plainName)

@@ -9,7 +9,6 @@ import org.springframework.test.context.junit4.SpringRunner
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager
-import pro.fessional.wings.faceless.spring.conf.WingsFlywaveVerProperties
 import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner
 
 /**
@@ -29,9 +28,6 @@ class WingsFlywaveShardJournalSample {
 
     @Autowired
     lateinit var schemaJournalManager: SchemaJournalManager
-
-    @Autowired
-    lateinit var wingsFlywaveVerProperties: WingsFlywaveVerProperties
 
     @Test
     fun revisionShardJournal() {
@@ -54,13 +50,7 @@ class WingsFlywaveShardJournalSample {
         schemaShardingManager.shardingData(table, true)
 
         // 跟踪
-        val ddls = SchemaJournalManager.JournalDdl(
-                wingsFlywaveVerProperties.journalUpdate,
-                wingsFlywaveVerProperties.triggerUpdate,
-                wingsFlywaveVerProperties.journalDelete,
-                wingsFlywaveVerProperties.triggerDelete
-        )
-        schemaJournalManager.checkAndInitDdl(table, ddls, 0)
+        schemaJournalManager.checkAndInitDdl(table, 0)
 
         // 开启关闭
         schemaJournalManager.publishUpdate(table, false, 0)

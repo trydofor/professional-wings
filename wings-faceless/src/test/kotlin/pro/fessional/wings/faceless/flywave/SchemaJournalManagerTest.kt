@@ -28,7 +28,7 @@ class SchemaJournalManagerTest {
     lateinit var schemaRevisionManager: SchemaRevisionManager
 
     @Test
-    fun test1InitSharding(){
+    fun test1InitSharding() {
         val sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH)
         schemaRevisionManager.checkAndInitSql(sqls, 0)
         schemaRevisionManager.publishRevision(20190520_01, 0)
@@ -36,13 +36,18 @@ class SchemaJournalManagerTest {
     }
 
     @Test
-    fun test2PublishUpdate() {
+    fun test2InitJouranl() {
+        schemaJournalManager.checkAndInitDdl("tst_中文也分表", 0)
+    }
+
+    @Test
+    fun test3PublishUpdate() {
         schemaJournalManager.publishUpdate("tst_中文也分表", true, 0)
         schemaJournalManager.publishUpdate("tst_中文也分表", false, 0)
     }
 
     @Test
-    fun test3PublishDelete() {
+    fun test4PublishDelete() {
         schemaJournalManager.publishDelete("tst_中文也分表", true, 0)
         schemaJournalManager.publishDelete("tst_中文也分表", false, 0)
     }

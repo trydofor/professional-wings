@@ -30,8 +30,16 @@ public class WingsFlywaveConfiguration {
             FlywaveDataSources sources,
             SqlStatementParser statementParser,
             SqlSegmentProcessor segmentProcessor,
-            SchemaDefinitionLoader schemaDefinitionLoader) {
-        return new SchemaJournalManager(sources, statementParser, segmentProcessor, schemaDefinitionLoader);
+            SchemaDefinitionLoader schemaDefinitionLoader,
+            WingsFlywaveVerProperties properties) {
+
+        SchemaJournalManager.JournalDdl ddl = new SchemaJournalManager.JournalDdl(
+                properties.getJournalUpdate(),
+                properties.getTriggerUpdate(),
+                properties.getJournalDelete(),
+                properties.getTriggerDelete()
+        );
+        return new SchemaJournalManager(sources, statementParser, segmentProcessor, schemaDefinitionLoader, ddl);
     }
 
     @Bean
