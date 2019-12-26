@@ -161,14 +161,19 @@ public class WingsOAuth2xConfiguration {
         return new Helper();
     }
 
-    @Setter(onMethod = @__({@Autowired}))
     public static class Helper {
 
+        @Setter(onMethod = @__({@Autowired}))
         private WingsOAuth2xFilter.Config config;
+        @Setter(onMethod = @__({@Autowired}))
         private PasswordEncoder passwordEncoder;
+        @Setter(onMethod = @__({@Autowired}))
         private ObjectProvider<TokenStore> tokenStore;
+        @Setter(onMethod = @__({@Autowired}))
         private ObjectProvider<AuthenticationManager> authenticationManager;
+        @Setter(onMethod = @__({@Autowired}))
         private ObjectProvider<UserDetailsService> userDetailsService;
+        @Setter(onMethod = @__({@Autowired}))
         private ObjectProvider<TokenEnhancer> tokenEnhancer;
 
         public ClientDetailsServiceConfigurer configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -224,7 +229,7 @@ public class WingsOAuth2xConfiguration {
             // https://stackoverflow.com/questions/36968963
             // CorsConfiguration#applyPermitDefaultValues
             return http
-                    .cors().configurationSource(corsAllowAll)
+                    .cors().configurationSource(corsAllowAll())
                     .and()
                     .authorizeRequests();
         }
@@ -247,14 +252,16 @@ public class WingsOAuth2xConfiguration {
             return registry;
         }
 
-        public CorsConfigurationSource corsAllowAll = request -> {
-            CorsConfiguration conf = new CorsConfiguration();
-            conf.addAllowedHeader("*");
-            conf.addAllowedOrigin("*");
-            conf.addAllowedMethod("*");
-            conf.setMaxAge(1800L);
-            return conf;
-        };
+        public CorsConfigurationSource corsAllowAll() {
+            return request -> {
+                CorsConfiguration conf = new CorsConfiguration();
+                conf.addAllowedHeader("*");
+                conf.addAllowedOrigin("*");
+                conf.addAllowedMethod("*");
+                conf.setMaxAge(1800L);
+                return conf;
+            };
+        }
 
         public String[] oauth2AntPaths() {
             return new String[]{"/oauth/**", "/error"};

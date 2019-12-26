@@ -20,12 +20,15 @@ import java.util.SortedMap;
  */
 
 @Controller
-@Setter(onMethod = @__({@Autowired}))
 public class TestFlywaveController {
 
+    @Setter(onMethod = @__({@Autowired}))
     private SchemaShardingManager schemaShardingManager;
+    @Setter(onMethod = @__({@Autowired}))
     private SchemaRevisionManager schemaRevisionManager;
+    @Setter(onMethod = @__({@Autowired}))
     private SchemaJournalManager schemaJournalManager;
+    @Setter(onMethod = @__({@Autowired}))
     private WingsFlywaveVerProperties wingsFlywaveVerProperties;
 
     @RequestMapping("/flywave-revi.json")
