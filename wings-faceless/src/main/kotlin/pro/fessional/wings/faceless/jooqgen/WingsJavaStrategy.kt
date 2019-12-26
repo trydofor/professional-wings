@@ -25,6 +25,7 @@ class WingsJavaStrategy : DefaultGeneratorStrategy() {
                 impls.add("pro.fessional.wings.faceless.service.journal.JournalAware")
             }
         } else if (mode == GeneratorStrategy.Mode.DEFAULT) {
+            // generateTable(TableDefinition table, JavaWriter out)
             impls.add("pro.fessional.wings.faceless.service.lightid.LightIdAware")
         }
 

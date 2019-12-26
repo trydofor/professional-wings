@@ -18,13 +18,13 @@ public interface LightIdService {
     }
 
     /**
-     * 按Jooq的 pojo命名获得，按 小写_小写命名。
+     * 按Jooq的Table命名获得，去掉结尾的`Table`后缀，按 小写_小写命名。
      *
-     * @param po jooq的Pojo
+     * @param table jooq的Table
      * @return id
      */
-    default long getId(@NotNull Class<? extends LightIdAware> po) {
-        return getId(po, geBlockId());
+    default long getId(@NotNull Class<? extends LightIdAware> table) {
+        return getId(table, geBlockId());
     }
 
     /**
@@ -38,15 +38,15 @@ public interface LightIdService {
     }
 
     /**
-     * 按Jooq的 pojo命名获得，按 小写_小写命名。
+     * 按Jooq的Table命名获得，去掉结尾的`Table`后缀，按 小写_小写命名。
      *
-     * @param po    jooq的Pojo
+     * @param table jooq的Table
      * @param block 区块
      * @return id
      */
-    default long getId(@NotNull Class<? extends LightIdAware> po, int block) {
-        String name = po.getSimpleName();
-        int len = name.length();
+    default long getId(@NotNull Class<? extends LightIdAware> table, int block) {
+        String name = table.getSimpleName();
+        int len = name.endsWith("Table") ? name.length() - 5 : name.length();
         StringBuilder sb = new StringBuilder(len + 10);
         for (int i = 0; i < len; i++) {
             char c = name.charAt(i);

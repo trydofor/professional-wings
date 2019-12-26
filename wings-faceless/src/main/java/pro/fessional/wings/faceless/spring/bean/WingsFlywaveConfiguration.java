@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.faceless.flywave.FlywaveDataSources;
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader;
+import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager;
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager;
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor;
@@ -50,6 +51,13 @@ public class WingsFlywaveConfiguration {
             SchemaDefinitionLoader schemaDefinitionLoader) {
         return new SchemaShardingManager(sources, statementParser, segmentProcessor, schemaDefinitionLoader);
 
+    }
+
+    @Bean
+    public SchemaFulldumpManager schemaFulldumpManager(
+            SqlStatementParser statementParser,
+            SchemaDefinitionLoader schemaDefinitionLoader) {
+        return new SchemaFulldumpManager(statementParser, schemaDefinitionLoader);
     }
 
     @Bean

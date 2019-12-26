@@ -31,8 +31,8 @@ public class LightIdServiceImpl implements LightIdService {
     }
 
     @Override
-    public long getId(@NotNull Class<? extends LightIdAware> po) {
-        return getId(po, blockIdProvider.getBlockId());
+    public long getId(@NotNull Class<? extends LightIdAware> table) {
+        return getId(table, blockIdProvider.getBlockId());
     }
 
     @Override
