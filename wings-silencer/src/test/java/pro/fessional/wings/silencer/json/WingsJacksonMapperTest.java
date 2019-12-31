@@ -1,11 +1,14 @@
 package pro.fessional.wings.silencer.json;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +19,10 @@ import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
 import pro.fessional.wings.silencer.jackson.JsonI18nString;
+import pro.fessional.wings.silencer.jackson.StringMapGenerator;
+import pro.fessional.wings.silencer.jackson.StringMapHelper;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -42,12 +48,11 @@ import java.util.Map;
 @SpringBootTest
 public class WingsJacksonMapperTest {
 
+    @Setter(onMethod = @__({@Autowired}))
     private ObjectMapper objectMapper;
 
-    @Autowired
-    public void setObjectMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
+    @Setter(onMethod = @__({@Autowired}))
+    private XmlMapper xmlMapper;
 
 
     @Test
@@ -73,7 +78,9 @@ public class WingsJacksonMapperTest {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
+    @XmlRootElement
     public static class JsonIt {
+        @JsonProperty("bool-val")
         private boolean boolVal = false;
         private int intVal = Integer.MAX_VALUE - 1;
         private long longVal = Long.MAX_VALUE - 1;
@@ -106,6 +113,7 @@ public class WingsJacksonMapperTest {
     }
 
     @Data
+    @XmlRootElement
     public static class I18nJson {
         @JsonI18nString // 有效
         private String codeManual = "base.not-empty";
@@ -136,5 +144,46 @@ public class WingsJacksonMapperTest {
         R<I18nJson> r2 = r1.toI18n("base.not-empty", "第一个参数");
         String j2 = jackson.writeValueAsString(r2);
         System.out.println(j2);
+    }
+
+    @Test
+    public void testXml() throws IOException {
+        ObjectWriter jackson = xmlMapper.writerWithDefaultPrettyPrinter();
+        I18nJson i18nJson = new I18nJson();
+        JsonIt jsonIt = new JsonIt();
+        String i18n = jackson.writeValueAsString(i18nJson);
+        String json = jackson.writeValueAsString(jsonIt);
+        System.out.println(i18n);
+        System.out.println("===========");
+        System.out.println(json);
+    }
+
+    @Test
+    public void testTreeMapGenerator() throws IOException {
+        I18nJson i18nJson = new I18nJson();
+        JsonIt jsonIt = new JsonIt();
+        StringMapGenerator t1 = StringMapGenerator.treeMap();
+        StringMapGenerator t2 = StringMapGenerator.linkMap();
+        objectMapper.writeValue(t1, i18nJson);
+        objectMapper.writeValue(t2, jsonIt);
+        System.out.println(t1.getResultTree());
+        System.out.println(t2.getResultTree());
+        System.out.println("======");
+    }
+
+    @Test
+    public void testHelper(){
+        I18nJson i18nJson = new I18nJson();
+        JsonIt jsonIt = new JsonIt();
+        Map<String, String> j1 = StringMapHelper.json(i18nJson, objectMapper);
+        Map<String, String> j2 = StringMapHelper.json(jsonIt, objectMapper);
+
+        Map<String, String> x1 = StringMapHelper.jaxb(i18nJson);
+        Map<String, String> x2 = StringMapHelper.jaxb(jsonIt);
+
+        System.out.println(j1);
+        System.out.println(j2);
+        System.out.println(x1);
+        System.out.println(x2);
     }
 }

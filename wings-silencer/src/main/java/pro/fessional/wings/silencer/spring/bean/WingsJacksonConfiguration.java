@@ -1,7 +1,9 @@
 package pro.fessional.wings.silencer.spring.bean;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.DateDeserializers;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -15,6 +17,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
 import pro.fessional.wings.silencer.datetime.ZonedDeserializer;
 
@@ -36,6 +40,18 @@ import java.util.Date;
 @ConditionalOnClass(DateSerializer.class)
 @ConditionalOnProperty(prefix = "spring.wings.jackson", name = "enabled", havingValue = "true")
 public class WingsJacksonConfiguration {
+
+    @Bean
+    @Primary
+    public ObjectMapper jacksonObjectMapper(Jackson2ObjectMapperBuilder builder) {
+        return builder.createXmlMapper(false).build();
+    }
+
+    @Bean
+    public XmlMapper jacksonXmlMapper(Jackson2ObjectMapperBuilder builder) {
+
+        return builder.createXmlMapper(true).build();
+    }
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer customizerFront() {

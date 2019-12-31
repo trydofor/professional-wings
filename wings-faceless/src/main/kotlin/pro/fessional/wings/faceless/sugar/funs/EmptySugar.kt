@@ -133,3 +133,31 @@ fun Boolean?.nullToTrue() = this ?: true
 
 @JvmName("nullToFalse")
 fun Boolean?.nullToFalse() = this ?: false
+
+//
+@JvmName("emptyToNull")
+fun String?.emptyToNull() = if (this.asEmptyValue()) null else this
+
+@JvmName("emptyToNull")
+fun Int?.emptyToNull() = if (this.asEmptyValue()) null else this
+
+@JvmName("emptyToNull")
+fun Long?.emptyToNull() = if (this.asEmptyValue()) null else this
+
+@JvmName("emptyToNull")
+fun Double?.emptyToNull() = if (this.asEmptyValue()) null else this
+
+@JvmName("emptyToNull")
+fun Float?.emptyToNull() = if (this.asEmptyValue()) null else this
+
+@JvmName("emptyToNull")
+fun BigDecimal?.emptyToNull() = if (this.asEmptyValue()) null else this
+
+@JvmName("emptyToNull")
+fun LocalDate?.emptyToNull() = if (this.asEmptyValue()) null else this
+
+@JvmName("emptyToNull")
+fun LocalTime?.emptyToNull() = if (this.asEmptyValue()) null else this
+
+@JvmName("emptyToNull")
+fun Boolean?.emptyToNull() = if (this.nullToTrue()) null else this
