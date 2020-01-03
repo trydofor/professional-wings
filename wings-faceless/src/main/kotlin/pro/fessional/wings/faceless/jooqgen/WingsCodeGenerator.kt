@@ -71,8 +71,11 @@ object WingsCodeGenerator {
         }
 
         // date = "2019-09-09T01:33:51.762Z",
+        // schema version:2019090903
         // serialVersionUID = 319604016;
-        val reg = """date\s*=\s*"[^"]+"|serialVersionUID\s*=\s*-?[0-9_,]+""".toRegex()
+        val ignoreRegex = arrayOf("@Generated[^)]+","serialVersionUID[^;]+")
+                .joinToString("|")
+                .toRegex(RegexOption.MULTILINE)
         for ((k, f) in from) {
             val d = dest[k]
             if (d == null) {
@@ -80,8 +83,8 @@ object WingsCodeGenerator {
                 f.copyTo(t, true)
                 logger.info("create new file=$k")
             } else {
-                val ft = f.readText(UTF_8).replace(reg, "")
-                val dt = d.readText(UTF_8).replace(reg, "")
+                val ft = f.readText(UTF_8).replace(ignoreRegex, "")
+                val dt = d.readText(UTF_8).replace(ignoreRegex, "")
                 if (ft == dt) {
                     logger.info("skip main same file=$k")
                 } else {
