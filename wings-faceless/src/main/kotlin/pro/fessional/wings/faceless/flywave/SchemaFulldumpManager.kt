@@ -46,11 +46,11 @@ class SchemaFulldumpManager(
         for (table in tables) {
 
             if (excludeRegex.find { it.matches(table) } != null) {
-                logger.info("skip the excluded ddl table={}", table)
+                logger.info("[dumpDdl] skip the excluded ddl table={}", table)
                 continue
             }
 
-            logger.info("dump ddls for table={}", table)
+            logger.info("[dumpDdl] dump ddls for table={}", table)
             argddl.append("\n").append(table)
             val ddls = schemaDefinitionLoader.showFullDdl(database, table)
             ddls.joinTo(schema, ";\n\n")
@@ -88,11 +88,11 @@ class SchemaFulldumpManager(
         for (table in tables) {
 
             if (includeRegex.find { it.matches(table) } == null) {
-                logger.info("skip the not include rec table={}", table)
+                logger.info("[dumpRec] skip the not include rec table={}", table)
                 continue
             }
 
-            logger.info("dump record for table={}", table)
+            logger.info("[dumpRec] dump record for table={}", table)
             argrec.append("\n").append(table)
             recode.append("\n")
 

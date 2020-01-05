@@ -48,7 +48,7 @@ class SqlSegmentProcessor(
         } else {
             this.singleComment = commentSingle.trim()
         }
-        logger.debug("use single-comment= {}", this.singleComment)
+        logger.debug("[init] use single-comment= {}", this.singleComment)
 
         // wings.flywave.sql.comment-multiple="/*   */"
         if (commentMultiple.isBlank()) {
@@ -59,7 +59,7 @@ class SqlSegmentProcessor(
             this.blockComment1 = spt[0].trim()
             this.blockComment2 = spt[1].trim()
         }
-        logger.debug("use multiple-comment={} {}", this.blockComment1, this.blockComment2)
+        logger.debug("[init] use multiple-comment={} {}", this.blockComment1, this.blockComment2)
 
         // wings.flywave.sql.delimiter-default=";"
         if (delimiterDefault.isBlank()) {
@@ -67,7 +67,7 @@ class SqlSegmentProcessor(
         } else {
             this.delimiterDefault = delimiterDefault.trim()
         }
-        logger.debug("use delimiter={}", this.delimiterDefault)
+        logger.debug("[init] use delimiter={}", this.delimiterDefault)
 
         // wings.flywave.sql.delimiter-command="DELIMITER"
         if (delimiterCommand.isBlank()) {
@@ -75,7 +75,7 @@ class SqlSegmentProcessor(
         } else {
             this.delimiterCommand = delimiterCommand.trim()
         }
-        logger.debug("use delimiter command={}", this.delimiterCommand)
+        logger.debug("[init] use delimiter command={}", this.delimiterCommand)
     }
 
     /**
@@ -88,7 +88,7 @@ class SqlSegmentProcessor(
             return emptyList()
         }
 
-        logger.debug("parse sql start")
+        logger.debug("[parse] parse sql start")
         var lineBgn = -1
         var annotate = 0
         var tblName = ""
@@ -116,7 +116,7 @@ class SqlSegmentProcessor(
                 }
                 if (annotate != 0) {
                     tblName = line.substringBefore("@").substringAfterLast(singleComment).trim()
-                    logger.debug("got annotation, line={} plain={}, tableName={}", lineCur, annotate < 0, tblName)
+                    logger.debug("[parse] got annotation, line={} plain={}, tableName={}", lineCur, annotate < 0, tblName)
                 }
                 continue
             }
@@ -134,7 +134,7 @@ class SqlSegmentProcessor(
 
             if (line.startsWith(delimiterCommand, true)) {
                 delimiter = line.substringAfter(delimiterCommand).trim()
-                logger.debug("got delimiter command, delimiter={}", delimiter)
+                logger.debug("[parse] got delimiter command, delimiter={}", delimiter)
                 continue
             }
 
@@ -147,7 +147,7 @@ class SqlSegmentProcessor(
                 val sql = builder.toString().trim()
                 if (sql.isNotEmpty()) {
                     if (tblName.isEmpty()) {
-                        logger.debug("use statementParser to get tableName and shard/plain")
+                        logger.debug("[parse] use statementParser to get tableName and shard/plain")
                         when (val st = statementParser.parseTypeAndTable(sql)) {
                             is SqlStatementParser.SqlType.Plain -> {
                                 tblName = st.table
@@ -158,11 +158,11 @@ class SqlSegmentProcessor(
                                 if (annotate == 0) annotate = 1
                             }
                             SqlStatementParser.SqlType.Other ->
-                                logger.warn("unsupported type, use shard datasource to run, sql=$sql")
+                                logger.warn("[parse] unsupported type, use shard datasource to run, sql=$sql")
                         }
                     }
                     val isPlain = annotate < 0
-                    logger.debug("got a segment line from={}, to={}, tableName={}, plain={}", lineBgn, lineCur, tblName, isPlain)
+                    logger.debug("[parse] got a segment line from={}, to={}, tableName={}, plain={}", lineBgn, lineCur, tblName, isPlain)
                     val tblIdx2 = TemplateUtil.parse(sql, tblName)
                     result.add(Segment(isPlain, lineBgn, lineCur, tblName, tblIdx2, sql))
                 }
@@ -175,7 +175,7 @@ class SqlSegmentProcessor(
                 builder.append(line).append("\n")
             }
         }
-        logger.debug("parse sql done")
+        logger.debug("[parse] parse sql done")
         return result
     }
 
