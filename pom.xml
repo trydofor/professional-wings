@@ -36,6 +36,7 @@
         <!--faceless-->
         <kotlin.version>1.3.50</kotlin.version>
         <jooq.version>3.12.1</jooq.version>
+        <!-- wait fo RC4 https://github.com/apache/incubator-shardingsphere/issues/3582 -->
         <sharding-sphere.version>4.0.0-RC2</sharding-sphere.version>
         <!--slardar-->
         <spring-boot.version>2.2.0.RELEASE</spring-boot.version>
