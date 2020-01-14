@@ -2,8 +2,9 @@ package pro.fessional.wings.slardar.security;
 
 import lombok.Getter;
 import lombok.ToString;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -11,6 +12,8 @@ import java.util.Map;
  * @since 2019-11-17
  */
 public class WingsOAuth2xContext {
+
+    public static final WingsOAuth2xContext.Context NULL = new WingsOAuth2xContext.Context();
 
     public static final String CLIENT_ID = "client_id";
     public static final String CLIENT_ID_ALIAS = "client_id_alias";
@@ -26,9 +29,10 @@ public class WingsOAuth2xContext {
 
     public static final ThreadLocal<Context> context = new ThreadLocal<>();
 
-    @Nullable
+    @NotNull
     public static Context get() {
-        return context.get();
+        Context ctx = WingsOAuth2xContext.context.get();
+        return ctx == null ? NULL : ctx;
     }
 
     public static Context set(Map<String, String> param) {
@@ -71,6 +75,6 @@ public class WingsOAuth2xContext {
         private String scope;
         private String state;
 
-        private Map<String, String> requestParam;
+        private Map<String, String> requestParam = Collections.emptyMap();
     }
 }

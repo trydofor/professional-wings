@@ -1,7 +1,7 @@
 package pro.fessional.wings.slardar.security;
 
 import lombok.Getter;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import pro.fessional.wings.silencer.context.WingsI18nContext;
 
 /**
@@ -10,12 +10,13 @@ import pro.fessional.wings.silencer.context.WingsI18nContext;
  */
 public class WingsTerminalContext {
 
-
+    public static final Context NULL = new Context();
     public static final ThreadLocal<Context> context = new ThreadLocal<>();
 
-    @Nullable
+    @NotNull
     public static Context get() {
-        return context.get();
+        Context ctx = WingsTerminalContext.context.get();
+        return ctx == null ? NULL : ctx;
     }
 
     public static Context set(WingsI18nContext i18n, String ip, String agent) {
@@ -35,6 +36,6 @@ public class WingsTerminalContext {
     public static class Context {
         private String remoteIp;
         private String agentInfo;
-        private WingsI18nContext i18nContext;
+        private WingsI18nContext i18nContext = WingsI18nContext.NULL;
     }
 }

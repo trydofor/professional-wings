@@ -27,7 +27,7 @@ public class SecurityContextUtil {
      *
      * @return context
      */
-    @Nullable
+    @NotNull
     public static WingsTerminalContext.Context getTerminalContext() {
         return WingsTerminalContext.get();
     }
@@ -37,10 +37,10 @@ public class SecurityContextUtil {
      *
      * @return context
      */
-    @Nullable
+    @NotNull
     public static WingsOAuth2xContext.Context getOauth2xContext() {
         WingsOAuth2xContext.Context wtx = WingsOAuth2xContext.get();
-        if (wtx == null) {
+        if (wtx == WingsOAuth2xContext.NULL) {
             Authentication a = SecurityContextHolder.getContext().getAuthentication();
             if (a instanceof OAuth2Authentication) {
                 OAuth2Authentication oau = (OAuth2Authentication) a;
@@ -48,7 +48,7 @@ public class SecurityContextUtil {
                 wtx = WingsOAuth2xContext.set(param);
             }
         }
-        return wtx;
+        return wtx == null ? WingsOAuth2xContext.NULL : wtx;
     }
 
     /**

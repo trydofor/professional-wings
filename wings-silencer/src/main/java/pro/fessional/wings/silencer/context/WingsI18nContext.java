@@ -13,6 +13,20 @@ import java.util.TimeZone;
  */
 public interface WingsI18nContext {
 
+    WingsI18nContext NULL = new WingsI18nContext() {
+        @Nullable
+        @Override
+        public Locale getLocale() {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public TimeZone getTimeZone() {
+            return null;
+        }
+    };
+
     @Nullable
     Locale getLocale();
 

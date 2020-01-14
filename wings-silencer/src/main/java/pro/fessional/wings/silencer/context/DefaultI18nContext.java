@@ -13,8 +13,8 @@ import java.util.TimeZone;
  */
 public class DefaultI18nContext implements WingsI18nContext {
 
-    ThreadLocal<Locale> locale = new ThreadLocal<>();
-    ThreadLocal<TimeZone> timezone = new ThreadLocal<>();
+    private final ThreadLocal<Locale> locale = new ThreadLocal<>();
+    private final ThreadLocal<TimeZone> timezone = new ThreadLocal<>();
 
     @Nullable
     @Override
