@@ -30,8 +30,8 @@ public class WingsRemoteResolver {
 
         String ip = null;
         for (String s : config.ipHeader) {
-            ip = request.getHeader(s);
-            if (notInnerIp(ip)) break;
+            ip = trimComma(request.getHeader(s));
+            if (isOuterAddr(ip)) break;
         }
         if (ip == null) {
             ip = request.getRemoteAddr();
@@ -41,8 +41,14 @@ public class WingsRemoteResolver {
         return ip;
     }
 
-    private boolean notInnerIp(String ip) {
-        if (ip == null) return true;
+    private String trimComma(String s) {
+        if (s == null) return s;
+        int p = s.indexOf(',');
+        return p > 0 ? s.substring(0, p) : s;
+    }
+
+    private boolean isOuterAddr(String ip) {
+        if (ip == null) return false;
         for (String s : config.innerIp) {
             if (ip.startsWith(s)) {
                 return false;

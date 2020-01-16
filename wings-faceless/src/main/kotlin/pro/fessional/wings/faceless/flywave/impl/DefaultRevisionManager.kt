@@ -28,6 +28,9 @@ class DefaultRevisionManager(
         private val schemaDefinitionLoader: SchemaDefinitionLoader) : SchemaRevisionManager {
 
     private val logger = LoggerFactory.getLogger(DefaultRevisionManager::class.java)
+    private val unapplyMark = "1000-01-01"
+    private val runningFlag = "17"
+    private val runningMark = "$unapplyMark 00:00:$runningFlag"
 
     override fun currentRevision() = flywaveDataSources.plains().map {
         val tmpl = SimpleJdbcTemplate(it.value, it.key)
@@ -98,6 +101,11 @@ class DefaultRevisionManager(
                 continue
             }
 
+            if (reviText.count { isRunning(it.third) } != 0) {
+                logger.warn("[publishRevision] skip running revision, need manually fix it , name={}, db-revi={}, to-revi={}", plainName, plainRevi, revision)
+                continue
+            }
+
             // 检测和处理边界
             if (isUptoSql) { // 版本从低到高
                 if (reviText.last.first != revision) {
@@ -105,7 +113,7 @@ class DefaultRevisionManager(
                     continue
                 }
                 // 检测apply情况，应该全都未APPLY
-                if (reviText.count { notApply(it.third) } != reviText.size) {
+                if (reviText.count { isUnapply(it.third) } != reviText.size) {
                     logger.warn("[publishRevision] skip broken un-apply_dt upgrade , name={}, db-revi={}, to-revi={}", plainName, plainRevi, revision)
                     continue
                 }
@@ -115,7 +123,7 @@ class DefaultRevisionManager(
                     continue
                 }
                 // 检测apply情况
-                if (reviText.count { notApply(it.third) } != 0) {
+                if (reviText.count { isUnapply(it.third) } != 0) {
                     logger.warn("[publishRevision] skip broken apply_dt-ed downgrade , name={}, db-revi={}, to-revi={}", plainName, plainRevi, revision)
                     continue
                 }
@@ -134,8 +142,8 @@ class DefaultRevisionManager(
                     undo_sql,
                     apply_dt
                 FROM sys_schema_version
-                WHERE apply_dt > '1000-01-01 0:0:0' 
-                    AND  apply_dt <= '1000-01-01 23:23:59'
+                WHERE apply_dt > '$unapplyMark 00:00:00' 
+                    AND  apply_dt <= '$unapplyMark 23:23:59'
                 ORDER BY revision DESC
             """.trimIndent()) {
                 val tplRedo = Triple(it.getLong(1), it.getString(2), it.getString(4))
@@ -221,14 +229,16 @@ class DefaultRevisionManager(
             }
 
             val reviSql = applySqls.first
-            val notAppd = notApply(reviSql.second)
+            val notAppd = isUnapply(reviSql.second)
+            val msgAly = applyMessage(reviSql.second)
+
             if (isUpto && !notAppd) {
-                logger.error("[forceApplyBreak] skip, applied upto, need force to undo first, revi={}, isUpto={}, db={}", revision, isUpto, plainName)
+                logger.error("[forceApplyBreak] skip, $msgAly upto, need force to undo first, revi={}, isUpto={}, db={}", revision, isUpto, plainName)
                 continue
             }
 
             if (!isUpto && notAppd) {
-                logger.error("[forceApplyBreak] skip, not applied undo, revi={}, isUpto={}, db={}", revision, isUpto, plainName)
+                logger.error("[forceApplyBreak] skip, not $msgAly undo, revi={}, isUpto={}, db={}", revision, isUpto, plainName)
                 continue
             }
 
@@ -285,6 +295,10 @@ class DefaultRevisionManager(
                         dbVal["undo_sql"] = ""
                         dbVal["apply_dt"] = ""
                     } else {
+                        val regex = "sys_schema_version.*exist".toRegex(setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE))
+                        if(e.message?.contains(regex) == true){
+                            logger.error("[checkAndInitSql] you may need revision=$INIT1ST_REVISION, for un-init database")
+                        }
                         throw e
                     }
                 }
@@ -302,11 +316,12 @@ class DefaultRevisionManager(
                 val updSql = StringBuilder()
                 val updVal = LinkedList<Any>()
                 val applyd = dbVal["apply_dt"]
-                val notAly = notApply(applyd)
+                val notAly = isUnapply(applyd)
+                val msgAly = applyMessage(applyd)
 
                 // check undo
                 val undoDbs = dbVal["undo_sql"]
-                val undoBlk = undoDbs!!.isBlank()
+                val undoBlk = undoDbs?.isBlank() != false
                 if (undoSql != undoDbs) {
                     if (notAly || undoBlk) {
                         updSql.append("undo_sql = ?, ")
@@ -317,14 +332,14 @@ class DefaultRevisionManager(
                             logger.warn("[checkAndInitSql] diff undo-sql, update it. revi={}, db={}", revi, plainName)
                         }
                     } else {
-                        logger.error("[checkAndInitSql] skip diff undo-sql but applied. revi={}, db={}", revi, plainName)
+                        logger.error("[checkAndInitSql] skip diff undo-sql but $msgAly. revi={}, db={}", revi, plainName)
                         continue
                     }
                 }
 
                 // check upto
                 val uptoDbs = dbVal["upto_sql"]
-                val uptoBlk = uptoDbs!!.isBlank()
+                val uptoBlk = uptoDbs?.isBlank() != false
                 if (uptoSql != uptoDbs) {
                     if (notAly || uptoBlk) {
                         updSql.append("upto_sql = ?, ")
@@ -335,7 +350,7 @@ class DefaultRevisionManager(
                             logger.warn("[checkAndInitSql] diff upto-sql, update it to revi={}, db={}", revi, plainName)
                         }
                     } else {
-                        logger.error("[checkAndInitSql] skip diff upto-sql but applied revi={}, db={}", revi, plainName)
+                        logger.error("[checkAndInitSql] skip diff upto-sql but $msgAly revi={}, db={}", revi, plainName)
                         continue
                     }
                 }
@@ -420,16 +435,16 @@ class DefaultRevisionManager(
             }
         }
     }
-    //
 
+    //
     private fun applyRevisionSql(revi: Long, text: String, isUpto: Boolean, commitId: Long, plainTmpl: SimpleJdbcTemplate, shardTmpl: SimpleJdbcTemplate?, plainTbls: List<String>) {
-        logger.info("[applyRevisionSql] parse revi-sql, revi={}, isUpto={}, mark as '1000-01-01 09:09:09'", revi, isUpto)
+        logger.info("[applyRevisionSql] parse revi-sql, revi={}, isUpto={}, mark as '$runningMark'", revi, isUpto)
 
         val plainName = plainTmpl.name
 
         // 记录部分执行情况。
         if (revi > INIT1ST_REVISION) {
-            plainTmpl.update("UPDATE sys_schema_version SET apply_dt='1000-01-01 09:09:09', commit_id=? WHERE revision=?", commitId, revi)
+            plainTmpl.update("UPDATE sys_schema_version SET apply_dt='$runningMark', commit_id=? WHERE revision=?", commitId, revi)
         }
 
         for (seg in sqlSegmentProcessor.parse(sqlStatementParser, text)) {
@@ -450,7 +465,7 @@ class DefaultRevisionManager(
         val applyDt = if (isUpto) {
             "NOW()"
         } else {
-            "'1000-01-01'"
+            "'$unapplyMark'"
         }
         val cnt = try {
             plainTmpl.update("UPDATE sys_schema_version SET apply_dt=$applyDt, commit_id=? WHERE revision=?", commitId, revi)
@@ -470,7 +485,7 @@ class DefaultRevisionManager(
 
     private fun getRevision(tmpl: SimpleJdbcTemplate): Long = try {
         val rst = AtomicLong()
-        tmpl.query("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt >'1000-01-01'") {
+        tmpl.query("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt >'$unapplyMark'") {
             val r = it.getLong(1)
             if (it.wasNull()) {
                 rst.set(0)
@@ -508,9 +523,21 @@ class DefaultRevisionManager(
         }
     }
 
-    private fun notApply(str: String?): Boolean {
+    private fun isUnapply(str: String?): Boolean {
         if (str.isNullOrEmpty()) return true
-        return str.startsWith("1000-01-01")
+        return str.startsWith(unapplyMark)
+    }
+
+    private fun isRunning(str: String?): Boolean {
+        if (str.isNullOrEmpty()) return false
+        // 可能受到时区影响
+        return str.startsWith(unapplyMark) && str.endsWith(runningFlag)
+    }
+
+    private fun applyMessage(str: String?): String = when {
+        isRunning(str) -> "running"
+        isUnapply(str) -> "unapply"
+        else -> "applied"
     }
 
     private fun assertNot1st(ds: DataSource, er: Exception) {
