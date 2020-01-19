@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.spring.bean;
 
+import org.jooq.Clause;
 import org.jooq.DSLContext;
 import org.jooq.ExecuteContext;
 import org.jooq.ExecuteListenerProvider;
@@ -7,11 +8,19 @@ import org.jooq.Insert;
 import org.jooq.Merge;
 import org.jooq.Param;
 import org.jooq.Query;
+import org.jooq.Table;
+import org.jooq.TableField;
 import org.jooq.Update;
+import org.jooq.VisitContext;
+import org.jooq.VisitListenerProvider;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultExecuteListener;
 import org.jooq.impl.DefaultExecuteListenerProvider;
+import org.jooq.impl.DefaultVisitListener;
+import org.jooq.impl.DefaultVisitListenerProvider;
+import org.jooq.impl.TableImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,6 +43,8 @@ import java.util.regex.Pattern;
 @ConditionalOnProperty(prefix = "spring.wings.jooq", name = "enabled", havingValue = "true")
 public class WingsJooqConfiguration {
 
+    private static final Logger logger = LoggerFactory.getLogger(WingsJooqConfiguration.class);
+
     @Bean
     @Order
     @ConditionalOnMissingBean(Settings.class)
@@ -42,16 +53,50 @@ public class WingsJooqConfiguration {
         return new Settings()
                 .withRenderCatalog(false)
                 .withRenderSchema(false)
-                .withRenderTable(false)
+//                .withRenderTable(false)
                 ;
+    }
+
+
+    /**
+     * workaround before Version 3.13.0
+     *
+     * @link https://github.com/jOOQ/jOOQ/issues/9055
+     * @link https://github.com/jOOQ/jOOQ/issues/7258
+     */
+    @Bean
+    @ConditionalOnProperty(prefix = "spring.wings.jooq.auto-qualify", name = "enabled", havingValue = "true")
+    public VisitListenerProvider autoQualifyFieldListener() {
+        return new DefaultVisitListenerProvider(new DefaultVisitListener() {
+
+            @Override
+            @SuppressWarnings("deprecation")
+            public void visitStart(VisitContext context) {
+                if (!(context.queryPart() instanceof TableField)) return;
+
+                TableField<?, ?> field = (TableField<?, ?>) context.queryPart();
+                Table<?> table = field.getTable();
+                if (!(table instanceof TableImpl)) return;
+
+                boolean notAlias = true;
+                for (Clause clause : ((TableImpl<?>) table).clauses(context.context())) {
+                    if (clause == Clause.TABLE_ALIAS) {
+                        notAlias = false;
+                        break;
+                    }
+                }
+
+                if (notAlias) {
+                    context.queryPart(DSL.field(field.getUnqualifiedName(), field.getDataType()));
+                }
+            }
+        });
     }
 
     @Bean
     @ConditionalOnProperty(prefix = "spring.wings.trigger.journal-delete", name = "enabled", havingValue = "true")
     public ExecuteListenerProvider journalDeleteListener() {
         return new DefaultExecuteListenerProvider(new DefaultExecuteListener() {
-
-            Logger logger = LoggerFactory.getLogger(DefaultExecuteListener.class);
 
             @Override
             public void renderEnd(ExecuteContext ctx) {

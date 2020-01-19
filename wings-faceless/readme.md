@@ -216,11 +216,18 @@ JdbcTemplate用于功能性或复杂的数据库操作，以自动注入Bean。
 
 ## 2.6.JOOQ与ShardingSphere的兼容问题
 
-注意，jooq生成代码，默认使用`table.column`限定列名，而ShardingJdbc做当前版本不支持。
+`flywave`对jooq的`Dao`包装，提供了`reader`和`writer`表，跟踪表。
+因此，强烈建议，使用`Dao`完成基础的CRUD操作，参见`JooqShardingTest.kt`。
+使用dsl构造复杂的sql时，要考虑读写分离。更复杂的sql建议使用jdbcTemplate。
+
+jooq生成代码，默认使用`table.column`限定列名，而ShardingJdbc做当前版本不支持。
 最优解决办法是使ShardingJdbc支持，当前最简单的办法是修改Jooq生成策略，参考以下Issue。
 
  * [JOOQ#9055 should NO table qualify if NO table alias](https://github.com/jOOQ/jOOQ/pull/9406)
  * [ShardingSphere#2859 `table.column` can not sharding](https://github.com/apache/incubator-shardingsphere/issues/2859)
+
+在jooq`2.13.0`版本之前，使用`spring.wings.jooq.auto-qualify.enabled=true`，
+完成限定名的自动处理，其规则是，`不存在alias时，不增加限定名`。
 
 使用Jooq的主要原因之一是`限制的艺术`，避免写出比较复杂的SQL，所以约定如下，
 
@@ -231,35 +238,6 @@ JdbcTemplate用于功能性或复杂的数据库操作，以自动注入Bean。
  * UPDATE 使用`别名`优先于`本名`，在a9m时，使用`本名`
  * SELECT 使用`别名`优先于`本名`，在a9m时，使用`别名`优于`本名`
  * **不要** 使用中文表名，例子代码只是极端测试。
-
-a9m((a9 mod)版为`${jooq.version}.1-a9m`，方法有三，mvn私有库，或直接替换class。
-
- * 私有库，`install`或`deploy` [jooq-a9m](https://github.com/trydofor/jOOQ) 
- * 静态替换，用`/test/resources/patch/*`到对应位置。
- * 动态替换，用`classloader`或`字节码修改术`搞黑科技，不推荐。
-
-因为maven的版本号比较和依赖传递规则，对于间接依赖小于等于jooq版本的，需要显示声明依赖。
-方法是按springboot-starter-jooq的配置，写一份 a9m的，如下格式。
-
-```
-    <dependency>
-        <groupId>org.jooq</groupId>
-        <artifactId>jooq</artifactId>
-        <version>${jooq.version}.1-a9m</version>
-        <!-- https://github.com/jOOQ/jOOQ/pull/9406 -->
-        <!-- 查看readme，只有jooq sharding的时候需要这样-->
-        <exclusions>
-            <exclusion>
-                <artifactId>javax.activation-api</artifactId>
-                <groupId>javax.activation</groupId>
-            </exclusion>
-            <exclusion>
-                <artifactId>jaxb-api</artifactId>
-                <groupId>javax.xml.bind</groupId>
-            </exclusion>
-        </exclusions>
-    </dependency>
-```
 
 JOOQ参考资料
 

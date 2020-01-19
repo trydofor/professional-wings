@@ -75,10 +75,9 @@ open class SchemaRevisionMangerTest {
 
     @Test
     fun test6ResetThen2nd() {
-        schemaRevisionManager.publishRevision(INIT1ST_REVISION, 0)
-        schemaRevisionManager.forceApplyBreak(INIT1ST_REVISION, 0, false)
         schemaRevisionManager.publishRevision(INIT2ND_REVISION, 0)
-
+        schemaRevisionManager.forceApplyBreak(INIT2ND_REVISION, 0, false)
+        schemaRevisionManager.publishRevision(INIT2ND_REVISION, 0)
     }
 
     @Test
@@ -97,7 +96,7 @@ open class SchemaRevisionMangerTest {
     fun test8PartlyUptoSql() {
         schemaRevisionManager.publishRevision(INIT2ND_REVISION, 0)
         schemaRevisionManager.forceExecuteSql("""
-            UPDATE `sys_schema_version` SET `apply_dt` = '1000-01-01 09:09:09' WHERE `revision` = '$INIT2ND_REVISION';
+            UPDATE `sys_schema_version` SET `apply_dt` = '1000-01-01 00:00:17' WHERE `revision` = '$INIT2ND_REVISION';
             """.trimIndent())
         schemaRevisionManager.publishRevision(20190521_01, 0)
     }

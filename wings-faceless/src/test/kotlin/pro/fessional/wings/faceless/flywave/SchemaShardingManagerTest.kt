@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless.flywave
 
 import org.junit.FixMethodOrder
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
@@ -17,7 +18,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("shard")
-//@Ignore("手动执行，使用shard配置")
+@Ignore("手动执行，使用shard配置")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class SchemaShardingManagerTest {
 

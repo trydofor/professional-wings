@@ -21,17 +21,14 @@ import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.shardingsphere.core.config.inline.InlineExpressionParser;
 import org.apache.shardingsphere.core.exception.ShardingException;
-import org.apache.shardingsphere.core.util.InlineExpressionParser;
 import org.apache.shardingsphere.shardingjdbc.spring.boot.common.SpringBootPropertiesConfigurationProperties;
 import org.apache.shardingsphere.shardingjdbc.spring.boot.encrypt.SpringBootEncryptRuleConfigurationProperties;
 import org.apache.shardingsphere.shardingjdbc.spring.boot.masterslave.SpringBootMasterSlaveRuleConfigurationProperties;
 import org.apache.shardingsphere.shardingjdbc.spring.boot.sharding.SpringBootShardingRuleConfigurationProperties;
-import org.apache.shardingsphere.shardingjdbc.spring.boot.util.DataSourceUtil;
-import org.apache.shardingsphere.shardingjdbc.spring.boot.util.PropertyUtil;
-// TODO RC3
-//import org.apache.shardingsphere.spring.boot.util.DataSourceUtil;
-//import org.apache.shardingsphere.spring.boot.util.PropertyUtil;
+import org.apache.shardingsphere.spring.boot.util.DataSourceUtil;
+import org.apache.shardingsphere.spring.boot.util.PropertyUtil;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -112,7 +109,8 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
         StandardEnvironment standardEnv = (StandardEnvironment) environment;
         standardEnv.setIgnoreUnresolvableNestedPlaceholders(true);
         return null == standardEnv.getProperty(prefix + "name")
-                ? new InlineExpressionParser(standardEnv.getProperty(prefix + "names")).splitAndEvaluate() : Collections.singletonList(standardEnv.getProperty(prefix + "name"));
+                ? new InlineExpressionParser(standardEnv.getProperty(prefix + "names")).splitAndEvaluate()
+                : Collections.singletonList(standardEnv.getProperty(prefix + "name"));
     }
 
     @SuppressWarnings("unchecked")
