@@ -1,11 +1,9 @@
 package pro.fessional.wings.faceless.flywave
 
 import org.slf4j.LoggerFactory
-import pro.fessional.mirana.best.ArgsAssert
-import pro.fessional.mirana.time.DateFormatter
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
 import java.io.File
-import java.time.LocalDateTime
+import java.util.LinkedList
 import javax.sql.DataSource
 
 /**
@@ -14,88 +12,175 @@ import javax.sql.DataSource
  * @author trydofor
  * @since 2019-12-15
  */
+typealias FilterSorter = (List<String>) -> List<String>
+
 class SchemaFulldumpManager(
         private val sqlStatementParser: SqlStatementParser,
         private val schemaDefinitionLoader: SchemaDefinitionLoader
 ) {
     private val logger = LoggerFactory.getLogger(SchemaFulldumpManager::class.java)
 
+    companion object {
+        val prefix = "--"
+        /**
+         * 满足正则的会被移除，按ascii自燃顺序排序
+         */
+        fun excludeRegexp(vararg regex: String): FilterSorter {
+            return { tables ->
+                val excludes = regex.map { it.toRegex(RegexOption.IGNORE_CASE) }
+                tables.filter { excludes.find { tt -> tt.matches(it) } == null }.sorted()
+            }
+        }
+
+        /**
+         * 不满足正则的会被移除，按ascii自燃顺序排序
+         */
+        fun includeRegexp(vararg regex: String): FilterSorter {
+            return { tables ->
+                val excludes = regex.map { it.toRegex(RegexOption.IGNORE_CASE) }
+                tables.filter { excludes.find { tt -> tt.matches(it) } != null }.sorted()
+            }
+        }
+
+        /**
+         * 按字符串相等（不区分大小写）过滤和排序。其中，`--` 开头表示分组分割线
+         * @param only true表示只包匹配的，false把未匹配的放最后，按ascii自燃顺序排序
+         */
+        fun groupedTable(only: Boolean, vararg table: String): FilterSorter {
+            return { tables ->
+                val spec = ArrayList<String>(tables.size + table.size)
+                val temp = LinkedList(tables)
+                for (t in table) {
+                    if (t.startsWith(prefix)) {
+                        spec.add(t)
+                        continue
+                    }
+                    val iter = temp.iterator()
+                    while (iter.hasNext()) {
+                        val s = iter.next()
+                        if (s.equals(t, true)) {
+                            iter.remove()
+                            spec.add(s)
+                            break
+                        }
+                    }
+                }
+                if (!only && temp.isNotEmpty()) {
+                    spec.add(prefix)
+                    spec.addAll(temp.sorted())
+                }
+                spec
+            }
+        }
+
+        val excludeShadow: FilterSorter = excludeRegexp(""".*_\d+$""", """.*\$\w+$""")
+    }
+
+    enum class SqlType {
+        ddlTable,
+        ddlTrigger,
+        dmlInsert,
+        sqlUnknown,
+        strComment,
+    }
+
+    data class SqlString(
+            val table: String,
+            val sqlType: SqlType,
+            val sqlText: String
+    )
+
+    fun saveFile(path: String, sqls: List<SqlString>) = File(path).bufferedWriter().use { buf ->
+        val trgs = ArrayList<SqlString>()
+        for (sql in sqls) {
+            when (sql.sqlType) {
+                SqlType.strComment -> {
+                    buf.write(sql.sqlText)
+                }
+                SqlType.ddlTrigger -> {
+                    trgs.add(sql)
+                }
+                else -> {
+                    buf.write( "$prefix ${sql.table} ${sql.sqlType}\n${sql.sqlText};")
+                }
+            }
+            buf.write("\n\n")
+        }
+
+        if (trgs.isNotEmpty()) {
+            buf.write("DELIMITER \$\$\n\n")
+            for (sql in trgs) {
+                buf.write("$prefix ${sql.table} ${sql.sqlType}\n${sql.sqlText} \$\$\n\n")
+            }
+            buf.write("DELIMITER ;\n")
+        }
+    }
 
     /**
      * dump 指定数据库的DDL (table,index和trigger)
-     * 会在fold下生成 schema.sql, argddl.txt
+     * 如果元素以`--`开头，表示注释
      *
-     * @param fold 制定目录
      * @param database 数据库
-     * @param exclude 不包括的表，正则表达式
+     * @param filterSorter 过滤并排序
+     * @return table_name :sql的map
      */
-    fun dumpDdl(fold: File, database: DataSource, vararg exclude: String = arrayOf(".*_\\d+$", ".*\\$\\w+$")) {
-        ArgsAssert.isTrue(fold.isDirectory, "fold must be a directory, %s", fold)
+    fun dumpDdl(database: DataSource, filterSorter: FilterSorter = excludeShadow): List<SqlString> {
 
-        val argddl = StringBuilder("-- ")
-        argddl.append(DateFormatter.full19(LocalDateTime.now()))
-        argddl.append("\n-- exclude")
-        for (s in exclude) {
-            argddl.append("\n").append(s)
-        }
-        argddl.append("\n\n-- tables")
-        val schema = StringBuilder()
-
-        val excludeRegex = exclude.map { it.toRegex(RegexOption.IGNORE_CASE) }
-        val tables = schemaDefinitionLoader.showTables(database).sorted()
+        val tables = schemaDefinitionLoader.showTables(database).let(filterSorter)
+        val result = ArrayList<SqlString>()
+        val ddlTableReg = """CREATE\s+TABLE\s+""".toRegex(RegexOption.IGNORE_CASE)
+        val ddlTriggerReg = """CREATE\s+TRIGGER\s+""".toRegex(RegexOption.IGNORE_CASE)
         for (table in tables) {
-
-            if (excludeRegex.find { it.matches(table) } != null) {
-                logger.info("[dumpDdl] skip the excluded ddl table={}", table)
+            if (table.startsWith(prefix)) {
+                logger.info("[dumpDdl] insert comment, {}", table)
+                result.add(SqlString(table, SqlType.strComment, table))
                 continue
             }
 
             logger.info("[dumpDdl] dump ddls for table={}", table)
-            argddl.append("\n").append(table)
             val ddls = schemaDefinitionLoader.showFullDdl(database, table)
-            ddls.joinTo(schema, ";\n\n")
-            schema.append(";\n\n")
+            for (ddl in ddls) {
+                when {
+                    ddlTableReg.containsMatchIn(ddl) -> {
+                        result.add(SqlString(table, SqlType.ddlTable, ddl))
+                    }
+                    ddlTriggerReg.containsMatchIn(ddl) -> {
+                        result.add(SqlString(table, SqlType.ddlTrigger, ddl))
+                    }
+                    else -> {
+                        result.add(SqlString(table, SqlType.sqlUnknown, ddl))
+                    }
+                }
+            }
         }
 
-        File(fold, "schema.sql").writeText(schema.toString())
-        File(fold, "argddl.txt").writeText(argddl.toString())
+        return result
     }
 
     /**
      * dump指定数据库的数据，INSERT语句
-     * 会在fold下生成 record.sql, argrec.txt
+     * 如果元素以`--`开头，表示注释
      *
-     * @param fold 制定目录
      * @param database 数据库
-     * @param exclude 包括的表，正则表达式
+     * @param filterSorter 过滤并排序
+     * @return table_name:sql的map
      */
-    fun dumpRec(fold: File, database: DataSource, vararg include: String) {
-        ArgsAssert.isTrue(fold.isDirectory, "fold must be a directory, %s", fold)
+    fun dumpRec(database: DataSource, filterSorter: FilterSorter = excludeShadow): List<SqlString> {
 
-        val argrec = StringBuilder("-- ")
-        argrec.append(DateFormatter.full19(LocalDateTime.now()))
-        argrec.append("\n-- include")
-        for (s in include) {
-            argrec.append("\n").append(s)
-        }
-        argrec.append("\n\n-- tables")
-
-        val recode = StringBuilder()
+        val result = ArrayList<SqlString>()
         val tmpl = SimpleJdbcTemplate(database)
-        val includeRegex = include.map { it.toRegex(RegexOption.IGNORE_CASE) }
 
-        val tables = schemaDefinitionLoader.showTables(database).sorted()
+        val tables = schemaDefinitionLoader.showTables(database).let(filterSorter)
+        val builder = StringBuilder()
+
         for (table in tables) {
-
-            if (includeRegex.find { it.matches(table) } == null) {
-                logger.info("[dumpRec] skip the not include rec table={}", table)
+            if (table.startsWith(prefix)) {
+                logger.info("[dumpRec] insert comment, {}", table)
+                result.add(SqlString(table, SqlType.strComment, table))
                 continue
             }
 
             logger.info("[dumpRec] dump record for table={}", table)
-            argrec.append("\n").append(table)
-            recode.append("\n")
-
             val tbl = sqlStatementParser.safeName(table)
             var ist = true
             tmpl.query("select * from $tbl") { rs ->
@@ -103,24 +188,24 @@ class SchemaFulldumpManager(
                 val cnt = meta.columnCount
 
                 if (ist) {
-                    recode.append("INSERT INTO ").append(tbl)
-                    (1..cnt).map {
+                    builder.append("INSERT INTO ").append(tbl)
+                    (1..cnt).joinTo(builder, ",", "(", ")") {
                         sqlStatementParser.safeName(meta.getColumnName(it))
-                    }.joinTo(recode, ",", "(", ")")
-                    recode.append(" VALUES \n")
+                    }
+                    builder.append(" VALUES \n")
                     ist = false
                 }
 
-                (1..cnt).map {
+                (1..cnt).joinTo(builder, ",", "(", ")") {
                     sqlStatementParser.safeValue(rs.getObject(it))
-                }.joinTo(recode, ",", "(", ")")
-                recode.append(",\n")
-            }
+                }
 
-            recode.replace(recode.length - 2, recode.length - 1, ";")
+                builder.append(",\n")
+            }
+            result.add(SqlString(table, SqlType.dmlInsert, builder.substring(0, builder.length - 2)))
+            builder.clear()
         }
 
-        File(fold, "record.sql").writeText(recode.toString())
-        File(fold, "argrec.txt").writeText(argrec.toString())
+        return result
     }
 }

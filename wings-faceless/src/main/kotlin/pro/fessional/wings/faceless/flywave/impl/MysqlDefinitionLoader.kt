@@ -43,15 +43,15 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
             WHERE
                 EVENT_OBJECT_SCHEMA = database()
                 AND EVENT_OBJECT_TABLE=?
-        """.trimIndent(), table) {
+        """, table) {
             val n = it.getString("TRIGGER_NAME")
             val t = it.getString("ACTION_TIMING")
             val e = it.getString("EVENT_MANIPULATION")
             val s = it.getString("ACTION_STATEMENT")
             rst.add("""
-                CREATE TRIGGER `$n` $t $e ON `$table`
-                FOR EACH ROW $s
-            """.trimIndent())
+                |CREATE TRIGGER `$n` $t $e ON `$table`
+                |FOR EACH ROW $s
+            """.trimMargin())
         }
 
         return rst
@@ -76,7 +76,7 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
                 AND TABLE_NAME IN (?, ?)
             GROUP BY COLUMN_NAME, COLUMN_TYPE, COLUMN_COMMENT, ORDINAL_POSITION, IS_NULLABLE, COLUMN_DEFAULT
             HAVING SAME_COUNT != 2
-            """.trimIndent(), table, other) {
+            """, table, other) {
                 diff.append("\nCOL@")
                 diff.append(it.getString("TBL_NAME")).append(".")
                 diff.append(it.getString("COLUMN_NAME")).append("=")
@@ -104,7 +104,7 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
                 AND TABLE_NAME IN (?, ?)
             GROUP BY INDEX_NAME, NON_UNIQUE, SEQ_IN_INDEX, COLUMN_NAME, INDEX_TYPE
             HAVING SAME_COUNT != 2
-            """.trimIndent(), table, other) {
+            """, table, other) {
                 diff.append("\nIDX@")
                 diff.append(it.getString("TBL_NAME")).append(".")
                 diff.append(it.getString("INDEX_NAME")).append("=")
@@ -129,7 +129,7 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
                 AND EVENT_OBJECT_TABLE IN (?, ?)
             GROUP BY TRIGGER_NAME, ACTION_TIMING, EVENT_MANIPULATION, ACTION_STATEMENT
             HAVING SAME_COUNT != 2
-            """.trimIndent(), table, other) {
+            """, table, other) {
                 diff.append("\nTRG@")
                 diff.append(it.getString("TBL_NAME")).append(".")
                 diff.append(it.getString("TRIGGER_NAME")).append("=")
@@ -155,7 +155,7 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
             TABLE_SCHEMA = database()
             AND TABLE_NAME = ?
             ORDER BY ORDINAL_POSITION ASC
-        """.trimIndent(), table) {
+        """, table) {
             val n = it.getString("COLUMN_NAME")
             val t = it.getString("COLUMN_TYPE")
             val c = it.getString("COLUMN_COMMENT").replace("'", "\\'")
@@ -169,7 +169,7 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
         val rst = LinkedList<String>()
         SimpleJdbcTemplate(dataSource).query("""
         SHOW KEYS FROM $table WHERE KEY_NAME = 'PRIMARY'
-        """.trimIndent()) {
+        """) {
             rst.add(it.getString("COLUMN_NAME"))
         }
 
@@ -187,7 +187,7 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
             WHERE
                 EVENT_OBJECT_SCHEMA = database()
                 AND EVENT_OBJECT_TABLE = ?
-            """.trimIndent(), table) {
+            """, table) {
             rst.put(it.getString("TRIGGER_NAME"), it.getString("ACTION_STATEMENT"))
         }
 

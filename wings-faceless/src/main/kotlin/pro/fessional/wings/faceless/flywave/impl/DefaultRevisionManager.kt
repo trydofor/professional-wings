@@ -53,7 +53,7 @@ class DefaultRevisionManager(
                 WHERE revision > ?
                     AND revision <= ?
                 ORDER BY revision ASC
-                """.trimIndent()
+                """
         val selectUndo = """
                 SELECT
                     revision,
@@ -63,7 +63,7 @@ class DefaultRevisionManager(
                 WHERE revision <= ?
                     AND revision >= ?
                 ORDER BY revision DESC
-                """.trimIndent()
+                """
 
         val shardTmpl = flywaveDataSources.shard?.let { SimpleJdbcTemplate(it, "sharding") }
         for ((plainName, plainDs) in flywaveDataSources.plains()) {
@@ -145,7 +145,7 @@ class DefaultRevisionManager(
                 WHERE apply_dt > '$unapplyMark 00:00:00' 
                     AND  apply_dt <= '$unapplyMark 23:23:59'
                 ORDER BY revision DESC
-            """.trimIndent()) {
+            """) {
                 val tplRedo = Triple(it.getLong(1), it.getString(2), it.getString(4))
                 val tplUndo = Triple(it.getLong(1), it.getString(3), it.getString(4))
                 logger.info("[publishRevision] undo partly applied for name={} revi={} need undo it", plainName, tplRedo.first)
@@ -185,12 +185,12 @@ class DefaultRevisionManager(
         val shardTmpl = flywaveDataSources.shard?.let { SimpleJdbcTemplate(it, "sharding") }
         val reviQuery = if (isUpto) {
             """
-                SELECT
-                    upto_sql,
-                    apply_dt
-                FROM sys_schema_version
-                WHERE revision = ?
-                """.trimIndent()
+            SELECT
+                upto_sql,
+                apply_dt
+            FROM sys_schema_version
+            WHERE revision = ?
+            """
         } else {
             """
             SELECT
@@ -198,7 +198,7 @@ class DefaultRevisionManager(
                 apply_dt
             FROM sys_schema_version
             WHERE revision = ?
-            """.trimIndent()
+            """
         }
         logger.info("[forceApplyBreak] begin data-source={}", dataSource)
 
@@ -260,12 +260,12 @@ class DefaultRevisionManager(
                     SELECT upto_sql, undo_sql, apply_dt
                     FROM sys_schema_version
                     WHERE revision = ?
-                    """.trimIndent()
+                    """
         val insertSql = """
                     INSERT INTO sys_schema_version
                     (revision, create_dt, commit_id, upto_sql, undo_sql)
                     VALUES(?, NOW(), ?, ?, ?)
-                    """.trimIndent()
+                    """
 
         for ((revi, entry) in sqls) {
             val undoSql = entry.undoText
@@ -296,7 +296,7 @@ class DefaultRevisionManager(
                         dbVal["apply_dt"] = ""
                     } else {
                         val regex = "sys_schema_version.*exist".toRegex(setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE))
-                        if(e.message?.contains(regex) == true){
+                        if (e.message?.contains(regex) == true) {
                             logger.error("[checkAndInitSql] you may need revision=$INIT1ST_REVISION, for un-init database")
                         }
                         throw e
@@ -366,7 +366,7 @@ class DefaultRevisionManager(
                             modify_dt = NOW(),
                             commit_id = ?
                         WHERE revision = ?
-                        """.trimIndent(), *updVal.toArray())
+                        """, *updVal.toArray())
 
                     if (rst != 1) {
                         throw IllegalStateException("failed to update revi=$revi, db=$plainName")
@@ -384,7 +384,7 @@ class DefaultRevisionManager(
             INSERT INTO sys_schema_version
             (revision, create_dt, commit_id, upto_sql, undo_sql)
             VALUES(?, NOW(), ?, ?, ?)
-            """.trimIndent()
+            """
         val updateSql = """
             UPDATE sys_schema_version SET
                 upto_sql = ?,
@@ -392,7 +392,7 @@ class DefaultRevisionManager(
                 modify_dt = NOW(),
                 commit_id = ?
             WHERE revision = ?
-            """.trimIndent()
+            """
 
         for ((plainName, plainDs) in flywaveDataSources.plains()) {
             logger.info("[forceUpdateSql] ready force update revi={}, on db={}", revision, plainName)

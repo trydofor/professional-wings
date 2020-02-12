@@ -7,6 +7,7 @@ import org.junit.runners.MethodSorters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
+import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedTable
 import java.io.File
 import javax.sql.DataSource
 
@@ -26,15 +27,27 @@ class SchemaFulldumpManagerTest {
     @Autowired
     lateinit var schemaFulldumpManager: SchemaFulldumpManager;
 
-    val fold = File("./src/main/resources/wings-flywave/fulldump")
+    val fold = "./src/test/resources/wings-flywave/fulldump"
 
     @Test
     fun test1DumpDdl() {
-        schemaFulldumpManager.dumpDdl(fold, dataSource)
+        File(fold).mkdirs()
+        val dlls = schemaFulldumpManager.dumpDdl(dataSource, groupedTable(false,
+                "SYS_LIGHT_SEQUENCE",
+                "-- schema",
+                "sys_schema_journal",
+                "sys_schema_version"))
+        schemaFulldumpManager.saveFile("$fold/schema.sql", dlls)
     }
 
     @Test
     fun test2DumpRec() {
-        schemaFulldumpManager.dumpRec(fold, dataSource, "SYS_LIGHT_SEQUENCE", "sys_schema_journal", "sys_schema_version")
+        File(fold).mkdirs()
+        val recs = schemaFulldumpManager.dumpRec(dataSource, groupedTable(true,
+                "SYS_LIGHT_SEQUENCE",
+                "-- schema",
+                "sys_schema_journal",
+                "sys_schema_version"))
+        schemaFulldumpManager.saveFile("$fold/record.sql", recs)
     }
 }
