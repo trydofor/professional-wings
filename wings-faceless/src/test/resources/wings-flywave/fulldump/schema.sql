@@ -1,3 +1,5 @@
+-- revision=2019052101, apply_dt=2020-02-12 18:23:13
+
 -- sys_light_sequence ddlTable
 CREATE TABLE `sys_light_sequence` (
   `seq_name` varchar(100) NOT NULL COMMENT '序列名',
@@ -37,17 +39,6 @@ CREATE TABLE `sys_schema_version` (
   PRIMARY KEY (`revision`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='表结构版本';
 
---
-
--- WG_ORDER ddlTable
-CREATE TABLE `WG_ORDER` (
-  `ID` bigint(20) NOT NULL COMMENT '主键',
-  `CREATE_DT` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日时',
-  `MODIFY_DT` datetime NOT NULL DEFAULT '1000-01-01 00:00:00' ON UPDATE CURRENT_TIMESTAMP COMMENT '修改日时',
-  PRIMARY KEY (`ID`),
-  KEY `IDX_CREATE_DT` (`CREATE_DT`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='测试订单';
-
 -- sys_commit_journal ddlTable
 CREATE TABLE `sys_commit_journal` (
   `id` bigint(20) NOT NULL COMMENT '主键',
@@ -58,6 +49,19 @@ CREATE TABLE `sys_commit_journal` (
   `other_info` text COMMENT '其他信息，业务侧自定义',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='变更日志';
+
+-- wings
+
+-- WG_ORDER ddlTable
+CREATE TABLE `WG_ORDER` (
+  `ID` bigint(20) NOT NULL COMMENT '主键',
+  `CREATE_DT` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日时',
+  `MODIFY_DT` datetime NOT NULL DEFAULT '1000-01-01 00:00:00' ON UPDATE CURRENT_TIMESTAMP COMMENT '修改日时',
+  PRIMARY KEY (`ID`),
+  KEY `IDX_CREATE_DT` (`CREATE_DT`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='测试订单';
+
+--
 
 -- tst_中文也分表 ddlTable
 CREATE TABLE `tst_中文也分表` (
@@ -70,10 +74,6 @@ CREATE TABLE `tst_中文也分表` (
   `other_info` text COMMENT '其他信息，业务侧自定义',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='变更日志';
-
-
-
-
 
 -- tst_中文也分表$del ddlTable
 CREATE TABLE `tst_中文也分表$del` (
@@ -103,6 +103,8 @@ CREATE TABLE `tst_中文也分表$upd` (
   `other_info` text COMMENT '其他信息，业务侧自定义',
   PRIMARY KEY (`_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- TRIGGER
 
 DELIMITER $$
 

@@ -1,3 +1,5 @@
+-- revision=2019052101, apply_dt=2020-02-12 18:23:13
+
 -- sys_light_sequence dmlInsert
 INSERT INTO sys_light_sequence(seq_name,block_id,next_val,step_val,comments) VALUES 
 ('singleton_lightid_blockid',0,10000000,100,'default block_id'),

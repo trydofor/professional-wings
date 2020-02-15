@@ -7,6 +7,7 @@ import org.junit.runners.MethodSorters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
+import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedRegexp
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedTable
 import java.io.File
 import javax.sql.DataSource
@@ -32,11 +33,15 @@ class SchemaFulldumpManagerTest {
     @Test
     fun test1DumpDdl() {
         File(fold).mkdirs()
-        val dlls = schemaFulldumpManager.dumpDdl(dataSource, groupedTable(false,
+        val dlls = schemaFulldumpManager.dumpDdl(dataSource, groupedRegexp(false,
                 "SYS_LIGHT_SEQUENCE",
                 "-- schema",
-                "sys_schema_journal",
-                "sys_schema_version"))
+                "sys_schema_.*",
+                "sys_commit_.*",
+                "-- wings",
+                "WG_.*"
+                )
+        )
         schemaFulldumpManager.saveFile("$fold/schema.sql", dlls)
     }
 
@@ -47,7 +52,8 @@ class SchemaFulldumpManagerTest {
                 "SYS_LIGHT_SEQUENCE",
                 "-- schema",
                 "sys_schema_journal",
-                "sys_schema_version"))
+                "sys_schema_version")
+        )
         schemaFulldumpManager.saveFile("$fold/record.sql", recs)
     }
 }

@@ -23,7 +23,7 @@ class SchemaFulldumpManager(
     companion object {
         val prefix = "--"
         /**
-         * 满足正则的会被移除，按ascii自燃顺序排序
+         * 满足正则（全匹配matches，忽略大小写）的会被移除，按ascii自燃顺序排序
          */
         fun excludeRegexp(vararg regex: String): FilterSorter {
             return { tables ->
@@ -33,7 +33,7 @@ class SchemaFulldumpManager(
         }
 
         /**
-         * 不满足正则的会被移除，按ascii自燃顺序排序
+         * 不满足正则（全匹配matches，忽略大小写）的会被移除，按ascii自燃顺序排序
          */
         fun includeRegexp(vararg regex: String): FilterSorter {
             return { tables ->
@@ -46,7 +46,7 @@ class SchemaFulldumpManager(
          * 按字符串相等（不区分大小写）过滤和排序。其中，`--` 开头表示分组分割线
          * @param only true表示只包匹配的，false把未匹配的放最后，按ascii自燃顺序排序
          */
-        fun groupedTable(only: Boolean, vararg table: String): FilterSorter {
+        fun groupedTable(only: Boolean = true, vararg table: String): FilterSorter {
             return { tables ->
                 val spec = ArrayList<String>(tables.size + table.size)
                 val temp = LinkedList(tables)
@@ -73,6 +73,45 @@ class SchemaFulldumpManager(
             }
         }
 
+        /**
+         * 按正则（全匹配matches，忽略大小写）过滤和排序。其中，`--` 开头表示分组分割线
+         * @param only true表示只包匹配的，false把未匹配的放最后，按ascii自燃顺序排序
+         */
+        fun groupedRegexp(only: Boolean = true, vararg regexp: String): FilterSorter {
+            return { tables ->
+                val regexSlots = LinkedHashMap<Regex, ArrayList<String>>(regexp.size)
+                for (it in regexp) {
+                    when {
+                        it.startsWith(prefix) -> regexSlots.put(it.toRegex(RegexOption.LITERAL), arrayListOf(it.trim()))
+                        else -> regexSlots.put(it.toRegex(RegexOption.IGNORE_CASE), arrayListOf<String>())
+                    }
+                }
+                val temp = LinkedList(tables)
+                val iter = temp.iterator()
+                while (iter.hasNext()) {
+                    val t = iter.next()
+                    for ((r, v) in regexSlots) {
+                        if (r.matches(t)) {
+                            v.add(t)
+                            iter.remove()
+                            break
+                        }
+                    }
+                }
+
+                val grpd = regexSlots.values.map { it.sorted() }.flatten()
+                if (!only && temp.isNotEmpty()) {
+                    ArrayList<String>(grpd.size + temp.size + 1).apply {
+                        addAll(grpd)
+                        add(prefix)
+                        addAll(temp.sorted())
+                    }
+                } else {
+                    grpd
+                }
+            }
+        }
+
         val excludeShadow: FilterSorter = excludeRegexp(""".*_\d+$""", """.*\$\w+$""")
     }
 
@@ -96,19 +135,25 @@ class SchemaFulldumpManager(
             when (sql.sqlType) {
                 SqlType.strComment -> {
                     buf.write(sql.sqlText)
+                    buf.write("\n\n")
                 }
                 SqlType.ddlTrigger -> {
                     trgs.add(sql)
                 }
                 else -> {
-                    buf.write( "$prefix ${sql.table} ${sql.sqlType}\n${sql.sqlText};")
+                    buf.write("$prefix ${sql.table} ${sql.sqlType}")
+                    buf.write("\n")
+                    buf.write("${sql.sqlText};")
+                    buf.write("\n\n")
                 }
             }
-            buf.write("\n\n")
         }
 
         if (trgs.isNotEmpty()) {
-            buf.write("DELIMITER \$\$\n\n")
+            buf.write("$prefix TRIGGER")
+            buf.write("\n\n")
+            buf.write("DELIMITER \$\$")
+            buf.write("\n\n")
             for (sql in trgs) {
                 buf.write("$prefix ${sql.table} ${sql.sqlType}\n${sql.sqlText} \$\$\n\n")
             }
@@ -126,29 +171,33 @@ class SchemaFulldumpManager(
      */
     fun dumpDdl(database: DataSource, filterSorter: FilterSorter = excludeShadow): List<SqlString> {
 
-        val tables = schemaDefinitionLoader.showTables(database).let(filterSorter)
+
         val result = ArrayList<SqlString>()
+        appendRevision(result, SimpleJdbcTemplate(database))
         val ddlTableReg = """CREATE\s+TABLE\s+""".toRegex(RegexOption.IGNORE_CASE)
         val ddlTriggerReg = """CREATE\s+TRIGGER\s+""".toRegex(RegexOption.IGNORE_CASE)
-        for (table in tables) {
+
+        val tables = schemaDefinitionLoader.showTables(database)
+        for (table in filterSorter(tables)) {
             if (table.startsWith(prefix)) {
                 logger.info("[dumpDdl] insert comment, {}", table)
-                result.add(SqlString(table, SqlType.strComment, table))
+                result.add(SqlString(table, SqlType.strComment, table.trim()))
                 continue
             }
 
             logger.info("[dumpDdl] dump ddls for table={}", table)
             val ddls = schemaDefinitionLoader.showFullDdl(database, table)
             for (ddl in ddls) {
+                val sql = ddl.trim()
                 when {
-                    ddlTableReg.containsMatchIn(ddl) -> {
-                        result.add(SqlString(table, SqlType.ddlTable, ddl))
+                    ddlTableReg.containsMatchIn(sql) -> {
+                        result.add(SqlString(table, SqlType.ddlTable, sql))
                     }
-                    ddlTriggerReg.containsMatchIn(ddl) -> {
-                        result.add(SqlString(table, SqlType.ddlTrigger, ddl))
+                    ddlTriggerReg.containsMatchIn(sql) -> {
+                        result.add(SqlString(table, SqlType.ddlTrigger, sql))
                     }
                     else -> {
-                        result.add(SqlString(table, SqlType.sqlUnknown, ddl))
+                        result.add(SqlString(table, SqlType.sqlUnknown, sql))
                     }
                 }
             }
@@ -169,14 +218,14 @@ class SchemaFulldumpManager(
 
         val result = ArrayList<SqlString>()
         val tmpl = SimpleJdbcTemplate(database)
+        appendRevision(result, tmpl)
 
-        val tables = schemaDefinitionLoader.showTables(database).let(filterSorter)
+        val tables = schemaDefinitionLoader.showTables(database)
         val builder = StringBuilder()
-
-        for (table in tables) {
+        for (table in filterSorter(tables)) {
             if (table.startsWith(prefix)) {
                 logger.info("[dumpRec] insert comment, {}", table)
-                result.add(SqlString(table, SqlType.strComment, table))
+                result.add(SqlString(table, SqlType.strComment, table.trim()))
                 continue
             }
 
@@ -207,5 +256,19 @@ class SchemaFulldumpManager(
         }
 
         return result
+    }
+
+    private fun appendRevision(result: ArrayList<SqlString>, tmpl: SimpleJdbcTemplate) = try {
+        tmpl.query("SELECT revision, apply_dt FROM sys_schema_version WHERE apply_dt >'1000-01-01' order by revision desc limit 1") {
+            val sb = StringBuilder()
+            sb.append(prefix)
+            sb.append(" revision=")
+            sb.append(it.getString("revision"))
+            sb.append(", apply_dt=")
+            sb.append(it.getString("apply_dt"))
+            result.add(SqlString("", SqlType.strComment, sb.toString()))
+        }
+    } catch (e: Exception) {
+        logger.warn("[getRevision] failed to revision", e)
     }
 }
