@@ -107,20 +107,6 @@ class MySqlStatementParser : SqlStatementParser {
     }
 
     override fun safeName(str: String): String {
-        val hasBad = str.any {
-            when (it) {
-                in '0'..'9' -> false
-                in 'a'..'z' -> false
-                in 'A'..'Z' -> false
-                '$', '_' -> false
-                else -> true
-            }
-        }
-
-        if (!hasBad) {
-            return str
-        }
-
         val i1 = str.indexOf('`')
         if (i1 >= 0) {
             val i2 = str.lastIndexOf('`')
