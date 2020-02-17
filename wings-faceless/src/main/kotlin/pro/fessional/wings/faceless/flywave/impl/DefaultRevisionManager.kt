@@ -143,12 +143,12 @@ class DefaultRevisionManager(
                     apply_dt
                 FROM sys_schema_version
                 WHERE apply_dt > '$unapplyMark 00:00:00' 
-                    AND  apply_dt <= '$unapplyMark 23:23:59'
+                    AND apply_dt <= '$unapplyMark 23:23:59'
                 ORDER BY revision DESC
             """) {
                 val tplRedo = Triple(it.getLong(1), it.getString(2), it.getString(4))
                 val tplUndo = Triple(it.getLong(1), it.getString(3), it.getString(4))
-                logger.info("[publishRevision] undo partly applied for name={} revi={} need undo it", plainName, tplRedo.first)
+                logger.warn("[publishRevision] undo partly applied for name={} revi={} need undo it", plainName, tplRedo.first)
                 partRedo.add(tplRedo)
                 partUndo.add(tplUndo)
             }
