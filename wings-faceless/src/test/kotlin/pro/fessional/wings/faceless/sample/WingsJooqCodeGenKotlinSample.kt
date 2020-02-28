@@ -7,7 +7,7 @@ object WingsJooqCodeGenKotlinSample {
     @JvmStatic
     fun main(args: Array<String>) {
         // 注释的部分，使用默认值就可
-        val database = "wings_0"
+        val database = "wings"
         WingsCodeGenerator.builder()
                 .jdbcDriver("com.mysql.cj.jdbc.Driver")
                 .jdbcUrl("jdbc:mysql://127.0.0.1/${database}")

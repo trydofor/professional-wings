@@ -6,7 +6,7 @@ CREATE TABLE `sys_light_sequence` (
     `comments` VARCHAR(200) NOT NULL COMMENT '注释说明',
     PRIMARY KEY (`seq_name`, `block_id`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4 COMMENT ='序号生成器';
+  DEFAULT CHARSET = utf8mb4 COMMENT ='103/序号生成器';
 
 CREATE TABLE `sys_commit_journal` (
     `id`         BIGINT(20)   NOT NULL COMMENT '主键',
@@ -17,7 +17,7 @@ CREATE TABLE `sys_commit_journal` (
     `other_info` TEXT COMMENT '其他信息，业务侧自定义',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4 COMMENT ='变更日志';
+  DEFAULT CHARSET = utf8mb4 COMMENT ='104/数据变更集';
 
 -- sys_light_sequence@plain
 INSERT IGNORE `sys_light_sequence` (`seq_name`, `block_id`, `next_val`, `step_val`, `comments`)

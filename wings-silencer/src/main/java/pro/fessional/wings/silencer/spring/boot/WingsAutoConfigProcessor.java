@@ -86,7 +86,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                 path = path.replace("classpath:", "classpath*:");
             } else if (path.startsWith("file:") || path.startsWith("classpath*:")) {
                 // skip
-            }else{
+            } else {
                 path = "file:" + path;
             }
 
@@ -103,28 +103,44 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         // resort by profile
         Set<String> activeProfiles = new HashSet<>(Arrays.asList(environment.getActiveProfiles()));
 
-        LinkedHashMap<String, Resource> tempRes = new LinkedHashMap<>();
-        Pattern profPattern = Pattern.compile("\\.([a-z0-9]+)\\.[a-z0-9]+$", Pattern.CASE_INSENSITIVE);
-        for (Iterator<Map.Entry<String, Resource>> iter = pathRes.entrySet().iterator(); iter.hasNext(); ) {
-            Map.Entry<String, Resource> entry = iter.next();
-            String key = entry.getKey();
-            Matcher matcher = profPattern.matcher(key);
-            if (matcher.find()) {
-                String prof = matcher.group(1);
-                if (activeProfiles.contains(prof)) {
-                    logger.info("adjust active profile=" + prof + ", file=" + key);
-                    tempRes.put(key, entry.getValue());
-                } else {
-                    logger.info("remove inactive profile file=" + key);
+        if (!activeProfiles.isEmpty()) {
+            LinkedHashMap<String, Resource> tempRes = new LinkedHashMap<>();
+            Set<String> profilePath = new HashSet<>();
+            Pattern profPattern = Pattern.compile("\\.([a-z0-9]+)\\.[a-z0-9]+$", Pattern.CASE_INSENSITIVE);
+            for (Iterator<Map.Entry<String, Resource>> iter = pathRes.entrySet().iterator(); iter.hasNext(); ) {
+                Map.Entry<String, Resource> entry = iter.next();
+                String key = entry.getKey();
+                Matcher matcher = profPattern.matcher(key);
+                if (matcher.find()) {
+                    String prof = matcher.group(1);
+                    if (activeProfiles.contains(prof)) {
+                        logger.info("adjust active profile=" + prof + ", file=" + key);
+                        tempRes.put(key, entry.getValue());
+                        profilePath.add(extractBaseName(key));
+                    } else {
+                        logger.info("remove inactive profile file=" + key);
+                    }
+                    iter.remove();
                 }
-                iter.remove();
             }
-        }
-        //
-        if (tempRes.size() > 0) {
-            tempRes.putAll(pathRes);
-            pathRes.clear();
-            pathRes.putAll(tempRes);
+            if (!profilePath.isEmpty()) {
+                for (Iterator<Map.Entry<String, Resource>> iter = pathRes.entrySet().iterator(); iter.hasNext(); ) {
+                    Map.Entry<String, Resource> entry = iter.next();
+                    String key = entry.getKey();
+                    String baseName = extractBaseName(key);
+                    if (profilePath.contains(baseName)) {
+                        logger.info("remove override profile file=" + key);
+                        iter.remove();
+                    }
+                }
+            }
+
+            //
+            if (tempRes.size() > 0) {
+                tempRes.putAll(pathRes);
+                pathRes.clear();
+                pathRes.putAll(tempRes);
+            }
         }
 
         final YamlPropertySourceLoader yamlLoader = new YamlPropertySourceLoader();
@@ -197,7 +213,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         }
     }
 
-    private Pattern ptnSeq = Pattern.compile("-(\\d\\d)$");
+    private Pattern ptnSeq = Pattern.compile("-\\d{2,}(\\.[a-z0-9]+)?$", Pattern.CASE_INSENSITIVE);
 
     private String extractBaseName(String p) {
         int p1 = p.lastIndexOf('/');
@@ -206,7 +222,12 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         int px = Math.max(p1, p2);
         if (px > 0 && pe > px) {
             String sb = p.substring(px + 1, pe);
-            if (!ptnSeq.matcher(sb).find()) {
+            Matcher mt = ptnSeq.matcher(sb);
+            if (mt.find()) {
+                if (mt.group(1) != null) {
+                    sb = sb.substring(0, mt.start(1));
+                }
+            } else {
                 sb = sb + "-99";
             }
             return sb;

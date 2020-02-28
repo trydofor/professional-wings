@@ -38,7 +38,7 @@ open class WingsShardingTests {
               `COMMIT_ID`  bigint(20)   NOT NULL COMMENT '提交ID',
               PRIMARY KEY (`ID`)
             ) ENGINE = InnoDB
-              DEFAULT CHARSET = utf8mb4 COMMENT ='测试订单';
+              DEFAULT CHARSET = utf8mb4 COMMENT ='202/测试订单';
         """.trimIndent())
 
         val result = statement.executeUpdate()

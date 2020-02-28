@@ -8,4 +8,4 @@ CREATE TABLE `tst_中文也分表` (
     `other_info` TEXT COMMENT '其他信息，业务侧自定义',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4 COMMENT ='变更日志';
+  DEFAULT CHARSET = utf8mb4 COMMENT ='201/奇葩测试';

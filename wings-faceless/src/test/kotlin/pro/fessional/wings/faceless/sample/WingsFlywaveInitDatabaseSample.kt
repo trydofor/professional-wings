@@ -31,6 +31,13 @@ class WingsFlywaveInitDatabaseSample {
         schemaRevisionManager.checkAndInitSql(sqls, 0)
 
         // 升级
-        schemaRevisionManager.publishRevision(20190520_01, 0)
+        schemaRevisionManager.publishRevision(2019_0521_01, 0)
+    }
+
+//    @Test
+    fun force(){
+        val sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH)
+        schemaRevisionManager.forceUpdateSql(sqls[2019_0512_01]!!,0);
+        schemaRevisionManager.forceUpdateSql(sqls[2019_0521_01]!!,0);
     }
 }

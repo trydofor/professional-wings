@@ -320,6 +320,7 @@ class DefaultRevisionManager(
                 val msgAly = applyMessage(applyd)
 
                 // check undo
+                var diffSql = false
                 val undoDbs = dbVal["undo_sql"]
                 val undoBlk = undoDbs?.isBlank() != false
                 if (undoSql != undoDbs) {
@@ -333,7 +334,7 @@ class DefaultRevisionManager(
                         }
                     } else {
                         logger.error("[checkAndInitSql] skip diff undo-sql but $msgAly. revi={}, db={}", revi, plainName)
-                        continue
+                        diffSql = true
                     }
                 }
 
@@ -351,8 +352,12 @@ class DefaultRevisionManager(
                         }
                     } else {
                         logger.error("[checkAndInitSql] skip diff upto-sql but $msgAly revi={}, db={}", revi, plainName)
-                        continue
+                        diffSql = true
                     }
+                }
+
+                if (diffSql) {
+                    continue
                 }
 
                 // update
@@ -378,6 +383,9 @@ class DefaultRevisionManager(
         }
     }
 
+    override fun forceUpdateSql(revision: SchemaRevisionManager.RevisionSql, commitId: Long) {
+        forceUpdateSql(revision.revision, revision.uptoText, revision.undoText, commitId)
+    }
 
     override fun forceUpdateSql(revision: Long, upto: String, undo: String, commitId: Long) {
         val insertSql = """

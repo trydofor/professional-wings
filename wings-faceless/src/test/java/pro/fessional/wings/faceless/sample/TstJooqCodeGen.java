@@ -12,7 +12,7 @@ public class TstJooqCodeGen {
     // 需要 版本 20190521_01
     public static void main(String[] args) {
 
-        String database = "wings_0";
+        String database = "wings";
         WingsCodeGenerator.builder()
                           .jdbcDriver("com.mysql.cj.jdbc.Driver")
                           .jdbcUrl("jdbc:mysql://127.0.0.1/" + database)
