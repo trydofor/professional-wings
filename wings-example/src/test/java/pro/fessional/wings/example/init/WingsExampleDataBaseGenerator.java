@@ -31,7 +31,7 @@ public class WingsExampleDataBaseGenerator {
     public void initR520() {
         // 初始
         SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH);
-        schemaRevisionManager.checkAndInitSql(sqls, 0);
+        schemaRevisionManager.checkAndInitSql(sqls, 0, false);
 
         // 初始为可用状态
         schemaRevisionManager.publishRevision(SchemaRevisionManager.INIT2ND_REVISION, 0);
@@ -44,7 +44,7 @@ public class WingsExampleDataBaseGenerator {
 //        String path = "classpath:/wings-flywave/revision/**/*.sql";  // 当前类路径
         String path = "file:src/main/resources/wings-flywave/revision/**/*.sql"; // 具体文件
         SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionSqlScanner.scan(path);
-        schemaRevisionManager.checkAndInitSql(sqls, 0);
+        schemaRevisionManager.checkAndInitSql(sqls, 0, false);
         schemaRevisionManager.publishRevision(3L, 0);
     }
 }

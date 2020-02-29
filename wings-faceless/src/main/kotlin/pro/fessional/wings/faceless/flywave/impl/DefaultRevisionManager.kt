@@ -250,7 +250,7 @@ class DefaultRevisionManager(
         logger.info("[forceApplyBreak] end")
     }
 
-    override fun checkAndInitSql(sqls: SortedMap<Long, SchemaRevisionManager.RevisionSql>, commitId: Long) {
+    override fun checkAndInitSql(sqls: SortedMap<Long, SchemaRevisionManager.RevisionSql>, commitId: Long, updateDiff: Boolean) {
         if (sqls.isNullOrEmpty()) {
             logger.warn("[checkAndInitSql] skip empty local sqls")
             return
@@ -320,21 +320,19 @@ class DefaultRevisionManager(
                 val msgAly = applyMessage(applyd)
 
                 // check undo
-                var diffSql = false
                 val undoDbs = dbVal["undo_sql"]
                 val undoBlk = undoDbs?.isBlank() != false
                 if (undoSql != undoDbs) {
-                    if (notAly || undoBlk) {
+                    if (notAly || undoBlk || updateDiff) {
                         updSql.append("undo_sql = ?, ")
                         updVal.add(undoSql)
                         if (undoBlk) {
                             logger.info("[checkAndInitSql] empty undo-sql, update it. revi={}, db={}", revi, plainName)
                         } else {
-                            logger.warn("[checkAndInitSql] diff undo-sql, update it. revi={}, db={}", revi, plainName)
+                            logger.warn("[checkAndInitSql] diff undo-sql $msgAly, update it. revi={}, db={}", revi, plainName)
                         }
                     } else {
-                        logger.error("[checkAndInitSql] skip diff undo-sql but $msgAly. revi={}, db={}", revi, plainName)
-                        diffSql = true
+                        logger.warn("[checkAndInitSql] diff undo-sql $msgAly, ingore it. revi={}, db={}", revi, plainName)
                     }
                 }
 
@@ -342,22 +340,17 @@ class DefaultRevisionManager(
                 val uptoDbs = dbVal["upto_sql"]
                 val uptoBlk = uptoDbs?.isBlank() != false
                 if (uptoSql != uptoDbs) {
-                    if (notAly || uptoBlk) {
+                    if (notAly || uptoBlk || updateDiff) {
                         updSql.append("upto_sql = ?, ")
                         updVal.add(uptoSql)
                         if (uptoBlk) {
-                            logger.info("[checkAndInitSql] empty upto-sql, update it to revi={}, db={}", revi, plainName)
+                            logger.info("[checkAndInitSql] empty upto-sql, update it. revi={}, db={}", revi, plainName)
                         } else {
-                            logger.warn("[checkAndInitSql] diff upto-sql, update it to revi={}, db={}", revi, plainName)
+                            logger.warn("[checkAndInitSql] diff upto-sql $msgAly, update it. revi={}, db={}", revi, plainName)
                         }
                     } else {
-                        logger.error("[checkAndInitSql] skip diff upto-sql but $msgAly revi={}, db={}", revi, plainName)
-                        diffSql = true
+                        logger.warn("[checkAndInitSql] diff upto-sql $msgAly, ingore it. revi={}, db={}", revi, plainName)
                     }
-                }
-
-                if (diffSql) {
-                    continue
                 }
 
                 // update

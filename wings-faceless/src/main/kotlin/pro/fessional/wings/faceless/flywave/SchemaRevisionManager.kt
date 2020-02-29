@@ -56,9 +56,10 @@ interface SchemaRevisionManager {
      * 当存在但内容不一致，已APPLY则log error，否则更新
      * @param sqls 本地脚本
      * @param commitId 提交ID，参见Journal
+     * @param updateDiff 是否自动更新不一致的 sql
      * @see INIT1ST_REVISION
      */
-    fun checkAndInitSql(sqls: SortedMap<Long, RevisionSql>, commitId: Long)
+    fun checkAndInitSql(sqls: SortedMap<Long, RevisionSql>, commitId: Long, updateDiff: Boolean = false)
 
     /**
      * 不一致时，强制把本地SQL插入或更新到数据库，一致时忽略。

@@ -35,7 +35,7 @@ public class TestFlywaveController {
         if (revi <= 20190512_01) {
             sb.append("\n开始初始化");
             SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH);
-            schemaRevisionManager.checkAndInitSql(sqls, 0);
+            schemaRevisionManager.checkAndInitSql(sqls, 0, false);
             sb.append("\n结束初始化");
         }
         sb.append("\n开始执行版本=").append(revi);
