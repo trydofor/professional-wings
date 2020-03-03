@@ -45,7 +45,7 @@ class SqlSegmentParserTest {
     }
 
     fun printSegment(revi: Long, segment: SqlSegmentProcessor.Segment) {
-        println("revi=${revi}, from=${segment.lineBgn} ,to=${segment.lineEnd}, plain=${segment.isPlain}, table=${segment.tblName}")
+        println(">>> revi=${revi}, from=${segment.lineBgn} ,to=${segment.lineEnd}, dbsType=${segment.dbsType}, table=${segment.tblName}, errType=${segment.errType}, tblRegx=${segment.tblRegx}")
         for (i in 0..1) {
             val newTbl = segment.tblName + "_" + i
             val sql = sqlSegmentProcessor.merge(segment, newTbl)

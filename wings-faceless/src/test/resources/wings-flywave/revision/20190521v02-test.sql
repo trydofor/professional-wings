@@ -1,4 +1,4 @@
--- @plain
+-- @plain error@skip
 REPLACE INTO `tst_中文也分表`(`id`, `commit_id`, `login_info`, `other_info`)
 VALUES (1, -1, 'LOGIN_INFO-1', 'OTHER_INFO-1'),
        (2, -1, 'LOGIN_INFO-2', 'OTHER_INFO-2'),

@@ -16,18 +16,44 @@ class SqlSegmentProcessor(
         delimiterCommand: String = ""
 ) {
 
+    enum class DbsType {
+        Plain, Shard
+    }
+
+    enum class ErrType {
+        Skip, Stop
+    }
+
     class Segment(
-            val isPlain: Boolean, // 是否使用真实数据源
+            val dbsType: DbsType, // 数据源类型
             val lineBgn: Int, // 开始行，含
             val lineEnd: Int, // 结束行，含
             val tblName: String, // 主表
             val tblIdx2: SortedMap<Int, Int>, // 要替换的启止坐标位置
-            val sqlText: String // SQL文本
+            val sqlText: String,  // SQL文本
+            val errType: ErrType = ErrType.Stop, // 错误处理
+            val tblRegx: Regex? // 应用表正则
     ) {
         /**
-         * 完全不需要考虑跟踪表，直接执行
+         * 返回应用到指定
          */
-        fun isBlack() = tblIdx2.isEmpty()
+        fun applyTbl(tables: List<String>?): Set<String> {
+            if (tables == null || tables.isEmpty() || tblIdx2.isEmpty() || tblName.isEmpty()) return emptySet()
+
+            // 包括分表和日志表
+            val tblApply = hashSetOf(tblName) // 保证当前执行
+            if (tblRegx == null) {
+                tblApply.addAll(tables.filter { hasType(tblName, it) > TYPE_PLAIN })
+            } else {
+                tblApply.addAll(tables.filter { tblRegx.matches(it) })
+            }
+            return tblApply
+        }
+
+        /**
+         * 是否是 Plain 数据源
+         */
+        fun isPlain() = dbsType == DbsType.Plain
     }
 
     private val logger = LoggerFactory.getLogger(SqlSegmentProcessor::class.java)
@@ -37,9 +63,6 @@ class SqlSegmentProcessor(
     private val blockComment2: String
     private val delimiterDefault: String
     private val delimiterCommand: String
-
-    private val shardAnnotation = "@shard"
-    private val plainAnnotation = "@plain"
 
     init {
         // wings.flywave.sql.comment-single="--"
@@ -90,8 +113,10 @@ class SqlSegmentProcessor(
 
         logger.debug("[parse] parse sql start")
         var lineBgn = -1
-        var annotate = 0
+        var dbsAnot = 0
         var tblName = ""
+        var tbApply = ""
+        var errType = ErrType.Stop
         var inComment = false
         var lineCur = 0
         var delimiter = delimiterDefault
@@ -109,14 +134,27 @@ class SqlSegmentProcessor(
             }
 
             if (line.startsWith(singleComment)) {
-                if (line.contains(shardAnnotation, true)) {
-                    annotate = 1
-                } else if (line.contains(plainAnnotation, true)) {
-                    annotate = -1
-                }
-                if (annotate != 0) {
-                    tblName = line.substringBefore("@").substringAfterLast(singleComment).trim()
-                    logger.debug("[parse] got annotation, line={} plain={}, tableName={}", lineCur, annotate < 0, tblName)
+                val mt = parseCmd(line)
+                if (mt.isNotEmpty()) {
+                    val (tbl, pln, apl, ers) = mt
+                    logger.debug("[parse] got annotation, line={} , tblName={}, dbsType={}, apply={}, error={}", lineCur, tbl, pln, apl, ers)
+
+                    if (tbl.isNotEmpty()) {
+                        tblName = tbl
+                    }
+                    if (pln.contains("shard", true)) {
+                        dbsAnot = 1
+                    } else if (line.contains("plain", true)) {
+                        dbsAnot = -1
+                    }
+                    if (apl.isNotEmpty()) {
+                        tbApply = apl
+                    }
+                    if (ers.contains("skip", true)) {
+                        errType = ErrType.Skip
+                    } else if (ers.contains("stop", true)) {
+                        errType = ErrType.Stop
+                    }
                 }
                 continue
             }
@@ -151,25 +189,28 @@ class SqlSegmentProcessor(
                         when (val st = statementParser.parseTypeAndTable(sql)) {
                             is SqlStatementParser.SqlType.Plain -> {
                                 tblName = st.table
-                                if (annotate == 0) annotate = -1
+                                if (dbsAnot == 0) dbsAnot = -1
                             }
                             is SqlStatementParser.SqlType.Shard -> {
                                 tblName = st.table
-                                if (annotate == 0) annotate = 1
+                                if (dbsAnot == 0) dbsAnot = 1
                             }
                             SqlStatementParser.SqlType.Other ->
                                 logger.warn("[parse] unsupported type, use shard datasource to run, sql=$sql")
                         }
                     }
-                    val isPlain = annotate < 0
-                    logger.debug("[parse] got a segment line from={}, to={}, tableName={}, plain={}", lineBgn, lineCur, tblName, isPlain)
                     val tblIdx2 = TemplateUtil.parse(sql, tblName)
-                    result.add(Segment(isPlain, lineBgn, lineCur, tblName, tblIdx2, sql))
+                    val dbsType = if (dbsAnot < 0) DbsType.Plain else DbsType.Shard
+                    val tblRegx = if (tbApply.isEmpty()) null else tbApply.toRegex(RegexOption.IGNORE_CASE)
+                    logger.debug("[parse] got a segment line from={}, to={}, tableName={}, dbsType={}, errType={}, tblRegx={}", lineBgn, lineCur, tblName, dbsType, errType, tbApply)
+                    result.add(Segment(dbsType, lineBgn, lineCur, tblName, tblIdx2, sql, errType, tblRegx))
                 }
                 // reset for next
                 lineBgn = -1
-                annotate = 0
+                dbsAnot = 0
                 tblName = ""
+                tbApply = ""
+                errType = ErrType.Stop
                 builder.clear()
             } else {
                 builder.append(line).append("\n")
@@ -188,45 +229,71 @@ class SqlSegmentProcessor(
      */
     fun merge(segment: Segment, newTbl: String) = TemplateUtil.merge(segment.sqlText, segment.tblIdx2, newTbl)
 
-
-    /**
-     * 判断两表关系，忽略大小写
-     * @param table 主表
-     * @param other 其他表
-     * @return
-     * -1:没有关系
-     * 0:自己
-     * 1:trace表
-     * 2:shard表
-     */
-    fun hasType(table: String, other: String): Int {
-        val pos = other.indexOf(table, 0, true)
-        if (pos < 0) return TYPE_OTHER
-
-        val len = pos + table.length
-        if (len == other.length) return TYPE_PLAIN
-
-        val c = other[len]
-        if (c == '$') return TYPE_TRACE
-
-        var typ = TYPE_OTHER
-        if (c == '_') {
-            for (i in len + 1 until other.length) {
-                if (other[i] in '0'..'9') {
-                    typ = TYPE_SHARD
-                } else {
-                    return TYPE_OTHER
-                }
-            }
-        }
-
-        return typ
-    }
-
     companion object {
         const val TYPE_OTHER = -1
         const val TYPE_PLAIN = 0
         const val TYPE_TRACE = 1
         const val TYPE_SHARD = 2
+
+        /**
+         * 判断两表关系，忽略大小写
+         * @param table 主表
+         * @param other 其他表
+         * @return
+         * -1:没有关系
+         * 0:自己
+         * 1:trace表
+         * 2:shard表
+         */
+        fun hasType(table: String, other: String): Int {
+            val pos = other.indexOf(table, 0, true)
+            if (pos < 0) return TYPE_OTHER
+
+            val len = pos + table.length
+            if (len == other.length) return TYPE_PLAIN
+
+            val c = other[len]
+            if (c == '$') return TYPE_TRACE
+
+            var typ = TYPE_OTHER
+            if (c == '_') {
+                for (i in len + 1 until other.length) {
+                    if (other[i] in '0'..'9') {
+                        typ = TYPE_SHARD
+                    } else {
+                        return TYPE_OTHER
+                    }
+                }
+            }
+
+            return typ
+        }
+
+        // -- wgs_order@plain apply@ctr_clerk[_0-0]* error@skip
+        private val cmdReg = "([^@ \t]+)?@([^@ \t]+)".toRegex()
+
+        fun parseCmd(line: String): Array<String> {
+            var emt = true
+            var tbl = ""
+            var dbs = ""
+            var apl = ""
+            var ers = ""
+            for (mr in cmdReg.findAll(line)) {
+                val (k, v) = mr.destructured
+                if(v.equals("plain", true) || v.equals("shard", true)){
+                    tbl = k
+                    dbs = v
+                    emt = false
+                } else if (k.equals("apply", true)){
+                    apl = v
+                    emt = false
+                } else if (k.equals("error", true)){
+                    ers = v
+                    emt = false
+                }
+            }
+
+            return if (emt) emptyArray() else arrayOf(tbl, dbs, apl, ers)
+        }
     }
 }

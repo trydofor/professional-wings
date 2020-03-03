@@ -426,7 +426,7 @@ class DefaultRevisionManager(
                     continue
                 }
                 // 不使用事务，出错时，根据日志进行回滚或数据清理
-                if (seg.isPlain || shardTmpl == null) {
+                if (seg.isPlain() || shardTmpl == null) {
                     logger.info("[forceExecuteSql] use plain to run sql-line from {} to {}, db={}", seg.lineBgn, seg.lineEnd, plainName)
                     runSegment(plainTmpl, plainTbls, seg)
                 } else {
@@ -453,7 +453,7 @@ class DefaultRevisionManager(
                 continue
             }
             // 不使用事务，出错时，根据日志进行回滚或数据清理
-            if (seg.isPlain || shardTmpl == null) {
+            if (seg.isPlain() || shardTmpl == null) {
                 logger.info("[applyRevisionSql] use plain to run sql-line from {} to {}, db={}", seg.lineBgn, seg.lineEnd, plainName)
                 runSegment(plainTmpl, plainTbls, seg)
             } else {
@@ -485,16 +485,19 @@ class DefaultRevisionManager(
 
 
     private fun getRevision(tmpl: SimpleJdbcTemplate): Long = try {
-        val rst = AtomicLong()
-        tmpl.query("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt >'$unapplyMark'") {
+        val rst = AtomicLong(0)
+        tmpl.query("SELECT revision, apply_dt FROM sys_schema_version WHERE apply_dt >'$unapplyMark' order by revision desc limit 2") {
             val r = it.getLong(1)
-            if (it.wasNull()) {
-                rst.set(0)
-            } else {
+            val d = it.getString(2)
+            if (isRunning(d)) {
+                logger.warn("[getRevision] find running revision={}, db={}", r, tmpl.name)
+            } else if (rst.get() < r) {
                 rst.set(r)
             }
         }
-        rst.get()
+        val v = rst.get()
+        logger.info("[getRevision] find applied revision={}, db={}", v, tmpl.name)
+        v
     } catch (e: Exception) {
         assertNot1st(tmpl.dataSource, e)
         logger.warn("[getRevision] failed to get un-init-1st revision, return -1, db={}", tmpl.name)
@@ -503,23 +506,40 @@ class DefaultRevisionManager(
 
     private fun runSegment(tmpl: SimpleJdbcTemplate, tables: List<String>, seg: SqlSegmentProcessor.Segment) {
         val dbName = tmpl.name
-        if (seg.isBlack() || tables.isEmpty() || seg.tblName.isEmpty()) {
+        val tblApply = seg.applyTbl(tables)
+        val errh = seg.errType
+        if (tblApply.isEmpty()) {
             logger.info("[runSegment] run sql on direct table, db={}", dbName)
-            tmpl.execute(seg.sqlText)
+            try {
+                tmpl.execute(seg.sqlText)
+            } catch (e: Exception) {
+                if (errh == SqlSegmentProcessor.ErrType.Skip) {
+                    logger.warn("skip an error by $errh", e)
+                } else {
+                    logger.error("stop an error by $errh", e)
+                    throw e
+                }
+            }
         } else {
             val tblName = seg.tblName
-            // 包括分表和日志表
-            val tblReal = tables.filter { sqlSegmentProcessor.hasType(tblName, it) > TYPE_PLAIN }.toMutableSet()
-            tblReal.add(tblName) // 保证当前执行
-
-            for (tbl in tblReal) {
+            for (tbl in tblApply) {
                 if (tbl == tblName) {
                     logger.info("[runSegment] run sql on plain table={}, db={}", tbl, dbName)
                 } else {
                     logger.info("[runSegment] run sql on shard/trace table={}, db={}", tbl, dbName)
                 }
-                val sql = sqlSegmentProcessor.merge(seg, tbl)
-                tmpl.execute(sql)
+
+                try {
+                    val sql = sqlSegmentProcessor.merge(seg, tbl)
+                    tmpl.execute(sql)
+                } catch (e: Exception) {
+                    if (errh == SqlSegmentProcessor.ErrType.Skip) {
+                        logger.warn("skip an error by $errh", e)
+                    } else {
+                        logger.error("stop an error by $errh", e)
+                        throw e
+                    }
+                }
             }
         }
     }

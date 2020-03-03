@@ -1,3 +1,4 @@
+-- apply@tst_.* error@stop
 CREATE TABLE `tst_中文也分表` (
     `id`         BIGINT(20) NOT NULL COMMENT '主键',
     `create_dt`  DATETIME   NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日时',

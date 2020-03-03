@@ -3,6 +3,7 @@ package pro.fessional.wings.faceless.flywave
 import org.slf4j.LoggerFactory
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.TYPE_PLAIN
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.TYPE_SHARD
+import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.hasType
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
 import pro.fessional.wings.faceless.flywave.util.TemplateUtil
 import java.util.LinkedList
@@ -246,7 +247,7 @@ class SchemaJournalManager(
             }.toMap()
 
             val staffs = tables.filter {
-                val tp = sqlSegmentProcessor.hasType(table, it.value)
+                val tp = hasType(table, it.value)
                 tp == TYPE_SHARD || tp == TYPE_PLAIN
             }.toMap()
 

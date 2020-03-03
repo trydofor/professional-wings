@@ -2,6 +2,7 @@ package pro.fessional.wings.faceless.flywave
 
 import org.slf4j.LoggerFactory
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.TYPE_SHARD
+import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.hasType
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
 import pro.fessional.wings.faceless.flywave.util.TemplateUtil
 import java.lang.IllegalStateException
@@ -46,7 +47,7 @@ class SchemaShardingManager(
 
             val shardBgn = table.length + 1
             for (tbl in allTables) {
-                if (sqlSegmentProcessor.hasType(table, tbl) == TYPE_SHARD) {
+                if (hasType(table, tbl) == TYPE_SHARD) {
                     shardAll[tbl] = tbl.substring(shardBgn).toInt()
                 }
             }
