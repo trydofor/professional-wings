@@ -87,24 +87,51 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
         onlyLive = l;
     }
 
+    /**
+     * 数据标记删除了
+     * 默认 DeleteDt.gt(EmptyValue.DATE_TIME);
+     * @return Condition
+     */
     public Condition onlyDiedData() {
         return onlyDied;
     }
 
+    /**
+     * 数据是有效数据
+     * 默认 DeleteDt.eq(EmptyValue.DATE_TIME);
+     * @return Condition
+     */
     public Condition onlyLiveData() {
         return onlyLive;
     }
 
+    /**
+     * 组合其他条件 and onlyDiedData
+     * @param cond 其他条件
+     * @return Condition
+     */
     public Condition onlyDiedData(@Nullable Condition cond) {
         if (onlyDied == null) return cond;
         return cond == null ? onlyLive : cond.and(onlyDied);
     }
 
+    /**
+     * 组合其他条件 and onlyLiveData
+     * @param cond 其他条件
+     * @return Condition
+     */
     public Condition onlyLiveData(@Nullable Condition cond) {
         if (onlyLive == null) return cond;
         return cond == null ? onlyLive : cond.and(onlyLive);
     }
 
+    /**
+     * 生成一个新的 DSLContext
+     * @return DSLContext
+     */
+    public DSLContext dslContext(){
+        return using(configuration());
+    }
     // ============
 
     /**

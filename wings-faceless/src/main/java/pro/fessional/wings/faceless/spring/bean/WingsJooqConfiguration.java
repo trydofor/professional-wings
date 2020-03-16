@@ -8,6 +8,7 @@ import org.jooq.Insert;
 import org.jooq.Merge;
 import org.jooq.Param;
 import org.jooq.Query;
+import org.jooq.SQLDialect;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.Update;
@@ -53,6 +54,7 @@ public class WingsJooqConfiguration {
         return new Settings()
                 .withRenderCatalog(false)
                 .withRenderSchema(false)
+                .withParseDialect(SQLDialect.MYSQL)
 //                .withRenderTable(false)
                 ;
     }
