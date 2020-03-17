@@ -29,7 +29,8 @@
 使用`idea`作为开发`IDE`，可使用`code style`和`live templates`。
 `wings-idea-style.xml`在`Setting/Editor/Code Style`导入。
 
-`wings-idea-live.xml`需要手动放到`config/templates/`。
+`wings-idea-live.xml`需要手动放到`$config/templates/`。
+参考 https://www.jetbrains.com/help/idea/sharing-live-templates.html
 
  * WIN `%HOMEPATH%\.IntelliJIdea2019.2\config`
  * LIN `~/.IntelliJIdea2019.2/config`
