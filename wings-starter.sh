@@ -18,14 +18,16 @@ BOOT_LOG=''      # 程序日志，需要外部指定
 BOOT_PID=''      # 主程序pid，默认 $BOOT_JAR.pid
 BOOT_CNF=''      # 外部配置。通过env覆盖
 BOOT_ARG=''      # 启动参数。通过env覆盖
+JAVA_XMS='2G'    # 启动参数。通过env覆盖
+JAVA_XMX='2G'    # 启动参数。通过env覆盖
 JAVA_ARG='
 -server
 -Duser.timezone=Asia/Shanghai
 -Djava.awt.headless=true
 -Dfile.encoding=UTF-8
 
--Xms6G
--Xmx6G
+-Xms${JAVA_XMS}
+-Xmx${JAVA_XMX}
 -XX:MetaspaceSize=128m
 -XX:+UseG1GC
 -XX:MaxGCPauseMillis=200
@@ -104,7 +106,7 @@ fi
 
 # check ps
 #count=$(ps -ef -u $USER_RUN | grep -E "java.+$BOOT_JAR " | grep -v grep | wc -l)
-count=$(pgrep -fc -u "$USER_RUN"  "jar +$BOOT_JAR ")
+count=$(pgrep -fc -u "$USER_RUN"  "jar +$BOOT_JAR\b")
 
 # check arg
 if [[ "$1" != "" ]]; then

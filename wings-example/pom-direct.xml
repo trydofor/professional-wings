@@ -27,7 +27,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!--silencer-->
-        <wings.version>2.2.x-SNAPSHOT</wings.version>
+        <wings.version>2.2.6-SNAPSHOT</wings.version>
         <mirana.version>1.0.0-SNAPSHOT</mirana.version>
     </properties>
 

@@ -171,7 +171,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             }
         }
 
-        logger.info("Wings adjust config precedence, first is higher then last");
+        logger.info("Wings adjust config precedence, first is higher than last");
         LinkedList<Map.Entry<String, Resource>> sortedResources = new LinkedList<>(pathRes.entrySet());
         sortedResources.sort((o1, o2) -> {
             String f1 = o1.getKey();
