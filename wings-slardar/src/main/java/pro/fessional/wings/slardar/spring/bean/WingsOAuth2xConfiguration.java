@@ -116,6 +116,7 @@ public class WingsOAuth2xConfiguration {
 
     @Configuration
     @ConditionalOnClass(RedisConnectionFactory.class)
+    @ConditionalOnProperty(prefix = "wings.slardar.actoken", name = "redis-store", havingValue = "true")
     @Order(Ordered.LOWEST_PRECEDENCE - 100)
     public class Redis {
         @Autowired
@@ -279,11 +280,6 @@ public class WingsOAuth2xConfiguration {
 
     @Data
     public static class Actoken {
-
-        /**
-         * 是否启用 wings token，是下2项的开关
-         */
-        private boolean wingsEnhance = true;
         /**
          * wing下access_token前缀，用以区分
          */
