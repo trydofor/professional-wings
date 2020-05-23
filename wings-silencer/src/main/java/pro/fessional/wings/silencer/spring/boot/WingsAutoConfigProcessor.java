@@ -30,14 +30,13 @@ import java.util.regex.Pattern;
 
 /**
  * 自动加载配置路径中的 /wings-conf/*.{yml,yaml,properties}配置。
- * <p/>
- * https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/ <br/>
- * <br/>
- * - "23.5 Application Events and Listeners" <br/>
- * - "24. Externalized Configuration" <br/>
- * - "77.3 Change the Location of External Properties of an Application" <br/>
- * - "76.3 Customize the Environment or ApplicationContext Before It Starts" <br/>
- *
+ * <pre>
+ * [参考资料 docs.spring.io](https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/)
+ *  - #boot-features-application-events-and-listeners
+ *  - #boot-features-external-config
+ *  - #howto-change-the-location-of-external-properties
+ *  - #howto-customize-the-environment-or-application-context
+ * </pre>
  * @author trydofor
  * @since 2019-05-21
  */

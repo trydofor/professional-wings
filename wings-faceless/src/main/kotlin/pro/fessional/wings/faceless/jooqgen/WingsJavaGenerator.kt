@@ -46,11 +46,11 @@ class WingsJavaGenerator : JavaGenerator() {
         out.tab(1).println("public static final %s as%s = %s.as(\"%s\");", className, aliasName, identifier, aliasLower)
         if (shadowDel.isNotEmpty()) {
             // public static final SysCommitJournalTable SysCommitJournal$del = SysCommitJournal.rename("sys_commit_journal$del").as("n6d");
-            out.tab(1).println("public static final %s %s${'$'}del = %s.rename(\"%s${'$'}del\").as(\"%sd\");", className, identifier, identifier, tableName, aliasLower)
+            out.tab(1).println("public static final %s %s\$del = %s.rename(\"%s\$del\").as(\"%sd\");", className, identifier, identifier, tableName, aliasLower)
         }
         if (shadowUpd.isNotEmpty()) {
             // public static final SysCommitJournalTable SysCommitJournal$upd = SysCommitJournal.rename("sys_commit_journal$upd").as("n6u");
-            out.tab(1).println("public static final %s %s${'$'}upd = %s.rename(\"%s${'$'}upd\").as(\"%su\");", className, identifier, identifier, tableName, aliasLower)
+            out.tab(1).println("public static final %s %s\$upd = %s.rename(\"%s\$upd\").as(\"%su\");", className, identifier, identifier, tableName, aliasLower)
         }
     }
 
@@ -134,7 +134,7 @@ class WingsJavaGenerator : JavaGenerator() {
         out.tab(1).println("public %s(%s configuration) {", className, Configuration::class.java)
         // wings shadow begin ====>
         if (shadowDel.isNotEmpty() || shadowUpd.isNotEmpty()) {
-            out.tab(2).println("super(%s, %s, %s.class, configuration, %s, %s);", tableIdentifier, aliasIdentifier, pType, "$tableIdentifier${'$'}del", "$tableIdentifier${'$'}upd")
+            out.tab(2).println("super(%s, %s, %s.class, configuration, %s, %s);", tableIdentifier, aliasIdentifier, pType, "$tableIdentifier\$del", "$tableIdentifier\$upd")
         } else
         // wings shadow endup <====
             out.tab(2).println("super(%s, %s, %s.class, configuration);", tableIdentifier, aliasIdentifier, pType)

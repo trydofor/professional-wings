@@ -20,7 +20,7 @@
  
 ## 0.2.涉及技术
 
- * [Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
+ * [Spring Boot](https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/)
  * [Apache ShardingSphere](https://shardingsphere.apache.org/index_zh.html)
  * [Apache ServiceComb](http://servicecomb.apache.org/cn/)
 

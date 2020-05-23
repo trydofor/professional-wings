@@ -5,6 +5,7 @@ import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.OrderField
 import org.junit.FixMethodOrder
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
@@ -27,6 +28,7 @@ import java.time.LocalDateTime
 @RunWith(SpringRunner::class)
 @SpringBootTest(properties = ["debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"])
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Ignore("手动执行，以有JooqShardingTest覆盖测试 ")
 class WingsJooqDslAndDaoSample {
 
     @Autowired

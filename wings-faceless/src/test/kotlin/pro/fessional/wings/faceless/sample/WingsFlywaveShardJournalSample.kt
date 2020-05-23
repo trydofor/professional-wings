@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.sample
 
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,6 +19,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner
 @RunWith(SpringRunner::class)
 @ActiveProfiles("shard")
 @SpringBootTest(properties = ["debug = true"])
+@Ignore("手动执行，以有SchemaJournalManagerTest，SchemaShardingManagerTest覆盖测试 ")
 class WingsFlywaveShardJournalSample {
 
     @Autowired

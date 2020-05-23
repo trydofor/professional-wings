@@ -61,8 +61,9 @@ public class WingsJooqConfiguration {
 
 
     /**
-     * workaround before Version 3.13.0
+     * workaround before Version 3.14.0
      *
+     * @link https://github.com/jOOQ/jOOQ/issues/8893
      * @link https://github.com/jOOQ/jOOQ/issues/9055
      * @link https://github.com/jOOQ/jOOQ/issues/7258
      */

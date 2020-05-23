@@ -12,6 +12,7 @@ import javax.sql.DataSource
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+
 open class WingsShardingTests {
 
     @Autowired

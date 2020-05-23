@@ -22,5 +22,6 @@ class SimpleJdbcTemplateTest {
     @Test
     fun metadata() {
         val tmpl = SimpleJdbcTemplate(flywaveDataSources.plains().values.iterator().next(), "first")
+        tmpl.execute("show tables")
     }
 }

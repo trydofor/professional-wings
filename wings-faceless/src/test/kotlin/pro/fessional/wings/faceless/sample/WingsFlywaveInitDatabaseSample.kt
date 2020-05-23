@@ -11,13 +11,15 @@ import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner
 
 /**
+ * @see SchemaRevisionMangerTest
  * @author trydofor
  * @since 2019-06-22
  */
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("init")
-@Ignore("手动执行，使用init配置")
+@Ignore("手动执行，以有SchemaRevisionMangerTest覆盖测试 ")
+
 class WingsFlywaveInitDatabaseSample {
 
     @Autowired

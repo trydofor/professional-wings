@@ -22,7 +22,7 @@ class SqlSegmentParserTest {
     lateinit var sqlStatementParser: SqlStatementParser
 
     @Test
-    fun parse() {
+    fun `test1🦁分析🦁人脑分析`() {
         val scan = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH)
         for ((k, v) in scan) {
             val undo = sqlSegmentProcessor.parse(sqlStatementParser, v.undoText)

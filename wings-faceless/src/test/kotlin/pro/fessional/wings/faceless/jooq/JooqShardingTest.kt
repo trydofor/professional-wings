@@ -10,7 +10,9 @@ import org.junit.runners.MethodSorters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.event.annotation.BeforeTestClass
 import org.springframework.test.context.junit4.SpringRunner
+import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.convention.EmptyValue
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao
@@ -47,22 +49,28 @@ class JooqShardingTest {
     @Autowired
     lateinit var dao: Tst中文也分表Dao
 
+    @Autowired
+    lateinit var wingsTestHelper: WingsTestHelper
+
     @Test
-    fun test1Init() {
-        val sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH)
-        schemaRevisionManager.checkAndInitSql(sqls, 0)
+    fun `test0🦁清表重置`() {
+        wingsTestHelper.cleanAndInit()
+    }
+
+    @Test
+    fun `test1🦁清表重置`() {
         schemaRevisionManager.publishRevision(20190521_01, 0)
     }
 
     @Test
-    fun test3Shard() {
+    fun `test3🦁分五张表`() {
         schemaShardingManager.publishShard("tst_中文也分表", 5)
     }
 
     val id by lazy { lightIdService.getId(Tst中文也分表Table::class.java) }
 
     @Test
-    fun test4Insert() {
+    fun `test4🦁插入🦁查日志`() {
         val rd = Tst中文也分表(id,
                 LocalDateTime.now(),
                 EmptyValue.DATE_TIME,
@@ -74,16 +82,16 @@ class JooqShardingTest {
         // insert into `tst_中文也分表` (`id`, `create_dt`, `modify_dt`, `commit_id`, `login_info`, `other_info`) values (?, ?, ?, ?, ?, ?)
         dao.insert(rd)
 
-        println("""
+        wingsTestHelper.note("""
                 ==== 检查 sql 日志 ====
-                [OK] insert into `TST_中文也分表` (`ID`, `CREATE_DT`, `MODIFY_DT`, `COMMIT_ID`, `LOGIN_INFO`, `OTHER_INFO`) values (?, ?, ?, ?, ?, ?)
+                [OK] insert into `tst_中文也分表_0` (`ID`, `CREATE_DT`, `MODIFY_DT`, `COMMIT_ID`, `LOGIN_INFO`, `OTHER_INFO`) values (?, ?, ?, ?, ?, ?)
                 [NG] insert into `TST_中文也分表` as `t1` (`ID`, `CREATE_DT`, `MODIFY_DT`, `COMMIT_ID`, `LOGIN_INFO`, `OTHER_INFO`) values (?, ?, ?, ?, ?, ?)
                 """.trimIndent())
 //        dsl.newRecord(Tst中文也分表Table.TST_中文也分表, rd).insert()
     }
 
     @Test
-    fun test5Update() {
+    fun `test5🦁更新🦁查日志`() {
         val tp = Tst中文也分表Table.Tst中文也分表
         // update `tst_中文也分表` set `modify_dt` = ?, `login_info` = ? where `id` <= ?
         val rp = dsl.update(tp)
@@ -91,7 +99,8 @@ class JooqShardingTest {
                 .set(tp.LoginInfo, "update 5")
                 .where(tp.Id.eq(id))
                 .execute()
-        println("============plain updated= $rp")
+        wingsTestHelper.note("plain updated= $rp")
+        wingsTestHelper.note("update `tst_中文也分表_1` set `modify_dt` = ?, `login_info` = ? where `id` = ?")
 
         val tw = dao.tableForWriter
         val rw = dsl.update(tw)
@@ -99,7 +108,8 @@ class JooqShardingTest {
                 .set(tw.LoginInfo, "update 5")
                 .where(tw.Id.eq(id))
                 .execute()
-        println("============write updated= $rw")
+        wingsTestHelper.note("write updated= $rw")
+        wingsTestHelper.note("update `tst_中文也分表_1` set `modify_dt` = ?, `login_info` = ? where `id` = ?")
 
         val tr = dao.aliasForReader
         val rr = dsl.update(tr)
@@ -107,10 +117,11 @@ class JooqShardingTest {
                 .set(tr.LoginInfo, "update 5")
                 .where(tr.Id.eq(id))
                 .execute()
-        println("============read  updated= $rr")
+        wingsTestHelper.note("read  updated= $rr")
+        wingsTestHelper.note("update `tst_中文也分表_1` as `y8` set `y8`.`modify_dt` = ?, `y8`.`login_info` = ? where `y8`.`id` = ?")
 
 
-        println("""
+        wingsTestHelper.note("""
                 ==== 检查 sql 日志 ====
                 [OK] update `TST_中文也分表` set `MODIFY_DT` = ?, `LOGIN_INFO` = ? where `ID` <= ?
                 [OK] update `TST_中文也分表` as `t1` set `t1`.`MODIFY_DT` = ?, `t1`.`LOGIN_INFO` = ? where `t1`.`ID` <= ?
@@ -119,20 +130,19 @@ class JooqShardingTest {
     }
 
     @Test
-    fun test6Select() = HintManager.getInstance().use {
+    fun `test6🦁查询🦁查日志`() = HintManager.getInstance().use {
         it.setMasterRouteOnly()
 
         val ta = Tst中文也分表Table.asY8
-        // select `y8`.`id` from `tst_中文也分表` as `y8` where `y8`.`id` <= ?
         val ra = dsl.select(ta.Id)
                 .from(ta)
                 .where(ta.Id.le(id))
                 .limit(DSL.inline(1)) // RC3
                 .getSQL()
 //                .fetchOne().into(Long::class.java)
-        println("============alias select= $ra")
+        wingsTestHelper.note("alias select", ra)
+        wingsTestHelper.note("select `y8`.`id` from `tst_中文也分表` as `y8` where `y8`.`id` <= ?")
 
-        // select `id` from `tst_中文也分表` where `id` <= ?
         val tp = Tst中文也分表Table.Tst中文也分表
         val rp = dsl.select(tp.Id)
                 .from(tp)
@@ -140,13 +150,15 @@ class JooqShardingTest {
 //                .limit(1) // https://github.com/apache/incubator-shardingsphere/issues/3330
                 .getSQL()
 //                .fetchOne().into(Long::class.java)
-        println("============plain select= $rp")
+        wingsTestHelper.note("plain select", rp)
+        wingsTestHelper.note("select `id` from `tst_中文也分表` where `id` <= ?")
 
         val da = dao.aliasForReader
         val rd = dao.fetch(da.Id.eq(id))
-        println("============dao select= $rd")
+        wingsTestHelper.note("dao select= $rd")
+        wingsTestHelper.note("select `y8`.`id`, `y8`.`create_dt`, ... from `tst_中文也分表` as `y8` where `y8`.`id` = ?")
 
-        println("""
+        wingsTestHelper.note("""
                 ==== 检查 sql 日志 ====
                 [OK] select `ID` from `TST_中文也分表` where `ID` <= ? limit ?
                 [OK] select `t1`.`ID` from `TST_中文也分表` as `t1` where `t1`.`ID` <= ? limit ?
@@ -155,21 +167,22 @@ class JooqShardingTest {
     }
 
     @Test
-    fun test7Delete() {
+    fun `test7🦁删除🦁查日志`() {
         val tp = Tst中文也分表Table.Tst中文也分表
-        // delete from `tst_中文也分表` where (`id` <= ? and `commit_id` is not null)
         val rp = dsl.delete(tp)
                 .where(tp.Id.eq(id)) // Inline strategy cannot support range sharding.
                 .and(tp.CommitId.isNotNull)
                 .getSQL()
 //                .execute()
-        println("============plain delete= $rp")
+        wingsTestHelper.note("plain delete= $rp")
+        wingsTestHelper.note("delete from `tst_中文也分表` where (`id` <= ? and `commit_id` is not null)")
 
         val dw = dao.tableForWriter
         val rw = dao.delete(dw.Id.eq(id))
-        println("============dao delete= $rw")
+        wingsTestHelper.note("dao delete= $rw")
+        wingsTestHelper.note("delete from `tst_中文也分表_3` where `id` = ? ")
 
-        println("""
+        wingsTestHelper.note("""
                 ==== 检查 sql 日志 ====
                 [OK] delete from `TST_中文也分表` where `ID` <= ?
                 [NG] delete from `TST_中文也分表` where `TST_中文也分表`.`ID` <= ?

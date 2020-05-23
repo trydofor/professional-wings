@@ -86,13 +86,12 @@
 
 ### 1.2.4.参考资料
 
-[参考资料 docs.spring.io](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
+[参考资料 docs.spring.io](https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/)
 
- - "23.5 Application Events and Listeners"
- - "24. Externalized Configuration"
- - "77.3 Change the Location of External Properties of an Application"
- - "76.3 Customize the Environment or ApplicationContext Before It Starts"
-
+ - "4.1.6. Application Events and Listeners"
+ - "4.2. Externalized Configuration"
+ - "9.2.3. Change the Location of External Properties of an Application"
+ - "9.1.3. Customize the Environment or ApplicationContext Before It Starts"
  
 ## 1.3.自动多国语(wings-i18n)
 
@@ -153,7 +152,7 @@ spring对MessageSource的加载与configuration的机制不同，不需要unicod
  * @JsonUnwrapped - 干掉包装类
  
 [jackson注解](https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations)
-[spring定制jackson](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/) - 79.3 Customize the Jackson ObjectMapper
+[spring定制jackson](https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/#howto-customize-the-jackson-objectmapper) - 9.4.3. Customize the Jackson ObjectMapper
 
 ## 1.5.logging/logback
 
@@ -171,3 +170,12 @@ spring对MessageSource的加载与configuration的机制不同，不需要unicod
  * logging.level.<忽略项>=OFF
 
 推荐使用`wings-starter.sh`启动，`wings-starter.env`配置基础参数。
+
+## 1.6.restTemplate和okhttp
+
+默认使用okhttp3作为restTemplate的实现。按spring boot官方文档和源码约定。
+并可以 autoware OkHttpClient 直接使用。
+如果需要按scope定制，使用RestTemplateBuilder，全局应用使用RestTemplateCustomizer。
+
+[RestTemplate 定制](https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/#boot-features-resttemplate-customization)
+org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration

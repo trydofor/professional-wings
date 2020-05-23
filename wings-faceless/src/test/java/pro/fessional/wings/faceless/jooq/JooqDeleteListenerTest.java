@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.jooq;
 
+import lombok.Setter;
 import org.jooq.BatchBindStep;
 import org.jooq.DSLContext;
 import org.junit.FixMethodOrder;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import pro.fessional.wings.faceless.WingsTestHelper;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
 import pro.fessional.wings.faceless.database.helper.JournalHelp;
@@ -28,58 +30,62 @@ import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
  */
 @RunWith(SpringRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@SpringBootTest
 @ActiveProfiles("init")
-public class TestJooqDeleteListener {
+@SpringBootTest(properties = {"debug = true", "spring.wings.trigger.journal-delete.enabled=true"})
 
-    private SchemaRevisionManager revi;
-    private SchemaJournalManager jour;
+public class JooqDeleteListenerTest {
+
+    @Setter(onMethod = @__({@Autowired}))
+    private SchemaRevisionManager revisionManager;
+    @Setter(onMethod = @__({@Autowired}))
+    private SchemaJournalManager journalManager;
+    @Setter(onMethod = @__({@Autowired}))
     private DSLContext dsl;
+    @Setter(onMethod = @__({@Autowired}))
     private JdbcTemplate tmpl;
 
-    @Autowired
-    public void setDsl(DSLContext dsl) {
-        this.dsl = dsl;
+    // >>=>🦁🦁🦁
+    @Setter(onMethod = @__({@Autowired}))
+    private WingsTestHelper wingsTestHelper;
+    @Test
+    public void test0巜清表重置() {
+        wingsTestHelper.cleanAndInit();
     }
+    //  🦁🦁🦁<=<<
 
-    @Autowired
-    public void setTmpl(JdbcTemplate tmpl) {
-        this.tmpl = tmpl;
-    }
-
-    @Autowired
-    public void setRevi(SchemaRevisionManager revi) {
-        this.revi = revi;
-    }
-
-    @Autowired
-    public void setJour(SchemaJournalManager jour) {
-        this.jour = jour;
+    @Test
+    public void test1巜升级表和触发器() {
+        revisionManager.publishRevision(20190521_02L, 0);
+        journalManager.publishUpdate("tst_中文也分表", true, 0);
+        journalManager.publishDelete("tst_中文也分表", true, 0);
+        wingsTestHelper.note("没有错误就是正确");
     }
 
     @Test
-    public void test1Init() {
-        revi.publishRevision(20190521_02L, 0);
-        jour.publishUpdate("tst_中文也分表", true, 0);
-        jour.publishDelete("tst_中文也分表", true, 0);
-    }
-
-
-    @Test
-    public void test2Help() {
+    public void test2巜Helper巜查日志() {
         JournalHelp.deleteByIds(dsl, Tst中文也分表Table.Tst中文也分表, 12L, 1L, 2L);
         JournalHelp.deleteByIds(tmpl, "`tst_中文也分表`", 34L, 3L, 4L);
+        wingsTestHelper.note(
+                "检查日志，在delete前update，如下",
+                "UPDATE `tst_中文也分表` SET commit_id=34, delete_dt=NOW()  WHERE id IN (3,4)",
+                "DELETE FROM `tst_中文也分表`  WHERE id IN (3,4)"
+        );
     }
 
     @Test
-    public void test3Auto() {
+    public void test3巜JooqDsl巜查日志() {
         // 有效
         dsl.execute("DELETE FROM `tst_中文也分表` WHERE ID =5 AND COMMIT_ID = 5");
-        dsl.execute("delete from `tst_中文也分表` where commit_id = 6 and id = 6");
-        dsl.execute("delete from `tst_中文也分表` where commit_id = 7 and id = ?", 7L);
+        dsl.execute("DELETE FROM `tst_中文也分表` WHERE commit_id = 6 AND id = 6");
+        dsl.execute("DELETE FROM `tst_中文也分表` WHERE commit_id = 7 AND id = ?", 7L);
 
         Tst中文也分表Table t = Tst中文也分表Table.Tst中文也分表;
         dsl.deleteFrom(t).where(t.Id.eq(8L).and(t.CommitId.eq(8L))).execute();
+        wingsTestHelper.note(
+                "检查日志，id 等于 (5,6,7,8)的sql，先delete，再update，如下",
+                "DELETE FROM `tst_中文也分表` WHERE ID =5 AND COMMIT_ID = 5",
+                "UPDATE `tst_中文也分表` SET COMMIT_ID = 5 ,delete_dt = NOW() WHERE ID =5"
+        );
 
         // 无效
         LocalDateTime now = LocalDateTime.now();
@@ -96,5 +102,9 @@ public class TestJooqDeleteListener {
         batch.bind(13L, 13L);
         int[] rs = batch.execute();
         System.out.println(Arrays.toString(rs));
+        wingsTestHelper.note(
+                "检查日志，id >= 9的sql，只有delete，如下",
+                "delete from `tst_中文也分表` where `id` = ?"
+        );
     }
 }

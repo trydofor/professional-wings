@@ -21,14 +21,14 @@ import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.shardingsphere.core.config.inline.InlineExpressionParser;
-import org.apache.shardingsphere.core.exception.ShardingException;
 import org.apache.shardingsphere.shardingjdbc.spring.boot.common.SpringBootPropertiesConfigurationProperties;
 import org.apache.shardingsphere.shardingjdbc.spring.boot.encrypt.SpringBootEncryptRuleConfigurationProperties;
 import org.apache.shardingsphere.shardingjdbc.spring.boot.masterslave.SpringBootMasterSlaveRuleConfigurationProperties;
 import org.apache.shardingsphere.shardingjdbc.spring.boot.sharding.SpringBootShardingRuleConfigurationProperties;
 import org.apache.shardingsphere.spring.boot.util.DataSourceUtil;
 import org.apache.shardingsphere.spring.boot.util.PropertyUtil;
+import org.apache.shardingsphere.underlying.common.config.inline.InlineExpressionParser;
+import org.apache.shardingsphere.underlying.common.exception.ShardingSphereException;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -70,6 +70,7 @@ import java.util.Map;
  * https://shardingsphere.apache.org/document/current/cn/manual/sharding-jdbc/configuration/config-java/ <br/>
  *
  * @author trydofor
+ * @see org.apache.shardingsphere.shardingjdbc.spring.boot.SpringBootConfiguration
  *
  * <p>
  * Spring boot flywave and master-slave configuration.
@@ -92,15 +93,16 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
     private final LinkedHashMap<String, DataSource> dataSourceMap = new LinkedHashMap<>();
     private final String jndiName = "jndi-name";
 
+    @Override
     public final void setEnvironment(final Environment environment) {
         String prefix = "spring.shardingsphere.datasource.";
         for (String each : getDataSourceNames(environment, prefix)) {
             try {
                 dataSourceMap.put(each, getDataSource(environment, prefix, each));
             } catch (final ReflectiveOperationException ex) {
-                throw new ShardingException("Can't find datasource type!", ex);
+                throw new ShardingSphereException("Can't find datasource type!", ex);
             } catch (final NamingException namingEx) {
-                throw new ShardingException("Can't find JNDI datasource!", namingEx);
+                throw new ShardingSphereException("Can't find JNDI datasource!", namingEx);
             }
         }
     }
@@ -109,8 +111,7 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
         StandardEnvironment standardEnv = (StandardEnvironment) environment;
         standardEnv.setIgnoreUnresolvableNestedPlaceholders(true);
         return null == standardEnv.getProperty(prefix + "name")
-                ? new InlineExpressionParser(standardEnv.getProperty(prefix + "names")).splitAndEvaluate()
-                : Collections.singletonList(standardEnv.getProperty(prefix + "name"));
+                ? new InlineExpressionParser(standardEnv.getProperty(prefix + "names")).splitAndEvaluate() : Collections.singletonList(standardEnv.getProperty(prefix + "name"));
     }
 
     @SuppressWarnings("unchecked")

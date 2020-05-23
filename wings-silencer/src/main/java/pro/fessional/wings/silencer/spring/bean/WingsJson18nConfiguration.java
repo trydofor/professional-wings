@@ -15,7 +15,7 @@ import pro.fessional.wings.silencer.jackson.I18nStringSerializer;
 
 /**
  * @author trydofor
- * @link https://docs.spring.io/spring-boot/docs/current/reference/html/howto-spring-mvc.html#howto-customize-the-jackson-objectmapper
+ * @link https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/#howto-customize-the-jackson-objectmapper
  * @see InstantDeserializer#ZONED_DATE_TIME
  * @since 2019-06-26
  */

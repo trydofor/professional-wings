@@ -1,14 +1,4 @@
--- revision=2019052001, apply_dt=1000-01-01 00:00:17
-
--- sys_light_sequence ddlTable
-CREATE TABLE `sys_light_sequence` (
-  `seq_name` varchar(100) NOT NULL COMMENT '序列名',
-  `block_id` int(11) NOT NULL DEFAULT '0' COMMENT '分块序号',
-  `next_val` bigint(20) NOT NULL DEFAULT '1' COMMENT '下一个序号',
-  `step_val` int(11) NOT NULL DEFAULT '100' COMMENT '序列步长',
-  `comments` varchar(200) NOT NULL COMMENT '注释说明',
-  PRIMARY KEY (`seq_name`,`block_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='103/序号生成器';
+-- revision=2019051201, apply_dt=2020-05-23 18:04:29
 
 -- schema
 
@@ -39,25 +29,5 @@ CREATE TABLE `sys_schema_version` (
   PRIMARY KEY (`revision`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='101/表结构版本';
 
--- sys_commit_journal ddlTable
-CREATE TABLE `sys_commit_journal` (
-  `id` bigint(20) NOT NULL COMMENT '主键',
-  `create_dt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日时',
-  `event_name` varchar(200) NOT NULL COMMENT '事件名称',
-  `target_key` varchar(200) NOT NULL DEFAULT '' COMMENT '目标数据特征',
-  `login_info` text COMMENT '登陆信息，用户，终端等',
-  `other_info` text COMMENT '其他信息，业务侧自定义',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='104/数据变更集';
-
 -- wings
-
--- WG_ORDER ddlTable
-CREATE TABLE `WG_ORDER` (
-  `ID` bigint(20) NOT NULL COMMENT '主键',
-  `CREATE_DT` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日时',
-  `MODIFY_DT` datetime NOT NULL DEFAULT '1000-01-01 00:00:00' ON UPDATE CURRENT_TIMESTAMP COMMENT '修改日时',
-  PRIMARY KEY (`ID`),
-  KEY `IDX_CREATE_DT` (`CREATE_DT`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='202/测试订单';
 
