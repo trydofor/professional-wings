@@ -79,14 +79,13 @@ class DefaultRevisionManager(
                 continue
             }
 
-            val reviQuery: String
             val isUptoSql = revision > plainRevi
-            if (isUptoSql) { // 升级
+            val reviQuery = if (isUptoSql) { // 升级
                 logger.info("[publishRevision] upgrade, db-revi={}, to-revi={}, db={}", plainRevi, revision, plainName)
-                reviQuery = selectUpto
+                selectUpto
             } else { // 降级
                 logger.info("[publishRevision] downgrade, db-revi={}, to-revi={}", plainRevi, revision)
-                reviQuery = selectUndo
+                selectUndo
             }
 
             val reviText = LinkedList<Triple<Long, String, String>>()

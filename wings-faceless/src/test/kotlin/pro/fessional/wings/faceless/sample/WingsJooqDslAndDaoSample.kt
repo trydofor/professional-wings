@@ -137,7 +137,5 @@ class WingsJooqDslAndDaoSample {
         println(c2)
         val t = Tst中文也分表Table.Tst中文也分表
 
-        val c3 = dsl.selectCount().from(t).where(t.onlyLiveData).execute()
-        println(c3)
     }
 }

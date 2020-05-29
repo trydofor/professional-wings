@@ -29,10 +29,10 @@ CREATE TABLE `sys_schema_journal` (
   DEFAULT CHARSET = utf8mb4 COMMENT ='102/数据触发器';
 
 -- sys_schema_version@plain
-INSERT IGNORE `sys_schema_version`(`revision`, `commit_id`, `upto_sql`, `undo_sql`, `apply_dt`)
+INSERT IGNORE INTO `sys_schema_version` (`revision`, `commit_id`, `upto_sql`, `undo_sql`, `apply_dt`)
 VALUES (2019051201, 0, '', '', NOW());
 
 -- sys_schema_journal@plain
-REPLACE INTO `sys_schema_journal`(`table_name`, `commit_id`, `ddl_updtbl`, `ddl_updtrg`, `ddl_deltbl`, `ddl_deltrg`)
+REPLACE INTO `sys_schema_journal` (`table_name`, `commit_id`, `ddl_updtbl`, `ddl_updtrg`, `ddl_deltbl`, `ddl_deltrg`)
 VALUES ('sys_schema_journal', 0, '', '', '', ''),
        ('sys_schema_version', 0, '', '', '', '');

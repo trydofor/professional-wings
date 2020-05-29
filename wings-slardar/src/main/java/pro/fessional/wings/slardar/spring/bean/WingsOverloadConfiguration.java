@@ -50,7 +50,7 @@ public class WingsOverloadConfiguration {
             logger.warn("Wings shutting down, deny new request, current=" + overloadFilter.getRequestProcess());
             while (overloadFilter.getRequestProcess() > 0) {
                 try {
-                    Thread.sleep(30);
+                    Thread.sleep(30); // 忙等
                 } catch (InterruptedException e) {
                     // ignore
                 }

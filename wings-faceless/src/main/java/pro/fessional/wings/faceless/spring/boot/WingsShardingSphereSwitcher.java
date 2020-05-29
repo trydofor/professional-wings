@@ -29,6 +29,7 @@ import org.apache.shardingsphere.spring.boot.util.DataSourceUtil;
 import org.apache.shardingsphere.spring.boot.util.PropertyUtil;
 import org.apache.shardingsphere.underlying.common.config.inline.InlineExpressionParser;
 import org.apache.shardingsphere.underlying.common.exception.ShardingSphereException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -47,6 +48,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.jdbc.support.JdbcUtils;
+import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.jndi.JndiObjectFactoryBean;
 import pro.fessional.mirana.cast.StringCastUtil;
 import pro.fessional.wings.faceless.flywave.FlywaveDataSources;
@@ -54,6 +57,7 @@ import pro.fessional.wings.faceless.flywave.FlywaveDataSources;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,12 +74,12 @@ import java.util.Map;
  * https://shardingsphere.apache.org/document/current/cn/manual/sharding-jdbc/configuration/config-java/ <br/>
  *
  * @author trydofor
+ * @author caohao
+ * @author panjuan
  * @see org.apache.shardingsphere.shardingjdbc.spring.boot.SpringBootConfiguration
  *
  * <p>
  * Spring boot flywave and master-slave configuration.
- * @author caohao
- * @author panjuan
  */
 
 @ConditionalOnProperty(prefix = "spring.wings.shardingsphere", name = "enabled", havingValue = "true")
@@ -146,13 +150,34 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
     }
 
     @Bean
-    public FlywaveDataSources flywaveDataSources(DataSource inuse, Environment environment) {
+    public FlywaveDataSources flywaveDataSources(@NotNull DataSource inuse, Environment environment) {
         DataSource shard = defaultDataSource(false) == inuse ? null : inuse;
+        Map<DataSource, String> dsJdbc = new HashMap<>();
+        for (Map.Entry<String, DataSource> e : dataSourceMap.entrySet()) {
+            String jdbc = dsJdbc.computeIfAbsent(e.getValue(), this::jdbcUrl);
+            logger.info("database-"+e.getKey() + "-url=" + jdbc);
+        }
+
+        if (shard != null) {
+            logger.info("database-shard-url=" + dsJdbc.get(shard));
+        } else {
+            logger.info("database-shard-url=no-shard-plain-database");
+        }
+        logger.info("database-inuse-url=" + dsJdbc.get(inuse));
         return new FlywaveDataSources(dataSourceMap, inuse, shard, hasSlave(environment));
     }
 
     //
     private static final Log logger = LogFactory.getLog(WingsShardingSphereSwitcher.class);
+
+    private String jdbcUrl(DataSource ds) {
+        if (ds == null) return "";
+        try {
+            return JdbcUtils.extractDatabaseMetaData(ds, "getURL");
+        } catch (MetaDataAccessException e) {
+            return "unknown";
+        }
+    }
 
     private DataSource defaultDataSource(boolean log) {
         Map.Entry<String, DataSource> first = dataSourceMap.entrySet().iterator().next();

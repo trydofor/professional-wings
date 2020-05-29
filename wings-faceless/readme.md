@@ -1,6 +1,6 @@
 # 2.虚空假面(faceless)
 
-支持MySql系的一套Sharding，并有表结构和数据变更的版本管理的基本套餐。
+支持MySql系(mysql及分支,h2)的一套Sharding，并有表结构和数据变更的版本管理的基本套餐。
 
  * 轻量SCHEMA版本管理(fly-wave)
  * DATA版本管理和追踪(journal/$log)
@@ -263,3 +263,32 @@ JOOQ参考资料
 这样会使有些`ApplicationListener`得不到触发，可能导致部分TestCase失败。
 
 发生部分失败部分成功时，重新执行失败部分，直到成功即可。
+
+## 2.8.H2本地库
+
+在不方便提供mysql数据库的时候，如演示或本地数据库应用，可以使用H2，配置如下。
+```
+jdbc:h2:~/wings-init
+;USER=trydofor;PASSWORD=moilioncircle
+;MODE=MySQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE
+;AUTO_RECONNECT=TRUE;AUTO_SERVER=TRUE
+```
+其中，H2对mysql做了部分兼容，分表分库可以，trigger不支持，参考配置，
+
+ * wings-conf/shardingsphere-datasource-79.properties
+ * wings-conf/shardingsphere-datasource-79.init.properties
+
+[H2官方文档](http://h2database.com/html/features.html)
+
+## 2.9.常见问题
+
+### 001.项目无法启动
+
+去掉了默认的datasource配置，使用无法启动的方式来提醒必须配置数据库。
+
+### 002.控制flywave时，spring找不到bean `SchemaRevisionManager`
+
+在2.2.6后续中，默认关闭了spring.wings.flywave.enabled=false
+初始化的时候需要打开，例如在test中增加临时打开
+`@SpringBootTest(properties = "spring.wings.flywave.enabled=true")`
+

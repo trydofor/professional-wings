@@ -21,7 +21,8 @@ class SchemaFulldumpManager(
     private val logger = LoggerFactory.getLogger(SchemaFulldumpManager::class.java)
 
     companion object {
-        val prefix = "--"
+        const val prefix = "--"
+
         /**
          * 满足正则（全匹配matches，忽略大小写）的会被移除，按ascii自燃顺序排序
          */
@@ -82,8 +83,8 @@ class SchemaFulldumpManager(
                 val regexSlots = LinkedHashMap<Regex, ArrayList<String>>(regexp.size)
                 for (it in regexp) {
                     when {
-                        it.startsWith(prefix) -> regexSlots.put(it.toRegex(RegexOption.LITERAL), arrayListOf(it.trim()))
-                        else -> regexSlots.put(it.toRegex(RegexOption.IGNORE_CASE), arrayListOf<String>())
+                        it.startsWith(prefix) -> regexSlots[it.toRegex(RegexOption.LITERAL)] = arrayListOf(it.trim())
+                        else -> regexSlots[it.toRegex(RegexOption.IGNORE_CASE)] = arrayListOf()
                     }
                 }
                 val temp = LinkedList(tables)
@@ -116,11 +117,11 @@ class SchemaFulldumpManager(
     }
 
     enum class SqlType {
-        ddlTable,
-        ddlTrigger,
-        dmlInsert,
-        sqlUnknown,
-        strComment,
+        DdlTable,
+        DdlTrigger,
+        DmlInsert,
+        SqlUnknown,
+        StrComment,
     }
 
     data class SqlString(
@@ -133,11 +134,11 @@ class SchemaFulldumpManager(
         val trgs = ArrayList<SqlString>()
         for (sql in sqls) {
             when (sql.sqlType) {
-                SqlType.strComment -> {
+                SqlType.StrComment -> {
                     buf.write(sql.sqlText)
                     buf.write("\n\n")
                 }
-                SqlType.ddlTrigger -> {
+                SqlType.DdlTrigger -> {
                     trgs.add(sql)
                 }
                 else -> {
@@ -181,7 +182,7 @@ class SchemaFulldumpManager(
         for (table in filterSorter(tables)) {
             if (table.startsWith(prefix)) {
                 logger.info("[dumpDdl] insert comment, {}", table)
-                result.add(SqlString(table, SqlType.strComment, table.trim()))
+                result.add(SqlString(table, SqlType.StrComment, table.trim()))
                 continue
             }
 
@@ -191,13 +192,13 @@ class SchemaFulldumpManager(
                 val sql = ddl.trim()
                 when {
                     ddlTableReg.containsMatchIn(sql) -> {
-                        result.add(SqlString(table, SqlType.ddlTable, sql))
+                        result.add(SqlString(table, SqlType.DdlTable, sql))
                     }
                     ddlTriggerReg.containsMatchIn(sql) -> {
-                        result.add(SqlString(table, SqlType.ddlTrigger, sql))
+                        result.add(SqlString(table, SqlType.DdlTrigger, sql))
                     }
                     else -> {
-                        result.add(SqlString(table, SqlType.sqlUnknown, sql))
+                        result.add(SqlString(table, SqlType.SqlUnknown, sql))
                     }
                 }
             }
@@ -225,7 +226,7 @@ class SchemaFulldumpManager(
         for (table in filterSorter(tables)) {
             if (table.startsWith(prefix)) {
                 logger.info("[dumpRec] insert comment, {}", table)
-                result.add(SqlString(table, SqlType.strComment, table.trim()))
+                result.add(SqlString(table, SqlType.StrComment, table.trim()))
                 continue
             }
 
@@ -251,8 +252,11 @@ class SchemaFulldumpManager(
 
                 builder.append(",\n")
             }
-            result.add(SqlString(table, SqlType.dmlInsert, builder.substring(0, builder.length - 2)))
-            builder.clear()
+
+            if (builder.length > 2) {
+                result.add(SqlString(table, SqlType.DmlInsert, builder.substring(0, builder.length - 2)))
+                builder.clear()
+            }
         }
 
         return result
@@ -266,7 +270,7 @@ class SchemaFulldumpManager(
             sb.append(it.getString("revision"))
             sb.append(", apply_dt=")
             sb.append(it.getString("apply_dt"))
-            result.add(SqlString("", SqlType.strComment, sb.toString()))
+            result.add(SqlString("", SqlType.StrComment, sb.toString()))
         }
     } catch (e: Exception) {
         logger.warn("[getRevision] failed to revision", e)

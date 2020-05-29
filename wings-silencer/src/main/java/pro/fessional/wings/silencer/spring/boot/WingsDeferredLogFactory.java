@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class WingsDeferredLogFactory implements ApplicationListener<ApplicationEvent> {
 
-    private static ConcurrentHashMap<Class<?>, DeferredLog> loggers = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Class<?>, DeferredLog> loggers = new ConcurrentHashMap<>();
 
     public static DeferredLog getLog(Class<?> claz) {
         return loggers.computeIfAbsent(claz, k -> new DeferredLog());

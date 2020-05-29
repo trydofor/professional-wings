@@ -10,7 +10,6 @@ import org.junit.runners.MethodSorters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.event.annotation.BeforeTestClass
 import org.springframework.test.context.junit4.SpringRunner
 import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.convention.EmptyValue
@@ -20,7 +19,6 @@ import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也�
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager
 import pro.fessional.wings.faceless.service.lightid.LightIdService
-import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner
 import java.time.LocalDateTime
 
 /**

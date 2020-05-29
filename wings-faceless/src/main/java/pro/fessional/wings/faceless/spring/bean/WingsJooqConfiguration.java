@@ -188,7 +188,7 @@ public class WingsJooqConfiguration {
 
             // delete from `tst_中文也分表` where (`id` = ? and `commit_id` = ?)
             // commit_id = :commit_id and `id` = ?
-            private Pattern ptnCommitId = Pattern.compile("" +
+            private final Pattern ptnCommitId = Pattern.compile("" +
                             "\\band\\s+([`'\"]?commit_id[`'\"]?[\\s]*=[\\s]*([^()=\\s]+))" +
                             "|" +
                             "([`'\"]?commit_id[`'\"]?[\\s]*=[\\s]*([^()=\\s]+))\\s+and\\b"

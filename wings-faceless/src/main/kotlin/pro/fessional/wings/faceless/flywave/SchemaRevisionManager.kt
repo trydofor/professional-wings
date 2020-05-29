@@ -64,8 +64,6 @@ interface SchemaRevisionManager {
     /**
      * 不一致时，强制把本地SQL插入或更新到数据库，一致时忽略。
      * @param revision 版本号
-     * @param upto 升级脚本
-     * @param undo 降级脚本
      * @param commitId 提交ID，参见Journal
      */
     fun forceUpdateSql(revision:RevisionSql, commitId: Long)

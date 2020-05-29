@@ -7,6 +7,7 @@ import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader.Companion.TYP
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
 import java.lang.StringBuilder
 import java.util.LinkedList
+import java.util.concurrent.ConcurrentHashMap
 import javax.sql.DataSource
 
 /**
@@ -14,6 +15,13 @@ import javax.sql.DataSource
  * @since 2019-06-13
  */
 class MysqlDefinitionLoader : SchemaDefinitionLoader {
+
+    private val h2database: ConcurrentHashMap<DataSource, Boolean> = ConcurrentHashMap()
+
+    fun isH2Database(dataSource: DataSource) =
+            h2database.computeIfAbsent(dataSource) {
+                SimpleJdbcTemplate(dataSource).jdbcUrl().contains(":h2:", true)
+            }
 
     override fun showTables(dataSource: DataSource): List<String> {
         val list = LinkedList<String>()
@@ -26,6 +34,19 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
     override fun showFullDdl(dataSource: DataSource, table: String): List<String> {
         val rst = LinkedList<String>()
         val tmpl = SimpleJdbcTemplate(dataSource)
+        if (isH2Database(dataSource)) {
+            tmpl.query("SCRIPT NODATA NOPASSWORDS NOSETTINGS TABLE $table") {
+                val s = it.getString(1)
+                if (s.startsWith("CREATE CACHED TABLE ", ignoreCase = true) ||
+                        s.startsWith("CREATE TABLE ", ignoreCase = true) ||
+                        s.startsWith("CREATE MEMORY TABLE ", ignoreCase = true)
+                ) {
+                    rst.add(s) // Create Table
+                }
+            }
+            return rst
+        }
+
         // Table , Create Table
         tmpl.query("SHOW CREATE TABLE $table") {
             rst.add(it.getString(2)) // Create Table
@@ -61,6 +82,28 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
 
         val diff = StringBuilder()
         val tmpl = SimpleJdbcTemplate(dataSource)
+
+        if (isH2Database(dataSource)) {
+            if (types and TYPE_TBL != 0) {
+                val t1 = showBoneCol(dataSource, table)
+                val t2 = showBoneCol(dataSource, other)
+
+                val s12 = t1.toSet() - t2
+                if (s12.isNotEmpty()) {
+                    diff.append("\nCOL@")
+                    diff.append(table).append(".")
+                    diff.append(s12.joinToString(","))
+                }
+
+                val s21 = t2.toSet() - t1
+                if (s21.isNotEmpty()) {
+                    diff.append("\nCOL@")
+                    diff.append(other).append(".")
+                    diff.append(s21.joinToString(","))
+                }
+            }
+            return diff.toString()
+        }
 
         // 对比列
         if (types and TYPE_TBL != 0) {
@@ -143,6 +186,16 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
 
     override fun showBoneCol(dataSource: DataSource, table: String): List<String> {
         val rst = LinkedList<String>()
+
+        if (isH2Database(dataSource)) {
+            SimpleJdbcTemplate(dataSource).query("SHOW COLUMNS FROM $table") {
+                val n = it.getString("FIELD")
+                val t = it.getString("TYPE")
+                rst.add("`$n` $t COMMENT ''") // `EVENT_NAME` varchar(100) NOT NULL COMMENT '事件名称'
+            }
+            return rst
+        }
+
         SimpleJdbcTemplate(dataSource).query("""
         SELECT
             COLUMN_NAME,
@@ -167,6 +220,17 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
 
     override fun showPkeyCol(dataSource: DataSource, table: String): List<String> {
         val rst = LinkedList<String>()
+
+        if (isH2Database(dataSource)) {
+            SimpleJdbcTemplate(dataSource).query("SHOW COLUMNS FROM $table") {
+                val t = it.getString("KEY")
+                if (t.isNotBlank()) {
+                    rst.add(it.getString("FIELD"))
+                }
+            }
+            return rst
+        }
+
         SimpleJdbcTemplate(dataSource).query("""
         SHOW KEYS FROM $table WHERE KEY_NAME = 'PRIMARY'
         """) {
@@ -178,6 +242,10 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
 
     override fun showBoneTrg(dataSource: DataSource, table: String): Map<String, String> {
         val rst = HashMap<String, String>()
+        if (isH2Database(dataSource)) {
+            return rst
+        }
+
         SimpleJdbcTemplate(dataSource).query("""
             SELECT
                 TRIGGER_NAME,

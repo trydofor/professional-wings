@@ -20,10 +20,10 @@ CREATE TABLE `sys_commit_journal` (
   DEFAULT CHARSET = utf8mb4 COMMENT ='104/数据变更集';
 
 -- sys_light_sequence@plain
-INSERT IGNORE `sys_light_sequence` (`seq_name`, `block_id`, `next_val`, `step_val`, `comments`)
+INSERT IGNORE INTO `sys_light_sequence` (`seq_name`, `block_id`, `next_val`, `step_val`, `comments`)
 VALUES ('singleton_lightid_blockid', 0, 10000000, 100, 'default block_id'),
        ('sys_commit_journal', 0, 1, 100, 'sys_commit_journal');
 
 -- sys_commit_journal@plain
-REPLACE INTO `sys_commit_journal`(`id`, `event_name`)
+REPLACE INTO `sys_commit_journal` (`id`, `event_name`)
 VALUES (0, 'system_manual_init');

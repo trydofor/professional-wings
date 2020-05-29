@@ -26,7 +26,7 @@ interface SqlStatementParser {
 
     /**
      * 对sql类型，变成sql字面量
-     * @param str 值
+     * @param obj 值
      */
     fun safeValue(obj: Any?): String
 

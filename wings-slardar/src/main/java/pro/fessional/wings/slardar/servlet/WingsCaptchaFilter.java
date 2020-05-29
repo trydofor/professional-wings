@@ -34,8 +34,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  */
 public class WingsCaptchaFilter implements OrderedFilter {
 
-    private List<SessionPicker> sessionPicker = new ArrayList<>();
-    private List<CaptchaTrigger> captchaTrigger = new ArrayList<>();
+    private final List<SessionPicker> sessionPicker = new ArrayList<>();
+    private final List<CaptchaTrigger> captchaTrigger = new ArrayList<>();
     private final Cache<String, WingsCaptchaContext.Context> captchaHolder;
 
     public WingsCaptchaFilter(Config config, Collection<CaptchaTrigger> triggers) {

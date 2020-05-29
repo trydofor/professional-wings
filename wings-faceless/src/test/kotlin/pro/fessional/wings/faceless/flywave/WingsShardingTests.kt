@@ -62,8 +62,7 @@ open class WingsShardingTests {
     fun test4AlterTable() {
         val statement = datasource.connection.prepareStatement("""
             ALTER TABLE `WG_ORDER`
-            DROP COLUMN `COMMIT_ID`,
-            ADD INDEX IDX_CREATE_DT (`CREATE_DT` ASC);
+            DROP COLUMN `COMMIT_ID`;
         """.trimIndent())
 
         val result = statement.executeUpdate()

@@ -1,6 +1,5 @@
 package pro.fessional.wings.faceless;
 
-import com.google.common.collect.Sets;
 import lombok.Setter;
 import org.apache.logging.log4j.util.Strings;
 import org.junit.Assert;
@@ -12,10 +11,12 @@ import org.springframework.stereotype.Component;
 import pro.fessional.mirana.data.Diff;
 import pro.fessional.wings.faceless.flywave.FlywaveDataSources;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
+import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate;
 import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner;
 
-import java.util.ArrayList;
+import javax.sql.DataSource;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,12 +32,25 @@ import java.util.stream.Collectors;
 @Component
 public class WingsTestHelper {
 
-    private Logger logger = LoggerFactory.getLogger(WingsTestHelper.class);
+    private final Logger logger = LoggerFactory.getLogger(WingsTestHelper.class);
 
     @Setter(onMethod = @__({@Autowired}))
     private SchemaRevisionManager schemaRevisionManager;
     @Setter(onMethod = @__({@Autowired}))
     private FlywaveDataSources flywaveDataSources;
+
+    private final HashMap<DataSource, Boolean> isH2Map = new HashMap<>();
+
+    public boolean isH2() {
+        for (DataSource ds : flywaveDataSources.plains().values()) {
+            Boolean h2 = isH2Map.computeIfAbsent(ds, dataSource -> {
+                String s = new SimpleJdbcTemplate(ds, "").jdbcUrl();
+                return s.contains(":h2:") || s.contains(":H2:");
+            });
+            if (h2) return true;
+        }
+        return false;
+    }
 
     public void cleanAndInit() {
         flywaveDataSources.plains().forEach((k, v) -> {
@@ -65,7 +79,7 @@ public class WingsTestHelper {
     }
 
     public void assertSame(Type type, String... str) {
-        List<String> bSet = Arrays.asList(str);
+        List<String> bSet = lowerCase(str);
         AtomicBoolean good = new AtomicBoolean(true);
         fetchAllColumn1(type.sql).forEach((k, aSet) -> {
             Diff.S<String> diff = Diff.of(aSet, bSet);
@@ -83,7 +97,7 @@ public class WingsTestHelper {
     }
 
     public void assertHas(Type type, String... str) {
-        List<String> bSet = Arrays.asList(str);
+        List<String> bSet = lowerCase(str);
         AtomicBoolean good = new AtomicBoolean(true);
         fetchAllColumn1(type.sql).forEach((k, aSet) -> {
             Diff.S<String> diff = Diff.of(aSet, bSet);
@@ -97,7 +111,7 @@ public class WingsTestHelper {
     }
 
     public void assertNot(Type type, String... str) {
-        List<String> bSet = Arrays.asList(str);
+        List<String> bSet = lowerCase(str);
         AtomicBoolean good = new AtomicBoolean(true);
         fetchAllColumn1(type.sql).forEach((k, aSet) -> {
             Diff.S<String> diff = Diff.of(aSet, bSet);
@@ -110,14 +124,18 @@ public class WingsTestHelper {
         Assert.assertTrue(type.name() + "不一致，查看日志，", good.get());
     }
 
-    public Map<String, Set<String>> fetchAllColumn1(String sql) {
+    private List<String> lowerCase(String... str) {
+        return Arrays.stream(str).map(String::toLowerCase).collect(Collectors.toList());
+    }
+
+    private Map<String, Set<String>> fetchAllColumn1(String sql) {
         return flywaveDataSources
                 .plains().entrySet().stream()
                 .collect(
                         Collectors.toMap(
                                 Map.Entry::getKey,
                                 e -> new HashSet<>(new JdbcTemplate(e.getValue())
-                                        .query(sql, (rs, i) -> rs.getString(1))
+                                        .query(sql, (rs, i) -> rs.getString(1).toLowerCase())
                                 )
                         )
                 );

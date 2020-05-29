@@ -21,8 +21,8 @@ class WingsJavaGenerator : JavaGenerator() {
     private val log = JooqLogger.getLogger(JavaGenerator::class.java)
 
     private val chr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    private val shadowDel = "del";
-    private val shadowUpd = "upd";
+    private val shadowDel = "del"
+    private val shadowUpd = "upd"
 
     private fun genAlias(id: String): String {
         val ix = id.hashCode() % chr.length
@@ -37,7 +37,7 @@ class WingsJavaGenerator : JavaGenerator() {
         val identifier = getStrategy().getJavaIdentifier(table) // SysCommitJournal
         val aliasName = genAlias(identifier) // N6
         val aliasLower = aliasName.toLowerCase() // n6
-        val tableName = table.getOutputName() // sys_commit_journal
+        val tableName = table.outputName // sys_commit_journal
         out.tab(1).javadoc("The reference instance of <code>%s</code>", table.qualifiedOutputName)
 
         // public static final SysCommitJournalTable SysCommitJournal = new SysCommitJournalTable();

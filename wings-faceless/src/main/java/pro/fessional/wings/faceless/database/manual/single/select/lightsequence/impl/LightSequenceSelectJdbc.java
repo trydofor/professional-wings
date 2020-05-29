@@ -20,7 +20,7 @@ public class LightSequenceSelectJdbc implements LightSequenceSelect {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private RowMapper<NextStep> mapperNextStep = (rs, rowNum) -> {
+    private final RowMapper<NextStep> mapperNextStep = (rs, rowNum) -> {
         NextStep one = new NextStep();
         one.setNextVal(rs.getLong("next_val"));
         one.setStepVal(rs.getInt("step_val"));
@@ -41,7 +41,7 @@ public class LightSequenceSelectJdbc implements LightSequenceSelect {
         }
     }
 
-    private RowMapper<NameNextStep> mapperNameNextStep = (rs, rowNum) -> {
+    private final RowMapper<NameNextStep> mapperNameNextStep = (rs, rowNum) -> {
         NameNextStep one = new NameNextStep();
         one.setSeqName(rs.getString("seq_name"));
         one.setStepVal(rs.getInt("step_val"));

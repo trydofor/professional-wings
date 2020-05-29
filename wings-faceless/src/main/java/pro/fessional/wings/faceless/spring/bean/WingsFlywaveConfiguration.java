@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.spring.bean;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -69,8 +70,8 @@ public class WingsFlywaveConfiguration {
     }
 
     @Bean
-    public SqlStatementParser sqlStatementParser(WingsFlywaveSqlProperties properties) {
-        if (properties.getDialect().equalsIgnoreCase("mysql")) {
+    public SqlStatementParser sqlStatementParser(@Value("${spring.jooq.sql-dialect}") String dialect) {
+        if ("mysql".equalsIgnoreCase(dialect)) {
             return new MySqlStatementParser();
         } else {
             throw new IllegalArgumentException("only support mysql");
@@ -78,8 +79,8 @@ public class WingsFlywaveConfiguration {
     }
 
     @Bean
-    public SqlSegmentProcessor sqlSegmentParser(WingsFlywaveSqlProperties properties) {
-        if (properties.getDialect().equalsIgnoreCase("mysql")) {
+    public SqlSegmentProcessor sqlSegmentParser(@Value("${spring.jooq.sql-dialect}") String dialect, WingsFlywaveSqlProperties properties) {
+        if ("mysql".equalsIgnoreCase(dialect)) {
             return new SqlSegmentProcessor(properties.getCommentSingle(),
                     properties.getCommentMultiple(),
                     properties.getDelimiterDefault(),
@@ -90,8 +91,8 @@ public class WingsFlywaveConfiguration {
     }
 
     @Bean
-    public SchemaDefinitionLoader schemaDefinitionLoader(WingsFlywaveSqlProperties properties) {
-        if (properties.getDialect().equalsIgnoreCase("mysql")) {
+    public SchemaDefinitionLoader schemaDefinitionLoader(@Value("${spring.jooq.sql-dialect}") String dialect) {
+        if ("mysql".equalsIgnoreCase(dialect)) {
             return new MysqlDefinitionLoader();
         } else {
             throw new IllegalArgumentException("only support mysql");

@@ -212,7 +212,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         }
     }
 
-    private Pattern ptnSeq = Pattern.compile("-\\d{2,}(\\.[a-z0-9]+)?$", Pattern.CASE_INSENSITIVE);
+    private final Pattern ptnSeq = Pattern.compile("-\\d{2,}(\\.[a-z0-9]+)?$", Pattern.CASE_INSENSITIVE);
 
     private String extractBaseName(String p) {
         int p1 = p.lastIndexOf('/');

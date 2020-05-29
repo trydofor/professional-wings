@@ -138,7 +138,7 @@ class MySqlStatementParser : SqlStatementParser {
         }
 
         val str = if (obj is java.sql.Clob) {
-            obj.getSubString(0, obj.length().toInt())
+            obj.characterStream.readText()
         } else {
             obj.toString()
         }
@@ -161,16 +161,18 @@ class MySqlStatementParser : SqlStatementParser {
         val c00 = 0x00.toChar()
         val c26 = 0x26.toChar()
         for (c in str) {
-            if (c == c00) sb.append("\\0")
-            else if (c == '\'') sb.append("\\'")
-            else if (c == '"') sb.append("\\\"")
-            else if (c == '\b') sb.append("\\b")
-            else if (c == '\n') sb.append("\\n")
-            else if (c == '\r') sb.append("\\r")
-            else if (c == '\t') sb.append("\\t")
-            else if (c == c26) sb.append("\\Z")
-            else if (c == '\\') sb.append("\\\\")
-            else sb.append(c)
+            when (c) {
+                c00 -> sb.append("\\0")
+                '\'' -> sb.append("\\'")
+                '"' -> sb.append("\\\"")
+                '\b' -> sb.append("\\b")
+                '\n' -> sb.append("\\n")
+                '\r' -> sb.append("\\r")
+                '\t' -> sb.append("\\t")
+                c26 -> sb.append("\\Z")
+                '\\' -> sb.append("\\\\")
+                else -> sb.append(c)
+            }
         }
         sb.append('\'')
         return sb.toString()

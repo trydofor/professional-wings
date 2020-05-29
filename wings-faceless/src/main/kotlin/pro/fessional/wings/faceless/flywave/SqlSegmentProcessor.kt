@@ -223,7 +223,6 @@ class SqlSegmentProcessor(
 
     /**
      * 使用新表名，合并sql片段。
-     * @see SqlStatementParser.parseTokenIndices
      * @param segment 解析过的sql片段
      * @param newTbl 新表
      */

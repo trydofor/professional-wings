@@ -57,30 +57,30 @@ open class SchemaRevisionMangerTest {
     @Test
     fun `test4🦁强加版本`() {
         schemaRevisionManager.forceUpdateSql(test3rdRevision, """
-            CREATE TABLE `TEST_TEMP`(
+            CREATE TABLE `test_temp`(
               `SEQ_NAME` varchar(100) NOT NULL COMMENT '序列名'
             ) ENGINE = InnoDB
-              DEFAULT CHARSET = utf8mb4 COMMENT ='TEST_TEMP';
+              DEFAULT CHARSET = utf8mb4 COMMENT ='test_temp';
 
-            CREATE TABLE `TEST_TEMP_0`(
+            CREATE TABLE `test_temp_0`(
               `SEQ_NAME` varchar(100) NOT NULL COMMENT '序列名'
             ) ENGINE = InnoDB
-              DEFAULT CHARSET = utf8mb4 COMMENT ='TEST_TEMP';
+              DEFAULT CHARSET = utf8mb4 COMMENT ='test_temp';
 
-            CREATE TABLE `TEST_TEMP_1`(
+            CREATE TABLE `test_temp_1`(
               `SEQ_NAME` varchar(100) NOT NULL COMMENT '序列名'
             ) ENGINE = InnoDB
-              DEFAULT CHARSET = utf8mb4 COMMENT ='TEST_TEMP';
-            """.trimIndent(), "DROP TABLE IF EXISTS `TEST_TEMP`", -2)
+              DEFAULT CHARSET = utf8mb4 COMMENT ='test_temp';
+            """.trimIndent(), "DROP TABLE IF EXISTS `test_temp`", -2)
     }
 
     @Test
     fun `test5🦁强发断版`() {
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "TEST_TEMP", "TEST_TEMP_0", "TEST_TEMP_1")
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
         schemaRevisionManager.forceApplyBreak(test3rdRevision, -3, true)
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, "TEST_TEMP", "TEST_TEMP_0", "TEST_TEMP_1")
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
         schemaRevisionManager.forceApplyBreak(test3rdRevision, -4, false)
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "TEST_TEMP", "TEST_TEMP_0", "TEST_TEMP_1")
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
     }
 
 
@@ -94,14 +94,14 @@ open class SchemaRevisionMangerTest {
     @Test
     fun `test7🦁强制执行Sql`() {
         schemaRevisionManager.forceExecuteSql("""
-            CREATE TABLE `TEST_TEMP_X`(
+            CREATE TABLE `test_temp_x`(
               `SEQ_NAME` varchar(100) NOT NULL COMMENT '序列名'
             ) ENGINE = InnoDB
-              DEFAULT CHARSET = utf8mb4 COMMENT ='TEST_TEMP';
+              DEFAULT CHARSET = utf8mb4 COMMENT ='test_temp';
 
-            DROP TABLE IF EXISTS `TEST_TEMP_X`;
+            DROP TABLE IF EXISTS `test_temp_x`;
             """.trimIndent())
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "TEST_TEMP_X")
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "test_temp_x")
     }
 
     @Test

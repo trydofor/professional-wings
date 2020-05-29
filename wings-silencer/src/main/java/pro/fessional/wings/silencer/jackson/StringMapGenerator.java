@@ -31,7 +31,7 @@ public class StringMapGenerator extends JsonGenerator {
 
     private int featureMask = 0;
     private ObjectCodec objectCodec = null;
-    private EnumMap<Feature, Boolean> features = new EnumMap<>(Feature.class);
+    private final EnumMap<Feature, Boolean> features = new EnumMap<>(Feature.class);
 
     private final Map<String, String> resultTree;
 
@@ -277,7 +277,7 @@ public class StringMapGenerator extends JsonGenerator {
 
     @Override
     public void writeNull() throws IOException {
-        putStringValue((String) null);
+        putStringValue(null);
     }
 
     @Override

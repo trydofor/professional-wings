@@ -59,7 +59,7 @@ class SchemaFulldumpManagerTest {
     }
 
     @Test
-    fun `test🦁DumpRec🦁查文件`() {
+    fun `test2🦁DumpRec🦁查文件`() {
         File(fold).mkdirs()
         val recs = schemaFulldumpManager.dumpRec(dataSource, groupedTable(true,
                 "SYS_LIGHT_SEQUENCE",

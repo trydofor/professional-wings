@@ -99,6 +99,14 @@ MVC中的RequestMapping约定如下
  * 在controller上写版本号`@RequestMapping("/v1")`
  * 不要相写相对路径，这样才可以通过URL直接搜索匹配。
 
+## 3.7.常见问题
+
+001.修改过的默认配置
+
+slardar，使用undertow，并提供了一下默认配置
+
+002.不想使用oauth2内容
+
 
 ## 3.9.参考资料
 

@@ -2,7 +2,6 @@ package pro.fessional.wings.silencer.jackson;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
@@ -18,7 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author trydofor
  * @since 2019-09-19
  */
-public class I18nStringSerializer extends JsonSerializer implements ContextualSerializer {
+public class I18nStringSerializer extends JsonSerializer<Object> implements ContextualSerializer {
 
     private final AtomicReference<I18nStringSerializer> oppositeOne = new AtomicReference<>();
     private final MessageSource messageSource;
@@ -67,7 +66,7 @@ public class I18nStringSerializer extends JsonSerializer implements ContextualSe
     }
 
     @Override
-    public JsonSerializer<?> createContextual(SerializerProvider provider, BeanProperty property) throws JsonMappingException {
+    public JsonSerializer<?> createContextual(SerializerProvider provider, BeanProperty property) {
         if (property == null) return this;
         JsonI18nString ann = property.getAnnotation(JsonI18nString.class);
         if (ann == null || ann.value() == enabled) return this;
