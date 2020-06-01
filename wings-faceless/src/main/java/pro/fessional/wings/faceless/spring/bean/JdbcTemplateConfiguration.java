@@ -18,7 +18,7 @@ import java.util.Map;
  * @since 2019-06-25
  */
 @Configuration
-@ConditionalOnProperty(prefix = "spring.wings.jdbctemplate", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.jdbctemplate.enabled", havingValue = "true")
 public class JdbcTemplateConfiguration {
 
     @Bean

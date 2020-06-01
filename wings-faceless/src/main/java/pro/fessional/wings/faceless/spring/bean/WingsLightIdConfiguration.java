@@ -21,7 +21,7 @@ import pro.fessional.wings.faceless.spring.conf.WingsLightIdLoaderProperties;
  * @since 2019-06-01
  */
 @Configuration
-@ConditionalOnProperty(prefix = "spring.wings.lightid", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.lightid.enabled", havingValue = "true")
 public class WingsLightIdConfiguration {
 
     @Bean

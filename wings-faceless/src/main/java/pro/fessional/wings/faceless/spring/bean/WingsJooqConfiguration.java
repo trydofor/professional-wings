@@ -24,11 +24,13 @@ import org.jooq.impl.DefaultVisitListenerProvider;
 import org.jooq.impl.TableImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import pro.fessional.wings.faceless.database.common.WingsJooqEnv;
 import pro.fessional.wings.faceless.database.helper.JournalHelp;
 
 import java.util.LinkedHashMap;
@@ -41,7 +43,7 @@ import java.util.regex.Pattern;
  * @since 2019-08-12
  */
 @Configuration
-@ConditionalOnProperty(prefix = "spring.wings.jooq", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.jooq.enabled", havingValue = "true")
 public class WingsJooqConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(WingsJooqConfiguration.class);
@@ -49,7 +51,8 @@ public class WingsJooqConfiguration {
     @Bean
     @Order
     @ConditionalOnMissingBean(Settings.class)
-    public Settings settings() {
+    public Settings settings(@Value("${spring.wings.jooq.dao.batch-mysql.enabled}") boolean daoBatchMysql) {
+        WingsJooqEnv.daoBatchMysql = daoBatchMysql;
         // ObjectProvider<Settings> settings
         return new Settings()
                 .withRenderCatalog(false)
@@ -68,7 +71,7 @@ public class WingsJooqConfiguration {
      * @link https://github.com/jOOQ/jOOQ/issues/7258
      */
     @Bean
-    @ConditionalOnProperty(prefix = "spring.wings.jooq.auto-qualify", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(name = "spring.wings.jooq.auto-qualify.enabled", havingValue = "true")
     public VisitListenerProvider autoQualifyFieldListener() {
         return new DefaultVisitListenerProvider(new DefaultVisitListener() {
 
@@ -97,7 +100,7 @@ public class WingsJooqConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "spring.wings.trigger.journal-delete", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(name = "spring.wings.trigger.journal-delete.enabled", havingValue = "true")
     public ExecuteListenerProvider journalDeleteListener() {
         return new DefaultExecuteListenerProvider(new DefaultExecuteListener() {
 

@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration
 @ConditionalOnClass(OkHttpClient.class)
-@ConditionalOnProperty(prefix = "spring.wings.okhttp", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.okhttp.enabled", havingValue = "true")
 public class WingsOkhttp3Configuration {
 
     private static final Log logger = LogFactory.getLog(WingsOkhttp3Configuration.class);

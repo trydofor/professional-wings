@@ -23,7 +23,7 @@ import pro.fessional.wings.faceless.spring.conf.WingsFlywaveVerProperties;
  * @since 2019-06-01
  */
 @Configuration
-@ConditionalOnProperty(prefix = "spring.wings.flywave", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.flywave.enabled", havingValue = "true")
 public class WingsFlywaveConfiguration {
 
     @Bean

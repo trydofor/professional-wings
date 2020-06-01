@@ -82,7 +82,7 @@ import java.util.Map;
  * Spring boot flywave and master-slave configuration.
  */
 
-@ConditionalOnProperty(prefix = "spring.wings.shardingsphere", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.shardingsphere.enabled", havingValue = "true")
 //////////////// >>>>>>> BGN ShardingSphere code ////////////////
 @Configuration
 @AutoConfigureBefore(DataSourceAutoConfiguration.class)

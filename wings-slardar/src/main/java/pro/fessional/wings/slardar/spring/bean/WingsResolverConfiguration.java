@@ -25,7 +25,7 @@ public class WingsResolverConfiguration {
 
     @Bean
     @ConditionalOnClass(LocaleResolver.class)
-    @ConditionalOnProperty(prefix = "spring.wings.slardar.locale", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(name = "spring.wings.slardar.locale.enabled", havingValue = "true")
     public WingsLocaleResolver localeResolver(WingsLocaleResolver.Config conf) {
         logger.info("Wings conf WingsLocaleResolver");
         return new WingsLocaleResolver(conf);
@@ -38,7 +38,7 @@ public class WingsResolverConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "spring.wings.slardar.remote", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(name = "spring.wings.slardar.remote.enabled", havingValue = "true")
     public WingsRemoteResolver wingsTerminalResolver(WingsRemoteResolver.Config conf) {
         logger.info("Wings conf WingsRemoteResolver");
         return new WingsRemoteResolver(conf);

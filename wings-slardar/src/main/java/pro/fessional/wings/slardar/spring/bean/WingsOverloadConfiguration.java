@@ -32,7 +32,7 @@ import java.io.PrintWriter;
  */
 
 @Configuration
-@ConditionalOnProperty(prefix = "spring.wings.slardar.overload", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.slardar.overload.enabled", havingValue = "true")
 @ConditionalOnClass(Filter.class)
 public class WingsOverloadConfiguration {
 

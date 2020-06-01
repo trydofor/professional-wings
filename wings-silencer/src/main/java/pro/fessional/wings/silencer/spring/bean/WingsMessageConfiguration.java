@@ -31,7 +31,7 @@ import java.util.LinkedHashSet;
  */
 @Configuration
 @ConditionalOnClass(MessageSource.class)
-@ConditionalOnProperty(prefix = "spring.wings.message", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.message.enabled", havingValue = "true")
 public class WingsMessageConfiguration {
 
     private static final Log logger = LogFactory.getLog(WingsMessageConfiguration.class);

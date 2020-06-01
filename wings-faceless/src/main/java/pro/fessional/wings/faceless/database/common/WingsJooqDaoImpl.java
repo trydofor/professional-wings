@@ -1,25 +1,34 @@
 package pro.fessional.wings.faceless.database.common;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.BatchBindStep;
 import org.jooq.Condition;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.Loader;
+import org.jooq.LoaderOptionsStep;
 import org.jooq.OrderField;
 import org.jooq.Record;
+import org.jooq.RowCountQuery;
 import org.jooq.Table;
+import org.jooq.TableRecord;
 import org.jooq.UniqueKey;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
 import pro.fessional.mirana.data.CodeEnum;
+import pro.fessional.mirana.data.Nulls;
 import pro.fessional.mirana.pain.CodeException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import static org.jooq.impl.DSL.row;
 import static org.jooq.impl.DSL.using;
@@ -90,6 +99,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
     /**
      * 数据标记删除了
      * 默认 DeleteDt.gt(EmptyValue.DATE_TIME);
+     *
      * @return Condition
      */
     public Condition onlyDiedData() {
@@ -99,6 +109,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
     /**
      * 数据是有效数据
      * 默认 DeleteDt.eq(EmptyValue.DATE_TIME);
+     *
      * @return Condition
      */
     public Condition onlyLiveData() {
@@ -107,6 +118,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
 
     /**
      * 组合其他条件 and onlyDiedData
+     *
      * @param cond 其他条件
      * @return Condition
      */
@@ -117,6 +129,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
 
     /**
      * 组合其他条件 and onlyLiveData
+     *
      * @param cond 其他条件
      * @return Condition
      */
@@ -127,11 +140,176 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
 
     /**
      * 生成一个新的 DSLContext
+     *
      * @return DSLContext
      */
-    public DSLContext dslContext(){
+    public DSLContext dslContext() {
         return using(configuration());
     }
+
+    // ============
+
+    /**
+     * 一次性导入新记录，对重复记录忽略或更新。
+     * ignore时，采用了先查询 from dual where exists select * where `id` = ?
+     * replace时，使用了 on duplicate key update
+     *
+     * @param records         所有记录
+     * @param ignoreOrReplace 唯一冲突时，忽略还是替换
+     * @return 执行结果，使用 ModifyAssert判断
+     * @see DSLContext#loadInto(Table)
+     */
+    public Loader<R> batchLoad(Collection<R> records, boolean ignoreOrReplace) throws IOException {
+        checkBatchMysql();
+
+        DSLContext dsl = dslContext();
+        LoaderOptionsStep<R> ldi = dsl.loadInto(table);
+        if (ignoreOrReplace) {
+            ldi.onDuplicateKeyIgnore();
+        } else {
+            ldi.onDuplicateKeyUpdate();
+        }
+        return ldi.loadRecords(records)
+                  .fields(table.fields())
+                  .execute();
+    }
+
+    private void checkBatchMysql() {
+        if (WingsJooqEnv.daoBatchMysql) {
+            throw new IllegalStateException("请使用#batchInsert(Collection<R>, int, boolean)，以使用insert ignore 和 replace into的mysql高效语法。避免使用from dual where exists 和 on duplicate key update");
+        }
+    }
+
+    /**
+     * 分配批量插入新记录，使用mysql的 insert ignore或 replace into。
+     * 注意 jooq的mergeInto，不完美，必须都有值，而replace不会。
+     *
+     * @param records         所有记录
+     * @param size            每批的数量，小于等于0时，表示不分批
+     * @param ignoreOrReplace 唯一冲突时，忽略还是替换
+     * @return 执行结果，使用 ModifyAssert判断
+     * @see DSLContext#mergeInto(Table)
+     */
+    public int[] batchInsert(Collection<R> records, int size, boolean ignoreOrReplace) {
+
+        BiFunction<DSLContext, Collection<R>, int[]> batchIgnoreExec = (dsl, rs) -> {
+            Field<?>[] fields = table.fields();
+            BatchBindStep batch;
+            if (ignoreOrReplace) {
+                // insert ignore
+                batch = dsl.batch(
+                        dsl.insertInto(table)
+                           .columns(fields)
+                           .values(new Object[fields.length]).onDuplicateKeyIgnore());
+
+            } else {
+                batch = dsl.batch(WingsJooqUtil.replaceInto(table, fields));
+            }
+
+            for (R r : rs) {
+                batch.bind(r.intoArray());
+            }
+
+            return batch.execute();
+        };
+        return batchExecute(records, size, batchIgnoreExec);
+    }
+
+    /**
+     * 插入新记录，使用mysql的 insert ignore或 replace into。
+     * 注意 jooq的mergeInto，不完美，必须都有值，而replace不会。
+     *
+     * @param record          记录
+     * @param ignoreOrReplace 唯一冲突时，忽略还是替换
+     * @return 执行结果，使用 ModifyAssert判断
+     * @see DSLContext#mergeInto(Table)
+     */
+    public int insertInto(R record, boolean ignoreOrReplace) {
+
+        DSLContext dsl = dslContext();
+        if (ignoreOrReplace) {
+            // insert ignore
+            return dsl.insertInto(table)
+                      .columns(table.fields())
+                      .values(record.intoArray())
+                      .onDuplicateKeyIgnore()
+                      .execute();
+
+        } else {
+            RowCountQuery query = WingsJooqUtil.replaceInto(record);
+            return dsl.execute(query);
+        }
+    }
+
+    /**
+     * 分配批量插入记录
+     *
+     * @param records 所有记录
+     * @param size    每批的数量，小于等于0时，表示不分批
+     * @return 执行结果，使用 ModifyAssert判断
+     * @see DSLContext#batchInsert(TableRecord[])
+     */
+    public int[] batchInsert(Collection<R> records, int size) {
+        return batchExecute(records, size, batchInsertExec);
+    }
+
+    private final BiFunction<DSLContext, Collection<R>, int[]> batchInsertExec = (dsl, rs) -> dsl.batchInsert(rs).execute();
+
+    /**
+     * 分配批量插入或更新记录
+     *
+     * @param records 所有记录
+     * @param size    每批的数量，小于等于0时，表示不分批
+     * @return 执行结果，使用 ModifyAssert判断
+     * @see DSLContext#batchStore(UpdatableRecord[])
+     */
+    public int[] batchStore(Collection<R> records, int size) {
+        return batchExecute(records, size, batchStoreExec);
+    }
+
+    private final BiFunction<DSLContext, Collection<R>, int[]> batchStoreExec = (dsl, rs) -> dsl.batchStore(rs).execute();
+
+    /**
+     * 分配批量更新记录
+     *
+     * @param records 所有记录
+     * @param size    每批的数量，小于等于0时，表示不分批
+     * @return 执行结果，使用 ModifyAssert判断
+     * @see DSLContext#batchUpdate(UpdatableRecord[])
+     */
+
+    public int[] batchUpdate(Collection<R> records, int size) {
+        if (records == null || records.isEmpty()) return Nulls.Ints;
+        return batchExecute(records, size, batchUpdateExec);
+    }
+
+    private final BiFunction<DSLContext, Collection<R>, int[]> batchUpdateExec = (dsl, rs) -> dsl.batchUpdate(rs).execute();
+
+    //
+    public int[] batchExecute(Collection<R> records, int size, BiFunction<DSLContext, Collection<R>, int[]> exec) {
+        if (records == null || records.isEmpty()) return Nulls.Ints;
+
+        DSLContext dsl = dslContext();
+        if (size <= 0 || records.size() <= size) {
+            return exec.apply(dsl, records);
+        }
+
+        int[] rst = new int[records.size()];
+        int off = 0;
+        List<R> rds;
+        if (records instanceof List) {
+            rds = (List<R>) records;
+        } else {
+            rds = new ArrayList<>(records);
+        }
+        for (List<R> pt : Lists.partition(rds, size)) {
+            int[] rt = exec.apply(dsl, pt);
+            System.arraycopy(rt, 0, rst, off, rt.length);
+            off += rt.length;
+        }
+        return rst;
+    }
+
     // ============
 
     /**

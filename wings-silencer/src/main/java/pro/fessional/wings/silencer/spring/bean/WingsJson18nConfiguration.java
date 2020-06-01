@@ -21,7 +21,7 @@ import pro.fessional.wings.silencer.jackson.I18nStringSerializer;
  */
 @Configuration
 @ConditionalOnClass(DateSerializer.class)
-@ConditionalOnProperty(prefix = "spring.wings.json18n", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.json18n.enabled", havingValue = "true")
 public class WingsJson18nConfiguration {
 
     public Jackson2ObjectMapperBuilderCustomizer customizerI18nSerializer(MessageSource messageSource, WingsI18nContext i18nContext) {

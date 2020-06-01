@@ -38,7 +38,7 @@ import java.util.Date;
  */
 @Configuration
 @ConditionalOnClass(DateSerializer.class)
-@ConditionalOnProperty(prefix = "spring.wings.jackson", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.jackson.enabled", havingValue = "true")
 public class WingsJacksonConfiguration {
 
     @Bean

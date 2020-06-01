@@ -59,7 +59,7 @@ import java.util.Map;
  * @since 2019-07-09
  */
 @Configuration
-@ConditionalOnProperty(prefix = "spring.wings.slardar.oauth2x", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.slardar.oauth2x.enabled", havingValue = "true")
 public class WingsOAuth2xConfiguration {
 
     private final Log logger = LogFactory.getLog(WingsOAuth2xConfiguration.class);
