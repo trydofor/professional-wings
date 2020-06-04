@@ -1,6 +1,8 @@
 package pro.fessional.wings.faceless.spring.bean;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +20,9 @@ import pro.fessional.wings.faceless.flywave.impl.MysqlDefinitionLoader;
 import pro.fessional.wings.faceless.spring.conf.WingsFlywaveSqlProperties;
 import pro.fessional.wings.faceless.spring.conf.WingsFlywaveVerProperties;
 
+import javax.sql.DataSource;
+import java.util.Collections;
+
 /**
  * @author trydofor
  * @since 2019-06-01
@@ -25,6 +30,13 @@ import pro.fessional.wings.faceless.spring.conf.WingsFlywaveVerProperties;
 @Configuration
 @ConditionalOnProperty(name = "spring.wings.flywave.enabled", havingValue = "true")
 public class WingsFlywaveConfiguration {
+
+    @Bean
+    @ConditionalOnBean(DataSource.class)
+    @ConditionalOnMissingBean
+    public FlywaveDataSources flywaveDataSources(DataSource inuse) {
+        return new FlywaveDataSources(Collections.singletonMap("default", inuse), inuse, null, false);
+    }
 
     @Bean
     public SchemaJournalManager schemaJournalManager(

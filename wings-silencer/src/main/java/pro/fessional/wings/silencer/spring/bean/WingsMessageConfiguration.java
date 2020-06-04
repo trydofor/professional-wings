@@ -26,6 +26,7 @@ import java.util.LinkedHashSet;
 
 /**
  * @author trydofor
+ * @link https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/#boot-features-internationalization
  * @see org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration
  * @since 2019-06-24
  */
@@ -77,6 +78,7 @@ public class WingsMessageConfiguration {
             Resource[] resources = resolver.getResources("classpath*:/" + WINGS_I18N);
             for (Resource res : resources) {
                 String fn = res.getURI().toString();
+                logger.info("find wings-i18n=" + fn);
                 baseNames.add(parseBaseMessage(fn));
             }
         } catch (IOException e) {
@@ -85,7 +87,7 @@ public class WingsMessageConfiguration {
 
         for (String bn : baseNames) {
             logger.info("add base-name=" + bn + " to message source");
-            bootedSource.addBasenames(bn);
+            bootedSource.addBasenames("classpath:/" + bn);
         }
 
         bootedSource.setParentMessageSource(parent);

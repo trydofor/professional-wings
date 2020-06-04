@@ -154,6 +154,14 @@ spring对MessageSource的加载与configuration的机制不同，不需要unicod
 [jackson注解](https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations)
 [spring定制jackson](https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/#howto-customize-the-jackson-objectmapper) - 9.4.3. Customize the Jackson ObjectMapper
 
+Jackson中涉及到泛型，参数类型，必备技能
+
+``` java
+TypeReference ref = new TypeReference<List<Integer>>() { };
+// TypeFactory 中有很丰富的类型构造
+JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, Foo.class)
+```
+
 ## 1.5.logging/logback
 
 参考`wings-logging-79.properties`配置，默认使用springboot配置。

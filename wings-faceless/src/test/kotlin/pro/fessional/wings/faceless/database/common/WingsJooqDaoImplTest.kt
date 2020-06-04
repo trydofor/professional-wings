@@ -79,9 +79,9 @@ class WingsJooqDaoImplTest {
                 Tst中文也分表Record(309, now, now, now, 9, "批量加载309", "")
         )
         wingsTestHelper.note("批量Insert，查看日志,ignore, 307-309，分2批次， insert ignore")
-        dao.batchMerge(rds, 2, true)
+        dao.batchInsert(rds, 2, true)
         wingsTestHelper.note("批量Insert，查看日志,merge, 307-309，分2批，replace into")
-        dao.batchMerge(rds, 2, false)
+        dao.batchInsert(rds, 2, false)
     }
 
     @Test
@@ -108,7 +108,7 @@ class WingsJooqDaoImplTest {
 
     @Test
     fun `test6🦁单独Merge🦁查日志`() {
-        dao.mergeInto(Tst中文也分表Record(312, now, now, now, 9, "批量加载312", "update"), true)
-        dao.mergeInto(Tst中文也分表Record(312, now, now, now, 9, "批量加载312", "update"), false)
+        dao.insertInto(Tst中文也分表Record(312, now, now, now, 9, "批量加载312", "update"), true)
+        dao.insertInto(Tst中文也分表Record(312, now, now, now, 9, "批量加载312", "update"), false)
     }
 }
