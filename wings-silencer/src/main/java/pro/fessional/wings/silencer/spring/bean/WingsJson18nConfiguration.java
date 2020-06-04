@@ -3,12 +3,15 @@ package pro.fessional.wings.silencer.spring.bean;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
+import pro.fessional.wings.silencer.context.DefaultI18nContext;
 import pro.fessional.wings.silencer.context.WingsI18nContext;
 import pro.fessional.wings.silencer.jackson.I18nResultSerializer;
 import pro.fessional.wings.silencer.jackson.I18nStringSerializer;
@@ -24,6 +27,13 @@ import pro.fessional.wings.silencer.jackson.I18nStringSerializer;
 @ConditionalOnProperty(name = "spring.wings.json18n.enabled", havingValue = "true")
 public class WingsJson18nConfiguration {
 
+    @Bean
+    @ConditionalOnMissingBean(WingsI18nContext.class)
+    public WingsI18nContext wingsI18nContext() {
+        return new DefaultI18nContext();
+    }
+
+    @Bean
     public Jackson2ObjectMapperBuilderCustomizer customizerI18nSerializer(MessageSource messageSource, WingsI18nContext i18nContext) {
         return builder -> {
             builder.serializerByType(R.I.class, new I18nResultSerializer(messageSource, i18nContext));

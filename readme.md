@@ -134,3 +134,18 @@
 ### 0.4.8.guava&commons
 
 guava和commons-lang是java程序员进阶必备的工具包。
+
+## 0.5.常见问题
+
+### 001.getHostName() took 5004 milliseconds
+InetAddress.getLocalHost().getHostName() took 5004 milliseconds to respond. 
+Please verify your network configuration (macOS machines may need to add entries to /etc/hosts)
+
+``` bash
+hostname
+# 输出 trydofors-Hackintosh.local
+
+cat /etc/hosts
+# 在localhost后面，填上 trydofors-Hackintosh.local
+127.0.0.1	    localhost trydofors-Hackintosh.local
+```

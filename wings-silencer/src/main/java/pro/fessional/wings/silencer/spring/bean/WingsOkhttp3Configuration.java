@@ -18,6 +18,8 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+import pro.fessional.wings.silencer.httprest.OkHttpClientHelper;
+import pro.fessional.wings.silencer.httprest.RestTemplateHelper;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -39,32 +41,30 @@ public class WingsOkhttp3Configuration {
 
     @Bean
     @ConditionalOnMissingBean
-    public OkHttpClient okHttp3Client(
+    public OkHttpClient okHttpClient(
             ObjectProvider<Cache> cache,
             ObjectProvider<CookieJar> cookieJar,
             ObjectProvider<Dns> dns,
             ConnectionPool connectionPool,
-            OkHttpProperties okHttpProperties
+            OkHttpProperties properties
     ) {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        // check builder return new ...
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .connectTimeout(Duration.ofSeconds(properties.getTimeoutConn()))
+                .readTimeout(Duration.ofSeconds(properties.getTimeoutRead()))
+                .writeTimeout(Duration.ofSeconds(properties.getTimeoutWrite()))
+                .pingInterval(Duration.ofSeconds(properties.getPingInterval()))
 
-
-        builder.connectTimeout(Duration.ofSeconds(okHttpProperties.getTimeoutConn()));
-        builder.readTimeout(Duration.ofSeconds(okHttpProperties.getTimeoutRead()));
-        builder.writeTimeout(Duration.ofSeconds(okHttpProperties.getTimeoutWrite()));
-        builder.pingInterval(Duration.ofSeconds(okHttpProperties.getPingInterval()));
-
-
-        builder.followRedirects(okHttpProperties.isFollowRedirects());
-        builder.followSslRedirects(okHttpProperties.isFollowSslRedirects());
-        builder.retryOnConnectionFailure(okHttpProperties.isRetryFailure());
+                .followRedirects(properties.isFollowRedirects())
+                .followSslRedirects(properties.isFollowSslRedirects())
+                .retryOnConnectionFailure(properties.isRetryFailure());
 
         // cache
         Cache cacheBean = cache.getIfAvailable();
         if (cacheBean == null) {
-            int mbs = okHttpProperties.getCacheMegabyte();
+            int mbs = properties.getCacheMegabyte();
             if (mbs > 0) {
-                File cacheDir = okHttpProperties.getCacheDirectory();
+                File cacheDir = properties.getCacheDirectory();
                 try {
                     if (cacheDir == null) {
                         cacheDir = Files.createTempDirectory("wings-okhttp-cache").toFile();
@@ -83,7 +83,7 @@ public class WingsOkhttp3Configuration {
         dns.ifUnique(builder::dns);
         builder.connectionPool(connectionPool);
 
-        return builder.build();
+        return properties.isSslTrustAll() ? OkHttpClientHelper.sslTrustAll(builder) : builder.build();
     }
 
     @Bean
@@ -102,8 +102,8 @@ public class WingsOkhttp3Configuration {
 
     @Bean
     @ConditionalOnMissingBean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
+    public RestTemplate restTemplate(RestTemplateBuilder builder, OkHttpClient client) {
+        return RestTemplateHelper.sslTrustAll(builder, client);
     }
 
     @Data
@@ -123,5 +123,6 @@ public class WingsOkhttp3Configuration {
         private boolean retryFailure = true;
         private int maxIdle = 5;
         private int keepAlive = 300;
+        private boolean sslTrustAll = true;
     }
 }

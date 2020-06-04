@@ -10,6 +10,7 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.util.StringUtils;
 import pro.fessional.wings.silencer.spring.help.Utf8ResourceDecorator;
 
 import java.io.BufferedReader;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,7 @@ import java.util.regex.Pattern;
  *  - #howto-change-the-location-of-external-properties
  *  - #howto-customize-the-environment-or-application-context
  * </pre>
+ *
  * @author trydofor
  * @since 2019-05-21
  */
@@ -46,15 +49,71 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
     public static final String BOOTS_CONF = "application.*";
     public static final String WINGS_CONF = "wings-conf/**/*.*";
+    public static final String WINGS_I18N = "wings-i18n/**/*.properties";
     public static final String BLACK_LIST = "wings-conf/wings-conf-black-list.cnf";
 
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+        processWingsI18n(environment);
         processWingsConf(environment);
     }
 
     // ///////////////////////////////////////////////////////
+    public void processWingsI18n(ConfigurableEnvironment environment) {
+        final LinkedHashSet<String> baseNames = new LinkedHashSet<>();
+        try {
+            final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+            Resource[] resources = resolver.getResources("classpath*:/" + WINGS_I18N);
+            for (Resource res : resources) {
+                String fn = res.getURI().toString();
+                logger.info("find wings-i18n=" + fn);
+                baseNames.add(parseBaseMessage(fn));
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("failed to resolve wings i18n path", e);
+        }
+
+        if (baseNames.isEmpty()) return;
+
+        StringBuilder sb = new StringBuilder();
+        String key = "spring.messages.basename";
+        String mess = environment.getProperty(key);
+        if (mess == null || mess.isEmpty()) {
+            logger.info("spring.messages.basename=");
+        } else {
+            Set<String> old = StringUtils.commaDelimitedListToSet(StringUtils.trimAllWhitespace(mess));
+            baseNames.addAll(old);
+            logger.info("spring.messages.basename=" + mess);
+        }
+
+        for (String bn : baseNames) {
+            sb.append(bn);
+            sb.append(",");
+            logger.info("add messages.basename=" + bn + " to message source");
+        }
+        System.setProperty(key, sb.substring(0, sb.length() - 1));
+    }
+
+    private String parseBaseMessage(String path) {
+        String lower = path.toLowerCase();
+        int p1 = lower.indexOf("wings-i18n/");
+        int p2 = lower.lastIndexOf(".properties");
+
+        for (int i = 0; i < 2; i++) { // _en_US
+            int x1 = p2 - 3;
+            if (x1 > p1) {
+                char c1 = lower.charAt(x1);
+                char c2 = lower.charAt(x1 + 1);
+                char c3 = lower.charAt(x1 + 2);
+                if (c1 == '_' && (c2 >= 'a' && c2 <= 'z') && (c3 >= 'a' && c3 <= 'z')) {
+                    p2 = x1;
+                }
+            }
+        }
+        return path.substring(p1, p2);
+    }
+
     private void processWingsConf(ConfigurableEnvironment environment) {
         final LinkedHashMap<String, Boolean> confPaths = new LinkedHashMap<>();
 

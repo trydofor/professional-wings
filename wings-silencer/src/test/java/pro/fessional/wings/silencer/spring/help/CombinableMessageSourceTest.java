@@ -1,5 +1,6 @@
 package pro.fessional.wings.silencer.spring.help;
 
+import lombok.Setter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,31 +21,23 @@ import java.util.Locale;
 @SpringBootTest
 public class CombinableMessageSourceTest {
 
-    private MessageSource message;
+    @Setter(onMethod = @__({@Autowired}))
+    private MessageSource messageSource;
+    @Setter(onMethod = @__({@Autowired}))
     private CombinableMessageSource combinableMessageSource;
-
-    @Autowired
-    public void setMessage(MessageSource message) {
-        this.message = message;
-    }
-
-    @Autowired
-    public void setCombinableMessageSource(CombinableMessageSource combinableMessageSource) {
-        this.combinableMessageSource = combinableMessageSource;
-    }
 
     @Test
     public void combine() {
 
         Object[] args = {};
-        String m1 = message.getMessage("test.我的测试", args, Locale.CHINA);
+        String m1 = messageSource.getMessage("test.我的测试", args, Locale.CHINA);
         combinableMessageSource.addMessage("test.我的测试", Locale.CHINA, "啥都好用");
-        String m2 = message.getMessage("test.我的测试", args, Locale.CHINA);
+        String m2 = messageSource.getMessage("test.我的测试", args, Locale.CHINA);
 
         StaticMessageSource sms = new StaticMessageSource();
         sms.addMessage("test.mytest", Locale.CHINA, "又一个测试");
         combinableMessageSource.addMessages(sms, 1);
-        String m3 = message.getMessage("test.mytest", args, Locale.CHINA);
+        String m3 = messageSource.getMessage("test.mytest", args, Locale.CHINA);
 
         Assert.assertEquals("test.我的测试", m1);// code
         Assert.assertEquals("啥都好用", m2);

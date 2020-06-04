@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpMethod;
 import pro.fessional.mirana.data.Nulls;
 import pro.fessional.mirana.io.InputStreams;
+import pro.fessional.mirana.netx.SslTrustAll;
 
 import java.io.File;
 import java.io.IOException;
@@ -166,5 +167,11 @@ public class OkHttpClientHelper {
         } catch (Exception e) {
             throw new IllegalStateException("failed to download, url=" + url, e);
         }
+    }
+
+    public static OkHttpClient sslTrustAll(OkHttpClient.Builder builder) {
+        return builder.sslSocketFactory(SslTrustAll.SSL_SOCKET_FACTORY, SslTrustAll.X509_TRUST_MANAGER)
+                      .hostnameVerifier(SslTrustAll.HOSTNAME_VERIFIER)
+                      .build();
     }
 }

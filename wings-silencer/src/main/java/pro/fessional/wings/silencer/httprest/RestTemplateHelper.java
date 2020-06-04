@@ -1,7 +1,9 @@
 package pro.fessional.wings.silencer.httprest;
 
+import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
@@ -12,6 +14,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -147,4 +151,12 @@ public class RestTemplateHelper {
         }
         return null;
     }
+
+    public static RestTemplate sslTrustAll(RestTemplateBuilder builder, OkHttpClient client) {
+        ClientHttpRequestFactory factory = new OkHttp3ClientHttpRequestFactory(client);
+        // fuck, builder return new ...
+        return builder.requestFactory(() -> factory)
+                      .build();
+    }
+
 }

@@ -110,7 +110,16 @@ spring对MessageSource的加载与configuration的机制不同，不需要unicod
  
 此处为行为约定，基于servlet或webflux的具体实现，在其他工程。
 
-通过注入`CombinableMessageSource`，可以动态添加和组合其他`MessageSource`。
+spring默认以如下配置为入口，逗号分隔，保留不带国家地区的bundle格式名。
+`spring.messages.basename=messages,config.i18n.messages`
+这样可以在classpath下存在以下格式的文件，命名避免使用`.`(会被换做`/`扫描)
+
+ * message.properties  必须存在，以bundle名的默认文件
+ * message_en.properties
+ * message_en_US.properties
+ * message_en_US_UNIX.properties
+ 
+ 提供 CombinableMessageSource 可以动态添加多国语信息
 
 ## 1.4.Json格式约定(jackson)
 
@@ -182,7 +191,7 @@ JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, Foo.
 ## 1.6.restTemplate和okhttp
 
 默认使用okhttp3作为restTemplate的实现。按spring boot官方文档和源码约定。
-并可以 autoware OkHttpClient 直接使用。
+并可以 autoware OkHttpClient 直接使用，默认**信任所有ssl证书**，如安全高，需要关闭。
 如果需要按scope定制，使用RestTemplateBuilder，全局应用使用RestTemplateCustomizer。
 
 [RestTemplate 定制](https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/#boot-features-resttemplate-customization)

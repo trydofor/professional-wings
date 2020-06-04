@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.client.AbstractClientHttpRequestFactoryWrapper;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
@@ -16,7 +15,9 @@ import org.springframework.web.client.RestTemplate;
 import java.lang.reflect.Field;
 import java.time.Duration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author trydofor
@@ -27,14 +28,13 @@ import static org.junit.Assert.*;
 public class WingsOkhttp3ConfigurationTest {
 
     @Setter(onMethod = @__({@Autowired}))
-    private RestTemplateBuilder restTemplateBuilder;
+    private RestTemplate restTemplate;
 
     @Setter(onMethod = @__({@Autowired}))
     private OkHttpClient okHttpClient;
 
     @Test
     public void test() throws Exception {
-        RestTemplate restTemplate = restTemplateBuilder.setConnectTimeout(Duration.ofSeconds(90)).build();
 
         ClientHttpRequestFactory requestFactory = restTemplate.getRequestFactory();
 
@@ -48,9 +48,11 @@ public class WingsOkhttp3ConfigurationTest {
 
         Field field = OkHttp3ClientHttpRequestFactory.class.getDeclaredField("client");
         field.setAccessible(true);
-        OkHttpClient restClient =  (OkHttpClient) field.get(requestFactory);
+        OkHttpClient restClient = (OkHttpClient) field.get(requestFactory);
 
-        assertEquals(okHttpClient.connectTimeoutMillis(), Duration.ofSeconds(70).toMillis());
-        assertEquals(restClient.connectTimeoutMillis(), Duration.ofSeconds(90).toMillis());
+        long mills = Duration.ofSeconds(70).toMillis();
+        assertEquals(mills, okHttpClient.connectTimeoutMillis());
+        assertEquals(mills, restClient.connectTimeoutMillis());
+        assertSame(restClient, okHttpClient);
     }
 }
