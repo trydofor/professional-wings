@@ -5,6 +5,7 @@ import org.jooq.QueryPart;
 import org.jooq.RowCountQuery;
 import org.jooq.Table;
 import org.jooq.TableRecord;
+import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 
 /**
@@ -32,6 +33,28 @@ public class WingsJooqUtil {
         sql.append(")");
 
         return DSL.query(sql.toString(), qps);
+    }
+
+    private static final Field<?>[] EMPTY_FIELDS = new Field<?>[0];
+
+    public static Field<?>[] primaryKeys(Table<?> table) {
+        UniqueKey<?> key = table.getPrimaryKey();
+        return key == null ? EMPTY_FIELDS : key.getFieldsArray();
+    }
+
+    public static void skipFields(TableRecord<?> record, Field<?>... fields) {
+        for (Field<?> field : fields) {
+            record.changed(field, false);
+        }
+    }
+
+    public static void skipNullVals(TableRecord<?> record) {
+        int size = record.size();
+        for (int i = 0; i < size; i++) {
+            if (record.get(i) == null) {
+                record.changed(i, false);
+            }
+        }
     }
 
     public static RowCountQuery replaceInto(Table<?> table, Field<?>... fields) {

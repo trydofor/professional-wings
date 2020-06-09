@@ -12,10 +12,10 @@ import org.jooq.Loader;
 import org.jooq.LoaderOptionsStep;
 import org.jooq.OrderField;
 import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.RowCountQuery;
 import org.jooq.Table;
 import org.jooq.TableRecord;
-import org.jooq.UniqueKey;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
 import pro.fessional.mirana.data.CodeEnum;
@@ -25,52 +25,49 @@ import pro.fessional.mirana.pain.CodeException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 
 import static org.jooq.impl.DSL.row;
 import static org.jooq.impl.DSL.using;
 
 /**
- * <pre>
- * val nullCond: Condition? = null
- * val nullField: Field<Long>? = null
- * val nullOrder: OrderField<Long>? = null
- * val emptyOrder = Array<OrderField<Long>?>(0) { null }
- * val t = Tst中文也分表Table.asY8
- * val sql = dsl
- * .select(t.Id, nullField) // null safe
- * .from(t)
- * .where(nullCond)  // null safe
- * .orderBy(*emptyOrder) // empty safe
- * // .orderBy(t.Id, nullOrder) // IllegalArgumentException: Field not supported : null
- * // .orderBy(nullOrder) // IllegalArgumentException: Field not supported : null
- * .getSQL()
- * </pre>
+ * 原则上，不希望Record携带的数据库信息扩散，因此建议Dao之外使用pojo
+ * 对于read方法，一律返回Pojo；对于write，同时支持 Record和Pojo。
+ * 为了编码的便捷和减少数据拷贝，可以使用Record进行操作。
+ * 批量处理中，一律使用了new Record，为了提升性能。
  *
+ * @param <T> Table
+ * @param <R> Record
+ * @param <P> POJO
+ * @param <K> primary Key type
  * @author trydofor
  * @since 2019-10-12
  */
-public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRecord<R>, P, T> extends DAOImpl<R, P, T> {
+public abstract class WingsJooqDaoImpl<T extends Table<R>, R extends UpdatableRecord<R>, P, K> extends DAOImpl<R, P, K> {
 
-    private final S table;
-    private final S alias;
-    private final S deleted;
-    private final S updated;
+    private final T table;
+    private final T alias;
+    private final T deleted;
+    private final T updated;
     private final Condition onlyDied;
     private final Condition onlyLive;
+    private final Field<?>[] pks;
 
-    protected WingsJooqDaoImpl(S table, S alias, Class<P> type) {
+    protected WingsJooqDaoImpl(T table, T alias, Class<P> type) {
         this(table, alias, type, null, null, null);
     }
 
-    protected WingsJooqDaoImpl(S table, S alias, Class<P> type, Configuration conf) {
+    protected WingsJooqDaoImpl(T table, T alias, Class<P> type, Configuration conf) {
         this(table, alias, type, conf, null, null);
     }
 
-    protected WingsJooqDaoImpl(S table, S alias, Class<P> type, Configuration conf, S deleted, S updated) {
+    protected WingsJooqDaoImpl(T table, T alias, Class<P> type, Configuration conf, T deleted, T updated) {
         super(table, type, conf);
         this.table = table;
         this.alias = alias == null ? table : alias;
@@ -94,6 +91,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
         }
         onlyDied = d;
         onlyLive = l;
+        pks = WingsJooqUtil.primaryKeys(table);
     }
 
     /**
@@ -180,53 +178,19 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
         }
     }
 
-    /**
-     * 分配批量插入新记录，使用mysql的 insert ignore或 replace into。
-     * 注意 jooq的mergeInto，不完美，必须都有值，而replace不会。
-     *
-     * @param records         所有记录
-     * @param size            每批的数量，小于等于0时，表示不分批
-     * @param ignoreOrReplace 唯一冲突时，忽略还是替换
-     * @return 执行结果，使用 ModifyAssert判断
-     * @see DSLContext#mergeInto(Table)
-     */
-    public int[] batchInsert(Collection<R> records, int size, boolean ignoreOrReplace) {
-
-        BiFunction<DSLContext, Collection<R>, int[]> batchIgnoreExec = (dsl, rs) -> {
-            Field<?>[] fields = table.fields();
-            BatchBindStep batch;
-            if (ignoreOrReplace) {
-                // insert ignore
-                batch = dsl.batch(
-                        dsl.insertInto(table)
-                           .columns(fields)
-                           .values(new Object[fields.length]).onDuplicateKeyIgnore());
-
-            } else {
-                batch = dsl.batch(WingsJooqUtil.replaceInto(table, fields));
-            }
-
-            for (R r : rs) {
-                batch.bind(r.intoArray());
-            }
-
-            return batch.execute();
-        };
-        return batchExecute(records, size, batchIgnoreExec);
-    }
 
     /**
      * 插入新记录，使用mysql的 insert ignore或 replace into。
      * 注意 jooq的mergeInto，不完美，必须都有值，而replace不会。
      *
-     * @param record          记录
+     * @param pojo            记录
      * @param ignoreOrReplace 唯一冲突时，忽略还是替换
      * @return 执行结果，使用 ModifyAssert判断
-     * @see DSLContext#mergeInto(Table)
      */
-    public int insertInto(R record, boolean ignoreOrReplace) {
+    public int insertInto(P pojo, boolean ignoreOrReplace) {
 
         DSLContext dsl = dslContext();
+        R record = dsl.newRecord(table, pojo);
         if (ignoreOrReplace) {
             // insert ignore
             return dsl.insertInto(table)
@@ -239,6 +203,237 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
             RowCountQuery query = WingsJooqUtil.replaceInto(record);
             return dsl.execute(query);
         }
+    }
+
+
+    /**
+     * 插入新记录，默认使用①insert into DuplicateKey update，
+     * 也可以②先select，在insert或update
+     *
+     * @param pojo         记录
+     * @param updateFields 唯一约束存在时更新的字段
+     * @return 执行结果，使用 ModifyAssert判断
+     */
+    public int mergeInto(P pojo, Field<?>... updateFields) {
+        HashMap<Field<?>, Object> map = new HashMap<>();
+        DSLContext dsl = dslContext();
+        R record = dsl.newRecord(table, pojo);
+
+        for (Field<?> field : updateFields) {
+            Object t = record.get(field);
+            map.put(field, t);
+        }
+
+        return dsl
+                .insertInto(table)
+                .columns(table.fields())
+                .values(record.intoArray())
+                .onDuplicateKeyUpdate()
+                .set(map)
+                .execute();
+    }
+
+    /**
+     * 先select，在insert或update
+     *
+     * @param records      所有记录
+     * @param size         每批的数量，小于等于0时，表示不分批
+     * @param updateFields 唯一约束存在时更新的字段
+     * @return 执行结果，使用 ModifyAssert判断
+     */
+    public int[] batchMerge(Collection<R> records, int size, Field<?>... updateFields) {
+        if (records == null || records.isEmpty()) return Nulls.Ints;
+
+        BiFunction<DSLContext, Collection<R>, int[]> batchMergeExec = (dsl, rs) -> {
+            HashMap<Field<?>, Object> map = new HashMap<>();
+            for (Field<?> field : updateFields) {
+                map.put(field, null);
+            }
+
+            Field<?>[] fields = table.fields();
+            int fldLen = fields.length;
+            int updLen = updateFields.length;
+            BatchBindStep batch = dsl.batch(
+                    dsl.insertInto(table)
+                       .columns(fields)
+                       .values(new Object[fldLen])
+                       .onDuplicateKeyUpdate()
+                       .set(map)
+            );
+
+            for (R r : rs) {
+                Object[] vals = new Object[fldLen + updLen];
+                for (int i = 0; i < fldLen; i++) {
+                    vals[i] = r.get(i);
+                }
+                for (int i = 0; i < updLen; i++) {
+                    vals[i + fldLen] = r.get(updateFields[i]);
+                }
+                batch.bind(vals);
+            }
+
+            return batch.execute();
+        };
+
+        return batchExecute(records, size, batchMergeExec);
+    }
+
+    /**
+     * 当不使用db中的唯一约束时，使用此方法
+     * 先根据keys进行分批select，再根据记录情况进行insert或update。
+     * 字符串比较忽略大小写
+     *
+     * @param keys         唯一索引字段
+     * @param records      所有记录
+     * @param size         每批的数量，小于等于0时，表示不分批
+     * @param updateFields 唯一约束存在时更新的字段
+     * @return 执行结果，使用 ModifyAssert判断
+     */
+    public int[] batchMerge(Field<?>[] keys, Collection<R> records, int size, Field<?>... updateFields) {
+        return batchMerge(keys, caseIgnore, records, size, updateFields);
+    }
+
+    private final BiPredicate<Object, Object> caseIgnore = (o1, o2) -> {
+        if (o1 instanceof String && o2 instanceof String) {
+            String s1 = (String) o1;
+            String s2 = (String) o2;
+            return s1.equalsIgnoreCase(s2);
+        } else {
+            return o1.equals(o2);
+        }
+    };
+
+    /**
+     * 当不使用db中的唯一约束时，使用此方法
+     * 先根据keys进行分批select，再根据记录情况进行insert或update
+     *
+     * @param keys         唯一索引字段
+     * @param equals       判断字段相等的方法
+     * @param records      所有记录
+     * @param size         每批的数量，小于等于0时，表示不分批
+     * @param updateFields 唯一约束存在时更新的字段
+     * @return 执行结果，使用 ModifyAssert判断
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public int[] batchMerge(Field<?>[] keys, BiPredicate<Object, Object> equals, Collection<R> records, int size, Field<?>... updateFields) {
+        if (records == null || records.isEmpty()) return Nulls.Ints;
+
+        DSLContext dsl = dslContext();
+        int[] result = new int[records.size()];
+        int off = 0;
+        List<R> upd = new ArrayList<>(size);
+        List<R> ins = new ArrayList<>(size);
+        for (List<R> rcds : partition(records, size)) {
+            upd.clear();
+            ins.clear();
+
+
+            Condition where = null;
+            for (R rcd : rcds) {
+                Condition cand = null;
+                for (Field key : keys) {
+                    Object o = rcd.get(key);
+                    if (cand == null) {
+                        cand = key.eq(o);
+                    } else {
+                        cand = cand.and(key.eq(o));
+                    }
+                }
+                if (where == null) {
+                    where = cand;
+                } else {
+                    where = where.or(cand);
+                }
+            }
+            // throw NPE, if stupid keys or upp is empty
+
+            Result<Record> res = dsl.select(keys)
+                                    .from(table)
+                                    .where(where)
+                                    .fetch();
+
+            List<Record> tmp = new ArrayList<>(res);
+            for (R rcd : rcds) {
+                boolean has = false;
+                for (Iterator<Record> it = tmp.iterator(); it.hasNext(); ) {
+                    Record d = it.next();
+                    int eq = 0;
+                    for (int i = 0; i < keys.length; i++) {
+                        if (equals.test(rcd.get(keys[i]), d.get(i))) {
+                            eq++;
+                        }
+                    }
+                    if (eq == keys.length) {
+                        it.remove();
+                        has = true;
+                        break;
+                    }
+                }
+
+                if (has) {
+                    upd.add(rcd);
+                } else {
+                    ins.add(rcd);
+                }
+            }
+
+            if (!ins.isEmpty()) {
+                int[] r = batchInsert(ins, size);
+                System.arraycopy(r, 0, result, off, r.length);
+                off += r.length;
+            }
+
+            if (!upd.isEmpty()) {
+                int[] r = batchUpdate(keys, upd, size, updateFields);
+                System.arraycopy(r, 0, result, off, r.length);
+                off += r.length;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * 分配批量插入新记录，使用mysql的 insert ignore或 replace into。
+     * 注意 jooq的mergeInto，不完美，必须都有值，而replace不会。
+     *
+     * @param records         所有记录
+     * @param size            每批的数量，小于等于0时，表示不分批
+     * @param ignoreOrReplace 唯一冲突时，忽略还是替换
+     * @return 执行结果，使用 ModifyAssert判断
+     * @see DSLContext#mergeInto(Table)
+     */
+    public int[] batchInsert(Collection<R> records, int size, boolean ignoreOrReplace) {
+        if (records == null || records.isEmpty()) return Nulls.Ints;
+
+        BiFunction<DSLContext, Collection<R>, int[]> batchIgnoreExec = (dsl, rs) -> {
+            Field<?>[] fields = table.fields();
+            BatchBindStep batch;
+            if (ignoreOrReplace) {
+                // insert ignore
+                batch = dsl.batch(
+                        dsl.insertInto(table)
+                           .columns(fields)
+                           .values(new Object[fields.length])
+                           .onDuplicateKeyIgnore()
+                );
+
+            } else {
+                batch = dsl.batch(WingsJooqUtil.replaceInto(table, fields));
+            }
+
+            for (R r : rs) {
+                Object[] vals = new Object[fields.length];
+                for (int i = 0; i < vals.length; i++) {
+                    vals[i] = r.get(i);
+                }
+                batch.bind(vals);
+            }
+
+            return batch.execute();
+        };
+
+        return batchExecute(records, size, batchIgnoreExec);
     }
 
     /**
@@ -270,6 +465,57 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
     private final BiFunction<DSLContext, Collection<R>, int[]> batchStoreExec = (dsl, rs) -> dsl.batchStore(rs).execute();
 
     /**
+     * 分配批量更新数据
+     *
+     * @param whereFields  where条件
+     * @param records      记录
+     * @param size         批次大小
+     * @param updateFields 更新字段
+     * @return 执行结果，使用 ModifyAssert判断
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public int[] batchUpdate(Field<?>[] whereFields, Collection<R> records, int size, Field<?>... updateFields) {
+        if (records == null || records.isEmpty()) return Nulls.Ints;
+
+        BiFunction<DSLContext, Collection<R>, int[]> batchMergeExec = (dsl, rs) -> {
+            HashMap<Field<?>, Object> map = new HashMap<>();
+            for (Field<?> uf : updateFields) {
+                map.put(uf, null);
+            }
+            Condition where = null;
+            for (Field wf : whereFields) {
+                if (where == null) {
+                    where = wf.eq((Object) null);
+                } else {
+                    where = where.and(wf.eq((Object) null));
+                }
+            }
+
+            BatchBindStep batch = dsl.batch(
+                    dsl.update(table)
+                       .set(map)
+                       .where(where)
+            );
+
+            for (R r : rs) {
+                Object[] vals = new Object[whereFields.length + updateFields.length];
+                int off = 0;
+                for (Field<?> uf : updateFields) {
+                    vals[off++] = r.get(uf);
+                }
+                for (Field<?> uf : whereFields) {
+                    vals[off++] = r.get(uf);
+                }
+                batch.bind(vals);
+            }
+
+            return batch.execute();
+        };
+
+        return batchExecute(records, size, batchMergeExec);
+    }
+
+    /**
      * 分配批量更新记录
      *
      * @param records 所有记录
@@ -279,7 +525,6 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
      */
 
     public int[] batchUpdate(Collection<R> records, int size) {
-        if (records == null || records.isEmpty()) return Nulls.Ints;
         return batchExecute(records, size, batchUpdateExec);
     }
 
@@ -302,12 +547,22 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
         } else {
             rds = new ArrayList<>(records);
         }
-        for (List<R> pt : Lists.partition(rds, size)) {
+        for (List<R> pt : partition(rds, size)) {
             int[] rt = exec.apply(dsl, pt);
             System.arraycopy(rt, 0, rst, off, rt.length);
             off += rt.length;
         }
         return rst;
+    }
+
+    private List<List<R>> partition(Collection<R> records, int size) {
+        List<R> rds;
+        if (records instanceof List) {
+            rds = (List<R>) records;
+        } else {
+            rds = new ArrayList<>(records);
+        }
+        return Lists.partition(rds, size);
     }
 
     // ============
@@ -316,10 +571,9 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
      * 只选择未标记删除的
      */
     @Override
-    public boolean existsById(T id) {
-        Field<?>[] pk = pk();
-        if (pk != null) {
-            return count(alias, onlyLiveData(equal(pk, id))) > 0;
+    public boolean existsById(K id) {
+        if (pks.length > 0) {
+            return count(alias, onlyLiveData(equal(pks, id))) > 0;
         } else {
             return false;
         }
@@ -345,10 +599,9 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
      * 只选择未标记删除的
      */
     @Override
-    public P findById(T id) {
-        Field<?>[] pk = pk();
-        if (pk == null) return null;
-        return fetchOne(alias, onlyLiveData(equal(pk, id)));
+    public P findById(K id) {
+        if (pks.length == 0) return null;
+        return fetchOne(alias, onlyLiveData(equal(pks, id)));
     }
 
     /**
@@ -373,8 +626,8 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
 
     @SuppressWarnings("unchecked")
     @NotNull
-    public S as(String alias) {
-        return (S) table.as(alias);
+    public T as(String alias) {
+        return (T) table.as(alias);
     }
 
     /**
@@ -383,7 +636,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
      * @return 表
      */
     @NotNull
-    public S getAliasForReader() {
+    public T getAliasForReader() {
         return alias;
     }
 
@@ -449,7 +702,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
      * @return 表
      */
     @Nullable
-    public S getTraceOfDeleted() {
+    public T getTraceOfDeleted() {
         return deleted;
     }
 
@@ -485,7 +738,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
      * @return 表
      */
     @Nullable
-    public S getTraceOfUpdated() {
+    public T getTraceOfUpdated() {
         return updated;
     }
 
@@ -521,7 +774,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
      * @return 表
      */
     @NotNull
-    public S getTableForWriter() {
+    public T getTableForWriter() {
         return table;
     }
 
@@ -540,16 +793,11 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
     /**
      * 批量插入N，必须N条，否则CodeException(orError)
      *
-     * @param objects 批量对象
+     * @param records 批量对象
      * @param orError 异常code
      */
-    public int[] insertEqN(Collection<P> objects, CodeEnum orError) {
+    public int[] insertEqN(Collection<R> records, CodeEnum orError) {
         DSLContext dsl = using(configuration());
-        List<R> records = new ArrayList<>(objects.size());
-        for (P po : objects) {
-            records.add(dsl.newRecord(table, po));
-        }
-
         int[] rc = dsl.batchInsert(records).execute();
         for (int v : rc) {
             if (v != 1) throw new CodeException(orError);
@@ -631,13 +879,13 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
     /**
      * 按对象和条件更新，null被忽略
      *
-     * @param object    对象
+     * @param pojo      对象
      * @param condition 条件
      * @return 更新数量
      */
-    public int update(P object, Condition condition) {
+    public int update(P pojo, Condition condition) {
         DSLContext dsl = using(configuration());
-        R record = dsl.newRecord(table, object);
+        R record = dsl.newRecord(table, pojo);
 
         Map<Field<?>, Object> setter = new LinkedHashMap<>();
         int size = record.size();
@@ -656,13 +904,13 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
     /**
      * 按对象和主键更新
      *
-     * @param object   对象
+     * @param pojo     对象
      * @param skipNull null字段不被更新
      * @return 更新数量
      */
-    public int update(P object, boolean skipNull) {
+    public int update(P pojo, boolean skipNull) {
         DSLContext dsl = using(configuration());
-        R record = dsl.newRecord(table, object);
+        R record = dsl.newRecord(table, pojo);
         dealPkAndNull(record, skipNull);
         return record.update();
     }
@@ -811,15 +1059,9 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
     }
 
     // ==========
-    private static final Field<?>[] EMPTY_PK = new Field<?>[0];
-
-    private Field<?>[] pk() {
-        UniqueKey<?> key = alias.getPrimaryKey();
-        return key == null ? EMPTY_PK : key.getFieldsArray();
-    }
 
     @SuppressWarnings("unchecked")
-    private Condition equal(Field<?>[] pk, T id) {
+    private Condition equal(Field<?>[] pk, K id) {
         if (pk.length == 1) {
             return ((Field<Object>) pk[0]).equal(pk[0].getDataType().convert(id));
         }
@@ -831,23 +1073,16 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
     }
 
     private void dealPkAndNull(R record, boolean skipNull) {
-        for (Field<?> field : pk()) {
-            record.changed(field, false);
-        }
+        WingsJooqUtil.skipFields(record, pks);
 
-        if (!skipNull) return;
-
-        int size = record.size();
-        for (int i = 0; i < size; i++) {
-            if (record.get(i) == null) {
-                record.changed(i, false);
-            }
+        if (skipNull) {
+            WingsJooqUtil.skipNullVals(record);
         }
     }
 
     // ===========
 
-    private Long count(S alias, Condition cond) {
+    private Long count(T alias, Condition cond) {
         return using(configuration())
                 .selectCount()
                 .from(alias)
@@ -855,7 +1090,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
                 .fetchOne(0, Long.class);
     }
 
-    private P fetchOne(S alias, Condition cond) {
+    private P fetchOne(T alias, Condition cond) {
         R record = using(configuration())
                 .selectFrom(alias)
                 .where(cond)
@@ -864,7 +1099,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
         return record == null ? null : mapper().map(record);
     }
 
-    private List<P> fetch(S t, int offset, int limit, Condition cond, OrderField<?>[] orderBy) {
+    private List<P> fetch(T t, int offset, int limit, Condition cond, OrderField<?>[] orderBy) {
         DSLContext dsl = using(configuration());
         if (orderBy == null || orderBy.length == 0) {
             return dsl
@@ -884,7 +1119,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
         }
     }
 
-    private List<P> fetch(S t, Condition cond) {
+    private List<P> fetch(T t, Condition cond) {
         DSLContext dsl = using(configuration());
         return dsl
                 .selectFrom(t)
@@ -893,7 +1128,7 @@ public abstract class WingsJooqDaoImpl<S extends Table<R>, R extends UpdatableRe
                 .map(mapper());
     }
 
-    private List<P> fetch(S t, Condition condition, OrderField<?>[] orderBy) {
+    private List<P> fetch(T t, Condition condition, OrderField<?>[] orderBy) {
         DSLContext dsl = using(configuration());
         if (orderBy == null || orderBy.length == 0) {
             return dsl

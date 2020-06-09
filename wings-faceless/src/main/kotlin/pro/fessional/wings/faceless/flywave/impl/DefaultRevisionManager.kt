@@ -101,7 +101,7 @@ class DefaultRevisionManager(
             }
 
             if (reviText.count { isRunning(it.third) } != 0) {
-                logger.warn("[publishRevision] skip running revision, need manually fix it , name={}, db-revi={}, to-revi={}", plainName, plainRevi, revision)
+                logger.warn("[publishRevision] skip running revision, need manually fix it [UPDATE sys_schema_version SET apply_dt = '1000-01-01 00:00:00' WHERE apply_dt = '1000-01-01 00:00:17'] , name={}, db-revi={}, to-revi={}", plainName, plainRevi, revision)
                 continue
             }
 

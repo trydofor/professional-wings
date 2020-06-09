@@ -3,6 +3,7 @@ package pro.fessional.wings.faceless.jooq
 import org.apache.shardingsphere.api.hint.HintManager
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
+import org.junit.Assert
 import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,6 +17,7 @@ import pro.fessional.wings.faceless.convention.EmptyValue
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表
+import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager
 import pro.fessional.wings.faceless.service.lightid.LightIdService
@@ -186,5 +188,63 @@ class JooqShardingTest {
                 [NG] delete from `TST_中文也分表` where `TST_中文也分表`.`ID` <= ?
                 [NG] delete `t1` from `TST_中文也分表` as `t1` where `t1`.`ID` <= ?
                 """.trimIndent())
+    }
+
+    val now = LocalDateTime.now()
+    val tbl = Tst中文也分表Table.Tst中文也分表
+
+    @Test
+    fun `test8🦁批量🦁查日志`() {
+
+        val rds = listOf(
+                Tst中文也分表Record(119, now, now, now, 9, "批量合并119", "test8"),
+                Tst中文也分表Record(308, now, now, now, 9, "批量合并308", "test8"),
+                Tst中文也分表Record(309, now, now, now, 9, "批量合并309", "test8")
+        )
+        wingsTestHelper.note("批量Insert，查看日志,ignore, 分2批次， 119 ignore; 308，309 insert")
+        val rs1 = dao.batchInsert(rds, 2, true)
+        Assert.assertArrayEquals(intArrayOf(1, 1, 1), rs1)
+
+        wingsTestHelper.note("先select在insert 310，或update 308，309")
+        val rs3 = dao.batchMerge(arrayOf(tbl.Id), listOf(
+                Tst中文也分表Record(310, now, now, now, 9, "批量合并310", "其他310"),
+                Tst中文也分表Record(308, now, now, now, 9, "批量合并308", "其他308"),
+                Tst中文也分表Record(309, now, now, now, 9, "批量合并309", "其他309")
+        ), 2, tbl.LoginInfo, tbl.OtherInfo)
+        Assert.assertArrayEquals(intArrayOf(1, 1, 1), rs3)
+    }
+
+    @Test
+    fun `test9🦁批量🦁有bug`() {
+        val rds = listOf(
+                Tst中文也分表Record(119, now, now, now, 9, "批量加载307", "test9"),
+                Tst中文也分表Record(318, now, now, now, 9, "批量加载318", "test9"),
+                Tst中文也分表Record(319, now, now, now, 9, "批量加载319", "test9")
+        )
+        wingsTestHelper.note("批量Insert，查看日志,replace, 307-309，分2批，replace into")
+        try {
+            val rs2 = dao.batchInsert(rds, 2, false)
+            println(rs2.joinToString(","))
+            //Assert.assertArrayEquals(intArrayOf(2, 2, 2), rs2)
+        } catch (e: Exception) {
+            wingsTestHelper.note("Sharding 不支持，replace into https://github.com/apache/shardingsphere/issues/5330")
+            e.printStackTrace();
+        }
+
+        wingsTestHelper.note("批量Merge，查看日志,on dupkey, 307-309，分2批，duplicate")
+        wingsTestHelper.note("insert into `tst_中文也分表` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?")
+        try {
+            val rs3 = dao.batchMerge(listOf(
+                    Tst中文也分表Record(320, now, now, now, 9, "批量合并320", "其他320"),
+                    Tst中文也分表Record(318, now, now, now, 9, "批量合并318", "其他318"),
+                    Tst中文也分表Record(319, now, now, now, 9, "批量合并319", "其他319")
+            ), 2, tbl.LoginInfo, tbl.OtherInfo)
+            println(rs3.joinToString(","))
+            //Assert.assertArrayEquals(intArrayOf(1, 1, 1), rs3)
+        } catch (e: Exception) {
+            wingsTestHelper.note("Sharding 不支持，on duplicate key update https://github.com/apache/shardingsphere/issues/5210")
+            wingsTestHelper.note("Sharding 不支持，https://github.com/apache/shardingsphere/pull/5423")
+            e.printStackTrace();
+        }
     }
 }

@@ -76,19 +76,19 @@ public interface JournalService {
             po.setDeleteDt(commitDt);
         }
 
-        public <T extends Table> void create(@Nullable T table, @Nullable Map<?, ?> setter) {
+        public <T extends Table<?>> void create(@Nullable T table, @Nullable Map<?, ?> setter) {
             commit(table, setter, COL_COMMIT_ID, COL_CREATE_DT, COL_MODIFY_DT, COL_DELETE_DT);
         }
 
-        public <T extends Table> void modify(@Nullable T table, @Nullable Map<?, ?> setter) {
+        public <T extends Table<?>> void modify(@Nullable T table, @Nullable Map<?, ?> setter) {
             commit(table, setter, COL_COMMIT_ID, COL_MODIFY_DT);
         }
 
-        public <T extends Table> void delete(@Nullable T table, @Nullable Map<?, ?> setter) {
+        public <T extends Table<?>> void delete(@Nullable T table, @Nullable Map<?, ?> setter) {
             commit(table, setter, COL_COMMIT_ID, COL_DELETE_DT);
         }
 
-        public <T extends Table> void commit(@Nullable T table, @Nullable Map<?, ?> setter, String... field) {
+        public <T extends Table<?>> void commit(@Nullable T table, @Nullable Map<?, ?> setter, String... field) {
             if (table == null || setter == null || field == null) return;
             Field<?>[] fields = JournalHelp.extractField(table.fields(), field);
             commit(setter, fields);
@@ -99,10 +99,10 @@ public interface JournalService {
             @SuppressWarnings("unchecked")
             Map<Object, Object> putter = (Map<Object, Object>) setter;
 
-            Field createDt = null;
-            Field modifyDt = null;
-            Field deleteDt = null;
-            for (Field fd : field) {
+            Field<?> createDt = null;
+            Field<?> modifyDt = null;
+            Field<?> deleteDt = null;
+            for (Field<?> fd : field) {
                 String k = getFieldName(fd.getName());
                 if (k.equalsIgnoreCase(COL_COMMIT_ID)) {
                     putter.put(fd, commitId);
