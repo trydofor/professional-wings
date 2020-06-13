@@ -9,10 +9,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
-import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner;
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.util.SortedMap;
-
 /**
  * @author trydofor
  * @since 2019-06-30
@@ -34,7 +33,7 @@ public class TestFlywaveController {
         StringBuilder sb = new StringBuilder();
         if (revi <= 20190512_01) {
             sb.append("\n开始初始化");
-            SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH);
+            SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scanMaster();
             schemaRevisionManager.checkAndInitSql(sqls, 0, false);
             sb.append("\n结束初始化");
         }

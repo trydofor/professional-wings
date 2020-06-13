@@ -73,7 +73,7 @@ object WingsCodeGenerator {
         // date = "2019-09-09T01:33:51.762Z",
         // schema version:2019090903
         // serialVersionUID = 319604016;
-        val ignoreRegex = arrayOf("@Generated[^)]+","serialVersionUID[^;]+")
+        val ignoreRegex = arrayOf("@Generated[^)]+", "serialVersionUID[^;]+")
                 .joinToString("|")
                 .toRegex(RegexOption.MULTILINE)
         for ((k, f) in from) {
@@ -97,6 +97,7 @@ object WingsCodeGenerator {
 
     class Builder(val conf: Configuration) {
         private var incr = false
+
         /**
          * 增量生成，即不删除本次中不存在的文件
          * @param t 是否增量生成
@@ -108,6 +109,7 @@ object WingsCodeGenerator {
          */
         fun buildAndGenerate() = generate(conf, incr)
 
+        fun springRepository(b: Boolean) = apply { this.conf.generator.generate.withSpringAnnotations(b) }
         fun jdbcDriver(str: String) = apply { this.conf.jdbc.driver = str }
         fun jdbcUrl(str: String) = apply { this.conf.jdbc.url = str }
         fun jdbcUser(str: String) = apply { this.conf.jdbc.user = str }

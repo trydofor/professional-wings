@@ -116,7 +116,7 @@ public class WingsOAuth2xConfiguration {
 
     @Configuration
     @ConditionalOnClass(RedisConnectionFactory.class)
-    @ConditionalOnProperty(prefix = "wings.slardar.actoken", name = "redis-store", havingValue = "true")
+    @ConditionalOnProperty(name = "wings.slardar.actoken.redis-store", havingValue = "true")
     @Order(Ordered.LOWEST_PRECEDENCE - 100)
     public class Redis {
         @Autowired
@@ -131,7 +131,7 @@ public class WingsOAuth2xConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "wings.slardar.actoken", name = "wings-enhance", havingValue = "true")
+    @ConditionalOnProperty(name = "wings.slardar.actoken.wings-enhance", havingValue = "true")
     public WingsTokenEnhancer tokenEnhancer(Actoken actoken, LeapCode leapCode) {
         logger.info("Wings conf WingsTokenEnhancer");
         WingsTokenEnhancer enhancer = new WingsTokenEnhancer();

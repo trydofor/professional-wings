@@ -17,12 +17,6 @@ interface SchemaRevisionManager {
             var uptoText: String = ""
     )
 
-    companion object {
-        const val REVISIONSQL_PATH = "classpath*:/wings-flywave/revision/**/*.sql"
-        const val INIT1ST_REVISION = 2019_0512_01L
-        const val INIT2ND_REVISION = 2019_0520_01L
-    }
-
     /**
      * 获得所有真实数据源的版本
      */
@@ -51,13 +45,12 @@ interface SchemaRevisionManager {
 
     /**
      * 对比本地和数据库中的SQL。
-     * 当未初始化时，执行 init1stRevision 版
+     * 当未初始化时，执行 REVISION_1ST_SCHEMA 版
      * 当不存在时，则把本地保存到数据库。
      * 当存在但内容不一致，已APPLY则log error，否则更新
      * @param sqls 本地脚本
      * @param commitId 提交ID，参见Journal
      * @param updateDiff 是否自动更新不一致的 sql
-     * @see INIT1ST_REVISION
      */
     fun checkAndInitSql(sqls: SortedMap<Long, RevisionSql>, commitId: Long, updateDiff: Boolean = false)
 
@@ -66,7 +59,7 @@ interface SchemaRevisionManager {
      * @param revision 版本号
      * @param commitId 提交ID，参见Journal
      */
-    fun forceUpdateSql(revision:RevisionSql, commitId: Long)
+    fun forceUpdateSql(revision: RevisionSql, commitId: Long)
 
     /**
      * 不一致时，强制把本地SQL插入或更新到数据库，一致时忽略。

@@ -7,7 +7,7 @@ import javax.sql.DataSource
  * 获得全部原始数据源`plains`
  * 当前数据源  `inuse`
  * shard数据源`shard`
- * 是否读写分离`slave`
+ * 是否读写分离`split`
  *
  * @author trydofor
  * @since 2019-05-24
@@ -15,7 +15,7 @@ import javax.sql.DataSource
 class FlywaveDataSources(plains: Map<String, DataSource>,
                          val inuse: DataSource,
                          val shard: DataSource?,
-                         val slave: Boolean) {
+                         val split: Boolean) {
     private val plainMap = LinkedHashMap<String, DataSource>()
 
     init {

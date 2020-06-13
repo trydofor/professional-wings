@@ -590,16 +590,14 @@ public abstract class WingsJooqDaoImpl<T extends Table<R>, R extends UpdatableRe
     /**
      * 只选择未标记删除的
      */
-    @Override
-    public List<P> findAll() {
+    public List<P> fetchAll() {
         return fetch(alias, onlyLive);
     }
 
     /**
      * 只选择未标记删除的
      */
-    @Override
-    public P findById(K id) {
+    public P fetchById(K id) {
         if (pks.length == 0) return null;
         return fetchOne(alias, onlyLiveData(equal(pks, id)));
     }

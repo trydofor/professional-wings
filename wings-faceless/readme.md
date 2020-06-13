@@ -13,9 +13,14 @@
 实际项目中，schema结构的变更十分频繁，需要控制好local/dev/product的版本和节奏。
 `flyway`是个不错的选择，但用它有点牛刀杀鸡，所以新造个轮子叫`flywave`，可以，
 
- * 根据 `/wings-flywave/revision/**/*.sql` 完成数据库和数据的统一管理。
+ * 根据 `/wings-flywave/master/**/*.sql` 数据库和数据的统一管理。
+ * 根据 `/wings-flywave/branch/**/*.sql` sql的分支管理。
  * 根据 `sys_schema_version`表，控制数据库版本，升级和降级。
  * 根据 `sys_schema_journal`表，完成自动记录数据变更。
+
+flywave受git管理，如无必须，勿搞复杂分支，单线最好。
+这里的branch，目标是sql管理，而非数据库和数据管理。
+就是说，数据库中只有master一条线，而本地sql可以有多条线。
 
 实际项目经验中，数据库只存储数据，不存业务逻辑。所以，必须使用基本的SQL和数据库功能。
 这些功能包括，表，索引，触发器。不包括，视图，存储过程，外键约束及个别特性。
@@ -53,8 +58,9 @@ sql的书写规则详见[数据库约定](/wings-faceless/src/main/resources/win
 关于`/wings-flywave/`目录，有以下几种实践操作。
  
  * 存在`fulldump/{db}/`目录，用来管理当前主要db的最新schema
- * 存在`revision/init/`目录，最开始的初始化脚本
- * 存在`revision/{m##}/`目录，用来按里程碑管理变更脚本
+ * 存在`master/init/`目录，最开始的初始化脚本
+ * 存在`master/{m##}/`目录，用来按里程碑管理变更脚本
+ * 存在`branch/{m##}/`目录，那git-flow的命名实践
 
 ## 2.2.数据的版本管理(journal)
 
@@ -234,6 +240,8 @@ jooq生成代码，默认使用`table.column`限定列名，而ShardingJdbc做�
 
  * [JOOQ#9055 should NO table qualify if NO table alias](https://github.com/jOOQ/jOOQ/pull/9406)
  * [ShardingSphere#2859 `table.column` can not sharding](https://github.com/apache/incubator-shardingsphere/issues/2859)
+ * [ShardingSphere#5330 replace into](https://github.com/apache/shardingsphere/issues/5330)
+ * [ShardingSphere#5210 on duplicate key update](https://github.com/apache/shardingsphere/issues/5210)
 
 在jooq`2.13.0`版本之前，使用`spring.wings.jooq.auto-qualify.enabled=true`，
 完成限定名的自动处理，其规则是，`不存在alias时，不增加限定名`。
@@ -262,7 +270,6 @@ JOOQ参考资料
 统一执行时，springboot为了有效使用资源，不会全部重新初始化`context`，
 这样会使有些`ApplicationListener`得不到触发，可能导致部分TestCase失败。
 
-发生部分失败部分成功时，重新执行失败部分，直到成功即可。
 
 ## 2.8.H2本地库
 
@@ -276,11 +283,18 @@ jdbc:h2:~/wings-init
 其中，H2对mysql做了部分兼容，分表分库可以，trigger不支持，参考配置，
 
  * wings-conf/shardingsphere-datasource-79.properties
- * wings-conf/shardingsphere-datasource-79.init.properties
+ * wings-conf/shardingsphere-datasource-79@init.properties
 
 [H2官方文档](http://h2database.com/html/features.html)
 
-## 2.9.常见问题
+## 2.9.数据库Enum类和多国语
+
+schema版本2019_0521_01，定义了enum和i18n表，分别定义业务级枚举code，如状态，
+可以使用`ConstantEnumGenerate`自动生成java类，保持db和java代码的一致。
+
+i18n可以使用CombinableMessageSource动态添加，处理service内消息的多国语。
+
+## 2.10.常见问题
 
 ### 001.项目无法启动
 
@@ -292,3 +306,12 @@ jdbc:h2:~/wings-init
 初始化的时候需要打开，例如在test中增加临时打开
 `@SpringBootTest(properties = "spring.wings.flywave.enabled=true")`
 
+### 003.版本更新，异常说缺少字段branches
+
+在2.2.7版后，对sys_schema_version增加了分支支持，之前的版本需要手动维护。
+
+```sql
+ALTER TABLE `sys_schema_version` 
+ADD COLUMN `branches`  VARCHAR(2000) NOT NULL DEFAULT 'master' COMMENT '分支,逗号分隔' AFTER `commit_id`,
+ADD COLUMN `comments`  VARCHAR(3000) NOT NULL DEFAULT '' COMMENT '版本信息' AFTER `branches`;
+```

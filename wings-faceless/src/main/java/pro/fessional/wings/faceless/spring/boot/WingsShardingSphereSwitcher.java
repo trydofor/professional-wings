@@ -77,9 +77,6 @@ import java.util.Map;
  * @author caohao
  * @author panjuan
  * @see org.apache.shardingsphere.shardingjdbc.spring.boot.SpringBootConfiguration
- *
- * <p>
- * Spring boot flywave and master-slave configuration.
  */
 
 @ConditionalOnProperty(name = "spring.wings.shardingsphere.enabled", havingValue = "true")

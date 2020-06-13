@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless.flywave
 
 import org.junit.FixMethodOrder
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
@@ -23,6 +24,7 @@ import javax.sql.DataSource
 @SpringBootTest
 @ActiveProfiles("init")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Ignore("手动执行，避免污染Git提交文件")
 class SchemaFulldumpManagerTest {
 
     @Autowired
@@ -51,7 +53,7 @@ class SchemaFulldumpManagerTest {
                 "sys_commit_.*",
                 "-- wings",
                 "WG_.*"
-                )
+        )
         )
         val file = "$fold/schema.sql"
         schemaFulldumpManager.saveFile(file, dlls)

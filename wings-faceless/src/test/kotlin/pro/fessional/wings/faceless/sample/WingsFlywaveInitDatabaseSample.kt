@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
+import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
-import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_1ST_SCHEMA
 
 /**
  * @see SchemaRevisionMangerTest
@@ -28,18 +30,18 @@ class WingsFlywaveInitDatabaseSample {
     @Test
     fun init520() {
         // 初始
-        val sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH)
-        schemaRevisionManager.publishRevision(SchemaRevisionManager.INIT1ST_REVISION, 0)
+        val sqls = FlywaveRevisionScanner.scanMaster()
+        schemaRevisionManager.publishRevision(REVISION_1ST_SCHEMA, 0)
         schemaRevisionManager.checkAndInitSql(sqls, 0)
 
         // 升级
-        schemaRevisionManager.publishRevision(2019_0521_01, 0)
+        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
     }
 
 //    @Test
     fun force(){
-        val sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH)
-        schemaRevisionManager.forceUpdateSql(sqls[2019_0512_01]!!,0);
-        schemaRevisionManager.forceUpdateSql(sqls[2019_0521_01]!!,0);
+        val sqls = FlywaveRevisionScanner.scanMaster()
+        schemaRevisionManager.forceUpdateSql(sqls[REVISION_1ST_SCHEMA]!!,0);
+        schemaRevisionManager.forceUpdateSql(sqls[REVISION_TEST_V1]!!,0);
     }
 }

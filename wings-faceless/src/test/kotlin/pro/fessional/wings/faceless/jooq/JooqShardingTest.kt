@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import pro.fessional.wings.faceless.WingsTestHelper
+import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
 import pro.fessional.wings.faceless.convention.EmptyValue
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao
@@ -59,7 +60,7 @@ class JooqShardingTest {
 
     @Test
     fun `test1🦁清表重置`() {
-        schemaRevisionManager.publishRevision(20190521_01, 0)
+        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
     }
 
     @Test

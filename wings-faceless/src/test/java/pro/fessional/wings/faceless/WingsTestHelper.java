@@ -12,7 +12,7 @@ import pro.fessional.mirana.data.Diff;
 import pro.fessional.wings.faceless.flywave.FlywaveDataSources;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate;
-import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner;
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import javax.sql.DataSource;
 import java.util.Arrays;
@@ -31,6 +31,9 @@ import java.util.stream.Collectors;
  */
 @Component
 public class WingsTestHelper {
+
+    public static final long REVISION_TEST_V1 = 2019_0601_01L;
+    public static final long REVISION_TEST_V2 = 2019_0601_02L;
 
     private final Logger logger = LoggerFactory.getLogger(WingsTestHelper.class);
 
@@ -53,6 +56,10 @@ public class WingsTestHelper {
     }
 
     public void cleanAndInit() {
+        cleanAndInit(0, FlywaveRevisionScanner.REVISION_PATH_MASTER);
+    }
+
+    public void cleanAndInit(long revi, String... branches) {
         flywaveDataSources.plains().forEach((k, v) -> {
             note("clean database " + k);
             JdbcTemplate tmpl = new JdbcTemplate(v);
@@ -63,8 +70,11 @@ public class WingsTestHelper {
             });
         });
 
-        SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH);
+        SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(branches);
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
+        if (revi > 0) {
+            schemaRevisionManager.publishRevision(revi, 0);
+        }
     }
 
     public enum Type {
@@ -144,7 +154,7 @@ public class WingsTestHelper {
 
     public void note(String... mes) {
         for (String s : mes) {
-            logger.warn(">>=>🦁🦁🦁 " + s + " 🦁🦁🦁<=<<");
+            logger.info(">>=>🦁🦁🦁 " + s + " 🦁🦁🦁<=<<");
         }
     }
 }

@@ -26,6 +26,7 @@ class SchemaFulldumpManager(
         /**
          * 满足正则（全匹配matches，忽略大小写）的会被移除，按ascii自燃顺序排序
          */
+        @JvmStatic
         fun excludeRegexp(vararg regex: String): FilterSorter {
             return { tables ->
                 val excludes = regex.map { it.toRegex(RegexOption.IGNORE_CASE) }
@@ -36,6 +37,7 @@ class SchemaFulldumpManager(
         /**
          * 不满足正则（全匹配matches，忽略大小写）的会被移除，按ascii自燃顺序排序
          */
+        @JvmStatic
         fun includeRegexp(vararg regex: String): FilterSorter {
             return { tables ->
                 val excludes = regex.map { it.toRegex(RegexOption.IGNORE_CASE) }
@@ -47,6 +49,7 @@ class SchemaFulldumpManager(
          * 按字符串相等（不区分大小写）过滤和排序。其中，`--` 开头表示分组分割线
          * @param only true表示只包匹配的，false把未匹配的放最后，按ascii自燃顺序排序
          */
+        @JvmStatic
         fun groupedTable(only: Boolean = true, vararg table: String): FilterSorter {
             return { tables ->
                 val spec = ArrayList<String>(tables.size + table.size)
@@ -78,6 +81,7 @@ class SchemaFulldumpManager(
          * 按正则（全匹配matches，忽略大小写）过滤和排序。其中，`--` 开头表示分组分割线
          * @param only true表示只包匹配的，false把未匹配的放最后，按ascii自燃顺序排序
          */
+        @JvmStatic
         fun groupedRegexp(only: Boolean = true, vararg regexp: String): FilterSorter {
             return { tables ->
                 val regexSlots = LinkedHashMap<Regex, ArrayList<String>>(regexp.size)
@@ -113,6 +117,7 @@ class SchemaFulldumpManager(
             }
         }
 
+        @JvmField
         val excludeShadow: FilterSorter = excludeRegexp(""".*_\d+$""", """.*\$\w+$""")
     }
 

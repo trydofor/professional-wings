@@ -4,11 +4,11 @@ import org.slf4j.LoggerFactory
 import pro.fessional.wings.faceless.flywave.FlywaveDataSources
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
-import pro.fessional.wings.faceless.flywave.SchemaRevisionManager.Companion.INIT1ST_REVISION
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor
-import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.TYPE_PLAIN
 import pro.fessional.wings.faceless.flywave.SqlStatementParser
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_1ST_SCHEMA
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.commentInfo
 import java.util.LinkedList
 import java.util.SortedMap
 import java.util.concurrent.atomic.AtomicLong
@@ -40,8 +40,8 @@ class DefaultRevisionManager(
 
 
     override fun publishRevision(revision: Long, commitId: Long) {
-        if (revision < INIT1ST_REVISION) {
-            logger.warn("[publishRevision] skip the revision less than {}", INIT1ST_REVISION)
+        if (revision < REVISION_1ST_SCHEMA) {
+            logger.warn("[publishRevision] skip the revision less than {}", REVISION_1ST_SCHEMA)
             return
         }
         val selectUpto = """
@@ -145,9 +145,10 @@ class DefaultRevisionManager(
                     AND apply_dt <= '$unapplyMark 23:23:59'
                 ORDER BY revision DESC
             """) {
-                val tplRedo = Triple(it.getLong(1), it.getString(2), it.getString(4))
-                val tplUndo = Triple(it.getLong(1), it.getString(3), it.getString(4))
-                logger.warn("[publishRevision] undo partly applied for name={} revi={} need undo it", plainName, tplRedo.first)
+                val rev = it.getLong(1)
+                val tplRedo = Triple(rev, it.getString(2), it.getString(4))
+                val tplUndo = Triple(rev, it.getString(3), it.getString(4))
+                logger.warn("[publishRevision] undo partly applied for name={} revi={} need undo it", plainName, rev)
                 partRedo.add(tplRedo)
                 partUndo.add(tplUndo)
             }
@@ -256,14 +257,14 @@ class DefaultRevisionManager(
         }
 
         val selectSql = """
-                    SELECT upto_sql, undo_sql, apply_dt
+                    SELECT upto_sql, undo_sql, apply_dt, comments
                     FROM sys_schema_version
                     WHERE revision = ?
                     """
         val insertSql = """
                     INSERT INTO sys_schema_version
-                    (revision, create_dt, commit_id, upto_sql, undo_sql)
-                    VALUES(?, NOW(), ?, ?, ?)
+                    (revision, create_dt, commit_id, upto_sql, undo_sql, comments)
+                    VALUES(?, NOW(), ?, ?, ?, ?)
                     """
 
         for ((revi, entry) in sqls) {
@@ -284,27 +285,30 @@ class DefaultRevisionManager(
                         dbVal["upto_sql"] = it.getString("upto_sql")
                         dbVal["undo_sql"] = it.getString("undo_sql")
                         dbVal["apply_dt"] = it.getString("apply_dt")
+                        dbVal["comments"] = it.getString("comments")
                     }
                 } catch (e: Exception) {
-                    if (revi <= INIT1ST_REVISION) {
+                    if (revi <= REVISION_1ST_SCHEMA) {
                         assertNot1st(plainDs, e)
                         logger.warn("[checkAndInitSql] try to init first version, revi={}, on db={}", revi, plainName)
                         applyRevisionSql(revi, uptoSql, true, commitId, plainTmpl, null, emptyList())
                         dbVal["upto_sql"] = ""
                         dbVal["undo_sql"] = ""
                         dbVal["apply_dt"] = ""
+                        dbVal["comments"] = ""
                     } else {
                         val regex = "sys_schema_version.*exist".toRegex(setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE))
                         if (e.message?.contains(regex) == true) {
-                            logger.error("[checkAndInitSql] you may need revision=$INIT1ST_REVISION, for un-init database")
+                            logger.error("[checkAndInitSql] you may need revision=$REVISION_1ST_SCHEMA, for un-init database")
                         }
                         throw e
                     }
                 }
 
+                val comments = commentInfo(entry.undoPath, entry.uptoPath)
                 if (dbVal.isEmpty()) {
                     logger.info("[checkAndInitSql] insert for database not exist revi={}, db={}", revi, plainName)
-                    val rst = plainTmpl.update(insertSql, revi, commitId, uptoSql, undoSql)
+                    val rst = plainTmpl.update(insertSql, revi, commitId, uptoSql, undoSql, comments)
                     if (rst != 1) {
                         throw IllegalStateException("failed to insert revi=$revi, db=$plainName")
                     }
@@ -331,7 +335,7 @@ class DefaultRevisionManager(
                             logger.warn("[checkAndInitSql] diff undo-sql $msgAly, update it. revi={}, db={}", revi, plainName)
                         }
                     } else {
-                        logger.warn("[checkAndInitSql] diff undo-sql $msgAly, ingore it. revi={}, db={}", revi, plainName)
+                        logger.warn("[checkAndInitSql] diff undo-sql $msgAly, ignore it. revi={}, db={}", revi, plainName)
                     }
                 }
 
@@ -348,7 +352,18 @@ class DefaultRevisionManager(
                             logger.warn("[checkAndInitSql] diff upto-sql $msgAly, update it. revi={}, db={}", revi, plainName)
                         }
                     } else {
-                        logger.warn("[checkAndInitSql] diff upto-sql $msgAly, ingore it. revi={}, db={}", revi, plainName)
+                        logger.warn("[checkAndInitSql] diff upto-sql $msgAly, ignore it. revi={}, db={}", revi, plainName)
+                    }
+                }
+
+                // check comments
+                if(comments != dbVal["comments"]){
+                    if (updateDiff) {
+                        updSql.append("comments = ?, ")
+                        updVal.add(comments)
+                        logger.info("[checkAndInitSql] update comments. revi={}, db={}", revi, plainName)
+                    } else {
+                        logger.warn("[checkAndInitSql] diff comments ignore it. revi={}, db={}", revi, plainName)
                     }
                 }
 
@@ -443,7 +458,7 @@ class DefaultRevisionManager(
         val plainName = plainTmpl.name
 
         // 记录部分执行情况。
-        if (revi > INIT1ST_REVISION) {
+        if (revi > REVISION_1ST_SCHEMA) {
             plainTmpl.update("UPDATE sys_schema_version SET apply_dt='$runningMark', commit_id=? WHERE revision=?", commitId, revi)
         }
 

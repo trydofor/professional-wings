@@ -11,7 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner
 import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.service.lightid.LightIdService
-import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_2ND_IDLOGS
 import java.util.concurrent.atomic.AtomicLong
 
 /**
@@ -42,7 +42,7 @@ open class LightIdServiceImplTest {
 
     @Test
     fun `test1🦁获取ID`() {
-        schemaRevisionManager.publishRevision(SchemaRevisionManager.INIT2ND_REVISION, 0)
+        schemaRevisionManager.publishRevision(REVISION_2ND_IDLOGS, 0)
 
         val seqName = "sys_commit_journal"
         val bgn = AtomicLong(0)

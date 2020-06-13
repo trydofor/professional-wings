@@ -12,12 +12,13 @@ import org.junit.runners.MethodSorters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
+import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.service.journal.JournalService
-import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 import java.time.LocalDateTime
 
 /**
@@ -43,9 +44,9 @@ class WingsJooqDslAndDaoSample {
 
     @Test
     fun test1Init() {
-        val sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH)
+        val sqls = FlywaveRevisionScanner.scanMaster()
         schemaRevisionManager.checkAndInitSql(sqls, 0)
-        schemaRevisionManager.publishRevision(20190521_01, 0)
+        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
     }
 
     @Test
@@ -81,7 +82,7 @@ class WingsJooqDslAndDaoSample {
     fun test3Dsl() {
         val nullCond: Condition? = null
         val nullField: Field<Long>? = null
-        val nullOrder: OrderField<Long>? = null
+//        val nullOrder: OrderField<Long>? = null
         val emptyOrder = Array<OrderField<Long>?>(0) { null }
         val t = Tst中文也分表Table.Tst中文也分表
         val sql = dsl
@@ -135,7 +136,5 @@ class WingsJooqDslAndDaoSample {
         println(c1)
         val c2 = dao.count(dao.onlyDiedData())
         println(c2)
-        val t = Tst中文也分表Table.Tst中文也分表
-
     }
 }

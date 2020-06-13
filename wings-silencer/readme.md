@@ -51,13 +51,16 @@
  7. 以`/`结尾的当做目录，否则作为文件
  8. 从以上路径，优先加载`application.*`，次之`wings-conf/**/*.*`
 
-`各路径`指按照上述顺序，把路径拆分后，依次扫描，序号大的优先级高（默认值有关）。
+`各路径`指按照上述顺序，把路径拆分后，依次扫描，优先级为FIFO先进先出（值覆盖有关）。
 
 目前只加载 `*.yml`, `*.yaml`,`*.xml`, `*.properties`三种扩展名的配置文件。
 默认的文件名字后面，都会跟上`-79`序号，方便根据文件名排序设置默认值。
 
-众多配置文件，优先按基本名(basename，不带目录和扩展名)生序排列，然后按目录生序排列。
-如果文件有序号`-##`格式，会按序号数值生序排列，无需号文件视为`-99`。
+每个配置文件都由一下几部分构成:`dirname`+`basename`+`seq`+`profile`+`extname`.
+例如，`classpath:/wings-conf`+`/`+`wings-mirana`+`-`+`79`+`.`+`properties`
+相同`basename`为同一配置，配置无序号，视序号为`99`。
+
+配置文件，以Resource首先按扫码顺序排序，然后按base归类，按seq升序调整（值覆盖有关）。
 
 所有配置文件必须UTF8编码，这样才可以更好的支持unicode，可以直接写中文。
 自动配置时对非ascii进行自动转义，以支持spring默认的按byte读取行为。
@@ -65,19 +68,20 @@
 ### 1.2.2.配置文件profile
 
 支持`profile`格式，但是从命名上，要求`profile`用`.`标识，和spring对比如下。
-文件名不建议使用`.`，`profile`不包括`.`，否则会造成解析错误。
+文件名不建议使用`@`，`profile`不包括`.`，否则会造成解析错误。
 
  * `application.properties`
- * `wings-conf/shardingsphere-datasource-79.properties`
  * `application-{profile}.properties`
- * `wings-conf/shardingsphere-datasource-79.{profile}.properties`
+ * `wings-conf/shardingsphere-datasource-79.properties`
+ * `wings-conf/shardingsphere-datasource-79@{profile}.properties`
 
-以`.`区分profile主要是因为，wings-conf文件名中存在`-`，避免造成误解析。
+相同`basename`+`seq`的config是同一组，会移除掉非活动的profile
+以`@`区分profile主要是因为，wings-conf文件名中存在`-`，避免造成误解析。
 在使用`spring.profiles.active`时，要确保配置文件按spring约定加载。
 
 ### 1.2.3.配置禁用
 
-存在于`/wings-conf/wings-conf-black-list.cnf`的文件名，不会自动加载。
+存在于`/wings-conf/wings-conf-block-list.cnf`的文件名，不会自动加载。
 
  * 一行一个文件名，区分大小写。
  * `#`开头标识注释，自动忽略首尾空白。

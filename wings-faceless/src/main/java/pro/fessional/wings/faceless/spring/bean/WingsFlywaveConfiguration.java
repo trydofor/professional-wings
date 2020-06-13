@@ -1,5 +1,7 @@
 package pro.fessional.wings.faceless.spring.bean;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,10 +33,13 @@ import java.util.Collections;
 @ConditionalOnProperty(name = "spring.wings.flywave.enabled", havingValue = "true")
 public class WingsFlywaveConfiguration {
 
+    private static final Logger logger = LoggerFactory.getLogger(WingsFlywaveConfiguration.class);
+
     @Bean
     @ConditionalOnBean(DataSource.class)
     @ConditionalOnMissingBean
     public FlywaveDataSources flywaveDataSources(DataSource inuse) {
+        logger.info("init bean FlywaveDataSources");
         return new FlywaveDataSources(Collections.singletonMap("default", inuse), inuse, null, false);
     }
 
@@ -91,7 +96,8 @@ public class WingsFlywaveConfiguration {
     }
 
     @Bean
-    public SqlSegmentProcessor sqlSegmentParser(@Value("${spring.jooq.sql-dialect}") String dialect, WingsFlywaveSqlProperties properties) {
+    public SqlSegmentProcessor sqlSegmentParser(@Value("${spring.jooq.sql-dialect}") String dialect,
+                                                WingsFlywaveSqlProperties properties) {
         if ("mysql".equalsIgnoreCase(dialect)) {
             return new SqlSegmentProcessor(properties.getCommentSingle(),
                     properties.getCommentMultiple(),

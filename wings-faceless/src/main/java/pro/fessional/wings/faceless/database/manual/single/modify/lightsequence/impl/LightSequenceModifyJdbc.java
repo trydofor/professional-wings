@@ -3,7 +3,6 @@ package pro.fessional.wings.faceless.database.manual.single.modify.lightsequence
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
 import pro.fessional.wings.faceless.database.manual.single.modify.lightsequence.LightSequenceModify;
 import pro.fessional.wings.faceless.database.manual.single.select.lightsequence.LightSequenceSelect;
 
@@ -17,7 +16,6 @@ import java.util.List;
  * @author trydofor
  * @since 2019-06-04
  */
-@Repository
 @RequiredArgsConstructor
 public class LightSequenceModifyJdbc implements LightSequenceModify {
 

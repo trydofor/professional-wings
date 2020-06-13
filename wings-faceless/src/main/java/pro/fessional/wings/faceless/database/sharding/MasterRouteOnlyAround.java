@@ -20,7 +20,7 @@ public class MasterRouteOnlyAround {
 
     public MasterRouteOnlyAround(ObjectProvider<FlywaveDataSources> flywaveDataSources) {
         FlywaveDataSources ds = flywaveDataSources.getIfAvailable();
-        hasSlave = ds != null && ds.getSlave();
+        hasSlave = ds != null && ds.getSplit();
     }
 
     @Around("@annotation(MasterRouteOnly)")

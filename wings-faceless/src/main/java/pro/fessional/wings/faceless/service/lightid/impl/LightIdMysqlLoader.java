@@ -3,7 +3,6 @@ package pro.fessional.wings.faceless.service.lightid.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.mirana.id.LightIdProvider;
@@ -21,7 +20,6 @@ import java.util.Optional;
  * @author trydofor
  * @since 2019-06-01
  */
-@Component
 @RequiredArgsConstructor
 @Slf4j
 public class LightIdMysqlLoader implements LightIdProvider.Loader {

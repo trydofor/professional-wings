@@ -7,10 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
+import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
+import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager
-import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_1ST_SCHEMA
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_2ND_IDLOGS
 
 /**
  * @author trydofor
@@ -35,15 +39,15 @@ class WingsFlywaveShardJournalSample {
     fun revisionShardJournal() {
 
         // 初始
-        val sqls = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH)
+        val sqls = FlywaveRevisionScanner.scanMaster()
         schemaRevisionManager.checkAndInitSql(sqls, 0)
 
         // 升级
-        schemaRevisionManager.publishRevision(SchemaRevisionManager.INIT2ND_REVISION, 0)
-        schemaRevisionManager.publishRevision(20190521_01, 0)
+        schemaRevisionManager.publishRevision(REVISION_2ND_IDLOGS, 0)
+        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
 
         // 单库强升
-        schemaRevisionManager.forceApplyBreak(20190521_02, 2, true, "master")
+        schemaRevisionManager.forceApplyBreak(REVISION_TEST_V2, 2, true, "master")
 
         // 分表
         val table = "tst_中文也分表"
@@ -64,6 +68,6 @@ class WingsFlywaveShardJournalSample {
         schemaJournalManager.publishDelete(table, false, 0)
 
         // 降级
-        schemaRevisionManager.publishRevision(SchemaRevisionManager.INIT1ST_REVISION, 0)
+        schemaRevisionManager.publishRevision(REVISION_1ST_SCHEMA, 0)
     }
 }

@@ -1,29 +1,27 @@
 package pro.fessional.wings.faceless.enums;
 
+import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.data.CodeEnum;
 
 /**
- * 支持ctr_standard_i18n的枚举类
+ * 支持 sys_standard_i18n 的枚举类
  *
  * @author trydofor
  * @since 2019-09-17
  */
 public interface StandardI18nEnum extends CodeEnum {
-    /**
-     * `base`.`kind`
-     *
-     * @return 前缀
-     */
-    String getPrefix();
 
-    String getName();
+    @NotNull
+    String getBase();
 
-    default String getI18nKey() {
-        return getPrefix() + "." + getCode();
-    }
+    @NotNull
+    String getKind();
 
-    @Override
-    default String getMessage() {
-        return getName();
+    @NotNull
+    String getUkey();
+
+    @NotNull
+    default String getI18nCode() {
+        return getBase() + "." + getKind() + "." + getUkey();
     }
 }

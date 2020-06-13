@@ -1,5 +1,6 @@
 package pro.fessional.wings.silencer.spring.boot;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.boot.env.PropertiesPropertySourceLoader;
@@ -17,18 +18,23 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * 自动加载配置路径中的 /wings-conf/*.{yml,yaml,properties}配置。
@@ -50,7 +56,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     public static final String BOOTS_CONF = "application.*";
     public static final String WINGS_CONF = "wings-conf/**/*.*";
     public static final String WINGS_I18N = "wings-i18n/**/*.properties";
-    public static final String BLACK_LIST = "wings-conf/wings-conf-black-list.cnf";
+    public static final String BLACK_LIST = "wings-conf/wings-conf-block-list.cnf";
 
 
     @Override
@@ -115,141 +121,22 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     }
 
     private void processWingsConf(ConfigurableEnvironment environment) {
-        final LinkedHashMap<String, Boolean> confPaths = new LinkedHashMap<>();
 
-        MutablePropertySources sources = environment.getPropertySources();
-        for (PropertySource<?> next : sources) {
-            Object property = next.getProperty("spring.config.location");
-            if (property == null) {
-                property = next.getProperty("SPRING_CONFIG_LOCATION");
-            }
-            if (property != null) {
-                String[] parts = property.toString().split(",");
-                for (String s : parts) {
-                    putPathIfValid(confPaths, s.trim());
-                }
-            }
-        }
+        final MutablePropertySources propertySources = environment.getPropertySources();
 
-        for (String s : "classpath:/,classpath:/config/,file:./,file:./config/".split(",")) {
-            putPathIfValid(confPaths, s.trim());
-        }
-
-        final LinkedHashMap<String, Resource> pathRes = new LinkedHashMap<>();
-        final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-
-        // depends classpath*:
-        for (String path : confPaths.keySet()) {
-            if (path.startsWith("classpath:")) {
-                path = path.replace("classpath:", "classpath*:");
-            } else if (path.startsWith("file:") || path.startsWith("classpath*:")) {
-                // skip
-            } else {
-                path = "file:" + path;
-            }
-
-            logger.info("Wings scan classpath, path=" + path);
-            if (path.endsWith("/") || path.endsWith("\\")) {
-                putConfIfValid(pathRes, resolver, path + WINGS_CONF);
-                putConfIfValid(pathRes, resolver, path + BOOTS_CONF);
-            } else {
-                putConfIfValid(pathRes, resolver, path);
-            }
-        }
-
-
-        // resort by profile
-        Set<String> activeProfiles = new HashSet<>(Arrays.asList(environment.getActiveProfiles()));
-
-        if (!activeProfiles.isEmpty()) {
-            LinkedHashMap<String, Resource> tempRes = new LinkedHashMap<>();
-            Set<String> profilePath = new HashSet<>();
-            Pattern profPattern = Pattern.compile("\\.([a-z0-9]+)\\.[a-z0-9]+$", Pattern.CASE_INSENSITIVE);
-            for (Iterator<Map.Entry<String, Resource>> iter = pathRes.entrySet().iterator(); iter.hasNext(); ) {
-                Map.Entry<String, Resource> entry = iter.next();
-                String key = entry.getKey();
-                Matcher matcher = profPattern.matcher(key);
-                if (matcher.find()) {
-                    String prof = matcher.group(1);
-                    if (activeProfiles.contains(prof)) {
-                        logger.info("adjust active profile=" + prof + ", file=" + key);
-                        tempRes.put(key, entry.getValue());
-                        profilePath.add(extractBaseName(key));
-                    } else {
-                        logger.info("remove inactive profile file=" + key);
-                    }
-                    iter.remove();
-                }
-            }
-            if (!profilePath.isEmpty()) {
-                for (Iterator<Map.Entry<String, Resource>> iter = pathRes.entrySet().iterator(); iter.hasNext(); ) {
-                    Map.Entry<String, Resource> entry = iter.next();
-                    String key = entry.getKey();
-                    String baseName = extractBaseName(key);
-                    if (profilePath.contains(baseName)) {
-                        logger.info("remove override profile file=" + key);
-                        iter.remove();
-                    }
-                }
-            }
-
-            //
-            if (tempRes.size() > 0) {
-                tempRes.putAll(pathRes);
-                pathRes.clear();
-                pathRes.putAll(tempRes);
-            }
-        }
+        final LinkedHashSet<ConfResource> confResources = scanWingsResource(propertySources);
+        final HashMap<String, String> blockList = parseBlockList(confResources);
+        final List<ConfResource> sortedResources = profileBlockSort(confResources, blockList, environment.getActiveProfiles());
 
         final YamlPropertySourceLoader yamlLoader = new YamlPropertySourceLoader();
         final PropertiesPropertySourceLoader propertyLoader = new PropertiesPropertySourceLoader();
 
-        final HashMap<String, String> blackList = new HashMap<>();
-        for (Iterator<Map.Entry<String, Resource>> it = pathRes.entrySet().iterator(); it.hasNext(); ) {
-            Map.Entry<String, Resource> entry = it.next();
-            String file = entry.getKey();
-            if (isBlacklist(file)) {
-                try (InputStream is = entry.getValue().getInputStream()) {
-                    BufferedReader buf = new BufferedReader(new InputStreamReader(is));
-                    String line;
-                    int count = 0;
-                    while ((line = buf.readLine()) != null) {
-                        String s = line.trim();
-                        if (!s.startsWith("#")) {
-                            count++;
-                            blackList.put(s, file);
-                        }
-                    }
-
-                    logger.info("find " + count + " blacklist from file=" + file);
-                } catch (IOException e) {
-                    logger.warn("failed to read blacklist file:" + file, e);
-                }
-                it.remove();
-            }
-        }
-
-        logger.info("Wings adjust config precedence, first is higher than last");
-        LinkedList<Map.Entry<String, Resource>> sortedResources = new LinkedList<>(pathRes.entrySet());
-        sortedResources.sort((o1, o2) -> {
-            String f1 = o1.getKey();
-            String f2 = o2.getKey();
-            String b1 = extractBaseName(f1);
-            String b2 = extractBaseName(f2);
-            int p = b1.compareToIgnoreCase(b2);
-            return p != 0 ? p : f1.compareToIgnoreCase(f2);
-        });
-
-        for (Map.Entry<String, Resource> entry : sortedResources) {
-            final String key = entry.getKey();
-            final Resource res = entry.getValue();
+        logger.info("Wings append resorted resource, first is higher than last");
+        for (ConfResource conf : sortedResources) {
+            final String key = conf.location;
+            final Resource res = conf.resource;
             try {
                 List<PropertySource<?>> sourceList;
-                String blacked = isBlackedBy(blackList, key);
-                if (blacked != null) {
-                    logger.info("skip a blacked resource=" + key + " by " + blacked);
-                    continue;
-                }
 
                 if (isYml(key)) {
                     sourceList = yamlLoader.load(key, res);
@@ -260,10 +147,9 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                     logger.info("skip unsupported resource=" + key);
                     continue;
                 }
-
+                logger.info("Wings append source " + conf);
                 for (PropertySource<?> source : sourceList) {
-                    logger.info("Wings add source to last, resource=" + source.getName());
-                    sources.addLast(source);
+                    propertySources.addLast(source);
                 }
             } catch (IOException e) {
                 logger.warn("Wings failed to load yml=" + key, e);
@@ -271,46 +157,180 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         }
     }
 
-    private final Pattern ptnSeq = Pattern.compile("-\\d{2,}(\\.[a-z0-9]+)?$", Pattern.CASE_INSENSITIVE);
-
-    private String extractBaseName(String p) {
-        int p1 = p.lastIndexOf('/');
-        int p2 = p.lastIndexOf('\\');
-        int pe = p.lastIndexOf('.');
-        int px = Math.max(p1, p2);
-        if (px > 0 && pe > px) {
-            String sb = p.substring(px + 1, pe);
-            Matcher mt = ptnSeq.matcher(sb);
-            if (mt.find()) {
-                if (mt.group(1) != null) {
-                    sb = sb.substring(0, mt.start(1));
+    @NotNull
+    private HashMap<String, String> parseBlockList(Collection<ConfResource> sortedResources) {
+        HashMap<String, String> blockList = new HashMap<>();
+        for (Iterator<ConfResource> it = sortedResources.iterator(); it.hasNext(); ) {
+            ConfResource conf = it.next();
+            if (isBlacklist(conf.location)) {
+                try (InputStream is = conf.resource.getInputStream()) {
+                    BufferedReader buf = new BufferedReader(new InputStreamReader(is));
+                    String line;
+                    int count = 0;
+                    while ((line = buf.readLine()) != null) {
+                        String s = line.trim();
+                        if (!s.startsWith("#")) {
+                            count++;
+                            blockList.put(s, conf.location);
+                        }
+                    }
+                    logger.info("find " + count + " blocks in block-list in " + conf);
+                } catch (IOException e) {
+                    logger.warn("failed to read block-list " + conf, e);
                 }
-            } else {
-                sb = sb + "-99";
+                it.remove();
             }
-            return sb;
-        } else {
-            return p;
         }
+        return blockList;
     }
 
-    private void putPathIfValid(LinkedHashMap<String, Boolean> path, String conf) {
+    // 移除非活动profile，basename相同
+    private List<ConfResource> profileBlockSort(LinkedHashSet<ConfResource> confResources,
+                                                HashMap<String, String> blockList,
+                                                String[] activeProfs) {
+        String profs = String.join(",", activeProfs);
+        logger.info("current active profile=[" + profs + "]");
+
+        Set<ConfResource> profiledConf = confResources
+                .stream()
+                .filter(it -> !it.profile.isEmpty())
+                .collect(Collectors.toSet());
+
+        if (!profiledConf.isEmpty()) {
+            if (activeProfs.length == 0) {
+                for (ConfResource it : profiledConf) {
+                    logger.info("inactive profile by empty, " + it);
+                    confResources.remove(it);
+                }
+            } else {
+                HashSet<String> prof = new HashSet<>(Arrays.asList(activeProfs));
+                // 移除所有非活动
+                Set<ConfResource> act = new HashSet<>();
+                for (ConfResource cr : profiledConf) {
+                    if (prof.contains(cr.profile)) {
+                        act.add(cr);
+                    } else {
+                        logger.info("inactive profile by [" + profs + "], " + cr);
+                        confResources.remove(cr);
+                    }
+                }
+
+                // 保留自己，移除所有同名者
+                confResources.removeIf(it -> {
+                    for (ConfResource cr : act) {
+                        if (it.location.equals(cr.location)) {
+                            return false;
+                        }
+                        if (it.baseName.equals(cr.baseName)) {
+                            logger.info("inactive profile by [" + cr.fullName + "], " + it);
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+            }
+        }
+
+        // 按名字分组，排序
+        LinkedHashMap<String, List<ConfResource>> groups = new LinkedHashMap<>(confResources.size());
+        Function<String, List<ConfResource>> newList = k -> new ArrayList<>();
+        for (ConfResource cr : confResources) {
+            String blocked = isBlackedBy(blockList, cr.location);
+            if (blocked != null) {
+                logger.info("skip a blocked " + cr + " in " + blocked);
+                continue;
+            }
+            groups.computeIfAbsent(cr.baseName, newList).add(cr);
+        }
+
+        List<ConfResource> sortedConf = new ArrayList<>(confResources.size());
+        Comparator<ConfResource> sorter = Comparator.comparingInt((ConfResource o) -> o.nameSeq)
+                                                    .thenComparingInt(o -> o.order);
+
+        for (Map.Entry<String, List<ConfResource>> e : groups.entrySet()) {
+            List<ConfResource> crs = e.getValue();
+            int size = crs.size();
+            if (size > 1) {
+                logger.info("resorted " + size + " basename by seq" + e.getKey());
+                crs.sort(sorter);
+            }
+            sortedConf.addAll(crs);
+        }
+
+        return sortedConf;
+    }
+
+    // 按路径优先级扫描
+    private LinkedHashSet<ConfResource> scanWingsResource(MutablePropertySources sources) {
+        LinkedHashSet<String> sortedPath = new LinkedHashSet<>();
+        for (PropertySource<?> next : sources) {
+            // 1. Command line arguments. `--spring.config.location`
+            // 2. Java System properties `spring.config.location`
+            Object property = next.getProperty("spring.config.location");
+            if (property == null) {
+                // 3. OS environment variables. `SPRING_CONFIG_LOCATION`
+                property = next.getProperty("SPRING_CONFIG_LOCATION");
+            }
+            if (property != null) {
+                String[] parts = property.toString().split(",");
+                for (String s : parts) {
+                    putPathIfValid(sortedPath, s.trim());
+                }
+            }
+        }
+
+        // 4. default `classpath:/,classpath:/config/,file:./,file:./config/`
+        for (String s : "classpath:/,classpath:/config/,file:./,file:./config/".split(",")) {
+            putPathIfValid(sortedPath, s.trim());
+        }
+
+        LinkedHashSet<ConfResource> confResources = new LinkedHashSet<>();
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+
+        for (String path : sortedPath) {
+            // 5. `classpath:/`会被以`classpath*:/`扫描
+            if (path.startsWith("classpath:")) {
+                path = path.replace("classpath:", "classpath*:");
+            } else if (path.startsWith("file:") || path.startsWith("classpath*:")) {
+                // skip
+            } else {
+                // 6. 任何非`classpath:`,`classpath*:`的，都以`file:`扫描
+                path = "file:" + path;
+            }
+
+            logger.info("Wings scan classpath, path=" + path);
+            //  7. 以`/`结尾的当做目录，否则作为文件
+            if (path.endsWith("/") || path.endsWith("\\")) {
+                // 8. 从以上路径，优先加载`application.*`，次之`wings-conf/**/*.*`
+                putConfIfValid(confResources, resolver, path + BOOTS_CONF);
+                putConfIfValid(confResources, resolver, path + WINGS_CONF);
+            } else {
+                putConfIfValid(confResources, resolver, path);
+            }
+        }
+
+        return confResources;
+    }
+
+
+    private void putPathIfValid(LinkedHashSet<String> path, String conf) {
         if (conf.isEmpty() || isYml(conf) || isProperty(conf)) {
             return;
         }
         if (!conf.endsWith("/")) {
             conf = conf + "/";
         }
-        path.putIfAbsent(conf, Boolean.TRUE);
+        path.add(conf);
     }
 
-    private void putConfIfValid(LinkedHashMap<String, Resource> pathRes, PathMatchingResourcePatternResolver resolver, String path) {
+    private void putConfIfValid(LinkedHashSet<ConfResource> confResources, PathMatchingResourcePatternResolver resolver, String path) {
         try {
             for (Resource res : resolver.getResources(path)) {
-                String p = res.getURL().getPath();
-                if (isYml(p) || isProperty(p) || isBlacklist(p)) {
-                    logger.info("Wings find resource=" + p);
-                    pathRes.putIfAbsent(p, res);
+                String url = res.getURL().getPath();
+                if (isYml(url) || isProperty(url) || isBlacklist(url)) {
+                    ConfResource conf = new ConfResource(res, url);
+                    logger.info("Wings find " + conf);
+                    confResources.add(conf);
                 }
             }
         } catch (IOException e) {
@@ -319,8 +339,76 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     }
 
 
-    private String isBlackedBy(HashMap<String, String> blackList, String file) {
-        for (Map.Entry<String, String> entry : blackList.entrySet()) {
+    private static class ConfResource {
+        private static final Pattern seqProfile = Pattern.compile("(-\\d{2,})?(@.+)?$", Pattern.CASE_INSENSITIVE);
+        private static final AtomicInteger seqs = new AtomicInteger(0);
+
+        private final int order;
+        private final String location;
+        private final Resource resource;
+
+        private final String fullName;
+        private String baseName;
+        private int nameSeq = 99;
+        private String profile = "";
+
+        public ConfResource(Resource res, String url) {
+            this.order = seqs.incrementAndGet();
+            this.location = url;
+            this.resource = res;
+
+            int p1 = Math.max(url.lastIndexOf('/'), url.lastIndexOf('\\'));
+            if (p1 >= 0) {
+                fullName = url.substring(p1 + 1);
+            } else {
+                fullName = url;
+            }
+
+
+            int pe = fullName.lastIndexOf('.');
+            if (pe > 0) {
+                baseName = fullName.substring(0, pe);
+            } else {
+                baseName = fullName;
+            }
+
+            Matcher mt = seqProfile.matcher(baseName);
+            if (mt.find()) {
+                String g1 = mt.group(1);
+                if (g1 != null) {
+                    nameSeq = Integer.parseInt(g1.substring(1));
+                }
+
+                String g2 = mt.group(2);
+                if (g2 != null) {
+                    profile = g2.substring(1);
+                }
+                baseName = baseName.substring(0, mt.start());
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return location.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof ConfResource) {
+                return location.equals(((ConfResource) obj).location);
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return String.format("[%02d] %s🦁%s", order, fullName, location);
+        }
+    }
+
+    private String isBlackedBy(HashMap<String, String> blockList, String file) {
+        for (Map.Entry<String, String> entry : blockList.entrySet()) {
             if (file.endsWith(entry.getKey())) {
                 return entry.getValue();
             }

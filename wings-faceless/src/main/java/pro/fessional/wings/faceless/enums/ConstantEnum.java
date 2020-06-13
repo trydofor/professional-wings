@@ -1,23 +1,27 @@
 package pro.fessional.wings.faceless.enums;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
- * 常量枚举，方便编程，要与数据库一致。
+ * sys_constant_enum 常量枚举，方便编程，要与数据库一致。
  * <p>
  * SUPER，是约定值，代表本组，特征有3个
  * - 名字为SUPER
- * - id以0000结尾
- * - type和code相同
+ * - id以00结尾
+ * - code为id或code
  *
  * @author trydofor
  * @since 2019-09-17
  */
-public interface ConstantEnum extends StandardI18nEnum {
+public interface ConstantEnum {
 
-    long getId();
+    int getId();
 
+    @NotNull
     String getType();
 
-    String getDesc();
+    @NotNull
+    String getInfo();
 
     /**
      * 00 结尾的是组别
@@ -38,7 +42,11 @@ public interface ConstantEnum extends StandardI18nEnum {
         return id % 100 == getId() % 100;
     }
 
-    default long getSuper() {
+    default boolean sameSuper(ConstantEnum e) {
+        return e != null && sameSuper(e.getId());
+    }
+
+    default long getSuperId() {
         return (getId() / 100) * 100;
     }
 }

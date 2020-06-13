@@ -22,6 +22,7 @@ import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
+import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
 import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
 
 /**
@@ -48,21 +49,21 @@ public class JooqDeleteListenerTest {
     @Setter(onMethod = @__({@Autowired}))
     private WingsTestHelper wingsTestHelper;
     @Test
-    public void test0巜清表重置() {
+    public void test0𓃬清表重置() {
         wingsTestHelper.cleanAndInit();
     }
     //  🦁🦁🦁<=<<
 
     @Test
-    public void test1巜升级表和触发器() {
-        revisionManager.publishRevision(20190521_02L, 0);
+    public void test1𓃬升级表和触发器() {
+        revisionManager.publishRevision(REVISION_TEST_V2, 0);
         journalManager.publishUpdate("tst_中文也分表", true, 0);
         journalManager.publishDelete("tst_中文也分表", true, 0);
         wingsTestHelper.note("没有错误就是正确");
     }
 
     @Test
-    public void test2巜Helper巜查日志() {
+    public void test2𓃬Helper𓃬查日志() {
         JournalHelp.deleteByIds(dsl, Tst中文也分表Table.Tst中文也分表, 12L, 1L, 2L);
         JournalHelp.deleteByIds(tmpl, "`tst_中文也分表`", 34L, 3L, 4L);
         wingsTestHelper.note(
@@ -73,7 +74,7 @@ public class JooqDeleteListenerTest {
     }
 
     @Test
-    public void test3巜JooqDsl巜查日志() {
+    public void test3𓃬JooqDsl𓃬查日志() {
         // 有效
         dsl.execute("DELETE FROM `tst_中文也分表` WHERE ID =5 AND COMMIT_ID = 5");
         dsl.execute("DELETE FROM `tst_中文也分表` WHERE commit_id = 6 AND id = 6");

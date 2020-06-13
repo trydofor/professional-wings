@@ -5,7 +5,7 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
-import pro.fessional.wings.faceless.util.FlywaveRevisionSqlScanner
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 
 /**
  * @author trydofor
@@ -23,7 +23,7 @@ class SqlSegmentParserTest {
 
     @Test
     fun `test1🦁分析🦁人脑分析`() {
-        val scan = FlywaveRevisionSqlScanner.scan(SchemaRevisionManager.REVISIONSQL_PATH)
+        val scan = FlywaveRevisionScanner.scanMaster()
         for ((k, v) in scan) {
             val undo = sqlSegmentProcessor.parse(sqlStatementParser, v.undoText)
             println("undo===========$k")

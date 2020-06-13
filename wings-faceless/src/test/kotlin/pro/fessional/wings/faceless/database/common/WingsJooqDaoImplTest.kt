@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import pro.fessional.wings.faceless.WingsTestHelper
+import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表
@@ -43,7 +44,7 @@ class WingsJooqDaoImplTest {
     @Test
     fun `test0🦁清表重置`() {
         wingsTestHelper.cleanAndInit()
-        schemaRevisionManager.publishRevision(20190521_02, 0)
+        schemaRevisionManager.publishRevision(REVISION_TEST_V2, 0)
     }
 
     @Test

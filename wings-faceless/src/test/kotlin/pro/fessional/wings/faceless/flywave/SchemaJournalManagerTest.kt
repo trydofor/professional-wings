@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import pro.fessional.wings.faceless.WingsTestHelper
+import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_2ND_IDLOGS
 
 /**
  * @author trydofor
@@ -37,13 +39,13 @@ class SchemaJournalManagerTest {
 
     @Test
     fun `test1🦁分表发布`() {
-        schemaRevisionManager.publishRevision(20190520_01, 0)
+        schemaRevisionManager.publishRevision(REVISION_2ND_IDLOGS, 0)
         wingsTestHelper.assertSame(WingsTestHelper.Type.Table, "sys_commit_journal",
                 "sys_light_sequence",
                 "sys_schema_journal",
                 "sys_schema_version"
         )
-        schemaRevisionManager.publishRevision(20190521_01, 0)
+        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
         wingsTestHelper.assertSame(WingsTestHelper.Type.Table, "sys_commit_journal",
                 "sys_light_sequence",
                 "sys_schema_journal",
