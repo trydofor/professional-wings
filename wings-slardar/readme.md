@@ -1,5 +1,9 @@
 # 3.鱼人守卫(slardar)
 
+大鱼人，是一个水手，他会星星点灯
+
+![slardar](./slardar_full.png)
+
 为Servlet体系下的SpringMvc和WebSocket的提供OAuth2的鉴/授权等控制。
 当有多个`WebSecurityConfigurerAdapter`时，需要注意`Order`的顺序。
 
@@ -90,14 +94,6 @@ public ResponseEntity<OAuth2Exception> handleException(Exception e)
 
  * WingsOAuth2xContext.Context Oauth2有关的
  * WingsTerminalContext.Context 登录终端有关的
-
-## 3.6.Controller约定
-
-MVC中的RequestMapping约定如下
-
- * 在方法上写全路径`@RequestMapping("/a/b/c.html")`
- * 在controller上写版本号`@RequestMapping("/v1")`
- * 不要相写相对路径，这样才可以通过URL直接搜索匹配。
 
 ## 3.7.常见问题
 

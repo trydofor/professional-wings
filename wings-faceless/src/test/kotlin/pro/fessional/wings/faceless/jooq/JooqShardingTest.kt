@@ -14,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
+import pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice
 import pro.fessional.wings.faceless.convention.EmptyValue
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao
@@ -83,7 +84,7 @@ class JooqShardingTest {
         // insert into `tst_中文也分表` (`id`, `create_dt`, `modify_dt`, `commit_id`, `login_info`, `other_info`) values (?, ?, ?, ?, ?, ?)
         dao.insert(rd)
 
-        wingsTestHelper.note("""
+        testcaseNotice("""
                 ==== 检查 sql 日志 ====
                 [OK] insert into `tst_中文也分表_0` (`ID`, `CREATE_DT`, `MODIFY_DT`, `COMMIT_ID`, `LOGIN_INFO`, `OTHER_INFO`) values (?, ?, ?, ?, ?, ?)
                 [NG] insert into `TST_中文也分表` as `t1` (`ID`, `CREATE_DT`, `MODIFY_DT`, `COMMIT_ID`, `LOGIN_INFO`, `OTHER_INFO`) values (?, ?, ?, ?, ?, ?)
@@ -100,8 +101,8 @@ class JooqShardingTest {
                 .set(tp.LoginInfo, "update 5")
                 .where(tp.Id.eq(id))
                 .execute()
-        wingsTestHelper.note("plain updated= $rp")
-        wingsTestHelper.note("update `tst_中文也分表_1` set `modify_dt` = ?, `login_info` = ? where `id` = ?")
+        testcaseNotice("plain updated= $rp")
+        testcaseNotice("update `tst_中文也分表_1` set `modify_dt` = ?, `login_info` = ? where `id` = ?")
 
         val tw = dao.tableForWriter
         val rw = dsl.update(tw)
@@ -109,8 +110,8 @@ class JooqShardingTest {
                 .set(tw.LoginInfo, "update 5")
                 .where(tw.Id.eq(id))
                 .execute()
-        wingsTestHelper.note("write updated= $rw")
-        wingsTestHelper.note("update `tst_中文也分表_1` set `modify_dt` = ?, `login_info` = ? where `id` = ?")
+        testcaseNotice("write updated= $rw")
+        testcaseNotice("update `tst_中文也分表_1` set `modify_dt` = ?, `login_info` = ? where `id` = ?")
 
         val tr = dao.aliasForReader
         val rr = dsl.update(tr)
@@ -118,11 +119,11 @@ class JooqShardingTest {
                 .set(tr.LoginInfo, "update 5")
                 .where(tr.Id.eq(id))
                 .execute()
-        wingsTestHelper.note("read  updated= $rr")
-        wingsTestHelper.note("update `tst_中文也分表_1` as `y8` set `y8`.`modify_dt` = ?, `y8`.`login_info` = ? where `y8`.`id` = ?")
+        testcaseNotice("read  updated= $rr")
+        testcaseNotice("update `tst_中文也分表_1` as `y8` set `y8`.`modify_dt` = ?, `y8`.`login_info` = ? where `y8`.`id` = ?")
 
 
-        wingsTestHelper.note("""
+        testcaseNotice("""
                 ==== 检查 sql 日志 ====
                 [OK] update `TST_中文也分表` set `MODIFY_DT` = ?, `LOGIN_INFO` = ? where `ID` <= ?
                 [OK] update `TST_中文也分表` as `t1` set `t1`.`MODIFY_DT` = ?, `t1`.`LOGIN_INFO` = ? where `t1`.`ID` <= ?
@@ -141,8 +142,8 @@ class JooqShardingTest {
                 .limit(DSL.inline(1)) // RC3
                 .getSQL()
 //                .fetchOne().into(Long::class.java)
-        wingsTestHelper.note("alias select", ra)
-        wingsTestHelper.note("select `y8`.`id` from `tst_中文也分表` as `y8` where `y8`.`id` <= ?")
+        testcaseNotice("alias select", ra)
+        testcaseNotice("select `y8`.`id` from `tst_中文也分表` as `y8` where `y8`.`id` <= ?")
 
         val tp = Tst中文也分表Table.Tst中文也分表
         val rp = dsl.select(tp.Id)
@@ -151,15 +152,15 @@ class JooqShardingTest {
 //                .limit(1) // https://github.com/apache/incubator-shardingsphere/issues/3330
                 .getSQL()
 //                .fetchOne().into(Long::class.java)
-        wingsTestHelper.note("plain select", rp)
-        wingsTestHelper.note("select `id` from `tst_中文也分表` where `id` <= ?")
+        testcaseNotice("plain select", rp)
+        testcaseNotice("select `id` from `tst_中文也分表` where `id` <= ?")
 
         val da = dao.aliasForReader
         val rd = dao.fetch(da.Id.eq(id))
-        wingsTestHelper.note("dao select= $rd")
-        wingsTestHelper.note("select `y8`.`id`, `y8`.`create_dt`, ... from `tst_中文也分表` as `y8` where `y8`.`id` = ?")
+        testcaseNotice("dao select= $rd")
+        testcaseNotice("select `y8`.`id`, `y8`.`create_dt`, ... from `tst_中文也分表` as `y8` where `y8`.`id` = ?")
 
-        wingsTestHelper.note("""
+        testcaseNotice("""
                 ==== 检查 sql 日志 ====
                 [OK] select `ID` from `TST_中文也分表` where `ID` <= ? limit ?
                 [OK] select `t1`.`ID` from `TST_中文也分表` as `t1` where `t1`.`ID` <= ? limit ?
@@ -175,15 +176,15 @@ class JooqShardingTest {
                 .and(tp.CommitId.isNotNull)
                 .getSQL()
 //                .execute()
-        wingsTestHelper.note("plain delete= $rp")
-        wingsTestHelper.note("delete from `tst_中文也分表` where (`id` <= ? and `commit_id` is not null)")
+        testcaseNotice("plain delete= $rp")
+        testcaseNotice("delete from `tst_中文也分表` where (`id` <= ? and `commit_id` is not null)")
 
         val dw = dao.tableForWriter
         val rw = dao.delete(dw.Id.eq(id))
-        wingsTestHelper.note("dao delete= $rw")
-        wingsTestHelper.note("delete from `tst_中文也分表_3` where `id` = ? ")
+        testcaseNotice("dao delete= $rw")
+        testcaseNotice("delete from `tst_中文也分表_3` where `id` = ? ")
 
-        wingsTestHelper.note("""
+        testcaseNotice("""
                 ==== 检查 sql 日志 ====
                 [OK] delete from `TST_中文也分表` where `ID` <= ?
                 [NG] delete from `TST_中文也分表` where `TST_中文也分表`.`ID` <= ?
@@ -202,11 +203,11 @@ class JooqShardingTest {
                 Tst中文也分表Record(308, now, now, now, 9, "批量合并308", "test8"),
                 Tst中文也分表Record(309, now, now, now, 9, "批量合并309", "test8")
         )
-        wingsTestHelper.note("批量Insert，查看日志,ignore, 分2批次， 119 ignore; 308，309 insert")
+        testcaseNotice("批量Insert，查看日志,ignore, 分2批次， 119 ignore; 308，309 insert")
         val rs1 = dao.batchInsert(rds, 2, true)
         Assert.assertArrayEquals(intArrayOf(1, 1, 1), rs1)
 
-        wingsTestHelper.note("先select在insert 310，或update 308，309")
+        testcaseNotice("先select在insert 310，或update 308，309")
         val rs3 = dao.batchMerge(arrayOf(tbl.Id), listOf(
                 Tst中文也分表Record(310, now, now, now, 9, "批量合并310", "其他310"),
                 Tst中文也分表Record(308, now, now, now, 9, "批量合并308", "其他308"),
@@ -222,18 +223,18 @@ class JooqShardingTest {
                 Tst中文也分表Record(318, now, now, now, 9, "批量加载318", "test9"),
                 Tst中文也分表Record(319, now, now, now, 9, "批量加载319", "test9")
         )
-        wingsTestHelper.note("批量Insert，查看日志,replace, 307-309，分2批，replace into")
+        testcaseNotice("批量Insert，查看日志,replace, 307-309，分2批，replace into")
         try {
             val rs2 = dao.batchInsert(rds, 2, false)
             println(rs2.joinToString(","))
             //Assert.assertArrayEquals(intArrayOf(2, 2, 2), rs2)
         } catch (e: Exception) {
-            wingsTestHelper.note("Sharding 不支持，replace into https://github.com/apache/shardingsphere/issues/5330")
-            e.printStackTrace();
+            testcaseNotice("Sharding 不支持，replace into https://github.com/apache/shardingsphere/issues/5330")
+            e.printStackTrace()
         }
 
-        wingsTestHelper.note("批量Merge，查看日志,on dupkey, 307-309，分2批，duplicate")
-        wingsTestHelper.note("insert into `tst_中文也分表` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?")
+        testcaseNotice("批量Merge，查看日志,on dupkey, 307-309，分2批，duplicate")
+        testcaseNotice("insert into `tst_中文也分表` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?")
         try {
             val rs3 = dao.batchMerge(listOf(
                     Tst中文也分表Record(320, now, now, now, 9, "批量合并320", "其他320"),
@@ -243,9 +244,9 @@ class JooqShardingTest {
             println(rs3.joinToString(","))
             //Assert.assertArrayEquals(intArrayOf(1, 1, 1), rs3)
         } catch (e: Exception) {
-            wingsTestHelper.note("Sharding 不支持，on duplicate key update https://github.com/apache/shardingsphere/issues/5210")
-            wingsTestHelper.note("Sharding 不支持，https://github.com/apache/shardingsphere/pull/5423")
-            e.printStackTrace();
+            testcaseNotice("Sharding 不支持，on duplicate key update https://github.com/apache/shardingsphere/issues/5210")
+            testcaseNotice("Sharding 不支持，https://github.com/apache/shardingsphere/pull/5423")
+            e.printStackTrace()
         }
     }
 }

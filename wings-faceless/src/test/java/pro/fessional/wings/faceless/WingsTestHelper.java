@@ -35,7 +35,7 @@ public class WingsTestHelper {
     public static final long REVISION_TEST_V1 = 2019_0601_01L;
     public static final long REVISION_TEST_V2 = 2019_0601_02L;
 
-    private final Logger logger = LoggerFactory.getLogger(WingsTestHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(WingsTestHelper.class);
 
     @Setter(onMethod = @__({@Autowired}))
     private SchemaRevisionManager schemaRevisionManager;
@@ -61,11 +61,11 @@ public class WingsTestHelper {
 
     public void cleanAndInit(long revi, String... branches) {
         flywaveDataSources.plains().forEach((k, v) -> {
-            note("clean database " + k);
+            testcaseNotice("clean database " + k);
             JdbcTemplate tmpl = new JdbcTemplate(v);
             tmpl.query("SHOW TABLES", rs -> {
                 String tbl = rs.getString(1);
-                note("drop table " + tbl);
+                testcaseNotice("drop table " + tbl);
                 tmpl.execute("DROP TABLE " + tbl);
             });
         });
@@ -94,11 +94,11 @@ public class WingsTestHelper {
         fetchAllColumn1(type.sql).forEach((k, aSet) -> {
             Diff.S<String> diff = Diff.of(aSet, bSet);
             if (!diff.bNotA.isEmpty()) {
-                note(k + " 数据库少：" + type + ":" + Strings.join(diff.bNotA, ','));
+                testcaseNotice(k + " 数据库少：" + type + ":" + Strings.join(diff.bNotA, ','));
                 good.set(false);
             }
             if (!diff.aNotB.isEmpty()) {
-                note(k + " 数据库多：" + type + ":" + Strings.join(diff.aNotB, ','));
+                testcaseNotice(k + " 数据库多：" + type + ":" + Strings.join(diff.aNotB, ','));
                 good.set(false);
             }
         });
@@ -112,7 +112,7 @@ public class WingsTestHelper {
         fetchAllColumn1(type.sql).forEach((k, aSet) -> {
             Diff.S<String> diff = Diff.of(aSet, bSet);
             if (!diff.bNotA.isEmpty()) {
-                note(k + " 数据库少：" + type + ":" + Strings.join(diff.bNotA, ','));
+                testcaseNotice(k + " 数据库少：" + type + ":" + Strings.join(diff.bNotA, ','));
                 good.set(false);
             }
         });
@@ -126,7 +126,7 @@ public class WingsTestHelper {
         fetchAllColumn1(type.sql).forEach((k, aSet) -> {
             Diff.S<String> diff = Diff.of(aSet, bSet);
             if (diff.bNotA.size() != bSet.size()) {
-                note(k + " 数据库不能有：" + type + ": " + Strings.join(diff.bNotA, ','));
+                testcaseNotice(k + " 数据库不能有：" + type + ": " + Strings.join(diff.bNotA, ','));
                 good.set(false);
             }
         });
@@ -152,9 +152,13 @@ public class WingsTestHelper {
 
     }
 
-    public void note(String... mes) {
+    public static void testcaseNotice(String... mes) {
         for (String s : mes) {
             logger.info(">>=>🦁🦁🦁 " + s + " 🦁🦁🦁<=<<");
         }
+    }
+
+    public static void breakpointDebug(String... mes) {
+        Arrays.stream(mes).forEach(s -> logger.debug(">>=>🐶🐶🐶 " + s + " 🐶🐶🐶<=<<"));
     }
 }

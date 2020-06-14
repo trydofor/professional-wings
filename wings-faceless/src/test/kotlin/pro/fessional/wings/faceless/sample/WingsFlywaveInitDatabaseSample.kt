@@ -21,14 +21,13 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_1ST_SCH
 @SpringBootTest
 @ActiveProfiles("init")
 @Ignore("手动执行，以有SchemaRevisionMangerTest覆盖测试 ")
-
 class WingsFlywaveInitDatabaseSample {
 
     @Autowired
     lateinit var schemaRevisionManager: SchemaRevisionManager
 
     @Test
-    fun init520() {
+    fun init0601() {
         // 初始
         val sqls = FlywaveRevisionScanner.scanMaster()
         schemaRevisionManager.publishRevision(REVISION_1ST_SCHEMA, 0)
@@ -41,7 +40,7 @@ class WingsFlywaveInitDatabaseSample {
 //    @Test
     fun force(){
         val sqls = FlywaveRevisionScanner.scanMaster()
-        schemaRevisionManager.forceUpdateSql(sqls[REVISION_1ST_SCHEMA]!!,0);
-        schemaRevisionManager.forceUpdateSql(sqls[REVISION_TEST_V1]!!,0);
+        schemaRevisionManager.forceUpdateSql(sqls[REVISION_1ST_SCHEMA]!!,0)
+        schemaRevisionManager.forceUpdateSql(sqls[REVISION_TEST_V1]!!,0)
     }
 }

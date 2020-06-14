@@ -4,12 +4,6 @@
 package pro.fessional.wings.faceless.database.autogen.tables;
 
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Name;
@@ -21,11 +15,15 @@ import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 import org.jooq.impl.TableImpl;
-
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.autogen.DefaultSchema;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
 import pro.fessional.wings.faceless.service.lightid.LightIdAware;
+
+import javax.annotation.Generated;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -41,15 +39,13 @@ import pro.fessional.wings.faceless.service.lightid.LightIdAware;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record> implements LightIdAware {
 
-    private static final long serialVersionUID = -1340129848;
+    private static final long serialVersionUID = 1576656083;
 
     /**
      * The reference instance of <code>tst_中文也分表</code>
      */
     public static final Tst中文也分表Table Tst中文也分表 = new Tst中文也分表Table();
     public static final Tst中文也分表Table asY8 = Tst中文也分表.as("y8");
-    public static final Tst中文也分表Table Tst中文也分表$del = Tst中文也分表.rename("tst_中文也分表$del").as("y8d");
-    public static final Tst中文也分表Table Tst中文也分表$upd = Tst中文也分表.rename("tst_中文也分表$upd").as("y8u");
 
     /**
      * The class holding records for this type
@@ -67,17 +63,17 @@ public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record>
     /**
      * The column <code>tst_中文也分表.create_dt</code>.
      */
-    public final TableField<Tst中文也分表Record, LocalDateTime> CreateDt = createField(DSL.name("create_dt"), org.jooq.impl.SQLDataType.LOCALDATETIME.nullable(false).defaultValue(org.jooq.impl.DSL.field("CURRENT_TIMESTAMP", org.jooq.impl.SQLDataType.LOCALDATETIME)), this, "创建日时");
+    public final TableField<Tst中文也分表Record, LocalDateTime> CreateDt = createField(DSL.name("create_dt"), org.jooq.impl.SQLDataType.LOCALDATETIME.nullable(false).defaultValue(org.jooq.impl.DSL.field("CURRENT_TIMESTAMP(3)", org.jooq.impl.SQLDataType.LOCALDATETIME)), this, "创建日时");
 
     /**
      * The column <code>tst_中文也分表.modify_dt</code>.
      */
-    public final TableField<Tst中文也分表Record, LocalDateTime> ModifyDt = createField(DSL.name("modify_dt"), org.jooq.impl.SQLDataType.LOCALDATETIME.nullable(false).defaultValue(org.jooq.impl.DSL.inline("1000-01-01 00:00:00", org.jooq.impl.SQLDataType.LOCALDATETIME)), this, "修改日时");
+    public final TableField<Tst中文也分表Record, LocalDateTime> ModifyDt = createField(DSL.name("modify_dt"), org.jooq.impl.SQLDataType.LOCALDATETIME.nullable(false).defaultValue(org.jooq.impl.DSL.inline("1000-01-01 00:00:00.000", org.jooq.impl.SQLDataType.LOCALDATETIME)), this, "修改日时");
 
     /**
      * The column <code>tst_中文也分表.delete_dt</code>.
      */
-    public final TableField<Tst中文也分表Record, LocalDateTime> DeleteDt = createField(DSL.name("delete_dt"), org.jooq.impl.SQLDataType.LOCALDATETIME.nullable(false).defaultValue(org.jooq.impl.DSL.inline("1000-01-01 00:00:00", org.jooq.impl.SQLDataType.LOCALDATETIME)), this, "标记删除");
+    public final TableField<Tst中文也分表Record, LocalDateTime> DeleteDt = createField(DSL.name("delete_dt"), org.jooq.impl.SQLDataType.LOCALDATETIME.nullable(false).defaultValue(org.jooq.impl.DSL.inline("1000-01-01 00:00:00.000", org.jooq.impl.SQLDataType.LOCALDATETIME)), this, "标记删除");
 
     /**
      * The column <code>tst_中文也分表.commit_id</code>.

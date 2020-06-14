@@ -18,6 +18,7 @@ import org.jooq.Table;
 import org.jooq.TableRecord;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
+import org.jooq.impl.TableImpl;
 import pro.fessional.mirana.data.CodeEnum;
 import pro.fessional.mirana.data.Nulls;
 import pro.fessional.mirana.pain.CodeException;
@@ -49,30 +50,22 @@ import static org.jooq.impl.DSL.using;
  * @author trydofor
  * @since 2019-10-12
  */
-public abstract class WingsJooqDaoImpl<T extends Table<R>, R extends UpdatableRecord<R>, P, K> extends DAOImpl<R, P, K> {
+public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends UpdatableRecord<R>, P, K> extends DAOImpl<R, P, K> {
 
     private final T table;
     private final T alias;
-    private final T deleted;
-    private final T updated;
     private final Condition onlyDied;
     private final Condition onlyLive;
     private final Field<?>[] pks;
 
     protected WingsJooqDaoImpl(T table, T alias, Class<P> type) {
-        this(table, alias, type, null, null, null);
+        this(table, alias, type, null);
     }
 
     protected WingsJooqDaoImpl(T table, T alias, Class<P> type, Configuration conf) {
-        this(table, alias, type, conf, null, null);
-    }
-
-    protected WingsJooqDaoImpl(T table, T alias, Class<P> type, Configuration conf, T deleted, T updated) {
         super(table, type, conf);
         this.table = table;
         this.alias = alias == null ? table : alias;
-        this.deleted = deleted;
-        this.updated = updated;
         //
         Condition d = null;
         Condition l = null;
@@ -143,6 +136,29 @@ public abstract class WingsJooqDaoImpl<T extends Table<R>, R extends UpdatableRe
      */
     public DSLContext dslContext() {
         return using(configuration());
+    }
+
+    /**
+     * 相同表结构，构造一个新表名，有在分表的场景
+     *
+     * @param name 新表名
+     * @return 新表
+     * @see TableImpl#rename(String)
+     */
+    @SuppressWarnings("unchecked")
+    public T newTable(String name) {
+        return (T) table.rename(name);
+    }
+
+    /**
+     * 以当前表名为基础，增加前缀，后缀
+     *
+     * @param prefix  前缀
+     * @param postfix 后缀
+     * @return 新表
+     */
+    public T newTable(String prefix, String postfix) {
+        return newTable(prefix + table.getName() + postfix);
     }
 
     // ============
@@ -690,78 +706,6 @@ public abstract class WingsJooqDaoImpl<T extends Table<R>, R extends UpdatableRe
     @Nullable
     public P fetchOne(Condition condition) {
         return fetchOne(alias, condition);
-    }
-
-    // ======= trace deleted =======
-
-    /**
-     * 获得删除影子表
-     *
-     * @return 表
-     */
-    @Nullable
-    public T getTraceOfDeleted() {
-        return deleted;
-    }
-
-    public long countDeleted(Condition condition) {
-        return count(deleted, condition);
-    }
-
-    @NotNull
-    public List<P> fetchDeleted(Condition condition, OrderField<?>... orderBy) {
-        return fetch(deleted, condition, orderBy);
-    }
-
-    @NotNull
-    public List<P> fetchDeleted(int offset, int limit, OrderField<?>... orderBy) {
-        return fetch(deleted, offset, limit, null, orderBy);
-    }
-
-    @NotNull
-    public List<P> fetchDeleted(int offset, int limit, Condition condition, OrderField<?>... orderBy) {
-        return fetch(deleted, offset, limit, condition, orderBy);
-    }
-
-    @Nullable
-    public P fetchOneDeleted(Condition condition) {
-        return fetchOne(deleted, condition);
-    }
-
-    // ======= trace updated =======
-
-    /**
-     * 获得更新影子表
-     *
-     * @return 表
-     */
-    @Nullable
-    public T getTraceOfUpdated() {
-        return updated;
-    }
-
-    public long countUpdated(Condition condition) {
-        return count(updated, condition);
-    }
-
-    @NotNull
-    public List<P> fetchUpdated(Condition condition, OrderField<?>... orderBy) {
-        return fetch(updated, condition, orderBy);
-    }
-
-    @NotNull
-    public List<P> fetchUpdated(int offset, int limit, OrderField<?>... orderBy) {
-        return fetch(updated, offset, limit, null, orderBy);
-    }
-
-    @NotNull
-    public List<P> fetchUpdated(int offset, int limit, Condition condition, OrderField<?>... orderBy) {
-        return fetch(updated, offset, limit, condition, orderBy);
-    }
-
-    @Nullable
-    public P fetchOneUpdated(Condition condition) {
-        return fetchOne(updated, condition);
     }
 
     // ======= modify =======

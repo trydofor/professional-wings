@@ -21,8 +21,6 @@ class WingsJavaGenerator : JavaGenerator() {
     private val log = JooqLogger.getLogger(JavaGenerator::class.java)
 
     private val chr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    private val shadowDel = "del"
-    private val shadowUpd = "upd"
 
     private fun genAlias(id: String): String {
         val ix = id.hashCode() % chr.length
@@ -35,36 +33,34 @@ class WingsJavaGenerator : JavaGenerator() {
         // table is TableDefinition
         val className = getStrategy().getJavaClassName(table) // SysCommitJournalTable
         val identifier = getStrategy().getJavaIdentifier(table) // SysCommitJournal
+
+        // 🦁>>>
         val aliasName = genAlias(identifier) // N6
         val aliasLower = aliasName.toLowerCase() // n6
-        val tableName = table.outputName // sys_commit_journal
-        out.tab(1).javadoc("The reference instance of <code>%s</code>", table.qualifiedOutputName)
+        // 🦁<<<
 
+        out.tab(1).javadoc("The reference instance of <code>%s</code>", table.qualifiedOutputName)
         // public static final SysCommitJournalTable SysCommitJournal = new SysCommitJournalTable();
         out.tab(1).println("public static final %s %s = new %s();", className, identifier, className)
+
+        // 🦁>>>
         // public static final SysCommitJournalTable asN6 = SysCommitJournal.as("n6");
         out.tab(1).println("public static final %s as%s = %s.as(\"%s\");", className, aliasName, identifier, aliasLower)
-        if (shadowDel.isNotEmpty()) {
-            // public static final SysCommitJournalTable SysCommitJournal$del = SysCommitJournal.rename("sys_commit_journal$del").as("n6d");
-            out.tab(1).println("public static final %s %s\$del = %s.rename(\"%s\$del\").as(\"%sd\");", className, identifier, identifier, tableName, aliasLower)
-        }
-        if (shadowUpd.isNotEmpty()) {
-            // public static final SysCommitJournalTable SysCommitJournal$upd = SysCommitJournal.rename("sys_commit_journal$upd").as("n6u");
-            out.tab(1).println("public static final %s %s\$upd = %s.rename(\"%s\$upd\").as(\"%su\");", className, identifier, identifier, tableName, aliasLower)
-        }
+        // 🦁<<<
     }
 
     override fun generateTableClassFooter(table: TableDefinition, out: JavaWriter) {
+        // 🦁>>>
         table.columns.find { it.outputName.equals(JournalHelp.COL_DELETE_DT, true) }?.let {
-            val col = it.outputName
             out.ref(Condition::class.java)
             out.ref(EmptyValue::class.java)
             val columnId = reflectProtectRef(out, getStrategy().getJavaIdentifier(it), colRefSegments(it))
 
-            out.tab(1).javadoc("The column <code>%s</code> condition", col)
+            out.tab(1).javadoc("The column <code>%s</code> condition", it.outputName)
             out.tab(1).println("public final Condition onlyDiedData = %s.gt(EmptyValue.DATE_TIME);",columnId)
             out.tab(1).println("public final Condition onlyLiveData = %s.eq(EmptyValue.DATE_TIME);",columnId)
         }
+        // 🦁<<<
     }
 
     override fun generateDao(table: TableDefinition, out: JavaWriter) {
@@ -79,10 +75,13 @@ class WingsJavaGenerator : JavaGenerator() {
         val tableRecord = out.ref(getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.RECORD))
         val daoImpl = out.ref(WingsJooqDaoImpl::class.java)
         val tableIdentifier = reflectProtectRef(out, getStrategy().getFullJavaIdentifier(table), 2)
+
+        // 🦁>>>
         // Tst中文也分表Table.Tst中文也分表
         val tableParts = tableIdentifier.split(".")
         val tableName = tableParts[0]
         val aliasIdentifier = "$tableName.as${genAlias(tableParts[1])}"
+        // 🦁<<<
 
         var tType: String
         val pType = out.ref(getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.POJO))
@@ -132,12 +131,7 @@ class WingsJavaGenerator : JavaGenerator() {
             out.tab(1).println("@%s", out.ref("org.springframework.beans.factory.annotation.Autowired"))
 
         out.tab(1).println("public %s(%s configuration) {", className, Configuration::class.java)
-        // wings shadow begin ====>
-        if (shadowDel.isNotEmpty() || shadowUpd.isNotEmpty()) {
-            out.tab(2).println("super(%s, %s, %s.class, configuration, %s, %s);", tableIdentifier, aliasIdentifier, pType, "$tableIdentifier\$del", "$tableIdentifier\$upd")
-        } else
-        // wings shadow endup <====
-            out.tab(2).println("super(%s, %s, %s.class, configuration);", tableIdentifier, aliasIdentifier, pType)
+        out.tab(2).println("super(%s, %s, %s.class, configuration);", tableIdentifier, aliasIdentifier, pType)
         out.tab(1).println("}")
 
 

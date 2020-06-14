@@ -4,19 +4,17 @@
 package pro.fessional.wings.faceless.database.autogen.tables.daos;
 
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import javax.annotation.Generated;
-
 import org.jooq.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
 import pro.fessional.wings.faceless.database.common.WingsJooqDaoImpl;
+
+import javax.annotation.Generated;
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 /**
@@ -45,7 +43,7 @@ public class Tst中文也分表Dao extends WingsJooqDaoImpl<Tst中文也分表Ta
      */
     @Autowired
     public Tst中文也分表Dao(Configuration configuration) {
-        super(Tst中文也分表Table.Tst中文也分表, Tst中文也分表Table.asY8, Tst中文也分表.class, configuration, Tst中文也分表Table.Tst中文也分表$del, Tst中文也分表Table.Tst中文也分表$upd);
+        super(Tst中文也分表Table.Tst中文也分表, Tst中文也分表Table.asY8, Tst中文也分表.class, configuration);
     }
 
     @Override

@@ -1,16 +1,35 @@
 # 2.虚空假面(faceless)
 
+`Void`，J8脸, `public static void main`  
+他是来自超维视界的一名访客，一个时间之外的境域。
+
+![faceless_void](./faceless_void_full.png)
+
 支持MySql系(mysql及分支,h2)的一套Sharding，并有表结构和数据变更的版本管理的基本套餐。
 
  * 轻量SCHEMA版本管理(fly-wave)
  * DATA版本管理和追踪(journal/$log)
  * 可切换的分表分库功能(ShardingJdbc/PlainDataSource)
  * 高效递增非连续的分布式主键(LightId)
- * jooq 自动生成代码
+ * 从数据库自动生成jooq代码，pojo, table, dao
+ * 从数据库自动生成enum和i18n代码, constantEnum,i18nEnum
+ * 全备份dump现有数据库的表结构和记录
 
 ## 2.1.飞波(flywave)是一个实践
 
-实际项目中，schema结构的变更十分频繁，需要控制好local/dev/product的版本和节奏。
+工程实际中，我们响应变化，应当变更，都有成熟的工具，源代码由git管理，任务由jira管理，
+那么静态的表结构变更，运行时的数据变更，我们怎么管理和记录，跟踪和调查，分支和回滚呢？
+
+  * 项目从零开始，需求逐渐浮现，如果管理每周迭代中的字段新增，废弃和修改
+  * local, develop, product的代码应该对应哪个schema和data
+  * 线上一个订单数据错误，由哪个even引起，同一even都更新了哪些条数据
+  * sql搞错where，发现时已晚，如何确认受影响数据，快速恢复到更新前
+  * 项目一点点变大，从单库单表，平滑的过度到，读写分离，分表分库
+  * 需要离线功能，同样代码可以跑本地h2database，云端mysql
+
+如果你的项目遇到了以上的数据库及数据的问题，flywave的思想（不一定是本工程）适合你。
+
+实际项目中，schema结构的变更十分频繁，需要控制好local/develop/product的版本和节奏。
 `flyway`是个不错的选择，但用它有点牛刀杀鸡，所以新造个轮子叫`flywave`，可以，
 
  * 根据 `/wings-flywave/master/**/*.sql` 数据库和数据的统一管理。
@@ -18,7 +37,7 @@
  * 根据 `sys_schema_version`表，控制数据库版本，升级和降级。
  * 根据 `sys_schema_journal`表，完成自动记录数据变更。
 
-flywave受git管理，如无必须，勿搞复杂分支，单线最好。
+flywave的sql文件都受git管理，所以，如无必须，勿搞复杂分支，单线实践最佳。
 这里的branch，目标是sql管理，而非数据库和数据管理。
 就是说，数据库中只有master一条线，而本地sql可以有多条线。
 
@@ -29,7 +48,7 @@ flywave受git管理，如无必须，勿搞复杂分支，单线最好。
 
 JDBC数据源(DataSource)，分为两种，他们会存在于`FlywaveDataSources`中，
 
- * 分片数据源(shard)，具有分表分库功能，如`ShardingSphere`。
+ * 分片数据源(Shard)，具有分表分库功能，如`ShardingSphere`。
  * 普通数据源(Plain)，没有sharding功能，只在单个DB上执行。
 
 当只有一个数据源，且没有sharding配置时，两者实际为同一个值。
@@ -134,8 +153,8 @@ DROP TABLE IF EXISTS `sys_light_sequence`;
 DROP TABLE IF EXISTS `sys_commit_journal`;
 -- wgs_order@plain 强制使用原始数据源，并直接指定本表为wgs_order，因为语法中没有本表。
 DROP TRIGGER IF EXISTS `wgs_order$bd`;
--- wgs_order@plain apply@ctr_clerk[_0-0]* error@skip
-ALTER TABLE `ctr_clerk` DROP INDEX ix_log in_name,
+-- apply@ctr_clerk[_0-0]* error@skip 可以解析本表，应用分表，忽略错误
+ALTER TABLE `win_admin` DROP INDEX ix_login_name;
 ```
 
 关于注释，只解析和忽略整行的，不处理行尾或行中的注释。
@@ -200,8 +219,9 @@ MyBatis虽是大部分项目的首选，固有其优秀之处，但开发人员�
 
  * `getAliasForReader` 获得select用的别名表，`Table as t1`
  * `getTableForWriter` 获得modify用的不使用别名的表 `Table`
- * `getTraceOfDeleted` 获得shadow用的删除的影子表`Table$del`
- * `getTraceOfUpdated` 获得shadow用的更新的影子表`Table$upd`
+ * 使用preparedStatement的batch批量插入和更新大量数据
+ * 使用mysql特效，`insert ignore`和`replace into`处理重复数据
+ * 使用`on duplicate key update`或`select+insert+update`部分更新唯一记录。
  
 在复杂数据操作必须手写代码时，遵循以下约定，
 
@@ -216,6 +236,7 @@ MyBatis虽是大部分项目的首选，固有其优秀之处，但开发人员�
  * `forUpdate`这种带锁操作，方法名以`Lock`结尾。
  * 类名以`表名`+`Insert|Modify`。
  * `Record`等同于`Dao`不应该在外部使用，应该用`Pojo`或`Dto`
+ * 主要 Dao，完成 dsl，等相关操作即可
 
 JdbcTemplate用于功能性或复杂的数据库操作，以自动注入Bean。
 参考 `JdbcTemplateConfiguration`的注入。
@@ -309,9 +330,16 @@ i18n可以使用CombinableMessageSource动态添加，处理service内消息的�
 ### 003.版本更新，异常说缺少字段branches
 
 在2.2.7版后，对sys_schema_version增加了分支支持，之前的版本需要手动维护。
+执行`branch/hotfixes/v2.2.7-fix`的`2019_0512_02`即可。
 
-```sql
-ALTER TABLE `sys_schema_version` 
-ADD COLUMN `branches`  VARCHAR(2000) NOT NULL DEFAULT 'master' COMMENT '分支,逗号分隔' AFTER `commit_id`,
-ADD COLUMN `comments`  VARCHAR(3000) NOT NULL DEFAULT '' COMMENT '版本信息' AFTER `branches`;
-```
+### 004.哪些测试或例子适合了解flywave
+
+ * SchemaJournalManagerTest - 包含了shard和track的例子测试
+ * SchemaRevisionMangerTest - 基本的版本管理测试
+ * SchemaShardingManagerTest - shard和数据迁移测试
+ 
+ * WingsFlywaveInitDatabaseSample 管理数据库版本例子
+ * ConstantEnumGenSample - enum类生成例子
+ * JooqJavaCodeGenSample - jooq类生成例子
+ * WingsSchemaDumper - schema和数据dump例子
+ * WingsSchemaJournal - track表控制例子

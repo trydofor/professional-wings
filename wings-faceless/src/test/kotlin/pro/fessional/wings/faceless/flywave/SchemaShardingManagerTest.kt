@@ -13,8 +13,10 @@ import org.springframework.test.context.junit4.SpringRunner
 import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
 import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2
+import pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice
 
 /**
+ * shard profile, 使用write和reader数据源
  * @author trydofor
  * @since 2019-06-17
  */
@@ -53,7 +55,7 @@ class SchemaShardingManagerTest {
         Assert.assertEquals(20, countRecords("writer", "tst_中文也分表"))
         Assert.assertEquals(0, countRecords("reader", "tst_中文也分表"))
 
-        wingsTestHelper.note("在writer强制插入数据，用SQL查询，只有writer有数据，reader上没有")
+        testcaseNotice("在writer强制插入数据，用SQL查询，只有writer有数据，reader上没有")
     }
 
     @Test
@@ -62,7 +64,7 @@ class SchemaShardingManagerTest {
         wingsTestHelper.assertHas(WingsTestHelper.Type.Table, "sys_schema_journal_0", "sys_schema_journal_1")
         schemaShardingManager.publishShard("sys_schema_journal", 0)
         wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "sys_schema_journal_0", "sys_schema_journal_1")
-        wingsTestHelper.note("writer 和reader上，同时多出2个sys_schema_journal_[0-1]表")
+        testcaseNotice("writer 和reader上，同时多出2个sys_schema_journal_[0-1]表")
     }
 
     @Test
@@ -85,8 +87,8 @@ class SchemaShardingManagerTest {
         Assert.assertEquals(4, countRecords("writer", "tst_中文也分表_3"))
         Assert.assertEquals(4, countRecords("writer", "tst_中文也分表_4"))
 
-        val cnt = shardingJdbcTemplate.queryForObject("select count(*) from tst_中文也分表", Int::class.java)
-        wingsTestHelper.note("writer和reader实际未配置同步，所以从库读取为0")
+        val cnt = shardingJdbcTemplate.queryForObject("SELECT count(*) FROM tst_中文也分表", Int::class.java)
+        testcaseNotice("writer和reader实际未配置同步，所以从库读取为0")
         Assert.assertEquals(0, cnt)
     }
 

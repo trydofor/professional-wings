@@ -41,7 +41,7 @@
         <!--slardar oauth2-->
         <guava.version>29.0-jre</guava.version>
         <spring-boot.version>2.2.7.RELEASE</spring-boot.version>
-        <commons-io.version>2.6</commons-io.version>
+        <commons-io.version>2.7</commons-io.version>
     </properties>
 
     <dependencyManagement>

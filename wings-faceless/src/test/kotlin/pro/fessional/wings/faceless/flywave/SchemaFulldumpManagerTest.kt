@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import pro.fessional.wings.faceless.WingsTestHelper
+import pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedRegexp
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedTable
 import java.io.File
@@ -28,10 +29,10 @@ import javax.sql.DataSource
 class SchemaFulldumpManagerTest {
 
     @Autowired
-    lateinit var dataSource: DataSource;
+    lateinit var dataSource: DataSource
 
     @Autowired
-    lateinit var schemaFulldumpManager: SchemaFulldumpManager;
+    lateinit var schemaFulldumpManager: SchemaFulldumpManager
 
     val fold = "./src/test/resources/wings-flywave/fulldump"
 
@@ -57,7 +58,7 @@ class SchemaFulldumpManagerTest {
         )
         val file = "$fold/schema.sql"
         schemaFulldumpManager.saveFile(file, dlls)
-        wingsTestHelper.note("检查文件 $file")
+        testcaseNotice("检查文件 $file")
     }
 
     @Test
@@ -71,6 +72,6 @@ class SchemaFulldumpManagerTest {
         )
         val file = "$fold/record.sql"
         schemaFulldumpManager.saveFile(file, recs)
-        wingsTestHelper.note("检查文件 $file")
+        testcaseNotice("检查文件 $file")
     }
 }

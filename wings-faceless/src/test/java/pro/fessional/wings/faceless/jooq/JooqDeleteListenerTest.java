@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
+import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
 
 /**
@@ -59,14 +60,14 @@ public class JooqDeleteListenerTest {
         revisionManager.publishRevision(REVISION_TEST_V2, 0);
         journalManager.publishUpdate("tst_中文也分表", true, 0);
         journalManager.publishDelete("tst_中文也分表", true, 0);
-        wingsTestHelper.note("没有错误就是正确");
+        testcaseNotice("没有错误就是正确");
     }
 
     @Test
     public void test2𓃬Helper𓃬查日志() {
         JournalHelp.deleteByIds(dsl, Tst中文也分表Table.Tst中文也分表, 12L, 1L, 2L);
         JournalHelp.deleteByIds(tmpl, "`tst_中文也分表`", 34L, 3L, 4L);
-        wingsTestHelper.note(
+        testcaseNotice(
                 "检查日志，在delete前update，如下",
                 "UPDATE `tst_中文也分表` SET commit_id=34, delete_dt=NOW()  WHERE id IN (3,4)",
                 "DELETE FROM `tst_中文也分表`  WHERE id IN (3,4)"
@@ -82,7 +83,7 @@ public class JooqDeleteListenerTest {
 
         Tst中文也分表Table t = Tst中文也分表Table.Tst中文也分表;
         dsl.deleteFrom(t).where(t.Id.eq(8L).and(t.CommitId.eq(8L))).execute();
-        wingsTestHelper.note(
+        testcaseNotice(
                 "检查日志，id 等于 (5,6,7,8)的sql，先delete，再update，如下",
                 "DELETE FROM `tst_中文也分表` WHERE ID =5 AND COMMIT_ID = 5",
                 "UPDATE `tst_中文也分表` SET COMMIT_ID = 5 ,delete_dt = NOW() WHERE ID =5"
@@ -103,7 +104,7 @@ public class JooqDeleteListenerTest {
         batch.bind(13L, 13L);
         int[] rs = batch.execute();
         System.out.println(Arrays.toString(rs));
-        wingsTestHelper.note(
+        testcaseNotice(
                 "检查日志，id >= 9的sql，只有delete，如下",
                 "delete from `tst_中文也分表` where `id` = ?"
         );
