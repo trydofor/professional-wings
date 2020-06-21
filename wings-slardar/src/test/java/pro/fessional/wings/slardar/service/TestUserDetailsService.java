@@ -55,7 +55,7 @@ public class TestUserDetailsService implements UserDetailsService {
         Authentication aut = SecurityContextHolder.getContext().getAuthentication();
         System.out.println("WingsOAuth2xContext=" + ocx);
         TestI18nUserDetail detail = new TestI18nUserDetail();
-        long idType = username.endsWith("2") ? 2L : 1L;
+        int idType = username.endsWith("2") ? 2 : 1;
         detail.setUserId(idType);
         detail.setUserType(idType);
         detail.setPassword(password);

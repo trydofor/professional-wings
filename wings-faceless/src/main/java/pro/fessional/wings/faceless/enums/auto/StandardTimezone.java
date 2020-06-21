@@ -11,7 +11,7 @@ import java.util.TimeZone;
 /**
  * @author trydofor
  * @see ZoneId#getAvailableZoneIds()
- * @since 2020-06-13
+ * @since 2020-06-21
  */
 public enum StandardTimezone implements StandardTimezoneEnum {
     SUPER(1010100, "standard_timezone", "标准时区", "classpath:/wings-tmpl/StandardTimezoneTemplate.java"),
@@ -37,6 +37,29 @@ public enum StandardTimezone implements StandardTimezoneEnum {
     CANADA𓃬NEWFOUNDLAND(1010905, "Canada/Newfoundland", "纽芬兰时(NST)：圣约翰斯", "加拿大"),
     CANADA𓃬PACIFIC(1010906, "Canada/Pacific", "太平洋时(PST)：温哥华", "加拿大"),
     ;
+    public static final String $SUPER = "standard_timezone";
+    public static final String $GMT = "GMT";
+    public static final String $ASIA𓃬SHANGHAI = "Asia/Shanghai";
+    public static final String $AMERICA𓃬CHICAGO = "America/Chicago";
+    public static final String $AMERICA𓃬LOS_ANGELES = "America/Los_Angeles";
+    public static final String $AMERICA𓃬NEW_YORK = "America/New_York";
+    public static final String $AMERICA𓃬PHOENIX = "America/Phoenix";
+    public static final String $US𓃬ALASKA = "US/Alaska";
+    public static final String $US𓃬HAWAII = "US/Hawaii";
+    public static final String $ASIA𓃬JAKARTA = "Asia/Jakarta";
+    public static final String $ASIA𓃬JAYAPURA = "Asia/Jayapura";
+    public static final String $ASIA𓃬MAKASSAR = "Asia/Makassar";
+    public static final String $ASIA𓃬KUALA_LUMPUR = "Asia/Kuala_Lumpur";
+    public static final String $ASIA𓃬SEOUL = "Asia/Seoul";
+    public static final String $ASIA𓃬SINGAPORE = "Asia/Singapore";
+    public static final String $ASIA𓃬TOKYO = "Asia/Tokyo";
+    public static final String $CANADA𓃬ATLANTIC = "Canada/Atlantic";
+    public static final String $CANADA𓃬CENTRAL = "Canada/Central";
+    public static final String $CANADA𓃬EASTERN = "Canada/Eastern";
+    public static final String $CANADA𓃬MOUNTAIN = "Canada/Mountain";
+    public static final String $CANADA𓃬NEWFOUNDLAND = "Canada/Newfoundland";
+    public static final String $CANADA𓃬PACIFIC = "Canada/Pacific";
+
 
     public static final boolean useIdAsKey = true;
     private final int id;

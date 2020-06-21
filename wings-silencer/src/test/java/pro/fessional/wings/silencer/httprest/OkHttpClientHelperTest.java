@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 public class OkHttpClientHelperTest {
 
-    @Value("http://localhost:${local.server.port}")
+    @Setter(onMethod = @__({@Value("http://localhost:${local.server.port}")}))
     private String host;
 
     @Setter(onMethod = @__({@Autowired}))

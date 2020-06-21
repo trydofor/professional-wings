@@ -13,7 +13,7 @@ import java.util.Locale;
  */
 public class TestI18nUserDetail implements TypeIdI18nUserDetail {
 
-    private long userType;
+    private int userType;
     private long userId;
     private String username;
     private String password;
@@ -28,7 +28,7 @@ public class TestI18nUserDetail implements TypeIdI18nUserDetail {
     private Locale locale = Locale.CHINA;
 
 
-    public void setUserType(long userType) {
+    public void setUserType(int userType) {
         this.userType = userType;
     }
 
@@ -70,7 +70,7 @@ public class TestI18nUserDetail implements TypeIdI18nUserDetail {
     }
 
     @Override
-    public long getUserType() {
+    public int getUserType() {
         return userType;
     }
 

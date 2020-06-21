@@ -42,6 +42,7 @@
         <guava.version>29.0-jre</guava.version>
         <spring-boot.version>2.2.7.RELEASE</spring-boot.version>
         <commons-io.version>2.7</commons-io.version>
+        <redisson.version>3.12.5</redisson.version>
     </properties>
 
     <dependencyManagement>
@@ -69,7 +70,6 @@
                 <artifactId>wings-slardar</artifactId>
                 <version>${wings.version}</version>
             </dependency>
-            <!-- redefine -->
             <!--flywave sphere-->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
@@ -86,6 +86,12 @@
                 <groupId>org.springframework.security.oauth.boot</groupId>
                 <artifactId>spring-security-oauth2-autoconfigure</artifactId>
                 <version>${spring-boot.version}</version>
+            </dependency>
+            <!-- for Spring Data Redis v.2.2.x -->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-data-22</artifactId>
+                <version>${redisson.version}</version>
             </dependency>
             <!-- utils -->
             <dependency>

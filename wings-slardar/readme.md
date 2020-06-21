@@ -9,11 +9,17 @@
 
 ## 3.1.OAuth2xFilter扩展
 
+只应在 AuthorizationServer使用，不需要在ResourceServer使用。
 OAuth2比用户密码的登录方式更有利于扩展，十分成熟，被广泛使用和支持。
 Slardar通过Filter增加`grant_type=password`的别名穿透机制，使
 
  * 使用`password`模式，不暴露`client_secret`
  * 使获得UserDetail时，可以通过Context获得request参数。
+ 
+别名`alias`的用途，除了因此oauth特征外，还用来识别登录类型，比如
+`oauth-password-alias=sms,em`，的配置，可以区分短信和邮件名登录。
+这样，`client-id`和`grant-type`和`password`别名有无数种组合，
+达到在控制层识别，并控制验证行为。
 
 这样在不污染Spring和OAuth2的情况下，可使`/oauth/token` 支持
 
@@ -23,7 +29,8 @@ Slardar通过Filter增加`grant_type=password`的别名穿透机制，使
 
 方法级的权限控制`@EnableGlobalMethodSecurity(securedEnabled = true)`，
 尽量使用`@Secured("IS_AUTHENTICATED_ANONYMOUSLY")`，这样会方便查找，
-尽量不要使用表达式`@PreAuthorize("hasAuthority('ROLE_TELLER')")`。
+非复杂条件不用使用SpEL的`@PreAuthorize("hasAuthority('ROLE_TELLER')")`。
+@Secured只作用于`ROLE_*`，在不自定义`RoleVoter`时得用`@PreAuthorize`
 
 一般情况下，不需要方法级的控制，在Security使用filter拦截更适合。
 
@@ -56,6 +63,10 @@ ResourceServer和`@Bean RemoteTokenServices tokenService()`即可。
 @ExceptionHandler(Exception.class)
 public ResponseEntity<OAuth2Exception> handleException(Exception e) 
 ```
+
+关于详细配置项，参考 wings-filter-oauth2x-79.properties 的注释
+`wings.slardar.oauth2x.client.*`是slardar特有的client，属于配置项，
+能够被filter使用，会自动填充`client_secret`。
 
 ## 3.2.CaptchaFilter防扒
 
@@ -95,17 +106,87 @@ public ResponseEntity<OAuth2Exception> handleException(Exception e)
  * WingsOAuth2xContext.Context Oauth2有关的
  * WingsTerminalContext.Context 登录终端有关的
 
-## 3.7.常见问题
+## 3.6.缓存Redis和Caffeine
 
-001.修改过的默认配置
+默认提供caffeine和Redis缓存，可以注入
 
-slardar，使用undertow，并提供了一下默认配置
+* CaffeineCacheManager caffeineCacheManager
+* RedisTemplate<String, Object> redisTemplate
+* StringRedisTemplate stringRedisTemplate
+* RedissonSpringCacheManager redissonCacheManager
 
-002.不想使用oauth2内容
+其中，caffeine默认开启，redis和redission需要引入依赖。
 
+三种不同缓存级别前缀，分别定义不同的ttl,idle,size
 
-## 3.9.参考资料
+* `general.` - 标准配置，1天
+* `service.` - 服务级的，1小时
+* `session.` - 会话级的，10分钟
+
+``` java
+@Cacheable(key = "'all'", 
+value = LEVEL_GENERAL + "StandardRegion", 
+cacheManager = MANAGER_CAFFEINE)
+
+@CacheEvict(key = "'all'", 
+value = LEVEL_SERVICE + "StandardRegion", 
+cacheManager = MANAGER_REDISSON)
+```
+
+## 3.7.参考资料
 
 [OAuth 2 Developers Guide](https://projects.spring.io/spring-security-oauth/docs/oauth2.html)
 [OAuth2 boot](https://docs.spring.io/spring-security-oauth2-boot/docs/current/reference/htmlsingle/)
 [Spring Security](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/)
+
+## 3.8.常见问题
+
+### 001.spring 找不到 RedissonSpringCacheManager
+
+在maven依赖中，把slardar以下3个optional的依赖引入 
+
+* spring-boot-starter-data-redis
+* redisson-spring-data-22
+
+### 002.修改过的默认配置
+
+slardar，使用undertow，并提供了一下默认配置
+
+### 003.不想使用oauth2内容
+
+spring.wings.slardar.oauth2x.enabled=false
+
+### 004.本地docker redis 5
+
+```bash
+docker run -d \
+ --name wings-redis \
+ --restart=unless-stopped \
+ -v /Users/trydofor/Docker/redis/data:/data \
+ -p 6379:6379 \
+redis:5.0 \
+redis-server --requirepass moilioncircle
+```
+### 005.Spring的Oauth2代码在哪里
+
+org.springframework.security.oauth2.provider.endpoint
+
+* TokenEndpoint - `/oauth/token`
+* AuthorizationEndpoint - `/oauth/authorize`
+
+### 006.Oauth登录 "invalid_client"
+
+需要设置client组的属性(id,secret等)，密码一定要复杂。
+`wings.slardar.oauth2x.client.xxxx.client-*`
+其中xxxx要保证唯一，可用来标识不同业务模块。
+
+### 007.error处理，需要自定义page或handler
+
+需要根据spring约定和实际需要，自定义一套机制。
+但是不要使用`spring.mvc.throw-exception-if-no-handler-found=true`，
+因为，异常之所以叫异常，就不能当做正常，避免用来处理正常事情。
+
+ * controller层异常用`@ControllerAdvice` 和 `@ExceptionHandler`
+ * service层异常，自行做业务处理，或AOP日志
+ 
+[error-handling](https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/#boot-features-error-handling)

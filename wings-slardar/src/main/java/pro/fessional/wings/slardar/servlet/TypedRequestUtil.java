@@ -17,8 +17,6 @@ import java.util.Map;
  * @since 2019-07-03
  */
 public class TypedRequestUtil {
-    private TypedRequestUtil() {
-    }
 
     @Nullable
     public static <T> T getAttribute(HttpServletRequest request, String name, Class<T> claz) {
@@ -136,5 +134,36 @@ public class TypedRequestUtil {
         }
 
         return rst;
+    }
+
+    /**
+     * 有些获得 headers中的Bearer然后 Parameter的access_token
+     * `Bearer`和`access_token` 不区分大小写，如果有多个token，取最后一个
+     */
+    @Nullable
+    public static String getAccessToken(HttpServletRequest request) {
+        String auth = request.getHeader("Authorization");
+        String token = null;
+        if (auth != null) {
+            String bearer = "bearer";
+            int p = auth.toLowerCase().indexOf(bearer);
+            if (p >= 0) {
+                token = auth.substring(p + bearer.length()).trim();
+            }
+        }
+        if (token == null) {
+            token = request.getParameter("access_token");
+        }
+
+        if (token != null) {
+            int pos = token.indexOf(",");
+            if (pos > 0) {
+                String[] tks = token.split(",");
+                token = tks[tks.length - 1];
+            }
+            token = token.trim();
+        }
+
+        return token;
     }
 }

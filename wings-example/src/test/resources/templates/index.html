@@ -1,0 +1,95 @@
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>wings example</title>
+</head>
+<body>
+<h1>Sleep(当前窗口)</h1>
+<a href="/test/sleep.html?ms=30000">/sleep.html?ms=30000</a>
+<h1>I18n(当前窗口)</h1>
+<ul>
+    <li><a href="?lang=zh-CN&zone=Asia/Shanghai">lang=zh-CN&zone=Asia/Shanghai</a></li>
+    <li><a href="?lang=en-US&zone=America/New_York">lang=en-US&zone=America/New_York</a></li>
+    <li><a href="?lang=zh&zone=Asia/Shanghai">lang=zh&zone=Asia/Shanghai</a></li>
+    <li><a href="?lang=en&zone=America/New_York">lang=en&zone=America/New_York</a></li>
+    <li><a href="?lang=zh&zone=Shanghai">lang=zh&zone=Shanghai</a></li>
+    <li><a href="?lang=en&zone=New_York">lang=en&zone=New_York</a></li>
+</ul>
+<ul>
+    <li>user.hello=<span th:text="#{user.hello}"></span></li>
+    <li>userLocale=<span th:text="${userLocale}"></span></li>
+    <li>userZoneId=<span th:text="${userZoneId}"></span></li>
+    <li>userDatetime=<span th:text="${userDatetime}"></span></li>
+    <li>systemZoneId=<span th:text="${systemZoneId}"></span></li>
+    <li>systemDatetime=<span th:text="${systemDatetime}"></span></li>
+</ul>
+<hr/>
+
+<h1>Json(新窗口)</h1>
+<ul>
+    <li><a href="/test/test.json?lang=zh-CN&zone=Asia/Shanghai" target="_blank">lang=zh-CN&zone=Asia/Shanghai</a></li>
+    <li><a href="/test/test.json?lang=en-US&zone=America/New_York" target="_blank">lang=en-US&zone=America/New_York</a></li>
+</ul>
+
+<h1>journal(新窗口)</h1>
+<ul>
+    <li><a href="/test/string.json" target="_blank">string.json</a></li>
+    <li><a href="/test/journal.json" target="_blank">journal.json</a></li>
+</ul>
+
+<h1>Oauth2(Ajax)</h1>
+<form id="user_pass" action="">
+    用户: <input type="text" name="username" value="trydofor"/><br/>
+    密码: <input type="password" name="password" value="moilioncircle"/><br/>
+</form>
+<input type="button" value="Oauth登陆" onclick="onLogin()">
+<input type="button" value="Oauth权限1" onclick="onAdmin()">
+<input type="button" value="Oauth权限2" onclick="onSecure()">
+<input type="button" value="Oauth登出" onclick="onLogout()">
+<br/>
+<textarea id="oauthOutput" cols="80" rows="5"></textarea>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+<script language="JavaScript">
+    var accessToken = null;
+    var count = 0;
+
+    function onLogin() {
+        $.ajax({
+            type: "post",
+            url: "/login.json",
+            dataType: "json",
+            data: $("#user_pass").serialize(),
+            success: function (d) {
+                output("login", d);
+                accessToken = d.access_token;
+            }
+        });
+    }
+
+    function onAdmin() {
+        $.get("/user/create.json?access_token=" + accessToken, function (d) {
+            output("admin", d);
+        });
+    }
+
+    function onLogout() {
+        $.get("/logout.json?access_token=" + accessToken, function (d) {
+            output("logout", d);
+        });
+    }
+    function onSecure() {
+        $.get("/test/secured-test.json?access_token=" + accessToken, function (d) {
+            output("secure", d);
+        });
+    }
+
+    function output(s, d) {
+        console.log(d);
+        var obj = $("#oauthOutput");
+        var txt = "[" + (count++) + " " + s + " ]" + JSON.stringify(d) + "\n"
+        obj.val(obj.val() + txt);
+    }
+</script>
+</body>
+</html>

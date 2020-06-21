@@ -232,7 +232,10 @@ public class WingsCaptchaFilter implements OrderedFilter {
                     String value = headers.nextElement();
                     if ((value.toLowerCase().startsWith(BEARER_LOWER))) {
                         for (String part : value.substring(BEARER_LOWER.length()).trim().split(",")) {
-                            session.add(part.trim());
+                            String trim = part.trim();
+                            if (trim.length() > 0) {
+                                session.add(trim);
+                            }
                         }
                     }
                 }

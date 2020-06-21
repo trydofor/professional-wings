@@ -58,7 +58,7 @@ public class WingsOAuth2xFilter implements OrderedFilter {
 
         try {
             HttpServletRequest request = (HttpServletRequest) req;
-            ServletRequest nrq = wrapIfNeed(request);
+            HttpServletRequest nrq = wrapIfNeed(request);
             if (nrq != request) {
                 WingsOAuth2xContext.set(TypedRequestUtil.getParameter(nrq.getParameterMap()));
             }
@@ -118,7 +118,10 @@ public class WingsOAuth2xFilter implements OrderedFilter {
         }
 
         if (cid != null && gtp != null && oauthPasswordAlias.contains(gtp)) {
-            param.put(CLIENT_SECRET, clientSecret.get(cid));
+            String[] cst = clientSecret.get(cid);
+            if(cst != null) {
+                param.put(CLIENT_SECRET, cst);
+            }
             param.put(GRANT_TYPE, OAUTH_PASSWORD);
             param.put(OAUTH_PASSWORD_ALIAS, new String[]{gtp});
         }
@@ -138,7 +141,9 @@ public class WingsOAuth2xFilter implements OrderedFilter {
         this.order = order;
     }
 
-    //
+    /**
+     * 配置内部client
+     */
     @Data
     public static class Config {
 

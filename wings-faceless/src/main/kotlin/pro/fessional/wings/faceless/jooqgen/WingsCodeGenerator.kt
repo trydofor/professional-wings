@@ -70,10 +70,14 @@ object WingsCodeGenerator {
             }
         }
 
+        // 忽略注释，import排序和serialVersionUID
         // date = "2019-09-09T01:33:51.762Z",
         // schema version:2019090903
         // serialVersionUID = 319604016;
-        val ignoreRegex = arrayOf("@Generated[^)]+", "serialVersionUID[^;]+")
+        val ignoreRegex = arrayOf(
+                "(import +[^\r\n]+;[\r\n ]+)+",
+                "@Generated[^)]+",
+                "serialVersionUID[^;]+")
                 .joinToString("|")
                 .toRegex(RegexOption.MULTILINE)
         for ((k, f) in from) {

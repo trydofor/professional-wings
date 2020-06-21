@@ -28,7 +28,7 @@ import static pro.fessional.wings.silencer.httprest.RestTestController.json;
 @RunWith(SpringRunner.class)
 public class RestTemplateHelperTest {
 
-    @Value("http://localhost:${local.server.port}")
+    @Setter(onMethod = @__({@Value("http://localhost:${local.server.port}")}))
     private String host;
 
     @Setter(onMethod = @__({@Autowired}))

@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -76,6 +77,7 @@ public class ConstantEnumGenerator {
     public static class Builder {
         private File src;
         private String pkg;
+        Set<String> exs = new HashSet<>();
 
         public Builder setJavaSource(File src) {
             this.src = src;
@@ -92,30 +94,48 @@ public class ConstantEnumGenerator {
             return this;
         }
 
-        public <T> void generate(Class<T> clazz, Collection<T> pojos) throws IOException {
-            List<ConstantEnum> enums = ConstantEnumGenerator.copyField(clazz, pojos);
+        public Builder addExcludeType(String typ) {
+            this.exs.add(typ);
+            return this;
+        }
+
+        public Builder addExcludeType(String... typ) {
+            this.exs.addAll(Arrays.asList(typ));
+            return this;
+        }
+
+        public <T> void generate(Class<T> clazz, Collection<T> pos) throws IOException {
+            List<ConstantEnum> enums = ConstantEnumGenerator.copyField(clazz, pos);
             generate(enums);
         }
 
-        public void generate(Collection<ConstantEnum> enums) throws IOException {
-            ConstantEnumGenerator.generate(src, pkg, enums);
+        public void generate(Collection<ConstantEnum> pos) throws IOException {
+            ConstantEnumGenerator.generate(src, pkg, pos, exs);
         }
     }
 
     /**
      * first, copy ConstantEnumTemplate.java to /resource/ to avoid compile
      *
-     * @param src   ./src/main/java/
-     * @param pkg   pro.fessional.wings.faceless.enums.constant
-     * @param pojos 对象数据
+     * @param src      ./src/main/java/
+     * @param pkg      pro.fessional.wings.faceless.enums.constant
+     * @param pojos    对象数据
+     * @param excludes 排除的type组
      * @throws IOException if IO exception
      * @see ConstantEnumTemplate
      */
-    public static void generate(File src, String pkg, Collection<ConstantEnum> pojos) throws IOException {
+    public static void generate(File src, String pkg, Collection<ConstantEnum> pojos, Set<String> excludes) throws IOException {
         // 初始
-        Map<String, List<ConstantEnum>> enums = pojos.stream().collect(Collectors.groupingBy(ConstantEnum::getType));
+        Map<String, List<ConstantEnum>> enums = pojos
+                .stream()
+                .filter(it -> excludes.isEmpty() || !excludes.contains(it.type))
+                .collect(Collectors.groupingBy(ConstantEnum::getType));
 
-        logger.info("load enum count = {}", enums.size());
+        int count = 1;
+        for (Map.Entry<String, List<ConstantEnum>> e : enums.entrySet()) {
+            logger.info("load {} enum type = {}, count={}", count++, e.getKey(), e.getValue().size());
+        }
+
         Set<File> nowFiles = new HashSet<>();
         File dst = new File(src, pkg.replace('.', '/'));
         dst.mkdirs();
@@ -167,7 +187,7 @@ public class ConstantEnumGenerator {
         Pattern useIdAsKey = Pattern.compile("\\s*useIdAsKey\\s*=\\s*(false|true)");
         Pattern className = Pattern.compile("public\\s+enum\\s+(\\S+)\\s+");
 
-        List<String> txt = null;
+        List<String> txt;
         try {
             DefaultResourceLoader loader = new DefaultResourceLoader();
             txt = InputStreams.readLine(loader.getResource(root.info).getInputStream());
@@ -221,10 +241,7 @@ public class ConstantEnumGenerator {
     private static String merge(String tmpl, ConstantEnum root, String type, List<ConstantEnum> list) {
         String pascal = javaClass(type);
         list.sort(Comparator.comparingLong(ConstantEnum::getId));
-        String text = list
-                .stream()
-                .map(ConstantEnumGenerator::enumFiled)
-                .collect(Collectors.joining("\n"));
+        String text = fields("    ", list);
 
         tmpl = tmpl.replace(VAR_SUPER, text);
         tmpl = tmpl.replace(VAR_CLASS, pascal);
@@ -240,48 +257,63 @@ public class ConstantEnumGenerator {
         return it.getId() % 100 == 0;
     }
 
-    private static String enumFiled(ConstantEnum it) {
-        StringBuilder sb = new StringBuilder(50);
-        sb.append("    ");
-        boolean isSuper = isSuper(it);
-        if (isSuper) {
-            sb.append("SUPER");
-        } else {
-            String code = it.code;
-            int len = code.length();
-            boolean canDeer = true;
-            for (int i = 0; i < len; i++) {
-                char c = code.charAt(i);
-                if (c == '-') {
-                    sb.append('_');
-                } else if (c >= 'a' && c <= 'z') {
-                    sb.append(Character.toUpperCase(c));
-                } else if (Character.isJavaIdentifierPart(c)) {
-                    sb.append(c);
-                } else if (c > 127) {
-                    sb.append(c);
-                } else {
-                    if (sb.length() > 0 && canDeer) {
-                        canDeer = false;
-                        sb.append(A9);
-                        continue;
+    private static String fields(String indent, List<ConstantEnum> its) {
+        StringBuilder enums = new StringBuilder();
+        StringBuilder codes = new StringBuilder();
+
+        for (ConstantEnum it : its) {
+            enums.append(indent);
+            codes.append(indent);
+            int idx = enums.length();
+            boolean isSuper = isSuper(it);
+            if (isSuper) {
+                enums.append("SUPER");
+            } else {
+                String code = it.code;
+                int len = code.length();
+                boolean canDeer = true;
+                for (int i = 0; i < len; i++) {
+                    char c = code.charAt(i);
+                    if (c == '-') {
+                        enums.append('_');
+                    } else if (c >= 'a' && c <= 'z') {
+                        enums.append(Character.toUpperCase(c));
+                    } else if (Character.isJavaIdentifierPart(c)) {
+                        enums.append(c);
+                    } else if (c > 127) {
+                        enums.append(c);
+                    } else {
+                        if (enums.length() > 0 && canDeer) {
+                            canDeer = false;
+                            enums.append(A9);
+                            continue;
+                        }
                     }
+                    canDeer = true;
                 }
-                canDeer = true;
             }
+            String code = isSuper ? it.type : it.code;
+            // public static final String $CREATE_USER = "CREATE_USER"
+            codes.append("public static final String $");
+            codes.append(enums, idx, enums.length());
+            codes.append(" = \"").append(code).append("\";\n");
+
+            enums.append("(")
+                 .append(it.id)
+                 .append(", \"")
+                 .append(code)
+                 .append("\", \"")
+                 .append(it.desc)
+                 .append("\", \"")
+                 .append(it.info)
+                 .append("\"),\n");
         }
 
-        sb.append("(")
-          .append(it.id)
-          .append(", \"")
-          .append(isSuper ? it.type : it.code)
-          .append("\", \"")
-          .append(it.desc)
-          .append("\", \"")
-          .append(it.info)
-          .append("\"),");
-
-        return sb.toString();
+        enums.append(indent)
+             .append(";\n")
+             .append(codes.toString())
+        ;
+        return enums.toString();
     }
 
     @NotNull

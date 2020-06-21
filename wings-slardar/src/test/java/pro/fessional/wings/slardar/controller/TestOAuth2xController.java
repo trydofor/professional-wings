@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import pro.fessional.wings.slardar.security.SecurityContextUtil;
 import pro.fessional.wings.slardar.security.WingsOAuth2xContext;
-import pro.fessional.wings.slardar.security.WingsOAuth2xLogin;
+import pro.fessional.wings.slardar.security.WingsOAuth2xHelper;
 import pro.fessional.wings.slardar.security.WingsTerminalContext;
 import pro.fessional.wings.slardar.security.WingsTokenEnhancer;
 import pro.fessional.wings.slardar.security.WingsTokenStore;
@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 public class TestOAuth2xController {
 
     @Setter(onMethod = @__({@Autowired}))
-    private WingsOAuth2xLogin wingsOAuth2xLogin;
+    private WingsOAuth2xHelper wingsOAuth2XHelper;
 
     @Setter(onMethod = @__({@Autowired}))
     private WingsTokenEnhancer wingsTokenEnhancer;
@@ -81,7 +81,7 @@ public class TestOAuth2xController {
 
     @RequestMapping(value = {"/test/forward-login.html"})
     public void forwardLogin(HttpServletRequest request, HttpServletResponse response) {
-        WingsOAuth2xLogin.Login info = new WingsOAuth2xLogin.Login();
+        WingsOAuth2xHelper.Login info = new WingsOAuth2xHelper.Login();
         info.setLoginUrl("/oauth/token");
         info.setClientId("wings-slardar-id");
         info.setUsername(request.getParameter("username"));
@@ -94,13 +94,13 @@ public class TestOAuth2xController {
         testUserDetailsService.setCredentialsNonExpired("1".equals(request.getParameter("CredentialsNonExpired")));
         testUserDetailsService.setEnabled("1".equals(request.getParameter("Enabled")));
 
-        wingsOAuth2xLogin.login(request, response, info);
+        wingsOAuth2XHelper.login(request, response, info);
     }
 
     @RequestMapping(value = {"/test/rest-login.html"})
     @ResponseBody
     public OAuth2AccessToken restLogin(HttpServletRequest request) {
-        WingsOAuth2xLogin.Login info = new WingsOAuth2xLogin.Login();
+        WingsOAuth2xHelper.Login info = new WingsOAuth2xHelper.Login();
         info.setLoginUrl("http://localhost:8081/oauth/token");
         info.setClientId("wings-slardar-id");
         info.setUsername(request.getParameter("username"));
@@ -115,14 +115,14 @@ public class TestOAuth2xController {
         testUserDetailsService.setCredentialsNonExpired("1".equals(request.getParameter("CredentialsNonExpired")));
         testUserDetailsService.setEnabled("1".equals(request.getParameter("Enabled")));
 
-        OAuth2AccessToken login = wingsOAuth2xLogin.login(new RestTemplate(), info);
+        OAuth2AccessToken login = wingsOAuth2XHelper.login(new RestTemplate(), info);
         return login;
     }
 
     @RequestMapping(value = {"/test/store-logout.html"})
     @ResponseBody
     public String tokenStoreLogout() {
-        wingsOAuth2xLogin.logout(wingsTokenStore, "bac0c873-e1cc-4740-8b9b-a903dcaaedfe");
+        wingsOAuth2XHelper.logout(wingsTokenStore, "bac0c873-e1cc-4740-8b9b-a903dcaaedfe");
         return "logout bac0c873-e1cc-4740-8b9b-a903dcaaedfe";
     }
 }

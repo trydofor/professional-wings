@@ -3,6 +3,8 @@ package pro.fessional.wings.faceless.enums;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.data.CodeEnum;
+import pro.fessional.mirana.data.Nulls;
+import pro.fessional.mirana.math.AnyIntegerUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -231,5 +233,71 @@ public class ConstantEnumUtil {
             }
         }
         return list;
+    }
+
+    @NotNull
+    public static <T extends CodeEnum> List<T> codes(T[] es, String... codes) {
+        if (codes == null || codes.length == 0) return Collections.emptyList();
+        List<T> result = new ArrayList<>(codes.length);
+        for (String s : codes) {
+            T c = codeOrNull(s, es);
+            if (c != null) result.add(c);
+        }
+        return result;
+    }
+
+    @NotNull
+    public static <T extends ConstantEnum> List<T> ids(T[] es, String... ids) {
+        if (ids == null || ids.length == 0) return Collections.emptyList();
+        List<T> result = new ArrayList<>(ids.length);
+        for (String s : ids) {
+            T c = idOrNull(AnyIntegerUtil.val32(s), es);
+            if (c != null) result.add(c);
+        }
+        return result;
+    }
+
+    @NotNull
+    public static <T extends Enum<?>> List<T> names(T[] es, String... names) {
+        if (names == null || names.length == 0) return Collections.emptyList();
+        List<T> result = new ArrayList<>(names.length);
+        for (String s : names) {
+            T c = nameOrNull(s, es);
+            if (c != null) result.add(c);
+        }
+        return result;
+    }
+
+    @NotNull
+    public static <T extends ConstantEnum> String joinIds(String delimiter, T... es) {
+        if (es == null || es.length == 0) return Nulls.Str;
+        StringBuilder sb = new StringBuilder();
+        for (T e : es) {
+            sb.append(delimiter);
+            sb.append(e.getId());
+        }
+        return sb.substring(delimiter.length());
+    }
+
+    @NotNull
+    public static <T extends Enum<?>> String joinNames(String delimiter, T... es) {
+        if (es == null || es.length == 0) return Nulls.Str;
+        StringBuilder sb = new StringBuilder();
+        for (T e : es) {
+            sb.append(delimiter);
+            sb.append(e.name());
+        }
+        return sb.substring(delimiter.length());
+    }
+
+    @NotNull
+    public static <T extends CodeEnum> String joinCodes(String delimiter, T... es) {
+        if (es == null || es.length == 0) return Nulls.Str;
+        StringBuilder sb = new StringBuilder();
+        for (T e : es) {
+            sb.append(delimiter);
+            sb.append(e.getCode());
+        }
+        return sb.substring(delimiter.length());
     }
 }

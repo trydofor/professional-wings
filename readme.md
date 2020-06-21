@@ -37,17 +37,39 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
  * [Apache ShardingSphere](https://shardingsphere.apache.org/index_zh.html)
  * [Jooq - 强类型 sql-mapping](https://www.jooq.org/)
 
-## 0.2.命名风格
+## 0.2.编码风格
 
-使用`idea`作为开发`IDE`，可使用`code style`和`live templates`。
+使用`IntelliJIdea`作为开发`IDE`，可使用`code style`和`live templates`。
 `wings-idea-style.xml`在`Setting/Editor/Code Style`导入。
 
-`wings-idea-live.xml`需要手动放到`$config/templates/`。
-参考 https://www.jetbrains.com/help/idea/sharing-live-templates.html
+`wings-idea-live.xml`需要手动放到`$config/templates/`，没有则新建
 
  * WIN `%HOMEPATH%\.IntelliJIdea2019.2\config`
  * LIN `~/.IntelliJIdea2019.2/config`
  * MAC `~/Library/Preferences/IntelliJIdea2019.2`
+ * MAC `~/Library/ApplicationSupport/JetBrains/IntelliJIdea2020.1`
+
+参考资料
+ * [sharing-live-templates](https://www.jetbrains.com/help/idea/sharing-live-templates.html)
+ * [2020.1 and above versions](https://www.jetbrains.com/help/idea/tuning-the-ide.html#default-dirs)
+ * [2019.3.x and below versions](https://www.jetbrains.com/help/idea/2019.3/tuning-the-ide.html#default-dirs)
+
+
+安装以下插件
+ * .ignore - 和版本管理中ignore有关的。
+ * CheckStyle - 代码质量
+ * GeneateAllSetter - alt-enter 生成全部 po.setXxx("")
+ * Git Flow Integration - 集成了git-flow
+ * GitToolBox - 自动 fetch
+ * Grep Console - 控制台的日志分颜色显示和过滤
+ * kotlin - 默认安装了
+ * lombok - IntelliJ Lombok plugin
+ * Maven Helper - 帮助管理maven
+ * Quick File Preview - 单击快速浏览文件
+ * Rainbow Brackets - 彩虹括号
+ * Request mapper - 快速查找 mapping
+ * Statistic - 统计一下自己的代码
+ * String Manipulation -  对字符串的各种操作和转换。
 
 ### 0.2.1.Java风格，遵循标准的java规范，但**可读性优先**。
 
@@ -67,7 +89,7 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
 
 系统内有2种时间`系统时间`和`本地时间`，数据库和 java 映射上，
 
- * `日期时间`，以`DATETIME`和`LocalDateTime`存储。
+ * `日期时间`，以`DATETIME(3)`和`LocalDateTime`存储。
  * `日期`，以`DATE`和`LocalDate`存储。
  * `时间`，以`TIME`和`LocalTime`存储。
 
@@ -120,6 +142,16 @@ public interface TradeService {
     void transfer(@NotNull MoneyInfo ai, @NotNull TradeInfo ti, @NotNull Journal journal);
 }
 ```
+
+### 0.2.8.枚举类和code/const值
+
+在service层，要求强类型，所以code/const都以enum传递。
+通过自动java模板生成enum，通过*EnumUtil，转换。
+
+在db层，以基本类型(int,varchar)读取和写入。
+
+在用户层，以多国语形式显示枚举内容
+
 
 ## 0.3.技术选型
 
@@ -202,4 +234,26 @@ hostname
 cat /etc/hosts
 # 在localhost后面，填上 trydofors-Hackintosh.local
 127.0.0.1	    localhost trydofors-Hackintosh.local
+```
+
+### 002.工程中哪些参数是必须打开的
+
+``` bash
+# 找到所以开关文件
+find . -name 'wings-conditional-manager.properties' \
+| egrep -v -E 'target/|example/' 
+
+./wings-slardar/src/main/resources/wings-conf/wings-conditional-manager.properties
+./wings-faceless/src/main/resources/wings-conf/wings-conditional-manager.properties
+./wings-silencer/src/main/resources/wings-conf/wings-conditional-manager.properties
+
+# 找到所false的开关
+find . -name 'wings-conditional-manager.properties' \
+| egrep -v -E 'target/|example/' \
+| xargs grep 'false'
+
+# 以下2个需要在flywave和enum时开启
+spring.wings.flywave.enabled=false
+spring.wings.enumi18n.enabled=false
+
 ```

@@ -11,8 +11,7 @@ import pro.fessional.wings.faceless.enums.StandardI18nEnum;
  */
 public enum ConstantEnumTemplate implements ConstantEnum, StandardI18nEnum {
 
-    SUPER(1010100, "ConstantEnumTemplate", "性别", "性别"),
-    ;
+    SUPER(1010100, "ConstantEnumTemplate", "性别", "性别");
 
     public static final boolean useIdAsKey = false;
 

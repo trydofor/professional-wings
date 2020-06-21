@@ -343,3 +343,26 @@ i18n可以使用CombinableMessageSource动态添加，处理service内消息的�
  * JooqJavaCodeGenSample - jooq类生成例子
  * WingsSchemaDumper - schema和数据dump例子
  * WingsSchemaJournal - track表控制例子
+ 
+### 005.本地创建mysql docker
+
+```bash
+sudo tee /Users/trydofor/Docker/mysql/conf/moilioncircle.cnf << EOF
+[mysqld]
+innodb_file_per_table       = 1
+innodb_ft_min_token_size    = 1
+ft_min_word_len             = 1
+character-set-server        = UTF8MB4
+max_allowed_packet          = 1024M
+skip_ssl
+EOF
+# 启动docker
+docker run -d \
+ --name mysql \
+ --restart=unless-stopped \
+ -e MYSQL_ALLOW_EMPTY_PASSWORD=yes \
+ -v /Users/trydofor/Docker/mysql/conf:/etc/mysql/conf.d \
+ -v /Users/trydofor/Docker/mysql/data:/var/lib/mysql \
+ -p 3306:3306 \
+mysql:5.7
+```

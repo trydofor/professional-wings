@@ -19,7 +19,7 @@ public class JooqJavaCodeGenSample {
                           .jdbcPassword("moilioncircle")
                           .databaseSchema(database)
                           .databaseIncludes("sys_commit_journal|sys_constant_enum|sys_standard_i18n")
-                          .databaseExcludes("")
+                          .databaseExcludes("sys_light_sequence|sys_schema_journal|sys_schema_version") // jdbc实现
                           .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
                           .targetPackage("pro.fessional.wings.faceless.database.autogen")
                           .targetDirectory("wings-faceless/src/main/java/")

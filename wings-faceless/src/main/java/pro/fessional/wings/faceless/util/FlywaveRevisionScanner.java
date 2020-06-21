@@ -1,5 +1,7 @@
 package pro.fessional.wings.faceless.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StreamUtils;
@@ -21,10 +23,15 @@ import java.util.regex.Pattern;
  */
 public class FlywaveRevisionScanner {
 
+    private static final Logger logger = LoggerFactory.getLogger(ConstantEnumGenerator.class);
+
     public static final String REVISION_PATH_MASTER = "classpath*:/wings-flywave/master/**/*.sql";
     public static final String REVISION_PATH_BRANCH_HEAD = "classpath*:/wings-flywave/branch/";
     public static final String REVISION_PATH_BRANCH_TAIL = "**/*.sql";
     public static final String REVISION_PATH_BRANCH_FULL = REVISION_PATH_BRANCH_HEAD + REVISION_PATH_BRANCH_TAIL;
+    public static final String REVISION_PATH_BRANCH_3RD_ENU18N = branchPath("features/enum-i18n");
+    public static final String REVISION_PATH_BRANCH_FIX_V2_2_7 = branchPath("hotfixes/v2.2.7-fix");
+
     public static final long REVISION_1ST_SCHEMA = 2019_0512_01L;
     public static final long REVISION_2ND_IDLOGS = 2019_0520_01L;
     public static final long REVISION_3RD_ENU18N = 2019_0521_01L;
@@ -56,7 +63,7 @@ public class FlywaveRevisionScanner {
     }
 
     public static String commentInfo(String... path) {
-        Pattern tknRegex = Pattern.compile("[/\\\\]wings-flywave[/\\\\]([^:]*[/\\\\])\\d{8,}[uv]\\d{2,}([^/]*\\.sql)$", Pattern.CASE_INSENSITIVE);
+        Pattern tknRegex = Pattern.compile("[/\\\\]wings-flywave[/\\\\]([^:]*[/\\\\])[-_0-9]{8,}[uv][0-9]{2,}([^/]*\\.sql)$", Pattern.CASE_INSENSITIVE);
 
         LinkedHashSet<String> info = new LinkedHashSet<>();
         for (String s : path) {
@@ -94,9 +101,9 @@ public class FlywaveRevisionScanner {
      * String path = "file:src/main/resources/wings-flywave/master/"; // 具体文件
      *
      * @param path 按Spring的格式写，classpath*:,classpath:等，默认[REVISIONSQL_PATH]
+     * @return 按版本号升序排列的TreeMap
      * @see PathMatchingResourcePatternResolver
      */
-
     public static SortedMap<Long, SchemaRevisionManager.RevisionSql> scan(@NotNull String... path) {
         TreeMap<Long, SchemaRevisionManager.RevisionSql> result = new TreeMap<>();
         for (String p : path) {
@@ -105,22 +112,36 @@ public class FlywaveRevisionScanner {
         return result;
     }
 
+    /**
+     * @param result 排序map
+     * @param path   扫描路径
+     * @see #scan(String...)
+     */
     public static void scan(SortedMap<Long, SchemaRevisionManager.RevisionSql> result, String path) {
         String file = null;
         try {
             PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
             Resource[] resources = resolver.getResources(path);
-            Pattern reviRegex = Pattern.compile("(\\d{8,})([uv])(\\d{2,})[^/]*\\.sql$", Pattern.CASE_INSENSITIVE);
+            logger.info("[FlywaveRevisionScanner]🐝 scanned " + resources.length + " resources in path=" + path);
+            Pattern reviRegex = Pattern.compile("([-_0-9]{8,})([uv])([0-9]{2,})[^/]*\\.sql$", Pattern.CASE_INSENSITIVE);
             Charset utf8 = StandardCharsets.UTF_8;
 
             for (Resource res : resources) {
                 file = res.getURL().getPath();
                 Matcher m = reviRegex.matcher(file);
                 if (!m.find()) {
+                    logger.info("[FlywaveRevisionScanner]🐝 skip unsupported resource=" + file);
                     continue;
                 }
                 boolean undo = m.group(2).equalsIgnoreCase("u");
-                long revi = Long.parseLong(m.group(1) + m.group(3));
+                StringBuilder sb = new StringBuilder(10);
+                String g1 = m.group(1);
+                for (int i = 0; i < g1.length(); i++) {
+                    char c = g1.charAt(i);
+                    if (c >= '0' && c <= '9') sb.append(c);
+                }
+                sb.append(m.group(3));
+                final long revi = Long.parseLong(sb.toString());
 
                 SchemaRevisionManager.RevisionSql d = result.computeIfAbsent(revi, key -> {
                     SchemaRevisionManager.RevisionSql sql = new SchemaRevisionManager.RevisionSql();
@@ -131,9 +152,11 @@ public class FlywaveRevisionScanner {
                 String text = StreamUtils.copyToString(res.getInputStream(), utf8);
 
                 if (undo) {
+                    logger.info("[FlywaveRevisionScanner]🐝 scan " + revi + " undo↓ resource=" + file);
                     d.setUndoPath(file);
                     d.setUndoText(text);
                 } else {
+                    logger.info("[FlywaveRevisionScanner]🐝 scan " + revi + " upto↑ resource=" + file);
                     d.setUptoPath(file);
                     d.setUptoText(text);
                 }

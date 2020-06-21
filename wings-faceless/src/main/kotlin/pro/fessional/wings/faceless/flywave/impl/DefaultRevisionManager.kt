@@ -106,7 +106,7 @@ class DefaultRevisionManager(
             }
 
             // 检测和处理边界
-            if (isUptoSql) { // 版本从低到高
+            if (isUptoSql) { // 版本从低到高，重点不一致，或不存在
                 if (reviText.last.first != revision) {
                     logger.warn("[publishRevision]🐝 skip the different upgrade end point , name={}, db-revi={}, to-revi={}", plainName, plainRevi, revision)
                     continue

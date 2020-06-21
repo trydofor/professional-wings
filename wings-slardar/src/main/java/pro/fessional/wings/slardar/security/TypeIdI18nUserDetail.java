@@ -23,7 +23,7 @@ public interface TypeIdI18nUserDetail extends UserDetails {
      *
      * @return 类型
      */
-    long getUserType();
+    int getUserType();
 
 
     /**

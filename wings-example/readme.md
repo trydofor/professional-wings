@@ -11,7 +11,6 @@
  * 了解 `maven`，缺什么，补什么。
  * 了解 `spring*`，`看官方文档，不要百度` x 3！
  * 了解 `mysql*`数据库，mysql,mariadb,percona
- * 了解 `redis`缓存
 
 ## 4.2.演示内容
  

@@ -15,8 +15,7 @@ import java.util.Locale;
  */
 public enum StandardLanguageTemplate implements StandardLanguageEnum {
 
-    SUPER(1010100, "ConstantEnumTemplate", "性别", "性别"),
-    ;
+    SUPER(1010100, "ConstantEnumTemplate", "性别", "性别");
 
     public static final boolean useIdAsKey = false;
 

@@ -44,7 +44,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import pro.fessional.mirana.code.LeapCode;
 import pro.fessional.wings.slardar.security.JdkSerializationStrategy;
-import pro.fessional.wings.slardar.security.WingsOAuth2xLogin;
+import pro.fessional.wings.slardar.security.WingsOAuth2xHelper;
 import pro.fessional.wings.slardar.security.WingsTokenEnhancer;
 import pro.fessional.wings.slardar.security.WingsTokenStore;
 import pro.fessional.wings.slardar.servlet.WingsFilterOrder;
@@ -90,18 +90,18 @@ public class WingsOAuth2xConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(WingsOAuth2xLogin.class)
-    public WingsOAuth2xLogin wingsOAuth2xLogin(Actoken actoken) {
+    @ConditionalOnMissingBean(WingsOAuth2xHelper.class)
+    public WingsOAuth2xHelper wingsOAuth2xLogin(Actoken actoken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        WingsOAuth2xLogin login = new WingsOAuth2xLogin();
-        login.setHeaders(headers);
-        login.setThirdTokenKey(actoken.thirdTokenKey);
-        login.setTokenLiveKey(actoken.tokenLiveKey);
-        login.setRenewTokenKey(actoken.renewTokenKey);
+        WingsOAuth2xHelper helper = new WingsOAuth2xHelper();
+        helper.setHeaders(headers);
+        helper.setThirdTokenKey(actoken.thirdTokenKey);
+        helper.setTokenLiveKey(actoken.tokenLiveKey);
+        helper.setRenewTokenKey(actoken.renewTokenKey);
 
-        return login;
+        return helper;
     }
 
     @Bean
@@ -115,10 +115,10 @@ public class WingsOAuth2xConfiguration {
     }
 
     @Configuration
-    @ConditionalOnClass(RedisConnectionFactory.class)
+    @ConditionalOnClass(name = "org.springframework.data.redis.connection.RedisConnectionFactory")
     @ConditionalOnProperty(name = "wings.slardar.actoken.redis-store", havingValue = "true")
     @Order(Ordered.LOWEST_PRECEDENCE - 100)
-    public class Redis {
+    public class RedisTokenStoreAutowire {
         @Autowired
         public void tokenStore(TokenStore tokenStore, RedisConnectionFactory factory) {
             if (tokenStore instanceof WingsTokenStore) {
