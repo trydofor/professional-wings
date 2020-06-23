@@ -268,6 +268,7 @@ public class ConstantEnumUtil {
         return result;
     }
 
+    @SafeVarargs
     @NotNull
     public static <T extends ConstantEnum> String joinIds(String delimiter, T... es) {
         if (es == null || es.length == 0) return Nulls.Str;
@@ -279,6 +280,7 @@ public class ConstantEnumUtil {
         return sb.substring(delimiter.length());
     }
 
+    @SafeVarargs
     @NotNull
     public static <T extends Enum<?>> String joinNames(String delimiter, T... es) {
         if (es == null || es.length == 0) return Nulls.Str;
@@ -290,6 +292,7 @@ public class ConstantEnumUtil {
         return sb.substring(delimiter.length());
     }
 
+    @SafeVarargs
     @NotNull
     public static <T extends CodeEnum> String joinCodes(String delimiter, T... es) {
         if (es == null || es.length == 0) return Nulls.Str;

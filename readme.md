@@ -152,6 +152,11 @@ public interface TradeService {
 
 在用户层，以多国语形式显示枚举内容
 
+### 0.2.9.maven管理的约定
+
+ * 多模块有主工程（parent|packaging=pom）和子工程（module|packaging=jar）
+ * 主工程在dependencyManagement定义lib，不管理具体dependency
+ * 子工程自己管理dependency，不可以重新定义版本号
 
 ## 0.3.技术选型
 
@@ -255,5 +260,48 @@ find . -name 'wings-conditional-manager.properties' \
 # 以下2个需要在flywave和enum时开启
 spring.wings.flywave.enabled=false
 spring.wings.enumi18n.enabled=false
+``` 
 
+### 003.如何创建一个工程
+
+``` bash
+git clone https://gitee.com/trydofor/pro.fessional.wings.git
+cd pro.fessional.wings
+wings-example/wings-init-project.sh
+
+# 如果不能执行bash，那么自行编译和执行
+cd wings-example/src/test/java/
+pro/fessional/wings/example/exec/Wings0InitProject.java
+```
+
+### 004.lib工程和boot工程的区别
+
+Springboot的打包机制使boot.jar 不是普通的lib.jar
+``` xml
+<plugin>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-maven-plugin</artifactId>
+    <configuration>
+        <executable>true</executable>
+    </configuration>
+</plugin>
+```
+
+lib工程的配置，跳过repackage，参考example之外的工程
+``` xml
+<plugin>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-maven-plugin</artifactId>
+    <executions>
+        <execution>
+            <id>repackage</id>
+            <goals>
+                <goal>repackage</goal>
+            </goals>
+            <configuration>
+                <skip>true</skip>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
 ```
