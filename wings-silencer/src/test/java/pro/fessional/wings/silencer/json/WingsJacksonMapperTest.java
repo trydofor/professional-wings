@@ -2,6 +2,8 @@ package pro.fessional.wings.silencer.json;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -54,7 +56,7 @@ public class WingsJacksonMapperTest {
     private XmlMapper xmlMapper;
 
     @Autowired
-    private void init(){
+    private void init() {
         System.out.println("=== set locale to us ===");
         Locale.setDefault(Locale.US);
     }
@@ -312,5 +314,36 @@ public class WingsJacksonMapperTest {
         Assert.assertEquals("{Map=1, bool-val=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, instantVal=2020-06-01T12:34:46Z, intVal=2147483646, listVal=列表, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, longVal=9223372036854775806, utilDateVal=2020-06-01 12:34:46, zonedDateTimeVal=2020-06-01 12:34:46, zonedDateTimeValV=2020-06-01 00:34:46.000 America/New_York, zonedDateTimeValZ=2020-06-01 00:34:46.000 -0400}", j2.toString());
         Assert.assertEquals("{args=textDisabled, codeIgnore=base.not-empty, codeManual=base.not-empty, hint=, key=ikey, longIgnore=0, value=ival}", x1.toString());
         Assert.assertEquals("{boolVal=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, intVal=2147483646, key=Map, listVal=列表, longVal=9223372036854775806, utilDateVal=2020-06-01T12:34:46+08:00, value=1}", x2.toString());
+    }
+
+    @Data
+    public static class NumberAsString {
+        private long numLong = 10L;
+        private int numInt = 10;
+        private double numDouble = 3.14159;
+        private BigDecimal numDecimal = new BigDecimal("2.71828");
+    }
+
+    @Data
+    public static class NumberAsNumber {
+        @JsonRawValue()
+        private long numLong = 10L;
+        @JsonRawValue()
+        private int numInt = 10;
+        @JsonRawValue()
+        private double numDouble = 3.14159;
+        @JsonRawValue()
+        private BigDecimal numDecimal = new BigDecimal("2.71828");
+    }
+
+    @Test
+    public void testNumber() throws JsonProcessingException {
+        NumberAsString nas = new NumberAsString();
+        NumberAsNumber nan = new NumberAsNumber();
+        String s1 = objectMapper.writeValueAsString(nas);
+        String s2 = objectMapper.writeValueAsString(nan);
+        //
+        Assert.assertEquals("{\"numLong\":\"10\",\"numInt\":\"10\",\"numDouble\":\"3.14159\",\"numDecimal\":\"2.71828\"}",s1);
+        Assert.assertEquals("{\"numLong\":10,\"numInt\":10,\"numDouble\":3.14159,\"numDecimal\":2.71828}",s2);
     }
 }

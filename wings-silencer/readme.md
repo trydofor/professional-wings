@@ -160,7 +160,7 @@ spring默认以如下配置为入口，逗号分隔，保留不带国家地区�
 `R.I<T>`为常用返回值类型，当存在`i18nCode`时，会用i18n信息自动替换`message`。
 
 常用的Jackson注解
- * @JsonRawValue - 以字符串（已是json格式）本来的形式展现
+ * @JsonRawValue - number不变字符串，字符串不转义。
  * @JsonFormat - 指定格式
  * @JsonIgnore/JsonProperty - 忽略该字段
  * @JsonProperty - 重命名

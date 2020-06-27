@@ -357,7 +357,7 @@ class DefaultRevisionManager(
                 }
 
                 // check comments
-                if(comments != dbVal["comments"]){
+                if (comments != dbVal["comments"]) {
                     if (updateDiff) {
                         updSql.append("comments = ?, ")
                         updVal.add(comments)
@@ -468,10 +468,10 @@ class DefaultRevisionManager(
             }
             // 不使用事务，出错时，根据日志进行回滚或数据清理
             if (seg.isPlain() || shardTmpl == null) {
-                logger.info("[applyRevisionSql]🐝 use plain to run sql-line from {} to {}, db={}", seg.lineBgn, seg.lineEnd, plainName)
+                logger.info("[applyRevisionSql]🐝 use plain to run revi={}, sql-line from {} to {}, db={}", revi, seg.lineBgn, seg.lineEnd, plainName)
                 runSegment(plainTmpl, plainTbls, seg)
             } else {
-                logger.info("[applyRevisionSql]🐝 use shard to run sql-line from {} to {}", seg.lineBgn, seg.lineEnd)
+                logger.info("[applyRevisionSql]🐝 use shard to run revi={}, sql-line from {} to {}", revi, seg.lineBgn, seg.lineEnd)
                 runSegment(shardTmpl, emptyList(), seg)
             }
         }

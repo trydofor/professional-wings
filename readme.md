@@ -305,3 +305,13 @@ lib工程的配置，跳过repackage，参考example之外的工程
     </executions>
 </plugin>
 ```
+
+### 005.jackson和fastjson
+
+wings中和springboot一样，默认采用了jackson进行json和xml绑定。
+不过wings的中对json的格式有特殊约定，比如日期格式，数字以字符串传递。
+再与外部api交换数据时可能格式不匹配，这时需要用有background
+
+ * 使用2套jackson配置
+ * 使用jackson注解 @JsonRawValue
+ * 使用fastjson(不推荐，需1.2.69+，SafeMode, 安全漏洞)
