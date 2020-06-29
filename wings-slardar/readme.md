@@ -115,21 +115,26 @@ public ResponseEntity<OAuth2Exception> handleException(Exception e)
 * StringRedisTemplate stringRedisTemplate
 * RedissonSpringCacheManager redissonCacheManager
 
-其中，caffeine默认开启，redis和redission需要引入依赖。
+其中，caffeine默认开启，且 `spring.cache.type=caffeine`，
+而redis和redission需要引入依赖才会开启。
 
 三种不同缓存级别前缀，分别定义不同的ttl,idle,size
 
+* `program.` - 程序配置，永存
 * `general.` - 标准配置，1天
 * `service.` - 服务级的，1小时
 * `session.` - 会话级的，10分钟
 
 ``` java
+@CacheConfig(cacheManager = MANAGER_CAFFEINE, 
+cacheNames = LEVEL_GENERAL + "OperatorService")
+
 @Cacheable(key = "'all'", 
-value = LEVEL_GENERAL + "StandardRegion", 
+cacheNames = LEVEL_GENERAL + "StandardRegion", 
 cacheManager = MANAGER_CAFFEINE)
 
 @CacheEvict(key = "'all'", 
-value = LEVEL_SERVICE + "StandardRegion", 
+cacheNames = LEVEL_SERVICE + "StandardRegion", 
 cacheManager = MANAGER_REDISSON)
 ```
 

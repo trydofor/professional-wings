@@ -19,7 +19,7 @@ public class ConstantEnumUtil {
 
     @SafeVarargs
     @Nullable
-    public static <T extends ConstantEnum> T idOrNull(int id, T... es) {
+    public static <T extends ConstantEnum> T intOrNull(int id, T... es) {
         for (T e : es) {
             if (id == e.getId()) return e;
         }
@@ -30,13 +30,13 @@ public class ConstantEnumUtil {
     @Nullable
     public static <T extends ConstantEnum> T idOrNull(Integer id, T... es) {
         if (es == null || id == null) return null;
-        return idOrNull(id.intValue(), es);
+        return intOrNull(id, es);
     }
 
     @SafeVarargs
     @NotNull
-    public static <T extends ConstantEnum> T idOrThrow(int id, T... es) {
-        T t = idOrNull(id, es);
+    public static <T extends ConstantEnum> T intOrThrow(int id, T... es) {
+        T t = intOrNull(id, es);
         if (t == null) {
             throw new IllegalArgumentException("can not found ConstantEnum by id=" + id);
         } else {
@@ -57,8 +57,8 @@ public class ConstantEnumUtil {
 
     @SafeVarargs
     @NotNull
-    public static <T extends ConstantEnum> T idOrHint(int id, String hint, T... es) {
-        T t = idOrNull(id, es);
+    public static <T extends ConstantEnum> T intOrHint(int id, String hint, T... es) {
+        T t = intOrNull(id, es);
         if (t == null) {
             throw new IllegalArgumentException(hint);
         } else {
@@ -79,8 +79,8 @@ public class ConstantEnumUtil {
 
     @SafeVarargs
     @NotNull
-    public static <T extends ConstantEnum> T idOrElse(int id, T el, T... es) {
-        T t = idOrNull(id, es);
+    public static <T extends ConstantEnum> T intOrElse(int id, T el, T... es) {
+        T t = intOrNull(id, es);
         return t == null ? el : t;
     }
 
@@ -183,7 +183,7 @@ public class ConstantEnumUtil {
     }
 
     @SafeVarargs
-    public static <T extends ConstantEnum> boolean idIn(int id, T... es) {
+    public static <T extends ConstantEnum> boolean intIn(int id, T... es) {
         if (es == null) return false;
         for (T e : es) {
             if (id == e.getId()) return true;

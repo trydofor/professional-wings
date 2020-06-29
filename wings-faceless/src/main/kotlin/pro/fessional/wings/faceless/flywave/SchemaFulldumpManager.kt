@@ -135,35 +135,40 @@ class SchemaFulldumpManager(
             val sqlText: String
     )
 
-    fun saveFile(path: String, sqls: List<SqlString>) = File(path).bufferedWriter().use { buf ->
-        val trgs = ArrayList<SqlString>()
-        for (sql in sqls) {
-            when (sql.sqlType) {
-                SqlType.StrComment -> {
-                    buf.write(sql.sqlText)
-                    buf.write("\n\n")
-                }
-                SqlType.DdlTrigger -> {
-                    trgs.add(sql)
-                }
-                else -> {
-                    buf.write("$prefix ${sql.table} ${sql.sqlType}")
-                    buf.write("\n")
-                    buf.write("${sql.sqlText};")
-                    buf.write("\n\n")
-                }
-            }
-        }
+    fun saveFile(path: String, sqls: List<SqlString>) = saveFile(File(path), sqls)
 
-        if (trgs.isNotEmpty()) {
-            buf.write("$prefix TRIGGER")
-            buf.write("\n\n")
-            buf.write("DELIMITER \$\$")
-            buf.write("\n\n")
-            for (sql in trgs) {
-                buf.write("$prefix ${sql.table} ${sql.sqlType}\n${sql.sqlText} \$\$\n\n")
+    fun saveFile(file: File, sqls: List<SqlString>) {
+        file.parentFile.mkdirs()
+        file.bufferedWriter().use { buf ->
+            val trgs = ArrayList<SqlString>()
+            for (sql in sqls) {
+                when (sql.sqlType) {
+                    SqlType.StrComment -> {
+                        buf.write(sql.sqlText)
+                        buf.write("\n\n")
+                    }
+                    SqlType.DdlTrigger -> {
+                        trgs.add(sql)
+                    }
+                    else -> {
+                        buf.write("$prefix ${sql.table} ${sql.sqlType}")
+                        buf.write("\n")
+                        buf.write("${sql.sqlText};")
+                        buf.write("\n\n")
+                    }
+                }
             }
-            buf.write("DELIMITER ;\n")
+
+            if (trgs.isNotEmpty()) {
+                buf.write("$prefix TRIGGER")
+                buf.write("\n\n")
+                buf.write("DELIMITER \$\$")
+                buf.write("\n\n")
+                for (sql in trgs) {
+                    buf.write("$prefix ${sql.table} ${sql.sqlType}\n${sql.sqlText} \$\$\n\n")
+                }
+                buf.write("DELIMITER ;\n")
+            }
         }
     }
 

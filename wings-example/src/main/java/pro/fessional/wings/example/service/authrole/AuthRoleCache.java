@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Record1;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -23,14 +24,13 @@ import static pro.fessional.wings.slardar.spring.bean.WingsCacheConfiguration.MA
 
 @Service
 @Setter(onMethod = @__({@Autowired}))
+@CacheConfig(cacheNames = LEVEL_GENERAL + "AuthorityName", cacheManager = MANAGER_CAFFEINE)
 public class AuthRoleCache {
 
     private LightIdService lightIdService;
     private WinAuthRoleDao winAuthRoleDao;
 
-    @Cacheable(key = "#roleId",
-            value = LEVEL_GENERAL + "AuthorityName",
-            cacheManager = MANAGER_CAFFEINE)
+    @Cacheable(key = "#roleId")
     @NotNull
     public Map<Integer, String> loadAuth(long roleId) {
         WinAuthRoleTable t = winAuthRoleDao.getAliasForReader();
@@ -51,9 +51,7 @@ public class AuthRoleCache {
         }
     }
 
-    @CacheEvict(key = "#result",
-            value = LEVEL_GENERAL + "AuthorityName",
-            cacheManager = MANAGER_CAFFEINE)
+    @CacheEvict(key = "#result")
     public long save(WinAuthRole authRole, JournalService.Journal journal) {
         long id;
         if (authRole.getId() == null) {

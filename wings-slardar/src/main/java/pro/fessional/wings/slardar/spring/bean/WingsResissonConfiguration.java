@@ -5,8 +5,6 @@ import lombok.val;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
-import org.redisson.spring.cache.CacheConfig;
-import org.redisson.spring.cache.RedissonSpringCacheManager;
 import org.redisson.spring.data.connection.RedissonConnectionFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -16,14 +14,9 @@ import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-
-import java.util.Map;
-
-import static pro.fessional.wings.slardar.spring.bean.WingsCacheConfiguration.MANAGER_REDISSON;
 
 /**
  * @author trydofor
@@ -55,45 +48,6 @@ public class WingsResissonConfiguration {
     }
 
     // //////////////////// redisson ////////////////////
-
-    @Primary
-    @Bean(MANAGER_REDISSON)
-    @ConditionalOnBean(RedissonClient.class)
-    @ConditionalOnClass(name = "org.redisson.spring.cache.RedissonSpringCacheManager")
-    public RedissonSpringCacheManager redissonCacheManager(RedissonClient redissonClient, WingsCacheConfiguration.CacheLevel conf) {
-
-        return new RedissonSpringCacheManager(redissonClient) {
-            private final ThreadLocal<String> cacheName = new ThreadLocal<>();
-
-            @Override
-            public org.springframework.cache.Cache getCache(String name) {
-                cacheName.set(name);
-                return super.getCache(name);
-            }
-
-            @Override
-            protected CacheConfig createDefaultConfig() {
-                String name = cacheName.get();
-                cacheName.remove();
-                if (name != null) {
-                    for (Map.Entry<String, WingsCacheConfiguration.Conf> entry : conf.getLevel().entrySet()) {
-                        if (name.startsWith(entry.getKey())) {
-                            WingsCacheConfiguration.Conf v = entry.getValue();
-                            return newRedisson(v.getMaxSize(), v.getTtl(), v.getMaxIdleTime());
-                        }
-                    }
-                }
-
-                return newRedisson(conf.getMaxSize(), conf.getTtl(), conf.getMaxIdleTime());
-            }
-        };
-    }
-
-    private CacheConfig newRedisson(int max, long ttl, long idle) {
-        CacheConfig c = new CacheConfig(ttl * 1000, idle * 1000);
-        c.setMaxSize(max);
-        return c;
-    }
 
     @Bean
     @ConditionalOnBean(RedissonClient.class)
