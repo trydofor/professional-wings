@@ -22,13 +22,14 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     private WingsOAuth2xConfiguration.Helper helper;
 
     @Override
-    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+    public void configure(ResourceServerSecurityConfigurer resources) {
         helper.configure(resources);
     }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
         helper.permitAll(http)
+              .antMatchers("/favicon.ico").permitAll()
               .antMatchers("/login.json", "/logout.json").permitAll()
               .antMatchers("/index.html", "/").permitAll()
               .antMatchers("/test/**/*").permitAll()

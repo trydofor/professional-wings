@@ -3,10 +3,10 @@
 
 CREATE TABLE `sys_schema_version` (
     `revision`  BIGINT(20)   NOT NULL COMMENT '版本号+修订号',
-    `create_dt` DATETIME(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建日时',
-    `modify_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01 00:00:00' ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '修改日时',
+    `create_dt` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日时',
+    `modify_dt` DATETIME     NOT NULL DEFAULT '1000-01-01' ON UPDATE CURRENT_TIMESTAMP COMMENT '修改日时',
     `commit_id` BIGINT(20)   NOT NULL COMMENT '提交ID',
-    `apply_dt`  DATETIME(3)  NOT NULL DEFAULT '1000-01-01 00:00:00' COMMENT '执行日时',
+    `apply_dt`  DATETIME     NOT NULL DEFAULT '1000-01-01' COMMENT '执行日时',
     `comments`  VARCHAR(500) NOT NULL DEFAULT '' COMMENT 'sql路径信息',
     `upto_sql`  TEXT         NOT NULL COMMENT '升级脚本',
     `undo_sql`  TEXT         NOT NULL COMMENT '降级脚本',

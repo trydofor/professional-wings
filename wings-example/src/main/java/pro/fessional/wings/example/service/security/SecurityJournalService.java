@@ -9,12 +9,13 @@ import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.
 import pro.fessional.wings.faceless.service.journal.impl.DefaultJournalService;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
+import pro.fessional.wings.slardar.security.SecurityContextUtil;
 
 /**
  * @author trydofor
  * @since 2019-08-15
  */
-@Service
+@Service("journalService")
 public class SecurityJournalService extends DefaultJournalService {
 
     public SecurityJournalService(LightIdService lightIdService,
@@ -23,16 +24,13 @@ public class SecurityJournalService extends DefaultJournalService {
         super(lightIdService, blockIdProvider, journalModify);
     }
 
-    @NotNull
+    @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Journal commit(@NotNull String eventName,
-                          @Nullable String targetKey,
-                          @Nullable String otherInfo) {
-
-//        SecurityContextUtil.getDetails()
-
-        String loginInfo = "";
+    public @NotNull Journal commit(@NotNull String eventName, @Nullable String loginInfo, @Nullable String targetKey, @Nullable String otherInfo) {
+        if (loginInfo == null || loginInfo.isEmpty()) {
+            WingsUserDetail principal = SecurityContextUtil.getPrincipal();
+            loginInfo = principal == null ? "" : principal.toLoginInfo();
+        }
         return super.commit(eventName, loginInfo, targetKey, otherInfo);
     }
-
 }

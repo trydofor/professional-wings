@@ -13,6 +13,7 @@ import pro.fessional.wings.faceless.flywave.FlywaveDataSources;
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader;
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager;
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager;
+import pro.fessional.wings.faceless.flywave.SchemaRevisionManager.AskType;
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor;
 import pro.fessional.wings.faceless.flywave.SqlStatementParser;
@@ -65,8 +66,16 @@ public class WingsFlywaveConfiguration {
             FlywaveDataSources sources,
             SqlStatementParser statementParser,
             SqlSegmentProcessor segmentProcessor,
-            SchemaDefinitionLoader schemaDefinitionLoader) {
-        return new DefaultRevisionManager(sources, statementParser, segmentProcessor, schemaDefinitionLoader);
+            SchemaDefinitionLoader schemaDefinitionLoader,
+            WingsFlywaveVerProperties properties) {
+        DefaultRevisionManager revisionManager = new DefaultRevisionManager(sources, statementParser, segmentProcessor, schemaDefinitionLoader);
+        revisionManager.confirmAsk(AskType.Mark, properties.isAskMark());
+        revisionManager.confirmAsk(AskType.Undo, properties.isAskUndo());
+        revisionManager.confirmAsk(AskType.Drop, properties.isAskDrop());
+        for (String s : properties.getDropReg()) {
+            revisionManager.addDropRegexp(s);
+        }
+        return revisionManager;
     }
 
     @Bean

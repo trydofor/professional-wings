@@ -1,6 +1,8 @@
 package pro.fessional.wings.faceless.flywave
 
+import pro.fessional.mirana.data.Nulls
 import java.util.SortedMap
+import java.util.function.Function
 
 
 /**
@@ -11,11 +13,15 @@ interface SchemaRevisionManager {
 
     data class RevisionSql(
             var revision: Long = 0,
-            var undoPath: String = "",
-            var undoText: String = "",
-            var uptoPath: String = "",
-            var uptoText: String = ""
+            var undoPath: String = Nulls.Str,
+            var undoText: String = Nulls.Str,
+            var uptoPath: String = Nulls.Str,
+            var uptoText: String = Nulls.Str
     )
+
+    enum class AskType {
+        Drop, Undo, Mark
+    }
 
     /**
      * 获得所有真实数据源的版本
@@ -38,7 +44,7 @@ interface SchemaRevisionManager {
      * 强制执行一个断点脚本，通常为不正常操作。
      * @param revision 到此版本，即数据库是此版本
      * @param commitId 提交ID，参见Journal
-     * @param isUpto 执行upto，还是undo
+     * @param isUpto 执行upto，还是undo，默认true
      * @param dataSource 要执行的datasource名字，null时为全部执行
      */
     fun forceApplyBreak(revision: Long, commitId: Long, isUpto: Boolean = true, dataSource: String? = null)
@@ -50,7 +56,7 @@ interface SchemaRevisionManager {
      * 当存在但内容不一致，已APPLY则log error，否则更新
      * @param sqls 本地脚本
      * @param commitId 提交ID，参见Journal
-     * @param updateDiff 是否自动更新不一致的 sql
+     * @param updateDiff 是否自动更新不一致的 sql，默认false
      */
     fun checkAndInitSql(sqls: SortedMap<Long, RevisionSql>, commitId: Long, updateDiff: Boolean = false)
 
@@ -75,4 +81,23 @@ interface SchemaRevisionManager {
      * @param text sql文本
      */
     fun forceExecuteSql(text: String)
+
+    /**
+     * 强制执行一个sql，不使用版本管理
+     * @param sqls 本地脚本
+     * @param isUpto 执行upto，还是undo，默认true
+     */
+    fun forceExecuteSql(sqls: SortedMap<Long, RevisionSql>, isUpto: Boolean = true)
+
+    /**
+     * 当执行undo的时候，是否控制台确认
+     * @param ask ask类型
+     * @param yes 是否确认，默认true
+     */
+    fun confirmAsk(ask: AskType, yes:Boolean)
+
+    /**
+     * 用什么方式确认，传递message，返回继续or停止
+     */
+    fun confirmWay(func: Function<String, Boolean>)
 }

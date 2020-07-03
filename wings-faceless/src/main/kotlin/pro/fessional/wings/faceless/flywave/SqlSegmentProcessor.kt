@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless.flywave
 
 import org.slf4j.LoggerFactory
+import pro.fessional.mirana.data.Nulls
 import pro.fessional.wings.faceless.flywave.util.TemplateUtil
 import java.util.LinkedList
 import java.util.SortedMap
@@ -10,10 +11,10 @@ import java.util.SortedMap
  * @since 2019-06-06
  */
 class SqlSegmentProcessor(
-        commentSingle: String = "",
-        commentMultiple: String = "",
-        delimiterDefault: String = "",
-        delimiterCommand: String = ""
+        commentSingle: String = Nulls.Str,
+        commentMultiple: String = Nulls.Str,
+        delimiterDefault: String = Nulls.Str,
+        delimiterCommand: String = Nulls.Str
 ) {
 
     enum class DbsType {
@@ -32,6 +33,7 @@ class SqlSegmentProcessor(
             val tblIdx2: SortedMap<Int, Int>, // 要替换的启止坐标位置
             val sqlText: String,  // SQL文本
             val errType: ErrType = ErrType.Stop, // 错误处理
+            val askText: String, // 确认语句
             val tblRegx: Regex? // 应用表正则
     ) {
         /**
@@ -114,9 +116,10 @@ class SqlSegmentProcessor(
         logger.debug("[parse] parse sql start")
         var lineBgn = -1
         var dbsAnot = 0
-        var tblName = ""
-        var tbApply = ""
+        var tblName = Nulls.Str
+        var tbApply = Nulls.Str
         var errType = ErrType.Stop
+        var askText = Nulls.Str
         var inComment = false
         var lineCur = 0
         var delimiter = delimiterDefault
@@ -136,7 +139,7 @@ class SqlSegmentProcessor(
             if (line.startsWith(singleComment)) {
                 val mt = parseCmd(line)
                 if (mt.isNotEmpty()) {
-                    val (tbl, pln, apl, ers) = mt
+                    val (tbl, pln, apl, ers, ask) = mt
                     logger.debug("[parse] got annotation, line={} , tblName={}, dbsType={}, apply={}, error={}", lineCur, tbl, pln, apl, ers)
 
                     if (tbl.isNotEmpty()) {
@@ -154,6 +157,9 @@ class SqlSegmentProcessor(
                         errType = ErrType.Skip
                     } else if (ers.contains("stop", true)) {
                         errType = ErrType.Stop
+                    }
+                    if (ask.isNotEmpty()) {
+                        askText = ask
                     }
                 }
                 continue
@@ -203,14 +209,15 @@ class SqlSegmentProcessor(
                     val dbsType = if (dbsAnot < 0) DbsType.Plain else DbsType.Shard
                     val tblRegx = if (tbApply.isEmpty()) null else tbApply.toRegex(RegexOption.IGNORE_CASE)
                     logger.debug("[parse] got a segment line from={}, to={}, tableName={}, dbsType={}, errType={}, tblRegx={}", lineBgn, lineCur, tblName, dbsType, errType, tbApply)
-                    result.add(Segment(dbsType, lineBgn, lineCur, tblName, tblIdx2, sql, errType, tblRegx))
+                    result.add(Segment(dbsType, lineBgn, lineCur, tblName, tblIdx2, sql, errType, askText, tblRegx))
                 }
                 // reset for next
                 lineBgn = -1
                 dbsAnot = 0
-                tblName = ""
-                tbApply = ""
+                tblName = Nulls.Str
+                tbApply = Nulls.Str
                 errType = ErrType.Stop
+                askText = Nulls.Str
                 builder.clear()
             } else {
                 builder.append(line).append("\n")
@@ -268,31 +275,35 @@ class SqlSegmentProcessor(
             return typ
         }
 
-        // -- wgs_order@plain apply@ctr_clerk[_0-0]* error@skip
+        // -- wgs_order@plain apply@ctr_clerk[_0-0]* error@skip ask@danger
         private val cmdReg = "([^@ \t]+)?@([^@ \t]+)".toRegex()
 
         fun parseCmd(line: String): Array<String> {
             var emt = true
-            var tbl = ""
-            var dbs = ""
-            var apl = ""
-            var ers = ""
+            var tbl = Nulls.Str
+            var dbs = Nulls.Str
+            var apl = Nulls.Str
+            var ers = Nulls.Str
+            var ask = Nulls.Str
             for (mr in cmdReg.findAll(line)) {
                 val (k, v) = mr.destructured
-                if(v.equals("plain", true) || v.equals("shard", true)){
+                if (v.equals("plain", true) || v.equals("shard", true)) {
                     tbl = k
                     dbs = v
                     emt = false
-                } else if (k.equals("apply", true)){
+                } else if (k.equals("apply", true)) {
                     apl = v
                     emt = false
-                } else if (k.equals("error", true)){
+                } else if (k.equals("error", true)) {
                     ers = v
+                    emt = false
+                } else if (k.equals("ask", true)) {
+                    ask = v
                     emt = false
                 }
             }
 
-            return if (emt) emptyArray() else arrayOf(tbl, dbs, apl, ers)
+            return if (emt) emptyArray() else arrayOf(tbl, dbs, apl, ers, ask)
         }
     }
 }

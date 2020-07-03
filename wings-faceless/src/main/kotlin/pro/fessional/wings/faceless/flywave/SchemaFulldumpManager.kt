@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless.flywave
 
 import org.slf4j.LoggerFactory
+import pro.fessional.mirana.data.Nulls
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
 import java.io.File
 import java.util.LinkedList
@@ -280,7 +281,7 @@ class SchemaFulldumpManager(
             sb.append(it.getString("revision"))
             sb.append(", apply_dt=")
             sb.append(it.getString("apply_dt"))
-            result.add(SqlString("", SqlType.StrComment, sb.toString()))
+            result.add(SqlString(Nulls.Str, SqlType.StrComment, sb.toString()))
         }
     } catch (e: Exception) {
         logger.warn("[getRevision] failed to revision", e)

@@ -12,6 +12,7 @@ import org.jooq.meta.TableDefinition
 import org.jooq.meta.TypedElementDefinition
 import org.jooq.meta.UDTDefinition
 import org.jooq.tools.JooqLogger
+import pro.fessional.mirana.data.Nulls
 import pro.fessional.wings.faceless.convention.EmptyValue
 import pro.fessional.wings.faceless.database.common.WingsJooqDaoImpl
 import pro.fessional.wings.faceless.database.helper.JournalHelp
@@ -91,8 +92,8 @@ class WingsJavaGenerator : JavaGenerator() {
         if (keyColumns.size == 1) {
             tType = getJavaType(keyColumns[0].getType(resolver()), GeneratorStrategy.Mode.POJO)
         } else if (keyColumns.size <= Constants.MAX_ROW_DEGREE) {
-            var generics = ""
-            var separator = ""
+            var generics = Nulls.Str
+            var separator = Nulls.Str
 
             for (column in keyColumns) {
                 generics += separator + out.ref(getJavaType(column.getType(resolver())))
@@ -145,8 +146,8 @@ class WingsJavaGenerator : JavaGenerator() {
         }
         // [#2574] This should be replaced by a call to a method on the target table's Key type
         else {
-            var params = ""
-            var separator = ""
+            var params = Nulls.Str
+            var separator = Nulls.Str
 
             for (column in keyColumns) {
                 params += separator + "object." + getStrategy().getJavaGetterName(column, GeneratorStrategy.Mode.POJO) + "()"

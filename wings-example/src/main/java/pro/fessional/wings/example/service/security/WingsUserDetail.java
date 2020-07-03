@@ -5,6 +5,9 @@ import lombok.Setter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.security.core.GrantedAuthority;
+import pro.fessional.wings.example.enums.auto.LoginType;
+import pro.fessional.wings.example.enums.auto.UserType;
+import pro.fessional.wings.faceless.enums.ConstantEnumUtil;
 import pro.fessional.wings.slardar.security.TypeIdI18nUserDetail;
 
 import java.time.LocalDate;
@@ -118,5 +121,15 @@ public class WingsUserDetail implements TypeIdI18nUserDetail {
                 .append(userId)
                 .append(userType)
                 .toHashCode();
+    }
+
+    public String toLoginInfo() {
+        // 手动拼接，高于自动化json
+        return "{\"id\":" + userId
+                + ",\"name\":\"" + name +
+                "\",\"type\":\"" + ConstantEnumUtil.intOrNull(userType, UserType.values()) +
+                "\",\"loginName\":\"" + username +
+                "\",\"loginType\":\"" + ConstantEnumUtil.intOrNull(loginType, LoginType.values()) +
+                "\"}";
     }
 }

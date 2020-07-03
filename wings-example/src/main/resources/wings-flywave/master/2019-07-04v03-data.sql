@@ -1,8 +1,8 @@
 INSERT IGNORE INTO `sys_light_sequence` (`seq_name`, `block_id`, `next_val`, `step_val`, `comments`)
 VALUES ('win_authority', 0, 100000000, 100, '系统插入9位起，手动8位'),
        ('win_auth_role', 0, 100000000, 100, '系统插入9位起，手动8位'),
-       ('win_user', 0, 1000, 100, '系统插入4位起，手动3位'),
-       ('win_user_login', 0, 1000, 100, '系统插入4位起，手动3位');
+       ('win_user', 0, 2000, 100, '系统插入4位起，手动3位'),
+       ('win_user_login', 0, 2000, 100, '系统插入4位起，手动3位');
 
 -- 从200#### 开始编号
 REPLACE INTO `sys_constant_enum` (`id`, `type`, `code`, `desc`, `info`)

@@ -1,17 +1,25 @@
 package pro.fessional.wings.faceless.flywave.impl
 
 import org.slf4j.LoggerFactory
+import pro.fessional.mirana.data.Nulls
 import pro.fessional.wings.faceless.flywave.FlywaveDataSources
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
+import pro.fessional.wings.faceless.flywave.SchemaRevisionManager.AskType
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor
+import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.ErrType
 import pro.fessional.wings.faceless.flywave.SqlStatementParser
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_1ST_SCHEMA
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.commentInfo
+import java.lang.RuntimeException
+import java.util.EnumMap
 import java.util.LinkedList
+import java.util.Scanner
 import java.util.SortedMap
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
+import java.util.function.Function
 import javax.sql.DataSource
 
 
@@ -32,12 +40,50 @@ class DefaultRevisionManager(
     private val runningFlag = "17"
     private val runningMark = "$unapplyMark 00:00:$runningFlag"
 
+    private val askType = EnumMap<AskType, Boolean>(AskType::class.java)
+    private val dropReg = HashMap<String, Regex>()
+
+    private var askFunc: Function<String, Boolean> = object : Function<String, Boolean> {
+        val scanner = Scanner(System.`in`)
+        override fun apply(msg: String): Boolean {
+            logger.warn("[askSegment]🐝🙀if no console, add '-Deditable.java.test.console=true' ('Help' > 'Edit Custom VM Options...')")
+            println("=== 😺😸😹😻😼😽🙀😿😾😺😸😹😻😼😽🙀😿😾 ===")
+            println(msg)
+            print("=== 😺😸😹😻😼😽🙀 continue or not ? [y|n]>")
+            while (scanner.hasNext()) {
+                val ans = scanner.next()
+                if (ans.equals("y", true)) {
+                    return true
+                } else if (ans.equals("n", true)) {
+                    return false
+                }
+            }
+
+            return false
+        }
+    }
+
+    override fun confirmWay(func: Function<String, Boolean>) {
+        askFunc = func
+    }
+
+    override fun confirmAsk(ask: AskType, yes: Boolean) {
+        askType[ask] = yes
+    }
+
+    /**
+     * 增加一个识别drop语句的表达式
+     * @param regexp 正则表达式
+     */
+    fun addDropRegexp(regexp: String) {
+        dropReg[regexp] = regexp.toRegex(RegexOption.IGNORE_CASE)
+    }
+
     override fun currentRevision() = flywaveDataSources.plains().map {
         val tmpl = SimpleJdbcTemplate(it.value, it.key)
         val revi = getRevision(tmpl)
         it.key to revi
     }.toMap()
-
 
     override fun publishRevision(revision: Long, commitId: Long) {
         if (revision < REVISION_1ST_SCHEMA) {
@@ -292,10 +338,10 @@ class DefaultRevisionManager(
                         assertNot1st(plainDs, e)
                         logger.warn("[checkAndInitSql]🐝 try to init first version, revi={}, on db={}", revi, plainName)
                         applyRevisionSql(revi, uptoSql, true, commitId, plainTmpl, null, emptyList())
-                        dbVal["upto_sql"] = ""
-                        dbVal["undo_sql"] = ""
-                        dbVal["apply_dt"] = ""
-                        dbVal["comments"] = ""
+                        dbVal["upto_sql"] = Nulls.Str
+                        dbVal["undo_sql"] = Nulls.Str
+                        dbVal["apply_dt"] = Nulls.Str
+                        dbVal["comments"] = Nulls.Str
                     } else {
                         val regex = "sys_schema_version.*exist".toRegex(setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE))
                         if (e.message?.contains(regex) == true) {
@@ -427,6 +473,7 @@ class DefaultRevisionManager(
     }
 
     override fun forceExecuteSql(text: String) {
+        if (text.isEmpty()) return
         val shardTmpl = flywaveDataSources.shard?.let { SimpleJdbcTemplate(it, "sharding") }
         val sqlSegs = sqlSegmentProcessor.parse(sqlStatementParser, text)
 
@@ -451,11 +498,27 @@ class DefaultRevisionManager(
         }
     }
 
+    override fun forceExecuteSql(sqls: SortedMap<Long, SchemaRevisionManager.RevisionSql>, isUpto: Boolean) {
+        for (sql in sqls) {
+            val txt = if (isUpto) sql.value.uptoText else sql.value.undoText
+            if (txt.isEmpty()) {
+                logger.info("[forceExecuteSql]🐝 skip empty sql for revision={}", sql.key)
+            } else {
+                logger.info("[forceExecuteSql]🐝 ready sql for revision={}", sql.key)
+                forceExecuteSql(txt)
+            }
+        }
+    }
+
     //
     private fun applyRevisionSql(revi: Long, text: String, isUpto: Boolean, commitId: Long, plainTmpl: SimpleJdbcTemplate, shardTmpl: SimpleJdbcTemplate?, plainTbls: List<String>) {
         logger.info("[applyRevisionSql]🐝 parse revi-sql, revi={}, isUpto={}, mark as '$runningMark'", revi, isUpto)
 
         val plainName = plainTmpl.name
+
+        if (!isUpto && askType[AskType.Undo] != false) {
+            askSegment("confirm undo revi = $revi")
+        }
 
         // 记录部分执行情况。
         if (revi > REVISION_1ST_SCHEMA) {
@@ -518,20 +581,58 @@ class DefaultRevisionManager(
         -1
     }
 
+    private fun askSegment(vararg txt: String) {
+        val ask = StringBuilder()
+        for (s in txt) {
+            if (s.isNotEmpty()) {
+                ask.append(s)
+                ask.append('\n')
+            }
+        }
+        if (ask.isEmpty()) return
+
+        val msg = ask.trim().toString()
+        logger.warn("[askSegment]🐝🙀confirm {}", msg)
+
+        if (!askFunc.apply(msg)) {
+            throw RuntimeException("stop for $msg")
+        }
+    }
+
+    private fun dangerous(sql: String): String {
+        if (askType[AskType.Drop] == false) return Nulls.Str
+
+        val txt = sql.trim()
+        for ((k, reg) in dropReg) {
+            if (reg.containsMatchIn(txt)) {
+                return "危险SQL，$k\n$txt"
+            }
+        }
+        return Nulls.Str
+    }
+
     private fun runSegment(tmpl: SimpleJdbcTemplate, tables: List<String>, seg: SqlSegmentProcessor.Segment) {
         val dbName = tmpl.name
         val tblApply = seg.applyTbl(tables)
-        val errh = seg.errType
+
+        val ask = if (seg.askText.isNotEmpty() && askType[AskType.Mark] != false) "强制确认：${seg.sqlText}" else Nulls.Str
+
+        askSegment(ask, dangerous(seg.sqlText))
+
+        val erh = seg.errType
         if (tblApply.isEmpty()) {
             logger.info("[runSegment]🐝 run sql on direct table, db={}", dbName)
             try {
                 tmpl.execute(seg.sqlText)
             } catch (e: Exception) {
-                if (errh == SqlSegmentProcessor.ErrType.Skip) {
-                    logger.warn("skip an error by $errh", e)
-                } else {
-                    logger.error("stop an error by $errh", e)
-                    throw e
+                logger.warn("$erh an error", e)
+                when (erh) {
+                    ErrType.Skip -> {
+                        // skip
+                    }
+                    else -> {
+                        throw e
+                    }
                 }
             }
         } else {
@@ -547,11 +648,14 @@ class DefaultRevisionManager(
                     val sql = sqlSegmentProcessor.merge(seg, tbl)
                     tmpl.execute(sql)
                 } catch (e: Exception) {
-                    if (errh == SqlSegmentProcessor.ErrType.Skip) {
-                        logger.warn("skip an error by $errh", e)
-                    } else {
-                        logger.error("stop an error by $errh", e)
-                        throw e
+                    logger.warn("$erh an error", e)
+                    when (erh) {
+                        ErrType.Skip -> {
+                            // skip
+                        }
+                        else -> {
+                            throw e
+                        }
                     }
                 }
             }

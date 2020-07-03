@@ -5,6 +5,7 @@ import org.jooq.codegen.GeneratorStrategy
 import org.jooq.meta.ColumnDefinition
 import org.jooq.meta.Definition
 import org.jooq.meta.TableDefinition
+import pro.fessional.mirana.data.Nulls
 
 /**
  * @author trydofor
@@ -12,7 +13,7 @@ import org.jooq.meta.TableDefinition
  */
 class WingsJavaStrategy : DefaultGeneratorStrategy() {
     override fun getJavaClassImplements(definition: Definition?, mode: GeneratorStrategy.Mode?): MutableList<String> {
-        var impls = super.getJavaClassImplements(definition, mode)
+        val impls = super.getJavaClassImplements(definition, mode)
 
         if (definition !is TableDefinition) return impls
 
@@ -47,7 +48,7 @@ class WingsJavaStrategy : DefaultGeneratorStrategy() {
 
 
     private fun pascalCase(str: String?): String {
-        if (str == null) return ""
+        if (str == null) return Nulls.Str
 
         val sb = StringBuilder(str.length)
         var up = false

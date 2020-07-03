@@ -42,52 +42,67 @@
     用户: <input type="text" name="username" value="trydofor"/><br/>
     密码: <input type="password" name="password" value="moilioncircle"/><br/>
 </form>
-<input type="button" value="Oauth登陆" onclick="onLogin()">
-<input type="button" value="Oauth权限1" onclick="onAdmin()">
-<input type="button" value="Oauth权限2" onclick="onSecure()">
-<input type="button" value="Oauth登出" onclick="onLogout()">
+<input type="button" value="登陆" onclick="onLogin()">
+<input type="button" value="antMatch配置" onclick="onAntMatch()">
+<input type="button" value="@Secured注解" onclick="onSecured()">
+<input type="button" value="登出" onclick="onLogout()">
 <br/>
-<textarea id="oauthOutput" cols="80" rows="5"></textarea>
+<textarea id="oauthOutput" cols="72" rows="20"></textarea>
 <script src="https://cdn.bootcdn.net/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 <script language="JavaScript">
+    // $(selector).post(URL,data,function(data,status,xhr),dataType)
     var accessToken = null;
     var count = 0;
 
     function onLogin() {
-        $.ajax({
-            type: "post",
-            url: "/login.json",
-            dataType: "json",
-            data: $("#user_pass").serialize(),
-            success: function (d) {
-                output("login", d);
-                accessToken = d.access_token;
-            }
-        });
+        let data = $("#user_pass").serialize();
+        $.post("/login.json", data, function (d) {
+            output("onLogin", d);
+            accessToken = d.access_token;
+        }, "json");
     }
 
-    function onAdmin() {
-        $.get("/user/create.json?access_token=" + accessToken, function (d) {
-            output("admin", d);
-        });
+    function onAntMatch() {
+        let data = {
+            "name": "a9",
+            "gender": 0,
+            "birth": "2015-07-02",
+            "avatar": "",
+            "country": "CN",
+            "language": "zh_CN",
+            "timezone": 1010201
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/user/create.json?access_token=" + accessToken,
+            contentType : 'application/json',
+            dataType: 'json',
+            async: false,
+            data: JSON.stringify(data),
+            success: function (d) {
+                output("onAntMatch", d);
+            }
+        })
     }
 
     function onLogout() {
         $.get("/logout.json?access_token=" + accessToken, function (d) {
-            output("logout", d);
+            output("onLogout", d);
         });
     }
-    function onSecure() {
+
+    function onSecured() {
         $.get("/test/secured-test.json?access_token=" + accessToken, function (d) {
-            output("secure", d);
+            output("onSecured", d);
         });
     }
 
     function output(s, d) {
         console.log(d);
-        var obj = $("#oauthOutput");
-        var txt = "[" + (count++) + " " + s + " ]" + JSON.stringify(d) + "\n"
+        let obj = $("#oauthOutput");
+        let txt = "[" + (count++) + " " + s + " ]" + JSON.stringify(d) + "\n"
         obj.val(obj.val() + txt);
     }
 </script>

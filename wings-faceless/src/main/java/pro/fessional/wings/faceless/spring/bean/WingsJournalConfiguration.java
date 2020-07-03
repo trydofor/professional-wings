@@ -33,7 +33,7 @@ public class WingsJournalConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(JournalService.class)
-    public JournalService journalServiceJ(
+    public JournalService journalService(
             LightIdService lightIdService,
             BlockIdProvider blockIdProvider,
             CommitJournalModify journalModify

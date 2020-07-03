@@ -3,6 +3,7 @@ package pro.fessional.wings.faceless.jooqgen
 import org.jooq.codegen.GenerationTool
 import org.jooq.meta.jaxb.Configuration
 import org.slf4j.LoggerFactory
+import pro.fessional.mirana.data.Nulls
 import java.io.File
 import java.nio.file.Files
 import kotlin.text.Charsets.UTF_8
@@ -87,8 +88,8 @@ object WingsCodeGenerator {
                 f.copyTo(t, true)
                 logger.info("create new file=$k")
             } else {
-                val ft = f.readText(UTF_8).replace(ignoreRegex, "")
-                val dt = d.readText(UTF_8).replace(ignoreRegex, "")
+                val ft = f.readText(UTF_8).replace(ignoreRegex, Nulls.Str)
+                val dt = d.readText(UTF_8).replace(ignoreRegex, Nulls.Str)
                 if (ft == dt) {
                     logger.info("skip main same file=$k")
                 } else {
@@ -126,6 +127,6 @@ object WingsCodeGenerator {
         fun databaseIncludes(reg: String) = apply { this.conf.generator.database.includes = reg }
         fun databaseExcludes(reg: String) = apply { this.conf.generator.database.excludes = reg }
         fun databaseVersionProvider(str: String) = apply { this.conf.generator.database.schemaVersionProvider = str }
-        fun forceRegenerate() = apply { this.conf.generator.database.schemaVersionProvider = "" }
+        fun forceRegenerate() = apply { this.conf.generator.database.schemaVersionProvider = Nulls.Str }
     }
 }

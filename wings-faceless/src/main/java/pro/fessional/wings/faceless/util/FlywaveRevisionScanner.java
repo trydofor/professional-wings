@@ -36,6 +36,7 @@ public class FlywaveRevisionScanner {
     public static final long REVISION_2ND_IDLOGS = 2019_0520_01L;
     public static final long REVISION_3RD_ENU18N = 2019_0521_01L;
 
+    @NotNull
     public static String branchPath(String name) {
         if (name == null || name.isEmpty()) return REVISION_PATH_BRANCH_FULL;
         int p1 = 0;
@@ -62,6 +63,7 @@ public class FlywaveRevisionScanner {
         return sb.toString();
     }
 
+    @NotNull
     public static String commentInfo(String... path) {
         Pattern tknRegex = Pattern.compile("[/\\\\]wings-flywave[/\\\\]([^:]*[/\\\\])[-_0-9]{8,}[uv][0-9]{2,}([^/]*\\.sql)$", Pattern.CASE_INSENSITIVE);
 
@@ -69,10 +71,10 @@ public class FlywaveRevisionScanner {
         for (String s : path) {
             Matcher m = tknRegex.matcher(s);
             if (m.find()) {
-                StringBuilder sb = new StringBuilder();
-                BuilderHelper.appendNotNull(sb, m.group(1));
+                BuilderHelper.W sb = BuilderHelper.w();
+                sb.append(m.group(1));
                 sb.append("*");
-                BuilderHelper.appendNotNull(sb, m.group(2));
+                sb.append(m.group(2));
                 info.add(sb.toString());
             } else {
                 info.add(s);
@@ -82,10 +84,12 @@ public class FlywaveRevisionScanner {
         return String.join(", ", info);
     }
 
+    @NotNull
     public static SortedMap<Long, SchemaRevisionManager.RevisionSql> scanMaster() {
         return scan(REVISION_PATH_MASTER);
     }
 
+    @NotNull
     public static SortedMap<Long, SchemaRevisionManager.RevisionSql> scanBranch(String... name) {
         TreeMap<Long, SchemaRevisionManager.RevisionSql> result = new TreeMap<>();
         for (String n : name) {
@@ -104,6 +108,7 @@ public class FlywaveRevisionScanner {
      * @return 按版本号升序排列的TreeMap
      * @see PathMatchingResourcePatternResolver
      */
+    @NotNull
     public static SortedMap<Long, SchemaRevisionManager.RevisionSql> scan(@NotNull String... path) {
         TreeMap<Long, SchemaRevisionManager.RevisionSql> result = new TreeMap<>();
         for (String p : path) {
@@ -164,5 +169,35 @@ public class FlywaveRevisionScanner {
         } catch (Exception e) {
             throw new IllegalStateException("failed to scan path = " + path + ", file=" + file, e);
         }
+    }
+
+    /**
+     * 读取所有降级脚本
+     *
+     * @param sqls sqls
+     * @return sql
+     */
+    @NotNull
+    public static String undo(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls) {
+        BuilderHelper.W sb = BuilderHelper.w();
+        if (sqls != null) {
+            sb.join(true, "\n", sqls.values(), SchemaRevisionManager.RevisionSql::getUndoText);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 读取所有升级脚本
+     *
+     * @param sqls sqls
+     * @return sql
+     */
+    @NotNull
+    public static String upto(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls) {
+        BuilderHelper.W sb = BuilderHelper.w();
+        if (sqls != null) {
+            sb.join(true, "\n", sqls.values(), SchemaRevisionManager.RevisionSql::getUptoText);
+        }
+        return sb.toString();
     }
 }

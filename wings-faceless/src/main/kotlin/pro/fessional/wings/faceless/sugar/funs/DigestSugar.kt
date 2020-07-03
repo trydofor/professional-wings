@@ -2,6 +2,7 @@
 
 package pro.fessional.wings.faceless.sugar.funs
 
+import pro.fessional.mirana.data.Nulls
 import java.security.MessageDigest
 
 /**
@@ -19,7 +20,7 @@ fun String?.sha512() = utf8Hash("SHA-512")
  * @see MessageDigest.getInstance
  */
 fun String?.utf8Hash(type: String): String {
-    if (this == null || this.isBlank()) return ""
+    if (this == null || this.isBlank()) return Nulls.Str
 
     val HEX_CHARS = "0123456789ABCDEF"
     val bytes = MessageDigest
