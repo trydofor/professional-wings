@@ -17,6 +17,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static org.springframework.core.io.support.ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX;
+import static org.springframework.util.ClassUtils.convertClassNameToResourcePath;
+
 /**
  * @author trydofor
  * @since 2020-07-04
@@ -31,9 +34,9 @@ public class SubclassSpringLoader {
         metadataReaderFactory = new CachingMetadataReaderFactory(resourceLoader);
     }
 
-    public Map<Class<?>,Enum<?>[]> loadSubEnums(String basePackage, Class<?>... superClass) {
+    public Map<Class<?>, Enum<?>[]> loadSubEnums(String basePackage, Class<?>... superClass) {
         Set<Class<?>> classes = loadSubClass(basePackage, superClass);
-        Map<Class<?>,Enum<?>[]> enums = new LinkedHashMap<>();
+        Map<Class<?>, Enum<?>[]> enums = new LinkedHashMap<>();
         try {
             for (Class<?> clz : classes) {
                 if (clz.isEnum()) {
@@ -58,8 +61,7 @@ public class SubclassSpringLoader {
         }
 
         try {
-            String path = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
-                    ClassUtils.convertClassNameToResourcePath("pro.fessional") + "/**/*.class";
+            String path = CLASSPATH_ALL_URL_PREFIX + convertClassNameToResourcePath(basePackage) + "/**/*.class";
             Resource[] resources = resourcePatternResolver.getResources(path);
             for (Resource res : resources) {
                 MetadataReader metadataReader = metadataReaderFactory.getMetadataReader(res);

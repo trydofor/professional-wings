@@ -28,10 +28,10 @@ import java.util.List;
         {"debug = true",
          "spring.wings.flywave.enabled=true",
 //         "spring.wings.enumi18n.enabled=true",
-//         "spring.shardingsphere.datasource.names=master",
-//         "spring.shardingsphere.datasource.master.jdbc-url=jdbc:mysql://127.0.0.1:3306/wings?autoReconnect=true&useSSL=false",
-//         "spring.shardingsphere.datasource.master.username=trydofor",
-//         "spring.shardingsphere.datasource.master.password=moilioncircle",
+//         "spring.shardingsphere.datasource.names=writer",
+//         "spring.shardingsphere.datasource.writer.jdbc-url=jdbc:mysql://127.0.0.1:3306/wings?autoReconnect=true&useSSL=false",
+//         "spring.shardingsphere.datasource.writer.username=trydofor",
+//         "spring.shardingsphere.datasource.writer.password=moilioncircle",
         })
 @Ignore("手动执行，版本更新时处理")
 @Slf4j

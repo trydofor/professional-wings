@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = WingsExampleApplication.class)
-public class Wings7EnumsDumpper {
+public class Wings7EnumsDumper {
 
     @Autowired
     private ResourceLoader resourceLoader;

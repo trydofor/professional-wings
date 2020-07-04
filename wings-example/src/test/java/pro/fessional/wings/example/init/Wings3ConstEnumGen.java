@@ -25,10 +25,10 @@ import java.util.List;
         {"debug = true",
          "spring.wings.enumi18n.enabled=true",
 //         "spring.wings.flywave.enabled=true",
-//         "spring.shardingsphere.datasource.names=master",
-//         "spring.shardingsphere.datasource.master.jdbc-url=jdbc:mysql://127.0.0.1:3306/wings?autoReconnect=true&useSSL=false",
-//         "spring.shardingsphere.datasource.master.username=trydofor",
-//         "spring.shardingsphere.datasource.master.password=moilioncircle",
+//         "spring.shardingsphere.datasource.names=writer",
+//         "spring.shardingsphere.datasource.writer.jdbc-url=jdbc:mysql://127.0.0.1:3306/wings?autoReconnect=true&useSSL=false",
+//         "spring.shardingsphere.datasource.writer.username=trydofor",
+//         "spring.shardingsphere.datasource.writer.password=moilioncircle",
         })
 @Ignore("手动生成Java类，依赖分支feature/enum-i18n的2019052101")
 public class Wings3ConstEnumGen {

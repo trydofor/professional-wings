@@ -30,10 +30,10 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
         {"debug = true",
          "spring.wings.flywave.enabled=true",
 //         "spring.wings.enumi18n.enabled=true",
-//         "spring.shardingsphere.datasource.names=master",
-//         "spring.shardingsphere.datasource.master.jdbc-url=jdbc:mysql://127.0.0.1:3306/wings?autoReconnect=true&useSSL=false",
-//         "spring.shardingsphere.datasource.master.username=trydofor",
-//         "spring.shardingsphere.datasource.master.password=moilioncircle",
+//         "spring.shardingsphere.datasource.names=writer",
+//         "spring.shardingsphere.datasource.writer.jdbc-url=jdbc:mysql://127.0.0.1:3306/wings?autoReconnect=true&useSSL=false",
+//         "spring.shardingsphere.datasource.writer.username=trydofor",
+//         "spring.shardingsphere.datasource.writer.password=moilioncircle",
         })
 @Ignore("手动执行一次，初始化步骤，危险操作")
 public class Wings1SchemaGen {
@@ -75,44 +75,44 @@ public class Wings1SchemaGen {
         val sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER, REVISION_PATH_BRANCH_3RD_ENU18N);
 
         // 合并，升级
-        // mergeThenPub(sqls, commitId, revision);
+         mergeThenPub(sqls, commitId, revision);
         // 是否更新前，更新掉数据库中的脚本，以免字段修改无法降级
         // down3rdThenMergePub(sqls, commitId, revision);
         // 重复升级最新版，用来检查脚本正确性
         // forceDownThenMergePub(sqls, commitId, revision);
         // 连续降级，合并，再升级
-        downMergeThenPub(sqls, commitId, 2020_0702_01L, 2020_0703_01L);
+//        downMergeThenPub(sqls, commitId, 2020_0702_01L, 2020_0703_01L);
     }
 
     //先降级，否则无法更新已更新的sql
-    private void down3rdThenMergePub(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls, long revision, long commitId) {
+    private void down3rdThenMergePub(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls, long commitId, long revision) {
         schemaRevisionManager.publishRevision(REVISION_3RD_ENU18N, commitId);
         schemaRevisionManager.checkAndInitSql(sqls, commitId, true);
         schemaRevisionManager.publishRevision(revision, commitId);
     }
 
     //先降级，否则无法更新已更新的sql
-    private void mergeThenDown3rdPub(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls, long revision, long commitId) {
+    private void mergeThenDown3rdPub(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls, long commitId, long revision) {
         schemaRevisionManager.checkAndInitSql(sqls, commitId, true);
         schemaRevisionManager.publishRevision(REVISION_3RD_ENU18N, commitId);
         schemaRevisionManager.publishRevision(revision, commitId);
     }
 
     // 直接升级
-    private void mergeThenPub(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls, long revision, long commitId) {
+    private void mergeThenPub(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls, long commitId, long revision) {
         schemaRevisionManager.checkAndInitSql(sqls, commitId, true);
         schemaRevisionManager.publishRevision(revision, commitId);
     }
 
     // 重复升级
-    private void forceDownThenMergePub(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls, long revision, long commitId) {
+    private void forceDownThenMergePub(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls, long commitId, long revision) {
         schemaRevisionManager.forceApplyBreak(revision, commitId, false, null);
         schemaRevisionManager.checkAndInitSql(sqls, commitId, true);
         schemaRevisionManager.publishRevision(revision, commitId);
     }
 
     // 强制升级
-    private void insertThenForce(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls, long revision, long commitId) {
+    private void insertThenForce(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls, long commitId, long revision) {
         schemaRevisionManager.checkAndInitSql(sqls, commitId, false);
         schemaRevisionManager.forceApplyBreak(revision, commitId, true, null);
     }

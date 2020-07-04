@@ -72,11 +72,15 @@ object WingsCodeGenerator {
         }
 
         // 忽略注释，import排序和serialVersionUID
+        // The table <code>jetplus_20200515.jp_account</code>.
+        // The schema <code>jetplus</code>.
         // date = "2019-09-09T01:33:51.762Z",
         // schema version:2019090903
         // serialVersionUID = 319604016;
         val ignoreRegex = arrayOf(
                 "(import +[^\r\n]+;[\r\n ]+)+",
+                "The\\s+table\\s+<code>[^.]+",
+                "The\\s+schema\\s+<code>[^<]+",
                 "@Generated[^)]+",
                 "serialVersionUID[^;]+")
                 .joinToString("|")
