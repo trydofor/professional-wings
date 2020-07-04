@@ -16,9 +16,9 @@ public enum UserError implements CodeEnum {
     private final String code;
     private final String hint;
 
-    UserError(String code, String message) {
+    UserError(String code, String hint) {
         this.code = code;
-        this.hint = message;
+        this.hint = hint;
     }
 
     @NotNull
