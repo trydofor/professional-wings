@@ -195,3 +195,14 @@ org.springframework.security.oauth2.provider.endpoint
  * service层异常，自行做业务处理，或AOP日志
  
 [error-handling](https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/#boot-features-error-handling)
+
+### 008.undertow 启动时warn UT026010
+
+在未配置websocket时，undertow使用默认buffer，出现以下警告。
+需要定制`websocketServletWebServerCustomizer`，或设置
+`spring.wings.slardar.undertow-ws.enabled=true`即可
+
+在`io.undertow.websockets.jsr.Bootstrap` 68行，`buffers == null` 时
+`UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used`
+默认 DefaultByteBufferPool(directBuffers, 1024, 100, 12);
+

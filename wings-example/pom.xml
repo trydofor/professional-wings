@@ -42,10 +42,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq</artifactId>
-        </dependency>
-        <dependency>
             <groupId>pro.fessional</groupId>
             <artifactId>wings-faceless</artifactId>
         </dependency>
@@ -60,10 +56,6 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -1,6 +1,7 @@
 #!/bin/bash
 cat <<'EOF'
 #################################################
+# version 2020-05-07
 # 使用`ln -s`把此脚本软连接到`执行目录/workdir`，
 # 其同名`env`如（wings-starter.env）会被自动载入。
 # `BOOT_CNF|BOOT_ARG|JAVA_ARG`内变量可被延时求值，

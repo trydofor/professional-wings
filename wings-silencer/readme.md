@@ -31,6 +31,8 @@
 
 注意：在`@Configuration`中的内部类，`static class`是按独立类处理的，不受外层约束。
 
+在wings工程中，会存在`wings-conditional-manager.properties`配置，作为功能开关
+可以通过属性`spring.wings.verbose.enabled=true` 通过日志INFO查看。
  
 ## 1.2.自动配置(wings-conf)
 

@@ -56,15 +56,16 @@ JDBC数据源(DataSource)，分为两种，他们会存在于`FlywaveDataSources
 
 数据表(Table)，语义上有三种表，用来表示用途和使用场景。
 
- * 普通表(plain)，普通的数据表，正常的命名，如英数下划线，甚至中文。
- * 分表(shard)，普通表+`_#`后缀，`#`为对N取模(0..N-1)（左侧无0填充）。
- * 跟踪表(trace)，普通表或分表+`$*`，其中`*`为任意命名字符，`$`视为分隔符。
+ * 本表(plain)，也叫普通表，正常的命名，如英数下划线，甚至中文。
+ * 分表(shard)，本表+`_#`后缀，`#`为对N取模(0..N-1)（左侧无0填充）。
+ * 跟踪表(trace)，也叫log表，影子表。本表或分表+`\$\w+`，`$`视为分隔符。
+ * 以`nut`表示，本表+分表；以`log`表示，跟踪表。
 
-这三种表，满足以下规定，并且跟普通表保持同步更新。
+这三种表，满足以下规定，并且跟本表保持同步更新。
 
- * 普通表一定存在，即便存在分表时，也会存在一个普通表，用来保持原始表结构。
- * 分表，具有和普通表一样的表结构，索引和触发器，同步更新。
- * 跟踪表具有和本表(staff，对应的普通表和分表)相同的字段和类型，同步更新。
+ * 本表一定存在，即便存在分表时，也会存在一个本表，用来保持原始表结构。
+ * 分表，具有和本表一样的表结构，索引和触发器，同步更新。
+ * 跟踪表具有和本表(staff，对应的本表和分表)相同的字段和类型，同步更新。
  * 跟踪表为触发器使用，包含了一些标记字段，建议以`_*`格式。
  * 三种表，一定会保持相同的表结构（名字，类型，前后关系），同步更新。
 
@@ -105,7 +106,7 @@ sql的书写规则详见[数据库约定](/wings-faceless/src/main/resources/win
 模板中，预定义以下DDL变量，避开spring变量替换，使用胡子`{{}}`表示法，名字全大写。
 
  * `{{PLAIN_NAME}}` 目标表的`本表`名字
- * `{{TABLE_NAME}}` 目标表名字，可能是普通表，分表，跟踪表
+ * `{{TABLE_NAME}}` 目标表名字，可能是本表，分表，跟踪表
  * `{{TABLE_BONE}}` 目标表字段(至少包含名字，类型，注释)，不含索引和约束
  * `{{TABLE_PKEY}}` 目标表的主键中字段名，用来创建原主键的普通索引。
 
@@ -146,8 +147,11 @@ flywave提供了以下有特殊功能的`sql注释`，称为`注解指令`
    - `确认语句` = `\s+ask@[^@ \t]+`，即，确认语句，比如危险
  * 指定了`本表`的SQL，不会尝试解析。
  * 指定的`本表`在SQL语句中不存在时，不影响SQL执行，只是忽略`跟踪表`替换。
- * `目标表` 不区分大小写，全匹配
- * `错误处理` 默认`stop`，以抛异常
+ * `目标表` 不区分大小写，全匹配。其中内定以下简写
+    - 空，默认适配全部，本表+分表+跟踪表
+    - `apply@nut` 只适配本表和分表 `[_0-9]*`
+    - `apply@log` 只适配跟踪表 `\$\w+`
+ * `错误处理` 默认`stop`以抛异常结束，`skip`表示忽略异常继续执行。
  * `确认语句` 默认std.out输出，在std.in等待确认输入
  * 注解的表达式为 `([^@ \t]+)?@([^@ \t]+)`
 
@@ -161,6 +165,10 @@ DROP TABLE IF EXISTS `sys_commit_journal`;
 -- wgs_order@plain 强制使用原始数据源，并直接指定本表为wgs_order，因为语法中没有本表。
 DROP TRIGGER IF EXISTS `wgs_order$bd`;
 -- apply@ctr_clerk[_0-0]* error@skip 可以解析本表，应用分表，忽略错误
+ALTER TABLE `win_admin` DROP INDEX ix_login_name;
+-- apply@nut error@skip 等效于上一句
+ALTER TABLE `win_admin` DROP INDEX ix_login_name;
+-- apply@log error@skip 只适应于跟踪表
 ALTER TABLE `win_admin` DROP INDEX ix_login_name;
 ```
 
@@ -378,7 +386,7 @@ mysql:5.7
 
 使用高优先级注入`journalService`，参考 example工程的 `SecurityJournalService`
 
-### 006.flaywave中确认危险语句
+### 006.flywave中确认危险语句
 
  * 带有`ask@*`注解的sql，强制确认
  * undo 语句确认 `wings.flywave.ver.ask-undo=true`
@@ -388,3 +396,24 @@ mysql:5.7
 如果UnitTest中控制台中无响应，需要在IDE中打开 console，如在Idea中
 `-Deditable.java.test.console=true` ('Help' > 'Edit Custom VM Options...')
  
+### 007.影子表不需要增加index
+
+如果已有索引更新到了影子库，并影响了写入性能，或唯一索引，通过以下sql查看。
+
+```sql
+SELECT DISTINCT CONCAT('DROP INDEX ',INDEX_NAME,' ON ',TABLE_NAME, ';')
+FROM
+	INFORMATION_SCHEMA.STATISTICS
+WHERE
+	TABLE_SCHEMA = DATABASE()
+	AND INDEX_NAME NOT IN ('PRIMARY','PLAIN_PK')
+	AND TABLE_NAME LIKE '%$%';
+```
+
+对于通过，`apply@` 语句指定更新表。比如，以下更新本表和分表，不更新跟踪表
+```sql
+-- @plain apply@nut error@skip
+ALTER TABLE `win_user`
+  DROP INDEX `ft_auth_set`,
+  DROP INDEX `ft_role_set`;
+```

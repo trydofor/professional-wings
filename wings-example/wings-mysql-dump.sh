@@ -4,7 +4,7 @@ config="$1"
 schema="$2"
 nodata="$3"
 
-echo -e "\033[0;31mWARN: usage: ./wings-mysql-dump.sh mysql-client.cnf your_database [nodata]\033[m"
+echo -e "\033[0;33mNOTE: version=2020-07-03, usage: ./wings-mysql-dump.sh mysql-client.cnf your_database [nodata]\033[m"
 
 if [[ -f "$config" ]]; then
   echo -e "\033[0;33mNOTE: current config file \033[m"

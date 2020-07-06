@@ -12,6 +12,7 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StringUtils;
+import pro.fessional.mirana.cast.StringCastUtil;
 import pro.fessional.wings.silencer.spring.help.Utf8ResourceDecorator;
 
 import java.io.BufferedReader;
@@ -30,6 +31,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -56,7 +58,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     public static final String BOOTS_CONF = "application.*";
     public static final String WINGS_CONF = "wings-conf/**/*.*";
     public static final String WINGS_I18N = "wings-i18n/**/*.properties";
-    public static final String BLACK_LIST = "wings-conf/wings-conf-block-list.cnf";
+    public static final String BLOCK_LIST = "wings-conf-block-list.cnf";
 
 
     @Override
@@ -132,6 +134,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         final PropertiesPropertySourceLoader propertyLoader = new PropertiesPropertySourceLoader();
 
         logger.info("Wings append resorted resource, first is higher than last");
+        TreeSet<Object> wingsKeys = new TreeSet<>();
         for (ConfResource conf : sortedResources) {
             final String key = conf.location;
             final Resource res = conf.resource;
@@ -149,11 +152,25 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                 }
                 logger.info("Wings append source " + conf);
                 for (PropertySource<?> source : sourceList) {
+                    Object src = source.getSource();
+                    if (src instanceof Map) {
+                        wingsKeys.addAll(((Map<?, ?>) src).keySet());
+                    }
                     propertySources.addLast(source);
                 }
             } catch (IOException e) {
-                logger.warn("Wings failed to load yml=" + key, e);
+                logger.warn("Wings failed to load config=" + key, e);
             }
+        }
+
+        if (StringCastUtil.asTrue(environment.getProperty("spring.wings.verbose.enabled")) && !wingsKeys.isEmpty()) {
+            String allCond = wingsKeys.stream()
+                                      .map(e -> {
+                                          String v = environment.getProperty(e.toString());
+                                          return e + "=" + (v == null ? "" : v.replace("\n", "\\n"));
+                                      })
+                                      .collect(Collectors.joining("\n\t"));
+            logger.info("🦁🦁🦁 Wings conditional manager 🦁🦁🦁\n\t" + allCond + "\n🦁🦁🦁");
         }
     }
 
@@ -417,7 +434,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     }
 
     private boolean isBlacklist(String file) {
-        return endsWithIgnoreCase(file, BLACK_LIST);
+        return endsWithIgnoreCase(file, BLOCK_LIST);
     }
 
     private boolean isYml(String file) {

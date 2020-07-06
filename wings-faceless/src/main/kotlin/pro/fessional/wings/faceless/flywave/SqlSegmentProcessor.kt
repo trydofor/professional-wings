@@ -11,10 +11,10 @@ import java.util.SortedMap
  * @since 2019-06-06
  */
 class SqlSegmentProcessor(
-        commentSingle: String = Nulls.Str,
-        commentMultiple: String = Nulls.Str,
-        delimiterDefault: String = Nulls.Str,
-        delimiterCommand: String = Nulls.Str
+        commentSingle: String = "--",
+        commentMultiple: String = "/*   */",
+        delimiterDefault: String = ";",
+        delimiterCommand: String = "DELIMITER"
 ) {
 
     enum class DbsType {
@@ -42,14 +42,25 @@ class SqlSegmentProcessor(
         fun applyTbl(tables: List<String>?): Set<String> {
             if (tables == null || tables.isEmpty() || tblIdx2.isEmpty() || tblName.isEmpty()) return emptySet()
 
-            // 包括分表和日志表
-            val tblApply = hashSetOf(tblName) // 保证当前执行
-            if (tblRegx == null) {
-                tblApply.addAll(tables.filter { hasType(tblName, it) > TYPE_PLAIN })
+            return if (tblRegx == null) {
+                tables.filter {
+                    hasType(tblName, it) >= TYPE_PLAIN
+                }
             } else {
-                tblApply.addAll(tables.filter { tblRegx.matches(it) })
-            }
-            return tblApply
+                val ptn = tblRegx.pattern
+                when {
+                    ptn.equals("nut", true) -> tables.filter {
+                        val tp = hasType(tblName, it)
+                        tp == TYPE_PLAIN || tp == TYPE_SHARD
+                    }
+                    ptn.equals("log", true) -> tables.filter {
+                        hasType(tblName, it) == TYPE_TRACE
+                    }
+                    else -> tables.filter {
+                        tblRegx.matches(it)
+                    }
+                }
+            }.toSet()
         }
 
         /**
@@ -241,6 +252,8 @@ class SqlSegmentProcessor(
         const val TYPE_TRACE = 1
         const val TYPE_SHARD = 2
 
+        private val regShard = "_[0-9]+".toRegex()
+        private val regTrace = "(_[0-9]+)?\\\$\\w+".toRegex()
         /**
          * 判断两表关系，忽略大小写
          * @param table 主表
@@ -253,26 +266,21 @@ class SqlSegmentProcessor(
          */
         fun hasType(table: String, other: String): Int {
             val pos = other.indexOf(table, 0, true)
-            if (pos < 0) return TYPE_OTHER
+            if (pos != 0) return TYPE_OTHER
 
-            val len = pos + table.length
-            if (len == other.length) return TYPE_PLAIN
-
-            val c = other[len]
-            if (c == '$') return TYPE_TRACE
-
-            var typ = TYPE_OTHER
-            if (c == '_') {
-                for (i in len + 1 until other.length) {
-                    if (other[i] in '0'..'9') {
-                        typ = TYPE_SHARD
-                    } else {
-                        return TYPE_OTHER
-                    }
+            val suf = other.substring(table.length)
+            return when {
+                suf.isEmpty() -> TYPE_PLAIN
+                regShard.matches(suf) -> {
+                    TYPE_SHARD
+                }
+                regTrace.matches(suf) -> {
+                    TYPE_TRACE
+                }
+                else -> {
+                    TYPE_OTHER
                 }
             }
-
-            return typ
         }
 
         // -- wgs_order@plain apply@ctr_clerk[_0-0]* error@skip ask@danger
