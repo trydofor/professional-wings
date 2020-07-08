@@ -417,3 +417,31 @@ ALTER TABLE `win_user`
   DROP INDEX `ft_auth_set`,
   DROP INDEX `ft_role_set`;
 ```
+
+### 008.日时零值和时区问题
+
+执行环境和数据库要在同一时区，否则jooq和jdbc在以下过程会自动转换时区，引发问题
+
+* jooq，使用timestamp作为localDatetime的值，设置preparedStatement。
+* jdbc，setTimestamp(int parameterIndex, Timestamp x), 
+  the JDBC driver uses the time zone of the virtual machine 
+  to calculate the date and time of the timestamp in that time zone.
+
+```sql
+-- 查看 系统，程序，会话时区
+SELECT @@system_time_zone,  @@global.time_zone, @@session.time_zone;
+-- @@system_time_zone, @@global.time_zone, @@session.time_zone
+-- UTC, Asia/Shanghai, Asia/Shanghai
+
+-- mysql 执行日志(UTC)
+select `id` from `win_user` where `delete_dt` <= '0999-12-31 16:00:00.0';
+-- jooq 绑定日志(GMT+8)
+select `id` from `win_user` where `delete_dt` <= '1000-01-01 00:00:00.0';
+
+-- 打开，日志，blob要
+SET GLOBAL log_output = 'TABLE';SET GLOBAL general_log = 'ON';
+SELECT * from mysql.general_log ORDER BY event_time DESC;
+-- 关闭，清除
+SET GLOBAL log_output = 'TABLE'; SET GLOBAL general_log = 'OFF';
+truncate table mysql.general_log;
+```

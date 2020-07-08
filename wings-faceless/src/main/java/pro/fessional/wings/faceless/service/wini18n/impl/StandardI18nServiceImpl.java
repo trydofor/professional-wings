@@ -28,7 +28,7 @@ public class StandardI18nServiceImpl implements StandardI18nService {
 
     @Override
     public int reloadAll() {
-        List<SysStandardI18n> pos = sysStandardI18nDao.fetchAll();
+        List<SysStandardI18n> pos = sysStandardI18nDao.findAll();
         return cache(pos);
 
     }

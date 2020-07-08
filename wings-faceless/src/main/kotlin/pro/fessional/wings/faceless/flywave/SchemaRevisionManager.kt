@@ -2,6 +2,8 @@ package pro.fessional.wings.faceless.flywave
 
 import pro.fessional.mirana.data.Nulls
 import java.util.SortedMap
+import java.util.function.BiConsumer
+import java.util.function.Consumer
 import java.util.function.Function
 
 
@@ -94,10 +96,15 @@ interface SchemaRevisionManager {
      * @param ask ask类型
      * @param yes 是否确认，默认true
      */
-    fun confirmAsk(ask: AskType, yes:Boolean)
+    fun confirmAsk(ask: AskType, yes: Boolean)
 
     /**
      * 用什么方式确认，传递message，返回继续or停止
      */
     fun confirmWay(func: Function<String, Boolean>)
+
+    /**
+     * 用什么方式处理，运行时的 token, message
+     */
+    fun messageWay(func: BiConsumer<String, String>)
 }

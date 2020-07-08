@@ -82,7 +82,8 @@ object WingsCodeGenerator {
                 "The\\s+table\\s+<code>[^.]+",
                 "The\\s+schema\\s+<code>[^<]+",
                 "@Generated[^)]+",
-                "serialVersionUID[^;]+")
+                "serialVersionUID[^;]+",
+                "[\r\n]+")
                 .joinToString("|")
                 .toRegex(RegexOption.MULTILINE)
         for ((k, f) in from) {

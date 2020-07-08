@@ -18,6 +18,7 @@ import org.jooq.Table;
 import org.jooq.TableRecord;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
+import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 import pro.fessional.mirana.data.CodeEnum;
 import pro.fessional.mirana.data.Nulls;
@@ -82,8 +83,8 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
                 }
             }
         }
-        onlyDied = d;
-        onlyLive = l;
+        onlyDied = d == null ? DSL.falseCondition() : d;
+        onlyLive = l == null ? DSL.trueCondition() : l;
         pks = WingsJooqUtil.primaryKeys(table);
     }
 
@@ -581,13 +582,12 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
         return Lists.partition(rds, size);
     }
 
-    // ============
+    // ===== override =====
 
     /**
      * 只选择未标记删除的
      */
-    @Override
-    public boolean existsById(K id) {
+    public boolean existsByIdLive(K id) {
         if (pks.length > 0) {
             return count(alias, onlyLiveData(equal(pks, id))) > 0;
         } else {
@@ -598,22 +598,21 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
     /**
      * 只选择未标记删除的
      */
-    @Override
-    public long count() {
+    public long countLive() {
         return count(alias, onlyLive);
     }
 
     /**
      * 只选择未标记删除的
      */
-    public List<P> fetchAll() {
+    public List<P> findAllLive() {
         return fetch(alias, onlyLive);
     }
 
     /**
      * 只选择未标记删除的
      */
-    public P fetchById(K id) {
+    public P findByIdLive(K id) {
         if (pks.length == 0) return null;
         return fetchOne(alias, onlyLiveData(equal(pks, id)));
     }
@@ -622,8 +621,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
      * 只选择未标记删除的
      */
     @SuppressWarnings("unchecked")
-    @Override
-    public <Z> List<P> fetch(Field<Z> field, Z... values) {
+    public <Z> List<P> fetchLive(Field<Z> field, Z... values) {
         return fetch(alias, onlyLiveData(field.in(values)));
     }
 
@@ -631,8 +629,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
     /**
      * 只选择未标记删除的
      */
-    @Override
-    public <Z> P fetchOne(Field<Z> field, Z value) {
+    public <Z> P fetchOneLive(Field<Z> field, Z value) {
         return fetchOne(alias, onlyLiveData(field.eq(value)));
     }
 

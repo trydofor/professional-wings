@@ -1,7 +1,6 @@
 package pro.fessional.wings.example.init;
 
 import lombok.val;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,9 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.wings.example.WingsExampleApplication;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
+import pro.fessional.wings.faceless.util.FlywaveRevisionGui;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
-import javax.swing.*;
 import java.util.SortedMap;
 
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_3RD_ENU18N;
@@ -43,25 +42,8 @@ public class Wings1SchemaGen {
     @Autowired
     public void setSchemaRevisionManager(SchemaRevisionManager schemaRevisionManager) {
         this.schemaRevisionManager = schemaRevisionManager;
-        schemaRevisionManager.confirmWay(msg -> {
-            while (true) {
-                int res = JOptionPane.showConfirmDialog(
-                        null, msg,
-                        "😺😸😹😻😼😽🙀😿😾😺",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.PLAIN_MESSAGE);
-                if (res == 0) {
-                    return true;
-                } else if (res == 1) {
-                    return false;
-                }
-            }
-        });
-    }
-
-    @BeforeClass
-    public static void setupGuiMode() {
-        System.setProperty("java.awt.headless", "false");
+        schemaRevisionManager.confirmWay(FlywaveRevisionGui.confirmDialog());
+        schemaRevisionManager.messageWay(FlywaveRevisionGui.messageDialog());
     }
 
     @Test
@@ -75,9 +57,9 @@ public class Wings1SchemaGen {
         val sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER, REVISION_PATH_BRANCH_3RD_ENU18N);
 
         // 合并，升级
-         mergeThenPub(sqls, commitId, revision);
+//        mergeThenPub(sqls, commitId, revision);
         // 是否更新前，更新掉数据库中的脚本，以免字段修改无法降级
-        // down3rdThenMergePub(sqls, commitId, revision);
+         down3rdThenMergePub(sqls, commitId, revision);
         // 重复升级最新版，用来检查脚本正确性
         // forceDownThenMergePub(sqls, commitId, revision);
         // 连续降级，合并，再升级
@@ -126,7 +108,5 @@ public class Wings1SchemaGen {
         for (long l : revision) {
             schemaRevisionManager.publishRevision(l, commitId);
         }
-
-        System.out.println("=================1===================");
     }
 }

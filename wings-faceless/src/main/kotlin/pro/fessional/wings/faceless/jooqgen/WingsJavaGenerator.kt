@@ -52,14 +52,38 @@ class WingsJavaGenerator : JavaGenerator() {
 
     override fun generateTableClassFooter(table: TableDefinition, out: JavaWriter) {
         // 🦁>>>
-        table.columns.find { it.outputName.equals(JournalHelp.COL_DELETE_DT, true) }?.let {
+        val logicCol = table.columns.find {
+            val col = it.outputName
+            col.equals(JournalHelp.COL_DELETE_DT, true) || col.equals(JournalHelp.COL_IS_DELETED, true)
+        }
+
+        if (logicCol == null) {
+//            out.tab(1).println("public final Condition onlyDiedData = DSL.falseCondition();")
+//            out.tab(1).println("public final Condition onlyLiveData = DSL.trueCondition();")
+        } else {
             out.ref(Condition::class.java)
             out.ref(EmptyValue::class.java)
-            val columnId = reflectProtectRef(out, getStrategy().getJavaIdentifier(it), colRefSegments(it))
+            val columnId = reflectProtectRef(out, getStrategy().getJavaIdentifier(logicCol), colRefSegments(logicCol))
 
-            out.tab(1).javadoc("The column <code>%s</code> condition", it.outputName)
-            out.tab(1).println("public final Condition onlyDiedData = %s.gt(EmptyValue.DATE_TIME);",columnId)
-            out.tab(1).println("public final Condition onlyLiveData = %s.eq(EmptyValue.DATE_TIME);",columnId)
+            val col = logicCol.outputName
+            out.tab(1).javadoc("The column <code>%s</code> condition", col)
+            if (col.equals(JournalHelp.COL_DELETE_DT, true)) {
+                val colType = logicCol.definedType.type
+                if (colType.startsWith("datetime", true)) {
+                    out.tab(1).println("public final Condition onlyDiedData = %s.gt(EmptyValue.DATE_TIME);", columnId)
+                    out.tab(1).println("public final Condition onlyLiveData = %s.eq(EmptyValue.DATE_TIME);", columnId)
+                } else if (colType.startsWith("bigint", true)) {
+                    out.tab(1).println("public final Condition onlyDiedData = %s.gt(EmptyValue.BIGINT);", columnId)
+                    out.tab(1).println("public final Condition onlyLiveData = %s.eq(EmptyValue.BIGINT);", columnId)
+                } else {
+                    out.tab(1).println("public final Condition onlyDiedData = %s.gt(EmptyValue.VARCHAR);", columnId)
+                    out.tab(1).println("public final Condition onlyLiveData = %s.eq(EmptyValue.VARCHAR);", columnId)
+                }
+            } else {
+                // COL_IS_DELETED
+                out.tab(1).println("public final Condition onlyDiedData = %s.eq(Boolean.TRUE);", columnId)
+                out.tab(1).println("public final Condition onlyLiveData = %s.eq(Boolean.FALSE);", columnId)
+            }
         }
         // 🦁<<<
     }

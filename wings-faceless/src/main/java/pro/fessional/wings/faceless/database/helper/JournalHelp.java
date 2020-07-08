@@ -32,6 +32,7 @@ public class JournalHelp {
     public static final String COL_CREATE_DT = "create_dt";
     public static final String COL_MODIFY_DT = "modify_dt";
     public static final String COL_DELETE_DT = "delete_dt";
+    public static final String COL_IS_DELETED = "is_deleted";
     public static final String COL_COMMIT_ID = "commit_id";
 
     private static final Map<String, String> tableJournal = new ConcurrentHashMap<>();
