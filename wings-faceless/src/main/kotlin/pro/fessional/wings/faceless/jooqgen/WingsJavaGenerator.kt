@@ -106,6 +106,11 @@ class WingsJavaGenerator : JavaGenerator() {
         val tableParts = tableIdentifier.split(".")
         val tableName = tableParts[0]
         val aliasIdentifier = "$tableName.as${genAlias(tableParts[1])}"
+        // 🦁>>>
+        val hasMarkDel = table.columns.find {
+            val col = it.outputName
+            col.equals(JournalHelp.COL_DELETE_DT, true) || col.equals(JournalHelp.COL_IS_DELETED, true)
+        } != null
         // 🦁<<<
 
         var tType: String
@@ -188,7 +193,7 @@ class WingsJavaGenerator : JavaGenerator() {
             val colTypeFull = getJavaType(column.getType(resolver()))
             val colType = out.ref(colTypeFull)
             val colIdentifier = reflectProtectRef(out, getStrategy().getFullJavaIdentifier(column), colRefSegments(column))
-                    .replace(tableIdentifier, aliasIdentifier)
+            //.replace(tableIdentifier, aliasIdentifier)
 
 
             // fetchBy[Column]([T]...)
@@ -198,6 +203,11 @@ class WingsJavaGenerator : JavaGenerator() {
             out.tab(1).println("public %s<%s> fetchBy%s(%s... values) {", List::class.java, pType, colClass, colType)
             out.tab(2).println("return fetch(%s, values);", colIdentifier)
             out.tab(1).println("}")
+            if (hasMarkDel) {         // 🦁<<<
+                out.tab(1).println("public %s<%s> fetchBy%sLive(%s... values) {", List::class.java, pType, colClass, colType)
+                out.tab(2).println("return fetchLive(%s, values);", colIdentifier)
+                out.tab(1).println("}")
+            }
 
             // fetchOneBy[Column]([T])
             // -----------------------
@@ -210,6 +220,11 @@ class WingsJavaGenerator : JavaGenerator() {
                     out.tab(1).println("public %s fetchOneBy%s(%s value) {", pType, colClass, colType)
                     out.tab(2).println("return fetchOne(%s, value);", colIdentifier)
                     out.tab(1).println("}")
+                    if (hasMarkDel) {         // 🦁<<<
+                        out.tab(1).println("public %s fetchOneBy%sLive(%s value) {", pType, colClass, colType)
+                        out.tab(2).println("return fetchOneLive(%s, value);", colIdentifier)
+                        out.tab(1).println("}")
+                    }
                     break@ukLoop
                 }
             }

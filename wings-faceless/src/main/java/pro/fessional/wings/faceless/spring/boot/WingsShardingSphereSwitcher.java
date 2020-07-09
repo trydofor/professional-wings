@@ -48,8 +48,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
-import org.springframework.jdbc.support.JdbcUtils;
-import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.jndi.JndiObjectFactoryBean;
 import pro.fessional.mirana.cast.StringCastUtil;
 import pro.fessional.wings.faceless.flywave.FlywaveDataSources;
@@ -57,7 +55,6 @@ import pro.fessional.wings.faceless.flywave.FlywaveDataSources;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,7 +93,7 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
     private final String jndiName = "jndi-name";
 
     @Override
-    public final void setEnvironment(final Environment environment) {
+    public final void setEnvironment(final @NotNull Environment environment) {
         String prefix = "spring.shardingsphere.datasource.";
         for (String each : getDataSourceNames(environment, prefix)) {
             try {
@@ -150,32 +147,25 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
     @Bean
     public FlywaveDataSources flywaveDataSources(@NotNull DataSource inuse, Environment environment) {
         DataSource shard = defaultDataSource(false) == inuse ? null : inuse;
-        Map<DataSource, String> dsJdbc = new HashMap<>();
+        boolean split = hasSlave(environment);
+        FlywaveDataSources fds = new FlywaveDataSources(dataSourceMap, inuse, shard, split);
+
         for (Map.Entry<String, DataSource> e : dataSourceMap.entrySet()) {
-            String jdbc = dsJdbc.computeIfAbsent(e.getValue(), this::jdbcUrl);
-            logger.info("[Wings]🦄 database-" + e.getKey() + "-url=" + jdbc);
+            logger.info("[Wings]🦄 database-" + e.getKey() + "-url=" + fds.jdbcUrl(e.getValue()));
         }
 
         if (shard != null) {
-            logger.info("[Wings]🦄 database-shard-url=" + dsJdbc.get(shard));
+            logger.info("[Wings]🦄 database-shard-url=" + fds.jdbcUrl(shard));
         } else {
             logger.info("[Wings]🦄 database-shard-url=no-shard-plain-database");
         }
-        logger.info("[Wings]🦄 database-inuse-url=" + dsJdbc.get(inuse));
-        return new FlywaveDataSources(dataSourceMap, inuse, shard, hasSlave(environment));
+        logger.info("[Wings]🦄 database-inuse-url=" + fds.jdbcUrl(inuse));
+
+        return fds;
     }
 
     //
     private static final Log logger = LogFactory.getLog(WingsShardingSphereSwitcher.class);
-
-    private String jdbcUrl(DataSource ds) {
-        if (ds == null) return "";
-        try {
-            return JdbcUtils.extractDatabaseMetaData(ds, "getURL");
-        } catch (MetaDataAccessException e) {
-            return "unknown";
-        }
-    }
 
     private DataSource defaultDataSource(boolean log) {
         Map.Entry<String, DataSource> first = dataSourceMap.entrySet().iterator().next();

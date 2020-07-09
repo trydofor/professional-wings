@@ -13,6 +13,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.cast.StringCastUtil;
+import pro.fessional.mirana.i18n.LocaleResolver;
+import pro.fessional.mirana.i18n.ZoneIdResolver;
 import pro.fessional.wings.silencer.spring.help.Utf8ResourceDecorator;
 
 import java.io.BufferedReader;
@@ -29,8 +31,10 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -63,20 +67,58 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        processWingsI18n(environment);
         processWingsConf(environment);
+        processWingsI18n(environment);
     }
 
     // ///////////////////////////////////////////////////////
     public void processWingsI18n(ConfigurableEnvironment environment) {
+        // system default locale, zoneid
+
+        String lcl = environment.getProperty("wings.i18n.locale");
+        if (lcl != null && !lcl.isEmpty()) {
+            String ln = System.getProperty("user.language");
+            String cn = System.getProperty("user.country");
+            logger.info("🦁 set wings-locale=" + lcl + ", current user.language=" + ln + ",user.country=" + cn);
+            Locale loc = LocaleResolver.locale(lcl);
+            String lc = loc.getLanguage();
+            if (lc != null && !lc.isEmpty()) {
+                System.setProperty("user.language", lc);
+            }
+            String cc = loc.getCountry();
+            if (cc != null && !cc.isEmpty()) {
+                System.setProperty("user.country", cc);
+            }
+            Locale.setDefault(loc);
+        }
+
+        String zid = environment.getProperty("wings.i18n.zoneid");
+        if (zid != null && !zid.isEmpty()) {
+            String tz = System.getProperty("user.timezone");
+            logger.info("🦁 set wings-zoneid=" + zid + ", current user.timezone=" + tz);
+            System.setProperty("user.timezone", zid);
+            TimeZone.setDefault(ZoneIdResolver.timeZone(zid));
+        }
+
         final LinkedHashSet<String> baseNames = new LinkedHashSet<>();
         try {
+            String bundle = environment.getProperty("wings.i18n.bundle");
+            String[] paths;
+            if (bundle == null || bundle.isEmpty()) {
+                paths = new String[]{"classpath*:/" + WINGS_I18N};
+            } else {
+                paths = bundle.split(",");
+            }
+
             final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-            Resource[] resources = resolver.getResources("classpath*:/" + WINGS_I18N);
-            for (Resource res : resources) {
-                String fn = res.getURI().toString();
-                logger.info("find wings-i18n=" + fn);
-                baseNames.add(parseBaseMessage(fn));
+            for (String path : paths) {
+                Resource[] resources = resolver.getResources(path.trim());
+                for (Resource res : resources) {
+                    String fn = res.getURI().toString();
+                    String baseName = parseBaseMessage(fn);
+                    logger.info("🦁 find wings-i18n base=" + baseName + ", path=" + fn);
+                    baseNames.add(baseName);
+                }
             }
         } catch (IOException e) {
             throw new IllegalStateException("failed to resolve wings i18n path", e);
@@ -88,17 +130,17 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         String key = "spring.messages.basename";
         String mess = environment.getProperty(key);
         if (mess == null || mess.isEmpty()) {
-            logger.info("spring.messages.basename=");
+            logger.info("🦁 spring.messages.basename=");
         } else {
             Set<String> old = StringUtils.commaDelimitedListToSet(StringUtils.trimAllWhitespace(mess));
             baseNames.addAll(old);
-            logger.info("spring.messages.basename=" + mess);
+            logger.info("🦁 spring.messages.basename=" + mess);
         }
 
         for (String bn : baseNames) {
             sb.append(bn);
             sb.append(",");
-            logger.info("add messages.basename=" + bn + " to message source");
+            logger.info("🦁 add messages.basename=" + bn + " to message source");
         }
         System.setProperty(key, sb.substring(0, sb.length() - 1));
     }
@@ -133,7 +175,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         final YamlPropertySourceLoader yamlLoader = new YamlPropertySourceLoader();
         final PropertiesPropertySourceLoader propertyLoader = new PropertiesPropertySourceLoader();
 
-        logger.info("Wings append resorted resource, first is higher than last");
+        logger.info("🦁 Wings append resorted resource, first is higher than last");
         TreeSet<Object> wingsKeys = new TreeSet<>();
         for (ConfResource conf : sortedResources) {
             final String key = conf.location;
@@ -147,10 +189,10 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                     sourceList = propertyLoader.load(key, Utf8ResourceDecorator.toUtf8(res));
                 } else {
                     // never here
-                    logger.info("skip unsupported resource=" + key);
+                    logger.info("🦁 skip unsupported resource=" + key);
                     continue;
                 }
-                logger.info("Wings append source " + conf);
+                logger.info("🦁 Wings append source " + conf);
                 for (PropertySource<?> source : sourceList) {
                     Object src = source.getSource();
                     if (src instanceof Map) {
@@ -159,7 +201,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                     propertySources.addLast(source);
                 }
             } catch (IOException e) {
-                logger.warn("Wings failed to load config=" + key, e);
+                logger.warn("🦁 Wings failed to load config=" + key, e);
             }
         }
 
@@ -191,9 +233,9 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                             blockList.put(s, conf.location);
                         }
                     }
-                    logger.info("find " + count + " blocks in block-list in " + conf);
+                    logger.info("🦁 find " + count + " blocks in block-list in " + conf);
                 } catch (IOException e) {
-                    logger.warn("failed to read block-list " + conf, e);
+                    logger.warn("🦁 failed to read block-list " + conf, e);
                 }
                 it.remove();
             }
@@ -206,7 +248,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                                                 HashMap<String, String> blockList,
                                                 String[] activeProfs) {
         String profs = String.join(",", activeProfs);
-        logger.info("current active profile=[" + profs + "]");
+        logger.info("🦁 current active profile=[" + profs + "]");
 
         Set<ConfResource> profiledConf = confResources
                 .stream()
@@ -216,7 +258,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         if (!profiledConf.isEmpty()) {
             if (activeProfs.length == 0) {
                 for (ConfResource it : profiledConf) {
-                    logger.info("inactive profile by empty, " + it);
+                    logger.info("🦁 inactive profile by empty, " + it);
                     confResources.remove(it);
                 }
             } else {
@@ -227,7 +269,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                     if (prof.contains(cr.profile)) {
                         act.add(cr);
                     } else {
-                        logger.info("inactive profile by [" + profs + "], " + cr);
+                        logger.info("🦁 inactive profile by [" + profs + "], " + cr);
                         confResources.remove(cr);
                     }
                 }
@@ -239,7 +281,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                             return false;
                         }
                         if (it.baseName.equals(cr.baseName)) {
-                            logger.info("inactive profile by [" + cr.fullName + "], " + it);
+                            logger.info("🦁 inactive profile by [" + cr.fullName + "], " + it);
                             return true;
                         }
                     }
@@ -254,7 +296,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         for (ConfResource cr : confResources) {
             String blocked = isBlackedBy(blockList, cr.location);
             if (blocked != null) {
-                logger.info("skip a blocked " + cr + " in " + blocked);
+                logger.info("🦁 skip a blocked " + cr + " in " + blocked);
                 continue;
             }
             groups.computeIfAbsent(cr.baseName, newList).add(cr);
@@ -268,7 +310,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             List<ConfResource> crs = e.getValue();
             int size = crs.size();
             if (size > 1) {
-                logger.info("resorted " + size + " basename by seq" + e.getKey());
+                logger.info("🦁 resorted " + size + " basename by seq" + e.getKey());
                 crs.sort(sorter);
             }
             sortedConf.addAll(crs);
@@ -315,7 +357,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                 path = "file:" + path;
             }
 
-            logger.info("Wings scan classpath, path=" + path);
+            logger.info("🦁 Wings scan classpath, path=" + path);
             //  7. 以`/`结尾的当做目录，否则作为文件
             if (path.endsWith("/") || path.endsWith("\\")) {
                 // 8. 从以上路径，优先加载`application.*`，次之`wings-conf/**/*.*`
@@ -346,12 +388,12 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                 String url = res.getURL().getPath();
                 if (isYml(url) || isProperty(url) || isBlacklist(url)) {
                     ConfResource conf = new ConfResource(res, url);
-                    logger.info("Wings find " + conf);
+                    logger.info("🦁 Wings find " + conf);
                     confResources.add(conf);
                 }
             }
         } catch (IOException e) {
-            logger.info("Wings failed to find config from path=" + path);
+            logger.info("🦁 Wings failed to find config from path=" + path);
         }
     }
 

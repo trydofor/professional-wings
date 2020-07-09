@@ -17,7 +17,7 @@
 
  * `/wings-conf/` 自动加载，放置拆分的配置文件，按字母顺序加载和覆盖。
  * `/wings-i18n/` 自动加载，放置拆分的多国语的信息文件。
- * 所有`Configuration`必须条件加载，可以关闭。除WingsAutoConfigProcessor。
+ * `*Configuration` 必须都条件加载，前缀`spring.wings.`，可以关闭。
  * `**/spring/boot/` 手动加载，boot有关的配置，如`spring.factories`
  * `**/spring/bean/`  自动加载，比如@ComponentScan指定。
  * `**/spring/conf/` 自动或手动加载，需要暴露的properties的配置。
@@ -36,7 +36,12 @@
  
 ## 1.2.自动配置(wings-conf)
 
-支持配置文件的`分割`，`禁用`和`profile`，更有利于工程化的管理。
+支持配置文件的`分割`，`覆盖`，`禁用`和`profile`，更有利于工程化的管理。
+
+* 分隔，指配置项可以按模块，功能，自由组成独立的配置文件。
+* 覆盖，配置项按一定的优先级（加载顺序）可以覆盖
+* 禁用，可以通过block-list，禁止某配置文件加载
+* profile，同spring规则。
 
 ### 1.2.1.配置分割
 
@@ -105,27 +110,33 @@
  
 ## 1.3.自动多国语(wings-i18n)
 
-spring自身对多国语(I18N)支持的很好，稍加组织就可利用，就可以更好的工程化。
-自动扫描`classpath*:/wings-i18n/**/*.properties`，加载分隔成多份的配置。
+wings启动时，可以修改系统默认locale和zoneid，通过以下配置，空置表示维持系统默认。
+
+ * wings.i18n.locale=zh_CN
+ * wings.i18n.zoneid=Asia/Shanghai
+ * wings.i18n.bundle=classpath*:/wings-i18n/**/*.properties
+
+同时，spring自身对多国语(I18N)支持的很好，稍加组织就可利用，就可以更好的工程化。
+自动扫描` wings.i18n.bundle`配置项（逗号分隔多个路径），加载分隔成多份的配置。
 
 spring对MessageSource的加载与configuration的机制不同，不需要unicode转义。
 
 `LocaleContextResolver` 会俺以下优先级，获得多国语设置。
 
  1. request被设置好的`WINGS.I18N_CONTEXT`
- 2. query string `locale`,`zoneid`
+ 2. query string `locale`, `zoneid`
  3. cookie `WINGS_LOCALE`, `WINGS_ZONEID`
  4. http header `Accept-Language`,`Zone-Id`
  5. 系统默认值
  
-此处为行为约定，基于servlet或webflux的具体实现，在其他工程。
+此处为行为约定，基于servlet或webflux的具体实现。`WingsLocaleResolver`是一个实现。
 
 spring默认以如下配置为入口，逗号分隔，保留不带国家地区的bundle格式名。
 `spring.messages.basename=messages,config.i18n.messages`
 这样可以在classpath下存在以下格式的文件，命名避免使用`.`(会被换做`/`扫描)
 
  * message.properties  必须存在，以bundle名的默认文件
- * message_en.properties
+ * message_en.properties 推荐这种，不带国家，为所以en提供默认值
  * message_en_US.properties
  * message_en_US_UNIX.properties
  

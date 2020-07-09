@@ -6,6 +6,10 @@ import org.jooq.meta.ColumnDefinition
 import org.jooq.meta.Definition
 import org.jooq.meta.TableDefinition
 import pro.fessional.mirana.data.Nulls
+import pro.fessional.wings.faceless.database.helper.JournalHelp.COL_COMMIT_ID
+import pro.fessional.wings.faceless.database.helper.JournalHelp.COL_CREATE_DT
+import pro.fessional.wings.faceless.database.helper.JournalHelp.COL_DELETE_DT
+import pro.fessional.wings.faceless.database.helper.JournalHelp.COL_MODIFY_DT
 
 /**
  * @author trydofor
@@ -20,7 +24,7 @@ class WingsJavaStrategy : DefaultGeneratorStrategy() {
         if (mode == GeneratorStrategy.Mode.INTERFACE) {
             val count = definition.columns.count {
                 val name = it.name.substringAfterLast(".").toLowerCase()
-                name == "create_dt" || name == "modify_dt" || name == "delete_dt" || name == "commit_id"
+                name == COL_CREATE_DT || name == COL_MODIFY_DT || name == COL_DELETE_DT || name == COL_COMMIT_ID
             }
             if (count >= 1) {
                 impls.add("pro.fessional.wings.faceless.service.journal.JournalAware")

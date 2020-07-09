@@ -52,7 +52,7 @@ class WingsJooqDslAndDaoSample {
     @Test
     fun test2Dao() {
 
-        val a = dao.aliasForReader
+        val a = dao.alias
         val c = a.Id.eq(1L).and(a.CommitId.eq(2L))
 
         // select count(*) from `tst_中文也分表` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?)
@@ -62,7 +62,7 @@ class WingsJooqDslAndDaoSample {
         val fetch = dao.fetch(0, 10, c)
         println("============count $i, fetch'size=${fetch.size}")
 
-        val t = dao.tableForWriter
+        val t = dao.table
         val setter = hashMapOf<Any, Any>()
         setter.put(t.LoginInfo, "info")
         setter.put(t.CommitId, t.Id.add(1L))
@@ -134,7 +134,7 @@ class WingsJooqDslAndDaoSample {
     fun test5DeleteDt() {
         val c1 = dao.count()
         println(c1)
-        val c2 = dao.count(dao.onlyDiedData())
+        val c2 = dao.count(dao.onlyDied())
         println(c2)
     }
 }

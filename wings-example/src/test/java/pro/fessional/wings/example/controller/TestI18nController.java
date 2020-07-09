@@ -2,7 +2,6 @@ package pro.fessional.wings.example.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,28 +32,24 @@ public class TestI18nController {
     public String index(HttpServletRequest request, Model model) {
         ZonedDateTime now = ZonedDateTime.now();
         ZoneId systemZoneId = ZoneId.systemDefault();
+        Locale systemLocale = Locale.getDefault();
+
         WingsTerminalContext.Context sct = SecurityContextUtil.getTerminalContext();
         WingsI18nContext ctx = sct.getI18nContext();
-        @NotNull Locale locale = ctx.getLocaleOrDefault();
-        @NotNull ZoneId zoneId = ctx.getZoneIdOrDefault();
-        String userDatetime = DateFormatter.full19(now, zoneId);
+        Locale userLocale = ctx.getLocaleOrDefault();
+        ZoneId userZoneId = ctx.getZoneIdOrDefault();
+        String userDatetime = DateFormatter.full19(now, userZoneId);
         //
-        model.addAttribute("userLocale", locale);
-        model.addAttribute("userZoneId", zoneId);
+        model.addAttribute("userLocale", userLocale);
+        model.addAttribute("userZoneId", userZoneId);
         model.addAttribute("userDatetime", userDatetime);
         //
-        log.debug("user.hello=" + messageSource.getMessage("user.hello", new Object[]{}, locale));
-        log.debug("userLocale=" + locale);
-        log.debug("userZoneId=" + zoneId);
-        log.debug("userDatetime=" + userDatetime);
+        model.addAttribute("messageUserHello", messageSource.getMessage("user.hello", new Object[]{}, userLocale));
 
-
+        model.addAttribute("systemLocale", systemLocale);
         model.addAttribute("systemZoneId", systemZoneId);
         String systemDatetime = DateFormatter.full19(now);
         model.addAttribute("systemDatetime", systemDatetime);
-
-        log.debug("systemZoneId=" + systemZoneId);
-        log.debug("systemDatetime=" + systemDatetime);
 
         return "index";
     }

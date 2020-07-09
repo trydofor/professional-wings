@@ -144,4 +144,12 @@ class WingsJooqDaoImplTest {
         val rs = dao.batchMerge(arrayOf(tbl.Id), rds, 2, tbl.LoginInfo, tbl.OtherInfo)
         Assert.assertArrayEquals(intArrayOf(1, 1, 1), rs)
     }
+
+    @Test
+    fun `test8🦁逻辑删除🦁查日志`(){
+        dao.fetchById(1L);
+        dao.fetchOneById(1L);
+        dao.count();
+        dao.countLive();
+    }
 }

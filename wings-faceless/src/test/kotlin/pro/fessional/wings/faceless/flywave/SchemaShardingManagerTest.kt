@@ -79,7 +79,7 @@ class SchemaShardingManagerTest {
         Assert.assertEquals(20, countRecords("writer", "tst_中文也分表"))
         schemaShardingManager.shardingData("tst_中文也分表", true)
         // 主表移除
-        Assert.assertEquals(0, countRecords("writer", "tst_中文也分表"))
+        Assert.assertEquals("如果失败，单独运行，消除分表干扰", 0, countRecords("writer", "tst_中文也分表"))
         // 分表平分
         Assert.assertEquals(4, countRecords("writer", "tst_中文也分表_0"))
         Assert.assertEquals(4, countRecords("writer", "tst_中文也分表_1"))

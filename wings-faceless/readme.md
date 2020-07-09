@@ -232,12 +232,22 @@ MyBatis虽是大部分项目的首选，固有其优秀之处，但开发人员�
 
 自动生成的`*Dao`，有大量可直接使用的数据库操作方法，免去很多手写代码量。
 
- * `getAliasForReader` 获得select用的别名表，`Table as t1`
- * `getTableForWriter` 获得modify用的不使用别名的表 `Table`
+ * `getAlias` 获得select用的别名表，`Table as t1`
+ * `getTable` 获得modify用的不使用别名的表 `Table`
  * 使用preparedStatement的batch批量插入和更新大量数据
  * 使用mysql特效，`insert ignore`和`replace into`处理重复数据
  * 使用`on duplicate key update`或`select+insert+update`部分更新唯一记录。
- 
+
+值得注意的是，在Dao中使用alias表和本表时，必须保持同源，否则报语法错误。
+
+``` kotlin
+val da = dao.alias
+// val rd = dao.fetch(da.Id.eq(id)) 别名和本表不同源，语法错误
+// select * from win_user where `y8`.`id` = ?
+
+val rd = dao.fetch(da, da.Id.eq(id))
+```
+
 在复杂数据操作必须手写代码时，遵循以下约定，
 
  * 任何对数据库的操作，都应该在`database`包内进行。
@@ -274,22 +284,24 @@ JdbcTemplate用于功能性或复杂的数据库操作，以自动注入Bean。
 jooq生成代码，默认使用`table.column`限定列名，而ShardingJdbc做当前版本不支持。
 最优解决办法是使ShardingJdbc支持，当前最简单的办法是修改Jooq生成策略，参考以下Issue。
 
- * [JOOQ#9055 should NO table qualify if NO table alias](https://github.com/jOOQ/jOOQ/pull/9406)
+ * [JOOQ#8893 Add Settings.renderTable](https://github.com/jOOQ/jOOQ/issues/8893)
+ * [JOOQ#9055 should NO table qualify if NO table alias](https://github.com/jOOQ/jOOQ/pull/9055)
  * [ShardingSphere#2859 `table.column` can not sharding](https://github.com/apache/incubator-shardingsphere/issues/2859)
  * [ShardingSphere#5330 replace into](https://github.com/apache/shardingsphere/issues/5330)
  * [ShardingSphere#5210 on duplicate key update](https://github.com/apache/shardingsphere/issues/5210)
 
-在jooq`2.13.0`版本之前，使用`spring.wings.jooq.auto-qualify.enabled=true`，
+
+在jooq`3.14.0`版本之前，使用`spring.wings.jooq.auto-qualify.enabled=true`，
 完成限定名的自动处理，其规则是，`不存在alias时，不增加限定名`。
 
 使用Jooq的主要原因之一是`限制的艺术`，避免写出比较复杂的SQL，所以约定如下，
 
- * 鼓励单表操作，放在`single`包内，使用`本名`(如，TstDemoTable.TST_DEMO)
- * 操作多表时，**一定** 使用`别名`(如，TstDemoTable.AS_F1)
- * INSERT 使用`本名`，不可使用`别名`，在a9m时，使用`本名`
- * DELETE 使用`本名`，不可使用`别名`，在a9m时，使用`本名`
- * UPDATE 使用`别名`优先于`本名`，在a9m时，使用`本名`
- * SELECT 使用`别名`优先于`本名`，在a9m时，使用`别名`优于`本名`
+ * 鼓励单表操作，放在`single`包内，使用`本名`(如，WinUserLoginTable)
+ * 操作多表时，`别名`(如，WinUserLoginTable.asA2)优于`本名`
+ * INSERT 使用`本名`，不可使用`别名`
+ * DELETE 使用`本名`，不可使用`别名`
+ * UPDATE 使用`别名`优先于`本名`
+ * SELECT 单表时，用`本名`；多表时，`别名`优先于`本名`
  * **不要** 使用中文表名，例子代码只是极端测试。
 
 JOOQ参考资料
@@ -420,12 +432,23 @@ ALTER TABLE `win_user`
 
 ### 008.日时零值和时区问题
 
-执行环境和数据库要在同一时区，否则jooq和jdbc在以下过程会自动转换时区，引发问题
+执行环境和数据库要在同一时区，否则jooq和jdbc在以下过程会自动转换时区，引发问题。
+
+如果服务器和执行环境时区不一致，可以通过以下方式协调。
+
+* 通过wings的参数设置时区 `wings.i18n.zoneid=Asia/Shanghai`
+* java的启动参数， `-Duser.timezone=Asia/Shanghai`
+* mysql的jdbc的url参数， `serverTimezone=Asia/Shanghai`
+* java的代码参数， `TimeZone.setDefault(TimeZone.getTimeZone("Asia/Shanghai"));`
+
+引发问题的原因，目前断定为jdbc和timestamp历史问题
 
 * jooq，使用timestamp作为localDatetime的值，设置preparedStatement。
 * jdbc，setTimestamp(int parameterIndex, Timestamp x), 
   the JDBC driver uses the time zone of the virtual machine 
   to calculate the date and time of the timestamp in that time zone.
+
+通过以下SQL可以在mysql端调查数据库执行过程
 
 ```sql
 -- 查看 系统，程序，会话时区
@@ -445,3 +468,42 @@ SELECT * from mysql.general_log ORDER BY event_time DESC;
 SET GLOBAL log_output = 'TABLE'; SET GLOBAL general_log = 'OFF';
 truncate table mysql.general_log;
 ```
+
+### 009.如何select所以本表，分表，影子表
+
+```sql
+-- 仅影子表
+SELECT 
+    reverse(substring(reverse(table_name),length(substring_index(table_name,'$',-1))+1)) as tbl,
+    group_concat(SUBSTRING_INDEX(table_name,'$',-1)) as log
+FROM INFORMATION_SCHEMA.TABLES
+WHERE table_schema = DATABASE()
+    AND table_name like '%$%'
+    group by tbl;
+
+-- 仅分表
+SELECT 
+    reverse(substring(reverse(table_name),length(substring_index(table_name,'_',-1))+1)) as tbl,
+    group_concat(SUBSTRING_INDEX(table_name,'_',-1)) as num
+FROM INFORMATION_SCHEMA.TABLES
+WHERE table_schema = DATABASE()
+    AND table_name REGEXP '_[0-9]+$'
+    group by tbl;
+
+-- 仅主表
+SELECT table_name
+FROM INFORMATION_SCHEMA.TABLES
+WHERE table_schema = DATABASE()
+    AND table_name NOT REGEXP '_[0-9]+$'
+    AND table_name NOT LIKE '%$%';
+```
+
+### 010.使用jooq执行plain sql
+
+在执行plain sql时，可以使用jdbcTemplate或jooq，jooq的好处是，会进行parse（性能），进行兼容性调整（如果需要），
+所以，在运行时，不考虑兼容性，推荐用 jdbcTemplate，在需要语法分析或合并等场景，使用jooq
+
+ * https://www.jooq.org/doc/3.12/manual/sql-building/plain-sql/
+ * https://www.jooq.org/doc/3.12/manual/sql-building/plain-sql-templating/
+ * https://www.jooq.org/doc/3.12/manual/sql-building/sql-parser/sql-parser-grammar/
+ * https://blog.jooq.org/2020/03/05/using-java-13-text-blocks-for-plain-sql-with-jooq/

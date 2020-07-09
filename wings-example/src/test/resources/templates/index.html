@@ -16,10 +16,12 @@
     <li><a href="?lang=en&zone=New_York">lang=en&zone=New_York</a></li>
 </ul>
 <ul>
-    <li>user.hello=<span th:text="#{user.hello}"></span></li>
+    <li>spring-user.hello=<span th:text="#{user.hello}"></span></li>
+    <li>manual-user.hello=<span th:text="${messageUserHello}"></span></li>
     <li>userLocale=<span th:text="${userLocale}"></span></li>
     <li>userZoneId=<span th:text="${userZoneId}"></span></li>
     <li>userDatetime=<span th:text="${userDatetime}"></span></li>
+    <li>systemLocale=<span th:text="${systemLocale}"></span></li>
     <li>systemZoneId=<span th:text="${systemZoneId}"></span></li>
     <li>systemDatetime=<span th:text="${systemDatetime}"></span></li>
 </ul>
@@ -77,7 +79,7 @@
         $.ajax({
             type: "POST",
             url: "/user/create.json?access_token=" + accessToken,
-            contentType : 'application/json',
+            contentType: 'application/json',
             dataType: 'json',
             async: false,
             data: JSON.stringify(data),

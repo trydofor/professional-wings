@@ -4,13 +4,14 @@ import pro.fessional.wings.faceless.jooqgen.WingsCodeGenerator;
 
 /**
  * @author trydofor
- * @since 2019-05-31
+ * @since 2019-10-12
  */
-public class JooqJavaCodeGenSample {
+public class JavaTestJooqCodeGen {
 
     // WingsFlywaveInitDatabaseSample
-    // 注意在目标工程中，应该注释掉.springRepository(false)，使Dao自动加载
+    // 需要 版本 20190601_01，手动执行亦可
     public static void main(String[] args) {
+
         String database = "wings";
         WingsCodeGenerator.builder()
                           .jdbcDriver("com.mysql.cj.jdbc.Driver")
@@ -18,12 +19,10 @@ public class JooqJavaCodeGenSample {
                           .jdbcUser("trydofor")
                           .jdbcPassword("moilioncircle")
                           .databaseSchema(database)
-                          .databaseIncludes("sys_commit_journal|sys_constant_enum|sys_standard_i18n")
-                          .databaseExcludes("sys_light_sequence|sys_schema_journal|sys_schema_version") // jdbc实现
-                          .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
+                          .databaseIncludes("tst_中文也分表")
+                          .databaseVersionProvider("")
                           .targetPackage("pro.fessional.wings.faceless.database.autogen")
-                          .targetDirectory("wings-faceless/src/main/java/")
-                          .springRepository(false)
+                          .targetDirectory("wings-faceless/src/test/java/")
                           .buildAndGenerate();
     }
 }

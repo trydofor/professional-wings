@@ -48,7 +48,7 @@ class DefaultRevisionManager(
     private val askType = EnumMap<AskType, Boolean>(AskType::class.java)
     private val dropReg = HashMap<String, Regex>()
 
-    private var msgFunc: BiConsumer<String, String> = BiConsumer { t, u -> }
+    private var msgFunc: BiConsumer<String, String> = BiConsumer { _, _ -> }
     private var askFunc: Function<String, Boolean> = object : Function<String, Boolean> {
         val scanner = Scanner(System.`in`)
         override fun apply(msg: String): Boolean {
@@ -751,6 +751,10 @@ class DefaultRevisionManager(
             }
         }
         val tkn = "${level.name}|$where"
+        val ot = lastMessage.get()
+        if (ot == null) {
+            msgFunc.accept("database-info", flywaveDataSources.toString())
+        }
         lastMessage.set(tkn to info)
         msgFunc.accept(tkn, info)
     }

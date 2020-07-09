@@ -55,55 +55,79 @@ public class Tst中文也分表Dao extends WingsJooqDaoImpl<Tst中文也分表Ta
      * Fetch records that have <code>id IN (values)</code>
      */
     public List<Tst中文也分表> fetchById(Long... values) {
-        return fetch(Tst中文也分表Table.asY8.Id, values);
+        return fetch(Tst中文也分表Table.Tst中文也分表.Id, values);
+    }
+    public List<Tst中文也分表> fetchByIdLive(Long... values) {
+        return fetchLive(Tst中文也分表Table.Tst中文也分表.Id, values);
     }
 
     /**
      * Fetch a unique record that has <code>id = value</code>
      */
     public Tst中文也分表 fetchOneById(Long value) {
-        return fetchOne(Tst中文也分表Table.asY8.Id, value);
+        return fetchOne(Tst中文也分表Table.Tst中文也分表.Id, value);
+    }
+    public Tst中文也分表 fetchOneByIdLive(Long value) {
+        return fetchOneLive(Tst中文也分表Table.Tst中文也分表.Id, value);
     }
 
     /**
      * Fetch records that have <code>create_dt IN (values)</code>
      */
     public List<Tst中文也分表> fetchByCreateDt(LocalDateTime... values) {
-        return fetch(Tst中文也分表Table.asY8.CreateDt, values);
+        return fetch(Tst中文也分表Table.Tst中文也分表.CreateDt, values);
+    }
+    public List<Tst中文也分表> fetchByCreateDtLive(LocalDateTime... values) {
+        return fetchLive(Tst中文也分表Table.Tst中文也分表.CreateDt, values);
     }
 
     /**
      * Fetch records that have <code>modify_dt IN (values)</code>
      */
     public List<Tst中文也分表> fetchByModifyDt(LocalDateTime... values) {
-        return fetch(Tst中文也分表Table.asY8.ModifyDt, values);
+        return fetch(Tst中文也分表Table.Tst中文也分表.ModifyDt, values);
+    }
+    public List<Tst中文也分表> fetchByModifyDtLive(LocalDateTime... values) {
+        return fetchLive(Tst中文也分表Table.Tst中文也分表.ModifyDt, values);
     }
 
     /**
      * Fetch records that have <code>delete_dt IN (values)</code>
      */
     public List<Tst中文也分表> fetchByDeleteDt(LocalDateTime... values) {
-        return fetch(Tst中文也分表Table.asY8.DeleteDt, values);
+        return fetch(Tst中文也分表Table.Tst中文也分表.DeleteDt, values);
+    }
+    public List<Tst中文也分表> fetchByDeleteDtLive(LocalDateTime... values) {
+        return fetchLive(Tst中文也分表Table.Tst中文也分表.DeleteDt, values);
     }
 
     /**
      * Fetch records that have <code>commit_id IN (values)</code>
      */
     public List<Tst中文也分表> fetchByCommitId(Long... values) {
-        return fetch(Tst中文也分表Table.asY8.CommitId, values);
+        return fetch(Tst中文也分表Table.Tst中文也分表.CommitId, values);
+    }
+    public List<Tst中文也分表> fetchByCommitIdLive(Long... values) {
+        return fetchLive(Tst中文也分表Table.Tst中文也分表.CommitId, values);
     }
 
     /**
      * Fetch records that have <code>login_info IN (values)</code>
      */
     public List<Tst中文也分表> fetchByLoginInfo(String... values) {
-        return fetch(Tst中文也分表Table.asY8.LoginInfo, values);
+        return fetch(Tst中文也分表Table.Tst中文也分表.LoginInfo, values);
+    }
+    public List<Tst中文也分表> fetchByLoginInfoLive(String... values) {
+        return fetchLive(Tst中文也分表Table.Tst中文也分表.LoginInfo, values);
     }
 
     /**
      * Fetch records that have <code>other_info IN (values)</code>
      */
     public List<Tst中文也分表> fetchByOtherInfo(String... values) {
-        return fetch(Tst中文也分表Table.asY8.OtherInfo, values);
+        return fetch(Tst中文也分表Table.Tst中文也分表.OtherInfo, values);
+    }
+    public List<Tst中文也分表> fetchByOtherInfoLive(String... values) {
+        return fetchLive(Tst中文也分表Table.Tst中文也分表.OtherInfo, values);
     }
 }

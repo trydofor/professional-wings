@@ -18,7 +18,6 @@ import org.jooq.Table;
 import org.jooq.TableRecord;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
-import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 import pro.fessional.mirana.data.CodeEnum;
 import pro.fessional.mirana.data.Nulls;
@@ -36,13 +35,19 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 
 import static org.jooq.impl.DSL.row;
-import static org.jooq.impl.DSL.using;
+import static org.jooq.impl.DSL.trueCondition;
 
 /**
+ * <pre>
  * 原则上，不希望Record携带的数据库信息扩散，因此建议Dao之外使用pojo
+ *
  * 对于read方法，一律返回Pojo；对于write，同时支持 Record和Pojo。
  * 为了编码的便捷和减少数据拷贝，可以使用Record进行操作。
  * 批量处理中，一律使用了new Record，为了提升性能。
+ *
+ * 注意，alias 用在多表查询，filed和table需要同源，否则出现语法错误。
+ * 即 T.Id 用在了非T的jooq表查询会出现语法错误。
+ * </pre>
  *
  * @param <T> Table
  * @param <R> Record
@@ -57,7 +62,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
     private final T alias;
     private final Condition onlyDied;
     private final Condition onlyLive;
-    private final Field<?>[] pks;
+    private final Field<?>[] tablePks;
 
     protected WingsJooqDaoImpl(T table, T alias, Class<P> type) {
         this(table, alias, type, null);
@@ -65,78 +70,28 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
 
     protected WingsJooqDaoImpl(T table, T alias, Class<P> type, Configuration conf) {
         super(table, type, conf);
-        this.table = table;
-        this.alias = alias == null ? table : alias;
         //
         Condition d = null;
         Condition l = null;
-        for (java.lang.reflect.Field f : this.alias.getClass().getDeclaredFields()) {
+        for (java.lang.reflect.Field f : table.getClass().getDeclaredFields()) {
             if (Condition.class.isAssignableFrom(f.getType())) {
                 try {
                     if (f.getName().equals("onlyDiedData")) {
-                        d = (Condition) f.get(this.alias);
+                        d = (Condition) f.get(table);
                     } else if (f.getName().equals("onlyLiveData")) {
-                        l = (Condition) f.get(this.alias);
+                        l = (Condition) f.get(table);
                     }
                 } catch (IllegalAccessException e) {
                     // ignore
                 }
             }
         }
-        onlyDied = d == null ? DSL.falseCondition() : d;
-        onlyLive = l == null ? DSL.trueCondition() : l;
-        pks = WingsJooqUtil.primaryKeys(table);
-    }
 
-    /**
-     * 数据标记删除了
-     * 默认 DeleteDt.gt(EmptyValue.DATE_TIME);
-     *
-     * @return Condition
-     */
-    public Condition onlyDiedData() {
-        return onlyDied;
-    }
-
-    /**
-     * 数据是有效数据
-     * 默认 DeleteDt.eq(EmptyValue.DATE_TIME);
-     *
-     * @return Condition
-     */
-    public Condition onlyLiveData() {
-        return onlyLive;
-    }
-
-    /**
-     * 组合其他条件 and onlyDiedData
-     *
-     * @param cond 其他条件
-     * @return Condition
-     */
-    public Condition onlyDiedData(@Nullable Condition cond) {
-        if (onlyDied == null) return cond;
-        return cond == null ? onlyLive : cond.and(onlyDied);
-    }
-
-    /**
-     * 组合其他条件 and onlyLiveData
-     *
-     * @param cond 其他条件
-     * @return Condition
-     */
-    public Condition onlyLiveData(@Nullable Condition cond) {
-        if (onlyLive == null) return cond;
-        return cond == null ? onlyLive : cond.and(onlyLive);
-    }
-
-    /**
-     * 生成一个新的 DSLContext
-     *
-     * @return DSLContext
-     */
-    public DSLContext dslContext() {
-        return using(configuration());
+        this.table = table;
+        this.alias = alias == null ? table : alias;
+        this.onlyDied = d;
+        this.onlyLive = l;
+        this.tablePks = WingsJooqUtil.primaryKeys(table);
     }
 
     /**
@@ -162,6 +117,27 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
         return newTable(prefix + table.getName() + postfix);
     }
 
+    @SuppressWarnings("unchecked")
+    @NotNull
+    public T as(String alias) {
+        return (T) table.as(alias);
+    }
+
+    @Override
+    public T getTable() {
+        return table;
+    }
+
+    /**
+     * 获得系统默认的table别名
+     *
+     * @return 表
+     */
+    @NotNull
+    public T getAlias() {
+        return alias;
+    }
+
     // ============
 
     /**
@@ -177,7 +153,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
     public Loader<R> batchLoad(Collection<R> records, boolean ignoreOrReplace) throws IOException {
         checkBatchMysql();
 
-        DSLContext dsl = dslContext();
+        DSLContext dsl = ctx();
         LoaderOptionsStep<R> ldi = dsl.loadInto(table);
         if (ignoreOrReplace) {
             ldi.onDuplicateKeyIgnore();
@@ -206,7 +182,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
      */
     public int insertInto(P pojo, boolean ignoreOrReplace) {
 
-        DSLContext dsl = dslContext();
+        DSLContext dsl = ctx();
         R record = dsl.newRecord(table, pojo);
         if (ignoreOrReplace) {
             // insert ignore
@@ -233,7 +209,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
      */
     public int mergeInto(P pojo, Field<?>... updateFields) {
         HashMap<Field<?>, Object> map = new HashMap<>();
-        DSLContext dsl = dslContext();
+        DSLContext dsl = ctx();
         R record = dsl.newRecord(table, pojo);
 
         for (Field<?> field : updateFields) {
@@ -335,7 +311,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
     public int[] batchMerge(Field<?>[] keys, BiPredicate<Object, Object> equals, Collection<R> records, int size, Field<?>... updateFields) {
         if (records == null || records.isEmpty()) return Nulls.Ints;
 
-        DSLContext dsl = dslContext();
+        DSLContext dsl = ctx();
         int[] result = new int[records.size()];
         int off = 0;
         List<R> upd = new ArrayList<>(size);
@@ -551,7 +527,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
     public int[] batchExecute(Collection<R> records, int size, BiFunction<DSLContext, Collection<R>, int[]> exec) {
         if (records == null || records.isEmpty()) return Nulls.Ints;
 
-        DSLContext dsl = dslContext();
+        DSLContext dsl = ctx();
         if (size <= 0 || records.size() <= size) {
             return exec.apply(dsl, records);
         }
@@ -588,8 +564,8 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
      * 只选择未标记删除的
      */
     public boolean existsByIdLive(K id) {
-        if (pks.length > 0) {
-            return count(alias, onlyLiveData(equal(pks, id))) > 0;
+        if (tablePks.length > 0) {
+            return count(table, onlyLive(condEqual(id, tablePks))) > 0;
         } else {
             return false;
         }
@@ -599,22 +575,32 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
      * 只选择未标记删除的
      */
     public long countLive() {
-        return count(alias, onlyLive);
+        return count(table, onlyLive);
     }
 
     /**
      * 只选择未标记删除的
      */
     public List<P> findAllLive() {
-        return fetch(alias, onlyLive);
+        return fetch(table, onlyLive);
     }
 
     /**
      * 只选择未标记删除的
      */
     public P findByIdLive(K id) {
-        if (pks.length == 0) return null;
-        return fetchOne(alias, onlyLiveData(equal(pks, id)));
+        if (tablePks.length == 0) return null;
+        return fetchOne(table, onlyLive(condEqual(id, tablePks)));
+    }
+
+
+    public <Z> List<P> fetchRangeLive(Field<Z> field, Z lowerInclusive, Z upperInclusive) {
+        Condition cond = condRange(field, lowerInclusive, upperInclusive);
+
+        return ctx()
+                .selectFrom(table)
+                .where(onlyLive(cond))
+                .fetch(mapper());
     }
 
     /**
@@ -622,7 +608,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
      */
     @SuppressWarnings("unchecked")
     public <Z> List<P> fetchLive(Field<Z> field, Z... values) {
-        return fetch(alias, onlyLiveData(field.in(values)));
+        return fetch(table, onlyLive(field.in(values)));
     }
 
 
@@ -630,35 +616,18 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
      * 只选择未标记删除的
      */
     public <Z> P fetchOneLive(Field<Z> field, Z value) {
-        return fetchOne(alias, onlyLiveData(field.eq(value)));
+        return fetchOne(table, onlyLive(field.eq(value)));
     }
 
     // ======= select =======
 
-    @SuppressWarnings("unchecked")
-    @NotNull
-    public T as(String alias) {
-        return (T) table.as(alias);
-    }
-
-    /**
-     * 获得为了读使用的table
-     *
-     * @return 表
-     */
-    @NotNull
-    public T getAliasForReader() {
-        return alias;
-    }
-
-
     public long count(Condition condition) {
-        return count(alias, condition);
+        return count(table, condition);
     }
 
     @NotNull
     public List<P> fetch(Condition condition, OrderField<?>... orderBy) {
-        return fetch(alias, condition, orderBy);
+        return fetch(table, condition, orderBy);
     }
 
     /**
@@ -677,7 +646,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
      */
     @NotNull
     public List<P> fetch(int offset, int limit, OrderField<?>... orderBy) {
-        return fetch(alias, offset, limit, null, orderBy);
+        return fetch(table, offset, limit, null, orderBy);
     }
 
     /**
@@ -697,25 +666,15 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
      */
     @NotNull
     public List<P> fetch(int offset, int limit, Condition condition, OrderField<?>... orderBy) {
-        return fetch(alias, offset, limit, condition, orderBy);
+        return fetch(table, offset, limit, condition, orderBy);
     }
 
     @Nullable
     public P fetchOne(Condition condition) {
-        return fetchOne(alias, condition);
+        return fetchOne(table, condition);
     }
 
     // ======= modify =======
-
-    /**
-     * 获得为了写使用的table
-     *
-     * @return 表
-     */
-    @NotNull
-    public T getTableForWriter() {
-        return table;
-    }
 
     /**
      * 必须插入一个，否则CodeException(orError)
@@ -724,7 +683,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
      * @param orError 异常code
      */
     public int insertOne(P object, CodeEnum orError) {
-        int rc = using(configuration()).newRecord(table, object).insert();
+        int rc = ctx().newRecord(table, object).insert();
         if (rc != 1) throw new CodeException(orError);
         return rc;
     }
@@ -736,7 +695,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
      * @param orError 异常code
      */
     public int[] insertEqN(Collection<R> records, CodeEnum orError) {
-        DSLContext dsl = using(configuration());
+        DSLContext dsl = ctx();
         int[] rc = dsl.batchInsert(records).execute();
         for (int v : rc) {
             if (v != 1) throw new CodeException(orError);
@@ -751,7 +710,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
      * @return 影响的数据条数
      */
     public int delete(Condition condition) {
-        return using(configuration())
+        return ctx()
                 .delete(table)
                 .where(condition)
                 .execute();
@@ -807,7 +766,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
      * @return 影响的数据条数
      */
     public int update(Map<?, ?> setter, Condition condition) {
-        return using(configuration())
+        return ctx()
                 .update(table)
                 .set(setter)
                 .where(condition)
@@ -823,7 +782,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
      * @return 更新数量
      */
     public int update(P pojo, Condition condition) {
-        DSLContext dsl = using(configuration());
+        DSLContext dsl = ctx();
         R record = dsl.newRecord(table, pojo);
 
         Map<Field<?>, Object> setter = new LinkedHashMap<>();
@@ -848,7 +807,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
      * @return 更新数量
      */
     public int update(P pojo, boolean skipNull) {
-        DSLContext dsl = using(configuration());
+        DSLContext dsl = ctx();
         R record = dsl.newRecord(table, pojo);
         dealPkAndNull(record, skipNull);
         return record.update();
@@ -864,7 +823,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
      */
     public int[] update(Collection<P> objects, boolean skipNull) {
         List<R> records = new ArrayList<>(objects.size());
-        DSLContext dsl = using(configuration());
+        DSLContext dsl = ctx();
         for (P object : objects) {
             R record = dsl.newRecord(table, object);
             dealPkAndNull(record, skipNull);
@@ -997,59 +956,151 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
         return rc;
     }
 
-    // ==========
+    // ===== Condition =====
 
-    @SuppressWarnings("unchecked")
-    private Condition equal(Field<?>[] pk, K id) {
-        if (pk.length == 1) {
-            return ((Field<Object>) pk[0]).equal(pk[0].getDataType().convert(id));
+    /**
+     * 数据标记删除了
+     * 默认 DeleteDt.gt(EmptyValue.DATE_TIME);
+     *
+     * @return Condition 或 null
+     */
+    @Nullable
+    public Condition onlyDied() {
+        return onlyDied;
+    }
+
+    /**
+     * 数据是有效数据
+     * 默认 DeleteDt.eq(EmptyValue.DATE_TIME);
+     *
+     * @return Condition 或 null
+     */
+    @Nullable
+    public Condition onlyLive() {
+        return onlyLive;
+    }
+
+    /**
+     * 组合其他条件 and onlyDiedData
+     *
+     * @param cond 其他条件
+     * @return Condition
+     */
+    @NotNull
+    public Condition onlyDied(@NotNull Condition cond) {
+        return onlyDied == null ? cond : onlyDied.and(cond);
+    }
+
+    /**
+     * 组合其他条件 and onlyLiveData
+     *
+     * @param cond 其他条件
+     * @return Condition
+     */
+    @NotNull
+    public Condition onlyLive(@NotNull Condition cond) {
+        return onlyLive == null ? cond : onlyLive.and(cond);
+    }
+
+    /**
+     * 构造一个between的条件
+     *
+     * @param field          字段
+     * @param lowerInclusive 小值，包含
+     * @param upperInclusive 大值，包含
+     * @param <Z>            类型
+     * @return 条件
+     */
+    public <Z> Condition condRange(Field<Z> field, Z lowerInclusive, Z upperInclusive) {
+        if (lowerInclusive == null) {
+            if (upperInclusive == null) {
+                return trueCondition();
+            } else {
+                return field.le(upperInclusive);
+            }
+        } else {
+            if (upperInclusive == null) {
+                return field.ge(lowerInclusive);
+            } else {
+                return field.between(lowerInclusive, upperInclusive);
+            }
         }
+    }
 
+    /**
+     * Composite key T types are of type Record[N]
+     * 复合条件 RowN = RecordN
+     *
+     * @param valN 复合值
+     * @param rowN 复合Col
+     * @return 条件
+     */
+    @SuppressWarnings("unchecked")
+    public Condition condEqual(Object valN, Field<?>... rowN) {
+        if (rowN.length == 1) {
+            return ((Field<Object>) rowN[0]).equal(rowN[0].getDataType().convert(valN));
+        }
         // [#2573] Composite key T types are of type Record[N]
         else {
-            return row(pk).equal((Record) id);
+            return row(rowN).equal((Record) valN);
         }
     }
 
-    private void dealPkAndNull(R record, boolean skipNull) {
-        WingsJooqUtil.skipFields(record, pks);
+    // ===== common ======
 
-        if (skipNull) {
-            WingsJooqUtil.skipNullVals(record);
-        }
-    }
-
-    // ===========
-
-    private Long count(T alias, Condition cond) {
-        return using(configuration())
+    /**
+     * 按表count，要求table和cond中的字段必须同源
+     *
+     * @param table 表
+     * @param cond  条件
+     * @return 结果
+     */
+    public long count(T table, Condition cond) {
+        return ctx()
                 .selectCount()
-                .from(alias)
+                .from(table)
                 .where(cond)
                 .fetchOne(0, Long.class);
     }
 
-    private P fetchOne(T alias, Condition cond) {
-        R record = using(configuration())
-                .selectFrom(alias)
+    /**
+     * 按表取一个，要求table和cond中的字段必须同源
+     *
+     * @param table 表
+     * @param cond  条件
+     * @return 结果
+     */
+    public P fetchOne(T table, Condition cond) {
+        R record = ctx()
+                .selectFrom(table)
                 .where(cond)
                 .fetchOne();
 
         return record == null ? null : mapper().map(record);
     }
 
-    private List<P> fetch(T t, int offset, int limit, Condition cond, OrderField<?>[] orderBy) {
-        DSLContext dsl = using(configuration());
+    /**
+     * 按表分页排序查询，要求table和cond中的字段必须同源
+     *
+     * @param table   表
+     * @param offset  offset
+     * @param limit   limit
+     * @param cond    条件
+     * @param orderBy order by
+     * @return 结果
+     */
+    public List<P> fetch(T table, int offset, int limit, Condition cond, OrderField<?>[] orderBy) {
+        DSLContext dsl = ctx();
         if (orderBy == null || orderBy.length == 0) {
             return dsl
-                    .selectFrom(t)
+                    .selectFrom(table)
                     .where(cond)
                     .limit(offset, limit)
                     .fetch()
                     .map(mapper());
         } else {
             return dsl
-                    .selectFrom(t)
+                    .selectFrom(table)
                     .where(cond)
                     .orderBy(orderBy)
                     .limit(offset, limit)
@@ -1058,30 +1109,54 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R>, R extends Updatab
         }
     }
 
-    private List<P> fetch(T t, Condition cond) {
-        DSLContext dsl = using(configuration());
+    /**
+     * 按表查询，要求table和cond中的字段必须同源
+     *
+     * @param table 表
+     * @param cond  条件
+     * @return 结果
+     */
+    public List<P> fetch(T table, Condition cond) {
+        DSLContext dsl = ctx();
         return dsl
-                .selectFrom(t)
+                .selectFrom(table)
                 .where(cond)
                 .fetch()
                 .map(mapper());
     }
 
-    private List<P> fetch(T t, Condition condition, OrderField<?>[] orderBy) {
-        DSLContext dsl = using(configuration());
+    /**
+     * 按表排序查询，要求table和cond中的字段必须同源
+     *
+     * @param table   表
+     * @param cond    条件
+     * @param orderBy order by
+     * @return 结果
+     */
+    public List<P> fetch(T table, Condition cond, OrderField<?>[] orderBy) {
+        DSLContext dsl = ctx();
         if (orderBy == null || orderBy.length == 0) {
             return dsl
-                    .selectFrom(t)
-                    .where(condition)
+                    .selectFrom(table)
+                    .where(cond)
                     .fetch()
                     .map(mapper());
         } else {
             return dsl
-                    .selectFrom(t)
-                    .where(condition)
+                    .selectFrom(table)
+                    .where(cond)
                     .orderBy(orderBy)
                     .fetch()
                     .map(mapper());
+        }
+    }
+
+    //
+    private void dealPkAndNull(R record, boolean skipNull) {
+        WingsJooqUtil.skipFields(record, tablePks);
+
+        if (skipNull) {
+            WingsJooqUtil.skipNullVals(record);
         }
     }
 }

@@ -33,9 +33,9 @@ public class AuthRoleCache {
     @Cacheable(key = "#roleId")
     @NotNull
     public Map<Integer, String> loadAuth(long roleId) {
-        WinAuthRoleTable t = winAuthRoleDao.getAliasForReader();
+        WinAuthRoleTable t = winAuthRoleDao.getTable();
         Record1<String> r1 = winAuthRoleDao
-                .dslContext()
+                .ctx()
                 .select(t.AuthSet)
                 .from(t)
                 .where(t.Id.eq(roleId))

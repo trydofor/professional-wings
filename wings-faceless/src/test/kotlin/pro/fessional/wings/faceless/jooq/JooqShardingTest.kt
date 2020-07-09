@@ -1,7 +1,6 @@
 package pro.fessional.wings.faceless.jooq
 
 import org.apache.shardingsphere.api.hint.HintManager
-import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import org.junit.Assert
 import org.junit.FixMethodOrder
@@ -44,9 +43,6 @@ class JooqShardingTest {
 
     @Autowired
     lateinit var lightIdService: LightIdService
-
-    @Autowired
-    lateinit var dsl: DSLContext
 
     @Autowired
     lateinit var dao: Tst中文也分表Dao
@@ -96,7 +92,7 @@ class JooqShardingTest {
     fun `test5🦁更新🦁查日志`() {
         val tp = Tst中文也分表Table.Tst中文也分表
         // update `tst_中文也分表` set `modify_dt` = ?, `login_info` = ? where `id` <= ?
-        val rp = dsl.update(tp)
+        val rp = dao.ctx().update(tp)
                 .set(tp.ModifyDt, LocalDateTime.now())
                 .set(tp.LoginInfo, "update 5")
                 .where(tp.Id.eq(id))
@@ -104,8 +100,8 @@ class JooqShardingTest {
         testcaseNotice("plain updated= $rp")
         testcaseNotice("update `tst_中文也分表_1` set `modify_dt` = ?, `login_info` = ? where `id` = ?")
 
-        val tw = dao.tableForWriter
-        val rw = dsl.update(tw)
+        val tw = dao.table
+        val rw = dao.ctx().update(tw)
                 .set(tw.ModifyDt, LocalDateTime.now())
                 .set(tw.LoginInfo, "update 5")
                 .where(tw.Id.eq(id))
@@ -113,8 +109,8 @@ class JooqShardingTest {
         testcaseNotice("write updated= $rw")
         testcaseNotice("update `tst_中文也分表_1` set `modify_dt` = ?, `login_info` = ? where `id` = ?")
 
-        val tr = dao.aliasForReader
-        val rr = dsl.update(tr)
+        val tr = dao.alias
+        val rr = dao.ctx().update(tr)
                 .set(tr.ModifyDt, LocalDateTime.now())
                 .set(tr.LoginInfo, "update 5")
                 .where(tr.Id.eq(id))
@@ -136,7 +132,7 @@ class JooqShardingTest {
         it.setMasterRouteOnly()
 
         val ta = Tst中文也分表Table.asY8
-        val ra = dsl.select(ta.Id)
+        val ra = dao.ctx().select(ta.Id)
                 .from(ta)
                 .where(ta.Id.le(id))
                 .limit(DSL.inline(1)) // RC3
@@ -146,7 +142,7 @@ class JooqShardingTest {
         testcaseNotice("select `y8`.`id` from `tst_中文也分表` as `y8` where `y8`.`id` <= ?")
 
         val tp = Tst中文也分表Table.Tst中文也分表
-        val rp = dsl.select(tp.Id)
+        val rp = dao.ctx().select(tp.Id)
                 .from(tp)
                 .where(tp.Id.le(id))
 //                .limit(1) // https://github.com/apache/incubator-shardingsphere/issues/3330
@@ -155,8 +151,8 @@ class JooqShardingTest {
         testcaseNotice("plain select", rp)
         testcaseNotice("select `id` from `tst_中文也分表` where `id` <= ?")
 
-        val da = dao.aliasForReader
-        val rd = dao.fetch(da.Id.eq(id))
+        val da = dao.alias
+        val rd = dao.fetch(da, da.Id.eq(id))
         testcaseNotice("dao select= $rd")
         testcaseNotice("select `y8`.`id`, `y8`.`create_dt`, ... from `tst_中文也分表` as `y8` where `y8`.`id` = ?")
 
@@ -171,7 +167,7 @@ class JooqShardingTest {
     @Test
     fun `test7🦁删除🦁查日志`() {
         val tp = Tst中文也分表Table.Tst中文也分表
-        val rp = dsl.delete(tp)
+        val rp = dao.ctx().delete(tp)
                 .where(tp.Id.eq(id)) // Inline strategy cannot support range sharding.
                 .and(tp.CommitId.isNotNull)
                 .getSQL()
@@ -179,7 +175,7 @@ class JooqShardingTest {
         testcaseNotice("plain delete= $rp")
         testcaseNotice("delete from `tst_中文也分表` where (`id` <= ? and `commit_id` is not null)")
 
-        val dw = dao.tableForWriter
+        val dw = dao.table
         val rw = dao.delete(dw.Id.eq(id))
         testcaseNotice("dao delete= $rw")
         testcaseNotice("delete from `tst_中文也分表_3` where `id` = ? ")

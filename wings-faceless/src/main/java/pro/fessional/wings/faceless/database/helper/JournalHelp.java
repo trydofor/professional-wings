@@ -31,16 +31,17 @@ public class JournalHelp {
 
     public static final String COL_CREATE_DT = "create_dt";
     public static final String COL_MODIFY_DT = "modify_dt";
+    public static final String COL_MODIFY_TM = "modify_time";
     public static final String COL_DELETE_DT = "delete_dt";
     public static final String COL_IS_DELETED = "is_deleted";
     public static final String COL_COMMIT_ID = "commit_id";
 
     private static final Map<String, String> tableJournal = new ConcurrentHashMap<>();
-    private static final ResultSetExtractor<String> filedJournal = rs -> getJournalColumn(rs, false);
+    private static final ResultSetExtractor<String> filedJournal = rs -> getJournalDateColumn(rs, false);
 
-    private static String getJournalColumn(ResultSet rs, boolean needClose) {
+    public static String getJournalDateColumn(ResultSet rs, boolean needClose) {
         try {
-            String[] columns = extractColumn(rs.getMetaData(), COL_DELETE_DT, COL_MODIFY_DT);
+            String[] columns = extractColumn(rs.getMetaData(), COL_DELETE_DT, COL_MODIFY_DT, COL_MODIFY_TM);
             if (columns[0] != null) return columns[0];
             if (columns[1] != null) return columns[1];
         } catch (SQLException e) {
@@ -57,20 +58,20 @@ public class JournalHelp {
         return "";
     }
 
-    public static String getJournalColumn(JdbcTemplate tmpl, String table) {
+    public static String getJournalDateColumn(JdbcTemplate tmpl, String table) {
         return tableJournal.computeIfAbsent(table, s -> tmpl.query("select * from " + s + " where 1 = 0", filedJournal));
     }
 
-    public static String getJournalColumn(DSLContext dsl, String table) {
+    public static String getJournalDateColumn(DSLContext dsl, String table) {
         return tableJournal.computeIfAbsent(table, s -> {
             ResultSet rs = dsl.selectFrom(s + " where 1 = 0").fetchResultSet();
-            return getJournalColumn(rs, true);
+            return getJournalDateColumn(rs, true);
         });
     }
 
-    public static String getJournalColumn(Table<? extends Record> table) {
+    public static String getJournalDateColumn(Table<? extends Record> table) {
         return tableJournal.computeIfAbsent(table.getName(), s -> {
-            String[] columns = extractColumn(table.fields(), COL_DELETE_DT, COL_MODIFY_DT);
+            String[] columns = extractColumn(table.fields(), COL_DELETE_DT, COL_MODIFY_DT, COL_MODIFY_TM);
             if (columns[0] != null) return columns[0];
             if (columns[1] != null) return columns[1];
             return "";
@@ -108,7 +109,7 @@ public class JournalHelp {
 
     public static int deleteWhere(JdbcTemplate tmpl, String table, Long commitId, LocalDateTime now, String where, Object... args) {
         checkTableName(table);
-        String jf = getJournalColumn(tmpl, table);
+        String jf = getJournalDateColumn(tmpl, table);
         String journalSetter = " ";
         if (!jf.isEmpty()) {
             String ldt = now == null ? "NOW()" : "'" + DateFormatter.full19(now) + "'";
@@ -150,7 +151,7 @@ public class JournalHelp {
                 .update(table)
                 .set(field(COL_COMMIT_ID, Long.class), commitId);
 
-        String jf = getJournalColumn(table);
+        String jf = getJournalDateColumn(table);
         if (!jf.isEmpty()) {
             if (now == null) {
                 update = update.set(field(jf, String.class), field("NOW()", String.class));

@@ -63,9 +63,8 @@ public class WingsUserDetailService implements UserDetailsService {
         }
 //        String password = passwordEncoder.encode("moilioncircle");
 
-        WinUserLoginTable t = winUserLoginDao.getAliasForReader();
-        Condition cond = t.LoginName.eq(username)
-                                    .and(t.LoginType.eq(loginType.getId()));
+        WinUserLoginTable t = winUserLoginDao.getTable();
+        Condition cond = t.LoginName.eq(username).and(t.LoginType.eq(loginType.getId()));
         List<WinUserLogin> logins = winUserLoginDao.fetch(cond);
 
         if (logins.size() != 1) {

@@ -35,7 +35,7 @@ public class StandardI18nServiceImpl implements StandardI18nService {
 
     @Override
     public int reloadBase(String base) {
-        SysStandardI18nTable tbl = sysStandardI18nDao.getAliasForReader();
+        SysStandardI18nTable tbl = sysStandardI18nDao.getTable();
         List<SysStandardI18n> pos = sysStandardI18nDao.fetch(tbl.Base, base);
         return cache(pos);
     }
@@ -45,9 +45,9 @@ public class StandardI18nServiceImpl implements StandardI18nService {
         String lan = lang.getLanguage() + "_" + lang.getCountry();
         String key = key(base, kind, ukey, lan);
         return cache.computeIfAbsent(key, s -> {
-            SysStandardI18nTable tbl = sysStandardI18nDao.getAliasForReader();
+            SysStandardI18nTable tbl = sysStandardI18nDao.getTable();
             Record1<String> rc1 = sysStandardI18nDao
-                    .dslContext()
+                    .ctx()
                     .select(tbl.Text)
                     .from(tbl)
                     .where(tbl.Base.eq(base))

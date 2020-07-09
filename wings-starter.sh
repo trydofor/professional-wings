@@ -23,7 +23,6 @@ JAVA_XMS='2G'    # 启动参数。通过env覆盖
 JAVA_XMX='2G'    # 启动参数。通过env覆盖
 JAVA_ARG='
 -server
--Duser.timezone=Asia/Shanghai
 -Djava.awt.headless=true
 -Dfile.encoding=UTF-8
 

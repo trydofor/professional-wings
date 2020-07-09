@@ -13,7 +13,7 @@ public class Wings2JooqJavaGen {
     // WingsFlywaveInitDatabaseSample
     // 注意在目标工程中，应该注释掉.springRepository(false)，使Dao自动加载
     public static void main(String[] args) {
-        String database = "wings_0";
+        String database = "wings_example";
         WingsCodeGenerator.builder()
                           .jdbcDriver("com.mysql.cj.jdbc.Driver")
                           .jdbcUrl("jdbc:mysql://127.0.0.1/" + database)
