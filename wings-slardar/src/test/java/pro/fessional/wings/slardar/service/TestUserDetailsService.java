@@ -6,8 +6,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import pro.fessional.wings.slardar.security.SecurityContextUtil;
-import pro.fessional.wings.slardar.security.WingsOAuth2xContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -51,9 +49,7 @@ public class TestUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         System.out.println("loadUserByUsername=" + username);
-        WingsOAuth2xContext.Context ocx = SecurityContextUtil.getOauth2xContext();
         Authentication aut = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("WingsOAuth2xContext=" + ocx);
         TestI18nUserDetail detail = new TestI18nUserDetail();
         int idType = username.endsWith("2") ? 2 : 1;
         detail.setUserId(idType);

@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import pro.fessional.mirana.cast.TypedCastUtil;
 
 import java.util.Collection;
@@ -30,40 +29,6 @@ public class SecurityContextUtil {
     @NotNull
     public static WingsTerminalContext.Context getTerminalContext() {
         return WingsTerminalContext.get();
-    }
-
-    /**
-     * 获得 OAuth2x的Context
-     *
-     * @return context
-     */
-    @NotNull
-    public static WingsOAuth2xContext.Context getOauth2xContext() {
-        WingsOAuth2xContext.Context wtx = WingsOAuth2xContext.get();
-        if (wtx == WingsOAuth2xContext.NULL) {
-            Authentication a = SecurityContextHolder.getContext().getAuthentication();
-            if (a instanceof OAuth2Authentication) {
-                OAuth2Authentication oau = (OAuth2Authentication) a;
-                Map<String, String> param = oau.getOAuth2Request().getRequestParameters();
-                wtx = WingsOAuth2xContext.set(param);
-            }
-        }
-        return wtx == null ? WingsOAuth2xContext.NULL : wtx;
-    }
-
-    /**
-     * 如果是OAuth2Authentication则返回，否则null
-     *
-     * @return 对象
-     */
-    @Nullable
-    public static OAuth2Authentication getOAuth2Authentication() {
-        Authentication a = SecurityContextHolder.getContext().getAuthentication();
-        if (a instanceof OAuth2Authentication) {
-            return (OAuth2Authentication) a;
-        } else {
-            return null;
-        }
     }
 
     @NotNull

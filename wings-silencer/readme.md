@@ -11,6 +11,7 @@
  * 自动加载i8n配置(wings-i18n)
  * 工程化Jackson配置(wings-jackson-79.properties)
  * 多时区
+ * caffeine cache
  * 不支持webflux
  
 ## 1.1.spring命名规则
@@ -217,3 +218,35 @@ JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, Foo.
 
 [RestTemplate 定制](https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/#boot-features-resttemplate-customization)
 org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
+
+
+## 1.7.缓存Caffeine
+
+默认提供caffeine缓存，可以注入
+
+* CaffeineCacheManager caffeineCacheManager
+* RedisTemplate<String, Object> redisTemplate
+* StringRedisTemplate stringRedisTemplate
+* RedissonSpringCacheManager redissonCacheManager
+
+其中，caffeine默认开启，且 `spring.cache.type=caffeine`，
+
+三种不同缓存级别前缀，分别定义不同的ttl,idle,size
+
+* `program.` - 程序配置，永存
+* `general.` - 标准配置，1天
+* `service.` - 服务级的，1小时
+* `session.` - 会话级的，10分钟
+
+``` java
+@CacheConfig(cacheManager = Manager.CAFFEINE, 
+cacheNames = Level.GENERAL + "OperatorService")
+
+@Cacheable(key = "'all'", 
+cacheNames = Level.GENERAL + "StandardRegion", 
+cacheManager = Manager.CAFFEINE)
+
+@CacheEvict(key = "'all'", 
+cacheNames = Level.GENERAL + "StandardRegion", 
+cacheManager = Manager.REDISSON)
+```

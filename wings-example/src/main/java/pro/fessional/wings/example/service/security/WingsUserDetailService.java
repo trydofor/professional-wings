@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import pro.fessional.mirana.i18n.LocaleResolver;
 import pro.fessional.wings.example.database.autogen.tables.WinUserLoginTable;
 import pro.fessional.wings.example.database.autogen.tables.daos.WinUserDao;
@@ -21,8 +20,6 @@ import pro.fessional.wings.example.service.authrole.AuthRoleService;
 import pro.fessional.wings.faceless.enums.ConstantEnumUtil;
 import pro.fessional.wings.faceless.enums.TimezoneEnumUtil;
 import pro.fessional.wings.faceless.enums.auto.StandardTimezone;
-import pro.fessional.wings.slardar.security.SecurityContextUtil;
-import pro.fessional.wings.slardar.security.WingsOAuth2xContext;
 
 import java.util.List;
 import java.util.Set;
@@ -53,14 +50,7 @@ public class WingsUserDetailService implements UserDetailsService {
 
     @Override
     public WingsUserDetail loadUserByUsername(String username) {
-        WingsOAuth2xContext.Context ctx = SecurityContextUtil.getOauth2xContext();
-        Assert.notNull(ctx, "oauth2x context is null");
-        // 使用alias来判断类型
-        String alias = ctx.getOauthPasswordAlias();
-        LoginType loginType = ConstantEnumUtil.codeOrNull(alias, loginTypes);
-        if (loginType == null) {
-            throw new UsernameNotFoundException("bad login type, username=" + username);
-        }
+        LoginType loginType = LoginType.NAME_PASS;
 //        String password = passwordEncoder.encode("moilioncircle");
 
         WinUserLoginTable t = winUserLoginDao.getTable();
