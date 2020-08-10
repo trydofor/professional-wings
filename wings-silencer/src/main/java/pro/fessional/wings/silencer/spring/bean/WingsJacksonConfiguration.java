@@ -12,6 +12,8 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -41,20 +43,24 @@ import java.util.Date;
 @ConditionalOnProperty(name = "spring.wings.jackson.enabled", havingValue = "true")
 public class WingsJacksonConfiguration {
 
+    private static final Log logger = LogFactory.getLog(WingsJacksonConfiguration.class);
+
     @Bean
     @Primary
     public ObjectMapper jacksonObjectMapper(Jackson2ObjectMapperBuilder builder) {
+        logger.info("config bean jacksonObjectMapper");
         return builder.createXmlMapper(false).build();
     }
 
     @Bean
     public XmlMapper jacksonXmlMapper(Jackson2ObjectMapperBuilder builder) {
-
+        logger.info("config bean jacksonXmlMapper");
         return builder.createXmlMapper(true).build();
     }
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer customizerFront() {
+        logger.info("config bean Jackson2ObjectMapperBuilderCustomizer");
         return builder -> {
             DateFormat dateFormat = new SimpleDateFormat(DateTimePattern.PTN_FULL_19);
 

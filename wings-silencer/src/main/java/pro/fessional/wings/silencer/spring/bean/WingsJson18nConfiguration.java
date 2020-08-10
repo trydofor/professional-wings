@@ -2,6 +2,8 @@ package pro.fessional.wings.silencer.spring.bean;
 
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -27,14 +29,18 @@ import pro.fessional.wings.silencer.jackson.I18nStringSerializer;
 @ConditionalOnProperty(name = "spring.wings.json18n.enabled", havingValue = "true")
 public class WingsJson18nConfiguration {
 
+    private static final Log logger = LogFactory.getLog(WingsJson18nConfiguration.class);
+
     @Bean
     @ConditionalOnMissingBean(WingsI18nContext.class)
     public WingsI18nContext wingsI18nContext() {
+        logger.info("config bean wingsI18nContext");
         return new DefaultI18nContext();
     }
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer customizerI18nSerializer(MessageSource messageSource, WingsI18nContext i18nContext) {
+        logger.info("config bean customizerI18nSerializer");
         return builder -> {
             builder.serializerByType(R.I.class, new I18nResultSerializer(messageSource, i18nContext));
             builder.serializerByType(I18nString.class, new I18nStringSerializer(messageSource, i18nContext, true));
