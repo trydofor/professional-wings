@@ -1,12 +1,13 @@
 package pro.fessional.wings.faceless.service.lightid.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.id.LightIdProvider;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdAware;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 
-import javax.validation.constraints.NotNull;
+
 
 /**
  * @author trydofor

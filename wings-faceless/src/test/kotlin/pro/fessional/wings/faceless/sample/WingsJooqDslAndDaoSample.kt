@@ -16,6 +16,7 @@ import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表
+import pro.fessional.wings.faceless.database.jooq.JournalJooqHelp
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.service.journal.JournalService
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
@@ -105,21 +106,21 @@ class WingsJooqDslAndDaoSample {
 
         val s1 = HashMap<Any, Any>()
         val t = Tst中文也分表Table.Tst中文也分表
-        journal.create(t, s1);
+        JournalJooqHelp.create(journal, t, s1);
         println(s1)
 
         val s2 = HashMap<Any, Any>()
-        journal.modify(t, s2);
+        JournalJooqHelp.modify(journal, t, s2);
         println(s2)
         val s3 = HashMap<Any, Any>()
-        journal.delete(t, s3);
+        JournalJooqHelp.delete(journal, t, s3);
         println(s3)
 
         val s4 = HashMap<Any, Any>()
         val ob = Tst中文也分表()
         val start1 = System.currentTimeMillis()
         for (i in 1..10000) {
-            journal.create(t, s4);
+            JournalJooqHelp.create(journal, t, s4);
         }
         val start2 = System.currentTimeMillis()
         for (i in 1..10000) {

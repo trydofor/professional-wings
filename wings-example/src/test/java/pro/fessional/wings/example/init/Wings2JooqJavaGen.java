@@ -20,8 +20,7 @@ public class Wings2JooqJavaGen {
                           .jdbcUser("trydofor")
                           .jdbcPassword("moilioncircle")
                           .databaseSchema(database)
-                          .databaseIncludes("win_.*")
-                          .databaseExcludes("sys_.*") // jdbc实现或默认实现了
+                          .databaseIncludes("sys_constant_enum|sys_standard_i18n|win_.*")
                           .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
                           .targetPackage("pro.fessional.wings.example.database.autogen")
                           .targetDirectory("wings-example/src/main/java/")

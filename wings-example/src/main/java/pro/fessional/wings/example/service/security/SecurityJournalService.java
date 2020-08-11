@@ -28,8 +28,12 @@ public class SecurityJournalService extends DefaultJournalService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public @NotNull Journal commit(@NotNull String eventName, @Nullable String loginInfo, @Nullable String targetKey, @Nullable String otherInfo) {
         if (loginInfo == null || loginInfo.isEmpty()) {
-            WingsUserDetail principal = SecurityContextUtil.getPrincipal();
-            loginInfo = principal == null ? "" : principal.toLoginInfo();
+            Object principal = SecurityContextUtil.getPrincipal();
+            if (principal instanceof WingsUserDetail) {
+                loginInfo = ((WingsUserDetail) principal).toLoginInfo();
+            } else if (principal instanceof CharSequence) {
+                loginInfo = principal.toString();
+            }
         }
         return super.commit(eventName, loginInfo, targetKey, otherInfo);
     }

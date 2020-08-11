@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.wings.example.WingsExampleApplication;
-import pro.fessional.wings.faceless.database.autogen.tables.daos.SysConstantEnumDao;
-import pro.fessional.wings.faceless.database.autogen.tables.pojos.SysConstantEnum;
+import pro.fessional.wings.example.database.autogen.tables.daos.SysConstantEnumDao;
+import pro.fessional.wings.example.database.autogen.tables.pojos.SysConstantEnum;
 import pro.fessional.wings.faceless.util.ConstantEnumGenerator;
 
 import java.util.List;
@@ -34,7 +34,7 @@ import java.util.List;
 public class Wings3ConstEnumGen {
 
     @Setter(onMethod = @__({@Autowired}))
-    SysConstantEnumDao sysConstantEnumDao;
+    private SysConstantEnumDao sysConstantEnumDao;
 
     @Test
     public void gen() throws Exception {

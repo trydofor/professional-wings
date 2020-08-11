@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import pro.fessional.wings.faceless.database.autogen.tables.SysCommitJournalTable;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
@@ -20,6 +19,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class DefaultJournalService implements JournalService {
 
+    public static final String SEQ_JOURNAL = "sys_commit_journal";
     private final LightIdService lightIdService;
     private final BlockIdProvider blockIdProvider;
     private final CommitJournalModify journalModify;
@@ -36,7 +36,7 @@ public class DefaultJournalService implements JournalService {
         journal.setTargetKey(targetKey);
         journal.setOtherInfo(otherInfo);
 
-        long id = lightIdService.getId(SysCommitJournalTable.class, blockIdProvider.getBlockId());
+        long id = lightIdService.getId(SEQ_JOURNAL, blockIdProvider.getBlockId());
         journal.setCommitId(id);
 
         int rc = journalModify.insert(journal);

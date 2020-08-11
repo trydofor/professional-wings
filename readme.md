@@ -32,8 +32,9 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
  * [演示例子/example](wings-example/readme.md) 集成了以上的例子
  * [沉默术士/silencer](wings-silencer/readme.md) 工程化的自动装配，I18n等
  * [虚空假面/faceless](wings-faceless/readme.md) DAO，分表分库，数据版本管理
- * [鱼人守卫/slardar](wings-slardar/readme.md) 基于Servlet体系的控制
- 
+ * [鱼人守卫/slardar](wings-slardar/readme.md) 基于Servlet体系的WebMvc
+ * [术士大叔/warlock](wings-warlock/readme.md) 基于Servlet体系的AuthZ和AuthN
+
 涉及技术和知识点
 
  * [Spring Boot](https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/)

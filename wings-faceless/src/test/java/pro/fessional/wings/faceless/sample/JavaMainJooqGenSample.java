@@ -8,7 +8,8 @@ import pro.fessional.wings.faceless.jooqgen.WingsCodeGenerator;
  */
 public class JavaMainJooqGenSample {
 
-    // WingsFlywaveInitDatabaseSample
+    // 需要 版本 20190601_01，手动执行亦可
+    // WingsInitDatabaseSample
     // 注意在目标工程中，应该注释掉.springRepository(false)，使Dao自动加载
     public static void main(String[] args) {
         String database = "wings";
@@ -18,12 +19,11 @@ public class JavaMainJooqGenSample {
                           .jdbcUser("trydofor")
                           .jdbcPassword("moilioncircle")
                           .databaseSchema(database)
-                          .databaseIncludes("sys_commit_journal|sys_constant_enum|sys_standard_i18n")
-                          .databaseExcludes("sys_light_sequence|sys_schema_journal|sys_schema_version") // jdbc实现
+                          .databaseIncludes("sys_constant_enum|sys_standard_i18n|tst_中文也分表")
                           .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
                           .targetPackage("pro.fessional.wings.faceless.database.autogen")
-                          .targetDirectory("wings-faceless/src/main/java/")
-                          .springRepository(false)
+                          .targetDirectory("wings-faceless/src/test/java/")
+//                          .springRepository(false)
                           .buildAndGenerate();
     }
 }

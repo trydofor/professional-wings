@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import pro.fessional.wings.example.database.autogen.tables.WinUserLoginTable;
 import pro.fessional.wings.example.database.autogen.tables.pojos.WinUserLogin;
 import pro.fessional.wings.example.database.autogen.tables.records.WinUserLoginRecord;
-import pro.fessional.wings.faceless.database.common.WingsJooqDaoImpl;
+import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl;
 
 import javax.annotation.Generated;
 import java.time.LocalDateTime;

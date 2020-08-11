@@ -27,17 +27,6 @@ class WingsFlywaveInitDatabaseSample {
     lateinit var schemaRevisionManager: SchemaRevisionManager
 
     @Test
-    fun init0601() {
-        // 初始
-        val sqls = FlywaveRevisionScanner.scanMaster()
-        schemaRevisionManager.publishRevision(REVISION_1ST_SCHEMA, 0)
-        schemaRevisionManager.checkAndInitSql(sqls, 0)
-
-        // 升级
-        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
-    }
-
-//    @Test
     fun force(){
         val sqls = FlywaveRevisionScanner.scanMaster()
         schemaRevisionManager.forceUpdateSql(sqls[REVISION_1ST_SCHEMA]!!,0)

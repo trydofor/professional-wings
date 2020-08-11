@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.util;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -8,7 +9,6 @@ import org.springframework.util.StreamUtils;
 import pro.fessional.mirana.text.BuilderHelper;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 
-import javax.validation.constraints.NotNull;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashSet;

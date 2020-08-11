@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.wings.faceless.WingsTestHelper;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
-import pro.fessional.wings.faceless.database.helper.JournalHelp;
+import pro.fessional.wings.faceless.database.jooq.JournalJooqHelp;
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 
@@ -65,8 +65,8 @@ public class JooqDeleteListenerTest {
 
     @Test
     public void test2𓃬Helper𓃬查日志() {
-        JournalHelp.deleteByIds(dsl, Tst中文也分表Table.Tst中文也分表, 12L, 1L, 2L);
-        JournalHelp.deleteByIds(tmpl, "`tst_中文也分表`", 34L, 3L, 4L);
+        JournalJooqHelp.deleteByIds(dsl, Tst中文也分表Table.Tst中文也分表, 12L, 1L, 2L);
+        JournalJooqHelp.deleteByIds(tmpl, "`tst_中文也分表`", 34L, 3L, 4L);
         testcaseNotice(
                 "检查日志，在delete前update，如下",
                 "UPDATE `tst_中文也分表` SET commit_id=34, delete_dt=NOW()  WHERE id IN (3,4)",

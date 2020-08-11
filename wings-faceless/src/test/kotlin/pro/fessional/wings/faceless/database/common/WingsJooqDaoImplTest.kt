@@ -16,6 +16,7 @@ import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Ta
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record
+import pro.fessional.wings.faceless.database.jooq.WingsJooqEnv
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import java.time.LocalDateTime
 

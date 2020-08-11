@@ -507,3 +507,37 @@ WHERE table_schema = DATABASE()
  * https://www.jooq.org/doc/3.12/manual/sql-building/plain-sql-templating/
  * https://www.jooq.org/doc/3.12/manual/sql-building/sql-parser/sql-parser-grammar/
  * https://blog.jooq.org/2020/03/05/using-java-13-text-blocks-for-plain-sql-with-jooq/
+
+### 011.如何禁用Jooq功能
+
+禁用jooq没有任何影响，不影响flywave，lightid，enum, i18n的使用。
+
+运行时禁用，设置spring.wings 开关，把jooq disable,`spring.wings.jooq.enabled=false`
+但如果有jooq自动生成的代码，是带有`@Repository`，需要禁止spring注入。
+```
+@ComponentScan(excludeFilters = 
+@Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WingsJooqDaoImpl.class))  
+```
+
+
+编译时禁用，在maven中去掉jooq和jooq自动生成代码和依赖。
+```xml
+<dependency>
+    <groupId>pro.fessional</groupId>
+    <artifactId>wings-slardar</artifactId>
+    <exclusions>
+        <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jooq</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>javax.persistence</groupId>
+            <artifactId>javax.persistence-api</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+```

@@ -15,8 +15,8 @@ import pro.fessional.wings.example.database.autogen.tables.pojos.WinAuthRole;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 
-import static pro.fessional.wings.silencer.cache.WingsCache.Manager;
-import static pro.fessional.wings.silencer.cache.WingsCache.Level;
+import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
+import static pro.fessional.wings.slardar.cache.WingsCache.Level;
 
 import java.util.Collections;
 import java.util.HashMap;

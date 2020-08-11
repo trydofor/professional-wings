@@ -48,6 +48,20 @@
         <dependency>
             <groupId>pro.fessional</groupId>
             <artifactId>wings-slardar</artifactId>
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>org.springframework.boot</groupId>-->
+<!--                    <artifactId>spring-boot-starter-jooq</artifactId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <groupId>javax.persistence</groupId>-->
+<!--                    <artifactId>javax.persistence-api</artifactId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <groupId>javax.validation</groupId>-->
+<!--                    <artifactId>validation-api</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

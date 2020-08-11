@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless.service.lightid;
 
-import javax.validation.constraints.NotNull;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author trydofor

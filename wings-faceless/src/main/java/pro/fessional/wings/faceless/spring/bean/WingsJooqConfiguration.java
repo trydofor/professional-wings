@@ -25,13 +25,14 @@ import org.jooq.impl.TableImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import pro.fessional.wings.faceless.database.common.WingsJooqEnv;
-import pro.fessional.wings.faceless.database.helper.JournalHelp;
+import pro.fessional.wings.faceless.database.jooq.JournalJooqHelp;
+import pro.fessional.wings.faceless.database.jooq.WingsJooqEnv;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -44,6 +45,7 @@ import java.util.regex.Pattern;
  */
 @Configuration
 @ConditionalOnProperty(name = "spring.wings.jooq.enabled", havingValue = "true")
+@ConditionalOnClass(name = "org.jooq.conf.Settings")
 public class WingsJooqConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(WingsJooqConfiguration.class);
@@ -239,7 +241,7 @@ public class WingsJooqConfiguration {
                 sql.append(" SET ");
                 sql.append(cidSql);
                 sql.append(" ");
-                String jf = JournalHelp.getJournalDateColumn(dsl, table);
+                String jf = JournalJooqHelp.getJournalDateColumn(dsl, table);
                 if (!jf.isEmpty()) {
                     sql.append(",").append(jf).append(" = NOW() ");
                 }

@@ -1,4 +1,4 @@
-# 4.演示例子(example)
+# 9.演示例子(example)
 
 一个需要有点动手能力的简单的例子。
 
@@ -6,13 +6,13 @@
  * `mvn install` + `mvn spring-boot:run`
  * `mvn package` + `wings-starter.sh`
 
-## 4.1.前置条件
+## 9.1.前置条件
 
  * 了解 `maven`，缺什么，补什么。
  * 了解 `spring*`，`看官方文档，不要百度` x 3！
  * 了解 `mysql*`数据库，mysql,mariadb,percona
 
-## 4.2.演示内容
+## 9.2.演示内容
  
  * 语言和时区切换
  * Json数据格式确认
@@ -28,7 +28,7 @@
 `wings-faceless/src/test/kotlin/`下的， 
 `pro/fessional/wings/faceless/sample/*`
 
-## 4.3.自建环境
+## 9.3.自建环境
 
 ``` bash
 # 设置变量
@@ -59,7 +59,7 @@ FLUSH PRIVILEGES;"
 
 ```
 
-## 4.4.配置运行
+## 9.4.配置运行
 
  * 在`localhost:3306`配置数据库2个，`wings_0`和`wings_1`
  * 数据库用户名`trydofor`，密码`moilioncircle`，或者自己改配置

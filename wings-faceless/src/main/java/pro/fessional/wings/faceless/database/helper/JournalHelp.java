@@ -1,11 +1,5 @@
 package pro.fessional.wings.faceless.database.helper;
 
-import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.Record;
-import org.jooq.Table;
-import org.jooq.UpdateSetMoreStep;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import pro.fessional.mirana.time.DateFormatter;
@@ -17,8 +11,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static org.jooq.impl.DSL.field;
+import java.util.function.Function;
 
 /**
  * 对数据库进行journal操作的助手类，表必须有 delete_dt和commit_id 字段。
@@ -58,24 +51,12 @@ public class JournalHelp {
         return "";
     }
 
+    public static String getJournalDateColumn(String table, Function<String, String> fun) {
+        return tableJournal.computeIfAbsent(table, fun);
+    }
+
     public static String getJournalDateColumn(JdbcTemplate tmpl, String table) {
-        return tableJournal.computeIfAbsent(table, s -> tmpl.query("select * from " + s + " where 1 = 0", filedJournal));
-    }
-
-    public static String getJournalDateColumn(DSLContext dsl, String table) {
-        return tableJournal.computeIfAbsent(table, s -> {
-            ResultSet rs = dsl.selectFrom(s + " where 1 = 0").fetchResultSet();
-            return getJournalDateColumn(rs, true);
-        });
-    }
-
-    public static String getJournalDateColumn(Table<? extends Record> table) {
-        return tableJournal.computeIfAbsent(table.getName(), s -> {
-            String[] columns = extractColumn(table.fields(), COL_DELETE_DT, COL_MODIFY_DT, COL_MODIFY_TM);
-            if (columns[0] != null) return columns[0];
-            if (columns[1] != null) return columns[1];
-            return "";
-        });
+        return getJournalDateColumn(table, s -> tmpl.query("select * from " + s + " where 1 = 0", filedJournal));
     }
 
     // jdbc
@@ -122,49 +103,6 @@ public class JournalHelp {
         return tmpl.update(delete, args);
     }
 
-    // jooq
-
-    public static int deleteByIds(DSLContext dsl, Table<? extends Record> table, JournalService.Journal journal, Long... ids) {
-        return deleteByIds(dsl, table, journal.getCommitId(), journal.getCommitDt(), ids);
-    }
-
-    public static int deleteByIds(DSLContext dsl, Table<? extends Record> table, Long commitId, Long... ids) {
-        return deleteByIds(dsl, table, commitId, null, ids);
-    }
-
-    public static int deleteByIds(DSLContext dsl, Table<? extends Record> table, Long commitId, LocalDateTime now, Long... ids) {
-        if (ids == null || ids.length == 0) return 0;
-        Field<Long> id = field("id", Long.class);
-        return deleteWhere(dsl, table, commitId, now, id.in(ids));
-    }
-
-    public static int deleteWhere(DSLContext dsl, Table<? extends Record> table, JournalService.Journal journal, Condition where) {
-        return deleteWhere(dsl, table, journal.getCommitId(), journal.getCommitDt(), where);
-    }
-
-    public static int deleteWhere(DSLContext dsl, Table<? extends Record> table, Long commitId, Condition where) {
-        return deleteWhere(dsl, table, commitId, null, where);
-    }
-
-    public static int deleteWhere(DSLContext dsl, Table<? extends Record> table, Long commitId, LocalDateTime now, Condition where) {
-        UpdateSetMoreStep<? extends Record> update = dsl
-                .update(table)
-                .set(field(COL_COMMIT_ID, Long.class), commitId);
-
-        String jf = getJournalDateColumn(table);
-        if (!jf.isEmpty()) {
-            if (now == null) {
-                update = update.set(field(jf, String.class), field("NOW()", String.class));
-            } else {
-                update = update.set(field(jf, LocalDateTime.class), now);
-            }
-        }
-        update.where(where).execute();
-
-        return dsl.deleteFrom(table).where(where).execute();
-    }
-
-
     public static String[] extractColumn(ResultSetMetaData md, String... name) throws SQLException {
         String[] result = new String[name.length];
         int count = md.getColumnCount();
@@ -173,32 +111,6 @@ public class JournalHelp {
             for (int j = 0; j < name.length; j++) {
                 if (result[j] == null && cn.equalsIgnoreCase(name[j])) {
                     result[j] = cn;
-                }
-            }
-        }
-        return result;
-    }
-
-    public static String[] extractColumn(Field<?>[] fields, String... name) {
-        String[] result = new String[name.length];
-        for (Field<?> fd : fields) {
-            String cn = getFieldName(fd.getName());
-            for (int j = 0; j < name.length; j++) {
-                if (result[j] == null && cn.equalsIgnoreCase(name[j])) {
-                    result[j] = cn;
-                }
-            }
-        }
-        return result;
-    }
-
-    public static Field<?>[] extractField(Field<?>[] fields, String... name) {
-        Field<?>[] result = new Field<?>[name.length];
-        for (Field<?> fd : fields) {
-            String cn = getFieldName(fd.getName());
-            for (int j = 0; j < name.length; j++) {
-                if (result[j] == null && cn.equalsIgnoreCase(name[j])) {
-                    result[j] = fd;
                 }
             }
         }

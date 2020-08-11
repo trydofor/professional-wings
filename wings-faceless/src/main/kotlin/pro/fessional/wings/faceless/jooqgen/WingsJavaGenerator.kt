@@ -14,7 +14,7 @@ import org.jooq.meta.UDTDefinition
 import org.jooq.tools.JooqLogger
 import pro.fessional.mirana.data.Nulls
 import pro.fessional.wings.faceless.convention.EmptyValue
-import pro.fessional.wings.faceless.database.common.WingsJooqDaoImpl
+import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl
 import pro.fessional.wings.faceless.database.helper.JournalHelp
 
 class WingsJavaGenerator : JavaGenerator() {
