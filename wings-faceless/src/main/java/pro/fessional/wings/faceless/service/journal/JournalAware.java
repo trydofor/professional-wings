@@ -1,7 +1,7 @@
 package pro.fessional.wings.faceless.service.journal;
 
+import pro.fessional.wings.faceless.convention.EmptySugar;
 import pro.fessional.wings.faceless.convention.EmptyValue;
-import pro.fessional.wings.faceless.sugar.funs.EmptySugar;
 
 import java.time.LocalDateTime;
 

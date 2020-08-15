@@ -5,7 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 
-import static pro.fessional.wings.faceless.sugar.funs.EmptySugar.nullToEmpty;
+import static pro.fessional.wings.faceless.convention.EmptySugar.nullToEmpty;
 
 /**
  * @author trydofor

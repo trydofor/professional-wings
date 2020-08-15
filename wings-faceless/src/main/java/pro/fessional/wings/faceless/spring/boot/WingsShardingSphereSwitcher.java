@@ -50,7 +50,7 @@ import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.jndi.JndiObjectFactoryBean;
 import pro.fessional.mirana.cast.StringCastUtil;
-import pro.fessional.wings.faceless.flywave.FlywaveDataSources;
+import pro.fessional.wings.faceless.database.FacelessDataSources;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -145,10 +145,10 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
     }
 
     @Bean
-    public FlywaveDataSources flywaveDataSources(@NotNull DataSource inuse, Environment environment) {
+    public FacelessDataSources FacelessDataSources(@NotNull DataSource inuse, Environment environment) {
         DataSource shard = defaultDataSource(false) == inuse ? null : inuse;
         boolean split = hasSlave(environment);
-        FlywaveDataSources fds = new FlywaveDataSources(dataSourceMap, inuse, shard, split);
+        FacelessDataSources fds = new FacelessDataSources(dataSourceMap, inuse, shard, split);
 
         for (Map.Entry<String, DataSource> e : dataSourceMap.entrySet()) {
             logger.info("[Wings]🦄 database-" + e.getKey() + "-url=" + fds.jdbcUrl(e.getValue()));

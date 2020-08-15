@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.faceless.convention.EmptyValue;
-import pro.fessional.wings.faceless.sugar.funs.EmptySugar;
+import pro.fessional.wings.faceless.convention.EmptySugar;
 
 import java.time.LocalDateTime;
 

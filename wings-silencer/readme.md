@@ -22,7 +22,7 @@
 使用`idea`开发时，需要在`Project Structure`/`Facets`/`Spring`设置中加入
 
  * `boot/WingsComponentScanner`或`/bean/*` 
- * `boot/WingsDataSourceConfigAware` 用来识别`FlywaveDataSources`
+ * `boot/WingsDataSourceConfigAware` 用来识别`FacelessDataSources`
  
 打开以下配置，`Settings`/`Annotation Processors`/`Enable annotation processing`
 

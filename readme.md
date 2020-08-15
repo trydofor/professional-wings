@@ -68,6 +68,7 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
  * Grep Console - 控制台的日志分颜色显示和过滤
  * kotlin - 默认安装了
  * lombok - IntelliJ Lombok plugin
+ * MapStruct Support - MapStruct support
  * Maven Helper - 帮助管理maven
  * Quick File Preview - 单击快速浏览文件
  * Rainbow Brackets - 彩虹括号
@@ -339,3 +340,14 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。
 
  * TI6，她在西雅图，我在特拉华
  * TI9，她在奔驰馆，我在大虹桥
+
+### 007.类型间Mapping比较
+
+根据以下文章，推荐使用 Mapstruct，主要是其静态性。
+对于比较复杂的mapping，使用expression，qualifiedByName，spring注入。
+自动生成的代码位于`target/generated-sources/annotations/`
+
+ * [Quick Guide to MapStruct](https://www.baeldung.com/mapstruct)
+ * [Mapping Collections with MapStruct](https://www.baeldung.com/java-mapstruct-mapping-collections)
+ * [Mapstruct 性能比较](https://www.baeldung.com/java-performance-mapping-frameworks)
+ * [Mapstruct ide&mvn支持](https://mapstruct.org/documentation/installation/)

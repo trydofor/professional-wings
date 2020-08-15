@@ -9,7 +9,6 @@ import pro.fessional.wings.example.database.autogen.tables.WinUserTable;
 import pro.fessional.wings.example.database.autogen.tables.daos.WinUserDao;
 import pro.fessional.wings.example.database.autogen.tables.pojos.WinUser;
 import pro.fessional.wings.example.enums.auto.UserStatus;
-import pro.fessional.wings.example.service.user.UserError;
 import pro.fessional.wings.example.service.user.UserService;
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.service.journal.JournalService;
@@ -48,7 +47,7 @@ public class UserServiceImpl implements UserService {
         po.setStatus(UserStatus.UNINIT.getId());
         journal.commit(po);
 
-        winUserDao.insertOne(po, UserError.UNKNOWN);
+        winUserDao.insert(po);
         return R.okData(id);
     }
 }

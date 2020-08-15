@@ -1,5 +1,7 @@
 package pro.fessional.wings.example.init;
 
+import lombok.Setter;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +22,10 @@ import java.util.Map;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = WingsExampleApplication.class)
+@Ignore("手动执行，版本更新时处理")
 public class Wings7EnumsDumper {
 
-    @Autowired
+    @Setter(onMethod = @__({@Autowired}))
     private ResourceLoader resourceLoader;
 
     @Test

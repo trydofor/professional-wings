@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
-import pro.fessional.wings.faceless.flywave.FlywaveDataSources;
+import pro.fessional.wings.faceless.database.FacelessDataSources;
 
 import javax.sql.DataSource;
 import java.util.LinkedHashMap;
@@ -29,8 +29,8 @@ public class JdbcTemplateConfiguration {
     }
 
     @Bean("plainJdbcTemplate")
-    @ConditionalOnBean(FlywaveDataSources.class)
-    public Map<String, JdbcTemplate> plainJdbcTemplate(FlywaveDataSources dataSources) {
+    @ConditionalOnBean(FacelessDataSources.class)
+    public Map<String, JdbcTemplate> plainJdbcTemplate(FacelessDataSources dataSources) {
         LinkedHashMap<String, DataSource> plains = dataSources.plains();
         LinkedHashMap<String, JdbcTemplate> templates = new LinkedHashMap<>(plains.size());
         for (Map.Entry<String, DataSource> entry : plains.entrySet()) {

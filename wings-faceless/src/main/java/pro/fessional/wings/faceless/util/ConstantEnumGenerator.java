@@ -1,6 +1,5 @@
 package pro.fessional.wings.faceless.util;
 
-import kotlin.io.FilesKt;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -10,6 +9,7 @@ import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.wings.faceless.enums.tmpl.ConstantEnumTemplate;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -157,7 +157,7 @@ public class ConstantEnumGenerator {
             File java = new File(dst, javaClass(type) + ".java");
             if (java.isFile()) {
                 nowFiles.add(java);
-                String jtxt = FilesKt.readText(java, StandardCharsets.UTF_8);
+                String jtxt = InputStreams.readText(new FileInputStream(java), StandardCharsets.UTF_8);
                 String jb = jtxt.replaceAll("@since [0-9-]+", "").trim();
                 String tb = text.replaceAll("@since [0-9-]+", "").trim();
                 if (jb.equals(tb)) {

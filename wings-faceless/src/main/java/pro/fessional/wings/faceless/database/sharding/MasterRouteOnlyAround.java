@@ -6,7 +6,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
-import pro.fessional.wings.faceless.flywave.FlywaveDataSources;
+import pro.fessional.wings.faceless.database.FacelessDataSources;
 
 /**
  * @author trydofor
@@ -18,9 +18,9 @@ public class MasterRouteOnlyAround {
 
     private final boolean hasSlave;
 
-    public MasterRouteOnlyAround(ObjectProvider<FlywaveDataSources> flywaveDataSources) {
-        FlywaveDataSources ds = flywaveDataSources.getIfAvailable();
-        hasSlave = ds != null && ds.getSplit();
+    public MasterRouteOnlyAround(ObjectProvider<FacelessDataSources> FacelessDataSources) {
+        FacelessDataSources ds = FacelessDataSources.getIfAvailable();
+        hasSlave = ds != null && ds.isSplit();
     }
 
     @Around("@annotation(MasterRouteOnly)")

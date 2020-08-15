@@ -46,7 +46,7 @@ flywave的sql文件都受git管理，所以，如无必须，勿搞复杂分支�
 
 `flywave`体系下，有一下约定和概念，理解这些约定，有利于清晰业务架构。
 
-JDBC数据源(DataSource)，分为两种，他们会存在于`FlywaveDataSources`中，
+JDBC数据源(DataSource)，分为两种，他们会存在于`FacelessDataSources`中，
 
  * 分片数据源(Shard)，具有分表分库功能，如`ShardingSphere`。
  * 普通数据源(Plain)，没有sharding功能，只在单个DB上执行。
@@ -125,7 +125,7 @@ sql的书写规则详见[数据库约定](/wings-faceless/src/main/resources/win
 
  * 在只有一个`DataSource`并且没有分表配置时，暴露普通数据源，
  * 有分表分库需要时，暴露`Sharding`数据源。
- * 所有普通数据源在`FlywaveDataSources`中获得。
+ * 所有普通数据源在`FacelessDataSources`中获得。
 
 因为`ShardingJdbc`在执行SCHEMA变更时，存在一定的SQL解析问题(index,trigger)，
 所以在做SCHEMA和`journal`功能时，使用普通数据源，使用`flywave`完成。
@@ -517,27 +517,4 @@ WHERE table_schema = DATABASE()
 ```
 @ComponentScan(excludeFilters = 
 @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WingsJooqDaoImpl.class))  
-```
-
-
-编译时禁用，在maven中去掉jooq和jooq自动生成代码和依赖。
-```xml
-<dependency>
-    <groupId>pro.fessional</groupId>
-    <artifactId>wings-slardar</artifactId>
-    <exclusions>
-        <exclusion>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jooq</artifactId>
-        </exclusion>
-        <exclusion>
-            <groupId>javax.persistence</groupId>
-            <artifactId>javax.persistence-api</artifactId>
-        </exclusion>
-        <exclusion>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-        </exclusion>
-    </exclusions>
-</dependency>
 ```
