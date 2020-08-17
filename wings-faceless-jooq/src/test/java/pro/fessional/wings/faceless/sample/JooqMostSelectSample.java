@@ -17,6 +17,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao;
@@ -30,9 +32,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.jooq.Operator.AND;
+import static org.jooq.Operator.OR;
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
 
 /**
+ * Jooq的编程能力十分强大，远高于 mybatis系列(mybatis plus)
  * https://www.jooq.org/doc/latest/manual/sql-execution/fetching/
  * https://www.jooq.org/doc/3.12/manual/sql-building/plain-sql-templating/
  *
@@ -125,13 +130,21 @@ public class JooqMostSelectSample {
         Tst中文也分表Table t = dao.getTable();
         Condition c = t.Id.gt(1L).and(t.Id.le(105L));
 
-        // 多个字段(同名子集)到List
+        // 多个字段(同名子集)到List  *推荐使用*
         List<SameName> sames = ctx
                 .select(t.Id, t.LoginInfo)
                 .from(t)
                 .where(c)
                 .fetch()
                 .into(SameName.class);
+
+        // 多个字段(不同名，使用字段别名)到List  *推荐使用*
+        List<DiffName> alias = ctx
+                .select(t.Id.as("uid"), t.LoginInfo.as("str"))
+                .from(t)
+                .where(c)
+                .fetch()
+                .into(DiffName.class);
 
         // 多个字段(同名子集)到List，使用Mapstruct
         List<DiffName> diffs = ctx
@@ -217,7 +230,7 @@ public class JooqMostSelectSample {
     public void test4绑定SQL() {
         DSLContext ctx = dao.ctx();
 
-        // 按map绑定
+        // 按map绑定，或者通过 jackson pojo to map
         Map<String, Object> bd1 = new HashMap<>();
         bd1.put("idMin", 3L);
         bd1.put("idMax", 105L);
@@ -249,11 +262,9 @@ public class JooqMostSelectSample {
         bd3.setId(5L);
         bd3.setLoginInfo("LOGIN_INFO-05");
 
-        // 通过record转一下
+        // 通过record转一下，必须字段同名
         Tst中文也分表Record rc = dao.newRecord(bd3);
         rc.from(bd3);
-
-        // 或者通过 jackson pojo to map
 
         List<SameName> bv3 = ctx
                 .fetch("SELECT id, login_info\n" +
@@ -267,6 +278,69 @@ public class JooqMostSelectSample {
 
     @Test
     public void test5动态SQL() {
+        Tst中文也分表Table t = dao.getTable();
 
+        // 通过页面过来的pojo构造and条码
+        SameName bd1 = new SameName();
+        bd1.setId(105L);
+        bd1.setLoginInfo("LOGIN_INFO-05");
+        Tst中文也分表Record rc1 = dao.newRecord(bd1);
+
+        // where (`id` = ? and `login_info` = ?)
+        // (`id` = 105 and `login_info` = 'LOGIN_INFO-05')
+        Condition cd1 = WingsJooqUtil.condChain(rc1, AND);
+        List<Tst中文也分表> rs1 = dao.fetch(cd1);
+
+        // 通过页面过来的pojo构造Or条码
+        SameName bd2 = new SameName();
+        bd2.setId(105L);
+        bd2.setLoginInfo("LOGIN_INFO-06");
+        Tst中文也分表Record rc2 = dao.newRecord(bd2);
+        // where (`id` = ? or `login_info` = ?)
+        // where (`id` = 105 or `login_info` = 'LOGIN_INFO-06')
+        Condition cd2 = WingsJooqUtil.condChain(rc2, OR);
+        List<Tst中文也分表> rs2 = dao.fetch(cd2);
+
+        // 只取id
+        // where `id` = ?
+        // where `id` = 105
+        List<Condition> cds = WingsJooqUtil.condField(rc2, t.Id);
+        List<Tst中文也分表> rs3 = dao.fetch(DSL.condition(OR, cds));
+
+        // 更新字段，可以直接使用dao.update()
+
+        System.out.println("");
+    }
+
+    @Setter(onMethod = @__({@Autowired}))
+    private JdbcTemplate jdbcTemplate;
+
+    @Test
+    public void test5JdbcTemplate() {
+        // 单字段查询
+        Integer cnt = jdbcTemplate.queryForObject(
+                "SELECT count(1) FROM tst_中文也分表 WHERE id > ?",
+                Integer.class, 1);
+
+        // BeanPropertyRowMapper
+        SameName sn1 = jdbcTemplate.queryForObject(
+                "SELECT id, login_info FROM tst_中文也分表 WHERE id = ?",
+                new BeanPropertyRowMapper<>(SameName.class), 105L);
+
+        // BeanPropertyRowMapper
+        DiffName df1 = jdbcTemplate.queryForObject(
+                "SELECT id as uid, login_info as str FROM tst_中文也分表 WHERE id = ?",
+                new BeanPropertyRowMapper<>(DiffName.class), 105L);
+
+        // lambda
+        DiffName df2 = jdbcTemplate.queryForObject("SELECT id, login_info FROM tst_中文也分表 WHERE id = ?",
+                (rs, rowNum) -> {
+                    DiffName a = new DiffName();
+                    a.setUid(rs.getLong(1));
+                    a.setStr(rs.getString(2));
+                    return a;
+                }, 105L);
+
+        System.out.println("");
     }
 }

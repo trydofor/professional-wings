@@ -3,6 +3,7 @@ package pro.fessional.wings.faceless.database.jooq;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.Operator;
 import org.jooq.Param;
 import org.jooq.QueryPart;
 import org.jooq.Record;
@@ -133,8 +134,8 @@ public class WingsJooqUtil {
         }
     }
 
-    public static Condition condChain(TableRecord<?> record) {
-        return condChain(record, true);
+    public static Condition condChain(TableRecord<?> record, Operator andOr) {
+        return condChain(record, andOr, true);
     }
 
     /**
@@ -145,15 +146,51 @@ public class WingsJooqUtil {
      * @return 条件
      */
     @NotNull
+    public static Condition condChain(TableRecord<?> record, Operator andOr, boolean ignoreNull) {
+        List<Condition> conds = condField(record, ignoreNull);
+        return conds.isEmpty() ? DSL.trueCondition() : DSL.condition(andOr, conds);
+    }
+
+    public static List<Condition> condField(TableRecord<?> record, Field<?>... includes) {
+        return condField(record, true, includes);
+    }
+
+    /**
+     * 构造一个 and 级联的条件， type=1 and name='dog'
+     *
+     * @param record     条件
+     * @param ignoreNull 是否忽略null
+     * @param includes   包含的字段，默认全包含
+     * @return 条件
+     */
+    @NotNull
     @SuppressWarnings("unchecked")
-    public static Condition condChain(TableRecord<?> record, boolean ignoreNull) {
+    public static List<Condition> condField(TableRecord<?> record, boolean ignoreNull, Field<?>... includes) {
         Field<?>[] fields = record.fields();
+        // 按include赋值，其他为null
+        if (includes != null && includes.length > 0) {
+            Field<?>[] temp = new Field<?>[fields.length];
+            for (Field<?> fld : includes) {
+                for (int i = 0; i < fields.length; i++) {
+                    if (fields[i].equals(fld)) {
+                        temp[i] = fields[i];
+                        break;
+                    }
+                }
+            }
+            fields = temp;
+        }
+
         List<Condition> conds = new ArrayList<>(fields.length);
         for (int i = 0; i < fields.length; i++) {
             Field<Object> field = (Field<Object>) fields[i];
+            if (field == null) continue;
+
             Object value = record.getValue(i);
             if (value == null) {
-                if (!ignoreNull) {
+                if (ignoreNull) {
+                    // ignore
+                } else {
                     conds.add(field.isNull());
                 }
             } else {
@@ -161,7 +198,7 @@ public class WingsJooqUtil {
             }
         }
 
-        return conds.isEmpty() ? DSL.trueCondition() : DSL.and(conds);
+        return conds;
     }
 
     ///////////////// binding /////////////////////

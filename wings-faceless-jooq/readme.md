@@ -1,4 +1,4 @@
-# 2.虚空假面①时间漫游(time_walk)
+# 2.2.虚空假面①时间漫游(jooq)
 
 冲到目标位置，并取消最近2.0秒内受到的任何伤害。
 虚空假面在时间漫游过程中为无敌状态。
@@ -7,7 +7,7 @@
 
  * 从数据库自动生成jooq代码，pojo, table, dao
 
-## 2.5.数据库操作
+## 2.2.1.强类型(jooq)数据库操作
 
 推荐使用SqlMapping，因为ORM太重了，工程内使用Jooq和JdbcTemplate
 
@@ -71,7 +71,7 @@ JdbcTemplate用于功能性或复杂的数据库操作，以自动注入Bean。
  
 如`LightId`在读写分离时，需要强制master，可使用注解`MasterRouteOnly`。
 
-## 2.6.JOOQ与ShardingSphere的兼容问题
+## 2.2.2.JOOQ与ShardingSphere的兼容问题
 
 `flywave`对jooq的`Dao`包装，提供了`reader`和`writer`表，跟踪表。
 因此，强烈建议，使用`Dao`完成基础的CRUD操作，参见`JooqShardingTest.kt`。
@@ -108,25 +108,9 @@ JOOQ参考资料
  * [使用别名，支持分表](https://www.jooq.org/doc/3.12/manual/sql-building/table-expressions/aliased-tables/)
  * [SQL的执行](https://www.jooq.org/doc/3.12/manual/sql-execution/)
 
-## 2.8.H2本地库
+## 2.2.3.常见问题
 
-在不方便提供mysql数据库的时候，如演示或本地数据库应用，可以使用H2，配置如下。
-```
-jdbc:h2:~/wings-init
-;USER=trydofor;PASSWORD=moilioncircle
-;MODE=MySQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE
-;AUTO_RECONNECT=TRUE;AUTO_SERVER=TRUE
-```
-其中，H2对mysql做了部分兼容，分表分库可以，trigger不支持，参考配置，
-
- * wings-conf/shardingsphere-datasource-79.properties
- * wings-conf/shardingsphere-datasource-79@init.properties
-
-[H2官方文档](http://h2database.com/html/features.html)
-
-## 2.10.常见问题
-
-### 010.使用jooq执行plain sql
+### 01.使用jooq执行plain sql
 
 在执行plain sql时，可以使用jdbcTemplate或jooq，jooq的好处是，会进行parse（性能），进行兼容性调整（如果需要），
 所以，在运行时，不考虑兼容性，推荐用 jdbcTemplate，在需要语法分析或合并等场景，使用jooq。
@@ -187,7 +171,7 @@ Templating with QueryPart placeholders (or bind value placeholders) requires a s
  * QueryPart placeholders ({number}) are replaced by the matching QueryPart.
  * Keywords ({identifier}) are treated like keywords and rendered in the correct case according to Settings.renderKeywordStyle.
 
-### 011.如何禁用Jooq功能
+### 02.如何禁用Jooq功能
 
 禁用jooq没有任何影响，不影响flywave，lightid，enum, i18n的使用。
 
@@ -198,7 +182,7 @@ Templating with QueryPart placeholders (or bind value placeholders) requires a s
 @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WingsJooqDaoImpl.class))  
 ```
 
-### 012.常见的jooq查询操作
+### 03.常见的jooq查询操作
 
 更多信息，参考 官方文档，test中的sample
 https://www.jooq.org/doc/latest/manual/sql-execution/fetching/

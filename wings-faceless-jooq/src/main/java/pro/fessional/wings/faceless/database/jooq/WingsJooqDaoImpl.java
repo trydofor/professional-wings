@@ -836,6 +836,11 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
                 .fetchOne(0, Long.class);
     }
 
+    ///////////////// condition /////////////////////
+
+//    public Condition
+
+
     ///////////////// other /////////////////////
 
     private void dealPkAndNull(R record, boolean skipNull) {

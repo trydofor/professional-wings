@@ -44,10 +44,6 @@ public class JooqDslAndDaoSample {
     @Setter(onMethod = @__({@Autowired}))
     private Tst中文也分表Dao dao;
 
-    @Setter(onMethod = @__({@Autowired}))
-    private DSLContext dsl;
-
-
     @Test
     public void test1Init() {
         val sqls = FlywaveRevisionScanner.scanMaster();
@@ -93,7 +89,7 @@ public class JooqDslAndDaoSample {
 //        val nullOrder: OrderField<Long>? = null
         val emptyOrder = new OrderField[]{null};
         val t = Tst中文也分表Table.Tst中文也分表;
-        val sql = dsl
+        val sql = dao.ctx()
                 .select(t.Id, nullField) // null safe
                 .from(t)
                 .where(nullCond)  // null safe
