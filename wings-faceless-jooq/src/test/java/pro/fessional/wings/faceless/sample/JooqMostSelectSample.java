@@ -8,6 +8,7 @@ import org.jooq.DSLContext;
 import org.jooq.Param;
 import org.jooq.Record2;
 import org.jooq.impl.DSL;
+import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +29,7 @@ import pro.fessional.wings.faceless.database.jooq.WingsJooqUtil;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,7 @@ import java.util.Map;
 import static org.jooq.Operator.AND;
 import static org.jooq.Operator.OR;
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
+import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 
 /**
  * Jooq的编程能力十分强大，远高于 mybatis系列(mybatis plus)
@@ -68,7 +71,7 @@ public class JooqMostSelectSample {
         Tst中文也分表Table t = dao.getTable();
         Condition c = t.Id.gt(1L).and(t.Id.le(105L));
 
-        // 1个字段，到List
+        testcaseNotice("1个字段，到List");
         List<Long> ones = ctx
                 .select()
                 .from(t)
@@ -76,22 +79,21 @@ public class JooqMostSelectSample {
                 .fetch()
                 .getValues(t.Id);
 
-        // 2个字段，到Map
+        testcaseNotice("2个字段，到Map");
         Map<Long, String> maps = ctx
                 .selectFrom(t)
                 .where(c)
                 .fetch()
                 .intoMap(t.Id, t.LoginInfo);
 
-        // 分组Pojo到Map
+        testcaseNotice("分组Pojo到Map");
         Map<Long, List<Tst中文也分表>> grps = ctx
                 .selectFrom(t)
                 .where(c)
                 .fetch()
                 .intoGroups(t.Id, dao.mapper());
 
-
-        // 多个字段到2维数组
+        testcaseNotice("多个字段到2维数组");
         Object[][] arrs = ctx
                 .select(t.Id, t.LoginInfo)
                 .from(t)
@@ -130,7 +132,7 @@ public class JooqMostSelectSample {
         Tst中文也分表Table t = dao.getTable();
         Condition c = t.Id.gt(1L).and(t.Id.le(105L));
 
-        // 多个字段(同名子集)到List  *推荐使用*
+        testcaseNotice("多个字段(同名子集)到List  *推荐使用*");
         List<SameName> sames = ctx
                 .select(t.Id, t.LoginInfo)
                 .from(t)
@@ -138,7 +140,7 @@ public class JooqMostSelectSample {
                 .fetch()
                 .into(SameName.class);
 
-        // 多个字段(不同名，使用字段别名)到List  *推荐使用*
+        testcaseNotice("多个字段(不同名，使用字段别名)到List  *推荐使用*");
         List<DiffName> alias = ctx
                 .select(t.Id.as("uid"), t.LoginInfo.as("str"))
                 .from(t)
@@ -146,7 +148,7 @@ public class JooqMostSelectSample {
                 .fetch()
                 .into(DiffName.class);
 
-        // 多个字段(同名子集)到List，使用Mapstruct
+        testcaseNotice("多个字段(同名子集)到List，使用Mapstruct");
         List<DiffName> diffs = ctx
                 .select(t.Id, t.LoginInfo)
                 .from(t)
@@ -154,7 +156,7 @@ public class JooqMostSelectSample {
                 .fetch()
                 .map(Record2Diff.INSTANCE::into);
 
-        // 多个字段(同名子集)到List，使用 lambda
+        testcaseNotice("多个字段(同名子集)到List，使用 lambda");
         List<DiffName> lambs = ctx
                 .select(t.Id, t.LoginInfo)
                 .from(t)
@@ -174,7 +176,7 @@ public class JooqMostSelectSample {
     @Test
     public void test3混合SQL() {
         //////////////////////// 说明部分 ////////////////////////
-        // 其中的 {0}是，0-base的，直接字符串替换的。使用不当会构成sql注入
+        testcaseNotice("其中的 {0}是，0-base的，直接字符串替换的。使用不当会构成sql注入");
         Param<Integer> count = DSL.val(3);
         Param<String> string = DSL.val("abc");
         DSL.field("replace(substr(quote(zeroblob(({0} + 1) / 2)), 3, {0}), '0', {1})", String.class, count, string);
@@ -183,7 +185,7 @@ public class JooqMostSelectSample {
         // argument "count" is repeated twice: \------------------+----------|---------------------/       |
         // argument "string" is used only once:                              \-----------------------------/
 
-        // 模板中支持，java和sql注释，placeholder和variable-binding
+        testcaseNotice("模板中支持，java和sql注释，placeholder和variable-binding");
         DSL.query(
                 "SELECT /* In a comment, this is not a placeholder: {0}. And this is not a bind variable: ? */ title AS `title {1} ?` " +
                         "-- Another comment without placeholders: {2} nor bind variables: ?" +
@@ -195,8 +197,8 @@ public class JooqMostSelectSample {
         DSLContext ctx = dao.ctx();
         Tst中文也分表Table t = dao.getTable();
 
-        // select `id`, `create_dt`, `modify_dt`, `delete_dt`, `commit_id`, `login_info`, `other_info` from `tst_中文也分表` where (id >= ? AND id <= ?)
-        // select `id`, `create_dt`, `modify_dt`, `delete_dt`, `commit_id`, `login_info`, `other_info` from `tst_中文也分表` where (id >= 1 AND id <= 105)
+        testcaseNotice("from `tst_中文也分表` where (id >= ? AND id <= ?)"
+                , "from `tst_中文也分表` where (id >= 1 AND id <= 105)");
         List<SameName> rc1 = ctx
                 .selectFrom(t)
                 .where(
@@ -207,10 +209,10 @@ public class JooqMostSelectSample {
                 .fetch()
                 .into(SameName.class);
 
-        //select `id`, `create_dt`, `modify_dt`, `delete_dt`, `commit_id`, `login_info`, `other_info` from `tst_中文也分表` where (id >= ? AND id <= ?)
-        //select `id`, `create_dt`, `modify_dt`, `delete_dt`, `commit_id`, `login_info`, `other_info` from `tst_中文也分表` where (id >= 2 AND id <= 105)
         // Plain SQL using embeddable QueryPart placeholders (counting from zero).
         // The QueryPart "index" is substituted for the placeholder {0}, the QueryPart "title" for {1}
+        testcaseNotice("from `tst_中文也分表` where (id >= ? AND id <= ?)"
+                , "from `tst_中文也分表` where (id >= 2 AND id <= 105)");
         Param<Long> id1 = DSL.val(2L);
         Param<Long> id2 = DSL.val(105L);
         List<SameName> rc2 = ctx
@@ -230,7 +232,7 @@ public class JooqMostSelectSample {
     public void test4绑定SQL() {
         DSLContext ctx = dao.ctx();
 
-        // 按map绑定，或者通过 jackson pojo to map
+        testcaseNotice("按map绑定，或者通过 jackson pojo to map");
         Map<String, Object> bd1 = new HashMap<>();
         bd1.put("idMin", 3L);
         bd1.put("idMax", 105L);
@@ -248,6 +250,7 @@ public class JooqMostSelectSample {
         // 按数组绑定
         // SELECT id, login_info FROM tst_中文也分表 WHERE id >=? AND id <=? ORDER BY login_info DESC,id LIMIT ?, ?
         // SELECT id, login_info FROM tst_中文也分表 WHERE id >=4 AND id <=105 ORDER BY login_info DESC,id LIMIT 0, 10
+        testcaseNotice("按数组绑定");
         Object[] bd2 = {4L, 105L, 0, 10};
         List<SameName> bv2 = ctx
                 .fetch("SELECT id, login_info\n" +
@@ -263,9 +266,9 @@ public class JooqMostSelectSample {
         bd3.setLoginInfo("LOGIN_INFO-05");
 
         // 通过record转一下，必须字段同名
+        testcaseNotice("按pojo绑定, 通过record转一下，必须字段同名");
         Tst中文也分表Record rc = dao.newRecord(bd3);
         rc.from(bd3);
-
         List<SameName> bv3 = ctx
                 .fetch("SELECT id, login_info\n" +
                         "FROM tst_中文也分表\n" +
@@ -278,9 +281,34 @@ public class JooqMostSelectSample {
 
     @Test
     public void test5动态SQL() {
+        // 条件构造，多参加 condition和cond*方法
         Tst中文也分表Table t = dao.getTable();
 
-        // 通过页面过来的pojo构造and条码
+        // 通过builder建立，对null友好
+        Condition d1 = WingsJooqUtil.condition("1=1");
+        Condition d2 = WingsJooqUtil.condition("2=2");
+        Condition d3 = WingsJooqUtil.condition("3=3");
+        Condition d4 = WingsJooqUtil.condition("4=4");
+        Condition d5 = WingsJooqUtil.condition("5=5");
+
+        // 1=1 and ((2=2 or 3=3) and (4=4 or 5=5))
+        Condition p1 = d2.or(d3);
+        Condition p2 = d4.or(d5);
+        Condition p3 = p1.and(p2);
+        Condition c0 = d1.and(p3);
+
+        Condition c1 = WingsJooqUtil.condBuilder()
+                                    .and(d1).and()
+                                    .grp()
+                                    .grp(d2).or(d3).end()
+                                    .and()
+                                    .grp(d4).or(d5).end()
+                                    .end()
+                                    .build();
+        Assert.assertEquals(c0.toString(), c1.toString());
+
+
+        testcaseNotice("通过页面过来的pojo构造and条码");
         SameName bd1 = new SameName();
         bd1.setId(105L);
         bd1.setLoginInfo("LOGIN_INFO-05");
@@ -288,7 +316,8 @@ public class JooqMostSelectSample {
 
         // where (`id` = ? and `login_info` = ?)
         // (`id` = 105 and `login_info` = 'LOGIN_INFO-05')
-        Condition cd1 = WingsJooqUtil.condChain(rc1, AND);
+        testcaseNotice("通过Record和condChain AND");
+        Condition cd1 = WingsJooqUtil.condChain(AND, rc1);
         List<Tst中文也分表> rs1 = dao.fetch(cd1);
 
         // 通过页面过来的pojo构造Or条码
@@ -298,14 +327,33 @@ public class JooqMostSelectSample {
         Tst中文也分表Record rc2 = dao.newRecord(bd2);
         // where (`id` = ? or `login_info` = ?)
         // where (`id` = 105 or `login_info` = 'LOGIN_INFO-06')
-        Condition cd2 = WingsJooqUtil.condChain(rc2, OR);
+        testcaseNotice("通过Record和condChain OR");
+        Condition cd2 = WingsJooqUtil.condChain(OR, rc2);
         List<Tst中文也分表> rs2 = dao.fetch(cd2);
 
         // 只取id
         // where `id` = ?
         // where `id` = 105
+        testcaseNotice("通过Record和condChain 单字段");
         List<Condition> cds = WingsJooqUtil.condField(rc2, t.Id);
         List<Tst中文也分表> rs3 = dao.fetch(DSL.condition(OR, cds));
+
+        // 通过字符串map构造条件，如用户数据隔离
+        testcaseNotice("通过字符串map构造条件，如用户数据隔离");
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", Collections.singletonList(105L));// 当做 in ()处理
+//        map.put("id", 105L);
+        map.put("login_info", "LOGIN_INFO-05");
+
+        // from `tst_中文也分表` where (id = ? and login_info = ?)
+        Condition cd4 = WingsJooqUtil.condChain(map);
+        List<Tst中文也分表> rc4 = dao.fetch(cd4);
+
+        // from `tst_中文也分表` as `y8` where (`y8`.`login_info` = ? and `y8`.`id` = ?)
+        testcaseNotice("通过字符串map构造条件，别名");
+        Tst中文也分表Table a = dao.getAlias();
+        Condition cd5 = WingsJooqUtil.condChain(map, true, a);
+        List<Tst中文也分表> rc5 = dao.fetch(a, cd5);
 
         // 更新字段，可以直接使用dao.update()
 
@@ -322,15 +370,15 @@ public class JooqMostSelectSample {
                 "SELECT count(1) FROM tst_中文也分表 WHERE id > ?",
                 Integer.class, 1);
 
-        // BeanPropertyRowMapper
+        // BeanPropertyRowMapper.new
         SameName sn1 = jdbcTemplate.queryForObject(
                 "SELECT id, login_info FROM tst_中文也分表 WHERE id = ?",
                 new BeanPropertyRowMapper<>(SameName.class), 105L);
 
-        // BeanPropertyRowMapper
+        // BeanPropertyRowMapper.newInstance
         DiffName df1 = jdbcTemplate.queryForObject(
-                "SELECT id as uid, login_info as str FROM tst_中文也分表 WHERE id = ?",
-                new BeanPropertyRowMapper<>(DiffName.class), 105L);
+                "SELECT id AS uid, login_info AS str FROM tst_中文也分表 WHERE id = ?",
+                BeanPropertyRowMapper.newInstance(DiffName.class), 105L);
 
         // lambda
         DiffName df2 = jdbcTemplate.queryForObject("SELECT id, login_info FROM tst_中文也分表 WHERE id = ?",

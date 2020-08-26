@@ -6,6 +6,8 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.OrderField;
+import org.jooq.SQL;
+import org.jooq.impl.DSL;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -26,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1;
+import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 
 /**
  * @author trydofor
@@ -45,63 +48,69 @@ public class JooqDslAndDaoSample {
     private Tst中文也分表Dao dao;
 
     @Test
-    public void test1Init() {
+    public void test0Init() {
         val sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0);
     }
 
     @Test
-    public void test2Dao() {
+    public void test1Dao() {
 
-        // alias
+        testcaseNotice("使用alias");
         val a = dao.getAlias();
         val c = a.Id.eq(1L).and(a.CommitId.eq(2L));
 
-        // select count(*) from `tst_中文也分表` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?)
+        testcaseNotice("select count(*) from `tst_中文也分表` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?)");
         val i = dao.count(a, c);
-        // select `y8`.`id`, `y8`.`create_dt`, `y8`.`modify_dt`, `y8`.`commit_id`, `y8`.`login_info`, `y8`.`other_info`
-        // from `tst_中文也分表` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?) limit ?
+        testcaseNotice("from `tst_中文也分表` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?) limit ?");
         val fetch = dao.fetch(a, 0, 10, c);
         System.out.println("============count " + i + ", fetch'size=" + fetch.size());
 
         // table
+        testcaseNotice("使用table");
         val t = dao.getTable();
         val setter = new HashMap<>();
         setter.put(t.LoginInfo, "info");
         setter.put(t.CommitId, t.Id.add(1L));
-        // update `tst_中文也分表` set `commit_id` = (`id` + ?), `login_info` = ? where `id` = ?
+        testcaseNotice("update `tst_中文也分表` set `commit_id` = (`id` + ?), `login_info` = ? where `id` = ?");
         val u1 = dao.update(setter, t.Id.eq(2L));
         System.out.println("============update " + u1);
 
         val po = new Tst中文也分表();
         po.setCommitId(2L);
         po.setLoginInfo("info");
-        // update `tst_中文也分表` set `commit_id` = ?, `login_info` = ? where `id` = ?
+        testcaseNotice("update `tst_中文也分表` set `commit_id` = ?, `login_info` = ? where `id` = ?");
         val u2 = dao.update(po, t.Id.eq(2L));
         System.out.println("============update " + u2);
     }
 
     @Test
-    public void test3Dsl() {
+    public void test2Dsl() {
+        testcaseNotice("通过dao.ctx()获得dsl能力");
         Condition nullCond = null;
         Field<Long> nullField = null;
 //        val nullOrder: OrderField<Long>? = null
         val emptyOrder = new OrderField[]{null};
         val t = Tst中文也分表Table.Tst中文也分表;
-        val sql = dao.ctx()
-                .select(t.Id, nullField) // null safe
-                .from(t)
-                .where(nullCond)  // null safe
-                .orderBy(emptyOrder) // empty safe
+        DSLContext dsl = dao.ctx();
+        val sql = dsl.select(t.Id, nullField) // null safe
+                     .from(t)
+                     .where(nullCond)  // null safe
+                     .orderBy(emptyOrder) // empty safe
 //                .orderBy(t.Id, nullOrder) // IllegalArgumentException: Field not supported : null
 //                .orderBy(nullOrder) // IllegalArgumentException: Field not supported : null
-                .getSQL();
+                     .getSQL();
         System.out.println(sql);
+
+        testcaseNotice("plain sql delete");
+        int rc = dsl.execute("DELETE FROM tst_中文也分表 WHERE id < ?", 1L);
     }
 
     @Test
-    public void test4Journal() {
+    public void test3Journal() {
+        testcaseNotice("日志功能");
+
         val journal = new JournalService.Journal();
         val now = LocalDateTime.now();
         journal.setCommitDt(now);
@@ -134,7 +143,8 @@ public class JooqDslAndDaoSample {
     }
 
     @Test
-    public void test5DeleteDt() {
+    public void test4DeleteDt() {
+        testcaseNotice("逻辑删除");
         val c1 = dao.count();
         System.out.println(c1);
         val c2 = dao.count(dao.getTable().onlyDiedData);

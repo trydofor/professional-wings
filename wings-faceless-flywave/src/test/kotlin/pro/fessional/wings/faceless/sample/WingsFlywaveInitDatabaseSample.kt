@@ -13,7 +13,6 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_1ST_SCHEMA
 
 /**
- * @see SchemaRevisionMangerTest
  * @author trydofor
  * @since 2019-06-22
  */

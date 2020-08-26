@@ -7,16 +7,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.junit4.SpringRunner;
-import pro.fessional.mirana.data.CodeEnum;
 import pro.fessional.wings.example.WingsExampleApplication;
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager;
-import pro.fessional.wings.silencer.spring.help.SubclassSpringLoader;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * ⑥ 使用wings的flywave，生成trigger和跟踪表

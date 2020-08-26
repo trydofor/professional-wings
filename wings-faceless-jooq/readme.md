@@ -124,6 +124,8 @@ JOOQ参考资料
  * https://docs.oracle.com/cd/E13157_01/wlevs/docs30/jdbc_drivers/sqlescape.html
 
 ``` java
+class SelectPlain {
+public void test(){
 // 其中的 {0}是，0-base的，直接字符串替换的。使用不当会构成sql注入
 Field<Integer> count = val(3);
 Field<String> string = val("abc");
@@ -157,19 +159,20 @@ query(
   "FROM book " +
   "WHERE title = 'In a string literal, this is not a placeholder: {3}. And this is not a bind variable: ?'"
 );
+}}
 ```
 
 Plain SQL templating specification
 Templating with QueryPart placeholders (or bind value placeholders) requires a simple parsing logic to be applied to SQL strings. The jOOQ template parser behaves according to the following rules:
 
- * Single-line comments (starting with -- in all databases (or #) in MySQL) are rendered without modification. Any bind variable or QueryPart placeholders in such comments are ignored.
- * Multi-line comments (starting with /* and ending with */ in all databases) are rendered without modification. Any bind variable or QueryPart placeholders in such comments are ignored.
- * String literals (starting and ending with ' in all databases, where all databases support escaping of the quote character by duplication as such: '', or in MySQL by escaping as such: \' (if Settings.backslashEscaping is turned on)) are rendered without modification. Any bind variable or QueryPart placeholders in such comments are ignored.
- * Quoted names (starting and ending with " in most databases, with ` in MySQL, or with [ and ] in T-SQL databases) are rendered without modification. Any bind variable or QueryPart placeholders in such comments are ignored.
- * JDBC escape syntax ({fn ...}, {d ...}, {t ...}, {ts ...}) is rendered without modification. Any bind variable or QueryPart placeholders in such comments are ignored.
+ * Single-line comments (starting with `--` in all databases (or #) in MySQL) are rendered without modification. Any bind variable or QueryPart placeholders in such comments are ignored.
+ * Multi-line comments (starting with `/*` and ending with `*/` in all databases) are rendered without modification. Any bind variable or QueryPart placeholders in such comments are ignored.
+ * String literals (starting and ending with `'` in all databases, where all databases support escaping of the quote character by duplication as such: `''`, or in MySQL by escaping as such: `\'` (if Settings.backslashEscaping is turned on)) are rendered without modification. Any bind variable or QueryPart placeholders in such comments are ignored.
+ * Quoted names (starting and ending with `"` in most databases, with \` in MySQL, or with `[` and `]` in T-SQL databases) are rendered without modification. Any bind variable or QueryPart placeholders in such comments are ignored.
+ * JDBC escape syntax (`{fn ...}`, `{d ...}`, `{t ...}`, `{ts ...}`) is rendered without modification. Any bind variable or QueryPart placeholders in such comments are ignored.
  * Bind variable placeholders (? or :name for named bind variables) are replaced by the matching bind value in case inlining is activated, e.g. through Settings.statementType == STATIC_STATEMENT.
- * QueryPart placeholders ({number}) are replaced by the matching QueryPart.
- * Keywords ({identifier}) are treated like keywords and rendered in the correct case according to Settings.renderKeywordStyle.
+ * QueryPart placeholders (`{number}`) are replaced by the matching QueryPart.
+ * Keywords (`{identifier}`) are treated like keywords and rendered in the correct case according to Settings.renderKeywordStyle.
 
 ### 02.如何禁用Jooq功能
 
@@ -184,10 +187,12 @@ Templating with QueryPart placeholders (or bind value placeholders) requires a s
 
 ### 03.常见的jooq查询操作
 
-更多信息，参考 官方文档，test中的sample
+更多信息，参考`官方文档`和sample代码`pro.fessional.wings.faceless.sample`
+
 https://www.jooq.org/doc/latest/manual/sql-execution/fetching/
 
 ```java
+class SelectFetch {
 // Fetching only book titles (the two calls are equivalent):
 List<String> titles1 = create.select().from(BOOK).fetch().getValues(BOOK.TITLE);
 List<String> titles2 = create.select().from(BOOK).fetch(BOOK.TITLE);
@@ -209,5 +214,5 @@ Map<Integer, Result<BookRecord>> group1 = create.selectFrom(BOOK).fetch().intoGr
 Map<Integer, Result<BookRecord>> group2 = create.selectFrom(BOOK).fetchGroups(BOOK.AUTHOR_ID);
 Map<Integer, List<String>>       group3 = create.selectFrom(BOOK).fetch().intoGroups(BOOK.AUTHOR_ID, BOOK.TITLE);
 Map<Integer, List<String>>       group4 = create.selectFrom(BOOK).fetchGroups(BOOK.AUTHOR_ID, BOOK.TITLE);
-
+}
 ```

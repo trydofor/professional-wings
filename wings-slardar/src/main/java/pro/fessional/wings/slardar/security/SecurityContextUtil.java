@@ -9,7 +9,6 @@ import pro.fessional.mirana.cast.TypedCastUtil;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 
 /**
  * Wrapper fo SecurityContextHolder

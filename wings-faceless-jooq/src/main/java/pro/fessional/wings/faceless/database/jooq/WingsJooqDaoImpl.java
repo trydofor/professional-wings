@@ -789,7 +789,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
     public int update(P pojo, boolean skipNull) {
         DSLContext dsl = ctx();
         R record = dsl.newRecord(table, pojo);
-        dealPkAndNull(record, skipNull);
+        skipPkAndNull(record, skipNull);
         return record.update();
     }
 
@@ -806,7 +806,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
         DSLContext dsl = ctx();
         for (P object : objects) {
             R record = dsl.newRecord(table, object);
-            dealPkAndNull(record, skipNull);
+            skipPkAndNull(record, skipNull);
             records.add(record);
         }
         return dsl.batchUpdate(records).execute();
@@ -843,7 +843,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
 
     ///////////////// other /////////////////////
 
-    private void dealPkAndNull(R record, boolean skipNull) {
+    public void skipPkAndNull(R record, boolean skipNull) {
         WingsJooqUtil.skipFields(record, pkeys);
 
         if (skipNull) {

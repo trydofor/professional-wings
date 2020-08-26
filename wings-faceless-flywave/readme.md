@@ -60,7 +60,7 @@ JDBC数据源(DataSource)，分为两种，他们会存在于`FacelessDataSource
 
 
 `$`是命名中的特殊字符，定义`跟踪表`。比如替换时。
-sql的书写规则详见[数据库约定](/wings-faceless/src/main/resources/wings-flywave/readme.md)
+sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/resources/wings-flywave/readme.md)
 
 数据库中尽量不要`nullable`，约定默认值代替，如`convention.EmptyValue`类
 

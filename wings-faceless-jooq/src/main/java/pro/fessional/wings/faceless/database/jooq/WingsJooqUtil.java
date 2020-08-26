@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless.database.jooq;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Operator;
@@ -12,19 +13,22 @@ import org.jooq.Table;
 import org.jooq.TableRecord;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
+import pro.fessional.mirana.cast.BoxedCastUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.jooq.impl.DSL.row;
-import static org.jooq.impl.DSL.trueCondition;
+import java.util.Objects;
 
 /**
  * @author trydofor
  * @since 2020-06-01
  */
-public class WingsJooqUtil {
+public class WingsJooqUtil extends DSL {
 
     public static RowCountQuery replaceInto(TableRecord<?> record) {
         Table<?> table = record.getTable();
@@ -34,7 +38,7 @@ public class WingsJooqUtil {
         System.arraycopy(fields, 0, qps, 1, fields.length);
         int off = fields.length;
         for (int i = 0; i < fields.length; i++) {
-            qps[++off] = DSL.val(record.get(i));
+            qps[++off] = val(record.get(i));
         }
 
         StringBuilder sql = new StringBuilder();
@@ -44,11 +48,12 @@ public class WingsJooqUtil {
         buildHolder(sql, pos, fields.length);
         sql.append(")");
 
-        return DSL.query(sql.toString(), qps);
+        return query(sql.toString(), qps);
     }
 
     private static final Field<?>[] EMPTY_FIELDS = new Field<?>[0];
 
+    @NotNull
     public static Field<?>[] primaryKeys(Table<?> table) {
         UniqueKey<?> key = table.getPrimaryKey();
         return key == null ? EMPTY_FIELDS : key.getFieldsArray();
@@ -84,7 +89,7 @@ public class WingsJooqUtil {
         buildHolder(sql, pos, fields.length);
         sql.append(")");
 
-        return DSL.query(sql.toString(), qps);
+        return query(sql.toString(), qps);
     }
 
     ///////////////// Condition /////////////////////
@@ -134,8 +139,28 @@ public class WingsJooqUtil {
         }
     }
 
-    public static Condition condChain(TableRecord<?> record, Operator andOr) {
-        return condChain(record, andOr, true);
+    /**
+     * @see #condChain(Operator, TableRecord, boolean)
+     */
+    @NotNull
+    public static Condition condChain(TableRecord<?> record) {
+        return condChain(Operator.AND, record, true);
+    }
+
+    /**
+     * @see #condChain(Operator, TableRecord, boolean)
+     */
+    @NotNull
+    public static Condition condChain(TableRecord<?> record, boolean ignoreNull) {
+        return condChain(Operator.AND, record, ignoreNull);
+    }
+
+    /**
+     * @see #condChain(Operator, TableRecord, boolean)
+     */
+    @NotNull
+    public static Condition condChain(Operator andOr, TableRecord<?> record) {
+        return condChain(andOr, record, true);
     }
 
     /**
@@ -146,9 +171,138 @@ public class WingsJooqUtil {
      * @return 条件
      */
     @NotNull
-    public static Condition condChain(TableRecord<?> record, Operator andOr, boolean ignoreNull) {
+    public static Condition condChain(Operator andOr, TableRecord<?> record, boolean ignoreNull) {
         List<Condition> conds = condField(record, ignoreNull);
-        return conds.isEmpty() ? DSL.trueCondition() : DSL.condition(andOr, conds);
+        return conds.isEmpty() ? trueCondition() : condition(andOr, conds);
+    }
+
+    /**
+     * @see #condChain(Operator, Map, boolean, TableImpl)
+     */
+    @NotNull
+    public static Condition condChain(Map<String, Object> fieldValue) {
+        return condChain(Operator.AND, fieldValue, true, null);
+    }
+
+    /**
+     * @see #condChain(Operator, Map, boolean, TableImpl)
+     */
+    @NotNull
+    public static Condition condChain(Map<String, Object> fieldValue, boolean ignoreNull) {
+        return condChain(Operator.AND, fieldValue, ignoreNull, null);
+    }
+
+    /**
+     * @see #condChain(Operator, Map, boolean, TableImpl)
+     */
+    @NotNull
+    public static Condition condChain(Map<String, Object> fieldValue, boolean ignoreNull, TableImpl<?> alias) {
+        return condChain(Operator.AND, fieldValue, ignoreNull, null);
+    }
+
+    /**
+     * @see #condChain(Operator, Map, boolean, TableImpl)
+     */
+    @NotNull
+    public static Condition condChain(Operator andOr, Map<String, Object> fieldValue, boolean ignoreNull) {
+        return condChain(andOr, fieldValue, ignoreNull, null);
+    }
+
+    /**
+     * 根据 map中的值，生成and条件，比如统一的用户数据隔离条件。
+     * value是collection时翻译为f.in(v)，否则为 f.eq(v)
+     *
+     * @param andOr      链接操作
+     * @param fieldValue 字段名和值
+     * @param ignoreNull 是否忽略null
+     * @param alias      表名或别名
+     * @return 条件
+     */
+    @NotNull
+    public static Condition condChain(Operator andOr, Map<String, Object> fieldValue, boolean ignoreNull, TableImpl<?> alias) {
+        Map<Field<?>, Object> fvs = new LinkedHashMap<>(fieldValue.size());
+        if (alias == null) {
+            for (Map.Entry<String, Object> en : fieldValue.entrySet()) {
+                Field<?> f = field(en.getKey());
+                fvs.put(f, en.getValue());
+            }
+        } else {
+            Field<?>[] fields = alias.fields();
+            for (Map.Entry<String, Object> en : fieldValue.entrySet()) {
+                for (Field<?> f : fields) {
+                    if (en.getKey().equalsIgnoreCase(f.getName())) {
+                        fvs.put(f, en.getValue());
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (fvs.isEmpty()) return trueCondition();
+
+        List<Condition> cds = new ArrayList<>(fvs.size());
+        for (Map.Entry<Field<?>, Object> en : fvs.entrySet()) {
+            Object v = en.getValue();
+            Field<?> f = en.getKey();
+            Condition c = condField(f, ignoreNull, v);
+            if (c != null) {
+                cds.add(c);
+            }
+        }
+
+        return condition(andOr, cds);
+    }
+
+    /**
+     * <pre>
+     * filed is null -> throw
+     * value is Array | Coolection -> f.in(v)
+     * null && !ignore -> f.isNull()
+     * _ -> f.eq(v)
+     * </pre>
+     *
+     * @param field      filed
+     * @param ignoreNull filed
+     * @param value      值
+     * @return 条件
+     */
+    @Nullable
+    public static Condition condField(Field<?> field, boolean ignoreNull, Object value) {
+        List<?> vs;
+        if (value == null) {
+            return ignoreNull ? null : field.isNull();
+        } else if (value instanceof Collection) {
+            vs = new ArrayList<>(((Collection<?>) value));
+        } else if (value.getClass().isArray()) {
+            if (value instanceof boolean[]) {
+                vs = BoxedCastUtil.list((boolean[]) value);
+            } else if (value instanceof byte[]) {
+                vs = BoxedCastUtil.list((byte[]) value);
+            } else if (value instanceof char[]) {
+                vs = BoxedCastUtil.list((char[]) value);
+            } else if (value instanceof int[]) {
+                vs = BoxedCastUtil.list((int[]) value);
+            } else if (value instanceof long[]) {
+                vs = BoxedCastUtil.list((long[]) value);
+            } else if (value instanceof float[]) {
+                vs = BoxedCastUtil.list((float[]) value);
+            } else if (value instanceof double[]) {
+                vs = BoxedCastUtil.list((double[]) value);
+            } else {
+                vs = Arrays.asList((Object[]) value);
+            }
+        } else {
+            @SuppressWarnings("unchecked")
+            Field<Object> f = (Field<Object>) field;
+            return f.eq(f.getDataType().convert(value));
+        }
+
+        if (vs.isEmpty()) {
+            return null;
+        } else {
+            vs.removeIf(Objects::isNull);
+            return field.in(field.getDataType().convert(vs));
+        }
     }
 
     public static List<Condition> condField(TableRecord<?> record, Field<?>... includes) {
@@ -185,20 +339,249 @@ public class WingsJooqUtil {
         for (int i = 0; i < fields.length; i++) {
             Field<Object> field = (Field<Object>) fields[i];
             if (field == null) continue;
-
-            Object value = record.getValue(i);
-            if (value == null) {
-                if (ignoreNull) {
-                    // ignore
-                } else {
-                    conds.add(field.isNull());
-                }
-            } else {
-                conds.add(field.eq(field.getDataType().convert(value)));
+            Condition cond = condField(field, ignoreNull, record.getValue(i));
+            if (cond != null) {
+                conds.add(cond);
             }
         }
 
         return conds;
+    }
+
+    /**
+     * 判断友好的链式条件builder
+     *
+     * @return builder
+     */
+    public static CondBuilder condBuilder() {
+        return new CondBuilder();
+    }
+
+    /**
+     * 判断友好的链式条件builder
+     *
+     * @return builder
+     */
+    public static CondBuilder condBuilder(Condition cond) {
+        return new CondBuilder().and(cond);
+    }
+
+    /**
+     * <pre>
+     * (1=1) and ((2=2 or 3=3) or (4=4 and 5=5))
+     * 可以通过以下 grp-end，构造括号条件
+     * (1=1).and()
+     * .grp()
+     *    .grp(2=2).or(3=3).end()
+     *        .and()
+     *    .grp(4=4).or(5=5).end()
+     * .end()
+     * </pre>
+     * 判断友好的链式条件builder
+     */
+    public static class CondBuilder {
+
+        private static final String BGN = "(";
+        private final ArrayList<Object> calcStack = new ArrayList<>(16);
+
+        /**
+         * @see #and(Condition, boolean)
+         */
+        @NotNull
+        public CondBuilder and() {
+            return cond(Operator.AND, null, true);
+        }
+
+        /**
+         * @see #and(Condition, boolean)
+         */
+        @NotNull
+        public CondBuilder and(Condition cond) {
+            return cond(Operator.AND, cond, true);
+        }
+
+        /**
+         * 当 ifTrue且cond != null时，and cond
+         *
+         * @param cond   目标
+         * @param ifTrue 判定
+         * @return builder
+         */
+        @NotNull
+        public CondBuilder and(Condition cond, boolean ifTrue) {
+            return cond(Operator.AND, cond, ifTrue);
+        }
+
+        /**
+         * @see #or(Condition, boolean)
+         */
+        @NotNull
+        public CondBuilder or() {
+            return cond(Operator.OR, null, true);
+        }
+
+        /**
+         * @see #or(Condition, boolean)
+         */
+        @NotNull
+        public CondBuilder or(Condition cond) {
+            return cond(Operator.OR, cond, true);
+        }
+
+        /**
+         * 当 ifTrue且cond != null时，or cond
+         *
+         * @param cond   目标
+         * @param ifTrue 判定
+         * @return builder
+         */
+        @NotNull
+        public CondBuilder or(Condition cond, boolean ifTrue) {
+            return cond(Operator.OR, cond, ifTrue);
+        }
+
+        /**
+         * @see #grp(Condition, boolean)
+         */
+        @NotNull
+        public CondBuilder grp() {
+            return grp(null, true);
+        }
+
+        /**
+         * @see #grp(Condition, boolean)
+         */
+        @NotNull
+        public CondBuilder grp(Condition cond) {
+            return grp(cond, true);
+        }
+
+        /**
+         * 开启一个括号条件组 (....)
+         *
+         * @return builder
+         */
+        @NotNull
+        public CondBuilder grp(Condition cond, boolean ifTrue) {
+            calcStack.add(BGN);
+            if (ifTrue && cond != null) calcStack.add(cond);
+            return this;
+        }
+
+        /**
+         * 当 ifTrue且cond != null时，and/or cond
+         *
+         * @param opr    操作
+         * @param cond   目标
+         * @param ifTrue 判定
+         * @return builder
+         */
+        @NotNull
+        public CondBuilder cond(Operator opr, Condition cond, boolean ifTrue) {
+            if (!ifTrue || opr == null) return this;
+
+            if (calcStack.isEmpty()) {
+                if (cond != null) calcStack.add(cond);
+            } else {
+                for (int i = calcStack.size() - 1; i >= 0; i--) {
+                    Object obj = calcStack.get(i);
+                    if (obj instanceof Condition) { // Condition -> 计算
+                        if (cond == null) { // only opr (group)
+                            calcStack.add(opr);
+                        } else { // 如果错误，抛出异常
+                            calcStack.set(i, eval((Condition) obj, opr, cond));
+                        }
+                        break;
+                    } else if (obj instanceof Operator) {
+                        if (cond == null) {
+                            break; // 忽略当前操作符
+                        } else {
+                            // Operator -> 移除，找上一个
+                            calcStack.remove(i);
+                        }
+                    } else { // "(" -> append Condition
+                        if (cond != null) calcStack.add(cond);
+                        break;
+                    }
+                }
+            }
+
+            return this;
+        }
+
+        /**
+         * 结束上一个括号条件组，并求值。
+         *
+         * @return 条件
+         */
+        @NotNull
+        public CondBuilder end() {
+            final int size = calcStack.size();
+            if (size <= 1) return this;
+
+            Condition rt = null;
+            Operator op = null;
+            int grp = -1;
+            int cur = size - 1;
+            for (; cur >= 0; cur--) {
+                Object obj = calcStack.get(cur);
+                if (obj instanceof Condition) {
+                    if (rt == null) {
+                        rt = (Condition) obj;
+                    } else {
+                        rt = eval((Condition) obj, op, rt);
+                    }
+                } else if (obj instanceof Operator) {
+                    op = (Operator) obj;
+                } else { // 括号
+                    if (grp < 0) { // 结束当前，继续求值
+                        grp = cur;
+                    } else {
+                        break;
+                    }
+                }
+            }
+
+            final int idx = cur + 1;
+            if (idx < size - 1) {
+                calcStack.set(idx, rt);
+                calcStack.subList(idx + 1, size).clear();
+            }
+            return this;
+        }
+
+        /**
+         * null友好的条件求值
+         *
+         * @param h1 条件1
+         * @param op 操作
+         * @param h2 条件2
+         * @return 条件
+         */
+        @NotNull
+        public Condition eval(Condition h1, Operator op, Condition h2) {
+            if (h1 == null) throw new IllegalStateException("bad expression: no left-hand Condition");
+            if (op == null && h2 == null) return h1;
+            if (op == null || h2 == null) throw new IllegalStateException("bad expression: no Condition or Operator");
+            return condition(op, h1, h2);
+        }
+
+        public Condition build() {
+            for (int i = calcStack.size(); i > 1 && calcStack.size() > 1; i--) {
+                end();
+            }
+
+            return (Condition) calcStack.get(0);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            for (Object o : calcStack) {
+                sb.append(o.toString());
+            }
+            return sb.toString();
+        }
     }
 
     ///////////////// binding /////////////////////
@@ -213,7 +596,7 @@ public class WingsJooqUtil {
         for (int i = 0; i < fields.length; i++) {
             Object value = record.getValue(i);
             if (value == null && ignoreNull) continue;
-            result.add(DSL.val(value));
+            result.add(val(value));
         }
 
         return result.isEmpty() ? emptyParams : result.toArray(emptyParams);
@@ -230,7 +613,7 @@ public class WingsJooqUtil {
             Field<?> field = fields[i];
             Object value = record.getValue(i);
             if (value == null && ignoreNull) continue;
-            result.add(DSL.param(field.getName(), value));
+            result.add(param(field.getName(), value));
         }
 
         return result.isEmpty() ? emptyParams : result.toArray(emptyParams);
@@ -247,7 +630,7 @@ public class WingsJooqUtil {
         for (Map.Entry<String, Object> entry : bindings.entrySet()) {
             Object value = entry.getValue();
             if (value == null && ignoreNull) continue;
-            result.add(DSL.param(entry.getKey(), value));
+            result.add(param(entry.getKey(), value));
         }
 
         return result.isEmpty() ? emptyParams : result.toArray(emptyParams);

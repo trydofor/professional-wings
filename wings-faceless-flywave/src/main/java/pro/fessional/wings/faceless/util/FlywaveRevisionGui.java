@@ -76,11 +76,10 @@ public class FlywaveRevisionGui {
                 frame.requestFocus();
                 frame.setVisible(true);
 
-                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                    showConfirmDialog(null, "程序退出了，要看的赶紧看",
-                            "😺😸😹😻😼😽🙀😿😾😺",
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE);
-                }));
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> showConfirmDialog(
+                        null, "程序退出了，要看的赶紧看",
+                        "😺😸😹😻😼😽🙀😿😾😺",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE)));
             }
 
             @Override

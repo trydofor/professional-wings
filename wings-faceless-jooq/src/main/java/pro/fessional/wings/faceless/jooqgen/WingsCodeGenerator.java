@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class WingsCodeGenerator {
 
     public static final String JOOQ_XML = "/wings-flywave/jooq-codegen-faceless.xml";
-    private static Logger logger = LoggerFactory.getLogger(WingsCodeGenerator.class);
+    private static final Logger logger = LoggerFactory.getLogger(WingsCodeGenerator.class);
 
     /**
      * 生成 Jooq 代码
