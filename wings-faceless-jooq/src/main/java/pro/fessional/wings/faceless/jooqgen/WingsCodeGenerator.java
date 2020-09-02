@@ -5,7 +5,7 @@ import org.jooq.codegen.GenerationTool;
 import org.jooq.meta.jaxb.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pro.fessional.mirana.data.Nulls;
+import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.io.InputStreams;
 
 import java.io.File;
@@ -132,8 +132,8 @@ public class WingsCodeGenerator {
                 Files.copy(f.toPath(), t.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 logger.info("create new file=" + k);
             } else {
-                val ft = ignoreRegex.matcher(InputStreams.readText(new FileInputStream(f))).replaceAll(Nulls.Str);
-                val dt = ignoreRegex.matcher(InputStreams.readText(new FileInputStream(d))).replaceAll(Nulls.Str);
+                val ft = ignoreRegex.matcher(InputStreams.readText(new FileInputStream(f))).replaceAll(Null.Str);
+                val dt = ignoreRegex.matcher(InputStreams.readText(new FileInputStream(d))).replaceAll(Null.Str);
                 if (ft.equals(dt)) {
                     logger.info("skip main same file=" + k);
                 } else {
@@ -226,7 +226,7 @@ public class WingsCodeGenerator {
         }
 
         public Builder forceRegenerate() {
-            this.conf.getGenerator().getDatabase().setSchemaVersionProvider(Nulls.Str);
+            this.conf.getGenerator().getDatabase().setSchemaVersionProvider(Null.Str);
             return this;
         }
     }

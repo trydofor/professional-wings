@@ -1,7 +1,7 @@
 package pro.fessional.wings.faceless.flywave
 
 import org.slf4j.LoggerFactory
-import pro.fessional.mirana.data.Nulls
+import pro.fessional.mirana.data.Null
 import pro.fessional.wings.faceless.database.FacelessDataSources
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.TYPE_SHARD
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.hasType
@@ -229,7 +229,7 @@ class SchemaShardingManager(
                     triple = insertQueue.take()
                 }
             } finally {
-                deleteQueue.offer(Pair(Nulls.Str, emptyArray()))
+                deleteQueue.offer(Pair(Null.Str, emptyArray()))
                 logger.info("[shardingData]🐵 finished, total insert {} records on table={}", insertCounter.get(), table)
             }
         }
@@ -305,7 +305,7 @@ class SchemaShardingManager(
             logger.info("[shardingData]🐵 finish one select. {} records on table={}, db={}", selectCounter.get() - lastCnt, table, plainName)
         }
 
-        insertQueue.offer(Triple(Nulls.Str, emptyArray(), emptyArray()))
+        insertQueue.offer(Triple(Null.Str, emptyArray(), emptyArray()))
         logger.info("[shardingData]🐵 finish all select. {} records on table={}, and wait for insert and delete done", selectCounter.get(), table)
         latch.await()
     }

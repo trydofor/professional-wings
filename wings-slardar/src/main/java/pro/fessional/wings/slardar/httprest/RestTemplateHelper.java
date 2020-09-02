@@ -19,7 +19,7 @@ import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import pro.fessional.mirana.data.Nulls;
+import pro.fessional.mirana.data.Null;
 
 import java.io.File;
 import java.io.InputStream;
@@ -141,7 +141,7 @@ public class RestTemplateHelper {
         if (method == null) method = HttpMethod.GET;
         ResponseEntity<byte[]> res = tmpl.exchange(url, method, entity, byte[].class);
         byte[] arr = extract(res);
-        return arr == null ? Nulls.Bytes : arr;
+        return arr == null ? Null.Bytes : arr;
     }
 
     @Nullable

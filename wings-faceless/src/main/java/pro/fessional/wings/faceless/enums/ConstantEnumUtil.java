@@ -3,7 +3,7 @@ package pro.fessional.wings.faceless.enums;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.data.CodeEnum;
-import pro.fessional.mirana.data.Nulls;
+import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.math.AnyIntegerUtil;
 
 import java.util.ArrayList;
@@ -271,7 +271,7 @@ public class ConstantEnumUtil {
     @SafeVarargs
     @NotNull
     public static <T extends ConstantEnum> String joinIds(String delimiter, T... es) {
-        if (es == null || es.length == 0) return Nulls.Str;
+        if (es == null || es.length == 0) return Null.Str;
         StringBuilder sb = new StringBuilder();
         for (T e : es) {
             sb.append(delimiter);
@@ -283,7 +283,7 @@ public class ConstantEnumUtil {
     @SafeVarargs
     @NotNull
     public static <T extends Enum<?>> String joinNames(String delimiter, T... es) {
-        if (es == null || es.length == 0) return Nulls.Str;
+        if (es == null || es.length == 0) return Null.Str;
         StringBuilder sb = new StringBuilder();
         for (T e : es) {
             sb.append(delimiter);
@@ -295,7 +295,7 @@ public class ConstantEnumUtil {
     @SafeVarargs
     @NotNull
     public static <T extends CodeEnum> String joinCodes(String delimiter, T... es) {
-        if (es == null || es.length == 0) return Nulls.Str;
+        if (es == null || es.length == 0) return Null.Str;
         StringBuilder sb = new StringBuilder();
         for (T e : es) {
             sb.append(delimiter);

@@ -113,7 +113,7 @@ public class WingsJavaGenerator extends JavaGenerator {
             Field fldImpt = jwc.getDeclaredField("qualifiedTypes");
             fldImpt.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Set<String> impt = (Set<String>)fldImpt.get(out);
+            Set<String> impt = (Set<String>) fldImpt.get(out);
             impt.remove("org.jooq.impl.DAOImpl");
             impt.add("pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl");
 
@@ -125,7 +125,7 @@ public class WingsJavaGenerator extends JavaGenerator {
             Matcher m = daoExtends.matcher(dao);
             dao = m.replaceFirst("public class $1Dao extends WingsJooqDaoImpl<$1Table, ");
 
-            java.delete(0,java.length());
+            java.setLength(0);
             java.append(dao);
         } catch (Exception e) {
             throw new RuntimeException("failed to replace to WingsJooqDaoImpl", e);

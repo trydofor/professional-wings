@@ -6,7 +6,7 @@ import org.jooq.codegen.GeneratorStrategy;
 import org.jooq.meta.ColumnDefinition;
 import org.jooq.meta.Definition;
 import org.jooq.meta.TableDefinition;
-import pro.fessional.mirana.data.Nulls;
+import pro.fessional.mirana.data.Null;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -82,7 +82,7 @@ public class WingsJavaStrategy extends DefaultGeneratorStrategy {
     }
 
     private String pascalCase(String str) {
-        if (str == null) return Nulls.Str;
+        if (str == null) return Null.Str;
 
         val sb = new StringBuilder(str.length());
         boolean up = false;

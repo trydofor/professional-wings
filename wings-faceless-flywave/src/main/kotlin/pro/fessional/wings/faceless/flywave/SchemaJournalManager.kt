@@ -1,7 +1,7 @@
 package pro.fessional.wings.faceless.flywave
 
 import org.slf4j.LoggerFactory
-import pro.fessional.mirana.data.Nulls
+import pro.fessional.mirana.data.Null
 import pro.fessional.wings.faceless.database.FacelessDataSources
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.TYPE_PLAIN
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.TYPE_SHARD
@@ -27,10 +27,10 @@ class SchemaJournalManager(
         private val journalDdl: JournalDdl
 ) {
     data class JournalDdl(
-            var updTbl: String = Nulls.Str,
-            var updTrg: String = Nulls.Str,
-            var delTbl: String = Nulls.Str,
-            var delTrg: String = Nulls.Str
+            var updTbl: String = Null.Str,
+            var updTrg: String = Null.Str,
+            var delTbl: String = Null.Str,
+            var delTrg: String = Null.Str
     )
 
     companion object {
@@ -410,12 +410,12 @@ class SchemaJournalManager(
             .toRegex(setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
 
     private fun parseTrgName(ddl: String): String {
-        return trgNameRegex.find(ddl)?.groupValues?.get(1) ?: Nulls.Str // 名字
+        return trgNameRegex.find(ddl)?.groupValues?.get(1) ?: Null.Str // 名字
     }
 
     private fun parseTblName(ddl: String) = when (val st = sqlStatementParser.parseTypeAndTable(ddl)) {
         is SqlStatementParser.SqlType.Plain -> st.table
         is SqlStatementParser.SqlType.Shard -> st.table
-        else -> Nulls.Str
+        else -> Null.Str
     }
 }

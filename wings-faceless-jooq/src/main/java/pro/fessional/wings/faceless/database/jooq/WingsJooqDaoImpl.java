@@ -19,7 +19,7 @@ import org.jooq.TableRecord;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
 import org.jooq.impl.TableImpl;
-import pro.fessional.mirana.data.Nulls;
+import pro.fessional.mirana.data.Null;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -220,7 +220,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
      * @return 执行结果，使用 ModifyAssert判断
      */
     public int[] batchMerge(Collection<R> records, int size, Field<?>... updateFields) {
-        if (records == null || records.isEmpty()) return Nulls.Ints;
+        if (records == null || records.isEmpty()) return Null.Ints;
 
         BiFunction<DSLContext, Collection<R>, int[]> batchMergeExec = (dsl, rs) -> {
             HashMap<Field<?>, Object> map = new HashMap<>();
@@ -294,7 +294,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public int[] batchMerge(Field<?>[] keys, BiPredicate<Object, Object> equals, Collection<R> records, int size, Field<?>... updateFields) {
-        if (records == null || records.isEmpty()) return Nulls.Ints;
+        if (records == null || records.isEmpty()) return Null.Ints;
 
         DSLContext dsl = ctx();
         int[] result = new int[records.size()];
@@ -382,7 +382,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
      * @see DSLContext#mergeInto(Table)
      */
     public int[] batchInsert(Collection<R> records, int size, boolean ignoreOrReplace) {
-        if (records == null || records.isEmpty()) return Nulls.Ints;
+        if (records == null || records.isEmpty()) return Null.Ints;
 
         BiFunction<DSLContext, Collection<R>, int[]> batchIgnoreExec = (dsl, rs) -> {
             Field<?>[] fields = table.fields();
@@ -453,7 +453,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public int[] batchUpdate(Field<?>[] whereFields, Collection<R> records, int size, Field<?>... updateFields) {
-        if (records == null || records.isEmpty()) return Nulls.Ints;
+        if (records == null || records.isEmpty()) return Null.Ints;
 
         BiFunction<DSLContext, Collection<R>, int[]> batchMergeExec = (dsl, rs) -> {
             HashMap<Field<?>, Object> map = new HashMap<>();
@@ -510,7 +510,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
 
     //
     public int[] batchExecute(Collection<R> records, int size, BiFunction<DSLContext, Collection<R>, int[]> exec) {
-        if (records == null || records.isEmpty()) return Nulls.Ints;
+        if (records == null || records.isEmpty()) return Null.Ints;
 
         DSLContext dsl = ctx();
         if (size <= 0 || records.size() <= size) {

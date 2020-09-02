@@ -1,7 +1,7 @@
 package pro.fessional.wings.faceless.flywave
 
 import org.slf4j.LoggerFactory
-import pro.fessional.mirana.data.Nulls
+import pro.fessional.mirana.data.Null
 import pro.fessional.wings.faceless.flywave.util.TemplateUtil
 import java.util.LinkedList
 import java.util.SortedMap
@@ -127,10 +127,10 @@ class SqlSegmentProcessor(
         logger.debug("[parse] parse sql start")
         var lineBgn = -1
         var dbsAnot = 0
-        var tblName = Nulls.Str
-        var tbApply = Nulls.Str
+        var tblName = Null.Str
+        var tbApply = Null.Str
         var errType = ErrType.Stop
-        var askText = Nulls.Str
+        var askText = Null.Str
         var inComment = false
         var lineCur = 0
         var delimiter = delimiterDefault
@@ -225,10 +225,10 @@ class SqlSegmentProcessor(
                 // reset for next
                 lineBgn = -1
                 dbsAnot = 0
-                tblName = Nulls.Str
-                tbApply = Nulls.Str
+                tblName = Null.Str
+                tbApply = Null.Str
                 errType = ErrType.Stop
-                askText = Nulls.Str
+                askText = Null.Str
                 builder.clear()
             } else {
                 builder.append(line).append("\n")
@@ -288,11 +288,11 @@ class SqlSegmentProcessor(
 
         fun parseCmd(line: String): Array<String> {
             var emt = true
-            var tbl = Nulls.Str
-            var dbs = Nulls.Str
-            var apl = Nulls.Str
-            var ers = Nulls.Str
-            var ask = Nulls.Str
+            var tbl = Null.Str
+            var dbs = Null.Str
+            var apl = Null.Str
+            var ers = Null.Str
+            var ask = Null.Str
             for (mr in cmdReg.findAll(line)) {
                 val (k, v) = mr.destructured
                 if (v.equals("plain", true) || v.equals("shard", true)) {

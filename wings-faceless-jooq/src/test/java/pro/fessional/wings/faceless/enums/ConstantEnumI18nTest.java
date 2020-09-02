@@ -13,7 +13,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import pro.fessional.mirana.data.Nulls;
+import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.faceless.WingsTestHelper;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.SysConstantEnumDao;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.SysConstantEnum;
@@ -83,8 +83,8 @@ public class ConstantEnumI18nTest {
         StandardLanguage enUs = StandardLanguage.EN_US;
         Assert.assertEquals("简体中文", standardI18nService.load(zhCN, zhCN));
         Assert.assertEquals("Simplified Chinese", standardI18nService.load(zhCN, enUs));
-        String mcn = messageSource.getMessage(zhCN.getI18nCode(), Nulls.StrArr, zhCN.toLocale());
-        String men = messageSource.getMessage(zhCN.getI18nCode(), Nulls.StrArr, enUs.toLocale());
+        String mcn = messageSource.getMessage(zhCN.getI18nCode(), Null.StrArr, zhCN.toLocale());
+        String men = messageSource.getMessage(zhCN.getI18nCode(), Null.StrArr, enUs.toLocale());
         Assert.assertEquals("简体中文", mcn);
         Assert.assertEquals("Simplified Chinese", men);
 

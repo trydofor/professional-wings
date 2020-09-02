@@ -5,7 +5,7 @@ import org.slf4j.event.Level
 import org.slf4j.event.Level.ERROR
 import org.slf4j.event.Level.INFO
 import org.slf4j.event.Level.WARN
-import pro.fessional.mirana.data.Nulls
+import pro.fessional.mirana.data.Null
 import pro.fessional.wings.faceless.database.FacelessDataSources
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
@@ -353,10 +353,10 @@ class DefaultRevisionManager(
                         assertNot1st(plainDs, e)
                         messageLog(WARN, here, "try to init first version, revi=$revi, on db=$plainName")
                         applyRevisionSql(revi, uptoSql, true, commitId, plainTmpl, null, emptyList())
-                        dbVal["upto_sql"] = Nulls.Str
-                        dbVal["undo_sql"] = Nulls.Str
-                        dbVal["apply_dt"] = Nulls.Str
-                        dbVal["comments"] = Nulls.Str
+                        dbVal["upto_sql"] = Null.Str
+                        dbVal["undo_sql"] = Null.Str
+                        dbVal["apply_dt"] = Null.Str
+                        dbVal["comments"] = Null.Str
                     } else {
                         val regex = "sys_schema_version.*exist".toRegex(setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE))
                         if (e.message?.contains(regex) == true) {
@@ -607,7 +607,7 @@ class DefaultRevisionManager(
         val dbName = tmpl.name
         val tblApply = seg.applyTbl(tables)
 
-        val ask = if (seg.askText.isNotEmpty() && askType[AskType.Mark] != false) "强制确认：${seg.sqlText}" else Nulls.Str
+        val ask = if (seg.askText.isNotEmpty() && askType[AskType.Mark] != false) "强制确认：${seg.sqlText}" else Null.Str
 
         askSegment(revi, ask, dangerous(seg.sqlText))
 
@@ -684,7 +684,7 @@ class DefaultRevisionManager(
     }
 
     private fun dangerous(sql: String): String {
-        if (askType[AskType.Drop] == false) return Nulls.Str
+        if (askType[AskType.Drop] == false) return Null.Str
 
         val txt = sql.trim()
         for ((k, reg) in dropReg) {
@@ -692,7 +692,7 @@ class DefaultRevisionManager(
                 return "dangerous sql, $k\n$txt"
             }
         }
-        return Nulls.Str
+        return Null.Str
     }
 
     private fun askSegment(revi: Long, vararg txt: String) {

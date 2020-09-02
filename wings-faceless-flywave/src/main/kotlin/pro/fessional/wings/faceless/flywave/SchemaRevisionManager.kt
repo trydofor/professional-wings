@@ -1,6 +1,6 @@
 package pro.fessional.wings.faceless.flywave
 
-import pro.fessional.mirana.data.Nulls
+import pro.fessional.mirana.data.Null
 import java.util.SortedMap
 import java.util.function.BiConsumer
 import java.util.function.Function
@@ -14,10 +14,10 @@ interface SchemaRevisionManager {
 
     data class RevisionSql(
             var revision: Long = 0,
-            var undoPath: String = Nulls.Str,
-            var undoText: String = Nulls.Str,
-            var uptoPath: String = Nulls.Str,
-            var uptoText: String = Nulls.Str
+            var undoPath: String = Null.Str,
+            var undoText: String = Null.Str,
+            var uptoPath: String = Null.Str,
+            var uptoText: String = Null.Str
     )
 
     enum class AskType {

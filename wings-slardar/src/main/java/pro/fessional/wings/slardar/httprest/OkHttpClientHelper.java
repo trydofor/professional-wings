@@ -10,7 +10,7 @@ import okhttp3.ResponseBody;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpMethod;
-import pro.fessional.mirana.data.Nulls;
+import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.mirana.netx.SslTrustAll;
 
@@ -126,7 +126,7 @@ public class OkHttpClientHelper {
     @NotNull
     public static String extractString(Response response) throws IOException {
         ResponseBody body = extract(response);
-        if (body == null) return Nulls.Str;
+        if (body == null) return Null.Str;
         return body.string();
     }
 
@@ -163,7 +163,7 @@ public class OkHttpClientHelper {
         try {
             Response response = client.newCall(builder.build()).execute();
             ResponseBody body = extract(response);
-            return body == null ? Nulls.Bytes : body.bytes();
+            return body == null ? Null.Bytes : body.bytes();
         } catch (Exception e) {
             throw new IllegalStateException("failed to download, url=" + url, e);
         }

@@ -2,7 +2,7 @@ package pro.fessional.wings.faceless.flywave.impl
 
 import org.slf4j.LoggerFactory
 import pro.fessional.mirana.bits.Bytes
-import pro.fessional.mirana.data.Nulls
+import pro.fessional.mirana.data.Null
 import pro.fessional.mirana.time.DateFormatter
 import pro.fessional.wings.faceless.flywave.SqlStatementParser
 import java.time.LocalDate
@@ -80,7 +80,7 @@ class MySqlStatementParser : SqlStatementParser {
                 return@Function if (m.groupCount() > 0) {
                     Optional.of(trimName(m.group(1)))
                 } else {
-                    Optional.of(Nulls.Str)
+                    Optional.of(Null.Str)
                 }
             } else {
                 return@Function Optional.empty<String>()
@@ -96,7 +96,7 @@ class MySqlStatementParser : SqlStatementParser {
             }
         }
         for (fnc in shardRegex) {
-            val m = fnc.apply(sql).orElse(Nulls.Str)
+            val m = fnc.apply(sql).orElse(Null.Str)
             if (m.isNotEmpty()) {
                 return SqlStatementParser.SqlType.Shard(m)
             }
