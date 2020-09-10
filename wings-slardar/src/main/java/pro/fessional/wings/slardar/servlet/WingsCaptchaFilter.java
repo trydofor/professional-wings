@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
 import pro.fessional.wings.slardar.security.WingsCaptchaContext;
 
@@ -230,7 +231,7 @@ public class WingsCaptchaFilter implements OrderedFilter {
                 Enumeration<String> headers = request.getHeaders(s);
                 while (headers.hasMoreElements()) {
                     String value = headers.nextElement();
-                    if ((value.toLowerCase().startsWith(BEARER_LOWER))) {
+                    if ((StringUtils.startsWithIgnoreCase(value, BEARER_LOWER))) {
                         for (String part : value.substring(BEARER_LOWER.length()).trim().split(",")) {
                             String trim = part.trim();
                             if (trim.length() > 0) {

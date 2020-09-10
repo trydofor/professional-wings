@@ -3,7 +3,7 @@ package pro.fessional.wings.slardar.spring.bean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.code.RandCode;
-import pro.fessional.wings.slardar.security.WingsCaptchaContext;
+import pro.fessional.wings.slardar.security.WingsCaptchaUtil;
 import pro.fessional.wings.slardar.servlet.WingsCaptchaFilter;
 
 /**
@@ -23,7 +23,12 @@ public class CaptchaTriggerConfigurationTest {
         return (request, sessions) -> {
             if (request.getParameter("ct") != null) {
                 String code = RandCode.number(10);
-                return WingsCaptchaContext.Context.of(code, "vc", "bad captcha", "/test/vcode.html");
+                return WingsCaptchaUtil.builder()
+                                       .setCode(code)
+                                       .setParam("vc")
+                                       .setFails("bad captcha")
+                                       .setAllowUri("/test/vcode.html")
+                                       .buildContext();
             }
             return null;
         };

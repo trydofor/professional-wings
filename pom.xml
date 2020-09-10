@@ -32,19 +32,22 @@
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!--
+        https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/html/appendix-dependency-versions.html#appendix-dependency-versions
+        -->
+        <spring-boot.version>2.2.7.RELEASE</spring-boot.version>
         <!--silencer-->
         <wings.version>2.2.7-SNAPSHOT</wings.version>
         <mirana.version>2.0.0-SNAPSHOT</mirana.version>
         <!--faceless-->
-        <!-- https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/html/appendix-dependency-versions.html#appendix-dependency-versions -->
         <kotlin.version>1.3.72</kotlin.version>
         <jooq.version>3.12.4</jooq.version>
         <sharding-sphere.version>4.1.1</sharding-sphere.version>
         <!--slardar oauth2-->
         <guava.version>29.0-jre</guava.version>
-        <spring-boot.version>2.2.7.RELEASE</spring-boot.version>
         <commons-io.version>2.7</commons-io.version>
         <mapstruct.version>1.3.1.Final</mapstruct.version>
+        <kaptcha.version>2.3.2</kaptcha.version>
     </properties>
 
     <dependencies>
@@ -133,6 +136,11 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons-io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.penggle</groupId>
+                <artifactId>kaptcha</artifactId>
+                <version>${kaptcha.version}</version>
             </dependency>
             <!-- dev -->
             <dependency>

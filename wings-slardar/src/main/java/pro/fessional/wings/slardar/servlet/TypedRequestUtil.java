@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.servlet;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.cast.TypedCastUtil;
@@ -146,7 +147,7 @@ public class TypedRequestUtil {
         String token = null;
         if (auth != null) {
             String bearer = "bearer";
-            int p = auth.toLowerCase().indexOf(bearer);
+            int p = StringUtils.indexOfIgnoreCase(auth, bearer);
             if (p >= 0) {
                 token = auth.substring(p + bearer.length()).trim();
             }

@@ -1,11 +1,13 @@
 package pro.fessional.wings.slardar.controller;
 
-import lombok.val;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pro.fessional.wings.slardar.security.WingsCaptchaContext;
+import pro.fessional.wings.slardar.security.WingsCaptchaUtil;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author trydofor
@@ -17,16 +19,29 @@ public class TestCaptchaController {
     @RequestMapping({"/test/captcha.html"})
     @ResponseBody
     public String captcha() {
-        String code = "123";
-        val ctx = WingsCaptchaContext.Context.of(code, "vc", "bad captcha", "/test/vcode.html");
-        WingsCaptchaContext.set(ctx);
+        String code = "ABC123";
+        WingsCaptchaUtil.builder()
+                        .setCode(code)
+                        .setParam("vc")
+                        .setFails("bad captcha")
+                        .setAllowUri("/test/vcode.html")
+                        .buildContext();
         return "captcha";
+    }
+
+    @RequestMapping({"/test/image.html"})
+    public void image(HttpServletResponse response) {
+        WingsCaptchaUtil.builder()
+                        .setParam("vc")
+                        .setFails("bad captcha")
+                        .setAllowUri("/test/vcode.html")
+                        .buildCaptcha(response);
     }
 
     @RequestMapping({"/test/verify.html"})
     @ResponseBody
     public String verify() {
-        return "/test/verify.html?vc=123";
+        return "/test/verify.html?vc=ABC123";
     }
 
 
@@ -39,7 +54,7 @@ public class TestCaptchaController {
 
     @RequestMapping(value = "/test/mmethod.html", method = {RequestMethod.POST, RequestMethod.PUT})
     @ResponseBody
-    public String postPut(){
+    public String postPut() {
         return "postPut";
     }
 }

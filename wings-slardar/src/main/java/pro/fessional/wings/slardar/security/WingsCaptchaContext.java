@@ -4,8 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.function.BiFunction;
 
 /**
@@ -61,36 +59,7 @@ public class WingsCaptchaContext {
          */
         public final BiFunction<HttpServletRequest, HttpServletResponse, R> handler;
 
-
-        public static Context of(String code, String param, String response, String... noopUri) {
-            return new Context(code, (req, res) -> {
-                if (code.equals(req.getParameter(param))) {
-                    return WingsCaptchaContext.R.PASS;
-                } else {
-                    String uri = req.getRequestURI();
-                    for (String s : noopUri) {
-                        if (uri.startsWith(s)) {
-                            return WingsCaptchaContext.R.NOOP;
-                        }
-                    }
-
-                    try {
-                        PrintWriter writer = res.getWriter();
-                        writer.write(response);
-                        writer.flush();
-                    } catch (IOException e) {
-                        // ignore
-                    }
-                    return WingsCaptchaContext.R.FAIL;
-                }
-            });
-        }
-
-        public static Context of(String code, BiFunction<HttpServletRequest, HttpServletResponse, R> handler) {
-            return new Context(code, handler);
-        }
-
-        private Context(String code, BiFunction<HttpServletRequest, HttpServletResponse, R> handler) {
+        public Context(String code, BiFunction<HttpServletRequest, HttpServletResponse, R> handler) {
             this.code = code;
             this.handler = handler;
         }
