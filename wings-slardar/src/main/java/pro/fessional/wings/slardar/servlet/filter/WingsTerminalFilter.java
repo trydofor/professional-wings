@@ -1,9 +1,12 @@
-package pro.fessional.wings.slardar.servlet;
+package pro.fessional.wings.slardar.servlet.filter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
 import pro.fessional.wings.silencer.context.WingsI18nContext;
 import pro.fessional.wings.slardar.security.WingsTerminalContext;
+import pro.fessional.wings.slardar.servlet.WingsServletConst;
+import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
+import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -39,7 +42,7 @@ public class WingsTerminalFilter implements OrderedFilter {
     }
 
     //
-    private int order = WingsFilterOrder.CAPTCHA;
+    private int order = WingsServletConst.ORDER_FILTER_TERMINAL;
 
     @Override
     public int getOrder() {

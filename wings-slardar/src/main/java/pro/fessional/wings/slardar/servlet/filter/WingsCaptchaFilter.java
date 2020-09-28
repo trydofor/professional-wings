@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.servlet;
+package pro.fessional.wings.slardar.servlet.filter;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
 import pro.fessional.wings.slardar.security.WingsCaptchaContext;
+import pro.fessional.wings.slardar.servlet.WingsServletConst;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -140,7 +141,7 @@ public class WingsCaptchaFilter implements OrderedFilter {
 
 
     //
-    private int order = WingsFilterOrder.CAPTCHA;
+    private int order = WingsServletConst.ORDER_FILTER_CAPTCHA;
 
     @Override
     public int getOrder() {

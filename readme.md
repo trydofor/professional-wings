@@ -157,6 +157,7 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
  * 在方法上写全路径`@RequestMapping("/a/b/c.html")`
  * 在controller上写版本号`@RequestMapping("/v1")`
  * 不要相写相对路径，这样才可以通过URL直接搜索匹配。
+ * 不要使用prefix拼接路径(view，url)，避免无意义的碎片。
  * 不管REST还是其他，url一定有扩展名，用来标识MIME和过滤
 
 ### 0.2.7.Spring Service 的接口和 DTO 约定

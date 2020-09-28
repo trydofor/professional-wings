@@ -2,6 +2,8 @@
 
 一个需要有点动手能力的简单的例子。
 
+![wings ti6](./src/test/resources/static/img/de19701.jpg)
+
  * 直接在IDE中run `WingsExampleApplication`
  * `mvn install` + `mvn spring-boot:run`
  * `mvn package` + `wings-starter.sh`

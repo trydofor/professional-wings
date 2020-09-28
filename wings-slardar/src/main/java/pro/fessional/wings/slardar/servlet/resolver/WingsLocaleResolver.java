@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.servlet;
+package pro.fessional.wings.slardar.servlet.resolver;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import static java.util.Collections.emptyList;
+import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_I18N_CONTEXT;
 
 /**
  * @author trydofor
@@ -27,7 +28,6 @@ import static java.util.Collections.emptyList;
 @RequiredArgsConstructor
 public class WingsLocaleResolver extends AbstractLocaleContextResolver {
 
-    public static final String CONTEXT_KEY = "WINGS.I18N_CONTEXT";
 
     private final Config config;
 
@@ -39,7 +39,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
 
     public WingsI18nContext resolveI18nContext(HttpServletRequest request) {
 
-        Object obj = request.getAttribute(CONTEXT_KEY);
+        Object obj = request.getAttribute(ATTR_I18N_CONTEXT);
         if (obj instanceof WingsI18nContext) {
             return (WingsI18nContext) obj;
         }
@@ -49,7 +49,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
         final ZoneId zoneId = timeZone.toZoneId();
 
         Context context = new Context(locale, timeZone, zoneId);
-        request.setAttribute(CONTEXT_KEY, context);
+        request.setAttribute(ATTR_I18N_CONTEXT, context);
 
         return context;
     }
@@ -58,7 +58,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
     public void setLocaleContext(@NotNull HttpServletRequest request, HttpServletResponse response, LocaleContext context) {
 
         if (context instanceof WingsI18nContext && context instanceof TimeZoneAwareLocaleContext) {
-            request.setAttribute(CONTEXT_KEY, context);
+            request.setAttribute(ATTR_I18N_CONTEXT, context);
             return;
         }
 
@@ -81,7 +81,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
         }
 
         context = new Context(locale, timeZone, timeZone.toZoneId());
-        request.setAttribute(CONTEXT_KEY, context);
+        request.setAttribute(ATTR_I18N_CONTEXT, context);
     }
 
     // /////////////////

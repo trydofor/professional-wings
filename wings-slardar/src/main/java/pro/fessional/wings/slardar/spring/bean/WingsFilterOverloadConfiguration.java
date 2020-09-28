@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -14,9 +15,9 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import pro.fessional.wings.slardar.servlet.WingsFilterOrder;
-import pro.fessional.wings.slardar.servlet.WingsOverloadFilter;
-import pro.fessional.wings.slardar.servlet.WingsRemoteResolver;
+import pro.fessional.wings.slardar.servlet.WingsServletConst;
+import pro.fessional.wings.slardar.servlet.filter.WingsOverloadFilter;
+import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletResponse;
@@ -34,9 +35,9 @@ import java.io.PrintWriter;
 @Configuration
 @ConditionalOnProperty(name = "spring.wings.slardar.overload.enabled", havingValue = "true")
 @ConditionalOnClass(Filter.class)
-public class WingsOverloadConfiguration {
+public class WingsFilterOverloadConfiguration {
 
-    private final Log logger = LogFactory.getLog(WingsOverloadConfiguration.class);
+    private final Log logger = LogFactory.getLog(WingsFilterOverloadConfiguration.class);
 
     @Component
     @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -45,12 +46,13 @@ public class WingsOverloadConfiguration {
         private final WingsOverloadFilter overloadFilter;
 
         @Override
-        public void onApplicationEvent(ContextClosedEvent event) {
+        public void onApplicationEvent(@NotNull ContextClosedEvent event) {
             overloadFilter.setRequestCapacity(Integer.MIN_VALUE);
             logger.warn("Wings shutting down, deny new request, current=" + overloadFilter.getRequestProcess());
-            while (overloadFilter.getRequestProcess() > 0) {
+            for (long breaks = 60 * 1000, step = 30; overloadFilter.getRequestProcess() > 0 && breaks > 0; ) {
                 try {
-                    Thread.sleep(30); // 忙等
+                    Thread.sleep(step); // 忙等
+                    breaks -= step;
                 } catch (InterruptedException e) {
                     // ignore
                 }
@@ -83,7 +85,7 @@ public class WingsOverloadConfiguration {
                                                    WingsRemoteResolver resolver) {
         logger.info("Wings conf Overload filter");
         WingsOverloadFilter filter = new WingsOverloadFilter(fallBack, config, resolver);
-        filter.setOrder(WingsFilterOrder.OVERLOAD);
+        filter.setOrder(WingsServletConst.ORDER_FILTER_OVERLOAD);
         return filter;
     }
 

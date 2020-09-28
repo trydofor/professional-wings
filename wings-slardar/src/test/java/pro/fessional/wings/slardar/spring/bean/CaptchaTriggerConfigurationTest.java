@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.slardar.security.WingsCaptchaUtil;
-import pro.fessional.wings.slardar.servlet.WingsCaptchaFilter;
+import pro.fessional.wings.slardar.servlet.filter.WingsCaptchaFilter;
 
 /**
  * @author trydofor

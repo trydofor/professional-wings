@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
@@ -15,9 +16,18 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+/**
+ * 列出所有RequestMapping标记的URL，
+ * 注意，不是容器内所有 mapping
+ * @see DispatcherServlet#getHandlerMappings()
+ *
+ */
 public class RequestMappingHelper {
 
     public static Map<RequestMappingInfo, HandlerMethod> listAllMapping(ApplicationContext context) {
+//        Map<String, HandlerMapping> matchingBeans =
+//                BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerMapping.class, true, false);
+
         RequestMappingHandlerMapping mapping = context.getBean(RequestMappingHandlerMapping.class);
         return mapping.getHandlerMethods();
     }

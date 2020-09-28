@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.servlet;
+package pro.fessional.wings.slardar.servlet.request;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ public class TypedRequestUtil {
     public static <T> T getAttribute(HttpServletRequest request, String name, Class<T> claz, boolean ignoreCase) {
         if (request == null || name == null) return null;
 
-        if (!ignoreCase) {
+        if (ignoreCase) {
             Enumeration<String> names = request.getAttributeNames();
             while (names != null && names.hasMoreElements()) {
                 String s = names.nextElement();

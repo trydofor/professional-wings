@@ -7,10 +7,11 @@
 为Servlet体系下的SpringMvc的提供i18n和security的简单封装。
 
  * 工程化Jackson配置(wings-jackson-79.properties)
+ * domain继承换肤(通过host判定，且可继承)
  * 多时区
  * caffeine cache
  * 不支持webflux
- * 不常用的filter
+ * 特殊功能的filter
 
 `LocaleContextResolver` 会俺以下优先级，获得多国语设置。
 
@@ -72,7 +73,77 @@ TypeReference ref = new TypeReference<List<Integer>>() { };
 JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, Foo.class)
 ```
 
-## 3.2.restTemplate和okhttp
+## 3.2.domain继承换肤
+
+不同于反向代理(nginx)的rewrite，此功能是于java的extend和override一致。
+
+* extend - 子domain拥有父domain的全部URL
+* override - 子domain可以override父domain的URL
+* 子domain有自己独立的URL
+* domain的继承基于 host
+
+### 3.2.1.场景举例
+
+假设`a.com`是一个有完整的功能domain，举例包括以下3个URL
+
+ * GET /user-list.json - 基于Controller
+ * GET /css/main.css - 静态资源
+ * GET /login.html - 基于Controller
+
+此时，来个加盟商`b.com`，除了皮肤，顶级域名外，都和`a.com`一样。  
+再后来，`b.com`有了自己的需求，部分界面和url和`a.com`的需求分叉了。
+不同的功能自己实现，放在约定的prefix下，此时URL分布如下，
+
+ * GET /login.html - a.com(父)，b.com(子)
+ * GET /user-list.json - a.com(父)
+ * GET /css/main.css - a.com(父)
+ * GET /domain/b/user-list.json - b.com(子)
+ * GET /domain/b/css/main.css - b.com(子)
+
+当用户访问以下URL时，按照java的父子类override规则，调用如下，
+
+ * a.com/login.html - /login.html(父)
+ * a.com/user-list.json - /user-info.list(父)
+ * a.com/css/main.css - /css/main.css(父)
+ * b.com/login.html - /login.html(父)
+ * b.com/user-list.json - /domain/b/user-list.json(子)
+ * b.com/css/main.css - /domain/b/css/main.css(子)
+
+实际项目中，以上场景多发生在resource和controller的Mapping中。  
+所以，暂时不支持viewTemplate，同时也约定模板必须使用全路径。
+
+根据wings mapping约定，避免使用相对路径，所以，b.com要在在class级做前缀。
+``` java
+@Controller
+@RequestMapping("/domain/b")
+public class UserController {
+ 
+    @GetMapping("/user-info.json")
+    public String fetchUserInfo() {
+        // 不支持view，需要手动指定
+        return "/domain/b/user-info";
+    }
+}
+```
+
+### 3.2.2.实现原理
+
+在spring mvc体系中，一个请求进入servlet容器后，在worker线程中
+
+* Filter#doFilter `before` chain.doFilter;
+* DispatcherServlet#doService `call` doDispatch
+* Filter#doFilter `after` chain.doFilter;
+
+wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子域全路径url，  
+通过检查缓存和DispatchServlet中的HandlerMapping再构造RequestWrapper。
+
+知识点提示，
+* 在FilterChain.doFilter调用之前Request可用，而其后Response可用的，注意线程安全和性能。
+* 默认静态资源在classpath中的 `/static`, `/public`, `/resources`, `/META-INF/resources`
+
+## 3.3.常用功能
+
+## 3.3.1.restTemplate和okhttp
 
 默认使用okhttp3作为restTemplate的实现。按spring boot官方文档和源码约定。
 并可以 autoware OkHttpClient 直接使用，默认**信任所有ssl证书**，如安全高，需要关闭。
@@ -82,7 +153,7 @@ JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, Foo.
 org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 
 
-## 3.3.缓存Caffeine
+## 3.3.2.缓存Caffeine
 
 默认提供caffeine缓存，可以注入
 
@@ -113,11 +184,29 @@ cacheNames = Level.GENERAL + "StandardRegion",
 cacheManager = Manager.REDISSON)
 ```
 
-## 3.4.不太常用的filter
+## 3.3.3.Session,Timezone和I18n
 
-默认都是关闭状态。
+用户登录后，自动生成时区和I18n有关的Context。
+通过`SecurityContextUtil`获得相关的Context。
 
-## 3.4.1.CaptchaFilter防扒
+`WingsTerminalContext.Context`和登录终端有关的，  
+需要打开TerminalFilter。
+
+
+## 3.7.特别用途的filter
+
+## 3.7.1.TerminalFilter终端
+
+是否解析 WingsTerminalContext，默认`spring.wings.slardar.terminal.enabled=true`控制，  
+同时依赖于 `WingsLocaleResolver`和`WingsRemoteResolver`
+
+ * 设置 Locale 和 TimeZone
+ * 设置 remote ip
+ * 设置 user agent信息
+
+## 3.7.2.CaptchaFilter防扒
+
+是否开启验证码，`spring.wings.slardar.captcha.enabled=false`
 
 通过`WingsCaptchaContext`设置规则，可以实现全局的防扒验证码。
 验证码的验证规则可以自定义，比如时间戳比较，短信码比较等。
@@ -131,36 +220,24 @@ cacheManager = Manager.REDISSON)
 
 举例，详见`TestCaptchaController`的三个方法。
 
-## 3.4.2.OverloadFilter过载
+## 3.7.3.OverloadFilter过载
+
+是否限定请求并发，默认`spring.wings.slardar.overload.enabled=false`
 
  * 自动或手动设置`最大同时进行请求数`。超过时，执行`fallback`。
  * 不影响性能的情况下，记录慢响应URI和运行状态。
  * 优雅停止服务器，阻断所有新请求。
  * 相同IP请求过于频繁，执行fallback。
- * 防扒验证码（图形或短信）
- 
- `最大同时进行请求数`，指已经由Controller处理，但未完成的请求。
 
-## 3.4.3.TerminalFilter终端
+`最大同时进行请求数`，指已经由Controller处理，但未完成的请求。
 
- * 设置 Locale 和 TimeZone
- * 设置 remote ip
- * 设置 user agent信息
+其中，关闭`快请求`或`慢请求`功能，可以通过以下设置关闭，
 
-## 3.5.Session,Timezone和I18n
+ * `快请求` - `wings.slardar.overload.request-capacity=-1`
+ * `慢请求` - `wings.slardar.overload.response-warn-slow=0`
 
-用户登录后，自动生成时区和I18n有关的Context。
-通过`SecurityContextUtil`获得相关的Context。
 
- * WingsTerminalContext.Context 登录终端有关的
-
-## 3.7.参考资料
-
-[OAuth 2 Developers Guide](https://projects.spring.io/spring-security-oauth/docs/oauth2.html)
-[OAuth2 boot](https://docs.spring.io/spring-security-oauth2-boot/docs/current/reference/htmlsingle/)
-[Spring Security](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/)
-
-## 3.8.常见问题
+## 3.9.常见问题
 
 ### 001.spring 找不到 RedissonSpringCacheManager
 
@@ -194,3 +271,8 @@ slardar，使用undertow，并提供了一下默认配置
 `UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used`
 默认 DefaultByteBufferPool(directBuffers, 1024, 100, 12);
 
+### 009.OAuth2的参考资料
+
+* [OAuth 2 Developers Guide](https://projects.spring.io/spring-security-oauth/docs/oauth2.html)
+* [OAuth2 boot](https://docs.spring.io/spring-security-oauth2-boot/docs/current/reference/htmlsingle/)
+* [Spring Security](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/)

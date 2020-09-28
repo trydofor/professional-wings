@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
-import pro.fessional.wings.slardar.servlet.TypedRequestUtil;
+import pro.fessional.wings.slardar.servlet.request.TypedRequestUtil;
 
 import javax.servlet.http.HttpServletRequest;
 

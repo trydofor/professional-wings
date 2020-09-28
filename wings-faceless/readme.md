@@ -142,7 +142,13 @@ schema版本2019_0521_01，定义了enum和i18n表，分别定义业务级枚举
 
 i18n可以使用CombinableMessageSource动态添加，处理service内消息的多国语。
 
-## 2.6.H2本地库
+## 2.6.事件服务EventService
+
+单进程的异步和解耦，guava的EventBus和Spring的Event都可以胜任。
+为单Jvm，多Jvm提高一个基于数据库的Event服务，主要用来
+
+
+## 2.9.H2本地库
 
 在不方便提供mysql数据库的时候，如演示或本地数据库应用，可以使用H2，配置如下。
 ```

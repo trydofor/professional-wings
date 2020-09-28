@@ -7,8 +7,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.slardar.servlet.WingsCaptchaFilter;
-import pro.fessional.wings.slardar.servlet.WingsFilterOrder;
+import pro.fessional.wings.slardar.servlet.WingsServletConst;
+import pro.fessional.wings.slardar.servlet.filter.WingsCaptchaFilter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
  */
 @Configuration
 @ConditionalOnProperty(name = "spring.wings.slardar.captcha.enabled", havingValue = "true")
-public class WingsCaptchaConfiguration {
+public class WingsFilterCaptchaConfiguration {
 
-    private final Log logger = LogFactory.getLog(WingsCaptchaConfiguration.class);
+    private final Log logger = LogFactory.getLog(WingsFilterCaptchaConfiguration.class);
 
     @Bean
     @ConfigurationProperties("wings.slardar.captcha")
@@ -34,7 +34,7 @@ public class WingsCaptchaConfiguration {
         logger.info("Wings conf Captcha filter");
         List<WingsCaptchaFilter.CaptchaTrigger> trgs = triggers.orderedStream().collect(Collectors.toList());
         WingsCaptchaFilter filter = new WingsCaptchaFilter(config, trgs);
-        filter.setOrder(WingsFilterOrder.CAPTCHA);
+        filter.setOrder(WingsServletConst.ORDER_FILTER_CAPTCHA);
         return filter;
     }
 

@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.servlet;
+package pro.fessional.wings.slardar.servlet.filter;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
+import pro.fessional.wings.slardar.servlet.WingsServletConst;
+import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -117,7 +119,7 @@ public class WingsOverloadFilter implements OrderedFilter {
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         // ignore
     }
 
@@ -136,7 +138,7 @@ public class WingsOverloadFilter implements OrderedFilter {
 
 
     //
-    private int order = WingsFilterOrder.OVERLOAD;
+    private int order = WingsServletConst.ORDER_FILTER_OVERLOAD;
 
     @Override
     public int getOrder() {

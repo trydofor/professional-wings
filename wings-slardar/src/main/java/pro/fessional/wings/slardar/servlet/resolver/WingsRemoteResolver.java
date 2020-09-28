@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.servlet;
+package pro.fessional.wings.slardar.servlet.resolver;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
+import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_AGENT_INFO;
+import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_REMOTE_IP;
 
 /**
  * @author trydofor
@@ -16,14 +18,13 @@ import static java.util.Collections.emptyList;
 @RequiredArgsConstructor
 public class WingsRemoteResolver {
 
-    public static final String REMOTE_IP_KEY = "WINGS.REMOTE_IP";
-    public static final String AGENT_INFO_KEY = "WINGS.AGENT_INFO";
+
 
     private final Config config;
 
     @NotNull
     public String resolveRemoteIp(HttpServletRequest request) {
-        Object atr = request.getAttribute(REMOTE_IP_KEY);
+        Object atr = request.getAttribute(ATTR_REMOTE_IP);
         if (atr instanceof String) {
             return (String) atr;
         }
@@ -37,7 +38,7 @@ public class WingsRemoteResolver {
             ip = request.getRemoteAddr();
         }
 
-        request.setAttribute(REMOTE_IP_KEY, ip);
+        request.setAttribute(ATTR_REMOTE_IP, ip);
         return ip;
     }
 
@@ -59,7 +60,7 @@ public class WingsRemoteResolver {
 
     @NotNull
     public String resolveAgentInfo(HttpServletRequest request) {
-        Object atr = request.getAttribute(AGENT_INFO_KEY);
+        Object atr = request.getAttribute(ATTR_AGENT_INFO);
         if (atr instanceof String) {
             return (String) atr;
         }
@@ -70,7 +71,7 @@ public class WingsRemoteResolver {
             if (h != null) sb.append(h).append(";");
         }
         String info = sb.toString();
-        request.setAttribute(AGENT_INFO_KEY, info);
+        request.setAttribute(ATTR_AGENT_INFO, info);
         return info;
     }
 

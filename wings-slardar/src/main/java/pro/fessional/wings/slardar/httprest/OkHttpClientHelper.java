@@ -1,5 +1,8 @@
 package pro.fessional.wings.slardar.httprest;
 
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -17,6 +20,12 @@ import pro.fessional.mirana.netx.SslTrustAll;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author trydofor
@@ -173,5 +182,26 @@ public class OkHttpClientHelper {
         return builder.sslSocketFactory(SslTrustAll.SSL_SOCKET_FACTORY, SslTrustAll.X509_TRUST_MANAGER)
                       .hostnameVerifier(SslTrustAll.HOSTNAME_VERIFIER)
                       .build();
+    }
+
+    public class HostCookieJar implements CookieJar {
+
+        Map<String, LinkedHashMap<String, Cookie>> cookies = new HashMap<>();
+
+        @Override
+        public void saveFromResponse(HttpUrl url, List<Cookie> cks) {
+            String key = url.host();
+            LinkedHashMap<String, Cookie> cookies = this.cookies.computeIfAbsent(key, s -> new LinkedHashMap<>());
+            for (Cookie ck : cks) {
+                cookies.put(ck.name(), ck);
+            }
+        }
+
+        @Override
+        @NotNull
+        public List<Cookie> loadForRequest(HttpUrl url) {
+            LinkedHashMap<String, Cookie> cookies = this.cookies.get(url.host());
+            return cookies == null ? Collections.emptyList() : new ArrayList<>(cookies.values());
+        }
     }
 }

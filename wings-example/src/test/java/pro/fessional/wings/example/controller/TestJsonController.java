@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.silencer.context.WingsI18nContext;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
-import pro.fessional.wings.slardar.servlet.WingsLocaleResolver;
+import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -80,7 +81,8 @@ public class TestJsonController {
         @NotNull WingsI18nContext ctx = wingsLocaleResolver.resolveI18nContext(request);
         ZonedDateTime userDate = now.withZoneSameInstant(ctx.getZoneIdOrDefault());
         json.setZonedDateTimeVal(userDate);
-        json.setHello(messageSource.getMessage("user.hello", new Object[]{}, ctx.getLocale()));
+        Locale locale = ctx.getLocaleOrDefault();
+        json.setHello(messageSource.getMessage("user.hello", new Object[]{}, locale));
         json.setUserZoneId(ctx.getZoneId());
         json.setSystemZoneId(ZoneId.systemDefault());
         return R.okData(json);
