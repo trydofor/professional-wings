@@ -1,13 +1,16 @@
 package pro.fessional.wings.faceless.spring.bean;
 
 import org.jooq.Clause;
+import org.jooq.Context;
 import org.jooq.DSLContext;
 import org.jooq.ExecuteContext;
 import org.jooq.ExecuteListenerProvider;
 import org.jooq.Insert;
 import org.jooq.Merge;
 import org.jooq.Param;
+import org.jooq.QualifiedAsterisk;
 import org.jooq.Query;
+import org.jooq.QueryPart;
 import org.jooq.SQLDialect;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -75,28 +78,36 @@ public class WingsJooqConfiguration {
     @Bean
     @ConditionalOnProperty(name = "spring.wings.jooq.auto-qualify.enabled", havingValue = "true")
     public VisitListenerProvider autoQualifyFieldListener() {
+        logger.info("Wings config autoQualifyFieldListener");
         return new DefaultVisitListenerProvider(new DefaultVisitListener() {
 
             @Override
-            @SuppressWarnings("deprecation")
             public void visitStart(VisitContext context) {
-                if (!(context.queryPart() instanceof TableField)) return;
-
-                TableField<?, ?> field = (TableField<?, ?>) context.queryPart();
-                Table<?> table = field.getTable();
-                if (!(table instanceof TableImpl)) return;
-
-                boolean notAlias = true;
-                for (Clause clause : ((TableImpl<?>) table).clauses(context.context())) {
-                    if (clause == Clause.TABLE_ALIAS) {
-                        notAlias = false;
-                        break;
+                QueryPart qp = context.queryPart();
+                Context<?> ctx = context.context();
+                if (qp instanceof TableField) {
+                    TableField<?, ?> field = (TableField<?, ?>) qp;
+                    if (notAlias(field.getTable(), ctx) == 0) {
+                        context.queryPart(DSL.field(field.getUnqualifiedName(), field.getDataType()));
+                    }
+                } else if (qp instanceof QualifiedAsterisk) {
+                    QualifiedAsterisk asterisk = (QualifiedAsterisk) qp;
+                    if (notAlias(asterisk.qualifier(), ctx) == 0) {
+                        context.queryPart(DSL.sql("*"));
                     }
                 }
+            }
 
-                if (notAlias) {
-                    context.queryPart(DSL.field(field.getUnqualifiedName(), field.getDataType()));
+            @SuppressWarnings("deprecation")
+            private int notAlias(Table<?> table, Context<?> ctx) {
+                if (!(table instanceof TableImpl)) return -1;
+
+                for (Clause clause : ((TableImpl<?>) table).clauses(ctx)) {
+                    if (clause == Clause.TABLE_ALIAS) {
+                        return 1;
+                    }
                 }
+                return 0;
             }
         });
     }
@@ -104,6 +115,7 @@ public class WingsJooqConfiguration {
     @Bean
     @ConditionalOnProperty(name = "spring.wings.trigger.journal-delete.enabled", havingValue = "true")
     public ExecuteListenerProvider journalDeleteListener() {
+        logger.info("Wings config journalDeleteListener");
         return new DefaultExecuteListenerProvider(new DefaultExecuteListener() {
 
             @Override

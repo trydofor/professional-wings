@@ -112,6 +112,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
 
     /**
      * 通过 mapping 构造一个 record
+     *
      * @param obj 具有相同mapping规则
      * @return record
      */
@@ -643,6 +644,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
      * @param orderBy order by
      * @return 结果
      */
+    @NotNull
     public List<P> fetch(T table, int offset, int limit, Condition cond, OrderField<?>... orderBy) {
         DSLContext dsl = ctx();
         if (orderBy == null || orderBy.length == 0) {
@@ -683,6 +685,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
      * @param cond  条件
      * @return 结果
      */
+    @Nullable
     public P fetchOne(T table, Condition cond) {
         R record = ctx()
                 .selectFrom(table)

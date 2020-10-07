@@ -5,8 +5,13 @@ import lombok.Setter;
 import lombok.val;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.Param;
+import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Record2;
+import org.jooq.SelectConditionStep;
+import org.jooq.TableOnConditionStep;
 import org.jooq.impl.DSL;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
@@ -21,6 +26,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
+import pro.fessional.mirana.page.PageQuery;
+import pro.fessional.mirana.page.PageResult;
+import pro.fessional.wings.faceless.database.WingsPageHelper;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
@@ -390,5 +398,129 @@ public class JooqMostSelectSample {
                 }, 105L);
 
         System.out.println("");
+    }
+
+    @Test
+    public void test6PageJooq() {
+        DSLContext dsl = dao.ctx();
+        Tst中文也分表Table t = dao.getTable();
+        Tst中文也分表Table t1 = dao.getAlias("t1");
+        Tst中文也分表Table t2 = dao.getAlias("t2");
+
+        //
+        testcaseNotice("使用helperJooq正常",
+                "select count(*) from `tst_中文也分表` as `t1` where `t1`.`id` >= ?",
+                "select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ? order by `id` asc limit ?");
+        PageQuery page = new PageQuery().setPageSize(5).setPageNumber(1).setSortBy("d");
+        Map<String, Field<?>> order = new HashMap<>();
+        order.put("d", t.Id);
+        PageResult<Tst中文也分表> pr1 = WingsPageHelper.use(dao, page)
+                                                  .count()
+                                                  .from(t1)
+                                                  .where(t1.Id.ge(1L))
+                                                  .order(order)
+                                                  .fetch(t1.asterisk())
+                                                  .into(Tst中文也分表.class);
+
+        testcaseNotice("使用helperJooq简化",
+                "缓存的total，使页面不执行count操作",
+                "select * from `tst_中文也分表` limit ?");
+        PageResult<Tst中文也分表> pr2 = WingsPageHelper.use(dao, page, 10)
+                                                  .count()
+                                                  .from(t)
+                                                  .whereTrue()
+                                                  .orderNone()
+                                                  .fetch()
+                                                  .into(Tst中文也分表.class);
+        //
+        testcaseNotice("使用helperJooq包装",
+                "select count(*) as `c` from (select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ?) as `q`",
+                "select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ? order by `id` asc limit ?");
+        SelectConditionStep<Record> qry1 = dsl.select(t1.asterisk()).from(t1).where(t1.Id.ge(1L));
+        PageResult<Tst中文也分表> pr3 = WingsPageHelper.use(dao, page)
+                                                  .wrap(qry1, order)
+                                                  .fetch()
+                                                  .into(Tst中文也分表.class);
+        /////////////////////
+
+        // 包装count
+        testcaseNotice("包装count",
+                "select count(*) as `c` from (select `id` from `tst_中文也分表` where `id` > ?) as `q`",
+                "select `id` from `tst_中文也分表` where `id` > ?");
+        SelectConditionStep<Record1<Long>> qry = dsl.select(t.Id).from(t).where(t.Id.gt(1L));
+        int cnt0 = dsl.fetchCount(qry);
+        List<Tst中文也分表> lst0 = qry.fetch().into(Tst中文也分表.class);
+
+        // 单表count
+        testcaseNotice("单表count",
+                "select count(*) from `tst_中文也分表` where `id` > ?");
+        int cnt1 = dsl.selectCount()
+                      .from(t)
+                      .where(t.Id.gt(1L))
+                      .fetchOne()
+                      .into(int.class);
+        List<Tst中文也分表> lst1 = dsl.select()
+                                 .from(t)
+                                 .where(t.Id.gt(1L))
+                                 .orderBy(t.Id.asc())
+                                 .limit(0, 10)
+                                 .fetch()
+                                 .into(Tst中文也分表.class);
+        System.out.println(cnt1);
+        System.out.println(lst1.size());
+
+        // 联表count
+        // DSL.countDistinct()
+        testcaseNotice("内联count",
+                "select count(`t1`.`id`) from `tst_中文也分表` as `t1`, `tst_中文也分表` as `t2` where (`t1`.`id` = `t2`.`id` and `t1`.`id` > ?)");
+        int cnt2 = dsl.select(DSL.count(t1.Id))
+                      .from(t1, t2)
+                      .where(t1.Id.eq(t2.Id).and(t1.Id.gt(1L)))
+                      .fetchOne()
+                      .into(int.class);
+        System.out.println(cnt2);
+
+        testcaseNotice("左联查询",
+                "select count(`t1`.`id`) from `tst_中文也分表` as `t1` left outer join `tst_中文也分表` as `t2` on `t1`.`id` = `t2`.`id` where `t1`.`id` > ?");
+        TableOnConditionStep<Record> jt = t1.leftJoin(t2).on(t1.Id.eq(t2.Id));
+        int cnt3 = dsl.select(DSL.count(t1.Id))
+                      .from(jt)
+                      .where(t1.Id.gt(1L))
+                      .fetchOne()
+                      .into(int.class);
+        System.out.println(cnt3);
+    }
+
+    @Test
+    public void test7PageJdbc() {
+        //
+        testcaseNotice("使用helperJdbc包装",
+                "SELECT count(*) FROM (select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ?) WINGS_WRAP",
+                "select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ? order by t1.Id ASC limit 5");
+
+        PageQuery page = new PageQuery().setPageSize(5).setPageNumber(1).setSortBy("d");
+        Map<String, String> order = new HashMap<>();
+        order.put("d", "t1.Id");
+        PageResult<Tst中文也分表> pr1 = WingsPageHelper.use(jdbcTemplate, page)
+                                                  .wrap("select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ?")
+                                                  .order(order)
+                                                  .bind(1L)
+                                                  .fetchInto(Tst中文也分表.class);
+
+        System.out.println(pr1.getData().size());
+
+        testcaseNotice("使用helperJdbc正常",
+                "SELECT count(*) from `tst_中文也分表` where id >= ?",
+                "SELECT id,login_info,other_info from `tst_中文也分表` where id >= ? order by id limit 5");
+
+        PageResult<Tst中文也分表> pr2 = WingsPageHelper.use(jdbcTemplate, page)
+                                                  .count("count(*)")
+                                                  .fromWhere("from `tst_中文也分表` where id >= ?")
+                                                  .order("id")
+                                                  .bind(1L)
+                                                  .fetch("id,login_info,other_info")
+                                                  .into(Tst中文也分表.class);
+
+        System.out.println(pr2.getData().size());
     }
 }

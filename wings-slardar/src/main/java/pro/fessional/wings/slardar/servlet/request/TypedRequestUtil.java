@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.cast.TypedCastUtil;
+import pro.fessional.mirana.text.Wildcard;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
@@ -21,26 +22,31 @@ public class TypedRequestUtil {
 
     @Nullable
     public static <T> T getAttribute(HttpServletRequest request, String name, Class<T> claz) {
-        return getAttribute(request, name, claz, false);
+        Object obj = request.getAttribute(name);
+        return TypedCastUtil.castObject(obj, claz);
     }
 
     @Nullable
     public static <T> T getAttribute(HttpServletRequest request, String name) {
-        return getAttribute(request, name, null, false);
+        Object obj = request.getAttribute(name);
+        return TypedCastUtil.castObject(obj, null);
     }
 
     @Nullable
-    public static <T> T getAttribute(HttpServletRequest request, String name, Class<T> claz, boolean ignoreCase) {
+    public static <T> T getAttributeIgnoreCase(HttpServletRequest request, String name) {
+        return getAttributeIgnoreCase(request, name, null);
+    }
+
+    @Nullable
+    public static <T> T getAttributeIgnoreCase(HttpServletRequest request, String name, Class<T> claz) {
         if (request == null || name == null) return null;
 
-        if (ignoreCase) {
-            Enumeration<String> names = request.getAttributeNames();
-            while (names != null && names.hasMoreElements()) {
-                String s = names.nextElement();
-                if (name.equalsIgnoreCase(s)) {
-                    name = s;
-                    break;
-                }
+        Enumeration<String> names = request.getAttributeNames();
+        while (names != null && names.hasMoreElements()) {
+            String s = names.nextElement();
+            if (name.equalsIgnoreCase(s)) {
+                name = s;
+                break;
             }
         }
 
@@ -60,14 +66,13 @@ public class TypedRequestUtil {
     }
 
     /**
-     * 匹配URI
+     * 带有contextpath进行URI的忽略大小写的全匹配，支持wildcard
      *
      * @param req  请求
      * @param path 路径，null或空为false
      * @return 是否匹配
      */
-    public static boolean match(HttpServletRequest req, String path) {
-
+    public static boolean matchIgnoreCase(HttpServletRequest req, String path) {
         if (path == null || path.isEmpty()) return false;
 
         String uri = req.getRequestURI();
@@ -76,23 +81,17 @@ public class TypedRequestUtil {
             uri = uri.substring(0, idx);
         }
 
-        String ctxPath = req.getContextPath();
-        if ("".equals(ctxPath)) {
-            return uri.endsWith(path);
-        }
-
-        return uri.endsWith(ctxPath + path);
+        return Wildcard.match(true, uri, req.getContextPath(), path);
     }
 
     /**
-     * 匹配URI
+     * 带有contextpath进行URI的忽略大小写的全匹配，支持wildcard
      *
      * @param req  请求
      * @param path 路径，null或空为false
      * @return 是否匹配
      */
-    public static boolean match(HttpServletRequest req, String... path) {
-
+    public static boolean matchIgnoreCase(HttpServletRequest req, String... path) {
         if (path == null) return false;
 
         String uri = req.getRequestURI();
@@ -101,14 +100,10 @@ public class TypedRequestUtil {
             uri = uri.substring(0, idx);
         }
 
-        String ctxPath = req.getContextPath();
-        if ("".equals(ctxPath)) {
-            for (String s : path) {
-                if (s != null && !s.isEmpty() && uri.endsWith(s)) return true;
-            }
-        } else {
-            for (String s : path) {
-                if (s != null && !s.isEmpty() && uri.endsWith(ctxPath + s)) return true;
+        for (String s : path) {
+            if (s == null) continue;
+            if (Wildcard.match(true, uri, req.getContextPath(), s)) {
+                return true;
             }
         }
 

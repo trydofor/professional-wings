@@ -216,3 +216,11 @@ Map<Integer, List<String>>       group3 = create.selectFrom(BOOK).fetch().intoGr
 Map<Integer, List<String>>       group4 = create.selectFrom(BOOK).fetchGroups(BOOK.AUTHOR_ID, BOOK.TITLE);
 }
 ```
+
+### 04.分页查询jooq
+
+分页查询中，count结果根据需要，可以进行缓存，或业务侧不要求必须精确，这样可以避免每次执行。
+通过WingsPageHelper工具类，可以构造2类分页查询，count+select 和 wrap select，参考
+
+ * JooqMostSelectSample #test6PageJooq, #test7PageJdbc
+ * [count(*)和count(1)谁快](https://blog.jooq.org/2019/09/19/whats-faster-count-or-count1/)
