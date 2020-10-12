@@ -148,7 +148,131 @@ i18n可以使用CombinableMessageSource动态添加，处理service内消息的�
 为单Jvm，多Jvm提高一个基于数据库的Event服务，主要用来
 
 
-## 2.9.H2本地库
+## 2.9.数据库知识
+
+
+mysql体系指mysql分支如(Percona,MariaDB)或兼容mysql协议的数据库，wings使用mysql-5.7.x（8.0未测试）。
+原则上DB不应该封装（自定义function或procedure）业务逻辑，但可以使用db提供的功能，简化工作实现业务目标。
+[mysql 5.7 官方文档](https://dev.mysql.com/doc/refman/5.7/en/)
+
+### 2.9.1.MySql非通常用法
+
+#### 01.FIND_IN_SET
+
+FIND_IN_SET(str,strlist)，比like和match更精准的查找，strlist以逗号分隔，str中不能有逗号。
+返回strlist中1-base的坐标。0表示没找到活strlist为空。NULL如果str或strlist为NULL。
+
+``` sql
+SELECT FIND_IN_SET('b','a,b,c,d')
+-- 2，多数场景还是作为where条件，如下
+WHERE FIND_IN_SET(role, role_set);
+```
+
+
+#### 02.GROUP_CONCAT
+
+```
+GROUP_CONCAT([DISTINCT] expr [,expr ...]
+    [ORDER BY {unsigned_integer | col_name | expr}
+        [ASC | DESC] [,col_name ...]]
+    [SEPARATOR str_val]
+)
+
+SELECT 
+    GROUP_CONCAT(CONCAT_WS(', ', contactLastName, contactFirstName)
+        SEPARATOR ';')
+FROM customers;
+```
+
+#### 03.全文检索，MATCH AGAINST
+
+需要建立full text index，注意汉字分词或用插件或在java中分好
+
+#### 04.替换和忽略 REPLACE IGNORE
+
+`replace into`和`insert ignore`
+
+#### 06.慎用Json数据类型
+
+As of MySQL 5.7.8, MySQL supports a native JSON data type defined by RFC 7159  
+新的操作符`->`和`->>`，需要注意词法分析框架的兼容性，所以在java中处理更为妥当。
+
+#### 07.性能分析explain和BENCHMARK
+
+``` sql
+-- 单个express重复执行，注意，select只能返回唯一值
+SELECT BENCHMARK(1000000,(
+    SELECT count(author_name) FROM git_log_jetplus
+));
+-- 查看索引使用情况
+explain 
+    SELECT author_name FROM git_log_jetplus;
+```
+
+#### 08.分页limit和FOUND_ROWS()记录总数
+
+```mysql
+-- 先增加SQL_CALC_FOUND_ROWS选项，
+SELECT SQL_CALC_FOUND_ROWS * FROM tbl_name WHERE id > 100 LIMIT 10;
+-- 然后获取
+SELECT FOUND_ROWS();
+```
+#### 09.自增主键AUTO_INCREMENT和LAST_INSERT_ID()
+
+项目中避免使用自增主键，特事特办的时候，可以如上获得。  
+注意value多值插入时，只返回第一个。
+
+#### 10.字符串/字段链接 CONCAT和CONCAT_WS
+
+```sql
+-- 注意对null的处理
+SELECT CONCAT('My', NULL, 'QL');
+-- NULL, returns NULL if any argument is NULL.
+SELECT CONCAT_WS(',','First name',NULL,'Last Name');
+-- 'First name,Last Name', skip any NULL values
+```
+
+#### 11.时区转换CONVERT_TZ
+
+转换类操作，应该在write时，此方法应在临时性读取时使用。  
+注意闰秒(leap second) `:59:60` or `:59:61`都以`:59:59`返回
+```
+SELECT  CONVERT_TZ('2007-03-11 2:00:00','America/New_york','Asia/Shanghai') AS time_cn
+```
+
+#### 12.格式化输出FORMAT,DATE_FORMAT
+
+```sql
+-- '#,###,###.##'
+SELECT FORMAT(12332.123456, 4);
+-- '12,332.1235'
+SELECT FORMAT(12332.1,4);
+-- '12,332.1000'
+```
+#### 13.全局悲观锁GET_LOCK
+
+此功能在做跨jvm全局悲观锁时可用。
+``` sql
+-- 一条语句，无阻塞获得锁
+SELECT IF(IS_FREE_LOCK('10')=1, GET_LOCK('10',10), -1);
+-- 检测锁，1 if the lock is free
+SELECT IS_FREE_LOCK('lock1');
+-- 阻塞10秒，1 if successfully, 0 timed out
+SELECT GET_LOCK('lock1',10);
+-- 释放锁，或session中断
+SELECT RELEASE_LOCK('lock1');
+-- RELEASE_ALL_LOCKS()
+```
+
+#### 14.正则匹配REGEXP和RLIKE
+
+注意，mysql是基于byte-wise的，不是char，所以多字节字符有可能不正常。
+``` sql
+-- 1为匹配，0为不匹配
+SELECT 'Michael!' NOT REGEXP '.*';
+```
+
+### 2.9.2.本地(文件/内存)数据库H2
 
 在不方便提供mysql数据库的时候，如演示或本地数据库应用，可以使用H2，配置如下。
 ```
