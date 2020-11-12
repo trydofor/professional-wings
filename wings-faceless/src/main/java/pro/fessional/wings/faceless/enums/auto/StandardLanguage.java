@@ -11,9 +11,10 @@ import java.util.Locale;
  *
  * @author trydofor
  * @see Locale#toString()
- * @since 2020-06-21
+ * @since 2020-11-12
  */
 public enum StandardLanguage implements StandardLanguageEnum {
+
     SUPER(1020100, "standard_language", "标准语言", "classpath:/wings-tmpl/StandardLanguageTemplate.java"),
     AR_AE(1020101, "ar_AE", "阿拉伯联合酋长国", ""),
     DE_DE(1020102, "de_DE", "德语", ""),
@@ -28,20 +29,19 @@ public enum StandardLanguage implements StandardLanguageEnum {
     ZH_CN(1020111, "zh_CN", "简体中文", ""),
     ZH_HK(1020112, "zh_HK", "繁体中文", ""),
     ;
-    public static final String $SUPER = "standard_language";
-    public static final String $AR_AE = "ar_AE";
-    public static final String $DE_DE = "de_DE";
-    public static final String $EN_US = "en_US";
-    public static final String $ES_ES = "es_ES";
-    public static final String $FR_FR = "fr_FR";
-    public static final String $IT_IT = "it_IT";
-    public static final String $JA_JP = "ja_JP";
-    public static final String $KO_KR = "ko_KR";
-    public static final String $RU_RU = "ru_RU";
-    public static final String $TH_TH = "th_TH";
-    public static final String $ZH_CN = "zh_CN";
-    public static final String $ZH_HK = "zh_HK";
-
+    public static final String $SUPER = SUPER.code;
+    public static final String $AR_AE = AR_AE.code;
+    public static final String $DE_DE = DE_DE.code;
+    public static final String $EN_US = EN_US.code;
+    public static final String $ES_ES = ES_ES.code;
+    public static final String $FR_FR = FR_FR.code;
+    public static final String $IT_IT = IT_IT.code;
+    public static final String $JA_JP = JA_JP.code;
+    public static final String $KO_KR = KO_KR.code;
+    public static final String $RU_RU = RU_RU.code;
+    public static final String $TH_TH = TH_TH.code;
+    public static final String $ZH_CN = ZH_CN.code;
+    public static final String $ZH_HK = ZH_HK.code;
 
     public static final boolean useIdAsKey = false;
     private final int id;
@@ -82,14 +82,11 @@ public enum StandardLanguage implements StandardLanguageEnum {
         return desc;
     }
 
-    //
-
     @Override
     public Locale toLocale() {
         return locl;
     }
 
-    //
     @Override
     public @NotNull String getBase() {
         return "sys_constant_enum";
@@ -105,7 +102,6 @@ public enum StandardLanguage implements StandardLanguageEnum {
         return ukey;
     }
 
-    //
     @Override
     public @NotNull String getCode() {
         return code;

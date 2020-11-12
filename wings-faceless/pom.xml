@@ -21,6 +21,10 @@
             <groupId>pro.fessional</groupId>
             <artifactId>wings-silencer</artifactId>
         </dependency>
+        <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>meepo</artifactId>
+        </dependency>
         <!-- spring boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

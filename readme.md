@@ -63,7 +63,7 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
 安装以下插件
  * .ignore - 和版本管理中ignore有关的。
  * CheckStyle - 代码质量
- * GeneateAllSetter - alt-enter 生成全部 po.setXxx("")
+ * GenerateAllSetter - alt-enter 生成全部 po.setXxx("")
  * Git Flow Integration - 集成了git-flow
  * GitToolBox - 自动 fetch
  * Grep Console - 控制台的日志分颜色显示和过滤

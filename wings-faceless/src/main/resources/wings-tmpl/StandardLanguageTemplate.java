@@ -1,3 +1,5 @@
+/* HI-MEEPO */
+/* RNA:USE /pro.fessional.wings.faceless.enums.tmpl/enum-package/ */
 package pro.fessional.wings.faceless.enums.tmpl;
 
 import org.jetbrains.annotations.NotNull;
@@ -6,6 +8,7 @@ import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 
 import java.util.Locale;
 
+/* RNA:USE /2019-09-17/now.date/ */
 /**
  * language + "_" + country，使用`_`分隔，zh_CN，在解析中，也支持zh-CN
  *
@@ -13,12 +16,24 @@ import java.util.Locale;
  * @see Locale#toString()
  * @since 2019-09-17
  */
+/* RNA:USE /StandardLanguageTemplate/enum-class/* */
 public enum StandardLanguageTemplate implements StandardLanguageEnum {
 
-    SUPER(1010100, "ConstantEnumTemplate", "性别", "性别");
+    /* RNA:EACH /1/enum-items/enum */
+    /* RNA:USE /SUPER/enum.name/* */
+    /* RNA:USE /1020100/enum.id/ */
+    /* RNA:USE /standard_language/enum.code/ */
+    /* RNA:USE /标准语言/enum.desc/ */
+    /* RNA:USE /模板路径/enum.info/ */
+    SUPER(1020100, "standard_language", "标准语言", "模板路径"),
+    /* RNA:DONE enum */
+    ;
+    /* RNA:EACH /1/enum-items/enum */
+    public static final String $SUPER = SUPER.code;
+    /* RNA:DONE enum */
 
+    /* RNA:USE /false/enum-idkey/ */
     public static final boolean useIdAsKey = false;
-
     private final int id;
     private final String code;
     private final String desc;
@@ -43,9 +58,10 @@ public enum StandardLanguageTemplate implements StandardLanguageEnum {
         return id;
     }
 
+    /* RNA:USE /standard_language/enum-type/ */
     @Override
     public @NotNull String getType() {
-        return "{sys_constant_enum.type}";
+        return "standard_language";
     }
 
     @Override
@@ -57,14 +73,11 @@ public enum StandardLanguageTemplate implements StandardLanguageEnum {
         return desc;
     }
 
-    //
-
     @Override
     public Locale toLocale() {
         return locl;
     }
 
-    //
     @Override
     public @NotNull String getBase() {
         return "sys_constant_enum";
@@ -80,7 +93,6 @@ public enum StandardLanguageTemplate implements StandardLanguageEnum {
         return ukey;
     }
 
-    //
     @Override
     public @NotNull String getCode() {
         return code;

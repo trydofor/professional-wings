@@ -11,9 +11,10 @@ import java.util.TimeZone;
 /**
  * @author trydofor
  * @see ZoneId#getAvailableZoneIds()
- * @since 2020-06-21
+ * @since 2020-11-12
  */
 public enum StandardTimezone implements StandardTimezoneEnum {
+
     SUPER(1010100, "standard_timezone", "标准时区", "classpath:/wings-tmpl/StandardTimezoneTemplate.java"),
     GMT(1010101, "GMT", "格林威治时间(零时区)", ""),
     ASIA𓃬SHANGHAI(1010201, "Asia/Shanghai", "北京时间：北京、上海、香港", "中国"),
@@ -37,31 +38,31 @@ public enum StandardTimezone implements StandardTimezoneEnum {
     CANADA𓃬NEWFOUNDLAND(1010905, "Canada/Newfoundland", "纽芬兰时(NST)：圣约翰斯", "加拿大"),
     CANADA𓃬PACIFIC(1010906, "Canada/Pacific", "太平洋时(PST)：温哥华", "加拿大"),
     ;
-    public static final String $SUPER = "standard_timezone";
-    public static final String $GMT = "GMT";
-    public static final String $ASIA𓃬SHANGHAI = "Asia/Shanghai";
-    public static final String $AMERICA𓃬CHICAGO = "America/Chicago";
-    public static final String $AMERICA𓃬LOS_ANGELES = "America/Los_Angeles";
-    public static final String $AMERICA𓃬NEW_YORK = "America/New_York";
-    public static final String $AMERICA𓃬PHOENIX = "America/Phoenix";
-    public static final String $US𓃬ALASKA = "US/Alaska";
-    public static final String $US𓃬HAWAII = "US/Hawaii";
-    public static final String $ASIA𓃬JAKARTA = "Asia/Jakarta";
-    public static final String $ASIA𓃬JAYAPURA = "Asia/Jayapura";
-    public static final String $ASIA𓃬MAKASSAR = "Asia/Makassar";
-    public static final String $ASIA𓃬KUALA_LUMPUR = "Asia/Kuala_Lumpur";
-    public static final String $ASIA𓃬SEOUL = "Asia/Seoul";
-    public static final String $ASIA𓃬SINGAPORE = "Asia/Singapore";
-    public static final String $ASIA𓃬TOKYO = "Asia/Tokyo";
-    public static final String $CANADA𓃬ATLANTIC = "Canada/Atlantic";
-    public static final String $CANADA𓃬CENTRAL = "Canada/Central";
-    public static final String $CANADA𓃬EASTERN = "Canada/Eastern";
-    public static final String $CANADA𓃬MOUNTAIN = "Canada/Mountain";
-    public static final String $CANADA𓃬NEWFOUNDLAND = "Canada/Newfoundland";
-    public static final String $CANADA𓃬PACIFIC = "Canada/Pacific";
-
+    public static final String $SUPER = SUPER.code;
+    public static final String $GMT = GMT.code;
+    public static final String $ASIA𓃬SHANGHAI = ASIA𓃬SHANGHAI.code;
+    public static final String $AMERICA𓃬CHICAGO = AMERICA𓃬CHICAGO.code;
+    public static final String $AMERICA𓃬LOS_ANGELES = AMERICA𓃬LOS_ANGELES.code;
+    public static final String $AMERICA𓃬NEW_YORK = AMERICA𓃬NEW_YORK.code;
+    public static final String $AMERICA𓃬PHOENIX = AMERICA𓃬PHOENIX.code;
+    public static final String $US𓃬ALASKA = US𓃬ALASKA.code;
+    public static final String $US𓃬HAWAII = US𓃬HAWAII.code;
+    public static final String $ASIA𓃬JAKARTA = ASIA𓃬JAKARTA.code;
+    public static final String $ASIA𓃬JAYAPURA = ASIA𓃬JAYAPURA.code;
+    public static final String $ASIA𓃬MAKASSAR = ASIA𓃬MAKASSAR.code;
+    public static final String $ASIA𓃬KUALA_LUMPUR = ASIA𓃬KUALA_LUMPUR.code;
+    public static final String $ASIA𓃬SEOUL = ASIA𓃬SEOUL.code;
+    public static final String $ASIA𓃬SINGAPORE = ASIA𓃬SINGAPORE.code;
+    public static final String $ASIA𓃬TOKYO = ASIA𓃬TOKYO.code;
+    public static final String $CANADA𓃬ATLANTIC = CANADA𓃬ATLANTIC.code;
+    public static final String $CANADA𓃬CENTRAL = CANADA𓃬CENTRAL.code;
+    public static final String $CANADA𓃬EASTERN = CANADA𓃬EASTERN.code;
+    public static final String $CANADA𓃬MOUNTAIN = CANADA𓃬MOUNTAIN.code;
+    public static final String $CANADA𓃬NEWFOUNDLAND = CANADA𓃬NEWFOUNDLAND.code;
+    public static final String $CANADA𓃬PACIFIC = CANADA𓃬PACIFIC.code;
 
     public static final boolean useIdAsKey = true;
+
     private final int id;
     private final String code;
     private final String desc;
@@ -103,7 +104,6 @@ public enum StandardTimezone implements StandardTimezoneEnum {
         return desc;
     }
 
-    //
     @Override
     public TimeZone toTimeZone() {
         return zone;
@@ -114,7 +114,6 @@ public enum StandardTimezone implements StandardTimezoneEnum {
         return tzid;
     }
 
-    //
     @Override
     public @NotNull String getBase() {
         return "sys_constant_enum";
@@ -130,7 +129,6 @@ public enum StandardTimezone implements StandardTimezoneEnum {
         return ukey;
     }
 
-    //
     @Override
     public @NotNull String getCode() {
         return code;
