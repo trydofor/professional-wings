@@ -210,11 +210,27 @@ public class WingsCodeGenerator {
             return this;
         }
 
+        /**
+         * 支持正则的注释
+         * whitespace is ignored, and embedded comments starting with # are ignored until the end of a line.
+         *
+         * @param reg 正则
+         * @return builder
+         * @see Pattern#COMMENTS
+         */
         public Builder databaseIncludes(String reg) {
             this.conf.getGenerator().getDatabase().setIncludes(reg);
             return this;
         }
 
+        /**
+         * 支持正则的注释
+         * whitespace is ignored, and embedded comments starting with # are ignored until the end of a line.
+         *
+         * @param reg 正则
+         * @return builder
+         * @see Pattern#COMMENTS
+         */
         public Builder databaseExcludes(String reg) {
             this.conf.getGenerator().getDatabase().setExcludes(reg);
             return this;

@@ -1,15 +1,13 @@
 package pro.fessional.wings.slardar.domain;
 
 import lombok.Setter;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author trydofor
@@ -21,7 +19,6 @@ import static org.junit.Assert.assertEquals;
                 "spring.wings.slardar.extend-controller.enabled=true",
                 "spring.wings.slardar.extend-resource.enabled=true"
         })
-@RunWith(SpringRunner.class)
 public class DomainExtendTest {
 
     @Setter(onMethod = @__({@Value("http://127.0.0.1:${local.server.port}")}))

@@ -3,15 +3,13 @@ package pro.fessional.wings.faceless.jooq;
 import lombok.Setter;
 import org.jooq.BatchBindStep;
 import org.jooq.DSLContext;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.wings.faceless.WingsTestHelper;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
@@ -28,8 +26,8 @@ import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
  * @author trydofor
  * @since 2019-09-27
  */
-@RunWith(SpringRunner.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+
+@TestMethodOrder(MethodOrderer.MethodName.class)
 @ActiveProfiles("init")
 @SpringBootTest(properties = {"debug = true", "spring.wings.trigger.journal-delete.enabled=true"})
 

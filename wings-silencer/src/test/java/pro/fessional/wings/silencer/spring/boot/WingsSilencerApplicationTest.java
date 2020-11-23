@@ -1,23 +1,20 @@
 package pro.fessional.wings.silencer.spring.boot;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author trydofor
  * @since 2019-06-25
  */
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(properties = {"debug = true"})
 public class WingsSilencerApplicationTest {
 

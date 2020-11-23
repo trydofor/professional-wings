@@ -1,12 +1,14 @@
 package pro.fessional.wings.faceless.enums;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import pro.fessional.wings.faceless.enums.auto.StandardLanguage;
 import pro.fessional.wings.faceless.enums.auto.StandardTimezone;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author trydofor
@@ -17,40 +19,40 @@ public class ConstantEnumUtilTest {
     @Test
     public void idOrElse() {
         StandardLanguage zhCn = StandardLanguage.ZH_CN;
-        Assert.assertEquals(zhCn, ConstantEnumUtil.idOrNull(zhCn.getId(), StandardLanguage.values()));
-        Assert.assertEquals(zhCn, ConstantEnumUtil.idOrElse(1, zhCn, StandardLanguage.values()));
+        assertEquals(zhCn, ConstantEnumUtil.idOrNull(zhCn.getId(), StandardLanguage.values()));
+        assertEquals(zhCn, ConstantEnumUtil.idOrElse(1, zhCn, StandardLanguage.values()));
     }
 
     @Test
     public void nameOrElse() {
         StandardLanguage zhCn = StandardLanguage.ZH_CN;
-        Assert.assertEquals(zhCn, ConstantEnumUtil.nameOrNull(zhCn.name(), StandardLanguage.values()));
-        Assert.assertEquals(zhCn, ConstantEnumUtil.nameOrElse("", zhCn, StandardLanguage.values()));
+        assertEquals(zhCn, ConstantEnumUtil.nameOrNull(zhCn.name(), StandardLanguage.values()));
+        assertEquals(zhCn, ConstantEnumUtil.nameOrElse("", zhCn, StandardLanguage.values()));
     }
 
     @Test
     public void codeOrElse() {
         StandardLanguage zhCn = StandardLanguage.ZH_CN;
-        Assert.assertEquals(zhCn, ConstantEnumUtil.codeOrNull(zhCn.getCode(), StandardLanguage.values()));
-        Assert.assertEquals(zhCn, ConstantEnumUtil.codeOrElse("", zhCn, StandardLanguage.values()));
+        assertEquals(zhCn, ConstantEnumUtil.codeOrNull(zhCn.getCode(), StandardLanguage.values()));
+        assertEquals(zhCn, ConstantEnumUtil.codeOrElse("", zhCn, StandardLanguage.values()));
     }
 
     @Test
     public void codeIn() {
         StandardLanguage zhCn = StandardLanguage.ZH_CN;
-        Assert.assertTrue(ConstantEnumUtil.codeIn(zhCn.getCode(), StandardLanguage.values()));
+        assertTrue(ConstantEnumUtil.codeIn(zhCn.getCode(), StandardLanguage.values()));
     }
 
     @Test
     public void nameIn() {
         StandardLanguage zhCn = StandardLanguage.ZH_CN;
-        Assert.assertTrue(ConstantEnumUtil.nameIn(zhCn.name(), StandardLanguage.values()));
+        assertTrue(ConstantEnumUtil.nameIn(zhCn.name(), StandardLanguage.values()));
     }
 
     @Test
     public void idIn() {
         StandardLanguage zhCn = StandardLanguage.ZH_CN;
-        Assert.assertTrue(ConstantEnumUtil.idIn(zhCn.getId(), StandardLanguage.values()));
+        assertTrue(ConstantEnumUtil.idIn(zhCn.getId(), StandardLanguage.values()));
     }
 
     @Test
@@ -63,6 +65,6 @@ public class ConstantEnumUtilTest {
                 StandardTimezone.AMERICA𓃬PHOENIX,
                 StandardTimezone.US𓃬ALASKA,
                 StandardTimezone.US𓃬HAWAII);
-        Assert.assertEquals(objects, usTimezone);
+        assertEquals(objects, usTimezone);
     }
 }

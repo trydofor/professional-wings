@@ -1,15 +1,13 @@
 package pro.fessional.wings.faceless.flywave
 
-import org.junit.Assert
-import org.junit.FixMethodOrder
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.MethodSorters
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.MethodOrderer.MethodName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
 import pro.fessional.wings.faceless.WingsTestHelper.breakpointDebug
@@ -22,10 +20,9 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_2ND_IDL
  * @since 2019-06-20
  */
 
-@RunWith(SpringRunner::class)
 @SpringBootTest(properties = ["debug = true"])
 @ActiveProfiles("shard")
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodName::class)
 class SchemaJournalManagerTest {
 
     @Autowired
@@ -114,7 +111,7 @@ class SchemaJournalManagerTest {
         jdbcTemplate.execute("DELETE FROM `tst_中文也分表` WHERE id = 1")
         val del = jdbcTemplate.update("DELETE FROM `tst_中文也分表_1\$upd` WHERE id = 1")
 
-        Assert.assertEquals("如果失败，单独运行，消除分表干扰", 1, del)
+        assertEquals(1, del, "如果失败，单独运行，消除分表干扰")
         breakpointDebug("清楚数据🐵，因为trace表不会删除有数据表")
 
         schemaJournalManager.publishUpdate("tst_中文也分表", false, 0)
@@ -146,7 +143,7 @@ class SchemaJournalManagerTest {
 
         val del = jdbcTemplate.update("DELETE FROM `tst_中文也分表\$del` WHERE id = 1")
 
-        Assert.assertEquals(1, del)
+        assertEquals(1, del)
         breakpointDebug("清楚数据🐵，因为trace表不会删除有数据表")
 
         schemaJournalManager.publishDelete("tst_中文也分表", false, 0)

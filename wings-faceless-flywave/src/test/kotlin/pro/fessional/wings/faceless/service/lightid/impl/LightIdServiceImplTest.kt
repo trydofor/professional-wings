@@ -1,13 +1,12 @@
 package pro.fessional.wings.faceless.service.lightid.impl
 
-import org.junit.Assert
-import org.junit.Test
-import org.junit.runner.RunWith
+
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.service.lightid.LightIdService
@@ -18,7 +17,6 @@ import java.util.concurrent.atomic.AtomicLong
  * @author trydofor
  * @since 2019-06-04
  */
-@RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("init")
 open class LightIdServiceImplTest {
@@ -53,7 +51,7 @@ open class LightIdServiceImplTest {
         }
 
         for (i in 1 .. (stp.get() + 10)) {
-            Assert.assertEquals(bgn.getAndIncrement(), lightIdService.getId(seqName, 0))
+            assertEquals(bgn.getAndIncrement(), lightIdService.getId(seqName, 0))
         }
     }
 }

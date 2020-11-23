@@ -1,7 +1,8 @@
 package pro.fessional.wings.faceless.flywave
 
-import org.junit.Assert
-import org.junit.Test
+
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import pro.fessional.wings.faceless.flywave.impl.MySqlStatementParser
 
 class SqlSegmentProcessorTest {
@@ -29,7 +30,7 @@ class SqlSegmentProcessorTest {
                 "jp_parcel_post_mail\$del"
         ))
 
-        Assert.assertEquals(setOf(
+        assertEquals(setOf(
                 "jp_parcel_post_mail",
                 "jp_parcel_post_mail_0",
                 "jp_parcel_post_mail_1"
@@ -56,7 +57,7 @@ class SqlSegmentProcessorTest {
                 "jp_parcel_post_mail\$del"
         ))
 
-        Assert.assertEquals(setOf(
+        assertEquals(setOf(
                 "jp_parcel_post_mail_0\$upd",
                 "jp_parcel_post_mail_1\$upd",
                 "jp_parcel_post_mail\$del"
@@ -67,54 +68,54 @@ class SqlSegmentProcessorTest {
     fun parseCmd0() {
         val mt = SqlSegmentProcessor.parseCmd("-- wgs_order@plain apply@ctr_clerk[_0-0]* error@skip ask@danger // 其他注释")
         val (tbl, dbs, apl, ers, ask) = mt
-        Assert.assertEquals("wgs_order", tbl)
-        Assert.assertEquals("plain", dbs)
-        Assert.assertEquals("ctr_clerk[_0-0]*", apl)
-        Assert.assertEquals("skip", ers)
-        Assert.assertEquals("danger", ask)
+        assertEquals("wgs_order", tbl)
+        assertEquals("plain", dbs)
+        assertEquals("ctr_clerk[_0-0]*", apl)
+        assertEquals("skip", ers)
+        assertEquals("danger", ask)
     }
 
     @Test
     fun parseCmd1() {
         val mt = SqlSegmentProcessor.parseCmd("-- @plain apply@ctr_clerk[_0-0]* error@skip // 其他注释")
         val (tbl, dbs, apl, ers, ask) = mt
-        Assert.assertEquals("", tbl)
-        Assert.assertEquals("plain", dbs)
-        Assert.assertEquals("ctr_clerk[_0-0]*", apl)
-        Assert.assertEquals("skip", ers)
-        Assert.assertEquals("", ask)
+        assertEquals("", tbl)
+        assertEquals("plain", dbs)
+        assertEquals("ctr_clerk[_0-0]*", apl)
+        assertEquals("skip", ers)
+        assertEquals("", ask)
     }
 
     @Test
     fun parseCmd2() {
         val mt = SqlSegmentProcessor.parseCmd("-- apply@ctr_clerk[_0-0]* error@skip // 其他注释")
         val (tbl, dbs, apl, ers, ask) = mt
-        Assert.assertEquals("", tbl)
-        Assert.assertEquals("", dbs)
-        Assert.assertEquals("ctr_clerk[_0-0]*", apl)
-        Assert.assertEquals("skip", ers)
-        Assert.assertEquals("", ask)
+        assertEquals("", tbl)
+        assertEquals("", dbs)
+        assertEquals("ctr_clerk[_0-0]*", apl)
+        assertEquals("skip", ers)
+        assertEquals("", ask)
     }
 
     @Test
     fun parseCmd3() {
         val mt = SqlSegmentProcessor.parseCmd("-- error@skip // 其他注释")
         val (tbl, dbs, apl, ers, ask) = mt
-        Assert.assertEquals("", tbl)
-        Assert.assertEquals("", dbs)
-        Assert.assertEquals("", apl)
-        Assert.assertEquals("skip", ers)
-        Assert.assertEquals("", ask)
+        assertEquals("", tbl)
+        assertEquals("", dbs)
+        assertEquals("", apl)
+        assertEquals("skip", ers)
+        assertEquals("", ask)
     }
 
     @Test
     fun parseCmd4() {
         val mt = SqlSegmentProcessor.parseCmd("-- ask@danger // 其他注释")
         val (tbl, dbs, apl, ers, ask) = mt
-        Assert.assertEquals("", tbl)
-        Assert.assertEquals("", dbs)
-        Assert.assertEquals("", apl)
-        Assert.assertEquals("", ers)
-        Assert.assertEquals("danger", ask)
+        assertEquals("", tbl)
+        assertEquals("", dbs)
+        assertEquals("", apl)
+        assertEquals("", ers)
+        assertEquals("danger", ask)
     }
 }

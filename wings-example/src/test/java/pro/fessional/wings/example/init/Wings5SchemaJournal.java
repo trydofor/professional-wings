@@ -2,12 +2,10 @@ package pro.fessional.wings.example.init;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.wings.example.WingsExampleApplication;
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager;
 
@@ -20,7 +18,7 @@ import java.util.List;
  * @author trydofor
  * @since 2019-12-26
  */
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(classes = WingsExampleApplication.class, properties =
         {"debug = true",
          "spring.wings.flywave.enabled=true",
@@ -30,7 +28,7 @@ import java.util.List;
 //         "spring.shardingsphere.datasource.writer.username=trydofor",
 //         "spring.shardingsphere.datasource.writer.password=moilioncircle",
         })
-@Ignore("手动执行，版本更新时处理")
+@Disabled("手动执行，版本更新时处理")
 @Slf4j
 public class Wings5SchemaJournal {
 

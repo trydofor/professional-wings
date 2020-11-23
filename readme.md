@@ -38,7 +38,7 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
 
 涉及技术和知识点
 
- * [Spring Boot](https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/)
+ * [Spring Boot](https://docs.spring.io/spring-boot/docs/2.4.0/reference/htmlsingle/)
  * [Apache ShardingSphere](https://shardingsphere.apache.org/index_zh.html)
  * [Jooq - 强类型 sql-mapping](https://www.jooq.org/)
 

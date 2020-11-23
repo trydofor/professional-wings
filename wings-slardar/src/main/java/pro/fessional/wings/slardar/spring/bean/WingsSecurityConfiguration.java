@@ -45,4 +45,12 @@ public class WingsSecurityConfiguration {
         Assert.isTrue(encoders.containsKey(defaultEncoder), "unsupported encoder: " + defaultEncoder);
         return new DelegatingPasswordEncoder(defaultEncoder, encoders);
     }
+
+    public static void main(String[] args) {
+        String pass = "wings_is_good";
+        WingsSecurityConfiguration conf = new WingsSecurityConfiguration();
+        String hash = conf.passwordEncoder().encode(pass);
+        System.out.println(pass);
+        System.out.println(hash);
+    }
 }

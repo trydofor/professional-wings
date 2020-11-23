@@ -3,13 +3,11 @@ package pro.fessional.wings.faceless.sample;
 import kotlin.jvm.functions.Function1;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager;
 
 import javax.sql.DataSource;
@@ -20,9 +18,9 @@ import java.util.List;
  * @since 2019-12-26
  */
 
-@RunWith(SpringRunner.class)
+
 @SpringBootTest
-@Ignore("手动执行，版本更新时处理")
+@Disabled("手动执行，版本更新时处理")
 @ActiveProfiles("init")
 @Slf4j
 public class WingsSchemaDumper {

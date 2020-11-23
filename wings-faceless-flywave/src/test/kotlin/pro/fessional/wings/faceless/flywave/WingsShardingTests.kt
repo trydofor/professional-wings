@@ -1,18 +1,14 @@
 package pro.fessional.wings.faceless.flywave
 
-import org.junit.FixMethodOrder
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.MethodSorters
+import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringRunner
 import javax.sql.DataSource
 
-@RunWith(SpringRunner::class)
 @SpringBootTest
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-
+@TestMethodOrder(MethodOrderer.MethodName::class)
 open class WingsShardingTests {
 
     @Autowired

@@ -1,13 +1,11 @@
 package pro.fessional.wings.example.init;
 
 import lombok.Setter;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.mirana.data.CodeEnum;
 import pro.fessional.wings.example.WingsExampleApplication;
 import pro.fessional.wings.silencer.spring.help.SubclassSpringLoader;
@@ -20,9 +18,9 @@ import java.util.Map;
  * @author trydofor
  * @since 2019-12-26
  */
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(classes = WingsExampleApplication.class)
-@Ignore("手动执行，版本更新时处理")
+@Disabled("手动执行，版本更新时处理")
 public class Wings7EnumsDumper {
 
     @Setter(onMethod = @__({@Autowired}))

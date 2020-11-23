@@ -1,26 +1,24 @@
 package pro.fessional.wings.example.load;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.wings.example.WingsExampleTestApplication;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author trydofor
  * @since 2019-07-31
  */
 
-@RunWith(SpringRunner.class)
+
 //@SpringBootTest(properties = {"debug = true"})
 @SpringBootTest(classes = WingsExampleTestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TestJsonControllerTest {
@@ -33,20 +31,20 @@ public class TestJsonControllerTest {
     }
 
     @Test
-    public void jsonIt() throws InterruptedException {
+    public void jsonIt() {
         ResponseEntity<String> entity = tmpl.getForEntity("/test.json", String.class);
         boolean ok = entity.getStatusCode().is2xxSuccessful();
         assertTrue(ok);
     }
 
     @Test
-    @Ignore("手动执行，负载测试")
+    @Disabled("手动执行，负载测试")
     public void stressTestJson() {
         stress("/test.json", 2000, 20);
     }
 
     @Test
-    @Ignore("手动执行，负载测试")
+    @Disabled("手动执行，负载测试")
     public void stressSleep() {
         stress("/sleep.html?ms=6000", 2000, 50);
     }

@@ -34,7 +34,7 @@ public class WingsSwaggerConfiguration {
         return new ApiInfoBuilder()
                 .title("专业大翅【wings】")
                 .description("wings exmaple")
-                .version("2.2.7-SNAPSHOT")
+                .version("2.4.0-SNAPSHOT")
                 .build();
     }
 }

@@ -1,6 +1,6 @@
 package pro.fessional.wings.faceless.enums;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import pro.fessional.wings.faceless.enums.auto.StandardLanguage;
 
 import java.util.Locale;

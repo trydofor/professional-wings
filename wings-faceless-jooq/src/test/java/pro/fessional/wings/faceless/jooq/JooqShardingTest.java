@@ -5,15 +5,12 @@ import lombok.val;
 import org.apache.shardingsphere.api.hint.HintManager;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
-import org.junit.Assert;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.wings.faceless.WingsTestHelper;
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
@@ -27,6 +24,7 @@ import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1;
 import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 
@@ -35,10 +33,10 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
  * @since 2019-06-20
  */
 
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
 @ActiveProfiles("shard")
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 class JooqShardingTest {
 
     @Setter(onMethod = @__({@Autowired}))
@@ -207,7 +205,7 @@ class JooqShardingTest {
         );
         testcaseNotice("批量Insert，查看日志,ignore, 分2批次， 119 ignore; 308，309 insert");
         val rs1 = dao.batchInsert(rds, 2, true);
-        Assert.assertArrayEquals(new int[]{1, 1, 1}, rs1);
+        assertArrayEquals(new int[]{1, 1, 1}, rs1);
 
         testcaseNotice("先select在insert 310，或update 308，309");
         val rs3 = dao.batchMerge(new Field[]{tbl.Id}, Arrays.asList(
@@ -215,7 +213,7 @@ class JooqShardingTest {
                 new Tst中文也分表Record(308L, now, now, now, 9L, "批量合并308", "其他308"),
                 new Tst中文也分表Record(309L, now, now, now, 9L, "批量合并309", "其他309")
         ), 2, tbl.LoginInfo, tbl.OtherInfo);
-        Assert.assertArrayEquals(new int[]{1, 1, 1}, rs3);
+        assertArrayEquals(new int[]{1, 1, 1}, rs3);
     }
 
     @Test
@@ -229,7 +227,7 @@ class JooqShardingTest {
         try {
             val rs2 = dao.batchInsert(rds, 2, false);
             System.out.println(Arrays.toString(rs2));
-            //Assert.assertArrayEquals(intArrayOf(2, 2, 2), rs2)
+            //assertArrayEquals(intArrayOf(2, 2, 2), rs2)
         } catch (Exception e) {
             testcaseNotice("Sharding 不支持，replace into https://github.com/apache/shardingsphere/issues/5330");
             e.printStackTrace();
@@ -244,7 +242,7 @@ class JooqShardingTest {
                     new Tst中文也分表Record(319L, now, now, now, 9L, "批量合并319", "其他319")
             ), 2, tbl.LoginInfo, tbl.OtherInfo);
             System.out.println(Arrays.toString(rs3));
-            //Assert.assertArrayEquals(intArrayOf(1, 1, 1), rs3)
+            //assertArrayEquals(intArrayOf(1, 1, 1), rs3)
         } catch (Exception e) {
             testcaseNotice("Sharding 不支持，on duplicate key update https://github.com/apache/shardingsphere/issues/5210");
             testcaseNotice("Sharding 不支持，https://github.com/apache/shardingsphere/pull/5423");

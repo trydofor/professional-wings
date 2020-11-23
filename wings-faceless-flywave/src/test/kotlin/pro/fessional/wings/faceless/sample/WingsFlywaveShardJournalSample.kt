@@ -1,12 +1,10 @@
 package pro.fessional.wings.faceless.sample
 
-import org.junit.Ignore
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
 import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager
@@ -20,10 +18,9 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_2ND_IDL
  * @author trydofor
  * @since 2019-06-22
  */
-@RunWith(SpringRunner::class)
 @ActiveProfiles("shard")
 @SpringBootTest(properties = ["debug = true"])
-@Ignore("手动执行，以有SchemaJournalManagerTest，SchemaShardingManagerTest覆盖测试 ")
+@Disabled("手动执行，以有SchemaJournalManagerTest，SchemaShardingManagerTest覆盖测试 ")
 class WingsFlywaveShardJournalSample {
 
     @Autowired

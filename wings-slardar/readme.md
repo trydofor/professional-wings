@@ -63,7 +63,7 @@
  * @JsonUnwrapped - 干掉包装类
 
 [jackson注解](https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations)
-[spring定制jackson](https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/#howto-customize-the-jackson-objectmapper) - 9.4.3. Customize the Jackson ObjectMapper
+[spring定制jackson](https://docs.spring.io/spring-boot/docs/2.4.0/reference/htmlsingle/#howto-customize-the-jackson-objectmapper) - 9.4.3. Customize the Jackson ObjectMapper
 
 Jackson中涉及到泛型，参数类型，必备技能
 
@@ -109,8 +109,11 @@ JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, Foo.
  * b.com/user-list.json - /domain/b/user-list.json(子)
  * b.com/css/main.css - /domain/b/css/main.css(子)
 
-实际项目中，以上场景多发生在resource和controller的Mapping中。  
-所以，暂时不支持viewTemplate，同时也约定模板必须使用全路径。
+实际项目中，以上场景多发生在resource和controller的Mapping中。
+
+ * resource通常有`**`匹配，用反射ResourceHttpRequestHandler.getResource检查。
+ * 若非ResourceHttpRequestHandler且match`**`，需要自己设法检查资源是否存在
+ * 暂时不支持viewTemplate，同时也约定模板必须使用全路径。
 
 根据wings mapping约定，避免使用相对路径，所以，b.com要在在class级做前缀。
 ``` java
@@ -149,7 +152,7 @@ wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子
 并可以 autoware OkHttpClient 直接使用，默认**信任所有ssl证书**，如安全高，需要关闭。
 如果需要按scope定制，使用RestTemplateBuilder，全局应用使用RestTemplateCustomizer。
 
-[RestTemplate 定制](https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/#boot-features-resttemplate-customization)
+[RestTemplate 定制](https://docs.spring.io/spring-boot/docs/2.4.0/reference/htmlsingle/#boot-features-resttemplate-customization)
 org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 
 
@@ -259,7 +262,7 @@ slardar，使用undertow，并提供了一下默认配置
  * controller层异常用`@ControllerAdvice` 和 `@ExceptionHandler`
  * service层异常，自行做业务处理，或AOP日志
  
-[error-handling](https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/#boot-features-error-handling)
+[error-handling](https://docs.spring.io/spring-boot/docs/2.4.0/reference/htmlsingle/#boot-features-error-handling)
 
 ### 008.undertow 启动时warn UT026010
 

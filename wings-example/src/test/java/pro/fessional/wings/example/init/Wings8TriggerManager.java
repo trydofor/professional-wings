@@ -2,12 +2,10 @@ package pro.fessional.wings.example.init;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.wings.example.WingsExampleApplication;
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager;
 
@@ -20,10 +18,10 @@ import java.util.List;
  * @author trydofor
  * @since 2019-12-26
  */
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(classes = WingsExampleApplication.class)
 @Slf4j
-@Ignore("手动执行，要先分表在跟踪，若已跟踪，先摘trigger再分表，再跟踪")
+@Disabled("手动执行，要先分表在跟踪，若已跟踪，先摘trigger再分表，再跟踪")
 public class Wings8TriggerManager {
 
     @Setter(onMethod = @__({@Autowired}))

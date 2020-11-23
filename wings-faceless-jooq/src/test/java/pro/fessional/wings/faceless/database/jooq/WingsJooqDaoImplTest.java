@@ -3,15 +3,12 @@ package pro.fessional.wings.faceless.database.jooq;
 import lombok.Setter;
 import lombok.val;
 import org.jooq.Field;
-import org.junit.Assert;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.wings.faceless.WingsTestHelper;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao;
@@ -22,6 +19,8 @@ import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
 import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 
@@ -30,10 +29,10 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
  * @author trydofor
  * @since 2020-05-31
  */
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
 @ActiveProfiles("init")
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class WingsJooqDaoImplTest {
 
     @Setter(onMethod = @__({@Autowired}))
@@ -81,7 +80,7 @@ public class WingsJooqDaoImplTest {
         );
         testcaseNotice("批量Insert，查看日志, 304-306，分2批插入");
         val rs = dao.batchInsert(rds, 2);
-        Assert.assertArrayEquals(new int[]{1, 1, 1}, rs);
+        assertArrayEquals(new int[]{1, 1, 1}, rs);
     }
 
     @Test
@@ -93,16 +92,16 @@ public class WingsJooqDaoImplTest {
         );
         testcaseNotice("批量Insert，查看日志,ignore, 307-309，分2批次， insert ignore");
         val rs1 = dao.batchInsert(rds, 2, true);
-        Assert.assertArrayEquals(new int[]{1, 1, 1}, rs1);
+        assertArrayEquals(new int[]{1, 1, 1}, rs1);
 
-        testcaseNotice("批量Insert，查看日志,replace, 307-309，分2批，replace into");
+        testcaseNotice("批量Insert，查看日志,replace, 307-309，分2批，replace into","BUG https://github.com/apache/shardingsphere/issues/8226\n");
         val rs2 = dao.batchInsert(rds, 2, false);
-        Assert.assertArrayEquals(new int[]{1, 1, 1}, rs2);
+        assertArrayEquals(new int[]{1, 1, 1}, rs2);
 
         testcaseNotice("批量Merge，查看日志,on dupkey, 307-309，分2批，duplicate");
         testcaseNotice("insert into `tst_中文也分表` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?");
         val rs3 = dao.batchMerge(rds, 2, tbl.LoginInfo, tbl.OtherInfo);
-        Assert.assertArrayEquals(new int[]{1, 1, 1}, rs3);
+        assertArrayEquals(new int[]{1, 1, 1}, rs3);
     }
 
     @Test
@@ -114,7 +113,7 @@ public class WingsJooqDaoImplTest {
         );
         testcaseNotice("批量Insert，查看日志,ignore, 307-309，分2批插入");
         val rs = dao.batchStore(rds, 2);
-        Assert.assertArrayEquals(new int[]{1, 1, 1}, rs);
+        assertArrayEquals(new int[]{1, 1, 1}, rs);
     }
 
     @Test
@@ -126,10 +125,10 @@ public class WingsJooqDaoImplTest {
         );
         testcaseNotice("批量Update，查看日志 307-309，分2批更新");
         val rs1 = dao.batchUpdate(rds, 2);
-        Assert.assertArrayEquals(new int[]{1, 1, 1}, rs1);
+        assertArrayEquals(new int[]{1, 1, 1}, rs1);
 
         val rs2 = dao.batchUpdate(new Field[]{tbl.Id}, rds, 2, tbl.LoginInfo, tbl.OtherInfo);
-        Assert.assertArrayEquals(new int[]{1, 1, 1}, rs2);
+        assertArrayEquals(new int[]{1, 1, 1}, rs2);
     }
 
     @Test
@@ -137,7 +136,7 @@ public class WingsJooqDaoImplTest {
         testcaseNotice("insert into `tst_中文也分表` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?");
         Tst中文也分表 pojo = new Tst中文也分表(312L, now, now, now, 9L, "批量加载312", "update-bymerge");
         val rs = dao.mergeInto(pojo, tbl.LoginInfo, tbl.OtherInfo);
-        Assert.assertEquals(2, rs);
+        assertEquals(2, rs);
     }
 
     @Test
@@ -149,7 +148,7 @@ public class WingsJooqDaoImplTest {
         );
         testcaseNotice("313 insert, 310,311 update");
         val rs = dao.batchMerge(new Field[]{tbl.Id}, rds, 2, tbl.LoginInfo, tbl.OtherInfo);
-        Assert.assertArrayEquals(new int[]{1, 1, 1}, rs);
+        assertArrayEquals(new int[]{1, 1, 1}, rs);
     }
 
     @Test

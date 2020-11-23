@@ -1,13 +1,11 @@
 package pro.fessional.wings.faceless.flywave
 
-import org.junit.Assert
-import org.junit.FixMethodOrder
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.MethodSorters
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.MethodOrderer.MethodName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringRunner
 import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
 import pro.fessional.wings.faceless.WingsTestHelper.breakpointDebug
@@ -21,9 +19,8 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_3RD_ENU
  * @author trydofor
  * @since 2019-06-05
  */
-@RunWith(SpringRunner::class)
 @SpringBootTest
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodName::class)
 open class SchemaRevisionMangerTest {
 
     @Autowired
@@ -48,7 +45,7 @@ open class SchemaRevisionMangerTest {
         breakpointDebug("查看当前版本💰")
         val databaseVersion = schemaRevisionManager.currentRevision()
         for ((_, u) in databaseVersion) {
-            Assert.assertEquals(REVISION_2ND_IDLOGS, u)
+            assertEquals(REVISION_2ND_IDLOGS, u)
         }
     }
 

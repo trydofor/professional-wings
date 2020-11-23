@@ -19,7 +19,10 @@ public class JooqCodeAutoGenSample {
                           .jdbcUser("trydofor")
                           .jdbcPassword("moilioncircle")
                           .databaseSchema(database)
-                          .databaseIncludes("sys_constant_enum|sys_standard_i18n|tst_中文也分表")
+                          // 支持 pattern的注释写法
+                          .databaseIncludes("sys_constant_enum" +
+                                  "|sys_standard_i18n" +
+                                  "|tst_中文也分表")
                           .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
                           .targetPackage("pro.fessional.wings.faceless.database.autogen")
                           .targetDirectory("wings-faceless-jooq/src/test/java/")

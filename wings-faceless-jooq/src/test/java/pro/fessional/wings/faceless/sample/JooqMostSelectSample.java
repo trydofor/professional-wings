@@ -13,11 +13,9 @@ import org.jooq.Record2;
 import org.jooq.SelectConditionStep;
 import org.jooq.TableOnConditionStep;
 import org.jooq.impl.DSL;
-import org.junit.Assert;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -25,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.mirana.page.PageQuery;
 import pro.fessional.mirana.page.PageResult;
 import pro.fessional.wings.faceless.database.WingsPageHelper;
@@ -44,6 +41,7 @@ import java.util.Map;
 
 import static org.jooq.Operator.AND;
 import static org.jooq.Operator.OR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
 import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 
@@ -55,9 +53,9 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
  * @author trydofor
  * @since 2020-08-14
  */
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class JooqMostSelectSample {
 
     @Setter(onMethod = @__({@Autowired}))
@@ -264,7 +262,7 @@ public class JooqMostSelectSample {
                 .fetch("SELECT id, login_info\n" +
                         "FROM tst_中文也分表\n" +
                         "WHERE id >={0} AND id <={1}\n" +
-                        "ORDER BY login_info DESC,id\n" +
+                        "ORDER BY login_info DESC, id\n" +
                         "LIMIT {2}, {3}", bd2)
                 .into(SameName.class);
 
@@ -313,7 +311,7 @@ public class JooqMostSelectSample {
                                     .grp(d4).or(d5).end()
                                     .end()
                                     .build();
-        Assert.assertEquals(c0.toString(), c1.toString());
+        assertEquals(c0.toString(), c1.toString());
 
 
         testcaseNotice("通过页面过来的pojo构造and条码");

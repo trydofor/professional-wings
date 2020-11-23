@@ -11,12 +11,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
@@ -41,11 +38,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * @author trydofor
  * @since 2019-06-26
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(properties = {"debug = true"})
 public class WingsJacksonMapperTest {
 
@@ -77,8 +75,8 @@ public class WingsJacksonMapperTest {
         String json2 = objectMapper.writeValueAsString(obj);
         JsonIt obj2 = objectMapper.readValue(json2, JsonIt.class);
 
-        Assert.assertEquals(json, json2);
-        Assert.assertEquals(obj, obj2);
+        assertEquals(json, json2);
+        assertEquals(obj, obj2);
     }
 
     @Data
@@ -114,7 +112,7 @@ public class WingsJacksonMapperTest {
         I18nJson obj = new I18nJson();
         ObjectWriter jackson = objectMapper.writerWithDefaultPrettyPrinter();
         String json = jackson.writeValueAsString(obj);
-        Assert.assertEquals("{\n" +
+        assertEquals("{\n" +
                 "  \"codeManual\" : \"{0} can not be empty\",\n" +
                 "  \"codeIgnore\" : \"base.not-empty\",\n" +
                 "  \"textAuto\" : \"textAuto can not be empty\",\n" +
@@ -167,7 +165,7 @@ public class WingsJacksonMapperTest {
 
         R<I18nJson> r1 = R.ok("这是一个消息", new I18nJson());
         String j1 = jackson.writeValueAsString(r1);
-        Assert.assertEquals("{\n" +
+        assertEquals("{\n" +
                 "  \"success\" : true,\n" +
                 "  \"message\" : \"这是一个消息\",\n" +
                 "  \"data\" : {\n" +
@@ -198,7 +196,7 @@ public class WingsJacksonMapperTest {
 
         R<I18nJson> r2 = r1.toI18n("base.not-empty", "第一个参数");
         String j2 = jackson.writeValueAsString(r2);
-        Assert.assertEquals("{\n" +
+        assertEquals("{\n" +
                 "  \"success\" : true,\n" +
                 "  \"message\" : \"第一个参数 can not be empty\",\n" +
                 "  \"data\" : {\n" +
@@ -235,7 +233,7 @@ public class WingsJacksonMapperTest {
         JsonIt jsonIt = new JsonIt();
         String i18n = jackson.writeValueAsString(i18nJson);
         String json = jackson.writeValueAsString(jsonIt);
-        Assert.assertEquals("<I18nJson>\n" +
+        assertEquals("<I18nJson>\n" +
                 "  <codeManual>{0} can not be empty</codeManual>\n" +
                 "  <codeIgnore>base.not-empty</codeIgnore>\n" +
                 "  <textAuto>textAuto can not be empty</textAuto>\n" +
@@ -263,7 +261,7 @@ public class WingsJacksonMapperTest {
                 "    <i18n>textAuto can not be empty</i18n>\n" +
                 "  </mapAuto>\n" +
                 "</I18nJson>", i18n.trim());
-        Assert.assertEquals("<JsonIt>\n" +
+        assertEquals("<JsonIt>\n" +
                 "  <intVal>2147483646</intVal>\n" +
                 "  <longVal>9223372036854775806</longVal>\n" +
                 "  <floatVal>1.1</floatVal>\n" +
@@ -296,8 +294,8 @@ public class WingsJacksonMapperTest {
         StringMapGenerator t2 = StringMapGenerator.linkMap();
         objectMapper.writeValue(t1, i18nJson);
         objectMapper.writeValue(t2, jsonIt);
-        Assert.assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, ikey=ival, longIgnore=0, textAuto=textAuto can not be empty}", t1.getResultTree().toString().trim());
-        Assert.assertEquals("{intVal=2147483646, longVal=9223372036854775806, floatVal=1.1, doubleVal=2.2, decimalVal=3.3, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, zonedDateTimeVal=2020-06-01 12:34:46, zonedDateTimeValV=2020-06-01 00:34:46.000 America/New_York, zonedDateTimeValZ=2020-06-01 00:34:46.000 -0400, instantVal=2020-06-01T12:34:46Z, utilDateVal=2020-06-01 12:34:46, listVal=列表, Map=1, bool-val=false}", t2.getResultTree().toString().trim());
+        assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, ikey=ival, longIgnore=0, textAuto=textAuto can not be empty}", t1.getResultTree().toString().trim());
+        assertEquals("{intVal=2147483646, longVal=9223372036854775806, floatVal=1.1, doubleVal=2.2, decimalVal=3.3, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, zonedDateTimeVal=2020-06-01 12:34:46, zonedDateTimeValV=2020-06-01 00:34:46.000 America/New_York, zonedDateTimeValZ=2020-06-01 00:34:46.000 -0400, instantVal=2020-06-01T12:34:46Z, utilDateVal=2020-06-01 12:34:46, listVal=列表, Map=1, bool-val=false}", t2.getResultTree().toString().trim());
     }
 
     @Test
@@ -310,10 +308,10 @@ public class WingsJacksonMapperTest {
         Map<String, String> x1 = StringMapHelper.jaxb(i18nJson);
         Map<String, String> x2 = StringMapHelper.jaxb(jsonIt);
 
-        Assert.assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, ikey=ival, longIgnore=0, textAuto=textAuto can not be empty}", j1.toString());
-        Assert.assertEquals("{Map=1, bool-val=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, instantVal=2020-06-01T12:34:46Z, intVal=2147483646, listVal=列表, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, longVal=9223372036854775806, utilDateVal=2020-06-01 12:34:46, zonedDateTimeVal=2020-06-01 12:34:46, zonedDateTimeValV=2020-06-01 00:34:46.000 America/New_York, zonedDateTimeValZ=2020-06-01 00:34:46.000 -0400}", j2.toString());
-        Assert.assertEquals("{args=textDisabled, codeIgnore=base.not-empty, codeManual=base.not-empty, hint=, key=ikey, longIgnore=0, value=ival}", x1.toString());
-        Assert.assertEquals("{boolVal=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, intVal=2147483646, key=Map, listVal=列表, longVal=9223372036854775806, utilDateVal=2020-06-01T12:34:46+08:00, value=1}", x2.toString());
+        assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, ikey=ival, longIgnore=0, textAuto=textAuto can not be empty}", j1.toString());
+        assertEquals("{Map=1, bool-val=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, instantVal=2020-06-01T12:34:46Z, intVal=2147483646, listVal=列表, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, longVal=9223372036854775806, utilDateVal=2020-06-01 12:34:46, zonedDateTimeVal=2020-06-01 12:34:46, zonedDateTimeValV=2020-06-01 00:34:46.000 America/New_York, zonedDateTimeValZ=2020-06-01 00:34:46.000 -0400}", j2.toString());
+        assertEquals("{args=textDisabled, codeIgnore=base.not-empty, codeManual=base.not-empty, hint=, key=ikey, longIgnore=0, value=ival}", x1.toString());
+        assertEquals("{boolVal=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, intVal=2147483646, key=Map, listVal=列表, longVal=9223372036854775806, utilDateVal=2020-06-01T12:34:46+08:00, value=1}", x2.toString());
     }
 
     @Data
@@ -343,7 +341,7 @@ public class WingsJacksonMapperTest {
         String s1 = objectMapper.writeValueAsString(nas);
         String s2 = objectMapper.writeValueAsString(nan);
         //
-        Assert.assertEquals("{\"numLong\":\"10\",\"numInt\":\"10\",\"numDouble\":\"3.14159\",\"numDecimal\":\"2.71828\"}",s1);
-        Assert.assertEquals("{\"numLong\":10,\"numInt\":10,\"numDouble\":3.14159,\"numDecimal\":2.71828}",s2);
+        assertEquals("{\"numLong\":\"10\",\"numInt\":\"10\",\"numDouble\":\"3.14159\",\"numDecimal\":\"2.71828\"}",s1);
+        assertEquals("{\"numLong\":10,\"numInt\":10,\"numDouble\":3.14159,\"numDecimal\":2.71828}",s2);
     }
 }

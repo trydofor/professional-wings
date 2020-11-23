@@ -2,25 +2,24 @@ package pro.fessional.wings.slardar.httprest;
 
 import lombok.Setter;
 import okhttp3.OkHttpClient;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.mirana.io.InputStreams;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 /**
  * @author trydofor
  * @since 2020-06-03
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@RunWith(SpringRunner.class)
+
 public class OkHttpClientHelperTest {
 
     @Setter(onMethod = @__({@Value("http://localhost:${local.server.port}")}))
@@ -38,7 +37,7 @@ public class OkHttpClientHelperTest {
     }
 
     @Test
-    public void postFile() throws IOException {
+    public void postFile() {
         String txt = "123456\nasdfgh";
         String j2 = OkHttpClientHelper.postFile(okHttpClient, host + "/test/rest-template-helper-file.htm", "up", txt.getBytes(), "test.txt");
         assertEquals(txt, j2);

@@ -1,15 +1,14 @@
 package pro.fessional.wings.faceless.database.jooq;
 
 import org.jooq.Condition;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.jooq.impl.DSL.field;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author trydofor
@@ -26,7 +25,7 @@ class WingsJooqUtilTest {
         Condition c1 = WingsJooqUtil.condChain(map, true);
         Condition c2 = field("id", Integer.class).in(1, 2, 3)
                                                  .and(field("info", String.class).in("a", "b"));
-        Assert.assertEquals(c1.toString(), c2.toString());
+        assertEquals(c1.toString(), c2.toString());
     }
 
 
@@ -52,7 +51,7 @@ class WingsJooqUtilTest {
                                     .grp(d4).or(d5).end()
                                     .end()
                                     .build();
-        Assert.assertEquals(c0.toString(), c1.toString());
+        assertEquals(c0.toString(), c1.toString());
 
         // 省略结尾
         Condition c2 = WingsJooqUtil.condBuilder()
@@ -62,7 +61,7 @@ class WingsJooqUtilTest {
                                     .and()
                                     .grp(d4).or(d5)
                                     .build();
-        Assert.assertEquals(c0.toString(), c2.toString());
+        assertEquals(c0.toString(), c2.toString());
 
         // 多个操作
         Condition c3 = WingsJooqUtil.condBuilder()
@@ -73,7 +72,7 @@ class WingsJooqUtilTest {
                                     .grp(d4).or(d5).end()
                                     .end()
                                     .build();
-        Assert.assertEquals(c0.toString(), c3.toString());
+        assertEquals(c0.toString(), c3.toString());
     }
 
     @Test
@@ -99,6 +98,6 @@ class WingsJooqUtilTest {
                                     .grp(d4).or(d5).and(d5, false).end()
                                     .end()
                                     .build();
-        Assert.assertEquals(c0.toString(), c1.toString());
+        assertEquals(c0.toString(), c1.toString());
     }
 }

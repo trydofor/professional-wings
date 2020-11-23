@@ -20,7 +20,11 @@ public class Wings2JooqJavaGen {
                           .jdbcUser("trydofor")
                           .jdbcPassword("moilioncircle")
                           .databaseSchema(database)
-                          .databaseIncludes("sys_constant_enum|sys_standard_i18n|win_.*")
+                          // 支持 pattern的注释写法
+                          .databaseIncludes(
+                                  "sys_constant_enum # enum表" +
+                                  "|sys_standard_i18n # i18n表" +
+                                  "|win_.* # win系列表")
                           .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
                           .targetPackage("pro.fessional.wings.example.database.autogen")
                           .targetDirectory("wings-example/src/main/java/")

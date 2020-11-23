@@ -1,13 +1,11 @@
 package pro.fessional.wings.faceless.sample;
 
 import lombok.Setter;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.wings.faceless.WingsTestHelper;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
@@ -17,7 +15,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
  * @author trydofor
  * @since 2019-06-22
  */
-@RunWith(SpringRunner.class)
+
 @ActiveProfiles("init")
 @SpringBootTest(properties =
         {"debug = true",
@@ -28,7 +26,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 //         "spring.shardingsphere.datasource.writer.username=trydofor",
 //         "spring.shardingsphere.datasource.writer.password=moilioncircle",
         })
-@Ignore("手动执行一次，初始化步骤，危险操作")
+@Disabled("手动执行一次，初始化步骤，危险操作")
 public class WingsSchemaGenerator {
 
     @Setter(onMethod = @__({@Autowired}))

@@ -1,21 +1,18 @@
 package pro.fessional.wings.silencer.spring.bean;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.mirana.code.Crc8Long;
 import pro.fessional.mirana.code.LeapCode;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author trydofor
  * @since 2019-10-05
  */
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(properties = {"debug = true"})
 public class WingsMiranaConfigurationTest {
 

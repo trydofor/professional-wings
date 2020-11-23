@@ -1,14 +1,13 @@
 package pro.fessional.wings.faceless.flywave
 
-import org.junit.FixMethodOrder
-import org.junit.Ignore
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.MethodSorters
+
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.MethodOrderer.MethodName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedRegexp
@@ -21,11 +20,10 @@ import javax.sql.DataSource
  * @since 2019-06-20
  */
 
-@RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("init")
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore("手动执行，避免污染Git提交文件")
+@TestMethodOrder(MethodName::class)
+@Disabled("手动执行，避免污染Git提交文件")
 class SchemaFulldumpManagerTest {
 
     @Autowired

@@ -10,13 +10,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import pro.fessional.mirana.text.Wildcard;
 import pro.fessional.wings.slardar.servlet.WingsServletConst;
 import pro.fessional.wings.slardar.servlet.filter.WingsDomainExFilter;
 import pro.fessional.wings.slardar.servlet.request.WingsRequestWrapper;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 
 /**
@@ -34,7 +38,7 @@ import java.util.function.BiFunction;
 @ConditionalOnExpression("${spring.wings.slardar.extend-controller.enabled:false} || ${spring.wings.slardar.extend-resource.enabled:false}")
 public class WingsFilterDomainExConfiguration {
 
-    private final Log logger = LogFactory.getLog(WingsFilterDomainExConfiguration.class);
+    private final static Log logger = LogFactory.getLog(WingsFilterDomainExConfiguration.class);
 
     @Bean
     public WingsDomainExFilter wingsDomainFilter(WingsDomainExFilter.Config config, DispatcherServlet dispatcherServlet) {
@@ -47,7 +51,10 @@ public class WingsFilterDomainExConfiguration {
             for (String v : vs) {
                 ls.add(Wildcard.compile(v));
             }
-            wildcards.put(entry.getKey(), ls);
+            String key = entry.getKey();
+            // spring official log is common log
+            logger.info(" - conf Domain filter - " + key + ":" + String.join(",", vs));
+            wildcards.put(key, ls);
         }
 
         String prefix = config.getPrefix();
@@ -114,9 +121,18 @@ public class WingsFilterDomainExConfiguration {
             //UrlPathHelper.getPathWithinServletMapping
             for (HandlerMapping hm : mappingUrl) {
                 try {
-                    if (hm.getHandler(wrp) != null) {
-                        cacheUrl.put(domainUrl, Boolean.TRUE);
-                        return wrp;
+                    HandlerExecutionChain hdc = hm.getHandler(wrp);
+                    if (hdc != null) {
+                        Object hd = hdc.getHandler();
+                        if (hd instanceof ResourceHttpRequestHandler) {
+                            if (ResourceChecker.exist((ResourceHttpRequestHandler) hd, wrp)) {
+                                cacheUrl.put(domainUrl, Boolean.TRUE);
+                                return wrp;
+                            }
+                        } else {
+                            cacheUrl.put(domainUrl, Boolean.TRUE);
+                            return wrp;
+                        }
                     }
                 } catch (Exception e) {
                     // ignore;
@@ -136,6 +152,36 @@ public class WingsFilterDomainExConfiguration {
                     mappingUrl.addAll(mappings);
                     initDone = true;
                 }
+            }
+        }
+    }
+
+    private static class ResourceChecker {
+        private static final AtomicReference<Method> resourceHttpRequestHandler = new AtomicReference<>();
+
+        public static boolean exist(ResourceHttpRequestHandler rh, HttpServletRequest rq) {
+            if (resourceHttpRequestHandler.get() == null) {
+                synchronized (resourceHttpRequestHandler) {
+                    if (resourceHttpRequestHandler.get() == null) {
+                        // getResource(HttpServletRequest request)
+                        try {
+                            Method md = ResourceHttpRequestHandler.class.getDeclaredMethod("getResource", HttpServletRequest.class);
+                            md.setAccessible(true);
+                            resourceHttpRequestHandler.set(md);
+                        } catch (Exception e) {
+                            logger.warn("failed to check resource=" + rq.getRequestURI(), e);
+                            throw new IllegalStateException(e);
+                        }
+                    }
+                }
+            }
+            try {
+                //
+                rq.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE,rq.getRequestURI());
+                Object obj = resourceHttpRequestHandler.get().invoke(rh, rq);
+                return obj != null;
+            } catch (Exception e) {
+                return false;
             }
         }
     }

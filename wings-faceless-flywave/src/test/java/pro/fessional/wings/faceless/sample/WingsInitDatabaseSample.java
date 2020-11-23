@@ -2,13 +2,11 @@ package pro.fessional.wings.faceless.sample;
 
 import lombok.Setter;
 import lombok.val;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1;
@@ -21,10 +19,10 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.scan;
  * @author trydofor
  * @since 2020-08-11
  */
-@RunWith(SpringRunner.class)
+
 @SpringBootTest
 @ActiveProfiles("init")
-@Ignore("手动执行，JavaMainJooqGenSample 需要 ")
+@Disabled("手动执行，JavaMainJooqGenSample 需要 ")
 public class WingsInitDatabaseSample {
 
     @Setter(onMethod = @__({@Autowired}))

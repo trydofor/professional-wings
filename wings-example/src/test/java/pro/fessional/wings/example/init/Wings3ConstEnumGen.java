@@ -1,12 +1,10 @@
 package pro.fessional.wings.example.init;
 
 import lombok.Setter;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.wings.example.WingsExampleApplication;
 import pro.fessional.wings.example.database.autogen.tables.daos.SysConstantEnumDao;
 import pro.fessional.wings.example.database.autogen.tables.pojos.SysConstantEnum;
@@ -20,7 +18,7 @@ import java.util.List;
  * @author trydofor
  * @since 2020-06-10
  */
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(classes = WingsExampleApplication.class, properties =
         {"debug = true",
          "spring.wings.enumi18n.enabled=true",
@@ -30,7 +28,7 @@ import java.util.List;
 //         "spring.shardingsphere.datasource.writer.username=trydofor",
 //         "spring.shardingsphere.datasource.writer.password=moilioncircle",
         })
-@Ignore("手动生成Java类，依赖分支feature/enum-i18n的2019052101")
+@Disabled("手动生成Java类，依赖分支feature/enum-i18n的2019052101")
 public class Wings3ConstEnumGen {
 
     @Setter(onMethod = @__({@Autowired}))

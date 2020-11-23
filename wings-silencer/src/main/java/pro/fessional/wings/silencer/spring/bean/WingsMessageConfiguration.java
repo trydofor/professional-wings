@@ -12,7 +12,7 @@ import pro.fessional.wings.silencer.message.CombinableMessageSource;
 
 /**
  * @author trydofor
- * @link https://docs.spring.io/spring-boot/docs/2.2.7.RELEASE/reference/htmlsingle/#boot-features-internationalization
+ * @link https://docs.spring.io/spring-boot/docs/2.4.0/reference/htmlsingle/#boot-features-internationalization
  * @see org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration
  * @since 2019-06-24
  */

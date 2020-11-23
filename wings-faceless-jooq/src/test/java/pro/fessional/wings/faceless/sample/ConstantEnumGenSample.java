@@ -1,12 +1,10 @@
 package pro.fessional.wings.faceless.sample;
 
 import lombok.Setter;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.SysConstantEnumDao;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.SysConstantEnum;
 import pro.fessional.wings.faceless.util.ConstantEnumGenerator;
@@ -18,7 +16,7 @@ import java.util.List;
  * @author trydofor
  * @since 2020-06-10
  */
-@RunWith(SpringRunner.class)
+
 @ActiveProfiles("init")
 @SpringBootTest(properties =
         {"debug = true",

@@ -6,16 +6,12 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.OrderField;
-import org.jooq.SQL;
-import org.jooq.impl.DSL;
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
@@ -35,10 +31,10 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
  * @since 2019-06-20
  */
 
-@RunWith(SpringRunner.class)
+
 @SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore("手动执行，以有JooqShardingTest覆盖测试 ")
+@TestMethodOrder(MethodOrderer.MethodName.class)
+@Disabled("手动执行，以有JooqShardingTest覆盖测试 ")
 public class JooqDslAndDaoSample {
 
     @Setter(onMethod = @__({@Autowired}))

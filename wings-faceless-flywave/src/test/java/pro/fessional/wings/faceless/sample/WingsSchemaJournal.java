@@ -2,12 +2,10 @@ package pro.fessional.wings.faceless.sample;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager;
 
 import java.util.Arrays;
@@ -17,9 +15,9 @@ import java.util.List;
  * @author trydofor
  * @since 2019-12-26
  */
-@RunWith(SpringRunner.class)
+
 @SpringBootTest
-@Ignore("手动执行，版本更新时处理")
+@Disabled("手动执行，版本更新时处理")
 @Slf4j
 public class WingsSchemaJournal {
 
