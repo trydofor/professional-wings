@@ -28,19 +28,20 @@
     </modules>
 
     <properties>
-        <maven.test.skip>true</maven.test.skip>
-        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.test.skip>true</maven.test.skip>
         <!--
         https://docs.spring.io/spring-boot/docs/2.4.0/reference/html/appendix-dependency-versions.html#appendix-dependency-versions
         -->
         <spring-boot.version>2.4.0</spring-boot.version>
         <!--silencer-->
         <wings.version>2.4.0-SNAPSHOT</wings.version>
-        <mirana.version>2.0.0-SNAPSHOT</mirana.version>
+        <mirana.version>2.0.0</mirana.version>
         <!--faceless-->
-        <meepo.version>1.0.0-SNAPSHOT</meepo.version>
+        <meepo.version>1.0.0</meepo.version>
         <kotlin.version>1.4.10</kotlin.version>
         <jooq.version>3.14.3</jooq.version>
         <sharding-sphere.version>4.1.1</sharding-sphere.version>
@@ -237,8 +238,8 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
-                        <source>${java.version}</source>
-                        <target>${java.version}</target>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
                         <annotationProcessorPaths>
                             <!--  从以下 path 查找annotationProcessor，class paths -->
                             <path>
