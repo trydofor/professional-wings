@@ -59,6 +59,46 @@ public class WingsJacksonMapperTest {
         Locale.setDefault(Locale.US);
     }
 
+    @Data
+    public static class NamingLombok {
+        private Boolean objectType = true;
+
+        public boolean isPrimaryType() {
+            return true;
+        }
+    }
+
+    public static class NamingManual {
+        private boolean primaryType = true;
+        private Boolean objectType = true;
+
+        public boolean isPrimaryType() {
+            return primaryType;
+        }
+
+        public void setPrimaryType(boolean primaryType) {
+            this.primaryType = primaryType;
+        }
+
+        public Boolean getObjectType() {
+            return objectType;
+        }
+
+        public void setObjectType(Boolean objectType) {
+            this.objectType = objectType;
+        }
+    }
+
+    @Test
+    public void testNaming() throws JsonProcessingException {
+        NamingManual n1 = new NamingManual();
+        String s1 = objectMapper.writeValueAsString(n1);
+        System.out.println(s1);
+        NamingLombok n2 = new NamingLombok();
+        String s2 = objectMapper.writeValueAsString(n2);
+        System.out.println(s2);
+    }
+
     @Test
     public void testEquals() throws IOException {
         System.out.println("=== ZoneId= " + ZoneId.systemDefault());
@@ -341,7 +381,7 @@ public class WingsJacksonMapperTest {
         String s1 = objectMapper.writeValueAsString(nas);
         String s2 = objectMapper.writeValueAsString(nan);
         //
-        assertEquals("{\"numLong\":\"10\",\"numInt\":\"10\",\"numDouble\":\"3.14159\",\"numDecimal\":\"2.71828\"}",s1);
-        assertEquals("{\"numLong\":10,\"numInt\":10,\"numDouble\":3.14159,\"numDecimal\":2.71828}",s2);
+        assertEquals("{\"numLong\":\"10\",\"numInt\":\"10\",\"numDouble\":\"3.14159\",\"numDecimal\":\"2.71828\"}", s1);
+        assertEquals("{\"numLong\":10,\"numInt\":10,\"numDouble\":3.14159,\"numDecimal\":2.71828}", s2);
     }
 }

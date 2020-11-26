@@ -408,7 +408,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
         private final String fullName;
         private String baseName;
-        private int nameSeq = 99;
+        private int nameSeq = 70;
         private String profile = "";
 
         public ConfResource(Resource res, String url) {

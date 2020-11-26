@@ -31,13 +31,13 @@ public class I18nResultSerializer extends JsonSerializer<R.I<?>> {
         String i18nCode = value.getI18nCode();
         String message = value.getMessage();
 
-        if (!StringUtils.isEmpty(i18nCode)) {
+        if (StringUtils.hasText(i18nCode)) {
             Locale locale = null;
             if (i18nContext != null) locale = i18nContext.getLocale();
             if (locale == null) locale = provider.getLocale();
 
             String i18n = messageSource.getMessage(i18nCode, value.getI18nArgs(), locale);
-            if (!StringUtils.isEmpty(i18n) && !i18n.equalsIgnoreCase(i18nCode)) {
+            if (StringUtils.hasText(i18n) && !i18n.equalsIgnoreCase(i18nCode)) {
                 message = i18n;
             }
         }
@@ -50,11 +50,11 @@ public class I18nResultSerializer extends JsonSerializer<R.I<?>> {
         gen.writeStartObject();
         gen.writeBooleanField("success", value.isSuccess());
         //
-        if (!StringUtils.isEmpty(message)) {
+        if (StringUtils.hasText(message)) {
             gen.writeStringField("message", message);
         }
         String code = value.getCode();
-        if (!StringUtils.isEmpty(code)) {
+        if (StringUtils.hasText(code)) {
             gen.writeStringField("code", code);
         }
         gen.writeFieldName("data");

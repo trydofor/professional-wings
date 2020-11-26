@@ -146,4 +146,12 @@ public class JooqDslAndDaoSample {
         val c2 = dao.count(dao.getTable().onlyDiedData);
         System.out.println(c2);
     }
+
+    @Test
+    public void test4Shadow() {
+        testcaseNotice("影子表");
+        Tst中文也分表Table upd = dao.newTable("","$upd");
+        val c1 = dao.count(upd);
+        System.out.println(c1);
+    }
 }

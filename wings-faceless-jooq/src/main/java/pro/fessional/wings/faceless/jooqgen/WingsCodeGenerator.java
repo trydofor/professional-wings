@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -55,7 +56,7 @@ public class WingsCodeGenerator {
             safeCopy(tdr, src, pkg, incremental);
             Files.walk(tmp.toPath())
                  .map(Path::toFile)
-                 .sorted((a, b) -> b.compareTo(a))
+                 .sorted(Comparator.reverseOrder())
                  .forEach(File::delete);
         } catch (Exception e) {
             logger.error("failed to generate", e);

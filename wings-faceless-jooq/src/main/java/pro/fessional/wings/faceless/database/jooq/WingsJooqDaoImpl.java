@@ -67,7 +67,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
     }
 
     /**
-     * 相同表结构，构造一个新表名，有在分表的场景
+     * 相同表结构，构造一个新表名，有在分表，影子表的场景
      *
      * @param name 新表名
      * @return 新表
@@ -96,7 +96,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
     }
 
     @Override
-    public T getTable() {
+    public @NotNull T getTable() {
         return table;
     }
 
@@ -825,6 +825,13 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
     }
 
     /**
+     * @see #count(TableImpl, Condition)
+     */
+    public long count(T table) {
+        return count(table, null);
+    }
+
+    /**
      * 按表count，要求table和cond中的字段必须同源
      *
      * @param table 表
@@ -832,11 +839,12 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
      * @return 结果
      */
     public long count(T table, Condition cond) {
-        return ctx()
+        Long cnt = ctx()
                 .selectCount()
                 .from(table)
                 .where(cond)
                 .fetchOne(0, Long.class);
+        return cnt == null ? 0 : cnt;
     }
 
     ///////////////// condition /////////////////////

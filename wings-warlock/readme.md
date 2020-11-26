@@ -6,15 +6,10 @@
 
 基于SpringSecurity的AuthN(Authentication/认证)和AuthZ(Authorization/授权)支持。
 
-* OIDC/SSO 支持
-* Form登录
-* RememberMe
-* API签名登录
-* 第三方登录
-* 验证码
-* 手机短信
-* 支持session,token
-* 权限组和权限
+ * 身份认证：OIDC/SSO，Form，RememberMe，API签名，第三方，手机短信
+ * 令牌传递：session，token
+ * 功能权限：role继承和扩展，身份马甲，临时增减，超级用户
+ * 数据隔离：管辖隔离，职能继承，助理扩展，临时授权。
 
 ## 4.1.权限场景
 
@@ -32,4 +27,5 @@ Auth端进行AuthN和基础的AuthZ，可以实现SSO和RememberMe，
 * 啰嗦，浪费带宽和计算资源。
 * 无法废弃，续签困难。
 * 并不安全，非加密
+
 

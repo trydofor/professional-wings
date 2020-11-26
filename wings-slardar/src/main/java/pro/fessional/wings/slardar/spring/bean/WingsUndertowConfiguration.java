@@ -43,9 +43,9 @@ public class WingsUndertowConfiguration {
                 boolean dtb = dt == null ? true : dt;
                 DataSize bs = undertow.getBufferSize();
                 int bss = bs == null ? 8192 : (int) bs.toBytes();
-                Integer it = undertow.getIoThreads();
+                Integer it = undertow.getThreads().getIo();
                 int its = it == null ? Runtime.getRuntime().availableProcessors() : it;
-                Integer wt = undertow.getWorkerThreads();
+                Integer wt = undertow.getThreads().getWorker();
                 int wks = wt == null ? its * 8 : wt;
 
                 logger.info("config Undertow websocket buffer, direct=" + dtb

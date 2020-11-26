@@ -9,6 +9,7 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.OrderField;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.RecordMapper;
 import org.jooq.Result;
 import org.jooq.SelectConditionStep;
@@ -172,7 +173,7 @@ public class WingsPageHelper {
         @NotNull
         public <E> PageResult<E> into(RowMapper<E> mapper) {
             if (context.total < 0) {
-                Integer total = context.tpl.queryForObject("SELECT " + context.count + " " + context.fromWhere, context.bind, int.class);
+                Integer total = context.tpl.queryForObject("SELECT " + context.count + " " + context.fromWhere, int.class, context.bind);
                 if (total != null) {
                     context.total = total;
                 }
@@ -185,7 +186,7 @@ public class WingsPageHelper {
                 sql.append(" ");
                 sql.append(context.fromWhere);
                 context.orderLimit(sql);
-                list = context.tpl.query(sql.toString(), context.bind, mapper);
+                list = context.tpl.query(sql.toString(), mapper, context.bind);
             }
 
             return list == null ? PageResult.empty() : PageResult.of(context.total, list, context.page);
@@ -204,7 +205,7 @@ public class WingsPageHelper {
         @NotNull
         public <E> PageResult<E> fetchInto(RowMapper<E> mapper) {
             if (context.total < 0) {
-                Integer total = context.tpl.queryForObject("SELECT count(*) FROM (" + context.wrap + ") WINGS_WRAP", context.bind, int.class);
+                Integer total = context.tpl.queryForObject("SELECT count(*) FROM (" + context.wrap + ") WINGS_WRAP", int.class, context.bind);
                 if (total != null) {
                     context.total = total;
                 }
@@ -214,7 +215,7 @@ public class WingsPageHelper {
                 StringBuilder sql = new StringBuilder(context.wrap.length() + context.order.length() + 30);
                 sql.append(context.wrap);
                 context.orderLimit(sql);
-                list = context.tpl.query(sql.toString(), context.bind, mapper);
+                list = context.tpl.query(sql.toString(), mapper, context.bind);
             }
 
             return list == null ? PageResult.empty() : PageResult.of(context.total, list, context.page);
@@ -458,18 +459,18 @@ public class WingsPageHelper {
 
         public IntoJooq fetch(SelectFieldOrAsterisk... select) {
             if (context.total < 0) {
+                Record1<Integer> cnt;
                 if (context.where == null) {
-                    context.total = context.dsl.select(context.count)
-                                               .from(context.from)
-                                               .fetchOne()
-                                               .into(int.class);
+                    cnt = context.dsl.select(context.count)
+                                     .from(context.from)
+                                     .fetchOne();
                 } else {
-                    context.total = context.dsl.select(context.count)
-                                               .from(context.from)
-                                               .where(context.where)
-                                               .fetchOne()
-                                               .into(int.class);
+                    cnt = context.dsl.select(context.count)
+                                     .from(context.from)
+                                     .where(context.where)
+                                     .fetchOne();
                 }
+                context.total = cnt == null ? 0 : cnt.value1();
             }
 
             if (context.total > 0) {

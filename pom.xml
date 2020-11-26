@@ -127,6 +127,11 @@
                 <artifactId>wings-slardar</artifactId>
                 <version>${wings.version}</version>
             </dependency>
+            <dependency>
+                <groupId>pro.fessional</groupId>
+                <artifactId>wings-warlock</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
             <!--flywave sphere-->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>

@@ -184,7 +184,7 @@ public class OkHttpClientHelper {
                       .build();
     }
 
-    public class HostCookieJar implements CookieJar {
+    public static class HostCookieJar implements CookieJar {
 
         Map<String, LinkedHashMap<String, Cookie>> cookies = new HashMap<>();
 

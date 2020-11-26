@@ -5,11 +5,11 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.jdbc.support.MetaDataAccessException;
 
-import java.lang.StringBuilder;
+import javax.sql.DataSource;
+import java.sql.DatabaseMetaData;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.sql.DataSource;
 
 /**
  * 获得全部原始数据源`plains`
@@ -91,7 +91,13 @@ public class FacelessDataSources {
     @NotNull
     public String extractUrl(DataSource ds) {
         try {
-            return JdbcUtils.extractDatabaseMetaData(ds, "getURL");
+            return JdbcUtils.extractDatabaseMetaData(ds, it -> {
+                try {
+                    return (String) DatabaseMetaData.class.getMethod("getURL").invoke(it);
+                } catch (Exception ex) {
+                    throw new MetaDataAccessException("No method named 'getURL' found on DatabaseMetaData instance [" + it + "]", ex);
+                }
+            });
         } catch (MetaDataAccessException e) {
             return "unknown";
         }

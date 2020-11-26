@@ -66,7 +66,7 @@
 
 每个配置文件都由一下几部分构成:`dirname`+`basename`+`seq`+`profile`+`extname`.
 例如，`classpath:/wings-conf`+`/`+`wings-mirana`+`-`+`79`+`.`+`properties`
-相同`basename`为同一配置，配置无序号，视序号为`99`。
+相同`basename`为同一配置，配置无序号，视序号为`70`，比默认的`79`高一点。
 
 配置文件，以Resource首先按扫码顺序排序，然后按base归类，按seq升序调整（值覆盖有关）。
 
@@ -142,6 +142,6 @@ spring默认以如下配置为入口，逗号分隔，保留不带国家地区�
  * logging.level.root=INFO
  * logging.level.org.springframework.web=DEBUG
  * logging.level.org.jooq=DEBUG
- * logging.level.<忽略项>=OFF
+ * logging.level.忽略的包路径=OFF
 
 推荐使用`wings-starter.sh`启动，`wings-starter.env`配置基础参数。
