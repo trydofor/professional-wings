@@ -82,22 +82,23 @@ public class WingsJavaStrategy extends DefaultGeneratorStrategy {
     }
 
     private String pascalCase(String str) {
-        if (str == null) return Null.Str;
+        if (str == null || str.isEmpty()) return Null.Str;
 
-        val sb = new StringBuilder(str.length());
+        val len = str.length();
+        val sb = new StringBuilder(len);
+        sb.append(Character.toUpperCase(str.charAt(0)));
+
         boolean up = false;
-        for (int i = 0; i < str.length(); i++) {
+        for (int i = 1; i < len; i++) {
             val c = str.charAt(i);
-            if (i == 0 && c >= 'a' && c <= 'z') {
-                sb.append(Character.toUpperCase(c));
-            } else if (c == '_') {
+            if (c == '_') {
                 up = true;
             } else {
                 if (up) {
                     sb.append(Character.toUpperCase(c));
                     up = false;
                 } else {
-                    sb.append(c);
+                    sb.append(Character.toLowerCase(c));
                 }
             }
         }

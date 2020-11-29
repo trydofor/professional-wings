@@ -16,7 +16,6 @@ import pro.fessional.wings.faceless.flywave.SqlStatementParser
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_1ST_SCHEMA
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.commentInfo
-import java.lang.RuntimeException
 import java.util.EnumMap
 import java.util.LinkedList
 import java.util.Scanner
@@ -675,6 +674,7 @@ class DefaultRevisionManager(
         try {
             val tables = schemaDefinitionLoader.showTables(ds)
             if (tables.find { it.equals("sys_schema_version", true) } != null) {
+                logger.error("exist sys_schema_version without any records, need manual fixed: drop empty table or insert records")
                 throw er // 存在 sys_schema_version 表，报出原异常
             }
         } catch (e: Exception) {
