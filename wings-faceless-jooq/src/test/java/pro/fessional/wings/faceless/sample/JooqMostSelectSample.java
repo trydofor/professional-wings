@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -123,13 +124,28 @@ public class JooqMostSelectSample {
         private String str;
     }
 
-    @Mapper
-    public interface Record2Diff {
-        Record2Diff INSTANCE = Mappers.getMapper(Record2Diff.class);
 
-        @Mapping(target = "uid", expression = "java(rd.value1())")
-        @Mapping(target = "str", expression = "java(rd.value2())")
-        DiffName into(Record2<Long, String> rd);
+    // 使用 wgmp live template
+    @Mapper
+    public interface Record22DiffName {
+
+        Record22DiffName INSTANCE = Mappers.getMapper(Record22DiffName.class);
+
+        static DiffName into(Record2<Long, String> a) {
+            return INSTANCE._into(a);
+        }
+
+        static void fill(Record2<Long, String> a, DiffName b) {
+            INSTANCE._fill(a, b);
+        }
+
+        @Mapping(target = "uid", expression = "java(a.value1())")
+        @Mapping(target = "str", expression = "java(a.value2())")
+        DiffName _into(Record2<Long, String> a);
+
+        @Mapping(target = "uid", expression = "java(a.value1())")
+        @Mapping(target = "str", expression = "java(a.value2())")
+        void _fill(Record2<Long, String> a, @MappingTarget DiffName b);
     }
 
     @Test
@@ -160,7 +176,7 @@ public class JooqMostSelectSample {
                 .from(t)
                 .where(c)
                 .fetch()
-                .map(Record2Diff.INSTANCE::into);
+                .map(Record22DiffName::into);
 
         testcaseNotice("多个字段(同名子集)到List，使用 lambda");
         List<DiffName> lambs = ctx

@@ -104,7 +104,7 @@ public class WingsTestHelper {
             }
         });
 
-       assertTrue(type.name() + "不一致，查看日志，", good.get());
+        assertTrue(type.name() + "不一致，查看日志，", good.get());
     }
 
     public void assertHas(Type type, String... str) {
@@ -118,7 +118,7 @@ public class WingsTestHelper {
             }
         });
 
-       assertTrue(type.name() + "不一致，查看日志，", good.get());
+        assertTrue(type.name() + "不一致，查看日志，", good.get());
     }
 
     public void assertNot(Type type, String... str) {
@@ -132,7 +132,7 @@ public class WingsTestHelper {
             }
         });
 
-       assertTrue(type.name() + "不一致，查看日志，", good.get());
+        assertTrue(type.name() + "不一致，查看日志，", good.get());
     }
 
     private List<String> lowerCase(String... str) {

@@ -1,7 +1,7 @@
 #!/bin/bash
 cat <<'EOF'
 #################################################
-# version 2020-11-26 # test on mac and lin
+# version 2020-12-01 # test on mac and lin
 # 使用`ln -s`把此脚本软连接到`执行目录/workdir`，
 # 其同名`env`如（wings-starter.env）会被自动载入。
 # `BOOT_CNF|BOOT_ARG|JAVA_ARG`内变量可被延时求值，
@@ -231,8 +231,15 @@ case "$ARGS_RUN" in
 
             if [[ $pid -ne $cpid ]]; then
                 echo -e "\033[0;31mWARN: pid not match, proc-pid=$cpid, file-pid=$pid\033[m"
-                ps -fwww "$pid"
             fi
+
+            echo -e "\033[0;33mNOTE: jstat -gcutil $cpid 1000 5 \033[m"
+            jstat -gcutil "$cpid" 1000 5
+
+            echo -e "\033[0;33mNOTE: === other useful command === \033[m"
+            echo -e "\033[0;32m jmap -heap $cpid \033[m mac's bug=8161164, lin's ptrace_scope"
+            echo -e "\033[0;32m profiler.sh -d 30 -f profile.svg $cpid \033[m https://github.com/jvm-profiling-tools/async-profiler"
+            echo -e "\033[0;32m java -jar arthas-boot.jar $cpid \033[m https://github.com/alibaba/arthas"
         fi
         ;;
 

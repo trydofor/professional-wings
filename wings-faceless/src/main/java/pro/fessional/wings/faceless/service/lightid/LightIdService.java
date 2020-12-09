@@ -45,21 +45,7 @@ public interface LightIdService {
      * @param block 区块
      * @return id
      */
-    default long getId(@NotNull Class<? extends LightIdAware> table, int block) {
-        String name = table.getSimpleName();
-        int len = name.endsWith("Table") ? name.length() - 5 : name.length();
-        StringBuilder sb = new StringBuilder(len + 10);
-        for (int i = 0; i < len; i++) {
-            char c = name.charAt(i);
-            if (c >= 'A' && c <= 'Z') {
-                if (i > 0) sb.append('_');
-                sb.append((char) (c + 32));
-            } else {
-                sb.append(c);
-            }
-        }
-        return getId(sb.toString(), block);
-    }
+    long getId(@NotNull Class<? extends LightIdAware> table, int block);
 
     /**
      * 按名字获得id，不区分大小写，默认全小写。

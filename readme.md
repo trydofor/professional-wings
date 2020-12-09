@@ -14,7 +14,7 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
  * 解决了软件开发中最难的命名问题（允许使用中文命名，解决行业黑话）
  * 功能池很深，对功能有独到的理解（读3遍官方文档，debug部分源码）
  * 不懂代码的看文档，都看不懂别用（这是你的homework，及格线）
- * java-8, kotlin-1.3.x, springboot-2.2.x, jooq, mysql
+ * java-8, kotlin-1.4.x, springboot-2.4.x, jooq, mysql
 
 ## 0.1.项目技术
 
@@ -374,3 +374,35 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。
  * [Mapping Collections with MapStruct](https://www.baeldung.com/java-mapstruct-mapping-collections)
  * [Mapstruct 性能比较](https://www.baeldung.com/java-performance-mapping-frameworks)
  * [Mapstruct ide&mvn支持](https://mapstruct.org/documentation/installation/)
+
+在编码过程中，我们经常要处理各种O的转换，赋值，比如DTO，PO，VO，POJO。
+同时我们又希望强类型，以便可以通过IDE提示提供效率，并把错误暴露在编译时。
+这样就一定要避免弱类型(map,json)和反射（bean copy）,势必需要代码生成工具。
+
+在wings中，推荐使用列编辑和正则（分享视频有讲），对于使用Mapstruct的时候，
+可以使用wings提供的`wgmp`(live template)做`A2B`的into和fill生成器。
+
+### 008.文件系统或对象存储
+
+需要权限才能访问的文件资源，不可以放到CDN，需要自建对象存储或使用物理文件系统
+当使用本地FS是，需要注意子文件或子目录的数量限制，一般控制在30k以下，理由。
+
+* The ext2/ext3 filesystems have a hard limit of 31998 links.
+* 数量过多时，ls读取巨慢，索引也会慢。
+
+如果自建对象存储，推荐以下方案
+
+ * https://docs.min.io/cn/ 推荐使用
+ * https://github.com/happyfish100/fastdfs
+
+### 009.客户端或服务器信息
+
+收集用户画像，需要获得UA信息，可使用以下工具包
+
+ * https://www.bitwalker.eu/software/user-agent-utils 浏览器（停止维护）
+ * https://github.com/browscap/browscap/wiki/Using-Browscap 浏览器工具家族
+ * https://github.com/blueconic/browscap-java 浏览器（推荐）
+
+获取服务器运行信息，使用以下工具包
+
+ * https://github.com/oshi/oshi 系统信息

@@ -9,4 +9,13 @@
       <option name="JAVA_DECLARATION" value="true" />
     </context>
   </template>
+  <template name="wgmp" value="@org.mapstruct.Mapper&#10;public interface $C$ {&#10;&#10;    $C$ INSTANCE = org.mapstruct.factory.Mappers.getMapper($C$.class);&#10;&#10;    static $B$ into($A$ a) {&#10;        return INSTANCE._into(a);&#10;    }&#10;&#10;    static void fill($A$ a, $B$ b) {&#10;        INSTANCE._fill(a, b);&#10;    }&#10;&#10;    $M$&#10;    $B$ _into($A$ a);&#10;&#10;    $M$&#10;    void _fill($A$ a, @org.mapstruct.MappingTarget $B$ b);&#10;}" description="mapstruct Create &amp; Update" toReformat="true" toShortenFQNames="true">
+    <variable name="A" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="B" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="C" expression="concat(regularExpression(A,&quot;&lt;.*&gt;|.*\\.&quot;,&quot;&quot;),&quot;2&quot;,regularExpression(B,&quot;&lt;.*&gt;|.*\\.&quot;,&quot;&quot;))" defaultValue="" alwaysStopAt="true" />
+    <variable name="M" expression="enum(&quot;&quot;,&quot;// https://mapstruct.org/documentation/stable/reference/html/&quot;,&quot;@org.mapstruct.Mapping(target = \&quot;setter\&quot;, expression = \&quot;java(a.method())\&quot;)&quot;,&quot;@org.mapstruct.Mapping(target = \&quot;setter\&quot;, source = \&quot;setter\&quot;)&quot;)" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_DECLARATION" value="true" />
+    </context>
+  </template>
 </templateSet>

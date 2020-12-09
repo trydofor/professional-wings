@@ -40,7 +40,7 @@ public class WingsUndertowConfiguration {
             UndertowDeploymentInfoCustomizer customizer = deploymentInfo -> {
                 ServerProperties.Undertow undertow = properties.getUndertow();
                 Boolean dt = undertow.getDirectBuffers();
-                boolean dtb = dt == null ? true : dt;
+                boolean dtb = dt == null || dt;
                 DataSize bs = undertow.getBufferSize();
                 int bss = bs == null ? 8192 : (int) bs.toBytes();
                 Integer it = undertow.getThreads().getIo();

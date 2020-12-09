@@ -253,6 +253,10 @@ cacheManager = Manager.REDISSON)
 
 slardar，使用undertow，并提供了一下默认配置
 
+### 003.session方案的选择
+
+其实 hazelcast 是个不错的选择，若选用redis，切记redis必须`requirepass`
+
 ### 007.error处理，需要自定义page或handler
 
 需要根据spring约定和实际需要，自定义一套机制。
@@ -261,7 +265,17 @@ slardar，使用undertow，并提供了一下默认配置
 
  * controller层异常用`@ControllerAdvice` 和 `@ExceptionHandler`
  * service层异常，自行做业务处理，或AOP日志
- 
+ * 静态，src/main/resources/public/error/404.html
+ * 模板，src/main/resources/templates/error/5xx.ftlh
+ * `class MyErrorPageRegistrar implements ErrorPageRegistrar`
+
+```
+@ControllerAdvice(basePackageClasses = AcmeController.class)
+public class AcmeControllerAdvice extends ResponseEntityExceptionHandler
+// ///////
+public ModelAndView resolveErrorView(HttpServletRequest request,
+```
+
 [error-handling](https://docs.spring.io/spring-boot/docs/2.4.0/reference/htmlsingle/#boot-features-error-handling)
 
 ### 008.undertow 启动时warn UT026010
