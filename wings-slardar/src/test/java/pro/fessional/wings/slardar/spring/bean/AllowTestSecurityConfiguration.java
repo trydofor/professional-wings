@@ -1,11 +1,11 @@
 package pro.fessional.wings.slardar.spring.bean;
 
-import lombok.val;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import pro.fessional.wings.slardar.security.SecurityConfigHelper;
+
+import static pro.fessional.wings.slardar.security.SecurityConfigHelper.wingsSecurityConfig;
 
 /**
  * @author trydofor
@@ -33,8 +33,14 @@ public class AllowTestSecurityConfiguration extends WebSecurityConfigurerAdapter
      */
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-        val registry = SecurityConfigHelper.permitAllCors(http);
-        SecurityConfigHelper.permitTest(registry);
+        http.apply(wingsSecurityConfig())
+            .permitAllCors()
+            .permitTest()
+            .and()
+            .csrf().disable();
+
+//        http.csrf().disable();
+//        val registry = SecurityConfigHelper.permitAllCors(http);
+//        SecurityConfigHelper.permitTest(registry);
     }
 }

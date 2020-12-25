@@ -293,3 +293,9 @@ public ModelAndView resolveErrorView(HttpServletRequest request,
 * [OAuth 2 Developers Guide](https://projects.spring.io/spring-security-oauth/docs/oauth2.html)
 * [OAuth2 boot](https://docs.spring.io/spring-security-oauth2-boot/docs/current/reference/htmlsingle/)
 * [Spring Security](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/)
+
+### 010.如何配置security
+
+security一定是系统中最为重要的部分，也是所有渗透入侵的重点，所以slardar无默认配置。
+
+配置中可以使用Order，提供多个HttpSecurity。

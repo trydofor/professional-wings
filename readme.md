@@ -47,7 +47,10 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
 使用`IntelliJIdea`作为开发`IDE`，可使用`code style`和`live templates`。
 `wings-idea-style.xml`在`Setting/Editor/Code Style`导入。
 
-`wings-idea-live.xml`需要手动放到`$config/templates/`，没有则新建
+`wings-idea-live.xml`需要手动放到`$config/templates/`，没有则新建。
+
+关于live-template的使用，分为Insert和Surround，对应插入和编辑，一般
+选择文本时，`Surround... ⌥⌘J`，无选择文本时，使用 `Insert... ⌘J`
 
  * WIN `%HOMEPATH%\.IntelliJIdea2019.2\config`
  * LIN `~/.IntelliJIdea2019.2/config`
@@ -69,7 +72,8 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
  * Grep Console - 控制台的日志分颜色显示和过滤
  * kotlin - 默认安装了
  * lombok - IntelliJ Lombok plugin
- * MapStruct Support - MapStruct support
+ * Any2dto -  支持jooq, sql查询直接生成dto，减少复制和赋值
+ * MapStruct Support - 静态强类型DTO转换，减少复制和赋值
  * Maven Helper - 帮助管理maven
  * Quick File Preview - 单击快速浏览文件
  * Rainbow Brackets - 彩虹括号
@@ -152,7 +156,7 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
    或`kotlin`的`@Autowired lateinit var`。
  * 不要使用`Field`注入，坏处自己搜。
 
-### 0.2.5.Spring MVC中的 RequestMapping 约定
+### 0.2.6.Spring MVC中的 RequestMapping 约定
 
  * 在方法上写全路径`@RequestMapping("/a/b/c.html")`
  * 在controller上写版本号`@RequestMapping("/v1")`
@@ -343,6 +347,15 @@ lib工程的配置，跳过repackage，参考example之外的工程
     </executions>
 </plugin>
 ```
+所以，wings推荐的工程结构是，在parent工程pom.xml的`project/build/plugins`中，
+对以下`plugin`的`configuration`设置，
+
+ * spring-boot-maven-plugin executable=true
+ * maven-deploy-plugin skip=true
+ * maven-install-plugin skip=true
+
+这样，为所以子模块，以boot工程提供默认的build（boot打包，不deploy，不install）。
+在lib子模块中跳过boot打包，spring-boot-maven-plugin/repackage skip=true
 
 ### 005.jackson和fastjson
 
@@ -366,20 +379,20 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。
 
 ### 007.类型间Mapping比较
 
-根据以下文章，推荐使用 Mapstruct，主要是其静态性。
+根据以下文章，推荐使用 MapStruct，主要是其静态性。
 对于比较复杂的mapping，使用expression，qualifiedByName，spring注入。
 自动生成的代码位于`target/generated-sources/annotations/`
 
  * [Quick Guide to MapStruct](https://www.baeldung.com/mapstruct)
  * [Mapping Collections with MapStruct](https://www.baeldung.com/java-mapstruct-mapping-collections)
- * [Mapstruct 性能比较](https://www.baeldung.com/java-performance-mapping-frameworks)
- * [Mapstruct ide&mvn支持](https://mapstruct.org/documentation/installation/)
+ * [MapStruct 性能比较](https://www.baeldung.com/java-performance-mapping-frameworks)
+ * [MapStruct ide&mvn支持](https://mapstruct.org/documentation/installation/)
 
 在编码过程中，我们经常要处理各种O的转换，赋值，比如DTO，PO，VO，POJO。
 同时我们又希望强类型，以便可以通过IDE提示提供效率，并把错误暴露在编译时。
 这样就一定要避免弱类型(map,json)和反射（bean copy）,势必需要代码生成工具。
 
-在wings中，推荐使用列编辑和正则（分享视频有讲），对于使用Mapstruct的时候，
+在wings中，推荐使用列编辑和正则（分享视频有讲），对于使用MapStruct的时候，
 可以使用wings提供的`wgmp`(live template)做`A2B`的into和fill生成器。
 
 ### 008.文件系统或对象存储

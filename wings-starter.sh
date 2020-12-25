@@ -1,7 +1,7 @@
 #!/bin/bash
 cat <<'EOF'
 #################################################
-# version 2020-12-01 # test on mac and lin
+# version 2020-12-25 # test on mac and lin
 # 使用`ln -s`把此脚本软连接到`执行目录/workdir`，
 # 其同名`env`如（wings-starter.env）会被自动载入。
 # `BOOT_CNF|BOOT_ARG|JAVA_ARG`内变量可被延时求值，
@@ -143,8 +143,13 @@ case "$ARGS_RUN" in
         fi
 
         cpid=$(pgrep -f "$JAR_NAME")
-        echo -e "\033[0;33mNOTE: current PID=$cpid of $JAR_NAME \033[m"
-        ps -fwww "$cpid"
+        if [[ "$cpid" == "" ]];then
+          echo -e "\033[0;31mERROR: failed to get PID of $JAR_NAME\033[m"
+          exit
+        else
+            echo -e "\033[0;33mNOTE: current PID=$cpid of $JAR_NAME \033[m"
+            ps -fwww "$cpid"
+        fi
 
         tail_log="$BOOT_OUT"
         if [[ -f "$BOOT_LOG" ]]; then
