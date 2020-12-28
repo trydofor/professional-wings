@@ -34,7 +34,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 提供基于jdbc和jooq的分页查询工具
+ * 提供基于jdbc和jooq的分页查询工具。
+ * <pre>
+ * total < 0，DB执行count和select
+ * total = 0，DB不count，不select
+ * total > 0，DB不count，但select
+ * </pre>
  *
  * @author trydofor
  * @link https://blog.jooq.org/2019/09/19/whats-faster-count-or-count1/
@@ -48,7 +53,7 @@ public class WingsPageHelper {
     }
 
     /**
-     * 分页查询，total小于0时，不进行db的count操作，等于0时，不执行所有操作。
+     * 分页查询
      *
      * @param tpl   dsl
      * @param page  页
@@ -69,6 +74,15 @@ public class WingsPageHelper {
         return use(dao.ctx(), page, -1);
     }
 
+    /**
+     * @param dao   jooq Dao
+     * @param page  页
+     * @param total service层缓存的count计数
+     * @param <R>   Record
+     * @param <P>   pojo
+     * @param <K>   主键
+     * @return 结果
+     */
     @NotNull
     public static <R extends UpdatableRecord<R>, P, K> CountJooq use(DAOImpl<R, P, K> dao, PageQuery page, int total) {
         return use(dao.ctx(), page, total);
@@ -80,7 +94,7 @@ public class WingsPageHelper {
     }
 
     /**
-     * 分页查询，total小于0时，不进行db的count操作，等于0时，不执行所有操作。
+     * 分页查询
      *
      * @param dsl   dsl
      * @param page  页
@@ -189,7 +203,7 @@ public class WingsPageHelper {
                 list = context.tpl.query(sql.toString(), mapper, context.bind);
             }
 
-            return list == null ? PageResult.empty() : PageResult.of(context.total, list, context.page);
+            return PageResult.of(context.total, list, context.page);
         }
     }
 
@@ -218,7 +232,7 @@ public class WingsPageHelper {
                 list = context.tpl.query(sql.toString(), mapper, context.bind);
             }
 
-            return list == null ? PageResult.empty() : PageResult.of(context.total, list, context.page);
+            return PageResult.of(context.total, list, context.page);
         }
     }
 
@@ -519,12 +533,14 @@ public class WingsPageHelper {
 
         @NotNull
         public <E> PageResult<E> into(Class<E> claz) {
-            return context.result == null ? PageResult.empty() : PageResult.of(context.total, context.result.into(claz), context.page);
+            final List<E> data = context.result == null ? null : context.result.into(claz);
+            return PageResult.of(context.total, data, context.page);
         }
 
         @NotNull
         public <E> PageResult<E> into(RecordMapper<? super Record, E> mapper) {
-            return context.result == null ? PageResult.empty() : PageResult.of(context.total, context.result.map(mapper), context.page);
+            final List<E> data = context.result == null ? null : context.result.map(mapper);
+            return PageResult.of(context.total, data, context.page);
         }
 
         @Nullable

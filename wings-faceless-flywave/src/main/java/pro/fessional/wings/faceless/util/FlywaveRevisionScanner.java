@@ -27,37 +27,49 @@ public class FlywaveRevisionScanner {
 
     public static final String REVISION_PATH_MASTER = "classpath*:/wings-flywave/master/**/*.sql";
     public static final String REVISION_PATH_BRANCH_HEAD = "classpath*:/wings-flywave/branch/";
+    public static final String REVISION_PATH_FEATURE_HEAD = REVISION_PATH_BRANCH_HEAD + "feature/";
+    public static final String REVISION_PATH_SUPPORT_HEAD = REVISION_PATH_BRANCH_HEAD + "support/";
+    public static final String REVISION_PATH_SOMEFIX_HEAD = REVISION_PATH_BRANCH_HEAD + "somefix/";
     public static final String REVISION_PATH_BRANCH_TAIL = "**/*.sql";
     public static final String REVISION_PATH_BRANCH_FULL = REVISION_PATH_BRANCH_HEAD + REVISION_PATH_BRANCH_TAIL;
-    public static final String REVISION_PATH_BRANCH_3RD_ENU18N = branchPath("features/enum-i18n");
-    public static final String REVISION_PATH_BRANCH_FIX_V2_2_7 = branchPath("hotfixes/v2.2.7-fix");
+    public static final String REVISION_PATH_BRANCH_3RD_ENU18N = featurePath("01-enum-i18n");
+    public static final String REVISION_PATH_BRANCH_FIX_V227 = somefixPath("v227-fix");
 
     public static final long REVISION_1ST_SCHEMA = 2019_0512_01L;
     public static final long REVISION_2ND_IDLOGS = 2019_0520_01L;
     public static final long REVISION_3RD_ENU18N = 2019_0521_01L;
 
     @NotNull
+    public static String somefixPath(String name) {
+        return prefixPath(REVISION_PATH_SOMEFIX_HEAD, name);
+    }
+
+    @NotNull
+    public static String supportPath(String name) {
+        return prefixPath(REVISION_PATH_SUPPORT_HEAD, name);
+    }
+
+    @NotNull
+    public static String featurePath(String name) {
+        return prefixPath(REVISION_PATH_FEATURE_HEAD, name);
+    }
+
+    @NotNull
     public static String branchPath(String name) {
-        if (name == null || name.isEmpty()) return REVISION_PATH_BRANCH_FULL;
-        int p1 = 0;
-        while (name.startsWith("/", p1)) {
-            p1++;
-        }
-        int p2 = name.length();
-        while (name.startsWith("/", p2 - 1)) {
-            p2--;
-        }
+        return prefixPath(REVISION_PATH_BRANCH_HEAD, name);
+    }
+
+    @NotNull
+    private static String prefixPath(String prefix, String name) {
         StringBuilder sb = new StringBuilder(100);
-        sb.append(REVISION_PATH_BRANCH_HEAD);
-        if (p1 < p2) {
-            name = name.substring(p1, p2);
-        } else {
-            return REVISION_PATH_BRANCH_FULL;
-        }
-        String trim = name.trim();
-        sb.append(trim);
-        if (trim.length() > 0) {
-            sb.append("/");
+        sb.append(prefix);
+        if(name != null) {
+            for (String pt : name.split("/+")) {
+                pt = pt.trim();
+                if (!pt.isEmpty()) {
+                    sb.append(pt).append("/");
+                }
+            }
         }
         sb.append(REVISION_PATH_BRANCH_TAIL);
         return sb.toString();

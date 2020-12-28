@@ -2,6 +2,7 @@ package pro.fessional.wings.faceless.sample;
 
 import lombok.Setter;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +28,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 //         "spring.shardingsphere.datasource.writer.password=moilioncircle",
         })
 @Disabled("手动执行一次，初始化步骤，危险操作")
+@Tag("init")
 public class WingsSchemaGenerator {
 
     @Setter(onMethod = @__({@Autowired}))

@@ -4,6 +4,7 @@ import lombok.Setter;
 import org.jooq.BatchBindStep;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @ActiveProfiles("init")
 @SpringBootTest(properties = {"debug = true", "spring.wings.trigger.journal-delete.enabled=true"})
-
+@Tag("init")
 public class JooqDeleteListenerTest {
 
     @Setter(onMethod = @__({@Autowired}))

@@ -123,10 +123,10 @@ open class SchemaRevisionMangerTest {
 
     @Test
     fun `test8🦁发布分支`() {
-        breakpointDebug("扫描分支features/enum-i18n💰")
-        val sqls = FlywaveRevisionScanner.scanBranch("features/enum-i18n")
+        breakpointDebug("扫描分支feature/01-enum-i18n💰")
+        val sqls = FlywaveRevisionScanner.scanBranch("feature/01-enum-i18n")
         schemaRevisionManager.checkAndInitSql(sqls, 0, true)
-        breakpointDebug("发布分支features/enum-i18n💰")
+        breakpointDebug("发布分支feature/01-enum-i18n💰")
         schemaRevisionManager.publishRevision(REVISION_3RD_ENU18N, 0)
     }
 
@@ -134,12 +134,12 @@ open class SchemaRevisionMangerTest {
     fun `test9🦁断版维护`() {
         breakpointDebug("制作执行失败的断裂版本💰")
         schemaRevisionManager.forceExecuteSql("""
-            UPDATE `sys_schema_version` SET `apply_dt` = '1000-01-01 00:00:17' WHERE `revision` = '$REVISION_2ND_IDLOGS';
+            UPDATE `sys_schema_version` SET `apply_dt` = '1000-01-01 00:00:17' WHERE `revision` = '$REVISION_TEST_V1';
             """.trimIndent())
-        schemaRevisionManager.publishRevision(REVISION_2ND_IDLOGS, 0)
+        schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
         breakpointDebug("因断裂版本不能执行，看日志💰")
         schemaRevisionManager.forceExecuteSql("""
-            UPDATE `sys_schema_version` SET `apply_dt` = '1000-01-01 00:00:00' WHERE `revision` = '$REVISION_2ND_IDLOGS';
+            UPDATE `sys_schema_version` SET `apply_dt` = '1000-01-01 00:00:00' WHERE `revision` = '$REVISION_TEST_V1';
             """.trimIndent())
         breakpointDebug("修复断裂，降级版本💰")
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)

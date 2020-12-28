@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless.sample
 
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -21,6 +22,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_2ND_IDL
 @ActiveProfiles("shard")
 @SpringBootTest(properties = ["debug = true"])
 @Disabled("手动执行，以有SchemaJournalManagerTest，SchemaShardingManagerTest覆盖测试 ")
+@Tag("shard")
 class WingsFlywaveShardJournalSample {
 
     @Autowired

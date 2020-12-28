@@ -15,11 +15,11 @@ public class FlywaveRevisionScannerTest {
 
     @Test
     public void branchPath() {
-        String path = REVISION_PATH_BRANCH_HEAD + "features/enum-i18n/" + REVISION_PATH_BRANCH_TAIL;
-        assertEquals(path, FlywaveRevisionScanner.branchPath("features/enum-i18n"));
-        assertEquals(path, FlywaveRevisionScanner.branchPath("/features/enum-i18n"));
-        assertEquals(path, FlywaveRevisionScanner.branchPath("/features/enum-i18n/"));
-        assertEquals(path, FlywaveRevisionScanner.branchPath("//features/enum-i18n//"));
+        String path = REVISION_PATH_BRANCH_HEAD + "feature/01-enum-i18n/" + REVISION_PATH_BRANCH_TAIL;
+        assertEquals(path, FlywaveRevisionScanner.branchPath("feature/01-enum-i18n"));
+        assertEquals(path, FlywaveRevisionScanner.branchPath("/feature/01-enum-i18n"));
+        assertEquals(path, FlywaveRevisionScanner.branchPath("/feature/01-enum-i18n/"));
+        assertEquals(path, FlywaveRevisionScanner.branchPath("//feature/01-enum-i18n//"));
         assertEquals(REVISION_PATH_BRANCH_FULL, FlywaveRevisionScanner.branchPath("////"));
         assertEquals(REVISION_PATH_BRANCH_FULL, FlywaveRevisionScanner.branchPath("// //"));
         assertEquals(REVISION_PATH_BRANCH_FULL, FlywaveRevisionScanner.branchPath(" "));

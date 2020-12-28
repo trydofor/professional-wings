@@ -33,23 +33,21 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.test.skip>true</maven.test.skip>
-        <!--
-        https://docs.spring.io/spring-boot/docs/2.4.0/reference/html/appendix-dependency-versions.html#appendix-dependency-versions
-        -->
+        <!-- https://docs.spring.io/spring-boot/docs/2.4.0/reference/html/appendix-dependency-versions.html#appendix-dependency-versions -->
         <spring-boot.version>2.4.0</spring-boot.version>
-        <!--silencer-->
-        <wings.version>2.4.0-SNAPSHOT</wings.version>
-        <mirana.version>2.0.0</mirana.version>
-        <!--faceless-->
-        <meepo.version>1.0.0</meepo.version>
-        <kotlin.version>1.4.10</kotlin.version>
-        <jooq.version>3.14.3</jooq.version>
-        <sharding-sphere.version>4.1.1</sharding-sphere.version>
-        <!--slardar oauth2-->
-        <guava.version>30.0-jre</guava.version>
-        <commons-io.version>2.8.0</commons-io.version>
-        <mapstruct.version>1.4.1.Final</mapstruct.version>
-        <kaptcha.version>2.3.2</kaptcha.version>
+        <!-- silencer -->
+        <wings.version>2.4.0-SNAPSHOT</wings.version> <!-- https://github.com/apache/shardingsphere/releases -->
+        <mirana.version>2.2.0-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
+        <!-- faceless -->
+        <meepo.version>1.0.0</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
+        <kotlin.version>1.4.21</kotlin.version> <!-- spring boot dependency -->
+        <jooq.version>3.14.4</jooq.version> <!-- spring boot dependency -->
+        <sharding-sphere.version>4.1.1</sharding-sphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
+        <!-- slardar oauth2 -->
+        <guava.version>30.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
+        <commons-io.version>2.8.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
+        <mapstruct.version>1.4.1.Final</mapstruct.version> <!-- https://mapstruct.org/news/ -->
+        <kaptcha.version>2.3.2</kaptcha.version> <!-- https://github.com/penggle/kaptcha -->
     </properties>
 
     <dependencies>
@@ -174,6 +172,7 @@
             <dependency>
                 <groupId>org.junit.vintage</groupId>
                 <artifactId>junit-vintage-engine</artifactId>
+                <version>${junit-jupiter.version}</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>

@@ -4,6 +4,7 @@ import lombok.Setter;
 import lombok.val;
 import org.jooq.Field;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 @SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
 @ActiveProfiles("init")
 @TestMethodOrder(MethodOrderer.MethodName.class)
+@Tag("init")
 public class WingsJooqDaoImplTest {
 
     @Setter(onMethod = @__({@Autowired}))

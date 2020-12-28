@@ -419,3 +419,16 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。
 获取服务器运行信息，使用以下工具包
 
  * https://github.com/oshi/oshi 系统信息
+
+### 010.缺少mirana和meepo依赖lib
+
+因是非吃货的大翅项目，一些`-SNAPSHOT`依赖，需要自行编译并本地安装。
+偶尔可以在`sonatype`上找到，需要自行添加`repository`，如`~/.m2/settings.xml`
+```
+<repository>
+    <id>ossrh-snapshots</id>
+    <url>>https://oss.sonatype.org/content/repositories/snapshots</url>
+    <snapshots><enabled>true</enabled></snapshots>
+    <releases><enabled>false</enabled></releases>
+</repository>
+```

@@ -225,6 +225,18 @@ Map<Integer, List<String>>       group4 = create.selectFrom(BOOK).fetchGroups(BO
  * JooqMostSelectSample #test6PageJooq, #test7PageJdbc
  * [count(*)和count(1)谁快](https://blog.jooq.org/2019/09/19/whats-faster-count-or-count1/)
 
+在SpringMvc的`@RequestMapping`中构建`PageQuery`，可以把`@ModelAttribute`放在参数上，
+
+ * pageNumber，大于等于1的整数
+ * pageSize，大于等于1的整数
+ * sortBy，字符串
+
+参考Spring的`Pageable`和SQL的 order by，以下参数是效果相同的
+
+ * PageQuery - pageSize=100&pageNumber=3&sortBy=id,-name
+ * Pageable - size=100&page=3&sort=id,asc&sort=name,desc
+ * SQL - order by id asc, name desc
+
 ### 05.如何转换sql语法
 
 不同sql语法间可以如下转换，https://www.jooq.org/translate/ (需要翻墙)

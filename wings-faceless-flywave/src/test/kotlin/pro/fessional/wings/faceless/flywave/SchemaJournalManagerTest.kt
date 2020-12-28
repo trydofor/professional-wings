@@ -2,6 +2,7 @@ package pro.fessional.wings.faceless.flywave
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.MethodOrderer.MethodName
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,6 +24,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_2ND_IDL
 @SpringBootTest(properties = ["debug = true"])
 @ActiveProfiles("shard")
 @TestMethodOrder(MethodName::class)
+@Tag("shard")
 class SchemaJournalManagerTest {
 
     @Autowired
@@ -111,7 +113,7 @@ class SchemaJournalManagerTest {
         jdbcTemplate.execute("DELETE FROM `tst_中文也分表` WHERE id = 1")
         val del = jdbcTemplate.update("DELETE FROM `tst_中文也分表_1\$upd` WHERE id = 1")
 
-        assertEquals(1, del, "如果失败，单独运行，消除分表干扰")
+        assertEquals(1, del, "如果失败，单独运行整个类，消除分表干扰")
         breakpointDebug("清楚数据🐵，因为trace表不会删除有数据表")
 
         schemaJournalManager.publishUpdate("tst_中文也分表", false, 0)

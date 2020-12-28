@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless.sample;
 
 import lombok.Setter;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +29,7 @@ import java.util.List;
 //         "spring.shardingsphere.datasource.master.password=moilioncircle",
         })
 //@Ignore("手动生成Java类，依赖分支feature/enum-i18n的2019052101, ConstantEnumI18nTest")
+@Tag("init")
 public class ConstantEnumGenSample {
 
     @Setter(onMethod = @__({@Autowired}))

@@ -2,6 +2,7 @@ package pro.fessional.wings.faceless.flywave
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,6 +23,7 @@ import pro.fessional.wings.faceless.database.FacelessDataSources
 @SpringBootTest
 @ActiveProfiles("shard")
 @TestMethodOrder(MethodOrderer.MethodName::class)
+@Tag("shard")
 class SchemaShardingManagerTest {
 
     @Autowired
@@ -77,7 +79,7 @@ class SchemaShardingManagerTest {
         assertEquals(20, countRecords("writer", "tst_中文也分表"))
         schemaShardingManager.shardingData("tst_中文也分表", true)
         // 主表移除
-        assertEquals(0, countRecords("writer", "tst_中文也分表"), "如果失败，单独运行，消除分表干扰")
+        assertEquals(0, countRecords("writer", "tst_中文也分表"), "如果失败，单独运行整个类，消除分表干扰")
         // 分表平分
         assertEquals(4, countRecords("writer", "tst_中文也分表_0"))
         assertEquals(4, countRecords("writer", "tst_中文也分表_1"))

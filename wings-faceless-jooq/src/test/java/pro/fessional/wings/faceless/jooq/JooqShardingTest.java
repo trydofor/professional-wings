@@ -6,6 +6,7 @@ import org.apache.shardingsphere.api.hint.HintManager;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,8 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 @SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
 @ActiveProfiles("shard")
 @TestMethodOrder(MethodOrderer.MethodName.class)
-class JooqShardingTest {
+@Tag("shard")
+public class JooqShardingTest {
 
     @Setter(onMethod = @__({@Autowired}))
     private SchemaRevisionManager schemaRevisionManager;

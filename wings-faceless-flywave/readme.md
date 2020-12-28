@@ -25,6 +25,7 @@
  * 根据 `/wings-flywave/branch/**/*.sql` sql的分支管理。
  * 根据 `sys_schema_version`表，控制数据库版本，升级和降级。
  * 根据 `sys_schema_journal`表，完成自动记录数据变更。
+ * 实际扫描`/**/*.sql`，因此次级目录表序表意为上，结构层次不影响版本排序
 
 flywave的sql文件都受git管理，所以，如无必须，勿搞复杂分支，单线实践最佳。
 这里的branch，目标是sql管理，而非数据库和数据管理。
@@ -67,9 +68,12 @@ sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/res
 关于`/wings-flywave/`目录，有以下几种实践操作。
 
  * 存在`fulldump/{db}/`目录，用来管理当前主要db的最新schema
- * 存在`master/init/`目录，最开始的初始化脚本
- * 存在`master/{m##}/`目录，用来按里程碑管理变更脚本
- * 存在`branch/{m##}/`目录，那git-flow的命名实践
+ * 存在`master/00-init/`目录，最开始的初始化脚本
+ * 存在`master/01-##/`目录，用来按里程碑或年月管理变更脚本
+ * 存在`branch/##/##/`目录，可以以git-flow的命名实践，内建如下
+   - feature 功能组件，可以作为选择项，按需添加
+   - support 支撑型，如临时数据维护，调查
+   - somefix 包括patch, bugfix, hotfix
 
 ## 2.1.2.数据的版本管理(journal)
 
@@ -125,7 +129,7 @@ sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/res
 ### 02.版本更新，异常说缺少字段branches
 
 在2.2.7版后，对sys_schema_version增加了分支支持，之前的版本需要手动维护。
-执行`branch/hotfixes/v2.2.7-fix`的`2019_0512_02`即可。
+执行`branch/somefix/v227-fix`的`2019_0512_02`即可。
 
 ### 03.哪些测试或例子适合了解flywave
 

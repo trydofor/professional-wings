@@ -18,6 +18,7 @@ CREATE TABLE `sys_standard_i18n` (
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='106/标准多国语';
 
+--
 INSERT IGNORE INTO `sys_light_sequence`(`seq_name`, `block_id`, `next_val`, `step_val`, `comments`)
 VALUES ('sys_constant_enum', 0, 100000000, 100, '系统插入9位起，手动8位'),
        ('sys_standard_i18n', 0, 100000000, 100, '系统插入9位起，手动8位');

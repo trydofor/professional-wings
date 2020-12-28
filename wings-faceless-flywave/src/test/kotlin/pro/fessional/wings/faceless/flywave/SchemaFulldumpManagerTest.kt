@@ -3,6 +3,7 @@ package pro.fessional.wings.faceless.flywave
 
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.MethodOrderer.MethodName
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,6 +25,7 @@ import javax.sql.DataSource
 @ActiveProfiles("init")
 @TestMethodOrder(MethodName::class)
 @Disabled("手动执行，避免污染Git提交文件")
+@Tag("init")
 class SchemaFulldumpManagerTest {
 
     @Autowired

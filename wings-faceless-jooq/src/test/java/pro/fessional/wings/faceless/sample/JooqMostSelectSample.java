@@ -537,4 +537,14 @@ public class JooqMostSelectSample {
 
         System.out.println(pr2.getData().size());
     }
+
+    @Test
+    public void test8JooqSelect(){
+        testcaseNotice("使用helperJdbc正常",
+                "SELECT count(*) from `tst_中文也分表` where id >= ?",
+                "SELECT id,login_info,other_info from `tst_中文也分表` where id >= ? order by id limit 5");
+
+        final Tst中文也分表Table t = dao.getTable();
+        final List<SameName> sn = dao.ctx().selectFrom(t).fetchInto(SameName.class);
+    }
 }

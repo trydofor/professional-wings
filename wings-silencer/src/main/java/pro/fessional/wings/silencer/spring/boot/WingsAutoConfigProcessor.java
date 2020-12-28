@@ -63,6 +63,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     public static final String WINGS_CONF = "wings-conf/**/*.*";
     public static final String WINGS_I18N = "wings-i18n/**/*.properties";
     public static final String BLOCK_LIST = "wings-conf-block-list.cnf";
+    public static final int NAKED_SEQ = 70;
 
 
     @Override
@@ -408,7 +409,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
         private final String fullName;
         private String baseName;
-        private int nameSeq = 70;
+        private int nameSeq = NAKED_SEQ;
         private String profile = "";
 
         public ConfResource(Resource res, String url) {

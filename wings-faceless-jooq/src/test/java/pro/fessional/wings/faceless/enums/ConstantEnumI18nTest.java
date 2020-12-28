@@ -3,6 +3,7 @@ package pro.fessional.wings.faceless.enums;
 import lombok.Setter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
 @ActiveProfiles("init")
 @SpringBootTest(properties = {"debug = true", "spring.wings.enumi18n.enabled=true"})
 @TestMethodOrder(MethodOrderer.MethodName.class)
+@Tag("init")
 public class ConstantEnumI18nTest {
 
     @Setter(onMethod = @__({@Autowired}))
@@ -53,7 +55,7 @@ public class ConstantEnumI18nTest {
 
     @Test
     public void test1Init() {
-        String branch = FlywaveRevisionScanner.branchPath("features/enum-i18n");
+        String branch = FlywaveRevisionScanner.branchPath("feature/01-enum-i18n");
         // BUG https://github.com/apache/shardingsphere/issues/8226
         wingsTestHelper.cleanAndInit(REVISION_3RD_ENU18N, REVISION_PATH_MASTER, branch);
     }
