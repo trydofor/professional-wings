@@ -9,7 +9,7 @@ import pro.fessional.wings.faceless.jooqgen.WingsCodeGenerator;
 public class JooqCodeAutoGenSample {
 
     // 需要 版本 20190601_01，手动执行亦可
-    // WingsInitDatabaseSample
+    // WingsInitDatabaseSample#init0601
     // 注意在目标工程中，应该注释掉.springRepository(false)，使Dao自动加载
     public static void main(String[] args) {
         String database = "wings";

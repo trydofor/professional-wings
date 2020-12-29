@@ -1,6 +1,5 @@
 package pro.fessional.wings.faceless.spring.bean;
 
-import org.jooq.Clause;
 import org.jooq.Context;
 import org.jooq.DSLContext;
 import org.jooq.ExecuteContext;
@@ -102,8 +101,8 @@ public class WingsJooqConfiguration {
             private int notAlias(Table<?> table, Context<?> ctx) {
                 if (!(table instanceof TableImpl)) return -1;
 
-                for (Clause clause : ((TableImpl<?>) table).clauses(ctx)) {
-                    if (clause == Clause.TABLE_ALIAS) {
+                for (org.jooq.Clause clause : ((TableImpl<?>) table).clauses(ctx)) {
+                    if (clause == org.jooq.Clause.TABLE_ALIAS) {
                         return 1;
                     }
                 }
@@ -129,6 +128,8 @@ public class WingsJooqConfiguration {
                 }
 
                 final String sql = ctx.sql();
+                if(sql == null) return;
+
                 final String low = sql.toLowerCase();
                 if (notJournalDelete(low)) return;
 

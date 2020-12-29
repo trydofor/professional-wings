@@ -77,6 +77,7 @@ public class WingsCodeGenerator {
         }
     }
 
+    @SuppressWarnings("all")
     private static Map<String, File> walkDir(String root, String child) throws IOException {
         File src = new File(root);
         File file = new File(src, child);

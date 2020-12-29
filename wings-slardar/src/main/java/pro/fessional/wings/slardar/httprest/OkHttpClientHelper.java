@@ -186,7 +186,7 @@ public class OkHttpClientHelper {
 
     public static class HostCookieJar implements CookieJar {
 
-        Map<String, LinkedHashMap<String, Cookie>> cookies = new HashMap<>();
+        private final Map<String, LinkedHashMap<String, Cookie>> cookies = new HashMap<>();
 
         @Override
         public void saveFromResponse(HttpUrl url, List<Cookie> cks) {

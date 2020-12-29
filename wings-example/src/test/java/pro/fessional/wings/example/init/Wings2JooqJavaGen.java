@@ -22,9 +22,9 @@ public class Wings2JooqJavaGen {
                           .databaseSchema(database)
                           // 支持 pattern的注释写法
                           .databaseIncludes(
-                                  "sys_constant_enum # enum表" +
-                                  "|sys_standard_i18n # i18n表" +
-                                  "|win_.* # win系列表")
+                                  "sys_constant_enum # enum表\n" +
+                                          "|sys_standard_i18n # i18n表\n" +
+                                          "|win_.* # win系列表")
                           .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
                           .targetPackage("pro.fessional.wings.example.database.autogen")
                           .targetDirectory("wings-example/src/main/java/")

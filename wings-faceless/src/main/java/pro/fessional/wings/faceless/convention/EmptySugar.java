@@ -132,11 +132,11 @@ public class EmptySugar {
     }
 
     public static boolean nullToTrue(Boolean v) {
-        return v == null ? true : v;
+        return v == null || v;
     }
 
     public static boolean nullToFalse(Boolean v) {
-        return v == null ? false : v;
+        return v != null && v;
     }
 
     //

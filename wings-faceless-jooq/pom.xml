@@ -33,12 +33,6 @@
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
         </dependency>
-        <!-- PageHelper -->
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-commons</artifactId>
-            <optional>true</optional>
-        </dependency>
         <!-- jooq dev -->
         <dependency>
             <groupId>org.jooq</groupId>

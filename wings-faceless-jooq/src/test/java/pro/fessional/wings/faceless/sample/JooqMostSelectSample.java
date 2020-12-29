@@ -425,7 +425,7 @@ public class JooqMostSelectSample {
         testcaseNotice("使用helperJooq正常",
                 "select count(*) from `tst_中文也分表` as `t1` where `t1`.`id` >= ?",
                 "select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ? order by `id` asc limit ?");
-        PageQuery page = new PageQuery().setPageSize(5).setPageNumber(1).setSortBy("d");
+        PageQuery page = new PageQuery().setSize(5).setPage(1).setSort("d");
         Map<String, Field<?>> order = new HashMap<>();
         order.put("d", t.Id);
         PageResult<Tst中文也分表> pr1 = WingsPageHelper.use(dao, page)
@@ -512,7 +512,7 @@ public class JooqMostSelectSample {
                 "SELECT count(*) FROM (select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ?) WINGS_WRAP",
                 "select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ? order by t1.Id ASC limit 5");
 
-        PageQuery page = new PageQuery().setPageSize(5).setPageNumber(1).setSortBy("d");
+        PageQuery page = new PageQuery().setSize(5).setPage(1).setSort("d");
         Map<String, String> order = new HashMap<>();
         order.put("d", "t1.Id");
         PageResult<Tst中文也分表> pr1 = WingsPageHelper.use(jdbcTemplate, page)

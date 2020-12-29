@@ -31,13 +31,10 @@ public class WingsJavaGenerator extends JavaGenerator {
         val aliasLower = aliasName.toLowerCase(); // n6
         // 🦁<<<
 
-        out.tab(1).javadoc("The reference instance of <code>%s</code>", definition.getQualifiedOutputName());
+        out.javadoc("The reference instance of <code>%s</code>", definition.getQualifiedOutputName());
 
         // public static final SysCommitJournalTable SysCommitJournal = new SysCommitJournalTable();
-        if (scala)
-            out.tab(1).println("val %s = new %s", identifier, className);
-        else
-            out.tab(1).println("public static final %s %s = new %s();", className, identifier, className);
+        out.println("public static final %s %s = new %s();", className, identifier, className);
 
         // 🦁>>>
         // public static final SysCommitJournalTable asN6 = SysCommitJournal.as("n6");
@@ -53,11 +50,11 @@ public class WingsJavaGenerator extends JavaGenerator {
         final String identifier = getStrategy().getJavaIdentifier(table);
         val aliasName = genAlias(identifier); // N6
 
-        out.tab(1).javadoc("alias %s", aliasName);
-        out.tab(1).println("@Override");
-        out.tab(1).println("public %s getAliasTable() {", className);
-        out.tab(1).println("    return as%s;", aliasName);
-        out.tab(1).println("}");
+        out.javadoc("alias %s", aliasName);
+        out.println("@Override");
+        out.println("public %s getAliasTable() {", className);
+        out.println("    return as%s;", aliasName);
+        out.println("}");
 
         val logicCol = table.getColumns().stream().filter(it -> {
             val col = it.getOutputName();
@@ -71,33 +68,33 @@ public class WingsJavaGenerator extends JavaGenerator {
             val columnId = reflectProtectRef(out, getStrategy().getJavaIdentifier(column), colRefSegments(column));
 
             val col = column.getOutputName();
-            out.tab(1).javadoc("The column <code>%s</code> condition", col);
+            out.javadoc("The column <code>%s</code> condition", col);
             if (col.equalsIgnoreCase(JournalHelp.COL_DELETE_DT)) {
                 val colType = column.getDefinedType().getType().toLowerCase();
                 if (colType.startsWith("datetime")) {
-                    out.tab(1).println("public final Condition onlyDiedData = %s.gt(EmptyValue.DATE_TIME);", columnId);
-                    out.tab(1).println("public final Condition onlyLiveData = %s.eq(EmptyValue.DATE_TIME);", columnId);
+                    out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.DATE_TIME);", columnId);
+                    out.println("public final Condition onlyLiveData = %s.eq(EmptyValue.DATE_TIME);", columnId);
                 } else if (colType.startsWith("bigint")) {
-                    out.tab(1).println("public final Condition onlyDiedData = %s.gt(EmptyValue.BIGINT);", columnId);
-                    out.tab(1).println("public final Condition onlyLiveData = %s.eq(EmptyValue.BIGINT);", columnId);
+                    out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.BIGINT);", columnId);
+                    out.println("public final Condition onlyLiveData = %s.eq(EmptyValue.BIGINT);", columnId);
                 } else {
-                    out.tab(1).println("public final Condition onlyDiedData = %s.gt(EmptyValue.VARCHAR);", columnId);
-                    out.tab(1).println("public final Condition onlyLiveData = %s.eq(EmptyValue.VARCHAR);", columnId);
+                    out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.VARCHAR);", columnId);
+                    out.println("public final Condition onlyLiveData = %s.eq(EmptyValue.VARCHAR);", columnId);
                 }
             } else {
                 // COL_IS_DELETED
-                out.tab(1).println("public final Condition onlyDiedData = %s.eq(Boolean.TRUE);", columnId);
-                out.tab(1).println("public final Condition onlyLiveData = %s.eq(Boolean.FALSE);", columnId);
+                out.println("public final Condition onlyDiedData = %s.eq(Boolean.TRUE);", columnId);
+                out.println("public final Condition onlyLiveData = %s.eq(Boolean.FALSE);", columnId);
             }
 
-            out.tab(1).println("@Override");
-            out.tab(1).println("public Condition getOnlyDied() {");
-            out.tab(1).println("    return onlyDiedData;");
-            out.tab(1).println("}");
-            out.tab(1).println("@Override");
-            out.tab(1).println("public Condition getOnlyLive() {");
-            out.tab(1).println("    return onlyLiveData;");
-            out.tab(1).println("}");
+            out.println("@Override");
+            out.println("public Condition getOnlyDied() {");
+            out.println("    return onlyDiedData;");
+            out.println("}");
+            out.println("@Override");
+            out.println("public Condition getOnlyLive() {");
+            out.println("    return onlyLiveData;");
+            out.println("}");
         }
         // 🦁<<<
     }
@@ -136,7 +133,6 @@ public class WingsJavaGenerator extends JavaGenerator {
     /////////////////
 
     private final String chr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private final boolean scala = false;
 
     private String genAlias(String id) {
         val ix = id.hashCode() % chr.length();

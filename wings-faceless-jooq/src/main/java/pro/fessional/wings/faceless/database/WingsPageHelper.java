@@ -255,7 +255,7 @@ public class WingsPageHelper {
         private void orderBy(Map<String, String> bys) {
             if (bys != null && bys.size() > 0) {
                 StringBuilder sb = new StringBuilder();
-                for (PageUtil.By by : PageUtil.sortBy(page.getSortBy())) {
+                for (PageUtil.By by : PageUtil.sort(page.getSort())) {
                     String fd = bys.get(by.key);
                     if (fd != null) {
                         sb.append(',').append(fd);
@@ -282,7 +282,7 @@ public class WingsPageHelper {
             if (offset > 0) {
                 sql.append(offset).append(",");
             }
-            sql.append(page.getPageSize());
+            sql.append(page.getSize());
         }
     }
 
@@ -309,7 +309,7 @@ public class WingsPageHelper {
         private void orderBy(Map<String, Field<?>> bys) {
             if (bys != null && bys.size() > 0) {
                 order = new ArrayList<>();
-                for (PageUtil.By by : PageUtil.sortBy(page.getSortBy())) {
+                for (PageUtil.By by : PageUtil.sort(page.getSort())) {
                     Field<?> fd = bys.get(by.key);
                     if (fd != null) {
                         order.add(by.asc ? fd.asc() : fd.desc());
@@ -492,14 +492,14 @@ public class WingsPageHelper {
                         context.dsl.select(select)
                                    .from(context.from)
                                    .orderBy(context.order)
-                                   .limit(context.page.toOffset(), context.page.getPageSize())
+                                   .limit(context.page.toOffset(), context.page.getSize())
                                    .fetch()
                         :
                         context.dsl.select(select)
                                    .from(context.from)
                                    .where(context.where)
                                    .orderBy(context.order)
-                                   .limit(context.page.toOffset(), context.page.getPageSize())
+                                   .limit(context.page.toOffset(), context.page.getSize())
                                    .fetch();
             }
 
@@ -520,7 +520,7 @@ public class WingsPageHelper {
             if (context.total > 0) {
                 context.result = context.wrap
                         .orderBy(context.order)
-                        .limit(context.page.toOffset(), context.page.getPageSize())
+                        .limit(context.page.toOffset(), context.page.getSize())
                         .fetch();
             }
             return new IntoJooq(context);

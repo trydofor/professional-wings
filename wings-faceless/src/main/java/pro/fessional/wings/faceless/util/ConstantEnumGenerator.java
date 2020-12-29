@@ -77,7 +77,7 @@ public class ConstantEnumGenerator {
     public static class Builder {
         private File src;
         private String pkg;
-        Set<String> exs = new HashSet<>();
+        private final Set<String> exs = new HashSet<>();
 
         public Builder setJavaSource(File src) {
             this.src = src;
