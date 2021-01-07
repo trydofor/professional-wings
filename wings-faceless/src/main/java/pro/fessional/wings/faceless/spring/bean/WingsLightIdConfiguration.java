@@ -27,7 +27,7 @@ import pro.fessional.wings.faceless.spring.conf.WingsLightIdLoaderProperties;
  * @since 2019-06-01
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.lightid.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.faceless.lightid.enabled", havingValue = "true")
 public class WingsLightIdConfiguration {
 
     @Bean
@@ -73,9 +73,9 @@ public class WingsLightIdConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(BlockIdProvider.class)
-    @ConditionalOnProperty(name = "wings.lightid.block.provider.type", havingValue = "sql")
-    public BlockIdProvider blockProvider(@Value("${wings.lightid.block.provider.type}") String type,
-                                         @Value("${wings.lightid.block.provider.para}") String sqlOrId,
+    @ConditionalOnProperty(name = "wings.faceless.lightid.block.provider.type", havingValue = "sql")
+    public BlockIdProvider blockProvider(@Value("${wings.faceless.lightid.block.provider.type}") String type,
+                                         @Value("${wings.faceless.lightid.block.provider.para}") String sqlOrId,
                                          ObjectProvider<JdbcTemplate> jdbcTemplate) {
         if (type.equalsIgnoreCase("sql")) {
             return new DefaultBlockIdProvider(sqlOrId, jdbcTemplate.getIfAvailable());
@@ -86,13 +86,13 @@ public class WingsLightIdConfiguration {
     }
 
     @Bean
-    @ConfigurationProperties("wings.lightid.insert")
+    @ConfigurationProperties("wings.faceless.lightid.insert")
     public WingsLightIdInsertProperties insertProperties() {
         return new WingsLightIdInsertProperties();
     }
 
     @Bean
-    @ConfigurationProperties("wings.lightid.loader")
+    @ConfigurationProperties("wings.faceless.lightid.loader")
     public WingsLightIdLoaderProperties loaderProperties() {
         return new WingsLightIdLoaderProperties();
     }

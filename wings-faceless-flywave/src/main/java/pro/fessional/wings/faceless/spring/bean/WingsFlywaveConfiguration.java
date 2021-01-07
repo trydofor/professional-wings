@@ -2,7 +2,7 @@ package pro.fessional.wings.faceless.spring.bean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -25,13 +25,15 @@ import pro.fessional.wings.faceless.spring.conf.WingsFlywaveVerProperties;
 
 import javax.sql.DataSource;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author trydofor
  * @since 2019-06-01
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.flywave.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.faceless.flywave.enabled", havingValue = "true")
 public class WingsFlywaveConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(WingsFlywaveConfiguration.class);
@@ -39,9 +41,27 @@ public class WingsFlywaveConfiguration {
     @Bean
     @ConditionalOnBean(DataSource.class)
     @ConditionalOnMissingBean
-    public FacelessDataSources facelessDataSources(DataSource inuse) {
-        logger.info("init bean FacelessDataSources");
-        return new FacelessDataSources(Collections.singletonMap("default", inuse), inuse, null, false);
+    public FacelessDataSources facelessDataSources(ObjectProvider<DataSource> dataSources) {
+        final DataSource uniq = dataSources.getIfUnique();
+        if (uniq != null) {
+            logger.info("init bean FacelessDataSources by uniq data-source");
+            return new FacelessDataSources(Collections.singletonMap("default", uniq), uniq, null, false);
+        } else {
+            Map<String, DataSource> map = new HashMap<>();
+            DataSource use = null;
+            int seq = 0;
+            for (DataSource ds : dataSources) {
+                if (use == null) use = ds;
+                map.put("datasource-" + (seq++), ds);
+            }
+
+            if (use == null) {
+                throw new IllegalStateException("can not find any data-source");
+            } else {
+                logger.warn("find {} data-sources, use 1st to init FacelessDataSources.", map.size());
+                return new FacelessDataSources(map, use, null, false);
+            }
+        }
     }
 
     @Bean
@@ -96,8 +116,8 @@ public class WingsFlywaveConfiguration {
     }
 
     @Bean
-    public SqlStatementParser sqlStatementParser(@Value("${spring.jooq.sql-dialect}") String dialect) {
-        if ("mysql".equalsIgnoreCase(dialect)) {
+    public SqlStatementParser sqlStatementParser(WingsFlywaveSqlProperties conf) {
+        if ("mysql".equalsIgnoreCase(conf.getDialect())) {
             return new MySqlStatementParser();
         } else {
             throw new IllegalArgumentException("only support mysql");
@@ -105,21 +125,20 @@ public class WingsFlywaveConfiguration {
     }
 
     @Bean
-    public SqlSegmentProcessor sqlSegmentParser(@Value("${spring.jooq.sql-dialect}") String dialect,
-                                                WingsFlywaveSqlProperties properties) {
-        if ("mysql".equalsIgnoreCase(dialect)) {
-            return new SqlSegmentProcessor(properties.getCommentSingle(),
-                    properties.getCommentMultiple(),
-                    properties.getDelimiterDefault(),
-                    properties.getDelimiterCommand());
+    public SqlSegmentProcessor sqlSegmentParser(WingsFlywaveSqlProperties conf) {
+        if ("mysql".equalsIgnoreCase(conf.getDialect())) {
+            return new SqlSegmentProcessor(conf.getCommentSingle(),
+                    conf.getCommentMultiple(),
+                    conf.getDelimiterDefault(),
+                    conf.getDelimiterCommand());
         } else {
             throw new IllegalArgumentException("only support mysql");
         }
     }
 
     @Bean
-    public SchemaDefinitionLoader schemaDefinitionLoader(@Value("${spring.jooq.sql-dialect}") String dialect) {
-        if ("mysql".equalsIgnoreCase(dialect)) {
+    public SchemaDefinitionLoader schemaDefinitionLoader(WingsFlywaveSqlProperties conf) {
+        if ("mysql".equalsIgnoreCase(conf.getDialect())) {
             return new MysqlDefinitionLoader();
         } else {
             throw new IllegalArgumentException("only support mysql");
@@ -127,13 +146,13 @@ public class WingsFlywaveConfiguration {
     }
 
     @Bean
-    @ConfigurationProperties("wings.flywave.sql")
+    @ConfigurationProperties("wings.faceless.flywave.sql")
     public WingsFlywaveSqlProperties sqlProperties() {
         return new WingsFlywaveSqlProperties();
     }
 
     @Bean
-    @ConfigurationProperties("wings.flywave.ver")
+    @ConfigurationProperties("wings.faceless.flywave.ver")
     public WingsFlywaveVerProperties verProperties() {
         return new WingsFlywaveVerProperties();
     }

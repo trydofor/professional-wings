@@ -39,7 +39,7 @@
         <wings.version>2.4.0-SNAPSHOT</wings.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <mirana.version>2.2.0-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <!-- faceless -->
-        <meepo.version>1.0.0</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
+        <meepo.version>1.4.0</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <kotlin.version>1.4.21</kotlin.version> <!-- spring boot dependency -->
         <jooq.version>3.14.4</jooq.version> <!-- spring boot dependency -->
         <sharding-sphere.version>4.1.1</sharding-sphere.version> <!-- https://github.com/apache/shardingsphere/releases -->

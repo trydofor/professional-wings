@@ -13,7 +13,7 @@
     <packaging>jar</packaging>
 
     <name>wings-faceless-jooq</name>
-    <description>虚空假面①时间漫游</description>
+    <description>虚空假面Jooq</description>
 
     <dependencies>
         <dependency>

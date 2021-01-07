@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @since 2020-06-03
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-
 public class PageQueryResolverTest {
 
 //    @LocalServerPort

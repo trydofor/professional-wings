@@ -65,7 +65,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * because I CAN'T override.
  * <p>
  * /////
- * 依照 flywave-jdbc-spring-boot-starter 配置，构造数据源，
+ * 依照 sharding-jdbc-spring-boot-starter 配置，构造数据源，
  * 当只有一个数据源，且不存在分表时，直接使用原始数据源，而非sharding数据源。
  * 如果有多个数据源，使用sharding数据源，同时expose原始出来，可以独立使用。
  * <p/>
@@ -77,7 +77,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @see org.apache.shardingsphere.shardingjdbc.spring.boot.SpringBootConfiguration
  */
 
-@ConditionalOnProperty(name = "spring.wings.shardingsphere.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.faceless.shardingsphere.enabled", havingValue = "true")
 //////////////// >>>>>>> BGN ShardingSphere code ////////////////
 @Configuration
 @AutoConfigureBefore(DataSourceAutoConfiguration.class)
@@ -212,7 +212,7 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
         }
 
         private boolean needShard(Environment environment) {
-            String enable = environment.getProperty("spring.wings.shardingsphere.enabled");
+            String enable = environment.getProperty("spring.wings.faceless.shardingsphere.enabled");
             if (StringCastUtil.asFalse(enable)) {
                 logger.info("[Wings]🦄 shardingsphere is disabled");
                 return false;

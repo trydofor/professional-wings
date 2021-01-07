@@ -26,14 +26,14 @@ import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
  * @since 2019-12-03
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.cache.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.slardar.cache.enabled", havingValue = "true")
 public class WingsCacheConfiguration {
 
     private static final Log logger = LogFactory.getLog(WingsCacheConfiguration.class);
 
     // //////////
     @Bean
-    @ConfigurationProperties("wings.cache")
+    @ConfigurationProperties("wings.slardar.cache")
     public CacheLevel cacheLevel() {
         logger.info("config bean cacheLevel");
         return new CacheLevel();

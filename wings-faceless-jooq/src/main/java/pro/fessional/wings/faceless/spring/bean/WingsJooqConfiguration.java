@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
  * @since 2019-08-12
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.jooq.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.faceless.jooq.enabled", havingValue = "true")
 @ConditionalOnClass(name = "org.jooq.conf.Settings")
 public class WingsJooqConfiguration {
 
@@ -55,7 +55,7 @@ public class WingsJooqConfiguration {
     @Bean
     @Order
     @ConditionalOnMissingBean(Settings.class)
-    public Settings settings(@Value("${spring.wings.jooq.dao.batch-mysql.enabled}") boolean daoBatchMysql) {
+    public Settings settings(@Value("${spring.wings.faceless.jooq.dao.batch-mysql.enabled}") boolean daoBatchMysql) {
         WingsJooqEnv.daoBatchMysql = daoBatchMysql;
         // ObjectProvider<Settings> settings
         return new Settings()
@@ -75,7 +75,7 @@ public class WingsJooqConfiguration {
      * @link https://github.com/jOOQ/jOOQ/issues/7258
      */
     @Bean
-    @ConditionalOnProperty(name = "spring.wings.jooq.auto-qualify.enabled", havingValue = "true")
+    @ConditionalOnProperty(name = "spring.wings.faceless.jooq.auto-qualify.enabled", havingValue = "true")
     public VisitListenerProvider autoQualifyFieldListener() {
         logger.info("Wings config autoQualifyFieldListener");
         return new DefaultVisitListenerProvider(new DefaultVisitListener() {
@@ -112,7 +112,7 @@ public class WingsJooqConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "spring.wings.trigger.journal-delete.enabled", havingValue = "true")
+    @ConditionalOnProperty(name = "spring.wings.faceless.trigger.journal-delete.enabled", havingValue = "true")
     public ExecuteListenerProvider journalDeleteListener() {
         logger.info("Wings config journalDeleteListener");
         return new DefaultExecuteListenerProvider(new DefaultExecuteListener() {

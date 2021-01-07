@@ -20,7 +20,7 @@ public class WingsMiranaConfiguration {
     private static final Log logger = LogFactory.getLog(WingsMiranaConfiguration.class);
 
     @Bean
-    public Crc8Long crc8Long(@Value("${wings.mirana.code.crc8-long}") int[] seed) {
+    public Crc8Long crc8Long(@Value("${wings.silencer.mirana.code.crc8-long}") int[] seed) {
         logger.info("Wings make Crc8Long, seed = " + Arrays.toString(seed));
         if (seed == null || seed.length == 0) {
             return new Crc8Long();
@@ -30,7 +30,7 @@ public class WingsMiranaConfiguration {
     }
 
     @Bean
-    public LeapCode leapCode(@Value("${wings.mirana.code.leap-code}") String seed) {
+    public LeapCode leapCode(@Value("${wings.silencer.mirana.code.leap-code}") String seed) {
         logger.info("Wings make LeapCode, seed = " + seed);
         if (seed == null) {
             return new LeapCode();

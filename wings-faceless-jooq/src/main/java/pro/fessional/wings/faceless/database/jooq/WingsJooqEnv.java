@@ -9,7 +9,7 @@ package pro.fessional.wings.faceless.database.jooq;
 public class WingsJooqEnv {
     /**
      * 控制dao中是否只支持mysql的高效 insert ignore和replace into
-     * spring.wings.jooq.dao.batch-mysql.enabled=true
+     * spring.wings.faceless.jooq.dao.batch-mysql.enabled=true
      */
     public static volatile boolean daoBatchMysql = true;
 }

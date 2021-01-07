@@ -147,9 +147,7 @@ i18n可以使用CombinableMessageSource动态添加，处理service内消息的�
 单进程的异步和解耦，guava的EventBus和Spring的Event都可以胜任。
 为单Jvm，多Jvm提高一个基于数据库的Event服务，主要用来
 
-
 ## 2.9.数据库知识
-
 
 mysql体系指mysql分支如(Percona,MariaDB)或兼容mysql协议的数据库，wings使用mysql-5.7.x（8.0未测试）。
 原则上DB不应该封装（自定义function或procedure）业务逻辑，但可以使用db提供的功能，简化工作实现业务目标。
@@ -328,7 +326,7 @@ mysql:5.7
 
 如果服务器和执行环境时区不一致，可以通过以下方式协调。
 
-* 通过wings的参数设置时区 `wings.i18n.zoneid=Asia/Shanghai`
+* 通过wings的参数设置时区 `wings.silencer.i18n.zoneid=Asia/Shanghai`
 * java的启动参数， `-Duser.timezone=Asia/Shanghai`
 * mysql的jdbc的url参数， `serverTimezone=Asia/Shanghai`
 * java的代码参数， `TimeZone.setDefault(TimeZone.getTimeZone("Asia/Shanghai"));`

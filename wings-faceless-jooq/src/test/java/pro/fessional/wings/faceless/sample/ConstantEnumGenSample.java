@@ -21,8 +21,8 @@ import java.util.List;
 @ActiveProfiles("init")
 @SpringBootTest(properties =
         {"debug = true",
-         "spring.wings.enumi18n.enabled=true",
-//         "spring.wings.flywave.enabled=true",
+         "spring.wings.faceless.enumi18n.enabled=true",
+//         "spring.wings.faceless.flywave.enabled=true",
 //         "spring.shardingsphere.datasource.names=master",
 //         "spring.shardingsphere.datasource.master.jdbc-url=jdbc:mysql://127.0.0.1:3306/wings?autoReconnect=true&useSSL=false",
 //         "spring.shardingsphere.datasource.master.username=trydofor",

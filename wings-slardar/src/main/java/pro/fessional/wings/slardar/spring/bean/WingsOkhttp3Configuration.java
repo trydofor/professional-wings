@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration
 @ConditionalOnClass(OkHttpClient.class)
-@ConditionalOnProperty(name = "spring.wings.okhttp.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.slardar.okhttp.enabled", havingValue = "true")
 public class WingsOkhttp3Configuration {
 
     private static final Log logger = LogFactory.getLog(WingsOkhttp3Configuration.class);
@@ -94,7 +94,7 @@ public class WingsOkhttp3Configuration {
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "wings.okhttp")
+    @ConfigurationProperties(prefix = "wings.slardar.okhttp")
     public OkHttpProperties okHttpProperties() {
         return new OkHttpProperties();
     }

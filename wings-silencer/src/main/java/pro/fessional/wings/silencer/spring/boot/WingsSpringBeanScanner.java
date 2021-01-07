@@ -32,7 +32,7 @@ public class WingsSpringBeanScanner implements ApplicationListener<ApplicationPr
         ConfigurableApplicationContext context = event.getApplicationContext();
         if (!(context instanceof BeanDefinitionRegistry)) return;
 
-        String enable = context.getEnvironment().getProperty("spring.wings.scanner.enabled");
+        String enable = context.getEnvironment().getProperty("spring.wings.silencer.scanner.enabled");
         if (!StringCastUtil.asTrue(enable)) {
             logger.info("Wings bean scanner is disabled, skip it.");
             return;

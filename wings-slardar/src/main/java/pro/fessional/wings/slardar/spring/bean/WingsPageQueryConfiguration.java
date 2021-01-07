@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pro.fessional.wings.slardar.webmvc.PageQueryArgumentResolver;
 
 import java.util.List;
@@ -19,8 +19,8 @@ import java.util.List;
  * @since 2019-12-03
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.pagequery.enabled", havingValue = "true")
-public class WingsPageQueryConfiguration extends WebMvcConfigurerAdapter {
+@ConditionalOnProperty(name = "spring.wings.slardar.pagequery.enabled", havingValue = "true")
+public class WingsPageQueryConfiguration implements WebMvcConfigurer {
 
     private static final Log logger = LogFactory.getLog(WingsPageQueryConfiguration.class);
 

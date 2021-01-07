@@ -109,7 +109,7 @@ sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/res
  * 通过工具类`JournalHelp`，手动执行`delete##`。
  * 自动对`delete from ## where id=? and commit_id=?`格式进行拦截。
 
-自动拦截`spring.wings.trigger.journal-delete.enabled`默认关闭。
+自动拦截`spring.wings.faceless.trigger.journal-delete.enabled`默认关闭。
 因为违反`静态高于动态，编译时高于运行时`团队规则，且性能和限制不好控制。
 
 ## 2.1.3.测试用例
@@ -122,9 +122,9 @@ sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/res
 
 ### 01.控制flywave时，spring找不到bean `SchemaRevisionManager`
 
-在2.2.6后续中，默认关闭了spring.wings.flywave.enabled=false
+在2.2.6后续中，默认关闭了spring.wings.faceless.flywave.enabled=false
 初始化的时候需要打开，例如在test中增加临时打开
-`@SpringBootTest(properties = "spring.wings.flywave.enabled=true")`
+`@SpringBootTest(properties = "spring.wings.faceless.flywave.enabled=true")`
 
 ### 02.版本更新，异常说缺少字段branches
 
@@ -146,9 +146,9 @@ sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/res
 ### 04.flywave中确认危险语句
 
  * 带有`ask@*`注解的sql，强制确认
- * undo 语句确认 `wings.flywave.ver.ask-undo=true`
- * drop 类语句确认 `wings.flywave.ver.ask-drop=true`
- * drop 类语句定义 `wings.flywave.ver.drop-reg[0]`
+ * undo 语句确认 `wings.faceless.flywave.ver.ask-undo=true`
+ * drop 类语句确认 `wings.faceless.flywave.ver.ask-drop=true`
+ * drop 类语句定义 `wings.faceless.flywave.ver.drop-reg[0]`
 
 如果UnitTest中控制台中无响应，需要在IDE中打开 console，如在Idea中
 `-Deditable.java.test.console=true` ('Help' > 'Edit Custom VM Options...')

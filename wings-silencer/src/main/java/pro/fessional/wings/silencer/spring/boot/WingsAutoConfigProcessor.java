@@ -76,7 +76,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     public void processWingsI18n(ConfigurableEnvironment environment) {
         // system default locale, zoneid
 
-        String lcl = environment.getProperty("wings.i18n.locale");
+        String lcl = environment.getProperty("wings.silencer.i18n.locale");
         if (lcl != null && !lcl.isEmpty()) {
             String ln = System.getProperty("user.language");
             String cn = System.getProperty("user.country");
@@ -93,7 +93,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             Locale.setDefault(loc);
         }
 
-        String zid = environment.getProperty("wings.i18n.zoneid");
+        String zid = environment.getProperty("wings.silencer.i18n.zoneid");
         if (zid != null && !zid.isEmpty()) {
             String tz = System.getProperty("user.timezone");
             logger.info("🦁 set wings-zoneid=" + zid + ", current user.timezone=" + tz);
@@ -103,7 +103,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
         final LinkedHashSet<String> baseNames = new LinkedHashSet<>();
         try {
-            String bundle = environment.getProperty("wings.i18n.bundle");
+            String bundle = environment.getProperty("wings.silencer.i18n.bundle");
             String[] paths;
             if (bundle == null || bundle.isEmpty()) {
                 paths = new String[]{"classpath*:/" + WINGS_I18N};
@@ -206,7 +206,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             }
         }
 
-        if (StringCastUtil.asTrue(environment.getProperty("spring.wings.verbose.enabled")) && !wingsKeys.isEmpty()) {
+        if (StringCastUtil.asTrue(environment.getProperty("spring.wings.silencer.verbose.enabled")) && !wingsKeys.isEmpty()) {
             String allCond = wingsKeys.stream()
                                       .map(e -> {
                                           String v = environment.getProperty(e.toString());

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 
 @ActiveProfiles("init")
-@SpringBootTest(properties = {"debug = true", "spring.wings.enumi18n.enabled=true"})
+@SpringBootTest(properties = {"debug = true", "spring.wings.faceless.enumi18n.enabled=true"})
 @TestMethodOrder(MethodName.class)
 @Tag("init")
 public class ConstantEnumI18nTest {

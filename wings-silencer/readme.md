@@ -29,7 +29,7 @@
 注意：在`@Configuration`中的内部类，`static class`是按独立类处理的，不受外层约束。
 
 在wings工程中，会存在`wings-conditional-manager.properties`配置，作为功能开关
-可以通过属性`spring.wings.verbose.enabled=true` 通过日志INFO查看。
+可以通过属性`spring.wings.silencer.verbose.enabled=true` 通过日志INFO查看。
  
 ## 1.2.自动配置(wings-conf)
 
@@ -109,12 +109,12 @@
 
 wings启动时，可以修改系统默认locale和zoneid，通过以下配置，空置表示维持系统默认。
 
- * wings.i18n.locale=zh_CN
- * wings.i18n.zoneid=Asia/Shanghai
- * wings.i18n.bundle=classpath*:/wings-i18n/**/*.properties
+ * wings.silencer.i18n.locale=zh_CN
+ * wings.silencer.i18n.zoneid=Asia/Shanghai
+ * wings.silencer.i18n.bundle=classpath*:/wings-i18n/**/*.properties
 
 同时，spring自身对多国语(I18N)支持的很好，稍加组织就可利用，就可以更好的工程化。
-自动扫描` wings.i18n.bundle`配置项（逗号分隔多个路径），加载分隔成多份的配置。
+自动扫描` wings.silencer.i18n.bundle`配置项（逗号分隔多个路径），加载分隔成多份的配置。
 
 spring对MessageSource的加载与configuration的机制不同，不需要unicode转义。
 

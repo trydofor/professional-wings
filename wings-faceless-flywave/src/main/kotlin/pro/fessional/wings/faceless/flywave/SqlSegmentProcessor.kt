@@ -78,7 +78,7 @@ class SqlSegmentProcessor(
     private val delimiterCommand: String
 
     init {
-        // wings.flywave.sql.comment-single="--"
+        // wings.faceless.flywave.sql.comment-single="--"
         if (commentSingle.isBlank()) {
             this.singleComment = "--"
         } else {
@@ -86,7 +86,7 @@ class SqlSegmentProcessor(
         }
         logger.debug("[init] use single-comment= {}", this.singleComment)
 
-        // wings.flywave.sql.comment-multiple="/*   */"
+        // wings.faceless.flywave.sql.comment-multiple="/*   */"
         if (commentMultiple.isBlank()) {
             this.blockComment1 = "/*"
             this.blockComment2 = "*/"
@@ -97,7 +97,7 @@ class SqlSegmentProcessor(
         }
         logger.debug("[init] use multiple-comment={} {}", this.blockComment1, this.blockComment2)
 
-        // wings.flywave.sql.delimiter-default=";"
+        // wings.faceless.flywave.sql.delimiter-default=";"
         if (delimiterDefault.isBlank()) {
             this.delimiterDefault = ";"
         } else {
@@ -105,7 +105,7 @@ class SqlSegmentProcessor(
         }
         logger.debug("[init] use delimiter={}", this.delimiterDefault)
 
-        // wings.flywave.sql.delimiter-command="DELIMITER"
+        // wings.faceless.flywave.sql.delimiter-command="DELIMITER"
         if (delimiterCommand.isBlank()) {
             this.delimiterCommand = "DELIMITER"
         } else {

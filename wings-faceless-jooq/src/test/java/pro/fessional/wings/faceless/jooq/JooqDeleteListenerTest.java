@@ -30,7 +30,7 @@ import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @ActiveProfiles("init")
-@SpringBootTest(properties = {"debug = true", "spring.wings.trigger.journal-delete.enabled=true"})
+@SpringBootTest(properties = {"debug = true", "spring.wings.faceless.trigger.journal-delete.enabled=true"})
 @Tag("init")
 public class JooqDeleteListenerTest {
 

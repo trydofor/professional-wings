@@ -65,6 +65,7 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
 
 安装以下插件
  * .ignore - 和版本管理中ignore有关的。
+ * Any2dto -  支持jooq, sql查询直接生成dto，减少复制和赋值
  * CheckStyle - 代码质量
  * GenerateAllSetter - alt-enter 生成全部 po.setXxx("")
  * Git Flow Integration - 集成了git-flow
@@ -72,7 +73,6 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
  * Grep Console - 控制台的日志分颜色显示和过滤
  * kotlin - 默认安装了
  * lombok - IntelliJ Lombok plugin
- * Any2dto -  支持jooq, sql查询直接生成dto，减少复制和赋值
  * MapStruct Support - 静态强类型DTO转换，减少复制和赋值
  * Maven Helper - 帮助管理maven
  * Quick File Preview - 单击快速浏览文件
@@ -143,10 +143,11 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
 
 ### 0.2.4.属性文件风格
 
- * 尽量使用`properties`和列编辑，`yml`的缩进有时会困扰。
- * 一组关联属性，一个`properties`，分成文件便于管理。
- * `conditional*`类spring配置开关，使用`spring.`前缀。
- * `wings-`功能类配置，使用`wings.`前缀。
+ * 尽量使用`properties`和列编辑，`yml`的缩进在传递与部分分享时会困扰。
+ * 一组关联属性，放在一个`properties`，分成文件便于管理。
+ * `wings-conditional-manager.properties`是开关配置，使用`spring.wings.`前缀。
+ * `spring-`前缀配置，放置spring官方配置key。
+ * `wings-`前缀配置，放置wings配置key，带有工程代号，如`wings.slardar.*`。
  * 推荐`kebab-caseae`命名，即`key`全小写，使用`-`分割。
 
 ### 0.2.5.Spring注入风格，在`silencer`和`faceless`有详细说明。
@@ -300,8 +301,8 @@ find . -name 'wings-conditional-manager.properties' \
 | xargs grep 'false'
 
 # 以下2个需要在flywave和enum时开启
-spring.wings.flywave.enabled=false
-spring.wings.enumi18n.enabled=false
+spring.wings.faceless.flywave.enabled=false
+spring.wings.faceless.enumi18n.enabled=false
 ``` 
 
 ### 003.如何创建一个工程
