@@ -59,6 +59,7 @@ public class JooqShardingTest {
     @Test
     public void test0𓃬清表重置() {
         wingsTestHelper.cleanAndInit();
+        wingsTestHelper.sleep1s();
     }
 
     @Test

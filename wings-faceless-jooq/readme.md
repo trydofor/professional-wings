@@ -3,9 +3,10 @@
 冲到目标位置，并取消最近2.0秒内受到的任何伤害。
 虚空假面在时间漫游过程中为无敌状态。
 
-![faceless_void](faceless_void_time_walk.png)
+![faceless_void_time_walk](faceless_void_time_walk.png)
 
  * 从数据库自动生成jooq代码，pojo, table, dao
+ * 通过jooq的强类型，保证数据层面的变更和重构稳定
 
 ## 2.2.1.强类型(jooq)数据库操作
 

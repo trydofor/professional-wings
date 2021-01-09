@@ -1,7 +1,6 @@
 package pro.fessional.wings.faceless.database;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.jdbc.support.MetaDataAccessException;
 
@@ -20,35 +19,61 @@ import java.util.Map;
  * @author trydofor
  * @since 2019-05-24
  */
-public class FacelessDataSources {
+public class DataSourceContext {
 
-    private final DataSource inuse;
-    private final DataSource shard;
-    private final boolean split;
+    private DataSource inuse = null;
+    private DataSource shard = null;
+    private boolean split = false;
 
     private final LinkedHashMap<String, DataSource> plainMap = new LinkedHashMap<>();
     private final HashMap<DataSource, String> plainURL = new HashMap<>();
 
-    public FacelessDataSources(Map<String, DataSource> plains, DataSource inuse, DataSource shard, boolean split) {
-        plainMap.putAll(plains);
-        this.inuse = inuse;
-        this.shard = shard;
-        this.split = split;
-    }
-
-    @NotNull
     public DataSource getInuse() {
         return inuse;
     }
 
-    @Nullable
+    public DataSourceContext setInuse(DataSource inuse) {
+        this.inuse = inuse;
+        return this;
+    }
+
     public DataSource getShard() {
         return shard;
+    }
+
+    public DataSourceContext setShard(DataSource shard) {
+        this.shard = shard;
+        return this;
     }
 
     public boolean isSplit() {
         return split;
     }
+
+    public DataSourceContext setSplit(boolean split) {
+        this.split = split;
+        return this;
+    }
+
+    public DataSourceContext cleanPlain() {
+        plainMap.clear();
+        return this;
+    }
+
+    public DataSourceContext addPlain(String name, DataSource ds) {
+        if (name != null && ds != null) {
+            plainMap.put(name, ds);
+        }
+        return this;
+    }
+
+    public DataSourceContext addPlain(Map<String, DataSource> map) {
+        if (map != null) {
+            plainMap.putAll(map);
+        }
+        return this;
+    }
+
 
     /**
      * 获得所有原始数据源
@@ -56,7 +81,7 @@ public class FacelessDataSources {
      * @return 数据源
      */
     @NotNull
-    public LinkedHashMap<String, DataSource> plains() {
+    public Map<String, DataSource> getPlains() {
         return new LinkedHashMap<>(plainMap);
     }
 
@@ -83,13 +108,13 @@ public class FacelessDataSources {
     }
 
     /**
-     * 提前数据源的jdbc url
+     * 提取数据源的jdbc url
      *
      * @param ds 数据源
      * @return jdbc url
      */
     @NotNull
-    public String extractUrl(DataSource ds) {
+    private String extractUrl(DataSource ds) {
         try {
             return JdbcUtils.extractDatabaseMetaData(ds, it -> {
                 try {
@@ -120,5 +145,15 @@ public class FacelessDataSources {
         }
 
         return sb.toString();
+    }
+
+    public interface Modifier {
+        /**
+         * 修改 context，是否停止其他modifier修改
+         *
+         * @param ctx context
+         * @return 是否排他
+         */
+        boolean modify(DataSourceContext ctx);
     }
 }

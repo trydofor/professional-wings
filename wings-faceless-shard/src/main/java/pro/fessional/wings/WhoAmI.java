@@ -1,4 +1,4 @@
-package pro.fessional.wings.faceless;
+package pro.fessional.wings;
 
 /**
  * @author trydofor

@@ -6,7 +6,6 @@ import org.slf4j.event.Level.ERROR
 import org.slf4j.event.Level.INFO
 import org.slf4j.event.Level.WARN
 import pro.fessional.mirana.data.Null
-import pro.fessional.wings.faceless.database.FacelessDataSources
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager.AskType
@@ -34,7 +33,8 @@ import javax.sql.DataSource
  * @since 2019-06-05
  */
 class DefaultRevisionManager(
-        private val facelessDataSources: FacelessDataSources,
+        private val plainDataSources: Map<String, DataSource>,
+        private val shardDataSource: DataSource?,
         private val sqlStatementParser: SqlStatementParser,
         private val sqlSegmentProcessor: SqlSegmentProcessor,
         private val schemaDefinitionLoader: SchemaDefinitionLoader) : SchemaRevisionManager {
@@ -88,7 +88,7 @@ class DefaultRevisionManager(
         dropReg[regexp] = regexp.toRegex(RegexOption.IGNORE_CASE)
     }
 
-    override fun currentRevision() = facelessDataSources.plains().map {
+    override fun currentRevision() = plainDataSources.map {
         val tmpl = SimpleJdbcTemplate(it.value, it.key)
         val revi = getRevision(tmpl)
         it.key to revi
@@ -121,8 +121,8 @@ class DefaultRevisionManager(
                 ORDER BY revision DESC
                 """
 
-        val shardTmpl = facelessDataSources.shard?.let { SimpleJdbcTemplate(it, "sharding") }
-        for ((plainName, plainDs) in facelessDataSources.plains()) {
+        val shardTmpl = shardDataSource?.let { SimpleJdbcTemplate(it, "sharding") }
+        for ((plainName, plainDs) in plainDataSources) {
             val plainTmpl = SimpleJdbcTemplate(plainDs, plainName)
             val plainRevi = getRevision(plainTmpl)
 
@@ -239,7 +239,7 @@ class DefaultRevisionManager(
 
 
     override fun forceApplyBreak(revision: Long, commitId: Long, isUpto: Boolean, dataSource: String?) {
-        val shardTmpl = facelessDataSources.shard?.let { SimpleJdbcTemplate(it, "sharding") }
+        val shardTmpl = shardDataSource?.let { SimpleJdbcTemplate(it, "sharding") }
         val reviQuery = if (isUpto) {
             """
             SELECT
@@ -260,7 +260,7 @@ class DefaultRevisionManager(
         val here = "forceApplyBreak"
         messageLog(INFO, here, "begin revi=$revision, assigned db=$dataSource")
 
-        for ((plainName, plainDs) in facelessDataSources.plains()) {
+        for ((plainName, plainDs) in plainDataSources) {
 
             if (!(dataSource == null || plainName.equals(dataSource, true))) {
                 messageLog(INFO, here, "skip revi=$revision, on unmatched db=$plainName")
@@ -335,7 +335,7 @@ class DefaultRevisionManager(
                 continue
             }
 
-            for ((plainName, plainDs) in facelessDataSources.plains()) {
+            for ((plainName, plainDs) in plainDataSources) {
                 messageLog(INFO, here, "ready to check revi=$revi, on db=$plainName")
                 val plainTmpl = SimpleJdbcTemplate(plainDs, plainName)
                 val dbVal = HashMap<String, String>()
@@ -469,7 +469,7 @@ class DefaultRevisionManager(
             WHERE revision = ?
             """
         val here = "forceUpdateSql"
-        for ((plainName, plainDs) in facelessDataSources.plains()) {
+        for ((plainName, plainDs) in plainDataSources) {
             messageLog(INFO, here, "ready force update revi=$revision, on db=$plainName")
             val tmpl = SimpleJdbcTemplate(plainDs, plainName)
 
@@ -488,11 +488,11 @@ class DefaultRevisionManager(
 
     override fun forceExecuteSql(text: String) {
         if (text.isEmpty()) return
-        val shardTmpl = facelessDataSources.shard?.let { SimpleJdbcTemplate(it, "sharding") }
+        val shardTmpl = shardDataSource?.let { SimpleJdbcTemplate(it, "sharding") }
         val sqlSegs = sqlSegmentProcessor.parse(sqlStatementParser, text)
 
         val here = "forceExecuteSql"
-        for ((plainName, plainDs) in facelessDataSources.plains()) {
+        for ((plainName, plainDs) in plainDataSources) {
             messageLog(INFO, here, "ready force execute sql on db=$plainName")
             val plainTmpl = SimpleJdbcTemplate(plainDs, plainName)
             val plainTbls = schemaDefinitionLoader.showTables(plainDs)
@@ -753,7 +753,7 @@ class DefaultRevisionManager(
         val tkn = "${level.name}|$where"
         val ot = lastMessage.get()
         if (ot == null) {
-            msgFunc.accept("database-info", facelessDataSources.toString())
+            msgFunc.accept("database-info", plainDataSources.toString())
         }
         lastMessage.set(tkn to info)
         msgFunc.accept(tkn, info)

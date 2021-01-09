@@ -9,43 +9,36 @@
         <version>2.4.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>wings-faceless</artifactId>
+    <artifactId>wings-faceless-shard</artifactId>
     <packaging>jar</packaging>
 
-    <name>wings-faceless</name>
-    <description>虚空假面</description>
+    <name>wings-faceless-shard</name>
+    <description>虚空假面②时间膨胀(shard)</description>
 
     <dependencies>
-        <!-- enum-i18n, wings-conf -->
         <dependency>
             <groupId>pro.fessional</groupId>
-            <artifactId>wings-silencer</artifactId>
+            <artifactId>mirana</artifactId>
         </dependency>
+        <!-- springboot auto config -->
         <dependency>
             <groupId>pro.fessional</groupId>
-            <artifactId>meepo</artifactId>
+            <artifactId>wings-faceless</artifactId>
+            <optional>true</optional>
         </dependency>
-        <!-- spring boot -->
+        <!-- annotation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
-        <!---->
+        <!--sharding sphere-->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-        <!-- test -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
-            <version>1.2.4</version>
-            <scope>test</scope>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>sharding-jdbc-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <scope>test</scope>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
         </dependency>
     </dependencies>
 </project>

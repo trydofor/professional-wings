@@ -32,6 +32,7 @@ import org.apache.shardingsphere.underlying.common.exception.ShardingSphereExcep
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -50,7 +51,8 @@ import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.jndi.JndiObjectFactoryBean;
 import pro.fessional.mirana.cast.StringCastUtil;
-import pro.fessional.wings.faceless.database.FacelessDataSources;
+import pro.fessional.wings.faceless.database.DataSourceContext;
+import pro.fessional.wings.faceless.database.sharding.MasterRouteOnlyAround;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -78,6 +80,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 
 @ConditionalOnProperty(name = "spring.wings.faceless.shardingsphere.enabled", havingValue = "true")
+@ConditionalOnClass(name = "pro.fessional.wings.faceless.database.DataSourceContext")
 //////////////// >>>>>>> BGN ShardingSphere code ////////////////
 @Configuration
 @AutoConfigureBefore(DataSourceAutoConfiguration.class)
@@ -139,29 +142,29 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
      * @return data source bean
      */
     @Bean
-    @Conditional(Switcher.class)
+    @Conditional(ShardSwitcher.class)
     public DataSource dataSource() {
         return defaultDataSource(true);
     }
 
     @Bean
-    public FacelessDataSources FacelessDataSources(@NotNull DataSource inuse, Environment environment) {
-        DataSource shard = defaultDataSource(false) == inuse ? null : inuse;
-        boolean split = hasSlave(environment);
-        FacelessDataSources fds = new FacelessDataSources(dataSourceMap, inuse, shard, split);
+    @Conditional(SlaveSwitcher.class)
+    public MasterRouteOnlyAround masterRouteOnlyAround() {
+        logger.info("[Wings]🦄 config masterRouteOnlyAround");
+        return new MasterRouteOnlyAround();
+    }
 
-        for (Map.Entry<String, DataSource> e : dataSourceMap.entrySet()) {
-            logger.info("[Wings]🦄 database-" + e.getKey() + "-url=" + fds.jdbcUrl(e.getValue()));
-        }
-
-        if (shard != null) {
-            logger.info("[Wings]🦄 database-shard-url=" + fds.jdbcUrl(shard));
-        } else {
-            logger.info("[Wings]🦄 database-shard-url=no-shard-plain-database");
-        }
-        logger.info("[Wings]🦄 database-inuse-url=" + fds.jdbcUrl(inuse));
-
-        return fds;
+    @Bean
+    public DataSourceContext.Modifier shardingSphereModifier(@NotNull DataSource inuse, Environment environment) {
+        return (ctx) -> {
+            DataSource shard = defaultDataSource(false) == inuse ? null : inuse;
+            boolean split = hasSlave(environment);
+            ctx.cleanPlain()
+               .addPlain(dataSourceMap)
+               .setShard(shard)
+               .setSplit(split);
+            return true;
+        };
     }
 
     //
@@ -175,14 +178,21 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
         return first.getValue();
     }
 
-    private boolean hasSlave(Environment environment) {
+    private static boolean hasSlave(Environment environment) {
         boolean hasMasterSlaveName = environment.containsProperty("spring.shardingsphere.masterslave.name");
         boolean hasShardingMasterSlave = PropertyUtil.containPropertyPrefix(environment, "spring.shardingsphere.sharding.master-slave-rules");
 
         return hasMasterSlaveName || hasShardingMasterSlave;
     }
 
-    public static class Switcher extends SpringBootCondition implements ApplicationListener<ApplicationPreparedEvent> {
+    public static class SlaveSwitcher extends SpringBootCondition {
+        @Override
+        public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            return hasSlave(context.getEnvironment()) ? ConditionOutcome.match() : ConditionOutcome.noMatch("not separate config");
+        }
+    }
+
+    public static class ShardSwitcher extends SpringBootCondition implements ApplicationListener<ApplicationPreparedEvent> {
 
         @Override
         public void onApplicationEvent(ApplicationPreparedEvent event) {

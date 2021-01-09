@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import pro.fessional.mirana.data.Diff;
-import pro.fessional.wings.faceless.database.FacelessDataSources;
+import pro.fessional.wings.faceless.database.DataSourceContext;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
@@ -41,12 +41,12 @@ public class WingsTestHelper {
     @Setter(onMethod = @__({@Autowired}))
     private SchemaRevisionManager schemaRevisionManager;
     @Setter(onMethod = @__({@Autowired}))
-    private FacelessDataSources facelessDataSources;
+    private DataSourceContext dataSourceContext;
 
     private final HashMap<DataSource, Boolean> isH2Map = new HashMap<>();
 
     public boolean isH2() {
-        for (DataSource ds : facelessDataSources.plains().values()) {
+        for (DataSource ds : dataSourceContext.getPlains().values()) {
             Boolean h2 = isH2Map.computeIfAbsent(ds, dataSource -> {
                 String s = new SimpleJdbcTemplate(ds, "").jdbcUrl();
                 return s.contains(":h2:") || s.contains(":H2:");
@@ -60,8 +60,16 @@ public class WingsTestHelper {
         cleanAndInit(0, FlywaveRevisionScanner.REVISION_PATH_MASTER);
     }
 
+    public void sleep1s(){
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void cleanAndInit(long revi, String... branches) {
-        facelessDataSources.plains().forEach((k, v) -> {
+        dataSourceContext.getPlains().forEach((k, v) -> {
             testcaseNotice("clean database " + k);
             JdbcTemplate tmpl = new JdbcTemplate(v);
             tmpl.query("SHOW TABLES", rs -> {
@@ -140,8 +148,8 @@ public class WingsTestHelper {
     }
 
     private Map<String, Set<String>> fetchAllColumn1(String sql) {
-        return facelessDataSources
-                .plains().entrySet().stream()
+        return dataSourceContext
+                .getPlains().entrySet().stream()
                 .collect(
                         Collectors.toMap(
                                 Map.Entry::getKey,
