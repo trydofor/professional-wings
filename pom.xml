@@ -48,7 +48,7 @@
         <guava.version>30.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
         <commons-io.version>2.8.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
         <mapstruct.version>1.4.1.Final</mapstruct.version> <!-- https://mapstruct.org/news/ -->
-        <kaptcha.version>2.3.2</kaptcha.version> <!-- https://github.com/penggle/kaptcha -->
+        <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
         <!-- others -->
         <fastjson.version>1.2.75</fastjson.version>
     </properties>
@@ -166,7 +166,7 @@
                 <version>${commons-io.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.penggle</groupId>
+                <groupId>pro.fessional</groupId>
                 <artifactId>kaptcha</artifactId>
                 <version>${kaptcha.version}</version>
             </dependency>
