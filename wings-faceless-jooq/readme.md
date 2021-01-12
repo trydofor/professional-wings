@@ -3,9 +3,10 @@
 冲到目标位置，并取消最近2.0秒内受到的任何伤害。
 虚空假面在时间漫游过程中为无敌状态。
 
-![faceless_void](faceless_void_time_walk.png)
+![faceless_void_time_walk](faceless_void_time_walk.png)
 
  * 从数据库自动生成jooq代码，pojo, table, dao
+ * 通过jooq的强类型，保证数据层面的变更和重构稳定
 
 ## 2.2.1.强类型(jooq)数据库操作
 
@@ -239,4 +240,14 @@ Map<Integer, List<String>>       group4 = create.selectFrom(BOOK).fetchGroups(BO
 
 ### 05.如何转换sql语法
 
-不同sql语法间可以如下转换，https://www.jooq.org/translate/ (需要翻墙)
+ * sql到sql，不同语法间转换，https://www.jooq.org/translate/ (需要翻墙)
+ * sql到jooq，可以使用any2dto插件，做了简单的select语法映射。
+ * jooq到sql，调用toSql方法，或开启debug，在日志中查看。
+
+### 06.TINYINT映射Boolean,Byte,Integer
+
+* 在mysql中TINYINT是1byte空间，范围是-128到127，在jooq中，默认映射为Byte类型。
+* 在[jdbc文档](https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-reference-type-conversions.html) 中其类型是Boolean，Integer
+* 而在jooq-codegen-faceless.xml中，TINYINT(1)为Boolean，其他为Integer
+
+若要调整，可以WingsCodeGenerator.forcedType()

@@ -13,7 +13,7 @@ import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
 import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2
 import pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice
-import pro.fessional.wings.faceless.database.FacelessDataSources
+import pro.fessional.wings.faceless.database.DataSourceContext
 
 /**
  * shard profile, 使用write和reader数据源
@@ -36,7 +36,7 @@ class SchemaShardingManagerTest {
     lateinit var shardingJdbcTemplate: JdbcTemplate
 
     @Autowired
-    lateinit var facelessDataSources: FacelessDataSources
+    lateinit var dataSources: DataSourceContext
 
     @Autowired
     lateinit var wingsTestHelper: WingsTestHelper
@@ -93,6 +93,6 @@ class SchemaShardingManagerTest {
         assertEquals(0, cnt)
     }
 
-    fun countRecords(db: String, tbl: String) = JdbcTemplate(facelessDataSources.plains()[db]!!)
+    fun countRecords(db: String, tbl: String) = JdbcTemplate(dataSources.getPlains()[db]!!)
             .queryForObject("select count(*) from $tbl", Int::class.java)
 }

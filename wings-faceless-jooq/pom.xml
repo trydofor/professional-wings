@@ -13,7 +13,7 @@
     <packaging>jar</packaging>
 
     <name>wings-faceless-jooq</name>
-    <description>虚空假面Jooq</description>
+    <description>虚空假面①时间漫游(jooq)</description>
 
     <dependencies>
         <dependency>
@@ -33,6 +33,10 @@
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
         <!-- jooq dev -->
         <dependency>
             <groupId>org.jooq</groupId>
@@ -43,6 +47,11 @@
         <dependency>
             <groupId>pro.fessional</groupId>
             <artifactId>wings-faceless-flywave</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>wings-faceless-shard</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

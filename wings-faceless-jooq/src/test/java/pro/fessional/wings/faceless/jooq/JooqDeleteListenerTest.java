@@ -15,13 +15,14 @@ import pro.fessional.wings.faceless.WingsTestHelper;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
 import pro.fessional.wings.faceless.database.jooq.JournalJooqHelp;
-import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
+import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
 import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
+import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
 
 /**
  * @author trydofor
@@ -35,8 +36,6 @@ import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
 public class JooqDeleteListenerTest {
 
     @Setter(onMethod = @__({@Autowired}))
-    private SchemaRevisionManager revisionManager;
-    @Setter(onMethod = @__({@Autowired}))
     private DSLContext dsl;
     @Setter(onMethod = @__({@Autowired}))
     private JdbcTemplate tmpl;
@@ -44,9 +43,11 @@ public class JooqDeleteListenerTest {
     // >>=>🦁🦁🦁
     @Setter(onMethod = @__({@Autowired}))
     private WingsTestHelper wingsTestHelper;
+
     @Test
     public void test0𓃬清表重置() {
-        wingsTestHelper.cleanAndInit();
+        wingsTestHelper.cleanAndInit(REVISION_TEST_V2, REVISION_PATH_MASTER);
+        wingsTestHelper.sleep1s();
     }
     //  🦁🦁🦁<=<<
 

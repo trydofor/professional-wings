@@ -2,7 +2,6 @@ package pro.fessional.wings.faceless.enums;
 
 import lombok.Setter;
 import org.junit.jupiter.api.MethodOrderer.MethodName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.faceless.enums.auto.StandardLanguage;
 import pro.fessional.wings.faceless.enums.auto.StandardTimezone;
@@ -24,10 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 2020-06-10
  */
 
-@ActiveProfiles("init")
 @SpringBootTest(properties = {"debug = true", "spring.wings.faceless.enumi18n.enabled=true"})
 @TestMethodOrder(MethodName.class)
-@Tag("init")
 public class ConstantEnumI18nTest {
 
     @Setter(onMethod = @__({@Autowired}))

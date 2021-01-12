@@ -2,7 +2,6 @@ package pro.fessional.wings.faceless.flywave
 
 import org.slf4j.LoggerFactory
 import pro.fessional.mirana.data.Null
-import pro.fessional.wings.faceless.database.FacelessDataSources
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.TYPE_SHARD
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.hasType
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
@@ -12,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.atomic.AtomicInteger
+import javax.sql.DataSource
 import kotlin.concurrent.thread
 
 /**
@@ -21,9 +21,9 @@ import kotlin.concurrent.thread
  * @since 2019-06-06
  */
 class SchemaShardingManager(
-        private val facelessDataSources: FacelessDataSources,
+        private val plainDataSources: Map<String,DataSource>,
+        private val shardDataSource: DataSource?,
         private val sqlStatementParser: SqlStatementParser,
-        private val sqlSegmentProcessor: SqlSegmentProcessor,
         private val schemaDefinitionLoader: SchemaDefinitionLoader
 ) {
     private val logger = LoggerFactory.getLogger(SchemaShardingManager::class.java)
@@ -40,7 +40,7 @@ class SchemaShardingManager(
     fun publishShard(table: String, number: Int) {
         logger.info("[publishShard]🐵 start publishShard table={}, number={}", table, number)
 
-        for ((plainName, plainDs) in facelessDataSources.plains()) {
+        for ((plainName, plainDs) in plainDataSources) {
             logger.info("[publishShard]🐵 ready publishShard table={}, db={}", table, plainName)
             val allTables = schemaDefinitionLoader.showTables(plainDs)
             val shardAll = HashMap<String, Int>() // 可能存在不同的编号风格，key-val不能对调
@@ -135,14 +135,14 @@ class SchemaShardingManager(
      * @param stopOnError 插入或删除失败时是否停止，默认不停止，只记录error。
      */
     fun shardingData(table: String, stopOnError: Boolean = false) {
-        if (facelessDataSources.shard == null) {
+        if (shardDataSource == null) {
             logger.error("[shardingData]🐵 can NOT shard without sharding datasource, table={}", table)
             return
         }
 
         val pks = LinkedList<String>()
         val cls = LinkedList<String>()
-        facelessDataSources.plains().values.iterator().next().connection.use { conn ->
+        plainDataSources.values.iterator().next().connection.use { conn ->
             val cate = conn.catalog
             val schm = conn.schema
             val meta = conn.metaData
@@ -191,7 +191,7 @@ class SchemaShardingManager(
                     .append((1..triple.third.size).joinToString { "?" })
                     .append(")").toString()
 
-            val shardTmpl = SimpleJdbcTemplate(facelessDataSources.shard!!, "sharding")
+            val shardTmpl = SimpleJdbcTemplate(shardDataSource, "sharding")
 
             try {
                 while (true) {
@@ -277,7 +277,7 @@ class SchemaShardingManager(
         }
 
         // main select thread
-        for ((plainName, plainDs) in facelessDataSources.plains()) {
+        for ((plainName, plainDs) in plainDataSources) {
             logger.info("[shardingData]🐵 move data from plain db={}, table={}", plainName, table)
             val plainTmpl = SimpleJdbcTemplate(plainDs, plainName)
             tmplMap.put(plainName, plainTmpl)

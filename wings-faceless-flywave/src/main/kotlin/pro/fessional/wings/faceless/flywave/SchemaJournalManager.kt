@@ -2,7 +2,6 @@ package pro.fessional.wings.faceless.flywave
 
 import org.slf4j.LoggerFactory
 import pro.fessional.mirana.data.Null
-import pro.fessional.wings.faceless.database.FacelessDataSources
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.TYPE_PLAIN
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.TYPE_SHARD
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.hasType
@@ -20,9 +19,8 @@ import javax.sql.DataSource
  * @since 2019-06-13
  */
 class SchemaJournalManager(
-        private val facelessDataSources: FacelessDataSources,
+        private val plainDataSources: Map<String, DataSource>,
         private val sqlStatementParser: SqlStatementParser,
-        private val sqlSegmentProcessor: SqlSegmentProcessor,
         private val schemaDefinitionLoader: SchemaDefinitionLoader,
         private val journalDdl: JournalDdl
 ) {
@@ -88,7 +86,7 @@ class SchemaJournalManager(
                 VALUES (?, ?, ?, ?, ?, ?)
                 """.trimIndent()
 
-        for ((plainName, plainDs) in facelessDataSources.plains()) {
+        for ((plainName, plainDs) in plainDataSources) {
             logger.info("[checkAndInitDdl]🐶 ready to check journal, table={} on db={}", table, plainName)
             val tmpl = SimpleJdbcTemplate(plainDs, plainName)
             val dbVal = HashMap<String, String>()
@@ -222,7 +220,7 @@ class SchemaJournalManager(
         }
 
         val model = HashMap<String, String>()
-        for ((plainName, plainDs) in facelessDataSources.plains()) {
+        for ((plainName, plainDs) in plainDataSources) {
             logger.info("[publishJournal]🐶 ready to publish {} table={}, enable={}, db={}", event, table, enable, plainName)
             val tmpl = SimpleJdbcTemplate(plainDs, plainName)
             val vals = AtomicReference<Triple<String, String, String>>()

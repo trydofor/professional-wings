@@ -3,6 +3,7 @@ package pro.fessional.wings.faceless.jooqgen;
 import lombok.val;
 import org.jooq.codegen.GenerationTool;
 import org.jooq.meta.jaxb.Configuration;
+import org.jooq.meta.jaxb.ForcedType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pro.fessional.mirana.data.Null;
@@ -245,6 +246,11 @@ public class WingsCodeGenerator {
 
         public Builder forceRegenerate() {
             this.conf.getGenerator().getDatabase().setSchemaVersionProvider(Null.Str);
+            return this;
+        }
+
+        public Builder forcedType(ForcedType ft) {
+            this.conf.getGenerator().getDatabase().getForcedTypes().add(ft);
             return this;
         }
     }

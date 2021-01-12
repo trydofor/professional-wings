@@ -73,7 +73,7 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.penggle</groupId>
+            <groupId>pro.fessional</groupId>
             <artifactId>kaptcha</artifactId>
         </dependency>
         <!-- utils -->

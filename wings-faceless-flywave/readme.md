@@ -2,7 +2,7 @@
 
 在时空中创造一个泡状遮罩，将所有位于其中的单位定住。
 
-![faceless_void](./faceless_void_chronosphere.png)
+![faceless_void_chronosphere](./faceless_void_chronosphere.png)
 
 ## 2.1.1.飞波(flywave)是一个实践
 
@@ -36,7 +36,7 @@ flywave的sql文件都受git管理，所以，如无必须，勿搞复杂分支�
 
 `flywave`体系下，有一下约定和概念，理解这些约定，有利于清晰业务架构。
 
-JDBC数据源(DataSource)，分为两种，他们会存在于`FacelessDataSources`中，
+JDBC数据源(DataSource)，分为两种，他们会存在于`DataSourceContext`中，
 
  * 分片数据源(Shard)，具有分表分库功能，如`ShardingSphere`。
  * 普通数据源(Plain)，没有sharding功能，只在单个DB上执行。

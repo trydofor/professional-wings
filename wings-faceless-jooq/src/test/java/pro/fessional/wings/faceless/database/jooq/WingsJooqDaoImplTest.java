@@ -15,7 +15,6 @@ import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Ta
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
-import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -24,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
 import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
 
 
 /**
@@ -38,9 +38,6 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 public class WingsJooqDaoImplTest {
 
     @Setter(onMethod = @__({@Autowired}))
-    private SchemaRevisionManager schemaRevisionManager;
-
-    @Setter(onMethod = @__({@Autowired}))
     private WingsTestHelper wingsTestHelper;
 
     @Setter(onMethod = @__({@Autowired}))
@@ -51,8 +48,8 @@ public class WingsJooqDaoImplTest {
 
     @Test
     public void test0𓃬清表重置() {
-        wingsTestHelper.cleanAndInit();
-        schemaRevisionManager.publishRevision(REVISION_TEST_V2, 0);
+        wingsTestHelper.cleanAndInit(REVISION_TEST_V2, REVISION_PATH_MASTER);
+        wingsTestHelper.sleep1s();
     }
 
     @Test
@@ -96,7 +93,7 @@ public class WingsJooqDaoImplTest {
         val rs1 = dao.batchInsert(rds, 2, true);
         assertArrayEquals(new int[]{1, 1, 1}, rs1);
 
-        testcaseNotice("批量Insert，查看日志,replace, 307-309，分2批，replace into","BUG https://github.com/apache/shardingsphere/issues/8226\n");
+        testcaseNotice("批量Insert，查看日志,replace, 307-309，分2批，replace into", "BUG https://github.com/apache/shardingsphere/issues/8226\n");
         val rs2 = dao.batchInsert(rds, 2, false);
         assertArrayEquals(new int[]{1, 1, 1}, rs2);
 

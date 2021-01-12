@@ -1,8 +1,13 @@
 # 0.专业大翅 (pro.fessional.wings)
 
-不是为吃货准备的伪装成吃货的项目，追忆大把的青春。
-其目标是能从单应用，分表分库，到微服务的平滑过渡，
-代码和数据表可安全重构，数据记录变化可跟踪和版本。
+[![Spring Boot](https://img.shields.io/badge/spring--boot-2.4.0-green)](https://spring.io/projects/spring-boot)
+[![Java 8](https://img.shields.io/badge/java-8+-red)](https://spring.io/projects/spring-boot)
+[![Kotlin 1.4](https://img.shields.io/badge/kotlin-1.4-red)](https://kotlinlang.org/docs/reference/)
+[![Jooq](https://img.shields.io/badge/jooq-3.14-yellow)](https://www.jooq.org/download/)
+[![Mysql](https://img.shields.io/badge/mysql-5.7+-blue)](https://dev.mysql.com/downloads/mysql/)
+[![H2Database](https://img.shields.io/badge/h2db-1.4-blue)](http://h2database.com/html/main.html)
+
+不是为吃货准备的伪装成吃货的项目，其核心价值是使团队快速实现业务目标，快速偿还技术债务，安全的面向程序和业务重构。
 
 ![wings ti6](./wings-ti6-champion.png)
 
@@ -14,7 +19,10 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
  * 解决了软件开发中最难的命名问题（允许使用中文命名，解决行业黑话）
  * 功能池很深，对功能有独到的理解（读3遍官方文档，debug部分源码）
  * 不懂代码的看文档，都看不懂别用（这是你的homework，及格线）
- * java-8, kotlin-1.4.x, springboot-2.4.x, jooq, mysql
+ 
+其目标是使小创业团队，平稳的实现从单应用，到分表分库，到服务化的过渡。
+在任何项目阶段和规模下，安全快速的重构业务，变更数据模型及服务，管理版本及兼容性。
+运行时的数据变化亦可追溯，复盘，恢复。对抗业务变化快，设计不足的技术债务。
 
 ## 0.1.项目技术
 

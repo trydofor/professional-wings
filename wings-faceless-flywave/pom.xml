@@ -13,13 +13,18 @@
     <packaging>jar</packaging>
 
     <name>wings-faceless-flywave</name>
-    <description>虚空假面飞波</description>
+    <description>虚空假面④时间结界(flywave)</description>
 
     <dependencies>
-        <!-- enum-i18n, wings-conf -->
+        <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>mirana</artifactId>
+        </dependency>
+        <!-- springboot auto config -->
         <dependency>
             <groupId>pro.fessional</groupId>
             <artifactId>wings-faceless</artifactId>
+            <optional>true</optional>
         </dependency>
         <!-- kotlin flywave -->
         <dependency>
@@ -50,6 +55,11 @@
             <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
         </dependency>
         <!-- test -->
+        <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>wings-faceless-shard</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

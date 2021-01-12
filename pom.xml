@@ -21,6 +21,7 @@
     <modules>
         <module>wings-silencer</module>
         <module>wings-faceless</module>
+        <module>wings-faceless-shard</module>
         <module>wings-faceless-flywave</module>
         <module>wings-faceless-jooq</module>
         <module>wings-slardar</module>
@@ -47,7 +48,9 @@
         <guava.version>30.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
         <commons-io.version>2.8.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
         <mapstruct.version>1.4.1.Final</mapstruct.version> <!-- https://mapstruct.org/news/ -->
-        <kaptcha.version>2.3.2</kaptcha.version> <!-- https://github.com/penggle/kaptcha -->
+        <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
+        <!-- others -->
+        <fastjson.version>1.2.75</fastjson.version>
     </properties>
 
     <dependencies>
@@ -117,6 +120,11 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional</groupId>
+                <artifactId>wings-faceless-shard</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional</groupId>
                 <artifactId>wings-faceless-jooq</artifactId>
                 <version>${wings.version}</version>
             </dependency>
@@ -130,7 +138,7 @@
                 <artifactId>wings-warlock</artifactId>
                 <version>${wings.version}</version>
             </dependency>
-            <!--flywave sphere-->
+            <!--sharding sphere-->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>sharding-jdbc-core</artifactId>
@@ -140,6 +148,11 @@
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
                 <version>${sharding-sphere.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-jdk8</artifactId>
+                <version>${kotlin.version}</version>
             </dependency>
             <!-- utils -->
             <dependency>
@@ -153,9 +166,14 @@
                 <version>${commons-io.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.penggle</groupId>
+                <groupId>pro.fessional</groupId>
                 <artifactId>kaptcha</artifactId>
                 <version>${kaptcha.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
             </dependency>
             <!-- dev -->
             <dependency>
