@@ -28,6 +28,7 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1;
 import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.faceless.enums.auto.StandardLanguage.ZH_CN;
 
 /**
  * @author trydofor
@@ -82,7 +83,8 @@ public class JooqShardingTest {
                 EmptyValue.DATE_TIME,
                 0L,
                 EmptyValue.VARCHAR,
-                EmptyValue.VARCHAR
+                EmptyValue.VARCHAR,
+                ZH_CN
         );
         // insert into `tst_中文也分表` (`id`, `create_dt`, `modify_dt`, `commit_id`, `login_info`, `other_info`) values (?, ?, ?, ?, ?, ?)
         dao.insert(rd);
@@ -202,9 +204,9 @@ public class JooqShardingTest {
     @Test
     public void test8𓃬批量𓃬查日志() {
         val rds = Arrays.asList(
-                new Tst中文也分表Record(119L, now, now, now, 9L, "批量合并119", "test8"),
-                new Tst中文也分表Record(308L, now, now, now, 9L, "批量合并308", "test8"),
-                new Tst中文也分表Record(309L, now, now, now, 9L, "批量合并309", "test8")
+                new Tst中文也分表Record(119L, now, now, now, 9L, "批量合并119", "test8", ZH_CN),
+                new Tst中文也分表Record(308L, now, now, now, 9L, "批量合并308", "test8", ZH_CN),
+                new Tst中文也分表Record(309L, now, now, now, 9L, "批量合并309", "test8", ZH_CN)
         );
         testcaseNotice("批量Insert，查看日志,ignore, 分2批次， 119 ignore; 308，309 insert");
         val rs1 = dao.batchInsert(rds, 2, true);
@@ -212,9 +214,9 @@ public class JooqShardingTest {
 
         testcaseNotice("先select在insert 310，或update 308，309");
         val rs3 = dao.batchMerge(new Field[]{tbl.Id}, Arrays.asList(
-                new Tst中文也分表Record(310L, now, now, now, 9L, "批量合并310", "其他310"),
-                new Tst中文也分表Record(308L, now, now, now, 9L, "批量合并308", "其他308"),
-                new Tst中文也分表Record(309L, now, now, now, 9L, "批量合并309", "其他309")
+                new Tst中文也分表Record(310L, now, now, now, 9L, "批量合并310", "其他310", ZH_CN),
+                new Tst中文也分表Record(308L, now, now, now, 9L, "批量合并308", "其他308", ZH_CN),
+                new Tst中文也分表Record(309L, now, now, now, 9L, "批量合并309", "其他309", ZH_CN)
         ), 2, tbl.LoginInfo, tbl.OtherInfo);
         assertArrayEquals(new int[]{1, 1, 1}, rs3);
     }
@@ -222,9 +224,9 @@ public class JooqShardingTest {
     @Test
     public void test9𓃬批量𓃬有bug() {
         val rds = Arrays.asList(
-                new Tst中文也分表Record(119L, now, now, now, 9L, "批量加载307", "test9"),
-                new Tst中文也分表Record(318L, now, now, now, 9L, "批量加载318", "test9"),
-                new Tst中文也分表Record(319L, now, now, now, 9L, "批量加载319", "test9")
+                new Tst中文也分表Record(119L, now, now, now, 9L, "批量加载307", "test9", ZH_CN),
+                new Tst中文也分表Record(318L, now, now, now, 9L, "批量加载318", "test9", ZH_CN),
+                new Tst中文也分表Record(319L, now, now, now, 9L, "批量加载319", "test9", ZH_CN)
         );
         testcaseNotice("批量Insert，查看日志,replace, 307-309，分2批，replace into");
         try {
@@ -240,9 +242,9 @@ public class JooqShardingTest {
         testcaseNotice("insert into `tst_中文也分表` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?");
         try {
             val rs3 = dao.batchMerge(Arrays.asList(
-                    new Tst中文也分表Record(320L, now, now, now, 9L, "批量合并320", "其他320"),
-                    new Tst中文也分表Record(318L, now, now, now, 9L, "批量合并318", "其他318"),
-                    new Tst中文也分表Record(319L, now, now, now, 9L, "批量合并319", "其他319")
+                    new Tst中文也分表Record(320L, now, now, now, 9L, "批量合并320", "其他320", ZH_CN),
+                    new Tst中文也分表Record(318L, now, now, now, 9L, "批量合并318", "其他318", ZH_CN),
+                    new Tst中文也分表Record(319L, now, now, now, 9L, "批量合并319", "其他319", ZH_CN)
             ), 2, tbl.LoginInfo, tbl.OtherInfo);
             System.out.println(Arrays.toString(rs3));
             //assertArrayEquals(intArrayOf(1, 1, 1), rs3)

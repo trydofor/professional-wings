@@ -23,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
 import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.faceless.enums.auto.StandardLanguage.ZH_CN;
+import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_BRANCH_3RD_ENU18N;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
 
 
@@ -48,7 +50,7 @@ public class WingsJooqDaoImplTest {
 
     @Test
     public void test0𓃬清表重置() {
-        wingsTestHelper.cleanAndInit(REVISION_TEST_V2, REVISION_PATH_MASTER);
+        wingsTestHelper.cleanAndInit(REVISION_TEST_V2, REVISION_PATH_MASTER, REVISION_PATH_BRANCH_3RD_ENU18N);
         wingsTestHelper.sleep1s();
     }
 
@@ -60,9 +62,9 @@ public class WingsJooqDaoImplTest {
         }
 
         val rds = Arrays.asList(
-                new Tst中文也分表Record(301L, now, now, now, 9L, "批量加载301", ""),
-                new Tst中文也分表Record(302L, now, now, now, 9L, "批量加载302", ""),
-                new Tst中文也分表Record(303L, now, now, now, 9L, "批量加载303", "")
+                new Tst中文也分表Record(301L, now, now, now, 9L, "批量加载301", "", ZH_CN),
+                new Tst中文也分表Record(302L, now, now, now, 9L, "批量加载302", "", ZH_CN),
+                new Tst中文也分表Record(303L, now, now, now, 9L, "批量加载303", "", ZH_CN)
         );
         testcaseNotice("批量Load，查看日志，ignore, 301-303，使用了from dual where exists先查再插");
         dao.batchLoad(rds, true);
@@ -73,9 +75,9 @@ public class WingsJooqDaoImplTest {
     @Test
     public void test2𓃬分批批量Insert𓃬查日志() {
         val rds = Arrays.asList(
-                new Tst中文也分表Record(304L, now, now, now, 9L, "批量加载304", ""),
-                new Tst中文也分表Record(305L, now, now, now, 9L, "批量加载305", ""),
-                new Tst中文也分表Record(306L, now, now, now, 9L, "批量加载306", "")
+                new Tst中文也分表Record(304L, now, now, now, 9L, "批量加载304", "", ZH_CN),
+                new Tst中文也分表Record(305L, now, now, now, 9L, "批量加载305", "", ZH_CN),
+                new Tst中文也分表Record(306L, now, now, now, 9L, "批量加载306", "", ZH_CN)
         );
         testcaseNotice("批量Insert，查看日志, 304-306，分2批插入");
         val rs = dao.batchInsert(rds, 2);
@@ -85,9 +87,9 @@ public class WingsJooqDaoImplTest {
     @Test
     public void test3𓃬分批批量Merge𓃬查日志() {
         val rds = Arrays.asList(
-                new Tst中文也分表Record(307L, now, now, now, 9L, "批量加载307", ""),
-                new Tst中文也分表Record(308L, now, now, now, 9L, "批量加载308", ""),
-                new Tst中文也分表Record(309L, now, now, now, 9L, "批量加载309", "")
+                new Tst中文也分表Record(307L, now, now, now, 9L, "批量加载307", "", ZH_CN),
+                new Tst中文也分表Record(308L, now, now, now, 9L, "批量加载308", "", ZH_CN),
+                new Tst中文也分表Record(309L, now, now, now, 9L, "批量加载309", "", ZH_CN)
         );
         testcaseNotice("批量Insert，查看日志,ignore, 307-309，分2批次， insert ignore");
         val rs1 = dao.batchInsert(rds, 2, true);
@@ -106,9 +108,9 @@ public class WingsJooqDaoImplTest {
     @Test
     public void test4𓃬分批批量Store𓃬查日志() {
         val rds = Arrays.asList(
-                new Tst中文也分表Record(310L, now, now, now, 9L, "批量加载310", ""),
-                new Tst中文也分表Record(311L, now, now, now, 9L, "批量加载311", ""),
-                new Tst中文也分表Record(312L, now, now, now, 9L, "批量加载312", "merge")
+                new Tst中文也分表Record(310L, now, now, now, 9L, "批量加载310", "", ZH_CN),
+                new Tst中文也分表Record(311L, now, now, now, 9L, "批量加载311", "", ZH_CN),
+                new Tst中文也分表Record(312L, now, now, now, 9L, "批量加载312", "merge", ZH_CN)
         );
         testcaseNotice("批量Insert，查看日志,ignore, 307-309，分2批插入");
         val rs = dao.batchStore(rds, 2);
@@ -118,9 +120,9 @@ public class WingsJooqDaoImplTest {
     @Test
     public void test5𓃬分批批量Update𓃬查日志() {
         val rds = Arrays.asList(
-                new Tst中文也分表Record(309L, now, now, now, 9L, "批量加载309", "update"),
-                new Tst中文也分表Record(310L, now, now, now, 9L, "批量加载310", "update"),
-                new Tst中文也分表Record(311L, now, now, now, 9L, "批量加载311", "update")
+                new Tst中文也分表Record(309L, now, now, now, 9L, "批量加载309", "update", ZH_CN),
+                new Tst中文也分表Record(310L, now, now, now, 9L, "批量加载310", "update", ZH_CN),
+                new Tst中文也分表Record(311L, now, now, now, 9L, "批量加载311", "update", ZH_CN)
         );
         testcaseNotice("批量Update，查看日志 307-309，分2批更新");
         val rs1 = dao.batchUpdate(rds, 2);
@@ -133,7 +135,7 @@ public class WingsJooqDaoImplTest {
     @Test
     public void test6𓃬单独Merge𓃬查日志() {
         testcaseNotice("insert into `tst_中文也分表` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?");
-        Tst中文也分表 pojo = new Tst中文也分表(312L, now, now, now, 9L, "批量加载312", "update-bymerge");
+        Tst中文也分表 pojo = new Tst中文也分表(312L, now, now, now, 9L, "批量加载312", "update-bymerge", ZH_CN);
         val rs = dao.mergeInto(pojo, tbl.LoginInfo, tbl.OtherInfo);
         assertEquals(2, rs);
     }
@@ -141,9 +143,9 @@ public class WingsJooqDaoImplTest {
     @Test
     public void test7𓃬分批Merge𓃬查日志() {
         val rds = Arrays.asList(
-                new Tst中文也分表Record(313L, now, now, now, 9L, "批量合并313-merge", "update-merge"),
-                new Tst中文也分表Record(310L, now, now, now, 9L, "批量合并310-merge", "update-merge"),
-                new Tst中文也分表Record(311L, now, now, now, 9L, "批量合并311-merge", "update-merge")
+                new Tst中文也分表Record(313L, now, now, now, 9L, "批量合并313-merge", "update-merge", ZH_CN),
+                new Tst中文也分表Record(310L, now, now, now, 9L, "批量合并310-merge", "update-merge", ZH_CN),
+                new Tst中文也分表Record(311L, now, now, now, 9L, "批量合并311-merge", "update-merge", ZH_CN)
         );
         testcaseNotice("313 insert, 310,311 update");
         val rs = dao.batchMerge(new Field[]{tbl.Id}, rds, 2, tbl.LoginInfo, tbl.OtherInfo);

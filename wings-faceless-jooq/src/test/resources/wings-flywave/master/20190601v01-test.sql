@@ -7,6 +7,7 @@ CREATE TABLE `tst_中文也分表` (
     `commit_id`  BIGINT(20)  NOT NULL COMMENT '提交ID',
     `login_info` TEXT COMMENT '登陆信息，用户，终端等',
     `other_info` TEXT COMMENT '其他信息，业务侧自定义',
+    `language`   INT(11) NOT NULL DEFAULT 1020111 COMMENT 'StandardLanguage',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='201/奇葩测试';

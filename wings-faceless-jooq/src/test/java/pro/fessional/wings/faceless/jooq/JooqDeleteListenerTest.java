@@ -22,6 +22,7 @@ import java.util.Arrays;
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
 import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
+import static pro.fessional.wings.faceless.enums.auto.StandardLanguage.ZH_CN;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
 
 /**
@@ -80,7 +81,7 @@ public class JooqDeleteListenerTest {
         // 无效
         LocalDateTime now = LocalDateTime.now();
         dsl.batchDelete(
-                new Tst中文也分表Record(9L, now, DATE_TIME, DATE_TIME, 9L, "", "")
+                new Tst中文也分表Record(9L, now, DATE_TIME, DATE_TIME, 9L, "", "", ZH_CN)
         ).execute();
 
         BatchBindStep batch = dsl.batch(

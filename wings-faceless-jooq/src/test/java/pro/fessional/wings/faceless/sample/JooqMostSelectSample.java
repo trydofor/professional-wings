@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.val;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.Param;
 import org.jooq.Record;
@@ -13,6 +14,7 @@ import org.jooq.Record2;
 import org.jooq.SelectConditionStep;
 import org.jooq.TableOnConditionStep;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -32,6 +34,8 @@ import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqUtil;
+import pro.fessional.wings.faceless.database.jooq.converter.WingsEnumConverters;
+import pro.fessional.wings.faceless.enums.auto.StandardLanguage;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
@@ -539,12 +543,41 @@ public class JooqMostSelectSample {
     }
 
     @Test
-    public void test8JooqSelect(){
+    public void test8JooqSelect() {
         testcaseNotice("使用helperJdbc正常",
                 "SELECT count(*) from `tst_中文也分表` where id >= ?",
                 "SELECT id,login_info,other_info from `tst_中文也分表` where id >= ? order by id limit 5");
 
         final Tst中文也分表Table t = dao.getTable();
         final List<SameName> sn = dao.ctx().selectFrom(t).fetchInto(SameName.class);
+    }
+
+
+    // 同名，自动转换
+    @Data
+    public static class EnumDto {
+        private Long id;
+        private StandardLanguage language;
+    }
+
+    @Test
+    public void test9MappperEnum() {
+        final Tst中文也分表Table t = dao.getTable();
+        DataType<StandardLanguage> lang = SQLDataType.INTEGER.asConvertedDataType(WingsEnumConverters.LanguageIdConverter);
+        final Field<StandardLanguage> langField = DSL.field(t.Language.getName(), lang);
+        final List<EnumDto> sn = dao.ctx()
+                                    .select(t.Id, langField)
+                                    .from(t)
+                                    .fetch()
+                                    .into(EnumDto.class);
+        System.out.println(sn);
+
+        // 全局注入的
+        final List<EnumDto> sn2 = dao.ctx()
+                                    .select(t.Id, t.Language)
+                                    .from(t)
+                                    .fetch()
+                                    .into(EnumDto.class);
+        System.out.println(sn2);
     }
 }
