@@ -6,13 +6,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.0</version>
+        <version>2.4.2</version>
         <relativePath/>
     </parent>
 
     <groupId>pro.fessional</groupId>
     <artifactId>wings-home</artifactId>
-    <version>2.4.0-SNAPSHOT</version>
+    <version>2.4.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>wings-home</name>
@@ -21,9 +21,10 @@
     <modules>
         <module>wings-silencer</module>
         <module>wings-faceless</module>
-        <module>wings-faceless-shard</module>
         <module>wings-faceless-flywave</module>
         <module>wings-faceless-jooq</module>
+        <module>wings-faceless-shard</module>
+        <module>wings-faceless-test</module>
         <module>wings-slardar</module>
         <module>wings-warlock</module>
     </modules>
@@ -34,15 +35,16 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.test.skip>true</maven.test.skip>
-        <!-- https://docs.spring.io/spring-boot/docs/2.4.0/reference/html/appendix-dependency-versions.html#appendix-dependency-versions -->
-        <spring-boot.version>2.4.0</spring-boot.version>
+        <!-- https://docs.spring.io/spring-boot/docs/2.4.2/reference/html/appendix-dependency-versions.html#appendix-dependency-versions -->
+        <spring-boot.version>2.4.2</spring-boot.version>
         <!-- silencer -->
-        <wings.version>2.4.0-SNAPSHOT</wings.version> <!-- https://github.com/apache/shardingsphere/releases -->
+        <wings.version>2.4.2-SNAPSHOT</wings.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <mirana.version>2.2.0-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <!-- faceless -->
         <meepo.version>1.4.0</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <kotlin.version>1.4.21</kotlin.version> <!-- spring boot dependency -->
         <jooq.version>3.14.4</jooq.version> <!-- spring boot dependency -->
+        <simpleflatmapper.version>8.2.3</simpleflatmapper.version>
         <sharding-sphere.version>4.1.1</sharding-sphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <!-- slardar oauth2 -->
         <guava.version>30.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
@@ -57,6 +59,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-properties-migrator</artifactId>
+            <optional>true</optional>
             <scope>runtime</scope>
         </dependency>
         <!-- dev tools-->
@@ -84,6 +87,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <optional>true</optional>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -120,12 +124,17 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional</groupId>
+                <artifactId>wings-faceless-jooq</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional</groupId>
                 <artifactId>wings-faceless-shard</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
                 <groupId>pro.fessional</groupId>
-                <artifactId>wings-faceless-jooq</artifactId>
+                <artifactId>wings-faceless-test</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
@@ -153,6 +162,22 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-jdk8</artifactId>
                 <version>${kotlin.version}</version>
+            </dependency>
+            <!-- mapper converter -->
+            <dependency>
+                <groupId>org.simpleflatmapper</groupId>
+                <artifactId>sfm-jdbc</artifactId>
+                <version>${simpleflatmapper.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.simpleflatmapper</groupId>
+                <artifactId>sfm-springjdbc</artifactId>
+                <version>${simpleflatmapper.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.simpleflatmapper</groupId>
+                <artifactId>sfm-jooq</artifactId>
+                <version>${simpleflatmapper.version}</version>
             </dependency>
             <!-- utils -->
             <dependency>

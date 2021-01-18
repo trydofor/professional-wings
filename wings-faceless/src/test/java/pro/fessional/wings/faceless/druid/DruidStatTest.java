@@ -12,7 +12,7 @@ import java.util.Map;
  * @author trydofor
  * @since 2021-01-08
  */
-@SpringBootTest(properties = {"debug = true", "spring.wings.faceless.enumi18n.enabled=true"})
+@SpringBootTest(properties = {"debug = true"})
 public class DruidStatTest {
     @Test
     public void druidStat() {

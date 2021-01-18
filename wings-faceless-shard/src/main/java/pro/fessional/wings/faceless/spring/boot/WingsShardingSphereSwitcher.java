@@ -155,14 +155,14 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
     }
 
     @Bean
-    public DataSourceContext.Modifier shardingSphereModifier(@NotNull DataSource inuse, Environment environment) {
+    public DataSourceContext.Customizer shardingSphereCustomizer(@NotNull DataSource inuse, Environment environment) {
         return (ctx) -> {
             DataSource shard = defaultDataSource(false) == inuse ? null : inuse;
             boolean split = hasSlave(environment);
             ctx.cleanPlain()
                .addPlain(dataSourceMap)
-               .setShard(shard)
-               .setSplit(split);
+               .setSharding(shard)
+               .setSeparate(split);
             return true;
         };
     }

@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.val;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.Param;
 import org.jooq.Record;
@@ -13,6 +14,7 @@ import org.jooq.Record2;
 import org.jooq.SelectConditionStep;
 import org.jooq.TableOnConditionStep;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -22,16 +24,19 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.mirana.page.PageQuery;
 import pro.fessional.mirana.page.PageResult;
-import pro.fessional.wings.faceless.database.WingsPageHelper;
+import pro.fessional.wings.faceless.converter.WingsEnumConverters;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
+import pro.fessional.wings.faceless.database.helper.RowMapperHelper;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqUtil;
+import pro.fessional.wings.faceless.database.jooq.converter.impl.JooqIdLanguageConverter;
+import pro.fessional.wings.faceless.database.jooq.helper.PageJooqHelper;
+import pro.fessional.wings.faceless.enums.auto.StandardLanguage;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
@@ -124,19 +129,32 @@ public class JooqMostSelectSample {
         private String str;
     }
 
-
-    // 使用 wgmp live template
+    /**
+     * Record2 to DiffName mapper, auto generate by `wgmp` live template
+     */
     @Mapper
-    public interface Record22DiffName {
+    public interface Record2ToDiffName {
 
-        Record22DiffName INSTANCE = Mappers.getMapper(Record22DiffName.class);
+        Record2ToDiffName INSTANCE = Mappers.getMapper(Record2ToDiffName.class);
 
+        /**
+         * create new DiffName by Record2
+         *
+         * @param a Record2
+         * @return DiffName
+         */
         static DiffName into(Record2<Long, String> a) {
             return INSTANCE._into(a);
         }
 
-        static void fill(Record2<Long, String> a, DiffName b) {
-            INSTANCE._fill(a, b);
+        /**
+         * build DiffName with Record2
+         *
+         * @param a Record2
+         * @param b DiffName
+         */
+        static void into(Record2<Long, String> a, DiffName b) {
+            INSTANCE._into(a, b);
         }
 
         @Mapping(target = "uid", expression = "java(a.value1())")
@@ -145,7 +163,7 @@ public class JooqMostSelectSample {
 
         @Mapping(target = "uid", expression = "java(a.value1())")
         @Mapping(target = "str", expression = "java(a.value2())")
-        void _fill(Record2<Long, String> a, @MappingTarget DiffName b);
+        void _into(Record2<Long, String> a, @MappingTarget DiffName b);
     }
 
     @Test
@@ -176,7 +194,7 @@ public class JooqMostSelectSample {
                 .from(t)
                 .where(c)
                 .fetch()
-                .map(Record22DiffName::into);
+                .map(Record2ToDiffName::into);
 
         testcaseNotice("多个字段(同名子集)到List，使用 lambda");
         List<DiffName> lambs = ctx
@@ -247,7 +265,7 @@ public class JooqMostSelectSample {
                 .fetch()
                 .into(SameName.class);
 
-        System.out.println("");
+        System.out.println();
     }
 
     @Test
@@ -298,7 +316,7 @@ public class JooqMostSelectSample {
                         "ORDER BY login_info DESC,id", WingsJooqUtil.bindNamed(rc))
                 .into(SameName.class);
 
-        System.out.println("");
+        System.out.println();
     }
 
     @Test
@@ -379,7 +397,7 @@ public class JooqMostSelectSample {
 
         // 更新字段，可以直接使用dao.update()
 
-        System.out.println("");
+        System.out.println();
     }
 
     @Setter(onMethod = @__({@Autowired}))
@@ -392,15 +410,13 @@ public class JooqMostSelectSample {
                 "SELECT count(1) FROM tst_中文也分表 WHERE id > ?",
                 Integer.class, 1);
 
-        // BeanPropertyRowMapper.new
         SameName sn1 = jdbcTemplate.queryForObject(
                 "SELECT id, login_info FROM tst_中文也分表 WHERE id = ?",
-                new BeanPropertyRowMapper<>(SameName.class), 105L);
+                RowMapperHelper.of(SameName.class), 105L);
 
-        // BeanPropertyRowMapper.newInstance
         DiffName df1 = jdbcTemplate.queryForObject(
                 "SELECT id AS uid, login_info AS str FROM tst_中文也分表 WHERE id = ?",
-                BeanPropertyRowMapper.newInstance(DiffName.class), 105L);
+                RowMapperHelper.of(DiffName.class), 105L);
 
         // lambda
         DiffName df2 = jdbcTemplate.queryForObject("SELECT id, login_info FROM tst_中文也分表 WHERE id = ?",
@@ -411,7 +427,7 @@ public class JooqMostSelectSample {
                     return a;
                 }, 105L);
 
-        System.out.println("");
+        System.out.println();
     }
 
     @Test
@@ -428,33 +444,33 @@ public class JooqMostSelectSample {
         PageQuery page = new PageQuery().setSize(5).setPage(1).setSort("d");
         Map<String, Field<?>> order = new HashMap<>();
         order.put("d", t.Id);
-        PageResult<Tst中文也分表> pr1 = WingsPageHelper.use(dao, page)
-                                                  .count()
-                                                  .from(t1)
-                                                  .where(t1.Id.ge(1L))
-                                                  .order(order)
-                                                  .fetch(t1.asterisk())
-                                                  .into(Tst中文也分表.class);
+        PageResult<Tst中文也分表> pr1 = PageJooqHelper.use(dao, page)
+                                                 .count()
+                                                 .from(t1)
+                                                 .where(t1.Id.ge(1L))
+                                                 .order(order)
+                                                 .fetch(t1.asterisk())
+                                                 .into(Tst中文也分表.class);
 
         testcaseNotice("使用helperJooq简化",
                 "缓存的total，使页面不执行count操作",
                 "select * from `tst_中文也分表` limit ?");
-        PageResult<Tst中文也分表> pr2 = WingsPageHelper.use(dao, page, 10)
-                                                  .count()
-                                                  .from(t)
-                                                  .whereTrue()
-                                                  .orderNone()
-                                                  .fetch()
-                                                  .into(Tst中文也分表.class);
+        PageResult<Tst中文也分表> pr2 = PageJooqHelper.use(dao, page, 10)
+                                                 .count()
+                                                 .from(t)
+                                                 .whereTrue()
+                                                 .orderNone()
+                                                 .fetch()
+                                                 .into(Tst中文也分表.class);
         //
         testcaseNotice("使用helperJooq包装",
                 "select count(*) as `c` from (select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ?) as `q`",
                 "select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ? order by `id` asc limit ?");
         SelectConditionStep<Record> qry1 = dsl.select(t1.asterisk()).from(t1).where(t1.Id.ge(1L));
-        PageResult<Tst中文也分表> pr3 = WingsPageHelper.use(dao, page)
-                                                  .wrap(qry1, order)
-                                                  .fetch()
-                                                  .into(Tst中文也分表.class);
+        PageResult<Tst中文也分表> pr3 = PageJooqHelper.use(dao, page)
+                                                 .wrap(qry1, order)
+                                                 .fetch()
+                                                 .into(Tst中文也分表.class);
         /////////////////////
 
         // 包装count
@@ -468,11 +484,11 @@ public class JooqMostSelectSample {
         // 单表count
         testcaseNotice("单表count",
                 "select count(*) from `tst_中文也分表` where `id` > ?");
-        int cnt1 = dsl.selectCount()
-                      .from(t)
-                      .where(t.Id.gt(1L))
-                      .fetchOne()
-                      .into(int.class);
+        Integer cnt1 = dsl.selectCount()
+                          .from(t)
+                          .where(t.Id.gt(1L))
+                          .fetchOptionalInto(int.class)
+                          .orElse(0);
         List<Tst中文也分表> lst1 = dsl.select()
                                  .from(t)
                                  .where(t.Id.gt(1L))
@@ -487,21 +503,21 @@ public class JooqMostSelectSample {
         // DSL.countDistinct()
         testcaseNotice("内联count",
                 "select count(`t1`.`id`) from `tst_中文也分表` as `t1`, `tst_中文也分表` as `t2` where (`t1`.`id` = `t2`.`id` and `t1`.`id` > ?)");
-        int cnt2 = dsl.select(DSL.count(t1.Id))
-                      .from(t1, t2)
-                      .where(t1.Id.eq(t2.Id).and(t1.Id.gt(1L)))
-                      .fetchOne()
-                      .into(int.class);
+        Integer cnt2 = dsl.select(DSL.count(t1.Id))
+                          .from(t1, t2)
+                          .where(t1.Id.eq(t2.Id).and(t1.Id.gt(1L)))
+                          .fetchOptionalInto(int.class)
+                          .orElse(0);
         System.out.println(cnt2);
 
         testcaseNotice("左联查询",
                 "select count(`t1`.`id`) from `tst_中文也分表` as `t1` left outer join `tst_中文也分表` as `t2` on `t1`.`id` = `t2`.`id` where `t1`.`id` > ?");
         TableOnConditionStep<Record> jt = t1.leftJoin(t2).on(t1.Id.eq(t2.Id));
-        int cnt3 = dsl.select(DSL.count(t1.Id))
-                      .from(jt)
-                      .where(t1.Id.gt(1L))
-                      .fetchOne()
-                      .into(int.class);
+        Integer cnt3 = dsl.select(DSL.count(t1.Id))
+                          .from(jt)
+                          .where(t1.Id.gt(1L))
+                          .fetchOptionalInto(Integer.class)
+                          .orElse(0);
         System.out.println(cnt3);
     }
 
@@ -515,11 +531,11 @@ public class JooqMostSelectSample {
         PageQuery page = new PageQuery().setSize(5).setPage(1).setSort("d");
         Map<String, String> order = new HashMap<>();
         order.put("d", "t1.Id");
-        PageResult<Tst中文也分表> pr1 = WingsPageHelper.use(jdbcTemplate, page)
-                                                  .wrap("select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ?")
-                                                  .order(order)
-                                                  .bind(1L)
-                                                  .fetchInto(Tst中文也分表.class);
+        PageResult<Tst中文也分表> pr1 = PageJooqHelper.use(jdbcTemplate, page)
+                                                 .wrap("select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ?")
+                                                 .order(order)
+                                                 .bind(1L)
+                                                 .fetchInto(Tst中文也分表.class, WingsEnumConverters.Id2Language);
 
         System.out.println(pr1.getData().size());
 
@@ -527,24 +543,53 @@ public class JooqMostSelectSample {
                 "SELECT count(*) from `tst_中文也分表` where id >= ?",
                 "SELECT id,login_info,other_info from `tst_中文也分表` where id >= ? order by id limit 5");
 
-        PageResult<Tst中文也分表> pr2 = WingsPageHelper.use(jdbcTemplate, page)
-                                                  .count("count(*)")
-                                                  .fromWhere("from `tst_中文也分表` where id >= ?")
-                                                  .order("id")
-                                                  .bind(1L)
-                                                  .fetch("id,login_info,other_info")
-                                                  .into(Tst中文也分表.class);
+        PageResult<Tst中文也分表> pr2 = PageJooqHelper.use(jdbcTemplate, page)
+                                                 .count("count(*)")
+                                                 .fromWhere("from `tst_中文也分表` where id >= ?")
+                                                 .order("id")
+                                                 .bind(1L)
+                                                 .fetch("id,login_info,other_info")
+                                                 .into(Tst中文也分表.class, WingsEnumConverters.Id2Language);
 
         System.out.println(pr2.getData().size());
     }
 
     @Test
-    public void test8JooqSelect(){
+    public void test8JooqSelect() {
         testcaseNotice("使用helperJdbc正常",
                 "SELECT count(*) from `tst_中文也分表` where id >= ?",
                 "SELECT id,login_info,other_info from `tst_中文也分表` where id >= ? order by id limit 5");
 
         final Tst中文也分表Table t = dao.getTable();
         final List<SameName> sn = dao.ctx().selectFrom(t).fetchInto(SameName.class);
+    }
+
+
+    // 同名，自动转换
+    @Data
+    public static class EnumDto {
+        private Long id;
+        private StandardLanguage language;
+    }
+
+    @Test
+    public void test9MappperEnum() {
+        final Tst中文也分表Table t = dao.getTable();
+        DataType<StandardLanguage> lang = SQLDataType.INTEGER.asConvertedDataType(JooqIdLanguageConverter.Instance);
+        final Field<StandardLanguage> langField = DSL.field(t.Language.getName(), lang);
+        final List<EnumDto> sn = dao.ctx()
+                                    .select(t.Id, langField)
+                                    .from(t)
+                                    .fetch()
+                                    .into(EnumDto.class);
+        System.out.println(sn);
+
+        // 全局注入的
+        final List<EnumDto> sn2 = dao.ctx()
+                                     .select(t.Id, t.Language)
+                                     .from(t)
+                                     .fetch()
+                                     .into(EnumDto.class);
+        System.out.println(sn2);
     }
 }

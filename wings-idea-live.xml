@@ -9,13 +9,21 @@
       <option name="JAVA_DECLARATION" value="true" />
     </context>
   </template>
-  <template name="wgmp" value="@org.mapstruct.Mapper&#10;public interface $C$ {&#10;&#10;    $C$ INSTANCE = org.mapstruct.factory.Mappers.getMapper($C$.class);&#10;&#10;    static $B$ into($A$ a) {&#10;        return INSTANCE._into(a);&#10;    }&#10;&#10;    static void fill($A$ a, $B$ b) {&#10;        INSTANCE._fill(a, b);&#10;    }&#10;&#10;    $M$&#10;    $B$ _into($A$ a);&#10;&#10;    $M$&#10;    void _fill($A$ a, @org.mapstruct.MappingTarget $B$ b);&#10;}" description="mapstruct Create &amp; Update" toReformat="true" toShortenFQNames="true">
+  <template name="wgmp" value="/**&#10; * $Aa$ to $Bb$ mapper, auto generate by `wgmp` live template&#10; */&#10;@org.mapstruct.Mapper&#10;public interface $A2B$ {&#10;&#10;    $A2B$ INSTANCE = org.mapstruct.factory.Mappers.getMapper($A2B$.class);&#10;&#10;    /**&#10;     * create new $Bb$ by $Aa$&#10;     *&#10;     * @param a $Aa$&#10;     * @return $Bb$&#10;     */&#10;    static $B$ into($A$ a) {&#10;        return INSTANCE._into(a);&#10;    }&#10;&#10;    /**&#10;     * build $Bb$ with $Aa$&#10;     *&#10;     * @param a $Aa$&#10;     * @param b $Bb$&#10;     */&#10;    static void into($A$ a, $B$ b) {&#10;        INSTANCE._into(a, b);&#10;    }&#10;&#10;    $M$&#10;    $B$ _into($A$ a);&#10;&#10;    $M$&#10;    void _into($A$ a, @org.mapstruct.MappingTarget $B$ b);&#10;}" description="mapstruct Create &amp; Update" toReformat="true" toShortenFQNames="true">
     <variable name="A" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="B" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="C" expression="concat(regularExpression(A,&quot;&lt;.*&gt;|.*\\.&quot;,&quot;&quot;),&quot;2&quot;,regularExpression(B,&quot;&lt;.*&gt;|.*\\.&quot;,&quot;&quot;))" defaultValue="" alwaysStopAt="true" />
     <variable name="M" expression="enum(&quot;&quot;,&quot;// https://mapstruct.org/documentation/stable/reference/html/&quot;,&quot;@org.mapstruct.Mapping(target = \&quot;setter\&quot;, expression = \&quot;java(a.method())\&quot;)&quot;,&quot;@org.mapstruct.Mapping(target = \&quot;setter\&quot;, source = \&quot;setter\&quot;)&quot;)" defaultValue="" alwaysStopAt="true" />
+    <variable name="Bb" expression="regularExpression(B,&quot;&lt;.*&gt;|.*\\.&quot;,&quot;&quot;)" defaultValue="" alwaysStopAt="false" />
+    <variable name="Aa" expression="regularExpression(A,&quot;&lt;.*&gt;|.*\\.&quot;,&quot;&quot;)" defaultValue="" alwaysStopAt="false" />
+    <variable name="A2B" expression="concat(Aa,&quot;To&quot;,Bb)" defaultValue="" alwaysStopAt="false" />
     <context>
       <option name="JAVA_DECLARATION" value="true" />
+    </context>
+  </template>
+  <template name="wgdc" value="$VO$" description="copy fileds and generate dto class" toReformat="true" toShortenFQNames="false">
+    <variable name="VO" expression="groovyScript(&quot;_1&quot;,&quot;a&quot;)" defaultValue="" alwaysStopAt="false" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
     </context>
   </template>
 </templateSet>

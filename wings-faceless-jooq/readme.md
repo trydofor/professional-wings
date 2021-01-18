@@ -251,3 +251,37 @@ Map<Integer, List<String>>       group4 = create.selectFrom(BOOK).fetchGroups(BO
 * 而在jooq-codegen-faceless.xml中，TINYINT(1)为Boolean，其他为Integer
 
 若要调整，可以WingsCodeGenerator.forcedType()
+
+### 07.枚举类的映射
+
+在wings实践中，以强类型为基础，因此数据库中的类别类型，通常在service层使用enum类。
+在jooq中，可以通过forcedType，使用converter自动映射类型，在MapStruct中也可。
+
+``` java
+// 每个表，每个字段映射，变更数据类型
+.forcedType(new ForcedType()
+        .withUserType("pro.fessional.wings.faceless.enums.auto.StandardLanguage")
+        .withConverter("pro.fessional.wings.faceless.database.jooq.StandardLanguageConverter")
+        .withExpression("tst_中文也分表.language")
+)
+```
+但对于某些情况，并不能在code generate时做类型转换，全局或局部的ConverterProvider。
+可以使用wings的配置约定，声明ConverterProvider或Converter的bean，即可完成全局注入。
+
+```
+// 单select，局部类型转换
+DataType<StandardLanguage> lang = SQLDataType.INTEGER.asConvertedDataType(new StandardLanguageConverter());
+dao.ctx()
+   .select(t.Id, DSL.field(t.Language.getName(), lang))
+```
+
+``` java
+@Mapper
+public interface Record22EnumDto {
+    @Named("languageConverter")
+    static StandardLanguage int2Enum(Integer id) {
+        return ConstantEnumUtil.idOrNull(id, StandardLanguage.values());
+    }
+}
+```
+https://blog.jooq.org/tag/converter/

@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 /**
  * 自动加载配置路径中的 /wings-conf/*.{yml,yaml,properties}配置。
  * <pre>
- * [参考资料 docs.spring.io](https://docs.spring.io/spring-boot/docs/2.4.0/reference/htmlsingle/)
+ * [参考资料 docs.spring.io](https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/)
  *  - #boot-features-application-events-and-listeners
  *  - #boot-features-external-config
  *  - #howto-change-the-location-of-external-properties
@@ -127,7 +127,6 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
         if (baseNames.isEmpty()) return;
 
-        StringBuilder sb = new StringBuilder();
         String key = "spring.messages.basename";
         String mess = environment.getProperty(key);
         if (mess == null || mess.isEmpty()) {
@@ -138,12 +137,13 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             logger.info("🦁 spring.messages.basename=" + mess);
         }
 
+        StringBuilder sb = new StringBuilder();
         for (String bn : baseNames) {
-            sb.append(bn);
             sb.append(",");
+            sb.append(bn);
             logger.info("🦁 add messages.basename=" + bn + " to message source");
         }
-        System.setProperty(key, sb.substring(0, sb.length() - 1));
+        System.setProperty(key, sb.substring(1, sb.length()));
     }
 
     private String parseBaseMessage(String path) {

@@ -77,7 +77,7 @@ FLUSH PRIVILEGES;"
  <parent>
     <groupId>pro.fessional</groupId>
     <artifactId>wings-home</artifactId>
-    <version>2.4.0-SNAPSHOT</version>
+    <version>2.4.2-SNAPSHOT</version>
 </parent>
  ```
  
@@ -90,7 +90,7 @@ FLUSH PRIVILEGES;"
         <dependency>
             <groupId>pro.fessional</groupId>
             <artifactId>wings-home</artifactId>
-            <version>2.4.0-SNAPSHOT</version>
+            <version>2.4.2-SNAPSHOT</version>
             <scope>import</scope>
             <type>pom</type>
         </dependency>
@@ -103,15 +103,15 @@ FLUSH PRIVILEGES;"
 
 ``` xml
 <properties>
-    <wings.version>2.4.0-SNAPSHOT</wings.version>
-    <mirana.version>1.0.0-SNAPSHOT</mirana.version>
+    <wings.version>2.4.2-SNAPSHOT</wings.version>
+    <mirana.version>2.2.0-SNAPSHOT</mirana.version>
 </properties>
 
 <dependencies>
     <dependency>
         <groupId>pro.fessional</groupId>
         <artifactId>wings-faceless</artifactId>
-        <version>2.4.0-SNAPSHOT</version>
+        <version>2.4.2-SNAPSHOT</version>
     </dependency>
 </dependencies>
 ```

@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.sample;
 
+import org.jooq.meta.jaxb.ForcedType;
 import pro.fessional.wings.faceless.jooqgen.WingsCodeGenerator;
 
 /**
@@ -9,7 +10,7 @@ import pro.fessional.wings.faceless.jooqgen.WingsCodeGenerator;
 public class JooqCodeAutoGenSample {
 
     // 需要 版本 20190601_01，手动执行亦可
-    // WingsInitDatabaseSample#init0601
+    // WingsJooqDaoImplTest#test0𓃬清表重置
     // 注意在目标工程中，应该注释掉.springRepository(false)，使Dao自动加载
     public static void main(String[] args) {
         String database = "wings";
@@ -26,7 +27,14 @@ public class JooqCodeAutoGenSample {
                           .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
                           .targetPackage("pro.fessional.wings.faceless.database.autogen")
                           .targetDirectory("wings-faceless-jooq/src/test/java/")
+//  不用spring自动注入
 //                          .springRepository(false)
+//  使用enum类型
+                          .forcedType(new ForcedType()
+                                  .withUserType("pro.fessional.wings.faceless.enums.auto.StandardLanguage")
+                                  .withConverter("pro.fessional.wings.faceless.database.jooq.converter.impl.JooqIdLanguageConverter")
+                                  .withExpression("tst_中文也分表.language")
+                          )
                           .buildAndGenerate();
     }
 }
