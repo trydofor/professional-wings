@@ -11,10 +11,10 @@ import pro.fessional.mirana.data.Null;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static pro.fessional.wings.faceless.database.helper.JournalHelp.COL_COMMIT_ID;
-import static pro.fessional.wings.faceless.database.helper.JournalHelp.COL_CREATE_DT;
-import static pro.fessional.wings.faceless.database.helper.JournalHelp.COL_DELETE_DT;
-import static pro.fessional.wings.faceless.database.helper.JournalHelp.COL_MODIFY_DT;
+import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_COMMIT_ID;
+import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_CREATE_DT;
+import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_DELETE_DT;
+import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_MODIFY_DT;
 
 /**
  * @author trydofor

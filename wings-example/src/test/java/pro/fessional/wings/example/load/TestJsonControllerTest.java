@@ -32,7 +32,7 @@ public class TestJsonControllerTest {
 
     @Test
     public void jsonIt() {
-        ResponseEntity<String> entity = tmpl.getForEntity("/test.json", String.class);
+        ResponseEntity<String> entity = tmpl.getForEntity("/test/test.json", String.class);
         boolean ok = entity.getStatusCode().is2xxSuccessful();
         assertTrue(ok);
     }
@@ -40,13 +40,13 @@ public class TestJsonControllerTest {
     @Test
     @Disabled("手动执行，负载测试")
     public void stressTestJson() {
-        stress("/test.json", 2000, 20);
+        stress("/test/test.json", 2000, 20);
     }
 
     @Test
     @Disabled("手动执行，负载测试")
     public void stressSleep() {
-        stress("/sleep.html?ms=6000", 2000, 50);
+        stress("/test/sleep.html?ms=6000", 2000, 50);
     }
 
     private void stress(final String uri, final int threads, final int loops) {

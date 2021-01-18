@@ -10,7 +10,7 @@ import org.jooq.meta.TableDefinition;
 import org.jooq.meta.TypedElementDefinition;
 import org.jooq.meta.UDTDefinition;
 import pro.fessional.wings.faceless.convention.EmptyValue;
-import pro.fessional.wings.faceless.database.helper.JournalHelp;
+import pro.fessional.wings.faceless.database.helper.JournalJdbcHelp;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -58,7 +58,7 @@ public class WingsJavaGenerator extends JavaGenerator {
 
         val logicCol = table.getColumns().stream().filter(it -> {
             val col = it.getOutputName();
-            return col.equalsIgnoreCase(JournalHelp.COL_DELETE_DT) || col.equalsIgnoreCase(JournalHelp.COL_IS_DELETED);
+            return col.equalsIgnoreCase(JournalJdbcHelp.COL_DELETE_DT) || col.equalsIgnoreCase(JournalJdbcHelp.COL_IS_DELETED);
         }).findFirst();
 
         if (logicCol.isPresent()) {
@@ -69,7 +69,7 @@ public class WingsJavaGenerator extends JavaGenerator {
 
             val col = column.getOutputName();
             out.javadoc("The column <code>%s</code> condition", col);
-            if (col.equalsIgnoreCase(JournalHelp.COL_DELETE_DT)) {
+            if (col.equalsIgnoreCase(JournalJdbcHelp.COL_DELETE_DT)) {
                 val colType = column.getDefinedType().getType().toLowerCase();
                 if (colType.startsWith("datetime")) {
                     out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.DATE_TIME);", columnId);

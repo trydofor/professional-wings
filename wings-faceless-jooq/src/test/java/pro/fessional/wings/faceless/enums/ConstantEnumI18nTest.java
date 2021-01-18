@@ -17,14 +17,17 @@ import pro.fessional.wings.faceless.database.autogen.tables.daos.SysConstantEnum
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.SysConstantEnum;
 import pro.fessional.wings.faceless.enums.auto.StandardLanguage;
 import pro.fessional.wings.faceless.enums.auto.StandardTimezone;
+import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.service.wini18n.StandardI18nService;
 import pro.fessional.wings.faceless.util.ConstantEnumGenerator;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.util.List;
+import java.util.SortedMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_3RD_ENU18N;
+import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_BRANCH_3RD_ENU18N;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
 
 /**
@@ -48,6 +51,9 @@ public class ConstantEnumI18nTest {
     WingsTestHelper wingsTestHelper;
 
     @Setter(onMethod = @__({@Autowired}))
+    SchemaRevisionManager revisionManager;
+
+    @Setter(onMethod = @__({@Autowired}))
     ApplicationContext applicationContext;
 
     @Setter(onMethod = @__({@Autowired}))
@@ -55,9 +61,10 @@ public class ConstantEnumI18nTest {
 
     @Test
     public void test1Init() {
-        String branch = FlywaveRevisionScanner.branchPath("feature/01-enum-i18n");
-        // BUG https://github.com/apache/shardingsphere/issues/8226
-        wingsTestHelper.cleanAndInit(REVISION_3RD_ENU18N, REVISION_PATH_MASTER, branch);
+        wingsTestHelper.cleanTable();
+        final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER, REVISION_PATH_BRANCH_3RD_ENU18N);
+        revisionManager.checkAndInitSql(sqls, 0, true);
+        revisionManager.publishRevision(REVISION_3RD_ENU18N, -1);
     }
 
     @Test

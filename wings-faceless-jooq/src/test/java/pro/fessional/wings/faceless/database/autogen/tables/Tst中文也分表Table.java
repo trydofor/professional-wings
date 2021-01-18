@@ -21,6 +21,7 @@ import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.autogen.DefaultSchema;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
 import pro.fessional.wings.faceless.database.jooq.WingsAliasTable;
+import pro.fessional.wings.faceless.database.jooq.converter.impl.JooqIdLanguageConverter;
 import pro.fessional.wings.faceless.enums.auto.StandardLanguage;
 import pro.fessional.wings.faceless.service.lightid.LightIdAware;
 
@@ -98,7 +99,7 @@ public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record>
     /**
      * The column <code>tst_中文也分表.language</code>.
      */
-    public final TableField<Tst中文也分表Record, StandardLanguage> Language = createField(DSL.name("language"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("1020111", SQLDataType.INTEGER)), this, "", pro.fessional.wings.faceless.database.jooq.converter.ConsEnumConverter.of(StandardLanguage.class));
+    public final TableField<Tst中文也分表Record, StandardLanguage> Language = createField(DSL.name("language"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("1020111", SQLDataType.INTEGER)), this, "", new JooqIdLanguageConverter());
 
     private Tst中文也分表Table(Name alias, Table<Tst中文也分表Record> aliased) {
         this(alias, aliased, null);

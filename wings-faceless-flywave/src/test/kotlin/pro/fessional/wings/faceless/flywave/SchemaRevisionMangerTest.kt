@@ -31,7 +31,8 @@ open class SchemaRevisionMangerTest {
 
     @Test
     fun `test0🦁清表重置`() {
-        wingsTestHelper.cleanAndInit()
+        wingsTestHelper.cleanTable()
+        schemaRevisionManager.checkAndInitSql(FlywaveRevisionScanner.scanMaster(), 0, true)
     }
 
     @Test

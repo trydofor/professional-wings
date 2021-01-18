@@ -2,15 +2,14 @@ package pro.fessional.wings.faceless.service.lightid.impl
 
 
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.test.context.ActiveProfiles
 import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.service.lightid.LightIdService
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_2ND_IDLOGS
 import java.util.concurrent.atomic.AtomicLong
 
@@ -19,8 +18,6 @@ import java.util.concurrent.atomic.AtomicLong
  * @since 2019-06-04
  */
 @SpringBootTest
-@ActiveProfiles("init")
-@Tag("init")
 open class LightIdServiceImplTest {
 
     @Autowired
@@ -37,7 +34,8 @@ open class LightIdServiceImplTest {
 
     @Test
     fun `test0🦁清表重置`() {
-        wingsTestHelper.cleanAndInit()
+        wingsTestHelper.cleanTable()
+        schemaRevisionManager.checkAndInitSql(FlywaveRevisionScanner.scanMaster(), 0, true)
     }
 
     @Test

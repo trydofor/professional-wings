@@ -57,7 +57,7 @@ public class WingsFlywaveConfiguration {
             SchemaDefinitionLoader schemaDefinitionLoader,
             WingsFlywaveVerProperties properties) {
         DefaultRevisionManager revisionManager = new DefaultRevisionManager(
-                sources.getPlains(), sources.getShard(),
+                sources.getPlains(), sources.getSharding(),
                 statementParser, segmentProcessor, schemaDefinitionLoader);
         revisionManager.confirmAsk(AskType.Mark, properties.isAskMark());
         revisionManager.confirmAsk(AskType.Undo, properties.isAskUndo());
@@ -75,7 +75,7 @@ public class WingsFlywaveConfiguration {
             SqlStatementParser statementParser,
             SchemaDefinitionLoader schemaDefinitionLoader) {
         logger.info("config schemaShardingManager");
-        return new SchemaShardingManager(sources.getPlains(), sources.getShard(),
+        return new SchemaShardingManager(sources.getPlains(), sources.getSharding(),
                 statementParser, schemaDefinitionLoader);
     }
 

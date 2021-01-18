@@ -40,5 +40,26 @@
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
         </dependency>
+        <!-- test -->
+        <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>wings-faceless-flywave</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>wings-faceless-jooq</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-codegen</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>wings-faceless-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

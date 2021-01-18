@@ -127,7 +127,6 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
         if (baseNames.isEmpty()) return;
 
-        StringBuilder sb = new StringBuilder();
         String key = "spring.messages.basename";
         String mess = environment.getProperty(key);
         if (mess == null || mess.isEmpty()) {
@@ -138,12 +137,13 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             logger.info("🦁 spring.messages.basename=" + mess);
         }
 
+        StringBuilder sb = new StringBuilder();
         for (String bn : baseNames) {
-            sb.append(bn);
             sb.append(",");
+            sb.append(bn);
             logger.info("🦁 add messages.basename=" + bn + " to message source");
         }
-        System.setProperty(key, sb.substring(0, sb.length() - 1));
+        System.setProperty(key, sb.substring(1, sb.length()));
     }
 
     private String parseBaseMessage(String path) {

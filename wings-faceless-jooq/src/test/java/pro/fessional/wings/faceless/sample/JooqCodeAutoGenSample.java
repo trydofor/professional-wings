@@ -32,7 +32,7 @@ public class JooqCodeAutoGenSample {
 //  使用enum类型
                           .forcedType(new ForcedType()
                                   .withUserType("pro.fessional.wings.faceless.enums.auto.StandardLanguage")
-                                  .withConverter("pro.fessional.wings.faceless.database.jooq.converter.ConsEnumConverter.of(StandardLanguage.class)")
+                                  .withConverter("pro.fessional.wings.faceless.database.jooq.converter.impl.JooqIdLanguageConverter")
                                   .withExpression("tst_中文也分表.language")
                           )
                           .buildAndGenerate();

@@ -4,11 +4,9 @@ import kotlin.jvm.functions.Function1;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager;
 
 import javax.sql.DataSource;
@@ -22,9 +20,7 @@ import java.util.List;
 
 @SpringBootTest
 @Disabled("手动执行，版本更新时处理")
-@ActiveProfiles("init")
 @Slf4j
-@Tag("init")
 public class WingsSchemaDumper {
 
     @Setter(onMethod = @__({@Autowired}))

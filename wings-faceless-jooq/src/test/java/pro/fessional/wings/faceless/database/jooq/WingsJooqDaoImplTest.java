@@ -15,9 +15,12 @@ import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Ta
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
+import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.SortedMap;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,6 +46,9 @@ public class WingsJooqDaoImplTest {
     private WingsTestHelper wingsTestHelper;
 
     @Setter(onMethod = @__({@Autowired}))
+    private SchemaRevisionManager revisionManager;
+
+    @Setter(onMethod = @__({@Autowired}))
     private Tst中文也分表Dao dao;
 
     private final Tst中文也分表Table tbl = Tst中文也分表Table.Tst中文也分表;
@@ -50,8 +56,10 @@ public class WingsJooqDaoImplTest {
 
     @Test
     public void test0𓃬清表重置() {
-        wingsTestHelper.cleanAndInit(REVISION_TEST_V2, REVISION_PATH_MASTER, REVISION_PATH_BRANCH_3RD_ENU18N);
-        wingsTestHelper.sleep1s();
+        wingsTestHelper.cleanTable();
+        final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER, REVISION_PATH_BRANCH_3RD_ENU18N);
+        revisionManager.checkAndInitSql(sqls, 0, true);
+        revisionManager.publishRevision(REVISION_TEST_V2, -1);
     }
 
     @Test

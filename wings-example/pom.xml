@@ -50,6 +50,10 @@
         </dependency>
         <dependency>
             <groupId>pro.fessional</groupId>
+            <artifactId>wings-faceless-shard</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional</groupId>
             <artifactId>wings-slardar</artifactId>
         </dependency>
         <dependency>

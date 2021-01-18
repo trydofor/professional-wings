@@ -388,21 +388,30 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。
 
 ### 007.类型间Mapping比较
 
-根据以下文章，推荐使用 MapStruct，主要是其静态性。
-对于比较复杂的mapping，使用expression，qualifiedByName，spring注入。
-自动生成的代码位于`target/generated-sources/annotations/`
+根据以下文章，推荐使用静态性的`MapStruct`和简单的`SimpleFlatMapper`。
 
  * [Quick Guide to MapStruct](https://www.baeldung.com/mapstruct)
  * [Mapping Collections with MapStruct](https://www.baeldung.com/java-mapstruct-mapping-collections)
  * [MapStruct 性能比较](https://www.baeldung.com/java-performance-mapping-frameworks)
  * [MapStruct ide&mvn支持](https://mapstruct.org/documentation/installation/)
+ * [Jdbc-Performance](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Jdbc-Performance-Local-Mysql)
 
 在编码过程中，我们经常要处理各种O的转换，赋值，比如DTO，PO，VO，POJO。
 同时我们又希望强类型，以便可以通过IDE提示提供效率，并把错误暴露在编译时。
 这样就一定要避免弱类型(map,json)和反射（bean copy）,势必需要代码生成工具。
 
+对于比较复杂的mapping，使用expression，qualifiedByName，spring注入。
+自动生成的代码位于`target/generated-sources/annotations/`
+
 在wings中，推荐使用列编辑和正则（分享视频有讲），对于使用MapStruct的时候，
-可以使用wings提供的`wgmp`(live template)做`A2B`的into和fill生成器。
+可以使用wings提供的`wgmp`(live template)做`A2B`的into生成器。
+
+ * 在业务层代码，推荐MapStruct或列编辑和正则（分享视频有讲）手工制品。
+ * 在jdbc中推荐`SimpleFlatMapper`或手工RowMapper，避免使用`BeanPropertyRowMapper`。
+ * 在jooq中推荐jooq自动生成的record，或SimpleFlatMapper。
+
+纯wings中的converter以`-or`结尾(convertor)，以和其他框架的converter区分。  
+包名以converter为准，类名以目的区分，通常纯wings的使用`-or`，其他用`-er`。
 
 ### 008.文件系统或对象存储
 

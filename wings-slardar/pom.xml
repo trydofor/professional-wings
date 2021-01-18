@@ -100,5 +100,11 @@
             <artifactId>spring-security-messaging</artifactId>
         </dependency>
         -->
+        <!-- test -->
+        <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>wings-faceless-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

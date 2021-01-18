@@ -1,6 +1,5 @@
 package pro.fessional.wings.faceless.spring.bean;
 
-import org.jooq.Converter;
 import org.jooq.ConverterProvider;
 import org.jooq.ExecuteListenerProvider;
 import org.jooq.SQLDialect;
@@ -19,14 +18,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import pro.fessional.mirana.cast.StringCastUtil;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqEnv;
-import pro.fessional.wings.faceless.database.jooq.converter.ConsEnumConverter;
-import pro.fessional.wings.faceless.database.jooq.converter.DelegatingConverterProvider;
-import pro.fessional.wings.faceless.database.jooq.converter.WingsEnumConverters;
+import pro.fessional.wings.faceless.database.jooq.converter.JooqConverterDelegate;
 import pro.fessional.wings.faceless.database.jooq.listener.AutoQualifyFieldListener;
 import pro.fessional.wings.faceless.database.jooq.listener.JournalDeleteListener;
-import pro.fessional.wings.faceless.enums.auto.StandardLanguage;
-import pro.fessional.wings.faceless.enums.auto.StandardTimezone;
 
 /**
  * @author trydofor
@@ -75,44 +71,35 @@ public class WingsJooqConfiguration {
                 ;
     }
 
-    @Bean
-    @ConditionalOnProperty(name = "spring.wings.faceless.jooq.converter.enabled", havingValue = "true")
-    public ConsEnumConverter<StandardLanguage> languageIdConverter() {
-        logger.info("Wings config StandardLanguageConverter");
-        return WingsEnumConverters.LanguageIdConverter;
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "spring.wings.faceless.jooq.converter.enabled", havingValue = "true")
-    public ConsEnumConverter<StandardTimezone> timezoneIdConverter() {
-        logger.info("Wings config StandardTimezoneConverter");
-        return WingsEnumConverters.TimezoneIdConverter;
-    }
-
     @Autowired
-    public void jooqConfigurationPostProcessor(
+    public void jooqObjectProviderProcessor(
             ObjectProvider<org.jooq.Configuration> config,
             ObjectProvider<ConverterProvider> providers,
-            ObjectProvider<Converter<?,?>> converters
-
+            ObjectProvider<org.jooq.Converter<?, ?>> converters,
+            @Value("spring.wings.faceless.jooq.converter.enabled") String enabled
     ) {
+        if (StringCastUtil.asFalse(enabled)) {
+            logger.info("Wings config skip jooqObjectProviderProcessor by enabled = false");
+            return;
+        }
+
         final org.jooq.Configuration bean = config.getIfAvailable();
         if (bean == null) {
-            logger.info("Wings config skip jooqConfiguration for config is null");
+            logger.info("Wings config skip jooqObjectProviderProcessor for null");
             return;
         }
 
         logger.info("Wings config jooqConfiguration ConverterProvider");
-        DelegatingConverterProvider dcp = new DelegatingConverterProvider();
+        JooqConverterDelegate dcp = new JooqConverterDelegate();
         dcp.add(bean.converterProvider());
 
         providers.orderedStream().forEach(it -> {
             dcp.add(it);
-            logger.info("   add converterProvider, class={}", it.getClass());
+            logger.info("   add jooqConverterProvider, class={}", it.getClass());
         });
         converters.orderedStream().forEach(it -> {
             dcp.add(it);
-            logger.info("   add Converter, class={}", it.getClass());
+            logger.info("   add jooqConverter, class={}", it.getClass());
         });
         bean.set(dcp);
     }

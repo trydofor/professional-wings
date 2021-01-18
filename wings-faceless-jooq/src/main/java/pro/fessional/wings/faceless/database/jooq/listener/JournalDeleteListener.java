@@ -11,7 +11,7 @@ import org.jooq.conf.ParamType;
 import org.jooq.impl.DefaultExecuteListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pro.fessional.wings.faceless.database.jooq.JournalJooqHelp;
+import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelp;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

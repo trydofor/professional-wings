@@ -1,18 +1,16 @@
 package pro.fessional.wings.faceless.flywave
 
-
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.MethodOrderer.MethodName
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedRegexp
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedTable
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 import java.io.File
 import javax.sql.DataSource
 
@@ -22,14 +20,15 @@ import javax.sql.DataSource
  */
 
 @SpringBootTest
-@ActiveProfiles("init")
 @TestMethodOrder(MethodName::class)
 @Disabled("手动执行，避免污染Git提交文件")
-@Tag("init")
 class SchemaFulldumpManagerTest {
 
     @Autowired
     lateinit var dataSource: DataSource
+
+    @Autowired
+    lateinit var schemaRevisionManager: SchemaRevisionManager
 
     @Autowired
     lateinit var schemaFulldumpManager: SchemaFulldumpManager
@@ -41,7 +40,8 @@ class SchemaFulldumpManagerTest {
 
     @Test
     fun `test0🦁清表重置`() {
-        wingsTestHelper.cleanAndInit()
+        wingsTestHelper.cleanTable()
+        schemaRevisionManager.checkAndInitSql(FlywaveRevisionScanner.scanMaster(), 0, true)
     }
 
     @Test

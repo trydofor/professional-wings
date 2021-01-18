@@ -1,11 +1,9 @@
 package pro.fessional.wings.faceless.sample
 
 import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
 import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager
@@ -19,10 +17,8 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_2ND_IDL
  * @author trydofor
  * @since 2019-06-22
  */
-@ActiveProfiles("shard")
 @SpringBootTest(properties = ["debug = true"])
 @Disabled("手动执行，以有SchemaJournalManagerTest，SchemaShardingManagerTest覆盖测试 ")
-@Tag("shard")
 class WingsFlywaveShardJournalSample {
 
     @Autowired
@@ -52,7 +48,8 @@ class WingsFlywaveShardJournalSample {
         val table = "tst_中文也分表"
 
         schemaShardingManager.publishShard(table, 5)
-        schemaShardingManager.shardingData(table, true)
+        // 需要sharding数据源，在shard中测试
+//        schemaShardingManager.shardingData(table, true)
 
         // 跟踪
         schemaJournalManager.checkAndInitDdl(table, 0)
