@@ -1,6 +1,6 @@
 # 0.专业大翅 (pro.fessional.wings)
 
-[![Spring Boot](https://img.shields.io/badge/spring--boot-2.4.0-green)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/spring--boot-2.4.2-green)](https://spring.io/projects/spring-boot)
 [![Java 8](https://img.shields.io/badge/java-8+-red)](https://spring.io/projects/spring-boot)
 [![Kotlin 1.4](https://img.shields.io/badge/kotlin-1.4-red)](https://kotlinlang.org/docs/reference/)
 [![Jooq](https://img.shields.io/badge/jooq-3.14-yellow)](https://www.jooq.org/download/)
@@ -46,7 +46,7 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
 
 涉及技术和知识点
 
- * [Spring Boot](https://docs.spring.io/spring-boot/docs/2.4.0/reference/htmlsingle/)
+ * [Spring Boot](https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/)
  * [Apache ShardingSphere](https://shardingsphere.apache.org/index_zh.html)
  * [Jooq - 强类型 sql-mapping](https://www.jooq.org/)
 
