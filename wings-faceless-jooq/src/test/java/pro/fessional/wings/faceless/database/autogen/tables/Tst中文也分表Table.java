@@ -191,6 +191,14 @@ public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record>
     }
 
     /**
+     * LightIdAware seqName
+     */
+    @Override
+    public String getSeqName() {
+            return "tst_中文也分表";
+    }
+
+    /**
      * The column <code>delete_dt</code> condition
      */
     public final Condition onlyDiedData = DeleteDt.gt(EmptyValue.DATE_TIME);

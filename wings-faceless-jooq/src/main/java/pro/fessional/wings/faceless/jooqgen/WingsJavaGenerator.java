@@ -15,6 +15,7 @@ import pro.fessional.wings.faceless.database.helper.JournalJdbcHelp;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,6 +56,18 @@ public class WingsJavaGenerator extends JavaGenerator {
         out.println("public %s getAliasTable() {", className);
         out.println("    return as%s;", aliasName);
         out.println("}");
+
+        if (table.getColumns().stream().anyMatch(WingsJooqGenHelp.LightIdAware)) {
+            out.javadoc("LightIdAware seqName");
+            out.println("@Override");
+            out.println("public String getSeqName() {");
+
+            final Function<TableDefinition, String> fun = WingsJooqGenHelp.funSeqName.get();
+            String seqName = fun != null ? fun.apply(table) : table.getOutputName();
+
+            out.println("    return \"%s\";", seqName);
+            out.println("}");
+        }
 
         val logicCol = table.getColumns().stream().filter(it -> {
             val col = it.getOutputName();

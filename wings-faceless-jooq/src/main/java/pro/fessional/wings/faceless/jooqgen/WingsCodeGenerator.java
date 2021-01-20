@@ -2,6 +2,7 @@ package pro.fessional.wings.faceless.jooqgen;
 
 import lombok.val;
 import org.jooq.codegen.GenerationTool;
+import org.jooq.meta.TableDefinition;
 import org.jooq.meta.jaxb.Configuration;
 import org.jooq.meta.jaxb.ForcedType;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -251,6 +253,11 @@ public class WingsCodeGenerator {
 
         public Builder forcedType(ForcedType ft) {
             this.conf.getGenerator().getDatabase().getForcedTypes().add(ft);
+            return this;
+        }
+
+        public Builder funSeqName(Function<TableDefinition, String> fn) {
+            WingsJooqGenHelp.funSeqName.set(fn);
             return this;
         }
     }

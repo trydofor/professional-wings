@@ -17,9 +17,9 @@ public abstract class AbstractLightIdService implements LightIdService {
     protected final ConcurrentHashMap<Class<?>, String> classCache = new ConcurrentHashMap<>();
 
     @Override
-    public long getId(@NotNull Class<? extends LightIdAware> table, int block) {
-        String key = classCache.computeIfAbsent(table, k -> {
-            String name = table.getSimpleName();
+    public long getId(@NotNull Class<? extends LightIdAware> clazz, int block) {
+        String key = classCache.computeIfAbsent(clazz, k -> {
+            String name = clazz.getSimpleName();
             int len = name.endsWith("Table") ? name.length() - 5 : name.length();
             StringBuilder sb = new StringBuilder(len + 10);
             for (int i = 0; i < len; i++) {
@@ -35,5 +35,10 @@ public abstract class AbstractLightIdService implements LightIdService {
         });
 
         return getId(key, block);
+    }
+
+    @Override
+    public <E extends LightIdAware> long getId(@NotNull E table, int block) {
+        return getId(table.getSeqName(), block);
     }
 }
