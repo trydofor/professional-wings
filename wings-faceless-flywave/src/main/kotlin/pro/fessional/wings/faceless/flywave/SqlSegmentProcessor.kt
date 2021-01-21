@@ -139,16 +139,26 @@ class SqlSegmentProcessor(
         val lines = text.lines()
         val total = lines.size
         val builder = StringBuilder()
+        val comment = StringBuilder()
 
         for (line in lines) {
             lineCur += 1
+            val ln = line.trim()
 
-            if (line.isBlank()) {
+            if (ln.isBlank()) {
                 continue
             }
 
-            if (line.startsWith(singleComment)) {
-                val mt = parseCmd(line)
+            val sic = ln.startsWith(singleComment)
+            if (sic || (!inComment && comment.isNotEmpty())) {
+                val mt = if (sic) {
+                    parseCmd(ln, singleComment)
+                } else {
+                    val ts = comment.toString().trim()
+                    logger.debug("[parse] multi-comment {}", ts)
+                    comment.setLength(0)
+                    parseCmd(ts, blockComment1)
+                }
                 if (mt.isNotEmpty()) {
                     val (tbl, pln, apl, ers, ask) = mt
                     logger.debug("[parse] got annotation, line={} , tblName={}, dbsType={}, apply={}, error={}", lineCur, tbl, pln, apl, ers)
@@ -158,7 +168,7 @@ class SqlSegmentProcessor(
                     }
                     if (pln.contains("shard", true)) {
                         dbsAnot = 1
-                    } else if (line.contains("plain", true)) {
+                    } else if (ln.contains("plain", true)) {
                         dbsAnot = -1
                     }
                     if (apl.isNotEmpty()) {
@@ -173,22 +183,36 @@ class SqlSegmentProcessor(
                         askText = ask
                     }
                 }
+
+                if (sic) {
+                    continue
+                }
+            }
+
+            val m1 = ln.startsWith(blockComment1)
+            val m2 = ln.endsWith(blockComment2)
+            if (m1 && m2) {
+                comment.append(ln)
+                inComment = false
                 continue
             }
-            if (line.startsWith(blockComment1)) {
+            if (m1) {
                 inComment = true
+                comment.append(ln)
                 continue
             }
-            if (line.endsWith(blockComment2)) {
+            if (m2) {
+                comment.append('\n').append(ln)
                 inComment = false
                 continue
             }
             if (inComment) {
+                comment.append('\n').append(ln)
                 continue
             }
 
-            if (line.startsWith(delimiterCommand, true)) {
-                delimiter = line.substringAfter(delimiterCommand).trim()
+            if (ln.startsWith(delimiterCommand, true)) {
+                delimiter = ln.substringAfter(delimiterCommand).trim()
                 logger.debug("[parse] got delimiter command, delimiter={}", delimiter)
                 continue
             }
@@ -197,8 +221,13 @@ class SqlSegmentProcessor(
                 lineBgn = lineCur
             }
 
-            if (line.endsWith(delimiter, true) || lineCur == total) {
-                builder.append(line.substringBeforeLast(delimiter))
+            val den = ln.endsWith(delimiter, true)
+            if (den || lineCur == total) {
+                if(den) {
+                    builder.append(ln, 0, ln.length - delimiter.length)
+                }else{
+                    builder.append(ln)
+                }
                 val sql = builder.toString().trim()
                 if (sql.isNotEmpty()) {
                     if (tblName.isEmpty()) {
@@ -229,9 +258,9 @@ class SqlSegmentProcessor(
                 tbApply = Null.Str
                 errType = ErrType.Stop
                 askText = Null.Str
-                builder.clear()
+                builder.setLength(0)
             } else {
-                builder.append(line).append("\n")
+                builder.append(ln).append("\n")
             }
         }
         logger.debug("[parse] parse sql done")
@@ -254,6 +283,7 @@ class SqlSegmentProcessor(
 
         private val regShard = "_[0-9]+".toRegex()
         private val regTrace = "(_[0-9]+)?\\\$\\w+".toRegex()
+
         /**
          * 判断两表关系，忽略大小写
          * @param table 主表
@@ -284,17 +314,19 @@ class SqlSegmentProcessor(
         }
 
         // -- wgs_order@plain apply@ctr_clerk[_0-0]* error@skip ask@danger
-        private val cmdReg = "([^@ \t]+)?@([^@ \t]+)".toRegex()
+        private val cmdReg = """([^@\s]+)?\s*@\s*([^@\s]+)""".toRegex(RegexOption.MULTILINE)
 
-        fun parseCmd(line: String): Array<String> {
+        fun parseCmd(line: String, head: String): Array<String> {
             var emt = true
             var tbl = Null.Str
             var dbs = Null.Str
             var apl = Null.Str
             var ers = Null.Str
             var ask = Null.Str
-            for (mr in cmdReg.findAll(line)) {
-                val (k, v) = mr.destructured
+            for (mr in cmdReg.findAll(line.substringAfter(head))) {
+                val (ko, vo) = mr.destructured
+                val k = ko.trim()
+                val v = vo.trim()
                 if (v.equals("plain", true) || v.equals("shard", true)) {
                     tbl = k
                     dbs = v

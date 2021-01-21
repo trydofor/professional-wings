@@ -13,7 +13,10 @@ class SqlSegmentProcessorTest {
     @Test
     fun applyNut() {
         val mt = processor.parse(parser, """
-            -- apply@nut error@skip
+            /* apply
+            @nut 
+             error
+             @skip */
             ALTER TABLE `jp_parcel_post_mail`
                 ADD UNIQUE INDEX `ix_mail_order_num_domain` (order_num, domain);
         """.trimIndent())
@@ -40,7 +43,7 @@ class SqlSegmentProcessorTest {
     @Test
     fun applyLog() {
         val mt = processor.parse(parser, """
-            -- apply@log error@skip
+            /* apply@log error@skip */
             ALTER TABLE `jp_parcel_post_mail`
                 ADD UNIQUE INDEX `ix_mail_order_num_domain` (order_num, domain);
         """.trimIndent())
@@ -66,7 +69,13 @@ class SqlSegmentProcessorTest {
 
     @Test
     fun parseCmd0() {
-        val mt = SqlSegmentProcessor.parseCmd("-- wgs_order@plain apply@ctr_clerk[_0-0]* error@skip ask@danger // 其他注释")
+        val mt = SqlSegmentProcessor.parseCmd(
+                """ /* wgs_order
+                    @plain 
+                    apply@ctr_clerk[_0-0]* 
+                    error@skip ask@danger 
+                    // 其他注释 
+                    */""","/*")
         val (tbl, dbs, apl, ers, ask) = mt
         assertEquals("wgs_order", tbl)
         assertEquals("plain", dbs)
@@ -77,7 +86,7 @@ class SqlSegmentProcessorTest {
 
     @Test
     fun parseCmd1() {
-        val mt = SqlSegmentProcessor.parseCmd("-- @plain apply@ctr_clerk[_0-0]* error@skip // 其他注释")
+        val mt = SqlSegmentProcessor.parseCmd("-- @plain apply@ctr_clerk[_0-0]* error@skip // 其他注释","--")
         val (tbl, dbs, apl, ers, ask) = mt
         assertEquals("", tbl)
         assertEquals("plain", dbs)
@@ -88,7 +97,7 @@ class SqlSegmentProcessorTest {
 
     @Test
     fun parseCmd2() {
-        val mt = SqlSegmentProcessor.parseCmd("-- apply@ctr_clerk[_0-0]* error@skip // 其他注释")
+        val mt = SqlSegmentProcessor.parseCmd("-- apply@ctr_clerk[_0-0]* error@skip // 其他注释","--")
         val (tbl, dbs, apl, ers, ask) = mt
         assertEquals("", tbl)
         assertEquals("", dbs)
@@ -99,7 +108,7 @@ class SqlSegmentProcessorTest {
 
     @Test
     fun parseCmd3() {
-        val mt = SqlSegmentProcessor.parseCmd("-- error@skip // 其他注释")
+        val mt = SqlSegmentProcessor.parseCmd("-- error@skip // 其他注释","--")
         val (tbl, dbs, apl, ers, ask) = mt
         assertEquals("", tbl)
         assertEquals("", dbs)
@@ -110,7 +119,7 @@ class SqlSegmentProcessorTest {
 
     @Test
     fun parseCmd4() {
-        val mt = SqlSegmentProcessor.parseCmd("-- ask@danger // 其他注释")
+        val mt = SqlSegmentProcessor.parseCmd("/* ask@danger // 其他注释 */","/*")
         val (tbl, dbs, apl, ers, ask) = mt
         assertEquals("", tbl)
         assertEquals("", dbs)
