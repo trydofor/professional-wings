@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicReference
 import javax.sql.DataSource
 
 /**
- * 控制`sys_schema_journal`中的`log_update`和`log_delete`，
+ * 控制`$schemaJournalTable`中的`log_update`和`log_delete`，
  * 进而实现自动的Trigger创建和删除。
  *
  * @author trydofor
@@ -22,7 +22,8 @@ class SchemaJournalManager(
         private val plainDataSources: Map<String, DataSource>,
         private val sqlStatementParser: SqlStatementParser,
         private val schemaDefinitionLoader: SchemaDefinitionLoader,
-        private val journalDdl: JournalDdl
+        private val journalDdl: JournalDdl,
+        val schemaJournalTable:String = "sys_schema_journal"
 ) {
     data class JournalDdl(
             var updTbl: String = Null.Str,
@@ -77,11 +78,11 @@ class SchemaJournalManager(
         logger.info("[checkAndInitDdl]🐶 start check journal table={}", table)
         val selectSql = """
                 SELECT ddl_updtbl, ddl_updtrg, ddl_deltbl, ddl_deltrg, log_update, log_delete
-                FROM sys_schema_journal
+                FROM $schemaJournalTable
                 WHERE table_name = ?
                 """.trimIndent()
         val insertSql = """
-                INSERT INTO sys_schema_journal
+                INSERT INTO $schemaJournalTable
                 (table_name, commit_id, ddl_updtbl, ddl_updtrg, ddl_deltbl, ddl_deltrg)
                 VALUES (?, ?, ?, ?, ?, ?)
                 """.trimIndent()
@@ -163,7 +164,7 @@ class SchemaJournalManager(
                 updVal.add(commitId)
                 updVal.add(table)
                 val rst = tmpl.update("""
-                        UPDATE sys_schema_journal SET
+                        UPDATE $schemaJournalTable SET
                             $updSql
                             modify_dt = NOW(),
                             commit_id = ?
@@ -189,7 +190,7 @@ class SchemaJournalManager(
                 ddl_updtbl ddl_tbl,
                 ddl_updtrg ddl_trg,
                 log_update apply_dt
-            FROM sys_schema_journal
+            FROM $schemaJournalTable
             WHERE table_name = ?
             """.trimIndent()
         } else {
@@ -198,21 +199,21 @@ class SchemaJournalManager(
                 ddl_deltbl ddl_tbl,
                 ddl_deltrg ddl_trg,
                 log_delete apply_dt
-            FROM sys_schema_journal
+            FROM $schemaJournalTable
             WHERE table_name = ?
             """.trimIndent()
         }
 
         val updateSql = if (isUpdate) {
             """
-            UPDATE sys_schema_journal SET
+            UPDATE $schemaJournalTable SET
                 log_update = NOW(),
                 commit_id = ?
             WHERE table_name = ?
             """.trimIndent()
         } else {
             """
-            UPDATE sys_schema_journal SET
+            UPDATE $schemaJournalTable SET
                 log_delete = NOW(),
                 commit_id = ?
             WHERE table_name = ?

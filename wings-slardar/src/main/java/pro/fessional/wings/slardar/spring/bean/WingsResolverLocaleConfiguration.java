@@ -22,7 +22,7 @@ public class WingsResolverLocaleConfiguration {
 
     @Bean
     @ConditionalOnClass(LocaleResolver.class)
-    public WingsLocaleResolver localeResolver(WingsLocaleResolver.Config conf) {
+    public WingsLocaleResolver wingsLocaleResolver(WingsLocaleResolver.Config conf) {
         logger.info("Wings conf WingsLocaleResolver");
         return new WingsLocaleResolver(conf);
     }

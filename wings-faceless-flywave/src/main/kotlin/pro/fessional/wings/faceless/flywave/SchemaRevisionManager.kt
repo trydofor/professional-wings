@@ -13,12 +13,13 @@ import java.util.function.Function
 interface SchemaRevisionManager {
 
     data class RevisionSql(
-            var revision: Long = 0,
-            var undoPath: String = Null.Str,
-            var undoText: String = Null.Str,
-            var uptoPath: String = Null.Str,
-            var uptoText: String = Null.Str
-    )
+            val revision: Long = 0,
+    ) {
+        var undoPath: String = Null.Str
+        var undoText: String = Null.Str
+        var uptoPath: String = Null.Str
+        var uptoText: String = Null.Str
+    }
 
     enum class AskType {
         Drop, Undo, Mark
@@ -78,7 +79,7 @@ interface SchemaRevisionManager {
     fun forceUpdateSql(revision: Long, upto: String, undo: String, commitId: Long)
 
     /**
-     * 强制执行一个sql，不使用版本管理
+     * 强制执行一个flywave语法的sql，不使用版本管理
      * @param text sql文本
      */
     fun forceExecuteSql(text: String)

@@ -8,11 +8,10 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StreamUtils;
 import pro.fessional.mirana.text.BuilderHelper;
 import pro.fessional.wings.faceless.convention.EmptySugar;
-import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
+import pro.fessional.wings.faceless.flywave.SchemaRevisionManager.RevisionSql;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +20,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,19 +35,26 @@ public class FlywaveRevisionScanner {
 
     private static final Logger logger = LoggerFactory.getLogger(ConstantEnumGenerator.class);
 
-    public static final String REVISION_PATH_MASTER = "classpath*:/wings-flywave/master/**/*.sql";
+    public static final String REVISION_PATH_REVIFILE_EXTN = ".sql";
+    public static final String REVISION_PATH_REVIFILE_TAIL = "**/*" + REVISION_PATH_REVIFILE_EXTN;
+    public static final String REVISION_PATH_MASTER_HEAD = "classpath*:/wings-flywave/master/";
+    public static final String REVISION_PATH_MASTER = REVISION_PATH_MASTER_HEAD + REVISION_PATH_REVIFILE_TAIL;
     public static final String REVISION_PATH_BRANCH_HEAD = "classpath*:/wings-flywave/branch/";
     public static final String REVISION_PATH_FEATURE_HEAD = REVISION_PATH_BRANCH_HEAD + "feature/";
     public static final String REVISION_PATH_SUPPORT_HEAD = REVISION_PATH_BRANCH_HEAD + "support/";
     public static final String REVISION_PATH_SOMEFIX_HEAD = REVISION_PATH_BRANCH_HEAD + "somefix/";
-    public static final String REVISION_PATH_BRANCH_TAIL = "**/*.sql";
-    public static final String REVISION_PATH_BRANCH_FULL = REVISION_PATH_BRANCH_HEAD + REVISION_PATH_BRANCH_TAIL;
+    public static final String REVISION_PATH_BRANCH_FULL = REVISION_PATH_BRANCH_HEAD + REVISION_PATH_REVIFILE_TAIL;
     public static final String REVISION_PATH_BRANCH_3RD_ENU18N = featurePath("01-enum-i18n");
     public static final String REVISION_PATH_BRANCH_FIX_V227 = somefixPath("v227-fix");
 
     public static final long REVISION_1ST_SCHEMA = 2019_0512_01L;
     public static final long REVISION_2ND_IDLOGS = 2019_0520_01L;
     public static final long REVISION_3RD_ENU18N = 2019_0521_01L;
+
+    @NotNull
+    public static String masterPath(String name) {
+        return prefixPath(REVISION_PATH_MASTER_HEAD, name);
+    }
 
     @NotNull
     public static String somefixPath(String name) {
@@ -69,23 +78,37 @@ public class FlywaveRevisionScanner {
 
     @NotNull
     private static String prefixPath(String prefix, String name) {
+        if (name == null) {
+            return prefix + REVISION_PATH_REVIFILE_TAIL;
+        }
+
         StringBuilder sb = new StringBuilder(100);
         sb.append(prefix);
-        if (name != null) {
-            for (String pt : name.split("/+")) {
-                pt = pt.trim();
-                if (!pt.isEmpty()) {
-                    sb.append(pt).append("/");
-                }
+        for (String pt : name.split("[/\\\\]+")) {
+            pt = pt.trim();
+            if (!pt.isEmpty()) {
+                sb.append(pt).append("/");
             }
         }
-        sb.append(REVISION_PATH_BRANCH_TAIL);
+
+        // sql 文件
+        final int dot = sb.length() - REVISION_PATH_REVIFILE_EXTN.length() - 1;
+        if (dot > 0) {
+            final int lst = sb.length() - 1;
+            final String en = sb.substring(dot, lst);
+            if (en.equalsIgnoreCase(REVISION_PATH_REVIFILE_EXTN)) {
+                return sb.substring(0, lst);
+            }
+        }
+
+        // 目录
+        sb.append(REVISION_PATH_REVIFILE_TAIL);
         return sb.toString();
     }
 
     @NotNull
     public static String commentInfo(String... path) {
-        Pattern tknRegex = Pattern.compile("[/\\\\]wings-flywave[/\\\\]([^:]*[/\\\\])[-_0-9]{8,}[uv][0-9]{2,}([^/]*\\.sql)$", Pattern.CASE_INSENSITIVE);
+        Pattern tknRegex = Pattern.compile("[/\\\\]wings-flywave[/\\\\]([^:]*[/\\\\])([-_0-9]{8,}[uv][0-9]{2,})([^/]*\\.sql)$", Pattern.CASE_INSENSITIVE);
 
         LinkedHashSet<String> info = new LinkedHashSet<>();
         for (String s : path) {
@@ -93,8 +116,8 @@ public class FlywaveRevisionScanner {
             if (m.find()) {
                 BuilderHelper.W sb = BuilderHelper.w();
                 sb.append(m.group(1));
-                sb.append("*");
-                sb.append(m.group(2));
+                sb.append(formatRevi(m.group(2)));
+                sb.append(m.group(3));
                 info.add(sb.toString());
             } else {
                 info.add(s);
@@ -104,14 +127,47 @@ public class FlywaveRevisionScanner {
         return String.join(", ", info);
     }
 
+    public static String formatRevi(String revi) {
+        StringBuilder sb = new StringBuilder(revi.length());
+        int cnt = 0;
+        for (int i = 0, len = revi.length(); i < len; i++) {
+            char c = revi.charAt(i);
+            if (c == 'u' || c == 'U' || c == 'v' || c == 'V') {
+                sb.append("_");
+                cnt = 0;
+            } else if (c >= '0' && c <= '9') {
+                if (cnt > 0 && cnt % 4 == 0) {
+                    sb.append("-");
+                }
+                cnt++;
+                sb.append(c);
+            }
+        }
+        final int lst = sb.length() - 1;
+        if (sb.charAt(lst) == '-') {
+            return sb.substring(0, lst);
+        } else {
+            return sb.toString();
+        }
+    }
+
     @NotNull
-    public static SortedMap<Long, SchemaRevisionManager.RevisionSql> scanMaster() {
+    public static SortedMap<Long, RevisionSql> scanMaster() {
         return scan(REVISION_PATH_MASTER);
     }
 
     @NotNull
-    public static SortedMap<Long, SchemaRevisionManager.RevisionSql> scanBranch(String... name) {
-        TreeMap<Long, SchemaRevisionManager.RevisionSql> result = new TreeMap<>();
+    public static SortedMap<Long, RevisionSql> scanMaster(String... name) {
+        TreeMap<Long, RevisionSql> result = new TreeMap<>();
+        for (String n : name) {
+            scan(result, masterPath(n));
+        }
+        return result;
+    }
+
+    @NotNull
+    public static SortedMap<Long, RevisionSql> scanBranch(String... name) {
+        TreeMap<Long, RevisionSql> result = new TreeMap<>();
         for (String n : name) {
             scan(result, branchPath(n));
         }
@@ -129,8 +185,8 @@ public class FlywaveRevisionScanner {
      * @see PathMatchingResourcePatternResolver
      */
     @NotNull
-    public static SortedMap<Long, SchemaRevisionManager.RevisionSql> scan(@NotNull String... path) {
-        TreeMap<Long, SchemaRevisionManager.RevisionSql> result = new TreeMap<>();
+    public static SortedMap<Long, RevisionSql> scan(@NotNull String... path) {
+        TreeMap<Long, RevisionSql> result = new TreeMap<>();
         for (String p : path) {
             scan(result, p);
         }
@@ -142,7 +198,7 @@ public class FlywaveRevisionScanner {
      * @param path   扫描路径
      * @see #scan(String...)
      */
-    public static void scan(SortedMap<Long, SchemaRevisionManager.RevisionSql> result, String path) {
+    public static void scan(SortedMap<Long, RevisionSql> result, String path) {
         String file = null;
         try {
             PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
@@ -171,11 +227,7 @@ public class FlywaveRevisionScanner {
                 final long revi = Long.parseLong(sb.toString());
                 newRevi.add(revi);
 
-                SchemaRevisionManager.RevisionSql d = result.computeIfAbsent(revi, key -> {
-                    SchemaRevisionManager.RevisionSql sql = new SchemaRevisionManager.RevisionSql();
-                    sql.setRevision(revi);
-                    return sql;
-                });
+                RevisionSql d = result.computeIfAbsent(revi, RevisionSql::new);
 
                 String text = StreamUtils.copyToString(res.getInputStream(), utf8);
 
@@ -214,10 +266,10 @@ public class FlywaveRevisionScanner {
      * @return sql
      */
     @NotNull
-    public static String undo(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls) {
+    public static String undo(SortedMap<Long, RevisionSql> sqls) {
         BuilderHelper.W sb = BuilderHelper.w();
         if (sqls != null) {
-            sb.join(true, "\n", sqls.values(), SchemaRevisionManager.RevisionSql::getUndoText);
+            sb.join(true, "\n", sqls.values(), RevisionSql::getUndoText);
         }
         return sb.toString();
     }
@@ -229,10 +281,10 @@ public class FlywaveRevisionScanner {
      * @return sql
      */
     @NotNull
-    public static String upto(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls) {
+    public static String upto(SortedMap<Long, RevisionSql> sqls) {
         BuilderHelper.W sb = BuilderHelper.w();
         if (sqls != null) {
-            sb.join(true, "\n", sqls.values(), SchemaRevisionManager.RevisionSql::getUptoText);
+            sb.join(true, "\n", sqls.values(), RevisionSql::getUptoText);
         }
         return sb.toString();
     }
@@ -241,57 +293,66 @@ public class FlywaveRevisionScanner {
      * 可应用版本过滤器和重命名
      *
      * @return 构造器
-     * @see Builder
+     * @see Helper
      */
-    public static Builder builder() {
-        return new Builder();
+    public static Helper helper() {
+        return new Helper();
     }
 
     /**
      * 执行以下步骤
      * ①scan全路径
-     * ②rename版本
+     * ②replace版本
      * ③include过滤器
      * ④exclude过滤器
+     * ⑤modifier调整
      */
-    public static class Builder {
-        private final LinkedHashMap<Predicate<SchemaRevisionManager.RevisionSql>, String> includes = new LinkedHashMap<>();
-        private final LinkedHashMap<Predicate<SchemaRevisionManager.RevisionSql>, String> excludes = new LinkedHashMap<>();
-        private final HashMap<Long, Map.Entry<Long, String>> renames = new HashMap<>();
+    public static class Helper {
+        private final LinkedHashMap<Predicate<Long>, String> includes = new LinkedHashMap<>();
+        private final LinkedHashMap<Predicate<Long>, String> excludes = new LinkedHashMap<>();
+        private final HashMap<Long, Long> replaces = new HashMap<>();
+        private final LinkedHashMap<BiConsumer<Long, RevisionSql>, String> modifier = new LinkedHashMap<>();
         private final LinkedHashSet<String> paths = new LinkedHashSet<>();
 
-        public Builder path(String... path) {
+        public Helper path(String... path) {
             Collections.addAll(paths, path);
             return this;
         }
 
-        public Builder master() {
+        public Helper master() {
             paths.add(REVISION_PATH_MASTER);
             return this;
         }
 
-        public Builder branch(String... path) {
+        public Helper master(String... path) {
+            for (String s : path) {
+                paths.add(FlywaveRevisionScanner.masterPath(s));
+            }
+            return this;
+        }
+
+        public Helper branch(String... path) {
             for (String s : path) {
                 paths.add(FlywaveRevisionScanner.branchPath(s));
             }
             return this;
         }
 
-        public Builder feature(String... path) {
+        public Helper feature(String... path) {
             for (String s : path) {
                 paths.add(FlywaveRevisionScanner.featurePath(s));
             }
             return this;
         }
 
-        public Builder somefix(String... path) {
+        public Helper somefix(String... path) {
             for (String s : path) {
                 paths.add(FlywaveRevisionScanner.somefixPath(s));
             }
             return this;
         }
 
-        public Builder support(String... path) {
+        public Helper support(String... path) {
             for (String s : path) {
                 paths.add(FlywaveRevisionScanner.supportPath(s));
             }
@@ -299,77 +360,166 @@ public class FlywaveRevisionScanner {
         }
 
         /**
-         * 版本改名，覆盖报错
+         * 把from版替换为to版，新版不存在时创建。
          *
-         * @param old 旧版本
-         * @param to  新版本
+         * @param from 旧版本
+         * @param to   新版本
          * @return builder
          */
-        public Builder rename(long old, long to) {
-            return rename(old, to, "do NOT replace");
+        public Helper replace(long from, long to) {
+            return replace(from, to, false);
         }
 
         /**
-         * 版本改名，如果没有force信息，old不存在或to存在在报错
+         * 把from版替换为to版，新版不存在时创建。同时使用fn处理from和to版
          *
-         * @param old   旧版本
-         * @param to    新版本
-         * @param force 强制覆盖信息，无信息且覆盖时抛出异常
+         * @param from 旧版本
+         * @param to   新版本
+         * @param sql  同时replace undo和upto脚本中的版本号
          * @return builder
          */
-        public Builder rename(long old, long to, String force) {
-            if (old < 0 || to < 0) throw new IllegalArgumentException("revi must >0");
-            if (force == null) force = "";
-            renames.put(old, new AbstractMap.SimpleEntry<>(to, force));
+        public Helper replace(long from, long to, boolean sql) {
+            if (sql) {
+                final Pattern op = Pattern.compile("\\b" + from + "\\b");
+                final String ns = String.valueOf(to);
+                return replace(from, to, it -> op.matcher(it).replaceAll(ns));
+            } else {
+                return replace(from, to, null);
+            }
+        }
+
+        /**
+         * 把from版替换为to版，新版不存在时创建。同时使用fn处理from和to版
+         *
+         * @param from 旧版本
+         * @param to   新版本
+         * @param mod  同时replace undo和upto脚本中的方法
+         * @return builder
+         */
+        public Helper replace(long from, long to, Function<String, String> mod) {
+            if (from < 0 || to < 0) throw new IllegalArgumentException("revi must >0");
+            replaces.put(from, to);
+            if (mod != null) {
+                modify("replace " + from + " to " + to + " with sql", to, it -> {
+                    it.setUptoText(mod.apply(it.getUptoText()));
+                    it.setUndoText(mod.apply(it.getUndoText()));
+                    logger.info("[FlywaveRevisionScanner]🐝 replace revi from=" + from + " to=" + to + " with sql text");
+                });
+            }
             return this;
         }
 
-        public Builder include(long... revi) {
+        /**
+         * 调整RevisionSql内容
+         *
+         * @param revi 声明版本
+         * @param str  查找字符串
+         * @param rpl  替换字符串
+         * @return builder
+         * @see #modify(String, BiConsumer)
+         */
+        public Helper modify(long revi, String str, String rpl) {
+            return modify("replace " + str + " to " + rpl + " at revi=" + revi, revi, it -> {
+                it.setUptoText(it.getUptoText().replace(str, rpl));
+                it.setUndoText(it.getUndoText().replace(str, rpl));
+            });
+        }
+
+        /**
+         * 调整RevisionSql内容
+         *
+         * @param revi 声明版本
+         * @param mod  调整函数 Consumer(实际SQL)
+         * @return builder
+         * @see #modify(String, BiConsumer)
+         */
+        public Helper modify(long revi, Consumer<RevisionSql> mod) {
+            return modify("", revi, mod);
+        }
+
+        /**
+         * 调整RevisionSql内容
+         *
+         * @param info 用途说明
+         * @param revi 声明版本
+         * @param mod  调整函数 Consumer(实际SQL)
+         * @return builder
+         * @see #modify(String, BiConsumer)
+         */
+        public Helper modify(String info, long revi, Consumer<RevisionSql> mod) {
+            modifier.put((r, s) -> {if (r == revi) mod.accept(s);}, info);
+            return this;
+        }
+
+        /**
+         * 调整RevisionSql内容
+         *
+         * @param mod 调整函数 BiConsumer(声明版本, 实际SQL)
+         * @return builder
+         */
+        public Helper modify(BiConsumer<Long, RevisionSql> mod) {
+            return modify("", mod);
+        }
+
+        /**
+         * 调整RevisionSql内容
+         *
+         * @param info 用途说明
+         * @param mod  调整函数 BiConsumer(声明版本, 实际SQL)
+         * @return builder
+         */
+        public Helper modify(String info, BiConsumer<Long, RevisionSql> mod) {
+            modifier.put(mod, info);
+            return this;
+        }
+
+
+        public Helper include(long... revi) {
             return include("", revi);
         }
 
-        public Builder include(String info, long... revi) {
+        public Helper include(String info, long... revi) {
             final HashSet<Long> rvs = new HashSet<>();
             for (long l : revi) {
                 rvs.add(l);
             }
-            return include(info, it -> rvs.contains(it.getRevision()));
+            return include(info, rvs::contains);
         }
 
-        public Builder include(Predicate<SchemaRevisionManager.RevisionSql> inc) {
+        public Helper include(Predicate<Long> inc) {
             return include("", inc);
         }
 
-        public Builder include(String info, Predicate<SchemaRevisionManager.RevisionSql> inc) {
+        public Helper include(String info, Predicate<Long> inc) {
             includes.put(inc, info);
             return this;
         }
 
 
-        public Builder exclude(long... revi) {
+        public Helper exclude(long... revi) {
             return exclude("", revi);
         }
 
-        public Builder exclude(String info, long... revi) {
+        public Helper exclude(String info, long... revi) {
             final HashSet<Long> rvs = new HashSet<>();
             for (long l : revi) {
                 rvs.add(l);
             }
-            return exclude(info, it -> rvs.contains(it.getRevision()));
+            return exclude(info, rvs::contains);
         }
 
-        public Builder exclude(Predicate<SchemaRevisionManager.RevisionSql> exc) {
+        public Helper exclude(Predicate<Long> exc) {
             return exclude("", exc);
         }
 
-        public Builder exclude(String info, Predicate<SchemaRevisionManager.RevisionSql> exc) {
+        public Helper exclude(String info, Predicate<Long> exc) {
             excludes.put(exc, info);
             return this;
         }
 
-        public SortedMap<Long, SchemaRevisionManager.RevisionSql> scan() {
+        public SortedMap<Long, RevisionSql> scan() {
 
-            TreeMap<Long, SchemaRevisionManager.RevisionSql> result = new TreeMap<>();
+            TreeMap<Long, RevisionSql> result = new TreeMap<>();
             // scan
             for (String p : paths) {
                 FlywaveRevisionScanner.scan(result, p);
@@ -377,72 +527,66 @@ public class FlywaveRevisionScanner {
 
             if (result.isEmpty()) return result;
 
-            // rename
-            for (Map.Entry<Long, Map.Entry<Long, String>> ent : renames.entrySet()) {
-                final Long old = ent.getKey();
-                final SchemaRevisionManager.RevisionSql revi = result.remove(old);
-                final Map.Entry<Long, String> vlu = ent.getValue();
-                final Long rto = vlu.getKey();
-                final String frc = vlu.getValue();
+            // replace
+            for (Map.Entry<Long, Long> ent : replaces.entrySet()) {
+                final Long ov = ent.getKey();
+                final Long nv = ent.getValue();
+                if (ov.equals(nv)) continue;
 
-                if (revi == null) {
-                    if (frc.isEmpty()) {
-                        throw new IllegalStateException("failed to rename not-exist from=" + old + " to=" + rto);
-                    } else {
-                        logger.info("[FlywaveRevisionScanner]🐝 rename skipped not-exist from=" + old + " to=" + rto + ", force=" + frc);
-                    }
-                } else {
-                    revi.setRevision(rto);
-                    final SchemaRevisionManager.RevisionSql est = result.put(rto, revi);
-
-                    if (est == null) {
-                        logger.info("[FlywaveRevisionScanner]🐝 rename revi from=" + old + " to=" + rto);
-                    } else {
-                        if (frc.isEmpty()) {
-                            throw new IllegalStateException("failed to rename from=" + old + " exist-to=" + rto);
-                        } else {
-                            logger.info("[FlywaveRevisionScanner]🐝 rename revi from=" + old + " exist-to=" + rto +
-                                    ", force=" + frc +
-                                    ", remove=\n" + est);
-                        }
-                    }
+                final RevisionSql old = result.remove(ov);
+                if (old == null) {
+                    throw new IllegalStateException("failed to replace not-exist from=" + ov + " to=" + nv);
                 }
-            }
 
-            if (includes.isEmpty() && excludes.isEmpty()) {
-                return result;
+                final RevisionSql tor = result.put(nv, old);
+                if (tor != null) {
+                    logger.info("[FlywaveRevisionScanner]🐝 replace revi from=" + ov + " to=" + nv + ", exist=" + tor);
+                }
             }
 
             // include
-            result.entrySet().removeIf(it -> {
-                for (Map.Entry<Predicate<SchemaRevisionManager.RevisionSql>, String> ent : includes.entrySet()) {
-                    if (ent.getKey().test(it.getValue())) {
-                        final String info = ent.getValue();
-                        if (info != null && !info.isEmpty()) {
-                            logger.info("[FlywaveRevisionScanner]🐝 include filter matches " + it.getKey() + " by " + info);
+            if (!includes.isEmpty()) {
+                result.entrySet().removeIf(it -> {
+                    for (Map.Entry<Predicate<Long>, String> ent : includes.entrySet()) {
+                        if (ent.getKey().test(it.getKey())) {
+                            final String info = ent.getValue();
+                            if (info != null && !info.isEmpty()) {
+                                logger.info("[FlywaveRevisionScanner]🐝 include " + it.getKey() + " by " + info);
+                            }
+                            return false;
                         }
-                        return false;
                     }
-                }
-                logger.info("[FlywaveRevisionScanner]🐝 include filter remove " + it.getKey());
-                return true;
-            });
+                    logger.info("[FlywaveRevisionScanner]🐝 remove " + it.getKey() + " by include filter unmatched");
+                    return true;
+                });
+            }
 
             // exclude
-            result.entrySet().removeIf(it -> {
-                for (Map.Entry<Predicate<SchemaRevisionManager.RevisionSql>, String> ent : excludes.entrySet()) {
-                    if (ent.getKey().test(it.getValue())) {
-                        final String info = ent.getValue();
-                        if (info == null || info.isEmpty()) {
-                            logger.info("[FlywaveRevisionScanner]🐝 exclude filter remove " + it.getKey());
-                        } else {
-                            logger.info("[FlywaveRevisionScanner]🐝 exclude filter remove " + it.getKey() + " by " + info);
+            if (!excludes.isEmpty()) {
+                result.entrySet().removeIf(it -> {
+                    for (Map.Entry<Predicate<Long>, String> ent : excludes.entrySet()) {
+                        if (ent.getKey().test(it.getKey())) {
+                            final String info = ent.getValue();
+                            if (info == null || info.isEmpty()) {
+                                logger.info("[FlywaveRevisionScanner]🐝 remove " + it.getKey() + " by exclude filter matched");
+                            } else {
+                                logger.info("[FlywaveRevisionScanner]🐝 remove " + it.getKey() + " by " + info);
+                            }
+                            return true;
                         }
-                        return true;
                     }
+                    return false;
+                });
+            }
+
+            // modifier
+            for (Map.Entry<BiConsumer<Long, RevisionSql>, String> mod : modifier.entrySet()) {
+                logger.info("[FlywaveRevisionScanner]🐝 modify RevisionSql by " + mod.getValue());
+                final BiConsumer<Long, RevisionSql> fn = mod.getKey();
+                for (Map.Entry<Long, RevisionSql> ent : result.entrySet()) {
+                    fn.accept(ent.getKey(), ent.getValue());
                 }
-                return false;
-            });
+            }
 
             return result;
         }

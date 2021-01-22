@@ -19,4 +19,6 @@ public class WingsFlywaveVerProperties {
     private String triggerUpdate = "";
     private String journalDelete = "";
     private String triggerDelete = "";
+    private String schemaVersionTable = "sys_schema_version";
+    private String schemaJournalTable = "sys_schema_journal";
 }

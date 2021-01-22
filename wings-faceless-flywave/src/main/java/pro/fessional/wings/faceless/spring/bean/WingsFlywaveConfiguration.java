@@ -46,7 +46,7 @@ public class WingsFlywaveConfiguration {
                 properties.getTriggerDelete()
         );
         logger.info("config schemaJournalManager");
-        return new SchemaJournalManager(facelessDs.getPlains(), statementParser, schemaDefinitionLoader, ddl);
+        return new SchemaJournalManager(facelessDs.getPlains(), statementParser, schemaDefinitionLoader, ddl, properties.getSchemaJournalTable());
     }
 
     @Bean
@@ -58,7 +58,8 @@ public class WingsFlywaveConfiguration {
             WingsFlywaveVerProperties properties) {
         DefaultRevisionManager revisionManager = new DefaultRevisionManager(
                 sources.getPlains(), sources.getSharding(),
-                statementParser, segmentProcessor, schemaDefinitionLoader);
+                statementParser, segmentProcessor, schemaDefinitionLoader,
+                properties.getSchemaVersionTable());
         revisionManager.confirmAsk(AskType.Mark, properties.isAskMark());
         revisionManager.confirmAsk(AskType.Undo, properties.isAskUndo());
         revisionManager.confirmAsk(AskType.Drop, properties.isAskDrop());

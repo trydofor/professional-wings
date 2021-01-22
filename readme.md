@@ -279,7 +279,7 @@ public interface TradeService {
 
 ## 0.5.常见问题
 
-### 001.getHostName() took 5004 milliseconds
+### 01.getHostName() took 5004 milliseconds
 InetAddress.getLocalHost().getHostName() took 5004 milliseconds to respond. 
 Please verify your network configuration (macOS machines may need to add entries to /etc/hosts)
 
@@ -292,7 +292,7 @@ cat /etc/hosts
 127.0.0.1	    localhost trydofors-Hackintosh.local
 ```
 
-### 002.工程中哪些参数是必须打开的
+### 02.工程中哪些参数是必须打开的
 
 ``` bash
 # 找到所以开关文件
@@ -313,7 +313,7 @@ spring.wings.faceless.flywave.enabled=false
 spring.wings.faceless.enumi18n.enabled=false
 ``` 
 
-### 003.如何创建一个工程
+### 03.如何创建一个工程
 
 ``` bash
 git clone https://gitee.com/trydofor/pro.fessional.wings.git
@@ -325,7 +325,7 @@ cd wings-example/src/test/java/
 pro/fessional/wings/example/exec/Wings0InitProject.java
 ```
 
-### 004.lib工程和boot工程的区别
+### 04.lib工程和boot工程的区别
 
 Springboot的打包机制使boot.jar 不是普通的lib.jar
 ``` xml
@@ -366,7 +366,7 @@ lib工程的配置，跳过repackage，参考example之外的工程
 这样，为所以子模块，以boot工程提供默认的build（boot打包，不deploy，不install）。
 在lib子模块中跳过boot打包，spring-boot-maven-plugin/repackage skip=true
 
-### 005.jackson和fastjson
+### 05.jackson和fastjson
 
 wings中和springboot一样，默认采用了jackson进行json和xml绑定。
 不过wings的中对json的格式有特殊约定，比如日期格式，数字以字符串传递。
@@ -376,7 +376,7 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。
  * 使用jackson注解 @JsonRawValue
  * 使用fastjson(不推荐，需1.2.69+，SafeMode, 安全漏洞)
 
-### 006.为什么是dota的英雄
+### 06.为什么是dota的英雄
 
 有这样一个团队，她是做对日金融的，穿拖鞋裤衩上班，课间可以团dota，cs，跑跑卡丁车。
 日本人组团爱上了瓜子，黄飞红，米线，火锅。团队只有一个要求，活干的漂亮，快，零缺陷。
@@ -386,7 +386,7 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。
  * TI6，她在西雅图，我在特拉华
  * TI9，她在奔驰馆，我在大虹桥
 
-### 007.类型间Mapping比较
+### 07.类型间Mapping比较
 
 根据以下文章，推荐使用静态性的`MapStruct`和简单的`SimpleFlatMapper`。
 
@@ -413,7 +413,7 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。
 纯wings中的converter以`-or`结尾(convertor)，以和其他框架的converter区分。  
 包名以converter为准，类名以目的区分，通常纯wings的使用`-or`，其他用`-er`。
 
-### 008.文件系统或对象存储
+### 08.文件系统或对象存储
 
 需要权限才能访问的文件资源，不可以放到CDN，需要自建对象存储或使用物理文件系统
 当使用本地FS是，需要注意子文件或子目录的数量限制，一般控制在30k以下，理由。
@@ -426,7 +426,7 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。
  * https://docs.min.io/cn/ 推荐使用
  * https://github.com/happyfish100/fastdfs
 
-### 009.客户端或服务器信息
+### 09.客户端或服务器信息
 
 收集用户画像，需要获得UA信息，可使用以下工具包
 
@@ -438,7 +438,7 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。
 
  * https://github.com/oshi/oshi 系统信息
 
-### 010.缺少mirana和meepo依赖lib
+### 10.缺少mirana和meepo依赖lib
 
 因是非吃货的大翅项目，一些`-SNAPSHOT`依赖，需要自行编译并本地安装。
 偶尔可以在`sonatype`上找到，需要自行添加`repository`，如`~/.m2/settings.xml`
@@ -450,3 +450,22 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。
     <releases><enabled>false</enabled></releases>
 </repository>
 ```
+
+### 11.调整springboot版本和依赖
+
+wings工程，仅对spring-boot的标准生命周期进行了配置文件加载的hook，非强依赖于任何固定版本。
+对于不想跟随wings一同升级spring及其依赖的，只把wings做dependency，而不parent和import即可。
+
+wings随时跟进升级spring boot的最新版本，目的是为了测试sharding-jdbc和jooq的兼容性。
+而在二进制兼容方面，wings编译的版本是java=1.8，kotlin=1.3。
+
+对于maven继承ri依赖有parent和import两种，其重要区别在于property覆盖。
+
+ * parent - you can also override individual dependencies by overriding a property in your own project
+ * import - does not let you override individual dependencies by using properties, as explained above. 
+   To achieve the same result, you need to add entries in the dependencyManagement 
+   section of your project before the spring-boot-dependencies entry.
+ * https://docs.spring.io/spring-boot/docs/2.4.2/maven-plugin/reference/htmlsingle/#using-parent-pom
+ * https://docs.spring.io/spring-boot/docs/2.4.2/maven-plugin/reference/htmlsingle/#using-import
+
+对于低于wings的spring-boot版本，一般来讲指定一下jooq版本就可以完全正常。

@@ -20,7 +20,10 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_2ND_IDL
  * @since 2019-06-20
  */
 
-@SpringBootTest(properties = ["debug = true"])
+@SpringBootTest(properties = ["debug = true",
+    "wings.faceless.flywave.ver.schema-version-table=win_schema_version",
+    "wings.faceless.flywave.ver.schema-journal-table=win_schema_journal"
+])
 @TestMethodOrder(MethodName::class)
 class SchemaJournalManagerTest {
 
@@ -39,10 +42,22 @@ class SchemaJournalManagerTest {
     @Autowired
     lateinit var jdbcTemplate: JdbcTemplate
 
+    private val schemaPrefix = "win_schema_"
+
     @Test
     fun `test0🦁清表`() {
         wingsTestHelper.cleanTable()
-        schemaRevisionManager.checkAndInitSql(FlywaveRevisionScanner.scanMaster(), 0, true)
+        val sqls = FlywaveRevisionScanner
+                .helper()
+                .master()
+                .modify("更名win_schema_version") { _, sql ->
+                    if (sql.revision == FlywaveRevisionScanner.REVISION_1ST_SCHEMA) {
+                        sql.undoText = sql.undoText.replace("sys_schema_", schemaPrefix)
+                        sql.uptoText = sql.uptoText.replace("sys_schema_", schemaPrefix)
+                    }
+                }
+                .scan()
+        schemaRevisionManager.checkAndInitSql(sqls, 0, true)
         breakpointDebug("清楚所有表，发布 REVISION_1ST_SCHEMA 版，新建 flywave 版本表")
     }
 
@@ -52,16 +67,16 @@ class SchemaJournalManagerTest {
         wingsTestHelper.assertSame(WingsTestHelper.Type.Table,
                 "sys_commit_journal",
                 "sys_light_sequence",
-                "sys_schema_journal",
-                "sys_schema_version"
+                "${schemaPrefix}journal",
+                "${schemaPrefix}version"
         )
         breakpointDebug("生成测试表💰，观察数据库所有表")
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
         wingsTestHelper.assertSame(WingsTestHelper.Type.Table,
                 "sys_commit_journal",
                 "sys_light_sequence",
-                "sys_schema_journal",
-                "sys_schema_version",
+                "${schemaPrefix}journal",
+                "${schemaPrefix}version",
                 "tst_中文也分表")
         testcaseNotice("可检查日志或debug观察，wing0和wing1表名")
     }

@@ -51,7 +51,7 @@ public class Wings1SchemaGen {
 //        String path = "classpath:/wings-flywave/revision/**/*.sql";  // 当前类路径
 //        String path = "file:src/main/resources/wings-flywave/revision/**/*.sql"; // 具体文件
 //        String path = "file:src/main/resources/wings-flywave/dev-revi/**/*.sql"; // DEV文件
-        val sqls = FlywaveRevisionScanner.builder()
+        val sqls = FlywaveRevisionScanner.helper()
                                          .master()
                                          .path(REVISION_PATH_BRANCH_3RD_ENU18N)
                                          .scan();
