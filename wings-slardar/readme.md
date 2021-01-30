@@ -144,9 +144,63 @@ wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子
 * 在FilterChain.doFilter调用之前Request可用，而其后Response可用的，注意线程安全和性能。
 * 默认静态资源在classpath中的 `/static`, `/public`, `/resources`, `/META-INF/resources`
 
-## 3.3.常用功能
+## 3.3.Session 管理
 
-## 3.3.1.restTemplate和okhttp
+* 同时支持header token, cookie session
+* 安全不高的url-string的凭证类ticket。
+* 用户可管理session，控制登录，踢人
+* 可配置的cookie-name，token-name
+* 不同级别的控制并发登录，如财务只许单登录。
+* 集成第三方登录。
+
+### 3.3.1.区分cookie，使用别名
+
+同domain同path下，多个应用共享一套Session-cookie体系，希望同名cookie可以区分使用。
+如admin和front两个应用要区分出`SESSSION`的cookie，设置别名而无需修改session体系。
+
+实现原理是写入时定制CookieSerializer，读取时进行cookie-name转换。
+
+### 3.3.2.记住我rememberMe
+
+重新登录，或修改了密码，原来的RememberMe需要失效。
+
+官方文档中，关键点和注意事项。
+
+ * Changes the session expiration length
+ * Ensures that the session cookie expires at Integer.MAX_VALUE.
+ * rememberMeServices use `SpringSessionRememberMeServices`
+ * Concurrent-Session-Control - sessionManagement use `SpringSessionBackedSessionRegistry`
+ * Limitations - not support the `getAllPrincipals` of Security’s SessionRegistry 
+
+参考文档，spring官方最新
+
+* https://docs.spring.io/spring-session/docs/current/reference/html5/#spring-security
+* https://docs.spring.io/spring-security/site/docs/current/reference/html5/#servlet-rememberme
+
+### 其他
+
+RequestContextHolder
+SecurityContextHolder
+
+CookieSerializer
+HttpSessionIdResolver
+
+SessionEventHttpSessionListenerAdapter
+HttpSessionEventPublisher
+
+rememberMe
+SpringSessionRememberMeServices
+
+
+默认使用jdbc实现，需要手动初始化相关表。
+
+若使用`@EnableJdbcHttpSession`表示手动配置，则`spring.session.*`不会自动配置。 
+`springSessionRepositoryFilter`会置顶，以便wrap掉原始的HttpRequest和HttpSession
+
+
+## 3.7.常用功能
+
+## 3.7.1.restTemplate和okhttp
 
 默认使用okhttp3作为restTemplate的实现。按spring boot官方文档和源码约定。
 并可以 autoware OkHttpClient 直接使用，默认**信任所有ssl证书**，如安全高，需要关闭。
@@ -156,7 +210,7 @@ wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子
 org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 
 
-## 3.3.2.缓存Caffeine
+## 3.7.2.缓存Caffeine
 
 默认提供caffeine缓存，可以注入
 
@@ -187,7 +241,7 @@ cacheNames = Level.GENERAL + "StandardRegion",
 cacheManager = Manager.REDISSON)
 ```
 
-## 3.3.3.Session,Timezone和I18n
+## 3.7.3.Session,Timezone和I18n
 
 用户登录后，自动生成时区和I18n有关的Context。
 通过`SecurityContextUtil`获得相关的Context。
@@ -196,9 +250,11 @@ cacheManager = Manager.REDISSON)
 需要打开TerminalFilter。
 
 
-## 3.7.特别用途的filter
+## 3.8.特别用途的 Filter
 
-## 3.7.1.TerminalFilter终端
+构建一个 wingsFilterChain 内置以下filter
+
+## 3.8.1.TerminalFilter终端
 
 是否解析 WingsTerminalContext，默认`spring.wings.slardar.terminal.enabled=true`控制，  
 同时依赖于 `WingsLocaleResolver`和`WingsRemoteResolver`
@@ -207,7 +263,7 @@ cacheManager = Manager.REDISSON)
  * 设置 remote ip
  * 设置 user agent信息
 
-## 3.7.2.CaptchaFilter防扒
+## 3.8.2.CaptchaFilter防扒
 
 是否开启验证码，`spring.wings.slardar.captcha.enabled=false`
 
@@ -223,7 +279,7 @@ cacheManager = Manager.REDISSON)
 
 举例，详见`TestCaptchaController`的三个方法。
 
-## 3.7.3.OverloadFilter过载
+## 3.8.3.OverloadFilter过载
 
 是否限定请求并发，默认`spring.wings.slardar.overload.enabled=false`
 
@@ -242,22 +298,22 @@ cacheManager = Manager.REDISSON)
 
 ## 3.9.常见问题
 
-### 001.spring 找不到 RedissonSpringCacheManager
+### 01.spring 找不到 RedissonSpringCacheManager
 
 在maven依赖中，把slardar以下3个optional的依赖引入 
 
 * spring-boot-starter-data-redis
 * redisson-spring-data-22
 
-### 002.修改过的默认配置
+### 02.修改过的默认配置
 
 slardar，使用undertow，并提供了一下默认配置
 
-### 003.session方案的选择
+### 03.session方案的选择
 
 其实 hazelcast 是个不错的选择，若选用redis，切记redis必须`requirepass`
 
-### 007.error处理，需要自定义page或handler
+### 04.error处理，需要自定义page或handler
 
 需要根据spring约定和实际需要，自定义一套机制。
 但是不要使用`spring.mvc.throw-exception-if-no-handler-found=true`，
@@ -278,7 +334,7 @@ public ModelAndView resolveErrorView(HttpServletRequest request,
 
 [error-handling](https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/#boot-features-error-handling)
 
-### 008.undertow 启动时warn UT026010
+### 05.undertow 启动时warn UT026010
 
 在未配置websocket时，undertow使用默认buffer，出现以下警告。
 需要定制`websocketServletWebServerCustomizer`，或设置
@@ -288,13 +344,13 @@ public ModelAndView resolveErrorView(HttpServletRequest request,
 `UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used`
 默认 DefaultByteBufferPool(directBuffers, 1024, 100, 12);
 
-### 009.OAuth2的参考资料
+### 06.OAuth2的参考资料
 
 * [OAuth 2 Developers Guide](https://projects.spring.io/spring-security-oauth/docs/oauth2.html)
 * [OAuth2 boot](https://docs.spring.io/spring-security-oauth2-boot/docs/current/reference/htmlsingle/)
 * [Spring Security](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/)
 
-### 010.如何配置security
+### 07.如何配置security
 
 security一定是系统中最为重要的部分，也是所有渗透入侵的重点，所以slardar无默认配置。
 

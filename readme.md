@@ -88,6 +88,7 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
  * Request mapper - 快速查找 mapping
  * Statistic - 统计一下自己的代码
  * String Manipulation -  对字符串的各种操作和转换。
+ * HTTP Client - 官方对`*.http`文件格式的支持
 
 ### 0.2.1.Java风格，遵循标准的java规范，但**可读性优先**。
 
@@ -208,6 +209,30 @@ public interface TradeService {
  * 多模块有主工程（parent|packaging=pom）和子工程（module|packaging=jar）
  * 主工程在dependencyManagement定义lib，不管理具体dependency
  * 子工程自己管理dependency，不可以重新定义版本号
+
+### 0.2.10.Api测试及文档约定
+
+使用swagger时，不可使用弱口令，必须在正式服关闭。在3.0.0版本，通过设置以下属性即可。  
+`springfox.documentation.enabled=false`，或通过profile来设置（不推荐）
+
+推荐在每个工程test下建立idea支持的 `*.http` 接口描述和测试脚本，官方文档如下
+
+ * https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html
+ * https://www.jetbrains.com/help/idea/exploring-http-syntax.html
+ * https://www.jetbrains.com/help/idea/http-response-handling-api-reference.html
+ * https://www.jetbrains.com/help/idea/http-client-reference.html
+ * https://www.jetbrains.com/help/idea/http-response-reference.html
+
+使用建议如下
+
+ * 使用`*.http`时，通常先从chrome中抓取 cURL 命令，复制过来即可。
+ * 变量`{{variable_name}}`，来自`http-client*.env.json`，`client.global.`或系统自带
+ * 处理Response. prepend it with `>` and enclose it in `{%` `%}`
+ * 很长的请求折多个短行. Indent all query string lines but the first one.
+ * HTTP Response Handler 的2个对象 client 和 response
+ * https://www.jetbrains.com/help/idea/http-response-handling-examples.html
+ 
+ 
 
 ## 0.3.技术选型
 

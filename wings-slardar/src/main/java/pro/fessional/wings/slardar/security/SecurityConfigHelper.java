@@ -48,9 +48,9 @@ public class SecurityConfigHelper extends AbstractHttpConfigurer<SecurityConfigH
         return this;
     }
 
-    public SecurityConfigHelper permitSwagger2() {
+    public SecurityConfigHelper permitSwagger() {
         if (notDslRegistry != null) {
-            permitSwagger2(notDslRegistry);
+            permitSwagger(notDslRegistry);
         } else {
             this.flagSwagger2 = true;
         }
@@ -81,7 +81,7 @@ public class SecurityConfigHelper extends AbstractHttpConfigurer<SecurityConfigH
             permitOAuth2(registry);
         }
         if (flagSwagger2) {
-            permitSwagger2(registry);
+            permitSwagger(registry);
         }
         if (flagTest) {
             permitTest(registry);
@@ -145,8 +145,8 @@ public class SecurityConfigHelper extends AbstractHttpConfigurer<SecurityConfigH
         return registry;
     }
 
-    public static ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry permitSwagger2(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) {
-        registry.antMatchers(swagger2AntPaths()).permitAll()
+    public static ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry permitSwagger(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) {
+        registry.antMatchers(swaggerAntPaths()).permitAll()
         ;
         return registry;
     }
@@ -181,7 +181,7 @@ public class SecurityConfigHelper extends AbstractHttpConfigurer<SecurityConfigH
         return new String[]{"/login", "/login/**", "/logout"};
     }
 
-    public static String[] swagger2AntPaths() {
-        return new String[]{"/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**"};
+    public static String[] swaggerAntPaths() {
+        return new String[]{"/*/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**"};
     }
 }

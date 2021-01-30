@@ -75,7 +75,17 @@ i18n可以使用CombinableMessageSource动态添加，处理service内消息的�
 ## 2.6.事件服务EventService
 
 单进程的异步和解耦，guava的EventBus和Spring的Event都可以胜任。
-为单Jvm，多Jvm提高一个基于数据库的Event服务，主要用来
+为单Jvm，多Jvm提高一个基于数据库的Event服务，主要用来。
+
+ * the event should extend ApplicationEvent
+ * the publisher should inject an ApplicationEventPublisher object
+ * the listener should implement the ApplicationListener interface
+ * @EventListener 和 @TransactionalEventListener 
+ 
+对应线程池直接传递上下文，可使用
+
+https://github.com/alibaba/transmittable-thread-local
+
 
 ## 2.9.数据库知识
 
