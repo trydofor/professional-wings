@@ -6,7 +6,7 @@
     <parent>
         <groupId>pro.fessional</groupId>
         <artifactId>wings-home</artifactId>
-        <version>2.4.2-SNAPSHOT</version>
+        <version>${revision}.${changelist}</version>
     </parent>
 
     <artifactId>wings-slardar</artifactId>
@@ -44,12 +44,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -72,12 +66,12 @@
             <artifactId>spring-data-commons</artifactId>
             <optional>true</optional>
         </dependency>
-        <!-- security -->
+        <!-- session and cache-->
         <dependency>
             <groupId>org.springframework.session</groupId>
-            <artifactId>spring-session-jdbc</artifactId>
-            <optional>true</optional>
+            <artifactId>spring-session-hazelcast</artifactId>
         </dependency>
+        <!-- security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -85,6 +79,16 @@
         <dependency>
             <groupId>pro.fessional</groupId>
             <artifactId>kaptcha</artifactId>
+        </dependency>
+        <!-- Argon2PasswordEncoder -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>me.zhyd.oauth</groupId>
+            <artifactId>JustAuth</artifactId>
+            <optional>true</optional>
         </dependency>
         <!-- utils -->
         <dependency>
@@ -98,6 +102,12 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+        </dependency>
+        <!-- dev -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <optional>true</optional>
         </dependency>
         <!-- websocket -->
         <!--
