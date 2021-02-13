@@ -34,13 +34,13 @@ public class WingsJson18nConfiguration {
     @Bean
     @ConditionalOnMissingBean(WingsI18nContext.class)
     public WingsI18nContext wingsI18nContext() {
-        logger.info("config bean wingsI18nContext");
+        logger.info("Wings conf wingsI18nContext");
         return new DefaultI18nContext();
     }
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer customizerI18nSerializer(MessageSource messageSource, WingsI18nContext i18nContext) {
-        logger.info("config bean customizerI18nSerializer");
+        logger.info("Wings conf customizerI18nSerializer");
         return builder -> {
             builder.serializerByType(R.I.class, new I18nResultSerializer(messageSource, i18nContext));
             builder.serializerByType(I18nString.class, new I18nStringSerializer(messageSource, i18nContext, true));

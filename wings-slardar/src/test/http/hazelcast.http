@@ -1,0 +1,10 @@
+### login-page
+GET {{host}}/test/hazelcast-get.json?key=trydofor
+
+# wings-slardar-pass 的 复制一次，然后MD5，即md5(pass+pass)
+#
+### login-proc
+POST {{host}}/test/hazelcast-put.json
+Content-Type: application/x-www-form-urlencoded;charset=UTF-8
+
+key=trydofor&value=东北程序猿

@@ -37,25 +37,25 @@ public class WingsDateTimeConfiguration implements WebMvcConfigurer {
     // spring boot can expose Beans instead of WebMvcConfigurer
     @Bean
     public LocalDateConverter localDateConverter() {
-        logger.info("config bean localDateConverter");
+        logger.info("Wings conf localDateConverter");
         return new LocalDateConverter();
     }
 
     @Bean
     public LocalTimeConverter localTimeConverter() {
-        logger.info("config bean localTimeConverter");
+        logger.info("Wings conf localTimeConverter");
         return new LocalTimeConverter();
     }
 
     @Bean
     public LocalDateTimeConverter localDateTimeConverter() {
-        logger.info("config bean localDateTimeConverter");
+        logger.info("Wings conf localDateTimeConverter");
         return new LocalDateTimeConverter();
     }
 
     @Bean
     public UtilDateConverter utilDateConverter() {
-        logger.info("config bean utilDateConverter");
+        logger.info("Wings conf utilDateConverter");
         return new UtilDateConverter();
     }
     */

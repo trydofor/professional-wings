@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
-import pro.fessional.wings.slardar.security.WingsCaptchaContext;
+import pro.fessional.wings.slardar.security.trek.WingsCaptchaContext;
 import pro.fessional.wings.slardar.servlet.WingsServletConst;
 
 import javax.servlet.FilterChain;

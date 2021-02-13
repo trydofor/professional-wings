@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.security;
+package pro.fessional.wings.slardar.security.trek;
 
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;

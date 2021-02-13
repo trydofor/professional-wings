@@ -29,7 +29,7 @@ public class WingsPageQueryConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        logger.info("config bean PageQueryArgumentResolver");
+        logger.info("Wings conf PageQueryArgumentResolver");
         argumentResolvers.add(new PageQueryArgumentResolver(config));
     }
 

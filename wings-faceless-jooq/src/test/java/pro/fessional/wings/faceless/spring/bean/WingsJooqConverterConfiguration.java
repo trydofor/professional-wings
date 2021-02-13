@@ -20,7 +20,7 @@ public class WingsJooqConverterConfiguration {
 
     @Bean
     public Converter<?, ?> jooqIdLanguageConverter() {
-        logger.info("Wings config jooqIdLanguageConverter");
+        logger.info("Wings conf jooqIdLanguageConverter");
         return JooqIdLanguageConverter.Instance;
     }
 }

@@ -36,13 +36,19 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
  * 奥卡姆剃刀，能简单的实现，就不用搞复杂的
  * 防御性编程风格，默认输入数据不可信，必须验证。
 
-由以下几个子工程构成
+由以下几个子工程构成，
 
- * [演示例子/example](wings-example/readme.md) 集成了以上的例子
- * [沉默术士/silencer](wings-silencer/readme.md) 工程化的自动装配，I18n等
- * [虚空假面/faceless](wings-faceless/readme.md) DAO，分表分库，数据版本管理
- * [鱼人守卫/slardar](wings-slardar/readme.md) 基于Servlet体系的WebMvc
- * [术士大叔/warlock](wings-warlock/readme.md) 基于Servlet体系的AuthZ和AuthN
+ * [沉默术士/silencer](wings-silencer/readme.md) springboot的工程化装配，I18n等
+ * [虚空假面/faceless](wings-faceless/readme.md) 数据层，分表分库，数据及库的版本管理
+ * [鱼人守卫/slardar](wings-slardar/readme.md) Servlet体系的WebMvc基础约定和封装
+ * [术士大叔/warlock](wings-warlock/readme.md) 综合以上的基础业务模块和功能脚手架
+ * [演示例子/example](wings-example/readme.md) 集成以上的样板工程和例子
+
+wings的版本号为`4段分隔`，前3段为spring-boot版本，第4段是changelist。
+build是3位数字，第1位为大版本，意味着大调整，不兼容，后2位是小版本，意味着基本兼容或容易适配。
+
+例如，`2.4.2.100-SNAPSHOT`，标识基于boot 2.4.2，是wings的`1##-SNAPSHOT`的系列。
+因为wings使用了`revision`和`changelist`的CI占位属性，所以需要Maven 3.5.0 以上。
 
 涉及技术和知识点
 
@@ -92,7 +98,8 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
 
 ### 0.2.1.Java风格，遵循标准的java规范，但**可读性优先**。
 
- * `static final` 不一定全大写。如`logger`比`LOG`可读性好。
+ * `static final` 不必全大写。如`logger`比`LOG`可读性好。
+ * 全大写下划线分隔，不如小写单词易读，可使用Pascal命名法。
  * 全大写名词（缩写或专有）只首字母大写。`Json`,`Html`,`Id`。
  * 英文无法表达的业务词汇及行业黑话，不要用拼音，用中文。`落地配`。
  * 要求4-8字母的单词都记住。
@@ -232,7 +239,7 @@ public interface TradeService {
  * HTTP Response Handler 的2个对象 client 和 response
  * https://www.jetbrains.com/help/idea/http-response-handling-examples.html
  
- 
+
 
 ## 0.3.技术选型
 
@@ -494,3 +501,17 @@ wings随时跟进升级spring boot的最新版本，目的是为了测试shardin
  * https://docs.spring.io/spring-boot/docs/2.4.2/maven-plugin/reference/htmlsingle/#using-import
 
 对于低于wings的spring-boot版本，一般来讲指定一下jooq版本就可以完全正常。
+
+### 12.关于http密码安全
+
+* 密码长度不可设置上限，一般要求8位以上
+* 支持中文密码，标点，全角半角
+* 不发送明文密码，密码初级散列策略为md5(pass+':'+pass).toUpperCase(Hex大写)
+* js侧md5需要支持UTF8，如 https://github.com/emn178/js-md5
+
+### 13.关于内网穿透，第三方集成调试
+
+在Oauth，支付等第三方集成调试时，需要有公网ip或域名，然后把公网请求转发到开发机调试。
+
+* 临时用 ssh - `ssh -R 9988:127.0.0.1:8080 user@remote`
+* 持久用 frp - https://gofrp.org/docs/

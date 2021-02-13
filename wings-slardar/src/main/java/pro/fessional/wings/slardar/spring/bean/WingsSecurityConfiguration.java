@@ -4,7 +4,9 @@ import lombok.Setter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
@@ -15,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.util.Assert;
+import pro.fessional.wings.slardar.security.auth.WingsUserDetailsService;
+import pro.fessional.wings.slardar.security.conf.WingsInitBeanManagerConfigurer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +48,12 @@ public class WingsSecurityConfiguration {
         encoders.put("argon2", new Argon2PasswordEncoder());
         Assert.isTrue(encoders.containsKey(defaultEncoder), "unsupported encoder: " + defaultEncoder);
         return new DelegatingPasswordEncoder(defaultEncoder, encoders);
+    }
+
+    @Bean
+    @ConditionalOnBean(WingsUserDetailsService.class)
+    public WingsInitBeanManagerConfigurer wingsInitBeanManagerConfigurer(ApplicationContext context) {
+        return new WingsInitBeanManagerConfigurer(context);
     }
 
     public static void main(String[] args) {

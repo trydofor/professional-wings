@@ -15,17 +15,17 @@ import pro.fessional.wings.example.database.autogen.tables.pojos.WinAuthRole;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 
-import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
-import static pro.fessional.wings.slardar.cache.WingsCache.Level;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static pro.fessional.wings.slardar.cache.WingsCache.Level;
+import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
+
 
 @Service
 @Setter(onMethod = @__({@Autowired}))
-@CacheConfig(cacheNames = Level.GENERAL + "AuthorityName", cacheManager = Manager.CAFFEINE)
+@CacheConfig(cacheNames = Level.General + "AuthorityName", cacheManager = Manager.Memory)
 public class AuthRoleCache {
 
     private LightIdService lightIdService;

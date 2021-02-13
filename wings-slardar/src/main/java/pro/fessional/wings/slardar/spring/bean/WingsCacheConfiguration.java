@@ -1,23 +1,25 @@
 package pro.fessional.wings.slardar.spring.bean;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.CacheLoader;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import lombok.Data;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.spring.cache.HazelcastCacheManager;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.slardar.cache.WingsCache;
-
-import java.util.HashMap;
-import java.util.Map;
+import pro.fessional.wings.slardar.cache.WingsCacheConfig;
+import pro.fessional.wings.slardar.cache.WingsCaffeine;
+import pro.fessional.wings.slardar.cache.WingsHazelcast;
 
 import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
 
@@ -27,6 +29,7 @@ import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
  */
 @Configuration
 @ConditionalOnProperty(name = "spring.wings.slardar.cache.enabled", havingValue = "true")
+@EnableCaching
 public class WingsCacheConfiguration {
 
     private static final Log logger = LogFactory.getLog(WingsCacheConfiguration.class);
@@ -34,76 +37,56 @@ public class WingsCacheConfiguration {
     // //////////
     @Bean
     @ConfigurationProperties("wings.slardar.cache")
-    public CacheLevel cacheLevel() {
-        logger.info("config bean cacheLevel");
-        return new CacheLevel();
+    public WingsCacheConfig wingsCacheConfig() {
+        logger.info("Wings conf cacheLevel");
+        return new WingsCacheConfig();
     }
 
-    @Data
-    public static class CacheLevel {
-        private long ttl;
-        private long maxIdleTime;
-        private int maxSize;
+    // //////////////////// resolver ////////////////////
+    @Configuration
+    @ConditionalOnMissingBean(name = "cacheManager")
+    @RequiredArgsConstructor
+    public static class CachingPrimary extends CachingConfigurerSupport {
+        private final ApplicationContext context;
+        private final WingsCacheConfig conf;
 
-        private Map<String, Conf> level = new HashMap<>();
-    }
-
-    @Data
-    public static class Conf {
-        private long ttl;
-        private long maxIdleTime;
-        private int maxSize;
+        @Override
+        public CacheManager cacheManager() {
+            final String[] names = context.getBeanNamesForType(CacheManager.class);
+            String prim = conf.getPrimary();
+            CacheManager pre = null;
+            for (String name : names) {
+                if (name.equalsIgnoreCase(prim)) {
+                    return context.getBean(name, CacheManager.class);
+                } else if (pre == null && name.startsWith(prim)) {
+                    pre = context.getBean(name, CacheManager.class);
+                }
+            }
+            return pre;
+        }
     }
 
     // //////////////////// caffeine ////////////////////
     @Configuration
-    @EnableCaching
-    @ConditionalOnClass(name = {"org.springframework.cache.caffeine.CaffeineCacheManager"})
-    static class CaffeineCacheManagerConfiguration {
-        @Bean(Manager.CAFFEINE)
-        public CaffeineCacheManager caffeineCacheManager(CacheLevel conf) {
-
-            logger.info("config bean caffeineCacheManager");
-            final Map<String, Caffeine<Object, Object>> caffeines = new HashMap<>();
-            for (Map.Entry<String, Conf> entry : conf.level.entrySet()) {
-                Conf c = entry.getValue();
-                caffeines.put(entry.getKey(), WingsCache.caffeine(c.maxSize, c.ttl, c.maxIdleTime));
-            }
-
-
-            CacheLoader<Object, Object> loader = new CacheLoader<Object, Object>() {
-                @Override
-                public Object load(@NotNull Object key) {
-                    return null;
-                }
-
-                @Override
-                public Object reload(@NotNull Object key, @NotNull Object oldValue) {
-                    return oldValue;
-                }
-            };
-
-            CaffeineCacheManager cacheManager = new CaffeineCacheManager() {
-                @Override
-                @NotNull
-                protected Cache<Object, Object> createNativeCaffeineCache(@NotNull String name) {
-                    for (Map.Entry<String, Caffeine<Object, Object>> entry : caffeines.entrySet()) {
-                        if (name.startsWith(entry.getKey())) {
-                            return entry.getValue().build(loader);
-                        }
-                    }
-                    return super.createNativeCaffeineCache(name);
-                }
-            };
-
-            cacheManager.setAllowNullValues(false);
-            cacheManager.setCacheLoader(loader);
-            cacheManager.setCaffeine(WingsCache.caffeine(conf.maxSize, conf.ttl, conf.maxIdleTime));
-
-            return cacheManager;
+    @ConditionalOnClass(CaffeineCacheManager.class)
+    public static class CaffeineCacheManagerConfiguration {
+        @Bean(Manager.Memory)
+        @ConditionalOnMissingBean
+        public CaffeineCacheManager caffeineCacheManager(WingsCacheConfig conf) {
+            logger.info("Wings conf " + Manager.Memory);
+            return new WingsCaffeine.Manager(conf);
         }
     }
 
-    // //////////////////// redis ////////////////////
-
+    // //////////////////// hazelcast ////////////////////
+    @Configuration
+    @ConditionalOnClass({HazelcastInstance.class, HazelcastCacheManager.class})
+    public static class HazelcastCacheConfiguration {
+        @ConditionalOnMissingBean
+        @Bean(Manager.Server)
+        public HazelcastCacheManager hazelcastCacheManager(WingsCacheConfig conf, ObjectProvider<HazelcastInstance> hazelcastInstance) {
+            logger.info("Wings conf " + Manager.Server);
+            return new WingsHazelcast.Manager(conf, hazelcastInstance.getIfAvailable());
+        }
+    }
 }

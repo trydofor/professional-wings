@@ -3,7 +3,7 @@ package pro.fessional.wings.slardar.spring.bean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.code.RandCode;
-import pro.fessional.wings.slardar.security.WingsCaptchaUtil;
+import pro.fessional.wings.slardar.security.util.WingsCaptchaUtil;
 import pro.fessional.wings.slardar.servlet.filter.WingsCaptchaFilter;
 
 /**

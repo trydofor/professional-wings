@@ -8,7 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import pro.fessional.wings.example.enums.auto.LoginType;
 import pro.fessional.wings.example.enums.auto.UserType;
 import pro.fessional.wings.faceless.enums.ConstantEnumUtil;
-import pro.fessional.wings.slardar.security.TypeIdI18nUserDetail;
+import pro.fessional.wings.slardar.security.auth.WingsUserDetails;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -22,7 +22,7 @@ import java.util.Locale;
  */
 @Setter
 @Getter
-public class WingsUserDetail implements TypeIdI18nUserDetail {
+public class WingsExampleUserDetails implements WingsUserDetails {
 
     private String username;
     private String password;
@@ -107,7 +107,7 @@ public class WingsUserDetail implements TypeIdI18nUserDetail {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        WingsUserDetail that = (WingsUserDetail) o;
+        WingsExampleUserDetails that = (WingsExampleUserDetails) o;
 
         return new EqualsBuilder()
                 .append(userId, that.userId)

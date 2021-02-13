@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.security;
+package pro.fessional.wings.slardar.security.auth;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,7 +9,7 @@ import java.util.Locale;
  * @author trydofor
  * @since 2019-11-27
  */
-public interface TypeIdI18nUserDetail extends UserDetails {
+public interface WingsUserDetails extends UserDetails {
 
     /**
      * 获得用户id

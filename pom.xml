@@ -182,6 +182,12 @@
                 <artifactId>sfm-jooq</artifactId>
                 <version>${simpleflatmapper.version}</version>
             </dependency>
+            <!-- session cache -->
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast-all</artifactId>
+                <version>${hazelcast.version}</version>
+            </dependency>
             <!-- utils -->
             <dependency>
                 <groupId>com.google.guava</groupId>

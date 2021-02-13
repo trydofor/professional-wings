@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.security;
+package pro.fessional.wings.slardar.security.util;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import pro.fessional.mirana.cast.TypedCastUtil;
+import pro.fessional.wings.slardar.security.trek.WingsTerminalContext;
 
 import java.util.Collection;
 import java.util.Collections;

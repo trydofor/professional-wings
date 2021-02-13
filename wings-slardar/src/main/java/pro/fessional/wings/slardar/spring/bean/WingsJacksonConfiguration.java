@@ -48,19 +48,19 @@ public class WingsJacksonConfiguration {
     @Bean
     @Primary
     public ObjectMapper jacksonObjectMapper(Jackson2ObjectMapperBuilder builder) {
-        logger.info("config bean jacksonObjectMapper");
+        logger.info("Wings conf jacksonObjectMapper");
         return builder.createXmlMapper(false).build();
     }
 
     @Bean
     public XmlMapper jacksonXmlMapper(Jackson2ObjectMapperBuilder builder) {
-        logger.info("config bean jacksonXmlMapper");
+        logger.info("Wings conf jacksonXmlMapper");
         return builder.createXmlMapper(true).build();
     }
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer customizerFront() {
-        logger.info("config bean Jackson2ObjectMapperBuilderCustomizer");
+        logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer");
         return builder -> {
             DateFormat dateFormat = new SimpleDateFormat(DateTimePattern.PTN_FULL_19);
 

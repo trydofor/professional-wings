@@ -45,14 +45,14 @@ public class WingsJooqConfiguration {
     @Bean
     @ConditionalOnProperty(name = "spring.wings.faceless.jooq.auto-qualify.enabled", havingValue = "true")
     public VisitListenerProvider autoQualifyFieldListener() {
-        logger.info("Wings config autoQualifyFieldListener");
+        logger.info("Wings conf autoQualifyFieldListener");
         return new DefaultVisitListenerProvider(new AutoQualifyFieldListener());
     }
 
     @Bean
     @ConditionalOnProperty(name = "spring.wings.faceless.trigger.journal-delete.enabled", havingValue = "true")
     public ExecuteListenerProvider journalDeleteListener() {
-        logger.info("Wings config journalDeleteListener");
+        logger.info("Wings conf journalDeleteListener");
         return new DefaultExecuteListenerProvider(new JournalDeleteListener());
     }
 
@@ -79,17 +79,17 @@ public class WingsJooqConfiguration {
             @Value("spring.wings.faceless.jooq.converter.enabled") String enabled
     ) {
         if (StringCastUtil.asFalse(enabled)) {
-            logger.info("Wings config skip jooqObjectProviderProcessor by enabled = false");
+            logger.info("Wings conf skip jooqObjectProviderProcessor by enabled = false");
             return;
         }
 
         final org.jooq.Configuration bean = config.getIfAvailable();
         if (bean == null) {
-            logger.info("Wings config skip jooqObjectProviderProcessor for null");
+            logger.info("Wings conf skip jooqObjectProviderProcessor for null");
             return;
         }
 
-        logger.info("Wings config jooqConfiguration ConverterProvider");
+        logger.info("Wings conf jooqConfiguration ConverterProvider");
         JooqConverterDelegate dcp = new JooqConverterDelegate();
         dcp.add(bean.converterProvider());
 

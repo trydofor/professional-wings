@@ -30,7 +30,7 @@ import java.util.Set;
  */
 @Service
 @Setter(onMethod = @__({@Autowired}))
-public class WingsUserDetailService implements UserDetailsService {
+public class WingsExampleUserDetailsService implements UserDetailsService {
 
     private WinUserLoginDao winUserLoginDao;
     private WinUserDao winUserDao;
@@ -49,7 +49,7 @@ public class WingsUserDetailService implements UserDetailsService {
 
 
     @Override
-    public WingsUserDetail loadUserByUsername(String username) {
+    public WingsExampleUserDetails loadUserByUsername(String username) {
         LoginType loginType = LoginType.NAME_PASS;
 //        String password = passwordEncoder.encode("moilioncircle");
 
@@ -69,7 +69,7 @@ public class WingsUserDetailService implements UserDetailsService {
 
         Set<GrantedAuthority> auths = authRoleService.loadRoleAuth(user.getRoleSet(), user.getAuthSet());
 
-        WingsUserDetail detail = new WingsUserDetail();
+        WingsExampleUserDetails detail = new WingsExampleUserDetails();
         detail.setUsername(username);
         detail.setPassword(login.getLoginPass());
         detail.setAuthorities(null);

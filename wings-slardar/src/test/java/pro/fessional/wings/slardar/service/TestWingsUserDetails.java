@@ -1,7 +1,7 @@
 package pro.fessional.wings.slardar.service;
 
 import org.springframework.security.core.GrantedAuthority;
-import pro.fessional.wings.slardar.security.TypeIdI18nUserDetail;
+import pro.fessional.wings.slardar.security.auth.WingsUserDetails;
 
 import java.time.ZoneId;
 import java.util.Collection;
@@ -11,7 +11,7 @@ import java.util.Locale;
  * @author trydofor
  * @since 2019-11-20
  */
-public class TestI18nUserDetail implements TypeIdI18nUserDetail {
+public class TestWingsUserDetails implements WingsUserDetails {
 
     private int userType;
     private long userId;

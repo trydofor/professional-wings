@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.security;
+package pro.fessional.wings.slardar.security.util;
 
 import com.google.code.kaptcha.Producer;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
@@ -6,6 +6,7 @@ import com.google.code.kaptcha.util.Config;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import pro.fessional.mirana.code.RandCode;
+import pro.fessional.wings.slardar.security.trek.WingsCaptchaContext;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
