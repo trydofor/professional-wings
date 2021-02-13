@@ -21,6 +21,7 @@ import org.springframework.util.unit.DataSize;
  * @since 2020-07-05
  */
 
+@ConditionalOnClass(io.undertow.websockets.jsr.Bootstrap.class)
 public class WingsUndertowConfiguration {
 
     private static final Log logger = LogFactory.getLog(WingsUndertowConfiguration.class);
@@ -29,9 +30,8 @@ public class WingsUndertowConfiguration {
      * UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
      */
     @Configuration(proxyBeanMethods = false)
-    @ConditionalOnClass(io.undertow.websockets.jsr.Bootstrap.class)
-    @ConditionalOnProperty(name = "spring.wings.slardar.undertow-ws.enabled", havingValue = "true")
-    static class UndertowWebSocketConfiguration {
+    @ConditionalOnProperty(name = "spring.wings.slardar.enabled.undertow-ws", havingValue = "true")
+    public static class UndertowWebSocketConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "websocketServletWebServerCustomizer")

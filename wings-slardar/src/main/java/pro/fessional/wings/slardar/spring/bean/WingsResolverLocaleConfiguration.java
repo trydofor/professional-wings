@@ -15,7 +15,7 @@ import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
  * @since 2019-06-29
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.slardar.locale.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.slardar.enabled.locale", havingValue = "true")
 public class WingsResolverLocaleConfiguration {
 
     private final Log logger = LogFactory.getLog(WingsResolverLocaleConfiguration.class);

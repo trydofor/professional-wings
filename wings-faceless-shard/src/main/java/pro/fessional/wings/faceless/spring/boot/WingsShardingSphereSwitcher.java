@@ -79,7 +79,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @see org.apache.shardingsphere.shardingjdbc.spring.boot.SpringBootConfiguration
  */
 
-@ConditionalOnProperty(name = "spring.wings.faceless.shardingsphere.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.faceless.shard.enabled.module", havingValue = "true")
 @ConditionalOnClass(name = "pro.fessional.wings.faceless.database.DataSourceContext")
 //////////////// >>>>>>> BGN ShardingSphere code ////////////////
 @Configuration
@@ -222,7 +222,7 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
         }
 
         private boolean needShard(Environment environment) {
-            String enable = environment.getProperty("spring.wings.faceless.shardingsphere.enabled");
+            String enable = environment.getProperty("spring.wings.faceless.shard.enabled.module");
             if (StringCastUtil.asFalse(enable)) {
                 logger.info("[Wings]🦄 shardingsphere is disabled");
                 return false;
@@ -249,16 +249,16 @@ public class WingsShardingSphereSwitcher implements EnvironmentAware {
         }
 
         private boolean containsProperty(Environment environment, String key, boolean prefix) {
-            boolean has;
+            final boolean has;
             if (prefix) {
                 has = PropertyUtil.containPropertyPrefix(environment, key);
             } else {
                 has = environment.containsProperty(key);
             }
             if (has) {
-                logger.info("[Wings]🦄 " + key + " = " + has + " 🦄");
+                logger.info("[Wings]🦄 " + key + " = true 🦄");
             } else {
-                logger.info("[Wings]🦄 " + key + " = " + has);
+                logger.info("[Wings]🦄 " + key + " = false");
             }
             return has;
         }

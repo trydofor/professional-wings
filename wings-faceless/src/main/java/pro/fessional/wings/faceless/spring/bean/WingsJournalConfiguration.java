@@ -17,7 +17,7 @@ import pro.fessional.wings.faceless.service.lightid.LightIdService;
  * @since 2019-06-01
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.faceless.journal.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.faceless.enabled.journal", havingValue = "true")
 public class WingsJournalConfiguration {
 
     @Bean

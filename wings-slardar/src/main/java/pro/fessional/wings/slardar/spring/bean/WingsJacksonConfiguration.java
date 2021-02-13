@@ -40,7 +40,7 @@ import java.util.Date;
  */
 @Configuration
 @ConditionalOnClass(DateSerializer.class)
-@ConditionalOnProperty(name = "spring.wings.slardar.jackson.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.slardar.enabled.jackson", havingValue = "true")
 public class WingsJacksonConfiguration {
 
     private static final Log logger = LogFactory.getLog(WingsJacksonConfiguration.class);

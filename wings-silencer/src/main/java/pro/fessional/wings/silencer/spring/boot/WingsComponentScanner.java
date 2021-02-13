@@ -1,5 +1,6 @@
 package pro.fessional.wings.silencer.spring.boot;
 
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,5 +10,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ComponentScan("pro.fessional.wings.silencer.spring.bean")
+@ConfigurationPropertiesScan("pro.fessional.wings.silencer.spring.prop")
 public class WingsComponentScanner {
 }

@@ -109,7 +109,7 @@ sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/res
  * 通过工具类`JournalHelp`，手动执行`delete##`。
  * 自动对`delete from ## where id=? and commit_id=?`格式进行拦截。
 
-自动拦截`spring.wings.faceless.trigger.journal-delete.enabled`默认关闭。
+自动拦截`spring.wings.faceless.jooq.enabled.journal-delete`默认关闭。
 因为违反`静态高于动态，编译时高于运行时`团队规则，且性能和限制不好控制。
 
 ## 2.1.4.测试用例
@@ -167,9 +167,9 @@ ALTER TABLE `win_admin` DROP INDEX ix_login_name;
 
 ### 01.控制flywave时，spring找不到bean `SchemaRevisionManager`
 
-在2.2.6后续中，默认关闭了spring.wings.faceless.flywave.enabled=false
+在2.2.6后续中，默认关闭了spring.wings.faceless.flywave.enabled.module=false
 初始化的时候需要打开，例如在test中增加临时打开
-`@SpringBootTest(properties = "spring.wings.faceless.flywave.enabled=true")`
+`@SpringBootTest(properties = "spring.wings.faceless.flywave.enabled.module=true")`
 
 ### 02.版本更新，异常说缺少字段branches
 

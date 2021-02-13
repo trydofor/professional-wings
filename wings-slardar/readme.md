@@ -342,7 +342,7 @@ org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 
 ## 3.8.1.TerminalFilter终端
 
-是否解析 WingsTerminalContext，默认`spring.wings.slardar.terminal.enabled=true`控制，  
+是否解析 WingsTerminalContext，默认`spring.wings.slardar.enabled.terminal=true`控制，  
 同时依赖于 `WingsLocaleResolver`和`WingsRemoteResolver`
 
  * 设置 Locale 和 TimeZone
@@ -351,7 +351,7 @@ org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 
 ## 3.8.2.CaptchaFilter防扒
 
-是否开启验证码，`spring.wings.slardar.captcha.enabled=false`
+是否开启验证码，`spring.wings.slardar.enabled.captcha=false`
 
 通过`WingsCaptchaContext`设置规则，可以实现全局的防扒验证码。
 验证码的验证规则可以自定义，比如时间戳比较，短信码比较等。
@@ -367,7 +367,7 @@ org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 
 ## 3.8.3.OverloadFilter过载
 
-是否限定请求并发，默认`spring.wings.slardar.overload.enabled=false`
+是否限定请求并发，默认`spring.wings.slardar.enabled.overload=false`
 
  * 自动或手动设置`最大同时进行请求数`。超过时，执行`fallback`。
  * 不影响性能的情况下，记录慢响应URI和运行状态。
@@ -435,7 +435,7 @@ public ModelAndView resolveErrorView(HttpServletRequest request,
 
 在未配置websocket时，undertow使用默认buffer，出现以下警告。
 需要定制`websocketServletWebServerCustomizer`，或设置
-`spring.wings.slardar.undertow-ws.enabled=true`即可
+`spring.wings.slardar.enabled.undertow-ws=true`即可
 
 在`io.undertow.websockets.jsr.Bootstrap` 68行，`buffers == null` 时
 `UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used`

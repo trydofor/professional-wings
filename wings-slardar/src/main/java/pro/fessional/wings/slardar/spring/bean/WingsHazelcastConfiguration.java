@@ -27,7 +27,7 @@ import org.springframework.session.security.SpringSessionBackedSessionRegistry;
  */
 @Configuration
 @ConditionalOnClass(HazelcastInstance.class)
-@ConditionalOnProperty(name = "spring.wings.slardar.session-hazelcast.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.slardar.enabled.session-hazelcast", havingValue = "true")
 public class WingsHazelcastConfiguration extends HazelcastHttpSessionConfiguration {
 
     private static final Log logger = LogFactory.getLog(WingsHazelcastConfiguration.class);

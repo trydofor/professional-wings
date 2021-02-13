@@ -35,7 +35,7 @@ import java.util.function.BiFunction;
  * @since 2019-06-29
  */
 @Configuration
-@ConditionalOnExpression("${spring.wings.slardar.extend-controller.enabled:false} || ${spring.wings.slardar.extend-resource.enabled:false}")
+@ConditionalOnExpression("${spring.wings.slardar.enabled.extend-controller:false} || ${spring.wings.slardar.enabled.extend-resource:false}")
 public class WingsFilterDomainExConfiguration {
 
     private final static Log logger = LogFactory.getLog(WingsFilterDomainExConfiguration.class);

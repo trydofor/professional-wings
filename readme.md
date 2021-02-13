@@ -161,7 +161,7 @@ build是3位数字，第1位为大版本，意味着大调整，不兼容，后2
 
  * 尽量使用`properties`和列编辑，`yml`的缩进在传递与部分分享时会困扰。
  * 一组关联属性，放在一个`properties`，分成文件便于管理。
- * `wings-conditional-manager.properties`是开关配置，使用`spring.wings.`前缀。
+ * `spring-wings-enabled.properties`是开关配置，使用`spring.wings.`前缀。
  * `spring-`前缀配置，放置spring官方配置key。
  * `wings-`前缀配置，放置wings配置key，带有工程代号，如`wings.slardar.*`。
  * 推荐`kebab-caseae`命名，即`key`全小写，使用`-`分割。
@@ -328,21 +328,21 @@ cat /etc/hosts
 
 ``` bash
 # 找到所以开关文件
-find . -name 'wings-conditional-manager.properties' \
+find . -name 'spring-wings-enabled.properties' \
 | egrep -v -E 'target/|example/' 
 
-./wings-slardar/src/main/resources/wings-conf/wings-conditional-manager.properties
-./wings-faceless/src/main/resources/wings-conf/wings-conditional-manager.properties
-./wings-silencer/src/main/resources/wings-conf/wings-conditional-manager.properties
+./wings-slardar/src/main/resources/wings-conf/spring-wings-enabled.properties
+./wings-faceless/src/main/resources/wings-conf/spring-wings-enabled.properties
+./wings-silencer/src/main/resources/wings-conf/spring-wings-enabled.properties
 
 # 找到所false的开关
-find . -name 'wings-conditional-manager.properties' \
+find . -name 'spring-wings-enabled.properties' \
 | egrep -v -E 'target/|example/' \
 | xargs grep 'false'
 
 # 以下2个需要在flywave和enum时开启
-spring.wings.faceless.flywave.enabled=false
-spring.wings.faceless.enumi18n.enabled=false
+spring.wings.faceless.flywave.enabled.module=false
+spring.wings.faceless.enabled.enumi18n=false
 ``` 
 
 ### 03.如何创建一个工程

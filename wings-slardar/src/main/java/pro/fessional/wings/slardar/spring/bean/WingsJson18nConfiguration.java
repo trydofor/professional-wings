@@ -26,7 +26,7 @@ import pro.fessional.wings.slardar.jackson.I18nStringSerializer;
  */
 @Configuration
 @ConditionalOnClass(DateSerializer.class)
-@ConditionalOnProperty(name = "spring.wings.slardar.json18n.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.slardar.enabled.json18n", havingValue = "true")
 public class WingsJson18nConfiguration {
 
     private static final Log logger = LogFactory.getLog(WingsJson18nConfiguration.class);

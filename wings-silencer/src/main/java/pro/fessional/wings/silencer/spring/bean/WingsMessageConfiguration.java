@@ -18,7 +18,7 @@ import pro.fessional.wings.silencer.message.CombinableMessageSource;
  */
 @Configuration
 @ConditionalOnClass(MessageSource.class)
-@ConditionalOnProperty(name = "spring.wings.silencer.message.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.silencer.enabled.message", havingValue = "true")
 public class WingsMessageConfiguration {
 
     private static final Log logger = LogFactory.getLog(WingsMessageConfiguration.class);

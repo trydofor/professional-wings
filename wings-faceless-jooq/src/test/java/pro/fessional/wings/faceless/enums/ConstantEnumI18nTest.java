@@ -36,7 +36,7 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
  */
 
 @ActiveProfiles("init")
-@SpringBootTest(properties = {"debug = true", "spring.wings.faceless.enumi18n.enabled=true"})
+@SpringBootTest(properties = {"debug = true", "spring.wings.faceless.enabled.enumi18n=true"})
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Tag("init")
 public class ConstantEnumI18nTest {

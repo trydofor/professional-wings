@@ -28,7 +28,7 @@ import pro.fessional.wings.slardar.session.WingsSessionIdResolver;
  * @since 2019-06-26
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.slardar.session.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.slardar.enabled.session", havingValue = "true")
 public class WingsSessionConfiguration {
 
     private static final Log logger = LogFactory.getLog(WingsSessionConfiguration.class);

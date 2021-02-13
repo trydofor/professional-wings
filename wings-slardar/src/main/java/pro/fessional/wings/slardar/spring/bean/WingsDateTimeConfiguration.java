@@ -20,7 +20,7 @@ import java.util.Date;
  * @since 2019-12-03
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.slardar.datetime.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.slardar.enabled.datetime", havingValue = "true")
 public class WingsDateTimeConfiguration implements WebMvcConfigurer {
 
     private static final Log logger = LogFactory.getLog(WingsDateTimeConfiguration.class);

@@ -19,7 +19,7 @@ import java.util.List;
  * @since 2019-12-03
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.slardar.pagequery.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.slardar.enabled.pagequery", havingValue = "true")
 public class WingsPageQueryConfiguration implements WebMvcConfigurer {
 
     private static final Log logger = LogFactory.getLog(WingsPageQueryConfiguration.class);

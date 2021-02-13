@@ -21,8 +21,8 @@ import java.util.List;
 
 @SpringBootTest(classes = WingsExampleApplication.class, properties =
         {"debug = true",
-         "spring.wings.faceless.flywave.enabled=true",
-//         "spring.wings.faceless.enumi18n.enabled=true",
+         "spring.wings.faceless.flywave.enabled.module=true",
+//         "spring.wings.faceless.enabled.enumi18n=true",
 //         "spring.shardingsphere.datasource.names=writer",
 //         "spring.shardingsphere.datasource.writer.jdbc-url=jdbc:mysql://127.0.0.1:3306/wings?autoReconnect=true&useSSL=false",
 //         "spring.shardingsphere.datasource.writer.username=trydofor",

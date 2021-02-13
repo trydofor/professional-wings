@@ -28,7 +28,7 @@ import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
  * @since 2019-12-03
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.slardar.cache.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.slardar.enabled.caching", havingValue = "true")
 @EnableCaching
 public class WingsCacheConfiguration {
 

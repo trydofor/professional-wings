@@ -1,7 +1,6 @@
 package pro.fessional.wings.slardar.spring.bean;
 
 import lombok.Setter;
-import me.zhyd.oauth.model.AuthUser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,7 +115,7 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public WingsBindAuthnDetailsSource<AuthUser> wingsBindAuthnDetailsSource() {
+    public WingsBindAuthnDetailsSource<Object> wingsBindAuthnDetailsSource() {
         return (authType, request) -> null;
     }
 }

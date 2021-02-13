@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.faceless.database.DataSourceContext;
@@ -18,8 +17,8 @@ import pro.fessional.wings.faceless.flywave.SqlStatementParser;
 import pro.fessional.wings.faceless.flywave.impl.DefaultRevisionManager;
 import pro.fessional.wings.faceless.flywave.impl.MySqlStatementParser;
 import pro.fessional.wings.faceless.flywave.impl.MysqlDefinitionLoader;
-import pro.fessional.wings.faceless.spring.conf.WingsFlywaveSqlProperties;
-import pro.fessional.wings.faceless.spring.conf.WingsFlywaveVerProperties;
+import pro.fessional.wings.faceless.spring.prop.FlywaveSqlProp;
+import pro.fessional.wings.faceless.spring.prop.FlywaveVerProp;
 
 /**
  * @author trydofor
@@ -27,7 +26,7 @@ import pro.fessional.wings.faceless.spring.conf.WingsFlywaveVerProperties;
  */
 @Configuration
 @ConditionalOnClass(name = "pro.fessional.wings.faceless.database.DataSourceContext")
-@ConditionalOnProperty(name = "spring.wings.faceless.flywave.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.faceless.flywave.enabled.module", havingValue = "true")
 public class WingsFlywaveConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(WingsFlywaveConfiguration.class);
@@ -37,7 +36,7 @@ public class WingsFlywaveConfiguration {
             DataSourceContext facelessDs,
             SqlStatementParser statementParser,
             SchemaDefinitionLoader schemaDefinitionLoader,
-            WingsFlywaveVerProperties properties) {
+            FlywaveVerProp properties) {
 
         SchemaJournalManager.JournalDdl ddl = new SchemaJournalManager.JournalDdl(
                 properties.getJournalUpdate(),
@@ -55,7 +54,7 @@ public class WingsFlywaveConfiguration {
             SqlStatementParser statementParser,
             SqlSegmentProcessor segmentProcessor,
             SchemaDefinitionLoader schemaDefinitionLoader,
-            WingsFlywaveVerProperties properties) {
+            FlywaveVerProp properties) {
         DefaultRevisionManager revisionManager = new DefaultRevisionManager(
                 sources.getPlains(), sources.getSharding(),
                 statementParser, segmentProcessor, schemaDefinitionLoader,
@@ -89,7 +88,7 @@ public class WingsFlywaveConfiguration {
     }
 
     @Bean
-    public SqlStatementParser sqlStatementParser(WingsFlywaveSqlProperties conf) {
+    public SqlStatementParser sqlStatementParser(FlywaveSqlProp conf) {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
             return new MySqlStatementParser();
         } else {
@@ -98,7 +97,7 @@ public class WingsFlywaveConfiguration {
     }
 
     @Bean
-    public SqlSegmentProcessor sqlSegmentParser(WingsFlywaveSqlProperties conf) {
+    public SqlSegmentProcessor sqlSegmentParser(FlywaveSqlProp conf) {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
             return new SqlSegmentProcessor(conf.getCommentSingle(),
                     conf.getCommentMultiple(),
@@ -110,23 +109,11 @@ public class WingsFlywaveConfiguration {
     }
 
     @Bean
-    public SchemaDefinitionLoader schemaDefinitionLoader(WingsFlywaveSqlProperties conf) {
+    public SchemaDefinitionLoader schemaDefinitionLoader(FlywaveSqlProp conf) {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
             return new MysqlDefinitionLoader();
         } else {
             throw new IllegalArgumentException("only support mysql");
         }
-    }
-
-    @Bean
-    @ConfigurationProperties("wings.faceless.flywave.sql")
-    public WingsFlywaveSqlProperties sqlProperties() {
-        return new WingsFlywaveSqlProperties();
-    }
-
-    @Bean
-    @ConfigurationProperties("wings.faceless.flywave.ver")
-    public WingsFlywaveVerProperties verProperties() {
-        return new WingsFlywaveVerProperties();
     }
 }

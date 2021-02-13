@@ -16,7 +16,7 @@ import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
  * @since 2019-06-29
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.slardar.terminal.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.slardar.enabled.terminal", havingValue = "true")
 public class WingsFilterTerminalConfiguration {
 
     private final Log logger = LogFactory.getLog(WingsFilterTerminalConfiguration.class);

@@ -53,6 +53,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
+        <!-- annotation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <!-- web server-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -74,7 +80,7 @@
             <artifactId>spring-data-commons</artifactId>
             <optional>true</optional>
         </dependency>
-        <!-- session and cache-->
+        <!-- session-->
         <dependency>
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-hazelcast</artifactId>
@@ -90,19 +96,14 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-        <dependency>
-            <groupId>pro.fessional</groupId>
-            <artifactId>kaptcha</artifactId>
-        </dependency>
         <!-- Argon2PasswordEncoder -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
         </dependency>
         <dependency>
-            <groupId>me.zhyd.oauth</groupId>
-            <artifactId>JustAuth</artifactId>
-            <optional>true</optional>
+            <groupId>pro.fessional</groupId>
+            <artifactId>kaptcha</artifactId>
         </dependency>
         <!-- utils -->
         <dependency>
@@ -134,7 +135,7 @@
             <artifactId>spring-security-messaging</artifactId>
         </dependency>
         -->
-        <!-- test -->
+        <!-- test : i18n -->
         <dependency>
             <groupId>pro.fessional</groupId>
             <artifactId>wings-faceless-test</artifactId>

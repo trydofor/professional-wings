@@ -13,7 +13,7 @@ import javax.sql.DataSource;
  * @since 2019-06-25
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.faceless.jdbctemplate.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.faceless.enabled.jdbctemplate", havingValue = "true")
 public class JdbcTemplateConfiguration {
 
     @Bean

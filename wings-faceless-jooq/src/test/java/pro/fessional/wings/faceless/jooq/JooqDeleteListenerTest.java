@@ -35,7 +35,7 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @ActiveProfiles("init")
-@SpringBootTest(properties = {"debug = true", "spring.wings.faceless.trigger.journal-delete.enabled=true"})
+@SpringBootTest(properties = {"debug = true", "spring.wings.faceless.jooq.enabled.journal-delete=true"})
 @Tag("init")
 public class JooqDeleteListenerTest {
 

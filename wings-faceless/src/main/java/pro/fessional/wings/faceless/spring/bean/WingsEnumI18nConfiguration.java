@@ -16,7 +16,7 @@ import pro.fessional.wings.silencer.message.CombinableMessageSource;
  * @since 2019-06-01
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.faceless.enumi18n.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.faceless.enabled.enumi18n", havingValue = "true")
 @ConditionalOnClass(name = "pro.fessional.wings.silencer.message.CombinableMessageSource")
 public class WingsEnumI18nConfiguration {
 

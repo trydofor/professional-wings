@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * @since 2019-07-09
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.slardar.captcha.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.slardar.enabled.captcha", havingValue = "true")
 public class WingsFilterCaptchaConfiguration {
 
     private final Log logger = LogFactory.getLog(WingsFilterCaptchaConfiguration.class);

@@ -13,7 +13,7 @@ import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
  * @since 2019-06-29
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.slardar.remote.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.slardar.enabled.remote", havingValue = "true")
 public class WingsResolverRemoteConfiguration {
 
     private final Log logger = LogFactory.getLog(WingsResolverRemoteConfiguration.class);

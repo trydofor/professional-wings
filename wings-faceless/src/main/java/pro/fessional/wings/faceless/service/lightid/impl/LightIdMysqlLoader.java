@@ -9,7 +9,7 @@ import pro.fessional.mirana.id.LightIdProvider;
 import pro.fessional.wings.faceless.database.manual.single.modify.lightsequence.LightSequenceModify;
 import pro.fessional.wings.faceless.database.manual.single.select.lightsequence.LightSequenceSelect;
 import pro.fessional.wings.faceless.database.sharding.MasterRouteOnly;
-import pro.fessional.wings.faceless.spring.conf.WingsLightIdInsertProperties;
+import pro.fessional.wings.faceless.spring.prop.LightIdInsertProp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public class LightIdMysqlLoader implements LightIdProvider.Loader {
 
     private final LightSequenceSelect select;
     private final LightSequenceModify modify;
-    private final WingsLightIdInsertProperties properties;
+    private final LightIdInsertProp properties;
 
     @NotNull
     @Override

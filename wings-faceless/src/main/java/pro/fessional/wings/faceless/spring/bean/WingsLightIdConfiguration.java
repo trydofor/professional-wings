@@ -1,10 +1,8 @@
 package pro.fessional.wings.faceless.spring.bean;
 
-import lombok.Data;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,41 +17,42 @@ import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.faceless.service.lightid.impl.DefaultBlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.impl.LightIdMysqlLoader;
 import pro.fessional.wings.faceless.service.lightid.impl.LightIdServiceImpl;
-import pro.fessional.wings.faceless.spring.conf.WingsLightIdInsertProperties;
-import pro.fessional.wings.faceless.spring.conf.WingsLightIdLoaderProperties;
+import pro.fessional.wings.faceless.spring.prop.LightIdInsertProp;
+import pro.fessional.wings.faceless.spring.prop.LightIdLoaderProp;
+import pro.fessional.wings.faceless.spring.prop.LightIdProviderProp;
 
 /**
  * @author trydofor
  * @since 2019-06-01
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.faceless.lightid.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.faceless.enabled.lightid", havingValue = "true")
 public class WingsLightIdConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(LightSequenceSelect.class)
-    public LightSequenceSelect lightSequenceSelect(LightIdProviderProperties provider, JdbcTemplate jdbcTemplate) {
-        return new LightSequenceSelectJdbc(jdbcTemplate, provider.sequenceGetOne, provider.sequenceGetAll);
+    public LightSequenceSelect lightSequenceSelect(LightIdProviderProp provider, JdbcTemplate jdbcTemplate) {
+        return new LightSequenceSelectJdbc(jdbcTemplate, provider.getSequenceGetOne(), provider.getSequenceGetAll());
     }
 
     @Bean
     @ConditionalOnMissingBean(LightSequenceModify.class)
-    public LightSequenceModify lightSequenceModify(LightIdProviderProperties provider, JdbcTemplate jdbcTemplate) {
-        return new LightSequenceModifyJdbc(jdbcTemplate, provider.sequenceInsert, provider.sequenceUpdate);
+    public LightSequenceModify lightSequenceModify(LightIdProviderProp provider, JdbcTemplate jdbcTemplate) {
+        return new LightSequenceModifyJdbc(jdbcTemplate, provider.getSequenceInsert(), provider.getSequenceUpdate());
     }
 
     @Bean
     @ConditionalOnMissingBean(LightIdProvider.Loader.class)
     public LightIdProvider.Loader lightIdLoader(LightSequenceSelect lightSequenceSelect,
                                                 LightSequenceModify lightSequenceModify,
-                                                WingsLightIdInsertProperties properties) {
+                                                LightIdInsertProp properties) {
         return new LightIdMysqlLoader(lightSequenceSelect, lightSequenceModify, properties);
     }
 
     @Bean
     @ConditionalOnMissingBean(LightIdProvider.class)
     public LightIdProvider lightIdProvider(LightIdProvider.Loader lightIdLoader,
-                                           WingsLightIdLoaderProperties properties) {
+                                           LightIdLoaderProp properties) {
 
         LightIdBufferedProvider provider = new LightIdBufferedProvider(lightIdLoader);
         provider.setTimeout(properties.getTimeout());
@@ -73,41 +72,13 @@ public class WingsLightIdConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(BlockIdProvider.class)
-    public BlockIdProvider blockProvider(LightIdProviderProperties provider,
+    public BlockIdProvider blockProvider(LightIdProviderProp provider,
                                          ObjectProvider<JdbcTemplate> jdbcTemplate) {
-        if ("sql".equalsIgnoreCase(provider.blockType)) {
-            return new DefaultBlockIdProvider(provider.blockPara, jdbcTemplate.getIfAvailable());
+        if ("sql".equalsIgnoreCase(provider.getBlockType())) {
+            return new DefaultBlockIdProvider(provider.getBlockPara(), jdbcTemplate.getIfAvailable());
         } else {
-            final int id = Integer.parseInt(provider.blockPara);
+            final int id = Integer.parseInt(provider.getBlockPara());
             return () -> id;
         }
-    }
-
-    @Bean
-    @ConfigurationProperties("wings.faceless.lightid.insert")
-    public WingsLightIdInsertProperties insertProperties() {
-        return new WingsLightIdInsertProperties();
-    }
-
-    @Bean
-    @ConfigurationProperties("wings.faceless.lightid.loader")
-    public WingsLightIdLoaderProperties loaderProperties() {
-        return new WingsLightIdLoaderProperties();
-    }
-
-    @Bean
-    @ConfigurationProperties("wings.faceless.lightid.provider")
-    public LightIdProviderProperties lightIdProviderProperties() {
-        return new LightIdProviderProperties();
-    }
-
-    @Data
-    public static class LightIdProviderProperties {
-        private String blockType;
-        private String blockPara;
-        private String sequenceInsert;
-        private String sequenceUpdate;
-        private String sequenceGetOne;
-        private String sequenceGetAll;
     }
 }

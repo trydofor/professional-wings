@@ -29,7 +29,7 @@ import pro.fessional.wings.faceless.database.jooq.listener.JournalDeleteListener
  * @since 2019-08-12
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.faceless.jooq.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.faceless.jooq.enabled.module", havingValue = "true")
 @ConditionalOnClass(name = "org.jooq.conf.Settings")
 public class WingsJooqConfiguration {
 
@@ -43,14 +43,14 @@ public class WingsJooqConfiguration {
      * @link https://github.com/jOOQ/jOOQ/issues/7258
      */
     @Bean
-    @ConditionalOnProperty(name = "spring.wings.faceless.jooq.auto-qualify.enabled", havingValue = "true")
+    @ConditionalOnProperty(name = "spring.wings.faceless.jooq.enabled.auto-qualify", havingValue = "true")
     public VisitListenerProvider autoQualifyFieldListener() {
         logger.info("Wings conf autoQualifyFieldListener");
         return new DefaultVisitListenerProvider(new AutoQualifyFieldListener());
     }
 
     @Bean
-    @ConditionalOnProperty(name = "spring.wings.faceless.trigger.journal-delete.enabled", havingValue = "true")
+    @ConditionalOnProperty(name = "spring.wings.faceless.jooq.enabled.journal-delete", havingValue = "true")
     public ExecuteListenerProvider journalDeleteListener() {
         logger.info("Wings conf journalDeleteListener");
         return new DefaultExecuteListenerProvider(new JournalDeleteListener());
@@ -60,7 +60,7 @@ public class WingsJooqConfiguration {
     @Bean
     @Order
     @ConditionalOnMissingBean(Settings.class)
-    public Settings settings(@Value("${spring.wings.faceless.jooq.dao.batch-mysql.enabled}") boolean daoBatchMysql) {
+    public Settings settings(@Value("${spring.wings.faceless.jooq.enabled.batch-mysql}") boolean daoBatchMysql) {
         WingsJooqEnv.daoBatchMysql = daoBatchMysql;
         // ObjectProvider<Settings> settings
         return new Settings()
@@ -76,7 +76,7 @@ public class WingsJooqConfiguration {
             ObjectProvider<org.jooq.Configuration> config,
             ObjectProvider<ConverterProvider> providers,
             ObjectProvider<org.jooq.Converter<?, ?>> converters,
-            @Value("spring.wings.faceless.jooq.converter.enabled") String enabled
+            @Value("spring.wings.faceless.jooq.enabled.converter") String enabled
     ) {
         if (StringCastUtil.asFalse(enabled)) {
             logger.info("Wings conf skip jooqObjectProviderProcessor by enabled = false");

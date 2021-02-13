@@ -13,7 +13,7 @@ import pro.fessional.wings.faceless.database.jooq.converter.impl.JooqIdLanguageC
  * @since 2019-08-12
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.wings.faceless.jooq.converter.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "spring.wings.faceless.jooq.enabled.converter", havingValue = "true")
 public class WingsJooqConverterConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(WingsJooqConverterConfiguration.class);
