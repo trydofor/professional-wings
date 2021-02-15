@@ -63,6 +63,15 @@ build是3位数字，第1位为大版本，意味着大调整，不兼容，后2
 
 `wings-idea-live.xml`需要手动放到`$config/templates/`，没有则新建。
 
+```
+id_config=~/Library/ApplicationSupport/JetBrains/IntelliJIdea2020.2
+cat $id_config/templates/wings.xml > wings-idea-live.xml
+cat $id_config/codestyles/Wings-Idea.xml > wings-idea-style.xml
+
+cat wings-idea-live.xml  > $id_config/templates/wings.xml
+cat wings-idea-style.xml > $id_config/codestyles/Wings-Idea.xml
+```
+
 关于live-template的使用，分为Insert和Surround，对应插入和编辑，一般
 选择文本时，`Surround... ⌥⌘J`，无选择文本时，使用 `Insert... ⌘J`
 
@@ -161,9 +170,13 @@ build是3位数字，第1位为大版本，意味着大调整，不兼容，后2
 
  * 尽量使用`properties`和列编辑，`yml`的缩进在传递与部分分享时会困扰。
  * 一组关联属性，放在一个`properties`，分成文件便于管理。
- * `spring-wings-enabled.properties`是开关配置，使用`spring.wings.`前缀。
- * `spring-`前缀配置，放置spring官方配置key。
- * `wings-`前缀配置，放置wings配置key，带有工程代号，如`wings.slardar.*`。
+ * `spring-wings-enabled.properties`用于ConditionalOnProperty配置
+    - 统一使用`spring.wings.**.enabled.*=true|false`格式。
+    - 多模块时，模块本身为`spring.wings.**.enabled.module=true`
+ * `spring-*`放置spring官方配置key。
+ * `wings-*`放置wings配置key，
+    - 带有工程或模块代号，如`wings.slardar.*`
+    - 提供默认配置，使用`-79`序号
  * 推荐`kebab-caseae`命名，即`key`全小写，使用`-`分割。
 
 ### 0.2.5.Spring注入风格，在`silencer`和`faceless`有详细说明。
@@ -172,6 +185,12 @@ build是3位数字，第1位为大版本，意味着大调整，不兼容，后2
  * 次之使用`setter`注入，用`lombok`的`@Setter(onMethod = @__({@Autowired}))`
    或`kotlin`的`@Autowired lateinit var`。
  * 不要使用`Field`注入，坏处自己搜。
+
+使用@Resource，@Inject和@Autowired，有细微差别，
+ * Resource由CommonAnnotationBeanPostProcessor处理，查找顺序为①BeanName②BeanType③Qualifier
+ * Autowired和Inject由AutowiredAnnotationBeanPostProcessor处理，查找顺序为①BeanType②Qualifier③BeanName 
+ * 注入控制时，type优先用Autowired和Inject，name优先用Resource(细粒度，难控制)
+ * 在spring体系下推荐@Autowired，考虑兼容性用Inject
 
 ### 0.2.6.Spring MVC中的 RequestMapping 约定
 
@@ -239,7 +258,59 @@ public interface TradeService {
  * HTTP Response Handler 的2个对象 client 和 response
  * https://www.jetbrains.com/help/idea/http-response-handling-examples.html
  
+### 0.2.11.工程目录结构
 
+文件命名，对外的内容使用Wings前缀，否则可实现项目前缀或特征代号。这样可以对外容易识别，对内避免冲突混淆。
+
+#### 01. resources
+```
+src/main/resources
+├── META-INF - spring 自动配置入口等
+│   └── spring.factories - EnableAutoConfiguration入口
+├── extra-conf/ - 非自动加载的其他配置
+├── wings-conf/ - wings自动加载配置 xml|yml|yaml|properties
+├── wings-flywave/ - flywave数据库版本管理，
+│   ├── branch/* - 分支脚本，如维护，功能
+│   └── master/* - 主线脚本，上线中
+└── wings-i18n/ - wings自动加载 bundle
+│   ├── base-validator_en.properties - 英文版
+│   └── base-validator_ja.properties - 日文版
+└── application.properties - spring 默认配置，用于覆盖wings
+```
+
+#### 02.database访问层
+
+```
+src/**/database/ - 数据访问层
+├── autogen/ - 自动生成的代码，jooq，mybatis等
+├── helper/ - 业务帮助类
+│   └── RowMapperHelper.java
+├── manual/ - 手动写的SQL
+│   ├── couple/ - 表示多表，一般为join查询或子查询，包名以主表命名
+│   │   ├── modify/ - 增，改，删
+│   │   └── select/ - 查
+│   └── single/ - 表示单表，可含简单的条件子查询，一个包名一个表。
+│       ├── modify/ - 增，改，删
+│       │   ├── commitjournal
+│       │   │   ├── CommitJournalModify.java - 接口
+│       │   │   └── impl/ 实现
+│       │   │       └── CommitJournalModifyJdbc.java - Jdbc实现
+│       └── select/ - 查
+```
+
+#### 03.spring有个目录
+
+```
+src/**/spring - spring有个配置
+├── bean/ - 自动扫描，产生可被Autowired的Bean
+│   └── WingsLightIdConfiguration.java - 内部用项目前缀，对外使用Wings前缀
+├── boot/ - spring boot 配置用，不产生Bean
+│   └── WingsComponentScanner.java - 由spring.factories开启Bean和属性入口
+├── conf/ - 配置辅助类Configurer
+├── help/ - 工具辅助类
+└── prop/ - 属性类，自动生成spring-configuration-metadata.json
+    └── FacelessEnabledProp.java - 开关类
+```
 
 ## 0.3.技术选型
 

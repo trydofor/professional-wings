@@ -7,14 +7,21 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * spring-wings-enabled-79.properties
  *
  * @author trydofor
+ * @see #Key
  * @since 2021-02-13
  */
 @Data
-@ConfigurationProperties("spring.wings.faceless.flywave.enabled")
+@ConfigurationProperties(FlywaveEnabledProp.Key)
 public class FlywaveEnabledProp {
+
+    public static final String Key = "spring.wings.faceless.flywave.enabled";
 
     /**
      * 是否注入flywave
+     *
+     * @see #Key$module
+     * @see #Key$module
      */
     private boolean module = false;
+    public static final String Key$module = Key + ".module";
 }

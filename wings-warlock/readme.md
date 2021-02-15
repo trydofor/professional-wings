@@ -4,7 +4,7 @@
 
 ![slardar](./warlock_full.png)
 
-基于SpringSecurity的AuthN(Authentication/认证)和AuthZ(Authorization/授权)支持。
+基于wings脚手架，包装了一些业务组件，复用或复制，可以快速实现业务功能。
 
  * 身份认证：OIDC/SSO，Form，RememberMe，API签名，第三方，手机短信
  * 令牌传递：session，token

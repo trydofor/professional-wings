@@ -16,6 +16,8 @@ import pro.fessional.mirana.cast.StringCastUtil;
 import pro.fessional.mirana.i18n.LocaleResolver;
 import pro.fessional.mirana.i18n.ZoneIdResolver;
 import pro.fessional.wings.silencer.spring.help.Utf8ResourceDecorator;
+import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
+import pro.fessional.wings.silencer.spring.prop.SilencerI18nProp;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -65,11 +67,6 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     public static final String BLOCK_LIST = "wings-conf-block-list.cnf";
     public static final int NAKED_SEQ = 70;
 
-    public static final String I18N_LOCALE = "wings.silencer.i18n.locale";
-    public static final String I18N_ZONEID = "wings.silencer.i18n.zoneid";
-    public static final String I18N_BUNDLE = "wings.silencer.i18n.bundle";
-
-
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         processWingsConf(environment);
@@ -80,7 +77,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     public void processWingsI18n(ConfigurableEnvironment environment) {
         // system default locale, zoneid
 
-        String lcl = environment.getProperty(I18N_LOCALE);
+        String lcl = environment.getProperty(SilencerI18nProp.Key$locale);
         if (lcl != null && !lcl.isEmpty()) {
             String ln = System.getProperty("user.language");
             String cn = System.getProperty("user.country");
@@ -97,7 +94,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             Locale.setDefault(loc);
         }
 
-        String zid = environment.getProperty(I18N_ZONEID);
+        String zid = environment.getProperty(SilencerI18nProp.Key$zoneid);
         if (zid != null && !zid.isEmpty()) {
             String tz = System.getProperty("user.timezone");
             logger.info("🦁 set wings-zoneid=" + zid + ", current user.timezone=" + tz);
@@ -107,7 +104,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
         final LinkedHashSet<String> baseNames = new LinkedHashSet<>();
         try {
-            String bundle = environment.getProperty(I18N_BUNDLE);
+            String bundle = environment.getProperty(SilencerI18nProp.Key$bundle);
             String[] paths;
             if (bundle == null || bundle.isEmpty()) {
                 paths = new String[]{"classpath*:/" + WINGS_I18N};
@@ -210,7 +207,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             }
         }
 
-        if (StringCastUtil.asTrue(environment.getProperty("spring.wings.silencer.enabled.verbose")) && !wingsKeys.isEmpty()) {
+        if (StringCastUtil.asTrue(environment.getProperty(SilencerEnabledProp.Key$verbose)) && !wingsKeys.isEmpty()) {
             String allCond = wingsKeys.stream()
                                       .map(e -> {
                                           String v = environment.getProperty(e.toString());

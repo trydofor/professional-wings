@@ -9,7 +9,7 @@ import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.
 import pro.fessional.wings.faceless.service.journal.impl.DefaultJournalService;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
-import pro.fessional.wings.slardar.security.util.SecurityContextUtil;
+import pro.fessional.wings.slardar.security.SecurityContextUtil;
 
 /**
  * @author trydofor

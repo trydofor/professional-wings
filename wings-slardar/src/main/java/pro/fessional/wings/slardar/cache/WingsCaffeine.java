@@ -6,12 +6,13 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
+import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static pro.fessional.wings.slardar.cache.WingsCacheConfig.inLevel;
-import static pro.fessional.wings.slardar.cache.WingsCacheConfig.maxInt;
+import static pro.fessional.wings.slardar.spring.prop.SlardarCacheProp.inLevel;
+import static pro.fessional.wings.slardar.spring.prop.SlardarCacheProp.maxInt;
 
 /**
  * @author trydofor
@@ -49,16 +50,16 @@ public class WingsCaffeine {
     }
 
     public static class Manager extends CaffeineCacheManager {
-        private final WingsCacheConfig wingsCacheConfig;
+        private final SlardarCacheProp slardarCacheProp;
         private final CacheLoader<Object, Object> loader;
 
-        public Manager(WingsCacheConfig config) {
-            this.wingsCacheConfig = config;
+        public Manager(SlardarCacheProp config) {
+            this.slardarCacheProp = config;
             this.loader = null;
             setAllowNullValues(config.isNulls());
         }
-        public Manager(WingsCacheConfig config, CacheLoader<Object, Object> loader) {
-            this.wingsCacheConfig = config;
+        public Manager(SlardarCacheProp config, CacheLoader<Object, Object> loader) {
+            this.slardarCacheProp = config;
             this.loader = loader;
             setAllowNullValues(config.isNulls());
             setCacheLoader(loader);
@@ -69,11 +70,11 @@ public class WingsCaffeine {
         protected Cache<Object, Object> createNativeCaffeineCache(@NotNull String name) {
 
             Caffeine<Object, Object> builder = null;
-            for (Map.Entry<String, WingsCacheConfig.Level> entry : wingsCacheConfig.getLevel().entrySet()) {
+            for (Map.Entry<String, SlardarCacheProp.Level> entry : slardarCacheProp.getLevel().entrySet()) {
                 // 前缀同
                 final String key = entry.getKey();
                 if (inLevel(name, key)) {
-                    final WingsCacheConfig.Level level = entry.getValue();
+                    final SlardarCacheProp.Level level = entry.getValue();
                     builder = builder(level.getMaxSize(), level.getMaxLive(), level.getMaxIdle());
                     log.info("Wings Caffeine name={}, level={}", name, key);
                     break;
@@ -81,9 +82,9 @@ public class WingsCaffeine {
             }
 
             if (builder == null) {
-                builder = WingsCaffeine.builder(wingsCacheConfig.getMaxSize(),
-                        wingsCacheConfig.getMaxLive(),
-                        wingsCacheConfig.getMaxIdle());
+                builder = WingsCaffeine.builder(slardarCacheProp.getMaxSize(),
+                        slardarCacheProp.getMaxLive(),
+                        slardarCacheProp.getMaxIdle());
                 log.info("Wings Caffeine name={}, level=default", name);
             }
 

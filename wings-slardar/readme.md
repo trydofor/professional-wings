@@ -130,6 +130,11 @@ public class UserController {
 wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子域全路径url，  
 通过检查缓存和DispatchServlet中的HandlerMapping再构造RequestWrapper。
 
+比如用户访问的URL为 /user/login.json，假设满足domain继承，host为trydofor，
+在服务器端实际访问的资源是 /prefix/trydofor/user/login.json
+
+即增加了 /${prefix}/${host}的路径在客户访问URI前。
+
 知识点提示，
 * 在FilterChain.doFilter调用之前Request可用，而其后Response可用的，注意线程安全和性能。
 * 默认静态资源在classpath中的 `/static`, `/public`, `/resources`, `/META-INF/resources`

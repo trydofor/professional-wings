@@ -1,7 +1,7 @@
 package pro.fessional.wings.slardar.webmvc;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -16,10 +16,15 @@ import pro.fessional.mirana.page.PageQuery;
  * @author trydofor
  * @since 2020-12-29
  */
-@RequiredArgsConstructor
+@Setter
+@Getter
 public class PageQueryArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final Config config;
+    private int page = 1;
+    private int size = 20;
+    private String[] pageAlias = Null.StrArr;
+    private String[] sizeAlias = Null.StrArr;
+    private String[] sortAlias = Null.StrArr;
 
     /**
      * 精确匹配PageQuery，避免污染子类
@@ -34,29 +39,29 @@ public class PageQueryArgumentResolver implements HandlerMethodArgumentResolver 
 
     @Override
     public PageQuery resolveArgument(@NotNull MethodParameter parameter, ModelAndViewContainer mavContainer,
-                                     @NotNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+                                     @NotNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         final PageDefault annotation = parameter.getParameterAnnotation(PageDefault.class);
 
-        int page = config.page;
-        int size = config.size;
+        int pg = page;
+        int sz = size;
         String sort = Null.Str;
-        String[] pageAlias = config.pageAlias;
-        String[] sizeAlias = config.sizeAlias;
-        String[] sortAlias = config.sortAlias;
+        String[] pas = pageAlias;
+        String[] szs = sizeAlias;
+        String[] sta = sortAlias;
         if (annotation != null) {
-            page = Math.max(page, annotation.page());
-            size = Math.max(size, annotation.size());
+            pg = Math.max(pg, annotation.page());
+            sz = Math.max(sz, annotation.size());
             sort = notEmpty(sort, annotation.sort());
-            pageAlias = notEmpty(pageAlias, annotation.pageAlias());
-            sizeAlias = notEmpty(sizeAlias, annotation.sizeAlias());
-            sortAlias = notEmpty(sortAlias, annotation.sortAlias());
+            pas = notEmpty(pas, annotation.pageAlias());
+            szs = notEmpty(szs, annotation.sizeAlias());
+            sta = notEmpty(sta, annotation.sortAlias());
         }
 
-        page = getParameter(page, webRequest, pageAlias);
-        size = getParameter(size, webRequest, sizeAlias);
-        sort = getParameter(sort, webRequest, sortAlias);
+        pg = getParameter(pg, webRequest, pas);
+        sz = getParameter(sz, webRequest, szs);
+        sort = getParameter(sort, webRequest, sta);
 
-        return new PageQuery(page, size, sort);
+        return new PageQuery(pg, sz, sort);
     }
 
     private String getParameter(String df, NativeWebRequest rq, String[] al) {
@@ -97,14 +102,5 @@ public class PageQueryArgumentResolver implements HandlerMethodArgumentResolver 
         } else {
             return df;
         }
-    }
-
-    @Data
-    public static class Config {
-        private int page = 1;
-        private int size = 20;
-        private String[] pageAlias = Null.StrArr;
-        private String[] sizeAlias = Null.StrArr;
-        private String[] sortAlias = Null.StrArr;
     }
 }

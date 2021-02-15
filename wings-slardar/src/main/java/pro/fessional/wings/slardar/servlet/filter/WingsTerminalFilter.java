@@ -3,7 +3,7 @@ package pro.fessional.wings.slardar.servlet.filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
 import pro.fessional.wings.silencer.context.WingsI18nContext;
-import pro.fessional.wings.slardar.security.trek.WingsTerminalContext;
+import pro.fessional.wings.slardar.security.WingsTerminalContext;
 import pro.fessional.wings.slardar.servlet.WingsServletConst;
 import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;

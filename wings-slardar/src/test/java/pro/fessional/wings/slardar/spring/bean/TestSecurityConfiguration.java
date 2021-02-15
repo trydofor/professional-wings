@@ -9,10 +9,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.session.SessionRegistry;
-import pro.fessional.wings.slardar.securit.enums.LoginTypeEnum;
-import pro.fessional.wings.slardar.securit.handler.TestLoginHandler;
-import pro.fessional.wings.slardar.security.auth.WingsBindAuthnDetailsSource;
-import pro.fessional.wings.slardar.security.conf.SecurityConfigHelper;
+import pro.fessional.wings.slardar.security.bind.WingsBindAuthnDetailsSource;
+import pro.fessional.wings.slardar.security.enums.LoginTypeEnum;
+import pro.fessional.wings.slardar.security.handler.TestLoginHandler;
+import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 
 
 /**

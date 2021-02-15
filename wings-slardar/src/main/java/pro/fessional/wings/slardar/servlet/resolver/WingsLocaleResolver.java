@@ -1,7 +1,7 @@
 package pro.fessional.wings.slardar.servlet.resolver;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
@@ -14,22 +14,27 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneId;
-import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
 
-import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_I18N_CONTEXT;
 
 /**
  * @author trydofor
  * @since 2019-06-30
  */
-@RequiredArgsConstructor
+@Setter
+@Getter
 public class WingsLocaleResolver extends AbstractLocaleContextResolver {
 
-
-    private final Config config;
+    private Set<String> localeParam = emptySet();
+    private Set<String> localeCookie = emptySet();
+    private Set<String> localeHeader = emptySet();
+    private Set<String> zoneidParam = emptySet();
+    private Set<String> zoneidCookie = emptySet();
+    private Set<String> zoneidHeader = emptySet();
 
     @NotNull
     @Override
@@ -87,7 +92,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
     // /////////////////
     private TimeZone resolveUserTimeZone(HttpServletRequest request) {
 
-        for (String s : config.getZoneidParam()) {
+        for (String s : zoneidParam) {
             String q = request.getParameter(s);
             if (q != null && !q.isEmpty()) {
                 return ZoneIdResolver.timeZone(q);
@@ -96,7 +101,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
 
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
-            for (String s : config.getZoneidCookie()) {
+            for (String s : zoneidCookie) {
                 for (Cookie c : cookies) {
                     if (c.getName().equalsIgnoreCase(s)) {
                         return ZoneIdResolver.timeZone(c.getValue());
@@ -105,7 +110,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
             }
         }
 
-        for (String s : config.getZoneidParam()) {
+        for (String s : zoneidParam) {
             String h = request.getHeader(s);
             if (h != null && !h.isEmpty()) {
                 return ZoneIdResolver.timeZone(h);
@@ -117,7 +122,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
 
     private Locale resolveUserLocale(HttpServletRequest request) {
 
-        for (String s : config.getLocaleParam()) {
+        for (String s : localeParam) {
             String q = request.getParameter(s);
             if (q != null && !q.isEmpty()) {
                 return LocaleResolver.locale(q);
@@ -126,7 +131,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
 
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
-            for (String s : config.getLocaleCookie()) {
+            for (String s : localeCookie) {
                 for (Cookie c : cookies) {
                     if (c.getName().equalsIgnoreCase(s)) {
                         return LocaleResolver.locale(c.getValue());
@@ -135,7 +140,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
             }
         }
 
-        for (String s : config.getLocaleParam()) {
+        for (String s : localeParam) {
             String h = request.getHeader(s);
             if (h != null && !h.isEmpty()) {
                 return LocaleResolver.locale(h);
@@ -143,16 +148,6 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
         }
 
         return Locale.getDefault();
-    }
-
-    @Data
-    public static class Config {
-        private List<String> localeParam = emptyList();
-        private List<String> localeCookie = emptyList();
-        private List<String> localeHeader = emptyList();
-        private List<String> zoneidParam = emptyList();
-        private List<String> zoneidCookie = emptyList();
-        private List<String> zoneidHeader = emptyList();
     }
 
     public static class Context implements TimeZoneAwareLocaleContext, WingsI18nContext {

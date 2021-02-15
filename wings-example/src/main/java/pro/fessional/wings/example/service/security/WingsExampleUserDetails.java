@@ -8,7 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import pro.fessional.wings.example.enums.auto.LoginType;
 import pro.fessional.wings.example.enums.auto.UserType;
 import pro.fessional.wings.faceless.enums.ConstantEnumUtil;
-import pro.fessional.wings.slardar.security.auth.WingsUserDetails;
+import pro.fessional.wings.slardar.security.WingsUserDetails;
 
 import java.time.LocalDate;
 import java.time.ZoneId;

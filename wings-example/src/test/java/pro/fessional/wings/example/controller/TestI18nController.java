@@ -8,8 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import pro.fessional.mirana.time.DateFormatter;
 import pro.fessional.wings.silencer.context.WingsI18nContext;
-import pro.fessional.wings.slardar.security.trek.WingsTerminalContext;
-import pro.fessional.wings.slardar.security.util.SecurityContextUtil;
+import pro.fessional.wings.slardar.security.SecurityContextUtil;
+import pro.fessional.wings.slardar.security.WingsTerminalContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneId;

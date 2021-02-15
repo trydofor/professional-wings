@@ -3,8 +3,8 @@ package pro.fessional.wings.slardar.spring.bean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.code.RandCode;
-import pro.fessional.wings.slardar.security.util.WingsCaptchaUtil;
-import pro.fessional.wings.slardar.servlet.filter.WingsCaptchaFilter;
+import pro.fessional.wings.slardar.captcha.CaptchaTrigger;
+import pro.fessional.wings.slardar.captcha.WingsCaptchaUtil;
 
 /**
  * @author trydofor
@@ -14,12 +14,12 @@ import pro.fessional.wings.slardar.servlet.filter.WingsCaptchaFilter;
 public class CaptchaTriggerConfigurationTest {
 
     @Bean
-    public WingsCaptchaFilter.CaptchaTrigger skipAllCaptchaTrigger() {
+    public CaptchaTrigger skipAllCaptchaTrigger() {
         return (request, sessions) -> null;
     }
 
     @Bean
-    public WingsCaptchaFilter.CaptchaTrigger requestCaptchaTrigger() {
+    public CaptchaTrigger requestCaptchaTrigger() {
         return (request, sessions) -> {
             if (request.getParameter("ct") != null) {
                 String code = RandCode.number(10);

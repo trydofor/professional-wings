@@ -1,7 +1,7 @@
 package pro.fessional.wings.slardar.service;
 
 import org.springframework.security.core.GrantedAuthority;
-import pro.fessional.wings.slardar.security.auth.WingsUserDetails;
+import pro.fessional.wings.slardar.security.WingsUserDetails;
 
 import java.time.ZoneId;
 import java.util.Collection;

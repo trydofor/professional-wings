@@ -6,11 +6,12 @@ import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.spring.cache.HazelcastCacheManager;
 import lombok.extern.slf4j.Slf4j;
+import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
 
 import java.util.Map;
 
-import static pro.fessional.wings.slardar.cache.WingsCacheConfig.maxInt;
-import static pro.fessional.wings.slardar.cache.WingsCacheConfig.wildcard;
+import static pro.fessional.wings.slardar.spring.prop.SlardarCacheProp.maxInt;
+import static pro.fessional.wings.slardar.spring.prop.SlardarCacheProp.wildcard;
 
 /**
  * @author trydofor
@@ -24,11 +25,11 @@ public class WingsHazelcast {
      * https://docs.hazelcast.org/docs/4.0.3/manual/html-single/index.html#configuration-pattern-matcher
      */
     public static class Manager extends HazelcastCacheManager {
-        private final WingsCacheConfig wingsCacheConfig;
+        private final SlardarCacheProp slardarCacheProp;
 
-        public Manager(WingsCacheConfig config, HazelcastInstance hazelcastInstance) {
+        public Manager(SlardarCacheProp config, HazelcastInstance hazelcastInstance) {
             super(hazelcastInstance);
-            this.wingsCacheConfig = config;
+            this.slardarCacheProp = config;
             checkWingsLevelPattern();
         }
 
@@ -42,13 +43,13 @@ public class WingsHazelcast {
             final Config config = getHazelcastInstance().getConfig();
             final Map<String, MapConfig> mapCnf = config.getMapConfigs();
 
-            checkMapConf(config, mapCnf, "default", wingsCacheConfig.getMaxLive(),
-                    wingsCacheConfig.getMaxIdle(), wingsCacheConfig.getMaxSize());
+            checkMapConf(config, mapCnf, "default", slardarCacheProp.getMaxLive(),
+                    slardarCacheProp.getMaxIdle(), slardarCacheProp.getMaxSize());
 
             // check level
-            for (Map.Entry<String, WingsCacheConfig.Level> entry : wingsCacheConfig.getLevel().entrySet()) {
+            for (Map.Entry<String, SlardarCacheProp.Level> entry : slardarCacheProp.getLevel().entrySet()) {
                 // 前缀同
-                final WingsCacheConfig.Level lvl = entry.getValue();
+                final SlardarCacheProp.Level lvl = entry.getValue();
                 checkMapConf(config, mapCnf, wildcard(entry.getKey()),
                         lvl.getMaxLive(), lvl.getMaxIdle(), lvl.getMaxSize());
             }

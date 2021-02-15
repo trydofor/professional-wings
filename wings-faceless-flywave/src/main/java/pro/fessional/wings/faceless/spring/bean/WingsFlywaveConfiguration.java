@@ -17,6 +17,7 @@ import pro.fessional.wings.faceless.flywave.SqlStatementParser;
 import pro.fessional.wings.faceless.flywave.impl.DefaultRevisionManager;
 import pro.fessional.wings.faceless.flywave.impl.MySqlStatementParser;
 import pro.fessional.wings.faceless.flywave.impl.MysqlDefinitionLoader;
+import pro.fessional.wings.faceless.spring.prop.FlywaveEnabledProp;
 import pro.fessional.wings.faceless.spring.prop.FlywaveSqlProp;
 import pro.fessional.wings.faceless.spring.prop.FlywaveVerProp;
 
@@ -26,7 +27,7 @@ import pro.fessional.wings.faceless.spring.prop.FlywaveVerProp;
  */
 @Configuration
 @ConditionalOnClass(name = "pro.fessional.wings.faceless.database.DataSourceContext")
-@ConditionalOnProperty(name = "spring.wings.faceless.flywave.enabled.module", havingValue = "true")
+@ConditionalOnProperty(name = FlywaveEnabledProp.Key$module, havingValue = "true")
 public class WingsFlywaveConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(WingsFlywaveConfiguration.class);
