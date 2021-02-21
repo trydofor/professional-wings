@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.DispatcherServlet;
 import pro.fessional.mirana.text.Wildcard;
-import pro.fessional.wings.slardar.domainx.DomainRequestMatcherDefault;
+import pro.fessional.wings.slardar.domainx.DefaultDomainRequestMatcher;
 import pro.fessional.wings.slardar.domainx.WingsDomainExtendFilter;
 import pro.fessional.wings.slardar.servlet.WingsServletConst;
 import pro.fessional.wings.slardar.spring.prop.DomainExtendProp;
@@ -49,7 +49,7 @@ public class SlardarDomainExtendConfiguration {
             prefix = prefix + "/";
         }
 
-        DomainRequestMatcherDefault requestMatcher = new DomainRequestMatcherDefault(dispatcherServlet, prefix,
+        DefaultDomainRequestMatcher requestMatcher = new DefaultDomainRequestMatcher(dispatcherServlet, prefix,
                 config.getOtherUrl(), config.getCacheSize());
         WingsDomainExtendFilter filter = new WingsDomainExtendFilter(
                 hostMatcher,

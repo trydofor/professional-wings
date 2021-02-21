@@ -6,7 +6,7 @@ import org.springframework.security.config.annotation.authentication.configurers
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pro.fessional.wings.slardar.security.bind.WingsBindAuthnProvider;
+import pro.fessional.wings.slardar.security.bind.WingsBindAuthProvider;
 
 /**
  * @author trydofor
@@ -48,7 +48,7 @@ public class WingsBindAuthnConfigurer<U extends UserDetailsService> extends User
     public void configure(AuthenticationManagerBuilder builder) {
         if (!wingsBindAuthnProvider) return;
 
-        WingsBindAuthnProvider provider = new WingsBindAuthnProvider(userDetailsService);
+        WingsBindAuthProvider provider = new WingsBindAuthProvider(userDetailsService);
 
         if (passwordEncoder != null) {
             provider.setPasswordEncoder(passwordEncoder);

@@ -67,7 +67,7 @@ public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record>
     /**
      * The column <code>tst_中文也分表.create_dt</code>.
      */
-    public final TableField<Tst中文也分表Record, LocalDateTime> CreateDt = createField(DSL.name("create_dt"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.field("CURRENT_TIMESTAMP(3)", SQLDataType.LOCALDATETIME)), this, "");
+    public final TableField<Tst中文也分表Record, LocalDateTime> CreateDt = createField(DSL.name("create_dt"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.field("NOW(3)", SQLDataType.LOCALDATETIME)), this, "");
 
     /**
      * The column <code>tst_中文也分表.modify_dt</code>.

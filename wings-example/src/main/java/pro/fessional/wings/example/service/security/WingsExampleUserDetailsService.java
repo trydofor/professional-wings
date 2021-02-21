@@ -19,7 +19,7 @@ import pro.fessional.wings.example.enums.auto.UserType;
 import pro.fessional.wings.example.service.authrole.AuthRoleService;
 import pro.fessional.wings.faceless.enums.ConstantEnumUtil;
 import pro.fessional.wings.faceless.enums.TimezoneEnumUtil;
-import pro.fessional.wings.faceless.enums.auto.StandardTimezone;
+import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 
 import java.util.List;
 import java.util.Set;

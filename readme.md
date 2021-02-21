@@ -65,11 +65,14 @@ build是3位数字，第1位为大版本，意味着大调整，不兼容，后2
 
 ```
 id_config=~/Library/ApplicationSupport/JetBrains/IntelliJIdea2020.2
+# 通过复制，备份
 cat $id_config/templates/wings.xml > wings-idea-live.xml
 cat $id_config/codestyles/Wings-Idea.xml > wings-idea-style.xml
-
+# 通过复制，还原
 cat wings-idea-live.xml  > $id_config/templates/wings.xml
 cat wings-idea-style.xml > $id_config/codestyles/Wings-Idea.xml
+# 若重新导入工程，清除idea配置
+find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 ```
 
 关于live-template的使用，分为Insert和Surround，对应插入和编辑，一般
@@ -305,12 +308,17 @@ src/**/spring - spring有个配置
 ├── bean/ - 自动扫描，产生可被Autowired的Bean
 │   └── WingsLightIdConfiguration.java - 内部用项目前缀，对外使用Wings前缀
 ├── boot/ - spring boot 配置用，不产生Bean
-│   └── WingsComponentScanner.java - 由spring.factories开启Bean和属性入口
+│   └── WingsAutoConfiguration.java - 兼容IDE和starter的配置入口
 ├── conf/ - 配置辅助类Configurer
 ├── help/ - 工具辅助类
 └── prop/ - 属性类，自动生成spring-configuration-metadata.json
     └── FacelessEnabledProp.java - 开关类
 ```
+
+### 0.2.12.常见的命名约定
+
+* 接口默认实现为`Default*`
+* 适配器类为`*Adapter`
 
 ## 0.3.技术选型
 

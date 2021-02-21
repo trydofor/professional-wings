@@ -8,19 +8,23 @@ import org.springframework.security.web.authentication.ForwardAuthenticationSucc
 import org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import pro.fessional.wings.slardar.security.bind.WingsBindAuthTypeSource;
-import pro.fessional.wings.slardar.security.bind.WingsBindAuthTypeSourceDefault;
-import pro.fessional.wings.slardar.security.bind.WingsBindAuthnFilter;
+import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
+import pro.fessional.wings.slardar.security.WingsAuthTypeSource;
+import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeSource;
+import pro.fessional.wings.slardar.security.bind.WingsBindAuthFilter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author trydofor
  * @since 2021-02-07
  */
 public class WingsBindLoginConfigurer extends
-        AbstractAuthenticationFilterConfigurer<HttpSecurity, WingsBindLoginConfigurer, WingsBindAuthnFilter> {
+        AbstractAuthenticationFilterConfigurer<HttpSecurity, WingsBindLoginConfigurer, WingsBindAuthFilter> {
 
     public WingsBindLoginConfigurer() {
-        super(new WingsBindAuthnFilter(), null);
+        super(new WingsBindAuthFilter(), null);
         usernameParameter("username");
         passwordParameter("password");
     }
@@ -53,26 +57,31 @@ public class WingsBindLoginConfigurer extends
 
     private String headerName = null;
     private String paramName = null;
-    private Enum<?>[] authType = null;
-    private WingsBindAuthTypeSource wingsBindAuthtypeSource = null;
+    private Map<String, Enum<?>> authTypes = new HashMap<>();
+    private WingsAuthTypeSource bindAuthTypeSource = null;
 
-    public WingsBindLoginConfigurer bindAuthtypeToHeader(String headerName) {
+    public WingsBindLoginConfigurer bindAuthTypeToHeader(String headerName) {
         this.headerName = headerName;
         return this;
     }
 
-    public WingsBindLoginConfigurer bindAuthtypeToParam(String paramName) {
+    public WingsBindLoginConfigurer bindAuthTypeToParam(String paramName) {
         this.paramName = paramName;
         return this;
     }
 
-    public WingsBindLoginConfigurer bindAuthtypeToEnums(Enum<?>... authType) {
-        this.authType = authType;
+    public WingsBindLoginConfigurer bindAuthTypeToEnums(String type, Enum<?> authType) {
+        this.authTypes.put(type, authType);
         return this;
     }
 
-    public WingsBindLoginConfigurer bindAuthtypeSource(WingsBindAuthTypeSource bindAuthtypeSource) {
-        this.wingsBindAuthtypeSource = bindAuthtypeSource;
+    public WingsBindLoginConfigurer bindAuthTypeToEnums(Map<String, Enum<?>> authType) {
+        this.authTypes.putAll(authType);
+        return this;
+    }
+
+    public WingsBindLoginConfigurer bindAuthTypeSource(WingsAuthTypeSource bindAuthTypeSource) {
+        this.bindAuthTypeSource = bindAuthTypeSource;
         return this;
     }
 
@@ -92,16 +101,26 @@ public class WingsBindLoginConfigurer extends
     }
 
     private void initBindAuthTypeSource(ApplicationContext context) {
-        if (wingsBindAuthtypeSource == null) {
-            if (authType != null) {
-                wingsBindAuthtypeSource = new WingsBindAuthTypeSourceDefault(getLoginProcessingUrl(), paramName, headerName, authType);
+        WingsAuthTypeParser parser = null;
+        if (bindAuthTypeSource == null) {
+            if (authTypes.isEmpty()) {
+                bindAuthTypeSource = context.getBeanProvider(WingsAuthTypeSource.class).getIfAvailable();
             } else {
-                wingsBindAuthtypeSource = context.getBeanProvider(WingsBindAuthTypeSource.class).getIfAvailable();
+                parser = authType -> authTypes.get(authType);
             }
         }
 
-        if (wingsBindAuthtypeSource != null) {
-            getAuthenticationFilter().setWingsBindAuthTypeSource(wingsBindAuthtypeSource);
+        if (bindAuthTypeSource == null) {
+            if (parser == null) {
+                parser = context.getBeanProvider(WingsAuthTypeParser.class).getIfAvailable();
+            }
+            if (parser != null) {
+                bindAuthTypeSource = new DefaultWingsAuthTypeSource(getLoginProcessingUrl(), paramName, headerName, parser);
+            }
+        }
+
+        if (bindAuthTypeSource != null) {
+            getAuthenticationFilter().setWingsBindAuthTypeSource(bindAuthTypeSource);
         }
     }
 

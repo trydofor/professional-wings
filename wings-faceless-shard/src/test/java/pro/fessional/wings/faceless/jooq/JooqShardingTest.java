@@ -28,7 +28,7 @@ import java.util.SortedMap;
 
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1;
 import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
-import static pro.fessional.wings.faceless.enums.auto.StandardLanguage.ZH_CN;
+import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
 
 /**
  * @author trydofor

@@ -210,6 +210,7 @@ header的名字和cookie同名，默认是SESSION。
 当手动配置userDetailsService，和默认配置一样，会自动new一个Provider添加。
 如果不需要添加Provider，可设置wingsBindAuthnProvider(false)，与spring原始不同。
 
+
 ### 3.4.4.实现原理
 
 在spring session加持下，spring security可以完成api预授信和token登录
@@ -285,10 +286,10 @@ Spring Boot tries to detect the following providers (in the indicated order):
 
 三种不同缓存级别前缀，分别定义不同的ttl,idle,size
 
-* `Forever.` - 程序配置，永存
-* `General.` - 标准配置，1天
-* `Service.` - 服务级的，1小时
-* `Session.` - 会话级的，10分钟
+* `program.` - 程序级，程序或服务运行期间
+* `general.` - 标准配置，1天
+* `service.` - 服务级的，1小时
+* `session.` - 会话级的，10分钟
 
 具有相同前缀的cache，会采用相同的配置项(ttl,idle,size)。
 

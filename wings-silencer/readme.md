@@ -21,7 +21,7 @@
  
 使用`idea`开发时，需要在`Project Structure`/`Facets`/`Spring`设置中加入
 
- * `boot/WingsComponentScanner`或`/bean/*` 
+ * `boot/WingsAutoConfiguration`或`/bean/*` 
  * `boot/WingsDataSourceConfigAware` 用来识别`FacelessDataSources`
  
 打开以下配置，`Settings`/`Annotation Processors`/`Enable annotation processing`
@@ -145,3 +145,16 @@ spring默认以如下配置为入口，逗号分隔，保留不带国家地区�
  * logging.level.忽略的包路径=OFF
 
 推荐使用`wings-starter.sh`启动，`wings-starter.env`配置基础参数。
+
+## 1.5.配置bind和meta提示
+
+配置类，统一使用`*Prop`和@Data
+
+* 手动添加 additional-spring-configuration-metadata.json
+* 自动生成 spring-configuration-metadata.json
+
+参考资料
+
+* https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#configuration-metadata
+* https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-Configuration-Binding
+* https://github.com/spring-projects/spring-boot/wiki/IDE-binding-features#simple-pojo

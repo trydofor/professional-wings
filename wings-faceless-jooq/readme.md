@@ -260,7 +260,7 @@ Map<Integer, List<String>>       group4 = create.selectFrom(BOOK).fetchGroups(BO
 ``` java
 // 每个表，每个字段映射，变更数据类型
 .forcedType(new ForcedType()
-        .withUserType("pro.fessional.wings.faceless.enums.auto.StandardLanguage")
+        .withUserType("pro.fessional.wings.faceless.enums.autogen.StandardLanguage")
         .withConverter("pro.fessional.wings.faceless.database.jooq.StandardLanguageConverter")
         .withExpression("tst_中文也分表.language")
 )

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.session.SessionRegistry;
-import pro.fessional.wings.slardar.security.bind.WingsBindAuthnDetailsSource;
+import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.enums.LoginTypeEnum;
 import pro.fessional.wings.slardar.security.handler.TestLoginHandler;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
@@ -75,7 +75,8 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .passwordParameter("password")
                     .successHandler(testLoginHandler.loginSuccess)
                     .failureHandler(testLoginHandler.loginFailure)
-                    .bindAuthtypeToEnums(LoginTypeEnum.values())
+                    .bindAuthTypeToEnums("sms", LoginTypeEnum.Sms)
+                    .bindAuthTypeToEnums("user", LoginTypeEnum.User)
             )
             .and()
             .authorizeRequests(conf -> conf
@@ -115,7 +116,7 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public WingsBindAuthnDetailsSource<Object> wingsBindAuthnDetailsSource() {
+    public WingsAuthDetailsSource<Object> wingsBindAuthnDetailsSource() {
         return (authType, request) -> null;
     }
 }

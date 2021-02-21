@@ -1,0 +1,8 @@
+### login-page
+GET {{host}}/auth/login-page.json
+
+### github login-page
+GET {{host}}/auth/github/login-page.html
+
+### github login-page
+GET {{host}}/auth/github/login-page.json

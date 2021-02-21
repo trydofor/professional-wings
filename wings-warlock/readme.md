@@ -11,21 +11,12 @@
  * 功能权限：role继承和扩展，身份马甲，临时增减，超级用户
  * 数据隔离：管辖隔离，职能继承，助理扩展，临时授权。
 
-## 4.1.权限场景
+## 4.1.多种登录验证
 
-Auth端进行AuthN和基础的AuthZ，可以实现SSO和RememberMe，
-在App和Res端可以通过uid的绑定，进行UserDetail和AuthZ的补充。
+### 4.1.1.集成Github
 
-在目前的`OIDC`体系中，access-token通常有以下几个格式，
+在github上设置，需要`App ID`，`Client ID`和`Client secret`，注意不用外泄。
+设置入口如下 Settings | Developer settings | GitHub Apps
 
-* opaque tokens (default)
-* reference tokens
-* JWTs (Json Web Tokens)
-
-目前主流的产品和技术风向上，对JWT比较钟爱，可却经常误用，命中其缺点。
-
-* 啰嗦，浪费带宽和计算资源。
-* 无法废弃，续签困难。
-* 并不安全，非加密
-
-
+ * Homepage URL - http://127.0.0.1:8084
+ * Callback URL - http://127.0.0.1:8084/auth/github/login.json

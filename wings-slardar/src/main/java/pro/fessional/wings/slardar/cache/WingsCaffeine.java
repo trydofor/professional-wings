@@ -44,7 +44,7 @@ public class WingsCaffeine {
      * @param tti 空闲秒数
      * @return cache
      */
-    public static Cache<Object, Object> cache(int max, int ttl, int tti, CacheLoader<Object, Object> loader) {
+    public static <K, V> Cache<K, V> cache(int max, int ttl, int tti, CacheLoader<K, V> loader) {
         final Caffeine<Object, Object> builder = builder(max, ttl, tti);
         return loader == null ? builder.build() : builder.build(loader);
     }
@@ -58,6 +58,7 @@ public class WingsCaffeine {
             this.loader = null;
             setAllowNullValues(config.isNulls());
         }
+
         public Manager(SlardarCacheProp config, CacheLoader<Object, Object> loader) {
             this.slardarCacheProp = config;
             this.loader = loader;
@@ -70,11 +71,11 @@ public class WingsCaffeine {
         protected Cache<Object, Object> createNativeCaffeineCache(@NotNull String name) {
 
             Caffeine<Object, Object> builder = null;
-            for (Map.Entry<String, SlardarCacheProp.Level> entry : slardarCacheProp.getLevel().entrySet()) {
+            for (Map.Entry<String, SlardarCacheProp.Conf> entry : slardarCacheProp.getLevel().entrySet()) {
                 // 前缀同
                 final String key = entry.getKey();
                 if (inLevel(name, key)) {
-                    final SlardarCacheProp.Level level = entry.getValue();
+                    final SlardarCacheProp.Conf level = entry.getValue();
                     builder = builder(level.getMaxSize(), level.getMaxLive(), level.getMaxIdle());
                     log.info("Wings Caffeine name={}, level={}", name, key);
                     break;
@@ -82,9 +83,10 @@ public class WingsCaffeine {
             }
 
             if (builder == null) {
-                builder = WingsCaffeine.builder(slardarCacheProp.getMaxSize(),
-                        slardarCacheProp.getMaxLive(),
-                        slardarCacheProp.getMaxIdle());
+                final SlardarCacheProp.Conf common = slardarCacheProp.getCommon();
+                builder = WingsCaffeine.builder(common.getMaxSize(),
+                        common.getMaxLive(),
+                        common.getMaxIdle());
                 log.info("Wings Caffeine name={}, level=default", name);
             }
 

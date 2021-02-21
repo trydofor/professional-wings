@@ -1,6 +1,5 @@
 package pro.fessional.wings.slardar.cache;
 
-import com.hazelcast.config.Config;
 import com.hazelcast.config.InvalidConfigurationException;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.HazelcastInstance;
@@ -40,22 +39,23 @@ public class WingsHazelcast {
         }
 
         private void checkWingsLevelPattern() {
-            final Config config = getHazelcastInstance().getConfig();
+            final com.hazelcast.config.Config config = getHazelcastInstance().getConfig();
             final Map<String, MapConfig> mapCnf = config.getMapConfigs();
 
-            checkMapConf(config, mapCnf, "default", slardarCacheProp.getMaxLive(),
-                    slardarCacheProp.getMaxIdle(), slardarCacheProp.getMaxSize());
+            final SlardarCacheProp.Conf common = slardarCacheProp.getCommon();
+            checkMapConf(config, mapCnf, "default", common.getMaxLive(),
+                    common.getMaxIdle(), common.getMaxSize());
 
             // check level
-            for (Map.Entry<String, SlardarCacheProp.Level> entry : slardarCacheProp.getLevel().entrySet()) {
+            for (Map.Entry<String, SlardarCacheProp.Conf> entry : slardarCacheProp.getLevel().entrySet()) {
                 // 前缀同
-                final SlardarCacheProp.Level lvl = entry.getValue();
+                final SlardarCacheProp.Conf lvl = entry.getValue();
                 checkMapConf(config, mapCnf, wildcard(entry.getKey()),
                         lvl.getMaxLive(), lvl.getMaxIdle(), lvl.getMaxSize());
             }
         }
 
-        private void checkMapConf(Config config, Map<String, MapConfig> mapCnf, String name, int ttl, int tti, int max) {
+        private void checkMapConf(com.hazelcast.config.Config config, Map<String, MapConfig> mapCnf, String name, int ttl, int tti, int max) {
             // check default
             final int ttl1 = maxInt(ttl);
             final int tti1 = maxInt(tti);

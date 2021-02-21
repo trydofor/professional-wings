@@ -4,6 +4,13 @@
 package pro.fessional.wings.example.database.autogen.tables;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.Generated;
+
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Row15;
@@ -16,17 +23,12 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
+
 import pro.fessional.wings.example.database.autogen.DefaultSchema;
 import pro.fessional.wings.example.database.autogen.tables.records.WinUserRecord;
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.jooq.WingsAliasTable;
 import pro.fessional.wings.faceless.service.lightid.LightIdAware;
-
-import javax.annotation.Generated;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 
 
 /**

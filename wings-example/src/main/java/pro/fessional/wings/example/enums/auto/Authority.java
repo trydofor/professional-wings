@@ -7,9 +7,11 @@ import pro.fessional.wings.faceless.enums.StandardI18nEnum;
 
 /**
  * @author trydofor
- * @since 2020-06-21
+ * @since 2021-02-21
  */
+// @SuppressWarnings({"NonAsciiCharacters"})
 public enum Authority implements ConstantEnum, StandardI18nEnum {
+
     SUPER(4010100, "authority", "权限定义", "classpath:/wings-tmpl/ConstantEnumTemplate.java"),
     CREATE_USER(4010101, "CREATE_USER", "创建用户", "用户:"),
     DELETE_USER(4010102, "DELETE_USER", "删除用户", "用户:"),
@@ -21,24 +23,23 @@ public enum Authority implements ConstantEnum, StandardI18nEnum {
     public static final String $DELETE_USER = "DELETE_USER";
     public static final String $CREATE_ROLE = "CREATE_ROLE";
     public static final String $DELETE_ROLE = "DELETE_ROLE";
-
-
     public static final boolean useIdAsKey = false;
+
     private final int id;
     private final String code;
-    private final String desc;
+    private final String hint;
     private final String info;
 
     private final String ukey;
     private final String rkey;
 
-    Authority(int id, String code, String desc, String info) {
+    Authority(int id, String code, String hint, String info) {
         this.id = id;
         this.code = code;
-        this.desc = desc;
+        this.hint = hint;
         this.info = info;
         this.ukey = useIdAsKey ? "id" + id : code;
-        this.rkey = "sys_constant_enum.desc." + ukey;
+        this.rkey = "sys_constant_enum.hint." + ukey;
     }
 
     @Override
@@ -48,7 +49,7 @@ public enum Authority implements ConstantEnum, StandardI18nEnum {
 
     @Override
     public @NotNull String getType() {
-        return "constant_enum_template";
+        return "authority";
     }
 
     @Override
@@ -56,19 +57,14 @@ public enum Authority implements ConstantEnum, StandardI18nEnum {
         return info;
     }
 
-    public String getDesc() {
-        return desc;
-    }
-
-    //
     @Override
     public @NotNull String getBase() {
-        return "authority";
+        return "sys_constant_enum";
     }
 
     @Override
     public @NotNull String getKind() {
-        return "desc";
+        return "hint";
     }
 
     @Override
@@ -76,8 +72,6 @@ public enum Authority implements ConstantEnum, StandardI18nEnum {
         return ukey;
     }
 
-
-    //
     @Override
     public @NotNull String getCode() {
         return code;
@@ -85,7 +79,7 @@ public enum Authority implements ConstantEnum, StandardI18nEnum {
 
     @Override
     public @NotNull String getHint() {
-        return desc;
+        return hint;
     }
 
     @Override

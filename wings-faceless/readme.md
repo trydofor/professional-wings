@@ -298,3 +298,7 @@ SELECT * from mysql.general_log ORDER BY event_time DESC;
 SET GLOBAL log_output = 'TABLE'; SET GLOBAL general_log = 'OFF';
 truncate table mysql.general_log;
 ```
+
+在mysql中，尽量使用NOW(fsp)，因为其短小明确有缓存，如无必须不可使用SYSDATE(fsp)，参考
+
+https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_now

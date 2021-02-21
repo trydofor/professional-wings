@@ -11,7 +11,7 @@ import org.jooq.Row8;
 import org.jooq.impl.UpdatableRecordImpl;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.interfaces.ITst中文也分表;
-import pro.fessional.wings.faceless.enums.auto.StandardLanguage;
+import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 
 import javax.annotation.Generated;
 import javax.persistence.Column;

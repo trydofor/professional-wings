@@ -10,7 +10,7 @@ CREATE TABLE `sys_light_sequence` (
 
 CREATE TABLE `sys_commit_journal` (
     `id`         BIGINT(20)   NOT NULL COMMENT '主键',
-    `create_dt`  DATETIME(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建日时',
+    `create_dt`  DATETIME(3)  NOT NULL DEFAULT NOW(3) COMMENT '创建日时',
     `event_name` VARCHAR(200) NOT NULL COMMENT '事件名称',
     `target_key` VARCHAR(200) NOT NULL DEFAULT '' COMMENT '目标数据特征',
     `login_info` TEXT COMMENT '登陆信息，用户，终端等',

@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  */
 public class FlywaveRevisionScanner {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConstantEnumGenerator.class);
+    private static final Logger logger = LoggerFactory.getLogger(FlywaveRevisionScanner.class);
 
     public static final String REVISION_PATH_REVIFILE_EXTN = ".sql";
     public static final String REVISION_PATH_REVIFILE_TAIL = "**/*" + REVISION_PATH_REVIFILE_EXTN;

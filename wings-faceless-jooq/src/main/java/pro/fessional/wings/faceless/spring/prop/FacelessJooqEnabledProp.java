@@ -41,11 +41,11 @@ public class FacelessJooqEnabledProp {
     public static final String Key$batchMysql = Key + ".batch-mysql";
 
     /**
-     * 是否注入全局converter
+     * 是否注入全局converter，如table中注入了，外部可以不用注入
      *
      * @see #Key$converter
      */
-    private boolean converter = true;
+    private boolean converter = false;
     public static final String Key$converter = Key + ".converter";
 
     /**

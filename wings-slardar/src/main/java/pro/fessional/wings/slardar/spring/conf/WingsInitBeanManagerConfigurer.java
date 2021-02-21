@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
-import pro.fessional.wings.slardar.security.bind.WingsBindAuthnProvider;
+import pro.fessional.wings.slardar.security.bind.WingsBindAuthProvider;
 
 /**
  * order before InitializeUserDetailsBeanManagerConfigurer.DEFAULT_ORDER
@@ -44,7 +44,7 @@ public class WingsInitBeanManagerConfigurer extends GlobalAuthenticationConfigur
             PasswordEncoder passwordEncoder = getBeanOrNull(PasswordEncoder.class);
             UserDetailsPasswordService passwordManager = getBeanOrNull(UserDetailsPasswordService.class);
 
-            WingsBindAuthnProvider provider = new WingsBindAuthnProvider(userDetailsService);
+            WingsBindAuthProvider provider = new WingsBindAuthProvider(userDetailsService);
 
             if (passwordEncoder != null) {
                 provider.setPasswordEncoder(passwordEncoder);

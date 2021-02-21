@@ -1,8 +1,8 @@
 package pro.fessional.wings.faceless.enums;
 
 import org.junit.jupiter.api.Test;
-import pro.fessional.wings.faceless.enums.auto.StandardLanguage;
-import pro.fessional.wings.faceless.enums.auto.StandardTimezone;
+import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
+import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 
 import java.util.Arrays;
 import java.util.List;

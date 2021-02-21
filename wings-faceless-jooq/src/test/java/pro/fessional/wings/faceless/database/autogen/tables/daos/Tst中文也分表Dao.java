@@ -11,7 +11,7 @@ import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Ta
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl;
-import pro.fessional.wings.faceless.enums.auto.StandardLanguage;
+import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 
 import javax.annotation.Generated;
 import java.time.LocalDateTime;

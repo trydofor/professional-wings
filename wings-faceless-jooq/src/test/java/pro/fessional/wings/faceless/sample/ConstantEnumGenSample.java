@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.SysConstantEnumDao;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.SysConstantEnum;
-import pro.fessional.wings.faceless.util.ConstantEnumGenerator;
+import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator;
 
 import java.util.List;
 
@@ -41,7 +41,8 @@ public class ConstantEnumGenSample {
         List<SysConstantEnum> all = sysConstantEnumDao.findAll();
         ConstantEnumGenerator.builder()
                              .setJavaSource("./src/main/java/")
-                             .setJavaPackage("pro.fessional.wings.faceless.enums.auto")
+                             .setJavaPackage("pro.fessional.wings.faceless.enums.autogen")
+                             .addExcludeType("standard_boolean")
                              .generate(SysConstantEnum.class, all);
     }
 }

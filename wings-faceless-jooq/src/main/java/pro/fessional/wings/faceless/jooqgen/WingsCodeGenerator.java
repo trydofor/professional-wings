@@ -7,8 +7,12 @@ import org.jooq.meta.jaxb.Configuration;
 import org.jooq.meta.jaxb.ForcedType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pro.fessional.mirana.data.CodeEnum;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.io.InputStreams;
+import pro.fessional.wings.faceless.database.jooq.converter.JooqCodeEnumConverter;
+import pro.fessional.wings.faceless.database.jooq.converter.JooqConsEnumConverter;
+import pro.fessional.wings.faceless.enums.ConstantEnum;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -251,9 +255,37 @@ public class WingsCodeGenerator {
             return this;
         }
 
-        public Builder forcedType(ForcedType ft) {
+        /**
+         * jooq中匹配 含`.`且&lt;&gt;或[]结尾，做 `new %s()`，否则做 %s
+         * 参考 JavaGenerator#converterTemplate
+         *
+         * @param ft         ForcedType
+         * @param sortImport 以import代替全限定引用，仅wingsGenerator有效
+         * @return this
+         */
+        public Builder forcedType(ForcedType ft, String sortImport) {
             this.conf.getGenerator().getDatabase().getForcedTypes().add(ft);
+            WingsJavaGenerator.shortImport4Table(sortImport);
             return this;
+        }
+
+        public <E extends Enum<E> & CodeEnum> Builder forcedCodeEnum(Class<E> en, String expr) {
+            return forcedJooqEnum(JooqCodeEnumConverter.class, en, expr);
+        }
+
+        public <E extends Enum<E> & ConstantEnum> Builder forcedConsEnum(Class<E> en, String expr) {
+            return forcedJooqEnum(JooqConsEnumConverter.class, en, expr);
+        }
+
+        private <E extends Enum<E>> Builder forcedJooqEnum(Class<?> jc, Class<E> en, String expr) {
+            final String cv = jc.getName();
+            final String tp = en.getName();
+            ForcedType ft = new ForcedType()
+                    .withUserType(tp)
+                    .withConverter(cv + ".of(" + en.getSimpleName() + ".class)")
+                    .withExpression(expr);
+
+            return forcedType(ft, cv);
         }
 
         public Builder funSeqName(Function<TableDefinition, String> fn) {

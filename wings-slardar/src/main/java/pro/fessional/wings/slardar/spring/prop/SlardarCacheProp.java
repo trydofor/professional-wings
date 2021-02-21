@@ -37,39 +37,23 @@ public class SlardarCacheProp {
     public static final String Key$nulls = Key + ".nulls";
 
     /**
-     * expireAfterWrite(Time To Live) seconds
+     * level之外的默认配置
      *
-     * @see #Key$maxLive
+     * @see #Key$common
      */
-    private int maxLive = 3600;
-    public static final String Key$maxLive = Key + ".max-live";
-
-    /**
-     * expireAfterAccess(Time To Idle) seconds
-     *
-     * @see #Key$maxIdle
-     */
-    private int maxIdle = 0;
-    public static final String Key$maxIdle = Key + ".max-idle";
-
-    /**
-     * cache size
-     *
-     * @see #Key$maxSize
-     */
-    private int maxSize = 0;
-    public static final String Key$maxSize = Key + ".max-size";
+    private Conf common;
+    public static final String Key$common = Key + ".common";
 
     /**
      * 不同的缓存级别
      *
      * @see #Key$level
      */
-    private Map<String, Level> level = new HashMap<>();
+    private Map<String, Conf> level = new HashMap<>();
     public static final String Key$level = Key + ".level";
 
     @Data
-    public static class Level {
+    public static class Conf {
         /**
          * expireAfterWrite(Time To Live) seconds
          */
@@ -84,6 +68,7 @@ public class SlardarCacheProp {
         private int maxSize = 0;
     }
 
+    // /////////////////
 
     public static int maxInt(int max) {
         return max <= 0 ? Integer.MAX_VALUE : max;

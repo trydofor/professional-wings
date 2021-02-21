@@ -1,0 +1,49 @@
+{
+  "hints": [
+    {
+      "name": "wings.slardar.cache.primary",
+      "values": [
+        {
+          "value": "Memory",
+          "description": "内存缓存，默认caffeine."
+        },
+        {
+          "value": "Server",
+          "description": "外部服务缓存，默认hazelcast."
+        }
+      ]
+    },
+    {
+      "name": "wings.slardar.cache.level.keys",
+      "values": [
+        {
+          "value": "program",
+          "description": "程序级，程序或服务运行期间."
+        },
+        {
+          "value": "general",
+          "description": "通常，1天."
+        },
+        {
+          "value": "service",
+          "description": "服务级，1小时."
+        },
+        {
+          "value": "session",
+          "description": "会话级，10分钟."
+        }
+      ]
+    },
+    {
+      "name": "wings.slardar.cache.level.values",
+      "providers": [
+        {
+          "name": "handle-as",
+          "parameters": {
+            "target": "pro.fessional.wings.slardar.spring.prop.SlardarCacheProp$Conf"
+          }
+        }
+      ]
+    }
+  ]
+}

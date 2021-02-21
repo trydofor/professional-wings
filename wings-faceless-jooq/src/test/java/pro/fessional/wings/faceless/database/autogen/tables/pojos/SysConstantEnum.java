@@ -4,8 +4,6 @@
 package pro.fessional.wings.faceless.database.autogen.tables.pojos;
 
 
-import pro.fessional.wings.faceless.database.autogen.tables.interfaces.ISysConstantEnum;
-
 import javax.annotation.Generated;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +12,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import pro.fessional.wings.faceless.database.autogen.tables.interfaces.ISysConstantEnum;
 
 
 /**
@@ -42,7 +42,7 @@ public class SysConstantEnum implements ISysConstantEnum {
     private Integer id;
     private String  type;
     private String  code;
-    private String  desc;
+    private String  hint;
     private String  info;
 
     public SysConstantEnum() {}
@@ -51,7 +51,7 @@ public class SysConstantEnum implements ISysConstantEnum {
         this.id = value.getId();
         this.type = value.getType();
         this.code = value.getCode();
-        this.desc = value.getDesc();
+        this.hint = value.getHint();
         this.info = value.getInfo();
     }
 
@@ -59,13 +59,13 @@ public class SysConstantEnum implements ISysConstantEnum {
         Integer id,
         String  type,
         String  code,
-        String  desc,
+        String  hint,
         String  info
     ) {
         this.id = id;
         this.type = type;
         this.code = code;
-        this.desc = desc;
+        this.hint = hint;
         this.info = info;
     }
 
@@ -127,22 +127,22 @@ public class SysConstantEnum implements ISysConstantEnum {
     }
 
     /**
-     * Getter for <code>sys_constant_enum.desc</code>.
+     * Getter for <code>sys_constant_enum.hint</code>.
      */
-    @Column(name = "desc", nullable = false, length = 100)
+    @Column(name = "hint", nullable = false, length = 100)
     @NotNull
     @Size(max = 100)
     @Override
-    public String getDesc() {
-        return this.desc;
+    public String getHint() {
+        return this.hint;
     }
 
     /**
-     * Setter for <code>sys_constant_enum.desc</code>.
+     * Setter for <code>sys_constant_enum.hint</code>.
      */
     @Override
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setHint(String hint) {
+        this.hint = hint;
     }
 
     /**
@@ -191,11 +191,11 @@ public class SysConstantEnum implements ISysConstantEnum {
         }
         else if (!code.equals(other.code))
             return false;
-        if (desc == null) {
-            if (other.desc != null)
+        if (hint == null) {
+            if (other.hint != null)
                 return false;
         }
-        else if (!desc.equals(other.desc))
+        else if (!hint.equals(other.hint))
             return false;
         if (info == null) {
             if (other.info != null)
@@ -213,7 +213,7 @@ public class SysConstantEnum implements ISysConstantEnum {
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
         result = prime * result + ((this.type == null) ? 0 : this.type.hashCode());
         result = prime * result + ((this.code == null) ? 0 : this.code.hashCode());
-        result = prime * result + ((this.desc == null) ? 0 : this.desc.hashCode());
+        result = prime * result + ((this.hint == null) ? 0 : this.hint.hashCode());
         result = prime * result + ((this.info == null) ? 0 : this.info.hashCode());
         return result;
     }
@@ -225,7 +225,7 @@ public class SysConstantEnum implements ISysConstantEnum {
         sb.append(id);
         sb.append(", ").append(type);
         sb.append(", ").append(code);
-        sb.append(", ").append(desc);
+        sb.append(", ").append(hint);
         sb.append(", ").append(info);
 
         sb.append(")");
@@ -241,7 +241,7 @@ public class SysConstantEnum implements ISysConstantEnum {
         setId(from.getId());
         setType(from.getType());
         setCode(from.getCode());
-        setDesc(from.getDesc());
+        setHint(from.getHint());
         setInfo(from.getInfo());
     }
 

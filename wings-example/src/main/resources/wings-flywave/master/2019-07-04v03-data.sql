@@ -5,7 +5,7 @@ VALUES ('win_authority', 0, 100000000, 100, '系统插入9位起，手动8位'),
        ('win_user_login', 0, 2000, 100, '系统插入4位起，手动3位');
 
 -- 从200#### 开始编号
-REPLACE INTO `sys_constant_enum` (`id`, `type`, `code`, `desc`, `info`)
+REPLACE INTO `sys_constant_enum` (`id`, `type`, `code`, `hint`, `info`)
 VALUES (2010100, 'common_gender', 'common_gender', '性别', 'classpath:/wings-tmpl/ConstantEnumTemplate.java'),
        (2010101, 'common_gender', 'male', '男', '通常'),
        (2010102, 'common_gender', 'female', '女', '通常'),
@@ -47,7 +47,7 @@ VALUES (2010100, 'common_gender', 'common_gender', '性别', 'classpath:/wings-t
        (4120103, 'login_type', 'mobile_sms', '手机号', '手机号'),
        (4120104, 'login_type', 'weixin_oauth', '微信登录', '微信登录');
 
-REPLACE INTO `win_auth_role` (`id`, `commit_id`, `role_type`, `role_name`, `desc`, `auth_set`)
+REPLACE INTO `win_auth_role` (`id`, `commit_id`, `role_type`, `role_name`, `remark`, `auth_set`)
 VALUES (10010101, 202006061234, 4020101, 'user.manager', '财务用户管理', '4010101,4010102'),
        (10010102, 202006061234, 4020102, 'user.manager', '运营用户管理', '4010204');
 

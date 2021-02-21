@@ -4,6 +4,12 @@
 package pro.fessional.wings.example.database.autogen.tables;
 
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.Generated;
+
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Name;
@@ -17,16 +23,12 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
+
 import pro.fessional.wings.example.database.autogen.DefaultSchema;
 import pro.fessional.wings.example.database.autogen.tables.records.WinAuthRoleRecord;
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.jooq.WingsAliasTable;
 import pro.fessional.wings.faceless.service.lightid.LightIdAware;
-
-import javax.annotation.Generated;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 
 
 /**
@@ -95,9 +97,9 @@ public class WinAuthRoleTable extends TableImpl<WinAuthRoleRecord> implements Wi
     public final TableField<WinAuthRoleRecord, String> RoleName = createField(DSL.name("role_name"), SQLDataType.VARCHAR(100).nullable(false), this, "");
 
     /**
-     * The column <code>win_auth_role.desc</code>.
+     * The column <code>win_auth_role.remark</code>.
      */
-    public final TableField<WinAuthRoleRecord, String> Desc = createField(DSL.name("desc"), SQLDataType.VARCHAR(200).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
+    public final TableField<WinAuthRoleRecord, String> Remark = createField(DSL.name("remark"), SQLDataType.VARCHAR(200).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>win_auth_role.auth_set</code>.

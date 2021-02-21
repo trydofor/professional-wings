@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.example.WingsExampleApplication;
 import pro.fessional.wings.example.database.autogen.tables.daos.SysConstantEnumDao;
 import pro.fessional.wings.example.database.autogen.tables.pojos.SysConstantEnum;
-import pro.fessional.wings.faceless.util.ConstantEnumGenerator;
+import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public class Wings3ConstEnumGen {
                              .setJavaSource("./src/main/java/")
                              .setJavaPackage("pro.fessional.wings.example.enums.auto")
                              // 如果够用，可以直接用，否则用自己生成的
-                             .addExcludeType("standard_timezone", "standard_language")
+                             .addExcludeType("standard_boolean","standard_timezone", "standard_language")
                              .generate(SysConstantEnum.class, all);
     }
 }

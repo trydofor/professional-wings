@@ -30,8 +30,8 @@ open class WingsShardingTests {
             CREATE TABLE `WG_ORDER`
             (
               `ID`         bigint(20)   NOT NULL COMMENT '主键',
-              `CREATE_DT`  datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建日时',
-              `MODIFY_DT`  datetime(3)     NOT NULL DEFAULT '1000-01-01' ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '修改日时',
+              `CREATE_DT`  datetime(3)     NOT NULL DEFAULT NOW(3) COMMENT '创建日时',
+              `MODIFY_DT`  datetime(3)     NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时',
               `COMMIT_ID`  bigint(20)   NOT NULL COMMENT '提交ID',
               PRIMARY KEY (`ID`)
             ) ENGINE = InnoDB
@@ -75,7 +75,7 @@ open class WingsShardingTests {
               `MODIFY_DT`  datetime(3)     NOT NULL COMMENT '修改日时',
               `COMMIT_ID`  bigint(20)   NOT NULL COMMENT '提交ID',
               `_du` INT(11) NULL,
-              `_dt` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+              `_dt` datetime(3) DEFAULT NOW(3),
               `_id` INT(11) NOT NULL AUTO_INCREMENT,
               PRIMARY KEY (`_id`)
             ) ENGINE = InnoDB

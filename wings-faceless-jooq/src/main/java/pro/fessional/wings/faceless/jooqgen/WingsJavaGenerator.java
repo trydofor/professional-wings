@@ -14,6 +14,9 @@ import pro.fessional.wings.faceless.database.helper.JournalJdbcHelp;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -41,6 +44,13 @@ public class WingsJavaGenerator extends JavaGenerator {
         // public static final SysCommitJournalTable asN6 = SysCommitJournal.as("n6");
         out.tab(1).println("public static final %s as%s = %s.as(\"%s\");", className, aliasName, identifier, aliasLower);
         // 🦁<<<
+    }
+
+    private static final Set<String> import4Table = new HashSet<>();
+
+    public static void shortImport4Table(String claz) {
+        if (claz == null || claz.isEmpty()) return;
+        import4Table.add(claz);
     }
 
     @Override
@@ -78,7 +88,7 @@ public class WingsJavaGenerator extends JavaGenerator {
             ColumnDefinition column = logicCol.get();
             out.ref(Condition.class);
             out.ref(EmptyValue.class);
-            val columnId = reflectProtectRef(out, getStrategy().getJavaIdentifier(column), colRefSegments(column));
+            val columnId = reflectMethodRef(out, getStrategy().getJavaIdentifier(column), colRefSegments(column));
 
             val col = column.getOutputName();
             out.javadoc("The column <code>%s</code> condition", col);
@@ -109,6 +119,29 @@ public class WingsJavaGenerator extends JavaGenerator {
             out.println("    return onlyLiveData;");
             out.println("}");
         }
+
+        // 缩短import
+        if (!import4Table.isEmpty()) {
+            StringBuilder java = reflectFieldSb(out);
+            final Set<String> qts = reflectFieldQt(out);
+            String str = java.toString();
+            boolean got = false;
+            for (String imp : import4Table) {
+                int p = imp.lastIndexOf('.');
+                if (p > 0 && str.contains(imp)) { // 避免import无用，先判断
+                    String rep = imp.substring(p + 1);
+                    str = str.replace(imp, rep);
+                    qts.add(imp);
+                    got = true;
+                }
+            }
+
+            if (got) {
+                java.setLength(0);
+                java.append(str);
+            }
+        }
+
         // 🦁<<<
     }
 
@@ -118,30 +151,18 @@ public class WingsJavaGenerator extends JavaGenerator {
     public void generateDao(TableDefinition table, JavaWriter out) {
         super.generateDao(table, out);
 
-        try {
-            Class<? extends JavaWriter> jwc = out.getClass();
-            Field fldImpt = jwc.getDeclaredField("qualifiedTypes");
-            fldImpt.setAccessible(true);
-            @SuppressWarnings("unchecked")
-            Set<String> impt = (Set<String>) fldImpt.get(out);
-            impt.remove("org.jooq.impl.DAOImpl");
-            impt.add("pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl");
+        Set<String> impt = reflectFieldQt(out);
+        impt.remove("org.jooq.impl.DAOImpl");
+        impt.add("pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl");
 
-            Field fldJava = jwc.getSuperclass().getDeclaredField("sb");
-            fldJava.setAccessible(true);
-            StringBuilder java = (StringBuilder) fldJava.get(out);
-            String dao = java.toString();
-            // "public class SysStandardI18nDao extends DAOImpl"
-            Matcher m = daoExtends.matcher(dao);
-            dao = m.replaceFirst("public class $1Dao extends WingsJooqDaoImpl<$1Table, ");
+        StringBuilder java = reflectFieldSb(out);
+        String dao = java.toString();
+        // "public class SysStandardI18nDao extends DAOImpl"
+        Matcher m = daoExtends.matcher(dao);
+        dao = m.replaceFirst("public class $1Dao extends WingsJooqDaoImpl<$1Table, ");
 
-            java.setLength(0);
-            java.append(dao);
-        } catch (Exception e) {
-            throw new RuntimeException("failed to replace to WingsJooqDaoImpl", e);
-        }
-
-        // replace to WingsJooqDaoImpl
+        java.setLength(0);
+        java.append(dao);
     }
     /////////////////
 
@@ -164,19 +185,77 @@ public class WingsJavaGenerator extends JavaGenerator {
         return 3;
     }
 
-    private String reflectProtectRef(JavaWriter out, String str, int kep) {
-        Class<? super JavaWriter> clz = JavaWriter.class;
-        while (clz != null) {
-            try {
-                Method ref = clz.getDeclaredMethod("ref", String.class, int.class);
-                //
-                ref.setAccessible(true);
-                Object rst = ref.invoke(out, str, kep);
-                return (String) rst;
-            } catch (Exception e) {
-                clz = clz.getSuperclass();
+    private final Map<Class<?>, Method> methodRef = new HashMap<>();
+
+    private String reflectMethodRef(JavaWriter out, String str, int kep) {
+        final Method md = methodRef.computeIfAbsent(out.getClass(), key -> {
+            Class<?> clz = key;
+            while (clz != null) {
+                try {
+                    Method ref = clz.getDeclaredMethod("ref", String.class, int.class);
+                    ref.setAccessible(true);
+                    return ref;
+                } catch (Exception e) {
+                    clz = clz.getSuperclass();
+                }
             }
+            throw new IllegalStateException("can not get ref method");
+        });
+
+        try {
+            Object rst = md.invoke(out, str, kep);
+            return (String) rst;
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
         }
-        return str;
+    }
+
+    private final Map<Class<?>, Field> fieldQt = new HashMap<>();
+
+    @SuppressWarnings("unchecked")
+    private Set<String> reflectFieldQt(JavaWriter out) {
+
+        final Field fd = fieldQt.computeIfAbsent(out.getClass(), key -> {
+            Class<?> clz = key;
+            while (clz != null) {
+                try {
+                    Field fld = clz.getDeclaredField("qualifiedTypes");
+                    fld.setAccessible(true);
+                    return fld;
+                } catch (Exception e) {
+                    clz = clz.getSuperclass();
+                }
+            }
+            throw new IllegalStateException("can not get ref method");
+        });
+
+        try {
+            return (Set<String>) fd.get(out);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private final Map<Class<?>, Field> fieldSb = new HashMap<>();
+
+    private StringBuilder reflectFieldSb(JavaWriter out) {
+        final Field fd = fieldSb.computeIfAbsent(out.getClass(), key -> {
+            Class<?> clz = key;
+            while (clz != null) {
+                try {
+                    Field fld = clz.getDeclaredField("sb");
+                    fld.setAccessible(true);
+                    return fld;
+                } catch (Exception e) {
+                    clz = clz.getSuperclass();
+                }
+            }
+            throw new IllegalStateException("can not get ref method");
+        });
+        try {
+            return (StringBuilder) fd.get(out);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

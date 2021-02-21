@@ -21,6 +21,10 @@
             <artifactId>wings-slardar</artifactId>
         </dependency>
         <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>wings-faceless-jooq</artifactId>
+        </dependency>
+        <dependency>
             <groupId>me.zhyd.oauth</groupId>
             <artifactId>JustAuth</artifactId>
         </dependency>
@@ -28,16 +32,15 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>
         </dependency>
-        <!-- websocket -->
-        <!--
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-messaging</artifactId>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-codegen</artifactId>
+            <optional>true</optional>
         </dependency>
-        -->
     </dependencies>
 </project>

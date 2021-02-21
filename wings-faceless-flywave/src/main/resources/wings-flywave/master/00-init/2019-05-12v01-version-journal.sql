@@ -3,8 +3,8 @@
 
 CREATE TABLE `sys_schema_version` (
     `revision`  BIGINT(20)   NOT NULL COMMENT '版本号+修订号',
-    `create_dt` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日时',
-    `modify_dt` DATETIME     NOT NULL DEFAULT '1000-01-01' ON UPDATE CURRENT_TIMESTAMP COMMENT '修改日时',
+    `create_dt` DATETIME     NOT NULL DEFAULT NOW() COMMENT '创建日时',
+    `modify_dt` DATETIME     NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW() COMMENT '修改日时',
     `commit_id` BIGINT(20)   NOT NULL COMMENT '提交ID',
     `apply_dt`  DATETIME     NOT NULL DEFAULT '1000-01-01' COMMENT '执行日时',
     `comments`  VARCHAR(500) NOT NULL DEFAULT '' COMMENT 'sql路径信息',
@@ -16,8 +16,8 @@ CREATE TABLE `sys_schema_version` (
 
 CREATE TABLE `sys_schema_journal` (
     `table_name` VARCHAR(100) NOT NULL COMMENT '主表表名',
-    `create_dt`  DATETIME(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建日时',
-    `modify_dt`  DATETIME(3)  NOT NULL DEFAULT '1000-01-01' ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '修改日时',
+    `create_dt`  DATETIME(3)  NOT NULL DEFAULT NOW(3) COMMENT '创建日时',
+    `modify_dt`  DATETIME(3)  NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时',
     `commit_id`  BIGINT(20)   NOT NULL COMMENT '提交ID',
     `ddl_updtbl` TEXT         NOT NULL COMMENT '更新的跟踪表DDL',
     `ddl_updtrg` TEXT         NOT NULL COMMENT '更新的触发器DDL',

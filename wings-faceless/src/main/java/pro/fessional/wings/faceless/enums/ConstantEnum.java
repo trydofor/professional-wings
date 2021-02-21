@@ -15,8 +15,18 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface ConstantEnum {
 
+    /**
+     * id:动态9位数起，静态8位以下，建议3-2-2分段（表-段-值）,00结尾为SUPER
+     *
+     * @return id
+     */
     int getId();
 
+    /**
+     * enum分组:相同type为同一Enum，自动Pascal命名
+     *
+     * @return type
+     */
     @NotNull
     String getType();
 
