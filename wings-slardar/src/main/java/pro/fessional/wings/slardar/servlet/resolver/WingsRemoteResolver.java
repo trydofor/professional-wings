@@ -44,7 +44,7 @@ public class WingsRemoteResolver {
     }
 
     private String trimComma(String s) {
-        if (s == null) return s;
+        if (s == null) return null;
         int p = s.indexOf(',');
         return p > 0 ? s.substring(0, p) : s;
     }

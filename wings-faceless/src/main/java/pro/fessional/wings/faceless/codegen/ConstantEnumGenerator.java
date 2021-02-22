@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pro.fessional.meepo.Meepo;
 import pro.fessional.mirana.io.InputStreams;
+import pro.fessional.mirana.pain.IORuntimeException;
 import pro.fessional.wings.faceless.enums.templet.ConstantEnumTemplate;
 
 import java.io.File;
@@ -79,37 +80,32 @@ public class ConstantEnumGenerator {
         private String pkg;
         private final Set<String> exs = new HashSet<>();
 
-        public Builder setJavaSource(File src) {
+        public Builder targetDirectory(File src) {
             this.src = src;
             return this;
         }
 
-        public Builder setJavaSource(String src) {
+        public Builder targetDirectory(String src) {
             this.src = new File(src);
             return this;
         }
 
-        public Builder setJavaPackage(String pkg) {
+        public Builder targetPackage(String pkg) {
             this.pkg = pkg;
             return this;
         }
 
-        public Builder addExcludeType(String typ) {
-            this.exs.add(typ);
-            return this;
-        }
-
-        public Builder addExcludeType(String... typ) {
+        public Builder excludeType(String... typ) {
             this.exs.addAll(Arrays.asList(typ));
             return this;
         }
 
-        public <T> void generate(Class<T> clazz, Collection<T> pos) throws IOException {
+        public <T> void generate(Class<T> clazz, Collection<T> pos) {
             List<ConstantEnum> enums = ConstantEnumGenerator.copyField(clazz, pos);
             generate(enums);
         }
 
-        public void generate(Collection<? extends ConstantEnum> pos) throws IOException {
+        public void generate(Collection<? extends ConstantEnum> pos) {
             ConstantEnumGenerator.generate(src, pkg, pos, exs);
         }
     }
@@ -121,10 +117,9 @@ public class ConstantEnumGenerator {
      * @param pkg      pro.fessional.wings.faceless.enums.constant
      * @param pojos    对象数据
      * @param excludes 排除的type组
-     * @throws IOException if IO exception
      * @see ConstantEnumTemplate
      */
-    public static void generate(File src, String pkg, Collection<? extends ConstantEnum> pojos, Set<String> excludes) throws IOException {
+    public static void generate(File src, String pkg, Collection<? extends ConstantEnum> pojos, Set<String> excludes) {
         // 初始
 
         Set<File> nowFiles = new HashSet<>();
@@ -133,28 +128,31 @@ public class ConstantEnumGenerator {
 
         Map<String, String> javaFiles = mergeJava(pkg, pojos, excludes);
 
-        for (Map.Entry<String, String> entry : javaFiles.entrySet()) {
-            // check same
-            String claz = entry.getKey();
-            File java = new File(dst, claz + ".java");
-            String text = entry.getValue();
+        try {
+            for (Map.Entry<String, String> entry : javaFiles.entrySet()) {
+                // check same
+                String claz = entry.getKey();
+                File java = new File(dst, claz + ".java");
+                String text = entry.getValue();
 
-            if (java.isFile()) {
-                nowFiles.add(java);
-                String jtxt = InputStreams.readText(new FileInputStream(java), StandardCharsets.UTF_8);
-                String jb = jtxt.replaceAll("@since [0-9-]+", "").trim();
-                String tb = text.replaceAll("@since [0-9-]+", "").trim();
-                if (jb.equals(tb)) {
-                    logger.info("skip same {}", java.getName());
-                    continue;
+                if (java.isFile()) {
+                    nowFiles.add(java);
+                    String jtxt = InputStreams.readText(new FileInputStream(java), StandardCharsets.UTF_8);
+                    String jb = jtxt.replaceAll("@since [0-9-]+", "").trim();
+                    String tb = text.replaceAll("@since [0-9-]+", "").trim();
+                    if (jb.equals(tb)) {
+                        logger.info("skip same {}", java.getName());
+                        continue;
+                    }
+                }
+                try (FileOutputStream fos = new FileOutputStream(java)) {
+                    fos.write(text.getBytes(StandardCharsets.UTF_8));
+                    nowFiles.add(java);
+                    logger.info("make {} to {}", claz, java.getAbsolutePath());
                 }
             }
-            try (FileOutputStream fos = new FileOutputStream(java)) {
-                fos.write(text.getBytes(StandardCharsets.UTF_8));
-                nowFiles.add(java);
-                logger.info("make {} to {}", claz, java.getAbsolutePath());
-            }
-
+        } catch (IOException e) {
+            throw new IORuntimeException(e);
         }
 
         File[] files = dst.listFiles();

@@ -25,9 +25,15 @@
             <artifactId>wings-faceless-jooq</artifactId>
         </dependency>
         <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>wings-faceless-flywave</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>me.zhyd.oauth</groupId>
             <artifactId>JustAuth</artifactId>
         </dependency>
+        <!-- dev -->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>

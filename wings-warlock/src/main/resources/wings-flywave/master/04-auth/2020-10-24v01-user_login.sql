@@ -1,5 +1,5 @@
 CREATE TABLE `win_user_basic` (
-    `id`        BIGINT(20)   NOT NULL COMMENT '主键/user_id',
+    `id`        BIGINT(20)   NOT NULL COMMENT '主键/user_id/uid',
     `create_dt` DATETIME(3)  NOT NULL DEFAULT NOW(3) COMMENT '创建日时(系统)',
     `modify_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时(系统)',
     `delete_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT '标记删除',
@@ -16,6 +16,7 @@ CREATE TABLE `win_user_basic` (
   DEFAULT CHARSET = utf8mb4 COMMENT ='120/用户基本表';
 
 CREATE TABLE `win_user_anthn` (
+    `id`         BIGINT(20)    NOT NULL COMMENT '主键/user_id',
     `create_dt`  DATETIME(3)   NOT NULL DEFAULT NOW(3) COMMENT '创建日时(系统)',
     `modify_dt`  DATETIME(3)   NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时(系统)',
     `delete_dt`  DATETIME(3)   NOT NULL DEFAULT '1000-01-01' COMMENT '标记删除',
@@ -31,7 +32,8 @@ CREATE TABLE `win_user_anthn` (
     `expired_dt` DATETIME(3)   NOT NULL DEFAULT '1000-01-01' COMMENT '过期时间',
     `error_cnt`  INT(11)       NOT NULL DEFAULT '0' COMMENT '错误计数',
     `status`     INT(11)       NOT NULL DEFAULT '0' COMMENT '状态/同用户状态:12002##:',
-    PRIMARY KEY (`user_id`, `auth_type`),
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX uq_uid_type (`user_id`, `auth_type`),
     UNIQUE INDEX uq_type_name (`auth_type`, `auth_name`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='121/用户验证表';
@@ -39,7 +41,7 @@ CREATE TABLE `win_user_anthn` (
 CREATE TABLE `win_user_login` (
     `id`        BIGINT(20)   NOT NULL COMMENT '主键/user_id',
     `user_id`   BIGINT(20)   NOT NULL DEFAULT '0' COMMENT '绑定用户/win_user_basic.id',
-    `auth_type` VARCHAR(10)  NOT NULL COMMENT '验证类型/wings.warlock.security.auth-type.*',
+    `auth_type` VARCHAR(20)  NOT NULL COMMENT '验证类型/wings.warlock.security.auth-type.*',
     `login_ip`  VARCHAR(50)  NOT NULL DEFAULT '' COMMENT '登录IP',
     `login_dt`  DATETIME(3)  NOT NULL DEFAULT NOW(3) COMMENT '创建日时(系统)',
     `terminal`  VARCHAR(500) NOT NULL DEFAULT '' COMMENT '登录终端',

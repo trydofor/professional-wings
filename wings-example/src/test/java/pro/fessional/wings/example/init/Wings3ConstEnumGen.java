@@ -38,10 +38,10 @@ public class Wings3ConstEnumGen {
     public void gen() throws Exception {
         List<SysConstantEnum> all = sysConstantEnumDao.findAll();
         ConstantEnumGenerator.builder()
-                             .setJavaSource("./src/main/java/")
-                             .setJavaPackage("pro.fessional.wings.example.enums.auto")
+                             .targetDirectory("./src/main/java/")
+                             .targetPackage("pro.fessional.wings.example.enums.auto")
                              // 如果够用，可以直接用，否则用自己生成的
-                             .addExcludeType("standard_boolean","standard_timezone", "standard_language")
+                             .excludeType("standard_boolean","standard_timezone", "standard_language")
                              .generate(SysConstantEnum.class, all);
     }
 }

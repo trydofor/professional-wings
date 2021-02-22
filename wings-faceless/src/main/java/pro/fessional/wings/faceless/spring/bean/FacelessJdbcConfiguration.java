@@ -15,7 +15,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 @ConditionalOnProperty(name = FacelessEnabledProp.Key$jdbctemplate, havingValue = "true")
-public class JdbcTemplateConfiguration {
+public class FacelessJdbcConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(JdbcTemplate.class)

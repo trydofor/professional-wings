@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import pro.fessional.mirana.cast.StringCastUtil;
 import pro.fessional.mirana.i18n.LocaleResolver;
 import pro.fessional.mirana.i18n.ZoneIdResolver;
+import pro.fessional.mirana.pain.IORuntimeException;
 import pro.fessional.wings.silencer.spring.help.Utf8ResourceDecorator;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 import pro.fessional.wings.silencer.spring.prop.SilencerI18nProp;
@@ -123,7 +124,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                 }
             }
         } catch (IOException e) {
-            throw new IllegalStateException("failed to resolve wings i18n path", e);
+            throw new IORuntimeException("failed to resolve wings i18n path", e);
         }
 
         if (baseNames.isEmpty()) return;

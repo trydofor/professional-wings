@@ -197,6 +197,8 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 
 ### 0.2.6.Spring MVC中的 RequestMapping 约定
 
+wings采用的Url命名主要是场景化的，命名为[RestHalf](./rest-half.md)，单独叙述。
+
  * 在方法上写全路径`@RequestMapping("/a/b/c.html")`
  * 在controller上写版本号`@RequestMapping("/v1")`
  * 不要相写相对路径，这样才可以通过URL直接搜索匹配。

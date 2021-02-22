@@ -13,13 +13,13 @@ import org.springframework.context.MessageSource;
 import org.springframework.test.context.ActiveProfiles;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.faceless.WingsTestHelper;
+import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.SysConstantEnumDao;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.SysConstantEnum;
 import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.service.wini18n.StandardI18nService;
-import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.util.List;
@@ -69,11 +69,11 @@ public class ConstantEnumI18nTest {
 
     @Test
     @Disabled("手动执行，避免污染java类")
-    public void test2GenEnum() throws Exception {
+    public void test2GenEnum() {
         List<SysConstantEnum> all = sysConstantEnumDao.findAll();
         ConstantEnumGenerator.builder()
-                             .setJavaSource("./src/test/java/")
-                             .setJavaPackage("pro.fessional.wings.faceless.enums.test")
+                             .targetDirectory("./src/test/java/")
+                             .targetPackage("pro.fessional.wings.faceless.enums.test")
                              .generate(SysConstantEnum.class, all);
     }
 

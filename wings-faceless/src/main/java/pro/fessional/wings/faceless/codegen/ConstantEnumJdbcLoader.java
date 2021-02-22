@@ -16,14 +16,18 @@ public class ConstantEnumJdbcLoader {
 
     public static final String DefaultTable = "sys_constant_enum";
 
-    private final DataSource dataSource;
+    private final JdbcTemplate jdbcTemplate;
 
-    public ConstantEnumJdbcLoader(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public ConstantEnumJdbcLoader(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public static ConstantEnumJdbcLoader use(JdbcTemplate tp) {
+        return new ConstantEnumJdbcLoader(tp);
     }
 
     public static ConstantEnumJdbcLoader use(DataSource ds) {
-        return new ConstantEnumJdbcLoader(ds);
+        return new ConstantEnumJdbcLoader(new JdbcTemplate(ds));
     }
 
     public static ConstantEnumJdbcLoader use(String url, String user, String pass) {
@@ -32,21 +36,20 @@ public class ConstantEnumJdbcLoader {
         ds.setUrl(url);
         ds.setUsername(user);
         ds.setPassword(pass);
-        return new ConstantEnumJdbcLoader(ds);
+        return use(ds);
     }
 
     public List<ConstantEnumGenerator.ConstantEnum> load() {
         return load(DefaultTable);
     }
 
-    public DataSource getDataSource() {
-        return dataSource;
+    public JdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
     }
 
     public List<ConstantEnumGenerator.ConstantEnum> load(String table) {
         String sql = "SELECT id, type, code, hint, info FROM " + table;
-        JdbcTemplate jdbcTmpl = new JdbcTemplate(dataSource);
-        return jdbcTmpl.query(sql, (rs, rowNum) -> {
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
             ConstantEnumGenerator.ConstantEnum ce = new ConstantEnumGenerator.ConstantEnum();
             ce.setId(rs.getInt("id"));
             ce.setType(rs.getString("type"));

@@ -18,9 +18,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2019-06-25
  */
 @Configuration
-public class DataSourceContextConfiguration {
+public class FacelessDataSourceConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataSourceContextConfiguration.class);
+    private static final Logger logger = LoggerFactory.getLogger(FacelessDataSourceConfiguration.class);
 
     @Bean
     public DataSourceContext dataSourceContext(

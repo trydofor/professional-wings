@@ -7,14 +7,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.SysConstantEnumDao;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.SysConstantEnum;
-import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator;
 
 import java.util.List;
 
 /**
  * 可以自己设置配置文件
+ *
  * @author trydofor
  * @since 2020-06-10
  */
@@ -37,12 +38,12 @@ public class ConstantEnumGenSample {
     SysConstantEnumDao sysConstantEnumDao;
 
     @Test
-    public void test2GenEnum() throws Exception {
+    public void test2GenEnum() {
         List<SysConstantEnum> all = sysConstantEnumDao.findAll();
         ConstantEnumGenerator.builder()
-                             .setJavaSource("./src/main/java/")
-                             .setJavaPackage("pro.fessional.wings.faceless.enums.autogen")
-                             .addExcludeType("standard_boolean")
+                             .targetDirectory("./src/main/java/")
+                             .targetPackage("pro.fessional.wings.faceless.enums.autogen")
+                             .excludeType("standard_boolean")
                              .generate(SysConstantEnum.class, all);
     }
 }

@@ -13,7 +13,6 @@ import me.zhyd.oauth.request.AuthAlipayRequest;
 import me.zhyd.oauth.request.AuthAliyunRequest;
 import me.zhyd.oauth.request.AuthBaiduRequest;
 import me.zhyd.oauth.request.AuthCodingRequest;
-import me.zhyd.oauth.request.AuthCsdnRequest;
 import me.zhyd.oauth.request.AuthDingTalkRequest;
 import me.zhyd.oauth.request.AuthDouyinRequest;
 import me.zhyd.oauth.request.AuthElemeRequest;

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import pro.fessional.mirana.data.CodeEnum;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.io.InputStreams;
+import pro.fessional.mirana.pain.IORuntimeException;
 import pro.fessional.wings.faceless.database.jooq.converter.JooqCodeEnumConverter;
 import pro.fessional.wings.faceless.database.jooq.converter.JooqConsEnumConverter;
 import pro.fessional.wings.faceless.enums.ConstantEnum;
@@ -80,7 +81,7 @@ public class WingsCodeGenerator {
         try {
             return GenerationTool.load(WingsCodeGenerator.class.getResourceAsStream(JOOQ_XML));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IORuntimeException(e);
         }
     }
 
@@ -190,6 +191,14 @@ public class WingsCodeGenerator {
         }
 
         public Builder jdbcUrl(String str) {
+            // jdbc:mysql://localhost:3306/wings_warlock
+            int p3 = str.indexOf("?");
+            int p2 = p3 > 0 ? p3 : str.length();
+            int p1 = str.lastIndexOf("/", p2);
+            if (p2 > p1) {
+                final String db = str.substring(p1 + 1, p2);
+                databaseSchema(db);
+            }
             this.conf.getJdbc().setUrl(str);
             return this;
         }
@@ -227,8 +236,9 @@ public class WingsCodeGenerator {
          * @return builder
          * @see Pattern#COMMENTS
          */
-        public Builder databaseIncludes(String reg) {
-            this.conf.getGenerator().getDatabase().setIncludes(reg);
+        public Builder databaseIncludes(String... reg) {
+            final String join = String.join("|", reg);
+            this.conf.getGenerator().getDatabase().setIncludes(join);
             return this;
         }
 
@@ -240,8 +250,9 @@ public class WingsCodeGenerator {
          * @return builder
          * @see Pattern#COMMENTS
          */
-        public Builder databaseExcludes(String reg) {
-            this.conf.getGenerator().getDatabase().setExcludes(reg);
+        public Builder databaseExcludes(String... reg) {
+            final String join = String.join("|", reg);
+            this.conf.getGenerator().getDatabase().setExcludes(join);
             return this;
         }
 
@@ -269,21 +280,23 @@ public class WingsCodeGenerator {
             return this;
         }
 
-        public <E extends Enum<E> & CodeEnum> Builder forcedCodeEnum(Class<E> en, String expr) {
-            return forcedJooqEnum(JooqCodeEnumConverter.class, en, expr);
+        public <E extends Enum<E> & CodeEnum> Builder forcedCodeEnum(Class<E> en, String... reg) {
+            return forcedJooqEnum(JooqCodeEnumConverter.class, en, reg);
         }
 
-        public <E extends Enum<E> & ConstantEnum> Builder forcedConsEnum(Class<E> en, String expr) {
-            return forcedJooqEnum(JooqConsEnumConverter.class, en, expr);
+        public <E extends Enum<E> & ConstantEnum> Builder forcedConsEnum(Class<E> en, String... reg) {
+            return forcedJooqEnum(JooqConsEnumConverter.class, en, reg);
         }
 
-        private <E extends Enum<E>> Builder forcedJooqEnum(Class<?> jc, Class<E> en, String expr) {
+        private <E extends Enum<E>> Builder forcedJooqEnum(Class<?> jc, Class<E> en, String... reg) {
             final String cv = jc.getName();
             final String tp = en.getName();
+            final String join = String.join("|", reg);
             ForcedType ft = new ForcedType()
                     .withUserType(tp)
-                    .withConverter(cv + ".of(" + en.getSimpleName() + ".class)")
-                    .withExpression(expr);
+                    // new JooqConsEnumConverter(StandardLanguage.class)
+                    .withConverter("new "+cv + "(" + en.getSimpleName() + ".class)")
+                    .withExpression(join);
 
             return forcedType(ft, cv);
         }

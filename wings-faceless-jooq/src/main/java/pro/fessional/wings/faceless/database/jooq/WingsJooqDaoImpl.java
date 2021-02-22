@@ -20,6 +20,7 @@ import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
 import org.jooq.impl.TableImpl;
 import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.pain.IORuntimeException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -147,7 +148,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
                       .fields(table.fields())
                       .execute();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IORuntimeException(e);
         }
     }
 

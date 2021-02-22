@@ -10,8 +10,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.WingsAuthTypeSource;
-import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeSource;
 import pro.fessional.wings.slardar.security.bind.WingsBindAuthFilter;
+import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeSource;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,8 +57,8 @@ public class WingsBindLoginConfigurer extends
 
     private String headerName = null;
     private String paramName = null;
-    private Map<String, Enum<?>> authTypes = new HashMap<>();
     private WingsAuthTypeSource bindAuthTypeSource = null;
+    private final Map<String, Enum<?>> authTypes = new HashMap<>();
 
     public WingsBindLoginConfigurer bindAuthTypeToHeader(String headerName) {
         this.headerName = headerName;
@@ -106,7 +106,7 @@ public class WingsBindLoginConfigurer extends
             if (authTypes.isEmpty()) {
                 bindAuthTypeSource = context.getBeanProvider(WingsAuthTypeSource.class).getIfAvailable();
             } else {
-                parser = authType -> authTypes.get(authType);
+                parser = authTypes::get;
             }
         }
 
