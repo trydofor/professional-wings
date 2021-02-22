@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import pro.fessional.wings.slardar.captcha.CaptchaPicker;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -13,13 +15,16 @@ import java.util.Set;
  */
 @RequiredArgsConstructor
 public class HeaderPicker implements CaptchaPicker {
-    private final Set<String> headerName;
+    private final LinkedHashSet<String> headerName = new LinkedHashSet<>();
+
+    public HeaderPicker(Collection<String> keys) {
+        headerName.addAll(keys);
+    }
 
     @Override
     public void pickSession(HttpServletRequest request, Set<String> session) {
-        if (headerName == null) return;
+        if (headerName.isEmpty()) return;
         for (String s : headerName) {
-
             Enumeration<String> headers = request.getHeaders(s);
             while (headers.hasMoreElements()) {
                 session.add(headers.nextElement());

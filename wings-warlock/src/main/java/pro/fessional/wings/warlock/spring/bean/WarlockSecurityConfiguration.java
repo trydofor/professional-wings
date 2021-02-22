@@ -16,8 +16,9 @@ import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -73,10 +74,11 @@ public class WarlockSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests(conf ->
                     {
-                        for (Map.Entry<String, Set<String>> en : securityProp.getAuthority().entrySet()) {
-                            final Set<String> paths = en.getValue();
+                        for (Map.Entry<String, List<String>> en : securityProp.getAuthority().entrySet()) {
+                            final List<String> paths = en.getValue();
                             if (paths.isEmpty()) continue;
-                            conf.antMatchers(paths.toArray(Null.StrArr)).hasAuthority(en.getKey());
+                            LinkedHashSet<String> uniq = new LinkedHashSet<>(paths);
+                            conf.antMatchers(uniq.toArray(Null.StrArr)).hasAuthority(en.getKey());
                         }
                         conf.antMatchers(securityProp.getAuthenticated().toArray(Null.StrArr))
                             .authenticated()

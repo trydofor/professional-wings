@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import pro.fessional.wings.slardar.captcha.CaptchaPicker;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -13,11 +15,15 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 public class ParamsPicker implements CaptchaPicker {
-    private final Set<String> paramsName;
+    private final LinkedHashSet<String> paramsName = new LinkedHashSet<>();
+
+    public ParamsPicker(Collection<String> keys) {
+        paramsName.addAll(keys);
+    }
 
     @Override
     public void pickSession(HttpServletRequest request, Set<String> session) {
-        if (paramsName == null) return;
+        if (paramsName.isEmpty()) return;
         for (String s : paramsName) {
             String[] vals = request.getParameterValues(s);
             if (vals == null) continue;

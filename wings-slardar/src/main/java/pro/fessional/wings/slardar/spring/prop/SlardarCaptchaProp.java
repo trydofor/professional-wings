@@ -3,7 +3,8 @@ package pro.fessional.wings.slardar.spring.prop;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.Set;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author trydofor
@@ -21,7 +22,7 @@ public class SlardarCaptchaProp {
      *
      * @see #Key$pickerHeader
      */
-    private Set<String> pickerHeader;
+    private List<String> pickerHeader = Collections.emptyList();
     public static final String Key$pickerHeader = Key + ".picker-header";
 
     /**
@@ -29,7 +30,7 @@ public class SlardarCaptchaProp {
      *
      * @see #Key$pickerCookie
      */
-    private Set<String> pickerCookie;
+    private List<String> pickerCookie = Collections.emptyList();
     public static final String Key$pickerCookie = Key + ".picker-cookie";
 
     /**
@@ -37,7 +38,7 @@ public class SlardarCaptchaProp {
      *
      * @see #Key$pickerParams
      */
-    private Set<String> pickerParams;
+    private List<String> pickerParams = Collections.emptyList();
     public static final String Key$pickerParams = Key + ".picker-params";
 
     /**

@@ -18,7 +18,6 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -36,15 +35,15 @@ public class SlardarCaptchaConfiguration {
         logger.info("Wings conf Captcha filter");
         List<CaptchaTrigger> triggers = cts.orderedStream().collect(Collectors.toList());
         List<CaptchaPicker> pickers = new ArrayList<>();
-        final Set<String> cookie = config.getPickerCookie();
+        final List<String> cookie = config.getPickerCookie();
         if (cookie != null && cookie.size() > 0) {
             pickers.add(new CookiePicker(cookie));
         }
-        final Set<String> header = config.getPickerHeader();
+        final List<String> header = config.getPickerHeader();
         if (header != null && header.size() > 0) {
             pickers.add(new HeaderPicker(header));
         }
-        final Set<String> params = config.getPickerParams();
+        final List<String> params = config.getPickerParams();
         if (params != null && params.size() > 0) {
             pickers.add(new ParamsPicker(params));
         }

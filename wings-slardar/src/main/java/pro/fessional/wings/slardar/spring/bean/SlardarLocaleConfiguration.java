@@ -26,12 +26,12 @@ public class SlardarLocaleConfiguration {
     public WingsLocaleResolver wingsLocaleResolver(SlardarLocaleProp conf) {
         logger.info("Wings conf WingsLocaleResolver");
         final WingsLocaleResolver resolver = new WingsLocaleResolver();
-        resolver.setLocaleCookie(conf.getLocaleCookie());
-        resolver.setLocaleHeader(conf.getLocaleHeader());
-        resolver.setLocaleParam(conf.getLocaleParam());
-        resolver.setZoneidCookie(conf.getZoneidCookie());
-        resolver.setZoneidHeader(conf.getZoneidHeader());
-        resolver.setZoneidParam(conf.getZoneidParam());
+        resolver.addLocaleCookie(conf.getLocaleCookie());
+        resolver.addLocaleHeader(conf.getLocaleHeader());
+        resolver.addLocaleParam(conf.getLocaleParam());
+        resolver.addZoneidCookie(conf.getZoneidCookie());
+        resolver.addZoneidHeader(conf.getZoneidHeader());
+        resolver.addZoneidParam(conf.getZoneidParam());
         return resolver;
     }
 }

@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static java.util.stream.Collectors.toMap;
 import static pro.fessional.mirana.cast.EnumConvertor.str2Enum;
@@ -68,7 +67,7 @@ public class WarlockSecurityProp {
     /**
      * @see #Key$authority
      */
-    private Map<String, Set<String>> authority = Collections.emptyMap();
+    private Map<String, List<String>> authority = Collections.emptyMap();
     public static final String Key$authority = Key + ".authority";
 
     /**
@@ -76,7 +75,7 @@ public class WarlockSecurityProp {
      *
      * @see #Key$authenticated
      */
-    private Set<String> authenticated = Collections.emptySet();
+    private List<String> authenticated = Collections.emptyList();
     public static final String Key$authenticated = Key + ".authenticated";
 
     /**
@@ -84,11 +83,11 @@ public class WarlockSecurityProp {
      *
      * @see #Key$permitAll
      */
-    private Set<String> permitAll = Collections.emptySet();
+    private List<String> permitAll = Collections.emptyList();
     public static final String Key$permitAll = Key + ".permit-all";
 
     /**
-     * 支持的验证类型， enum全路径
+     * 支持的验证类型， enum全路径，一对一，否则反向解析有问题
      *
      * @see #Key$authType
      */

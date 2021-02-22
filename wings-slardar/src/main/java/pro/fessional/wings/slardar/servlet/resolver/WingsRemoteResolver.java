@@ -1,13 +1,13 @@
 package pro.fessional.wings.slardar.servlet.resolver;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static java.util.Collections.emptySet;
 import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_AGENT_INFO;
 import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_REMOTE_IP;
 
@@ -15,13 +15,24 @@ import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_REMOTE_
  * @author trydofor
  * @since 2019-06-30
  */
-@Setter
 @Getter
 public class WingsRemoteResolver {
 
-    private Set<String> innerIp = emptySet();
-    private Set<String> ipHeader = emptySet();
-    private Set<String> agentHeader = emptySet();
+    private final Set<String> innerIp = new LinkedHashSet<>();
+    private final Set<String> ipHeader = new LinkedHashSet<>();
+    private final Set<String> agentHeader = new LinkedHashSet<>();
+
+    public void addInnerIp(Collection<String> keys) {
+        innerIp.addAll(keys);
+    }
+
+    public void addAgentHeader(Collection<String> keys) {
+        agentHeader.addAll(keys);
+    }
+
+    public void addIpHeader(Collection<String> keys) {
+        ipHeader.addAll(keys);
+    }
 
     @NotNull
     public String resolveRemoteIp(HttpServletRequest request) {

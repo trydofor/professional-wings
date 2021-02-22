@@ -1,23 +1,27 @@
 package pro.fessional.wings.slardar.captcha.picker;
 
-import lombok.RequiredArgsConstructor;
 import pro.fessional.wings.slardar.captcha.CaptchaPicker;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
  * @author trydofor
  * @since 2021-02-14
  */
-@RequiredArgsConstructor
 public class CookiePicker implements CaptchaPicker {
-    private final Set<String> cookieName;
+    private final LinkedHashSet<String> cookieName = new LinkedHashSet<>();
+
+    public CookiePicker(Collection<String> keys) {
+        cookieName.addAll(keys);
+    }
 
     @Override
     public void pickSession(HttpServletRequest request, Set<String> session) {
-        if (cookieName == null) return;
+        if (cookieName.isEmpty()) return;
         Cookie[] cookies = request.getCookies();
         if (cookies != null)
             for (Cookie ck : cookies) {

@@ -23,9 +23,9 @@ public class SlardarRemoteConfiguration {
     public WingsRemoteResolver wingsTerminalResolver(SlardarRemoteProp conf) {
         logger.info("Wings conf WingsRemoteResolver");
         final WingsRemoteResolver resolver = new WingsRemoteResolver();
-        resolver.setInnerIp(conf.getInnerIp());
-        resolver.setAgentHeader(conf.getAgentHeader());
-        resolver.setIpHeader(conf.getIpHeader());
+        resolver.addInnerIp(conf.getInnerIp());
+        resolver.addAgentHeader(conf.getAgentHeader());
+        resolver.addIpHeader(conf.getIpHeader());
         return resolver;
     }
 }

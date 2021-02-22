@@ -3,7 +3,8 @@ package pro.fessional.wings.slardar.spring.prop;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.Set;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author trydofor
@@ -37,7 +38,7 @@ public class SlardarPagequeryProp {
      *
      * @see #Key$pageAlias
      */
-    private Set<String> pageAlias;
+    private List<String> pageAlias = Collections.emptyList();
     public static final String Key$pageAlias = Key + ".page-alias";
 
     /**
@@ -46,7 +47,7 @@ public class SlardarPagequeryProp {
      * @see #Key$sizeAlias
      */
 
-    private Set<String> sizeAlias;
+    private List<String> sizeAlias = Collections.emptyList();
     public static final String Key$sizeAlias = Key + ".size-alias";
 
     /**
@@ -54,6 +55,6 @@ public class SlardarPagequeryProp {
      *
      * @see #Key$sortAlias
      */
-    private Set<String> sortAlias;
+    private List<String> sortAlias = Collections.emptyList();
     public static final String Key$sortAlias = Key + ".sort-alias";
 }

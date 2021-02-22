@@ -18,6 +18,7 @@ import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
+import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeParser;
 import pro.fessional.wings.warlock.security.handler.LoginNgHandler;
 import pro.fessional.wings.warlock.security.handler.LoginOkHandler;
 import pro.fessional.wings.warlock.security.handler.LogoutOkHandler;
@@ -99,7 +100,7 @@ public class WarlockAuthBeanConfiguration {
     @ConditionalOnMissingBean
     public WingsAuthTypeParser wingsAuthTypeParser(WarlockSecurityProp config) {
         logger.info("Wings conf wingsAuthTypeParser");
-        final Map<String, Enum<?>> enumMap = config.mapAuthTypeEnum();
-        return enumMap::get;
+        final Map<String, Enum<?>> authType = config.mapAuthTypeEnum();
+        return new DefaultWingsAuthTypeParser(authType);
     }
 }

@@ -3,9 +3,9 @@ package pro.fessional.wings.slardar.spring.prop;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 构造 prefix+host+url的新路径
@@ -41,7 +41,7 @@ public class DomainExtendProp {
      *
      * @see #Key$host
      */
-    private Map<String, List<String>> host;
+    private Map<String, List<String>> host = Collections.emptyMap();
     public static final String Key$host = Key + ".host";
 
     /**
@@ -49,6 +49,6 @@ public class DomainExtendProp {
      *
      * @see #Key$otherUrl
      */
-    private Set<String> otherUrl;
+    private List<String> otherUrl = Collections.emptyList();
     public static final String Key$otherUrl = Key + ".other-url";
 }

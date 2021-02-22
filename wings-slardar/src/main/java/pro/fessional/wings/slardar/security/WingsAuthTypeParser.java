@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.security;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -8,11 +9,20 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface WingsAuthTypeParser {
     /**
-     * 获取 auth type
+     * 获取通过字符串别名，解析成enum类
      *
      * @param authType authType
-     * @return auth type
+     * @return 枚举类
      */
     @Nullable
     Enum<?> parse(String authType);
+
+    /**
+     * 把enum类，变成字符串别名，无法转换时PC异常
+     *
+     * @param authType authType
+     * @return 字符串型
+     * @throws IllegalArgumentException 无法转换时
+     */
+    @NotNull String parse(Enum<?> authType);
 }

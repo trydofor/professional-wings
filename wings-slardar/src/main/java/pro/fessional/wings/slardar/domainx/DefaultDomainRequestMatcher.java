@@ -11,8 +11,9 @@ import pro.fessional.wings.slardar.servlet.request.WingsRequestWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import static pro.fessional.wings.slardar.servlet.request.ResourceHttpRequestUtil.existResource;
 
@@ -25,15 +26,15 @@ public class DefaultDomainRequestMatcher implements DomainRequestMatcher {
     private final String pathPrefix;
     private final List<HandlerMapping> mappingUrl = new ArrayList<>();
     private final AntPathMatcher antMatcher = new AntPathMatcher();
-    private final Set<String> otherUrl;
+    private final LinkedHashSet<String> otherUrl = new LinkedHashSet<>();
     private final DispatcherServlet dispatcherServlet;
     private final Cache<String, Boolean> matchedUrl;
     private final Cache<String, Boolean> notfoundUrl;
 
-    public DefaultDomainRequestMatcher(DispatcherServlet dispatcher, String pathPrefix, Set<String> otherUrl, int cacheSize) {
+    public DefaultDomainRequestMatcher(DispatcherServlet dispatcher, String pathPrefix, Collection<String> otherUrl, int cacheSize) {
         this.dispatcherServlet = dispatcher;
         this.pathPrefix = pathPrefix;
-        this.otherUrl = otherUrl;
+        this.otherUrl.addAll(otherUrl);
         this.matchedUrl = Caffeine.newBuilder().maximumSize(cacheSize).build();
         this.notfoundUrl = Caffeine.newBuilder().maximumSize(cacheSize).build();
     }
@@ -88,6 +89,7 @@ public class DefaultDomainRequestMatcher implements DomainRequestMatcher {
     }
 
     private volatile boolean initMapping = false;
+
     private void checkInitMapping() {
         if (initMapping) return;
 

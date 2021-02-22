@@ -27,7 +27,7 @@ class DefaultWingsAuthTypeSourceTest {
 
     @Test
     void extractVar() {
-        DefaultWingsAuthTypeSource d = new DefaultWingsAuthTypeSource(null, null, null, str -> null);
+        DefaultWingsAuthTypeSource d = new DefaultWingsAuthTypeSource(null, null, null, null);
         assertNull(d.extractVar("/login", 0, 0));
         assertEquals("sms", d.extractVar("/login/sms", "/login/".length(), 0));
         assertEquals("sms", d.extractVar("/login/sms.json", "/login/".length(), ".json".length()));
