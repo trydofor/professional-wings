@@ -62,6 +62,8 @@
         <transmittable.version>2.12.1</transmittable.version>
         <bouncycastle.version>1.68</bouncycastle.version>
         <justauth.version>1.15.9</justauth.version>
+        <!-- just auth need 4 -->
+        <okhttp3.version>4.9.0</okhttp3.version>
     </properties>
 
     <dependencies>

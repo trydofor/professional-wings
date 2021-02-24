@@ -210,6 +210,13 @@ SELECT RELEASE_LOCK('lock1');
 SELECT 'Michael!' NOT REGEXP '.*';
 ```
 
+#### 15.VarChar和Text类型
+
+* VarChar 有长度限制，可以设置默认值，这符合wings NOT NULL的规范。
+* TEXT可认为无限制，不可设置默认值，不符合wings规范。
+* MySQL has hard limit of 4096 columns
+* maximum row size limit of 65535 bytes
+
 ### 2.9.2.本地(文件/内存)数据库H2
 
 在不方便提供mysql数据库的时候，如演示或本地数据库应用，可以使用H2，配置如下。

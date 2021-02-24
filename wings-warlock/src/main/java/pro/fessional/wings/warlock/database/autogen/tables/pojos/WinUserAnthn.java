@@ -5,7 +5,6 @@ package pro.fessional.wings.warlock.database.autogen.tables.pojos;
 
 
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.IWinUserAnthn;
-import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
 import javax.annotation.Generated;
 import javax.persistence.Column;
@@ -48,15 +47,14 @@ public class WinUserAnthn implements IWinUserAnthn {
     private Long          commitId;
     private Long          userId;
     private String        authType;
-    private String        authName;
-    private String        authPass;
-    private String        authSalt;
-    private String        authPara1;
-    private String        authPara2;
-    private String        authToken;
+    private String        username;
+    private String        password;
+    private String        passsalt;
+    private String        extraPara;
+    private String        extraUser;
     private LocalDateTime expiredDt;
-    private Integer       errorCnt;
-    private UserStatus    status;
+    private Integer       failedCnt;
+    private Integer       failedMax;
 
     public WinUserAnthn() {}
 
@@ -68,15 +66,14 @@ public class WinUserAnthn implements IWinUserAnthn {
         this.commitId = value.getCommitId();
         this.userId = value.getUserId();
         this.authType = value.getAuthType();
-        this.authName = value.getAuthName();
-        this.authPass = value.getAuthPass();
-        this.authSalt = value.getAuthSalt();
-        this.authPara1 = value.getAuthPara1();
-        this.authPara2 = value.getAuthPara2();
-        this.authToken = value.getAuthToken();
+        this.username = value.getUsername();
+        this.password = value.getPassword();
+        this.passsalt = value.getPasssalt();
+        this.extraPara = value.getExtraPara();
+        this.extraUser = value.getExtraUser();
         this.expiredDt = value.getExpiredDt();
-        this.errorCnt = value.getErrorCnt();
-        this.status = value.getStatus();
+        this.failedCnt = value.getFailedCnt();
+        this.failedMax = value.getFailedMax();
     }
 
     public WinUserAnthn(
@@ -87,15 +84,14 @@ public class WinUserAnthn implements IWinUserAnthn {
         Long          commitId,
         Long          userId,
         String        authType,
-        String        authName,
-        String        authPass,
-        String        authSalt,
-        String        authPara1,
-        String        authPara2,
-        String        authToken,
+        String        username,
+        String        password,
+        String        passsalt,
+        String        extraPara,
+        String        extraUser,
         LocalDateTime expiredDt,
-        Integer       errorCnt,
-        UserStatus    status
+        Integer       failedCnt,
+        Integer       failedMax
     ) {
         this.id = id;
         this.createDt = createDt;
@@ -104,15 +100,14 @@ public class WinUserAnthn implements IWinUserAnthn {
         this.commitId = commitId;
         this.userId = userId;
         this.authType = authType;
-        this.authName = authName;
-        this.authPass = authPass;
-        this.authSalt = authSalt;
-        this.authPara1 = authPara1;
-        this.authPara2 = authPara2;
-        this.authToken = authToken;
+        this.username = username;
+        this.password = password;
+        this.passsalt = passsalt;
+        this.extraPara = extraPara;
+        this.extraUser = extraUser;
         this.expiredDt = expiredDt;
-        this.errorCnt = errorCnt;
-        this.status = status;
+        this.failedCnt = failedCnt;
+        this.failedMax = failedMax;
     }
 
     /**
@@ -240,112 +235,94 @@ public class WinUserAnthn implements IWinUserAnthn {
     }
 
     /**
-     * Getter for <code>win_user_anthn.auth_name</code>.
+     * Getter for <code>win_user_anthn.username</code>.
      */
-    @Column(name = "auth_name", nullable = false, length = 200)
+    @Column(name = "username", nullable = false, length = 200)
     @NotNull
     @Size(max = 200)
     @Override
-    public String getAuthName() {
-        return this.authName;
+    public String getUsername() {
+        return this.username;
     }
 
     /**
-     * Setter for <code>win_user_anthn.auth_name</code>.
+     * Setter for <code>win_user_anthn.username</code>.
      */
     @Override
-    public void setAuthName(String authName) {
-        this.authName = authName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**
-     * Getter for <code>win_user_anthn.auth_pass</code>.
+     * Getter for <code>win_user_anthn.password</code>.
      */
-    @Column(name = "auth_pass", nullable = false, length = 200)
+    @Column(name = "password", nullable = false, length = 200)
     @Size(max = 200)
     @Override
-    public String getAuthPass() {
-        return this.authPass;
+    public String getPassword() {
+        return this.password;
     }
 
     /**
-     * Setter for <code>win_user_anthn.auth_pass</code>.
+     * Setter for <code>win_user_anthn.password</code>.
      */
     @Override
-    public void setAuthPass(String authPass) {
-        this.authPass = authPass;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     /**
-     * Getter for <code>win_user_anthn.auth_salt</code>.
+     * Getter for <code>win_user_anthn.passsalt</code>.
      */
-    @Column(name = "auth_salt", nullable = false, length = 50)
-    @Size(max = 50)
+    @Column(name = "passsalt", nullable = false, length = 100)
+    @Size(max = 100)
     @Override
-    public String getAuthSalt() {
-        return this.authSalt;
+    public String getPasssalt() {
+        return this.passsalt;
     }
 
     /**
-     * Setter for <code>win_user_anthn.auth_salt</code>.
+     * Setter for <code>win_user_anthn.passsalt</code>.
      */
     @Override
-    public void setAuthSalt(String authSalt) {
-        this.authSalt = authSalt;
+    public void setPasssalt(String passsalt) {
+        this.passsalt = passsalt;
     }
 
     /**
-     * Getter for <code>win_user_anthn.auth_para1</code>.
+     * Getter for <code>win_user_anthn.extra_para</code>.
      */
-    @Column(name = "auth_para1", nullable = false, length = 200)
-    @Size(max = 200)
+    @Column(name = "extra_para", nullable = false, length = 3000)
+    @Size(max = 3000)
     @Override
-    public String getAuthPara1() {
-        return this.authPara1;
+    public String getExtraPara() {
+        return this.extraPara;
     }
 
     /**
-     * Setter for <code>win_user_anthn.auth_para1</code>.
+     * Setter for <code>win_user_anthn.extra_para</code>.
      */
     @Override
-    public void setAuthPara1(String authPara1) {
-        this.authPara1 = authPara1;
+    public void setExtraPara(String extraPara) {
+        this.extraPara = extraPara;
     }
 
     /**
-     * Getter for <code>win_user_anthn.auth_para2</code>.
+     * Getter for <code>win_user_anthn.extra_user</code>.
      */
-    @Column(name = "auth_para2", nullable = false, length = 200)
-    @Size(max = 200)
+    @Column(name = "extra_user", nullable = false, length = 9000)
+    @Size(max = 9000)
     @Override
-    public String getAuthPara2() {
-        return this.authPara2;
+    public String getExtraUser() {
+        return this.extraUser;
     }
 
     /**
-     * Setter for <code>win_user_anthn.auth_para2</code>.
+     * Setter for <code>win_user_anthn.extra_user</code>.
      */
     @Override
-    public void setAuthPara2(String authPara2) {
-        this.authPara2 = authPara2;
-    }
-
-    /**
-     * Getter for <code>win_user_anthn.auth_token</code>.
-     */
-    @Column(name = "auth_token", nullable = false, length = 2000)
-    @Size(max = 2000)
-    @Override
-    public String getAuthToken() {
-        return this.authToken;
-    }
-
-    /**
-     * Setter for <code>win_user_anthn.auth_token</code>.
-     */
-    @Override
-    public void setAuthToken(String authToken) {
-        this.authToken = authToken;
+    public void setExtraUser(String extraUser) {
+        this.extraUser = extraUser;
     }
 
     /**
@@ -366,37 +343,37 @@ public class WinUserAnthn implements IWinUserAnthn {
     }
 
     /**
-     * Getter for <code>win_user_anthn.error_cnt</code>.
+     * Getter for <code>win_user_anthn.failed_cnt</code>.
      */
-    @Column(name = "error_cnt", nullable = false, precision = 10)
+    @Column(name = "failed_cnt", nullable = false, precision = 10)
     @Override
-    public Integer getErrorCnt() {
-        return this.errorCnt;
+    public Integer getFailedCnt() {
+        return this.failedCnt;
     }
 
     /**
-     * Setter for <code>win_user_anthn.error_cnt</code>.
+     * Setter for <code>win_user_anthn.failed_cnt</code>.
      */
     @Override
-    public void setErrorCnt(Integer errorCnt) {
-        this.errorCnt = errorCnt;
+    public void setFailedCnt(Integer failedCnt) {
+        this.failedCnt = failedCnt;
     }
 
     /**
-     * Getter for <code>win_user_anthn.status</code>.
+     * Getter for <code>win_user_anthn.failed_max</code>.
      */
-    @Column(name = "status", nullable = false, precision = 10)
+    @Column(name = "failed_max", nullable = false, precision = 10)
     @Override
-    public UserStatus getStatus() {
-        return this.status;
+    public Integer getFailedMax() {
+        return this.failedMax;
     }
 
     /**
-     * Setter for <code>win_user_anthn.status</code>.
+     * Setter for <code>win_user_anthn.failed_max</code>.
      */
     @Override
-    public void setStatus(UserStatus status) {
-        this.status = status;
+    public void setFailedMax(Integer failedMax) {
+        this.failedMax = failedMax;
     }
 
     @Override
@@ -450,41 +427,35 @@ public class WinUserAnthn implements IWinUserAnthn {
         }
         else if (!authType.equals(other.authType))
             return false;
-        if (authName == null) {
-            if (other.authName != null)
+        if (username == null) {
+            if (other.username != null)
                 return false;
         }
-        else if (!authName.equals(other.authName))
+        else if (!username.equals(other.username))
             return false;
-        if (authPass == null) {
-            if (other.authPass != null)
+        if (password == null) {
+            if (other.password != null)
                 return false;
         }
-        else if (!authPass.equals(other.authPass))
+        else if (!password.equals(other.password))
             return false;
-        if (authSalt == null) {
-            if (other.authSalt != null)
+        if (passsalt == null) {
+            if (other.passsalt != null)
                 return false;
         }
-        else if (!authSalt.equals(other.authSalt))
+        else if (!passsalt.equals(other.passsalt))
             return false;
-        if (authPara1 == null) {
-            if (other.authPara1 != null)
+        if (extraPara == null) {
+            if (other.extraPara != null)
                 return false;
         }
-        else if (!authPara1.equals(other.authPara1))
+        else if (!extraPara.equals(other.extraPara))
             return false;
-        if (authPara2 == null) {
-            if (other.authPara2 != null)
+        if (extraUser == null) {
+            if (other.extraUser != null)
                 return false;
         }
-        else if (!authPara2.equals(other.authPara2))
-            return false;
-        if (authToken == null) {
-            if (other.authToken != null)
-                return false;
-        }
-        else if (!authToken.equals(other.authToken))
+        else if (!extraUser.equals(other.extraUser))
             return false;
         if (expiredDt == null) {
             if (other.expiredDt != null)
@@ -492,17 +463,17 @@ public class WinUserAnthn implements IWinUserAnthn {
         }
         else if (!expiredDt.equals(other.expiredDt))
             return false;
-        if (errorCnt == null) {
-            if (other.errorCnt != null)
+        if (failedCnt == null) {
+            if (other.failedCnt != null)
                 return false;
         }
-        else if (!errorCnt.equals(other.errorCnt))
+        else if (!failedCnt.equals(other.failedCnt))
             return false;
-        if (status == null) {
-            if (other.status != null)
+        if (failedMax == null) {
+            if (other.failedMax != null)
                 return false;
         }
-        else if (!status.equals(other.status))
+        else if (!failedMax.equals(other.failedMax))
             return false;
         return true;
     }
@@ -518,15 +489,14 @@ public class WinUserAnthn implements IWinUserAnthn {
         result = prime * result + ((this.commitId == null) ? 0 : this.commitId.hashCode());
         result = prime * result + ((this.userId == null) ? 0 : this.userId.hashCode());
         result = prime * result + ((this.authType == null) ? 0 : this.authType.hashCode());
-        result = prime * result + ((this.authName == null) ? 0 : this.authName.hashCode());
-        result = prime * result + ((this.authPass == null) ? 0 : this.authPass.hashCode());
-        result = prime * result + ((this.authSalt == null) ? 0 : this.authSalt.hashCode());
-        result = prime * result + ((this.authPara1 == null) ? 0 : this.authPara1.hashCode());
-        result = prime * result + ((this.authPara2 == null) ? 0 : this.authPara2.hashCode());
-        result = prime * result + ((this.authToken == null) ? 0 : this.authToken.hashCode());
+        result = prime * result + ((this.username == null) ? 0 : this.username.hashCode());
+        result = prime * result + ((this.password == null) ? 0 : this.password.hashCode());
+        result = prime * result + ((this.passsalt == null) ? 0 : this.passsalt.hashCode());
+        result = prime * result + ((this.extraPara == null) ? 0 : this.extraPara.hashCode());
+        result = prime * result + ((this.extraUser == null) ? 0 : this.extraUser.hashCode());
         result = prime * result + ((this.expiredDt == null) ? 0 : this.expiredDt.hashCode());
-        result = prime * result + ((this.errorCnt == null) ? 0 : this.errorCnt.hashCode());
-        result = prime * result + ((this.status == null) ? 0 : this.status.hashCode());
+        result = prime * result + ((this.failedCnt == null) ? 0 : this.failedCnt.hashCode());
+        result = prime * result + ((this.failedMax == null) ? 0 : this.failedMax.hashCode());
         return result;
     }
 
@@ -541,15 +511,14 @@ public class WinUserAnthn implements IWinUserAnthn {
         sb.append(", ").append(commitId);
         sb.append(", ").append(userId);
         sb.append(", ").append(authType);
-        sb.append(", ").append(authName);
-        sb.append(", ").append(authPass);
-        sb.append(", ").append(authSalt);
-        sb.append(", ").append(authPara1);
-        sb.append(", ").append(authPara2);
-        sb.append(", ").append(authToken);
+        sb.append(", ").append(username);
+        sb.append(", ").append(password);
+        sb.append(", ").append(passsalt);
+        sb.append(", ").append(extraPara);
+        sb.append(", ").append(extraUser);
         sb.append(", ").append(expiredDt);
-        sb.append(", ").append(errorCnt);
-        sb.append(", ").append(status);
+        sb.append(", ").append(failedCnt);
+        sb.append(", ").append(failedMax);
 
         sb.append(")");
         return sb.toString();
@@ -568,15 +537,14 @@ public class WinUserAnthn implements IWinUserAnthn {
         setCommitId(from.getCommitId());
         setUserId(from.getUserId());
         setAuthType(from.getAuthType());
-        setAuthName(from.getAuthName());
-        setAuthPass(from.getAuthPass());
-        setAuthSalt(from.getAuthSalt());
-        setAuthPara1(from.getAuthPara1());
-        setAuthPara2(from.getAuthPara2());
-        setAuthToken(from.getAuthToken());
+        setUsername(from.getUsername());
+        setPassword(from.getPassword());
+        setPasssalt(from.getPasssalt());
+        setExtraPara(from.getExtraPara());
+        setExtraUser(from.getExtraUser());
         setExpiredDt(from.getExpiredDt());
-        setErrorCnt(from.getErrorCnt());
-        setStatus(from.getStatus());
+        setFailedCnt(from.getFailedCnt());
+        setFailedMax(from.getFailedMax());
     }
 
     @Override

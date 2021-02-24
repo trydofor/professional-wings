@@ -27,7 +27,7 @@ public class ComboWingsUserDetailsService implements WingsUserDetailsService {
     public @NotNull UserDetails loadUserByUsername(String username, @Nullable Enum<?> authType, @Nullable Object authDetail) throws UsernameNotFoundException {
         dclCombos.runIfDirty();
         for (Combo<?> combo : combos) {
-            final UserDetails ud = combo.loadOrSave(username, authType, authDetail);
+            final UserDetails ud = combo.loadOrNull(username, authType, authDetail);
             if (ud != null) return ud;
         }
 
@@ -58,6 +58,7 @@ public class ComboWingsUserDetailsService implements WingsUserDetailsService {
          * @throws UsernameNotFoundException UsernameNotFound
          * @see Authentication#getDetails
          */
-        T loadOrSave(String username, @Nullable Enum<?> authType, @Nullable Object authDetail);
+        @Nullable
+        T loadOrNull(String username, @Nullable Enum<?> authType, @Nullable Object authDetail);
     }
 }

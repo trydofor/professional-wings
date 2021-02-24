@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
+import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 
 /**
@@ -83,12 +84,18 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+        if (userDetails instanceof WingsUserDetails && ((WingsUserDetails) userDetails).isPreAuthed()) {
+            return;
+        }
+
         if (authentication.getCredentials() == null) {
             this.logger.debug("Failed to authenticate since no credentials provided");
             throw new BadCredentialsException(this.messages
                     .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
         }
-        String presentedPassword = authentication.getCredentials().toString();
+
+        String presentedPassword = presentPassword(userDetails, authentication);
+
         if (!this.passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
             this.logger.debug("Failed to authenticate since password does not match stored value");
             throw new BadCredentialsException(this.messages
@@ -96,15 +103,28 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
         }
     }
 
+    private String presentPassword(UserDetails details, Authentication auth) {
+        String presentedPassword = auth.getCredentials().toString();
+        // 加盐处理
+        if (details instanceof WingsUserDetails) {
+            WingsUserDetails wud = (WingsUserDetails) details;
+            final String salt = wud.getPasssalt();
+            if (salt != null && salt.length() > 0) {
+                presentedPassword = presentedPassword + salt;
+            }
+        }
+        return presentedPassword;
+    }
+
     @Override
-    protected Authentication createSuccessAuthentication(Object principal, Authentication authn, UserDetails user) {
-        if (userDetailsPasswordService != null && passwordEncoder.upgradeEncoding(user.getPassword())) {
-            String presentedPassword = authn.getCredentials().toString();
+    protected Authentication createSuccessAuthentication(Object principal, Authentication authn, UserDetails details) {
+        if (userDetailsPasswordService != null && passwordEncoder.upgradeEncoding(details.getPassword())) {
+            String presentedPassword = presentPassword(details, authn);
             String newPassword = this.passwordEncoder.encode(presentedPassword);
-            user = this.userDetailsPasswordService.updatePassword(user, newPassword);
+            details = this.userDetailsPasswordService.updatePassword(details, newPassword);
         }
 
-        Authentication result = super.createSuccessAuthentication(principal, authn, user);
+        Authentication result = super.createSuccessAuthentication(principal, authn, details);
         if (authn instanceof WingsBindAuthToken) {
             final Enum<?> authType = ((WingsBindAuthToken) authn).getAuthType();
             return new WingsBindAuthToken(authType, result);

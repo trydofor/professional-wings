@@ -105,21 +105,32 @@ public interface IWinUserLogin extends Serializable {
     /**
      * Getter for <code>win_user_login.terminal</code>.
      */
-    @Column(name = "terminal", nullable = false, length = 500)
-    @Size(max = 500)
+    @Column(name = "terminal", nullable = false, length = 1000)
+    @Size(max = 1000)
     public String getTerminal();
 
     /**
-     * Setter for <code>win_user_login.remark</code>.
+     * Setter for <code>win_user_login.details</code>.
      */
-    public void setRemark(String value);
+    public void setDetails(String value);
 
     /**
-     * Getter for <code>win_user_login.remark</code>.
+     * Getter for <code>win_user_login.details</code>.
      */
-    @Column(name = "remark", nullable = false, length = 500)
-    @Size(max = 500)
-    public String getRemark();
+    @Column(name = "details", nullable = false, length = 9000)
+    @Size(max = 9000)
+    public String getDetails();
+
+    /**
+     * Setter for <code>win_user_login.failed</code>.
+     */
+    public void setFailed(Boolean value);
+
+    /**
+     * Getter for <code>win_user_login.failed</code>.
+     */
+    @Column(name = "failed", nullable = false)
+    public Boolean getFailed();
 
     // -------------------------------------------------------------------------
     // FROM and INTO

@@ -20,8 +20,8 @@ import org.jooq.impl.TableImpl;
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.jooq.WingsAliasTable;
 import pro.fessional.wings.faceless.database.jooq.converter.JooqConsEnumConverter;
-import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
-import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
+import pro.fessional.wings.faceless.database.jooq.converter.JooqLocaleConverter;
+import pro.fessional.wings.faceless.database.jooq.converter.JooqZoneIdConverter;
 import pro.fessional.wings.faceless.service.lightid.LightIdAware;
 import pro.fessional.wings.warlock.database.autogen.DefaultSchema;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinUserBasicRecord;
@@ -30,6 +30,7 @@ import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
 import javax.annotation.Generated;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 
@@ -90,9 +91,9 @@ public class WinUserBasicTable extends TableImpl<WinUserBasicRecord> implements 
     public final TableField<WinUserBasicRecord, Long> CommitId = createField(DSL.name("commit_id"), SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
-     * The column <code>win_user_basic.nick_name</code>.
+     * The column <code>win_user_basic.nickname</code>.
      */
-    public final TableField<WinUserBasicRecord, String> NickName = createField(DSL.name("nick_name"), SQLDataType.VARCHAR(50).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
+    public final TableField<WinUserBasicRecord, String> Nickname = createField(DSL.name("nickname"), SQLDataType.VARCHAR(50).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>win_user_basic.gender</code>.
@@ -105,14 +106,14 @@ public class WinUserBasicTable extends TableImpl<WinUserBasicRecord> implements 
     public final TableField<WinUserBasicRecord, String> Avatar = createField(DSL.name("avatar"), SQLDataType.VARCHAR(200).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
 
     /**
-     * The column <code>win_user_basic.language</code>.
+     * The column <code>win_user_basic.locale</code>.
      */
-    public final TableField<WinUserBasicRecord, StandardLanguage> Language = createField(DSL.name("language"), SQLDataType.CHAR(5).nullable(false).defaultValue(DSL.inline("zh_CN", SQLDataType.CHAR)), this, "", new JooqConsEnumConverter(StandardLanguage.class));
+    public final TableField<WinUserBasicRecord, java.util.Locale> Locale = createField(DSL.name("locale"), SQLDataType.CHAR(5).nullable(false).defaultValue(DSL.inline("zh_CN", SQLDataType.CHAR)), this, "", new JooqLocaleConverter());
 
     /**
-     * The column <code>win_user_basic.timezone</code>.
+     * The column <code>win_user_basic.zoneid</code>.
      */
-    public final TableField<WinUserBasicRecord, StandardTimezone> Timezone = createField(DSL.name("timezone"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("1010201", SQLDataType.INTEGER)), this, "", new JooqConsEnumConverter(StandardTimezone.class));
+    public final TableField<WinUserBasicRecord, ZoneId> Zoneid = createField(DSL.name("zoneid"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("1010201", SQLDataType.INTEGER)), this, "", new JooqZoneIdConverter());
 
     /**
      * The column <code>win_user_basic.remark</code>.
@@ -201,7 +202,7 @@ public class WinUserBasicTable extends TableImpl<WinUserBasicRecord> implements 
     // -------------------------------------------------------------------------
 
     @Override
-    public Row12<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, UserGender, String, StandardLanguage, StandardTimezone, String, UserStatus> fieldsRow() {
+    public Row12<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, UserGender, String, java.util.Locale, ZoneId, String, UserStatus> fieldsRow() {
         return (Row12) super.fieldsRow();
     }
 

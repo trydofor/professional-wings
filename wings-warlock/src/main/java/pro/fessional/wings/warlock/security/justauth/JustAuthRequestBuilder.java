@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
+import me.zhyd.oauth.config.AuthSource;
 import me.zhyd.oauth.model.AuthCallback;
 import me.zhyd.oauth.model.AuthResponse;
 import me.zhyd.oauth.model.AuthUser;
@@ -63,9 +64,10 @@ import java.util.Map;
 @Slf4j
 public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo<AuthUser> {
 
+    public static final int ORDER = WarlockOrderConst.AuthDetailsCombo + 10;
     private Map<Enum<?>, AuthConfig> authConfigMap = Collections.emptyMap();
     private AuthStateCache authStateCache;
-    private int order = WarlockOrderConst.AuthDetailsCombo + 10;
+    private int order = ORDER;
 
     @Override
     public AuthUser buildDetails(@Nullable Enum<?> authType, @NotNull HttpServletRequest request) {
@@ -85,13 +87,13 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
         if (data instanceof AuthUser) {
             return (AuthUser) data;
         } else {
-            log.warn("unsupported auto-type={}, response type={}", authType, data.getClass().getName());
+            log.warn("unsupported auto-type={}, response type={}", authType, data == null ? "null" : data.getClass().getName());
             return null;
         }
     }
 
     public AuthRequest buildRequest(Enum<?> authType) {
-        if (!(authType instanceof AuthDefaultSource)) return null;
+        if (!(authType instanceof AuthSource)) return null;
 
         final AuthConfig config = authConfigMap.get(authType);
         if (config == null) return null;

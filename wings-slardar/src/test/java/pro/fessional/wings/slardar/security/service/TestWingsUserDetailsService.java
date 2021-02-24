@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import pro.fessional.mirana.bits.Md5;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
-import pro.fessional.wings.slardar.service.TestWingsUserDetails;
+import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,11 +24,6 @@ import java.util.List;
 @Service
 @Slf4j
 public class TestWingsUserDetailsService implements WingsUserDetailsService {
-
-    private boolean accountNonExpired = true;
-    private boolean accountNonLocked = true;
-    private boolean credentialsNonExpired = true;
-    private boolean enabled = true;
 
     public final String origPassword = "大翅挺好吃";
     //F9EC9CF4EA9EEEE69FC01AA44638087F
@@ -46,18 +41,13 @@ public class TestWingsUserDetailsService implements WingsUserDetailsService {
     public @NotNull UserDetails loadUserByUsername(String username, @Nullable Enum<?> type, @Nullable Object authDetail) throws UsernameNotFoundException {
         log.info("login type={}, username={}", type, username);
 
-        TestWingsUserDetails ud = new TestWingsUserDetails();
+        DefaultWingsUserDetails ud = new DefaultWingsUserDetails();
         int idType = username.endsWith("2") ? 2 : 1;
         ud.setUserId(idType);
-        ud.setUserType(idType);
+        ud.setNickname("nick" + idType);
         ud.setPassword(hashPassword);
         ud.setUsername(username);
         ud.setAuthorities(auths);
-
-        ud.setEnabled(enabled);
-        ud.setAccountNonExpired(accountNonExpired);
-        ud.setAccountNonLocked(accountNonLocked);
-        ud.setCredentialsNonExpired(credentialsNonExpired);
 
         return ud;
     }

@@ -9,8 +9,6 @@ import org.jooq.Record1;
 import org.jooq.Record12;
 import org.jooq.Row12;
 import org.jooq.impl.UpdatableRecordImpl;
-import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
-import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasicTable;
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.IWinUserBasic;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
@@ -25,6 +23,8 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Locale;
 
 
 /**
@@ -46,7 +46,7 @@ import java.time.LocalDateTime;
         @UniqueConstraint(name = "KEY_win_user_basic_PRIMARY", columnNames = { "id" })
     }
 )
-public class WinUserBasicRecord extends UpdatableRecordImpl<WinUserBasicRecord> implements Record12<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, UserGender, String, StandardLanguage, StandardTimezone, String, UserStatus>, IWinUserBasic {
+public class WinUserBasicRecord extends UpdatableRecordImpl<WinUserBasicRecord> implements Record12<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, UserGender, String, Locale, ZoneId, String, UserStatus>, IWinUserBasic {
 
     private static final long serialVersionUID = 1L;
 
@@ -139,20 +139,20 @@ public class WinUserBasicRecord extends UpdatableRecordImpl<WinUserBasicRecord> 
     }
 
     /**
-     * Setter for <code>win_user_basic.nick_name</code>.
+     * Setter for <code>win_user_basic.nickname</code>.
      */
     @Override
-    public void setNickName(String value) {
+    public void setNickname(String value) {
         set(5, value);
     }
 
     /**
-     * Getter for <code>win_user_basic.nick_name</code>.
+     * Getter for <code>win_user_basic.nickname</code>.
      */
-    @Column(name = "nick_name", nullable = false, length = 50)
+    @Column(name = "nickname", nullable = false, length = 50)
     @Size(max = 50)
     @Override
-    public String getNickName() {
+    public String getNickname() {
         return (String) get(5);
     }
 
@@ -192,37 +192,37 @@ public class WinUserBasicRecord extends UpdatableRecordImpl<WinUserBasicRecord> 
     }
 
     /**
-     * Setter for <code>win_user_basic.language</code>.
+     * Setter for <code>win_user_basic.locale</code>.
      */
     @Override
-    public void setLanguage(StandardLanguage value) {
+    public void setLocale(Locale value) {
         set(8, value);
     }
 
     /**
-     * Getter for <code>win_user_basic.language</code>.
+     * Getter for <code>win_user_basic.locale</code>.
      */
-    @Column(name = "language", nullable = false, length = 5)
+    @Column(name = "locale", nullable = false, length = 5)
     @Override
-    public StandardLanguage getLanguage() {
-        return (StandardLanguage) get(8);
+    public Locale getLocale() {
+        return (Locale) get(8);
     }
 
     /**
-     * Setter for <code>win_user_basic.timezone</code>.
+     * Setter for <code>win_user_basic.zoneid</code>.
      */
     @Override
-    public void setTimezone(StandardTimezone value) {
+    public void setZoneid(ZoneId value) {
         set(9, value);
     }
 
     /**
-     * Getter for <code>win_user_basic.timezone</code>.
+     * Getter for <code>win_user_basic.zoneid</code>.
      */
-    @Column(name = "timezone", nullable = false, precision = 10)
+    @Column(name = "zoneid", nullable = false, precision = 10)
     @Override
-    public StandardTimezone getTimezone() {
-        return (StandardTimezone) get(9);
+    public ZoneId getZoneid() {
+        return (ZoneId) get(9);
     }
 
     /**
@@ -274,12 +274,12 @@ public class WinUserBasicRecord extends UpdatableRecordImpl<WinUserBasicRecord> 
     // -------------------------------------------------------------------------
 
     @Override
-    public Row12<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, UserGender, String, StandardLanguage, StandardTimezone, String, UserStatus> fieldsRow() {
+    public Row12<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, UserGender, String, Locale, ZoneId, String, UserStatus> fieldsRow() {
         return (Row12) super.fieldsRow();
     }
 
     @Override
-    public Row12<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, UserGender, String, StandardLanguage, StandardTimezone, String, UserStatus> valuesRow() {
+    public Row12<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, UserGender, String, Locale, ZoneId, String, UserStatus> valuesRow() {
         return (Row12) super.valuesRow();
     }
 
@@ -310,7 +310,7 @@ public class WinUserBasicRecord extends UpdatableRecordImpl<WinUserBasicRecord> 
 
     @Override
     public Field<String> field6() {
-        return WinUserBasicTable.WinUserBasic.NickName;
+        return WinUserBasicTable.WinUserBasic.Nickname;
     }
 
     @Override
@@ -324,13 +324,13 @@ public class WinUserBasicRecord extends UpdatableRecordImpl<WinUserBasicRecord> 
     }
 
     @Override
-    public Field<StandardLanguage> field9() {
-        return WinUserBasicTable.WinUserBasic.Language;
+    public Field<Locale> field9() {
+        return WinUserBasicTable.WinUserBasic.Locale;
     }
 
     @Override
-    public Field<StandardTimezone> field10() {
-        return WinUserBasicTable.WinUserBasic.Timezone;
+    public Field<ZoneId> field10() {
+        return WinUserBasicTable.WinUserBasic.Zoneid;
     }
 
     @Override
@@ -370,7 +370,7 @@ public class WinUserBasicRecord extends UpdatableRecordImpl<WinUserBasicRecord> 
 
     @Override
     public String component6() {
-        return getNickName();
+        return getNickname();
     }
 
     @Override
@@ -384,13 +384,13 @@ public class WinUserBasicRecord extends UpdatableRecordImpl<WinUserBasicRecord> 
     }
 
     @Override
-    public StandardLanguage component9() {
-        return getLanguage();
+    public Locale component9() {
+        return getLocale();
     }
 
     @Override
-    public StandardTimezone component10() {
-        return getTimezone();
+    public ZoneId component10() {
+        return getZoneid();
     }
 
     @Override
@@ -430,7 +430,7 @@ public class WinUserBasicRecord extends UpdatableRecordImpl<WinUserBasicRecord> 
 
     @Override
     public String value6() {
-        return getNickName();
+        return getNickname();
     }
 
     @Override
@@ -444,13 +444,13 @@ public class WinUserBasicRecord extends UpdatableRecordImpl<WinUserBasicRecord> 
     }
 
     @Override
-    public StandardLanguage value9() {
-        return getLanguage();
+    public Locale value9() {
+        return getLocale();
     }
 
     @Override
-    public StandardTimezone value10() {
-        return getTimezone();
+    public ZoneId value10() {
+        return getZoneid();
     }
 
     @Override
@@ -495,7 +495,7 @@ public class WinUserBasicRecord extends UpdatableRecordImpl<WinUserBasicRecord> 
 
     @Override
     public WinUserBasicRecord value6(String value) {
-        setNickName(value);
+        setNickname(value);
         return this;
     }
 
@@ -512,14 +512,14 @@ public class WinUserBasicRecord extends UpdatableRecordImpl<WinUserBasicRecord> 
     }
 
     @Override
-    public WinUserBasicRecord value9(StandardLanguage value) {
-        setLanguage(value);
+    public WinUserBasicRecord value9(Locale value) {
+        setLocale(value);
         return this;
     }
 
     @Override
-    public WinUserBasicRecord value10(StandardTimezone value) {
-        setTimezone(value);
+    public WinUserBasicRecord value10(ZoneId value) {
+        setZoneid(value);
         return this;
     }
 
@@ -536,7 +536,7 @@ public class WinUserBasicRecord extends UpdatableRecordImpl<WinUserBasicRecord> 
     }
 
     @Override
-    public WinUserBasicRecord values(Long value1, LocalDateTime value2, LocalDateTime value3, LocalDateTime value4, Long value5, String value6, UserGender value7, String value8, StandardLanguage value9, StandardTimezone value10, String value11, UserStatus value12) {
+    public WinUserBasicRecord values(Long value1, LocalDateTime value2, LocalDateTime value3, LocalDateTime value4, Long value5, String value6, UserGender value7, String value8, Locale value9, ZoneId value10, String value11, UserStatus value12) {
         value1(value1);
         value2(value2);
         value3(value3);
@@ -563,11 +563,11 @@ public class WinUserBasicRecord extends UpdatableRecordImpl<WinUserBasicRecord> 
         setModifyDt(from.getModifyDt());
         setDeleteDt(from.getDeleteDt());
         setCommitId(from.getCommitId());
-        setNickName(from.getNickName());
+        setNickname(from.getNickname());
         setGender(from.getGender());
         setAvatar(from.getAvatar());
-        setLanguage(from.getLanguage());
-        setTimezone(from.getTimezone());
+        setLocale(from.getLocale());
+        setZoneid(from.getZoneid());
         setRemark(from.getRemark());
         setStatus(from.getStatus());
     }
@@ -592,7 +592,7 @@ public class WinUserBasicRecord extends UpdatableRecordImpl<WinUserBasicRecord> 
     /**
      * Create a detached, initialised WinUserBasicRecord
      */
-    public WinUserBasicRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, String nickName, UserGender gender, String avatar, StandardLanguage language, StandardTimezone timezone, String remark, UserStatus status) {
+    public WinUserBasicRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, String nickname, UserGender gender, String avatar, Locale locale, ZoneId zoneid, String remark, UserStatus status) {
         super(WinUserBasicTable.WinUserBasic);
 
         setId(id);
@@ -600,11 +600,11 @@ public class WinUserBasicRecord extends UpdatableRecordImpl<WinUserBasicRecord> 
         setModifyDt(modifyDt);
         setDeleteDt(deleteDt);
         setCommitId(commitId);
-        setNickName(nickName);
+        setNickname(nickname);
         setGender(gender);
         setAvatar(avatar);
-        setLanguage(language);
-        setTimezone(timezone);
+        setLocale(locale);
+        setZoneid(zoneid);
         setRemark(remark);
         setStatus(status);
     }

@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
-import pro.fessional.wings.slardar.spring.conf.WingsInitBeanManagerConfigurer;
+import pro.fessional.wings.slardar.spring.conf.WingsSecBeanInitConfigurer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +63,7 @@ public class SlardarSecurityConfiguration {
      */
     @Bean
     @ConditionalOnBean(WingsUserDetailsService.class)
-    public WingsInitBeanManagerConfigurer wingsInitBeanManagerConfigurer(ApplicationContext context) {
-        return new WingsInitBeanManagerConfigurer(context);
+    public WingsSecBeanInitConfigurer wingsInitBeanManagerConfigurer(ApplicationContext context) {
+        return new WingsSecBeanInitConfigurer(context);
     }
 }

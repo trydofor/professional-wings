@@ -8,8 +8,6 @@ import org.jooq.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl;
-import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
-import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasicTable;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserBasic;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinUserBasicRecord;
@@ -18,7 +16,9 @@ import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
 import javax.annotation.Generated;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -134,17 +134,17 @@ public class WinUserBasicDao extends WingsJooqDaoImpl<WinUserBasicTable, WinUser
     }
 
     /**
-     * Fetch records that have <code>nick_name BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>nickname BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinUserBasic> fetchRangeOfNickName(String lowerInclusive, String upperInclusive) {
-        return fetchRange(WinUserBasicTable.WinUserBasic.NickName, lowerInclusive, upperInclusive);
+    public List<WinUserBasic> fetchRangeOfNickname(String lowerInclusive, String upperInclusive) {
+        return fetchRange(WinUserBasicTable.WinUserBasic.Nickname, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>nick_name IN (values)</code>
+     * Fetch records that have <code>nickname IN (values)</code>
      */
-    public List<WinUserBasic> fetchByNickName(String... values) {
-        return fetch(WinUserBasicTable.WinUserBasic.NickName, values);
+    public List<WinUserBasic> fetchByNickname(String... values) {
+        return fetch(WinUserBasicTable.WinUserBasic.Nickname, values);
     }
 
     /**
@@ -176,31 +176,31 @@ public class WinUserBasicDao extends WingsJooqDaoImpl<WinUserBasicTable, WinUser
     }
 
     /**
-     * Fetch records that have <code>language BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>locale BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinUserBasic> fetchRangeOfLanguage(StandardLanguage lowerInclusive, StandardLanguage upperInclusive) {
-        return fetchRange(WinUserBasicTable.WinUserBasic.Language, lowerInclusive, upperInclusive);
+    public List<WinUserBasic> fetchRangeOfLocale(Locale lowerInclusive, Locale upperInclusive) {
+        return fetchRange(WinUserBasicTable.WinUserBasic.Locale, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>language IN (values)</code>
+     * Fetch records that have <code>locale IN (values)</code>
      */
-    public List<WinUserBasic> fetchByLanguage(StandardLanguage... values) {
-        return fetch(WinUserBasicTable.WinUserBasic.Language, values);
+    public List<WinUserBasic> fetchByLocale(Locale... values) {
+        return fetch(WinUserBasicTable.WinUserBasic.Locale, values);
     }
 
     /**
-     * Fetch records that have <code>timezone BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>zoneid BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinUserBasic> fetchRangeOfTimezone(StandardTimezone lowerInclusive, StandardTimezone upperInclusive) {
-        return fetchRange(WinUserBasicTable.WinUserBasic.Timezone, lowerInclusive, upperInclusive);
+    public List<WinUserBasic> fetchRangeOfZoneid(ZoneId lowerInclusive, ZoneId upperInclusive) {
+        return fetchRange(WinUserBasicTable.WinUserBasic.Zoneid, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>timezone IN (values)</code>
+     * Fetch records that have <code>zoneid IN (values)</code>
      */
-    public List<WinUserBasic> fetchByTimezone(StandardTimezone... values) {
-        return fetch(WinUserBasicTable.WinUserBasic.Timezone, values);
+    public List<WinUserBasic> fetchByZoneid(ZoneId... values) {
+        return fetch(WinUserBasicTable.WinUserBasic.Zoneid, values);
     }
 
     /**

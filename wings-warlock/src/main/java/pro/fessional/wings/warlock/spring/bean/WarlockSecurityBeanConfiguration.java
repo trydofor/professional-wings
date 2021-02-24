@@ -1,9 +1,10 @@
 package pro.fessional.wings.warlock.spring.bean;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -19,8 +20,11 @@ import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeParser;
-import pro.fessional.wings.warlock.security.handler.LoginNgHandler;
-import pro.fessional.wings.warlock.security.handler.LoginOkHandler;
+import pro.fessional.wings.warlock.security.events.WarlockFailedLoginListener;
+import pro.fessional.wings.warlock.security.events.WarlockSuccessLoginListener;
+import pro.fessional.wings.warlock.security.handler.LoginFailureHandler;
+import pro.fessional.wings.warlock.security.handler.LoginPageDefaultHandler;
+import pro.fessional.wings.warlock.security.handler.LoginSuccessHandler;
 import pro.fessional.wings.warlock.security.handler.LogoutOkHandler;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
@@ -34,27 +38,29 @@ import java.util.Map;
  */
 @Configuration
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$security, havingValue = "true")
-@RequiredArgsConstructor
-public class WarlockAuthBeanConfiguration {
+public class WarlockSecurityBeanConfiguration {
 
-    private final static Log logger = LogFactory.getLog(WarlockAuthBeanConfiguration.class);
+    private final static Log logger = LogFactory.getLog(WarlockSecurityBeanConfiguration.class);
+
+    @Setter(onMethod = @__({@Autowired}))
+    private WarlockSecurityProp securityProp;
 
     @Bean
-    @ConditionalOnMissingBean
-    public AuthenticationSuccessHandler loginOkHandler() {
+    @ConditionalOnMissingBean(AuthenticationSuccessHandler.class)
+    public AuthenticationSuccessHandler loginSuccessHandler() {
         logger.info("Wings conf loginOkHandler");
-        return new LoginOkHandler();
+        return new LoginSuccessHandler();
     }
 
     @Bean
-    @ConditionalOnMissingBean
-    public AuthenticationFailureHandler loginNgHandler() {
+    @ConditionalOnMissingBean(AuthenticationFailureHandler.class)
+    public AuthenticationFailureHandler loginFailureHandler() {
         logger.info("Wings conf loginNgHandler");
-        return new LoginNgHandler();
+        return new LoginFailureHandler();
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(LogoutSuccessHandler.class)
     public LogoutSuccessHandler logoutOkHandler() {
         logger.info("Wings conf logoutOkHandler");
         return new LogoutOkHandler();
@@ -98,9 +104,29 @@ public class WarlockAuthBeanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public WingsAuthTypeParser wingsAuthTypeParser(WarlockSecurityProp config) {
+    public WingsAuthTypeParser wingsAuthTypeParser() {
         logger.info("Wings conf wingsAuthTypeParser");
-        final Map<String, Enum<?>> authType = config.mapAuthTypeEnum();
+        final Map<String, Enum<?>> authType = securityProp.mapAuthTypeEnum();
         return new DefaultWingsAuthTypeParser(authType);
+    }
+
+    @Bean
+    public WarlockSuccessLoginListener warlockSuccessLoginListener() {
+        logger.info("Wings conf authSuccessListener");
+        return new WarlockSuccessLoginListener();
+    }
+
+    @Bean
+    public WarlockFailedLoginListener warlockFailedLoginListener() {
+        logger.info("Wings conf authSuccessListener");
+        return new WarlockFailedLoginListener();
+    }
+
+    @Bean
+    public LoginPageDefaultHandler loginPageDefaultHandler() {
+        logger.info("Wings conf loginPageDefaultHandler");
+        final LoginPageDefaultHandler handler = new LoginPageDefaultHandler();
+        handler.setWarlockSecurityProp(securityProp);
+        return handler;
     }
 }

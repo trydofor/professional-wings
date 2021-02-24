@@ -12,7 +12,7 @@ import java.io.IOException;
  * @author trydofor
  * @since 2021-02-17
  */
-public class LoginNgHandler implements AuthenticationFailureHandler {
+public class LoginFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 

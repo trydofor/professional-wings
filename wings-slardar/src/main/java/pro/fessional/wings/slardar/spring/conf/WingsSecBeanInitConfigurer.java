@@ -17,11 +17,11 @@ import pro.fessional.wings.slardar.security.bind.WingsBindAuthProvider;
  * @since 2021-02-09
  */
 @Order(Ordered.LOWEST_PRECEDENCE - 5010)
-public class WingsInitBeanManagerConfigurer extends GlobalAuthenticationConfigurerAdapter {
+public class WingsSecBeanInitConfigurer extends GlobalAuthenticationConfigurerAdapter {
 
     private final ApplicationContext context;
 
-    public WingsInitBeanManagerConfigurer(ApplicationContext context) {
+    public WingsSecBeanInitConfigurer(ApplicationContext context) {
         this.context = context;
     }
 
@@ -54,6 +54,7 @@ public class WingsInitBeanManagerConfigurer extends GlobalAuthenticationConfigur
             }
             provider.afterPropertiesSet();
             auth.authenticationProvider(provider);
+
         }
 
         /**
@@ -61,11 +62,11 @@ public class WingsInitBeanManagerConfigurer extends GlobalAuthenticationConfigur
          * component, null otherwise.
          */
         private <T> T getBeanOrNull(Class<T> type) {
-            String[] beanNames = WingsInitBeanManagerConfigurer.this.context.getBeanNamesForType(type);
+            String[] beanNames = WingsSecBeanInitConfigurer.this.context.getBeanNamesForType(type);
             if (beanNames.length != 1) {
                 return null;
             }
-            return WingsInitBeanManagerConfigurer.this.context.getBean(beanNames[0], type);
+            return WingsSecBeanInitConfigurer.this.context.getBean(beanNames[0], type);
         }
     }
 }

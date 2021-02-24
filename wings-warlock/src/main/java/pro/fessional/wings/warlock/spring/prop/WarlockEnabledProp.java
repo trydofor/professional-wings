@@ -25,6 +25,13 @@ public class WarlockEnabledProp {
     public static final String Key$security = Key + ".security";
 
     /**
+     * 是否支持 自动配置user-details相关bean
+     * @see #Key$userDetails
+     */
+    private String userDetails = "";
+    public static final String Key$userDetails = Key + ".user-details";
+
+    /**
      * 是否支持 just auth登录
      *
      * @see #Key$justAuth

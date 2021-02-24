@@ -46,7 +46,8 @@ public class WinUserLogin implements IWinUserLogin {
     private String        loginIp;
     private LocalDateTime loginDt;
     private String        terminal;
-    private String        remark;
+    private String        details;
+    private Boolean       failed;
 
     public WinUserLogin() {}
 
@@ -57,7 +58,8 @@ public class WinUserLogin implements IWinUserLogin {
         this.loginIp = value.getLoginIp();
         this.loginDt = value.getLoginDt();
         this.terminal = value.getTerminal();
-        this.remark = value.getRemark();
+        this.details = value.getDetails();
+        this.failed = value.getFailed();
     }
 
     public WinUserLogin(
@@ -67,7 +69,8 @@ public class WinUserLogin implements IWinUserLogin {
         String        loginIp,
         LocalDateTime loginDt,
         String        terminal,
-        String        remark
+        String        details,
+        Boolean       failed
     ) {
         this.id = id;
         this.userId = userId;
@@ -75,7 +78,8 @@ public class WinUserLogin implements IWinUserLogin {
         this.loginIp = loginIp;
         this.loginDt = loginDt;
         this.terminal = terminal;
-        this.remark = remark;
+        this.details = details;
+        this.failed = failed;
     }
 
     /**
@@ -171,8 +175,8 @@ public class WinUserLogin implements IWinUserLogin {
     /**
      * Getter for <code>win_user_login.terminal</code>.
      */
-    @Column(name = "terminal", nullable = false, length = 500)
-    @Size(max = 500)
+    @Column(name = "terminal", nullable = false, length = 1000)
+    @Size(max = 1000)
     @Override
     public String getTerminal() {
         return this.terminal;
@@ -187,21 +191,38 @@ public class WinUserLogin implements IWinUserLogin {
     }
 
     /**
-     * Getter for <code>win_user_login.remark</code>.
+     * Getter for <code>win_user_login.details</code>.
      */
-    @Column(name = "remark", nullable = false, length = 500)
-    @Size(max = 500)
+    @Column(name = "details", nullable = false, length = 9000)
+    @Size(max = 9000)
     @Override
-    public String getRemark() {
-        return this.remark;
+    public String getDetails() {
+        return this.details;
     }
 
     /**
-     * Setter for <code>win_user_login.remark</code>.
+     * Setter for <code>win_user_login.details</code>.
      */
     @Override
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    /**
+     * Getter for <code>win_user_login.failed</code>.
+     */
+    @Column(name = "failed", nullable = false)
+    @Override
+    public Boolean getFailed() {
+        return this.failed;
+    }
+
+    /**
+     * Setter for <code>win_user_login.failed</code>.
+     */
+    @Override
+    public void setFailed(Boolean failed) {
+        this.failed = failed;
     }
 
     @Override
@@ -249,11 +270,17 @@ public class WinUserLogin implements IWinUserLogin {
         }
         else if (!terminal.equals(other.terminal))
             return false;
-        if (remark == null) {
-            if (other.remark != null)
+        if (details == null) {
+            if (other.details != null)
                 return false;
         }
-        else if (!remark.equals(other.remark))
+        else if (!details.equals(other.details))
+            return false;
+        if (failed == null) {
+            if (other.failed != null)
+                return false;
+        }
+        else if (!failed.equals(other.failed))
             return false;
         return true;
     }
@@ -268,7 +295,8 @@ public class WinUserLogin implements IWinUserLogin {
         result = prime * result + ((this.loginIp == null) ? 0 : this.loginIp.hashCode());
         result = prime * result + ((this.loginDt == null) ? 0 : this.loginDt.hashCode());
         result = prime * result + ((this.terminal == null) ? 0 : this.terminal.hashCode());
-        result = prime * result + ((this.remark == null) ? 0 : this.remark.hashCode());
+        result = prime * result + ((this.details == null) ? 0 : this.details.hashCode());
+        result = prime * result + ((this.failed == null) ? 0 : this.failed.hashCode());
         return result;
     }
 
@@ -282,7 +310,8 @@ public class WinUserLogin implements IWinUserLogin {
         sb.append(", ").append(loginIp);
         sb.append(", ").append(loginDt);
         sb.append(", ").append(terminal);
-        sb.append(", ").append(remark);
+        sb.append(", ").append(details);
+        sb.append(", ").append(failed);
 
         sb.append(")");
         return sb.toString();
@@ -300,7 +329,8 @@ public class WinUserLogin implements IWinUserLogin {
         setLoginIp(from.getLoginIp());
         setLoginDt(from.getLoginDt());
         setTerminal(from.getTerminal());
-        setRemark(from.getRemark());
+        setDetails(from.getDetails());
+        setFailed(from.getFailed());
     }
 
     @Override

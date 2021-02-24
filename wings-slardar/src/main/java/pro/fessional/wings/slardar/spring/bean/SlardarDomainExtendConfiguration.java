@@ -29,7 +29,7 @@ public class SlardarDomainExtendConfiguration {
     private final static Log logger = LogFactory.getLog(SlardarDomainExtendConfiguration.class);
 
     @Bean
-    public WingsDomainExtendFilter wingsDomainFilter(DomainExtendProp config, DispatcherServlet dispatcherServlet) {
+    public WingsDomainExtendFilter wingsDomainFilter(DomainExtendProp config, DispatcherServlet dispatcher) {
         logger.info("Wings conf Domain filter");
         Map<String, List<String[]>> hostMatcher = new HashMap<>();
         for (Map.Entry<String, List<String>> entry : config.getHost().entrySet()) {
@@ -49,7 +49,7 @@ public class SlardarDomainExtendConfiguration {
             prefix = prefix + "/";
         }
 
-        DefaultDomainRequestMatcher requestMatcher = new DefaultDomainRequestMatcher(dispatcherServlet, prefix,
+        DefaultDomainRequestMatcher requestMatcher = new DefaultDomainRequestMatcher(dispatcher, prefix,
                 config.getOtherUrl(), config.getCacheSize());
         WingsDomainExtendFilter filter = new WingsDomainExtendFilter(
                 hostMatcher,

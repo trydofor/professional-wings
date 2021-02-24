@@ -6,8 +6,8 @@ package pro.fessional.wings.warlock.database.autogen.tables.records;
 
 import org.jooq.Field;
 import org.jooq.Record1;
-import org.jooq.Record7;
-import org.jooq.Row7;
+import org.jooq.Record8;
+import org.jooq.Row8;
 import org.jooq.impl.UpdatableRecordImpl;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserLoginTable;
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.IWinUserLogin;
@@ -42,7 +42,7 @@ import java.time.LocalDateTime;
         @UniqueConstraint(name = "KEY_win_user_login_PRIMARY", columnNames = { "id" })
     }
 )
-public class WinUserLoginRecord extends UpdatableRecordImpl<WinUserLoginRecord> implements Record7<Long, Long, String, String, LocalDateTime, String, String>, IWinUserLogin {
+public class WinUserLoginRecord extends UpdatableRecordImpl<WinUserLoginRecord> implements Record8<Long, Long, String, String, LocalDateTime, String, String, Boolean>, IWinUserLogin {
 
     private static final long serialVersionUID = 1L;
 
@@ -147,29 +147,46 @@ public class WinUserLoginRecord extends UpdatableRecordImpl<WinUserLoginRecord> 
     /**
      * Getter for <code>win_user_login.terminal</code>.
      */
-    @Column(name = "terminal", nullable = false, length = 500)
-    @Size(max = 500)
+    @Column(name = "terminal", nullable = false, length = 1000)
+    @Size(max = 1000)
     @Override
     public String getTerminal() {
         return (String) get(5);
     }
 
     /**
-     * Setter for <code>win_user_login.remark</code>.
+     * Setter for <code>win_user_login.details</code>.
      */
     @Override
-    public void setRemark(String value) {
+    public void setDetails(String value) {
         set(6, value);
     }
 
     /**
-     * Getter for <code>win_user_login.remark</code>.
+     * Getter for <code>win_user_login.details</code>.
      */
-    @Column(name = "remark", nullable = false, length = 500)
-    @Size(max = 500)
+    @Column(name = "details", nullable = false, length = 9000)
+    @Size(max = 9000)
     @Override
-    public String getRemark() {
+    public String getDetails() {
         return (String) get(6);
+    }
+
+    /**
+     * Setter for <code>win_user_login.failed</code>.
+     */
+    @Override
+    public void setFailed(Boolean value) {
+        set(7, value);
+    }
+
+    /**
+     * Getter for <code>win_user_login.failed</code>.
+     */
+    @Column(name = "failed", nullable = false)
+    @Override
+    public Boolean getFailed() {
+        return (Boolean) get(7);
     }
 
     // -------------------------------------------------------------------------
@@ -182,17 +199,17 @@ public class WinUserLoginRecord extends UpdatableRecordImpl<WinUserLoginRecord> 
     }
 
     // -------------------------------------------------------------------------
-    // Record7 type implementation
+    // Record8 type implementation
     // -------------------------------------------------------------------------
 
     @Override
-    public Row7<Long, Long, String, String, LocalDateTime, String, String> fieldsRow() {
-        return (Row7) super.fieldsRow();
+    public Row8<Long, Long, String, String, LocalDateTime, String, String, Boolean> fieldsRow() {
+        return (Row8) super.fieldsRow();
     }
 
     @Override
-    public Row7<Long, Long, String, String, LocalDateTime, String, String> valuesRow() {
-        return (Row7) super.valuesRow();
+    public Row8<Long, Long, String, String, LocalDateTime, String, String, Boolean> valuesRow() {
+        return (Row8) super.valuesRow();
     }
 
     @Override
@@ -227,7 +244,12 @@ public class WinUserLoginRecord extends UpdatableRecordImpl<WinUserLoginRecord> 
 
     @Override
     public Field<String> field7() {
-        return WinUserLoginTable.WinUserLogin.Remark;
+        return WinUserLoginTable.WinUserLogin.Details;
+    }
+
+    @Override
+    public Field<Boolean> field8() {
+        return WinUserLoginTable.WinUserLogin.Failed;
     }
 
     @Override
@@ -262,7 +284,12 @@ public class WinUserLoginRecord extends UpdatableRecordImpl<WinUserLoginRecord> 
 
     @Override
     public String component7() {
-        return getRemark();
+        return getDetails();
+    }
+
+    @Override
+    public Boolean component8() {
+        return getFailed();
     }
 
     @Override
@@ -297,7 +324,12 @@ public class WinUserLoginRecord extends UpdatableRecordImpl<WinUserLoginRecord> 
 
     @Override
     public String value7() {
-        return getRemark();
+        return getDetails();
+    }
+
+    @Override
+    public Boolean value8() {
+        return getFailed();
     }
 
     @Override
@@ -338,12 +370,18 @@ public class WinUserLoginRecord extends UpdatableRecordImpl<WinUserLoginRecord> 
 
     @Override
     public WinUserLoginRecord value7(String value) {
-        setRemark(value);
+        setDetails(value);
         return this;
     }
 
     @Override
-    public WinUserLoginRecord values(Long value1, Long value2, String value3, String value4, LocalDateTime value5, String value6, String value7) {
+    public WinUserLoginRecord value8(Boolean value) {
+        setFailed(value);
+        return this;
+    }
+
+    @Override
+    public WinUserLoginRecord values(Long value1, Long value2, String value3, String value4, LocalDateTime value5, String value6, String value7, Boolean value8) {
         value1(value1);
         value2(value2);
         value3(value3);
@@ -351,6 +389,7 @@ public class WinUserLoginRecord extends UpdatableRecordImpl<WinUserLoginRecord> 
         value5(value5);
         value6(value6);
         value7(value7);
+        value8(value8);
         return this;
     }
 
@@ -366,7 +405,8 @@ public class WinUserLoginRecord extends UpdatableRecordImpl<WinUserLoginRecord> 
         setLoginIp(from.getLoginIp());
         setLoginDt(from.getLoginDt());
         setTerminal(from.getTerminal());
-        setRemark(from.getRemark());
+        setDetails(from.getDetails());
+        setFailed(from.getFailed());
     }
 
     @Override
@@ -389,7 +429,7 @@ public class WinUserLoginRecord extends UpdatableRecordImpl<WinUserLoginRecord> 
     /**
      * Create a detached, initialised WinUserLoginRecord
      */
-    public WinUserLoginRecord(Long id, Long userId, String authType, String loginIp, LocalDateTime loginDt, String terminal, String remark) {
+    public WinUserLoginRecord(Long id, Long userId, String authType, String loginIp, LocalDateTime loginDt, String terminal, String details, Boolean failed) {
         super(WinUserLoginTable.WinUserLogin);
 
         setId(id);
@@ -398,6 +438,7 @@ public class WinUserLoginRecord extends UpdatableRecordImpl<WinUserLoginRecord> 
         setLoginIp(loginIp);
         setLoginDt(loginDt);
         setTerminal(terminal);
-        setRemark(remark);
+        setDetails(details);
+        setFailed(failed);
     }
 }

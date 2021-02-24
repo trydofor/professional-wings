@@ -13,5 +13,5 @@ import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 @Configuration
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$jooqDao, havingValue = "true")
 @ComponentScan("pro.fessional.wings.warlock.database.autogen")
-public class WarlockJooqBeanConfiguration {
+public class WarlockJooqDaoConfiguration {
 }

@@ -12,6 +12,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import pro.fessional.mirana.data.Null;
+import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
@@ -28,15 +29,16 @@ import java.util.Map;
 @Configuration
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$security, havingValue = "true")
 @RequiredArgsConstructor
-public class WarlockSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WarlockSecurityWebConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final static Log logger = LogFactory.getLog(WarlockSecurityConfiguration.class);
+    private final static Log logger = LogFactory.getLog(WarlockSecurityWebConfiguration.class);
 
     private final SessionRegistry sessionRegistry;
     private final WarlockSecurityProp securityProp;
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
     private final AuthenticationFailureHandler authenticationFailureHandler;
     private final LogoutSuccessHandler logoutSuccessHandler;
+    private final WingsAuthDetailsSource<?> wingsAuthDetailsSource;
 
     /**
      * The URL paths provided by the framework are
@@ -69,6 +71,7 @@ public class WarlockSecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .passwordParameter(securityProp.getPasswordPara())
                     .successHandler(authenticationSuccessHandler)
                     .failureHandler(authenticationFailureHandler)
+                    .authenticationDetailsSource(wingsAuthDetailsSource)
                     .bindAuthTypeToEnums(securityProp.mapAuthTypeEnum())
             )
             .and()

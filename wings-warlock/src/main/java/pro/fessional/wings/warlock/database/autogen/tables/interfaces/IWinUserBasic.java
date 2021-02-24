@@ -4,8 +4,6 @@
 package pro.fessional.wings.warlock.database.autogen.tables.interfaces;
 
 
-import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
-import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 import pro.fessional.wings.faceless.service.journal.JournalAware;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
@@ -20,6 +18,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Locale;
 
 
 /**
@@ -102,16 +102,16 @@ public interface IWinUserBasic extends JournalAware, Serializable {
     public Long getCommitId();
 
     /**
-     * Setter for <code>win_user_basic.nick_name</code>.
+     * Setter for <code>win_user_basic.nickname</code>.
      */
-    public void setNickName(String value);
+    public void setNickname(String value);
 
     /**
-     * Getter for <code>win_user_basic.nick_name</code>.
+     * Getter for <code>win_user_basic.nickname</code>.
      */
-    @Column(name = "nick_name", nullable = false, length = 50)
+    @Column(name = "nickname", nullable = false, length = 50)
     @Size(max = 50)
-    public String getNickName();
+    public String getNickname();
 
     /**
      * Setter for <code>win_user_basic.gender</code>.
@@ -137,26 +137,26 @@ public interface IWinUserBasic extends JournalAware, Serializable {
     public String getAvatar();
 
     /**
-     * Setter for <code>win_user_basic.language</code>.
+     * Setter for <code>win_user_basic.locale</code>.
      */
-    public void setLanguage(StandardLanguage value);
+    public void setLocale(Locale value);
 
     /**
-     * Getter for <code>win_user_basic.language</code>.
+     * Getter for <code>win_user_basic.locale</code>.
      */
-    @Column(name = "language", nullable = false, length = 5)
-    public StandardLanguage getLanguage();
+    @Column(name = "locale", nullable = false, length = 5)
+    public Locale getLocale();
 
     /**
-     * Setter for <code>win_user_basic.timezone</code>.
+     * Setter for <code>win_user_basic.zoneid</code>.
      */
-    public void setTimezone(StandardTimezone value);
+    public void setZoneid(ZoneId value);
 
     /**
-     * Getter for <code>win_user_basic.timezone</code>.
+     * Getter for <code>win_user_basic.zoneid</code>.
      */
-    @Column(name = "timezone", nullable = false, precision = 10)
-    public StandardTimezone getTimezone();
+    @Column(name = "zoneid", nullable = false, precision = 10)
+    public ZoneId getZoneid();
 
     /**
      * Setter for <code>win_user_basic.remark</code>.

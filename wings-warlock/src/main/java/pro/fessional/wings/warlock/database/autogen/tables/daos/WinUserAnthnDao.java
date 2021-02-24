@@ -11,7 +11,6 @@ import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAnthnTable;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserAnthn;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinUserAnthnRecord;
-import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
 import javax.annotation.Generated;
 import java.time.LocalDateTime;
@@ -159,87 +158,73 @@ public class WinUserAnthnDao extends WingsJooqDaoImpl<WinUserAnthnTable, WinUser
     }
 
     /**
-     * Fetch records that have <code>auth_name BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>username BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinUserAnthn> fetchRangeOfAuthName(String lowerInclusive, String upperInclusive) {
-        return fetchRange(WinUserAnthnTable.WinUserAnthn.AuthName, lowerInclusive, upperInclusive);
+    public List<WinUserAnthn> fetchRangeOfUsername(String lowerInclusive, String upperInclusive) {
+        return fetchRange(WinUserAnthnTable.WinUserAnthn.Username, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>auth_name IN (values)</code>
+     * Fetch records that have <code>username IN (values)</code>
      */
-    public List<WinUserAnthn> fetchByAuthName(String... values) {
-        return fetch(WinUserAnthnTable.WinUserAnthn.AuthName, values);
+    public List<WinUserAnthn> fetchByUsername(String... values) {
+        return fetch(WinUserAnthnTable.WinUserAnthn.Username, values);
     }
 
     /**
-     * Fetch records that have <code>auth_pass BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>password BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinUserAnthn> fetchRangeOfAuthPass(String lowerInclusive, String upperInclusive) {
-        return fetchRange(WinUserAnthnTable.WinUserAnthn.AuthPass, lowerInclusive, upperInclusive);
+    public List<WinUserAnthn> fetchRangeOfPassword(String lowerInclusive, String upperInclusive) {
+        return fetchRange(WinUserAnthnTable.WinUserAnthn.Password, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>auth_pass IN (values)</code>
+     * Fetch records that have <code>password IN (values)</code>
      */
-    public List<WinUserAnthn> fetchByAuthPass(String... values) {
-        return fetch(WinUserAnthnTable.WinUserAnthn.AuthPass, values);
+    public List<WinUserAnthn> fetchByPassword(String... values) {
+        return fetch(WinUserAnthnTable.WinUserAnthn.Password, values);
     }
 
     /**
-     * Fetch records that have <code>auth_salt BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>passsalt BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinUserAnthn> fetchRangeOfAuthSalt(String lowerInclusive, String upperInclusive) {
-        return fetchRange(WinUserAnthnTable.WinUserAnthn.AuthSalt, lowerInclusive, upperInclusive);
+    public List<WinUserAnthn> fetchRangeOfPasssalt(String lowerInclusive, String upperInclusive) {
+        return fetchRange(WinUserAnthnTable.WinUserAnthn.Passsalt, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>auth_salt IN (values)</code>
+     * Fetch records that have <code>passsalt IN (values)</code>
      */
-    public List<WinUserAnthn> fetchByAuthSalt(String... values) {
-        return fetch(WinUserAnthnTable.WinUserAnthn.AuthSalt, values);
+    public List<WinUserAnthn> fetchByPasssalt(String... values) {
+        return fetch(WinUserAnthnTable.WinUserAnthn.Passsalt, values);
     }
 
     /**
-     * Fetch records that have <code>auth_para1 BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>extra_para BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinUserAnthn> fetchRangeOfAuthPara1(String lowerInclusive, String upperInclusive) {
-        return fetchRange(WinUserAnthnTable.WinUserAnthn.AuthPara1, lowerInclusive, upperInclusive);
+    public List<WinUserAnthn> fetchRangeOfExtraPara(String lowerInclusive, String upperInclusive) {
+        return fetchRange(WinUserAnthnTable.WinUserAnthn.ExtraPara, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>auth_para1 IN (values)</code>
+     * Fetch records that have <code>extra_para IN (values)</code>
      */
-    public List<WinUserAnthn> fetchByAuthPara1(String... values) {
-        return fetch(WinUserAnthnTable.WinUserAnthn.AuthPara1, values);
+    public List<WinUserAnthn> fetchByExtraPara(String... values) {
+        return fetch(WinUserAnthnTable.WinUserAnthn.ExtraPara, values);
     }
 
     /**
-     * Fetch records that have <code>auth_para2 BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>extra_user BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinUserAnthn> fetchRangeOfAuthPara2(String lowerInclusive, String upperInclusive) {
-        return fetchRange(WinUserAnthnTable.WinUserAnthn.AuthPara2, lowerInclusive, upperInclusive);
+    public List<WinUserAnthn> fetchRangeOfExtraUser(String lowerInclusive, String upperInclusive) {
+        return fetchRange(WinUserAnthnTable.WinUserAnthn.ExtraUser, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>auth_para2 IN (values)</code>
+     * Fetch records that have <code>extra_user IN (values)</code>
      */
-    public List<WinUserAnthn> fetchByAuthPara2(String... values) {
-        return fetch(WinUserAnthnTable.WinUserAnthn.AuthPara2, values);
-    }
-
-    /**
-     * Fetch records that have <code>auth_token BETWEEN lowerInclusive AND upperInclusive</code>
-     */
-    public List<WinUserAnthn> fetchRangeOfAuthToken(String lowerInclusive, String upperInclusive) {
-        return fetchRange(WinUserAnthnTable.WinUserAnthn.AuthToken, lowerInclusive, upperInclusive);
-    }
-
-    /**
-     * Fetch records that have <code>auth_token IN (values)</code>
-     */
-    public List<WinUserAnthn> fetchByAuthToken(String... values) {
-        return fetch(WinUserAnthnTable.WinUserAnthn.AuthToken, values);
+    public List<WinUserAnthn> fetchByExtraUser(String... values) {
+        return fetch(WinUserAnthnTable.WinUserAnthn.ExtraUser, values);
     }
 
     /**
@@ -257,30 +242,30 @@ public class WinUserAnthnDao extends WingsJooqDaoImpl<WinUserAnthnTable, WinUser
     }
 
     /**
-     * Fetch records that have <code>error_cnt BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>failed_cnt BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinUserAnthn> fetchRangeOfErrorCnt(Integer lowerInclusive, Integer upperInclusive) {
-        return fetchRange(WinUserAnthnTable.WinUserAnthn.ErrorCnt, lowerInclusive, upperInclusive);
+    public List<WinUserAnthn> fetchRangeOfFailedCnt(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRange(WinUserAnthnTable.WinUserAnthn.FailedCnt, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>error_cnt IN (values)</code>
+     * Fetch records that have <code>failed_cnt IN (values)</code>
      */
-    public List<WinUserAnthn> fetchByErrorCnt(Integer... values) {
-        return fetch(WinUserAnthnTable.WinUserAnthn.ErrorCnt, values);
+    public List<WinUserAnthn> fetchByFailedCnt(Integer... values) {
+        return fetch(WinUserAnthnTable.WinUserAnthn.FailedCnt, values);
     }
 
     /**
-     * Fetch records that have <code>status BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>failed_max BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinUserAnthn> fetchRangeOfStatus(UserStatus lowerInclusive, UserStatus upperInclusive) {
-        return fetchRange(WinUserAnthnTable.WinUserAnthn.Status, lowerInclusive, upperInclusive);
+    public List<WinUserAnthn> fetchRangeOfFailedMax(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRange(WinUserAnthnTable.WinUserAnthn.FailedMax, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>status IN (values)</code>
+     * Fetch records that have <code>failed_max IN (values)</code>
      */
-    public List<WinUserAnthn> fetchByStatus(UserStatus... values) {
-        return fetch(WinUserAnthnTable.WinUserAnthn.Status, values);
+    public List<WinUserAnthn> fetchByFailedMax(Integer... values) {
+        return fetch(WinUserAnthnTable.WinUserAnthn.FailedMax, values);
     }
 }

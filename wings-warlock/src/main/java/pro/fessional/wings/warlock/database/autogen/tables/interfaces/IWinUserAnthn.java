@@ -5,7 +5,6 @@ package pro.fessional.wings.warlock.database.autogen.tables.interfaces;
 
 
 import pro.fessional.wings.faceless.service.journal.JournalAware;
-import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
 import javax.annotation.Generated;
 import javax.persistence.Column;
@@ -123,77 +122,65 @@ public interface IWinUserAnthn extends JournalAware, Serializable {
     public String getAuthType();
 
     /**
-     * Setter for <code>win_user_anthn.auth_name</code>.
+     * Setter for <code>win_user_anthn.username</code>.
      */
-    public void setAuthName(String value);
+    public void setUsername(String value);
 
     /**
-     * Getter for <code>win_user_anthn.auth_name</code>.
+     * Getter for <code>win_user_anthn.username</code>.
      */
-    @Column(name = "auth_name", nullable = false, length = 200)
+    @Column(name = "username", nullable = false, length = 200)
     @NotNull
     @Size(max = 200)
-    public String getAuthName();
+    public String getUsername();
 
     /**
-     * Setter for <code>win_user_anthn.auth_pass</code>.
+     * Setter for <code>win_user_anthn.password</code>.
      */
-    public void setAuthPass(String value);
+    public void setPassword(String value);
 
     /**
-     * Getter for <code>win_user_anthn.auth_pass</code>.
+     * Getter for <code>win_user_anthn.password</code>.
      */
-    @Column(name = "auth_pass", nullable = false, length = 200)
+    @Column(name = "password", nullable = false, length = 200)
     @Size(max = 200)
-    public String getAuthPass();
+    public String getPassword();
 
     /**
-     * Setter for <code>win_user_anthn.auth_salt</code>.
+     * Setter for <code>win_user_anthn.passsalt</code>.
      */
-    public void setAuthSalt(String value);
+    public void setPasssalt(String value);
 
     /**
-     * Getter for <code>win_user_anthn.auth_salt</code>.
+     * Getter for <code>win_user_anthn.passsalt</code>.
      */
-    @Column(name = "auth_salt", nullable = false, length = 50)
-    @Size(max = 50)
-    public String getAuthSalt();
+    @Column(name = "passsalt", nullable = false, length = 100)
+    @Size(max = 100)
+    public String getPasssalt();
 
     /**
-     * Setter for <code>win_user_anthn.auth_para1</code>.
+     * Setter for <code>win_user_anthn.extra_para</code>.
      */
-    public void setAuthPara1(String value);
+    public void setExtraPara(String value);
 
     /**
-     * Getter for <code>win_user_anthn.auth_para1</code>.
+     * Getter for <code>win_user_anthn.extra_para</code>.
      */
-    @Column(name = "auth_para1", nullable = false, length = 200)
-    @Size(max = 200)
-    public String getAuthPara1();
+    @Column(name = "extra_para", nullable = false, length = 3000)
+    @Size(max = 3000)
+    public String getExtraPara();
 
     /**
-     * Setter for <code>win_user_anthn.auth_para2</code>.
+     * Setter for <code>win_user_anthn.extra_user</code>.
      */
-    public void setAuthPara2(String value);
+    public void setExtraUser(String value);
 
     /**
-     * Getter for <code>win_user_anthn.auth_para2</code>.
+     * Getter for <code>win_user_anthn.extra_user</code>.
      */
-    @Column(name = "auth_para2", nullable = false, length = 200)
-    @Size(max = 200)
-    public String getAuthPara2();
-
-    /**
-     * Setter for <code>win_user_anthn.auth_token</code>.
-     */
-    public void setAuthToken(String value);
-
-    /**
-     * Getter for <code>win_user_anthn.auth_token</code>.
-     */
-    @Column(name = "auth_token", nullable = false, length = 2000)
-    @Size(max = 2000)
-    public String getAuthToken();
+    @Column(name = "extra_user", nullable = false, length = 9000)
+    @Size(max = 9000)
+    public String getExtraUser();
 
     /**
      * Setter for <code>win_user_anthn.expired_dt</code>.
@@ -207,26 +194,26 @@ public interface IWinUserAnthn extends JournalAware, Serializable {
     public LocalDateTime getExpiredDt();
 
     /**
-     * Setter for <code>win_user_anthn.error_cnt</code>.
+     * Setter for <code>win_user_anthn.failed_cnt</code>.
      */
-    public void setErrorCnt(Integer value);
+    public void setFailedCnt(Integer value);
 
     /**
-     * Getter for <code>win_user_anthn.error_cnt</code>.
+     * Getter for <code>win_user_anthn.failed_cnt</code>.
      */
-    @Column(name = "error_cnt", nullable = false, precision = 10)
-    public Integer getErrorCnt();
+    @Column(name = "failed_cnt", nullable = false, precision = 10)
+    public Integer getFailedCnt();
 
     /**
-     * Setter for <code>win_user_anthn.status</code>.
+     * Setter for <code>win_user_anthn.failed_max</code>.
      */
-    public void setStatus(UserStatus value);
+    public void setFailedMax(Integer value);
 
     /**
-     * Getter for <code>win_user_anthn.status</code>.
+     * Getter for <code>win_user_anthn.failed_max</code>.
      */
-    @Column(name = "status", nullable = false, precision = 10)
-    public UserStatus getStatus();
+    @Column(name = "failed_max", nullable = false, precision = 10)
+    public Integer getFailedMax();
 
     // -------------------------------------------------------------------------
     // FROM and INTO

@@ -160,6 +160,14 @@ wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子
 
 多时区方面，通过enum类，自动生成业务上的标准时区，以供解析和使用。
 
+在编码命名上，类型关系和命名约定如下
+
+ * language - 对应 StandardLanguageEnum
+ * timezone - 对应 StandardTimezoneEnum
+ * locale - 对应 java.util.Locale
+ * zoneid - 对应 java.time.ZoneId
+
+
 ## 3.4.Session和认证管理
 
  * 同时支持header-token, cookie-session
@@ -323,6 +331,8 @@ cacheManager = Manager.Server)
 
 [RestTemplate 定制](https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/#boot-features-resttemplate-customization)
 org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
+
+在springboot默认是3.x，而just-auth需要4.x，所以需要手动okhttp3.version属性
 
 ## 3.7.2.防止连击
 

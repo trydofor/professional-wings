@@ -51,7 +51,6 @@ public class WingsExampleUserDetails implements WingsUserDetails {
         return userId;
     }
 
-    @Override
     public int getUserType() {
         return userType;
     }

@@ -2,8 +2,6 @@ package pro.fessional.wings.warlock.project;
 
 import lombok.Getter;
 import lombok.Setter;
-import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
-import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 import pro.fessional.wings.faceless.jooqgen.WingsCodeGenerator;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
@@ -38,12 +36,10 @@ public class Warlock3JooqGenerator {
                           .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
                           .targetPackage(targetPkg)
                           .targetDirectory(targetDir)
-//  使用enum类型
-                          .forcedConsEnum(StandardLanguage.class, "win_user_basic.language")
-                          .forcedConsEnum(StandardTimezone.class, "win_user_basic.timezone")
-                          .forcedConsEnum(UserGender.class, "win_user_basic.gender")
-                          .forcedConsEnum(UserStatus.class, "win_user_basic.status")
-                          .forcedConsEnum(UserStatus.class, "win_user_anthn.status")
+                          .forcedLocale(".*\\.locale")
+                          .forcedZoneId(".*\\.zoneid")
+                          .forcedConsEnum(UserGender.class, ".*\\.gender")
+                          .forcedConsEnum(UserStatus.class, "win_user_basic\\.status")
                           .buildAndGenerate();
     }
 }

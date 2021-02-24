@@ -144,16 +144,30 @@ public class WinUserLoginDao extends WingsJooqDaoImpl<WinUserLoginTable, WinUser
     }
 
     /**
-     * Fetch records that have <code>remark BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>details BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinUserLogin> fetchRangeOfRemark(String lowerInclusive, String upperInclusive) {
-        return fetchRange(WinUserLoginTable.WinUserLogin.Remark, lowerInclusive, upperInclusive);
+    public List<WinUserLogin> fetchRangeOfDetails(String lowerInclusive, String upperInclusive) {
+        return fetchRange(WinUserLoginTable.WinUserLogin.Details, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>remark IN (values)</code>
+     * Fetch records that have <code>details IN (values)</code>
      */
-    public List<WinUserLogin> fetchByRemark(String... values) {
-        return fetch(WinUserLoginTable.WinUserLogin.Remark, values);
+    public List<WinUserLogin> fetchByDetails(String... values) {
+        return fetch(WinUserLoginTable.WinUserLogin.Details, values);
+    }
+
+    /**
+     * Fetch records that have <code>failed BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinUserLogin> fetchRangeOfFailed(Boolean lowerInclusive, Boolean upperInclusive) {
+        return fetchRange(WinUserLoginTable.WinUserLogin.Failed, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>failed IN (values)</code>
+     */
+    public List<WinUserLogin> fetchByFailed(Boolean... values) {
+        return fetch(WinUserLoginTable.WinUserLogin.Failed, values);
     }
 }

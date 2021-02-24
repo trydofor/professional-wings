@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author trydofor
  * @see Authentication#getDetails()
+ * @see AbstractAuthenticationProcessingFilter#setAuthenticationDetailsSource(AuthenticationDetailsSource)
  * @since 2021-02-08
  */
 public interface WingsAuthDetailsSource<T> extends AuthenticationDetailsSource<HttpServletRequest, T> {

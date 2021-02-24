@@ -4,8 +4,6 @@
 package pro.fessional.wings.warlock.database.autogen.tables.pojos;
 
 
-import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
-import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.IWinUserBasic;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
@@ -19,6 +17,8 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Locale;
 
 
 /**
@@ -44,18 +44,18 @@ public class WinUserBasic implements IWinUserBasic {
 
     private static final long serialVersionUID = 1L;
 
-    private Long             id;
-    private LocalDateTime    createDt;
-    private LocalDateTime    modifyDt;
-    private LocalDateTime    deleteDt;
-    private Long             commitId;
-    private String           nickName;
-    private UserGender       gender;
-    private String           avatar;
-    private StandardLanguage language;
-    private StandardTimezone timezone;
-    private String           remark;
-    private UserStatus       status;
+    private Long          id;
+    private LocalDateTime createDt;
+    private LocalDateTime modifyDt;
+    private LocalDateTime deleteDt;
+    private Long          commitId;
+    private String        nickname;
+    private UserGender    gender;
+    private String        avatar;
+    private Locale        locale;
+    private ZoneId        zoneid;
+    private String        remark;
+    private UserStatus    status;
 
     public WinUserBasic() {}
 
@@ -65,39 +65,39 @@ public class WinUserBasic implements IWinUserBasic {
         this.modifyDt = value.getModifyDt();
         this.deleteDt = value.getDeleteDt();
         this.commitId = value.getCommitId();
-        this.nickName = value.getNickName();
+        this.nickname = value.getNickname();
         this.gender = value.getGender();
         this.avatar = value.getAvatar();
-        this.language = value.getLanguage();
-        this.timezone = value.getTimezone();
+        this.locale = value.getLocale();
+        this.zoneid = value.getZoneid();
         this.remark = value.getRemark();
         this.status = value.getStatus();
     }
 
     public WinUserBasic(
-        Long             id,
-        LocalDateTime    createDt,
-        LocalDateTime    modifyDt,
-        LocalDateTime    deleteDt,
-        Long             commitId,
-        String           nickName,
-        UserGender       gender,
-        String           avatar,
-        StandardLanguage language,
-        StandardTimezone timezone,
-        String           remark,
-        UserStatus       status
+        Long          id,
+        LocalDateTime createDt,
+        LocalDateTime modifyDt,
+        LocalDateTime deleteDt,
+        Long          commitId,
+        String        nickname,
+        UserGender    gender,
+        String        avatar,
+        Locale        locale,
+        ZoneId        zoneid,
+        String        remark,
+        UserStatus    status
     ) {
         this.id = id;
         this.createDt = createDt;
         this.modifyDt = modifyDt;
         this.deleteDt = deleteDt;
         this.commitId = commitId;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.gender = gender;
         this.avatar = avatar;
-        this.language = language;
-        this.timezone = timezone;
+        this.locale = locale;
+        this.zoneid = zoneid;
         this.remark = remark;
         this.status = status;
     }
@@ -191,21 +191,21 @@ public class WinUserBasic implements IWinUserBasic {
     }
 
     /**
-     * Getter for <code>win_user_basic.nick_name</code>.
+     * Getter for <code>win_user_basic.nickname</code>.
      */
-    @Column(name = "nick_name", nullable = false, length = 50)
+    @Column(name = "nickname", nullable = false, length = 50)
     @Size(max = 50)
     @Override
-    public String getNickName() {
-        return this.nickName;
+    public String getNickname() {
+        return this.nickname;
     }
 
     /**
-     * Setter for <code>win_user_basic.nick_name</code>.
+     * Setter for <code>win_user_basic.nickname</code>.
      */
     @Override
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     /**
@@ -244,37 +244,37 @@ public class WinUserBasic implements IWinUserBasic {
     }
 
     /**
-     * Getter for <code>win_user_basic.language</code>.
+     * Getter for <code>win_user_basic.locale</code>.
      */
-    @Column(name = "language", nullable = false, length = 5)
+    @Column(name = "locale", nullable = false, length = 5)
     @Override
-    public StandardLanguage getLanguage() {
-        return this.language;
+    public Locale getLocale() {
+        return this.locale;
     }
 
     /**
-     * Setter for <code>win_user_basic.language</code>.
+     * Setter for <code>win_user_basic.locale</code>.
      */
     @Override
-    public void setLanguage(StandardLanguage language) {
-        this.language = language;
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 
     /**
-     * Getter for <code>win_user_basic.timezone</code>.
+     * Getter for <code>win_user_basic.zoneid</code>.
      */
-    @Column(name = "timezone", nullable = false, precision = 10)
+    @Column(name = "zoneid", nullable = false, precision = 10)
     @Override
-    public StandardTimezone getTimezone() {
-        return this.timezone;
+    public ZoneId getZoneid() {
+        return this.zoneid;
     }
 
     /**
-     * Setter for <code>win_user_basic.timezone</code>.
+     * Setter for <code>win_user_basic.zoneid</code>.
      */
     @Override
-    public void setTimezone(StandardTimezone timezone) {
-        this.timezone = timezone;
+    public void setZoneid(ZoneId zoneid) {
+        this.zoneid = zoneid;
     }
 
     /**
@@ -351,11 +351,11 @@ public class WinUserBasic implements IWinUserBasic {
         }
         else if (!commitId.equals(other.commitId))
             return false;
-        if (nickName == null) {
-            if (other.nickName != null)
+        if (nickname == null) {
+            if (other.nickname != null)
                 return false;
         }
-        else if (!nickName.equals(other.nickName))
+        else if (!nickname.equals(other.nickname))
             return false;
         if (gender == null) {
             if (other.gender != null)
@@ -369,17 +369,17 @@ public class WinUserBasic implements IWinUserBasic {
         }
         else if (!avatar.equals(other.avatar))
             return false;
-        if (language == null) {
-            if (other.language != null)
+        if (locale == null) {
+            if (other.locale != null)
                 return false;
         }
-        else if (!language.equals(other.language))
+        else if (!locale.equals(other.locale))
             return false;
-        if (timezone == null) {
-            if (other.timezone != null)
+        if (zoneid == null) {
+            if (other.zoneid != null)
                 return false;
         }
-        else if (!timezone.equals(other.timezone))
+        else if (!zoneid.equals(other.zoneid))
             return false;
         if (remark == null) {
             if (other.remark != null)
@@ -405,11 +405,11 @@ public class WinUserBasic implements IWinUserBasic {
         result = prime * result + ((this.modifyDt == null) ? 0 : this.modifyDt.hashCode());
         result = prime * result + ((this.deleteDt == null) ? 0 : this.deleteDt.hashCode());
         result = prime * result + ((this.commitId == null) ? 0 : this.commitId.hashCode());
-        result = prime * result + ((this.nickName == null) ? 0 : this.nickName.hashCode());
+        result = prime * result + ((this.nickname == null) ? 0 : this.nickname.hashCode());
         result = prime * result + ((this.gender == null) ? 0 : this.gender.hashCode());
         result = prime * result + ((this.avatar == null) ? 0 : this.avatar.hashCode());
-        result = prime * result + ((this.language == null) ? 0 : this.language.hashCode());
-        result = prime * result + ((this.timezone == null) ? 0 : this.timezone.hashCode());
+        result = prime * result + ((this.locale == null) ? 0 : this.locale.hashCode());
+        result = prime * result + ((this.zoneid == null) ? 0 : this.zoneid.hashCode());
         result = prime * result + ((this.remark == null) ? 0 : this.remark.hashCode());
         result = prime * result + ((this.status == null) ? 0 : this.status.hashCode());
         return result;
@@ -424,11 +424,11 @@ public class WinUserBasic implements IWinUserBasic {
         sb.append(", ").append(modifyDt);
         sb.append(", ").append(deleteDt);
         sb.append(", ").append(commitId);
-        sb.append(", ").append(nickName);
+        sb.append(", ").append(nickname);
         sb.append(", ").append(gender);
         sb.append(", ").append(avatar);
-        sb.append(", ").append(language);
-        sb.append(", ").append(timezone);
+        sb.append(", ").append(locale);
+        sb.append(", ").append(zoneid);
         sb.append(", ").append(remark);
         sb.append(", ").append(status);
 
@@ -447,11 +447,11 @@ public class WinUserBasic implements IWinUserBasic {
         setModifyDt(from.getModifyDt());
         setDeleteDt(from.getDeleteDt());
         setCommitId(from.getCommitId());
-        setNickName(from.getNickName());
+        setNickname(from.getNickname());
         setGender(from.getGender());
         setAvatar(from.getAvatar());
-        setLanguage(from.getLanguage());
-        setTimezone(from.getTimezone());
+        setLocale(from.getLocale());
+        setZoneid(from.getZoneid());
         setRemark(from.getRemark());
         setStatus(from.getStatus());
     }

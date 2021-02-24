@@ -7,7 +7,7 @@ package pro.fessional.wings.warlock.database.autogen.tables;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Name;
-import org.jooq.Row16;
+import org.jooq.Row15;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -19,11 +19,9 @@ import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.jooq.WingsAliasTable;
-import pro.fessional.wings.faceless.database.jooq.converter.JooqConsEnumConverter;
 import pro.fessional.wings.faceless.service.lightid.LightIdAware;
 import pro.fessional.wings.warlock.database.autogen.DefaultSchema;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinUserAnthnRecord;
-import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
 import javax.annotation.Generated;
 import java.time.LocalDateTime;
@@ -97,34 +95,29 @@ public class WinUserAnthnTable extends TableImpl<WinUserAnthnRecord> implements 
     public final TableField<WinUserAnthnRecord, String> AuthType = createField(DSL.name("auth_type"), SQLDataType.VARCHAR(10).nullable(false), this, "");
 
     /**
-     * The column <code>win_user_anthn.auth_name</code>.
+     * The column <code>win_user_anthn.username</code>.
      */
-    public final TableField<WinUserAnthnRecord, String> AuthName = createField(DSL.name("auth_name"), SQLDataType.VARCHAR(200).nullable(false), this, "");
+    public final TableField<WinUserAnthnRecord, String> Username = createField(DSL.name("username"), SQLDataType.VARCHAR(200).nullable(false), this, "");
 
     /**
-     * The column <code>win_user_anthn.auth_pass</code>.
+     * The column <code>win_user_anthn.password</code>.
      */
-    public final TableField<WinUserAnthnRecord, String> AuthPass = createField(DSL.name("auth_pass"), SQLDataType.VARCHAR(200).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
+    public final TableField<WinUserAnthnRecord, String> Password = createField(DSL.name("password"), SQLDataType.VARCHAR(200).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
 
     /**
-     * The column <code>win_user_anthn.auth_salt</code>.
+     * The column <code>win_user_anthn.passsalt</code>.
      */
-    public final TableField<WinUserAnthnRecord, String> AuthSalt = createField(DSL.name("auth_salt"), SQLDataType.VARCHAR(50).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
+    public final TableField<WinUserAnthnRecord, String> Passsalt = createField(DSL.name("passsalt"), SQLDataType.VARCHAR(100).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
 
     /**
-     * The column <code>win_user_anthn.auth_para1</code>.
+     * The column <code>win_user_anthn.extra_para</code>.
      */
-    public final TableField<WinUserAnthnRecord, String> AuthPara1 = createField(DSL.name("auth_para1"), SQLDataType.VARCHAR(200).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
+    public final TableField<WinUserAnthnRecord, String> ExtraPara = createField(DSL.name("extra_para"), SQLDataType.VARCHAR(3000).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
 
     /**
-     * The column <code>win_user_anthn.auth_para2</code>.
+     * The column <code>win_user_anthn.extra_user</code>.
      */
-    public final TableField<WinUserAnthnRecord, String> AuthPara2 = createField(DSL.name("auth_para2"), SQLDataType.VARCHAR(200).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
-
-    /**
-     * The column <code>win_user_anthn.auth_token</code>.
-     */
-    public final TableField<WinUserAnthnRecord, String> AuthToken = createField(DSL.name("auth_token"), SQLDataType.VARCHAR(2000).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
+    public final TableField<WinUserAnthnRecord, String> ExtraUser = createField(DSL.name("extra_user"), SQLDataType.VARCHAR(9000).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>win_user_anthn.expired_dt</code>.
@@ -132,14 +125,14 @@ public class WinUserAnthnTable extends TableImpl<WinUserAnthnRecord> implements 
     public final TableField<WinUserAnthnRecord, LocalDateTime> ExpiredDt = createField(DSL.name("expired_dt"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
 
     /**
-     * The column <code>win_user_anthn.error_cnt</code>.
+     * The column <code>win_user_anthn.failed_cnt</code>.
      */
-    public final TableField<WinUserAnthnRecord, Integer> ErrorCnt = createField(DSL.name("error_cnt"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
+    public final TableField<WinUserAnthnRecord, Integer> FailedCnt = createField(DSL.name("failed_cnt"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
 
     /**
-     * The column <code>win_user_anthn.status</code>.
+     * The column <code>win_user_anthn.failed_max</code>.
      */
-    public final TableField<WinUserAnthnRecord, UserStatus> Status = createField(DSL.name("status"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "", new JooqConsEnumConverter(UserStatus.class));
+    public final TableField<WinUserAnthnRecord, Integer> FailedMax = createField(DSL.name("failed_max"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("5", SQLDataType.INTEGER)), this, "");
 
     private WinUserAnthnTable(Name alias, Table<WinUserAnthnRecord> aliased) {
         this(alias, aliased, null);
@@ -214,12 +207,12 @@ public class WinUserAnthnTable extends TableImpl<WinUserAnthnRecord> implements 
     }
 
     // -------------------------------------------------------------------------
-    // Row16 type methods
+    // Row15 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row16<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, Long, String, String, String, String, String, String, String, LocalDateTime, Integer, UserStatus> fieldsRow() {
-        return (Row16) super.fieldsRow();
+    public Row15<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, Long, String, String, String, String, String, String, LocalDateTime, Integer, Integer> fieldsRow() {
+        return (Row15) super.fieldsRow();
     }
 
     /**

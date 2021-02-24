@@ -6,7 +6,7 @@ package pro.fessional.wings.warlock.database.autogen.tables;
 
 import org.jooq.Field;
 import org.jooq.Name;
-import org.jooq.Row7;
+import org.jooq.Row8;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -85,12 +85,17 @@ public class WinUserLoginTable extends TableImpl<WinUserLoginRecord> implements 
     /**
      * The column <code>win_user_login.terminal</code>.
      */
-    public final TableField<WinUserLoginRecord, String> Terminal = createField(DSL.name("terminal"), SQLDataType.VARCHAR(500).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
+    public final TableField<WinUserLoginRecord, String> Terminal = createField(DSL.name("terminal"), SQLDataType.VARCHAR(1000).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
 
     /**
-     * The column <code>win_user_login.remark</code>.
+     * The column <code>win_user_login.details</code>.
      */
-    public final TableField<WinUserLoginRecord, String> Remark = createField(DSL.name("remark"), SQLDataType.VARCHAR(500).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
+    public final TableField<WinUserLoginRecord, String> Details = createField(DSL.name("details"), SQLDataType.VARCHAR(9000).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
+
+    /**
+     * The column <code>win_user_login.failed</code>.
+     */
+    public final TableField<WinUserLoginRecord, Boolean> Failed = createField(DSL.name("failed"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.inline("0", SQLDataType.BOOLEAN)), this, "");
 
     private WinUserLoginTable(Name alias, Table<WinUserLoginRecord> aliased) {
         this(alias, aliased, null);
@@ -165,12 +170,12 @@ public class WinUserLoginTable extends TableImpl<WinUserLoginRecord> implements 
     }
 
     // -------------------------------------------------------------------------
-    // Row7 type methods
+    // Row8 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row7<Long, Long, String, String, LocalDateTime, String, String> fieldsRow() {
-        return (Row7) super.fieldsRow();
+    public Row8<Long, Long, String, String, LocalDateTime, String, String, Boolean> fieldsRow() {
+        return (Row8) super.fieldsRow();
     }
 
     /**

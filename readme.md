@@ -207,6 +207,11 @@ wings采用的Url命名主要是场景化的，命名为[RestHalf](./rest-half.m
 
 ### 0.2.7.Spring Service 的接口和 DTO 约定
 
+interface上使用annotation时，遵循以下规则，
+
+* @Component类注解，不要放在接口上，放在具体实现上
+* 功能约定类，放在接口上，如 @Transactional
+
 Service定义为接口，Service中的DTO，定义为内类，作为锲约。
 DTO间的转换和复制，使用工具类生成Helper静态对拷属性。
 禁止使用反射，不仅是因为一点性能，主要是动态性，脱离了编译时检查。

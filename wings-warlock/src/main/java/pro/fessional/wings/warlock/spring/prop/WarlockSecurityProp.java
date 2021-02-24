@@ -3,6 +3,7 @@ package pro.fessional.wings.warlock.spring.prop;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -87,6 +88,29 @@ public class WarlockSecurityProp {
     public static final String Key$permitAll = Key + ".permit-all";
 
     /**
+     * 是否根据auth-detail自动创建用户
+     *
+     * @see #Key$autoCreateUserAuto
+     */
+    private boolean autoCreateUserAuto = true;
+    public static final String Key$autoCreateUserAuto = Key + ".auto-create-user-auto";
+
+    /**
+     * 最大连续失败次数，到达后锁账户
+     *
+     * @see #Key$maxFailedCount
+     */
+    private int maxFailedCount = 5;
+    public static final String Key$maxFailedCount = Key + ".max-failed-count";
+
+    /**
+     * 创建用户时，默认凭证过期时间
+     * @see #Key$expiredDuration
+     */
+    private Duration expiredDuration = Duration.ofDays(1000);
+    public static final String Key$expiredDuration = Key + ".expired-duration";
+
+    /**
      * 支持的验证类型， enum全路径，一对一，否则反向解析有问题
      *
      * @see #Key$authType
@@ -94,6 +118,7 @@ public class WarlockSecurityProp {
     private Map<String, String> authType = new HashMap<>();
     public static final String Key$authType = Key + ".auth-type";
 
+    // ////
     public Map<String, Enum<?>> mapAuthTypeEnum() {
         return authType.entrySet()
                        .stream()

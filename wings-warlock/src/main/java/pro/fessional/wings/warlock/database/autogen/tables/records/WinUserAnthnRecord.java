@@ -6,12 +6,11 @@ package pro.fessional.wings.warlock.database.autogen.tables.records;
 
 import org.jooq.Field;
 import org.jooq.Record1;
-import org.jooq.Record16;
-import org.jooq.Row16;
+import org.jooq.Record15;
+import org.jooq.Row15;
 import org.jooq.impl.UpdatableRecordImpl;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAnthnTable;
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.IWinUserAnthn;
-import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
 import javax.annotation.Generated;
 import javax.persistence.Column;
@@ -43,7 +42,7 @@ import java.time.LocalDateTime;
         @UniqueConstraint(name = "KEY_win_user_anthn_PRIMARY", columnNames = { "id" })
     }
 )
-public class WinUserAnthnRecord extends UpdatableRecordImpl<WinUserAnthnRecord> implements Record16<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, Long, String, String, String, String, String, String, String, LocalDateTime, Integer, UserStatus>, IWinUserAnthn {
+public class WinUserAnthnRecord extends UpdatableRecordImpl<WinUserAnthnRecord> implements Record15<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, Long, String, String, String, String, String, String, LocalDateTime, Integer, Integer>, IWinUserAnthn {
 
     private static final long serialVersionUID = 1L;
 
@@ -172,112 +171,94 @@ public class WinUserAnthnRecord extends UpdatableRecordImpl<WinUserAnthnRecord> 
     }
 
     /**
-     * Setter for <code>win_user_anthn.auth_name</code>.
+     * Setter for <code>win_user_anthn.username</code>.
      */
     @Override
-    public void setAuthName(String value) {
+    public void setUsername(String value) {
         set(7, value);
     }
 
     /**
-     * Getter for <code>win_user_anthn.auth_name</code>.
+     * Getter for <code>win_user_anthn.username</code>.
      */
-    @Column(name = "auth_name", nullable = false, length = 200)
+    @Column(name = "username", nullable = false, length = 200)
     @NotNull
     @Size(max = 200)
     @Override
-    public String getAuthName() {
+    public String getUsername() {
         return (String) get(7);
     }
 
     /**
-     * Setter for <code>win_user_anthn.auth_pass</code>.
+     * Setter for <code>win_user_anthn.password</code>.
      */
     @Override
-    public void setAuthPass(String value) {
+    public void setPassword(String value) {
         set(8, value);
     }
 
     /**
-     * Getter for <code>win_user_anthn.auth_pass</code>.
+     * Getter for <code>win_user_anthn.password</code>.
      */
-    @Column(name = "auth_pass", nullable = false, length = 200)
+    @Column(name = "password", nullable = false, length = 200)
     @Size(max = 200)
     @Override
-    public String getAuthPass() {
+    public String getPassword() {
         return (String) get(8);
     }
 
     /**
-     * Setter for <code>win_user_anthn.auth_salt</code>.
+     * Setter for <code>win_user_anthn.passsalt</code>.
      */
     @Override
-    public void setAuthSalt(String value) {
+    public void setPasssalt(String value) {
         set(9, value);
     }
 
     /**
-     * Getter for <code>win_user_anthn.auth_salt</code>.
+     * Getter for <code>win_user_anthn.passsalt</code>.
      */
-    @Column(name = "auth_salt", nullable = false, length = 50)
-    @Size(max = 50)
+    @Column(name = "passsalt", nullable = false, length = 100)
+    @Size(max = 100)
     @Override
-    public String getAuthSalt() {
+    public String getPasssalt() {
         return (String) get(9);
     }
 
     /**
-     * Setter for <code>win_user_anthn.auth_para1</code>.
+     * Setter for <code>win_user_anthn.extra_para</code>.
      */
     @Override
-    public void setAuthPara1(String value) {
+    public void setExtraPara(String value) {
         set(10, value);
     }
 
     /**
-     * Getter for <code>win_user_anthn.auth_para1</code>.
+     * Getter for <code>win_user_anthn.extra_para</code>.
      */
-    @Column(name = "auth_para1", nullable = false, length = 200)
-    @Size(max = 200)
+    @Column(name = "extra_para", nullable = false, length = 3000)
+    @Size(max = 3000)
     @Override
-    public String getAuthPara1() {
+    public String getExtraPara() {
         return (String) get(10);
     }
 
     /**
-     * Setter for <code>win_user_anthn.auth_para2</code>.
+     * Setter for <code>win_user_anthn.extra_user</code>.
      */
     @Override
-    public void setAuthPara2(String value) {
+    public void setExtraUser(String value) {
         set(11, value);
     }
 
     /**
-     * Getter for <code>win_user_anthn.auth_para2</code>.
+     * Getter for <code>win_user_anthn.extra_user</code>.
      */
-    @Column(name = "auth_para2", nullable = false, length = 200)
-    @Size(max = 200)
+    @Column(name = "extra_user", nullable = false, length = 9000)
+    @Size(max = 9000)
     @Override
-    public String getAuthPara2() {
+    public String getExtraUser() {
         return (String) get(11);
-    }
-
-    /**
-     * Setter for <code>win_user_anthn.auth_token</code>.
-     */
-    @Override
-    public void setAuthToken(String value) {
-        set(12, value);
-    }
-
-    /**
-     * Getter for <code>win_user_anthn.auth_token</code>.
-     */
-    @Column(name = "auth_token", nullable = false, length = 2000)
-    @Size(max = 2000)
-    @Override
-    public String getAuthToken() {
-        return (String) get(12);
     }
 
     /**
@@ -285,7 +266,7 @@ public class WinUserAnthnRecord extends UpdatableRecordImpl<WinUserAnthnRecord> 
      */
     @Override
     public void setExpiredDt(LocalDateTime value) {
-        set(13, value);
+        set(12, value);
     }
 
     /**
@@ -294,41 +275,41 @@ public class WinUserAnthnRecord extends UpdatableRecordImpl<WinUserAnthnRecord> 
     @Column(name = "expired_dt", nullable = false, precision = 3)
     @Override
     public LocalDateTime getExpiredDt() {
-        return (LocalDateTime) get(13);
+        return (LocalDateTime) get(12);
     }
 
     /**
-     * Setter for <code>win_user_anthn.error_cnt</code>.
+     * Setter for <code>win_user_anthn.failed_cnt</code>.
      */
     @Override
-    public void setErrorCnt(Integer value) {
+    public void setFailedCnt(Integer value) {
+        set(13, value);
+    }
+
+    /**
+     * Getter for <code>win_user_anthn.failed_cnt</code>.
+     */
+    @Column(name = "failed_cnt", nullable = false, precision = 10)
+    @Override
+    public Integer getFailedCnt() {
+        return (Integer) get(13);
+    }
+
+    /**
+     * Setter for <code>win_user_anthn.failed_max</code>.
+     */
+    @Override
+    public void setFailedMax(Integer value) {
         set(14, value);
     }
 
     /**
-     * Getter for <code>win_user_anthn.error_cnt</code>.
+     * Getter for <code>win_user_anthn.failed_max</code>.
      */
-    @Column(name = "error_cnt", nullable = false, precision = 10)
+    @Column(name = "failed_max", nullable = false, precision = 10)
     @Override
-    public Integer getErrorCnt() {
+    public Integer getFailedMax() {
         return (Integer) get(14);
-    }
-
-    /**
-     * Setter for <code>win_user_anthn.status</code>.
-     */
-    @Override
-    public void setStatus(UserStatus value) {
-        set(15, value);
-    }
-
-    /**
-     * Getter for <code>win_user_anthn.status</code>.
-     */
-    @Column(name = "status", nullable = false, precision = 10)
-    @Override
-    public UserStatus getStatus() {
-        return (UserStatus) get(15);
     }
 
     // -------------------------------------------------------------------------
@@ -341,17 +322,17 @@ public class WinUserAnthnRecord extends UpdatableRecordImpl<WinUserAnthnRecord> 
     }
 
     // -------------------------------------------------------------------------
-    // Record16 type implementation
+    // Record15 type implementation
     // -------------------------------------------------------------------------
 
     @Override
-    public Row16<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, Long, String, String, String, String, String, String, String, LocalDateTime, Integer, UserStatus> fieldsRow() {
-        return (Row16) super.fieldsRow();
+    public Row15<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, Long, String, String, String, String, String, String, LocalDateTime, Integer, Integer> fieldsRow() {
+        return (Row15) super.fieldsRow();
     }
 
     @Override
-    public Row16<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, Long, String, String, String, String, String, String, String, LocalDateTime, Integer, UserStatus> valuesRow() {
-        return (Row16) super.valuesRow();
+    public Row15<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, Long, String, String, String, String, String, String, LocalDateTime, Integer, Integer> valuesRow() {
+        return (Row15) super.valuesRow();
     }
 
     @Override
@@ -391,47 +372,42 @@ public class WinUserAnthnRecord extends UpdatableRecordImpl<WinUserAnthnRecord> 
 
     @Override
     public Field<String> field8() {
-        return WinUserAnthnTable.WinUserAnthn.AuthName;
+        return WinUserAnthnTable.WinUserAnthn.Username;
     }
 
     @Override
     public Field<String> field9() {
-        return WinUserAnthnTable.WinUserAnthn.AuthPass;
+        return WinUserAnthnTable.WinUserAnthn.Password;
     }
 
     @Override
     public Field<String> field10() {
-        return WinUserAnthnTable.WinUserAnthn.AuthSalt;
+        return WinUserAnthnTable.WinUserAnthn.Passsalt;
     }
 
     @Override
     public Field<String> field11() {
-        return WinUserAnthnTable.WinUserAnthn.AuthPara1;
+        return WinUserAnthnTable.WinUserAnthn.ExtraPara;
     }
 
     @Override
     public Field<String> field12() {
-        return WinUserAnthnTable.WinUserAnthn.AuthPara2;
+        return WinUserAnthnTable.WinUserAnthn.ExtraUser;
     }
 
     @Override
-    public Field<String> field13() {
-        return WinUserAnthnTable.WinUserAnthn.AuthToken;
-    }
-
-    @Override
-    public Field<LocalDateTime> field14() {
+    public Field<LocalDateTime> field13() {
         return WinUserAnthnTable.WinUserAnthn.ExpiredDt;
     }
 
     @Override
-    public Field<Integer> field15() {
-        return WinUserAnthnTable.WinUserAnthn.ErrorCnt;
+    public Field<Integer> field14() {
+        return WinUserAnthnTable.WinUserAnthn.FailedCnt;
     }
 
     @Override
-    public Field<UserStatus> field16() {
-        return WinUserAnthnTable.WinUserAnthn.Status;
+    public Field<Integer> field15() {
+        return WinUserAnthnTable.WinUserAnthn.FailedMax;
     }
 
     @Override
@@ -471,47 +447,42 @@ public class WinUserAnthnRecord extends UpdatableRecordImpl<WinUserAnthnRecord> 
 
     @Override
     public String component8() {
-        return getAuthName();
+        return getUsername();
     }
 
     @Override
     public String component9() {
-        return getAuthPass();
+        return getPassword();
     }
 
     @Override
     public String component10() {
-        return getAuthSalt();
+        return getPasssalt();
     }
 
     @Override
     public String component11() {
-        return getAuthPara1();
+        return getExtraPara();
     }
 
     @Override
     public String component12() {
-        return getAuthPara2();
+        return getExtraUser();
     }
 
     @Override
-    public String component13() {
-        return getAuthToken();
-    }
-
-    @Override
-    public LocalDateTime component14() {
+    public LocalDateTime component13() {
         return getExpiredDt();
     }
 
     @Override
-    public Integer component15() {
-        return getErrorCnt();
+    public Integer component14() {
+        return getFailedCnt();
     }
 
     @Override
-    public UserStatus component16() {
-        return getStatus();
+    public Integer component15() {
+        return getFailedMax();
     }
 
     @Override
@@ -551,47 +522,42 @@ public class WinUserAnthnRecord extends UpdatableRecordImpl<WinUserAnthnRecord> 
 
     @Override
     public String value8() {
-        return getAuthName();
+        return getUsername();
     }
 
     @Override
     public String value9() {
-        return getAuthPass();
+        return getPassword();
     }
 
     @Override
     public String value10() {
-        return getAuthSalt();
+        return getPasssalt();
     }
 
     @Override
     public String value11() {
-        return getAuthPara1();
+        return getExtraPara();
     }
 
     @Override
     public String value12() {
-        return getAuthPara2();
+        return getExtraUser();
     }
 
     @Override
-    public String value13() {
-        return getAuthToken();
-    }
-
-    @Override
-    public LocalDateTime value14() {
+    public LocalDateTime value13() {
         return getExpiredDt();
     }
 
     @Override
-    public Integer value15() {
-        return getErrorCnt();
+    public Integer value14() {
+        return getFailedCnt();
     }
 
     @Override
-    public UserStatus value16() {
-        return getStatus();
+    public Integer value15() {
+        return getFailedMax();
     }
 
     @Override
@@ -638,60 +604,54 @@ public class WinUserAnthnRecord extends UpdatableRecordImpl<WinUserAnthnRecord> 
 
     @Override
     public WinUserAnthnRecord value8(String value) {
-        setAuthName(value);
+        setUsername(value);
         return this;
     }
 
     @Override
     public WinUserAnthnRecord value9(String value) {
-        setAuthPass(value);
+        setPassword(value);
         return this;
     }
 
     @Override
     public WinUserAnthnRecord value10(String value) {
-        setAuthSalt(value);
+        setPasssalt(value);
         return this;
     }
 
     @Override
     public WinUserAnthnRecord value11(String value) {
-        setAuthPara1(value);
+        setExtraPara(value);
         return this;
     }
 
     @Override
     public WinUserAnthnRecord value12(String value) {
-        setAuthPara2(value);
+        setExtraUser(value);
         return this;
     }
 
     @Override
-    public WinUserAnthnRecord value13(String value) {
-        setAuthToken(value);
-        return this;
-    }
-
-    @Override
-    public WinUserAnthnRecord value14(LocalDateTime value) {
+    public WinUserAnthnRecord value13(LocalDateTime value) {
         setExpiredDt(value);
         return this;
     }
 
     @Override
+    public WinUserAnthnRecord value14(Integer value) {
+        setFailedCnt(value);
+        return this;
+    }
+
+    @Override
     public WinUserAnthnRecord value15(Integer value) {
-        setErrorCnt(value);
+        setFailedMax(value);
         return this;
     }
 
     @Override
-    public WinUserAnthnRecord value16(UserStatus value) {
-        setStatus(value);
-        return this;
-    }
-
-    @Override
-    public WinUserAnthnRecord values(Long value1, LocalDateTime value2, LocalDateTime value3, LocalDateTime value4, Long value5, Long value6, String value7, String value8, String value9, String value10, String value11, String value12, String value13, LocalDateTime value14, Integer value15, UserStatus value16) {
+    public WinUserAnthnRecord values(Long value1, LocalDateTime value2, LocalDateTime value3, LocalDateTime value4, Long value5, Long value6, String value7, String value8, String value9, String value10, String value11, String value12, LocalDateTime value13, Integer value14, Integer value15) {
         value1(value1);
         value2(value2);
         value3(value3);
@@ -707,7 +667,6 @@ public class WinUserAnthnRecord extends UpdatableRecordImpl<WinUserAnthnRecord> 
         value13(value13);
         value14(value14);
         value15(value15);
-        value16(value16);
         return this;
     }
 
@@ -724,15 +683,14 @@ public class WinUserAnthnRecord extends UpdatableRecordImpl<WinUserAnthnRecord> 
         setCommitId(from.getCommitId());
         setUserId(from.getUserId());
         setAuthType(from.getAuthType());
-        setAuthName(from.getAuthName());
-        setAuthPass(from.getAuthPass());
-        setAuthSalt(from.getAuthSalt());
-        setAuthPara1(from.getAuthPara1());
-        setAuthPara2(from.getAuthPara2());
-        setAuthToken(from.getAuthToken());
+        setUsername(from.getUsername());
+        setPassword(from.getPassword());
+        setPasssalt(from.getPasssalt());
+        setExtraPara(from.getExtraPara());
+        setExtraUser(from.getExtraUser());
         setExpiredDt(from.getExpiredDt());
-        setErrorCnt(from.getErrorCnt());
-        setStatus(from.getStatus());
+        setFailedCnt(from.getFailedCnt());
+        setFailedMax(from.getFailedMax());
     }
 
     @Override
@@ -755,7 +713,7 @@ public class WinUserAnthnRecord extends UpdatableRecordImpl<WinUserAnthnRecord> 
     /**
      * Create a detached, initialised WinUserAnthnRecord
      */
-    public WinUserAnthnRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, Long userId, String authType, String authName, String authPass, String authSalt, String authPara1, String authPara2, String authToken, LocalDateTime expiredDt, Integer errorCnt, UserStatus status) {
+    public WinUserAnthnRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, Long userId, String authType, String username, String password, String passsalt, String extraPara, String extraUser, LocalDateTime expiredDt, Integer failedCnt, Integer failedMax) {
         super(WinUserAnthnTable.WinUserAnthn);
 
         setId(id);
@@ -765,14 +723,13 @@ public class WinUserAnthnRecord extends UpdatableRecordImpl<WinUserAnthnRecord> 
         setCommitId(commitId);
         setUserId(userId);
         setAuthType(authType);
-        setAuthName(authName);
-        setAuthPass(authPass);
-        setAuthSalt(authSalt);
-        setAuthPara1(authPara1);
-        setAuthPara2(authPara2);
-        setAuthToken(authToken);
+        setUsername(username);
+        setPassword(password);
+        setPasssalt(passsalt);
+        setExtraPara(extraPara);
+        setExtraUser(extraUser);
         setExpiredDt(expiredDt);
-        setErrorCnt(errorCnt);
-        setStatus(status);
+        setFailedCnt(failedCnt);
+        setFailedMax(failedMax);
     }
 }

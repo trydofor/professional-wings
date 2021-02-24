@@ -15,11 +15,11 @@ import pro.fessional.wings.example.database.autogen.tables.pojos.WinUser;
 import pro.fessional.wings.example.database.autogen.tables.pojos.WinUserLogin;
 import pro.fessional.wings.example.enums.auto.LoginType;
 import pro.fessional.wings.example.enums.auto.UserStatus;
-import pro.fessional.wings.example.enums.auto.UserType;
 import pro.fessional.wings.example.service.authrole.AuthRoleService;
 import pro.fessional.wings.faceless.enums.ConstantEnumUtil;
 import pro.fessional.wings.faceless.enums.TimezoneEnumUtil;
 import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
+import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 
 import java.util.List;
 import java.util.Set;
@@ -49,7 +49,7 @@ public class WingsExampleUserDetailsService implements UserDetailsService {
 
 
     @Override
-    public WingsExampleUserDetails loadUserByUsername(String username) {
+    public DefaultWingsUserDetails loadUserByUsername(String username) {
         LoginType loginType = LoginType.NAME_PASS;
 //        String password = passwordEncoder.encode("moilioncircle");
 
@@ -69,24 +69,21 @@ public class WingsExampleUserDetailsService implements UserDetailsService {
 
         Set<GrantedAuthority> auths = authRoleService.loadRoleAuth(user.getRoleSet(), user.getAuthSet());
 
-        WingsExampleUserDetails detail = new WingsExampleUserDetails();
+        DefaultWingsUserDetails detail = new DefaultWingsUserDetails();
         detail.setUsername(username);
         detail.setPassword(login.getLoginPass());
         detail.setAuthorities(null);
         detail.setUserId(user.getId());
-        detail.setUserType(UserType.GUEST.getId());
-        detail.setLoginType(loginType.getId());
-        detail.setName(user.getName());
-        detail.setGender(user.getGender());
-        detail.setBirth(user.getBirth());
-        detail.setAvatar(user.getAvatar());
-        detail.setCountry(user.getCountry());
+//        detail.setUserType(UserType.GUEST.getId());
+//        detail.setLoginType(loginType.getId());
+//        detail.setName(user.getName());
+//        detail.setGender(user.getGender());
+//        detail.setBirth(user.getBirth());
+//        detail.setAvatar(user.getAvatar());
+//        detail.setCountry(user.getCountry());
         detail.setLocale(LocaleResolver.locale(user.getLanguage()));
         detail.setZoneId(TimezoneEnumUtil.idOrThrow(user.getTimezone(), StandardTimezone.values()).toZoneId());
 
-        detail.setAccountNonExpired(true);
-        detail.setAccountNonLocked(true);
-        detail.setCredentialsNonExpired(true);
         detail.setEnabled(ConstantEnumUtil.idIn(user.getStatus(), enables));
         detail.setAuthorities(auths);
 
