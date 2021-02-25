@@ -1,17 +1,18 @@
 package pro.fessional.wings.warlock.service.auth.impl;
 
-import com.alibaba.fastjson.JSON;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import me.zhyd.oauth.enums.AuthUserGender;
-import me.zhyd.oauth.model.AuthUser;
 import org.jooq.Condition;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pro.fessional.wings.faceless.database.helper.ModifyAssert;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
+import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.WingsTerminalContext;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
@@ -21,18 +22,15 @@ import pro.fessional.wings.warlock.database.autogen.tables.WinUserLoginTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAnthnDao;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasicDao;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserLoginDao;
-import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserAnthn;
-import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserBasic;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserLogin;
-import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.help.DetailsMapper;
-import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Locale;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author trydofor
@@ -40,7 +38,7 @@ import java.util.Locale;
  */
 @Service
 @Slf4j
-public class WarlockAuthnServiceImpl implements WarlockAuthnService {
+public class WarlockAuthnServiceImpl implements WarlockAuthnService, InitializingBean {
 
     @Setter(onMethod = @__({@Autowired}))
     private WinUserBasicDao winUserBasicDao;
@@ -55,13 +53,24 @@ public class WarlockAuthnServiceImpl implements WarlockAuthnService {
     private WingsAuthTypeParser wingsAuthTypeParser;
 
     @Setter(onMethod = @__({@Autowired}))
-    private WarlockSecurityProp warlockSecurityProp;
-
-    @Setter(onMethod = @__({@Autowired}))
     private LightIdService lightIdService;
 
     @Setter(onMethod = @__({@Autowired}))
     private JournalService journalService;
+
+    @Setter(onMethod = @__({@Autowired}))
+    private ObjectProvider<Saver> saverProvider;
+
+    @Setter(onMethod = @__({@Autowired}))
+    private PasssaltEncoder passsaltEncoder;
+
+    private List<Saver> orderedSavers = Collections.emptyList();
+
+    @Override
+    public void afterPropertiesSet() {
+        orderedSavers = saverProvider.orderedStream().collect(Collectors.toList());
+        log.info("inject {} savers", orderedSavers.size());
+    }
 
     @Override
     public Details load(Enum<?> authType, String username) {
@@ -117,76 +126,16 @@ public class WarlockAuthnServiceImpl implements WarlockAuthnService {
         userDetails.setCredentialsNonExpired(details.getExpiredDt().isAfter(LocalDateTime.now()));
     }
 
-    public enum Jane {
-        AutoSave,
-        Success,
-        Failure
-    }
-
     @Override
     @Transactional
-    public Details save(Enum<?> authType, String username, AuthUser authUser) {
-        if (authUser == null) return null;
-
-        final String at = wingsAuthTypeParser.parse(authType);
-        final WinUserBasicTable tu = winUserBasicDao.getTable();
-        final long uid = lightIdService.getId(tu.getClass());
-        final String mrk = "auto create auth-user auth-type=" + at + "username=" + username;
-        val commit = journalService.commit(Jane.AutoSave, uid, mrk);
-
-        WinUserBasic user = new WinUserBasic();
-        commit.create(user);
-        user.setId(uid);
-        user.setNickname(authUser.getNickname());
-        user.setAvatar(authUser.getAvatar());
-        final AuthUserGender aug = authUser.getGender();
-        if (aug == AuthUserGender.FEMALE) {
-            user.setGender(UserGender.FEMALE);
-        } else if (aug == AuthUserGender.MALE) {
-            user.setGender(UserGender.MALE);
-        } else {
-            user.setGender(UserGender.UNKNOWN);
+    public Details save(Enum<?> authType, String username, Object details) {
+        for (Saver saver : orderedSavers) {
+            if (saver.accept(authType, username, details)) {
+                final Details dt = saver.save(authType, username, details);
+                if (dt != null) return dt;
+            }
         }
-        user.setLocale(Locale.getDefault());
-        user.setZoneid((ZoneId.systemDefault()));
-        user.setRemark(authUser.getRemark());
-        user.setStatus(UserStatus.ACTIVE);
-        winUserBasicDao.insert(user);
-
-        //
-        WinUserAnthn auth = new WinUserAnthn();
-        commit.create(auth);
-        auth.setId(lightIdService.getId(winUserAnthnDao.getTable().getClass()));
-        auth.setUserId(uid);
-        auth.setAuthType(at);
-        auth.setUsername(authUser.getUuid());
-        auth.setPassword("pre-authed");
-        auth.setPasssalt("pre-authed");
-
-        auth.setExtraPara(JSON.toJSONString(authUser.getToken()));
-        auth.setExtraUser(JSON.toJSONString(authUser.getRawUserInfo()));
-
-        long seconds = warlockSecurityProp.getExpiredDuration().getSeconds();
-        LocalDateTime expired = commit.getCommitDt().plusSeconds(seconds);
-        auth.setExpiredDt(expired);
-        auth.setFailedCnt(0);
-        auth.setFailedMax(warlockSecurityProp.getMaxFailedCount());
-
-        winUserAnthnDao.insert(auth);
-
-        final Details details = new Details();
-        details.setUserId(uid);
-        details.setNickname(user.getNickname());
-        details.setLocale(user.getLocale());
-        details.setZoneId(user.getZoneid());
-        details.setStatus(user.getStatus());
-        details.setAuthType(authType);
-        details.setUsername(auth.getUsername());
-        details.setPassword(auth.getPassword());
-        details.setPasssalt(auth.getPasssalt());
-        details.setExpiredDt(auth.getExpiredDt());
-
-        return details;
+        return null;
     }
 
     @Override
@@ -302,4 +251,74 @@ public class WarlockAuthnServiceImpl implements WarlockAuthnService {
         }
     }
 
+    @Override
+    public void renew(Enum<?> authType, String username, Authn authn) {
+        renew(authType, authn, username, null);
+    }
+
+    @Override
+    public void renew(Enum<?> authType, long userId, Authn authn) {
+        renew(authType, authn, null, userId);
+    }
+
+    private void renew(Enum<?> authType, Authn authn, String username, Long userId) {
+
+        if (authn.getExpiredIn() == null && authn.getMaxFailed() == null
+                && authn.getPassword() == null && !authn.isZeroFail()) {
+            log.info("nothing to renew auth-type={}, username={}, userId={}", authType, username, userId);
+            return;
+        }
+
+        final String at = wingsAuthTypeParser.parse(authType);
+        final WinUserAnthnTable t = winUserAnthnDao.getTable();
+        final Condition cond;
+        final JournalService.Journal commit;
+        if (userId != null) {
+            cond = t.AuthType.eq(at).and(t.UserId.eq(userId)).and(t.onlyLiveData);
+            commit = journalService.commit(Jane.Renew, userId, "by userId and auth-type=" + authType);
+        } else {
+            cond = t.AuthType.eq(at).and(t.Username.eq(username)).and(t.onlyLiveData);
+            commit = journalService.commit(Jane.Renew, username, "by username and auth-type=" + authType);
+        }
+
+        val update = winUserAnthnDao
+                .ctx()
+                .update(t)
+                .set(t.CommitId, commit.getCommitId())
+                .set(t.ModifyDt, commit.getCommitDt());
+
+        if (authn.isZeroFail()) {
+            update.set(t.FailedCnt, 0);
+        }
+
+        if (authn.getPassword() != null) {
+            val rc = winUserAnthnDao
+                    .ctx()
+                    .select(t.Passsalt)
+                    .from(t)
+                    .where(cond)
+                    .fetchOne();
+
+            if (rc == null) {
+                throw new IllegalStateException("failed to found authn by auth-type=" + at + ", user-id=" + userId);
+            }
+            update.set(t.Password, passsaltEncoder.salt(authn.getPassword(), rc.value1()));
+        }
+
+        final Integer maxFailed = authn.getMaxFailed();
+        if (maxFailed != null && maxFailed > 0) {
+            update.set(t.FailedMax, maxFailed);
+        }
+
+        if (authn.getExpiredIn() != null) {
+            final LocalDateTime expired = commit.getCommitDt().plusSeconds(authn.getExpiredIn().getSeconds());
+            update.set(t.ExpiredDt, expired);
+        }
+
+        final int af = update
+                .where(cond)
+                .execute();
+
+        ModifyAssert.one(af, "failed to renew auth-type={}, userId={}, username={}", at, userId, username);
+    }
 }

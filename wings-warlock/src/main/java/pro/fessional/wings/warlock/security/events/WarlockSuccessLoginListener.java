@@ -24,27 +24,18 @@ public class WarlockSuccessLoginListener implements ApplicationListener<Authenti
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
         final Object source = event.getSource();
-        Enum<?> authType = null;
-        long uid = 0;
-        String details = "";
-
-        if (source instanceof Authentication) {
-            final Authentication atn = (Authentication) source;
-            Object principal = atn.getPrincipal();
-            details = JSON.toJSONString(atn.getDetails());
-
-            if (principal instanceof WingsUserDetails) {
-                final WingsUserDetails ud = (WingsUserDetails) principal;
-                authType = ud.getAuthType();
-                uid = ud.getUserId();
-            }
-        }
-
-        if (authType == null) {
-            log.info("skip non-wings-source, type={}", source.getClass().getName());
+        if (!(source instanceof Authentication)) return;
+        final Object detail = ((Authentication) source).getDetails();
+        if (!(detail instanceof WingsUserDetails)) {
+            log.info("skip non-WingsUserDetails, type={}", source.getClass().getName());
             return;
         }
 
-        warlockAuthnService.onSuccess(authType, uid, details);
+        final WingsUserDetails ud = (WingsUserDetails) detail;
+        Enum<?> authType = ud.getAuthType();
+        long userId = ud.getUserId();
+        String detailString = JSON.toJSONString(detail);
+
+        warlockAuthnService.onSuccess(authType, userId, detailString);
     }
 }

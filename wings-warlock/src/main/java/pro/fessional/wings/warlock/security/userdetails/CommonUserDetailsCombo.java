@@ -1,9 +1,8 @@
-package pro.fessional.wings.warlock.security.justauth;
+package pro.fessional.wings.warlock.security.userdetails;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import me.zhyd.oauth.config.AuthSource;
 import me.zhyd.oauth.model.AuthUser;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +21,9 @@ import pro.fessional.wings.warlock.service.auth.WarlockAuthzService;
 @Getter
 @Setter
 @Slf4j
-public class JustAuthUserDetailsCombo implements ComboWingsUserDetailsService.Combo<DefaultWingsUserDetails> {
+public class CommonUserDetailsCombo implements ComboWingsUserDetailsService.Combo<DefaultWingsUserDetails> {
 
-    public static final int ORDER = WarlockOrderConst.UserDetailsCombo + 10;
+    public static final int ORDER = WarlockOrderConst.UserDetailsCombo + 1000;
 
     private int order = ORDER;
     private boolean autoCreate = true;
@@ -36,18 +35,16 @@ public class JustAuthUserDetailsCombo implements ComboWingsUserDetailsService.Co
 
     @Override
     public DefaultWingsUserDetails loadOrNull(String username, @Nullable Enum<?> authType, @Nullable Object authDetail) {
-        if (!(authType instanceof AuthSource)) {
+        if (!accept(authType)) {
             return null;
         }
 
-        if(username.isEmpty() && authDetail instanceof AuthUser){
-            username = ((AuthUser) authDetail).getUuid();
-        }
+        username = judgeUsername(username, authType, authDetail);
 
         WarlockAuthnService.Details dt = warlockAuthnService.load(authType, username);
-        if (dt == null && autoCreate && authDetail instanceof AuthUser) {
-            log.info("auto-create user by auth-user, username={},auth-type={}", username, authType);
-            dt = warlockAuthnService.save(authType, username, (AuthUser) authDetail);
+        if (dt == null && autoCreate) {
+            log.info("auto-create user by auth-user, username={}, auth-type={}", username, authType);
+            dt = warlockAuthnService.save(authType, username, authDetail);
         }
 
         if (dt == null) {
@@ -58,8 +55,23 @@ public class JustAuthUserDetailsCombo implements ComboWingsUserDetailsService.Co
         DefaultWingsUserDetails wud = new DefaultWingsUserDetails();
         warlockAuthnService.auth(wud, dt);
         warlockAuthzService.auth(wud);
-        wud.setPreAuthed(true);
+        wud.setPreAuthed(authed(authType));
 
         return wud;
+    }
+
+    protected boolean accept(Enum<?> authType) {
+        return true;
+    }
+
+    protected boolean authed(Enum<?> authType) {
+        return false;
+    }
+
+    protected String judgeUsername(String username, @Nullable Enum<?> authType, @Nullable Object authDetail) {
+        if (username.isEmpty() && authDetail instanceof AuthUser) {
+            username = ((AuthUser) authDetail).getUuid();
+        }
+        return username;
     }
 }

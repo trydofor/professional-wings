@@ -45,15 +45,15 @@ public class WingsBindAuthFilter extends UsernamePasswordAuthenticationFilter {
         password = (password != null) ? password : "";
 
         Enum<?> authType = wingsAuthTypeSource.buildAuthType(request);
-        WingsBindAuthToken authRequest = new WingsBindAuthToken(authType, username, password);
+        WingsBindAuthToken at = new WingsBindAuthToken(authType, username, password);
         if (authenticationDetailsSource instanceof WingsAuthDetailsSource<?>) {
             WingsAuthDetailsSource<?> ads = (WingsAuthDetailsSource<?>) authenticationDetailsSource;
-            authRequest.setDetails(ads.buildDetails(authType, request));
+            at.setDetails(ads.buildDetails(authType, request));
         } else {
-            authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
+            at.setDetails(authenticationDetailsSource.buildDetails(request));
         }
 
-        return this.getAuthenticationManager().authenticate(authRequest);
+        return this.getAuthenticationManager().authenticate(at);
     }
 
     public WingsAuthTypeSource getWingsBindAuthTypeSource() {

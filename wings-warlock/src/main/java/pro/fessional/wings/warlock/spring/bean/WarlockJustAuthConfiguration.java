@@ -11,10 +11,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.warlock.security.justauth.JustAuthLoginPageCombo;
 import pro.fessional.wings.warlock.security.justauth.JustAuthRequestBuilder;
 import pro.fessional.wings.warlock.security.justauth.JustAuthStateCaffeine;
-import pro.fessional.wings.warlock.security.justauth.JustAuthUserDetailsCombo;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockJustAuthProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
@@ -80,21 +78,5 @@ public class WarlockJustAuthConfiguration {
     public AuthStateCache authStateCache() {
         logger.info("Wings conf authStateCache");
         return new JustAuthStateCaffeine(justAuthProp.getCacheSize(), justAuthProp.getCacheLive());
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$justAuthLoginPageCombo, havingValue = "true")
-    public JustAuthLoginPageCombo justAuthLoginPageCombo(JustAuthRequestBuilder justAuthRequestBuilder) {
-        final JustAuthLoginPageCombo handler = new JustAuthLoginPageCombo();
-        handler.setJustAuthRequestBuilder(justAuthRequestBuilder);
-        return handler;
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$userDetails, havingValue = "true")
-    public JustAuthUserDetailsCombo justAuthUserDetailsCombo() {
-        final JustAuthUserDetailsCombo combo = new JustAuthUserDetailsCombo();
-        combo.setAutoCreate(securityProp.isAutoCreateUserAuto());
-        return combo;
     }
 }

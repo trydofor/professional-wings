@@ -14,7 +14,10 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
+import pro.fessional.mirana.bits.MdHelp;
+import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
+import pro.fessional.wings.slardar.security.impl.DefaultPasssaltEncoder;
 import pro.fessional.wings.slardar.spring.conf.WingsSecBeanInitConfigurer;
 
 import java.util.HashMap;
@@ -56,6 +59,12 @@ public class SlardarSecurityConfiguration {
         encoders.put("scrypt", new SCryptPasswordEncoder());
         encoders.put("argon2", new Argon2PasswordEncoder());
         return new DelegatingPasswordEncoder(defaultEncoder, encoders);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(PasssaltEncoder.class)
+    public PasssaltEncoder passsaltEncoder() {
+        return new DefaultPasssaltEncoder(MdHelp.sha256);
     }
 
     /**

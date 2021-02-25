@@ -23,9 +23,14 @@ import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeParser;
 import pro.fessional.wings.warlock.security.events.WarlockFailedLoginListener;
 import pro.fessional.wings.warlock.security.events.WarlockSuccessLoginListener;
 import pro.fessional.wings.warlock.security.handler.LoginFailureHandler;
-import pro.fessional.wings.warlock.security.handler.LoginPageDefaultHandler;
 import pro.fessional.wings.warlock.security.handler.LoginSuccessHandler;
 import pro.fessional.wings.warlock.security.handler.LogoutOkHandler;
+import pro.fessional.wings.warlock.security.loginpage.JustAuthLoginPageCombo;
+import pro.fessional.wings.warlock.security.loginpage.ListAllLoginPageCombo;
+import pro.fessional.wings.warlock.security.userdetails.CommonUserDetailsCombo;
+import pro.fessional.wings.warlock.security.userdetails.JustAuthUserAuthnSaver;
+import pro.fessional.wings.warlock.security.userdetails.JustAuthUserDetailsCombo;
+import pro.fessional.wings.warlock.service.auth.impl.CommonUserAuthnSaver;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
@@ -45,6 +50,15 @@ public class WarlockSecurityBeanConfiguration {
     @Setter(onMethod = @__({@Autowired}))
     private WarlockSecurityProp securityProp;
 
+    @Bean
+    @ConditionalOnMissingBean
+    public WingsAuthTypeParser wingsAuthTypeParser() {
+        logger.info("Wings conf wingsAuthTypeParser");
+        final Map<String, Enum<?>> authType = securityProp.mapAuthTypeEnum();
+        return new DefaultWingsAuthTypeParser(authType);
+    }
+
+    ///////// handler /////////
     @Bean
     @ConditionalOnMissingBean(AuthenticationSuccessHandler.class)
     public AuthenticationSuccessHandler loginSuccessHandler() {
@@ -66,6 +80,7 @@ public class WarlockSecurityBeanConfiguration {
         return new LogoutOkHandler();
     }
 
+    ///////// UserDetails /////////
     @Bean
     @ConditionalOnMissingBean
     public WingsUserDetailsService wingsUserDetailsService(ObjectProvider<ComboWingsUserDetailsService.Combo<?>> combos) {
@@ -91,9 +106,28 @@ public class WarlockSecurityBeanConfiguration {
     }
 
     @Bean
+    @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboJustAuthUserDetails, havingValue = "true")
+    public JustAuthUserDetailsCombo justAuthUserDetailsCombo() {
+        logger.info("Wings conf justAuthUserDetailsCombo");
+        final JustAuthUserDetailsCombo combo = new JustAuthUserDetailsCombo();
+        combo.setAutoCreate(securityProp.isAutoCreateUserAuto());
+        return combo;
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboCommonUserDetails, havingValue = "true")
+    public CommonUserDetailsCombo commonUserDetailsCombo() {
+        logger.info("Wings conf commonUserDetailsCombo");
+        final CommonUserDetailsCombo combo = new CommonUserDetailsCombo();
+        combo.setAutoCreate(securityProp.isAutoCreateUserAuto());
+        return combo;
+    }
+
+    ///////// login page /////////
+    @Bean
     @ConditionalOnMissingBean
     public WingsAuthPageHandler wingsAuthPageHandler(ObjectProvider<ComboWingsAuthPageHandler.Combo> combos) {
-        logger.info("Wings conf wingsAuthDetailsSource");
+        logger.info("Wings conf wingsAuthPageHandler");
         ComboWingsAuthPageHandler uds = new ComboWingsAuthPageHandler();
         combos.orderedStream().forEach(it -> {
             logger.info("Wings conf wingsAuthPageHandler add " + it.getClass().getName());
@@ -103,13 +137,32 @@ public class WarlockSecurityBeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
-    public WingsAuthTypeParser wingsAuthTypeParser() {
-        logger.info("Wings conf wingsAuthTypeParser");
-        final Map<String, Enum<?>> authType = securityProp.mapAuthTypeEnum();
-        return new DefaultWingsAuthTypeParser(authType);
+    @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboListAllLoginPage, havingValue = "true")
+    public ListAllLoginPageCombo listAllLoginPageCombo() {
+        logger.info("Wings conf listAllLoginPageCombo");
+        return new ListAllLoginPageCombo();
     }
 
+    @Bean
+    @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboJustAuthLoginPage, havingValue = "true")
+    public JustAuthLoginPageCombo justAuthLoginPageCombo() {
+        return new JustAuthLoginPageCombo();
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = WarlockEnabledProp.Key$saverJustAuthUserAuthn, havingValue = "true")
+    public JustAuthUserAuthnSaver justAuthUserAuthnSaver() {
+        // autowired
+        return new JustAuthUserAuthnSaver();
+    }
+
+    @Bean
+    public CommonUserAuthnSaver commonUserAuthnSaver() {
+        // autowired
+        return new CommonUserAuthnSaver();
+    }
+
+    ///////// Listener /////////
     @Bean
     public WarlockSuccessLoginListener warlockSuccessLoginListener() {
         logger.info("Wings conf authSuccessListener");
@@ -120,13 +173,5 @@ public class WarlockSecurityBeanConfiguration {
     public WarlockFailedLoginListener warlockFailedLoginListener() {
         logger.info("Wings conf authSuccessListener");
         return new WarlockFailedLoginListener();
-    }
-
-    @Bean
-    public LoginPageDefaultHandler loginPageDefaultHandler() {
-        logger.info("Wings conf loginPageDefaultHandler");
-        final LoginPageDefaultHandler handler = new LoginPageDefaultHandler();
-        handler.setWarlockSecurityProp(securityProp);
-        return handler;
     }
 }

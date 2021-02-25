@@ -1,4 +1,4 @@
-package pro.fessional.wings.warlock.security.handler;
+package pro.fessional.wings.warlock.security.loginpage;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author trydofor
  * @since 2021-02-19
  */
-public class LoginPageDefaultHandler implements ComboWingsAuthPageHandler.Combo {
+public class ListAllLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
 
     public static final int ORDER = WarlockOrderConst.AuthPageCombo + 90;
 

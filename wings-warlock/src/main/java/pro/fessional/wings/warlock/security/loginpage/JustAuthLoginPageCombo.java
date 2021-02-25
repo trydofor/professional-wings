@@ -1,4 +1,4 @@
-package pro.fessional.wings.warlock.security.justauth;
+package pro.fessional.wings.warlock.security.loginpage;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +15,7 @@ import org.springframework.util.MimeType;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
+import pro.fessional.wings.warlock.security.justauth.JustAuthRequestBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

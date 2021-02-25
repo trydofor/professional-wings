@@ -13,8 +13,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
+import pro.fessional.mirana.bits.MdHelp;
+import pro.fessional.wings.slardar.security.PasssaltEncoder;
+import pro.fessional.wings.slardar.security.WingsUidSuccessToken;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
+import pro.fessional.wings.slardar.security.impl.DefaultPasssaltEncoder;
 
 /**
  * 兼容DaoAuthenticationProvider，可替换之。如果设置onlyWingsBindAuthnToken=true，则只处理 WingsBindAuthnToken。
@@ -32,11 +36,13 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
 
     private UserDetailsService userDetailsService;
     private PasswordEncoder passwordEncoder;
+    private PasssaltEncoder passsaltEncoder;
     private UserDetailsPasswordService userDetailsPasswordService;
 
     public WingsBindAuthProvider(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        this.passsaltEncoder = new DefaultPasssaltEncoder(MdHelp.sha256);
     }
 
     @Override
@@ -57,21 +63,21 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         prepareTimingAttackProtection();
         try {
-            final UserDetails loadedUser;
+            final UserDetails details;
             final UserDetailsService userDetailsService = this.getUserDetailsService();
 
             if (userDetailsService instanceof WingsUserDetailsService && authentication instanceof WingsBindAuthToken) {
                 WingsUserDetailsService uds = (WingsUserDetailsService) userDetailsService;
                 WingsBindAuthToken bat = (WingsBindAuthToken) authentication;
-                loadedUser = uds.loadUserByUsername(username, bat.getAuthType(), bat.getDetails());
+                details = uds.loadUserByUsername(username, bat.getAuthType(), bat.getDetails());
             } else {
-                loadedUser = userDetailsService.loadUserByUsername(username);
+                details = userDetailsService.loadUserByUsername(username);
             }
 
-            if (loadedUser == null) {
+            if (details == null) {
                 throw new InternalAuthenticationServiceException("UserDetailsService returned null, which is an interface contract violation");
             }
-            return loadedUser;
+            return details;
         } catch (UsernameNotFoundException ex) {
             mitigateAgainstTimingAttack(authentication);
             throw ex;
@@ -106,28 +112,25 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
     private String presentPassword(UserDetails details, Authentication auth) {
         String presentedPassword = auth.getCredentials().toString();
         // 加盐处理
-        if (details instanceof WingsUserDetails) {
-            WingsUserDetails wud = (WingsUserDetails) details;
-            final String salt = wud.getPasssalt();
-            if (salt != null && salt.length() > 0) {
-                presentedPassword = presentedPassword + salt;
-            }
+        if (passsaltEncoder != null && details instanceof WingsUserDetails) {
+            presentedPassword = passsaltEncoder.salt(presentedPassword, ((WingsUserDetails) details).getPasssalt());
         }
         return presentedPassword;
     }
 
     @Override
     protected Authentication createSuccessAuthentication(Object principal, Authentication authn, UserDetails details) {
+        final UserDetails origDetails = details;
         if (userDetailsPasswordService != null && passwordEncoder.upgradeEncoding(details.getPassword())) {
             String presentedPassword = presentPassword(details, authn);
             String newPassword = this.passwordEncoder.encode(presentedPassword);
             details = this.userDetailsPasswordService.updatePassword(details, newPassword);
         }
 
+        // super use authoritiesMapper
         Authentication result = super.createSuccessAuthentication(principal, authn, details);
-        if (authn instanceof WingsBindAuthToken) {
-            final Enum<?> authType = ((WingsBindAuthToken) authn).getAuthType();
-            return new WingsBindAuthToken(authType, result);
+        if (origDetails instanceof WingsUserDetails) {
+            return new WingsUidSuccessToken((WingsUserDetails) origDetails, result.getAuthorities());
         } else {
             return result;
         }
@@ -147,6 +150,16 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
     }
 
     // setter & getter
+
+
+    public PasssaltEncoder getPasssaltEncoder() {
+        return passsaltEncoder;
+    }
+
+    public void setPasssaltEncoder(PasssaltEncoder passsaltEncoder) {
+        this.passsaltEncoder = passsaltEncoder;
+    }
+
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         Assert.notNull(passwordEncoder, "passwordEncoder cannot be null");
         this.passwordEncoder = passwordEncoder;

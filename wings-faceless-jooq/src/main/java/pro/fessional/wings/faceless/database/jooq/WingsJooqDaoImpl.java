@@ -832,20 +832,20 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
         return fetchLive(claz, table, null, fields);
     }
 
-    public <E> List<E> fetchLive(Class<E> claz, T table, SelectField<?>... fields) {
-        return fetchLive(claz, table, null, fields);
-    }
-
-    public <E> List<E> fetchLive(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
-        return fetch(claz, table, table.onlyLive(cond), fields);
-    }
-
     public <E> List<E> fetch(Class<E> claz, SelectField<?>... fields) {
         return fetch(claz, table, null, fields);
     }
 
+    public <E> List<E> fetchLive(Class<E> claz, T table, SelectField<?>... fields) {
+        return fetchLive(claz, table, null, fields);
+    }
+
     public <E> List<E> fetch(Class<E> claz, T table, SelectField<?>... fields) {
         return fetch(claz, table, null, fields);
+    }
+
+    public <E> List<E> fetchLive(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
+        return fetch(claz, table, table.onlyLive(cond), fields);
     }
 
     public <E> List<E> fetch(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
@@ -862,20 +862,20 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
         return fetchLive(mapper, table, null, fields);
     }
 
-    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, T table, SelectField<?>... fields) {
-        return fetchLive(mapper, table, null, fields);
-    }
-
-    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, T table, Condition cond, SelectField<?>... fields) {
-        return fetch(mapper, table, table.onlyLive(cond), fields);
-    }
-
     public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, SelectField<?>... fields) {
         return fetch(mapper, table, null, fields);
     }
 
+    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, T table, SelectField<?>... fields) {
+        return fetchLive(mapper, table, null, fields);
+    }
+
     public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, T table, SelectField<?>... fields) {
         return fetch(mapper, table, null, fields);
+    }
+
+    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, T table, Condition cond, SelectField<?>... fields) {
+        return fetch(mapper, table, table.onlyLive(cond), fields);
     }
 
     public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, T table, Condition cond, SelectField<?>... fields) {
