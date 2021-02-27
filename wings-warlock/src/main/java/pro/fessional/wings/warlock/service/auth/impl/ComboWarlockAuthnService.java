@@ -3,10 +3,12 @@ package pro.fessional.wings.warlock.service.auth.impl;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.wings.faceless.database.helper.ModifyAssert;
@@ -25,7 +27,7 @@ import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserLoginDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserLogin;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
-import pro.fessional.wings.warlock.service.auth.help.DetailsMapper;
+import pro.fessional.wings.warlock.service.auth.help.AuthnDetailsMapper;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -38,7 +40,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class WarlockAuthnServiceImpl implements WarlockAuthnService, InitializingBean {
+public class ComboWarlockAuthnService implements WarlockAuthnService, InitializingBean {
 
     @Setter(onMethod = @__({@Autowired}))
     private WinUserBasicDao winUserBasicDao;
@@ -59,21 +61,21 @@ public class WarlockAuthnServiceImpl implements WarlockAuthnService, Initializin
     private JournalService journalService;
 
     @Setter(onMethod = @__({@Autowired}))
-    private ObjectProvider<Saver> saverProvider;
+    private ObjectProvider<Combo> comboProvider;
 
     @Setter(onMethod = @__({@Autowired}))
     private PasssaltEncoder passsaltEncoder;
 
-    private List<Saver> orderedSavers = Collections.emptyList();
+    private List<Combo> saverCombos = Collections.emptyList();
 
     @Override
     public void afterPropertiesSet() {
-        orderedSavers = saverProvider.orderedStream().collect(Collectors.toList());
-        log.info("inject {} savers", orderedSavers.size());
+        saverCombos = comboProvider.orderedStream().collect(Collectors.toList());
+        log.info("inject {} saver combo", saverCombos.size());
     }
 
     @Override
-    public Details load(Enum<?> authType, String username) {
+    public Details load(@NotNull Enum<?> authType, String username) {
         final WinUserBasicTable user = winUserBasicDao.getAlias();
         final WinUserAnthnTable auth = winUserAnthnDao.getAlias();
         final String at = wingsAuthTypeParser.parse(authType);
@@ -101,7 +103,7 @@ public class WarlockAuthnServiceImpl implements WarlockAuthnService, Initializin
     public void auth(DefaultWingsUserDetails userDetails, Details details) {
         if (userDetails == null || details == null) return;
 
-        DetailsMapper.into(details, userDetails);
+        AuthnDetailsMapper.into(details, userDetails);
 
         switch (details.getStatus()) {
             case ACTIVE:
@@ -128,10 +130,10 @@ public class WarlockAuthnServiceImpl implements WarlockAuthnService, Initializin
 
     @Override
     @Transactional
-    public Details save(Enum<?> authType, String username, Object details) {
-        for (Saver saver : orderedSavers) {
-            if (saver.accept(authType, username, details)) {
-                final Details dt = saver.save(authType, username, details);
+    public Details save(@NotNull Enum<?> authType, String username, Object details) {
+        for (Combo combo : saverCombos) {
+            if (combo.accept(authType, username, details)) {
+                final Details dt = combo.save(authType, username, details);
                 if (dt != null) return dt;
             }
         }
@@ -139,7 +141,7 @@ public class WarlockAuthnServiceImpl implements WarlockAuthnService, Initializin
     }
 
     @Override
-    public void onSuccess(Enum<?> authType, long userId, String details) {
+    public void onSuccess(@NotNull Enum<?> authType, long userId, String details) {
         final WingsTerminalContext.Context tc = WingsTerminalContext.get();
         final WinUserLoginTable t = winUserLoginDao.getTable();
 
@@ -168,7 +170,7 @@ public class WarlockAuthnServiceImpl implements WarlockAuthnService, Initializin
     }
 
     @Override
-    public void onFailure(Enum<?> authType, String username) {
+    public void onFailure(@NotNull Enum<?> authType, String username) {
         if (username == null || username.isEmpty()) return;
 
         final String at = wingsAuthTypeParser.parse(authType);
@@ -252,12 +254,12 @@ public class WarlockAuthnServiceImpl implements WarlockAuthnService, Initializin
     }
 
     @Override
-    public void renew(Enum<?> authType, String username, Authn authn) {
+    public void renew(@NotNull Enum<?> authType, String username, Authn authn) {
         renew(authType, authn, username, null);
     }
 
     @Override
-    public void renew(Enum<?> authType, long userId, Authn authn) {
+    public void renew(@NotNull Enum<?> authType, long userId, Authn authn) {
         renew(authType, authn, null, userId);
     }
 
@@ -320,5 +322,16 @@ public class WarlockAuthnServiceImpl implements WarlockAuthnService, Initializin
                 .execute();
 
         ModifyAssert.one(af, "failed to renew auth-type={}, userId={}, username={}", at, userId, username);
+    }
+
+
+    // /////
+    public interface Combo extends Ordered {
+        /**
+         * 不需要事务,在外层事务内调用
+         */
+        Details save(@NotNull Enum<?> authType, String username, Object details);
+
+        boolean accept(@NotNull Enum<?> authType, String username, Object details);
     }
 }

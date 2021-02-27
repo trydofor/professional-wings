@@ -1,7 +1,6 @@
 package pro.fessional.wings.slardar.security;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author trydofor
@@ -14,7 +13,7 @@ public interface WingsAuthTypeParser {
      * @param authType authType
      * @return 枚举类
      */
-    @Nullable
+    @NotNull
     Enum<?> parse(String authType);
 
     /**

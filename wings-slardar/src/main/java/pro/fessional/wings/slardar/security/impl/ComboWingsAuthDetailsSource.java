@@ -1,7 +1,6 @@
 package pro.fessional.wings.slardar.security.impl;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.core.Ordered;
 import pro.fessional.mirana.func.Dcl;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
@@ -22,7 +21,7 @@ public class ComboWingsAuthDetailsSource implements WingsAuthDetailsSource<Objec
     private final Dcl dclCombos = Dcl.of(() -> combos.sort(Comparator.comparingInt(Combo::getOrder)));
 
     @Override
-    public Object buildDetails(@Nullable Enum<?> authType, @NotNull HttpServletRequest request) {
+    public Object buildDetails(@NotNull Enum<?> authType, @NotNull HttpServletRequest request) {
         dclCombos.runIfDirty();
         for (Combo<?> cb : combos) {
             final Object d = cb.buildDetails(authType, request);
@@ -51,6 +50,6 @@ public class ComboWingsAuthDetailsSource implements WingsAuthDetailsSource<Objec
          * @param request  request
          * @return details or null
          */
-        T buildDetails(@Nullable Enum<?> authType, @NotNull HttpServletRequest request);
+        T buildDetails(@NotNull Enum<?> authType, @NotNull HttpServletRequest request);
     }
 }

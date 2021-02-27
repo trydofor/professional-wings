@@ -3,7 +3,6 @@ package pro.fessional.wings.slardar.security.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.core.Ordered;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MimeType;
@@ -30,7 +29,7 @@ public class ComboWingsAuthPageHandler implements WingsAuthPageHandler {
                                                               .build();
 
     @Override
-    public ResponseEntity<?> response(@Nullable Enum<?> authType, @Nullable MimeType mimeType, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
+    public ResponseEntity<?> response(@NotNull Enum<?> authType, @Nullable MimeType mimeType, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         dclCombos.runIfDirty();
         for (Combo combo : combos) {
             ResponseEntity<?> res = combo.response(authType, mimeType, request, response);
@@ -61,6 +60,6 @@ public class ComboWingsAuthPageHandler implements WingsAuthPageHandler {
          * @param response response
          * @return null 如果不能处理
          */
-        ResponseEntity<?> response(@Nullable Enum<?> authType, @Nullable MimeType mimeType, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response);
+        ResponseEntity<?> response(@NotNull Enum<?> authType, @Nullable MimeType mimeType, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response);
     }
 }

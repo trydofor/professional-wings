@@ -1,4 +1,4 @@
-package pro.fessional.wings.warlock.security.events;
+package pro.fessional.wings.warlock.security.listener;
 
 import com.alibaba.fastjson.JSON;
 import lombok.Setter;

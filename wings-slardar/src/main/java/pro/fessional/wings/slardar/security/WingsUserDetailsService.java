@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import pro.fessional.mirana.data.Null;
 
 /**
  * 支持验证类型的，当load*出现UsernameNotFoundException时，尝试saveUserByDetail
@@ -25,20 +26,19 @@ public interface WingsUserDetailsService extends UserDetailsService {
     @Override
     @NotNull
     default UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return loadUserByUsername(username, null, null);
+        return loadUserByUsername(username, Null.Enm, null);
     }
-
 
     /**
      * 按登录类型加载 UserDetails
      *
-     * @param username type下身份唯一辨识，用户名，手机号，邮箱，userId等
-     * @param authType 验证类型，默认null
-     * @param authDetail   Authentication.getDetails
+     * @param username   type下身份唯一辨识，用户名，手机号，邮箱，userId等
+     * @param authType   验证类型，Null.Enm
+     * @param authDetail Authentication.getDetails
      * @return UserDetails
      * @throws UsernameNotFoundException UsernameNotFound
      * @see Authentication#getDetails
      */
     @NotNull
-    UserDetails loadUserByUsername(String username, @Nullable Enum<?> authType, @Nullable Object authDetail) throws UsernameNotFoundException;
+    UserDetails loadUserByUsername(String username, @NotNull Enum<?> authType, @Nullable Object authDetail) throws UsernameNotFoundException;
 }

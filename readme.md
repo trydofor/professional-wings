@@ -327,6 +327,12 @@ src/**/spring - spring有个配置
 * 接口默认实现为`Default*`
 * 适配器类为`*Adapter`
 
+### 0.2.13.有关事件Event约定
+
+* 内部Event，内部Publish，内部Listen
+* 能内部Listen的，就不用外部的Subscribe。
+* 能同步的就不用异步
+
 ## 0.3.技术选型
 
 技术选型，遵循Unix哲学，主要回答，`为什么`和`为什么不？`
@@ -601,3 +607,9 @@ wings随时跟进升级spring boot的最新版本，目的是为了测试shardin
 
 * 临时用 ssh - `ssh -R 9988:127.0.0.1:8080 user@remote`
 * 持久用 frp - https://gofrp.org/docs/
+
+### 14.占位符
+
+* 编码中，autowired StringValueResolver
+* properties配置中`${VAR}`
+* @Value和@RequestMapping中`${VAR}`

@@ -1,8 +1,8 @@
 package pro.fessional.wings.slardar.security.impl;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.cast.EnumConvertor;
+import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 
 import java.util.HashMap;
@@ -34,8 +34,9 @@ public class DefaultWingsAuthTypeParser implements WingsAuthTypeParser {
     }
 
     @Override
-    public @Nullable Enum<?> parse(String at) {
-        return strEnumMap.get(at);
+    public @NotNull Enum<?> parse(String at) {
+        final Enum<?> en = strEnumMap.get(at);
+        return en == null ? Null.Enm : en;
     }
 
     @Override

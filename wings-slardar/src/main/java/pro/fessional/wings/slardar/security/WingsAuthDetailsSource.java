@@ -1,10 +1,10 @@
 package pro.fessional.wings.slardar.security;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import pro.fessional.mirana.data.Null;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,7 +20,7 @@ public interface WingsAuthDetailsSource<T> extends AuthenticationDetailsSource<H
 
     @Override
     default T buildDetails(@NotNull HttpServletRequest request) {
-        return buildDetails(null, request);
+        return buildDetails(Null.Enm, request);
     }
 
     /**
@@ -30,6 +30,6 @@ public interface WingsAuthDetailsSource<T> extends AuthenticationDetailsSource<H
      * @param request  request
      * @return detail or null
      */
-    T buildDetails(@Nullable Enum<?> authType, @NotNull HttpServletRequest request);
+    T buildDetails(@NotNull Enum<?> authType, @NotNull HttpServletRequest request);
 
 }

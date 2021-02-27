@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 import static pro.fessional.mirana.cast.EnumConvertor.str2Enum;
@@ -88,29 +90,6 @@ public class WarlockSecurityProp {
     public static final String Key$permitAll = Key + ".permit-all";
 
     /**
-     * 是否根据auth-detail自动创建用户
-     *
-     * @see #Key$autoCreateUserAuto
-     */
-    private boolean autoCreateUserAuto = true;
-    public static final String Key$autoCreateUserAuto = Key + ".auto-create-user-auto";
-
-    /**
-     * 最大连续失败次数，到达后锁账户
-     *
-     * @see #Key$maxFailedCount
-     */
-    private int maxFailedCount = 5;
-    public static final String Key$maxFailedCount = Key + ".max-failed-count";
-
-    /**
-     * 创建用户时，默认凭证过期时间
-     * @see #Key$expiredDuration
-     */
-    private Duration expiredDuration = Duration.ofDays(1000);
-    public static final String Key$expiredDuration = Key + ".expired-duration";
-
-    /**
      * 支持的验证类型， enum全路径，一对一，否则反向解析有问题
      *
      * @see #Key$authType
@@ -118,10 +97,78 @@ public class WarlockSecurityProp {
     private Map<String, String> authType = new HashMap<>();
     public static final String Key$authType = Key + ".auth-type";
 
+
+    /**
+     * 支持Nonce的验证类型
+     *
+     * @see #Key$nonceAuthType
+     */
+    private Set<String> nonceAuthType = Collections.emptySet();
+    public static final String Key$nonceAuthType = Key + ".nonce-auth-type";
+
+    /**
+     * 默认的cache-manager bean name，同wings.slardar.cache.primary
+     *
+     * @see #Key$nonceCacheManager
+     * @see pro.fessional.wings.slardar.cache.WingsCache.Manager
+     */
+    private String nonceCacheManager = "MemoryCacheManager";
+    public static final String Key$nonceCacheManager = Key + ".nonce-cache-manager";
+
+    /**
+     * 默认使用的缓存leve
+     *
+     * @see #Key$nonceCacheLevel
+     */
+    private String nonceCacheLevel = "service";
+    public static final String Key$nonceCacheLevel = Key + ".nonce-cache-level";
+
+
+    /**
+     * 支持自动注册用户的验证类型
+     *
+     * @see #Key$autoregAuthType
+     */
+    private Set<String> autoregAuthType = Collections.emptySet();
+    public static final String Key$autoregAuthType = Key + ".autoreg-auth-type";
+
+    /**
+     * 最大连续失败次数，到达后锁账户
+     *
+     * @see #Key$autoregMaxFailed
+     */
+    private int autoregMaxFailed = 5;
+    public static final String Key$autoregMaxFailed = Key + ".autoreg-max-failed";
+
+    /**
+     * 创建用户时，默认凭证过期时间
+     *
+     * @see #Key$autoregExpired
+     */
+    private Duration autoregExpired = Duration.ofDays(1000);
+    public static final String Key$autoregExpired = Key + ".autoreg-expired";
+
+
     // ////
     public Map<String, Enum<?>> mapAuthTypeEnum() {
         return authType.entrySet()
                        .stream()
                        .collect(toMap(Map.Entry::getKey, en -> str2Enum(en.getValue())));
+    }
+
+    public Set<Enum<?>> mapAutoregAuthEnum() {
+        return autoregAuthType.stream().map(it -> {
+            final String s = authType.get(it);
+            if (s == null) throw new IllegalArgumentException("not found auth-type=" + it);
+            return str2Enum(s);
+        }).collect(Collectors.toSet());
+    }
+
+    public Set<Enum<?>> mapNonceAuthEnum() {
+        return nonceAuthType.stream().map(it -> {
+            final String s = authType.get(it);
+            if (s == null) throw new IllegalArgumentException("not found auth-type=" + it);
+            return str2Enum(s);
+        }).collect(Collectors.toSet());
     }
 }

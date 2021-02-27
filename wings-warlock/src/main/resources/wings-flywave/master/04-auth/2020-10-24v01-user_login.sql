@@ -54,7 +54,8 @@ CREATE TABLE `win_user_login` (
 -- -----------
 
 INSERT IGNORE INTO `sys_light_sequence` (`seq_name`, `block_id`, `next_val`, `step_val`, `comments`)
-VALUES ('win_user_basic', 0, 1000, 100, '###为静态用户');
+VALUES ('win_user_basic', 0, 1000, 100, '###为静态用户'),
+       ('win_user_anthn', 0, 1000, 100, '###为静态信息');
 
 --
 REPLACE INTO `sys_constant_enum` (`id`, `type`, `code`, `hint`, `info`)
@@ -78,3 +79,5 @@ VALUES (0, NOW(3), 0, 'nobody', 1200103, '', 'zh_CN', 1010201, '系统用户，�
        (1, NOW(3), 0, 'root', 1200103, '', 'zh_CN', 1010201, '超级用户，拥有所以权限', 1200202),
        (2, NOW(3), 0, 'daemon', 1200103, '', 'zh_CN', 1010201, '系统用户，执行后台任务', 1200207);
 
+INSERT INTO `win_user_anthn`(`id`, `create_dt`, `commit_id`, `user_id`, `auth_type`, `username`, `password`, `passsalt`, `expired_dt`)
+VALUES (1, NOW(3), 0, 1, 'username', 'root', '{never}ruDz1R0qKfa4wnlGye9Axngpa5O2wLSVd2O1McAtRJ6TfhisMcbeonEorm9V', 'xaUcoFCyLLnkaimmySpVB7KK6xxE8BFi1xrLafaD', '2999-09-09');

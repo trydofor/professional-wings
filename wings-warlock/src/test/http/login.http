@@ -6,3 +6,12 @@ GET {{host}}/auth/github/login-page.html
 
 ### github login-page
 GET {{host}}/auth/github/login-page.json
+
+### get root nonce
+POST {{host}}/auth/console-nonce.json
+
+### root nonce login
+POST {{host}}/auth/username/login.json
+Content-Type: application/x-www-form-urlencoded
+
+username=root&password=KfM2gd52RdJ4f97B

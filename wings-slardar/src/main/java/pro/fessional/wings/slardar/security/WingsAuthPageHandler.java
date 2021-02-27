@@ -1,7 +1,6 @@
 package pro.fessional.wings.slardar.security;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MimeType;
 
@@ -25,6 +24,6 @@ public interface WingsAuthPageHandler {
      * @param response response
      * @see org.springframework.http.MediaType
      */
-    ResponseEntity<?> response(@Nullable Enum<?> authType, MimeType mimeType, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response);
+    ResponseEntity<?> response(@NotNull Enum<?> authType, MimeType mimeType, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response);
 
 }

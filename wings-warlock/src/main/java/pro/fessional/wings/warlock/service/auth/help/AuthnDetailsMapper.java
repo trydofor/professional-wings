@@ -14,9 +14,9 @@ import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
  * @since 2021-02-23
  */
 @Mapper
-public interface DetailsMapper {
+public interface AuthnDetailsMapper {
 
-    DetailsMapper INSTANCE = Mappers.getMapper(DetailsMapper.class);
+    AuthnDetailsMapper INSTANCE = Mappers.getMapper(AuthnDetailsMapper.class);
 
     /**
      * create new DefaultWingsUserDetails by Details

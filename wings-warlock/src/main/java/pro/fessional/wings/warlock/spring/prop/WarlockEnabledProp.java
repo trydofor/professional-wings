@@ -66,20 +66,19 @@ public class WarlockEnabledProp {
     public static final String Key$comboJustAuthUserDetails = Key + ".combo-just-auth-user-details";
 
     /**
-     * 是否注入 CommonUserDetailsCombo
+     * 是否注入 NonceUserDetailsCombo
      *
-     * @see #Key$comboCommonUserDetails
+     * @see #Key$comboNonceUserDetails
      */
-    private boolean comboCommonUserDetails = true;
-    public static final String Key$comboCommonUserDetails = Key + ".combo-common-user-details";
-
+    private boolean comboNonceUserDetails = true;
+    public static final String Key$comboNonceUserDetails = Key + ".combo-nonce-user-details";
 
     /**
-     * 是否注入 JustAuthUserAuthnSaver
+     * 是否注入 JustAuthUserAuthnCombo
      *
-     * @see #Key$saverJustAuthUserAuthn
+     * @see #Key$comboJustAuthUserAuthn
      */
-    private boolean saverJustAuthUserAuthn = true;
-    public static final String Key$saverJustAuthUserAuthn = Key + ".saver-just-auth-user-authn";
+    private boolean comboJustAuthUserAuthn = true;
+    public static final String Key$comboJustAuthUserAuthn = Key + ".combo-just-auth-user-authn";
 
 }

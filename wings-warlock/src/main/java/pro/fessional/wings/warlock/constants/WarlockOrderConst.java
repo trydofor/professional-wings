@@ -5,8 +5,8 @@ package pro.fessional.wings.warlock.constants;
  * @since 2021-02-19
  */
 public interface WarlockOrderConst {
-    int AuthDetailsCombo = 1000;
-    int AuthPageCombo = 2000;
-    int UserDetailsCombo = 3000;
-    int UserAuthnSaver = 4000;
+    int AuthDetailsCombo = 10000;
+    int AuthPageCombo = 10000;
+    int UserDetailsCombo = 10000;
+    int UserAuthnCombo = 10000;
 }

@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ListAllLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
 
-    public static final int ORDER = WarlockOrderConst.AuthPageCombo + 90;
+    public static final int ORDER = WarlockOrderConst.AuthPageCombo + 10_000;
 
     @Setter(onMethod = @__({@Autowired}))
     private WarlockSecurityProp warlockSecurityProp;
@@ -30,7 +30,7 @@ public class ListAllLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
     private int order = ORDER;
 
     @Override
-    public ResponseEntity<?> response(@Nullable Enum<?> authType, @Nullable MimeType mimeType, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
+    public ResponseEntity<?> response(@NotNull Enum<?> authType, @Nullable MimeType mimeType, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         return ResponseEntity.ok().body(R.okData(warlockSecurityProp.getAuthType().keySet()));
     }
 }

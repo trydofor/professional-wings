@@ -1,10 +1,11 @@
 package pro.fessional.wings.slardar.security.impl;
 
+import org.jetbrains.annotations.NotNull;
+import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.WingsAuthTypeSource;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 /**
  * 支持 header，param，AntPath (/login/*.json)
@@ -51,7 +52,7 @@ public class DefaultWingsAuthTypeSource implements WingsAuthTypeSource {
     }
 
     @Override
-    public Enum<?> buildAuthType(HttpServletRequest request) {
+    public @NotNull Enum<?> buildAuthType(HttpServletRequest request) {
         String name = null;
         if (paraName != null) {
             name = request.getParameter(paraName);
@@ -63,11 +64,12 @@ public class DefaultWingsAuthTypeSource implements WingsAuthTypeSource {
             name = extractVar(request.getRequestURI(), pathHead, pathTail);
         }
 
+        Enum<?> nv = null;
         if (name != null) {
-            return authTypes.parse(name);
+            nv = authTypes.parse(name);
         }
 
-        return null;
+        return nv == null ? Null.Enm : nv;
     }
 
     public String extractVar(String uri, int head, int tail) {

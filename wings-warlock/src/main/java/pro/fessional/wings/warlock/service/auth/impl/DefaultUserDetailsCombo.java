@@ -1,16 +1,21 @@
-package pro.fessional.wings.warlock.security.userdetails;
+package pro.fessional.wings.warlock.service.auth.impl;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import me.zhyd.oauth.model.AuthUser;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthzService;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * JustAuth UserDetailsService，不存在用户时，自动创建
@@ -18,15 +23,17 @@ import pro.fessional.wings.warlock.service.auth.WarlockAuthzService;
  * @author trydofor
  * @since 2021-02-22
  */
-@Getter
-@Setter
 @Slf4j
-public class CommonUserDetailsCombo implements ComboWingsUserDetailsService.Combo<DefaultWingsUserDetails> {
+@Service
+public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Combo<DefaultWingsUserDetails> {
 
-    public static final int ORDER = WarlockOrderConst.UserDetailsCombo + 1000;
+    public static final int ORDER = WarlockOrderConst.UserDetailsCombo + 10_000;
 
+    @Getter
+    @Setter
     private int order = ORDER;
-    private boolean autoCreate = true;
+
+    private final Set<Enum<?>> autoRegisterType = new HashSet<>();
 
     @Setter(onMethod = @__({@Autowired}))
     private WarlockAuthnService warlockAuthnService;
@@ -34,21 +41,20 @@ public class CommonUserDetailsCombo implements ComboWingsUserDetailsService.Comb
     private WarlockAuthzService warlockAuthzService;
 
     @Override
-    public DefaultWingsUserDetails loadOrNull(String username, @Nullable Enum<?> authType, @Nullable Object authDetail) {
+    public DefaultWingsUserDetails loadOrNull(String username, @NotNull  Enum<?> authType, @Nullable Object authDetail) {
         if (!accept(authType)) {
             return null;
         }
 
-        username = judgeUsername(username, authType, authDetail);
+        WarlockAuthnService.Details dt = doLoad(authType, username, authDetail);
 
-        WarlockAuthnService.Details dt = warlockAuthnService.load(authType, username);
-        if (dt == null && autoCreate) {
+        if (dt == null && autoRegisterType.contains(authType)) {
             log.info("auto-create user by auth-user, username={}, auth-type={}", username, authType);
             dt = warlockAuthnService.save(authType, username, authDetail);
         }
 
         if (dt == null) {
-            log.info("can not load user by username={}, auth-type={}, auto-create={}", username, authType, autoCreate);
+            log.info("can not load user by username={}, auth-type={}", username, authType);
             return null;
         }
 
@@ -60,18 +66,40 @@ public class CommonUserDetailsCombo implements ComboWingsUserDetailsService.Comb
         return wud;
     }
 
+    /**
+     * 是否能处理，默认true
+     *
+     * @param authType 类型
+     * @return true
+     */
     protected boolean accept(Enum<?> authType) {
         return true;
     }
 
+    /**
+     * 是否验证过，默认false
+     *
+     * @param authType 类型
+     * @return false
+     */
     protected boolean authed(Enum<?> authType) {
         return false;
     }
 
-    protected String judgeUsername(String username, @Nullable Enum<?> authType, @Nullable Object authDetail) {
-        if (username.isEmpty() && authDetail instanceof AuthUser) {
-            username = ((AuthUser) authDetail).getUuid();
-        }
-        return username;
+    /**
+     * 加载信息
+     */
+    @Nullable
+    protected WarlockAuthnService.Details doLoad(@NotNull Enum<?> authType, String username, @Nullable Object authDetail) {
+        return warlockAuthnService.load(authType, username);
+    }
+
+    ///
+    public void addAutoRegisterType(Enum<?> en) {
+        autoRegisterType.add(en);
+    }
+
+    public void addAutoRegisterType(Collection<? extends Enum<?>> en) {
+        autoRegisterType.addAll(en);
     }
 }

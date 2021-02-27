@@ -8,7 +8,7 @@ package pro.fessional.wings.slardar.cache;
  */
 public interface WingsCache {
 
-    String Splitter = ":";
+    String Joiner = ":";
 
     class Manager {
         /**
@@ -25,18 +25,22 @@ public interface WingsCache {
         /**
          * 程序级，程序或服务运行期间
          */
-        public static final String Forever = "program" + Splitter;
+        public static final String Forever = "program" + Joiner;
         /**
          * 通常，1天
          */
-        public static final String General = "general" + Splitter;
+        public static final String General = "general" + Joiner;
         /**
          * 服务级，1小时
          */
-        public static final String Service = "service" + Splitter;
+        public static final String Service = "service" + Joiner;
         /**
          * 会话级，10分钟
          */
-        public static final String Session = "session" + Splitter;
+        public static final String Session = "session" + Joiner;
+
+        public static String join(String... part) {
+            return String.join(Joiner, part);
+        }
     }
 }

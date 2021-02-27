@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.security.WingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 
@@ -25,7 +26,7 @@ public class LoginController {
 
     @RequestMapping("/auth/login-page.json")
     public ResponseEntity<?> loginPageDefault(HttpServletRequest request, HttpServletResponse response) {
-        return wingsAuthPageHandler.response(null, MediaType.APPLICATION_JSON, request, response);
+        return wingsAuthPageHandler.response(Null.Enm, MediaType.APPLICATION_JSON, request, response);
     }
 
     @RequestMapping("/auth/{authType}/login-page.html")

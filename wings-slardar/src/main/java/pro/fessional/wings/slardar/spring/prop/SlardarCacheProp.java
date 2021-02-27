@@ -7,7 +7,7 @@ import pro.fessional.wings.slardar.cache.WingsCache;
 import java.util.HashMap;
 import java.util.Map;
 
-import static pro.fessional.wings.slardar.cache.WingsCache.Splitter;
+import static pro.fessional.wings.slardar.cache.WingsCache.Joiner;
 
 /**
  * @author trydofor
@@ -75,13 +75,13 @@ public class SlardarCacheProp {
     }
 
     public static String wildcard(String level) {
-        return level + Splitter + "*";
+        return WingsCache.Level.join(level, "*");
     }
 
     public static boolean inLevel(String name, String level) {
         if (name == null || level == null) return false;
         final int len = level.length();
         return name.regionMatches(true, 0, level, 0, len)
-                && name.regionMatches(true, len, Splitter, 0, Splitter.length());
+                && name.regionMatches(true, len, Joiner, 0, Joiner.length());
     }
 }

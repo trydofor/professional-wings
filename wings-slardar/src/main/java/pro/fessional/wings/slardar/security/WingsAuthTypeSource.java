@@ -1,6 +1,6 @@
 package pro.fessional.wings.slardar.security;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,6 +15,6 @@ public interface WingsAuthTypeSource {
      * @param request HttpServletRequest
      * @return auth type
      */
-    @Nullable
+    @NotNull
     Enum<?> buildAuthType(HttpServletRequest request);
 }

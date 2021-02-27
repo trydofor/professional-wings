@@ -26,8 +26,8 @@
       <option name="JAVA_CODE" value="true" />
     </context>
   </template>
-  <template name="wgpp" value="public static final String Key$$$FD$ = Key + &quot;.$FK$&quot;;" description="wings prop file" toReformat="false" toShortenFQNames="true">
-    <variable name="FD" expression="clipboard()" defaultValue="" alwaysStopAt="false" />
+  <template name="wgpp" value="/**&#10; * @see #Key$$$FD$&#10; */&#10;private String $FD$ = &quot;&quot;;&#10;public static final String Key$$$FD$ = Key + &quot;.$FK$&quot;;" description="wings prop file" toReformat="false" toShortenFQNames="true">
+    <variable name="FD" expression="camelCase(clipboard())" defaultValue="" alwaysStopAt="false" />
     <variable name="FK" expression="lowercaseAndDash(FD)" defaultValue="" alwaysStopAt="false" />
     <context>
       <option name="JAVA_DECLARATION" value="true" />

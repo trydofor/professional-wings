@@ -2,7 +2,8 @@ package pro.fessional.wings.warlock.service.auth;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.core.Ordered;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
@@ -41,15 +42,17 @@ public interface WarlockAuthnService {
         Renew
     }
 
-    Details load(Enum<?> authType, String username);
+    @Nullable
+    Details load(@NotNull Enum<?> authType, String username);
 
-    Details save(Enum<?> authType, String username, Object details);
+    @Nullable
+    Details save(@NotNull Enum<?> authType, String username, Object details);
 
     void auth(DefaultWingsUserDetails userDetails, Details details);
 
-    void onSuccess(Enum<?> authType, long userId, String details);
+    void onSuccess(@NotNull Enum<?> authType, long userId, String details);
 
-    void onFailure(Enum<?> authType, String username);
+    void onFailure(@NotNull Enum<?> authType, String username);
 
     @Data
     @Builder
@@ -63,20 +66,10 @@ public interface WarlockAuthnService {
     /**
      * 设置密码，有限期，错误计数，连错上限
      */
-    void renew(Enum<?> authType, String username, Authn authn);
+    void renew(@NotNull Enum<?> authType, String username, Authn authn);
 
     /**
      * 设置密码，有限期，错误计数，连错上限
      */
-    void renew(Enum<?> authType, long userId, Authn authn);
-
-    // /////
-    interface Saver extends Ordered {
-        /**
-         * 不需要事务,在外层事务内调用
-         */
-        Details save(Enum<?> authType, String username, Object details);
-
-        boolean accept(Enum<?> authType, String username, Object details);
-    }
+    void renew(@NotNull Enum<?> authType, long userId, Authn authn);
 }

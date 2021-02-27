@@ -3,7 +3,9 @@ package pro.fessional.wings.warlock.service.auth.impl;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
@@ -27,9 +29,10 @@ import java.util.Locale;
  * @author trydofor
  * @since 2021-02-25
  */
-public class CommonUserAuthnSaver implements WarlockAuthnService.Saver {
+@Service
+public class DefaultUserAuthnCombo implements ComboWarlockAuthnService.Combo {
 
-    public static final int ORDER = WarlockOrderConst.UserAuthnSaver + 1000;
+    public static final int ORDER = WarlockOrderConst.UserAuthnCombo + 10_000;
 
     @Getter
     @Setter
@@ -57,7 +60,7 @@ public class CommonUserAuthnSaver implements WarlockAuthnService.Saver {
     private PasssaltEncoder passsaltEncoder;
 
     @Override
-    public WarlockAuthnService.Details save(Enum<?> authType, String username, Object details) {
+    public WarlockAuthnService.Details save(@NotNull Enum<?> authType, String username, Object details) {
 
         final String at = wingsAuthTypeParser.parse(authType);
         final WinUserBasicTable tu = winUserBasicDao.getTable();
@@ -97,8 +100,8 @@ public class CommonUserAuthnSaver implements WarlockAuthnService.Saver {
             auth.setFailedMax(an.getMaxFailed());
             auth.setPassword(an.getPassword());
         } else {
-            seconds = warlockSecurityProp.getExpiredDuration().getSeconds();
-            auth.setFailedMax(warlockSecurityProp.getMaxFailedCount());
+            seconds = warlockSecurityProp.getAutoregExpired().getSeconds();
+            auth.setFailedMax(warlockSecurityProp.getAutoregMaxFailed());
             auth.setPassword(RandCode.human(16));
         }
         auth.setPasssalt(passsaltEncoder.salt(60));
@@ -122,14 +125,14 @@ public class CommonUserAuthnSaver implements WarlockAuthnService.Saver {
         return result;
     }
 
-    protected void beforeInsert(WinUserBasic pojo, Enum<?> authType, String username, Object details) {
+    protected void beforeInsert(WinUserBasic pojo, @NotNull Enum<?> authType, String username, Object details) {
     }
 
-    protected void beforeInsert(WinUserAnthn pojo, Enum<?> authType, String username, Object details) {
+    protected void beforeInsert(WinUserAnthn pojo, @NotNull Enum<?> authType, String username, Object details) {
     }
 
     @Override
-    public boolean accept(Enum<?> authType, String username, Object details) {
+    public boolean accept(@NotNull Enum<?> authType, String username, Object details) {
         return false;
     }
 }

@@ -47,7 +47,6 @@ import me.zhyd.oauth.request.AuthWeChatOpenRequest;
 import me.zhyd.oauth.request.AuthWeiboRequest;
 import me.zhyd.oauth.request.AuthXmlyRequest;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 
@@ -64,13 +63,14 @@ import java.util.Map;
 @Slf4j
 public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo<AuthUser> {
 
-    public static final int ORDER = WarlockOrderConst.AuthDetailsCombo + 10;
+    public static final int ORDER = WarlockOrderConst.AuthDetailsCombo + 9_000;
+
     private Map<Enum<?>, AuthConfig> authConfigMap = Collections.emptyMap();
     private AuthStateCache authStateCache;
     private int order = ORDER;
 
     @Override
-    public AuthUser buildDetails(@Nullable Enum<?> authType, @NotNull HttpServletRequest request) {
+    public AuthUser buildDetails(@NotNull Enum<?> authType, @NotNull HttpServletRequest request) {
         AuthRequest ar = buildRequest(authType);
         if (ar == null) return null;
         AuthCallback callback = new AuthCallback();

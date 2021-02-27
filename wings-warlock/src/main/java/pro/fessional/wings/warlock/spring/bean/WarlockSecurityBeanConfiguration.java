@@ -7,11 +7,14 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cache.CacheManager;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.WingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
@@ -20,17 +23,17 @@ import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeParser;
-import pro.fessional.wings.warlock.security.events.WarlockFailedLoginListener;
-import pro.fessional.wings.warlock.security.events.WarlockSuccessLoginListener;
 import pro.fessional.wings.warlock.security.handler.LoginFailureHandler;
 import pro.fessional.wings.warlock.security.handler.LoginSuccessHandler;
 import pro.fessional.wings.warlock.security.handler.LogoutOkHandler;
+import pro.fessional.wings.warlock.security.listener.WarlockFailedLoginListener;
+import pro.fessional.wings.warlock.security.listener.WarlockSuccessLoginListener;
 import pro.fessional.wings.warlock.security.loginpage.JustAuthLoginPageCombo;
 import pro.fessional.wings.warlock.security.loginpage.ListAllLoginPageCombo;
-import pro.fessional.wings.warlock.security.userdetails.CommonUserDetailsCombo;
-import pro.fessional.wings.warlock.security.userdetails.JustAuthUserAuthnSaver;
+import pro.fessional.wings.warlock.security.userdetails.JustAuthUserAuthnCombo;
 import pro.fessional.wings.warlock.security.userdetails.JustAuthUserDetailsCombo;
-import pro.fessional.wings.warlock.service.auth.impl.CommonUserAuthnSaver;
+import pro.fessional.wings.warlock.security.userdetails.NonceUserDetailsCombo;
+import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
@@ -49,6 +52,9 @@ public class WarlockSecurityBeanConfiguration {
 
     @Setter(onMethod = @__({@Autowired}))
     private WarlockSecurityProp securityProp;
+
+    @Setter(onMethod = @__({@Autowired}))
+    private ApplicationContext applicationContext;
 
     @Bean
     @ConditionalOnMissingBean
@@ -109,17 +115,19 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboJustAuthUserDetails, havingValue = "true")
     public JustAuthUserDetailsCombo justAuthUserDetailsCombo() {
         logger.info("Wings conf justAuthUserDetailsCombo");
-        final JustAuthUserDetailsCombo combo = new JustAuthUserDetailsCombo();
-        combo.setAutoCreate(securityProp.isAutoCreateUserAuto());
-        return combo;
+        return new JustAuthUserDetailsCombo();
     }
 
     @Bean
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboCommonUserDetails, havingValue = "true")
-    public CommonUserDetailsCombo commonUserDetailsCombo() {
-        logger.info("Wings conf commonUserDetailsCombo");
-        final CommonUserDetailsCombo combo = new CommonUserDetailsCombo();
-        combo.setAutoCreate(securityProp.isAutoCreateUserAuto());
+    @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboNonceUserDetails, havingValue = "true")
+    public NonceUserDetailsCombo nonceUserDetailsCombo() {
+        logger.info("Wings conf nonceUserDetailsCombo");
+        final NonceUserDetailsCombo combo = new NonceUserDetailsCombo();
+        combo.setAcceptNonceType(securityProp.mapNonceAuthEnum());
+        final String cn = WingsCache.Level.join(securityProp.getNonceCacheLevel(), "NonceUserDetailsCombo");
+        combo.setCacheName(cn);
+        final CacheManager cm = applicationContext.getBean(securityProp.getNonceCacheManager(), CacheManager.class);
+        combo.setCacheManager(cm);
         return combo;
     }
 
@@ -150,16 +158,10 @@ public class WarlockSecurityBeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$saverJustAuthUserAuthn, havingValue = "true")
-    public JustAuthUserAuthnSaver justAuthUserAuthnSaver() {
+    @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboJustAuthUserAuthn, havingValue = "true")
+    public JustAuthUserAuthnCombo justAuthUserAuthnCombo() {
         // autowired
-        return new JustAuthUserAuthnSaver();
-    }
-
-    @Bean
-    public CommonUserAuthnSaver commonUserAuthnSaver() {
-        // autowired
-        return new CommonUserAuthnSaver();
+        return new JustAuthUserAuthnCombo();
     }
 
     ///////// Listener /////////
@@ -173,5 +175,11 @@ public class WarlockSecurityBeanConfiguration {
     public WarlockFailedLoginListener warlockFailedLoginListener() {
         logger.info("Wings conf authSuccessListener");
         return new WarlockFailedLoginListener();
+    }
+
+    ///////
+    @Autowired
+    public void initDefaultUserDetailsCombo(DefaultUserDetailsCombo defaultUserDetailsCombo) {
+        defaultUserDetailsCombo.addAutoRegisterType(securityProp.mapAutoregAuthEnum());
     }
 }
