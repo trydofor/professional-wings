@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
-import pro.fessional.wings.slardar.security.WingsUidSuccessToken;
+import pro.fessional.wings.slardar.security.WingsUidPrincipalToken;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultPasssaltEncoder;
@@ -130,7 +130,7 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
         // super use authoritiesMapper
         Authentication result = super.createSuccessAuthentication(principal, authn, details);
         if (origDetails instanceof WingsUserDetails) {
-            return new WingsUidSuccessToken((WingsUserDetails) origDetails, result.getAuthorities());
+            return new WingsUidPrincipalToken((WingsUserDetails) origDetails, result.getAuthorities());
         } else {
             return result;
         }

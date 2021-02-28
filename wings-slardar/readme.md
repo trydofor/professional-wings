@@ -232,10 +232,28 @@ header的名字和cookie同名，默认是SESSION。
 
 * SessionRepositoryFilter
 * UsernamePasswordAuthenticationFilter
+* RememberMeAuthenticationFilter
+* SwitchUserFilter
+* FilterComparator
 
 类似 DigestAuthenticationFilter
 
 RunAsManager - 有意思，调查一下，好像可以马甲
+
+Session和SecurityContext的调用关系如下
+``` plantuml
+@startuml
+SessionRepositoryFilter -> SessionRepositoryRequestWrapper
+SecurityContextPersistenceFilter -> SecurityContextRepository: loadContext()
+SecurityContextRepository -> SessionRepositoryRequestWrapper: getSession()
+SecurityContextPersistenceFilter -> SecurityContextHolder: setContext()
+SecurityContextPersistenceFilter -> FilterChain: doFilter()
+SecurityContextPersistenceFilter -> SecurityContextHolder: clearContext()
+SecurityContextPersistenceFilter -> SecurityContextRepository: saveContext()
+SessionManagementFilter -> SecurityContextRepository: containsContext()
+SessionManagementFilter -> SecurityContextRepository: saveContext()
+@enduml
+```
 
 ### 3.4.1.区分cookie，使用别名
 

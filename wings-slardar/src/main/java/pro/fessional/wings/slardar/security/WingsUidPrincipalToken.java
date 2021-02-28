@@ -8,26 +8,27 @@ import java.util.Collection;
 /**
  * 认证成功，wings中应该只有此token，
  * Details 应更是 WingsUserDetails。
- * Principal 为 userId
+ * Principal 为 userId，保证session控制
  *
+ * @see WingsUserDetails
  * @author trydofor
  * @since 2021-02-25
  */
-public class WingsUidSuccessToken extends AbstractAuthenticationToken {
+public class WingsUidPrincipalToken extends AbstractAuthenticationToken {
 
     private static final long serialVersionUID = 1979L;
 
     private final long userId;
 
-    public WingsUidSuccessToken(WingsUserDetails details, Collection<? extends GrantedAuthority> authorities) {
+    public WingsUidPrincipalToken(WingsUserDetails details, Collection<? extends GrantedAuthority> authorities) {
         this(details.getUserId(), details, authorities);
     }
 
-    public WingsUidSuccessToken(long userId, Collection<? extends GrantedAuthority> authorities) {
+    public WingsUidPrincipalToken(long userId, Collection<? extends GrantedAuthority> authorities) {
         this(userId, null, authorities);
     }
 
-    public WingsUidSuccessToken(long userId, Object details, Collection<? extends GrantedAuthority> authorities) {
+    public WingsUidPrincipalToken(long userId, Object details, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         super.setDetails(details);
         super.setAuthenticated(true);

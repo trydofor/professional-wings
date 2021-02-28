@@ -17,9 +17,4 @@ public enum WarlockAuthType {
      * 以邮件为用户名
      */
     EMAIL,
-
-    /**
-     * 以API_KEY作为用户名
-     */
-    API_KEY,
 }
