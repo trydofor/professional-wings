@@ -2,11 +2,10 @@ package pro.fessional.wings.warlock.project;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator;
 import pro.fessional.wings.faceless.codegen.ConstantEnumJdbcLoader;
+import pro.fessional.wings.faceless.codegen.JdbcDataLoadHelper;
 
-import javax.sql.DataSource;
 import java.util.List;
 
 /**
@@ -23,18 +22,8 @@ public class Warlock2EnumGenerator {
     private String targetDir = "pro.fessional.wings.warlock.enums.autogen";
 
     public void gen(String jdbc, String user, String pass) {
-        final ConstantEnumJdbcLoader loader = ConstantEnumJdbcLoader.use(jdbc, user, pass);
-        gen(loader.load());
-    }
-
-    public void gen(JdbcTemplate jdbcTemplate) {
-        final ConstantEnumJdbcLoader loader = ConstantEnumJdbcLoader.use(jdbcTemplate);
-        gen(loader.load());
-    }
-
-    public void gen(DataSource dataSource) {
-        final ConstantEnumJdbcLoader loader = ConstantEnumJdbcLoader.use(dataSource);
-        gen(loader.load());
+        final JdbcDataLoadHelper helper = JdbcDataLoadHelper.use(jdbc, user, pass);
+        gen(ConstantEnumJdbcLoader.load(helper));
     }
 
     public void gen(List<ConstantEnumGenerator.ConstantEnum> enumItems) {

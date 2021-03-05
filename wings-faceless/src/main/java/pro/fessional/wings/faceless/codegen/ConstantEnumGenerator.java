@@ -3,12 +3,12 @@ package pro.fessional.wings.faceless.codegen;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pro.fessional.meepo.Meepo;
 import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.mirana.pain.IORuntimeException;
+import pro.fessional.mirana.text.CaseSwitcher;
 import pro.fessional.wings.faceless.enums.templet.ConstantEnumTemplate;
 
 import java.io.File;
@@ -188,7 +188,7 @@ public class ConstantEnumGenerator {
                     .findFirst()
                     .orElseGet(() -> {throw new IllegalStateException("failed to find super enum");});
 
-            String enumClass = javaClass(type);
+            String enumClass = CaseSwitcher.pascal(type);
 
             List<Map<String, String>> items = new ArrayList<>(vals.size());
 
@@ -249,22 +249,5 @@ public class ConstantEnumGenerator {
 
     private static boolean isSuper(ConstantEnum it) {
         return it.getId() % 100 == 0;
-    }
-
-    @NotNull
-    private static String javaClass(String type) {
-        StringBuilder pascal = new StringBuilder();
-        boolean up = true;
-        for (int i = 0; i < type.length(); i++) {
-            char c = type.charAt(i);
-            if (up) c = Character.toUpperCase(c);
-            if (c == '_') {
-                up = true;
-            } else {
-                up = false;
-                pascal.append(c);
-            }
-        }
-        return pascal.toString();
     }
 }

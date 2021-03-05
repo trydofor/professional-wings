@@ -54,8 +54,8 @@ CREATE TABLE `win_user_login` (
 -- -----------
 
 INSERT IGNORE INTO `sys_light_sequence` (`seq_name`, `block_id`, `next_val`, `step_val`, `comments`)
-VALUES ('win_user_basic', 0, 1000, 100, '###为静态用户'),
-       ('win_user_anthn', 0, 1000, 100, '###为静态信息');
+VALUES ('win_user_basic', 0, 10000, 100, '动态插入5位起，静态5位'),
+       ('win_user_anthn', 0, 10000, 100, '动态插入5位起，静态5位');
 
 --
 REPLACE INTO `sys_constant_enum` (`id`, `type`, `code`, `hint`, `info`)
