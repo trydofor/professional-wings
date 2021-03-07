@@ -25,7 +25,7 @@ public class SlardarPageQueryConfiguration implements WebMvcConfigurer {
 
     private static final Log logger = LogFactory.getLog(SlardarPageQueryConfiguration.class);
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SlardarPagequeryProp config;
 
     @Override

@@ -20,7 +20,7 @@ import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 @Disabled("手动初始化")
 class Warlock1SchemaManagerTest {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;
 
     @Test

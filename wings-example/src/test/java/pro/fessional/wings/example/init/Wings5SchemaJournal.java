@@ -32,7 +32,7 @@ import java.util.List;
 @Slf4j
 public class Wings5SchemaJournal {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaJournalManager schemaJournalManager;
 
     @Test

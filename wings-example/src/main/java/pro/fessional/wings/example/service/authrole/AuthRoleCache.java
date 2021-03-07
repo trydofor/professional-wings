@@ -24,7 +24,7 @@ import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
 
 
 @Service
-@Setter(onMethod = @__({@Autowired}))
+@Setter(onMethod_ = {@Autowired})
 @CacheConfig(cacheNames = Level.General + "AuthorityName", cacheManager = Manager.Memory)
 public class AuthRoleCache {
 

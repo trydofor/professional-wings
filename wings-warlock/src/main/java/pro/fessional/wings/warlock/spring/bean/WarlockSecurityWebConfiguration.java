@@ -27,7 +27,7 @@ import java.util.Map;
  * @since 2019-12-01
  */
 @Configuration
-@ConditionalOnProperty(name = WarlockEnabledProp.Key$security, havingValue = "true")
+@ConditionalOnProperty(name = WarlockEnabledProp.Key$securityConf, havingValue = "true")
 @RequiredArgsConstructor
 public class WarlockSecurityWebConfiguration extends WebSecurityConfigurerAdapter {
 

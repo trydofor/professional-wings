@@ -17,7 +17,7 @@ public class TestLoginHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(TestLoginHandler.class);
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private ObjectMapper objectMapper;
 
     public AuthenticationSuccessHandler loginSuccess = (req, res, auth) -> {

@@ -23,7 +23,7 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.scan;
 @Disabled("手动执行，JavaMainJooqGenSample 需要 ")
 public class WingsInitDatabaseSample {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;
 
     @Test

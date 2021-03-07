@@ -29,9 +29,7 @@ public class Warlock3JooqGenerator {
                           .databaseIncludes(
                                   "sys_constant_enum",
                                   "sys_standard_i18n",
-                                  "win_user_basic",
-                                  "win_user_anthn",
-                                  "win_user_login"
+                                  "win_.*"
                           )
                           .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
                           .targetPackage(targetPkg)

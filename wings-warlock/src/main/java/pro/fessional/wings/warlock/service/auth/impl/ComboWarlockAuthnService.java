@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Service;
@@ -32,7 +30,6 @@ import pro.fessional.wings.warlock.service.auth.help.AuthnDetailsMapper;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author trydofor
@@ -40,38 +37,35 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class ComboWarlockAuthnService implements WarlockAuthnService, InitializingBean {
+public class ComboWarlockAuthnService implements WarlockAuthnService {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WinUserBasicDao winUserBasicDao;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WinUserAnthnDao winUserAnthnDao;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WinUserLoginDao winUserLoginDao;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WingsAuthTypeParser wingsAuthTypeParser;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private LightIdService lightIdService;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private JournalService journalService;
 
-    @Setter(onMethod = @__({@Autowired}))
-    private ObjectProvider<Combo> comboProvider;
-
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private PasssaltEncoder passsaltEncoder;
 
     private List<Combo> saverCombos = Collections.emptyList();
 
-    @Override
-    public void afterPropertiesSet() {
-        saverCombos = comboProvider.orderedStream().collect(Collectors.toList());
-        log.info("inject {} saver combo", saverCombos.size());
+    @Autowired(required = false)
+    public void setSaverCombos(List<Combo> saverCombos) {
+        log.info("inject saver combo, count={}", saverCombos.size());
+        this.saverCombos = saverCombos;
     }
 
     @Override

@@ -17,7 +17,7 @@ import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 @Slf4j
 public class WarlockSuccessLoginListener implements ApplicationListener<AuthenticationSuccessEvent> {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WarlockAuthnService warlockAuthnService;
 
 

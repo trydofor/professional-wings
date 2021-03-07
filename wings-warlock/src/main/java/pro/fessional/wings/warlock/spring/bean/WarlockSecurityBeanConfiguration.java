@@ -11,6 +11,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -45,15 +46,15 @@ import java.util.Map;
  * @since 2019-12-01
  */
 @Configuration
-@ConditionalOnProperty(name = WarlockEnabledProp.Key$security, havingValue = "true")
+@ConditionalOnProperty(name = WarlockEnabledProp.Key$securityBean, havingValue = "true")
 public class WarlockSecurityBeanConfiguration {
 
     private final static Log logger = LogFactory.getLog(WarlockSecurityBeanConfiguration.class);
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WarlockSecurityProp securityProp;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private ApplicationContext applicationContext;
 
     @Bean
@@ -162,6 +163,12 @@ public class WarlockSecurityBeanConfiguration {
     public JustAuthUserAuthnCombo justAuthUserAuthnCombo() {
         // autowired
         return new JustAuthUserAuthnCombo();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public GrantedAuthorityDefaults grantedAuthorityDefaults() {
+        return new GrantedAuthorityDefaults(securityProp.getRolePrefix());
     }
 
     ///////// Listener /////////

@@ -42,13 +42,13 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
 @Tag("init")
 public class WingsJooqDaoImplTest {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WingsTestHelper wingsTestHelper;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager revisionManager;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private Tst中文也分表Dao dao;
 
     private final Tst中文也分表Table tbl = Tst中文也分表Table.Tst中文也分表;

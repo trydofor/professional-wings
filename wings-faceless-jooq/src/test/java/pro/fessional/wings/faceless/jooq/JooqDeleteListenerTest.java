@@ -39,16 +39,16 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
 @Tag("init")
 public class JooqDeleteListenerTest {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private DSLContext dsl;
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private JdbcTemplate tmpl;
 
     // >>=>🦁🦁🦁
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WingsTestHelper wingsTestHelper;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager revisionManager;
 
     @Test

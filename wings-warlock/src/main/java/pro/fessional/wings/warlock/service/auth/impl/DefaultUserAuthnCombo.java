@@ -38,25 +38,25 @@ public class DefaultUserAuthnCombo implements ComboWarlockAuthnService.Combo {
     @Setter
     private int order = ORDER;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WinUserBasicDao winUserBasicDao;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WinUserAnthnDao winUserAnthnDao;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WingsAuthTypeParser wingsAuthTypeParser;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WarlockSecurityProp warlockSecurityProp;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private LightIdService lightIdService;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private JournalService journalService;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private PasssaltEncoder passsaltEncoder;
 
     @Override

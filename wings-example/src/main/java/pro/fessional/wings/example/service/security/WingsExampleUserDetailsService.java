@@ -29,7 +29,7 @@ import java.util.Set;
  * @since 2019-11-30
  */
 @Service
-@Setter(onMethod = @__({@Autowired}))
+@Setter(onMethod_ = {@Autowired})
 public class WingsExampleUserDetailsService implements UserDetailsService {
 
     private WinUserLoginDao winUserLoginDao;

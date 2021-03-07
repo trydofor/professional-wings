@@ -36,7 +36,7 @@ public class SlardarPasscoderConfiguration {
 
     private static final Log logger = LogFactory.getLog(SlardarPasscoderConfiguration.class);
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SlardarPasscoderProp slardarPasscoderProp;
 
     /**

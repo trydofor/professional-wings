@@ -18,7 +18,7 @@ import pro.fessional.wings.warlock.service.auth.WarlockAuthType;
 @Slf4j
 public class LoginControllerTest {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private ApplicationEventPublisher applicationEventPublisher;
 
     @RequestMapping("/auth/console-nonce.json")

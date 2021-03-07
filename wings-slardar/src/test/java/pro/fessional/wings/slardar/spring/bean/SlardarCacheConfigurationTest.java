@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(properties = {"debug = true", "wings.slardar.cache.level.general.maxLive=10"})
 public class SlardarCacheConfigurationTest {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private TestMyCacheService cacheService;
 
     @Test

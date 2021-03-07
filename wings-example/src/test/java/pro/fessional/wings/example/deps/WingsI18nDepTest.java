@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(classes = WingsExampleTestApplication.class, properties = {"debug = true"})
 public class WingsI18nDepTest {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private MessageSource messageSource;
 
     @Test

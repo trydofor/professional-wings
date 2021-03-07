@@ -19,10 +19,18 @@ public class WarlockEnabledProp {
     /**
      * 是否支持 warlock security 默认配置
      *
-     * @see #Key$security
+     * @see #Key$securityConf
      */
-    private boolean security = true;
-    public static final String Key$security = Key + ".security";
+    private boolean securityConf = true;
+    public static final String Key$securityConf = Key + ".security-conf";
+
+    /**
+     * 是否支持 warlock security 默认Bean
+     *
+     * @see #Key$securityBean
+     */
+    private boolean securityBean = true;
+    public static final String Key$securityBean = Key + ".security-bean";
 
     /**
      * 是否支持 just auth登录

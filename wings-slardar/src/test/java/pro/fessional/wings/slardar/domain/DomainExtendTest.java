@@ -20,12 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         })
 public class DomainExtendTest {
 
-    @Setter(onMethod = @__({@Value("http://127.0.0.1:${local.server.port}")}))
+    @Setter(onMethod_ = {@Value("http://127.0.0.1:${local.server.port}")})
     private String domainA;
-    @Setter(onMethod = @__({@Value("http://localhost:${local.server.port}")}))
+    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
     private String domainB;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private RestTemplate restTemplate;
 
     @Test

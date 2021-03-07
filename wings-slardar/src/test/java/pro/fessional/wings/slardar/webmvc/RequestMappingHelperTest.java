@@ -11,7 +11,7 @@ import java.util.List;
 @SpringBootTest
 public class RequestMappingHelperTest {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private ApplicationContext context;
 
     @Test

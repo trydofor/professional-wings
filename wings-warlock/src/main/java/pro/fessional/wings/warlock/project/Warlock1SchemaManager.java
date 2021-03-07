@@ -18,16 +18,17 @@ import java.util.SortedMap;
 @RequiredArgsConstructor
 public class Warlock1SchemaManager {
 
-    private static final long InitRevision = 2020_10_24_01;
+    private static final long InitRevision = 2020_10_24_02;
     private final SchemaRevisionManager schemaRevisionManager;
 
     public void init04Auth() {
-        final SortedMap<Long, RevisionSql> sqls = FlywaveRevisionScanner.helper()
-                                                                        .master("00-init")
-                                                                        .master("01-light")
-                                                                        .feature("01-enum-i18n")
-                                                                        .master("04-auth")
-                                                                        .scan();
+        final SortedMap<Long, RevisionSql> sqls = FlywaveRevisionScanner
+                .helper()
+                .master("00-init")
+                .master("01-light")
+                .feature("01-enum-i18n")
+                .master("04-auth")
+                .scan();
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
         schemaRevisionManager.publishRevision(InitRevision, 0);
     }

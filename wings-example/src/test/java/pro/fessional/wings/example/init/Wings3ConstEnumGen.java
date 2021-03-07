@@ -31,17 +31,17 @@ import java.util.List;
 @Disabled("手动生成Java类，依赖分支feature/enum-i18n的2019052101")
 public class Wings3ConstEnumGen {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SysConstantEnumDao sysConstantEnumDao;
 
     @Test
-    public void gen() throws Exception {
+    public void gen() {
         List<SysConstantEnum> all = sysConstantEnumDao.findAll();
         ConstantEnumGenerator.builder()
                              .targetDirectory("./src/main/java/")
                              .targetPackage("pro.fessional.wings.example.enums.auto")
                              // 如果够用，可以直接用，否则用自己生成的
-                             .excludeType("standard_boolean","standard_timezone", "standard_language")
+                             .excludeType("standard_boolean", "standard_timezone", "standard_language")
                              .generate(SysConstantEnum.class, all);
     }
 }

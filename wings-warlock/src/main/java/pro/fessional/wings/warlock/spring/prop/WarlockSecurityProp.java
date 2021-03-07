@@ -68,6 +68,12 @@ public class WarlockSecurityProp {
     public static final String Key$passwordPara = Key + ".password-para";
 
     /**
+     * @see #Key$rolePrefix
+     */
+    private String rolePrefix = "ROLE_";
+    public static final String Key$rolePrefix = Key + ".role-prefix";
+
+    /**
      * @see #Key$authority
      */
     private Map<String, List<String>> authority = Collections.emptyMap();

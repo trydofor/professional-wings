@@ -23,10 +23,10 @@ import java.util.List;
 @Slf4j
 public class WingsSchemaDumper {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private DataSource dataSource;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaFulldumpManager schemaFulldumpManager;
 
     @Test

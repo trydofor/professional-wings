@@ -41,22 +41,22 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
 @Tag("init")
 public class ConstantEnumI18nTest {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     SysConstantEnumDao sysConstantEnumDao;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     StandardI18nService standardI18nService;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     WingsTestHelper wingsTestHelper;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     SchemaRevisionManager revisionManager;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     ApplicationContext applicationContext;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     MessageSource messageSource;
 
     @Test

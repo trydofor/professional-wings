@@ -26,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(properties = {"debug = true","wings.slardar.okhttp.timeout-conn = 70"})
 public class SlardarOkhttp3ConfigurationTest {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private RestTemplate restTemplate;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private OkHttpClient okHttpClient;
 
     @Test

@@ -34,7 +34,7 @@ import java.util.List;
 @Tag("init")
 public class ConstantEnumGenSample {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     SysConstantEnumDao sysConstantEnumDao;
 
     @Test

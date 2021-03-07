@@ -19,7 +19,7 @@ import pro.fessional.wings.example.service.user.UserService;
 @Slf4j
 public class UserController {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private UserService userService;
 
     @RequestMapping("/index.json")

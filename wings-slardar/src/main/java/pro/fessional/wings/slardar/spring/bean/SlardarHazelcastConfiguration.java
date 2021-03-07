@@ -33,7 +33,7 @@ public class SlardarHazelcastConfiguration extends HazelcastHttpSessionConfigura
 
     private static final Log logger = LogFactory.getLog(SlardarHazelcastConfiguration.class);
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private FindByIndexNameSessionRepository<? extends Session> sessionRepository;
 
     @Bean

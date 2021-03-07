@@ -47,10 +47,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(properties = {"debug = true"})
 public class WingsJacksonMapperTest {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private ObjectMapper objectMapper;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private XmlMapper xmlMapper;
 
     @Autowired

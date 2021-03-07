@@ -15,7 +15,7 @@ import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 @Slf4j
 public class WarlockFailedLoginListener implements ApplicationListener<AuthenticationFailureBadCredentialsEvent> {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WarlockAuthnService warlockAuthnService;
 
     @Override

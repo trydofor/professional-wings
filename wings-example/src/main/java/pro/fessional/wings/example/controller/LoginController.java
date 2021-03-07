@@ -21,13 +21,13 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class LoginController {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private RestTemplate restTemplate;
 
-    @Setter(onMethod = @__({@Value("${wings.oauth.token.url}")}))
+    @Setter(onMethod_ = {@Value("${wings.oauth.token.url}")})
     private String oauthTokenUrl;
 
-    @Setter(onMethod = @__({@Value("${wings.slardar.oauth2x.client.staff.client-id}")}))
+    @Setter(onMethod_ = {@Value("${wings.slardar.oauth2x.client.staff.client-id}")})
     private String oauthClientId;
 
     @ApiOperation("用户登录")

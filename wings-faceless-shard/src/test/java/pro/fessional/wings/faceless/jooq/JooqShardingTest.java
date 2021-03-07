@@ -41,16 +41,16 @@ import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class JooqShardingTest {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaShardingManager schemaShardingManager;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private Tst中文也分表Dao dao;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WingsTestHelper wingsTestHelper;
 
     @Test

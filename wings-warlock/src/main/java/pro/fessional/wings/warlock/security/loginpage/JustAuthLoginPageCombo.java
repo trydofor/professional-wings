@@ -28,7 +28,7 @@ public class JustAuthLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
 
     public static final int ORDER = WarlockOrderConst.AuthPageCombo + 9_000;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private JustAuthRequestBuilder justAuthRequestBuilder;
     @Setter
     @Getter

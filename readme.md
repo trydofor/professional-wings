@@ -385,7 +385,21 @@ src/**/spring - spring有个配置
 
 ### 0.3.7.lombok
 
-简化代码，开发时，需要自己在pom中引入
+简化代码，开发时，需要自己在pom中引入。使用了Experimental功能，可能会突然编译不过去。
+错误大概类似于 `cannot find symbol class __`，官方文档表示，
+
+javac8+, you add an `_` after `onMethod`, `onParam`, or `onConstructor`.
+
+``` java
+//  @Getter(onMethod=@__({@Id, @Column(name="unique-id")})) //JDK7
+//  @Setter(onParam=@__(@Max(10000))) //JDK7
+@Getter(onMethod_={@Id, @Column(name="unique-id")}) //JDK8
+@Setter(onParam_=@Max(10000)) //JDK8
+```
+在IDEA中，可通过以下正则进行全工程替换。
+
+* 查找 `onMethod\s*=\s*@__\(/(.+)\)`
+* 替换 `onMethod_ = $1`
 
 ### 0.3.8.git-flow
 

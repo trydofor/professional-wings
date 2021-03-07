@@ -14,4 +14,4 @@ POST {{host}}/auth/console-nonce.json
 POST {{host}}/auth/username/login.json
 Content-Type: application/x-www-form-urlencoded
 
-username=root&password=Sd2rqC322JCfBe92
+username=root&password=CKS49848frKgrdB8

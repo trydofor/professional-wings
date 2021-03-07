@@ -24,14 +24,14 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final static Log logger = LogFactory.getLog(TestSecurityConfiguration.class);
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private TestLoginHandler testLoginHandler;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SessionRegistry sessionRegistry;
 
 /*
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WingsUserDetailsService wingsUserDetailsService;
 
 

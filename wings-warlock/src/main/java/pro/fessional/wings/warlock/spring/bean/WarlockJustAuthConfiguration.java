@@ -33,10 +33,10 @@ public class WarlockJustAuthConfiguration {
 
     private final static Log logger = LogFactory.getLog(WarlockJustAuthConfiguration.class);
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WarlockJustAuthProp justAuthProp;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WarlockSecurityProp securityProp;
 
     @Bean

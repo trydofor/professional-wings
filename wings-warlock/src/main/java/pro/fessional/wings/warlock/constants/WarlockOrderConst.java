@@ -9,4 +9,5 @@ public interface WarlockOrderConst {
     int AuthPageCombo = 10000;
     int UserDetailsCombo = 10000;
     int UserAuthnCombo = 10000;
+    int UserAuthzCombo = 10000;
 }

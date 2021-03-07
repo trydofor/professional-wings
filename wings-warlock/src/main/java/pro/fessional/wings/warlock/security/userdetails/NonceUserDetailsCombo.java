@@ -40,9 +40,9 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
     private String cacheName;
     private Set<Enum<?>> acceptNonceType = Collections.emptySet();
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private PasswordEncoder passwordEncoder;
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private PasssaltEncoder passsaltEncoder;
 
     public NonceUserDetailsCombo() {

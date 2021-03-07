@@ -19,10 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 public class MessagePrintTest {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private MessageSource messageSource;
 
-    @Setter(onMethod = @__({@Value("${wings.test.module}")}))
+    @Setter(onMethod_ = {@Value("${wings.test.module}")})
     private String module;
 
     @Test

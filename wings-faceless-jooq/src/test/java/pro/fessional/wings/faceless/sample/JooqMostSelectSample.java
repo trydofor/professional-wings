@@ -64,10 +64,10 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class JooqMostSelectSample {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private Tst中文也分表Dao dao;
 
     @Test
@@ -400,7 +400,7 @@ public class JooqMostSelectSample {
         System.out.println();
     }
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private JdbcTemplate jdbcTemplate;
 
     @Test

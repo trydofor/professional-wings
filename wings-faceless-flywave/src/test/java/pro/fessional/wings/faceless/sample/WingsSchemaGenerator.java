@@ -30,10 +30,10 @@ import java.util.SortedMap;
 @Disabled("手动执行一次，初始化步骤，危险操作")
 public class WingsSchemaGenerator {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WingsTestHelper wingsTestHelper;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;
 
     @Test

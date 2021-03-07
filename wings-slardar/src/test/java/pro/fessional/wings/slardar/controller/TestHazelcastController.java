@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentMap;
 @RestController
 public class TestHazelcastController {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private HazelcastInstance hazelcastInstance;
 
 

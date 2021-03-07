@@ -23,7 +23,7 @@ public class ListAllLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
 
     public static final int ORDER = WarlockOrderConst.AuthPageCombo + 10_000;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WarlockSecurityProp warlockSecurityProp;
     @Setter
     @Getter
