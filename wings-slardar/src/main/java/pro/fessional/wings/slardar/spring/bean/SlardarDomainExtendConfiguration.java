@@ -29,6 +29,7 @@ public class SlardarDomainExtendConfiguration {
     private final static Log logger = LogFactory.getLog(SlardarDomainExtendConfiguration.class);
 
     @Bean
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public WingsDomainExtendFilter wingsDomainFilter(DomainExtendProp config, DispatcherServlet dispatcher) {
         logger.info("Wings conf Domain filter");
         Map<String, List<String[]>> hostMatcher = new HashMap<>();

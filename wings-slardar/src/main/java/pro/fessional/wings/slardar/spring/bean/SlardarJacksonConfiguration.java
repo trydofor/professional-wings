@@ -48,12 +48,14 @@ public class SlardarJacksonConfiguration {
 
     @Bean
     @Primary
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public ObjectMapper jacksonObjectMapper(Jackson2ObjectMapperBuilder builder) {
         logger.info("Wings conf jacksonObjectMapper");
         return builder.createXmlMapper(false).build();
     }
 
     @Bean
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public XmlMapper jacksonXmlMapper(Jackson2ObjectMapperBuilder builder) {
         logger.info("Wings conf jacksonXmlMapper");
         return builder.createXmlMapper(true).build();

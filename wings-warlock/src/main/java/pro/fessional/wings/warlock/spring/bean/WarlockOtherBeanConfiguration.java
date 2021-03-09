@@ -16,14 +16,14 @@ import pro.fessional.wings.warlock.spring.prop.WarlockI18nProp;
  * @since 2019-12-01
  */
 @Configuration
-public class WarlockI18nConfiguration {
+public class WarlockOtherBeanConfiguration {
 
-    private final static Log logger = LogFactory.getLog(WarlockI18nConfiguration.class);
+    private final static Log logger = LogFactory.getLog(WarlockOtherBeanConfiguration.class);
 
     @Autowired
     public void registerEnumUtil(WarlockI18nProp warlockI18nProp) throws Exception {
         for (String s : warlockI18nProp.getLocaleEnum()) {
-            logger.info("wings conf locale enum " + s);
+            logger.info("Wings conf locale enum " + s);
             final Class<?> cz = Class.forName(s);
             if (!(cz.isEnum() && StandardLanguageEnum.class.isAssignableFrom(cz))) {
                 throw new IllegalArgumentException(s + " is not enum and StandardLanguageEnum");
@@ -34,7 +34,7 @@ public class WarlockI18nConfiguration {
         }
 
         for (String s : warlockI18nProp.getZoneidEnum()) {
-            logger.info("wings conf zoneid enum " + s);
+            logger.info("Wings conf zoneid enum " + s);
             final Class<?> cz = Class.forName(s);
             if (!(cz.isEnum() && StandardTimezoneEnum.class.isAssignableFrom(cz))) {
                 throw new IllegalArgumentException(s + " is not enum and StandardTimezoneEnum");

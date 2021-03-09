@@ -278,6 +278,17 @@ SessionManagementFilter -> SecurityContextRepository: saveContext()
 
 hazelcast 3.x和4.x差异很大，也就是在spring-boot 2.2和2.4是不兼容的。
 
+hazelcast提供了3类锁，推荐使用CP系统，但集群要求至少3台，默认为0单机unsafe模式。
+
+ * FencedLock - Raft的分布式锁，在CP系统(4.x)
+ * IMap.lock - 自动GC，干净简洁
+ * ILock.lock - 遵循j.u.c.Lock约定（3.12移除）
+
+参考资料如下，
+
+ * https://hazelcast.com/blog/hazelcast-imdg-3-12-introduces-cp-subsystem/
+ * https://hazelcast.com/blog/long-live-distributed-locks/
+
 ### 3.4.6.其他
 
 RequestContextHolder

@@ -39,7 +39,14 @@
         <eviction eviction-policy="LRU" max-size-policy="PER_NODE" size="5000"/>
     </map>
     -->
-
+    <cp-subsystem>
+        <cp-member-count>0</cp-member-count>
+        <group-size>0</group-size>
+        <session-time-to-live-seconds>300</session-time-to-live-seconds>
+        <session-heartbeat-interval-seconds>5</session-heartbeat-interval-seconds>
+        <missing-cp-member-auto-removal-seconds>14400</missing-cp-member-auto-removal-seconds>
+        <fail-on-indeterminate-operation-state>false</fail-on-indeterminate-operation-state>
+    </cp-subsystem>
     <!-- spring FindByIndexNameSessionRepository -->
     <map name="spring:session:sessions">
         <in-memory-format>OBJECT</in-memory-format>

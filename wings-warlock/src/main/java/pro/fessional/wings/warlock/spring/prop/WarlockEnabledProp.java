@@ -32,6 +32,15 @@ public class WarlockEnabledProp {
     private boolean securityBean = true;
     public static final String Key$securityBean = Key + ".security-bean";
 
+
+    /**
+     * 是否注入 wings的全局锁
+     *
+     * @see #Key$globalLock
+     */
+    private boolean globalLock = true;
+    public static final String Key$globalLock = Key + ".global-lock";
+
     /**
      * 是否支持 just auth登录
      *

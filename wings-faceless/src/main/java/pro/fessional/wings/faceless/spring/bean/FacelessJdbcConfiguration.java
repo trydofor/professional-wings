@@ -19,6 +19,7 @@ public class FacelessJdbcConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(JdbcTemplate.class)
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }

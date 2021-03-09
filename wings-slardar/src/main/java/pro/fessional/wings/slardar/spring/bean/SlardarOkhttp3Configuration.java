@@ -95,6 +95,7 @@ public class SlardarOkhttp3Configuration {
 
     @Bean
     @ConditionalOnMissingBean
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public RestTemplate restTemplate(RestTemplateBuilder builder, OkHttpClient client) {
         return RestTemplateHelper.sslTrustAll(builder, client);
     }

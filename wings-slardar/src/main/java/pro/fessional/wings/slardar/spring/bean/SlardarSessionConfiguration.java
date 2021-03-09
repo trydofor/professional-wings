@@ -41,6 +41,7 @@ public class SlardarSessionConfiguration {
     }
 
     @Bean
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public HttpSessionIdResolver httpSessionIdResolver(
             ServerProperties serverProperties,
             ObjectProvider<CookieSerializer> cookieSerializer,

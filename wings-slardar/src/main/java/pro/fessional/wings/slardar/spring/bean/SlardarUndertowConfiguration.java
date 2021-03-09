@@ -36,6 +36,7 @@ public class SlardarUndertowConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "websocketServletWebServerCustomizer")
+        @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
         public WebServerFactoryCustomizer<UndertowServletWebServerFactory> websocketServletWebServerCustomizer(ServerProperties properties) {
 
             UndertowDeploymentInfoCustomizer customizer = deploymentInfo -> {
