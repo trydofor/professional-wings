@@ -14,7 +14,6 @@ import java.util.SortedMap;
 
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_3RD_ENU18N;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_BRANCH_3RD_ENU18N;
-import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
 
 /**
  * ① 使用wings的flywave管理数据库版本
@@ -25,8 +24,8 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
 
 @SpringBootTest(classes = WingsExampleApplication.class, properties =
         {"debug = true",
-         "spring.wings.faceless.flywave.enabled=true",
-//         "spring.wings.faceless.enumi18n.enabled=true",
+         "spring.wings.faceless.flywave.enabled.module=true",
+//         "spring.wings.faceless.enabled.enumi18n=true",
 //         "spring.shardingsphere.datasource.names=writer",
 //         "spring.shardingsphere.datasource.writer.jdbc-url=jdbc:mysql://127.0.0.1:3306/wings?autoReconnect=true&useSSL=false",
 //         "spring.shardingsphere.datasource.writer.username=trydofor",
@@ -52,12 +51,15 @@ public class Wings1SchemaGen {
 //        String path = "classpath:/wings-flywave/revision/**/*.sql";  // 当前类路径
 //        String path = "file:src/main/resources/wings-flywave/revision/**/*.sql"; // 具体文件
 //        String path = "file:src/main/resources/wings-flywave/dev-revi/**/*.sql"; // DEV文件
-        val sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER, REVISION_PATH_BRANCH_3RD_ENU18N);
+        val sqls = FlywaveRevisionScanner.helper()
+                                         .master()
+                                         .path(REVISION_PATH_BRANCH_3RD_ENU18N)
+                                         .scan();
 
         // 合并，升级
 //        mergeThenPub(sqls, commitId, revision);
         // 是否更新前，更新掉数据库中的脚本，以免字段修改无法降级
-         down3rdThenMergePub(sqls, commitId, revision);
+        down3rdThenMergePub(sqls, commitId, revision);
         // 重复升级最新版，用来检查脚本正确性
         // forceDownThenMergePub(sqls, commitId, revision);
         // 连续降级，合并，再升级

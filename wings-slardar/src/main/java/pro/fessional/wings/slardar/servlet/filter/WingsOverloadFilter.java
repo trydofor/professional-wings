@@ -159,17 +159,47 @@ public class WingsOverloadFilter implements OrderedFilter {
 
     @Data
     public static class Config {
+        /**
+         * 日志的记录间隔（毫秒）
+         */
         private long loggerInterval = 3000;
 
+        /**
+         * 过载时，默认http status code
+         */
         private int fallbackCode = 200;
+        /**
+         * 过载时，默认http body 内容
+         */
         private String fallbackBody = "";
 
-        private int requestCapacity = 0;
-        private long requestInterval = -1;
+        /**
+         * 注意，共享ip的容易误判
+         * 处理中的的最大请求数量，`<0`表示无限制；
+         * `>0`表示用户根据压力测试结果推算的值。
+         * `0`表示自动调整，初始值为 cpu核心数*300
+         */
+        private int requestCapacity = 9000;
+        /**
+         * 在`interval`毫秒内，同ip的处理中的请求不能超过`calmdown`个。`<=0`表示无限制
+         */
+        private long requestInterval = 1000;
+        /**
+         * 在`interval`毫秒内，同ip的处理中的请求不能超过`calmdown`个。`<=0`表示无限制
+         */
         private int requestCalmdown = 50;
-        private String[] requestPermit = {};
+        /**
+         * 请求ip白名单，分号分割，前部匹配 127. 192.
+         */
+        private String[] requestPermit = {"127.", "192."};
 
-        private long responseWarnSlow = 4000;
+        /**
+         * 满响应（毫秒数），超过时，记录WARN日志，小于0表示关闭
+         */
+        private long responseWarnSlow = 5000;
+        /**
+         * 每多少个请求记录一次INFO日志，小于0表示关闭
+         */
         private long responseInfoStat = 1000;
     }
 

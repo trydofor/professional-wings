@@ -1,13 +1,13 @@
 package pro.fessional.wings.slardar.servlet.resolver;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-import static java.util.Collections.emptyList;
 import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_AGENT_INFO;
 import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_REMOTE_IP;
 
@@ -15,12 +15,24 @@ import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_REMOTE_
  * @author trydofor
  * @since 2019-06-30
  */
-@RequiredArgsConstructor
+@Getter
 public class WingsRemoteResolver {
 
+    private final Set<String> innerIp = new LinkedHashSet<>();
+    private final Set<String> ipHeader = new LinkedHashSet<>();
+    private final Set<String> agentHeader = new LinkedHashSet<>();
 
+    public void addInnerIp(Collection<String> keys) {
+        innerIp.addAll(keys);
+    }
 
-    private final Config config;
+    public void addAgentHeader(Collection<String> keys) {
+        agentHeader.addAll(keys);
+    }
+
+    public void addIpHeader(Collection<String> keys) {
+        ipHeader.addAll(keys);
+    }
 
     @NotNull
     public String resolveRemoteIp(HttpServletRequest request) {
@@ -30,7 +42,7 @@ public class WingsRemoteResolver {
         }
 
         String ip = null;
-        for (String s : config.ipHeader) {
+        for (String s : ipHeader) {
             ip = trimComma(request.getHeader(s));
             if (isOuterAddr(ip)) break;
         }
@@ -43,14 +55,14 @@ public class WingsRemoteResolver {
     }
 
     private String trimComma(String s) {
-        if (s == null) return s;
+        if (s == null) return null;
         int p = s.indexOf(',');
         return p > 0 ? s.substring(0, p) : s;
     }
 
     private boolean isOuterAddr(String ip) {
         if (ip == null) return false;
-        for (String s : config.innerIp) {
+        for (String s : innerIp) {
             if (ip.startsWith(s)) {
                 return false;
             }
@@ -66,19 +78,12 @@ public class WingsRemoteResolver {
         }
 
         StringBuilder sb = new StringBuilder();
-        for (String s : config.agentHeader) {
+        for (String s : agentHeader) {
             String h = request.getHeader(s);
             if (h != null) sb.append(h).append(";");
         }
         String info = sb.toString();
         request.setAttribute(ATTR_AGENT_INFO, info);
         return info;
-    }
-
-    @Data
-    public static class Config {
-        private List<String> innerIp = emptyList();
-        private List<String> ipHeader = emptyList();
-        private List<String> agentHeader = emptyList();
     }
 }

@@ -19,7 +19,7 @@ import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
 @Disabled("手动执行，版本更新时处理")
 public class Wings9ShardingManager {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaShardingManager schemaShardingManager;
 
     @Test

@@ -88,7 +88,7 @@ jooq生成代码，默认使用`table.column`限定列名，而ShardingJdbc做�
  * [ShardingSphere#5210 on duplicate key update](https://github.com/apache/shardingsphere/issues/5210)
 
 
-在jooq`3.14.0`版本之前，使用`spring.wings.faceless.jooq.auto-qualify.enabled=true`，
+在jooq`3.14.0`版本之前，使用`spring.wings.faceless.jooq.enabled.auto-qualify=true`，
 完成限定名的自动处理，其规则是，`不存在alias时，不增加限定名`。
 
 使用Jooq的主要原因之一是`限制的艺术`，避免写出比较复杂的SQL，所以约定如下，
@@ -179,7 +179,7 @@ Templating with QueryPart placeholders (or bind value placeholders) requires a s
 
 禁用jooq没有任何影响，不影响flywave，lightid，enum, i18n的使用。
 
-运行时禁用，设置spring.wings 开关，把jooq disable,`spring.wings.faceless.jooq.enabled=false`
+运行时禁用，设置spring.wings 开关，把jooq disable,`spring.wings.faceless.jooq.enabled.module=false`
 但如果有jooq自动生成的代码，是带有`@Repository`，需要禁止spring注入。
 ```
 @ComponentScan(excludeFilters = 
@@ -260,7 +260,7 @@ Map<Integer, List<String>>       group4 = create.selectFrom(BOOK).fetchGroups(BO
 ``` java
 // 每个表，每个字段映射，变更数据类型
 .forcedType(new ForcedType()
-        .withUserType("pro.fessional.wings.faceless.enums.auto.StandardLanguage")
+        .withUserType("pro.fessional.wings.faceless.enums.autogen.StandardLanguage")
         .withConverter("pro.fessional.wings.faceless.database.jooq.StandardLanguageConverter")
         .withExpression("tst_中文也分表.language")
 )

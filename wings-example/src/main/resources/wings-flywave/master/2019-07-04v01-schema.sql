@@ -1,12 +1,12 @@
 CREATE TABLE `win_auth_role` (
     `id`        BIGINT(20)    NOT NULL COMMENT '主键',
-    `create_dt` DATETIME(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建日时(系统)',
-    `modify_dt` DATETIME(3)   NOT NULL DEFAULT '1000-01-01' ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '修改日时(系统)',
+    `create_dt` DATETIME(3)   NOT NULL DEFAULT NOW(3) COMMENT '创建日时(系统)',
+    `modify_dt` DATETIME(3)   NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时(系统)',
     `delete_dt` DATETIME(3)   NOT NULL DEFAULT '1000-01-01' COMMENT '标记删除',
     `commit_id` BIGINT(20)    NOT NULL COMMENT '提交id',
     `role_type` INT(11)       NOT NULL COMMENT '类型/40201##:financial|operation',
     `role_name` VARCHAR(100)  NOT NULL COMMENT '名字',
-    `desc`      VARCHAR(200)  NOT NULL DEFAULT '' COMMENT '描述',
+    `remark`      VARCHAR(200)  NOT NULL DEFAULT '' COMMENT '描述',
     `auth_set`  VARCHAR(3000) NOT NULL COMMENT '权限集:authority#401####，逗号分割',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
@@ -14,8 +14,8 @@ CREATE TABLE `win_auth_role` (
 
 CREATE TABLE `win_user` (
     `id`        BIGINT(20)    NOT NULL COMMENT '主键',
-    `create_dt` DATETIME(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建日时(系统)',
-    `modify_dt` DATETIME(3)   NOT NULL DEFAULT '1000-01-01' ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '修改日时(系统)',
+    `create_dt` DATETIME(3)   NOT NULL DEFAULT NOW(3) COMMENT '创建日时(系统)',
+    `modify_dt` DATETIME(3)   NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时(系统)',
     `delete_dt` DATETIME(3)   NOT NULL DEFAULT '1000-01-01' COMMENT '标记删除',
     `commit_id` BIGINT(20)    NOT NULL COMMENT '提交id',
     `name`      VARCHAR(50)   NOT NULL COMMENT '名字',
@@ -34,8 +34,8 @@ CREATE TABLE `win_user` (
 
 CREATE TABLE `win_user_login` (
     `id`         BIGINT(20)    NOT NULL COMMENT '主键',
-    `create_dt`  DATETIME(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建日时(系统)',
-    `modify_dt`  DATETIME(3)   NOT NULL DEFAULT '1000-01-01' ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '修改日时(系统)',
+    `create_dt`  DATETIME(3)   NOT NULL DEFAULT NOW(3) COMMENT '创建日时(系统)',
+    `modify_dt`  DATETIME(3)   NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时(系统)',
     `delete_dt`  DATETIME(3)   NOT NULL DEFAULT '1000-01-01' COMMENT '标记删除',
     `commit_id`  BIGINT(20)    NOT NULL COMMENT '提交id',
     `user_id`    BIGINT(20)    NOT NULL COMMENT '客户id:win_user.id',

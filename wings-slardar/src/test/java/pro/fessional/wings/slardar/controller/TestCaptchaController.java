@@ -4,8 +4,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import pro.fessional.wings.slardar.security.WingsCaptchaContext;
-import pro.fessional.wings.slardar.security.WingsCaptchaUtil;
+import pro.fessional.wings.slardar.captcha.WingsCaptchaContext;
+import pro.fessional.wings.slardar.captcha.WingsCaptchaUtil;
 
 import javax.servlet.http.HttpServletResponse;
 

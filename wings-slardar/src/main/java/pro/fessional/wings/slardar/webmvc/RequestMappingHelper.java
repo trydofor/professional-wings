@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
@@ -51,8 +52,11 @@ public class RequestMappingHelper {
             String javaMethod = method.getName();
             String httpMethod = key.getMethodsCondition().getMethods().stream().map(Enum::name).collect(Collectors.joining(","));
 
-            for (String url : key.getPatternsCondition().getPatterns()) {
-                result.add(new Info(url, httpMethod, javaClass, javaMethod));
+            final PatternsRequestCondition prc = key.getPatternsCondition();
+            if(prc != null) {
+                for (String url : prc.getPatterns()) {
+                    result.add(new Info(url, httpMethod, javaClass, javaMethod));
+                }
             }
         }
         return result;

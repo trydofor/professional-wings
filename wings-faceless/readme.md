@@ -75,7 +75,17 @@ i18n可以使用CombinableMessageSource动态添加，处理service内消息的�
 ## 2.6.事件服务EventService
 
 单进程的异步和解耦，guava的EventBus和Spring的Event都可以胜任。
-为单Jvm，多Jvm提高一个基于数据库的Event服务，主要用来
+为单Jvm，多Jvm提高一个基于数据库的Event服务，主要用来。
+
+ * the event should extend ApplicationEvent
+ * the publisher should inject an ApplicationEventPublisher object
+ * the listener should implement the ApplicationListener interface
+ * @EventListener 和 @TransactionalEventListener 
+ 
+对应线程池直接传递上下文，可使用
+
+https://github.com/alibaba/transmittable-thread-local
+
 
 ## 2.9.数据库知识
 
@@ -200,6 +210,13 @@ SELECT RELEASE_LOCK('lock1');
 SELECT 'Michael!' NOT REGEXP '.*';
 ```
 
+#### 15.VarChar和Text类型
+
+* VarChar 有长度限制，可以设置默认值，这符合wings NOT NULL的规范。
+* TEXT可认为无限制，不可设置默认值，不符合wings规范。
+* MySQL has hard limit of 4096 columns
+* maximum row size limit of 65535 bytes
+
 ### 2.9.2.本地(文件/内存)数据库H2
 
 在不方便提供mysql数据库的时候，如演示或本地数据库应用，可以使用H2，配置如下。
@@ -288,3 +305,7 @@ SELECT * from mysql.general_log ORDER BY event_time DESC;
 SET GLOBAL log_output = 'TABLE'; SET GLOBAL general_log = 'OFF';
 truncate table mysql.general_log;
 ```
+
+在mysql中，尽量使用NOW(fsp)，因为其短小明确有缓存，如无必须不可使用SYSDATE(fsp)，参考
+
+https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_now

@@ -59,20 +59,20 @@ public class OkHttpClientHelper {
     public static final MediaType TEXT_PLAIN_VALUE = MediaType.parse("text/plain");
     public static final MediaType TEXT_XML_VALUE = MediaType.parse("text/xml");
 
-    public static final RequestBody EMPTY = RequestBody.create(ALL_VALUE, "");
+    public static final RequestBody EMPTY = RequestBody.create("", ALL_VALUE);
 
     @NotNull
     public static MultipartBody.Builder postFile(String key, File file) {
         return new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart(key, file.getName(), RequestBody.create(MULTIPART_FORM_DATA_VALUE, file));
+                .addFormDataPart(key, file.getName(), RequestBody.create(file, MULTIPART_FORM_DATA_VALUE));
     }
 
     @NotNull
     public static MultipartBody.Builder postFile(String key, byte[] file, String fileName) {
         return new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart(key, fileName, RequestBody.create(MULTIPART_FORM_DATA_VALUE, file));
+                .addFormDataPart(key, fileName, RequestBody.create(file, MULTIPART_FORM_DATA_VALUE));
     }
 
     @NotNull
@@ -111,7 +111,7 @@ public class OkHttpClientHelper {
 
     @NotNull
     public static String postJson(OkHttpClient client, String url, CharSequence json) {
-        okhttp3.RequestBody body = RequestBody.create(APPLICATION_JSON_VALUE, json.toString());
+        okhttp3.RequestBody body = RequestBody.create(json.toString(), APPLICATION_JSON_VALUE);
         okhttp3.Request request = new okhttp3.Request.Builder()
                 .url(url)
                 .post(body)

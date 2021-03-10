@@ -6,7 +6,7 @@
     <parent>
         <groupId>pro.fessional</groupId>
         <artifactId>wings-home</artifactId>
-        <version>2.4.2-SNAPSHOT</version>
+        <version>${revision}.${changelist}</version>
     </parent>
 
     <artifactId>wings-slardar</artifactId>
@@ -34,6 +34,10 @@
         </dependency>
         <!-- cache -->
         <dependency>
+            <groupId>javax.cache</groupId>
+            <artifactId>cache-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
         </dependency>
@@ -42,10 +46,19 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast-all</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
-            <optional>true</optional>
         </dependency>
+        <!-- annotation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <!-- web server-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -67,10 +80,26 @@
             <artifactId>spring-data-commons</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- session-->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-hazelcast</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.hazelcast</groupId>
+                    <artifactId>hazelcast</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <!-- security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <!-- Argon2PasswordEncoder -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
         </dependency>
         <dependency>
             <groupId>pro.fessional</groupId>
@@ -89,6 +118,12 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
+        <!-- dev -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!-- websocket -->
         <!--
         <dependency>
@@ -100,7 +135,7 @@
             <artifactId>spring-security-messaging</artifactId>
         </dependency>
         -->
-        <!-- test -->
+        <!-- test : i18n -->
         <dependency>
             <groupId>pro.fessional</groupId>
             <artifactId>wings-faceless-test</artifactId>

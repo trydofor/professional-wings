@@ -1,6 +1,6 @@
 package pro.fessional.wings.faceless.sample;
 
-import org.jooq.meta.jaxb.ForcedType;
+import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 import pro.fessional.wings.faceless.jooqgen.WingsCodeGenerator;
 
 /**
@@ -30,11 +30,12 @@ public class JooqCodeAutoGenSample {
 //  不用spring自动注入
 //                          .springRepository(false)
 //  使用enum类型
-                          .forcedType(new ForcedType()
-                                  .withUserType("pro.fessional.wings.faceless.enums.auto.StandardLanguage")
-                                  .withConverter("pro.fessional.wings.faceless.database.jooq.converter.impl.JooqIdLanguageConverter")
-                                  .withExpression("tst_中文也分表.language")
-                          )
+//                          .forcedType(new ForcedType()
+//                                  .withUserType("pro.fessional.wings.faceless.enums.auto.StandardLanguage")
+//                                  .withConverter("pro.fessional.wings.faceless.database.jooq.converter.JooqConsEnumConverter.of(StandardLanguage.class)")
+//                                  .withExpression("tst_中文也分表.language")
+//                          )
+                          .forcedConsEnum(StandardLanguage.class, "tst_中文也分表.language")
                           .buildAndGenerate();
     }
 }

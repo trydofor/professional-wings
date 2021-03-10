@@ -10,8 +10,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.mirana.data.Null;
-import pro.fessional.wings.faceless.enums.auto.StandardLanguage;
-import pro.fessional.wings.faceless.enums.auto.StandardTimezone;
+import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
+import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 import pro.fessional.wings.faceless.service.wini18n.StandardI18nService;
 import pro.fessional.wings.faceless.util.ExecSql;
 
@@ -22,20 +22,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 2020-06-10
  */
 
-@SpringBootTest(properties = {"debug = true", "spring.wings.faceless.enumi18n.enabled=true"})
+@SpringBootTest(properties = {"debug = true", "spring.wings.faceless.enabled.enumi18n=true"})
 @TestMethodOrder(MethodName.class)
 public class ConstantEnumI18nTest {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private StandardI18nService standardI18nService;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private ApplicationContext applicationContext;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private MessageSource messageSource;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private JdbcTemplate jdbcTemplate;
 
     @Test

@@ -9,10 +9,14 @@ import pro.fessional.wings.faceless.enums.ConstantEnum;
  * @author trydofor
  * @since 2021-01-18
  */
-public class JooqConsEnumConverter<E extends ConstantEnum> extends ConsEnumConverter<E> implements Converter<Integer, E> {
+public class JooqConsEnumConverter<E extends Enum<E> & ConstantEnum> extends ConsEnumConverter<E> implements Converter<Integer, E> {
 
-    public JooqConsEnumConverter(Class<E> toType, E[] values) {
-        super(toType, values);
+    public JooqConsEnumConverter(Class<E> toType) {
+        super(toType, toType.getEnumConstants());
+    }
+
+    public static <T extends Enum<T> & ConstantEnum> JooqConsEnumConverter<T> of(Class<T> et) {
+        return new JooqConsEnumConverter<>(et);
     }
 
     @Override

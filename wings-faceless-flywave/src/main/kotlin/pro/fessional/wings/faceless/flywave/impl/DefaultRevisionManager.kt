@@ -37,7 +37,9 @@ class DefaultRevisionManager(
         private val shardDataSource: DataSource?,
         private val sqlStatementParser: SqlStatementParser,
         private val sqlSegmentProcessor: SqlSegmentProcessor,
-        private val schemaDefinitionLoader: SchemaDefinitionLoader) : SchemaRevisionManager {
+        private val schemaDefinitionLoader: SchemaDefinitionLoader,
+        val schemaVersionTable: String = "sys_schema_version"
+) : SchemaRevisionManager {
 
     private val logger = LoggerFactory.getLogger(DefaultRevisionManager::class.java)
     private val unapplyMark = "1000-01-01"
@@ -105,7 +107,7 @@ class DefaultRevisionManager(
                     revision,
                     upto_sql,
                     apply_dt
-                FROM sys_schema_version
+                FROM $schemaVersionTable
                 WHERE revision > ?
                     AND revision <= ?
                 ORDER BY revision ASC
@@ -115,7 +117,7 @@ class DefaultRevisionManager(
                     revision,
                     undo_sql,
                     apply_dt
-                FROM sys_schema_version
+                FROM $schemaVersionTable
                 WHERE revision <= ?
                     AND revision >= ?
                 ORDER BY revision DESC
@@ -157,7 +159,7 @@ class DefaultRevisionManager(
             }
 
             if (reviText.count { isRunning(it.third) } != 0) {
-                messageLog(WARN, here, "skip running revision, need manually fix it [UPDATE sys_schema_version SET apply_dt = '1000-01-01 00:00:00' WHERE apply_dt = '1000-01-01 00:00:17'] db-revi=$plainRevi, to-revi=$revision, db=$plainName")
+                messageLog(WARN, here, "skip running revision, need manually fix it [UPDATE $schemaVersionTable SET apply_dt = '1000-01-01 00:00:00' WHERE apply_dt = '1000-01-01 00:00:17'] db-revi=$plainRevi, to-revi=$revision, db=$plainName")
                 continue
             }
 
@@ -196,7 +198,7 @@ class DefaultRevisionManager(
                     upto_sql,
                     undo_sql,
                     apply_dt
-                FROM sys_schema_version
+                FROM $schemaVersionTable
                 WHERE apply_dt > '$unapplyMark 00:00:00' 
                     AND apply_dt <= '$unapplyMark 23:23:59'
                 ORDER BY revision DESC
@@ -245,7 +247,7 @@ class DefaultRevisionManager(
             SELECT
                 upto_sql,
                 apply_dt
-            FROM sys_schema_version
+            FROM $schemaVersionTable
             WHERE revision = ?
             """
         } else {
@@ -253,7 +255,7 @@ class DefaultRevisionManager(
             SELECT
                 undo_sql,
                 apply_dt
-            FROM sys_schema_version
+            FROM $schemaVersionTable
             WHERE revision = ?
             """
         }
@@ -318,11 +320,11 @@ class DefaultRevisionManager(
 
         val selectSql = """
                     SELECT upto_sql, undo_sql, apply_dt, comments
-                    FROM sys_schema_version
+                    FROM $schemaVersionTable
                     WHERE revision = ?
                     """
         val insertSql = """
-                    INSERT INTO sys_schema_version
+                    INSERT INTO $schemaVersionTable
                     (revision, create_dt, commit_id, upto_sql, undo_sql, comments)
                     VALUES(?, NOW(), ?, ?, ?, ?)
                     """
@@ -348,19 +350,23 @@ class DefaultRevisionManager(
                         dbVal["comments"] = it.getString("comments")
                     }
                 } catch (e: Exception) {
-                    if (revi <= REVISION_1ST_SCHEMA) {
+                    if (entry.uptoText.contains(schemaVersionTable, true)) {
                         assertNot1st(plainDs, e)
-                        messageLog(WARN, here, "try to init first version, revi=$revi, on db=$plainName")
-                        applyRevisionSql(revi, uptoSql, true, commitId, plainTmpl, null, emptyList())
+                        messageLog(WARN, here, "try to init $schemaVersionTable , revision=$revi, on db=$plainName")
+                        applyRevisionSql(revi, uptoSql, true, commitId, plainTmpl, null, emptyList(), false, entry.revision)
+                        // for later update
                         dbVal["upto_sql"] = Null.Str
                         dbVal["undo_sql"] = Null.Str
                         dbVal["apply_dt"] = Null.Str
                         dbVal["comments"] = Null.Str
                     } else {
-                        val regex = "sys_schema_version.*exist".toRegex(setOf(RegexOption.MULTILINE, RegexOption.IGNORE_CASE))
-                        if (e.message?.contains(regex) == true) {
-                            messageLog(ERROR, here, "you may need revision=$REVISION_1ST_SCHEMA, for un-init database")
-                        }
+                        val help = """for un-init database, one of the following ways can auto init.
+                                1.need $REVISION_1ST_SCHEMA as the first revision
+                                2.replace $REVISION_1ST_SCHEMA to first revi by Scanner.Helper
+                                3.the first revi less than $REVISION_1ST_SCHEMA
+                                4.branch create tables as in $REVISION_1ST_SCHEMA
+                            """.trimIndent()
+                        messageLog(ERROR, here, help)
                         throw e
                     }
                 }
@@ -429,19 +435,32 @@ class DefaultRevisionManager(
 
                 // update
                 if (updSql.isNotEmpty()) {
-                    messageLog(INFO, here, "update diff to database revi=$revi, applyDt=$applyd, db=$plainName")
-                    updVal.add(commitId)
-                    updVal.add(revi)
+                    // replace
+                    val whereRevi: String
+                    if (revi != entry.revision) {
+                        messageLog(INFO, here, "update diff to database refer-revi=$revi, entry-revi=${entry.revision}, applyDt=$applyd, db=$plainName")
+                        updSql.append("revision = ?, ")
+                        updVal.add(revi)
+                        whereRevi = "revision in (?,?)"
+                        updVal.add(commitId)
+                        updVal.add(revi)
+                        updVal.add(entry.revision)
+                    } else {
+                        messageLog(INFO, here, "update diff to database revi=$revi, applyDt=$applyd, db=$plainName")
+                        whereRevi = "revision = ?"
+                        updVal.add(commitId)
+                        updVal.add(revi)
+                    }
                     val rst = plainTmpl.update("""
-                        UPDATE sys_schema_version SET
+                        UPDATE $schemaVersionTable SET
                             $updSql
                             modify_dt = NOW(),
                             commit_id = ?
-                        WHERE revision = ?
+                        WHERE $whereRevi
                         """, *updVal.toArray())
 
                     if (rst != 1) {
-                        throw IllegalStateException("failed to update revi=$revi, db=$plainName")
+                        throw IllegalStateException("failed to update revi=$revi, db=$plainName, affect $rst records")
                     }
                 } else {
                     messageLog(INFO, here, "skip all same  revi=$revi, applyDt=$applyd, db=$plainName")
@@ -456,12 +475,12 @@ class DefaultRevisionManager(
 
     override fun forceUpdateSql(revision: Long, upto: String, undo: String, commitId: Long) {
         val insertSql = """
-            INSERT INTO sys_schema_version
+            INSERT INTO $schemaVersionTable
             (revision, create_dt, commit_id, upto_sql, undo_sql)
             VALUES(?, NOW(), ?, ?, ?)
             """
         val updateSql = """
-            UPDATE sys_schema_version SET
+            UPDATE $schemaVersionTable SET
                 upto_sql = ?,
                 undo_sql = ?,
                 modify_dt = NOW(),
@@ -475,7 +494,7 @@ class DefaultRevisionManager(
 
             // 不要使用msyql的REPLACE INTO，使用标准SQL
 
-            val cnt = tmpl.count("SELECT COUNT(1) FROM sys_schema_version WHERE revision= ?", revision)
+            val cnt = tmpl.count("SELECT COUNT(1) FROM $schemaVersionTable WHERE revision= ?", revision)
             if (cnt == 0) {
                 val rst = tmpl.update(insertSql, revision, commitId, upto, undo)
                 messageLog(INFO, here, "done force insert $rst records, revi=$revision, on db=$plainName")
@@ -527,10 +546,11 @@ class DefaultRevisionManager(
     }
 
     //
-    private fun applyRevisionSql(revi: Long, text: String, isUpto: Boolean, commitId: Long, plainTmpl: SimpleJdbcTemplate, shardTmpl: SimpleJdbcTemplate?, plainTbls: List<String>) {
+    private fun applyRevisionSql(revi: Long, text: String, isUpto: Boolean, commitId: Long,
+                                 plainTmpl: SimpleJdbcTemplate, shardTmpl: SimpleJdbcTemplate?, plainTbls: List<String>,
+                                 check: Boolean = true, orig: Long = revi
+    ) {
         val here = "applyRevisionSql"
-        messageLog(INFO, here, "parse revi-sql, revi=$revi, isUpto=$isUpto, mark as '$runningMark'")
-
         val plainName = plainTmpl.name
 
         if (!isUpto && askType[AskType.Undo] != false) {
@@ -538,8 +558,11 @@ class DefaultRevisionManager(
         }
 
         // 记录部分执行情况。
-        if (revi > REVISION_1ST_SCHEMA) {
-            plainTmpl.update("UPDATE sys_schema_version SET apply_dt='$runningMark', commit_id=? WHERE revision=?", commitId, revi)
+        if (check) {
+            messageLog(INFO, here, "parse revi-sql, revi=$revi, isUpto=$isUpto, mark as '$runningMark'")
+            plainTmpl.update("UPDATE $schemaVersionTable SET apply_dt='$runningMark', commit_id=? WHERE revision=?", commitId, revi)
+        } else {
+            messageLog(INFO, here, "parse revi-sql, revi=$revi, isUpto=$isUpto in abnormal mode")
         }
 
         for (seg in sqlSegmentProcessor.parse(sqlStatementParser, text)) {
@@ -562,8 +585,13 @@ class DefaultRevisionManager(
         } else {
             "'$unapplyMark'"
         }
+
         val cnt = try {
-            plainTmpl.update("UPDATE sys_schema_version SET apply_dt=$applyDt, commit_id=? WHERE revision=?", commitId, revi)
+            if (revi == orig) {
+                plainTmpl.update("UPDATE $schemaVersionTable SET apply_dt=$applyDt, commit_id=? WHERE revision=?", commitId, revi)
+            } else {
+                plainTmpl.update("UPDATE $schemaVersionTable SET apply_dt=$applyDt, commit_id=? WHERE revision in (?, ?)", commitId, revi, orig)
+            }
         } catch (e: Exception) {
             assertNot1st(plainTmpl.dataSource, e)
             messageLog(WARN, here, "skip un-init-1st, revi={}, applyDt=$revi, db=$plainName")
@@ -573,7 +601,11 @@ class DefaultRevisionManager(
         if (cnt == 1) {
             messageLog(INFO, here, "update revi=$revi, applyDt=$applyDt, db=$plainName")
         } else {
-            throw IllegalStateException("update revi=$revi, but $cnt records affect, db=$plainName")
+            if (check) {
+                throw IllegalStateException("update revi=$revi, but $cnt records affect, db=$plainName")
+            } else {
+                messageLog(WARN, here, "update revi=$revi, $cnt records affect, db=$plainName in abnormal-mode")
+            }
         }
     }
 
@@ -582,7 +614,7 @@ class DefaultRevisionManager(
         val here = "getRevision"
         return try {
             val rst = AtomicLong(0)
-            tmpl.query("SELECT revision, apply_dt FROM sys_schema_version WHERE apply_dt >'$unapplyMark' order by revision desc limit 2") {
+            tmpl.query("SELECT revision, apply_dt FROM $schemaVersionTable WHERE apply_dt >'$unapplyMark' order by revision desc limit 2") {
                 val r = it.getLong(1)
                 val d = it.getString(2)
                 if (isRunning(d)) {
@@ -673,9 +705,9 @@ class DefaultRevisionManager(
     private fun assertNot1st(ds: DataSource, er: Exception) {
         try {
             val tables = schemaDefinitionLoader.showTables(ds)
-            if (tables.find { it.equals("sys_schema_version", true) } != null) {
-                logger.error("exist sys_schema_version without any records, need manual fixed: drop empty table or insert records")
-                throw er // 存在 sys_schema_version 表，报出原异常
+            if (tables.find { it.equals(schemaVersionTable, true) } != null) {
+                logger.error("exist $schemaVersionTable without any records, need manual fixed: drop empty table or insert records")
+                throw er // 存在 $schemaVersionTable 表，报出原异常
             }
         } catch (e: Exception) {
             // 报出原异常

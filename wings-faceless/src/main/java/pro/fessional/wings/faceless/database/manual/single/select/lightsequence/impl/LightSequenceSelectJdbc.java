@@ -17,6 +17,8 @@ import java.util.Optional;
 public class LightSequenceSelectJdbc implements LightSequenceSelect {
 
     private final JdbcTemplate jdbcTemplate;
+    private final String selectOne;
+    private final String selectAll;
 
     private final RowMapper<NextStep> mapperNextStep = (rs, rowNum) -> {
         NextStep one = new NextStep();
@@ -27,8 +29,7 @@ public class LightSequenceSelectJdbc implements LightSequenceSelect {
 
     @Override
     public Optional<NextStep> selectOneLock(int block, String name) {
-        String sql = "SELECT next_val, step_val FROM sys_light_sequence WHERE block_id=? AND seq_name=? FOR UPDATE";
-        List<NextStep> list = jdbcTemplate.query(sql, mapperNextStep, block, name);
+        List<NextStep> list = jdbcTemplate.query(selectOne, mapperNextStep, block, name);
         int size = list.size();
         if (size == 0) {
             return Optional.empty();
@@ -49,7 +50,6 @@ public class LightSequenceSelectJdbc implements LightSequenceSelect {
 
     @Override
     public List<NameNextStep> selectAllLock(int block) {
-        String sql = "SELECT seq_name, next_val, step_val FROM sys_light_sequence WHERE block_id=? FOR UPDATE";
-        return jdbcTemplate.query(sql, mapperNameNextStep, block);
+        return jdbcTemplate.query(selectAll, mapperNameNextStep, block);
     }
 }

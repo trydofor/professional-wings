@@ -7,9 +7,11 @@ import pro.fessional.wings.faceless.enums.StandardI18nEnum;
 
 /**
  * @author trydofor
- * @since 2020-06-21
+ * @since 2021-02-21
  */
+// @SuppressWarnings({"NonAsciiCharacters"})
 public enum UserStatus implements ConstantEnum, StandardI18nEnum {
+
     SUPER(4110100, "user_status", "用户状态", "classpath:/wings-tmpl/ConstantEnumTemplate.java"),
     UNINIT(4110101, "uninit", "新建", "建立未登陆"),
     ACTIVE(4110102, "active", "正常", "正常活动"),
@@ -23,24 +25,23 @@ public enum UserStatus implements ConstantEnum, StandardI18nEnum {
     public static final String $UNSAFE = "unsafe";
     public static final String $DANGER = "danger";
     public static final String $FROZEN = "frozen";
-
-
     public static final boolean useIdAsKey = false;
+
     private final int id;
     private final String code;
-    private final String desc;
+    private final String hint;
     private final String info;
 
     private final String ukey;
     private final String rkey;
 
-    UserStatus(int id, String code, String desc, String info) {
+    UserStatus(int id, String code, String hint, String info) {
         this.id = id;
         this.code = code;
-        this.desc = desc;
+        this.hint = hint;
         this.info = info;
         this.ukey = useIdAsKey ? "id" + id : code;
-        this.rkey = "sys_constant_enum.desc." + ukey;
+        this.rkey = "sys_constant_enum.hint." + ukey;
     }
 
     @Override
@@ -50,7 +51,7 @@ public enum UserStatus implements ConstantEnum, StandardI18nEnum {
 
     @Override
     public @NotNull String getType() {
-        return "constant_enum_template";
+        return "user_status";
     }
 
     @Override
@@ -58,19 +59,14 @@ public enum UserStatus implements ConstantEnum, StandardI18nEnum {
         return info;
     }
 
-    public String getDesc() {
-        return desc;
-    }
-
-    //
     @Override
     public @NotNull String getBase() {
-        return "user_status";
+        return "sys_constant_enum";
     }
 
     @Override
     public @NotNull String getKind() {
-        return "desc";
+        return "hint";
     }
 
     @Override
@@ -78,8 +74,6 @@ public enum UserStatus implements ConstantEnum, StandardI18nEnum {
         return ukey;
     }
 
-
-    //
     @Override
     public @NotNull String getCode() {
         return code;
@@ -87,7 +81,7 @@ public enum UserStatus implements ConstantEnum, StandardI18nEnum {
 
     @Override
     public @NotNull String getHint() {
-        return desc;
+        return hint;
     }
 
     @Override

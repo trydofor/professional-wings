@@ -34,7 +34,7 @@ public class WingsTestHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(WingsTestHelper.class);
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private DataSourceContext dataSourceContext;
 
     private final HashMap<DataSource, Boolean> isH2Map = new HashMap<>();

@@ -4,14 +4,6 @@
 package pro.fessional.wings.faceless.database.autogen.tables.records;
 
 
-import org.jooq.Field;
-import org.jooq.Record1;
-import org.jooq.Record5;
-import org.jooq.Row5;
-import org.jooq.impl.UpdatableRecordImpl;
-import pro.fessional.wings.faceless.database.autogen.tables.SysConstantEnumTable;
-import pro.fessional.wings.faceless.database.autogen.tables.interfaces.ISysConstantEnum;
-
 import javax.annotation.Generated;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +12,15 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.jooq.Field;
+import org.jooq.Record1;
+import org.jooq.Record5;
+import org.jooq.Row5;
+import org.jooq.impl.UpdatableRecordImpl;
+
+import pro.fessional.wings.faceless.database.autogen.tables.SysConstantEnumTable;
+import pro.fessional.wings.faceless.database.autogen.tables.interfaces.ISysConstantEnum;
 
 
 /**
@@ -103,21 +104,21 @@ public class SysConstantEnumRecord extends UpdatableRecordImpl<SysConstantEnumRe
     }
 
     /**
-     * Setter for <code>sys_constant_enum.desc</code>.
+     * Setter for <code>sys_constant_enum.hint</code>.
      */
     @Override
-    public void setDesc(String value) {
+    public void setHint(String value) {
         set(3, value);
     }
 
     /**
-     * Getter for <code>sys_constant_enum.desc</code>.
+     * Getter for <code>sys_constant_enum.hint</code>.
      */
-    @Column(name = "desc", nullable = false, length = 100)
+    @Column(name = "hint", nullable = false, length = 100)
     @NotNull
     @Size(max = 100)
     @Override
-    public String getDesc() {
+    public String getHint() {
         return (String) get(3);
     }
 
@@ -180,7 +181,7 @@ public class SysConstantEnumRecord extends UpdatableRecordImpl<SysConstantEnumRe
 
     @Override
     public Field<String> field4() {
-        return SysConstantEnumTable.SysConstantEnum.Desc;
+        return SysConstantEnumTable.SysConstantEnum.Hint;
     }
 
     @Override
@@ -205,7 +206,7 @@ public class SysConstantEnumRecord extends UpdatableRecordImpl<SysConstantEnumRe
 
     @Override
     public String component4() {
-        return getDesc();
+        return getHint();
     }
 
     @Override
@@ -230,7 +231,7 @@ public class SysConstantEnumRecord extends UpdatableRecordImpl<SysConstantEnumRe
 
     @Override
     public String value4() {
-        return getDesc();
+        return getHint();
     }
 
     @Override
@@ -258,7 +259,7 @@ public class SysConstantEnumRecord extends UpdatableRecordImpl<SysConstantEnumRe
 
     @Override
     public SysConstantEnumRecord value4(String value) {
-        setDesc(value);
+        setHint(value);
         return this;
     }
 
@@ -287,7 +288,7 @@ public class SysConstantEnumRecord extends UpdatableRecordImpl<SysConstantEnumRe
         setId(from.getId());
         setType(from.getType());
         setCode(from.getCode());
-        setDesc(from.getDesc());
+        setHint(from.getHint());
         setInfo(from.getInfo());
     }
 
@@ -311,13 +312,13 @@ public class SysConstantEnumRecord extends UpdatableRecordImpl<SysConstantEnumRe
     /**
      * Create a detached, initialised SysConstantEnumRecord
      */
-    public SysConstantEnumRecord(Integer id, String type, String code, String desc, String info) {
+    public SysConstantEnumRecord(Integer id, String type, String code, String hint, String info) {
         super(SysConstantEnumTable.SysConstantEnum);
 
         setId(id);
         setType(type);
         setCode(code);
-        setDesc(desc);
+        setHint(hint);
         setInfo(info);
     }
 }

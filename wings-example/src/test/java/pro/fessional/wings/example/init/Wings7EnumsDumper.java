@@ -23,7 +23,7 @@ import java.util.Map;
 @Disabled("手动执行，版本更新时处理")
 public class Wings7EnumsDumper {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private ResourceLoader resourceLoader;
 
     @Test

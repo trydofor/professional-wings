@@ -26,10 +26,10 @@ import static pro.fessional.wings.slardar.controller.TestRestTmplController.json
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class RestTemplateHelperTest {
 
-    @Setter(onMethod = @__({@Value("http://localhost:${local.server.port}")}))
+    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
     private String host;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private RestTemplate restTemplate;
 
 

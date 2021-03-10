@@ -34,9 +34,9 @@ import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也�
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
 import pro.fessional.wings.faceless.database.helper.RowMapperHelper;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqUtil;
-import pro.fessional.wings.faceless.database.jooq.converter.impl.JooqIdLanguageConverter;
+import pro.fessional.wings.faceless.database.jooq.converter.JooqConsEnumConverter;
 import pro.fessional.wings.faceless.database.jooq.helper.PageJooqHelper;
-import pro.fessional.wings.faceless.enums.auto.StandardLanguage;
+import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
@@ -64,10 +64,10 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class JooqMostSelectSample {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private Tst中文也分表Dao dao;
 
     @Test
@@ -400,7 +400,7 @@ public class JooqMostSelectSample {
         System.out.println();
     }
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private JdbcTemplate jdbcTemplate;
 
     @Test
@@ -575,7 +575,7 @@ public class JooqMostSelectSample {
     @Test
     public void test9MappperEnum() {
         final Tst中文也分表Table t = dao.getTable();
-        DataType<StandardLanguage> lang = SQLDataType.INTEGER.asConvertedDataType(JooqIdLanguageConverter.Instance);
+        DataType<StandardLanguage> lang = SQLDataType.INTEGER.asConvertedDataType(JooqConsEnumConverter.of(StandardLanguage.class));
         final Field<StandardLanguage> langField = DSL.field(t.Language.getName(), lang);
         final List<EnumDto> sn = dao.ctx()
                                     .select(t.Id, langField)

@@ -22,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OkHttpClientHelperTest {
 
-    @Setter(onMethod = @__({@Value("http://localhost:${local.server.port}")}))
+    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
     private String host;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private OkHttpClient okHttpClient;
 
 

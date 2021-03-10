@@ -29,8 +29,8 @@ public class SecurityJournalService extends DefaultJournalService {
     public @NotNull Journal commit(@NotNull String eventName, @Nullable String loginInfo, @Nullable String targetKey, @Nullable String otherInfo) {
         if (loginInfo == null || loginInfo.isEmpty()) {
             Object principal = SecurityContextUtil.getPrincipal();
-            if (principal instanceof WingsUserDetail) {
-                loginInfo = ((WingsUserDetail) principal).toLoginInfo();
+            if (principal instanceof WingsExampleUserDetails) {
+                loginInfo = ((WingsExampleUserDetails) principal).toLoginInfo();
             } else if (principal instanceof CharSequence) {
                 loginInfo = principal.toString();
             }

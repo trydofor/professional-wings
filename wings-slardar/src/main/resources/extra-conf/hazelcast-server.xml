@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hazelcast xmlns="http://www.hazelcast.com/schema/config"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.hazelcast.com/schema/config
+           http://www.hazelcast.com/schema/config/hazelcast-config-4.0.xsd">
+
+    <!-- hazelcast-full-example.xml -->
+    <cluster-name>wings-slardar</cluster-name>
+
+    <network>
+        <port auto-increment="true" port-count="100">5701</port>
+        <reuse-address>true</reuse-address>
+        <outbound-ports>
+            <ports>0</ports>
+        </outbound-ports>
+        <join>
+            <multicast enabled="true">
+                <multicast-group>224.0.0.1</multicast-group>
+                <multicast-port>54327</multicast-port>
+            </multicast>
+            <tcp-ip enabled="false">
+                <interface>127.0.0.1</interface>
+                <member-list>
+                    <member>127.0.0.1</member>
+                    <member>127.0.0.2</member>
+                </member-list>
+            </tcp-ip>
+        </join>
+        <interfaces enabled="false">
+            <interface>10.10.1.*</interface>
+        </interfaces>
+        <ssl enabled="false"/>
+    </network>
+
+    <!--
+    <map name="default">
+        <time-to-live-seconds>3600</time-to-live-seconds>
+        <max-idle-seconds>0</max-idle-seconds>
+        <eviction eviction-policy="LRU" max-size-policy="PER_NODE" size="5000"/>
+    </map>
+    -->
+    <cp-subsystem>
+        <cp-member-count>0</cp-member-count>
+        <group-size>0</group-size>
+        <session-time-to-live-seconds>300</session-time-to-live-seconds>
+        <session-heartbeat-interval-seconds>5</session-heartbeat-interval-seconds>
+        <missing-cp-member-auto-removal-seconds>14400</missing-cp-member-auto-removal-seconds>
+        <fail-on-indeterminate-operation-state>false</fail-on-indeterminate-operation-state>
+    </cp-subsystem>
+    <!-- spring FindByIndexNameSessionRepository -->
+    <map name="spring:session:sessions">
+        <in-memory-format>OBJECT</in-memory-format>
+        <near-cache>
+            <time-to-live-seconds>0</time-to-live-seconds>
+            <max-idle-seconds>0</max-idle-seconds>
+            <invalidate-on-change>true</invalidate-on-change>
+            <in-memory-format>OBJECT</in-memory-format>
+            <cache-local-entries>false</cache-local-entries>
+            <eviction size="1000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
+        </near-cache>
+        <attributes>
+            <attribute extractor-class-name="org.springframework.session.hazelcast.Hazelcast4PrincipalNameExtractor">principalName</attribute>
+        </attributes>
+        <indexes>
+            <index type="HASH">
+                <attributes>
+                    <attribute>principalName</attribute>
+                </attributes>
+            </index>
+        </indexes>
+    </map>
+
+    <serialization>
+        <serializers>
+            <!-- spring FindByIndexNameSessionRepository -->
+            <serializer class-name="org.springframework.session.hazelcast.HazelcastSessionSerializer"
+                        type-class="org.springframework.session.MapSession"/>
+        </serializers>
+    </serialization>
+
+    <!-- HazelcastSerializationException: java.lang.ClassNotFoundException -->
+    <user-code-deployment enabled="true">
+        <class-cache-mode>ETERNAL</class-cache-mode>
+        <provider-mode>LOCAL_AND_CACHED_CLASSES</provider-mode>
+        <!--        <blacklist-prefixes>com.foo,com.bar</blacklist-prefixes>-->
+        <!--        <whitelist-prefixes>com.bar.MyClass</whitelist-prefixes>-->
+        <!--        <provider-filter>HAS_ATTRIBUTE:lite</provider-filter>-->
+    </user-code-deployment>
+</hazelcast>

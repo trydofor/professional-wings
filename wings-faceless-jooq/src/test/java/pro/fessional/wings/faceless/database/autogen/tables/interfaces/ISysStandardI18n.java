@@ -4,6 +4,8 @@
 package pro.fessional.wings.faceless.database.autogen.tables.interfaces;
 
 
+import java.io.Serializable;
+
 import javax.annotation.Generated;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,7 +13,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 
 
 /**
@@ -88,17 +89,17 @@ public interface ISysStandardI18n extends Serializable {
     public String getLang();
 
     /**
-     * Setter for <code>sys_standard_i18n.text</code>.
+     * Setter for <code>sys_standard_i18n.hint</code>.
      */
-    public void setText(String value);
+    public void setHint(String value);
 
     /**
-     * Getter for <code>sys_standard_i18n.text</code>.
+     * Getter for <code>sys_standard_i18n.hint</code>.
      */
-    @Column(name = "text", nullable = false, length = 3000)
+    @Column(name = "hint", nullable = false, length = 3000)
     @NotNull
     @Size(max = 3000)
-    public String getText();
+    public String getHint();
 
     // -------------------------------------------------------------------------
     // FROM and INTO

@@ -13,13 +13,13 @@ import org.springframework.context.MessageSource;
 import org.springframework.test.context.ActiveProfiles;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.faceless.WingsTestHelper;
+import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.SysConstantEnumDao;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.SysConstantEnum;
-import pro.fessional.wings.faceless.enums.auto.StandardLanguage;
-import pro.fessional.wings.faceless.enums.auto.StandardTimezone;
+import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
+import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.service.wini18n.StandardI18nService;
-import pro.fessional.wings.faceless.util.ConstantEnumGenerator;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.util.List;
@@ -36,27 +36,27 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
  */
 
 @ActiveProfiles("init")
-@SpringBootTest(properties = {"debug = true", "spring.wings.faceless.enumi18n.enabled=true"})
+@SpringBootTest(properties = {"debug = true", "spring.wings.faceless.enabled.enumi18n=true"})
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Tag("init")
 public class ConstantEnumI18nTest {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     SysConstantEnumDao sysConstantEnumDao;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     StandardI18nService standardI18nService;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     WingsTestHelper wingsTestHelper;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     SchemaRevisionManager revisionManager;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     ApplicationContext applicationContext;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     MessageSource messageSource;
 
     @Test
@@ -69,11 +69,11 @@ public class ConstantEnumI18nTest {
 
     @Test
     @Disabled("手动执行，避免污染java类")
-    public void test2GenEnum() throws Exception {
+    public void test2GenEnum() {
         List<SysConstantEnum> all = sysConstantEnumDao.findAll();
         ConstantEnumGenerator.builder()
-                             .setJavaSource("./src/test/java/")
-                             .setJavaPackage("pro.fessional.wings.faceless.enums.test")
+                             .targetDirectory("./src/test/java/")
+                             .targetPackage("pro.fessional.wings.faceless.enums.test")
                              .generate(SysConstantEnum.class, all);
     }
 

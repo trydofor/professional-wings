@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.example.WingsExampleApplication;
 import pro.fessional.wings.example.database.autogen.tables.daos.SysConstantEnumDao;
 import pro.fessional.wings.example.database.autogen.tables.pojos.SysConstantEnum;
-import pro.fessional.wings.faceless.util.ConstantEnumGenerator;
+import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator;
 
 import java.util.List;
 
@@ -21,8 +21,8 @@ import java.util.List;
 
 @SpringBootTest(classes = WingsExampleApplication.class, properties =
         {"debug = true",
-         "spring.wings.faceless.enumi18n.enabled=true",
-//         "spring.wings.faceless.flywave.enabled=true",
+         "spring.wings.faceless.enabled.enumi18n=true",
+//         "spring.wings.faceless.flywave.enabled.module=true",
 //         "spring.shardingsphere.datasource.names=writer",
 //         "spring.shardingsphere.datasource.writer.jdbc-url=jdbc:mysql://127.0.0.1:3306/wings?autoReconnect=true&useSSL=false",
 //         "spring.shardingsphere.datasource.writer.username=trydofor",
@@ -31,17 +31,17 @@ import java.util.List;
 @Disabled("手动生成Java类，依赖分支feature/enum-i18n的2019052101")
 public class Wings3ConstEnumGen {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SysConstantEnumDao sysConstantEnumDao;
 
     @Test
-    public void gen() throws Exception {
+    public void gen() {
         List<SysConstantEnum> all = sysConstantEnumDao.findAll();
         ConstantEnumGenerator.builder()
-                             .setJavaSource("./src/main/java/")
-                             .setJavaPackage("pro.fessional.wings.example.enums.auto")
+                             .targetDirectory("./src/main/java/")
+                             .targetPackage("pro.fessional.wings.example.enums.auto")
                              // 如果够用，可以直接用，否则用自己生成的
-                             .addExcludeType("standard_timezone", "standard_language")
+                             .excludeType("standard_boolean", "standard_timezone", "standard_language")
                              .generate(SysConstantEnum.class, all);
     }
 }

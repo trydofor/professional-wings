@@ -4,6 +4,11 @@
 package pro.fessional.wings.faceless.database.autogen.tables;
 
 
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Name;
 import org.jooq.Row5;
@@ -16,13 +21,10 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
+
 import pro.fessional.wings.faceless.database.autogen.DefaultSchema;
 import pro.fessional.wings.faceless.database.autogen.tables.records.SysConstantEnumRecord;
 import pro.fessional.wings.faceless.database.jooq.WingsAliasTable;
-
-import javax.annotation.Generated;
-import java.util.Arrays;
-import java.util.List;
 
 
 /**
@@ -71,9 +73,9 @@ public class SysConstantEnumTable extends TableImpl<SysConstantEnumRecord> imple
     public final TableField<SysConstantEnumRecord, String> Code = createField(DSL.name("code"), SQLDataType.VARCHAR(100).nullable(false), this, "");
 
     /**
-     * The column <code>sys_constant_enum.desc</code>.
+     * The column <code>sys_constant_enum.hint</code>.
      */
-    public final TableField<SysConstantEnumRecord, String> Desc = createField(DSL.name("desc"), SQLDataType.VARCHAR(100).nullable(false), this, "");
+    public final TableField<SysConstantEnumRecord, String> Hint = createField(DSL.name("hint"), SQLDataType.VARCHAR(100).nullable(false), this, "");
 
     /**
      * The column <code>sys_constant_enum.info</code>.

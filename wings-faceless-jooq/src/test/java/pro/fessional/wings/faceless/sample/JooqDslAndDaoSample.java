@@ -37,10 +37,10 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 @Disabled("手动执行，以有JooqShardingTest覆盖测试 ")
 public class JooqDslAndDaoSample {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private Tst中文也分表Dao dao;
 
     @Test

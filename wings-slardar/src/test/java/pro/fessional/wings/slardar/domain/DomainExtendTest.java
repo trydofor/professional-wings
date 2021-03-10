@@ -16,17 +16,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-                "spring.wings.slardar.extend-controller.enabled=true",
-                "spring.wings.slardar.extend-resource.enabled=true"
+                "spring.wings.slardar.enabled.domain-extend=true"
         })
 public class DomainExtendTest {
 
-    @Setter(onMethod = @__({@Value("http://127.0.0.1:${local.server.port}")}))
+    @Setter(onMethod_ = {@Value("http://127.0.0.1:${local.server.port}")})
     private String domainA;
-    @Setter(onMethod = @__({@Value("http://localhost:${local.server.port}")}))
+    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
     private String domainB;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private RestTemplate restTemplate;
 
     @Test

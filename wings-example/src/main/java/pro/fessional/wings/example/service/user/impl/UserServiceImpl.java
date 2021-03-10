@@ -19,7 +19,7 @@ import pro.fessional.wings.faceless.service.lightid.LightIdService;
  * @since 2020-07-01
  */
 @Service
-@Setter(onMethod = @__({@Autowired}))
+@Setter(onMethod_ = {@Autowired})
 @Slf4j
 public class UserServiceImpl implements UserService {
 

@@ -1,13 +1,22 @@
 package pro.fessional.wings.faceless.jooqgen;
 
 import lombok.val;
+import org.jooq.Converter;
 import org.jooq.codegen.GenerationTool;
+import org.jooq.meta.TableDefinition;
 import org.jooq.meta.jaxb.Configuration;
 import org.jooq.meta.jaxb.ForcedType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pro.fessional.mirana.data.CodeEnum;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.io.InputStreams;
+import pro.fessional.mirana.pain.IORuntimeException;
+import pro.fessional.wings.faceless.database.jooq.converter.JooqCodeEnumConverter;
+import pro.fessional.wings.faceless.database.jooq.converter.JooqConsEnumConverter;
+import pro.fessional.wings.faceless.database.jooq.converter.JooqLocaleConverter;
+import pro.fessional.wings.faceless.database.jooq.converter.JooqZoneIdConverter;
+import pro.fessional.wings.faceless.enums.ConstantEnum;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,8 +24,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.ZoneId;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -74,7 +86,7 @@ public class WingsCodeGenerator {
         try {
             return GenerationTool.load(WingsCodeGenerator.class.getResourceAsStream(JOOQ_XML));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IORuntimeException(e);
         }
     }
 
@@ -184,6 +196,14 @@ public class WingsCodeGenerator {
         }
 
         public Builder jdbcUrl(String str) {
+            // jdbc:mysql://localhost:3306/wings_warlock
+            int p3 = str.indexOf("?");
+            int p2 = p3 > 0 ? p3 : str.length();
+            int p1 = str.lastIndexOf("/", p2);
+            if (p2 > p1) {
+                final String db = str.substring(p1 + 1, p2);
+                databaseSchema(db);
+            }
             this.conf.getJdbc().setUrl(str);
             return this;
         }
@@ -221,8 +241,9 @@ public class WingsCodeGenerator {
          * @return builder
          * @see Pattern#COMMENTS
          */
-        public Builder databaseIncludes(String reg) {
-            this.conf.getGenerator().getDatabase().setIncludes(reg);
+        public Builder databaseIncludes(String... reg) {
+            final String join = String.join("|", reg);
+            this.conf.getGenerator().getDatabase().setIncludes(join);
             return this;
         }
 
@@ -234,8 +255,9 @@ public class WingsCodeGenerator {
          * @return builder
          * @see Pattern#COMMENTS
          */
-        public Builder databaseExcludes(String reg) {
-            this.conf.getGenerator().getDatabase().setExcludes(reg);
+        public Builder databaseExcludes(String... reg) {
+            final String join = String.join("|", reg);
+            this.conf.getGenerator().getDatabase().setExcludes(join);
             return this;
         }
 
@@ -252,6 +274,60 @@ public class WingsCodeGenerator {
         public Builder forcedType(ForcedType ft) {
             this.conf.getGenerator().getDatabase().getForcedTypes().add(ft);
             return this;
+        }
+
+        public Builder forcedType(Class<?> userType, Class<? extends Converter<?, ?>> converter, String... reg) {
+            ForcedType ft = new ForcedType()
+                    .withUserType(userType.getName())
+                    .withConverter(converter.getName())
+                    .withExpression(String.join("|", reg));
+            return forcedType(ft);
+        }
+
+        /**
+         * jooq中匹配 含`.`且&lt;&gt;或[]结尾，做 `new %s()`，否则做 %s
+         * 参考 JavaGenerator#converterTemplate
+         *
+         * @param ft         ForcedType
+         * @param sortImport 以import代替全限定引用，仅wingsGenerator有效
+         * @return this
+         */
+        public Builder forcedType(ForcedType ft, String sortImport) {
+            WingsJavaGenerator.shortImport4Table(sortImport);
+            return forcedType(ft);
+        }
+
+        public <E extends Enum<E> & CodeEnum> Builder forcedCodeEnum(Class<E> en, String... reg) {
+            return forcedJooqEnum(en, JooqCodeEnumConverter.class, reg);
+        }
+
+        public <E extends Enum<E> & ConstantEnum> Builder forcedConsEnum(Class<E> en, String... reg) {
+            return forcedJooqEnum(en, JooqConsEnumConverter.class, reg);
+        }
+
+        public Builder forcedLocale(String... reg) {
+            return forcedType(Locale.class, JooqLocaleConverter.class, reg);
+        }
+
+        public Builder forcedZoneId(String... reg) {
+            return forcedType(ZoneId.class, JooqZoneIdConverter.class, reg);
+        }
+
+        public Builder funSeqName(Function<TableDefinition, String> fn) {
+            WingsJooqGenHelp.funSeqName.set(fn);
+            return this;
+        }
+
+        //
+        private <E extends Enum<E>> Builder forcedJooqEnum(Class<E> userType, Class<?> converter, String... reg) {
+            final String cv = converter.getName();
+            ForcedType ft = new ForcedType()
+                    .withUserType(userType.getName())
+                    // new JooqConsEnumConverter(StandardLanguage.class)
+                    .withConverter("new " + cv + "(" + userType.getSimpleName() + ".class)")
+                    .withExpression(String.join("|", reg));
+
+            return forcedType(ft, cv);
         }
     }
 }

@@ -5,8 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pro.fessional.wings.faceless.convention.EmptyValue;
+import pro.fessional.mirana.cast.EnumConvertor;
 import pro.fessional.wings.faceless.convention.EmptySugar;
+import pro.fessional.wings.faceless.convention.EmptyValue;
 
 import java.time.LocalDateTime;
 
@@ -98,7 +99,7 @@ public interface JournalService {
         String lgn = loginInfo == null ? EmptyValue.VARCHAR : loginInfo;
         String key = targetKey == null ? EmptyValue.VARCHAR : String.valueOf(targetKey);
         String oth = otherInfo == null ? EmptyValue.VARCHAR : String.valueOf(otherInfo);
-        return commit(eventClass.getCanonicalName(), lgn, key, oth);
+        return commit(eventClass.getName(), lgn, key, oth);
     }
 
     /**
@@ -138,5 +139,62 @@ public interface JournalService {
     @NotNull
     default Journal commit(@NotNull Class<?> eventClass) {
         return commit(eventClass, null, null, null);
+    }
+
+    /**
+     * 构建一个日志
+     * 建议Override，通过Json构造targetKey或OtherInfo
+     *
+     * @param eventEnum 事件类，使用类的全路径，通常内部类命名为Jane
+     * @param loginInfo 登陆信息，用户id，ip等，自定义
+     * @param targetKey 目标key或id
+     * @param otherInfo 其他信息
+     * @return 可以提交的日志
+     */
+    @NotNull
+    default Journal commit(@NotNull Enum<?> eventEnum, @Nullable String loginInfo, @Nullable Object targetKey, @Nullable Object otherInfo) {
+        String lgn = loginInfo == null ? EmptyValue.VARCHAR : loginInfo;
+        String key = targetKey == null ? EmptyValue.VARCHAR : String.valueOf(targetKey);
+        String oth = otherInfo == null ? EmptyValue.VARCHAR : String.valueOf(otherInfo);
+        return commit(EnumConvertor.enum2Str(eventEnum), lgn, key, oth);
+    }
+
+    /**
+     * 构建一个日志。
+     * 建议Override，通过SecurityContext获得 loginInfo
+     *
+     * @param eventEnum 事件类，使用类的全路径
+     * @param targetKey 目标key或id
+     * @param otherInfo 其他信息
+     * @return 可以提交的日志
+     */
+    @NotNull
+    default Journal commit(@NotNull Enum<?> eventEnum, @Nullable Object targetKey, @Nullable Object otherInfo) {
+        return commit(eventEnum, null, targetKey, otherInfo);
+    }
+
+    /**
+     * 构建一个日志。
+     * 建议Override，通过SecurityContext获得 loginInfo
+     *
+     * @param eventEnum 事件类，使用类的全路径
+     * @param targetKey 目标key或id
+     * @return 可以提交的日志
+     */
+    @NotNull
+    default Journal commit(@NotNull Enum<?> eventEnum, @Nullable Object targetKey) {
+        return commit(eventEnum, null, targetKey, null);
+    }
+
+    /**
+     * 构建一个日志。
+     * 建议Override，通过SecurityContext获得 loginInfo
+     *
+     * @param eventEnum 事件类，使用类的全路径
+     * @return 可以提交的日志
+     */
+    @NotNull
+    default Journal commit(@NotNull Enum<?> eventEnum) {
+        return commit(eventEnum, null, null, null);
     }
 }

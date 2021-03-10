@@ -8,26 +8,26 @@
 
 ### 显示验证码
 # 输出 code=null
-GET http://localhost:8081/test/vcode.html
+GET {{host}}/test/vcode.html
 
 ### 验证码
 # 输出 captcha
-GET http://localhost:8081/test/captcha.html
+GET {{host}}/test/captcha.html
 
 ### 显示验证码
 # 输出 code=123
-GET http://localhost:8081/test/vcode.html
+GET {{host}}/test/vcode.html
 
 ### 不带验证码查看
 # 输出 bad captcha
-GET http://localhost:8081/test/verify.html
+GET {{host}}/test/verify.html
 
 ### 带验证码查看
 # 输出 /test/verify.html?vc=123
-GET http://localhost:8081/test/verify.html?vc=123
+GET {{host}}/test/verify.html?vc=123
 
 ### 全局产生验证码
 # 输出 code=随机数
-GET http://localhost:8081/test/vcode.html?ct=1
+GET {{host}}/test/vcode.html?ct=1
 
 ###

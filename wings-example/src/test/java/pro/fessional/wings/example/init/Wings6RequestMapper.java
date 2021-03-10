@@ -22,7 +22,7 @@ import java.util.List;
 @Disabled("手动执行，版本更新时处理")
 public class Wings6RequestMapper {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private ApplicationContext context;
 
     @Test

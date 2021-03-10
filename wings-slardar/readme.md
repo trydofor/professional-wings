@@ -4,24 +4,14 @@
 
 ![slardar](./slardar_full.png)
 
-为Servlet体系下的SpringMvc的提供i18n和security的简单封装。
+为SpringMvc(不支持webflux)提供i18n和security,cache,session的基础支持和封装。
 
  * 工程化Jackson配置(wings-jackson-79.properties)
  * domain继承换肤(通过host判定，且可继承)
- * 多时区
- * caffeine cache
- * 不支持webflux
+ * 多时区，多语言
+ * 分布式session和多种认证 - hazelcast
+ * 多级cache - caffeine, hazelcast 
  * 特殊功能的filter
-
-`LocaleContextResolver` 会俺以下优先级，获得多国语设置。
-
- 1. request被设置好的`WINGS.I18N_CONTEXT`
- 2. query string `locale`, `zoneid`
- 3. cookie `WINGS_LOCALE`, `WINGS_ZONEID`
- 4. http header `Accept-Language`,`Zone-Id`
- 5. 系统默认值
-
-此处为行为约定，基于servlet或webflux的具体实现。`WingsLocaleResolver`是一个实现。
 
 ## 3.1.Json格式约定(jackson)
 
@@ -140,76 +130,278 @@ public class UserController {
 wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子域全路径url，  
 通过检查缓存和DispatchServlet中的HandlerMapping再构造RequestWrapper。
 
+比如用户访问的URL为 /user/login.json，假设满足domain继承，host为trydofor，
+在服务器端实际访问的资源是 /prefix/trydofor/user/login.json
+
+即增加了 /${prefix}/${host}的路径在客户访问URI前。
+
 知识点提示，
 * 在FilterChain.doFilter调用之前Request可用，而其后Response可用的，注意线程安全和性能。
 * 默认静态资源在classpath中的 `/static`, `/public`, `/resources`, `/META-INF/resources`
 
-## 3.3.常用功能
+## 3.3.多国语和多时区
 
-## 3.3.1.restTemplate和okhttp
+在silence的配置中，所有I18n有个的资源，放置在 wigns-i18n/即可自动加载
+
+通过`LocaleContextResolver`，按以下优先级，获得当前locale设置。
+
+ 1. request被设置好的`WINGS.I18N_CONTEXT`
+ 2. query string `locale`, `zoneid`
+ 3. cookie `WINGS_LOCALE`, `WINGS_ZONEID`
+ 4. http header `Accept-Language`,`Zone-Id`
+ 5. 系统默认值
+
+此处为行为约定，基于servlet或webflux的具体实现。`WingsLocaleResolver`是一个实现。
+
+用户登录后，自动生成时区和I18n有关的Context。
+通过`SecurityContextUtil`获得相关的Context。
+
+`WingsTerminalContext.Context`和登录终端有关的，需要打开TerminalFilter。
+
+多时区方面，通过enum类，自动生成业务上的标准时区，以供解析和使用。
+
+在编码命名上，类型关系和命名约定如下
+
+ * language - 对应 StandardLanguageEnum
+ * timezone - 对应 StandardTimezoneEnum
+ * locale - 对应 java.util.Locale
+ * zoneid - 对应 java.time.ZoneId
+
+
+## 3.4.Session和认证管理
+
+ * 同时支持header-token, cookie-session
+ * 安全不高的url-string的凭证类ticket。
+ * 用户可管理session，控制登录，踢人
+ * 可配置的cookie-name，token-name
+ * 不同级别的控制并发登录，如财务只许单登录。
+ * 集成第三方登录，验证码登录，凭证登录
+ * 管理端马甲，超级用户身份切换
+ * session别名，附加token
+
+### 3.4.1.同时使用header和cookie
+
+通过spring默认的server.servlet.session.cookie.name设置，
+在WingsSessionIdResolver中，会加入header和cookie两个resolver。
+header的名字和cookie同名，默认是SESSION。
+
+建议不使用rememberMe，设置session的timeout和cookie的maxAge较长时间。
+
+### 3.4.2.多中验证及绑定登录
+
+加强了spring security的userPassword登录，通过继承或替换以下类，实现无缝替代。
+
+ * WingsBindLoginConfigurer : FormLoginConfigurer
+ * WingsBindAuthenticationToken : UsernamePasswordAuthenticationToken
+ * WingsBindAuthenticationFilter : UsernamePasswordAuthenticationFilter
+ * WingsBindAuthenticationProvider : DaoAuthenticationProvider
+ * WingsUserDetail : UserDetails
+ * WingsUserDetailService : UserDetailsService
+
+使用时，建议直接以bindLogin替换formLogin配置，如果共存，则必须bind的order在前面，
+因为Token是继承关系，要保证WingsProvider在DaoAuthenticationProvider前处理。
+
+举例，实现短信验证或第三方绑定时，只需实现WingsUserDetailService，处理验证类型。
+ 
+ * 短信验证，UserDetailsService在缓存中取得passwordEncoder加密后的短信
+ * 三方绑定，推荐集成justAuth，设置loginProcessingUrl为callback地址，通过
+   - 在AuthnDetailsSource构造的请求中的Authentication.details
+   - 在AuthnProvider先UserDetailsService.load，NotFound时尝试创建用户
+   - 尤其Oauth这种2次获取detail的，强依赖AuthnDetailsSource获取Detail
+   
+在使用 WingsBindAuthnProvider 代替默认的DaoAuthenticationProvider时，有2种方法，
+
+* 继承configure(AuthenticationManagerBuilder)，通过wingsHelper手动构建
+* 无上述继承，直接 @Bean WingsBindAuthnProvider，自动全局配置（推荐）
+* 无AuthenticationProvider，有WingsUserDetailsService，自动配置Wings全套（默认）
+
+当手动配置userDetailsService，和默认配置一样，会自动new一个Provider添加。
+如果不需要添加Provider，可设置wingsBindAuthnProvider(false)，与spring原始不同。
+
+
+### 3.4.4.实现原理
+
+在spring session加持下，spring security可以完成api预授信和token登录
+
+ * [PreAuthenticatedProcessingFilter](https://docs.spring.io/spring-security/site/docs/current/reference/html5/#servlet-preauth)
+ * [UsernamePasswordAuthenticationFilter](https://docs.spring.io/spring-security/site/docs/current/reference/html5/#servlet-preauth)
+ * SwitchUserFilter - linux su - 全局套马甲
+ * RunAsManager - 单方法临时套马甲
+
+作为提高话题，以下技术点需要阅读源码和定制。
+
+* SessionRepositoryFilter
+* UsernamePasswordAuthenticationFilter
+* RememberMeAuthenticationFilter
+* SwitchUserFilter
+* FilterComparator
+
+类似 DigestAuthenticationFilter
+
+RunAsManager - 有意思，调查一下，好像可以马甲
+
+Session和SecurityContext的调用关系如下
+``` plantuml
+@startuml
+SessionRepositoryFilter -> SessionRepositoryRequestWrapper
+SecurityContextPersistenceFilter -> SecurityContextRepository: loadContext()
+SecurityContextRepository -> SessionRepositoryRequestWrapper: getSession()
+SecurityContextPersistenceFilter -> SecurityContextHolder: setContext()
+SecurityContextPersistenceFilter -> FilterChain: doFilter()
+SecurityContextPersistenceFilter -> SecurityContextHolder: clearContext()
+SecurityContextPersistenceFilter -> SecurityContextRepository: saveContext()
+SessionManagementFilter -> SecurityContextRepository: containsContext()
+SessionManagementFilter -> SecurityContextRepository: saveContext()
+@enduml
+```
+
+### 3.4.1.区分cookie，使用别名
+
+同domain同path下，多个应用共享一套Session-cookie体系，希望同名cookie可以区分使用。
+如admin和front两个应用要区分出`SESSSION`的cookie，设置别名而无需修改session体系。
+
+实现原理是写入时定制CookieSerializer，读取时进行cookie-name转换。
+
+
+### 3.4.5.hazelcast 管理
+
+* ClassNotFound - user-code-deployment需要设置
+* 重连机制，client时，需要设置重连时间
+* 数据持久化，MapStore和MapLoader
+* 默认开启multicast，组播地址224.0.0.1
+
+在实际部署时，建议独立配置好hazelcast集群，使用client端链接。
+集群配置，可以是app+1的形式，这样可保证至少一个独立存活。
+
+一般在统一网段，内网间可以使用组播，但建议使用tcp-ip方式设置。
+通过 spring.hazelcast.config 选择不同的配置文件，建议xml。
+
+hazelcast 3.x和4.x差异很大，也就是在spring-boot 2.2和2.4是不兼容的。
+
+hazelcast提供了3类锁，推荐使用CP系统，但集群要求至少3台，默认为0单机unsafe模式。
+
+ * FencedLock - Raft的分布式锁，在CP系统(4.x)
+ * IMap.lock - 自动GC，干净简洁
+ * ILock.lock - 遵循j.u.c.Lock约定（3.12移除）
+
+参考资料如下，
+
+ * https://hazelcast.com/blog/hazelcast-imdg-3-12-introduces-cp-subsystem/
+ * https://hazelcast.com/blog/long-live-distributed-locks/
+
+### 3.4.6.其他
+
+RequestContextHolder
+SecurityContextHolder
+
+CookieSerializer
+HttpSessionIdResolver
+
+SessionEventHttpSessionListenerAdapter
+HttpSessionEventPublisher
+
+rememberMe
+SpringSessionRememberMeServices
+
+
+默认使用Hazelcast实现，全默认配置，正式环境需要自行调整
+
+若使用`@Enable*HttpSession`表示手动配置，则`spring.session.*`不会自动配置。 
+`springSessionRepositoryFilter`会置顶，以便wrap掉原始的HttpRequest和HttpSession
+
+## 3.5.缓存Caffeine和Hazelcast
+
+默认提供JCache约定下的Memory和Server两个CacheManager，名字和实现如下，
+
+* MemoryCacheManager caffeineCacheManager
+* ServerCacheManager hazelcastCacheManager
+
+因为已注入了CacheManager，会使spring-boot的自动配置不满足条件而无效。
+If you have not defined a bean of type CacheManager or 
+a CacheResolver named cacheResolver (see CachingConfigurer), 
+Spring Boot tries to detect the following providers (in the indicated order):
+
+三种不同缓存级别前缀，分别定义不同的ttl,idle,size
+
+* `program.` - 程序级，程序或服务运行期间
+* `general.` - 标准配置，1天
+* `service.` - 服务级的，1小时
+* `session.` - 会话级的，10分钟
+
+具有相同前缀的cache，会采用相同的配置项(ttl,idle,size)。
+
+``` java
+@CacheConfig(cacheManager = Manager.Memory, 
+cacheNames = Level.GENERAL + "OperatorService")
+
+@Cacheable(key = "'all'", 
+cacheNames = Level.GENERAL + "StandardRegion", 
+cacheManager = Manager.Server)
+
+@CacheEvict(key = "'all'", 
+cacheNames = Level.GENERAL + "StandardRegion", 
+cacheManager = Manager.Server)
+```
+
+对于hazelcast的MapConfig若无配置，则wings会根据level自动配置以下MapConf。
+``` xml
+<time-to-live-seconds>3600</time-to-live-seconds>
+<max-idle-seconds>0</max-idle-seconds>
+<eviction size="5000"/>
+```
+
+## 3.7.常用功能
+
+## 3.7.1.restTemplate和okhttp
 
 默认使用okhttp3作为restTemplate的实现。按spring boot官方文档和源码约定。
-并可以 autoware OkHttpClient 直接使用，默认**信任所有ssl证书**，如安全高，需要关闭。
+并可以 Autowired OkHttpClient 直接使用，默认**信任所有ssl证书**，如安全高，需要关闭。
 如果需要按scope定制，使用RestTemplateBuilder，全局应用使用RestTemplateCustomizer。
 
 [RestTemplate 定制](https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/#boot-features-resttemplate-customization)
 org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 
+在springboot默认是3.x，而just-auth需要4.x，所以需要手动okhttp3.version属性
 
-## 3.3.2.缓存Caffeine
+## 3.7.2.防止连击
 
-默认提供caffeine缓存，可以注入
+通常业务场景下，可以通过前端在dom或js层面做好用户的防连击。而服务器端防连击，主要是API类的误操作。
+因filter和interceptor会对所有请求检查，slardar采用的是AOP方式，类似Cacheable。
 
-* CaffeineCacheManager caffeineCacheManager
-* RedisTemplate<String, Object> redisTemplate
-* StringRedisTemplate stringRedisTemplate
-* RedissonSpringCacheManager redissonCacheManager
+沿用dota命名，此处命名为 @DoubleKill注解，通过Jvm全局锁和DoubleKillException完成。
 
-其中，caffeine默认开启，且 `spring.cache.type=caffeine`，
+在controller层，需要使用@RequestParam 或@RequestHeader等注入参数。
+对应session级别的控制，可使用@bean进行处理。
 
-三种不同缓存级别前缀，分别定义不同的ttl,idle,size
+默认对DoubleKillException返回固定的json字符串，注入DoubleKillExceptionResolver可替换
 
-* `program.` - 程序配置，永存
-* `general.` - 标准配置，1天
-* `service.` - 服务级的，1小时
-* `session.` - 会话级的，10分钟
+详细用法，可参考TestDoubleKillController和DoubleKillService
 
-``` java
-@CacheConfig(cacheManager = Manager.CAFFEINE, 
-cacheNames = Level.GENERAL + "OperatorService")
+## 3.7.3.验证码
 
-@Cacheable(key = "'all'", 
-cacheNames = Level.GENERAL + "StandardRegion", 
-cacheManager = Manager.CAFFEINE)
+对于受保护的资源，要采取一定的验证码，有时是为了延缓时间，有时是为了区分行为。
+验证码可以以http header 进行返回，前端获得header后，去请求验证码图片等。
+用户填写后，验证码也通过header发给server进行验证，http状态码建议返回401。
 
-@CacheEvict(key = "'all'", 
-cacheNames = Level.GENERAL + "StandardRegion", 
-cacheManager = Manager.REDISSON)
-```
-
-## 3.3.3.Session,Timezone和I18n
-
-用户登录后，自动生成时区和I18n有关的Context。
-通过`SecurityContextUtil`获得相关的Context。
-
-`WingsTerminalContext.Context`和登录终端有关的，  
-需要打开TerminalFilter。
+验证码的关键点有2个，
 
 
-## 3.7.特别用途的filter
+## 3.8.特别用途的 Filter
 
-## 3.7.1.TerminalFilter终端
+构建一个 wingsFilterChain 内置以下filter
 
-是否解析 WingsTerminalContext，默认`spring.wings.slardar.terminal.enabled=true`控制，  
+## 3.8.1.TerminalFilter终端
+
+是否解析 WingsTerminalContext，默认`spring.wings.slardar.enabled.terminal=true`控制，  
 同时依赖于 `WingsLocaleResolver`和`WingsRemoteResolver`
 
  * 设置 Locale 和 TimeZone
  * 设置 remote ip
  * 设置 user agent信息
 
-## 3.7.2.CaptchaFilter防扒
+## 3.8.2.CaptchaFilter防扒
 
-是否开启验证码，`spring.wings.slardar.captcha.enabled=false`
+是否开启验证码，`spring.wings.slardar.enabled.captcha=false`
 
 通过`WingsCaptchaContext`设置规则，可以实现全局的防扒验证码。
 验证码的验证规则可以自定义，比如时间戳比较，短信码比较等。
@@ -223,9 +415,9 @@ cacheManager = Manager.REDISSON)
 
 举例，详见`TestCaptchaController`的三个方法。
 
-## 3.7.3.OverloadFilter过载
+## 3.8.3.OverloadFilter过载
 
-是否限定请求并发，默认`spring.wings.slardar.overload.enabled=false`
+是否限定请求并发，默认`spring.wings.slardar.enabled.overload=false`
 
  * 自动或手动设置`最大同时进行请求数`。超过时，执行`fallback`。
  * 不影响性能的情况下，记录慢响应URI和运行状态。
@@ -242,22 +434,33 @@ cacheManager = Manager.REDISSON)
 
 ## 3.9.常见问题
 
-### 001.spring 找不到 RedissonSpringCacheManager
+### 01.Error creating bean with name 'hazelcastInstance'
 
-在maven依赖中，把slardar以下3个optional的依赖引入 
+Invalid content was found starting with element 'cluster-name'，
+若是有以上信息，是hazelcast 3.x和4.x配置的兼容问题，boot-2.2.x为hazelcast 3.12.x
 
-* spring-boot-starter-data-redis
-* redisson-spring-data-22
 
-### 002.修改过的默认配置
+### 02.修改过的默认配置
 
 slardar，使用undertow，并提供了一下默认配置
 
-### 003.session方案的选择
+### 03.session方案的选择
 
-其实 hazelcast 是个不错的选择，若选用redis，切记redis必须`requirepass`
+其实 hazelcast 是个不错的选择，若选用redis，切记redis必须`requirepass`。
+最后，从redis+redisson的方案，切换成了 hazelcast的方案。其理由如下。
 
-### 007.error处理，需要自定义page或handler
+* 单应用进化的简单性，hazelcast是零依赖
+* 性能，可用性，运维角度，两者五五开
+
+关于hazelcast和spring，主要的管理场景是cache,session,security
+
+* spring-boot优先尝试创建client，不成则创建embedded server
+* spring session 使用@Enable*HttpSession手动配置。文档中是hazelcast3的配置，实际支持4
+
+文档中的例子都是通过编码方式配置的，实际可以通过xml配置，交由boot处理。
+系统默认提供了server和client的组播配置。
+
+### 04.error处理，需要自定义page或handler
 
 需要根据spring约定和实际需要，自定义一套机制。
 但是不要使用`spring.mvc.throw-exception-if-no-handler-found=true`，
@@ -278,24 +481,45 @@ public ModelAndView resolveErrorView(HttpServletRequest request,
 
 [error-handling](https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/#boot-features-error-handling)
 
-### 008.undertow 启动时warn UT026010
+### 05.undertow 启动时warn UT026010
 
 在未配置websocket时，undertow使用默认buffer，出现以下警告。
 需要定制`websocketServletWebServerCustomizer`，或设置
-`spring.wings.slardar.undertow-ws.enabled=true`即可
+`spring.wings.slardar.enabled.undertow-ws=true`即可
 
 在`io.undertow.websockets.jsr.Bootstrap` 68行，`buffers == null` 时
 `UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used`
 默认 DefaultByteBufferPool(directBuffers, 1024, 100, 12);
 
-### 009.OAuth2的参考资料
+### 06.OAuth2的参考资料
 
 * [OAuth 2 Developers Guide](https://projects.spring.io/spring-security-oauth/docs/oauth2.html)
 * [OAuth2 boot](https://docs.spring.io/spring-security-oauth2-boot/docs/current/reference/htmlsingle/)
 * [Spring Security](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/)
 
-### 010.如何配置security
+### 07.如何配置security
 
 security一定是系统中最为重要的部分，也是所有渗透入侵的重点，所以slardar无默认配置。
 
 配置中可以使用Order，提供多个HttpSecurity。
+
+### 08.多线程下的SecurityContext
+
+ * DelegatingSecurityContext*  
+ * transmittable-thread-local
+
+### 09.成功登陆后跳转
+
+SavedRequestAwareAuthenticationSuccessHandler和RequestCache 进行搭配即可。
+在前后端分离的情况下，不需要后端控制，所以应该关闭RequestCache。
+
+ * HTTP Referer header - 有些浏览器不给refer
+ * saving the original request in the session - 要session支持。
+ * base64 original URL to the redirected login URL - 通常的SSO实现
+
+不过，spring security默认不支持地三种。如果要定制的话，需要看ExceptionTranslationFilter，
+在sendStartAuthentication方法中，对requestCache或authenticationEntryPoint上进行定制。
+也可以通过interceptor对loginPage进行定制。
+
+* https://www.baeldung.com/spring-security-redirect-login
+* https://www.baeldung.com/spring-security-redirect-logged-in

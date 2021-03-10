@@ -14,7 +14,7 @@ import pro.fessional.wings.example.auth.SecuredService;
 @Controller
 public class TestSecuredController {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     SecuredService securedService;
 
     @RequestMapping("/test/secured-test.json")

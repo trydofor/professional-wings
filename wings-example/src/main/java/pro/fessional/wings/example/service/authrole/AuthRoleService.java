@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * @since 2019-12-01
  */
 @Service
-@Setter(onMethod = @__({@Autowired}))
+@Setter(onMethod_ = {@Autowired})
 public class AuthRoleService {
 
     private AuthRoleCache authRoleCache;

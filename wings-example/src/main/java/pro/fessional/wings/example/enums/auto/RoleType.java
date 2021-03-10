@@ -7,9 +7,11 @@ import pro.fessional.wings.faceless.enums.StandardI18nEnum;
 
 /**
  * @author trydofor
- * @since 2020-06-21
+ * @since 2021-02-21
  */
+// @SuppressWarnings({"NonAsciiCharacters"})
 public enum RoleType implements ConstantEnum, StandardI18nEnum {
+
     SUPER(4020100, "role_type", "角色类别", "classpath:/wings-tmpl/ConstantEnumTemplate.java"),
     FINANCIAL(4020101, "financial", "财务", "财务总部"),
     OPERATION(4020102, "operation", "运营", "财务总部"),
@@ -17,24 +19,23 @@ public enum RoleType implements ConstantEnum, StandardI18nEnum {
     public static final String $SUPER = "role_type";
     public static final String $FINANCIAL = "financial";
     public static final String $OPERATION = "operation";
-
-
     public static final boolean useIdAsKey = false;
+
     private final int id;
     private final String code;
-    private final String desc;
+    private final String hint;
     private final String info;
 
     private final String ukey;
     private final String rkey;
 
-    RoleType(int id, String code, String desc, String info) {
+    RoleType(int id, String code, String hint, String info) {
         this.id = id;
         this.code = code;
-        this.desc = desc;
+        this.hint = hint;
         this.info = info;
         this.ukey = useIdAsKey ? "id" + id : code;
-        this.rkey = "sys_constant_enum.desc." + ukey;
+        this.rkey = "sys_constant_enum.hint." + ukey;
     }
 
     @Override
@@ -44,7 +45,7 @@ public enum RoleType implements ConstantEnum, StandardI18nEnum {
 
     @Override
     public @NotNull String getType() {
-        return "constant_enum_template";
+        return "role_type";
     }
 
     @Override
@@ -52,19 +53,14 @@ public enum RoleType implements ConstantEnum, StandardI18nEnum {
         return info;
     }
 
-    public String getDesc() {
-        return desc;
-    }
-
-    //
     @Override
     public @NotNull String getBase() {
-        return "role_type";
+        return "sys_constant_enum";
     }
 
     @Override
     public @NotNull String getKind() {
-        return "desc";
+        return "hint";
     }
 
     @Override
@@ -72,8 +68,6 @@ public enum RoleType implements ConstantEnum, StandardI18nEnum {
         return ukey;
     }
 
-
-    //
     @Override
     public @NotNull String getCode() {
         return code;
@@ -81,7 +75,7 @@ public enum RoleType implements ConstantEnum, StandardI18nEnum {
 
     @Override
     public @NotNull String getHint() {
-        return desc;
+        return hint;
     }
 
     @Override

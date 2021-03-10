@@ -28,7 +28,7 @@ public class StandardI18nServiceJdbc implements StandardI18nService {
     @Override
     public int reloadAll() {
         List<Po> pos = jdbcTemplate.query(
-                "SELECT base,kind,ukey,lang,text FROM sys_standard_i18n",
+                "SELECT base, kind, ukey, lang, hint FROM sys_standard_i18n",
                 poMapper);
         return cache(pos);
     }
@@ -36,7 +36,7 @@ public class StandardI18nServiceJdbc implements StandardI18nService {
     @Override
     public int reloadBase(String base) {
         List<Po> pos = jdbcTemplate.query(
-                "SELECT base,kind,ukey,lang,text FROM sys_standard_i18n WHERE base=?",
+                "SELECT base, kind, ukey, lang, hint FROM sys_standard_i18n WHERE base=?",
                 poMapper,
                 base);
         return cache(pos);
@@ -48,21 +48,21 @@ public class StandardI18nServiceJdbc implements StandardI18nService {
         String key = key(base, kind, ukey, lan);
         return cache.computeIfAbsent(key, s -> {
             String txt = jdbcTemplate.query(
-                    "SELECT text FROM sys_standard_i18n WHERE base=? AND kind=? AND ukey=? AND lang=?",
+                    "SELECT hint FROM sys_standard_i18n WHERE base=? AND kind=? AND ukey=? AND lang=?",
                     strExtractor,
                     base, kind, ukey, lan);
-            String text = txt == null ? "" : txt;
-            if (combinableMessageSource != null && !text.isEmpty()) {
-                combinableMessageSource.addMessage(code(base, kind, ukey), lang, text);
+            String hint = txt == null ? "" : txt;
+            if (combinableMessageSource != null && !hint.isEmpty()) {
+                combinableMessageSource.addMessage(code(base, kind, ukey), lang, hint);
             }
-            return text;
+            return hint;
         });
     }
 
     private int cache(List<Po> pos) {
         for (Po po : pos) {
             String key = key(po.base, po.kind, po.ukey, po.lang);
-            String txt = po.text;
+            String txt = po.hint;
             cache.put(key, txt);
             if (combinableMessageSource != null) {
                 String code = code(po.base, po.kind, po.ukey);
@@ -89,7 +89,7 @@ public class StandardI18nServiceJdbc implements StandardI18nService {
         po.kind = rs.getString("kind");
         po.ukey = rs.getString("ukey");
         po.lang = rs.getString("lang");
-        po.text = rs.getString("text");
+        po.hint = rs.getString("hint");
         return po;
     };
 
@@ -98,6 +98,6 @@ public class StandardI18nServiceJdbc implements StandardI18nService {
         private String kind = "";
         private String ukey = "";
         private String lang = "";
-        private String text = "";
+        private String hint = "";
     }
 }

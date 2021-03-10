@@ -1,5 +1,6 @@
 package pro.fessional.wings.example.controller;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,21 +21,23 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class LoginController {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private RestTemplate restTemplate;
 
-    @Setter(onMethod = @__({@Value("${wings.oauth.token.url}")}))
+    @Setter(onMethod_ = {@Value("${wings.oauth.token.url}")})
     private String oauthTokenUrl;
 
-    @Setter(onMethod = @__({@Value("${wings.slardar.oauth2x.client.staff.client-id}")}))
+    @Setter(onMethod_ = {@Value("${wings.slardar.oauth2x.client.staff.client-id}")})
     private String oauthClientId;
 
+    @ApiOperation("用户登录")
     @PostMapping(value = {"/login.json"})
     @ResponseBody
     public String login(@RequestParam("username") String username, @RequestParam("password") String password) {
         return "废弃了";
     }
 
+    @ApiOperation("用户登出")
     @RequestMapping(value = {"/logout.json"})
     @ResponseBody
     public String logout(HttpServletRequest request) {

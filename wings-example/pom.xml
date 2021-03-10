@@ -27,8 +27,9 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.test.skip>true</maven.test.skip>
 
-        <wings.version>2.4.2-SNAPSHOT</wings.version>
-        <swagger2.version>2.9.2</swagger2.version>
+        <jooq.version>3.14.4</jooq.version>
+        <wings.version>2.4.2.100-SNAPSHOT</wings.version>
+        <okhttp3.version>4.9.0</okhttp3.version>
     </properties>
 
     <dependencyManagement>
@@ -68,6 +69,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-hazelcast</artifactId>
+        </dependency>
+
         <!-- redis -->
 <!--        <dependency>-->
 <!--            <groupId>org.redisson</groupId>-->
@@ -104,14 +110,12 @@
         </dependency>
         <!-- swagger -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${swagger2.version}</version>
+            <groupId>com.alibaba</groupId>
+            <artifactId>transmittable-thread-local</artifactId>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${swagger2.version}</version>
+            <artifactId>springfox-boot-starter</artifactId>
         </dependency>
         <!-- test -->
         <dependency>

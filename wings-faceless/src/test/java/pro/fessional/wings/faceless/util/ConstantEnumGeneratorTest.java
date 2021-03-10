@@ -1,8 +1,8 @@
 package pro.fessional.wings.faceless.util;
 
-import pro.fessional.wings.faceless.util.ConstantEnumGenerator.ConstantEnum;
+import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator;
+import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator.ConstantEnum;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,10 +60,10 @@ class ConstantEnumGeneratorTest {
         return result;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         ConstantEnumGenerator.builder()
-                             .setJavaSource("wings-faceless/src/test/java/")
-                             .setJavaPackage("pro.fessional.wings.faceless.enums.auto")
+                             .targetDirectory("wings-faceless/src/test/java/")
+                             .targetPackage("pro.fessional.wings.faceless.enums.autogen")
                              .generate(mockPos());
     }
 }

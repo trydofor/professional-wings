@@ -9,41 +9,15 @@ import org.jooq.meta.TableDefinition;
 import pro.fessional.mirana.data.Null;
 
 import java.util.List;
-import java.util.function.Predicate;
 
-import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_COMMIT_ID;
-import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_CREATE_DT;
-import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_DELETE_DT;
-import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_MODIFY_DT;
+import static pro.fessional.wings.faceless.jooqgen.WingsJooqGenHelp.JournalAware;
+import static pro.fessional.wings.faceless.jooqgen.WingsJooqGenHelp.LightIdAware;
 
 /**
  * @author trydofor
  * @since 2019-05-17
  */
 public class WingsJavaStrategy extends DefaultGeneratorStrategy {
-
-    private final Predicate<ColumnDefinition> journalAware = it -> {
-        String name = it.getName();
-        int p = name.lastIndexOf(".");
-        if (p > 0) {
-            name = name.substring(p + 1);
-        }
-
-        return name.equalsIgnoreCase(COL_CREATE_DT)
-                || name.equalsIgnoreCase(COL_MODIFY_DT)
-                || name.equalsIgnoreCase(COL_DELETE_DT)
-                || name.equalsIgnoreCase(COL_COMMIT_ID);
-    };
-
-    private final Predicate<ColumnDefinition> lightIdAware = it -> {
-        String name = it.getName();
-        int p = name.lastIndexOf(".");
-        if (p > 0) {
-            name = name.substring(p + 1);
-        }
-
-        return name.equalsIgnoreCase("id") && it.getDefinedType().getType().toLowerCase().contains("bigint");
-    };
 
     @Override
     public List<String> getJavaClassImplements(Definition definition, Mode mode) {
@@ -53,13 +27,13 @@ public class WingsJavaStrategy extends DefaultGeneratorStrategy {
 
         List<ColumnDefinition> columns = ((TableDefinition) definition).getColumns();
         if (mode == GeneratorStrategy.Mode.INTERFACE) {
-            if (columns.stream().anyMatch(journalAware)) {
+            if (columns.stream().anyMatch(JournalAware)) {
                 impls.add("pro.fessional.wings.faceless.service.journal.JournalAware");
             }
         } else if (mode == GeneratorStrategy.Mode.DEFAULT) {
             String java = getJavaClassName(definition, mode);
             impls.add("pro.fessional.wings.faceless.database.jooq.WingsAliasTable<" + java + ">");
-            if (columns.stream().anyMatch(lightIdAware)) {
+            if (columns.stream().anyMatch(LightIdAware)) {
                 impls.add("pro.fessional.wings.faceless.service.lightid.LightIdAware");
             }
         }

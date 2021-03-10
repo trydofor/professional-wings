@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hazelcast-client xmlns="http://www.hazelcast.com/schema/client-config"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://www.hazelcast.com/schema/client-config
+                  http://www.hazelcast.com/schema/client-config/hazelcast-client-config-4.0.xsd">
+
+    <cluster-name>wings-slardar</cluster-name>
+    <network>
+        <cluster-members>
+            <address>127.0.0.1</address>
+<!--            <address>127.0.0.2</address>-->
+        </cluster-members>
+        <outbound-ports>
+            <ports>34600</ports>
+            <ports>34700-34710</ports>
+        </outbound-ports>
+        <smart-routing>true</smart-routing>
+        <redo-operation>true</redo-operation>
+        <connection-timeout>60000</connection-timeout>
+        <socket-options>
+            <tcp-no-delay>false</tcp-no-delay>
+            <keep-alive>true</keep-alive>
+            <reuse-address>true</reuse-address>
+            <linger-seconds>3</linger-seconds>
+            <buffer-size>128</buffer-size>
+        </socket-options>
+        <icmp-ping enabled="false">
+            <timeout-milliseconds>2000</timeout-milliseconds>
+            <interval-milliseconds>3000</interval-milliseconds>
+            <ttl>100</ttl>
+            <max-attempts>5</max-attempts>
+            <echo-fail-fast-on-startup>false</echo-fail-fast-on-startup>
+        </icmp-ping>
+    </network>
+    <near-cache name="default">
+        <in-memory-format>OBJECT</in-memory-format>
+        <invalidate-on-change>true</invalidate-on-change>
+        <serialize-keys>true</serialize-keys>
+        <local-update-policy>INVALIDATE</local-update-policy>
+    </near-cache>
+    <serialization>
+        <serializers>
+            <!-- spring FindByIndexNameSessionRepository -->
+            <serializer class-name="org.springframework.session.hazelcast.HazelcastSessionSerializer"
+                        type-class="org.springframework.session.MapSession"/>
+        </serializers>
+    </serialization>
+    <user-code-deployment enabled="true">
+<!--        <jarPaths>-->
+<!--            <jarPath>example.jar</jarPath>-->
+<!--            <jarPath>https://hazelcast.com/</jarPath>-->
+<!--            <jarPath>file://User/test/sample.jar</jarPath>-->
+<!--        </jarPaths>-->
+        <classNames>
+            <className>pro.fessional.wings.slardar.service.TestWingsUserDetails</className>
+        </classNames>
+    </user-code-deployment>
+
+    <connection-strategy async-start="true" reconnect-mode="ASYNC">
+        <connection-retry>
+            <initial-backoff-millis>10000</initial-backoff-millis>
+            <max-backoff-millis>360000</max-backoff-millis>
+            <cluster-connect-timeout-millis>180000</cluster-connect-timeout-millis>
+        </connection-retry>
+    </connection-strategy>
+</hazelcast-client>

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
 import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
-import static pro.fessional.wings.faceless.enums.auto.StandardLanguage.ZH_CN;
+import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_BRANCH_3RD_ENU18N;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
 
@@ -42,13 +42,13 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
 @Tag("init")
 public class WingsJooqDaoImplTest {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WingsTestHelper wingsTestHelper;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager revisionManager;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private Tst中文也分表Dao dao;
 
     private final Tst中文也分表Table tbl = Tst中文也分表Table.Tst中文也分表;

@@ -20,8 +20,8 @@ import java.util.SortedMap;
 
 @SpringBootTest(properties =
         {"debug = true",
-         "spring.wings.faceless.flywave.enabled=true",
-//         "spring.wings.faceless.enumi18n.enabled=true",
+         "spring.wings.faceless.flywave.enabled.module=true",
+//         "spring.wings.faceless.enabled.enumi18n=true",
 //         "spring.shardingsphere.datasource.names=writer",
 //         "spring.shardingsphere.datasource.writer.jdbc-url=jdbc:mysql://127.0.0.1:3306/wings?autoReconnect=true&useSSL=false",
 //         "spring.shardingsphere.datasource.writer.username=trydofor",
@@ -30,10 +30,10 @@ import java.util.SortedMap;
 @Disabled("手动执行一次，初始化步骤，危险操作")
 public class WingsSchemaGenerator {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WingsTestHelper wingsTestHelper;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;
 
     @Test

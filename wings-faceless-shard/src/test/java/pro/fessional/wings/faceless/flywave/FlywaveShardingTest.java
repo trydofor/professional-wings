@@ -28,15 +28,15 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class FlywaveShardingTest {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaShardingManager schemaShardingManager;
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private JdbcTemplate shardingJdbcTemplate;
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private DataSourceContext dataSourceContext;
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WingsTestHelper wingsTestHelper;
 
     @Test

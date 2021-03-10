@@ -38,8 +38,21 @@ import java.util.TimeZone;
  */
 public class WingsRequestWrapper extends HttpServletRequestWrapper {
 
+    private static final String WrappedKey = "wings:request:wrapper:true";
+
     public WingsRequestWrapper(HttpServletRequest request) {
         super(request);
+        request.setAttribute(WrappedKey, Boolean.TRUE);
+    }
+
+    /**
+     * 检测是否WingsRequestWrapper过
+     *
+     * @param request request
+     * @return 是否wrapper
+     */
+    public static boolean hasWingsWrapper(HttpServletRequest request) {
+        return request != null && request.getAttribute(WrappedKey) == Boolean.TRUE;
     }
 
     // ========= Method =========
@@ -647,6 +660,7 @@ public class WingsRequestWrapper extends HttpServletRequestWrapper {
 
     /**
      * 同时影响，RequestUri，RequestURL，ServletPath
+     *
      * @param str 新uri
      * @return this
      */

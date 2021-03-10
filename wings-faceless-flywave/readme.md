@@ -109,22 +109,67 @@ sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/res
  * 通过工具类`JournalHelp`，手动执行`delete##`。
  * 自动对`delete from ## where id=? and commit_id=?`格式进行拦截。
 
-自动拦截`spring.wings.faceless.trigger.journal-delete.enabled`默认关闭。
+自动拦截`spring.wings.faceless.jooq.enabled.journal-delete`默认关闭。
 因为违反`静态高于动态，编译时高于运行时`团队规则，且性能和限制不好控制。
 
-## 2.1.3.测试用例
+## 2.1.4.测试用例
 
 `kotlin`中的测试用例，主要是场景演示。需要单个执行，确保成功。
 统一执行时，springboot为了有效使用资源，不会全部重新初始化`context`，
 这样会使有些`ApplicationListener`得不到触发，可能导致部分TestCase失败。
 
-## 2.1.4.常见问题
+## 2.1.3.注解指令
+
+flywave提供了以下有特殊功能的`sql注释`，称为`注解指令`
+
+ * 格式为 `特征前缀` + `本表`? + `数据源`? + `目标表`? + `错误处理`? + `确认语句`?
+   - `特征前缀` = `^\s*-{2,}\s+`，即，单行注释 + `空格`
+   - `本表` = `[^@ \t]+`，即，合法表名
+   - `数据源` = `@plain`|`@shard`，固定值
+   - `目标表` = `\s+apply@[^@ \t]+`，即，固定值，正则
+   - `错误处理` = `\s+error@(skip|stop)`，即，出错时停止还是继续
+   - `确认语句` = `\s+ask@[^@ \t]+`，即，确认语句，比如危险
+ * 指定了`本表`的SQL，不会尝试解析。
+ * 指定的`本表`在SQL语句中不存在时，不影响SQL执行，只是忽略`跟踪表`替换。
+ * `目标表` 不区分大小写，全匹配。其中内定以下简写
+    - 空，默认适配全部，本表+分表+跟踪表
+    - `apply@nut` 只适配本表和分表 `[_0-9]*`
+    - `apply@log` 只适配跟踪表 `\$\w+`
+    - 注意，目标表不是if语句，不作为条件检查
+ * `错误处理` 默认`stop`以抛异常结束，`skip`表示忽略异常继续执行。
+ * `确认语句` 默认std.out输出，在std.in等待确认输入
+ * 注解的表达式为 `([^@ \t]+)?@([^@ \t]+)`
+
+``` sql
+-- ask@drop-database
+DROP TABLE sys_schema_version;
+-- @shard 强制使用shard数据源，自动解析本表为 sys_light_sequence
+DROP TABLE IF EXISTS `sys_light_sequence`;
+-- @plain 强制使用原始数据源，自动解析本表为sys_commit_journal
+DROP TABLE IF EXISTS `sys_commit_journal`;
+-- wgs_order@plain 强制使用原始数据源，并直接指定本表为wgs_order，因为语法中没有本表。
+DROP TRIGGER IF EXISTS `wgs_order$bd`;
+-- apply@win_admin[_0-0]* error@skip 可以解析本表，应用分表，忽略错误
+ALTER TABLE `win_admin` DROP INDEX ix_login_name;
+-- apply@nut error@skip 等效于上一句
+ALTER TABLE `win_admin` DROP INDEX ix_login_name;
+-- apply@log error@skip 只适应于跟踪表
+ALTER TABLE `win_admin` DROP INDEX ix_login_name;
+```
+
+关于注释，只解析和忽略整行的，不处理行尾或行中的注释。
+因需求简单，未使用语法分析，只属于正则和字符串替换方式进行。
+单双引号内括起来的字符串内容会被忽略，不会被替换的。
+
+推荐使用单行注释`--`，对应多行注释`/* */`不可置于行中。
+
+## 2.1.5.常见问题
 
 ### 01.控制flywave时，spring找不到bean `SchemaRevisionManager`
 
-在2.2.6后续中，默认关闭了spring.wings.faceless.flywave.enabled=false
+在2.2.6后续中，默认关闭了spring.wings.faceless.flywave.enabled.module=false
 初始化的时候需要打开，例如在test中增加临时打开
-`@SpringBootTest(properties = "spring.wings.faceless.flywave.enabled=true")`
+`@SpringBootTest(properties = "spring.wings.faceless.flywave.enabled.module=true")`
 
 ### 02.版本更新，异常说缺少字段branches
 
@@ -203,3 +248,15 @@ WHERE table_schema = DATABASE()
     AND table_name NOT REGEXP '_[0-9]+$'
     AND table_name NOT LIKE '%$%';
 ```
+
+### 07.如果使用flywave管理老工程
+
+对于老工程，需要保留原来的表结构和数据，可能无法使用wings的命名，分作以下情况。
+
+* 不能用`sys_schema_*`表，可以通过wings-flywave-79.properties配置设置对于表，并手工创建同结构表。
+* 希望用`sys_schema_*`表，也希望版本连续，可通过replace方法把1ST_SCHEMA改名为新名字。
+* 不希望rename的，可以使用branch分支管理初始化脚本，使用forceExecuteSql方法执行
+
+以上方法，推荐使用最后一种，做好手工初始化后，后续通过flywave管理数据库版本。
+
+除了初始版本，会在checkAndInit时执行外，其他版本必须显示的publish或execute

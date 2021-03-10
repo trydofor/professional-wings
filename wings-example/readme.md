@@ -65,10 +65,8 @@ FLUSH PRIVILEGES;"
 
  * 在`localhost:3306`配置数据库2个，`wings_0`和`wings_1`
  * 数据库用户名`trydofor`，密码`moilioncircle`，或者自己改配置
- * redis，密码`moilioncircle`，或者自己改配置
  * 如果数据库未初始化，手动执行`pro.fessional.wings.example.init.WingsExampleDataBaseGenerator`。
  * 运行example，访问 http://127.0.0.1:8080/
- * 配置一个本地redis做session和缓存，用docker的就好。
  
 使用`maven`管理依赖，可以有下面3中方式。
 方式一，以`parent`形式，当前工程形式，可以继承wings的属性和配置。
@@ -103,7 +101,7 @@ FLUSH PRIVILEGES;"
 
 ``` xml
 <properties>
-    <wings.version>2.4.2-SNAPSHOT</wings.version>
+    <wings.version>2.4.2.100-SNAPSHOT</wings.version>
     <mirana.version>2.2.0-SNAPSHOT</mirana.version>
 </properties>
 
@@ -111,7 +109,7 @@ FLUSH PRIVILEGES;"
     <dependency>
         <groupId>pro.fessional</groupId>
         <artifactId>wings-faceless</artifactId>
-        <version>2.4.2-SNAPSHOT</version>
+        <version>2.4.2.100-SNAPSHOT</version>
     </dependency>
 </dependencies>
 ```

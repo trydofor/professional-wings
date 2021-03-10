@@ -4,6 +4,8 @@
 package pro.fessional.wings.faceless.database.autogen.tables.interfaces;
 
 
+import java.io.Serializable;
+
 import javax.annotation.Generated;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +14,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 
 
 /**
@@ -76,17 +77,17 @@ public interface ISysConstantEnum extends Serializable {
     public String getCode();
 
     /**
-     * Setter for <code>sys_constant_enum.desc</code>.
+     * Setter for <code>sys_constant_enum.hint</code>.
      */
-    public void setDesc(String value);
+    public void setHint(String value);
 
     /**
-     * Getter for <code>sys_constant_enum.desc</code>.
+     * Getter for <code>sys_constant_enum.hint</code>.
      */
-    @Column(name = "desc", nullable = false, length = 100)
+    @Column(name = "hint", nullable = false, length = 100)
     @NotNull
     @Size(max = 100)
-    public String getDesc();
+    public String getHint();
 
     /**
      * Setter for <code>sys_constant_enum.info</code>.

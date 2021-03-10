@@ -12,14 +12,17 @@ import org.jooq.Loader;
 import org.jooq.LoaderOptionsStep;
 import org.jooq.OrderField;
 import org.jooq.Record;
+import org.jooq.RecordMapper;
 import org.jooq.Result;
 import org.jooq.RowCountQuery;
+import org.jooq.SelectField;
 import org.jooq.Table;
 import org.jooq.TableRecord;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
 import org.jooq.impl.TableImpl;
 import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.pain.IORuntimeException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -147,7 +150,7 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
                       .fields(table.fields())
                       .execute();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IORuntimeException(e);
         }
     }
 
@@ -549,8 +552,22 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
     /**
      * @see #fetch(TableImpl, Condition)
      */
+    public List<P> fetchLive(Condition cond) {
+        return fetchLive(table, cond);
+    }
+
+    /**
+     * @see #fetch(TableImpl, Condition)
+     */
     public List<P> fetch(Condition cond) {
         return fetch(table, cond);
+    }
+
+    /**
+     * @see #fetch(TableImpl, Condition)
+     */
+    public List<P> fetchLive(T table, Condition cond) {
+        return fetch(table, table.onlyLive(cond));
     }
 
     /**
@@ -578,8 +595,24 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
      * @see #fetch(TableImpl, Condition, OrderField[])
      */
     @NotNull
-    public List<P> fetch(Condition condition, OrderField<?>... orderBy) {
-        return fetch(table, condition, orderBy);
+    public List<P> fetchLive(Condition cond, OrderField<?>... orderBy) {
+        return fetchLive(table, cond, orderBy);
+    }
+
+    /**
+     * @see #fetch(TableImpl, Condition, OrderField[])
+     */
+    @NotNull
+    public List<P> fetch(Condition cond, OrderField<?>... orderBy) {
+        return fetch(table, cond, orderBy);
+    }
+
+    /**
+     * @see #fetch(TableImpl, Condition, OrderField[])
+     */
+    @NotNull
+    public List<P> fetchLive(T table, Condition cond, OrderField<?>... orderBy) {
+        return fetch(table, table.onlyLive(cond), orderBy);
     }
 
     /**
@@ -617,6 +650,14 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
      * @see #fetch(TableImpl, int, int, Condition, OrderField[])
      */
     @NotNull
+    public List<P> fetchLive(int offset, int limit, OrderField<?>... orderBy) {
+        return fetchLive(table, offset, limit, null, orderBy);
+    }
+
+    /**
+     * @see #fetch(TableImpl, int, int, Condition, OrderField[])
+     */
+    @NotNull
     public List<P> fetch(int offset, int limit, OrderField<?>... orderBy) {
         return fetch(table, offset, limit, null, orderBy);
     }
@@ -625,8 +666,24 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
      * @see #fetch(TableImpl, int, int, Condition, OrderField[])
      */
     @NotNull
+    public List<P> fetchLive(int offset, int limit, Condition condition, OrderField<?>... orderBy) {
+        return fetchLive(table, offset, limit, condition, orderBy);
+    }
+
+    /**
+     * @see #fetch(TableImpl, int, int, Condition, OrderField[])
+     */
+    @NotNull
     public List<P> fetch(int offset, int limit, Condition condition, OrderField<?>... orderBy) {
         return fetch(table, offset, limit, condition, orderBy);
+    }
+
+    /**
+     * @see #fetch(TableImpl, int, int, Condition, OrderField[])
+     */
+    @NotNull
+    public List<P> fetchLive(T table, int offset, int limit, Condition cond, OrderField<?>... orderBy) {
+        return fetch(table, offset, limit, table.onlyLive(cond), orderBy);
     }
 
     /**
@@ -669,8 +726,24 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
      * @see #fetchOne(TableImpl, Condition)
      */
     @Nullable
-    public P fetchOne(Condition condition) {
-        return fetchOne(table, condition);
+    public P fetchOneLive(Condition cond) {
+        return fetchOneLive(table, cond);
+    }
+
+    /**
+     * @see #fetchOne(TableImpl, Condition)
+     */
+    @Nullable
+    public P fetchOne(Condition cond) {
+        return fetchOne(table, cond);
+    }
+
+    /**
+     * @see #fetchOne(TableImpl, Condition)
+     */
+    @Nullable
+    public P fetchOneLive(T table, Condition cond) {
+        return fetchOne(table, table.onlyLive(cond));
     }
 
     /**
@@ -693,6 +766,126 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
                 .fetchOne();
 
         return record == null ? null : mapper().map(record);
+    }
+
+    ///////////////// select into /////////////////////
+
+    public <E> E fetchOneLive(Class<E> claz, SelectField<?>... fields) {
+        return fetchOneLive(claz, table, null, fields);
+    }
+
+    public <E> E fetchOne(Class<E> claz, SelectField<?>... fields) {
+        return fetchOne(claz, table, null, fields);
+    }
+
+    public <E> E fetchOneLive(Class<E> claz, T table, SelectField<?>... fields) {
+        return fetchOneLive(claz, table, null, fields);
+    }
+
+    public <E> E fetchOne(Class<E> claz, T table, SelectField<?>... fields) {
+        return fetchOne(claz, table, null, fields);
+    }
+
+    public <E> E fetchOneLive(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
+        return fetchOne(claz, table, table.onlyLive(cond), fields);
+    }
+
+    public <E> E fetchOne(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
+        DSLContext dsl = ctx();
+        return dsl
+                .select(fields)
+                .from(table)
+                .where(cond)
+                .fetchOneInto(claz);
+    }
+
+    public <E> E fetchOneLive(RecordMapper<? super Record, E> mapper, SelectField<?>... fields) {
+        return fetchOneLive(mapper, table, null, fields);
+    }
+
+    public <E> E fetchOne(RecordMapper<? super Record, E> mapper, SelectField<?>... fields) {
+        return fetchOne(mapper, table, null, fields);
+    }
+
+    public <E> E fetchOneLive(RecordMapper<? super Record, E> mapper, T table, SelectField<?>... fields) {
+        return fetchOneLive(mapper, table, null, fields);
+    }
+
+    public <E> E fetchOne(RecordMapper<? super Record, E> mapper, T table, SelectField<?>... fields) {
+        return fetchOne(mapper, table, null, fields);
+    }
+
+    public <E> E fetchOneLive(RecordMapper<? super Record, E> mapper, T table, Condition cond, SelectField<?>... fields) {
+        return fetchOne(mapper, table, table.onlyLive(cond), fields);
+    }
+
+    public <E> E fetchOne(RecordMapper<? super Record, E> mapper, T table, Condition cond, SelectField<?>... fields) {
+        DSLContext dsl = ctx();
+        return dsl
+                .select(fields)
+                .from(table)
+                .where(cond)
+                .fetchOne(mapper);
+    }
+
+    public <E> List<E> fetchLive(Class<E> claz, SelectField<?>... fields) {
+        return fetchLive(claz, table, null, fields);
+    }
+
+    public <E> List<E> fetch(Class<E> claz, SelectField<?>... fields) {
+        return fetch(claz, table, null, fields);
+    }
+
+    public <E> List<E> fetchLive(Class<E> claz, T table, SelectField<?>... fields) {
+        return fetchLive(claz, table, null, fields);
+    }
+
+    public <E> List<E> fetch(Class<E> claz, T table, SelectField<?>... fields) {
+        return fetch(claz, table, null, fields);
+    }
+
+    public <E> List<E> fetchLive(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
+        return fetch(claz, table, table.onlyLive(cond), fields);
+    }
+
+    public <E> List<E> fetch(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
+        DSLContext dsl = ctx();
+        return dsl
+                .select(fields)
+                .from(table)
+                .where(cond)
+                .fetch()
+                .into(claz);
+    }
+
+    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, SelectField<?>... fields) {
+        return fetchLive(mapper, table, null, fields);
+    }
+
+    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, SelectField<?>... fields) {
+        return fetch(mapper, table, null, fields);
+    }
+
+    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, T table, SelectField<?>... fields) {
+        return fetchLive(mapper, table, null, fields);
+    }
+
+    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, T table, SelectField<?>... fields) {
+        return fetch(mapper, table, null, fields);
+    }
+
+    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, T table, Condition cond, SelectField<?>... fields) {
+        return fetch(mapper, table, table.onlyLive(cond), fields);
+    }
+
+    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, T table, Condition cond, SelectField<?>... fields) {
+        DSLContext dsl = ctx();
+        return dsl
+                .select(fields)
+                .from(table)
+                .where(cond)
+                .fetch()
+                .map(mapper);
     }
 
     ///////////////// delete /////////////////////
@@ -820,6 +1013,13 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
     /**
      * @see #count(TableImpl, Condition)
      */
+    public long countLive(Condition cond) {
+        return countLive(table, cond);
+    }
+
+    /**
+     * @see #count(TableImpl, Condition)
+     */
     public long count(Condition cond) {
         return count(table, cond);
     }
@@ -827,8 +1027,22 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
     /**
      * @see #count(TableImpl, Condition)
      */
+    public long countLive(T table) {
+        return countLive(table, null);
+    }
+
+    /**
+     * @see #count(TableImpl, Condition)
+     */
     public long count(T table) {
         return count(table, null);
+    }
+
+    /**
+     * @see #count(TableImpl, Condition)
+     */
+    public long countLive(T table, Condition cond) {
+        return count(table, table.onlyLive(cond));
     }
 
     /**
@@ -847,10 +1061,21 @@ public abstract class WingsJooqDaoImpl<T extends TableImpl<R> & WingsAliasTable<
         return cnt == null ? 0 : cnt;
     }
 
-    ///////////////// condition /////////////////////
+    ///////////////// super read /////////////////////
 
-//    public Condition
+    /**
+     * @see #count(TableImpl, Condition)
+     */
+    public long countLive() {
+        return countLive(table, null);
+    }
 
+    /**
+     * @see #fetchLive(Condition)
+     */
+    public List<P> findAllLive() {
+        return fetchLive(null);
+    }
 
     ///////////////// other /////////////////////
 

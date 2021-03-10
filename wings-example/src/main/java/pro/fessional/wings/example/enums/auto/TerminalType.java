@@ -7,9 +7,11 @@ import pro.fessional.wings.faceless.enums.StandardI18nEnum;
 
 /**
  * @author trydofor
- * @since 2020-06-21
+ * @since 2021-02-21
  */
+// @SuppressWarnings({"NonAsciiCharacters"})
 public enum TerminalType implements ConstantEnum, StandardI18nEnum {
+
     SUPER(2030100, "terminal_type", "用户类别", "classpath:/wings-tmpl/ConstantEnumTemplate.java"),
     WEB_ADMIN(2030101, "web_admin", "WEB管理端", ""),
     APP_ANDROID(2030102, "app_android", "安卓app", ""),
@@ -19,24 +21,23 @@ public enum TerminalType implements ConstantEnum, StandardI18nEnum {
     public static final String $WEB_ADMIN = "web_admin";
     public static final String $APP_ANDROID = "app_android";
     public static final String $EXE_PC = "exe_pc";
-
-
     public static final boolean useIdAsKey = false;
+
     private final int id;
     private final String code;
-    private final String desc;
+    private final String hint;
     private final String info;
 
     private final String ukey;
     private final String rkey;
 
-    TerminalType(int id, String code, String desc, String info) {
+    TerminalType(int id, String code, String hint, String info) {
         this.id = id;
         this.code = code;
-        this.desc = desc;
+        this.hint = hint;
         this.info = info;
         this.ukey = useIdAsKey ? "id" + id : code;
-        this.rkey = "sys_constant_enum.desc." + ukey;
+        this.rkey = "sys_constant_enum.hint." + ukey;
     }
 
     @Override
@@ -46,7 +47,7 @@ public enum TerminalType implements ConstantEnum, StandardI18nEnum {
 
     @Override
     public @NotNull String getType() {
-        return "constant_enum_template";
+        return "terminal_type";
     }
 
     @Override
@@ -54,19 +55,14 @@ public enum TerminalType implements ConstantEnum, StandardI18nEnum {
         return info;
     }
 
-    public String getDesc() {
-        return desc;
-    }
-
-    //
     @Override
     public @NotNull String getBase() {
-        return "terminal_type";
+        return "sys_constant_enum";
     }
 
     @Override
     public @NotNull String getKind() {
-        return "desc";
+        return "hint";
     }
 
     @Override
@@ -74,8 +70,6 @@ public enum TerminalType implements ConstantEnum, StandardI18nEnum {
         return ukey;
     }
 
-
-    //
     @Override
     public @NotNull String getCode() {
         return code;
@@ -83,7 +77,7 @@ public enum TerminalType implements ConstantEnum, StandardI18nEnum {
 
     @Override
     public @NotNull String getHint() {
-        return desc;
+        return hint;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package pro.fessional.wings.faceless.converter;
 
-import pro.fessional.wings.faceless.enums.auto.StandardLanguage;
-import pro.fessional.wings.faceless.enums.auto.StandardTimezone;
+import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
+import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 
 /**
  * @author trydofor

@@ -4,28 +4,70 @@
 
 ![slardar](./warlock_full.png)
 
-基于SpringSecurity的AuthN(Authentication/认证)和AuthZ(Authorization/授权)支持。
+基于wings脚手架，包装了一些业务组件，复用或复制，可以快速实现业务功能。
 
  * 身份认证：OIDC/SSO，Form，RememberMe，API签名，第三方，手机短信
  * 令牌传递：session，token
  * 功能权限：role继承和扩展，身份马甲，临时增减，超级用户
  * 数据隔离：管辖隔离，职能继承，助理扩展，临时授权。
 
-## 4.1.权限场景
+## 4.1.登录验证
 
-Auth端进行AuthN和基础的AuthZ，可以实现SSO和RememberMe，
-在App和Res端可以通过uid的绑定，进行UserDetail和AuthZ的补充。
+### 4.1.1.集成Github
 
-在目前的`OIDC`体系中，access-token通常有以下几个格式，
+在github上设置，需要`App ID`，`Client ID`和`Client secret`，注意不用外泄。
+设置入口如下 Settings | Developer settings | GitHub Apps
 
-* opaque tokens (default)
-* reference tokens
-* JWTs (Json Web Tokens)
+ * Homepage URL - http://127.0.0.1:8084
+ * Callback URL - http://127.0.0.1:8084/auth/github/login.json
 
-目前主流的产品和技术风向上，对JWT比较钟爱，可却经常误用，命中其缺点。
+## 4.2.功能权限
 
-* 啰嗦，浪费带宽和计算资源。
-* 无法废弃，续签困难。
-* 并不安全，非加密
+功能权限，有权限(Perm)和角色(Role)构成。都在db中定义，通过模板自动生成java类
+
+### 4.2.1 权限 Perm
+
+Perm由scope和action构成，都采用句号分隔全小写命名法，参考java变量命名。
+
+格式为 scope + ('.' + scope )* + '.' + action，多个级联scope加一个action
+
+* scope是一个名词，支持所属关系，使用`.`分隔，`system.menu`属于`system`
+* 第一个scope不可以是ROLE前缀（如spring中默认是ROLE_）
+* action是一个动词，支持scope包含，如`system.read`包含`system.menu.read`
+* `*`表示包含所有动作，仅配置所属关系使用，不在具体方法上使用。
+
+Perm主要用在方法级的鉴权上，即在方法上增加的注解，如`@Secured`，`@Pre*`。
+
+```java
+// 推荐
+@Secured(PermConstant.System.User.read)
+// 不推荐
+@PreAuthorize("hasAnyAuthority(T(pro.fessional.wings.warlock.security.autogen.PermConstant$System$User).read)")
+```
+
+### 4.2.2.角色 Role
+
+Role支持继承，采用句号分隔全小写命名法，参考java变量命名。
+
+* 在自动生成的java类中，采用和spring相同的`ROLE_`前缀。
+* Role是扁平的，但可配置继承，如Leader包括Member
+
+Role主要用在filter级的配置上，如在配置url权限时。当然也可用在方法级。
+在配置文件中使用时，需要带上spring自动添加的前缀，建议使用前缀，以区分perm。
+
+### 4.2.3.远行机制
+
+Warlock在用户通过身边鉴别（authn）后，会分别加载和用户绑定的Perm和Role，
+并扁平化其各自的所属和继承关系，全部加载到SecurityContext中。
+
+
+## 4.3.数据权限
+
+数据权限，包括了用户，部门，公司，三个层级的可见性。
+
+* 用户(User)，以user_id为主，同时包括子账号。
+* 部门(Dept)，以dept_id为主，包括了部门间所属关系
+* 公司(Corp)，以corp_id为主，通常和domain有关
+
 
 

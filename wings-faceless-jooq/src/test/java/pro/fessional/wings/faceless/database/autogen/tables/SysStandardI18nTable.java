@@ -4,6 +4,11 @@
 package pro.fessional.wings.faceless.database.autogen.tables;
 
 
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Name;
 import org.jooq.Row5;
@@ -16,13 +21,10 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
+
 import pro.fessional.wings.faceless.database.autogen.DefaultSchema;
 import pro.fessional.wings.faceless.database.autogen.tables.records.SysStandardI18nRecord;
 import pro.fessional.wings.faceless.database.jooq.WingsAliasTable;
-
-import javax.annotation.Generated;
-import java.util.Arrays;
-import java.util.List;
 
 
 /**
@@ -76,9 +78,9 @@ public class SysStandardI18nTable extends TableImpl<SysStandardI18nRecord> imple
     public final TableField<SysStandardI18nRecord, String> Lang = createField(DSL.name("lang"), SQLDataType.CHAR(5).nullable(false), this, "");
 
     /**
-     * The column <code>sys_standard_i18n.text</code>.
+     * The column <code>sys_standard_i18n.hint</code>.
      */
-    public final TableField<SysStandardI18nRecord, String> Text = createField(DSL.name("text"), SQLDataType.VARCHAR(3000).nullable(false), this, "");
+    public final TableField<SysStandardI18nRecord, String> Hint = createField(DSL.name("hint"), SQLDataType.VARCHAR(3000).nullable(false), this, "");
 
     private SysStandardI18nTable(Name alias, Table<SysStandardI18nRecord> aliased) {
         this(alias, aliased, null);

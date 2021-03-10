@@ -25,7 +25,7 @@ import java.util.SortedMap;
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
 import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
-import static pro.fessional.wings.faceless.enums.auto.StandardLanguage.ZH_CN;
+import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
 
 /**
@@ -35,20 +35,20 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @ActiveProfiles("init")
-@SpringBootTest(properties = {"debug = true", "spring.wings.faceless.trigger.journal-delete.enabled=true"})
+@SpringBootTest(properties = {"debug = true", "spring.wings.faceless.jooq.enabled.journal-delete=true"})
 @Tag("init")
 public class JooqDeleteListenerTest {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private DSLContext dsl;
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private JdbcTemplate tmpl;
 
     // >>=>🦁🦁🦁
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private WingsTestHelper wingsTestHelper;
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager revisionManager;
 
     @Test

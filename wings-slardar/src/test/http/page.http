@@ -8,5 +8,5 @@
 
 ###
 
-GET http://localhost:8081/test/page-request.html?pageNumber=1&pageSize=10&sortBy=name,-id
+GET {{host}}/test/page-request.html?pageNumber=1&pageSize=10&sortBy=name,-id
 Accept: application/json

@@ -24,7 +24,7 @@ import java.util.List;
 @Disabled("手动执行，要先分表在跟踪，若已跟踪，先摘trigger再分表，再跟踪")
 public class Wings8TriggerManager {
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private SchemaJournalManager schemaJournalManager;
 
     // 如果有分表，需要先分表，后trigger，否则个分表只是复制本表

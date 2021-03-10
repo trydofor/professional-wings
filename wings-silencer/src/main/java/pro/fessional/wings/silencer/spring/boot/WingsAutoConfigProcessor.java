@@ -15,7 +15,10 @@ import org.springframework.util.StringUtils;
 import pro.fessional.mirana.cast.StringCastUtil;
 import pro.fessional.mirana.i18n.LocaleResolver;
 import pro.fessional.mirana.i18n.ZoneIdResolver;
+import pro.fessional.mirana.pain.IORuntimeException;
 import pro.fessional.wings.silencer.spring.help.Utf8ResourceDecorator;
+import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
+import pro.fessional.wings.silencer.spring.prop.SilencerI18nProp;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -65,7 +68,6 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     public static final String BLOCK_LIST = "wings-conf-block-list.cnf";
     public static final int NAKED_SEQ = 70;
 
-
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         processWingsConf(environment);
@@ -76,7 +78,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     public void processWingsI18n(ConfigurableEnvironment environment) {
         // system default locale, zoneid
 
-        String lcl = environment.getProperty("wings.silencer.i18n.locale");
+        String lcl = environment.getProperty(SilencerI18nProp.Key$locale);
         if (lcl != null && !lcl.isEmpty()) {
             String ln = System.getProperty("user.language");
             String cn = System.getProperty("user.country");
@@ -93,7 +95,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             Locale.setDefault(loc);
         }
 
-        String zid = environment.getProperty("wings.silencer.i18n.zoneid");
+        String zid = environment.getProperty(SilencerI18nProp.Key$zoneid);
         if (zid != null && !zid.isEmpty()) {
             String tz = System.getProperty("user.timezone");
             logger.info("🦁 set wings-zoneid=" + zid + ", current user.timezone=" + tz);
@@ -103,7 +105,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
         final LinkedHashSet<String> baseNames = new LinkedHashSet<>();
         try {
-            String bundle = environment.getProperty("wings.silencer.i18n.bundle");
+            String bundle = environment.getProperty(SilencerI18nProp.Key$bundle);
             String[] paths;
             if (bundle == null || bundle.isEmpty()) {
                 paths = new String[]{"classpath*:/" + WINGS_I18N};
@@ -122,7 +124,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                 }
             }
         } catch (IOException e) {
-            throw new IllegalStateException("failed to resolve wings i18n path", e);
+            throw new IORuntimeException("failed to resolve wings i18n path", e);
         }
 
         if (baseNames.isEmpty()) return;
@@ -206,7 +208,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             }
         }
 
-        if (StringCastUtil.asTrue(environment.getProperty("spring.wings.silencer.verbose.enabled")) && !wingsKeys.isEmpty()) {
+        if (StringCastUtil.asTrue(environment.getProperty(SilencerEnabledProp.Key$verbose)) && !wingsKeys.isEmpty()) {
             String allCond = wingsKeys.stream()
                                       .map(e -> {
                                           String v = environment.getProperty(e.toString());

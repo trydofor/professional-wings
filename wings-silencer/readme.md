@@ -12,6 +12,8 @@
 
 ## 1.1.spring命名规则
 
+wings中的spring命名，主要集中在以下（后续目录结构有详解）
+
  * `/wings-conf/` 自动加载，放置拆分的配置文件，按字母顺序加载和覆盖。
  * `/wings-i18n/` 自动加载，放置拆分的多国语的信息文件。
  * `*Configuration` 必须都条件加载，前缀`spring.wings.`，可以关闭。
@@ -19,17 +21,15 @@
  * `**/spring/bean/`  自动加载，比如@ComponentScan指定。
  * `**/spring/conf/` 自动或手动加载，需要暴露的properties的配置。
  
-使用`idea`开发时，需要在`Project Structure`/`Facets`/`Spring`设置中加入
+使用`idea`开发时，会有黄色警告或提示，不影响运行，但看着碍眼
 
- * `boot/WingsComponentScanner`或`/bean/*` 
- * `boot/WingsDataSourceConfigAware` 用来识别`FacelessDataSources`
- 
-打开以下配置，`Settings`/`Annotation Processors`/`Enable annotation processing`
+ * 提示Application context not configured for this file，
+   在`Project Structure`/`Facets`/`Spring`手动添加`boot/WingsAutoConfiguration`一个即可。
+ * 提示 annotation processing的设置，在`Settings`/`Annotation Processors`/`Enable annotation processing`
+   注意：在`@Configuration`中的内部类，`static class`是按独立类处理的，不受外层约束。
 
-注意：在`@Configuration`中的内部类，`static class`是按独立类处理的，不受外层约束。
-
-在wings工程中，会存在`wings-conditional-manager.properties`配置，作为功能开关
-可以通过属性`spring.wings.silencer.verbose.enabled=true` 通过日志INFO查看。
+在wings工程中，会存在`spring-wings-enabled.properties`配置，作为功能开关
+可以通过属性`spring.wings.silencer.enabled.verbose=true` 通过日志INFO查看。
  
 ## 1.2.自动配置(wings-conf)
 
@@ -145,3 +145,16 @@ spring默认以如下配置为入口，逗号分隔，保留不带国家地区�
  * logging.level.忽略的包路径=OFF
 
 推荐使用`wings-starter.sh`启动，`wings-starter.env`配置基础参数。
+
+## 1.5.配置bind和meta提示
+
+配置类，统一使用`*Prop`和@Data
+
+* 手动添加 additional-spring-configuration-metadata.json
+* 自动生成 spring-configuration-metadata.json
+
+参考资料
+
+* https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#configuration-metadata
+* https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-Configuration-Binding
+* https://github.com/spring-projects/spring-boot/wiki/IDE-binding-features#simple-pojo

@@ -21,11 +21,11 @@ public class PageQueryResolverTest {
 //    @LocalServerPort
 //    private int port;
 
-    @Setter(onMethod = @__({@Value("http://localhost:${local.server.port}")}))
+    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
     private String host;
 
 
-    @Setter(onMethod = @__({@Autowired}))
+    @Setter(onMethod_ = {@Autowired})
     private RestTemplate restTemplate;
 
     @Test

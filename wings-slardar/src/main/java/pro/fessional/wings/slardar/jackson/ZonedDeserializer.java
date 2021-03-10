@@ -1,7 +1,7 @@
 package pro.fessional.wings.slardar.jackson;
 
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
-import pro.fessional.wings.silencer.datetime.TimeZoneDefault;
+import pro.fessional.wings.silencer.datetime.DefaultTimeZone;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -21,7 +21,7 @@ public class ZonedDeserializer extends InstantDeserializer<ZonedDateTime> {
                 formatter,
                 temporal -> {
                     ZoneId zoneId = temporal.query(TemporalQueries.zone());
-                    if (zoneId == null) zoneId = TimeZoneDefault.ZONE_ID;
+                    if (zoneId == null) zoneId = DefaultTimeZone.ZONE_ID;
                     LocalDate date = LocalDate.from(temporal);
                     LocalTime time = LocalTime.from(temporal);
                     return ZonedDateTime.of(date, time, zoneId);
