@@ -58,6 +58,7 @@
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
         <swagger.version>3.0.0</swagger.version>
         <!-- others -->
+        <errorprone.version>2.5.1</errorprone.version>
         <fastjson.version>1.2.75</fastjson.version>
         <transmittable.version>2.12.1</transmittable.version>
         <bouncycastle.version>1.68</bouncycastle.version>
@@ -93,6 +94,10 @@
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.google.errorprone</groupId>
+            <artifactId>error_prone_annotations</artifactId>
         </dependency>
         <!-- test -->
         <dependency>
@@ -227,6 +232,11 @@
                 <version>${bouncycastle.version}</version>
             </dependency>
             <!-- dev -->
+            <dependency>
+                <groupId>com.google.errorprone</groupId>
+                <artifactId>error_prone_annotations</artifactId>
+                <version>${errorprone.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>

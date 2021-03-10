@@ -1,9 +1,8 @@
 package pro.fessional.wings.slardar.spring.bean;
 
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -21,12 +20,12 @@ import java.util.List;
  */
 @Configuration
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$pagequery, havingValue = "true")
+@RequiredArgsConstructor
 public class SlardarPageQueryConfiguration implements WebMvcConfigurer {
 
     private static final Log logger = LogFactory.getLog(SlardarPageQueryConfiguration.class);
 
-    @Setter(onMethod_ = {@Autowired})
-    private SlardarPagequeryProp config;
+    private final SlardarPagequeryProp config;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {

@@ -1,9 +1,8 @@
 package pro.fessional.wings.slardar.spring.bean;
 
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
@@ -32,12 +31,12 @@ import java.util.Map;
  * @since 2020-08-10
  */
 @Configuration
+@RequiredArgsConstructor
 public class SlardarPasscoderConfiguration {
 
     private static final Log logger = LogFactory.getLog(SlardarPasscoderConfiguration.class);
 
-    @Setter(onMethod_ = {@Autowired})
-    private SlardarPasscoderProp slardarPasscoderProp;
+    private final SlardarPasscoderProp slardarPasscoderProp;
 
     /**
      * #@Async

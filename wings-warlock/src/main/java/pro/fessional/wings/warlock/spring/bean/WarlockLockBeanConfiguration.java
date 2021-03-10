@@ -1,17 +1,16 @@
 package pro.fessional.wings.warlock.spring.bean;
 
 import com.hazelcast.core.HazelcastInstance;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+import pro.fessional.mirana.lock.JvmStaticGlobalLock;
 import pro.fessional.wings.faceless.concur.DatabaseGlobalLock;
-import pro.fessional.wings.silencer.concur.JvmStaticGlobalLock;
 import pro.fessional.wings.slardar.concur.HazelcastGlobalLock;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockLockProp;
@@ -22,12 +21,11 @@ import pro.fessional.wings.warlock.spring.prop.WarlockLockProp;
  * @since 2019-12-01
  */
 @Configuration
+@RequiredArgsConstructor
 public class WarlockLockBeanConfiguration {
 
     private final static Log logger = LogFactory.getLog(WarlockLockBeanConfiguration.class);
-
-    @Setter(onMethod_ = {@Autowired})
-    private WarlockLockProp warlockLockProp;
+    private final WarlockLockProp warlockLockProp;
 
 
     @Bean

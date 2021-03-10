@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.concur;
 
+import com.google.errorprone.annotations.DoNotCall;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -103,12 +104,14 @@ public class MysqlServerLock implements Lock {
     }
 
     @Override
+    @DoNotCall
     public void lockInterruptibly() {
         throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
+    @DoNotCall
     public Condition newCondition() {
         throw new UnsupportedOperationException();
     }

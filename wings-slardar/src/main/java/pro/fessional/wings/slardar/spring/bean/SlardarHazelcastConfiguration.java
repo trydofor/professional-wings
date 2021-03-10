@@ -1,10 +1,8 @@
 package pro.fessional.wings.slardar.spring.bean;
 
 import com.hazelcast.core.HazelcastInstance;
-import lombok.Setter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -33,9 +31,6 @@ public class SlardarHazelcastConfiguration extends HazelcastHttpSessionConfigura
 
     private static final Log logger = LogFactory.getLog(SlardarHazelcastConfiguration.class);
 
-    @Setter(onMethod_ = {@Autowired})
-    private FindByIndexNameSessionRepository<? extends Session> sessionRepository;
-
     @Bean
     @ConditionalOnMissingBean
     @Override
@@ -47,7 +42,7 @@ public class SlardarHazelcastConfiguration extends HazelcastHttpSessionConfigura
     // concurrent session
     @Bean
     @ConditionalOnMissingBean
-    public SessionRegistry sessionRegistry() {
+    public SessionRegistry sessionRegistry(FindByIndexNameSessionRepository<? extends Session> sessionRepository) {
         logger.info("Wings conf sessionRegistry");
         return new SpringSessionBackedSessionRegistry<>(sessionRepository);
     }

@@ -366,11 +366,16 @@ org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 ## 3.7.2.防止连击
 
 通常业务场景下，可以通过前端在dom或js层面做好用户的防连击。而服务器端防连击，主要是API类的误操作。
-可以通过 filter和interceptor达到目标，比较简单的方式是增加annotation，自动配置或AOP。
+因filter和interceptor会对所有请求检查，slardar采用的是AOP方式，类似Cacheable。
 
-在有用户session或跟踪cookie的情况下，可以按client进行区分，再进行参数hash比较。
+沿用dota命名，此处命名为 @DoubleKill注解，通过Jvm全局锁和DoubleKillException完成。
 
-沿用dota命名，此处命名为 @DoubleKill
+在controller层，需要使用@RequestParam 或@RequestHeader等注入参数。
+对应session级别的控制，可使用@bean进行处理。
+
+默认对DoubleKillException返回固定的json字符串，注入DoubleKillExceptionResolver可替换
+
+详细用法，可参考TestDoubleKillController和DoubleKillService
 
 ## 3.7.3.验证码
 

@@ -3,7 +3,7 @@ package pro.fessional.wings.faceless.concur;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.JdbcTemplate;
-import pro.fessional.wings.silencer.concur.GlobalLock;
+import pro.fessional.mirana.lock.GlobalLock;
 
 import java.util.concurrent.locks.Lock;
 

@@ -1,12 +1,11 @@
 package pro.fessional.wings.warlock.spring.bean;
 
 import com.xkcoding.http.config.HttpConfig;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -29,15 +28,13 @@ import java.util.Map;
  */
 @Configuration
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$justAuth, havingValue = "true")
+@RequiredArgsConstructor
 public class WarlockJustAuthConfiguration {
 
     private final static Log logger = LogFactory.getLog(WarlockJustAuthConfiguration.class);
 
-    @Setter(onMethod_ = {@Autowired})
-    private WarlockJustAuthProp justAuthProp;
-
-    @Setter(onMethod_ = {@Autowired})
-    private WarlockSecurityProp securityProp;
+    private final WarlockJustAuthProp justAuthProp;
+    private final WarlockSecurityProp securityProp;
 
     @Bean
     @ConditionalOnMissingBean

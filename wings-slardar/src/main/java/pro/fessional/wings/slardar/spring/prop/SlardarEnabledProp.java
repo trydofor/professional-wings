@@ -18,6 +18,7 @@ public class SlardarEnabledProp {
 
     /**
      * 是否默认配置jackson
+     *
      * @see #Key$jackson
      */
     private boolean jackson = true;
@@ -25,6 +26,7 @@ public class SlardarEnabledProp {
 
     /**
      * 是否默认配置okhttp3
+     *
      * @see #Key$okhttp
      */
     private boolean okhttp = true;
@@ -32,6 +34,7 @@ public class SlardarEnabledProp {
 
     /**
      * 是否开启json的i18n
+     *
      * @see #Key$json18n
      */
     private boolean json18n = true;
@@ -39,6 +42,7 @@ public class SlardarEnabledProp {
 
     /**
      * 是否开启cache配置
+     *
      * @see #Key$caching
      */
     private boolean caching = true;
@@ -46,6 +50,7 @@ public class SlardarEnabledProp {
 
     /**
      * 是否默认配置session
+     *
      * @see #Key$session
      */
     private boolean session = true;
@@ -53,13 +58,23 @@ public class SlardarEnabledProp {
 
     /**
      * 是否默认配置session hazelcast
+     *
      * @see #Key$sessionHazelcast
      */
     private boolean sessionHazelcast = true;
     public static final String Key$sessionHazelcast = Key + ".session-hazelcast";
 
     /**
+     * 是否开启DoubleKill AOP和ExceptionHandle
+     *
+     * @see #Key$doubleKill
+     */
+    private boolean doubleKill = true;
+    public static final String Key$doubleKill = Key + ".double-kill";
+
+    /**
      * 是否开启wings的PageQuery webmvc resolver
+     *
      * @see #Key$pagequery
      */
     private boolean pagequery = true;
@@ -67,6 +82,7 @@ public class SlardarEnabledProp {
 
     /**
      * 是否开启wings的 webmvc local datetime converter
+     *
      * @see #Key$datetime
      */
     private boolean datetime = true;
@@ -74,6 +90,7 @@ public class SlardarEnabledProp {
 
     /**
      * 是否配置undertow ws for UT026010: Buffer pool
+     *
      * @see #Key$undertowWs
      */
     private boolean undertowWs = false;
@@ -81,6 +98,7 @@ public class SlardarEnabledProp {
 
     /**
      * 是否开启terminal Resolver
+     *
      * @see #Key$remote
      */
     private boolean remote = true;
@@ -88,6 +106,7 @@ public class SlardarEnabledProp {
 
     /**
      * 是否开启i18n Resolver
+     *
      * @see #Key$locale
      */
     private boolean locale = true;
@@ -95,6 +114,7 @@ public class SlardarEnabledProp {
 
     /**
      * 是否解析 WingsTerminalContext
+     *
      * @see #Key$terminal
      */
     private boolean terminal = true;
@@ -102,6 +122,7 @@ public class SlardarEnabledProp {
 
     /**
      * 是否开启captcha配置
+     *
      * @see #Key$captcha
      */
     private boolean captcha = false;
@@ -109,6 +130,7 @@ public class SlardarEnabledProp {
 
     /**
      * 是否开启熔断设置
+     *
      * @see #Key$overload
      */
     private boolean overload = false;
@@ -116,6 +138,7 @@ public class SlardarEnabledProp {
 
     /**
      * 是否支持 domain-extend
+     *
      * @see #Key$domainExtend
      */
     private boolean domainExtend = false;

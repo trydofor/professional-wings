@@ -1,6 +1,6 @@
 package pro.fessional.wings.warlock.spring.bean;
 
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -47,15 +47,13 @@ import java.util.Map;
  */
 @Configuration
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityBean, havingValue = "true")
+@RequiredArgsConstructor
 public class WarlockSecurityBeanConfiguration {
 
     private final static Log logger = LogFactory.getLog(WarlockSecurityBeanConfiguration.class);
 
-    @Setter(onMethod_ = {@Autowired})
-    private WarlockSecurityProp securityProp;
-
-    @Setter(onMethod_ = {@Autowired})
-    private ApplicationContext applicationContext;
+    private final WarlockSecurityProp securityProp;
+    private final ApplicationContext applicationContext;
 
     @Bean
     @ConditionalOnMissingBean

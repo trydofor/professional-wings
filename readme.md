@@ -93,6 +93,7 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
  * .ignore - 和版本管理中ignore有关的。
  * Any2dto -  支持jooq, sql查询直接生成dto，减少复制和赋值
  * CheckStyle - 代码质量
+ * Error Prone Compiler - google出品（java8不好整）
  * GenerateAllSetter - alt-enter 生成全部 po.setXxx("")
  * Git Flow Integration - 集成了git-flow
  * GitToolBox - 自动 fetch
@@ -321,6 +322,12 @@ src/**/spring - spring有个配置
 └── prop/ - 属性类，自动生成spring-configuration-metadata.json
     └── FacelessEnabledProp.java - 开关类
 ```
+
+需要注意的是，在`@Configuration`类中配置`@Bean`时，对bean的依赖遵循以下原则。
+ * 优先使用Constructor注入+final
+ * 使用Bean方法的参数。
+ * 可使用Field注入。
+ * 避免使用Setter注入，因为不能提前暴露依赖错误。
 
 ### 0.2.12.常见的命名约定
 
