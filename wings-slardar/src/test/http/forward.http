@@ -1,0 +1,6 @@
+GET {{host}}/test/forward.json
+Accept: application/json
+
+### 404
+GET {{host}}/test/forward-target.json1
+Accept: application/json

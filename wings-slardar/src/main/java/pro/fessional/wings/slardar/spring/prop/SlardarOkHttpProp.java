@@ -112,4 +112,11 @@ public class SlardarOkHttpProp {
     private boolean sslTrustAll = true;
     public static final String Key$sslTrustAll = Key + ".ssl-trust-all";
 
+    /**
+     * 是否以host为单位保留cookie
+     *
+     * @see #Key$hostCookie
+     */
+    private boolean hostCookie = true;
+    public static final String Key$hostCookie = Key + ".host-cookie";
 }

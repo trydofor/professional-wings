@@ -112,7 +112,7 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 ### 0.2.1.Java风格，遵循标准的java规范，但**可读性优先**。
 
  * `static final` 不必全大写。如`logger`比`LOG`可读性好。
- * 全大写下划线分隔，不如小写单词易读，可使用Pascal命名法。
+ * `BIG_SNAKE`可使用`PascalNaming`，因为大写单词不如小写易读。
  * 全大写名词（缩写或专有）只首字母大写。`Json`,`Html`,`Id`。
  * 英文无法表达的业务词汇及行业黑话，不要用拼音，用中文。`落地配`。
  * 要求4-8字母的单词都记住。
@@ -634,3 +634,13 @@ wings随时跟进升级spring boot的最新版本，目的是为了测试shardin
 * 编码中，autowired StringValueResolver
 * properties配置中`${VAR}`
 * @Value和@RequestMapping中`${VAR}`
+
+### 15.IDEA提示 component, or scanned
+
+导入wings工程，Idea会无法处理spring.factories中的WingsAutoConfiguration，会报类似以下信息
+
+Not registered via @EnableConfigurationProperties, marked as Spring component, 
+or scanned via @ConfigurationPropertiesScan
+
+此时在，Project Structure中的Facets中的spring，对每个主工程，
+导入`Code based configuration`，选择WingsAutoConfiguration，即可。

@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.concur;
+package pro.fessional.wings.slardar.concur.impl;
 
 import com.google.errorprone.annotations.DoNotCall;
 import com.hazelcast.map.IMap;

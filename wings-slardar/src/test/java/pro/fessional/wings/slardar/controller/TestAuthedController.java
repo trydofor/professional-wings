@@ -12,12 +12,12 @@ import pro.fessional.mirana.data.R;
 public class TestAuthedController {
 
     @GetMapping("/user/login.json")
-    public R<String> login(){
+    public R<String> login() {
         return R.ok("login page");
     }
 
     @GetMapping("/authed/see-user.json")
-    public R<String> seeUser(){
+    public R<String> seeUser() {
         return R.ok("saw it");
     }
 }

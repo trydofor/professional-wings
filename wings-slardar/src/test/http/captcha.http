@@ -6,28 +6,17 @@
 # * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
 # * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
 
-### 显示验证码
 # 输出 code=null
-GET {{host}}/test/vcode.html
+GET {{host}}/test/captcha.json
+
+# 输出 captcha
+GET {{host}}/test/captcha.json?fresh-captcha-image=12345678
+client-ticket:127.0.0.1
 
 ### 验证码
 # 输出 captcha
-GET {{host}}/test/captcha.html
+GET {{host}}/test/captcha.json?check-captcha-image=
+client-ticket:127.0.0.1
 
-### 显示验证码
-# 输出 code=123
-GET {{host}}/test/vcode.html
-
-### 不带验证码查看
-# 输出 bad captcha
-GET {{host}}/test/verify.html
-
-### 带验证码查看
-# 输出 /test/verify.html?vc=123
-GET {{host}}/test/verify.html?vc=123
-
-### 全局产生验证码
-# 输出 code=随机数
-GET {{host}}/test/vcode.html?ct=1
-
-###
+# 输出 code=null
+GET {{host}}/test/captcha-30.json

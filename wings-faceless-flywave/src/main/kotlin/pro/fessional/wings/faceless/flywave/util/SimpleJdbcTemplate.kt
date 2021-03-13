@@ -5,7 +5,6 @@ import org.springframework.jdbc.support.JdbcUtils
 import java.sql.DatabaseMetaData
 import java.sql.ResultSet
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicInteger
 import javax.sql.DataSource
 
 /**
@@ -26,26 +25,26 @@ class SimpleJdbcTemplate(val dataSource: DataSource, val name: String = "unnamed
     }
 
     fun count(sql: String, vararg args: Any?): Int {
-        val count = AtomicInteger(0)
-        if (args.isEmpty()) {
-            jdbcTmpl.query(sql) {
-                count.set(it.getInt(1))
-            }
+        return if (args.isEmpty()) {
+            jdbcTmpl.queryForObject(sql, Int::class.java)!!
         } else {
-            jdbcTmpl.query(sql, { rs -> count.set(rs.getInt(1)) }, *args)
+            jdbcTmpl.queryForObject(sql, Int::class.java, args)
         }
-        return count.get()
     }
 
     /**
      * 处理每一条数据
-     * @param handler RowCallbackHandler
+     * @param handler org.springframework.jdbc.core.RowCallbackHandler
      */
     fun query(sql: String, vararg args: Any?, handler: (ResultSet) -> Unit) {
         if (args.isEmpty()) {
             jdbcTmpl.query(sql, handler)
         } else {
-            jdbcTmpl.query(sql, handler, *args)
+            // [TYPE_INFERENCE_CANDIDATE_WITH_SAM_AND_VARARG]
+            // Please use spread operator to pass an array as vararg.
+            // It will be an error in 1.5.
+            @Suppress("TYPE_INFERENCE_CANDIDATE_WITH_SAM_AND_VARARG")
+            jdbcTmpl.query(sql, handler, args)
         }
     }
 
@@ -53,7 +52,7 @@ class SimpleJdbcTemplate(val dataSource: DataSource, val name: String = "unnamed
         return if (args.isEmpty()) {
             jdbcTmpl.update(sql)
         } else {
-            jdbcTmpl.update(sql, *args)
+            jdbcTmpl.update(sql, args)
         }
     }
 

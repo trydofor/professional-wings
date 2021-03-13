@@ -65,7 +65,20 @@ public class SlardarEnabledProp {
     public static final String Key$sessionHazelcast = Key + ".session-hazelcast";
 
     /**
-     * 是否开启DoubleKill AOP和ExceptionHandle
+     * 是否开启FirstBlood默认的Interceptor和图形验证码
+     * @see #Key$firstBlood
+     */
+    private boolean firstBlood = true;
+    public static final String Key$firstBlood = Key + ".first-blood";
+
+    /**
+     * @see #Key$firstBloodImage
+     */
+    private String firstBloodImage = "";
+    public static final String Key$firstBloodImage = Key + ".first-blood-image";
+
+    /**
+     * 是否开启DoubleKill默认的AOP和ExceptionHandle
      *
      * @see #Key$doubleKill
      */

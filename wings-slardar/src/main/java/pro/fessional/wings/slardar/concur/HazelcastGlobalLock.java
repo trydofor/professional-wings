@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.concur;
 import com.hazelcast.core.HazelcastInstance;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.lock.GlobalLock;
+import pro.fessional.wings.slardar.concur.impl.HazelcastIMapLock;
 
 import java.util.concurrent.locks.Lock;
 

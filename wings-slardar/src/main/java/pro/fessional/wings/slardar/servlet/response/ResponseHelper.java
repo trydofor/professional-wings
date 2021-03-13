@@ -6,8 +6,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.io.Zipper;
 import pro.fessional.mirana.pain.IORuntimeException;
+import pro.fessional.wings.slardar.concur.WingsCaptchaHelper;
 
+import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -289,6 +294,42 @@ public class ResponseHelper {
             for (InputStream is : files.values()) {
                 IOUtils.closeQuietly(is, null);
             }
+        }
+    }
+
+
+    /**
+     * 输出图片验证码
+     *
+     * @param code     文本，6字
+     * @param response response
+     */
+    public static void showCaptcha(HttpServletResponse response, String code) {
+        try (ServletOutputStream out = response.getOutputStream()) {
+            response.setDateHeader("Expires", 0);
+            response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+            response.addHeader("Cache-Control", "post-check=0, pre-check=0");
+            response.setHeader("Pragma", "no-cache");
+            response.setContentType("image/jpeg");
+
+            BufferedImage bi = WingsCaptchaHelper.createImage(code);
+            ImageIO.write(bi, "jpg", out);
+            out.flush();
+        } catch (Exception e) {
+            // ignore it
+        }
+    }
+
+    public static void bothHeadCookie(HttpServletResponse response, String key, String value) {
+        response.setHeader(key, value);
+        response.addCookie(new Cookie(key, value));
+    }
+
+    public static void writeBodyUtf8(HttpServletResponse response, String body) {
+        try {
+            response.getOutputStream().write(body.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new IORuntimeException(e);
         }
     }
 }

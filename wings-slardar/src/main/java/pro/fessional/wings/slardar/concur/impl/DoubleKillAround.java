@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.concur;
+package pro.fessional.wings.slardar.concur.impl;
 
 import lombok.Setter;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -17,6 +17,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.flow.DoubleKillException;
 import pro.fessional.mirana.lock.JvmStaticGlobalLock;
+import pro.fessional.wings.slardar.concur.DoubleKill;
 import pro.fessional.wings.slardar.security.SecurityContextUtil;
 
 import java.lang.reflect.Method;

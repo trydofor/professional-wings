@@ -380,11 +380,17 @@ org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 ## 3.7.3.验证码
 
 对于受保护的资源，要采取一定的验证码，有时是为了延缓时间，有时是为了区分行为。
-验证码可以以http header 进行返回，前端获得header后，去请求验证码图片等。
-用户填写后，验证码也通过header发给server进行验证，http状态码建议返回401。
+验证码可以header或param进行校验（默认param）去请求验证码图片等。
 
-验证码的关键点有2个，
+在spring Security中，对401和403有以下约定，所以验证码使用406
 
+* 401 - Unauthorized 身份未鉴别
+* 403 - Forbidden/Access Denied 鉴权通过，授权不够
+
+slardar验证码的默认是基于图片的，在现今的AI算法识别上，识别成功率应该在90%以上。
+因此，仅限于初级的防人工的资源保护上。若是敏感信息或高级防护，建议采购第三方验证码服务。
+
+默认支持中文验证码，一般是一个汉字，3个英数，可以在配置中关闭。
 
 ## 3.8.特别用途的 Filter
 

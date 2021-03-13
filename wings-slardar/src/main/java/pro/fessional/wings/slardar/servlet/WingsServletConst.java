@@ -11,6 +11,7 @@ public class WingsServletConst {
     public static final int ORDER_FILTER_CAPTCHA = (wingsOrder++) * 70;
     public static final int ORDER_FILTER_TERMINAL = (wingsOrder++) * 70;
     public static final int ORDER_FILTER_DOMAINEX = (wingsOrder++) * 70;
+    public static final int ORDER_FIRST_BLOOD_IMG = (wingsOrder++) * 70;
 
     //
     public static final String ATTR_DOMAIN_EXTEND = "WINGS.ATTR.DOMAIN_EXTEND";

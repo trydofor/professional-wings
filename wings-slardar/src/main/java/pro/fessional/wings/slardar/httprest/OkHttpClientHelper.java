@@ -10,22 +10,25 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpMethod;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.mirana.netx.SslTrustAll;
+import pro.fessional.mirana.pain.IORuntimeException;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 /**
  * @author trydofor
@@ -139,9 +142,42 @@ public class OkHttpClientHelper {
         return body.string();
     }
 
+    @Nullable
+    @Contract("_,false->!null")
+    public static String extractString(Response response, boolean nullWhenThrow) {
+        try {
+            return extractString(response);
+        } catch (IOException e) {
+            if (nullWhenThrow) {
+                return null;
+            } else {
+                throw new IORuntimeException(e);
+            }
+        }
+    }
+
     @NotNull
     public static byte[] download(OkHttpClient client, String url) {
         return download(client, url, HttpMethod.GET);
+    }
+
+    @NotNull
+    public static Response execute(OkHttpClient client, Request.Builder builder) throws IOException {
+        return client.newCall(builder.build()).execute();
+    }
+
+    @Nullable
+    @Contract("_,_,false->!null")
+    public static Response execute(OkHttpClient client, Request.Builder builder, boolean nullWhenThrow) {
+        try {
+            return client.newCall(builder.build()).execute();
+        } catch (IOException e) {
+            if (nullWhenThrow) {
+                return null;
+            } else {
+                throw new IORuntimeException(e);
+            }
+        }
     }
 
     @NotNull
@@ -178,30 +214,35 @@ public class OkHttpClientHelper {
         }
     }
 
-    public static OkHttpClient sslTrustAll(OkHttpClient.Builder builder) {
-        return builder.sslSocketFactory(SslTrustAll.SSL_SOCKET_FACTORY, SslTrustAll.X509_TRUST_MANAGER)
-                      .hostnameVerifier(SslTrustAll.HOSTNAME_VERIFIER)
-                      .build();
+    public static void sslTrustAll(OkHttpClient.Builder builder) {
+        builder.sslSocketFactory(SslTrustAll.SSL_SOCKET_FACTORY, SslTrustAll.X509_TRUST_MANAGER)
+               .hostnameVerifier(SslTrustAll.HOSTNAME_VERIFIER);
+    }
+
+    public static void hostCookieJar(OkHttpClient.Builder builder) {
+        builder.cookieJar(new HostCookieJar());
     }
 
     public static class HostCookieJar implements CookieJar {
 
-        private final Map<String, LinkedHashMap<String, Cookie>> cookies = new HashMap<>();
+        private final Map<String, Queue<Cookie>> cookies = new ConcurrentHashMap<>();
 
         @Override
-        public void saveFromResponse(HttpUrl url, List<Cookie> cks) {
-            String key = url.host();
-            LinkedHashMap<String, Cookie> cookies = this.cookies.computeIfAbsent(key, s -> new LinkedHashMap<>());
-            for (Cookie ck : cks) {
-                cookies.put(ck.name(), ck);
-            }
+        public void saveFromResponse(HttpUrl url, @NotNull List<Cookie> cks) {
+            Queue<Cookie> cookies = this.cookies.computeIfAbsent(url.host(), s -> new ConcurrentLinkedQueue<>());
+            cookies.addAll(cks);
         }
 
         @Override
         @NotNull
         public List<Cookie> loadForRequest(HttpUrl url) {
-            LinkedHashMap<String, Cookie> cookies = this.cookies.get(url.host());
-            return cookies == null ? Collections.emptyList() : new ArrayList<>(cookies.values());
+            Queue<Cookie> cookies = this.cookies.get(url.host());
+            if (cookies == null || cookies.isEmpty()) return Collections.emptyList();
+
+            final String uri = url.encodedPath();
+            return cookies.stream()
+                          .filter(it -> uri.contains(it.path()))
+                          .collect(Collectors.toList());
         }
     }
 }

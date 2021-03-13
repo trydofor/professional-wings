@@ -2,10 +2,11 @@ package pro.fessional.wings.slardar.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import pro.fessional.wings.slardar.captcha.WingsCaptchaContext;
-import pro.fessional.wings.slardar.captcha.WingsCaptchaUtil;
+import pro.fessional.mirana.code.RandCode;
+import pro.fessional.wings.slardar.concur.FirstBlood;
+import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,45 +17,23 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class TestCaptchaController {
 
-    @RequestMapping({"/test/captcha.html"})
+    @RequestMapping({"/test/captcha.jpg"})
+    public void show(HttpServletResponse response, @RequestParam(value = "code", required = false) String code) {
+        if (code == null || code.isEmpty()) code = RandCode.mix(4);
+        ResponseHelper.showCaptcha(response, code);
+    }
+
+    @RequestMapping({"/test/captcha.json"})
     @ResponseBody
+    @FirstBlood
     public String captcha() {
-        String code = "ABC123";
-        WingsCaptchaUtil.builder()
-                        .setCode(code)
-                        .setParam("vc")
-                        .setFails("bad captcha")
-                        .setAllowUri("/test/vcode.html")
-                        .buildContext();
         return "captcha";
     }
 
-    @RequestMapping({"/test/image.html"})
-    public void image(HttpServletResponse response) {
-        WingsCaptchaUtil.builder()
-                        .setParam("vc")
-                        .setFails("bad captcha")
-                        .setAllowUri("/test/vcode.html")
-                        .buildCaptcha(response);
-    }
-
-    @RequestMapping({"/test/verify.html"})
+    @RequestMapping({"/test/captcha-30.json"})
     @ResponseBody
-    public String verify() {
-        return "/test/verify.html?vc=ABC123";
-    }
-
-
-    @RequestMapping({"/test/vcode.html"})
-    @ResponseBody
-    public String vcode() {
-        WingsCaptchaContext.Context ctx = WingsCaptchaContext.get();
-        return "code=" + ctx.code;
-    }
-
-    @RequestMapping(value = "/test/mmethod.html", method = {RequestMethod.POST, RequestMethod.PUT})
-    @ResponseBody
-    public String postPut() {
-        return "postPut";
+    @FirstBlood(first = 30)
+    public String captcha30() {
+        return "captcha-30";
     }
 }

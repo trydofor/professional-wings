@@ -6,11 +6,14 @@ import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.cast.TypedCastUtil;
 import pro.fessional.mirana.text.Wildcard;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 类型安全的获得request中的值。
@@ -18,7 +21,40 @@ import java.util.Map;
  * @author trydofor
  * @since 2019-07-03
  */
-public class TypedRequestUtil {
+public class RequestHelper {
+
+    @Nullable
+    public static String getCookieValue(HttpServletRequest request, String name) {
+        final Cookie[] cookies = request.getCookies();
+        if (cookies == null || cookies.length == 0) return null;
+        for (Cookie ck : cookies) {
+            if (ck.getName().equals(name)) return ck.getValue();
+        }
+        return null;
+    }
+
+    @NotNull
+    public static Map<String, String> mapCookieValue(HttpServletRequest request) {
+        final Cookie[] cookies = request.getCookies();
+        if (cookies == null || cookies.length == 0) return Collections.emptyMap();
+        HashMap<String, String> map = new HashMap<>();
+        for (Cookie ck : cookies) {
+            map.put(ck.getName(), ck.getValue());
+        }
+        return map;
+    }
+
+    @NotNull
+    public static Map<String, Set<String>> allCookieValue(HttpServletRequest request) {
+        final Cookie[] cookies = request.getCookies();
+        if (cookies == null || cookies.length == 0) return Collections.emptyMap();
+        HashMap<String, Set<String>> map = new HashMap<>();
+        for (Cookie ck : cookies) {
+            final Set<String> set = map.computeIfAbsent(ck.getName(), k -> new LinkedHashSet<>());
+            set.add(ck.getValue());
+        }
+        return map;
+    }
 
     @Nullable
     public static <T> T getAttribute(HttpServletRequest request, String name, Class<T> claz) {

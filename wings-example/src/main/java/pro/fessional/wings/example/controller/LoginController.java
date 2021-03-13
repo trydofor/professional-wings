@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
-import pro.fessional.wings.slardar.servlet.request.TypedRequestUtil;
+import pro.fessional.wings.slardar.servlet.request.RequestHelper;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -41,7 +41,7 @@ public class LoginController {
     @RequestMapping(value = {"/logout.json"})
     @ResponseBody
     public String logout(HttpServletRequest request) {
-        String accessToken = TypedRequestUtil.getAccessToken(request);
+        String accessToken = RequestHelper.getAccessToken(request);
         return "logout " + accessToken;
     }
 }

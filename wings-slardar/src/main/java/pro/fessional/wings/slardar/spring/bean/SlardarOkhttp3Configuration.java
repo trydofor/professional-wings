@@ -42,12 +42,13 @@ public class SlardarOkhttp3Configuration {
     @Bean
     @ConditionalOnMissingBean
     public OkHttpClient okHttpClient(
-            ObjectProvider<Cache> cache,
-            ObjectProvider<CookieJar> cookieJar,
-            ObjectProvider<Dns> dns,
+            ObjectProvider<Cache> cacheProvier,
+            ObjectProvider<CookieJar> cookieProvider,
+            ObjectProvider<Dns> dnsProvider,
             ConnectionPool connectionPool,
             SlardarOkHttpProp properties
     ) {
+        logger.info("Wings conf okHttpClient");
         // check builder return new ...
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .connectTimeout(Duration.ofSeconds(properties.getTimeoutConn()))
@@ -60,7 +61,7 @@ public class SlardarOkhttp3Configuration {
                 .retryOnConnectionFailure(properties.isRetryFailure());
 
         // cache
-        Cache cacheBean = cache.getIfAvailable();
+        Cache cacheBean = cacheProvier.getIfAvailable();
         if (cacheBean == null) {
             int mbs = properties.getCacheMegabyte();
             if (mbs > 0) {
@@ -73,22 +74,39 @@ public class SlardarOkhttp3Configuration {
                 } catch (Exception e) {
                     logger.warn("failed to create okhttp cache on dir=" + cacheDir, e);
                 }
+                logger.info("Wings conf okHttpClient cache-dir=" + properties.getCacheDirectory());
+            } else {
+                logger.info("Wings conf okHttpClient no-cache");
             }
         } else {
             builder.cache(cacheBean);
+            logger.info("Wings conf okHttpClient cache=" + cacheBean.getClass().getName());
         }
 
-
-        cookieJar.ifUnique(builder::cookieJar);
-        dns.ifUnique(builder::dns);
         builder.connectionPool(connectionPool);
 
-        return properties.isSslTrustAll() ? OkHttpClientHelper.sslTrustAll(builder) : builder.build();
+        final CookieJar ck = cookieProvider.getIfAvailable();
+        if (ck != null) {
+            logger.info("Wings conf okHttpClient CookieJar=" + ck.getClass().getName());
+            builder.cookieJar(ck);
+        }
+        final Dns dns = dnsProvider.getIfAvailable();
+        if (dns != null) {
+            logger.info("Wings conf okHttpClient dns=" + dns.getClass().getName());
+            builder.dns(dns);
+        }
+
+        if (properties.isSslTrustAll()) {
+            logger.info("Wings conf okHttpClient sslTrustAll");
+            OkHttpClientHelper.sslTrustAll(builder);
+        }
+        return builder.build();
     }
 
     @Bean
     @ConditionalOnMissingBean
     public ConnectionPool okHttp3ConnectionPool(SlardarOkHttpProp config) {
+        logger.info("Wings conf okHttp3ConnectionPool");
         int maxIdleConnections = config.getMaxIdle();
         return new ConnectionPool(maxIdleConnections, config.getKeepAlive(), TimeUnit.SECONDS);
     }
@@ -97,7 +115,14 @@ public class SlardarOkhttp3Configuration {
     @ConditionalOnMissingBean
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public RestTemplate restTemplate(RestTemplateBuilder builder, OkHttpClient client) {
+        logger.info("Wings conf restTemplate");
         return RestTemplateHelper.sslTrustAll(builder, client);
     }
 
+    @Bean
+    @ConditionalOnProperty(value = SlardarOkHttpProp.Key$hostCookie, havingValue = "true")
+    public CookieJar hostCookieJar() {
+        logger.info("Wings conf hostCookieJar");
+        return new OkHttpClientHelper.HostCookieJar();
+    }
 }

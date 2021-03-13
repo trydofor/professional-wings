@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
@@ -56,11 +55,12 @@ public class SlardarPasscoderConfiguration {
     @ConditionalOnMissingBean(PasswordEncoder.class)
     @SuppressWarnings("deprecation")
     public PasswordEncoder passwordEncoder() {
+        // @formatter:off
         final String encoder = slardarPasscoderProp.getPassEncoder();
         final String decoder = slardarPasscoderProp.getPassDecoder();
         logger.info("Wings conf PasswordEncoder bean, default encoder is " + encoder + ", decoder is " + decoder);
         Map<String, PasswordEncoder> encoders = new HashMap<>();
-        encoders.put("noop", NoOpPasswordEncoder.getInstance());
+        encoders.put("noop", org.springframework.security.crypto.password.NoOpPasswordEncoder.getInstance());
         encoders.put("never", new NeverPasswordEncoder());
         encoders.put("bcrypt", new BCryptPasswordEncoder());
         encoders.put("pbkdf2", new Pbkdf2PasswordEncoder());
@@ -71,6 +71,7 @@ public class SlardarPasscoderConfiguration {
         passwordEncoder.setDefaultPasswordEncoderForMatches(encoders.get(decoder));
 
         return passwordEncoder;
+        // @formatter:on
     }
 
     @Bean

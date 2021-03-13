@@ -9,7 +9,6 @@ import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.core.Version;
 import pro.fessional.mirana.cast.BoxedCastUtil;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -125,6 +124,7 @@ public class StringMapGenerator extends JsonGenerator {
     }
 
     @Override
+    @Deprecated
     public JsonGenerator setFeatureMask(int values) {
         featureMask = values;
         return this;
@@ -136,157 +136,157 @@ public class StringMapGenerator extends JsonGenerator {
     }
 
     @Override
-    public void writeStartArray() throws IOException {
+    public void writeStartArray() {
         // ignore
     }
 
     @Override
-    public void writeEndArray() throws IOException {
+    public void writeEndArray() {
         // ignore
     }
 
     @Override
-    public void writeStartObject() throws IOException {
+    public void writeStartObject() {
         // ignore
     }
 
     @Override
-    public void writeEndObject() throws IOException {
+    public void writeEndObject() {
         // ignore
     }
 
     @Override
-    public void writeFieldName(String name) throws IOException {
+    public void writeFieldName(String name) {
         currentKey = name;
     }
 
     @Override
-    public void writeFieldName(SerializableString name) throws IOException {
+    public void writeFieldName(SerializableString name) {
         writeFieldName(name.getValue());
     }
 
     @Override
-    public void writeString(String text) throws IOException {
+    public void writeString(String text) {
         putStringValue(text);
     }
 
     @Override
-    public void writeString(char[] text, int offset, int len) throws IOException {
+    public void writeString(char[] text, int offset, int len) {
         putStringValue(new String(text, offset, len));
     }
 
     @Override
-    public void writeString(SerializableString text) throws IOException {
+    public void writeString(SerializableString text) {
         putStringValue(text.getValue());
     }
 
     @Override
-    public void writeRawUTF8String(byte[] text, int offset, int length) throws IOException {
+    public void writeRawUTF8String(byte[] text, int offset, int length) {
         putStringValue(new String(text, offset, length, UTF_8));
     }
 
     @Override
-    public void writeUTF8String(byte[] text, int offset, int length) throws IOException {
+    public void writeUTF8String(byte[] text, int offset, int length) {
         putStringValue(new String(text, offset, length, UTF_8));
     }
 
     @Override
-    public void writeRaw(String text) throws IOException {
+    public void writeRaw(String text) {
         putStringValue(text);
     }
 
     @Override
-    public void writeRaw(String text, int offset, int len) throws IOException {
+    public void writeRaw(String text, int offset, int len) {
         putStringValue(text.substring(offset, len));
     }
 
     @Override
-    public void writeRaw(char[] text, int offset, int len) throws IOException {
+    public void writeRaw(char[] text, int offset, int len) {
         putStringValue(new String(text, offset, len));
     }
 
     @Override
-    public void writeRaw(char c) throws IOException {
+    public void writeRaw(char c) {
         putStringValue(String.valueOf(c));
     }
 
     @Override
-    public void writeRawValue(String text) throws IOException {
+    public void writeRawValue(String text) {
         putStringValue(text);
     }
 
     @Override
-    public void writeRawValue(String text, int offset, int len) throws IOException {
+    public void writeRawValue(String text, int offset, int len) {
         putStringValue(text.substring(offset, len));
     }
 
     @Override
-    public void writeRawValue(char[] text, int offset, int len) throws IOException {
+    public void writeRawValue(char[] text, int offset, int len) {
         putStringValue(new String(text, offset, len));
     }
 
     @Override
-    public void writeBinary(Base64Variant bv, byte[] data, int offset, int len) throws IOException {
+    public void writeBinary(Base64Variant bv, byte[] data, int offset, int len) {
         // ignore
     }
 
     @Override
-    public int writeBinary(Base64Variant bv, InputStream data, int dataLength) throws IOException {
+    public int writeBinary(Base64Variant bv, InputStream data, int dataLength) {
         return 0;
     }
 
     @Override
-    public void writeNumber(int v) throws IOException {
+    public void writeNumber(int v) {
         putStringValue(String.valueOf(v));
     }
 
     @Override
-    public void writeNumber(long v) throws IOException {
+    public void writeNumber(long v) {
         putStringValue(String.valueOf(v));
     }
 
     @Override
-    public void writeNumber(BigInteger v) throws IOException {
+    public void writeNumber(BigInteger v) {
         putStringValue(String.valueOf(v));
     }
 
     @Override
-    public void writeNumber(double v) throws IOException {
+    public void writeNumber(double v) {
         putStringValue(String.valueOf(v));
     }
 
     @Override
-    public void writeNumber(float v) throws IOException {
+    public void writeNumber(float v) {
         putStringValue(String.valueOf(v));
     }
 
     @Override
-    public void writeNumber(BigDecimal v) throws IOException {
+    public void writeNumber(BigDecimal v) {
         putStringValue(String.valueOf(v));
     }
 
     @Override
-    public void writeNumber(String encodedValue) throws IOException {
+    public void writeNumber(String encodedValue) {
         putStringValue(encodedValue);
     }
 
     @Override
-    public void writeBoolean(boolean state) throws IOException {
+    public void writeBoolean(boolean state) {
         putStringValue(String.valueOf(state));
     }
 
     @Override
-    public void writeNull() throws IOException {
+    public void writeNull() {
         putStringValue(null);
     }
 
     @Override
-    public void writeObject(Object pojo) throws IOException {
+    public void writeObject(Object pojo) {
         //ignore
     }
 
     @Override
-    public void writeTree(TreeNode node) throws IOException {
+    public void writeTree(TreeNode node) {
         // ignore
     }
 
@@ -296,7 +296,7 @@ public class StringMapGenerator extends JsonGenerator {
     }
 
     @Override
-    public void flush() throws IOException {
+    public void flush() {
         //ignore
     }
 
@@ -306,7 +306,7 @@ public class StringMapGenerator extends JsonGenerator {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         //ignore
     }
 }

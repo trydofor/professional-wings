@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.concur;
+package pro.fessional.wings.slardar.concur.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.servlet.ModelAndView;
