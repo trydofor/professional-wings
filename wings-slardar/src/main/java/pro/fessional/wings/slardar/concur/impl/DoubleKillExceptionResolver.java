@@ -3,10 +3,11 @@ package pro.fessional.wings.slardar.concur.impl;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
-import pro.fessional.mirana.flow.DoubleKillException;
+import pro.fessional.wings.slardar.concur.DoubleKillException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.function.Function;
 
 /**
  * @author trydofor
@@ -14,9 +15,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class DoubleKillExceptionResolver extends AbstractHandlerExceptionResolver {
 
-    private final ModelAndView modelAndView;
+    private final Function<DoubleKillException, ModelAndView> modelAndView;
 
-    public DoubleKillExceptionResolver(ModelAndView modelAndView) {
+    public DoubleKillExceptionResolver(Function<DoubleKillException, ModelAndView> modelAndView) {
         this.modelAndView = modelAndView;
     }
 
@@ -24,6 +25,6 @@ public class DoubleKillExceptionResolver extends AbstractHandlerExceptionResolve
     protected ModelAndView doResolveException(@NotNull HttpServletRequest request,
                                               @NotNull HttpServletResponse response, Object handler,
                                               @NotNull Exception ex) {
-        return ex instanceof DoubleKillException ? modelAndView : null;
+        return ex instanceof DoubleKillException ? modelAndView.apply((DoubleKillException) ex) : null;
     }
 }

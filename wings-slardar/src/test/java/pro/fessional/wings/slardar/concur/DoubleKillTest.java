@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import pro.fessional.mirana.flow.DoubleKillException;
 import pro.fessional.wings.slardar.service.DoubleKillService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

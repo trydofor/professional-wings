@@ -1,2 +1,5 @@
 ### login-page
 GET {{host}}/test/double-kill.json
+
+### login-page
+GET {{host}}/test/double-kill-async.json

@@ -65,7 +65,16 @@ public class SlardarEnabledProp {
     public static final String Key$sessionHazelcast = Key + ".session-hazelcast";
 
     /**
+     * 是否spring Async和线程池配置
+     *
+     * @see #Key$async
+     */
+    private boolean async = true;
+    public static final String Key$async = Key + ".async";
+
+    /**
      * 是否开启FirstBlood默认的Interceptor和图形验证码
+     *
      * @see #Key$firstBlood
      */
     private boolean firstBlood = true;

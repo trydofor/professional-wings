@@ -29,6 +29,7 @@ public class WingsCaffeine {
      * @param tti 空闲秒数
      * @return cache
      */
+    @NotNull
     public static Caffeine<Object, Object> builder(int max, int ttl, int tti) {
         return Caffeine.newBuilder()
                        .maximumSize(maxInt(max))
@@ -44,7 +45,8 @@ public class WingsCaffeine {
      * @param tti 空闲秒数
      * @return cache
      */
-    public static <K, V> Cache<K, V> cache(int max, int ttl, int tti, CacheLoader<K, V> loader) {
+    @NotNull
+    public static <K, V> Cache<K, V> newCache(int max, int ttl, int tti, CacheLoader<K, V> loader) {
         final Caffeine<Object, Object> builder = builder(max, ttl, tti);
         return loader == null ? builder.build() : builder.build(loader);
     }

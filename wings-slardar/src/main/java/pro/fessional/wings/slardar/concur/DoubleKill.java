@@ -6,11 +6,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * JVM内重复执行拦截，抛出 DoubleKillException终止执行
- * 需要注意的是
+ * 注意：异步执行时且同@Cacheable等AOP功能注解一起使用时，要保证DK最先被执行。
+ * 否则异步执行的结果，不能被正确处理。若是不能保证最先执行，不要同时使用。
+ * <p>
+ * JVM内重复执行拦截，以抛出无栈异常终止执行，需要调用者自行catch。
+ * - DoubleKillException 除同步执行中的调用，其他调用都throw。
  *
  * @author trydofor
- * @see pro.fessional.mirana.flow.DoubleKillException
+ * @see DoubleKillException
+ * @see org.springframework.cache.interceptor.CacheProxyFactoryBean
  * @since 2021-03-09
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -23,13 +27,6 @@ public @interface DoubleKill {
      * @return key
      */
     String value() default "";
-
-    /**
-     * 是否使用spring SecurityContextHolder.context.authentication.principal参与鉴别
-     *
-     * @return 是否参与
-     */
-    boolean principal() default true;
 
     /**
      * 使用方法同`@Cacheable`的`key`，默认空，表示不使用。当有static-key时，expression无效。
@@ -49,4 +46,27 @@ public @interface DoubleKill {
      * @return SpEL
      */
     String expression() default "";
+
+    /**
+     * 是否使用spring SecurityContextHolder.context.authentication.principal参与鉴别
+     *
+     * @return 是否参与
+     */
+    boolean principal() default true;
+
+    /**
+     * 是否异步执行改方法，默认同步。
+     * 异步执行时，执行中都以ReturnOrException任务进度。
+     * 默认使用spring @Async线程池
+     *
+     * @return 是否异步
+     */
+    boolean async() default false;
+
+    /**
+     * 执行信息在 ProgressContext 中存活的秒数
+     *
+     * @return 默认300秒
+     */
+    int progress() default 300;
 }

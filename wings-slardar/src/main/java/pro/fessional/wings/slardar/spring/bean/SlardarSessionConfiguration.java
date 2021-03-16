@@ -6,6 +6,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.session.DefaultCookieSerializerCustomizer;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +31,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
  */
 @Configuration
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$session, havingValue = "true")
+@EnableConfigurationProperties(ServerProperties.class)
 public class SlardarSessionConfiguration {
 
     private static final Log logger = LogFactory.getLog(SlardarSessionConfiguration.class);
@@ -41,7 +43,6 @@ public class SlardarSessionConfiguration {
     }
 
     @Bean
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public HttpSessionIdResolver httpSessionIdResolver(
             ServerProperties serverProperties,
             ObjectProvider<CookieSerializer> cookieSerializer,

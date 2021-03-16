@@ -57,12 +57,14 @@
         <mapstruct.version>1.4.1.Final</mapstruct.version> <!-- https://mapstruct.org/news/ -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
         <swagger.version>3.0.0</swagger.version>
+        <!-- slardar -->
+        <justauth.version>1.15.9</justauth.version>
+        <xxljob.version>2.3.0</xxljob.version>
         <!-- others -->
         <errorprone.version>2.5.1</errorprone.version>
         <fastjson.version>1.2.75</fastjson.version>
         <transmittable.version>2.12.1</transmittable.version>
         <bouncycastle.version>1.68</bouncycastle.version>
-        <justauth.version>1.15.9</justauth.version>
         <!-- just auth need 4 -->
         <okhttp3.version>4.9.0</okhttp3.version>
     </properties>
@@ -224,6 +226,11 @@
                 <groupId>me.zhyd.oauth</groupId>
                 <artifactId>JustAuth</artifactId>
                 <version>${justauth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.xuxueli</groupId>
+                <artifactId>xxl-job-core</artifactId>
+                <version>${xxljob.version}</version>
             </dependency>
             <!-- Argon2PasswordEncoder -->
             <dependency>

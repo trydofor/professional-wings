@@ -1,7 +1,6 @@
 package pro.fessional.wings.slardar.spring.bean;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -11,10 +10,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pro.fessional.mirana.code.RandCode;
+import pro.fessional.mirana.text.StringTemplate;
 import pro.fessional.wings.slardar.concur.impl.DoubleKillAround;
 import pro.fessional.wings.slardar.concur.impl.DoubleKillExceptionResolver;
 import pro.fessional.wings.slardar.concur.impl.FirstBloodHandler;
@@ -22,8 +21,7 @@ import pro.fessional.wings.slardar.concur.impl.FirstBloodImageHandler;
 import pro.fessional.wings.slardar.concur.impl.FirstBloodInterceptor;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.servlet.response.view.PlainTextView;
-import pro.fessional.wings.slardar.spring.prop.SlardarConcurDkProp;
-import pro.fessional.wings.slardar.spring.prop.SlardarConcurFbProp;
+import pro.fessional.wings.slardar.spring.prop.SlardarConcurProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 import java.util.List;
@@ -35,20 +33,11 @@ import java.util.stream.Collectors;
  */
 @Configuration
 @RequiredArgsConstructor
-public class SlardarConcurConfiguration implements WebMvcConfigurer {
+public class SlardarConcurConfiguration {
 
     private static final Log logger = LogFactory.getLog(SlardarConcurConfiguration.class);
 
-    private final SlardarConcurFbProp firstBloodProp;
-    private final SlardarConcurDkProp doubleKillProp;
-
-    @Setter(onMethod_ = {@Autowired})
-    private FirstBloodInterceptor firstBloodInterceptor;
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(firstBloodInterceptor);
-    }
+    private final SlardarConcurProp slardarConcurProp;
 
     //
     @Bean
@@ -56,6 +45,7 @@ public class SlardarConcurConfiguration implements WebMvcConfigurer {
     public FirstBloodImageHandler firstBloodImageHandler(@Autowired(required = false) WingsRemoteResolver remoteResolver) {
         logger.info("Wings conf firstBloodImageHandler");
         final FirstBloodImageHandler handler = new FirstBloodImageHandler();
+        SlardarConcurProp.FirstBlood firstBloodProp = slardarConcurProp.getFirstBlood();
         handler.setClientTicketKey(firstBloodProp.getClientTicketKey());
         handler.setFreshCaptchaKey(firstBloodProp.getFreshCaptchaKey());
         handler.setCheckCaptchaKey(firstBloodProp.getCheckCaptchaKey());
@@ -91,14 +81,22 @@ public class SlardarConcurConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "doubleKillExceptionResolver")
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$doubleKill, havingValue = "true")
-    public DoubleKillExceptionResolver doubleKillExceptionResolver() {
+    public HandlerExceptionResolver doubleKillExceptionResolver() {
         logger.info("Wings conf doubleKillAround");
-        ModelAndView mav = new ModelAndView();
-        PlainTextView pv = new PlainTextView(doubleKillProp.getContentType(), doubleKillProp.getResponseBody());
-        mav.setStatus(HttpStatus.valueOf(doubleKillProp.getHttpStatus()));
-        mav.setView(pv);
-        return new DoubleKillExceptionResolver(mav);
+        return new DoubleKillExceptionResolver(e -> {
+            ModelAndView mav = new ModelAndView();
+            SlardarConcurProp.DoubleKill doubleKillProp = slardarConcurProp.getDoubleKill();
+            final String body = StringTemplate
+                    .dyn(doubleKillProp.getResponseBody())
+                    .bindStr("${key}", e.getProgressKey())
+                    .bindStr("${ttl}", e.getRunningSecond())
+                    .toString();
+            PlainTextView pv = new PlainTextView(doubleKillProp.getContentType(), body);
+            mav.setStatus(HttpStatus.valueOf(doubleKillProp.getHttpStatus()));
+            mav.setView(pv);
+            return mav;
+        });
     }
 }
