@@ -26,14 +26,22 @@ public class Warlock2EnumGenerator {
         gen(ConstantEnumJdbcLoader.load(helper));
     }
 
+    protected String[] warlockGenerated = {"user_gender","user_status"};
+
     public void gen(List<ConstantEnumGenerator.ConstantEnum> enumItems) {
 
-        ConstantEnumGenerator.builder()
-                             .targetDirectory(targetPkg)
-                             .targetPackage(targetDir)
-                             .excludeType("standard_boolean")
-                             .excludeType("standard_language")
-                             .excludeType("standard_timezone")
-                             .generate(enumItems);
+        final ConstantEnumGenerator.Builder builder = ConstantEnumGenerator.builder();
+        builder.targetDirectory(targetPkg)
+               .targetPackage(targetDir)
+               .excludeType("standard_boolean")
+               .excludeType("standard_language")
+               .excludeType("standard_timezone");
+
+
+        build(builder);
+        builder.generate(enumItems);
+    }
+
+    protected void build(ConstantEnumGenerator.Builder builder) {
     }
 }

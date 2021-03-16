@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.project;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager.RevisionSql;
@@ -16,20 +17,25 @@ import java.util.SortedMap;
  * @since 2021-02-20
  */
 @RequiredArgsConstructor
+@Getter
 public class Warlock1SchemaManager {
 
-    private static final long InitRevision = 2020_10_24_02;
-    private final SchemaRevisionManager schemaRevisionManager;
+    protected static final long InitRevision = 2020_10_24_02;
+    protected final SchemaRevisionManager schemaRevisionManager;
 
     public void init04Auth() {
-        final SortedMap<Long, RevisionSql> sqls = FlywaveRevisionScanner
-                .helper()
-                .master("00-init")
-                .master("01-light")
-                .feature("01-enum-i18n")
-                .master("04-auth")
-                .scan();
+        final FlywaveRevisionScanner.Helper helper = FlywaveRevisionScanner.helper();
+        helper.master("00-init")
+              .master("01-light")
+              .feature("01-enum-i18n")
+              .master("04-auth");
+
+        build(helper);
+        final SortedMap<Long, RevisionSql> sqls = helper.scan();
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
         schemaRevisionManager.publishRevision(InitRevision, 0);
+    }
+
+    protected void build(FlywaveRevisionScanner.Helper helper) {
     }
 }

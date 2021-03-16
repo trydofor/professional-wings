@@ -28,7 +28,7 @@ class SimpleJdbcTemplate(val dataSource: DataSource, val name: String = "unnamed
         return if (args.isEmpty()) {
             jdbcTmpl.queryForObject(sql, Int::class.java)!!
         } else {
-            jdbcTmpl.queryForObject(sql, Int::class.java, args)
+            jdbcTmpl.queryForObject(sql, Int::class.java, *args)
         }
     }
 
@@ -40,11 +40,7 @@ class SimpleJdbcTemplate(val dataSource: DataSource, val name: String = "unnamed
         if (args.isEmpty()) {
             jdbcTmpl.query(sql, handler)
         } else {
-            // [TYPE_INFERENCE_CANDIDATE_WITH_SAM_AND_VARARG]
-            // Please use spread operator to pass an array as vararg.
-            // It will be an error in 1.5.
-            @Suppress("TYPE_INFERENCE_CANDIDATE_WITH_SAM_AND_VARARG")
-            jdbcTmpl.query(sql, handler, args)
+            jdbcTmpl.query(sql, handler, *args)
         }
     }
 
@@ -52,7 +48,7 @@ class SimpleJdbcTemplate(val dataSource: DataSource, val name: String = "unnamed
         return if (args.isEmpty()) {
             jdbcTmpl.update(sql)
         } else {
-            jdbcTmpl.update(sql, args)
+            jdbcTmpl.update(sql, *args)
         }
     }
 

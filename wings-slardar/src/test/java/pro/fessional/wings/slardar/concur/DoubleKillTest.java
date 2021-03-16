@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.fail;
                 "debug = true",
                 "wings.slardar.concur.double-kill.http-status=202",
                 "wings.slardar.concur.double-kill.content-type=text/plain",
-                "wings.slardar.concur.double-kill.response-body=double-killed",
+                "wings.slardar.concur.double-kill.response-body=double-killed ttl=${ttl}, key=${key}",
         })
 class DoubleKillTest {
 
@@ -52,7 +52,13 @@ class DoubleKillTest {
         final String ct = r2.getHeaders().getFirst("Content-Type");
         assertNotNull(ct);
         assertTrue(ct.contains("text/plain"));
-        assertEquals("double-killed", r2.getBody());
+        final String body = r2.getBody();
+        assertNotNull(body);
+        assertTrue(body.contains("double-killed"));
+        System.out.println(body);
+        String key = body.substring(body.lastIndexOf("=")+1);
+        final ProgressContext.Bar bar = ProgressContext.get(key);
+        System.out.println(bar);
     }
 
     @Test

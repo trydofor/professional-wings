@@ -145,5 +145,15 @@ public class ProgressContext {
         public int hashCode() {
             return Objects.hash(key);
         }
+
+        @Override
+        public String toString() {
+            return "Bar{" +
+                    "key='" + key + '\'' +
+                    ", started=" + started +
+                    ", done=" + done +
+                    ", error=" + error +
+                    '}';
+        }
     }
 }

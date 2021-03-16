@@ -19,8 +19,8 @@ import java.util.List;
 @Getter
 public class Warlock4AuthGenerator {
 
-    private static final String permSelect = "select id, scopes, action, remark from win_perm_entry where delete_dt = '1000-01-01'";
-    private static final RowMapper<Entry> permMapper = (rs, rowNum) -> {
+    protected static final String permSelect = "select id, scopes, action, remark from win_perm_entry where delete_dt = '1000-01-01'";
+    protected static final RowMapper<Entry> permMapper = (rs, rowNum) -> {
         Entry en = new Entry();
         en.setId(rs.getLong("id"));
         en.setName(rs.getString("scopes") + "." + rs.getString("action"));
@@ -28,8 +28,8 @@ public class Warlock4AuthGenerator {
         return en;
     };
 
-    private static final String roleSelect = "select id, name, remark from win_role_entry where delete_dt = '1000-01-01'";
-    private static final RowMapper<Entry> roleMapper = (rs, rowNum) -> {
+    protected static final String roleSelect = "select id, name, remark from win_role_entry where delete_dt = '1000-01-01'";
+    protected static final RowMapper<Entry> roleMapper = (rs, rowNum) -> {
         Entry en = new Entry();
         en.setId(rs.getLong("id"));
         en.setName(rs.getString("name"));
@@ -50,9 +50,15 @@ public class Warlock4AuthGenerator {
         generator.setPackageName(targetPkg);
         generator.setTargetDir(targetDir);
 
-        generator.generate("PermConstant", "", perms);
-        generator.generate("RoleConstant", "ROLE_", roles);
+        genPerm(generator, perms);
+        genPerm(generator, roles);
     }
 
+    protected void genPerm(ConstantNaviGenerator generator, List<Entry> perms) {
+        generator.generate("PermConstant", "", perms);
+    }
 
+    protected void genRole(ConstantNaviGenerator generator, List<Entry> roles) {
+        generator.generate("RoleConstant", "ROLE_", roles);
+    }
 }

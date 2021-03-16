@@ -20,24 +20,31 @@ public class Warlock3JooqGenerator {
     private String targetPkg = "pro.fessional.wings.warlock.database.autogen";
 
     public void gen(String jdbc, String user, String pass) {
-        WingsCodeGenerator.builder()
-                          .jdbcDriver("com.mysql.cj.jdbc.Driver")
-                          .jdbcUrl(jdbc)
-                          .jdbcUser(user)
-                          .jdbcPassword(pass)
-                          // 支持 pattern的注释写法
-                          .databaseIncludes(
-                                  "sys_constant_enum",
-                                  "sys_standard_i18n",
-                                  "win_.*"
-                          )
-                          .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
-                          .targetPackage(targetPkg)
-                          .targetDirectory(targetDir)
-                          .forcedLocale(".*\\.locale")
-                          .forcedZoneId(".*\\.zoneid")
-                          .forcedConsEnum(UserGender.class, ".*\\.gender")
-                          .forcedConsEnum(UserStatus.class, "win_user_basic\\.status")
-                          .buildAndGenerate();
+        final WingsCodeGenerator.Builder builder = WingsCodeGenerator.builder();
+        builder
+                .jdbcDriver("com.mysql.cj.jdbc.Driver")
+                .jdbcUrl(jdbc)
+                .jdbcUser(user)
+                .jdbcPassword(pass)
+                // 支持 pattern的注释写法
+                .databaseIncludes(
+                        "sys_constant_enum",
+                        "sys_standard_i18n",
+                        "win_.*"
+                )
+                .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
+                .targetPackage(targetPkg)
+                .targetDirectory(targetDir)
+                .forcedLocale(".*\\.locale")
+                .forcedZoneId(".*\\.zoneid")
+                .forcedConsEnum(UserGender.class, ".*\\.gender")
+                .forcedConsEnum(UserStatus.class, "win_user_basic\\.status");
+
+        build(builder);
+        builder.buildAndGenerate();
+    }
+
+    protected void build(final WingsCodeGenerator.Builder builder) {
+
     }
 }
