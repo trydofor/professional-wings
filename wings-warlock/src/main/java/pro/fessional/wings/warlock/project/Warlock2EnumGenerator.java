@@ -3,10 +3,13 @@ package pro.fessional.wings.warlock.project;
 import lombok.Getter;
 import lombok.Setter;
 import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator;
+import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator.Builder;
+import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator.ConstantEnum;
 import pro.fessional.wings.faceless.codegen.ConstantEnumJdbcLoader;
 import pro.fessional.wings.faceless.codegen.JdbcDataLoadHelper;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * idea中，main函数执行和spring执行，workdir不同
@@ -18,30 +21,40 @@ import java.util.List;
 @Getter
 public class Warlock2EnumGenerator {
 
-    private String targetPkg = "./wings-warlock/src/main/java/";
-    private String targetDir = "pro.fessional.wings.warlock.enums.autogen";
+    private String targetDir = "./wings-warlock/src/main/java/";
+    private String targetPkg = "pro.fessional.wings.warlock.enums.autogen";
 
-    public void gen(String jdbc, String user, String pass) {
+    @SafeVarargs
+    public final void gen(List<ConstantEnum> enums, Consumer<Builder>... customize) {
+        final Builder builder = ConstantEnumGenerator
+                .builder()
+                .targetDirectory(targetDir)
+                .targetPackage(targetPkg);
+        for (Consumer<Builder> consumer : customize) {
+            consumer.accept(builder);
+        }
+
+        builder.generate(enums);
+    }
+
+    @SafeVarargs
+    public final void gen(String jdbc, String user, String pass, Consumer<Builder>... customize) {
         final JdbcDataLoadHelper helper = JdbcDataLoadHelper.use(jdbc, user, pass);
-        gen(ConstantEnumJdbcLoader.load(helper));
+        List<ConstantEnum> enums = ConstantEnumJdbcLoader.load(helper);
+        gen(enums, customize);
     }
 
-    protected String[] warlockGenerated = {"user_gender","user_status"};
-
-    public void gen(List<ConstantEnumGenerator.ConstantEnum> enumItems) {
-
-        final ConstantEnumGenerator.Builder builder = ConstantEnumGenerator.builder();
-        builder.targetDirectory(targetPkg)
-               .targetPackage(targetDir)
-               .excludeType("standard_boolean")
-               .excludeType("standard_language")
-               .excludeType("standard_timezone");
-
-
-        build(builder);
-        builder.generate(enumItems);
+    ///
+    public static Consumer<Builder> excludeStandard() {
+        return builder -> builder
+                .excludeType("standard_boolean")
+                .excludeType("standard_language")
+                .excludeType("standard_timezone");
     }
 
-    protected void build(ConstantEnumGenerator.Builder builder) {
+    public static Consumer<Builder> excludeWarlock() {
+        return builder -> builder
+                .excludeType("user_gender")
+                .excludeType("user_status");
     }
 }

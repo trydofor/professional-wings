@@ -7,10 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
+import pro.fessional.wings.faceless.flywave.WingsRevision;
 
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1;
-import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_1ST_SCHEMA;
-import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_BRANCH_3RD_ENU18N;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.scan;
 
@@ -29,8 +28,8 @@ public class WingsInitDatabaseSample {
     @Test
     public void init0601() {
         // 初始
-        val sqls = scan(REVISION_PATH_MASTER, REVISION_PATH_BRANCH_3RD_ENU18N);
-        schemaRevisionManager.publishRevision(REVISION_1ST_SCHEMA, 0);
+        val sqls = scan(REVISION_PATH_MASTER, WingsRevision.V01_19_0521_01_EnumI18n.classpath());
+        schemaRevisionManager.publishRevision(WingsRevision.V00_19_0512_01_Schema.revision(), 0);
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
 
         // 升级

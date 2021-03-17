@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.WingsTestHelper;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
+import pro.fessional.wings.faceless.flywave.WingsRevision;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.util.SortedMap;
@@ -39,7 +40,9 @@ public class WingsSchemaGenerator {
     @Test
     public void init() {
         wingsTestHelper.cleanTable();
-        final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(FlywaveRevisionScanner.REVISION_PATH_MASTER, FlywaveRevisionScanner.REVISION_PATH_BRANCH_3RD_ENU18N);
+        final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner
+                .scan(FlywaveRevisionScanner.REVISION_PATH_MASTER,
+                        WingsRevision.V01_19_0521_01_EnumI18n.classpath());
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
         schemaRevisionManager.publishRevision(WingsTestHelper.REVISION_TEST_V2, 0);
     }

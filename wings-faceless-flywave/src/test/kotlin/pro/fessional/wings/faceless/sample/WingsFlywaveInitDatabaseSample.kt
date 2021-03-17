@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
+import pro.fessional.wings.faceless.flywave.WingsRevision
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
-import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_1ST_SCHEMA
 
 /**
  * @author trydofor
@@ -21,9 +21,9 @@ class WingsFlywaveInitDatabaseSample {
     lateinit var schemaRevisionManager: SchemaRevisionManager
 
     @Test
-    fun force(){
+    fun force() {
         val sqls = FlywaveRevisionScanner.scanMaster()
-        schemaRevisionManager.forceUpdateSql(sqls[REVISION_1ST_SCHEMA]!!, 0)
+        schemaRevisionManager.forceUpdateSql(sqls[WingsRevision.V00_19_0512_01_Schema.revision()]!!, 0)
         schemaRevisionManager.forceUpdateSql(sqls[REVISION_TEST_V1]!!, 0)
     }
 }

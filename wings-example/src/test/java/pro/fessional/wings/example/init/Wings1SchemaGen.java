@@ -12,8 +12,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.util.SortedMap;
 
-import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_3RD_ENU18N;
-import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_BRANCH_3RD_ENU18N;
+import static pro.fessional.wings.faceless.flywave.WingsRevision.V01_19_0521_01_EnumI18n;
 
 /**
  * ① 使用wings的flywave管理数据库版本
@@ -53,7 +52,7 @@ public class Wings1SchemaGen {
 //        String path = "file:src/main/resources/wings-flywave/dev-revi/**/*.sql"; // DEV文件
         val sqls = FlywaveRevisionScanner.helper()
                                          .master()
-                                         .path(REVISION_PATH_BRANCH_3RD_ENU18N)
+                                         .flywave(V01_19_0521_01_EnumI18n.flywave())
                                          .scan();
 
         // 合并，升级
@@ -68,7 +67,7 @@ public class Wings1SchemaGen {
 
     //先降级，否则无法更新已更新的sql
     private void down3rdThenMergePub(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls, long commitId, long revision) {
-        schemaRevisionManager.publishRevision(REVISION_3RD_ENU18N, commitId);
+        schemaRevisionManager.publishRevision(V01_19_0521_01_EnumI18n.revision(), commitId);
         schemaRevisionManager.checkAndInitSql(sqls, commitId, true);
         schemaRevisionManager.publishRevision(revision, commitId);
     }
@@ -76,7 +75,7 @@ public class Wings1SchemaGen {
     //先降级，否则无法更新已更新的sql
     private void mergeThenDown3rdPub(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls, long commitId, long revision) {
         schemaRevisionManager.checkAndInitSql(sqls, commitId, true);
-        schemaRevisionManager.publishRevision(REVISION_3RD_ENU18N, commitId);
+        schemaRevisionManager.publishRevision(V01_19_0521_01_EnumI18n.revision(), commitId);
         schemaRevisionManager.publishRevision(revision, commitId);
     }
 

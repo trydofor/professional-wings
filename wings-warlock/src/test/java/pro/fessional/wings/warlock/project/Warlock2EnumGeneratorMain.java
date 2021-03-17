@@ -9,6 +9,7 @@ class Warlock2EnumGeneratorMain {
     public static void main(String[] args) {
         Warlock2EnumGenerator generator = new Warlock2EnumGenerator();
         generator.setTargetDir(Warlock0CodegenConstant.JAVA);
-        generator.gen(Warlock0CodegenConstant.JDBC, Warlock0CodegenConstant.USER, Warlock0CodegenConstant.PASS);
+        generator.gen(Warlock0CodegenConstant.JDBC, Warlock0CodegenConstant.USER, Warlock0CodegenConstant.PASS,
+                Warlock2EnumGenerator.excludeStandard());
     }
 }

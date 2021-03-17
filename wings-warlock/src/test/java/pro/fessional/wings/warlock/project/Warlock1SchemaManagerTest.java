@@ -26,7 +26,9 @@ class Warlock1SchemaManagerTest {
     @Test
     void init04Auth() {
         final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
-        manager.init04Auth();
+        manager.init(Warlock1SchemaManager.InitRevision,
+                Warlock1SchemaManager.includeWarlockPath(),
+                Warlock1SchemaManager.includeWarlockRevi());
     }
 
 }
