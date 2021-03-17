@@ -119,11 +119,6 @@
             <artifactId>commons-io</artifactId>
         </dependency>
         <!-- dev -->
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <optional>true</optional>
-        </dependency>
         <!-- websocket -->
         <!--
         <dependency>
