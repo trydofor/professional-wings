@@ -50,11 +50,23 @@ public interface LightIdService {
     /**
      * 按Jooq的Table命名获得，去掉结尾的`Table`后缀，按 小写_小写命名。
      *
-     * @param table  标记的对象
+     * @param table 标记的对象
      * @param block 区块
      * @return id
      */
-    <E extends LightIdAware> long getId(@NotNull E table, int block);
+    default long getId(@NotNull LightIdAware table, int block) {
+        return getId(table.getSeqName(), block);
+    }
+
+    /**
+     * 按Jooq的Table命名获得，去掉结尾的`Table`后缀，按 小写_小写命名。
+     *
+     * @param table 标记的对象
+     * @return id
+     */
+    default long getId(@NotNull LightIdAware table) {
+        return getId(table.getSeqName(), geBlockId());
+    }
 
     /**
      * 按名字获得id，不区分大小写，默认全小写。

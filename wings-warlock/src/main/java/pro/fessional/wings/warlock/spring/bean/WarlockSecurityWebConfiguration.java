@@ -81,12 +81,21 @@ public class WarlockSecurityWebConfiguration extends WebSecurityConfigurerAdapte
                             final List<String> paths = en.getValue();
                             if (paths.isEmpty()) continue;
                             LinkedHashSet<String> uniq = new LinkedHashSet<>(paths);
+                            logger.info("Wings conf HttpSecurity. bind authority=" + en.getKey()
+                                    + String.join("\n, ", uniq));
                             conf.antMatchers(uniq.toArray(Null.StrArr)).hasAuthority(en.getKey());
                         }
+
                         conf.antMatchers(securityProp.getAuthenticated().toArray(Null.StrArr))
                             .authenticated()
                             .antMatchers(securityProp.getPermitAll().toArray(Null.StrArr))
                             .permitAll();
+
+                        logger.info("Wings conf HttpSecurity. bind Authenticated"
+                                + String.join("\n, ", securityProp.getAuthenticated()));
+                        logger.info("Wings conf HttpSecurity. bind PermitAll="
+                                + String.join("\n, ", securityProp.getPermitAll()));
+
                     }
             )
             .logout(conf -> conf

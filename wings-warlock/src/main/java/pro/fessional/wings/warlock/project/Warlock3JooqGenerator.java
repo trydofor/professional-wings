@@ -52,7 +52,7 @@ public class Warlock3JooqGenerator {
                         "sys_standard_i18n",
                         "win_.*"
                 )
-                .forcedConsEnum(UserGender.class, ".*\\.gender")
-                .forcedConsEnum(UserStatus.class, "win_user_basic\\.status");
+                .forcedIntConsEnum(UserGender.class, ".*\\.gender")
+                .forcedIntConsEnum(UserStatus.class, "win_user_basic\\.status");
     }
 }
