@@ -61,6 +61,18 @@ public class SlardarJacksonConfiguration {
         return builder.createXmlMapper(true).build();
     }
 
+    /**
+     * The context’s Jackson2ObjectMapperBuilder can be customized by one or more
+     * Jackson2ObjectMapperBuilderCustomizer beans. Such customizer beans can be ordered
+     * (Boot’s own customizer has an order of 0), letting additional
+     * customization be applied both before and after Boot’s customization.
+     * <p>
+     * If you provide any @Beans of type MappingJackson2HttpMessageConverter,
+     * they replace the default value in the MVC configuration. Also,
+     * a convenience bean of type HttpMessageConverters is provided
+     * (and is always available if you use the default MVC configuration).
+     * It has some useful methods to access the default and user-enhanced message converters.
+     */
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer customizerFront() {
         logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer");

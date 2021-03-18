@@ -1,11 +1,12 @@
 package pro.fessional.wings.slardar.spring.bean;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.format.FormatterRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pro.fessional.mirana.time.DateParser;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
@@ -20,17 +21,9 @@ import java.util.Date;
  */
 @Configuration
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$datetime, havingValue = "true")
-public class SlardarDateTimeConfiguration implements WebMvcConfigurer {
+public class SlardarDateTimeConfiguration {
+    private static final Log logger = LogFactory.getLog(SlardarDateTimeConfiguration.class);
 
-    @Override
-    public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new LocalDateConverter());
-        registry.addConverter(new LocalTimeConverter());
-        registry.addConverter(new LocalDateTimeConverter());
-        registry.addConverter(new UtilDateConverter());
-    }
-
-    /*
     // spring boot can expose Beans instead of WebMvcConfigurer
     @Bean
     public LocalDateConverter localDateConverter() {
@@ -55,7 +48,6 @@ public class SlardarDateTimeConfiguration implements WebMvcConfigurer {
         logger.info("Wings conf utilDateConverter");
         return new UtilDateConverter();
     }
-    */
     //
     public static class LocalDateConverter implements Converter<String, LocalDate> {
         @Override

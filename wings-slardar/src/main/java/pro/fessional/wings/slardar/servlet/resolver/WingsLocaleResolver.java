@@ -133,7 +133,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
             }
         }
 
-        for (String s : zoneidParam) {
+        for (String s : zoneidHeader) {
             String h = request.getHeader(s);
             if (h != null && !h.isEmpty()) {
                 return ZoneIdResolver.timeZone(h);
@@ -163,7 +163,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
             }
         }
 
-        for (String s : localeParam) {
+        for (String s : localeHeader) {
             String h = request.getHeader(s);
             if (h != null && !h.isEmpty()) {
                 return LocaleResolver.locale(h);

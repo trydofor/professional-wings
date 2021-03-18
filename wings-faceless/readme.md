@@ -278,6 +278,24 @@ mysql:5.7
 * mysql的jdbc的url参数， `serverTimezone=Asia/Shanghai`
 * java的代码参数， `TimeZone.setDefault(TimeZone.getTimeZone("Asia/Shanghai"));`
 
+在数据库和java配置上，需要统一时区和dev状态下的用户名和密码，一般团队一致。
+
+```properties
+wings.silencer.i18n.zoneid=Asia/Shanghai
+# 常用jdbc参数
+spring.datasource.url=jdbc:mysql://localhost:3306/tail_backend\
+  ?autoReconnect=true&useSSL=false\
+  &useUnicode=true&characterEncoding=UTF-8\
+  &serverTimezone=Asia/Shanghai
+```
+
+```sql
+CREATE USER 'trydofor'@'%' IDENTIFIED BY 'moilioncircle';
+GRANT ALL  ON *.*  TO 'trydofor'@'%';
+SHOW GRANTS FOR 'trydofor'@'%';
+DROP USER 'trydofor'@'%';
+```
+
 引发问题的原因，目前断定为jdbc和timestamp历史问题
 
 * jooq，使用timestamp作为localDatetime的值，设置preparedStatement。
