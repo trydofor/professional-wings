@@ -12,9 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.wings.faceless.database.helper.ModifyAssert;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
+import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
-import pro.fessional.wings.slardar.security.WingsTerminalContext;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAnthnTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasicTable;
@@ -136,7 +136,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
 
     @Override
     public void onSuccess(@NotNull Enum<?> authType, long userId, String details) {
-        final WingsTerminalContext.Context tc = WingsTerminalContext.get();
+        final TerminalContext.Context tc = TerminalContext.get();
         final WinUserLoginTable t = winUserLoginDao.getTable();
 
         WinUserLogin po = new WinUserLogin();
@@ -208,7 +208,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
                     .execute();
         }
 
-        final WingsTerminalContext.Context tc = WingsTerminalContext.get();
+        final TerminalContext.Context tc = TerminalContext.get();
         final WinUserLoginTable tl = winUserLoginDao.getTable();
         WinUserLogin po = new WinUserLogin();
         po.setId(lightIdService.getId(tl.getClass()));

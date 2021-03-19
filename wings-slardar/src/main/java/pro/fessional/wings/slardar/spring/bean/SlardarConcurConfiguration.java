@@ -90,8 +90,8 @@ public class SlardarConcurConfiguration {
             SlardarConcurProp.DoubleKill doubleKillProp = slardarConcurProp.getDoubleKill();
             final String body = StringTemplate
                     .dyn(doubleKillProp.getResponseBody())
-                    .bindStr("${key}", e.getProgressKey())
-                    .bindStr("${ttl}", e.getRunningSecond())
+                    .bindStr("{{key}}", e.getProgressKey())
+                    .bindStr("{{ttl}}", e.getRunningSecond())
                     .toString();
             PlainTextView pv = new PlainTextView(doubleKillProp.getContentType(), body);
             mav.setStatus(HttpStatus.valueOf(doubleKillProp.getHttpStatus()));

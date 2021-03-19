@@ -350,6 +350,25 @@ cacheManager = Manager.Server)
 <eviction size="5000"/>
 ```
 
+## 3.6.有个时区的LocalDateTime和ZonedDateTime
+
+多时区，要兼顾数据可读性和编码便利性，在slardar中统一约定如下。
+
+* `系统时区` - 系统运行时区，其在Jvm，Db上是统一的。
+* `数据时区` - 数据流动时，参与者所在的时区。
+* `用户时区` - 数据使用者，阅读数据时希望看到的时区。
+
+在一般情况下，此三者是统一的，比如都在北京时间，GMT+8。
+在时区不敏感的数据上，一般直接使用LocalDateTime，忽略时区。
+
+在slardar的适用的业务场景中，在业务层统一使用系统时区，用LocalDateTime。
+而在Controller层，负责进行系统和用户时区的双向转换，使用ZonedDateTime。
+
+* 时区不敏感或只做本地时间标签的情况，统一使用LocalDateTime，
+* 时区敏感时，使用ZonedDateTime类型，在Jackson和RequestParam中自动转换。
+  - Request时，自动把用户时间调至系统时区。
+  - Response时，自动把系统时间调至用户时区。
+
 ## 3.7.常用功能
 
 ## 3.7.1.restTemplate和okhttp

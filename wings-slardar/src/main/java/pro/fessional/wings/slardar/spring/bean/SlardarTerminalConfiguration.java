@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.slardar.servlet.WingsServletConst;
-import pro.fessional.wings.slardar.servlet.filter.WingsTerminalFilter;
+import pro.fessional.wings.slardar.context.TerminalInterceptor;
 import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
@@ -24,10 +23,8 @@ public class SlardarTerminalConfiguration {
 
     @Bean
     @ConditionalOnBean({WingsLocaleResolver.class, WingsRemoteResolver.class})
-    public WingsTerminalFilter wingsTerminalFilter(WingsLocaleResolver localeResolver, WingsRemoteResolver remoteResolver) {
+    public TerminalInterceptor terminalInterceptor(WingsLocaleResolver localeResolver, WingsRemoteResolver remoteResolver) {
         logger.info("Wings conf Terminal filter");
-        WingsTerminalFilter filter = new WingsTerminalFilter(localeResolver, remoteResolver);
-        filter.setOrder(WingsServletConst.ORDER_FILTER_TERMINAL);
-        return filter;
+        return new TerminalInterceptor(localeResolver, remoteResolver);
     }
 }

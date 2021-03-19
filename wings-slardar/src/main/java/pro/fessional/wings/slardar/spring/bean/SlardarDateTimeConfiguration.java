@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.convert.converter.Converter;
 import pro.fessional.mirana.time.DateParser;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
@@ -13,7 +14,9 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * @author trydofor
@@ -44,10 +47,17 @@ public class SlardarDateTimeConfiguration {
     }
 
     @Bean
+    public ZonedDateTimeConverter zonedDateTimeConverter() {
+        logger.info("Wings conf zonedDateTimeConverter");
+        return new ZonedDateTimeConverter();
+    }
+
+    @Bean
     public UtilDateConverter utilDateConverter() {
         logger.info("Wings conf utilDateConverter");
         return new UtilDateConverter();
     }
+
     //
     public static class LocalDateConverter implements Converter<String, LocalDate> {
         @Override
@@ -67,6 +77,16 @@ public class SlardarDateTimeConfiguration {
         @Override
         public LocalDateTime convert(@NotNull String source) {
             return DateParser.parseDateTime(source);
+        }
+    }
+
+
+    public static class ZonedDateTimeConverter implements Converter<String, ZonedDateTime> {
+        @Override
+        public ZonedDateTime convert(@NotNull String source) {
+            final LocalDateTime ldt = DateParser.parseDateTime(source);
+            final TimeZone tz = LocaleContextHolder.getTimeZone();
+            return ZonedDateTime.of(ldt, tz.toZoneId());
         }
     }
 

@@ -6,17 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pro.fessional.mirana.data.R;
-import pro.fessional.wings.silencer.context.WingsI18nContext;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
+import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -75,15 +73,16 @@ public class TestJsonController {
 
     @RequestMapping("/test/test.json")
     @ResponseBody
-    public R<JsonIt> jsonIt(HttpServletRequest request) {
+    public R<JsonIt> jsonIt() {
         JsonIt json = new JsonIt();
         ZonedDateTime now = ZonedDateTime.now();
-        @NotNull WingsI18nContext ctx = wingsLocaleResolver.resolveI18nContext(request);
-        ZonedDateTime userDate = now.withZoneSameInstant(ctx.getZoneIdOrDefault());
+        final TerminalContext.Context ctx = TerminalContext.get();
+        final ZoneId zid = ctx.getTimeZone().toZoneId();
+        ZonedDateTime userDate = now.withZoneSameInstant(zid);
         json.setZonedDateTimeVal(userDate);
-        Locale locale = ctx.getLocaleOrDefault();
+        Locale locale = ctx.getLocale();
         json.setHello(messageSource.getMessage("user.hello", new Object[]{}, locale));
-        json.setUserZoneId(ctx.getZoneId());
+        json.setUserZoneId(zid);
         json.setSystemZoneId(ZoneId.systemDefault());
         return R.okData(json);
     }

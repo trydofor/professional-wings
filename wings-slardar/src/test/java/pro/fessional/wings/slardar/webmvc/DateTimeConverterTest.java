@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -34,7 +35,7 @@ public class DateTimeConverterTest {
     }
 
     private void assertUtilDate(String d, String v) throws Exception {
-        mockMvc.perform(get("/test/datetime-util-date.html?d=" + d))
+        mockMvc.perform(get("/test/datetime-util-date.json?d=" + d))
                .andDo(print())
                .andExpect(content().string(v));
     }
@@ -51,7 +52,7 @@ public class DateTimeConverterTest {
     }
 
     private void assertFullDate(String d, String v) throws Exception {
-        mockMvc.perform(get("/test/datetime-full-date.html?d=" + d))
+        mockMvc.perform(get("/test/datetime-full-date.json?d=" + d))
                .andDo(print())
                .andExpect(content().string(v));
     }
@@ -68,7 +69,7 @@ public class DateTimeConverterTest {
     }
 
     private void assertLocalDate(String d, String v) throws Exception {
-        mockMvc.perform(get("/test/datetime-local-date.html?d=" + d))
+        mockMvc.perform(get("/test/datetime-local-date.json?d=" + d))
                .andDo(print())
                .andExpect(content().string(v));
     }
@@ -82,8 +83,37 @@ public class DateTimeConverterTest {
     }
 
     private void assertLocalTime(String d, String v) throws Exception {
-        mockMvc.perform(get("/test/datetime-local-time.html?d=" + d))
+        mockMvc.perform(get("/test/datetime-local-time.json?d=" + d))
                .andDo(print())
                .andExpect(content().string(v));
+    }
+
+
+    @Test
+    public void testLdtZdt() throws Exception {
+        // GMT -> GMT+8
+        testLdtZdt("2020-12-30 20:34:56", "2020-12-30 12:34:56");
+    }
+
+    private void testLdtZdt(String d, String v) throws Exception {
+        final MockHttpServletRequestBuilder builder = get("/test/ldt-zdt.json?d=" + d)
+                .header("Zone-Id", "GMT");
+        mockMvc.perform(builder)
+               .andDo(print())
+               .andExpect(content().json("{\"zdt\":\"" + v + "\",\"ldt\":\"" + d + "\"}", false));
+    }
+
+    @Test
+    public void testZdtLdt() throws Exception {
+        // GMT -> GMT+8
+        testZdtLdt("2020-12-30 12:34:56", "2020-12-30 20:34:56");
+    }
+
+    private void testZdtLdt(String d, String v) throws Exception {
+        final MockHttpServletRequestBuilder builder = get("/test/zdt-ldt.json?d=" + d)
+                .header("Zone-Id", "GMT");
+        mockMvc.perform(builder)
+               .andDo(print())
+               .andExpect(content().json("{\"zdt\":\"" + d + "\",\"ldt\":\"" + v + "\"}", false));
     }
 }

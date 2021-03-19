@@ -3,11 +3,11 @@ package pro.fessional.wings.slardar.servlet.resolver;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.i18n.LocaleContext;
+import org.springframework.context.i18n.SimpleTimeZoneAwareLocaleContext;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
 import org.springframework.web.servlet.i18n.AbstractLocaleContextResolver;
 import pro.fessional.mirana.i18n.LocaleResolver;
 import pro.fessional.mirana.i18n.ZoneIdResolver;
-import pro.fessional.wings.silencer.context.WingsI18nContext;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -62,21 +62,20 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
     @NotNull
     @Override
     public LocaleContext resolveLocaleContext(@NotNull HttpServletRequest request) {
-        return (LocaleContext) resolveI18nContext(request);
+        return resolveI18nContext(request);
     }
 
-    public WingsI18nContext resolveI18nContext(HttpServletRequest request) {
+    public TimeZoneAwareLocaleContext resolveI18nContext(HttpServletRequest request) {
 
         Object obj = request.getAttribute(ATTR_I18N_CONTEXT);
-        if (obj instanceof WingsI18nContext) {
-            return (WingsI18nContext) obj;
+        if (obj instanceof TimeZoneAwareLocaleContext) {
+            return (TimeZoneAwareLocaleContext) obj;
         }
 
         final Locale locale = resolveUserLocale(request);
         final TimeZone timeZone = resolveUserTimeZone(request);
-        final ZoneId zoneId = timeZone.toZoneId();
 
-        Context context = new Context(locale, timeZone, zoneId);
+        SimpleTimeZoneAwareLocaleContext context = new SimpleTimeZoneAwareLocaleContext(locale, timeZone);
         request.setAttribute(ATTR_I18N_CONTEXT, context);
 
         return context;
@@ -84,31 +83,15 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
 
     @Override
     public void setLocaleContext(@NotNull HttpServletRequest request, HttpServletResponse response, LocaleContext context) {
-
-        if (context instanceof WingsI18nContext && context instanceof TimeZoneAwareLocaleContext) {
+        if (context instanceof TimeZoneAwareLocaleContext) {
             request.setAttribute(ATTR_I18N_CONTEXT, context);
             return;
         }
 
-        Locale locale = context.getLocale();
-        TimeZone timeZone = null;
-        if (context instanceof TimeZoneAwareLocaleContext) {
-            TimeZoneAwareLocaleContext tc = (TimeZoneAwareLocaleContext) context;
-            timeZone = tc.getTimeZone();
-        }
-        if (timeZone == null && context instanceof WingsI18nContext) {
-            WingsI18nContext ic = (WingsI18nContext) context;
-            timeZone = ic.getTimeZone();
-        }
+        final Locale locale = context.getLocale();
+        final TimeZone timeZone = resolveUserTimeZone(request);
 
-        if (locale == null) {
-            locale = Locale.getDefault();
-        }
-        if (timeZone == null) {
-            timeZone = TimeZone.getDefault();
-        }
-
-        context = new Context(locale, timeZone, timeZone.toZoneId());
+        context = new SimpleTimeZoneAwareLocaleContext(locale == null ? Locale.getDefault() : locale, timeZone);
         request.setAttribute(ATTR_I18N_CONTEXT, context);
     }
 
@@ -173,7 +156,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
         return Locale.getDefault();
     }
 
-    public static class Context implements TimeZoneAwareLocaleContext, WingsI18nContext {
+    public static class Context implements TimeZoneAwareLocaleContext {
 
         private final Locale locale;
         private final TimeZone timeZone;
@@ -195,9 +178,8 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
             return locale;
         }
 
-        @Override
-        public @NotNull
-        ZoneId getZoneId() {
+        @NotNull
+        public ZoneId getZoneId() {
             return zoneId;
         }
     }

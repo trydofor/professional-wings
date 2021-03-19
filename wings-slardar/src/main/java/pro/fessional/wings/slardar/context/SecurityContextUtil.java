@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.security;
+package pro.fessional.wings.slardar.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,8 +26,8 @@ public class SecurityContextUtil {
      * @return context
      */
     @NotNull
-    public static WingsTerminalContext.Context getTerminalContext() {
-        return WingsTerminalContext.get();
+    public static TerminalContext.Context getTerminalContext() {
+        return TerminalContext.get();
     }
 
     @NotNull

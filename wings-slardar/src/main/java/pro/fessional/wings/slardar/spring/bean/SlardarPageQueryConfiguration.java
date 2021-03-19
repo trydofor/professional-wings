@@ -4,15 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarPagequeryProp;
 import pro.fessional.wings.slardar.webmvc.PageQueryArgumentResolver;
-
-import java.util.List;
 
 /**
  * @author trydofor
@@ -21,14 +18,14 @@ import java.util.List;
 @Configuration
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$pagequery, havingValue = "true")
 @RequiredArgsConstructor
-public class SlardarPageQueryConfiguration implements WebMvcConfigurer {
+public class SlardarPageQueryConfiguration {
 
     private static final Log logger = LogFactory.getLog(SlardarPageQueryConfiguration.class);
 
     private final SlardarPagequeryProp config;
 
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+    @Bean
+    public PageQueryArgumentResolver pageQueryArgumentResolver() {
         logger.info("Wings conf PageQueryArgumentResolver");
         final PageQueryArgumentResolver resolver = new PageQueryArgumentResolver();
         resolver.setPage(config.getPage());
@@ -36,6 +33,6 @@ public class SlardarPageQueryConfiguration implements WebMvcConfigurer {
         resolver.setPageAlias(config.getPageAlias().toArray(Null.StrArr));
         resolver.setSizeAlias(config.getSizeAlias().toArray(Null.StrArr));
         resolver.setSortAlias(config.getSortAlias().toArray(Null.StrArr));
-        argumentResolvers.add(resolver);
+        return resolver;
     }
 }

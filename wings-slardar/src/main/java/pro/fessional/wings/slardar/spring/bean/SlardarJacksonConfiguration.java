@@ -11,7 +11,6 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -23,6 +22,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
 import pro.fessional.wings.slardar.jackson.ZonedDeserializer;
+import pro.fessional.wings.slardar.jackson.ZonedSerializer;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 import java.text.DateFormat;
@@ -49,15 +49,15 @@ public class SlardarJacksonConfiguration {
     @Bean
     @Primary
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public ObjectMapper jacksonObjectMapper(Jackson2ObjectMapperBuilder builder) {
-        logger.info("Wings conf jacksonObjectMapper");
+    public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
+        logger.info("Wings conf jackson ObjectMapper");
         return builder.createXmlMapper(false).build();
     }
 
     @Bean
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public XmlMapper jacksonXmlMapper(Jackson2ObjectMapperBuilder builder) {
-        logger.info("Wings conf jacksonXmlMapper");
+    public XmlMapper xmlMapper(Jackson2ObjectMapperBuilder builder) {
+        logger.info("Wings conf jackson XmlMapper");
         return builder.createXmlMapper(true).build();
     }
 
@@ -79,17 +79,20 @@ public class SlardarJacksonConfiguration {
         return builder -> {
             DateFormat dateFormat = new SimpleDateFormat(DateTimePattern.PTN_FULL_19);
 
-            builder.serializerByType(ZonedDateTime.class, new ZonedDateTimeSerializer(DateTimePattern.FMT_FULL_19));
             builder.serializerByType(LocalDateTime.class, new LocalDateTimeSerializer(DateTimePattern.FMT_FULL_19));
             builder.serializerByType(LocalTime.class, new LocalTimeSerializer(DateTimePattern.FMT_TIME_08));
             builder.serializerByType(LocalDate.class, new LocalDateSerializer(DateTimePattern.FMT_DATE_10));
             builder.serializerByType(Date.class, new DateSerializer(false, dateFormat));
 
-            builder.deserializerByType(ZonedDateTime.class, new ZonedDeserializer(DateTimePattern.FMT_FULL_19));
             builder.deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimePattern.FMT_FULL_19));
             builder.deserializerByType(LocalTime.class, new LocalTimeDeserializer(DateTimePattern.FMT_TIME_08));
             builder.deserializerByType(LocalDate.class, new LocalDateDeserializer(DateTimePattern.FMT_DATE_10));
 
+            // zoned TODO 时区要重做，完成系统和用户的双向自动转换功能
+            builder.serializerByType(ZonedDateTime.class, new ZonedSerializer(DateTimePattern.FMT_FULL_19));
+            builder.deserializerByType(ZonedDateTime.class, new ZonedDeserializer(DateTimePattern.FMT_FULL_19));
+
+            // util date
             DateDeserializers.DateDeserializer base = DateDeserializers.DateDeserializer.instance;
             DateDeserializers.DateDeserializer dateDeserializer = new DateDeserializers.DateDeserializer(base, dateFormat, DateTimePattern.PTN_FULL_19);
             builder.deserializerByType(Date.class, dateDeserializer);

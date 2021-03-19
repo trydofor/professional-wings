@@ -7,9 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import pro.fessional.mirana.time.DateFormatter;
-import pro.fessional.wings.silencer.context.WingsI18nContext;
-import pro.fessional.wings.slardar.security.SecurityContextUtil;
-import pro.fessional.wings.slardar.security.WingsTerminalContext;
+import pro.fessional.wings.slardar.context.SecurityContextUtil;
+import pro.fessional.wings.slardar.context.TerminalContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneId;
@@ -34,10 +33,9 @@ public class TestI18nController {
         ZoneId systemZoneId = ZoneId.systemDefault();
         Locale systemLocale = Locale.getDefault();
 
-        WingsTerminalContext.Context sct = SecurityContextUtil.getTerminalContext();
-        WingsI18nContext ctx = sct.getI18nContext();
-        Locale userLocale = ctx.getLocaleOrDefault();
-        ZoneId userZoneId = ctx.getZoneIdOrDefault();
+        TerminalContext.Context ctx = SecurityContextUtil.getTerminalContext();
+        Locale userLocale = ctx.getLocale();
+        ZoneId userZoneId = ctx.getTimeZone().toZoneId();
         String userDatetime = DateFormatter.full19(now, userZoneId);
         //
         model.addAttribute("userLocale", userLocale);
