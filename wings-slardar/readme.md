@@ -411,6 +411,12 @@ slardar验证码的默认是基于图片的，在现今的AI算法识别上，�
 
 默认支持中文验证码，一般是一个汉字，3个英数，可以在配置中关闭。
 
+### 3.7.4.终端信息
+
+通过handlerInterceptor，在当前线程和request中设置terminal信息
+
+TerminalContext保存了，远程ip，agent信息，locale和timezone
+
 ## 3.8.特别用途的 Filter
 
 构建一个 wingsFilterChain 内置以下filter
@@ -423,22 +429,6 @@ slardar验证码的默认是基于图片的，在现今的AI算法识别上，�
  * 设置 Locale 和 TimeZone
  * 设置 remote ip
  * 设置 user agent信息
-
-## 3.8.2.CaptchaFilter防扒
-
-是否开启验证码，`spring.wings.slardar.enabled.captcha=false`
-
-通过`WingsCaptchaContext`设置规则，可以实现全局的防扒验证码。
-验证码的验证规则可以自定义，比如时间戳比较，短信码比较等。
-
-`WingsCaptchaContext.set`时，需要在handler中白名单和验证法。
-
- * 白名单，指验证返回`NOOP`的URI。
- * 验证码，为自定义字符串，在context中可供后续请求获得。
- * 验证法，自定义算法，成功返回`PASS`，否则`FAIL`。
- * 有效期，验证码在设定生命期内，返回`PASS`之前都有效。
-
-举例，详见`TestCaptchaController`的三个方法。
 
 ## 3.8.3.OverloadFilter过载
 

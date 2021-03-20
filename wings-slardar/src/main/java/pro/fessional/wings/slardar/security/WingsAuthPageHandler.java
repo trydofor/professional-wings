@@ -19,7 +19,7 @@ public interface WingsAuthPageHandler {
      * 处理login-page的get或post请求，如发送短信，oauth重定向
      *
      * @param authType 登录类型
-     * @param mimeType 内容类型
+     * @param mimeType 指定内容，null是，自动根据判断
      * @param request  request
      * @param response response
      * @see org.springframework.http.MediaType

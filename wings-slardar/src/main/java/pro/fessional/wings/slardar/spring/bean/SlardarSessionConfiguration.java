@@ -48,13 +48,14 @@ public class SlardarSessionConfiguration {
             ObjectProvider<CookieSerializer> cookieSerializer,
             ObjectProvider<DefaultCookieSerializerCustomizer> cookieSerializerCustomizers) {
         Session.Cookie cookie = serverProperties.getServlet().getSession().getCookie();
-        logger.info("Wings conf httpSessionIdResolver by server.servlet.session.cookie.name=" + cookie.getName());
+        final String cookieName = cookie.getName();
+        logger.info("Wings conf httpSessionIdResolver by server.servlet.session.cookie.name=" + cookieName);
 
         CookieSerializer serializer = cookieSerializer.getIfAvailable();
         if (serializer == null) {
             DefaultCookieSerializer defaultCookieSerializer = new DefaultCookieSerializer();
             PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();
-            map.from(cookie::getName).to(defaultCookieSerializer::setCookieName);
+            map.from(cookieName).to(defaultCookieSerializer::setCookieName);
             map.from(cookie::getDomain).to(defaultCookieSerializer::setDomainName);
             map.from(cookie::getPath).to(defaultCookieSerializer::setCookiePath);
             map.from(cookie::getHttpOnly).to(defaultCookieSerializer::setUseHttpOnlyCookie);
@@ -64,11 +65,10 @@ public class SlardarSessionConfiguration {
             serializer = defaultCookieSerializer;
         }
 
-        final HeaderHttpSessionIdResolver headerHttpSessionIdResolver = new HeaderHttpSessionIdResolver(cookie.getName());
+        final HeaderHttpSessionIdResolver headerHttpSessionIdResolver = new HeaderHttpSessionIdResolver(cookieName);
         final CookieHttpSessionIdResolver cookieHttpSessionIdResolver = new CookieHttpSessionIdResolver();
         cookieHttpSessionIdResolver.setCookieSerializer(serializer);
 
-        return new WingsSessionIdResolver(headerHttpSessionIdResolver, cookieHttpSessionIdResolver
-        );
+        return new WingsSessionIdResolver(headerHttpSessionIdResolver, cookieHttpSessionIdResolver);
     }
 }

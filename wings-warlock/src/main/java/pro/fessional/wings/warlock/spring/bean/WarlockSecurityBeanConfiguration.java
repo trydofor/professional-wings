@@ -7,6 +7,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -65,24 +66,26 @@ public class WarlockSecurityBeanConfiguration {
 
     ///////// handler /////////
     @Bean
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @ConditionalOnMissingBean(AuthenticationSuccessHandler.class)
-    public AuthenticationSuccessHandler loginSuccessHandler() {
-        logger.info("Wings conf loginOkHandler");
-        return new LoginSuccessHandler();
+    public AuthenticationSuccessHandler loginSuccessHandler(ServerProperties serverProperties) {
+        final String cookieName = serverProperties.getServlet().getSession().getCookie().getName();
+        logger.info("Wings conf loginSuccessHandler by server.servlet.session.cookie.name=" + cookieName);
+        return new LoginSuccessHandler(securityProp.getLoginSuccessBody(), cookieName);
     }
 
     @Bean
     @ConditionalOnMissingBean(AuthenticationFailureHandler.class)
     public AuthenticationFailureHandler loginFailureHandler() {
-        logger.info("Wings conf loginNgHandler");
-        return new LoginFailureHandler();
+        logger.info("Wings conf loginFailureHandler");
+        return new LoginFailureHandler(securityProp.getLoginFailureBody());
     }
 
     @Bean
     @ConditionalOnMissingBean(LogoutSuccessHandler.class)
-    public LogoutSuccessHandler logoutOkHandler() {
-        logger.info("Wings conf logoutOkHandler");
-        return new LogoutOkHandler();
+    public LogoutSuccessHandler logoutSuccessHandler() {
+        logger.info("Wings conf logoutSuccessHandler");
+        return new LogoutOkHandler(securityProp.getLogoutSuccessBody());
     }
 
     ///////// UserDetails /////////

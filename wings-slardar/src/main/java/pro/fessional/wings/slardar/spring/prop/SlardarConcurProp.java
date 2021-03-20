@@ -99,7 +99,7 @@ public class SlardarConcurProp {
 
         /**
          * DoubleKillExceptionResolver 回复的文本内容。
-         * 支持变量 {{key}} 和 {{ttl}}
+         * 支持变量 {key} 和 {ttl}
          *
          * @see #Key$responseBody
          */

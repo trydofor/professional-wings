@@ -7,6 +7,8 @@ import pro.fessional.wings.slardar.security.WingsAuthTypeSource;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static pro.fessional.wings.slardar.spring.conf.WingsBindLoginConfigurer.TokenAuthType;
+
 /**
  * 支持 header，param，AntPath (/login/*.json)
  *
@@ -24,7 +26,7 @@ public class DefaultWingsAuthTypeSource implements WingsAuthTypeSource {
     /**
      * 如果不支持对应的类型，设置为null
      *
-     * @param antPath    /login/*.json，AntPath
+     * @param antPath    /login/*.json，AntPath，or {authType} path
      * @param paramName  paramName
      * @param headerName headerName
      * @param authTypes  enums.name
@@ -35,15 +37,23 @@ public class DefaultWingsAuthTypeSource implements WingsAuthTypeSource {
         this.authTypes = authTypes;
 
         if (antPath != null) {
-            final String[] part = antPath.split("\\*+");
-            if (part.length == 1) { // `/login` | `/login/*`
-                pathHead = antPath.contains("*") ? part[0].length() : 0;
-                pathTail = 0;
-            } else if (part.length == 2) { // `/login/*.json` | `*/login.json`
-                pathHead = part[0].length();
-                pathTail = part[1].length();
+            int pos = antPath.indexOf(TokenAuthType);
+            if (pos >= 0) {
+                pathHead = pos;
+                pathTail = antPath.length() - pos - TokenAuthType.length();
             } else {
-                throw new IllegalArgumentException("only support 1 wildcard in ant path");
+                int p1 = antPath.indexOf("*");
+                int p2 = antPath.lastIndexOf("*");
+                if (p1 != p2) {
+                    throw new IllegalArgumentException("must have 1 wildcard in ant path");
+                }
+                if (p1 >= 0) {
+                    pathHead = pos;
+                    pathTail = antPath.length() - pos - 1;
+                } else {
+                    pathHead = 0;
+                    pathTail = 0;
+                }
             }
         } else {
             pathHead = 0;
