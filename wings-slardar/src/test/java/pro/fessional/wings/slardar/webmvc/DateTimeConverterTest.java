@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
@@ -89,6 +90,10 @@ public class DateTimeConverterTest {
     }
 
 
+    /**
+     * 用户时区GMT，系统时区GMT+8，使用LocalDateTime在接受输入，按系统时区处理。
+     * 希望json输出时，把系统时区自动变为用户时区，减8小时。
+     */
     @Test
     public void testLdtZdt() throws Exception {
         // GMT -> GMT+8
@@ -96,16 +101,18 @@ public class DateTimeConverterTest {
     }
 
     private void testLdtZdt(String d, String v) throws Exception {
-        final MockHttpServletRequestBuilder builder = get("/test/ldt-zdt.json?d=" + d)
+        final MockHttpServletRequestBuilder builder = post("/test/ldt-zdt.json?d=" + d)
                 .header("Zone-Id", "GMT");
         mockMvc.perform(builder)
                .andDo(print())
                .andExpect(content().json("{\"zdt\":\"" + v + "\",\"ldt\":\"" + d + "\"}", false));
     }
 
+    /**
+     * 用户时区GMT，系统时区GMT+8，使用ZonedDateTime在接受输入时自动转换到系统时区
+     */
     @Test
     public void testZdtLdt() throws Exception {
-        // GMT -> GMT+8
         testZdtLdt("2020-12-30 12:34:56", "2020-12-30 20:34:56");
     }
 

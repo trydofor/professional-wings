@@ -77,22 +77,23 @@ public class SlardarJacksonConfiguration {
     public Jackson2ObjectMapperBuilderCustomizer customizerFront() {
         logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer");
         return builder -> {
-            DateFormat dateFormat = new SimpleDateFormat(DateTimePattern.PTN_FULL_19);
+//            builder.timeZone(LocaleContextHolder.getTimeZone());
 
             builder.serializerByType(LocalDateTime.class, new LocalDateTimeSerializer(DateTimePattern.FMT_FULL_19));
             builder.serializerByType(LocalTime.class, new LocalTimeSerializer(DateTimePattern.FMT_TIME_08));
             builder.serializerByType(LocalDate.class, new LocalDateSerializer(DateTimePattern.FMT_DATE_10));
-            builder.serializerByType(Date.class, new DateSerializer(false, dateFormat));
 
             builder.deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimePattern.FMT_FULL_19));
             builder.deserializerByType(LocalTime.class, new LocalTimeDeserializer(DateTimePattern.FMT_TIME_08));
             builder.deserializerByType(LocalDate.class, new LocalDateDeserializer(DateTimePattern.FMT_DATE_10));
 
-            // zoned TODO 时区要重做，完成系统和用户的双向自动转换功能
+            // zoned
             builder.serializerByType(ZonedDateTime.class, new ZonedSerializer(DateTimePattern.FMT_FULL_19));
             builder.deserializerByType(ZonedDateTime.class, new ZonedDeserializer(DateTimePattern.FMT_FULL_19));
 
             // util date
+            DateFormat dateFormat = new SimpleDateFormat(DateTimePattern.PTN_FULL_19);
+            builder.serializerByType(Date.class, new DateSerializer(false, dateFormat));
             DateDeserializers.DateDeserializer base = DateDeserializers.DateDeserializer.instance;
             DateDeserializers.DateDeserializer dateDeserializer = new DateDeserializers.DateDeserializer(base, dateFormat, DateTimePattern.PTN_FULL_19);
             builder.deserializerByType(Date.class, dateDeserializer);

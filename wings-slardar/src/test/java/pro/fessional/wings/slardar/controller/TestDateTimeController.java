@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.controller;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,6 +37,7 @@ public class TestDateTimeController {
         xdt.zdt=ldt.atZone(StandardTimezone.ASIA𓃬SHANGHAI.toZoneId());
         xdt.ldt = ldt;
         System.out.println("ldtZdt>>>"+xdt);
+        System.out.println("userTz>>>"+ LocaleContextHolder.getTimeZone());
         return xdt;
     }
 

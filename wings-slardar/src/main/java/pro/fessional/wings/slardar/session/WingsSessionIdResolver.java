@@ -7,6 +7,7 @@ import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,11 +19,18 @@ import java.util.List;
  */
 public class WingsSessionIdResolver implements HttpSessionIdResolver {
 
-    private final HttpSessionIdResolver[] httpSessionIdResolvers;
+    private final List<HttpSessionIdResolver> httpSessionIdResolvers;
+
+    public WingsSessionIdResolver(List<HttpSessionIdResolver> httpSessionIdResolvers) {
+        this.httpSessionIdResolvers = httpSessionIdResolvers;
+    }
 
     public WingsSessionIdResolver(HttpSessionIdResolver... resolvers) {
         Assert.notEmpty(resolvers, "need HttpSessionIdResolver");
-        httpSessionIdResolvers = resolvers;
+        httpSessionIdResolvers = new ArrayList<>(resolvers.length);
+        for (HttpSessionIdResolver resolver : resolvers) {
+            if (resolver != null) httpSessionIdResolvers.add(resolver);
+        }
     }
 
     @Override

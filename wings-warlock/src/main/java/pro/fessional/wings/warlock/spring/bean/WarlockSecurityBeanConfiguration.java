@@ -7,7 +7,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +24,7 @@ import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeParser;
+import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
 import pro.fessional.wings.warlock.security.handler.LoginFailureHandler;
 import pro.fessional.wings.warlock.security.handler.LoginSuccessHandler;
 import pro.fessional.wings.warlock.security.handler.LogoutOkHandler;
@@ -68,10 +68,10 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @ConditionalOnMissingBean(AuthenticationSuccessHandler.class)
-    public AuthenticationSuccessHandler loginSuccessHandler(ServerProperties serverProperties) {
-        final String cookieName = serverProperties.getServlet().getSession().getCookie().getName();
-        logger.info("Wings conf loginSuccessHandler by server.servlet.session.cookie.name=" + cookieName);
-        return new LoginSuccessHandler(securityProp.getLoginSuccessBody(), cookieName);
+    public AuthenticationSuccessHandler loginSuccessHandler(SlardarSessionProp sessionProp) {
+        final String headerName = sessionProp.getHeaderName();
+        logger.info("Wings conf loginSuccessHandler by header.name=" + headerName);
+        return new LoginSuccessHandler(securityProp.getLoginSuccessBody(), headerName);
     }
 
     @Bean

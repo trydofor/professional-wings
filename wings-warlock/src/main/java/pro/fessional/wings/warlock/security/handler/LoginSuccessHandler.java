@@ -21,17 +21,19 @@ import javax.servlet.http.HttpSession;
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final String body;
-    private final String cookieName;
+    private final String headerName;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        final HttpSession session = request.getSession(false);
-        if (session == null) {
-            log.error("login Success, but no session");
-        } else {
-            final String sid = session.getId();
-            response.setHeader(cookieName, sid);
-            log.info("login Success, session-id={}", sid);
+        if (headerName != null) {
+            final HttpSession session = request.getSession(false);
+            if (session == null) {
+                log.error("login Success, but no session");
+            } else {
+                final String sid = session.getId();
+                response.setHeader(headerName, sid);
+                log.info("login Success, session-id={}", sid);
+            }
         }
         ResponseHelper.writeBodyUtf8(response, body);
     }
