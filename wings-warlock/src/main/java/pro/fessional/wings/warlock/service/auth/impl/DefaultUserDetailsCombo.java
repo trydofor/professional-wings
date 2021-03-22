@@ -50,7 +50,7 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
 
         if (dt == null && autoRegisterType.contains(authType)) {
             log.info("auto-create user by auth-user, username={}, auth-type={}", username, authType);
-            dt = warlockAuthnService.save(authType, username, authDetail);
+            dt = warlockAuthnService.register(authType, username, authDetail);
         }
 
         if (dt == null) {

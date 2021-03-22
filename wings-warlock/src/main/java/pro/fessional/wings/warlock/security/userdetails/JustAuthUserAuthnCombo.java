@@ -5,10 +5,10 @@ import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.model.AuthUser;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserAnthn;
-import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserBasic;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserAuthnCombo;
+import pro.fessional.wings.warlock.service.user.WarlockUserBasicService;
 
 /**
  * @author trydofor
@@ -23,24 +23,24 @@ public class JustAuthUserAuthnCombo extends DefaultUserAuthnCombo {
     }
 
     @Override
-    protected void beforeInsert(WinUserBasic pojo, @NotNull Enum<?> authType, String username, Object details) {
+    protected void beforeSave(WarlockUserBasicService.User dot, @NotNull Enum<?> authType, String username, Object details) {
         AuthUser user = (AuthUser) details;
-        pojo.setNickname(user.getNickname());
-        pojo.setAvatar(user.getAvatar());
+        dot.setNickname(user.getNickname());
+        dot.setAvatar(user.getAvatar());
         final AuthUserGender aug = user.getGender();
         if (aug == AuthUserGender.FEMALE) {
-            pojo.setGender(UserGender.FEMALE);
+            dot.setGender(UserGender.FEMALE);
         } else if (aug == AuthUserGender.MALE) {
-            pojo.setGender(UserGender.MALE);
+            dot.setGender(UserGender.MALE);
         } else {
-            pojo.setGender(UserGender.UNKNOWN);
+            dot.setGender(UserGender.UNKNOWN);
         }
-        pojo.setRemark(user.getRemark());
-        pojo.setStatus(UserStatus.ACTIVE);
+        dot.setRemark(user.getRemark());
+        dot.setStatus(UserStatus.ACTIVE);
     }
 
     @Override
-    protected void beforeInsert(WinUserAnthn pojo, @NotNull Enum<?> authType, String username, Object details) {
+    protected void beforeSave(WinUserAnthn pojo, @NotNull Enum<?> authType, String username, Object details) {
         AuthUser user = (AuthUser) details;
         pojo.setUsername(user.getUuid());
         pojo.setExtraPara(JSON.toJSONString(user.getToken()));

@@ -107,10 +107,8 @@ public class JooqDslAndDaoSample {
     public void test3Journal() {
         testcaseNotice("日志功能");
 
-        val journal = new JournalService.Journal();
         val now = LocalDateTime.now();
-        journal.setCommitDt(now);
-        journal.setCommitId(1L);
+        val journal = new JournalService.Journal(1L, now, "", "", "", "");
 
         val s1 = new HashMap<>();
         val t = Tst中文也分表Table.Tst中文也分表;
@@ -150,7 +148,7 @@ public class JooqDslAndDaoSample {
     @Test
     public void test4Shadow() {
         testcaseNotice("影子表");
-        Tst中文也分表Table upd = dao.newTable("","$upd");
+        Tst中文也分表Table upd = dao.newTable("", "$upd");
         val c1 = dao.count(upd);
         System.out.println(c1);
     }

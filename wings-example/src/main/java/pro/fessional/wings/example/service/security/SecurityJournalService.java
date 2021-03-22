@@ -11,6 +11,8 @@ import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 
+import java.util.function.Function;
+
 /**
  * @author trydofor
  * @since 2019-08-15
@@ -26,7 +28,7 @@ public class SecurityJournalService extends DefaultJournalService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public @NotNull Journal commit(@NotNull String eventName, @Nullable String loginInfo, @Nullable String targetKey, @Nullable String otherInfo) {
+    public @NotNull <R> R submit(@NotNull String eventName, @Nullable String loginInfo, @Nullable String targetKey, @Nullable String otherInfo, @NotNull Function<Journal, R> commitSet) {
         if (loginInfo == null || loginInfo.isEmpty()) {
             Object principal = SecurityContextUtil.getPrincipal();
             if (principal instanceof WingsExampleUserDetails) {
@@ -35,6 +37,6 @@ public class SecurityJournalService extends DefaultJournalService {
                 loginInfo = principal.toString();
             }
         }
-        return super.commit(eventName, loginInfo, targetKey, otherInfo);
+        return super.submit(eventName, loginInfo, targetKey, otherInfo, commitSet);
     }
 }

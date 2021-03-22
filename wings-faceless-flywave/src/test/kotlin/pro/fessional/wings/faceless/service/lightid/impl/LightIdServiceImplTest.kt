@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.WingsRevision
+import pro.fessional.wings.faceless.service.journal.JournalService
 import pro.fessional.wings.faceless.service.lightid.LightIdService
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 import java.util.concurrent.atomic.AtomicLong
@@ -32,6 +33,9 @@ open class LightIdServiceImplTest {
     @Autowired
     lateinit var wingsTestHelper: WingsTestHelper
 
+    @Autowired
+    lateinit var journalService: JournalService
+
     @Test
     fun `test0🦁清表重置`() {
         wingsTestHelper.cleanTable()
@@ -50,8 +54,19 @@ open class LightIdServiceImplTest {
             stp.set(it.getLong("step_val"))
         }
 
-        for (i in 1 .. (stp.get() + 10)) {
+        for (i in 1..(stp.get() + 10)) {
             assertEquals(bgn.getAndIncrement(), lightIdService.getId(seqName, 0))
         }
+    }
+
+    @Test
+    fun journalKotlin() {
+        // consumer
+        journalService.commit(this.javaClass) {
+            print(it.commitDt)
+        }
+
+        // function
+        journalService.submit(this.javaClass) { it.commitDt };
     }
 }

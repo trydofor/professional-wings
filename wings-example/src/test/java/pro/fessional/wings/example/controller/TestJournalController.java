@@ -22,14 +22,13 @@ public class TestJournalController {
     @RequestMapping("/test/string.json")
     @ResponseBody
     public String string() {
-        JournalService.Journal journal = journalService.commit(JournalService.class);
+        JournalService.Journal journal = journalService.submit(JournalService.class, commit -> commit);
         return journal.toString();
     }
 
     @RequestMapping("/test/journal.json")
     @ResponseBody
     public JournalService.Journal journal() {
-        JournalService.Journal journal = journalService.commit(JournalService.class);
-        return journal;
+        return journalService.submit(JournalService.class, commit -> commit);
     }
 }

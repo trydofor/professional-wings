@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.concur.impl;
 
+import com.alibaba.ttl.threadpool.TtlExecutors;
 import lombok.Setter;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -97,9 +98,8 @@ public class DoubleKillAround {
             try {
                 final ProgressContext.Bar bar = ProgressContext.gen(arrKey, now, ttl);
                 if (doubleKill.async()) {
-                    if (asyncExecutor == null) {
-                        asyncExecutor = Executors.newWorkStealingPool();
-                    }
+
+                    checkTtlExecutor();
 
                     asyncExecutor.execute(() -> {
                         try {
@@ -123,6 +123,19 @@ public class DoubleKillAround {
             } else {
                 throw new DoubleKillException(bar.getKey(), bar.getStarted(), now);
             }
+        }
+    }
+
+    private void checkTtlExecutor() {
+        if (TtlExecutors.isTtlWrapper(asyncExecutor)) return;
+
+        synchronized (evaluator) {
+            if (TtlExecutors.isTtlWrapper(asyncExecutor)) return;
+
+            if (asyncExecutor == null) {
+                asyncExecutor = Executors.newWorkStealingPool();
+            }
+            asyncExecutor = TtlExecutors.getTtlExecutor(asyncExecutor);
         }
     }
 

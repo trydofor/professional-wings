@@ -45,8 +45,16 @@ public interface WarlockAuthnService {
     @Nullable
     Details load(@NotNull Enum<?> authType, String username);
 
+    /**
+     * 自动创建用户
+     *
+     * @param authType 类型
+     * @param username 登录用户名
+     * @param details  用户和验证信息
+     * @return 如果成功，返回用户信息
+     */
     @Nullable
-    Details save(@NotNull Enum<?> authType, String username, Object details);
+    Details register(@NotNull Enum<?> authType, String username, Object details);
 
     void auth(DefaultWingsUserDetails userDetails, Details details);
 

@@ -58,11 +58,11 @@ public class AuthRoleCache {
         if (authRole.getId() == null) {
             id = lightIdService.getId(WinAuthRoleTable.class);
             authRole.setId(id);
-            journal.commit(authRole);
+            journal.create(authRole);
             winAuthRoleDao.insert(authRole);
         } else {
             id = authRole.getId();
-            journal.commit(authRole);
+            journal.modify(authRole);
             winAuthRoleDao.update(authRole, true);
         }
         return id;

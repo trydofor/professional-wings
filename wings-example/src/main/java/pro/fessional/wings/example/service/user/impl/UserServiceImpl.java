@@ -29,25 +29,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public R<Long> create(UserCreate user) {
+        long uid = journalService.submit(UserService.class, journal -> {
+            long id = lightIdService.getId(WinUserTable.class);
 
-        long id = lightIdService.getId(WinUserTable.class);
-        JournalService.Journal journal = journalService.commit(UserService.class);
+            WinUser po = new WinUser();
+            po.setId(id);
+            po.setName(user.getName());
+            po.setGender(user.getGender());
+            po.setBirth(user.getBirth());
+            po.setAvatar(user.getAvatar());
+            po.setCountry(user.getCountry());
+            po.setLanguage(user.getLanguage());
+            po.setTimezone(user.getTimezone());
+            po.setAuthSet(EmptyValue.VARCHAR);
+            po.setRoleSet(EmptyValue.VARCHAR);
+            po.setStatus(UserStatus.UNINIT.getId());
+            journal.create(po);
+            winUserDao.insert(po);
+            return id;
+        });
 
-        WinUser po = new WinUser();
-        po.setId(id);
-        po.setName(user.getName());
-        po.setGender(user.getGender());
-        po.setBirth(user.getBirth());
-        po.setAvatar(user.getAvatar());
-        po.setCountry(user.getCountry());
-        po.setLanguage(user.getLanguage());
-        po.setTimezone(user.getTimezone());
-        po.setAuthSet(EmptyValue.VARCHAR);
-        po.setRoleSet(EmptyValue.VARCHAR);
-        po.setStatus(UserStatus.UNINIT.getId());
-        journal.commit(po);
-
-        winUserDao.insert(po);
-        return R.okData(id);
+        return R.okData(uid);
     }
 }

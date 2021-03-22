@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.context;
 
+import com.alibaba.ttl.TransmittableThreadLocal;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +15,7 @@ import java.util.TimeZone;
 public class TerminalContext {
 
     public static final Context NULL = new Context(null, null, null, null);
-    public static final ThreadLocal<Context> context = new ThreadLocal<>();
+    public static final TransmittableThreadLocal<Context> context = new TransmittableThreadLocal<>();
 
     @NotNull
     public static Context get() {

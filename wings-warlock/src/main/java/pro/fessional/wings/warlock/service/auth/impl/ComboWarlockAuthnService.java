@@ -124,10 +124,10 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
 
     @Override
     @Transactional
-    public Details save(@NotNull Enum<?> authType, String username, Object details) {
+    public Details register(@NotNull Enum<?> authType, String username, Object details) {
         for (Combo combo : saverCombos) {
             if (combo.accept(authType, username, details)) {
-                final Details dt = combo.save(authType, username, details);
+                final Details dt = combo.create(authType, username, details);
                 if (dt != null) return dt;
             }
         }
@@ -136,31 +136,32 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
 
     @Override
     public void onSuccess(@NotNull Enum<?> authType, long userId, String details) {
-        final TerminalContext.Context tc = TerminalContext.get();
-        final WinUserLoginTable t = winUserLoginDao.getTable();
-
-        WinUserLogin po = new WinUserLogin();
-        po.setId(lightIdService.getId(t.getClass()));
-        po.setUserId(userId);
         final String at = wingsAuthTypeParser.parse(authType);
-        po.setAuthType(at);
-        po.setLoginIp(tc.getRemoteIp());
-        po.setLoginDt(LocalDateTime.now());
-        po.setTerminal(tc.getAgentInfo());
-        po.setDetails(details);
-        po.setFailed(false);
-        winUserLoginDao.insert(po);
+        journalService.commit(Jane.Success, userId, "success login auth-type=" + at, commit -> {
+            final TerminalContext.Context tc = TerminalContext.get();
+            final WinUserLoginTable t = winUserLoginDao.getTable();
 
-        val commit = journalService.commit(Jane.Success, userId, "success login auth-type=" + at);
-        final WinUserAnthnTable ta = winUserAnthnDao.getTable();
-        winUserAnthnDao
-                .ctx()
-                .update(ta)
-                .set(ta.FailedCnt, 0)
-                .set(ta.CommitId, commit.getCommitId())
-                .set(ta.ModifyDt, commit.getCommitDt())
-                .where(ta.UserId.eq(userId))
-                .execute();
+            WinUserLogin po = new WinUserLogin();
+            po.setId(lightIdService.getId(t.getClass()));
+            po.setUserId(userId);
+            po.setAuthType(at);
+            po.setLoginIp(tc.getRemoteIp());
+            po.setLoginDt(commit.getCommitDt());
+            po.setTerminal(tc.getAgentInfo());
+            po.setDetails(details);
+            po.setFailed(false);
+            winUserLoginDao.insert(po);
+
+            final WinUserAnthnTable ta = winUserAnthnDao.getTable();
+            winUserAnthnDao
+                    .ctx()
+                    .update(ta)
+                    .set(ta.FailedCnt, 0)
+                    .set(ta.CommitId, commit.getCommitId())
+                    .set(ta.ModifyDt, commit.getCommitDt())
+                    .where(ta.UserId.eq(userId))
+                    .execute();
+        });
     }
 
     @Override
@@ -193,45 +194,45 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         final long uid = auth.value1();
         final long aid = auth.value4();
 
-        val commit = journalService.commit(Jane.Failure, uid, "failed login auth-id=" + aid);
-        // 锁账号
-        if (cnt >= max) {
-            final WinUserBasicTable tu = winUserBasicDao.getTable();
-            winUserBasicDao
+        journalService.commit(Jane.Failure, uid, "failed login auth-id=" + aid, commit -> {
+            // 锁账号
+            if (cnt >= max) {
+                final WinUserBasicTable tu = winUserBasicDao.getTable();
+                winUserBasicDao
+                        .ctx()
+                        .update(tu)
+                        .set(tu.Status, UserStatus.DANGER)
+                        .set(tu.CommitId, commit.getCommitId())
+                        .set(tu.ModifyDt, commit.getCommitDt())
+                        .set(tu.Remark, "locked by reach the max failure count=" + max)
+                        .where(tu.Id.eq(uid))
+                        .execute();
+            }
+
+            final TerminalContext.Context tc = TerminalContext.get();
+            final WinUserLoginTable tl = winUserLoginDao.getTable();
+            WinUserLogin po = new WinUserLogin();
+            po.setId(lightIdService.getId(tl.getClass()));
+            po.setUserId(uid);
+            po.setAuthType(at);
+            po.setLoginIp(tc.getRemoteIp());
+            po.setLoginDt(commit.getCommitDt());
+            po.setTerminal(tc.getAgentInfo());
+            po.setDetails("");
+            po.setFailed(true);
+            winUserLoginDao.insert(po);
+
+            winUserAnthnDao
                     .ctx()
-                    .update(tu)
-                    .set(tu.Status, UserStatus.DANGER)
-                    .set(tu.CommitId, commit.getCommitId())
-                    .set(tu.ModifyDt, commit.getCommitDt())
-                    .set(tu.Remark, "locked by reach the max failure count=" + max)
-                    .where(tu.Id.eq(uid))
+                    .update(ta)
+                    .set(ta.FailedCnt, ta.FailedCnt.add(1))
+                    .set(ta.CommitId, commit.getCommitId())
+                    .set(ta.ModifyDt, commit.getCommitDt())
+                    .where(ta.Id.eq(aid))
                     .execute();
-        }
 
-        final TerminalContext.Context tc = TerminalContext.get();
-        final WinUserLoginTable tl = winUserLoginDao.getTable();
-        WinUserLogin po = new WinUserLogin();
-        po.setId(lightIdService.getId(tl.getClass()));
-        po.setUserId(uid);
-        po.setAuthType(at);
-        po.setLoginIp(tc.getRemoteIp());
-        po.setLoginDt(LocalDateTime.now());
-        po.setTerminal(tc.getAgentInfo());
-        po.setDetails("");
-        po.setFailed(true);
-        winUserLoginDao.insert(po);
-
-
-        winUserAnthnDao
-                .ctx()
-                .update(ta)
-                .set(ta.FailedCnt, ta.FailedCnt.add(1))
-                .set(ta.CommitId, commit.getCommitId())
-                .set(ta.ModifyDt, commit.getCommitDt())
-                .where(ta.Id.eq(aid))
-                .execute();
-
-        lastTiming = System.currentTimeMillis() - bgn;
+            lastTiming = System.currentTimeMillis() - bgn;
+        });
     }
 
     private volatile long lastTiming = 0;
@@ -258,7 +259,6 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     }
 
     private void renew(Enum<?> authType, Authn authn, String username, Long userId) {
-
         if (authn.getExpiredIn() == null && authn.getMaxFailed() == null
                 && authn.getPassword() == null && !authn.isZeroFail()) {
             log.info("nothing to renew auth-type={}, username={}, userId={}", authType, username, userId);
@@ -267,55 +267,58 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
 
         final String at = wingsAuthTypeParser.parse(authType);
         final WinUserAnthnTable t = winUserAnthnDao.getTable();
-        final Condition cond;
-        final JournalService.Journal commit;
-        if (userId != null) {
-            cond = t.AuthType.eq(at).and(t.UserId.eq(userId)).and(t.onlyLiveData);
-            commit = journalService.commit(Jane.Renew, userId, "by userId and auth-type=" + authType);
-        } else {
-            cond = t.AuthType.eq(at).and(t.Username.eq(username)).and(t.onlyLiveData);
-            commit = journalService.commit(Jane.Renew, username, "by username and auth-type=" + authType);
-        }
+        final Object targetKey = userId != null ? userId : username;
+        final Object otherInfo = userId != null ? "by userId and auth-type=" + authType : "by username and auth-type=" + authType;
 
-        val update = winUserAnthnDao
-                .ctx()
-                .update(t)
-                .set(t.CommitId, commit.getCommitId())
-                .set(t.ModifyDt, commit.getCommitDt());
+        journalService.commit(Jane.Renew, targetKey, otherInfo, commit -> {
 
-        if (authn.isZeroFail()) {
-            update.set(t.FailedCnt, 0);
-        }
-
-        if (authn.getPassword() != null) {
-            val rc = winUserAnthnDao
-                    .ctx()
-                    .select(t.Passsalt)
-                    .from(t)
-                    .where(cond)
-                    .fetchOne();
-
-            if (rc == null) {
-                throw new IllegalStateException("failed to found authn by auth-type=" + at + ", user-id=" + userId);
+            final Condition cond;
+            if (userId != null) {
+                cond = t.AuthType.eq(at).and(t.UserId.eq(userId)).and(t.onlyLiveData);
+            } else {
+                cond = t.AuthType.eq(at).and(t.Username.eq(username)).and(t.onlyLiveData);
             }
-            update.set(t.Password, passsaltEncoder.salt(authn.getPassword(), rc.value1()));
-        }
 
-        final Integer maxFailed = authn.getMaxFailed();
-        if (maxFailed != null && maxFailed > 0) {
-            update.set(t.FailedMax, maxFailed);
-        }
+            val update = winUserAnthnDao
+                    .ctx()
+                    .update(t)
+                    .set(t.CommitId, commit.getCommitId())
+                    .set(t.ModifyDt, commit.getCommitDt());
 
-        if (authn.getExpiredIn() != null) {
-            final LocalDateTime expired = commit.getCommitDt().plusSeconds(authn.getExpiredIn().getSeconds());
-            update.set(t.ExpiredDt, expired);
-        }
+            if (authn.isZeroFail()) {
+                update.set(t.FailedCnt, 0);
+            }
 
-        final int af = update
-                .where(cond)
-                .execute();
+            if (authn.getPassword() != null) {
+                val rc = winUserAnthnDao
+                        .ctx()
+                        .select(t.Passsalt)
+                        .from(t)
+                        .where(cond)
+                        .fetchOne();
 
-        ModifyAssert.one(af, "failed to renew auth-type={}, userId={}, username={}", at, userId, username);
+                if (rc == null) {
+                    throw new IllegalStateException("failed to found authn by auth-type=" + at + ", user-id=" + userId);
+                }
+                update.set(t.Password, passsaltEncoder.salt(authn.getPassword(), rc.value1()));
+            }
+
+            final Integer maxFailed = authn.getMaxFailed();
+            if (maxFailed != null && maxFailed > 0) {
+                update.set(t.FailedMax, maxFailed);
+            }
+
+            if (authn.getExpiredIn() != null) {
+                final LocalDateTime expired = commit.getCommitDt().plusSeconds(authn.getExpiredIn().getSeconds());
+                update.set(t.ExpiredDt, expired);
+            }
+
+            final int af = update
+                    .where(cond)
+                    .execute();
+
+            ModifyAssert.one(af, "failed to renew auth-type={}, userId={}, username={}", at, userId, username);
+        });
     }
 
 
@@ -324,7 +327,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         /**
          * 不需要事务,在外层事务内调用
          */
-        Details save(@NotNull Enum<?> authType, String username, Object details);
+        Details create(@NotNull Enum<?> authType, String username, Object details);
 
         boolean accept(@NotNull Enum<?> authType, String username, Object details);
     }
