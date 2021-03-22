@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.jackson;
+package pro.fessional.wings.slardar.autozone.json;
 
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -15,13 +15,13 @@ import java.time.format.DateTimeFormatter;
  * @author trydofor
  * @since 2019-09-01
  */
-public class ZonedDeserializer extends InstantDeserializer<ZonedDateTime> {
+public class JacksonZonedDeserializer extends InstantDeserializer<ZonedDateTime> {
 
-    public ZonedDeserializer() {
+    public JacksonZonedDeserializer() {
         this(DateTimePattern.FMT_FULL_19);
     }
 
-    public ZonedDeserializer(DateTimeFormatter formatter) {
+    public JacksonZonedDeserializer(DateTimeFormatter formatter) {
         super(ZonedDateTime.class,
                 formatter,
                 temporal -> {

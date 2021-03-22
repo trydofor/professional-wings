@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.jackson;
+package pro.fessional.wings.slardar.autozone.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -16,13 +16,13 @@ import java.util.TimeZone;
  * @author trydofor
  * @since 2021-03-18
  */
-public class ZonedSerializer extends ZonedDateTimeSerializer {
+public class JacksonZonedSerializer extends ZonedDateTimeSerializer {
 
-    public ZonedSerializer() {
+    public JacksonZonedSerializer() {
         super(DateTimePattern.FMT_FULL_19);
     }
 
-    public ZonedSerializer(DateTimeFormatter formatter) {
+    public JacksonZonedSerializer(DateTimeFormatter formatter) {
         super(formatter);
     }
 

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.time.DateFormatter;
 import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
-import pro.fessional.wings.slardar.jackson.ZonedSerializer;
+import pro.fessional.wings.slardar.autozone.json.JacksonZonedSerializer;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,7 +26,7 @@ public class TestDateTimeController {
 
     @Data
     public static class Xdt {
-        @JsonSerialize(using = ZonedSerializer.class)
+        @JsonSerialize(using = JacksonZonedSerializer.class)
         public ZonedDateTime zdt;
         public LocalDateTime ldt;
     }

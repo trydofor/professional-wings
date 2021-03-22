@@ -21,8 +21,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
-import pro.fessional.wings.slardar.jackson.ZonedDeserializer;
-import pro.fessional.wings.slardar.jackson.ZonedSerializer;
+import pro.fessional.wings.slardar.autozone.json.JacksonZonedDeserializer;
+import pro.fessional.wings.slardar.autozone.json.JacksonZonedSerializer;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 import java.text.DateFormat;
@@ -88,8 +88,8 @@ public class SlardarJacksonConfiguration {
             builder.deserializerByType(LocalDate.class, new LocalDateDeserializer(DateTimePattern.FMT_DATE_10));
 
             // zoned
-            builder.serializerByType(ZonedDateTime.class, new ZonedSerializer(DateTimePattern.FMT_FULL_19));
-            builder.deserializerByType(ZonedDateTime.class, new ZonedDeserializer(DateTimePattern.FMT_FULL_19));
+            builder.serializerByType(ZonedDateTime.class, new JacksonZonedSerializer(DateTimePattern.FMT_FULL_19));
+            builder.deserializerByType(ZonedDateTime.class, new JacksonZonedDeserializer(DateTimePattern.FMT_FULL_19));
 
             // util date
             DateFormat dateFormat = new SimpleDateFormat(DateTimePattern.PTN_FULL_19);
