@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.concur.impl;
 
 import com.alibaba.ttl.threadpool.TtlExecutors;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -42,6 +43,7 @@ import java.util.concurrent.locks.Lock;
  */
 @Aspect
 @Order(Ordered.HIGHEST_PRECEDENCE)
+@Slf4j
 public class DoubleKillAround {
 
     private final Evaluator evaluator = new Evaluator();
@@ -133,6 +135,7 @@ public class DoubleKillAround {
             if (TtlExecutors.isTtlWrapper(asyncExecutor)) return;
 
             if (asyncExecutor == null) {
+                log.warn("config default Executors use newWorkStealingPool");
                 asyncExecutor = Executors.newWorkStealingPool();
             }
             asyncExecutor = TtlExecutors.getTtlExecutor(asyncExecutor);

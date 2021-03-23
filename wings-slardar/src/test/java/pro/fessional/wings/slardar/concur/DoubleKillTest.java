@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.fail;
         })
 class DoubleKillTest {
 
-    @Setter(onMethod_ = {@Value("http://127.0.0.1:${local.server.port}/test/double-kill.json")})
-    private String doubleKillUrl;
+    @Setter(onMethod_ = {@Value("http://127.0.0.1:${local.server.port}")})
+    private String doubleKillHost;
 
     @Setter(onMethod_ = {@Autowired})
     private DoubleKillService doubleKillService;
@@ -41,13 +41,14 @@ class DoubleKillTest {
 
     @Test
     void doubleKillUrl() throws InterruptedException {
+        final String url = this.doubleKillHost + "/test/double-kill.json";
         new Thread(() -> {
-            final ResponseEntity<String> r1 = restTemplate.getForEntity(doubleKillUrl, String.class);
+            final ResponseEntity<String> r1 = restTemplate.getForEntity(url, String.class);
             assertEquals(HttpStatus.OK, r1.getStatusCode());
         }).start();
 
         Thread.sleep(1000);
-        final ResponseEntity<String> r2 = restTemplate.getForEntity(doubleKillUrl, String.class);
+        final ResponseEntity<String> r2 = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.ACCEPTED, r2.getStatusCode());
         final String ct = r2.getHeaders().getFirst("Content-Type");
         assertNotNull(ct);
@@ -56,7 +57,30 @@ class DoubleKillTest {
         assertNotNull(body);
         assertTrue(body.contains("double-killed"));
         System.out.println(body);
-        String key = body.substring(body.lastIndexOf("=")+1);
+        String key = body.substring(body.lastIndexOf("=") + 1);
+        final ProgressContext.Bar bar = ProgressContext.get(key);
+        System.out.println(bar);
+    }
+
+    @Test
+    void doubleKillAysnc() throws InterruptedException {
+        final String url = this.doubleKillHost + "/test/double-kill-async.json";
+        new Thread(() -> {
+            final ResponseEntity<String> r1 = restTemplate.getForEntity(url, String.class);
+            assertEquals(HttpStatus.OK, r1.getStatusCode());
+        }).start();
+
+        Thread.sleep(1000);
+        final ResponseEntity<String> r2 = restTemplate.getForEntity(url, String.class);
+        assertEquals(HttpStatus.ACCEPTED, r2.getStatusCode());
+        final String ct = r2.getHeaders().getFirst("Content-Type");
+        assertNotNull(ct);
+        assertTrue(ct.contains("text/plain"));
+        final String body = r2.getBody();
+        assertNotNull(body);
+        assertTrue(body.contains("double-killed"));
+        System.out.println(body);
+        String key = body.substring(body.lastIndexOf("=") + 1);
         final ProgressContext.Bar bar = ProgressContext.get(key);
         System.out.println(bar);
     }

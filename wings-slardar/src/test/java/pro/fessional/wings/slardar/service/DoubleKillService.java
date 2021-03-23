@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import pro.fessional.wings.slardar.cache.WingsCache;
@@ -10,6 +11,7 @@ import pro.fessional.wings.slardar.concur.DoubleKill;
  * @since 2021-03-09
  */
 @Service
+@Slf4j
 public class DoubleKillService {
 
     @DoubleKill(async = true)
@@ -21,7 +23,7 @@ public class DoubleKillService {
             e.printStackTrace();
         }
         final String r = type + "-" + s;
-        System.out.println(">>>>>> sleepCache invoke " + r);
+        log.info(">>>>>> sleepCache " + r);
         return r;
     }
 
@@ -32,7 +34,9 @@ public class DoubleKillService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return type + "-" + s;
+        final String r = type + "-" + s;
+        log.info(">>>>>> sleepSecond " + r);
+        return r;
     }
 
     @DoubleKill("static-key")
@@ -42,7 +46,9 @@ public class DoubleKillService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return type + "-" + s;
+        final String r = type + "-" + s;
+        log.info(">>>>>> sleepSecondStr " + r);
+        return r;
     }
 
     @DoubleKill(expression = "#root.methodName + #root.targetClass + #p0 + '-' + #p1 * 1000")
@@ -52,6 +58,8 @@ public class DoubleKillService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return type + "-" + s;
+        final String r = type + "-" + s;
+        log.info(">>>>>> sleepSecondExp " + r);
+        return r;
     }
 }

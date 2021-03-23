@@ -29,12 +29,23 @@ public class TerminalInterceptor implements HandlerInterceptor {
         TimeZoneAwareLocaleContext locale = localeResolver.resolveI18nContext(request);
         String remoteIp = remoteResolver.resolveRemoteIp(request);
         String agentInfo = remoteResolver.resolveAgentInfo(request);
-        TerminalContext.set(locale.getLocale(), locale.getTimeZone(), remoteIp, agentInfo);
+        final Object principal = SecurityContextUtil.getPrincipal();
+        if (principal instanceof Long) {
+            long uid = (Long) principal;
+            TerminalContext.login(uid, locale.getLocale(), locale.getTimeZone(), remoteIp, agentInfo);
+        } else {
+            TerminalContext.guest(locale.getLocale(), locale.getTimeZone(), remoteIp, agentInfo);
+        }
         //
         LocaleContextHolder.setLocaleContext(locale);
         //
-
-
         return true;
+    }
+
+    @Override
+    public void afterCompletion(@NotNull HttpServletRequest request,
+                                @NotNull HttpServletResponse response,
+                                @NotNull Object handler, Exception ex) {
+        TerminalContext.clear();
     }
 }

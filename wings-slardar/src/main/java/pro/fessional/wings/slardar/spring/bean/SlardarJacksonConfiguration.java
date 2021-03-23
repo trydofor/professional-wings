@@ -39,7 +39,7 @@ import java.util.Date;
  * @see InstantDeserializer#ZONED_DATE_TIME
  * @since 2019-06-26
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(DateSerializer.class)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$jackson, havingValue = "true")
 public class SlardarJacksonConfiguration {
