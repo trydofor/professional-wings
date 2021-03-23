@@ -166,7 +166,14 @@ wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子
  * timezone - 对应 StandardTimezoneEnum
  * locale - 对应 java.util.Locale
  * zoneid - 对应 java.time.ZoneId
+ 
+在@Valid的验证中，有以下技巧。
 
+```
+@Size( min = 5, max = 14, message = "{common.email.size}")
+# 在 i18n信息中设置
+common.email.size=The author email '${validatedValue}' must be between {min} and {max} characters long
+```
 
 ## 3.4.Session和认证管理
 

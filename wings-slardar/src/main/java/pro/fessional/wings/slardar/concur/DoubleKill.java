@@ -40,7 +40,7 @@ public @interface DoubleKill {
      * ({@code #root.targetClass}) are also available.
      * <li>Method arguments can be accessed by index. For instance the 1st argument
      * can be accessed via {@code #root.args[0]}, {@code #p0} or {@code #a0}. Arguments
-     * can also be accessed by name if that information is available.</li>
+     * can also be accessed by #name if that information is available.</li>
      * </ul>
      *
      * @return SpEL

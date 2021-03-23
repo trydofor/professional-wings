@@ -33,14 +33,6 @@ public class SlardarEnabledProp {
     public static final String Key$okhttp = Key + ".okhttp";
 
     /**
-     * 是否开启json的i18n
-     *
-     * @see #Key$json18n
-     */
-    private boolean json18n = true;
-    public static final String Key$json18n = Key + ".json18n";
-
-    /**
      * 是否开启cache配置
      *
      * @see #Key$caching
