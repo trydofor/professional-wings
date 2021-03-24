@@ -4,19 +4,17 @@
 package pro.fessional.wings.example.database.autogen.tables.daos;
 
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import javax.annotation.Generated;
-
 import org.jooq.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import pro.fessional.wings.example.database.autogen.tables.WinAuthRoleTable;
 import pro.fessional.wings.example.database.autogen.tables.pojos.WinAuthRole;
 import pro.fessional.wings.example.database.autogen.tables.records.WinAuthRoleRecord;
-import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl;
+import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoJournalImpl;
+
+import javax.annotation.Generated;
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 /**
@@ -32,7 +30,7 @@ import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl;
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @Repository
-public class WinAuthRoleDao extends WingsJooqDaoImpl<WinAuthRoleTable, WinAuthRoleRecord, WinAuthRole, Long> {
+public class WinAuthRoleDao extends WingsJooqDaoJournalImpl<WinAuthRoleTable, WinAuthRoleRecord, WinAuthRole, Long> {
 
     /**
      * Create a new WinAuthRoleDao without any configuration
@@ -185,5 +183,139 @@ public class WinAuthRoleDao extends WingsJooqDaoImpl<WinAuthRoleTable, WinAuthRo
      */
     public List<WinAuthRole> fetchByAuthSet(String... values) {
         return fetch(WinAuthRoleTable.WinAuthRole.AuthSet, values);
+    }
+
+
+    /**
+     * Fetch records that have <code>id BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinAuthRole> fetchRangeOfIdLive(Long lowerInclusive, Long upperInclusive) {
+        return fetchRangeLive(WinAuthRoleTable.WinAuthRole.Id, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>id IN (values)</code>
+     */
+    public List<WinAuthRole> fetchByIdLive(Long... values) {
+        return fetchLive(WinAuthRoleTable.WinAuthRole.Id, values);
+    }
+
+    /**
+     * Fetch a unique record that has <code>id = value</code>
+     */
+    public WinAuthRole fetchOneByIdLive(Long value) {
+        return fetchOneLive(WinAuthRoleTable.WinAuthRole.Id, value);
+    }
+
+    /**
+     * Fetch records that have <code>create_dt BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinAuthRole> fetchRangeOfCreateDtLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRangeLive(WinAuthRoleTable.WinAuthRole.CreateDt, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>create_dt IN (values)</code>
+     */
+    public List<WinAuthRole> fetchByCreateDtLive(LocalDateTime... values) {
+        return fetchLive(WinAuthRoleTable.WinAuthRole.CreateDt, values);
+    }
+
+    /**
+     * Fetch records that have <code>modify_dt BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinAuthRole> fetchRangeOfModifyDtLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRangeLive(WinAuthRoleTable.WinAuthRole.ModifyDt, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>modify_dt IN (values)</code>
+     */
+    public List<WinAuthRole> fetchByModifyDtLive(LocalDateTime... values) {
+        return fetchLive(WinAuthRoleTable.WinAuthRole.ModifyDt, values);
+    }
+
+    /**
+     * Fetch records that have <code>delete_dt BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinAuthRole> fetchRangeOfDeleteDtLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRangeLive(WinAuthRoleTable.WinAuthRole.DeleteDt, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>delete_dt IN (values)</code>
+     */
+    public List<WinAuthRole> fetchByDeleteDtLive(LocalDateTime... values) {
+        return fetchLive(WinAuthRoleTable.WinAuthRole.DeleteDt, values);
+    }
+
+    /**
+     * Fetch records that have <code>commit_id BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinAuthRole> fetchRangeOfCommitIdLive(Long lowerInclusive, Long upperInclusive) {
+        return fetchRangeLive(WinAuthRoleTable.WinAuthRole.CommitId, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>commit_id IN (values)</code>
+     */
+    public List<WinAuthRole> fetchByCommitIdLive(Long... values) {
+        return fetchLive(WinAuthRoleTable.WinAuthRole.CommitId, values);
+    }
+
+    /**
+     * Fetch records that have <code>role_type BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinAuthRole> fetchRangeOfRoleTypeLive(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRangeLive(WinAuthRoleTable.WinAuthRole.RoleType, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>role_type IN (values)</code>
+     */
+    public List<WinAuthRole> fetchByRoleTypeLive(Integer... values) {
+        return fetchLive(WinAuthRoleTable.WinAuthRole.RoleType, values);
+    }
+
+    /**
+     * Fetch records that have <code>role_name BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinAuthRole> fetchRangeOfRoleNameLive(String lowerInclusive, String upperInclusive) {
+        return fetchRangeLive(WinAuthRoleTable.WinAuthRole.RoleName, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>role_name IN (values)</code>
+     */
+    public List<WinAuthRole> fetchByRoleNameLive(String... values) {
+        return fetchLive(WinAuthRoleTable.WinAuthRole.RoleName, values);
+    }
+
+    /**
+     * Fetch records that have <code>remark BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinAuthRole> fetchRangeOfRemarkLive(String lowerInclusive, String upperInclusive) {
+        return fetchRangeLive(WinAuthRoleTable.WinAuthRole.Remark, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>remark IN (values)</code>
+     */
+    public List<WinAuthRole> fetchByRemarkLive(String... values) {
+        return fetchLive(WinAuthRoleTable.WinAuthRole.Remark, values);
+    }
+
+    /**
+     * Fetch records that have <code>auth_set BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinAuthRole> fetchRangeOfAuthSetLive(String lowerInclusive, String upperInclusive) {
+        return fetchRangeLive(WinAuthRoleTable.WinAuthRole.AuthSet, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>auth_set IN (values)</code>
+     */
+    public List<WinAuthRole> fetchByAuthSetLive(String... values) {
+        return fetchLive(WinAuthRoleTable.WinAuthRole.AuthSet, values);
     }
 }

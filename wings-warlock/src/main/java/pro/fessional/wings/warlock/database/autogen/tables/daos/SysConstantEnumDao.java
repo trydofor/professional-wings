@@ -7,7 +7,7 @@ package pro.fessional.wings.warlock.database.autogen.tables.daos;
 import org.jooq.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl;
+import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoAliasImpl;
 import pro.fessional.wings.warlock.database.autogen.tables.SysConstantEnumTable;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.SysConstantEnum;
 import pro.fessional.wings.warlock.database.autogen.tables.records.SysConstantEnumRecord;
@@ -29,7 +29,7 @@ import java.util.List;
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @Repository
-public class SysConstantEnumDao extends WingsJooqDaoImpl<SysConstantEnumTable, SysConstantEnumRecord, SysConstantEnum, Integer> {
+public class SysConstantEnumDao extends WingsJooqDaoAliasImpl<SysConstantEnumTable, SysConstantEnumRecord, SysConstantEnum, Integer> {
 
     /**
      * Create a new SysConstantEnumDao without any configuration

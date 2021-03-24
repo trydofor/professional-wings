@@ -8,7 +8,7 @@ import org.jooq.Configuration;
 import org.jooq.Record2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl;
+import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoJournalImpl;
 import pro.fessional.wings.warlock.database.autogen.tables.WinRolePermMapTable;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinRolePermMap;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinRolePermMapRecord;
@@ -31,7 +31,7 @@ import java.util.List;
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @Repository
-public class WinRolePermMapDao extends WingsJooqDaoImpl<WinRolePermMapTable, WinRolePermMapRecord, WinRolePermMap, Record2<Long, Long>> {
+public class WinRolePermMapDao extends WingsJooqDaoJournalImpl<WinRolePermMapTable, WinRolePermMapRecord, WinRolePermMap, Record2<Long, Long>> {
 
     /**
      * Create a new WinRolePermMapDao without any configuration
@@ -135,5 +135,90 @@ public class WinRolePermMapDao extends WingsJooqDaoImpl<WinRolePermMapTable, Win
      */
     public List<WinRolePermMap> fetchByCommitId(Long... values) {
         return fetch(WinRolePermMapTable.WinRolePermMap.CommitId, values);
+    }
+
+
+    /**
+     * Fetch records that have <code>refer_role BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRolePermMap> fetchRangeOfReferRoleLive(Long lowerInclusive, Long upperInclusive) {
+        return fetchRangeLive(WinRolePermMapTable.WinRolePermMap.ReferRole, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>refer_role IN (values)</code>
+     */
+    public List<WinRolePermMap> fetchByReferRoleLive(Long... values) {
+        return fetchLive(WinRolePermMapTable.WinRolePermMap.ReferRole, values);
+    }
+
+    /**
+     * Fetch records that have <code>grant_perm BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRolePermMap> fetchRangeOfGrantPermLive(Long lowerInclusive, Long upperInclusive) {
+        return fetchRangeLive(WinRolePermMapTable.WinRolePermMap.GrantPerm, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>grant_perm IN (values)</code>
+     */
+    public List<WinRolePermMap> fetchByGrantPermLive(Long... values) {
+        return fetchLive(WinRolePermMapTable.WinRolePermMap.GrantPerm, values);
+    }
+
+    /**
+     * Fetch records that have <code>create_dt BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRolePermMap> fetchRangeOfCreateDtLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRangeLive(WinRolePermMapTable.WinRolePermMap.CreateDt, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>create_dt IN (values)</code>
+     */
+    public List<WinRolePermMap> fetchByCreateDtLive(LocalDateTime... values) {
+        return fetchLive(WinRolePermMapTable.WinRolePermMap.CreateDt, values);
+    }
+
+    /**
+     * Fetch records that have <code>modify_dt BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRolePermMap> fetchRangeOfModifyDtLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRangeLive(WinRolePermMapTable.WinRolePermMap.ModifyDt, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>modify_dt IN (values)</code>
+     */
+    public List<WinRolePermMap> fetchByModifyDtLive(LocalDateTime... values) {
+        return fetchLive(WinRolePermMapTable.WinRolePermMap.ModifyDt, values);
+    }
+
+    /**
+     * Fetch records that have <code>delete_dt BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRolePermMap> fetchRangeOfDeleteDtLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRangeLive(WinRolePermMapTable.WinRolePermMap.DeleteDt, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>delete_dt IN (values)</code>
+     */
+    public List<WinRolePermMap> fetchByDeleteDtLive(LocalDateTime... values) {
+        return fetchLive(WinRolePermMapTable.WinRolePermMap.DeleteDt, values);
+    }
+
+    /**
+     * Fetch records that have <code>commit_id BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRolePermMap> fetchRangeOfCommitIdLive(Long lowerInclusive, Long upperInclusive) {
+        return fetchRangeLive(WinRolePermMapTable.WinRolePermMap.CommitId, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>commit_id IN (values)</code>
+     */
+    public List<WinRolePermMap> fetchByCommitIdLive(Long... values) {
+        return fetchLive(WinRolePermMapTable.WinRolePermMap.CommitId, values);
     }
 }

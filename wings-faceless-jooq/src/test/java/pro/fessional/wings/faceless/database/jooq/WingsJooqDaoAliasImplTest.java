@@ -40,7 +40,7 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
 @ActiveProfiles("init")
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Tag("init")
-public class WingsJooqDaoImplTest {
+public class WingsJooqDaoAliasImplTest {
 
     @Setter(onMethod_ = {@Autowired})
     private WingsTestHelper wingsTestHelper;

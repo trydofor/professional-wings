@@ -7,7 +7,7 @@ package pro.fessional.wings.warlock.database.autogen.tables.daos;
 import org.jooq.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl;
+import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoAliasImpl;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserLoginTable;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserLogin;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinUserLoginRecord;
@@ -30,7 +30,7 @@ import java.util.List;
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @Repository
-public class WinUserLoginDao extends WingsJooqDaoImpl<WinUserLoginTable, WinUserLoginRecord, WinUserLogin, Long> {
+public class WinUserLoginDao extends WingsJooqDaoAliasImpl<WinUserLoginTable, WinUserLoginRecord, WinUserLogin, Long> {
 
     /**
      * Create a new WinUserLoginDao without any configuration

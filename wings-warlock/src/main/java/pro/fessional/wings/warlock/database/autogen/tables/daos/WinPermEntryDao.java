@@ -7,7 +7,7 @@ package pro.fessional.wings.warlock.database.autogen.tables.daos;
 import org.jooq.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl;
+import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoJournalImpl;
 import pro.fessional.wings.warlock.database.autogen.tables.WinPermEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinPermEntry;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinPermEntryRecord;
@@ -30,7 +30,7 @@ import java.util.List;
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @Repository
-public class WinPermEntryDao extends WingsJooqDaoImpl<WinPermEntryTable, WinPermEntryRecord, WinPermEntry, Long> {
+public class WinPermEntryDao extends WingsJooqDaoJournalImpl<WinPermEntryTable, WinPermEntryRecord, WinPermEntry, Long> {
 
     /**
      * Create a new WinPermEntryDao without any configuration
@@ -169,5 +169,125 @@ public class WinPermEntryDao extends WingsJooqDaoImpl<WinPermEntryTable, WinPerm
      */
     public List<WinPermEntry> fetchByRemark(String... values) {
         return fetch(WinPermEntryTable.WinPermEntry.Remark, values);
+    }
+
+
+    /**
+     * Fetch records that have <code>id BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinPermEntry> fetchRangeOfIdLive(Long lowerInclusive, Long upperInclusive) {
+        return fetchRangeLive(WinPermEntryTable.WinPermEntry.Id, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>id IN (values)</code>
+     */
+    public List<WinPermEntry> fetchByIdLive(Long... values) {
+        return fetchLive(WinPermEntryTable.WinPermEntry.Id, values);
+    }
+
+    /**
+     * Fetch a unique record that has <code>id = value</code>
+     */
+    public WinPermEntry fetchOneByIdLive(Long value) {
+        return fetchOneLive(WinPermEntryTable.WinPermEntry.Id, value);
+    }
+
+    /**
+     * Fetch records that have <code>create_dt BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinPermEntry> fetchRangeOfCreateDtLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRangeLive(WinPermEntryTable.WinPermEntry.CreateDt, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>create_dt IN (values)</code>
+     */
+    public List<WinPermEntry> fetchByCreateDtLive(LocalDateTime... values) {
+        return fetchLive(WinPermEntryTable.WinPermEntry.CreateDt, values);
+    }
+
+    /**
+     * Fetch records that have <code>modify_dt BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinPermEntry> fetchRangeOfModifyDtLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRangeLive(WinPermEntryTable.WinPermEntry.ModifyDt, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>modify_dt IN (values)</code>
+     */
+    public List<WinPermEntry> fetchByModifyDtLive(LocalDateTime... values) {
+        return fetchLive(WinPermEntryTable.WinPermEntry.ModifyDt, values);
+    }
+
+    /**
+     * Fetch records that have <code>delete_dt BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinPermEntry> fetchRangeOfDeleteDtLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRangeLive(WinPermEntryTable.WinPermEntry.DeleteDt, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>delete_dt IN (values)</code>
+     */
+    public List<WinPermEntry> fetchByDeleteDtLive(LocalDateTime... values) {
+        return fetchLive(WinPermEntryTable.WinPermEntry.DeleteDt, values);
+    }
+
+    /**
+     * Fetch records that have <code>commit_id BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinPermEntry> fetchRangeOfCommitIdLive(Long lowerInclusive, Long upperInclusive) {
+        return fetchRangeLive(WinPermEntryTable.WinPermEntry.CommitId, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>commit_id IN (values)</code>
+     */
+    public List<WinPermEntry> fetchByCommitIdLive(Long... values) {
+        return fetchLive(WinPermEntryTable.WinPermEntry.CommitId, values);
+    }
+
+    /**
+     * Fetch records that have <code>scopes BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinPermEntry> fetchRangeOfScopesLive(String lowerInclusive, String upperInclusive) {
+        return fetchRangeLive(WinPermEntryTable.WinPermEntry.Scopes, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>scopes IN (values)</code>
+     */
+    public List<WinPermEntry> fetchByScopesLive(String... values) {
+        return fetchLive(WinPermEntryTable.WinPermEntry.Scopes, values);
+    }
+
+    /**
+     * Fetch records that have <code>action BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinPermEntry> fetchRangeOfActionLive(String lowerInclusive, String upperInclusive) {
+        return fetchRangeLive(WinPermEntryTable.WinPermEntry.Action, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>action IN (values)</code>
+     */
+    public List<WinPermEntry> fetchByActionLive(String... values) {
+        return fetchLive(WinPermEntryTable.WinPermEntry.Action, values);
+    }
+
+    /**
+     * Fetch records that have <code>remark BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinPermEntry> fetchRangeOfRemarkLive(String lowerInclusive, String upperInclusive) {
+        return fetchRangeLive(WinPermEntryTable.WinPermEntry.Remark, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>remark IN (values)</code>
+     */
+    public List<WinPermEntry> fetchByRemarkLive(String... values) {
+        return fetchLive(WinPermEntryTable.WinPermEntry.Remark, values);
     }
 }

@@ -8,7 +8,7 @@ import org.jooq.Configuration;
 import org.jooq.Record2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl;
+import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoJournalImpl;
 import pro.fessional.wings.warlock.database.autogen.tables.WinRoleRoleMapTable;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinRoleRoleMap;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinRoleRoleMapRecord;
@@ -31,7 +31,7 @@ import java.util.List;
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @Repository
-public class WinRoleRoleMapDao extends WingsJooqDaoImpl<WinRoleRoleMapTable, WinRoleRoleMapRecord, WinRoleRoleMap, Record2<Long, Long>> {
+public class WinRoleRoleMapDao extends WingsJooqDaoJournalImpl<WinRoleRoleMapTable, WinRoleRoleMapRecord, WinRoleRoleMap, Record2<Long, Long>> {
 
     /**
      * Create a new WinRoleRoleMapDao without any configuration
@@ -135,5 +135,90 @@ public class WinRoleRoleMapDao extends WingsJooqDaoImpl<WinRoleRoleMapTable, Win
      */
     public List<WinRoleRoleMap> fetchByCommitId(Long... values) {
         return fetch(WinRoleRoleMapTable.WinRoleRoleMap.CommitId, values);
+    }
+
+
+    /**
+     * Fetch records that have <code>refer_role BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRoleRoleMap> fetchRangeOfReferRoleLive(Long lowerInclusive, Long upperInclusive) {
+        return fetchRangeLive(WinRoleRoleMapTable.WinRoleRoleMap.ReferRole, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>refer_role IN (values)</code>
+     */
+    public List<WinRoleRoleMap> fetchByReferRoleLive(Long... values) {
+        return fetchLive(WinRoleRoleMapTable.WinRoleRoleMap.ReferRole, values);
+    }
+
+    /**
+     * Fetch records that have <code>grant_role BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRoleRoleMap> fetchRangeOfGrantRoleLive(Long lowerInclusive, Long upperInclusive) {
+        return fetchRangeLive(WinRoleRoleMapTable.WinRoleRoleMap.GrantRole, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>grant_role IN (values)</code>
+     */
+    public List<WinRoleRoleMap> fetchByGrantRoleLive(Long... values) {
+        return fetchLive(WinRoleRoleMapTable.WinRoleRoleMap.GrantRole, values);
+    }
+
+    /**
+     * Fetch records that have <code>create_dt BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRoleRoleMap> fetchRangeOfCreateDtLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRangeLive(WinRoleRoleMapTable.WinRoleRoleMap.CreateDt, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>create_dt IN (values)</code>
+     */
+    public List<WinRoleRoleMap> fetchByCreateDtLive(LocalDateTime... values) {
+        return fetchLive(WinRoleRoleMapTable.WinRoleRoleMap.CreateDt, values);
+    }
+
+    /**
+     * Fetch records that have <code>modify_dt BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRoleRoleMap> fetchRangeOfModifyDtLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRangeLive(WinRoleRoleMapTable.WinRoleRoleMap.ModifyDt, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>modify_dt IN (values)</code>
+     */
+    public List<WinRoleRoleMap> fetchByModifyDtLive(LocalDateTime... values) {
+        return fetchLive(WinRoleRoleMapTable.WinRoleRoleMap.ModifyDt, values);
+    }
+
+    /**
+     * Fetch records that have <code>delete_dt BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRoleRoleMap> fetchRangeOfDeleteDtLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRangeLive(WinRoleRoleMapTable.WinRoleRoleMap.DeleteDt, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>delete_dt IN (values)</code>
+     */
+    public List<WinRoleRoleMap> fetchByDeleteDtLive(LocalDateTime... values) {
+        return fetchLive(WinRoleRoleMapTable.WinRoleRoleMap.DeleteDt, values);
+    }
+
+    /**
+     * Fetch records that have <code>commit_id BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRoleRoleMap> fetchRangeOfCommitIdLive(Long lowerInclusive, Long upperInclusive) {
+        return fetchRangeLive(WinRoleRoleMapTable.WinRoleRoleMap.CommitId, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>commit_id IN (values)</code>
+     */
+    public List<WinRoleRoleMap> fetchByCommitIdLive(Long... values) {
+        return fetchLive(WinRoleRoleMapTable.WinRoleRoleMap.CommitId, values);
     }
 }
