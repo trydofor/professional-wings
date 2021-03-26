@@ -79,12 +79,20 @@ public class SlardarEnabledProp {
     public static final String Key$firstBloodImage = Key + ".first-blood-image";
 
     /**
-     * 是否开启DoubleKill默认的AOP和ExceptionHandle
+     * 是否开启DoubleKill默认的AOP
      *
      * @see #Key$doubleKill
      */
     private boolean doubleKill = true;
     public static final String Key$doubleKill = Key + ".double-kill";
+
+    /**
+     * 是否开启DoubleKill默认的ExceptionHandle
+     *
+     * @see #Key$doubleKillHandler
+     */
+    private boolean doubleKillHandler = true;
+    public static final String Key$doubleKillHandler = Key + ".double-kill-handler";
 
     /**
      * 是否开启wings的PageQuery webmvc resolver

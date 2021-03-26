@@ -10,6 +10,7 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Loader;
 import org.jooq.LoaderOptionsStep;
+import org.jooq.Name;
 import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
@@ -796,14 +797,30 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
     ///////////////// update /////////////////////
 
     /**
-     * @see #update(TableImpl, Map, Condition)
+     * @see #update(TableImpl, Map, Condition, boolean)
      */
     public int update(Map<?, ?> setter, Condition cond) {
-        return update(table, setter, cond);
+        return update(table, setter, cond, false);
+    }
+
+    /**
+     * @see #update(TableImpl, Map, Condition, boolean)
+     */
+    public int update(Map<?, ?> setter, Condition cond, boolean skipNull) {
+        return update(table, setter, cond, skipNull);
+    }
+
+    /**
+     * @see #update(TableImpl, Map, Condition, boolean)
+     */
+    public int update(T table, Map<?, ?> setter, Condition cond) {
+        return update(table, setter, cond, false);
     }
 
     /**
      * <pre>
+     * Keys can either be of type {@link String}, {@link Name}, or {@link Field}.
+     *
      * val t = dao.tableForWriter
      * val setter = hashMapOf<Any, Any>()
      * setter.put(t.Id, 1L)
@@ -811,12 +828,20 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
      * val ui = dao.update(setter, t.Id.eq(2L))
      * </pre>
      *
-     * @param table  同源表
-     * @param setter 更新的字段-值
-     * @param cond   更新条件
+     * @param table    同源表
+     * @param setter   更新的字段-值
+     * @param cond     更新条件
+     * @param skipNull 忽略null值，true时需要map可编辑
      * @return 影响的数据条数
+     * @see org.jooq.UpdateSetStep#set(Map)
      */
-    public int update(T table, Map<?, ?> setter, Condition cond) {
+    public int update(T table, Map<?, ?> setter, Condition cond, boolean skipNull) {
+        if (skipNull) {
+            setter.entrySet().removeIf(it -> it.getValue() == null);
+        }
+
+        if (setter.isEmpty()) return 0;
+
         return ctx()
                 .update(table)
                 .set(setter)
@@ -825,10 +850,24 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
     }
 
     /**
-     * @see #update(TableImpl, Object, Condition)
+     * @see #update(TableImpl, Object, Condition, boolean)
      */
     public int update(P pojo, Condition cond) {
-        return update(table, pojo, cond);
+        return update(table, pojo, cond, false);
+    }
+
+    /**
+     * @see #update(TableImpl, Object, Condition, boolean)
+     */
+    public int update(P pojo, Condition cond, boolean skipNull) {
+        return update(table, pojo, cond, skipNull);
+    }
+
+    /**
+     * @see #update(TableImpl, Object, Condition, boolean)
+     */
+    public int update(T table, P pojo, Condition cond) {
+        return update(table, pojo, cond, false);
     }
 
     /**
@@ -839,7 +878,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
      * @param cond  条件
      * @return 更新数量
      */
-    public int update(T table, P pojo, Condition cond) {
+    public int update(T table, P pojo, Condition cond, boolean skipNull) {
         DSLContext dsl = ctx();
         R record = dsl.newRecord(table, pojo);
 
@@ -851,10 +890,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
             }
         }
 
-        return dsl.update(table)
-                  .set(setter)
-                  .where(cond)
-                  .execute();
+        return update(table, setter, cond, skipNull);
     }
 
     /**

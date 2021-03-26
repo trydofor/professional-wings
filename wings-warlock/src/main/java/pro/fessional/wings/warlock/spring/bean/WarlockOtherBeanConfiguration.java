@@ -3,11 +3,19 @@ package pro.fessional.wings.warlock.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import pro.fessional.wings.faceless.enums.LanguageEnumUtil;
 import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 import pro.fessional.wings.faceless.enums.StandardTimezoneEnum;
 import pro.fessional.wings.faceless.enums.TimezoneEnumUtil;
+import pro.fessional.wings.warlock.error.CodeExceptionResolver;
+import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
+import pro.fessional.wings.warlock.spring.prop.WarlockErrorProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockI18nProp;
 
 
@@ -43,5 +51,14 @@ public class WarlockOtherBeanConfiguration {
                 TimezoneEnumUtil.register((StandardTimezoneEnum) o);
             }
         }
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "codeExceptionResolver")
+    @ConditionalOnProperty(name = WarlockEnabledProp.Key$codeExceptionHandler, havingValue = "true")
+    public HandlerExceptionResolver codeExceptionResolver(MessageSource messageSource, WarlockErrorProp prop) {
+        logger.info("Wings conf codeExceptionResolver");
+        final WarlockErrorProp.CodeException cp = prop.getCodeException();
+        return new CodeExceptionResolver(messageSource, cp.getHttpStatus(), cp.getContentType(), cp.getResponseBody());
     }
 }

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pro.fessional.wings.faceless.database.helper.ModifyAssert;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.slardar.context.TerminalContext;
@@ -247,80 +246,6 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
             }
         }
     }
-
-    @Override
-    public void renew(@NotNull Enum<?> authType, String username, Authn authn) {
-        renew(authType, authn, username, null);
-    }
-
-    @Override
-    public void renew(@NotNull Enum<?> authType, long userId, Authn authn) {
-        renew(authType, authn, null, userId);
-    }
-
-    private void renew(Enum<?> authType, Authn authn, String username, Long userId) {
-        if (authn.getExpiredIn() == null && authn.getMaxFailed() == null
-                && authn.getPassword() == null && !authn.isZeroFail()) {
-            log.info("nothing to renew auth-type={}, username={}, userId={}", authType, username, userId);
-            return;
-        }
-
-        final String at = wingsAuthTypeParser.parse(authType);
-        final WinUserAnthnTable t = winUserAnthnDao.getTable();
-        final Object targetKey = userId != null ? userId : username;
-        final Object otherInfo = userId != null ? "by userId and auth-type=" + authType : "by username and auth-type=" + authType;
-
-        journalService.commit(Jane.Renew, targetKey, otherInfo, commit -> {
-
-            final Condition cond;
-            if (userId != null) {
-                cond = t.AuthType.eq(at).and(t.UserId.eq(userId)).and(t.onlyLiveData);
-            } else {
-                cond = t.AuthType.eq(at).and(t.Username.eq(username)).and(t.onlyLiveData);
-            }
-
-            val update = winUserAnthnDao
-                    .ctx()
-                    .update(t)
-                    .set(t.CommitId, commit.getCommitId())
-                    .set(t.ModifyDt, commit.getCommitDt());
-
-            if (authn.isZeroFail()) {
-                update.set(t.FailedCnt, 0);
-            }
-
-            if (authn.getPassword() != null) {
-                val rc = winUserAnthnDao
-                        .ctx()
-                        .select(t.Passsalt)
-                        .from(t)
-                        .where(cond)
-                        .fetchOne();
-
-                if (rc == null) {
-                    throw new IllegalStateException("failed to found authn by auth-type=" + at + ", user-id=" + userId);
-                }
-                update.set(t.Password, passsaltEncoder.salt(authn.getPassword(), rc.value1()));
-            }
-
-            final Integer maxFailed = authn.getMaxFailed();
-            if (maxFailed != null && maxFailed > 0) {
-                update.set(t.FailedMax, maxFailed);
-            }
-
-            if (authn.getExpiredIn() != null) {
-                final LocalDateTime expired = commit.getCommitDt().plusSeconds(authn.getExpiredIn().getSeconds());
-                update.set(t.ExpiredDt, expired);
-            }
-
-            final int af = update
-                    .where(cond)
-                    .execute();
-
-            ModifyAssert.one(af, "failed to renew auth-type={}, userId={}, username={}", at, userId, username);
-        });
-    }
-
 
     // /////
     public interface Combo extends Ordered {

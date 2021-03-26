@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author trydofor
@@ -17,6 +18,6 @@ public class PlainTextView extends OnlyView<String> {
 
     @Override
     public void responseData(@NotNull String data, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws Exception {
-        response.getWriter().print(data);
+        response.getOutputStream().write(data.getBytes(StandardCharsets.UTF_8));
     }
 }

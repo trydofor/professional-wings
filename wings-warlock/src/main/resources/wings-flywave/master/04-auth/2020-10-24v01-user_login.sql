@@ -16,7 +16,7 @@ CREATE TABLE `win_user_basic` (
   DEFAULT CHARSET = utf8mb4 COMMENT ='120/用户基本表';
 
 CREATE TABLE `win_user_anthn` (
-    `id`         BIGINT(20)    NOT NULL COMMENT '主键/user_id',
+    `id`         BIGINT(20)    NOT NULL COMMENT '主键',
     `create_dt`  DATETIME(3)   NOT NULL DEFAULT NOW(3) COMMENT '创建日时(系统)',
     `modify_dt`  DATETIME(3)   NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时(系统)',
     `delete_dt`  DATETIME(3)   NOT NULL DEFAULT '1000-01-01' COMMENT '标记删除',
@@ -24,7 +24,7 @@ CREATE TABLE `win_user_anthn` (
     `user_id`    BIGINT(20)    NOT NULL DEFAULT '0' COMMENT '绑定用户/win_user_basic.id',
     `auth_type`  VARCHAR(10)   NOT NULL COMMENT '验证类型/wings.warlock.security.auth-type.*',
     `username`   VARCHAR(200)  NOT NULL COMMENT '验证账号/身份辨识:邮箱|手机|union_id|api_key',
-    `password`   VARCHAR(200)  NOT NULL DEFAULT '' COMMENT '验证密码/spring格式|api_secret|api_sec',
+    `password`   VARCHAR(200)  NOT NULL DEFAULT '' COMMENT '验证密码/spring格式|api_secret',
     `passsalt`   VARCHAR(100)  NOT NULL DEFAULT '' COMMENT '验证加盐/随机数',
     `extra_para` VARCHAR(3000) NOT NULL DEFAULT '' COMMENT '第三方验证参数',
     `extra_user` VARCHAR(9000) NOT NULL DEFAULT '' COMMENT '第三方用户信息',
@@ -38,7 +38,7 @@ CREATE TABLE `win_user_anthn` (
   DEFAULT CHARSET = utf8mb4 COMMENT ='121/用户验证表';
 
 CREATE TABLE `win_user_login` (
-    `id`        BIGINT(20)    NOT NULL COMMENT '主键/user_id',
+    `id`        BIGINT(20)    NOT NULL COMMENT '主键',
     `user_id`   BIGINT(20)    NOT NULL DEFAULT '0' COMMENT '绑定用户/win_user_basic.id',
     `auth_type` VARCHAR(20)   NOT NULL COMMENT '验证类型/wings.warlock.security.auth-type.*',
     `login_ip`  VARCHAR(50)   NOT NULL DEFAULT '' COMMENT '登录IP',

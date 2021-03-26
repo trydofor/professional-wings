@@ -57,7 +57,7 @@ Role主要用在filter级的配置上，如在配置url权限时。当然也可�
 
 ### 4.2.3.远行机制
 
-Warlock在用户通过身边鉴别（authn）后，会分别加载和用户绑定的Perm和Role，
+Warlock在用户通过身边鉴别（renew）后，会分别加载和用户绑定的Perm和Role，
 并扁平化其各自的所属和继承关系，全部加载到SecurityContext中。
 
 

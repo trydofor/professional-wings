@@ -1,30 +1,28 @@
 package pro.fessional.wings.slardar.concur.impl;
 
-import org.jetbrains.annotations.NotNull;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
+import lombok.RequiredArgsConstructor;
+import pro.fessional.mirana.text.StringTemplate;
 import pro.fessional.wings.slardar.concur.DoubleKillException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.function.Function;
+import pro.fessional.wings.slardar.webmvc.WingsExceptionResolver;
 
 /**
  * @author trydofor
  * @since 2021-03-10
  */
-public class DoubleKillExceptionResolver extends AbstractHandlerExceptionResolver {
+@RequiredArgsConstructor
+public class DoubleKillExceptionResolver extends WingsExceptionResolver<DoubleKillException> {
 
-    private final Function<DoubleKillException, ModelAndView> modelAndView;
-
-    public DoubleKillExceptionResolver(Function<DoubleKillException, ModelAndView> modelAndView) {
-        this.modelAndView = modelAndView;
-    }
+    private final int httpStatus;
+    private final String contentType;
+    private final String responseBody;
 
     @Override
-    protected ModelAndView doResolveException(@NotNull HttpServletRequest request,
-                                              @NotNull HttpServletResponse response, Object handler,
-                                              @NotNull Exception ex) {
-        return ex instanceof DoubleKillException ? modelAndView.apply((DoubleKillException) ex) : null;
+    protected Body resolve(DoubleKillException e) {
+        final String body = StringTemplate
+                .dyn(responseBody)
+                .bindStr("{key}", e.getProgressKey())
+                .bindStr("{ttl}", e.getRunningSecond())
+                .toString();
+        return new Body(httpStatus, contentType, body);
     }
 }

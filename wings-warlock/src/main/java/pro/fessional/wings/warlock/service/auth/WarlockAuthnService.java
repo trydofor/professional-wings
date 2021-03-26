@@ -1,18 +1,18 @@
 package pro.fessional.wings.warlock.service.auth;
 
-import lombok.Builder;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Locale;
 
 /**
+ * 验证
+ *
  * @author trydofor
  * @since 2021-02-23
  */
@@ -39,7 +39,6 @@ public interface WarlockAuthnService {
         AutoSave,
         Success,
         Failure,
-        Renew
     }
 
     @Nullable
@@ -61,23 +60,4 @@ public interface WarlockAuthnService {
     void onSuccess(@NotNull Enum<?> authType, long userId, String details);
 
     void onFailure(@NotNull Enum<?> authType, String username);
-
-    @Data
-    @Builder
-    class Authn {
-        private Integer maxFailed;
-        private String password;
-        private Duration expiredIn;
-        private boolean zeroFail;
-    }
-
-    /**
-     * 设置密码，有限期，错误计数，连错上限
-     */
-    void renew(@NotNull Enum<?> authType, String username, Authn authn);
-
-    /**
-     * 设置密码，有限期，错误计数，连错上限
-     */
-    void renew(@NotNull Enum<?> authType, long userId, Authn authn);
 }

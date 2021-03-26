@@ -4,10 +4,10 @@ import com.alibaba.fastjson.JSON;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.model.AuthUser;
 import org.jetbrains.annotations.NotNull;
-import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserAnthn;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserAuthnCombo;
+import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
 import pro.fessional.wings.warlock.service.user.WarlockUserBasicService;
 
 /**
@@ -40,11 +40,11 @@ public class JustAuthUserAuthnCombo extends DefaultUserAuthnCombo {
     }
 
     @Override
-    protected void beforeSave(WinUserAnthn pojo, @NotNull Enum<?> authType, String username, Object details) {
+    protected void beforeSave(WarlockUserAuthnService.Authn dto, @NotNull Enum<?> authType, String username, Object details) {
         AuthUser user = (AuthUser) details;
-        pojo.setUsername(user.getUuid());
-        pojo.setExtraPara(JSON.toJSONString(user.getToken()));
-        pojo.setExtraUser(JSON.toJSONString(user.getRawUserInfo()));
+        dto.setUsername(user.getUuid());
+        dto.setExtraPara(JSON.toJSONString(user.getToken()));
+        dto.setExtraUser(JSON.toJSONString(user.getRawUserInfo()));
     }
 
     @Override

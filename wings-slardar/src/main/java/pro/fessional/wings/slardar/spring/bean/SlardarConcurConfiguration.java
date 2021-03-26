@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import pro.fessional.mirana.code.RandCode;
-import pro.fessional.mirana.text.StringTemplate;
 import pro.fessional.wings.slardar.concur.impl.DoubleKillAround;
 import pro.fessional.wings.slardar.concur.impl.DoubleKillExceptionResolver;
 import pro.fessional.wings.slardar.concur.impl.FirstBloodHandler;
@@ -82,21 +81,13 @@ public class SlardarConcurConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "doubleKillExceptionResolver")
-    @ConditionalOnProperty(name = SlardarEnabledProp.Key$doubleKill, havingValue = "true")
+    @ConditionalOnProperty(name = SlardarEnabledProp.Key$doubleKillHandler, havingValue = "true")
     public HandlerExceptionResolver doubleKillExceptionResolver() {
         logger.info("Wings conf doubleKillAround");
-        return new DoubleKillExceptionResolver(e -> {
-            ModelAndView mav = new ModelAndView();
-            SlardarConcurProp.DoubleKill doubleKillProp = slardarConcurProp.getDoubleKill();
-            final String body = StringTemplate
-                    .dyn(doubleKillProp.getResponseBody())
-                    .bindStr("{key}", e.getProgressKey())
-                    .bindStr("{ttl}", e.getRunningSecond())
-                    .toString();
-            PlainTextView pv = new PlainTextView(doubleKillProp.getContentType(), body);
-            mav.setStatus(HttpStatus.valueOf(doubleKillProp.getHttpStatus()));
-            mav.setView(pv);
-            return mav;
-        });
+        SlardarConcurProp.DoubleKill dkp = slardarConcurProp.getDoubleKill();
+        return new DoubleKillExceptionResolver(
+                dkp.getHttpStatus(),
+                dkp.getContentType(),
+                dkp.getResponseBody());
     }
 }
