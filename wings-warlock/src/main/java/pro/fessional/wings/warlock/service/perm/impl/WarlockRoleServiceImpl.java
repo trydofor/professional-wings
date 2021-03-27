@@ -3,16 +3,24 @@ package pro.fessional.wings.warlock.service.perm.impl;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.Record2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.pain.CodeException;
+import pro.fessional.wings.faceless.service.journal.JournalService;
+import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.warlock.database.autogen.tables.WinRoleEntryTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinRoleRoleMapTable;
+import pro.fessional.wings.warlock.database.autogen.tables.WinRoleGrantTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinRoleEntryDao;
-import pro.fessional.wings.warlock.database.autogen.tables.daos.WinRoleRoleMapDao;
+import pro.fessional.wings.warlock.database.autogen.tables.daos.WinRoleGrantDao;
+import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinRoleEntry;
+import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
 import pro.fessional.wings.warlock.service.perm.WarlockRoleService;
 
 import java.util.HashMap;
@@ -30,12 +38,17 @@ import java.util.Set;
 public class WarlockRoleServiceImpl implements WarlockRoleService {
 
     private static final String RoleAllSpEL = "'KeyAllRole'";
-    private static final String RoleMapSpEL = "'KeyRoleMap'";
+    private static final String RoleGrantSpEL = "'KeyRoleGrant'";
 
     @Setter(onMethod_ = {@Autowired})
     private WinRoleEntryDao winRoleEntryDao;
     @Setter(onMethod_ = {@Autowired})
-    private WinRoleRoleMapDao winRoleRoleMapDao;
+    private WinRoleGrantDao winRoleGrantDao;
+
+    @Setter(onMethod_ = {@Autowired})
+    private LightIdService lightIdService;
+    @Setter(onMethod_ = {@Autowired})
+    private JournalService journalService;
 
     @Override
     @Cacheable(key = RoleAllSpEL)
@@ -54,15 +67,15 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
     }
 
     @Override
-    @Cacheable(key = RoleMapSpEL)
-    public Map<Long, Set<Long>> loadRoleMap() {
-        final WinRoleRoleMapTable t = winRoleRoleMapDao.getTable();
+    @Cacheable(key = RoleGrantSpEL)
+    public Map<Long, Set<Long>> loadRoleGrant() {
+        final WinRoleGrantTable t = winRoleGrantDao.getTable();
 
         val list = winRoleEntryDao
                 .ctx()
-                .select(t.ReferRole, t.GrantRole)
+                .select(t.ReferRole, t.GrantEntry)
                 .from(t)
-                .where(t.onlyLiveData)
+                .where(t.GrantEntry.eq(1L))
                 .fetch();
 
         log.info("loadRoleMap size={}", list.size());
@@ -81,8 +94,52 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
         log.info("evictRoleAllCache");
     }
 
-    @CacheEvict(key = RoleMapSpEL)
-    public void evictRoleMapCache() {
-        log.info("evictRoleMapCache");
+    @CacheEvict(key = RoleGrantSpEL)
+    public void evictRoleGrantCache() {
+        log.info("evictRoleGrantCache");
+    }
+
+
+    @Override
+    @CacheEvict(key = RoleAllSpEL)
+    public long create(@NotNull String name, String remark) {
+        if (!StringUtils.hasText(name)) {
+            throw new CodeException(CommonErrorEnum.AssertEmpty1, "role.name");
+        }
+
+        return journalService.submit(Jane.Create, name, remark, commit -> {
+            final WinRoleEntryTable t = winRoleEntryDao.getTable();
+            long id = lightIdService.getId(t);
+            WinRoleEntry po = new WinRoleEntry();
+            po.setId(id);
+            po.setName(name.toLowerCase());
+            po.setRemark(Null.notNull(remark));
+            commit.create(po);
+
+            try {
+                winRoleEntryDao.insert(po);
+            } catch (Exception e) {
+                log.error("failed to insert role entry. name=" + name + ", remark=" + remark, e);
+                throw new CodeException(e, CommonErrorEnum.AssertState2, "role.name", name);
+            }
+
+            return id;
+        });
+    }
+
+    @Override
+    public void modify(long roleId, String remark) {
+        journalService.commit(Jane.Modify, roleId, remark, commit -> {
+            final WinRoleEntryTable t = winRoleEntryDao.getTable();
+            final int rc = winRoleEntryDao
+                    .ctx()
+                    .update(t)
+                    .set(t.CommitId, commit.getCommitId())
+                    .set(t.ModifyDt, commit.getCommitDt())
+                    .set(t.Remark, remark)
+                    .where(t.Id.eq(roleId))
+                    .execute();
+            log.info("modify perm remark. roleId={}, affect={}", roleId, rc);
+        });
     }
 }

@@ -13,6 +13,8 @@ public enum CommonErrorEnum implements CodeEnum {
 
     AssertEmpty1("error.common.assert.empty", "{0}不能为空"),
     AssertFormat1("error.common.assert.format", "{0}格式不正确"),
+    AssertNotFound1("error.common.assert.notfound", "{0}不存在"),
+    AssertExisted1("error.common.assert.existed", "{0}已存在"),
     AssertState2("error.common.assert.state", "状态不正确，名字={0}，值={1}"),
     AssertParam2("error.common.assert.param", "参数不正确，名字={0}，值={1}"),
 

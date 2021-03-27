@@ -1,4 +1,4 @@
-package pro.fessional.wings.warlock.service.perm;
+package pro.fessional.wings.warlock.service.grant;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -9,14 +9,33 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
+ * 根权限是空，这样unite之后是 `.*`。
+ * inherit指，使用`.`分隔的scope，存在隐式的继承关系。
+ * grant值，绑定授权。
+ *
  * @author trydofor
  * @since 2021-03-07
  */
-public class PermInheritHelper {
+public class PermGrantHelper {
 
     public static final String ALL = "*";
     public static final String SPL = ".";
 
+
+    public static String unitePermit(String scopes, String action) {
+        return scopes + SPL + action;
+    }
+
+    public static String[] splitPermit(String permit) {
+        int p = permit.lastIndexOf(SPL);
+        if (p > 0) {
+            return new String[]{permit.substring(0, p), permit.substring(p + 1)};
+        } else if (p == 0) {
+            return new String[]{"", permit.substring(1)};
+        } else {
+            return new String[]{"", permit};
+        }
+    }
 
     /**
      * top 是否包括了 sub.
@@ -78,7 +97,7 @@ public class PermInheritHelper {
         if (permAll == null || permCode == null) return Collections.emptySet();
         return permAll.values()
                       .stream()
-                      .filter(it -> PermInheritHelper.canInherit(permCode, it))
+                      .filter(it -> PermGrantHelper.canInherit(permCode, it))
                       .collect(Collectors.toSet());
     }
 
@@ -95,19 +114,19 @@ public class PermInheritHelper {
     }
 
     /**
-     * 通过id，获得继承的角色
+     * 通过id，获得授权的角色
      *
-     * @param roleId  role
-     * @param roleAll 所有角色id-name
-     * @param roleMap 所有权限继承id-id
+     * @param roleId    role
+     * @param roleAll   所有角色id-name
+     * @param roleGrant 拥有权限继承id-Set[id]
      * @return 包括当前id的继承角色码
      */
     @NotNull
-    public static Set<String> inheritRole(long roleId, Map<Long, String> roleAll, Map<Long, Set<Long>> roleMap) {
-        if (roleAll == null || roleMap == null) return Collections.emptySet();
+    public static Set<String> grantRole(long roleId, Map<Long, String> roleAll, Map<Long, Set<Long>> roleGrant) {
+        if (roleAll == null || roleGrant == null) return Collections.emptySet();
 
         Set<String> all = new HashSet<>();
-        recur(0, roleId, all, roleAll, roleMap);
+        recur(0, roleId, all, roleAll, roleGrant);
 
         return all;
     }

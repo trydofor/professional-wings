@@ -1,7 +1,7 @@
 package pro.fessional.wings.warlock.security.autogen;
 
 /**
- * @since 2021-03-05
+ * @since 2021-03-27
  */
 public interface PermConstant {
 
@@ -11,83 +11,63 @@ public interface PermConstant {
         interface Perm {
 
             /**
-             * id=21, remark=读取
-             */
-            String read = "system.perm.read";
-
-            /**
-             * id=22, remark=搜索
-             */
-            String search = "system.perm.search";
-
-            /**
-             * id=23, remark=创建
+             * id=21, remark=权限创建
              */
             String create = "system.perm.create";
 
             /**
-             * id=24, remark=编辑
+             * id=22, remark=权限编辑
              */
             String update = "system.perm.update";
 
             /**
-             * id=25, remark=删除
+             * id=23, remark=权限删除
              */
             String delete = "system.perm.delete";
+
+            /**
+             * id=24, remark=角色指派，给用户或角色
+             */
+            String assign = "system.perm.assign";
 
         }
         interface Role {
 
             /**
-             * id=31, remark=读取
-             */
-            String read = "system.role.read";
-
-            /**
-             * id=32, remark=搜索
-             */
-            String search = "system.role.search";
-
-            /**
-             * id=33, remark=创建
+             * id=31, remark=角色创建
              */
             String create = "system.role.create";
 
             /**
-             * id=34, remark=编辑
+             * id=32, remark=角色编辑
              */
             String update = "system.role.update";
 
             /**
-             * id=35, remark=删除
+             * id=33, remark=角色删除
              */
             String delete = "system.role.delete";
+
+            /**
+             * id=34, remark=角色指派，给用户或角色
+             */
+            String assign = "system.role.assign";
 
         }
         interface User {
 
             /**
-             * id=11, remark=读取
-             */
-            String read = "system.user.read";
-
-            /**
-             * id=12, remark=搜索
-             */
-            String search = "system.user.search";
-
-            /**
-             * id=13, remark=创建
+             * id=11, remark=用户创建
              */
             String create = "system.user.create";
 
             /**
-             * id=14, remark=编辑
+             * id=12, remark=用户编辑
              */
             String update = "system.user.update";
 
             /**
-             * id=15, remark=删除
+             * id=13, remark=用户删除
              */
             String delete = "system.user.delete";
 
