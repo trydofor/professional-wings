@@ -8,7 +8,7 @@ import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserAuthnCombo;
 import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
-import pro.fessional.wings.warlock.service.user.WarlockUserBasicService;
+import pro.fessional.wings.warlock.service.user.WarlockUserBasisService;
 
 /**
  * @author trydofor
@@ -23,7 +23,7 @@ public class JustAuthUserAuthnCombo extends DefaultUserAuthnCombo {
     }
 
     @Override
-    protected void beforeSave(WarlockUserBasicService.User dot, @NotNull Enum<?> authType, String username, Object details) {
+    protected void beforeSave(WarlockUserBasisService.User dot, @NotNull Enum<?> authType, String username, Object details) {
         AuthUser user = (AuthUser) details;
         dot.setNickname(user.getNickname());
         dot.setAvatar(user.getAvatar());

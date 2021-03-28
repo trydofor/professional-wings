@@ -15,7 +15,7 @@ import java.util.Locale;
  * @author trydofor
  * @since 2021-02-23
  */
-public interface WarlockUserBasicService {
+public interface WarlockUserBasisService {
 
     enum Jane {
         Create,

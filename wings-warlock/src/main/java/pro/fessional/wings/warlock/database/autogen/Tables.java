@@ -10,7 +10,7 @@ import pro.fessional.wings.warlock.database.autogen.tables.WinPermEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinRoleEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinRoleGrantTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAnthnTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasicTable;
+import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserGrantTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserLoginTable;
 
@@ -62,9 +62,9 @@ public class Tables {
     public static final WinUserAnthnTable WinUserAnthn = WinUserAnthnTable.WinUserAnthn;
 
     /**
-     * The table <code>win_user_basic</code>.
+     * The table <code>win_user_basis</code>.
      */
-    public static final WinUserBasicTable WinUserBasic = WinUserBasicTable.WinUserBasic;
+    public static final WinUserBasisTable WinUserBasis = WinUserBasisTable.WinUserBasis;
 
     /**
      * The table <code>win_user_grant</code>.

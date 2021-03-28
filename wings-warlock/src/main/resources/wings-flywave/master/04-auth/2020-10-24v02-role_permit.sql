@@ -36,7 +36,7 @@ CREATE TABLE `win_role_grant` (
   DEFAULT CHARSET = utf8mb4 COMMENT ='134/角色权限映射表';
 
 CREATE TABLE `win_user_grant` (
-    `refer_user`  BIGINT(20)  NOT NULL COMMENT '当前角色/win_user_basic.id',
+    `refer_user`  BIGINT(20)  NOT NULL COMMENT '当前角色/win_user_basis.id',
     `grant_type`  INT(11)     NOT NULL COMMENT '授权类别/13301##:Role,Perm',
     `grant_entry` BIGINT(20)  NOT NULL COMMENT '授予id/win_role_entry.id或win_perm_entry.id',
     `create_dt`   DATETIME(3) NOT NULL DEFAULT NOW(3) COMMENT '创建日时(系统)',

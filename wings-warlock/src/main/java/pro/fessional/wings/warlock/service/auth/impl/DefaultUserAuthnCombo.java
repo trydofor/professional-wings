@@ -15,7 +15,7 @@ import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
-import pro.fessional.wings.warlock.service.user.WarlockUserBasicService;
+import pro.fessional.wings.warlock.service.user.WarlockUserBasisService;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
 import java.time.ZoneId;
@@ -36,7 +36,7 @@ public class DefaultUserAuthnCombo implements ComboWarlockAuthnService.Combo {
     private int order = ORDER;
 
     @Setter(onMethod_ = {@Autowired})
-    private WarlockUserBasicService warlockUserBasicService;
+    private WarlockUserBasisService warlockUserBasisService;
 
     @Setter(onMethod_ = {@Autowired})
     private WarlockUserAuthnService warlockUserAuthnService;
@@ -57,7 +57,7 @@ public class DefaultUserAuthnCombo implements ComboWarlockAuthnService.Combo {
         final String mrk = "auto create auth-user auth-type=" + authType + "username=" + username;
         return journalService.submit(WarlockAuthnService.Jane.AutoSave, username, mrk, commit -> {
 
-            WarlockUserBasicService.User user = new WarlockUserBasicService.User();
+            WarlockUserBasisService.User user = new WarlockUserBasisService.User();
             user.setNickname(username);
             user.setAvatar("");
             user.setGender(UserGender.UNKNOWN);
@@ -67,7 +67,7 @@ public class DefaultUserAuthnCombo implements ComboWarlockAuthnService.Combo {
             user.setStatus(UserStatus.UNINIT);
 
             beforeSave(user, authType, username, details);
-            long uid = warlockUserBasicService.create(user);
+            long uid = warlockUserBasisService.create(user);
             //
             WarlockUserAuthnService.Authn authn = new WarlockUserAuthnService.Authn();
 
@@ -101,7 +101,7 @@ public class DefaultUserAuthnCombo implements ComboWarlockAuthnService.Combo {
         });
     }
 
-    protected void beforeSave(WarlockUserBasicService.User dto, @NotNull Enum<?> authType, String username, Object details) {
+    protected void beforeSave(WarlockUserBasisService.User dto, @NotNull Enum<?> authType, String username, Object details) {
     }
 
     protected void beforeSave(WarlockUserAuthnService.Authn dto, @NotNull Enum<?> authType, String username, Object details) {

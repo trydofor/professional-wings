@@ -16,10 +16,10 @@ import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAnthnTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasicTable;
+import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserLoginTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAnthnDao;
-import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasicDao;
+import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasisDao;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserLoginDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserLogin;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
@@ -39,7 +39,7 @@ import java.util.List;
 public class ComboWarlockAuthnService implements WarlockAuthnService {
 
     @Setter(onMethod_ = {@Autowired})
-    private WinUserBasicDao winUserBasicDao;
+    private WinUserBasisDao winUserBasisDao;
 
     @Setter(onMethod_ = {@Autowired})
     private WinUserAnthnDao winUserAnthnDao;
@@ -69,7 +69,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
 
     @Override
     public Details load(@NotNull Enum<?> authType, String username) {
-        final WinUserBasicTable user = winUserBasicDao.getAlias();
+        final WinUserBasisTable user = winUserBasisDao.getAlias();
         final WinUserAnthnTable auth = winUserAnthnDao.getAlias();
         final String at = wingsAuthTypeParser.parse(authType);
 
@@ -196,8 +196,8 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         journalService.commit(Jane.Failure, uid, "failed login auth-id=" + aid, commit -> {
             // 锁账号
             if (cnt >= max) {
-                final WinUserBasicTable tu = winUserBasicDao.getTable();
-                winUserBasicDao
+                final WinUserBasisTable tu = winUserBasisDao.getTable();
+                winUserBasisDao
                         .ctx()
                         .update(tu)
                         .set(tu.Status, UserStatus.DANGER)

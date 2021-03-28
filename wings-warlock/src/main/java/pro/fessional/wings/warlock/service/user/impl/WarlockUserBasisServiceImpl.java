@@ -11,13 +11,13 @@ import pro.fessional.mirana.data.Z;
 import pro.fessional.wings.faceless.database.helper.ModifyAssert;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasicTable;
-import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasicDao;
-import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserBasic;
+import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
+import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasisDao;
+import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserBasis;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
-import pro.fessional.wings.warlock.service.user.WarlockUserBasicService;
+import pro.fessional.wings.warlock.service.user.WarlockUserBasisService;
 
 import java.time.ZoneId;
 import java.util.HashMap;
@@ -30,10 +30,10 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class WarlockUserBasicServiceImpl implements WarlockUserBasicService {
+public class WarlockUserBasisServiceImpl implements WarlockUserBasisService {
 
     @Setter(onMethod_ = {@Autowired})
-    private WinUserBasicDao winUserBasicDao;
+    private WinUserBasisDao winUserBasisDao;
 
     @Setter(onMethod_ = {@Autowired})
     private LightIdService lightIdService;
@@ -44,9 +44,9 @@ public class WarlockUserBasicServiceImpl implements WarlockUserBasicService {
     @Override
     public long create(@NotNull User user) {
         return journalService.submit(Jane.Create, user.getNickname(), commit -> {
-            final WinUserBasicTable tu = winUserBasicDao.getTable();
+            final WinUserBasisTable tu = winUserBasisDao.getTable();
             final long uid = lightIdService.getId(tu);
-            WinUserBasic po = new WinUserBasic();
+            WinUserBasis po = new WinUserBasis();
             po.setId(uid);
             po.setNickname(user.getNickname());
             po.setAvatar(Z.notNull(user.getAvatar(), Null.Str));
@@ -56,7 +56,7 @@ public class WarlockUserBasicServiceImpl implements WarlockUserBasicService {
             po.setRemark(Z.notNull(user.getRemark(), Null.Str));
             po.setStatus(Z.notNull(user.getStatus(), UserStatus.UNINIT));
             commit.create(po);
-            winUserBasicDao.insert(po);
+            winUserBasisDao.insert(po);
             return uid;
         });
     }
@@ -64,7 +64,7 @@ public class WarlockUserBasicServiceImpl implements WarlockUserBasicService {
     @Override
     public void modify(long userId, @NotNull User user) {
         final Integer rc = journalService.submit(Jane.Modify, userId, commit -> {
-            final WinUserBasicTable tu = winUserBasicDao.getTable();
+            final WinUserBasisTable tu = winUserBasisDao.getTable();
             Map<Field<?>, Object> setter = new HashMap<>();
             setter.put(tu.Nickname, user.getNickname());
             setter.put(tu.Gender, user.getGender());
@@ -76,7 +76,7 @@ public class WarlockUserBasicServiceImpl implements WarlockUserBasicService {
             // 一定会更新，除非不存在
             setter.put(tu.CommitId, commit.getCommitId());
             setter.put(tu.ModifyDt, commit.getCommitDt());
-            return winUserBasicDao.update(setter, tu.Id.eq(userId), true);
+            return winUserBasisDao.update(setter, tu.Id.eq(userId), true);
         });
 
         ModifyAssert.one(rc, CommonErrorEnum.DataNotFound);
