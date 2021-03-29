@@ -17,7 +17,6 @@ import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
 import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelp;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
-import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.time.LocalDateTime;
@@ -25,6 +24,7 @@ import java.util.HashMap;
 
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1;
 import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.faceless.service.journal.JournalService.Journal;
 
 /**
  * @author trydofor
@@ -108,7 +108,7 @@ public class JooqDslAndDaoSample {
         testcaseNotice("日志功能");
 
         val now = LocalDateTime.now();
-        val journal = new JournalService.Journal(1L, now, "", "", "", "");
+        val journal = new Journal(1L, now, "", "", "", "");
 
         val s1 = new HashMap<>();
         val t = Tst中文也分表Table.Tst中文也分表;

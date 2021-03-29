@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.mirana.data.Null;
@@ -46,6 +47,9 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
     private JournalService journalService;
 
     @Setter(onMethod_ = {@Autowired})
+    private PasswordEncoder passwordEncoder;
+
+    @Setter(onMethod_ = {@Autowired})
     private PasssaltEncoder passsaltEncoder;
 
     @Setter(onMethod_ = {@Autowired})
@@ -67,14 +71,19 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             auth.setUserId(userId);
             auth.setAuthType(wingsAuthTypeParser.parse(authType));
             auth.setUsername(authn.getUsername());
-            auth.setPassword(authn.getPassword());
-            auth.setPasssalt(Z.notNull(authn.getPasssalt(), passsaltEncoder.salt(60)));
+
+            final String salt = Z.notNull(authn.getPasssalt(), passsaltEncoder.salt(60));
+            final String pass = passsaltEncoder.salt(authn.getPassword(), salt);
+            auth.setPasssalt(salt);
+            auth.setPassword(passwordEncoder.encode(pass));
+
             auth.setExtraPara(Null.notNull(authn.getExtraPara()));
             auth.setExtraUser(Null.notNull(authn.getExtraUser()));
             if (authn.getExpiredDt() == null) {
                 final Duration expire = warlockSecurityProp.getAutoregExpired();
                 auth.setExpiredDt(commit.getCommitDt().plusSeconds(expire.getSeconds()));
-            } else {
+            }
+            else {
                 auth.setExpiredDt(authn.getExpiredDt());
             }
             auth.setFailedCnt(Z.notNull(authn.getFailedCnt(), 0));
@@ -84,7 +93,8 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
             try {
                 winUserAnthnDao.insert(auth);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 log.error("failed to insert authn " + authn, e);
                 // 可能唯一约束或字段超长
                 throw new CodeException(e, CommonErrorEnum.DataExisted);
@@ -106,18 +116,19 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
                 final String slat;
                 if (authn.getPasssalt() == null) {
                     val rc = winUserAnthnDao
-                            .ctx()
-                            .select(t.Passsalt)
-                            .from(t)
-                            .where(cond)
-                            .fetchOne();
+                                     .ctx()
+                                     .select(t.Passsalt)
+                                     .from(t)
+                                     .where(cond)
+                                     .fetchOne();
 
                     if (rc == null) {
                         log.warn("failed to find passsalt. uid={}, type={}", userId, authType);
                         throw new CodeException(CommonErrorEnum.DataNotFound);
                     }
                     slat = rc.value1();
-                } else {
+                }
+                else {
                     slat = authn.getPasssalt();
                 }
                 setter.put(t.Password, passsaltEncoder.salt(authn.getPassword(), slat));
@@ -148,9 +159,9 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
     @Transactional
     public void renew(long userId, @NotNull Enum<?> authType, @NotNull Renew renew) {
         if (renew.getPassword() == null
-                && renew.getExpiredDt() == null
-                && renew.getFailedCnt() == null
-                && renew.getFailedMax() == null
+            && renew.getExpiredDt() == null
+            && renew.getFailedCnt() == null
+            && renew.getFailedMax() == null
         ) {
             log.info("nothing to renew auth-type={},userId={}", authType, userId);
             return;
@@ -169,11 +180,11 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
             if (renew.getPassword() != null) {
                 val rc = winUserAnthnDao
-                        .ctx()
-                        .select(t.Passsalt)
-                        .from(t)
-                        .where(cond)
-                        .fetchOne();
+                                 .ctx()
+                                 .select(t.Passsalt)
+                                 .from(t)
+                                 .where(cond)
+                                 .fetchOne();
 
                 if (rc == null) {
                     log.warn("failed to find {}, key={}", otherInfo, userId);

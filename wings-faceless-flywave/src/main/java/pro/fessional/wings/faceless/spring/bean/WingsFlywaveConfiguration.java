@@ -21,6 +21,8 @@ import pro.fessional.wings.faceless.spring.prop.FlywaveEnabledProp;
 import pro.fessional.wings.faceless.spring.prop.FlywaveSqlProp;
 import pro.fessional.wings.faceless.spring.prop.FlywaveVerProp;
 
+import static pro.fessional.wings.faceless.flywave.SchemaJournalManager.JournalDdl;
+
 /**
  * @author trydofor
  * @since 2019-06-01
@@ -39,7 +41,7 @@ public class WingsFlywaveConfiguration {
             SchemaDefinitionLoader schemaDefinitionLoader,
             FlywaveVerProp properties) {
 
-        SchemaJournalManager.JournalDdl ddl = new SchemaJournalManager.JournalDdl(
+        JournalDdl ddl = new JournalDdl(
                 properties.getJournalUpdate(),
                 properties.getTriggerUpdate(),
                 properties.getJournalDelete(),
@@ -92,7 +94,8 @@ public class WingsFlywaveConfiguration {
     public SqlStatementParser sqlStatementParser(FlywaveSqlProp conf) {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
             return new MySqlStatementParser();
-        } else {
+        }
+        else {
             throw new IllegalArgumentException("only support mysql");
         }
     }
@@ -104,7 +107,8 @@ public class WingsFlywaveConfiguration {
                     conf.getCommentMultiple(),
                     conf.getDelimiterDefault(),
                     conf.getDelimiterCommand());
-        } else {
+        }
+        else {
             throw new IllegalArgumentException("only support mysql");
         }
     }
@@ -113,7 +117,8 @@ public class WingsFlywaveConfiguration {
     public SchemaDefinitionLoader schemaDefinitionLoader(FlywaveSqlProp conf) {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
             return new MysqlDefinitionLoader();
-        } else {
+        }
+        else {
             throw new IllegalArgumentException("only support mysql");
         }
     }

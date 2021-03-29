@@ -42,7 +42,7 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService {
     private JournalService journalService;
 
     @Override
-    public long create(@NotNull User user) {
+    public long create(@NotNull Basis user) {
         return journalService.submit(Jane.Create, user.getNickname(), commit -> {
             final WinUserBasisTable tu = winUserBasisDao.getTable();
             final long uid = lightIdService.getId(tu);
@@ -62,7 +62,7 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService {
     }
 
     @Override
-    public void modify(long userId, @NotNull User user) {
+    public void modify(long userId, @NotNull Basis user) {
         final Integer rc = journalService.submit(Jane.Modify, userId, commit -> {
             final WinUserBasisTable tu = winUserBasisDao.getTable();
             Map<Field<?>, Object> setter = new HashMap<>();

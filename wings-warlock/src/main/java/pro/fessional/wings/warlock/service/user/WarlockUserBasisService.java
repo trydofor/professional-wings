@@ -23,7 +23,7 @@ public interface WarlockUserBasisService {
     }
 
     @Data
-    class User {
+    class Basis {
         private String nickname;
         private UserGender gender;
         private String avatar;
@@ -40,7 +40,7 @@ public interface WarlockUserBasisService {
      * @param user user
      * @return userId
      */
-    long create(@NotNull User user);
+    long create(@NotNull Basis user);
 
     /**
      * 修改用户，只修改不为null的字段。
@@ -50,10 +50,10 @@ public interface WarlockUserBasisService {
      * @param user   需要调整的值
      * @throws CodeException 数据不存在
      */
-    void modify(long userId, @NotNull User user);
+    void modify(long userId, @NotNull Basis user);
 
     default void changeStatus(long userId, UserStatus status) {
-        User user = new User();
+        Basis user = new Basis();
         user.setStatus(status);
         modify(userId, user);
     }

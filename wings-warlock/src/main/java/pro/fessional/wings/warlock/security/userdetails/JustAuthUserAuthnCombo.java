@@ -7,8 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserAuthnCombo;
-import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
-import pro.fessional.wings.warlock.service.user.WarlockUserBasisService;
+
+import static pro.fessional.wings.warlock.service.user.WarlockUserAuthnService.Authn;
+import static pro.fessional.wings.warlock.service.user.WarlockUserBasisService.Basis;
 
 /**
  * @author trydofor
@@ -23,28 +24,30 @@ public class JustAuthUserAuthnCombo extends DefaultUserAuthnCombo {
     }
 
     @Override
-    protected void beforeSave(WarlockUserBasisService.User dot, @NotNull Enum<?> authType, String username, Object details) {
+    protected void beforeSave(Basis basis, @NotNull Enum<?> authType, String username, Object details) {
         AuthUser user = (AuthUser) details;
-        dot.setNickname(user.getNickname());
-        dot.setAvatar(user.getAvatar());
+        basis.setNickname(user.getNickname());
+        basis.setAvatar(user.getAvatar());
         final AuthUserGender aug = user.getGender();
         if (aug == AuthUserGender.FEMALE) {
-            dot.setGender(UserGender.FEMALE);
-        } else if (aug == AuthUserGender.MALE) {
-            dot.setGender(UserGender.MALE);
-        } else {
-            dot.setGender(UserGender.UNKNOWN);
+            basis.setGender(UserGender.FEMALE);
         }
-        dot.setRemark(user.getRemark());
-        dot.setStatus(UserStatus.ACTIVE);
+        else if (aug == AuthUserGender.MALE) {
+            basis.setGender(UserGender.MALE);
+        }
+        else {
+            basis.setGender(UserGender.UNKNOWN);
+        }
+        basis.setRemark(user.getRemark());
+        basis.setStatus(UserStatus.ACTIVE);
     }
 
     @Override
-    protected void beforeSave(WarlockUserAuthnService.Authn dto, @NotNull Enum<?> authType, String username, Object details) {
+    protected void beforeSave(Authn authn, @NotNull Enum<?> authType, String username, Object details) {
         AuthUser user = (AuthUser) details;
-        dto.setUsername(user.getUuid());
-        dto.setExtraPara(JSON.toJSONString(user.getToken()));
-        dto.setExtraUser(JSON.toJSONString(user.getRawUserInfo()));
+        authn.setUsername(user.getUuid());
+        authn.setExtraPara(JSON.toJSONString(user.getToken()));
+        authn.setExtraUser(JSON.toJSONString(user.getRawUserInfo()));
     }
 
     @Override
