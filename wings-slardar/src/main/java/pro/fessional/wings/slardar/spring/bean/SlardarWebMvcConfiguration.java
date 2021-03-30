@@ -12,6 +12,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pro.fessional.wings.slardar.concur.impl.FirstBloodInterceptor;
+import pro.fessional.wings.slardar.context.RighterInterceptor;
 import pro.fessional.wings.slardar.context.TerminalInterceptor;
 import pro.fessional.wings.slardar.webmvc.PageQueryArgumentResolver;
 
@@ -28,6 +29,7 @@ public class SlardarWebMvcConfiguration implements WebMvcConfigurer {
 
     private final ObjectProvider<FirstBloodInterceptor> firstBloodInterceptor;
     private final ObjectProvider<TerminalInterceptor> terminalInterceptor;
+    private final ObjectProvider<RighterInterceptor> righterInterceptor;
     private final ObjectProvider<Converter<?, ?>> converters;
     private final ObjectProvider<PageQueryArgumentResolver> pageQueryArgumentResolver;
 
@@ -41,6 +43,11 @@ public class SlardarWebMvcConfiguration implements WebMvcConfigurer {
 
         terminalInterceptor.ifAvailable(it -> {
             logger.info("Wings conf terminalInterceptor=" + it.getClass().getName());
+            registry.addInterceptor(it);
+        });
+
+        righterInterceptor.ifAvailable(it -> {
+            logger.info("Wings conf righterInterceptor=" + it.getClass().getName());
             registry.addInterceptor(it);
         });
     }

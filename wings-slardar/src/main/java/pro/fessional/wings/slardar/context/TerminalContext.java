@@ -11,7 +11,7 @@ import java.util.TimeZone;
 import static pro.fessional.wings.slardar.context.TerminalContext.Context.Guest;
 
 /**
- * 比spring security context有更好的线程继承性
+ * 在service层使用，TransmittableThreadLocal有自动的线程继承性。
  *
  * @author trydofor
  * @since 2019-11-25

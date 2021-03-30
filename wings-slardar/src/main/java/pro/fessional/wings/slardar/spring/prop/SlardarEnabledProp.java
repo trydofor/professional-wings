@@ -65,6 +65,14 @@ public class SlardarEnabledProp {
     public static final String Key$async = Key + ".async";
 
     /**
+     * 是否防范编辑权限提升
+     *
+     * @see #Key$righter
+     */
+    private boolean righter = true;
+    public static final String Key$righter = Key + ".righter";
+
+    /**
      * 是否开启FirstBlood默认的Interceptor和图形验证码
      *
      * @see #Key$firstBlood

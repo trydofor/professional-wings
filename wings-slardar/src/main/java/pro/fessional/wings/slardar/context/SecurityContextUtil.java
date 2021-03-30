@@ -11,7 +11,10 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Wrapper fo SecurityContextHolder
+ * Wrapper fo SecurityContextHolder.
+ * <p>
+ * 尽量在controller层使用，当异步时，context会失效。
+ * 因为spring的threadlocal仅支持手动inherit。
  *
  * @author trydofor
  * @since 2019-07-09

@@ -63,6 +63,7 @@
         <!-- others -->
         <errorprone.version>2.5.1</errorprone.version>
         <fastjson.version>1.2.75</fastjson.version>
+        <kryo.version>5.0.4</kryo.version>
         <transmittable.version>2.12.1</transmittable.version>
         <bouncycastle.version>1.68</bouncycastle.version>
         <!-- just auth need 4 -->
@@ -120,6 +121,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -231,6 +237,11 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.esotericsoftware</groupId>
+                <artifactId>kryo</artifactId>
+                <version>${kryo.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
