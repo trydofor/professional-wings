@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+import pro.fessional.mirana.bits.Aes128;
 import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
@@ -105,6 +106,20 @@ public class RighterInterceptor implements HandlerInterceptor {
         }
     }
 
+    private Aes128 genAesKey(Object key) {
+        String k = key.toString();
+        final int len = k.length();
+        final int min = 20;
+        if (len < min) {
+            int tm = (min - 1) / len + 1;
+            StringBuilder sb = new StringBuilder(len * tm);
+            for (int i = 0; i < tm; i++) {
+                sb.append(k);
+            }
+            k = sb.toString();
+        }
+        return Aes128.of(k);
+    }
 
     private String encodeAllow(Object key, Object obj) {
         // 序列化对象
@@ -113,8 +128,9 @@ public class RighterInterceptor implements HandlerInterceptor {
         kryo.get().writeClassAndObject(out, obj);
         out.flush();
 
-        // base64主体
-        final String b64 = Base64.encode(out.toBytes());
+        // 加密
+        final Aes128 aes = genAesKey(key);
+        final String b64 = Base64.encode(aes.encode(out.toBytes()));
         final String sum = MdHelp.sha1.sum(b64 + key.toString()); // 40c
 
         return sum + b64;
@@ -123,10 +139,14 @@ public class RighterInterceptor implements HandlerInterceptor {
     private byte[] decodeAudit(Object key, String audit) {
         final int sha1Pos = 40;
         if (audit.length() <= sha1Pos) return null;
+
         String sum = audit.substring(0, sha1Pos);
         String b64 = audit.substring(sha1Pos);
+
         if (MdHelp.sha1.check(sum, b64 + key.toString())) {
-            return Base64.decode(b64);
+            final byte[] bys = Base64.decode(b64);
+            final Aes128 aes = genAesKey(key);
+            return aes.decode(bys);
         }
         else {
             return null;
