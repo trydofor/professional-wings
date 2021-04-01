@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,12 +57,11 @@ public class ConstantNaviGenerator {
 
         StringBuilder out = new StringBuilder();
         out.append(String.format("package %s;\n" +
-                        "\n" +
-                        "/**\n" +
-                        " * @since %s\n" +
-                        " */\n" +
-                        "public interface %s {\n" +
-                        "\n",
+                                 "\n" +
+                                 "/**\n" +
+                                 " * @since %s\n" +
+                                 " */\n" +
+                                 "public interface %s {",
                 packageName, LocalDate.now().toString(), javaName));
         genField(1, ROOT, list, out, prefixCode);
         genClass(1, ROOT, list, out, prefixCode);
@@ -70,7 +70,8 @@ public class ConstantNaviGenerator {
         File java = new File(dst, javaName + ".java");
         try (FileOutputStream fos = new FileOutputStream(java)) {
             fos.write(out.toString().getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new IORuntimeException(e);
         }
     }
@@ -87,7 +88,8 @@ public class ConstantNaviGenerator {
                     list.add(en);
                     it.remove();
                 }
-            } else {
+            }
+            else {
                 if (name.startsWith(ncp) && name.indexOf(delimiter, ncp.length()) < 0) {
                     list.add(en);
                     it.remove();
@@ -106,21 +108,27 @@ public class ConstantNaviGenerator {
             String tkn = nm.startsWith(delimiter) ? nm.substring(delimiter.length()) : nm;
 
             final String camel = CaseSwitcher.camel(n);
-            out.append(String.format("\n" +
-                            indent + "/**\n" +
-                            indent + " * id=%d, remark=%s\n" +
-                            indent + " */\n" +
-                            indent + "String %s = \"%s\";\n",
-                    en.id, en.remark, camel, tkn
-            ));
+            out.append(MessageFormat.format("\n\n" +
+                                            indent + "/**\n" +
+                                            indent + " * id={0}, remark={1}\n" +
+                                            indent + " */\n" +
+                                            indent + "String {2} = \"{3}\";\n" +
+                                            indent + "long ID${2} = {0};",
+                    en.id, en.remark, camel, tkn));
 
             if (prefixCode.length() > 0) {
-                out.append(String.format("\n" +
-                                indent + "/**\n" +
-                                indent + " * id=%d, remark=%s, prefix=%s\n" +
-                                indent + " */\n" +
-                                indent + "String %s = \"%s%s\";\n",
-                        en.id, en.remark, prefixCode, prefixCode + camel, prefixCode, tkn
+                String jf = prefixCode;
+                final char c = jf.charAt(jf.length() - 1);
+                if ((c < '0' || c > '9') && (c < 'a' || c > 'z') && (c < 'A' || c > 'Z')) {
+                    jf = jf.substring(0, jf.length() - 1) + "$";
+                }
+
+                out.append(MessageFormat.format("\n" +
+                                                indent + "/**\n" +
+                                                indent + " * id={0}, remark={1}, prefix={4}\n" +
+                                                indent + " */\n" +
+                                                indent + "String {5}{3} = \"{4}{3}\";",
+                        en.id, en.remark, camel, tkn, prefixCode, jf
                 ));
             }
         }
@@ -136,10 +144,12 @@ public class ConstantNaviGenerator {
                 int p2 = name.indexOf(delimiter);
                 if (p2 < 0) {
                     subClz.add(name);
-                } else if (p2 > 0) {
+                }
+                else if (p2 > 0) {
                     subClz.add(name.substring(0, p2));
                 }
-            } else {
+            }
+            else {
                 if (name.startsWith(ncp)) {
                     int p1 = ncp.length();
                     int p2 = name.indexOf(delimiter, p1);
@@ -155,7 +165,7 @@ public class ConstantNaviGenerator {
         String indent = indent(level);
         for (String name : subClz) {
             String scp = ncp + name;
-            out.append("\n").append(indent).append("interface ").append(CaseSwitcher.pascal(name)).append(" {\n");
+            out.append("\n\n").append(indent).append("interface ").append(CaseSwitcher.pascal(name)).append(" {");
             genField(level + 1, scp, entries, out, prefixCode);
             genClass(level + 1, scp, entries, out, prefixCode);
             out.append("\n").append(indent).append("}");
