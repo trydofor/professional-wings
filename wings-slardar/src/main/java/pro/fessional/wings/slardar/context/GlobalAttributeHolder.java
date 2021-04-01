@@ -3,9 +3,17 @@ package pro.fessional.wings.slardar.context;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.Data;
+import lombok.ToString;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,91 +29,244 @@ import java.util.stream.Collectors;
  */
 public class GlobalAttributeHolder {
 
-    private static final Cache<K, Object> CACHE = Caffeine.newBuilder()
-                                                          .expireAfterAccess(12, TimeUnit.HOURS)
-                                                          .build();
-    private static final ConcurrentHashMap<Enum<?>, Function<K, Object>> HOLDER = new ConcurrentHashMap<>();
+
+    //
+    private static final Cache<Key<?, ?>, Object> CACHE = Caffeine.newBuilder()
+                                                                  .expireAfterAccess(12, TimeUnit.HOURS)
+                                                                  .build();
+    private static final ConcurrentHashMap<Reg<?, ?>, Function<?, ?>> HOLDER = new ConcurrentHashMap<>();
 
     /**
      * 注册一个属性及其加载器
      *
-     * @param type   类型
+     * @param reg    类型
      * @param loader 加载器
-     * @param <T>    类型
+     * @param <K>    key类型
+     * @param <V>    value类型
      */
-    public static <T extends Enum<?> & Aware> void register(T type, Function<K, Object> loader) {
-        HOLDER.put(type, loader);
+    public static <K, V> void regLoader(@NotNull Reg<K, V> reg, @NotNull Function<Key<K, V>, V> loader) {
+        HOLDER.put(reg, loader);
+    }
+
+    /**
+     * 放入一个type的值，对loader的补充，如生效前
+     *
+     * @param reg   类型
+     * @param key   唯一key，如userId
+     * @param value 值
+     * @param <K>   key类型
+     * @param <V>   value类型
+     */
+    public static <K, V> void putAttr(@NotNull Reg<K, V> reg, @NotNull K key, @NotNull V value) {
+        Key<K, V> k = new Key<>(reg, key);
+        CACHE.put(k, value);
+    }
+
+    /**
+     * 放入一个type的值，对loader的补充，如生效前
+     *
+     * @param reg 类型
+     * @param map 唯一key，如userId
+     * @param <K> key类型
+     * @param <V> value类型
+     */
+    public static <K, V> void putAttr(@NotNull Reg<K, V> reg, @NotNull Map<K, V> map) {
+        Map<Key<K, V>, V> kvs = new HashMap<>(map.size());
+        for (Map.Entry<K, V> en : map.entrySet()) {
+            kvs.put(new Key<>(reg, en.getKey()), en.getValue());
+        }
+        CACHE.putAll(kvs);
     }
 
     /**
      * 根据一个type获取属性，如果不存在，null时抛NPE异常
      *
-     * @param type 类型
-     * @param key  唯一key，如userId
-     * @param <T>  type类型
-     * @param <R>  返回值
+     * @param reg 类型
+     * @param key 唯一key，如userId
+     * @param <K> key类型
+     * @param <V> value类型
      * @return 返回值
      */
     @NotNull
-    public static <T extends Enum<?> & Aware, R> R get(T type, Object key) {
-        return get(type, key, true);
+    public static <K, V> V getAttr(@NotNull Reg<K, V> reg, @NotNull K key) {
+        return getAttr(reg, key, true);
     }
 
     /**
      * 根据一个type获取属性，如果不存在，选择null或异常
      *
-     * @param type    类型
+     * @param reg     类型
      * @param key     唯一key，如userId
      * @param nonnull 是否 notnull
-     * @param <T>     type类型
-     * @param <R>     返回值
+     * @param <K>     key类型
+     * @param <V>     value类型
      * @return 返回值
      */
     @SuppressWarnings("unchecked")
     @Contract("_,_,true ->!null")
-    public static <T extends Enum<?> & Aware, R> R get(T type, Object key, boolean nonnull) {
-        K k = new K(type, key);
-        final Object rst = CACHE.get(k, HOLDER.get(type));
+    public static <K, V> V getAttr(@NotNull Reg<K, V> reg, @NotNull K key, boolean nonnull) {
+        Key<K, V> k = new Key<>(reg, key);
+        final Function<Key<?, ?>, ?> ld = (Function<Key<?, ?>, ?>) HOLDER.get(reg);
+        final Object rst = CACHE.get(k, ld);
         if (rst == null && nonnull) {
-            throw new NullPointerException("type=" + type + ",key=" + key);
+            throw new NullPointerException("aware=" + reg + ",key=" + key);
         }
-        return (R) rst;
+        return (V) rst;
     }
 
     /**
-     * 移除一个缓存
+     * 去掉一个缓存
      *
-     * @param type 类型
-     * @param key  唯一key，如userId
-     * @param <T>  类型
+     * @param reg 类型
+     * @param key 唯一key，如userId
+     * @param <K> key类型
      */
-    public static <T extends Enum<?> & Aware> void remove(T type, Object key) {
-        CACHE.invalidate(new K(type, key));
+    public static <K> void ridAttr(Reg<K, ?> reg, K key) {
+        CACHE.invalidate(new Key<>(reg, key));
     }
 
     /**
-     * 移除一个缓存
+     * 去掉一个缓存
      *
-     * @param type 类型
-     * @param <T>  类型
+     * @param reg 类型
+     * @param key 唯一key，如userId
+     * @param <K> key类型
      */
-    @SuppressWarnings("EqualsBetweenInconvertibleTypes")
-    public static <T extends Enum<?> & Aware> void remove(T type) {
-        HOLDER.remove(type);
-        final Set<K> keys = CACHE.asMap()
+    @SafeVarargs
+    public static <K> void ridAttr(Reg<K, ?> reg, K... key) {
+        if (key == null || key.length == 0) return;
+        ridAttrs(reg, Arrays.asList(key));
+    }
+
+    /**
+     * 去掉一个缓存
+     *
+     * @param <K> key类型
+     * @param reg 类型
+     * @param key 唯一key，如userId
+     */
+    public static <K> void ridAttrs(Reg<K, ?> reg, Collection<? extends K> key) {
+        if (key == null || key.isEmpty()) return;
+        final Set<Key<K, ?>> ks = new HashSet<>();
+        for (K k : key) {
+            ks.add(new Key<>(reg, k));
+        }
+        CACHE.invalidate(ks);
+    }
+
+    /**
+     * 移除所有缓存
+     *
+     * @param reg 类型
+     */
+    public static void ridAttrAll(Reg<?, ?>... reg) {
+        if (reg == null || reg.length == 0) return;
+        ridAttrAll(Arrays.asList(reg));
+    }
+
+    /**
+     * 移除所有缓存
+     *
+     * @param reg 类型
+     */
+    public static void ridAttrAll(Collection<? extends Reg<?, ?>> reg) {
+        if (reg == null || reg.isEmpty()) return;
+        final Set<Reg<?, ?>> rgs;
+        if (reg instanceof Set) {
+            //noinspection unchecked
+            rgs = (Set<Reg<?, ?>>) reg;
+        }
+        else {
+            rgs = new HashSet<>(reg);
+        }
+
+        final Set<?> keys = CACHE.asMap()
                                  .keySet()
                                  .stream()
-                                 .filter(it -> Objects.equals(type, it.type))
+                                 .filter(it -> rgs.contains(it.reg))
                                  .collect(Collectors.toSet());
         CACHE.invalidateAll(keys);
     }
 
-    //
-    public interface Aware {}
+    /**
+     * 移除属性及其已存在缓存
+     *
+     * @param reg 注册类型
+     */
+    public static void ridLoader(Reg<?, ?>... reg) {
+        if (reg == null || reg.length == 0) return;
+        ridLoader(Arrays.asList(reg));
+    }
 
+    /**
+     * 移除属性及其已存在缓存
+     *
+     * @param reg 注册类型
+     */
+    public static void ridLoader(Collection<? extends Reg<?, ?>> reg) {
+        if (reg == null || reg.isEmpty()) return;
+
+        for (Reg<?, ?> r : reg) {
+            HOLDER.remove(r);
+        }
+        ridAttrAll(reg);
+    }
+
+    // ////
     @Data
-    public static class K {
-        private final Enum<?> type;
-        private final Object key;
+    @ToString
+    public static class Key<K, R> {
+        private final Reg<K, R> reg;
+        private final K key;
+    }
+
+    /**
+     * 使用方法，在接口中构造子类。
+     * <pre>
+     * public interface Solos {
+     *  Reg<Integer, String> PasssaltByUid = new Reg<Integer, String>() {};
+     *  Reg<Integer, Set<String>> PermitsByUid = new Reg<Integer, Set<String>>() {};
+     * }
+     * </pre>
+     *
+     * @param <K> key类型
+     * @param <V> value类型
+     */
+    public static abstract class Reg<K, V> {
+        private final Type keyType;
+        private final Type valType;
+        private final Class<?> regType;
+
+        protected Reg() {
+            final Class<?> clz = getClass();
+            final Type sup = clz.getGenericSuperclass();
+            final Type[] tps = ((ParameterizedType) sup).getActualTypeArguments();
+            keyType = tps[0];
+            valType = tps[1];
+            regType = clz;
+        }
+
+        public Type getKeyType() {
+            return keyType;
+        }
+
+        public Type getValType() {
+            return valType;
+        }
+
+        public Class<?> getRegType() {
+            return regType;
+        }
+
+        @Override public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Reg)) return false;
+            Reg<?, ?> reg = (Reg<?, ?>) o;
+            return Objects.equals(regType, reg.regType);
+        }
+
+        @Override public int hashCode() {
+            return Objects.hash(regType);
+        }
     }
 }

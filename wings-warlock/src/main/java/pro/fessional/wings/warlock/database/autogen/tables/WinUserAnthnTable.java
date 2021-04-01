@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Name;
-import org.jooq.Row15;
+import org.jooq.Row14;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -109,11 +109,6 @@ public class WinUserAnthnTable extends TableImpl<WinUserAnthnRecord> implements 
     public final TableField<WinUserAnthnRecord, String> Password = createField(DSL.name("password"), SQLDataType.VARCHAR(200).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
 
     /**
-     * The column <code>win_user_anthn.passsalt</code>.
-     */
-    public final TableField<WinUserAnthnRecord, String> Passsalt = createField(DSL.name("passsalt"), SQLDataType.VARCHAR(100).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
-
-    /**
      * The column <code>win_user_anthn.extra_para</code>.
      */
     public final TableField<WinUserAnthnRecord, String> ExtraPara = createField(DSL.name("extra_para"), SQLDataType.VARCHAR(3000).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
@@ -211,12 +206,12 @@ public class WinUserAnthnTable extends TableImpl<WinUserAnthnRecord> implements 
     }
 
     // -------------------------------------------------------------------------
-    // Row15 type methods
+    // Row14 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row15<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, Long, String, String, String, String, String, String, LocalDateTime, Integer, Integer> fieldsRow() {
-        return (Row15) super.fieldsRow();
+    public Row14<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, Long, String, String, String, String, String, LocalDateTime, Integer, Integer> fieldsRow() {
+        return (Row14) super.fieldsRow();
     }
 
     /**

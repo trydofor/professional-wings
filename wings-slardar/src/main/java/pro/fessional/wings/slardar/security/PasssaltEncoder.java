@@ -6,16 +6,6 @@ package pro.fessional.wings.slardar.security;
  */
 public interface PasssaltEncoder {
 
-    int MIN_LENGTH = 40;
-
-    /**
-     * 生成一个指定长度的salt
-     *
-     * @param len 小于等于0为不限长度，长度至少40位。
-     * @return salt
-     */
-    String salt(int len);
-
     /**
      * 根据算法组合salt和pass
      *

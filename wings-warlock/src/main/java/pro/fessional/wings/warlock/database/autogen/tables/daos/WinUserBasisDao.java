@@ -148,6 +148,20 @@ public class WinUserBasisDao extends WingsJooqDaoJournalImpl<WinUserBasisTable, 
     }
 
     /**
+     * Fetch records that have <code>passsalt BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinUserBasis> fetchRangeOfPasssalt(String lowerInclusive, String upperInclusive) {
+        return fetchRange(WinUserBasisTable.WinUserBasis.Passsalt, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>passsalt IN (values)</code>
+     */
+    public List<WinUserBasis> fetchByPasssalt(String... values) {
+        return fetch(WinUserBasisTable.WinUserBasis.Passsalt, values);
+    }
+
+    /**
      * Fetch records that have <code>gender BETWEEN lowerInclusive AND upperInclusive</code>
      */
     public List<WinUserBasis> fetchRangeOfGender(UserGender lowerInclusive, UserGender upperInclusive) {
@@ -321,6 +335,20 @@ public class WinUserBasisDao extends WingsJooqDaoJournalImpl<WinUserBasisTable, 
      */
     public List<WinUserBasis> fetchByNicknameLive(String... values) {
         return fetchLive(WinUserBasisTable.WinUserBasis.Nickname, values);
+    }
+
+    /**
+     * Fetch records that have <code>passsalt BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinUserBasis> fetchRangeOfPasssaltLive(String lowerInclusive, String upperInclusive) {
+        return fetchRangeLive(WinUserBasisTable.WinUserBasis.Passsalt, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>passsalt IN (values)</code>
+     */
+    public List<WinUserBasis> fetchByPasssaltLive(String... values) {
+        return fetchLive(WinUserBasisTable.WinUserBasis.Passsalt, values);
     }
 
     /**

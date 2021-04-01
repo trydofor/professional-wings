@@ -50,6 +50,7 @@ public class WinUserBasis implements IWinUserBasis {
     private LocalDateTime deleteDt;
     private Long          commitId;
     private String        nickname;
+    private String        passsalt;
     private UserGender    gender;
     private String        avatar;
     private Locale        locale;
@@ -66,6 +67,7 @@ public class WinUserBasis implements IWinUserBasis {
         this.deleteDt = value.getDeleteDt();
         this.commitId = value.getCommitId();
         this.nickname = value.getNickname();
+        this.passsalt = value.getPasssalt();
         this.gender = value.getGender();
         this.avatar = value.getAvatar();
         this.locale = value.getLocale();
@@ -81,6 +83,7 @@ public class WinUserBasis implements IWinUserBasis {
         LocalDateTime deleteDt,
         Long          commitId,
         String        nickname,
+        String        passsalt,
         UserGender    gender,
         String        avatar,
         Locale        locale,
@@ -94,6 +97,7 @@ public class WinUserBasis implements IWinUserBasis {
         this.deleteDt = deleteDt;
         this.commitId = commitId;
         this.nickname = nickname;
+        this.passsalt = passsalt;
         this.gender = gender;
         this.avatar = avatar;
         this.locale = locale;
@@ -206,6 +210,24 @@ public class WinUserBasis implements IWinUserBasis {
     @Override
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    /**
+     * Getter for <code>win_user_basis.passsalt</code>.
+     */
+    @Column(name = "passsalt", nullable = false, length = 100)
+    @Size(max = 100)
+    @Override
+    public String getPasssalt() {
+        return this.passsalt;
+    }
+
+    /**
+     * Setter for <code>win_user_basis.passsalt</code>.
+     */
+    @Override
+    public void setPasssalt(String passsalt) {
+        this.passsalt = passsalt;
     }
 
     /**
@@ -357,6 +379,12 @@ public class WinUserBasis implements IWinUserBasis {
         }
         else if (!nickname.equals(other.nickname))
             return false;
+        if (passsalt == null) {
+            if (other.passsalt != null)
+                return false;
+        }
+        else if (!passsalt.equals(other.passsalt))
+            return false;
         if (gender == null) {
             if (other.gender != null)
                 return false;
@@ -406,6 +434,7 @@ public class WinUserBasis implements IWinUserBasis {
         result = prime * result + ((this.deleteDt == null) ? 0 : this.deleteDt.hashCode());
         result = prime * result + ((this.commitId == null) ? 0 : this.commitId.hashCode());
         result = prime * result + ((this.nickname == null) ? 0 : this.nickname.hashCode());
+        result = prime * result + ((this.passsalt == null) ? 0 : this.passsalt.hashCode());
         result = prime * result + ((this.gender == null) ? 0 : this.gender.hashCode());
         result = prime * result + ((this.avatar == null) ? 0 : this.avatar.hashCode());
         result = prime * result + ((this.locale == null) ? 0 : this.locale.hashCode());
@@ -425,6 +454,7 @@ public class WinUserBasis implements IWinUserBasis {
         sb.append(", ").append(deleteDt);
         sb.append(", ").append(commitId);
         sb.append(", ").append(nickname);
+        sb.append(", ").append(passsalt);
         sb.append(", ").append(gender);
         sb.append(", ").append(avatar);
         sb.append(", ").append(locale);
@@ -448,6 +478,7 @@ public class WinUserBasis implements IWinUserBasis {
         setDeleteDt(from.getDeleteDt());
         setCommitId(from.getCommitId());
         setNickname(from.getNickname());
+        setPasssalt(from.getPasssalt());
         setGender(from.getGender());
         setAvatar(from.getAvatar());
         setLocale(from.getLocale());

@@ -4,7 +4,9 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.objenesis.strategy.StdInstantiatorStrategy;
@@ -13,11 +15,13 @@ import org.springframework.web.servlet.ModelAndView;
 import pro.fessional.mirana.bits.Aes128;
 import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.bits.MdHelp;
+import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarRighterProp;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.function.Function;
 
 /**
  * @author trydofor
@@ -27,7 +31,15 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class RighterInterceptor implements HandlerInterceptor {
 
+    public static final String secret = RandCode.strong(60);
+
     private final SlardarRighterProp prop;
+
+    /**
+     * 根据 SecurityContext.Principal 获得用户加密用的密码
+     */
+    @Setter @Getter
+    private Function<Object, String> secretProvider = key -> secret;
 
     private final ThreadLocal<Kryo> kryo = ThreadLocal.withInitial(() -> {
         Kryo ko = new Kryo();
@@ -107,7 +119,7 @@ public class RighterInterceptor implements HandlerInterceptor {
     }
 
     private Aes128 genAesKey(Object key) {
-        String k = key.toString();
+        String k = secretProvider.apply(key);
         final int len = k.length();
         final int min = 20;
         if (len < min) {

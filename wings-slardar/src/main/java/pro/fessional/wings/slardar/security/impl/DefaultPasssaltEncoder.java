@@ -1,7 +1,6 @@
 package pro.fessional.wings.slardar.security.impl;
 
 import pro.fessional.mirana.bits.MdHelp;
-import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 
 /**
@@ -14,11 +13,6 @@ public class DefaultPasssaltEncoder implements PasssaltEncoder {
 
     public DefaultPasssaltEncoder(MdHelp help) {
         this.help = help;
-    }
-
-    @Override
-    public String salt(int len) {
-        return RandCode.strong(Math.max(len, MIN_LENGTH));
     }
 
     @Override

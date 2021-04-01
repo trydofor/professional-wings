@@ -30,7 +30,6 @@ public interface WarlockUserAuthnService {
         private String username;
         private String extraPara;
         private String extraUser;
-        private String passsalt;
     }
 
     @Data

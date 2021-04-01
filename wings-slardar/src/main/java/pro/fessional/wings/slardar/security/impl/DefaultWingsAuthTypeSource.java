@@ -48,8 +48,8 @@ public class DefaultWingsAuthTypeSource implements WingsAuthTypeSource {
                     throw new IllegalArgumentException("must have 1 wildcard in ant path");
                 }
                 if (p1 >= 0) {
-                    pathHead = pos;
-                    pathTail = antPath.length() - pos - 1;
+                    pathHead = p1;
+                    pathTail = antPath.length() - p2 - 1;
                 } else {
                     pathHead = 0;
                     pathTail = 0;

@@ -92,7 +92,7 @@ public class DateTimeConverterTest {
 
     /**
      * 用户时区GMT，系统时区GMT+8，使用LocalDateTime在接受输入，按系统时区处理。
-     * 希望json输出时，把系统时区自动变为用户时区，减8小时。
+     * 希望json输出时，把系统时区自动变为用户时区，减8小时。 TODO 未解决 spring jackson
      */
     @Test
     public void testLdtZdt() throws Exception {

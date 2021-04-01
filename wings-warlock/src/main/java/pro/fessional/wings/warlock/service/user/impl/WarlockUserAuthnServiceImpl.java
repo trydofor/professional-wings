@@ -2,7 +2,6 @@ package pro.fessional.wings.warlock.service.user.impl;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -15,12 +14,14 @@ import pro.fessional.mirana.data.Z;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
+import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAnthnTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAnthnDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserAnthn;
 import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
+import pro.fessional.wings.warlock.service.user.WarlockUserAttribute;
 import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
@@ -72,9 +73,8 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             auth.setAuthType(wingsAuthTypeParser.parse(authType));
             auth.setUsername(authn.getUsername());
 
-            final String salt = Z.notNull(authn.getPasssalt(), passsaltEncoder.salt(60));
+            final String salt = GlobalAttributeHolder.getAttr(WarlockUserAttribute.SaltByUid, userId);
             final String pass = passsaltEncoder.salt(authn.getPassword(), salt);
-            auth.setPasssalt(salt);
             auth.setPassword(passwordEncoder.encode(pass));
 
             auth.setExtraPara(Null.notNull(authn.getExtraPara()));
@@ -113,31 +113,13 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             Map<Field<?>, Object> setter = new HashMap<>();
 
             if (authn.getPassword() != null) {
-                final String slat;
-                if (authn.getPasssalt() == null) {
-                    val rc = winUserAnthnDao
-                                     .ctx()
-                                     .select(t.Passsalt)
-                                     .from(t)
-                                     .where(cond)
-                                     .fetchOne();
-
-                    if (rc == null) {
-                        log.warn("failed to find passsalt. uid={}, type={}", userId, authType);
-                        throw new CodeException(CommonErrorEnum.DataNotFound);
-                    }
-                    slat = rc.value1();
-                }
-                else {
-                    slat = authn.getPasssalt();
-                }
+                final String slat = GlobalAttributeHolder.getAttr(WarlockUserAttribute.SaltByUid, userId);
                 setter.put(t.Password, passsaltEncoder.salt(authn.getPassword(), slat));
             }
 
             setter.put(t.Username, authn.getUsername());
             setter.put(t.ExtraPara, authn.getExtraPara());
             setter.put(t.ExtraUser, authn.getExtraUser());
-            setter.put(t.Passsalt, authn.getPasssalt());
             setter.put(t.ExpiredDt, authn.getExpiredDt());
             setter.put(t.FailedCnt, authn.getFailedCnt());
             setter.put(t.FailedMax, authn.getFailedMax());
@@ -179,18 +161,8 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             Map<Field<?>, Object> setter = new HashMap<>();
 
             if (renew.getPassword() != null) {
-                val rc = winUserAnthnDao
-                                 .ctx()
-                                 .select(t.Passsalt)
-                                 .from(t)
-                                 .where(cond)
-                                 .fetchOne();
-
-                if (rc == null) {
-                    log.warn("failed to find {}, key={}", otherInfo, userId);
-                    throw new CodeException(CommonErrorEnum.DataNotFound);
-                }
-                setter.put(t.Password, passsaltEncoder.salt(renew.getPassword(), rc.value1()));
+                final String slat = GlobalAttributeHolder.getAttr(WarlockUserAttribute.SaltByUid, userId);
+                setter.put(t.Password, passsaltEncoder.salt(renew.getPassword(), slat));
             }
 
             setter.put(t.ExpiredDt, renew.getExpiredDt());

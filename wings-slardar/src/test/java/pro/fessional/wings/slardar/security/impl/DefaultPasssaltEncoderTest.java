@@ -10,7 +10,6 @@ import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.mirana.code.RandCode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pro.fessional.wings.slardar.security.PasssaltEncoder.MIN_LENGTH;
 
 /**
  * @author trydofor
@@ -57,16 +56,9 @@ class DefaultPasssaltEncoderTest {
     }
 
     @Test
-    void salt() {
-        assertEquals(MIN_LENGTH, sha256.salt(10).length());
-        assertEquals(MIN_LENGTH, sha256.salt(20).length());
-        assertEquals(41, sha256.salt(41).length());
-    }
-
-    @Test
     void testSalt() {
         final String pass = RandCode.strong(5);
-        final String salt = sha256.salt(100);
+        final String salt = RandCode.strong(100);
         final String p1 = sha256.salt(pass, salt);
         final String p2 = sha256.salt(pass, salt);
         System.out.println(pass);

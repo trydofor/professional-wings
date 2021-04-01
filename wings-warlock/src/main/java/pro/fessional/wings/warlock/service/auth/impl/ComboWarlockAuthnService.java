@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
+import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
@@ -25,6 +26,7 @@ import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserLogin;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.help.AuthnDetailsMapper;
+import pro.fessional.wings.warlock.service.user.WarlockUserAttribute;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -80,14 +82,18 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
                                       .and(auth.onlyLiveData);
 
         final Details details = winUserAnthnDao
-                .ctx()
-                .select(auth.UserId, user.Nickname, user.Locale, user.Zoneid, user.Status,
-                        auth.Username, auth.Password, auth.Passsalt, auth.ExpiredDt)
-                .from(user, auth)
-                .where(cond)
-                .fetchOneInto(Details.class);
+                                        .ctx()
+                                        .select(auth.UserId, user.Nickname,
+                                                user.Locale, user.Zoneid,
+                                                user.Status, auth.Username,
+                                                auth.Password, auth.ExpiredDt)
+                                        .from(user, auth)
+                                        .where(cond)
+                                        .fetchOneInto(Details.class);
         if (details != null) {
             details.setAuthType(authType);
+            final String passsalt = GlobalAttributeHolder.getAttr(WarlockUserAttribute.SaltByUid, details.getUserId());
+            details.setPasssalt(passsalt);
         }
         return details;
     }
@@ -170,11 +176,11 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         final String at = wingsAuthTypeParser.parse(authType);
         final WinUserAnthnTable ta = winUserAnthnDao.getTable();
         val auth = winUserAnthnDao
-                .ctx()
-                .select(ta.UserId, ta.FailedCnt, ta.FailedMax, ta.Id)
-                .from(ta)
-                .where(ta.Username.eq(username).and(ta.AuthType.eq(at)).and(ta.onlyLiveData))
-                .fetchOne();
+                           .ctx()
+                           .select(ta.UserId, ta.FailedCnt, ta.FailedMax, ta.Id)
+                           .from(ta)
+                           .where(ta.Username.eq(username).and(ta.AuthType.eq(at)).and(ta.onlyLiveData))
+                           .fetchOne();
         if (auth == null) {
             log.info("ignore login failure by not found auth-type={}, username={}", at, username);
             timingAttack();
@@ -241,7 +247,8 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         if (t > 10 && t < 10000) {
             try {
                 Thread.sleep(t);
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 // ignore
             }
         }

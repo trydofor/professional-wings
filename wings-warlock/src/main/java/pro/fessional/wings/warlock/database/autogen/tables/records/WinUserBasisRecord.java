@@ -6,8 +6,8 @@ package pro.fessional.wings.warlock.database.autogen.tables.records;
 
 import org.jooq.Field;
 import org.jooq.Record1;
-import org.jooq.Record12;
-import org.jooq.Row12;
+import org.jooq.Record13;
+import org.jooq.Row13;
 import org.jooq.impl.UpdatableRecordImpl;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.IWinUserBasis;
@@ -46,7 +46,7 @@ import java.util.Locale;
         @UniqueConstraint(name = "KEY_win_user_basis_PRIMARY", columnNames = { "id" })
     }
 )
-public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> implements Record12<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, UserGender, String, Locale, ZoneId, String, UserStatus>, IWinUserBasis {
+public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> implements Record13<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, String, UserGender, String, Locale, ZoneId, String, UserStatus>, IWinUserBasis {
 
     private static final long serialVersionUID = 1L;
 
@@ -157,11 +157,29 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
     }
 
     /**
+     * Setter for <code>win_user_basis.passsalt</code>.
+     */
+    @Override
+    public void setPasssalt(String value) {
+        set(6, value);
+    }
+
+    /**
+     * Getter for <code>win_user_basis.passsalt</code>.
+     */
+    @Column(name = "passsalt", nullable = false, length = 100)
+    @Size(max = 100)
+    @Override
+    public String getPasssalt() {
+        return (String) get(6);
+    }
+
+    /**
      * Setter for <code>win_user_basis.gender</code>.
      */
     @Override
     public void setGender(UserGender value) {
-        set(6, value);
+        set(7, value);
     }
 
     /**
@@ -170,7 +188,7 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
     @Column(name = "gender", nullable = false, precision = 10)
     @Override
     public UserGender getGender() {
-        return (UserGender) get(6);
+        return (UserGender) get(7);
     }
 
     /**
@@ -178,7 +196,7 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
      */
     @Override
     public void setAvatar(String value) {
-        set(7, value);
+        set(8, value);
     }
 
     /**
@@ -188,7 +206,7 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
     @Size(max = 200)
     @Override
     public String getAvatar() {
-        return (String) get(7);
+        return (String) get(8);
     }
 
     /**
@@ -196,7 +214,7 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
      */
     @Override
     public void setLocale(Locale value) {
-        set(8, value);
+        set(9, value);
     }
 
     /**
@@ -205,7 +223,7 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
     @Column(name = "locale", nullable = false, length = 5)
     @Override
     public Locale getLocale() {
-        return (Locale) get(8);
+        return (Locale) get(9);
     }
 
     /**
@@ -213,7 +231,7 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
      */
     @Override
     public void setZoneid(ZoneId value) {
-        set(9, value);
+        set(10, value);
     }
 
     /**
@@ -222,7 +240,7 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
     @Column(name = "zoneid", nullable = false, precision = 10)
     @Override
     public ZoneId getZoneid() {
-        return (ZoneId) get(9);
+        return (ZoneId) get(10);
     }
 
     /**
@@ -230,7 +248,7 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
      */
     @Override
     public void setRemark(String value) {
-        set(10, value);
+        set(11, value);
     }
 
     /**
@@ -240,7 +258,7 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
     @Size(max = 500)
     @Override
     public String getRemark() {
-        return (String) get(10);
+        return (String) get(11);
     }
 
     /**
@@ -248,7 +266,7 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
      */
     @Override
     public void setStatus(UserStatus value) {
-        set(11, value);
+        set(12, value);
     }
 
     /**
@@ -257,7 +275,7 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
     @Column(name = "status", nullable = false, precision = 10)
     @Override
     public UserStatus getStatus() {
-        return (UserStatus) get(11);
+        return (UserStatus) get(12);
     }
 
     // -------------------------------------------------------------------------
@@ -270,17 +288,17 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
     }
 
     // -------------------------------------------------------------------------
-    // Record12 type implementation
+    // Record13 type implementation
     // -------------------------------------------------------------------------
 
     @Override
-    public Row12<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, UserGender, String, Locale, ZoneId, String, UserStatus> fieldsRow() {
-        return (Row12) super.fieldsRow();
+    public Row13<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, String, UserGender, String, Locale, ZoneId, String, UserStatus> fieldsRow() {
+        return (Row13) super.fieldsRow();
     }
 
     @Override
-    public Row12<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, UserGender, String, Locale, ZoneId, String, UserStatus> valuesRow() {
-        return (Row12) super.valuesRow();
+    public Row13<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, String, UserGender, String, Locale, ZoneId, String, UserStatus> valuesRow() {
+        return (Row13) super.valuesRow();
     }
 
     @Override
@@ -314,32 +332,37 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
     }
 
     @Override
-    public Field<UserGender> field7() {
+    public Field<String> field7() {
+        return WinUserBasisTable.WinUserBasis.Passsalt;
+    }
+
+    @Override
+    public Field<UserGender> field8() {
         return WinUserBasisTable.WinUserBasis.Gender;
     }
 
     @Override
-    public Field<String> field8() {
+    public Field<String> field9() {
         return WinUserBasisTable.WinUserBasis.Avatar;
     }
 
     @Override
-    public Field<Locale> field9() {
+    public Field<Locale> field10() {
         return WinUserBasisTable.WinUserBasis.Locale;
     }
 
     @Override
-    public Field<ZoneId> field10() {
+    public Field<ZoneId> field11() {
         return WinUserBasisTable.WinUserBasis.Zoneid;
     }
 
     @Override
-    public Field<String> field11() {
+    public Field<String> field12() {
         return WinUserBasisTable.WinUserBasis.Remark;
     }
 
     @Override
-    public Field<UserStatus> field12() {
+    public Field<UserStatus> field13() {
         return WinUserBasisTable.WinUserBasis.Status;
     }
 
@@ -374,32 +397,37 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
     }
 
     @Override
-    public UserGender component7() {
+    public String component7() {
+        return getPasssalt();
+    }
+
+    @Override
+    public UserGender component8() {
         return getGender();
     }
 
     @Override
-    public String component8() {
+    public String component9() {
         return getAvatar();
     }
 
     @Override
-    public Locale component9() {
+    public Locale component10() {
         return getLocale();
     }
 
     @Override
-    public ZoneId component10() {
+    public ZoneId component11() {
         return getZoneid();
     }
 
     @Override
-    public String component11() {
+    public String component12() {
         return getRemark();
     }
 
     @Override
-    public UserStatus component12() {
+    public UserStatus component13() {
         return getStatus();
     }
 
@@ -434,32 +462,37 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
     }
 
     @Override
-    public UserGender value7() {
+    public String value7() {
+        return getPasssalt();
+    }
+
+    @Override
+    public UserGender value8() {
         return getGender();
     }
 
     @Override
-    public String value8() {
+    public String value9() {
         return getAvatar();
     }
 
     @Override
-    public Locale value9() {
+    public Locale value10() {
         return getLocale();
     }
 
     @Override
-    public ZoneId value10() {
+    public ZoneId value11() {
         return getZoneid();
     }
 
     @Override
-    public String value11() {
+    public String value12() {
         return getRemark();
     }
 
     @Override
-    public UserStatus value12() {
+    public UserStatus value13() {
         return getStatus();
     }
 
@@ -500,43 +533,49 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
     }
 
     @Override
-    public WinUserBasisRecord value7(UserGender value) {
+    public WinUserBasisRecord value7(String value) {
+        setPasssalt(value);
+        return this;
+    }
+
+    @Override
+    public WinUserBasisRecord value8(UserGender value) {
         setGender(value);
         return this;
     }
 
     @Override
-    public WinUserBasisRecord value8(String value) {
+    public WinUserBasisRecord value9(String value) {
         setAvatar(value);
         return this;
     }
 
     @Override
-    public WinUserBasisRecord value9(Locale value) {
+    public WinUserBasisRecord value10(Locale value) {
         setLocale(value);
         return this;
     }
 
     @Override
-    public WinUserBasisRecord value10(ZoneId value) {
+    public WinUserBasisRecord value11(ZoneId value) {
         setZoneid(value);
         return this;
     }
 
     @Override
-    public WinUserBasisRecord value11(String value) {
+    public WinUserBasisRecord value12(String value) {
         setRemark(value);
         return this;
     }
 
     @Override
-    public WinUserBasisRecord value12(UserStatus value) {
+    public WinUserBasisRecord value13(UserStatus value) {
         setStatus(value);
         return this;
     }
 
     @Override
-    public WinUserBasisRecord values(Long value1, LocalDateTime value2, LocalDateTime value3, LocalDateTime value4, Long value5, String value6, UserGender value7, String value8, Locale value9, ZoneId value10, String value11, UserStatus value12) {
+    public WinUserBasisRecord values(Long value1, LocalDateTime value2, LocalDateTime value3, LocalDateTime value4, Long value5, String value6, String value7, UserGender value8, String value9, Locale value10, ZoneId value11, String value12, UserStatus value13) {
         value1(value1);
         value2(value2);
         value3(value3);
@@ -549,6 +588,7 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
         value10(value10);
         value11(value11);
         value12(value12);
+        value13(value13);
         return this;
     }
 
@@ -564,6 +604,7 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
         setDeleteDt(from.getDeleteDt());
         setCommitId(from.getCommitId());
         setNickname(from.getNickname());
+        setPasssalt(from.getPasssalt());
         setGender(from.getGender());
         setAvatar(from.getAvatar());
         setLocale(from.getLocale());
@@ -592,7 +633,7 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
     /**
      * Create a detached, initialised WinUserBasisRecord
      */
-    public WinUserBasisRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, String nickname, UserGender gender, String avatar, Locale locale, ZoneId zoneid, String remark, UserStatus status) {
+    public WinUserBasisRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, String nickname, String passsalt, UserGender gender, String avatar, Locale locale, ZoneId zoneid, String remark, UserStatus status) {
         super(WinUserBasisTable.WinUserBasis);
 
         setId(id);
@@ -601,6 +642,7 @@ public class WinUserBasisRecord extends UpdatableRecordImpl<WinUserBasisRecord> 
         setDeleteDt(deleteDt);
         setCommitId(commitId);
         setNickname(nickname);
+        setPasssalt(passsalt);
         setGender(gender);
         setAvatar(avatar);
         setLocale(locale);

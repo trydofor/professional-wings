@@ -15,6 +15,9 @@ import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
+import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
+import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.WingsAuthPageHandler;
@@ -24,6 +27,7 @@ import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeParser;
+import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
 import pro.fessional.wings.warlock.security.handler.LoginFailureHandler;
 import pro.fessional.wings.warlock.security.handler.LoginSuccessHandler;
@@ -36,6 +40,7 @@ import pro.fessional.wings.warlock.security.userdetails.JustAuthUserAuthnCombo;
 import pro.fessional.wings.warlock.security.userdetails.JustAuthUserDetailsCombo;
 import pro.fessional.wings.warlock.security.userdetails.NonceUserDetailsCombo;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
+import pro.fessional.wings.warlock.service.other.TerminalJournalService;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
@@ -62,6 +67,18 @@ public class WarlockSecurityBeanConfiguration {
         logger.info("Wings conf wingsAuthTypeParser");
         final Map<String, Enum<?>> authType = securityProp.mapAuthTypeEnum();
         return new DefaultWingsAuthTypeParser(authType);
+    }
+
+    @Bean
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    @ConditionalOnProperty(name = SlardarEnabledProp.Key$terminal, havingValue = "true")
+    public TerminalJournalService terminalJournalService(
+            LightIdService lightIdService,
+            BlockIdProvider blockIdProvider,
+            CommitJournalModify journalModify
+    ) {
+        logger.info("Wings conf terminalJournalService");
+        return new TerminalJournalService(lightIdService, blockIdProvider, journalModify);
     }
 
     ///////// handler /////////

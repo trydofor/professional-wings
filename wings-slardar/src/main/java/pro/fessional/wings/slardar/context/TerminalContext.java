@@ -82,5 +82,14 @@ public class TerminalContext {
         public boolean isLogin() {
             return userId != Guest;
         }
+
+        @Override
+        public String toString() {
+            return "Context{" +
+                   "userId=" + userId +
+                   ", remoteIp='" + remoteIp + '\'' +
+                   ", agentInfo='" + agentInfo + '\'' +
+                   '}';
+        }
     }
 }

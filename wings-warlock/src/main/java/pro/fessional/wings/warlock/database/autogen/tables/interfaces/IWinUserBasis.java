@@ -114,6 +114,18 @@ public interface IWinUserBasis extends JournalAware, Serializable {
     public String getNickname();
 
     /**
+     * Setter for <code>win_user_basis.passsalt</code>.
+     */
+    public void setPasssalt(String value);
+
+    /**
+     * Getter for <code>win_user_basis.passsalt</code>.
+     */
+    @Column(name = "passsalt", nullable = false, length = 100)
+    @Size(max = 100)
+    public String getPasssalt();
+
+    /**
      * Setter for <code>win_user_basis.gender</code>.
      */
     public void setGender(UserGender value);

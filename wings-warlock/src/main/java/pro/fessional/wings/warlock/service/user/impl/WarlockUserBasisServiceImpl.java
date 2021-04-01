@@ -4,13 +4,16 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.Z;
 import pro.fessional.wings.faceless.database.helper.ModifyAssert;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
+import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasisDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserBasis;
@@ -24,13 +27,15 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.SaltByUid;
+
 /**
  * @author trydofor
  * @since 2021-03-22
  */
 @Slf4j
 @Service
-public class WarlockUserBasisServiceImpl implements WarlockUserBasisService {
+public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, InitializingBean {
 
     @Setter(onMethod_ = {@Autowired})
     private WinUserBasisDao winUserBasisDao;
@@ -42,6 +47,19 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService {
     private JournalService journalService;
 
     @Override
+    public void afterPropertiesSet() {
+        log.info("warlock conf SaltByUid for GlobalAttributeHolder");
+        GlobalAttributeHolder.regLoader(SaltByUid, key -> {
+            final WinUserBasisTable t = winUserBasisDao.getTable();
+            return winUserBasisDao.ctx()
+                                  .select(t.Passsalt)
+                                  .from(t)
+                                  .where(t.Id.eq(key.getKey()))
+                                  .fetchOneInto(String.class);
+        });
+    }
+
+    @Override
     public long create(@NotNull Basis user) {
         return journalService.submit(Jane.Create, user.getNickname(), commit -> {
             final WinUserBasisTable tu = winUserBasisDao.getTable();
@@ -49,6 +67,11 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService {
             WinUserBasis po = new WinUserBasis();
             po.setId(uid);
             po.setNickname(user.getNickname());
+
+            final String passsalt = RandCode.strong(60);
+            GlobalAttributeHolder.putAttr(SaltByUid, uid, passsalt);
+            po.setPasssalt(passsalt);
+
             po.setAvatar(Z.notNull(user.getAvatar(), Null.Str));
             po.setGender(Z.notNull(user.getGender(), UserGender.UNKNOWN));
             po.setLocale(Z.notNull(user.getLocale(), Locale.getDefault()));

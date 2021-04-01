@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Name;
-import org.jooq.Row12;
+import org.jooq.Row13;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -98,6 +98,11 @@ public class WinUserBasisTable extends TableImpl<WinUserBasisRecord> implements 
      * The column <code>win_user_basis.nickname</code>.
      */
     public final TableField<WinUserBasisRecord, String> Nickname = createField(DSL.name("nickname"), SQLDataType.VARCHAR(50).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
+
+    /**
+     * The column <code>win_user_basis.passsalt</code>.
+     */
+    public final TableField<WinUserBasisRecord, String> Passsalt = createField(DSL.name("passsalt"), SQLDataType.VARCHAR(100).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>win_user_basis.gender</code>.
@@ -202,12 +207,12 @@ public class WinUserBasisTable extends TableImpl<WinUserBasisRecord> implements 
     }
 
     // -------------------------------------------------------------------------
-    // Row12 type methods
+    // Row13 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row12<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, UserGender, String, java.util.Locale, ZoneId, String, UserStatus> fieldsRow() {
-        return (Row12) super.fieldsRow();
+    public Row13<Long, LocalDateTime, LocalDateTime, LocalDateTime, Long, String, String, UserGender, String, java.util.Locale, ZoneId, String, UserStatus> fieldsRow() {
+        return (Row13) super.fieldsRow();
     }
 
     /**

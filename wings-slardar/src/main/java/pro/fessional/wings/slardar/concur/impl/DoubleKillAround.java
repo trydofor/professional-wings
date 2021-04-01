@@ -26,7 +26,7 @@ import pro.fessional.mirana.lock.JvmStaticGlobalLock;
 import pro.fessional.wings.slardar.concur.DoubleKill;
 import pro.fessional.wings.slardar.concur.DoubleKillException;
 import pro.fessional.wings.slardar.concur.ProgressContext;
-import pro.fessional.wings.slardar.context.SecurityContextUtil;
+import pro.fessional.wings.slardar.context.TerminalContext;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -58,18 +58,7 @@ public class DoubleKillAround {
     public Object doubleKill(ProceedingJoinPoint joinPoint) throws Throwable {
         final Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         final DoubleKill doubleKill = method.getAnnotation(DoubleKill.class);
-        final Object principal;
-
-        if (doubleKill.principal()) {
-            final Object p = SecurityContextUtil.getPrincipal();
-            if (p == null) {
-                principal = Boolean.TRUE;
-            } else {
-                principal = p;
-            }
-        } else {
-            principal = Boolean.FALSE;
-        }
+        final Object principal = TerminalContext.get().getUserId();
         final Object[] args = joinPoint.getArgs();
 
         final String keyStr = doubleKill.value();

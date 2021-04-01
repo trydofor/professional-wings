@@ -9,12 +9,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.faceless.service.journal.JournalService;
+import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
+import pro.fessional.wings.warlock.service.user.WarlockUserAttribute;
 import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
 import pro.fessional.wings.warlock.service.user.WarlockUserBasisService;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
@@ -83,7 +85,6 @@ public class DefaultUserAuthnCombo implements ComboWarlockAuthnService.Combo {
             authn.setFailedMax(warlockSecurityProp.getAutoregMaxFailed());
 
             // 明文，有WarlockUserAuthnService加密
-            authn.setPasssalt(passsaltEncoder.salt(60));
             authn.setPassword(RandCode.human(16));
 
             beforeSave(authn, authType, username, details);
@@ -99,7 +100,7 @@ public class DefaultUserAuthnCombo implements ComboWarlockAuthnService.Combo {
 
             result.setUsername(authn.getUsername());
             result.setPassword(authn.getPassword());
-            result.setPasssalt(authn.getPasssalt());
+            result.setPasssalt(GlobalAttributeHolder.getAttr(WarlockUserAttribute.SaltByUid, uid));
             result.setExpiredDt(authn.getExpiredDt());
 
             return result;

@@ -34,10 +34,10 @@ public class TestDateTimeController {
     @RequestMapping(value = "/test/ldt-zdt.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public Xdt ldtZdt(@RequestParam("d") LocalDateTime ldt) {
         final Xdt xdt = new Xdt();
-        xdt.zdt=ldt.atZone(StandardTimezone.ASIA𓃬SHANGHAI.toZoneId());
+        xdt.zdt = ldt.atZone(StandardTimezone.ASIA𓃬SHANGHAI.toZoneId());
         xdt.ldt = ldt;
-        System.out.println("ldtZdt>>>"+xdt);
-        System.out.println("userTz>>>"+ LocaleContextHolder.getTimeZone());
+        System.out.println("ldtZdt>>>" + xdt);
+        System.out.println("userTz>>>" + LocaleContextHolder.getTimeZone());
         return xdt;
     }
 
@@ -46,7 +46,7 @@ public class TestDateTimeController {
         final Xdt xdt = new Xdt();
         xdt.zdt = zdt;
         xdt.ldt = zdt.withZoneSameInstant(StandardTimezone.ASIA𓃬SHANGHAI.toZoneId()).toLocalDateTime();
-        System.out.println("zdtLdt>>>"+xdt);
+        System.out.println("zdtLdt>>>" + xdt);
         return xdt;
     }
 
