@@ -143,14 +143,16 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
         LoaderOptionsStep<R> ldi = dsl.loadInto(table);
         if (ignoreOrReplace) {
             ldi.onDuplicateKeyIgnore();
-        } else {
+        }
+        else {
             ldi.onDuplicateKeyUpdate();
         }
         try {
             return ldi.loadRecords(records)
                       .fields(table.fields())
                       .execute();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new IORuntimeException(e);
         }
     }
@@ -182,7 +184,8 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
                       .onDuplicateKeyIgnore()
                       .execute();
 
-        } else {
+        }
+        else {
             RowCountQuery query = WingsJooqUtil.replaceInto(record);
             return dsl.execute(query);
         }
@@ -207,13 +210,12 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
             map.put(field, t);
         }
 
-        return dsl
-                .insertInto(table)
-                .columns(table.fields())
-                .values(record.intoArray())
-                .onDuplicateKeyUpdate()
-                .set(map)
-                .execute();
+        return dsl.insertInto(table)
+                  .columns(table.fields())
+                  .values(record.intoArray())
+                  .onDuplicateKeyUpdate()
+                  .set(map)
+                  .execute();
     }
 
     /**
@@ -281,7 +283,8 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
             String s1 = (String) o1;
             String s2 = (String) o2;
             return s1.equalsIgnoreCase(s2);
-        } else {
+        }
+        else {
             return o1.equals(o2);
         }
     };
@@ -318,13 +321,15 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
                     Object o = rcd.get(key);
                     if (cand == null) {
                         cand = key.eq(o);
-                    } else {
+                    }
+                    else {
                         cand = cand.and(key.eq(o));
                     }
                 }
                 if (where == null) {
                     where = cand;
-                } else {
+                }
+                else {
                     where = where.or(cand);
                 }
             }
@@ -355,7 +360,8 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
 
                 if (has) {
                     upd.add(rcd);
-                } else {
+                }
+                else {
                     ins.add(rcd);
                 }
             }
@@ -401,7 +407,8 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
                            .onDuplicateKeyIgnore()
                 );
 
-            } else {
+            }
+            else {
                 batch = dsl.batch(WingsJooqUtil.replaceInto(table, fields));
             }
 
@@ -469,7 +476,8 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
             for (Field wf : whereFields) {
                 if (where == null) {
                     where = wf.eq((Object) null);
-                } else {
+                }
+                else {
                     where = where.and(wf.eq((Object) null));
                 }
             }
@@ -527,7 +535,8 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
         List<R> rds;
         if (records instanceof List) {
             rds = (List<R>) records;
-        } else {
+        }
+        else {
             rds = new ArrayList<>(records);
         }
         for (List<R> pt : partition(rds, size)) {
@@ -542,7 +551,8 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
         List<R> rds;
         if (records instanceof List) {
             rds = (List<R>) records;
-        } else {
+        }
+        else {
             rds = new ArrayList<>(records);
         }
         return Lists.partition(rds, size);
@@ -570,12 +580,10 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
      * @return 结果
      */
     public List<P> fetch(T table, Condition cond) {
-        DSLContext dsl = ctx();
-        return dsl
-                .selectFrom(table)
-                .where(cond)
-                .fetch()
-                .map(mapper());
+        return ctx().selectFrom(table)
+                    .where(cond)
+                    .fetch()
+                    .map(mapper());
     }
 
     /**
@@ -602,18 +610,17 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
     public List<P> fetch(T table, Condition cond, OrderField<?>... orderBy) {
         DSLContext dsl = ctx();
         if (orderBy == null || orderBy.length == 0) {
-            return dsl
-                    .selectFrom(table)
-                    .where(cond)
-                    .fetch()
-                    .map(mapper());
-        } else {
-            return dsl
-                    .selectFrom(table)
-                    .where(cond)
-                    .orderBy(orderBy)
-                    .fetch()
-                    .map(mapper());
+            return dsl.selectFrom(table)
+                      .where(cond)
+                      .fetch()
+                      .map(mapper());
+        }
+        else {
+            return dsl.selectFrom(table)
+                      .where(cond)
+                      .orderBy(orderBy)
+                      .fetch()
+                      .map(mapper());
         }
     }
 
@@ -652,20 +659,19 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
     public List<P> fetch(T table, int offset, int limit, Condition cond, OrderField<?>... orderBy) {
         DSLContext dsl = ctx();
         if (orderBy == null || orderBy.length == 0) {
-            return dsl
-                    .selectFrom(table)
-                    .where(cond)
-                    .limit(offset, limit)
-                    .fetch()
-                    .map(mapper());
-        } else {
-            return dsl
-                    .selectFrom(table)
-                    .where(cond)
-                    .orderBy(orderBy)
-                    .limit(offset, limit)
-                    .fetch()
-                    .map(mapper());
+            return dsl.selectFrom(table)
+                      .where(cond)
+                      .limit(offset, limit)
+                      .fetch()
+                      .map(mapper());
+        }
+        else {
+            return dsl.selectFrom(table)
+                      .where(cond)
+                      .orderBy(orderBy)
+                      .limit(offset, limit)
+                      .fetch()
+                      .map(mapper());
         }
     }
 
@@ -691,10 +697,9 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
      */
     @Nullable
     public P fetchOne(T table, Condition cond) {
-        R record = ctx()
-                .selectFrom(table)
-                .where(cond)
-                .fetchOne();
+        R record = ctx().selectFrom(table)
+                        .where(cond)
+                        .fetchOne();
 
         return record == null ? null : mapper().map(record);
     }
@@ -710,12 +715,10 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
     }
 
     public <E> E fetchOne(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
-        DSLContext dsl = ctx();
-        return dsl
-                .select(fields)
-                .from(table)
-                .where(cond)
-                .fetchOneInto(claz);
+        return ctx().select(fields)
+                    .from(table)
+                    .where(cond)
+                    .fetchOneInto(claz);
     }
 
     public <E> E fetchOne(RecordMapper<? super Record, E> mapper, SelectField<?>... fields) {
@@ -727,12 +730,10 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
     }
 
     public <E> E fetchOne(RecordMapper<? super Record, E> mapper, T table, Condition cond, SelectField<?>... fields) {
-        DSLContext dsl = ctx();
-        return dsl
-                .select(fields)
-                .from(table)
-                .where(cond)
-                .fetchOne(mapper);
+        return ctx().select(fields)
+                    .from(table)
+                    .where(cond)
+                    .fetchOne(mapper);
     }
 
     public <E> List<E> fetch(Class<E> claz, SelectField<?>... fields) {
@@ -744,13 +745,11 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
     }
 
     public <E> List<E> fetch(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
-        DSLContext dsl = ctx();
-        return dsl
-                .select(fields)
-                .from(table)
-                .where(cond)
-                .fetch()
-                .into(claz);
+        return ctx().select(fields)
+                    .from(table)
+                    .where(cond)
+                    .fetch()
+                    .into(claz);
     }
 
     public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, SelectField<?>... fields) {
@@ -762,13 +761,11 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
     }
 
     public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, T table, Condition cond, SelectField<?>... fields) {
-        DSLContext dsl = ctx();
-        return dsl
-                .select(fields)
-                .from(table)
-                .where(cond)
-                .fetch()
-                .map(mapper);
+        return ctx().select(fields)
+                    .from(table)
+                    .where(cond)
+                    .fetch()
+                    .map(mapper);
     }
 
     ///////////////// delete /////////////////////
@@ -788,10 +785,9 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
      * @return 影响的数据条数
      */
     public int delete(T table, Condition cond) {
-        return ctx()
-                .delete(table)
-                .where(cond)
-                .execute();
+        return ctx().delete(table)
+                    .where(cond)
+                    .execute();
     }
 
     ///////////////// update /////////////////////
@@ -842,11 +838,10 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
 
         if (setter.isEmpty()) return 0;
 
-        return ctx()
-                .update(table)
-                .set(setter)
-                .where(cond)
-                .execute();
+        return ctx().update(table)
+                    .set(setter)
+                    .where(cond)
+                    .execute();
     }
 
     /**
@@ -950,11 +945,10 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
      * @return 结果
      */
     public long count(T table, Condition cond) {
-        Long cnt = ctx()
-                .selectCount()
-                .from(table)
-                .where(cond)
-                .fetchOne(0, Long.class);
+        Long cnt = ctx().selectCount()
+                        .from(table)
+                        .where(cond)
+                        .fetchOne(0, Long.class);
         return cnt == null ? 0 : cnt;
     }
 

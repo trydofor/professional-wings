@@ -24,6 +24,7 @@ import pro.fessional.wings.warlock.service.perm.WarlockPermService;
 import pro.fessional.wings.warlock.service.perm.WarlockRoleService;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -57,7 +58,7 @@ public class WarlockGrantServiceImpl implements WarlockGrantService, Initializin
     private WarlockRoleService warlockRoleService;
 
     @Override
-    public void grantRole(long refer, @NotNull GrantType type, @NotNull Set<Long> grant) {
+    public void grantRole(long refer, @NotNull GrantType type, @NotNull Collection<Long> grant) {
         if (grant.isEmpty()) return;
         journalService.commit(Jane.Grant, refer, grant, commit -> {
             List<WinRoleGrantRecord> pos = new ArrayList<>(grant.size());
@@ -75,7 +76,7 @@ public class WarlockGrantServiceImpl implements WarlockGrantService, Initializin
     }
 
     @Override
-    public void purgeRole(long refer, @NotNull GrantType type, @NotNull Set<Long> grant) {
+    public void purgeRole(long refer, @NotNull GrantType type, @NotNull Collection<Long> grant) {
         if (grant.isEmpty()) return;
         journalService.commit(Jane.Purge, refer, grant, commit -> {
             final WinRoleGrantTable t = winRoleGrantDao.getTable();
@@ -89,7 +90,7 @@ public class WarlockGrantServiceImpl implements WarlockGrantService, Initializin
 
 
     @Override
-    public void grantUser(long refer, @NotNull GrantType type, @NotNull Set<Long> grant) {
+    public void grantUser(long refer, @NotNull GrantType type, @NotNull Collection<Long> grant) {
         if (grant.isEmpty()) return;
         journalService.commit(Jane.Grant, refer, grant, commit -> {
             List<WinUserGrantRecord> pos = new ArrayList<>(grant.size());
@@ -107,7 +108,7 @@ public class WarlockGrantServiceImpl implements WarlockGrantService, Initializin
     }
 
     @Override
-    public void purgeUser(long refer, @NotNull GrantType type, @NotNull Set<Long> grant) {
+    public void purgeUser(long refer, @NotNull GrantType type, @NotNull Collection<Long> grant) {
         if (grant.isEmpty()) return;
         journalService.commit(Jane.Purge, refer, grant, commit -> {
             final WinUserGrantTable t = winUserGrantDao.getTable();

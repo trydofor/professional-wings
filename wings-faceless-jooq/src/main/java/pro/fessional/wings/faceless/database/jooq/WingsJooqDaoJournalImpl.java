@@ -123,12 +123,12 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
     @NotNull
     public <Z> List<P> fetchRangeLive(Field<Z> field, Z lowerInclusive, Z upperInclusive) {
         final Condition cond = lowerInclusive == null
-                ? upperInclusive == null
-                ? noCondition()
-                : field.le(upperInclusive)
-                : upperInclusive == null
-                ? field.ge(lowerInclusive)
-                : field.between(lowerInclusive, upperInclusive);
+                               ? upperInclusive == null
+                                 ? noCondition()
+                                 : field.le(upperInclusive)
+                               : upperInclusive == null
+                                 ? field.ge(lowerInclusive)
+                                 : field.between(lowerInclusive, upperInclusive);
         return fetchLive(table, cond);
     }
 
@@ -219,10 +219,10 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
      */
     public int delete(JournalService.Journal commit, T table, Condition cond) {
         return ctx()
-                .update(table)
-                .set(table.markDelete(commit))
-                .where(cond)
-                .execute();
+                       .update(table)
+                       .set(table.markDelete(commit))
+                       .where(cond)
+                       .execute();
     }
 
     /**
