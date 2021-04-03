@@ -2,7 +2,6 @@ package pro.fessional.wings.slardar.autozone.json;
 
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import org.springframework.context.i18n.LocaleContextHolder;
-import pro.fessional.wings.silencer.datetime.DateTimePattern;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -16,10 +15,6 @@ import java.time.format.DateTimeFormatter;
  * @since 2019-09-01
  */
 public class JacksonZonedDeserializer extends InstantDeserializer<ZonedDateTime> {
-
-    public JacksonZonedDeserializer() {
-        this(DateTimePattern.FMT_FULL_19);
-    }
 
     public JacksonZonedDeserializer(DateTimeFormatter formatter) {
         super(ZonedDateTime.class,

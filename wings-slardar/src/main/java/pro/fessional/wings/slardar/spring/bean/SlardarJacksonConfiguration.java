@@ -1,9 +1,7 @@
 package pro.fessional.wings.slardar.spring.bean;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.DateDeserializers;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -18,8 +16,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedSerializer;
@@ -46,6 +42,7 @@ public class SlardarJacksonConfiguration {
 
     private static final Log logger = LogFactory.getLog(SlardarJacksonConfiguration.class);
 
+/*
     @Bean
     @Primary
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
@@ -60,6 +57,7 @@ public class SlardarJacksonConfiguration {
         logger.info("Wings conf jackson XmlMapper");
         return builder.createXmlMapper(true).build();
     }
+*/
 
     /**
      * The context’s Jackson2ObjectMapperBuilder can be customized by one or more
@@ -77,8 +75,8 @@ public class SlardarJacksonConfiguration {
     public Jackson2ObjectMapperBuilderCustomizer customizerFront() {
         logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer");
         return builder -> {
-//            builder.timeZone(LocaleContextHolder.getTimeZone());
 
+            // local
             builder.serializerByType(LocalDateTime.class, new LocalDateTimeSerializer(DateTimePattern.FMT_FULL_19));
             builder.serializerByType(LocalTime.class, new LocalTimeSerializer(DateTimePattern.FMT_TIME_08));
             builder.serializerByType(LocalDate.class, new LocalDateSerializer(DateTimePattern.FMT_DATE_10));
@@ -87,16 +85,16 @@ public class SlardarJacksonConfiguration {
             builder.deserializerByType(LocalTime.class, new LocalTimeDeserializer(DateTimePattern.FMT_TIME_08));
             builder.deserializerByType(LocalDate.class, new LocalDateDeserializer(DateTimePattern.FMT_DATE_10));
 
-            // zoned
-            builder.serializerByType(ZonedDateTime.class, new JacksonZonedSerializer(DateTimePattern.FMT_FULL_19));
-            builder.deserializerByType(ZonedDateTime.class, new JacksonZonedDeserializer(DateTimePattern.FMT_FULL_19));
-
             // util date
             DateFormat dateFormat = new SimpleDateFormat(DateTimePattern.PTN_FULL_19);
             builder.serializerByType(Date.class, new DateSerializer(false, dateFormat));
             DateDeserializers.DateDeserializer base = DateDeserializers.DateDeserializer.instance;
             DateDeserializers.DateDeserializer dateDeserializer = new DateDeserializers.DateDeserializer(base, dateFormat, DateTimePattern.PTN_FULL_19);
             builder.deserializerByType(Date.class, dateDeserializer);
+
+            // auto zoned
+            builder.serializerByType(ZonedDateTime.class, new JacksonZonedSerializer(DateTimePattern.FMT_FULL_19));
+            builder.deserializerByType(ZonedDateTime.class, new JacksonZonedDeserializer(DateTimePattern.FMT_FULL_19));
         };
     }
 }
