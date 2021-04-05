@@ -3,142 +3,43 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- mvn -f pom-import.xml clean compile -->
-
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.2</version>
-        <relativePath/>
+        <groupId>pro.fessional</groupId>
+        <artifactId>wings-home</artifactId>
+        <version>${revision}.${changelist}</version>
     </parent>
 
-    <groupId>pro.fessional</groupId>
+    <groupId>com.moilioncircle.roshan</groupId>
     <artifactId>wings-example</artifactId>
-    <packaging>jar</packaging>
-    <version>2.4.2-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <version>${revision}-SNAPSHOT</version>
 
     <name>wings-example</name>
-    <description>演示例子</description>
+
+    <modules>
+        <module>demo-common</module>
+        <module>demo-admin</module>
+    </modules>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.test.skip>true</maven.test.skip>
-
-        <jooq.version>3.14.4</jooq.version>
-        <wings.version>2.4.2.100-SNAPSHOT</wings.version>
-        <okhttp3.version>4.9.0</okhttp3.version>
+        <demo-revision>1.0.0-SNAPSHOT</demo-revision>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>pro.fessional</groupId>
-                <artifactId>wings-home</artifactId>
-                <version>${wings.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
+                <groupId>com.moilioncircle.roshan</groupId>
+                <artifactId>demo-common</artifactId>
+                <version>${revision}-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.moilioncircle.roshan</groupId>
+                <artifactId>demo-admin</artifactId>
+                <version>${revision}-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <dependencies>
-        <dependency>
-            <groupId>pro.fessional</groupId>
-            <artifactId>wings-faceless-jooq</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional</groupId>
-            <artifactId>wings-faceless-shard</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional</groupId>
-            <artifactId>wings-slardar</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-cache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.session</groupId>
-            <artifactId>spring-session-hazelcast</artifactId>
-        </dependency>
-
-        <!-- redis -->
-<!--        <dependency>-->
-<!--            <groupId>org.redisson</groupId>-->
-<!--            <artifactId>redisson-spring-data-22</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-data-redis</artifactId>-->
-<!--        </dependency>-->
-        <!-- websocket -->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-websocket</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.security</groupId>-->
-<!--            <artifactId>spring-security-messaging</artifactId>-->
-<!--        </dependency>-->
-        <!-- ops -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <!-- dev -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-codegen</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <!-- swagger -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>transmittable-thread-local</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-        </dependency>
-        <!-- test -->
-        <dependency>
-            <groupId>pro.fessional</groupId>
-            <artifactId>wings-faceless-flywave</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
     <build>
         <plugins>
             <plugin>

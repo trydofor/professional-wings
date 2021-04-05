@@ -27,6 +27,8 @@
         <module>wings-faceless-test</module>
         <module>wings-slardar</module>
         <module>wings-warlock</module>
+        <!-- sample -->
+        <module>wings-example</module>
     </modules>
 
     <properties>
