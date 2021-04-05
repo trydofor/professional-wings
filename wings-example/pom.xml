@@ -17,8 +17,9 @@
     <name>wings-example</name>
 
     <modules>
-        <module>demo-common</module>
         <module>demo-admin</module>
+        <module>demo-common</module>
+        <module>demo-devops</module>
     </modules>
 
     <properties>
