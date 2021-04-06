@@ -7,11 +7,11 @@ import org.jooq.meta.ColumnDefinition;
 import org.jooq.meta.Definition;
 import org.jooq.meta.TableDefinition;
 import pro.fessional.mirana.data.Null;
+import pro.fessional.wings.faceless.database.jooq.WingsJournalTable;
+import pro.fessional.wings.faceless.service.journal.JournalAware;
+import pro.fessional.wings.faceless.service.lightid.LightIdAware;
 
 import java.util.List;
-
-import static pro.fessional.wings.faceless.jooqgen.WingsJooqGenHelp.JournalAware;
-import static pro.fessional.wings.faceless.jooqgen.WingsJooqGenHelp.LightIdAware;
 
 /**
  * @author trydofor
@@ -27,14 +27,14 @@ public class WingsJavaStrategy extends DefaultGeneratorStrategy {
 
         List<ColumnDefinition> columns = ((TableDefinition) definition).getColumns();
         if (mode == GeneratorStrategy.Mode.INTERFACE) {
-            if (columns.stream().anyMatch(JournalAware)) {
-                impls.add("pro.fessional.wings.faceless.service.journal.JournalAware");
+            if (columns.stream().anyMatch(WingsJooqGenHelp.JournalAware)) {
+                impls.add(JournalAware.class.getName());
             }
         } else if (mode == GeneratorStrategy.Mode.DEFAULT) {
             String java = getJavaClassName(definition, mode);
-            impls.add("pro.fessional.wings.faceless.database.jooq.WingsAliasTable<" + java + ">");
-            if (columns.stream().anyMatch(LightIdAware)) {
-                impls.add("pro.fessional.wings.faceless.service.lightid.LightIdAware");
+            impls.add(WingsJournalTable.class.getName() + "<" + java + ">");
+            if (columns.stream().anyMatch(WingsJooqGenHelp.LightIdAware)) {
+                impls.add(LightIdAware.class.getName());
             }
         }
 

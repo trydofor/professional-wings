@@ -1,96 +1,85 @@
 package pro.fessional.wings.warlock.security.autogen;
 
 /**
- * @since 2021-03-05
+ * @since 2021-04-01
  */
 public interface PermConstant {
-
 
     interface System {
 
         interface Perm {
 
             /**
-             * id=21, remark=读取
-             */
-            String read = "system.perm.read";
-
-            /**
-             * id=22, remark=搜索
-             */
-            String search = "system.perm.search";
-
-            /**
-             * id=23, remark=创建
+             * id=21, remark=权限创建
              */
             String create = "system.perm.create";
+            long ID$create = 21;
 
             /**
-             * id=24, remark=编辑
+             * id=22, remark=权限编辑
              */
             String update = "system.perm.update";
+            long ID$update = 22;
 
             /**
-             * id=25, remark=删除
+             * id=23, remark=权限删除
              */
             String delete = "system.perm.delete";
+            long ID$delete = 23;
 
+            /**
+             * id=24, remark=角色指派，给用户或角色
+             */
+            String assign = "system.perm.assign";
+            long ID$assign = 24;
         }
+
         interface Role {
 
             /**
-             * id=31, remark=读取
-             */
-            String read = "system.role.read";
-
-            /**
-             * id=32, remark=搜索
-             */
-            String search = "system.role.search";
-
-            /**
-             * id=33, remark=创建
+             * id=31, remark=角色创建
              */
             String create = "system.role.create";
+            long ID$create = 31;
 
             /**
-             * id=34, remark=编辑
+             * id=32, remark=角色编辑
              */
             String update = "system.role.update";
+            long ID$update = 32;
 
             /**
-             * id=35, remark=删除
+             * id=33, remark=角色删除
              */
             String delete = "system.role.delete";
+            long ID$delete = 33;
 
+            /**
+             * id=34, remark=角色指派，给用户或角色
+             */
+            String assign = "system.role.assign";
+            long ID$assign = 34;
         }
+
         interface User {
 
             /**
-             * id=11, remark=读取
-             */
-            String read = "system.user.read";
-
-            /**
-             * id=12, remark=搜索
-             */
-            String search = "system.user.search";
-
-            /**
-             * id=13, remark=创建
+             * id=11, remark=用户创建
              */
             String create = "system.user.create";
+            long ID$create = 11;
 
             /**
-             * id=14, remark=编辑
+             * id=12, remark=用户编辑
              */
             String update = "system.user.update";
+            long ID$update = 12;
 
             /**
-             * id=15, remark=删除
+             * id=13, remark=用户删除
              */
             String delete = "system.user.delete";
-
+            long ID$delete = 13;
         }
     }
 }

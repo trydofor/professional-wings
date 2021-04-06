@@ -31,6 +31,13 @@ public class ComboWingsAuthPageHandler implements WingsAuthPageHandler {
     @Override
     public ResponseEntity<?> response(@NotNull Enum<?> authType, @Nullable MimeType mimeType, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         dclCombos.runIfDirty();
+        if (mimeType == null) {
+            try {
+                mimeType = MimeType.valueOf(request.getContentType());
+            } catch (Exception e) {
+                // ignore
+            }
+        }
         for (Combo combo : combos) {
             ResponseEntity<?> res = combo.response(authType, mimeType, request, response);
             if (res != null) return res;

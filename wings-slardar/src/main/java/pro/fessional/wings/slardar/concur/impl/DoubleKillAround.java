@@ -1,12 +1,15 @@
 package pro.fessional.wings.slardar.concur.impl;
 
+import com.alibaba.ttl.threadpool.TtlExecutors;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.expression.AnnotatedElementKey;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.context.expression.CachedExpressionEvaluator;
@@ -16,13 +19,14 @@ import org.springframework.core.annotation.Order;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.lang.Nullable;
+import org.springframework.scheduling.annotation.AsyncAnnotationBeanPostProcessor;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.lock.ArrayKey;
 import pro.fessional.mirana.lock.JvmStaticGlobalLock;
 import pro.fessional.wings.slardar.concur.DoubleKill;
 import pro.fessional.wings.slardar.concur.DoubleKillException;
 import pro.fessional.wings.slardar.concur.ProgressContext;
-import pro.fessional.wings.slardar.security.SecurityContextUtil;
+import pro.fessional.wings.slardar.context.TerminalContext;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -39,6 +43,7 @@ import java.util.concurrent.locks.Lock;
  */
 @Aspect
 @Order(Ordered.HIGHEST_PRECEDENCE)
+@Slf4j
 public class DoubleKillAround {
 
     private final Evaluator evaluator = new Evaluator();
@@ -46,25 +51,14 @@ public class DoubleKillAround {
     @Setter(onMethod_ = {@Autowired(required = false)})
     private BeanFactory beanFactory;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = {@Autowired, @Qualifier(AsyncAnnotationBeanPostProcessor.DEFAULT_TASK_EXECUTOR_BEAN_NAME)})
     private Executor asyncExecutor;
 
     @Around("@annotation(pro.fessional.wings.slardar.concur.DoubleKill)")
     public Object doubleKill(ProceedingJoinPoint joinPoint) throws Throwable {
         final Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         final DoubleKill doubleKill = method.getAnnotation(DoubleKill.class);
-        final Object principal;
-
-        if (doubleKill.principal()) {
-            final Object p = SecurityContextUtil.getPrincipal();
-            if (p == null) {
-                principal = Boolean.TRUE;
-            } else {
-                principal = p;
-            }
-        } else {
-            principal = Boolean.FALSE;
-        }
+        final Object principal = TerminalContext.get().getUserId();
         final Object[] args = joinPoint.getArgs();
 
         final String keyStr = doubleKill.value();
@@ -95,9 +89,8 @@ public class DoubleKillAround {
             try {
                 final ProgressContext.Bar bar = ProgressContext.gen(arrKey, now, ttl);
                 if (doubleKill.async()) {
-                    if (asyncExecutor == null) {
-                        asyncExecutor = Executors.newWorkStealingPool();
-                    }
+
+                    checkTtlExecutor();
 
                     asyncExecutor.execute(() -> {
                         try {
@@ -121,6 +114,20 @@ public class DoubleKillAround {
             } else {
                 throw new DoubleKillException(bar.getKey(), bar.getStarted(), now);
             }
+        }
+    }
+
+    private void checkTtlExecutor() {
+        if (TtlExecutors.isTtlWrapper(asyncExecutor)) return;
+
+        synchronized (evaluator) {
+            if (TtlExecutors.isTtlWrapper(asyncExecutor)) return;
+
+            if (asyncExecutor == null) {
+                log.warn("config default Executors use newWorkStealingPool");
+                asyncExecutor = Executors.newWorkStealingPool();
+            }
+            asyncExecutor = TtlExecutors.getTtlExecutor(asyncExecutor);
         }
     }
 

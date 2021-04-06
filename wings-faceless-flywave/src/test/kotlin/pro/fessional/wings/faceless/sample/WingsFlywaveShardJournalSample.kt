@@ -9,9 +9,8 @@ import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager
+import pro.fessional.wings.faceless.flywave.WingsRevision
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
-import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_1ST_SCHEMA
-import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_2ND_IDLOGS
 
 /**
  * @author trydofor
@@ -38,7 +37,7 @@ class WingsFlywaveShardJournalSample {
         schemaRevisionManager.checkAndInitSql(sqls, 0)
 
         // 升级
-        schemaRevisionManager.publishRevision(REVISION_2ND_IDLOGS, 0)
+        schemaRevisionManager.publishRevision(WingsRevision.V01_19_0520_01_IdLog.revision(), 0)
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
 
         // 单库强升
@@ -64,6 +63,6 @@ class WingsFlywaveShardJournalSample {
         schemaJournalManager.publishDelete(table, false, 0)
 
         // 降级
-        schemaRevisionManager.publishRevision(REVISION_1ST_SCHEMA, 0)
+        schemaRevisionManager.publishRevision(WingsRevision.V00_19_0512_01_Schema.revision(), 0)
     }
 }

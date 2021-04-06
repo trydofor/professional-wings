@@ -57,7 +57,7 @@ Role主要用在filter级的配置上，如在配置url权限时。当然也可�
 
 ### 4.2.3.远行机制
 
-Warlock在用户通过身边鉴别（authn）后，会分别加载和用户绑定的Perm和Role，
+Warlock在用户通过身边鉴别（renew）后，会分别加载和用户绑定的Perm和Role，
 并扁平化其各自的所属和继承关系，全部加载到SecurityContext中。
 
 
@@ -70,4 +70,32 @@ Warlock在用户通过身边鉴别（authn）后，会分别加载和用户绑�
 * 公司(Corp)，以corp_id为主，通常和domain有关
 
 
+## 4.4.功能定制
 
+和wings所有工程一样，所有远行功能都可以通过 spring-wings-enabled-77.properties 关闭。
+不过功能之间的依赖，需要使用者自行关照，需要阅读代码。后续文档中提到`暴露`，指声明一个Bean
+
+### 4.4.1.定制登录
+
+登录分登录页面`login-page*`和处理接口`*login*`，前者（有`page`），区别如下，
+
+ * login-page，展示给用户的登录页面，一般是401时自动重定向。
+ * login，为提交凭证后的处理或回调接口，由filter执行。
+ 
+可以通过以下4种方式，不同程度的改变Warlock提供的默认登录页面和返回结果。
+
+ * 暴露 ComboWingsAuthPageHandler.Combo，增加处理细节。
+ * 暴露 WingsAuthPageHandler，替换处理细节。
+ * 指定 wings.warlock.security.login-page，定向到自定义页面。
+ * 暴露 Authentication*Handler，自行处理登录或登出的事件。
+ 
+默认实现中，login中会在cookie和header中放置sessionId，logout是清空session
+
+### 4.4.2.定制验证
+
+ * 暴露 ComboWingsAuthDetailsSource.Combo，增加details
+ * 暴露 WingsAuthDetailsSource 替换处理细节
+ * 暴露 ComboWingsUserDetailsService.Combo，增加加载细节
+ * 暴露 WingsUserDetailsService，替换用户加载
+
+### 4.4.3.定制授权

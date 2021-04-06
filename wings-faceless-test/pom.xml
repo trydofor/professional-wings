@@ -20,7 +20,6 @@
             <groupId>pro.fessional</groupId>
             <artifactId>mirana</artifactId>
         </dependency>
-        <!-- springboot auto config -->
         <dependency>
             <groupId>pro.fessional</groupId>
             <artifactId>wings-faceless</artifactId>

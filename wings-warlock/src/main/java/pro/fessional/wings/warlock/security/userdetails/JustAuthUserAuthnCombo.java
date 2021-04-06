@@ -4,11 +4,12 @@ import com.alibaba.fastjson.JSON;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.model.AuthUser;
 import org.jetbrains.annotations.NotNull;
-import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserAnthn;
-import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserBasic;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserAuthnCombo;
+
+import static pro.fessional.wings.warlock.service.user.WarlockUserAuthnService.Authn;
+import static pro.fessional.wings.warlock.service.user.WarlockUserBasisService.Basis;
 
 /**
  * @author trydofor
@@ -23,28 +24,30 @@ public class JustAuthUserAuthnCombo extends DefaultUserAuthnCombo {
     }
 
     @Override
-    protected void beforeInsert(WinUserBasic pojo, @NotNull Enum<?> authType, String username, Object details) {
+    protected void beforeSave(Basis basis, @NotNull Enum<?> authType, String username, Object details) {
         AuthUser user = (AuthUser) details;
-        pojo.setNickname(user.getNickname());
-        pojo.setAvatar(user.getAvatar());
+        basis.setNickname(user.getNickname());
+        basis.setAvatar(user.getAvatar());
         final AuthUserGender aug = user.getGender();
         if (aug == AuthUserGender.FEMALE) {
-            pojo.setGender(UserGender.FEMALE);
-        } else if (aug == AuthUserGender.MALE) {
-            pojo.setGender(UserGender.MALE);
-        } else {
-            pojo.setGender(UserGender.UNKNOWN);
+            basis.setGender(UserGender.FEMALE);
         }
-        pojo.setRemark(user.getRemark());
-        pojo.setStatus(UserStatus.ACTIVE);
+        else if (aug == AuthUserGender.MALE) {
+            basis.setGender(UserGender.MALE);
+        }
+        else {
+            basis.setGender(UserGender.UNKNOWN);
+        }
+        basis.setRemark(user.getRemark());
+        basis.setStatus(UserStatus.ACTIVE);
     }
 
     @Override
-    protected void beforeInsert(WinUserAnthn pojo, @NotNull Enum<?> authType, String username, Object details) {
+    protected void beforeSave(Authn authn, @NotNull Enum<?> authType, String username, Object details) {
         AuthUser user = (AuthUser) details;
-        pojo.setUsername(user.getUuid());
-        pojo.setExtraPara(JSON.toJSONString(user.getToken()));
-        pojo.setExtraUser(JSON.toJSONString(user.getRawUserInfo()));
+        authn.setUsername(user.getUuid());
+        authn.setExtraPara(JSON.toJSONString(user.getToken()));
+        authn.setExtraUser(JSON.toJSONString(user.getRawUserInfo()));
     }
 
     @Override

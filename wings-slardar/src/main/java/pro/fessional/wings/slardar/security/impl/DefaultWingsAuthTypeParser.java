@@ -43,7 +43,7 @@ public class DefaultWingsAuthTypeParser implements WingsAuthTypeParser {
     public @NotNull String parse(Enum<?> at) {
         final String s = enumStrMap.get(at);
         if (s == null) {
-            final String mes = "can not parse enum to string, enum=" + EnumConvertor.enum2Str(at);
+            final String mes = "failed to parse enum=" + EnumConvertor.enum2Str(at);
             throw new IllegalArgumentException(mes);
         }
         return s;

@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import pro.fessional.mirana.i18n.I18nString;
-import pro.fessional.wings.silencer.context.WingsI18nContext;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -21,12 +21,10 @@ public class I18nStringSerializer extends JsonSerializer<Object> implements Cont
 
     private final AtomicReference<I18nStringSerializer> oppositeOne = new AtomicReference<>();
     private final MessageSource messageSource;
-    private final WingsI18nContext i18nContext;
     private final boolean enabled;
 
-    public I18nStringSerializer(MessageSource messageSource, WingsI18nContext i18nContext, boolean enabled) {
+    public I18nStringSerializer(MessageSource messageSource, boolean enabled) {
         this.messageSource = messageSource;
-        this.i18nContext = i18nContext;
         this.enabled = enabled;
     }
 
@@ -38,9 +36,7 @@ public class I18nStringSerializer extends JsonSerializer<Object> implements Cont
             return;
         }
 
-        Locale locale = null;
-        if (i18nContext != null) locale = i18nContext.getLocale();
-        if (locale == null) locale = provider.getLocale();
+        Locale locale = LocaleContextHolder.getLocale();
 
         if (value instanceof CharSequence) {
             String text = value.toString();
@@ -74,7 +70,7 @@ public class I18nStringSerializer extends JsonSerializer<Object> implements Cont
         I18nStringSerializer that = oppositeOne.get();
         // 不需要同步，不影响结果
         if (that == null) {
-            that = new I18nStringSerializer(messageSource, i18nContext, !enabled);
+            that = new I18nStringSerializer(messageSource, !enabled);
             oppositeOne.set(that);
         }
         return that;

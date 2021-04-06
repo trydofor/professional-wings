@@ -297,11 +297,11 @@ public class WingsCodeGenerator {
             return forcedType(ft);
         }
 
-        public <E extends Enum<E> & CodeEnum> Builder forcedCodeEnum(Class<E> en, String... reg) {
+        public <E extends Enum<E> & CodeEnum> Builder forcedStrCodeEnum(Class<E> en, String... reg) {
             return forcedJooqEnum(en, JooqCodeEnumConverter.class, reg);
         }
 
-        public <E extends Enum<E> & ConstantEnum> Builder forcedConsEnum(Class<E> en, String... reg) {
+        public <E extends Enum<E> & ConstantEnum> Builder forcedIntConsEnum(Class<E> en, String... reg) {
             return forcedJooqEnum(en, JooqConsEnumConverter.class, reg);
         }
 
@@ -324,7 +324,7 @@ public class WingsCodeGenerator {
             ForcedType ft = new ForcedType()
                     .withUserType(userType.getName())
                     // new JooqConsEnumConverter(StandardLanguage.class)
-                    .withConverter("new " + cv + "(" + userType.getSimpleName() + ".class)")
+                    .withConverter("new " + cv + "(" + userType.getName() + ".class)")
                     .withExpression(String.join("|", reg));
 
             return forcedType(ft, cv);

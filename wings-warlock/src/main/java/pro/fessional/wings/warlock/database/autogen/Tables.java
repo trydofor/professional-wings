@@ -8,13 +8,11 @@ import pro.fessional.wings.warlock.database.autogen.tables.SysConstantEnumTable;
 import pro.fessional.wings.warlock.database.autogen.tables.SysStandardI18nTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinPermEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinRoleEntryTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinRolePermMapTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinRoleRoleMapTable;
+import pro.fessional.wings.warlock.database.autogen.tables.WinRoleGrantTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAnthnTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasicTable;
+import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
+import pro.fessional.wings.warlock.database.autogen.tables.WinUserGrantTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserLoginTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserPermMapTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserRoleMapTable;
 
 import javax.annotation.Generated;
 
@@ -54,14 +52,9 @@ public class Tables {
     public static final WinRoleEntryTable WinRoleEntry = WinRoleEntryTable.WinRoleEntry;
 
     /**
-     * The table <code>win_role_perm_map</code>.
+     * The table <code>win_role_grant</code>.
      */
-    public static final WinRolePermMapTable WinRolePermMap = WinRolePermMapTable.WinRolePermMap;
-
-    /**
-     * The table <code>win_role_role_map</code>.
-     */
-    public static final WinRoleRoleMapTable WinRoleRoleMap = WinRoleRoleMapTable.WinRoleRoleMap;
+    public static final WinRoleGrantTable WinRoleGrant = WinRoleGrantTable.WinRoleGrant;
 
     /**
      * The table <code>win_user_anthn</code>.
@@ -69,22 +62,17 @@ public class Tables {
     public static final WinUserAnthnTable WinUserAnthn = WinUserAnthnTable.WinUserAnthn;
 
     /**
-     * The table <code>win_user_basic</code>.
+     * The table <code>win_user_basis</code>.
      */
-    public static final WinUserBasicTable WinUserBasic = WinUserBasicTable.WinUserBasic;
+    public static final WinUserBasisTable WinUserBasis = WinUserBasisTable.WinUserBasis;
+
+    /**
+     * The table <code>win_user_grant</code>.
+     */
+    public static final WinUserGrantTable WinUserGrant = WinUserGrantTable.WinUserGrant;
 
     /**
      * The table <code>win_user_login</code>.
      */
     public static final WinUserLoginTable WinUserLogin = WinUserLoginTable.WinUserLogin;
-
-    /**
-     * The table <code>win_user_perm_map</code>.
-     */
-    public static final WinUserPermMapTable WinUserPermMap = WinUserPermMapTable.WinUserPermMap;
-
-    /**
-     * The table <code>win_user_role_map</code>.
-     */
-    public static final WinUserRoleMapTable WinUserRoleMap = WinUserRoleMapTable.WinUserRoleMap;
 }

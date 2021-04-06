@@ -7,7 +7,7 @@ package pro.fessional.wings.warlock.database.autogen.tables.daos;
 import org.jooq.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl;
+import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoJournalImpl;
 import pro.fessional.wings.warlock.database.autogen.tables.WinRoleEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinRoleEntry;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinRoleEntryRecord;
@@ -30,7 +30,7 @@ import java.util.List;
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @Repository
-public class WinRoleEntryDao extends WingsJooqDaoImpl<WinRoleEntryTable, WinRoleEntryRecord, WinRoleEntry, Long> {
+public class WinRoleEntryDao extends WingsJooqDaoJournalImpl<WinRoleEntryTable, WinRoleEntryRecord, WinRoleEntry, Long> {
 
     /**
      * Create a new WinRoleEntryDao without any configuration
@@ -155,5 +155,111 @@ public class WinRoleEntryDao extends WingsJooqDaoImpl<WinRoleEntryTable, WinRole
      */
     public List<WinRoleEntry> fetchByRemark(String... values) {
         return fetch(WinRoleEntryTable.WinRoleEntry.Remark, values);
+    }
+
+
+    /**
+     * Fetch records that have <code>id BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRoleEntry> fetchRangeOfIdLive(Long lowerInclusive, Long upperInclusive) {
+        return fetchRangeLive(WinRoleEntryTable.WinRoleEntry.Id, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>id IN (values)</code>
+     */
+    public List<WinRoleEntry> fetchByIdLive(Long... values) {
+        return fetchLive(WinRoleEntryTable.WinRoleEntry.Id, values);
+    }
+
+    /**
+     * Fetch a unique record that has <code>id = value</code>
+     */
+    public WinRoleEntry fetchOneByIdLive(Long value) {
+        return fetchOneLive(WinRoleEntryTable.WinRoleEntry.Id, value);
+    }
+
+    /**
+     * Fetch records that have <code>create_dt BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRoleEntry> fetchRangeOfCreateDtLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRangeLive(WinRoleEntryTable.WinRoleEntry.CreateDt, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>create_dt IN (values)</code>
+     */
+    public List<WinRoleEntry> fetchByCreateDtLive(LocalDateTime... values) {
+        return fetchLive(WinRoleEntryTable.WinRoleEntry.CreateDt, values);
+    }
+
+    /**
+     * Fetch records that have <code>modify_dt BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRoleEntry> fetchRangeOfModifyDtLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRangeLive(WinRoleEntryTable.WinRoleEntry.ModifyDt, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>modify_dt IN (values)</code>
+     */
+    public List<WinRoleEntry> fetchByModifyDtLive(LocalDateTime... values) {
+        return fetchLive(WinRoleEntryTable.WinRoleEntry.ModifyDt, values);
+    }
+
+    /**
+     * Fetch records that have <code>delete_dt BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRoleEntry> fetchRangeOfDeleteDtLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRangeLive(WinRoleEntryTable.WinRoleEntry.DeleteDt, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>delete_dt IN (values)</code>
+     */
+    public List<WinRoleEntry> fetchByDeleteDtLive(LocalDateTime... values) {
+        return fetchLive(WinRoleEntryTable.WinRoleEntry.DeleteDt, values);
+    }
+
+    /**
+     * Fetch records that have <code>commit_id BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRoleEntry> fetchRangeOfCommitIdLive(Long lowerInclusive, Long upperInclusive) {
+        return fetchRangeLive(WinRoleEntryTable.WinRoleEntry.CommitId, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>commit_id IN (values)</code>
+     */
+    public List<WinRoleEntry> fetchByCommitIdLive(Long... values) {
+        return fetchLive(WinRoleEntryTable.WinRoleEntry.CommitId, values);
+    }
+
+    /**
+     * Fetch records that have <code>name BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRoleEntry> fetchRangeOfNameLive(String lowerInclusive, String upperInclusive) {
+        return fetchRangeLive(WinRoleEntryTable.WinRoleEntry.Name, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>name IN (values)</code>
+     */
+    public List<WinRoleEntry> fetchByNameLive(String... values) {
+        return fetchLive(WinRoleEntryTable.WinRoleEntry.Name, values);
+    }
+
+    /**
+     * Fetch records that have <code>remark BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinRoleEntry> fetchRangeOfRemarkLive(String lowerInclusive, String upperInclusive) {
+        return fetchRangeLive(WinRoleEntryTable.WinRoleEntry.Remark, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>remark IN (values)</code>
+     */
+    public List<WinRoleEntry> fetchByRemarkLive(String... values) {
+        return fetchLive(WinRoleEntryTable.WinRoleEntry.Remark, values);
     }
 }

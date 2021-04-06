@@ -24,6 +24,8 @@ import java.util.Map;
 public class WingsBindLoginConfigurer extends
         AbstractAuthenticationFilterConfigurer<HttpSecurity, WingsBindLoginConfigurer, WingsBindAuthFilter> {
 
+    public static final String TokenAuthType = "{authType}";
+
     public WingsBindLoginConfigurer() {
         super(new WingsBindAuthFilter(), null);
         usernameParameter("username");
@@ -58,6 +60,7 @@ public class WingsBindLoginConfigurer extends
 
     private String headerName = null;
     private String paramName = null;
+    private String loginProcessingUrl = null;
     private WingsAuthTypeSource bindAuthTypeSource = null;
     private final Map<String, Enum<?>> authTypes = new HashMap<>();
 
@@ -84,6 +87,12 @@ public class WingsBindLoginConfigurer extends
     public WingsBindLoginConfigurer bindAuthTypeSource(WingsAuthTypeSource bindAuthTypeSource) {
         this.bindAuthTypeSource = bindAuthTypeSource;
         return this;
+    }
+
+    @Override
+    public WingsBindLoginConfigurer loginProcessingUrl(String loginProcessingUrl) {
+        this.loginProcessingUrl = loginProcessingUrl;
+        return super.loginProcessingUrl(loginProcessingUrl.replace(TokenAuthType, "*"));
     }
 
     @Override
@@ -116,7 +125,7 @@ public class WingsBindLoginConfigurer extends
                 parser = context.getBeanProvider(WingsAuthTypeParser.class).getIfAvailable();
             }
             if (parser != null) {
-                bindAuthTypeSource = new DefaultWingsAuthTypeSource(getLoginProcessingUrl(), paramName, headerName, parser);
+                bindAuthTypeSource = new DefaultWingsAuthTypeSource(loginProcessingUrl, paramName, headerName, parser);
             }
         }
 

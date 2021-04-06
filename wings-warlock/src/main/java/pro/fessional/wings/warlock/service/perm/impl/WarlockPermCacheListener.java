@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.warlock.database.autogen.tables.WinPermEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinRoleEntryTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinRoleRoleMapTable;
+import pro.fessional.wings.warlock.database.autogen.tables.WinRoleGrantTable;
 import pro.fessional.wings.warlock.event.cache.TableChangeEvent;
 
 /**
@@ -35,8 +35,8 @@ public class WarlockPermCacheListener {
             warlockPermServer.evictPermAllCache();
         } else if (WinRoleEntryTable.class.equals(table)) {
             warlockRoleService.evictRoleAllCache();
-        } else if (WinRoleRoleMapTable.class.equals(table)) {
-            warlockRoleService.evictRoleMapCache();
+        } else if (WinRoleGrantTable.class.equals(table)) {
+            warlockRoleService.evictRoleGrantCache();
         }
     }
 }

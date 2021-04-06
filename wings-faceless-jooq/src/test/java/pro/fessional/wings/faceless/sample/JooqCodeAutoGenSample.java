@@ -35,7 +35,7 @@ public class JooqCodeAutoGenSample {
 //                                  .withConverter("pro.fessional.wings.faceless.database.jooq.converter.JooqConsEnumConverter.of(StandardLanguage.class)")
 //                                  .withExpression("tst_中文也分表.language")
 //                          )
-                          .forcedConsEnum(StandardLanguage.class, "tst_中文也分表.language")
+                          .forcedIntConsEnum(StandardLanguage.class, "tst_中文也分表.language")
                           .buildAndGenerate();
     }
 }

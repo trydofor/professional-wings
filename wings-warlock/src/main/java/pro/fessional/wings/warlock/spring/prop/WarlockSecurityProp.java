@@ -36,11 +36,11 @@ public class WarlockSecurityProp {
     public static final String Key$loginPage = Key + ".login-page";
 
     /**
-     * 处理登录的URL，由filter处理，不需要controller
+     * 处理登录的Ant格式URL（支持`{authType}`占位符，表示`*`），由filter处理，不需要controller
      *
      * @see #Key$loginUrl
      */
-    private String loginUrl = "/auth/*/login.json";
+    private String loginUrl = "/auth/{authType}/login.json";
     public static final String Key$loginUrl = Key + ".login-url";
 
     /**
@@ -50,6 +50,32 @@ public class WarlockSecurityProp {
      */
     private String logoutUrl = "/auth/logout.json";
     public static final String Key$logoutUrl = Key + ".logout-url";
+
+    /**
+     * 登录成功返回的body
+     *
+     * @see #Key$loginSuccessBody
+     */
+    private String loginSuccessBody = "";
+    public static final String Key$loginSuccessBody = Key + ".login-success-body";
+
+    /**
+     * 登录失败返回的body
+     *
+     * @see #Key$loginFailureBody
+     */
+    private String loginFailureBody = "";
+    public static final String Key$loginFailureBody = Key + ".login-failure-body";
+
+    /**
+     * 登出成功返回的body
+     * <p>
+     * logout-success-body
+     *
+     * @see #Key$logoutSuccessBody
+     */
+    private String logoutSuccessBody = "";
+    public static final String Key$logoutSuccessBody = Key + ".logout-success-body";
 
     /**
      * usernameParameter 名字

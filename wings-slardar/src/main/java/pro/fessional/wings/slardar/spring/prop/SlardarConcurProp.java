@@ -98,7 +98,8 @@ public class SlardarConcurProp {
         public static final String Key$contentType = Key + ".double-kill.content-type";
 
         /**
-         * DoubleKillExceptionResolver 回复的文本内容
+         * DoubleKillExceptionResolver 回复的文本内容。
+         * 支持变量 {key} 和 {ttl}
          *
          * @see #Key$responseBody
          */

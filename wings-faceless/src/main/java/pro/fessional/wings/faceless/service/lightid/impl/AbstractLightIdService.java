@@ -36,9 +36,4 @@ public abstract class AbstractLightIdService implements LightIdService {
 
         return getId(key, block);
     }
-
-    @Override
-    public <E extends LightIdAware> long getId(@NotNull E table, int block) {
-        return getId(table.getSeqName(), block);
-    }
 }

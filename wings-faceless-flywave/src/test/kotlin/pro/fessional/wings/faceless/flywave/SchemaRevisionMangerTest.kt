@@ -10,9 +10,6 @@ import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
 import pro.fessional.wings.faceless.WingsTestHelper.breakpointDebug
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
-import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_1ST_SCHEMA
-import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_2ND_IDLOGS
-import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_3RD_ENU18N
 
 /**
  * 默认profile，有writer和reader数据源，但只使用writer
@@ -25,6 +22,9 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_3RD_ENU
 ])
 @TestMethodOrder(MethodName::class)
 open class SchemaRevisionMangerTest {
+
+    private val revi1Schema: Long = WingsRevision.V00_19_0512_01_Schema.revision();
+    private val revi2IdLog: Long = WingsRevision.V01_19_0520_01_IdLog.revision();
 
     @Autowired
     lateinit var schemaRevisionManager: SchemaRevisionManager
@@ -39,8 +39,8 @@ open class SchemaRevisionMangerTest {
         wingsTestHelper.cleanTable()
         val sqls = FlywaveRevisionScanner.helper()
                 .master()
-                .replace(REVISION_1ST_SCHEMA, REVISION_1ST_SCHEMA + 1, true)
-                .modify(REVISION_1ST_SCHEMA + 1, "sys_schema_version", schemaVersion)
+                .replace(revi1Schema, revi1Schema + 1, true)
+                .modify(revi1Schema + 1, "sys_schema_version", schemaVersion)
 //                .modify("更名win_schema_version") { _, sql ->
 //                    if (sql.revision == REVISION_1ST_SCHEMA) {
 //                        sql.undoText = sql.undoText.replace("sys_schema_version", schemaVersion)
@@ -54,7 +54,7 @@ open class SchemaRevisionMangerTest {
     @Test
     fun `test1🦁发布520版`() {
         breakpointDebug("发布REVISION_2ND_IDLOGS💰")
-        schemaRevisionManager.publishRevision(REVISION_2ND_IDLOGS, 0)
+        schemaRevisionManager.publishRevision(revi2IdLog, 0)
     }
 
     @Test
@@ -62,18 +62,18 @@ open class SchemaRevisionMangerTest {
         breakpointDebug("查看当前版本💰")
         val databaseVersion = schemaRevisionManager.currentRevision()
         for ((_, u) in databaseVersion) {
-            assertEquals(REVISION_2ND_IDLOGS, u)
+            assertEquals(revi2IdLog, u)
         }
     }
 
     @Test
     fun `test3🦁回滚再发`() {
         breakpointDebug("降级到1st版本💰")
-        schemaRevisionManager.publishRevision(REVISION_1ST_SCHEMA, -1)
+        schemaRevisionManager.publishRevision(revi1Schema, -1)
         breakpointDebug("升级到2st版本💰")
-        schemaRevisionManager.publishRevision(REVISION_2ND_IDLOGS, -1)
+        schemaRevisionManager.publishRevision(revi2IdLog, -1)
         breakpointDebug("再次降级到1st版本💰")
-        schemaRevisionManager.publishRevision(REVISION_1ST_SCHEMA, -1)
+        schemaRevisionManager.publishRevision(revi1Schema, -1)
     }
 
     private val test3rdRevision = 20190615_01L
@@ -117,11 +117,11 @@ open class SchemaRevisionMangerTest {
     @Test
     fun `test6🦁重置520版`() {
         breakpointDebug("发布520💰")
-        schemaRevisionManager.publishRevision(REVISION_2ND_IDLOGS, 0)
+        schemaRevisionManager.publishRevision(revi2IdLog, 0)
         breakpointDebug("降级520💰")
-        schemaRevisionManager.forceApplyBreak(REVISION_2ND_IDLOGS, 0, false)
+        schemaRevisionManager.forceApplyBreak(revi2IdLog, 0, false)
         breakpointDebug("重发520💰")
-        schemaRevisionManager.publishRevision(REVISION_2ND_IDLOGS, 0)
+        schemaRevisionManager.publishRevision(revi2IdLog, 0)
     }
 
     @Test
@@ -144,7 +144,7 @@ open class SchemaRevisionMangerTest {
         val sqls = FlywaveRevisionScanner.scanBranch("feature/01-enum-i18n")
         schemaRevisionManager.checkAndInitSql(sqls, 0, true)
         breakpointDebug("发布分支feature/01-enum-i18n💰")
-        schemaRevisionManager.publishRevision(REVISION_3RD_ENU18N, 0)
+        schemaRevisionManager.publishRevision(WingsRevision.V01_19_0521_01_EnumI18n.revision(), 0)
     }
 
     @Test

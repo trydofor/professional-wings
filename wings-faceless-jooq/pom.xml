@@ -37,12 +37,6 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-        <!-- jooq dev -->
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-codegen</artifactId>
-            <optional>true</optional>
-        </dependency>
         <!-- test -->
         <dependency>
             <groupId>pro.fessional</groupId>

@@ -11,13 +11,11 @@ import pro.fessional.wings.warlock.database.autogen.tables.SysConstantEnumTable;
 import pro.fessional.wings.warlock.database.autogen.tables.SysStandardI18nTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinPermEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinRoleEntryTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinRolePermMapTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinRoleRoleMapTable;
+import pro.fessional.wings.warlock.database.autogen.tables.WinRoleGrantTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAnthnTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasicTable;
+import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
+import pro.fessional.wings.warlock.database.autogen.tables.WinUserGrantTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserLoginTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserPermMapTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserRoleMapTable;
 
 import javax.annotation.Generated;
 import java.util.Arrays;
@@ -66,14 +64,9 @@ public class DefaultSchema extends SchemaImpl {
     public final WinRoleEntryTable WinRoleEntry = WinRoleEntryTable.WinRoleEntry;
 
     /**
-     * The table <code>win_role_perm_map</code>.
+     * The table <code>win_role_grant</code>.
      */
-    public final WinRolePermMapTable WinRolePermMap = WinRolePermMapTable.WinRolePermMap;
-
-    /**
-     * The table <code>win_role_role_map</code>.
-     */
-    public final WinRoleRoleMapTable WinRoleRoleMap = WinRoleRoleMapTable.WinRoleRoleMap;
+    public final WinRoleGrantTable WinRoleGrant = WinRoleGrantTable.WinRoleGrant;
 
     /**
      * The table <code>win_user_anthn</code>.
@@ -81,24 +74,19 @@ public class DefaultSchema extends SchemaImpl {
     public final WinUserAnthnTable WinUserAnthn = WinUserAnthnTable.WinUserAnthn;
 
     /**
-     * The table <code>win_user_basic</code>.
+     * The table <code>win_user_basis</code>.
      */
-    public final WinUserBasicTable WinUserBasic = WinUserBasicTable.WinUserBasic;
+    public final WinUserBasisTable WinUserBasis = WinUserBasisTable.WinUserBasis;
+
+    /**
+     * The table <code>win_user_grant</code>.
+     */
+    public final WinUserGrantTable WinUserGrant = WinUserGrantTable.WinUserGrant;
 
     /**
      * The table <code>win_user_login</code>.
      */
     public final WinUserLoginTable WinUserLogin = WinUserLoginTable.WinUserLogin;
-
-    /**
-     * The table <code>win_user_perm_map</code>.
-     */
-    public final WinUserPermMapTable WinUserPermMap = WinUserPermMapTable.WinUserPermMap;
-
-    /**
-     * The table <code>win_user_role_map</code>.
-     */
-    public final WinUserRoleMapTable WinUserRoleMap = WinUserRoleMapTable.WinUserRoleMap;
 
     /**
      * No further instances allowed
@@ -120,12 +108,10 @@ public class DefaultSchema extends SchemaImpl {
             SysStandardI18nTable.SysStandardI18n,
             WinPermEntryTable.WinPermEntry,
             WinRoleEntryTable.WinRoleEntry,
-            WinRolePermMapTable.WinRolePermMap,
-            WinRoleRoleMapTable.WinRoleRoleMap,
+            WinRoleGrantTable.WinRoleGrant,
             WinUserAnthnTable.WinUserAnthn,
-            WinUserBasicTable.WinUserBasic,
-            WinUserLoginTable.WinUserLogin,
-            WinUserPermMapTable.WinUserPermMap,
-            WinUserRoleMapTable.WinUserRoleMap);
+            WinUserBasisTable.WinUserBasis,
+            WinUserGrantTable.WinUserGrant,
+            WinUserLoginTable.WinUserLogin);
     }
 }

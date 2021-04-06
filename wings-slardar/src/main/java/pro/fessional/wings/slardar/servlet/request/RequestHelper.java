@@ -3,6 +3,9 @@ package pro.fessional.wings.slardar.servlet.request;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import pro.fessional.mirana.cast.TypedCastUtil;
 import pro.fessional.mirana.text.Wildcard;
 
@@ -22,6 +25,26 @@ import java.util.Set;
  * @since 2019-07-03
  */
 public class RequestHelper {
+
+    /**
+     * 把所有错误信息构造成`\n`分隔的(error=)?message格式
+     *
+     * @param error 错误信息
+     * @return null 无错误
+     */
+    public static String allErrors(@NotNull BindingResult error) {
+        if (!error.hasErrors()) return null;
+        StringBuilder sb = new StringBuilder();
+
+        for (ObjectError err : error.getAllErrors()) {
+            sb.append("\n");
+            if (err instanceof FieldError) {
+                sb.append(((FieldError) err).getField()).append("=");
+            }
+            sb.append(err.getDefaultMessage());
+        }
+        return sb.substring(1);
+    }
 
     @Nullable
     public static String getCookieValue(HttpServletRequest request, String name) {

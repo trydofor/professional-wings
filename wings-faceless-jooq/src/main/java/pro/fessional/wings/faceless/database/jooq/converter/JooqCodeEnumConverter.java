@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jooq.Converter;
 import pro.fessional.mirana.data.CodeEnum;
 import pro.fessional.wings.faceless.converter.CodeEnumConverter;
-import pro.fessional.wings.faceless.enums.ConstantEnum;
 
 /**
  * @author trydofor

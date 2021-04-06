@@ -2,34 +2,37 @@ package pro.fessional.wings.warlock.service.auth.impl;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.faceless.service.journal.JournalService;
-import pro.fessional.wings.faceless.service.lightid.LightIdService;
+import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
-import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasicTable;
-import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAnthnDao;
-import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasicDao;
-import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserAnthn;
-import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserBasic;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
+import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
+import pro.fessional.wings.warlock.service.user.WarlockUserAttribute;
+import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
+import pro.fessional.wings.warlock.service.user.WarlockUserBasisService;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
 import java.time.ZoneId;
 import java.util.Locale;
+
+import static pro.fessional.wings.warlock.service.user.WarlockUserAuthnService.Authn;
+import static pro.fessional.wings.warlock.service.user.WarlockUserBasisService.Basis;
 
 /**
  * @author trydofor
  * @since 2021-02-25
  */
 @Service
+@Slf4j
 public class DefaultUserAuthnCombo implements ComboWarlockAuthnService.Combo {
 
     public static final int ORDER = WarlockOrderConst.UserAuthnCombo + 10_000;
@@ -39,19 +42,13 @@ public class DefaultUserAuthnCombo implements ComboWarlockAuthnService.Combo {
     private int order = ORDER;
 
     @Setter(onMethod_ = {@Autowired})
-    private WinUserBasicDao winUserBasicDao;
+    private WarlockUserBasisService warlockUserBasisService;
 
     @Setter(onMethod_ = {@Autowired})
-    private WinUserAnthnDao winUserAnthnDao;
-
-    @Setter(onMethod_ = {@Autowired})
-    private WingsAuthTypeParser wingsAuthTypeParser;
+    private WarlockUserAuthnService warlockUserAuthnService;
 
     @Setter(onMethod_ = {@Autowired})
     private WarlockSecurityProp warlockSecurityProp;
-
-    @Setter(onMethod_ = {@Autowired})
-    private LightIdService lightIdService;
 
     @Setter(onMethod_ = {@Autowired})
     private JournalService journalService;
@@ -60,75 +57,60 @@ public class DefaultUserAuthnCombo implements ComboWarlockAuthnService.Combo {
     private PasssaltEncoder passsaltEncoder;
 
     @Override
-    public WarlockAuthnService.Details save(@NotNull Enum<?> authType, String username, Object details) {
+    @Transactional
+    public Details create(@NotNull Enum<?> authType, String username, Object details) {
 
-        final String at = wingsAuthTypeParser.parse(authType);
-        final WinUserBasicTable tu = winUserBasicDao.getTable();
-        final long uid = lightIdService.getId(tu.getClass());
-        final String mrk = "auto create auth-user auth-type=" + at + "username=" + username;
-        val commit = journalService.commit(WarlockAuthnService.Jane.AutoSave, uid, mrk);
+        final String mrk = "auto create auth-user auth-type=" + authType + "username=" + username;
+        return journalService.submit(WarlockAuthnService.Jane.AutoSave, username, mrk, commit -> {
 
-        WinUserBasic user = new WinUserBasic();
-        commit.create(user);
-        user.setId(uid);
-        user.setNickname(username);
-        user.setAvatar("");
-        user.setGender(UserGender.UNKNOWN);
-        user.setLocale(Locale.getDefault());
-        user.setZoneid((ZoneId.systemDefault()));
-        user.setRemark("auto create");
-        user.setStatus(UserStatus.UNINIT);
+            Basis user = new Basis();
+            user.setNickname(username);
+            user.setAvatar("");
+            user.setGender(UserGender.UNKNOWN);
+            user.setLocale(Locale.getDefault());
+            user.setZoneid((ZoneId.systemDefault()));
+            user.setRemark("auto register");
+            user.setStatus(UserStatus.UNINIT);
 
-        beforeInsert(user, authType, username, details);
-        winUserBasicDao.insert(user);
+            beforeSave(user, authType, username, details);
+            long uid = warlockUserBasisService.create(user);
+            //
+            Authn authn = new Authn();
 
-        //
-        WinUserAnthn auth = new WinUserAnthn();
-        commit.create(auth);
-        auth.setId(lightIdService.getId(winUserAnthnDao.getTable().getClass()));
-        auth.setUserId(uid);
-        auth.setAuthType(at);
-        auth.setUsername(username);
-        auth.setExtraPara("");
-        auth.setExtraUser("");
-        auth.setFailedCnt(0);
+            authn.setUsername(username);
+            authn.setExtraPara("");
+            authn.setExtraUser("");
+            authn.setExpiredDt(commit.getCommitDt().plusSeconds(warlockSecurityProp.getAutoregExpired().getSeconds()));
+            authn.setFailedCnt(0);
+            authn.setFailedMax(warlockSecurityProp.getAutoregMaxFailed());
 
-        long seconds;
-        if (details instanceof WarlockAuthnService.Authn) {
-            final WarlockAuthnService.Authn an = (WarlockAuthnService.Authn) details;
-            seconds = an.getExpiredIn().getSeconds();
-            auth.setFailedMax(an.getMaxFailed());
-            auth.setPassword(an.getPassword());
-        } else {
-            seconds = warlockSecurityProp.getAutoregExpired().getSeconds();
-            auth.setFailedMax(warlockSecurityProp.getAutoregMaxFailed());
-            auth.setPassword(RandCode.human(16));
-        }
-        auth.setPasssalt(passsaltEncoder.salt(60));
-        auth.setExpiredDt(commit.getCommitDt().plusSeconds(seconds));
+            // 明文，有WarlockUserAuthnService加密
+            authn.setPassword(RandCode.human(16));
 
-        beforeInsert(auth, authType, username, details);
-        winUserAnthnDao.insert(auth);
+            beforeSave(authn, authType, username, details);
+            warlockUserAuthnService.create(uid, authType, authn);
 
-        final WarlockAuthnService.Details result = new WarlockAuthnService.Details();
-        result.setUserId(uid);
-        result.setNickname(user.getNickname());
-        result.setLocale(user.getLocale());
-        result.setZoneId(user.getZoneid());
-        result.setStatus(user.getStatus());
-        result.setAuthType(authType);
-        result.setUsername(auth.getUsername());
-        result.setPassword(auth.getPassword());
-        result.setPasssalt(auth.getPasssalt());
-        result.setExpiredDt(auth.getExpiredDt());
+            final Details result = new Details();
+            result.setUserId(uid);
+            result.setNickname(user.getNickname());
+            result.setLocale(user.getLocale());
+            result.setZoneId(user.getZoneid());
+            result.setStatus(user.getStatus());
+            result.setAuthType(authType);
 
-        return result;
+            result.setUsername(authn.getUsername());
+            result.setPassword(authn.getPassword());
+            result.setPasssalt(GlobalAttributeHolder.getAttr(WarlockUserAttribute.SaltByUid, uid));
+            result.setExpiredDt(authn.getExpiredDt());
+
+            return result;
+        });
     }
 
-    protected void beforeInsert(WinUserBasic pojo, @NotNull Enum<?> authType, String username, Object details) {
+    protected void beforeSave(Basis basis, @NotNull Enum<?> authType, String username, Object details) {
     }
 
-    protected void beforeInsert(WinUserAnthn pojo, @NotNull Enum<?> authType, String username, Object details) {
+    protected void beforeSave(Authn authn, @NotNull Enum<?> authType, String username, Object details) {
     }
 
     @Override

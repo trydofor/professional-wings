@@ -40,7 +40,7 @@ public class JustAuthLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
         if (ar == null) return null;
 
         final String authorize = ar.authorize(AuthStateUtils.createState());
-        if (MediaType.TEXT_HTML == mimeType) {
+        if (MediaType.TEXT_HTML.isCompatibleWith(mimeType)) {
             // response.sendRedirect(url); 302
             return ResponseEntity.status(HttpStatus.FOUND)
                                  .header(HttpHeaders.LOCATION, authorize)

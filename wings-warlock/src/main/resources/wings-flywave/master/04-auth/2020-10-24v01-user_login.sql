@@ -1,10 +1,11 @@
-CREATE TABLE `win_user_basic` (
+CREATE TABLE `win_user_basis` (
     `id`        BIGINT(20)   NOT NULL COMMENT '主键/user_id/uid',
     `create_dt` DATETIME(3)  NOT NULL DEFAULT NOW(3) COMMENT '创建日时(系统)',
     `modify_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时(系统)',
     `delete_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT '标记删除',
     `commit_id` BIGINT(20)   NOT NULL COMMENT '提交id',
     `nickname`  VARCHAR(50)  NOT NULL DEFAULT '' COMMENT '用户昵称',
+    `passsalt`  VARCHAR(100) NOT NULL DEFAULT '' COMMENT '验证加盐/随机数，只读不对外，可用于辅助加密',
     `gender`    INT(11)      NOT NULL DEFAULT '0' COMMENT '用户性别/12001##:未知|先生|女士',
     `avatar`    VARCHAR(200) NOT NULL DEFAULT '' COMMENT '头像地址',
     `locale`    CHAR(5)      NOT NULL DEFAULT 'zh_CN' COMMENT '使用语言/Locale:StandardLanguageEnum',
@@ -16,16 +17,15 @@ CREATE TABLE `win_user_basic` (
   DEFAULT CHARSET = utf8mb4 COMMENT ='120/用户基本表';
 
 CREATE TABLE `win_user_anthn` (
-    `id`         BIGINT(20)    NOT NULL COMMENT '主键/user_id',
+    `id`         BIGINT(20)    NOT NULL COMMENT '主键',
     `create_dt`  DATETIME(3)   NOT NULL DEFAULT NOW(3) COMMENT '创建日时(系统)',
     `modify_dt`  DATETIME(3)   NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时(系统)',
     `delete_dt`  DATETIME(3)   NOT NULL DEFAULT '1000-01-01' COMMENT '标记删除',
     `commit_id`  BIGINT(20)    NOT NULL COMMENT '提交id',
-    `user_id`    BIGINT(20)    NOT NULL DEFAULT '0' COMMENT '绑定用户/win_user_basic.id',
+    `user_id`    BIGINT(20)    NOT NULL DEFAULT '0' COMMENT '绑定用户/win_user_basis.id',
     `auth_type`  VARCHAR(10)   NOT NULL COMMENT '验证类型/wings.warlock.security.auth-type.*',
     `username`   VARCHAR(200)  NOT NULL COMMENT '验证账号/身份辨识:邮箱|手机|union_id|api_key',
-    `password`   VARCHAR(200)  NOT NULL DEFAULT '' COMMENT '验证密码/spring格式|api_secret|api_sec',
-    `passsalt`   VARCHAR(100)  NOT NULL DEFAULT '' COMMENT '验证加盐/随机数',
+    `password`   VARCHAR(200)  NOT NULL DEFAULT '' COMMENT '验证密码/spring格式|api_secret',
     `extra_para` VARCHAR(3000) NOT NULL DEFAULT '' COMMENT '第三方验证参数',
     `extra_user` VARCHAR(9000) NOT NULL DEFAULT '' COMMENT '第三方用户信息',
     `expired_dt` DATETIME(3)   NOT NULL DEFAULT '1000-01-01' COMMENT '到期时间，非token到期时间',
@@ -38,8 +38,8 @@ CREATE TABLE `win_user_anthn` (
   DEFAULT CHARSET = utf8mb4 COMMENT ='121/用户验证表';
 
 CREATE TABLE `win_user_login` (
-    `id`        BIGINT(20)    NOT NULL COMMENT '主键/user_id',
-    `user_id`   BIGINT(20)    NOT NULL DEFAULT '0' COMMENT '绑定用户/win_user_basic.id',
+    `id`        BIGINT(20)    NOT NULL COMMENT '主键',
+    `user_id`   BIGINT(20)    NOT NULL DEFAULT '0' COMMENT '绑定用户/win_user_basis.id',
     `auth_type` VARCHAR(20)   NOT NULL COMMENT '验证类型/wings.warlock.security.auth-type.*',
     `login_ip`  VARCHAR(50)   NOT NULL DEFAULT '' COMMENT '登录IP',
     `login_dt`  DATETIME(3)   NOT NULL DEFAULT NOW(3) COMMENT '创建日时(系统)',
@@ -54,7 +54,7 @@ CREATE TABLE `win_user_login` (
 -- -----------
 
 INSERT IGNORE INTO `sys_light_sequence` (`seq_name`, `block_id`, `next_val`, `step_val`, `comments`)
-VALUES ('win_user_basic', 0, 10000, 100, '动态插入5位起，静态5位'),
+VALUES ('win_user_basis', 0, 10000, 100, '动态插入5位起，静态5位'),
        ('win_user_anthn', 0, 10000, 100, '动态插入5位起，静态5位');
 
 --
@@ -74,10 +74,10 @@ VALUES (1200100, 'user_gender', 'user_gender', '性别', 'classpath:/wings-tmpl/
        (1200207, 'user_status', 'hidden', '隐藏', '隐藏账户');
 
 
-INSERT INTO `win_user_basic` (`id`, `create_dt`, `commit_id`, `nickname`, `gender`, `avatar`, `locale`, `zoneid`, `remark`, `status`)
-VALUES (0, NOW(3), 0, 'nobody', 1200103, '', 'zh_CN', 1010201, '系统用户，无任何权限', 1200207),
-       (1, NOW(3), 0, 'root', 1200103, '', 'zh_CN', 1010201, '超级用户，拥有所以权限', 1200202),
-       (2, NOW(3), 0, 'daemon', 1200103, '', 'zh_CN', 1010201, '系统用户，执行后台任务', 1200207);
+INSERT INTO `win_user_basis` (`id`, `create_dt`, `commit_id`, `nickname`, `passsalt`, `gender`, `avatar`, `locale`, `zoneid`, `remark`, `status`)
+VALUES (0, NOW(3), 0, 'nobody', SHA1(UUID()), 1200103, '', 'zh_CN', 1010201, '系统用户，无任何权限', 1200207),
+       (1, NOW(3), 0, 'root', SHA1(UUID()), 1200103, '', 'zh_CN', 1010201, '超级用户，拥有所以权限', 1200202),
+       (2, NOW(3), 0, 'daemon', SHA1(UUID()), 1200103, '', 'zh_CN', 1010201, '系统用户，执行后台任务', 1200207);
 
-INSERT INTO `win_user_anthn`(`id`, `create_dt`, `commit_id`, `user_id`, `auth_type`, `username`, `password`, `passsalt`, `expired_dt`)
-VALUES (1, NOW(3), 0, 1, 'username', 'root', '{never}ruDz1R0qKfa4wnlGye9Axngpa5O2wLSVd2O1McAtRJ6TfhisMcbeonEorm9V', 'xaUcoFCyLLnkaimmySpVB7KK6xxE8BFi1xrLafaD', '2999-09-09');
+INSERT INTO `win_user_anthn`(`id`, `create_dt`, `commit_id`, `user_id`, `auth_type`, `username`, `password`, `expired_dt`)
+VALUES (1, NOW(3), 0, 1, 'username', 'root', CONCAT('{never}', SHA1(UUID())), '2999-09-09');

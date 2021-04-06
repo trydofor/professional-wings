@@ -1,3 +1,6 @@
+### logout
+GET {{host}}/auth/logout.json
+
 ### login-page
 GET {{host}}/auth/login-page.json
 
@@ -14,4 +17,4 @@ POST {{host}}/auth/console-nonce.json
 POST {{host}}/auth/username/login.json
 Content-Type: application/x-www-form-urlencoded
 
-username=root&password=CKS49848frKgrdB8
+username=root&password=88rE4TtheH72Df3Q

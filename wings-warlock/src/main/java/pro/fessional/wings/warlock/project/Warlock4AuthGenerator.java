@@ -19,8 +19,48 @@ import java.util.List;
 @Getter
 public class Warlock4AuthGenerator {
 
-    protected static final String permSelect = "select id, scopes, action, remark from win_perm_entry where delete_dt = '1000-01-01'";
-    protected static final RowMapper<Entry> permMapper = (rs, rowNum) -> {
+    private String targetDir = "./wings-warlock/src/main/java/";
+    private String targetPkg = "pro.fessional.wings.warlock.security.autogen";
+
+    public void genPerm(String jdbc, String user, String pass) {
+        genPerm(JdbcDataLoadHelper.use(jdbc, user, pass));
+    }
+
+    public void genPerm(JdbcDataLoadHelper helper) {
+        genPerm(helper, "PermConstant", "");
+    }
+
+    public void genPerm(JdbcDataLoadHelper helper, String javaName, String prefixCode) {
+        final List<Entry> perms = helper.load(permSelect, permMapper);
+
+        ConstantNaviGenerator generator = new ConstantNaviGenerator();
+        generator.setPackageName(targetPkg);
+        generator.setTargetDir(targetDir);
+
+        generator.generate(javaName, prefixCode, perms);
+    }
+
+    public void genRole(String jdbc, String user, String pass) {
+        genRole(JdbcDataLoadHelper.use(jdbc, user, pass), "RoleConstant", "ROLE_");
+    }
+
+    public void genRole(JdbcDataLoadHelper helper) {
+        genRole(helper, "RoleConstant", "ROLE_");
+    }
+
+    public void genRole(JdbcDataLoadHelper helper, String javaName, String prefixCode) {
+        final List<Entry> roles = helper.load(roleSelect, roleMapper);
+
+        ConstantNaviGenerator generator = new ConstantNaviGenerator();
+        generator.setPackageName(targetPkg);
+        generator.setTargetDir(targetDir);
+
+        generator.generate(javaName, prefixCode, roles);
+    }
+
+    ///
+    public static final String permSelect = "select id, scopes, action, remark from win_perm_entry where delete_dt = '1000-01-01'";
+    public static final RowMapper<Entry> permMapper = (rs, rowNum) -> {
         Entry en = new Entry();
         en.setId(rs.getLong("id"));
         en.setName(rs.getString("scopes") + "." + rs.getString("action"));
@@ -28,37 +68,12 @@ public class Warlock4AuthGenerator {
         return en;
     };
 
-    protected static final String roleSelect = "select id, name, remark from win_role_entry where delete_dt = '1000-01-01'";
-    protected static final RowMapper<Entry> roleMapper = (rs, rowNum) -> {
+    public static final String roleSelect = "select id, name, remark from win_role_entry where delete_dt = '1000-01-01'";
+    public static final RowMapper<Entry> roleMapper = (rs, rowNum) -> {
         Entry en = new Entry();
         en.setId(rs.getLong("id"));
         en.setName(rs.getString("name"));
         en.setRemark(rs.getString("remark"));
         return en;
     };
-
-    private String targetDir = "./wings-warlock/src/main/java/";
-    private String targetPkg = "pro.fessional.wings.warlock.security.autogen";
-
-    public void gen(String jdbc, String user, String pass) {
-        JdbcDataLoadHelper helper = JdbcDataLoadHelper.use(jdbc, user, pass);
-
-        final List<Entry> perms = helper.load(permSelect, permMapper);
-        final List<Entry> roles = helper.load(roleSelect, roleMapper);
-
-        ConstantNaviGenerator generator = new ConstantNaviGenerator();
-        generator.setPackageName(targetPkg);
-        generator.setTargetDir(targetDir);
-
-        genPerm(generator, perms);
-        genPerm(generator, roles);
-    }
-
-    protected void genPerm(ConstantNaviGenerator generator, List<Entry> perms) {
-        generator.generate("PermConstant", "", perms);
-    }
-
-    protected void genRole(ConstantNaviGenerator generator, List<Entry> roles) {
-        generator.generate("RoleConstant", "ROLE_", roles);
-    }
 }

@@ -1,26 +1,37 @@
 package pro.fessional.wings.faceless.jooqgen;
 
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.jooq.codegen.JavaGenerator;
 import org.jooq.codegen.JavaWriter;
+import org.jooq.impl.DAOImpl;
 import org.jooq.meta.ColumnDefinition;
 import org.jooq.meta.Definition;
 import org.jooq.meta.TableDefinition;
 import org.jooq.meta.TypedElementDefinition;
 import org.jooq.meta.UDTDefinition;
+import pro.fessional.mirana.time.DateFormatter;
+import pro.fessional.mirana.time.DateNumber;
 import pro.fessional.wings.faceless.convention.EmptyValue;
-import pro.fessional.wings.faceless.database.helper.JournalJdbcHelp;
+import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoAliasImpl;
+import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoJournalImpl;
+import pro.fessional.wings.faceless.service.journal.JournalService;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_COMMIT_ID;
+import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_DELETE_DT;
+import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_IS_DELETED;
 
 public class WingsJavaGenerator extends JavaGenerator {
 
@@ -61,15 +72,12 @@ public class WingsJavaGenerator extends JavaGenerator {
         final String identifier = getStrategy().getJavaIdentifier(table);
         val aliasName = genAlias(identifier); // N6
 
-        out.javadoc("alias %s", aliasName);
-        out.println("@Override");
-        out.println("public %s getAliasTable() {", className);
-        out.println("    return as%s;", aliasName);
-        out.println("}");
-
-        if (table.getColumns().stream().anyMatch(WingsJooqGenHelp.LightIdAware)) {
+        out.ref(NotNull.class);
+        final List<ColumnDefinition> columns = table.getColumns();
+        if (columns.stream().anyMatch(WingsJooqGenHelp.LightIdAware)) {
             out.javadoc("LightIdAware seqName");
             out.println("@Override");
+            out.println("@NotNull");
             out.println("public String getSeqName() {");
 
             final Function<TableDefinition, String> fun = WingsJooqGenHelp.funSeqName.get();
@@ -79,44 +87,85 @@ public class WingsJavaGenerator extends JavaGenerator {
             out.println("}");
         }
 
-        val logicCol = table.getColumns().stream().filter(it -> {
+        out.println("");
+        out.javadoc("alias %s", aliasName);
+        out.println("@Override");
+        out.println("@NotNull");
+        out.println("public %s getAliasTable() {", className);
+        out.println("    return as%s;", aliasName);
+        out.println("}");
+
+        val logicCol = columns.stream().filter(it -> {
             val col = it.getOutputName();
-            return col.equalsIgnoreCase(JournalJdbcHelp.COL_DELETE_DT) || col.equalsIgnoreCase(JournalJdbcHelp.COL_IS_DELETED);
+            return col.equalsIgnoreCase(COL_DELETE_DT) || col.equalsIgnoreCase(COL_IS_DELETED);
         }).findFirst();
 
         if (logicCol.isPresent()) {
-            ColumnDefinition column = logicCol.get();
+            ColumnDefinition colDel = logicCol.get();
             out.ref(Condition.class);
             out.ref(EmptyValue.class);
-            val columnId = reflectMethodRef(out, getStrategy().getJavaIdentifier(column), colRefSegments(column));
+            out.ref(Map.class);
+            out.ref(HashMap.class);
+            out.ref(JournalService.class);
+            val fldDel = reflectMethodRef(out, getStrategy().getJavaIdentifier(colDel), colRefSegments(colDel));
 
-            val col = column.getOutputName();
-            out.javadoc("The column <code>%s</code> condition", col);
-            if (col.equalsIgnoreCase(JournalJdbcHelp.COL_DELETE_DT)) {
-                val colType = column.getDefinedType().getType().toLowerCase();
+            val namDel = colDel.getOutputName();
+            out.println("");
+            out.javadoc("The colDel <code>%s</code> condition", namDel);
+            final String markDelete;
+            if (namDel.equalsIgnoreCase(COL_DELETE_DT)) {
+                val colType = colDel.getDefinedType().getType().toLowerCase();
                 if (colType.startsWith("datetime")) {
-                    out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.DATE_TIME);", columnId);
-                    out.println("public final Condition onlyLiveData = %s.eq(EmptyValue.DATE_TIME);", columnId);
+                    markDelete = "commit.getCommitDt()";
+                    out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.DATE_TIME);", fldDel);
+                    out.println("public final Condition onlyLiveData = %s.eq(EmptyValue.DATE_TIME);", fldDel);
                 } else if (colType.startsWith("bigint")) {
-                    out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.BIGINT);", columnId);
-                    out.println("public final Condition onlyLiveData = %s.eq(EmptyValue.BIGINT);", columnId);
+                    markDelete = "DateNumber.dateTime17(commit.getCommitDt())";
+                    out.ref(DateNumber.class);
+                    out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.BIGINT);", fldDel);
+                    out.println("public final Condition onlyLiveData = %s.eq(EmptyValue.BIGINT);", fldDel);
                 } else {
-                    out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.VARCHAR);", columnId);
-                    out.println("public final Condition onlyLiveData = %s.eq(EmptyValue.VARCHAR);", columnId);
+                    markDelete = "DateFormatter.full23(commit.getCommitDt())";
+                    out.ref(DateFormatter.class);
+                    out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.VARCHAR);", fldDel);
+                    out.println("public final Condition onlyLiveData = %s.eq(EmptyValue.VARCHAR);", fldDel);
                 }
             } else {
                 // COL_IS_DELETED
-                out.println("public final Condition onlyDiedData = %s.eq(Boolean.TRUE);", columnId);
-                out.println("public final Condition onlyLiveData = %s.eq(Boolean.FALSE);", columnId);
+                markDelete = "Boolean.TRUE";
+                out.println("public final Condition onlyDiedData = %s.eq(Boolean.TRUE);", fldDel);
+                out.println("public final Condition onlyLiveData = %s.eq(Boolean.FALSE);", fldDel);
             }
 
+            out.println("");
             out.println("@Override");
+            out.println("@NotNull");
             out.println("public Condition getOnlyDied() {");
             out.println("    return onlyDiedData;");
             out.println("}");
+
+            out.println("");
             out.println("@Override");
+            out.println("@NotNull");
             out.println("public Condition getOnlyLive() {");
             out.println("    return onlyLiveData;");
+            out.println("}");
+
+            out.println("");
+            out.println("@Override");
+            out.println("@NotNull");
+            out.println("public Map<Field<?>, ?> markDelete(JournalService.Journal commit) {");
+            out.println("    Map<org.jooq.Field<?>, Object> map = new HashMap<>();");
+            out.println("    map.put(%s, %s);", fldDel, markDelete);
+
+            val commitCol = columns.stream().filter(it ->
+                    it.getOutputName().equalsIgnoreCase(COL_COMMIT_ID)).findFirst();
+            if (commitCol.isPresent()) {
+                final ColumnDefinition colCid = commitCol.get();
+                val fldCid = reflectMethodRef(out, getStrategy().getJavaIdentifier(colCid), colRefSegments(colCid));
+                out.println("    map.put(%s, commit.getCommitId());", fldCid);
+            }
+            out.println("    return map;");
             out.println("}");
         }
 
@@ -146,23 +195,49 @@ public class WingsJavaGenerator extends JavaGenerator {
     }
 
     private final Pattern daoExtends = Pattern.compile("public class (\\S+)Dao extends (DAOImpl<)");
+    private final Pattern daoFetches = Pattern.compile("\n +/[* \n]+Fetch records", Pattern.MULTILINE);
+    private final Pattern daoFetchMd = Pattern.compile("(fetch[^(]*)\\(");
 
     @Override
     public void generateDao(TableDefinition table, JavaWriter out) {
         super.generateDao(table, out);
 
         Set<String> impt = reflectFieldQt(out);
-        impt.remove("org.jooq.impl.DAOImpl");
-        impt.add("pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl");
+        impt.remove(DAOImpl.class.getName());
+
+        final Class<?> implClass;
+        // TODO
+        if (table.getColumns().stream().anyMatch(WingsJooqGenHelp.JournalAware)) {
+            implClass = WingsJooqDaoJournalImpl.class;
+        } else {
+            implClass = WingsJooqDaoAliasImpl.class;
+        }
+        impt.add(implClass.getName());
 
         StringBuilder java = reflectFieldSb(out);
         String dao = java.toString();
         // "public class SysStandardI18nDao extends DAOImpl"
-        Matcher m = daoExtends.matcher(dao);
-        dao = m.replaceFirst("public class $1Dao extends WingsJooqDaoImpl<$1Table, ");
+        Matcher me = daoExtends.matcher(dao);
+        dao = me.replaceFirst("public class $1Dao extends " + implClass.getSimpleName() + "<$1Table, ");
 
         java.setLength(0);
-        java.append(dao);
+        if (implClass.equals(WingsJooqDaoJournalImpl.class)) {
+            final Matcher md = daoFetches.matcher(dao);
+            if (md.find()) {
+                final int p1 = md.start();
+                final int p2 = dao.lastIndexOf("}");
+                java.append(dao, 0, p2);
+                final Matcher mr = daoFetchMd.matcher(dao.substring(p1, p2));
+                final String live = mr.replaceAll("$1Live(");
+                java.append("\n");
+                java.append(live);
+                java.append(dao.substring(p2));
+            }
+        }
+
+        if (java.length() == 0) {
+            java.append(dao);
+        }
     }
     /////////////////
 

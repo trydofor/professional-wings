@@ -8,7 +8,7 @@ import org.jooq.Configuration;
 import org.jooq.Record4;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl;
+import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoAliasImpl;
 import pro.fessional.wings.warlock.database.autogen.tables.SysStandardI18nTable;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.SysStandardI18n;
 import pro.fessional.wings.warlock.database.autogen.tables.records.SysStandardI18nRecord;
@@ -30,7 +30,7 @@ import java.util.List;
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @Repository
-public class SysStandardI18nDao extends WingsJooqDaoImpl<SysStandardI18nTable, SysStandardI18nRecord, SysStandardI18n, Record4<String, String, String, String>> {
+public class SysStandardI18nDao extends WingsJooqDaoAliasImpl<SysStandardI18nTable, SysStandardI18nRecord, SysStandardI18n, Record4<String, String, String, String>> {
 
     /**
      * Create a new SysStandardI18nDao without any configuration

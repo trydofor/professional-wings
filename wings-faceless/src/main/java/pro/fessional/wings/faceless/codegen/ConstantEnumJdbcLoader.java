@@ -2,6 +2,8 @@ package pro.fessional.wings.faceless.codegen;
 
 import java.util.List;
 
+import static pro.fessional.wings.faceless.codegen.ConstantEnumGenerator.ConstantEnum;
+
 /**
  * sys_constant_enum
  *
@@ -12,14 +14,14 @@ public class ConstantEnumJdbcLoader {
 
     public static final String DefaultTable = "sys_constant_enum";
 
-    public static List<ConstantEnumGenerator.ConstantEnum> load(JdbcDataLoadHelper helper) {
+    public static List<ConstantEnum> load(JdbcDataLoadHelper helper) {
         return load(helper, DefaultTable);
     }
 
-    public static List<ConstantEnumGenerator.ConstantEnum> load(JdbcDataLoadHelper helper, String table) {
+    public static List<ConstantEnum> load(JdbcDataLoadHelper helper, String table) {
         String sql = "SELECT id, type, code, hint, info FROM " + table;
         return helper.load(sql, (rs, rowNum) -> {
-            ConstantEnumGenerator.ConstantEnum ce = new ConstantEnumGenerator.ConstantEnum();
+            ConstantEnum ce = new ConstantEnum();
             ce.setId(rs.getInt("id"));
             ce.setType(rs.getString("type"));
             ce.setCode(rs.getString("code"));

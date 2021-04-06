@@ -166,7 +166,14 @@ wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子
  * timezone - 对应 StandardTimezoneEnum
  * locale - 对应 java.util.Locale
  * zoneid - 对应 java.time.ZoneId
+ 
+在@Valid的验证中，有以下技巧。
 
+```
+@Size( min = 5, max = 14, message = "{common.email.size}")
+# 在 i18n信息中设置
+common.email.size=The author email '${validatedValue}' must be between {min} and {max} characters long
+```
 
 ## 3.4.Session和认证管理
 
@@ -350,6 +357,25 @@ cacheManager = Manager.Server)
 <eviction size="5000"/>
 ```
 
+## 3.6.有个时区的LocalDateTime和ZonedDateTime
+
+多时区，要兼顾数据可读性和编码便利性，在slardar中统一约定如下。
+
+* `系统时区` - 系统运行时区，其在Jvm，Db上是统一的。
+* `数据时区` - 数据流动时，参与者所在的时区。
+* `用户时区` - 数据使用者，阅读数据时希望看到的时区。
+
+在一般情况下，此三者是统一的，比如都在北京时间，GMT+8。
+在时区不敏感的数据上，一般直接使用LocalDateTime，忽略时区。
+
+在slardar的适用的业务场景中，在业务层统一使用系统时区，用LocalDateTime。
+而在Controller层，负责进行系统和用户时区的双向转换，使用ZonedDateTime。
+
+* 时区不敏感或只做本地时间标签的情况，统一使用LocalDateTime，
+* 时区敏感时，使用ZonedDateTime类型，在Jackson和RequestParam中自动转换。
+  - Request时，自动把用户时间调至系统时区。
+  - Response时，自动把系统时间调至用户时区。
+
 ## 3.7.常用功能
 
 ## 3.7.1.restTemplate和okhttp
@@ -392,6 +418,12 @@ slardar验证码的默认是基于图片的，在现今的AI算法识别上，�
 
 默认支持中文验证码，一般是一个汉字，3个英数，可以在配置中关闭。
 
+### 3.7.4.终端信息
+
+通过handlerInterceptor，在当前线程和request中设置terminal信息
+
+TerminalContext保存了，远程ip，agent信息，locale和timezone
+
 ## 3.8.特别用途的 Filter
 
 构建一个 wingsFilterChain 内置以下filter
@@ -404,22 +436,6 @@ slardar验证码的默认是基于图片的，在现今的AI算法识别上，�
  * 设置 Locale 和 TimeZone
  * 设置 remote ip
  * 设置 user agent信息
-
-## 3.8.2.CaptchaFilter防扒
-
-是否开启验证码，`spring.wings.slardar.enabled.captcha=false`
-
-通过`WingsCaptchaContext`设置规则，可以实现全局的防扒验证码。
-验证码的验证规则可以自定义，比如时间戳比较，短信码比较等。
-
-`WingsCaptchaContext.set`时，需要在handler中白名单和验证法。
-
- * 白名单，指验证返回`NOOP`的URI。
- * 验证码，为自定义字符串，在context中可供后续请求获得。
- * 验证法，自定义算法，成功返回`PASS`，否则`FAIL`。
- * 有效期，验证码在设定生命期内，返回`PASS`之前都有效。
-
-举例，详见`TestCaptchaController`的三个方法。
 
 ## 3.8.3.OverloadFilter过载
 

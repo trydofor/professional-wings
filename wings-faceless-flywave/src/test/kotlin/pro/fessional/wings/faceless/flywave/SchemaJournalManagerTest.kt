@@ -12,7 +12,6 @@ import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
 import pro.fessional.wings.faceless.WingsTestHelper.breakpointDebug
 import pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
-import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_2ND_IDLOGS
 
 /**
  * 包括了分表，跟踪表的综合测试
@@ -51,7 +50,7 @@ class SchemaJournalManagerTest {
                 .helper()
                 .master()
                 .modify("更名win_schema_version") { _, sql ->
-                    if (sql.revision == FlywaveRevisionScanner.REVISION_1ST_SCHEMA) {
+                    if (sql.revision == WingsRevision.V00_19_0512_01_Schema.revision()) {
                         sql.undoText = sql.undoText.replace("sys_schema_", schemaPrefix)
                         sql.uptoText = sql.uptoText.replace("sys_schema_", schemaPrefix)
                     }
@@ -63,7 +62,7 @@ class SchemaJournalManagerTest {
 
     @Test
     fun `test1🦁建表`() {
-        schemaRevisionManager.publishRevision(REVISION_2ND_IDLOGS, 0)
+        schemaRevisionManager.publishRevision(WingsRevision.V01_19_0520_01_IdLog.revision(), 0)
         wingsTestHelper.assertSame(WingsTestHelper.Type.Table,
                 "sys_commit_journal",
                 "sys_light_sequence",

@@ -12,8 +12,8 @@ import pro.fessional.wings.faceless.flywave.SchemaRevisionManager.AskType
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.ErrType
 import pro.fessional.wings.faceless.flywave.SqlStatementParser
+import pro.fessional.wings.faceless.flywave.WingsRevision
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
-import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_1ST_SCHEMA
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.commentInfo
 import java.util.EnumMap
 import java.util.LinkedList
@@ -41,6 +41,7 @@ class DefaultRevisionManager(
         val schemaVersionTable: String = "sys_schema_version"
 ) : SchemaRevisionManager {
 
+    private val revi1st = WingsRevision.V00_19_0512_01_Schema.revision()
     private val logger = LoggerFactory.getLogger(DefaultRevisionManager::class.java)
     private val unapplyMark = "1000-01-01"
     private val runningFlag = "17"
@@ -98,8 +99,8 @@ class DefaultRevisionManager(
 
     override fun publishRevision(revision: Long, commitId: Long) {
         val here = "publishRevision"
-        if (revision < REVISION_1ST_SCHEMA) {
-            messageLog(WARN, here, "skip the revision less than $REVISION_1ST_SCHEMA")
+        if (revision < revi1st) {
+            messageLog(WARN, here, "skip the revision less than $revi1st")
             return
         }
         val selectUpto = """
@@ -361,10 +362,10 @@ class DefaultRevisionManager(
                         dbVal["comments"] = Null.Str
                     } else {
                         val help = """for un-init database, one of the following ways can auto init.
-                                1.need $REVISION_1ST_SCHEMA as the first revision
-                                2.replace $REVISION_1ST_SCHEMA to first revi by Scanner.Helper
-                                3.the first revi less than $REVISION_1ST_SCHEMA
-                                4.branch create tables as in $REVISION_1ST_SCHEMA
+                                1.need $revi1st as the first revision
+                                2.replace $revi1st to first revi by Scanner.Helper
+                                3.the first revi less than $revi1st
+                                4.branch create tables as in $revi1st
                             """.trimIndent()
                         messageLog(ERROR, here, help)
                         throw e

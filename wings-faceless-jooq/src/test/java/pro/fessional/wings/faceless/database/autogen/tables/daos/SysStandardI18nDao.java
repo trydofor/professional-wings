@@ -4,19 +4,17 @@
 package pro.fessional.wings.faceless.database.autogen.tables.daos;
 
 
-import java.util.List;
-
-import javax.annotation.Generated;
-
 import org.jooq.Configuration;
 import org.jooq.Record4;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import pro.fessional.wings.faceless.database.autogen.tables.SysStandardI18nTable;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.SysStandardI18n;
 import pro.fessional.wings.faceless.database.autogen.tables.records.SysStandardI18nRecord;
-import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl;
+import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoAliasImpl;
+
+import javax.annotation.Generated;
+import java.util.List;
 
 
 /**
@@ -32,7 +30,7 @@ import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoImpl;
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @Repository
-public class SysStandardI18nDao extends WingsJooqDaoImpl<SysStandardI18nTable, SysStandardI18nRecord, SysStandardI18n, Record4<String, String, String, String>> {
+public class SysStandardI18nDao extends WingsJooqDaoAliasImpl<SysStandardI18nTable, SysStandardI18nRecord, SysStandardI18n, Record4<String, String, String, String>> {
 
     /**
      * Create a new SysStandardI18nDao without any configuration

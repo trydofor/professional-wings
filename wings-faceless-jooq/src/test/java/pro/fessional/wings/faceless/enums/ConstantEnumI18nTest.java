@@ -19,6 +19,7 @@ import pro.fessional.wings.faceless.database.autogen.tables.pojos.SysConstantEnu
 import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
+import pro.fessional.wings.faceless.flywave.WingsRevision;
 import pro.fessional.wings.faceless.service.wini18n.StandardI18nService;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
@@ -26,8 +27,6 @@ import java.util.List;
 import java.util.SortedMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_3RD_ENU18N;
-import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_BRANCH_3RD_ENU18N;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
 
 /**
@@ -62,9 +61,10 @@ public class ConstantEnumI18nTest {
     @Test
     public void test1Init() {
         wingsTestHelper.cleanTable();
-        final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER, REVISION_PATH_BRANCH_3RD_ENU18N);
+        final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner
+                .scan(REVISION_PATH_MASTER, WingsRevision.V01_19_0521_01_EnumI18n.classpath());
         revisionManager.checkAndInitSql(sqls, 0, true);
-        revisionManager.publishRevision(REVISION_3RD_ENU18N, -1);
+        revisionManager.publishRevision(WingsRevision.V01_19_0521_01_EnumI18n.revision(), -1);
     }
 
     @Test

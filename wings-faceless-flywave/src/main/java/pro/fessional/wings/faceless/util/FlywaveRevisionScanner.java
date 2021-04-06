@@ -8,6 +8,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StreamUtils;
 import pro.fessional.mirana.text.BuilderHelper;
 import pro.fessional.wings.faceless.convention.EmptySugar;
+import pro.fessional.wings.faceless.flywave.FlywaveRevisionRegister;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager.RevisionSql;
 
 import java.nio.charset.Charset;
@@ -37,19 +38,19 @@ public class FlywaveRevisionScanner {
 
     public static final String REVISION_PATH_REVIFILE_EXTN = ".sql";
     public static final String REVISION_PATH_REVIFILE_TAIL = "**/*" + REVISION_PATH_REVIFILE_EXTN;
-    public static final String REVISION_PATH_MASTER_HEAD = "classpath*:/wings-flywave/master/";
+    public static final String REVISION_PATH_FLYWAVE_HEAD = "classpath*:/wings-flywave/";
+    public static final String REVISION_PATH_MASTER_HEAD = REVISION_PATH_FLYWAVE_HEAD + "master/";
     public static final String REVISION_PATH_MASTER = REVISION_PATH_MASTER_HEAD + REVISION_PATH_REVIFILE_TAIL;
-    public static final String REVISION_PATH_BRANCH_HEAD = "classpath*:/wings-flywave/branch/";
+    public static final String REVISION_PATH_BRANCH_HEAD = REVISION_PATH_FLYWAVE_HEAD + "branch/";
     public static final String REVISION_PATH_FEATURE_HEAD = REVISION_PATH_BRANCH_HEAD + "feature/";
     public static final String REVISION_PATH_SUPPORT_HEAD = REVISION_PATH_BRANCH_HEAD + "support/";
     public static final String REVISION_PATH_SOMEFIX_HEAD = REVISION_PATH_BRANCH_HEAD + "somefix/";
     public static final String REVISION_PATH_BRANCH_FULL = REVISION_PATH_BRANCH_HEAD + REVISION_PATH_REVIFILE_TAIL;
-    public static final String REVISION_PATH_BRANCH_3RD_ENU18N = featurePath("01-enum-i18n");
-    public static final String REVISION_PATH_BRANCH_FIX_V227 = somefixPath("v227-fix");
 
-    public static final long REVISION_1ST_SCHEMA = 2019_0512_01L;
-    public static final long REVISION_2ND_IDLOGS = 2019_0520_01L;
-    public static final long REVISION_3RD_ENU18N = 2019_0521_01L;
+    @NotNull
+    public static String flywavePath(String name) {
+        return prefixPath(REVISION_PATH_FLYWAVE_HEAD, name);
+    }
 
     @NotNull
     public static String masterPath(String name) {
@@ -170,6 +171,20 @@ public class FlywaveRevisionScanner {
         TreeMap<Long, RevisionSql> result = new TreeMap<>();
         for (String n : name) {
             scan(result, branchPath(n));
+        }
+        return result;
+    }
+
+    /**
+     * @param path FlywaveRevisionRegister
+     * @return 按版本号升序排列的TreeMap
+     * @see PathMatchingResourcePatternResolver
+     */
+    @NotNull
+    public static SortedMap<Long, RevisionSql> scan(@NotNull FlywaveRevisionRegister... path) {
+        TreeMap<Long, RevisionSql> result = new TreeMap<>();
+        for (FlywaveRevisionRegister p : path) {
+            scan(result, p.classpath());
         }
         return result;
     }
@@ -314,8 +329,22 @@ public class FlywaveRevisionScanner {
         private final LinkedHashMap<BiConsumer<Long, RevisionSql>, String> modifier = new LinkedHashMap<>();
         private final LinkedHashSet<String> paths = new LinkedHashSet<>();
 
+        public Helper path(FlywaveRevisionRegister... path) {
+            for (FlywaveRevisionRegister s : path) {
+                paths.add(s.classpath());
+            }
+            return this;
+        }
+
         public Helper path(String... path) {
             Collections.addAll(paths, path);
+            return this;
+        }
+
+        public Helper flywave(String... path) {
+            for (String s : path) {
+                paths.add(FlywaveRevisionScanner.flywavePath(s));
+            }
             return this;
         }
 
@@ -474,6 +503,10 @@ public class FlywaveRevisionScanner {
         }
 
 
+        public Helper include(FlywaveRevisionRegister revi) {
+            return include(revi.description(), revi.revision());
+        }
+
         public Helper include(long... revi) {
             return include("", revi);
         }
@@ -495,6 +528,10 @@ public class FlywaveRevisionScanner {
             return this;
         }
 
+
+        public Helper exclude(FlywaveRevisionRegister revi) {
+            return exclude(revi.description(), revi.revision());
+        }
 
         public Helper exclude(long... revi) {
             return exclude("", revi);

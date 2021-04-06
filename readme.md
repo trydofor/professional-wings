@@ -249,7 +249,9 @@ public interface TradeService {
 
 ### 0.2.10.Api测试及文档约定
 
-使用swagger时，不可使用弱口令，必须在正式服关闭。在3.0.0版本，通过设置以下属性即可。  
+默认开启了swagger，访问路径为 /swagger-ui/index.html
+
+使用swagger时，不可使用弱口令，在正式服上必须关闭。在3.0.0版本，通过设置以下属性即可。  
 `springfox.documentation.enabled=false`，或通过profile来设置（不推荐）
 
 推荐在每个工程test下建立idea支持的 `*.http` 接口描述和测试脚本，官方文档如下
@@ -644,3 +646,16 @@ or scanned via @ConfigurationPropertiesScan
 
 此时在，Project Structure中的Facets中的spring，对每个主工程，
 导入`Code based configuration`，选择WingsAutoConfiguration，即可。
+
+### 16.Jooq隐秘的NullPointerException
+
+在jooq映射enum类型是，如果converter错误，可能会出现以下NPE，不能通过stack定位问题，需要分析SQL
+
+```
+java.lang.NullPointerException
+at org.jooq.impl.DefaultExecuteContext.exception(DefaultExecuteContext.java:737)
+at org.springframework.boot.autoconfigure.jooq.JooqExceptionTranslator.handle(JooqExceptionTranslator.java:83)
+at org.springframework.boot.autoconfigure.jooq.JooqExceptionTranslator.exception(JooqExceptionTranslator.java:55)
+at org.jooq.impl.ExecuteListeners.exception(ExecuteListeners.java:274)
+at org.jooq.impl.AbstractQuery.execute(AbstractQuery.java:390)
+```

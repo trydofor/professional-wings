@@ -11,6 +11,7 @@ import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
+import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthzService;
 
 import java.util.Collection;
@@ -46,11 +47,11 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
             return null;
         }
 
-        WarlockAuthnService.Details dt = doLoad(authType, username, authDetail);
+        Details dt = doLoad(authType, username, authDetail);
 
         if (dt == null && autoRegisterType.contains(authType)) {
             log.info("auto-create user by auth-user, username={}, auth-type={}", username, authType);
-            dt = warlockAuthnService.save(authType, username, authDetail);
+            dt = warlockAuthnService.register(authType, username, authDetail);
         }
 
         if (dt == null) {
@@ -90,7 +91,7 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
      * 加载信息
      */
     @Nullable
-    protected WarlockAuthnService.Details doLoad(@NotNull Enum<?> authType, String username, @Nullable Object authDetail) {
+    protected Details doLoad(@NotNull Enum<?> authType, String username, @Nullable Object authDetail) {
         return warlockAuthnService.load(authType, username);
     }
 

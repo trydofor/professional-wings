@@ -33,14 +33,6 @@ public class SlardarEnabledProp {
     public static final String Key$okhttp = Key + ".okhttp";
 
     /**
-     * 是否开启json的i18n
-     *
-     * @see #Key$json18n
-     */
-    private boolean json18n = true;
-    public static final String Key$json18n = Key + ".json18n";
-
-    /**
      * 是否开启cache配置
      *
      * @see #Key$caching
@@ -73,6 +65,14 @@ public class SlardarEnabledProp {
     public static final String Key$async = Key + ".async";
 
     /**
+     * 是否防范编辑权限提升
+     *
+     * @see #Key$righter
+     */
+    private boolean righter = true;
+    public static final String Key$righter = Key + ".righter";
+
+    /**
      * 是否开启FirstBlood默认的Interceptor和图形验证码
      *
      * @see #Key$firstBlood
@@ -87,12 +87,20 @@ public class SlardarEnabledProp {
     public static final String Key$firstBloodImage = Key + ".first-blood-image";
 
     /**
-     * 是否开启DoubleKill默认的AOP和ExceptionHandle
+     * 是否开启DoubleKill默认的AOP
      *
      * @see #Key$doubleKill
      */
     private boolean doubleKill = true;
     public static final String Key$doubleKill = Key + ".double-kill";
+
+    /**
+     * 是否开启DoubleKill默认的ExceptionHandle
+     *
+     * @see #Key$doubleKillHandler
+     */
+    private boolean doubleKillHandler = true;
+    public static final String Key$doubleKillHandler = Key + ".double-kill-handler";
 
     /**
      * 是否开启wings的PageQuery webmvc resolver
