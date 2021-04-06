@@ -9,6 +9,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -37,13 +39,16 @@ public class JournalJdbcHelp {
             String[] columns = extractColumn(rs.getMetaData(), COL_DELETE_DT, COL_MODIFY_DT, COL_MODIFY_TM);
             if (columns[0] != null) return columns[0];
             if (columns[1] != null) return columns[1];
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             //
-        } finally {
+        }
+        finally {
             if (needClose) {
                 try {
                     rs.close();
-                } catch (SQLException e) {
+                }
+                catch (SQLException e) {
                     //
                 }
             }
@@ -61,16 +66,30 @@ public class JournalJdbcHelp {
 
     // jdbc
 
-    public static int deleteByIds(JdbcTemplate tmpl, String table, JournalService.Journal journal, Long... ids) {
-        return deleteByIds(tmpl, table, journal.getCommitId(), journal.getCommitDt(), ids);
+    public static int deleteByIds(JdbcTemplate tmpl, String table, JournalService.Journal commit, Long... ids) {
+        return deleteByIds(tmpl, table, commit.getCommitId(), commit.getCommitDt(), ids);
+    }
+
+    public static int deleteByIds(JdbcTemplate tmpl, String table, JournalService.Journal commit, Collection<Long> ids) {
+        return deleteByIds(tmpl, table, commit.getCommitId(), commit.getCommitDt(), ids);
     }
 
     public static int deleteByIds(JdbcTemplate tmpl, String table, Long commitId, Long... ids) {
         return deleteByIds(tmpl, table, commitId, null, ids);
     }
 
+    public static int deleteByIds(JdbcTemplate tmpl, String table, Long commitId, Collection<Long> ids) {
+        return deleteByIds(tmpl, table, commitId, null, ids);
+    }
+
     public static int deleteByIds(JdbcTemplate tmpl, String table, Long commitId, LocalDateTime now, Long... ids) {
         if (ids == null || ids.length == 0) return 0;
+        return deleteByIds(tmpl, table, commitId, now, Arrays.asList(ids));
+    }
+
+    public static int deleteByIds(JdbcTemplate tmpl, String table, Long commitId, LocalDateTime now, Collection<Long> ids) {
+        if (ids == null || ids.isEmpty()) return 0;
+
         StringBuilder where = new StringBuilder(" WHERE id IN (");
         for (Long id : ids) {
             where.append(id).append(",");
@@ -80,8 +99,8 @@ public class JournalJdbcHelp {
         return deleteWhere(tmpl, table, commitId, now, where.toString());
     }
 
-    public static int deleteWhere(JdbcTemplate tmpl, String table, JournalService.Journal journal, String where, Object... args) {
-        return deleteWhere(tmpl, table, journal.getCommitId(), journal.getCommitDt(), where, args);
+    public static int deleteWhere(JdbcTemplate tmpl, String table, JournalService.Journal commit, String where, Object... args) {
+        return deleteWhere(tmpl, table, commit.getCommitId(), commit.getCommitDt(), where, args);
     }
 
     public static int deleteWhere(JdbcTemplate tmpl, String table, Long commitId, String where, Object... args) {
@@ -89,13 +108,15 @@ public class JournalJdbcHelp {
     }
 
     public static int deleteWhere(JdbcTemplate tmpl, String table, Long commitId, LocalDateTime now, String where, Object... args) {
+        checkWhere(where);
         checkTableName(table);
         String jf = getJournalDateColumn(tmpl, table);
         String journalSetter = " ";
         if (!jf.isEmpty()) {
-            String ldt = now == null ? "NOW()" : "'" + DateFormatter.full19(now) + "'";
+            String ldt = now == null ? "NOW(3)" : "'" + DateFormatter.full19(now) + "'";
             journalSetter = ", " + jf + "=" + ldt + " ";
         }
+
         String update = "UPDATE " + table + " SET " + COL_COMMIT_ID + "=" + commitId + journalSetter + where;
         tmpl.update(update, args);
 
@@ -122,6 +143,13 @@ public class JournalJdbcHelp {
         return dot < 0 ? name : name.substring(dot + 1);
     }
     // ////
+
+    private static void checkWhere(String where) {
+        if (where == null || where.isEmpty()) throw new IllegalArgumentException("where is empty");
+        if (where.contains(";")) {
+            throw new IllegalArgumentException("where is may be sql-injected");
+        }
+    }
 
     private static void checkTableName(String table) {
         if (table == null) throw new NullPointerException("table is null");

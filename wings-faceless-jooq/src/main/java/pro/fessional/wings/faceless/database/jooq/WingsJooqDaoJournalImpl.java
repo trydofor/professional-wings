@@ -206,7 +206,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
      * @see #delete(TableImpl, Condition)
      */
     public int delete(JournalService.Journal commit, Condition cond) {
-        return delete(table, cond);
+        return delete(commit, table, cond);
     }
 
     /**
