@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,7 @@ public class SlardarRighterConfiguration {
     private final static Log logger = LogFactory.getLog(SlardarRighterConfiguration.class);
 
     @Bean
+    @ConditionalOnMissingBean
     public RighterInterceptor righterInterceptor(SlardarRighterProp slardarRighterProp) {
         logger.info("Wings conf righterInterceptor");
         return new RighterInterceptor(slardarRighterProp);

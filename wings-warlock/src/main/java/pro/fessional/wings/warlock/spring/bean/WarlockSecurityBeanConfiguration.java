@@ -19,6 +19,8 @@ import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.slardar.cache.WingsCache;
+import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
+import pro.fessional.wings.slardar.context.RighterInterceptor;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.WingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
@@ -45,6 +47,9 @@ import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
 import java.util.Map;
+import java.util.function.Function;
+
+import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.SaltByUid;
 
 
 /**
@@ -204,7 +209,28 @@ public class WarlockSecurityBeanConfiguration {
 
     ///////
     @Autowired
-    public void initDefaultUserDetailsCombo(DefaultUserDetailsCombo defaultUserDetailsCombo) {
+    public void initDefaultUserDetailsCombo(
+            DefaultUserDetailsCombo defaultUserDetailsCombo,
+            ObjectProvider<RighterInterceptor> righterInterceptor
+    ) {
+        logger.info("Wings conf addAutoRegisterType ");
         defaultUserDetailsCombo.addAutoRegisterType(securityProp.mapAutoregAuthEnum());
+
+        final RighterInterceptor ri = righterInterceptor.getIfAvailable();
+        if (ri != null) {
+            logger.info("Wings conf righterInterceptor with secretProvider");
+            final Function<Object, String> ori = ri.getSecretProvider();
+            ri.setSecretProvider(key -> {
+                String pass = null;
+                if (key instanceof Long) {
+                    pass = GlobalAttributeHolder.getAttr(SaltByUid, (Long) key);
+                }
+                if (pass == null) {
+                    ori.apply(key);
+                }
+                return pass;
+            });
+        }
+
     }
 }

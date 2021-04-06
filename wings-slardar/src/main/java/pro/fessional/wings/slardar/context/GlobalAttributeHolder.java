@@ -40,7 +40,7 @@ public class GlobalAttributeHolder {
      * 注册一个属性及其加载器
      *
      * @param reg    类型
-     * @param loader 加载器
+     * @param loader 加载器，返回null时不被缓存，每次都会调用，因此建议返回`空值`
      * @param <K>    key类型
      * @param <V>    value类型
      */
@@ -76,6 +76,22 @@ public class GlobalAttributeHolder {
             kvs.put(new Key<>(reg, en.getKey()), en.getValue());
         }
         CACHE.putAll(kvs);
+    }
+
+    /**
+     * 根据一个type获取属性，如果不存在，null时抛NPE异常
+     *
+     * @param reg  类型
+     * @param key  唯一key，如userId
+     * @param elze 唯一key，null时返回elze
+     * @param <K>  key类型
+     * @param <V>  value类型
+     * @return 返回值
+     */
+    @NotNull
+    public static <K, V> V getAttr(@NotNull Reg<K, V> reg, @NotNull K key, @NotNull V elze) {
+        final V obj = getAttr(reg, key, false);
+        return obj == null ? elze : obj;
     }
 
     /**
@@ -258,14 +274,16 @@ public class GlobalAttributeHolder {
             return regType;
         }
 
-        @Override public boolean equals(Object o) {
+        @Override
+        public boolean equals(Object o) {
             if (this == o) return true;
             if (!(o instanceof Reg)) return false;
             Reg<?, ?> reg = (Reg<?, ?>) o;
             return Objects.equals(regType, reg.regType);
         }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             return Objects.hash(regType);
         }
     }
