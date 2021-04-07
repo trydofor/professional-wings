@@ -28,6 +28,15 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- method 2: import dependency, not inherit all properties
+            <dependency>
+                <groupId>pro.fessional</groupId>
+                <artifactId>wings-home</artifactId>
+                <version>${wings.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            -->
             <dependency>
                 <groupId>com.moilioncircle.roshan</groupId>
                 <artifactId>demo-common</artifactId>
@@ -47,6 +56,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <skip>false</skip>
                     <executable>true</executable>
                 </configuration>
             </plugin>

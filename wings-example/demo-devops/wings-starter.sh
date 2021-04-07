@@ -1,14 +1,13 @@
 #!/bin/bash
 cat <<'EOF'
 #################################################
-# version 2020-12-25 # test on mac and lin
+# version 2021-04-01 # test on mac and lin
 # 使用`ln -s`把此脚本软连接到`执行目录/workdir`，
 # 其同名`env`如（wings-starter.env）会被自动载入。
 # `BOOT_CNF|BOOT_ARG|JAVA_ARG`内变量可被延时求值，
 # 使用`'`为延时求值，使用`"`为立即求值。
 #################################################
 EOF
-BOOT_DTM=$(date '+-%y%m%d%H%M%S')
 ################ modify the following params ################
 USER_RUN="$USER" # 用来启动程序的用户。
 PORT_RUN=''      # 默认端口，空时
@@ -35,8 +34,8 @@ JAVA_ARG='
 -XX:ConcGCThreads=8
 -XX:InitiatingHeapOccupancyPercent=70
 
--XX:HeapDumpPath=${BOOT_JAR}${BOOT_DTM}.heap
--Xloggc:${BOOT_JAR}${BOOT_DTM}.gc
+-XX:HeapDumpPath=${JAR_NAME}-${BOOT_DTM}.heap
+-Xloggc:${JAR_NAME}-${BOOT_DTM}.gc
 -XX:+PrintGC
 -XX:+PrintGCDetails
 -XX:+PrintGCDateStamps
@@ -53,24 +52,20 @@ JAVA_ARG='
 ################ NO NEED to modify the following ################
 
 ################ script dir ################
+# load env
 this_file="$0"
+this_envs=${this_file%.*}.env
+if [[ -f "$this_envs" ]]; then
+    echo -e "\033[0;32mINFO: load env file. $this_envs ==== \033[m"
+    source "$this_envs"
+else
+    echo -e "\033[0;31mWARN: no env file found. $this_envs \033[m"
+fi
+
+# change workdir after found env-file
 cd $(dirname $this_file) || exit
 echo -e "\033[0;32mINFO: ==== work dir ==== \033[m"
 pwd
-
-# load env
-thie_envf=${this_file%.*}.env
-if [[ -f "$thie_envf" ]]; then
-    echo -e "\033[0;32mINFO: load env file, $thie_envf ==== \033[m"
-    source "$thie_envf"
-else
-    echo -e "\033[0;31mWARN: no env file found, $thie_envf \033[m"
-fi
-
-# calc env
-BOOT_CNF=$(eval "echo \"$BOOT_CNF\"")
-BOOT_ARG=$(eval "echo \"$BOOT_ARG\"")
-JAVA_ARG=$(eval "echo \"$JAVA_ARG\"")
 
 # check user
 if [[ "$USER_RUN" != "$USER" ]]; then
@@ -114,6 +109,13 @@ count=$(pgrep -f -u "$USER_RUN"  " $BOOT_JAR " | wc -l)
 if [[ "$1" != "" ]]; then
     ARGS_RUN="$1"
 fi
+
+# calc env
+BOOT_DTM=$(date '+%y%m%d%H%M%S')
+BOOT_CNF=$(eval "echo \"$BOOT_CNF\"")
+BOOT_ARG=$(eval "echo \"$BOOT_ARG\"")
+JAVA_ARG=$(eval "echo \"$JAVA_ARG\"")
+
 case "$ARGS_RUN" in
     start)
         if [[ "$BOOT_CNF" != "" ]]; then
@@ -132,7 +134,7 @@ case "$ARGS_RUN" in
         if [[ $count -eq 0 ]]; then
             if [[ -f "${BOOT_OUT}" ]]; then
                 echo -e "\033[0;33mNOTE: backup old output \033[m"
-                mv "${BOOT_OUT}" "${BOOT_OUT}.$(date '+%y%m%d-%H%M%S')"
+                mv "${BOOT_OUT}" "${BOOT_OUT}-${BOOT_DTM}.bak"
             fi
 
             nohup java ${JAVA_ARG} -jar ${BOOT_JAR} ${BOOT_ARG} > ${BOOT_OUT} 2>&1 &

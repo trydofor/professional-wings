@@ -15,8 +15,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>pro.fessional</groupId>
-            <artifactId>wings-warlock</artifactId>
+            <groupId>com.moilioncircle.roshan</groupId>
+            <artifactId>demo-common</artifactId>
         </dependency>
         <dependency>
             <groupId>pro.fessional</groupId>
@@ -24,16 +24,4 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <executable>false</executable>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

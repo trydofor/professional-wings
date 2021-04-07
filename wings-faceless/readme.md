@@ -283,7 +283,7 @@ mysql:5.7
 ```properties
 wings.silencer.i18n.zoneid=Asia/Shanghai
 # 常用jdbc参数
-spring.datasource.url=jdbc:mysql://localhost:3306/tail_backend\
+spring.datasource.url=jdbc:mysql://localhost:3306/wings_example\
   ?autoReconnect=true&useSSL=false\
   &useUnicode=true&characterEncoding=UTF-8\
   &serverTimezone=Asia/Shanghai

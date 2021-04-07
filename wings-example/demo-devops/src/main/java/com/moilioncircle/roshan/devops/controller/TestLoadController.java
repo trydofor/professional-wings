@@ -1,4 +1,4 @@
-package com.moilioncircle.roshan.admin.controller;
+package com.moilioncircle.roshan.devops.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -93,7 +93,7 @@ public class TestLoadController {
         return "sleep" + ms;
     }
 
-    @GetMapping("/test/load/speed.html")
+    @GetMapping({"/test/load/speed.html", "/index.html"})
     public String speed() {
         return "speed";
     }
