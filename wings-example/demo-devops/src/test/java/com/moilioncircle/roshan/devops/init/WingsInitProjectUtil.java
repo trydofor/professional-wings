@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -76,14 +77,13 @@ public class WingsInitProjectUtil {
             copyTree(info, new File(info.srcDir, f), excludes, message);
         }
 
-        makeWings(info.dstDir, info.dstPackage, message);
+        makeWings(info.dstDir, info.dstCodeName.toLowerCase(), info.dstPackage, message);
     }
 
-    private static void makeWings(File root, String pkg, Consumer<String> message) {
+    private static void makeWings(File root, String code, String pkg, Consumer<String> message) {
         final String path = root.getAbsolutePath();
         if (path.endsWith("-common/src/main")) {
             new File(root, "resources/wings-conf").mkdirs();
-            new File(root, "resources/wings-flywave/master").mkdirs();
             new File(root, "resources/wings-flywave/branch").mkdirs();
             new File(root, "resources/wings-i18n").mkdirs();
             message.accept("mkdir for wings common resources");
@@ -99,7 +99,7 @@ public class WingsInitProjectUtil {
 
         if (root.isDirectory()) {
             for (File f : root.listFiles()) {
-                makeWings(f, pkg, message);
+                makeWings(f, code, pkg, message);
             }
         }
     }
@@ -126,6 +126,7 @@ public class WingsInitProjectUtil {
         else if (path.endsWith(".java") ||
                  path.endsWith(".form") ||
                  path.endsWith(".env") ||
+                 path.endsWith(".sql") ||
                  path.endsWith(".md") ||
                  path.endsWith(".properties")
         ) {
@@ -143,6 +144,7 @@ public class WingsInitProjectUtil {
         }
 
         dstName = replaceCodeName(info, dstName);
+        dstName = replaceDate999(dstName);
         File dstFile = new File(info.dstDir, dstName);
         File parent = dstFile.getParentFile();
         if (!parent.exists()) {
@@ -169,8 +171,11 @@ public class WingsInitProjectUtil {
         String dstCn1 = Character.toLowerCase(info.dstCodeName.charAt(0)) + info.dstCodeName.substring(1);
         String dstCn2 = Character.toUpperCase(info.dstCodeName.charAt(0)) + info.dstCodeName.substring(1);
 
-        return text.replace(srcCn1, dstCn1)
-                   .replace(srcCn2, dstCn2);
+        return text.replace(srcCn1, dstCn1).replace(srcCn2, dstCn2);
+    }
+
+    private static String replaceDate999(String text) {
+        return text.replace("9999-99-99", LocalDate.now().toString());
     }
 
     private static byte[] copyPomXml(Info info, File file) throws IOException {
@@ -193,6 +198,7 @@ public class WingsInitProjectUtil {
                               .replace(info.srcPackage, info.dstPackage)
                               .replace(info.srcArtifactId, info.dstArtifactId);
         text = replaceCodeName(info, text);
+        text = replaceDate999(text);
         return text.getBytes(StandardCharsets.UTF_8);
     }
 

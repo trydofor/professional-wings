@@ -16,6 +16,7 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 import pro.fessional.mirana.cast.BoxedCastUtil;
 import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.data.Z;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,6 +96,48 @@ public class WingsJooqUtil extends DSL {
 
     ///////////////// Condition /////////////////////
 
+    @NotNull
+    public static <Z> Condition andNotNull(@NotNull Condition first, @Nullable Condition other, @Nullable Object... value) {
+        return condNotNull(Operator.AND, first, other, value);
+    }
+
+    @NotNull
+    public static <Z> Condition orNotNull(@NotNull Condition first, @Nullable Condition other, @Nullable Object... value) {
+        return condNotNull(Operator.OR, first, other, value);
+    }
+
+    @NotNull
+    public static <Z> Condition condNotNull(@NotNull Operator opr, @NotNull Condition first, @Nullable Condition other, @Nullable Object... value) {
+        if (other == null || value == null || value.length == 0) return first;
+        for (Object v : value) {
+            if (v != null) {
+                return condition(opr, first, other);
+            }
+        }
+        return first;
+    }
+
+    @NotNull
+    public static <Z> Condition andNotEmpty(@NotNull Condition first, @Nullable Condition other, @Nullable Collection<?> value) {
+        return condNotEmpty(Operator.AND, first, other, value);
+    }
+
+    @NotNull
+    public static <Z> Condition orNotEmpty(@NotNull Condition first, @Nullable Condition other, @Nullable Collection<?> value) {
+        return condNotEmpty(Operator.OR, first, other, value);
+    }
+
+    @NotNull
+    public static <Z> Condition condNotEmpty(@NotNull Operator opr, @NotNull Condition first, @Nullable Condition other, @Nullable Collection<?> value) {
+        if (other == null || value == null || value.isEmpty()) {
+            return first;
+        }
+        else {
+            return condition(opr, first, other);
+        }
+    }
+
+
     /**
      * 构造一个between的条件
      *
@@ -109,13 +152,16 @@ public class WingsJooqUtil extends DSL {
         if (lowerInclusive == null) {
             if (upperInclusive == null) {
                 return trueCondition();
-            } else {
+            }
+            else {
                 return field.le(upperInclusive);
             }
-        } else {
+        }
+        else {
             if (upperInclusive == null) {
                 return field.ge(lowerInclusive);
-            } else {
+            }
+            else {
                 return field.between(lowerInclusive, upperInclusive);
             }
         }
@@ -164,7 +210,8 @@ public class WingsJooqUtil extends DSL {
         if (rowN.length == 1) {
             if (valN.length == 1) {
                 return condCombo(valN[0], rowN);
-            } else {
+            }
+            else {
                 @SuppressWarnings("unchecked")
                 Field<Object> fd = (Field<Object>) rowN[0];
                 return fd.in(fd.getDataType().convert(valN));
@@ -264,7 +311,8 @@ public class WingsJooqUtil extends DSL {
                 Field<?> f = field(en.getKey());
                 fvs.put(f, en.getValue());
             }
-        } else {
+        }
+        else {
             Field<?>[] fields = alias.fields();
             for (Map.Entry<String, Object> en : fieldValue.entrySet()) {
                 for (Field<?> f : fields) {
@@ -309,27 +357,37 @@ public class WingsJooqUtil extends DSL {
         List<?> vs;
         if (value == null) {
             return ignoreNull ? null : field.isNull();
-        } else if (value instanceof Collection) {
+        }
+        else if (value instanceof Collection) {
             vs = new ArrayList<>(((Collection<?>) value));
-        } else if (value.getClass().isArray()) {
+        }
+        else if (value.getClass().isArray()) {
             if (value instanceof boolean[]) {
                 vs = BoxedCastUtil.list((boolean[]) value);
-            } else if (value instanceof byte[]) {
+            }
+            else if (value instanceof byte[]) {
                 vs = BoxedCastUtil.list((byte[]) value);
-            } else if (value instanceof char[]) {
+            }
+            else if (value instanceof char[]) {
                 vs = BoxedCastUtil.list((char[]) value);
-            } else if (value instanceof int[]) {
+            }
+            else if (value instanceof int[]) {
                 vs = BoxedCastUtil.list((int[]) value);
-            } else if (value instanceof long[]) {
+            }
+            else if (value instanceof long[]) {
                 vs = BoxedCastUtil.list((long[]) value);
-            } else if (value instanceof float[]) {
+            }
+            else if (value instanceof float[]) {
                 vs = BoxedCastUtil.list((float[]) value);
-            } else if (value instanceof double[]) {
+            }
+            else if (value instanceof double[]) {
                 vs = BoxedCastUtil.list((double[]) value);
-            } else {
+            }
+            else {
                 vs = Arrays.asList((Object[]) value);
             }
-        } else {
+        }
+        else {
             @SuppressWarnings("unchecked")
             Field<Object> f = (Field<Object>) field;
             return f.eq(f.getDataType().convert(value));
@@ -337,7 +395,8 @@ public class WingsJooqUtil extends DSL {
 
         if (vs.isEmpty()) {
             return null;
-        } else {
+        }
+        else {
             vs.removeIf(Objects::isNull);
             return field.in(field.getDataType().convert(vs));
         }
@@ -435,19 +494,37 @@ public class WingsJooqUtil extends DSL {
          */
         @NotNull
         public CondBuilder and(Condition cond) {
-            return cond(Operator.AND, cond, true);
+            return cond(Operator.AND, cond, cond != null);
         }
 
         /**
-         * 当 ifTrue且cond != null时，and cond
+         * @see #and(Condition, boolean)
+         */
+        @NotNull
+        public CondBuilder andNotNull(Condition cond, Object... value) {
+            final boolean vd = cond != null && Z.notNull(value) != null;
+            return cond(Operator.AND, cond, vd);
+        }
+
+        /**
+         * @see #and(Condition, boolean)
+         */
+        @NotNull
+        public CondBuilder andNotEmpty(Condition cond, Collection<?> value) {
+            final boolean vd = cond != null && value != null && !value.isEmpty();
+            return cond(Operator.AND, cond, vd);
+        }
+
+        /**
+         * 当 valid且cond != null时，and cond
          *
-         * @param cond   目标
-         * @param ifTrue 判定
+         * @param cond  目标
+         * @param valid 判定
          * @return builder
          */
         @NotNull
-        public CondBuilder and(Condition cond, boolean ifTrue) {
-            return cond(Operator.AND, cond, ifTrue);
+        public CondBuilder and(Condition cond, boolean valid) {
+            return cond(Operator.AND, cond, valid);
         }
 
         /**
@@ -463,19 +540,37 @@ public class WingsJooqUtil extends DSL {
          */
         @NotNull
         public CondBuilder or(Condition cond) {
-            return cond(Operator.OR, cond, true);
+            return cond(Operator.OR, cond, cond != null);
         }
 
         /**
-         * 当 ifTrue且cond != null时，or cond
+         * @see #and(Condition, boolean)
+         */
+        @NotNull
+        public CondBuilder orNotNull(Condition cond, Object... value) {
+            final boolean vd = cond != null && Z.notNull(value) != null;
+            return cond(Operator.OR, cond, vd);
+        }
+
+        /**
+         * @see #and(Condition, boolean)
+         */
+        @NotNull
+        public CondBuilder orNotEmpty(Condition cond, Collection<?> value) {
+            final boolean vd = cond != null && value != null && !value.isEmpty();
+            return cond(Operator.OR, cond, vd);
+        }
+
+        /**
+         * 当 valid且cond != null时，or cond
          *
-         * @param cond   目标
-         * @param ifTrue 判定
+         * @param cond  目标
+         * @param valid 判定
          * @return builder
          */
         @NotNull
-        public CondBuilder or(Condition cond, boolean ifTrue) {
-            return cond(Operator.OR, cond, ifTrue);
+        public CondBuilder or(Condition cond, boolean valid) {
+            return cond(Operator.OR, cond, valid);
         }
 
         /**
@@ -500,44 +595,49 @@ public class WingsJooqUtil extends DSL {
          * @return builder
          */
         @NotNull
-        public CondBuilder grp(Condition cond, boolean ifTrue) {
+        public CondBuilder grp(Condition cond, boolean valid) {
             calcStack.add(BGN);
-            if (ifTrue && cond != null) calcStack.add(cond);
+            if (valid && cond != null) calcStack.add(cond);
             return this;
         }
 
         /**
-         * 当 ifTrue且cond != null时，and/or cond
+         * 当 valid且cond != null时，and/or cond
          *
-         * @param opr    操作
-         * @param cond   目标
-         * @param ifTrue 判定
+         * @param opr   操作
+         * @param cond  目标
+         * @param valid 判定
          * @return builder
          */
         @NotNull
-        public CondBuilder cond(Operator opr, Condition cond, boolean ifTrue) {
-            if (!ifTrue || opr == null) return this;
+        public CondBuilder cond(Operator opr, Condition cond, boolean valid) {
+            if (!valid || opr == null) return this;
 
             if (calcStack.isEmpty()) {
                 if (cond != null) calcStack.add(cond);
-            } else {
+            }
+            else {
                 for (int i = calcStack.size() - 1; i >= 0; i--) {
                     Object obj = calcStack.get(i);
                     if (obj instanceof Condition) { // Condition -> 计算
                         if (cond == null) { // only opr (group)
                             calcStack.add(opr);
-                        } else { // 如果错误，抛出异常
+                        }
+                        else { // 如果错误，抛出异常
                             calcStack.set(i, eval((Condition) obj, opr, cond));
                         }
                         break;
-                    } else if (obj instanceof Operator) {
+                    }
+                    else if (obj instanceof Operator) {
                         if (cond == null) {
                             break; // 忽略当前操作符
-                        } else {
+                        }
+                        else {
                             // Operator -> 移除，找上一个
                             calcStack.remove(i);
                         }
-                    } else { // "(" -> append Condition
+                    }
+                    else { // "(" -> append Condition
                         if (cond != null) calcStack.add(cond);
                         break;
                     }
@@ -566,15 +666,19 @@ public class WingsJooqUtil extends DSL {
                 if (obj instanceof Condition) {
                     if (rt == null) {
                         rt = (Condition) obj;
-                    } else {
+                    }
+                    else {
                         rt = eval((Condition) obj, op, rt);
                     }
-                } else if (obj instanceof Operator) {
+                }
+                else if (obj instanceof Operator) {
                     op = (Operator) obj;
-                } else { // 括号
+                }
+                else { // 括号
                     if (grp < 0) { // 结束当前，继续求值
                         grp = cur;
-                    } else {
+                    }
+                    else {
                         break;
                     }
                 }

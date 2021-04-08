@@ -4,6 +4,7 @@ import org.jooq.Condition;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -88,6 +89,7 @@ class WingsJooqUtilTest {
         Condition p2 = d4.or(d5);
         Condition p3 = p1.and(p2);
         Condition c0 = d1.and(p3);
+        String nil = null;
 
         Condition c1 = WingsJooqUtil.condBuilder()
                                     .and(d1).and()
@@ -95,6 +97,9 @@ class WingsJooqUtilTest {
                                     .grp()
                                     .grp(d2).or(d3).or(d3, false).end()
                                     .and().and(d4, false)
+                                    .and(null)
+                                    .andNotNull(d1,nil)
+                                    .andNotEmpty(d1, Collections.EMPTY_LIST)
                                     .grp(d4).or(d5).and(d5, false).end()
                                     .end()
                                     .build();

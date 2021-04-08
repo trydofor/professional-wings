@@ -17,8 +17,8 @@ PASS=moilioncircle
 
 # 创建一个mysql数据库
 docker run -d \
---name wings-mysql \
--e MYSQL_DATABASE=wings-example \
+--name demo-mysql-5.7 \
+-e MYSQL_DATABASE=demo_example \
 -e MYSQL_USER=${USER} \
 -e MYSQL_ROOT_PASSWORD=${PASS} \
 -e MYSQL_PASSWORD=${PASS} \
