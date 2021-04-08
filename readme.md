@@ -336,6 +336,15 @@ src/**/spring - spring有个配置
 * 接口默认实现为`Default*`
 * 适配器类为`*Adapter`
 
+```
+// Journal 枚举类
+enum Jane {
+    Create, // 新建
+    Modify, // 修改
+    Remove, // 逻辑删除
+    Delete, // 物理删除
+}
+```
 ### 0.2.13.有关事件Event约定
 
 * 内部Event，内部Publish，内部Listen

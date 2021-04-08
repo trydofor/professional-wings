@@ -18,6 +18,7 @@
 
     <modules>
         <module>demo-admin</module>
+        <module>demo-front</module>
         <module>demo-common</module>
         <module>demo-devops</module>
     </modules>

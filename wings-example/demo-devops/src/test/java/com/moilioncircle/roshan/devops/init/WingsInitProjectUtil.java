@@ -52,6 +52,7 @@ public class WingsInitProjectUtil {
                 "pom.xml",
                 "readme.md",
                 "demo-admin/",
+                "demo-front/",
                 "demo-common/",
                 "demo-devops/",
                 };
