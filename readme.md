@@ -668,3 +668,15 @@ at org.springframework.boot.autoconfigure.jooq.JooqExceptionTranslator.exception
 at org.jooq.impl.ExecuteListeners.exception(ExecuteListeners.java:274)
 at org.jooq.impl.AbstractQuery.execute(AbstractQuery.java:390)
 ```
+
+### 17. resources的`Input length = 1` 错误
+
+```
+ Failed to execute goal org.apache.maven.plugins:maven-resources-plugin:3.2.0:resources
+  (default-resources) on project xxx-common: Input length = 1
+```
+
+原因是maven-resources-plugin的filter目录中存在非文本文件(不可按字符串读取)，
+不要降级到3.1.0，在nonFilteredFileExtension添加扩展名即可。
+
+(Automatic Property Expansion Using Maven)[https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/#howto-properties-and-configuration]
