@@ -51,11 +51,12 @@ public class WarlockEnabledProp {
 
 
     /**
-     * @see #Key$jooqDao
+     * 是否注入 jooq dao
+     *
+     * @see #Key$jooqAutogen
      */
-    private boolean jooqDao = true;
-    public static final String Key$jooqDao = Key + ".jooq-dao";
-
+    private String jooqAutogen = "";
+    public static final String Key$jooqAutogen = Key + ".jooq-autogen";
 
     /**
      * 是否注入 justAuthLoginPageCombo
@@ -103,4 +104,12 @@ public class WarlockEnabledProp {
      */
     private boolean codeExceptionHandler = true;
     public static final String Key$codeExceptionHandler = Key + ".code-exception-handler";
+
+    /**
+     * 是否注入 BindExceptionAdvice
+     *
+     * @see #Key$bindExceptionAdvice
+     */
+    private String bindExceptionAdvice = "";
+    public static final String Key$bindExceptionAdvice = Key + ".bind-exception-advice";
 }

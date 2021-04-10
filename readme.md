@@ -336,8 +336,14 @@ src/**/spring - spring有个配置
 * 接口默认实现为`Default*`
 * 适配器类为`*Adapter`
 
+常用命名组合，单词顺序和词义尽量保持一致，可读性优先。
+
+* Ins/Out
+* Query/Reply
+
+
 ```
-// Journal 枚举类
+// Service中Journal 枚举类
 enum Jane {
     Create, // 新建
     Modify, // 修改
@@ -345,6 +351,7 @@ enum Jane {
     Delete, // 物理删除
 }
 ```
+
 ### 0.2.13.有关事件Event约定
 
 * 内部Event，内部Publish，内部Listen

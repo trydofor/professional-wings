@@ -13,7 +13,7 @@ import pro.fessional.wings.faceless.enums.LanguageEnumUtil;
 import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 import pro.fessional.wings.faceless.enums.StandardTimezoneEnum;
 import pro.fessional.wings.faceless.enums.TimezoneEnumUtil;
-import pro.fessional.wings.warlock.error.CodeExceptionResolver;
+import pro.fessional.wings.warlock.errorhandle.CodeExceptionResolver;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockErrorProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockI18nProp;

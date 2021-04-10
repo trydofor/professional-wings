@@ -10,7 +10,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.objenesis.strategy.StdInstantiatorStrategy;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import pro.fessional.mirana.bits.Aes128;
 import pro.fessional.mirana.bits.Base64;
@@ -18,6 +17,7 @@ import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarRighterProp;
+import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,7 +29,7 @@ import java.util.function.Function;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class RighterInterceptor implements HandlerInterceptor {
+public class RighterInterceptor implements AutoRegisterInterceptor {
 
     public static final String secret = RandCode.strong(60);
 

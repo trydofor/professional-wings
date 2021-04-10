@@ -58,3 +58,23 @@ jmeter -n \
 -j demo-devops/target/load-test/load-test.log \
 -e -o demo-devops/target/load-test/report
 ```
+
+## 9.4. 程序部署
+
+复制 wings-starter.sh 到服务器，并使用软连接建立启动脚本和env文件，以demo-admin为例。
+
+``` bash
+# 建立启动脚本，一个boot一个
+ln -s wings-starter.sh demo-admin.sh
+# 复制 wings-starter.env内容，与启动脚本同名(扩展名不同)
+vi demo-admin.env
+```
+
+在env中，port,jar,log容易理解，按项目需要配置即可。
+BOOT_CNF是用来替换默认配置的运行时配置，结构如下。
+
+```
+├── application.properties // 程序级设置
+├── wings-conf // 自动配置，按需覆盖内部文件
+│     └── spring-datasource.properties
+```

@@ -3,9 +3,9 @@ package pro.fessional.wings.slardar.concur.impl;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerInterceptor;
 import pro.fessional.wings.slardar.concur.FirstBlood;
 import pro.fessional.wings.slardar.concur.ProgressContext;
+import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +16,7 @@ import java.util.List;
  * @author trydofor
  * @since 2021-03-10
  */
-public class FirstBloodInterceptor implements HandlerInterceptor {
+public class FirstBloodInterceptor implements AutoRegisterInterceptor {
 
     private final List<FirstBloodHandler> handlers;
 

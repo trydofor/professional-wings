@@ -1,4 +1,4 @@
-package pro.fessional.wings.warlock.error;
+package pro.fessional.wings.warlock.errorhandle;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
