@@ -1,2 +1,0 @@
--- 时区统一(GMT+8)，编码统一(utf8mb4)
--- CREATE DATABASE `demo_example` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;

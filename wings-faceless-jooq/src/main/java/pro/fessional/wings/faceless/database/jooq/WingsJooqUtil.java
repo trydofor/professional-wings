@@ -97,46 +97,54 @@ public class WingsJooqUtil extends DSL {
     ///////////////// Condition /////////////////////
 
     @NotNull
-    public static <Z> Condition andNotNull(@NotNull Condition first, @Nullable Condition other, @Nullable Object... value) {
+    public static Condition andNotNull(@NotNull Condition first, @Nullable Condition other, @Nullable Object... value) {
         return condNotNull(Operator.AND, first, other, value);
     }
 
     @NotNull
-    public static <Z> Condition orNotNull(@NotNull Condition first, @Nullable Condition other, @Nullable Object... value) {
+    public static Condition orNotNull(@NotNull Condition first, @Nullable Condition other, @Nullable Object... value) {
         return condNotNull(Operator.OR, first, other, value);
     }
 
     @NotNull
-    public static <Z> Condition condNotNull(@NotNull Operator opr, @NotNull Condition first, @Nullable Condition other, @Nullable Object... value) {
-        if (other == null || value == null || value.length == 0) return first;
-        for (Object v : value) {
-            if (v != null) {
-                return condition(opr, first, other);
-            }
-        }
-        return first;
+    public static Condition condNotNull(@NotNull Operator opr, @NotNull Condition first, @Nullable Condition other, @Nullable Object... value) {
+        return cond(opr, first, other, Z.notNull(value) != null);
     }
 
     @NotNull
-    public static <Z> Condition andNotEmpty(@NotNull Condition first, @Nullable Condition other, @Nullable Collection<?> value) {
+    public static Condition andNotEmpty(@NotNull Condition first, @Nullable Condition other, @Nullable Collection<?> value) {
         return condNotEmpty(Operator.AND, first, other, value);
     }
 
     @NotNull
-    public static <Z> Condition orNotEmpty(@NotNull Condition first, @Nullable Condition other, @Nullable Collection<?> value) {
+    public static Condition orNotEmpty(@NotNull Condition first, @Nullable Condition other, @Nullable Collection<?> value) {
         return condNotEmpty(Operator.OR, first, other, value);
     }
 
     @NotNull
-    public static <Z> Condition condNotEmpty(@NotNull Operator opr, @NotNull Condition first, @Nullable Condition other, @Nullable Collection<?> value) {
-        if (other == null || value == null || value.isEmpty()) {
-            return first;
-        }
-        else {
-            return condition(opr, first, other);
-        }
+    public static Condition condNotEmpty(@NotNull Operator opr, @NotNull Condition first, @Nullable Condition other, @Nullable Collection<?> value) {
+        return cond(opr, first, other, value != null && !value.isEmpty());
     }
 
+    @NotNull
+    public static Condition and(@NotNull Condition first, @Nullable Condition other, boolean valid) {
+        return cond(Operator.AND, first, other, valid);
+    }
+
+    @NotNull
+    public static Condition or(@NotNull Condition first, @Nullable Condition other, boolean valid) {
+        return cond(Operator.OR, first, other, valid);
+    }
+
+    @NotNull
+    public static Condition cond(@NotNull Operator opr, @NotNull Condition first, @Nullable Condition other, boolean valid) {
+        if (other != null && valid) {
+            return condition(opr, first, other);
+        }
+        else {
+            return first;
+        }
+    }
 
     /**
      * 构造一个between的条件
