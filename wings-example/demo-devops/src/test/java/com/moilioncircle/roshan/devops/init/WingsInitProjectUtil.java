@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -176,7 +177,14 @@ public class WingsInitProjectUtil {
     }
 
     private static String replaceDate999(String text) {
-        return text.replace("9999-99-99", LocalDate.now().toString());
+        final LocalDate now = LocalDate.now();
+        final String ymd1 = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        final String ymd2 = now.format(DateTimeFormatter.ofPattern("yyyy_MMdd"));
+        final String ymh = now.format(DateTimeFormatter.ofPattern("yyyy_MMdd_HHmm"));
+        return text.replace("9999-99-99", ymd1)
+                   .replace("9999_9999_01L", ymd2 + "_01L")
+                   .replace("9999_9999_9999L", ymh + "_01L")
+                ;
     }
 
     private static byte[] copyPomXml(Info info, File file) throws IOException {
