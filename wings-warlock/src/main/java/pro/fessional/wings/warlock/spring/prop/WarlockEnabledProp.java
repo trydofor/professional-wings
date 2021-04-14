@@ -55,7 +55,7 @@ public class WarlockEnabledProp {
      *
      * @see #Key$jooqAutogen
      */
-    private String jooqAutogen = "";
+    private boolean jooqAutogen = true;
     public static final String Key$jooqAutogen = Key + ".jooq-autogen";
 
     /**
@@ -110,6 +110,14 @@ public class WarlockEnabledProp {
      *
      * @see #Key$bindExceptionAdvice
      */
-    private String bindExceptionAdvice = "";
+    private boolean bindExceptionAdvice = true;
     public static final String Key$bindExceptionAdvice = Key + ".bind-exception-advice";
+
+    /**
+     * 是否检查mysql和本机timezone兼容性
+     *
+     * @see #Key$checkTimezone
+     */
+    private boolean checkTimezone = true;
+    public static final String Key$checkTimezone = Key + ".check-timezone";
 }

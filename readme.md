@@ -676,7 +676,7 @@ at org.jooq.impl.ExecuteListeners.exception(ExecuteListeners.java:274)
 at org.jooq.impl.AbstractQuery.execute(AbstractQuery.java:390)
 ```
 
-### 17. resources的`Input length = 1` 错误
+### 17.resources的`Input length = 1` 错误
 
 ```
  Failed to execute goal org.apache.maven.plugins:maven-resources-plugin:3.2.0:resources
@@ -687,3 +687,12 @@ at org.jooq.impl.AbstractQuery.execute(AbstractQuery.java:390)
 不要降级到3.1.0，在nonFilteredFileExtension添加扩展名即可。
 
 (Automatic Property Expansion Using Maven)[https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/#howto-properties-and-configuration]
+
+### 18.通过mysql客户端能找到，wings查询不到数据
+
+wings本身是时区敏感的，一般要求jvm和mysql在同一时区，主要体现在，
+flywave版本管理和journal的delete_dt时，都采用了时间，可以快速发现问题。
+
+Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控制台以Error形式输出。
+
+更多信息，参考 [04.日时零值和时区问题](wings-faceless/readme.md#04.日时零值和时区问题)
