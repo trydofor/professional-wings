@@ -33,4 +33,20 @@ public interface WarlockUserLoginService {
      */
     @NotNull
     List<Item> list(long userId, PageQuery query);
+
+
+    @Data
+    class Auth {
+        private Enum<?> authType;
+        private long userId;
+        private String details;
+        private boolean failed;
+    }
+
+    /**
+     * 记录登录验证情况
+     *
+     * @param auth 验证
+     */
+    void auth(Auth auth);
 }

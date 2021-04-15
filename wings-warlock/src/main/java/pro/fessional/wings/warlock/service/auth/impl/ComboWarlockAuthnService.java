@@ -6,27 +6,24 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.wings.faceless.service.journal.JournalService;
-import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
-import pro.fessional.wings.slardar.context.TerminalContext;
-import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAnthnTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserLoginTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAnthnDao;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasisDao;
-import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserLoginDao;
-import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserLogin;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
+import pro.fessional.wings.warlock.event.auth.WarlockMaxFailedEvent;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.help.AuthnDetailsMapper;
 import pro.fessional.wings.warlock.service.user.WarlockUserAttribute;
+import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -46,20 +43,19 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     @Setter(onMethod_ = {@Autowired})
     private WinUserAnthnDao winUserAnthnDao;
 
-    @Setter(onMethod_ = {@Autowired})
-    private WinUserLoginDao winUserLoginDao;
 
     @Setter(onMethod_ = {@Autowired})
     private WingsAuthTypeParser wingsAuthTypeParser;
 
-    @Setter(onMethod_ = {@Autowired})
-    private LightIdService lightIdService;
 
     @Setter(onMethod_ = {@Autowired})
     private JournalService journalService;
 
     @Setter(onMethod_ = {@Autowired})
-    private PasssaltEncoder passsaltEncoder;
+    private WarlockUserLoginService warlockUserLoginService;
+
+    @Setter(onMethod_ = {@Autowired})
+    private ApplicationEventPublisher applicationEventPublisher;
 
     private List<Combo> saverCombos = Collections.emptyList();
 
@@ -105,8 +101,8 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         AuthnDetailsMapper.into(details, userDetails);
 
         switch (details.getStatus()) {
-            case ACTIVE:
             case UNINIT:
+            case ACTIVE:
             case INFIRM:
             case UNSAFE:
                 userDetails.setEnabled(true);
@@ -143,19 +139,12 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     public void onSuccess(@NotNull Enum<?> authType, long userId, String details) {
         final String at = wingsAuthTypeParser.parse(authType);
         journalService.commit(Jane.Success, userId, "success login auth-type=" + at, commit -> {
-            final TerminalContext.Context tc = TerminalContext.get();
-            final WinUserLoginTable t = winUserLoginDao.getTable();
-
-            WinUserLogin po = new WinUserLogin();
-            po.setId(lightIdService.getId(t.getClass()));
-            po.setUserId(userId);
-            po.setAuthType(at);
-            po.setLoginIp(tc.getRemoteIp());
-            po.setLoginDt(commit.getCommitDt());
-            po.setTerminal(tc.getAgentInfo());
-            po.setDetails(details);
-            po.setFailed(false);
-            winUserLoginDao.insert(po);
+            WarlockUserLoginService.Auth la = new WarlockUserLoginService.Auth();
+            la.setAuthType(authType);
+            la.setUserId(userId);
+            la.setDetails(details);
+            la.setFailed(false);
+            warlockUserLoginService.auth(la);
 
             final WinUserAnthnTable ta = winUserAnthnDao.getTable();
             winUserAnthnDao
@@ -181,6 +170,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
                            .from(ta)
                            .where(ta.Username.eq(username).and(ta.AuthType.eq(at)).and(ta.onlyLiveData))
                            .fetchOne();
+
         if (auth == null) {
             log.info("ignore login failure by not found auth-type={}, username={}", at, username);
             timingAttack();
@@ -212,20 +202,19 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
                         .set(tu.Remark, "locked by reach the max failure count=" + max)
                         .where(tu.Id.eq(uid))
                         .execute();
+
+                //
+                WarlockMaxFailedEvent evt = new WarlockMaxFailedEvent();
+                evt.setUserId(uid);
+                applicationEventPublisher.publishEvent(evt);
             }
 
-            final TerminalContext.Context tc = TerminalContext.get();
-            final WinUserLoginTable tl = winUserLoginDao.getTable();
-            WinUserLogin po = new WinUserLogin();
-            po.setId(lightIdService.getId(tl.getClass()));
-            po.setUserId(uid);
-            po.setAuthType(at);
-            po.setLoginIp(tc.getRemoteIp());
-            po.setLoginDt(commit.getCommitDt());
-            po.setTerminal(tc.getAgentInfo());
-            po.setDetails("");
-            po.setFailed(true);
-            winUserLoginDao.insert(po);
+            WarlockUserLoginService.Auth la = new WarlockUserLoginService.Auth();
+            la.setAuthType(authType);
+            la.setUserId(uid);
+            la.setDetails("");
+            la.setFailed(false);
+            warlockUserLoginService.auth(la);
 
             winUserAnthnDao
                     .ctx()

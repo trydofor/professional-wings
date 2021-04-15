@@ -696,3 +696,13 @@ flywave版本管理和journal的delete_dt时，都采用了时间，可以快速
 Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控制台以Error形式输出。
 
 更多信息，参考 [04.日时零值和时区问题](wings-faceless/readme.md#04.日时零值和时区问题)
+
+
+### 19.无外网mysql如何执行flywave版本管理
+
+建议在double check的情况下，手动执行和监控脚本。所以使用ssh Tunnel做端口转发。
+
+`ssh -N -L 3336:127.0.0.1:3306 [USER]@[SERVER_IP]`
+
+ * -N Tells SSH not to execute a remote command.
+ * -L 3336:127.0.0.1:3306 本地端口，远端ip，远端端口
