@@ -1,12 +1,14 @@
 package pro.fessional.wings.faceless.database.helper;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 
 /**
  * mysql服务器，程序，会话时区
@@ -16,37 +18,36 @@ import java.time.ZonedDateTime;
  * @since 2021-04-14
  */
 @Slf4j
-public class TimezoneChecker {
-
-    public static final String SQL = "SELECT @@system_time_zone,  @@global.time_zone, @@session.time_zone, NOW(), UTC_TIMESTAMP()";
+public class DatabaseChecker {
 
     /**
      * 如果不一致，抛出 IllegalStateException
      *
      * @param ds jdbc template
      */
-    public static void mysql(DataSource ds) {
+    public static void timezone(DataSource ds) {
+
+        final String zdt = "1979-01-01T00:00:00";
+        final LocalDateTime ldt = LocalDateTime.parse(zdt);
+        final String sql = "SELECT @@system_time_zone,  @@global.time_zone, @@session.time_zone,"
+                           + "TIMESTAMPDIFF(SECOND,'" + zdt.replace('T', ' ') + "', ?) from dual;";
 
         final JdbcTemplate tmpl = new JdbcTemplate(ds);
-//        tmpl.execute("set TIME_ZONE ='America/New_York'");
-        tmpl.query(SQL, rs -> {
+
+        tmpl.query(sql, rs -> {
             final StringBuilder sb = new StringBuilder();
             sb.append("\nsystem_time_zone=").append(rs.getString(1));
             sb.append("\nglobal.time_zone=").append(rs.getString(2));
-            sb.append("\nsession.time_zone==").append(rs.getString(3));
+            sb.append("\nsession.time_zone=").append(rs.getString(3));
             sb.append("\njvm-timezone=").append(ZoneId.systemDefault().getId());
 
-            final long nowSys = rs.getTimestamp(4).getTime();
-            final long nowUtc = rs.getTimestamp(5).getTime();
-            final int sqlOff = (int) ((nowSys - nowUtc) / 1000);
-            final int sysOff = ZonedDateTime.now().getOffset().getTotalSeconds();
-            final int allOff = sqlOff - sysOff;
-            sb.append("\nZoneOffset=").append(ZoneOffset.ofTotalSeconds(allOff));
+            final int off = rs.getInt(4);
+
+            sb.append("\nZoneOffset=").append(ZoneOffset.ofTotalSeconds(off));
 
             log.info(sb.substring(1).replace("\n", ", "));
 
-            if (Math.abs(allOff) < 10) {
-                sb.setLength(0);
+            if (off == 0) {
                 return;
             }
 
@@ -59,6 +60,24 @@ public class TimezoneChecker {
             sb.append("\n - java code `TimeZone.setDefault(TimeZone.getTimeZone(\"Asia/Shanghai\"));`");
 
             throw new IllegalStateException(sb.toString());
+        }, Timestamp.valueOf(ldt));
+    }
+
+    public static void version(DataSource ds) {
+        final JdbcTemplate tmpl = new JdbcTemplate(ds);
+        String ver = "SELECT version() FROM dual";
+        tmpl.query(ver, rs -> {
+            log.info("mysql version={}", rs.getString(1));
         });
+
+        String rev = "SELECT max(revision) FROM sys_schema_version WHERE apply_dt > '1111-11-11'";
+        try {
+            tmpl.query(rev, rs -> {
+                log.info("flywave revision={}", rs.getString(1));
+            });
+        }
+        catch (DataAccessException e) {
+            log.info("flywave revision is unknown, for no sys_schema_version");
+        }
     }
 }

@@ -12,7 +12,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import pro.fessional.wings.faceless.database.helper.TimezoneChecker;
+import pro.fessional.wings.faceless.database.helper.DatabaseChecker;
 import pro.fessional.wings.faceless.enums.LanguageEnumUtil;
 import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 import pro.fessional.wings.faceless.enums.StandardTimezoneEnum;
@@ -46,12 +46,13 @@ public class WarlockOtherBeanConfiguration {
 
     @Bean
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$checkTimezone, havingValue = "true")
-    public CommandLineRunner mysqlTimezoneChecker(DataSource dataSource, ApplicationContext context) {
-        logger.info("Wings conf mysqlTimezoneChecker");
+    @ConditionalOnProperty(name = WarlockEnabledProp.Key$checkDatabase, havingValue = "true")
+    public CommandLineRunner databaseChecker(DataSource dataSource, ApplicationContext context) {
+        logger.info("Wings conf databaseChecker");
         return args -> {
             try {
-                TimezoneChecker.mysql(dataSource);
+                DatabaseChecker.version(dataSource);
+                DatabaseChecker.timezone(dataSource);
             }
             catch (Exception e) {
                 logger.error("failed to check timezone", e);

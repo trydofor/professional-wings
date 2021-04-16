@@ -116,8 +116,8 @@ public class WarlockEnabledProp {
     /**
      * 是否检查mysql和本机timezone兼容性
      *
-     * @see #Key$checkTimezone
+     * @see #Key$checkDatabase
      */
-    private boolean checkTimezone = true;
-    public static final String Key$checkTimezone = Key + ".check-timezone";
+    private boolean checkDatabase = true;
+    public static final String Key$checkDatabase = Key + ".check-database";
 }
