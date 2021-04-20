@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -130,7 +130,8 @@ public class WingsInitProjectUtil {
                  path.endsWith(".env") ||
                  path.endsWith(".sql") ||
                  path.endsWith(".md") ||
-                 path.endsWith(".properties")
+                 path.endsWith(".properties") ||
+                 path.endsWith("spring.factories")
         ) {
             bytes = copyTxtSrc(info, src);
         }
@@ -177,7 +178,7 @@ public class WingsInitProjectUtil {
     }
 
     private static String replaceDate999(String text) {
-        final LocalDate now = LocalDate.now();
+        final LocalDateTime now = LocalDateTime.now();
         final String ymd1 = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         final String ymd2 = now.format(DateTimeFormatter.ofPattern("yyyy_MMdd"));
         final String ymh = now.format(DateTimeFormatter.ofPattern("yyyy_MMdd_HHmm"));

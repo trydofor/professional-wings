@@ -13,11 +13,23 @@ public class DateTimePattern {
     public static final String PTN_DATE_10 = DateFormatter.PTN_DATE_10;
     public static final String PTN_TIME_08 = DateFormatter.PTN_TIME_08;
     public static final String PTN_FULL_19 = DateFormatter.PTN_FULL_19;
+    /**
+     * 2020-06-01 13:34:46 +0900
+     */
     public static final String PTN_FULL_19Z = "yyyy-MM-dd HH:mm:ss Z";
+    /**
+     * 2020-06-01 13:34:46 Asia/Tokyo
+     */
     public static final String PTN_FULL_19V = "yyyy-MM-dd HH:mm:ss VV";
 
     public static final String PTN_FULL_23 = "yyyy-MM-dd HH:mm:ss.SSS";
+    /**
+     * 2020-06-01 13:34:46.000 +0900
+     */
     public static final String PTN_FULL_23Z = "yyyy-MM-dd HH:mm:ss.SSS Z";
+    /**
+     * 2020-06-01 13:34:46.000 Asia/Tokyo
+     */
     public static final String PTN_FULL_23V = "yyyy-MM-dd HH:mm:ss.SSS VV";
 
     // This class is immutable and thread-safe.

@@ -93,8 +93,8 @@ public class SlardarJacksonConfiguration {
             builder.deserializerByType(Date.class, dateDeserializer);
 
             // auto zoned
-            builder.serializerByType(ZonedDateTime.class, new JacksonZonedSerializer(DateTimePattern.FMT_FULL_19));
-            builder.deserializerByType(ZonedDateTime.class, new JacksonZonedDeserializer(DateTimePattern.FMT_FULL_19));
+            builder.serializerByType(ZonedDateTime.class, new JacksonZonedSerializer(DateTimePattern.FMT_FULL_19V));
+            builder.deserializerByType(ZonedDateTime.class, new JacksonZonedDeserializer(DateTimePattern.FMT_FULL_19V));
         };
     }
 }

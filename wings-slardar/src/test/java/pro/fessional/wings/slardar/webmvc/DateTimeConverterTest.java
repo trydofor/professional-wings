@@ -91,37 +91,42 @@ public class DateTimeConverterTest {
 
 
     /**
-     * 用户时区GMT，系统时区GMT+8，使用LocalDateTime在接受输入，按系统时区处理。
-     * 希望json输出时，把系统时区自动变为用户时区，减8小时。
+     * 用户时区GMT+9，系统时区GMT+8，使用LocalDateTime在接受输入，按系统时区处理。
+     * 希望json输出时，把系统时区自动变为用户时区，+1小时。
+     *
      * @see pro.fessional.wings.slardar.json.WingsJacksonMapperTest
      */
     @Test
     public void testLdtZdt() throws Exception {
-        // GMT -> GMT+8
-        testLdtZdt("2020-12-30 20:34:56", "2020-12-30 12:34:56");
+        // GMT+9 -> GMT+8
+        testLdtZdt("2020-12-30 12:34:56", "2020-12-30 13:34:56", "Asia/Tokyo");
+        // GMT+0 -> GMT+8
+        testLdtZdt("2020-12-30 20:34:56", "2020-12-30 12:34:56", "GMT");
     }
 
-    private void testLdtZdt(String d, String v) throws Exception {
+    private void testLdtZdt(String d, String v, String z) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/ldt-zdt.json?d=" + d)
-                .header("Zone-Id", "GMT");
+                                                              .header("Zone-Id", z);
         mockMvc.perform(builder)
                .andDo(print())
-               .andExpect(content().json("{\"zdt\":\"" + v + "\",\"ldt\":\"" + d + "\"}", false));
+               .andExpect(content().json("{\"zdt\":\"" + v + " " + z + "\",\"ldt\":\"" + d + "\"}", false));
     }
 
     /**
-     * 用户时区GMT，系统时区GMT+8，使用ZonedDateTime在接受输入时自动转换到系统时区
+     * 用户时区GMT+9，系统时区GMT+8，使用ZonedDateTime在接受输入时自动转换到系统时区。
+     * 不要使用有夏令时的时区测试。
      */
     @Test
     public void testZdtLdt() throws Exception {
-        testZdtLdt("2020-12-30 12:34:56", "2020-12-30 20:34:56");
+        testZdtLdt("2020-12-30 12:34:56", "2020-12-30 11:34:56", "Asia/Tokyo");
+        testZdtLdt("2020-12-30 12:34:56", "2020-12-30 20:34:56", "GMT");
     }
 
-    private void testZdtLdt(String d, String v) throws Exception {
+    private void testZdtLdt(String d, String v, String z) throws Exception {
         final MockHttpServletRequestBuilder builder = get("/test/zdt-ldt.json?d=" + d)
-                .header("Zone-Id", "GMT");
+                                                              .header("Zone-Id", z);
         mockMvc.perform(builder)
                .andDo(print())
-               .andExpect(content().json("{\"zdt\":\"" + d + "\",\"ldt\":\"" + v + "\"}", false));
+               .andExpect(content().json("{\"zdt\":\"" + d + " " + z + "\",\"ldt\":\"" + v + "\"}", false));
     }
 }

@@ -1,0 +1,3 @@
+#
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.moilioncircle.roshan.common.spring.boot.DemoAutoConfiguration
