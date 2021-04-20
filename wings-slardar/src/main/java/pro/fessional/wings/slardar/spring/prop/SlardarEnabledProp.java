@@ -123,7 +123,7 @@ public class SlardarEnabledProp {
      *
      * @see #Key$undertowWs
      */
-    private boolean undertowWs = false;
+    private boolean undertowWs = true;
     public static final String Key$undertowWs = Key + ".undertow-ws";
 
     /**

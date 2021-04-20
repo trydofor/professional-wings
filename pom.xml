@@ -186,7 +186,31 @@
                 <artifactId>wings-warlock</artifactId>
                 <version>${wings.version}</version>
             </dependency>
-            <!--sharding sphere-->
+            <!-- springboot -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring-boot.version}</version>
+                <!-- 测试上看 undertow 新能最好 -->
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-tomcat</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.session</groupId>
+                <artifactId>spring-session-hazelcast</artifactId>
+                <version>${spring-boot.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.hazelcast</groupId>
+                        <artifactId>hazelcast</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <!-- sharding sphere -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>sharding-jdbc-core</artifactId>

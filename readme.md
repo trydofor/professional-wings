@@ -706,3 +706,11 @@ Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控�
 
  * -N Tells SSH not to execute a remote command.
  * -L 3336:127.0.0.1:3306 本地端口，远端ip，远端端口
+
+### 20.Tomcat和hazelcast的POM exclusion
+
+使用wings-home为parent时通过dependencyManagement，继承wings默认不需要修改。
+但若是没有继承wings依赖，以下2项视情况需要自行调整
+
+* spring-boot-starter-web/spring-boot-starter-tomcat，因默认使用undertow
+* spring-session-hazelcast/hazelcast，使用最新版本。
