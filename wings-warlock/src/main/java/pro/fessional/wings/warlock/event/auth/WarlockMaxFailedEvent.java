@@ -9,5 +9,7 @@ import pro.fessional.wings.warlock.event.WarlockMetadataEvent;
  */
 @Data
 public class WarlockMaxFailedEvent implements WarlockMetadataEvent {
+    private int current;
+    private int maximum;
     private long userId;
 }

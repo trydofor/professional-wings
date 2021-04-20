@@ -177,8 +177,20 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
             return;
         }
 
+        final long uid = auth.value1();
         final int cnt = auth.value2();
+        final long aid = auth.value4();
         final int max = auth.value3();
+
+        //
+        if (cnt > max - 3) {
+            WarlockMaxFailedEvent evt = new WarlockMaxFailedEvent();
+            evt.setCurrent(cnt);
+            evt.setMaximum(max);
+            evt.setUserId(uid);
+            applicationEventPublisher.publishEvent(evt);
+        }
+
         if (cnt > max) {
             log.info("ignore login failure by reach max-count={}, auth-type={}, username={}", auth.value3(), at, username);
             timingAttack();
@@ -186,8 +198,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         }
 
         final long bgn = System.currentTimeMillis();
-        final long uid = auth.value1();
-        final long aid = auth.value4();
+
 
         journalService.commit(Jane.Failure, uid, "failed login auth-id=" + aid, commit -> {
             // 锁账号
@@ -202,11 +213,6 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
                         .set(tu.Remark, "locked by reach the max failure count=" + max)
                         .where(tu.Id.eq(uid))
                         .execute();
-
-                //
-                WarlockMaxFailedEvent evt = new WarlockMaxFailedEvent();
-                evt.setUserId(uid);
-                applicationEventPublisher.publishEvent(evt);
             }
 
             WarlockUserLoginService.Auth la = new WarlockUserLoginService.Auth();
