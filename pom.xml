@@ -60,7 +60,7 @@
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
         <swagger.version>3.0.0</swagger.version>
         <!-- slardar -->
-        <justauth.version>1.15.9</justauth.version>
+        <justauth.version>1.16.1</justauth.version>
         <xxljob.version>2.3.0</xxljob.version>
         <!-- others -->
         <errorprone.version>2.5.1</errorprone.version>

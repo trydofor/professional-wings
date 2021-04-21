@@ -42,7 +42,7 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
     private WarlockAuthzService warlockAuthzService;
 
     @Override
-    public DefaultWingsUserDetails loadOrNull(String username, @NotNull  Enum<?> authType, @Nullable Object authDetail) {
+    public DefaultWingsUserDetails loadOrNull(String username, @NotNull Enum<?> authType, @Nullable Object authDetail) {
         if (!accept(authType)) {
             return null;
         }
@@ -50,12 +50,12 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
         Details dt = doLoad(authType, username, authDetail);
 
         if (dt == null && autoRegisterType.contains(authType)) {
-            log.info("auto-create user by auth-user, username={}, auth-type={}", username, authType);
+            log.info("auto-register user by auth-user, username={}, auth-type={}", username, authType);
             dt = warlockAuthnService.register(authType, username, authDetail);
         }
 
         if (dt == null) {
-            log.info("can not load user by username={}, auth-type={}", username, authType);
+            log.info("can not load user by username={}, auth-type={} , without auto-register", username, authType);
             return null;
         }
 

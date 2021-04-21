@@ -1,7 +1,6 @@
 package pro.fessional.wings.warlock.security.justauth;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import me.zhyd.oauth.cache.AuthStateCache;
 import pro.fessional.wings.slardar.cache.WingsCaffeine;
 

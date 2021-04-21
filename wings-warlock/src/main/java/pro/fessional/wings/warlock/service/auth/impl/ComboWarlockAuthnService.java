@@ -43,10 +43,8 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     @Setter(onMethod_ = {@Autowired})
     private WinUserAnthnDao winUserAnthnDao;
 
-
     @Setter(onMethod_ = {@Autowired})
     private WingsAuthTypeParser wingsAuthTypeParser;
-
 
     @Setter(onMethod_ = {@Autowired})
     private JournalService journalService;
@@ -57,12 +55,12 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     @Setter(onMethod_ = {@Autowired})
     private ApplicationEventPublisher applicationEventPublisher;
 
-    private List<Combo> saverCombos = Collections.emptyList();
+    private List<Combo> authCombos = Collections.emptyList();
 
     @Autowired(required = false)
-    public void setSaverCombos(List<Combo> saverCombos) {
-        log.info("inject saver combo, count={}", saverCombos.size());
-        this.saverCombos = saverCombos;
+    public void setAuthCombos(List<Combo> authCombos) {
+        log.info("inject auth combo, count={}", authCombos.size());
+        this.authCombos = authCombos;
     }
 
     @Override
@@ -126,7 +124,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     @Override
     @Transactional
     public Details register(@NotNull Enum<?> authType, String username, Object details) {
-        for (Combo combo : saverCombos) {
+        for (Combo combo : authCombos) {
             if (combo.accept(authType, username, details)) {
                 final Details dt = combo.create(authType, username, details);
                 if (dt != null) return dt;
