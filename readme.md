@@ -403,6 +403,8 @@ enum Jane {
 
 `kotlin`比`scala`更能胜任`更好的java`，主要考量的是团队成本，工程实践性价比。
 
+目前仅在flywave支撑性项目中用了kotlin，而在主要业务场景，仍然主张【少吃糖，写好java】
+
 ### 0.3.6.webmvc
 
 尽管`webflux`在模型和性能好于serverlet体系，当前更多的是阻塞IO，多线程场景。
@@ -620,7 +622,7 @@ wings工程，仅对spring-boot的标准生命周期进行了配置文件加载�
 对于不想跟随wings一同升级spring及其依赖的，只把wings做dependency，而不parent和import即可。
 
 wings随时跟进升级spring boot的最新版本，目的是为了测试sharding-jdbc和jooq的兼容性。
-而在二进制兼容方面，wings编译的版本是java=1.8，kotlin=1.3。
+而在二进制兼容方面，wings编译的版本是java=1.8，kotlin=1.4。
 
 对于maven继承ri依赖有parent和import两种，其重要区别在于property覆盖。
 
@@ -714,3 +716,7 @@ Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控�
 
 * spring-boot-starter-web/spring-boot-starter-tomcat，因默认使用undertow
 * spring-session-hazelcast/hazelcast，使用最新版本。
+
+### 21.Java和Kotlin版本
+
+目前编译目标是java 8，kotlin 1.4，如果在IDE中出现编译失败，很可能是编译版本不对。

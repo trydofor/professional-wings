@@ -60,13 +60,11 @@ public class FlywaveVerProp {
     public static final String Key$dropReg = Key + ".drop-reg";
 
     /**
-     * update journal table。
-     * # #### 数据版本跟踪 ######
-     * # `{{PLAIN_NAME}}` 目标表的`本表`名字
-     * # `{{TABLE_NAME}}` 目标表名字，可能是本表，分表，跟踪表
-     * # `{{TABLE_BONE}}` 目标表字段(至少包含名字，类型，注释)，不含索引和约束
-     * # `{{TABLE_PKEY}}` 目标表的主键中字段名，用来创建原主键的普通索引。
-     * # ######################
+     * update journal table。支持一下变量
+     * - PLAIN_NAME 目标表的`本表`名字
+     * - TABLE_NAME 目标表名字，可能是本表，分表，跟踪表
+     * - TABLE_BONE 目标表字段(至少包含名字，类型，注释)，不含索引和约束
+     * - TABLE_PKEY 目标表的主键中字段名，用来创建原主键的普通索引。
      * @see #Key$journalUpdate
      */
     private String journalUpdate = "";
@@ -81,13 +79,11 @@ public class FlywaveVerProp {
     public static final String Key$triggerUpdate = Key + ".trigger-update";
 
     /**
-     * delete journal table。
-     * # #### 数据版本跟踪 ######
-     * # `{{PLAIN_NAME}}` 目标表的`本表`名字
-     * # `{{TABLE_NAME}}` 目标表名字，可能是本表，分表，跟踪表
-     * # `{{TABLE_BONE}}` 目标表字段(至少包含名字，类型，注释)，不含索引和约束
-     * # `{{TABLE_PKEY}}` 目标表的主键中字段名，用来创建原主键的普通索引。
-     * # ######################
+     * delete journal table。支持一下变量
+     * - PLAIN_NAME 目标表的`本表`名字
+     * - TABLE_NAME 目标表名字，可能是本表，分表，跟踪表
+     * - TABLE_BONE 目标表字段(至少包含名字，类型，注释)，不含索引和约束
+     * - TABLE_PKEY 目标表的主键中字段名，用来创建原主键的普通索引。
      * @see #Key$journalDelete
      */
     private String journalDelete = "";
