@@ -56,12 +56,15 @@ public class WarlockJustAuthConfiguration {
                 final Proxy.Type ht = Proxy.Type.valueOf(hc.getProxyType());
                 final Proxy proxy = new Proxy(ht, new InetSocketAddress(hc.getProxyHost(), hc.getProxyPort()));
                 ac.setHttpConfig(HttpConfig
-                        .builder()
-                        .timeout(hc.getTimeout())
-                        .proxy(proxy)
-                        .build());
+                                         .builder()
+                                         .timeout(hc.getTimeout() * 1000)
+                                         .proxy(proxy)
+                                         .build());
+                logger.info("Wings conf justAuthRequestFactory auth-type " + k + ", proxy=" + hc.getProxyType());
             }
-            logger.info("Wings conf justAuthRequestFactory auth-type " + k);
+            else {
+                logger.info("Wings conf justAuthRequestFactory auth-type " + k);
+            }
             map.put(em, ac);
         }
 
