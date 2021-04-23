@@ -91,7 +91,7 @@ public class WarlockSecurityWebConfiguration extends WebSecurityConfigurerAdapte
                             .antMatchers(securityProp.getPermitAll().toArray(Null.StrArr))
                             .permitAll();
 
-                        logger.info("Wings conf HttpSecurity. bind Authenticated"
+                        logger.info("Wings conf HttpSecurity. bind Authenticated="
                                 + String.join("\n, ", securityProp.getAuthenticated()));
                         logger.info("Wings conf HttpSecurity. bind PermitAll="
                                 + String.join("\n, ", securityProp.getPermitAll()));
