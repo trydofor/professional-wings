@@ -166,6 +166,7 @@ public class ResponseHelper {
     public static void writeBodyUtf8(HttpServletResponse response, String body) {
         try {
             response.getOutputStream().write(body.getBytes(StandardCharsets.UTF_8));
+            response.flushBuffer();
         } catch (IOException e) {
             throw new IORuntimeException(e);
         }

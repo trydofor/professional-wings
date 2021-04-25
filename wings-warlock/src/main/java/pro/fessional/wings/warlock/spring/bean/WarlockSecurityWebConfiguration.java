@@ -13,10 +13,12 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
+import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -105,8 +107,12 @@ public class WarlockSecurityWebConfiguration extends WebSecurityConfigurerAdapte
                     .logoutSuccessHandler(logoutSuccessHandler)
             )
             .sessionManagement(conf -> conf
-                    .maximumSessions(1)
+                    .maximumSessions(securityProp.getSessionMaximum())
                     .sessionRegistry(sessionRegistry)
+                    .expiredSessionStrategy(event -> {
+                        HttpServletResponse response = event.getResponse();
+                        ResponseHelper.writeBodyUtf8(response, securityProp.getSessionExpiredBody());
+                    })
             )
             .requestCache().disable()
             .csrf().disable();

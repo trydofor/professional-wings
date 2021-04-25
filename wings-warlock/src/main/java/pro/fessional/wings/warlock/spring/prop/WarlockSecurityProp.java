@@ -78,6 +78,22 @@ public class WarlockSecurityProp {
     public static final String Key$logoutSuccessBody = Key + ".logout-success-body";
 
     /**
+     * 同时登陆的session数
+     *
+     * @see #Key$sessionMaximum
+     */
+    private int sessionMaximum = 1;
+    public static final String Key$sessionMaximum = Key + ".session-maximum";
+
+    /**
+     * 过期时返回的内容
+     *
+     * @see #Key$sessionExpiredBody
+     */
+    private String sessionExpiredBody = "";
+    public static final String Key$sessionExpiredBody = Key + ".session-expired-body";
+
+    /**
      * usernameParameter 名字
      *
      * @see #Key$usernamePara
