@@ -31,13 +31,20 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- method 2: import dependency, not inherit all properties
+            <!-- method 2: import dependency, manually set properties and dependencies
             <dependency>
                 <groupId>pro.fessional</groupId>
                 <artifactId>wings-home</artifactId>
                 <version>${wings.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             -->
             <dependency>

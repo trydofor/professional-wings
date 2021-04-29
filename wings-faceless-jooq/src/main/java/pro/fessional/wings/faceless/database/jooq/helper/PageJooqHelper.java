@@ -477,13 +477,13 @@ public class PageJooqHelper extends PageJdbcHelper {
         @NotNull
         public <E> PageResult<E> into(Class<E> claz) {
             final List<E> data = context.result == null ? null : context.result.into(claz);
-            return PageResult.of(context.total, data, context.page);
+            return PageResult.ok(context.total, data, context.page);
         }
 
         @NotNull
         public <E> PageResult<E> into(RecordMapper<R, E> mapper) {
             final List<E> data = context.result == null ? null : context.result.map(mapper);
-            return PageResult.of(context.total, data, context.page);
+            return PageResult.ok(context.total, data, context.page);
         }
 
         @Nullable

@@ -1,6 +1,6 @@
 package pro.fessional.wings.slardar.spring.bean;
 
-import com.fasterxml.jackson.databind.deser.std.DateDeserializers;
+import com.fasterxml.jackson.databind.deser.std.DateDeserializers.DateDeserializer;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -16,10 +17,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.silencer.datetime.DateTimePattern;
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedSerializer;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
+import pro.fessional.wings.slardar.spring.prop.SlardarJacksonProp;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -27,6 +28,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -38,10 +40,12 @@ import java.util.Date;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(DateSerializer.class)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$jackson, havingValue = "true")
+@RequiredArgsConstructor
 public class SlardarJacksonConfiguration {
 
     private static final Log logger = LogFactory.getLog(SlardarJacksonConfiguration.class);
 
+    private final SlardarJacksonProp slardarJacksonProp;
 /*
     @Bean
     @Primary
@@ -76,25 +80,31 @@ public class SlardarJacksonConfiguration {
         logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer");
         return builder -> {
 
-            // local
-            builder.serializerByType(LocalDateTime.class, new LocalDateTimeSerializer(DateTimePattern.FMT_FULL_19));
-            builder.serializerByType(LocalTime.class, new LocalTimeSerializer(DateTimePattern.FMT_TIME_08));
-            builder.serializerByType(LocalDate.class, new LocalDateSerializer(DateTimePattern.FMT_DATE_10));
+            DateTimeFormatter f19 = DateTimeFormatter.ofPattern(slardarJacksonProp.getPatternDatetime());
+            DateTimeFormatter d10 = DateTimeFormatter.ofPattern(slardarJacksonProp.getPatternDate());
+            DateTimeFormatter t08 = DateTimeFormatter.ofPattern(slardarJacksonProp.getPatternTime());
 
-            builder.deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimePattern.FMT_FULL_19));
-            builder.deserializerByType(LocalTime.class, new LocalTimeDeserializer(DateTimePattern.FMT_TIME_08));
-            builder.deserializerByType(LocalDate.class, new LocalDateDeserializer(DateTimePattern.FMT_DATE_10));
+            // local
+            builder.serializerByType(LocalDateTime.class, new LocalDateTimeSerializer(f19));
+            builder.serializerByType(LocalDate.class, new LocalDateSerializer(d10));
+            builder.serializerByType(LocalTime.class, new LocalTimeSerializer(t08));
+
+            builder.deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer(f19));
+            builder.deserializerByType(LocalDate.class, new LocalDateDeserializer(d10));
+            builder.deserializerByType(LocalTime.class, new LocalTimeDeserializer(t08));
 
             // util date
-            DateFormat dateFormat = new SimpleDateFormat(DateTimePattern.PTN_FULL_19);
+            DateFormat dateFormat = new SimpleDateFormat(slardarJacksonProp.getPatternDatetime());
             builder.serializerByType(Date.class, new DateSerializer(false, dateFormat));
-            DateDeserializers.DateDeserializer base = DateDeserializers.DateDeserializer.instance;
-            DateDeserializers.DateDeserializer dateDeserializer = new DateDeserializers.DateDeserializer(base, dateFormat, DateTimePattern.PTN_FULL_19);
+            DateDeserializer base = DateDeserializer.instance;
+            DateDeserializer dateDeserializer = new DateDeserializer(base, dateFormat, slardarJacksonProp.getPatternDatetime());
             builder.deserializerByType(Date.class, dateDeserializer);
 
             // auto zoned
-            builder.serializerByType(ZonedDateTime.class, new JacksonZonedSerializer(DateTimePattern.FMT_FULL_19V));
-            builder.deserializerByType(ZonedDateTime.class, new JacksonZonedDeserializer(DateTimePattern.FMT_FULL_19V));
+            DateTimeFormatter v19 = DateTimeFormatter.ofPattern(slardarJacksonProp.getPatternZoned());
+
+            builder.serializerByType(ZonedDateTime.class, new JacksonZonedSerializer(v19));
+            builder.deserializerByType(ZonedDateTime.class, new JacksonZonedDeserializer(v19));
         };
     }
 }

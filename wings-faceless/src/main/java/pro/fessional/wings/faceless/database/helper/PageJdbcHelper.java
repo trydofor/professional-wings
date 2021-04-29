@@ -147,7 +147,7 @@ public class PageJdbcHelper {
                 list = context.tpl.query(sql.toString(), mapper, context.bind);
             }
 
-            return PageResult.of(context.total, list, context.page);
+            return PageResult.ok(context.total, list, context.page);
         }
     }
 
@@ -181,7 +181,7 @@ public class PageJdbcHelper {
                 list = context.tpl.query(sql.toString(), mapper, context.bind);
             }
 
-            return PageResult.of(context.total, list, context.page);
+            return PageResult.ok(context.total, list, context.page);
         }
     }
 
