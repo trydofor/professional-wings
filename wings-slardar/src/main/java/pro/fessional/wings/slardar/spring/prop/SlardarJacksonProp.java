@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(SlardarJacksonProp.Key)
 public class SlardarJacksonProp {
 
-    public static final String Key = "wings.slardar.jaskson";
+    public static final String Key = "wings.slardar.jackson";
 
     /**
      * LocalDateTime  util date

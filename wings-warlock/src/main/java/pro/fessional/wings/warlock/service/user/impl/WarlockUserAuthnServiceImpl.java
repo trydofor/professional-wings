@@ -140,14 +140,6 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
     @Override
     @Transactional
     public void renew(long userId, @NotNull Enum<?> authType, @NotNull Renew renew) {
-        if (renew.getPassword() == null
-            && renew.getExpiredDt() == null
-            && renew.getFailedCnt() == null
-            && renew.getFailedMax() == null
-        ) {
-            log.info("nothing to renew auth-type={},userId={}", authType, userId);
-            return;
-        }
 
         String otherInfo = "by userId and auth-type=" + authType;
 
@@ -165,9 +157,27 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
                 setter.put(t.Password, passsaltEncoder.salt(renew.getPassword(), slat));
             }
 
-            setter.put(t.ExpiredDt, renew.getExpiredDt());
-            setter.put(t.FailedMax, renew.getFailedMax());
-            setter.put(t.FailedCnt, renew.getFailedCnt());
+            if (renew.getExpiredDt() != null) {
+                setter.put(t.ExpiredDt, renew.getExpiredDt());
+            }
+            else {
+                final Duration expire = warlockSecurityProp.getAutoregExpired();
+                setter.put(t.ExpiredDt, commit.getCommitDt().plusSeconds(expire.getSeconds()));
+            }
+
+            if (renew.getFailedMax() != null) {
+                setter.put(t.FailedMax, renew.getFailedMax());
+            }
+            else {
+                setter.put(t.FailedMax, warlockSecurityProp.getAutoregMaxFailed());
+            }
+
+            if (renew.getFailedCnt() != null) {
+                setter.put(t.FailedCnt, renew.getFailedCnt());
+            }
+            else {
+                setter.put(t.FailedCnt, 0);
+            }
 
             setter.put(t.CommitId, commit.getCommitId());
             setter.put(t.ModifyDt, commit.getCommitDt());

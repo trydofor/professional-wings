@@ -51,7 +51,7 @@ public interface WarlockUserAuthnService {
     long create(long userId, @NotNull Enum<?> authType, @NotNull Authn authn);
 
     /**
-     * 修改
+     * 修改，如果是null，则忽略
      *
      * @param userId   所属用户
      * @param authType 验证类型
@@ -61,7 +61,7 @@ public interface WarlockUserAuthnService {
     void modify(long userId, @NotNull Enum<?> authType, @NotNull Authn authn);
 
     /**
-     * 重置密码，有效期，错误计数，连错上限
+     * 重置密码，有效期，错误计数，连错上限，如果是null，使用默认值
      *
      * @param userId   user id
      * @param authType 验证类型
