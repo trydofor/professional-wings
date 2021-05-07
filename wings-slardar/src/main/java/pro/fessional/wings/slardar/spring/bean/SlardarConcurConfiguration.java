@@ -48,6 +48,7 @@ public class SlardarConcurConfiguration {
         handler.setClientTicketKey(firstBloodProp.getClientTicketKey());
         handler.setFreshCaptchaKey(firstBloodProp.getFreshCaptchaKey());
         handler.setCheckCaptchaKey(firstBloodProp.getCheckCaptchaKey());
+        handler.setScenePrefix(firstBloodProp.getCaptchaPrefix());
 
         ModelAndView mav = new ModelAndView();
         PlainTextView pv = new PlainTextView(firstBloodProp.getContentType(), firstBloodProp.getResponseBody());

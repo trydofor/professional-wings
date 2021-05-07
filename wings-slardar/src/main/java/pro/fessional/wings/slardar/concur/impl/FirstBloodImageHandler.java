@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 import static pro.fessional.wings.slardar.servlet.WingsServletConst.ORDER_FIRST_BLOOD_IMG;
 
 /**
- * 接受scene为空或image的验证，
+ * 接受scene为空或以image开始的验证，
  * - 发行时，同时设置header和coolie。
  * - 取码和鉴别时，通知支持header和parameter
  *
@@ -45,11 +45,12 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
     private ModelAndView needCaptchaResponse;
     private WingsRemoteResolver wingsRemoteResolver;
     private Supplier<String> captchaSupplier = () -> RandCode.human(6);
+    private String scenePrefix = "image";
 
     @Override
     public boolean accept(@NotNull HttpServletRequest request, @NotNull FirstBlood anno) {
         final String scene = anno.scene();
-        return scene.isEmpty() || scene.equalsIgnoreCase("image");
+        return scene.isEmpty() || scene.startsWith(scenePrefix);
     }
 
     @Override
@@ -83,7 +84,8 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
                 return true;
             }
 
-        } else {
+        }
+        else {
             key = new Key(uri, makeClientTicket(request));
             tkn = (Tkn) cache.get(key, k -> new Tkn(now));
             assert tkn != null;
@@ -125,7 +127,8 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
         if (view != null) {
             try {
                 view.render(needCaptchaResponse.getModel(), request, response);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 throw new IORuntimeException(e);
             }
         }
@@ -157,7 +160,8 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
         final String remoteIp;
         if (wingsRemoteResolver == null) {
             remoteIp = request.getRemoteAddr();
-        } else {
+        }
+        else {
             remoteIp = wingsRemoteResolver.resolveRemoteIp(request);
         }
 
@@ -219,7 +223,8 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
                 if (eq) {
                     retry.set(0);
                     token = Null.Str;
-                } else {
+                }
+                else {
                     retry.decrementAndGet();
                 }
             }

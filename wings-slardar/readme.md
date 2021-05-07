@@ -418,6 +418,17 @@ slardar验证码的默认是基于图片的，在现今的AI算法识别上，�
 
 默认支持中文验证码，一般是一个汉字，3个英数，可以在配置中关闭。
 
+使用方法如下，在MappingMethod上，放置`@FirstBlood` 即可，工作流程如下。
+
+* 客户端正常访问此URL，如/test/captcha.json
+* 服务器需要验证码时，以406(Not Acceptable)返回提示json
+* 客户端在header和cookie中获得client-ticket的token，并每次都发送
+* 客户端在URL后增加fresh-captcha-image=${timestamp}获取验证码图片
+* 客户端在URL后增加check-captcha-image=${vcode}提交验证码
+* 服务器端自动校验client-ticket和check-captcha-image，完成验证或放行
+
+若需集成其他验证码，如第三方服务或消息验证码，实现并注入FirstBloodHandler即可
+
 ### 3.7.4.终端信息
 
 通过handlerInterceptor，在当前线程和request中设置terminal信息

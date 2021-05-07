@@ -57,6 +57,13 @@ public class SlardarConcurProp {
         public static final String Key$chineseCaptcha = Key + ".first-blood.chinese-captcha";
 
         /**
+         * @see #Key$captchaPrefix
+         */
+        private String captchaPrefix = "image";
+        public static final String Key$captchaPrefix = Key + ".captcha-prefix";
+
+
+        /**
          * @see #Key$httpStatus
          */
         private int httpStatus = 406;
