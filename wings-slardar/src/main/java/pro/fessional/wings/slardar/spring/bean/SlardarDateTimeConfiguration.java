@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.spring.bean;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
@@ -11,11 +12,13 @@ import pro.fessional.mirana.time.DateFormatter;
 import pro.fessional.mirana.time.DateParser;
 import pro.fessional.wings.slardar.autozone.spring.StringZonedConverter;
 import pro.fessional.wings.slardar.autozone.spring.ZonedStringConverter;
+import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -24,8 +27,11 @@ import java.util.Date;
  */
 @Configuration
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$datetime, havingValue = "true")
+@RequiredArgsConstructor
 public class SlardarDateTimeConfiguration {
     private static final Log logger = LogFactory.getLog(SlardarDateTimeConfiguration.class);
+
+    private final SlardarDatetimeProp slardarDatetimeProp;
 
     // spring boot can expose Beans instead of WebMvcConfigurer
     @Bean
@@ -73,7 +79,9 @@ public class SlardarDateTimeConfiguration {
     @Bean
     public ZonedStringConverter zonedDateTimeStringConverter() {
         logger.info("Wings conf zonedDateTimeStringConverter");
-        return new ZonedStringConverter();
+        final String zft = slardarDatetimeProp.getPatternZoned();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(zft);
+        return new ZonedStringConverter(dtf);
     }
 
     @Bean

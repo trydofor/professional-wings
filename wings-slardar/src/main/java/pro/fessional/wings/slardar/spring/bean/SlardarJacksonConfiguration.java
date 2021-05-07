@@ -19,8 +19,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedSerializer;
+import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
-import pro.fessional.wings.slardar.spring.prop.SlardarJacksonProp;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -45,7 +45,7 @@ public class SlardarJacksonConfiguration {
 
     private static final Log logger = LogFactory.getLog(SlardarJacksonConfiguration.class);
 
-    private final SlardarJacksonProp slardarJacksonProp;
+    private final SlardarDatetimeProp slardarDatetimeProp;
 /*
     @Bean
     @Primary
@@ -80,9 +80,9 @@ public class SlardarJacksonConfiguration {
         logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer");
         return builder -> {
 
-            DateTimeFormatter f19 = DateTimeFormatter.ofPattern(slardarJacksonProp.getPatternDatetime());
-            DateTimeFormatter d10 = DateTimeFormatter.ofPattern(slardarJacksonProp.getPatternDate());
-            DateTimeFormatter t08 = DateTimeFormatter.ofPattern(slardarJacksonProp.getPatternTime());
+            DateTimeFormatter f19 = DateTimeFormatter.ofPattern(slardarDatetimeProp.getPatternDatetime());
+            DateTimeFormatter d10 = DateTimeFormatter.ofPattern(slardarDatetimeProp.getPatternDate());
+            DateTimeFormatter t08 = DateTimeFormatter.ofPattern(slardarDatetimeProp.getPatternTime());
 
             // local
             builder.serializerByType(LocalDateTime.class, new LocalDateTimeSerializer(f19));
@@ -94,14 +94,14 @@ public class SlardarJacksonConfiguration {
             builder.deserializerByType(LocalTime.class, new LocalTimeDeserializer(t08));
 
             // util date
-            DateFormat dateFormat = new SimpleDateFormat(slardarJacksonProp.getPatternDatetime());
+            DateFormat dateFormat = new SimpleDateFormat(slardarDatetimeProp.getPatternDatetime());
             builder.serializerByType(Date.class, new DateSerializer(false, dateFormat));
             DateDeserializer base = DateDeserializer.instance;
-            DateDeserializer dateDeserializer = new DateDeserializer(base, dateFormat, slardarJacksonProp.getPatternDatetime());
+            DateDeserializer dateDeserializer = new DateDeserializer(base, dateFormat, slardarDatetimeProp.getPatternDatetime());
             builder.deserializerByType(Date.class, dateDeserializer);
 
             // auto zoned
-            DateTimeFormatter v19 = DateTimeFormatter.ofPattern(slardarJacksonProp.getPatternZoned());
+            DateTimeFormatter v19 = DateTimeFormatter.ofPattern(slardarDatetimeProp.getPatternZoned());
 
             builder.serializerByType(ZonedDateTime.class, new JacksonZonedSerializer(v19));
             builder.deserializerByType(ZonedDateTime.class, new JacksonZonedDeserializer(v19));

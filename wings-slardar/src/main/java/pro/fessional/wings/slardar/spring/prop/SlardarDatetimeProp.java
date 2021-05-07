@@ -9,10 +9,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @since 2021-02-14
  */
 @Data
-@ConfigurationProperties(SlardarJacksonProp.Key)
-public class SlardarJacksonProp {
+@ConfigurationProperties(SlardarDatetimeProp.Key)
+public class SlardarDatetimeProp {
 
-    public static final String Key = "wings.slardar.jackson";
+    public static final String Key = "wings.slardar.datetime";
 
     /**
      * LocalDateTime  util date

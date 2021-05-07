@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -114,17 +115,39 @@ public class DateTimeConverterTest {
 
     /**
      * 用户时区GMT+9，系统时区GMT+8，使用ZonedDateTime在接受输入时自动转换到系统时区。
-     * 不要使用有夏令时的时区测试。
+     * 输出时，自动变为用户时区。（不要使用有夏令时的时区测试，以免刚好切换）
      */
     @Test
     public void testZdtLdt() throws Exception {
         testZdtLdt("2020-12-30 12:34:56", "2020-12-30 11:34:56", "Asia/Tokyo");
-        testZdtLdt("2020-12-30 12:34:56", "2020-12-30 20:34:56", "GMT");
+        testZdtLdt("2020-12-30 13:34:56", "2020-12-30 21:34:56", "GMT");
     }
 
     private void testZdtLdt(String d, String v, String z) throws Exception {
         final MockHttpServletRequestBuilder builder = get("/test/zdt-ldt.json?d=" + d)
                                                               .header("Zone-Id", z);
+        mockMvc.perform(builder)
+               .andDo(print())
+               .andExpect(content().json("{\"zdt\":\"" + d + " " + z + "\",\"ldt\":\"" + v + "\"}", false));
+    }
+
+    /**
+     * 以 request body形式，转换json，用户时区自动变成系统时区，获得系统时区的LocalDateTime，
+     * 输出时，ZonedDateTime又自动变为用户时区
+     *
+     */
+    @Test
+    public void testZdtLdtBody() throws Exception {
+        testZdtLdtBody("2020-12-30 12:34:56", "2020-12-30 11:34:56", "Asia/Tokyo");
+        testZdtLdtBody("2020-12-30 13:34:56", "2020-12-30 21:34:56", "GMT");
+    }
+
+    private void testZdtLdtBody(String d, String v, String z) throws Exception {
+        final MockHttpServletRequestBuilder builder = post("/test/zdt-ldt-body.json")
+                                                              .header("Zone-Id", z)
+                                                              .contentType(MediaType.APPLICATION_JSON)
+                                                              .content("{\"zdt\":\"" + d + " " + z + "\",\"ldt\":\"" + v + "\"}");
+
         mockMvc.perform(builder)
                .andDo(print())
                .andExpect(content().json("{\"zdt\":\"" + d + " " + z + "\",\"ldt\":\"" + v + "\"}", false));

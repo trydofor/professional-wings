@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,7 +46,13 @@ public class TestDateTimeController {
     public Xdt zdtLdt(@RequestParam("d") ZonedDateTime zdt) {
         final Xdt xdt = new Xdt();
         xdt.zdt = zdt;
-        xdt.ldt = zdt.withZoneSameInstant(StandardTimezone.ASIA𓃬SHANGHAI.toZoneId()).toLocalDateTime();
+        xdt.ldt = zdt.toLocalDateTime();
+        System.out.println("zdtLdt>>>" + xdt);
+        return xdt;
+    }
+
+    @RequestMapping(value = "/test/zdt-ldt-body.json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Xdt zdtLdt(@RequestBody Xdt xdt) {
         System.out.println("zdtLdt>>>" + xdt);
         return xdt;
     }

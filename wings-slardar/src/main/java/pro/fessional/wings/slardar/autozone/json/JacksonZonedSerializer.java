@@ -8,10 +8,10 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 import org.springframework.context.i18n.LocaleContextHolder;
+import pro.fessional.mirana.time.DateLocaling;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
 
 import java.io.IOException;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -44,10 +44,7 @@ public class JacksonZonedSerializer extends ZonedDateTimeSerializer {
     @Override
     public void serialize(ZonedDateTime value, JsonGenerator g, SerializerProvider provider) throws IOException {
         final TimeZone tz = LocaleContextHolder.getTimeZone();
-        final ZoneId zid = tz.toZoneId();
-        if (!zid.equals(value.getZone())) {
-            value = value.withZoneSameInstant(zid);
-        }
+        value = DateLocaling.zoneZone(value, tz.toZoneId());
         super.serialize(value, g, provider);
     }
 

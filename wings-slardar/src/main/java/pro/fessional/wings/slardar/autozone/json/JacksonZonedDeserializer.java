@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.autozone.json;
 
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import org.springframework.context.i18n.LocaleContextHolder;
+import pro.fessional.mirana.time.DateLocaling;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -23,7 +24,8 @@ public class JacksonZonedDeserializer extends InstantDeserializer<ZonedDateTime>
                     final ZoneId zoneId = LocaleContextHolder.getTimeZone().toZoneId();
                     LocalDate date = LocalDate.from(temporal);
                     LocalTime time = LocalTime.from(temporal);
-                    return ZonedDateTime.of(date, time, zoneId);
+                    final ZonedDateTime zdt = ZonedDateTime.of(date, time, zoneId);
+                    return DateLocaling.zoneZone(zdt, ZoneId.systemDefault());
                 },
                 a -> ZonedDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
                 a -> ZonedDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
