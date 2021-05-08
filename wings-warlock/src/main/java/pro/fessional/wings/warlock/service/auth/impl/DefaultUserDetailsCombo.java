@@ -6,10 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
+import pro.fessional.wings.warlock.event.auth.WarlockAutoRegisterEvent;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthzService;
@@ -40,6 +42,8 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
     private WarlockAuthnService warlockAuthnService;
     @Setter(onMethod_ = {@Autowired})
     private WarlockAuthzService warlockAuthzService;
+    @Setter(onMethod_ = {@Autowired})
+    private ApplicationEventPublisher eventPublisher;
 
     @Override
     public DefaultWingsUserDetails loadOrNull(String username, @NotNull Enum<?> authType, @Nullable Object authDetail) {
@@ -52,6 +56,7 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
         if (dt == null && autoRegisterType.contains(authType)) {
             log.info("auto-register user by auth-user, username={}, auth-type={}", username, authType);
             dt = warlockAuthnService.register(authType, username, authDetail);
+            eventPublisher.publishEvent(new WarlockAutoRegisterEvent(dt));
         }
 
         if (dt == null) {
