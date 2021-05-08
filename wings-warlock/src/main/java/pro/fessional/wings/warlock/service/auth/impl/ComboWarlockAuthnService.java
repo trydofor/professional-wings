@@ -217,7 +217,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
             la.setAuthType(authType);
             la.setUserId(uid);
             la.setDetails("");
-            la.setFailed(false);
+            la.setFailed(true);
             warlockUserLoginService.auth(la);
 
             winUserAnthnDao

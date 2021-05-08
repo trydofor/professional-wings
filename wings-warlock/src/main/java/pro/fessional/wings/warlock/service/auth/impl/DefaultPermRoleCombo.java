@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
-import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserGrantDao;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -35,10 +34,6 @@ public class DefaultPermRoleCombo implements ComboWarlockAuthzService.Combo {
     @Getter
     @Setter
     private int order = ORDER;
-
-    @Setter(onMethod_ = {@Autowired})
-    private WinUserGrantDao winUserGrantDao;
-
 
     @Setter(onMethod_ = {@Autowired(required = false)})
     private GrantedAuthorityDefaults grantedAuthorityDefaults;
