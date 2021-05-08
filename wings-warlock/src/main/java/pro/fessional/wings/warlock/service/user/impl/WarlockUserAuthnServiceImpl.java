@@ -154,7 +154,8 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
             if (renew.getPassword() != null) {
                 final String slat = GlobalAttributeHolder.getAttr(WarlockUserAttribute.SaltByUid, userId);
-                setter.put(t.Password, passsaltEncoder.salt(renew.getPassword(), slat));
+                final String pass = passsaltEncoder.salt(renew.getPassword(), slat);
+                setter.put(t.Password, passwordEncoder.encode(pass));
             }
 
             if (renew.getExpiredDt() != null) {

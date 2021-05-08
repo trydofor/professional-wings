@@ -423,7 +423,7 @@ slardar验证码的默认是基于图片的，在现今的AI算法识别上，�
 * 客户端正常访问此URL，如/test/captcha.json
 * 服务器需要验证码时，以406(Not Acceptable)返回提示json
 * 客户端在header和cookie中获得client-ticket的token，并每次都发送
-* 客户端在URL后增加fresh-captcha-image=${timestamp}获取验证码图片
+* 客户端在URL后增加fresh-captcha-image=${timestamp}获取验证码图片（可直接使用）
 * 客户端在URL后增加check-captcha-image=${vcode}提交验证码
 * 服务器端自动校验client-ticket和check-captcha-image，完成验证或放行
 

@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
+import pro.fessional.mirana.bits.Md5;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.pain.IORuntimeException;
@@ -65,43 +66,35 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
         final long now = System.currentTimeMillis();
         final Key key;
         final Tkn tkn;
-        final boolean ukEmpty = uk.isEmpty();
-        if (!ukEmpty) {
-            key = new Key(uri, uk);
-            tkn = (Tkn) cache.get(key, k -> new Tkn(now));
-            assert tkn != null;
-
-            // 获取验证图片
-            final String ck = getKeyCode(request, freshCaptchaKey);
-            if (!ck.isEmpty()) {
-                showCaptcha(response, tkn.fresh(anno.retry(), captchaSupplier));
-                return false;
-            }
-
-            // 校验输入验证码
-            String vk = getKeyCode(request, checkCaptchaKey);
-            if (!vk.isEmpty() && tkn.check(vk)) {
-                return true;
-            }
-
-        }
-        else {
+        if (uk.isEmpty()) {
             key = new Key(uri, makeClientTicket(request));
             tkn = (Tkn) cache.get(key, k -> new Tkn(now));
-            assert tkn != null;
+            sendClientTicket(response, key.clientCode);
+        }
+        else {
+            key = new Key(uri, uk);
+            tkn = (Tkn) cache.get(key, k -> new Tkn(now));
+        }
+        assert tkn != null;
+
+        // 获取验证图
+        final String ck = getKeyCode(request, freshCaptchaKey);
+        if (!ck.isEmpty()) {
+            showCaptcha(response, tkn.fresh(anno.retry(), captchaSupplier));
+            return false;
         }
 
-        // 3秒外，未连续，不用验证
+        // 检查验证码
+        String vk = getKeyCode(request, checkCaptchaKey);
+        if (!vk.isEmpty() && tkn.check(vk)) {
+            return true;
+        }
+
+        // 3秒外，非连击，不用验证
         final int fst = anno.first();
         final long rct = tkn.recent;
-        final boolean born = rct == now;
-        if (fst > 3 && (born || rct + fst * 1000 < now)) {
-            if (!born) {
-                tkn.recent = now;
-            }
-            if (ukEmpty) {
-                sendClientTicket(response, key.clientCode);
-            }
+        if (fst > 3 && (rct == now || rct + fst * 1000 < now)) {
+            tkn.recent = now;
             return true;
         }
 
@@ -165,7 +158,7 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
             remoteIp = wingsRemoteResolver.resolveRemoteIp(request);
         }
 
-        return remoteIp + "@" + System.currentTimeMillis();
+        return Md5.sum(remoteIp + System.currentTimeMillis());
     }
 
     /**
