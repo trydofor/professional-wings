@@ -221,6 +221,17 @@ DTO间的转换和复制，使用工具类生成Helper静态对拷属性。
 
 ```java
 public interface TradeService {
+
+    @Getter
+    @RequiredArgsConstructor
+    enum Err implements CodeEnum {
+        RateFailed("fedex.rate.unknown", "Fedex查询价格错误"),
+        ;
+
+        private final String code;
+        private final String hint;
+    }
+
     @Data
     class TradeInfo {
         private long orderId;
