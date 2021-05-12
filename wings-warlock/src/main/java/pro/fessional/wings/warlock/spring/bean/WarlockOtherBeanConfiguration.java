@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import pro.fessional.wings.faceless.database.helper.DatabaseChecker;
+import pro.fessional.wings.warlock.errorhandle.AllExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.CodeExceptionResolver;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockErrorProp;
@@ -35,6 +36,15 @@ public class WarlockOtherBeanConfiguration {
         logger.info("Wings conf codeExceptionResolver");
         final WarlockErrorProp.CodeException cp = prop.getCodeException();
         return new CodeExceptionResolver(messageSource, cp.getHttpStatus(), cp.getContentType(), cp.getResponseBody());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "allExceptionResolver")
+    @ConditionalOnProperty(name = WarlockEnabledProp.Key$allExceptionHandler, havingValue = "true")
+    public HandlerExceptionResolver allExceptionResolver(MessageSource messageSource, WarlockErrorProp prop) {
+        logger.info("Wings conf allExceptionResolver");
+        final WarlockErrorProp.CodeException cp = prop.getAllException();
+        return new AllExceptionResolver(messageSource, cp.getHttpStatus(), cp.getContentType(), cp.getResponseBody());
     }
 
 

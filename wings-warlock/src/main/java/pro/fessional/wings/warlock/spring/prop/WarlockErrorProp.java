@@ -17,6 +17,7 @@ public class WarlockErrorProp {
     public static final String Key = "wings.slardar.error";
 
     private final CodeException codeException = new CodeException();
+    private final CodeException allException = new CodeException();
 
     @Data
     public static class CodeException {

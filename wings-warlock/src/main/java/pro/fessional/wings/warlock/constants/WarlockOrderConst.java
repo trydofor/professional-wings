@@ -12,4 +12,5 @@ public interface WarlockOrderConst {
     int UserAuthzCombo = 10000;
     int BindExceptionAdvice = 10000;
     int CodeExceptionResolver = 10000;
+    int AllExceptionResolver = Integer.MAX_VALUE- 100;
 }

@@ -98,6 +98,12 @@ public class WarlockEnabledProp {
     public static final String Key$comboJustAuthUserAuthn = Key + ".combo-just-auth-user-authn";
 
     /**
+     * @see #Key$allExceptionHandler
+     */
+    private boolean allExceptionHandler = true;
+    public static final String Key$allExceptionHandler = Key + ".all-exception-handler";
+
+    /**
      * @see #Key$codeExceptionHandler
      */
     private boolean codeExceptionHandler = true;
