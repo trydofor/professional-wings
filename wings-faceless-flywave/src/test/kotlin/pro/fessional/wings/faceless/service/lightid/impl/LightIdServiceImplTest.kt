@@ -60,7 +60,7 @@ open class LightIdServiceImplTest {
     }
 
     @Test
-    fun journalKotlin() {
+    fun `test2🦁获取ID`() {
         // consumer
         journalService.commit(this.javaClass) {
             print(it.commitDt)

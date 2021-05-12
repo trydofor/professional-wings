@@ -52,7 +52,7 @@ val rd = dao.fetch(da, da.Id.eq(id))
  * `single/`包，表示单表，可含简单的条件子查询，一个包名一个表。
  * `couple/`包， 表示多表，一般为join查询或子查询，包名以主表命名。
  * `select|modify`分别对应数据库操作。
- * 也可以`select|insert|update|delete`分类，只是autoware时比较多
+ * 也可以`select|insert|update|delete`分类，只是autowired时比较多
  * 数据传递以Dto结尾，放到最临近使用的位子。
  * Dto以静态内类形似存在，用lombok做@Value或@Data。
  * `forUpdate`这种带锁操作，方法名以`Lock`结尾。
