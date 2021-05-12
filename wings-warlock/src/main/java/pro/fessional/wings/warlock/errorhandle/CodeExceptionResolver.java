@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.annotation.Order;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.text.StringTemplate;
 import pro.fessional.wings.slardar.webmvc.WingsExceptionResolver;
+import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 
 import java.util.Locale;
 
@@ -17,6 +19,7 @@ import java.util.Locale;
  */
 @RequiredArgsConstructor
 @Slf4j
+@Order(WarlockOrderConst.CodeExceptionResolver)
 public class CodeExceptionResolver extends WingsExceptionResolver<CodeException> {
 
     private final MessageSource messageSource;
@@ -30,16 +33,17 @@ public class CodeExceptionResolver extends WingsExceptionResolver<CodeException>
         final String message;
         if (code == null) {
             message = ce.getMessage();
-        } else {
+        }
+        else {
             Locale locale = LocaleContextHolder.getLocale();
             final Object[] args = ce.getI18nArgs();
             message = messageSource.getMessage(code, Null.notNull(args), locale);
         }
 
         final String body = StringTemplate
-                .dyn(responseBody)
-                .bindStr("{message}", message)
-                .toString();
+                                    .dyn(responseBody)
+                                    .bindStr("{message}", message)
+                                    .toString();
 
         return new Body(httpStatus, contentType, body);
     }

@@ -25,7 +25,7 @@ public interface AuthnDetailsMapper {
      * @return DefaultWingsUserDetails
      */
     static DefaultWingsUserDetails into(WarlockAuthnService.Details a) {
-        return INSTANCE._into(a);
+        return into(a, new DefaultWingsUserDetails());
     }
 
     /**
@@ -34,19 +34,10 @@ public interface AuthnDetailsMapper {
      * @param a Details
      * @param b DefaultWingsUserDetails
      */
-    static void into(WarlockAuthnService.Details a, DefaultWingsUserDetails b) {
+    static DefaultWingsUserDetails into(WarlockAuthnService.Details a, DefaultWingsUserDetails b) {
         INSTANCE._into(a, b);
+        return b;
     }
-
-
-    @Mapping(target = "preAuthed", ignore = true)
-    @Mapping(target = "enabled", ignore = true)
-    @Mapping(target = "credentialsNonExpired", ignore = true)
-    @Mapping(target = "authorities", ignore = true)
-    @Mapping(target = "accountNonLocked", ignore = true)
-    @Mapping(target = "accountNonExpired", ignore = true)
-    DefaultWingsUserDetails _into(WarlockAuthnService.Details a);
-
 
     @Mapping(target = "preAuthed", ignore = true)
     @Mapping(target = "enabled", ignore = true)

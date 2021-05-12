@@ -144,7 +144,7 @@ public class JooqMostSelectSample {
          * @return DiffName
          */
         static DiffName into(Record2<Long, String> a) {
-            return INSTANCE._into(a);
+            return into(a, new DiffName());
         }
 
         /**
@@ -153,13 +153,10 @@ public class JooqMostSelectSample {
          * @param a Record2
          * @param b DiffName
          */
-        static void into(Record2<Long, String> a, DiffName b) {
+        static DiffName into(Record2<Long, String> a, DiffName b) {
             INSTANCE._into(a, b);
+            return b;
         }
-
-        @Mapping(target = "uid", expression = "java(a.value1())")
-        @Mapping(target = "str", expression = "java(a.value2())")
-        DiffName _into(Record2<Long, String> a);
 
         @Mapping(target = "uid", expression = "java(a.value1())")
         @Mapping(target = "str", expression = "java(a.value2())")
