@@ -1,7 +1,14 @@
 package pro.fessional.wings.slardar.spring.prop;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import springfox.documentation.service.ParameterType;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author trydofor
@@ -12,29 +19,69 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(SlardarSwaggerProp.Key)
 public class SlardarSwaggerProp {
 
-    public static final String Key = "wings.slardar.swagger.api-info";
+    public static final String Key = "wings.slardar.swagger";
 
     /**
-     * docket的标题
-     *
-     * @see #Key$title
+     * @see #Key$api
      */
-    private String title;
-    public static final String Key$title = Key + ".title";
+    private Api api = new Api();
+
+    public static final String Key$api = Key + ".api";
+
 
     /**
-     * docket的描述
-     *
-     * @see #Key$description
+     * @see #Key$group
      */
-    private String description;
-    public static final String Key$description = Key + ".description";
+    private Map<String, Grp> group = new HashMap<>();
+    public static final String Key$group = Key + ".group";
 
     /**
-     * docket的版本
-     *
-     * @see #Key$version
+     * @see #Key$param
      */
-    private String version;
-    public static final String Key$version = Key + ".version";
+    private Map<String, Par> param = new HashMap<>();
+    public static final String Key$param = Key + ".param";
+
+    @Data
+    public static class Api {
+        /**
+         * docket的标题
+         */
+        private String title;
+
+        /**
+         * docket的描述
+         */
+        private String description;
+
+        /**
+         * docket的版本
+         */
+        private String version;
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class Grp extends Api {
+
+        private boolean enable = true;
+
+        private String host = null;
+        /**
+         * package prefix
+         */
+        private Set<String> basePackage = Collections.emptySet();
+
+        /**
+         * ant path
+         */
+        private Set<String> antPath = Collections.emptySet();
+    }
+
+    @Data
+    public static class Par {
+        private boolean enable = true;
+        private ParameterType type;
+        private String value = "";
+        private String description = "";
+    }
 }

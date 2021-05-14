@@ -1,6 +1,7 @@
 package com.moilioncircle.roshan.devops.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -63,6 +64,7 @@ public class TestLoadController {
         private ZoneId userZoneId;
     }
 
+    @ApiOperation("common test")
     @GetMapping("/test/load/test.json")
     public R<JsonIt> jsonIt() {
         JsonIt json = new JsonIt();
@@ -79,6 +81,7 @@ public class TestLoadController {
 
     private final Random unsafeRandom = new Random();
 
+    @ApiOperation("sleep test")
     @GetMapping("/test/load/sleep.html")
     public String sleep(@RequestParam("ms") long ms) {
         long half = ms / 2;
@@ -93,6 +96,7 @@ public class TestLoadController {
         return "sleep" + ms;
     }
 
+    @ApiOperation("speed test")
     @GetMapping({"/test/load/speed.html", "/index.html"})
     public String speed() {
         return "speed";

@@ -174,4 +174,11 @@ public class SlardarEnabledProp {
     private boolean domainExtend = false;
     public static final String Key$domainExtend = Key + ".domain-extend";
 
+    /**
+     * 是否开启默认的swagger配置
+     *
+     * @see #Key$swagger
+     */
+    private boolean swagger = true;
+    public static final String Key$swagger = Key + ".swagger";
 }
