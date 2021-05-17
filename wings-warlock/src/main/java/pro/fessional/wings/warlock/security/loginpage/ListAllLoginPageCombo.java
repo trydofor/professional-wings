@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MimeType;
 import pro.fessional.mirana.data.R;
@@ -31,6 +32,8 @@ public class ListAllLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
 
     @Override
     public ResponseEntity<?> response(@NotNull Enum<?> authType, @Nullable MimeType mimeType, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
-        return ResponseEntity.ok().body(R.okData(warlockSecurityProp.getAuthType().keySet()));
+        return ResponseEntity
+                       .status(HttpStatus.UNAUTHORIZED)
+                       .body(R.okData(warlockSecurityProp.getAuthType().keySet()));
     }
 }

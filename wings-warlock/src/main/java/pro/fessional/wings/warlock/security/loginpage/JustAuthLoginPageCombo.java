@@ -46,7 +46,8 @@ public class JustAuthLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
                                  .header(HttpHeaders.LOCATION, authorize)
                                  .build();
         } else {
-            return ResponseEntity.ok().body(R.okData(authorize));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                 .body(R.okData(authorize));
         }
     }
 }

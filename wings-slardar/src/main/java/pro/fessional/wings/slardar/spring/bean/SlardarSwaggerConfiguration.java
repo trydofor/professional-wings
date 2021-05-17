@@ -103,7 +103,6 @@ public class SlardarSwaggerConfiguration implements BeanFactoryPostProcessor, En
             Docket dkt = new Docket(DocumentationType.SWAGGER_2)
                                  .enable(grp.isEnable())
                                  .groupName(name)
-                                 .enableUrlTemplating(true)
                                  .apiInfo(info)
                                  .globalRequestParameters(para)
                                  .host(StringUtils.hasText(grp.getHost()) ? grp.getHost() : null)
