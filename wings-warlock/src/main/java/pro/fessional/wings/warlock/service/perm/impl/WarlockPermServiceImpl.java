@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static pro.fessional.wings.warlock.service.grant.PermGrantHelper.unitePermit;
+import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheListener.KeyPermAll;
 
 /**
  * @author trydofor
@@ -41,28 +42,28 @@ public class WarlockPermServiceImpl implements WarlockPermService {
     private JournalService journalService;
 
     @Override
-    @Cacheable
+    @Cacheable(key = KeyPermAll)
     public Map<Long, String> loadPermAll() {
         final WinPermEntryTable t = winPermEntryDao.getTable();
 
         final Map<Long, String> all = winPermEntryDao
-                .ctx()
-                .select(t.Id, t.Scopes, t.Action)
-                .from(t)
-                .where(t.onlyLiveData)
-                .fetch()
-                .intoMap(Record3::value1, it -> unitePermit(it.value2(), it.value3()));
+                                              .ctx()
+                                              .select(t.Id, t.Scopes, t.Action)
+                                              .from(t)
+                                              .where(t.onlyLiveData)
+                                              .fetch()
+                                              .intoMap(Record3::value1, it -> unitePermit(it.value2(), it.value3()));
         log.info("loadPermAll size={}", all.size());
         return all;
     }
 
-    @CacheEvict
+    @CacheEvict(key = KeyPermAll)
     public void evictPermAllCache() {
-        log.info("evictPermAllCache");
+        log.info("evict cache {}", KeyPermAll);
     }
 
     @Override
-    @CacheEvict
+    @CacheEvict(key = KeyPermAll)
     public void create(@NotNull String scopes, @NotNull Collection<Act> acts) {
         if (acts.isEmpty()) return;
 
@@ -88,13 +89,13 @@ public class WarlockPermServiceImpl implements WarlockPermService {
         journalService.commit(Jane.Modify, permId, commit -> {
             final WinPermEntryTable t = winPermEntryDao.getTable();
             final int rc = winPermEntryDao
-                    .ctx()
-                    .update(t)
-                    .set(t.CommitId, commit.getCommitId())
-                    .set(t.ModifyDt, commit.getCommitDt())
-                    .set(t.Remark, remark)
-                    .where(t.Id.eq(permId))
-                    .execute();
+                                   .ctx()
+                                   .update(t)
+                                   .set(t.CommitId, commit.getCommitId())
+                                   .set(t.ModifyDt, commit.getCommitDt())
+                                   .set(t.Remark, remark)
+                                   .where(t.Id.eq(permId))
+                                   .execute();
             log.info("modify perm remark. permId={}, affect={}", permId, rc);
         });
     }

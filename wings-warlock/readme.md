@@ -87,7 +87,8 @@ Warlock在用户通过身边鉴别（renew）后，会分别加载和用户绑�
  * 暴露 ComboWingsAuthPageHandler.Combo，增加处理细节。
  * 暴露 WingsAuthPageHandler，替换处理细节。
  * 指定 wings.warlock.security.login-page，定向到自定义页面。
- * 暴露 Authentication*Handler，自行处理登录或登出的事件。
+ * 暴露 AuthenticationSuccessHandler，AuthenticationFailureHandler处理登录事件。
+ * 暴露 LogoutSuccessHandler 处理登出的事件。
  
 默认实现中，login中会在cookie和header中放置sessionId，logout是清空session
 

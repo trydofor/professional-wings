@@ -18,6 +18,10 @@ import pro.fessional.wings.warlock.event.cache.TableChangeEvent;
 @Service
 public class WarlockPermCacheListener {
 
+    public static final String KeyPermAll = "'KeyPermAll'";
+    public static final String KeyRoleAll = "'KeyRoleAll'";
+    public static final String KeyRoleGrant = "'KeyRoleGrant'";
+
     public static final String CacheName = WingsCache.Level.Service + "WarlockPermRoleCache";
     public static final String ManagerName = WingsCache.Manager.Memory;
 
@@ -33,9 +37,11 @@ public class WarlockPermCacheListener {
         final Class<?> table = event.getTable();
         if (WinPermEntryTable.class.equals(table)) {
             warlockPermServer.evictPermAllCache();
-        } else if (WinRoleEntryTable.class.equals(table)) {
+        }
+        else if (WinRoleEntryTable.class.equals(table)) {
             warlockRoleService.evictRoleAllCache();
-        } else if (WinRoleGrantTable.class.equals(table)) {
+        }
+        else if (WinRoleGrantTable.class.equals(table)) {
             warlockRoleService.evictRoleGrantCache();
         }
     }

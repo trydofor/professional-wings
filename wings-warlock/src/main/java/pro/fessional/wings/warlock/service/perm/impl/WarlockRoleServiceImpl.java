@@ -28,6 +28,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheListener.KeyRoleAll;
+import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheListener.KeyRoleGrant;
+
 /**
  * @author trydofor
  * @since 2021-03-07
@@ -36,9 +39,6 @@ import java.util.Set;
 @Slf4j
 @CacheConfig(cacheNames = WarlockPermCacheListener.CacheName, cacheManager = WarlockPermCacheListener.ManagerName)
 public class WarlockRoleServiceImpl implements WarlockRoleService {
-
-    private static final String RoleAllSpEL = "'KeyAllRole'";
-    private static final String RoleGrantSpEL = "'KeyRoleGrant'";
 
     @Setter(onMethod_ = {@Autowired})
     private WinRoleEntryDao winRoleEntryDao;
@@ -51,32 +51,32 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
     private JournalService journalService;
 
     @Override
-    @Cacheable(key = RoleAllSpEL)
+    @Cacheable(key = KeyRoleAll)
     public Map<Long, String> loadRoleAll() {
         final WinRoleEntryTable t = winRoleEntryDao.getTable();
 
         final Map<Long, String> all = winRoleEntryDao
-                .ctx()
-                .select(t.Id, t.Name)
-                .from(t)
-                .where(t.onlyLiveData)
-                .fetch()
-                .intoMap(Record2::value1, Record2::value2);
+                                              .ctx()
+                                              .select(t.Id, t.Name)
+                                              .from(t)
+                                              .where(t.onlyLiveData)
+                                              .fetch()
+                                              .intoMap(Record2::value1, Record2::value2);
         log.info("loadRoleAll size={}", all.size());
         return all;
     }
 
     @Override
-    @Cacheable(key = RoleGrantSpEL)
+    @Cacheable(key = KeyRoleGrant)
     public Map<Long, Set<Long>> loadRoleGrant() {
         final WinRoleGrantTable t = winRoleGrantDao.getTable();
 
         val list = winRoleEntryDao
-                .ctx()
-                .select(t.ReferRole, t.GrantEntry)
-                .from(t)
-                .where(t.GrantEntry.eq(1L))
-                .fetch();
+                           .ctx()
+                           .select(t.ReferRole, t.GrantEntry)
+                           .from(t)
+                           .where(t.GrantEntry.eq(1L))
+                           .fetch();
 
         log.info("loadRoleMap size={}", list.size());
 
@@ -89,19 +89,19 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
         return all;
     }
 
-    @CacheEvict(key = RoleAllSpEL)
+    @CacheEvict(key = KeyRoleAll)
     public void evictRoleAllCache() {
-        log.info("evictRoleAllCache");
+        log.info("evict cache {}", KeyRoleAll);
     }
 
-    @CacheEvict(key = RoleGrantSpEL)
+    @CacheEvict(key = KeyRoleGrant)
     public void evictRoleGrantCache() {
-        log.info("evictRoleGrantCache");
+        log.info("evict cache {}", KeyRoleGrant);
     }
 
 
     @Override
-    @CacheEvict(key = RoleAllSpEL)
+    @CacheEvict(key = KeyRoleAll)
     public long create(@NotNull String name, String remark) {
         if (!StringUtils.hasText(name)) {
             throw new CodeException(CommonErrorEnum.AssertEmpty1, "role.name");
@@ -118,7 +118,8 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
 
             try {
                 winRoleEntryDao.insert(po);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 log.error("failed to insert role entry. name=" + name + ", remark=" + remark, e);
                 throw new CodeException(e, CommonErrorEnum.AssertState2, "role.name", name);
             }
@@ -132,13 +133,13 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
         journalService.commit(Jane.Modify, roleId, remark, commit -> {
             final WinRoleEntryTable t = winRoleEntryDao.getTable();
             final int rc = winRoleEntryDao
-                    .ctx()
-                    .update(t)
-                    .set(t.CommitId, commit.getCommitId())
-                    .set(t.ModifyDt, commit.getCommitDt())
-                    .set(t.Remark, remark)
-                    .where(t.Id.eq(roleId))
-                    .execute();
+                                   .ctx()
+                                   .update(t)
+                                   .set(t.CommitId, commit.getCommitId())
+                                   .set(t.ModifyDt, commit.getCommitDt())
+                                   .set(t.Remark, remark)
+                                   .where(t.Id.eq(roleId))
+                                   .execute();
             log.info("modify perm remark. roleId={}, affect={}", roleId, rc);
         });
     }
