@@ -156,7 +156,7 @@ wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子
 用户登录后，自动生成时区和I18n有关的Context。
 通过`SecurityContextUtil`获得相关的Context。
 
-`WingsTerminalContext.Context`和登录终端有关的，需要打开TerminalFilter。
+`WingsTerminalContext.Context`操作终端有关的，通过TerminalInterceptor完成。
 
 多时区方面，通过enum类，自动生成业务上的标准时区，以供解析和使用。
 
@@ -437,18 +437,7 @@ TerminalContext保存了，远程ip，agent信息，locale和timezone
 
 ## 3.8.特别用途的 Filter
 
-构建一个 wingsFilterChain 内置以下filter
-
-## 3.8.1.TerminalFilter终端
-
-是否解析 WingsTerminalContext，默认`spring.wings.slardar.enabled.terminal=true`控制，  
-同时依赖于 `WingsLocaleResolver`和`WingsRemoteResolver`
-
- * 设置 Locale 和 TimeZone
- * 设置 remote ip
- * 设置 user agent信息
-
-## 3.8.3.OverloadFilter过载
+## 3.8.1.OverloadFilter过载
 
 是否限定请求并发，默认`spring.wings.slardar.enabled.overload=false`
 

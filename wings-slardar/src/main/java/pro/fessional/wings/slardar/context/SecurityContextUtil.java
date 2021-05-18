@@ -85,6 +85,21 @@ public class SecurityContextUtil {
     }
 
     /**
+     * 获得登录的userId，如果未登录或principal为非Long类型，返回 Long.MIN_VALUE
+     *
+     * @return 登录uid，或Long.MIN_VALUE
+     */
+    public static long getUserId() {
+        final Object principal = getPrincipal();
+        if (principal instanceof Long) {
+            return (Long) principal;
+        }
+        else {
+            return Long.MIN_VALUE;
+        }
+    }
+
+    /**
      * 一般为 UserDetailsService 放入的 UserDetails
      *
      * @param <T> UserDetails 类型

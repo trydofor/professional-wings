@@ -26,6 +26,7 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
                              @NotNull HttpServletResponse response,
                              @NotNull Object handler) {
 
+        TerminalContext.clear();
         TimeZoneAwareLocaleContext locale = localeResolver.resolveI18nContext(request);
         String remoteIp = remoteResolver.resolveRemoteIp(request);
         String agentInfo = remoteResolver.resolveAgentInfo(request);
