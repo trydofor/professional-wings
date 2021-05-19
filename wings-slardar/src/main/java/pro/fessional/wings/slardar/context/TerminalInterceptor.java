@@ -30,11 +30,13 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
         TimeZoneAwareLocaleContext locale = localeResolver.resolveI18nContext(request);
         String remoteIp = remoteResolver.resolveRemoteIp(request);
         String agentInfo = remoteResolver.resolveAgentInfo(request);
+        // TODO，从request获得i18n，如果不存在，则使用用户设置的
         final Object principal = SecurityContextUtil.getPrincipal();
         if (principal instanceof Long) {
             long uid = (Long) principal;
             TerminalContext.login(uid, locale.getLocale(), locale.getTimeZone(), remoteIp, agentInfo);
-        } else {
+        }
+        else {
             TerminalContext.guest(locale.getLocale(), locale.getTimeZone(), remoteIp, agentInfo);
         }
         //

@@ -2,6 +2,12 @@ package pro.fessional.wings.slardar.spring.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.util.StringUtils;
+
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author trydofor
@@ -15,34 +21,57 @@ public class SlardarDatetimeProp {
     public static final String Key = "wings.slardar.datetime";
 
     /**
-     * LocalDateTime  util date
+     * LocalDateTime
      *
      * @see #Key$patternDatetime
      */
-    private String patternDatetime = "yyyy-MM-dd HH:mm:ss";
-    public static final String Key$patternDatetime = Key + ".pattern-datetime";
+    private Df datetime;
+    public static final String Key$patternDatetime = Key + ".datetime";
 
     /**
      * LocalDate
      *
      * @see #Key$patternDate
      */
-    private String patternDate = "yyyy-MM-dd";
-    public static final String Key$patternDate = Key + ".pattern-date";
+    private Df date;
+    public static final String Key$patternDate = Key + ".date";
 
     /**
      * LocalTime
      *
      * @see #Key$patternTime
      */
-    private String patternTime = "HH:mm:ss";
-    public static final String Key$patternTime = Key + ".pattern-time";
+    private Df time;
+    public static final String Key$patternTime = Key + ".time";
 
     /**
      * ZonedDateTime
      *
      * @see #Key$patternZoned
      */
-    private String patternZoned = "yyyy-MM-dd HH:mm:ss VV";
-    public static final String Key$patternZoned = Key + ".pattern-zoned";
+    private Df zoned;
+    public static final String Key$patternZoned = Key + ".zoned";
+
+    @Data
+    public static class Df {
+        /**
+         * 格式化输出的格式
+         */
+        private String format;
+        /**
+         * 解析时支持的格式
+         */
+        private List<String> parser = Collections.emptyList();
+
+        public Set<String> getSupport() {
+            LinkedHashSet<String> set = new LinkedHashSet<>();
+            for (String s : parser) {
+                if (StringUtils.hasText(s)) {
+                    set.add(s);
+                }
+            }
+            set.add(format);
+            return set;
+        }
+    }
 }

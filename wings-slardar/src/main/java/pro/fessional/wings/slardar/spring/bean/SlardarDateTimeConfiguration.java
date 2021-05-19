@@ -1,28 +1,32 @@
 package pro.fessional.wings.slardar.spring.bean;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.convert.ApplicationConversionService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.converter.Converter;
-import pro.fessional.mirana.time.DateFormatter;
-import pro.fessional.mirana.time.DateParser;
-import pro.fessional.wings.slardar.autozone.spring.StringZonedConverter;
-import pro.fessional.wings.slardar.autozone.spring.ZonedStringConverter;
+import pro.fessional.wings.slardar.autozone.spring.LocalDate2StringConverter;
+import pro.fessional.wings.slardar.autozone.spring.LocalDateTime2StringConverter;
+import pro.fessional.wings.slardar.autozone.spring.LocalTime2StringConverter;
+import pro.fessional.wings.slardar.autozone.spring.String2LocalDateConverter;
+import pro.fessional.wings.slardar.autozone.spring.String2LocalDateTimeConverter;
+import pro.fessional.wings.slardar.autozone.spring.String2LocalTimeConverter;
+import pro.fessional.wings.slardar.autozone.spring.String2ZonedDateTimeConverter;
+import pro.fessional.wings.slardar.autozone.spring.ZonedDateTime2StringConverter;
 import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.util.stream.Collectors;
 
 /**
+ * 通过 ApplicationConversionService#addBeans 自动注入
+ *
  * @author trydofor
+ * @see ApplicationConversionService#addBeans
  * @since 2019-12-03
  */
 @Configuration
@@ -35,122 +39,74 @@ public class SlardarDateTimeConfiguration {
 
     // spring boot can expose Beans instead of WebMvcConfigurer
     @Bean
-    public StringLocalDateConverter stringLocalDateConverter() {
+    public String2LocalDateConverter stringLocalDateConverter() {
         logger.info("Wings conf stringLocalDateConverter");
-        return new StringLocalDateConverter();
+        val fmt = slardarDatetimeProp.getDate()
+                                     .getSupport()
+                                     .stream()
+                                     .map(DateTimeFormatter::ofPattern)
+                                     .collect(Collectors.toList());
+        return new String2LocalDateConverter(fmt);
     }
+
     @Bean
-    public LocalDateStringConverter localDateStringConverter() {
+    public LocalDate2StringConverter localDateStringConverter() {
         logger.info("Wings conf localDateStringConverter");
-        return new LocalDateStringConverter();
+        final DateTimeFormatter fmt = DateTimeFormatter.ofPattern(slardarDatetimeProp.getDate().getFormat());
+        return new LocalDate2StringConverter(fmt);
     }
 
     @Bean
-    public StringLocalTimeConverter stringLocalTimeConverter() {
+    public String2LocalTimeConverter stringLocalTimeConverter() {
         logger.info("Wings conf stringLocalTimeConverter");
-        return new StringLocalTimeConverter();
+        val fmt = slardarDatetimeProp.getTime()
+                                     .getSupport()
+                                     .stream()
+                                     .map(DateTimeFormatter::ofPattern)
+                                     .collect(Collectors.toList());
+        return new String2LocalTimeConverter(fmt);
     }
 
     @Bean
-    public LocalTimeStringConverter localTimeStringConverter() {
+    public LocalTime2StringConverter localTimeStringConverter() {
         logger.info("Wings conf localTimeStringConverter");
-        return new LocalTimeStringConverter();
+        final DateTimeFormatter fmt = DateTimeFormatter.ofPattern(slardarDatetimeProp.getTime().getFormat());
+        return new LocalTime2StringConverter(fmt);
     }
 
     @Bean
-    public StringLocalDateTimeConverter stringLocalDateTimeConverter() {
+    public String2LocalDateTimeConverter stringLocalDateTimeConverter() {
         logger.info("Wings conf stringLocalDateTimeConverter");
-        return new StringLocalDateTimeConverter();
+        val fmt = slardarDatetimeProp.getDatetime()
+                                     .getSupport()
+                                     .stream()
+                                     .map(DateTimeFormatter::ofPattern)
+                                     .collect(Collectors.toList());
+        return new String2LocalDateTimeConverter(fmt);
     }
 
     @Bean
-    public LocalDateTimeStringConverter localDateTimeStringConverter() {
+    public LocalDateTime2StringConverter localDateTimeStringConverter() {
         logger.info("Wings conf localDateTimeStringConverter");
-        return new LocalDateTimeStringConverter();
+        final DateTimeFormatter fmt = DateTimeFormatter.ofPattern(slardarDatetimeProp.getDatetime().getFormat());
+        return new LocalDateTime2StringConverter(fmt);
     }
 
-
     @Bean
-    public StringZonedConverter stringZonedDateTimeConverter() {
+    public String2ZonedDateTimeConverter stringZonedDateTimeConverter() {
         logger.info("Wings conf stringZonedDateTimeConverter");
-        return new StringZonedConverter();
+        val fmt = slardarDatetimeProp.getZoned()
+                                     .getSupport()
+                                     .stream()
+                                     .map(DateTimeFormatter::ofPattern)
+                                     .collect(Collectors.toList());
+        return new String2ZonedDateTimeConverter(fmt);
     }
 
     @Bean
-    public ZonedStringConverter zonedDateTimeStringConverter() {
+    public ZonedDateTime2StringConverter zonedDateTimeStringConverter() {
         logger.info("Wings conf zonedDateTimeStringConverter");
-        final String zft = slardarDatetimeProp.getPatternZoned();
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(zft);
-        return new ZonedStringConverter(dtf);
-    }
-
-    @Bean
-    public StringUtilDateConverter stringUtilDateConverter() {
-        logger.info("Wings conf stringUtilDateConverter");
-        return new StringUtilDateConverter();
-    }
-
-    @Bean
-    public UtilDateStringConverter utilDateStringConverter() {
-        logger.info("Wings conf utilDateStringConverter");
-        return new UtilDateStringConverter();
-    }
-
-    //
-    public static class StringLocalDateConverter implements Converter<String, LocalDate> {
-        @Override
-        public LocalDate convert(@NotNull String source) {
-            return DateParser.parseDate(source);
-        }
-    }
-
-    public static class LocalDateStringConverter implements Converter<LocalDate, String> {
-        @Override
-        public String convert(@NotNull LocalDate source) {
-            return DateFormatter.date10(source);
-        }
-    }
-
-    public static class StringLocalTimeConverter implements Converter<String, LocalTime> {
-        @Override
-        public LocalTime convert(@NotNull String source) {
-            return DateParser.parseTime(source);
-        }
-    }
-
-    public static class LocalTimeStringConverter implements Converter<LocalTime, String> {
-        @Override
-        public String convert(@NotNull LocalTime source) {
-            return DateFormatter.time08(source);
-        }
-    }
-
-    public static class StringLocalDateTimeConverter implements Converter<String, LocalDateTime> {
-        @Override
-        public LocalDateTime convert(@NotNull String source) {
-            return DateParser.parseDateTime(source);
-        }
-    }
-
-
-    public static class LocalDateTimeStringConverter implements Converter<LocalDateTime, String> {
-        @Override
-        public String convert(@NotNull LocalDateTime source) {
-            return DateFormatter.full19(source);
-        }
-    }
-
-    public static class StringUtilDateConverter implements Converter<String, Date> {
-        @Override
-        public Date convert(@NotNull String source) {
-            return DateParser.parseUtilDate(source);
-        }
-    }
-
-    public static class UtilDateStringConverter implements Converter<Date, String> {
-        @Override
-        public String convert(@NotNull Date source) {
-            return DateFormatter.full19(source);
-        }
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern(slardarDatetimeProp.getZoned().getFormat());
+        return new ZonedDateTime2StringConverter(fmt);
     }
 }

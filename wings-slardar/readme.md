@@ -376,6 +376,8 @@ cacheManager = Manager.Server)
   - Request时，自动把用户时间调至系统时区。
   - Response时，自动把系统时间调至用户时区。
 
+注意，因util.Date的缺陷，在wings中，默认禁用其使用，需要使用java.time.*
+
 ## 3.7.常用功能
 
 ## 3.7.1.restTemplate和okhttp

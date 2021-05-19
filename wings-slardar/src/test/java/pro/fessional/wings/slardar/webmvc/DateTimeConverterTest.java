@@ -26,18 +26,14 @@ public class DateTimeConverterTest {
     private MockMvc mockMvc;
 
     @Test
-    public void testUtilDate() throws Exception {
-        assertUtilDate("2020--", "2020-01-01 00:00:00.000");
-        assertUtilDate("2020-12-", "2020-12-01 00:00:00.000");
-        assertUtilDate("2020-12-30", "2020-12-30 00:00:00.000");
-        assertUtilDate("2020-12-30_12", "2020-12-30 12:00:00.000");
-        assertUtilDate("2020-12-30_12:34", "2020-12-30 12:34:00.000");
-        assertUtilDate("2020-12-30_12:34:56", "2020-12-30 12:34:56.000");
-        assertUtilDate("2020-12-30_12:34:56.789", "2020-12-30 12:34:56.789");
+    public void testFmtDate() throws Exception {
+        assertFmtDate("Jan_01_2020", "2020-01-01");
+        assertFmtDate("Jan_2_2020", "2020-01-02");
+        assertFmtDate("Jan_2_20", "2020-01-02");
     }
 
-    private void assertUtilDate(String d, String v) throws Exception {
-        mockMvc.perform(get("/test/datetime-util-date.json?d=" + d))
+    private void assertFmtDate(String d, String v) throws Exception {
+        mockMvc.perform(get("/test/datetime-fmt-date.json?d=" + d))
                .andDo(print())
                .andExpect(content().string(v));
     }
@@ -47,10 +43,10 @@ public class DateTimeConverterTest {
         assertFullDate("2020-", "2020-01-01 00:00:00.000");
         assertFullDate("2020-12-", "2020-12-01 00:00:00.000");
         assertFullDate("2020-12-30", "2020-12-30 00:00:00.000");
-        assertFullDate("2020-12-30_12", "2020-12-30 12:00:00.000");
-        assertFullDate("2020-12-30_12:34", "2020-12-30 12:34:00.000");
-        assertFullDate("2020-12-30_12:34:56", "2020-12-30 12:34:56.000");
-        assertFullDate("2020-12-30_12:34:56.789", "2020-12-30 12:34:56.789");
+        assertFullDate("2020-12-30T12", "2020-12-30 12:00:00.000");
+        assertFullDate("2020-12-30T12:34", "2020-12-30 12:34:00.000");
+        assertFullDate("2020-12-30T12:34:56", "2020-12-30 12:34:56.000");
+        assertFullDate("2020-12-30T12:34:56.789", "2020-12-30 12:34:56.789");
     }
 
     private void assertFullDate(String d, String v) throws Exception {
@@ -61,6 +57,10 @@ public class DateTimeConverterTest {
 
     @Test
     public void testLocalDate() throws Exception {
+        assertLocalDate("January/1/20", "2020-01-01");
+        assertLocalDate("Jan/1/20", "2020-01-01");
+        assertLocalDate("Jan/1/2021", "2021-01-01");
+
         assertLocalDate("2020-", "2020-01-01");
         assertLocalDate("2020-12-", "2020-12-01");
         assertLocalDate("2020-12-30", "2020-12-30");
@@ -134,7 +134,6 @@ public class DateTimeConverterTest {
     /**
      * 以 request body形式，转换json，用户时区自动变成系统时区，获得系统时区的LocalDateTime，
      * 输出时，ZonedDateTime又自动变为用户时区
-     *
      */
     @Test
     public void testZdtLdtBody() throws Exception {

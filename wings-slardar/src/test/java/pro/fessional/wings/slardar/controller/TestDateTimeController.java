@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.controller;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
-import java.util.Date;
 
 /**
  * @author trydofor
@@ -57,9 +57,9 @@ public class TestDateTimeController {
         return xdt;
     }
 
-    @RequestMapping("/test/datetime-util-date.json")
-    public String utilDate(@RequestParam("d") Date date) {
-        return DateFormatter.full23(date);
+    @RequestMapping(value = "/test/datetime-fmt-date.json")
+    public String fmtDate(@RequestParam("d") @DateTimeFormat(pattern = "MMM_d_[uuuu][uu]") LocalDate date) {
+        return DateFormatter.date10(date);
     }
 
     @RequestMapping("/test/datetime-full-date.json")
