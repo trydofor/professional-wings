@@ -65,18 +65,20 @@ public class SlardarSwaggerConfiguration implements BeanFactoryPostProcessor, En
 
         final SlardarSwaggerProp.Api api = slardarSwaggerProp.getApi();
 
-        List<RequestParameter> para = slardarSwaggerProp.getParam().entrySet()
-                                                        .stream()
-                                                        .filter(e -> e.getValue().isEnable())
-                                                        .map(e -> new RequestParameterBuilder()
-                                                                          .name(e.getKey())
-                                                                          .in(e.getValue().getType())
-                                                                          .description(e.getValue().getDescription())
-                                                                          .query(q -> q.defaultValue(e.getValue().getValue()))
-                                                                          .required(false)
-                                                                          .build())
-                                                        .collect(Collectors.toList());
+        List<RequestParameter> param = slardarSwaggerProp.getParam()
+                                                         .entrySet()
+                                                         .stream()
+                                                         .filter(e -> e.getValue().isEnable())
+                                                         .map(e -> new RequestParameterBuilder()
+                                                                           .name(e.getKey())
+                                                                           .in(e.getValue().getType())
+                                                                           .description(e.getValue().getDescription())
+                                                                           .query(q -> q.defaultValue(e.getValue().getValue()))
+                                                                           .required(false)
+                                                                           .build())
+                                                         .collect(Collectors.toList());
 
+        boolean logModel = true;
         for (Map.Entry<String, SlardarSwaggerProp.Grp> ent : slardarSwaggerProp.getGroup().entrySet()) {
             final String name = ent.getKey();
             final SlardarSwaggerProp.Grp grp = ent.getValue();
@@ -104,12 +106,23 @@ public class SlardarSwaggerConfiguration implements BeanFactoryPostProcessor, En
                                  .enable(grp.isEnable())
                                  .groupName(name)
                                  .apiInfo(info)
-                                 .globalRequestParameters(para)
+                                 .globalRequestParameters(param)
                                  .host(StringUtils.hasText(grp.getHost()) ? grp.getHost() : null)
                                  .select()
                                  .apis(apis)
                                  .paths(paths)
                                  .build();
+
+            for (Map.Entry<Class<?>, Class<?>> me : slardarSwaggerProp.getModel().entrySet()) {
+                final Class<?> to = me.getValue();
+                if(to == Void.class) continue;
+
+                dkt.directModelSubstitute(me.getKey(), to);
+                if(logModel){
+                    logger.info("Wings conf WingsSwaggerConfiguration bean, ModelSubstitute from=" + me.getKey() + " to=" + to);
+                    logModel = false;
+                }
+            }
 
             beanFactory.registerSingleton(name + "Docket", dkt);
         }
