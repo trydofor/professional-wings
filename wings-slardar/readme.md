@@ -145,11 +145,12 @@ wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子
 
 通过`LocaleContextResolver`，按以下优先级，获得当前locale设置。
 
- 1. request被设置好的`WINGS.I18N_CONTEXT`
+ 1. request中被设置的`WINGS.I18N_CONTEXT`
  2. query string `locale`, `zoneid`
- 3. cookie `WINGS_LOCALE`, `WINGS_ZONEID`
- 4. http header `Accept-Language`,`Zone-Id`
- 5. 系统默认值
+ 3. http header `Accept-Language`,`Zone-Id`
+ 4. cookie `Wings-Locale`, `Wings-Zoneid`
+ 5. 登录用户的SecurityContext中获得wings设置
+ 6. 系统默认值
 
 此处为行为约定，基于servlet或webflux的具体实现。`WingsLocaleResolver`是一个实现。
 
@@ -166,6 +167,9 @@ wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子
  * timezone - 对应 StandardTimezoneEnum
  * locale - 对应 java.util.Locale
  * zoneid - 对应 java.time.ZoneId
+ 
+在js环境中，可以用`Intl.DateTimeFormat().resolvedOptions().timeZone`获得。
+当client端无法获得zoneid时，可以取得服务器支持的zone及其offset,country自行判断。
  
 在@Valid的验证中，有以下技巧。
 

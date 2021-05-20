@@ -23,16 +23,6 @@ public class SecurityContextUtil {
     private SecurityContextUtil() {
     }
 
-    /**
-     * 获得终端信息
-     *
-     * @return context
-     */
-    @NotNull
-    public static TerminalContext.Context getTerminalContext() {
-        return TerminalContext.get();
-    }
-
     @NotNull
     @SuppressWarnings("unchecked")
     public static Collection<GrantedAuthority> getAuthorities() {

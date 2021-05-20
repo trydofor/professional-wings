@@ -8,6 +8,8 @@ import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
 import org.springframework.web.servlet.i18n.AbstractLocaleContextResolver;
 import pro.fessional.mirana.i18n.LocaleResolver;
 import pro.fessional.mirana.i18n.ZoneIdResolver;
+import pro.fessional.wings.slardar.context.SecurityContextUtil;
+import pro.fessional.wings.slardar.security.WingsUserDetails;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,13 @@ import java.util.TimeZone;
 import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_I18N_CONTEXT;
 
 /**
+ * 按以下优先顺序获得用户语言和时区设置。
+ * ① request中被设置的`WINGS.I18N_CONTEXT`
+ * ② query string `locale`, `zoneid`
+ * ③ http header `Accept-Language`,`Zone-Id`
+ * ④ cookie `WINGS_LOCALE`, `WINGS_ZONEID`
+ * ⑤ 登录用户的SecurityContext中获得wings设置
+ *
  * @author trydofor
  * @since 2019-06-30
  */
@@ -72,8 +81,30 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
             return (TimeZoneAwareLocaleContext) obj;
         }
 
-        final Locale locale = resolveUserLocale(request);
-        final TimeZone timeZone = resolveUserTimeZone(request);
+        Locale locale = resolveUserLocale(request);
+        TimeZone timeZone = resolveUserTimeZone(request);
+
+        if (locale == null || timeZone == null) {
+            final WingsUserDetails dt = SecurityContextUtil.getDetails(WingsUserDetails.class);
+
+            if (locale == null) {
+                if (dt == null) {
+                    locale = Locale.getDefault();
+                }
+                else {
+                    locale = dt.getLocale();
+                }
+            }
+
+            if (timeZone == null) {
+                if (dt == null) {
+                    timeZone = TimeZone.getDefault();
+                }
+                else {
+                    timeZone = TimeZone.getTimeZone(dt.getZoneId());
+                }
+            }
+        }
 
         SimpleTimeZoneAwareLocaleContext context = new SimpleTimeZoneAwareLocaleContext(locale, timeZone);
         request.setAttribute(ATTR_I18N_CONTEXT, context);
@@ -105,6 +136,13 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
             }
         }
 
+        for (String s : zoneidHeader) {
+            String h = request.getHeader(s);
+            if (h != null && !h.isEmpty()) {
+                return ZoneIdResolver.timeZone(h);
+            }
+        }
+
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (String s : zoneidCookie) {
@@ -116,14 +154,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
             }
         }
 
-        for (String s : zoneidHeader) {
-            String h = request.getHeader(s);
-            if (h != null && !h.isEmpty()) {
-                return ZoneIdResolver.timeZone(h);
-            }
-        }
-
-        return TimeZone.getDefault();
+        return null;
     }
 
     private Locale resolveUserLocale(HttpServletRequest request) {
@@ -132,6 +163,13 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
             String q = request.getParameter(s);
             if (q != null && !q.isEmpty()) {
                 return LocaleResolver.locale(q);
+            }
+        }
+
+        for (String s : localeHeader) {
+            String h = request.getHeader(s);
+            if (h != null && !h.isEmpty()) {
+                return LocaleResolver.locale(h);
             }
         }
 
@@ -146,14 +184,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
             }
         }
 
-        for (String s : localeHeader) {
-            String h = request.getHeader(s);
-            if (h != null && !h.isEmpty()) {
-                return LocaleResolver.locale(h);
-            }
-        }
-
-        return Locale.getDefault();
+        return null;
     }
 
     public static class Context implements TimeZoneAwareLocaleContext {
