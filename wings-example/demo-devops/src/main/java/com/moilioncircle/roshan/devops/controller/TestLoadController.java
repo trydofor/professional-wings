@@ -25,8 +25,8 @@ public class TestLoadController {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    @ApiModel("SleepJson")
-    public static class JsonIt {
+    @ApiModel("DumyJson")
+    public static class Jn {
         @ApiModelProperty("整数值")
         private int intVal = Integer.MAX_VALUE - 1;
         @ApiModelProperty("整数类")
@@ -35,9 +35,9 @@ public class TestLoadController {
 
     private final Random unsafeRandom = new Random();
 
-    @ApiOperation("sleep test")
+    @ApiOperation("test sleep")
     @GetMapping("/test/load/sleep.html")
-    public R<JsonIt> sleep(@RequestParam("ms") long ms) {
+    public R<Jn> sleep(@RequestParam("ms") long ms) {
         long half = ms / 2;
         long slp = ((long) (unsafeRandom.nextDouble() * half)) + half;
         try {
@@ -47,10 +47,10 @@ public class TestLoadController {
             // ingore
         }
 
-        return R.okData(new JsonIt());
+        return R.okData(new Jn());
     }
 
-    @ApiOperation("speed test")
+    @ApiOperation("test speed")
     @GetMapping({"/test/load/speed.html", "/index.html"})
     public String speed() {
         return "speed";

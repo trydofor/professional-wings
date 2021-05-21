@@ -40,7 +40,7 @@ public class SlardarOkhttp3Configuration {
     private static final Log logger = LogFactory.getLog(SlardarOkhttp3Configuration.class);
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(OkHttpClient.class)
     public OkHttpClient okHttpClient(
             ObjectProvider<Cache> cacheProvier,
             ObjectProvider<CookieJar> cookieProvider,
@@ -104,7 +104,7 @@ public class SlardarOkhttp3Configuration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(ConnectionPool.class)
     public ConnectionPool okHttp3ConnectionPool(SlardarOkHttpProp config) {
         logger.info("Wings conf okHttp3ConnectionPool");
         int maxIdleConnections = config.getMaxIdle();
@@ -112,7 +112,7 @@ public class SlardarOkhttp3Configuration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(RestTemplate.class)
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public RestTemplate restTemplate(RestTemplateBuilder builder, OkHttpClient client) {
         logger.info("Wings conf restTemplate");

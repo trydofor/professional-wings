@@ -37,7 +37,7 @@ public class WarlockJustAuthConfiguration {
     private final WarlockSecurityProp securityProp;
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(JustAuthRequestBuilder.class)
     public JustAuthRequestBuilder justAuthRequestBuilder(AuthStateCache cache) {
         logger.info("Wings conf justAuthRequestFactory");
         JustAuthRequestBuilder factory = new JustAuthRequestBuilder();
@@ -74,7 +74,7 @@ public class WarlockJustAuthConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(AuthStateCache.class)
     public AuthStateCache authStateCache() {
         logger.info("Wings conf authStateCache");
         return new JustAuthStateCaffeine(justAuthProp.getCacheSize(), justAuthProp.getCacheLive());

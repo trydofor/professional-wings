@@ -41,12 +41,6 @@ public class SlardarSwaggerProp {
     private Map<String, Par> param = new HashMap<>();
     public static final String Key$param = Key + ".param";
 
-    /**
-     * directModelSubstitute
-     */
-    private Map<Class<?>, Class<?>> model = new HashMap<>();
-    public static final String Key$model = Key + ".model";
-
     @Data
     public static class Api {
         /**

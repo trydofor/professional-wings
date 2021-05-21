@@ -60,7 +60,7 @@ public class WarlockSecurityBeanConfiguration {
     private final ApplicationContext applicationContext;
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(WingsAuthTypeParser.class)
     public WingsAuthTypeParser wingsAuthTypeParser() {
         logger.info("Wings conf wingsAuthTypeParser");
         final Map<String, Enum<?>> authType = securityProp.mapAuthTypeEnum();
@@ -105,7 +105,7 @@ public class WarlockSecurityBeanConfiguration {
 
     ///////// UserDetails /////////
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(WingsUserDetailsService.class)
     public WingsUserDetailsService wingsUserDetailsService(ObjectProvider<ComboWingsUserDetailsService.Combo<?>> combos) {
         logger.info("Wings conf wingsUserDetailsService");
         ComboWingsUserDetailsService uds = new ComboWingsUserDetailsService();
@@ -117,7 +117,7 @@ public class WarlockSecurityBeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(WingsAuthDetailsSource.class)
     public WingsAuthDetailsSource<?> wingsAuthDetailsSource(ObjectProvider<ComboWingsAuthDetailsSource.Combo<?>> combos) {
         logger.info("Wings conf wingsAuthDetailsSource");
         ComboWingsAuthDetailsSource uds = new ComboWingsAuthDetailsSource();
@@ -150,7 +150,7 @@ public class WarlockSecurityBeanConfiguration {
 
     ///////// login page /////////
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(WingsAuthPageHandler.class)
     public WingsAuthPageHandler wingsAuthPageHandler(ObjectProvider<ComboWingsAuthPageHandler.Combo> combos) {
         logger.info("Wings conf wingsAuthPageHandler");
         ComboWingsAuthPageHandler uds = new ComboWingsAuthPageHandler();
@@ -182,7 +182,7 @@ public class WarlockSecurityBeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(GrantedAuthorityDefaults.class)
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
         return new GrantedAuthorityDefaults(securityProp.getRolePrefix());
     }

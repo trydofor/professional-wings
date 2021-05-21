@@ -124,4 +124,18 @@ public class WarlockEnabledProp {
      */
     private boolean checkDatabase = true;
     public static final String Key$checkDatabase = Key + ".check-database";
+
+    /**
+     * 是否支持为Docket全局注入AlternateTypeRule
+     * @see #Key$swaggerRule
+     */
+    private boolean swaggerRule = true;
+    public static final String Key$swaggerRule = Key + ".swagger-rule";
+
+    /**
+     * 是否支持为Docket全局注入java.time.Local*
+     * @see #Key$swaggerJsr310
+     */
+    private boolean swaggerJsr310 = true;
+    public static final String Key$swaggerJsr310 = Key + ".swagger-jsr-310";
 }

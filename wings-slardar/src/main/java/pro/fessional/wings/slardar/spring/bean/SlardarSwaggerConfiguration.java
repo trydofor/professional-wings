@@ -77,8 +77,13 @@ public class SlardarSwaggerConfiguration implements BeanFactoryPostProcessor, En
                                                                            .required(false)
                                                                            .build())
                                                          .collect(Collectors.toList());
+        if (!param.isEmpty()) {
+            for (RequestParameter rp : param) {
+                logger.info("Wings conf WingsSwaggerConfiguration param=" + rp.getName()
+                            + ", type=" + rp.getIn().name());
+            }
+        }
 
-        boolean logModel = true;
         for (Map.Entry<String, SlardarSwaggerProp.Grp> ent : slardarSwaggerProp.getGroup().entrySet()) {
             final String name = ent.getKey();
             final SlardarSwaggerProp.Grp grp = ent.getValue();
@@ -88,7 +93,7 @@ public class SlardarSwaggerConfiguration implements BeanFactoryPostProcessor, En
                 logger.info("Wings conf WingsSwaggerConfiguration skip, group=" + name + ", path or package empty");
                 continue;
             }
-            logger.info("Wings conf WingsSwaggerConfiguration bean, group=" + name + ", path=" + String.join(",", aps) + ", pkg=" + String.join(",", bps));
+            logger.info("Wings conf WingsSwaggerConfiguration group=" + name + ", path=" + String.join(",", aps) + ", pkg=" + String.join(",", bps));
 
             final Predicate<RequestHandler> apis = buildRequestHandlerPredicate(bps);
             final Predicate<String> paths = buildStringPredicate(aps);
@@ -113,21 +118,11 @@ public class SlardarSwaggerConfiguration implements BeanFactoryPostProcessor, En
                                  .paths(paths)
                                  .build();
 
-            for (Map.Entry<Class<?>, Class<?>> me : slardarSwaggerProp.getModel().entrySet()) {
-                final Class<?> to = me.getValue();
-                if(to == Void.class) continue;
-
-                dkt.directModelSubstitute(me.getKey(), to);
-                if(logModel){
-                    logger.info("Wings conf WingsSwaggerConfiguration bean, ModelSubstitute from=" + me.getKey() + " to=" + to);
-                    logModel = false;
-                }
-            }
-
             beanFactory.registerSingleton(name + "Docket", dkt);
         }
     }
 
+    //
     @NotNull
     private Predicate<String> buildStringPredicate(Set<String> aps) {
         final Predicate<String> paths;

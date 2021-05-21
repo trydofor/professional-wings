@@ -21,10 +21,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,13 +33,13 @@ import java.util.Map;
  */
 @RestController
 @Slf4j
-public class TestSwagController {
+public class TestJsonController {
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    @ApiModel("LoadJson")
-    public static class JsonIt {
+    @ApiModel("DemoJson")
+    public static class Jn {
         private boolean boolVal = false;
         private int intVal = Integer.MAX_VALUE - 1;
         private long longVal = Long.MAX_VALUE - 1;
@@ -59,17 +58,17 @@ public class TestSwagController {
         private Date utilDateVal = new Date();
         @ApiModelProperty(dataType = "Long", example = "1234567890")
         private Calendar calendarVal = Calendar.getInstance();
-        private List<String> listVal = Arrays.asList("字符串", "列表");
-        private Map<String, Long> mapVal = new HashMap<String, Long>() {{put("Map", 1L);}};
+        private List<Instant> listVal = Collections.singletonList(Instant.now());
+        private Map<LocalDate, LocalDateTime> mapVal = Collections.singletonMap(LocalDate.now(), LocalDateTime.now());
         private String hello;
         private ZoneId systemZoneId;
         private ZoneId userZoneId;
     }
 
-    @ApiOperation("common test")
-    @GetMapping("/test/load/test.json")
-    public R<JsonIt> jsonIt() {
-        JsonIt json = new JsonIt();
+    @ApiOperation("test json")
+    @GetMapping("/test/demo.json")
+    public R<Jn> jsonIt() {
+        Jn json = new Jn();
         ZonedDateTime now = ZonedDateTime.now();
         final TerminalContext.Context ctx = TerminalContext.get();
         final ZoneId zid = ctx.getTimeZone().toZoneId();

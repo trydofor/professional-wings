@@ -731,3 +731,18 @@ Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控�
 ### 21.Java和Kotlin版本
 
 目前编译目标是java 8，kotlin 1.4，如果在IDE中出现编译失败，很可能是编译版本不对。
+
+### 22.swagger的问题
+
+`😱 Could not render n, see the console.`
+是swagger前端js错误，可能是response对象层级过深，导致swagger扫描时间太长。
+
+`Unable to find a model that matches key ...` 如，
+
+* ModelKey{qualifiedModelName=ModelName{namespace='java.time', name='Instant'}
+* ModelKey{qualifiedModelName=ModelName{namespace='java.time', name='LocalDateTime'}
+
+springfox的swagger3.0.0有bug，会在3.0.1修复，
+https://github.com/springfox/springfox/issues/3452
+
+wings中可以通过暴露AlternateTypeRule bean，自动注入所以Docket中。

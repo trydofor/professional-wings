@@ -63,7 +63,7 @@ public class SlardarCacheConfiguration {
     @ConditionalOnClass(CaffeineCacheManager.class)
     public static class CaffeineCacheManagerConfiguration {
         @Bean(Manager.Memory)
-        @ConditionalOnMissingBean
+        @ConditionalOnMissingBean(CaffeineCacheManager.class)
         public CaffeineCacheManager caffeineCacheManager(SlardarCacheProp conf) {
             logger.info("Wings conf " + Manager.Memory);
             return new WingsCaffeine.Manager(conf);
@@ -74,7 +74,7 @@ public class SlardarCacheConfiguration {
     @Configuration
     @ConditionalOnClass({HazelcastInstance.class, HazelcastCacheManager.class})
     public static class HazelcastCacheConfiguration {
-        @ConditionalOnMissingBean
+        @ConditionalOnMissingBean(HazelcastCacheManager.class)
         @Bean(Manager.Server)
         public HazelcastCacheManager hazelcastCacheManager(SlardarCacheProp conf, ObjectProvider<HazelcastInstance> hazelcastInstance) {
             logger.info("Wings conf " + Manager.Server);

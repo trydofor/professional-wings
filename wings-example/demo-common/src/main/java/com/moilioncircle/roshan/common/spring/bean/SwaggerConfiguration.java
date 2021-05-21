@@ -1,18 +1,27 @@
 package com.moilioncircle.roshan.common.spring.bean;
 
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fasterxml.classmate.TypeResolver;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.web.bind.annotation.RequestBody;
 import pro.fessional.wings.slardar.spring.prop.SlardarSwaggerProp;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.schema.AlternateTypeRule;
 import springfox.documentation.service.ResolvedMethodParameter;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author trydofor
@@ -21,10 +30,10 @@ import springfox.documentation.spring.web.plugins.Docket;
 @Configuration
 @ConditionalOnProperty(name = "springfox.documentation.enabled", havingValue = "true")
 @ConditionalOnClass(name = "springfox.documentation.spring.web.plugins.Docket")
+@RequiredArgsConstructor
 public class SwaggerConfiguration {
 
-    @Setter(onMethod_ = {@Autowired})
-    private SlardarSwaggerProp slardarSwaggerProp;
+    private final SlardarSwaggerProp slardarSwaggerProp;
 
     @Bean
     public Docket requestBodyDocket() {
@@ -45,5 +54,25 @@ public class SwaggerConfiguration {
                        })
                        .paths(PathSelectors.any())
                        .build();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "swaggerRuleListInstant")
+    public AlternateTypeRule swaggerRuleListInstant() {
+        TypeResolver resolver = new TypeResolver();
+        return new AlternateTypeRule(
+                resolver.resolve(List.class, Instant.class),
+                resolver.resolve(List.class, String.class),
+                Ordered.LOWEST_PRECEDENCE);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "swaggerRuleMapLocalDate2LocalDateTime")
+    public AlternateTypeRule swaggerRuleMapLocalDate2LocalDateTime() {
+        TypeResolver resolver = new TypeResolver();
+        return new AlternateTypeRule(
+                resolver.resolve(Map.class, LocalDate.class, LocalDateTime.class),
+                resolver.resolve(Map.class, String.class, String.class),
+                Ordered.LOWEST_PRECEDENCE);
     }
 }

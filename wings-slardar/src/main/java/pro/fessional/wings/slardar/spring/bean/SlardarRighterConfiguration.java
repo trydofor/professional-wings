@@ -21,7 +21,7 @@ public class SlardarRighterConfiguration {
     private final static Log logger = LogFactory.getLog(SlardarRighterConfiguration.class);
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(RighterInterceptor.class)
     public RighterInterceptor righterInterceptor(SlardarRighterProp slardarRighterProp) {
         logger.info("Wings conf righterInterceptor");
         return new RighterInterceptor(slardarRighterProp);

@@ -65,7 +65,7 @@ public class SlardarConcurConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(FirstBloodInterceptor.class)
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$firstBlood, havingValue = "true")
     public FirstBloodInterceptor firstBloodInterceptor(ObjectProvider<FirstBloodHandler> providers) {
         final List<FirstBloodHandler> handlers = providers.orderedStream().collect(Collectors.toList());

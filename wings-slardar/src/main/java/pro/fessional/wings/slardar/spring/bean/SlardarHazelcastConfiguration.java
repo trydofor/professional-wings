@@ -32,7 +32,7 @@ public class SlardarHazelcastConfiguration extends HazelcastHttpSessionConfigura
     private static final Log logger = LogFactory.getLog(SlardarHazelcastConfiguration.class);
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(FindByIndexNameSessionRepository.class)
     @Override
     public FindByIndexNameSessionRepository<?> sessionRepository() {
         logger.info("Wings conf sessionRepository : FindByIndexNameSessionRepository");
@@ -41,7 +41,7 @@ public class SlardarHazelcastConfiguration extends HazelcastHttpSessionConfigura
 
     // concurrent session
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(SessionRegistry.class)
     public SessionRegistry sessionRegistry(FindByIndexNameSessionRepository<? extends Session> sessionRepository) {
         logger.info("Wings conf sessionRegistry");
         return new SpringSessionBackedSessionRegistry<>(sessionRepository);

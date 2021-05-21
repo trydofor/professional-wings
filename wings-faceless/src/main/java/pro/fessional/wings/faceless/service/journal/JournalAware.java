@@ -35,7 +35,7 @@ public interface JournalAware {
         return EmptyValue.BIGINT;
     }
 
-    default boolean isDeleted(){
-        return EmptySugar.isEmptyValue(getDeleteDt());
+    default boolean isDeleted() {
+        return !EmptySugar.asEmptyValue(getDeleteDt());
     }
 }
