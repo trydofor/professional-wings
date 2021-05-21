@@ -1,11 +1,14 @@
 package pro.fessional.wings.slardar.spring.bean;
 
+import io.swagger.annotations.ApiModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +27,7 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.RequestParameter;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger.schema.ApiModelTypeNameProvider;
 
 import java.util.List;
 import java.util.Map;
@@ -31,12 +35,15 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
+
 /**
  * @author trydofor
  * @since 2019-10-30
  */
 @Configuration
-public class SlardarSwaggerConfiguration implements BeanFactoryPostProcessor, EnvironmentAware {
+@ConditionalOnProperty(name = SlardarEnabledProp.Key$swagger, havingValue = "true")
+public class SlardarSwaggerConfiguration implements BeanFactoryPostProcessor, BeanPostProcessor, EnvironmentAware {
 
     private static final Log logger = LogFactory.getLog(SlardarSwaggerConfiguration.class);
 
@@ -50,13 +57,38 @@ public class SlardarSwaggerConfiguration implements BeanFactoryPostProcessor, En
             return;
         }
 
-        final String en = environment.getProperty(SlardarEnabledProp.Key$swagger);
-        if (!"true".equalsIgnoreCase(en)) {
-            logger.info("Wings conf WingsSwaggerConfiguration disable by " + SlardarEnabledProp.Key$swagger);
-            return;
-        }
-
         slardarSwaggerProp = Binder.get(environment).bind(SlardarSwaggerProp.Key, SlardarSwaggerProp.class).get();
+    }
+
+    @Override
+    public Object postProcessBeforeInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
+        if (bean instanceof ApiModelTypeNameProvider) {
+            final Set<String> pkgs = slardarSwaggerProp.getModel().getCanonical();
+            if (pkgs.isEmpty()) return bean;
+
+            final boolean useAnno = slardarSwaggerProp.getModel().isAnnotation();
+            //
+            logger.info("Wings conf ApiModelTypeNameProvider with CanonicalName");
+
+            return new ApiModelTypeNameProvider() {
+                @Override
+                public String nameFor(Class<?> type) {
+                    final String pkg = type.getPackage().getName();
+                    final boolean got = pkgs.stream().anyMatch(it -> it.equals("**") || pkg.startsWith(it));
+                    if (!got) return super.nameFor(type);
+
+                    if (useAnno) {
+                        ApiModel annotation = findAnnotation(type, ApiModel.class);
+                        if (annotation != null && StringUtils.hasText(annotation.value())) {
+                            return annotation.value();
+                        }
+                    }
+
+                    return type.getCanonicalName();
+                }
+            };
+        }
+        return bean;
     }
 
     @Override

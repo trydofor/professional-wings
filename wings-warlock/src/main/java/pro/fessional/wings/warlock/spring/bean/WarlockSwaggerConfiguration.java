@@ -89,7 +89,5 @@ public class WarlockSwaggerConfiguration implements InitializingBean {
             return AlternateTypeRules.newRule(ZonedDateTime.class, String.class);
         }
     }
-
-
 }
 

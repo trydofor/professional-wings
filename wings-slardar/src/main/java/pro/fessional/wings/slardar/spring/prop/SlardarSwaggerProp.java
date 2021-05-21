@@ -22,14 +22,17 @@ public class SlardarSwaggerProp {
     public static final String Key = "wings.slardar.swagger";
 
     /**
+     * wings中，默认docket的设置
+     *
      * @see #Key$api
      */
     private Api api = new Api();
 
     public static final String Key$api = Key + ".api";
 
-
     /**
+     * `**` 为 `any`，支持逗号`,`分隔
+     *
      * @see #Key$group
      */
     private Map<String, Grp> group = new HashMap<>();
@@ -40,6 +43,15 @@ public class SlardarSwaggerProp {
      */
     private Map<String, Par> param = new HashMap<>();
     public static final String Key$param = Key + ".param";
+
+
+    /**
+     * 在ApiMode中使用全类名的，而非SimpleName
+     *
+     * @see #Key$model
+     */
+    private Mdl model = new Mdl();
+    public static final String Key$model = Key + ".model";
 
     @Data
     public static class Api {
@@ -83,5 +95,11 @@ public class SlardarSwaggerProp {
         private ParameterType type;
         private String value = "";
         private String description = "";
+    }
+
+    @Data
+    public static class Mdl {
+        private Set<String> canonical = Collections.emptySet();
+        private boolean annotation = false;
     }
 }
