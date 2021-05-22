@@ -40,13 +40,6 @@ public class JacksonZonedSerializer extends ZonedDateTimeSerializer {
     }
 
     @Override
-    public void serialize(ZonedDateTime value, JsonGenerator g, SerializerProvider provider) throws IOException {
-        final TimeZone tz = LocaleContextHolder.getTimeZone();
-        value = DateLocaling.zoneZone(value, tz.toZoneId());
-        super.serialize(value, g, provider);
-    }
-
-    @Override
     protected ZonedDateTimeSerializer withFormat(Boolean useTimestamp, DateTimeFormatter formatter, JsonFormat.Shape shape) {
         return new JacksonZonedSerializer(this, useTimestamp, formatter, _writeZoneId);
     }
@@ -54,5 +47,12 @@ public class JacksonZonedSerializer extends ZonedDateTimeSerializer {
     @Override
     protected ZonedDateTimeSerializer withFeatures(Boolean writeZoneId, Boolean writeNanoseconds) {
         return new JacksonZonedSerializer(this, _useTimestamp, writeNanoseconds, _formatter, writeZoneId);
+    }
+
+    @Override
+    public void serialize(ZonedDateTime value, JsonGenerator g, SerializerProvider provider) throws IOException {
+        final TimeZone tz = LocaleContextHolder.getTimeZone();
+        value = DateLocaling.zoneZone(value, tz.toZoneId());
+        super.serialize(value, g, provider);
     }
 }

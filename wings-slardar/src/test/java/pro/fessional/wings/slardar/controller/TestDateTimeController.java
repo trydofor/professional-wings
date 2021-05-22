@@ -25,18 +25,34 @@ public class TestDateTimeController {
 
     @Data
     public static class Xdt {
+        @javax.validation.constraints.NotNull
         public ZonedDateTime zdt;
+        @javax.validation.constraints.NotNull
         public LocalDateTime ldt;
     }
 
     @Data
     public static class Ldt {
+        @javax.validation.constraints.NotNull
         public LocalDateTime ldt;
     }
 
     @Data
+    public static class Zdt {
+        @javax.validation.constraints.NotNull
+        public ZonedDateTime zdt;
+    }
+
+    @Data
     public static class Ld {
+        @javax.validation.constraints.NotNull
         public LocalDate ld;
+    }
+
+    @Data
+    public static class Lt {
+        @javax.validation.constraints.NotNull
+        public LocalTime lt;
     }
 
     @RequestMapping(value = "/test/ldt-zdt.json", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -45,6 +61,16 @@ public class TestDateTimeController {
         xdt.zdt = ldt.atZone(StandardTimezone.ASIA𓃬SHANGHAI.toZoneId());
         xdt.ldt = ldt;
         System.out.println("ldtZdt>>>" + xdt);
+        System.out.println("userTz>>>" + LocaleContextHolder.getTimeZone());
+        return xdt;
+    }
+
+    @RequestMapping(value = "/test/ldt-zdt-body.json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Xdt ldtZdtBody(@RequestBody Ldt ldt) {
+        final Xdt xdt = new Xdt();
+        xdt.zdt = ldt.ldt.atZone(StandardTimezone.ASIA𓃬SHANGHAI.toZoneId());
+        xdt.ldt = ldt.ldt;
+        System.out.println("ldtZdtBody>>>" + xdt);
         System.out.println("userTz>>>" + LocaleContextHolder.getTimeZone());
         return xdt;
     }
@@ -59,21 +85,24 @@ public class TestDateTimeController {
     }
 
     @RequestMapping(value = "/test/zdt-ldt-body.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Xdt zdtLdt(@RequestBody Xdt xdt) {
-        System.out.println("zdtLdt>>>" + xdt);
+    public Xdt zdtLdt(@RequestBody Zdt zdt) {
+        final Xdt xdt = new Xdt();
+        xdt.zdt = zdt.zdt;
+        xdt.ldt = zdt.zdt.toLocalDateTime();
+        System.out.println("zdtLdtBody>>>" + xdt);
         return xdt;
     }
 
-    @RequestMapping(value = "/test/ldt-ldt-body.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Ldt ldtLdt(@RequestBody Ldt ldt) {
-        System.out.println("ldt>>>" + ldt);
-        return ldt;
+    @RequestMapping(value = "/test/ld-ld-body.json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Ld ldLd(@RequestBody Ld ld) {
+        System.out.println("LdBody>>>" + ld);
+        return ld;
     }
 
-    @RequestMapping(value = "/test/ld-ld-body.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Ld ldtLdt(@RequestBody Ld ld) {
-        System.out.println("Ld>>>" + ld);
-        return ld;
+    @RequestMapping(value = "/test/lt-lt-body.json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Lt ltLt(@RequestBody Lt lt) {
+        System.out.println("LtBody>>>" + lt);
+        return lt;
     }
 
     @RequestMapping(value = "/test/datetime-fmt-date.json")

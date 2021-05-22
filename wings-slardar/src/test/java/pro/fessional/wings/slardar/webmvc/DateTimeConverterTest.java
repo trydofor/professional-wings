@@ -115,6 +115,26 @@ public class DateTimeConverterTest {
                .andExpect(content().json("{\"zdt\":\"" + v + " " + z + "\",\"ldt\":\"" + d2 + "\"}", false));
     }
 
+    @Test
+    public void testLdtZdtBody() throws Exception {
+        // GMT+9 -> GMT+8
+        testLdtZdtBody("2020-12-30 12:34:56", "2020-12-30 12:34:56", "2020-12-30 13:34:56", "Asia/Tokyo");
+        testLdtZdtBody("2020/12/30 12:34:56", "2020-12-30 12:34:56", "2020-12-30 13:34:56", "Asia/Tokyo");
+        testLdtZdtBody("Dec/30/20 12:34:56", "2020-12-30 12:34:56", "2020-12-30 13:34:56", "Asia/Tokyo");
+        // GMT+0 -> GMT+8
+        testLdtZdtBody("2020-12-30 20:34:56", "2020-12-30 20:34:56", "2020-12-30 12:34:56", "GMT");
+    }
+
+    private void testLdtZdtBody(String d, String d2, String v, String z) throws Exception {
+        final MockHttpServletRequestBuilder builder = post("/test/ldt-zdt-body.json")
+                                                              .header("Zone-Id", z)
+                                                              .contentType(MediaType.APPLICATION_JSON)
+                                                              .content("{\"ldt\":\"" + d + "\"}");
+        mockMvc.perform(builder)
+               .andDo(print())
+               .andExpect(content().json("{\"zdt\":\"" + v + " " + z + "\",\"ldt\":\"" + d2 + "\"}", false));
+    }
+
     /**
      * 用户时区GMT+9，系统时区GMT+8，使用ZonedDateTime在接受输入时自动转换到系统时区。
      * 输出时，自动变为用户时区。（不要使用有夏令时的时区测试，以免刚好切换）
@@ -127,18 +147,14 @@ public class DateTimeConverterTest {
         testZdtLdt("2020-12-30 13:34:56", "2020-12-30 13:34:56", "2020-12-30 21:34:56", "GMT");
     }
 
-    private void testZdtLdt(String d, String d2, String v, String z) throws Exception {
+    private void testZdtLdt(String d, String vz, String v, String z) throws Exception {
         final MockHttpServletRequestBuilder builder = get("/test/zdt-ldt.json?d=" + d)
                                                               .header("Zone-Id", z);
         mockMvc.perform(builder)
                .andDo(print())
-               .andExpect(content().json("{\"zdt\":\"" + d2 + " " + z + "\",\"ldt\":\"" + v + "\"}", false));
+               .andExpect(content().json("{\"zdt\":\"" + vz + " " + z + "\",\"ldt\":\"" + v + "\"}", false));
     }
 
-    /**
-     * 以 request body形式，转换json，用户时区自动变成系统时区，获得系统时区的LocalDateTime，
-     * 输出时，ZonedDateTime又自动变为用户时区
-     */
     @Test
     public void testZdtLdtBody() throws Exception {
         testZdtLdtBody("2020-12-30 12:34:56", "2020-12-30 12:34:56", "2020-12-30 11:34:56", "Asia/Tokyo");
@@ -147,57 +163,49 @@ public class DateTimeConverterTest {
         testZdtLdtBody("2020-12-30 13:34:56", "2020-12-30 13:34:56", "2020-12-30 21:34:56", "GMT");
     }
 
-    private void testZdtLdtBody(String d, String d2, String v, String z) throws Exception {
-        final MockHttpServletRequestBuilder builder = post("/test/zdt-ldt-body.json")
+    private void testZdtLdtBody(String d, String vz, String v, String z) throws Exception {
+        final MockHttpServletRequestBuilder builder = get("/test/zdt-ldt-body.json")
                                                               .header("Zone-Id", z)
                                                               .contentType(MediaType.APPLICATION_JSON)
-                                                              .content("{\"zdt\":\"" + d + " " + z + "\",\"ldt\":\"" + v + "\"}");
-
+                                                              .content("{\"zdt\":\"" + d + "\"}");
         mockMvc.perform(builder)
                .andDo(print())
-               .andExpect(content().json("{\"zdt\":\"" + d2 + " " + z + "\",\"ldt\":\"" + v + "\"}", false));
-    }
-
-
-    @Test
-    public void testLdtLdtBody() throws Exception {
-        testLdtLdtBody("2020-12-30 12:34:56", "2020-12-30 11:34:56");
-        testLdtLdtBody("2020.12.30 13:34:56", "2020-12-30 21:34:56");
-        testLdtLdtBody("2020/12/30 12:34:56", "2020-12-30 11:34:56");
-        testLdtLdtBody("12/30/20 12:34:56", "2020-12-30 11:34:56");
-        testLdtLdtBody("Dec/30/20 12:34:56", "2020-12-30 11:34:56");
-        testLdtLdtBody("Dec-30-20 12:34:56", "2020-12-30 11:34:56");
-        testLdtLdtBody("Dec.30.20 12:34:56", "2020-12-30 11:34:56");
-    }
-
-    private void testLdtLdtBody(String d, String v) throws Exception {
-        final MockHttpServletRequestBuilder builder = post("/test/ldt-ldt-body.json")
-                                                              .contentType(MediaType.APPLICATION_JSON)
-                                                              .content("{\"ldt\":\"" + v + "\"}");
-
-        mockMvc.perform(builder)
-               .andDo(print())
-               .andExpect(content().json("{\"ldt\":\"" + v + "\"}", false));
+               .andExpect(content().json("{\"zdt\":\"" + vz + " " + z + "\",\"ldt\":\"" + v + "\"}", false));
     }
 
     @Test
     public void testLdLdBody() throws Exception {
-        testLdLdBody("2020-12-20", "2020-12-20");
-        testLdLdBody("2020.12.20", "2020-12-20");
-        testLdLdBody("2020/12/20", "2020-12-20");
-        testLdLdBody("12/30/20", "2020-12-30");
+        testLdLdBody("2020-11-30", "2020-11-30");
+        testLdLdBody("2020/12/30", "2020-12-30");
         testLdLdBody("Dec/30/20", "2020-12-30");
-        testLdLdBody("Dec-30-20", "2020-12-30");
-        testLdLdBody("Dec.30.20", "2020-12-30");
+        testLdLdBody("2020.12.30", "2020-12-30");
     }
 
     private void testLdLdBody(String d, String v) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/ld-ld-body.json")
                                                               .contentType(MediaType.APPLICATION_JSON)
-                                                              .content("{\"ld\":\"" + v + "\"}");
+                                                              .content("{\"ld\":\"" + d + "\"}");
 
         mockMvc.perform(builder)
                .andDo(print())
                .andExpect(content().json("{\"ld\":\"" + v + "\"}", false));
+    }
+
+    @Test
+    public void testLtLtBody() throws Exception {
+        testLtLtBody("12:34:56", "12:34:56");
+        testLtLtBody("12:34", "12:34:00");
+        testLtLtBody("12", "12:00:00");
+        testLtLtBody("12:34:56.789", "12:34:56");
+    }
+
+    private void testLtLtBody(String d, String v) throws Exception {
+        final MockHttpServletRequestBuilder builder = post("/test/lt-lt-body.json")
+                                                              .contentType(MediaType.APPLICATION_JSON)
+                                                              .content("{\"lt\":\"" + d + "\"}");
+
+        mockMvc.perform(builder)
+               .andDo(print())
+               .andExpect(content().json("{\"lt\":\"" + v + "\"}", false));
     }
 }

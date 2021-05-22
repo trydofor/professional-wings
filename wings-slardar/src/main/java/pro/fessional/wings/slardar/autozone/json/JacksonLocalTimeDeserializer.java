@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.autozone.json;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
@@ -21,6 +22,26 @@ public class JacksonLocalTimeDeserializer extends LocalTimeDeserializer {
     public JacksonLocalTimeDeserializer(DateTimeFormatter formatter, List<DateTimeFormatter> formats) {
         super(formatter);
         this.formats = formats;
+    }
+
+    protected JacksonLocalTimeDeserializer(LocalTimeDeserializer base, Boolean leniency, List<DateTimeFormatter> formats) {
+        super(base, leniency);
+        this.formats = formats;
+    }
+
+    @Override
+    protected LocalTimeDeserializer withDateFormat(DateTimeFormatter formatter) {
+        return new JacksonLocalTimeDeserializer(formatter, formats);
+    }
+
+    @Override
+    protected LocalTimeDeserializer withLeniency(Boolean leniency) {
+        return new JacksonLocalTimeDeserializer(this, leniency, formats);
+    }
+
+    @Override
+    protected LocalTimeDeserializer withShape(JsonFormat.Shape shape) {
+        return this;
     }
 
     @Override
