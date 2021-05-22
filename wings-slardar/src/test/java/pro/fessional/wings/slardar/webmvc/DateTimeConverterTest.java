@@ -100,17 +100,19 @@ public class DateTimeConverterTest {
     @Test
     public void testLdtZdt() throws Exception {
         // GMT+9 -> GMT+8
-        testLdtZdt("2020-12-30 12:34:56", "2020-12-30 13:34:56", "Asia/Tokyo");
+        testLdtZdt("2020-12-30 12:34:56", "2020-12-30 12:34:56", "2020-12-30 13:34:56", "Asia/Tokyo");
+        testLdtZdt("2020/12/30 12:34:56", "2020-12-30 12:34:56", "2020-12-30 13:34:56", "Asia/Tokyo");
+        testLdtZdt("Dec/30/20 12:34:56", "2020-12-30 12:34:56", "2020-12-30 13:34:56", "Asia/Tokyo");
         // GMT+0 -> GMT+8
-        testLdtZdt("2020-12-30 20:34:56", "2020-12-30 12:34:56", "GMT");
+        testLdtZdt("2020-12-30 20:34:56", "2020-12-30 20:34:56", "2020-12-30 12:34:56", "GMT");
     }
 
-    private void testLdtZdt(String d, String v, String z) throws Exception {
+    private void testLdtZdt(String d, String d2, String v, String z) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/ldt-zdt.json?d=" + d)
                                                               .header("Zone-Id", z);
         mockMvc.perform(builder)
                .andDo(print())
-               .andExpect(content().json("{\"zdt\":\"" + v + " " + z + "\",\"ldt\":\"" + d + "\"}", false));
+               .andExpect(content().json("{\"zdt\":\"" + v + " " + z + "\",\"ldt\":\"" + d2 + "\"}", false));
     }
 
     /**
@@ -119,16 +121,18 @@ public class DateTimeConverterTest {
      */
     @Test
     public void testZdtLdt() throws Exception {
-        testZdtLdt("2020-12-30 12:34:56", "2020-12-30 11:34:56", "Asia/Tokyo");
-        testZdtLdt("2020-12-30 13:34:56", "2020-12-30 21:34:56", "GMT");
+        testZdtLdt("2020-12-30 12:34:56", "2020-12-30 12:34:56", "2020-12-30 11:34:56", "Asia/Tokyo");
+        testZdtLdt("2020/12/30 12:34:56", "2020-12-30 12:34:56", "2020-12-30 11:34:56", "Asia/Tokyo");
+        testZdtLdt("Dec/30/20 12:34:56", "2020-12-30 12:34:56", "2020-12-30 11:34:56", "Asia/Tokyo");
+        testZdtLdt("2020-12-30 13:34:56", "2020-12-30 13:34:56", "2020-12-30 21:34:56", "GMT");
     }
 
-    private void testZdtLdt(String d, String v, String z) throws Exception {
+    private void testZdtLdt(String d, String d2, String v, String z) throws Exception {
         final MockHttpServletRequestBuilder builder = get("/test/zdt-ldt.json?d=" + d)
                                                               .header("Zone-Id", z);
         mockMvc.perform(builder)
                .andDo(print())
-               .andExpect(content().json("{\"zdt\":\"" + d + " " + z + "\",\"ldt\":\"" + v + "\"}", false));
+               .andExpect(content().json("{\"zdt\":\"" + d2 + " " + z + "\",\"ldt\":\"" + v + "\"}", false));
     }
 
     /**
@@ -137,11 +141,13 @@ public class DateTimeConverterTest {
      */
     @Test
     public void testZdtLdtBody() throws Exception {
-        testZdtLdtBody("2020-12-30 12:34:56", "2020-12-30 11:34:56", "Asia/Tokyo");
-        testZdtLdtBody("2020-12-30 13:34:56", "2020-12-30 21:34:56", "GMT");
+        testZdtLdtBody("2020-12-30 12:34:56", "2020-12-30 12:34:56", "2020-12-30 11:34:56", "Asia/Tokyo");
+        testZdtLdtBody("2020/12/30 12:34:56", "2020-12-30 12:34:56", "2020-12-30 11:34:56", "Asia/Tokyo");
+        testZdtLdtBody("Dec/30/20 12:34:56", "2020-12-30 12:34:56", "2020-12-30 11:34:56", "Asia/Tokyo");
+        testZdtLdtBody("2020-12-30 13:34:56", "2020-12-30 13:34:56", "2020-12-30 21:34:56", "GMT");
     }
 
-    private void testZdtLdtBody(String d, String v, String z) throws Exception {
+    private void testZdtLdtBody(String d, String d2, String v, String z) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/zdt-ldt-body.json")
                                                               .header("Zone-Id", z)
                                                               .contentType(MediaType.APPLICATION_JSON)
@@ -149,6 +155,49 @@ public class DateTimeConverterTest {
 
         mockMvc.perform(builder)
                .andDo(print())
-               .andExpect(content().json("{\"zdt\":\"" + d + " " + z + "\",\"ldt\":\"" + v + "\"}", false));
+               .andExpect(content().json("{\"zdt\":\"" + d2 + " " + z + "\",\"ldt\":\"" + v + "\"}", false));
+    }
+
+
+    @Test
+    public void testLdtLdtBody() throws Exception {
+        testLdtLdtBody("2020-12-30 12:34:56", "2020-12-30 11:34:56");
+        testLdtLdtBody("2020.12.30 13:34:56", "2020-12-30 21:34:56");
+        testLdtLdtBody("2020/12/30 12:34:56", "2020-12-30 11:34:56");
+        testLdtLdtBody("12/30/20 12:34:56", "2020-12-30 11:34:56");
+        testLdtLdtBody("Dec/30/20 12:34:56", "2020-12-30 11:34:56");
+        testLdtLdtBody("Dec-30-20 12:34:56", "2020-12-30 11:34:56");
+        testLdtLdtBody("Dec.30.20 12:34:56", "2020-12-30 11:34:56");
+    }
+
+    private void testLdtLdtBody(String d, String v) throws Exception {
+        final MockHttpServletRequestBuilder builder = post("/test/ldt-ldt-body.json")
+                                                              .contentType(MediaType.APPLICATION_JSON)
+                                                              .content("{\"ldt\":\"" + v + "\"}");
+
+        mockMvc.perform(builder)
+               .andDo(print())
+               .andExpect(content().json("{\"ldt\":\"" + v + "\"}", false));
+    }
+
+    @Test
+    public void testLdLdBody() throws Exception {
+        testLdLdBody("2020-12-20", "2020-12-20");
+        testLdLdBody("2020.12.20", "2020-12-20");
+        testLdLdBody("2020/12/20", "2020-12-20");
+        testLdLdBody("12/30/20", "2020-12-30");
+        testLdLdBody("Dec/30/20", "2020-12-30");
+        testLdLdBody("Dec-30-20", "2020-12-30");
+        testLdLdBody("Dec.30.20", "2020-12-30");
+    }
+
+    private void testLdLdBody(String d, String v) throws Exception {
+        final MockHttpServletRequestBuilder builder = post("/test/ld-ld-body.json")
+                                                              .contentType(MediaType.APPLICATION_JSON)
+                                                              .content("{\"ld\":\"" + v + "\"}");
+
+        mockMvc.perform(builder)
+               .andDo(print())
+               .andExpect(content().json("{\"ld\":\"" + v + "\"}", false));
     }
 }

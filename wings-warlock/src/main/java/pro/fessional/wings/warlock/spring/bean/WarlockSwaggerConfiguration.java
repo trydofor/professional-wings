@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import springfox.documentation.schema.AlternateTypeRule;
 import springfox.documentation.schema.AlternateTypeRules;
@@ -41,6 +42,7 @@ public class WarlockSwaggerConfiguration implements InitializingBean {
     @Override
     public void afterPropertiesSet() {
         final AlternateTypeRule[] alternateTypeRules = ruleObjectProvider.orderedStream()
+                                                                         .filter(it -> !it.getOriginal().equals(it.getAlternate()))
                                                                          .toArray(AlternateTypeRule[]::new);
         for (AlternateTypeRule rl : alternateTypeRules) {
             logger.info("Wings conf WingsSwaggerConfiguration rule=" + rl.getOriginal().getFullDescription()
@@ -53,6 +55,12 @@ public class WarlockSwaggerConfiguration implements InitializingBean {
                 dkt.alternateTypeRules(alternateTypeRules);
             }
         }
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "swaggerRuleI18nString")
+    public AlternateTypeRule swaggerRuleI18nString() {
+        return AlternateTypeRules.newRule(I18nString.class, String.class);
     }
 
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$swaggerJsr310, havingValue = "true")

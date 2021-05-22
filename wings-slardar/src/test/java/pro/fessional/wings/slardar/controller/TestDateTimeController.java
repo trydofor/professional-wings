@@ -1,6 +1,5 @@
 package pro.fessional.wings.slardar.controller;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.time.DateFormatter;
 import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
-import pro.fessional.wings.slardar.autozone.json.JacksonZonedSerializer;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,9 +25,18 @@ public class TestDateTimeController {
 
     @Data
     public static class Xdt {
-        @JsonSerialize(using = JacksonZonedSerializer.class)
         public ZonedDateTime zdt;
         public LocalDateTime ldt;
+    }
+
+    @Data
+    public static class Ldt {
+        public LocalDateTime ldt;
+    }
+
+    @Data
+    public static class Ld {
+        public LocalDate ld;
     }
 
     @RequestMapping(value = "/test/ldt-zdt.json", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -55,6 +62,18 @@ public class TestDateTimeController {
     public Xdt zdtLdt(@RequestBody Xdt xdt) {
         System.out.println("zdtLdt>>>" + xdt);
         return xdt;
+    }
+
+    @RequestMapping(value = "/test/ldt-ldt-body.json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Ldt ldtLdt(@RequestBody Ldt ldt) {
+        System.out.println("ldt>>>" + ldt);
+        return ldt;
+    }
+
+    @RequestMapping(value = "/test/ld-ld-body.json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Ld ldtLdt(@RequestBody Ld ld) {
+        System.out.println("Ld>>>" + ld);
+        return ld;
     }
 
     @RequestMapping(value = "/test/datetime-fmt-date.json")
