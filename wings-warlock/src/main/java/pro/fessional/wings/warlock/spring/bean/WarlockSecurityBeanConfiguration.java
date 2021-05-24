@@ -38,6 +38,11 @@ import pro.fessional.wings.warlock.security.loginpage.ListAllLoginPageCombo;
 import pro.fessional.wings.warlock.security.userdetails.JustAuthUserAuthnCombo;
 import pro.fessional.wings.warlock.security.userdetails.JustAuthUserDetailsCombo;
 import pro.fessional.wings.warlock.security.userdetails.NonceUserDetailsCombo;
+import pro.fessional.wings.warlock.service.auth.impl.ComboWarlockAuthnService;
+import pro.fessional.wings.warlock.service.auth.impl.ComboWarlockAuthzService;
+import pro.fessional.wings.warlock.service.auth.impl.DefaultPermRoleCombo;
+import pro.fessional.wings.warlock.service.auth.impl.DefaultUserAuthnCombo;
+import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
 import pro.fessional.wings.warlock.service.other.TerminalJournalService;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
@@ -101,6 +106,43 @@ public class WarlockSecurityBeanConfiguration {
     public LogoutSuccessHandler logoutSuccessHandler() {
         logger.info("Wings conf logoutSuccessHandler");
         return new LogoutOkHandler(securityProp.getLogoutSuccessBody());
+    }
+
+    ///////// Authz & AuthN /////////
+
+    @Bean
+    @ConditionalOnMissingBean(ComboWarlockAuthnService.class)
+    public ComboWarlockAuthnService comboWarlockAuthnService() {
+        logger.info("Wings conf comboWarlockAuthnService");
+        return new ComboWarlockAuthnService();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(ComboWarlockAuthzService.class)
+    public ComboWarlockAuthzService comboWarlockAuthzService() {
+        logger.info("Wings conf comboWarlockAuthzService");
+        return new ComboWarlockAuthzService();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(DefaultPermRoleCombo.class)
+    public DefaultPermRoleCombo defaultPermRoleCombo() {
+        logger.info("Wings conf defaultPermRoleCombo");
+        return new DefaultPermRoleCombo();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(DefaultUserAuthnCombo.class)
+    public DefaultUserAuthnCombo defaultUserAuthnCombo() {
+        logger.info("Wings conf defaultUserAuthnCombo");
+        return new DefaultUserAuthnCombo();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(DefaultUserDetailsCombo.class)
+    public DefaultUserDetailsCombo defaultUserDetailsCombo() {
+        logger.info("Wings conf defaultUserDetailsCombo");
+        return new DefaultUserDetailsCombo();
     }
 
     ///////// UserDetails /////////

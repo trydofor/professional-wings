@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
-import org.springframework.stereotype.Service;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthzService;
 
@@ -15,7 +14,6 @@ import java.util.List;
  * @author trydofor
  * @since 2021-02-23
  */
-@Service
 @Slf4j
 public class ComboWarlockAuthzService implements WarlockAuthzService {
 

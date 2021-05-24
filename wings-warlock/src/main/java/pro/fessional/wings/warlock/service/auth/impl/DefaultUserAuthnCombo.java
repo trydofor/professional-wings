@@ -5,12 +5,10 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
-import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
@@ -31,7 +29,6 @@ import static pro.fessional.wings.warlock.service.user.WarlockUserBasisService.B
  * @author trydofor
  * @since 2021-02-25
  */
-@Service
 @Slf4j
 public class DefaultUserAuthnCombo implements ComboWarlockAuthnService.Combo {
 
@@ -52,9 +49,6 @@ public class DefaultUserAuthnCombo implements ComboWarlockAuthnService.Combo {
 
     @Setter(onMethod_ = {@Autowired})
     private JournalService journalService;
-
-    @Setter(onMethod_ = {@Autowired})
-    private PasssaltEncoder passsaltEncoder;
 
     @Override
     @Transactional

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Service;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
@@ -25,7 +24,6 @@ import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.Role
  * @author trydofor
  * @since 2021-03-05
  */
-@Service
 @Slf4j
 public class DefaultPermRoleCombo implements ComboWarlockAuthzService.Combo {
 

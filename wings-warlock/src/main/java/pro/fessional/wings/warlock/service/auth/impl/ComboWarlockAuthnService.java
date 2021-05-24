@@ -8,7 +8,6 @@ import org.jooq.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.Ordered;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
@@ -33,7 +32,6 @@ import java.util.List;
  * @author trydofor
  * @since 2021-02-23
  */
-@Service
 @Slf4j
 public class ComboWarlockAuthnService implements WarlockAuthnService {
 
