@@ -30,8 +30,9 @@ public class JacksonLocalTimeDeserializer extends LocalTimeDeserializer {
     }
 
     @Override
-    protected LocalTimeDeserializer withDateFormat(DateTimeFormatter formatter) {
-        return new JacksonLocalTimeDeserializer(formatter, formats);
+    protected LocalTimeDeserializer withDateFormat(DateTimeFormatter dtf) {
+        if (dtf == _formatter) return this;
+        return new JacksonLocalTimeDeserializer(dtf, formats);
     }
 
     @Override

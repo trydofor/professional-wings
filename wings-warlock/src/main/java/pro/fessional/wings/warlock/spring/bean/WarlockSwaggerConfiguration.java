@@ -57,10 +57,14 @@ public class WarlockSwaggerConfiguration implements InitializingBean {
         }
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "swaggerRuleI18nString")
-    public AlternateTypeRule swaggerRuleI18nString() {
-        return AlternateTypeRules.newRule(I18nString.class, String.class);
+    @Configuration
+    public static class SwaggerWings {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "swaggerRuleI18nString")
+        public AlternateTypeRule swaggerRuleI18nString() {
+            return AlternateTypeRules.newRule(I18nString.class, String.class);
+        }
     }
 
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$swaggerJsr310, havingValue = "true")

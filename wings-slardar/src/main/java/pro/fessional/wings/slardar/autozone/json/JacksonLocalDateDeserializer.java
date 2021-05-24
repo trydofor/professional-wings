@@ -41,6 +41,7 @@ public class JacksonLocalDateDeserializer extends LocalDateDeserializer {
 
     @Override
     protected LocalDateDeserializer withDateFormat(DateTimeFormatter dtf) {
+        if (dtf == _formatter) return this;
         return new JacksonLocalDateDeserializer(this, dtf, formats);
     }
 
