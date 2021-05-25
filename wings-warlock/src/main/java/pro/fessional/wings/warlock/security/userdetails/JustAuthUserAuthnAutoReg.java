@@ -1,12 +1,13 @@
 package pro.fessional.wings.warlock.security.userdetails;
 
 import com.alibaba.fastjson.JSON;
+import lombok.extern.slf4j.Slf4j;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.model.AuthUser;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
-import pro.fessional.wings.warlock.service.auth.impl.DefaultUserAuthnCombo;
+import pro.fessional.wings.warlock.service.auth.impl.DefaultUserAuthnAutoReg;
 
 import static pro.fessional.wings.warlock.service.user.WarlockUserAuthnService.Authn;
 import static pro.fessional.wings.warlock.service.user.WarlockUserBasisService.Basis;
@@ -15,11 +16,12 @@ import static pro.fessional.wings.warlock.service.user.WarlockUserBasisService.B
  * @author trydofor
  * @since 2021-02-25
  */
-public class JustAuthUserAuthnCombo extends DefaultUserAuthnCombo {
+@Slf4j
+public class JustAuthUserAuthnAutoReg extends DefaultUserAuthnAutoReg {
 
-    public static final int ORDER = DefaultUserAuthnCombo.ORDER - 10;
+    public static final int ORDER = DefaultUserAuthnAutoReg.ORDER - 10;
 
-    public JustAuthUserAuthnCombo() {
+    public JustAuthUserAuthnAutoReg() {
         setOrder(ORDER);
     }
 
@@ -40,14 +42,16 @@ public class JustAuthUserAuthnCombo extends DefaultUserAuthnCombo {
         }
         basis.setRemark(user.getRemark());
         basis.setStatus(UserStatus.ACTIVE);
+        log.info("nickName={}, Gender={}", user.getNickname(), aug);
     }
 
     @Override
-    protected void beforeSave(Authn authn, @NotNull Enum<?> authType, String username, Object details) {
+    protected void beforeSave(Authn authn, @NotNull Enum<?> authType, String username, Object details, long userId) {
         AuthUser user = (AuthUser) details;
         authn.setUsername(user.getUuid());
         authn.setExtraPara(JSON.toJSONString(user.getToken()));
         authn.setExtraUser(JSON.toJSONString(user.getRawUserInfo()));
+        log.info("uuid={}, userId={}", user.getUuid(), userId);
     }
 
     @Override

@@ -90,12 +90,12 @@ public class WarlockEnabledProp {
     public static final String Key$comboJustAuthUserDetails = Key + ".combo-just-auth-user-details";
 
     /**
-     * 是否注入 JustAuthUserAuthnCombo
+     * 是否注入 JustAuthUserAuthnAutoReg
      *
-     * @see #Key$comboJustAuthUserAuthn
+     * @see #Key$comboJustAuthAutoreg
      */
-    private boolean comboJustAuthUserAuthn = true;
-    public static final String Key$comboJustAuthUserAuthn = Key + ".combo-just-auth-user-authn";
+    private boolean comboJustAuthAutoreg = true;
+    public static final String Key$comboJustAuthAutoreg = Key + ".combo-just-auth-autoreg";
 
     /**
      * @see #Key$allExceptionHandler

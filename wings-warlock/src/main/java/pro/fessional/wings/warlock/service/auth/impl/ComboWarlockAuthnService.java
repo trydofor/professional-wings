@@ -53,12 +53,12 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     @Setter(onMethod_ = {@Autowired})
     private ApplicationEventPublisher applicationEventPublisher;
 
-    private List<Combo> authCombos = Collections.emptyList();
+    private List<AutoReg> authAutoRegs = Collections.emptyList();
 
     @Autowired(required = false)
-    public void setAuthCombos(List<Combo> authCombos) {
-        log.info("inject auth combo, count={}", authCombos.size());
-        this.authCombos = authCombos;
+    public void setAuthAutoRegs(List<AutoReg> authAutoRegs) {
+        log.info("inject auth combo, count={}", authAutoRegs.size());
+        this.authAutoRegs = authAutoRegs;
     }
 
     @Override
@@ -122,9 +122,9 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     @Override
     @Transactional
     public Details register(@NotNull Enum<?> authType, String username, Object details) {
-        for (Combo combo : authCombos) {
-            if (combo.accept(authType, username, details)) {
-                final Details dt = combo.create(authType, username, details);
+        for (AutoReg autoReg : authAutoRegs) {
+            if (autoReg.accept(authType, username, details)) {
+                final Details dt = autoReg.create(authType, username, details);
                 if (dt != null) return dt;
             }
         }
@@ -246,7 +246,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     }
 
     // /////
-    public interface Combo extends Ordered {
+    public interface AutoReg extends Ordered {
         /**
          * 不需要事务,在外层事务内调用
          */

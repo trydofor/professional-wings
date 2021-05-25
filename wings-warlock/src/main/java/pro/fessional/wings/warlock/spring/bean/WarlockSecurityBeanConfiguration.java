@@ -35,13 +35,13 @@ import pro.fessional.wings.warlock.security.listener.WarlockFailedLoginListener;
 import pro.fessional.wings.warlock.security.listener.WarlockSuccessLoginListener;
 import pro.fessional.wings.warlock.security.loginpage.JustAuthLoginPageCombo;
 import pro.fessional.wings.warlock.security.loginpage.ListAllLoginPageCombo;
-import pro.fessional.wings.warlock.security.userdetails.JustAuthUserAuthnCombo;
+import pro.fessional.wings.warlock.security.userdetails.JustAuthUserAuthnAutoReg;
 import pro.fessional.wings.warlock.security.userdetails.JustAuthUserDetailsCombo;
 import pro.fessional.wings.warlock.security.userdetails.NonceUserDetailsCombo;
 import pro.fessional.wings.warlock.service.auth.impl.ComboWarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.impl.ComboWarlockAuthzService;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultPermRoleCombo;
-import pro.fessional.wings.warlock.service.auth.impl.DefaultUserAuthnCombo;
+import pro.fessional.wings.warlock.service.auth.impl.DefaultUserAuthnAutoReg;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
 import pro.fessional.wings.warlock.service.other.TerminalJournalService;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
@@ -132,17 +132,26 @@ public class WarlockSecurityBeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(DefaultUserAuthnCombo.class)
-    public DefaultUserAuthnCombo defaultUserAuthnCombo() {
-        logger.info("Wings conf defaultUserAuthnCombo");
-        return new DefaultUserAuthnCombo();
-    }
-
-    @Bean
     @ConditionalOnMissingBean(DefaultUserDetailsCombo.class)
     public DefaultUserDetailsCombo defaultUserDetailsCombo() {
         logger.info("Wings conf defaultUserDetailsCombo");
         return new DefaultUserDetailsCombo();
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboJustAuthAutoreg, havingValue = "true")
+    @ConditionalOnMissingBean(JustAuthUserAuthnAutoReg.class)
+    public JustAuthUserAuthnAutoReg justAuthUserAuthnAutoReg() {
+        logger.info("Wings conf justAuthUserAuthnAutoReg");
+        return new JustAuthUserAuthnAutoReg();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(DefaultUserAuthnAutoReg.class)
+    public DefaultUserAuthnAutoReg defaultUserAuthnAutoReg() {
+        // 存在子类，则不需要此bean，如JustAuthUserAuthnAutoReg
+        logger.info("Wings conf defaultUserAuthnAutoReg");
+        return new DefaultUserAuthnAutoReg();
     }
 
     ///////// UserDetails /////////
@@ -172,6 +181,7 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboJustAuthUserDetails, havingValue = "true")
+    @ConditionalOnMissingBean(JustAuthUserDetailsCombo.class)
     public JustAuthUserDetailsCombo justAuthUserDetailsCombo() {
         logger.info("Wings conf justAuthUserDetailsCombo");
         return new JustAuthUserDetailsCombo();
@@ -179,6 +189,7 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboNonceUserDetails, havingValue = "true")
+    @ConditionalOnMissingBean(NonceUserDetailsCombo.class)
     public NonceUserDetailsCombo nonceUserDetailsCombo() {
         logger.info("Wings conf nonceUserDetailsCombo");
         final NonceUserDetailsCombo combo = new NonceUserDetailsCombo();
@@ -205,6 +216,7 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboListAllLoginPage, havingValue = "true")
+    @ConditionalOnMissingBean(ListAllLoginPageCombo.class)
     public ListAllLoginPageCombo listAllLoginPageCombo() {
         logger.info("Wings conf listAllLoginPageCombo");
         return new ListAllLoginPageCombo();
@@ -212,20 +224,17 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboJustAuthLoginPage, havingValue = "true")
+    @ConditionalOnMissingBean(JustAuthLoginPageCombo.class)
     public JustAuthLoginPageCombo justAuthLoginPageCombo() {
+        logger.info("Wings conf justAuthLoginPageCombo");
         return new JustAuthLoginPageCombo();
     }
 
-    @Bean
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboJustAuthUserAuthn, havingValue = "true")
-    public JustAuthUserAuthnCombo justAuthUserAuthnCombo() {
-        // autowired
-        return new JustAuthUserAuthnCombo();
-    }
 
     @Bean
     @ConditionalOnMissingBean(GrantedAuthorityDefaults.class)
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
+        logger.info("Wings conf grantedAuthorityDefaults");
         return new GrantedAuthorityDefaults(securityProp.getRolePrefix());
     }
 
