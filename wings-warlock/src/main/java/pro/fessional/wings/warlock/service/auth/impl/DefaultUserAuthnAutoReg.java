@@ -65,13 +65,13 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
             user.setRemark("auto register");
             user.setStatus(UserStatus.UNINIT);
 
-            beforeSave(user, authType, username, details);
+            beforeSave(user, username, details);
             long uid = warlockUserBasisService.create(user);
             log.info("auto register user authType={}, username={}, userId={}", authType, username, uid);
-            afterSave(user, authType, username, details, uid);
+            afterSave(user, username, details, uid);
             //
             Authn authn = new Authn();
-
+            authn.setAuthType(authType);
             authn.setUsername(username);
             authn.setExtraPara("");
             authn.setExtraUser("");
@@ -82,9 +82,10 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
             // 明文，有WarlockUserAuthnService加密
             authn.setPassword(RandCode.human(16));
 
-            beforeSave(authn, authType, username, details, uid);
-            long aid = warlockUserAuthnService.create(uid, authType, authn);
+            beforeSave(authn, username, details, uid);
+            long aid = warlockUserAuthnService.create(uid, authn);
             log.info("auto register auth authType={}, username={}, authId={}", authType, username, aid);
+            afterSave(authn, username, details, uid, aid);
 
             final Details result = new Details();
             result.setUserId(uid);
@@ -103,13 +104,16 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
         });
     }
 
-    protected void beforeSave(Basis basis, @NotNull Enum<?> authType, String username, Object details) {
+    protected void beforeSave(Basis basis,String username, Object details) {
     }
 
-    protected void afterSave(Basis basis, @NotNull Enum<?> authType, String username, Object details, long userId) {
+    protected void afterSave(Basis basis, String username, Object details, long userId) {
     }
 
-    protected void beforeSave(Authn authn, @NotNull Enum<?> authType, String username, Object details, long userId) {
+    protected void beforeSave(Authn authn, String username, Object details, long userId) {
+    }
+
+    protected void afterSave(Authn authn, String username, Object details, long userId, long authId) {
     }
 
     @Override

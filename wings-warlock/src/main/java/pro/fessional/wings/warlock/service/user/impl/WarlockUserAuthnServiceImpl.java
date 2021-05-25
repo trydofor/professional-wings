@@ -61,7 +61,8 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
     @Override
     @Transactional
-    public long create(long userId, @NotNull Enum<?> authType, @NotNull Authn authn) {
+    public long create(long userId, @NotNull Authn authn) {
+        Enum<?> authType = authn.getAuthType();
         return journalService.submit(Jane.Create, userId, authType, commit -> {
 
             final long id = lightIdService.getId(winUserAnthnDao.getTable());
@@ -105,7 +106,8 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
     @Override
     @Transactional
-    public void modify(long userId, @NotNull Enum<?> authType, @NotNull Authn authn) {
+    public void modify(long userId, @NotNull Authn authn) {
+        Enum<?> authType = authn.getAuthType();
         journalService.commit(Jane.Modify, userId, authType, commit -> {
 
             final WinUserAnthnTable t = winUserAnthnDao.getTable();
@@ -136,16 +138,13 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
         });
     }
 
-
     @Override
     @Transactional
-    public void renew(long userId, @NotNull Enum<?> authType, @NotNull Renew renew) {
-
-        String otherInfo = "by userId and auth-type=" + authType;
-
+    public void renew(long userId, @NotNull Renew renew) {
+        String otherInfo = "by userId and auth-type=" + renew.getAuthType();
         journalService.commit(Jane.Renew, userId, otherInfo, commit -> {
 
-            final String at = wingsAuthTypeParser.parse(authType);
+            final String at = wingsAuthTypeParser.parse(renew.getAuthType());
             final WinUserAnthnTable t = winUserAnthnDao.getTable();
 
             final Condition cond = t.onlyLive(t.AuthType.eq(at).and(t.UserId.eq(userId)));

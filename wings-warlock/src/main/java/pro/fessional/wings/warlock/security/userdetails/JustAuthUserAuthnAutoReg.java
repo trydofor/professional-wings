@@ -26,7 +26,7 @@ public class JustAuthUserAuthnAutoReg extends DefaultUserAuthnAutoReg {
     }
 
     @Override
-    protected void beforeSave(Basis basis, @NotNull Enum<?> authType, String username, Object details) {
+    protected void beforeSave(Basis basis, String username, Object details) {
         AuthUser user = (AuthUser) details;
         basis.setNickname(user.getNickname());
         basis.setAvatar(user.getAvatar());
@@ -46,7 +46,7 @@ public class JustAuthUserAuthnAutoReg extends DefaultUserAuthnAutoReg {
     }
 
     @Override
-    protected void beforeSave(Authn authn, @NotNull Enum<?> authType, String username, Object details, long userId) {
+    protected void beforeSave(Authn authn, String username, Object details, long userId) {
         AuthUser user = (AuthUser) details;
         authn.setUsername(user.getUuid());
         authn.setExtraPara(JSON.toJSONString(user.getToken()));
