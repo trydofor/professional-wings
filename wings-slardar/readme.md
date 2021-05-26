@@ -295,10 +295,19 @@ hazelcast提供了3类锁，推荐使用CP系统，但集群要求至少3台，�
  * IMap.lock - 自动GC，干净简洁
  * ILock.lock - 遵循j.u.c.Lock约定（3.12移除）
 
+不同的工程中，需要分开设置cluster-nam，避免不同项目的同名缓存出现干扰。
+slardar采用了springboot默认的配置方式，client和server的配置文件如下。
+
+ * extra-conf/hazelcast-client.xml
+ * extra-conf/hazelcast-server.xml
+
+若是需要独立定制，可以编程的形式暴露ClientConfig或Config Bean
+
 参考资料如下，
 
  * https://hazelcast.com/blog/hazelcast-imdg-3-12-introduces-cp-subsystem/
  * https://hazelcast.com/blog/long-live-distributed-locks/
+ 
 
 ### 3.4.6.其他
 

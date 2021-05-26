@@ -1,9 +1,12 @@
 package pro.fessional.wings.slardar.spring.bean;
 
+import com.hazelcast.core.HazelcastInstance;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.session.DefaultCookieSerializerCustomizer;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -12,7 +15,11 @@ import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.session.FindByIndexNameSessionRepository;
+import org.springframework.session.hazelcast.config.annotation.web.http.HazelcastHttpSessionConfiguration;
+import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
@@ -45,6 +52,30 @@ public class SlardarSessionConfiguration {
     private static final Log logger = LogFactory.getLog(SlardarSessionConfiguration.class);
 
     private final SlardarSessionProp slardarSessionProp;
+
+    @Configuration
+    @ConditionalOnClass(HazelcastInstance.class)
+    @ConditionalOnProperty(name = SlardarEnabledProp.Key$sessionHazelcast, havingValue = "true")
+    public static class SlardarHazelcastConfiguration extends HazelcastHttpSessionConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(FindByIndexNameSessionRepository.class)
+        @Override
+        public FindByIndexNameSessionRepository<?> sessionRepository() {
+            logger.info("Wings conf sessionRepository : FindByIndexNameSessionRepository");
+            return (FindByIndexNameSessionRepository<? extends org.springframework.session.Session>) super.sessionRepository();
+        }
+
+        // concurrent session
+        @Bean
+        @ConditionalOnMissingBean(SessionRegistry.class)
+        public SessionRegistry sessionRegistry(FindByIndexNameSessionRepository<? extends org.springframework.session.Session> sessionRepository) {
+            logger.info("Wings conf sessionRegistry");
+            return new SpringSessionBackedSessionRegistry<>(sessionRepository);
+        }
+    }
+
+    ////////// must after SessionRegistry Bean ///////
 
     @Bean
     public HttpSessionEventPublisher httpSessionEventPublisher() {

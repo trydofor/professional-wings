@@ -36,7 +36,8 @@
         <changelist>100-SNAPSHOT</changelist>
         <!-- https://docs.spring.io/spring-boot/docs/2.4.2/reference/html/appendix-dependency-versions.html#appendix-dependency-versions -->
         <spring-boot.version>${revision}</spring-boot.version>
-        <wings.version>${revision}.${changelist}</wings.version> <!-- https://github.com/apache/shardingsphere/releases -->
+        <spring-session.version>2.4.1</spring-session.version> <!-- spring-session-bom.version -->
+        <wings.version>${revision}.${changelist}</wings.version>
         <!-- project -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -46,11 +47,9 @@
         <kotlin.compiler.apiVersion>1.4</kotlin.compiler.apiVersion>
         <maven.test.skip>true</maven.test.skip>
         <!-- silencer -->
-        <mirana.version>2.2.0-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
+        <mirana.version>2.2.3-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <!-- faceless -->
         <meepo.version>1.4.0</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
-        <kotlin.version>1.4.21</kotlin.version> <!-- spring boot dependency -->
-        <jooq.version>3.14.4</jooq.version> <!-- spring boot dependency -->
         <simpleflatmapper.version>8.2.3</simpleflatmapper.version>
         <sharding-sphere.version>4.1.1</sharding-sphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <!-- slardar -->
@@ -68,7 +67,7 @@
         <kryo.version>5.0.4</kryo.version>
         <transmittable.version>2.12.1</transmittable.version>
         <bouncycastle.version>1.68</bouncycastle.version>
-        <!-- just auth need 4 -->
+        <!-- just auth need 4, spring use 3 -->
         <okhttp3.version>4.9.0</okhttp3.version>
     </properties>
 
@@ -199,17 +198,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>org.springframework.session</groupId>
-                <artifactId>spring-session-hazelcast</artifactId>
-                <version>${spring-boot.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.hazelcast</groupId>
-                        <artifactId>hazelcast</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
             <!-- sharding sphere -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
@@ -238,6 +226,17 @@
                 <version>${simpleflatmapper.version}</version>
             </dependency>
             <!-- session cache -->
+            <dependency>
+                <groupId>org.springframework.session</groupId>
+                <artifactId>spring-session-hazelcast</artifactId>
+                <version>${spring-session.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.hazelcast</groupId>
+                        <artifactId>hazelcast</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
             <dependency>
                 <groupId>com.hazelcast</groupId>
                 <artifactId>hazelcast-all</artifactId>
@@ -310,19 +309,6 @@
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-boot-starter</artifactId>
                 <version>${swagger.version}</version>
-            </dependency>
-            <!-- test -->
-            <dependency>
-                <groupId>org.junit.vintage</groupId>
-                <artifactId>junit-vintage-engine</artifactId>
-                <version>${junit-jupiter.version}</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.hamcrest</groupId>
-                        <artifactId>hamcrest-core</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>

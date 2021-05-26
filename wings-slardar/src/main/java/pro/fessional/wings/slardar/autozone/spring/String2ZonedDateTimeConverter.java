@@ -38,11 +38,12 @@ public class String2ZonedDateTimeConverter extends DateTimeFormatSupport {
         final TimeZone tz = LocaleContextHolder.getTimeZone();
         final DateTimeFormatter fmt = getFormatter(targetType);
         final ZonedDateTime zdt;
+        final String str = (String) source;
         if (fmt != null) {
-            zdt = DateParser.parseZoned((String) source, tz.toZoneId(), fmt);
+            zdt = DateParser.parseZoned(str, tz.toZoneId(), fmt);
         }
         else {
-            zdt = DateParser.parseZoned((String) source, tz.toZoneId(), formats);
+            zdt = DateParser.parseZoned(str, tz.toZoneId(), formats);
         }
         return DateLocaling.zoneZone(zdt, ZoneId.systemDefault());
     }

@@ -50,7 +50,8 @@ public class SlardarCacheConfiguration {
             for (String name : names) {
                 if (name.equalsIgnoreCase(prim)) {
                     return context.getBean(name, CacheManager.class);
-                } else if (pre == null && name.startsWith(prim)) {
+                }
+                else if (pre == null && name.startsWith(prim)) {
                     pre = context.getBean(name, CacheManager.class);
                 }
             }
@@ -74,7 +75,7 @@ public class SlardarCacheConfiguration {
     @Configuration
     @ConditionalOnClass({HazelcastInstance.class, HazelcastCacheManager.class})
     public static class HazelcastCacheConfiguration {
-        @ConditionalOnMissingBean(HazelcastCacheManager.class)
+        @ConditionalOnMissingBean(name = Manager.Server)
         @Bean(Manager.Server)
         public HazelcastCacheManager hazelcastCacheManager(SlardarCacheProp conf, ObjectProvider<HazelcastInstance> hazelcastInstance) {
             logger.info("Wings conf " + Manager.Server);

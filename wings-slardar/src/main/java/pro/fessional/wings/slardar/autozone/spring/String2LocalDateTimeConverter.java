@@ -29,11 +29,12 @@ public class String2LocalDateTimeConverter extends DateTimeFormatSupport {
     public Object convert(Object source, @NotNull TypeDescriptor sourceType, @NotNull TypeDescriptor targetType) {
         final DateTimeFormatter fmt = getFormatter(targetType);
         final LocalDateTime dt;
+        final String str = (String) source;
         if (fmt != null) {
-            dt = DateParser.parseDateTime((String) source, fmt);
+            dt = DateParser.parseDateTime(str, fmt);
         }
         else {
-            dt = DateParser.parseDateTime((String) source, formats);
+            dt = DateParser.parseDateTime(str, formats);
         }
         return dt;
     }
