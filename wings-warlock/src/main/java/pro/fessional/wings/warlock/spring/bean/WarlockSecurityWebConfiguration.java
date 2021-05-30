@@ -68,6 +68,7 @@ public class WarlockSecurityWebConfiguration extends WebSecurityConfigurerAdapte
             )
             .bindLogin(conf -> conf
                     .loginPage(securityProp.getLoginPage()) // 无权限时返回的页面，
+                    .loginForward(securityProp.isLoginForward()) // 无权限时返回的页面，
                     .loginProcessingUrl(securityProp.getLoginUrl()) // filter处理，不需要controller
                     .usernameParameter(securityProp.getUsernamePara())
                     .passwordParameter(securityProp.getPasswordPara())

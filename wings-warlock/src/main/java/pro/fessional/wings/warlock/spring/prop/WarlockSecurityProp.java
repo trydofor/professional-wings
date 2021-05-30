@@ -28,6 +28,14 @@ public class WarlockSecurityProp {
     public static final String Key = "wings.warlock.security";
 
     /**
+     * true以servlet的forward进行，否则redirect(302)跳转
+     *
+     * @see #Key$loginForward
+     */
+    private boolean loginForward = true;
+    public static final String Key$loginForward = Key + ".login-forward";
+
+    /**
      * 未登录时跳转的页面，需要有controller处理
      *
      * @see #Key$loginPage
