@@ -55,7 +55,7 @@ VALUES (1330100, 'grant_type', 'grant_type', '授权类别', 'classpath:/wings-t
        (1330101, 'grant_type', 'perm', '角色', '角色'),
        (1330102, 'grant_type', 'role', '权限', '权限');
 
-INSERT INTO `win_perm_entry`(`id`, `create_dt`, `commit_id`, `scopes`, `action`, `remark`)
+REPLACE INTO `win_perm_entry`(`id`, `create_dt`, `commit_id`, `scopes`, `action`, `remark`)
 VALUES (1, NOW(3), 0, '', '*', '顶级权限，不对外使用'),
        -- User
        (10, NOW(3), 0, 'system.user', '*', '用户全部'),
@@ -75,17 +75,17 @@ VALUES (1, NOW(3), 0, '', '*', '顶级权限，不对外使用'),
        (33, NOW(3), 0, 'system.role', 'delete', '角色删除'),
        (34, NOW(3), 0, 'system.role', 'assign', '角色指派，给用户或角色');
 
-INSERT INTO `win_role_entry`(`id`, `create_dt`, `commit_id`, `name`, `remark`)
+REPLACE INTO `win_role_entry`(`id`, `create_dt`, `commit_id`, `name`, `remark`)
 VALUES (1, NOW(3), 0, 'root', '超级管理员'),
        (10, NOW(3), 0, 'admin', '管理员');
 
 -- 授予root角色，根权限；admin基本权限
-INSERT INTO `win_role_grant`(`refer_role`, `grant_type`, `grant_entry`, `create_dt`, `commit_id`)
+REPLACE INTO `win_role_grant`(`refer_role`, `grant_type`, `grant_entry`, `create_dt`, `commit_id`)
 VALUES (1, 1330101, 1, NOW(3), 0),
        (10, 1330101, 10, NOW(3), 0),
        (10, 1330101, 20, NOW(3), 0),
        (10, 1330101, 30, NOW(3), 0);
 
 -- 授予root用户，根权限
-INSERT INTO `win_user_grant`(`refer_user`, `grant_type`, `grant_entry`, `create_dt`, `commit_id`)
+REPLACE INTO `win_user_grant`(`refer_user`, `grant_type`, `grant_entry`, `create_dt`, `commit_id`)
 VALUES (1, 1330102, 1, NOW(3), 0);
