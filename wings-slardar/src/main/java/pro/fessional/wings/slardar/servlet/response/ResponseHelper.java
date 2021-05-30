@@ -4,8 +4,10 @@ import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.io.Zipper;
 import pro.fessional.mirana.pain.IORuntimeException;
+import pro.fessional.mirana.text.StringTemplate;
 import pro.fessional.wings.slardar.concur.WingsCaptchaHelper;
 import pro.fessional.wings.slardar.servlet.ContentTypeHelper;
 
@@ -14,6 +16,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,7 +30,6 @@ import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import static pro.fessional.wings.slardar.servlet.ContentTypeHelper.findByFileName;
 
 /**
- *
  * @author trydofor
  * @since 2021-03-10
  */
@@ -56,12 +58,14 @@ public class ResponseHelper {
         StringBuilder dis = new StringBuilder("attachment;fileName=");
         if (fileName == null) {
             dis.append("download-file");
-        } else {
+        }
+        else {
             dis.append(new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
             try {
                 final String enc = URLEncoder.encode(fileName, "UTF8");
                 dis.append(";fileName*=UTF-8''").append(enc);
-            } catch (UnsupportedEncodingException e) {
+            }
+            catch (UnsupportedEncodingException e) {
                 // ignore
             }
         }
@@ -101,9 +105,11 @@ public class ResponseHelper {
         response.setHeader("Content-Disposition", getDownloadContentDisposition(fileName));
         try {
             IOUtils.copy(stream, response.getOutputStream(), 1024);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new IORuntimeException(e);
-        } finally {
+        }
+        finally {
             IOUtils.closeQuietly(stream, null);
         }
     }
@@ -126,9 +132,11 @@ public class ResponseHelper {
             response.setContentType(ContentTypeHelper.MEDIA_TYPE_ZIP);
             setDownloadContentDisposition(response, fileName);
             Zipper.zip(response.getOutputStream(), files);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new IORuntimeException(e);
-        } finally {
+        }
+        finally {
             for (InputStream is : files.values()) {
                 IOUtils.closeQuietly(is, null);
             }
@@ -153,7 +161,44 @@ public class ResponseHelper {
             BufferedImage bi = WingsCaptchaHelper.createImage(code);
             ImageIO.write(bi, "jpg", out);
             out.flush();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
+            // ignore it
+        }
+    }
+
+    /**
+     * 输出图片验证码
+     *
+     * @param code     文本，6字
+     * @param fmt      模板，以{b64}为占位符
+     * @param response response
+     */
+    public static void showCaptcha(HttpServletResponse response, String code, String fmt) {
+        if (fmt == null) {
+            showCaptcha(response, code);
+            return;
+        }
+
+        try (ServletOutputStream out = response.getOutputStream()) {
+            response.setDateHeader("Expires", 0);
+            response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+            response.addHeader("Cache-Control", "post-check=0, pre-check=0");
+            response.setHeader("Pragma", "no-cache");
+            response.setContentType("application/json");
+
+            BufferedImage bi = WingsCaptchaHelper.createImage(code);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ImageIO.write(bi, "jpg", bos);
+            final byte[] bytes = bos.toByteArray();
+            final String b64 = Base64.encode(bytes, false);
+            final String data = StringTemplate.dyn(fmt)
+                                              .bindStr("{b64}", b64)
+                                              .toString();
+            out.write(data.getBytes());
+            out.flush();
+        }
+        catch (Exception e) {
             // ignore it
         }
     }
@@ -167,7 +212,8 @@ public class ResponseHelper {
         try {
             response.getOutputStream().write(body.getBytes(StandardCharsets.UTF_8));
             response.flushBuffer();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new IORuntimeException(e);
         }
     }

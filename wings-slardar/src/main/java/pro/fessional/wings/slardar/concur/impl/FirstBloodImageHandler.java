@@ -42,6 +42,8 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
     private String clientTicketKey = "client-ticket";
     private String freshCaptchaKey = "fresh-captcha-image";
     private String checkCaptchaKey = "check-captcha-image";
+    private String base64CaptchaKey = "base64";
+    private String base64CaptchaBody = "{\"success\":true,\"data\":\"data:image/jpeg;base64,{b64}\"}";
 
     private ModelAndView needCaptchaResponse;
     private WingsRemoteResolver wingsRemoteResolver;
@@ -80,7 +82,13 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
         // 获取验证图
         final String ck = getKeyCode(request, freshCaptchaKey);
         if (!ck.isEmpty()) {
-            showCaptcha(response, tkn.fresh(anno.retry(), captchaSupplier));
+            if (!base64CaptchaKey.isEmpty() && ck.startsWith(base64CaptchaKey)) {
+                showCaptcha(response, tkn.fresh(anno.retry(), captchaSupplier), base64CaptchaBody);
+            }
+            else {
+                showCaptcha(response, tkn.fresh(anno.retry(), captchaSupplier), null);
+            }
+
             return false;
         }
 
@@ -132,9 +140,10 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
      *
      * @param response response
      * @param code     验证码
+     * @param fmt      模板，以{b64}为占位符
      */
-    protected void showCaptcha(@NotNull HttpServletResponse response, String code) {
-        ResponseHelper.showCaptcha(response, code);
+    protected void showCaptcha(@NotNull HttpServletResponse response, String code, String fmt) {
+        ResponseHelper.showCaptcha(response, code, fmt);
     }
 
     /**
