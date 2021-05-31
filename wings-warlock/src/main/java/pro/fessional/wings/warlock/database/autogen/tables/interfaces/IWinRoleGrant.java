@@ -5,6 +5,7 @@ package pro.fessional.wings.warlock.database.autogen.tables.interfaces;
 
 
 import pro.fessional.wings.faceless.service.journal.JournalAware;
+import pro.fessional.wings.warlock.enums.autogen.GrantType;
 
 import javax.annotation.Generated;
 import javax.persistence.Column;
@@ -52,14 +53,14 @@ public interface IWinRoleGrant extends JournalAware, Serializable {
     /**
      * Setter for <code>win_role_grant.grant_type</code>.
      */
-    public void setGrantType(Integer value);
+    public void setGrantType(GrantType value);
 
     /**
      * Getter for <code>win_role_grant.grant_type</code>.
      */
     @Column(name = "grant_type", nullable = false, precision = 10)
     @NotNull
-    public Integer getGrantType();
+    public GrantType getGrantType();
 
     /**
      * Setter for <code>win_role_grant.grant_entry</code>.

@@ -4,7 +4,7 @@ CREATE TABLE `win_perm_entry` (
     `modify_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时(系统)',
     `delete_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT '标记删除',
     `commit_id` BIGINT(20)   NOT NULL COMMENT '提交id',
-    `scopes`    VARCHAR(200) NOT NULL COMMENT '范围:全小写，句号分隔',
+    `scopes`    VARCHAR(200) NOT NULL COMMENT '范围:全小写，英句号分隔',
     `action`    VARCHAR(50)  NOT NULL COMMENT '动作:全小写',
     `remark`    VARCHAR(500) NOT NULL DEFAULT '' COMMENT '备注',
     PRIMARY KEY (`id`),
@@ -18,7 +18,7 @@ CREATE TABLE `win_role_entry` (
     `modify_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时(系统)',
     `delete_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT '标记删除',
     `commit_id` BIGINT(20)   NOT NULL COMMENT '提交id',
-    `name`      VARCHAR(50)  NOT NULL COMMENT '名称:全小写，句号分隔，无需ROLE_前缀',
+    `name`      VARCHAR(50)  NOT NULL COMMENT '名称:全大写，不分割，无需ROLE_前缀',
     `remark`    VARCHAR(500) NOT NULL DEFAULT '' COMMENT '备注',
     PRIMARY KEY (`id`),
     UNIQUE INDEX (`name`)
@@ -76,12 +76,15 @@ VALUES (1, NOW(3), 0, '', '*', '顶级权限，不对外使用'),
        (34, NOW(3), 0, 'system.role', 'assign', '角色指派，给用户或角色');
 
 REPLACE INTO `win_role_entry`(`id`, `create_dt`, `commit_id`, `name`, `remark`)
-VALUES (1, NOW(3), 0, 'root', '超级管理员'),
-       (10, NOW(3), 0, 'admin', '管理员');
+VALUES (1, NOW(3),  0, 'ROOT', '超级管理员，全部权限'),
+       (9, NOW(3),  0, 'SYSTEM', '系统管理员，系统权限'),
+       (10, NOW(3), 0, 'ADMIN', '普通管理员，业务权限');
 
--- 授予root角色，根权限；admin基本权限
+-- 授予root角色，根权限；admin基本权限；注意role不继承，需要指定，ROOT默认用于SYSTEM和ADMIN
 REPLACE INTO `win_role_grant`(`refer_role`, `grant_type`, `grant_entry`, `create_dt`, `commit_id`)
 VALUES (1, 1330101, 1, NOW(3), 0),
+       (1, 1330102, 9, NOW(3), 0),
+       (1, 1330102, 10, NOW(3), 0),
        (10, 1330101, 10, NOW(3), 0),
        (10, 1330101, 20, NOW(3), 0),
        (10, 1330101, 30, NOW(3), 0);

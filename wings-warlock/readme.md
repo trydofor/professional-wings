@@ -27,7 +27,7 @@
 
 ### 4.2.1 权限 Perm
 
-Perm由scope和action构成，都采用句号分隔全小写命名法，参考java变量命名。
+Perm由scope和action构成，都采用`英句号`分隔`全小写`命名法，参考java变量命名。
 
 格式为 scope + ('.' + scope )* + '.' + action，多个级联scope加一个action
 
@@ -47,10 +47,11 @@ Perm主要用在方法级的鉴权上，即在方法上增加的注解，如`@Se
 
 ### 4.2.2.角色 Role
 
-Role支持继承，采用句号分隔全小写命名法，参考java变量命名。
+Role不支持继承，`全大写`无分隔命名法（区分权限），参考java变量命名。
 
 * 在自动生成的java类中，采用和spring相同的`ROLE_`前缀。
-* Role是扁平的，但可配置继承，如Leader包括Member
+* Role是扁平的，但可配置继承，如LEADER包括MEMBER
+* 无分隔，指以`_`链接的词，当做同一个词看待。
 
 Role主要用在filter级的配置上，如在配置url权限时。当然也可用在方法级。
 在配置文件中使用时，需要带上spring自动添加的前缀，建议使用前缀，以区分perm。

@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static pro.fessional.wings.warlock.enums.autogen.GrantType.ROLE;
 import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheListener.KeyRoleAll;
 import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheListener.KeyRoleGrant;
 
@@ -71,15 +72,16 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
     public Map<Long, Set<Long>> loadRoleGrant() {
         final WinRoleGrantTable t = winRoleGrantDao.getTable();
 
-        val list = winRoleEntryDao
+        val list = winRoleGrantDao
                            .ctx()
                            .select(t.ReferRole, t.GrantEntry)
                            .from(t)
-                           .where(t.GrantEntry.eq(1L))
+                           .where(t.GrantType.eq(ROLE))
                            .fetch();
 
         log.info("loadRoleMap size={}", list.size());
 
+        // group by outside
         Map<Long, Set<Long>> all = new HashMap<>();
         for (Record2<Long, Long> rcd : list) {
             final Set<Long> grd = all.computeIfAbsent(rcd.value1(), k -> new HashSet<>());

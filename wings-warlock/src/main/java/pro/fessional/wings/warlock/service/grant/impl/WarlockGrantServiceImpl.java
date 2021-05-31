@@ -65,7 +65,7 @@ public class WarlockGrantServiceImpl implements WarlockGrantService, Initializin
             for (Long g : grant) {
                 WinRoleGrantRecord rd = new WinRoleGrantRecord();
                 rd.setReferRole(refer);
-                rd.setGrantType(type.getId());
+                rd.setGrantType(type);
                 rd.setGrantEntry(g);
                 commit.create(rd);
                 pos.add(rd);
@@ -81,7 +81,7 @@ public class WarlockGrantServiceImpl implements WarlockGrantService, Initializin
         journalService.commit(Jane.Purge, refer, grant, commit -> {
             final WinRoleGrantTable t = winRoleGrantDao.getTable();
             final Condition cond = t.ReferRole.eq(refer)
-                                              .and(t.GrantType.eq(type.getId()))
+                                              .and(t.GrantType.eq(type))
                                               .and(t.GrantEntry.in(grant));
             winRoleGrantDao.delete(cond);
         });
@@ -97,7 +97,7 @@ public class WarlockGrantServiceImpl implements WarlockGrantService, Initializin
             for (Long g : grant) {
                 WinUserGrantRecord rd = new WinUserGrantRecord();
                 rd.setReferUser(refer);
-                rd.setGrantType(type.getId());
+                rd.setGrantType(type);
                 rd.setGrantEntry(g);
                 commit.create(rd);
                 pos.add(rd);
@@ -113,7 +113,7 @@ public class WarlockGrantServiceImpl implements WarlockGrantService, Initializin
         journalService.commit(Jane.Purge, refer, grant, commit -> {
             final WinUserGrantTable t = winUserGrantDao.getTable();
             final Condition cond = t.ReferUser.eq(refer)
-                                              .and(t.GrantType.eq(type.getId()))
+                                              .and(t.GrantType.eq(type))
                                               .and(t.GrantEntry.in(grant));
             winUserGrantDao.delete(cond);
         });
@@ -126,7 +126,7 @@ public class WarlockGrantServiceImpl implements WarlockGrantService, Initializin
         GlobalAttributeHolder.regLoader(RolesByUid, key -> {
             final Long uid = key.getKey();
             final WinUserGrantTable t = winUserGrantDao.getTable();
-            final Condition cond = t.GrantType.eq(ROLE.getId()).and(t.ReferUser.eq(uid));
+            final Condition cond = t.GrantType.eq(ROLE).and(t.ReferUser.eq(uid));
             val userRoles = winUserGrantDao
                                     .ctx()
                                     .select(t.GrantEntry)
@@ -140,7 +140,7 @@ public class WarlockGrantServiceImpl implements WarlockGrantService, Initializin
             Set<String> roles = new HashSet<>();
             for (Long rid : userRoles) {
                 final Set<String> rs = PermGrantHelper.grantRole(rid, roleAll, roleGrant);
-                log.info("grant {} roles for roleId={}", userRoles.size(), rid);
+                log.info("grant {} roles for roleId={}", rs.size(), rid);
                 roles.addAll(rs);
             }
             return roles;
@@ -158,15 +158,15 @@ public class WarlockGrantServiceImpl implements WarlockGrantService, Initializin
                                      .where(cnd1)
                                      .fetch()
                                      .intoGroups(Record2::value1, Record2::value2);
-            final Set<Long> pids = new HashSet<>(userGrants.getOrDefault(PERM.getId(), Collections.emptyList()));
+            final Set<Long> pids = new HashSet<>(userGrants.getOrDefault(PERM, Collections.emptyList()));
             log.info("load {} perms for uid={}", pids.size(), uid);
 
-            final List<Long> rids = userGrants.getOrDefault(ROLE.getId(), Collections.emptyList());
+            final List<Long> rids = userGrants.getOrDefault(ROLE, Collections.emptyList());
             log.info("load {} roles for uid={}", rids.size(), uid);
 
             if (!rids.isEmpty()) {
                 final WinRoleGrantTable tr = winRoleGrantDao.getTable();
-                final Condition cnd2 = tr.GrantType.eq(PERM.getId()).and(tr.ReferRole.in(rids));
+                final Condition cnd2 = tr.GrantType.eq(PERM).and(tr.ReferRole.in(rids));
                 val perm2 = winRoleGrantDao
                                     .ctx()
                                     .select(tr.GrantEntry)
