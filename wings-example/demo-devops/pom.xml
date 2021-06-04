@@ -23,6 +23,11 @@
             <artifactId>wings-faceless-flywave</artifactId>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-server</artifactId>
+            <version>${boot-admin.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,6 +1,9 @@
 package pro.fessional.wings.warlock.service.auth;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
@@ -19,6 +22,9 @@ import java.util.Locale;
 public interface WarlockAuthnService {
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder(toBuilder = true, builderMethodName = "")
     class Details {
         // user
         private long userId;

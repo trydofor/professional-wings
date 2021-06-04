@@ -1,6 +1,9 @@
 package pro.fessional.wings.slardar.security.impl;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 
@@ -14,6 +17,9 @@ import java.util.Locale;
  * @since 2021-02-18
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true, builderMethodName = "")
 public class DefaultWingsUserDetails implements WingsUserDetails {
 
     private long userId;
@@ -35,5 +41,5 @@ public class DefaultWingsUserDetails implements WingsUserDetails {
     // PostAuthenticationChecks
     private boolean credentialsNonExpired = true;
 
-    private Collection<? extends GrantedAuthority> authorities = Collections.emptySet();
+    private Collection<GrantedAuthority> authorities = Collections.emptySet();
 }

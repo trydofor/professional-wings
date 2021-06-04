@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -21,7 +22,6 @@ import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.WingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
-import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
@@ -37,12 +37,14 @@ import pro.fessional.wings.warlock.security.loginpage.JustAuthLoginPageCombo;
 import pro.fessional.wings.warlock.security.loginpage.ListAllLoginPageCombo;
 import pro.fessional.wings.warlock.security.userdetails.JustAuthUserAuthnAutoReg;
 import pro.fessional.wings.warlock.security.userdetails.JustAuthUserDetailsCombo;
+import pro.fessional.wings.warlock.security.userdetails.MemoryUserDetailsCombo;
 import pro.fessional.wings.warlock.security.userdetails.NonceUserDetailsCombo;
 import pro.fessional.wings.warlock.service.auth.impl.ComboWarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.impl.ComboWarlockAuthzService;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultPermRoleCombo;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserAuthnAutoReg;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
+import pro.fessional.wings.warlock.service.auth.impl.MemoryTypedAuthzCombo;
 import pro.fessional.wings.warlock.service.other.TerminalJournalService;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
@@ -156,8 +158,8 @@ public class WarlockSecurityBeanConfiguration {
 
     ///////// UserDetails /////////
     @Bean
-    @ConditionalOnMissingBean(WingsUserDetailsService.class)
-    public WingsUserDetailsService wingsUserDetailsService(ObjectProvider<ComboWingsUserDetailsService.Combo<?>> combos) {
+    @ConditionalOnMissingBean(UserDetailsService.class)
+    public UserDetailsService wingsUserDetailsService(ObjectProvider<ComboWingsUserDetailsService.Combo<?>> combos) {
         logger.info("Wings conf wingsUserDetailsService");
         ComboWingsUserDetailsService uds = new ComboWingsUserDetailsService();
         combos.orderedStream().forEach(it -> {
@@ -177,6 +179,20 @@ public class WarlockSecurityBeanConfiguration {
             uds.add(it);
         });
         return uds;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(MemoryUserDetailsCombo.class)
+    public MemoryUserDetailsCombo memoryUserDetailsCombo() {
+        logger.info("Wings conf memoryUserDetailsCombo");
+        return new MemoryUserDetailsCombo();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(MemoryTypedAuthzCombo.class)
+    public MemoryTypedAuthzCombo memoryTypedAuthzCombo() {
+        logger.info("Wings conf memoryTypedAuthzCombo");
+        return new MemoryTypedAuthzCombo();
     }
 
     @Bean

@@ -67,8 +67,10 @@
         <kryo.version>5.0.4</kryo.version>
         <transmittable.version>2.12.1</transmittable.version>
         <bouncycastle.version>1.68</bouncycastle.version>
-        <!-- just auth need 4, spring use 3 -->
-        <okhttp3.version>4.9.0</okhttp3.version>
+        <boot-admin.version>2.4.0</boot-admin.version>
+        <!-- override spring boot default -->
+        <lombok.version>1.18.20</lombok.version>
+        <okhttp3.version>4.9.0</okhttp3.version> <!-- just auth need 4, spring use 3 -->
     </properties>
 
     <dependencies>
@@ -288,6 +290,17 @@
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcpkix-jdk15on</artifactId>
                 <version>${bouncycastle.version}</version>
+            </dependency>
+            <!-- ops -->
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-server</artifactId>
+                <version>${boot-admin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-client</artifactId>
+                <version>${boot-admin.version}</version>
             </dependency>
             <!-- dev -->
             <dependency>
