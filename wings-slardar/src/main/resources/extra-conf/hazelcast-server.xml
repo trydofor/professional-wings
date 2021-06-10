@@ -5,7 +5,7 @@
            http://www.hazelcast.com/schema/config/hazelcast-config-4.0.xsd">
 
     <!-- hazelcast-full-example.xml -->
-    <cluster-name>wings-slardar</cluster-name>
+    <cluster-name>${wings.slardar.hazelcast.cluster-name}</cluster-name>
 
     <network>
         <port auto-increment="true" port-count="100">5701</port>
@@ -72,6 +72,9 @@
 
     <serialization>
         <serializers>
+            <global-serializer override-java-serialization="true">
+                pro.fessional.wings.slardar.serialize.KryoHazelcast
+            </global-serializer>
             <!-- spring FindByIndexNameSessionRepository -->
             <serializer class-name="org.springframework.session.hazelcast.HazelcastSessionSerializer"
                         type-class="org.springframework.session.MapSession"/>

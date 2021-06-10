@@ -47,12 +47,12 @@ public class WarlockPermServiceImpl implements WarlockPermService {
         final WinPermEntryTable t = winPermEntryDao.getTable();
 
         final Map<Long, String> all = winPermEntryDao
-                                              .ctx()
-                                              .select(t.Id, t.Scopes, t.Action)
-                                              .from(t)
-                                              .where(t.onlyLiveData)
-                                              .fetch()
-                                              .intoMap(Record3::value1, it -> unitePermit(it.value2(), it.value3()));
+                .ctx()
+                .select(t.Id, t.Scopes, t.Action)
+                .from(t)
+                .where(t.onlyLiveData)
+                .fetch()
+                .intoMap(Record3::value1, it -> unitePermit(it.value2(), it.value3()));
         log.info("loadPermAll size={}", all.size());
         return all;
     }
@@ -89,13 +89,13 @@ public class WarlockPermServiceImpl implements WarlockPermService {
         journalService.commit(Jane.Modify, permId, commit -> {
             final WinPermEntryTable t = winPermEntryDao.getTable();
             final int rc = winPermEntryDao
-                                   .ctx()
-                                   .update(t)
-                                   .set(t.CommitId, commit.getCommitId())
-                                   .set(t.ModifyDt, commit.getCommitDt())
-                                   .set(t.Remark, remark)
-                                   .where(t.Id.eq(permId))
-                                   .execute();
+                    .ctx()
+                    .update(t)
+                    .set(t.CommitId, commit.getCommitId())
+                    .set(t.ModifyDt, commit.getCommitDt())
+                    .set(t.Remark, remark)
+                    .where(t.Id.eq(permId))
+                    .execute();
             log.info("modify perm remark. permId={}, affect={}", permId, rc);
         });
     }

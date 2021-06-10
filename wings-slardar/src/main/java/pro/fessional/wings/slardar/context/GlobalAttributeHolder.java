@@ -104,7 +104,7 @@ public class GlobalAttributeHolder {
      * @return 返回值
      */
     @NotNull
-    public static <K, V> V getAttr(@NotNull Reg<K, V> reg, @NotNull K key) {
+    public static <K, V> V                                                                                                                                                                                          getAttr(@NotNull Reg<K, V> reg, @NotNull K key) {
         return getAttr(reg, key, true);
     }
 

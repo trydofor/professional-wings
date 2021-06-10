@@ -59,6 +59,15 @@ public class ConstantNaviGenerator {
                                  " */\n" +
                                  "public interface %s {",
                 packageName, LocalDate.now().toString(), javaName));
+        if(prefixCode.length()>0){
+            String indent = indent(1);
+            out.append(MessageFormat.format("\n\n" +
+                                            indent + "/**\n" +
+                                            indent + " * prefix={0}\n" +
+                                            indent + " */\n" +
+                                            indent + "String $PREFIX = \"{0}\";\n",
+                    prefixCode));
+        }
         genField(1, ROOT, list, out, prefixCode);
         genClass(1, ROOT, list, out, prefixCode);
         out.append("\n}");
@@ -119,11 +128,8 @@ public class ConstantNaviGenerator {
                 }
 
                 out.append(MessageFormat.format("\n" +
-                                                indent + "/**\n" +
-                                                indent + " * id={0}, remark={1}, prefix={4}\n" +
-                                                indent + " */\n" +
-                                                indent + "String {5}{3} = \"{4}{3}\";",
-                        en.id, en.remark, n, tkn, prefixCode, jf
+                                                indent + "String {2}{0} = \"{1}{0}\";",
+                        tkn, prefixCode, jf
                 ));
             }
         }

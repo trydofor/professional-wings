@@ -22,8 +22,8 @@ import java.util.concurrent.Executor;
  * @see TaskExecutionAutoConfiguration
  * @since 2019-12-03
  */
-@Configuration(proxyBeanMethods = false)
 @EnableAsync
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$async, havingValue = "true")
 public class SlardarAsyncConfiguration {
 

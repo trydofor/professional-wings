@@ -53,7 +53,7 @@ public class WingsJavaGenerator extends JavaGenerator {
 
         // 🦁>>>
         // public static final SysCommitJournalTable asN6 = SysCommitJournal.as("n6");
-        out.tab(1).println("public static final %s as%s = %s.as(\"%s\");", className, aliasName, identifier, aliasLower);
+        out.println("public static final %s as%s = %s.as(\"%s\");", className, aliasName, identifier, aliasLower);
         // 🦁<<<
     }
 

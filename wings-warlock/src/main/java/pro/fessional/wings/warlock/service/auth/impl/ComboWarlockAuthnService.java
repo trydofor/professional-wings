@@ -6,11 +6,11 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.Ordered;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
+import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAnthnTable;
@@ -49,9 +49,6 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
 
     @Setter(onMethod_ = {@Autowired})
     private WarlockUserLoginService warlockUserLoginService;
-
-    @Setter(onMethod_ = {@Autowired})
-    private ApplicationEventPublisher applicationEventPublisher;
 
     private List<AutoReg> authAutoRegs = Collections.emptyList();
 
@@ -184,7 +181,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
             evt.setCurrent(cnt);
             evt.setMaximum(max);
             evt.setUserId(uid);
-            applicationEventPublisher.publishEvent(evt);
+            EventPublishHelper.SyncSpring.publishEvent(evt);
         }
 
         if (cnt > max) {

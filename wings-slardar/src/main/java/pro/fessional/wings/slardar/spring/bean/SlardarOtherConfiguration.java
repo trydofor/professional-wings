@@ -15,9 +15,9 @@ import pro.fessional.wings.slardar.cache.WingsCacheHelper;
  * @since 2019-12-01
  */
 @Configuration
-public class SlardarBeanPostConfiguration {
+public class SlardarOtherConfiguration {
 
-    private final static Log logger = LogFactory.getLog(SlardarBeanPostConfiguration.class);
+    private final static Log logger = LogFactory.getLog(SlardarOtherConfiguration.class);
 
     @Autowired // 静态注入，一次即可
     public void initHelper(

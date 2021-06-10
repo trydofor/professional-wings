@@ -28,7 +28,6 @@ import pro.fessional.mirana.pain.IORuntimeException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -201,7 +200,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
      * @return 执行结果，使用 ModifyAssert判断
      */
     public int mergeInto(P pojo, Field<?>... updateFields) {
-        HashMap<Field<?>, Object> map = new HashMap<>();
+        Map<Field<?>, Object> map = new LinkedHashMap<>();
         DSLContext dsl = ctx();
         R record = dsl.newRecord(table, pojo);
 
@@ -230,7 +229,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
         if (records == null || records.isEmpty()) return Null.Ints;
 
         BiFunction<DSLContext, Collection<R>, int[]> batchMergeExec = (dsl, rs) -> {
-            HashMap<Field<?>, Object> map = new HashMap<>();
+            Map<Field<?>, Object> map = new LinkedHashMap<>();
             for (Field<?> field : updateFields) {
                 map.put(field, null);
             }
@@ -468,7 +467,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
         if (records == null || records.isEmpty()) return Null.Ints;
 
         BiFunction<DSLContext, Collection<R>, int[]> batchMergeExec = (dsl, rs) -> {
-            HashMap<Field<?>, Object> map = new HashMap<>();
+            Map<Field<?>, Object> map = new LinkedHashMap<>();
             for (Field<?> uf : updateFields) {
                 map.put(uf, null);
             }

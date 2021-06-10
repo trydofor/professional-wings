@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.spring.bean;
 
+import org.jetbrains.annotations.NotNull;
 import org.jooq.ConverterProvider;
 import org.jooq.ExecuteListenerProvider;
 import org.jooq.SQLDialect;
@@ -9,8 +10,10 @@ import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.jooq.impl.DefaultVisitListenerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -36,6 +39,7 @@ public class FacelessJooqConfiguration {
 
     /**
      * workaround before Version 3.14.0
+     * still opening, maybe 3.16.0 checked on 2021-06-06
      *
      * @link https://github.com/jOOQ/jOOQ/issues/8893
      * @link https://github.com/jOOQ/jOOQ/issues/9055
@@ -55,7 +59,6 @@ public class FacelessJooqConfiguration {
         return new DefaultExecuteListenerProvider(new JournalDeleteListener());
     }
 
-
     @Bean
     @Order
     @ConditionalOnMissingBean(Settings.class)
@@ -70,36 +73,36 @@ public class FacelessJooqConfiguration {
                 ;
     }
 
-    @Autowired
-    public void jooqObjectProviderProcessor(
-            ObjectProvider<org.jooq.Configuration> config,
-            ObjectProvider<ConverterProvider> providers,
-            ObjectProvider<org.jooq.Converter<?, ?>> converters,
-            FacelessJooqEnabledProp prop
-    ) {
-        if (!prop.isConverter()) {
-            logger.info("Wings conf skip jooqObjectProviderProcessor by enabled = false");
-            return;
-        }
+    @Bean
+    @ConditionalOnBean(org.jooq.Configuration.class)
+    @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$converter, havingValue = "true")
+    public BeanPostProcessor beanPostJooqConfiguration(ObjectProvider<ConverterProvider> providers,
+                                                       ObjectProvider<org.jooq.Converter<?, ?>> converters) {
+        logger.info("Wings conf skip Jooq.Configuration");
 
-        final org.jooq.Configuration bean = config.getIfAvailable();
-        if (bean == null) {
-            logger.info("Wings conf skip jooqObjectProviderProcessor for null");
-            return;
-        }
+        return new BeanPostProcessor() {
+            @Override
+            public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
+                if (!(bean instanceof org.jooq.Configuration)) return bean;
+                final org.jooq.Configuration cnf = (org.jooq.Configuration) bean;
 
-        logger.info("Wings conf jooqConfiguration ConverterProvider");
-        JooqConverterDelegate dcp = new JooqConverterDelegate();
-        dcp.add(bean.converterProvider());
+                logger.info("Wings conf jooqConfiguration ConverterProvider, beanName=" + beanName);
+                JooqConverterDelegate dcp = new JooqConverterDelegate();
+                dcp.add(cnf.converterProvider());
 
-        providers.orderedStream().forEach(it -> {
-            dcp.add(it);
-            logger.info("   add jooqConverterProvider, class={}", it.getClass());
-        });
-        converters.orderedStream().forEach(it -> {
-            dcp.add(it);
-            logger.info("   add jooqConverter, class={}", it.getClass());
-        });
-        bean.set(dcp);
+
+                providers.orderedStream().forEach(it -> {
+                    dcp.add(it);
+                    logger.info("   add jooqConverterProvider, class={}", it.getClass());
+                });
+                converters.orderedStream().forEach(it -> {
+                    dcp.add(it);
+                    logger.info("   add jooqConverter, class={}", it.getClass());
+                });
+                cnf.set(dcp);
+
+                return cnf;
+            }
+        };
     }
 }

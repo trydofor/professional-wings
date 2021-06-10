@@ -45,7 +45,10 @@ import pro.fessional.wings.warlock.service.auth.impl.DefaultPermRoleCombo;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserAuthnAutoReg;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
 import pro.fessional.wings.warlock.service.auth.impl.MemoryTypedAuthzCombo;
+import pro.fessional.wings.warlock.service.grant.WarlockGrantService;
+import pro.fessional.wings.warlock.service.grant.impl.WarlockGrantServiceImpl;
 import pro.fessional.wings.warlock.service.other.TerminalJournalService;
+import pro.fessional.wings.warlock.service.perm.RoleNormalizer;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
@@ -110,7 +113,16 @@ public class WarlockSecurityBeanConfiguration {
         return new LogoutOkHandler(securityProp.getLogoutSuccessBody());
     }
 
-    ///////// Authz & AuthN /////////
+    ///////// AuthZ & AuthN /////////
+
+    @Bean
+    @ConditionalOnMissingBean(RoleNormalizer.class)
+    public RoleNormalizer roleNormalizer(GrantedAuthorityDefaults gad){
+        logger.info("Wings conf roleNormalizer");
+        final RoleNormalizer bean = new RoleNormalizer();
+        bean.setPrefix(gad.getRolePrefix());
+        return bean;
+    }
 
     @Bean
     @ConditionalOnMissingBean(ComboWarlockAuthnService.class)
@@ -154,6 +166,14 @@ public class WarlockSecurityBeanConfiguration {
         // 存在子类，则不需要此bean，如JustAuthUserAuthnAutoReg
         logger.info("Wings conf defaultUserAuthnAutoReg");
         return new DefaultUserAuthnAutoReg();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(WarlockGrantService.class)
+    public WarlockGrantService warlockGrantService() {
+        // 存在子类，则不需要此bean，如JustAuthUserAuthnAutoReg
+        logger.info("Wings conf warlockGrantService");
+        return new WarlockGrantServiceImpl();
     }
 
     ///////// UserDetails /////////

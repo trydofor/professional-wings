@@ -47,7 +47,6 @@ public class WarlockOtherBeanConfiguration {
         return new AllExceptionResolver(messageSource, cp.getHttpStatus(), cp.getContentType(), cp.getResponseBody());
     }
 
-
     @Bean
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$checkDatabase, havingValue = "true")

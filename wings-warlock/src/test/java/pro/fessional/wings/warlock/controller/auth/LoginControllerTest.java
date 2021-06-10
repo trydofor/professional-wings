@@ -1,13 +1,11 @@
 package pro.fessional.wings.warlock.controller.auth;
 
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.code.RandCode;
+import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.warlock.event.auth.WarlockNonceSendEvent;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthType;
 
@@ -19,9 +17,6 @@ import pro.fessional.wings.warlock.service.auth.WarlockAuthType;
 @Slf4j
 public class LoginControllerTest {
 
-    @Setter(onMethod_ = {@Autowired})
-    private ApplicationEventPublisher applicationEventPublisher;
-
     @GetMapping("/auth/console-nonce.json")
     public String loginPageDefault(@RequestParam("username") String user) {
         Enum<?> authType = WarlockAuthType.USERNAME;
@@ -32,7 +27,7 @@ public class LoginControllerTest {
         event.setExpired(expire);
         event.setUsername(user);
         event.setNonce(pass);
-        applicationEventPublisher.publishEvent(event);
+        EventPublishHelper.AsyncSpring.publishEvent(event);
         log.warn("root username-nonce is " + pass);
         return "see console log warn";
     }

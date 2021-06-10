@@ -1,20 +1,16 @@
 package pro.fessional.wings.slardar.context;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.objenesis.strategy.StdInstantiatorStrategy;
 import org.springframework.web.servlet.ModelAndView;
 import pro.fessional.mirana.bits.Aes128;
 import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.mirana.code.RandCode;
+import pro.fessional.wings.slardar.serialize.KryoSimple;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarRighterProp;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
@@ -41,17 +37,6 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
     @Setter @Getter
     private Function<Object, String> secretProvider = key -> secret;
 
-    private final ThreadLocal<Kryo> kryo = ThreadLocal.withInitial(() -> {
-        Kryo ko = new Kryo();
-        ko.setReferences(false);
-        ko.setRegistrationRequired(false);
-        ko.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
-        return ko;
-    });
-
-    private final ThreadLocal<Output> output = ThreadLocal.withInitial(() -> {
-        return new Output(1024, 1024 * 16); // 1-16k
-    });
 
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request,
@@ -75,8 +60,7 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
 
         // 反序列化对象
         try {
-            Input input = new Input(bytes);
-            final Object obj = kryo.get().readClassAndObject(input);
+            final Object obj = KryoSimple.readClassAndObject(bytes);
             RighterContext.setAudit(obj);
             return true;
         }
@@ -135,14 +119,10 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
 
     private String encodeAllow(Object key, Object obj) {
         // 序列化对象
-        final Output out = this.output.get();
-        out.reset();
-        kryo.get().writeClassAndObject(out, obj);
-        out.flush();
-
+        final byte[] bytes = KryoSimple.writeClassAndObject(obj);
         // 加密
         final Aes128 aes = genAesKey(key);
-        final String b64 = Base64.encode(aes.encode(out.toBytes()));
+        final String b64 = Base64.encode(aes.encode(bytes));
         final String sum = MdHelp.sha1.sum(b64 + key.toString()); // 40c
 
         return sum + b64;

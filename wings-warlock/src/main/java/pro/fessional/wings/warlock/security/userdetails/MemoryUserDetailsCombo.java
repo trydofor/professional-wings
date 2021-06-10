@@ -12,7 +12,6 @@ import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
-import pro.fessional.wings.warlock.service.user.DefaultUserId;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -22,7 +21,10 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * 通过配置等，在内存中一直有效的预设用户验证信息。
- * 如果autoEncode且password不是以'{'和'}'的代理模式，会自动加密
+ * 如果autoEncode且password不是以'{'和'}'的代理模式，会自动加密。
+ * 注意事项：
+ * ①自行确保username与userid对应关系，此处不做验证。
+ * ②验证时，无盐，即便db中存在passslat。
  *
  * @author trydofor
  * @since 2021-06-03
@@ -74,16 +76,6 @@ public class MemoryUserDetailsCombo extends DefaultUserDetailsCombo {
         details.setExpiredDt(LocalDateTime.MAX);
 
         addUser(details);
-    }
-
-    /**
-     * 默认 nobody用户，AuthType Null
-     *
-     * @param username 登录名
-     * @param password 登录密码
-     */
-    public void addUser(String username, String password) {
-        addUser(DefaultUserId.Nobody, Null.Enm, username, password);
     }
 
     public void delUser(String username) {

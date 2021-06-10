@@ -232,16 +232,10 @@
                 <groupId>org.springframework.session</groupId>
                 <artifactId>spring-session-hazelcast</artifactId>
                 <version>${spring-session.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.hazelcast</groupId>
-                        <artifactId>hazelcast</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.hazelcast</groupId>
-                <artifactId>hazelcast-all</artifactId>
+                <artifactId>hazelcast-spring</artifactId>
                 <version>${hazelcast.version}</version>
             </dependency>
             <!-- utils -->

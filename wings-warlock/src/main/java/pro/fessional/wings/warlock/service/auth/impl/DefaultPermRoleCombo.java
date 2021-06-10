@@ -5,18 +5,13 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.config.core.GrantedAuthorityDefaults;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
+import pro.fessional.wings.warlock.enums.autogen.GrantType;
+import pro.fessional.wings.warlock.service.grant.WarlockGrantService;
 
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-
-import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.PermsByUid;
-import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.RolesByUid;
 
 /**
  * 通过user和permit的map关系构造 GrantedAuthority
@@ -29,42 +24,22 @@ public class DefaultPermRoleCombo implements ComboWarlockAuthzService.Combo {
 
     public static final int ORDER = WarlockOrderConst.UserAuthzCombo + 10_000;
 
-    @Getter
-    @Setter
+    @Getter @Setter
     private int order = ORDER;
 
-    @Setter(onMethod_ = {@Autowired(required = false)})
-    private GrantedAuthorityDefaults grantedAuthorityDefaults;
+    @Setter(onMethod_ = {@Autowired})
+    private WarlockGrantService warlockGrantService;
 
     @Override
-    public void auth(@NotNull DefaultWingsUserDetails details) {
+    public void auth(@NotNull DefaultWingsUserDetails details, @NotNull Set<Object> role, @NotNull Set<Object> perm) {
 
         final long uid = details.getUserId();
+        final Map<Long, Long> roles = warlockGrantService.entryUser(GrantType.ROLE, uid);
+        log.info("got roles for uid={}, size={}", uid, roles.size());
+        role.addAll(roles.keySet());
 
-        final Set<GrantedAuthority> auth = new HashSet<>();
-
-        final Set<String> grantPerms = GlobalAttributeHolder.getAttr(PermsByUid, uid);
-
-        for (String perm : grantPerms) {
-            auth.add(new SimpleGrantedAuthority(perm));
-        }
-
-        String prefix = grantedAuthorityDefaults == null ? null : grantedAuthorityDefaults.getRolePrefix();
-        if (prefix == null) prefix = "ROLE_";
-        log.info("set role-prefix={}", prefix);
-
-        final Set<String> grantRoles = GlobalAttributeHolder.getAttr(RolesByUid, uid);
-        for (String role : grantRoles) {
-            auth.add(new SimpleGrantedAuthority(prefix + role));
-        }
-
-        if (auth.isEmpty()) {
-            log.info("empty role and perm for uid={}", uid);
-        }
-        else {
-            log.info("add role and perm for uid={}, count={}", uid, auth.size());
-            auth.addAll(details.getAuthorities());
-            details.setAuthorities(auth);
-        }
+        final Map<Long, Long> perms = warlockGrantService.entryUser(GrantType.PERM, uid);
+        log.info("got perms for uid={}, size={}", uid, perms.size());
+        perm.addAll(perms.keySet());
     }
 }
