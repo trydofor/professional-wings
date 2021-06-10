@@ -7,7 +7,6 @@ import org.jooq.Condition;
 import org.jooq.Record2;
 import org.springframework.beans.factory.annotation.Autowired;
 import pro.fessional.wings.faceless.service.journal.JournalService;
-import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.warlock.database.autogen.tables.WinRoleGrantTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserGrantTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinRoleGrantDao;
@@ -15,7 +14,6 @@ import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserGrantDao;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinRoleGrantRecord;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinUserGrantRecord;
 import pro.fessional.wings.warlock.enums.autogen.GrantType;
-import pro.fessional.wings.warlock.event.cache.TableChangeEvent;
 import pro.fessional.wings.warlock.service.grant.WarlockGrantService;
 
 import java.util.ArrayList;
@@ -55,8 +53,6 @@ public class WarlockGrantServiceImpl implements WarlockGrantService {
             }
             winRoleGrantDao.batchInsert(pos, 100, true);
         });
-
-        EventPublishHelper.AsyncSpring.publishEvent(new TableChangeEvent(winRoleGrantDao.getTable().getName()));
     }
 
     @Override
@@ -70,8 +66,6 @@ public class WarlockGrantServiceImpl implements WarlockGrantService {
                                               .and(t.GrantEntry.in(grant));
             winRoleGrantDao.delete(cond);
         });
-
-        EventPublishHelper.AsyncSpring.publishEvent(new TableChangeEvent(winRoleGrantDao.getTable().getName()));
     }
 
 
@@ -91,8 +85,6 @@ public class WarlockGrantServiceImpl implements WarlockGrantService {
             }
             winUserGrantDao.batchInsert(pos, 100, true);
         });
-
-        EventPublishHelper.AsyncSpring.publishEvent(new TableChangeEvent(winUserGrantDao.getTable().getName()));
     }
 
     @Override
@@ -105,8 +97,6 @@ public class WarlockGrantServiceImpl implements WarlockGrantService {
                                               .and(t.GrantEntry.in(grant));
             winUserGrantDao.delete(cond);
         });
-
-        EventPublishHelper.AsyncSpring.publishEvent(new TableChangeEvent(winUserGrantDao.getTable().getName()));
     }
 
     @Override

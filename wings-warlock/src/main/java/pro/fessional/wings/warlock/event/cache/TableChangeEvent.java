@@ -1,16 +1,16 @@
 package pro.fessional.wings.warlock.event.cache;
 
-import lombok.Data;
 import pro.fessional.wings.warlock.event.WarlockMetadataEvent;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.EventObject;
 
 /**
  * @author trydofor
  * @since 2021-03-07
  */
-@Data
-public class TableChangeEvent implements WarlockMetadataEvent {
+public class TableChangeEvent extends EventObject implements WarlockMetadataEvent {
 
     /**
      * 变更的表名
@@ -22,23 +22,29 @@ public class TableChangeEvent implements WarlockMetadataEvent {
      */
     private Collection<Object> record;
 
-    /**
-     * 变更源
-     */
-    private Object source;
+    public TableChangeEvent(Object source, String table) {
+        this(source, table, null);
+    }
 
-    public TableChangeEvent(String table) {
+    public TableChangeEvent(Object source, String table, Collection<Object> record) {
+        super(source);
+        this.table = table;
+        this.record = record == null ? Collections.emptySet() : record;
+    }
+
+    public String getTable() {
+        return table;
+    }
+
+    public void setTable(String table) {
         this.table = table;
     }
 
-    public TableChangeEvent(String table, Object source) {
-        this.table = table;
-        this.source = source;
+    public Collection<Object> getRecord() {
+        return record;
     }
 
-    public TableChangeEvent(String table, Object source, Collection<Object> record) {
-        this.table = table;
-        this.source = source;
+    public void setRecord(Collection<Object> record) {
         this.record = record;
     }
 }

@@ -4,6 +4,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.topic.Message;
 import com.hazelcast.topic.MessageListener;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.context.ApplicationEventPublisher;
 import pro.fessional.wings.slardar.spring.bean.SlardarEventConfiguration;
 
@@ -49,13 +50,18 @@ public class EventPublishHelper {
     private static ApplicationEventPublisher publisher;
     private static HazelcastInstance hazelcast;
 
-    protected EventPublishHelper(ApplicationEventPublisher pub, Executor exe, HazelcastInstance hzc) {
+    protected EventPublishHelper(@NotNull ApplicationEventPublisher pub, @NotNull Executor exe,
+                                 @Nullable HazelcastInstance hzc) {
         if (hzc != null && hzc != hazelcast) {
             hzc.getTopic(HazelcastTopic).addMessageListener(new HazelcastRepublish());
         }
         hazelcast = hzc;
         publisher = pub;
         executor = exe;
+    }
+
+    public static boolean hasHazelcast() {
+        return hazelcast != null;
     }
 
     private static class SyncPub implements ApplicationEventPublisher {
