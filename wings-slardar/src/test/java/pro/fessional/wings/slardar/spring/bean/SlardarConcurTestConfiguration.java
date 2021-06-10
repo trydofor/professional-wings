@@ -58,8 +58,8 @@ public class SlardarConcurTestConfiguration {
 
         @Override
         protected void showCaptcha(@NotNull HttpServletResponse response, String code, String fmt) {
-            logger.warn("set captcha code = " + code);
-            ResponseHelper.writeBodyUtf8(response, "code=" + code + ", fmt=" + fmt);
+            logger.warn("set captcha code=" + code + ", fmt=" + fmt);
+            ResponseHelper.writeBodyUtf8(response, code);
         }
     }
 }

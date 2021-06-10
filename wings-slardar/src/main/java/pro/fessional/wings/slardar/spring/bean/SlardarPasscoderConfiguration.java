@@ -99,6 +99,7 @@ public class SlardarPasscoderConfiguration {
     @Bean
     @ConditionalOnBean(WingsUserDetailsService.class)
     public WingsSecBeanInitConfigurer wingsInitBeanManagerConfigurer(ApplicationContext context) {
+        logger.info("Wings conf wingsInitBeanManagerConfigurer ");
         return new WingsSecBeanInitConfigurer(context);
     }
 }

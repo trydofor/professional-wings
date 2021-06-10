@@ -56,7 +56,7 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
         }
 
         if (dt == null) {
-            log.info("can not load user by username={}, auth-type={} , without auto-register", username, authType);
+            log.info("can not load user by username={}, auth-type={} ,auto-register=false", username, authType);
             return null;
         }
 

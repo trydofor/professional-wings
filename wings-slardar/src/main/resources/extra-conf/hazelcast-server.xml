@@ -72,9 +72,8 @@
 
     <serialization>
         <serializers>
-            <global-serializer override-java-serialization="true">
-                pro.fessional.wings.slardar.serialize.KryoHazelcast
-            </global-serializer>
+            <!-- override-java-serialization="true" failed if Immutable and unmodifiable -->
+            <global-serializer>pro.fessional.wings.slardar.serialize.KryoHazelcast</global-serializer>
             <!-- spring FindByIndexNameSessionRepository -->
             <serializer class-name="org.springframework.session.hazelcast.HazelcastSessionSerializer"
                         type-class="org.springframework.session.MapSession"/>

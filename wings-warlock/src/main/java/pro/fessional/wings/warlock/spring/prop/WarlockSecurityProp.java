@@ -28,6 +28,22 @@ public class WarlockSecurityProp {
     public static final String Key = "wings.warlock.security";
 
     /**
+     * 权限是否使用Role
+     *
+     * @see #Key$authorityRole
+     */
+    private boolean authorityRole = true;
+    public static final String Key$authorityRole = Key + ".authority-role";
+
+    /**
+     * 权限是否使用Perm
+     *
+     * @see #Key$authorityPerm
+     */
+    private boolean authorityPerm = false;
+    public static final String Key$authorityPerm = Key + ".authority-perm";
+
+    /**
      * true以servlet的forward进行，否则redirect(302)跳转
      *
      * @see #Key$loginForward

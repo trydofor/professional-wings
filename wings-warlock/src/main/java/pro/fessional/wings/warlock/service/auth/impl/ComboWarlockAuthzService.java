@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.service.auth.impl;
 
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +55,11 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
         this.authCombos = authCombos;
     }
 
+    @Setter @Getter
+    private boolean authorityRole = true;
+    @Setter @Getter
+    private boolean authorityPerm = true;
+
     @Override
     public void auth(DefaultWingsUserDetails details) {
         if (details == null) return;
@@ -64,19 +70,25 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
             combo.auth(details, roleObjs, permObjs);
         }
 
-        final Set<GrantedAuthority> auth = new HashSet<>();
+        final long uid = details.getUserId();
+        final Set<GrantedAuthority> auths = new HashSet<>();
 
         final Set<Long> roleIds = new HashSet<>();
-        final Set<String> roleStr = new HashSet<>();
-        final Set<String> permStr = new HashSet<>();
 
-        buildGrantRoles(roleObjs, auth, roleStr, roleIds);
-        buildGrantPerms(permObjs, auth, permStr, roleIds);
+        if (authorityRole) {
+            final Set<String> roleStr = new HashSet<>();
+            buildGrantRoles(roleObjs, auths, roleStr, roleIds);
+            GlobalAttributeHolder.putAttr(RolesByUid, uid, roleStr);
+        }
 
-        final long uid = details.getUserId();
+        if (authorityPerm) {
+            final Set<String> permStr = new HashSet<>();
+            buildGrantPerms(permObjs, auths, permStr, roleIds);
+            permStr.removeIf(it -> it.contains(PermGrantHelper.ALL));
+            GlobalAttributeHolder.putAttr(PermsByUid, uid, permStr);
+        }
 
-        GlobalAttributeHolder.putAttr(PermsByUid, uid, permStr);
-        GlobalAttributeHolder.putAttr(RolesByUid, uid, roleStr);
+        details.setAuthorities(auths);
     }
 
     private void buildGrantRoles(Set<Object> roleObjs, Set<GrantedAuthority> auth, Set<String> roleStr, Set<Long> roleIds) {
@@ -136,7 +148,7 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
         final Set<Long> permIds = warlockGrantService.entryRole(PERM, roleIds).keySet();
         for (Long pid : permIds) {
             final String s = permAll.get(pid);
-            if(s != null){
+            if (s != null) {
                 permStr.add(s);
             }
         }
@@ -144,7 +156,7 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
         for (Object po : permObjs) {
             if (po instanceof Long) {
                 final String s = permAll.get(po);
-                if(s != null){
+                if (s != null) {
                     permStr.add(s);
                 }
             }
@@ -161,16 +173,18 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
             }
         }
 
+        Set<String> tmp = new HashSet<>();
         for (String str : permStr) {
             final Set<String> ps = PermGrantHelper.inheritPerm(str, permAll);
             for (String p : ps) {
                 // 去掉`*`权限
                 if (!p.contains(PermGrantHelper.ALL)) {
                     auth.add(new SimpleGrantedAuthority(p));
-                    permStr.add(p);
+                    tmp.add(p);
                 }
             }
         }
+        permStr.addAll(tmp);
     }
 
     // /////

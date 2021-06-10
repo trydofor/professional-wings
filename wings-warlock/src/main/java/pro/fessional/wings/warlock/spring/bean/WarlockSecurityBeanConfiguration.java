@@ -22,6 +22,7 @@ import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.WingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
+import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
@@ -117,7 +118,7 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(RoleNormalizer.class)
-    public RoleNormalizer roleNormalizer(GrantedAuthorityDefaults gad){
+    public RoleNormalizer roleNormalizer(GrantedAuthorityDefaults gad) {
         logger.info("Wings conf roleNormalizer");
         final RoleNormalizer bean = new RoleNormalizer();
         bean.setPrefix(gad.getRolePrefix());
@@ -135,7 +136,10 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnMissingBean(ComboWarlockAuthzService.class)
     public ComboWarlockAuthzService comboWarlockAuthzService() {
         logger.info("Wings conf comboWarlockAuthzService");
-        return new ComboWarlockAuthzService();
+        final ComboWarlockAuthzService bean = new ComboWarlockAuthzService();
+        bean.setAuthorityRole(securityProp.isAuthorityRole());
+        bean.setAuthorityPerm(securityProp.isAuthorityPerm());
+        return bean;
     }
 
     @Bean
@@ -179,7 +183,7 @@ public class WarlockSecurityBeanConfiguration {
     ///////// UserDetails /////////
     @Bean
     @ConditionalOnMissingBean(UserDetailsService.class)
-    public UserDetailsService wingsUserDetailsService(ObjectProvider<ComboWingsUserDetailsService.Combo<?>> combos) {
+    public WingsUserDetailsService wingsUserDetailsService(ObjectProvider<ComboWingsUserDetailsService.Combo<?>> combos) {
         logger.info("Wings conf wingsUserDetailsService");
         ComboWingsUserDetailsService uds = new ComboWingsUserDetailsService();
         combos.orderedStream().forEach(it -> {

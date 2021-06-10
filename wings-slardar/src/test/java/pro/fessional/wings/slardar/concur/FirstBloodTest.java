@@ -59,7 +59,7 @@ class FirstBloodTest {
     }
 
     public void checkFirstBlood(String url) {
-        final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(firstBloodUrl30), false);
+        final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(url), false);
         assertEquals(202, r2.code());
         final String ct = r2.header("Content-Type");
         final String tk = r2.header("client-ticket");
