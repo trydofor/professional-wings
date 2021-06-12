@@ -8,12 +8,12 @@ import org.jooq.VisitListenerProvider;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.jooq.impl.DefaultVisitListenerProvider;
+import org.simpleflatmapper.jooq.JooqMapperFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -73,23 +73,43 @@ public class FacelessJooqConfiguration {
                 ;
     }
 
+
     @Bean
-    @ConditionalOnBean(org.jooq.Configuration.class)
-    @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$converter, havingValue = "true")
-    public BeanPostProcessor beanPostJooqConfiguration(ObjectProvider<ConverterProvider> providers,
-                                                       ObjectProvider<org.jooq.Converter<?, ?>> converters) {
-        logger.info("Wings conf skip Jooq.Configuration");
+    @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$simpleflatmapper, havingValue = "true")
+    public BeanPostProcessor beanPostSfmRecordMapperProvider() {
+        logger.info("Wings conf beanPostSfmRecordMapperProvider");
 
         return new BeanPostProcessor() {
             @Override
             public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
                 if (!(bean instanceof org.jooq.Configuration)) return bean;
+
                 final org.jooq.Configuration cnf = (org.jooq.Configuration) bean;
 
-                logger.info("Wings conf jooqConfiguration ConverterProvider, beanName=" + beanName);
+                logger.info("Wings conf jooqConfiguration simpleflatmapper, bean=" + beanName);
+                cnf.set(JooqMapperFactory.newInstance().ignorePropertyNotFound().newRecordMapperProvider());
+                cnf.set(JooqMapperFactory.newInstance().newRecordUnmapperProvider(cnf));
+                return cnf;
+            }
+        };
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$converter, havingValue = "true")
+    public BeanPostProcessor beanPostJooqConfiguration(ObjectProvider<ConverterProvider> providers,
+                                                       ObjectProvider<org.jooq.Converter<?, ?>> converters) {
+        logger.info("Wings conf beanPostJooqConfiguration");
+
+        return new BeanPostProcessor() {
+            @Override
+            public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
+                if (!(bean instanceof org.jooq.Configuration)) return bean;
+
+                final org.jooq.Configuration cnf = (org.jooq.Configuration) bean;
+
+                logger.info("Wings conf jooqConfiguration ConverterProvider, bean=" + beanName);
                 JooqConverterDelegate dcp = new JooqConverterDelegate();
                 dcp.add(cnf.converterProvider());
-
 
                 providers.orderedStream().forEach(it -> {
                     dcp.add(it);

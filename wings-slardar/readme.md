@@ -151,6 +151,9 @@ wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子
  4. cookie `Wings-Locale`, `Wings-Zoneid`
  5. 登录用户的SecurityContext中获得wings设置
  6. 系统默认值
+ 
+注意：在数据库和配置中`zoneid`视为一个词，而java中`ZoneId`是一个类（I大写），
+所以，当从Db中取值，并通过反射赋值时，容易是ZoneId错过，所以使用SimpleFlatMapper。
 
 此处为行为约定，基于servlet或webflux的具体实现。`WingsLocaleResolver`是一个实现。
 

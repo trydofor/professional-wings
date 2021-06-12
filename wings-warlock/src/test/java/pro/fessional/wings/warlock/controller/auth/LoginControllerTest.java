@@ -1,16 +1,23 @@
 package pro.fessional.wings.warlock.controller.auth;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.code.RandCode;
+import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.warlock.event.auth.WarlockNonceSendEvent;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthType;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,7 +41,7 @@ public class LoginControllerTest {
         event.setUsername(user);
         event.setNonce(pass);
         EventPublishHelper.AsyncSpring.publishEvent(event);
-        log.warn("root username-nonce is " + pass);
+        log.warn(user + " username-nonce is " + pass);
         return pass;
     }
 
@@ -42,5 +49,21 @@ public class LoginControllerTest {
     public Set<String> listAllRole() {
         final Collection<GrantedAuthority> auth = SecurityContextUtil.getAuthorities();
         return auth.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+    }
+
+    @Data
+    public static class Dto {
+        private final String zid;
+        private final ZonedDateTime zdt;
+    }
+
+    @GetMapping("/auth/list-zoneid.json")
+    public Dto listZoneId() {
+        final ZoneId zid = LocaleContextHolder.getTimeZone().toZoneId();
+        LocalDate ld = LocalDate.of(2021, 1, 1);
+        LocalTime lt = LocalTime.of(5, 0, 0, 0);
+        ZonedDateTime zdt = ZonedDateTime.of(ld, lt, StandardTimezone.GMT.toZoneId());
+        // America/New_York
+        return new Dto(zid.getId(), zdt);
     }
 }

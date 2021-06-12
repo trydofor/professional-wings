@@ -61,7 +61,7 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
             user.setAvatar("");
             user.setGender(UserGender.UNKNOWN);
             user.setLocale(Locale.getDefault());
-            user.setZoneid((ZoneId.systemDefault()));
+            user.setZoneId((ZoneId.systemDefault()));
             user.setRemark("auto register");
             user.setStatus(UserStatus.UNINIT);
 
@@ -91,7 +91,7 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
             result.setUserId(uid);
             result.setNickname(user.getNickname());
             result.setLocale(user.getLocale());
-            result.setZoneId(user.getZoneid());
+            result.setZoneId(user.getZoneId());
             result.setStatus(user.getStatus());
             result.setAuthType(authType);
 

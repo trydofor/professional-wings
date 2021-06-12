@@ -120,7 +120,8 @@ public class FlywaveRevisionScanner {
                 sb.append(formatRevi(m.group(2)));
                 sb.append(m.group(3));
                 info.add(sb.toString());
-            } else {
+            }
+            else {
                 info.add(s);
             }
         }
@@ -136,7 +137,8 @@ public class FlywaveRevisionScanner {
             if (c == 'u' || c == 'U' || c == 'v' || c == 'V') {
                 sb.append("_");
                 cnt = 0;
-            } else if (c >= '0' && c <= '9') {
+            }
+            else if (c >= '0' && c <= '9') {
                 if (cnt > 0 && cnt % 4 == 0) {
                     sb.append("-");
                 }
@@ -147,7 +149,8 @@ public class FlywaveRevisionScanner {
         final int lst = sb.length() - 1;
         if (sb.charAt(lst) == '-') {
             return sb.substring(0, lst);
-        } else {
+        }
+        else {
             return sb.toString();
         }
     }
@@ -239,7 +242,7 @@ public class FlywaveRevisionScanner {
                     if (c >= '0' && c <= '9') sb.append(c);
                 }
                 sb.append(m.group(3));
-                final long revi = Long.parseLong(sb.toString());
+                final Long revi = Long.valueOf(sb.toString());
                 newRevi.add(revi);
 
                 RevisionSql d = result.computeIfAbsent(revi, RevisionSql::new);
@@ -250,17 +253,20 @@ public class FlywaveRevisionScanner {
                     final String ou = d.getUndoPath();
                     if (EmptySugar.asEmptyValue(ou)) {
                         logger.info("[FlywaveRevisionScanner]🐝 scan " + revi + " undo↓ resource=" + file);
-                    } else {
+                    }
+                    else {
                         rplRevi.add(revi);
                         logger.warn("[FlywaveRevisionScanner]🐝 replace " + revi + " undo↓ new=" + file + ", old=" + ou);
                     }
                     d.setUndoPath(file);
                     d.setUndoText(text);
-                } else {
+                }
+                else {
                     final String ou = d.getUptoPath();
                     if (EmptySugar.asEmptyValue(ou)) {
                         logger.info("[FlywaveRevisionScanner]🐝 scan " + revi + " upto↑ resource=" + file);
-                    } else {
+                    }
+                    else {
                         rplRevi.add(revi);
                         logger.warn("[FlywaveRevisionScanner]🐝 replace " + revi + " upto↑ new=" + file + ", old=" + ou);
                     }
@@ -269,7 +275,8 @@ public class FlywaveRevisionScanner {
                 }
             }
             logger.info("[FlywaveRevisionScanner]🐝 scanned revisions new=" + newRevi.size() + ", replace=" + rplRevi.size());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new IllegalStateException("failed to scan path = " + path + ", file=" + file, e);
         }
     }
@@ -412,7 +419,8 @@ public class FlywaveRevisionScanner {
                 final Pattern op = Pattern.compile("\\b" + from + "\\b");
                 final String ns = String.valueOf(to);
                 return replace(from, to, it -> op.matcher(it).replaceAll(ns));
-            } else {
+            }
+            else {
                 return replace(from, to, null);
             }
         }
@@ -513,7 +521,7 @@ public class FlywaveRevisionScanner {
 
         public Helper include(String info, long... revi) {
             final HashSet<Long> rvs = new HashSet<>();
-            for (long l : revi) {
+            for (Long l : revi) {
                 rvs.add(l);
             }
             return include(info, rvs::contains);
@@ -539,7 +547,7 @@ public class FlywaveRevisionScanner {
 
         public Helper exclude(String info, long... revi) {
             final HashSet<Long> rvs = new HashSet<>();
-            for (long l : revi) {
+            for (Long l : revi) {
                 rvs.add(l);
             }
             return exclude(info, rvs::contains);
@@ -590,6 +598,9 @@ public class FlywaveRevisionScanner {
                             if (info != null && !info.isEmpty()) {
                                 logger.info("[FlywaveRevisionScanner]🐝 include " + it.getKey() + " by " + info);
                             }
+                            else {
+                                logger.info("[FlywaveRevisionScanner]🐝 include " + it.getKey());
+                            }
                             return false;
                         }
                     }
@@ -606,7 +617,8 @@ public class FlywaveRevisionScanner {
                             final String info = ent.getValue();
                             if (info == null || info.isEmpty()) {
                                 logger.info("[FlywaveRevisionScanner]🐝 remove " + it.getKey() + " by exclude filter matched");
-                            } else {
+                            }
+                            else {
                                 logger.info("[FlywaveRevisionScanner]🐝 remove " + it.getKey() + " by " + info);
                             }
                             return true;

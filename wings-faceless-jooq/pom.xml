@@ -20,6 +20,10 @@
             <groupId>pro.fessional</groupId>
             <artifactId>wings-faceless</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.simpleflatmapper</groupId>
+            <artifactId>sfm-jooq</artifactId>
+        </dependency>
         <!-- jooq auto gen -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

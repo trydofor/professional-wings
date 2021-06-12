@@ -75,7 +75,7 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, Ini
             po.setAvatar(Z.notNull(user.getAvatar(), Null.Str));
             po.setGender(Z.notNull(user.getGender(), UserGender.UNKNOWN));
             po.setLocale(Z.notNull(user.getLocale(), Locale.getDefault()));
-            po.setZoneid(Z.notNull(user.getZoneid(), ZoneId.systemDefault()));
+            po.setZoneid(Z.notNull(user.getZoneId(), ZoneId.systemDefault()));
             po.setRemark(Z.notNull(user.getRemark(), Null.Str));
             po.setStatus(Z.notNull(user.getStatus(), UserStatus.UNINIT));
             commit.create(po);
@@ -93,7 +93,7 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, Ini
             setter.put(tu.Gender, user.getGender());
             setter.put(tu.Avatar, user.getAvatar());
             setter.put(tu.Locale, user.getLocale());
-            setter.put(tu.Zoneid, user.getZoneid());
+            setter.put(tu.Zoneid, user.getZoneId());
             setter.put(tu.Remark, user.getRemark());
             setter.put(tu.Status, user.getStatus());
             // 一定会更新，除非不存在

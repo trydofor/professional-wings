@@ -293,7 +293,7 @@ public class WingsCodeGenerator {
          * @return this
          */
         public Builder forcedType(ForcedType ft, String sortImport) {
-            WingsJavaGenerator.shortImport4Table(sortImport);
+            WingsCodeGenConf.shortImport4Table(sortImport);
             return forcedType(ft);
         }
 
