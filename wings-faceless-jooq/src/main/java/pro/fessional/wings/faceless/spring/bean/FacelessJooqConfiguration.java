@@ -24,6 +24,7 @@ import pro.fessional.wings.faceless.database.jooq.WingsJooqEnv;
 import pro.fessional.wings.faceless.database.jooq.converter.JooqConverterDelegate;
 import pro.fessional.wings.faceless.database.jooq.listener.AutoQualifyFieldListener;
 import pro.fessional.wings.faceless.database.jooq.listener.JournalDeleteListener;
+import pro.fessional.wings.faceless.database.jooq.listener.TableCudListener;
 import pro.fessional.wings.faceless.spring.prop.FacelessJooqEnabledProp;
 
 /**
@@ -50,6 +51,13 @@ public class FacelessJooqConfiguration {
     public VisitListenerProvider autoQualifyFieldListener() {
         logger.info("Wings conf autoQualifyFieldListener");
         return new DefaultVisitListenerProvider(new AutoQualifyFieldListener());
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$listenTableCud, havingValue = "true")
+    public VisitListenerProvider tableCudListener() {
+        logger.info("Wings conf tableCudListener");
+        return new DefaultVisitListenerProvider(new TableCudListener());
     }
 
     @Bean
@@ -86,9 +94,11 @@ public class FacelessJooqConfiguration {
 
                 final org.jooq.Configuration cnf = (org.jooq.Configuration) bean;
 
-                logger.info("Wings conf jooqConfiguration simpleflatmapper, bean=" + beanName);
+                logger.info("Wings conf jooqConfiguration SimpleFlatMapper, bean=" + beanName);
+                // into
                 cnf.set(JooqMapperFactory.newInstance().ignorePropertyNotFound().newRecordMapperProvider());
-                cnf.set(JooqMapperFactory.newInstance().newRecordUnmapperProvider(cnf));
+                // from
+                cnf.set(JooqMapperFactory.newInstance().ignorePropertyNotFound().newRecordUnmapperProvider(cnf));
                 return cnf;
             }
         };

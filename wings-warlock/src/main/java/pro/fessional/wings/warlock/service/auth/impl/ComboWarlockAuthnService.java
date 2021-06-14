@@ -73,7 +73,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         final Details details = winUserAnthnDao
                                         .ctx()
                                         .select(auth.UserId, user.Nickname,
-                                                user.Locale, user.Zoneid,
+                                                user.Locale, user.Zoneid.as("zoneId"),
                                                 user.Status, auth.Username,
                                                 auth.Password, auth.ExpiredDt)
                                         .from(user, auth)

@@ -25,11 +25,11 @@ public class FacelessJooqEnabledProp {
     public static final String Key$module = Key + ".module";
 
     /**
-     * 是否注使用 simpleflatmapper
+     * 是否注使用 simpleflatmapper, bug https://github.com/arnaudroger/SimpleFlatMapper/issues/764
      *
      * @see #Key$simpleflatmapper
      */
-    private String simpleflatmapper = "";
+    private boolean simpleflatmapper = false;
     public static final String Key$simpleflatmapper = Key + ".simpleflatmapper";
 
     /**
@@ -63,4 +63,12 @@ public class FacelessJooqEnabledProp {
      */
     private boolean journalDelete = false;
     public static final String Key$journalDelete = Key + ".journal-delete";
+
+    /**
+     * 是否监听table的create,update,delete
+     *
+     * @see #Key$listenTableCud
+     */
+    private boolean listenTableCud = false;
+    public static final String Key$listenTableCud = Key + ".listen-table-cud";
 }

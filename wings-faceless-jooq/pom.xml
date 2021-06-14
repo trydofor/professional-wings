@@ -21,8 +21,10 @@
             <artifactId>wings-faceless</artifactId>
         </dependency>
         <dependency>
+            <!--  仅测试用，不推荐使用 -->
             <groupId>org.simpleflatmapper</groupId>
             <artifactId>sfm-jooq</artifactId>
+            <optional>true</optional>
         </dependency>
         <!-- jooq auto gen -->
         <dependency>

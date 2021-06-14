@@ -504,7 +504,7 @@ public class JooqMostSelectSample {
         Integer cnt1 = dsl.selectCount()
                           .from(t)
                           .where(t.Id.gt(1L))
-                          .fetchOptionalInto(int.class)
+                          .fetchOptionalInto(Integer.class)
                           .orElse(0);
         List<Tst中文也分表> lst1 = dsl.select()
                                  .from(t)
@@ -523,7 +523,7 @@ public class JooqMostSelectSample {
         Integer cnt2 = dsl.select(DSL.count(t1.Id))
                           .from(t1, t2)
                           .where(t1.Id.eq(t2.Id).and(t1.Id.gt(1L)))
-                          .fetchOptionalInto(int.class)
+                          .fetchOptionalInto(Integer.class)
                           .orElse(0);
         System.out.println(cnt2);
 

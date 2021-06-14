@@ -109,7 +109,21 @@ JOOQ参考资料
  * [使用别名，支持分表](https://www.jooq.org/doc/3.12/manual/sql-building/table-expressions/aliased-tables/)
  * [SQL的执行](https://www.jooq.org/doc/3.12/manual/sql-execution/)
 
-## 2.2.3.常见问题
+## 2.2.3.Record Mapper
+
+jooq 默认有2中Mapper都区分大小写，对应的功能如下
+
+ * DefaultRecordMapper 负责Record#into(Class), Result#into(Class)
+ * DefaultRecordUnmapper 负责DSL.newRecord(Table, Object), Record#from(Object)
+
+SimpleFlatMapper的mapper更为宽松，不区分大小写，单有一下不足。
+
+ * [intoArray的bug](https://github.com/arnaudroger/SimpleFlatMapper/issues/764)
+ * 不支持primary type，如int.class，仅Integer.class
+
+在官方修复前，不推荐使用，因为除了以上bug，并未充分测试。
+
+## 2.2.4.常见问题
 
 ### 01.使用jooq执行plain sql
 
