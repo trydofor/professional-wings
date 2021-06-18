@@ -14,18 +14,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import pro.fessional.wings.faceless.database.WingsTableCudHandler;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqEnv;
 import pro.fessional.wings.faceless.database.jooq.converter.JooqConverterDelegate;
 import pro.fessional.wings.faceless.database.jooq.listener.AutoQualifyFieldListener;
 import pro.fessional.wings.faceless.database.jooq.listener.JournalDeleteListener;
 import pro.fessional.wings.faceless.database.jooq.listener.TableCudListener;
+import pro.fessional.wings.faceless.spring.prop.FacelessJooqCudProp;
 import pro.fessional.wings.faceless.spring.prop.FacelessJooqEnabledProp;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author trydofor
@@ -48,16 +55,26 @@ public class FacelessJooqConfiguration {
      */
     @Bean
     @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$autoQualify, havingValue = "true")
+    @Order(Ordered.HIGHEST_PRECEDENCE)
     public VisitListenerProvider autoQualifyFieldListener() {
         logger.info("Wings conf autoQualifyFieldListener");
         return new DefaultVisitListenerProvider(new AutoQualifyFieldListener());
     }
 
     @Bean
+    @ConditionalOnBean(WingsTableCudHandler.class)
     @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$listenTableCud, havingValue = "true")
-    public VisitListenerProvider tableCudListener() {
-        logger.info("Wings conf tableCudListener");
-        return new DefaultVisitListenerProvider(new TableCudListener());
+    @Order(Ordered.HIGHEST_PRECEDENCE + 1000)
+    public VisitListenerProvider tableCudListener(ObjectProvider<WingsTableCudHandler> handlers, FacelessJooqCudProp prop) {
+        final List<WingsTableCudHandler> hdl = handlers.orderedStream().collect(Collectors.toList());
+        logger.info("Wings conf tableCudListener with handler size=" + hdl.size());
+        final TableCudListener listener = new TableCudListener();
+        listener.setHandlers(hdl);
+        listener.setInsert(prop.isInsert());
+        listener.setUpdate(prop.isUpdate());
+        listener.setDelete(prop.isDelete());
+        listener.setTableField(prop.getTable());
+        return new DefaultVisitListenerProvider(listener);
     }
 
     @Bean

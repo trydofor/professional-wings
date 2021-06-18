@@ -32,7 +32,11 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
  * @since 2020-08-14
  */
 
-@SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
+@SpringBootTest(properties = {
+        "debug = true",
+        "logging.level.org.jooq.tools.LoggerListener=DEBUG",
+//        "spring.wings.faceless.jooq.enabled.simpleflatmapper=true",
+})
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class JooqMapperCompatibleTest {
 
@@ -111,6 +115,21 @@ public class JooqMapperCompatibleTest {
         final Object[] arr = rd.intoArray();
 
         Assertions.assertNotNull(rd.getLoginInfo());
+        Assertions.assertEquals(fld.length, arr.length, "Sfm bug https://github.com/arnaudroger/SimpleFlatMapper/issues/764");
+    }
+
+    @Test
+    public void test2Array() {
+        Tst中文也分表Table t = dao.getTable();
+        Condition c = t.Id.eq(105L);
+        final Tst中文也分表Record rd = dao.ctx()
+                .selectFrom(t)
+                .where(c)
+                .fetchOne();
+        Assertions.assertNotNull(rd);
+        Assertions.assertNotNull(rd.getLoginInfo());
+        final Object[] arr = rd.intoArray();
+        final Field<?>[] fld = dao.getTable().fields();
         Assertions.assertEquals(fld.length, arr.length, "Sfm bug https://github.com/arnaudroger/SimpleFlatMapper/issues/764");
     }
 }

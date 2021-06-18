@@ -1,12 +1,11 @@
 package pro.fessional.wings.faceless.database.jooq.listener;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
+import org.jooq.Delete;
 import org.jooq.ExecuteContext;
-import org.jooq.Insert;
-import org.jooq.Merge;
 import org.jooq.Param;
 import org.jooq.Query;
-import org.jooq.Update;
 import org.jooq.conf.ParamType;
 import org.jooq.impl.DefaultExecuteListener;
 import org.slf4j.Logger;
@@ -19,6 +18,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * delete from `tst_中文也分表` where (`id` = ? and `commit_id` = ?)
+ * commit_id = :commit_id and `id` = ?
+ *
  * @author trydofor
  * @since 2021-01-14
  */
@@ -29,20 +31,16 @@ public class JournalDeleteListener extends DefaultExecuteListener {
     @Override
     public void renderEnd(ExecuteContext ctx) {
         Query query = ctx.query();
-        if (query == null
-                || query instanceof Update
-                || query instanceof Insert
-                || query instanceof Merge) {
+        if (!(query instanceof Delete)) {
             return;
         }
 
         final String sql = ctx.sql();
-        if(sql == null) return;
+        if (sql == null) return;
 
-        final String low = sql.toLowerCase();
-        if (notJournalDelete(low)) return;
+        if (notJournalDelete(sql)) return;
 
-        String table = parseTable(sql, low);
+        String table = parseTable(sql);
         if (table == null) return;
 
         Map<String, Param<?>> params = query.getParams();
@@ -56,7 +54,7 @@ public class JournalDeleteListener extends DefaultExecuteListener {
             }
             params = new LinkedHashMap<>(params);
         }
-        String updateSql = buildUpdateSql(ctx.dsl(), sql, low, table, params);
+        String updateSql = buildUpdateSql(ctx.dsl(), sql, table, params);
         if (updateSql == null) return;
 
         logger.info("Wings journal-delete, sql={}", updateSql);
@@ -64,7 +62,8 @@ public class JournalDeleteListener extends DefaultExecuteListener {
         try {
             if (params.isEmpty()) {
                 ctx.dsl().execute(updateSql);
-            } else {
+            }
+            else {
                 // 保证顺序
                 Object[] pms = new Object[params.size()];
                 int i = 0;
@@ -74,37 +73,40 @@ public class JournalDeleteListener extends DefaultExecuteListener {
 
                 ctx.dsl().execute(updateSql, pms);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger.error(updateSql, e);
         }
     }
 
     /**
-     DELETE [LOW_PRIORITY] [QUICK] [IGNORE] FROM tbl_name
-     [PARTITION (partition_name [, partition_name] ...)]
-     [WHERE where_condition]
+     * DELETE [LOW_PRIORITY] [QUICK] [IGNORE] FROM tbl_name
+     * [PARTITION (partition_name [, partition_name] ...)]
+     * [WHERE where_condition]
      */
-    private String parseTable(String sql, String low) {
-        int fi = low.indexOf("from");
+    private String parseTable(String sql) {
+        int fi = StringUtils.indexOfIgnoreCase(sql, "from");
         if (fi < 0) return null;
-        int wi = low.indexOf("where");
+        int wi = StringUtils.indexOfIgnoreCase(sql, "where", fi + 5);
 
         char quote = 0;
         int bgn = -1;
         for (int i = fi + 4; i < wi; i++) {
-            char c = low.charAt(i);
+            char c = sql.charAt(i);
             if (c == '`' || c == '"' || c == '\'') {
                 if (quote == 0) {
                     quote = c;
                     bgn = i;
                     continue;
-                } else if (quote == c) {
+                }
+                else if (quote == c) {
                     return sql.substring(bgn, i + 1);
                 }
             }
             if (c > ' ') {
                 if (bgn < 0) bgn = i;
-            } else {
+            }
+            else {
                 if (quote == 0 && bgn > 0) {
                     return sql.substring(bgn, i);
                 }
@@ -115,14 +117,14 @@ public class JournalDeleteListener extends DefaultExecuteListener {
 
     // delete from `tst_中文也分表` where (`id` = ? and `commit_id` = ?)
     // commit_id = :commit_id and `id` = ?
-    private final Pattern ptnCommitId = Pattern.compile("" +
-                    "\\band\\s+([`'\"]?commit_id[`'\"]?[\\s]*=[\\s]*([^()=\\s]+))" +
-                    "|" +
-                    "([`'\"]?commit_id[`'\"]?[\\s]*=[\\s]*([^()=\\s]+))\\s+and\\b"
-            , Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private final Pattern ptnCommitId = Pattern
+            .compile("\\band\\s+([`'\"]?commit_id[`'\"]?[\\s]*=[\\s]*([^()=\\s]+))" +
+                     "|" +
+                     "([`'\"]?commit_id[`'\"]?[\\s]*=[\\s]*([^()=\\s]+))\\s+and\\b"
+                    , Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
-    private String buildUpdateSql(DSLContext dsl, String deleteSql, String lower, String table, Map<String, Param<?>> params) {
-        Matcher matcher = ptnCommitId.matcher(deleteSql);
+    private String buildUpdateSql(DSLContext dsl, String del, String table, Map<String, Param<?>> params) {
+        Matcher matcher = ptnCommitId.matcher(del);
         if (!matcher.find()) return null;
         String cidWhere = matcher.group();
 
@@ -139,11 +141,12 @@ public class JournalDeleteListener extends DefaultExecuteListener {
             if (cidVal.equals("?")) {
                 int cn = 1;
                 for (int i = 0; i < matcher.start(); i++) {
-                    char c = deleteSql.charAt(i);
+                    char c = del.charAt(i);
                     if (c == '?') cn++;
                 }
                 para = params.remove(String.valueOf(cn));
-            } else {
+            }
+            else {
                 para = params.remove(cidVal);
             }
 
@@ -153,30 +156,32 @@ public class JournalDeleteListener extends DefaultExecuteListener {
                     char c = cidVal.charAt(i);
                     if (!(c == '-' || (c >= '0' && c <= '9'))) return null;
                 }
-            } else {
+            }
+            else {
                 cidSql = cidSql.replace(cidVal, String.valueOf(para.getValue()));
             }
         }
 
-        StringBuilder sql = new StringBuilder("UPDATE ");
-        sql.append(table);
-        sql.append(" SET ");
-        sql.append(cidSql);
-        sql.append(" ");
+        StringBuilder upd = new StringBuilder("UPDATE ");
+        upd.append(table);
+        upd.append(" SET ");
+        upd.append(cidSql);
+        upd.append(" ");
         String jf = JournalJooqHelp.getJournalDateColumn(dsl, table);
         if (!jf.isEmpty()) {
-            sql.append(",").append(jf).append(" = NOW() ");
+            upd.append(",").append(jf).append(" = NOW() ");
         }
-        String where = deleteSql.substring(lower.indexOf("where"));
-        sql.append(where.replace(cidWhere, ""));
-        return sql.toString();
+
+        String where = del.substring(StringUtils.indexOfIgnoreCase(del, "where"));
+        upd.append(where.replace(cidWhere, ""));
+        return upd.toString();
     }
 
-    private boolean notJournalDelete(String low) {
-        int di = low.indexOf("delete");
+    private boolean notJournalDelete(String sql) {
+        int di = StringUtils.indexOfIgnoreCase(sql, "delete");
         if (di < 0) return true;
 
-        int ci = low.indexOf("commit_id");
+        int ci = StringUtils.indexOfIgnoreCase(sql, "commit_id", di + 7);
         return ci < di;
     }
 }

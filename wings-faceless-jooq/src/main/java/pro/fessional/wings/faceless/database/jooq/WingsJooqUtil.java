@@ -32,27 +32,6 @@ import java.util.Objects;
  */
 public class WingsJooqUtil extends DSL {
 
-    public static RowCountQuery replaceInto(TableRecord<?> record) {
-        Table<?> table = record.getTable();
-        Field<?>[] fields = table.fields();
-        QueryPart[] qps = new QueryPart[fields.length * 2 + 1];
-        qps[0] = table;
-        System.arraycopy(fields, 0, qps, 1, fields.length);
-        int off = fields.length;
-        for (int i = 0; i < fields.length; i++) {
-            qps[++off] = val(record.get(i));
-        }
-
-        StringBuilder sql = new StringBuilder();
-        sql.append("replace into {0} (");
-        int pos = buildHolder(sql, 0, fields.length);
-        sql.append(") values (");
-        buildHolder(sql, pos, fields.length);
-        sql.append(")");
-
-        return query(sql.toString(), qps);
-    }
-
     private static final Field<?>[] EMPTY_FIELDS = new Field<?>[0];
 
     @NotNull
@@ -76,6 +55,20 @@ public class WingsJooqUtil extends DSL {
         }
     }
 
+    ///////////////// replace into /////////////////////
+
+    /**
+     * 不受CUD listener管理
+     */
+    public static RowCountQuery replaceInto(TableRecord<?> record) {
+        Table<?> table = record.getTable();
+        Field<?>[] fields = table.fields();
+        return replaceInto(table, fields);
+    }
+
+    /**
+     * 不受CUD listener管理
+     */
     public static RowCountQuery replaceInto(Table<?> table, Field<?>... fields) {
         if (fields == null || fields.length == 0) {
             fields = table.fields();

@@ -21,6 +21,10 @@
             <artifactId>wings-faceless</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
             <!--  仅测试用，不推荐使用 -->
             <groupId>org.simpleflatmapper</groupId>
             <artifactId>sfm-jooq</artifactId>
