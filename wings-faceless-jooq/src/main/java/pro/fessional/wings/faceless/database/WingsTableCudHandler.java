@@ -3,8 +3,8 @@ package pro.fessional.wings.faceless.database;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 数据表CUD处理，可以是CUD或者Other
@@ -28,7 +28,7 @@ public interface WingsTableCudHandler {
      * @param table 表名
      * @param field 关联字段和值(或值集合)
      */
-    void handle(@NotNull Cud cud, @NotNull String table, @NotNull Map<String, Set<Object>> field);
+    void handle(@NotNull Cud cud, @NotNull String table, @NotNull Map<String, List<Object>> field);
 
     /**
      * 处理表变更，建议轻任务或异步，关联键为empty

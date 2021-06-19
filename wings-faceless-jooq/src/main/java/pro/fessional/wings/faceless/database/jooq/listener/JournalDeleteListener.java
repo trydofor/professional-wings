@@ -18,6 +18,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * 仅支持单表执行，不支持batch处理
+ * <p>
  * delete from `tst_中文也分表` where (`id` = ? and `commit_id` = ?)
  * commit_id = :commit_id and `id` = ?
  *

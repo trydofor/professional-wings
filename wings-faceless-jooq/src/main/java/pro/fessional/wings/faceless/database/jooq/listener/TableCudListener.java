@@ -3,7 +3,10 @@ package pro.fessional.wings.faceless.database.jooq.listener;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.jooq.Clause;
+import org.jooq.Configuration;
+import org.jooq.Context;
 import org.jooq.Keyword;
 import org.jooq.Param;
 import org.jooq.QueryPart;
@@ -14,10 +17,11 @@ import org.jooq.impl.TableImpl;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,10 +30,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static pro.fessional.wings.faceless.database.WingsTableCudHandler.Cud;
 
 /**
- * 仅支持jooq的单表insert,update,delete。
- * 不支持merge和replace。不支持batch执行(无法获得bind值)
- * 仅支持eq,le,ge,in的where条件。
- * 注意：visit可能触发多次，任何需要render的地方，如toString, getSQL0
+ * 仅支持jooq的单表insert,update,delete。<p>
+ * 不支持merge和replace。不支持batch执行(无法获得bind值)<p>
+ * 仅支持eq,le,ge,in的where条件。<p>
+ * 注意：visit可能触发多次，任何需要render的地方，如日志debug，toString等<p>
  *
  * @author trydofor
  * @since 2021-01-14
@@ -54,7 +58,7 @@ public class TableCudListener extends DefaultVisitListener {
         EXECUTING_VISIT_CUD, // Cud
         EXECUTING_TABLE_STR, // String
         EXECUTING_FIELD_KEY, // SET<String>
-        EXECUTING_FIELD_MAP, // Map<String, Set<Object>>
+        EXECUTING_FIELD_MAP, // Map<String, List<Object>>
         EXECUTING_INSERT_IDX,
         EXECUTING_INSERT_CNT,
         EXECUTING_WHERE_KEY,
@@ -68,9 +72,15 @@ public class TableCudListener extends DefaultVisitListener {
     @SuppressWarnings("deprecation")
     public void clauseStart(VisitContext context) {
         if (WarnVisit) {
-            final QueryPart qp = context.queryPart();
-            // noinspection ConstantConditions
-            log.warn(">>> clauseStart Clause={}, Query={}", context.clause(), qp == null ? "null" : qp.getClass());
+            final String clz = scn(context.queryPart());
+            final Clause clause = context.clause();
+            if (clause == Clause.INSERT || clause == Clause.UPDATE || clause == Clause.DELETE) {
+                log.warn(">>> clauseStart Clause=" + clause + ", Query=" + clz
+                        , new RuntimeException("debug for call stack"));
+            }
+            else {
+                log.warn(">>> clauseStart Clause=" + clause + ", Query=" + clz);
+            }
         }
 
         if (context.renderContext() == null) return;
@@ -93,11 +103,15 @@ public class TableCudListener extends DefaultVisitListener {
         for (Map.Entry<Object, Object> ent : context.data().entrySet()) {
             final Object key = ent.getKey();
             if (key instanceof Enum<?> && ((Enum<?>) key).name().equals("DATA_COUNT_BIND_VALUES")) {
+                if (WarnVisit) {
+                    log.warn(">>> got DATA_COUNT_BIND_VALUES");
+                }
+                context.data(Key.EXECUTING_VISIT_CUD, cud);
                 return;
             }
         }
 
-        context.data(Key.EXECUTING_VISIT_CUD, cud);
+        context.data(Key.EXECUTING_VISIT_CUD, null);
     }
 
     @Override
@@ -105,9 +119,14 @@ public class TableCudListener extends DefaultVisitListener {
     public void clauseEnd(VisitContext context) {
 
         if (WarnVisit) {
-            final QueryPart qp = context.queryPart();
-            // noinspection ConstantConditions
-            log.warn("<<< clauseEnd   Clause={}, QueryPart={}", context.clause(), qp == null ? "null" : qp.getClass());
+            final String clz = scn(context.queryPart());
+            final Clause clause = context.clause();
+            if (clause == Clause.INSERT || clause == Clause.UPDATE || clause == Clause.DELETE) {
+                log.warn("<<< clauseEnd   Clause=" + clause + ", Query=" + clz + "\n\n");
+            }
+            else {
+                log.warn(">>> clauseStart Clause=" + clause + ", Query=" + clz);
+            }
         }
 
         final Cud cud = (Cud) context.data(Key.EXECUTING_VISIT_CUD);
@@ -126,7 +145,7 @@ public class TableCudListener extends DefaultVisitListener {
             return;
         }
 
-        Map<String, Set<Object>> field = (Map<String, Set<Object>>) context.data(Key.EXECUTING_FIELD_MAP);
+        Map<String, List<Object>> field = (Map<String, List<Object>>) context.data(Key.EXECUTING_FIELD_MAP);
         if (field == null) field = Collections.emptyMap();
 
         log.info("handle CUD={}, table={}, filed-size={}", cud, table, field.size());
@@ -141,7 +160,7 @@ public class TableCudListener extends DefaultVisitListener {
                 msg.append(", handle=").append(hd.getClass());
                 if (!field.isEmpty()) {
                     msg.append(", field=");
-                    for (Map.Entry<String, Set<Object>> en : field.entrySet()) {
+                    for (Map.Entry<String, List<Object>> en : field.entrySet()) {
                         msg.append(",").append(en.getKey()).append(":").append(en.getValue());
                     }
                 }
@@ -153,9 +172,13 @@ public class TableCudListener extends DefaultVisitListener {
     @Override
     public void visitStart(VisitContext context) {
         if (WarnVisit) {
-            final QueryPart qp = context.queryPart();
-            // noinspection ConstantConditions
-            log.warn("==> visitStart  Clause={}, Query={}, Context={}", context.clause(), qp == null ? "null" : qp.getClass(), context.context().getClass());
+            final Context<?> ctx = context.context();
+            final Configuration cnf = ctx.configuration();
+            log.warn("==> visitStart  Clause={}, Query={}, Context={}, Config={}",
+                    context.clause(),
+                    scn(context.queryPart()),
+                    ctx.getClass().getSimpleName() + "@" + System.identityHashCode(ctx),
+                    cnf.getClass().getSimpleName() + "@" + System.identityHashCode(cnf));
         }
 
         if (handlers.isEmpty() || tableField.isEmpty()) return;
@@ -203,7 +226,7 @@ public class TableCudListener extends DefaultVisitListener {
             final Set<String> fds = (Set<String>) context.data(Key.EXECUTING_FIELD_KEY);
             if (fds == null) return;
 
-            final Map<String, Set<Object>> map = (Map<String, Set<Object>>) context.data(Key.EXECUTING_FIELD_MAP);
+            final Map<String, List<Object>> map = (Map<String, List<Object>>) context.data(Key.EXECUTING_FIELD_MAP);
             if (map == null) return;
 
             final Map<?, ?> updSet = (Map<?, ?>) query;
@@ -213,7 +236,7 @@ public class TableCudListener extends DefaultVisitListener {
                 if (ky instanceof TableField && (vl == null || vl instanceof Param)) {
                     final String fd = ((TableField<?, ?>) ky).getName();
                     if (fds.contains(fd)) {
-                        final Set<Object> set = map.computeIfAbsent(fd, k -> new HashSet<>());
+                        final List<Object> set = map.computeIfAbsent(fd, k -> new ArrayList<>());
                         set.add(vl == null ? null : ((Param<?>) vl).getValue());
                     }
                 }
@@ -257,12 +280,12 @@ public class TableCudListener extends DefaultVisitListener {
             final String fd = (String) context.data(Key.EXECUTING_WHERE_KEY);
             if (fd == null) return;
 
-            final Map<String, Set<Object>> map = (Map<String, Set<Object>>) context.data(Key.EXECUTING_FIELD_MAP);
+            final Map<String, List<Object>> map = (Map<String, List<Object>>) context.data(Key.EXECUTING_FIELD_MAP);
             if (map == null) return;
 
             final Object cmp = context.data(Key.EXECUTING_WHERE_CMP);
             if (cmp == WHERE_EQ || cmp == WHERE_IN) {
-                final Set<Object> set = map.computeIfAbsent(fd, k -> new HashSet<>());
+                final List<Object> set = map.computeIfAbsent(fd, k -> new ArrayList<>());
                 set.add(((Param<?>) query).getValue());
             }
         }
@@ -275,7 +298,7 @@ public class TableCudListener extends DefaultVisitListener {
 
         context.data(Key.EXECUTING_TABLE_STR, tbl);
         context.data(Key.EXECUTING_FIELD_KEY, fds);
-        context.data(Key.EXECUTING_FIELD_MAP, new HashMap<>());
+        context.data(Key.EXECUTING_FIELD_MAP, new LinkedHashMap<>());
     }
 
     @SuppressWarnings({"deprecation", "unchecked"})
@@ -315,11 +338,38 @@ public class TableCudListener extends DefaultVisitListener {
             if (idx == null) return;
             final String name = idx.get(cnt.incrementAndGet());
             if (name != null) {
-                final Map<String, Set<Object>> map = (Map<String, Set<Object>>) context.data(Key.EXECUTING_FIELD_MAP);
+                final Map<String, List<Object>> map = (Map<String, List<Object>>) context.data(Key.EXECUTING_FIELD_MAP);
                 if (map == null) return;
-                final Set<Object> set = map.computeIfAbsent(name, k -> new HashSet<>());
+                final List<Object> set = map.computeIfAbsent(name, k -> new ArrayList<>());
                 set.add(((Param<?>) query).getValue());
             }
         }
+    }
+
+    @Nullable
+    private String scn(Object obj) {
+        if (obj == null) return null;
+
+        if (obj instanceof TableImpl) {
+            TableImpl<?> f = (TableImpl<?>) obj;
+            return obj.getClass().getSimpleName() + ":" + f.getName();
+        }
+
+        if (obj instanceof TableField) {
+            TableField<?, ?> f = (TableField<?, ?>) obj;
+            return obj.getClass().getSimpleName() + ":" + f.getName();
+        }
+
+        if (obj instanceof Param) {
+            Param<?> p = (Param<?>) obj;
+            return obj.getClass().getSimpleName() + ":name=" + p.getParamName() + ",value=" + p.getValue();
+        }
+
+        if (obj instanceof Keyword) {
+            Keyword k = (Keyword) obj;
+            return obj.getClass().getSimpleName() + ":" + k.toString();
+        }
+
+        return obj.getClass().getSimpleName();
     }
 }
