@@ -1,50 +1,46 @@
 package pro.fessional.wings.warlock.event.cache;
 
+import lombok.Data;
 import pro.fessional.wings.warlock.event.WarlockMetadataEvent;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.EventObject;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author trydofor
  * @since 2021-03-07
  */
-public class TableChangeEvent extends EventObject implements WarlockMetadataEvent {
+@Data
+public class TableChangeEvent implements WarlockMetadataEvent {
 
-    /**
-     * 变更的表名
-     */
+    public static final int INSERT = 1 << 1;
+    public static final int UPDATE = 1 << 2;
+    public static final int DELETE = 1 << 3;
+
+    private List<String> source = new LinkedList<>();
+    private int change = 0;
     private String table;
+    private Map<String, List<?>> field = Collections.emptyMap();
 
-    /**
-     * 变更的数据
-     */
-    private Collection<Object> record;
-
-    public TableChangeEvent(Object source, String table) {
-        this(source, table, null);
+    public boolean isInsert() {
+        return (change & INSERT) != 0;
     }
 
-    public TableChangeEvent(Object source, String table, Collection<Object> record) {
-        super(source);
-        this.table = table;
-        this.record = record == null ? Collections.emptySet() : record;
+    public boolean isUpdate() {
+        return (change & UPDATE) != 0;
     }
 
-    public String getTable() {
-        return table;
+    public boolean isDelete() {
+        return (change & DELETE) != 0;
     }
 
-    public void setTable(String table) {
-        this.table = table;
+    public void addSource(String src) {
+        source.add(src);
     }
 
-    public Collection<Object> getRecord() {
-        return record;
-    }
-
-    public void setRecord(Collection<Object> record) {
-        this.record = record;
+    public boolean hasSource(String src){
+        return source.contains(src);
     }
 }

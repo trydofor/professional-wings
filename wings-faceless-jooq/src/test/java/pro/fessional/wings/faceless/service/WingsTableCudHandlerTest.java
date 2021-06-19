@@ -20,7 +20,7 @@ public class WingsTableCudHandlerTest implements WingsTableCudHandler {
 
     private final List<Cud> cud = new ArrayList<>();
     private final List<String> table = new ArrayList<>();
-    private final List<Map<String, List<Object>>> field = new ArrayList<>();
+    private final List<Map<String, List<?>>> field = new ArrayList<>();
 
     public void reset() {
         cud.clear();
@@ -29,7 +29,7 @@ public class WingsTableCudHandlerTest implements WingsTableCudHandler {
     }
 
     @Override
-    public void handle(@NotNull Cud c, @NotNull String t, @NotNull Map<String, List<Object>> f) {
+    public void handle(@NotNull Cud c, @NotNull String t, @NotNull Map<String, List<?>> f) {
         this.cud.add(c);
         this.table.add(t);
         this.field.add(f);

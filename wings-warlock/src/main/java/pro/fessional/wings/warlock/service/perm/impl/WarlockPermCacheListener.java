@@ -6,9 +6,10 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import pro.fessional.wings.slardar.cache.WingsCache;
-import pro.fessional.wings.warlock.database.autogen.tables.WinPermEntryTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinRoleEntryTable;
 import pro.fessional.wings.warlock.event.cache.TableChangeEvent;
+
+import static pro.fessional.wings.warlock.database.autogen.tables.WinPermEntryTable.WinPermEntry;
+import static pro.fessional.wings.warlock.database.autogen.tables.WinRoleEntryTable.WinRoleEntry;
 
 /**
  * @author trydofor
@@ -34,10 +35,10 @@ public class WarlockPermCacheListener {
     public void cleanCache(TableChangeEvent event) {
         final String table = event.getTable();
 
-        if (WinPermEntryTable.WinPermEntry.getName().equalsIgnoreCase(table)) {
+        if (WinPermEntry.getName().equalsIgnoreCase(table)) {
             warlockPermServer.evictPermAllCache();
         }
-        else if (WinRoleEntryTable.WinRoleEntry.getName().equalsIgnoreCase(table)) {
+        else if (WinRoleEntry.getName().equalsIgnoreCase(table)) {
             warlockRoleService.evictRoleAllCache();
         }
     }

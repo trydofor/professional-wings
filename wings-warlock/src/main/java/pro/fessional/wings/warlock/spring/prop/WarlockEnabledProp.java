@@ -138,4 +138,11 @@ public class WarlockEnabledProp {
      */
     private boolean swaggerJsr310 = true;
     public static final String Key$swaggerJsr310 = Key + ".swagger-jsr-310";
+
+    /**
+     * 是否开启table CUD 监听
+     * @see #Key$tableChange
+     */
+    private boolean tableChange = true;
+    public static final String Key$tableChange = Key + ".table-change";
 }

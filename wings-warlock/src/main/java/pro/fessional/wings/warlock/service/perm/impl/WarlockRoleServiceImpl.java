@@ -68,7 +68,6 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
     }
 
     @Override
-    @CacheEvict(key = KeyRoleAll)
     public long create(@NotNull String name, String remark) {
         if (!StringUtils.hasText(name)) {
             throw new CodeException(CommonErrorEnum.AssertEmpty1, "role.name");

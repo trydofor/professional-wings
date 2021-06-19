@@ -34,8 +34,8 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 
 @SpringBootTest(properties = {
         "debug = true",
-        "logging.level.org.jooq.tools.LoggerListener=DEBUG",
-//        "spring.wings.faceless.jooq.enabled.simpleflatmapper=true",
+        "logging.level.org.jooq.tools.LoggerListener=debug",
+        "spring.wings.faceless.jooq.enabled.simpleflatmapper=false",
 })
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class JooqMapperCompatibleTest {

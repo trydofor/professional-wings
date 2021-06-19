@@ -28,7 +28,7 @@ public interface WingsTableCudHandler {
      * @param table 表名
      * @param field 关联字段和值(或值集合)
      */
-    void handle(@NotNull Cud cud, @NotNull String table, @NotNull Map<String, List<Object>> field);
+    void handle(@NotNull Cud cud, @NotNull String table, @NotNull Map<String, List<?>> field);
 
     /**
      * 处理表变更，建议轻任务或异步，关联键为empty

@@ -176,7 +176,7 @@ public class JooqTableCudListenerTest {
         TableCudListener.WarnVisit = false;
         final List<Cud> d = wingsTableCudHandlerTest.getCud();
         final List<String> t = wingsTableCudHandlerTest.getTable();
-        List<Map<String, List<Object>>> f = wingsTableCudHandlerTest.getField();
+        List<Map<String, List<?>>> f = wingsTableCudHandlerTest.getField();
 
         if (cud == null) {
             Assertions.assertTrue(d.isEmpty());

@@ -67,7 +67,8 @@ public class FacelessJooqConfiguration {
     @Order(Ordered.HIGHEST_PRECEDENCE + 1000)
     public VisitListenerProvider tableCudListener(ObjectProvider<WingsTableCudHandler> handlers, FacelessJooqCudProp prop) {
         final List<WingsTableCudHandler> hdl = handlers.orderedStream().collect(Collectors.toList());
-        logger.info("Wings conf tableCudListener with handler size=" + hdl.size());
+        final String names = hdl.stream().map(it -> it.getClass().getName()).collect(Collectors.joining(","));
+        logger.info("Wings conf tableCudListener with handler=" + names);
         final TableCudListener listener = new TableCudListener();
         listener.setHandlers(hdl);
         listener.setInsert(prop.isInsert());

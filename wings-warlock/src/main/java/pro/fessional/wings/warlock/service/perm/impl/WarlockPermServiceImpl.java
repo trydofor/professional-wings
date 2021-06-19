@@ -63,7 +63,6 @@ public class WarlockPermServiceImpl implements WarlockPermService {
     }
 
     @Override
-    @CacheEvict(key = KeyPermAll)
     public void create(@NotNull String scopes, @NotNull Collection<Act> acts) {
         if (acts.isEmpty()) return;
 

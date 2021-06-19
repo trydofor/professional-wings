@@ -145,10 +145,10 @@ public class TableCudListener extends DefaultVisitListener {
             return;
         }
 
-        Map<String, List<Object>> field = (Map<String, List<Object>>) context.data(Key.EXECUTING_FIELD_MAP);
+        Map<String, List<?>> field = (Map<String, List<?>>) context.data(Key.EXECUTING_FIELD_MAP);
         if (field == null) field = Collections.emptyMap();
 
-        log.info("handle CUD={}, table={}, filed-size={}", cud, table, field.size());
+        log.debug("handle CUD={}, table={}, filed={}", cud, table, field);
         for (WingsTableCudHandler hd : handlers) {
             try {
                 hd.handle(cud, table, field);
@@ -160,7 +160,7 @@ public class TableCudListener extends DefaultVisitListener {
                 msg.append(", handle=").append(hd.getClass());
                 if (!field.isEmpty()) {
                     msg.append(", field=");
-                    for (Map.Entry<String, List<Object>> en : field.entrySet()) {
+                    for (Map.Entry<String, List<?>> en : field.entrySet()) {
                         msg.append(",").append(en.getKey()).append(":").append(en.getValue());
                     }
                 }
@@ -206,6 +206,7 @@ public class TableCudListener extends DefaultVisitListener {
             handleTable(context, (TableImpl<?>) query);
         }
         else if (clause == Clause.DELETE_WHERE && query instanceof Keyword) {
+            log.debug("handle delete-where");
             context.data(Key.EXECUTING_WHERE_CMP, Null.Str);
         }
         else {
@@ -224,10 +225,16 @@ public class TableCudListener extends DefaultVisitListener {
         }
         else if (clause == Clause.UPDATE_SET && query instanceof Map) {
             final Set<String> fds = (Set<String>) context.data(Key.EXECUTING_FIELD_KEY);
-            if (fds == null) return;
+            if (fds == null) {
+                log.debug("should not be here, update-table without key");
+                return;
+            }
 
             final Map<String, List<Object>> map = (Map<String, List<Object>>) context.data(Key.EXECUTING_FIELD_MAP);
-            if (map == null) return;
+            if (map == null) {
+                log.debug("should not be here, update-table without map");
+                return;
+            }
 
             final Map<?, ?> updSet = (Map<?, ?>) query;
             for (Map.Entry<?, ?> en : updSet.entrySet()) {
@@ -238,11 +245,16 @@ public class TableCudListener extends DefaultVisitListener {
                     if (fds.contains(fd)) {
                         final List<Object> set = map.computeIfAbsent(fd, k -> new ArrayList<>());
                         set.add(vl == null ? null : ((Param<?>) vl).getValue());
+                        log.debug("handle update-field, name={}", fd);
+                    }
+                    else {
+                        log.debug("skip careless update-field, name={}", fd);
                     }
                 }
             }
         }
         else if (clause == Clause.UPDATE_WHERE && query instanceof Keyword) {
+            log.debug("handle update-where");
             context.data(Key.EXECUTING_WHERE_CMP, Null.Str);
         }
         else {
@@ -253,38 +265,61 @@ public class TableCudListener extends DefaultVisitListener {
     @SuppressWarnings({"deprecation", "unchecked"})
     private void handleWhere(VisitContext context, Clause clause, QueryPart query) {
         if (clause == Clause.FIELD_REFERENCE && query instanceof TableField) {
-            if (context.data(Key.EXECUTING_WHERE_CMP) == null) return;
+            if (context.data(Key.EXECUTING_WHERE_CMP) == null) {
+                log.debug("skip where without where-clause");
+                return;
+            }
 
             final Set<String> fds = (Set<String>) context.data(Key.EXECUTING_FIELD_KEY);
-            if (fds == null) return;
+            if (fds == null) {
+                log.debug("should not be here, table without key");
+                return;
+            }
             final String fd = ((TableField<?, ?>) query).getName();
             if (fds.contains(fd)) {
+                log.debug("handle where-field={}", fd);
                 context.data(Key.EXECUTING_WHERE_KEY, fd);
             }
             else {
+                log.debug("skip careless where-field={}", fd);
                 context.data(Key.EXECUTING_WHERE_KEY, null);
             }
         }
         else if ((clause == Clause.CONDITION_COMPARISON || clause == Clause.CONDITION_IN) && query instanceof Keyword) {
-            if (context.data(Key.EXECUTING_WHERE_KEY) == null) return;
+            if (context.data(Key.EXECUTING_WHERE_KEY) == null) {
+                log.debug("skip comparison without where-key or careless");
+                return;
+            }
 
             final String cmp = query.toString();
             if (cmp.equals("=") || cmp.equals(">=") || cmp.equals("<=")) {
+                log.debug("handle comparison. key={}", cmp);
                 context.data(Key.EXECUTING_WHERE_CMP, WHERE_EQ);
             }
             else if (cmp.equalsIgnoreCase("in")) {
+                log.debug("handle comparison. key=in");
                 context.data(Key.EXECUTING_WHERE_CMP, WHERE_IN);
+            }
+            else {
+                log.debug("skip comparison. key={}", cmp);
             }
         }
         else if (clause == Clause.FIELD_VALUE && query instanceof Param) {
             final String fd = (String) context.data(Key.EXECUTING_WHERE_KEY);
-            if (fd == null) return;
+            if (fd == null) {
+                log.debug("skip where-field without where-key or careless");
+                return;
+            }
 
             final Map<String, List<Object>> map = (Map<String, List<Object>>) context.data(Key.EXECUTING_FIELD_MAP);
-            if (map == null) return;
+            if (map == null) {
+                log.debug("skip where-field without where-table or careless");
+                return;
+            }
 
             final Object cmp = context.data(Key.EXECUTING_WHERE_CMP);
             if (cmp == WHERE_EQ || cmp == WHERE_IN) {
+                log.debug("handle where-value key={}", cmp);
                 final List<Object> set = map.computeIfAbsent(fd, k -> new ArrayList<>());
                 set.add(((Param<?>) query).getValue());
             }
@@ -294,11 +329,21 @@ public class TableCudListener extends DefaultVisitListener {
     private void handleTable(VisitContext context, TableImpl<?> query) {
         final String tbl = query.getName();
         final Set<String> fds = tableField.get(tbl);
-        if (fds == null) return;
-
-        context.data(Key.EXECUTING_TABLE_STR, tbl);
-        context.data(Key.EXECUTING_FIELD_KEY, fds);
-        context.data(Key.EXECUTING_FIELD_MAP, new LinkedHashMap<>());
+        if (fds == null) {
+            if (WarnVisit) {
+                log.warn("skip careless table={}", tbl);
+            }
+            else {
+                log.debug("skip careless table={}", tbl);
+            }
+            context.data(Key.EXECUTING_VISIT_CUD, null);
+        }
+        else {
+            log.debug("handle table={}", tbl);
+            context.data(Key.EXECUTING_TABLE_STR, tbl);
+            context.data(Key.EXECUTING_FIELD_KEY, fds);
+            context.data(Key.EXECUTING_FIELD_MAP, new LinkedHashMap<>());
+        }
     }
 
     @SuppressWarnings({"deprecation", "unchecked"})
@@ -312,7 +357,10 @@ public class TableCudListener extends DefaultVisitListener {
         // QueryPartCollectionView
         else if (clause == Clause.INSERT_INSERT_INTO && query instanceof Collection) {
             final Set<String> fds = (Set<String>) context.data(Key.EXECUTING_FIELD_KEY);
-            if (fds == null) return;
+            if (fds == null) {
+                log.debug("should not be here, insert-table without key");
+                return;
+            }
 
             final Collection<?> col = (Collection<?>) query;
             int cnt = 0;
@@ -322,26 +370,42 @@ public class TableCudListener extends DefaultVisitListener {
                     cnt++;
                     final String name = ((TableField<?, ?>) o).getName();
                     if (fds.contains(name)) {
+                        log.debug("handle insert-field index={}, name={}", cnt, name);
                         idx.put(cnt, name);
                     }
                 }
             }
             if (cnt > 0) {
+                log.debug("handle insert-fields. count={}", cnt);
                 context.data(Key.EXECUTING_INSERT_CNT, new AtomicInteger(0));
                 context.data(Key.EXECUTING_INSERT_IDX, idx);
             }
         }
         else if (clause == Clause.FIELD_VALUE && query instanceof Param) {
             final AtomicInteger cnt = (AtomicInteger) context.data(Key.EXECUTING_INSERT_CNT);
-            if (cnt == null) return;
+            if (cnt == null) {
+                log.debug("should not be here, insert-fields without cnt");
+                return;
+            }
             final Map<Integer, String> idx = (Map<Integer, String>) context.data(Key.EXECUTING_INSERT_IDX);
-            if (idx == null) return;
+            if (idx == null) {
+                log.debug("skip careless insert-fields without index");
+                return;
+            }
             final String name = idx.get(cnt.incrementAndGet());
-            if (name != null) {
+            if (name == null) {
+                log.debug("skip careless insert-field not in index");
+            }
+            else {
                 final Map<String, List<Object>> map = (Map<String, List<Object>>) context.data(Key.EXECUTING_FIELD_MAP);
-                if (map == null) return;
-                final List<Object> set = map.computeIfAbsent(name, k -> new ArrayList<>());
-                set.add(((Param<?>) query).getValue());
+                if (map == null) {
+                    log.debug("should not be here, insert-field without map");
+                }
+                else {
+                    final List<Object> set = map.computeIfAbsent(name, k -> new ArrayList<>());
+                    set.add(((Param<?>) query).getValue());
+                    log.debug("handle insert-field={} with value", name);
+                }
             }
         }
     }

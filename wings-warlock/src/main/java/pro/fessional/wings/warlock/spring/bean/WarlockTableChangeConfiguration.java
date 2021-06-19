@@ -3,12 +3,16 @@ package pro.fessional.wings.warlock.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pro.fessional.wings.faceless.database.WingsTableCudHandler;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.warlock.service.event.TableChangePublisher;
 import pro.fessional.wings.warlock.service.event.impl.TableChangePublisherImpl;
+import pro.fessional.wings.warlock.service.event.impl.WingsTableCudHandlerImpl;
+import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 
 
 /**
@@ -16,6 +20,7 @@ import pro.fessional.wings.warlock.service.event.impl.TableChangePublisherImpl;
  * @since 2019-12-01
  */
 @Configuration
+@ConditionalOnProperty(name = WarlockEnabledProp.Key$tableChange, havingValue = "true")
 public class WarlockTableChangeConfiguration {
 
     private final static Log logger = LogFactory.getLog(WarlockTableChangeConfiguration.class);
@@ -26,13 +31,18 @@ public class WarlockTableChangeConfiguration {
         final ApplicationEventPublisher publisher;
         if (EventPublishHelper.hasHazelcast()) {
             publisher = EventPublishHelper.AsyncHazelcast;
-            logger.info("Wings conf tableChangePublisher");
+            logger.info("Wings conf tableChangePublisher with hazelcast");
         }
         else {
             publisher = EventPublishHelper.AsyncSpring;
-            logger.info("Wings conf tableChangePublisher");
+            logger.info("Wings conf tableChangePublisher with async spring");
         }
         return new TableChangePublisherImpl(publisher);
     }
 
+    @Bean
+    public WingsTableCudHandler wingsTableCudHandler() {
+        logger.info("Wings conf wingsTableCudHandler");
+        return new WingsTableCudHandlerImpl();
+    }
 }
