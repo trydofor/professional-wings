@@ -1,12 +1,8 @@
 package pro.fessional.wings.warlock.security.userdetails;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
@@ -14,10 +10,10 @@ import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 通过配置等，在内存中一直有效的预设用户验证信息。
@@ -34,13 +30,8 @@ public class MemoryUserDetailsCombo extends DefaultUserDetailsCombo {
 
     public static final int ORDER = WarlockOrderConst.UserDetailsCombo + 2_000;
 
-    private final Map<String, Set<Details>> typedUser = new ConcurrentHashMap<>();
-
-    @Setter(onMethod_ = {@Autowired})
-    private PasswordEncoder passwordEncoder;
-
-    @Setter @Getter
-    private boolean autoEncode = true;
+    // 以 username+authType去重
+    private final Map<String, List<Details>> typedUser = new ConcurrentHashMap<>();
 
     public MemoryUserDetailsCombo() {
         setOrder(ORDER);
@@ -51,19 +42,26 @@ public class MemoryUserDetailsCombo extends DefaultUserDetailsCombo {
      *
      * @param dtl 会被改变，自动加密密码
      */
-    public void addUser(Details dtl) {
+    public void addUser(@NotNull Details dtl) {
+        final List<Details> set = typedUser.computeIfAbsent(dtl.getUsername(), k -> new CopyOnWriteArrayList<>());
 
         final String psw = dtl.getPassword();
-        if (autoEncode && !(psw.startsWith("{") && psw.contains("}"))) {
-            dtl.setPassword(passwordEncoder.encode(psw));
+        final int bc = psw.indexOf("}", 2);
+        final String enc;
+        if (psw.startsWith("{") && bc > 0) {
+            enc = psw.substring(1, bc);
+        }
+        else {
+            enc = "{noop}";
+            dtl.setPassword(enc + psw);
         }
 
-        final Set<Details> set = typedUser.computeIfAbsent(dtl.getUsername(), k -> new CopyOnWriteArraySet<>());
-        log.info("add MemoryUser. uid={},username={}, authType={}", dtl.getUserId(), dtl.getUsername(), dtl.getAuthType());
+        log.info("add MemoryUser. uid={}, username={}, authType={}, encoder={}", dtl.getUserId(), dtl.getUsername(), dtl.getAuthType(), enc);
+        set.removeIf(it -> it.getAuthType() == dtl.getAuthType());
         set.add(dtl);
     }
 
-    public void addUser(long userId, Enum<?> authType, String username, String password) {
+    public void addUser(long userId, Enum<?> authType, @NotNull String username, @NotNull String password) {
         Details details = new Details();
         details.setUserId(userId);
         details.setAuthType(authType);
@@ -78,17 +76,17 @@ public class MemoryUserDetailsCombo extends DefaultUserDetailsCombo {
         addUser(details);
     }
 
-    public void delUser(String username) {
+    public void delUser(@NotNull String username) {
         delUser(username, null);
     }
 
-    public void delUser(String username, Enum<?> authType) {
+    public void delUser(@NotNull String username, Enum<?> authType) {
         if (authType == null) {
             delUser(username);
             return;
         }
 
-        final Set<Details> set = typedUser.get(username);
+        final List<Details> set = typedUser.get(username);
         if (set != null) {
             set.removeIf(it -> it.getAuthType() == authType);
         }
@@ -101,37 +99,37 @@ public class MemoryUserDetailsCombo extends DefaultUserDetailsCombo {
 
     @Override
     protected Details doLoad(@NotNull Enum<?> authType, String username, @Nullable Object authDetail) {
-        final Set<Details> details = typedUser.get(username);
+        final List<Details> details = typedUser.get(username);
         if (details == null || details.isEmpty()) return null;
 
-        LocalDateTime now = LocalDateTime.now();
 
-        details.removeIf(it -> it.getExpiredDt().isAfter(now));
-
-        Details nil = null;
+        Details dtl = null;
         for (Details d : details) {
-            if (d.getUsername().equals(username)) {
-                if (d.getAuthType() == null) {
-                    nil = d;
-                }
-                else if (d.getAuthType() == authType) {
-                    return d;
-                }
+            if (d.getAuthType() == null) {
+                dtl = d;
             }
-            else {
-                if (nil != null) {
-                    break;
-                }
+            else if (d.getAuthType() == authType) {
+                dtl = d;
+                break;
             }
         }
 
+        if (dtl == null) return null;
+
         // shallow copy with authType
-        if (nil != null) {
-            nil = nil.toBuilder()
+        if (dtl.getAuthType() == null) {
+            dtl = dtl.toBuilder()
                      .authType(authType)
                      .build();
         }
+        else {
+            LocalDateTime now = LocalDateTime.now();
+            if (now.isAfter(dtl.getExpiredDt())) {
+                details.removeIf(it -> now.isAfter(it.getExpiredDt()));
+                dtl = null;
+            }
+        }
 
-        return nil;
+        return dtl;
     }
 }

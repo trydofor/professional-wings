@@ -18,7 +18,7 @@ import pro.fessional.wings.warlock.database.autogen.tables.WinRoleEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinRoleEntryDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinRoleEntry;
 import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
-import pro.fessional.wings.warlock.service.perm.RoleNormalizer;
+import pro.fessional.wings.warlock.service.perm.AuthNormalizer;
 import pro.fessional.wings.warlock.service.perm.WarlockRoleService;
 
 import java.util.Map;
@@ -44,7 +44,7 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
     private JournalService journalService;
 
     @Setter(onMethod_ = {@Autowired})
-    private RoleNormalizer roleNormalizer;
+    private AuthNormalizer authNormalizer;
 
     @Override
     @Cacheable(key = KeyRoleAll)
@@ -57,7 +57,7 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
                 .from(t)
                 .where(t.onlyLiveData)
                 .fetch()
-                .intoMap(Record2::value1, it -> roleNormalizer.normalize(it.value2()));
+                .intoMap(Record2::value1, it -> authNormalizer.role(it.value2()));
         log.info("loadRoleAll size={}", all.size());
         return all;
     }

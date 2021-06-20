@@ -34,7 +34,7 @@ public class GlobalAttributeHolder {
     private static final Cache<Key<?, ?>, Object> CACHE = Caffeine.newBuilder()
                                                                   .expireAfterAccess(12, TimeUnit.HOURS)
                                                                   .build();
-    private static final ConcurrentHashMap<Reg<?, ?>, Function<?, ?>> HOLDER = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Reg<?, ?>, Function<?, ?>> LOADER = new ConcurrentHashMap<>();
 
     /**
      * 注册一个属性及其加载器
@@ -45,7 +45,7 @@ public class GlobalAttributeHolder {
      * @param <V>    value类型
      */
     public static <K, V> void regLoader(@NotNull Reg<K, V> reg, @NotNull Function<Key<K, V>, V> loader) {
-        HOLDER.put(reg, loader);
+        LOADER.put(reg, loader);
     }
 
     /**
@@ -104,7 +104,7 @@ public class GlobalAttributeHolder {
      * @return 返回值
      */
     @NotNull
-    public static <K, V> V                                                                                                                                                                                          getAttr(@NotNull Reg<K, V> reg, @NotNull K key) {
+    public static <K, V> V getAttr(@NotNull Reg<K, V> reg, @NotNull K key) {
         return getAttr(reg, key, true);
     }
 
@@ -122,8 +122,15 @@ public class GlobalAttributeHolder {
     @Contract("_,_,true ->!null")
     public static <K, V> V getAttr(@NotNull Reg<K, V> reg, @NotNull K key, boolean nonnull) {
         Key<K, V> k = new Key<>(reg, key);
-        final Function<Key<?, ?>, ?> ld = (Function<Key<?, ?>, ?>) HOLDER.get(reg);
-        final Object rst = CACHE.get(k, ld);
+        final Function<Key<?, ?>, ?> ld = (Function<Key<?, ?>, ?>) LOADER.get(reg);
+        final Object rst;
+        if (ld == null) {
+            rst = CACHE.getIfPresent(k);
+        }
+        else {
+            rst = CACHE.get(k, ld);
+        }
+
         if (rst == null && nonnull) {
             throw new NullPointerException("aware=" + reg + ",key=" + key);
         }
@@ -223,7 +230,7 @@ public class GlobalAttributeHolder {
         if (reg == null || reg.isEmpty()) return;
 
         for (Reg<?, ?> r : reg) {
-            HOLDER.remove(r);
+            LOADER.remove(r);
         }
         ridAttrAll(reg);
     }

@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
-import pro.fessional.wings.warlock.service.perm.RoleNormalizer;
+import pro.fessional.wings.warlock.service.perm.AuthNormalizer;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,7 +32,7 @@ public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
     private int order = ORDER;
 
     @Setter(onMethod_ = {@Autowired})
-    private RoleNormalizer roleNormalizer;
+    private AuthNormalizer authNormalizer;
 
     private final Map<Long, Set<String>> userAuthz = new ConcurrentHashMap<>();
     private final Map<String, Set<String>> namedAuthz = new ConcurrentHashMap<>();
@@ -194,28 +194,47 @@ public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
     @Override
     public void auth(@NotNull DefaultWingsUserDetails details, @NotNull Set<Object> role, @NotNull Set<Object> perm) {
 
-        final Set<String> az1 = namedAuthz.get(details.getUsername());
-        if (az1 != null) {
-            for (String s : az1) {
-                if (roleNormalizer.hasPrefix(s)) {
-                    role.add(s);
+        final Set<String> uaz = userAuthz.get(details.getUserId());
+        if (uaz != null) {
+            for (String s : uaz) {
+                if (authNormalizer.indexRolePrefix(s) < 0) {
+                    perm.add(s);
+                    log.debug("add uid-perm={}", s);
                 }
                 else {
-                    perm.add(s);
+                    role.add(s);
+                    log.debug("add uid-role={}", s);
                 }
             }
         }
 
-        final Map<Enum<?>, Set<String>> tpa = typedAuthz.get(details.getUsername());
-        if (tpa != null) {
-            final Set<String> az2 = tpa.get(details.getAuthType());
+        final Set<String> naz = namedAuthz.get(details.getUsername());
+        if (naz != null) {
+            for (String s : naz) {
+                if (authNormalizer.indexRolePrefix(s) < 0) {
+                    perm.add(s);
+                    log.debug("add name-perm={}", s);
+                }
+                else {
+                    role.add(s);
+                    log.debug("add name-role={}", s);
+                }
+            }
+        }
+
+        final Map<Enum<?>, Set<String>> taz = typedAuthz.get(details.getUsername());
+        if (taz != null) {
+            final Enum<?> at = details.getAuthType();
+            final Set<String> az2 = taz.get(at);
             if (az2 != null) {
                 for (String s : az2) {
-                    if (roleNormalizer.hasPrefix(s)) {
-                        role.add(s);
+                    if (authNormalizer.indexRolePrefix(s) < 0) {
+                        perm.add(s);
+                        log.debug("add type-perm={}, type={}", s, at);
                     }
                     else {
-                        perm.add(s);
+                        role.add(s);
+                        log.debug("add type-role={}, type={}", s, at);
                     }
                 }
             }

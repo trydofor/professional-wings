@@ -2,17 +2,22 @@ package pro.fessional.wings.warlock.spring.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 import static pro.fessional.mirana.cast.EnumConvertor.str2Enum;
+import static pro.fessional.wings.warlock.enums.autogen.UserStatus.ACTIVE;
 
 /**
  * wings-warlock-security-77.properties
@@ -220,6 +225,47 @@ public class WarlockSecurityProp {
     private Duration autoregExpired = Duration.ofDays(1000);
     public static final String Key$autoregExpired = Key + ".autoreg-expired";
 
+
+    /**
+     * 内存用户，key用户说明，重复时覆盖，建议为`username`+[`/`+`auth-type`]
+     * auth-type=""或null时，为匹配全部auth-type，而"null"为Null类型
+     * 其他设置，参考WarlockAuthnService.Details 的类型及默认值
+     *
+     * @see #Key$memUser
+     */
+    private Map<String, Mu> memUser = Collections.emptyMap();
+    public static final String Key$memUser = Key + ".mem-user";
+
+    /**
+     * 内存用户权限，key授权说明，重复时覆盖，建议以类型和用途
+     *
+     * @see #Key$memAuth
+     */
+    private Map<String, Ma> memAuth = Collections.emptyMap();
+    public static final String Key$memAuth = Key + ".mem-auth";
+
+    @Data
+    public static class Mu {
+        private long userId;
+        private String authType;
+        private String username;
+        private String password;
+        private UserStatus status = ACTIVE;
+        private String nickname;
+        private String passsalt = "";
+        private Locale locale = Locale.getDefault();
+        private ZoneId zoneId = ZoneId.systemDefault();
+        private LocalDateTime expired = LocalDateTime.MAX;
+    }
+
+    @Data
+    public static class Ma {
+        private long userId = -1;
+        private String authType;
+        private String username;
+        private Set<String> authRole = Collections.emptySet();
+        private Set<String> authPerm = Collections.emptySet();
+    }
 
     // ////
     public Map<String, Enum<?>> mapAuthTypeEnum() {

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
+import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.warlock.event.auth.WarlockNonceSendEvent;
@@ -19,8 +20,12 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.PermsByUid;
+import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.RolesByUid;
 
 /**
  * @author trydofor
@@ -46,9 +51,18 @@ public class LoginControllerTest {
     }
 
     @GetMapping("/auth/list-auth.json")
-    public Set<String> listAllRole() {
+    public Set<String> listAllAuth() {
         final Collection<GrantedAuthority> auth = SecurityContextUtil.getAuthorities();
         return auth.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+    }
+
+    @GetMapping("/auth/list-hold.json")
+    public Set<String> listAllHold() {
+        Set<String> set = new HashSet<>();
+        final long uid = SecurityContextUtil.getUserId();
+        set.addAll(GlobalAttributeHolder.getAttr(RolesByUid, uid));
+        set.addAll(GlobalAttributeHolder.getAttr(PermsByUid, uid));
+        return set;
     }
 
     @Data
