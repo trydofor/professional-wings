@@ -3,8 +3,11 @@ package pro.fessional.wings.slardar.serialize;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.DefaultArraySerializers;
 import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
 import org.objenesis.strategy.StdInstantiatorStrategy;
+import pro.fessional.wings.slardar.serialize.javakaffee.SynchronizedCollectionsSerializer;
+import pro.fessional.wings.slardar.serialize.javakaffee.UnmodifiableCollectionsSerializer;
 
 /**
  * @author trydofor
@@ -21,8 +24,21 @@ public class KryoSimple {
         ko.setReferences(false);
         ko.setRegistrationRequired(false);
         ko.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+        register(ko);
         return ko;
     });
+
+    /**
+     * 增加 用户Serializer，大部分Kryo自己实现了
+     *
+     * @param kryo 需要注册的类型
+     * @see DefaultArraySerializers
+     */
+    public static void register(Kryo kryo) {
+        // KryoException: java.lang.UnsupportedOperationException
+        UnmodifiableCollectionsSerializer.registerSerializers(kryo);
+        SynchronizedCollectionsSerializer.registerSerializers(kryo);
+    }
 
     public static Kryo getKryo() {
         return kryo.get();

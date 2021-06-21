@@ -40,8 +40,10 @@
     </near-cache>
     <serialization>
         <serializers>
-            <!-- override-java-serialization="true" failed if Immutable and unmodifiable -->
-            <global-serializer>pro.fessional.wings.slardar.serialize.KryoHazelcast</global-serializer>
+            <!-- need UnmodifiableCollectionsSerializer -->
+            <global-serializer override-java-serialization="true">
+                pro.fessional.wings.slardar.serialize.KryoHazelcast
+            </global-serializer>
             <!-- spring FindByIndexNameSessionRepository -->
             <serializer class-name="org.springframework.session.hazelcast.HazelcastSessionSerializer"
                         type-class="org.springframework.session.MapSession"/>
