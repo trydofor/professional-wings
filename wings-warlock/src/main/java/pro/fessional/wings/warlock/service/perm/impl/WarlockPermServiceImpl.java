@@ -8,12 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.warlock.database.autogen.tables.WinPermEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinPermEntryDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinPermEntry;
+import pro.fessional.wings.warlock.event.cache.TableChangeEvent;
 import pro.fessional.wings.warlock.service.perm.WarlockPermService;
 
 import java.util.ArrayList;
@@ -22,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import static pro.fessional.wings.warlock.service.grant.PermGrantHelper.unitePermit;
-import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheListener.KeyPermAll;
+import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheConst.KeyPermAll;
 
 /**
  * @author trydofor
@@ -30,7 +33,7 @@ import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheList
  */
 @Service
 @Slf4j
-@CacheConfig(cacheNames = WarlockPermCacheListener.CacheName, cacheManager = WarlockPermCacheListener.ManagerName)
+@CacheConfig(cacheNames = WarlockPermCacheConst.CacheName, cacheManager = WarlockPermCacheConst.ManagerName)
 public class WarlockPermServiceImpl implements WarlockPermService {
 
     @Setter(onMethod_ = {@Autowired})
@@ -57,9 +60,20 @@ public class WarlockPermServiceImpl implements WarlockPermService {
         return all;
     }
 
+    /**
+     * 异步清理缓存，event可以为null
+     * @param event 可以为null
+     */
+    @Async
+    @EventListener
     @CacheEvict(key = KeyPermAll)
-    public void evictPermAllCache() {
-        log.info("evict cache {}", KeyPermAll);
+    public void evictPermAllCache(TableChangeEvent event) {
+        if (event == null) {
+            log.info("evict cache={} by NULL", KeyPermAll);
+        }
+        else if (WinPermEntryTable.WinPermEntry.getName().equalsIgnoreCase(event.getTable())) {
+            log.info("evict cache={} by TableChangeEvent", KeyPermAll);
+        }
     }
 
     @Override

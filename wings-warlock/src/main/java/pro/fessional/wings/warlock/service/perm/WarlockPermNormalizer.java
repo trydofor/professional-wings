@@ -9,7 +9,7 @@ import lombok.Setter;
  * @author trydofor
  * @since 2021-06-08
  */
-public class AuthNormalizer {
+public class WarlockPermNormalizer {
 
     public static final String EXCLUDE = "-";
 

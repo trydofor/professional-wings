@@ -13,7 +13,7 @@ import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthzService;
 import pro.fessional.wings.warlock.service.grant.PermGrantHelper;
 import pro.fessional.wings.warlock.service.grant.WarlockGrantService;
-import pro.fessional.wings.warlock.service.perm.AuthNormalizer;
+import pro.fessional.wings.warlock.service.perm.WarlockPermNormalizer;
 import pro.fessional.wings.warlock.service.perm.WarlockPermService;
 import pro.fessional.wings.warlock.service.perm.WarlockRoleService;
 
@@ -38,7 +38,7 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
     private List<Combo> authCombos = Collections.emptyList();
 
     @Setter(onMethod_ = {@Autowired})
-    private AuthNormalizer authNormalizer;
+    private WarlockPermNormalizer permNormalizer;
 
     @Setter(onMethod_ = {@Autowired})
     private WarlockRoleService warlockRoleService;
@@ -105,8 +105,8 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
                 roleIds.add((Long) ro);
             }
             else if (ro instanceof String) {
-                String str = authNormalizer.role((String) ro);
-                int off = authNormalizer.indexExcludePrefix(str);
+                String str = permNormalizer.role((String) ro);
+                int off = permNormalizer.indexExcludePrefix(str);
                 if (off > 0) {
                     log.debug("off role by str={}", ro);
                     excStr.add(str.substring(off));
@@ -122,7 +122,7 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
                 auth.add(gt);
                 final String au = gt.getAuthority();
                 log.debug("add role by aut={}", au);
-                if (authNormalizer.indexRolePrefix(au) >= 0) {
+                if (permNormalizer.indexRolePrefix(au) >= 0) {
                     roleStr.add(au);
                 }
             }
@@ -184,7 +184,7 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
             }
             else if (po instanceof String) {
                 String pm = (String) po;
-                final int off = authNormalizer.indexExcludePrefix(pm);
+                final int off = permNormalizer.indexExcludePrefix(pm);
                 if (off < 0) {
                     permStr.add(pm);
                     auth.add(new SimpleGrantedAuthority(pm));

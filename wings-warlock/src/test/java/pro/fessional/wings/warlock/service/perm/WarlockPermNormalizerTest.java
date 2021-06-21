@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test;
  * @author trydofor
  * @since 2021-06-20
  */
-class AuthNormalizerTest {
+class WarlockPermNormalizerTest {
 
     @Test
     void normalize() {
-        AuthNormalizer normalizer = new AuthNormalizer();
+        WarlockPermNormalizer normalizer = new WarlockPermNormalizer();
         Assertions.assertEquals("ROLE_root", normalizer.role("root"));
         Assertions.assertEquals("ROLE_root", normalizer.role("ROLE_root"));
         Assertions.assertEquals("-ROLE_root", normalizer.role("-root"));

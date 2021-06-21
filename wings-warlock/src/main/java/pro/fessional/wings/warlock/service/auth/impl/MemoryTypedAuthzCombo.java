@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
-import pro.fessional.wings.warlock.service.perm.AuthNormalizer;
+import pro.fessional.wings.warlock.service.perm.WarlockPermNormalizer;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,7 +32,7 @@ public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
     private int order = ORDER;
 
     @Setter(onMethod_ = {@Autowired})
-    private AuthNormalizer authNormalizer;
+    private WarlockPermNormalizer permNormalizer;
 
     private final Map<Long, Set<String>> userAuthz = new ConcurrentHashMap<>();
     private final Map<String, Set<String>> namedAuthz = new ConcurrentHashMap<>();
@@ -197,7 +197,7 @@ public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
         final Set<String> uaz = userAuthz.get(details.getUserId());
         if (uaz != null) {
             for (String s : uaz) {
-                if (authNormalizer.indexRolePrefix(s) < 0) {
+                if (permNormalizer.indexRolePrefix(s) < 0) {
                     perm.add(s);
                     log.debug("add uid-perm={}", s);
                 }
@@ -211,7 +211,7 @@ public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
         final Set<String> naz = namedAuthz.get(details.getUsername());
         if (naz != null) {
             for (String s : naz) {
-                if (authNormalizer.indexRolePrefix(s) < 0) {
+                if (permNormalizer.indexRolePrefix(s) < 0) {
                     perm.add(s);
                     log.debug("add name-perm={}", s);
                 }
@@ -228,7 +228,7 @@ public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
             final Set<String> az2 = taz.get(at);
             if (az2 != null) {
                 for (String s : az2) {
-                    if (authNormalizer.indexRolePrefix(s) < 0) {
+                    if (permNormalizer.indexRolePrefix(s) < 0) {
                         perm.add(s);
                         log.debug("add type-perm={}, type={}", s, at);
                     }

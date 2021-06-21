@@ -51,7 +51,7 @@ import pro.fessional.wings.warlock.service.auth.impl.MemoryTypedAuthzCombo;
 import pro.fessional.wings.warlock.service.grant.WarlockGrantService;
 import pro.fessional.wings.warlock.service.grant.impl.WarlockGrantServiceImpl;
 import pro.fessional.wings.warlock.service.other.TerminalJournalService;
-import pro.fessional.wings.warlock.service.perm.AuthNormalizer;
+import pro.fessional.wings.warlock.service.perm.WarlockPermNormalizer;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp.Ma;
@@ -126,10 +126,10 @@ public class WarlockSecurityBeanConfiguration {
     ///////// AuthZ & AuthN /////////
 
     @Bean
-    @ConditionalOnMissingBean(AuthNormalizer.class)
-    public AuthNormalizer authNormalizer(GrantedAuthorityDefaults gad) {
-        logger.info("Wings conf authNormalizer");
-        final AuthNormalizer bean = new AuthNormalizer();
+    @ConditionalOnMissingBean(WarlockPermNormalizer.class)
+    public WarlockPermNormalizer warlockPermNormalizer(GrantedAuthorityDefaults gad) {
+        logger.info("Wings conf warlockPermNormalizer");
+        final WarlockPermNormalizer bean = new WarlockPermNormalizer();
         bean.setRolePrefix(gad.getRolePrefix());
         return bean;
     }
@@ -252,7 +252,7 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(MemoryTypedAuthzCombo.class)
-    public MemoryTypedAuthzCombo memoryTypedAuthzCombo(WingsAuthTypeParser typeParser, AuthNormalizer normalizer) {
+    public MemoryTypedAuthzCombo memoryTypedAuthzCombo(WingsAuthTypeParser typeParser, WarlockPermNormalizer normalizer) {
         logger.info("Wings conf memoryTypedAuthzCombo");
         final MemoryTypedAuthzCombo bean = new MemoryTypedAuthzCombo();
         for (Map.Entry<String, Ma> en : securityProp.getMemAuth().entrySet()) {

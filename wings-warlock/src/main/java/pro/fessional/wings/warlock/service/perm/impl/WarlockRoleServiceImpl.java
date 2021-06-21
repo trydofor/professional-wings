@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.Null;
@@ -18,12 +20,13 @@ import pro.fessional.wings.warlock.database.autogen.tables.WinRoleEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinRoleEntryDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinRoleEntry;
 import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
-import pro.fessional.wings.warlock.service.perm.AuthNormalizer;
+import pro.fessional.wings.warlock.event.cache.TableChangeEvent;
+import pro.fessional.wings.warlock.service.perm.WarlockPermNormalizer;
 import pro.fessional.wings.warlock.service.perm.WarlockRoleService;
 
 import java.util.Map;
 
-import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheListener.KeyRoleAll;
+import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheConst.KeyRoleAll;
 
 /**
  * @author trydofor
@@ -31,7 +34,7 @@ import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheList
  */
 @Service
 @Slf4j
-@CacheConfig(cacheNames = WarlockPermCacheListener.CacheName, cacheManager = WarlockPermCacheListener.ManagerName)
+@CacheConfig(cacheNames = WarlockPermCacheConst.CacheName, cacheManager = WarlockPermCacheConst.ManagerName)
 public class WarlockRoleServiceImpl implements WarlockRoleService {
 
     @Setter(onMethod_ = {@Autowired})
@@ -44,7 +47,7 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
     private JournalService journalService;
 
     @Setter(onMethod_ = {@Autowired})
-    private AuthNormalizer authNormalizer;
+    private WarlockPermNormalizer permNormalizer;
 
     @Override
     @Cacheable(key = KeyRoleAll)
@@ -57,14 +60,25 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
                 .from(t)
                 .where(t.onlyLiveData)
                 .fetch()
-                .intoMap(Record2::value1, it -> authNormalizer.role(it.value2()));
+                .intoMap(Record2::value1, it -> permNormalizer.role(it.value2()));
         log.info("loadRoleAll size={}", all.size());
         return all;
     }
 
+    /**
+     * 异步清理缓存，event可以为null
+     * @param event 可以为null
+     */
+    @Async
+    @EventListener
     @CacheEvict(key = KeyRoleAll)
-    public void evictRoleAllCache() {
-        log.info("evict cache {}", KeyRoleAll);
+    public void evictRoleAllCache(TableChangeEvent event) {
+        if (event == null) {
+            log.info("evict cache={} by NULL", KeyRoleAll);
+        }
+        else if (WinRoleEntryTable.WinRoleEntry.getName().equalsIgnoreCase(event.getTable())) {
+            log.info("evict cache={} by TableChangeEvent", KeyRoleAll);
+        }
     }
 
     @Override
