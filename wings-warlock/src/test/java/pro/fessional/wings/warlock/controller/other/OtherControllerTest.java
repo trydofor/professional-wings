@@ -10,6 +10,7 @@ import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 /**
@@ -31,6 +32,8 @@ public class OtherControllerTest {
         private String name;
         @NotBlank(message = "{test.age.empty}")
         private String age;
+        @Email(message = "{test.email.invalid}")
+        private String email;
     }
 
     @RequestMapping("/test/binding-error-from.json")

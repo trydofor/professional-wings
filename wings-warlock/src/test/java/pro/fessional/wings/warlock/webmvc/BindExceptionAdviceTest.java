@@ -30,9 +30,22 @@ public class BindExceptionAdviceTest {
                                 .header("Accept-Language", "en_US")
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                 .param("name", "")
+                                .param("email", "abc@google.com")
                                 .param("age", "41"))
                .andDo(print())
                .andExpect(content().string("{\"success\":false,\"message\":\"name=test name is empty\"}"));
+    }
+
+    @Test
+    public void bindingErrorEmail() throws Exception {
+        mockMvc.perform(post("/test/binding-error-from.json")
+                                .header("Accept-Language", "en_US")
+                                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                                .param("name", "name")
+                                .param("email", "@google.com")
+                                .param("age", "41"))
+               .andDo(print())
+               .andExpect(content().string("{\"success\":false,\"message\":\"email=test email is invalid\"}"));
     }
 
     @Test
