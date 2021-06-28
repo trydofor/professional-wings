@@ -32,13 +32,6 @@
         <ssl enabled="false"/>
     </network>
 
-    <!--
-    <map name="default">
-        <time-to-live-seconds>3600</time-to-live-seconds>
-        <max-idle-seconds>0</max-idle-seconds>
-        <eviction eviction-policy="LRU" max-size-policy="PER_NODE" size="5000"/>
-    </map>
-    -->
     <cp-subsystem>
         <cp-member-count>0</cp-member-count>
         <group-size>0</group-size>
@@ -47,16 +40,36 @@
         <missing-cp-member-auto-removal-seconds>14400</missing-cp-member-auto-removal-seconds>
         <fail-on-indeterminate-operation-state>false</fail-on-indeterminate-operation-state>
     </cp-subsystem>
+
+    <map name="default">
+        <!--
+        For the key, the equals/hashcode is determined based on the binary format.
+        https://hazelcast.com/blog/in-memory-format/
+        -->
+        <in-memory-format>BINARY</in-memory-format>
+        <time-to-live-seconds>${wings.slardar.cache.common.max-live}</time-to-live-seconds>
+        <max-idle-seconds>${wings.slardar.cache.common.max-idle}</max-idle-seconds>
+        <eviction size="${wings.slardar.cache.common.max-size}"/>
+        <near-cache name="default">
+            <in-memory-format>OBJECT</in-memory-format>
+            <time-to-live-seconds>0</time-to-live-seconds>
+            <max-idle-seconds>3600</max-idle-seconds>
+            <invalidate-on-change>true</invalidate-on-change>
+            <cache-local-entries>false</cache-local-entries>
+            <eviction eviction-policy="LRU" max-size-policy="ENTRY_COUNT" size="10000"/>
+        </near-cache>
+    </map>
+
     <!-- spring FindByIndexNameSessionRepository -->
     <map name="spring:session:sessions">
-        <in-memory-format>OBJECT</in-memory-format>
+        <in-memory-format>BINARY</in-memory-format>
         <near-cache>
+            <in-memory-format>OBJECT</in-memory-format>
             <time-to-live-seconds>0</time-to-live-seconds>
             <max-idle-seconds>0</max-idle-seconds>
             <invalidate-on-change>true</invalidate-on-change>
-            <in-memory-format>OBJECT</in-memory-format>
             <cache-local-entries>false</cache-local-entries>
-            <eviction size="1000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
+            <eviction size="10000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
         </near-cache>
         <attributes>
             <attribute extractor-class-name="org.springframework.session.hazelcast.Hazelcast4PrincipalNameExtractor">principalName</attribute>
@@ -73,9 +86,7 @@
     <serialization>
         <serializers>
             <!-- need UnmodifiableCollectionsSerializer -->
-            <global-serializer override-java-serialization="true">
-                pro.fessional.wings.slardar.serialize.KryoHazelcast
-            </global-serializer>
+            <global-serializer>pro.fessional.wings.slardar.serialize.KryoHazelcast</global-serializer>
             <!-- spring FindByIndexNameSessionRepository -->
             <serializer class-name="org.springframework.session.hazelcast.HazelcastSessionSerializer"
                         type-class="org.springframework.session.MapSession"/>

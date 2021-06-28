@@ -17,20 +17,27 @@ class WarlockPermCacheListenerTest {
 
     @Setter(onMethod_ = {@Autowired})
     private WarlockPermService warlockPermServer;
+    @Setter(onMethod_ = {@Autowired})
+    private WarlockRoleService warlockRoleService;
 
     @Test
     @Disabled("手动看日志")
     void cleanCache() throws InterruptedException {
-        log.info("无缓存，从数据库加载");
+        log.warn("无缓存，从数据库加载Perm");
         warlockPermServer.loadPermAll();
-        log.info("有缓存，无数据库加载");
+        log.warn("无缓存，从数据库加载Role");
+        warlockRoleService.loadRoleAll();
+        log.warn("有缓存，无任何数据库");
         warlockPermServer.loadPermAll();
-        log.info("修改Perm=1，触发jooq CUD事件");
+        warlockRoleService.loadRoleAll();
+        log.warn("修改Perm=1，触发jooq CUD事件");
         warlockPermServer.modify(1, "test cleanCache");
         log.info("睡眠3秒，等待async事件");
         Thread.sleep(3000);
-        log.info("无缓存，从数据库加载");
+        log.warn("无缓存，从数据库加载Perm");
         warlockPermServer.loadPermAll();
-        log.info("查看日志");
+        log.warn("有缓存，不从数据库加载Role");
+        warlockRoleService.loadRoleAll();
+        log.warn("查看日志");
     }
 }

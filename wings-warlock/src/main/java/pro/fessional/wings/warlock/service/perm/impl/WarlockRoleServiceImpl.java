@@ -9,7 +9,6 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.Null;
@@ -27,6 +26,7 @@ import pro.fessional.wings.warlock.service.perm.WarlockRoleService;
 import java.util.Map;
 
 import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheConst.KeyRoleAll;
+import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheConst.SpelRoleAll;
 
 /**
  * @author trydofor
@@ -50,7 +50,7 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
     private WarlockPermNormalizer permNormalizer;
 
     @Override
-    @Cacheable(key = KeyRoleAll)
+    @Cacheable(key = SpelRoleAll)
     public Map<Long, String> loadRoleAll() {
         final WinRoleEntryTable t = winRoleEntryDao.getTable();
 
@@ -67,18 +67,21 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
 
     /**
      * 异步清理缓存，event可以为null
+     *
      * @param event 可以为null
      */
-    @Async
     @EventListener
-    @CacheEvict(key = KeyRoleAll)
-    public void evictRoleAllCache(TableChangeEvent event) {
+    @CacheEvict(key = "#result", condition = "#result != null")
+    public Object evictRoleAllCache(TableChangeEvent event) {
         if (event == null) {
             log.info("evict cache={} by NULL", KeyRoleAll);
+            return KeyRoleAll;
         }
         else if (WinRoleEntryTable.WinRoleEntry.getName().equalsIgnoreCase(event.getTable())) {
-            log.info("evict cache={} by TableChangeEvent", KeyRoleAll);
+            log.info("evict cache={} by {}", KeyRoleAll, event.getTable());
+            return KeyRoleAll;
         }
+        return null;
     }
 
     @Override

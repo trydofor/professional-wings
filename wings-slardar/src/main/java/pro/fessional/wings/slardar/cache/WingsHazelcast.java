@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import static pro.fessional.wings.slardar.spring.prop.SlardarCacheProp.maxInt;
 import static pro.fessional.wings.slardar.spring.prop.SlardarCacheProp.wildcard;
 
 /**
@@ -94,44 +93,41 @@ public class WingsHazelcast {
 
         private void checkMapConf(com.hazelcast.config.Config config, Map<String, MapConfig> mapCnf, String name, int ttl, int tti, int max) {
             // check default
-            final int ttl1 = maxInt(ttl);
-            final int tti1 = maxInt(tti);
-            final int max1 = maxInt(max);
             MapConfig mc = mapCnf.get(name);
 
             try {
                 if (mc == null) {
                     mc = new MapConfig(name);
-                    mc.setTimeToLiveSeconds(ttl1);
-                    mc.setMaxIdleSeconds(tti1);
-                    mc.getEvictionConfig().setSize(max1);
-                    log.info("Wings hazelcast addMapConfig name={}, ttl={}, tti={}, size={}", name, ttl1, tti1, max1);
+                    mc.setTimeToLiveSeconds(ttl);
+                    mc.setMaxIdleSeconds(tti);
+                    mc.getEvictionConfig().setSize(max);
+                    log.info("Wings hazelcast addMapConfig name={}, ttl={}, tti={}, size={}", name, ttl, tti, max);
                     config.addMapConfig(mc);
                 }
                 else {
                     boolean diff = false;
                     final int ttl0 = mc.getTimeToLiveSeconds();
-                    if (ttl0 != ttl1) {
+                    if (ttl0 != ttl) {
                         diff = true;
-                        mc.setTimeToLiveSeconds(ttl1);
-                        log.warn("Wings hazelcast exist TimeToLiveSeconds diff {} to {}", ttl0, ttl1);
+                        mc.setTimeToLiveSeconds(ttl);
+                        log.warn("Wings hazelcast exist TimeToLiveSeconds of name={}, from {} to {}", name, ttl0, ttl);
                     }
                     final int tti0 = mc.getMaxIdleSeconds();
-                    if (tti0 != tti1) {
+                    if (tti0 != tti) {
                         diff = true;
-                        mc.setMaxIdleSeconds(tti1);
-                        log.warn("Wings hazelcast exist MaxIdleSeconds diff {} to {}", tti0, tti1);
+                        mc.setMaxIdleSeconds(tti);
+                        log.warn("Wings hazelcast exist MaxIdleSeconds of name={}, from {} to {}", name, tti0, tti);
                     }
 
                     int max0 = mc.getEvictionConfig().getSize();
-                    if (max0 != max1) {
+                    if (max0 != max) {
                         diff = true;
-                        mc.getEvictionConfig().setSize(max1);
-                        log.warn("Wings hazelcast default Eviction-max0 diff {} to {}", max0, max);
+                        mc.getEvictionConfig().setSize(max);
+                        log.warn("Wings hazelcast default Eviction-max0 of name={}, from {} to {}",name, max0, max);
                     }
 
                     if (diff) {
-                        log.warn("Wings hazelcast default diff. dynamically change may has conflict. \nsee https://docs.hazelcast.org/docs/4.0.3/manual/html-single/index.html#dynamically-adding-data-structure-configuration-on-a-cluster");
+                        log.warn("Wings hazelcast dynamically change may has conflict. \nsee https://docs.hazelcast.org/docs/4.0.3/manual/html-single/index.html#dynamically-adding-data-structure-configuration-on-a-cluster");
                     }
                 }
             }

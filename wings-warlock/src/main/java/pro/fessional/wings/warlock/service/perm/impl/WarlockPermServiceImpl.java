@@ -9,7 +9,6 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
@@ -26,6 +25,7 @@ import java.util.Map;
 
 import static pro.fessional.wings.warlock.service.grant.PermGrantHelper.unitePermit;
 import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheConst.KeyPermAll;
+import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheConst.SpelPermAll;
 
 /**
  * @author trydofor
@@ -45,7 +45,7 @@ public class WarlockPermServiceImpl implements WarlockPermService {
     private JournalService journalService;
 
     @Override
-    @Cacheable(key = KeyPermAll)
+    @Cacheable(key = SpelPermAll)
     public Map<Long, String> loadPermAll() {
         final WinPermEntryTable t = winPermEntryDao.getTable();
 
@@ -62,18 +62,21 @@ public class WarlockPermServiceImpl implements WarlockPermService {
 
     /**
      * 异步清理缓存，event可以为null
+     *
      * @param event 可以为null
      */
-    @Async
     @EventListener
-    @CacheEvict(key = KeyPermAll)
-    public void evictPermAllCache(TableChangeEvent event) {
+    @CacheEvict(key = "#result", condition = "#result != null")
+    public Object evictPermAllCache(TableChangeEvent event) {
         if (event == null) {
             log.info("evict cache={} by NULL", KeyPermAll);
+            return KeyPermAll;
         }
         else if (WinPermEntryTable.WinPermEntry.getName().equalsIgnoreCase(event.getTable())) {
-            log.info("evict cache={} by TableChangeEvent", KeyPermAll);
+            log.info("evict cache={} by {}", KeyPermAll, event.getTable());
+            return KeyPermAll;
         }
+        return null;
     }
 
     @Override

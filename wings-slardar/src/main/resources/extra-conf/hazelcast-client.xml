@@ -8,7 +8,7 @@
     <network>
         <cluster-members>
             <address>127.0.0.1</address>
-<!--            <address>127.0.0.2</address>-->
+            <!--            <address>127.0.0.2</address>-->
         </cluster-members>
         <outbound-ports>
             <ports>34600</ports>
@@ -41,20 +41,18 @@
     <serialization>
         <serializers>
             <!-- need UnmodifiableCollectionsSerializer -->
-            <global-serializer override-java-serialization="true">
-                pro.fessional.wings.slardar.serialize.KryoHazelcast
-            </global-serializer>
+            <global-serializer>pro.fessional.wings.slardar.serialize.KryoHazelcast</global-serializer>
             <!-- spring FindByIndexNameSessionRepository -->
             <serializer class-name="org.springframework.session.hazelcast.HazelcastSessionSerializer"
                         type-class="org.springframework.session.MapSession"/>
         </serializers>
     </serialization>
     <user-code-deployment enabled="true">
-<!--        <jarPaths>-->
-<!--            <jarPath>example.jar</jarPath>-->
-<!--            <jarPath>https://hazelcast.com/</jarPath>-->
-<!--            <jarPath>file://User/test/sample.jar</jarPath>-->
-<!--        </jarPaths>-->
+        <!--        <jarPaths>-->
+        <!--            <jarPath>example.jar</jarPath>-->
+        <!--            <jarPath>https://hazelcast.com/</jarPath>-->
+        <!--            <jarPath>file://User/test/sample.jar</jarPath>-->
+        <!--        </jarPaths>-->
         <classNames>
             <className>pro.fessional.wings.slardar.service.TestWingsUserDetails</className>
         </classNames>
