@@ -4,7 +4,6 @@ import com.hazelcast.core.HazelcastInstance;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
@@ -39,11 +38,13 @@ public class SlardarEventConfiguration {
         return executor;
     }
 
-    @Autowired
-    public void autowiredEventPublishHelper(ApplicationEventPublisher publisher,
-                                            @Qualifier(SLARDAR_EVENT_EXECUTOR) Executor executor,
-                                            ObjectProvider<HazelcastInstance> hazelcast) {
-        new EventPublishHelper(publisher, executor, hazelcast.getIfAvailable()) {};
-        logger.info("Wings conf autowired EventPublishHelper with " + SLARDAR_EVENT_EXECUTOR);
+    @Bean
+    public EventPublishHelper eventPublishHelper(ApplicationEventPublisher publisher,
+                                                 @Qualifier(SLARDAR_EVENT_EXECUTOR) Executor executor,
+                                                 ObjectProvider<HazelcastInstance> hazelcast) {
+
+        final HazelcastInstance hz = hazelcast.getIfAvailable();
+        logger.info("Wings conf eventPublishHelper with " + SLARDAR_EVENT_EXECUTOR + ", Hazelcast=" + (hz != null));
+        return new EventPublishHelper(publisher, executor, hz) {};
     }
 }
