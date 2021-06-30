@@ -93,15 +93,9 @@ public class MemoryUserDetailsCombo extends DefaultUserDetailsCombo {
     }
 
     @Override
-    protected boolean accept(Enum<?> authType) {
-        return true;
-    }
-
-    @Override
     protected Details doLoad(@NotNull Enum<?> authType, String username, @Nullable Object authDetail) {
         final List<Details> details = typedUser.get(username);
         if (details == null || details.isEmpty()) return null;
-
 
         Details dtl = null;
         for (Details d : details) {

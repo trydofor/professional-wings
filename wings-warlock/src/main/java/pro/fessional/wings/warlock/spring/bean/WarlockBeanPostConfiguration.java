@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.faceless.enums.LanguageEnumUtil;
@@ -15,9 +14,7 @@ import pro.fessional.wings.faceless.enums.StandardTimezoneEnum;
 import pro.fessional.wings.faceless.enums.TimezoneEnumUtil;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.context.RighterInterceptor;
-import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
 import pro.fessional.wings.warlock.spring.prop.WarlockI18nProp;
-import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
 import java.util.function.Function;
 
@@ -59,22 +56,6 @@ public class WarlockBeanPostConfiguration {
     }
 
     @Bean
-    @ConditionalOnBean(DefaultUserDetailsCombo.class)
-    public BeanPostProcessor beanPostDefaultUserDetailsCombo(WarlockSecurityProp securityProp) {
-        logger.info("Wings conf beanPostDefaultUserDetailsCombo");
-        return new BeanPostProcessor() {
-            @Override
-            public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
-                if (bean instanceof DefaultUserDetailsCombo) {
-                    ((DefaultUserDetailsCombo) bean).addAutoRegisterType(securityProp.mapAutoregAuthEnum());
-                }
-                return bean;
-            }
-        };
-    }
-
-    @Bean
-    @ConditionalOnBean(RighterInterceptor.class)
     public BeanPostProcessor beanPostRighterInterceptor() {
         logger.info("Wings conf beanPostRighterInterceptor");
         return new BeanPostProcessor() {

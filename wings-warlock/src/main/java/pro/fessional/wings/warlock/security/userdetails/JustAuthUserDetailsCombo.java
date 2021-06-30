@@ -6,7 +6,7 @@ import me.zhyd.oauth.model.AuthUser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
-import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
+import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
 
 /**
@@ -25,19 +25,17 @@ public class JustAuthUserDetailsCombo extends DefaultUserDetailsCombo {
     }
 
     @Override
-    protected boolean accept(Enum<?> authType) {
-        return authType instanceof AuthSource;
-    }
-
-    @Override
     protected boolean authed(Enum<?> authType) {
         return true;
     }
 
     @Override
-    protected WarlockAuthnService.Details doLoad(@NotNull Enum<?> authType, String username, @Nullable Object authDetail) {
+    protected Details doLoad(@NotNull Enum<?> authType, String username, @Nullable Object authDetail) {
+        if (!(authType instanceof AuthSource)) return null;
+
         if (username.isEmpty() && authDetail instanceof AuthUser) {
             username = ((AuthUser) authDetail).getUuid();
+            log.info("load auth-user by {} use uuid={}", authType, username);
         }
         return super.doLoad(authType, username, authDetail);
     }

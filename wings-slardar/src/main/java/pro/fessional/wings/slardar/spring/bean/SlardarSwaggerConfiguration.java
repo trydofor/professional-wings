@@ -102,12 +102,12 @@ public class SlardarSwaggerConfiguration implements BeanFactoryPostProcessor, Be
                                                          .stream()
                                                          .filter(e -> e.getValue().isEnable())
                                                          .map(e -> new RequestParameterBuilder()
-                                                                           .name(e.getKey())
-                                                                           .in(e.getValue().getType())
-                                                                           .description(e.getValue().getDescription())
-                                                                           .query(q -> q.defaultValue(e.getValue().getValue()))
-                                                                           .required(false)
-                                                                           .build())
+                                                                 .name(e.getKey())
+                                                                 .in(e.getValue().getType())
+                                                                 .description(e.getValue().getDescription())
+                                                                 .query(q -> q.defaultValue(e.getValue().getValue()))
+                                                                 .required(false)
+                                                                 .build())
                                                          .collect(Collectors.toList());
         if (!param.isEmpty()) {
             for (RequestParameter rp : param) {
@@ -134,21 +134,21 @@ public class SlardarSwaggerConfiguration implements BeanFactoryPostProcessor, Be
             final String ver = Z.notBlank(grp.getVersion(), api.getVersion());
 
             final ApiInfo info = new ApiInfoBuilder()
-                                         .title(tit)
-                                         .description(dsp)
-                                         .version(ver)
-                                         .build();
+                    .title(tit)
+                    .description(dsp)
+                    .version(ver)
+                    .build();
 
             Docket dkt = new Docket(DocumentationType.SWAGGER_2)
-                                 .enable(grp.isEnable())
-                                 .groupName(name)
-                                 .apiInfo(info)
-                                 .globalRequestParameters(param)
-                                 .host(StringUtils.hasText(grp.getHost()) ? grp.getHost() : null)
-                                 .select()
-                                 .apis(apis)
-                                 .paths(paths)
-                                 .build();
+                    .enable(grp.isEnable())
+                    .groupName(name)
+                    .apiInfo(info)
+                    .globalRequestParameters(param)
+                    .host(StringUtils.hasText(grp.getHost()) ? grp.getHost() : null)
+                    .select()
+                    .apis(apis)
+                    .paths(paths)
+                    .build();
 
             beanFactory.registerSingleton(name + "Docket", dkt);
         }

@@ -47,7 +47,7 @@ public class LoginPageController {
                                            HttpServletRequest request,
                                            HttpServletResponse response) {
         final Enum<?> em = wingsAuthTypeParser.parse(authType);
-        final MediaType mt = ContentTypeHelper.mediaTypeByUri(extName);
+        final MediaType mt = ContentTypeHelper.mediaTypeByUri(extName, MediaType.APPLICATION_JSON);
         log.info("{} login-page media-type={}", authType, mt);
         return wingsAuthPageHandler.response(em, mt, request, response);
     }

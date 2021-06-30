@@ -11,7 +11,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MimeType;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
@@ -35,18 +34,21 @@ public class JustAuthLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
     private int order = ORDER;
 
     @Override
-    public ResponseEntity<?> response(@NotNull Enum<?> authType, @Nullable MimeType mimeType, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
+    public ResponseEntity<?> response(@NotNull Enum<?> authType, @Nullable MediaType mediaType, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         final AuthRequest ar = justAuthRequestBuilder.buildRequest(authType);
         if (ar == null) return null;
 
         final String authorize = ar.authorize(AuthStateUtils.createState());
-        if (MediaType.TEXT_HTML.isCompatibleWith(mimeType)) {
+        if (mediaType != null && mediaType.getSubtype().contains("html")) {
             // response.sendRedirect(url); 302
             return ResponseEntity.status(HttpStatus.FOUND)
+                                 .contentType(MediaType.TEXT_XML)
                                  .header(HttpHeaders.LOCATION, authorize)
                                  .build();
-        } else {
+        }
+        else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                 .contentType(mediaType == null ? MediaType.APPLICATION_JSON : mediaType)
                                  .body(R.okData(authorize));
         }
     }

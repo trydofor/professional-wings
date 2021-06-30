@@ -68,7 +68,7 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, Ini
             po.setId(uid);
             po.setNickname(user.getNickname());
 
-            final String passsalt = RandCode.strong(60);
+            final String passsalt = RandCode.human(40);
             GlobalAttributeHolder.putAttr(SaltByUid, uid, passsalt);
             po.setPasssalt(passsalt);
 

@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MimeType;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
@@ -31,9 +31,10 @@ public class ListAllLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
     private int order = ORDER;
 
     @Override
-    public ResponseEntity<?> response(@NotNull Enum<?> authType, @Nullable MimeType mimeType, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
+    public ResponseEntity<?> response(@NotNull Enum<?> authType, @Nullable MediaType mediaType, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         return ResponseEntity
-                       .status(HttpStatus.UNAUTHORIZED)
-                       .body(R.okData(warlockSecurityProp.getAuthType().keySet()));
+                .status(HttpStatus.UNAUTHORIZED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(R.okData(warlockSecurityProp.getAuthType().keySet()));
     }
 }

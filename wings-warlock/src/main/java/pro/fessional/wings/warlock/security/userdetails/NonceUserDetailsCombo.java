@@ -50,12 +50,11 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
     }
 
     @Override
-    protected boolean accept(Enum<?> authType) {
-        return acceptNonceType.contains(authType);
-    }
-
-    @Override
     protected Details doLoad(@NotNull Enum<?> authType, String username, @Nullable Object authDetail) {
+        if (!acceptNonceType.contains(authType)) {
+            return null;
+        }
+
         final Cache cache = getCache();
         final String key = cacheKey(authType, username);
         final WarlockNonceSendEvent event = cache.get(key, WarlockNonceSendEvent.class);

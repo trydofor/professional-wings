@@ -71,14 +71,14 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
                                       .and(auth.onlyLiveData);
 
         final Details details = winUserAnthnDao
-                                        .ctx()
-                                        .select(auth.UserId, user.Nickname,
-                                                user.Locale, user.Zoneid.as("zoneId"),
-                                                user.Status, auth.Username,
-                                                auth.Password, auth.ExpiredDt)
-                                        .from(user, auth)
-                                        .where(cond)
-                                        .fetchOneInto(Details.class);
+                .ctx()
+                .select(auth.UserId, user.Nickname,
+                        user.Locale, user.Zoneid.as("zoneId"),
+                        user.Status, auth.Username,
+                        auth.Password, auth.ExpiredDt)
+                .from(user, auth)
+                .where(cond)
+                .fetchOneInto(Details.class);
         if (details != null) {
             details.setAuthType(authType);
             final String passsalt = GlobalAttributeHolder.getAttr(WarlockUserAttribute.SaltByUid, details.getUserId());
@@ -122,7 +122,10 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         for (AutoReg autoReg : authAutoRegs) {
             if (autoReg.accept(authType, username, details)) {
                 final Details dt = autoReg.create(authType, username, details);
-                if (dt != null) return dt;
+                if (dt != null) {
+                    log.info("register by AutoReg={}", autoReg.getClass());
+                    return dt;
+                }
             }
         }
         return null;
@@ -158,11 +161,11 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         final String at = wingsAuthTypeParser.parse(authType);
         final WinUserAnthnTable ta = winUserAnthnDao.getTable();
         val auth = winUserAnthnDao
-                           .ctx()
-                           .select(ta.UserId, ta.FailedCnt, ta.FailedMax, ta.Id)
-                           .from(ta)
-                           .where(ta.Username.eq(username).and(ta.AuthType.eq(at)).and(ta.onlyLiveData))
-                           .fetchOne();
+                .ctx()
+                .select(ta.UserId, ta.FailedCnt, ta.FailedMax, ta.Id)
+                .from(ta)
+                .where(ta.Username.eq(username).and(ta.AuthType.eq(at)).and(ta.onlyLiveData))
+                .fetchOne();
 
         if (auth == null) {
             log.info("ignore login failure by not found auth-type={}, username={}", at, username);

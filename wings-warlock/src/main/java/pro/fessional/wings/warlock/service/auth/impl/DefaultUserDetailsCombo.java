@@ -15,7 +15,6 @@ import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthzService;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,11 +29,11 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
 
     public static final int ORDER = WarlockOrderConst.UserDetailsCombo + 10_000;
 
-    @Getter
-    @Setter
+    @Getter @Setter
     private int order = ORDER;
 
-    private final Set<Enum<?>> autoRegisterType = new HashSet<>();
+    @Getter @Setter
+    private Set<Enum<?>> autoRegisterType = new HashSet<>();
 
     @Setter(onMethod_ = {@Autowired})
     private WarlockAuthnService warlockAuthnService;
@@ -43,39 +42,35 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
 
     @Override
     public DefaultWingsUserDetails loadOrNull(String username, @NotNull Enum<?> authType, @Nullable Object authDetail) {
-        if (!accept(authType)) {
-            return null;
-        }
 
         Details dt = doLoad(authType, username, authDetail);
-
+        boolean at = false;
         if (dt == null && autoRegisterType.contains(authType)) {
-            log.info("auto-register user by auth-user, username={}, auth-type={}", username, authType);
             dt = warlockAuthnService.register(authType, username, authDetail);
-            EventPublishHelper.SyncSpring.publishEvent(new WarlockAutoRegisterEvent(dt));
+            if (dt != null) {
+                at = true;
+                EventPublishHelper.SyncSpring.publishEvent(new WarlockAutoRegisterEvent(dt));
+            }
         }
 
-        if (dt == null) {
-            log.info("can not load user by username={}, auth-type={} ,auto-register=false", username, authType);
-            return null;
+        if (dt == null) return null;
+
+        if (at) {
+            log.info("autoreg auth-user, username={}, auth-type={}, class={}", username, authType, this.getClass());
+        }
+        else {
+            log.info("loading auth-user, username={}, auth-type={}, class={}", username, authType, this.getClass());
         }
 
-        DefaultWingsUserDetails wud = new DefaultWingsUserDetails();
+        final DefaultWingsUserDetails wud = new DefaultWingsUserDetails();
         warlockAuthnService.auth(wud, dt);
         warlockAuthzService.auth(wud);
-        wud.setPreAuthed(authed(authType));
+        if (!wud.isPreAuthed()) {
+            // 无前置验证时，自动注册认为可登录
+            wud.setPreAuthed(at || authed(authType));
+        }
 
         return wud;
-    }
-
-    /**
-     * 是否能处理，默认true
-     *
-     * @param authType 类型
-     * @return true
-     */
-    protected boolean accept(Enum<?> authType) {
-        return true;
     }
 
     /**
@@ -94,14 +89,5 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
     @Nullable
     protected Details doLoad(@NotNull Enum<?> authType, String username, @Nullable Object authDetail) {
         return warlockAuthnService.load(authType, username);
-    }
-
-    ///
-    public void addAutoRegisterType(Enum<?> en) {
-        autoRegisterType.add(en);
-    }
-
-    public void addAutoRegisterType(Collection<? extends Enum<?>> en) {
-        autoRegisterType.addAll(en);
     }
 }

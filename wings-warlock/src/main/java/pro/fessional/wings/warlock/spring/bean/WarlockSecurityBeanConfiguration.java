@@ -88,7 +88,6 @@ public class WarlockSecurityBeanConfiguration {
     }
 
     @Bean
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$terminal, havingValue = "true")
     public TerminalJournalService terminalJournalService(
             LightIdService lightIdService,
@@ -101,7 +100,6 @@ public class WarlockSecurityBeanConfiguration {
 
     ///////// handler /////////
     @Bean
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @ConditionalOnMissingBean(AuthenticationSuccessHandler.class)
     public AuthenticationSuccessHandler loginSuccessHandler(SlardarSessionProp sessionProp) {
         final String headerName = sessionProp.getHeaderName();
@@ -162,7 +160,9 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnMissingBean(DefaultUserDetailsCombo.class)
     public DefaultUserDetailsCombo defaultUserDetailsCombo() {
         logger.info("Wings conf defaultUserDetailsCombo");
-        return new DefaultUserDetailsCombo();
+        final DefaultUserDetailsCombo bean = new DefaultUserDetailsCombo();
+        bean.setAutoRegisterType(securityProp.mapAutoregAuthEnum());
+        return bean;
     }
 
     @Bean
