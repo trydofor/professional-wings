@@ -32,7 +32,7 @@ public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
     private int order = ORDER;
 
     @Setter(onMethod_ = {@Autowired})
-    private WarlockPermNormalizer permNormalizer;
+    protected WarlockPermNormalizer permNormalizer;
 
     private final Map<Long, Set<String>> userAuthz = new ConcurrentHashMap<>();
     private final Map<String, Set<String>> namedAuthz = new ConcurrentHashMap<>();

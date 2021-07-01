@@ -7,7 +7,6 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.Z;
@@ -34,30 +33,29 @@ import java.util.Map;
  * @author trydofor
  * @since 2021-03-25
  */
-@Service
 @Slf4j
 public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
     @Setter(onMethod_ = {@Autowired})
-    private WinUserAnthnDao winUserAnthnDao;
+    protected WinUserAnthnDao winUserAnthnDao;
 
     @Setter(onMethod_ = {@Autowired})
-    private WingsAuthTypeParser wingsAuthTypeParser;
+    protected WingsAuthTypeParser wingsAuthTypeParser;
 
     @Setter(onMethod_ = {@Autowired})
-    private JournalService journalService;
+    protected JournalService journalService;
 
     @Setter(onMethod_ = {@Autowired})
-    private PasswordEncoder passwordEncoder;
+    protected PasswordEncoder passwordEncoder;
 
     @Setter(onMethod_ = {@Autowired})
-    private PasssaltEncoder passsaltEncoder;
+    protected PasssaltEncoder passsaltEncoder;
 
     @Setter(onMethod_ = {@Autowired})
-    private LightIdService lightIdService;
+    protected LightIdService lightIdService;
 
     @Setter(onMethod_ = {@Autowired})
-    private WarlockSecurityProp warlockSecurityProp;
+    protected WarlockSecurityProp warlockSecurityProp;
 
     @Override
     @Transactional

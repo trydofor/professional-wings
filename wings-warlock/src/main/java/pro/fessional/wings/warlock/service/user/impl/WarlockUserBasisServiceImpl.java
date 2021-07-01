@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.Z;
@@ -34,17 +33,16 @@ import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.Salt
  * @since 2021-03-22
  */
 @Slf4j
-@Service
 public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, InitializingBean {
 
     @Setter(onMethod_ = {@Autowired})
-    private WinUserBasisDao winUserBasisDao;
+    protected WinUserBasisDao winUserBasisDao;
 
     @Setter(onMethod_ = {@Autowired})
-    private LightIdService lightIdService;
+    protected LightIdService lightIdService;
 
     @Setter(onMethod_ = {@Autowired})
-    private JournalService journalService;
+    protected JournalService journalService;
 
     @Override
     public void afterPropertiesSet() {

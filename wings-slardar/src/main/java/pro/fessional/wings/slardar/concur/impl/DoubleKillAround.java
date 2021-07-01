@@ -49,10 +49,10 @@ public class DoubleKillAround {
     private final Evaluator evaluator = new Evaluator();
 
     @Setter(onMethod_ = {@Autowired(required = false)})
-    private BeanFactory beanFactory;
+    protected BeanFactory beanFactory;
 
     @Setter(onMethod_ = {@Autowired, @Qualifier(AsyncAnnotationBeanPostProcessor.DEFAULT_TASK_EXECUTOR_BEAN_NAME)})
-    private Executor asyncExecutor;
+    protected Executor asyncExecutor;
 
     @Around("@annotation(pro.fessional.wings.slardar.concur.DoubleKill)")
     public Object doubleKill(ProceedingJoinPoint joinPoint) throws Throwable {

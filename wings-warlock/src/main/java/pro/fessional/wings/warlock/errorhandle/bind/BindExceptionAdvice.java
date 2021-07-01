@@ -28,7 +28,7 @@ import static pro.fessional.wings.slardar.servlet.request.RequestHelper.allError
 public class BindExceptionAdvice {
 
     @Setter(onMethod_ = {@Autowired})
-    private MessageSource messageSource;
+    protected MessageSource messageSource;
 
     @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
     public ResponseEntity<R<?>> bindException(BindException ex) {

@@ -9,7 +9,6 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.warlock.database.autogen.tables.WinPermEntryTable;
@@ -31,18 +30,18 @@ import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheCons
  * @author trydofor
  * @since 2021-03-07
  */
-@Service
 @Slf4j
 @CacheConfig(cacheNames = WarlockPermCacheConst.CacheName, cacheManager = WarlockPermCacheConst.ManagerName)
 public class WarlockPermServiceImpl implements WarlockPermService {
 
     @Setter(onMethod_ = {@Autowired})
-    private WinPermEntryDao winPermEntryDao;
+    protected WinPermEntryDao winPermEntryDao;
 
     @Setter(onMethod_ = {@Autowired})
-    private LightIdService lightIdService;
+    protected LightIdService lightIdService;
+
     @Setter(onMethod_ = {@Autowired})
-    private JournalService journalService;
+    protected JournalService journalService;
 
     @Override
     @Cacheable(key = SpelPermAll)

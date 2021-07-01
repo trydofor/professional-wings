@@ -30,8 +30,7 @@ import java.util.Set;
  * @since 2021-02-22
  */
 @Slf4j
-@Setter
-@Getter
+@Setter @Getter
 public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
 
     public static final int ORDER = WarlockOrderConst.UserDetailsCombo + 1_000;
@@ -41,9 +40,9 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
     private Set<Enum<?>> acceptNonceType = Collections.emptySet();
 
     @Setter(onMethod_ = {@Autowired})
-    private PasswordEncoder passwordEncoder;
+    protected PasswordEncoder passwordEncoder;
     @Setter(onMethod_ = {@Autowired})
-    private PasssaltEncoder passsaltEncoder;
+    protected PasssaltEncoder passsaltEncoder;
 
     public NonceUserDetailsCombo() {
         setOrder(ORDER);

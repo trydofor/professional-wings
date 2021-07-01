@@ -64,7 +64,7 @@ build是3位数字，第1位为大版本，意味着大调整，不兼容，后2
 `wings-idea-live.xml`需要手动放到`$config/templates/`，没有则新建。
 
 ```
-id_config=~/Library/ApplicationSupport/JetBrains/IntelliJIdea2020.2
+id_config=~/Library/ApplicationSupport/JetBrains/IntelliJIdea2021.1
 # 通过复制，备份
 cat $id_config/templates/wings.xml > wings-idea-live.xml
 cat $id_config/codestyles/Wings-Idea.xml > wings-idea-style.xml
@@ -81,7 +81,7 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
  * WIN `%HOMEPATH%\.IntelliJIdea2019.2\config`
  * LIN `~/.IntelliJIdea2019.2/config`
  * MAC `~/Library/Preferences/IntelliJIdea2019.2`
- * MAC `~/Library/ApplicationSupport/JetBrains/IntelliJIdea2020.1`
+ * MAC `~/Library/ApplicationSupport/JetBrains/IntelliJIdea2021.1`
 
 参考资料
  * [sharing-live-templates](https://www.jetbrains.com/help/idea/sharing-live-templates.html)
@@ -98,6 +98,7 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
  * Git Flow Integration - 集成了git-flow
  * GitToolBox - 自动 fetch
  * Grep Console - 控制台的日志分颜色显示和过滤
+ * Indent Rainbow - 使缩进有颜色
  * kotlin - 默认安装了
  * lombok - IntelliJ Lombok plugin
  * MapStruct Support - 静态强类型DTO转换，减少复制和赋值
@@ -189,12 +190,20 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
  * 次之使用`setter`注入，用`lombok`的`@Setter(onMethod = @__({@Autowired}))`
    或`kotlin`的`@Autowired lateinit var`。
  * 不要使用`Field`注入，坏处自己搜。
+ * 通常required时constructor注入，optional时setter注入。
+ * 但注入过多，使参数列表过长不易读时，使用setter注入。
 
 使用@Resource，@Inject和@Autowired，有细微差别，
  * Resource由CommonAnnotationBeanPostProcessor处理，查找顺序为①BeanName②BeanType③Qualifier
  * Autowired和Inject由AutowiredAnnotationBeanPostProcessor处理，查找顺序为①BeanType②Qualifier③BeanName 
  * 注入控制时，type优先用Autowired和Inject，name优先用Resource(细粒度，难控制)
  * 在spring体系下推荐@Autowired，考虑兼容性用Inject
+
+继承父类时的注入规定（类无法得知是否被继承）
+ * 父类中有@Setter注入时，字段以protected替代private。
+ * 不希望子类覆盖时，需要final setter，避免父类无法注入。
+ * 继承时，一旦父类有setter，请不要override，除非确保DI无碍。
+ * 继承时，不希望父类DI，子类override，并自行注入。
 
 ### 0.2.6.Spring MVC中的 RequestMapping 约定
 

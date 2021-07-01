@@ -34,21 +34,20 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
 
     public static final int ORDER = WarlockOrderConst.UserAuthnCombo + 10_000;
 
-    @Getter
-    @Setter
+    @Getter @Setter
     private int order = ORDER;
 
     @Setter(onMethod_ = {@Autowired})
-    private WarlockUserBasisService warlockUserBasisService;
+    protected WarlockUserBasisService warlockUserBasisService;
 
     @Setter(onMethod_ = {@Autowired})
-    private WarlockUserAuthnService warlockUserAuthnService;
+    protected WarlockUserAuthnService warlockUserAuthnService;
 
     @Setter(onMethod_ = {@Autowired})
-    private WarlockSecurityProp warlockSecurityProp;
+    protected WarlockSecurityProp warlockSecurityProp;
 
     @Setter(onMethod_ = {@Autowired})
-    private JournalService journalService;
+    protected JournalService journalService;
 
     @Override
     @Transactional
@@ -104,7 +103,7 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
         });
     }
 
-    protected void beforeSave(Basis basis,String username, Object details) {
+    protected void beforeSave(Basis basis, String username, Object details) {
     }
 
     protected void afterSave(Basis basis, String username, Object details, long userId) {

@@ -9,7 +9,6 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.pain.CodeException;
@@ -32,22 +31,21 @@ import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheCons
  * @author trydofor
  * @since 2021-03-07
  */
-@Service
 @Slf4j
 @CacheConfig(cacheNames = WarlockPermCacheConst.CacheName, cacheManager = WarlockPermCacheConst.ManagerName)
 public class WarlockRoleServiceImpl implements WarlockRoleService {
 
     @Setter(onMethod_ = {@Autowired})
-    private WinRoleEntryDao winRoleEntryDao;
+    protected WinRoleEntryDao winRoleEntryDao;
 
     @Setter(onMethod_ = {@Autowired})
-    private LightIdService lightIdService;
+    protected LightIdService lightIdService;
 
     @Setter(onMethod_ = {@Autowired})
-    private JournalService journalService;
+    protected JournalService journalService;
 
     @Setter(onMethod_ = {@Autowired})
-    private WarlockPermNormalizer permNormalizer;
+    protected WarlockPermNormalizer permNormalizer;
 
     @Override
     @Cacheable(key = SpelRoleAll)

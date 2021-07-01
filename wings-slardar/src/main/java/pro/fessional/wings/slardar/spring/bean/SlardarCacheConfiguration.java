@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -16,6 +17,8 @@ import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pro.fessional.wings.slardar.cache.WingsCache;
+import pro.fessional.wings.slardar.cache.WingsCacheHelper;
 import pro.fessional.wings.slardar.cache.WingsCaffeine;
 import pro.fessional.wings.slardar.cache.WingsHazelcast;
 import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
@@ -33,6 +36,30 @@ import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
 public class SlardarCacheConfiguration {
 
     private static final Log logger = LogFactory.getLog(SlardarCacheConfiguration.class);
+
+    // //////////////////// caffeine ////////////////////
+    @Configuration
+    @ConditionalOnClass(CaffeineCacheManager.class)
+    public static class CaffeineCacheManagerConfiguration {
+        @Bean(Manager.Memory)
+        @ConditionalOnMissingBean(CaffeineCacheManager.class)
+        public CaffeineCacheManager caffeineCacheManager(SlardarCacheProp conf) {
+            logger.info("Wings conf " + Manager.Memory);
+            return new WingsCaffeine.Manager(conf);
+        }
+    }
+
+    // //////////////////// hazelcast ////////////////////
+    @Configuration
+    @ConditionalOnClass({HazelcastInstance.class, HazelcastCacheManager.class})
+    public static class HazelcastCacheConfiguration {
+        @ConditionalOnMissingBean(name = Manager.Server)
+        @Bean(Manager.Server)
+        public HazelcastCacheManager hazelcastCacheManager(SlardarCacheProp conf, ObjectProvider<HazelcastInstance> hazelcastInstance) {
+            logger.info("Wings conf " + Manager.Server);
+            return new WingsHazelcast.Manager(conf, hazelcastInstance.getIfAvailable());
+        }
+    }
 
     // //////////////////// resolver ////////////////////
     @Configuration
@@ -59,27 +86,12 @@ public class SlardarCacheConfiguration {
         }
     }
 
-    // //////////////////// caffeine ////////////////////
-    @Configuration
-    @ConditionalOnClass(CaffeineCacheManager.class)
-    public static class CaffeineCacheManagerConfiguration {
-        @Bean(Manager.Memory)
-        @ConditionalOnMissingBean(CaffeineCacheManager.class)
-        public CaffeineCacheManager caffeineCacheManager(SlardarCacheProp conf) {
-            logger.info("Wings conf " + Manager.Memory);
-            return new WingsCaffeine.Manager(conf);
-        }
-    }
-
-    // //////////////////// hazelcast ////////////////////
-    @Configuration
-    @ConditionalOnClass({HazelcastInstance.class, HazelcastCacheManager.class})
-    public static class HazelcastCacheConfiguration {
-        @ConditionalOnMissingBean(name = Manager.Server)
-        @Bean(Manager.Server)
-        public HazelcastCacheManager hazelcastCacheManager(SlardarCacheProp conf, ObjectProvider<HazelcastInstance> hazelcastInstance) {
-            logger.info("Wings conf " + Manager.Server);
-            return new WingsHazelcast.Manager(conf, hazelcastInstance.getIfAvailable());
-        }
+    @Bean
+    public WingsCacheHelper wingsCacheHelper(
+            @Qualifier(WingsCache.Manager.Server) CacheManager ser,
+            @Qualifier(WingsCache.Manager.Memory) CacheManager mem
+    ) {
+        logger.info("Wings conf WingsCacheHelper");
+        return new WingsCacheHelper(ser, mem) {};
     }
 }

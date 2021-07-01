@@ -16,7 +16,7 @@ import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 public class WarlockFailedLoginListener implements ApplicationListener<AuthenticationFailureBadCredentialsEvent> {
 
     @Setter(onMethod_ = {@Autowired})
-    private WarlockAuthnService warlockAuthnService;
+    protected WarlockAuthnService warlockAuthnService;
 
     @Override
     public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent event) {

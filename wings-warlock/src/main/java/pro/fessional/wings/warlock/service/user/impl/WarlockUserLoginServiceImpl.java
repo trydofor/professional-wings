@@ -4,7 +4,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import pro.fessional.mirana.page.PageQuery;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.slardar.context.TerminalContext;
@@ -21,31 +20,29 @@ import java.util.List;
  * @author trydofor
  * @since 2021-03-26
  */
-
-@Service
 @Slf4j
 public class WarlockUserLoginServiceImpl implements WarlockUserLoginService {
 
     @Setter(onMethod_ = {@Autowired})
-    private WinUserLoginDao winUserLoginDao;
+    protected WinUserLoginDao winUserLoginDao;
 
     @Setter(onMethod_ = {@Autowired})
-    private WingsAuthTypeParser wingsAuthTypeParser;
+    protected WingsAuthTypeParser wingsAuthTypeParser;
 
     @Setter(onMethod_ = {@Autowired})
-    private LightIdService lightIdService;
+    protected LightIdService lightIdService;
 
     @Override
     public @NotNull List<Item> list(long userId, PageQuery query) {
         final WinUserLoginTable t = winUserLoginDao.getTable();
         return winUserLoginDao
-                       .ctx()
-                       .select(t.AuthType, t.LoginIp, t.LoginDt, t.Terminal, t.Failed)
-                       .from(t)
-                       .orderBy(t.LoginDt.desc())
-                       .limit(query.toOffset(), query.getSize())
-                       .fetch()
-                       .into(Item.class);
+                .ctx()
+                .select(t.AuthType, t.LoginIp, t.LoginDt, t.Terminal, t.Failed)
+                .from(t)
+                .orderBy(t.LoginDt.desc())
+                .limit(query.toOffset(), query.getSize())
+                .fetch()
+                .into(Item.class);
     }
 
     @Override

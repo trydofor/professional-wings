@@ -29,13 +29,13 @@ import java.util.Map;
 public class WarlockGrantServiceImpl implements WarlockGrantService {
 
     @Setter(onMethod_ = {@Autowired})
-    private JournalService journalService;
+    protected JournalService journalService;
 
     @Setter(onMethod_ = {@Autowired})
-    private WinRoleGrantDao winRoleGrantDao;
+    protected WinRoleGrantDao winRoleGrantDao;
 
     @Setter(onMethod_ = {@Autowired})
-    private WinUserGrantDao winUserGrantDao;
+    protected WinUserGrantDao winUserGrantDao;
 
     @Override
     public void grantRole(long roleId, @NotNull GrantType type, @NotNull Collection<Long> grant) {

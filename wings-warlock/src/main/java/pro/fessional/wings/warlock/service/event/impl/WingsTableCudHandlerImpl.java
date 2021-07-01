@@ -18,7 +18,7 @@ import java.util.Map;
 public class WingsTableCudHandlerImpl implements WingsTableCudHandler {
 
     @Setter(onMethod_ = {@Autowired})
-    private TableChangePublisher tableChangePublisher;
+    protected TableChangePublisher tableChangePublisher;
 
     @Override
     public void handle(@NotNull Cud cud, @NotNull String table, @NotNull Map<String, List<?>> field) {

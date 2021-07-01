@@ -34,10 +34,10 @@ public class WarlockSwaggerConfiguration implements InitializingBean {
     private static final Log logger = LogFactory.getLog(WarlockSwaggerConfiguration.class);
 
     @Setter(onMethod_ = {@Autowired})
-    private ObjectProvider<AlternateTypeRule> ruleObjectProvider;
+    protected ObjectProvider<AlternateTypeRule> ruleObjectProvider;
 
     @Setter(onMethod_ = {@Autowired})
-    private ObjectProvider<Docket> docketObjectProvider;
+    protected ObjectProvider<Docket> docketObjectProvider;
 
     @Override
     public void afterPropertiesSet() {

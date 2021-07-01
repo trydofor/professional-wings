@@ -8,7 +8,6 @@ import org.springframework.context.annotation.ComponentScan;
  * @since 2019-07-11
  */
 @ComponentScan({"pro.fessional.wings.warlock.controller",
-                "pro.fessional.wings.warlock.service",
                 "pro.fessional.wings.warlock.spring.bean"})
 @ConfigurationPropertiesScan("pro.fessional.wings.warlock.spring.prop")
 public class WingsAutoConfiguration {

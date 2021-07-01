@@ -24,11 +24,11 @@ public class ListAllLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
 
     public static final int ORDER = WarlockOrderConst.AuthPageCombo + 10_000;
 
-    @Setter(onMethod_ = {@Autowired})
-    private WarlockSecurityProp warlockSecurityProp;
-    @Setter
-    @Getter
+    @Setter @Getter
     private int order = ORDER;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected WarlockSecurityProp warlockSecurityProp;
 
     @Override
     public ResponseEntity<?> response(@NotNull Enum<?> authType, @Nullable MediaType mediaType, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {

@@ -1,13 +1,11 @@
 package pro.fessional.wings.warlock.service.perm.impl;
 
-import org.springframework.stereotype.Service;
 import pro.fessional.wings.slardar.cache.WingsCache;
 
 /**
  * @author trydofor
  * @since 2021-03-07
  */
-@Service
 public class WarlockPermCacheConst {
 
     public static final String KeyPermAll = "KeyPermAll";

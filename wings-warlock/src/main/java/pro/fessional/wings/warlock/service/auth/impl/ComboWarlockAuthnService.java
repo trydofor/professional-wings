@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.service.auth.impl;
 
+import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,24 +37,24 @@ import java.util.List;
 public class ComboWarlockAuthnService implements WarlockAuthnService {
 
     @Setter(onMethod_ = {@Autowired})
-    private WinUserBasisDao winUserBasisDao;
+    protected WinUserBasisDao winUserBasisDao;
 
     @Setter(onMethod_ = {@Autowired})
-    private WinUserAnthnDao winUserAnthnDao;
+    protected WinUserAnthnDao winUserAnthnDao;
 
     @Setter(onMethod_ = {@Autowired})
-    private WingsAuthTypeParser wingsAuthTypeParser;
+    protected WingsAuthTypeParser wingsAuthTypeParser;
 
     @Setter(onMethod_ = {@Autowired})
-    private JournalService journalService;
+    protected JournalService journalService;
 
     @Setter(onMethod_ = {@Autowired})
-    private WarlockUserLoginService warlockUserLoginService;
+    protected WarlockUserLoginService warlockUserLoginService;
 
     private List<AutoReg> authAutoRegs = Collections.emptyList();
 
     @Autowired(required = false)
-    public void setAuthAutoRegs(List<AutoReg> authAutoRegs) {
+    public final void setAuthAutoRegs(List<AutoReg> authAutoRegs) {
         log.info("inject auth combo, count={}", authAutoRegs.size());
         this.authAutoRegs = authAutoRegs;
     }
@@ -231,6 +232,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         });
     }
 
+    @Setter(AccessLevel.NONE)
     private volatile long lastTiming = 0;
 
     private void timingAttack() {

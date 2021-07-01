@@ -52,6 +52,16 @@ import pro.fessional.wings.warlock.service.grant.WarlockGrantService;
 import pro.fessional.wings.warlock.service.grant.impl.WarlockGrantServiceImpl;
 import pro.fessional.wings.warlock.service.other.TerminalJournalService;
 import pro.fessional.wings.warlock.service.perm.WarlockPermNormalizer;
+import pro.fessional.wings.warlock.service.perm.WarlockPermService;
+import pro.fessional.wings.warlock.service.perm.WarlockRoleService;
+import pro.fessional.wings.warlock.service.perm.impl.WarlockPermServiceImpl;
+import pro.fessional.wings.warlock.service.perm.impl.WarlockRoleServiceImpl;
+import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
+import pro.fessional.wings.warlock.service.user.WarlockUserBasisService;
+import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
+import pro.fessional.wings.warlock.service.user.impl.WarlockUserAuthnServiceImpl;
+import pro.fessional.wings.warlock.service.user.impl.WarlockUserBasisServiceImpl;
+import pro.fessional.wings.warlock.service.user.impl.WarlockUserLoginServiceImpl;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp.Ma;
@@ -189,7 +199,35 @@ public class WarlockSecurityBeanConfiguration {
         return new WarlockGrantServiceImpl();
     }
 
+    @Bean
+    @ConditionalOnMissingBean(WarlockPermService.class)
+    public WarlockPermService warlockPermService() {
+        logger.info("Wings conf warlockPermService");
+        return new WarlockPermServiceImpl();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(WarlockRoleService.class)
+    public WarlockRoleService warlockRoleService() {
+        logger.info("Wings conf warlockRoleService");
+        return new WarlockRoleServiceImpl();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(WarlockUserAuthnService.class)
+    public WarlockUserAuthnService warlockUserAuthnService() {
+        logger.info("Wings conf warlockUserAuthnService");
+        return new WarlockUserAuthnServiceImpl();
+    }
+
     ///////// UserDetails /////////
+
+    @Bean
+    @ConditionalOnMissingBean(WarlockUserBasisService.class)
+    public WarlockUserBasisService warlockUserBasisService() {
+        logger.info("Wings conf warlockUserBasisService");
+        return new WarlockUserBasisServiceImpl();
+    }
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboNonceUserDetails, havingValue = "true")
@@ -293,7 +331,15 @@ public class WarlockSecurityBeanConfiguration {
         return uds;
     }
 
-    ///////// login page /////////
+    ///////// login /////////
+
+    @Bean
+    @ConditionalOnMissingBean(WarlockUserLoginService.class)
+    public WarlockUserLoginService warlockUserLoginService() {
+        logger.info("Wings conf warlockUserLoginService");
+        return new WarlockUserLoginServiceImpl();
+    }
+
     @Bean
     @ConditionalOnMissingBean(WingsAuthPageHandler.class)
     public WingsAuthPageHandler wingsAuthPageHandler(ObjectProvider<ComboWingsAuthPageHandler.Combo> combos) {
@@ -342,4 +388,6 @@ public class WarlockSecurityBeanConfiguration {
         logger.info("Wings conf authSuccessListener");
         return new WarlockFailedLoginListener();
     }
+
+
 }

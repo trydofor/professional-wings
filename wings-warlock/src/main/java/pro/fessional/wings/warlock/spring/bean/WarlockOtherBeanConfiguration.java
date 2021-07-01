@@ -48,7 +48,6 @@ public class WarlockOtherBeanConfiguration {
     }
 
     @Bean
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$checkDatabase, havingValue = "true")
     public CommandLineRunner databaseChecker(DataSource dataSource, ApplicationContext context) {
         logger.info("Wings conf databaseChecker");

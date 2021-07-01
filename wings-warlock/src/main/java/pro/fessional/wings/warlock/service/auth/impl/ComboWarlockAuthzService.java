@@ -35,22 +35,22 @@ import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.Role
 @Slf4j
 public class ComboWarlockAuthzService implements WarlockAuthzService {
 
+    @Setter(onMethod_ = {@Autowired})
+    protected WarlockPermNormalizer permNormalizer;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected WarlockRoleService warlockRoleService;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected WarlockPermService warlockPermService;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected WarlockGrantService warlockGrantService;
+
     private List<Combo> authCombos = Collections.emptyList();
 
-    @Setter(onMethod_ = {@Autowired})
-    private WarlockPermNormalizer permNormalizer;
-
-    @Setter(onMethod_ = {@Autowired})
-    private WarlockRoleService warlockRoleService;
-
-    @Setter(onMethod_ = {@Autowired})
-    private WarlockPermService warlockPermService;
-
-    @Setter(onMethod_ = {@Autowired})
-    private WarlockGrantService warlockGrantService;
-
     @Autowired(required = false)
-    public void setAuthCombos(List<Combo> authCombos) {
+    public final void setAuthCombos(List<Combo> authCombos) {
         log.info("inject auth combo, count={}", authCombos.size());
         this.authCombos = authCombos;
     }

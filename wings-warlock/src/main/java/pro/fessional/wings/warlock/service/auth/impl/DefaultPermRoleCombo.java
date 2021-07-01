@@ -28,7 +28,7 @@ public class DefaultPermRoleCombo implements ComboWarlockAuthzService.Combo {
     private int order = ORDER;
 
     @Setter(onMethod_ = {@Autowired})
-    private WarlockGrantService warlockGrantService;
+    protected WarlockGrantService warlockGrantService;
 
     @Override
     public void auth(@NotNull DefaultWingsUserDetails details, @NotNull Set<Object> role, @NotNull Set<Object> perm) {

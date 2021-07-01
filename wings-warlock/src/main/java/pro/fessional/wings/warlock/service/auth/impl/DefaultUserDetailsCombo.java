@@ -36,9 +36,10 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
     private Set<Enum<?>> autoRegisterType = new HashSet<>();
 
     @Setter(onMethod_ = {@Autowired})
-    private WarlockAuthnService warlockAuthnService;
+    protected WarlockAuthnService warlockAuthnService;
+
     @Setter(onMethod_ = {@Autowired})
-    private WarlockAuthzService warlockAuthzService;
+    protected WarlockAuthzService warlockAuthzService;
 
     @Override
     public DefaultWingsUserDetails loadOrNull(String username, @NotNull Enum<?> authType, @Nullable Object authDetail) {

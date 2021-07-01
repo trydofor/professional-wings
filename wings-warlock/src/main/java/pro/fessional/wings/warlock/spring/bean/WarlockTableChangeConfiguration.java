@@ -2,6 +2,7 @@ package pro.fessional.wings.warlock.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
@@ -41,6 +42,7 @@ public class WarlockTableChangeConfiguration {
     }
 
     @Bean
+    @ConditionalOnBean(TableChangePublisher.class)
     public WingsTableCudHandler wingsTableCudHandler() {
         logger.info("Wings conf wingsTableCudHandler");
         return new WingsTableCudHandlerImpl();
