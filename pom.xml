@@ -49,7 +49,7 @@
         <!-- silencer -->
         <mirana.version>2.2.3-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <!-- faceless -->
-        <meepo.version>1.4.0</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
+        <meepo.version>1.4.1-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <simpleflatmapper.version>8.2.3</simpleflatmapper.version>
         <sharding-sphere.version>4.1.1</sharding-sphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <!-- slardar -->

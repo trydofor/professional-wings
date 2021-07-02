@@ -24,6 +24,7 @@ public class KryoSimple {
         ko.setReferences(false);
         ko.setRegistrationRequired(false);
         ko.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+        ko.setClassLoader(Thread.currentThread().getContextClassLoader());
         register(ko);
         return ko;
     });
