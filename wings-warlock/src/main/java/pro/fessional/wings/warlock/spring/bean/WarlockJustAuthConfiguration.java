@@ -37,6 +37,13 @@ public class WarlockJustAuthConfiguration {
     private final WarlockSecurityProp securityProp;
 
     @Bean
+    @ConditionalOnMissingBean(AuthStateCache.class)
+    public AuthStateCache authStateCache() {
+        logger.info("Wings conf authStateCache");
+        return new JustAuthStateCaffeine(justAuthProp.getCacheSize(), justAuthProp.getCacheLive());
+    }
+
+    @Bean
     @ConditionalOnMissingBean(JustAuthRequestBuilder.class)
     public JustAuthRequestBuilder justAuthRequestBuilder(AuthStateCache cache) {
         logger.info("Wings conf justAuthRequestFactory");
@@ -56,10 +63,10 @@ public class WarlockJustAuthConfiguration {
                 final Proxy.Type ht = Proxy.Type.valueOf(hc.getProxyType());
                 final Proxy proxy = new Proxy(ht, new InetSocketAddress(hc.getProxyHost(), hc.getProxyPort()));
                 ac.setHttpConfig(HttpConfig
-                                         .builder()
-                                         .timeout(hc.getTimeout() * 1000)
-                                         .proxy(proxy)
-                                         .build());
+                        .builder()
+                        .timeout(hc.getTimeout() * 1000)
+                        .proxy(proxy)
+                        .build());
                 logger.info("Wings conf justAuthRequestFactory auth-type " + k + ", proxy=" + hc.getProxyType());
             }
             else {
@@ -71,12 +78,5 @@ public class WarlockJustAuthConfiguration {
         factory.setAuthConfigMap(map);
         factory.setAuthStateCache(cache);
         return factory;
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(AuthStateCache.class)
-    public AuthStateCache authStateCache() {
-        logger.info("Wings conf authStateCache");
-        return new JustAuthStateCaffeine(justAuthProp.getCacheSize(), justAuthProp.getCacheLive());
     }
 }

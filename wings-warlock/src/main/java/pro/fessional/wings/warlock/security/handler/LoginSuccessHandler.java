@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import pro.fessional.wings.slardar.security.WingsUidPrincipalToken;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
+import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,16 +27,27 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        String sid = null;
         if (headerName != null) {
-            final HttpSession session = request.getSession(false);
-            if (session == null) {
-                log.error("login Success, but no session");
-            } else {
-                final String sid = session.getId();
-                response.setHeader(headerName, sid);
-                log.info("login Success, session-id={}", sid);
-            }
+            sid = trySid(sid, request);
+            response.setHeader(headerName, sid);
+            log.info("login Success, session-id={}", sid);
+        }
+
+        if (authentication instanceof WingsUidPrincipalToken) {
+            long uid = ((WingsUidPrincipalToken) authentication).getUserId();
+            NonceTokenSessionHelper.swapNonceSid(uid, trySid(sid, request));
         }
         ResponseHelper.writeBodyUtf8(response, body);
+    }
+
+    private String trySid(String sid, HttpServletRequest request) {
+        if (sid == null) {
+            final HttpSession s = request.getSession(false);
+            if (s != null) {
+                sid = s.getId();
+            }
+        }
+        return sid;
     }
 }

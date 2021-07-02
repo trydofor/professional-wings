@@ -15,6 +15,7 @@ import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.security.justauth.JustAuthRequestBuilder;
+import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,7 +39,10 @@ public class JustAuthLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
         final AuthRequest ar = justAuthRequestBuilder.buildRequest(authType);
         if (ar == null) return null;
 
-        final String authorize = ar.authorize(AuthStateUtils.createState());
+        final String state = AuthStateUtils.createState();
+        NonceTokenSessionHelper.initNonce(state);
+
+        final String authorize = ar.authorize(state);
         if (mediaType != null && mediaType.getSubtype().contains("html")) {
             // response.sendRedirect(url); 302
             return ResponseEntity.status(HttpStatus.FOUND)

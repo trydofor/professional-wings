@@ -49,6 +49,7 @@ import me.zhyd.oauth.request.AuthXmlyRequest;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
+import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
@@ -58,9 +59,8 @@ import java.util.Map;
  * @author trydofor
  * @since 2021-02-17
  */
-@Setter
-@Getter
 @Slf4j
+@Setter @Getter
 public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo<AuthUser> {
 
     public static final int ORDER = WarlockOrderConst.AuthDetailsCombo + 9_000;
@@ -80,15 +80,25 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
         callback.setCode(request.getParameter("code"));
         callback.setOauth_token(request.getParameter("oauth_token"));
         callback.setOauth_verifier(request.getParameter("oauth_verifier"));
-        callback.setState(request.getParameter("state"));
+        final String state = request.getParameter("state");
+        callback.setState(state);
 
-        AuthResponse<?> response = ar.login(callback);
-        final Object data = response.getData();
-        if (data instanceof AuthUser) {
-            return (AuthUser) data;
-        } else {
-            log.warn("unsupported auto-type={}, response type={}", authType, data == null ? "null" : data.getClass().getName());
-            return null;
+        try {
+            AuthResponse<?> response = ar.login(callback);
+            final Object data = response.getData();
+            if (data instanceof AuthUser) {
+                NonceTokenSessionHelper.bindNonceAuth(state, data);
+                return (AuthUser) data;
+            }
+            else {
+                NonceTokenSessionHelper.invalidNonce(state);
+                log.warn("unsupported auto-type={}, response type={}", authType, data == null ? "null" : data.getClass().getName());
+                return null;
+            }
+        }
+        catch (Exception e) {
+            NonceTokenSessionHelper.invalidNonce(state);
+            throw e;
         }
     }
 

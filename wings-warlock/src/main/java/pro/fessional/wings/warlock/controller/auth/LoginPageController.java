@@ -6,14 +6,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.security.WingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.servlet.ContentTypeHelper;
+import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,6 +56,20 @@ public class LoginPageController {
         return wingsAuthPageHandler.response(em, mt, request, response);
     }
 
+    @ApiOperation(value = "验证一次性token是否有效，oauth2使用state作为token", notes = "message='authing'为进行中")
+    @PostMapping(value = "/auth/nonce/check.json")
+    public R<String> tokenNonce(@RequestHeader("token") String token) {
+        final String sid = NonceTokenSessionHelper.authNonce(token);
+        if (sid == null) {
+            return R.ng();
+        }
+        else if (sid.isEmpty()) {
+            return R.ng("authing");
+        }
+        else {
+            return R.okData(sid);
+        }
+    }
 
     @ApiOperation(value = "登出接口，有filter处理，仅做文档", notes = "默认失效Session，参考wings.warlock.security.logout-url")
     @RequestMapping(value = "${wings.warlock.security.logout-url}", method = {RequestMethod.POST, RequestMethod.GET})

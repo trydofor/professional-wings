@@ -11,6 +11,7 @@ import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.event.auth.WarlockAutoRegisterEvent;
+import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthzService;
@@ -42,7 +43,7 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
     protected WarlockAuthzService warlockAuthzService;
 
     @Override
-    public DefaultWingsUserDetails loadOrNull(String username, @NotNull Enum<?> authType, @Nullable Object authDetail) {
+    public final DefaultWingsUserDetails loadOrNull(String username, @NotNull Enum<?> authType, @Nullable Object authDetail) {
 
         Details dt = doLoad(authType, username, authDetail);
         boolean at = false;
@@ -70,6 +71,8 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
             // 无前置验证时，自动注册认为可登录
             wud.setPreAuthed(at || authed(authType));
         }
+
+        NonceTokenSessionHelper.swapNonceUid(dt.getUserId(), authDetail);
 
         return wud;
     }
