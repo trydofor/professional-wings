@@ -53,9 +53,9 @@
         <!--            <jarPath>https://hazelcast.com/</jarPath>-->
         <!--            <jarPath>file://User/test/sample.jar</jarPath>-->
         <!--        </jarPaths>-->
-        <classNames>
-            <className>pro.fessional.wings.slardar.service.TestWingsUserDetails</className>
-        </classNames>
+        <!--        <classNames>-->
+        <!--            <className>pro.fessional.wings.slardar.service.TestWingsUserDetails</className>-->
+        <!--        </classNames>-->
     </user-code-deployment>
 
     <connection-strategy async-start="true" reconnect-mode="ASYNC">

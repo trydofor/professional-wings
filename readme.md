@@ -736,7 +736,9 @@ wings中可以通过暴露AlternateTypeRule bean，自动注入所以Docket中�
 
 现象是，完全一样的class，但是在序列化时却抛出 ClassCastException。 大概率是，开发时项目使用了spring-boot-devtools，导致IDE和jar处在不同的classloader。
 
-在springboot官方文档中有提到[Known Limitations](https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/#using.devtools.restart.limitations)说，
+* 原因：IDE工程使用了`restart` classloader, jar file 则是`base`classloader
+* 方案一，wings中始终使用`spring.hazelcast.config`配置hazelcast
+* 方案二，自己暴露Config或ClientConfig，并设置好classloader
+* 方案三，通过restart.include设置（不推荐）
 
-* IDE工程使用了`restart` classloader, jar file 则是`base`classloader
-* 
+不推荐在product环境使用devtool，参考springboot官方文档的[Known Limitations](https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/#using.devtools.restart.limitations)

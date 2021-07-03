@@ -181,4 +181,12 @@ public class SlardarEnabledProp {
      */
     private boolean swagger = true;
     public static final String Key$swagger = Key + ".swagger";
+
+    /**
+     * 是否开在有spring-boot-devtool时开启devtool兼容配置
+     *
+     * @see #Key$devtool
+     */
+    private boolean devtool = true;
+    public static final String Key$devtool = Key + ".devtool";
 }
