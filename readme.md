@@ -742,3 +742,15 @@ wings中可以通过暴露AlternateTypeRule bean，自动注入所以Docket中�
 * 方案三，通过restart.include设置（不推荐）
 
 不推荐在product环境使用devtool，参考springboot官方文档的[Known Limitations](https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/#using.devtools.restart.limitations)
+
+### 24.Hazelcast OutOfMemoryError CallerNotMemberException
+
+当内存紧张时，hazelcast会出现OutOfMemoryError，然后集群以CallerNotMemberException拒绝此实例。
+
+通常并发量级不过万，为实例jvm分配2-4G，主机预留一个1个实例的物理内存空闲可适用大部分场景。
+
+> For this reason, we recommend that you plan to use only 60% of available memory, 
+> with 40% headroom to handle member failure or shutdown.
+
+* https://hazelcast.com/blog/how-much-memory-do-i-need-for-my-data/
+* https://docs.hazelcast.org/docs/4.0.3/manual/html-single/index.html#sizing-practices

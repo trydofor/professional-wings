@@ -1,7 +1,7 @@
 #!/bin/bash
 cat <<'EOF'
 #################################################
-# version 2021-04-01 # test on mac and lin
+# version 2021-07-01 # test on mac and lin
 # 使用`ln -s`把此脚本软连接到`执行目录/workdir`，
 # 其同名`env`如（wings-starter.env）会被自动载入。
 # `BOOT_CNF|BOOT_ARG|JAVA_ARG`内变量可被延时求值，
@@ -9,7 +9,8 @@ cat <<'EOF'
 #################################################
 EOF
 ################ modify the following params ################
-USER_RUN="$USER" # 用来启动程序的用户。
+TAIL_LOG='out'   # 默认tail的日志，"log|out|''"
+USER_RUN="$USER" # 用来启动程序的用户
 PORT_RUN=''      # 默认端口，空时
 ARGS_RUN="start" # 默认参数。空时使用$1
 BOOT_JAR="$2"    # 主程序。通过env覆盖
@@ -19,7 +20,7 @@ BOOT_PID=''      # 主程序pid，默认 $BOOT_JAR.pid
 BOOT_CNF=''      # 外部配置。通过env覆盖
 BOOT_ARG=''      # 启动参数。通过env覆盖
 JAVA_XMS='2G'    # 启动参数。通过env覆盖
-JAVA_XMX='2G'    # 启动参数。通过env覆盖
+JAVA_XMX='4G'    # 启动参数。通过env覆盖
 JAVA_ARG='-server
 -Djava.awt.headless=true
 -Dfile.encoding=UTF-8
@@ -66,12 +67,6 @@ fi
 cd $(dirname $this_file) || exit
 echo "work dir $(pwd)"
 
-# check user
-if [[ "$USER_RUN" != "$USER" ]]; then
-    echo -e "\033[37;41;1mERROR: need user $USER_RUN to run\033[0m"
-    exit
-fi
-
 # check java
 echo -e "\033[37;42;1mINFO: ==== java version ==== \033[0m"
 
@@ -102,11 +97,28 @@ fi
 
 # check ps
 #count=$(ps -ef -u $USER_RUN | grep -E "java.+$BOOT_JAR " | grep -v grep | wc -l)
-count=$(pgrep -f -u "$USER_RUN"  " $BOOT_JAR " | wc -l)
+count=$(pgrep -f -u "$USER_RUN" " $BOOT_JAR " | wc -l)
 
 # check arg
 if [[ "$1" != "" ]]; then
     ARGS_RUN="$1"
+fi
+
+# check memory, only in linux, not mac
+if [[ -f "/proc/meminfo" ]]; then
+    echo -e "\033[37;42;1mINFO: ==== system memory ==== \033[0m"
+    mem_tot=$(head /proc/meminfo | grep MemTotal | awk '{print $2"K"}' | numfmt --from=auto --to-unit=1M)
+    mem_fre=$(head /proc/meminfo | grep MemFree | awk '{print $2"K"}' | numfmt --from=auto --to-unit=1M)
+    mem_avl=$(head /proc/meminfo | grep MemAvailable | awk '{print $2"K"}' | numfmt --from=auto --to-unit=1M)
+    mem_min=$(numfmt --from=auto --to-unit=1M $JAVA_XMS)
+    mem_max=$(numfmt --from=auto --to-unit=1M $JAVA_XMX)
+    if [[ "$mem_avl" < "$mem_min" ]]; then
+        echo -e "\033[33mNOTE: Available=${mem_avl}Mb < JAVA_XMS=${mem_min}Mb, Total=${mem_tot}Mb, Free=${mem_fre}Mb \033[0m"
+    fi
+    if [[ "$mem_avl" < "$mem_max" ]]; then
+        echo -e "\033[33mNOTE: Available=${mem_avl}Mb < JAVA_XMX=${mem_max}Mb, Total=${mem_tot}Mb, Free=${mem_fre}Mb \033[0m"
+    fi
+    head /proc/meminfo
 fi
 
 # calc env
@@ -126,7 +138,7 @@ if [[ "$BOOT_LOG" != "" ]]; then
 fi
 
 echo -e "\033[37;42;1mINFO: ==== boot arguments ==== \033[0m"
-cat << EOF
+cat <<EOF
 boot-jar=$BOOT_JAR
 boot-pid=$BOOT_PID
 boot-log=$BOOT_LOG
@@ -137,6 +149,12 @@ EOF
 echo -e "\033[37;42;1mINFO: ==== java arguments ==== \033[0m"
 echo "$JAVA_ARG"
 
+# check user
+if [[ "$USER_RUN" != "$USER" ]]; then
+    echo -e "\033[37;41;1mERROR: need user $USER_RUN to run\033[0m"
+    exit
+fi
+
 case "$ARGS_RUN" in
     start)
         if [[ $count -eq 0 ]]; then
@@ -145,17 +163,17 @@ case "$ARGS_RUN" in
                 mv "${BOOT_OUT}" "${BOOT_OUT}-${BOOT_DTM}.bak"
             fi
 
-            nohup java ${JAVA_ARG} -jar ${BOOT_JAR} ${BOOT_ARG} > ${BOOT_OUT} 2>&1 &
-            echo $! > "$BOOT_PID"
+            nohup java ${JAVA_ARG} -jar ${BOOT_JAR} ${BOOT_ARG} >${BOOT_OUT} 2>&1 &
+            echo $! >"$BOOT_PID"
             sleep 2
         else
             echo -e "\033[37;41;1mERROR: already $count running of $JAR_NAME\033[0m"
         fi
 
         cpid=$(pgrep -f "$JAR_NAME")
-        if [[ "$cpid" == "" ]];then
-          echo -e "\033[37;41;1mERROR: failed to get PID of $JAR_NAME\033[0m"
-          exit
+        if [[ "$cpid" == "" ]]; then
+            echo -e "\033[37;41;1mERROR: failed to get PID of $JAR_NAME\033[0m"
+            exit
         else
             echo -e "\033[37;43;1mNOTE: current PID=$cpid of $JAR_NAME \033[0m"
             ps -fwww "$cpid"
@@ -167,12 +185,18 @@ case "$ARGS_RUN" in
             echo -e "\033[33mNOTE: 1 - $BOOT_LOG \033[0m"
             echo -e "\033[33mNOTE: 2 - $BOOT_OUT \033[0m"
             echo -e "\033[33mNOTE: ENTER to BREAK \033[0m"
-            read -r num
-            case "$num" in
-              1) tail_log="$BOOT_LOG";;
-              2) tail_log="$BOOT_OUT";;
-              *) tail_log=""
-            esac
+            if [[ "$TAIL_LOG" == 'log' ]]; then
+                tail_log="$BOOT_LOG"
+            elif [[ "$TAIL_LOG" == 'out' ]]; then
+                tail_log="$BOOT_OUT"
+            else
+                read -r num
+                case "$num" in
+                    1) tail_log="$BOOT_LOG" ;;
+                    2) tail_log="$BOOT_OUT" ;;
+                    *) tail_log="" ;;
+                esac
+            fi
         else
             echo -e "\033[31mWARN: not found boot-log=$BOOT_LOG \033[0m"
         fi
@@ -196,15 +220,15 @@ case "$ARGS_RUN" in
                 echo -e "\033[31mWARN: press <y> to kill $cpid, ohters to kill $pid\033[0m"
                 read -r yon
                 if [[ "$yon" == "y" ]]; then
-                  pid=$cpid
+                    pid=$cpid
                 fi
             fi
             echo -e "\033[33mNOTE: killing boot.pid=$pid of $JAR_NAME\033[0m"
             kill "$pid"
 
             icon=''
-            for (( i = 0; i < timeout; i++)); do
-                for((j=0;j< 10;j++));do
+            for ((i = 0; i < timeout; i++)); do
+                for ((j = 0; j < 10; j++)); do
                     printf "[%ds][%-60s]\r" "$i" "$icon"
                     if [[ ${#icon} -ge 60 ]]; then
                         icon=''
@@ -213,7 +237,7 @@ case "$ARGS_RUN" in
                     fi
                     sleep 0.1
                 done
-                if [[ $(pgrep -f -u "$USER_RUN"  " $BOOT_JAR " | wc -l) -eq 0 ]]; then
+                if [[ $(pgrep -f -u "$USER_RUN" " $BOOT_JAR " | wc -l) -eq 0 ]]; then
                     echo -e "\033[33mNOTE: successfully stop in $i seconds, pid=$pid of $JAR_NAME\033[0m"
                     exit
                 fi
@@ -261,5 +285,6 @@ case "$ARGS_RUN" in
     *)
         echo -e '\033[37;41;1mERROR: use start|stop|status\033[m'
         echo -e '\033[31meg ./wings-starter.sh start\033[m'
+        ;;
 esac
 echo
