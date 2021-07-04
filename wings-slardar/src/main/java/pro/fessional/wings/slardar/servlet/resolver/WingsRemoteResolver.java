@@ -34,6 +34,22 @@ public class WingsRemoteResolver {
         ipHeader.addAll(keys);
     }
 
+    /**
+     * 组合remote的ip,agent,及header，构造唯一key
+     */
+    @NotNull
+    public String resolveRemoteKey(HttpServletRequest request, String... header) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(resolveRemoteIp(request));
+        sb.append('|');
+        sb.append(resolveRemoteIp(request));
+        for (String h : header) {
+            sb.append('|');
+            sb.append(request.getHeader(h));
+        }
+        return sb.toString();
+    }
+
     @NotNull
     public String resolveRemoteIp(HttpServletRequest request) {
         Object atr = request.getAttribute(ATTR_REMOTE_IP);

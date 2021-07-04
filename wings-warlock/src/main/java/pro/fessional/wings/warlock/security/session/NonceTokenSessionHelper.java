@@ -16,15 +16,24 @@ import pro.fessional.wings.slardar.cache.WingsCaffeine;
  */
 public class NonceTokenSessionHelper {
 
-    private static final Cache<Object, Object> caffeine = WingsCaffeine
+    private static final Cache<String, Sf> caffeine = WingsCaffeine
             .builder(100_000, 300, 0).build();
+
+    private static class Sf {
+        private String ip = null;
+        private String sid = null;
+        private Long uid = null;
+        private Object mid = null;
+    }
 
     /**
      * 初始化一次性token
      */
-    public static void initNonce(String token) {
+    public static void initNonce(String token, String ip) {
         if (token == null) return;
-        caffeine.put(token, Null.Str);
+        final Sf s = new Sf();
+        s.ip = ip;
+        caffeine.put(token, s);
     }
 
     /**
@@ -32,8 +41,9 @@ public class NonceTokenSessionHelper {
      */
     public static void bindNonceAuth(String token, Object auth) {
         if (token == null || auth == null) return;
-        if (caffeine.getIfPresent(token) != null) {
-            caffeine.put(auth, token);
+        final Sf s = caffeine.getIfPresent(token);
+        if (s != null) {
+            s.mid = auth;
         }
     }
 
@@ -42,12 +52,11 @@ public class NonceTokenSessionHelper {
      */
     public static void swapNonceUid(long uid, Object auth) {
         if (auth == null) return;
-        final Object tkn = caffeine.getIfPresent(auth);
-        if (tkn == null) return;
-
-        caffeine.invalidate(auth);
-        if (tkn instanceof String) {
-            bindNonceUid((String) tkn, uid);
+        for (Sf s : caffeine.asMap().values()) {
+            if (s.mid != null && s.mid.equals(auth)) {
+                s.uid = uid;
+                break;
+            }
         }
     }
 
@@ -56,12 +65,11 @@ public class NonceTokenSessionHelper {
      */
     public static void swapNonceSid(long uid, String sid) {
         if (sid == null) return;
-        final Object tkn = caffeine.getIfPresent(uid);
-        if (tkn == null) return;
-
-        caffeine.invalidate(uid);
-        if (tkn instanceof String) {
-            bindNonceSid((String) tkn, sid);
+        for (Sf s : caffeine.asMap().values()) {
+            if (s.uid != null && s.uid.equals(uid)) {
+                s.sid = sid;
+                break;
+            }
         }
     }
 
@@ -70,14 +78,20 @@ public class NonceTokenSessionHelper {
      * 绑定token和uid
      */
     public static void bindNonceUid(String token, long uid) {
-        caffeine.put(uid, token);
+        final Sf s = caffeine.getIfPresent(token);
+        if (s != null) {
+            s.uid = uid;
+        }
     }
 
     /**
      * 绑定token和sid
      */
     public static void bindNonceSid(String token, String sid) {
-        caffeine.put(token, sid);
+        final Sf s = caffeine.getIfPresent(token);
+        if (s != null) {
+            s.sid = sid;
+        }
     }
 
     /**
@@ -95,13 +109,14 @@ public class NonceTokenSessionHelper {
      * @param token 一次性token
      * @return null|empty|sid
      */
-    public static String authNonce(String token) {
+    public static String authNonce(String token, String ip) {
         if (token == null || token.isEmpty()) return null;
 
-        final String sid = (String) caffeine.getIfPresent(token);
-        if (sid != null && sid.length() > 0) {
-            invalidNonce(token);
-        }
-        return sid;
+        final Sf s = caffeine.getIfPresent(token);
+        if (s == null) return null;
+        if (s.sid == null) return Null.Str;
+
+        invalidNonce(token);
+        return s.ip.equals(ip) ? s.sid : null;
     }
 }

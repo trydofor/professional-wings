@@ -17,6 +17,7 @@ import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.security.WingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.servlet.ContentTypeHelper;
+import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +34,7 @@ public class LoginPageController {
 
     private final WingsAuthPageHandler wingsAuthPageHandler;
     private final WingsAuthTypeParser wingsAuthTypeParser;
+    private final WingsRemoteResolver wingsRemoteResolver;
 
     @ApiOperation(value = "集成登录默认页，默认返回支持的type类表", notes = "当鉴权失败时，重定向页面")
     @RequestMapping(value = "/auth/login-page.{extName}", method = {RequestMethod.POST, RequestMethod.GET})
@@ -56,10 +58,10 @@ public class LoginPageController {
         return wingsAuthPageHandler.response(em, mt, request, response);
     }
 
-    @ApiOperation(value = "验证一次性token是否有效，oauth2使用state作为token", notes = "message='authing'为进行中")
+    @ApiOperation(value = "验证一次性token是否有效，oauth2使用state作为token，要求和发行client具有相同ip，agent等header信息", notes = "message='authing'为进行中")
     @PostMapping(value = "/auth/nonce/check.json")
-    public R<String> tokenNonce(@RequestHeader("token") String token) {
-        final String sid = NonceTokenSessionHelper.authNonce(token);
+    public R<String> tokenNonce(@RequestHeader("token") String token, HttpServletRequest request) {
+        final String sid = NonceTokenSessionHelper.authNonce(token, wingsRemoteResolver.resolveRemoteKey(request));
         if (sid == null) {
             return R.ng();
         }
