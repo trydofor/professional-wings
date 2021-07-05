@@ -80,4 +80,9 @@ public class LoginControllerTest {
         // America/New_York
         return new Dto(zid.getId(), zdt);
     }
+
+    @GetMapping("/admin/need-auth.json")
+    public String adminAuth() {
+        return "admin need auth";
+    }
 }

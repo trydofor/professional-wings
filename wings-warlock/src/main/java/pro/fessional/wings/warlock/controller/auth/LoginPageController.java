@@ -3,6 +3,7 @@ package pro.fessional.wings.warlock.controller.auth;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +37,8 @@ public class LoginPageController {
     private final WingsAuthTypeParser wingsAuthTypeParser;
     private final WingsRemoteResolver wingsRemoteResolver;
 
-    @ApiOperation(value = "集成登录默认页，默认返回支持的type类表", notes = "当鉴权失败时，重定向页面")
+    @ApiOperation(value = "集成登录默认页，默认返回支持的type类表",
+            notes = "①当鉴权失败时，重定向页面，status=401;②直接访问时返回status=200")
     @RequestMapping(value = "/auth/login-page.{extName}", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<?> loginPageDefault(@PathVariable("extName") String extName,
                                               HttpServletRequest request,
@@ -46,7 +48,8 @@ public class LoginPageController {
         return wingsAuthPageHandler.response(Null.Enm, mt, request, response);
     }
 
-    @ApiOperation(value = "具体验证登录默认页，根据content-type自动返回", notes = "一般用于定制访问，如github页面重定向")
+    @ApiOperation(value = "具体验证登录默认页，根据content-type自动返回",
+            notes = "一般用于定制访问，如github页面重定向。①当鉴权失败时，重定向页面，status=401;②直接访问时返回status=200")
     @RequestMapping(value = "/auth/{authType}/login-page.{extName}", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<?> LoginPageAuto(@PathVariable("authType") String authType,
                                            @PathVariable("extName") String extName,
@@ -58,18 +61,19 @@ public class LoginPageController {
         return wingsAuthPageHandler.response(em, mt, request, response);
     }
 
-    @ApiOperation(value = "验证一次性token是否有效，oauth2使用state作为token，要求和发行client具有相同ip，agent等header信息", notes = "message='authing'为进行中")
+    @ApiOperation(value = "验证一次性token是否有效，oauth2使用state作为token，要求和发行client具有相同ip，agent等header信息",
+            notes = "①status=401时，无|过期|失败 ②status=300&success=false时，进行中，message=authing ③status=200&success=true时成功，data=sessionId")
     @PostMapping(value = "/auth/nonce/check.json")
-    public R<String> tokenNonce(@RequestHeader("token") String token, HttpServletRequest request) {
+    public ResponseEntity<R<?>> tokenNonce(@RequestHeader("token") String token, HttpServletRequest request) {
         final String sid = NonceTokenSessionHelper.authNonce(token, wingsRemoteResolver.resolveRemoteKey(request));
         if (sid == null) {
-            return R.ng();
-        }
-        else if (sid.isEmpty()) {
-            return R.ng("authing");
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(R.ng());
         }
         else {
-            return R.okData(sid);
+            R<?> r = sid.isEmpty() ? R.ng("authing") : R.okData(sid);
+            return ResponseEntity.ok(r);
         }
     }
 

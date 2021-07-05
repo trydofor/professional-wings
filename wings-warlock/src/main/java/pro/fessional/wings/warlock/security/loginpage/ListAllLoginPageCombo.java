@@ -31,9 +31,10 @@ public class ListAllLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
     protected WarlockSecurityProp warlockSecurityProp;
 
     @Override
-    public ResponseEntity<?> response(@NotNull Enum<?> authType, @Nullable MediaType mediaType, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
+    public ResponseEntity<?> response(@NotNull Enum<?> authType, @Nullable MediaType mediaType, @NotNull HttpServletRequest request,
+                                      @NotNull HttpServletResponse response, @NotNull HttpStatus status) {
         return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
+                .status(status)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(R.okData(warlockSecurityProp.getAuthType().keySet()));
     }

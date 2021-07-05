@@ -6,20 +6,20 @@
 
 基于wings脚手架，包装了一些业务组件，复用或复制，可以快速实现业务功能。
 
- * 身份认证：OIDC/SSO，Form，RememberMe，API签名，第三方，手机短信
- * 令牌传递：session，token
- * 功能权限：role继承和扩展，身份马甲，临时增减，超级用户
- * 数据隔离：管辖隔离，职能继承，助理扩展，临时授权。
+* 身份认证：OIDC/SSO，Form，RememberMe，API签名，第三方，手机短信
+* 令牌传递：session，token
+* 功能权限：role继承和扩展，身份马甲，临时增减，超级用户
+* 数据隔离：管辖隔离，职能继承，助理扩展，临时授权。
 
 ## 4.1.登录验证
 
 ### 4.1.1.集成Github
 
-在github上设置，需要`App ID`，`Client ID`和`Client secret`，注意不用外泄。
-设置入口如下 Settings | Developer settings | GitHub Apps
+在github上设置，需要`App ID`，`Client ID`和`Client secret`，注意不用外泄。 设置入口如下 Settings |
+Developer settings | GitHub Apps
 
- * Homepage URL - http://127.0.0.1:8084
- * Callback URL - http://127.0.0.1:8084/auth/github/login.json
+* Homepage URL - http://127.0.0.1:8084
+* Callback URL - http://127.0.0.1:8084/auth/github/login.json
 
 ## 4.2.功能权限
 
@@ -72,7 +72,6 @@ Warlock在用户通过身边鉴别（renew）后，会分别加载和用户绑�
 * 部门(Dept)，以dept_id为主，包括了部门间所属关系
 * 公司(Corp)，以corp_id为主，通常和domain有关
 
-
 ## 4.4.功能定制
 
 和wings所有工程一样，所有远行功能都可以通过 spring-wings-enabled-77.properties 关闭。
@@ -82,24 +81,33 @@ Warlock在用户通过身边鉴别（renew）后，会分别加载和用户绑�
 
 登录分登录页面`login-page*`和处理接口`*login*`，前者（有`page`），区别如下，
 
- * login-page，展示给用户的登录页面，一般是401时自动重定向。
- * login，为提交凭证后的处理或回调接口，由filter执行。
- 
+* login-page，展示给用户的登录页面，一般是401时自动重定向。
+* login，为提交凭证后的处理或回调接口，由filter执行。
+
 可以通过以下4种方式，不同程度的改变Warlock提供的默认登录页面和返回结果。
 
- * 暴露 ComboWingsAuthPageHandler.Combo，增加处理细节。
- * 暴露 WingsAuthPageHandler，替换处理细节。
- * 指定 wings.warlock.security.login-page，定向到自定义页面。
- * 暴露 AuthenticationSuccessHandler，AuthenticationFailureHandler处理登录事件。
- * 暴露 LogoutSuccessHandler 处理登出的事件。
- 
-默认实现中，login中会在cookie和header中放置sessionId，logout是清空session
+* 暴露 ComboWingsAuthPageHandler.Combo，增加处理细节。
+* 暴露 WingsAuthPageHandler，替换处理细节。
+* 指定 wings.warlock.security.login-page，定向到自定义页面。
+* 暴露 AuthenticationSuccessHandler，AuthenticationFailureHandler处理登录事件。
+* 暴露 LogoutSuccessHandler 处理登出的事件。
+
+默认实现中，login中会在cookie和header中放置sessionId，logout是清空session。
+
+NonceLoginSuccessHandler配合NonceTokenSessionHelper实现了oauth一次性token换取session的功能。
+所以如果需要此功能，需要在自行实现AuthenticationSuccessHandler继承NonceLoginSuccessHandler。
 
 ### 4.4.2.定制验证
 
- * 暴露 ComboWingsAuthDetailsSource.Combo，增加details
- * 暴露 WingsAuthDetailsSource 替换处理细节
- * 暴露 ComboWingsUserDetailsService.Combo，增加加载细节
- * 暴露 WingsUserDetailsService，替换用户加载
+* 暴露 ComboWingsAuthDetailsSource.Combo，增加details
+* 暴露 WingsAuthDetailsSource 替换处理细节
+* 暴露 ComboWingsUserDetailsService.Combo，增加加载细节
+* 暴露 WingsUserDetailsService，替换用户加载
 
 ### 4.4.3.定制授权
+
+除了默认实现的user，role，perm体系外，warlock支持一下用户和权限的细粒度定制
+
+* NonceUserDetailsCombo - 一次性登录。
+* MemoryUserDetailsCombo - 按uid，登录名，登录方式，挂载用户和权限。
+* NonceTokenSessionHelper - oauth2流程外，通过一次性state换取sessionId。

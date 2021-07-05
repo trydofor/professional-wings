@@ -18,3 +18,9 @@ POST {{host}}/auth/username/login.json
 Content-Type: application/x-www-form-urlencoded
 
 username=root&password=88rE4TtheH72Df3Q
+
+### 401
+GET {{host}}/admin/need-auth.json
+
+### 200
+GET {{host}}//auth/login-page.json

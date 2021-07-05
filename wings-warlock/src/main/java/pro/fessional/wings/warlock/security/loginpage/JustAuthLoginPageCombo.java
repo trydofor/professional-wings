@@ -39,7 +39,8 @@ public class JustAuthLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
     protected WingsRemoteResolver wingsRemoteResolver;
 
     @Override
-    public ResponseEntity<?> response(@NotNull Enum<?> authType, @Nullable MediaType mediaType, @NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
+    public ResponseEntity<?> response(@NotNull Enum<?> authType, @Nullable MediaType mediaType, @NotNull HttpServletRequest request,
+                                      @NotNull HttpServletResponse response, @NotNull HttpStatus status) {
         final AuthRequest ar = justAuthRequestBuilder.buildRequest(authType);
         if (ar == null) return null;
 
@@ -55,7 +56,7 @@ public class JustAuthLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
                                  .build();
         }
         else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            return ResponseEntity.status(status)
                                  .contentType(mediaType == null ? MediaType.APPLICATION_JSON : mediaType)
                                  .body(R.okData(authorize));
         }

@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 import pro.fessional.wings.warlock.security.justauth.JustAuthRequestBuilder;
 import pro.fessional.wings.warlock.security.justauth.JustAuthStateCaffeine;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
@@ -59,7 +60,7 @@ public class WarlockJustAuthConfiguration {
 
             AuthConfig ac = en.getValue();
             WarlockJustAuthProp.Http hc = hcs.get(k);
-            if (hc != null) {
+            if (hc != null && StringUtils.hasText(hc.getProxyHost())) {
                 final Proxy.Type ht = Proxy.Type.valueOf(hc.getProxyType());
                 final Proxy proxy = new Proxy(ht, new InetSocketAddress(hc.getProxyHost(), hc.getProxyPort()));
                 ac.setHttpConfig(HttpConfig
