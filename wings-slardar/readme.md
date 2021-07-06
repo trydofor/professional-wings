@@ -55,7 +55,7 @@
 
 [jackson注解](https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations)
 [spring定制jackson](https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/#howto-customize-the-jackson-objectmapper)
-- 9.4.3. Customize the Jackson ObjectMapper
+ 9.4.3. Customize the Jackson ObjectMapper
 
 Jackson中涉及到泛型，参数类型，必备技能
 
@@ -383,7 +383,6 @@ cacheManager = Manager.Server)
 <max-idle-seconds>0</max-idle-seconds>
 <eviction size="5000"/>
 ```
-
 
 ## 3.7.常用功能
 

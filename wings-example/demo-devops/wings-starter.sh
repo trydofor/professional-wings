@@ -9,7 +9,7 @@ cat <<'EOF'
 #################################################
 EOF
 ################ modify the following params ################
-TAIL_LOG='out'   # 默认tail的日志，"log|out|''"
+TAIL_LOG='new'   # 默认tail的日志，"log|out|new|ask"
 USER_RUN="$USER" # 用来启动程序的用户
 PORT_RUN=''      # 默认端口，空时
 ARGS_RUN="start" # 默认参数。空时使用$1
@@ -189,6 +189,13 @@ case "$ARGS_RUN" in
                 tail_log="$BOOT_LOG"
             elif [[ "$TAIL_LOG" == 'out' ]]; then
                 tail_log="$BOOT_OUT"
+            elif [[ "$TAIL_LOG" == 'new' ]]; then
+                if [[ "$BOOT_LOG" -nt "$BOOT_OUT" ]]; then
+                    tail_log="$BOOT_LOG"
+                else
+                    tail_log="$BOOT_OUT"
+                fi
+                echo -e "\033[33mNOTE: $tail_log is newer\033[0m"
             else
                 read -r num
                 case "$num" in

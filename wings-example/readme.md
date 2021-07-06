@@ -78,3 +78,50 @@ BOOT_CNF是用来替换默认配置的运行时配置，结构如下。
 ├── wings-conf // 自动配置，按需覆盖内部文件
 │     └── spring-datasource.properties
 ```
+
+## 9.5. Nginx配置
+
+``` nginx
+upstream demo_admin {
+    ip_hash;
+    server demo_appser_01:8090;
+    server demo_appser_02:8090;
+}
+
+server {
+    listen       80;
+    listen       443 ssl;
+    server_name  admin.moilioncircle.com;
+
+    access_log /data/logs/nginx/admin.moilioncircle.com-access.log;
+    error_log  /data/logs/nginx/admin.moilioncircle.com-error.log;
+
+    ssl_certificate     /data/nginx/cert/moilioncircle.com/fullchain.pem;
+    ssl_certificate_key /data/nginx/cert/moilioncircle.com/privkey.pem;
+
+    # 防御性设置，禁止发布git工程
+    location .git {
+        access_log off;
+        log_not_found off;
+        deny all;
+    }
+
+    # 后端分流，资源类遵循res-id-{base64_urlsafe}.{pdf}格式
+    location ~* (\.json|/res-id-[\-=_0-9a-z]+\.[0-9a-z]+)$ {
+        proxy_pass http://demo_admin;
+        proxy_http_version  1.1;
+        proxy_cache_bypass  $http_upgrade;
+    
+        proxy_set_header Connection        "";
+        #proxy_set_header Connection        "upgrade";
+        #proxy_set_header Upgrade           $http_upgrade;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+    }
+
+    # 前端分流
+    location / {
+        root /data/static/demo-admin-spa/;
+    }
+}
+```
