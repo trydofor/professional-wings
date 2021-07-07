@@ -22,6 +22,8 @@ import java.net.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.net.Proxy.Type.DIRECT;
+
 
 /**
  * @author trydofor
@@ -60,7 +62,10 @@ public class WarlockJustAuthConfiguration {
 
             AuthConfig ac = en.getValue();
             WarlockJustAuthProp.Http hc = hcs.get(k);
-            if (hc != null && StringUtils.hasText(hc.getProxyHost())) {
+            if (hc == null || !StringUtils.hasText(hc.getProxyHost()) || DIRECT.name().equalsIgnoreCase(hc.getProxyType())) {
+                logger.info("Wings conf justAuthRequestFactory auth-type " + k);
+            }
+            else {
                 final Proxy.Type ht = Proxy.Type.valueOf(hc.getProxyType());
                 final Proxy proxy = new Proxy(ht, new InetSocketAddress(hc.getProxyHost(), hc.getProxyPort()));
                 ac.setHttpConfig(HttpConfig
@@ -69,9 +74,6 @@ public class WarlockJustAuthConfiguration {
                         .proxy(proxy)
                         .build());
                 logger.info("Wings conf justAuthRequestFactory auth-type " + k + ", proxy=" + hc.getProxyType());
-            }
-            else {
-                logger.info("Wings conf justAuthRequestFactory auth-type " + k);
             }
             map.put(em, ac);
         }

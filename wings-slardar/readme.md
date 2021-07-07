@@ -35,15 +35,30 @@
 * ZoneId应首选`IANA TZDB`格式，如`America/New_York`。
 * 带时区(`Z`)的序列化与反序列化过程，会丢失夏令时信息。
 
-**Json内容的国际化**，通过注解和类型自动对内容进行i18n转换，以字符串输出。
-`I18nString`类型会自动转换。`CharSequence`要`@JsonI18nString`注解才转化。
+### 3.1.1.Json内容的国际化
 
-自动转化时，使用注入的`messageSource`和`WingsI18nContext`获得相应语言。 使用`@JsonI18nString(false)`
-，可以关闭自动转换。
+通过注解和类型自动对内容进行i18n转换，以字符串输出。
 
-`R.I<T>`为常用返回值类型，当存在`i18nCode`时，会用i18n信息自动替换`message`。
+* `I18nString`类型会自动转换
+* `@JsonI18nString`注解的`CharSequence`当做message_code转化。
+* `@JsonI18nString(false)`可以关闭自动转换。
+* `R.I<T>`为常用返回值类型，当存在`i18nCode`时，会用i18n信息自动替换`message`。
+  自动转化时，使用注入的`messageSource`和`WingsI18nContext`获得相应语言。
 
-常用的Jackson注解
+### 3.1.2.日期格式化
+
+支持java.time中以下日期格式的定制，包括Json和Spring。
+
+* LocalDate，LocalTime，LocalDateTime，多个输入格式，单个输出格式定制。
+* ZonedDateTime，在Local功能外，支持自动切换到用户时区
+
+### 3.1.3.数字格式化
+
+对Int,Long,Float,Double,BigDecimal支持（Json）输出时格式和舍入格式的定制
+需要注意的是，实际项目中，应该避免使用Float和Double，应该使用BigDecimal。
+在wings约定内，常用的Number类型，应该只有Int，Long和BigDecimal。
+
+### 3.1.4.常用的Jackson注解
 
 * @JsonRawValue - number不变字符串，字符串不转义。
 * @JsonFormat - 指定格式
@@ -55,7 +70,7 @@
 
 [jackson注解](https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations)
 [spring定制jackson](https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/#howto-customize-the-jackson-objectmapper)
- 9.4.3. Customize the Jackson ObjectMapper
+9.4.3. Customize the Jackson ObjectMapper
 
 Jackson中涉及到泛型，参数类型，必备技能
 

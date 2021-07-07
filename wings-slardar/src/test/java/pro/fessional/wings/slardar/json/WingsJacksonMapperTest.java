@@ -365,6 +365,7 @@ public class WingsJacksonMapperTest {
         assertEquals("{boolVal=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, intVal=2147483646, key=Map, listVal=列表, longVal=9223372036854775806, value=1}", x2.toString());
     }
 
+    //
     @Data
     public static class NumberAsString {
         private long numLong = 10L;

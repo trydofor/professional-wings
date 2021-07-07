@@ -73,6 +73,14 @@ public class SlardarConcurProp {
         public static final String Key$chineseCaptcha = Key + ".first-blood.chinese-captcha";
 
         /**
+         * 是否忽略大小写
+         *
+         * @see #Key$caseIgnore
+         */
+        private boolean caseIgnore = true;
+        public static final String Key$caseIgnore = Key + ".case-ignore";
+
+        /**
          * @see #Key$captchaPrefix
          */
         private String captchaPrefix = "image";

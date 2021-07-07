@@ -119,6 +119,14 @@ public class SlardarEnabledProp {
     public static final String Key$datetime = Key + ".datetime";
 
     /**
+     * 是否开启wings的jackson对Double，Float，BigDecimal的精度限定
+     *
+     * @see #Key$number
+     */
+    private boolean number = true;
+    public static final String Key$number = Key + ".number";
+
+    /**
      * 是否配置undertow ws for UT026010: Buffer pool
      *
      * @see #Key$undertowWs

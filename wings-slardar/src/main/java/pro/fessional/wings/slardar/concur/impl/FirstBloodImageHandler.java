@@ -49,6 +49,7 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
     private WingsRemoteResolver wingsRemoteResolver;
     private Supplier<String> captchaSupplier = () -> RandCode.human(6);
     private String scenePrefix = "image";
+    private boolean caseIgnore = true;
 
     @Override
     public boolean accept(@NotNull HttpServletRequest request, @NotNull FirstBlood anno) {
@@ -94,14 +95,14 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
 
         // 检查验证码
         String vk = getKeyCode(request, checkCaptchaKey);
-        if (!vk.isEmpty() && tkn.check(vk)) {
+        if (!vk.isEmpty() && tkn.check(vk, caseIgnore)) {
             return true;
         }
 
         // 3秒外，非连击，不用验证
         final int fst = anno.first();
         final long rct = tkn.recent;
-        if (fst > 3 && (rct == now || rct + fst * 1000 < now)) {
+        if (fst > 3 && (rct == now || rct + fst * 1000L < now)) {
             tkn.recent = now;
             return true;
         }
@@ -218,10 +219,10 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
             this.recent = now;
         }
 
-        public boolean check(String tkn) {
+        public boolean check(String tkn, boolean ci) {
             final boolean eq;
             synchronized (retry) {
-                eq = tkn.equals(token);
+                eq = ci ? tkn.equalsIgnoreCase(token) : tkn.equals(token);
                 if (eq) {
                     retry.set(0);
                     token = Null.Str;

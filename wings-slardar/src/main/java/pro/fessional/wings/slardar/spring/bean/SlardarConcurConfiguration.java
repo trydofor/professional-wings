@@ -57,6 +57,7 @@ public class SlardarConcurConfiguration {
 
         handler.setNeedCaptchaResponse(mav);
         handler.setWingsRemoteResolver(remoteResolver);
+        handler.setCaseIgnore(firstBloodProp.isCaseIgnore());
         if (firstBloodProp.isChineseCaptcha()) {
             logger.info("Wings conf firstBloodImageHandler ChineseCaptcha");
             handler.setCaptchaSupplier(() -> RandCode.mix(4));
