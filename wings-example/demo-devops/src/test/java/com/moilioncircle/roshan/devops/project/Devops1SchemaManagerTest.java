@@ -26,18 +26,18 @@ class Devops1SchemaManagerTest {
     private SchemaRevisionManager schemaRevisionManager;
 
     @Test
-    void initTail0315() {
+    void initDemo() {
         final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
 //        manager.init(WingsRevision.V04_20_1024_02_RolePermit.revision(),
-        manager.init(2021_0315_01L,
+        manager.init(9999_9999_01L,
                 Warlock1SchemaManager.includeWarlockPath(),
                 FlywaveRevisionScanner.Helper::master
-                );
+        );
     }
 
     @Test
-    void resetRevi(){
-        long revi = 2021_0315_01L;
+    void resetDemo() {
+        long revi = 9999_9999_01L;
         final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
         final FlywaveRevisionScanner.Helper helper = FlywaveRevisionScanner.helper();
         Warlock1SchemaManager.includeWarlockPath().accept(helper);

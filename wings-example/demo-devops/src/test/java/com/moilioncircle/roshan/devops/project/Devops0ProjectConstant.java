@@ -5,9 +5,9 @@ package com.moilioncircle.roshan.devops.project;
  * @since 2021-02-22
  */
 public interface Devops0ProjectConstant {
-    String JDBC_URL = "jdbc:mysql://127.0.0.1:3306/wings-example";
-    String JDBC_USER = "jiayu_dev";
-    String JDBC_PASS = "make-dev-great-again";
+    String JDBC_URL = "jdbc:mysql://localhost:3306/demo_example";
+    String JDBC_USER = "trydofor";
+    String JDBC_PASS = "moilioncircle";
     String JAVA_MAIN = "./demo-common/src/main/java/";
 
     String PKG_ENUM = "com.moilioncircle.roshan.common.enums.autogen";

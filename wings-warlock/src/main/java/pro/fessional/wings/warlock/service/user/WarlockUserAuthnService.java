@@ -34,6 +34,7 @@ public interface WarlockUserAuthnService {
 
     @Data
     class Renew {
+        private Enum<?> authType;
         private String password;
         private LocalDateTime expiredDt;
         private Integer failedCnt;
@@ -44,30 +45,27 @@ public interface WarlockUserAuthnService {
      * 创建
      *
      * @param userId   所属用户
-     * @param authType 验证类型
      * @param authn    数据
      * @return id
      */
-    long create(long userId, @NotNull Enum<?> authType, @NotNull Authn authn);
+    long create(long userId, @NotNull Authn authn);
 
     /**
-     * 修改
+     * 修改，如果是null，则忽略
      *
      * @param userId   所属用户
-     * @param authType 验证类型
      * @param authn    数据
      * @throws CodeException 数据不存在
      */
-    void modify(long userId, @NotNull Enum<?> authType, @NotNull Authn authn);
+    void modify(long userId, @NotNull Authn authn);
 
     /**
-     * 重置密码，有效期，错误计数，连错上限
+     * 重置密码，有效期，错误计数，连错上限，如果是null，使用默认值
      *
      * @param userId   user id
-     * @param authType 验证类型
      * @param renew    修改项
      */
-    void renew(long userId, @NotNull Enum<?> authType, @NotNull Renew renew);
+    void renew(long userId, @NotNull Renew renew);
 
     /**
      * 关闭该验证
@@ -77,8 +75,9 @@ public interface WarlockUserAuthnService {
      */
     default void disable(long userId, @NotNull Enum<?> authType) {
         Renew renew = new Renew();
+        renew.setAuthType(authType);
         renew.setExpiredDt(EmptyValue.DATE_TIME);
-        renew(userId, authType, renew);
+        renew(userId, renew);
     }
 
     /**
@@ -90,8 +89,9 @@ public interface WarlockUserAuthnService {
      */
     default void enable(long userId, @NotNull Enum<?> authType, Duration expireIn) {
         Renew renew = new Renew();
+        renew.setAuthType(authType);
         renew.setExpiredDt(LocalDateTime.now().plusSeconds(expireIn.getSeconds()));
-        renew(userId, authType, renew);
+        renew(userId, renew);
     }
 
     @Data

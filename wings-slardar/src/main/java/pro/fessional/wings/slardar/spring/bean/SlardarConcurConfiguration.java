@@ -48,6 +48,7 @@ public class SlardarConcurConfiguration {
         handler.setClientTicketKey(firstBloodProp.getClientTicketKey());
         handler.setFreshCaptchaKey(firstBloodProp.getFreshCaptchaKey());
         handler.setCheckCaptchaKey(firstBloodProp.getCheckCaptchaKey());
+        handler.setScenePrefix(firstBloodProp.getCaptchaPrefix());
 
         ModelAndView mav = new ModelAndView();
         PlainTextView pv = new PlainTextView(firstBloodProp.getContentType(), firstBloodProp.getResponseBody());
@@ -56,6 +57,7 @@ public class SlardarConcurConfiguration {
 
         handler.setNeedCaptchaResponse(mav);
         handler.setWingsRemoteResolver(remoteResolver);
+        handler.setCaseIgnore(firstBloodProp.isCaseIgnore());
         if (firstBloodProp.isChineseCaptcha()) {
             logger.info("Wings conf firstBloodImageHandler ChineseCaptcha");
             handler.setCaptchaSupplier(() -> RandCode.mix(4));
@@ -64,7 +66,7 @@ public class SlardarConcurConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(FirstBloodInterceptor.class)
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$firstBlood, havingValue = "true")
     public FirstBloodInterceptor firstBloodInterceptor(ObjectProvider<FirstBloodHandler> providers) {
         final List<FirstBloodHandler> handlers = providers.orderedStream().collect(Collectors.toList());

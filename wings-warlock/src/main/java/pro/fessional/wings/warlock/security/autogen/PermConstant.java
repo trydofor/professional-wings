@@ -1,7 +1,7 @@
 package pro.fessional.wings.warlock.security.autogen;
 
 /**
- * @since 2021-04-01
+ * @since 2021-06-08
  */
 public interface PermConstant {
 

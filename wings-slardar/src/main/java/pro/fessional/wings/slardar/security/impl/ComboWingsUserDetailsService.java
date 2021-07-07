@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.security.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.core.Ordered;
@@ -18,6 +19,7 @@ import java.util.List;
  * @author trydofor
  * @since 2021-02-17
  */
+@Slf4j
 public class ComboWingsUserDetailsService implements WingsUserDetailsService {
 
     private final List<Combo<?>> combos = new ArrayList<>();
@@ -28,7 +30,10 @@ public class ComboWingsUserDetailsService implements WingsUserDetailsService {
         dclCombos.runIfDirty();
         for (Combo<?> combo : combos) {
             final UserDetails ud = combo.loadOrNull(username, authType, authDetail);
-            if (ud != null) return ud;
+            if (ud != null) {
+                log.info("loadUserByUsername by combo={}", combo.getClass());
+                return ud;
+            }
         }
 
         throw new UsernameNotFoundException("failed load user-details, username=" + username + ", auth-type=" + authType);

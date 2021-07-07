@@ -46,10 +46,6 @@ public class ConstantNaviGenerator {
 
         log.info("generate java={}, prefix={}, entry-count={}", javaName, prefixCode, entries.size());
         List<Entry> list = new ArrayList<>(entries);
-        for (Entry entry : list) {
-            String lowerCase = entry.getName().toLowerCase();
-            entry.setName(lowerCase);
-        }
 
         // 初始
         File dst = new File(targetDir, packageName.replace('.', '/'));
@@ -63,6 +59,15 @@ public class ConstantNaviGenerator {
                                  " */\n" +
                                  "public interface %s {",
                 packageName, LocalDate.now().toString(), javaName));
+        if(prefixCode.length()>0){
+            String indent = indent(1);
+            out.append(MessageFormat.format("\n\n" +
+                                            indent + "/**\n" +
+                                            indent + " * prefix={0}\n" +
+                                            indent + " */\n" +
+                                            indent + "String $PREFIX = \"{0}\";\n",
+                    prefixCode));
+        }
         genField(1, ROOT, list, out, prefixCode);
         genClass(1, ROOT, list, out, prefixCode);
         out.append("\n}");
@@ -107,14 +112,13 @@ public class ConstantNaviGenerator {
 
             String tkn = nm.startsWith(delimiter) ? nm.substring(delimiter.length()) : nm;
 
-            final String camel = CaseSwitcher.camel(n);
             out.append(MessageFormat.format("\n\n" +
                                             indent + "/**\n" +
                                             indent + " * id={0}, remark={1}\n" +
                                             indent + " */\n" +
                                             indent + "String {2} = \"{3}\";\n" +
                                             indent + "long ID${2} = {0};",
-                    en.id, en.remark, camel, tkn));
+                    en.id, en.remark, n, tkn));
 
             if (prefixCode.length() > 0) {
                 String jf = prefixCode;
@@ -124,11 +128,8 @@ public class ConstantNaviGenerator {
                 }
 
                 out.append(MessageFormat.format("\n" +
-                                                indent + "/**\n" +
-                                                indent + " * id={0}, remark={1}, prefix={4}\n" +
-                                                indent + " */\n" +
-                                                indent + "String {5}{3} = \"{4}{3}\";",
-                        en.id, en.remark, camel, tkn, prefixCode, jf
+                                                indent + "String {2}{0} = \"{1}{0}\";",
+                        tkn, prefixCode, jf
                 ));
             }
         }

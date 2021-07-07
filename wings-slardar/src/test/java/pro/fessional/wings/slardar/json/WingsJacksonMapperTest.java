@@ -34,7 +34,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -51,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class WingsJacksonMapperTest {
 
     final static TimeZone systemTz = TimeZone.getTimeZone("Asia/Shanghai");
-    final static TimeZone userTz = TimeZone.getTimeZone("GMT-4");
+    final static TimeZone userTz = TimeZone.getTimeZone("Asia/Tokyo");
 
     @Setter(onMethod_ = {@Autowired})
     private ObjectMapper objectMapper;
@@ -151,7 +150,6 @@ public class WingsJacksonMapperTest {
         @JsonFormat(pattern = DateTimePattern.PTN_FULL_23Z)
         private ZonedDateTime zonedDateTimeValZ = zonedDateTimeVal.withZoneSameInstant(userTz.toZoneId());
         private Instant instantVal = Instant.parse("2020-06-01T12:34:46.000Z");
-        private Date utilDateVal = new Date(zonedDateTimeValV.toEpochSecond() * 1000);
         private List<String> listVal = Arrays.asList("字符串", "列表");
         private Map<String, Long> mapVal = new HashMap<String, Long>() {{put("Map", 1L);}};
     }
@@ -322,11 +320,10 @@ public class WingsJacksonMapperTest {
                      "  <localDateTimeVal>2020-06-01 12:34:46</localDateTimeVal>\n" +
                      "  <localDateVal>2020-06-01</localDateVal>\n" +
                      "  <localTimeVal>12:34:46</localTimeVal>\n" +
-                     "  <zonedDateTimeVal>2020-06-01 00:34:46</zonedDateTimeVal>\n" +
-                     "  <zonedDateTimeValV>2020-06-01 00:34:46.000 GMT-04:00</zonedDateTimeValV>\n" +
-                     "  <zonedDateTimeValZ>2020-06-01 00:34:46.000 -0400</zonedDateTimeValZ>\n" +
+                     "  <zonedDateTimeVal>2020-06-01 13:34:46 Asia/Tokyo</zonedDateTimeVal>\n" +
+                     "  <zonedDateTimeValV>2020-06-01 13:34:46.000 Asia/Tokyo</zonedDateTimeValV>\n" +
+                     "  <zonedDateTimeValZ>2020-06-01 13:34:46.000 +0900</zonedDateTimeValZ>\n" +
                      "  <instantVal>2020-06-01T12:34:46Z</instantVal>\n" +
-                     "  <utilDateVal>2020-06-01 12:34:46</utilDateVal>\n" +
                      "  <listVal>\n" +
                      "    <listVal>字符串</listVal>\n" +
                      "    <listVal>列表</listVal>\n" +
@@ -349,9 +346,7 @@ public class WingsJacksonMapperTest {
         assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, ikey=ival, longIgnore=0, textAuto=textAuto can not be empty}", t1.getResultTree()
                                                                                                                                                                                                                 .toString()
                                                                                                                                                                                                                 .trim());
-        assertEquals("{intVal=2147483646, longVal=9223372036854775806, floatVal=1.1, doubleVal=2.2, decimalVal=3.3, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, zonedDateTimeVal=2020-06-01 00:34:46, zonedDateTimeValV=2020-06-01 00:34:46.000 GMT-04:00, zonedDateTimeValZ=2020-06-01 00:34:46.000 -0400, instantVal=2020-06-01T12:34:46Z, utilDateVal=2020-06-01 12:34:46, listVal=列表, Map=1, bool-val=false}", t2.getResultTree()
-                                                                                                                                                                                                                                                                                                                                                                                                                                                               .toString()
-                                                                                                                                                                                                                                                                                                                                                                                                                                                               .trim());
+        assertEquals("{intVal=2147483646, longVal=9223372036854775806, floatVal=1.1, doubleVal=2.2, decimalVal=3.3, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, zonedDateTimeVal=2020-06-01 13:34:46 Asia/Tokyo, zonedDateTimeValV=2020-06-01 13:34:46.000 Asia/Tokyo, zonedDateTimeValZ=2020-06-01 13:34:46.000 +0900, instantVal=2020-06-01T12:34:46Z, listVal=列表, Map=1, bool-val=false}", t2.getResultTree().toString().trim());
     }
 
     @Test
@@ -365,11 +360,12 @@ public class WingsJacksonMapperTest {
         Map<String, String> x2 = StringMapHelper.jaxb(jsonIt);
 
         assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, ikey=ival, longIgnore=0, textAuto=textAuto can not be empty}", j1.toString());
-        assertEquals("{Map=1, bool-val=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, instantVal=2020-06-01T12:34:46Z, intVal=2147483646, listVal=列表, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, longVal=9223372036854775806, utilDateVal=2020-06-01 12:34:46, zonedDateTimeVal=2020-06-01 00:34:46, zonedDateTimeValV=2020-06-01 00:34:46.000 GMT-04:00, zonedDateTimeValZ=2020-06-01 00:34:46.000 -0400}", j2.toString());
+        assertEquals("{Map=1, bool-val=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, instantVal=2020-06-01T12:34:46Z, intVal=2147483646, listVal=列表, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, longVal=9223372036854775806, zonedDateTimeVal=2020-06-01 13:34:46 Asia/Tokyo, zonedDateTimeValV=2020-06-01 13:34:46.000 Asia/Tokyo, zonedDateTimeValZ=2020-06-01 13:34:46.000 +0900}", j2.toString());
         assertEquals("{args=textDisabled, codeIgnore=base.not-empty, codeManual=base.not-empty, hint=, key=ikey, longIgnore=0, value=ival}", x1.toString());
-        assertEquals("{boolVal=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, intVal=2147483646, key=Map, listVal=列表, longVal=9223372036854775806, utilDateVal=2020-06-01T12:34:46+08:00, value=1}", x2.toString());
+        assertEquals("{boolVal=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, intVal=2147483646, key=Map, listVal=列表, longVal=9223372036854775806, value=1}", x2.toString());
     }
 
+    //
     @Data
     public static class NumberAsString {
         private long numLong = 10L;

@@ -5,6 +5,7 @@ import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.ZoneId;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -52,6 +53,7 @@ public class TerminalContext {
         private final long userId;
         private final Locale locale;
         private final TimeZone timeZone;
+        private final ZoneId zoneId;
         private final String remoteIp;
         private final String agentInfo;
 
@@ -61,6 +63,8 @@ public class TerminalContext {
             this.timeZone = timeZone == null ? TimeZone.getDefault() : timeZone;
             this.remoteIp = remoteIp == null ? "" : remoteIp;
             this.agentInfo = agentInfo == null ? "" : agentInfo;
+            //
+            this.zoneId = this.timeZone.toZoneId();
         }
 
         /**
@@ -87,6 +91,7 @@ public class TerminalContext {
         public String toString() {
             return "Context{" +
                    "userId=" + userId +
+                   "zoneId=" + zoneId +
                    ", remoteIp='" + remoteIp + '\'' +
                    ", agentInfo='" + agentInfo + '\'' +
                    '}';

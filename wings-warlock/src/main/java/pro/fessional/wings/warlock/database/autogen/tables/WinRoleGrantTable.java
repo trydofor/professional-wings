@@ -18,6 +18,7 @@ import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 import pro.fessional.wings.faceless.database.jooq.WingsJournalTable;
+import pro.fessional.wings.faceless.database.jooq.converter.JooqConsEnumConverter;
 import pro.fessional.wings.warlock.database.autogen.DefaultSchema;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinRoleGrantRecord;
 
@@ -65,7 +66,7 @@ public class WinRoleGrantTable extends TableImpl<WinRoleGrantRecord> implements 
     /**
      * The column <code>win_role_grant.grant_type</code>.
      */
-    public final TableField<WinRoleGrantRecord, Integer> GrantType = createField(DSL.name("grant_type"), SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<WinRoleGrantRecord, pro.fessional.wings.warlock.enums.autogen.GrantType> GrantType = createField(DSL.name("grant_type"), SQLDataType.INTEGER.nullable(false), this, "", new JooqConsEnumConverter(pro.fessional.wings.warlock.enums.autogen.GrantType.class));
 
     /**
      * The column <code>win_role_grant.grant_entry</code>.
@@ -159,7 +160,7 @@ public class WinRoleGrantTable extends TableImpl<WinRoleGrantRecord> implements 
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<Long, Integer, Long, LocalDateTime, Long> fieldsRow() {
+    public Row5<Long, pro.fessional.wings.warlock.enums.autogen.GrantType, Long, LocalDateTime, Long> fieldsRow() {
         return (Row5) super.fieldsRow();
     }
 

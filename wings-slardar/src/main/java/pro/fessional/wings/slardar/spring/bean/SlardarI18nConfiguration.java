@@ -1,17 +1,19 @@
 package pro.fessional.wings.slardar.spring.bean;
 
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
-import pro.fessional.wings.slardar.jackson.I18nResultSerializer;
+import pro.fessional.wings.slardar.jackson.I18nResultModifier;
 import pro.fessional.wings.slardar.jackson.I18nStringSerializer;
+import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 /**
  * @author trydofor
@@ -25,13 +27,14 @@ public class SlardarI18nConfiguration {
     private static final Log logger = LogFactory.getLog(SlardarI18nConfiguration.class);
 
     @Bean
-    public Jackson2ObjectMapperBuilderCustomizer customizerI18nSerializer(MessageSource messageSource) {
-        logger.info("Wings conf customizerI18nSerializer");
-        return builder -> {
-            builder.serializerByType(R.I.class, new I18nResultSerializer(messageSource));
-            builder.serializerByType(I18nString.class, new I18nStringSerializer(messageSource, true));
-            builder.serializerByType(CharSequence.class, new I18nStringSerializer(messageSource, false));
-        };
+    @ConditionalOnProperty(name = SlardarEnabledProp.Key$jackson, havingValue = "true")
+    public Module customizerI18nResultModule(MessageSource messageSource) {
+        logger.info("Wings conf customizerI18nResultModule");
+        SimpleModule i18n = new SimpleModule();
+        i18n.setSerializerModifier(new I18nResultModifier(messageSource));
+        i18n.addSerializer(I18nString.class, new I18nStringSerializer(messageSource, true));
+        i18n.addSerializer(CharSequence.class, new I18nStringSerializer(messageSource, false));
+        return i18n;
     }
 
     @Bean

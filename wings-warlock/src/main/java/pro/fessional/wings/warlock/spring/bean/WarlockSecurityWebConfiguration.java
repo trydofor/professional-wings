@@ -13,10 +13,12 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
+import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +68,7 @@ public class WarlockSecurityWebConfiguration extends WebSecurityConfigurerAdapte
             )
             .bindLogin(conf -> conf
                     .loginPage(securityProp.getLoginPage()) // 无权限时返回的页面，
+                    .loginForward(securityProp.isLoginForward()) // 无权限时返回的页面，
                     .loginProcessingUrl(securityProp.getLoginUrl()) // filter处理，不需要controller
                     .usernameParameter(securityProp.getUsernamePara())
                     .passwordParameter(securityProp.getPasswordPara())
@@ -91,7 +94,7 @@ public class WarlockSecurityWebConfiguration extends WebSecurityConfigurerAdapte
                             .antMatchers(securityProp.getPermitAll().toArray(Null.StrArr))
                             .permitAll();
 
-                        logger.info("Wings conf HttpSecurity. bind Authenticated"
+                        logger.info("Wings conf HttpSecurity. bind Authenticated="
                                 + String.join("\n, ", securityProp.getAuthenticated()));
                         logger.info("Wings conf HttpSecurity. bind PermitAll="
                                 + String.join("\n, ", securityProp.getPermitAll()));
@@ -105,8 +108,12 @@ public class WarlockSecurityWebConfiguration extends WebSecurityConfigurerAdapte
                     .logoutSuccessHandler(logoutSuccessHandler)
             )
             .sessionManagement(conf -> conf
-                    .maximumSessions(1)
+                    .maximumSessions(securityProp.getSessionMaximum())
                     .sessionRegistry(sessionRegistry)
+                    .expiredSessionStrategy(event -> {
+                        HttpServletResponse response = event.getResponse();
+                        ResponseHelper.writeBodyUtf8(response, securityProp.getSessionExpiredBody());
+                    })
             )
             .requestCache().disable()
             .csrf().disable();

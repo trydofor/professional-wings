@@ -96,7 +96,16 @@ wings中的spring命名，主要集中在以下（后续目录结构有详解）
  * 以`String.endWith`判断，全路径精确匹配。
  * `profile`格式的配置文件，需要单独
 
-### 1.2.4.参考资料
+### 1.2.4.配置提升
+
+有些非Spring体系的功能，通过System.getProperties获得属性。
+因此需要把部分spring下的配置写入System.properties。
+
+ * System中不存在时写入，即 `-Dkey=value`优先级最高。
+ * 变量名保存在`/wings-conf/wings-prop-promotion.cnf`中
+ * 文件格式说明同`配置禁用`
+
+### 1.2.5.参考资料
 
 [参考资料 docs.spring.io](https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/)
 

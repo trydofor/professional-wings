@@ -11,6 +11,7 @@ import org.jooq.impl.DefaultVisitListener;
 import org.jooq.impl.TableImpl;
 
 /**
+ * visit可能触发多次，任何需要render的地方，如toString, getSQL0
  * @author trydofor
  * @since 2021-01-14
  */
@@ -18,16 +19,19 @@ public class AutoQualifyFieldListener extends DefaultVisitListener {
 
     @Override
     public void visitStart(VisitContext context) {
+        // only rendering
+        if(context.renderContext() == null) return;
+
         QueryPart qp = context.queryPart();
-        Context<?> ctx = context.context();
         if (qp instanceof TableField) {
             TableField<?, ?> field = (TableField<?, ?>) qp;
-            if (notAlias(field.getTable(), ctx) == 0) {
+            if (notAlias(field.getTable(), context.context()) == 0) {
                 context.queryPart(DSL.field(field.getUnqualifiedName(), field.getDataType()));
             }
-        } else if (qp instanceof QualifiedAsterisk) {
+        }
+        else if (qp instanceof QualifiedAsterisk) {
             QualifiedAsterisk asterisk = (QualifiedAsterisk) qp;
-            if (notAlias(asterisk.qualifier(), ctx) == 0) {
+            if (notAlias(asterisk.qualifier(), context.context()) == 0) {
                 context.queryPart(DSL.sql("*"));
             }
         }

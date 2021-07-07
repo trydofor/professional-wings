@@ -4,11 +4,11 @@
                   xsi:schemaLocation="http://www.hazelcast.com/schema/client-config
                   http://www.hazelcast.com/schema/client-config/hazelcast-client-config-4.0.xsd">
 
-    <cluster-name>wings-slardar</cluster-name>
+    <cluster-name>${wings.slardar.hazelcast.cluster-name}</cluster-name>
     <network>
         <cluster-members>
             <address>127.0.0.1</address>
-<!--            <address>127.0.0.2</address>-->
+            <!--            <address>127.0.0.2</address>-->
         </cluster-members>
         <outbound-ports>
             <ports>34600</ports>
@@ -40,20 +40,22 @@
     </near-cache>
     <serialization>
         <serializers>
+            <!-- need UnmodifiableCollectionsSerializer -->
+            <global-serializer>pro.fessional.wings.slardar.serialize.KryoHazelcast</global-serializer>
             <!-- spring FindByIndexNameSessionRepository -->
             <serializer class-name="org.springframework.session.hazelcast.HazelcastSessionSerializer"
                         type-class="org.springframework.session.MapSession"/>
         </serializers>
     </serialization>
     <user-code-deployment enabled="true">
-<!--        <jarPaths>-->
-<!--            <jarPath>example.jar</jarPath>-->
-<!--            <jarPath>https://hazelcast.com/</jarPath>-->
-<!--            <jarPath>file://User/test/sample.jar</jarPath>-->
-<!--        </jarPaths>-->
-        <classNames>
-            <className>pro.fessional.wings.slardar.service.TestWingsUserDetails</className>
-        </classNames>
+        <!--        <jarPaths>-->
+        <!--            <jarPath>example.jar</jarPath>-->
+        <!--            <jarPath>https://hazelcast.com/</jarPath>-->
+        <!--            <jarPath>file://User/test/sample.jar</jarPath>-->
+        <!--        </jarPaths>-->
+        <!--        <classNames>-->
+        <!--            <className>pro.fessional.wings.slardar.service.TestWingsUserDetails</className>-->
+        <!--        </classNames>-->
     </user-code-deployment>
 
     <connection-strategy async-start="true" reconnect-mode="ASYNC">

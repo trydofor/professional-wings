@@ -19,7 +19,10 @@ public enum CommonErrorEnum implements CodeEnum {
     AssertParam2("error.common.assert.param", "参数不正确，名字={0}，值={1}"),
 
     DataNotFound("error.common.data.notfound", "数据不存在"),
-    DataExisted("error.common.data.existed", "数据已存在");
+    DataExisted("error.common.data.existed", "数据已存在"),
+
+    MessageUnreadable("error.common.message.unreadable", "请求数据格式错误"),
+    ;
 
     private final String code;
     private final String hint;

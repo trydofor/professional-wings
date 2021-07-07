@@ -6,12 +6,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * @author trydofor
  * @since 2021-04-05
  */
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class WingsInitProjectUtil {
 
     public static class Info {
@@ -30,7 +34,7 @@ public class WingsInitProjectUtil {
         public String dstPackage;
     }
 
-    public static void initProject(Info info, Consumer<String> fun) throws IOException {
+    public static void initProject(Info info, Consumer<String> message) throws IOException {
 
         String srcAbsPath = info.srcDir.getAbsolutePath();
         String dstAbsPath = info.dstDir.getAbsolutePath();
@@ -40,60 +44,110 @@ public class WingsInitProjectUtil {
         }
 
         if (!info.srcDir.exists()) {
-            fun.accept("创建新工程目录");
+            message.accept("创建新工程目录");
             info.srcDir.mkdirs();
         }
 
         final String[] copyFiles = {
+                ".gitignore",
                 "pom.xml",
+                "readme.md",
                 "demo-admin/",
+                "demo-front/",
                 "demo-common/",
                 "demo-devops/",
                 };
 
+        final Predicate<String> excludes = (path) -> {
+            if (path.endsWith(".out")) return true;
+            if (path.endsWith(".pid")) return true;
+            if (path.endsWith(".gc")) return true;
+            if (path.endsWith(".bak")) return true;
+            if (path.endsWith(".iml")) return true;
+            if (path.endsWith(".log")) return true;
+            if (path.endsWith(".flattened-pom.xml")) return true;
+            if (path.endsWith("wings-init-project.sh")) return true;
+            if (path.endsWith(".class")) return true;
+            if (path.contains("/devops/init/")) return true;
+            if (path.contains(".DS_Store")) return true;
+            if (path.contains(".idea/")) return true;
+
+            return path.contains("/target/");
+        };
+
         for (String f : copyFiles) {
-            copyTree(info, new File(info.srcDir, f), fun);
+            copyTree(info, new File(info.srcDir, f), excludes, message);
+        }
+
+        makeWings(info.dstDir, info.dstCodeName.toLowerCase(), info.dstPackage, message);
+    }
+
+    private static void makeWings(File root, String code, String pkg, Consumer<String> message) {
+        final String path = root.getAbsolutePath();
+        if (path.endsWith("-common/src/main")) {
+            new File(root, "resources/wings-conf").mkdirs();
+            new File(root, "resources/wings-flywave/branch").mkdirs();
+            new File(root, "resources/wings-i18n").mkdirs();
+            message.accept("mkdir for wings common resources");
+
+            final String common = "java/" + pkg.replace('.', '/') + "/common/";
+            new File(root, common + "service").mkdirs();
+            new File(root, common + "spring/bean").mkdirs();
+            new File(root, common + "spring/boot").mkdirs();
+            new File(root, common + "spring/prop").mkdirs();
+            message.accept("mkdir for wings common springs");
+            return;
+        }
+
+        if (root.isDirectory()) {
+            for (File f : root.listFiles()) {
+                makeWings(f, code, pkg, message);
+            }
         }
     }
 
-    private static void copyTree(Info info, File src, Consumer<String> fun) throws IOException {
+    private static void copyTree(Info info, File src, Predicate<String> exc, Consumer<String> message) throws IOException {
 
-        String name = src.getName();
+        final String path = src.getAbsolutePath();
         // 忽略
-        if (name.equalsIgnoreCase("target") ||
-            name.equalsIgnoreCase(".flattened-pom.xml") ||
-            name.endsWith(".iml")) {
+        if (exc.test(path)) {
             return;
         }
 
         if (src.isDirectory()) {
             for (File f : src.listFiles()) {
-                copyTree(info, f, fun);
+                copyTree(info, f, exc, message);
             }
             return;
         }
 
-        boolean isJava = false;
         byte[] bytes;
-        if (name.equals("pom.xml")) {
+        if (path.endsWith("pom.xml")) {
             bytes = copyPomXml(info, src);
         }
-        else if (name.endsWith(".java")) {
-            bytes = copyJavas(info, src);
-            isJava = true;
+        else if (path.endsWith(".java") ||
+                 path.endsWith(".form") ||
+                 path.endsWith(".env") ||
+                 path.endsWith(".sql") ||
+                 path.endsWith(".md") ||
+                 path.endsWith(".properties") ||
+                 path.endsWith("spring.factories")
+        ) {
+            bytes = copyTxtSrc(info, src);
         }
         else {
             bytes = copyBytes(info, src);
         }
 
-        String dstName = src.getAbsolutePath().replace(info.srcDir.getAbsolutePath(), "");
-        if (isJava) {
+        String dstName = path.replace(info.srcDir.getAbsolutePath(), "");
+        if (path.endsWith(".java")) {
             final String srcPkg = info.srcPackage.replace('.', '/');
             final String dstPkg = info.dstPackage.replace('.', '/');
             dstName = dstName.replace(srcPkg, dstPkg);
         }
 
         dstName = replaceCodeName(info, dstName);
+        dstName = replaceDate999(dstName);
         File dstFile = new File(info.dstDir, dstName);
         File parent = dstFile.getParentFile();
         if (!parent.exists()) {
@@ -101,14 +155,14 @@ public class WingsInitProjectUtil {
         }
 
         if (bytes.length > 0) {
-            fun.accept("写入 " + dstName);
+            message.accept("写入 " + dstName);
             FileOutputStream fos = new FileOutputStream(dstFile);
             fos.write(bytes);
             fos.flush();
             fos.close();
         }
         else {
-            fun.accept("新建 " + dstName);
+            message.accept("新建 " + dstName);
             dstFile.createNewFile();
         }
     }
@@ -120,8 +174,18 @@ public class WingsInitProjectUtil {
         String dstCn1 = Character.toLowerCase(info.dstCodeName.charAt(0)) + info.dstCodeName.substring(1);
         String dstCn2 = Character.toUpperCase(info.dstCodeName.charAt(0)) + info.dstCodeName.substring(1);
 
-        return text.replace(srcCn1, dstCn1)
-                   .replace(srcCn2, dstCn2);
+        return text.replace(srcCn1, dstCn1).replace(srcCn2, dstCn2);
+    }
+
+    private static String replaceDate999(String text) {
+        final LocalDateTime now = LocalDateTime.now();
+        final String ymd1 = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        final String ymd2 = now.format(DateTimeFormatter.ofPattern("yyyy_MMdd"));
+        final String ymh = now.format(DateTimeFormatter.ofPattern("yyyy_MMdd_HHmm"));
+        return text.replace("9999-99-99", ymd1)
+                   .replace("9999_9999_01L", ymd2 + "_01L")
+                   .replace("9999_9999_9999L", ymh + "_01L")
+                ;
     }
 
     private static byte[] copyPomXml(Info info, File file) throws IOException {
@@ -137,13 +201,14 @@ public class WingsInitProjectUtil {
         return text.getBytes(StandardCharsets.UTF_8);
     }
 
-    private static byte[] copyJavas(Info info, File file) throws IOException {
+    private static byte[] copyTxtSrc(Info info, File file) throws IOException {
         ByteArrayOutputStream ios = new ByteArrayOutputStream();
         Files.copy(file.toPath(), ios);
         String text = new String(ios.toByteArray(), StandardCharsets.UTF_8)
                               .replace(info.srcPackage, info.dstPackage)
                               .replace(info.srcArtifactId, info.dstArtifactId);
         text = replaceCodeName(info, text);
+        text = replaceDate999(text);
         return text.getBytes(StandardCharsets.UTF_8);
     }
 

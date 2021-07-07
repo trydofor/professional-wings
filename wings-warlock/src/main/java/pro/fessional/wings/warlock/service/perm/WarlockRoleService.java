@@ -3,7 +3,6 @@ package pro.fessional.wings.warlock.service.perm;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author trydofor
@@ -17,20 +16,11 @@ public interface WarlockRoleService {
     }
 
     /**
-     * 一次性获得所有id和角色码name
+     * 一次性获得所有id和角色码name，并进行变准化处理
      *
      * @return 角色码
      */
     Map<Long, String> loadRoleAll();
-
-
-    /**
-     * 一次性获得所有role之间的继承关系。
-     * key拥有Set中所有role的权限
-     *
-     * @return 拥有关系
-     */
-    Map<Long, Set<Long>> loadRoleGrant();
 
     /**
      * 创建role，如果同名存在则失败

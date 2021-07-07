@@ -49,12 +49,43 @@ public class SlardarConcurProp {
 
 
         /**
+         * 图片以base64返回的key，用在fresh-captcha-image=base64+时间戳
+         *
+         * @see #Key$base64CaptchaKey
+         */
+        private String base64CaptchaKey = "";
+        public static final String Key$base64CaptchaKey = Key + ".base-64-captcha-key";
+
+        /**
+         * 图片以base64返回的格式，{b64} 占位为 `data:image/jpeg;base64,/9j/4AAQSkZ.....`
+         *
+         * @see #Key$base64CaptchaBody
+         */
+        private String base64CaptchaBody = "";
+        public static final String Key$base64CaptchaBody = Key + ".base-64-captcha-body";
+
+        /**
          * 是否使用中文验证码
          *
          * @see #Key$chineseCaptcha
          */
         private boolean chineseCaptcha = true;
         public static final String Key$chineseCaptcha = Key + ".first-blood.chinese-captcha";
+
+        /**
+         * 是否忽略大小写
+         *
+         * @see #Key$caseIgnore
+         */
+        private boolean caseIgnore = true;
+        public static final String Key$caseIgnore = Key + ".case-ignore";
+
+        /**
+         * @see #Key$captchaPrefix
+         */
+        private String captchaPrefix = "image";
+        public static final String Key$captchaPrefix = Key + ".captcha-prefix";
+
 
         /**
          * @see #Key$httpStatus

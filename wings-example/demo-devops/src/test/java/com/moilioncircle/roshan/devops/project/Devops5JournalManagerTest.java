@@ -33,7 +33,7 @@ public class Devops5JournalManagerTest {
 
     @Test
     public void journal() {
-        long commitId = 2020_0606_1423L;
+        long commitId = 9999_9999_9999L;
         boolean enable = true;
         List<String> tables = Arrays.asList(
                 "win_user",

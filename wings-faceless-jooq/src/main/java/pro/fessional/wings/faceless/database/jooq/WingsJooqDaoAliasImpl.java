@@ -8,6 +8,9 @@ import org.jooq.Condition;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.InsertOnDuplicateSetMoreStep;
+import org.jooq.InsertOnDuplicateSetStep;
+import org.jooq.InsertReturningStep;
 import org.jooq.Loader;
 import org.jooq.LoaderOptionsStep;
 import org.jooq.Name;
@@ -15,7 +18,6 @@ import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.Result;
-import org.jooq.RowCountQuery;
 import org.jooq.SelectField;
 import org.jooq.Table;
 import org.jooq.TableRecord;
@@ -28,7 +30,6 @@ import pro.fessional.mirana.pain.IORuntimeException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -186,8 +187,14 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
 
         }
         else {
-            RowCountQuery query = WingsJooqUtil.replaceInto(record);
-            return dsl.execute(query);
+//            RowCountQuery query = WingsJooqUtil.replaceInto(record);
+//            return dsl.execute(query);
+            return dsl.insertInto(table)
+                      .columns(table.fields())
+                      .values(record.intoArray())
+                      .onDuplicateKeyUpdate()
+                      .set(record)
+                      .execute();
         }
     }
 
@@ -201,7 +208,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
      * @return 执行结果，使用 ModifyAssert判断
      */
     public int mergeInto(P pojo, Field<?>... updateFields) {
-        HashMap<Field<?>, Object> map = new HashMap<>();
+        Map<Field<?>, Object> map = new LinkedHashMap<>();
         DSLContext dsl = ctx();
         R record = dsl.newRecord(table, pojo);
 
@@ -230,7 +237,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
         if (records == null || records.isEmpty()) return Null.Ints;
 
         BiFunction<DSLContext, Collection<R>, int[]> batchMergeExec = (dsl, rs) -> {
-            HashMap<Field<?>, Object> map = new HashMap<>();
+            Map<Field<?>, Object> map = new LinkedHashMap<>();
             for (Field<?> field : updateFields) {
                 map.put(field, null);
             }
@@ -392,35 +399,50 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
      * @return 执行结果，使用 ModifyAssert判断
      * @see DSLContext#mergeInto(Table)
      */
+    @SuppressWarnings("unchecked")
     public int[] batchInsert(Collection<R> records, int size, boolean ignoreOrReplace) {
         if (records == null || records.isEmpty()) return Null.Ints;
 
         BiFunction<DSLContext, Collection<R>, int[]> batchIgnoreExec = (dsl, rs) -> {
-            Field<?>[] fields = table.fields();
-            BatchBindStep batch;
+            Field<Object>[] fields = (Field<Object>[]) table.fields();
             if (ignoreOrReplace) {
                 // insert ignore
-                batch = dsl.batch(
-                        dsl.insertInto(table)
-                           .columns(fields)
-                           .values(new Object[fields.length])
-                           .onDuplicateKeyIgnore()
-                );
 
+                final InsertReturningStep<R> step = dsl
+                        .insertInto(table)
+                        .columns(fields)
+                        .values(new Object[fields.length])
+                        .onDuplicateKeyIgnore();
+
+                BatchBindStep batch = dsl.batch(step);
+                for (R r : rs) {
+                    batch.bind(r.intoArray());
+                }
+                return batch.execute();
             }
             else {
-                batch = dsl.batch(WingsJooqUtil.replaceInto(table, fields));
-            }
+                final InsertOnDuplicateSetStep<R> step = dsl
+                        .insertInto(table)
+                        .columns(fields)
+                        .values(new Object[fields.length])
+                        .onDuplicateKeyUpdate();
 
-            for (R r : rs) {
-                Object[] vals = new Object[fields.length];
-                for (int i = 0; i < vals.length; i++) {
-                    vals[i] = r.get(i);
+                InsertOnDuplicateSetMoreStep<R> set = null;
+                for (Field<Object> fld : fields) {
+                    set = step.set(fld, (Object) null);
                 }
-                batch.bind(vals);
-            }
 
-            return batch.execute();
+                BatchBindStep batch = dsl.batch(set);
+                for (R r : rs) {
+                    final Object[] ay = r.intoArray();
+                    final int len = ay.length;
+                    Object[] vl = new Object[len * 2];
+                    System.arraycopy(ay, 0, vl, 0, len);
+                    System.arraycopy(ay, 0, vl, len, len);
+                    batch.bind(vl);
+                }
+                return batch.execute();
+            }
         };
 
         return batchExecute(records, size, batchIgnoreExec);
@@ -468,7 +490,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
         if (records == null || records.isEmpty()) return Null.Ints;
 
         BiFunction<DSLContext, Collection<R>, int[]> batchMergeExec = (dsl, rs) -> {
-            HashMap<Field<?>, Object> map = new HashMap<>();
+            Map<Field<?>, Object> map = new LinkedHashMap<>();
             for (Field<?> uf : updateFields) {
                 map.put(uf, null);
             }

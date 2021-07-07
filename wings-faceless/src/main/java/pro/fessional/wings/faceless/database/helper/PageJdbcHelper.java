@@ -131,7 +131,7 @@ public class PageJdbcHelper {
         @NotNull
         public <E> PageResult<E> into(RowMapper<E> mapper) {
             if (context.total < 0) {
-                Integer total = context.tpl.queryForObject("SELECT " + context.count + " " + context.fromWhere, int.class, context.bind);
+                Integer total = context.tpl.queryForObject("SELECT " + context.count + " " + context.fromWhere, Integer.class, context.bind);
                 if (total != null) {
                     context.total = total;
                 }
@@ -147,7 +147,7 @@ public class PageJdbcHelper {
                 list = context.tpl.query(sql.toString(), mapper, context.bind);
             }
 
-            return PageResult.of(context.total, list, context.page);
+            return PageResult.ok(context.total, list, context.page);
         }
     }
 
@@ -168,7 +168,7 @@ public class PageJdbcHelper {
         @NotNull
         public <E> PageResult<E> fetchInto(RowMapper<E> mapper) {
             if (context.total < 0) {
-                Integer total = context.tpl.queryForObject("SELECT count(*) FROM (" + context.wrap + ") WINGS_WRAP", int.class, context.bind);
+                Integer total = context.tpl.queryForObject("SELECT count(*) FROM (" + context.wrap + ") WINGS_WRAP", Integer.class, context.bind);
                 if (total != null) {
                     context.total = total;
                 }
@@ -181,7 +181,7 @@ public class PageJdbcHelper {
                 list = context.tpl.query(sql.toString(), mapper, context.bind);
             }
 
-            return PageResult.of(context.total, list, context.page);
+            return PageResult.ok(context.total, list, context.page);
         }
     }
 

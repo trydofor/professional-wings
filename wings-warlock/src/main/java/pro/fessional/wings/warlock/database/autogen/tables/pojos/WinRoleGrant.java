@@ -5,6 +5,7 @@ package pro.fessional.wings.warlock.database.autogen.tables.pojos;
 
 
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.IWinRoleGrant;
+import pro.fessional.wings.warlock.enums.autogen.GrantType;
 
 import javax.annotation.Generated;
 import javax.persistence.Column;
@@ -39,7 +40,7 @@ public class WinRoleGrant implements IWinRoleGrant {
     private static final long serialVersionUID = 1L;
 
     private Long          referRole;
-    private Integer       grantType;
+    private GrantType     grantType;
     private Long          grantEntry;
     private LocalDateTime createDt;
     private Long          commitId;
@@ -56,7 +57,7 @@ public class WinRoleGrant implements IWinRoleGrant {
 
     public WinRoleGrant(
         Long          referRole,
-        Integer       grantType,
+        GrantType     grantType,
         Long          grantEntry,
         LocalDateTime createDt,
         Long          commitId
@@ -92,7 +93,7 @@ public class WinRoleGrant implements IWinRoleGrant {
     @Column(name = "grant_type", nullable = false, precision = 10)
     @NotNull
     @Override
-    public Integer getGrantType() {
+    public GrantType getGrantType() {
         return this.grantType;
     }
 
@@ -100,7 +101,7 @@ public class WinRoleGrant implements IWinRoleGrant {
      * Setter for <code>win_role_grant.grant_type</code>.
      */
     @Override
-    public void setGrantType(Integer grantType) {
+    public void setGrantType(GrantType grantType) {
         this.grantType = grantType;
     }
 

@@ -16,14 +16,14 @@ CLAZ_ROOT="demo-devops/target/test-classes"
 JAVA_FILE="com/moilioncircle/roshan/devops/init/*.java"
 CLASS_RUN="com.moilioncircle.roshan.devops.init.WingsInitProjectSwing"
 
-echo "编译java文件 $JAVA_FILE to $CLAZ_ROOT"
-mkdir -p $CLAZ_ROOT
-javac -d $CLAZ_ROOT -encoding utf-8 $JAVA_ROOT/$JAVA_FILE
-
 VERS=$(grep -E '/revision>|/changelist>' ../pom.xml | \
 sort -r | tr -d '\n '| \
 sed -E 's:<revision>|</changelist>::g'| \
 sed -E 's:</revision><changelist>:.:g')
+
+echo "编译java文件 $JAVA_FILE to $CLAZ_ROOT"
+mkdir -p $CLAZ_ROOT
+javac -d $CLAZ_ROOT -encoding utf-8 $JAVA_ROOT/$JAVA_FILE
 
 echo "Wings Version=$VERS"
 echo "执行class文件 $CLASS_RUN"

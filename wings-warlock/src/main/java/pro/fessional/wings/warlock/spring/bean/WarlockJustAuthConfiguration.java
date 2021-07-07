@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 import pro.fessional.wings.warlock.security.justauth.JustAuthRequestBuilder;
 import pro.fessional.wings.warlock.security.justauth.JustAuthStateCaffeine;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
@@ -20,6 +21,8 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.net.Proxy.Type.DIRECT;
 
 
 /**
@@ -37,7 +40,14 @@ public class WarlockJustAuthConfiguration {
     private final WarlockSecurityProp securityProp;
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(AuthStateCache.class)
+    public AuthStateCache authStateCache() {
+        logger.info("Wings conf authStateCache");
+        return new JustAuthStateCaffeine(justAuthProp.getCacheSize(), justAuthProp.getCacheLive());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(JustAuthRequestBuilder.class)
     public JustAuthRequestBuilder justAuthRequestBuilder(AuthStateCache cache) {
         logger.info("Wings conf justAuthRequestFactory");
         JustAuthRequestBuilder factory = new JustAuthRequestBuilder();
@@ -52,28 +62,24 @@ public class WarlockJustAuthConfiguration {
 
             AuthConfig ac = en.getValue();
             WarlockJustAuthProp.Http hc = hcs.get(k);
-            if (hc != null) {
+            if (hc == null || !StringUtils.hasText(hc.getProxyHost()) || DIRECT.name().equalsIgnoreCase(hc.getProxyType())) {
+                logger.info("Wings conf justAuthRequestFactory auth-type " + k);
+            }
+            else {
                 final Proxy.Type ht = Proxy.Type.valueOf(hc.getProxyType());
                 final Proxy proxy = new Proxy(ht, new InetSocketAddress(hc.getProxyHost(), hc.getProxyPort()));
                 ac.setHttpConfig(HttpConfig
                         .builder()
-                        .timeout(hc.getTimeout())
+                        .timeout(hc.getTimeout() * 1000)
                         .proxy(proxy)
                         .build());
+                logger.info("Wings conf justAuthRequestFactory auth-type " + k + ", proxy=" + hc.getProxyType());
             }
-            logger.info("Wings conf justAuthRequestFactory auth-type " + k);
             map.put(em, ac);
         }
 
         factory.setAuthConfigMap(map);
         factory.setAuthStateCache(cache);
         return factory;
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public AuthStateCache authStateCache() {
-        logger.info("Wings conf authStateCache");
-        return new JustAuthStateCaffeine(justAuthProp.getCacheSize(), justAuthProp.getCacheLive());
     }
 }

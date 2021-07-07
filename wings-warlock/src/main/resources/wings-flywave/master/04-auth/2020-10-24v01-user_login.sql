@@ -65,19 +65,21 @@ VALUES (1200100, 'user_gender', 'user_gender', '性别', 'classpath:/wings-tmpl/
        (1200103, 'user_gender', 'unknown', '未知', '通常'),
 
        (1200200, 'user_status', 'user_status', '用户状态', 'classpath:/wings-tmpl/ConstantEnumTemplate.java'),
-       (1200201, 'user_status', 'uninit', '新建', '未初始化'),
-       (1200202, 'user_status', 'active', '正常', '正常活动'),
-       (1200203, 'user_status', 'infirm', '薄弱', '薄弱账户'),
-       (1200204, 'user_status', 'unsafe', '异动', '异动账户'),
-       (1200205, 'user_status', 'danger', '危险', '危险账户'),
-       (1200206, 'user_status', 'frozen', '冻结', '冻结账户'),
-       (1200207, 'user_status', 'hidden', '隐藏', '隐藏账户');
+       (1200201, 'user_status', 'uninit', '新建', '未初始化，有信息不完善'),
+       (1200202, 'user_status', 'active', '正常', '正常活动，通常的账号状态'),
+       (1200203, 'user_status', 'infirm', '薄弱', '薄弱账户，弱密码，密码临期'),
+       (1200204, 'user_status', 'unsafe', '异动', '异动账户，有可疑迹象，如频繁操作'),
+       (1200205, 'user_status', 'danger', '危险', '危险账户，不可登录，如失败过多'),
+       (1200206, 'user_status', 'frozen', '冻结', '冻结账户，不可登录，如资金危险'),
+       (1200207, 'user_status', 'locked', '锁定', '锁定账户，不可登录，人为锁定'),
+       (1200208, 'user_status', 'closed', '关闭', '关闭账户，不可登录，人为关闭'),
+       (1200299, 'user_status', 'hidden', '隐藏', '隐藏账户，不可登录，特殊用途');
 
 
-INSERT INTO `win_user_basis` (`id`, `create_dt`, `commit_id`, `nickname`, `passsalt`, `gender`, `avatar`, `locale`, `zoneid`, `remark`, `status`)
+INSERT IGNORE INTO `win_user_basis` (`id`, `create_dt`, `commit_id`, `nickname`, `passsalt`, `gender`, `avatar`, `locale`, `zoneid`, `remark`, `status`)
 VALUES (0, NOW(3), 0, 'nobody', SHA1(UUID()), 1200103, '', 'zh_CN', 1010201, '系统用户，无任何权限', 1200207),
        (1, NOW(3), 0, 'root', SHA1(UUID()), 1200103, '', 'zh_CN', 1010201, '超级用户，拥有所以权限', 1200202),
        (2, NOW(3), 0, 'daemon', SHA1(UUID()), 1200103, '', 'zh_CN', 1010201, '系统用户，执行后台任务', 1200207);
 
-INSERT INTO `win_user_anthn`(`id`, `create_dt`, `commit_id`, `user_id`, `auth_type`, `username`, `password`, `expired_dt`)
+INSERT IGNORE INTO `win_user_anthn`(`id`, `create_dt`, `commit_id`, `user_id`, `auth_type`, `username`, `password`, `expired_dt`)
 VALUES (1, NOW(3), 0, 1, 'username', 'root', CONCAT('{never}', SHA1(UUID())), '2999-09-09');

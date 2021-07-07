@@ -54,7 +54,8 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
     public boolean supports(Class<?> authentication) {
         if (onlyWingsBindAuthnToken) {
             return WingsBindAuthToken.class.isAssignableFrom(authentication);
-        } else {
+        }
+        else {
             return super.supports(authentication);
         }
     }
@@ -70,7 +71,8 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
                 WingsUserDetailsService uds = (WingsUserDetailsService) userDetailsService;
                 WingsBindAuthToken bat = (WingsBindAuthToken) authentication;
                 details = uds.loadUserByUsername(username, bat.getAuthType(), bat.getDetails());
-            } else {
+            }
+            else {
                 details = userDetailsService.loadUserByUsername(username);
             }
 
@@ -78,12 +80,15 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
                 throw new InternalAuthenticationServiceException("UserDetailsService returned null, which is an interface contract violation");
             }
             return details;
-        } catch (UsernameNotFoundException ex) {
+        }
+        catch (UsernameNotFoundException ex) {
             mitigateAgainstTimingAttack(authentication);
             throw ex;
-        } catch (InternalAuthenticationServiceException ex) {
+        }
+        catch (InternalAuthenticationServiceException ex) {
             throw ex;
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             throw new InternalAuthenticationServiceException(ex.getMessage(), ex);
         }
     }
@@ -131,7 +136,8 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
         Authentication result = super.createSuccessAuthentication(principal, authn, details);
         if (origDetails instanceof WingsUserDetails) {
             return new WingsUidPrincipalToken((WingsUserDetails) origDetails, result.getAuthorities());
-        } else {
+        }
+        else {
             return result;
         }
     }

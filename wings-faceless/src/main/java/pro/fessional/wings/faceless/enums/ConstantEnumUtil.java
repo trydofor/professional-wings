@@ -17,6 +17,13 @@ import java.util.function.Function;
  */
 public class ConstantEnumUtil {
 
+    public static boolean in(Enum<?> en, Enum<?>... ens){
+        for (Enum<?> e : ens) {
+            if(en == e) return true;
+        }
+        return false;
+    }
+
     @SafeVarargs
     @Nullable
     public static <T extends ConstantEnum> T intOrNull(int id, T... es) {

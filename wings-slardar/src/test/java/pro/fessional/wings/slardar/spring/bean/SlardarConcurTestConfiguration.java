@@ -40,6 +40,8 @@ public class SlardarConcurTestConfiguration {
         handler.setClientTicketKey(firstBloodProp.getClientTicketKey());
         handler.setFreshCaptchaKey(firstBloodProp.getFreshCaptchaKey());
         handler.setCheckCaptchaKey(firstBloodProp.getCheckCaptchaKey());
+        handler.setBase64CaptchaKey(firstBloodProp.getBase64CaptchaKey());
+        handler.setBase64CaptchaBody(firstBloodProp.getBase64CaptchaBody());
 
         ModelAndView mav = new ModelAndView();
         PlainTextView pv = new PlainTextView(firstBloodProp.getContentType(), firstBloodProp.getResponseBody());
@@ -55,8 +57,8 @@ public class SlardarConcurTestConfiguration {
     private static class Test extends FirstBloodImageHandler {
 
         @Override
-        protected void showCaptcha(@NotNull HttpServletResponse response, String code) {
-            logger.warn("set captcha code = " + code);
+        protected void showCaptcha(@NotNull HttpServletResponse response, String code, String fmt) {
+            logger.warn("set captcha code=" + code + ", fmt=" + fmt);
             ResponseHelper.writeBodyUtf8(response, code);
         }
     }

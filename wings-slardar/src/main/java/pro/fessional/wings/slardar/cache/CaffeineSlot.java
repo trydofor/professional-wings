@@ -23,7 +23,7 @@ public class CaffeineSlot {
      * 以ConcurrentHashMap构造一个按ttl分片的缓存
      *
      * @param ttl  最大ttl秒
-     * @param step 分片步长
+     * @param step 分片步长秒
      */
     public CaffeineSlot(int ttl, int step) {
         this(new ConcurrentHashMap<>(), ttl, step);
@@ -34,7 +34,7 @@ public class CaffeineSlot {
      *
      * @param slot  slot
      * @param ttl  最大ttl秒
-     * @param step 分片步长
+     * @param step 分片步长秒
      */
     public CaffeineSlot(Map<Integer, Cache<Object, Object>> slot, int ttl, int step) {
         this.slot = slot;
@@ -43,7 +43,7 @@ public class CaffeineSlot {
     }
 
     /**
-     * 根据秒数，获得最大24小时，误差10秒的缓存
+     * 根据秒数，获得最大24小时，误差step秒的无界缓存
      *
      * @param second ttl
      * @return 缓存

@@ -11,7 +11,7 @@ import pro.fessional.mirana.cast.BiConvertor;
  */
 public interface WingsConverter<S, T> extends BiConvertor<S,T>,
         org.springframework.core.convert.converter.Converter<S, T>,
-        org.simpleflatmapper.converter.Converter<S, T> {
+        org.jooq.Converter<S, T> {
 
     @Override
     @Nullable

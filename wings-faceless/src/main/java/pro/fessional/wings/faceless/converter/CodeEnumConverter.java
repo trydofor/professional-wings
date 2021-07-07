@@ -25,6 +25,26 @@ public class CodeEnumConverter<E extends CodeEnum> implements WingsConverter<Str
     }
 
     @Override
+    public E from(String databaseObject) {
+        return toTarget(databaseObject);
+    }
+
+    @Override
+    public String to(E userObject) {
+        return toSource(userObject);
+    }
+
+    @Override
+    public @NotNull Class<String> fromType() {
+        return srcClz;
+    }
+
+    @Override
+    public @NotNull Class<E> toType() {
+        return tgtClz;
+    }
+
+    @Override
     public @NotNull Class<String> sourceType() {
         return srcClz;
     }

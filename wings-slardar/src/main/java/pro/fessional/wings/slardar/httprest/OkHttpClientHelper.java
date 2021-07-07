@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.httprest;
 
+import lombok.Data;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
@@ -23,11 +24,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
 /**
@@ -107,7 +107,8 @@ public class OkHttpClientHelper {
         try {
             Response response = client.newCall(request).execute();
             return extractString(response);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new IllegalStateException("failed to post file, url=" + url, e);
         }
     }
@@ -122,7 +123,8 @@ public class OkHttpClientHelper {
         try {
             Response response = client.newCall(request).execute();
             return extractString(response);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new IllegalStateException("failed to post file, url=" + url, e);
         }
     }
@@ -147,10 +149,12 @@ public class OkHttpClientHelper {
     public static String extractString(Response response, boolean nullWhenThrow) {
         try {
             return extractString(response);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             if (nullWhenThrow) {
                 return null;
-            } else {
+            }
+            else {
                 throw new IORuntimeException(e);
             }
         }
@@ -171,10 +175,12 @@ public class OkHttpClientHelper {
     public static Response execute(OkHttpClient client, Request.Builder builder, boolean nullWhenThrow) {
         try {
             return client.newCall(builder.build()).execute();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             if (nullWhenThrow) {
                 return null;
-            } else {
+            }
+            else {
                 throw new IORuntimeException(e);
             }
         }
@@ -209,7 +215,8 @@ public class OkHttpClientHelper {
             Response response = client.newCall(builder.build()).execute();
             ResponseBody body = extract(response);
             return body == null ? Null.Bytes : body.bytes();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new IllegalStateException("failed to download, url=" + url, e);
         }
     }
@@ -225,24 +232,39 @@ public class OkHttpClientHelper {
 
     public static class HostCookieJar implements CookieJar {
 
-        private final Map<String, Queue<Cookie>> cookies = new ConcurrentHashMap<>();
+        private final Map<String, Map<Ckk, Cookie>> cookies = new ConcurrentHashMap<>();
 
         @Override
         public void saveFromResponse(HttpUrl url, @NotNull List<Cookie> cks) {
-            Queue<Cookie> cookies = this.cookies.computeIfAbsent(url.host(), s -> new ConcurrentLinkedQueue<>());
-            cookies.addAll(cks);
+            Map<Ckk, Cookie> cookies = this.cookies.computeIfAbsent(url.host(), s -> new LinkedHashMap<>());
+            for (Cookie ck : cks) {
+                Ckk k = new Ckk();
+                k.setHost(ck.domain());
+                k.setPath(ck.path());
+                k.setName(ck.name());
+                k.setSecure(ck.secure());
+                //
+                cookies.remove(k);
+                cookies.put(k,ck);
+            }
         }
 
         @Override
         @NotNull
         public List<Cookie> loadForRequest(HttpUrl url) {
-            Queue<Cookie> cookies = this.cookies.get(url.host());
-            if (cookies == null || cookies.isEmpty()) return Collections.emptyList();
-
-            final String uri = url.encodedPath();
-            return cookies.stream()
-                          .filter(it -> uri.contains(it.path()))
+            Map<Ckk, Cookie> cookies = this.cookies.get(url.host());
+            if (cookies == null) return Collections.emptyList();
+            return cookies.values().stream()
+                          .filter(it -> it.matches(url))
                           .collect(Collectors.toList());
         }
+    }
+
+    @Data
+    private static class Ckk {
+        private String host;
+        private String path;
+        private String name;
+        private boolean secure;
     }
 }

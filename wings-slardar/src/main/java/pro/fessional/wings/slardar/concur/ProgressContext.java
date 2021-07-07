@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class ProgressContext {
 
-    private static final CaffeineSlot slots = new CaffeineSlot(24 * 3600, 10);
+    private static final CaffeineSlot slots = new CaffeineSlot(24 * 3600, 300);
     private static final AtomicLong count = new AtomicLong(0);
     private static final LeapCode leapCode = new LeapCode();
 

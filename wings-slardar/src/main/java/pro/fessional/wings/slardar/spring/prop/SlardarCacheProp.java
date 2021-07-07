@@ -82,6 +82,6 @@ public class SlardarCacheProp {
         if (name == null || level == null) return false;
         final int len = level.length();
         return name.regionMatches(true, 0, level, 0, len)
-                && name.regionMatches(true, len, Joiner, 0, Joiner.length());
+               && name.regionMatches(true, len, Joiner, 0, Joiner.length());
     }
 }

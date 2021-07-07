@@ -28,7 +28,7 @@ public interface WarlockUserBasisService {
         private UserGender gender;
         private String avatar;
         private Locale locale;
-        private ZoneId zoneid;
+        private ZoneId zoneId;
         private String remark;
         private UserStatus status;
     }

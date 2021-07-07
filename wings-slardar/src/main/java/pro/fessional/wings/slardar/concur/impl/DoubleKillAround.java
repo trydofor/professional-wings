@@ -49,35 +49,39 @@ public class DoubleKillAround {
     private final Evaluator evaluator = new Evaluator();
 
     @Setter(onMethod_ = {@Autowired(required = false)})
-    private BeanFactory beanFactory;
+    protected BeanFactory beanFactory;
 
     @Setter(onMethod_ = {@Autowired, @Qualifier(AsyncAnnotationBeanPostProcessor.DEFAULT_TASK_EXECUTOR_BEAN_NAME)})
-    private Executor asyncExecutor;
+    protected Executor asyncExecutor;
 
     @Around("@annotation(pro.fessional.wings.slardar.concur.DoubleKill)")
     public Object doubleKill(ProceedingJoinPoint joinPoint) throws Throwable {
         final Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         final DoubleKill doubleKill = method.getAnnotation(DoubleKill.class);
-        final Object principal = TerminalContext.get().getUserId();
+
+        final Object uid = doubleKill.principal() ? TerminalContext.get().getUserId() : TerminalContext.Context.Guest;
         final Object[] args = joinPoint.getArgs();
 
         final String keyStr = doubleKill.value();
         final ArrayKey arrKey;
         if (StringUtils.hasText(keyStr)) {
-            arrKey = new ArrayKey(method, principal, keyStr);
-        } else {
+            arrKey = new ArrayKey(method, uid, keyStr);
+        }
+        else {
             final String spelKey = doubleKill.expression();
             if (StringUtils.hasText(spelKey)) {
                 final Root root = new Root(method, args, joinPoint.getTarget());
                 final EvaluationContext ctx = evaluator.createContext(root, beanFactory);
                 final AnnotatedElementKey methodKey = new AnnotatedElementKey(root.method, root.targetClass);
                 final Object key = evaluator.key(spelKey, methodKey, ctx);
-                arrKey = new ArrayKey(method, principal, key);
-            } else {
+                arrKey = new ArrayKey(method, uid, key);
+            }
+            else {
                 if (args == null || args.length == 0) {
-                    arrKey = new ArrayKey(method, principal);
-                } else {
-                    arrKey = new ArrayKey(method, principal, args);
+                    arrKey = new ArrayKey(method, uid);
+                }
+                else {
+                    arrKey = new ArrayKey(method, uid, args);
                 }
             }
         }
@@ -95,23 +99,27 @@ public class DoubleKillAround {
                     asyncExecutor.execute(() -> {
                         try {
                             syncProceed(joinPoint, bar);
-                        } catch (Throwable e) {
+                        }
+                        catch (Throwable e) {
                             // ignore in async, get it from bar
                         }
                     });
                     throw new DoubleKillException(bar.getKey(), bar.getStarted(), now);
-                } else {
+                }
+                else {
                     return syncProceed(joinPoint, bar);
                 }
-            } finally {
+            }
+            finally {
                 lock.unlock();
             }
-        } else {
+        }
+        else {
             final ProgressContext.Bar bar = ProgressContext.get(arrKey, ttl);
             if (bar == null) {
-                // 不会到这，防御性写法
-                throw new DoubleKillException("", 0);
-            } else {
+                throw new DoubleKillException("", 0); // 不会到这，防御性写法
+            }
+            else {
                 throw new DoubleKillException(bar.getKey(), bar.getStarted(), now);
             }
         }
@@ -136,7 +144,8 @@ public class DoubleKillAround {
             final Object r = joinPoint.proceed();
             bar.ok(r);
             return r;
-        } catch (Throwable e) {
+        }
+        catch (Throwable e) {
             bar.fail(e);
             throw e;
         }

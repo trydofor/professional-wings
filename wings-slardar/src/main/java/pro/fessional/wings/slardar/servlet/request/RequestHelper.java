@@ -9,6 +9,7 @@ import org.springframework.validation.ObjectError;
 import pro.fessional.mirana.cast.TypedCastUtil;
 import pro.fessional.mirana.text.Wildcard;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
@@ -220,5 +221,9 @@ public class RequestHelper {
         }
 
         return token;
+    }
+
+    public static boolean isForwarding(HttpServletRequest request) {
+        return request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI) != null;
     }
 }

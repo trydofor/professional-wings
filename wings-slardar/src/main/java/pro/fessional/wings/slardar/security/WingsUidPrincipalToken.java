@@ -7,7 +7,7 @@ import java.util.Collection;
 
 /**
  * 认证成功，wings中应该只有此token，
- * Details 应更是 WingsUserDetails。
+ * Details 应该是 WingsUserDetails。
  * Principal 为 userId，保证session控制
  *
  * @see WingsUserDetails

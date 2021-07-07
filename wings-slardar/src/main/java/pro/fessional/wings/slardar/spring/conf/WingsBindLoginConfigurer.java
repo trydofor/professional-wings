@@ -5,6 +5,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.web.authentication.ForwardAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.ForwardAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -35,6 +36,11 @@ public class WingsBindLoginConfigurer extends
     @Override
     public WingsBindLoginConfigurer loginPage(String loginPage) {
         return super.loginPage(loginPage);
+    }
+
+    public WingsBindLoginConfigurer loginForward(boolean forward) {
+        ((LoginUrlAuthenticationEntryPoint) this.getAuthenticationEntryPoint()).setUseForward(forward);
+        return this;
     }
 
     public WingsBindLoginConfigurer usernameParameter(String usernameParameter) {
@@ -115,7 +121,8 @@ public class WingsBindLoginConfigurer extends
         if (bindAuthTypeSource == null) {
             if (authTypes.isEmpty()) {
                 bindAuthTypeSource = context.getBeanProvider(WingsAuthTypeSource.class).getIfAvailable();
-            } else {
+            }
+            else {
                 parser = new DefaultWingsAuthTypeParser(authTypes);
             }
         }

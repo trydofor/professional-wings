@@ -15,6 +15,7 @@ import org.jooq.SelectConditionStep;
 import org.jooq.TableOnConditionStep;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -84,34 +85,38 @@ public class JooqMostSelectSample {
         Condition c = t.Id.gt(1L).and(t.Id.le(105L));
 
         testcaseNotice("1个字段，到List");
-        List<Long> ones = ctx
-                .select()
-                .from(t)
-                .where(c)
-                .fetch()
-                .getValues(t.Id);
+        List<Long> ones = ctx.select(t.Id)
+                             .from(t)
+                             .where(c)
+                             .fetch()
+                             .into(Long.class);
+
+        testcaseNotice("1个字段，到List");
+        Long one = ctx.select(t.Id)
+                      .from(t)
+                      .where(t.Id.lt(0L))
+                      .fetchOneInto(Long.class);
+        Assertions.assertNull(one);
 
         testcaseNotice("2个字段，到Map");
-        Map<Long, String> maps = ctx
-                .selectFrom(t)
-                .where(c)
-                .fetch()
-                .intoMap(t.Id, t.LoginInfo);
+        Map<Long, String> maps = ctx.select(t.Id, t.LoginInfo)
+                                    .from(t)
+                                    .where(c)
+                                    .fetch()
+                                    .intoMap(t.Id, t.LoginInfo);
 
         testcaseNotice("分组Pojo到Map");
-        Map<Long, List<Tst中文也分表>> grps = ctx
-                .selectFrom(t)
-                .where(c)
-                .fetch()
-                .intoGroups(t.Id, dao.mapper());
+        Map<Long, List<Tst中文也分表>> grps = ctx.selectFrom(t)
+                                            .where(c)
+                                            .fetch()
+                                            .intoGroups(t.Id, dao.mapper());
 
         testcaseNotice("多个字段到2维数组");
-        Object[][] arrs = ctx
-                .select(t.Id, t.LoginInfo)
-                .from(t)
-                .where(c)
-                .fetch()
-                .intoArrays();
+        Object[][] arrs = ctx.select(t.Id, t.LoginInfo)
+                             .from(t)
+                             .where(c)
+                             .fetch()
+                             .intoArrays();
     }
 
 
@@ -144,7 +149,7 @@ public class JooqMostSelectSample {
          * @return DiffName
          */
         static DiffName into(Record2<Long, String> a) {
-            return INSTANCE._into(a);
+            return into(a, new DiffName());
         }
 
         /**
@@ -153,13 +158,10 @@ public class JooqMostSelectSample {
          * @param a Record2
          * @param b DiffName
          */
-        static void into(Record2<Long, String> a, DiffName b) {
+        static DiffName into(Record2<Long, String> a, DiffName b) {
             INSTANCE._into(a, b);
+            return b;
         }
-
-        @Mapping(target = "uid", expression = "java(a.value1())")
-        @Mapping(target = "str", expression = "java(a.value2())")
-        DiffName _into(Record2<Long, String> a);
 
         @Mapping(target = "uid", expression = "java(a.value1())")
         @Mapping(target = "str", expression = "java(a.value2())")
@@ -173,41 +175,37 @@ public class JooqMostSelectSample {
         Condition c = t.Id.gt(1L).and(t.Id.le(105L));
 
         testcaseNotice("多个字段(同名子集)到List  *推荐使用*");
-        List<SameName> sames = ctx
-                .select(t.Id, t.LoginInfo)
-                .from(t)
-                .where(c)
-                .fetch()
-                .into(SameName.class);
+        List<SameName> sames = ctx.select(t.Id, t.LoginInfo)
+                                  .from(t)
+                                  .where(c)
+                                  .fetch()
+                                  .into(SameName.class);
 
         testcaseNotice("多个字段(不同名，使用字段别名)到List  *推荐使用*");
-        List<DiffName> alias = ctx
-                .select(t.Id.as("uid"), t.LoginInfo.as("str"))
-                .from(t)
-                .where(c)
-                .fetch()
-                .into(DiffName.class);
+        List<DiffName> alias = ctx.select(t.Id.as("uid"), t.LoginInfo.as("str"))
+                                  .from(t)
+                                  .where(c)
+                                  .fetch()
+                                  .into(DiffName.class);
 
         testcaseNotice("多个字段(同名子集)到List，使用Mapstruct");
-        List<DiffName> diffs = ctx
-                .select(t.Id, t.LoginInfo)
-                .from(t)
-                .where(c)
-                .fetch()
-                .map(Record2ToDiffName::into);
+        List<DiffName> diffs = ctx.select(t.Id, t.LoginInfo)
+                                  .from(t)
+                                  .where(c)
+                                  .fetch()
+                                  .map(Record2ToDiffName::into);
 
         testcaseNotice("多个字段(同名子集)到List，使用 lambda");
-        List<DiffName> lambs = ctx
-                .select(t.Id, t.LoginInfo)
-                .from(t)
-                .where(c)
-                .fetch()
-                .map(it -> {
-                    DiffName a = new DiffName();
-                    a.setUid(it.value1());
-                    a.setStr(it.value2());
-                    return a;
-                });
+        List<DiffName> lambs = ctx.select(t.Id, t.LoginInfo)
+                                  .from(t)
+                                  .where(c)
+                                  .fetch()
+                                  .map(it -> {
+                                      DiffName a = new DiffName();
+                                      a.setUid(it.value1());
+                                      a.setStr(it.value2());
+                                      return a;
+                                  });
 
 
         System.out.println("debug here to see");
@@ -228,9 +226,9 @@ public class JooqMostSelectSample {
         testcaseNotice("模板中支持，java和sql注释，placeholder和variable-binding");
         DSL.query(
                 "SELECT /* In a comment, this is not a placeholder: {0}. And this is not a bind variable: ? */ title AS `title {1} ?` " +
-                        "-- Another comment without placeholders: {2} nor bind variables: ?" +
-                        "FROM book " +
-                        "WHERE title = 'In a string literal, this is not a placeholder: {3}. And this is not a bind variable: ?'"
+                "-- Another comment without placeholders: {2} nor bind variables: ?" +
+                "FROM book " +
+                "WHERE title = 'In a string literal, this is not a placeholder: {3}. And this is not a bind variable: ?'"
         );
 
         //////////////////////// 执行部分 ////////////////////////
@@ -239,15 +237,14 @@ public class JooqMostSelectSample {
 
         testcaseNotice("from `tst_中文也分表` where (id >= ? AND id <= ?)"
                 , "from `tst_中文也分表` where (id >= 1 AND id <= 105)");
-        List<SameName> rc1 = ctx
-                .selectFrom(t)
-                .where(
-                        "id >= ? AND id <= ?",     // The SQL string containing bind value placeholders ("?")
-                        1L,                               // The bind value at index 1
-                        105L                    // The bind value at index 2
-                )
-                .fetch()
-                .into(SameName.class);
+        List<SameName> rc1 = ctx.selectFrom(t)
+                                .where(
+                                        "id >= ? AND id <= ?",     // The SQL string containing bind value placeholders ("?")
+                                        1L,                               // The bind value at index 1
+                                        105L                    // The bind value at index 2
+                                )
+                                .fetch()
+                                .into(SameName.class);
 
         // Plain SQL using embeddable QueryPart placeholders (counting from zero).
         // The QueryPart "index" is substituted for the placeholder {0}, the QueryPart "title" for {1}
@@ -255,15 +252,14 @@ public class JooqMostSelectSample {
                 , "from `tst_中文也分表` where (id >= 2 AND id <= 105)");
         Param<Long> id1 = DSL.val(2L);
         Param<Long> id2 = DSL.val(105L);
-        List<SameName> rc2 = ctx
-                .selectFrom(t)
-                .where(
-                        "id >= {0} AND id <= {1}", // The SQL string containing QueryPart placeholders ("{N}")
-                        id1,                              // The QueryPart at index 0
-                        id2                            // The QueryPart at index 1
-                )
-                .fetch()
-                .into(SameName.class);
+        List<SameName> rc2 = ctx.selectFrom(t)
+                                .where(
+                                        "id >= {0} AND id <= {1}", // The SQL string containing QueryPart placeholders ("{N}")
+                                        id1,                              // The QueryPart at index 0
+                                        id2                            // The QueryPart at index 1
+                                )
+                                .fetch()
+                                .into(SameName.class);
 
         System.out.println();
     }
@@ -278,27 +274,25 @@ public class JooqMostSelectSample {
         bd1.put("idMax", 105L);
         bd1.put("offset", 0);
         bd1.put("count", 10);
-        List<SameName> bv1 = ctx
-                .fetch("SELECT id, login_info\n" +
-                                "FROM tst_中文也分表\n" +
-                                "WHERE id >=:idMin AND id <=:idMax\n" +
-                                "ORDER BY login_info DESC,id\n" +
-                                "LIMIT :offset, :count",
-                        WingsJooqUtil.bindNamed(bd1))
-                .into(SameName.class);
+        List<SameName> bv1 = ctx.fetch("SELECT id, login_info\n" +
+                                       "FROM tst_中文也分表\n" +
+                                       "WHERE id >=:idMin AND id <=:idMax\n" +
+                                       "ORDER BY login_info DESC,id\n" +
+                                       "LIMIT :offset, :count",
+                WingsJooqUtil.bindNamed(bd1))
+                                .into(SameName.class);
 
         // 按数组绑定
         // SELECT id, login_info FROM tst_中文也分表 WHERE id >=? AND id <=? ORDER BY login_info DESC,id LIMIT ?, ?
         // SELECT id, login_info FROM tst_中文也分表 WHERE id >=4 AND id <=105 ORDER BY login_info DESC,id LIMIT 0, 10
         testcaseNotice("按数组绑定");
         Object[] bd2 = {4L, 105L, 0, 10};
-        List<SameName> bv2 = ctx
-                .fetch("SELECT id, login_info\n" +
-                        "FROM tst_中文也分表\n" +
-                        "WHERE id >={0} AND id <={1}\n" +
-                        "ORDER BY login_info DESC, id\n" +
-                        "LIMIT {2}, {3}", bd2)
-                .into(SameName.class);
+        List<SameName> bv2 = ctx.fetch("SELECT id, login_info\n" +
+                                       "FROM tst_中文也分表\n" +
+                                       "WHERE id >={0} AND id <={1}\n" +
+                                       "ORDER BY login_info DESC, id\n" +
+                                       "LIMIT {2}, {3}", bd2)
+                                .into(SameName.class);
 
         // 按pojo绑定
         SameName bd3 = new SameName();
@@ -309,12 +303,11 @@ public class JooqMostSelectSample {
         testcaseNotice("按pojo绑定, 通过record转一下，必须字段同名");
         Tst中文也分表Record rc = dao.newRecord(bd3);
         rc.from(bd3);
-        List<SameName> bv3 = ctx
-                .fetch("SELECT id, login_info\n" +
-                        "FROM tst_中文也分表\n" +
-                        "WHERE id = :id OR login_info=:loginInfo\n" +
-                        "ORDER BY login_info DESC,id", WingsJooqUtil.bindNamed(rc))
-                .into(SameName.class);
+        List<SameName> bv3 = ctx.fetch("SELECT id, login_info\n" +
+                                            "FROM tst_中文也分表\n" +
+                                            "WHERE id = :id OR login_info=:loginInfo\n" +
+                                            "ORDER BY login_info DESC,id", WingsJooqUtil.bindNamed(rc))
+                                     .into(SameName.class);
 
         System.out.println();
     }
@@ -449,13 +442,26 @@ public class JooqMostSelectSample {
                                                  .from(t1)
                                                  .where(t1.Id.ge(1L))
                                                  .order(order)
-                                                 .fetch(t1.asterisk())
+                                                 .fetch(t1.Id, t1.CommitId)
                                                  .into(Tst中文也分表.class);
+
+        PageResult<Tst中文也分表> pr2 = PageJooqHelper.use(dao.ctx(), page)
+                                                 .count()
+                                                 .from(t1)
+                                                 .where(t1.Id.ge(1L))
+                                                 .order(order)
+                                                 .fetch(t1.Id, t1.CommitId)
+                                                 .into(it -> {
+                                                     Tst中文也分表 po = new Tst中文也分表();
+                                                     po.setId(it.value1());
+                                                     po.setCommitId(it.value2());
+                                                     return po;
+                                                 });
 
         testcaseNotice("使用helperJooq简化",
                 "缓存的total，使页面不执行count操作",
                 "select * from `tst_中文也分表` limit ?");
-        PageResult<Tst中文也分表> pr2 = PageJooqHelper.use(dao, page, 10)
+        PageResult<Tst中文也分表> pr3 = PageJooqHelper.use(dao, page, 10)
                                                  .count()
                                                  .from(t)
                                                  .whereTrue()
@@ -466,11 +472,22 @@ public class JooqMostSelectSample {
         testcaseNotice("使用helperJooq包装",
                 "select count(*) as `c` from (select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ?) as `q`",
                 "select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ? order by `id` asc limit ?");
-        SelectConditionStep<Record> qry1 = dsl.select(t1.asterisk()).from(t1).where(t1.Id.ge(1L));
-        PageResult<Tst中文也分表> pr3 = PageJooqHelper.use(dao, page)
-                                                 .wrap(qry1, order)
+        val qry4 = dsl.select(t1.asterisk()).from(t1).where(t1.Id.ge(1L));
+        PageResult<Tst中文也分表> pr4 = PageJooqHelper.use(dao, page)
+                                                 .wrap(qry4, order)
                                                  .fetch()
                                                  .into(Tst中文也分表.class);
+
+        val qry5 = dsl.select(t1.Id, t1.CommitId).from(t1).where(t1.Id.ge(1L));
+        PageResult<Tst中文也分表> pr5 = PageJooqHelper.use(dao, page)
+                                                 .wrap(qry5, order)
+                                                 .fetch()
+                                                 .into(it -> {
+                                                     Tst中文也分表 po = new Tst中文也分表();
+                                                     po.setId(it.value1());
+                                                     po.setCommitId(it.value2());
+                                                     return po;
+                                                 });
         /////////////////////
 
         // 包装count
@@ -487,7 +504,7 @@ public class JooqMostSelectSample {
         Integer cnt1 = dsl.selectCount()
                           .from(t)
                           .where(t.Id.gt(1L))
-                          .fetchOptionalInto(int.class)
+                          .fetchOptionalInto(Integer.class)
                           .orElse(0);
         List<Tst中文也分表> lst1 = dsl.select()
                                  .from(t)
@@ -506,7 +523,7 @@ public class JooqMostSelectSample {
         Integer cnt2 = dsl.select(DSL.count(t1.Id))
                           .from(t1, t2)
                           .where(t1.Id.eq(t2.Id).and(t1.Id.gt(1L)))
-                          .fetchOptionalInto(int.class)
+                          .fetchOptionalInto(Integer.class)
                           .orElse(0);
         System.out.println(cnt2);
 

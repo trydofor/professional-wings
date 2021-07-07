@@ -29,7 +29,7 @@ public class WarlockLockBeanConfiguration {
 
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(JvmStaticGlobalLock.class)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$globalLock, havingValue = "true")
     public JvmStaticGlobalLock jvmStaticGlobalLock() {
         logger.info("Wings conf jvmStaticGlobalLock");
@@ -37,7 +37,7 @@ public class WarlockLockBeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(DatabaseGlobalLock.class)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$globalLock, havingValue = "true")
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public DatabaseGlobalLock databaseGlobalLock(JdbcTemplate jdbcTemplate) {
@@ -46,7 +46,7 @@ public class WarlockLockBeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(HazelcastGlobalLock.class)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$globalLock, havingValue = "true")
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public HazelcastGlobalLock hazelcastGlobalLock(HazelcastInstance hazelcastInstance) {

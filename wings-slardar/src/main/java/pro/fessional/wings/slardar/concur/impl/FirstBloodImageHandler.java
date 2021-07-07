@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
+import pro.fessional.mirana.bits.Md5;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.pain.IORuntimeException;
@@ -26,7 +27,7 @@ import java.util.function.Supplier;
 import static pro.fessional.wings.slardar.servlet.WingsServletConst.ORDER_FIRST_BLOOD_IMG;
 
 /**
- * 接受scene为空或image的验证，
+ * 接受scene为空或以image开始的验证，
  * - 发行时，同时设置header和coolie。
  * - 取码和鉴别时，通知支持header和parameter
  *
@@ -41,15 +42,19 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
     private String clientTicketKey = "client-ticket";
     private String freshCaptchaKey = "fresh-captcha-image";
     private String checkCaptchaKey = "check-captcha-image";
+    private String base64CaptchaKey = "base64";
+    private String base64CaptchaBody = "{\"success\":true,\"data\":\"data:image/jpeg;base64,{b64}\"}";
 
     private ModelAndView needCaptchaResponse;
     private WingsRemoteResolver wingsRemoteResolver;
     private Supplier<String> captchaSupplier = () -> RandCode.human(6);
+    private String scenePrefix = "image";
+    private boolean caseIgnore = true;
 
     @Override
     public boolean accept(@NotNull HttpServletRequest request, @NotNull FirstBlood anno) {
         final String scene = anno.scene();
-        return scene.isEmpty() || scene.equalsIgnoreCase("image");
+        return scene.isEmpty() || scene.startsWith(scenePrefix);
     }
 
     @Override
@@ -64,42 +69,41 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
         final long now = System.currentTimeMillis();
         final Key key;
         final Tkn tkn;
-        final boolean ukEmpty = uk.isEmpty();
-        if (!ukEmpty) {
-            key = new Key(uri, uk);
-            tkn = (Tkn) cache.get(key, k -> new Tkn(now));
-            assert tkn != null;
-
-            // 获取验证图片
-            final String ck = getKeyCode(request, freshCaptchaKey);
-            if (!ck.isEmpty()) {
-                showCaptcha(response, tkn.fresh(anno.retry(), captchaSupplier));
-                return false;
-            }
-
-            // 校验输入验证码
-            String vk = getKeyCode(request, checkCaptchaKey);
-            if (!vk.isEmpty() && tkn.check(vk)) {
-                return true;
-            }
-
-        } else {
+        if (uk.isEmpty()) {
             key = new Key(uri, makeClientTicket(request));
             tkn = (Tkn) cache.get(key, k -> new Tkn(now));
-            assert tkn != null;
+            sendClientTicket(response, key.clientCode);
+        }
+        else {
+            key = new Key(uri, uk);
+            tkn = (Tkn) cache.get(key, k -> new Tkn(now));
+        }
+        assert tkn != null;
+
+        // 获取验证图
+        final String ck = getKeyCode(request, freshCaptchaKey);
+        if (!ck.isEmpty()) {
+            if (!base64CaptchaKey.isEmpty() && ck.startsWith(base64CaptchaKey)) {
+                showCaptcha(response, tkn.fresh(anno.retry(), captchaSupplier), base64CaptchaBody);
+            }
+            else {
+                showCaptcha(response, tkn.fresh(anno.retry(), captchaSupplier), null);
+            }
+
+            return false;
         }
 
-        // 3秒外，未连续，不用验证
+        // 检查验证码
+        String vk = getKeyCode(request, checkCaptchaKey);
+        if (!vk.isEmpty() && tkn.check(vk, caseIgnore)) {
+            return true;
+        }
+
+        // 3秒外，非连击，不用验证
         final int fst = anno.first();
         final long rct = tkn.recent;
-        final boolean born = rct == now;
-        if (fst > 3 && (born || rct + fst * 1000 < now)) {
-            if (!born) {
-                tkn.recent = now;
-            }
-            if (ukEmpty) {
-                sendClientTicket(response, key.clientCode);
-            }
+        if (fst > 3 && (rct == now || rct + fst * 1000L < now)) {
+            tkn.recent = now;
             return true;
         }
 
@@ -125,7 +129,8 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
         if (view != null) {
             try {
                 view.render(needCaptchaResponse.getModel(), request, response);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 throw new IORuntimeException(e);
             }
         }
@@ -136,9 +141,10 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
      *
      * @param response response
      * @param code     验证码
+     * @param fmt      模板，以{b64}为占位符
      */
-    protected void showCaptcha(@NotNull HttpServletResponse response, String code) {
-        ResponseHelper.showCaptcha(response, code);
+    protected void showCaptcha(@NotNull HttpServletResponse response, String code, String fmt) {
+        ResponseHelper.showCaptcha(response, code, fmt);
     }
 
     /**
@@ -157,11 +163,12 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
         final String remoteIp;
         if (wingsRemoteResolver == null) {
             remoteIp = request.getRemoteAddr();
-        } else {
+        }
+        else {
             remoteIp = wingsRemoteResolver.resolveRemoteIp(request);
         }
 
-        return remoteIp + "@" + System.currentTimeMillis();
+        return Md5.sum(remoteIp + System.currentTimeMillis());
     }
 
     /**
@@ -212,14 +219,15 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
             this.recent = now;
         }
 
-        public boolean check(String tkn) {
+        public boolean check(String tkn, boolean ci) {
             final boolean eq;
             synchronized (retry) {
-                eq = tkn.equals(token);
+                eq = ci ? tkn.equalsIgnoreCase(token) : tkn.equals(token);
                 if (eq) {
                     retry.set(0);
                     token = Null.Str;
-                } else {
+                }
+                else {
                     retry.decrementAndGet();
                 }
             }

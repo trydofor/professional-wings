@@ -8,7 +8,12 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static pro.fessional.wings.slardar.spring.prop.SlardarCacheProp.inLevel;
@@ -51,9 +56,11 @@ public class WingsCaffeine {
         return loader == null ? builder.build() : builder.build(loader);
     }
 
-    public static class Manager extends CaffeineCacheManager {
+    public static class Manager extends CaffeineCacheManager implements WingsCache.State {
+
         private final SlardarCacheProp slardarCacheProp;
         private final CacheLoader<Object, Object> loader;
+        private final ConcurrentHashMap<String, Cache<Object, Object>> holder = new ConcurrentHashMap<>();
 
         public Manager(SlardarCacheProp config) {
             this.slardarCacheProp = config;
@@ -92,7 +99,29 @@ public class WingsCaffeine {
                 log.info("Wings Caffeine name={}, level=default", name);
             }
 
-            return loader == null ? builder.build() : builder.build(loader);
+            final Cache<Object, Object> cache = loader == null ? builder.build() : builder.build(loader);
+            holder.put(name, cache);
+            return cache;
+        }
+
+        @Override
+        @NotNull
+        public Map<String, Integer> statsCacheSize() {
+            final Collection<String> names = super.getCacheNames();
+            final Map<String, Integer> stats = new TreeMap<>();
+            for (String name : names) {
+                final Cache<Object, Object> cache = holder.get(name);
+                stats.put(name, cache == null ? -1 : (int) cache.estimatedSize());
+            }
+            return stats;
+        }
+
+        @Override
+        @NotNull
+        public Set<Object> statsCacheKeys(String name) {
+            final Cache<Object, Object> cache = holder.get(name);
+            if (cache == null) return Collections.emptySet();
+            return cache.asMap().keySet();
         }
     }
 }

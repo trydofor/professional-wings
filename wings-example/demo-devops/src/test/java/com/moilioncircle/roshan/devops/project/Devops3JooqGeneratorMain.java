@@ -21,7 +21,7 @@ public class Devops3JooqGeneratorMain {
         generator.setTargetPkg(PKG_JOOQ);
         generator.gen(JDBC_URL, JDBC_USER, JDBC_PASS,
                 builder -> builder
-                                   .databaseIncludes("owt_.*")
+                                   .databaseIncludes("demo_.*")
 //                        .forcedIntConsEnum(ScanStatus.class, ".*\\.scan_status")
 //                        .forcedIntConsEnum(DeliveryType.class, ".*\\.delivery_type")
 //                        .forcedIntConsEnum(WarehouseType.class, "owt_warehouse\\.type")

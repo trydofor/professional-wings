@@ -24,11 +24,12 @@ class Warlock1SchemaManagerTest {
     private SchemaRevisionManager schemaRevisionManager;
 
     @Test
-    void init04Auth() {
+    void init04AuthTest() {
         final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
-        manager.init(Warlock1SchemaManager.InitRevision,
+        manager.init(2020_10_24_03,
                 Warlock1SchemaManager.includeWarlockPath(),
-                Warlock1SchemaManager.includeWarlockRevi());
+                Warlock1SchemaManager.includeWarlockRevi(),
+                helper -> helper.branch("test/").include(2020_10_24_03));
     }
 
 }

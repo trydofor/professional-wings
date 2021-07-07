@@ -7,7 +7,6 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.Z;
@@ -34,34 +33,34 @@ import java.util.Map;
  * @author trydofor
  * @since 2021-03-25
  */
-@Service
 @Slf4j
 public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
     @Setter(onMethod_ = {@Autowired})
-    private WinUserAnthnDao winUserAnthnDao;
+    protected WinUserAnthnDao winUserAnthnDao;
 
     @Setter(onMethod_ = {@Autowired})
-    private WingsAuthTypeParser wingsAuthTypeParser;
+    protected WingsAuthTypeParser wingsAuthTypeParser;
 
     @Setter(onMethod_ = {@Autowired})
-    private JournalService journalService;
+    protected JournalService journalService;
 
     @Setter(onMethod_ = {@Autowired})
-    private PasswordEncoder passwordEncoder;
+    protected PasswordEncoder passwordEncoder;
 
     @Setter(onMethod_ = {@Autowired})
-    private PasssaltEncoder passsaltEncoder;
+    protected PasssaltEncoder passsaltEncoder;
 
     @Setter(onMethod_ = {@Autowired})
-    private LightIdService lightIdService;
+    protected LightIdService lightIdService;
 
     @Setter(onMethod_ = {@Autowired})
-    private WarlockSecurityProp warlockSecurityProp;
+    protected WarlockSecurityProp warlockSecurityProp;
 
     @Override
     @Transactional
-    public long create(long userId, @NotNull Enum<?> authType, @NotNull Authn authn) {
+    public long create(long userId, @NotNull Authn authn) {
+        Enum<?> authType = authn.getAuthType();
         return journalService.submit(Jane.Create, userId, authType, commit -> {
 
             final long id = lightIdService.getId(winUserAnthnDao.getTable());
@@ -105,7 +104,8 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
     @Override
     @Transactional
-    public void modify(long userId, @NotNull Enum<?> authType, @NotNull Authn authn) {
+    public void modify(long userId, @NotNull Authn authn) {
+        Enum<?> authType = authn.getAuthType();
         journalService.commit(Jane.Modify, userId, authType, commit -> {
 
             final WinUserAnthnTable t = winUserAnthnDao.getTable();
@@ -136,24 +136,13 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
         });
     }
 
-
     @Override
     @Transactional
-    public void renew(long userId, @NotNull Enum<?> authType, @NotNull Renew renew) {
-        if (renew.getPassword() == null
-            && renew.getExpiredDt() == null
-            && renew.getFailedCnt() == null
-            && renew.getFailedMax() == null
-        ) {
-            log.info("nothing to renew auth-type={},userId={}", authType, userId);
-            return;
-        }
-
-        String otherInfo = "by userId and auth-type=" + authType;
-
+    public void renew(long userId, @NotNull Renew renew) {
+        String otherInfo = "by userId and auth-type=" + renew.getAuthType();
         journalService.commit(Jane.Renew, userId, otherInfo, commit -> {
 
-            final String at = wingsAuthTypeParser.parse(authType);
+            final String at = wingsAuthTypeParser.parse(renew.getAuthType());
             final WinUserAnthnTable t = winUserAnthnDao.getTable();
 
             final Condition cond = t.onlyLive(t.AuthType.eq(at).and(t.UserId.eq(userId)));
@@ -162,12 +151,31 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
             if (renew.getPassword() != null) {
                 final String slat = GlobalAttributeHolder.getAttr(WarlockUserAttribute.SaltByUid, userId);
-                setter.put(t.Password, passsaltEncoder.salt(renew.getPassword(), slat));
+                final String pass = passsaltEncoder.salt(renew.getPassword(), slat);
+                setter.put(t.Password, passwordEncoder.encode(pass));
             }
 
-            setter.put(t.ExpiredDt, renew.getExpiredDt());
-            setter.put(t.FailedMax, renew.getFailedMax());
-            setter.put(t.FailedCnt, renew.getFailedCnt());
+            if (renew.getExpiredDt() != null) {
+                setter.put(t.ExpiredDt, renew.getExpiredDt());
+            }
+            else {
+                final Duration expire = warlockSecurityProp.getAutoregExpired();
+                setter.put(t.ExpiredDt, commit.getCommitDt().plusSeconds(expire.getSeconds()));
+            }
+
+            if (renew.getFailedMax() != null) {
+                setter.put(t.FailedMax, renew.getFailedMax());
+            }
+            else {
+                setter.put(t.FailedMax, warlockSecurityProp.getAutoregMaxFailed());
+            }
+
+            if (renew.getFailedCnt() != null) {
+                setter.put(t.FailedCnt, renew.getFailedCnt());
+            }
+            else {
+                setter.put(t.FailedCnt, 0);
+            }
 
             setter.put(t.CommitId, commit.getCommitId());
             setter.put(t.ModifyDt, commit.getCommitDt());

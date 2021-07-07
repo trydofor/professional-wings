@@ -14,6 +14,11 @@ public class WingsCacheHelper {
     private static CacheManager memory;
     private static CacheManager server;
 
+    protected WingsCacheHelper(CacheManager mem, CacheManager ser) {
+        memory = mem;
+        server = ser;
+    }
+
     @NotNull
     public static Cache getMemoryCache(String name) {
         final Cache cache = memory.getCache(name);
@@ -39,13 +44,5 @@ public class WingsCacheHelper {
     public static CacheManager getServer() {
         StateAssert.notNull(server, "Server CacheManager is null");
         return server;
-    }
-
-    public static void setMemory(CacheManager cm) {
-        memory = cm;
-    }
-
-    public static void setServer(CacheManager cm) {
-        server = cm;
     }
 }

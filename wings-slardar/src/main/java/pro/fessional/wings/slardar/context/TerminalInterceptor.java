@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
-import org.springframework.web.servlet.HandlerInterceptor;
 import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
+import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 2019-11-16
  */
 @RequiredArgsConstructor
-public class TerminalInterceptor implements HandlerInterceptor {
+public class TerminalInterceptor implements AutoRegisterInterceptor {
 
     private final WingsLocaleResolver localeResolver;
     private final WingsRemoteResolver remoteResolver;
@@ -26,14 +26,17 @@ public class TerminalInterceptor implements HandlerInterceptor {
                              @NotNull HttpServletResponse response,
                              @NotNull Object handler) {
 
+        TerminalContext.clear();
         TimeZoneAwareLocaleContext locale = localeResolver.resolveI18nContext(request);
         String remoteIp = remoteResolver.resolveRemoteIp(request);
         String agentInfo = remoteResolver.resolveAgentInfo(request);
+
         final Object principal = SecurityContextUtil.getPrincipal();
         if (principal instanceof Long) {
             long uid = (Long) principal;
             TerminalContext.login(uid, locale.getLocale(), locale.getTimeZone(), remoteIp, agentInfo);
-        } else {
+        }
+        else {
             TerminalContext.guest(locale.getLocale(), locale.getTimeZone(), remoteIp, agentInfo);
         }
         //

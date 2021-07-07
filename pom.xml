@@ -33,24 +33,23 @@
 
     <properties>
         <revision>2.4.2</revision>
-        <changelist>100-SNAPSHOT</changelist>
+        <changelist>101-SNAPSHOT</changelist>
         <!-- https://docs.spring.io/spring-boot/docs/2.4.2/reference/html/appendix-dependency-versions.html#appendix-dependency-versions -->
         <spring-boot.version>${revision}</spring-boot.version>
-        <wings.version>${revision}.${changelist}</wings.version> <!-- https://github.com/apache/shardingsphere/releases -->
+        <spring-session.version>2.4.1</spring-session.version> <!-- spring-session-bom.version -->
+        <wings.version>${revision}.${changelist}</wings.version>
         <!-- project -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
-        <kotlin.compiler.apiVersion>1.3</kotlin.compiler.apiVersion>
+        <kotlin.compiler.apiVersion>1.4</kotlin.compiler.apiVersion>
         <maven.test.skip>true</maven.test.skip>
         <!-- silencer -->
-        <mirana.version>2.2.0-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
+        <mirana.version>2.2.3-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <!-- faceless -->
-        <meepo.version>1.4.0</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
-        <kotlin.version>1.4.21</kotlin.version> <!-- spring boot dependency -->
-        <jooq.version>3.14.4</jooq.version> <!-- spring boot dependency -->
+        <meepo.version>1.4.1-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <simpleflatmapper.version>8.2.3</simpleflatmapper.version>
         <sharding-sphere.version>4.1.1</sharding-sphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <!-- slardar -->
@@ -60,7 +59,7 @@
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
         <swagger.version>3.0.0</swagger.version>
         <!-- slardar -->
-        <justauth.version>1.15.9</justauth.version>
+        <justauth.version>1.16.1</justauth.version>
         <xxljob.version>2.3.0</xxljob.version>
         <!-- others -->
         <errorprone.version>2.5.1</errorprone.version>
@@ -68,8 +67,10 @@
         <kryo.version>5.0.4</kryo.version>
         <transmittable.version>2.12.1</transmittable.version>
         <bouncycastle.version>1.68</bouncycastle.version>
-        <!-- just auth need 4 -->
-        <okhttp3.version>4.9.0</okhttp3.version>
+        <boot-admin.version>2.4.0</boot-admin.version>
+        <!-- override spring boot default -->
+        <lombok.version>1.18.20</lombok.version>
+        <okhttp3.version>4.9.0</okhttp3.version> <!-- just auth need 4, spring use 3 -->
     </properties>
 
     <dependencies>
@@ -186,7 +187,20 @@
                 <artifactId>wings-warlock</artifactId>
                 <version>${wings.version}</version>
             </dependency>
-            <!--sharding sphere-->
+            <!-- springboot -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring-boot.version}</version>
+                <!-- 测试上看 undertow 新能最好 -->
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-tomcat</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <!-- sharding sphere -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>sharding-jdbc-core</artifactId>
@@ -215,8 +229,13 @@
             </dependency>
             <!-- session cache -->
             <dependency>
+                <groupId>org.springframework.session</groupId>
+                <artifactId>spring-session-hazelcast</artifactId>
+                <version>${spring-session.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.hazelcast</groupId>
-                <artifactId>hazelcast-all</artifactId>
+                <artifactId>hazelcast-spring</artifactId>
                 <version>${hazelcast.version}</version>
             </dependency>
             <!-- utils -->
@@ -266,6 +285,17 @@
                 <artifactId>bcpkix-jdk15on</artifactId>
                 <version>${bouncycastle.version}</version>
             </dependency>
+            <!-- ops -->
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-server</artifactId>
+                <version>${boot-admin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-client</artifactId>
+                <version>${boot-admin.version}</version>
+            </dependency>
             <!-- dev -->
             <dependency>
                 <groupId>com.google.errorprone</groupId>
@@ -287,19 +317,6 @@
                 <artifactId>springfox-boot-starter</artifactId>
                 <version>${swagger.version}</version>
             </dependency>
-            <!-- test -->
-            <dependency>
-                <groupId>org.junit.vintage</groupId>
-                <artifactId>junit-vintage-engine</artifactId>
-                <version>${junit-jupiter.version}</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.hamcrest</groupId>
-                        <artifactId>hamcrest-core</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -320,6 +337,16 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -328,6 +355,10 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
             </plugin>
         </plugins>
         <pluginManagement>
@@ -365,38 +396,12 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <configuration>
-                        <archive>
-                            <manifestEntries>
-                                <Main-Class>pro.fessional.wings.WhoAmI</Main-Class>
-                            </manifestEntries>
-                        </archive>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
                     <executions>
                         <execution>
                             <goals>
                                 <goal>jar-no-fork</goal>
                             </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>repackage</id>
-                            <goals>
-                                <goal>repackage</goal>
-                            </goals>
-                            <configuration>
-                                <skip>true</skip>
-                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
@@ -491,6 +496,37 @@
                             <version>${kotlin.version}</version>
                         </dependency>
                     </dependencies>
+                </plugin>
+                <!-- build info -->
+                <plugin>
+                    <groupId>pl.project13.maven</groupId>
+                    <artifactId>git-commit-id-plugin</artifactId>
+                    <version>4.0.4</version>
+                    <executions>
+                        <execution>
+                            <id>get-the-git-infos</id>
+                            <goals>
+                                <goal>revision</goal>
+                            </goals>
+                            <phase>initialize</phase>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <verbose>true</verbose>
+                        <offline>true</offline>
+                        <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                        <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+                        <includeOnlyProperties>
+                            <includeOnlyProperty>git.branch</includeOnlyProperty>
+                            <includeOnlyProperty>git.build.(host|time|version|user.name|number.*)</includeOnlyProperty>
+                            <includeOnlyProperty>git.closest.*</includeOnlyProperty>
+                            <includeOnlyProperty>git.commit.(time|user.name|id.abbrev|id.full|message.full)</includeOnlyProperty>
+                            <includeOnlyProperty>git.dirty</includeOnlyProperty>
+                            <includeOnlyProperty>git.local.*</includeOnlyProperty>
+                            <includeOnlyProperty>git.tags</includeOnlyProperty>
+                        </includeOnlyProperties>
+                        <commitIdGenerationMode>full</commitIdGenerationMode>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>

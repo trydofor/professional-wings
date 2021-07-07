@@ -15,13 +15,18 @@
 
     <dependencies>
         <dependency>
-            <groupId>pro.fessional</groupId>
-            <artifactId>wings-warlock</artifactId>
+            <groupId>com.moilioncircle.roshan</groupId>
+            <artifactId>demo-common</artifactId>
         </dependency>
         <dependency>
             <groupId>pro.fessional</groupId>
             <artifactId>wings-faceless-flywave</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-server</artifactId>
+            <version>${boot-admin.version}</version>
         </dependency>
     </dependencies>
 
@@ -31,7 +36,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <executable>false</executable>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>

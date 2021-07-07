@@ -12,6 +12,7 @@ import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoJournalImpl;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserGrantTable;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserGrant;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinUserGrantRecord;
+import pro.fessional.wings.warlock.enums.autogen.GrantType;
 
 import javax.annotation.Generated;
 import java.time.LocalDateTime;
@@ -31,7 +32,7 @@ import java.util.List;
 )
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @Repository
-public class WinUserGrantDao extends WingsJooqDaoJournalImpl<WinUserGrantTable, WinUserGrantRecord, WinUserGrant, Record3<Long, Integer, Long>> {
+public class WinUserGrantDao extends WingsJooqDaoJournalImpl<WinUserGrantTable, WinUserGrantRecord, WinUserGrant, Record3<Long, GrantType, Long>> {
 
     /**
      * Create a new WinUserGrantDao without any configuration
@@ -49,7 +50,7 @@ public class WinUserGrantDao extends WingsJooqDaoJournalImpl<WinUserGrantTable, 
     }
 
     @Override
-    public Record3<Long, Integer, Long> getId(WinUserGrant object) {
+    public Record3<Long, GrantType, Long> getId(WinUserGrant object) {
         return compositeKeyRecord(object.getReferUser(), object.getGrantType(), object.getGrantEntry());
     }
 
@@ -70,14 +71,14 @@ public class WinUserGrantDao extends WingsJooqDaoJournalImpl<WinUserGrantTable, 
     /**
      * Fetch records that have <code>grant_type BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinUserGrant> fetchRangeOfGrantType(Integer lowerInclusive, Integer upperInclusive) {
+    public List<WinUserGrant> fetchRangeOfGrantType(GrantType lowerInclusive, GrantType upperInclusive) {
         return fetchRange(WinUserGrantTable.WinUserGrant.GrantType, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>grant_type IN (values)</code>
      */
-    public List<WinUserGrant> fetchByGrantType(Integer... values) {
+    public List<WinUserGrant> fetchByGrantType(GrantType... values) {
         return fetch(WinUserGrantTable.WinUserGrant.GrantType, values);
     }
 
@@ -141,14 +142,14 @@ public class WinUserGrantDao extends WingsJooqDaoJournalImpl<WinUserGrantTable, 
     /**
      * Fetch records that have <code>grant_type BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinUserGrant> fetchRangeOfGrantTypeLive(Integer lowerInclusive, Integer upperInclusive) {
+    public List<WinUserGrant> fetchRangeOfGrantTypeLive(GrantType lowerInclusive, GrantType upperInclusive) {
         return fetchRangeLive(WinUserGrantTable.WinUserGrant.GrantType, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>grant_type IN (values)</code>
      */
-    public List<WinUserGrant> fetchByGrantTypeLive(Integer... values) {
+    public List<WinUserGrant> fetchByGrantTypeLive(GrantType... values) {
         return fetchLive(WinUserGrantTable.WinUserGrant.GrantType, values);
     }
 

@@ -133,7 +133,7 @@ public class JooqDslAndDaoSample {
             journal.create(ob);
         }
         val start3 = System.currentTimeMillis();
-        System.out.println("cost1=${start2 - start1}, cost2=${start3 - start2}");
+        System.out.println("cost1=" + (start2 - start1) + ", cost2=" + (start3 - start2));
     }
 
     @Test

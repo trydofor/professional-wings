@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.metrics.buffering.BufferingApplicationStartup;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +18,9 @@ import java.util.Arrays;
 public class WingsSlardarApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(WingsSlardarApplication.class, args);
+        SpringApplication app = new SpringApplication(WingsSlardarApplication.class);
+        app.setApplicationStartup(new BufferingApplicationStartup(4096));
+        app.run(args);
     }
 
     @Bean

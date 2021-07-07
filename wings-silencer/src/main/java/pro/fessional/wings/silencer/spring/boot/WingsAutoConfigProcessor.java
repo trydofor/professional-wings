@@ -60,12 +60,13 @@ import java.util.stream.Collectors;
  */
 public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
-    private static final DeferredLog logger = WingsDeferredLogFactory.getLog(WingsAutoConfigProcessor.class);
+    private static final DeferredLog logger = DeferredLogFactory.getLog(WingsAutoConfigProcessor.class);
 
     public static final String BOOTS_CONF = "application.*";
     public static final String WINGS_CONF = "wings-conf/**/*.*";
     public static final String WINGS_I18N = "wings-i18n/**/*.properties";
     public static final String BLOCK_LIST = "wings-conf-block-list.cnf";
+    public static final String PROMO_PROP = "wings-prop-promotion.cnf";
     public static final int NAKED_SEQ = 70;
 
     @Override
@@ -109,7 +110,8 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             String[] paths;
             if (bundle == null || bundle.isEmpty()) {
                 paths = new String[]{"classpath*:/" + WINGS_I18N};
-            } else {
+            }
+            else {
                 paths = bundle.split(",");
             }
 
@@ -123,7 +125,8 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                     baseNames.add(baseName);
                 }
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new IORuntimeException("failed to resolve wings i18n path", e);
         }
 
@@ -133,7 +136,8 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         String mess = environment.getProperty(key);
         if (mess == null || mess.isEmpty()) {
             logger.info("🦁 spring.messages.basename=");
-        } else {
+        }
+        else {
             Set<String> old = StringUtils.commaDelimitedListToSet(StringUtils.trimAllWhitespace(mess));
             baseNames.addAll(old);
             logger.info("🦁 spring.messages.basename=" + mess);
@@ -188,9 +192,11 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
                 if (isYml(key)) {
                     sourceList = yamlLoader.load(key, res);
-                } else if (isProperty(key)) {
+                }
+                else if (isProperty(key)) {
                     sourceList = propertyLoader.load(key, Utf8ResourceDecorator.toUtf8(res));
-                } else {
+                }
+                else {
                     // never here
                     logger.info("🦁 skip unsupported resource=" + key);
                     continue;
@@ -203,8 +209,23 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                     }
                     propertySources.addLast(source);
                 }
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 logger.warn("🦁 Wings failed to load config=" + key, e);
+            }
+        }
+
+        //
+        Set<String> props = parsePromoProp(confResources);
+        logger.info("🦁 Wings promote property, keys count=" + props.size());
+        for (String prop : props) {
+            final String value = environment.getProperty(prop);
+            if (StringUtils.hasText(value)) {
+                final String sys = System.getProperty(value);
+                if (!StringUtils.hasText(sys)) {
+                    logger.info("🦁 Wings promote property to System. " + prop + "=" + value);
+                    System.setProperty(prop, value);
+                }
             }
         }
 
@@ -224,7 +245,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         HashMap<String, String> blockList = new HashMap<>();
         for (Iterator<ConfResource> it = sortedResources.iterator(); it.hasNext(); ) {
             ConfResource conf = it.next();
-            if (isBlacklist(conf.location)) {
+            if (isBlockList(conf.location)) {
                 try (InputStream is = conf.resource.getInputStream()) {
                     BufferedReader buf = new BufferedReader(new InputStreamReader(is));
                     String line;
@@ -237,13 +258,42 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                         }
                     }
                     logger.info("🦁 find " + count + " blocks in block-list in " + conf);
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     logger.warn("🦁 failed to read block-list " + conf, e);
                 }
                 it.remove();
             }
         }
         return blockList;
+    }
+
+    private Set<String> parsePromoProp(Collection<ConfResource> res) {
+        Set<String> prop = new HashSet<>();
+        for (Iterator<ConfResource> it = res.iterator(); it.hasNext(); ) {
+            ConfResource conf = it.next();
+            if (isPromoProp(conf.location)) {
+                try (InputStream is = conf.resource.getInputStream()) {
+                    BufferedReader buf = new BufferedReader(new InputStreamReader(is));
+                    String line;
+                    int count = 0;
+                    while ((line = buf.readLine()) != null) {
+                        String s = line.trim();
+                        if (!s.startsWith("#")) {
+                            count++;
+                            prop.add(s);
+                        }
+                    }
+                    logger.info("🦁 find " + count + " props in promote-cnf in " + conf);
+                }
+                catch (IOException e) {
+                    logger.warn("🦁 failed to read promote-cnf " + conf, e);
+                }
+                it.remove();
+            }
+        }
+
+        return prop;
     }
 
     // 移除非活动profile，basename相同
@@ -264,14 +314,16 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                     logger.info("🦁 inactive profile by empty, " + it);
                     confResources.remove(it);
                 }
-            } else {
+            }
+            else {
                 HashSet<String> prof = new HashSet<>(Arrays.asList(activeProfs));
                 // 移除所有非活动
                 Set<ConfResource> act = new HashSet<>();
                 for (ConfResource cr : profiledConf) {
                     if (prof.contains(cr.profile)) {
                         act.add(cr);
-                    } else {
+                    }
+                    else {
                         logger.info("🦁 inactive profile by [" + profs + "], " + cr);
                         confResources.remove(cr);
                     }
@@ -297,7 +349,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         LinkedHashMap<String, List<ConfResource>> groups = new LinkedHashMap<>(confResources.size());
         Function<String, List<ConfResource>> newList = k -> new ArrayList<>();
         for (ConfResource cr : confResources) {
-            String blocked = isBlackedBy(blockList, cr.location);
+            String blocked = isBlockedBy(blockList, cr.location);
             if (blocked != null) {
                 logger.info("🦁 skip a blocked " + cr + " in " + blocked);
                 continue;
@@ -353,9 +405,11 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             // 5. `classpath:/`会被以`classpath*:/`扫描
             if (path.startsWith("classpath:")) {
                 path = path.replace("classpath:", "classpath*:");
-            } else if (path.startsWith("file:") || path.startsWith("classpath*:")) {
+            }
+            else if (path.startsWith("file:") || path.startsWith("classpath*:")) {
                 // skip
-            } else {
+            }
+            else {
                 // 6. 任何非`classpath:`,`classpath*:`的，都以`file:`扫描
                 path = "file:" + path;
             }
@@ -366,7 +420,8 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                 // 8. 从以上路径，优先加载`application.*`，次之`wings-conf/**/*.*`
                 putConfIfValid(confResources, resolver, path + BOOTS_CONF);
                 putConfIfValid(confResources, resolver, path + WINGS_CONF);
-            } else {
+            }
+            else {
                 putConfIfValid(confResources, resolver, path);
             }
         }
@@ -389,13 +444,14 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         try {
             for (Resource res : resolver.getResources(path)) {
                 String url = res.getURL().getPath();
-                if (isYml(url) || isProperty(url) || isBlacklist(url)) {
+                if (isYml(url) || isProperty(url) || isBlockList(url) || isPromoProp(url)) {
                     ConfResource conf = new ConfResource(res, url);
                     logger.info("🦁 Wings find " + conf);
                     confResources.add(conf);
                 }
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             logger.info("🦁 Wings failed to find config from path=" + path);
         }
     }
@@ -422,7 +478,8 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             int p1 = Math.max(url.lastIndexOf('/'), url.lastIndexOf('\\'));
             if (p1 >= 0) {
                 fullName = url.substring(p1 + 1);
-            } else {
+            }
+            else {
                 fullName = url;
             }
 
@@ -430,7 +487,8 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             int pe = fullName.lastIndexOf('.');
             if (pe > 0) {
                 baseName = fullName.substring(0, pe);
-            } else {
+            }
+            else {
                 baseName = fullName;
             }
 
@@ -458,7 +516,8 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         public boolean equals(Object obj) {
             if (obj instanceof ConfResource) {
                 return location.equals(((ConfResource) obj).location);
-            } else {
+            }
+            else {
                 return false;
             }
         }
@@ -469,7 +528,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         }
     }
 
-    private String isBlackedBy(HashMap<String, String> blockList, String file) {
+    private String isBlockedBy(HashMap<String, String> blockList, String file) {
         for (Map.Entry<String, String> entry : blockList.entrySet()) {
             if (file.endsWith(entry.getKey())) {
                 return entry.getValue();
@@ -478,8 +537,12 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         return null;
     }
 
-    private boolean isBlacklist(String file) {
+    private boolean isBlockList(String file) {
         return endsWithIgnoreCase(file, BLOCK_LIST);
+    }
+
+    private boolean isPromoProp(String file) {
+        return endsWithIgnoreCase(file, PROMO_PROP);
     }
 
     private boolean isYml(String file) {

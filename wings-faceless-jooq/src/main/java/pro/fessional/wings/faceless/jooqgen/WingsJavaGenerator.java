@@ -21,7 +21,6 @@ import pro.fessional.wings.faceless.service.journal.JournalService;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,15 +52,8 @@ public class WingsJavaGenerator extends JavaGenerator {
 
         // 🦁>>>
         // public static final SysCommitJournalTable asN6 = SysCommitJournal.as("n6");
-        out.tab(1).println("public static final %s as%s = %s.as(\"%s\");", className, aliasName, identifier, aliasLower);
+        out.println("public static final %s as%s = %s.as(\"%s\");", className, aliasName, identifier, aliasLower);
         // 🦁<<<
-    }
-
-    private static final Set<String> import4Table = new HashSet<>();
-
-    public static void shortImport4Table(String claz) {
-        if (claz == null || claz.isEmpty()) return;
-        import4Table.add(claz);
     }
 
     @Override
@@ -170,6 +162,7 @@ public class WingsJavaGenerator extends JavaGenerator {
         }
 
         // 缩短import
+        Set<String> import4Table = WingsCodeGenConf.getImport4Table();
         if (!import4Table.isEmpty()) {
             StringBuilder java = reflectFieldSb(out);
             final Set<String> qts = reflectFieldQt(out);

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import pro.fessional.wings.faceless.jooqgen.WingsCodeGenerator;
 import pro.fessional.wings.faceless.jooqgen.WingsCodeGenerator.Builder;
+import pro.fessional.wings.warlock.enums.autogen.GrantType;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
@@ -53,6 +54,8 @@ public class Warlock3JooqGenerator {
                         "win_.*"
                 )
                 .forcedIntConsEnum(UserGender.class, ".*\\.gender")
-                .forcedIntConsEnum(UserStatus.class, "win_user_basis\\.status");
+                .forcedIntConsEnum(UserStatus.class, "win_user_basis\\.status")
+                .forcedIntConsEnum(GrantType.class,"win_.*_grant\\.grant_type")
+                ;
     }
 }

@@ -26,7 +26,7 @@ public class WingsSessionTest {
     private MockMvc mockMvc;
 
     @Test
-    public void assertLogin() throws Exception {
+    public void test1LoginUserLangZone() throws Exception {
         mockMvc.perform(
                 post("/user/login-proc.json")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -37,6 +37,27 @@ public class WingsSessionTest {
                .andExpect(status().isOk())
                .andExpect(cookie().exists("SESSION"))
                .andExpect(header().exists("SESSION"))
+               .andExpect(header().string("UserLocale","en-CA"))
+               .andExpect(header().string("UserZoneid","Canada/Central"))
+        ;
+    }
+
+    @Test
+    public void test2LoginWithLangZone() throws Exception {
+        mockMvc.perform(
+                post("/user/login-proc.json")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .header("Accept-Language", "zh-CN")
+                        .header("Zone-Id", "Asia/Shanghai")
+                        .param("username", "wings-slardar-user2")
+                        .param("password", "F9EC9CF4EA9EEEE69FC01AA44638087F")
+        )
+               .andDo(print())
+               .andExpect(status().isOk())
+               .andExpect(cookie().exists("SESSION"))
+               .andExpect(header().exists("SESSION"))
+               .andExpect(header().string("UserLocale","zh-CN"))
+               .andExpect(header().string("UserZoneid","Asia/Shanghai"))
         ;
     }
 }

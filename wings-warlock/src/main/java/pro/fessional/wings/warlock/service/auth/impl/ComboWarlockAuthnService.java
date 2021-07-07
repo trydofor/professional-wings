@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.service.auth.impl;
 
+import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -7,26 +8,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.wings.faceless.service.journal.JournalService;
-import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
-import pro.fessional.wings.slardar.context.TerminalContext;
-import pro.fessional.wings.slardar.security.PasssaltEncoder;
+import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAnthnTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserLoginTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAnthnDao;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasisDao;
-import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserLoginDao;
-import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserLogin;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
+import pro.fessional.wings.warlock.event.auth.WarlockMaxFailedEvent;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.help.AuthnDetailsMapper;
 import pro.fessional.wings.warlock.service.user.WarlockUserAttribute;
+import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -36,37 +33,30 @@ import java.util.List;
  * @author trydofor
  * @since 2021-02-23
  */
-@Service
 @Slf4j
 public class ComboWarlockAuthnService implements WarlockAuthnService {
 
     @Setter(onMethod_ = {@Autowired})
-    private WinUserBasisDao winUserBasisDao;
+    protected WinUserBasisDao winUserBasisDao;
 
     @Setter(onMethod_ = {@Autowired})
-    private WinUserAnthnDao winUserAnthnDao;
+    protected WinUserAnthnDao winUserAnthnDao;
 
     @Setter(onMethod_ = {@Autowired})
-    private WinUserLoginDao winUserLoginDao;
+    protected WingsAuthTypeParser wingsAuthTypeParser;
 
     @Setter(onMethod_ = {@Autowired})
-    private WingsAuthTypeParser wingsAuthTypeParser;
+    protected JournalService journalService;
 
     @Setter(onMethod_ = {@Autowired})
-    private LightIdService lightIdService;
+    protected WarlockUserLoginService warlockUserLoginService;
 
-    @Setter(onMethod_ = {@Autowired})
-    private JournalService journalService;
-
-    @Setter(onMethod_ = {@Autowired})
-    private PasssaltEncoder passsaltEncoder;
-
-    private List<Combo> saverCombos = Collections.emptyList();
+    private List<AutoReg> authAutoRegs = Collections.emptyList();
 
     @Autowired(required = false)
-    public void setSaverCombos(List<Combo> saverCombos) {
-        log.info("inject saver combo, count={}", saverCombos.size());
-        this.saverCombos = saverCombos;
+    public final void setAuthAutoRegs(List<AutoReg> authAutoRegs) {
+        log.info("inject auth combo, count={}", authAutoRegs.size());
+        this.authAutoRegs = authAutoRegs;
     }
 
     @Override
@@ -82,14 +72,14 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
                                       .and(auth.onlyLiveData);
 
         final Details details = winUserAnthnDao
-                                        .ctx()
-                                        .select(auth.UserId, user.Nickname,
-                                                user.Locale, user.Zoneid,
-                                                user.Status, auth.Username,
-                                                auth.Password, auth.ExpiredDt)
-                                        .from(user, auth)
-                                        .where(cond)
-                                        .fetchOneInto(Details.class);
+                .ctx()
+                .select(auth.UserId, user.Nickname,
+                        user.Locale, user.Zoneid.as("zoneId"),
+                        user.Status, auth.Username,
+                        auth.Password, auth.ExpiredDt)
+                .from(user, auth)
+                .where(cond)
+                .fetchOneInto(Details.class);
         if (details != null) {
             details.setAuthType(authType);
             final String passsalt = GlobalAttributeHolder.getAttr(WarlockUserAttribute.SaltByUid, details.getUserId());
@@ -105,8 +95,8 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         AuthnDetailsMapper.into(details, userDetails);
 
         switch (details.getStatus()) {
-            case ACTIVE:
             case UNINIT:
+            case ACTIVE:
             case INFIRM:
             case UNSAFE:
                 userDetails.setEnabled(true);
@@ -130,10 +120,13 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     @Override
     @Transactional
     public Details register(@NotNull Enum<?> authType, String username, Object details) {
-        for (Combo combo : saverCombos) {
-            if (combo.accept(authType, username, details)) {
-                final Details dt = combo.create(authType, username, details);
-                if (dt != null) return dt;
+        for (AutoReg autoReg : authAutoRegs) {
+            if (autoReg.accept(authType, username, details)) {
+                final Details dt = autoReg.create(authType, username, details);
+                if (dt != null) {
+                    log.info("register by AutoReg={}", autoReg.getClass());
+                    return dt;
+                }
             }
         }
         return null;
@@ -143,19 +136,12 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     public void onSuccess(@NotNull Enum<?> authType, long userId, String details) {
         final String at = wingsAuthTypeParser.parse(authType);
         journalService.commit(Jane.Success, userId, "success login auth-type=" + at, commit -> {
-            final TerminalContext.Context tc = TerminalContext.get();
-            final WinUserLoginTable t = winUserLoginDao.getTable();
-
-            WinUserLogin po = new WinUserLogin();
-            po.setId(lightIdService.getId(t.getClass()));
-            po.setUserId(userId);
-            po.setAuthType(at);
-            po.setLoginIp(tc.getRemoteIp());
-            po.setLoginDt(commit.getCommitDt());
-            po.setTerminal(tc.getAgentInfo());
-            po.setDetails(details);
-            po.setFailed(false);
-            winUserLoginDao.insert(po);
+            WarlockUserLoginService.Auth la = new WarlockUserLoginService.Auth();
+            la.setAuthType(authType);
+            la.setUserId(userId);
+            la.setDetails(details);
+            la.setFailed(false);
+            warlockUserLoginService.auth(la);
 
             final WinUserAnthnTable ta = winUserAnthnDao.getTable();
             winUserAnthnDao
@@ -176,19 +162,32 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         final String at = wingsAuthTypeParser.parse(authType);
         final WinUserAnthnTable ta = winUserAnthnDao.getTable();
         val auth = winUserAnthnDao
-                           .ctx()
-                           .select(ta.UserId, ta.FailedCnt, ta.FailedMax, ta.Id)
-                           .from(ta)
-                           .where(ta.Username.eq(username).and(ta.AuthType.eq(at)).and(ta.onlyLiveData))
-                           .fetchOne();
+                .ctx()
+                .select(ta.UserId, ta.FailedCnt, ta.FailedMax, ta.Id)
+                .from(ta)
+                .where(ta.Username.eq(username).and(ta.AuthType.eq(at)).and(ta.onlyLiveData))
+                .fetchOne();
+
         if (auth == null) {
             log.info("ignore login failure by not found auth-type={}, username={}", at, username);
             timingAttack();
             return;
         }
 
+        final long uid = auth.value1();
         final int cnt = auth.value2();
+        final long aid = auth.value4();
         final int max = auth.value3();
+
+        //
+        if (cnt > max - 3) {
+            WarlockMaxFailedEvent evt = new WarlockMaxFailedEvent();
+            evt.setCurrent(cnt);
+            evt.setMaximum(max);
+            evt.setUserId(uid);
+            EventPublishHelper.SyncSpring.publishEvent(evt);
+        }
+
         if (cnt > max) {
             log.info("ignore login failure by reach max-count={}, auth-type={}, username={}", auth.value3(), at, username);
             timingAttack();
@@ -196,8 +195,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         }
 
         final long bgn = System.currentTimeMillis();
-        final long uid = auth.value1();
-        final long aid = auth.value4();
+
 
         journalService.commit(Jane.Failure, uid, "failed login auth-id=" + aid, commit -> {
             // 锁账号
@@ -214,18 +212,12 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
                         .execute();
             }
 
-            final TerminalContext.Context tc = TerminalContext.get();
-            final WinUserLoginTable tl = winUserLoginDao.getTable();
-            WinUserLogin po = new WinUserLogin();
-            po.setId(lightIdService.getId(tl.getClass()));
-            po.setUserId(uid);
-            po.setAuthType(at);
-            po.setLoginIp(tc.getRemoteIp());
-            po.setLoginDt(commit.getCommitDt());
-            po.setTerminal(tc.getAgentInfo());
-            po.setDetails("");
-            po.setFailed(true);
-            winUserLoginDao.insert(po);
+            WarlockUserLoginService.Auth la = new WarlockUserLoginService.Auth();
+            la.setAuthType(authType);
+            la.setUserId(uid);
+            la.setDetails("");
+            la.setFailed(true);
+            warlockUserLoginService.auth(la);
 
             winUserAnthnDao
                     .ctx()
@@ -240,6 +232,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         });
     }
 
+    @Setter(AccessLevel.NONE)
     private volatile long lastTiming = 0;
 
     private void timingAttack() {
@@ -255,7 +248,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     }
 
     // /////
-    public interface Combo extends Ordered {
+    public interface AutoReg extends Ordered {
         /**
          * 不需要事务,在外层事务内调用
          */

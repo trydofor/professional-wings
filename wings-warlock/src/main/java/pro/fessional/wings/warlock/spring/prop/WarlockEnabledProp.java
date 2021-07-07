@@ -42,28 +42,12 @@ public class WarlockEnabledProp {
     public static final String Key$globalLock = Key + ".global-lock";
 
     /**
-     * 是否支持 just auth登录
+     * 是否注入 jooq dao
      *
-     * @see #Key$justAuth
+     * @see #Key$jooqAutogen
      */
-    private boolean justAuth = true;
-    public static final String Key$justAuth = Key + ".just-auth";
-
-
-    /**
-     * @see #Key$jooqDao
-     */
-    private boolean jooqDao = true;
-    public static final String Key$jooqDao = Key + ".jooq-dao";
-
-
-    /**
-     * 是否注入 justAuthLoginPageCombo
-     *
-     * @see #Key$comboJustAuthLoginPage
-     */
-    private boolean comboJustAuthLoginPage = true;
-    public static final String Key$comboJustAuthLoginPage = Key + ".combo-just-auth-login-page";
+    private boolean jooqAutogen = true;
+    public static final String Key$jooqAutogen = Key + ".jooq-autogen";
 
     /**
      * 是否注入 ListAllLoginPageCombo
@@ -72,15 +56,6 @@ public class WarlockEnabledProp {
      */
     private boolean comboListAllLoginPage = true;
     public static final String Key$comboListAllLoginPage = Key + ".combo-list-all-login-page";
-
-
-    /**
-     * 是否注入 JustAuthUserDetailsCombo
-     *
-     * @see #Key$comboJustAuthUserDetails
-     */
-    private boolean comboJustAuthUserDetails = true;
-    public static final String Key$comboJustAuthUserDetails = Key + ".combo-just-auth-user-details";
 
     /**
      * 是否注入 NonceUserDetailsCombo
@@ -91,16 +66,83 @@ public class WarlockEnabledProp {
     public static final String Key$comboNonceUserDetails = Key + ".combo-nonce-user-details";
 
     /**
-     * 是否注入 JustAuthUserAuthnCombo
+     * 是否支持 just auth登录
      *
-     * @see #Key$comboJustAuthUserAuthn
+     * @see #Key$justAuth
      */
-    private boolean comboJustAuthUserAuthn = true;
-    public static final String Key$comboJustAuthUserAuthn = Key + ".combo-just-auth-user-authn";
+    private boolean justAuth = true;
+    public static final String Key$justAuth = Key + ".just-auth";
+
+    /**
+     * 是否注入 justAuthLoginPageCombo
+     *
+     * @see #Key$comboJustAuthLoginPage
+     */
+    private boolean comboJustAuthLoginPage = true;
+    public static final String Key$comboJustAuthLoginPage = Key + ".combo-just-auth-login-page";
+
+    /**
+     * 是否注入 JustAuthUserDetailsCombo
+     *
+     * @see #Key$comboJustAuthUserDetails
+     */
+    private boolean comboJustAuthUserDetails = true;
+    public static final String Key$comboJustAuthUserDetails = Key + ".combo-just-auth-user-details";
+
+    /**
+     * 是否注入 JustAuthUserAuthnAutoReg
+     *
+     * @see #Key$comboJustAuthAutoreg
+     */
+    private boolean comboJustAuthAutoreg = true;
+    public static final String Key$comboJustAuthAutoreg = Key + ".combo-just-auth-autoreg";
+
+    /**
+     * @see #Key$allExceptionHandler
+     */
+    private boolean allExceptionHandler = true;
+    public static final String Key$allExceptionHandler = Key + ".all-exception-handler";
 
     /**
      * @see #Key$codeExceptionHandler
      */
     private boolean codeExceptionHandler = true;
     public static final String Key$codeExceptionHandler = Key + ".code-exception-handler";
+
+    /**
+     * 是否注入 BindExceptionAdvice
+     *
+     * @see #Key$bindExceptionAdvice
+     */
+    private boolean bindExceptionAdvice = true;
+    public static final String Key$bindExceptionAdvice = Key + ".bind-exception-advice";
+
+    /**
+     * 是否检查mysql和本机timezone兼容性
+     *
+     * @see #Key$checkDatabase
+     */
+    private boolean checkDatabase = true;
+    public static final String Key$checkDatabase = Key + ".check-database";
+
+    /**
+     * 是否支持为Docket全局注入AlternateTypeRule
+     * @see #Key$swaggerRule
+     */
+    private boolean swaggerRule = true;
+    public static final String Key$swaggerRule = Key + ".swagger-rule";
+
+    /**
+     * 是否支持为Docket全局注入java.time.Local*
+     * @see #Key$swaggerJsr310
+     */
+    private boolean swaggerJsr310 = true;
+    public static final String Key$swaggerJsr310 = Key + ".swagger-jsr-310";
+
+    /**
+     * 是否开启table CUD 监听
+     * @see #Key$tableChange
+     */
+    private boolean tableChange = true;
+    public static final String Key$tableChange = Key + ".table-change";
 }

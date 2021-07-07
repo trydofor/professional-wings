@@ -1,26 +1,27 @@
 package pro.fessional.wings.slardar.security.service;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import pro.fessional.mirana.bits.Md5;
+import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author trydofor
  * @since 2019-11-14
  */
-@Data
 @Service
 @Slf4j
 public class TestWingsUserDetailsService implements WingsUserDetailsService {
@@ -30,7 +31,7 @@ public class TestWingsUserDetailsService implements WingsUserDetailsService {
     public final String sendPassword = Md5.sum(origPassword + ":" + origPassword);
     private final String hashPassword = "{bcrypt}" + new BCryptPasswordEncoder().encode(sendPassword);
 
-    private final List<SimpleGrantedAuthority> auths = Arrays.asList(
+    private final List<GrantedAuthority> auths = Arrays.asList(
             new SimpleGrantedAuthority("ROLE_USER"),
             new SimpleGrantedAuthority("ROLE_ADMIN"),
             new SimpleGrantedAuthority("ROLE_CLURK"),
@@ -48,6 +49,8 @@ public class TestWingsUserDetailsService implements WingsUserDetailsService {
         ud.setPassword(hashPassword);
         ud.setUsername(username);
         ud.setAuthorities(auths);
+        ud.setLocale(Locale.CANADA);
+        ud.setZoneId(StandardTimezone.CANADA𓃬CENTRAL.toZoneId());
 
         return ud;
     }

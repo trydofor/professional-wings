@@ -6,7 +6,7 @@ import org.jooq.codegen.GeneratorStrategy;
 import org.jooq.meta.ColumnDefinition;
 import org.jooq.meta.Definition;
 import org.jooq.meta.TableDefinition;
-import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.text.CaseSwitcher;
 import pro.fessional.wings.faceless.database.jooq.WingsJournalTable;
 import pro.fessional.wings.faceless.service.journal.JournalAware;
 import pro.fessional.wings.faceless.service.lightid.LightIdAware;
@@ -30,7 +30,8 @@ public class WingsJavaStrategy extends DefaultGeneratorStrategy {
             if (columns.stream().anyMatch(WingsJooqGenHelp.JournalAware)) {
                 impls.add(JournalAware.class.getName());
             }
-        } else if (mode == GeneratorStrategy.Mode.DEFAULT) {
+        }
+        else if (mode == GeneratorStrategy.Mode.DEFAULT) {
             String java = getJavaClassName(definition, mode);
             impls.add(WingsJournalTable.class.getName() + "<" + java + ">");
             if (columns.stream().anyMatch(WingsJooqGenHelp.LightIdAware)) {
@@ -41,42 +42,22 @@ public class WingsJavaStrategy extends DefaultGeneratorStrategy {
         return impls;
     }
 
-
     @Override
     public String getJavaClassName(Definition definition, Mode mode) {
-        val name = super.getJavaClassName(definition, mode);
-        return mode == GeneratorStrategy.Mode.DEFAULT && definition instanceof TableDefinition ? name + "Table" : name;
+        String name = super.getJavaClassName(definition, mode);
+        if (mode == GeneratorStrategy.Mode.DEFAULT && definition instanceof TableDefinition) {
+            return name + "Table";
+        }
+        return name;
     }
 
     @Override
     public String getJavaIdentifier(Definition definition) {
-        return (definition instanceof TableDefinition || definition instanceof ColumnDefinition) ?
-                pascalCase(definition.getOutputName()) :
-                super.getJavaIdentifier(definition);
-    }
-
-    private String pascalCase(String str) {
-        if (str == null || str.isEmpty()) return Null.Str;
-
-        val len = str.length();
-        val sb = new StringBuilder(len);
-        sb.append(Character.toUpperCase(str.charAt(0)));
-
-        boolean up = false;
-        for (int i = 1; i < len; i++) {
-            val c = str.charAt(i);
-            if (c == '_') {
-                up = true;
-            } else {
-                if (up) {
-                    sb.append(Character.toUpperCase(c));
-                    up = false;
-                } else {
-                    sb.append(Character.toLowerCase(c));
-                }
-            }
+        if (definition instanceof TableDefinition || definition instanceof ColumnDefinition) {
+            return CaseSwitcher.pascal(definition.getOutputName());
         }
-
-        return sb.toString();
+        else {
+            return super.getJavaIdentifier(definition);
+        }
     }
 }

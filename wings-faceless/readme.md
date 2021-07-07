@@ -263,6 +263,13 @@ docker run -d \
 mysql:5.7
 ```
 
+```sql
+CREATE USER 'trydofor'@'%' IDENTIFIED BY 'moilioncircle';
+GRANT ALL  ON *.*  TO 'trydofor'@'%';
+SHOW GRANTS FOR 'trydofor'@'%';
+DROP USER 'trydofor'@'%';
+```
+
 ### 03.如何自定义journalService
 
 使用高优先级注入`journalService`，参考 example工程的 `SecurityJournalService`
@@ -283,17 +290,10 @@ mysql:5.7
 ```properties
 wings.silencer.i18n.zoneid=Asia/Shanghai
 # 常用jdbc参数
-spring.datasource.url=jdbc:mysql://localhost:3306/tail_backend\
+spring.datasource.url=jdbc:mysql://localhost:3306/wings_example\
   ?autoReconnect=true&useSSL=false\
   &useUnicode=true&characterEncoding=UTF-8\
   &serverTimezone=Asia/Shanghai
-```
-
-```sql
-CREATE USER 'trydofor'@'%' IDENTIFIED BY 'moilioncircle';
-GRANT ALL  ON *.*  TO 'trydofor'@'%';
-SHOW GRANTS FOR 'trydofor'@'%';
-DROP USER 'trydofor'@'%';
 ```
 
 引发问题的原因，目前断定为jdbc和timestamp历史问题
@@ -324,6 +324,13 @@ SET GLOBAL log_output = 'TABLE'; SET GLOBAL general_log = 'OFF';
 truncate table mysql.general_log;
 ```
 
+The session time zone setting affects display and storage of time values that are zone-sensitive. 
+This includes the values displayed by functions such as NOW() or CURTIME(), 
+and values stored in and retrieved from TIMESTAMP columns. Values for TIMESTAMP columns are converted 
+from the session time zone to UTC for storage, and from UTC to the session time zone for retrieval.
+
+
 在mysql中，尽量使用NOW(fsp)，因为其短小明确有缓存，如无必须不可使用SYSDATE(fsp)，参考
 
-https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_now
+* https://dev.mysql.com/doc/refman/8.0/en/time-zone-support.html#time-zone-variables
+* https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_now

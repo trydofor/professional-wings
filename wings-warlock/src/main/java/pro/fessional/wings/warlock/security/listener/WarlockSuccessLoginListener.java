@@ -18,8 +18,7 @@ import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 public class WarlockSuccessLoginListener implements ApplicationListener<AuthenticationSuccessEvent> {
 
     @Setter(onMethod_ = {@Autowired})
-    private WarlockAuthnService warlockAuthnService;
-
+    protected WarlockAuthnService warlockAuthnService;
 
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent event) {

@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.Z;
@@ -34,17 +33,16 @@ import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.Salt
  * @since 2021-03-22
  */
 @Slf4j
-@Service
 public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, InitializingBean {
 
     @Setter(onMethod_ = {@Autowired})
-    private WinUserBasisDao winUserBasisDao;
+    protected WinUserBasisDao winUserBasisDao;
 
     @Setter(onMethod_ = {@Autowired})
-    private LightIdService lightIdService;
+    protected LightIdService lightIdService;
 
     @Setter(onMethod_ = {@Autowired})
-    private JournalService journalService;
+    protected JournalService journalService;
 
     @Override
     public void afterPropertiesSet() {
@@ -68,14 +66,14 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, Ini
             po.setId(uid);
             po.setNickname(user.getNickname());
 
-            final String passsalt = RandCode.strong(60);
+            final String passsalt = RandCode.human(40);
             GlobalAttributeHolder.putAttr(SaltByUid, uid, passsalt);
             po.setPasssalt(passsalt);
 
             po.setAvatar(Z.notNull(user.getAvatar(), Null.Str));
             po.setGender(Z.notNull(user.getGender(), UserGender.UNKNOWN));
             po.setLocale(Z.notNull(user.getLocale(), Locale.getDefault()));
-            po.setZoneid(Z.notNull(user.getZoneid(), ZoneId.systemDefault()));
+            po.setZoneid(Z.notNull(user.getZoneId(), ZoneId.systemDefault()));
             po.setRemark(Z.notNull(user.getRemark(), Null.Str));
             po.setStatus(Z.notNull(user.getStatus(), UserStatus.UNINIT));
             commit.create(po);
@@ -93,7 +91,7 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, Ini
             setter.put(tu.Gender, user.getGender());
             setter.put(tu.Avatar, user.getAvatar());
             setter.put(tu.Locale, user.getLocale());
-            setter.put(tu.Zoneid, user.getZoneid());
+            setter.put(tu.Zoneid, user.getZoneId());
             setter.put(tu.Remark, user.getRemark());
             setter.put(tu.Status, user.getStatus());
             // 一定会更新，除非不存在

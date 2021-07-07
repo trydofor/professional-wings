@@ -3,6 +3,7 @@ package pro.fessional.wings.warlock.service.grant;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -30,9 +31,11 @@ public class PermGrantHelper {
         int p = permit.lastIndexOf(SPL);
         if (p > 0) {
             return new String[]{permit.substring(0, p), permit.substring(p + 1)};
-        } else if (p == 0) {
+        }
+        else if (p == 0) {
             return new String[]{"", permit.substring(1)};
-        } else {
+        }
+        else {
             return new String[]{"", permit};
         }
     }
@@ -66,20 +69,24 @@ public class PermGrantHelper {
         if (t1 < 0) {
             if (top.equals(ALL)) {
                 return true;
-            } else {
+            }
+            else {
                 return top.equalsIgnoreCase(sub);
             }
-        } else {
+        }
+        else {
             final int hl = t1 + 1;
             if (top.regionMatches(hl, ALL, 0, ALL.length())) {
                 return t1 == 0 || sub.regionMatches(true, 0, top, 0, hl);
-            } else {
+            }
+            else {
                 int s1 = sub.lastIndexOf(spl);
                 if (s1 < 0) {
                     return false;
-                } else {
+                }
+                else {
                     return sub.regionMatches(true, 0, top, 0, hl)
-                            && sub.regionMatches(true, s1 + 1, top, hl, top.length() - hl);
+                           && sub.regionMatches(true, s1 + 1, top, hl, top.length() - hl);
                 }
             }
         }
@@ -125,24 +132,23 @@ public class PermGrantHelper {
     public static Set<String> grantRole(long roleId, Map<Long, String> roleAll, Map<Long, Set<Long>> roleGrant) {
         if (roleAll == null || roleGrant == null) return Collections.emptySet();
 
-        Set<String> all = new HashSet<>();
-        recur(0, roleId, all, roleAll, roleGrant);
+        Map<Long, String> out = new HashMap<>();
+        recur(roleId, out, roleAll, roleGrant);
 
-        return all;
+        return new HashSet<>(out.values());
     }
 
-    private static void recur(int cnt, Long rid, Set<String> out, Map<Long, String> all, Map<Long, Set<Long>> map) {
-        if (rid == null) return;
-
-        if (cnt > 10_0000) throw new IllegalStateException("may be dead loop in role mapping");
+    private static void recur(Long rid, Map<Long, String> out, Map<Long, String> all, Map<Long, Set<Long>> map) {
 
         final String rcd = all.get(rid);
         if (rcd == null) return;
 
-        out.add(rcd);
+        out.put(rid, rcd);
         final Set<Long> sub = map.getOrDefault(rid, Collections.emptySet());
         for (Long id : sub) {
-            recur(cnt + 1, id, out, all, map);
+            if (!out.containsKey(id)) {
+                recur(id, out, all, map);
+            }
         }
     }
 }

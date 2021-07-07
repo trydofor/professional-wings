@@ -1,5 +1,10 @@
 package pro.fessional.wings.slardar.cache;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+import java.util.Set;
+
 /**
  * 不使用enum或interface，可继承使用
  *
@@ -42,5 +47,24 @@ public interface WingsCache {
         public static String join(String... part) {
             return String.join(Joiner, part);
         }
+    }
+
+    interface State {
+        /**
+         * 获得 缓存的name及size
+         *
+         * @return name-size
+         */
+        @NotNull
+        Map<String, Integer> statsCacheSize();
+
+        /**
+         * 获得缓存keys
+         *
+         * @param name 名字
+         * @return keys
+         */
+        @NotNull
+        Set<Object> statsCacheKeys(String name);
     }
 }

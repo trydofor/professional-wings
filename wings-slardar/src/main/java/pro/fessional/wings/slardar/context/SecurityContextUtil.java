@@ -23,16 +23,6 @@ public class SecurityContextUtil {
     private SecurityContextUtil() {
     }
 
-    /**
-     * 获得终端信息
-     *
-     * @return context
-     */
-    @NotNull
-    public static TerminalContext.Context getTerminalContext() {
-        return TerminalContext.get();
-    }
-
     @NotNull
     @SuppressWarnings("unchecked")
     public static Collection<GrantedAuthority> getAuthorities() {
@@ -82,6 +72,21 @@ public class SecurityContextUtil {
         Authentication atn = SecurityContextHolder.getContext().getAuthentication();
         if (atn == null) return null;
         return (T) atn.getPrincipal();
+    }
+
+    /**
+     * 获得登录的userId，如果未登录或principal为非Long类型，返回 Long.MIN_VALUE
+     *
+     * @return 登录uid，或Long.MIN_VALUE
+     */
+    public static long getUserId() {
+        final Object principal = getPrincipal();
+        if (principal instanceof Long) {
+            return (Long) principal;
+        }
+        else {
+            return Long.MIN_VALUE;
+        }
     }
 
     /**

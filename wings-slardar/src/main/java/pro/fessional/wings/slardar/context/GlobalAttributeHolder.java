@@ -34,18 +34,18 @@ public class GlobalAttributeHolder {
     private static final Cache<Key<?, ?>, Object> CACHE = Caffeine.newBuilder()
                                                                   .expireAfterAccess(12, TimeUnit.HOURS)
                                                                   .build();
-    private static final ConcurrentHashMap<Reg<?, ?>, Function<?, ?>> HOLDER = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Reg<?, ?>, Function<?, ?>> LOADER = new ConcurrentHashMap<>();
 
     /**
      * 注册一个属性及其加载器
      *
      * @param reg    类型
-     * @param loader 加载器
+     * @param loader 加载器，返回null时不被缓存，每次都会调用，因此建议返回`空值`
      * @param <K>    key类型
      * @param <V>    value类型
      */
     public static <K, V> void regLoader(@NotNull Reg<K, V> reg, @NotNull Function<Key<K, V>, V> loader) {
-        HOLDER.put(reg, loader);
+        LOADER.put(reg, loader);
     }
 
     /**
@@ -81,6 +81,22 @@ public class GlobalAttributeHolder {
     /**
      * 根据一个type获取属性，如果不存在，null时抛NPE异常
      *
+     * @param reg  类型
+     * @param key  唯一key，如userId
+     * @param elze 唯一key，null时返回elze
+     * @param <K>  key类型
+     * @param <V>  value类型
+     * @return 返回值
+     */
+    @NotNull
+    public static <K, V> V getAttr(@NotNull Reg<K, V> reg, @NotNull K key, @NotNull V elze) {
+        final V obj = getAttr(reg, key, false);
+        return obj == null ? elze : obj;
+    }
+
+    /**
+     * 根据一个type获取属性，如果不存在，null时抛NPE异常
+     *
      * @param reg 类型
      * @param key 唯一key，如userId
      * @param <K> key类型
@@ -106,8 +122,15 @@ public class GlobalAttributeHolder {
     @Contract("_,_,true ->!null")
     public static <K, V> V getAttr(@NotNull Reg<K, V> reg, @NotNull K key, boolean nonnull) {
         Key<K, V> k = new Key<>(reg, key);
-        final Function<Key<?, ?>, ?> ld = (Function<Key<?, ?>, ?>) HOLDER.get(reg);
-        final Object rst = CACHE.get(k, ld);
+        final Function<Key<?, ?>, ?> ld = (Function<Key<?, ?>, ?>) LOADER.get(reg);
+        final Object rst;
+        if (ld == null) {
+            rst = CACHE.getIfPresent(k);
+        }
+        else {
+            rst = CACHE.get(k, ld);
+        }
+
         if (rst == null && nonnull) {
             throw new NullPointerException("aware=" + reg + ",key=" + key);
         }
@@ -207,7 +230,7 @@ public class GlobalAttributeHolder {
         if (reg == null || reg.isEmpty()) return;
 
         for (Reg<?, ?> r : reg) {
-            HOLDER.remove(r);
+            LOADER.remove(r);
         }
         ridAttrAll(reg);
     }
@@ -258,14 +281,16 @@ public class GlobalAttributeHolder {
             return regType;
         }
 
-        @Override public boolean equals(Object o) {
+        @Override
+        public boolean equals(Object o) {
             if (this == o) return true;
             if (!(o instanceof Reg)) return false;
             Reg<?, ?> reg = (Reg<?, ?>) o;
             return Objects.equals(regType, reg.regType);
         }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             return Objects.hash(regType);
         }
     }

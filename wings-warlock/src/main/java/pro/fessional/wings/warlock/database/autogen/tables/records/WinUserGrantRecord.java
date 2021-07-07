@@ -11,6 +11,7 @@ import org.jooq.Row5;
 import org.jooq.impl.UpdatableRecordImpl;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserGrantTable;
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.IWinUserGrant;
+import pro.fessional.wings.warlock.enums.autogen.GrantType;
 
 import javax.annotation.Generated;
 import javax.persistence.Column;
@@ -40,7 +41,7 @@ import java.time.LocalDateTime;
         @UniqueConstraint(name = "KEY_win_user_grant_PRIMARY", columnNames = { "refer_user", "grant_type", "grant_entry" })
     }
 )
-public class WinUserGrantRecord extends UpdatableRecordImpl<WinUserGrantRecord> implements Record5<Long, Integer, Long, LocalDateTime, Long>, IWinUserGrant {
+public class WinUserGrantRecord extends UpdatableRecordImpl<WinUserGrantRecord> implements Record5<Long, GrantType, Long, LocalDateTime, Long>, IWinUserGrant {
 
     private static final long serialVersionUID = 1L;
 
@@ -66,7 +67,7 @@ public class WinUserGrantRecord extends UpdatableRecordImpl<WinUserGrantRecord> 
      * Setter for <code>win_user_grant.grant_type</code>.
      */
     @Override
-    public void setGrantType(Integer value) {
+    public void setGrantType(GrantType value) {
         set(1, value);
     }
 
@@ -76,8 +77,8 @@ public class WinUserGrantRecord extends UpdatableRecordImpl<WinUserGrantRecord> 
     @Column(name = "grant_type", nullable = false, precision = 10)
     @NotNull
     @Override
-    public Integer getGrantType() {
-        return (Integer) get(1);
+    public GrantType getGrantType() {
+        return (GrantType) get(1);
     }
 
     /**
@@ -138,7 +139,7 @@ public class WinUserGrantRecord extends UpdatableRecordImpl<WinUserGrantRecord> 
     // -------------------------------------------------------------------------
 
     @Override
-    public Record3<Long, Integer, Long> key() {
+    public Record3<Long, GrantType, Long> key() {
         return (Record3) super.key();
     }
 
@@ -147,12 +148,12 @@ public class WinUserGrantRecord extends UpdatableRecordImpl<WinUserGrantRecord> 
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<Long, Integer, Long, LocalDateTime, Long> fieldsRow() {
+    public Row5<Long, GrantType, Long, LocalDateTime, Long> fieldsRow() {
         return (Row5) super.fieldsRow();
     }
 
     @Override
-    public Row5<Long, Integer, Long, LocalDateTime, Long> valuesRow() {
+    public Row5<Long, GrantType, Long, LocalDateTime, Long> valuesRow() {
         return (Row5) super.valuesRow();
     }
 
@@ -162,7 +163,7 @@ public class WinUserGrantRecord extends UpdatableRecordImpl<WinUserGrantRecord> 
     }
 
     @Override
-    public Field<Integer> field2() {
+    public Field<GrantType> field2() {
         return WinUserGrantTable.WinUserGrant.GrantType;
     }
 
@@ -187,7 +188,7 @@ public class WinUserGrantRecord extends UpdatableRecordImpl<WinUserGrantRecord> 
     }
 
     @Override
-    public Integer component2() {
+    public GrantType component2() {
         return getGrantType();
     }
 
@@ -212,7 +213,7 @@ public class WinUserGrantRecord extends UpdatableRecordImpl<WinUserGrantRecord> 
     }
 
     @Override
-    public Integer value2() {
+    public GrantType value2() {
         return getGrantType();
     }
 
@@ -238,7 +239,7 @@ public class WinUserGrantRecord extends UpdatableRecordImpl<WinUserGrantRecord> 
     }
 
     @Override
-    public WinUserGrantRecord value2(Integer value) {
+    public WinUserGrantRecord value2(GrantType value) {
         setGrantType(value);
         return this;
     }
@@ -262,7 +263,7 @@ public class WinUserGrantRecord extends UpdatableRecordImpl<WinUserGrantRecord> 
     }
 
     @Override
-    public WinUserGrantRecord values(Long value1, Integer value2, Long value3, LocalDateTime value4, Long value5) {
+    public WinUserGrantRecord values(Long value1, GrantType value2, Long value3, LocalDateTime value4, Long value5) {
         value1(value1);
         value2(value2);
         value3(value3);
@@ -304,7 +305,7 @@ public class WinUserGrantRecord extends UpdatableRecordImpl<WinUserGrantRecord> 
     /**
      * Create a detached, initialised WinUserGrantRecord
      */
-    public WinUserGrantRecord(Long referUser, Integer grantType, Long grantEntry, LocalDateTime createDt, Long commitId) {
+    public WinUserGrantRecord(Long referUser, GrantType grantType, Long grantEntry, LocalDateTime createDt, Long commitId) {
         super(WinUserGrantTable.WinUserGrant);
 
         setReferUser(referUser);

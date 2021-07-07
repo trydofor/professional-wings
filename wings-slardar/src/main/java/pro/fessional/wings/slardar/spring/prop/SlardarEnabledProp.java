@@ -119,11 +119,19 @@ public class SlardarEnabledProp {
     public static final String Key$datetime = Key + ".datetime";
 
     /**
+     * 是否开启wings的jackson对Double，Float，BigDecimal的精度限定
+     *
+     * @see #Key$number
+     */
+    private boolean number = true;
+    public static final String Key$number = Key + ".number";
+
+    /**
      * 是否配置undertow ws for UT026010: Buffer pool
      *
      * @see #Key$undertowWs
      */
-    private boolean undertowWs = false;
+    private boolean undertowWs = true;
     public static final String Key$undertowWs = Key + ".undertow-ws";
 
     /**
@@ -174,4 +182,19 @@ public class SlardarEnabledProp {
     private boolean domainExtend = false;
     public static final String Key$domainExtend = Key + ".domain-extend";
 
+    /**
+     * 是否开启默认的swagger配置
+     *
+     * @see #Key$swagger
+     */
+    private boolean swagger = true;
+    public static final String Key$swagger = Key + ".swagger";
+
+    /**
+     * 是否开在有spring-boot-devtool时开启devtool兼容配置
+     *
+     * @see #Key$devtool
+     */
+    private boolean devtool = true;
+    public static final String Key$devtool = Key + ".devtool";
 }

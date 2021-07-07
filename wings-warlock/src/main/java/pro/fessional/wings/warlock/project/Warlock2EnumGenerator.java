@@ -54,6 +54,7 @@ public class Warlock2EnumGenerator {
 
     public static Consumer<Builder> excludeWarlock() {
         return builder -> builder
+                .excludeType("grant_type")
                 .excludeType("user_gender")
                 .excludeType("user_status");
     }

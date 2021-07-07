@@ -7,13 +7,17 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Table;
+import org.jooq.UpdatableRecord;
 import org.jooq.UpdateSetMoreStep;
+import org.jooq.impl.DAOImpl;
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.helper.JournalJdbcHelp;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 import static org.jooq.impl.DSL.field;
@@ -42,22 +46,47 @@ public class JournalJooqHelp extends JournalJdbcHelp {
 
     // jooq
 
-    public static int deleteByIds(DSLContext dsl, Table<? extends Record> table, JournalService.Journal journal, Long... ids) {
-        return deleteByIds(dsl, table, journal.getCommitId(), journal.getCommitDt(), ids);
+    public static int deleteByIds(DAOImpl<? extends UpdatableRecord<?>, ?, ?> dao, JournalService.Journal commit, Long... ids) {
+        return deleteByIds(dao.ctx(), dao.getTable(), commit.getCommitId(), commit.getCommitDt(), ids);
+    }
+
+    public static int deleteByIds(DAOImpl<? extends UpdatableRecord<?>, ?, ?> dao, JournalService.Journal commit, Collection<Long> ids) {
+        return deleteByIds(dao.ctx(), dao.getTable(), commit.getCommitId(), commit.getCommitDt(), ids);
+    }
+
+    public static int deleteByIds(DSLContext dsl, Table<? extends Record> table, JournalService.Journal commit, Long... ids) {
+        return deleteByIds(dsl, table, commit.getCommitId(), commit.getCommitDt(), ids);
+    }
+
+    public static int deleteByIds(DSLContext dsl, Table<? extends Record> table, JournalService.Journal commit, Collection<Long> ids) {
+        return deleteByIds(dsl, table, commit.getCommitId(), commit.getCommitDt(), ids);
     }
 
     public static int deleteByIds(DSLContext dsl, Table<? extends Record> table, Long commitId, Long... ids) {
         return deleteByIds(dsl, table, commitId, null, ids);
     }
 
+    public static int deleteByIds(DSLContext dsl, Table<? extends Record> table, Long commitId, Collection<Long> ids) {
+        return deleteByIds(dsl, table, commitId, null, ids);
+    }
+
     public static int deleteByIds(DSLContext dsl, Table<? extends Record> table, Long commitId, LocalDateTime now, Long... ids) {
         if (ids == null || ids.length == 0) return 0;
+        return deleteByIds(dsl, table, commitId, now, Arrays.asList(ids));
+    }
+
+    public static int deleteByIds(DSLContext dsl, Table<? extends Record> table, Long commitId, LocalDateTime now, Collection<Long> ids) {
+        if (ids == null || ids.isEmpty()) return 0;
         Field<Long> id = field("id", Long.class);
         return deleteWhere(dsl, table, commitId, now, id.in(ids));
     }
 
-    public static int deleteWhere(DSLContext dsl, Table<? extends Record> table, JournalService.Journal journal, Condition where) {
-        return deleteWhere(dsl, table, journal.getCommitId(), journal.getCommitDt(), where);
+    public static int deleteWhere(DAOImpl<? extends UpdatableRecord<?>, ?, ?> dao, JournalService.Journal commit, Condition where) {
+        return deleteWhere(dao.ctx(), dao.getTable(), commit.getCommitId(), commit.getCommitDt(), where);
+    }
+
+    public static int deleteWhere(DSLContext dsl, Table<? extends Record> table, JournalService.Journal commit, Condition where) {
+        return deleteWhere(dsl, table, commit.getCommitId(), commit.getCommitDt(), where);
     }
 
     public static int deleteWhere(DSLContext dsl, Table<? extends Record> table, Long commitId, Condition where) {
@@ -66,14 +95,15 @@ public class JournalJooqHelp extends JournalJdbcHelp {
 
     public static int deleteWhere(DSLContext dsl, Table<? extends Record> table, Long commitId, LocalDateTime now, Condition where) {
         UpdateSetMoreStep<? extends Record> update = dsl
-                .update(table)
-                .set(field(COL_COMMIT_ID, Long.class), commitId);
+                                                             .update(table)
+                                                             .set(field(COL_COMMIT_ID, Long.class), commitId);
 
         String jf = getJournalDateColumn(table);
         if (!jf.isEmpty()) {
             if (now == null) {
                 update = update.set(field(jf, String.class), field("NOW()", String.class));
-            } else {
+            }
+            else {
                 update = update.set(field(jf, LocalDateTime.class), now);
             }
         }
@@ -110,24 +140,24 @@ public class JournalJooqHelp extends JournalJdbcHelp {
     }
 
     public static <T extends Table<?>> void create(@NotNull JournalService.Journal journal, @Nullable T table, @Nullable Map<?, ?> setter) {
-        commit(journal,table, setter, COL_COMMIT_ID, COL_CREATE_DT, COL_MODIFY_DT, COL_DELETE_DT);
+        commit(journal, table, setter, COL_COMMIT_ID, COL_CREATE_DT, COL_MODIFY_DT, COL_DELETE_DT);
     }
 
-    public static <T extends Table<?>> void modify(@NotNull JournalService.Journal journal,@Nullable T table, @Nullable Map<?, ?> setter) {
-        commit(journal,table, setter, COL_COMMIT_ID, COL_MODIFY_DT);
+    public static <T extends Table<?>> void modify(@NotNull JournalService.Journal journal, @Nullable T table, @Nullable Map<?, ?> setter) {
+        commit(journal, table, setter, COL_COMMIT_ID, COL_MODIFY_DT);
     }
 
-    public static <T extends Table<?>> void delete(@NotNull JournalService.Journal journal,@Nullable T table, @Nullable Map<?, ?> setter) {
-        commit(journal,table, setter, COL_COMMIT_ID, COL_DELETE_DT);
+    public static <T extends Table<?>> void delete(@NotNull JournalService.Journal journal, @Nullable T table, @Nullable Map<?, ?> setter) {
+        commit(journal, table, setter, COL_COMMIT_ID, COL_DELETE_DT);
     }
 
-    public static <T extends Table<?>> void commit(@NotNull JournalService.Journal journal,@Nullable T table, @Nullable Map<?, ?> setter, String... field) {
+    public static <T extends Table<?>> void commit(@NotNull JournalService.Journal journal, @Nullable T table, @Nullable Map<?, ?> setter, String... field) {
         if (table == null || setter == null || field == null) return;
         Field<?>[] fields = extractField(table.fields(), field);
-        commit(journal,setter, fields);
+        commit(journal, setter, fields);
     }
 
-    public static void commit(@NotNull JournalService.Journal journal,@Nullable Map<?, ?> setter, Field<?>... field) {
+    public static void commit(@NotNull JournalService.Journal journal, @Nullable Map<?, ?> setter, Field<?>... field) {
         if (setter == null || field == null) return;
         @SuppressWarnings("unchecked")
         Map<Object, Object> putter = (Map<Object, Object>) setter;
@@ -139,11 +169,14 @@ public class JournalJooqHelp extends JournalJdbcHelp {
             String k = getFieldName(fd.getName());
             if (k.equalsIgnoreCase(COL_COMMIT_ID)) {
                 putter.put(fd, journal.getCommitId());
-            } else if (k.equalsIgnoreCase(COL_CREATE_DT)) {
+            }
+            else if (k.equalsIgnoreCase(COL_CREATE_DT)) {
                 createDt = fd;
-            } else if (k.equalsIgnoreCase(COL_MODIFY_DT)) {
+            }
+            else if (k.equalsIgnoreCase(COL_MODIFY_DT)) {
                 modifyDt = fd;
-            } else if (k.equalsIgnoreCase(COL_DELETE_DT)) {
+            }
+            else if (k.equalsIgnoreCase(COL_DELETE_DT)) {
                 deleteDt = fd;
             }
         }
@@ -152,7 +185,8 @@ public class JournalJooqHelp extends JournalJdbcHelp {
         if (createDt == null) {
             if (modifyDt != null) putter.put(modifyDt, commitDt);
             if (deleteDt != null) putter.put(deleteDt, commitDt);
-        } else {
+        }
+        else {
             putter.put(createDt, commitDt);
             if (modifyDt != null) putter.put(modifyDt, EmptyValue.DATE_TIME);
             if (deleteDt != null) putter.put(deleteDt, EmptyValue.DATE_TIME);

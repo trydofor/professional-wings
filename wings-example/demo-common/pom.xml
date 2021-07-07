@@ -18,11 +18,6 @@
             <groupId>pro.fessional</groupId>
             <artifactId>wings-warlock</artifactId>
         </dependency>
-        <dependency>
-            <groupId>pro.fessional</groupId>
-            <artifactId>wings-faceless-flywave</artifactId>
-            <optional>true</optional>
-        </dependency>
     </dependencies>
 
     <build>
@@ -31,7 +26,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <executable>false</executable>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>
