@@ -1,3 +1,6 @@
+spring.session.timeout
+spring.session.hazelcast.map-name
+
 wings.slardar.hazelcast.cluster-name
 wings.slardar.cache.common.max-live
 wings.slardar.cache.common.max-idle

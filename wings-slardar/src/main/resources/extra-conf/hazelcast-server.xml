@@ -52,8 +52,8 @@
         <eviction size="${wings.slardar.cache.common.max-size}"/>
         <near-cache name="default">
             <in-memory-format>OBJECT</in-memory-format>
-            <time-to-live-seconds>0</time-to-live-seconds>
-            <max-idle-seconds>3600</max-idle-seconds>
+            <time-to-live-seconds>${wings.slardar.cache.common.max-live}</time-to-live-seconds>
+            <max-idle-seconds>${wings.slardar.cache.common.max-idle}</max-idle-seconds>
             <invalidate-on-change>true</invalidate-on-change>
             <cache-local-entries>false</cache-local-entries>
             <eviction eviction-policy="LRU" max-size-policy="ENTRY_COUNT" size="10000"/>
@@ -61,12 +61,15 @@
     </map>
 
     <!-- spring FindByIndexNameSessionRepository -->
-    <map name="spring:session:sessions">
+    <map name="${spring.session.hazelcast.map-name}">
         <in-memory-format>BINARY</in-memory-format>
+        <time-to-live-seconds>0</time-to-live-seconds>
+        <max-idle-seconds>${spring.session.timeout}</max-idle-seconds>
+        <eviction size="100000"/>
         <near-cache>
             <in-memory-format>OBJECT</in-memory-format>
             <time-to-live-seconds>0</time-to-live-seconds>
-            <max-idle-seconds>0</max-idle-seconds>
+            <max-idle-seconds>${spring.session.timeout}</max-idle-seconds>
             <invalidate-on-change>true</invalidate-on-change>
             <cache-local-entries>false</cache-local-entries>
             <eviction size="10000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
