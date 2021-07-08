@@ -5,14 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.security.core.Authentication;
+import org.springframework.session.web.http.DefaultCookieSerializer;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * cookie和header返回sid
+ * cookie和header返回sid,
+ * 默认情况下 cookie是sid的base64字符串
  *
+ * @see DefaultCookieSerializer
  * @author trydofor
  * @since 2021-02-17
  */

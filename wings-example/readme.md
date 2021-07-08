@@ -81,6 +81,8 @@ BOOT_CNF是用来替换默认配置的运行时配置，结构如下。
 
 ## 9.5. Nginx配置
 
+通常的配置参考，包括强制https，保护误操作.git，前后端分离
+
 ``` nginx
 upstream demo_admin {
     ip_hash;
@@ -99,6 +101,10 @@ server {
     ssl_certificate     /data/nginx/cert/moilioncircle.com/fullchain.pem;
     ssl_certificate_key /data/nginx/cert/moilioncircle.com/privkey.pem;
 
+    #if ($scheme = http) {
+    #    return 301 https://$host$request_uri;
+    #}
+    
     # 防御性设置，禁止发布git工程
     location .git {
         access_log off;
@@ -123,5 +129,24 @@ server {
     location / {
         root /data/static/demo-admin-spa/;
     }
+}
+```
+
+挂旗维护，重定向到维护倒计时界面 500.html
+
+* sudo ln -s /data/nginx/conf/nginx.nginx /etc/nginx/nginx.conf
+* include /data/nginx/conf/vhost/*.nginx;
+* include /data/nginx/down/*.nginx;
+
+``` nginx
+# sudo vi /etc/nginx/nginx.conf
+
+server {
+    listen       80;
+    listen       443 ssl;
+    server_name  _;
+    root           /data/nginx/down;
+    error_page 403 /500.html;
+    error_page 404 /500.html;
 }
 ```

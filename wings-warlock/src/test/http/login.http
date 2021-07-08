@@ -11,13 +11,16 @@ GET {{host}}/auth/github/login-page.html
 GET {{host}}/auth/github/login-page.json
 
 ### get root nonce
-POST {{host}}/auth/console-nonce.json
+GET {{host}}/auth/console-nonce.json?username=root
 
 ### root nonce login
 POST {{host}}/auth/username/login.json
 Content-Type: application/x-www-form-urlencoded
 
-username=root&password=88rE4TtheH72Df3Q
+username=root&password=452gLF83qLbGaEt7
+
+### sid=4d757b99-a2eb-49b9-932f-22f23b75ba30
+### SESSION=base64(NGQ3NTdiOTktYTJlYi00OWI5LTkzMmYtMjJmMjNiNzViYTMw)
 
 ### 401
 GET {{host}}/admin/need-auth.json

@@ -2,10 +2,13 @@ package pro.fessional.wings.warlock.controller.auth;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.session.web.http.HttpSessionIdResolver;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -37,6 +40,9 @@ public class LoginPageController {
     private final WingsAuthTypeParser wingsAuthTypeParser;
     private final WingsRemoteResolver wingsRemoteResolver;
 
+    @Setter(onMethod_ = {@Autowired(required = false)})
+    private HttpSessionIdResolver httpSessionIdResolver;
+
     @ApiOperation(value = "集成登录默认页，默认返回支持的type类表",
             notes = "①当鉴权失败时，重定向页面，status=401;②直接访问时返回status=200")
     @RequestMapping(value = "/auth/login-page.{extName}", method = {RequestMethod.POST, RequestMethod.GET})
@@ -62,9 +68,12 @@ public class LoginPageController {
     }
 
     @ApiOperation(value = "验证一次性token是否有效，oauth2使用state作为token，要求和发行client具有相同ip，agent等header信息",
-            notes = "①status=401时，无|过期|失败 ②status=300&success=false时，进行中，message=authing ③status=200&success=true时成功，data=sessionId")
+            notes = "①status=401时，无|过期|失败 "
+                    + "②status=300&success=false时，进行中，message=authing "
+                    + "③status=200&success=true时成功，data=sessionId "
+                    + "④在header中，也可以有session和cookie")
     @PostMapping(value = "/auth/nonce/check.json")
-    public ResponseEntity<R<?>> tokenNonce(@RequestHeader("token") String token, HttpServletRequest request) {
+    public ResponseEntity<R<?>> tokenNonce(@RequestHeader("token") String token, HttpServletRequest request, HttpServletResponse response) {
         final String sid = NonceTokenSessionHelper.authNonce(token, wingsRemoteResolver.resolveRemoteKey(request));
         if (sid == null) {
             return ResponseEntity
@@ -72,7 +81,17 @@ public class LoginPageController {
                     .body(R.ng());
         }
         else {
-            R<?> r = sid.isEmpty() ? R.ng("authing") : R.okData(sid);
+            final R<?> r;
+            if (sid.isEmpty()) {
+                r = R.ng("authing");
+            }
+            else {
+                r = R.okData(sid);
+                if (httpSessionIdResolver != null) {
+                    httpSessionIdResolver.setSessionId(request, response, sid);
+                }
+            }
+
             return ResponseEntity.ok(r);
         }
     }

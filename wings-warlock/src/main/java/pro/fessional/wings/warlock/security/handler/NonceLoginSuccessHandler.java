@@ -28,10 +28,10 @@ public class NonceLoginSuccessHandler implements AuthenticationSuccessHandler {
         final String sid = session == null ? null : session.getId();
 
         if (sid == null) {
-            log.error("login Success without session, uid={}", uid);
+            log.warn("login Success without session, uid={}", uid);
         }
         else {
-            log.error("login Success and swap nonce, uid={}", uid);
+            log.info("login Success and swap nonce, uid={}", uid);
             NonceTokenSessionHelper.swapNonceSid(uid, sid);
         }
 
