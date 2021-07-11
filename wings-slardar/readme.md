@@ -77,9 +77,9 @@ wings.slardar.number.decimal.format=#.00
 wings.slardar.number.decimal.round=FLOOR
 wings.slardar.number.decimal.separator=,
 ```
-也可以设置，按中国人习惯，每4位用`_`分隔
+也可以设置，按中国人习惯，每4位用`_`分隔，增加CNY符号
 ``` properties
-wings.slardar.number.decimal.format=,####.00
+wings.slardar.number.decimal.format=￥,####.00
 wings.slardar.number.decimal.separator=_
 # 参考 DecimalFormatTest.java
 ```

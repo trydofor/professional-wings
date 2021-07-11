@@ -241,7 +241,7 @@ public class WingsJacksonMapperTest {
                      "  }\n" +
                      "}", j1);
 
-        R<I18nJson> r2 = r1.toI18n("base.not-empty", "第一个参数");
+        R<I18nJson> r2 = r1.setI18nMessage("base.not-empty", "第一个参数");
         String j2 = jackson.writeValueAsString(r2);
         assertEquals("{\n" +
                      "  \"success\" : true,\n" +

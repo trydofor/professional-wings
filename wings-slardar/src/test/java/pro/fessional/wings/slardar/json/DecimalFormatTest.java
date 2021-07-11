@@ -35,13 +35,13 @@ public class DecimalFormatTest {
 
     @Test
     public void testFloat() {
-        DecimalFormat df = new DecimalFormat(",###,####.00");
+        DecimalFormat df = new DecimalFormat("￥,####.00");
         DecimalFormatSymbols customSymbols = new DecimalFormatSymbols();
         customSymbols.setGroupingSeparator('_');
         df.setDecimalFormatSymbols(customSymbols);
         df.setRoundingMode(RoundingMode.FLOOR);
-        assertEquals("10_0000.00", df.format(10_0000L));
-        assertEquals("10_0000.12", df.format(10_0000.125D));
+        assertEquals("￥10_0000.00", df.format(10_0000L));
+        assertEquals("￥10_0000.12", df.format(10_0000.125D));
     }
 
     @Test
@@ -90,7 +90,7 @@ public class DecimalFormatTest {
         private double doubleVal = 123456.789D;
         @JsonFormat(pattern = ",####.0")
         private Double doubleObj = doubleVal;
-        @JsonFormat(pattern = ",####.0")
+        @JsonFormat(pattern = "￥,####.0")
         private BigDecimal decimalObj = new BigDecimal("123456.789");
     }
 
@@ -161,7 +161,7 @@ public class DecimalFormatTest {
                                 + "\"floatObj\":\"12,3456.7\","
                                 + "\"doubleVal\":\"12,3456.7\","
                                 + "\"doubleObj\":\"12,3456.7\","
-                                + "\"decimalObj\":\"12_3456.7\"}"
+                                + "\"decimalObj\":\"￥12_3456.7\"}"
                 , decFmt);
     }
 }

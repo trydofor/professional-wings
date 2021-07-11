@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import pro.fessional.mirana.data.R;
+import pro.fessional.mirana.page.PageResult;
 import pro.fessional.wings.slardar.serialize.KryoSimple;
 
 import java.io.ByteArrayInputStream;
@@ -59,6 +60,12 @@ public class ResultTest {
         Assertions.assertNull(r2.getCause());
         Assertions.assertNull(r2.getI18nArgs());
         Assertions.assertNull(r2.getI18nCode());
+
+        PageResult<String> p1 = new PageResult<String>()
+                .addData("1")
+                .setTotalInfo(30, 20);
+        System.out.println(JSON.toJSONString(p1));
+        System.out.println(JSON.toJSONString(p1.addMeta("left", 10)));
     }
 
     @SuppressWarnings("unchecked")
