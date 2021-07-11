@@ -44,7 +44,8 @@ public class LoginPageController {
     private HttpSessionIdResolver httpSessionIdResolver;
 
     @ApiOperation(value = "集成登录默认页，默认返回支持的type类表",
-            notes = "①当鉴权失败时，重定向页面，status=401;②直接访问时返回status=200")
+            notes = "①当鉴权失败时，重定向页面，status=401;"
+                    + "②直接访问时返回status=200")
     @RequestMapping(value = "/auth/login-page.{extName}", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<?> loginPageDefault(@PathVariable("extName") String extName,
                                               HttpServletRequest request,
@@ -55,15 +56,18 @@ public class LoginPageController {
     }
 
     @ApiOperation(value = "具体验证登录默认页，根据content-type自动返回",
-            notes = "一般用于定制访问，如github页面重定向。①当鉴权失败时，重定向页面，status=401;②直接访问时返回status=200")
+            notes = "一般用于定制访问，如github页面重定向。支持state参数，用于构造oauth2的有意义的state"
+                    + "①当鉴权失败时，重定向页面，status=401;"
+                    + "②直接访问时返回status=200;")
     @RequestMapping(value = "/auth/{authType}/login-page.{extName}", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<?> LoginPageAuto(@PathVariable("authType") String authType,
                                            @PathVariable("extName") String extName,
+                                           @RequestParam(value = "state", required = false) String state,
                                            HttpServletRequest request,
                                            HttpServletResponse response) {
         final Enum<?> em = wingsAuthTypeParser.parse(authType);
         final MediaType mt = ContentTypeHelper.mediaTypeByUri(extName, MediaType.APPLICATION_JSON);
-        log.info("{} login-page media-type={}", authType, mt);
+        log.info("{} login-page media-type={}, state={}", authType, mt, state);
         return wingsAuthPageHandler.response(em, mt, request, response);
     }
 

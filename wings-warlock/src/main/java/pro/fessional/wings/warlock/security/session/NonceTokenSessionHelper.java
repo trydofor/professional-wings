@@ -55,6 +55,7 @@ public class NonceTokenSessionHelper {
         for (Sf s : caffeine.asMap().values()) {
             if (s.mid != null && s.mid.equals(auth)) {
                 s.uid = uid;
+                s.mid = null;
                 break;
             }
         }
