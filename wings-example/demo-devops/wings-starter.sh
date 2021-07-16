@@ -1,7 +1,7 @@
 #!/bin/bash
 cat <<'EOF'
 #################################################
-# version 2021-07-01 # test on mac and lin
+# version 2021-07-14 # test on mac and lin
 # 使用`ln -s`把此脚本软连接到`执行目录/workdir`，
 # 其同名`env`如（wings-starter.env）会被自动载入。
 # `BOOT_CNF|BOOT_ARG|JAVA_ARG`内变量可被延时求值，
@@ -9,7 +9,7 @@ cat <<'EOF'
 #################################################
 EOF
 ################ modify the following params ################
-TAIL_LOG='new'   # 默认tail的日志，"log|out|new|ask"
+TAIL_LOG='log'   # 默认tail的日志，"log|out|new|ask"
 USER_RUN="$USER" # 用来启动程序的用户
 PORT_RUN=''      # 默认端口，空时
 ARGS_RUN="start" # 默认参数。空时使用$1
@@ -21,6 +21,8 @@ BOOT_CNF=''      # 外部配置。通过env覆盖
 BOOT_ARG=''      # 启动参数。通过env覆盖
 JAVA_XMS='2G'    # 启动参数。通过env覆盖
 JAVA_XMX='4G'    # 启动参数。通过env覆盖
+WARN_TXT=''      # 预设的警告词
+WARN_RUN=''      # 若pid消失或日志无更新则执行
 JAVA_ARG='-server
 -Djava.awt.headless=true
 -Dfile.encoding=UTF-8
@@ -160,7 +162,9 @@ case "$ARGS_RUN" in
         if [[ $count -eq 0 ]]; then
             if [[ -f "${BOOT_OUT}" ]]; then
                 echo -e "\033[33mNOTE: backup old output \033[0m"
-                mv "${BOOT_OUT}" "${BOOT_OUT}-${BOOT_DTM}.bak"
+                out_bak="${BOOT_OUT}-${BOOT_DTM}"
+                mv "${BOOT_OUT}" "$out_bak"
+                gzip "$out_bak"
             fi
 
             nohup java ${JAVA_ARG} -jar ${BOOT_JAR} ${BOOT_ARG} >${BOOT_OUT} 2>&1 &
@@ -288,9 +292,42 @@ case "$ARGS_RUN" in
             echo -e "\033[32m java -jar arthas-boot.jar $cpid \033[m https://github.com/alibaba/arthas"
         fi
         ;;
+    warn)
+        this_path=$(realpath -s $this_file)
+        echo -e "\033[37;43;1mNOTE: ==== crontab usage ==== \033[0m"
+        echo -e "\033[32m crontab -l -u ${USER_RUN} \033[m"
+        echo -e "\033[32m */30 * * * * $this_path warn \033[m"
 
+        warn_got=''
+        if [[ $count -eq 0 ]]; then
+            echo -e "\033[33mNOTE: not found running $JAR_NAME\033[0m"
+            WARN_TXT="$WARN_TXT,PID"
+            warn_got="pid"
+        fi
+
+        log_time=$(date +%s -r "$BOOT_LOG")
+        ago_time=$(date +%s -d 'now -60 second')
+        if [[ log_time -lt ago_time ]]; then
+            echo -e "\033[33mNOTE: not newer log $BOOT_LOG\033[0m"
+            WARN_TXT="$WARN_TXT,LOG"
+            warn_got="log"
+        fi
+
+        if [[ "$warn_got"  != "" ]] ; then
+            if [[ "$WARN_RUN" == "" ]]; then
+                echo -e "\033[33mNOTE: skip monitor for empty WARN_RUN \033[0m"
+            else
+                echo "$WARN_RUN"
+                eval "$WARN_RUN"
+                echo
+                echo -e "\033[33mNOTE: sended warn notice \033[0m"
+            fi
+        else
+            echo -e "\033[33mNOTE: good status : pid and log \033[0m"
+        fi
+        ;;
     *)
-        echo -e '\033[37;41;1mERROR: use start|stop|status\033[m'
+        echo -e '\033[37;41;1mERROR: use start|stop|status|warn\033[m'
         echo -e '\033[31meg ./wings-starter.sh start\033[m'
         ;;
 esac
