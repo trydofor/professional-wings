@@ -145,6 +145,7 @@ spring默认以如下配置为入口，逗号分隔，保留不带国家地区�
  * 只需要console输出（如果docker内）不需要额外设置。
  * 同时需要console和file，则增加以下配置`logging.file.name=/tmp/wings-example.log`
  * 只需要file，则再增加`logging.config=classpath:logback-fileonly.xml`
+ * 可按名字配置appender日志级别，默认存在FILE时，CONSOLE自动切到WARN以上(仅logback)
 
 推荐的logging配置
 

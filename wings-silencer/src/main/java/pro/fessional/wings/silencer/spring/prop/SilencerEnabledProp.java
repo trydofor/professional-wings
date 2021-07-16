@@ -39,4 +39,12 @@ public class SilencerEnabledProp {
      */
     private boolean scanner = true;
     public static final String Key$scanner = Key + ".scanner";
+
+    /**
+     * 是否在有log-file时，console自动ERROR
+     *
+     * @see #Key$autoLog
+     */
+    private boolean autoLog = true;
+    public static final String Key$autoLog = Key + ".auto-log";
 }

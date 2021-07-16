@@ -1,5 +1,6 @@
 package pro.fessional.wings.silencer.spring.bean;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Bean;
@@ -15,28 +16,33 @@ import java.util.Arrays;
  * @since 2019-06-26
  */
 @Configuration
+@RequiredArgsConstructor
 public class SilencerMiranaConfiguration {
 
     private static final Log logger = LogFactory.getLog(SilencerMiranaConfiguration.class);
 
+    private final SilencerMiranaProp silencerMiranaProp;
+
     @Bean
-    public Crc8Long crc8Long(SilencerMiranaProp conf) {
-        int[] seed = conf.getCrc8Long();
+    public Crc8Long crc8Long() {
+        int[] seed = silencerMiranaProp.getCode().getCrc8Long();
         logger.info("Wings make Crc8Long, seed = " + Arrays.toString(seed));
         if (seed == null || seed.length == 0) {
             return new Crc8Long();
-        } else {
+        }
+        else {
             return new Crc8Long(seed);
         }
     }
 
     @Bean
-    public LeapCode leapCode(SilencerMiranaProp conf) {
-        String seed = conf.getLeapCode();
+    public LeapCode leapCode() {
+        String seed = silencerMiranaProp.getCode().getLeapCode();
         logger.info("Wings make LeapCode, seed = " + seed);
         if (seed == null) {
             return new LeapCode();
-        } else {
+        }
+        else {
             return new LeapCode(seed);
         }
     }
