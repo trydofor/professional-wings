@@ -1,11 +1,13 @@
 package pro.fessional.wings.slardar.monitor.report;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.util.StringUtils;
 import pro.fessional.wings.slardar.httprest.OkHttpClientHelper;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.monitor.WarnReport;
@@ -19,6 +21,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
+ * 钉钉机器人 https://developers.dingtalk.com/document/app/custom-robot-access
+ *
  * @author trydofor
  * @since 2021-07-14
  */
@@ -26,23 +30,25 @@ import java.util.function.Consumer;
 @Getter @Setter
 public class DingTalkReport implements WarnReport {
 
-    private final String accessToken;
-    private final String dingTalkHost;
+    private final Conf conf;
     private final OkHttpClient okHttpClient;
 
-    private String warnKeyword;
-    private String digestSecret;
+    private String clientUrl = "https://oapi.dingtalk.com/robot/send?access_token=";
 
-    public DingTalkReport(String accessToken, OkHttpClient okHttpClient) {
-        this.accessToken = accessToken;
-        this.dingTalkHost = "https://oapi.dingtalk.com/robot/send?access_token=" + accessToken;
+    public DingTalkReport(Conf conf, OkHttpClient okHttpClient) {
         this.okHttpClient = okHttpClient;
+        this.conf = conf;
     }
 
     @Override
-    public Sts report(String jvmName, Map<String, List<WarnMetric.Warn>> warn) {
-        if (accessToken == null || accessToken.isEmpty()) {
+    public Sts report(String title, Map<String, List<WarnMetric.Warn>> warn) {
+        if (!StringUtils.hasText(conf.accessToken)) {
             log.info("accessToken is empty, skip");
+            return Sts.Skip;
+        }
+
+        if (conf.accessToken.contains("${")) {
+            log.info("accessToken has placeholder, skip");
             return Sts.Skip;
         }
 
@@ -51,8 +57,7 @@ public class DingTalkReport implements WarnReport {
             return Sts.Skip;
         }
 
-        StringBuilder buffer = new StringBuilder();
-        buildMarkdown(buffer, jvmName, sb -> {
+        String text = buildMarkdown(title, sb -> {
             for (Map.Entry<String, List<WarnMetric.Warn>> entry : warn.entrySet()) {
                 title(sb, entry.getKey());
                 for (WarnMetric.Warn w : entry.getValue()) {
@@ -66,20 +71,27 @@ public class DingTalkReport implements WarnReport {
             }
         });
 
-        if (warnKeyword != null && buffer.indexOf(warnKeyword) < 0) {
-            buffer.append("\ndingtalk-keyword=").append(warnKeyword);
-        }
-
-        final boolean rst = post(buffer.toString());
+        final boolean rst = post(text);
         return rst ? Sts.Done : Sts.Fail;
     }
 
-    public void buildMarkdown(StringBuilder sb, String title, Consumer<StringBuilder> text) {
+    public String buildText(String title, String text) {
+        return "{\"msgtype\": \"text\",\"text\": {\"content\":\""
+               + checkKeyword(title)
+               + escapeQuote(text)
+               + "\"}}";
+    }
+
+    public String buildMarkdown(String title, Consumer<StringBuilder> text) {
+        StringBuilder sb = new StringBuilder();
+        title = checkKeyword(title);
         sb.append("{\"msgtype\":\"markdown\",\"markdown\":{");
         sb.append("\"title\":\"").append(title).append("\",");
         sb.append("\"text\":\"");
+        sb.append("# ").append(escapeQuote(title)).append("\n");
         text.accept(sb);
         sb.append("\"},\"at\":{\"isAtAll\":true}}");
+        return sb.toString();
     }
 
     public boolean post(String text) {
@@ -92,19 +104,26 @@ public class DingTalkReport implements WarnReport {
              "text": " \n"
          },"at":{"isAtAll":true}}'
          */
-        final long now = System.currentTimeMillis();
         final String host;
-        if (digestSecret == null || digestSecret.isEmpty()) {
-            host = dingTalkHost;
+        if (StringUtils.hasText(conf.digestSecret)) {
+            final long now = System.currentTimeMillis();
+            String sign = sign(now);
+            host = clientUrl + conf.accessToken + "&timestamp=" + now + "&sign=" + sign;
         }
         else {
-            String sign = sign(now);
-            host = dingTalkHost + "&timestamp=" + now + "&sign=" + sign;
+            host = clientUrl + conf.accessToken;
         }
         log.debug("ding-talk post message, host={}, text={}", host, text);
         final String s = OkHttpClientHelper.postJson(okHttpClient, host, text);
         log.debug("ding-talk result={}", s);
         return s.contains("errcode");
+    }
+
+    private String checkKeyword(String title) {
+        if (StringUtils.hasText(conf.reportKeyword) && !title.contains(conf.reportKeyword)) {
+            title = title + ":" + conf.reportKeyword;
+        }
+        return escapeQuote(title);
     }
 
     private void title(StringBuilder sb, String str) {
@@ -138,12 +157,41 @@ public class DingTalkReport implements WarnReport {
 
     @SneakyThrows
     private String sign(long timestamp) {
-        String stringToSign = timestamp + "\n" + digestSecret;
+        String stringToSign = timestamp + "\n" + conf.digestSecret;
         // 低频使用，不需要缓存，fire&forget
         final Mac hmacSHA256 = Mac.getInstance("HmacSHA256");
-        hmacSHA256.init(new SecretKeySpec(digestSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+        hmacSHA256.init(new SecretKeySpec(conf.digestSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
         byte[] signData = hmacSHA256.doFinal(stringToSign.getBytes(StandardCharsets.UTF_8));
         hmacSHA256.reset();
         return URLEncoder.encode(new String(Base64.encodeBase64(signData)), "UTF-8");
+    }
+
+    @Data
+    public static class Conf {
+        public static final String Key = "wings.slardar.monitor.ding-talk";
+
+        /**
+         * 警报时，使用钉钉通知的access_token，空表示不使用。
+         *
+         * @see #Key$accessToken
+         */
+        private String accessToken = "";
+        public static final String Key$accessToken = Key + ".access-token";
+
+        /**
+         * 消息签名，空表示不使用
+         *
+         * @see #Key$digestSecret
+         */
+        private String digestSecret = "";
+        public static final String Key$digestSecret = Key + ".digest-secret";
+
+        /**
+         * 自定义关键词：最多可以设置10个关键词，消息中至少包含其中1个关键词才可以发送成功
+         *
+         * @see #Key$reportKeyword
+         */
+        private String reportKeyword = "";
+        public static final String Key$reportKeyword = Key + ".report-keyword";
     }
 }

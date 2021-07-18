@@ -1,12 +1,17 @@
 package pro.fessional.wings.slardar.monitor;
 
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.util.StringUtils;
 
 import java.lang.management.ManagementFactory;
+import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +21,8 @@ import java.util.Map;
  * @since 2021-07-14
  */
 @Slf4j
-public class MonitorTask {
+@Setter @Getter
+public class MonitorTask implements InitializingBean {
 
     @Setter(onMethod_ = {@Autowired})
     private Environment environment;
@@ -28,11 +34,17 @@ public class MonitorTask {
     private List<WarnReport> warnReports;
 
     private String applicationName = null;
+    private boolean hookSelf = true;
 
     @Scheduled(cron = "${wings.slardar.monitor.cron}")
     public void run() {
         log.info("MonitorTask started");
         Map<String, List<WarnMetric.Warn>> warns = new LinkedHashMap<>();
+        metric(warns);
+        report(warns);
+    }
+
+    public void metric(Map<String, List<WarnMetric.Warn>> warns) {
         for (WarnMetric metric : warnMetrics) {
             final String nm = metric.getKey();
             try {
@@ -47,22 +59,23 @@ public class MonitorTask {
                 log.warn("failed to metric, name=" + nm, e);
             }
         }
+    }
 
-        if (applicationName == null) {
-            String an = environment.getProperty("spring.application.name");
-            if (an == null || an.isEmpty()) {
-                applicationName = ManagementFactory.getRuntimeMXBean().getName();
-            }
-            else {
-                applicationName = an;
-            }
+    public void report(Map<String, List<WarnMetric.Warn>> warns) {
+        if (warnReports.isEmpty()) return;
+
+        if (!StringUtils.hasText(applicationName)) {
+            applicationName = environment.getProperty("spring.application.name");
         }
+
+        final String jvm = ManagementFactory.getRuntimeMXBean().getName().replace('@', ':');
+        final String title = StringUtils.hasText(applicationName) ? applicationName + ":" + jvm : jvm;
 
         for (WarnReport report : warnReports) {
             final String rpt = report.getClass().getName();
             try {
                 log.debug("check {} warns by {}", warns.size(), rpt);
-                final WarnReport.Sts sts = report.report(applicationName, warns);
+                final WarnReport.Sts sts = report.report(title, warns);
                 if (sts == WarnReport.Sts.Fail) {
                     log.warn("failed to report={}", rpt);
                 }
@@ -73,6 +86,30 @@ public class MonitorTask {
             catch (Exception e) {
                 log.warn("failed to report, name=" + rpt, e);
             }
+        }
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        if (hookSelf) {
+            reportHook("started");
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> reportHook("shutting")));
+        }
+    }
+
+    private void reportHook(String key) {
+        try {
+            WarnMetric.Warn wn = new WarnMetric.Warn();
+            wn.setType(WarnMetric.Type.Text);
+            wn.setKey(key);
+            wn.setRule("time");
+            wn.setWarn(ZonedDateTime.now().toString());
+            List<WarnMetric.Warn> ws = Collections.singletonList(wn);
+            final Map<String, List<WarnMetric.Warn>> warns = Collections.singletonMap("wings.slardar.monitor.hook", ws);
+            report(warns);
+        }
+        catch (Exception e) {
+            // ignore
         }
     }
 }

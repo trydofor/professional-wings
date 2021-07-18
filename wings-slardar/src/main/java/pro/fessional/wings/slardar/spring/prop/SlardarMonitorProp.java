@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import pro.fessional.wings.slardar.monitor.metric.JvmMetric;
 import pro.fessional.wings.slardar.monitor.metric.LogMetric;
+import pro.fessional.wings.slardar.monitor.report.DingTalkReport;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +40,14 @@ public class SlardarMonitorProp {
     private String cron = "0 */10 * * * ?";
 
     /**
+     * 是否对jvm的启动和停止增加hook通知
+     *
+     * @see #Key$hook
+     */
+    private boolean hook = true;
+    public static final String Key$hook = Key + ".hook";
+
+    /**
      * 日志监控配置
      *
      * @see #Key$log
@@ -53,4 +62,13 @@ public class SlardarMonitorProp {
      */
     public static final String Key$jvm = Key + ".jvm";
     private JvmMetric.Rule jvm = new JvmMetric.Rule();
+
+    /**
+     * 钉钉通知设置
+     *
+     * @see #Key$dingTalk
+     */
+    public static final String Key$dingTalk = Key + ".ding-talk";
+    private DingTalkReport.Conf dingTalk = new DingTalkReport.Conf();
+
 }

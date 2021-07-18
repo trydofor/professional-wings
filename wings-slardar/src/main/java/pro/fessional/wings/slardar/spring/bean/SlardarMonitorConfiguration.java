@@ -57,19 +57,16 @@ public class SlardarMonitorConfiguration {
     @ConditionalOnMissingBean
     public DingTalkReport dingTalkReport(OkHttpClient okHttpClient) {
         logger.info("Wings conf dingTalkReport");
-        final Map<String, String> conf = slardarMonitorProp.getConf();
-        final String at = conf.get("dingtalk-access-token");
-        final DingTalkReport bean = new DingTalkReport(at, okHttpClient);
-        bean.setDigestSecret(conf.get("dingtalk-digest-secret"));
-        bean.setWarnKeyword(conf.get("dingtalk-warn-keyword"));
-        return bean;
+        return new DingTalkReport(slardarMonitorProp.getDingTalk(), okHttpClient);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public MonitorTask monitorTask() {
         logger.info("Wings conf monitorTask");
-        return new MonitorTask();
+        final MonitorTask bean = new MonitorTask();
+        bean.setHookSelf(slardarMonitorProp.isHook());
+        return bean;
     }
 
     @Configuration
@@ -93,6 +90,11 @@ public class SlardarMonitorConfiguration {
 
             for (Map.Entry<String, LogMetric.Rule> entry : logs.entrySet()) {
                 String key = LogMetric.Rule.Key + "." + entry.getKey();
+                if (beanFactory.containsBean(key)) {
+                    logger.info("Wings skip LogMetric bean=" + key + ", for existed");
+                    continue;
+                }
+
                 final LogMetric.Rule rule = entry.getValue();
                 if (rule.isEnable()) {
                     fillDefault(defaults, rule);

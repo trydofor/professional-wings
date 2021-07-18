@@ -19,9 +19,8 @@ class DingTalkReportTest {
 
     @Test
     void post() {
-        StringBuilder buffer = new StringBuilder();
-        dingTalkReport.buildMarkdown(buffer, "测试",
+        String text = dingTalkReport.buildMarkdown("测试",
                 sb -> sb.append("## 标题\n- **列表** 正常"));
-        dingTalkReport.post(buffer.toString());
+        dingTalkReport.post(text);
     }
 }
