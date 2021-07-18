@@ -22,6 +22,7 @@ BOOT_ARG=''      # 启动参数。通过env覆盖
 JAVA_XMS='2G'    # 启动参数。通过env覆盖
 JAVA_XMX='4G'    # 启动参数。通过env覆盖
 WARN_TXT=''      # 预设的警告词
+WARN_AGO=''      # 日志多少秒不更新，则警报，空表示忽略
 WARN_RUN=''      # 若pid消失或日志无更新则执行
 JAVA_ARG='-server
 -Djava.awt.headless=true
@@ -114,10 +115,10 @@ if [[ -f "/proc/meminfo" ]]; then
     mem_avl=$(head /proc/meminfo | grep MemAvailable | awk '{print $2"K"}' | numfmt --from=auto --to-unit=1M)
     mem_min=$(numfmt --from=auto --to-unit=1M $JAVA_XMS)
     mem_max=$(numfmt --from=auto --to-unit=1M $JAVA_XMX)
-    if [[ "$mem_avl" < "$mem_min" ]]; then
+    if [[ "$mem_avl" -lt "$mem_min" ]]; then
         echo -e "\033[33mNOTE: Available=${mem_avl}Mb < JAVA_XMS=${mem_min}Mb, Total=${mem_tot}Mb, Free=${mem_fre}Mb \033[0m"
     fi
-    if [[ "$mem_avl" < "$mem_max" ]]; then
+    if [[ "$mem_avl" -lt "$mem_max" ]]; then
         echo -e "\033[33mNOTE: Available=${mem_avl}Mb < JAVA_XMX=${mem_max}Mb, Total=${mem_tot}Mb, Free=${mem_fre}Mb \033[0m"
     fi
     head /proc/meminfo
@@ -295,8 +296,9 @@ case "$ARGS_RUN" in
     warn)
         this_path=$(realpath -s $this_file)
         echo -e "\033[37;43;1mNOTE: ==== crontab usage ==== \033[0m"
+        echo -e "\033[32m crontab -e -u ${USER_RUN} \033[m"
         echo -e "\033[32m crontab -l -u ${USER_RUN} \033[m"
-        echo -e "\033[32m */30 * * * * $this_path warn \033[m"
+        echo -e "\033[32m */5 * * * * $this_path warn \033[m"
 
         warn_got=''
         if [[ $count -eq 0 ]]; then
@@ -305,12 +307,14 @@ case "$ARGS_RUN" in
             warn_got="pid"
         fi
 
-        log_time=$(date +%s -r "$BOOT_LOG")
-        ago_time=$(date +%s -d 'now -60 second')
-        if [[ log_time -lt ago_time ]]; then
-            echo -e "\033[33mNOTE: not newer log $BOOT_LOG\033[0m"
-            WARN_TXT="$WARN_TXT,LOG"
-            warn_got="log"
+        if [[ "$WARN_AGO" != "" ]]; then
+            log_time=$(date +%s -r "$BOOT_LOG")
+            ago_time=$(date +%s -d "now -$WARN_AGO second")
+            if [[ log_time -lt ago_time ]]; then
+                echo -e "\033[33mNOTE: no update in $WARN_AGO seconds, log $BOOT_LOG\033[0m"
+                WARN_TXT="$WARN_TXT,LOG"
+                warn_got="log"
+            fi
         fi
 
         if [[ "$warn_got"  != "" ]] ; then
@@ -323,7 +327,7 @@ case "$ARGS_RUN" in
                 echo -e "\033[33mNOTE: sended warn notice \033[0m"
             fi
         else
-            echo -e "\033[33mNOTE: good status : pid and log \033[0m"
+            echo -e "\033[37;42;1mNOTE: good status : PID and LOG \033[0m"
         fi
         ;;
     *)
