@@ -180,6 +180,20 @@ public class LogMetric implements WarnMetric {
         public static final String Key$maxSize = Key + ".max-size";
 
         /**
+         * 日志基本和内容的大概分隔线，分隔byte数（ascii等于char数）
+         *
+         * @see #Key$bound
+         */
+        private int bound = 40;
+        public static final String Key$bound = Key + ".bound";
+
+        /**
+         * @see #Key$level
+         */
+        private String[] level = null;
+        public static final String Key$level = Key + ".level";
+
+        /**
          * 监控的关键词
          */
         private String[] keyword = null;
@@ -228,15 +242,27 @@ public class LogMetric implements WarnMetric {
          * @return 按字符集构造的byte
          */
         @SneakyThrows
-        public byte[][] getRuntimeKeys() {
-            if (keyword == null) return null;
-            final int len = keyword.length;
-            byte[][] bbs = new byte[len][];
-            for (int i = 0; i < bbs.length; i++) {
-                String kw = trimKey(keyword[i], false);
-                bbs[i] = kw.getBytes(charset);
+        public List<LogStat.Word> getRuntimeKeys() {
+            List<LogStat.Word> rst = new ArrayList<>();
+            if(level != null){
+                for (String s : level) {
+                    String kw = trimKey(s, false);
+                    if(kw.isEmpty()) continue;
+                    LogStat.Word wd = new LogStat.Word();
+                    wd.range2 = bound;
+                    wd.bytes = kw.getBytes(charset);
+                    rst.add(wd);
+                }
+                for (String s : keyword) {
+                    String kw = trimKey(s, false);
+                    if(kw.isEmpty()) continue;
+                    LogStat.Word wd = new LogStat.Word();
+                    wd.range1 = bound;
+                    wd.bytes = kw.getBytes(charset);
+                    rst.add(wd);
+                }
             }
-            return bbs;
+            return rst;
         }
     }
 }
