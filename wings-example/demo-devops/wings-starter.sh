@@ -74,7 +74,7 @@ echo "work dir $(pwd)"
 echo -e "\033[37;42;1mINFO: ==== java version ==== \033[0m"
 
 if ! java -version; then
-    echo -e "\033[37;41;1mERROR: can not found 'java' in the $PATH\033[0m"
+    echo -e "\033[37;41;1mERROR: can not found 'java' in the $PATH \033[0m"
     exit
 fi
 
@@ -83,7 +83,7 @@ if [[ ! -f "$BOOT_JAR" ]]; then
     BOOT_JAR=$(find . -type f -name "$BOOT_JAR" | head -n 1)
 fi
 if [[ ! -f "$BOOT_JAR" ]]; then
-    echo -e "\033[37;41;1mERROR: can not found jar file, $BOOT_JAR\033[0m"
+    echo -e "\033[37;41;1mERROR: can not found jar file, $BOOT_JAR \033[0m"
     exit
 fi
 
@@ -97,10 +97,6 @@ fi
 if [[ "$BOOT_PID" == "" ]]; then
     BOOT_PID=${JAR_NAME}.pid
 fi
-
-# check ps
-#count=$(ps -ef -u $USER_RUN | grep -E "java.+$BOOT_JAR " | grep -v grep | wc -l)
-count=$(pgrep -f -u "$USER_RUN" " $BOOT_JAR " | wc -l)
 
 # check arg
 if [[ "$1" != "" ]]; then
@@ -152,9 +148,13 @@ EOF
 echo -e "\033[37;42;1mINFO: ==== java arguments ==== \033[0m"
 echo "$JAVA_ARG"
 
+# check ps
+#count=$(ps -ef -u $USER_RUN | grep -E "java.+$BOOT_JAR " | grep -v grep | wc -l)
+count=$(pgrep -f -u "$USER_RUN" " $BOOT_JAR " | wc -l)
+
 # check user
 if [[ "$USER_RUN" != "$USER" ]]; then
-    echo -e "\033[37;41;1mERROR: need user $USER_RUN to run\033[0m"
+    echo -e "\033[37;41;1mERROR: need user $USER_RUN to run \033[0m"
     exit
 fi
 
@@ -172,24 +172,20 @@ case "$ARGS_RUN" in
             echo $! >"$BOOT_PID"
             sleep 2
         else
-            echo -e "\033[37;41;1mERROR: already $count running of $JAR_NAME\033[0m"
+            echo -e "\033[37;41;1mERROR: already $count running of $BOOT_JAR \033[0m"
         fi
 
-        cpid=$(pgrep -f "$JAR_NAME")
+        cpid=$(pgrep -f " $BOOT_JAR " | tr '\n' ' ')
         if [[ "$cpid" == "" ]]; then
-            echo -e "\033[37;41;1mERROR: failed to get PID of $JAR_NAME\033[0m"
+            echo -e "\033[37;41;1mERROR: failed to check PID by $BOOT_JAR \033[0m"
             exit
         else
-            echo -e "\033[37;43;1mNOTE: current PID=$cpid of $JAR_NAME \033[0m"
-            ps -fwww "$cpid"
+            echo -e "\033[37;43;1mNOTE: current PID=$cpid of $BOOT_JAR \033[0m"
+            ps -fwww $cpid
         fi
 
         tail_log="$BOOT_OUT"
         if [[ -f "$BOOT_LOG" ]]; then
-            echo -e "\033[37;43;1mNOTE: monitor the log-file? input the number \033[0m"
-            echo -e "\033[33mNOTE: 1 - $BOOT_LOG \033[0m"
-            echo -e "\033[33mNOTE: 2 - $BOOT_OUT \033[0m"
-            echo -e "\033[33mNOTE: ENTER to BREAK \033[0m"
             if [[ "$TAIL_LOG" == 'log' ]]; then
                 tail_log="$BOOT_LOG"
             elif [[ "$TAIL_LOG" == 'out' ]]; then
@@ -200,8 +196,13 @@ case "$ARGS_RUN" in
                 else
                     tail_log="$BOOT_OUT"
                 fi
-                echo -e "\033[33mNOTE: $tail_log is newer\033[0m"
+                echo -e "\033[33mNOTE: $tail_log is newer \033[0m"
             else
+                echo -e "\033[37;43;1mNOTE: monitor the log-file? input the number \033[0m"
+                echo -e "\033[33mNOTE: 1 - $BOOT_LOG \033[0m"
+                echo -e "\033[33mNOTE: 2 - $BOOT_OUT \033[0m"
+                echo -e "\033[33mNOTE: ENTER to BREAK \033[0m"
+
                 read -r num
                 case "$num" in
                     1) tail_log="$BOOT_LOG" ;;
@@ -218,25 +219,24 @@ case "$ARGS_RUN" in
             tail -n 50 -f "$tail_log"
         fi
         ;;
-
     stop)
         if [[ $count -eq 0 ]]; then
-            echo -e "\033[37;43;1mNOTE: not found running $JAR_NAME\033[0m"
+            echo -e "\033[37;43;1mNOTE: not found running $BOOT_JAR \033[0m"
         else
-            cpid=$(pgrep -f "$JAR_NAME")
-            echo -e "\033[33mNOTE: current PID=$cpid of $JAR_NAME \033[0m"
+            cpid=$(pgrep -f " $BOOT_JAR " | tr '\n' ' ')
+            echo -e "\033[33mNOTE: current PID=$cpid of $BOOT_JAR \033[0m"
             timeout=60
             pid=$(cat "$BOOT_PID")
             if [[ $pid -ne $cpid ]]; then
-                echo -e "\033[31mWARN: pid not match, proc-pid=$cpid, file-pid=$pid\033[0m"
-                echo -e "\033[31mWARN: press <y> to kill $cpid, ohters to kill $pid\033[0m"
+                echo -e "\033[31mWARN: pid not match, file-pid=$pid , proc-pid=$cpid \033[0m"
+                echo -e "\033[31mWARN: press <ENTER> to kill $pid, <y> to kill all $cpid \033[0m"
                 read -r yon
                 if [[ "$yon" == "y" ]]; then
                     pid=$cpid
                 fi
             fi
-            echo -e "\033[33mNOTE: killing boot.pid=$pid of $JAR_NAME\033[0m"
-            kill "$pid"
+            echo -e "\033[33mNOTE: killing boot.pid=$pid of $BOOT_JAR \033[0m"
+            kill $pid
 
             icon=''
             for ((i = 0; i < timeout; i++)); do
@@ -250,42 +250,41 @@ case "$ARGS_RUN" in
                     sleep 0.1
                 done
                 if [[ $(pgrep -f -u "$USER_RUN" " $BOOT_JAR " | wc -l) -eq 0 ]]; then
-                    echo -e "\033[33mNOTE: successfully stop in $i seconds, pid=$pid of $JAR_NAME\033[0m"
+                    echo -e "\033[33mNOTE: successfully stop in $i seconds, pid=$pid of $BOOT_JAR \033[0m"
                     exit
                 fi
             done
-            cpid=$(pgrep -f "$JAR_NAME")
-            echo -e "\033[37;41;1mWARN: stopping timeout[${timeout}s], pid=$pid\033[0m"
-            echo -e "\033[31mWARN: need manually check PID=$cpid of ${JAR_NAME}\033[0m"
-            echo -e "\033[33mNOTE: <ENTER> to 'kill -9 $pid', <Ctrl-C> to exit\033[0m"
+            cpid=$(pgrep -f " $BOOT_JAR " | tr '\n' ' ')
+            echo -e "\033[37;41;1mWARN: stopping timeout[${timeout}s], pid=$pid \033[0m"
+            echo -e "\033[31mWARN: need manually check PID=$cpid of $BOOT_JAR \033[0m"
+            echo -e "\033[33mNOTE: <ENTER> to 'kill -9 $pid', <Ctrl-C> to exit \033[0m"
             read -r
             kill -9 "$pid"
         fi
         ;;
-
     status)
         if [[ $count -eq 0 ]]; then
-            echo -e "\033[37;43;1mNOTE: not found running $JAR_NAME\033[0m"
+            echo -e "\033[37;43;1mNOTE: not found running $BOOT_JAR \033[0m"
         else
             tail_num=10
-            echo -e "\033[37;43;1mNOTE: last $tail_num lines of output=$BOOT_OUT\033[0m"
+            echo -e "\033[37;43;1mNOTE: last $tail_num lines of output=$BOOT_OUT \033[0m"
             tail -n $tail_num "$BOOT_OUT"
             if [[ -f "$BOOT_LOG" ]]; then
                 echo -e "\033[37;43;1mNOTE: tail $tail_num lines of log-file= $BOOT_LOG \033[0m"
                 tail -n $tail_num "$BOOT_LOG"
             fi
             pid=$(cat "$BOOT_PID")
-            cpid=$(pgrep -f "$JAR_NAME")
+            cpid=$(pgrep -f " $BOOT_JAR " | tr '\n' ' ')
             echo -e "\033[37;43;1mNOTE: boot.pid=$pid \033[0m"
-            echo -e "\033[33mNOTE: current PID=$cpid of $JAR_NAME \033[0m"
-            ps -fwww "$cpid"
+            echo -e "\033[33mNOTE: current PID=$cpid of $BOOT_JAR \033[0m"
+            ps -fwww $cpid
 
             if [[ $pid -ne $cpid ]]; then
-                echo -e "\033[31mWARN: pid not match, proc-pid=$cpid, file-pid=$pid\033[0m"
+                echo -e "\033[31mWARN: pid not match, proc-pid=$cpid, file-pid=$pid \033[0m"
             fi
 
             echo -e "\033[37;43;1mNOTE: jstat -gcutil $cpid 1000 5 \033[0m"
-            jstat -gcutil "$cpid" 1000 5
+            jstat -gcutil $cpid 1000 5
 
             echo -e "\033[37;43;1mNOTE: ==== other useful command ==== \033[0m"
             echo -e "\033[32m jmap -heap $cpid \033[m mac's bug=8161164, lin's ptrace_scope"
@@ -302,7 +301,7 @@ case "$ARGS_RUN" in
 
         warn_got=''
         if [[ $count -eq 0 ]]; then
-            echo -e "\033[33mNOTE: not found running $JAR_NAME\033[0m"
+            echo -e "\033[33mNOTE: not found running $BOOT_JAR \033[0m"
             WARN_TXT="$WARN_TXT,PID"
             warn_got="pid"
         fi
@@ -311,7 +310,7 @@ case "$ARGS_RUN" in
             log_time=$(date +%s -r "$BOOT_LOG")
             ago_time=$(date +%s -d "now -$WARN_AGO second")
             if [[ log_time -lt ago_time ]]; then
-                echo -e "\033[33mNOTE: no update in $WARN_AGO seconds, log $BOOT_LOG\033[0m"
+                echo -e "\033[33mNOTE: no update in $WARN_AGO seconds, log $BOOT_LOG \033[0m"
                 WARN_TXT="$WARN_TXT,LOG"
                 warn_got="log"
             fi
@@ -330,8 +329,24 @@ case "$ARGS_RUN" in
             echo -e "\033[37;42;1mNOTE: good status : PID and LOG \033[0m"
         fi
         ;;
+    clean)
+        dys=30
+        echo -e "\033[37;43;1mNOTE: ==== clear ${dys}-days ago log file ==== \033[0m"
+        echo -e "\033[32m find . -name \"${JAR_NAME}[.-]*\" -type f -mtime +${dys} \033[m"
+        old=$(find . -name "${JAR_NAME}[.-]*" -type f -mtime +${dys})
+        if [[ "$old" != "" ]]; then
+            find . -name "${JAR_NAME}[.-]*" -type f -mtime +${dys}
+            echo -e "\033[31mWARN: press <y> to rm them all \033[0m"
+            read -r yon
+            if [[ "$yon" == "y" ]]; then
+                find . -name "${JAR_NAME}[.-]*" -type f -mtime +${dys} -print0 | xargs -0 rm -f
+            fi
+        else
+            echo -e "\033[37;42;1mNOTE: no ${dys}-days ago logs \033[0m"
+        fi
+        ;;
     *)
-        echo -e '\033[37;41;1mERROR: use start|stop|status|warn\033[m'
+        echo -e '\033[37;41;1mERROR: use start|stop|status|warn|clean\033[m'
         echo -e '\033[31meg ./wings-starter.sh start\033[m'
         ;;
 esac
