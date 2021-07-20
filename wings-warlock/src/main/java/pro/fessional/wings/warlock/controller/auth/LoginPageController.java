@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,8 @@ import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.servlet.ContentTypeHelper;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
+import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
+import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerAuth, havingValue = "true")
 public class LoginPageController {
 
     private final WingsAuthPageHandler wingsAuthPageHandler;
@@ -101,7 +105,7 @@ public class LoginPageController {
     }
 
     @ApiOperation(value = "登出接口，有filter处理，仅做文档", notes = "默认失效Session，参考wings.warlock.security.logout-url")
-    @RequestMapping(value = "${wings.warlock.security.logout-url}", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "${" + WarlockSecurityProp.Key$logoutUrl + "}", method = {RequestMethod.POST, RequestMethod.GET})
     public String logout() {
         return "handler by filter, never here";
     }
@@ -109,7 +113,7 @@ public class LoginPageController {
 
     @SuppressWarnings("MVCPathVariableInspection")
     @ApiOperation(value = "登录验证接口，有filter处理，仅做文档", notes = "根据类型自动处理，参考 wings.warlock.security.login-url")
-    @RequestMapping(value = "${wings.warlock.security.login-url}", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "${" + WarlockSecurityProp.Key$loginUrl + "}", method = {RequestMethod.POST, RequestMethod.GET})
     public String login(@PathVariable("authType") String authType,
                         @RequestParam(value = "username", defaultValue = "参考 wings.warlock.security.username-para") String username,
                         @RequestParam(value = "password", defaultValue = "参考 wings.warlock.security.password-para") String password) {

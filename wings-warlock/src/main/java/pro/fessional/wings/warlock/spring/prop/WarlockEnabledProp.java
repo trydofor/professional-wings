@@ -145,4 +145,10 @@ public class WarlockEnabledProp {
      */
     private boolean tableChange = true;
     public static final String Key$tableChange = Key + ".table-change";
+
+    /**
+     * @see #Key$controllerAuth
+     */
+    private boolean controllerAuth = true;
+    public static final String Key$controllerAuth = Key + ".controller-auth";
 }

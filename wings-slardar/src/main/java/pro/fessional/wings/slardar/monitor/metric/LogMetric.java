@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -117,11 +118,12 @@ public class LogMetric implements WarnMetric {
     }
 
     private String maskKeyword() {
-        final String[] kes = rule.getKeyword();
-        if (kes == null || kes.length == 0) return "";
-
         StringBuilder sb = new StringBuilder();
-        for (String k : kes) {
+        for (String k : rule.level) {
+            sb.append(",");
+            sb.append(rule.maskKey(k));
+        }
+        for (String k : rule.keyword) {
             sb.append(",");
             sb.append(rule.maskKey(k));
         }
@@ -190,13 +192,13 @@ public class LogMetric implements WarnMetric {
         /**
          * @see #Key$level
          */
-        private String[] level = null;
+        private Set<String> level = Collections.emptySet();
         public static final String Key$level = Key + ".level";
 
         /**
          * 监控的关键词
          */
-        private String[] keyword = null;
+        private Set<String> keyword = Collections.emptySet();
         public static final String Key$keyword = Key + ".keyword";
 
         /**
@@ -244,10 +246,10 @@ public class LogMetric implements WarnMetric {
         @SneakyThrows
         public List<LogStat.Word> getRuntimeKeys() {
             List<LogStat.Word> rst = new ArrayList<>();
-            if(level != null){
+            if (level != null) {
                 for (String s : level) {
                     String kw = trimKey(s, false);
-                    if(kw.isEmpty()) continue;
+                    if (kw.isEmpty()) continue;
                     LogStat.Word wd = new LogStat.Word();
                     wd.range2 = bound;
                     wd.bytes = kw.getBytes(charset);
@@ -255,7 +257,7 @@ public class LogMetric implements WarnMetric {
                 }
                 for (String s : keyword) {
                     String kw = trimKey(s, false);
-                    if(kw.isEmpty()) continue;
+                    if (kw.isEmpty()) continue;
                     LogStat.Word wd = new LogStat.Word();
                     wd.range1 = bound;
                     wd.bytes = kw.getBytes(charset);

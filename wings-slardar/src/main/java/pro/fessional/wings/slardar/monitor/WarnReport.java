@@ -18,9 +18,10 @@ public interface WarnReport {
     /**
      * 发送报告
      *
-     * @param title 当前jvm标识
+     * @param appName 当前app标识
+     * @param jvmName 当前jvm标识
      * @param warn    警告内容
      * @return 报告结果
      */
-    Sts report(String title, Map<String, List<WarnMetric.Warn>> warn);
+    Sts report(String appName, String jvmName, Map<String, List<WarnMetric.Warn>> warn);
 }

@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.spring.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import pro.fessional.wings.slardar.monitor.filtter.LogViewer;
 import pro.fessional.wings.slardar.monitor.metric.JvmMetric;
 import pro.fessional.wings.slardar.monitor.metric.LogMetric;
 import pro.fessional.wings.slardar.monitor.report.DingTalkReport;
@@ -60,7 +61,7 @@ public class SlardarMonitorProp {
      *
      * @see #Key$jvm
      */
-    public static final String Key$jvm = Key + ".jvm";
+    public static final String Key$jvm = JvmMetric.Rule.Key;
     private JvmMetric.Rule jvm = new JvmMetric.Rule();
 
     /**
@@ -68,7 +69,13 @@ public class SlardarMonitorProp {
      *
      * @see #Key$dingTalk
      */
-    public static final String Key$dingTalk = Key + ".ding-talk";
+    public static final String Key$dingTalk = DingTalkReport.Conf.Key;
     private DingTalkReport.Conf dingTalk = new DingTalkReport.Conf();
 
+
+    /**
+     * @see #Key$view
+     */
+    private LogViewer.Conf view = null;
+    public static final String Key$view = LogViewer.Conf.Key;
 }

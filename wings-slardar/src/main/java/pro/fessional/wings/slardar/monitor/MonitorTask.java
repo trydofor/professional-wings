@@ -33,6 +33,9 @@ public class MonitorTask implements InitializingBean {
     @Setter(onMethod_ = {@Autowired})
     private List<WarnReport> warnReports;
 
+    @Setter(onMethod_ = {@Autowired})
+    private List<WarnFilter> warnFilters;
+
     private String applicationName = null;
     private boolean hookSelf = true;
 
@@ -41,6 +44,7 @@ public class MonitorTask implements InitializingBean {
         log.info("MonitorTask started");
         Map<String, List<WarnMetric.Warn>> warns = new LinkedHashMap<>();
         metric(warns);
+        filter(warns);
         report(warns);
     }
 
@@ -61,21 +65,23 @@ public class MonitorTask implements InitializingBean {
         }
     }
 
+    private void filter(Map<String, List<WarnMetric.Warn>> warns) {
+        for (WarnFilter filter : warnFilters) {
+            filter.filter(warns);
+        }
+    }
+
     public void report(Map<String, List<WarnMetric.Warn>> warns) {
         if (warnReports.isEmpty()) return;
 
-        if (!StringUtils.hasText(applicationName)) {
-            applicationName = environment.getProperty("spring.application.name");
-        }
-
-        final String jvm = ManagementFactory.getRuntimeMXBean().getName().replace('@', ':');
-        final String title = StringUtils.hasText(applicationName) ? applicationName + ":" + jvm : jvm;
+        final String app = StringUtils.hasText(applicationName) ? applicationName : environment.getProperty("spring.application.name");
+        final String jvm = ManagementFactory.getRuntimeMXBean().getName();
 
         for (WarnReport report : warnReports) {
             final String rpt = report.getClass().getName();
             try {
                 log.debug("check {} warns by {}", warns.size(), rpt);
-                final WarnReport.Sts sts = report.report(title, warns);
+                final WarnReport.Sts sts = report.report(app, jvm, warns);
                 if (sts == WarnReport.Sts.Fail) {
                     log.warn("failed to report={}", rpt);
                 }

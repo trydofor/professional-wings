@@ -16,6 +16,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -41,7 +42,7 @@ public class DingTalkReport implements WarnReport {
     }
 
     @Override
-    public Sts report(String title, Map<String, List<WarnMetric.Warn>> warn) {
+    public Sts report(String appName, String jvmName, Map<String, List<WarnMetric.Warn>> warn) {
         if (!StringUtils.hasText(conf.accessToken)) {
             log.info("accessToken is empty, skip");
             return Sts.Skip;
@@ -57,15 +58,15 @@ public class DingTalkReport implements WarnReport {
             return Sts.Skip;
         }
 
-        String text = buildMarkdown(title, sb -> {
+        String text = buildMarkdown(appName, jvmName, sb -> {
             for (Map.Entry<String, List<WarnMetric.Warn>> entry : warn.entrySet()) {
-                title(sb, entry.getKey());
+                mkTitleH2(sb, entry.getKey());
                 for (WarnMetric.Warn w : entry.getValue()) {
                     if (w.getType() == WarnMetric.Type.Link) {
-                        link(sb, w);
+                        mkItemLink(sb, w);
                     }
                     else {
-                        item(sb, w);
+                        mkItemText(sb, w);
                     }
                 }
             }
@@ -75,20 +76,39 @@ public class DingTalkReport implements WarnReport {
         return rst ? Sts.Done : Sts.Fail;
     }
 
-    public String buildText(String title, String text) {
+    public String buildText(String app, String jvm, String text) {
+        StringBuilder sb = new StringBuilder();
+        if (conf.reportKeyword != null) {
+            sb.append(escapeQuote(conf.reportKeyword));
+        }
+        final int zln = sb.length();
+
+        sb.append("app=").append(escapeQuote(app));
+        sb.append(",jvm=").append(escapeQuote(jvm));
+        sb.append(",time=").append(ZonedDateTime.now());
+        sb.append(",text=").append(escapeQuote(text));
+
+        final String rst;
+        if (zln > 0 && sb.indexOf(conf.reportKeyword, zln) < 0) {
+            rst = sb.toString();
+        }
+        else {
+            rst = sb.substring(zln);
+        }
+
         return "{\"msgtype\": \"text\",\"text\": {\"content\":\""
-               + checkKeyword(title)
-               + escapeQuote(text)
+               + rst
                + "\"}}";
     }
 
-    public String buildMarkdown(String title, Consumer<StringBuilder> text) {
+    public String buildMarkdown(String app, String jvm, Consumer<StringBuilder> text) {
         StringBuilder sb = new StringBuilder();
-        title = checkKeyword(title);
         sb.append("{\"msgtype\":\"markdown\",\"markdown\":{");
-        sb.append("\"title\":\"").append(title).append("\",");
+        sb.append("\"title\":\"").append(conf.reportKeyword).append("\",");
         sb.append("\"text\":\"");
-        sb.append("# ").append(escapeQuote(title)).append("\n");
+        mkTitleH2(sb, app);
+        mkItemText(sb, jvm, "jvm-name");
+        mkItemText(sb, ZonedDateTime.now().toString(), "rpt-time");
         text.accept(sb);
         sb.append("\"},\"at\":{\"isAtAll\":true}}");
         return sb.toString();
@@ -119,20 +139,21 @@ public class DingTalkReport implements WarnReport {
         return s.contains("errcode");
     }
 
-    private String checkKeyword(String title) {
-        if (StringUtils.hasText(conf.reportKeyword) && !title.contains(conf.reportKeyword)) {
-            title = title + ":" + conf.reportKeyword;
-        }
-        return escapeQuote(title);
-    }
-
-    private void title(StringBuilder sb, String str) {
-        sb.append("## ")
+    protected void mkTitleH2(StringBuilder sb, String str) {
+        sb.append("## ■ ")
           .append(escapeQuote(str))
           .append("\n");
     }
 
-    private void item(StringBuilder sb, WarnMetric.Warn warn) {
+    protected void mkItemText(StringBuilder sb, String value, String key) {
+        sb.append("- ")
+          .append(escapeQuote(value))
+          .append(" | ")
+          .append(key)
+          .append("\n");
+    }
+
+    protected void mkItemText(StringBuilder sb, WarnMetric.Warn warn) {
         sb.append("- ")
           .append("**").append(warn.getWarn()).append("** | ")
           .append(escapeQuote(warn.getRule()))
@@ -141,7 +162,7 @@ public class DingTalkReport implements WarnReport {
           .append("\n");
     }
 
-    private void link(StringBuilder sb, WarnMetric.Warn warn) {
+    protected void mkItemLink(StringBuilder sb, WarnMetric.Warn warn) {
         sb.append("- [")
           .append(escapeQuote(warn.getRule()))
           .append("](")

@@ -19,7 +19,7 @@ class DingTalkReportTest {
 
     @Test
     void post() {
-        String text = dingTalkReport.buildMarkdown("测试",
+        String text = dingTalkReport.buildMarkdown("测试", "jvm",
                 sb -> sb.append("## 标题\n- **列表** 正常"));
         dingTalkReport.post(text);
     }
