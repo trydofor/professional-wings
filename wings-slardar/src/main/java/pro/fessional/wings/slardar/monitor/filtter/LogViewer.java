@@ -73,7 +73,8 @@ public class LogViewer implements WarnFilter {
             final ServletOutputStream outputStream = res.getOutputStream();
             IOUtils.copyLarge(fis, res.getOutputStream(), 0L, len);
             if (file.length() - len > 0) {
-                outputStream.write(("\n\n......" + len + "/" + file.length() + " bytes").getBytes());
+                final String more = String.format("\n\n...... %,d / %,d bytes", len, file.length());
+                outputStream.write(more.getBytes());
             }
         }
     }

@@ -104,7 +104,7 @@ public class DingTalkReport implements WarnReport {
     public String buildMarkdown(String app, String jvm, Consumer<StringBuilder> text) {
         StringBuilder sb = new StringBuilder();
         sb.append("{\"msgtype\":\"markdown\",\"markdown\":{");
-        sb.append("\"title\":\"").append(conf.reportKeyword).append("\",");
+        sb.append("\"title\":\"").append(escapeQuote(conf.reportKeyword + ":" + app)).append("\",");
         sb.append("\"text\":\"");
         mkTitleH2(sb, app);
         mkItemText(sb, jvm, "jvm-name");

@@ -32,6 +32,7 @@ public class LogMetric implements WarnMetric {
     private final String keyMaxGrow;
     private final String keyMaxSize;
     private final String keyKeyword;
+    private volatile long lastClean = 0;
 
     public LogMetric(String key, Rule rule) {
         this.key = key;
@@ -62,6 +63,12 @@ public class LogMetric implements WarnMetric {
         final LogStat.Stat stat = LogStat.stat(rule.file, from, rule.getRuntimeKeys());
         log.info("LogStat-{}, stat={}", key, stat);
         writeLastFrom(stat);
+
+        if (stat.getTimeDone() - lastClean > 24 * 3600 * 1000L) {
+            final List<String> cln = LogStat.clean(file, rule.clean);
+            log.info("LogStat clean {} days scanned file count={}", rule.clean, cln.size());
+            lastClean = stat.getByteDone();
+        }
 
         final List<Warn> result = new ArrayList<>();
 
@@ -206,6 +213,14 @@ public class LogMetric implements WarnMetric {
          */
         private String charset = "UTF8";
         public static final String Key$charset = Key + ".charset";
+
+        /**
+         * 清除N天以上的扫描文件，-1 表示不清理
+         *
+         * @see #Key$clean
+         */
+        private int clean = 30;
+        public static final String Key$clean = Key + ".clean";
 
         /**
          * 脱外层单引号，及是否处理后续空白
