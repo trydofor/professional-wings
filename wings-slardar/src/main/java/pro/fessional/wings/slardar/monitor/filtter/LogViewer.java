@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,7 @@ import java.util.UUID;
 @ConditionalOnProperty(name = LogViewer.Conf.Key$enable, havingValue = "true")
 public class LogViewer implements WarnFilter {
 
+    @Getter
     private final Conf conf;
     private final Cache<String, String> cache;
 
@@ -119,6 +121,7 @@ public class LogViewer implements WarnFilter {
 
     private boolean canIgnoreHead(String out) {
         if (conf.ignore.isEmpty()) return false;
+
         long max = conf.length.toBytes();
         final File file = new File(out);
         if (file.length() > max || !file.canRead()) return false;
@@ -191,7 +194,7 @@ public class LogViewer implements WarnFilter {
         public static final String Key$domain = Key + ".domain";
 
         /**
-         * 可以排除的日志中的警报
+         * 可以排除的日志中的警报，不用设置空值
          *
          * @see #Key$ignore
          */
