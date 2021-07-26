@@ -78,9 +78,11 @@ public class WingsHazelcast {
             final com.hazelcast.config.Config config = getHazelcastInstance().getConfig();
             final Map<String, MapConfig> mapCnf = config.getMapConfigs();
 
+            /*
             final SlardarCacheProp.Conf common = slardarCacheProp.getCommon();
             checkMapConf(config, mapCnf, "default", common.getMaxLive(),
                     common.getMaxIdle(), common.getMaxSize());
+            */
 
             // check level
             for (Map.Entry<String, SlardarCacheProp.Conf> entry : slardarCacheProp.getLevel().entrySet()) {

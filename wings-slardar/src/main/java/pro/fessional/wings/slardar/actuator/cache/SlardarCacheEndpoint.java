@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.actuator.cache;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.actuate.endpoint.EndpointId;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -16,10 +17,15 @@ import java.util.Set;
 import static pro.fessional.wings.slardar.cache.WingsCache.State;
 
 /**
+ * https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.1-Release-Notes#endpoint-id-names
+ *
+ * @see EndpointId
  * @author trydofor
  * @since 2021-06-02
  */
-@Endpoint(id = "wings-cache")
+// WARN 41663 --- [restartedMain] o.s.boot.actuate.endpoint.EndpointId  TODO
+// Endpoint ID 'wings-cache' contains invalid characters, please migrate to a valid format
+@Endpoint(id = "wingscache")
 @Slf4j
 public class SlardarCacheEndpoint {
 

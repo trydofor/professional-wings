@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pro.fessional.wings.faceless.convention.EmptySugar;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
@@ -39,6 +40,10 @@ public interface WarlockAuthnService {
         private String password;
         private String passsalt;
         private LocalDateTime expiredDt;
+
+        public boolean isUninit(){
+            return EmptySugar.asEmptyValue(expiredDt);
+        }
     }
 
     enum Jane {
@@ -49,6 +54,9 @@ public interface WarlockAuthnService {
 
     @Nullable
     Details load(@NotNull Enum<?> authType, String username);
+
+    @Nullable
+    Details load(@NotNull Enum<?> authType, long userId);
 
     /**
      * 自动创建用户

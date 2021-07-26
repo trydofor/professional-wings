@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
+import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,26 +29,33 @@ public class NonceLoginSuccessHandler implements AuthenticationSuccessHandler {
         final String sid = session == null ? null : session.getId();
 
         if (sid == null) {
-            log.error("login Success without session, uid={}", uid);
+            log.warn("login Success without session, uid={}", uid);
         }
         else {
-            log.error("login Success and swap nonce, uid={}", uid);
+            log.info("login Success and swap nonce, uid={}", uid);
             NonceTokenSessionHelper.swapNonceSid(uid, sid);
         }
 
-        onResponse(request, response, authentication, sid, uid);
+        final String state = AuthStateBuilder.parseParam(request.getParameter("state"));
+        if (state != null) {
+            log.info("parse client state={}, uid={}", state, uid);
+        }
+
+        onResponse(request, response, authentication, sid, uid, state);
     }
 
     /**
      * response
      *
-     * @param req HttpServletRequest
-     * @param res HttpServletResponse
-     * @param aun Authentication
-     * @param sid session id, 无session登录时，可能为null
-     * @param uid user id
+     * @param req   HttpServletRequest
+     * @param res   HttpServletResponse
+     * @param aun   Authentication
+     * @param sid   session id, 无session登录时，可能为null
+     * @param uid   user id
+     * @param state oauth2 state中包含的客户端设置的state
      */
-    protected void onResponse(@NotNull HttpServletRequest req, @NotNull HttpServletResponse res, @NotNull Authentication aun, @Nullable String sid, long uid) {
+    protected void onResponse(@NotNull HttpServletRequest req, @NotNull HttpServletResponse res, @NotNull Authentication aun,
+                              @Nullable String sid, long uid, @Nullable String state) {
 
     }
 }

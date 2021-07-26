@@ -31,6 +31,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
+ * 保持，谁用response谁关闭，采用 try-close模式
+ *
  * @author trydofor
  * @since 2020-06-02
  */
@@ -104,8 +106,7 @@ public class OkHttpClientHelper {
                 .url(url)
                 .post(body)
                 .build();
-        try {
-            Response response = client.newCall(request).execute();
+        try (Response response = client.newCall(request).execute()) {
             return extractString(response);
         }
         catch (Exception e) {
@@ -120,8 +121,7 @@ public class OkHttpClientHelper {
                 .url(url)
                 .post(body)
                 .build();
-        try {
-            Response response = client.newCall(request).execute();
+        try (Response response = client.newCall(request).execute()) {
             return extractString(response);
         }
         catch (Exception e) {
@@ -150,7 +150,7 @@ public class OkHttpClientHelper {
         try {
             return extractString(response);
         }
-        catch (IOException e) {
+        catch (Exception e) {
             if (nullWhenThrow) {
                 return null;
             }
@@ -211,8 +211,7 @@ public class OkHttpClientHelper {
             default:
         }
 
-        try {
-            Response response = client.newCall(builder.build()).execute();
+        try (Response response = client.newCall(builder.build()).execute()) {
             ResponseBody body = extract(response);
             return body == null ? Null.Bytes : body.bytes();
         }
@@ -245,7 +244,7 @@ public class OkHttpClientHelper {
                 k.setSecure(ck.secure());
                 //
                 cookies.remove(k);
-                cookies.put(k,ck);
+                cookies.put(k, ck);
             }
         }
 

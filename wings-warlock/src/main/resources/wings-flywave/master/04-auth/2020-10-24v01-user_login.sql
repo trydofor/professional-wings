@@ -28,7 +28,7 @@ CREATE TABLE `win_user_anthn` (
     `password`   VARCHAR(200)  NOT NULL DEFAULT '' COMMENT '验证密码/spring格式|api_secret',
     `extra_para` VARCHAR(3000) NOT NULL DEFAULT '' COMMENT '第三方验证参数',
     `extra_user` VARCHAR(9000) NOT NULL DEFAULT '' COMMENT '第三方用户信息',
-    `expired_dt` DATETIME(3)   NOT NULL DEFAULT '1000-01-01' COMMENT '到期时间，非token到期时间',
+    `expired_dt` DATETIME(3)   NOT NULL DEFAULT '1000-01-01' COMMENT '到期时间，非token到期时间，空为未激活',
     `failed_cnt` INT(11)       NOT NULL DEFAULT '0' COMMENT '连错计数:成功后清零',
     `failed_max` INT(11)       NOT NULL DEFAULT '5' COMMENT '连错上限',
     PRIMARY KEY (`id`),

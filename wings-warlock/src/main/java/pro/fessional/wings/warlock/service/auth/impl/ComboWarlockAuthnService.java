@@ -71,6 +71,27 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
                                       .and(user.onlyLiveData)
                                       .and(auth.onlyLiveData);
 
+        return selectDetails(user, auth, authType, cond);
+    }
+
+    @Override
+    public Details load(@NotNull Enum<?> authType, long userId) {
+        final WinUserBasisTable user = winUserBasisDao.getAlias();
+        final WinUserAnthnTable auth = winUserAnthnDao.getAlias();
+        final String at = wingsAuthTypeParser.parse(authType);
+
+        final Condition cond = user.Id.eq(auth.UserId)
+                                      .and(auth.AuthType.eq(at))
+                                      .and(auth.UserId.eq(userId))
+                                      .and(user.onlyLiveData)
+                                      .and(auth.onlyLiveData);
+
+        return selectDetails(user, auth, authType, cond);
+
+    }
+
+    private Details selectDetails(WinUserBasisTable user, WinUserAnthnTable auth,
+                                  Enum<?> authType, Condition cond) {
         final Details details = winUserAnthnDao
                 .ctx()
                 .select(auth.UserId, user.Nickname,
@@ -80,6 +101,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
                 .from(user, auth)
                 .where(cond)
                 .fetchOneInto(Details.class);
+
         if (details != null) {
             details.setAuthType(authType);
             final String passsalt = GlobalAttributeHolder.getAttr(WarlockUserAttribute.SaltByUid, details.getUserId());

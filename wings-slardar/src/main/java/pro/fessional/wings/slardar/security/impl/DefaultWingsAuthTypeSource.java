@@ -17,14 +17,14 @@ import static pro.fessional.wings.slardar.spring.conf.WingsBindLoginConfigurer.T
  */
 public class DefaultWingsAuthTypeSource implements WingsAuthTypeSource {
 
-    private final int pathHead;
-    private final int pathTail;
+    private final String pathHead;
+    private final String pathTail;
     private final String headName;
     private final String paraName;
     private final WingsAuthTypeParser authTypes;
 
     /**
-     * 如果不支持对应的类型，设置为null
+     * 如果不支持对应的类型，设置为null，antPath中，第一个`*`视为authType路径参数
      *
      * @param antPath    /login/*.json，AntPath，or {authType} path
      * @param paramName  paramName
@@ -36,28 +36,55 @@ public class DefaultWingsAuthTypeSource implements WingsAuthTypeSource {
         this.headName = headerName;
         this.authTypes = authTypes;
 
-        if (antPath != null) {
-            int pos = antPath.indexOf(TokenAuthType);
-            if (pos >= 0) {
-                pathHead = pos;
-                pathTail = antPath.length() - pos - TokenAuthType.length();
-            } else {
-                int p1 = antPath.indexOf("*");
-                int p2 = antPath.lastIndexOf("*");
-                if (p1 != p2) {
-                    throw new IllegalArgumentException("must have 1 wildcard in ant path");
+        if (antPath == null || antPath.isEmpty()) {
+            pathHead = null;
+            pathTail = null;
+        }
+        else {
+            int pt = antPath.indexOf(TokenAuthType);
+            if (pt >= 0) {
+                pathHead = antPath.substring(0, pt);
+                int p1 = pt + TokenAuthType.length();
+                int p2 = antPath.indexOf("*", p1);
+                if (pathHead.contains("*")) {
+                    throw new IllegalArgumentException("can not contains `*` before " + TokenAuthType + " in ant-path=" + antPath);
                 }
-                if (p1 >= 0) {
-                    pathHead = p1;
-                    pathTail = antPath.length() - p2 - 1;
-                } else {
-                    pathHead = 0;
-                    pathTail = 0;
+
+                if (p2 < 0) {
+                    pathTail = antPath.substring(p1);
+                }
+                else {
+                    if (p2 > p1) {
+                        pathTail = antPath.substring(p1, p2);
+                    }
+                    else {
+                        throw new IllegalArgumentException("can not contains `**` in " + TokenAuthType + " in ant-path=" + antPath);
+                    }
                 }
             }
-        } else {
-            pathHead = 0;
-            pathTail = 0;
+            else {
+                int p0 = antPath.indexOf("*");
+                if (p0 < 0) {
+                    pathHead = null;
+                    pathTail = null;
+                }
+                else {
+                    pathHead = antPath.substring(0, p0);
+                    int p1 = p0 + 1;
+                    int p2 = antPath.indexOf("*", p1);
+                    if (p2 < 0) {
+                        pathTail = antPath.substring(p1);
+                    }
+                    else {
+                        if (p2 > p1) {
+                            pathTail = antPath.substring(p1, p2);
+                        }
+                        else {
+                            throw new IllegalArgumentException("can not contains `**` before * in ant-path=" + antPath);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -71,7 +98,7 @@ public class DefaultWingsAuthTypeSource implements WingsAuthTypeSource {
             name = request.getHeader(headName);
         }
         if (name == null) {
-            name = extractVar(request.getRequestURI(), pathHead, pathTail);
+            name = parsePathVar(request.getRequestURI());
         }
 
         Enum<?> nv = null;
@@ -82,18 +109,24 @@ public class DefaultWingsAuthTypeSource implements WingsAuthTypeSource {
         return nv == null ? Null.Enm : nv;
     }
 
-    public String extractVar(String uri, int head, int tail) {
-        if (head == 0) {
-            if (tail == 0) {
+    public String parsePathVar(String uri) {
+        if (pathHead == null) {
+            if (pathTail == null) {
                 return null;
-            } else {
-                return uri.substring(0, uri.length() - tail);
             }
-        } else {
-            if (tail == 0) {
-                return uri.substring(head);
-            } else {
-                return uri.substring(head, uri.length() - tail);
+            else {
+                int p0 = uri.indexOf(pathTail);
+                return p0 < 0 ? null : uri.substring(0, p0);
+            }
+        }
+        else {
+            final int p0 = pathHead.length();
+            if (pathTail == null) {
+                return uri.substring(p0);
+            }
+            else {
+                int p1 = uri.indexOf(pathTail, p0);
+                return p1 < 0 ? null : uri.substring(p0, p1);
             }
         }
     }

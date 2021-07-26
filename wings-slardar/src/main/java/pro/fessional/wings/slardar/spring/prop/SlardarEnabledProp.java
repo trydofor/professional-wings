@@ -197,4 +197,28 @@ public class SlardarEnabledProp {
      */
     private boolean devtool = true;
     public static final String Key$devtool = Key + ".devtool";
+
+    /**
+     * 是否开启监控
+     *
+     * @see #Key$monitor
+     */
+    private boolean monitor = true;
+    public static final String Key$monitor = Key + ".monitor";
+
+    /**
+     * 是否开启Jvm监控
+     *
+     * @see #Key$monitorJvm
+     */
+    private boolean monitorJvm = true;
+    public static final String Key$monitorJvm = Key + ".monitor-jvm";
+
+    /**
+     * 是否开启Log监控
+     *
+     * @see #Key$monitorLog
+     */
+    private boolean monitorLog = true;
+    public static final String Key$monitorLog = Key + ".monitor-log";
 }

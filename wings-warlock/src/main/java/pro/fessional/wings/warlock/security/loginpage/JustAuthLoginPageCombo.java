@@ -3,7 +3,6 @@ package pro.fessional.wings.warlock.security.loginpage;
 import lombok.Getter;
 import lombok.Setter;
 import me.zhyd.oauth.request.AuthRequest;
-import me.zhyd.oauth.utils.AuthStateUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
+import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
 import pro.fessional.wings.warlock.security.justauth.JustAuthRequestBuilder;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
@@ -44,7 +44,7 @@ public class JustAuthLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
         final AuthRequest ar = justAuthRequestBuilder.buildRequest(authType);
         if (ar == null) return null;
 
-        final String state = AuthStateUtils.createState();
+        final String state = AuthStateBuilder.buildState(request.getParameter("state"));
         NonceTokenSessionHelper.initNonce(state, wingsRemoteResolver.resolveRemoteKey(request));
 
         final String authorize = ar.authorize(state);

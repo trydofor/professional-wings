@@ -1,6 +1,6 @@
 package com.moilioncircle.roshan.devops.project;
 
-import pro.fessional.mirana.io.Git;
+import pro.fessional.mirana.stat.GitStat;
 
 import java.io.File;
 import java.util.HashMap;
@@ -17,9 +17,9 @@ public class Devops9GitStatisticsMain {
 
     public static void main(String[] args) {
         File workDir = new File("./");
-        List<Git.S> infos = Git.logAll(workDir, null);
+        List<GitStat.S> infos = GitStat.logAll(workDir, null);
         Map<String, String> alias = new HashMap<>();
 
-        Git.stat(infos, Git.STAT_WEEK_YEAR, alias);
+        GitStat.stat(infos, GitStat.STAT_WEEK_YEAR, alias);
     }
 }

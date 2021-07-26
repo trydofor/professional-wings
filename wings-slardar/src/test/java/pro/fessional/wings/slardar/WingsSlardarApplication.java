@@ -15,6 +15,7 @@ import java.util.Arrays;
  * @since 2019-07-20
  */
 @SpringBootApplication
+//@ComponentScan(excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = LogViewer.class)})
 public class WingsSlardarApplication {
 
     public static void main(String[] args) {

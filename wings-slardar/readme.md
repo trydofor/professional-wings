@@ -50,13 +50,39 @@
 支持java.time中以下日期格式的定制，包括Json和Spring。
 
 * LocalDate，LocalTime，LocalDateTime，多个输入格式，单个输出格式定制。
-* ZonedDateTime，在Local功能外，支持自动切换到用户时区
+* ZonedDateTime，在Local功能外，支持自动切换到用户时区。
+
+例如，默认配置 wings-datetime-79.properties 中的LocalDate支持
+
+``` properties
+# 输出时以 2021-01-30格式
+wings.slardar.datetime.date.format=yyyy[-MM][-dd]
+# 输入的时候，支持 2021-01-30 和 Jan/30/2021等多种
+wings.slardar.datetime.date.parser=\
+,yyyy[-][/][.][M][-][/][.][d]\
+,[MMMM][MMM][M][-][/][.][d][-][/][.][yyyy][yy]
+# 参考 SmartFormatter.java 测试
+```
 
 ### 3.1.3.数字格式化
 
 对Int,Long,Float,Double,BigDecimal支持（Json）输出时格式和舍入格式的定制
 需要注意的是，实际项目中，应该避免使用Float和Double，应该使用BigDecimal。
 在wings约定内，常用的Number类型，应该只有Int，Long和BigDecimal。
+
+例如，默认配置 wings-number-79.properties 中的Decimal支持，
+``` properties
+# 以Floor方式，保留2位小数
+wings.slardar.number.decimal.format=#.00
+wings.slardar.number.decimal.round=FLOOR
+wings.slardar.number.decimal.separator=,
+```
+也可以设置，按中国人习惯，每4位用`_`分隔，增加CNY符号
+``` properties
+wings.slardar.number.decimal.format=￥,####.00
+wings.slardar.number.decimal.separator=_
+# 参考 DecimalFormatTest.java
+```
 
 ### 3.1.4.常用的Jackson注解
 
@@ -456,6 +482,16 @@ slardar验证码的默认是基于图片的，在现今的AI算法识别上，�
 通过handlerInterceptor，在当前线程和request中设置terminal信息
 
 TerminalContext保存了，远程ip，agent信息，locale和timezone
+
+## 3.7.5.同步/异步/单机/集群的事件驱动
+
+EventPublishHelper默认提供了3种事件发布机制
+
+* SyncSpring - 同步，spring原生的jvm内
+* AsyncSpring - 异步，spring原生的jvm内，使用slardarEventExecutor线程池
+* AsyncHazelcast - 异步，基于Hazelcast集群的topic的发布订阅机制
+
+其中，jooq对表的CUD事件，默认通过AsyncHazelcast发布，可供表和字段有关缓存evict
 
 ## 3.8.特别用途的 Filter
 
