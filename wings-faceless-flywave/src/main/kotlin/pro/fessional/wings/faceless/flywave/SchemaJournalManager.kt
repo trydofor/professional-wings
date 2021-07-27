@@ -311,6 +311,7 @@ class SchemaJournalManager(
                     } else if (furTrg.isNotEmpty() && furTrg.equals(trg, true)) {
                         logger.warn("[publishJournal]🐶 drop trigger={}, existed same name, table={}, db={}", trg, tblRaw, plainName)
                     } else {
+                        logger.info("[publishJournal]🐶 skip trigger={}, existed same name, table={}, db={}", trg, tblRaw, plainName)
                         continue
                     }
                     tmpl.execute("DROP TRIGGER IF EXISTS ${sqlStatementParser.safeName(trg)}")

@@ -7,6 +7,8 @@ import pro.fessional.mirana.i18n.LocaleResolver;
 import java.util.Locale;
 
 /**
+ * 统一成 en_US格式
+ *
  * @author trydofor
  * @since 2021-01-18
  */
@@ -19,7 +21,23 @@ public class JooqLocaleConverter implements Converter<String, Locale> {
 
     @Override
     public String to(Locale lcl) {
-        return lcl.getLanguage() + "_" + lcl.getCountry();
+        // FastJson使用sun.util.BaseLocale
+        String lt = lcl.getLanguage();
+        String ct = lcl.getCountry();
+        final int ln = lt.length();
+        final int cn = ct.length();
+
+        if (ln == 2 && cn == 2) {
+            return lt + "_" + ct;
+        }
+        else {
+            if (ln != 0) lt = lt.replace('-', '_');
+            if (cn != 0) ct = ct.replace('-', '_');
+
+            if(ct.isEmpty()) return lt;
+            if(lt.isEmpty()) return ct;
+            return lt + "_" + ct;
+        }
     }
 
     @Override

@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -166,27 +167,6 @@ public class OkHttpClientHelper {
     }
 
     @NotNull
-    public static Response execute(OkHttpClient client, Request.Builder builder) throws IOException {
-        return client.newCall(builder.build()).execute();
-    }
-
-    @Nullable
-    @Contract("_,_,false->!null")
-    public static Response execute(OkHttpClient client, Request.Builder builder, boolean nullWhenThrow) {
-        try {
-            return client.newCall(builder.build()).execute();
-        }
-        catch (IOException e) {
-            if (nullWhenThrow) {
-                return null;
-            }
-            else {
-                throw new IORuntimeException(e);
-            }
-        }
-    }
-
-    @NotNull
     public static byte[] download(OkHttpClient client, String url, HttpMethod method) {
         Request.Builder builder = new Request.Builder().url(url);
         switch (method) {
@@ -217,6 +197,37 @@ public class OkHttpClientHelper {
         }
         catch (Exception e) {
             throw new IllegalStateException("failed to download, url=" + url, e);
+        }
+    }
+
+    @NotNull
+    public static Response execute(OkHttpClient client, Request.Builder builder) throws IOException {
+        return client.newCall(builder.build()).execute();
+    }
+
+    @Nullable
+    @Contract("_,_,false->!null")
+    public static Response execute(OkHttpClient client, Request.Builder builder, boolean nullWhenThrow) {
+        try {
+            return client.newCall(builder.build()).execute();
+        }
+        catch (IOException e) {
+            if (nullWhenThrow) {
+                return null;
+            }
+            else {
+                throw new IORuntimeException(e);
+            }
+        }
+    }
+
+    @Nullable
+    public static <T> T execute(OkHttpClient client, Request.Builder builder, BiFunction<Response, IOException, T> fun) {
+        try (final Response res = client.newCall(builder.build()).execute()) {
+            return fun.apply(res, null);
+        }
+        catch (IOException e) {
+            return fun.apply(null, e);
         }
     }
 
