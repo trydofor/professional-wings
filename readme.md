@@ -89,6 +89,7 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 * .ignore - 和版本管理中ignore有关的。
 * Any2dto - 支持jooq, sql查询直接生成dto，减少复制和赋值
 * CheckStyle - 代码质量
+* Comments Highlighter - 注释中划重点
 * Error Prone Compiler - google出品（java8不好整）
 * GenerateAllSetter - alt-enter 生成全部 po.setXxx("")
 * Git Flow Integration - 集成了git-flow

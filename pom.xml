@@ -71,6 +71,9 @@
         <!-- override spring boot default -->
         <lombok.version>1.18.20</lombok.version>
         <okhttp3.version>4.9.0</okhttp3.version> <!-- just auth need 4, spring use 3 -->
+        <!-- mvn-build-plugin -->
+        <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
+        <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
     </properties>
 
     <dependencies>
@@ -366,6 +369,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
                     <configuration>
                         <source>${maven.compiler.source}</source>
                         <target>${maven.compiler.target}</target>
@@ -397,19 +401,54 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven-source-plugin.version}</version>
                     <executions>
                         <execution>
+                            <id>attach-sources</id>
                             <goals>
                                 <goal>jar-no-fork</goal>
                             </goals>
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
                 <!--  deploy  -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven-gpg-plugin.version}</version>
+                    <configuration>
+                        <skip>${deploy.private.repository}</skip>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                            <configuration>
+                                <keyname>541B1728468267BFA83FE092CE8F6F63A835DB68</keyname>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>${build-helper-maven-plugin.version}</version>
                     <executions>
                         <execution>
                             <phase>generate-sources</phase>
@@ -428,7 +467,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
-                    <version>1.2.5</version>
+                    <version>${flatten-maven-plugin.version}</version>
                     <configuration>
                         <updatePomFile>true</updatePomFile>
                         <flattenMode>resolveCiFriendliesOnly</flattenMode>
@@ -454,6 +493,7 @@
                 <plugin>
                     <groupId>org.jetbrains.kotlin</groupId>
                     <artifactId>kotlin-maven-plugin</artifactId>
+                    <version>${kotlin.version}</version>
                     <executions>
                         <execution>
                             <id>compile</id>
@@ -501,7 +541,7 @@
                 <plugin>
                     <groupId>pl.project13.maven</groupId>
                     <artifactId>git-commit-id-plugin</artifactId>
-                    <version>4.0.4</version>
+                    <version>${git-commit-id-plugin.version}</version>
                     <executions>
                         <execution>
                             <id>get-the-git-infos</id>
@@ -514,6 +554,7 @@
                     <configuration>
                         <verbose>true</verbose>
                         <offline>true</offline>
+                        <failOnNoGitDirectory>false</failOnNoGitDirectory>
                         <generateGitPropertiesFile>true</generateGitPropertiesFile>
                         <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
                         <includeOnlyProperties>
@@ -531,4 +572,14 @@
             </plugins>
         </pluginManagement>
     </build>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 </project>
