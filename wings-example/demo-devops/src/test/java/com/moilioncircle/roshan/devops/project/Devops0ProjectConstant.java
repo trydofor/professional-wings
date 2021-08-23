@@ -6,6 +6,7 @@ package com.moilioncircle.roshan.devops.project;
  */
 public interface Devops0ProjectConstant {
     String JDBC_URL = "jdbc:mysql://localhost:3306/demo_example";
+    //String JDBC_URL = "jdbc:h2:~/demo;MODE=MySQL";
     String JDBC_USER = "trydofor";
     String JDBC_PASS = "moilioncircle";
     String JAVA_MAIN = "./demo-common/src/main/java/";

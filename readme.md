@@ -616,7 +616,7 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。 �
 ```
 <repository>
     <id>ossrh-snapshots</id>
-    <url>>https://oss.sonatype.org/content/repositories/snapshots</url>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     <snapshots><enabled>true</enabled></snapshots>
     <releases><enabled>false</enabled></releases>
 </repository>

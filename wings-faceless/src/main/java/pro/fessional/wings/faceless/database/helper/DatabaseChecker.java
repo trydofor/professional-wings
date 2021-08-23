@@ -1,10 +1,14 @@
 package pro.fessional.wings.faceless.database.helper;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.JdbcUtils;
 
 import javax.sql.DataSource;
+import java.sql.DatabaseMetaData;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -20,12 +24,33 @@ import java.time.ZoneOffset;
 @Slf4j
 public class DatabaseChecker {
 
+    public static boolean isH2(DataSource ds) {
+        return extractJdbcUrl(ds).contains(":h2:");
+    }
+
+    @SneakyThrows
+    @NotNull
+    public static String extractJdbcUrl(DataSource ds) {
+        return JdbcUtils.extractDatabaseMetaData(ds, it -> {
+            try {
+                return (String) DatabaseMetaData.class.getMethod("getURL").invoke(it);
+            }
+            catch (Exception e) {
+                return "";
+            }
+        });
+    }
+
     /**
      * 如果不一致，抛出 IllegalStateException
      *
      * @param ds jdbc template
      */
     public static void timezone(DataSource ds) {
+        if (isH2(ds)) {
+            log.info("skip timezone check for h2database");
+            return;
+        }
 
         final String zdt = "1979-01-01T00:00:00";
         final LocalDateTime ldt = LocalDateTime.parse(zdt);
@@ -65,12 +90,13 @@ public class DatabaseChecker {
 
     public static void version(DataSource ds) {
         final JdbcTemplate tmpl = new JdbcTemplate(ds);
-        String ver = "SELECT version() FROM dual";
-        tmpl.query(ver, rs -> {
-            log.info("mysql version={}", rs.getString(1));
+
+        final String ver = isH2(ds) ? "H2VERSION()" : "VERSION()";
+        tmpl.query("SELECT " + ver + " FROM dual", rs -> {
+            log.info("{}={}", ver, rs.getString(1));
         });
 
-        String rev = "SELECT max(revision) FROM sys_schema_version WHERE apply_dt > '1111-11-11'";
+        String rev = "SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1111-11-11'";
         try {
             tmpl.query(rev, rs -> {
                 log.info("flywave revision={}", rs.getString(1));

@@ -77,9 +77,9 @@ VALUES (1200100, 'user_gender', 'user_gender', '性别', 'classpath:/wings-tmpl/
 
 
 INSERT IGNORE INTO `win_user_basis` (`id`, `create_dt`, `commit_id`, `nickname`, `passsalt`, `gender`, `avatar`, `locale`, `zoneid`, `remark`, `status`)
-VALUES (0, NOW(3), 0, 'nobody', SHA1(UUID()), 1200103, '', 'zh_CN', 1010201, '系统用户，无任何权限', 1200207),
-       (1, NOW(3), 0, 'root', SHA1(UUID()), 1200103, '', 'zh_CN', 1010201, '超级用户，拥有所以权限', 1200202),
-       (2, NOW(3), 0, 'daemon', SHA1(UUID()), 1200103, '', 'zh_CN', 1010201, '系统用户，执行后台任务', 1200207);
+VALUES (0, NOW(3), 0, 'nobody', UUID(), 1200103, '', 'zh_CN', 1010201, '系统用户，无任何权限', 1200207),
+       (1, NOW(3), 0, 'root', UUID(), 1200103, '', 'zh_CN', 1010201, '超级用户，拥有所以权限', 1200202),
+       (2, NOW(3), 0, 'daemon', UUID(), 1200103, '', 'zh_CN', 1010201, '系统用户，执行后台任务', 1200207);
 
 INSERT IGNORE INTO `win_user_anthn`(`id`, `create_dt`, `commit_id`, `user_id`, `auth_type`, `username`, `password`, `expired_dt`)
-VALUES (1, NOW(3), 0, 1, 'username', 'root', CONCAT('{never}', SHA1(UUID())), '2999-09-09');
+VALUES (1, NOW(3), 0, 1, 'username', 'root', CONCAT('{never}', UUID()), '2999-09-09');

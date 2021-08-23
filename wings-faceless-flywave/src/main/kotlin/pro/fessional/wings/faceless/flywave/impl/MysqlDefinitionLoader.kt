@@ -1,11 +1,11 @@
 package pro.fessional.wings.faceless.flywave.impl
 
+import pro.fessional.wings.faceless.database.helper.DatabaseChecker
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader.Companion.TYPE_IDX
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader.Companion.TYPE_TBL
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader.Companion.TYPE_TRG
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
-import java.lang.StringBuilder
 import java.util.LinkedList
 import java.util.concurrent.ConcurrentHashMap
 import javax.sql.DataSource
@@ -18,10 +18,9 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
 
     private val h2database: ConcurrentHashMap<DataSource, Boolean> = ConcurrentHashMap()
 
-    fun isH2Database(dataSource: DataSource) =
-            h2database.computeIfAbsent(dataSource) {
-                SimpleJdbcTemplate(dataSource).jdbcUrl().contains(":h2:", true)
-            }
+    fun isH2Database(dataSource: DataSource) = h2database.computeIfAbsent(dataSource) {
+        DatabaseChecker.isH2(dataSource)
+    }
 
     override fun showTables(dataSource: DataSource): List<String> {
         val list = LinkedList<String>()
