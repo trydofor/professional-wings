@@ -107,11 +107,11 @@ public class WingsJavaGenerator extends JavaGenerator {
             final String markDelete;
             if (namDel.equalsIgnoreCase(COL_DELETE_DT)) {
                 val colType = colDel.getDefinedType().getType().toLowerCase();
-                if (colType.startsWith("datetime")) {
+                if (colType.contains("time")) {
                     markDelete = "commit.getCommitDt()";
                     out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.DATE_TIME);", fldDel);
                     out.println("public final Condition onlyLiveData = %s.eq(EmptyValue.DATE_TIME);", fldDel);
-                } else if (colType.startsWith("bigint")) {
+                } else if (colType.contains("int")) {
                     markDelete = "DateNumber.dateTime17(commit.getCommitDt())";
                     out.ref(DateNumber.class);
                     out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.BIGINT);", fldDel);

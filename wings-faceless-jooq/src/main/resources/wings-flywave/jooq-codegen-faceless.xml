@@ -19,7 +19,7 @@
             <outputCatalogToDefault>true</outputCatalogToDefault>
             <outputSchemaToDefault>true</outputSchemaToDefault>
 
-            <name>org.jooq.meta.mysql.MySQLDatabase</name>
+            <!--<name>org.jooq.meta.mysql.MySQLDatabase</name>-->
             <includes>.*</includes>
             <excludes>
                 spring.* # Spring 自动创建

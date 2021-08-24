@@ -71,7 +71,8 @@ public class WingsCodeGenerator {
                  .map(Path::toFile)
                  .sorted(Comparator.reverseOrder())
                  .forEach(File::delete);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger.error("failed to generate", e);
         }
     }
@@ -85,7 +86,8 @@ public class WingsCodeGenerator {
     public static Configuration config() {
         try {
             return GenerationTool.load(WingsCodeGenerator.class.getResourceAsStream(JOOQ_XML));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new IORuntimeException(e);
         }
     }
@@ -146,12 +148,14 @@ public class WingsCodeGenerator {
                 t.getParentFile().mkdirs();
                 Files.copy(f.toPath(), t.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 logger.info("create new file=" + k);
-            } else {
+            }
+            else {
                 val ft = ignoreRegex.matcher(InputStreams.readText(new FileInputStream(f))).replaceAll(Null.Str);
                 val dt = ignoreRegex.matcher(InputStreams.readText(new FileInputStream(d))).replaceAll(Null.Str);
                 if (ft.equals(dt)) {
                     logger.info("skip main same file=" + k);
-                } else {
+                }
+                else {
                     Files.copy(f.toPath(), d.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     logger.info("copy new file=" + k);
                 }
@@ -185,8 +189,19 @@ public class WingsCodeGenerator {
             generate(conf, incr);
         }
 
+        public Configuration configuration() {
+            return conf;
+        }
+
         public Builder springRepository(boolean b) {
             this.conf.getGenerator().getGenerate().withSpringAnnotations(b);
+            return this;
+        }
+
+        public Builder h2() {
+            jdbcDriver("org.h2.Driver");
+            databaseName("org.jooq.meta.h2.H2Database");
+            databaseSchema("PUBLIC");
             return this;
         }
 
@@ -196,15 +211,19 @@ public class WingsCodeGenerator {
         }
 
         public Builder jdbcUrl(String str) {
-            // jdbc:mysql://localhost:3306/wings_warlock
-            int p3 = str.indexOf("?");
-            int p2 = p3 > 0 ? p3 : str.length();
-            int p1 = str.lastIndexOf("/", p2);
-            if (p2 > p1) {
-                final String db = str.substring(p1 + 1, p2);
-                databaseSchema(db);
-            }
             this.conf.getJdbc().setUrl(str);
+            if(str.contains(":h2:")){
+                h2();
+            }else{
+                // jdbc:mysql://localhost:3306/wings_warlock
+                int p3 = str.indexOf("?");
+                int p2 = p3 > 0 ? p3 : str.length();
+                int p1 = str.lastIndexOf("/", p2);
+                if (p2 > p1) {
+                    final String db = str.substring(p1 + 1, p2);
+                    databaseSchema(db);
+                }
+            }
             return this;
         }
 
@@ -230,6 +249,17 @@ public class WingsCodeGenerator {
 
         public Builder databaseSchema(String str) {
             this.conf.getGenerator().getDatabase().setInputSchema(str);
+            return this;
+        }
+
+        /**
+         * org.jooq.meta.h2.H2Database
+         *
+         * @param str AbstractDatabase
+         * @return this
+         */
+        public Builder databaseName(String str) {
+            this.conf.getGenerator().getDatabase().setName(str);
             return this;
         }
 
