@@ -21,6 +21,7 @@ import pro.fessional.wings.faceless.enums.ConstantEnum;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -67,6 +68,7 @@ public class WingsCodeGenerator {
 
             // clean and move
             safeCopy(tdr, src, pkg, incremental);
+            //noinspection ResultOfMethodCallIgnored
             Files.walk(tmp.toPath())
                  .map(Path::toFile)
                  .sorted(Comparator.reverseOrder())
@@ -85,7 +87,9 @@ public class WingsCodeGenerator {
 
     public static Configuration config() {
         try {
-            return GenerationTool.load(WingsCodeGenerator.class.getResourceAsStream(JOOQ_XML));
+            final InputStream ins = WingsCodeGenerator.class.getResourceAsStream(JOOQ_XML);
+            assert ins != null;
+            return GenerationTool.load(ins);
         }
         catch (IOException e) {
             throw new IORuntimeException(e);
@@ -145,6 +149,7 @@ public class WingsCodeGenerator {
             val d = dest.get(k);
             if (d == null) {
                 val t = new File(src, k);
+                //noinspection ResultOfMethodCallIgnored
                 t.getParentFile().mkdirs();
                 Files.copy(f.toPath(), t.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 logger.info("create new file=" + k);
@@ -299,6 +304,13 @@ public class WingsCodeGenerator {
         public Builder forceRegenerate() {
             this.conf.getGenerator().getDatabase().setSchemaVersionProvider(Null.Str);
             return this;
+        }
+
+        public Builder forcedType(String name, String type) {
+            ForcedType ft = new ForcedType();
+            ft.setName(name);
+            ft.setIncludeTypes(type);
+            return forcedType(ft);
         }
 
         public Builder forcedType(ForcedType ft) {

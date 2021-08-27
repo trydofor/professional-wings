@@ -53,7 +53,7 @@
             <forcedTypes>
                 <forcedType>
                     <name>BOOLEAN</name>
-                    <includeTypes>TINYINT\(1\)</includeTypes>
+                    <includeTypes>TINYINT(\(1\))?</includeTypes>
                 </forcedType>
                 <forcedType>
                     <name>INTEGER</name>
