@@ -112,6 +112,7 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 * `static final` 不必全大写。如`logger`比`LOG`可读性好。
 * `BIG_SNAKE`可使用`PascalNaming`，因为大写单词不如小写易读。
 * 全大写名词（缩写或专有）只首字母大写。`Json`,`Html`,`Id`。
+* 前后缀或缩写，不可以单字母，建议3个字母。
 * 英文无法表达的业务词汇及行业黑话，不要用拼音，用中文。`落地配`。
 * 要求4-8字母的单词都记住。
 
