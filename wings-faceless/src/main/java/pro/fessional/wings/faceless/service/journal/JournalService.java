@@ -8,6 +8,7 @@ import pro.fessional.mirana.cast.EnumConvertor;
 import pro.fessional.wings.faceless.convention.EmptyValue;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -47,6 +48,27 @@ public interface JournalService {
             if (po == null) return;
             po.setCommitId(commitId);
             po.setDeleteDt(commitDt);
+        }
+
+        public void create(@Nullable Collection<? extends JournalAware> pos) {
+            if (pos == null) return;
+            for (JournalAware po : pos) {
+                create(po);
+            }
+        }
+
+        public void modify(@Nullable Collection<? extends JournalAware> pos) {
+            if (pos == null) return;
+            for (JournalAware po : pos) {
+                modify(po);
+            }
+        }
+
+        public void delete(@Nullable Collection<? extends JournalAware> pos) {
+            if (pos == null) return;
+            for (JournalAware po : pos) {
+                delete(po);
+            }
         }
 
         public long getId() {
