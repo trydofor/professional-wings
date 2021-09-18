@@ -35,6 +35,9 @@
 * ZoneId应首选`IANA TZDB`格式，如`America/New_York`。
 * 带时区(`Z`)的序列化与反序列化过程，会丢失夏令时信息。
 
+注意：属性名前缀不可以单字母，建议3字母以上，要符合wings规范。
+同时，`sCount`会导致解析错误，见测试用例 OkHttpClientHelperTest.testPostBad。
+
 ### 3.1.1.Json内容的国际化
 
 通过注解和类型自动对内容进行i18n转换，以字符串输出。

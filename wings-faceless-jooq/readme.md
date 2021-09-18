@@ -299,3 +299,8 @@ public interface Record22EnumDto {
 }
 ```
 https://blog.jooq.org/tag/converter/
+
+### 08. H2Database的兼容性
+
+* 手动指定 spring.jooq.sql-dialect=mysql
+* 数据库指定 jdbc:h2:~/studies;MODE=MySQL

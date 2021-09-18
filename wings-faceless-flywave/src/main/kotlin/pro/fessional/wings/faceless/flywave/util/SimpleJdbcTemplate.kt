@@ -1,8 +1,6 @@
 package pro.fessional.wings.faceless.flywave.util
 
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.support.JdbcUtils
-import java.sql.DatabaseMetaData
 import java.sql.ResultSet
 import java.util.concurrent.ConcurrentHashMap
 import javax.sql.DataSource
@@ -18,10 +16,6 @@ class SimpleJdbcTemplate(val dataSource: DataSource, val name: String = "unnamed
 
     init {
         this.jdbcTmpl = templates.computeIfAbsent(dataSource) { JdbcTemplate(dataSource) }
-    }
-
-    fun jdbcUrl() = JdbcUtils.extractDatabaseMetaData<String>(dataSource) {
-        DatabaseMetaData::class.java.getMethod("getURL").invoke(it) as String
     }
 
     fun count(sql: String, vararg args: Any?): Int {

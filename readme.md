@@ -89,6 +89,7 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 * .ignore - 和版本管理中ignore有关的。
 * Any2dto - 支持jooq, sql查询直接生成dto，减少复制和赋值
 * CheckStyle - 代码质量
+* Comments Highlighter - 注释中划重点
 * Error Prone Compiler - google出品（java8不好整）
 * GenerateAllSetter - alt-enter 生成全部 po.setXxx("")
 * Git Flow Integration - 集成了git-flow
@@ -111,6 +112,7 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 * `static final` 不必全大写。如`logger`比`LOG`可读性好。
 * `BIG_SNAKE`可使用`PascalNaming`，因为大写单词不如小写易读。
 * 全大写名词（缩写或专有）只首字母大写。`Json`,`Html`,`Id`。
+* 前后缀或缩写，不可以单字母，建议3个字母。
 * 英文无法表达的业务词汇及行业黑话，不要用拼音，用中文。`落地配`。
 * 要求4-8字母的单词都记住。
 
@@ -615,7 +617,7 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。 �
 ```
 <repository>
     <id>ossrh-snapshots</id>
-    <url>>https://oss.sonatype.org/content/repositories/snapshots</url>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     <snapshots><enabled>true</enabled></snapshots>
     <releases><enabled>false</enabled></releases>
 </repository>

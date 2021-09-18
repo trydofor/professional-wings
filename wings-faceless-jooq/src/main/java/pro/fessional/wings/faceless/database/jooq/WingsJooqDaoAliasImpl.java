@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 
 /**
  * <pre>
@@ -125,6 +126,19 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
         return ctx().newRecord(table, obj);
     }
 
+    /**
+     * 把一组 po 构造为 record，可供batch系列使用
+     *
+     * @param pos po
+     * @return list of record
+     */
+    public List<R> newRecord(Collection<P> pos) {
+        final DSLContext ctx = ctx();
+        return pos.stream()
+                  .map(it -> ctx.newRecord(table, it))
+                  .collect(Collectors.toList());
+    }
+
     ///////////////// batch /////////////////////
 
     /**
@@ -196,6 +210,17 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
                       .set(record)
                       .execute();
         }
+    }
+
+    /**
+     * batchInsert record的语法糖
+     *
+     * @param pos             记录
+     * @param ignoreOrReplace 唯一冲突时，忽略还是替换
+     * @return 执行结果，使用 ModifyAssert判断
+     */
+    public int[] insertInto(Collection<P> pos, boolean ignoreOrReplace) {
+        return batchInsert(newRecord(pos), 0, ignoreOrReplace);
     }
 
 

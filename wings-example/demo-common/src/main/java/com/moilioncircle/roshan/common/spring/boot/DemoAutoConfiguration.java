@@ -8,6 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @since 2019-07-11
  */
 @ComponentScan({"com.moilioncircle.roshan.common.controller",
+                "com.moilioncircle.roshan.common.database",
                 "com.moilioncircle.roshan.common.service",
                 "com.moilioncircle.roshan.common.spring.bean"})
 @ConfigurationPropertiesScan("com.moilioncircle.roshan.common.spring.prop")

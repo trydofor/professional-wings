@@ -38,11 +38,17 @@ public class TestRestTmplController {
     }
 
     @GetMapping("/test/rest-template-helper-down.htm")
-    public ResponseEntity<Resource> download() throws IOException {
+    public ResponseEntity<Resource> download() {
         return ResponseEntity.ok()
                              .contentType(MediaType.APPLICATION_XML)
                              .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"pom.xml\"")
                              .body(new FileSystemResource("./pom.xml"));
+    }
+
+    @PostMapping("/test/rest-bad-json.htm")
+    @ResponseBody
+    public Ins bad(@RequestBody Ins ins) {
+        return ins;
     }
 
     @Data
@@ -50,6 +56,17 @@ public class TestRestTmplController {
         private String name;
         private int age;
         private List<String> cats;
+    }
+
+    @Data
+    public static class Ins {
+        private List<Bad> bad;
+    }
+
+    @Data
+    public static class Bad {
+        private String sStr;
+        private String ssStr;
     }
 
     public static Json json() {
