@@ -14,9 +14,9 @@ import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserAnthnTable;
+import pro.fessional.wings.warlock.database.autogen.tables.WinUserAuthnTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
-import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAnthnDao;
+import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAuthnDao;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasisDao;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.event.auth.WarlockMaxFailedEvent;
@@ -40,7 +40,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     protected WinUserBasisDao winUserBasisDao;
 
     @Setter(onMethod_ = {@Autowired})
-    protected WinUserAnthnDao winUserAnthnDao;
+    protected WinUserAuthnDao winUserAuthnDao;
 
     @Setter(onMethod_ = {@Autowired})
     protected WingsAuthTypeParser wingsAuthTypeParser;
@@ -62,7 +62,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     @Override
     public Details load(@NotNull Enum<?> authType, String username) {
         final WinUserBasisTable user = winUserBasisDao.getAlias();
-        final WinUserAnthnTable auth = winUserAnthnDao.getAlias();
+        final WinUserAuthnTable auth = winUserAuthnDao.getAlias();
         final String at = wingsAuthTypeParser.parse(authType);
 
         final Condition cond = user.Id.eq(auth.UserId)
@@ -77,7 +77,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     @Override
     public Details load(@NotNull Enum<?> authType, long userId) {
         final WinUserBasisTable user = winUserBasisDao.getAlias();
-        final WinUserAnthnTable auth = winUserAnthnDao.getAlias();
+        final WinUserAuthnTable auth = winUserAuthnDao.getAlias();
         final String at = wingsAuthTypeParser.parse(authType);
 
         final Condition cond = user.Id.eq(auth.UserId)
@@ -90,9 +90,9 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
 
     }
 
-    private Details selectDetails(WinUserBasisTable user, WinUserAnthnTable auth,
+    private Details selectDetails(WinUserBasisTable user, WinUserAuthnTable auth,
                                   Enum<?> authType, Condition cond) {
-        final Details details = winUserAnthnDao
+        final Details details = winUserAuthnDao
                 .ctx()
                 .select(auth.UserId, user.Nickname,
                         user.Locale, user.Zoneid.as("zoneId"),
@@ -165,8 +165,8 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
             la.setFailed(false);
             warlockUserLoginService.auth(la);
 
-            final WinUserAnthnTable ta = winUserAnthnDao.getTable();
-            winUserAnthnDao
+            final WinUserAuthnTable ta = winUserAuthnDao.getTable();
+            winUserAuthnDao
                     .ctx()
                     .update(ta)
                     .set(ta.FailedCnt, 0)
@@ -182,8 +182,8 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         if (username == null || username.isEmpty()) return;
 
         final String at = wingsAuthTypeParser.parse(authType);
-        final WinUserAnthnTable ta = winUserAnthnDao.getTable();
-        val auth = winUserAnthnDao
+        final WinUserAuthnTable ta = winUserAuthnDao.getTable();
+        val auth = winUserAuthnDao
                 .ctx()
                 .select(ta.UserId, ta.FailedCnt, ta.FailedMax, ta.Id)
                 .from(ta)
@@ -241,7 +241,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
             la.setFailed(true);
             warlockUserLoginService.auth(la);
 
-            winUserAnthnDao
+            winUserAuthnDao
                     .ctx()
                     .update(ta)
                     .set(ta.FailedCnt, ta.FailedCnt.add(1))
