@@ -14,6 +14,7 @@ import org.springframework.security.web.authentication.www.NonceExpiredException
 import pro.fessional.mirana.best.StateAssert;
 import pro.fessional.mirana.cast.EnumConvertor;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
+import pro.fessional.wings.slardar.security.PasswordHelper;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.event.auth.WarlockNonceSendEvent;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
@@ -66,8 +67,8 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
 
         final Details details = super.doLoad(authType, username, authDetail);
         if (details != null) {
-            String plainPass = passsaltEncoder.salt(event.getNonce(), details.getPasssalt());
-            details.setPassword(passwordEncoder.encode(plainPass));
+            PasswordHelper helper = new PasswordHelper(passwordEncoder, passsaltEncoder);
+            details.setPassword(helper.hash(event.getNonce(), details.getPasssalt()));
         }
         return details;
     }
