@@ -6,6 +6,7 @@ import com.hazelcast.client.config.XmlClientConfigBuilder;
 import com.hazelcast.client.config.YamlClientConfigBuilder;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.ConfigStream;
+import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.config.YamlConfigBuilder;
 import com.hazelcast.core.HazelcastInstance;
@@ -43,8 +44,11 @@ public class SlardarDevtoolConfiguration {
 
     private static final Log logger = LogFactory.getLog(SlardarDevtoolConfiguration.class);
 
-    // //////////////////// 为devtool设置classloader ////////////////////
-    // org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration
+    /**
+     * 为devtool设置classloader，避免开发环境下，hazelcast的自定义序列化(kyro)无法加载类
+     *
+     * @see org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration
+     */
     @Configuration(proxyBeanMethods = false)
     @EnableConfigurationProperties(HazelcastProperties.class)
     @ConditionalOnMissingBean(value = {HazelcastInstance.class, Config.class, ClientConfig.class})
@@ -53,7 +57,19 @@ public class SlardarDevtoolConfiguration {
     public static class HazelcastDevtoolConfiguration {
 
         @Bean
-        public HazelcastInstance hazelcastInstance(HazelcastProperties properties) throws IOException {
+        public HazelcastInstance hazelcastInstance(HazelcastProperties properties, SlardarEnabledProp enabled) throws IOException {
+
+            if (enabled.isMockHazelcast()) {
+                logger.info("Wings conf Standalone hazelcastInstance for mock");
+                Config config = new Config();
+                config.setClusterName("slardar-standalone");
+                config.setProperty("hazelcast.shutdownhook.enabled", "false");
+                NetworkConfig network = config.getNetworkConfig();
+                network.getJoin().getTcpIpConfig().setEnabled(false);
+                network.getJoin().getMulticastConfig().setEnabled(false);
+                return new HazelcastInstanceFactory(config).getHazelcastInstance();
+            }
+
             Resource resource = properties.resolveConfigLocation();
             final URL url = resource.getURL();
             final String path = url.getPath();

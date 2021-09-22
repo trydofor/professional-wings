@@ -199,6 +199,15 @@ public class SlardarEnabledProp {
     public static final String Key$devtool = Key + ".devtool";
 
     /**
+     * 在devtool时，以standalone方式启动，可减少集群影响。
+     * 高级测试，参考 https://github.com/hazelcast/hazelcast-simulator/blob/master/README.md
+     *
+     * @see #Key$mockHazelcast
+     */
+    private boolean mockHazelcast = false;
+    public static final String Key$mockHazelcast = Key + ".mock-hazelcast";
+
+    /**
      * 是否开启监控
      *
      * @see #Key$monitor
