@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author trydofor
  * @since 2019-06-26
  */
-@SpringBootTest(properties = {"debug = true"})
+@SpringBootTest(properties = {"debug = true","wings.slardar.datetime.zoned.auto=true"})
 public class WingsJacksonMapperTest {
 
     final static TimeZone systemTz = TimeZone.getTimeZone("Asia/Shanghai");

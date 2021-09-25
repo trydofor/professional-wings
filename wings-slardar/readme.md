@@ -53,7 +53,8 @@
 支持java.time中以下日期格式的定制，包括Json和Spring。
 
 * LocalDate，LocalTime，LocalDateTime，多个输入格式，单个输出格式定制。
-* ZonedDateTime，在Local功能外，支持自动切换到用户时区。
+* ZonedDateTime，同`Local*`功能。可支持自动切换到用户时区，默认关闭。
+* OffsetDateTime，同`Local*`功能，可支持自动切换到用户时区，默认打开
 
 例如，默认配置 wings-datetime-79.properties 中的LocalDate支持
 
@@ -228,7 +229,7 @@ wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子
 common.email.size=The author email '${validatedValue}' must be between {min} and {max} characters long
 ```
 
-## 3.3.1.时区的LocalDateTime和ZonedDateTime
+## 3.3.1.时区的LocalDateTime，ZonedDateTime和OffsetDateTime
 
 多时区，要兼顾数据可读性和编码便利性，在slardar中统一约定如下。
 
@@ -242,9 +243,12 @@ common.email.size=The author email '${validatedValue}' must be between {min} and
 而在Controller层，负责进行系统和用户时区的双向转换，使用ZonedDateTime。
 
 * 时区不敏感或只做本地时间标签的情况，统一使用LocalDateTime，
-* 时区敏感时，使用ZonedDateTime类型，在Jackson和RequestParam中自动转换。
+* 时区敏感时，在Jackson和RequestParam中自动转换。
   - Request时，自动把用户时间调至系统时区。
   - Response时，自动把系统时间调至用户时区。
+* 自动转换类型，目前只有一下2中，其中。
+  - ZonedDatetime 默认关闭
+  - OffsetDateTime 默认开启
 
 注意，因util.Date的缺陷，在wings中，默认禁用其使用，需要使用java.time.*
 

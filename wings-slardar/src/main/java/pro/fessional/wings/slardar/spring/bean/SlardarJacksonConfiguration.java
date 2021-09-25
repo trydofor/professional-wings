@@ -17,8 +17,10 @@ import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalTimeDeserializer;
-import pro.fessional.wings.slardar.autozone.json.JacksonZonedDeserializer;
-import pro.fessional.wings.slardar.autozone.json.JacksonZonedSerializer;
+import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeDeserializer;
+import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeSerializer;
+import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeDeserializer;
+import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeSerializer;
 import pro.fessional.wings.slardar.jackson.FormatNumberSerializer;
 import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
@@ -29,6 +31,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
@@ -117,8 +120,10 @@ public class SlardarJacksonConfiguration {
 
             // auto zoned
             DateTimeFormatter zoned = DateTimeFormatter.ofPattern(slardarDatetimeProp.getZoned().getFormat());
-            JacksonZonedSerializer.globalDefault = zoned;
-            builder.serializerByType(ZonedDateTime.class, new JacksonZonedSerializer(zoned));
+            final boolean autoZone = slardarDatetimeProp.getZoned().isAuto();
+            JacksonZonedDateTimeSerializer.defaultFormatter = zoned;
+            JacksonZonedDateTimeSerializer.defaultAutoZone = autoZone;
+            builder.serializerByType(ZonedDateTime.class, new JacksonZonedDateTimeSerializer(zoned, autoZone));
 
             val zonePsr = slardarDatetimeProp.getZoned()
                                              .getSupport()
@@ -126,8 +131,24 @@ public class SlardarJacksonConfiguration {
                                              .map(DateTimeFormatter::ofPattern)
                                              .collect(Collectors.toList());
 
-            builder.deserializerByType(ZonedDateTime.class, new JacksonZonedDeserializer(zoned, zonePsr));
+            builder.deserializerByType(ZonedDateTime.class, new JacksonZonedDateTimeDeserializer(zoned, zonePsr, autoZone));
             logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer ZonedDateTime");
+
+            // auto offset
+            DateTimeFormatter offset = DateTimeFormatter.ofPattern(slardarDatetimeProp.getOffset().getFormat());
+            final boolean autoOffset = slardarDatetimeProp.getOffset().isAuto();
+            JacksonOffsetDateTimeSerializer.defaultFormatter = offset;
+            JacksonOffsetDateTimeSerializer.defaultAutoZone = autoOffset;
+            builder.serializerByType(OffsetDateTime.class, new JacksonOffsetDateTimeSerializer(offset, autoOffset));
+
+            val offPsr = slardarDatetimeProp.getZoned()
+                                             .getSupport()
+                                             .stream()
+                                             .map(DateTimeFormatter::ofPattern)
+                                             .collect(Collectors.toList());
+
+            builder.deserializerByType(OffsetDateTime.class, new JacksonOffsetDateTimeDeserializer(offset, offPsr, autoOffset));
+            logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer OffsetDateTime");
         };
     }
 

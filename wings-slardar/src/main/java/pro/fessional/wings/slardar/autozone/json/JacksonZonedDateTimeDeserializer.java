@@ -20,11 +20,12 @@ import java.util.List;
  * @author trydofor
  * @since 2019-09-01
  */
-public class JacksonZonedDeserializer extends InstantDeserializer<ZonedDateTime> {
+public class JacksonZonedDateTimeDeserializer extends InstantDeserializer<ZonedDateTime> {
 
+    private final boolean autoZone;
     private final List<DateTimeFormatter> formats;
 
-    public JacksonZonedDeserializer(DateTimeFormatter formatter, List<DateTimeFormatter> formats) {
+    public JacksonZonedDateTimeDeserializer(DateTimeFormatter formatter, List<DateTimeFormatter> formats, boolean auto) {
         super(ZonedDateTime.class,
                 formatter,
                 temporal -> DateParser.parseZoned(temporal, ZoneId.systemDefault()),
@@ -34,27 +35,29 @@ public class JacksonZonedDeserializer extends InstantDeserializer<ZonedDateTime>
                 false // keep zero offset and Z separate since zones explicitly supported
         );
         this.formats = formats;
+        this.autoZone = auto;
     }
 
-    public JacksonZonedDeserializer(JacksonZonedDeserializer jacksonZonedDeserializer, Boolean leniency, List<DateTimeFormatter> formats) {
+    public JacksonZonedDateTimeDeserializer(JacksonZonedDateTimeDeserializer jacksonZonedDeserializer, Boolean leniency, List<DateTimeFormatter> formats, boolean auto) {
         super(jacksonZonedDeserializer, leniency);
         this.formats = formats;
+        this.autoZone = auto;
     }
 
 
     @Override
-    protected InstantDeserializer<ZonedDateTime> withDateFormat(DateTimeFormatter dtf) {
+    protected JacksonZonedDateTimeDeserializer withDateFormat(DateTimeFormatter dtf) {
         if (dtf == _formatter) return this;
-        return new JacksonZonedDeserializer(dtf, formats);
+        return new JacksonZonedDateTimeDeserializer(dtf, formats, autoZone);
     }
 
     @Override
-    protected InstantDeserializer<ZonedDateTime> withLeniency(Boolean leniency) {
-        return new JacksonZonedDeserializer(this, leniency, formats);
+    protected JacksonZonedDateTimeDeserializer withLeniency(Boolean leniency) {
+        return new JacksonZonedDateTimeDeserializer(this, leniency, formats, autoZone);
     }
 
     @Override
-    protected InstantDeserializer<ZonedDateTime> withShape(JsonFormat.Shape shape) {
+    protected JacksonZonedDateTimeDeserializer withShape(JsonFormat.Shape shape) {
         return this;
     }
 
@@ -65,9 +68,9 @@ public class JacksonZonedDeserializer extends InstantDeserializer<ZonedDateTime>
         if (tma == null) {
             return super.deserialize(parser, context);
         }
-
         final ZoneId zid = LocaleContextHolder.getTimeZone().toZoneId();
         final ZonedDateTime zdt = DateParser.parseZoned(tma, zid);
-        return DateLocaling.zoneZone(zdt, ZoneId.systemDefault());
+
+        return autoZone ? DateLocaling.zoneZone(zdt, ZoneId.systemDefault()) : zdt;
     }
 }

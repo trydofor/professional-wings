@@ -52,8 +52,20 @@ public class SlardarDatetimeProp {
     private Df zoned;
     public static final String Key$patternZoned = Key + ".zoned";
 
+    /**
+     * OffsetDateTime
+     *
+     * @see #Key$patternZoned
+     */
+    private Df offset;
+    public static final String Key$patternOffset = Key + ".offset";
+
     @Data
     public static class Df {
+        /**
+         * 是否支持自动转换
+         */
+        private boolean auto = false;
         /**
          * 格式化输出的格式
          */
