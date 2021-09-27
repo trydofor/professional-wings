@@ -14,6 +14,7 @@ import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.ErrType
 import pro.fessional.wings.faceless.flywave.SqlStatementParser
 import pro.fessional.wings.faceless.flywave.WingsRevision
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
+import pro.fessional.wings.faceless.flywave.util.TemplateUtil
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.commentInfo
 import java.util.EnumMap
 import java.util.LinkedList
@@ -38,7 +39,7 @@ class DefaultRevisionManager(
         private val sqlStatementParser: SqlStatementParser,
         private val sqlSegmentProcessor: SqlSegmentProcessor,
         private val schemaDefinitionLoader: SchemaDefinitionLoader,
-        val schemaVersionTable: String = "sys_schema_version"
+        private val schemaVersionTable: String = "sys_schema_version"
 ) : SchemaRevisionManager {
 
     private val revi1st = WingsRevision.V00_19_0512_01_Schema.revision()
@@ -661,16 +662,40 @@ class DefaultRevisionManager(
             }
         } else {
             val tblName = seg.tblName
-            for (tbl in tblApply) {
+            for ((tbl, map) in tblApply) {
                 if (tbl == tblName) {
                     messageLog(INFO, here, "run sql on plain table=$tbl, db=$dbName")
                 } else {
                     messageLog(INFO, here, "run sql on shard/trace table=$tbl, db=$dbName")
                 }
 
+                val trgDef = if (seg.trgJour) {
+                    schemaDefinitionLoader.showBoneTrg(tmpl.dataSource, tbl).filter {
+                        it.event.contains(tbl, true)
+                    }
+                } else {
+                    emptyList()
+                }
                 try {
-                    val sql = sqlSegmentProcessor.merge(seg, tbl)
+                    for (trg in trgDef) {
+                        messageLog(WARN, here, "affect trigger=${trg.name}, table=$tbl, db=$dbName")
+                        messageLog(WARN, here, "recover trigger-ddl=" + schemaDefinitionLoader.makeDdlTrg(trg, false).replace('\n',' '))
+                        tmpl.execute(schemaDefinitionLoader.makeDdlTrg(trg, true))
+                    }
+                    //
+                    val sql = sqlSegmentProcessor.merge(seg, map)
                     tmpl.execute(sql)
+                    //
+                    for (trg in trgDef) {
+                        val ddl = schemaDefinitionLoader.makeDdlTrg(trg, false)
+                        val dic = seg.dicName
+                        if (dic.isEmpty()) {
+                            tmpl.execute(ddl)
+                        } else {
+                            val ndl = TemplateUtil.replace(ddl, dic, bnd = false)
+                            tmpl.execute(ndl)
+                        }
+                    }
                 } catch (e: Exception) {
                     messageLog(WARN, here, "$erh an error", e)
                     when (erh) {

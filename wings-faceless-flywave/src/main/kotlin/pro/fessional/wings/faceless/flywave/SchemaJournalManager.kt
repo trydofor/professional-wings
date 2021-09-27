@@ -23,7 +23,7 @@ class SchemaJournalManager(
         private val sqlStatementParser: SqlStatementParser,
         private val schemaDefinitionLoader: SchemaDefinitionLoader,
         private val journalDdl: JournalDdl,
-        val schemaJournalTable:String = "sys_schema_journal"
+        private val schemaJournalTable:String = "sys_schema_journal"
 ) {
     data class JournalDdl(
             var updTbl: String = Null.Str,
@@ -305,16 +305,16 @@ class SchemaJournalManager(
 
                 // 检查触发器，删除同名或关联表的
                 val furTrg = parseTrgName(ddlTrg) // 名字
-                for ((trg, evt) in schemaDefinitionLoader.showBoneTrg(plainDs, tblRaw)) {
-                    if (drpOld && TemplateUtil.isBoundary(evt, curTac, false)) {
-                        logger.warn("[publishJournal]🐶 drop trigger={}, dropped trace-table={}, table={}, db={}", curTac, trg, tblRaw, plainName)
-                    } else if (furTrg.isNotEmpty() && furTrg.equals(trg, true)) {
-                        logger.warn("[publishJournal]🐶 drop trigger={}, existed same name, table={}, db={}", trg, tblRaw, plainName)
+                for (trg in schemaDefinitionLoader.showBoneTrg(plainDs, tblRaw)) {
+                    if (drpOld && TemplateUtil.isBoundary(trg.event, curTac, false)) {
+                        logger.warn("[publishJournal]🐶 drop trigger={}, dropped trace-table={}, table={}, db={}", curTac, trg.name, tblRaw, plainName)
+                    } else if (furTrg.isNotEmpty() && furTrg.equals(trg.name, true)) {
+                        logger.warn("[publishJournal]🐶 drop trigger={}, existed same name, table={}, db={}", trg.name, tblRaw, plainName)
                     } else {
-                        logger.info("[publishJournal]🐶 skip trigger={}, existed same name, table={}, db={}", trg, tblRaw, plainName)
+                        logger.info("[publishJournal]🐶 skip trigger={}, existed same name, table={}, db={}", trg.name, tblRaw, plainName)
                         continue
                     }
-                    tmpl.execute("DROP TRIGGER IF EXISTS ${sqlStatementParser.safeName(trg)}")
+                    tmpl.execute(schemaDefinitionLoader.makeDdlTrg(trg,true))
                 }
 
                 trgDdl[ddlTrg] = tblRaw

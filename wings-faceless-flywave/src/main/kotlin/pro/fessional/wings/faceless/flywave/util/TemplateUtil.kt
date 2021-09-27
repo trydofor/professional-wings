@@ -20,9 +20,10 @@ object TemplateUtil {
      * @param sub 查找文本
      * @param rpl 替换文本
      * @param qto 引号字符，默认`'`
+     * @param bnd 是否检查边界，默认检查
      */
-    fun replace(txt: String, sub: String, rpl: String, qto: String = "'"): String {
-        val idx = parse(txt, sub, qto)
+    fun replace(txt: String, sub: String, rpl: String, qto: String = "'", bnd: Boolean = true): String {
+        val idx = parse(txt, sub, qto, bnd)
         return merge(txt, idx, rpl)
     }
 
@@ -32,10 +33,11 @@ object TemplateUtil {
      * @param txt 文本
      * @param rep 查找文本, 替换文本
      * @param qto 引号字符，默认`'`
+     * @param bnd 是否检查边界，默认检查
      */
-    fun replace(txt: String, rep: Map<String, String>, qto: String = "'"): String {
+    fun replace(txt: String, rep: Map<String, String>, qto: String = "'", bnd: Boolean = true): String {
         val key = rep.keys.toList()
-        val idx = parse(txt, key, qto)
+        val idx = parse(txt, key, qto, bnd)
         return merge(txt, idx, rep)
     }
 
@@ -98,10 +100,11 @@ object TemplateUtil {
      * @param txt 目标文本
      * @param tkn 单个token
      * @param qto 引号字符，默认`'`
+     * @param bnd 是否检查边界，默认检查
      * @see maskQuote
      * @see isBoundary
      */
-    fun parse(txt: String, tkn: List<String>, qto: String = "'"): SortedMap<Int, Pair<Int, String>> {
+    fun parse(txt: String, tkn: List<String>, qto: String = "'", bnd: Boolean = true): SortedMap<Int, Pair<Int, String>> {
         val idx = TreeMap<Int, Pair<Int, String>>()
         if (tkn.isEmpty() || txt.isBlank()) {
             return idx
@@ -109,7 +112,8 @@ object TemplateUtil {
         val msk = maskQuote(txt, qto)
         val ix = TreeMap<Int, Int>()
         for (tk in tkn) {
-            parse(msk, tk, ix)
+            if(tk.isEmpty()) continue
+            parse(msk, tk, ix, bnd)
             for ((p1, p2) in ix) {
                 idx[p1] = Pair(p2, tk)
             }
@@ -136,20 +140,21 @@ object TemplateUtil {
      * @param txt 目标文本
      * @param tkn 单个token
      * @param qto 引号字符，默认`'`
+     * @param bnd 是否检查边界，默认检查
      * @see maskQuote
      * @see isBoundary
      */
-    fun parse(txt: String, tkn: String, qto: String = "'"): SortedMap<Int, Int> {
+    fun parse(txt: String, tkn: String, qto: String = "'", bnd: Boolean = true): SortedMap<Int, Int> {
         val idx = TreeMap<Int, Int>()
         if (tkn.isBlank() || txt.isBlank()) {
             return idx
         }
         val msk = maskQuote(txt, qto)
-        parse(msk, tkn, idx)
+        parse(msk, tkn, idx, bnd)
         return idx
     }
 
-    private fun parse(msk: String, tkn: String, idx: TreeMap<Int, Int>) {
+    private fun parse(msk: String, tkn: String, idx: TreeMap<Int, Int>, bnd: Boolean = true) {
         if (msk.isBlank() || tkn.isBlank()) {
             return
         }
@@ -162,8 +167,12 @@ object TemplateUtil {
                 break
             } else {
                 val end = i + len
-                val bgn = (i == 0 || (i > 0 && isBoundary(msk, i - 1)))
-                if (bgn && isBoundary(msk, end)) {
+                if (bnd) {
+                    val bgn = (i == 0 || (i > 0 && isBoundary(msk, i - 1)))
+                    if (bgn && isBoundary(msk, end)) {
+                        idx[i] = end
+                    }
+                } else {
                     idx[i] = end
                 }
                 off = end

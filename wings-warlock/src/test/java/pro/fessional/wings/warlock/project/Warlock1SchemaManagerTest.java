@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
+
+import java.util.SortedMap;
 
 /**
  * @author trydofor
@@ -32,4 +35,12 @@ class Warlock1SchemaManagerTest {
                 helper -> helper.branch("test/").include(2020_10_24_03));
     }
 
+
+    @Test
+    void bugfixExecute() {
+        final FlywaveRevisionScanner.Helper helper = FlywaveRevisionScanner.helper();
+        helper.somefix("01-authn-fix");
+        final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = helper.scan();
+        schemaRevisionManager.forceExecuteSql(sqls, true);
+    }
 }

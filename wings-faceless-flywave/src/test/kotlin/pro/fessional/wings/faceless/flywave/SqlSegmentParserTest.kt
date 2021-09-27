@@ -1,5 +1,7 @@
 package pro.fessional.wings.faceless.flywave
 
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -19,6 +21,7 @@ class SqlSegmentParserTest {
     lateinit var sqlStatementParser: SqlStatementParser
 
     @Test
+    @Disabled
     fun `test1🦁分析🦁人脑分析`() {
         val scan = FlywaveRevisionScanner.scanMaster()
         for ((k, v) in scan) {
@@ -44,9 +47,21 @@ class SqlSegmentParserTest {
     fun printSegment(revi: Long, segment: SqlSegmentProcessor.Segment) {
         println(">>> revi=${revi}, from=${segment.lineBgn} ,to=${segment.lineEnd}, dbsType=${segment.dbsType}, table=${segment.tblName}, errType=${segment.errType}, tblRegx=${segment.tblRegx}")
         for (i in 0..1) {
-            val newTbl = segment.tblName + "_" + i
-            val sql = sqlSegmentProcessor.merge(segment, newTbl)
+            val sql = sqlSegmentProcessor.merge(segment, mapOf(segment.tblName to segment.tblName + "_" + i))
             println(sql)
         }
+    }
+
+    @Test
+    fun `test2🦁改名🦁影子表`() {
+        val segs = sqlSegmentProcessor.parse(sqlStatementParser, "ALTER TABLE `table_a` RENAME TO `table_b`")
+        val segment = segs[0]
+        val tbls = segment.applyTbl(listOf("table_a", "table_a${'$'}log"))
+
+        val sql1 = sqlSegmentProcessor.merge(segment, tbls["table_a"]!!)
+        Assertions.assertEquals("ALTER TABLE `table_a` RENAME TO `table_b`", sql1)
+
+        val sql2 = sqlSegmentProcessor.merge(segment, tbls["table_a${'$'}log"]!!)
+        Assertions.assertEquals("ALTER TABLE `table_a${'$'}log` RENAME TO `table_b${'$'}log`", sql2)
     }
 }
