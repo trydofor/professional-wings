@@ -267,7 +267,7 @@ common.email.size=The author email '${validatedValue}' must be between {min} and
 
 通过spring默认的server.servlet.session.cookie.name设置，
 在WingsSessionIdResolver中，会加入header和cookie两个resolver。
-header的名字和cookie同名，默认是SESSION。
+header的名字和cookie同名，默认是`session`。
 
 同domain同path下，多个应用共享一套Session-cookie体系，希望同名cookie可以区分使用。
 如admin和front两个应用要区分出`SESSSION`的cookie，设置别名而无需修改session体系。

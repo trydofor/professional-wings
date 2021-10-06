@@ -16,12 +16,22 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 /**
  * @author trydofor
  * @since 2021-07-08
  */
 public class ResultTest {
+
+    @Test
+    public void testZoneid() {
+        final int totalSeconds = ZonedDateTime.now(ZoneId.systemDefault()).getOffset().getTotalSeconds();
+        System.out.println(totalSeconds);
+        final int t2 = ZonedDateTime.now(ZoneId.of("GMT-5")).getOffset().getTotalSeconds();
+        System.out.println(t2);
+    }
 
     @SneakyThrows
     @Test
