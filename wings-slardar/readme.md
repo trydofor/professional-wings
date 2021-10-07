@@ -269,14 +269,22 @@ common.email.size=The author email '${validatedValue}' must be between {min} and
 在WingsSessionIdResolver中，会加入header和cookie两个resolver。
 header的名字和cookie同名，默认是`session`。
 
-同domain同path下，多个应用共享一套Session-cookie体系，希望同名cookie可以区分使用。
-如admin和front两个应用要区分出`SESSSION`的cookie，设置别名而无需修改session体系。
+实施建议，
+* 不建议使用rememberMe，设置session的timeout和cookie的maxAge较长时间。
+* 如果没有特殊要求，建议使用cookie体系，因其生态成熟。
 
-实现原理是写入时定制CookieSerializer，读取时进行cookie-name转换。
+### 3.4.2. cookie的定制功能
 
-建议不使用rememberMe，设置session的timeout和cookie的maxAge较长时间。
+cookie体系下，可通过定制Filter和Wrapper实现以下功能。
 
-### 3.4.2.多中验证及绑定登录
+* cookie前缀，适用同domain同path下，多个应用共享一套Session-cookie体系的情况。
+* cookie别名，用于混淆发布时cookie key的情况，受前缀影响。
+* cookie编码，用于可读性粒度控制。
+  - noop - 不加密，明文，如随机token，没必要消耗计算资源
+  - b64 - base64,spring默认的加密机制，只用了防止特殊字符干扰
+  - aes - aes128,非敏感数据的初级加密，基本的防偷窥功能
+
+### 3.4.3.多中验证及绑定登录
 
 加强了spring security的userPassword登录，通过继承或替换以下类，实现无缝替代。
 

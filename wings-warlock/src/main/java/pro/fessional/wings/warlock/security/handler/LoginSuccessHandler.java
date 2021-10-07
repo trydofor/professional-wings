@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.security.core.Authentication;
-import org.springframework.session.web.http.DefaultCookieSerializer;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
  * 默认情况下 cookie是sid的base64字符串
  *
  * @author trydofor
- * @see DefaultCookieSerializer
  * @since 2021-02-17
  */
 @Slf4j
