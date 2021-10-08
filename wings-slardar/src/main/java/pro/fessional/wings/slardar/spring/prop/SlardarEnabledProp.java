@@ -41,6 +41,14 @@ public class SlardarEnabledProp {
     public static final String Key$caching = Key + ".caching";
 
     /**
+     * 是否实现cookie定制
+     *
+     * @see #Key$cookie
+     */
+    private boolean cookie = true;
+    public static final String Key$cookie = Key + ".cookie";
+
+    /**
      * 是否默认配置session
      *
      * @see #Key$session

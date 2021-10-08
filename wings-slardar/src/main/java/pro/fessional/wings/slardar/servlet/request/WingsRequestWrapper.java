@@ -6,6 +6,8 @@ import pro.fessional.mirana.cast.StringCastUtil;
 import pro.fessional.mirana.data.Null;
 
 import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletRequestWrapper;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -38,21 +40,26 @@ import java.util.TimeZone;
  */
 public class WingsRequestWrapper extends HttpServletRequestWrapper {
 
-    private static final String WrappedKey = "wings:request:wrapper:true";
+    /**
+     * 检测是否Wrapper过，返回最新的WingsRequestWrapper或null
+     *
+     * @param request request
+     * @return 最新的一个WingsRequestWrapper
+     * @see #isWrapperFor(ServletRequest)
+     */
+    public static WingsRequestWrapper infer(ServletRequest request) {
+        if (request instanceof WingsRequestWrapper) {
+            return (WingsRequestWrapper) request;
+        }
+        if (request instanceof ServletRequestWrapper) {
+            final ServletRequest req = ((ServletRequestWrapper) request).getRequest();
+            return infer(req);
+        }
+        return null;
+    }
 
     public WingsRequestWrapper(HttpServletRequest request) {
         super(request);
-        request.setAttribute(WrappedKey, Boolean.TRUE);
-    }
-
-    /**
-     * 检测是否WingsRequestWrapper过
-     *
-     * @param request request
-     * @return 是否wrapper
-     */
-    public static boolean hasWingsWrapper(HttpServletRequest request) {
-        return request != null && request.getAttribute(WrappedKey) == Boolean.TRUE;
     }
 
     // ========= Method =========
@@ -121,7 +128,8 @@ public class WingsRequestWrapper extends HttpServletRequestWrapper {
             }
             if (len <= 0) {
                 params.remove(name);
-            } else {
+            }
+            else {
                 String[] ar = new String[len];
                 for (int i = 0, j = 0; i < vs.length; i++) {
                     if (vs[i] != null) {
@@ -175,9 +183,11 @@ public class WingsRequestWrapper extends HttpServletRequestWrapper {
             if (key == null) continue;
             if (value instanceof CharSequence) {
                 unsafeAddParameter(key, value.toString());
-            } else if (value instanceof String[]) {
+            }
+            else if (value instanceof String[]) {
                 unsafeAddParameter(key, (String[]) value);
-            } else if (value instanceof Collection<?>) {
+            }
+            else if (value instanceof Collection<?>) {
                 unsafeAddParameter(key, collectionToStrings((Collection<?>) value));
             }
         }
@@ -189,7 +199,8 @@ public class WingsRequestWrapper extends HttpServletRequestWrapper {
         String[] vs = params.get(name);
         if (vs == null || vs.length == 0) {
             params.put(name, value);
-        } else {
+        }
+        else {
             ArrayList<String> nr = new ArrayList<>(vs.length + value.length);
             for (String s : vs) {
                 if (s != null) nr.add(s);
@@ -241,9 +252,11 @@ public class WingsRequestWrapper extends HttpServletRequestWrapper {
             Object value = entry.getValue();
             if (value instanceof CharSequence) {
                 params.put(entry.getKey(), new String[]{value.toString()});
-            } else if (value instanceof String[]) {
+            }
+            else if (value instanceof String[]) {
                 params.put(entry.getKey(), (String[]) value);
-            } else if (value instanceof Collection<?>) {
+            }
+            else if (value instanceof Collection<?>) {
                 params.put(entry.getKey(), collectionToStrings((Collection<?>) value));
             }
         }
@@ -260,7 +273,8 @@ public class WingsRequestWrapper extends HttpServletRequestWrapper {
         }
         if (ln == vs.length) {
             return vs;
-        } else {
+        }
+        else {
             String[] ns = new String[ln];
             System.arraycopy(vs, 0, ns, 0, ln);
             return ns;
@@ -272,11 +286,13 @@ public class WingsRequestWrapper extends HttpServletRequestWrapper {
         if (name == null) return null;
         if (params == null) {
             return super.getParameter(name);
-        } else {
+        }
+        else {
             String[] v = params.get(name);
             if (v == null || v.length == 0) {
                 return null;
-            } else {
+            }
+            else {
                 return v[0];
             }
         }
@@ -316,7 +332,8 @@ public class WingsRequestWrapper extends HttpServletRequestWrapper {
         if (cks != null) {
             if (cookies == null) {
                 cookies = cks;
-            } else {
+            }
+            else {
                 Cookie[] nk = new Cookie[cookies.length + cks.length];
                 System.arraycopy(cookies, 0, nk, 0, cookies.length);
                 System.arraycopy(cks, 0, nk, cookies.length, cks.length);
@@ -435,9 +452,11 @@ public class WingsRequestWrapper extends HttpServletRequestWrapper {
             if (key == null) continue;
             if (value instanceof CharSequence) {
                 unsafeAddHeader(key, value.toString());
-            } else if (value instanceof String[]) {
+            }
+            else if (value instanceof String[]) {
                 unsafeAddHeader(key, (String[]) value);
-            } else if (value instanceof Collection<?>) {
+            }
+            else if (value instanceof Collection<?>) {
                 unsafeAddHeader(key, (Collection<?>) value);
             }
         }
@@ -508,11 +527,13 @@ public class WingsRequestWrapper extends HttpServletRequestWrapper {
 
             if (value instanceof CharSequence) {
                 vs.add(value.toString());
-            } else if (value instanceof String[]) {
+            }
+            else if (value instanceof String[]) {
                 for (String s : (String[]) value) {
                     if (s != null) vs.add(s);
                 }
-            } else if (value instanceof Collection<?>) {
+            }
+            else if (value instanceof Collection<?>) {
                 Collection<?> cs = (Collection<?>) value;
                 for (Object c : cs) {
                     if (c != null) vs.add(c.toString());
@@ -563,11 +584,13 @@ public class WingsRequestWrapper extends HttpServletRequestWrapper {
     public String getHeader(String name) {
         if (headers == null) {
             return super.getHeader(name);
-        } else {
+        }
+        else {
             LinkedHashSet<String> vs = headers.get(name);
             if (vs == null || vs.isEmpty()) {
                 return null;
-            } else {
+            }
+            else {
                 return vs.iterator().next();
             }
         }
@@ -577,11 +600,13 @@ public class WingsRequestWrapper extends HttpServletRequestWrapper {
     public Enumeration<String> getHeaders(String name) {
         if (headers == null) {
             return super.getHeaders(name);
-        } else {
+        }
+        else {
             LinkedHashSet<String> vs = headers.get(name);
             if (vs == null || vs.isEmpty()) {
                 return Collections.emptyEnumeration();
-            } else {
+            }
+            else {
                 return Collections.enumeration(vs);
             }
         }
@@ -591,7 +616,8 @@ public class WingsRequestWrapper extends HttpServletRequestWrapper {
     public Enumeration<String> getHeaderNames() {
         if (headers == null) {
             return super.getHeaderNames();
-        } else {
+        }
+        else {
             return Collections.enumeration(headers.keySet());
         }
     }
@@ -668,7 +694,8 @@ public class WingsRequestWrapper extends HttpServletRequestWrapper {
         if (str == null) {
             oldRequestUri = null;
             newRequestUri = null;
-        } else {
+        }
+        else {
             oldRequestUri = super.getRequestURI();
             newRequestUri = str;
         }
@@ -735,7 +762,8 @@ public class WingsRequestWrapper extends HttpServletRequestWrapper {
     public WingsRequestWrapper setTrailerFields(Map<String, String> map) {
         if (map == null) {
             trailer = null;
-        } else {
+        }
+        else {
             trailer = new LinkedHashMap<>(map);
         }
         return this;
@@ -898,7 +926,8 @@ public class WingsRequestWrapper extends HttpServletRequestWrapper {
         if (inputStream == null) {
             try {
                 inputStream = new CircleServletInputStream(super.getInputStream());
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -914,7 +943,8 @@ public class WingsRequestWrapper extends HttpServletRequestWrapper {
     public BufferedReader getReader() throws IOException {
         if (inputStream == null) {
             return super.getReader();
-        } else {
+        }
+        else {
             if (this.bufferedReader == null) {
                 this.bufferedReader = new BufferedReader(new InputStreamReader(getInputStream(), getCharacterEncoding()));
             }

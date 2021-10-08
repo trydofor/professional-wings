@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -18,12 +19,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author trydofor
  * @since 2020-06-03
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = "spring.wings.slardar.enabled.mock-hazelcast=false")
 @AutoConfigureMockMvc
 public class WingsSessionTest {
 
     @Setter(onMethod_ = {@Autowired})
     private MockMvc mockMvc;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected SlardarSessionProp slardarSessionProp;
 
     @Test
     public void test1LoginUserLangZone() throws Exception {
@@ -35,10 +40,10 @@ public class WingsSessionTest {
         )
                .andDo(print())
                .andExpect(status().isOk())
-               .andExpect(cookie().exists("SESSION"))
-               .andExpect(header().exists("SESSION"))
-               .andExpect(header().string("UserLocale","en-CA"))
-               .andExpect(header().string("UserZoneid","Canada/Central"))
+               .andExpect(cookie().exists(slardarSessionProp.getCookieName()))
+               .andExpect(header().exists(slardarSessionProp.getCookieName()))
+               .andExpect(header().string("UserLocale", "en-CA"))
+               .andExpect(header().string("UserZoneid", "Canada/Central"))
         ;
     }
 
@@ -54,10 +59,10 @@ public class WingsSessionTest {
         )
                .andDo(print())
                .andExpect(status().isOk())
-               .andExpect(cookie().exists("SESSION"))
-               .andExpect(header().exists("SESSION"))
-               .andExpect(header().string("UserLocale","zh-CN"))
-               .andExpect(header().string("UserZoneid","Asia/Shanghai"))
+               .andExpect(cookie().exists(slardarSessionProp.getCookieName()))
+               .andExpect(header().exists(slardarSessionProp.getCookieName()))
+               .andExpect(header().string("UserLocale", "zh-CN"))
+               .andExpect(header().string("UserZoneid", "Asia/Shanghai"))
         ;
     }
 }
