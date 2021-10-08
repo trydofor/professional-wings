@@ -265,7 +265,7 @@ mysql:5.7
 
 ```sql
 CREATE USER 'trydofor'@'%' IDENTIFIED BY 'moilioncircle';
-GRANT ALL  ON *.*  TO 'trydofor'@'%';
+GRANT ALL  ON `*`.*  TO 'trydofor'@'%';
 SHOW GRANTS FOR 'trydofor'@'%';
 DROP USER 'trydofor'@'%';
 ```

@@ -21,6 +21,7 @@ class MySqlStatementParser : SqlStatementParser {
     private val logger = LoggerFactory.getLogger(MySqlStatementParser::class.java)
 
     private val options = Pattern.MULTILINE or Pattern.CASE_INSENSITIVE
+    private val ddlRenameTable = "^ALTER\\s+TABLE\\s+([^(\\s]+)\\s+RENAME\\s+TO\\s+([^(\\s]+)".toPattern(options)
     private val ddlAlterTable = "^ALTER\\s+TABLE\\s+([^(\\s]+)".toPattern(options)
     private val ddlCreateIndex = "^CREATE\\s+(?:UNIQUE\\s+|FULLTEXT\\s+|SPATIAL\\s+)?INDEX\\s+\\S+\\s+(?:\\S+\\s+)?ON\\s+([^(\\s]+)".toPattern(options)
     private val ddlCreateTable = "^CREATE\\s+(?:TEMPORARY\\s+)?TABLE\\s+(?:IF\\s+NOT\\s+EXISTS\\s+)?([^(\\s]+)".toPattern(options)
@@ -35,22 +36,23 @@ class MySqlStatementParser : SqlStatementParser {
     private val dmlReplace = "^REPLACE\\s+(?:LOW_PRIORITY|DELAYED)?\\s*(?:INTO\\s+)?([^(\\s]+)".toPattern(options)
     private val dmlUpdate = "^UPDATE\\s+(?:LOW_PRIORITY\\s+)?(?:IGNORE\\s+)?([^(\\s]+)".toPattern(options)
 
+    private val plainRename = linkedSetOf(
+        ddlRenameTable
+    )
+
     private val plainRegex = linkedSetOf(
-            ddlAlterTable.toFunction()
-            , ddlCreateIndex.toFunction()
-            , ddlCreateTable.toFunction()
-            , ddlCreateTrigger.toFunction()
-            , ddlDropIndex.toFunction()
-            , ddlDropTable.toFunction()
-            , ddlDropTrigger.toFunction()
-            , ddlTruncateTable.toFunction()
+        ddlAlterTable.toFunction(),
+        ddlCreateIndex.toFunction(),
+        ddlCreateTable.toFunction(),
+        ddlCreateTrigger.toFunction(),
+        ddlDropIndex.toFunction(),
+        ddlDropTable.toFunction(),
+        ddlDropTrigger.toFunction(),
+        ddlTruncateTable.toFunction()
     )
 
     private val shardRegex = linkedSetOf(
-            dmlDelete.toFunction()
-            , dmlInsert.toFunction()
-            , dmlReplace.toFunction()
-            , dmlUpdate.toFunction()
+        dmlDelete.toFunction(), dmlInsert.toFunction(), dmlReplace.toFunction(), dmlUpdate.toFunction()
     )
 
     /**
@@ -89,6 +91,14 @@ class MySqlStatementParser : SqlStatementParser {
     }
 
     override fun parseTypeAndTable(sql: String): SqlStatementParser.SqlType {
+        for (ptn in plainRename) {
+            val m = ptn.matcher(sql)
+            if (m.find()) {
+                val tbl = trimName(m.group(1))
+                val ren = trimName(m.group(2))
+                return SqlStatementParser.SqlType.Plain(tbl, ren)
+            }
+        }
         for (fnc in plainRegex) {
             val m = fnc.apply(sql)
             if (m.isPresent) {

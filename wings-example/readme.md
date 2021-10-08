@@ -81,13 +81,14 @@ BOOT_CNF是用来替换默认配置的运行时配置，结构如下。
 
 ## 9.5. Nginx配置
 
-通常的配置参考，包括强制https，保护误操作.git，前后端分离
+通常的配置参考，包括强制https，保护误操作.git，前后端分离。
 
 ``` nginx
 upstream demo_admin {
     ip_hash;
     server demo_appser_01:8090;
     server demo_appser_02:8090;
+    keepalive 300; # 长连接
 }
 
 server {
@@ -118,15 +119,17 @@ server {
         proxy_http_version  1.1;
         proxy_cache_bypass  $http_upgrade;
     
-        proxy_set_header Connection        "";
-        #proxy_set_header Connection        "upgrade";
-        #proxy_set_header Upgrade           $http_upgrade;
-        proxy_set_header Host              $host;
-        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header  Connection   "";            # 长连接
+        #proxy_set_header Connection   "upgrade";     # ws
+        #proxy_set_header Upgrade      $http_upgrade; # ws
+        proxy_set_header  Host         $host;
+        proxy_set_header  X-Real-IP    $remote_addr;
+        proxy_redirect    http://      $scheme://;    # https
     }
 
     # 前端分流
     location / {
+        #add_header 'Access-Control-Allow-Origin' '*'; #允许跨域
         root /data/static/demo-admin-spa/;
     }
 }
@@ -148,5 +151,28 @@ server {
     root           /data/nginx/down;
     error_page 403 /500.html;
     error_page 404 /500.html;
+}
+```
+
+http段有关的长连接和反向代理设置。
+
+``` nginx
+http {
+    keepalive_timeout 1800;
+    keepalive_requests 8192;
+
+    client_max_body_size    50m;
+    send_timeout            1800;
+    
+    proxy_connect_timeout   1800;
+    proxy_send_timeout      1800;
+    proxy_read_timeout      1800;
+
+    proxy_buffering on;
+    proxy_buffer_size 4k;           #设置代理服务器（nginx）保存用户头信息的缓冲区大小
+    proxy_buffers 4 32k;            #proxy_buffers缓冲区，网页平均在32k以下的设置
+    proxy_busy_buffers_size 64k;    #高负荷下缓冲大小（proxy_buffers*2）
+    proxy_temp_file_write_size 64k;
+    proxy_max_temp_file_size 0;
 }
 ```

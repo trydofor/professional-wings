@@ -41,7 +41,7 @@ Perm主要用在方法级的鉴权上，即在方法上增加的注解，如`@Se
 ```java
 // 推荐
 @Secured(PermConstant.System.User.read)
-// 不推荐
+// 不推荐，因为比较长，但SpEL很强大
 @PreAuthorize("hasAnyAuthority(T(pro.fessional.wings.warlock.security.autogen.PermConstant$System$User).read)")
 ```
 
@@ -93,6 +93,11 @@ Warlock在用户通过身边鉴别（renew）后，会分别加载和用户绑�
 * 暴露 LogoutSuccessHandler 处理登出的事件。
 
 默认实现中，login中会在cookie和header中放置sessionId，logout是清空session。
+
+需要注意的是，http协议的header和cookie的大小写问题，因此建议全小写。
+* header RFC2616 *不*区分大小写，有些代理或工具会自动转为全小写。
+* cookie RFC2019 区分大小写，一般保存原样。
+* 已知header默认自动转小写有swagger-ui和webpack-dev-server(node http)
 
 NonceLoginSuccessHandler配合NonceTokenSessionHelper实现了oauth一次性token换取session的功能。
 所以如果需要此功能，需要在自行实现AuthenticationSuccessHandler继承NonceLoginSuccessHandler。

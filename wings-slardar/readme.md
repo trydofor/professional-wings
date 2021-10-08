@@ -53,7 +53,8 @@
 支持java.time中以下日期格式的定制，包括Json和Spring。
 
 * LocalDate，LocalTime，LocalDateTime，多个输入格式，单个输出格式定制。
-* ZonedDateTime，在Local功能外，支持自动切换到用户时区。
+* ZonedDateTime，同`Local*`功能。可支持自动切换到用户时区，默认关闭。
+* OffsetDateTime，同`Local*`功能，可支持自动切换到用户时区，默认打开
 
 例如，默认配置 wings-datetime-79.properties 中的LocalDate支持
 
@@ -228,7 +229,7 @@ wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子
 common.email.size=The author email '${validatedValue}' must be between {min} and {max} characters long
 ```
 
-## 3.3.1.时区的LocalDateTime和ZonedDateTime
+## 3.3.1.时区的LocalDateTime，ZonedDateTime和OffsetDateTime
 
 多时区，要兼顾数据可读性和编码便利性，在slardar中统一约定如下。
 
@@ -242,9 +243,12 @@ common.email.size=The author email '${validatedValue}' must be between {min} and
 而在Controller层，负责进行系统和用户时区的双向转换，使用ZonedDateTime。
 
 * 时区不敏感或只做本地时间标签的情况，统一使用LocalDateTime，
-* 时区敏感时，使用ZonedDateTime类型，在Jackson和RequestParam中自动转换。
+* 时区敏感时，在Jackson和RequestParam中自动转换。
   - Request时，自动把用户时间调至系统时区。
   - Response时，自动把系统时间调至用户时区。
+* 自动转换类型，目前只有一下2中，其中。
+  - ZonedDatetime 默认关闭
+  - OffsetDateTime 默认开启
 
 注意，因util.Date的缺陷，在wings中，默认禁用其使用，需要使用java.time.*
 
@@ -263,16 +267,24 @@ common.email.size=The author email '${validatedValue}' must be between {min} and
 
 通过spring默认的server.servlet.session.cookie.name设置，
 在WingsSessionIdResolver中，会加入header和cookie两个resolver。
-header的名字和cookie同名，默认是SESSION。
+header的名字和cookie同名，默认是`session`。
 
-同domain同path下，多个应用共享一套Session-cookie体系，希望同名cookie可以区分使用。
-如admin和front两个应用要区分出`SESSSION`的cookie，设置别名而无需修改session体系。
+实施建议，
+* 不建议使用rememberMe，设置session的timeout和cookie的maxAge较长时间。
+* 如果没有特殊要求，建议使用cookie体系，因其生态成熟。
 
-实现原理是写入时定制CookieSerializer，读取时进行cookie-name转换。
+### 3.4.2. cookie的定制功能
 
-建议不使用rememberMe，设置session的timeout和cookie的maxAge较长时间。
+cookie体系下，可通过定制Filter和Wrapper实现以下功能。
 
-### 3.4.2.多中验证及绑定登录
+* cookie前缀，适用同domain同path下，多个应用共享一套Session-cookie体系的情况。
+* cookie别名，用于混淆发布时cookie key的情况，受前缀影响。
+* cookie编码，用于可读性粒度控制。
+  - noop - 不加密，明文，如随机token，没必要消耗计算资源
+  - b64 - base64,spring默认的加密机制，只用了防止特殊字符干扰
+  - aes - aes128,非敏感数据的初级加密，基本的防偷窥功能
+
+### 3.4.3.多中验证及绑定登录
 
 加强了spring security的userPassword登录，通过继承或替换以下类，实现无缝替代。
 

@@ -15,10 +15,11 @@ import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
+import pro.fessional.wings.slardar.security.PasswordHelper;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserAnthnTable;
-import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAnthnDao;
-import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserAnthn;
+import pro.fessional.wings.warlock.database.autogen.tables.WinUserAuthnTable;
+import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAuthnDao;
+import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserAuthn;
 import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
 import pro.fessional.wings.warlock.service.user.WarlockUserAttribute;
 import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
@@ -37,7 +38,7 @@ import java.util.Map;
 public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
     @Setter(onMethod_ = {@Autowired})
-    protected WinUserAnthnDao winUserAnthnDao;
+    protected WinUserAuthnDao winUserAuthnDao;
 
     @Setter(onMethod_ = {@Autowired})
     protected WingsAuthTypeParser wingsAuthTypeParser;
@@ -63,9 +64,9 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
         Enum<?> authType = authn.getAuthType();
         return journalService.submit(Jane.Create, userId, authType, commit -> {
 
-            final long id = lightIdService.getId(winUserAnthnDao.getTable());
+            final long id = lightIdService.getId(winUserAuthnDao.getTable());
 
-            WinUserAnthn auth = new WinUserAnthn();
+            WinUserAuthn auth = new WinUserAuthn();
 
             auth.setId(id);
             auth.setUserId(userId);
@@ -73,8 +74,8 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             auth.setUsername(authn.getUsername());
 
             final String salt = GlobalAttributeHolder.getAttr(WarlockUserAttribute.SaltByUid, userId);
-            final String pass = passsaltEncoder.salt(authn.getPassword(), salt);
-            auth.setPassword(passwordEncoder.encode(pass));
+            PasswordHelper helper = new PasswordHelper(passwordEncoder, passsaltEncoder);
+            auth.setPassword(helper.hash(authn.getPassword(), salt));
 
             auth.setExtraPara(Null.notNull(authn.getExtraPara()));
             auth.setExtraUser(Null.notNull(authn.getExtraUser()));
@@ -91,7 +92,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             commit.create(auth);
 
             try {
-                winUserAnthnDao.insert(auth);
+                winUserAuthnDao.insert(auth);
             }
             catch (Exception e) {
                 log.error("failed to insert authn " + authn, e);
@@ -108,13 +109,14 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
         Enum<?> authType = authn.getAuthType();
         journalService.commit(Jane.Modify, userId, authType, commit -> {
 
-            final WinUserAnthnTable t = winUserAnthnDao.getTable();
+            final WinUserAuthnTable t = winUserAuthnDao.getTable();
             final Condition cond = t.onlyLive(t.AuthType.eq(wingsAuthTypeParser.parse(authType)).and(t.UserId.eq(userId)));
             Map<Field<?>, Object> setter = new HashMap<>();
 
             if (authn.getPassword() != null) {
+                PasswordHelper helper = new PasswordHelper(passwordEncoder, passsaltEncoder);
                 final String slat = GlobalAttributeHolder.getAttr(WarlockUserAttribute.SaltByUid, userId);
-                setter.put(t.Password, passsaltEncoder.salt(authn.getPassword(), slat));
+                setter.put(t.Password, helper.hash(authn.getPassword(), slat));
             }
 
             setter.put(t.Username, authn.getUsername());
@@ -127,7 +129,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             setter.put(t.CommitId, commit.getCommitId());
             setter.put(t.ModifyDt, commit.getCommitDt());
 
-            final int rc = winUserAnthnDao.update(setter, cond, true);
+            final int rc = winUserAuthnDao.update(setter, cond, true);
 
             if (rc != 1) {
                 log.warn("failed to modify authn. uid={}, type={}, affect={}", userId, authType, rc);
@@ -143,7 +145,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
         journalService.commit(Jane.Renew, userId, otherInfo, commit -> {
 
             final String at = wingsAuthTypeParser.parse(renew.getAuthType());
-            final WinUserAnthnTable t = winUserAnthnDao.getTable();
+            final WinUserAuthnTable t = winUserAuthnDao.getTable();
 
             final Condition cond = t.onlyLive(t.AuthType.eq(at).and(t.UserId.eq(userId)));
 
@@ -151,8 +153,8 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
             if (renew.getPassword() != null) {
                 final String slat = GlobalAttributeHolder.getAttr(WarlockUserAttribute.SaltByUid, userId);
-                final String pass = passsaltEncoder.salt(renew.getPassword(), slat);
-                setter.put(t.Password, passwordEncoder.encode(pass));
+                PasswordHelper helper = new PasswordHelper(passwordEncoder, passsaltEncoder);
+                setter.put(t.Password, helper.hash(renew.getPassword(), slat));
             }
 
             if (renew.getExpiredDt() != null) {
@@ -180,7 +182,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             setter.put(t.CommitId, commit.getCommitId());
             setter.put(t.ModifyDt, commit.getCommitDt());
 
-            final int rc = winUserAnthnDao.update(setter, cond, true);
+            final int rc = winUserAuthnDao.update(setter, cond, true);
 
             if (rc != 1) {
                 log.warn("failed to renew {}, key={}, affect={}", otherInfo, userId, rc);
@@ -191,8 +193,8 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
     @Override
     public @NotNull List<Item> list(long userId) {
-        final WinUserAnthnTable t = winUserAnthnDao.getTable();
-        return winUserAnthnDao.fetchLive(Item.class,
+        final WinUserAuthnTable t = winUserAuthnDao.getTable();
+        return winUserAuthnDao.fetchLive(Item.class,
                 t.Username,
                 t.AuthType,
                 t.ExpiredDt,

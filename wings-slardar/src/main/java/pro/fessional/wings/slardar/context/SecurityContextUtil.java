@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import pro.fessional.mirana.cast.TypedCastUtil;
+import pro.fessional.wings.slardar.security.WingsUserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -45,11 +46,8 @@ public class SecurityContextUtil {
     }
 
     @Nullable
-    @SuppressWarnings("unchecked")
-    public static <T> T getDetails() {
-        Authentication atn = SecurityContextHolder.getContext().getAuthentication();
-        if (atn == null) return null;
-        return (T) atn.getDetails();
+    public static WingsUserDetails getDetails() {
+        return getDetails(WingsUserDetails.class);
     }
 
     @Nullable

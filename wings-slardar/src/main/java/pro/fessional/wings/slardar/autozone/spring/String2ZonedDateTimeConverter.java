@@ -27,6 +27,7 @@ public class String2ZonedDateTimeConverter extends DateTimeFormatSupport {
 
     private final List<DateTimeFormatter> formats;
     private final Set<ConvertiblePair> pairs = Collections.singleton(new ConvertiblePair(String.class, ZonedDateTime.class));
+    private final boolean autoZone;
 
     @Override
     public Set<ConvertiblePair> getConvertibleTypes() {
@@ -38,13 +39,13 @@ public class String2ZonedDateTimeConverter extends DateTimeFormatSupport {
         final TimeZone tz = LocaleContextHolder.getTimeZone();
         final DateTimeFormatter fmt = getFormatter(targetType);
         final ZonedDateTime zdt;
-        final String str = (String) source;
         if (fmt != null) {
-            zdt = DateParser.parseZoned(str, tz.toZoneId(), fmt);
+            zdt = DateParser.parseZoned((String) source, tz.toZoneId(), fmt);
         }
         else {
-            zdt = DateParser.parseZoned(str, tz.toZoneId(), formats);
+            zdt = DateParser.parseZoned((String) source, tz.toZoneId(), formats);
         }
-        return DateLocaling.zoneZone(zdt, ZoneId.systemDefault());
+
+        return autoZone ? DateLocaling.zoneZone(zdt, ZoneId.systemDefault()) : zdt;
     }
 }

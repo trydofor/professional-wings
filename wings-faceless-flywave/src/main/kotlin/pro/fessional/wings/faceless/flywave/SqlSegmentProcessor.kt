@@ -11,10 +11,10 @@ import java.util.SortedMap
  * @since 2019-06-06
  */
 class SqlSegmentProcessor(
-        commentSingle: String = "--",
-        commentMultiple: String = "/*   */",
-        delimiterDefault: String = ";",
-        delimiterCommand: String = "DELIMITER"
+    commentSingle: String = "--",
+    commentMultiple: String = "/*   */",
+    delimiterDefault: String = ";",
+    delimiterCommand: String = "DELIMITER"
 ) {
 
     enum class DbsType {
@@ -26,23 +26,25 @@ class SqlSegmentProcessor(
     }
 
     class Segment(
-            val dbsType: DbsType, // 数据源类型
-            val lineBgn: Int, // 开始行，含
-            val lineEnd: Int, // 结束行，含
-            val tblName: String, // 主表
-            val tblIdx2: SortedMap<Int, Int>, // 要替换的启止坐标位置
-            val sqlText: String,  // SQL文本
-            val errType: ErrType = ErrType.Stop, // 错误处理
-            val askText: String, // 确认语句
-            val tblRegx: Regex? // 应用表正则
+        val dbsType: DbsType, // 数据源类型
+        val lineBgn: Int, // 开始行，含
+        val lineEnd: Int, // 结束行，含
+        val tblName: String, // 主表
+        val tblIdx2: SortedMap<Int, Pair<Int, String>>, // 要替换的启止坐标位置
+        val sqlText: String,  // SQL文本
+        val errType: ErrType = ErrType.Stop, // 错误处理
+        val askText: String, // 确认语句
+        val tblRegx: Regex?, // 应用表正则
+        val trgJour: Boolean, // 是否影响trigger
+        val dicName: Map<String, String> = emptyMap() // 名字替换
     ) {
         /**
-         * 返回应用到指定
+         * 筛选出可以被应用的table以及替换的关键词
          */
-        fun applyTbl(tables: List<String>?): Set<String> {
-            if (tables == null || tables.isEmpty() || tblIdx2.isEmpty() || tblName.isEmpty()) return emptySet()
+        fun applyTbl(tables: List<String>?): Map<String, Map<String, String>> {
+            if (tables == null || tables.isEmpty() || tblIdx2.isEmpty() || tblName.isEmpty()) return emptyMap()
 
-            return if (tblRegx == null) {
+            val tbls = if (tblRegx == null) {
                 tables.filter {
                     hasType(tblName, it) >= TYPE_PLAIN
                 }
@@ -61,6 +63,16 @@ class SqlSegmentProcessor(
                     }
                 }
             }.toSet()
+
+            if (tbls.isEmpty()) return emptyMap()
+            val tkns = tblIdx2.values.map { (_, v) -> v }.toSet()
+
+            return tbls.associateWith {
+                val tle = it.substringAfter(tblName)
+                tkns.associateWith { tk ->
+                    tk + tle
+                }
+            }
         }
 
         /**
@@ -131,6 +143,7 @@ class SqlSegmentProcessor(
         var tbApply = Null.Str
         var errType = ErrType.Stop
         var askText = Null.Str
+        var trgJour = false
         var inComment = false
         var lineCur = 0
         var delimiter = delimiterDefault
@@ -159,28 +172,31 @@ class SqlSegmentProcessor(
                     comment.setLength(0)
                     parseCmd(ts, blockComment1)
                 }
-                if (mt.isNotEmpty()) {
-                    val (tbl, pln, apl, ers, ask) = mt
-                    logger.debug("[parse] got annotation, line={} , tblName={}, dbsType={}, apply={}, error={}", lineCur, tbl, pln, apl, ers)
 
-                    if (tbl.isNotEmpty()) {
-                        tblName = tbl
+                if (mt != null) {
+                    logger.debug("[parse] got annotation, line={} , options={}", lineCur, mt)
+
+                    if (mt.tbl.isNotEmpty()) {
+                        tblName = mt.tbl
                     }
-                    if (pln.contains("shard", true)) {
+                    if (mt.dbs.contains("shard", true)) {
                         dbsAnot = 1
                     } else if (ln.contains("plain", true)) {
                         dbsAnot = -1
                     }
-                    if (apl.isNotEmpty()) {
-                        tbApply = apl
+                    if (mt.apl.isNotEmpty()) {
+                        tbApply = mt.apl
                     }
-                    if (ers.contains("skip", true)) {
+                    if (mt.ers.contains("skip", true)) {
                         errType = ErrType.Skip
-                    } else if (ers.contains("stop", true)) {
+                    } else if (mt.ers.contains("stop", true)) {
                         errType = ErrType.Stop
                     }
-                    if (ask.isNotEmpty()) {
-                        askText = ask
+                    if (mt.ask.isNotEmpty()) {
+                        askText = mt.ask
+                    }
+                    if (mt.trg) {
+                        trgJour = true
                     }
                 }
 
@@ -223,18 +239,21 @@ class SqlSegmentProcessor(
 
             val den = ln.endsWith(delimiter, true)
             if (den || lineCur == total) {
-                if(den) {
+                if (den) {
                     builder.append(ln, 0, ln.length - delimiter.length)
-                }else{
+                } else {
                     builder.append(ln)
                 }
                 val sql = builder.toString().trim()
                 if (sql.isNotEmpty()) {
+                    var rename = Null.Str
                     if (tblName.isEmpty()) {
                         logger.debug("[parse] use statementParser to get tableName and shard/plain")
                         when (val st = statementParser.parseTypeAndTable(sql)) {
                             is SqlStatementParser.SqlType.Plain -> {
                                 tblName = st.table
+                                rename = st.rename
+                                trgJour = true
                                 if (dbsAnot == 0) dbsAnot = -1
                             }
                             is SqlStatementParser.SqlType.Shard -> {
@@ -245,11 +264,14 @@ class SqlSegmentProcessor(
                                 logger.warn("[parse] unsupported type, use shard datasource to run, sql=$sql")
                         }
                     }
-                    val tblIdx2 = TemplateUtil.parse(sql, tblName)
+
+                    val dicName = if (rename.isBlank()) emptyMap() else mapOf(tblName to rename)
+                    val tblList = if (rename.isBlank()) listOf(tblName) else listOf(tblName, rename)
+                    val tblIdx2 = TemplateUtil.parse(sql, tblList)
                     val dbsType = if (dbsAnot < 0) DbsType.Plain else DbsType.Shard
                     val tblRegx = if (tbApply.isEmpty()) null else tbApply.toRegex(RegexOption.IGNORE_CASE)
                     logger.debug("[parse] got a segment line from={}, to={}, tableName={}, dbsType={}, errType={}, tblRegx={}", lineBgn, lineCur, tblName, dbsType, errType, tbApply)
-                    result.add(Segment(dbsType, lineBgn, lineCur, tblName, tblIdx2, sql, errType, askText, tblRegx))
+                    result.add(Segment(dbsType, lineBgn, lineCur, tblName, tblIdx2, sql, errType, askText, tblRegx, trgJour, dicName))
                 }
                 // reset for next
                 lineBgn = -1
@@ -258,6 +280,7 @@ class SqlSegmentProcessor(
                 tbApply = Null.Str
                 errType = ErrType.Stop
                 askText = Null.Str
+                trgJour = false
                 builder.setLength(0)
             } else {
                 builder.append(ln).append("\n")
@@ -273,7 +296,7 @@ class SqlSegmentProcessor(
      * @param segment 解析过的sql片段
      * @param newTbl 新表
      */
-    fun merge(segment: Segment, newTbl: String) = TemplateUtil.merge(segment.sqlText, segment.tblIdx2, newTbl)
+    fun merge(segment: Segment, newTbl: Map<String, String>) = TemplateUtil.merge(segment.sqlText, segment.tblIdx2, newTbl)
 
     companion object {
         const val TYPE_OTHER = -1
@@ -316,13 +339,23 @@ class SqlSegmentProcessor(
         // -- wgs_order@plain apply@ctr_clerk[_0-0]* error@skip ask@danger
         private val cmdReg = """([^@\s]+)?\s*@\s*([^@\s]+)""".toRegex(RegexOption.MULTILINE)
 
-        fun parseCmd(line: String, head: String): Array<String> {
+        data class Opt (
+            val tbl:String = Null.Str,
+            val dbs:String = Null.Str,
+            val apl:String = Null.Str,
+            val ers:String = Null.Str,
+            val ask:String = Null.Str,
+            val trg:Boolean = false
+        )
+
+        fun parseCmd(line: String, head: String): Opt? {
             var emt = true
             var tbl = Null.Str
             var dbs = Null.Str
             var apl = Null.Str
             var ers = Null.Str
             var ask = Null.Str
+            var trg = false
             for (mr in cmdReg.findAll(line.substringAfter(head))) {
                 val (ko, vo) = mr.destructured
                 val k = ko.trim()
@@ -340,10 +373,13 @@ class SqlSegmentProcessor(
                 } else if (k.equals("ask", true)) {
                     ask = v
                     emt = false
+                } else if (v.equals("trigger", true)) {
+                    trg = true
+                    emt = false
                 }
             }
 
-            return if (emt) emptyArray() else arrayOf(tbl, dbs, apl, ers, ask)
+            return if (emt) null else Opt(tbl, dbs, apl, ers, ask, trg)
         }
     }
 }

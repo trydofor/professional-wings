@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @author trydofor
  * @since 2021-06-09
  */
-@SpringBootTest
+@SpringBootTest(properties = "spring.wings.slardar.enabled.mock-hazelcast=false")
 public class EventPublishHelperTest {
 
     @Test

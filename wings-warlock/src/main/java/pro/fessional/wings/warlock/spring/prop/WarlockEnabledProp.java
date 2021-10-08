@@ -151,4 +151,10 @@ public class WarlockEnabledProp {
      */
     private boolean controllerAuth = true;
     public static final String Key$controllerAuth = Key + ".controller-auth";
+
+    /**
+     * @see #Key$controllerUser
+     */
+    private boolean controllerUser = true;
+    public static final String Key$controllerUser = Key + ".controller-user";
 }

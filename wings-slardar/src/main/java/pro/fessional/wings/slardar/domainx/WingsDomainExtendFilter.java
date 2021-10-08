@@ -1,15 +1,16 @@
 package pro.fessional.wings.slardar.domainx;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.web.servlet.filter.OrderedFilter;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.core.Ordered;
+import org.springframework.web.filter.OncePerRequestFilter;
 import pro.fessional.mirana.text.Wildcard;
 import pro.fessional.wings.slardar.servlet.WingsServletConst;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -21,15 +22,15 @@ import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_DOMAIN_
  * @since 2019-11-16
  */
 @RequiredArgsConstructor
-public class WingsDomainExtendFilter implements OrderedFilter {
+public class WingsDomainExtendFilter extends OncePerRequestFilter implements Ordered {
 
     private final Map<String, List<String[]>> hostWildcard;
     private final DomainRequestMatcher domainRequestMatcher;
 
     @Override
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+    protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse res, @NotNull FilterChain chain)
+            throws ServletException, IOException {
 
-        HttpServletRequest request = (HttpServletRequest) req;
         String host = request.getServerName();
         String domain = null;
 

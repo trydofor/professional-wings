@@ -16,7 +16,7 @@ CREATE TABLE `win_user_basis` (
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='120/用户基本表';
 
-CREATE TABLE `win_user_anthn` (
+CREATE TABLE `win_user_authn` (
     `id`         BIGINT(20)    NOT NULL COMMENT '主键',
     `create_dt`  DATETIME(3)   NOT NULL DEFAULT NOW(3) COMMENT '创建日时(系统)',
     `modify_dt`  DATETIME(3)   NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时(系统)',
@@ -55,7 +55,7 @@ CREATE TABLE `win_user_login` (
 
 INSERT IGNORE INTO `sys_light_sequence` (`seq_name`, `block_id`, `next_val`, `step_val`, `comments`)
 VALUES ('win_user_basis', 0, 10000, 100, '动态插入5位起，静态5位'),
-       ('win_user_anthn', 0, 10000, 100, '动态插入5位起，静态5位');
+       ('win_user_authn', 0, 10000, 100, '动态插入5位起，静态5位');
 
 --
 REPLACE INTO `sys_constant_enum` (`id`, `type`, `code`, `hint`, `info`)
@@ -81,5 +81,5 @@ VALUES (0, NOW(3), 0, 'nobody', UUID(), 1200103, '', 'zh_CN', 1010201, '系统�
        (1, NOW(3), 0, 'root', UUID(), 1200103, '', 'zh_CN', 1010201, '超级用户，拥有所以权限', 1200202),
        (2, NOW(3), 0, 'daemon', UUID(), 1200103, '', 'zh_CN', 1010201, '系统用户，执行后台任务', 1200207);
 
-INSERT IGNORE INTO `win_user_anthn`(`id`, `create_dt`, `commit_id`, `user_id`, `auth_type`, `username`, `password`, `expired_dt`)
+INSERT IGNORE INTO `win_user_authn`(`id`, `create_dt`, `commit_id`, `user_id`, `auth_type`, `username`, `password`, `expired_dt`)
 VALUES (1, NOW(3), 0, 1, 'username', 'root', CONCAT('{never}', UUID()), '2999-09-09');

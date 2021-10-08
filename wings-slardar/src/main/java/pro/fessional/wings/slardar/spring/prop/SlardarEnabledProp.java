@@ -41,6 +41,14 @@ public class SlardarEnabledProp {
     public static final String Key$caching = Key + ".caching";
 
     /**
+     * 是否实现cookie定制
+     *
+     * @see #Key$cookie
+     */
+    private boolean cookie = true;
+    public static final String Key$cookie = Key + ".cookie";
+
+    /**
      * 是否默认配置session
      *
      * @see #Key$session
@@ -197,6 +205,15 @@ public class SlardarEnabledProp {
      */
     private boolean devtool = true;
     public static final String Key$devtool = Key + ".devtool";
+
+    /**
+     * 在devtool时，以standalone方式启动，可减少集群影响。
+     * 高级测试，参考 https://github.com/hazelcast/hazelcast-simulator/blob/master/README.md
+     *
+     * @see #Key$mockHazelcast
+     */
+    private boolean mockHazelcast = false;
+    public static final String Key$mockHazelcast = Key + ".mock-hazelcast";
 
     /**
      * 是否开启监控

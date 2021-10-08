@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
+import pro.fessional.wings.slardar.security.PasswordHelper;
 import pro.fessional.wings.slardar.security.WingsUidPrincipalToken;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
@@ -118,7 +119,8 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
         String presentedPassword = auth.getCredentials().toString();
         // 加盐处理
         if (passsaltEncoder != null && details instanceof WingsUserDetails) {
-            presentedPassword = passsaltEncoder.salt(presentedPassword, ((WingsUserDetails) details).getPasssalt());
+            PasswordHelper helper = new PasswordHelper(passwordEncoder, passsaltEncoder);
+            presentedPassword = helper.salt(presentedPassword, ((WingsUserDetails) details).getPasssalt());
         }
         return presentedPassword;
     }

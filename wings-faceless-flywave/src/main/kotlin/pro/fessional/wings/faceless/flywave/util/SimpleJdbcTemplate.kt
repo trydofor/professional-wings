@@ -12,11 +12,7 @@ import javax.sql.DataSource
  */
 class SimpleJdbcTemplate(val dataSource: DataSource, val name: String = "unnamed") {
 
-    private val jdbcTmpl: JdbcTemplate
-
-    init {
-        this.jdbcTmpl = templates.computeIfAbsent(dataSource) { JdbcTemplate(dataSource) }
-    }
+    private val jdbcTmpl: JdbcTemplate = templates.computeIfAbsent(dataSource) { JdbcTemplate(dataSource) }
 
     fun count(sql: String, vararg args: Any?): Int {
         return if (args.isEmpty()) {

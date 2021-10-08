@@ -11,9 +11,11 @@ import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.slardar.autozone.spring.LocalDate2StringConverter;
 import pro.fessional.wings.slardar.autozone.spring.LocalDateTime2StringConverter;
 import pro.fessional.wings.slardar.autozone.spring.LocalTime2StringConverter;
+import pro.fessional.wings.slardar.autozone.spring.OffsetDateTime2StringConverter;
 import pro.fessional.wings.slardar.autozone.spring.String2LocalDateConverter;
 import pro.fessional.wings.slardar.autozone.spring.String2LocalDateTimeConverter;
 import pro.fessional.wings.slardar.autozone.spring.String2LocalTimeConverter;
+import pro.fessional.wings.slardar.autozone.spring.String2OffsetDateTimeConverter;
 import pro.fessional.wings.slardar.autozone.spring.String2ZonedDateTimeConverter;
 import pro.fessional.wings.slardar.autozone.spring.ZonedDateTime2StringConverter;
 import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
@@ -100,13 +102,31 @@ public class SlardarDateTimeConfiguration {
                                      .stream()
                                      .map(DateTimeFormatter::ofPattern)
                                      .collect(Collectors.toList());
-        return new String2ZonedDateTimeConverter(fmt);
+        return new String2ZonedDateTimeConverter(fmt, slardarDatetimeProp.getZoned().isAuto());
     }
 
     @Bean
     public ZonedDateTime2StringConverter zonedDateTimeStringConverter() {
         logger.info("Wings conf zonedDateTimeStringConverter");
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern(slardarDatetimeProp.getZoned().getFormat());
-        return new ZonedDateTime2StringConverter(fmt);
+        return new ZonedDateTime2StringConverter(fmt, slardarDatetimeProp.getZoned().isAuto());
+    }
+
+    @Bean
+    public String2OffsetDateTimeConverter stringOffsetDateTimeConverter() {
+        logger.info("Wings conf stringOffsetDateTimeConverter");
+        val fmt = slardarDatetimeProp.getOffset()
+                                     .getSupport()
+                                     .stream()
+                                     .map(DateTimeFormatter::ofPattern)
+                                     .collect(Collectors.toList());
+        return new String2OffsetDateTimeConverter(fmt, slardarDatetimeProp.getOffset().isAuto());
+    }
+
+    @Bean
+    public OffsetDateTime2StringConverter offsetDateTimeStringConverter() {
+        logger.info("Wings conf offsetDateTimeStringConverter");
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern(slardarDatetimeProp.getOffset().getFormat());
+        return new OffsetDateTime2StringConverter(fmt, slardarDatetimeProp.getOffset().isAuto());
     }
 }

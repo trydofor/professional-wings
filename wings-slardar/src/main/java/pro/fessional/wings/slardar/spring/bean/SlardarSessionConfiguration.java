@@ -84,21 +84,38 @@ public class SlardarSessionConfiguration {
     }
 
     @Bean
+    public DefaultCookieSerializerCustomizer slardarCookieSerializerCustomizer() {
+        return it -> {
+            final boolean base64 = slardarSessionProp.isCookieBase64();
+            logger.info("Wings conf Session Cookie Base64=" + base64);
+            it.setUseBase64Encoding(base64);
+            final String jvmRoute = slardarSessionProp.getCookieRoute();
+            if (StringUtils.hasText(jvmRoute)) {
+                logger.info("Wings conf Session Cookie jvmRoute=" + jvmRoute);
+                it.setJvmRoute(jvmRoute);
+            }
+
+        };
+    }
+
+    @Bean
     public HttpSessionIdResolver httpSessionIdResolver(
             ObjectProvider<ServerProperties> serverProperties,
             ObjectProvider<CookieSerializer> cookieSerializer,
             ObjectProvider<DefaultCookieSerializerCustomizer> cookieSerializerCustomizers) {
 
-        final List<HttpSessionIdResolver> httpSessionIdResolver = new ArrayList<>();
+        final List<HttpSessionIdResolver> resolvers = new ArrayList<>();
         if (StringUtils.hasText(slardarSessionProp.getCookieName())) {
             final ServerProperties server = serverProperties.getIfAvailable();
             ArgsAssert.notNull(server, "need `server.servlet.session.*` config");
             Session.Cookie cookie = server.getServlet().getSession().getCookie();
-            final String cookieName = slardarSessionProp.getCookieName();
-            if (cookieName.equals(cookie.getName())) {
-                logger.info("Wings conf cookieHttpSessionIdResolver by server.servlet.session.cookie.name=" + cookieName);
-            } else {
-                logger.warn("Wings conf cookieHttpSessionIdResolver by cookie.name=" + cookieName + ", but server.servlet.session.cookie.name =" + cookie.getName());
+            final String propName = slardarSessionProp.getCookieName();
+            final String servName = cookie.getName();
+            if (propName.equals(servName)) {
+                logger.info("Wings conf cookieHttpSessionIdResolver by server.servlet.session.cookie.name=" + propName);
+            }
+            else {
+                logger.warn("Wings conf cookieHttpSessionIdResolver by cookie.name=" + propName + ", but server.servlet.session.cookie.name =" + servName);
             }
 
             CookieSerializer serializer = cookieSerializer.getIfAvailable();
@@ -106,7 +123,7 @@ public class SlardarSessionConfiguration {
                 logger.info("Wings conf httpSessionIdResolver CookieSerializer by default");
                 DefaultCookieSerializer defaultCookieSerializer = new DefaultCookieSerializer();
                 PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();
-                map.from(cookieName).to(defaultCookieSerializer::setCookieName);
+                map.from(propName).to(defaultCookieSerializer::setCookieName);
                 map.from(cookie::getDomain).to(defaultCookieSerializer::setDomainName);
                 map.from(cookie::getPath).to(defaultCookieSerializer::setCookiePath);
                 map.from(cookie::getHttpOnly).to(defaultCookieSerializer::setUseHttpOnlyCookie);
@@ -117,16 +134,16 @@ public class SlardarSessionConfiguration {
             }
             final CookieHttpSessionIdResolver cookieHttpSessionIdResolver = new CookieHttpSessionIdResolver();
             cookieHttpSessionIdResolver.setCookieSerializer(serializer);
-            httpSessionIdResolver.add(cookieHttpSessionIdResolver);
+            resolvers.add(cookieHttpSessionIdResolver);
         }
 
         final String headerName = slardarSessionProp.getHeaderName();
         if (StringUtils.hasText(headerName)) {
             final HeaderHttpSessionIdResolver headerHttpSessionIdResolver = new HeaderHttpSessionIdResolver(headerName);
             logger.info("Wings conf headerHttpSessionIdResolver by header.name=" + headerName);
-            httpSessionIdResolver.add(headerHttpSessionIdResolver);
+            resolvers.add(headerHttpSessionIdResolver);
         }
 
-        return new WingsSessionIdResolver(httpSessionIdResolver);
+        return new WingsSessionIdResolver(resolvers);
     }
 }

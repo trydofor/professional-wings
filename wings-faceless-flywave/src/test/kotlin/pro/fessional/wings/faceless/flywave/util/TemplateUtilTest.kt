@@ -21,6 +21,15 @@ class TemplateUtilTest {
     }
 
     @Test
+    fun bnd() {
+        val txt = """CREATE TABLE `SYS_LIGHT_SEQUENCE_01` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'"""
+        val tkn = "SYS_LIGHT_SEQUENCE"
+        val idx = TemplateUtil.parse(txt, tkn, "'\"",false)
+        val mrg = TemplateUtil.merge(txt, idx, "中文表也是表")
+        assertEquals("""CREATE TABLE `中文表也是表_01` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'""", mrg)
+    }
+
+    @Test
     fun more() {
         val txt = """CREATE TABLE `SYS_LIGHT_SEQUENCE` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'"""
         val tkn = listOf("SYS_LIGHT_SEQUENCE","LIGHT_SEQUENCE","SEQUENCE`")

@@ -66,6 +66,6 @@ class NonceLoginTest {
         String zones = OkHttpClientHelper.extractString(r4, false);
         log.warn("get zones = " + zones);
         Assertions.assertTrue(zones.contains("America/New_York"));
-        Assertions.assertTrue(zones.contains("2021-01-01 00:00:00"));
+        Assertions.assertTrue(zones.contains("2021-01-01 05:00:00"));
     }
 }

@@ -5,6 +5,7 @@ import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader.Companion.TYPE_IDX
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader.Companion.TYPE_TBL
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader.Companion.TYPE_TRG
+import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader.Trg
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
 import java.util.LinkedList
 import java.util.concurrent.ConcurrentHashMap
@@ -68,10 +69,7 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
             val t = it.getString("ACTION_TIMING")
             val e = it.getString("EVENT_MANIPULATION")
             val s = it.getString("ACTION_STATEMENT")
-            rst.add("""
-                |CREATE TRIGGER `$n` $t $e ON `$table`
-                |FOR EACH ROW $s
-            """.trimMargin())
+            rst.add("CREATE TRIGGER `$n` $t $e ON `$table` FOR EACH ROW $s")
         }
 
         return rst
@@ -239,8 +237,8 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
         return rst
     }
 
-    override fun showBoneTrg(dataSource: DataSource, table: String): Map<String, String> {
-        val rst = HashMap<String, String>()
+    override fun showBoneTrg(dataSource: DataSource, table: String): List<Trg> {
+        val rst = ArrayList<Trg>()
         if (isH2Database(dataSource)) {
             return rst
         }
@@ -248,6 +246,8 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
         SimpleJdbcTemplate(dataSource).query("""
             SELECT
                 TRIGGER_NAME,
+                ACTION_TIMING,
+                EVENT_MANIPULATION,
                 ACTION_STATEMENT
             FROM
                 INFORMATION_SCHEMA.TRIGGERS
@@ -255,9 +255,25 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
                 EVENT_OBJECT_SCHEMA = database()
                 AND EVENT_OBJECT_TABLE = ?
             """, table) {
-            rst.put(it.getString("TRIGGER_NAME"), it.getString("ACTION_STATEMENT"))
+            rst.add(
+                Trg(
+                    it.getString("TRIGGER_NAME"),
+                    it.getString("ACTION_TIMING"),
+                    it.getString("EVENT_MANIPULATION"),
+                    it.getString("ACTION_STATEMENT"),
+                    table
+                )
+            )
         }
 
         return rst
+    }
+
+    override fun makeDdlTrg(trg: Trg, drop: Boolean): String {
+        return if (drop) {
+            "DROP TRIGGER IF EXISTS ${trg.name}"
+        } else {
+            "CREATE TRIGGER ${trg.name} ${trg.timing} ${trg.action} ON ${trg.table} FOR EACH ROW ${trg.event}"
+        }
     }
 }

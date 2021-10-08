@@ -44,7 +44,7 @@ public class Devops7SchemaDumperTest {
                 "sys_standard_i18n",  // 106/标准多国语
                 "-- ==================== Floor-1(F1/12#-13#):用户 =======================",
                 "win_user_basis",  // 120/用户基本表
-                "win_user_anthn",  // 121/用户验证表
+                "win_user_authn",  // 121/用户验证表
                 "win_user_login",  // 122/用户登录表
                 "win_perm_entry",  // 130/权限条目表
                 "win_role_entry",  // 131/角色条目表
@@ -66,7 +66,7 @@ public class Devops7SchemaDumperTest {
                 "sys_constant_.*",
                 "sys_standard_.*",
                 "win_user_basis",  // 120/用户基本表
-                "win_user_anthn",  // 121/用户验证表
+                "win_user_authn",  // 121/用户验证表
                 "win_user_login",  // 122/用户登录表
                 "win_perm_entry",  // 130/权限条目表
                 "win_role_entry",  // 131/角色条目表

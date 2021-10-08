@@ -85,7 +85,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
         TimeZone timeZone = resolveUserTimeZone(request);
 
         if (locale == null || timeZone == null) {
-            final WingsUserDetails dt = SecurityContextUtil.getDetails(WingsUserDetails.class);
+            final WingsUserDetails dt = SecurityContextUtil.getDetails();
 
             if (locale == null) {
                 if (dt == null) {

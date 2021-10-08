@@ -57,9 +57,18 @@ interface SchemaDefinitionLoader {
      */
     fun showPkeyCol(dataSource: DataSource, table: String): List<String>
 
+    data class Trg(val name: String, val timing: String, val action: String, val event: String, val table: String)
+
     /**
      * 获得当前表触发器的名字和`EVENT`内容
      * @param table 目标表名。
      */
-    fun showBoneTrg(dataSource: DataSource, table: String): Map<String, String>
+    fun showBoneTrg(dataSource: DataSource, table: String): List<Trg>
+
+    /**
+     * 根据 Trg定义，创建trigger ddl
+     * @param trg 定义
+     * @param drop 是drop还是create
+     */
+    fun makeDdlTrg(trg: Trg, drop: Boolean): String
 }
