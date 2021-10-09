@@ -14,6 +14,7 @@ import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
+import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -46,7 +47,7 @@ public class AuthedUserController {
     }
 
     @ApiOperation(value = "获得登录用户的自身基本信息，未登录时status=401")
-    @RequestMapping(value = "/user/authed-user.json", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedUser + "}", method = {RequestMethod.POST, RequestMethod.GET})
     public R<Dto> authedUser() {
         final WingsUserDetails wd = SecurityContextUtil.getDetails();
         if (wd == null) return R.ng();
@@ -72,7 +73,7 @@ public class AuthedUserController {
 
     @ApiOperation(value = "检查登录用户的权限，不区分大小写比较，返回存在的权限，未登录时status=401",
             notes = "alias优先于perms检测，alias表示以其value返回，以方便历史命名映射。")
-    @RequestMapping(value = "/user/authed-perm.json", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedPerm + "}", method = {RequestMethod.POST, RequestMethod.GET})
     public R<Set<String>> authedPerm(@RequestBody Ins ins) {
         final WingsUserDetails wd = SecurityContextUtil.getDetails();
         if (wd == null) return R.ng();

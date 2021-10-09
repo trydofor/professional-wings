@@ -26,6 +26,7 @@ import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
+import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,24 +48,26 @@ public class LoginPageController {
     @Setter(onMethod_ = {@Autowired(required = false)})
     private HttpSessionIdResolver httpSessionIdResolver;
 
+    @SuppressWarnings("MVCPathVariableInspection")
     @ApiOperation(value = "集成登录默认页，默认返回支持的type类表",
             notes = "①当鉴权失败时，重定向页面，status=401;"
                     + "②直接访问时返回status=200")
-    @RequestMapping(value = "/auth/login-page.{extName}", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseEntity<?> loginPageDefault(@PathVariable("extName") String extName,
-                                              HttpServletRequest request,
-                                              HttpServletResponse response) {
+    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginList + "}", method = {RequestMethod.POST, RequestMethod.GET})
+    public ResponseEntity<?> loginList(@PathVariable("extName") String extName,
+                                           HttpServletRequest request,
+                                           HttpServletResponse response) {
         final MediaType mt = ContentTypeHelper.mediaTypeByUri(extName);
         log.info("default login-page media-type={}", mt);
         return wingsAuthPageHandler.response(Null.Enm, mt, request, response);
     }
 
+    @SuppressWarnings("MVCPathVariableInspection")
     @ApiOperation(value = "具体验证登录默认页，根据content-type自动返回",
             notes = "一般用于定制访问，如github页面重定向。支持state参数，用于构造oauth2的有意义的state"
                     + "①当鉴权失败时，重定向页面，status=401;"
                     + "②直接访问时返回status=200;")
-    @RequestMapping(value = "/auth/{authType}/login-page.{extName}", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseEntity<?> LoginPageAuto(@PathVariable("authType") String authType,
+    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginPage + "}", method = {RequestMethod.POST, RequestMethod.GET})
+    public ResponseEntity<?> LoginPage(@PathVariable("authType") String authType,
                                            @PathVariable("extName") String extName,
                                            @RequestParam(value = "state", required = false) String state,
                                            HttpServletRequest request,
@@ -80,8 +83,8 @@ public class LoginPageController {
                     + "②status=300&success=false时，进行中，message=authing "
                     + "③status=200&success=true时成功，data=sessionId "
                     + "④在header中，也可以有session和cookie")
-    @PostMapping(value = "/auth/nonce/check.json")
-    public ResponseEntity<R<?>> tokenNonce(@RequestHeader("token") String token, HttpServletRequest request, HttpServletResponse response) {
+    @PostMapping(value = "${" + WarlockUrlmapProp.Key$authNonceCheck + "}")
+    public ResponseEntity<R<?>> nonceCheck(@RequestHeader("token") String token, HttpServletRequest request, HttpServletResponse response) {
         final String sid = NonceTokenSessionHelper.authNonce(token, wingsRemoteResolver.resolveRemoteKey(request));
         if (sid == null) {
             return ResponseEntity
