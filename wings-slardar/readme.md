@@ -283,6 +283,11 @@ cookie体系下，可通过定制Filter和Wrapper实现以下功能。
   - noop - 不加密，明文，如随机token，没必要消耗计算资源
   - b64 - base64,spring默认的加密机制，只用了防止特殊字符干扰
   - aes - aes128,非敏感数据的初级加密，基本的防偷窥功能
+* 定制 http-only, secure, domain, path。
+
+其中需要注意的是，
+* http-only会使js无法读取，有时需要放开（注意CSRF攻击）
+* session的设置，应该在spring-session-79.properties 中设置
 
 ### 3.4.3.多中验证及绑定登录
 

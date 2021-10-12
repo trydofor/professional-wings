@@ -13,6 +13,9 @@ import pro.fessional.wings.slardar.servlet.cookie.impl.WingsCookieInterceptorImp
 import pro.fessional.wings.slardar.spring.prop.SlardarCookieProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
+import java.util.Map;
+import java.util.Set;
+
 import static pro.fessional.wings.slardar.servlet.cookie.WingsCookieInterceptor.Coder.Aes;
 import static pro.fessional.wings.slardar.servlet.cookie.WingsCookieInterceptor.Coder.B64;
 import static pro.fessional.wings.slardar.servlet.cookie.WingsCookieInterceptor.Coder.Nop;
@@ -39,6 +42,7 @@ public class SlardarCookieConfiguration {
         else {
             logger.info("Wings conf WingsCookieInterceptor");
         }
+
         WingsCookieInterceptorImpl interceptor = new WingsCookieInterceptorImpl(aesKey);
         interceptor.setPrefix(slardarCookieProp.getPrefix());
         interceptor.setCoder(slardarCookieProp.getCoder());
@@ -46,6 +50,29 @@ public class SlardarCookieConfiguration {
         interceptor.addCodes(Nop, slardarCookieProp.getNop());
         interceptor.addCodes(B64, slardarCookieProp.getB64());
         interceptor.addCodes(Aes, slardarCookieProp.getAes());
+
+        for (Map.Entry<Boolean, Set<String>> en : slardarCookieProp.getHttpOnly().entrySet()) {
+            final Boolean k = en.getKey();
+            for (String s : en.getValue()) {
+                interceptor.addHttpOnly(s, k);
+            }
+        }
+
+        for (Map.Entry<Boolean, Set<String>> en : slardarCookieProp.getSecure().entrySet()) {
+            final Boolean k = en.getKey();
+            for (String s : en.getValue()) {
+                interceptor.addSecure(s, k);
+            }
+        }
+
+        for (Map.Entry<String, Set<String>> en : slardarCookieProp.getDomain().entrySet()) {
+            interceptor.addDomain(en.getKey(), en.getValue());
+        }
+
+        for (Map.Entry<String, Set<String>> en : slardarCookieProp.getPath().entrySet()) {
+            interceptor.addPath(en.getKey(), en.getValue());
+        }
+
         return interceptor;
     }
 

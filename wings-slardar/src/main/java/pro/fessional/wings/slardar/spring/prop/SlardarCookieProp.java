@@ -68,4 +68,32 @@ public class SlardarCookieProp {
      */
     private String aesKey = "";
     public static final String Key$aesKey = Key + ".aes-key";
+
+    /**
+     * http only，js不可读取
+     *
+     * @see #Key$httpOnly
+     */
+    private Map<Boolean, Set<String>> httpOnly = Collections.emptyMap();
+    public static final String Key$httpOnly = Key + ".http-only";
+
+    /**
+     * https 下发送
+     *
+     * @see #Key$secure
+     */
+    private Map<Boolean, Set<String>> secure = Collections.emptyMap();
+    public static final String Key$secure = Key + ".secure";
+
+    /**
+     * @see #Key$domain
+     */
+    private Map<String, Set<String>> domain = Collections.emptyMap();
+    public static final String Key$domain = Key + ".domain";
+
+    /**
+     * @see #Key$path
+     */
+    private Map<String, Set<String>> path = Collections.emptyMap();
+    public static final String Key$path = Key + ".path";
 }

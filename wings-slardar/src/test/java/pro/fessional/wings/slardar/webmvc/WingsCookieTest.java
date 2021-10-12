@@ -46,7 +46,19 @@ import static pro.fessional.wings.slardar.httprest.OkHttpClientHelper.APPLICATIO
                 "wings.slardar.cookie.nop=ck1,ck2",
                 "wings.slardar.cookie.b64=b64",
                 "wings.slardar.cookie.aes=aes",
+                "wings.slardar.cookie.http-only.true=ck1,ck2",
+                "wings.slardar.cookie.http-only.false=b64,aes",
+                "wings.slardar.cookie.secure.true=",
+                "wings.slardar.cookie.secure.false=ck1,ck2,b64,aes",
+                "wings.slardar.cookie.domain[a.com]=b,c",
+                "wings.slardar.cookie.path[/admin]=b,c",
         })
+/*
+        res.addCookie(newCookie("b64", ins.b64,true,true));
+        res.addCookie(newCookie("aes", ins.aes,true,true));
+        res.addCookie(newCookie("ck1", ins.ck1,false,true));
+        res.addCookie(newCookie("ck2", ins.ck2,false,true));
+ */
 @AutoConfigureMockMvc
 public class WingsCookieTest {
 
@@ -101,9 +113,17 @@ public class WingsCookieTest {
                .andDo(print())
                .andExpect(status().isOk())
                .andExpect(cookie().value(PREFIX + "ck1", ins.getCk1()))
+               .andExpect(cookie().httpOnly(PREFIX + "ck1", true))
+               .andExpect(cookie().secure(PREFIX + "ck1", false))
                .andExpect(cookie().value(PREFIX + CK2OTH, ins.getCk2()))
+               .andExpect(cookie().httpOnly(PREFIX + CK2OTH, true))
+               .andExpect(cookie().secure(PREFIX + CK2OTH, false))
                .andExpect(cookie().value(PREFIX + "b64", Base64.encode(ins.getB64())))
+               .andExpect(cookie().httpOnly(PREFIX + "b64", false))
+               .andExpect(cookie().secure(PREFIX + "b64", false))
                .andExpect(cookie().value(PREFIX + "aes", aes128.encode64(ins.getAes())))
+               .andExpect(cookie().httpOnly(PREFIX + "aes", false))
+               .andExpect(cookie().secure(PREFIX + "aes", false))
                .andExpect(cookie().value(PREFIX + "oth", aes128.encode64(ins.getOth())))
                .andExpect(content().string(ins.getCk1() + ins.getCk2()))
         ;
@@ -134,8 +154,9 @@ public class WingsCookieTest {
             assertEquals(ins.getCk1() + ins.getCk2(), resBody.string());
 
             final Set<String> cookies = new HashSet<>(response.headers("Set-Cookie"));
-            assertTrue(cookies.contains(PREFIX + "ck1=" + ins.getCk1()));
-            assertTrue(cookies.contains(PREFIX + CK2OTH + "=" + ins.getCk2()));
+            System.out.println(String.join("|", cookies));
+            assertTrue(cookies.contains(PREFIX + "ck1=" + ins.getCk1() + "; HttpOnly"));
+            assertTrue(cookies.contains(PREFIX + CK2OTH + "=" + ins.getCk2() + "; HttpOnly"));
             assertTrue(cookies.contains(PREFIX + "b64=" + Base64.encode(ins.getB64())));
             assertTrue(cookies.contains(PREFIX + "aes=" + aes128.encode64(ins.getAes())));
             assertTrue(cookies.contains(PREFIX + "oth=" + aes128.encode64(ins.getOth())));

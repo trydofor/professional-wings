@@ -16,6 +16,8 @@ import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -44,11 +46,12 @@ public class AuthedUserController {
         private String zoneid;
         private int offset;
         private String authtype;
+        private String token;
     }
 
     @ApiOperation(value = "获得登录用户的自身基本信息，未登录时status=401")
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedUser + "}", method = {RequestMethod.POST, RequestMethod.GET})
-    public R<Dto> authedUser() {
+    public R<Dto> authedUser(HttpServletRequest request) {
         final WingsUserDetails wd = SecurityContextUtil.getDetails();
         if (wd == null) return R.ng();
 
@@ -62,6 +65,10 @@ public class AuthedUserController {
         final ZoneId zid = wd.getZoneId();
         dto.setZoneid(zid.getId());
         dto.setOffset(ZonedDateTime.now(zid).getOffset().getTotalSeconds());
+        final HttpSession session = request.getSession(false);
+        if (session != null) {
+            dto.setToken(session.getId());
+        }
         return R.okData(dto);
     }
 
