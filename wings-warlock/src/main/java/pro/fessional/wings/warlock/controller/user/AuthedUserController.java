@@ -49,7 +49,7 @@ public class AuthedUserController {
         private String token;
     }
 
-    @ApiOperation(value = "获得登录用户的自身基本信息，未登录时status=401")
+    @ApiOperation(value = "获得登录用户的自身基本信息，未登录时Result(false)；可设置URL权限，返回status=401")
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedUser + "}", method = {RequestMethod.POST, RequestMethod.GET})
     public R<Dto> authedUser(HttpServletRequest request) {
         final WingsUserDetails wd = SecurityContextUtil.getDetails();
@@ -78,7 +78,7 @@ public class AuthedUserController {
         private Set<String> perms;
     }
 
-    @ApiOperation(value = "检查登录用户的权限，不区分大小写比较，返回存在的权限，未登录时status=401",
+    @ApiOperation(value = "检查登录用户的权限，不区分大小写比较，返回存在的权限；未登录时Result(false)，可设置URL权限，返回status=401",
             notes = "alias优先于perms检测，alias表示以其value返回，以方便历史命名映射。")
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedPerm + "}", method = {RequestMethod.POST, RequestMethod.GET})
     public R<Set<String>> authedPerm(@RequestBody Ins ins) {
