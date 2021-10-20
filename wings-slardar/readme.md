@@ -466,17 +466,19 @@ org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 沿用dota命名，此处命名为 @DoubleKill注解，通过Jvm全局锁和DoubleKillException完成。
 
 在controller层，需要使用@RequestParam 或@RequestHeader等注入参数。
-对应session级别的控制，可使用@bean进行处理。
+对应session级别的控制，可使用@bean进行处理。默认返回202(Accepted)
 
-默认对DoubleKillException返回固定的json字符串，注入DoubleKillExceptionResolver可替换
+默认对DoubleKillException返回固定的json字符串，注入DoubleKillExceptionResolver可替换，
+需要注意ExceptionResolver或ExceptionHandler的Order，避免异常捕获的层级错误。
 
 详细用法，可参考TestDoubleKillController和DoubleKillService
 
 ## 3.7.3.验证码
 
-对于受保护的资源，要采取一定的验证码，有时是为了延缓时间，有时是为了区分行为。 验证码可以header或param进行校验（默认param）去请求验证码图片等。
+对于受保护的资源，要采取一定的验证码，有时是为了延缓时间，有时是为了区分行为。 
+验证码可以header或param进行校验（默认param）去请求验证码图片等。
 
-在spring Security中，对401和403有以下约定，所以验证码使用406
+在spring Security中，对401和403有以下约定，所以验证码使用406(Not Acceptable)
 
 * 401 - Unauthorized 身份未鉴别
 * 403 - Forbidden/Access Denied 鉴权通过，授权不够
@@ -497,13 +499,23 @@ slardar验证码的默认是基于图片的，在现今的AI算法识别上，�
 
 若需集成其他验证码，如第三方服务或消息验证码，实现并注入FirstBloodHandler即可
 
-### 3.7.4.终端信息
+### 3.7.4.防止篡改
+
+通过在http header中设置信息，进行编辑保护，防止客户端篡改。默认返回409(Conflict)。
+详见 wings-righter-79.properties 和 RighterContext。实现原理和使用方法是，
+
+* 使用Righter注解编辑数据(false)和提交数据(true)的方法
+* 获得编辑数据时，在RighterContext中设置签名的数据header
+* 提交时需要提交此签名，并被校验，签名错误时直接409
+* 签名通过后，通过RighterContext获取数据，程序自行检验数据项是否一致
+
+### 3.7.5.终端信息
 
 通过handlerInterceptor，在当前线程和request中设置terminal信息
 
 TerminalContext保存了，远程ip，agent信息，locale和timezone
 
-## 3.7.5.同步/异步/单机/集群的事件驱动
+## 3.7.6.同步/异步/单机/集群的事件驱动
 
 EventPublishHelper默认提供了3种事件发布机制
 

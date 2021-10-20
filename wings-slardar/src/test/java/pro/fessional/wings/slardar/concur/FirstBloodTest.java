@@ -27,9 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
                 "debug = true",
                 "spring.wings.slardar.enabled.first-blood-image=false",
                 "spring.wings.slardar.enabled.first-blood-image-test=true",
-                "wings.slardar.concur.first-blood.http-status=202",
-                "wings.slardar.concur.first-blood.content-type=text/plain",
-                "wings.slardar.concur.first-blood.response-body=first-blood",
+                "wings.slardar.first-blood.http-status=202",
+                "wings.slardar.first-blood.content-type=text/plain",
+                "wings.slardar.first-blood.response-body=first-blood",
         })
 @Slf4j
 class FirstBloodTest {

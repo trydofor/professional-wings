@@ -1,7 +1,9 @@
-package pro.fessional.wings.slardar.context;
+package pro.fessional.wings.slardar.concur.impl;
 
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.Nullable;
+import pro.fessional.wings.slardar.concur.RighterException;
+
+import java.util.function.Consumer;
 
 /**
  * 在Controller层通过interceptor，防止数据权限提升。
@@ -13,22 +15,25 @@ import org.jetbrains.annotations.Nullable;
  */
 public class RighterContext {
 
-    private static final ThreadLocal<Object> ResAllow = new ThreadLocal<>();
+    private static final ThreadLocal<Consumer<Object>> ResAllow = new ThreadLocal<>();
     private static final ThreadLocal<Object> ReqAudit = new ThreadLocal<>();
 
     /**
      * 设置允许项，在response前由controller使用
      */
-    public static void setAllow(Object json) {
-        ResAllow.set(json);
+    public static void setAllow(Object obj) {
+        final Consumer<Object> fun = ResAllow.get();
+        if (fun == null) {
+            throw new IllegalStateException("must use in @Righter method");
+        }
+        fun.accept(obj);
     }
 
     /**
      * 获得允许项，在拦截器内部使用
      */
-    @Nullable
-    public static Object getAllow() {
-        return ResAllow.get();
+    public static void funAllow(Consumer<Object> fun) {
+        ResAllow.set(fun);
     }
 
     /**
@@ -46,7 +51,7 @@ public class RighterContext {
     public static <R> R getAudit(boolean nonnull) {
         final Object obj = ReqAudit.get();
         if (obj == null && nonnull) {
-            throw new NullPointerException("failed to audit null");
+            throw new RighterException("failed to audit null");
         }
         return (R) obj;
     }

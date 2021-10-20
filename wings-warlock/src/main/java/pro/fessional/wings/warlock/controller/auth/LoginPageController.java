@@ -54,8 +54,8 @@ public class LoginPageController {
                     + "②直接访问时返回status=200")
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginList + "}", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<?> loginList(@PathVariable("extName") String extName,
-                                           HttpServletRequest request,
-                                           HttpServletResponse response) {
+                                       HttpServletRequest request,
+                                       HttpServletResponse response) {
         final MediaType mt = ContentTypeHelper.mediaTypeByUri(extName);
         log.info("default login-page media-type={}", mt);
         return wingsAuthPageHandler.response(Null.Enm, mt, request, response);
@@ -68,20 +68,21 @@ public class LoginPageController {
                     + "②直接访问时返回status=200;")
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginPage + "}", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<?> LoginPage(@PathVariable("authType") String authType,
-                                           @PathVariable("extName") String extName,
-                                           @RequestParam(value = "state", required = false) String state,
-                                           HttpServletRequest request,
-                                           HttpServletResponse response) {
+                                       @PathVariable("extName") String extName,
+                                       @RequestParam(value = "state", required = false) String state,
+                                       HttpServletRequest request,
+                                       HttpServletResponse response) {
         final Enum<?> em = wingsAuthTypeParser.parse(authType);
         final MediaType mt = ContentTypeHelper.mediaTypeByUri(extName, MediaType.APPLICATION_JSON);
         log.info("{} login-page media-type={}, state={}", authType, mt, state);
         return wingsAuthPageHandler.response(em, mt, request, response);
     }
 
+    @SuppressWarnings("UastIncorrectHttpHeaderInspection")
     @ApiOperation(value = "验证一次性token是否有效，oauth2使用state作为token，要求和发行client具有相同ip，agent等header信息",
-            notes = "①status=401时，无|过期|失败 "
-                    + "②status=300&success=false时，进行中，message=authing "
-                    + "③status=200&success=true时成功，data=sessionId "
+            notes = "①status=401时，无|过期|失败"
+                    + "②status=200&success=false时，进行中，message=authing"
+                    + "③status=200&success=true时成功，data=sessionId"
                     + "④在header中，也可以有session和cookie")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$authNonceCheck + "}")
     public ResponseEntity<R<?>> nonceCheck(@RequestHeader("token") String token, HttpServletRequest request, HttpServletResponse response) {
@@ -108,15 +109,16 @@ public class LoginPageController {
     }
 
     @ApiOperation(value = "登出接口，有filter处理，仅做文档", notes = "默认失效Session，参考wings.warlock.security.logout-url")
-    @RequestMapping(value = "${" + WarlockSecurityProp.Key$logoutUrl + "}", method = {RequestMethod.POST, RequestMethod.GET})
+    @PostMapping(value = "${" + WarlockSecurityProp.Key$logoutUrl + "}")
     public String logout() {
         return "handler by filter, never here";
     }
 
 
     @SuppressWarnings("MVCPathVariableInspection")
-    @ApiOperation(value = "登录验证接口，有filter处理，仅做文档", notes = "根据类型自动处理，参考 wings.warlock.security.login-url")
-    @RequestMapping(value = "${" + WarlockSecurityProp.Key$loginUrl + "}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ApiOperation(value = "登录接口，有filter处理，仅做文档",
+            notes = "根据类型自动处理，参考 wings.warlock.security.login-url")
+    @PostMapping(value = "${" + WarlockSecurityProp.Key$loginUrl + "}")
     public String login(@PathVariable("authType") String authType,
                         @RequestParam(value = "username", defaultValue = "参考 wings.warlock.security.username-para") String username,
                         @RequestParam(value = "password", defaultValue = "参考 wings.warlock.security.password-para") String password) {

@@ -103,14 +103,6 @@ public class SlardarEnabledProp {
     public static final String Key$doubleKill = Key + ".double-kill";
 
     /**
-     * 是否开启DoubleKill默认的ExceptionHandle
-     *
-     * @see #Key$doubleKillHandler
-     */
-    private boolean doubleKillHandler = true;
-    public static final String Key$doubleKillHandler = Key + ".double-kill-handler";
-
-    /**
      * 是否开启wings的PageQuery webmvc resolver
      *
      * @see #Key$pagequery

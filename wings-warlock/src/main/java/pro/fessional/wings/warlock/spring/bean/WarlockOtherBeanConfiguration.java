@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import pro.fessional.wings.faceless.database.helper.DatabaseChecker;
 import pro.fessional.wings.warlock.errorhandle.AllExceptionResolver;
@@ -35,16 +36,20 @@ public class WarlockOtherBeanConfiguration {
     public HandlerExceptionResolver codeExceptionResolver(MessageSource messageSource, WarlockErrorProp prop) {
         logger.info("Wings conf codeExceptionResolver");
         final WarlockErrorProp.CodeException cp = prop.getCodeException();
-        return new CodeExceptionResolver(messageSource, cp.getHttpStatus(), cp.getContentType(), cp.getResponseBody());
+        final CodeExceptionResolver bean = new CodeExceptionResolver(messageSource, cp.getHttpStatus(), cp.getContentType(), cp.getResponseBody());
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1000);
+        return bean;
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "allExceptionResolver")
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$allExceptionHandler, havingValue = "true")
-    public HandlerExceptionResolver allExceptionResolver(MessageSource messageSource, WarlockErrorProp prop) {
+    public HandlerExceptionResolver allExceptionResolver(WarlockErrorProp prop) {
         logger.info("Wings conf allExceptionResolver");
         final WarlockErrorProp.CodeException cp = prop.getAllException();
-        return new AllExceptionResolver(messageSource, cp.getHttpStatus(), cp.getContentType(), cp.getResponseBody());
+        final AllExceptionResolver bean = new AllExceptionResolver(cp.getHttpStatus(), cp.getContentType(), cp.getResponseBody());
+        bean.setOrder(Ordered.LOWEST_PRECEDENCE);
+        return bean;
     }
 
     @Bean

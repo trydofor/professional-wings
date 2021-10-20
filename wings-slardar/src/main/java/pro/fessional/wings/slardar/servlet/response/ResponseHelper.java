@@ -203,9 +203,11 @@ public class ResponseHelper {
         }
     }
 
-    public static void bothHeadCookie(HttpServletResponse response, String key, String value) {
+    public static void bothHeadCookie(HttpServletResponse response, String key, String value, int second) {
         response.setHeader(key, value);
-        response.addCookie(new Cookie(key, value));
+        final Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(second);
+        response.addCookie(cookie);
     }
 
     public static void writeBodyUtf8(HttpServletResponse response, String body) {

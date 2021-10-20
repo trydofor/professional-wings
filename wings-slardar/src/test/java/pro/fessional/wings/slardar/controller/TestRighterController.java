@@ -4,7 +4,8 @@ import lombok.Data;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pro.fessional.wings.slardar.context.RighterContext;
+import pro.fessional.wings.slardar.concur.Righter;
+import pro.fessional.wings.slardar.concur.impl.RighterContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +24,7 @@ public class TestRighterController {
     }
 
     @GetMapping("/test/righter.json")
+    @Righter(false)
     public Inn getEdit() {
         Inn inn = new Inn();
         inn.setUid(1L);
@@ -33,6 +35,7 @@ public class TestRighterController {
     }
 
     @PostMapping("/test/righter.json")
+    @Righter
     public Inn postEdit() {
         final Inn audit = RighterContext.getAudit(true);
         System.out.println(audit);

@@ -124,7 +124,7 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
         if (status != null) {
             response.setStatus(status.value());
         }
-        ResponseHelper.bothHeadCookie(response, clientTicketKey, token);
+        ResponseHelper.bothHeadCookie(response, clientTicketKey, token, 600);
         final View view = needCaptchaResponse.getView();
         if (view != null) {
             try {
@@ -178,7 +178,7 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
      * @param token    身份标记
      */
     protected void sendClientTicket(@NotNull HttpServletResponse response, String token) {
-        ResponseHelper.bothHeadCookie(response, clientTicketKey, token);
+        ResponseHelper.bothHeadCookie(response, clientTicketKey, token, 600);
     }
     ////////
 

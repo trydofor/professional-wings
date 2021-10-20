@@ -4,7 +4,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.warlock.database.autogen.Tables;
-import pro.fessional.wings.warlock.errorhandle.bind.BindExceptionAdvice;
+import pro.fessional.wings.warlock.errorhandle.auto.BindExceptionAdvice;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 
 
@@ -14,7 +14,6 @@ import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
  */
 @Configuration
 public class WarlockCompScanConfiguration {
-
 
     @Configuration
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$jooqAutogen, havingValue = "true")

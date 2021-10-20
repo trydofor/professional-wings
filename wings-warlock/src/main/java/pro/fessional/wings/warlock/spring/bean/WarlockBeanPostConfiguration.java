@@ -12,8 +12,8 @@ import pro.fessional.wings.faceless.enums.LanguageEnumUtil;
 import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 import pro.fessional.wings.faceless.enums.StandardTimezoneEnum;
 import pro.fessional.wings.faceless.enums.TimezoneEnumUtil;
+import pro.fessional.wings.slardar.concur.impl.RighterInterceptor;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
-import pro.fessional.wings.slardar.context.RighterInterceptor;
 import pro.fessional.wings.warlock.spring.prop.WarlockI18nProp;
 
 import java.util.function.Function;
@@ -66,11 +66,12 @@ public class WarlockBeanPostConfiguration {
                     final Function<Object, String> ori = ri.getSecretProvider();
                     ri.setSecretProvider(key -> {
                         String pass = null;
+                        // 使用登录用户的密码
                         if (key instanceof Long) {
                             pass = GlobalAttributeHolder.getAttr(SaltByUid, (Long) key);
                         }
                         if (pass == null) {
-                            ori.apply(key);
+                            pass = ori.apply(key);
                         }
                         return pass;
                     });

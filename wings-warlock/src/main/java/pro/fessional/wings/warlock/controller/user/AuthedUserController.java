@@ -6,9 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
@@ -50,7 +49,7 @@ public class AuthedUserController {
     }
 
     @ApiOperation(value = "获得登录用户的自身基本信息，未登录时Result(false)；可设置URL权限，返回status=401")
-    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedUser + "}", method = {RequestMethod.POST, RequestMethod.GET})
+    @PostMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedUser + "}")
     public R<Dto> authedUser(HttpServletRequest request) {
         final WingsUserDetails wd = SecurityContextUtil.getDetails();
         if (wd == null) return R.ng();
@@ -80,7 +79,7 @@ public class AuthedUserController {
 
     @ApiOperation(value = "检查登录用户的权限，不区分大小写比较，返回存在的权限；未登录时Result(false)，可设置URL权限，返回status=401",
             notes = "alias优先于perms检测，alias表示以其value返回，以方便历史命名映射。")
-    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedPerm + "}", method = {RequestMethod.POST, RequestMethod.GET})
+    @PostMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedPerm + "}")
     public R<Set<String>> authedPerm(@RequestBody Ins ins) {
         final WingsUserDetails wd = SecurityContextUtil.getDetails();
         if (wd == null) return R.ng();

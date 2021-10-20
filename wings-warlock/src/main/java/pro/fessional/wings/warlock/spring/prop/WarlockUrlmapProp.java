@@ -55,4 +55,28 @@ public class WarlockUrlmapProp {
      */
     private String userAuthedPerm = "";
     public static final String Key$userAuthedPerm = Key + ".user-authed-perm";
+
+    /**
+     * @see #Key$mockCaptcha
+     */
+    private String mockCaptcha = "";
+    public static final String Key$mockCaptcha = Key + ".mock-captcha";
+
+    /**
+     * @see #Key$mockDoubler
+     */
+    private String mockDoubler = "";
+    public static final String Key$mockDoubler = Key + ".mock-doubler";
+
+    /**
+     * @see #Key$mockRighter
+     */
+    private String mockRighter = "";
+    public static final String Key$mockRighter = Key + ".mock-righter";
+
+    /**
+     * @see #Key$mockEcho0o0
+     */
+    private String mockEcho0o0 = "";
+    public static final String Key$mockEcho0o0 = Key + ".mock-echo0o0";
 }
