@@ -171,7 +171,7 @@ public class ResponseHelper {
      * 输出图片验证码
      *
      * @param code     文本，6字
-     * @param fmt      模板，以{b64}为占位符
+     * @param fmt      模板，以{base64}为占位符
      * @param response response
      */
     public static void showCaptcha(HttpServletResponse response, String code, String fmt) {
@@ -185,7 +185,7 @@ public class ResponseHelper {
             response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
             response.addHeader("Cache-Control", "post-check=0, pre-check=0");
             response.setHeader("Pragma", "no-cache");
-            response.setContentType("application/json");
+            response.setContentType("text/plain");
 
             BufferedImage bi = WingsCaptchaHelper.createImage(code);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -193,7 +193,7 @@ public class ResponseHelper {
             final byte[] bytes = bos.toByteArray();
             final String b64 = Base64.encode(bytes, false);
             final String data = StringTemplate.dyn(fmt)
-                                              .bindStr("{b64}", b64)
+                                              .bindStr("{base64}", b64)
                                               .toString();
             out.write(data.getBytes());
             out.flush();

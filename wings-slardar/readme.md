@@ -490,12 +490,14 @@ slardar验证码的默认是基于图片的，在现今的AI算法识别上，�
 
 使用方法如下，在MappingMethod上，放置`@FirstBlood` 即可，工作流程如下。
 
-* 客户端正常访问此URL，如/test/captcha.json
+* 客户端正常访问此URL，如/test/captcha.json（需要支持GET方法，以便返回图片）
 * 服务器需要验证码时，以406(Not Acceptable)返回提示json
-* 客户端在header和cookie中获得client-ticket的token，并每次都发送
-* 客户端在URL后增加fresh-captcha-image=${timestamp}获取验证码图片（可直接使用）
+* 客户端在header和cookie中获得Client-Ticket的token，并每次都发送
+* 客户端在URL后增加quest-captcha-image=${vcode}获取验证码图片（可直接使用）
+  - 以`accept`区分图片的返回形式，`base64`为base64格式的图，其他均为二进制流
+  - 当`vcode`为验证码，通过时，返回空body，否则返回新的验证图片
 * 客户端在URL后增加check-captcha-image=${vcode}提交验证码
-* 服务器端自动校验client-ticket和check-captcha-image，完成验证或放行
+* 服务器端自动校验Client-Ticket和check-captcha-image，完成验证或放行
 
 若需集成其他验证码，如第三方服务或消息验证码，实现并注入FirstBloodHandler即可
 

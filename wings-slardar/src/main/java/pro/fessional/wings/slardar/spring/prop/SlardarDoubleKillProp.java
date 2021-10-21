@@ -22,7 +22,7 @@ public class SlardarDoubleKillProp {
      * @see #Key$httpStatus
      */
     private int httpStatus = 200;
-    public static final String Key$httpStatus = Key + ".double-kill.http-status";
+    public static final String Key$httpStatus = Key + ".http-status";
 
     /**
      * DoubleKillExceptionResolver 回复的content-type
@@ -30,7 +30,7 @@ public class SlardarDoubleKillProp {
      * @see #Key$contentType
      */
     private String contentType = "";
-    public static final String Key$contentType = Key + ".double-kill.content-type";
+    public static final String Key$contentType = Key + ".content-type";
 
     /**
      * DoubleKillExceptionResolver 回复的文本内容。
@@ -39,5 +39,5 @@ public class SlardarDoubleKillProp {
      * @see #Key$responseBody
      */
     private String responseBody = "";
-    public static final String Key$responseBody = Key + ".double-kill.response-body";
+    public static final String Key$responseBody = Key + ".response-body";
 }

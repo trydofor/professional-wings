@@ -37,7 +37,7 @@ public class SlardarFirstBloodTestConfiguration {
         logger.info("Wings conf firstBloodImageHandler for test");
         final FirstBloodImageHandler handler = new Test();
         handler.setClientTicketKey(firstBloodProp.getClientTicketKey());
-        handler.setFreshCaptchaKey(firstBloodProp.getFreshCaptchaKey());
+        handler.setQuestCaptchaKey(firstBloodProp.getQuestCaptchaKey());
         handler.setCheckCaptchaKey(firstBloodProp.getCheckCaptchaKey());
         handler.setBase64CaptchaKey(firstBloodProp.getBase64CaptchaKey());
         handler.setBase64CaptchaBody(firstBloodProp.getBase64CaptchaBody());

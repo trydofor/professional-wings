@@ -23,15 +23,15 @@ public class SlardarFirstBloodProp {
      * @see #Key$clientTicketKey
      */
     private String clientTicketKey = "";
-    public static final String Key$clientTicketKey = Key + ".first-blood.client-ticket-key";
+    public static final String Key$clientTicketKey = Key + ".client-ticket-key";
 
     /**
-     * 生成图形验证码的参数，时间戳
+     * 生成或验证图形验证码的参数，时间戳
      *
-     * @see #Key$freshCaptchaKey
+     * @see #Key$questCaptchaKey
      */
-    private String freshCaptchaKey = "";
-    public static final String Key$freshCaptchaKey = Key + ".first-blood.fresh-captcha-key";
+    private String questCaptchaKey = "";
+    public static final String Key$questCaptchaKey = Key + ".quest-captcha-key";
 
     /**
      * 图形验证验证码的参数，客户输入的验证码
@@ -39,7 +39,7 @@ public class SlardarFirstBloodProp {
      * @see #Key$checkCaptchaKey
      */
     private String checkCaptchaKey = "";
-    public static final String Key$checkCaptchaKey = Key + ".first-blood.check-captcha-key";
+    public static final String Key$checkCaptchaKey = Key + ".check-captcha-key";
 
 
     /**
@@ -64,7 +64,7 @@ public class SlardarFirstBloodProp {
      * @see #Key$chineseCaptcha
      */
     private boolean chineseCaptcha = true;
-    public static final String Key$chineseCaptcha = Key + ".first-blood.chinese-captcha";
+    public static final String Key$chineseCaptcha = Key + ".chinese-captcha";
 
     /**
      * 是否忽略大小写
@@ -85,7 +85,7 @@ public class SlardarFirstBloodProp {
      * @see #Key$httpStatus
      */
     private int httpStatus = 406;
-    public static final String Key$httpStatus = Key + ".first-blood.http-status";
+    public static final String Key$httpStatus = Key + ".http-status";
 
     /**
      * 告知需要验证的content-type
@@ -93,7 +93,7 @@ public class SlardarFirstBloodProp {
      * @see #Key$contentType
      */
     private String contentType = "";
-    public static final String Key$contentType = Key + ".first-blood.content-type";
+    public static final String Key$contentType = Key + ".content-type";
 
     /**
      * 告知验证码的回复文本内容
@@ -101,5 +101,5 @@ public class SlardarFirstBloodProp {
      * @see #Key$responseBody
      */
     private String responseBody = "";
-    public static final String Key$responseBody = Key + ".first-blood.response-body";
+    public static final String Key$responseBody = Key + ".response-body";
 }

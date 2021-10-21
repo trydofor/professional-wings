@@ -10,13 +10,13 @@
 GET {{host}}/test/captcha.json
 
 # 输出 captcha
-GET {{host}}/test/captcha.json?fresh-captcha-image=12345678
-client-ticket:127.0.0.1
+GET {{host}}/test/captcha.json?quest-captcha-image=12345678
+Client-Ticket:127.0.0.1
 
 ### 验证码
 # 输出 captcha
 GET {{host}}/test/captcha.json?check-captcha-image=
-client-ticket:127.0.0.1
+Client-Ticket:127.0.0.1
 
 # 输出 code=null
 GET {{host}}/test/captcha-30.json

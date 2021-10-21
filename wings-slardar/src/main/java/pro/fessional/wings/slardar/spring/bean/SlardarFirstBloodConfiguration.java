@@ -40,10 +40,12 @@ public class SlardarFirstBloodConfiguration {
     public FirstBloodImageHandler firstBloodImageHandler(@Autowired(required = false) WingsRemoteResolver remoteResolver) {
         logger.info("Wings conf firstBloodImageHandler");
         final FirstBloodImageHandler handler = new FirstBloodImageHandler();
-        handler.setClientTicketKey(firstBloodProp.getClientTicketKey());
-        handler.setFreshCaptchaKey(firstBloodProp.getFreshCaptchaKey());
-        handler.setCheckCaptchaKey(firstBloodProp.getCheckCaptchaKey());
         handler.setScenePrefix(firstBloodProp.getCaptchaPrefix());
+        handler.setClientTicketKey(firstBloodProp.getClientTicketKey());
+        handler.setQuestCaptchaKey(firstBloodProp.getQuestCaptchaKey());
+        handler.setCheckCaptchaKey(firstBloodProp.getCheckCaptchaKey());
+        handler.setBase64CaptchaKey(firstBloodProp.getBase64CaptchaKey());
+        handler.setBase64CaptchaBody(firstBloodProp.getBase64CaptchaBody());
 
         ModelAndView mav = new ModelAndView();
         PlainTextView pv = new PlainTextView(firstBloodProp.getContentType(), firstBloodProp.getResponseBody());

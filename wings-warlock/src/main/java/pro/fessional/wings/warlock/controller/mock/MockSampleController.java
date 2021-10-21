@@ -22,6 +22,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -34,17 +35,32 @@ import java.util.Set;
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerMock, havingValue = "true")
 public class MockSampleController {
 
-    @ApiOperation(value = "验证码，直接返回", notes = "客户端正常访问此URL，\n"
-                                              + "①服务器需要验证码时，以406(Not Acceptable)返回提示json\n"
-                                              + "②客户端在header和cookie中获得client-ticket的token，并每次都发送\n"
-                                              + "③客户端在URL后增加fresh-captcha-image=${timestamp}获取验证码图片（可直接使用）\n"
-                                              + "④客户端在URL后增加check-captcha-image=${vcode}提交验证码\n"
-                                              + "⑤服务器端自动校验client-ticket和check-captcha-image，完成验证或放行")
+    @ApiOperation(value = "验证码，获得图片，有interceptor处理",
+            notes = "参考POST说明，GET方法主要用来获取及刷新验证码图片。\n"
+                    + "quest-captcha-image为默认名，参数为验证码\n"
+                    + "若Accept中含有base64时，则返回base64格式的图片")
+    @GetMapping(value = "${" + WarlockUrlmapProp.Key$mockCaptcha + "}")
+    @ResponseBody
+    @FirstBlood
+    public R<String> mockCaptchaGet(@RequestParam(value = "quest-captcha-image") String quest
+            , @RequestHeader(value = "Accept", defaultValue = "*") String accept) {
+        return R.ok("should NOT return this, Please use POST. Quest=" + quest + ", Accept=" + accept);
+    }
+
+    @ApiOperation(value = "验证码，获得结果，有controller处理",
+            notes = "客户端正常访问此URL，验证图片由interceptor处理\n"
+                    + "①服务器需要验证码时，以406(Not Acceptable)返回提示json\n"
+                    + "②客户端在header和cookie中获得Client-Ticket的token，并每次都发送\n"
+                    + "③客户端在URL后增加quest-captcha-image=${vcode}获取验证码图片（可直接使用）\n"
+                    + "④客户端在URL后增加check-captcha-image=${vcode}提交验证码\n"
+                    + "⑤服务器端自动校验Client-Ticket和check-captcha-image，完成验证或放行")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$mockCaptcha + "}")
     @ResponseBody
     @FirstBlood
-    public R<String> mockCaptcha(@RequestParam("data") String data) {
-        return R.okData(data);
+    public R<String> mockCaptchaPost(@RequestParam(value = "data", required = false) String data,
+                                     @RequestParam(value = "check-captcha-image", required = false) String check
+    ) {
+        return R.ok("check=" + check, data);
     }
 
     @ApiOperation(value = "防连击，需要2次请求", notes = "①首次执行，会等待输入秒数后完成。②在①执行过程中再次执行，会返回202(Accepted)")
@@ -88,22 +104,31 @@ public class MockSampleController {
             @RequestBody(required = false) String body,
             HttpServletResponse response) throws IOException {
 
-        for (String g : header) {
-            final String[] kv = g.split("=", 2);
-            if (kv.length == 2) response.setHeader(kv[0].trim(), kv[1].trim());
+        if (header != null) {
+            for (String g : header) {
+                final String[] kv = g.split("=", 2);
+                if (kv.length == 2) response.setHeader(kv[0].trim(), kv[1].trim());
+            }
         }
-        for (String g : cookie) {
-            final String[] kv = g.split("=", 2);
-            if (kv.length == 2) {
-                final String k = kv[0].trim();
-                final Cookie ck = new Cookie(k, kv[1].trim());
-                ck.setHttpOnly(httponly.contains(k));
-                ck.setSecure(secure.contains(k));
-                response.addCookie(ck);
+
+        if (cookie != null) {
+            if (httponly == null) httponly = Collections.emptySet();
+            if (secure == null) secure = Collections.emptySet();
+            for (String g : cookie) {
+                final String[] kv = g.split("=", 2);
+                if (kv.length == 2) {
+                    final String k = kv[0].trim();
+                    final Cookie ck = new Cookie(k, kv[1].trim());
+                    ck.setHttpOnly(httponly.contains(k));
+                    ck.setSecure(secure.contains(k));
+                    response.addCookie(ck);
+                }
             }
         }
 
         response.setStatus(status);
-        response.getWriter().print(body);
+        if (body != null) {
+            response.getWriter().print(body);
+        }
     }
 }
