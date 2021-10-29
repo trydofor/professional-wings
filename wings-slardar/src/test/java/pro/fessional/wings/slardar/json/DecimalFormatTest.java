@@ -25,8 +25,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(properties =
         {"debug = true",
          "spring.wings.slardar.enabled.number=true",
-         "wings.slardar.number.integer.enable=true",
-         "wings.slardar.number.decimal.separator=_"
+         "wings.slardar.number.decimal.separator=_",
+         "wings.slardar.number.floats.format=#.00",
+         "wings.slardar.number.decimal.format=#.00",
         })
 public class DecimalFormatTest {
 
@@ -120,10 +121,10 @@ public class DecimalFormatTest {
     public void testDecStr() throws JsonProcessingException {
         final String decStr = objectMapper.writeValueAsString(new DecStr());
         System.out.println(decStr);
-        Assertions.assertEquals("{\"intVal\":\"123456\","
-                                + "\"intObj\":\"123456\","
-                                + "\"longVal\":\"123456\","
-                                + "\"longObj\":\"123456\","
+        Assertions.assertEquals("{\"intVal\":123456,"
+                                + "\"intObj\":123456,"
+                                + "\"longVal\":123456,"
+                                + "\"longObj\":123456,"
                                 + "\"floatVal\":\"123456.78\","
                                 + "\"floatObj\":\"123456.78\","
                                 + "\"doubleVal\":\"123456.78\","
@@ -153,10 +154,10 @@ public class DecimalFormatTest {
     public void testDecFmt() throws JsonProcessingException {
         final String decFmt = objectMapper.writeValueAsString(new DecFmt());
         System.out.println(decFmt);
-        Assertions.assertEquals("{\"intVal\":\"12,34,56.0\","
-                                + "\"intObj\":\"12,34,56.0\","
-                                + "\"longVal\":\"123,456.0\","
-                                + "\"longObj\":\"123,456.0\","
+        Assertions.assertEquals("{\"intVal\":12,34,56.0,"
+                                + "\"intObj\":12,34,56.0,"
+                                + "\"longVal\":123,456.0,"
+                                + "\"longObj\":123,456.0,"
                                 + "\"floatVal\":\"12,3456.7\","
                                 + "\"floatObj\":\"12,3456.7\","
                                 + "\"doubleVal\":\"12,3456.7\","

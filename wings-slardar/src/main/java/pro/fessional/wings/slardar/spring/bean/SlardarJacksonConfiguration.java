@@ -142,10 +142,10 @@ public class SlardarJacksonConfiguration {
             builder.serializerByType(OffsetDateTime.class, new JacksonOffsetDateTimeSerializer(offset, autoOffset));
 
             val offPsr = slardarDatetimeProp.getZoned()
-                                             .getSupport()
-                                             .stream()
-                                             .map(DateTimeFormatter::ofPattern)
-                                             .collect(Collectors.toList());
+                                            .getSupport()
+                                            .stream()
+                                            .map(DateTimeFormatter::ofPattern)
+                                            .collect(Collectors.toList());
 
             builder.deserializerByType(OffsetDateTime.class, new JacksonOffsetDateTimeDeserializer(offset, offPsr, autoOffset));
             logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer OffsetDateTime");
@@ -161,28 +161,30 @@ public class SlardarJacksonConfiguration {
             final SlardarNumberProp.Nf ints = slardarNumberProp.getInteger();
             if (ints.isEnable()) {
                 final DecimalFormat df = ints.getWellFormat();
+                final boolean digital = ints.isDigital();
                 logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer Integer&Long serializer");
-                builder.serializerByType(Integer.class, new FormatNumberSerializer(Integer.class, df));
-                builder.serializerByType(Integer.TYPE, new FormatNumberSerializer(Integer.TYPE, df));
-                builder.serializerByType(Long.class, new FormatNumberSerializer(Long.class, df));
-                builder.serializerByType(Long.TYPE, new FormatNumberSerializer(Long.TYPE, df));
+                builder.serializerByType(Integer.class, new FormatNumberSerializer(Integer.class, df, digital));
+                builder.serializerByType(Integer.TYPE, new FormatNumberSerializer(Integer.TYPE, df, digital));
+                builder.serializerByType(Long.class, new FormatNumberSerializer(Long.class, df, digital));
+                builder.serializerByType(Long.TYPE, new FormatNumberSerializer(Long.TYPE, df, digital));
             }
 
             final SlardarNumberProp.Nf floats = slardarNumberProp.getFloats();
             if (floats.isEnable()) {
                 final DecimalFormat df = floats.getWellFormat();
+                final boolean digital = floats.isDigital();
                 logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer Float&Double serializer");
-                builder.serializerByType(Float.class, new FormatNumberSerializer(Float.class, df));
-                builder.serializerByType(Float.TYPE, new FormatNumberSerializer(Float.TYPE, df));
-                builder.serializerByType(Double.class, new FormatNumberSerializer(Double.class, df));
-                builder.serializerByType(Double.TYPE, new FormatNumberSerializer(Double.TYPE, df));
+                builder.serializerByType(Float.class, new FormatNumberSerializer(Float.class, df, digital));
+                builder.serializerByType(Float.TYPE, new FormatNumberSerializer(Float.TYPE, df, digital));
+                builder.serializerByType(Double.class, new FormatNumberSerializer(Double.class, df, digital));
+                builder.serializerByType(Double.TYPE, new FormatNumberSerializer(Double.TYPE, df, digital));
             }
 
             final SlardarNumberProp.Nf decimal = slardarNumberProp.getDecimal();
             if (decimal.isEnable()) {
                 final DecimalFormat df = decimal.getWellFormat();
                 logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer BigDecimal serializer");
-                builder.serializerByType(BigDecimal.class, new FormatNumberSerializer(BigDecimal.class, df));
+                builder.serializerByType(BigDecimal.class, new FormatNumberSerializer(BigDecimal.class, df, decimal.isDigital()));
             }
         };
     }

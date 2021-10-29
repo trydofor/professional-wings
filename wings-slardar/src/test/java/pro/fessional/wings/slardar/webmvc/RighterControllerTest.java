@@ -63,7 +63,7 @@ public class RighterControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .header(prop.getHeader(), allow))
            .andDo(print())
-           .andExpect(content().json("{\"uid\":\"1\",\"perms\":[\"a\",\"b\"]}"));
+           .andExpect(content().json("{\"uid\":1,\"perms\":[\"a\",\"b\"]}"));
 
         // 篡改失败
         mvc.perform(post("/test/righter.json")

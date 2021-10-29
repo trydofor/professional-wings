@@ -38,11 +38,6 @@ public class SlardarNumberProp {
 
     @Data
     public static class Nf {
-
-        /**
-         * 是否开启
-         */
-        private boolean enable = true;
         /*
          * 千分位用`,`占位，在separator替换，空表示无效
          */
@@ -55,6 +50,15 @@ public class SlardarNumberProp {
          * 整数位分隔符，如千分位，可替换format中的`,`
          */
         private String separator = ",";
+
+        /**
+         * 是否忽略WRITE_NUMBERS_AS_STRINGS，强制写number，需要注意format
+         */
+        private boolean digital = false;
+
+        public boolean isEnable() {
+            return format != null;
+        }
 
         public DecimalFormat getWellFormat() {
             if (format == null) return null;

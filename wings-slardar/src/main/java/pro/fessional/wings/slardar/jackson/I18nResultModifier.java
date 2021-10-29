@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ public class I18nResultModifier extends BeanSerializerModifier {
     @Override
     @SuppressWarnings("unchecked")
     public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription beanDesc, JsonSerializer<?> serializer) {
-        if (beanDesc.getBeanClass().isAssignableFrom(R.class)) {
+        if (R.class.isAssignableFrom(beanDesc.getBeanClass())) {
             return new I18nResultSerializer((JsonSerializer<Object>) serializer, messageSource);
         }
         else {
@@ -48,6 +49,16 @@ public class I18nResultModifier extends BeanSerializerModifier {
 
         @Override
         public void serialize(R<?> value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+            setI18nMessage(value);
+            serializer.serialize(value, gen, provider);
+        }
+
+        @Override public void serializeWithType(R<?> value, JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
+            setI18nMessage(value);
+            serializer.serializeWithType(value, gen, serializers, typeSer);
+        }
+
+        private void setI18nMessage(R<?> value) {
             String i18nCode = value.getI18nCode();
             if (StringUtils.hasText(i18nCode)) {
                 Locale locale = LocaleContextHolder.getLocale();
@@ -62,7 +73,6 @@ public class I18nResultModifier extends BeanSerializerModifier {
                     throw e;
                 }
             }
-            serializer.serialize(value, gen, provider);
         }
     }
 }

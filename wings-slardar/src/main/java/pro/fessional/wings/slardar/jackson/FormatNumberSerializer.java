@@ -24,15 +24,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FormatNumberSerializer extends NumberSerializer {
 
     private final DecimalFormat format;
+    private final boolean digital;
     private final Map<String, DecimalFormat> pools = new ConcurrentHashMap<>();
 
     /**
      * @param rawType 类型
      * @since 2.5
      */
-    public FormatNumberSerializer(Class<? extends Number> rawType, DecimalFormat format) {
+    public FormatNumberSerializer(Class<? extends Number> rawType, DecimalFormat format, boolean digital) {
         super(rawType);
         this.format = format;
+        this.digital = digital;
     }
 
     @Override
@@ -49,27 +51,24 @@ public class FormatNumberSerializer extends NumberSerializer {
                 d.setRoundingMode(format.getRoundingMode());
                 return d;
             });
-            return new FormatNumberSerializer(_handledType, df);
+            return new FormatNumberSerializer(_handledType, df, digital);
         }
         return this;
     }
 
     @Override
     public void serialize(Number value, JsonGenerator g, SerializerProvider provider) throws IOException {
-        if (format == null) {
-            super.serialize(value, g, provider);
-        }
-        // mostly
-        else if (value instanceof Long || value instanceof Integer) {
-            g.writeNumber(format.format(value));
-        }
-        // commonly
-        else if (value instanceof BigDecimal) {
-            g.writeNumber(format.format(value));
-        }
-        // less
-        else if (value instanceof Float || value instanceof Double) {
-            g.writeNumber(format.format(value));
+        if (format != null || digital
+            || value instanceof Long || value instanceof Integer
+            || value instanceof Float || value instanceof Double
+            || value instanceof BigDecimal) {
+            final String str = format == null ? String.valueOf(value) : this.format.format(value);
+            if (digital) {
+                g.writeRawValue(str);
+            }
+            else {
+                g.writeNumber(str);
+            }
         }
         else {
             super.serialize(value, g, provider);

@@ -46,7 +46,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author trydofor
  * @since 2019-06-26
  */
-@SpringBootTest(properties = {"debug = true","wings.slardar.datetime.zoned.auto=true"})
+@SpringBootTest(properties = {"debug = true",
+                              "wings.slardar.datetime.zoned.auto=true",
+                              "spring.wings.slardar.enabled.number=true",
+})
 public class WingsJacksonMapperTest {
 
     final static TimeZone systemTz = TimeZone.getTimeZone("Asia/Shanghai");
@@ -168,7 +171,7 @@ public class WingsJacksonMapperTest {
                      "    \"hint\" : \"\",\n" +
                      "    \"args\" : [ \"textDisabled\" ]\n" +
                      "  },\n" +
-                     "  \"longIgnore\" : \"0\",\n" +
+                     "  \"longIgnore\" : 0,\n" +
                      "  \"mapIgnore\" : {\n" +
                      "    \"ikey\" : \"ival\"\n" +
                      "  },\n" +
@@ -224,7 +227,7 @@ public class WingsJacksonMapperTest {
                      "      \"hint\" : \"\",\n" +
                      "      \"args\" : [ \"textDisabled\" ]\n" +
                      "    },\n" +
-                     "    \"longIgnore\" : \"0\",\n" +
+                     "    \"longIgnore\" : 0,\n" +
                      "    \"mapIgnore\" : {\n" +
                      "      \"ikey\" : \"ival\"\n" +
                      "    },\n" +
@@ -255,7 +258,7 @@ public class WingsJacksonMapperTest {
                      "      \"hint\" : \"\",\n" +
                      "      \"args\" : [ \"textDisabled\" ]\n" +
                      "    },\n" +
-                     "    \"longIgnore\" : \"0\",\n" +
+                     "    \"longIgnore\" : 0,\n" +
                      "    \"mapIgnore\" : {\n" +
                      "      \"ikey\" : \"ival\"\n" +
                      "    },\n" +
@@ -283,7 +286,7 @@ public class WingsJacksonMapperTest {
         JsonIt jsonIt = new JsonIt();
         String i18n = jackson.writeValueAsString(i18nJson);
         String json = jackson.writeValueAsString(jsonIt);
-        assertEquals("<I18nJson>\n" +
+        assertEquals(("<I18nJson>\n" +
                      "  <codeManual>{0} can not be empty</codeManual>\n" +
                      "  <codeIgnore>base.not-empty</codeIgnore>\n" +
                      "  <textAuto>textAuto can not be empty</textAuto>\n" +
@@ -310,8 +313,8 @@ public class WingsJacksonMapperTest {
                      "  <mapAuto>\n" +
                      "    <i18n>textAuto can not be empty</i18n>\n" +
                      "  </mapAuto>\n" +
-                     "</I18nJson>", i18n.trim());
-        assertEquals("<JsonIt>\n" +
+                     "</I18nJson>").replaceAll("\\s",""), i18n.replaceAll("\\s",""));
+        assertEquals(("<JsonIt>\n" +
                      "  <intVal>2147483646</intVal>\n" +
                      "  <longVal>9223372036854775806</longVal>\n" +
                      "  <floatVal>1.1</floatVal>\n" +
@@ -332,7 +335,7 @@ public class WingsJacksonMapperTest {
                      "    <Map>1</Map>\n" +
                      "  </mapVal>\n" +
                      "  <bool-val>false</bool-val>\n" +
-                     "</JsonIt>", json.trim());
+                     "</JsonIt>").replaceAll("\\s",""), json.replaceAll("\\s",""));
     }
 
     @Test
@@ -368,8 +371,8 @@ public class WingsJacksonMapperTest {
     //
     @Data
     public static class NumberAsString {
-        private long numLong = 10L;
-        private int numInt = 10;
+        private long numLong = 10000L;
+        private int numInt = 10000;
         private double numDouble = 3.14159;
         private BigDecimal numDecimal = new BigDecimal("2.71828");
     }
@@ -377,9 +380,9 @@ public class WingsJacksonMapperTest {
     @Data
     public static class NumberAsNumber {
         @JsonRawValue()
-        private long numLong = 10L;
+        private long numLong = 10000L;
         @JsonRawValue()
-        private int numInt = 10;
+        private int numInt = 10000;
         @JsonRawValue()
         private double numDouble = 3.14159;
         @JsonRawValue()
@@ -393,7 +396,7 @@ public class WingsJacksonMapperTest {
         String s1 = objectMapper.writeValueAsString(nas);
         String s2 = objectMapper.writeValueAsString(nan);
         //
-        assertEquals("{\"numLong\":\"10\",\"numInt\":\"10\",\"numDouble\":\"3.14159\",\"numDecimal\":\"2.71828\"}", s1);
-        assertEquals("{\"numLong\":10,\"numInt\":10,\"numDouble\":3.14159,\"numDecimal\":2.71828}", s2);
+        assertEquals("{\"numLong\":10000,\"numInt\":10000,\"numDouble\":\"3.14159\",\"numDecimal\":\"2.71828\"}", s1);
+        assertEquals("{\"numLong\":10000,\"numInt\":10000,\"numDouble\":3.14159,\"numDecimal\":2.71828}", s2);
     }
 }
