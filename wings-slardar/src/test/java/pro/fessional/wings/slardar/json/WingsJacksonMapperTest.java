@@ -30,7 +30,9 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -155,6 +157,10 @@ public class WingsJacksonMapperTest {
         private Instant instantVal = Instant.parse("2020-06-01T12:34:46.000Z");
         private List<String> listVal = Arrays.asList("字符串", "列表");
         private Map<String, Long> mapVal = new HashMap<String, Long>() {{put("Map", 1L);}};
+        private LocalDateTime localDateTimeEmpty = LocalDateTime.parse("1000-01-01T11:34:46");
+        private LocalDate localDateEmpty = localDateTimeEmpty.toLocalDate();
+        private ZonedDateTime zonedDateTimeEmpty = localDateTimeEmpty.atZone(systemTz.toZoneId());
+        private OffsetDateTime offsetDateTimeEmpty = localDateTimeEmpty.atOffset(ZoneOffset.UTC);
     }
 
     @Test
@@ -279,63 +285,63 @@ public class WingsJacksonMapperTest {
     @Test
     public void testXml() throws IOException {
         ObjectWriter jackson = jackson2ObjectMapperBuilder
-                                       .createXmlMapper(true)
-                                       .build()
-                                       .writerWithDefaultPrettyPrinter();
+                .createXmlMapper(true)
+                .build()
+                .writerWithDefaultPrettyPrinter();
         I18nJson i18nJson = new I18nJson();
         JsonIt jsonIt = new JsonIt();
         String i18n = jackson.writeValueAsString(i18nJson);
         String json = jackson.writeValueAsString(jsonIt);
         assertEquals(("<I18nJson>\n" +
-                     "  <codeManual>{0} can not be empty</codeManual>\n" +
-                     "  <codeIgnore>base.not-empty</codeIgnore>\n" +
-                     "  <textAuto>textAuto can not be empty</textAuto>\n" +
-                     "  <textDisabled>\n" +
-                     "    <code>base.not-empty</code>\n" +
-                     "    <hint></hint>\n" +
-                     "    <args>\n" +
-                     "      <item>textDisabled</item>\n" +
-                     "    </args>\n" +
-                     "  </textDisabled>\n" +
-                     "  <longIgnore>0</longIgnore>\n" +
-                     "  <mapIgnore>\n" +
-                     "    <ikey>ival</ikey>\n" +
-                     "  </mapIgnore>\n" +
-                     "  <mapDisabled>\n" +
-                     "    <i18n>\n" +
-                     "      <code>base.not-empty</code>\n" +
-                     "      <hint></hint>\n" +
-                     "      <args>\n" +
-                     "        <item>textDisabled</item>\n" +
-                     "      </args>\n" +
-                     "    </i18n>\n" +
-                     "  </mapDisabled>\n" +
-                     "  <mapAuto>\n" +
-                     "    <i18n>textAuto can not be empty</i18n>\n" +
-                     "  </mapAuto>\n" +
-                     "</I18nJson>").replaceAll("\\s",""), i18n.replaceAll("\\s",""));
+                      "  <codeManual>{0} can not be empty</codeManual>\n" +
+                      "  <codeIgnore>base.not-empty</codeIgnore>\n" +
+                      "  <textAuto>textAuto can not be empty</textAuto>\n" +
+                      "  <textDisabled>\n" +
+                      "    <code>base.not-empty</code>\n" +
+                      "    <hint></hint>\n" +
+                      "    <args>\n" +
+                      "      <item>textDisabled</item>\n" +
+                      "    </args>\n" +
+                      "  </textDisabled>\n" +
+                      "  <longIgnore>0</longIgnore>\n" +
+                      "  <mapIgnore>\n" +
+                      "    <ikey>ival</ikey>\n" +
+                      "  </mapIgnore>\n" +
+                      "  <mapDisabled>\n" +
+                      "    <i18n>\n" +
+                      "      <code>base.not-empty</code>\n" +
+                      "      <hint></hint>\n" +
+                      "      <args>\n" +
+                      "        <item>textDisabled</item>\n" +
+                      "      </args>\n" +
+                      "    </i18n>\n" +
+                      "  </mapDisabled>\n" +
+                      "  <mapAuto>\n" +
+                      "    <i18n>textAuto can not be empty</i18n>\n" +
+                      "  </mapAuto>\n" +
+                      "</I18nJson>").replaceAll("\\s", ""), i18n.replaceAll("\\s", ""));
         assertEquals(("<JsonIt>\n" +
-                     "  <intVal>2147483646</intVal>\n" +
-                     "  <longVal>9223372036854775806</longVal>\n" +
-                     "  <floatVal>1.1</floatVal>\n" +
-                     "  <doubleVal>2.2</doubleVal>\n" +
-                     "  <decimalVal>3.3</decimalVal>\n" +
-                     "  <localDateTimeVal>2020-06-01 12:34:46</localDateTimeVal>\n" +
-                     "  <localDateVal>2020-06-01</localDateVal>\n" +
-                     "  <localTimeVal>12:34:46</localTimeVal>\n" +
-                     "  <zonedDateTimeVal>2020-06-01 13:34:46 Asia/Tokyo</zonedDateTimeVal>\n" +
-                     "  <zonedDateTimeValV>2020-06-01 13:34:46.000 Asia/Tokyo</zonedDateTimeValV>\n" +
-                     "  <zonedDateTimeValZ>2020-06-01 13:34:46.000 +0900</zonedDateTimeValZ>\n" +
-                     "  <instantVal>2020-06-01T12:34:46Z</instantVal>\n" +
-                     "  <listVal>\n" +
-                     "    <listVal>字符串</listVal>\n" +
-                     "    <listVal>列表</listVal>\n" +
-                     "  </listVal>\n" +
-                     "  <mapVal>\n" +
-                     "    <Map>1</Map>\n" +
-                     "  </mapVal>\n" +
-                     "  <bool-val>false</bool-val>\n" +
-                     "</JsonIt>").replaceAll("\\s",""), json.replaceAll("\\s",""));
+                      "  <intVal>2147483646</intVal>\n" +
+                      "  <longVal>9223372036854775806</longVal>\n" +
+                      "  <floatVal>1.1</floatVal>\n" +
+                      "  <doubleVal>2.2</doubleVal>\n" +
+                      "  <decimalVal>3.3</decimalVal>\n" +
+                      "  <localDateTimeVal>2020-06-01 12:34:46</localDateTimeVal>\n" +
+                      "  <localDateVal>2020-06-01</localDateVal>\n" +
+                      "  <localTimeVal>12:34:46</localTimeVal>\n" +
+                      "  <zonedDateTimeVal>2020-06-01 13:34:46 Asia/Tokyo</zonedDateTimeVal>\n" +
+                      "  <zonedDateTimeValV>2020-06-01 13:34:46.000 Asia/Tokyo</zonedDateTimeValV>\n" +
+                      "  <zonedDateTimeValZ>2020-06-01 13:34:46.000 +0900</zonedDateTimeValZ>\n" +
+                      "  <instantVal>2020-06-01T12:34:46Z</instantVal>\n" +
+                      "  <listVal>\n" +
+                      "    <listVal>字符串</listVal>\n" +
+                      "    <listVal>列表</listVal>\n" +
+                      "  </listVal>\n" +
+                      "  <mapVal>\n" +
+                      "    <Map>1</Map>\n" +
+                      "  </mapVal>\n" +
+                      "  <bool-val>false</bool-val>\n" +
+                      "</JsonIt>").replaceAll("\\s", ""), json.replaceAll("\\s", ""));
     }
 
     @Test

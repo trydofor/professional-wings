@@ -1,5 +1,7 @@
 package pro.fessional.wings.slardar.spring.bean;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
@@ -9,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -21,6 +24,8 @@ import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeDeserializ
 import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeSerializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeSerializer;
+import pro.fessional.wings.slardar.jackson.AutoRegisterPropertyFilter;
+import pro.fessional.wings.slardar.jackson.EmptyDatePropertyFilter;
 import pro.fessional.wings.slardar.jackson.FormatNumberSerializer;
 import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
@@ -34,6 +39,7 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -149,6 +155,11 @@ public class SlardarJacksonConfiguration {
 
             builder.deserializerByType(OffsetDateTime.class, new JacksonOffsetDateTimeDeserializer(offset, offPsr, autoOffset));
             logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer OffsetDateTime");
+
+            if (slardarDatetimeProp.getEmptyDate() != null) {
+                logger.info("Wings conf ignoreEmptyDatePropertyFilter's EmptyDateMixin");
+                builder.mixIn(Object.class, EmptyDatePropertyFilter.EmptyDateMixin.class);
+            }
         };
     }
 
@@ -187,5 +198,29 @@ public class SlardarJacksonConfiguration {
                 builder.serializerByType(BigDecimal.class, new FormatNumberSerializer(BigDecimal.class, df, decimal.isDigital()));
             }
         };
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = SlardarDatetimeProp.Key$emptyDate)
+    public AutoRegisterPropertyFilter emptyDatePropertyFilter() {
+        logger.info("Wings conf emptyDatePropertyFilter");
+        return new EmptyDatePropertyFilter(slardarDatetimeProp.getEmptyDate());
+    }
+
+    @Bean
+    @ConditionalOnBean(AutoRegisterPropertyFilter.class)
+    public FilterProvider slardarFilterProvider(List<AutoRegisterPropertyFilter> filters) {
+        final SimpleFilterProvider bean = new SimpleFilterProvider();
+        for (AutoRegisterPropertyFilter filter : filters) {
+            bean.addFilter(filter.getId(), filter);
+        }
+        return bean;
+    }
+
+    @Bean
+    @ConditionalOnBean(FilterProvider.class)
+    public Jackson2ObjectMapperBuilderCustomizer customizerObjectMapperFilterProvider(FilterProvider filterProvider) {
+        logger.info("Wings conf customizerObjectMapperFilterProvider");
+        return builder -> builder.filters(filterProvider);
     }
 }
