@@ -13,10 +13,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
+import pro.fessional.mirana.data.R;
+import pro.fessional.mirana.i18n.I18nString;
+import pro.fessional.mirana.time.DateParser;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalTimeDeserializer;
@@ -25,10 +31,13 @@ import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeSerializer
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeSerializer;
 import pro.fessional.wings.slardar.jackson.AutoRegisterPropertyFilter;
-import pro.fessional.wings.slardar.jackson.EmptyDatePropertyFilter;
+import pro.fessional.wings.slardar.jackson.EmptyValuePropertyFilter;
 import pro.fessional.wings.slardar.jackson.FormatNumberSerializer;
+import pro.fessional.wings.slardar.jackson.I18nResultPropertyFilter;
+import pro.fessional.wings.slardar.jackson.I18nStringSerializer;
 import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
+import pro.fessional.wings.slardar.spring.prop.SlardarJacksonProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarNumberProp;
 
 import java.math.BigDecimal;
@@ -56,9 +65,10 @@ public class SlardarJacksonConfiguration {
 
     private static final Log logger = LogFactory.getLog(SlardarJacksonConfiguration.class);
 
+    private final SlardarJacksonProp slardarJacksonProp;
     private final SlardarDatetimeProp slardarDatetimeProp;
-
     private final SlardarNumberProp slardarNumberProp;
+    private final MessageSource messageSource;
 
 /*
     @Bean
@@ -155,11 +165,6 @@ public class SlardarJacksonConfiguration {
 
             builder.deserializerByType(OffsetDateTime.class, new JacksonOffsetDateTimeDeserializer(offset, offPsr, autoOffset));
             logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer OffsetDateTime");
-
-            if (slardarDatetimeProp.getEmptyDate() != null) {
-                logger.info("Wings conf ignoreEmptyDatePropertyFilter's EmptyDateMixin");
-                builder.mixIn(Object.class, EmptyDatePropertyFilter.EmptyDateMixin.class);
-            }
         };
     }
 
@@ -201,10 +206,47 @@ public class SlardarJacksonConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = SlardarDatetimeProp.Key$emptyDate)
-    public AutoRegisterPropertyFilter emptyDatePropertyFilter() {
-        logger.info("Wings conf emptyDatePropertyFilter");
-        return new EmptyDatePropertyFilter(slardarDatetimeProp.getEmptyDate());
+    public Jackson2ObjectMapperBuilderCustomizer customizerObjectMapperJackson() {
+        logger.info("Wings conf customizerObjectMapperJackson");
+        return builder -> {
+            if (StringUtils.hasText(slardarJacksonProp.getEmptyDate()) ||
+                slardarJacksonProp.isEmptyMap() || slardarJacksonProp.isEmptyList()) {
+                logger.info("Wings conf EmptyValuePropertyFilter's EmptyDateMixin");
+                builder.mixIn(Object.class, EmptyValuePropertyFilter.EmptyDateMixin.class);
+            }
+
+            if (slardarJacksonProp.isI18nResult()) {
+                logger.info("Wings conf I18nResultPropertyFilter's I18nResultMixin");
+                builder.serializerByType(I18nString.class, new I18nStringSerializer(messageSource, true));
+                builder.serializerByType(CharSequence.class, new I18nStringSerializer(messageSource, false));
+                builder.mixIn(R.class, I18nResultPropertyFilter.I18nResultMixin.class);
+            }
+        };
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = SlardarJacksonProp.Key$i18nResult, havingValue = "true")
+    public AutoRegisterPropertyFilter i18nResultPropertyFilter() {
+        logger.info("Wings conf i18nResultPropertyFilter");
+        return new I18nResultPropertyFilter(messageSource);
+    }
+
+    @Bean
+    // "${logging.enabled:true} and '${logging.level}'.equals('DEBUG')"
+    @ConditionalOnExpression("T(org.springframework.util.StringUtils).hasText('${" + SlardarJacksonProp.Key$emptyDate + "}') "
+                             + "|| ${" + SlardarJacksonProp.Key$emptyList + ":false}"
+                             + "|| ${" + SlardarJacksonProp.Key$emptyMap + ":false}"
+    )
+    public AutoRegisterPropertyFilter emptyValuePropertyFilter() {
+        logger.info("Wings conf emptyValuePropertyFilter");
+
+        final LocalDate ed = slardarJacksonProp.getEmptyDate() == null ? null :
+                             DateParser.parseDate(slardarJacksonProp.getEmptyDate());
+        return new EmptyValuePropertyFilter(ed,
+                slardarJacksonProp.getEmptyDateOffset(),
+                slardarJacksonProp.isEmptyList(),
+                slardarJacksonProp.isEmptyMap()
+        );
     }
 
     @Bean

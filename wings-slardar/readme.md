@@ -89,7 +89,14 @@ wings.slardar.number.decimal.separator=_
 # 参考 DecimalFormatTest.java
 ```
 
-### 3.1.4.常用的Jackson注解
+### 3.1.4.empty数据处理，
+
+此功能默认开启，会造成正反序列化的不一致。需要自行处理差异
+
+* 日期empty视为null，不输出，避免出现很多1000-01-01的数据
+* array/Collection/Map为empty时，不输出。
+
+### 3.1.5.常用的Jackson注解
 
 * @JsonRawValue - number不变字符串，字符串不转义。
 * @JsonFormat - 指定格式

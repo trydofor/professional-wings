@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * @author trydofor
@@ -51,6 +52,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(properties = {"debug = true",
                               "wings.slardar.datetime.zoned.auto=true",
                               "spring.wings.slardar.enabled.number=true",
+                              "wings.slardar.jackson.empty-date=1970-01-01",
+                              "wings.slardar.jackson.empty-list=true",
+                              "wings.slardar.jackson.empty-map=true",
 })
 public class WingsJacksonMapperTest {
 
@@ -130,6 +134,8 @@ public class WingsJacksonMapperTest {
 
         assertEquals(json, json2);
         assertEquals(obj, obj2);
+        assertFalse(json.contains("Null"));
+        assertFalse(json.contains("Empty"));
     }
 
     @Data
@@ -157,10 +163,22 @@ public class WingsJacksonMapperTest {
         private Instant instantVal = Instant.parse("2020-06-01T12:34:46.000Z");
         private List<String> listVal = Arrays.asList("字符串", "列表");
         private Map<String, Long> mapVal = new HashMap<String, Long>() {{put("Map", 1L);}};
-        private LocalDateTime localDateTimeEmpty = LocalDateTime.parse("1000-01-01T11:34:46");
+        // empty
+        private LocalDateTime localDateTimeEmpty = LocalDateTime.parse("1970-01-01T00:00:00");
+        private LocalDateTime localDateTimeEmpty1 = localDateTimeEmpty.minusHours(12);
+        private LocalDateTime localDateTimeEmpty2 = localDateTimeEmpty.plusHours(12);
         private LocalDate localDateEmpty = localDateTimeEmpty.toLocalDate();
         private ZonedDateTime zonedDateTimeEmpty = localDateTimeEmpty.atZone(systemTz.toZoneId());
         private OffsetDateTime offsetDateTimeEmpty = localDateTimeEmpty.atOffset(ZoneOffset.UTC);
+        private List<String> listNull = null;
+        private Map<String, Long> mapNull = null;
+        private List<String> listEmpty = Collections.emptyList();
+        private Map<String, Long> mapEmpty = Collections.emptyMap();
+        private Integer[] integerArrNull = null;
+        private Integer[] integerArrEmpty = new Integer[0];
+        private int[] intArrNull = null;
+        private int[] intArrEmpty = new int[0];
+
     }
 
     @Test
@@ -284,14 +302,13 @@ public class WingsJacksonMapperTest {
 
     @Test
     public void testXml() throws IOException {
-        ObjectWriter jackson = jackson2ObjectMapperBuilder
+        ObjectMapper xmlMapper = jackson2ObjectMapperBuilder
                 .createXmlMapper(true)
-                .build()
-                .writerWithDefaultPrettyPrinter();
+                .build();
         I18nJson i18nJson = new I18nJson();
         JsonIt jsonIt = new JsonIt();
-        String i18n = jackson.writeValueAsString(i18nJson);
-        String json = jackson.writeValueAsString(jsonIt);
+        String i18n = xmlMapper.writeValueAsString(i18nJson);
+        String json = xmlMapper.writeValueAsString(jsonIt);
         assertEquals(("<I18nJson>\n" +
                       "  <codeManual>{0} can not be empty</codeManual>\n" +
                       "  <codeIgnore>base.not-empty</codeIgnore>\n" +
@@ -342,6 +359,9 @@ public class WingsJacksonMapperTest {
                       "  </mapVal>\n" +
                       "  <bool-val>false</bool-val>\n" +
                       "</JsonIt>").replaceAll("\\s", ""), json.replaceAll("\\s", ""));
+
+        JsonIt xmlJsonIt = xmlMapper.readValue(json, JsonIt.class);
+        System.out.println(xmlJsonIt);
     }
 
     @Test

@@ -4,7 +4,6 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -20,14 +19,6 @@ import java.util.Set;
 public class SlardarDatetimeProp {
 
     public static final String Key = "wings.slardar.datetime";
-
-    /**
-     * 是否把 1000-01-01 日期当做null处理
-     *
-     * @see #Key$emptyDate
-     */
-    private LocalDate emptyDate = null;
-    public static final String Key$emptyDate = Key + ".empty-date";
 
     /**
      * LocalDateTime
