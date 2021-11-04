@@ -41,7 +41,7 @@ public class JustAuthLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
     @Override
     public ResponseEntity<?> response(@NotNull Enum<?> authType, @Nullable MediaType mediaType, @NotNull HttpServletRequest request,
                                       @NotNull HttpServletResponse response, @NotNull HttpStatus status) {
-        final AuthRequest ar = justAuthRequestBuilder.buildRequest(authType);
+        final AuthRequest ar = justAuthRequestBuilder.buildRequest(authType, request);
         if (ar == null) return null;
 
         final String state = AuthStateBuilder.buildState(request.getParameter("state"));

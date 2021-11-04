@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
+import pro.fessional.wings.warlock.security.justauth.AuthConfigWrapper;
 import pro.fessional.wings.warlock.security.justauth.JustAuthRequestBuilder;
 import pro.fessional.wings.warlock.security.justauth.JustAuthStateCaffeine;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
@@ -75,7 +76,9 @@ public class WarlockJustAuthConfiguration {
                         .build());
                 logger.info("Wings conf justAuthRequestFactory auth-type " + k + ", proxy=" + hc.getProxyType());
             }
-            map.put(em, ac);
+
+            // 处理动态redirect-uri
+            map.put(em, AuthConfigWrapper.tryWrap(ac));
         }
 
         factory.setAuthConfigMap(map);
