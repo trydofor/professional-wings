@@ -12,12 +12,14 @@ import org.springframework.boot.autoconfigure.session.DefaultCookieSerializerCus
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.PropertyMapper;
-import org.springframework.boot.web.servlet.server.Session;
+import org.springframework.boot.web.servlet.server.Session.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.session.FindByIndexNameSessionRepository;
+import org.springframework.session.Session;
+import org.springframework.session.hazelcast.Hazelcast4IndexedSessionRepository;
 import org.springframework.session.hazelcast.config.annotation.web.http.HazelcastHttpSessionConfiguration;
 import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 import org.springframework.session.web.http.CookieHttpSessionIdResolver;
@@ -63,14 +65,19 @@ public class SlardarSessionConfiguration {
         @Override
         public FindByIndexNameSessionRepository<?> sessionRepository() {
             logger.info("Wings conf sessionRepository : FindByIndexNameSessionRepository");
-            return (FindByIndexNameSessionRepository<? extends org.springframework.session.Session>) super.sessionRepository();
+            return (FindByIndexNameSessionRepository<? extends Session>) super.sessionRepository();
         }
 
         // concurrent session
         @Bean
         @ConditionalOnMissingBean(SessionRegistry.class)
-        public SessionRegistry sessionRegistry(FindByIndexNameSessionRepository<? extends org.springframework.session.Session> sessionRepository) {
+        public SessionRegistry sessionRegistry(FindByIndexNameSessionRepository<? extends Session> sessionRepository, SlardarSessionProp slardarSessionProp) {
             logger.info("Wings conf sessionRegistry");
+            if (sessionRepository instanceof Hazelcast4IndexedSessionRepository) {
+                final int seconds = slardarSessionProp.getInactiveInterval();
+                ((Hazelcast4IndexedSessionRepository) sessionRepository).setDefaultMaxInactiveInterval(seconds);
+                logger.info("Wings conf sessionRegistry DefaultMaxInactiveInterval Seconds= " + seconds);
+            }
             return new SpringSessionBackedSessionRegistry<>(sessionRepository);
         }
     }
@@ -107,7 +114,7 @@ public class SlardarSessionConfiguration {
         if (StringUtils.hasText(slardarSessionProp.getCookieName())) {
             final ServerProperties server = serverProperties.getIfAvailable();
             ArgsAssert.notNull(server, "need `server.servlet.session.*` config");
-            Session.Cookie cookie = server.getServlet().getSession().getCookie();
+            Cookie cookie = server.getServlet().getSession().getCookie();
             final String propName = slardarSessionProp.getCookieName();
             final String servName = cookie.getName();
             if (propName.equals(servName)) {

@@ -1,11 +1,14 @@
 package pro.fessional.wings.warlock.security.handler;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
+import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
 import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
@@ -22,9 +25,17 @@ import javax.servlet.http.HttpSession;
 @Slf4j
 public class NonceLoginSuccessHandler implements AuthenticationSuccessHandler {
 
+    @Setter(onMethod_ = {@Autowired})
+    private SlardarSessionProp slardarSessionProp;
+
     @Override
     public final void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         final HttpSession session = request.getSession(false);
+
+        if (session != null && slardarSessionProp != null) {
+            session.setMaxInactiveInterval(slardarSessionProp.getInactiveInterval());
+        }
+
         final long uid = SecurityContextUtil.getUserId();
         final String sid = session == null ? null : session.getId();
 

@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.cache;
+package pro.fessional.wings.slardar.cache.caffeine;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -32,7 +32,7 @@ public class CaffeineSlot {
     /**
      * 构造一个按ttl分片的缓存
      *
-     * @param slot  slot
+     * @param slot slot
      * @param ttl  最大ttl秒
      * @param step 分片步长秒
      */
@@ -55,13 +55,14 @@ public class CaffeineSlot {
         int min = 1;
         if (slot <= min) {
             slot = min;
-        } else if (slot >= max) {
+        }
+        else if (slot >= max) {
             slot = max;
         }
         return this.slot.computeIfAbsent(slot,
                 k -> Caffeine.newBuilder()
                              .maximumSize(Integer.MAX_VALUE)
-                             .expireAfterWrite(k * step, SECONDS)
+                             .expireAfterWrite(k.longValue() * step, SECONDS)
                              .build()
         );
     }

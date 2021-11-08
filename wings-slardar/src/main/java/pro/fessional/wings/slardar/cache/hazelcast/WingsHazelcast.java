@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.cache;
+package pro.fessional.wings.slardar.cache.hazelcast;
 
 import com.hazelcast.config.InvalidConfigurationException;
 import com.hazelcast.config.MapConfig;
@@ -8,6 +8,7 @@ import com.hazelcast.map.IMap;
 import com.hazelcast.spring.cache.HazelcastCacheManager;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
 
 import java.util.Collection;
@@ -88,8 +89,8 @@ public class WingsHazelcast {
             for (Map.Entry<String, SlardarCacheProp.Conf> entry : slardarCacheProp.getLevel().entrySet()) {
                 // 前缀同
                 final SlardarCacheProp.Conf lvl = entry.getValue();
-                checkMapConf(config, mapCnf, wildcard(entry.getKey()),
-                        lvl.getMaxLive(), lvl.getMaxIdle(), lvl.getMaxSize());
+                final String name = wildcard(entry.getKey());
+                checkMapConf(config, mapCnf, name, lvl.getMaxLive(), lvl.getMaxIdle(), lvl.getMaxSize());
             }
         }
 
@@ -125,7 +126,7 @@ public class WingsHazelcast {
                     if (max0 != max) {
                         diff = true;
                         mc.getEvictionConfig().setSize(max);
-                        log.warn("Wings hazelcast default Eviction-max0 of name={}, from {} to {}",name, max0, max);
+                        log.warn("Wings hazelcast default Eviction-max0 of name={}, from {} to {}", name, max0, max);
                     }
 
                     if (diff) {
