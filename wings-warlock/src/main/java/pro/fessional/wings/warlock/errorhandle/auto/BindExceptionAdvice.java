@@ -1,8 +1,9 @@
-package pro.fessional.wings.warlock.errorhandle.bind;
+package pro.fessional.wings.warlock.errorhandle.auto;
 
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.servlet.MessageHelper;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
 
 import static pro.fessional.wings.slardar.servlet.request.RequestHelper.allErrors;
@@ -24,7 +24,7 @@ import static pro.fessional.wings.slardar.servlet.request.RequestHelper.allError
  */
 
 @ControllerAdvice(annotations = RestController.class)
-@Order(WarlockOrderConst.BindExceptionAdvice)
+@Order(Ordered.HIGHEST_PRECEDENCE + 1000)
 public class BindExceptionAdvice {
 
     @Setter(onMethod_ = {@Autowired})

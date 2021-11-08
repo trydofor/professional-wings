@@ -61,7 +61,7 @@ public class LogViewer implements WarnFilter {
                 .build();
     }
 
-    @ApiOperation(value = "开启自身监控时，可查看警报日志", notes = "不要在日志中记录敏感信息，无脱敏设置")
+    @ApiOperation(value = "开启自身监控时，配合警报通知，可查看警报日志", notes = "不要在日志中记录敏感信息，无脱敏设置")
     @GetMapping(value = "${" + Conf.Key$mapping + "}")
     public void view(@RequestParam("id") String id, HttpServletResponse res) throws IOException {
         if (id == null) return;

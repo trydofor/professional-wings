@@ -27,9 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
                 "debug = true",
                 "spring.wings.slardar.enabled.first-blood-image=false",
                 "spring.wings.slardar.enabled.first-blood-image-test=true",
-                "wings.slardar.concur.first-blood.http-status=202",
-                "wings.slardar.concur.first-blood.content-type=text/plain",
-                "wings.slardar.concur.first-blood.response-body=first-blood",
+                "wings.slardar.first-blood.http-status=202",
+                "wings.slardar.first-blood.content-type=text/plain",
+                "wings.slardar.first-blood.response-body=first-blood",
         })
 @Slf4j
 class FirstBloodTest {
@@ -62,7 +62,7 @@ class FirstBloodTest {
         final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(url), false);
         assertEquals(202, r2.code());
         final String ct = r2.header("Content-Type");
-        final String tk = r2.header("client-ticket");
+        final String tk = r2.header("Client-Ticket");
         final String ck = r2.header("Set-Cookie");
         assertNotNull(ct);
         assertNotNull(tk);
@@ -72,7 +72,7 @@ class FirstBloodTest {
         assertTrue(ck.contains(tk));
         log.warn("get client-ticket = " + tk);
 
-        final Response r3 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(url + "?fresh-captcha-image=1234567890"), false);
+        final Response r3 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(url + "?quest-captcha-image=1234567890"), false);
         String code = OkHttpClientHelper.extractString(r3, false);
         log.warn("get captcha code = " + code);
         assertEquals(200, r3.code());

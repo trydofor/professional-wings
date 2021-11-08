@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.webmvc;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,6 +17,7 @@ import java.lang.reflect.Type;
  * @author trydofor
  * @since 2021-03-25
  */
+@Slf4j
 public abstract class WingsExceptionResolver<T extends Exception> extends AbstractHandlerExceptionResolver {
 
     protected final Class<?> acceptClass;
@@ -26,6 +28,7 @@ public abstract class WingsExceptionResolver<T extends Exception> extends Abstra
             throw new IllegalArgumentException("Internal error: TypeReference constructed without actual type information");
         }
         acceptClass = (Class<?>) ((ParameterizedType) superClass).getActualTypeArguments()[0];
+        log.info("WingsExceptionResolver={}, Exception={}", this.getClass().getName(), acceptClass);
     }
 
     @Override

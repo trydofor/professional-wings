@@ -94,7 +94,6 @@ public class SlardarSessionConfiguration {
                 logger.info("Wings conf Session Cookie jvmRoute=" + jvmRoute);
                 it.setJvmRoute(jvmRoute);
             }
-
         };
     }
 

@@ -39,11 +39,11 @@ import static pro.fessional.wings.slardar.servlet.WingsServletConst.ORDER_FIRST_
 public class FirstBloodImageHandler implements FirstBloodHandler {
 
     private int order = ORDER_FIRST_BLOOD_IMG;
-    private String clientTicketKey = "client-ticket";
-    private String freshCaptchaKey = "fresh-captcha-image";
+    private String clientTicketKey = "Client-Ticket";
+    private String questCaptchaKey = "quest-captcha-image";
     private String checkCaptchaKey = "check-captcha-image";
     private String base64CaptchaKey = "base64";
-    private String base64CaptchaBody = "{\"success\":true,\"data\":\"data:image/jpeg;base64,{b64}\"}";
+    private String base64CaptchaBody = "data:image/jpeg;base64,{base64}";
 
     private ModelAndView needCaptchaResponse;
     private WingsRemoteResolver wingsRemoteResolver;
@@ -80,22 +80,23 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
         }
         assert tkn != null;
 
-        // 获取验证图
-        final String ck = getKeyCode(request, freshCaptchaKey);
+        // 获取验证图，或验证
+        final String ck = getKeyCode(request, questCaptchaKey);
         if (!ck.isEmpty()) {
-            if (!base64CaptchaKey.isEmpty() && ck.startsWith(base64CaptchaKey)) {
-                showCaptcha(response, tkn.fresh(anno.retry(), captchaSupplier), base64CaptchaBody);
+            if (tkn.check(ck, caseIgnore, false)) {
+                // ignore
             }
             else {
-                showCaptcha(response, tkn.fresh(anno.retry(), captchaSupplier), null);
+                final String accept = request.getHeader("Accept");
+                final String fmt = base64CaptchaKey.isEmpty() || accept == null || !accept.contains(base64CaptchaKey) ? null : base64CaptchaBody;
+                showCaptcha(response, tkn.fresh(anno.retry(), captchaSupplier), fmt);
             }
-
             return false;
         }
 
         // 检查验证码
         String vk = getKeyCode(request, checkCaptchaKey);
-        if (!vk.isEmpty() && tkn.check(vk, caseIgnore)) {
+        if (!vk.isEmpty() && tkn.check(vk, caseIgnore, true)) {
             return true;
         }
 
@@ -124,7 +125,7 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
         if (status != null) {
             response.setStatus(status.value());
         }
-        ResponseHelper.bothHeadCookie(response, clientTicketKey, token);
+        ResponseHelper.bothHeadCookie(response, clientTicketKey, token, 600);
         final View view = needCaptchaResponse.getView();
         if (view != null) {
             try {
@@ -178,7 +179,7 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
      * @param token    身份标记
      */
     protected void sendClientTicket(@NotNull HttpServletResponse response, String token) {
-        ResponseHelper.bothHeadCookie(response, clientTicketKey, token);
+        ResponseHelper.bothHeadCookie(response, clientTicketKey, token, 600);
     }
     ////////
 
@@ -219,13 +220,15 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
             this.recent = now;
         }
 
-        public boolean check(String tkn, boolean ci) {
+        public boolean check(String tkn, boolean ci, boolean once) {
             final boolean eq;
             synchronized (retry) {
                 eq = ci ? tkn.equalsIgnoreCase(token) : tkn.equals(token);
                 if (eq) {
-                    retry.set(0);
-                    token = Null.Str;
+                    if (once) {
+                        retry.set(0);
+                        token = Null.Str;
+                    }
                 }
                 else {
                     retry.decrementAndGet();

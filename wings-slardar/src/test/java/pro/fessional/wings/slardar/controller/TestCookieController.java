@@ -36,13 +36,13 @@ public class TestCookieController {
     @PostMapping("/test/cookie.json")
     @ResponseBody
     public String getCookie(@CookieValue(value = "ck1", required = false) String ck1,
-                            @CookieValue(value = "ck2",required = false) String ck2,
+                            @CookieValue(value = "ck2", required = false) String ck2,
                             @RequestBody Ins ins, HttpServletResponse res, HttpServletRequest req) {
-        res.addCookie(new Cookie("b64", ins.b64));
-        res.addCookie(new Cookie("aes", ins.aes));
-        res.addCookie(new Cookie("ck1", ins.ck1));
-        res.addCookie(new Cookie("ck2", ins.ck2));
-        res.addCookie(new Cookie("oth", ins.oth));
+        res.addCookie(newCookie("b64", ins.b64, true, true));
+        res.addCookie(newCookie("aes", ins.aes, true, true));
+        res.addCookie(newCookie("ck1", ins.ck1, false, true));
+        res.addCookie(newCookie("ck2", ins.ck2, false, true));
+        res.addCookie(newCookie("oth", ins.oth, false, false));
         log.info("/test/cookie.json ck1={} ck2={}", ck1, ck2);
         final WingsRequestWrapper irq = WingsRequestWrapper.infer(req);
         log.info("wings req wrapper={}", irq);
@@ -60,5 +60,12 @@ public class TestCookieController {
     @PostMapping("/test/cookie-forward2.json")
     public String getSpringForward() {
         return "forward:/test/cookie.json";
+    }
+
+    private Cookie newCookie(String n, String v, boolean h, boolean s) {
+        final Cookie ck = new Cookie(n, v);
+        ck.setSecure(s);
+        ck.setHttpOnly(h);
+        return ck;
     }
 }

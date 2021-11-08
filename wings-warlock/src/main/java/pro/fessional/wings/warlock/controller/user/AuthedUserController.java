@@ -6,15 +6,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
+import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -43,11 +45,12 @@ public class AuthedUserController {
         private String zoneid;
         private int offset;
         private String authtype;
+        private String token;
     }
 
-    @ApiOperation(value = "获得登录用户的自身基本信息，未登录时status=401")
-    @RequestMapping(value = "/user/authed-user.json", method = {RequestMethod.POST, RequestMethod.GET})
-    public R<Dto> authedUser() {
+    @ApiOperation(value = "获得登录用户的自身基本信息，未登录时Result(false)；可设置URL权限，返回status=401")
+    @PostMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedUser + "}")
+    public R<Dto> authedUser(HttpServletRequest request) {
         final WingsUserDetails wd = SecurityContextUtil.getDetails();
         if (wd == null) return R.ng();
 
@@ -61,6 +64,10 @@ public class AuthedUserController {
         final ZoneId zid = wd.getZoneId();
         dto.setZoneid(zid.getId());
         dto.setOffset(ZonedDateTime.now(zid).getOffset().getTotalSeconds());
+        final HttpSession session = request.getSession(false);
+        if (session != null) {
+            dto.setToken(session.getId());
+        }
         return R.okData(dto);
     }
 
@@ -70,9 +77,9 @@ public class AuthedUserController {
         private Set<String> perms;
     }
 
-    @ApiOperation(value = "检查登录用户的权限，不区分大小写比较，返回存在的权限，未登录时status=401",
+    @ApiOperation(value = "检查登录用户的权限，不区分大小写比较，返回存在的权限；未登录时Result(false)，可设置URL权限，返回status=401",
             notes = "alias优先于perms检测，alias表示以其value返回，以方便历史命名映射。")
-    @RequestMapping(value = "/user/authed-perm.json", method = {RequestMethod.POST, RequestMethod.GET})
+    @PostMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedPerm + "}")
     public R<Set<String>> authedPerm(@RequestBody Ins ins) {
         final WingsUserDetails wd = SecurityContextUtil.getDetails();
         if (wd == null) return R.ng();

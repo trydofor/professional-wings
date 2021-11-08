@@ -2,12 +2,10 @@ package pro.fessional.wings.warlock.errorhandle;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.MessageSource;
 import org.springframework.core.annotation.Order;
 import pro.fessional.mirana.pain.ThrowableUtil;
 import pro.fessional.mirana.text.StringTemplate;
 import pro.fessional.wings.slardar.webmvc.WingsExceptionResolver;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 
 /**
  * @author trydofor
@@ -15,10 +13,9 @@ import pro.fessional.wings.warlock.constants.WarlockOrderConst;
  */
 @RequiredArgsConstructor
 @Slf4j
-@Order(WarlockOrderConst.AllExceptionResolver)
+@Order
 public class AllExceptionResolver extends WingsExceptionResolver<Exception> {
 
-    private final MessageSource messageSource;
     private final int httpStatus;
     private final String contentType;
     private final String responseBody;

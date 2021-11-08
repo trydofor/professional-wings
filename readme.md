@@ -115,6 +115,7 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 * 前后缀或缩写，不可以单字母，建议3个字母。
 * 英文无法表达的业务词汇及行业黑话，不要用拼音，用中文。`落地配`。
 * 要求4-8字母的单词都记住。
+* 消除null。Set/List/Array/Map用empty，其他标注@NotNull或@Nullable
 
 ### 0.2.2.Sql风格，`snake_case`，即全小写，下划线分割，小写词比大写容易识别。
 

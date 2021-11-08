@@ -53,6 +53,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
     /**
      * @see #fetch(TableImpl, Condition)
      */
+    @NotNull
     public List<P> fetchLive(Condition cond) {
         return fetchLive(table, cond);
     }
@@ -60,6 +61,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
     /**
      * @see #fetch(TableImpl, Condition)
      */
+    @NotNull
     public List<P> fetchLive(T table, Condition cond) {
         return fetch(table, table.onlyLive(cond));
     }
@@ -174,26 +176,32 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
         return fetchOne(mapper, table, table.onlyLive(cond), fields);
     }
 
+    @NotNull
     public <E> List<E> fetchLive(Class<E> claz, SelectField<?>... fields) {
         return fetchLive(claz, table, null, fields);
     }
 
+    @NotNull
     public <E> List<E> fetchLive(Class<E> claz, T table, SelectField<?>... fields) {
         return fetchLive(claz, table, null, fields);
     }
 
+    @NotNull
     public <E> List<E> fetchLive(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
         return fetch(claz, table, table.onlyLive(cond), fields);
     }
 
+    @NotNull
     public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, SelectField<?>... fields) {
         return fetchLive(mapper, table, null, fields);
     }
 
+    @NotNull
     public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, T table, SelectField<?>... fields) {
         return fetchLive(mapper, table, null, fields);
     }
 
+    @NotNull
     public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, T table, Condition cond, SelectField<?>... fields) {
         return fetch(mapper, table, table.onlyLive(cond), fields);
     }
@@ -285,6 +293,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
     /**
      * @see #fetchLive(Condition)
      */
+    @NotNull
     public List<P> findAllLive() {
         return fetchLive(null);
     }

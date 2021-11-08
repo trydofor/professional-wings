@@ -1,5 +1,7 @@
 package pro.fessional.wings.slardar.spring.bean;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
@@ -9,11 +11,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
+import pro.fessional.mirana.data.R;
+import pro.fessional.mirana.i18n.I18nString;
+import pro.fessional.mirana.time.DateParser;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalTimeDeserializer;
@@ -21,9 +30,14 @@ import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeDeserializ
 import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeSerializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeSerializer;
+import pro.fessional.wings.slardar.jackson.AutoRegisterPropertyFilter;
+import pro.fessional.wings.slardar.jackson.EmptyValuePropertyFilter;
 import pro.fessional.wings.slardar.jackson.FormatNumberSerializer;
+import pro.fessional.wings.slardar.jackson.I18nResultPropertyFilter;
+import pro.fessional.wings.slardar.jackson.I18nStringSerializer;
 import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
+import pro.fessional.wings.slardar.spring.prop.SlardarJacksonProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarNumberProp;
 
 import java.math.BigDecimal;
@@ -34,6 +48,7 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -50,9 +65,10 @@ public class SlardarJacksonConfiguration {
 
     private static final Log logger = LogFactory.getLog(SlardarJacksonConfiguration.class);
 
+    private final SlardarJacksonProp slardarJacksonProp;
     private final SlardarDatetimeProp slardarDatetimeProp;
-
     private final SlardarNumberProp slardarNumberProp;
+    private final MessageSource messageSource;
 
 /*
     @Bean
@@ -142,10 +158,10 @@ public class SlardarJacksonConfiguration {
             builder.serializerByType(OffsetDateTime.class, new JacksonOffsetDateTimeSerializer(offset, autoOffset));
 
             val offPsr = slardarDatetimeProp.getZoned()
-                                             .getSupport()
-                                             .stream()
-                                             .map(DateTimeFormatter::ofPattern)
-                                             .collect(Collectors.toList());
+                                            .getSupport()
+                                            .stream()
+                                            .map(DateTimeFormatter::ofPattern)
+                                            .collect(Collectors.toList());
 
             builder.deserializerByType(OffsetDateTime.class, new JacksonOffsetDateTimeDeserializer(offset, offPsr, autoOffset));
             logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer OffsetDateTime");
@@ -161,29 +177,92 @@ public class SlardarJacksonConfiguration {
             final SlardarNumberProp.Nf ints = slardarNumberProp.getInteger();
             if (ints.isEnable()) {
                 final DecimalFormat df = ints.getWellFormat();
+                final boolean digital = ints.isDigital();
                 logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer Integer&Long serializer");
-                builder.serializerByType(Integer.class, new FormatNumberSerializer(Integer.class, df));
-                builder.serializerByType(Integer.TYPE, new FormatNumberSerializer(Integer.TYPE, df));
-                builder.serializerByType(Long.class, new FormatNumberSerializer(Long.class, df));
-                builder.serializerByType(Long.TYPE, new FormatNumberSerializer(Long.TYPE, df));
+                builder.serializerByType(Integer.class, new FormatNumberSerializer(Integer.class, df, digital));
+                builder.serializerByType(Integer.TYPE, new FormatNumberSerializer(Integer.TYPE, df, digital));
+                builder.serializerByType(Long.class, new FormatNumberSerializer(Long.class, df, digital));
+                builder.serializerByType(Long.TYPE, new FormatNumberSerializer(Long.TYPE, df, digital));
             }
 
             final SlardarNumberProp.Nf floats = slardarNumberProp.getFloats();
             if (floats.isEnable()) {
                 final DecimalFormat df = floats.getWellFormat();
+                final boolean digital = floats.isDigital();
                 logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer Float&Double serializer");
-                builder.serializerByType(Float.class, new FormatNumberSerializer(Float.class, df));
-                builder.serializerByType(Float.TYPE, new FormatNumberSerializer(Float.TYPE, df));
-                builder.serializerByType(Double.class, new FormatNumberSerializer(Double.class, df));
-                builder.serializerByType(Double.TYPE, new FormatNumberSerializer(Double.TYPE, df));
+                builder.serializerByType(Float.class, new FormatNumberSerializer(Float.class, df, digital));
+                builder.serializerByType(Float.TYPE, new FormatNumberSerializer(Float.TYPE, df, digital));
+                builder.serializerByType(Double.class, new FormatNumberSerializer(Double.class, df, digital));
+                builder.serializerByType(Double.TYPE, new FormatNumberSerializer(Double.TYPE, df, digital));
             }
 
             final SlardarNumberProp.Nf decimal = slardarNumberProp.getDecimal();
             if (decimal.isEnable()) {
                 final DecimalFormat df = decimal.getWellFormat();
                 logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer BigDecimal serializer");
-                builder.serializerByType(BigDecimal.class, new FormatNumberSerializer(BigDecimal.class, df));
+                builder.serializerByType(BigDecimal.class, new FormatNumberSerializer(BigDecimal.class, df, decimal.isDigital()));
             }
         };
+    }
+
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer customizerObjectMapperJackson() {
+        logger.info("Wings conf customizerObjectMapperJackson");
+        return builder -> {
+            if (StringUtils.hasText(slardarJacksonProp.getEmptyDate()) ||
+                slardarJacksonProp.isEmptyMap() || slardarJacksonProp.isEmptyList()) {
+                logger.info("Wings conf EmptyValuePropertyFilter's EmptyDateMixin");
+                builder.mixIn(Object.class, EmptyValuePropertyFilter.EmptyDateMixin.class);
+            }
+
+            if (slardarJacksonProp.isI18nResult()) {
+                logger.info("Wings conf I18nResultPropertyFilter's I18nResultMixin");
+                builder.serializerByType(I18nString.class, new I18nStringSerializer(messageSource, true));
+                builder.serializerByType(CharSequence.class, new I18nStringSerializer(messageSource, false));
+                builder.mixIn(R.class, I18nResultPropertyFilter.I18nResultMixin.class);
+            }
+        };
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = SlardarJacksonProp.Key$i18nResult, havingValue = "true")
+    public AutoRegisterPropertyFilter i18nResultPropertyFilter() {
+        logger.info("Wings conf i18nResultPropertyFilter");
+        return new I18nResultPropertyFilter(messageSource);
+    }
+
+    @Bean
+    // "${logging.enabled:true} and '${logging.level}'.equals('DEBUG')"
+    @ConditionalOnExpression("T(org.springframework.util.StringUtils).hasText('${" + SlardarJacksonProp.Key$emptyDate + "}') "
+                             + "|| ${" + SlardarJacksonProp.Key$emptyList + ":false}"
+                             + "|| ${" + SlardarJacksonProp.Key$emptyMap + ":false}"
+    )
+    public AutoRegisterPropertyFilter emptyValuePropertyFilter() {
+        logger.info("Wings conf emptyValuePropertyFilter");
+
+        final LocalDate ed = slardarJacksonProp.getEmptyDate() == null ? null :
+                             DateParser.parseDate(slardarJacksonProp.getEmptyDate());
+        return new EmptyValuePropertyFilter(ed,
+                slardarJacksonProp.getEmptyDateOffset(),
+                slardarJacksonProp.isEmptyList(),
+                slardarJacksonProp.isEmptyMap()
+        );
+    }
+
+    @Bean
+    @ConditionalOnBean(AutoRegisterPropertyFilter.class)
+    public FilterProvider slardarFilterProvider(List<AutoRegisterPropertyFilter> filters) {
+        final SimpleFilterProvider bean = new SimpleFilterProvider();
+        for (AutoRegisterPropertyFilter filter : filters) {
+            bean.addFilter(filter.getId(), filter);
+        }
+        return bean;
+    }
+
+    @Bean
+    @ConditionalOnBean(FilterProvider.class)
+    public Jackson2ObjectMapperBuilderCustomizer customizerObjectMapperFilterProvider(FilterProvider filterProvider) {
+        logger.info("Wings conf customizerObjectMapperFilterProvider");
+        return builder -> builder.filters(filterProvider);
     }
 }

@@ -15,7 +15,7 @@ import pro.fessional.wings.slardar.concur.impl.FirstBloodImageHandler;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.servlet.response.view.PlainTextView;
-import pro.fessional.wings.slardar.spring.prop.SlardarConcurProp;
+import pro.fessional.wings.slardar.spring.prop.SlardarFirstBloodProp;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,20 +25,19 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Configuration
 @RequiredArgsConstructor
-public class SlardarConcurTestConfiguration {
+public class SlardarFirstBloodTestConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SlardarConcurTestConfiguration.class);
+    private static final Log logger = LogFactory.getLog(SlardarFirstBloodTestConfiguration.class);
 
-    private final SlardarConcurProp slardarConcurProp;
+    private final SlardarFirstBloodProp firstBloodProp;
 
     @Bean
     @ConditionalOnProperty(value = "spring.wings.slardar.enabled.first-blood-image-test", havingValue = "true")
     public FirstBloodImageHandler firstBloodImageHandler(@Autowired(required = false) WingsRemoteResolver remoteResolver) {
         logger.info("Wings conf firstBloodImageHandler for test");
         final FirstBloodImageHandler handler = new Test();
-        SlardarConcurProp.FirstBlood firstBloodProp = slardarConcurProp.getFirstBlood();
         handler.setClientTicketKey(firstBloodProp.getClientTicketKey());
-        handler.setFreshCaptchaKey(firstBloodProp.getFreshCaptchaKey());
+        handler.setQuestCaptchaKey(firstBloodProp.getQuestCaptchaKey());
         handler.setCheckCaptchaKey(firstBloodProp.getCheckCaptchaKey());
         handler.setBase64CaptchaKey(firstBloodProp.getBase64CaptchaKey());
         handler.setBase64CaptchaBody(firstBloodProp.getBase64CaptchaBody());

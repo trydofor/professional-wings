@@ -1,15 +1,18 @@
-package pro.fessional.wings.slardar.context;
+package pro.fessional.wings.slardar.concur.impl;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import pro.fessional.mirana.bits.Aes128;
 import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.mirana.code.RandCode;
+import pro.fessional.wings.slardar.concur.Righter;
+import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.serialize.KryoSimple;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarRighterProp;
@@ -20,6 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.function.Function;
 
 /**
+ * https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-handlermapping-interceptor
+ *
  * @author trydofor
  * @since 2019-11-16
  */
@@ -42,11 +47,36 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
     public boolean preHandle(@NotNull HttpServletRequest request,
                              @NotNull HttpServletResponse response,
                              @NotNull Object handler) {
+
+        if (!(handler instanceof HandlerMethod)) return true;
+
+        final Righter anno = ((HandlerMethod) handler).getMethod().getAnnotation(Righter.class);
+        if (anno == null) return true;
+
         // 使用前清空
         RighterContext.delAudit();
 
         final String audit = request.getHeader(prop.getHeader());
-        if (audit == null) return true;
+        if (audit == null) {
+            if (anno.value()) {
+                responseError(response);
+                return false;
+            }
+            else {
+                RighterContext.funAllow((obj) -> {
+                    final Object key = SecurityContextUtil.getPrincipal();
+                    final String allow = encodeAllow(key, obj);
+                    final int len = allow.length();
+                    if (len > 5_000) {
+                        log.warn("browser may 8k header, but 4k is too much. key={}, uri={}", key, request.getRequestURI());
+                    }
+                    response.setHeader(prop.getHeader(), allow);
+                });
+                return true;
+            }
+        }
+
+        // 一般只有登录用户才有权限修改，使用用户slat作为密码
         final Object key = SecurityContextUtil.getPrincipal();
         if (key == null) return true;
 
@@ -77,29 +107,21 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
         ResponseHelper.writeBodyUtf8(response, prop.getResponseBody());
     }
 
+    /**
+     * Note that postHandle is less useful with @ResponseBody and ResponseEntity
+     * methods for which the response is written and committed within the
+     * HandlerAdapter and before postHandle. That means it is too late to
+     * make any changes to the response, such as adding an extra header.
+     * For such scenarios, you can implement ResponseBodyAdvice and either
+     * declare it as an Controller Advice bean or configure it directly on
+     * RequestMappingHandlerAdapter
+     */
     @Override
     public void postHandle(@NotNull HttpServletRequest request,
                            @NotNull HttpServletResponse response,
                            @NotNull Object handler,
                            ModelAndView modelAndView) {
-        final Object obj = RighterContext.getAllow();
-        if (obj == null) return;
-
-        try {
-            final Object key = SecurityContextUtil.getPrincipal();
-            if (key == null) return;
-
-            final String allow = encodeAllow(key, obj);
-            final int len = allow.length();
-            if (len > 5000) {
-                log.warn("browser may 8k header, but 4k is too much. key={}, uri={}", key, request.getRequestURI());
-            }
-            response.setHeader(prop.getHeader(), allow);
-        }
-        finally {
-            // 使用后清空
-            RighterContext.delAllow();
-        }
+        RighterContext.delAllow();
     }
 
     private Aes128 genAesKey(Object key) {

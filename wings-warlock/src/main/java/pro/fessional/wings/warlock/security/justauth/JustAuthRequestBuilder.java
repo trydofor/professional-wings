@@ -71,7 +71,7 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
 
     @Override
     public AuthUser buildDetails(@NotNull Enum<?> authType, @NotNull HttpServletRequest request) {
-        AuthRequest ar = buildRequest(authType);
+        AuthRequest ar = buildRequest(authType, request);
         if (ar == null) return null;
         AuthCallback callback = new AuthCallback();
 
@@ -102,11 +102,15 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
         }
     }
 
-    public AuthRequest buildRequest(Enum<?> authType) {
+    public AuthRequest buildRequest(Enum<?> authType, HttpServletRequest request) {
         if (!(authType instanceof AuthSource)) return null;
 
-        final AuthConfig config = authConfigMap.get(authType);
+        AuthConfig config = authConfigMap.get(authType);
         if (config == null) return null;
+
+        if (config instanceof AuthConfigWrapper) {
+            config = ((AuthConfigWrapper) config).wrap(request);
+        }
 
         switch ((AuthDefaultSource) authType) {
             case GITHUB:

@@ -12,15 +12,13 @@ public class DoubleKillException extends NoStackRuntimeException {
     private final long runningSecond;
 
     public DoubleKillException(String progressKey, long runningSecond) {
-        super(progressKey);
+        super(progressKey + ", run=" + runningSecond);
         this.progressKey = progressKey;
         this.runningSecond = runningSecond;
     }
 
     public DoubleKillException(String progressKey, long started, long now) {
-        super(progressKey);
-        this.progressKey = progressKey;
-        this.runningSecond = (now - started) / 1000;
+        this(progressKey, (now - started) / 1000);
     }
 
     public String getProgressKey() {

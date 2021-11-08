@@ -268,6 +268,7 @@ CREATE USER 'trydofor'@'%' IDENTIFIED BY 'moilioncircle';
 GRANT ALL  ON `*`.*  TO 'trydofor'@'%';
 SHOW GRANTS FOR 'trydofor'@'%';
 DROP USER 'trydofor'@'%';
+FLUSH PRIVILEGES;
 ```
 
 ### 03.如何自定义journalService

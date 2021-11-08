@@ -24,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.fail;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
                 "debug = true",
-                "wings.slardar.concur.double-kill.http-status=202",
-                "wings.slardar.concur.double-kill.content-type=text/plain",
-                "wings.slardar.concur.double-kill.response-body=double-killed ttl=${ttl}, key=${key}",
+                "wings.slardar.double-kill.http-status=202",
+                "wings.slardar.double-kill.content-type=text/plain",
+                "wings.slardar.double-kill.response-body=double-killed ttl=${ttl}, key=${key}",
         })
 class DoubleKillTest {
 

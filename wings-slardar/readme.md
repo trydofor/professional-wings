@@ -31,6 +31,7 @@
 * Js不应该有任何有精度要求的金额计算，只应负责显示服务器端计算结果。
 * 因为时间的特殊性，还有时区和夏令时，在保证精度的同时要提供可读性。
 * 51bits位的long，必须使用string，因为IEE754无法正确表示。
+* integer和long，默认使用number，考虑typescript兼容性。
 * 确保jsr310格式兼容，如依赖`jackson-datatype-jsr310`。
 * ZoneId应首选`IANA TZDB`格式，如`America/New_York`。
 * 带时区(`Z`)的序列化与反序列化过程，会丢失夏令时信息。
@@ -88,7 +89,14 @@ wings.slardar.number.decimal.separator=_
 # 参考 DecimalFormatTest.java
 ```
 
-### 3.1.4.常用的Jackson注解
+### 3.1.4.empty数据处理，
+
+此功能默认开启，会造成正反序列化的不一致。需要自行处理差异
+
+* 日期empty视为null，不输出，避免出现很多1000-01-01的数据
+* array/Collection/Map为empty时，不输出。
+
+### 3.1.5.常用的Jackson注解
 
 * @JsonRawValue - number不变字符串，字符串不转义。
 * @JsonFormat - 指定格式
@@ -283,6 +291,11 @@ cookie体系下，可通过定制Filter和Wrapper实现以下功能。
   - noop - 不加密，明文，如随机token，没必要消耗计算资源
   - b64 - base64,spring默认的加密机制，只用了防止特殊字符干扰
   - aes - aes128,非敏感数据的初级加密，基本的防偷窥功能
+* 定制 http-only, secure, domain, path。
+
+其中需要注意的是，
+* http-only会使js无法读取，有时需要放开（注意CSRF攻击）
+* session的设置，应该在spring-session-79.properties 中设置
 
 ### 3.4.3.多中验证及绑定登录
 
@@ -461,17 +474,19 @@ org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 沿用dota命名，此处命名为 @DoubleKill注解，通过Jvm全局锁和DoubleKillException完成。
 
 在controller层，需要使用@RequestParam 或@RequestHeader等注入参数。
-对应session级别的控制，可使用@bean进行处理。
+对应session级别的控制，可使用@bean进行处理。默认返回202(Accepted)
 
-默认对DoubleKillException返回固定的json字符串，注入DoubleKillExceptionResolver可替换
+默认对DoubleKillException返回固定的json字符串，注入DoubleKillExceptionResolver可替换，
+需要注意ExceptionResolver或ExceptionHandler的Order，避免异常捕获的层级错误。
 
 详细用法，可参考TestDoubleKillController和DoubleKillService
 
 ## 3.7.3.验证码
 
-对于受保护的资源，要采取一定的验证码，有时是为了延缓时间，有时是为了区分行为。 验证码可以header或param进行校验（默认param）去请求验证码图片等。
+对于受保护的资源，要采取一定的验证码，有时是为了延缓时间，有时是为了区分行为。 
+验证码可以header或param进行校验（默认param）去请求验证码图片等。
 
-在spring Security中，对401和403有以下约定，所以验证码使用406
+在spring Security中，对401和403有以下约定，所以验证码使用406(Not Acceptable)
 
 * 401 - Unauthorized 身份未鉴别
 * 403 - Forbidden/Access Denied 鉴权通过，授权不够
@@ -483,22 +498,34 @@ slardar验证码的默认是基于图片的，在现今的AI算法识别上，�
 
 使用方法如下，在MappingMethod上，放置`@FirstBlood` 即可，工作流程如下。
 
-* 客户端正常访问此URL，如/test/captcha.json
+* 客户端正常访问此URL，如/test/captcha.json（需要支持GET方法，以便返回图片）
 * 服务器需要验证码时，以406(Not Acceptable)返回提示json
-* 客户端在header和cookie中获得client-ticket的token，并每次都发送
-* 客户端在URL后增加fresh-captcha-image=${timestamp}获取验证码图片（可直接使用）
+* 客户端在header和cookie中获得Client-Ticket的token，并每次都发送
+* 客户端在URL后增加quest-captcha-image=${vcode}获取验证码图片（可直接使用）
+  - 以`accept`区分图片的返回形式，`base64`为base64格式的图，其他均为二进制流
+  - 当`vcode`为验证码，通过时，返回空body，否则返回新的验证图片
 * 客户端在URL后增加check-captcha-image=${vcode}提交验证码
-* 服务器端自动校验client-ticket和check-captcha-image，完成验证或放行
+* 服务器端自动校验Client-Ticket和check-captcha-image，完成验证或放行
 
 若需集成其他验证码，如第三方服务或消息验证码，实现并注入FirstBloodHandler即可
 
-### 3.7.4.终端信息
+### 3.7.4.防止篡改
+
+通过在http header中设置信息，进行编辑保护，防止客户端篡改。默认返回409(Conflict)。
+详见 wings-righter-79.properties 和 RighterContext。实现原理和使用方法是，
+
+* 使用Righter注解编辑数据(false)和提交数据(true)的方法
+* 获得编辑数据时，在RighterContext中设置签名的数据header
+* 提交时需要提交此签名，并被校验，签名错误时直接409
+* 签名通过后，通过RighterContext获取数据，程序自行检验数据项是否一致
+
+### 3.7.5.终端信息
 
 通过handlerInterceptor，在当前线程和request中设置terminal信息
 
 TerminalContext保存了，远程ip，agent信息，locale和timezone
 
-## 3.7.5.同步/异步/单机/集群的事件驱动
+## 3.7.6.同步/异步/单机/集群的事件驱动
 
 EventPublishHelper默认提供了3种事件发布机制
 
