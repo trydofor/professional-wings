@@ -26,7 +26,7 @@ import javax.servlet.http.HttpSession;
 public class NonceLoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Setter(onMethod_ = {@Autowired})
-    private SlardarSessionProp slardarSessionProp;
+    protected SlardarSessionProp slardarSessionProp;
 
     @Override
     public final void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {

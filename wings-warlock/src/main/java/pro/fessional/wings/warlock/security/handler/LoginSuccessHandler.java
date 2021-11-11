@@ -1,12 +1,14 @@
 package pro.fessional.wings.warlock.security.handler;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
+import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,19 +21,18 @@ import javax.servlet.http.HttpServletResponse;
  * @since 2021-02-17
  */
 @Slf4j
-@RequiredArgsConstructor
 public class LoginSuccessHandler extends NonceLoginSuccessHandler {
 
-    private final String body;
-    private final String headerName;
+    @Setter(onMethod_ = {@Autowired})
+    protected WarlockSecurityProp warlockSecurityProp;
 
     @SneakyThrows
     @Override
     protected void onResponse(@NotNull HttpServletRequest req, @NotNull HttpServletResponse res, @NotNull Authentication aun,
                               @Nullable String sid, long uid, @Nullable String state) {
 
-        if (headerName != null) {
-            res.setHeader(headerName, sid);
+        if (slardarSessionProp != null && slardarSessionProp.getHeaderName() != null) {
+            res.setHeader(slardarSessionProp.getHeaderName(), sid);
         }
 
         if (state != null && !state.isEmpty()) {
@@ -44,7 +45,7 @@ public class LoginSuccessHandler extends NonceLoginSuccessHandler {
             }
         }
         else {
-            writeResponseBody(body, req, res, aun, sid, uid, state);
+            writeResponseBody(warlockSecurityProp.getLoginSuccessBody(), req, res, aun, sid, uid, state);
         }
     }
 
