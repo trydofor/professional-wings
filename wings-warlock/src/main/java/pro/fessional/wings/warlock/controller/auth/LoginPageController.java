@@ -63,7 +63,7 @@ public class LoginPageController {
 
     @SuppressWarnings("MVCPathVariableInspection")
     @ApiOperation(value = "具体验证登录默认页，根据content-type自动返回",
-            notes = "一般用于定制访问，如github页面重定向。支持state参数，用于构造oauth2的有意义的state"
+            notes = "一般用于定制访问，如github页面重定向。支持state参数，用于构造oauth2的有意义的state，如重定向(http或'/'开头的跳转)；回写非空内容"
                     + "①当鉴权失败时，重定向页面，status=401;"
                     + "②直接访问时返回status=200;")
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginPage + "}", method = {RequestMethod.POST, RequestMethod.GET})

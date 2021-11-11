@@ -30,22 +30,26 @@ public class LoginSuccessHandler extends NonceLoginSuccessHandler {
     protected void onResponse(@NotNull HttpServletRequest req, @NotNull HttpServletResponse res, @NotNull Authentication aun,
                               @Nullable String sid, long uid, @Nullable String state) {
 
-        if (state != null) {
-            if (state.equals("blank")) {
-                log.info("state=blank, response nothing to client");
-                return;
-            }
-            else if (state.startsWith("http")) {
-                log.info("state=http*, redirect to {}", state);
-                res.sendRedirect(state);
-                return;
-            }
-        }
-
         if (headerName != null) {
             res.setHeader(headerName, sid);
         }
 
+        if (state != null && !state.isEmpty()) {
+            if (state.startsWith("http") || state.startsWith("/")) {
+                log.info("redirect to {}", state);
+                res.sendRedirect(state);
+            }
+            else {
+                writeResponseBody(state, req, res, aun, sid, uid, state);
+            }
+        }
+        else {
+            writeResponseBody(body, req, res, aun, sid, uid, state);
+        }
+    }
+
+    protected void writeResponseBody(@NotNull String body, @NotNull HttpServletRequest req, @NotNull HttpServletResponse res,
+                                     @NotNull Authentication aun, @Nullable String sid, long uid, @Nullable String state) {
         ResponseHelper.writeBodyUtf8(res, body);
     }
 }

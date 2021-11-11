@@ -102,6 +102,10 @@ Warlock在用户通过身边鉴别（renew）后，会分别加载和用户绑�
 NonceLoginSuccessHandler配合NonceTokenSessionHelper实现了oauth一次性token换取session的功能。
 所以如果需要此功能，需要在自行实现AuthenticationSuccessHandler继承NonceLoginSuccessHandler。
 
+Oauth通过定制state参数，构造指令，完成重定向等操作，参考 AuthStateBuilder 类。
+* 重定向 - `http`或`/`开头的302 跳转。
+* 回写 - 非空的内容，直接写回到response。
+
 ### 4.4.2.定制验证
 
 * 暴露 ComboWingsAuthDetailsSource.Combo，增加details
