@@ -97,7 +97,7 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, Ini
             // 一定会更新，除非不存在
             setter.put(tu.CommitId, commit.getCommitId());
             setter.put(tu.ModifyDt, commit.getCommitDt());
-            return winUserBasisDao.update(setter, tu.Id.eq(userId), true);
+            return winUserBasisDao.update(tu, setter, tu.Id.eq(userId), true);
         });
 
         ModifyAssert.one(rc, CommonErrorEnum.DataNotFound);

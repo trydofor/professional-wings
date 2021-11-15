@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -46,7 +47,7 @@ import java.util.stream.Collectors;
  * 为了编码的便捷和减少数据拷贝，可以使用Record进行操作。
  * 批量处理中，一律使用了new Record，为了提升性能。
  *
- * 注意，alias 用在多表查询，filed和table需要同源，否则出现语法错误。
+ * 注意，alias 用在多表查询，filed/condition和table需要同名，否则出现语法错误。
  * 即，不能是表名和字段不能一个是table，一个是alias的。
  * </pre>
  *
@@ -57,7 +58,7 @@ import java.util.stream.Collectors;
  * @author trydofor
  * @since 2019-10-12
  */
-public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasTable<T>, R extends UpdatableRecord<R>, P, K> extends DAOImpl<R, P, K> {
+public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable<T>, R extends UpdatableRecord<R>, P, K> extends DAOImpl<R, P, K> {
 
     protected final T table;
     protected final Field<?>[] pkeys;
@@ -82,7 +83,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
     @SuppressWarnings("unchecked")
     @NotNull
     public T newTable(String name) {
-        return (T) table.rename(name);
+        return (T) ((TableImpl<?>) table).rename(name);
     }
 
     /**
@@ -229,16 +230,23 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
         return batchInsert(newRecord(pos), 0, ignoreOrReplace);
     }
 
+    /**
+     * @see #mergeInto(Table, Object, Field[])
+     */
+    public int mergeInto(P pojo, Function<T, Field<?>[]> fun) {
+        return mergeInto(table, pojo, fun.apply(table));
+    }
 
     /**
      * 插入新记录，默认使用①insert into DuplicateKey update，
      * 也可以②先select，在insert或update
      *
+     * @param table        与 updateFields 同名表
      * @param pojo         记录
-     * @param updateFields 唯一约束存在时更新的字段
+     * @param updateFields 唯一约束存在时更新的字段，确保不使用别名
      * @return 执行结果，使用 ModifyAssert判断
      */
-    public int mergeInto(P pojo, Field<?>... updateFields) {
+    public int mergeInto(T table, P pojo, Field<?>... updateFields) {
         Map<Field<?>, Object> map = new LinkedHashMap<>();
         DSLContext dsl = ctx();
         R record = dsl.newRecord(table, pojo);
@@ -257,14 +265,22 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
     }
 
     /**
+     * @see #batchMerge(Table, Collection, int, Field[])
+     */
+    public int @NotNull [] batchMerge(Collection<R> records, int size, Function<T, Field<?>[]> fun) {
+        return batchMerge(table, records, size, fun.apply(table));
+    }
+
+    /**
      * 先select，在insert或update
      *
+     * @param table        与 updateFields 同名表
      * @param records      所有记录
      * @param size         每批的数量，小于等于0时，表示不分批
      * @param updateFields 唯一约束存在时更新的字段
      * @return 执行结果，使用 ModifyAssert判断
      */
-    public int @NotNull [] batchMerge(Collection<R> records, int size, Field<?>... updateFields) {
+    public int @NotNull [] batchMerge(T table, Collection<R> records, int size, Field<?>... updateFields) {
         if (records == null || records.isEmpty()) return Null.Ints;
 
         BiFunction<DSLContext, Collection<R>, int[]> batchMergeExec = (dsl, rs) -> {
@@ -306,14 +322,15 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
      * 先根据keys进行分批select，再根据记录情况进行insert或update。
      * 字符串比较忽略大小写
      *
+     * @param table        与 updateFields 同名表
      * @param keys         唯一索引字段
      * @param records      所有记录
      * @param size         每批的数量，小于等于0时，表示不分批
      * @param updateFields 唯一约束存在时更新的字段
      * @return 执行结果，使用 ModifyAssert判断
      */
-    public int @NotNull [] batchMerge(Field<?>[] keys, Collection<R> records, int size, Field<?>... updateFields) {
-        return batchMerge(keys, caseIgnore, records, size, updateFields);
+    public int @NotNull [] batchMerge(T table, Field<?>[] keys, Collection<R> records, int size, Field<?>... updateFields) {
+        return batchMerge(table, keys, caseIgnore, records, size, updateFields);
     }
 
     private final BiPredicate<Object, Object> caseIgnore = (o1, o2) -> {
@@ -331,6 +348,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
      * 当不使用db中的唯一约束时，使用此方法
      * 先根据keys进行分批select，再根据记录情况进行insert或update
      *
+     * @param table        与 updateFields 同名表
      * @param keys         唯一索引字段
      * @param equals       判断字段相等的方法
      * @param records      所有记录
@@ -339,7 +357,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
      * @return 执行结果，使用 ModifyAssert判断
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public int @NotNull [] batchMerge(Field<?>[] keys, BiPredicate<Object, Object> equals, Collection<R> records, int size, Field<?>... updateFields) {
+    public int @NotNull [] batchMerge(T table, Field<?>[] keys, BiPredicate<Object, Object> equals, Collection<R> records, int size, Field<?>... updateFields) {
         if (records == null || records.isEmpty()) return Null.Ints;
 
         DSLContext dsl = ctx();
@@ -411,7 +429,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
             }
 
             if (!upd.isEmpty()) {
-                int[] r = batchUpdate(keys, upd, size, updateFields);
+                int[] r = batchUpdate(table, keys, upd, size, updateFields);
                 System.arraycopy(r, 0, result, off, r.length);
                 off += r.length;
             }
@@ -510,6 +528,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
     /**
      * 分配批量更新数据
      *
+     * @param table        与 updateFields 同名表
      * @param whereFields  where条件
      * @param records      记录
      * @param size         批次大小
@@ -517,7 +536,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
      * @return 执行结果，使用 ModifyAssert判断
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public int @NotNull [] batchUpdate(Field<?>[] whereFields, Collection<R> records, int size, Field<?>... updateFields) {
+    public int @NotNull [] batchUpdate(T table, Field<?>[] whereFields, Collection<R> records, int size, Field<?>... updateFields) {
         if (records == null || records.isEmpty()) return Null.Ints;
 
         BiFunction<DSLContext, Collection<R>, int[]> batchMergeExec = (dsl, rs) -> {
@@ -614,11 +633,11 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
     ///////////////// select /////////////////////
 
     /**
-     * @see #fetch(TableImpl, Condition)
+     * @see #fetch(Table, Condition)
      */
     @NotNull
-    public List<P> fetch(Condition cond) {
-        return fetch(table, cond);
+    public List<P> fetch(Function<T, Condition> fun) {
+        return fetch(table, fun.apply(table));
     }
 
     /**
@@ -639,61 +658,6 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
                     .where(cond)
                     .fetch()
                     .map(mapper());
-    }
-
-    /**
-     * @see #fetch(TableImpl, Condition, OrderField[])
-     */
-    @NotNull
-    public List<P> fetch(Condition cond, OrderField<?>... orderBy) {
-        return fetch(table, cond, orderBy);
-    }
-
-    /**
-     * 按表排序查询，要求table和cond中的字段必须同源
-     * <pre>
-     * val t = dao.getTable();
-     * val c = t.Id.eq(1L).and(t.CommitId.eq(2L));
-     * val r = dao.fetch(t, c, t.Id.desc());
-     * </pre>
-     *
-     * @param table   表
-     * @param cond    条件
-     * @param orderBy order by
-     * @return 结果
-     */
-    @NotNull
-    public List<P> fetch(T table, Condition cond, OrderField<?>... orderBy) {
-        DSLContext dsl = ctx();
-        if (orderBy == null || orderBy.length == 0) {
-            return dsl.selectFrom(table)
-                      .where(cond)
-                      .fetch()
-                      .map(mapper());
-        }
-        else {
-            return dsl.selectFrom(table)
-                      .where(cond)
-                      .orderBy(orderBy)
-                      .fetch()
-                      .map(mapper());
-        }
-    }
-
-    /**
-     * @see #fetch(TableImpl, int, int, Condition, OrderField[])
-     */
-    @NotNull
-    public List<P> fetch(int offset, int limit, OrderField<?>... orderBy) {
-        return fetch(table, offset, limit, null, orderBy);
-    }
-
-    /**
-     * @see #fetch(TableImpl, int, int, Condition, OrderField[])
-     */
-    @NotNull
-    public List<P> fetch(int offset, int limit, Condition condition, OrderField<?>... orderBy) {
-        return fetch(table, offset, limit, condition, orderBy);
     }
 
     /**
@@ -732,11 +696,11 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
     }
 
     /**
-     * @see #fetchOne(TableImpl, Condition)
+     * @see #fetchOne(Table, Condition)
      */
     @Nullable
-    public P fetchOne(Condition cond) {
-        return fetchOne(table, cond);
+    public P fetchOne(Function<T, Condition> fun) {
+        return fetchOne(table, fun.apply(table));
     }
 
     /**
@@ -762,39 +726,36 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
 
     ///////////////// select into /////////////////////
 
-    public <E> E fetchOne(Class<E> claz, SelectField<?>... fields) {
-        return fetchOne(claz, table, null, fields);
-    }
-
+    @Nullable
     public <E> E fetchOne(Class<E> claz, T table, SelectField<?>... fields) {
         return fetchOne(claz, table, null, fields);
     }
 
+    @Nullable
     public <E> E fetchOne(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
+        if (fields == null || fields.length == 0) {
+            fields = table.fields();
+        }
         return ctx().select(fields)
                     .from(table)
                     .where(cond)
                     .fetchOneInto(claz);
     }
 
-    public <E> E fetchOne(RecordMapper<? super Record, E> mapper, SelectField<?>... fields) {
-        return fetchOne(mapper, table, null, fields);
-    }
-
+    @Nullable
     public <E> E fetchOne(RecordMapper<? super Record, E> mapper, T table, SelectField<?>... fields) {
         return fetchOne(mapper, table, null, fields);
     }
 
+    @Nullable
     public <E> E fetchOne(RecordMapper<? super Record, E> mapper, T table, Condition cond, SelectField<?>... fields) {
+        if (fields == null || fields.length == 0) {
+            fields = table.fields();
+        }
         return ctx().select(fields)
                     .from(table)
                     .where(cond)
                     .fetchOne(mapper);
-    }
-
-    @NotNull
-    public <E> List<E> fetch(Class<E> claz, SelectField<?>... fields) {
-        return fetch(claz, table, null, fields);
     }
 
     @NotNull
@@ -804,16 +765,14 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
 
     @NotNull
     public <E> List<E> fetch(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
+        if (fields == null || fields.length == 0) {
+            fields = table.fields();
+        }
         return ctx().select(fields)
                     .from(table)
                     .where(cond)
                     .fetch()
                     .into(claz);
-    }
-
-    @NotNull
-    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, SelectField<?>... fields) {
-        return fetch(mapper, table, null, fields);
     }
 
     @NotNull
@@ -823,6 +782,9 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
 
     @NotNull
     public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, T table, Condition cond, SelectField<?>... fields) {
+        if (fields == null || fields.length == 0) {
+            fields = table.fields();
+        }
         return ctx().select(fields)
                     .from(table)
                     .where(cond)
@@ -830,13 +792,29 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
                     .map(mapper);
     }
 
+    @NotNull
+    public Result<Record> fetch(T table, Condition cond, SelectField<?>... fields) {
+        return ctx().select(fields)
+                    .from(table)
+                    .where(cond)
+                    .fetch();
+    }
+
+    @Nullable
+    public Record fetchOne(T table, Condition cond, SelectField<?>... fields) {
+        if (fields == null || fields.length == 0) {
+            fields = table.fields();
+        }
+        return ctx().select(fields)
+                    .from(table)
+                    .where(cond)
+                    .fetchOne();
+    }
+
     ///////////////// delete /////////////////////
 
-    /**
-     * @see #delete(TableImpl, Condition)
-     */
-    public int delete(Condition cond) {
-        return delete(table, cond);
+    public int delete(Function<T, Condition> fun) {
+        return delete(table, fun.apply(table));
     }
 
     /**
@@ -855,21 +833,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
     ///////////////// update /////////////////////
 
     /**
-     * @see #update(TableImpl, Map, Condition, boolean)
-     */
-    public int update(Map<?, ?> setter, Condition cond) {
-        return update(table, setter, cond, false);
-    }
-
-    /**
-     * @see #update(TableImpl, Map, Condition, boolean)
-     */
-    public int update(Map<?, ?> setter, Condition cond, boolean skipNull) {
-        return update(table, setter, cond, skipNull);
-    }
-
-    /**
-     * @see #update(TableImpl, Map, Condition, boolean)
+     * @see #update(Table, Map, Condition, boolean)
      */
     public int update(T table, Map<?, ?> setter, Condition cond) {
         return update(table, setter, cond, false);
@@ -907,21 +871,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
     }
 
     /**
-     * @see #update(TableImpl, Object, Condition, boolean)
-     */
-    public int update(P pojo, Condition cond) {
-        return update(table, pojo, cond, false);
-    }
-
-    /**
-     * @see #update(TableImpl, Object, Condition, boolean)
-     */
-    public int update(P pojo, Condition cond, boolean skipNull) {
-        return update(table, pojo, cond, skipNull);
-    }
-
-    /**
-     * @see #update(TableImpl, Object, Condition, boolean)
+     * @see #update(Table, Object, Condition, boolean)
      */
     public int update(T table, P pojo, Condition cond) {
         return update(table, pojo, cond, false);
@@ -986,17 +936,10 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
     ///////////////// count /////////////////////
 
     /**
-     * @see #count(TableImpl, Condition)
+     * @see #count(Table, Condition)
      */
-    public long count(Condition cond) {
-        return count(table, cond);
-    }
-
-    /**
-     * @see #count(TableImpl, Condition)
-     */
-    public long count(T table) {
-        return count(table, null);
+    public long count(Function<T, Condition> fun) {
+        return count(table, fun.apply(table));
     }
 
     /**
@@ -1015,7 +958,6 @@ public abstract class WingsJooqDaoAliasImpl<T extends TableImpl<R> & WingsAliasT
     }
 
     ///////////////// other /////////////////////
-
     public void skipPkAndNull(R record, boolean skipNull) {
         WingsJooqUtil.skipFields(record, pkeys);
 
