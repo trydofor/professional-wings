@@ -46,7 +46,7 @@ public class SysStandardI18nTable extends TableImpl<SysStandardI18nRecord> imple
      * The reference instance of <code>sys_standard_i18n</code>
      */
     public static final SysStandardI18nTable SysStandardI18n = new SysStandardI18nTable();
-    public static final SysStandardI18nTable asM5 = SysStandardI18n.as("m5");
+    public static final SysStandardI18nTable asM5 = SysStandardI18n.as(pro.fessional.wings.faceless.database.jooq.WingsJooqEnv.uniqueAlias());
 
     /**
      * The class holding records for this type
@@ -164,11 +164,11 @@ public class SysStandardI18nTable extends TableImpl<SysStandardI18nRecord> imple
 
 
     /**
-     * alias M5
+     * alias asM5
      */
     @Override
     @NotNull
     public SysStandardI18nTable getAliasTable() {
-            return asM5;
+        return asM5;
     }
 }

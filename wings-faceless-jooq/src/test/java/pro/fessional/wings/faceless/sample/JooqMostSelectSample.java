@@ -427,7 +427,7 @@ public class JooqMostSelectSample {
     public void test6PageJooq() {
         DSLContext dsl = dao.ctx();
         Tst中文也分表Table t = dao.getTable();
-        Tst中文也分表Table t1 = dao.getAlias("t1");
+        Tst中文也分表Table t1 = dao.getAlias();
         Tst中文也分表Table t2 = dao.getAlias("t2");
 
         //

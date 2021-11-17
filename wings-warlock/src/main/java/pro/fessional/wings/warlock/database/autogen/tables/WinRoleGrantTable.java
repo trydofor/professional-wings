@@ -48,7 +48,7 @@ public class WinRoleGrantTable extends TableImpl<WinRoleGrantRecord> implements 
      * The reference instance of <code>win_role_grant</code>
      */
     public static final WinRoleGrantTable WinRoleGrant = new WinRoleGrantTable();
-    public static final WinRoleGrantTable asE2 = WinRoleGrant.as("e2");
+    public static final WinRoleGrantTable asE2 = WinRoleGrant.as(pro.fessional.wings.faceless.database.jooq.WingsJooqEnv.uniqueAlias());
 
     /**
      * The class holding records for this type
@@ -166,11 +166,11 @@ public class WinRoleGrantTable extends TableImpl<WinRoleGrantRecord> implements 
 
 
     /**
-     * alias E2
+     * alias asE2
      */
     @Override
     @NotNull
     public WinRoleGrantTable getAliasTable() {
-            return asE2;
+        return asE2;
     }
 }

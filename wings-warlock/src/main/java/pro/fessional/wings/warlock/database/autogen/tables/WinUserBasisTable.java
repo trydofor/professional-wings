@@ -59,7 +59,7 @@ public class WinUserBasisTable extends TableImpl<WinUserBasisRecord> implements 
      * The reference instance of <code>win_user_basis</code>
      */
     public static final WinUserBasisTable WinUserBasis = new WinUserBasisTable();
-    public static final WinUserBasisTable asB2 = WinUserBasis.as("b2");
+    public static final WinUserBasisTable asB2 = WinUserBasis.as(pro.fessional.wings.faceless.database.jooq.WingsJooqEnv.uniqueAlias());
 
     /**
      * The class holding records for this type
@@ -221,17 +221,17 @@ public class WinUserBasisTable extends TableImpl<WinUserBasisRecord> implements 
     @Override
     @NotNull
     public String getSeqName() {
-            return "win_user_basis";
+        return "win_user_basis";
     }
 
 
     /**
-     * alias B2
+     * alias asB2
      */
     @Override
     @NotNull
     public WinUserBasisTable getAliasTable() {
-            return asB2;
+        return asB2;
     }
 
 
@@ -244,21 +244,21 @@ public class WinUserBasisTable extends TableImpl<WinUserBasisRecord> implements 
     @Override
     @NotNull
     public Condition getOnlyDied() {
-            return onlyDiedData;
+        return onlyDiedData;
     }
 
     @Override
     @NotNull
     public Condition getOnlyLive() {
-            return onlyLiveData;
+        return onlyLiveData;
     }
 
     @Override
     @NotNull
     public Map<Field<?>, ?> markDelete(JournalService.Journal commit) {
-            Map<org.jooq.Field<?>, Object> map = new HashMap<>();
-            map.put(DeleteDt, commit.getCommitDt());
-            map.put(CommitId, commit.getCommitId());
-            return map;
+        Map<org.jooq.Field<?>, Object> map = new HashMap<>();
+        map.put(DeleteDt, commit.getCommitDt());
+        map.put(CommitId, commit.getCommitId());
+        return map;
     }
 }

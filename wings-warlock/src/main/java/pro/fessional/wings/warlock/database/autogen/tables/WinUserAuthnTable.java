@@ -53,7 +53,7 @@ public class WinUserAuthnTable extends TableImpl<WinUserAuthnRecord> implements 
      * The reference instance of <code>win_user_authn</code>
      */
     public static final WinUserAuthnTable WinUserAuthn = new WinUserAuthnTable();
-    public static final WinUserAuthnTable asT2 = WinUserAuthn.as("t2");
+    public static final WinUserAuthnTable asT2 = WinUserAuthn.as(pro.fessional.wings.faceless.database.jooq.WingsJooqEnv.uniqueAlias());
 
     /**
      * The class holding records for this type
@@ -220,17 +220,17 @@ public class WinUserAuthnTable extends TableImpl<WinUserAuthnRecord> implements 
     @Override
     @NotNull
     public String getSeqName() {
-            return "win_user_authn";
+        return "win_user_authn";
     }
 
 
     /**
-     * alias T2
+     * alias asT2
      */
     @Override
     @NotNull
     public WinUserAuthnTable getAliasTable() {
-            return asT2;
+        return asT2;
     }
 
 
@@ -243,21 +243,21 @@ public class WinUserAuthnTable extends TableImpl<WinUserAuthnRecord> implements 
     @Override
     @NotNull
     public Condition getOnlyDied() {
-            return onlyDiedData;
+        return onlyDiedData;
     }
 
     @Override
     @NotNull
     public Condition getOnlyLive() {
-            return onlyLiveData;
+        return onlyLiveData;
     }
 
     @Override
     @NotNull
     public Map<Field<?>, ?> markDelete(JournalService.Journal commit) {
-            Map<org.jooq.Field<?>, Object> map = new HashMap<>();
-            map.put(DeleteDt, commit.getCommitDt());
-            map.put(CommitId, commit.getCommitId());
-            return map;
+        Map<org.jooq.Field<?>, Object> map = new HashMap<>();
+        map.put(DeleteDt, commit.getCommitDt());
+        map.put(CommitId, commit.getCommitId());
+        return map;
     }
 }

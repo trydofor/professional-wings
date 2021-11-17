@@ -141,7 +141,6 @@ public class JooqDslAndDaoSample {
         testcaseNotice("逻辑删除");
         val c1 = dao.count();
         System.out.println(c1);
-        final Tst中文也分表Table tbl = dao.getTable();
         val c2 = dao.count(it -> it.onlyDiedData);
         System.out.println(c2);
     }

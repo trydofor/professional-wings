@@ -52,7 +52,7 @@ public class WinRoleEntryTable extends TableImpl<WinRoleEntryRecord> implements 
      * The reference instance of <code>win_role_entry</code>
      */
     public static final WinRoleEntryTable WinRoleEntry = new WinRoleEntryTable();
-    public static final WinRoleEntryTable asC2 = WinRoleEntry.as("c2");
+    public static final WinRoleEntryTable asC2 = WinRoleEntry.as(pro.fessional.wings.faceless.database.jooq.WingsJooqEnv.uniqueAlias());
 
     /**
      * The class holding records for this type
@@ -184,17 +184,17 @@ public class WinRoleEntryTable extends TableImpl<WinRoleEntryRecord> implements 
     @Override
     @NotNull
     public String getSeqName() {
-            return "win_role_entry";
+        return "win_role_entry";
     }
 
 
     /**
-     * alias C2
+     * alias asC2
      */
     @Override
     @NotNull
     public WinRoleEntryTable getAliasTable() {
-            return asC2;
+        return asC2;
     }
 
 
@@ -207,21 +207,21 @@ public class WinRoleEntryTable extends TableImpl<WinRoleEntryRecord> implements 
     @Override
     @NotNull
     public Condition getOnlyDied() {
-            return onlyDiedData;
+        return onlyDiedData;
     }
 
     @Override
     @NotNull
     public Condition getOnlyLive() {
-            return onlyLiveData;
+        return onlyLiveData;
     }
 
     @Override
     @NotNull
     public Map<Field<?>, ?> markDelete(JournalService.Journal commit) {
-            Map<org.jooq.Field<?>, Object> map = new HashMap<>();
-            map.put(DeleteDt, commit.getCommitDt());
-            map.put(CommitId, commit.getCommitId());
-            return map;
+        Map<org.jooq.Field<?>, Object> map = new HashMap<>();
+        map.put(DeleteDt, commit.getCommitDt());
+        map.put(CommitId, commit.getCommitId());
+        return map;
     }
 }

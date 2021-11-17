@@ -46,7 +46,7 @@ public class SysConstantEnumTable extends TableImpl<SysConstantEnumRecord> imple
      * The reference instance of <code>sys_constant_enum</code>
      */
     public static final SysConstantEnumTable SysConstantEnum = new SysConstantEnumTable();
-        public static final SysConstantEnumTable asK5 = SysConstantEnum.as("k5");
+    public static final SysConstantEnumTable asK5 = SysConstantEnum.as(pro.fessional.wings.faceless.database.jooq.WingsJooqEnv.uniqueAlias());
 
     /**
      * The class holding records for this type
@@ -164,11 +164,11 @@ public class SysConstantEnumTable extends TableImpl<SysConstantEnumRecord> imple
 
 
     /**
-     * alias K5
+     * alias asK5
      */
     @Override
     @NotNull
     public SysConstantEnumTable getAliasTable() {
-            return asK5;
+        return asK5;
     }
 }
