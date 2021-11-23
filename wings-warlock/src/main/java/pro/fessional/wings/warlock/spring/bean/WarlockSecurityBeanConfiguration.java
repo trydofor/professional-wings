@@ -32,6 +32,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.warlock.security.handler.LoginFailureHandler;
 import pro.fessional.wings.warlock.security.handler.LoginSuccessHandler;
 import pro.fessional.wings.warlock.security.handler.LogoutOkHandler;
+import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
 import pro.fessional.wings.warlock.security.listener.WarlockFailedLoginListener;
 import pro.fessional.wings.warlock.security.listener.WarlockSuccessLoginListener;
 import pro.fessional.wings.warlock.security.loginpage.JustAuthLoginPageCombo;
@@ -62,6 +63,7 @@ import pro.fessional.wings.warlock.service.user.impl.WarlockUserAuthnServiceImpl
 import pro.fessional.wings.warlock.service.user.impl.WarlockUserBasisServiceImpl;
 import pro.fessional.wings.warlock.service.user.impl.WarlockUserLoginServiceImpl;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
+import pro.fessional.wings.warlock.spring.prop.WarlockJustAuthProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp.Ma;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp.Mu;
@@ -330,6 +332,13 @@ public class WarlockSecurityBeanConfiguration {
     }
 
     ///////// login /////////
+
+    @Bean
+    @ConditionalOnMissingBean(AuthStateBuilder.class)
+    public AuthStateBuilder authStateBuilder(WarlockJustAuthProp prop) {
+        logger.info("Wings conf authStateBuilder");
+        return new AuthStateBuilder(prop.getSafeState());
+    }
 
     @Bean
     @ConditionalOnMissingBean(WarlockUserLoginService.class)

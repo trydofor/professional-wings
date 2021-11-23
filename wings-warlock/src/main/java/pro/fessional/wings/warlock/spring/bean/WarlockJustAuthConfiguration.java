@@ -78,7 +78,7 @@ public class WarlockJustAuthConfiguration {
             }
 
             // 处理动态redirect-uri
-            map.put(em, AuthConfigWrapper.tryWrap(ac));
+            map.put(em, AuthConfigWrapper.tryWrap(ac, justAuthProp.getSafeHost()));
         }
 
         factory.setAuthConfigMap(map);

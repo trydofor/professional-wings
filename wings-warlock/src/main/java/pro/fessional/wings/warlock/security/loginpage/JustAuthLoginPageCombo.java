@@ -38,13 +38,16 @@ public class JustAuthLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
     @Setter(onMethod_ = {@Autowired})
     protected WingsRemoteResolver wingsRemoteResolver;
 
+    @Setter(onMethod_ = {@Autowired})
+    protected AuthStateBuilder authStateBuilder;
+
     @Override
     public ResponseEntity<?> response(@NotNull Enum<?> authType, @Nullable MediaType mediaType, @NotNull HttpServletRequest request,
                                       @NotNull HttpServletResponse response, @NotNull HttpStatus status) {
         final AuthRequest ar = justAuthRequestBuilder.buildRequest(authType, request);
         if (ar == null) return null;
 
-        final String state = AuthStateBuilder.buildState(request.getParameter("state"));
+        final String state = authStateBuilder.buildState(request.getParameterValues("state"));
         NonceTokenSessionHelper.initNonce(state, wingsRemoteResolver.resolveRemoteKey(request));
 
         final String authorize = ar.authorize(state);

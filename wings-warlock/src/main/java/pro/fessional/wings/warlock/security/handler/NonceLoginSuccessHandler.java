@@ -28,6 +28,9 @@ public class NonceLoginSuccessHandler implements AuthenticationSuccessHandler {
     @Setter(onMethod_ = {@Autowired})
     protected SlardarSessionProp slardarSessionProp;
 
+    @Setter(onMethod_ = {@Autowired})
+    protected AuthStateBuilder authStateBuilder;
+
     @Override
     public final void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         final HttpSession session = request.getSession(false);
@@ -47,7 +50,7 @@ public class NonceLoginSuccessHandler implements AuthenticationSuccessHandler {
             NonceTokenSessionHelper.swapNonceSid(uid, sid);
         }
 
-        final String state = AuthStateBuilder.parseParam(request.getParameter("state"));
+        final String state = authStateBuilder.parseParam(request.getParameter("state"));
         if (state != null) {
             log.info("parse client state={}, uid={}", state, uid);
         }
