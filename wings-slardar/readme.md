@@ -229,7 +229,10 @@ wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子
 在js环境中，可以用`Intl.DateTimeFormat().resolvedOptions().timeZone`获得。
 当client端无法获得zoneid时，可以取得服务器支持的zone及其offset,country自行判断。
 
-在@Valid的验证中，有以下技巧。
+## 3.3.1.多国语I18n的格式
+
+在@Valid的JavaBean Validation验证中， 支持Unified Expression Language (JSR 341)
+使用`${}`访问外部变量，使用`{}`范围annotation内变量，如以下例子
 
 ```
 @Size( min = 5, max = 14, message = "{common.email.size}")
@@ -237,7 +240,9 @@ wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子
 common.email.size=The author email '${validatedValue}' must be between {min} and {max} characters long
 ```
 
-## 3.3.1.时区的LocalDateTime，ZonedDateTime和OffsetDateTime
+而在 Message的ResourceBundle中，默认使用java.text.MessageFormat的数组`{0}`格式。
+
+## 3.3.2.时区的LocalDateTime，ZonedDateTime和OffsetDateTime
 
 多时区，要兼顾数据可读性和编码便利性，在slardar中统一约定如下。
 
@@ -642,3 +647,17 @@ SavedRequestAwareAuthenticationSuccessHandler和RequestCache 进行搭配即可�
 
 * https://www.baeldung.com/spring-security-redirect-login
 * https://www.baeldung.com/spring-security-redirect-logged-in
+
+### 10.数组及对象参数如通过key-value传递
+
+在http协议中，没有明确的规定数组及对象的传递方法，因此实践中，spring及js体系下有不同的默认规则。
+* `a=1&a=2&a=3`，servlet支持，spring支持，js的qs需要`{ indices: false }` (推荐)
+* `a[]=1&a[]=2&a[]=3`，spring支持，js的qs需要`{ arrayFormat: 'brackets' }`
+* `a[0]=1&a[1]=2&a[2]=3`，spring支持，js的qs默认格式
+
+其中，servlet支持时，@RequestParam也生效；spring支持指，默认的DataBinding
+
+参考资料
+* [qs#stringifying](https://github.com/ljharb/qs#stringifying)
+* [nested properties Conventions](https://docs.spring.io/spring-framework/docs/5.0.0.M4/spring-framework-reference/html/validation.html#beans-beans-conventions)
+* [@MatrixVariable](https://docs.spring.io/spring-framework/docs/5.0.0.M4/spring-framework-reference/html/mvc.html#mvc-ann-matrix-variables)

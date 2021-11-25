@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.security.justauth;
 
+import com.alibaba.fastjson.JSON;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhyd.oauth.utils.UuidUtils;
@@ -40,9 +41,10 @@ public class AuthStateBuilder {
         if (param != null && param.length != 0 && safeState != null) {
             final String fmt = safeState.get(param[0]);
             if (fmt != null) {
-                final String state = FormatUtil.message(fmt, (Object[]) param);
+                final byte[] bytes = JSON.toJSONBytes(param);
+                final String state = Base64.encode(bytes);
                 log.info("AuthStateBuilder, buildState={}", state);
-                return uuid + Base64.encode(state);
+                return uuid + state;
             }
         }
         return uuid;
@@ -51,7 +53,10 @@ public class AuthStateBuilder {
     @Nullable
     public String parseParam(String state) {
         if (state == null || state.length() <= UUID_LEN) return null;
-        final String rst = Base64.de2str(state.substring(UUID_LEN));
+        final byte[] bytes = Base64.decode(state.substring(UUID_LEN));
+        final String[] args = JSON.parseObject(bytes, String[].class);
+        final String fmt = safeState.get(args[0]);
+        final String rst = FormatUtil.message(fmt, (Object[]) args);
         log.info("AuthStateBuilder, parseParam={}", rst);
         return rst;
     }

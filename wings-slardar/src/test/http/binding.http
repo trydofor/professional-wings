@@ -1,0 +1,31 @@
+### OK perms
+POST http://{{host}}/test/data-param.json?uid=111&perms=a&perms=b
+accept: */*
+Content-Type: application/x-www-form-urlencoded
+
+### NG perms[]
+POST http://{{host}}/test/data-param.json?uid=111&perms[]=a&perms[]=b
+accept: */*
+Content-Type: application/x-www-form-urlencoded
+
+### NG perms[0]
+POST http://{{host}}/test/data-param.json?uid=111&perms[0]=a&perms[1]=b
+accept: */*
+Content-Type: application/x-www-param-urlencoded
+
+###############
+
+### OK perms
+POST http://{{host}}/test/data-object.json?uid=111&perms=a&perms=b
+accept: */*
+Content-Type: application/x-www-form-urlencoded
+
+### OK perms[]
+POST http://{{host}}/test/data-object.json?uid=111&perms[]=a&perms[]=b
+accept: */*
+Content-Type: application/x-www-form-urlencoded
+
+### OK perms[0]
+POST http://{{host}}/test/data-object.json?uid=111&perms[0]=a&perms[1]=b
+accept: */*
+Content-Type: application/x-www-form-urlencoded

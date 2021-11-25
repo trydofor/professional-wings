@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
+import pro.fessional.wings.slardar.servlet.request.RequestHelper;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
@@ -47,7 +48,7 @@ public class JustAuthLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
         final AuthRequest ar = justAuthRequestBuilder.buildRequest(authType, request);
         if (ar == null) return null;
 
-        final String state = authStateBuilder.buildState(request.getParameterValues("state"));
+        final String state = authStateBuilder.buildState(RequestHelper.getParameters(request.getParameterMap(), "state"));
         NonceTokenSessionHelper.initNonce(state, wingsRemoteResolver.resolveRemoteKey(request));
 
         final String authorize = ar.authorize(state);
