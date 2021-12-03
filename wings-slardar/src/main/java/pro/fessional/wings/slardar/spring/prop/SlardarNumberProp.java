@@ -8,6 +8,8 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
+import static pro.fessional.wings.slardar.jackson.FormatNumberSerializer.Digital;
+
 /**
  * 可定制Number的精度和格式
  *
@@ -54,7 +56,7 @@ public class SlardarNumberProp {
         /**
          * 是否忽略WRITE_NUMBERS_AS_STRINGS，强制写number，需要注意format
          */
-        private boolean digital = false;
+        private Digital digital = Digital.False;
 
         public boolean isEnable() {
             return format != null;

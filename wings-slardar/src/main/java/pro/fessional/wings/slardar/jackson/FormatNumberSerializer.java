@@ -23,15 +23,24 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class FormatNumberSerializer extends NumberSerializer {
 
+    public enum Digital {
+        Auto,
+        True,
+        False,
+    }
+
+    private static final long MIN_SAFE_INTEGER = -9007199254740991L;
+    private static final long MAX_SAFE_INTEGER = 9007199254740991L;
+
     private final DecimalFormat format;
-    private final boolean digital;
+    private final Digital digital;
     private final Map<String, DecimalFormat> pools = new ConcurrentHashMap<>();
 
     /**
      * @param rawType 类型
      * @since 2.5
      */
-    public FormatNumberSerializer(Class<? extends Number> rawType, DecimalFormat format, boolean digital) {
+    public FormatNumberSerializer(Class<? extends Number> rawType, DecimalFormat format, Digital digital) {
         super(rawType);
         this.format = format;
         this.digital = digital;
@@ -58,13 +67,22 @@ public class FormatNumberSerializer extends NumberSerializer {
 
     @Override
     public void serialize(Number value, JsonGenerator g, SerializerProvider provider) throws IOException {
-        if (format != null || digital
+        if (format != null || digital != Digital.False
             || value instanceof Long || value instanceof Integer
             || value instanceof Float || value instanceof Double
             || value instanceof BigDecimal) {
             final String str = format == null ? String.valueOf(value) : this.format.format(value);
-            if (digital) {
+            if (digital == Digital.True) {
                 g.writeRawValue(str);
+            }
+            else if (digital == Digital.Auto) {
+                final long vl = value.longValue();
+                if (vl <= MIN_SAFE_INTEGER || vl >= MAX_SAFE_INTEGER) {
+                    g.writeNumber(str);
+                }
+                else {
+                    g.writeRawValue(str);
+                }
             }
             else {
                 g.writeNumber(str);

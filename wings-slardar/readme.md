@@ -30,7 +30,7 @@
 * Json中最好只有2种基本数据类型：boolean,string
 * Js不应该有任何有精度要求的金额计算，只应负责显示服务器端计算结果。
 * 因为时间的特殊性，还有时区和夏令时，在保证精度的同时要提供可读性。
-* 51bits位的long，必须使用string，因为IEE754无法正确表示。
+* 53bits位的long，必须使用string，因为IEE754无法正确表示。
 * integer和long，默认使用number，考虑typescript兼容性。
 * 确保jsr310格式兼容，如依赖`jackson-datatype-jsr310`。
 * ZoneId应首选`IANA TZDB`格式，如`America/New_York`。
@@ -88,6 +88,9 @@ wings.slardar.number.decimal.format=￥,####.00
 wings.slardar.number.decimal.separator=_
 # 参考 DecimalFormatTest.java
 ```
+
+当JS场景数字value超越 Number.M##_SAFE_INTEGER时，`digital=auto`自动切换number和string。
+默认配置中，仅对int32和int64使用了auto，需要谨慎使用，检查类型或关闭auto为false
 
 ### 3.1.4.empty数据处理，
 
