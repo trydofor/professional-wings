@@ -12,7 +12,6 @@ import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  * invalid session
@@ -29,14 +28,6 @@ public class LogoutOkHandler implements LogoutSuccessHandler {
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        final HttpSession session = request.getSession(false);
-        if (session != null) {
-            log.info("logout success, session-id={}", session.getId());
-            session.invalidate();
-        }
-        else {
-            log.info("logout success, but no-session");
-        }
         writeResponseBody(warlockSecurityProp.getLogoutSuccessBody(), request, response, authentication);
     }
 
