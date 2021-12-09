@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.code.LeapCode;
-import pro.fessional.wings.slardar.cache.CaffeineSlot;
+import pro.fessional.wings.slardar.cache.caffeine.CaffeineSlot;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;

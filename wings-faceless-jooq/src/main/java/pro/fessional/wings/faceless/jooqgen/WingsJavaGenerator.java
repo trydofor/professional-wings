@@ -42,7 +42,7 @@ public class WingsJavaGenerator extends JavaGenerator {
 
         // 🦁>>>
         val aliasName = genAlias(identifier); // N6
-        val aliasLower = aliasName.toLowerCase(); // n6
+        val aliasLower = "pro.fessional.wings.faceless.database.jooq.WingsJooqEnv.uniqueAlias()"; // n6
         // 🦁<<<
 
         out.javadoc("The reference instance of <code>%s</code>", definition.getQualifiedOutputName());
@@ -51,8 +51,8 @@ public class WingsJavaGenerator extends JavaGenerator {
         out.println("public static final %s %s = new %s();", className, identifier, className);
 
         // 🦁>>>
-        // public static final SysCommitJournalTable asN6 = SysCommitJournal.as("n6");
-        out.println("public static final %s as%s = %s.as(\"%s\");", className, aliasName, identifier, aliasLower);
+        // public static final SysCommitJournalTable asN6 = SysCommitJournal.as(WingsJooqEnv.uniqueRuntimeAlias());
+        out.println("public static final %s %s = %s.as(%s);", className, aliasName, identifier, aliasLower);
         // 🦁<<<
     }
 
@@ -75,7 +75,7 @@ public class WingsJavaGenerator extends JavaGenerator {
             final Function<TableDefinition, String> fun = WingsJooqGenHelp.funSeqName.get();
             String seqName = fun != null ? fun.apply(table) : table.getOutputName();
 
-            out.println("    return \"%s\";", seqName);
+            out.println("return \"%s\";", seqName);
             out.println("}");
         }
 
@@ -84,7 +84,7 @@ public class WingsJavaGenerator extends JavaGenerator {
         out.println("@Override");
         out.println("@NotNull");
         out.println("public %s getAliasTable() {", className);
-        out.println("    return as%s;", aliasName);
+        out.println("return %s;", aliasName);
         out.println("}");
 
         val logicCol = columns.stream().filter(it -> {
@@ -133,31 +133,31 @@ public class WingsJavaGenerator extends JavaGenerator {
             out.println("@Override");
             out.println("@NotNull");
             out.println("public Condition getOnlyDied() {");
-            out.println("    return onlyDiedData;");
+            out.println("return onlyDiedData;");
             out.println("}");
 
             out.println("");
             out.println("@Override");
             out.println("@NotNull");
             out.println("public Condition getOnlyLive() {");
-            out.println("    return onlyLiveData;");
+            out.println("return onlyLiveData;");
             out.println("}");
 
             out.println("");
             out.println("@Override");
             out.println("@NotNull");
             out.println("public Map<Field<?>, ?> markDelete(JournalService.Journal commit) {");
-            out.println("    Map<org.jooq.Field<?>, Object> map = new HashMap<>();");
-            out.println("    map.put(%s, %s);", fldDel, markDelete);
+            out.println("Map<org.jooq.Field<?>, Object> map = new HashMap<>();");
+            out.println("map.put(%s, %s);", fldDel, markDelete);
 
             val commitCol = columns.stream().filter(it ->
                     it.getOutputName().equalsIgnoreCase(COL_COMMIT_ID)).findFirst();
             if (commitCol.isPresent()) {
                 final ColumnDefinition colCid = commitCol.get();
                 val fldCid = reflectMethodRef(out, getStrategy().getJavaIdentifier(colCid), colRefSegments(colCid));
-                out.println("    map.put(%s, commit.getCommitId());", fldCid);
+                out.println("map.put(%s, commit.getCommitId());", fldCid);
             }
-            out.println("    return map;");
+            out.println("return map;");
             out.println("}");
         }
 
@@ -234,13 +234,12 @@ public class WingsJavaGenerator extends JavaGenerator {
     }
     /////////////////
 
-    private final String chr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
     private String genAlias(String id) {
+        final String chr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         val ix = id.hashCode() % chr.length();
         val cd = ix < 0 ? chr.charAt(-ix) : chr.charAt(ix);
         val sq = id.length() % 10;
-        return cd + "" + sq;
+        return "as" + cd + "" + sq;
     }
 
     private int colRefSegments(TypedElementDefinition<?> column) {

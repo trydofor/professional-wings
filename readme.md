@@ -94,6 +94,7 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 * GenerateAllSetter - alt-enter 生成全部 po.setXxx("")
 * Git Flow Integration - 集成了git-flow
 * GitToolBox - 自动 fetch
+* Git Commit Guide - gitmoji.dev 辅助
 * Grep Console - 控制台的日志分颜色显示和过滤
 * Indent Rainbow - 使缩进有颜色
 * kotlin - 默认安装了

@@ -48,7 +48,7 @@ public class WinUserGrantTable extends TableImpl<WinUserGrantRecord> implements 
      * The reference instance of <code>win_user_grant</code>
      */
     public static final WinUserGrantTable WinUserGrant = new WinUserGrantTable();
-    public static final WinUserGrantTable asR2 = WinUserGrant.as("r2");
+    public static final WinUserGrantTable asR2 = WinUserGrant.as(pro.fessional.wings.faceless.database.jooq.WingsJooqEnv.uniqueAlias());
 
     /**
      * The class holding records for this type
@@ -166,11 +166,11 @@ public class WinUserGrantTable extends TableImpl<WinUserGrantRecord> implements 
 
 
     /**
-     * alias R2
+     * alias asR2
      */
     @Override
     @NotNull
     public WinUserGrantTable getAliasTable() {
-            return asR2;
+        return asR2;
     }
 }

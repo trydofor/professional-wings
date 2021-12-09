@@ -5,6 +5,7 @@ import me.zhyd.oauth.config.AuthConfig;
 import pro.fessional.mirana.text.StringTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
 
 /**
  * @author trydofor
@@ -14,12 +15,11 @@ public class AuthConfigWrapper extends AuthConfig {
 
     public static final String RedirectUriHost = "{host}";
     public static final String RedirectUriScheme = "{scheme}";
-    public static final String RedirectUriPort = "{port}";
 
-    public static AuthConfig tryWrap(AuthConfig config) {
+    public static AuthConfig tryWrap(AuthConfig config, Set<String> safeHost) {
         final String uri = config.getRedirectUri();
-        if (uri != null && (uri.contains(RedirectUriHost) || uri.contains(RedirectUriScheme) || uri.contains(RedirectUriPort))) {
-            return new AuthConfigWrapper(config, null);
+        if (uri != null && (uri.contains(RedirectUriHost) || uri.contains(RedirectUriScheme))) {
+            return new AuthConfigWrapper(config, safeHost, null);
         }
         return config;
     }
@@ -27,14 +27,16 @@ public class AuthConfigWrapper extends AuthConfig {
     @Delegate(excludes = DelegateExclude.class)
     private final AuthConfig config;
     private final HttpServletRequest request;
+    private final Set<String> safeHost;
 
-    public AuthConfigWrapper(AuthConfig config, HttpServletRequest request) {
+    public AuthConfigWrapper(AuthConfig config, Set<String> safeHost, HttpServletRequest request) {
         this.config = config;
         this.request = request;
+        this.safeHost = safeHost;
     }
 
     public AuthConfig wrap(HttpServletRequest request) {
-        return new AuthConfigWrapper(config, request);
+        return new AuthConfigWrapper(config, safeHost, request);
     }
 
     private interface DelegateExclude {
@@ -44,13 +46,22 @@ public class AuthConfigWrapper extends AuthConfig {
     @Override
     public String getRedirectUri() {
         final String uri = config.getRedirectUri();
-        if (request != null) {
-            return StringTemplate
-                    .dyn(uri)
-                    .bindStr(RedirectUriHost, request.getHeader("Host"))
-                    .bindStr(RedirectUriScheme, request.getScheme())
-                    .toString();
+        if (request == null) return uri;
+
+        String host = request.getHeader("Host");
+        if (safeHost != null) {
+            final String key = request.getParameter("host");
+            if (key != null) {
+                if (safeHost.contains(key)) {
+                    host = key;
+                }
+            }
         }
-        return uri;
+
+        return StringTemplate
+                .dyn(uri)
+                .bindStr(RedirectUriHost, host)
+                .bindStr(RedirectUriScheme, request.getScheme())
+                .toString();
     }
 }

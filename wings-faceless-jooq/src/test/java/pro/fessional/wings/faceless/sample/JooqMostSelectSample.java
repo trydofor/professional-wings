@@ -304,10 +304,10 @@ public class JooqMostSelectSample {
         Tst中文也分表Record rc = dao.newRecord(bd3);
         rc.from(bd3);
         List<SameName> bv3 = ctx.fetch("SELECT id, login_info\n" +
-                                            "FROM tst_中文也分表\n" +
-                                            "WHERE id = :id OR login_info=:loginInfo\n" +
-                                            "ORDER BY login_info DESC,id", WingsJooqUtil.bindNamed(rc))
-                                     .into(SameName.class);
+                                       "FROM tst_中文也分表\n" +
+                                       "WHERE id = :id OR login_info=:loginInfo\n" +
+                                       "ORDER BY login_info DESC,id", WingsJooqUtil.bindNamed(rc))
+                                .into(SameName.class);
 
         System.out.println();
     }
@@ -351,7 +351,7 @@ public class JooqMostSelectSample {
         // (`id` = 105 and `login_info` = 'LOGIN_INFO-05')
         testcaseNotice("通过Record和condChain AND");
         Condition cd1 = WingsJooqUtil.condChain(AND, rc1);
-        List<Tst中文也分表> rs1 = dao.fetch(cd1);
+        List<Tst中文也分表> rs1 = dao.fetch(dao.getTable(), cd1);
 
         // 通过页面过来的pojo构造Or条码
         SameName bd2 = new SameName();
@@ -362,14 +362,14 @@ public class JooqMostSelectSample {
         // where (`id` = 105 or `login_info` = 'LOGIN_INFO-06')
         testcaseNotice("通过Record和condChain OR");
         Condition cd2 = WingsJooqUtil.condChain(OR, rc2);
-        List<Tst中文也分表> rs2 = dao.fetch(cd2);
+        List<Tst中文也分表> rs2 = dao.fetch(dao.getTable(), cd2);
 
         // 只取id
         // where `id` = ?
         // where `id` = 105
         testcaseNotice("通过Record和condChain 单字段");
         List<Condition> cds = WingsJooqUtil.condField(rc2, t.Id);
-        List<Tst中文也分表> rs3 = dao.fetch(DSL.condition(OR, cds));
+        List<Tst中文也分表> rs3 = dao.fetch(t, DSL.condition(OR, cds));
 
         // 通过字符串map构造条件，如用户数据隔离
         testcaseNotice("通过字符串map构造条件，如用户数据隔离");
@@ -380,7 +380,7 @@ public class JooqMostSelectSample {
 
         // from `tst_中文也分表` where (id = ? and login_info = ?)
         Condition cd4 = WingsJooqUtil.condChain(map);
-        List<Tst中文也分表> rc4 = dao.fetch(cd4);
+        List<Tst中文也分表> rc4 = dao.fetch(t, cd4);
 
         // from `tst_中文也分表` as `y8` where (`y8`.`login_info` = ? and `y8`.`id` = ?)
         testcaseNotice("通过字符串map构造条件，别名");
@@ -400,7 +400,7 @@ public class JooqMostSelectSample {
     public void test5JdbcTemplate() {
         // 单字段查询
         Integer cnt = jdbcTemplate.queryForObject(
-                "SELECT count(1) FROM tst_中文也分表 WHERE id > ?",
+                "SELECT COUNT(1) FROM tst_中文也分表 WHERE id > ?",
                 Integer.class, 1);
 
         SameName sn1 = jdbcTemplate.queryForObject(
@@ -427,7 +427,7 @@ public class JooqMostSelectSample {
     public void test6PageJooq() {
         DSLContext dsl = dao.ctx();
         Tst中文也分表Table t = dao.getTable();
-        Tst中文也分表Table t1 = dao.getAlias("t1");
+        Tst中文也分表Table t1 = dao.getAlias();
         Tst中文也分表Table t2 = dao.getAlias("t2");
 
         //
@@ -453,8 +453,8 @@ public class JooqMostSelectSample {
                                                  .fetch(t1.Id, t1.CommitId)
                                                  .into(it -> {
                                                      Tst中文也分表 po = new Tst中文也分表();
-                                                     po.setId(it.value1());
-                                                     po.setCommitId(it.value2());
+                                                     po.setId(it.get(t1.Id));
+                                                     po.setCommitId(it.get(t1.CommitId));
                                                      return po;
                                                  });
 
@@ -484,8 +484,8 @@ public class JooqMostSelectSample {
                                                  .fetch()
                                                  .into(it -> {
                                                      Tst中文也分表 po = new Tst中文也分表();
-                                                     po.setId(it.value1());
-                                                     po.setCommitId(it.value2());
+                                                     po.setId(it.get(t1.Id));
+                                                     po.setCommitId(it.get(t1.CommitId));
                                                      return po;
                                                  });
         /////////////////////

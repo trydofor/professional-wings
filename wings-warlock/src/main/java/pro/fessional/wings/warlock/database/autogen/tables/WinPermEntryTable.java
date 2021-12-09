@@ -53,7 +53,7 @@ public class WinPermEntryTable extends TableImpl<WinPermEntryRecord> implements 
      * The reference instance of <code>win_perm_entry</code>
      */
     public static final WinPermEntryTable WinPermEntry = new WinPermEntryTable();
-    public static final WinPermEntryTable asM2 = WinPermEntry.as("m2");
+    public static final WinPermEntryTable asM2 = WinPermEntry.as(pro.fessional.wings.faceless.database.jooq.WingsJooqEnv.uniqueAlias());
 
     /**
      * The class holding records for this type
@@ -190,17 +190,17 @@ public class WinPermEntryTable extends TableImpl<WinPermEntryRecord> implements 
     @Override
     @NotNull
     public String getSeqName() {
-            return "win_perm_entry";
+        return "win_perm_entry";
     }
 
 
     /**
-     * alias M2
+     * alias asM2
      */
     @Override
     @NotNull
     public WinPermEntryTable getAliasTable() {
-            return asM2;
+        return asM2;
     }
 
 
@@ -213,21 +213,21 @@ public class WinPermEntryTable extends TableImpl<WinPermEntryRecord> implements 
     @Override
     @NotNull
     public Condition getOnlyDied() {
-            return onlyDiedData;
+        return onlyDiedData;
     }
 
     @Override
     @NotNull
     public Condition getOnlyLive() {
-            return onlyLiveData;
+        return onlyLiveData;
     }
 
     @Override
     @NotNull
     public Map<Field<?>, ?> markDelete(JournalService.Journal commit) {
-            Map<org.jooq.Field<?>, Object> map = new HashMap<>();
-            map.put(DeleteDt, commit.getCommitDt());
-            map.put(CommitId, commit.getCommitId());
-            return map;
+        Map<org.jooq.Field<?>, Object> map = new HashMap<>();
+        map.put(DeleteDt, commit.getCommitDt());
+        map.put(CommitId, commit.getCommitId());
+        return map;
     }
 }

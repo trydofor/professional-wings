@@ -1,7 +1,8 @@
 package pro.fessional.wings.warlock.security.handler;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -9,6 +10,7 @@ import pro.fessional.mirana.text.StringTemplate;
 import pro.fessional.wings.slardar.context.RequestContextUtil;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.warlock.event.auth.WarlockMaxFailedEvent;
+import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,11 +20,13 @@ import javax.servlet.http.HttpServletResponse;
  * @since 2021-02-17
  */
 @Slf4j
-@RequiredArgsConstructor
 public class LoginFailureHandler implements AuthenticationFailureHandler {
 
-    private final String body;
-    private final String eventKey = "wings.WarlockMaxFailedEvent.Key";
+    public final static String eventKey = "wings.WarlockMaxFailedEvent.Key";
+
+    @Setter(onMethod_ = {@Autowired})
+    protected WarlockSecurityProp warlockSecurityProp;
+
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
@@ -39,8 +43,7 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
             msg = "login failed";
         }
 
-
-        final String mess = StringTemplate.dyn(body)
+        final String mess = StringTemplate.dyn(warlockSecurityProp.getLoginFailureBody())
                                           .bindStr("{message}", msg)
                                           .toString();
         ResponseHelper.writeBodyUtf8(response, mess);

@@ -15,6 +15,12 @@ public class SlardarSessionProp {
     public static final String Key = "wings.slardar.session";
 
     /**
+     * @see #Key$inactiveInterval
+     */
+    private int inactiveInterval = 3600;
+    public static final String Key$inactiveInterval = Key + ".inactive-interval";
+
+    /**
      * 使用header解析session的name，空表示不解析
      *
      * @see #Key$headerName

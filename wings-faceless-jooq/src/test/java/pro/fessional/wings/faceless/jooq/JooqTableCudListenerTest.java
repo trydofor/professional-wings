@@ -97,7 +97,7 @@ public class JooqTableCudListenerTest {
         assertCud(false, Cud.Create, singletonList(singletonList(301L)), () -> testDao.insertInto(pojo, false));
 
         final Tst中文也分表Table t = testDao.getTable();
-        final long c1 = testDao.count(t.Id.eq(301L));
+        final long c1 = testDao.count(t, t.Id.eq(301L));
         Assertions.assertEquals(1L, c1);
 
         val rds = Arrays.asList(
@@ -115,7 +115,7 @@ public class JooqTableCudListenerTest {
         testcaseNotice("批量插入 replace");
         assertCud(false, null, Collections.emptyList(), () -> testDao.batchInsert(rds, 10, false));
 
-        final long c2 = testDao.count(t.Id.ge(302L).and(t.Id.le(303L)));
+        final long c2 = testDao.count(t, t.Id.ge(302L).and(t.Id.le(303L)));
         Assertions.assertEquals(2L, c2);
     }
 
@@ -130,7 +130,7 @@ public class JooqTableCudListenerTest {
         testcaseNotice("单个更新");
         assertCud(false, Cud.Update, singletonList(singletonList(301L)), () -> testDao.update(pojo, true));
 
-        final long c1 = testDao.count(t.CommitId.eq(-301L));
+        final long c1 = testDao.count(t, t.CommitId.eq(-301L));
         Assertions.assertEquals(1L, c1);
 
         testcaseNotice("批量更新");
@@ -141,7 +141,7 @@ public class JooqTableCudListenerTest {
                 .where(t.Id.in(302L, 303L).or(t.Id.ge(302L).and(t.Id.le(304L))))
                 .execute());
 
-        final long c2 = testDao.count(t.CommitId.eq(-302L));
+        final long c2 = testDao.count(t, t.CommitId.eq(-302L));
         Assertions.assertEquals(3L, c2);
     }
 
@@ -165,7 +165,7 @@ public class JooqTableCudListenerTest {
         );
 
 
-        final long c1 = testDao.count(t.Id.ge(301L).and(t.Id.le(304L)));
+        final long c1 = testDao.count(t, t.Id.ge(301L).and(t.Id.le(304L)));
         Assertions.assertEquals(0L, c1);
     }
 

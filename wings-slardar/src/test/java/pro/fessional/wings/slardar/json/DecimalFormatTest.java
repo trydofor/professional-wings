@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -164,5 +165,25 @@ public class DecimalFormatTest {
                                 + "\"doubleObj\":\"12,3456.7\","
                                 + "\"decimalObj\":\"￥12_3456.7\"}"
                 , decFmt);
+    }
+
+    @Test
+    public void testJsSafe() throws JsonProcessingException {
+        TreeMap<String, Long> js = new TreeMap<>();
+        js.put("maxSafe0", 9007199254740990L);
+        js.put("maxSafe1", 9007199254740991L);
+        js.put("maxSafe2", 9007199254740992L);
+        js.put("minSafe0", -9007199254740990L);
+        js.put("minSafe1", -9007199254740991L);
+        js.put("minSafe2", -9007199254740992L);
+        final String jsFmt = objectMapper.writeValueAsString(js);
+        System.out.println(jsFmt);
+        Assertions.assertEquals("{\"maxSafe0\":9007199254740990,"
+                                + "\"maxSafe1\":\"9007199254740991\","
+                                + "\"maxSafe2\":\"9007199254740992\","
+                                + "\"minSafe0\":-9007199254740990,"
+                                + "\"minSafe1\":\"-9007199254740991\","
+                                + "\"minSafe2\":\"-9007199254740992\"}"
+                , jsFmt);
     }
 }

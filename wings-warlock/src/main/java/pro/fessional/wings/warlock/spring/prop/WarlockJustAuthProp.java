@@ -23,7 +23,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.net.Proxy;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * wings-just-auth-77.properties
@@ -40,6 +42,7 @@ public class WarlockJustAuthProp {
 
     /**
      * 缓存大小
+     *
      * @see #Key$cacheSize
      */
     private int cacheSize = 5000;
@@ -47,10 +50,28 @@ public class WarlockJustAuthProp {
 
     /**
      * ttl秒数
+     *
      * @see #Key$cacheLive
      */
     private int cacheLive = 300;
     public static final String Key$cacheLive = Key + ".cache-live";
+
+    /**
+     * 设定安全的state，通过key获取内容，执行重定向(`http`或`/`开头)或回写
+     *
+     * @see #Key$safeState
+     */
+    private Map<String, String> safeState = new HashMap<>();
+    public static final String Key$safeState = Key + ".safe-state";
+
+
+    /**
+     * 设定安全的host，通过key获取内容，减少dev时的跨域
+     *
+     * @see #Key$safeHost
+     */
+    private Set<String> safeHost = new HashSet<>();
+    public static final String Key$safeHost = Key + ".safe-host";
 
     /**
      * 验证类型，同bind auth的key相同

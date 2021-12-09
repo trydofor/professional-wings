@@ -129,7 +129,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             setter.put(t.CommitId, commit.getCommitId());
             setter.put(t.ModifyDt, commit.getCommitDt());
 
-            final int rc = winUserAuthnDao.update(setter, cond, true);
+            final int rc = winUserAuthnDao.update(t, setter, cond, true);
 
             if (rc != 1) {
                 log.warn("failed to modify authn. uid={}, type={}, affect={}", userId, authType, rc);
@@ -182,7 +182,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             setter.put(t.CommitId, commit.getCommitId());
             setter.put(t.ModifyDt, commit.getCommitDt());
 
-            final int rc = winUserAuthnDao.update(setter, cond, true);
+            final int rc = winUserAuthnDao.update(t, setter, cond, true);
 
             if (rc != 1) {
                 log.warn("failed to renew {}, key={}, affect={}", otherInfo, userId, rc);
@@ -194,7 +194,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
     @Override
     public @NotNull List<Item> list(long userId) {
         final WinUserAuthnTable t = winUserAuthnDao.getTable();
-        return winUserAuthnDao.fetchLive(Item.class,
+        return winUserAuthnDao.fetchLive(Item.class, t,
                 t.Username,
                 t.AuthType,
                 t.ExpiredDt,

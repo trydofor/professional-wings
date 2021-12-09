@@ -55,7 +55,7 @@ public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record>
      * The reference instance of <code>tst_中文也分表</code>
      */
     public static final Tst中文也分表Table Tst中文也分表 = new Tst中文也分表Table();
-        public static final Tst中文也分表Table asY8 = Tst中文也分表.as("y8");
+    public static final Tst中文也分表Table asY8 = Tst中文也分表.as(pro.fessional.wings.faceless.database.jooq.WingsJooqEnv.uniqueAlias());
 
     /**
      * The class holding records for this type
@@ -192,17 +192,17 @@ public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record>
     @Override
     @NotNull
     public String getSeqName() {
-            return "tst_中文也分表";
+        return "tst_中文也分表";
     }
 
 
     /**
-     * alias Y8
+     * alias asY8
      */
     @Override
     @NotNull
     public Tst中文也分表Table getAliasTable() {
-            return asY8;
+        return asY8;
     }
 
 
@@ -215,21 +215,21 @@ public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record>
     @Override
     @NotNull
     public Condition getOnlyDied() {
-            return onlyDiedData;
+        return onlyDiedData;
     }
 
     @Override
     @NotNull
     public Condition getOnlyLive() {
-            return onlyLiveData;
+        return onlyLiveData;
     }
 
     @Override
     @NotNull
     public Map<Field<?>, ?> markDelete(JournalService.Journal commit) {
-            Map<org.jooq.Field<?>, Object> map = new HashMap<>();
-            map.put(DeleteDt, commit.getCommitDt());
-            map.put(CommitId, commit.getCommitId());
-            return map;
+        Map<org.jooq.Field<?>, Object> map = new HashMap<>();
+        map.put(DeleteDt, commit.getCommitDt());
+        map.put(CommitId, commit.getCommitId());
+        return map;
     }
 }

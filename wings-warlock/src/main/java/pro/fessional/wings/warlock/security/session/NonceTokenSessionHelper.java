@@ -2,7 +2,7 @@ package pro.fessional.wings.warlock.security.session;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import pro.fessional.mirana.data.Null;
-import pro.fessional.wings.slardar.cache.WingsCaffeine;
+import pro.fessional.wings.slardar.cache.caffeine.WingsCaffeine;
 
 /**
  * 提供5分钟内有效的一次性token关联验证。

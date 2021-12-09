@@ -183,7 +183,7 @@ public class JooqShardingTest {
         testcaseNotice("delete from `tst_中文也分表` where (`id` <= ? and `commit_id` is not null)");
 
         val dw = dao.getTable();
-        val rw = dao.delete(dw.Id.eq(id));
+        val rw = dao.delete(dw, dw.Id.eq(id));
         testcaseNotice("dao delete= $rw");
         testcaseNotice("delete from `tst_中文也分表_3` where `id` = ? ");
 
@@ -210,7 +210,7 @@ public class JooqShardingTest {
         Assertions.assertArrayEquals(new int[]{1, 1, 1}, rs1);
 
         testcaseNotice("先select在insert 310，或update 308，309");
-        val rs3 = dao.batchMerge(new Field[]{tbl.Id}, Arrays.asList(
+        val rs3 = dao.batchMerge(tbl, new Field[]{tbl.Id}, Arrays.asList(
                 new Tst中文也分表Record(310L, now, now, now, 9L, "批量合并310", "其他310", ZH_CN.getId()),
                 new Tst中文也分表Record(308L, now, now, now, 9L, "批量合并308", "其他308", ZH_CN.getId()),
                 new Tst中文也分表Record(309L, now, now, now, 9L, "批量合并309", "其他309", ZH_CN.getId())
@@ -238,7 +238,7 @@ public class JooqShardingTest {
         testcaseNotice("批量Merge，查看日志,on dupkey, 307-309，分2批，duplicate");
         testcaseNotice("insert into `tst_中文也分表` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?");
         try {
-            val rs3 = dao.batchMerge(Arrays.asList(
+            val rs3 = dao.batchMerge(tbl, Arrays.asList(
                     new Tst中文也分表Record(320L, now, now, now, 9L, "批量合并320", "其他320", ZH_CN.getId()),
                     new Tst中文也分表Record(318L, now, now, now, 9L, "批量合并318", "其他318", ZH_CN.getId()),
                     new Tst中文也分表Record(319L, now, now, now, 9L, "批量合并319", "其他319", ZH_CN.getId())

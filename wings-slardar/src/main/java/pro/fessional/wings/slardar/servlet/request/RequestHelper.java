@@ -7,11 +7,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import pro.fessional.mirana.cast.TypedCastUtil;
+import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.Wildcard;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -174,6 +177,25 @@ public class RequestHelper {
     public static String getParameter(Map<String, String[]> param, String name) {
         String[] vals = param.get(name);
         return (vals == null || vals.length == 0) ? null : vals[0];
+    }
+
+    @NotNull
+    public static String[] getParameters(Map<String, String[]> param, String name) {
+        final String[] arr = param.get(name);
+        if (arr == null) {
+            final ArrayList<String> list = new ArrayList<>();
+            final String prefix = name + '[';
+            for (Map.Entry<String, String[]> en : param.entrySet()) {
+                final String n = en.getKey();
+                if (n.startsWith(prefix) && n.endsWith("]")) {
+                    list.addAll(Arrays.asList(en.getValue()));
+                }
+            }
+            return list.toArray(Null.StrArr);
+        }
+        else {
+            return arr;
+        }
     }
 
     @NotNull

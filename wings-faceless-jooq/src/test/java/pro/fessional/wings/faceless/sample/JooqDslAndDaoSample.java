@@ -70,14 +70,14 @@ public class JooqDslAndDaoSample {
         setter.put(t.LoginInfo, "info");
         setter.put(t.CommitId, t.Id.add(1L));
         testcaseNotice("update `tst_中文也分表` set `commit_id` = (`id` + ?), `login_info` = ? where `id` = ?");
-        val u1 = dao.update(setter, t.Id.eq(2L));
+        val u1 = dao.update(t, setter, t.Id.eq(2L));
         System.out.println("============update " + u1);
 
         val po = new Tst中文也分表();
         po.setCommitId(2L);
         po.setLoginInfo("info");
         testcaseNotice("update `tst_中文也分表` set `commit_id` = ?, `login_info` = ? where `id` = ?");
-        val u2 = dao.update(po, t.Id.eq(2L));
+        val u2 = dao.update(t, po, t.Id.eq(2L));
         System.out.println("============update " + u2);
     }
 
@@ -141,7 +141,7 @@ public class JooqDslAndDaoSample {
         testcaseNotice("逻辑删除");
         val c1 = dao.count();
         System.out.println(c1);
-        val c2 = dao.count(dao.getTable().onlyDiedData);
+        val c2 = dao.count(it -> it.onlyDiedData);
         System.out.println(c2);
     }
 
@@ -149,7 +149,7 @@ public class JooqDslAndDaoSample {
     public void test4Shadow() {
         testcaseNotice("影子表");
         Tst中文也分表Table upd = dao.newTable("", "$upd");
-        val c1 = dao.count(upd);
+        val c1 = dao.count(upd, null);
         System.out.println(c1);
     }
 }

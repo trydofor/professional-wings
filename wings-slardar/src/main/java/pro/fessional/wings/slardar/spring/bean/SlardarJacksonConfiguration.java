@@ -33,6 +33,7 @@ import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeSerializer;
 import pro.fessional.wings.slardar.jackson.AutoRegisterPropertyFilter;
 import pro.fessional.wings.slardar.jackson.EmptyValuePropertyFilter;
 import pro.fessional.wings.slardar.jackson.FormatNumberSerializer;
+import pro.fessional.wings.slardar.jackson.FormatNumberSerializer.Digital;
 import pro.fessional.wings.slardar.jackson.I18nResultPropertyFilter;
 import pro.fessional.wings.slardar.jackson.I18nStringSerializer;
 import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
@@ -177,7 +178,7 @@ public class SlardarJacksonConfiguration {
             final SlardarNumberProp.Nf ints = slardarNumberProp.getInteger();
             if (ints.isEnable()) {
                 final DecimalFormat df = ints.getWellFormat();
-                final boolean digital = ints.isDigital();
+                final Digital digital = ints.getDigital();
                 logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer Integer&Long serializer");
                 builder.serializerByType(Integer.class, new FormatNumberSerializer(Integer.class, df, digital));
                 builder.serializerByType(Integer.TYPE, new FormatNumberSerializer(Integer.TYPE, df, digital));
@@ -188,7 +189,7 @@ public class SlardarJacksonConfiguration {
             final SlardarNumberProp.Nf floats = slardarNumberProp.getFloats();
             if (floats.isEnable()) {
                 final DecimalFormat df = floats.getWellFormat();
-                final boolean digital = floats.isDigital();
+                final Digital digital = floats.getDigital();
                 logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer Float&Double serializer");
                 builder.serializerByType(Float.class, new FormatNumberSerializer(Float.class, df, digital));
                 builder.serializerByType(Float.TYPE, new FormatNumberSerializer(Float.TYPE, df, digital));
@@ -200,7 +201,7 @@ public class SlardarJacksonConfiguration {
             if (decimal.isEnable()) {
                 final DecimalFormat df = decimal.getWellFormat();
                 logger.info("Wings conf Jackson2ObjectMapperBuilderCustomizer BigDecimal serializer");
-                builder.serializerByType(BigDecimal.class, new FormatNumberSerializer(BigDecimal.class, df, decimal.isDigital()));
+                builder.serializerByType(BigDecimal.class, new FormatNumberSerializer(BigDecimal.class, df, decimal.getDigital()));
             }
         };
     }

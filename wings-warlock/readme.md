@@ -102,6 +102,15 @@ Warlock在用户通过身边鉴别（renew）后，会分别加载和用户绑�
 NonceLoginSuccessHandler配合NonceTokenSessionHelper实现了oauth一次性token换取session的功能。
 所以如果需要此功能，需要在自行实现AuthenticationSuccessHandler继承NonceLoginSuccessHandler。
 
+Oauth通过定制host和state参数，构造指令，完成重定向定制，参考 AuthStateBuilder 类。
+* 重定向 - `http`或`/`开头的302 跳转。
+* 回写 - 非空的内容，直接写回到response。
+* 考虑到安全性，以上必须预设在配置文件中，参考`wings.warlock.just-auth.safe-*`
+
+注意 safe-host对以下功能有约束。
+* 用request有host参数时，检查redirect-uri的{host}，通过则使用host参数构造uri
+* state中重定向是以http开头时，检查host，不通过时，直接回写，而非重定向。
+
 ### 4.4.2.定制验证
 
 * 暴露 ComboWingsAuthDetailsSource.Combo，增加details

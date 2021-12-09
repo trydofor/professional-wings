@@ -30,6 +30,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * @author trydofor
@@ -63,18 +64,21 @@ public class LoginPageController {
 
     @SuppressWarnings("MVCPathVariableInspection")
     @ApiOperation(value = "具体验证登录默认页，根据content-type自动返回",
-            notes = "一般用于定制访问，如github页面重定向。支持state参数，用于构造oauth2的有意义的state"
+            notes = "一般用于定制访问，如github页面重定向。"
                     + "①当鉴权失败时，重定向页面，status=401;"
-                    + "②直接访问时返回status=200;")
+                    + "②直接访问时返回status=200;"
+                    + "参数⑴state，用于构造oauth2的有意义的state，支持MessageFormat;"
+                    + "参数⑵host，用于构造oauth2的重定向host(减少跨域)")
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginPage + "}", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<?> LoginPage(@PathVariable("authType") String authType,
                                        @PathVariable("extName") String extName,
-                                       @RequestParam(value = "state", required = false) String state,
+                                       @RequestParam(value = "state", required = false) List<String> state,
+                                       @RequestParam(value = "host", required = false) String host,
                                        HttpServletRequest request,
                                        HttpServletResponse response) {
         final Enum<?> em = wingsAuthTypeParser.parse(authType);
         final MediaType mt = ContentTypeHelper.mediaTypeByUri(extName, MediaType.APPLICATION_JSON);
-        log.info("{} login-page media-type={}, state={}", authType, mt, state);
+        log.info("{} login-page media-type={}, state={}, host={}", authType, mt, state, host);
         return wingsAuthPageHandler.response(em, mt, request, response);
     }
 

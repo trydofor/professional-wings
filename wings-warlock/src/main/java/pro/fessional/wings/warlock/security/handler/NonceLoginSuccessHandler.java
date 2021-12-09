@@ -1,11 +1,14 @@
 package pro.fessional.wings.warlock.security.handler;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
+import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
 import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
@@ -22,9 +25,20 @@ import javax.servlet.http.HttpSession;
 @Slf4j
 public class NonceLoginSuccessHandler implements AuthenticationSuccessHandler {
 
+    @Setter(onMethod_ = {@Autowired})
+    protected SlardarSessionProp slardarSessionProp;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected AuthStateBuilder authStateBuilder;
+
     @Override
     public final void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         final HttpSession session = request.getSession(false);
+
+        if (session != null && slardarSessionProp != null) {
+            session.setMaxInactiveInterval(slardarSessionProp.getInactiveInterval());
+        }
+
         final long uid = SecurityContextUtil.getUserId();
         final String sid = session == null ? null : session.getId();
 
@@ -36,7 +50,7 @@ public class NonceLoginSuccessHandler implements AuthenticationSuccessHandler {
             NonceTokenSessionHelper.swapNonceSid(uid, sid);
         }
 
-        final String state = AuthStateBuilder.parseParam(request.getParameter("state"));
+        final String state = authStateBuilder.parseParam(request.getParameter("state"));
         if (state != null) {
             log.info("parse client state={}, uid={}", state, uid);
         }

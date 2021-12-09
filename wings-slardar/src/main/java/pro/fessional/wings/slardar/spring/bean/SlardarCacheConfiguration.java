@@ -19,8 +19,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.cache.WingsCacheHelper;
-import pro.fessional.wings.slardar.cache.WingsCaffeine;
-import pro.fessional.wings.slardar.cache.WingsHazelcast;
+import pro.fessional.wings.slardar.cache.caffeine.WingsCaffeine;
+import pro.fessional.wings.slardar.cache.hazelcast.WingsHazelcast;
 import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 

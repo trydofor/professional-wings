@@ -4,18 +4,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Condition;
 import org.jooq.Configuration;
-import org.jooq.Field;
 import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
+import org.jooq.Result;
 import org.jooq.SelectField;
+import org.jooq.Table;
+import org.jooq.TableField;
 import org.jooq.UpdatableRecord;
-import org.jooq.impl.TableImpl;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static org.jooq.impl.DSL.noCondition;
 
@@ -38,10 +40,10 @@ import static org.jooq.impl.DSL.noCondition;
  * @author trydofor
  * @since 2019-10-12
  */
-public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJournalTable<T>, R extends UpdatableRecord<R>, P, K> extends WingsJooqDaoAliasImpl<T, R, P, K> {
+public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalTable<T>, R extends UpdatableRecord<R>, P, K> extends WingsJooqDaoAliasImpl<T, R, P, K> {
 
     protected WingsJooqDaoJournalImpl(T table, Class<P> type) {
-        this(table, type, null);
+        super(table, type, null);
     }
 
     protected WingsJooqDaoJournalImpl(T table, Class<P> type, Configuration conf) {
@@ -51,15 +53,15 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
     ///////////////// select /////////////////////
 
     /**
-     * @see #fetch(TableImpl, Condition)
+     * @see #fetch(Table, Condition)
      */
     @NotNull
-    public List<P> fetchLive(Condition cond) {
-        return fetchLive(table, cond);
+    public List<P> fetchLive(Function<T, Condition> fun) {
+        return fetchLive(table, fun.apply(table));
     }
 
     /**
-     * @see #fetch(TableImpl, Condition)
+     * @see #fetch(Table, Condition)
      */
     @NotNull
     public List<P> fetchLive(T table, Condition cond) {
@@ -67,39 +69,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
     }
 
     /**
-     * @see #fetch(TableImpl, Condition, OrderField[])
-     */
-    @NotNull
-    public List<P> fetchLive(Condition cond, OrderField<?>... orderBy) {
-        return fetchLive(table, cond, orderBy);
-    }
-
-    /**
-     * @see #fetch(TableImpl, Condition, OrderField[])
-     */
-    @NotNull
-    public List<P> fetchLive(T table, Condition cond, OrderField<?>... orderBy) {
-        return fetch(table, table.onlyLive(cond), orderBy);
-    }
-
-    /**
-     * @see #fetch(TableImpl, int, int, Condition, OrderField[])
-     */
-    @NotNull
-    public List<P> fetchLive(int offset, int limit, OrderField<?>... orderBy) {
-        return fetchLive(table, offset, limit, null, orderBy);
-    }
-
-    /**
-     * @see #fetch(TableImpl, int, int, Condition, OrderField[])
-     */
-    @NotNull
-    public List<P> fetchLive(int offset, int limit, Condition condition, OrderField<?>... orderBy) {
-        return fetchLive(table, offset, limit, condition, orderBy);
-    }
-
-    /**
-     * @see #fetch(TableImpl, int, int, Condition, OrderField[])
+     * @see #fetch(Table, int, int, Condition, OrderField[])
      */
     @NotNull
     public List<P> fetchLive(T table, int offset, int limit, Condition cond, OrderField<?>... orderBy) {
@@ -107,23 +77,24 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
     }
 
     /**
-     * @see #fetchOne(TableImpl, Condition)
+     * @see #fetch(Table, Condition)
      */
     @Nullable
-    public P fetchOneLive(Condition cond) {
-        return fetchOneLive(table, cond);
+    public P fetchOneLive(Function<T, Condition> fun) {
+        return fetchOneLive(table, fun.apply(table));
     }
 
     /**
-     * @see #fetchOne(TableImpl, Condition)
+     * @see #fetchOne(Table, Condition)
      */
     @Nullable
     public P fetchOneLive(T table, Condition cond) {
         return fetchOne(table, table.onlyLive(cond));
     }
 
+    @SuppressWarnings("unchecked")
     @NotNull
-    public <Z> List<P> fetchRangeLive(Field<Z> field, Z lowerInclusive, Z upperInclusive) {
+    public <Z> List<P> fetchRangeLive(TableField<R, Z> field, Z lowerInclusive, Z upperInclusive) {
         final Condition cond = lowerInclusive == null
                                ? upperInclusive == null
                                  ? noCondition()
@@ -131,30 +102,27 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
                                : upperInclusive == null
                                  ? field.ge(lowerInclusive)
                                  : field.between(lowerInclusive, upperInclusive);
-        return fetchLive(table, cond);
+        return fetchLive((T) field.getTable(), cond);
     }
 
     @SuppressWarnings("unchecked")
     @NotNull
-    public <Z> List<P> fetchLive(Field<Z> field, Z... values) {
-        return fetchLive(table, field.in(values));
+    public <Z> List<P> fetchLive(TableField<R, Z> field, Z... values) {
+        return fetchLive((T) field.getTable(), field.in(values));
     }
 
     @Nullable
-    public <Z> P fetchOneLive(Field<Z> field, Z value) {
-        return fetchOneLive(table, field.equal(value));
+    @SuppressWarnings("unchecked")
+    public <Z> P fetchOneLive(TableField<R, Z> field, Z value) {
+        return fetchOneLive((T) field.getTable(), field.equal(value));
     }
 
     @NotNull
-    public <Z> Optional<P> fetchOptionalLive(Field<Z> field, Z value) {
+    public <Z> Optional<P> fetchOptionalLive(TableField<R, Z> field, Z value) {
         return Optional.ofNullable(fetchOneLive(field, value));
     }
 
     ///////////////// select into /////////////////////
-
-    public <E> E fetchOneLive(Class<E> claz, SelectField<?>... fields) {
-        return fetchOneLive(claz, table, null, fields);
-    }
 
     public <E> E fetchOneLive(Class<E> claz, T table, SelectField<?>... fields) {
         return fetchOneLive(claz, table, null, fields);
@@ -162,10 +130,6 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
 
     public <E> E fetchOneLive(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
         return fetchOne(claz, table, table.onlyLive(cond), fields);
-    }
-
-    public <E> E fetchOneLive(RecordMapper<? super Record, E> mapper, SelectField<?>... fields) {
-        return fetchOneLive(mapper, table, null, fields);
     }
 
     public <E> E fetchOneLive(RecordMapper<? super Record, E> mapper, T table, SelectField<?>... fields) {
@@ -176,9 +140,15 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
         return fetchOne(mapper, table, table.onlyLive(cond), fields);
     }
 
+
     @NotNull
-    public <E> List<E> fetchLive(Class<E> claz, SelectField<?>... fields) {
-        return fetchLive(claz, table, null, fields);
+    public Result<Record> fetchLive(T table, Condition cond, SelectField<?>... fields) {
+        return fetch(table, table.onlyLive(cond), fields);
+    }
+
+    @Nullable
+    public Record fetchOneLive(T table, Condition cond, SelectField<?>... fields) {
+        return fetchOne(table, table.onlyLive(cond), fields);
     }
 
     @NotNull
@@ -189,11 +159,6 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
     @NotNull
     public <E> List<E> fetchLive(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
         return fetch(claz, table, table.onlyLive(cond), fields);
-    }
-
-    @NotNull
-    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, SelectField<?>... fields) {
-        return fetchLive(mapper, table, null, fields);
     }
 
     @NotNull
@@ -208,13 +173,8 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
 
     ///////////////// delete /////////////////////
 
-    /**
-     * 逻辑删除
-     *
-     * @see #delete(TableImpl, Condition)
-     */
-    public int delete(JournalService.Journal commit, Condition cond) {
-        return delete(commit, table, cond);
+    public int delete(JournalService.Journal commit, Function<T, Condition> fun) {
+        return delete(commit, table, fun.apply(table));
     }
 
     /**
@@ -227,10 +187,10 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
      */
     public int delete(JournalService.Journal commit, T table, Condition cond) {
         return ctx()
-                       .update(table)
-                       .set(table.markDelete(commit))
-                       .where(cond)
-                       .execute();
+                .update(table)
+                .set(table.markDelete(commit))
+                .where(cond)
+                .execute();
     }
 
     /**
@@ -261,21 +221,14 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
     ///////////////// count /////////////////////
 
     /**
-     * @see #count(TableImpl, Condition)
+     * @see #count(Table, Condition)
      */
-    public long countLive(Condition cond) {
-        return countLive(table, cond);
+    public long countLive(Function<T, Condition> fun) {
+        return countLive(table, fun.apply(table));
     }
 
     /**
-     * @see #count(TableImpl, Condition)
-     */
-    public long countLive(T table) {
-        return countLive(table, null);
-    }
-
-    /**
-     * @see #count(TableImpl, Condition)
+     * @see #count(Table, Condition)
      */
     public long countLive(T table, Condition cond) {
         return count(table, table.onlyLive(cond));
@@ -284,17 +237,17 @@ public abstract class WingsJooqDaoJournalImpl<T extends TableImpl<R> & WingsJour
     ///////////////// super read /////////////////////
 
     /**
-     * @see #count(TableImpl, Condition)
+     * @see #count(Table, Condition)
      */
     public long countLive() {
         return countLive(table, null);
     }
 
     /**
-     * @see #fetchLive(Condition)
+     * @see #fetchLive(Table, Condition)
      */
     @NotNull
     public List<P> findAllLive() {
-        return fetchLive(null);
+        return fetchLive(table, null);
     }
 }

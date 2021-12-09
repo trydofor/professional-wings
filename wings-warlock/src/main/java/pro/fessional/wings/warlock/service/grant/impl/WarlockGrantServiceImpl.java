@@ -64,7 +64,7 @@ public class WarlockGrantServiceImpl implements WarlockGrantService {
             final Condition cond = t.ReferRole.eq(roleId)
                                               .and(t.GrantType.eq(type))
                                               .and(t.GrantEntry.in(grant));
-            winRoleGrantDao.delete(cond);
+            winRoleGrantDao.delete(t, cond);
         });
     }
 
@@ -95,7 +95,7 @@ public class WarlockGrantServiceImpl implements WarlockGrantService {
             final Condition cond = t.ReferUser.eq(userId)
                                               .and(t.GrantType.eq(type))
                                               .and(t.GrantEntry.in(grant));
-            winUserGrantDao.delete(cond);
+            winUserGrantDao.delete(t, cond);
         });
     }
 

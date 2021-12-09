@@ -109,7 +109,7 @@ public class WingsJooqDaoAliasImplTest {
 
         testcaseNotice("批量Merge，查看日志,on dupkey, 307-309，分2批，duplicate");
         testcaseNotice("insert into `tst_中文也分表` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?");
-        val rs3 = dao.batchMerge(rds, 2, tbl.LoginInfo, tbl.OtherInfo);
+        val rs3 = dao.batchMerge(tbl, rds, 2, tbl.LoginInfo, tbl.OtherInfo);
         assertArrayEquals(new int[]{1, 1, 1}, rs3);
     }
 
@@ -136,7 +136,7 @@ public class WingsJooqDaoAliasImplTest {
         val rs1 = dao.batchUpdate(rds, 2);
         assertArrayEquals(new int[]{1, 1, 1}, rs1);
 
-        val rs2 = dao.batchUpdate(new Field[]{tbl.Id}, rds, 2, tbl.LoginInfo, tbl.OtherInfo);
+        val rs2 = dao.batchUpdate(tbl, new Field[]{tbl.Id}, rds, 2, tbl.LoginInfo, tbl.OtherInfo);
         assertArrayEquals(new int[]{1, 1, 1}, rs2);
     }
 
@@ -144,7 +144,7 @@ public class WingsJooqDaoAliasImplTest {
     public void test6𓃬单独Merge𓃬查日志() {
         testcaseNotice("insert into `tst_中文也分表` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?");
         Tst中文也分表 pojo = new Tst中文也分表(312L, now, now, now, 9L, "批量加载312", "update-bymerge", ZH_CN);
-        val rs = dao.mergeInto(pojo, tbl.LoginInfo, tbl.OtherInfo);
+        val rs = dao.mergeInto(tbl, pojo, tbl.LoginInfo, tbl.OtherInfo);
         assertEquals(2, rs);
     }
 
@@ -156,7 +156,7 @@ public class WingsJooqDaoAliasImplTest {
                 new Tst中文也分表Record(311L, now, now, now, 9L, "批量合并311-merge", "update-merge", ZH_CN)
         );
         testcaseNotice("313 insert, 310,311 update");
-        val rs = dao.batchMerge(new Field[]{tbl.Id}, rds, 2, tbl.LoginInfo, tbl.OtherInfo);
+        val rs = dao.batchMerge(tbl, new Field[]{tbl.Id}, rds, 2, tbl.LoginInfo, tbl.OtherInfo);
         assertArrayEquals(new int[]{1, 1, 1}, rs);
     }
 
@@ -165,6 +165,7 @@ public class WingsJooqDaoAliasImplTest {
         dao.fetchById(1L);
         dao.fetchOneById(1L);
         dao.count();
-        dao.count(dao.getTable().onlyLiveData);
+        final Tst中文也分表Table tbl = dao.getTable();
+        dao.count(tbl, tbl.onlyLiveData);
     }
 }

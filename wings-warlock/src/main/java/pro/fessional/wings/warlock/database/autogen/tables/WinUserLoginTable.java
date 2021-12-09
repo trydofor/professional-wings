@@ -48,7 +48,7 @@ public class WinUserLoginTable extends TableImpl<WinUserLoginRecord> implements 
      * The reference instance of <code>win_user_login</code>
      */
     public static final WinUserLoginTable WinUserLogin = new WinUserLoginTable();
-    public static final WinUserLoginTable asA2 = WinUserLogin.as("a2");
+    public static final WinUserLoginTable asA2 = WinUserLogin.as(pro.fessional.wings.faceless.database.jooq.WingsJooqEnv.uniqueAlias());
 
     /**
      * The class holding records for this type
@@ -185,16 +185,16 @@ public class WinUserLoginTable extends TableImpl<WinUserLoginRecord> implements 
     @Override
     @NotNull
     public String getSeqName() {
-            return "win_user_login";
+        return "win_user_login";
     }
 
 
     /**
-     * alias A2
+     * alias asA2
      */
     @Override
     @NotNull
     public WinUserLoginTable getAliasTable() {
-            return asA2;
+        return asA2;
     }
 }

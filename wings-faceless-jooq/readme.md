@@ -29,7 +29,9 @@ MyBatis虽是大部分项目的首选，固有其优秀之处，但开发人员�
 
 自动生成的`*Dao`，有大量可直接使用的数据库操作方法，免去很多手写代码量。
 
- * `getAlias` 获得select用的别名表，`Table as t1`
+ * `getAlias` 获得select用的别名表，`Table as az`
+   - 运行时，Table唯一，采用excel格式的az进制表示
+   - 自命名时，采用数字结尾，避免与系统发生冲突。
  * `getTable` 获得modify用的不使用别名的表 `Table`
  * 使用preparedStatement的batch批量插入和更新大量数据
  * 使用mysql特效，`insert ignore`和`replace into`处理重复数据
