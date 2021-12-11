@@ -556,6 +556,11 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。 �
 * 使用jackson注解 @JsonRawValue
 * 使用fastjson(不推荐，需1.2.69+，SafeMode, 安全漏洞)
 
+在Jackson和Fastjson的使用上，考虑到安全及兼容性，遵循以下约定
+* FastJson用于①安全环境的读写，②对不安全的写，不读入外部json
+* FastJson用于静态环境，即不能优雅注入jackson的情况
+* 此外，都应该使用Jackson
+
 ### 06.为什么是dota的英雄
 
 有这样一个团队，她是做对日金融的，穿拖鞋裤衩上班，课间可以团dota，cs，跑跑卡丁车。 日本人组团爱上了瓜子，黄飞红，米线，火锅。团队只有一个要求，活干的漂亮，快，零缺陷。

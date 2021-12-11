@@ -1,7 +1,6 @@
 package pro.fessional.wings.faceless;
 
 import lombok.Setter;
-import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,11 +86,11 @@ public class WingsTestHelper {
         fetchAllColumn1(type.sql).forEach((k, aSet) -> {
             Diff.S<String> diff = Diff.of(aSet, bSet);
             if (!diff.bNotA.isEmpty()) {
-                testcaseNotice(k + " 数据库少：" + type + ":" + Strings.join(diff.bNotA, ','));
+                testcaseNotice(k + " 数据库少：" + type + ":" + String.join(",", diff.bNotA));
                 good.set(false);
             }
             if (!diff.aNotB.isEmpty()) {
-                testcaseNotice(k + " 数据库多：" + type + ":" + Strings.join(diff.aNotB, ','));
+                testcaseNotice(k + " 数据库多：" + type + ":" + String.join(",", diff.aNotB));
                 good.set(false);
             }
         });
@@ -105,7 +104,7 @@ public class WingsTestHelper {
         fetchAllColumn1(type.sql).forEach((k, aSet) -> {
             Diff.S<String> diff = Diff.of(aSet, bSet);
             if (!diff.bNotA.isEmpty()) {
-                testcaseNotice(k + " 数据库少：" + type + ":" + Strings.join(diff.bNotA, ','));
+                testcaseNotice(k + " 数据库少：" + type + ":" + String.join(",", diff.bNotA));
                 good.set(false);
             }
         });
@@ -119,7 +118,7 @@ public class WingsTestHelper {
         fetchAllColumn1(type.sql).forEach((k, aSet) -> {
             Diff.S<String> diff = Diff.of(aSet, bSet);
             if (diff.bNotA.size() != bSet.size()) {
-                testcaseNotice(k + " 数据库不能有：" + type + ": " + Strings.join(diff.bNotA, ','));
+                testcaseNotice(k + " 数据库不能有：" + type + ": " + String.join(",", diff.bNotA));
                 good.set(false);
             }
         });
