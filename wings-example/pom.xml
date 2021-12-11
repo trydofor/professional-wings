@@ -7,6 +7,7 @@
         <groupId>pro.fessional</groupId>
         <artifactId>wings-home</artifactId>
         <version>${revision}.${changelist}</version>
+        <relativePath>../wings-project/pom.xml</relativePath>
     </parent>
 
     <groupId>com.moilioncircle.roshan</groupId>

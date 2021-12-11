@@ -195,6 +195,7 @@ public class WingsInitProjectUtil {
         text = text.replace("${revision}.${changelist}", info.version)
                    .replace("${revision}-SNAPSHOT", "${revision}")
                    .replace("demo-revision", "revision")
+                   .replaceFirst("<relativePath>.*</relativePath>", "<relativePath/>")
                    .replace(info.srcGroupId, info.dstGroupId)
                    .replace(info.srcArtifactId, info.dstArtifactId);
         text = replaceCodeName(info, text);

@@ -36,10 +36,10 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
 
 由以下几个子工程构成，
 
-* [沉默术士/silencer](wings-silencer/readme.md) springboot的工程化装配，I18n等
-* [虚空假面/faceless](wings-faceless/readme.md) 数据层，分表分库，数据及库的版本管理
-* [鱼人守卫/slardar](wings-slardar/readme.md) Servlet体系的WebMvc基础约定和封装
-* [术士大叔/warlock](wings-warlock/readme.md) 综合以上的基础业务模块和功能脚手架
+* [沉默术士/silencer](wings-project/wings-silencer/readme.md) springboot的工程化装配，I18n等
+* [虚空假面/faceless](wings-project/wings-faceless/readme.md) 数据层，分表分库，数据及库的版本管理
+* [鱼人守卫/slardar](wings-project/wings-slardar/readme.md) Servlet体系的WebMvc基础约定和封装
+* [术士大叔/warlock](wings-project/wings-warlock/readme.md) 综合以上的基础业务模块和功能脚手架
 * [演示例子/example](wings-example/readme.md) 集成以上的样板工程和例子
 
 wings的版本号为`4段分隔`，前3段为spring-boot版本，第4段是changelist。 build是3位数字，第1位为大版本，意味着大调整，不兼容，后2位是小版本，意味着基本兼容或容易适配。
@@ -60,6 +60,7 @@ wings的版本号为`4段分隔`，前3段为spring-boot版本，第4段是chang
 `wings-idea-live.xml`需要手动放到`$config/templates/`，没有则新建。
 
 ```
+cd wings-project
 id_config=~/Library/ApplicationSupport/JetBrains/IntelliJIdea2021.1
 # 通过复制，备份
 cat $id_config/templates/wings.xml > wings-idea-live.xml
@@ -704,7 +705,7 @@ wings本身是时区敏感的，一般要求jvm和mysql在同一时区，主要�
 
 Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控制台以Error形式输出。
 
-更多信息，参考 [04.日时零值和时区问题](wings-faceless/readme.md#04.日时零值和时区问题)
+更多信息，参考 [04.日时零值和时区问题](wings-project/wings-faceless/readme.md#04.日时零值和时区问题)
 
 ### 19.无外网mysql如何执行flywave版本管理
 
