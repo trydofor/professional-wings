@@ -1,7 +1,7 @@
 #!/bin/bash
 cat <<'EOF'
 #################################################
-# version 2021-07-14 # test on mac and lin
+# version 2021-12-18 # test on mac and lin
 # 使用`ln -s`把此脚本软连接到`执行目录/workdir`，
 # 其同名`env`如（wings-starter.env）会被自动载入。
 # `BOOT_CNF|BOOT_ARG|JAVA_ARG`内变量可被延时求值，
@@ -12,8 +12,8 @@ EOF
 TAIL_LOG='log'   # 默认tail的日志，"log|out|new|ask"
 USER_RUN="$USER" # 用来启动程序的用户
 PORT_RUN=''      # 默认端口，空时
-ARGS_RUN="start" # 默认参数。空时使用$1
-BOOT_JAR="$2"    # 主程序。通过env覆盖
+BOOT_JAR=''      # 主程序。通过env覆盖或$1
+ARGS_RUN='start' # 默认参数。若$1或$2指定
 BOOT_OUT=''      # 控制台日志，默认 $BOOT_JAR.out
 BOOT_LOG=''      # 程序日志，需要外部指定，用来tail
 BOOT_PID=''      # 主程序pid，默认 $BOOT_JAR.pid
@@ -66,10 +66,6 @@ else
     echo -e "\033[31mWARN: no env file found. $this_envs \033[0m"
 fi
 
-# change workdir after found env-file
-cd $(dirname $this_file) || exit
-echo "work dir $(pwd)"
-
 # check java
 echo -e "\033[37;42;1mINFO: ==== java version ==== \033[0m"
 
@@ -78,9 +74,28 @@ if ! java -version; then
     exit
 fi
 
+# check arg
+if [[ -f "$1" ]]; then
+    BOOT_JAR="$1"
+    shift
+else
+    # change workdir after found env-file
+    cd $(dirname $this_file) || exit
+fi
+echo "work dir $(pwd)"
+
+if [[ "$1" != "" ]]; then
+    ARGS_RUN="$1"
+fi
+
 # check jar
 if [[ ! -f "$BOOT_JAR" ]]; then
-    BOOT_JAR=$(find . -type f -name "$BOOT_JAR" | head -n 1)
+    cnt=$(find . -type f -name "$BOOT_JAR" | wc -l)
+    if [[ "$cnt" != "1" ]]; then
+        echo -e "\033[37;41;1mERROR: found $cnt jar file, $BOOT_JAR \033[0m"
+        exit
+    fi
+    BOOT_JAR=$(find . -type f -name "$BOOT_JAR")
 fi
 if [[ ! -f "$BOOT_JAR" ]]; then
     echo -e "\033[37;41;1mERROR: can not found jar file, $BOOT_JAR \033[0m"
@@ -96,11 +111,6 @@ fi
 # check pid
 if [[ "$BOOT_PID" == "" ]]; then
     BOOT_PID=${JAR_NAME}.pid
-fi
-
-# check arg
-if [[ "$1" != "" ]]; then
-    ARGS_RUN="$1"
 fi
 
 # check memory, only in linux, not mac
@@ -158,6 +168,7 @@ if [[ "$USER_RUN" != "$USER" ]]; then
     exit
 fi
 
+pstk="java .*$BOOT_JAR"
 case "$ARGS_RUN" in
     start)
         if [[ $count -eq 0 ]]; then
@@ -175,7 +186,7 @@ case "$ARGS_RUN" in
             echo -e "\033[37;41;1mERROR: already $count running of $BOOT_JAR \033[0m"
         fi
 
-        cpid=$(pgrep -f " $BOOT_JAR " | tr '\n' ' ')
+        cpid=$(pgrep -f "$pstk" | tr '\n' ' ')
         if [[ "$cpid" == "" ]]; then
             echo -e "\033[37;41;1mERROR: failed to check PID by $BOOT_JAR \033[0m"
             exit
@@ -223,7 +234,7 @@ case "$ARGS_RUN" in
         if [[ $count -eq 0 ]]; then
             echo -e "\033[37;43;1mNOTE: not found running $BOOT_JAR \033[0m"
         else
-            cpid=$(pgrep -f " $BOOT_JAR " | tr '\n' ' ')
+            cpid=$(pgrep -f "$pstk" | tr '\n' ' ')
             echo -e "\033[33mNOTE: current PID=$cpid of $BOOT_JAR \033[0m"
             timeout=60
             pid=$(cat "$BOOT_PID")
@@ -254,7 +265,7 @@ case "$ARGS_RUN" in
                     exit
                 fi
             done
-            cpid=$(pgrep -f " $BOOT_JAR " | tr '\n' ' ')
+            cpid=$(pgrep -f "$pstk" | tr '\n' ' ')
             echo -e "\033[37;41;1mWARN: stopping timeout[${timeout}s], pid=$pid \033[0m"
             echo -e "\033[31mWARN: need manually check PID=$cpid of $BOOT_JAR \033[0m"
             echo -e "\033[33mNOTE: <ENTER> to 'kill -9 $pid', <Ctrl-C> to exit \033[0m"
@@ -274,7 +285,7 @@ case "$ARGS_RUN" in
                 tail -n $tail_num "$BOOT_LOG"
             fi
             pid=$(cat "$BOOT_PID")
-            cpid=$(pgrep -f " $BOOT_JAR " | tr '\n' ' ')
+            cpid=$(pgrep -f "$pstk" | tr '\n' ' ')
             echo -e "\033[37;43;1mNOTE: boot.pid=$pid \033[0m"
             echo -e "\033[33mNOTE: current PID=$cpid of $BOOT_JAR \033[0m"
             ps -fwww $cpid
@@ -282,6 +293,12 @@ case "$ARGS_RUN" in
             if [[ $pid -ne $cpid ]]; then
                 echo -e "\033[31mWARN: pid not match, proc-pid=$cpid, file-pid=$pid \033[0m"
             fi
+
+            mrs=$(ps -o rss $cpid | grep -v RSS | numfmt --grouping)
+            mvs=$(ps -o vsz $cpid | grep -v VSZ | numfmt --grouping)
+            echo -e "\033[37;43;1mNOTE: ps -o rss -o vsz $cpid \033[0m"
+            echo -e "\033[32m Resident= $mrs Kb\033[m"
+            echo -e "\033[32m Virtual=  $mvs Kb\033[m"
 
             echo -e "\033[37;43;1mNOTE: jstat -gcutil $cpid 1000 5 \033[0m"
             jstat -gcutil $cpid 1000 5
@@ -293,12 +310,6 @@ case "$ARGS_RUN" in
         fi
         ;;
     warn)
-        this_path=$(realpath -s $this_file)
-        echo -e "\033[37;43;1mNOTE: ==== crontab usage ==== \033[0m"
-        echo -e "\033[32m crontab -e -u ${USER_RUN} \033[m"
-        echo -e "\033[32m crontab -l -u ${USER_RUN} \033[m"
-        echo -e "\033[32m */5 * * * * $this_path warn \033[m"
-
         warn_got=''
         if [[ $count -eq 0 ]]; then
             echo -e "\033[33mNOTE: not found running $BOOT_JAR \033[0m"
@@ -316,28 +327,34 @@ case "$ARGS_RUN" in
             fi
         fi
 
-        if [[ "$warn_got"  != "" ]] ; then
+        if [[ "$warn_got" != "" ]]; then
             if [[ "$WARN_RUN" == "" ]]; then
                 echo -e "\033[33mNOTE: skip monitor for empty WARN_RUN \033[0m"
             else
                 echo "$WARN_RUN"
                 eval "$WARN_RUN"
                 echo
-                echo -e "\033[33mNOTE: sended warn notice \033[0m"
+                echo -e "\033[33mNOTE: sent warn notice \033[0m"
             fi
         else
             echo -e "\033[37;42;1mNOTE: good status : PID and LOG \033[0m"
         fi
         ;;
     clean)
-        dys=30
-        echo -e "\033[37;43;1mNOTE: ==== clear ${dys}-days ago log file ==== \033[0m"
+        dys="$2"
+        if [[ "$dys" == "" ]]; then
+            dys=30
+        fi
         echo -e "\033[32m find . -name \"${JAR_NAME}[.-]*\" -type f -mtime +${dys} \033[m"
         old=$(find . -name "${JAR_NAME}[.-]*" -type f -mtime +${dys})
         if [[ "$old" != "" ]]; then
             find . -name "${JAR_NAME}[.-]*" -type f -mtime +${dys}
-            echo -e "\033[31mWARN: press <y> to rm them all \033[0m"
-            read -r yon
+            echo -e "\033[37;43;1mNOTE: ==== clear ${dys}-days ago log file ==== \033[0m"
+            yon="$3"
+            if [[ "$3" == "" ]]; then
+                echo -e "\033[31mWARN: press <y> to rm them all \033[0m"
+                read -r yon
+            fi
             if [[ "$yon" == "y" ]]; then
                 find . -name "${JAR_NAME}[.-]*" -type f -mtime +${dys} -print0 | xargs -0 rm -f
             fi
@@ -345,9 +362,28 @@ case "$ARGS_RUN" in
             echo -e "\033[37;42;1mNOTE: no ${dys}-days ago logs \033[0m"
         fi
         ;;
+    cron)
+        this_path=$(realpath -s $this_file)
+        echo -e "\033[37;43;1mNOTE: ==== crontab usage ==== \033[0m"
+        echo -e "\033[32m crontab -e -u ${USER_RUN} \033[m"
+        echo -e "\033[32m crontab -l -u ${USER_RUN} \033[m"
+        echo -e "\033[32m */5 * * * * $this_path warn \033[m"
+        echo -e "\033[32m 0 0 * * * $this_path clean 30 y \033[m"
+        ;;
     *)
-        echo -e '\033[37;41;1mERROR: use start|stop|status|warn|clean\033[m'
-        echo -e '\033[31meg ./wings-starter.sh start\033[m'
+        if [[ "$ARGS_RUN" == "help" ]]; then
+            echo -e '\033[37;42;1mNOTE: help info, use the following\033[m'
+        else
+            echo -e '\033[37;41;1mERROR: unsupported command, use the following\033[m'
+        fi
+        echo -e '\033[32m start \033[m start the {boot-jar} and tail the log'
+        echo -e '\033[32m stop \033[m  stop the {boot-jar} gracefully'
+        echo -e '\033[32m status \033[m show the {boot-jar} runtime status'
+        echo -e '\033[32m warn \033[m monitor the {boot-jar} and log'
+        echo -e '\033[32m clean [days=30] [y] \033[m clean up log-file {days} ago'
+        echo -e '\033[32m cron \033[m show the {boot-jar} crontab usage'
+        echo -e '\033[37;43;1m default ./wings-starter.sh start\033[m'
+        echo -e '\033[37;43;1m default ./wings-starter.sh boot.jar start\033[m'
         ;;
 esac
 echo
