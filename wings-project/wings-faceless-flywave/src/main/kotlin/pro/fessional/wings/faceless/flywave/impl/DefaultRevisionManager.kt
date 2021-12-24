@@ -45,7 +45,7 @@ class DefaultRevisionManager(
     private val revi1st = WingsRevision.V00_19_0512_01_Schema.revision()
     private val logger = LoggerFactory.getLogger(DefaultRevisionManager::class.java)
     private val unapplyMark = "1000-01-01"
-    private val runningFlag = "17"
+    private val runningFlag = "17.521"
     private val runningMark = "$unapplyMark 00:00:$runningFlag"
 
     private val askType = EnumMap<AskType, Boolean>(AskType::class.java)
@@ -328,7 +328,7 @@ class DefaultRevisionManager(
         val insertSql = """
                     INSERT INTO $schemaVersionTable
                     (revision, create_dt, commit_id, upto_sql, undo_sql, comments)
-                    VALUES(?, NOW(), ?, ?, ?, ?)
+                    VALUES(?, NOW(3), ?, ?, ?, ?)
                     """
 
         for ((revi, entry) in sqls) {
@@ -456,7 +456,7 @@ class DefaultRevisionManager(
                     val rst = plainTmpl.update("""
                         UPDATE $schemaVersionTable SET
                             $updSql
-                            modify_dt = NOW(),
+                            modify_dt = NOW(3),
                             commit_id = ?
                         WHERE $whereRevi
                         """, *updVal.toArray())
@@ -479,13 +479,13 @@ class DefaultRevisionManager(
         val insertSql = """
             INSERT INTO $schemaVersionTable
             (revision, create_dt, commit_id, upto_sql, undo_sql)
-            VALUES(?, NOW(), ?, ?, ?)
+            VALUES(?, NOW(3), ?, ?, ?)
             """
         val updateSql = """
             UPDATE $schemaVersionTable SET
                 upto_sql = ?,
                 undo_sql = ?,
-                modify_dt = NOW(),
+                modify_dt = NOW(3),
                 commit_id = ?
             WHERE revision = ?
             """
@@ -583,7 +583,7 @@ class DefaultRevisionManager(
 
         // update apply datetime，避免时区问题，使用SQL语法
         val applyDt = if (isUpto) {
-            "NOW()"
+            "NOW(3)"
         } else {
             "'$unapplyMark'"
         }

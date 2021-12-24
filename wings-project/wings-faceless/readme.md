@@ -245,6 +245,7 @@ jdbc:h2:~/wings-init
 ```bash
 sudo tee /Users/trydofor/Docker/mysql/conf/moilioncircle.cnf << EOF
 [mysqld]
+lower_case_table_names      = 1
 innodb_file_per_table       = 1
 innodb_ft_min_token_size    = 1
 ft_min_word_len             = 1
@@ -265,9 +266,10 @@ mysql:5.7
 
 ```sql
 CREATE USER 'trydofor'@'%' IDENTIFIED BY 'moilioncircle';
-GRANT ALL  ON `*`.*  TO 'trydofor'@'%';
+GRANT ALL  ON *.*  TO 'trydofor'@'%'; -- 通常写法
+# GRANT ALL  ON `*`.*  TO 'trydofor'@'%'; -- 某些版本
 SHOW GRANTS FOR 'trydofor'@'%';
-DROP USER 'trydofor'@'%';
+# DROP USER 'trydofor'@'%';
 FLUSH PRIVILEGES;
 ```
 

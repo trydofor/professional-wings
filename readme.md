@@ -764,3 +764,13 @@ wings中可以通过暴露AlternateTypeRule bean，自动注入所以Docket中�
 
 * https://hazelcast.com/blog/how-much-memory-do-i-need-for-my-data/
 * https://docs.hazelcast.org/docs/4.0.3/manual/html-single/index.html#sizing-practices
+
+### 25.create table时报 Table doesn't exist
+
+错误信息 Error Code: 1146. Table xxx doesn't exist
+这其中有些有趣的现象，结果就是我创建table，就是因为不存在啊，怎么不让我create呢。
+
+和文件系统的大小写有关，根据wings的Sql风格，建议全小写，snake_case。
+此外，也建议在 mysqld 的配置上，增加 `lower_case_table_names=1`
+
+https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_lower_case_table_names

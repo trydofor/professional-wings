@@ -101,7 +101,7 @@ public class JournalJooqHelp extends JournalJdbcHelp {
         String jf = getJournalDateColumn(table);
         if (!jf.isEmpty()) {
             if (now == null) {
-                update = update.set(field(jf, String.class), field("NOW()", String.class));
+                update = update.set(field(jf, String.class), field("NOW(3)", String.class));
             }
             else {
                 update = update.set(field(jf, LocalDateTime.class), now);

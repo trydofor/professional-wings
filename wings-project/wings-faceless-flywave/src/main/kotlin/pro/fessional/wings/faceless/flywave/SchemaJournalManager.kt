@@ -19,17 +19,19 @@ import javax.sql.DataSource
  * @since 2019-06-13
  */
 class SchemaJournalManager(
-        private val plainDataSources: Map<String, DataSource>,
-        private val sqlStatementParser: SqlStatementParser,
-        private val schemaDefinitionLoader: SchemaDefinitionLoader,
-        private val journalDdl: JournalDdl,
-        private val schemaJournalTable:String = "sys_schema_journal"
+    private val plainDataSources: Map<String, DataSource>,
+    private val sqlStatementParser: SqlStatementParser,
+    private val schemaDefinitionLoader: SchemaDefinitionLoader,
+    private val journalDdl: JournalDdl,
+    private val schemaJournalTable: String = "sys_schema_journal"
 ) {
     data class JournalDdl(
-            var updTbl: String = Null.Str,
-            var updTrg: String = Null.Str,
-            var delTbl: String = Null.Str,
-            var delTrg: String = Null.Str
+        var insTbl: String = Null.Str,
+        var insTrg: String = Null.Str,
+        var updTbl: String = Null.Str,
+        var updTrg: String = Null.Str,
+        var delTbl: String = Null.Str,
+        var delTrg: String = Null.Str
     )
 
     companion object {
@@ -52,7 +54,7 @@ class SchemaJournalManager(
      * @param commitId 提交ID，参见Journal
      */
     fun publishUpdate(table: String, enable: Boolean, commitId: Long) =
-            publishJournal(table, enable, commitId, "update")
+        publishJournal(table, enable, commitId, "update")
 
     /**
      * 根据DDL模板应用跟踪表和触发器
@@ -65,7 +67,20 @@ class SchemaJournalManager(
      * @param commitId 提交ID，参见Journal
      */
     fun publishDelete(table: String, enable: Boolean, commitId: Long) =
-            publishJournal(table, enable, commitId, "delete")
+        publishJournal(table, enable, commitId, "delete")
+
+    /**
+     * 根据DDL模板应用跟踪表和触发器
+     * 跟踪表，如果存在，没有数据，则重建。
+     * 跟踪表，如果存在，且有数据，结构相同时，忽略，否则报错。
+     * 触发器，如果触发器存在，删除重建。
+     * 如果跟踪表和触发器都不存在，新建。
+     * @param table 主表
+     * @param enable 允许或禁止
+     * @param commitId 提交ID，参见Journal
+     */
+    fun publishInsert(table: String, enable: Boolean, commitId: Long) =
+        publishJournal(table, enable, commitId, "insert")
 
     /**
      * 对比本地和数据库中的SQL。
@@ -77,14 +92,14 @@ class SchemaJournalManager(
     fun checkAndInitDdl(table: String, commitId: Long) {
         logger.info("[checkAndInitDdl]🐶 start check journal table={}", table)
         val selectSql = """
-                SELECT ddl_updtbl, ddl_updtrg, ddl_deltbl, ddl_deltrg, log_update, log_delete
+                SELECT ddl_instbl, ddl_instrg, ddl_updtbl, ddl_updtrg, ddl_deltbl, ddl_deltrg, log_insert, log_update, log_delete
                 FROM $schemaJournalTable
                 WHERE table_name = ?
                 """.trimIndent()
         val insertSql = """
                 INSERT INTO $schemaJournalTable
-                (table_name, commit_id, ddl_updtbl, ddl_updtrg, ddl_deltbl, ddl_deltrg)
-                VALUES (?, ?, ?, ?, ?, ?)
+                (table_name, commit_id, ddl_instbl, ddl_instrg, ddl_updtbl, ddl_updtrg, ddl_deltbl, ddl_deltrg)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """.trimIndent()
 
         for ((plainName, plainDs) in plainDataSources) {
@@ -92,17 +107,20 @@ class SchemaJournalManager(
             val tmpl = SimpleJdbcTemplate(plainDs, plainName)
             val dbVal = HashMap<String, String>()
             tmpl.query(selectSql, table) {
+                dbVal["ddl_instbl"] = it.getString("ddl_instbl")
+                dbVal["ddl_instrg"] = it.getString("ddl_instrg")
                 dbVal["ddl_updtbl"] = it.getString("ddl_updtbl")
                 dbVal["ddl_updtrg"] = it.getString("ddl_updtrg")
                 dbVal["ddl_deltbl"] = it.getString("ddl_deltbl")
                 dbVal["ddl_deltrg"] = it.getString("ddl_deltrg")
+                dbVal["log_insert"] = it.getString("log_insert")
                 dbVal["log_update"] = it.getString("log_update")
                 dbVal["log_delete"] = it.getString("log_delete")
             }
 
             if (dbVal.isEmpty()) {
                 logger.info("[checkAndInitDdl]🐶 insert journal ddl, table=$table, db=$plainName")
-                val rst = tmpl.update(insertSql, table, commitId, journalDdl.updTbl, journalDdl.updTrg, journalDdl.delTbl, journalDdl.delTrg)
+                val rst = tmpl.update(insertSql, table, commitId, journalDdl.insTbl, journalDdl.insTrg, journalDdl.updTbl, journalDdl.updTrg, journalDdl.delTbl, journalDdl.delTrg)
                 if (rst != 1) {
                     throw IllegalStateException("failed to insert journal ddl, table=$table, db=$plainName")
                 }
@@ -112,9 +130,30 @@ class SchemaJournalManager(
             // check
             val updSql = StringBuilder()
             val updVal = LinkedList<Any>()
-            val updNot = notApply(dbVal["log_update"])
-            val delNot = notApply(dbVal["log_delete"])
 
+            val insNot = notApply(dbVal["log_insert"])
+            if (journalDdl.insTbl != dbVal["ddl_instbl"]) {
+                if (insNot) {
+                    updSql.append("ddl_instbl = ?, ")
+                    updVal.add(journalDdl.insTbl)
+                    logger.warn("[checkAndInitDdl]🐶 diff ddl-ins-tbl, update it. table={}, db={}", table, plainName)
+                } else {
+                    logger.error("[checkAndInitDdl]🐶 skip diff ddl-ins-tbl but applied, should manually disable it first. table={}, db={}", table, plainName)
+                    continue
+                }
+            }
+            if (journalDdl.insTrg != dbVal["ddl_instrg"]) {
+                if (insNot) {
+                    updSql.append("ddl_instrg = ?, ")
+                    updVal.add(journalDdl.insTrg)
+                    logger.warn("[checkAndInitDdl]🐶 diff ddl-ins-trg, update it. table={}, db={}", table, plainName)
+                } else {
+                    logger.error("[checkAndInitDdl]🐶 skip diff ddl-ins-trg but applied, should manually disable it first. table={}, db={}", table, plainName)
+                    continue
+                }
+            }
+
+            val updNot = notApply(dbVal["log_update"])
             if (journalDdl.updTbl != dbVal["ddl_updtbl"]) {
                 if (updNot) {
                     updSql.append("ddl_updtbl = ?, ")
@@ -137,6 +176,7 @@ class SchemaJournalManager(
                 }
             }
 
+            val delNot = notApply(dbVal["log_delete"])
             if (journalDdl.delTbl != dbVal["ddl_deltbl"]) {
                 if (delNot) {
                     updSql.append("ddl_deltbl = ?, ")
@@ -163,13 +203,15 @@ class SchemaJournalManager(
                 logger.info("[checkAndInitDdl]🐶 update diff journal to database table={}, db={}", table, plainName)
                 updVal.add(commitId)
                 updVal.add(table)
-                val rst = tmpl.update("""
+                val rst = tmpl.update(
+                    """
                         UPDATE $schemaJournalTable SET
                             $updSql
-                            modify_dt = NOW(),
+                            modify_dt = NOW(3),
                             commit_id = ?
                         WHERE table_name = ?
-                        """.trimIndent(), *updVal.toArray())
+                        """.trimIndent(), *updVal.toArray()
+                )
                 if (rst != 1) {
                     throw IllegalStateException("failed to update table=$table, db=$plainName")
                 }
@@ -183,8 +225,19 @@ class SchemaJournalManager(
     private fun publishJournal(table: String, enable: Boolean, commitId: Long, event: String) {
         logger.info("[publishJournal]🐶 start publish {} table={}, enable={}", event, table, enable)
 
+        val isInsert = "insert".equals(event, true)
         val isUpdate = "update".equals(event, true)
-        val selectSql = if (isUpdate) {
+        val isDelete = "delete".equals(event, true)
+        val selectSql = if (isInsert) {
+            """
+            SELECT
+                ddl_instbl ddl_tbl,
+                ddl_instrg ddl_trg,
+                log_insert apply_dt
+            FROM $schemaJournalTable
+            WHERE table_name = ?
+            """.trimIndent()
+        } else if (isUpdate) {
             """
             SELECT
                 ddl_updtbl ddl_tbl,
@@ -193,7 +246,7 @@ class SchemaJournalManager(
             FROM $schemaJournalTable
             WHERE table_name = ?
             """.trimIndent()
-        } else {
+        } else if (isDelete) {
             """
             SELECT
                 ddl_deltbl ddl_tbl,
@@ -202,22 +255,33 @@ class SchemaJournalManager(
             FROM $schemaJournalTable
             WHERE table_name = ?
             """.trimIndent()
+        } else {
+            throw RuntimeException("unsupported event $event")
         }
 
-        val updateSql = if (isUpdate) {
+        val updateSql = if (isInsert) {
             """
             UPDATE $schemaJournalTable SET
-                log_update = NOW(),
+                log_insert = NOW(3),
+                commit_id = ?
+            WHERE table_name = ?
+            """.trimIndent()
+        } else if (isUpdate) {
+            """
+            UPDATE $schemaJournalTable SET
+                log_update = NOW(3),
+                commit_id = ?
+            WHERE table_name = ?
+            """.trimIndent()
+        } else if (isDelete) {
+            """
+            UPDATE $schemaJournalTable SET
+                log_delete = NOW(3),
                 commit_id = ?
             WHERE table_name = ?
             """.trimIndent()
         } else {
-            """
-            UPDATE $schemaJournalTable SET
-                log_delete = NOW(),
-                commit_id = ?
-            WHERE table_name = ?
-            """.trimIndent()
+            throw RuntimeException("unsupported event $event")
         }
 
         val model = HashMap<String, String>()
@@ -226,10 +290,13 @@ class SchemaJournalManager(
             val tmpl = SimpleJdbcTemplate(plainDs, plainName)
             val vals = AtomicReference<Triple<String, String, String>>()
             tmpl.query(selectSql, table) {
-                vals.set(Triple(it.getString("ddl_tbl"),
+                vals.set(
+                    Triple(
+                        it.getString("ddl_tbl"),
                         it.getString("ddl_trg"),
                         it.getString("apply_dt")
-                ))
+                    )
+                )
             }
 
             if (vals.get() == null) {
@@ -255,7 +322,7 @@ class SchemaJournalManager(
             logger.info("[publishJournal]🐶 init model, applyDt={} table={}, enable={}, db={}", applyDt, table, enable, plainName)
             initModelOnce(table, plainDs, model)
 
-            val trcStf = HashMap<String, String>()
+            val trcChk = HashMap<String, String>()
             val trcDdl = HashMap<String, String>()
             val trgDdl = HashMap<String, String>()
             val drpTbl = HashMap<String, String>()
@@ -282,46 +349,45 @@ class SchemaJournalManager(
                     continue
                 }
 
+                // 检查触发器
+                val furTrg = parseTrgName(ddlTrg) // 新trigger名字
+                var refTrc = false // 有引用
+                for (trg in schemaDefinitionLoader.showBoneTrg(plainDs, tblRaw)) {
+                    // 删除同名
+                    if (trg.name.equals(furTrg, true)) {
+                        logger.warn("[publishJournal]🐶 drop trigger={}, existed same name, table={}, db={}", trg.name, tblRaw, plainName)
+                        tmpl.execute(schemaDefinitionLoader.makeDdlTrg(trg, true))
+                    } else {
+                        // 保留trigger使用的trac表
+                        if (TemplateUtil.isBoundary(trg.event, curTac, false)) {
+                            logger.info("[publishJournal]🐶 trigger={}, with same trace-table={}, db={}", trg.name, curTac, plainName)
+                            refTrc = true
+                        }
+                    }
+                }
+
                 // 检查跟踪表
-                val safeCurTrc = sqlStatementParser.safeName(curTac)
-                var notOld = true
-                var drpOld = false
+                var newTrc = true
                 if (tables.containsKey(curTac.toLowerCase())) {
                     logger.info("[publishJournal]🐶 existed trace-table={}, table={}, db={}", curTac, tblRaw, plainName)
+                    val safeCurTrc = sqlStatementParser.safeName(curTac)
                     val cnt = tmpl.count("SELECT COUNT(1) FROM $safeCurTrc")
-                    if (cnt == 0) {
-                        drpOld = true
-                        drpTbl["DROP TABLE IF EXISTS $safeCurTrc"] = tblRaw
+                    if (cnt == 0 && !refTrc) {
+                        drpTbl["DROP TABLE IF EXISTS $safeCurTrc"] = curTac
                     } else {
                         logger.warn("[publishJournal]🐶 lazy-check existed {} records trace-table={}, table={}, db={}", cnt, curTac, tblRaw, plainName)
-                        trcStf[curTac] = tblRaw
-                        notOld = false
+                        trcChk[curTac] = tblRaw
+                        newTrc = false
                     }
                 }
-
-                if (notOld) {
+                if (newTrc) {
                     trcDdl[ddlTbl] = tblRaw
                 }
-
-                // 检查触发器，删除同名或关联表的
-                val furTrg = parseTrgName(ddlTrg) // 名字
-                for (trg in schemaDefinitionLoader.showBoneTrg(plainDs, tblRaw)) {
-                    if (drpOld && TemplateUtil.isBoundary(trg.event, curTac, false)) {
-                        logger.warn("[publishJournal]🐶 drop trigger={}, dropped trace-table={}, table={}, db={}", curTac, trg.name, tblRaw, plainName)
-                    } else if (furTrg.isNotEmpty() && furTrg.equals(trg.name, true)) {
-                        logger.warn("[publishJournal]🐶 drop trigger={}, existed same name, table={}, db={}", trg.name, tblRaw, plainName)
-                    } else {
-                        logger.info("[publishJournal]🐶 skip trigger={}, existed same name, table={}, db={}", trg.name, tblRaw, plainName)
-                        continue
-                    }
-                    tmpl.execute(schemaDefinitionLoader.makeDdlTrg(trg,true))
-                }
-
                 trgDdl[ddlTrg] = tblRaw
             }
 
             // 检测已存在的，所有跟踪表应该结构一致
-            if (trcStf.isNotEmpty()) {
+            if (trcChk.isNotEmpty()) {
                 val tmpDdl = mergeDdl(tmplTbl, model, tmpTrc)
                 val tmpTbl = parseTblName(tmpDdl)
                 val safeTmp = sqlStatementParser.safeName(tmpTbl)
@@ -330,8 +396,8 @@ class SchemaJournalManager(
                 logger.info("[publishJournal]🐶 create temp-trace-table={}, db={}", tmpTbl, plainName)
                 try {
                     var isSame = true
-                    for ((trc, stf) in trcStf) {
-                        val df = schemaDefinitionLoader.diffAllSame(plainDs, tmpTbl, trc)
+                    for ((trc, stf) in trcChk) {
+                        val df = schemaDefinitionLoader.diffFullSame(plainDs, tmpTrc, trc)
                         if (df.isNotEmpty()) {
                             isSame = false
                             logger.error("[publishJournal]🐶 different trace-table={} of staff={}, error={}", trc, stf, df)
@@ -406,8 +472,8 @@ class SchemaJournalManager(
         return str.startsWith("1000-01-01")
     }
 
-    val trgNameRegex = """\s+TRIGGER\s+[`'"]*(\S+)[`'"]*"""
-            .toRegex(setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
+    private val trgNameRegex = """\s+TRIGGER\s+[`'"]*([^`'"]+)[`'"]*"""
+        .toRegex(setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
 
     private fun parseTrgName(ddl: String): String {
         return trgNameRegex.find(ddl)?.groupValues?.get(1) ?: Null.Str // 名字

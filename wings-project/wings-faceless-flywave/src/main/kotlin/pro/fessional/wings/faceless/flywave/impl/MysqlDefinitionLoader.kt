@@ -38,8 +38,8 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
             tmpl.query("SCRIPT NODATA NOPASSWORDS NOSETTINGS TABLE $table") {
                 val s = it.getString(1)
                 if (s.startsWith("CREATE CACHED TABLE ", ignoreCase = true) ||
-                        s.startsWith("CREATE TABLE ", ignoreCase = true) ||
-                        s.startsWith("CREATE MEMORY TABLE ", ignoreCase = true)
+                    s.startsWith("CREATE TABLE ", ignoreCase = true) ||
+                    s.startsWith("CREATE MEMORY TABLE ", ignoreCase = true)
                 ) {
                     rst.add(s) // Create Table
                 }
@@ -53,7 +53,8 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
         }
 
         // triggers
-        tmpl.query("""
+        tmpl.query(
+            """
             SELECT
                 TRIGGER_NAME,
                 ACTION_TIMING,
@@ -64,7 +65,8 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
             WHERE
                 EVENT_OBJECT_SCHEMA = database()
                 AND EVENT_OBJECT_TABLE=?
-        """, table) {
+        """, table
+        ) {
             val n = it.getString("TRIGGER_NAME")
             val t = it.getString("ACTION_TIMING")
             val e = it.getString("EVENT_MANIPULATION")
@@ -75,7 +77,10 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
         return rst
     }
 
-    override fun diffAllSame(dataSource: DataSource, table: String, other: String, types: Int): String {
+    override fun diffBoneSame(dataSource: DataSource, table: String, other: String, types: Int) = diffTable(dataSource, table, other, types, true);
+    override fun diffFullSame(dataSource: DataSource, table: String, other: String, types: Int) = diffTable(dataSource, table, other, types, false);
+
+    private fun diffTable(dataSource: DataSource, table: String, other: String, types: Int, bone: Boolean): String {
 
         val diff = StringBuilder()
         val tmpl = SimpleJdbcTemplate(dataSource)
@@ -104,9 +109,15 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
 
         // 对比列
         if (types and TYPE_TBL != 0) {
-            tmpl.query("""
+            val cols = if (bone) {
+                "COLUMN_NAME, COLUMN_TYPE, COLUMN_COMMENT, ORDINAL_POSITION";
+            } else {
+                "COLUMN_NAME, COLUMN_TYPE, COLUMN_COMMENT, ORDINAL_POSITION, IS_NULLABLE, COLUMN_DEFAULT"
+            }
+            tmpl.query(
+                """
             SELECT
-                COLUMN_NAME, COLUMN_TYPE, COLUMN_COMMENT, ORDINAL_POSITION, IS_NULLABLE, COLUMN_DEFAULT,
+                $cols ,
                 GROUP_CONCAT(TABLE_NAME) as TBL_NAME,
                 COUNT(1) SAME_COUNT
             FROM
@@ -114,25 +125,29 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
             WHERE
                 TABLE_SCHEMA = database()
                 AND TABLE_NAME IN (?, ?)
-            GROUP BY COLUMN_NAME, COLUMN_TYPE, COLUMN_COMMENT, ORDINAL_POSITION, IS_NULLABLE, COLUMN_DEFAULT
+            GROUP BY $cols
             HAVING SAME_COUNT != 2
-            """, table, other) {
+            """, table, other
+            ) {
                 diff.append("\nCOL@")
                 diff.append(it.getString("TBL_NAME")).append(".")
                 diff.append(it.getString("COLUMN_NAME")).append("=")
                 diff.append(it.getString("COLUMN_TYPE")).append(",")
                 diff.append(it.getString("COLUMN_COMMENT")).append(",")
                 diff.append(it.getString("ORDINAL_POSITION")).append(",")
-                var nullable = it.getString("IS_NULLABLE")
-                if (it.wasNull()) nullable = "<NULL>"
-                diff.append(nullable).append(",")
-                diff.append(it.getString("COLUMN_DEFAULT"))
+                if (!bone) {
+                    var nullable = it.getString("IS_NULLABLE")
+                    if (it.wasNull()) nullable = "<NULL>"
+                    diff.append(nullable).append(",")
+                    diff.append(it.getString("COLUMN_DEFAULT"))
+                }
             }
         }
 
         // 对比索引
         if (types and TYPE_IDX != 0) {
-            tmpl.query("""
+            tmpl.query(
+                """
             SELECT
                 INDEX_NAME, NON_UNIQUE, SEQ_IN_INDEX, COLUMN_NAME, INDEX_TYPE,
                 GROUP_CONCAT(TABLE_NAME) as TBL_NAME,
@@ -144,7 +159,8 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
                 AND TABLE_NAME IN (?, ?)
             GROUP BY INDEX_NAME, NON_UNIQUE, SEQ_IN_INDEX, COLUMN_NAME, INDEX_TYPE
             HAVING SAME_COUNT != 2
-            """, table, other) {
+            """, table, other
+            ) {
                 diff.append("\nIDX@")
                 diff.append(it.getString("TBL_NAME")).append(".")
                 diff.append(it.getString("INDEX_NAME")).append("=")
@@ -157,7 +173,8 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
 
         // 对比触发器
         if (types and TYPE_TRG != 0) {
-            tmpl.query("""
+            tmpl.query(
+                """
             SELECT
                 TRIGGER_NAME, ACTION_TIMING, EVENT_MANIPULATION, ACTION_STATEMENT,
                 GROUP_CONCAT(EVENT_OBJECT_TABLE) as TBL_NAME,
@@ -169,7 +186,8 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
                 AND EVENT_OBJECT_TABLE IN (?, ?)
             GROUP BY TRIGGER_NAME, ACTION_TIMING, EVENT_MANIPULATION, ACTION_STATEMENT
             HAVING SAME_COUNT != 2
-            """, table, other) {
+            """, table, other
+            ) {
                 diff.append("\nTRG@")
                 diff.append(it.getString("TBL_NAME")).append(".")
                 diff.append(it.getString("TRIGGER_NAME")).append("=")
@@ -193,7 +211,8 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
             return rst
         }
 
-        SimpleJdbcTemplate(dataSource).query("""
+        SimpleJdbcTemplate(dataSource).query(
+            """
         SELECT
             COLUMN_NAME,
             COLUMN_TYPE,
@@ -205,7 +224,8 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
             TABLE_SCHEMA = database()
             AND TABLE_NAME = ?
             ORDER BY ORDINAL_POSITION ASC
-        """, table) {
+        """, table
+        ) {
             val n = it.getString("COLUMN_NAME")
             val t = it.getString("COLUMN_TYPE")
             val c = it.getString("COLUMN_COMMENT").replace("'", "\\'")
@@ -228,9 +248,11 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
             return rst
         }
 
-        SimpleJdbcTemplate(dataSource).query("""
+        SimpleJdbcTemplate(dataSource).query(
+            """
         SHOW KEYS FROM $table WHERE KEY_NAME = 'PRIMARY'
-        """) {
+        """
+        ) {
             rst.add(it.getString("COLUMN_NAME"))
         }
 
@@ -243,7 +265,8 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
             return rst
         }
 
-        SimpleJdbcTemplate(dataSource).query("""
+        SimpleJdbcTemplate(dataSource).query(
+            """
             SELECT
                 TRIGGER_NAME,
                 ACTION_TIMING,
@@ -254,7 +277,8 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
             WHERE
                 EVENT_OBJECT_SCHEMA = database()
                 AND EVENT_OBJECT_TABLE = ?
-            """, table) {
+            """, table
+        ) {
             rst.add(
                 Trg(
                     it.getString("TRIGGER_NAME"),

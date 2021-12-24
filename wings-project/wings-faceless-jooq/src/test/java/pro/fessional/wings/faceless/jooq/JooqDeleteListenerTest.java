@@ -66,7 +66,7 @@ public class JooqDeleteListenerTest {
         JournalJooqHelp.deleteByIds(tmpl, "`tst_中文也分表`", 34L, 3L, 4L);
         testcaseNotice(
                 "检查日志，在delete前update，如下",
-                "UPDATE `tst_中文也分表` SET commit_id=34, delete_dt=NOW()  WHERE id IN (3,4)",
+                "UPDATE `tst_中文也分表` SET commit_id=34, delete_dt=NOW(3)  WHERE id IN (3,4)",
                 "DELETE FROM `tst_中文也分表`  WHERE id IN (3,4)"
         );
     }
@@ -83,7 +83,7 @@ public class JooqDeleteListenerTest {
         testcaseNotice(
                 "检查日志，id 等于 (5,6,7,8)的sql，先delete，再update，如下",
                 "DELETE FROM `tst_中文也分表` WHERE ID =5 AND COMMIT_ID = 5",
-                "UPDATE `tst_中文也分表` SET COMMIT_ID = 5 ,delete_dt = NOW() WHERE ID =5"
+                "UPDATE `tst_中文也分表` SET COMMIT_ID = 5 ,delete_dt = NOW(3) WHERE ID =5"
         );
 
         // 无效

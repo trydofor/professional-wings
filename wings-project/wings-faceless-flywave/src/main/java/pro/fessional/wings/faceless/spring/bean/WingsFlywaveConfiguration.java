@@ -42,6 +42,8 @@ public class WingsFlywaveConfiguration {
             FlywaveVerProp properties) {
 
         JournalDdl ddl = new JournalDdl(
+                properties.getJournalInsert(),
+                properties.getTriggerInsert(),
                 properties.getJournalUpdate(),
                 properties.getTriggerUpdate(),
                 properties.getJournalDelete(),

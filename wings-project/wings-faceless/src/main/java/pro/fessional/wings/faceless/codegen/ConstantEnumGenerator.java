@@ -37,6 +37,11 @@ public class ConstantEnumGenerator {
 
     private static final Logger logger = LoggerFactory.getLogger(ConstantEnumGenerator.class);
 
+    /**
+     * 对java中非合法命名的字符进行替换，设置为空，以忽略非命名字符
+     */
+    public static String deerChar = "𓃬";
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -216,7 +221,7 @@ public class ConstantEnumGenerator {
                         } else {
                             if (buff.length() > 0 && canDeer) {
                                 canDeer = false;
-                                buff.append("𓃬");
+                                buff.append(deerChar);
                                 nonAscii = "";
                                 continue;
                             }

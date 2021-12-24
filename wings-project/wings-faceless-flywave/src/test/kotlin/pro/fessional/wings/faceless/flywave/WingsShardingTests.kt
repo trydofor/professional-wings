@@ -17,7 +17,7 @@ open class WingsShardingTests {
     @Test
     fun test1DropTable() {
         val statement = datasource.connection.prepareStatement("""
-            DROP TABLE IF EXISTS `WG_ORDER`;
+            drop table if exists `wg_order`;
         """.trimIndent())
 
         val result = statement.executeUpdate()
@@ -27,15 +27,15 @@ open class WingsShardingTests {
     @Test
     fun test2CreateTable() {
         val statement = datasource.connection.prepareStatement("""
-            CREATE TABLE `WG_ORDER`
+            create table `wg_order`
             (
-              `ID`         bigint(20)   NOT NULL COMMENT '主键',
-              `CREATE_DT`  datetime(3)     NOT NULL DEFAULT NOW(3) COMMENT '创建日时',
-              `MODIFY_DT`  datetime(3)     NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时',
-              `COMMIT_ID`  bigint(20)   NOT NULL COMMENT '提交ID',
-              PRIMARY KEY (`ID`)
-            ) ENGINE = InnoDB
-              DEFAULT CHARSET = utf8mb4 COMMENT ='202/测试订单';
+              `id`         bigint(20)   not null comment '主键',
+              `create_dt`  datetime(3)     not null default now(3) comment '创建日时',
+              `modify_dt`  datetime(3)     not null default '1000-01-01' on update now(3) comment '修改日时',
+              `commit_id`  bigint(20)   not null comment '提交id',
+              primary key (`id`)
+            ) engine = innodb
+              default charset = utf8mb4 comment ='202/测试订单';
         """.trimIndent())
 
         val result = statement.executeUpdate()
@@ -45,7 +45,7 @@ open class WingsShardingTests {
     @Test
     fun test3InsertDate() {
         val statement = datasource.connection.prepareStatement("""
-            INSERT INTO `WG_ORDER` (`ID`,`COMMIT_ID`) VALUES
+            insert into `wg_order` (`id`,`commit_id`) values
             (1, 1),
             (2, 1)
         """.trimIndent())
@@ -57,8 +57,8 @@ open class WingsShardingTests {
     @Test
     fun test4AlterTable() {
         val statement = datasource.connection.prepareStatement("""
-            ALTER TABLE `WG_ORDER`
-            DROP COLUMN `COMMIT_ID`;
+            alter table `wg_order`
+            drop column `commit_id`;
         """.trimIndent())
 
         val result = statement.executeUpdate()
@@ -68,28 +68,28 @@ open class WingsShardingTests {
 
     fun trigger() {
         val sts1 = datasource.connection.prepareStatement("""
-            CREATE TABLE `WG_ORDER${"$"}LOG`
+            create table `wg_order${"$"}log`
             (
-              `ID`         bigint(20)   NOT NULL COMMENT '主键',
-              `CREATE_DT`  datetime(3)     NOT NULL COMMENT '创建日时',
-              `MODIFY_DT`  datetime(3)     NOT NULL COMMENT '修改日时',
-              `COMMIT_ID`  bigint(20)   NOT NULL COMMENT '提交ID',
-              `_du` INT(11) NULL,
-              `_dt` datetime(3) DEFAULT NOW(3),
-              `_id` INT(11) NOT NULL AUTO_INCREMENT,
-              PRIMARY KEY (`_id`)
-            ) ENGINE = InnoDB
-              DEFAULT CHARSET = utf8mb4 COMMENT ='测试订单';
+              `id`         bigint(20)   not null comment '主键',
+              `create_dt`  datetime(3)     not null comment '创建日时',
+              `modify_dt`  datetime(3)     not null comment '修改日时',
+              `commit_id`  bigint(20)   not null comment '提交id',
+              `_du` int(11) null,
+              `_dt` datetime(3) default now(3),
+              `_id` int(11) not null auto_increment,
+              primary key (`_id`)
+            ) engine = innodb
+              default charset = utf8mb4 comment ='测试订单';
         """.trimIndent())
 
         val rst1 = sts1.executeUpdate()
         println("=================== trigger=$rst1")
 
         val sts2 = datasource.connection.prepareStatement("""
-        CREATE TRIGGER `WG_ORDER${"$"}LOG_BU` BEFORE UPDATE ON `WG_ORDER_0`
-        FOR EACH ROW BEGIN
-          insert into `WG_ORDER${"$"}LOG` select *, 1 from `WG_ORDER_0` where id = OLD.id;
-        END
+        create trigger `wg_order${"$"}log_bu` before update on `wg_order_0`
+        for each row begin
+          insert into `wg_order${"$"}log` select *, 1 from `wg_order_0` where id = old.id;
+        end
         """.trimIndent())
 
         val rst2 = sts2.executeUpdate()

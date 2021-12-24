@@ -171,7 +171,7 @@ public class JournalDeleteListener extends DefaultExecuteListener {
         upd.append(" ");
         String jf = JournalJooqHelp.getJournalDateColumn(dsl, table);
         if (!jf.isEmpty()) {
-            upd.append(",").append(jf).append(" = NOW() ");
+            upd.append(",").append(jf).append(" = NOW(3) ");
         }
 
         String where = del.substring(StringUtils.indexOfIgnoreCase(del, "where"));

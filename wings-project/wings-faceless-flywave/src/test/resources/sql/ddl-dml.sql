@@ -30,7 +30,7 @@ SELECT max(version)
 FROM sys_schema_version;
 
 REPLACE INTO sys_schema_version (version, created)
-VALUES (2019031201, NOW());
+VALUES (2019031201, NOW(3));
 
 INSERT IGNORE INTO `tx_sequence` (`table_name`, `id`)
 VALUES ('tx_sequence', 1);

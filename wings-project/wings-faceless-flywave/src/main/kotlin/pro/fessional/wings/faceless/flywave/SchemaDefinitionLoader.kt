@@ -31,13 +31,22 @@ interface SchemaDefinitionLoader {
     fun showFullDdl(dataSource: DataSource, table: String): List<String>
 
     /**
+     * 检测两个表的是否骨架相同，包括字段，索引，触发器
+     * @param dataSource 当前数据源
+     * @param table 目标表名，不要包含`` ` ``
+     * @param other 其他表名，不要包含`` ` ``
+     * @return 不一致的信息，空表示完全一致
+     */
+    fun diffBoneSame(dataSource: DataSource, table: String, other: String, types: Int = TYPE_TBL or TYPE_IDX or TYPE_TRG): String
+
+    /**
      * 检测两个表的是否完全相同，包括字段，索引，触发器
      * @param dataSource 当前数据源
      * @param table 目标表名，不要包含`` ` ``
      * @param other 其他表名，不要包含`` ` ``
      * @return 不一致的信息，空表示完全一致
      */
-    fun diffAllSame(dataSource: DataSource, table: String, other: String, types: Int = TYPE_TBL or TYPE_IDX or TYPE_TRG): String
+    fun diffFullSame(dataSource: DataSource, table: String, other: String, types: Int = TYPE_TBL or TYPE_IDX or TYPE_TRG): String
 
     /**
      * 至少列出当前表的`字段名`，`类型`，`注释`三项的DDL部分

@@ -86,7 +86,7 @@ class SchemaShardingManager(
                     true
                 } else {
                     // 检查全DDL（表结构，索引，触发器）是否一样
-                    val diff = schemaDefinitionLoader.diffAllSame(plainDs, table, tbl)
+                    val diff = schemaDefinitionLoader.diffFullSame(plainDs, table, tbl)
                     if (diff.isEmpty()) {
                         true
                     } else {

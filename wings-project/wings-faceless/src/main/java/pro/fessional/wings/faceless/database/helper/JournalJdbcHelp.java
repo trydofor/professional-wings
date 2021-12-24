@@ -17,7 +17,7 @@ import java.util.function.Function;
 
 /**
  * 对数据库进行journal操作的助手类，表必须有 delete_dt和commit_id 字段。
- * delete前，先更新commit_id=?和delete_dt=NOW()，然后真正delete
+ * delete前，先更新commit_id=?和delete_dt=NOW(3)，然后真正delete
  *
  * @author trydofor
  * @since 2019-09-28
