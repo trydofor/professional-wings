@@ -9,11 +9,11 @@
         <version>${revision}.${changelist}</version>
     </parent>
 
-    <artifactId>wings-home</artifactId>
+    <artifactId>wings-project</artifactId>
     <version>${revision}.${changelist}</version>
     <packaging>pom</packaging>
 
-    <name>wings-home</name>
+    <name>wings-project</name>
     <description>不是为吃货准备的伪装成吃货的项目</description>
 
     <modules>
