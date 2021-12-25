@@ -96,11 +96,12 @@ sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/res
 
 `journal`通过`sys_schema_journal`生成`跟踪表`和`触发器`。
 
- * 根据`log_update`创建 `before update` 触发器。
+ * 根据`log_insert`创建 `after insert` 触发器。
+ * 根据`log_update`创建 `after update` 触发器。
  * 根据`log_delete`创建 `before delete` 触发器。
 
 通过配置文件指定模板来定义DDL，默认设置参考`wings-flywave.properties`。
-默认分表有自己的`更新表`(`TABLE_#$upd`)，但共享同一个`删除表`(`TABLE$del`)。
+默认分表有自己的`log表`(`TABLE_#$log`)，一个table的触发器共用一个log表。
 模板中，预定义以下DDL变量，避开spring变量替换，使用胡子`{{}}`表示法，名字全大写。
 
  * `{{PLAIN_NAME}}` 目标表的`本表`名字
@@ -116,6 +117,14 @@ sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/res
 
 自动拦截`spring.wings.faceless.jooq.enabled.journal-delete`默认关闭。
 因为违反`静态高于动态，编译时高于运行时`团队规则，且性能和限制不好控制。
+
+可设置session级变量`DISABLE_FLYWAVE`使trigger失效，如数据恢复等无trigger情况。
+* disable - `SET @DISABLE_FLYWAVE = 1;`时，trigger无效。
+* enable - 当session结束时，trigger自动恢复有效。
+* enable - `SET @DISABLE_FLYWAVE = NULL;`。
+
+参考资料
+* https://dev.mysql.com/doc/refman/5.7/en/trigger-syntax.html
 
 ## 2.1.4.测试用例
 
@@ -214,7 +223,7 @@ FROM
 	INFORMATION_SCHEMA.STATISTICS
 WHERE
 	TABLE_SCHEMA = DATABASE()
-	AND INDEX_NAME NOT IN ('PRIMARY','PLAIN_PK')
+	AND INDEX_NAME NOT IN ('PRIMARY','RAW_TABLE_PK')
 	AND TABLE_NAME LIKE '%$%';
 ```
 
@@ -266,3 +275,28 @@ WHERE table_schema = DATABASE()
 以上方法，推荐使用最后一种，做好手工初始化后，后续通过flywave管理数据库版本。
 
 除了初始版本，会在checkAndInit时执行外，其他版本必须显示的publish或execute
+
+### 08.如果获得或删除所有trigger
+
+```sql
+SELECT
+	EVENT_OBJECT_TABLE,
+	TRIGGER_NAME,
+	ACTION_TIMING,
+	EVENT_MANIPULATION,
+	ACTION_STATEMENT
+FROM
+	INFORMATION_SCHEMA.TRIGGERS
+WHERE
+  EVENT_OBJECT_SCHEMA = database();
+
+-- 符合flywave命名规则的
+SELECT
+   TRIGGER_NAME,
+   concat('DROP TRIGGER IF EXISTS ',TRIGGER_NAME,';')
+FROM
+   INFORMATION_SCHEMA.TRIGGERS
+WHERE
+   EVENT_OBJECT_SCHEMA = DATABASE()
+  AND TRIGGER_NAME RLIKE '.*\\$(bi|ai|bu|au|bd|ad)';
+```

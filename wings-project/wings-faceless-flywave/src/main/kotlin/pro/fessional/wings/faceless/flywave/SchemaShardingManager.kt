@@ -1,9 +1,12 @@
 package pro.fessional.wings.faceless.flywave
 
 import org.slf4j.LoggerFactory
+import org.slf4j.event.Level.ERROR
+import org.slf4j.event.Level.INFO
 import pro.fessional.mirana.data.Null
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.TYPE_SHARD
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.hasType
+import pro.fessional.wings.faceless.flywave.impl.DefaultInteractiveManager
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
 import pro.fessional.wings.faceless.flywave.util.TemplateUtil
 import java.util.LinkedList
@@ -11,6 +14,8 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.function.BiConsumer
+import java.util.function.Function
 import javax.sql.DataSource
 import kotlin.concurrent.thread
 
@@ -21,12 +26,30 @@ import kotlin.concurrent.thread
  * @since 2019-06-06
  */
 class SchemaShardingManager(
-        private val plainDataSources: Map<String,DataSource>,
-        private val shardDataSource: DataSource?,
-        private val sqlStatementParser: SqlStatementParser,
-        private val schemaDefinitionLoader: SchemaDefinitionLoader
-) {
+    private val plainDataSources: Map<String, DataSource>,
+    private val shardDataSource: DataSource?,
+    private val sqlStatementParser: SqlStatementParser,
+    private val schemaDefinitionLoader: SchemaDefinitionLoader
+) : InteractiveManager<SchemaShardingManager.AskType> {
+
+    enum class AskType {
+        DropTable, ManualCheck
+    }
+
     private val logger = LoggerFactory.getLogger(SchemaShardingManager::class.java)
+    private val interactive = DefaultInteractiveManager<AskType>(logger, plainDataSources, "🐵")
+
+    override fun logWay(func: BiConsumer<String, String>) {
+        interactive.logWay(func)
+    }
+
+    override fun askWay(func: Function<String, Boolean>) {
+        interactive.askWay(func)
+    }
+
+    override fun needAsk(ask: AskType, yes: Boolean) {
+        interactive.needAsk(ask, yes)
+    }
 
     /**
      * 检查并执行分表，分表为table_0, table_${number -1}，共number个表。。
@@ -38,10 +61,11 @@ class SchemaShardingManager(
      * @param number 分表数量，0表示不分表。
      */
     fun publishShard(table: String, number: Int) {
-        logger.info("[publishShard]🐵 start publishShard table={}, number={}", table, number)
+        val here = "publishShard"
+        interactive.log(INFO, here,"start publishShard table=$table, number=$number")
 
         for ((plainName, plainDs) in plainDataSources) {
-            logger.info("[publishShard]🐵 ready publishShard table={}, db={}", table, plainName)
+            interactive.log(INFO, here,"ready publishShard table=$table, db=$plainName")
             val allTables = schemaDefinitionLoader.showTables(plainDs)
             val shardAll = HashMap<String, Int>() // 可能存在不同的编号风格，key-val不能对调
 
@@ -72,11 +96,14 @@ class SchemaShardingManager(
                 val cnt = tmpl.count("SELECT COUNT(1) FROM $tbl")
                 val drop = "DROP TABLE " + sqlStatementParser.safeName(tbl)
                 if (cnt == 0) {
-                    logger.info("[publishShard]🐵 drop unused empty shard table={}, db={}", table, plainName)
+                    interactive.log(INFO, here,"drop unused empty shard table=$table, db=$plainName")
+                    if (interactive.needAsk(AskType.DropTable)) {
+                        interactive.ask("continue?\ndrop unused empty shard table=$table")
+                    }
                     tmpl.execute(drop)
                 } else {
                     hasError = true
-                    logger.error("[publishShard]🐵 ignore drop table with {} records, table={}, db={}, sql={}", cnt, table, plainName, drop)
+                    interactive.log(ERROR, here,"ignore drop table with $cnt records, table=$table, db=$plainName, sql=$drop")
                 }
             }
             // 重建的表
@@ -91,37 +118,44 @@ class SchemaShardingManager(
                         true
                     } else {
                         hasError = true
-                        logger.error("[publishShard]🐵 ignore existed diff shard {}, db={} , diff={}", tbl, plainName, diff)
+                        interactive.log(ERROR, here,"ignore existed diff shard=$tbl, db=$plainName , diff=$diff")
                         false
                     }
                 }
                 if (canDrop) {
                     val drop = "DROP TABLE " + sqlStatementParser.safeName(tbl)
-                    logger.info("[publishShard]🐵 drop empty shard table then recreate it, table={}, db={}", table, plainName)
+                    interactive.log(INFO, here,"drop empty shard table then recreate it, table=$table, db=$plainName")
+                    if (interactive.needAsk(AskType.DropTable)) {
+                        interactive.ask("continue?\ndrop empty shard table then recreate it, table=$table")
+                    }
                     tmpl.execute(drop)
                     shardNew[idx] = tbl
                 }
             }
 
             if (hasError) {
-                logger.error("[publishShard]🐵 need manually handle above errors to continue, table={}, db={}", table, plainName)
+                interactive.log(ERROR, here,"need manually handle above errors to continue, table=$table, db=$plainName")
+                if (interactive.needAsk(AskType.ManualCheck)) {
+                    interactive.ask("continue?\nskip above errors and continue next, table=$table")
+                }
                 continue
             }
+
             // 新建的表
             val ddls = schemaDefinitionLoader.showFullDdl(plainDs, table).map {
                 it to TemplateUtil.parse(it, table)
             }
 
             for ((_, tbl) in shardNew) {
-                logger.info("[publishShard]🐵 create shard table, table={}, db={}", table, plainName)
+                interactive.log(INFO, here,"create shard table, table=$table, db=$plainName")
                 for ((ddl, idx) in ddls) {
                     val sql = TemplateUtil.merge(ddl, idx, tbl)
-                    logger.info("running db={}, ddl={}", plainName, sql)
+                    interactive.log(INFO, here,"running db=$plainName, ddl=$sql")
                     tmpl.execute(sql)
                 }
             }
         }
-        logger.info("[publishShard]🐵 done publishShard table={}, number={}", table, number)
+        interactive.log(INFO, here,"done publishShard table=$table, number=$number")
     }
 
     /**
@@ -172,10 +206,10 @@ class SchemaShardingManager(
 
         val safeTable = sqlStatementParser.safeName(table)
         val deleteStmt = StringBuilder("DELETE FROM ")
-                .append(safeTable)
-                .append(" WHERE ")
-                .append(pks.joinToString { sqlStatementParser.safeName(it) + "=?" })
-                .toString()
+            .append(safeTable)
+            .append(" WHERE ")
+            .append(pks.joinToString { sqlStatementParser.safeName(it) + "=?" })
+            .toString()
 
 
         // insert thread
@@ -184,12 +218,12 @@ class SchemaShardingManager(
             // sql92 sql99 standard but sharding jdbc not well
             var triple = insertQueue.take()
             val insertStmt = StringBuilder("INSERT INTO ")
-                    .append(safeTable)
-                    .append("(")
-                    .append(cls.joinToString { sqlStatementParser.safeName(it) })
-                    .append(") VALUES (")
-                    .append((1..triple.third.size).joinToString { "?" })
-                    .append(")").toString()
+                .append(safeTable)
+                .append("(")
+                .append(cls.joinToString { sqlStatementParser.safeName(it) })
+                .append(") VALUES (")
+                .append((1..triple.third.size).joinToString { "?" })
+                .append(")").toString()
 
             val shardTmpl = SimpleJdbcTemplate(shardDataSource, "sharding")
 

@@ -2,15 +2,13 @@ package pro.fessional.wings.faceless.flywave
 
 import pro.fessional.mirana.data.Null
 import java.util.SortedMap
-import java.util.function.BiConsumer
-import java.util.function.Function
 
 
 /**
  * @author trydofor
  * @since 2019-06-14
  */
-interface SchemaRevisionManager {
+interface SchemaRevisionManager : InteractiveManager<SchemaRevisionManager.AskType> {
 
     data class RevisionSql(
             val revision: Long = 0,
@@ -90,21 +88,4 @@ interface SchemaRevisionManager {
      * @param isUpto 执行upto，还是undo，默认true
      */
     fun forceExecuteSql(sqls: SortedMap<Long, RevisionSql>, isUpto: Boolean = true)
-
-    /**
-     * 当执行undo的时候，是否控制台确认
-     * @param ask ask类型
-     * @param yes 是否确认，默认true
-     */
-    fun confirmAsk(ask: AskType, yes: Boolean)
-
-    /**
-     * 用什么方式确认，传递message，返回继续or停止
-     */
-    fun confirmWay(func: Function<String, Boolean>)
-
-    /**
-     * 用什么方式处理，运行时的 token, message
-     */
-    fun messageWay(func: BiConsumer<String, String>)
 }

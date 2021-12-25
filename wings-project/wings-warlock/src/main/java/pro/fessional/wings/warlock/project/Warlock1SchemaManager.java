@@ -3,7 +3,7 @@ package pro.fessional.wings.warlock.project;
 import lombok.Getter;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.WingsRevision;
-import pro.fessional.wings.faceless.util.FlywaveRevisionGui;
+import pro.fessional.wings.faceless.util.FlywaveInteractiveGui;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.Helper;
 
@@ -31,8 +31,8 @@ public class Warlock1SchemaManager {
     public Warlock1SchemaManager(SchemaRevisionManager schemaRevisionManager, boolean enableGui) {
         this.schemaRevisionManager = schemaRevisionManager;
         if (enableGui) {
-            schemaRevisionManager.confirmWay(FlywaveRevisionGui.confirmDialog());
-            schemaRevisionManager.messageWay(FlywaveRevisionGui.messageDialog());
+            schemaRevisionManager.askWay(FlywaveInteractiveGui.askGui());
+            schemaRevisionManager.logWay(FlywaveInteractiveGui.logGui());
         }
     }
 

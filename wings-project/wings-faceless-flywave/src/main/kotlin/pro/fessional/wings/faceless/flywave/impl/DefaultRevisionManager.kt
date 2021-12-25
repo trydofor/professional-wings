@@ -1,7 +1,6 @@
 package pro.fessional.wings.faceless.flywave.impl
 
 import org.slf4j.LoggerFactory
-import org.slf4j.event.Level
 import org.slf4j.event.Level.ERROR
 import org.slf4j.event.Level.INFO
 import org.slf4j.event.Level.WARN
@@ -16,12 +15,9 @@ import pro.fessional.wings.faceless.flywave.WingsRevision
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
 import pro.fessional.wings.faceless.flywave.util.TemplateUtil
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.commentInfo
-import java.util.EnumMap
 import java.util.LinkedList
-import java.util.Scanner
 import java.util.SortedMap
 import java.util.concurrent.atomic.AtomicLong
-import java.util.concurrent.atomic.AtomicReference
 import java.util.function.BiConsumer
 import java.util.function.Function
 import javax.sql.DataSource
@@ -34,12 +30,12 @@ import javax.sql.DataSource
  * @since 2019-06-05
  */
 class DefaultRevisionManager(
-        private val plainDataSources: Map<String, DataSource>,
-        private val shardDataSource: DataSource?,
-        private val sqlStatementParser: SqlStatementParser,
-        private val sqlSegmentProcessor: SqlSegmentProcessor,
-        private val schemaDefinitionLoader: SchemaDefinitionLoader,
-        private val schemaVersionTable: String = "sys_schema_version"
+    private val plainDataSources: Map<String, DataSource>,
+    private val shardDataSource: DataSource?,
+    private val sqlStatementParser: SqlStatementParser,
+    private val sqlSegmentProcessor: SqlSegmentProcessor,
+    private val schemaDefinitionLoader: SchemaDefinitionLoader,
+    private val schemaVersionTable: String = "sys_schema_version"
 ) : SchemaRevisionManager {
 
     private val revi1st = WingsRevision.V00_19_0512_01_Schema.revision()
@@ -48,40 +44,19 @@ class DefaultRevisionManager(
     private val runningFlag = "17.521"
     private val runningMark = "$unapplyMark 00:00:$runningFlag"
 
-    private val askType = EnumMap<AskType, Boolean>(AskType::class.java)
+    private val interactive = DefaultInteractiveManager<AskType>(logger, plainDataSources, "🐝")
     private val dropReg = HashMap<String, Regex>()
 
-    private var msgFunc: BiConsumer<String, String> = BiConsumer { _, _ -> }
-    private var askFunc: Function<String, Boolean> = object : Function<String, Boolean> {
-        val scanner = Scanner(System.`in`)
-        override fun apply(msg: String): Boolean {
-            logger.warn("[askSegment]🐝🙀if no console, add '-Deditable.java.test.console=true' ('Help' > 'Edit Custom VM Options...')")
-            println("=== 😺😸😹😻😼😽🙀😿😾😺😸😹😻😼😽🙀😿😾 ===")
-            println(msg)
-            print("=== 😺😸😹😻😼😽🙀 continue or not ? [y|n]>")
-            while (scanner.hasNext()) {
-                val ans = scanner.next()
-                if (ans.equals("y", true)) {
-                    return true
-                } else if (ans.equals("n", true)) {
-                    return false
-                }
-            }
-
-            return false
-        }
+    override fun logWay(func: BiConsumer<String, String>) {
+        interactive.logWay(func)
     }
 
-    override fun messageWay(func: BiConsumer<String, String>) {
-        msgFunc = func
+    override fun askWay(func: Function<String, Boolean>) {
+        interactive.askWay(func)
     }
 
-    override fun confirmWay(func: Function<String, Boolean>) {
-        askFunc = func
-    }
-
-    override fun confirmAsk(ask: AskType, yes: Boolean) {
-        askType[ask] = yes
+    override fun needAsk(ask: AskType, yes: Boolean) {
+        interactive.needAsk(ask, yes)
     }
 
     /**
@@ -101,7 +76,7 @@ class DefaultRevisionManager(
     override fun publishRevision(revision: Long, commitId: Long) {
         val here = "publishRevision"
         if (revision < revi1st) {
-            messageLog(WARN, here, "skip the revision less than $revi1st")
+            interactive.log(WARN, here, "skip the revision less than $revi1st")
             return
         }
         val selectUpto = """
@@ -131,20 +106,20 @@ class DefaultRevisionManager(
             val plainRevi = getRevision(plainTmpl)
 
             if (plainRevi < 0) {
-                messageLog(WARN, here, "skip a bad version,    db-revi=$plainRevi, to-revi=$revision, db=$plainName")
+                interactive.log(WARN, here, "skip a bad version,    db-revi=$plainRevi, to-revi=$revision, db=$plainName")
                 continue
             }
             if (plainRevi == revision) {
-                messageLog(WARN, here, "skip the same version, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
+                interactive.log(WARN, here, "skip the same version, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
                 continue
             }
 
             val isUptoSql = revision > plainRevi
             val reviQuery = if (isUptoSql) { // 升级
-                messageLog(INFO, here, "upgrade,   db-revi=$plainRevi, to-revi=$revision, db=$plainName")
+                interactive.log(INFO, here, "upgrade,   db-revi=$plainRevi, to-revi=$revision, db=$plainName")
                 selectUpto
             } else { // 降级
-                messageLog(INFO, here, "downgrade, db-revi=$plainRevi, to-revi=$revision")
+                interactive.log(INFO, here, "downgrade, db-revi=$plainRevi, to-revi=$revision")
                 selectUndo
             }
 
@@ -156,34 +131,38 @@ class DefaultRevisionManager(
             }
 
             if (reviText.isEmpty()) {
-                messageLog(WARN, here, "skip the empty revision-sqls, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
+                interactive.log(WARN, here, "skip the empty revision-sqls, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
                 continue
             }
 
             if (reviText.count { isRunning(it.third) } != 0) {
-                messageLog(WARN, here, "skip running revision, need manually fix it [UPDATE $schemaVersionTable SET apply_dt = '1000-01-01 00:00:00' WHERE apply_dt = '1000-01-01 00:00:17'] db-revi=$plainRevi, to-revi=$revision, db=$plainName")
+                interactive.log(
+                    WARN,
+                    here,
+                    "skip running revision, need manually fix it [UPDATE $schemaVersionTable SET apply_dt = '1000-01-01 00:00:00' WHERE apply_dt = '1000-01-01 00:00:17'] db-revi=$plainRevi, to-revi=$revision, db=$plainName"
+                )
                 continue
             }
 
             // 检测和处理边界
             if (isUptoSql) { // 版本从低到高，重点不一致，或不存在
                 if (reviText.last.first != revision) {
-                    messageLog(WARN, here, "skip the diff upgrade end point, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
+                    interactive.log(WARN, here, "skip the diff upgrade end point, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
                     continue
                 }
                 // 检测apply情况，应该全都未APPLY
                 if (reviText.count { isUnapply(it.third) } != reviText.size) {
-                    messageLog(WARN, here, "skip broken un-apply_dt upgrade, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
+                    interactive.log(WARN, here, "skip broken un-apply_dt upgrade, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
                     continue
                 }
             } else {  // 版本从高到低
                 if (reviText.last.first != revision) {
-                    messageLog(WARN, here, "skip the diff downgrade end point, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
+                    interactive.log(WARN, here, "skip the diff downgrade end point, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
                     continue
                 }
                 // 检测apply情况
                 if (reviText.count { isUnapply(it.third) } != 0) {
-                    messageLog(WARN, here, "skip broken apply_dt-ed downgrade, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
+                    interactive.log(WARN, here, "skip broken apply_dt-ed downgrade, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
                     continue
                 }
 
@@ -194,7 +173,8 @@ class DefaultRevisionManager(
             // 检查部分执行
             val partUndo = LinkedList<Triple<Long, String, String>>()
             val partRedo = LinkedList<Triple<Long, String, String>>()
-            plainTmpl.query("""
+            plainTmpl.query(
+                """
                 SELECT
                     revision,
                     upto_sql,
@@ -204,11 +184,12 @@ class DefaultRevisionManager(
                 WHERE apply_dt > '$unapplyMark 00:00:00' 
                     AND apply_dt <= '$unapplyMark 23:23:59'
                 ORDER BY revision DESC
-            """) {
+            """
+            ) {
                 val rev = it.getLong(1)
                 val tplRedo = Triple(rev, it.getString(2), it.getString(4))
                 val tplUndo = Triple(rev, it.getString(3), it.getString(4))
-                messageLog(WARN, here, "undo partly applied for revi=$rev, db=$plainName need undo it")
+                interactive.log(WARN, here, "undo partly applied for revi=$rev, db=$plainName need undo it")
                 partRedo.add(tplRedo)
                 partUndo.add(tplUndo)
             }
@@ -220,22 +201,22 @@ class DefaultRevisionManager(
 
             val plainTbls = schemaDefinitionLoader.showTables(plainDs)
             for ((revi, text) in reviText) {
-                messageLog(INFO, here, "ready for revi=$revi, db=$plainName ")
+                interactive.log(INFO, here, "ready for revi=$revi, db=$plainName ")
                 try {
                     applyRevisionSql(revi, text, isUptoSql, commitId, plainTmpl, shardTmpl, plainTbls)
                 } catch (e: Exception) {
-                    messageLog(ERROR, here, "failed to exec sql revision, revi=$revi, db=$plainName", e)
+                    interactive.log(ERROR, here, "failed to exec sql revision, revi=$revi, db=$plainName", e)
                     throw e
                 }
-                messageLog(INFO, here, "done for revi=$revi, db=$plainName")
+                interactive.log(INFO, here, "done for revi=$revi, db=$plainName")
             }
 
             // 后置检查
-            messageLog(INFO, here, "post check revi=$revision, db=$plainName")
+            interactive.log(INFO, here, "post check revi=$revision, db=$plainName")
             val newRevi = getRevision(plainTmpl)
             if (revision != newRevi) {
                 val msg = "failed to post check schema revision, need $revision, but $newRevi, db=$plainName"
-                messageLog(ERROR, here, msg)
+                interactive.log(ERROR, here, msg)
                 throw IllegalStateException(msg)
             }
         }
@@ -262,16 +243,16 @@ class DefaultRevisionManager(
             """
         }
         val here = "forceApplyBreak"
-        messageLog(INFO, here, "begin revi=$revision, assigned db=$dataSource")
+        interactive.log(INFO, here, "begin revi=$revision, assigned db=$dataSource")
 
         for ((plainName, plainDs) in plainDataSources) {
 
             if (!(dataSource == null || plainName.equals(dataSource, true))) {
-                messageLog(INFO, here, "skip revi=$revision, on unmatched db=$plainName")
+                interactive.log(INFO, here, "skip revi=$revision, on unmatched db=$plainName")
                 continue
             }
 
-            messageLog(INFO, here, "apply revi=$revision, db=$plainName")
+            interactive.log(INFO, here, "apply revi=$revision, db=$plainName")
             val plainTmpl = SimpleJdbcTemplate(plainDs, plainName)
             val applySqls = LinkedList<Pair<String, String>>()
 
@@ -281,12 +262,12 @@ class DefaultRevisionManager(
                 }
             } catch (e: Exception) {
                 assertNot1st(plainDs, e)
-                messageLog(WARN, here, "skip, un-init-ist, revi=$revision, isUpto=$isUpto, db=$plainName")
+                interactive.log(WARN, here, "skip, un-init-ist, revi=$revision, isUpto=$isUpto, db=$plainName")
                 continue
             }
 
             if (applySqls.size != 1) {
-                messageLog(WARN, here, "skip, find ${applySqls.size} sqls, revi=$revision, isUpto=$isUpto, db=$plainName")
+                interactive.log(WARN, here, "skip, find ${applySqls.size} sqls, revi=$revision, isUpto=$isUpto, db=$plainName")
                 continue
             }
 
@@ -295,28 +276,28 @@ class DefaultRevisionManager(
             val msgAly = applyMessage(reviSql.second)
 
             if (isUpto && !notAppd) {
-                messageLog(ERROR, here, "skip, $msgAly upto, need force to undo first, revi=$revision, isUpto=$isUpto, db=$plainName")
+                interactive.log(ERROR, here, "skip, $msgAly upto, need force to undo first, revi=$revision, isUpto=$isUpto, db=$plainName")
                 continue
             }
 
             if (!isUpto && notAppd) {
-                messageLog(ERROR, here, "skip, not $msgAly undo, revi=$revision, isUpto=$isUpto, db=$plainName")
+                interactive.log(ERROR, here, "skip, not $msgAly undo, revi=$revision, isUpto=$isUpto, db=$plainName")
                 continue
             }
 
-            messageLog(INFO, here, "ready, revi=$revision, isUpto=$isUpto, db=$plainName")
+            interactive.log(INFO, here, "ready, revi=$revision, isUpto=$isUpto, db=$plainName")
             val plainTbls = schemaDefinitionLoader.showTables(plainDs)
             applyRevisionSql(revision, reviSql.first, isUpto, commitId, plainTmpl, shardTmpl, plainTbls)
-            messageLog(INFO, here, "done , revi=$revision, isUpto=$isUpto, db=$plainName")
+            interactive.log(INFO, here, "done , revi=$revision, isUpto=$isUpto, db=$plainName")
         }
 
-        messageLog(INFO, here, "end, revi=$revision, assigned db=$dataSource")
+        interactive.log(INFO, here, "end, revi=$revision, assigned db=$dataSource")
     }
 
     override fun checkAndInitSql(sqls: SortedMap<Long, SchemaRevisionManager.RevisionSql>, commitId: Long, updateDiff: Boolean) {
         val here = "checkAndInitSql"
         if (sqls.isNullOrEmpty()) {
-            messageLog(WARN, here, "skip empty local sqls, should be removed")
+            interactive.log(WARN, here, "skip empty local sqls, should be removed")
             return
         }
 
@@ -335,12 +316,12 @@ class DefaultRevisionManager(
             val undoSql = entry.undoText
             val uptoSql = entry.uptoText
             if (undoSql.isBlank() && uptoSql.isBlank()) {
-                messageLog(WARN, here, "skip an both empty sqls, revi=${entry.revision}, upto-path=${entry.uptoPath}, undo-path=${entry.undoPath}")
+                interactive.log(WARN, here, "skip an both empty sqls, revi=${entry.revision}, upto-path=${entry.uptoPath}, undo-path=${entry.undoPath}")
                 continue
             }
 
             for ((plainName, plainDs) in plainDataSources) {
-                messageLog(INFO, here, "ready to check revi=$revi, on db=$plainName")
+                interactive.log(INFO, here, "ready to check revi=$revi, on db=$plainName")
                 val plainTmpl = SimpleJdbcTemplate(plainDs, plainName)
                 val dbVal = HashMap<String, String>()
 
@@ -354,7 +335,7 @@ class DefaultRevisionManager(
                 } catch (e: Exception) {
                     if (entry.uptoText.contains(schemaVersionTable, true)) {
                         assertNot1st(plainDs, e)
-                        messageLog(WARN, here, "try to init $schemaVersionTable , revision=$revi, on db=$plainName")
+                        interactive.log(WARN, here, "try to init $schemaVersionTable , revision=$revi, on db=$plainName")
                         applyRevisionSql(revi, uptoSql, true, commitId, plainTmpl, null, emptyList(), false, entry.revision)
                         // for later update
                         dbVal["upto_sql"] = Null.Str
@@ -368,14 +349,14 @@ class DefaultRevisionManager(
                                 3.the first revi less than $revi1st
                                 4.branch create tables as in $revi1st
                             """.trimIndent()
-                        messageLog(ERROR, here, help)
+                        interactive.log(ERROR, here, help)
                         throw e
                     }
                 }
 
                 val comments = commentInfo(entry.undoPath, entry.uptoPath)
                 if (dbVal.isEmpty()) {
-                    messageLog(INFO, here, "insert for database not exist revi=$revi, db=$plainName")
+                    interactive.log(INFO, here, "insert for database not exist revi=$revi, db=$plainName")
                     val rst = plainTmpl.update(insertSql, revi, commitId, uptoSql, undoSql, comments)
                     if (rst != 1) {
                         throw IllegalStateException("failed to insert revi=$revi, db=$plainName")
@@ -398,12 +379,12 @@ class DefaultRevisionManager(
                         updSql.append("undo_sql = ?, ")
                         updVal.add(undoSql)
                         if (undoBlk) {
-                            messageLog(INFO, here, "empty undo-sql, update it. revi=$revi, db=$plainName")
+                            interactive.log(INFO, here, "empty undo-sql, update it. revi=$revi, db=$plainName")
                         } else {
-                            messageLog(WARN, here, "diff undo-sql $msgAly, update it. revi=$revi, db=$plainName")
+                            interactive.log(WARN, here, "diff undo-sql $msgAly, update it. revi=$revi, db=$plainName")
                         }
                     } else {
-                        messageLog(WARN, here, "diff undo-sql $msgAly, ignore it. revi=$revi, db=$plainName")
+                        interactive.log(WARN, here, "diff undo-sql $msgAly, ignore it. revi=$revi, db=$plainName")
                     }
                 }
 
@@ -415,12 +396,12 @@ class DefaultRevisionManager(
                         updSql.append("upto_sql = ?, ")
                         updVal.add(uptoSql)
                         if (uptoBlk) {
-                            messageLog(INFO, here, "empty upto-sql, update it. revi=$revi, db=$plainName")
+                            interactive.log(INFO, here, "empty upto-sql, update it. revi=$revi, db=$plainName")
                         } else {
-                            messageLog(WARN, here, "diff upto-sql $msgAly, update it. revi=$revi, db=$plainName")
+                            interactive.log(WARN, here, "diff upto-sql $msgAly, update it. revi=$revi, db=$plainName")
                         }
                     } else {
-                        messageLog(WARN, here, "diff upto-sql $msgAly, ignore it. revi=$revi, db=$plainName")
+                        interactive.log(WARN, here, "diff upto-sql $msgAly, ignore it. revi=$revi, db=$plainName")
                     }
                 }
 
@@ -429,9 +410,9 @@ class DefaultRevisionManager(
                     if (updateDiff) {
                         updSql.append("comments = ?, ")
                         updVal.add(comments)
-                        messageLog(INFO, here, "update comments. revi=$revi, db=$plainName")
+                        interactive.log(INFO, here, "update comments. revi=$revi, db=$plainName")
                     } else {
-                        messageLog(WARN, here, "diff comments ignore it. revi=$revi, db=$plainName")
+                        interactive.log(WARN, here, "diff comments ignore it. revi=$revi, db=$plainName")
                     }
                 }
 
@@ -440,7 +421,7 @@ class DefaultRevisionManager(
                     // replace
                     val whereRevi: String
                     if (revi != entry.revision) {
-                        messageLog(INFO, here, "update diff to database refer-revi=$revi, entry-revi=${entry.revision}, applyDt=$applyd, db=$plainName")
+                        interactive.log(INFO, here, "update diff to database refer-revi=$revi, entry-revi=${entry.revision}, applyDt=$applyd, db=$plainName")
                         updSql.append("revision = ?, ")
                         updVal.add(revi)
                         whereRevi = "revision in (?,?)"
@@ -448,24 +429,26 @@ class DefaultRevisionManager(
                         updVal.add(revi)
                         updVal.add(entry.revision)
                     } else {
-                        messageLog(INFO, here, "update diff to database revi=$revi, applyDt=$applyd, db=$plainName")
+                        interactive.log(INFO, here, "update diff to database revi=$revi, applyDt=$applyd, db=$plainName")
                         whereRevi = "revision = ?"
                         updVal.add(commitId)
                         updVal.add(revi)
                     }
-                    val rst = plainTmpl.update("""
+                    val rst = plainTmpl.update(
+                        """
                         UPDATE $schemaVersionTable SET
                             $updSql
                             modify_dt = NOW(3),
                             commit_id = ?
                         WHERE $whereRevi
-                        """, *updVal.toArray())
+                        """, *updVal.toArray()
+                    )
 
                     if (rst != 1) {
                         throw IllegalStateException("failed to update revi=$revi, db=$plainName, affect $rst records")
                     }
                 } else {
-                    messageLog(INFO, here, "skip all same  revi=$revi, applyDt=$applyd, db=$plainName")
+                    interactive.log(INFO, here, "skip all same  revi=$revi, applyDt=$applyd, db=$plainName")
                 }
             }
         }
@@ -491,7 +474,7 @@ class DefaultRevisionManager(
             """
         val here = "forceUpdateSql"
         for ((plainName, plainDs) in plainDataSources) {
-            messageLog(INFO, here, "ready force update revi=$revision, on db=$plainName")
+            interactive.log(INFO, here, "ready force update revi=$revision, on db=$plainName")
             val tmpl = SimpleJdbcTemplate(plainDs, plainName)
 
             // 不要使用msyql的REPLACE INTO，使用标准SQL
@@ -499,10 +482,10 @@ class DefaultRevisionManager(
             val cnt = tmpl.count("SELECT COUNT(1) FROM $schemaVersionTable WHERE revision= ?", revision)
             if (cnt == 0) {
                 val rst = tmpl.update(insertSql, revision, commitId, upto, undo)
-                messageLog(INFO, here, "done force insert $rst records, revi=$revision, on db=$plainName")
+                interactive.log(INFO, here, "done force insert $rst records, revi=$revision, on db=$plainName")
             } else {
                 val rst = tmpl.update(updateSql, upto, undo, commitId, revision)
-                messageLog(INFO, here, "done force update $rst records, revi=$revision, on db=$plainName")
+                interactive.log(INFO, here, "done force update $rst records, revi=$revision, on db=$plainName")
             }
         }
     }
@@ -514,7 +497,7 @@ class DefaultRevisionManager(
 
         val here = "forceExecuteSql"
         for ((plainName, plainDs) in plainDataSources) {
-            messageLog(INFO, here, "ready force execute sql on db=$plainName")
+            interactive.log(INFO, here, "ready force execute sql on db=$plainName")
             val plainTmpl = SimpleJdbcTemplate(plainDs, plainName)
             val plainTbls = schemaDefinitionLoader.showTables(plainDs)
 
@@ -524,10 +507,10 @@ class DefaultRevisionManager(
                 }
                 // 不使用事务，出错时，根据日志进行回滚或数据清理
                 if (seg.isPlain() || shardTmpl == null) {
-                    messageLog(INFO, here, "use plain to run sql-line from ${seg.lineBgn} to ${seg.lineEnd}, db=$plainName")
+                    interactive.log(INFO, here, "use plain to run sql-line from ${seg.lineBgn} to ${seg.lineEnd}, db=$plainName")
                     runSegment(plainTmpl, plainTbls, seg)
                 } else {
-                    messageLog(INFO, here, "use shard to run sql-line from ${seg.lineBgn} to ${seg.lineEnd}")
+                    interactive.log(INFO, here, "use shard to run sql-line from ${seg.lineBgn} to ${seg.lineEnd}")
                     runSegment(shardTmpl, emptyList(), seg)
                 }
             }
@@ -539,32 +522,33 @@ class DefaultRevisionManager(
         for (sql in sqls) {
             val txt = if (isUpto) sql.value.uptoText else sql.value.undoText
             if (txt.isEmpty()) {
-                messageLog(INFO, here, "skip empty for revision=${sql.key}")
+                interactive.log(INFO, here, "skip empty for revision=${sql.key}")
             } else {
-                messageLog(INFO, here, "ready sql  for revision=${sql.key}")
+                interactive.log(INFO, here, "ready sql  for revision=${sql.key}")
                 forceExecuteSql(txt)
             }
         }
     }
 
     //
-    private fun applyRevisionSql(revi: Long, text: String, isUpto: Boolean, commitId: Long,
-                                 plainTmpl: SimpleJdbcTemplate, shardTmpl: SimpleJdbcTemplate?, plainTbls: List<String>,
-                                 check: Boolean = true, orig: Long = revi
+    private fun applyRevisionSql(
+        revi: Long, text: String, isUpto: Boolean, commitId: Long,
+        plainTmpl: SimpleJdbcTemplate, shardTmpl: SimpleJdbcTemplate?, plainTbls: List<String>,
+        check: Boolean = true, orig: Long = revi
     ) {
         val here = "applyRevisionSql"
         val plainName = plainTmpl.name
 
-        if (!isUpto && askType[AskType.Undo] != false) {
+        if (!isUpto && interactive.needAsk(AskType.Undo)) {
             askSegment(revi, "apply undo sqls")
         }
 
         // 记录部分执行情况。
         if (check) {
-            messageLog(INFO, here, "parse revi-sql, revi=$revi, isUpto=$isUpto, mark as '$runningMark'")
+            interactive.log(INFO, here, "parse revi-sql, revi=$revi, isUpto=$isUpto, mark as '$runningMark'")
             plainTmpl.update("UPDATE $schemaVersionTable SET apply_dt='$runningMark', commit_id=? WHERE revision=?", commitId, revi)
         } else {
-            messageLog(INFO, here, "parse revi-sql, revi=$revi, isUpto=$isUpto in abnormal mode")
+            interactive.log(INFO, here, "parse revi-sql, revi=$revi, isUpto=$isUpto in abnormal mode")
         }
 
         for (seg in sqlSegmentProcessor.parse(sqlStatementParser, text)) {
@@ -573,10 +557,10 @@ class DefaultRevisionManager(
             }
             // 不使用事务，出错时，根据日志进行回滚或数据清理
             if (seg.isPlain() || shardTmpl == null) {
-                messageLog(INFO, here, "use plain to run revi=$revi, sql-line from ${seg.lineBgn} to ${seg.lineEnd}, db=$plainName")
+                interactive.log(INFO, here, "use plain to run revi=$revi, sql-line from ${seg.lineBgn} to ${seg.lineEnd}, db=$plainName")
                 runSegment(plainTmpl, plainTbls, seg, revi)
             } else {
-                messageLog(INFO, here, "use shard to run revi=$revi, sql-line from ${seg.lineBgn} to ${seg.lineEnd}")
+                interactive.log(INFO, here, "use shard to run revi=$revi, sql-line from ${seg.lineBgn} to ${seg.lineEnd}")
                 runSegment(shardTmpl, emptyList(), seg, revi)
             }
         }
@@ -596,17 +580,17 @@ class DefaultRevisionManager(
             }
         } catch (e: Exception) {
             assertNot1st(plainTmpl.dataSource, e)
-            messageLog(WARN, here, "skip un-init-1st, revi={}, applyDt=$revi, db=$plainName")
+            interactive.log(WARN, here, "skip un-init-1st, revi={}, applyDt=$revi, db=$plainName")
             return
         }
         // 执行了，必须一条，因为上面不会出现语法错误
         if (cnt == 1) {
-            messageLog(INFO, here, "update revi=$revi, applyDt=$applyDt, db=$plainName")
+            interactive.log(INFO, here, "update revi=$revi, applyDt=$applyDt, db=$plainName")
         } else {
             if (check) {
                 throw IllegalStateException("update revi=$revi, but $cnt records affect, db=$plainName")
             } else {
-                messageLog(WARN, here, "update revi=$revi, $cnt records affect, db=$plainName in abnormal-mode")
+                interactive.log(WARN, here, "update revi=$revi, $cnt records affect, db=$plainName in abnormal-mode")
             }
         }
     }
@@ -620,17 +604,17 @@ class DefaultRevisionManager(
                 val r = it.getLong(1)
                 val d = it.getString(2)
                 if (isRunning(d)) {
-                    messageLog(WARN, here, "find running revision=$r, db=${tmpl.name}")
+                    interactive.log(WARN, here, "find running revision=$r, db=${tmpl.name}")
                 } else if (rst.get() < r) {
                     rst.set(r)
                 }
             }
             val r = rst.get()
-            messageLog(INFO, here, "find applied revision=$r, db=${tmpl.name}")
+            interactive.log(INFO, here, "find applied revision=$r, db=${tmpl.name}")
             r
         } catch (e: Exception) {
             assertNot1st(tmpl.dataSource, e)
-            messageLog(WARN, here, "failed to get un-init-1st revision, return -1, db=${tmpl.name}")
+            interactive.log(WARN, here, "failed to get un-init-1st revision, return -1, db=${tmpl.name}")
             -1
         }
     }
@@ -640,17 +624,17 @@ class DefaultRevisionManager(
         val dbName = tmpl.name
         val tblApply = seg.applyTbl(tables)
 
-        val ask = if (seg.askText.isNotEmpty() && askType[AskType.Mark] != false) "强制确认：${seg.sqlText}" else Null.Str
+        val ask = if (seg.askText.isNotEmpty() && interactive.needAsk(AskType.Mark)) "强制确认：${seg.sqlText}" else Null.Str
 
         askSegment(revi, ask, dangerous(seg.sqlText))
 
         val erh = seg.errType
         if (tblApply.isEmpty()) {
-            messageLog(INFO, here, "run sql on direct table, db=$dbName")
+            interactive.log(INFO, here, "run sql on direct table, db=$dbName")
             try {
                 tmpl.execute(seg.sqlText)
             } catch (e: Exception) {
-                messageLog(WARN, here, "$erh an error", e)
+                interactive.log(WARN, here, "$erh an error", e)
                 when (erh) {
                     ErrType.Skip -> {
                         // skip
@@ -664,9 +648,9 @@ class DefaultRevisionManager(
             val tblName = seg.tblName
             for ((tbl, map) in tblApply) {
                 if (tbl == tblName) {
-                    messageLog(INFO, here, "run sql on plain table=$tbl, db=$dbName")
+                    interactive.log(INFO, here, "run sql on plain table=$tbl, db=$dbName")
                 } else {
-                    messageLog(INFO, here, "run sql on shard/trace table=$tbl, db=$dbName")
+                    interactive.log(INFO, here, "run sql on shard/trace table=$tbl, db=$dbName")
                 }
 
                 val trgDef = if (seg.trgJour) {
@@ -678,8 +662,8 @@ class DefaultRevisionManager(
                 }
                 try {
                     for (trg in trgDef) {
-                        messageLog(WARN, here, "affect trigger=${trg.name}, table=$tbl, db=$dbName")
-                        messageLog(WARN, here, "recover trigger-ddl=" + schemaDefinitionLoader.makeDdlTrg(trg, false).replace('\n',' '))
+                        interactive.log(WARN, here, "affect trigger=${trg.name}, table=$tbl, db=$dbName")
+                        interactive.log(WARN, here, "recover trigger-ddl=" + schemaDefinitionLoader.makeDdlTrg(trg, false).replace('\n', ' '))
                         tmpl.execute(schemaDefinitionLoader.makeDdlTrg(trg, true))
                     }
                     //
@@ -697,7 +681,7 @@ class DefaultRevisionManager(
                         }
                     }
                 } catch (e: Exception) {
-                    messageLog(WARN, here, "$erh an error", e)
+                    interactive.log(WARN, here, "$erh an error", e)
                     when (erh) {
                         ErrType.Skip -> {
                             // skip
@@ -742,7 +726,7 @@ class DefaultRevisionManager(
     }
 
     private fun dangerous(sql: String): String {
-        if (askType[AskType.Drop] == false) return Null.Str
+        if (!interactive.needAsk(AskType.Drop)) return Null.Str
 
         val txt = sql.trim()
         for ((k, reg) in dropReg) {
@@ -769,8 +753,8 @@ class DefaultRevisionManager(
             ask.append("\n")
         }
 
-        val pr = lastMessage.get() // 获取上一个信息，必须 messageLog 之前
-        messageLog(WARN, "askSegment", ask.toString())
+        val pr = interactive.lastMessage.get() // 获取上一个信息，必须 interactive.log 之前
+        interactive.log(WARN, "askSegment", ask.toString())
 
         if (pr != null) {
             ask.append("\n")
@@ -781,39 +765,6 @@ class DefaultRevisionManager(
 
         val msg = ask.trim().toString()
 
-        if (!askFunc.apply(msg)) {
-            throw RuntimeException("stop for $msg")
-        }
-    }
-
-    val lastMessage = AtomicReference<Pair<String, String>>()
-    private fun messageLog(level: Level, where: String, info: String, er: Exception? = null) {
-        val msg = "[$where] 🐝 $info"
-        if (level == ERROR) {
-            if (er == null) {
-                logger.error(msg)
-            } else {
-                logger.error(msg, er)
-            }
-        } else if (level == WARN) {
-            if (er == null) {
-                logger.warn(msg)
-            } else {
-                logger.warn(msg, er)
-            }
-        } else {
-            if (er == null) {
-                logger.info(msg)
-            } else {
-                logger.info(msg, er)
-            }
-        }
-        val tkn = "${level.name}|$where"
-        val ot = lastMessage.get()
-        if (ot == null) {
-            msgFunc.accept("database-info", plainDataSources.toString())
-        }
-        lastMessage.set(tkn to info)
-        msgFunc.accept(tkn, info)
+        interactive.ask(msg)
     }
 }

@@ -1,14 +1,20 @@
 package pro.fessional.wings.faceless.flywave
 
 import org.slf4j.LoggerFactory
+import org.slf4j.event.Level.ERROR
+import org.slf4j.event.Level.INFO
+import org.slf4j.event.Level.WARN
 import pro.fessional.mirana.data.Null
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.TYPE_PLAIN
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.TYPE_SHARD
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.Companion.hasType
+import pro.fessional.wings.faceless.flywave.impl.DefaultInteractiveManager
 import pro.fessional.wings.faceless.flywave.util.SimpleJdbcTemplate
 import pro.fessional.wings.faceless.flywave.util.TemplateUtil
 import java.util.LinkedList
 import java.util.concurrent.atomic.AtomicReference
+import java.util.function.BiConsumer
+import java.util.function.Function
 import javax.sql.DataSource
 
 /**
@@ -24,7 +30,12 @@ class SchemaJournalManager(
     private val schemaDefinitionLoader: SchemaDefinitionLoader,
     private val journalDdl: JournalDdl,
     private val schemaJournalTable: String = "sys_schema_journal"
-) {
+) : InteractiveManager<SchemaJournalManager.AskType> {
+
+    enum class AskType {
+        DropTable, DropTrigger, ManualCheck
+    }
+
     data class JournalDdl(
         var insTbl: String = Null.Str,
         var insTrg: String = Null.Str,
@@ -42,6 +53,19 @@ class SchemaJournalManager(
     }
 
     private val logger = LoggerFactory.getLogger(SchemaJournalManager::class.java)
+    private val interactive = DefaultInteractiveManager<AskType>(logger, plainDataSources, "🐶")
+
+    override fun logWay(func: BiConsumer<String, String>) {
+        interactive.logWay(func)
+    }
+
+    override fun askWay(func: Function<String, Boolean>) {
+        interactive.askWay(func)
+    }
+
+    override fun needAsk(ask: AskType, yes: Boolean) {
+        interactive.needAsk(ask, yes)
+    }
 
     /**
      * 根据DDL模板应用跟踪表和触发器
@@ -83,6 +107,29 @@ class SchemaJournalManager(
         publishJournal(table, enable, commitId, "insert")
 
     /**
+     * 检查所有trigger，可以选择是否删除
+     * @param table 主表
+     * @param drop 是否询问删除，默认false
+     */
+    fun manageTriggers(table: String, drop: Boolean = false) {
+        val here = "manageTriggers"
+        interactive.log(INFO, here, "start check triggers on table=$table")
+        for ((plainName, plainDs) in plainDataSources) {
+            interactive.log(INFO, here, "ready to check triggers, table=$table on db=$plainName")
+            val tgs = schemaDefinitionLoader.showBoneTrg(plainDs, table)
+            interactive.log(INFO, here, "find ${tgs.size} triggers, table=$table on db=$plainName")
+            val tmpl = SimpleJdbcTemplate(plainDs, plainName)
+            for (trg in tgs) {
+                val msg = "${trg.name} ${trg.timing} ${trg.action}\n${trg.event}"
+                interactive.log(INFO, here, msg)
+                if (drop && interactive.ask("drop trigger?\n$msg", false)) {
+                    tmpl.execute(schemaDefinitionLoader.makeDdlTrg(trg, true))
+                }
+            }
+        }
+    }
+
+    /**
      * 对比本地和数据库中的SQL。
      * 当不存在时，则把本地保存到数据库。
      * 当存在但内容不一致，已APPLY则log error，否则更新
@@ -90,7 +137,8 @@ class SchemaJournalManager(
      * @param commitId 提交ID，参见Journal
      */
     fun checkAndInitDdl(table: String, commitId: Long) {
-        logger.info("[checkAndInitDdl]🐶 start check journal table={}", table)
+        val here = "checkAndInitDdl"
+        interactive.log(INFO, here, "start check journal table=$table")
         val selectSql = """
                 SELECT ddl_instbl, ddl_instrg, ddl_updtbl, ddl_updtrg, ddl_deltbl, ddl_deltrg, log_insert, log_update, log_delete
                 FROM $schemaJournalTable
@@ -103,7 +151,15 @@ class SchemaJournalManager(
                 """.trimIndent()
 
         for ((plainName, plainDs) in plainDataSources) {
-            logger.info("[checkAndInitDdl]🐶 ready to check journal, table={} on db={}", table, plainName)
+            interactive.log(INFO, here, "ready to check journal, table=$table on db=$plainName")
+            val tables = schemaDefinitionLoader.showTables(plainDs).map {
+                it.toLowerCase() to it
+            }.toMap()
+
+            if (!tables.containsKey(table.toLowerCase())) {
+                throw IllegalArgumentException("table not existed. table=$table")
+            }
+
             val tmpl = SimpleJdbcTemplate(plainDs, plainName)
             val dbVal = HashMap<String, String>()
             tmpl.query(selectSql, table) {
@@ -119,7 +175,7 @@ class SchemaJournalManager(
             }
 
             if (dbVal.isEmpty()) {
-                logger.info("[checkAndInitDdl]🐶 insert journal ddl, table=$table, db=$plainName")
+                interactive.log(INFO, here, "insert journal ddl, table=$table, db=$plainName")
                 val rst = tmpl.update(insertSql, table, commitId, journalDdl.insTbl, journalDdl.insTrg, journalDdl.updTbl, journalDdl.updTrg, journalDdl.delTbl, journalDdl.delTrg)
                 if (rst != 1) {
                     throw IllegalStateException("failed to insert journal ddl, table=$table, db=$plainName")
@@ -130,77 +186,99 @@ class SchemaJournalManager(
             // check
             val updSql = StringBuilder()
             val updVal = LinkedList<Any>()
-
+            val badDif = StringBuilder()
             val insNot = notApply(dbVal["log_insert"])
             if (journalDdl.insTbl != dbVal["ddl_instbl"]) {
                 if (insNot) {
-                    updSql.append("ddl_instbl = ?, ")
-                    updVal.add(journalDdl.insTbl)
-                    logger.warn("[checkAndInitDdl]🐶 diff ddl-ins-tbl, update it. table={}, db={}", table, plainName)
+                    interactive.log(WARN, here, "diff ddl-ins-tbl, update it. table=$table, db=$plainName")
                 } else {
-                    logger.error("[checkAndInitDdl]🐶 skip diff ddl-ins-tbl but applied, should manually disable it first. table={}, db={}", table, plainName)
-                    continue
+                    badDif.append("\ninsert-tracer")
+                    interactive.log(WARN, here, "diff applied ddl-ins-tbl, should manually disable it first. table=$table, db=$plainName")
+                    if (interactive.needAsk(AskType.ManualCheck)) {
+                        interactive.ask("continue?\nupdate diff applied insert-tracer. table=$table")
+                    }
                 }
+                updSql.append("ddl_instbl = ?, ")
+                updVal.add(journalDdl.insTbl)
             }
             if (journalDdl.insTrg != dbVal["ddl_instrg"]) {
                 if (insNot) {
-                    updSql.append("ddl_instrg = ?, ")
-                    updVal.add(journalDdl.insTrg)
-                    logger.warn("[checkAndInitDdl]🐶 diff ddl-ins-trg, update it. table={}, db={}", table, plainName)
+                    interactive.log(WARN, here, "diff ddl-ins-trg, update it. table=$table, db=$plainName")
                 } else {
-                    logger.error("[checkAndInitDdl]🐶 skip diff ddl-ins-trg but applied, should manually disable it first. table={}, db={}", table, plainName)
-                    continue
+                    badDif.append("\ninsert-trigger")
+                    interactive.log(WARN, here, "diff applied ddl-ins-trg, should manually disable it first. table=$table, db=$plainName")
+                    if (interactive.needAsk(AskType.ManualCheck)) {
+                        interactive.ask("continue?\nupdate diff applied insert-trigger. table=$table")
+                    }
                 }
+                updSql.append("ddl_instrg = ?, ")
+                updVal.add(journalDdl.insTrg)
             }
 
             val updNot = notApply(dbVal["log_update"])
             if (journalDdl.updTbl != dbVal["ddl_updtbl"]) {
                 if (updNot) {
-                    updSql.append("ddl_updtbl = ?, ")
-                    updVal.add(journalDdl.updTbl)
-                    logger.warn("[checkAndInitDdl]🐶 diff ddl-upd-tbl, update it. table={}, db={}", table, plainName)
+                    interactive.log(WARN, here, "diff ddl-upd-tbl, update it. table=$table, db=$plainName")
                 } else {
-                    logger.error("[checkAndInitDdl]🐶 skip diff ddl-upd-tbl but applied, should manually disable it first. table={}, db={}", table, plainName)
-                    continue
+                    badDif.append("\nupdate-tracer")
+                    interactive.log(WARN, here, "diff applied ddl-upd-tbl, should manually disable it first. table=$table, db=$plainName")
+                    if (interactive.needAsk(AskType.ManualCheck)) {
+                        interactive.ask("continue?\nupdate diff applied update-tracer. table=$table")
+                    }
                 }
+                updSql.append("ddl_updtbl = ?, ")
+                updVal.add(journalDdl.updTbl)
             }
 
             if (journalDdl.updTrg != dbVal["ddl_updtrg"]) {
                 if (updNot) {
-                    updSql.append("ddl_updtrg = ?, ")
-                    updVal.add(journalDdl.updTrg)
-                    logger.warn("[checkAndInitDdl]🐶 diff ddl-upd-trg, update it. table={}, db={}", table, plainName)
+                    interactive.log(WARN, here, "diff ddl-upd-trg, update it. table=$table, db=$plainName")
                 } else {
-                    logger.error("[checkAndInitDdl]🐶 skip diff ddl-upd-trg but applied, should manually disable it first. table={}, db={}", table, plainName)
-                    continue
+                    badDif.append("\nupdate-trigger")
+                    interactive.log(WARN, here, "diff applied ddl-upd-trg, should manually disable it first. table=$table, db=$plainName")
+                    if (interactive.needAsk(AskType.ManualCheck)) {
+                        interactive.ask("continue?\nupdate diff applied update-trigger. table=$table")
+                    }
                 }
+                updSql.append("ddl_updtrg = ?, ")
+                updVal.add(journalDdl.updTrg)
             }
 
             val delNot = notApply(dbVal["log_delete"])
             if (journalDdl.delTbl != dbVal["ddl_deltbl"]) {
                 if (delNot) {
-                    updSql.append("ddl_deltbl = ?, ")
-                    updVal.add(journalDdl.delTbl)
-                    logger.warn("[checkAndInitDdl]🐶 diff ddl-del-tbl, update it. table={}, db={}", table, plainName)
+                    interactive.log(WARN, here, "diff ddl-del-tbl, update it. table=$table, db=$plainName")
                 } else {
-                    logger.error("[checkAndInitDdl]🐶 skip diff ddl-del-tbl but applied, should manually disable it first. table={}, db={}", table, plainName)
-                    continue
+                    badDif.append("\ndelete-tracer")
+                    interactive.log(WARN, here, "diff applied ddl-del-tbl, should manually disable it first. table=$table, db=$plainName")
+                    if (interactive.needAsk(AskType.ManualCheck)) {
+                        interactive.ask("continue?\nupdate diff applied delete-tracer. table=$table")
+                    }
                 }
+                updSql.append("ddl_deltbl = ?, ")
+                updVal.add(journalDdl.delTbl)
             }
             if (journalDdl.delTrg != dbVal["ddl_deltrg"]) {
                 if (delNot) {
-                    updSql.append("ddl_deltrg = ?, ")
-                    updVal.add(journalDdl.delTrg)
-                    logger.warn("[checkAndInitDdl]🐶 diff ddl-del-trg, update it. table={}, db={}", table, plainName)
+                    interactive.log(WARN, here, "diff ddl-del-trg, update it. table=$table, db=$plainName")
                 } else {
-                    logger.error("[checkAndInitDdl]🐶 skip diff ddl-del-trg but applied, should manually disable it first. table={}, db={}", table, plainName)
-                    continue
+                    badDif.append("\ndelete-trigger")
+                    interactive.log(WARN, here, "diff applied ddl-del-trg, should manually disable it first. table=$table, db=$plainName")
+                    if (interactive.needAsk(AskType.ManualCheck)) {
+                        interactive.ask("continue?\nupdate diff applied delete-trigger. table=$table")
+                    }
                 }
+                updSql.append("ddl_deltrg = ?, ")
+                updVal.add(journalDdl.delTrg)
             }
 
             // update
             if (updSql.isNotEmpty()) {
-                logger.info("[checkAndInitDdl]🐶 update diff journal to database table={}, db={}", table, plainName)
+                if (badDif.isNotEmpty() && interactive.needAsk(AskType.ManualCheck)) {
+                    interactive.ask("continue?\ntable=$table $badDif")
+                }
+
+                interactive.log(INFO, here, "update diff journal to database table=$table, db=$plainName")
                 updVal.add(commitId)
                 updVal.add(table)
                 val rst = tmpl.update(
@@ -216,14 +294,15 @@ class SchemaJournalManager(
                     throw IllegalStateException("failed to update table=$table, db=$plainName")
                 }
             } else {
-                logger.info("[checkAndInitDdl]🐶 skip all same journal, table={}, db={}", table, plainName)
+                interactive.log(INFO, here, "skip all same journal, table=$table, db=$plainName")
             }
         }
-        logger.info("[checkAndInitDdl]🐶 done check journal table={}", table)
+        interactive.log(INFO, here, "done check journal table=$table")
     }
 
     private fun publishJournal(table: String, enable: Boolean, commitId: Long, event: String) {
-        logger.info("[publishJournal]🐶 start publish {} table={}, enable={}", event, table, enable)
+        val here = "publishJournal"
+        interactive.log(INFO, here, "start publish $event table=$table, enable=$enable")
 
         val isInsert = "insert".equals(event, true)
         val isUpdate = "update".equals(event, true)
@@ -259,24 +338,29 @@ class SchemaJournalManager(
             throw RuntimeException("unsupported event $event")
         }
 
+        val logDate = if (enable) {
+            "NOW(3)"
+        } else {
+            "'1000-01-01 00:00:00.000'"
+        }
         val updateSql = if (isInsert) {
             """
             UPDATE $schemaJournalTable SET
-                log_insert = NOW(3),
+                log_insert = $logDate,
                 commit_id = ?
             WHERE table_name = ?
             """.trimIndent()
         } else if (isUpdate) {
             """
             UPDATE $schemaJournalTable SET
-                log_update = NOW(3),
+                log_update = $logDate,
                 commit_id = ?
             WHERE table_name = ?
             """.trimIndent()
         } else if (isDelete) {
             """
             UPDATE $schemaJournalTable SET
-                log_delete = NOW(3),
+                log_delete = $logDate,
                 commit_id = ?
             WHERE table_name = ?
             """.trimIndent()
@@ -286,11 +370,11 @@ class SchemaJournalManager(
 
         val model = HashMap<String, String>()
         for ((plainName, plainDs) in plainDataSources) {
-            logger.info("[publishJournal]🐶 ready to publish {} table={}, enable={}, db={}", event, table, enable, plainName)
+            interactive.log(INFO, here, "ready to publish $event table=$table, enable=$enable, db=$plainName")
             val tmpl = SimpleJdbcTemplate(plainDs, plainName)
-            val vals = AtomicReference<Triple<String, String, String>>()
+            val olds = AtomicReference<Triple<String, String, String>>()
             tmpl.query(selectSql, table) {
-                vals.set(
+                olds.set(
                     Triple(
                         it.getString("ddl_tbl"),
                         it.getString("ddl_trg"),
@@ -299,14 +383,14 @@ class SchemaJournalManager(
                 )
             }
 
-            if (vals.get() == null) {
-                logger.error("[publishJournal]🐶 skip template not found, table={}, db={}", table, plainName)
+            if (olds.get() == null) {
+                interactive.log(WARN, here, "skip template not found, table=$table, db=$plainName")
                 continue
             }
 
-            val (tmplTbl, tmplTrg, applyDt) = vals.get()
+            val (tmplTbl, tmplTrg, applyDt) = olds.get()
             if (tmplTbl.isBlank() || tmplTrg.isBlank()) {
-                logger.error("[publishJournal]🐶 skip blank template,apply={} table={}, db={}", table, plainName)
+                interactive.log(WARN, here, "skip blank template,table=$table, db=$plainName")
                 continue
             }
 
@@ -319,7 +403,7 @@ class SchemaJournalManager(
                 tp == TYPE_SHARD || tp == TYPE_PLAIN
             }.toMap()
 
-            logger.info("[publishJournal]🐶 init model, applyDt={} table={}, enable={}, db={}", applyDt, table, enable, plainName)
+            interactive.log(INFO, here, "init model, applyDt=$applyDt table=$table, enable=$enable, db=$plainName")
             initModelOnce(table, plainDs, model)
 
             val trcChk = HashMap<String, String>()
@@ -333,7 +417,7 @@ class SchemaJournalManager(
             // clean temp table
             for ((_, tblRaw) in tables) {
                 if (tblRaw.contains(tmpTkn, true)) {
-                    logger.info("[publishJournal]🐶 drop temp table table={}, db={}", tblRaw, plainName)
+                    interactive.log(INFO, here, "remove temp table table=$tblRaw, db=$plainName")
                     tmpl.execute("DROP TABLE IF EXISTS ${sqlStatementParser.safeName(tblRaw)}")
                 }
             }
@@ -345,7 +429,7 @@ class SchemaJournalManager(
 
                 val curTac = parseTblName(ddlTbl)
                 if (curTac.isBlank()) {
-                    logger.warn("[publishJournal]🐶 skip bad table={}, trace-table-ddl ={}", tblRaw, ddlTbl)
+                    interactive.log(WARN, here, "skip bad table=$tblRaw, trace-table-ddl =$ddlTbl")
                     continue
                 }
 
@@ -355,12 +439,15 @@ class SchemaJournalManager(
                 for (trg in schemaDefinitionLoader.showBoneTrg(plainDs, tblRaw)) {
                     // 删除同名
                     if (trg.name.equals(furTrg, true)) {
-                        logger.warn("[publishJournal]🐶 drop trigger={}, existed same name, table={}, db={}", trg.name, tblRaw, plainName)
+                        interactive.log(WARN, here, "drop trigger=${trg.name}, existed same name, table=$tblRaw, db=$plainName")
+                        if (interactive.needAsk(AskType.DropTrigger)) {
+                            interactive.ask("continue?\ndrop trigger=${trg.name}, existed same name")
+                        }
                         tmpl.execute(schemaDefinitionLoader.makeDdlTrg(trg, true))
                     } else {
                         // 保留trigger使用的trac表
                         if (TemplateUtil.isBoundary(trg.event, curTac, false)) {
-                            logger.info("[publishJournal]🐶 trigger={}, with same trace-table={}, db={}", trg.name, curTac, plainName)
+                            interactive.log(INFO, here, "trigger=${trg.name}, with same trace-table=$curTac, db=$plainName")
                             refTrc = true
                         }
                     }
@@ -369,13 +456,13 @@ class SchemaJournalManager(
                 // 检查跟踪表
                 var newTrc = true
                 if (tables.containsKey(curTac.toLowerCase())) {
-                    logger.info("[publishJournal]🐶 existed trace-table={}, table={}, db={}", curTac, tblRaw, plainName)
+                    interactive.log(INFO, here, "existed trace-table=$curTac, table=$tblRaw, db=$plainName")
                     val safeCurTrc = sqlStatementParser.safeName(curTac)
                     val cnt = tmpl.count("SELECT COUNT(1) FROM $safeCurTrc")
                     if (cnt == 0 && !refTrc) {
                         drpTbl["DROP TABLE IF EXISTS $safeCurTrc"] = curTac
                     } else {
-                        logger.warn("[publishJournal]🐶 lazy-check existed {} records trace-table={}, table={}, db={}", cnt, curTac, tblRaw, plainName)
+                        interactive.log(WARN, here, "lazy-check existed $cnt records trace-table=$curTac, table=$tblRaw, db=$plainName")
                         trcChk[curTac] = tblRaw
                         newTrc = false
                     }
@@ -393,46 +480,49 @@ class SchemaJournalManager(
                 val safeTmp = sqlStatementParser.safeName(tmpTbl)
 
                 tmpl.execute(TemplateUtil.replace(tmpDdl, tmpTbl, tmpTrc))
-                logger.info("[publishJournal]🐶 create temp-trace-table={}, db={}", tmpTbl, plainName)
+                interactive.log(INFO, here, "create temp-trace-table=$tmpTbl, db=$plainName")
                 try {
                     var isSame = true
                     for ((trc, stf) in trcChk) {
                         val df = schemaDefinitionLoader.diffFullSame(plainDs, tmpTrc, trc)
                         if (df.isNotEmpty()) {
                             isSame = false
-                            logger.error("[publishJournal]🐶 different trace-table={} of staff={}, error={}", trc, stf, df)
+                            interactive.log(ERROR, here, "different trace-table=$trc of staff=$stf, error=$df")
                         }
                     }
                     if (isSame) {
-                        logger.info("[publishJournal]🐶 existed traces all the same table={}, db={}", table, plainName)
+                        interactive.log(INFO, here, "existed traces all the same table=$table, db=$plainName")
                     } else {
-                        logger.error("[publishJournal]🐶 need manually check the different traces, table={}, db={}", table, plainName)
+                        interactive.log(ERROR, here, "need manually check the different traces, table=$table, db=$plainName")
                         continue
                     }
                 } finally {
                     // 如创建，则删除
                     tmpl.execute("DROP TABLE IF EXISTS $safeTmp")
-                    logger.info("[publishJournal]🐶 drop temp-trace-table={}, db={}", tmpTbl, plainName)
+                    interactive.log(INFO, here, "remove temp-trace-table=$tmpTbl, db=$plainName")
                 }
             }
 
             for ((ddl, tbl) in drpTbl) {
-                logger.warn("[publishJournal]🐶 drop trace-table={}, empty existed, table={}, db={}", tbl, table, plainName)
+                interactive.log(WARN, here, "drop trace-table=$tbl, empty existed, table=$table, db=$plainName")
+                if (interactive.needAsk(AskType.DropTable)) {
+                    interactive.ask("continue?\ndrop tracer=$tbl\nddl=$ddl")
+                }
                 tmpl.execute(ddl)
             }
 
             if (enable) {
-                logger.info("[publishJournal]🐶 execute enable journal, plain-table={}, db={}", table, plainName)
+                interactive.log(INFO, here, "execute enable journal, plain-table=table=$table, db=$plainName")
                 for ((ddl, tbl) in trcDdl) {
-                    logger.info("[publishJournal]🐶 execute trace-table ddl on table={}, db={}", tbl, plainName)
+                    interactive.log(INFO, here, "execute trace-table ddl on table=$tbl, db=$plainName")
                     tmpl.execute(ddl)
                 }
                 for ((ddl, tbl) in trgDdl) {
-                    logger.info("[publishJournal]🐶 execute trigger ddl on table={}, db={}", tbl, plainName)
+                    interactive.log(INFO, here, "execute trigger ddl on table=$tbl, db=$plainName")
                     tmpl.execute(ddl)
                 }
             } else {
-                logger.info("[publishJournal]🐶 execute disable journal, plain-table={}, db={}", table, plainName)
+                interactive.log(INFO, here, "execute disable journal, plain-table=table=$table, db=$plainName")
             }
 
             // 更新状态
@@ -442,7 +532,7 @@ class SchemaJournalManager(
             }
         }
 
-        logger.info("[publishJournal]🐶 done publish {} table={}, enable={}", event, table, enable)
+        interactive.log(INFO, here, "done publish $event table=$table, enable=$enable")
     }
 
     private fun initModelOnce(table: String, ds: DataSource, map: HashMap<String, String>) {
@@ -456,7 +546,7 @@ class SchemaJournalManager(
         val keys = schemaDefinitionLoader.showPkeyCol(ds, table).joinToString()
         map[TABLE_PKEY] = keys
 
-        logger.info("[initModelOnce]🐶 init model table={}, keys={}, bone={}", table, keys, bone)
+        interactive.log(INFO, "initModelOnce", "init model table=$table, keys=$keys")
     }
 
     private fun mergeDdl(ddl: String, map: HashMap<String, String>, table: String): String {

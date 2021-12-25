@@ -7,13 +7,12 @@ import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.RowMapper
 import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
 import pro.fessional.wings.faceless.WingsTestHelper.breakpointDebug
 import pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice
+import pro.fessional.wings.faceless.util.FlywaveInteractiveTty
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
-import java.sql.ResultSet
 
 /**
  * 包括了分表，跟踪表的综合测试
@@ -37,10 +36,10 @@ class SchemaJournalManagerTest {
     lateinit var schemaRevisionManager: SchemaRevisionManager
 
     @Autowired
-    lateinit var wingsTestHelper: WingsTestHelper
+    lateinit var shcemaShardingManager: SchemaShardingManager
 
     @Autowired
-    lateinit var shcemaShardingManager: SchemaShardingManager
+    lateinit var wingsTestHelper: WingsTestHelper
 
     @Autowired
     lateinit var jdbcTemplate: JdbcTemplate
@@ -49,6 +48,10 @@ class SchemaJournalManagerTest {
 
     @Test
     fun `test0🦁清表`() {
+        schemaJournalManager.askWay(FlywaveInteractiveTty.askYes)
+        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes)
+        shcemaShardingManager.askWay(FlywaveInteractiveTty.askYes)
+
         wingsTestHelper.cleanTable()
         val sqls = FlywaveRevisionScanner
             .helper()
@@ -206,18 +209,20 @@ class SchemaJournalManagerTest {
         wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "tst_中文也分表\$au")
         wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "tst_中文也分表\$bd")
 
-        jdbcTemplate.execute("""
+        jdbcTemplate.execute(
+            """
             INSERT INTO `tst_中文也分表_2`
             (`id`, `create_dt`, `modify_dt`, `delete_dt`, `commit_id`, `login_info`, `other_info`)
             VALUES (1,NOW(3),NOW(3),'1000-01-01',0,'赵四','老张');
-        """)
+        """
+        )
         jdbcTemplate.execute("UPDATE `tst_中文也分表_2` SET login_info='赵思', commit_id=1 WHERE id = 1")
         jdbcTemplate.execute("DELETE FROM `tst_中文也分表_2` WHERE id = 1")
         breakpointDebug("删除数据🐵，查询数据库各表及数据")
 
-        val tps = jdbcTemplate.queryForList("SELECT _tp FROM `tst_中文也分表_2\$log` WHERE id = 1 ORDER BY _id", String::class.java);
+        val tps = jdbcTemplate.queryForList("SELECT _tp FROM `tst_中文也分表_2\$log` WHERE id = 1 ORDER BY _id", String::class.java)
 
-        assertEquals(listOf("C","U","D"), tps)
+        assertEquals(listOf("C", "U", "D"), tps)
         breakpointDebug("清楚数据🐵，因为trace表不会删除有数据表")
 
         schemaJournalManager.publishInsert("tst_中文也分表", false, 0)

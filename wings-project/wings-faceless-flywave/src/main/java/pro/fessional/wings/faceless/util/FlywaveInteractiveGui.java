@@ -10,7 +10,6 @@ import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -23,22 +22,17 @@ import static javax.swing.JOptionPane.showConfirmDialog;
  * @author trydofor
  * @since 2020-07-07
  */
-public class FlywaveRevisionGui {
+public class FlywaveInteractiveGui {
 
-    private static final AtomicBoolean inited = new AtomicBoolean(false);
-
-    private static void init() {
-        if (!inited.get()) {
-            System.setProperty("java.awt.headless", "false");
-            Font font = new Font(Font.MONOSPACED, Font.PLAIN, 12);
-            UIManager.put("OptionPane.messageFont", font);
-            UIManager.put("TextArea.font", font);
-            UIManager.put("TextPane.font", font);
-        }
+    static {
+        System.setProperty("java.awt.headless", "false");
+        Font font = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+        UIManager.put("OptionPane.messageFont", font);
+        UIManager.put("TextArea.font", font);
+        UIManager.put("TextPane.font", font);
     }
 
-    public static Function<String, Boolean> confirmDialog() {
-        init();
+    public static Function<String, Boolean> askGui() {
         return msg -> {
             while (true) {
                 int res = showConfirmDialog(null, msg,
@@ -46,17 +40,16 @@ public class FlywaveRevisionGui {
                         JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (res == 0) {
                     return true;
-                } else if (res == 1) {
+                }
+                else if (res == 1) {
                     return false;
                 }
             }
         };
     }
 
-    public static BiConsumer<String, String> messageDialog() {
-        init();
+    public static BiConsumer<String, String> logGui() {
         return new BiConsumer<String, String>() {
-
             private final AtomicInteger counter = new AtomicInteger(0);
             private final JTextPane textPane = new JTextPane();
 
@@ -95,7 +88,8 @@ public class FlywaveRevisionGui {
                 String line = String.format("%03d %5s %-18s %s\n", counter.incrementAndGet(), lvl, slf, msg);
                 if (SwingUtilities.isEventDispatchThread()) {
                     insertString(line);
-                } else {
+                }
+                else {
                     SwingUtilities.invokeLater(() -> insertString(line));
                 }
             }
@@ -115,9 +109,11 @@ public class FlywaveRevisionGui {
                     String key = matcher.group(1);
                     if (key.equalsIgnoreCase("ERROR")) {
                         color = Color.PINK;
-                    } else if (key.equalsIgnoreCase("WARN")) {
+                    }
+                    else if (key.equalsIgnoreCase("WARN")) {
                         color = Color.ORANGE;
-                    } else {
+                    }
+                    else {
                         color = Color.MAGENTA;
                         key = key.substring(0, 4) + "-" + key.substring(4, 8) + "-" + key.substring(8);
                     }
@@ -140,7 +136,8 @@ public class FlywaveRevisionGui {
                     for (Map.Entry<String, MutableAttributeSet> entry : parts.entrySet()) {
                         styled.insertString(doc.getLength(), entry.getKey(), entry.getValue());
                     }
-                } catch (BadLocationException ignored) {
+                }
+                catch (BadLocationException ignored) {
                     // ignore
                 }
             }

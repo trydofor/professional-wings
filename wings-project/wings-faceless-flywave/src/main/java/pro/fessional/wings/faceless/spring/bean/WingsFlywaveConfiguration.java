@@ -64,9 +64,9 @@ public class WingsFlywaveConfiguration {
                 sources.getPlains(), sources.getSharding(),
                 statementParser, segmentProcessor, schemaDefinitionLoader,
                 properties.getSchemaVersionTable());
-        revisionManager.confirmAsk(AskType.Mark, properties.isAskMark());
-        revisionManager.confirmAsk(AskType.Undo, properties.isAskUndo());
-        revisionManager.confirmAsk(AskType.Drop, properties.isAskDrop());
+        revisionManager.needAsk(AskType.Mark, properties.isAskMark());
+        revisionManager.needAsk(AskType.Undo, properties.isAskUndo());
+        revisionManager.needAsk(AskType.Drop, properties.isAskDrop());
         for (String s : properties.getDropReg()) {
             revisionManager.addDropRegexp(s);
         }

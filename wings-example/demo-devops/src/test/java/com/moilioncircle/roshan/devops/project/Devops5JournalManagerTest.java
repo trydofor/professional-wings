@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager;
+import pro.fessional.wings.faceless.util.FlywaveInteractiveGui;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,12 +34,21 @@ public class Devops5JournalManagerTest {
 
     @Test
     public void journal() {
+        schemaJournalManager.askWay(FlywaveInteractiveGui.askGui());
+        schemaJournalManager.logWay(FlywaveInteractiveGui.logGui());
+
         long commitId = 9999_9999_9999L;
         boolean enable = true;
+        boolean manage = true;
         List<String> tables = Arrays.asList(
-                "win_user",
+                "win_user_basis",
                 "win_user_login"
         );
+
+        for (String table : tables) {
+            log.info("====== init manager={}", table);
+            schemaJournalManager.manageTriggers(table, manage);
+        }
 
         for (String table : tables) {
             log.info("====== init table={}", table);
@@ -47,8 +57,9 @@ public class Devops5JournalManagerTest {
 
         for (String table : tables) {
             log.info("====== init delete,update={}", table);
-            schemaJournalManager.publishDelete(table, enable, commitId);
+            schemaJournalManager.publishInsert(table, enable, commitId);
             schemaJournalManager.publishUpdate(table, enable, commitId);
+            schemaJournalManager.publishDelete(table, enable, commitId);
         }
     }
 }

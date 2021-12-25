@@ -11,6 +11,7 @@ import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.WingsRevision
 import pro.fessional.wings.faceless.service.journal.JournalService
 import pro.fessional.wings.faceless.service.lightid.LightIdService
+import pro.fessional.wings.faceless.util.FlywaveInteractiveTty
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 import java.util.concurrent.atomic.AtomicLong
 
@@ -39,6 +40,7 @@ open class LightIdServiceImplTest {
     @Test
     fun `test0🦁清表重置`() {
         wingsTestHelper.cleanTable()
+        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes)
         schemaRevisionManager.checkAndInitSql(FlywaveRevisionScanner.scanMaster(), 0, true)
     }
 
@@ -67,6 +69,6 @@ open class LightIdServiceImplTest {
         }
 
         // function
-        journalService.submit(this.javaClass) { it.commitDt };
+        journalService.submit(this.javaClass) { it.commitDt }
     }
 }

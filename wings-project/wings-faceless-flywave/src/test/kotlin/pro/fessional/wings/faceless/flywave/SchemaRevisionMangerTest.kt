@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
 import pro.fessional.wings.faceless.WingsTestHelper.breakpointDebug
+import pro.fessional.wings.faceless.util.FlywaveInteractiveTty
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 
 /**
@@ -23,8 +24,8 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 @TestMethodOrder(MethodName::class)
 open class SchemaRevisionMangerTest {
 
-    private val revi1Schema: Long = WingsRevision.V00_19_0512_01_Schema.revision();
-    private val revi2IdLog: Long = WingsRevision.V01_19_0520_01_IdLog.revision();
+    private val revi1Schema: Long = WingsRevision.V00_19_0512_01_Schema.revision()
+    private val revi2IdLog: Long = WingsRevision.V01_19_0520_01_IdLog.revision()
 
     @Autowired
     lateinit var schemaRevisionManager: SchemaRevisionManager
@@ -36,6 +37,7 @@ open class SchemaRevisionMangerTest {
 
     @Test
     fun `test0🦁清表重置`() {
+        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes)
         wingsTestHelper.cleanTable()
         val sqls = FlywaveRevisionScanner.helper()
                 .master()
