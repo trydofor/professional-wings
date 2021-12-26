@@ -10,7 +10,6 @@ import pro.fessional.wings.faceless.database.DataSourceContext;
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader;
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager;
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager;
-import pro.fessional.wings.faceless.flywave.SchemaRevisionManager.AskType;
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor;
 import pro.fessional.wings.faceless.flywave.SqlStatementParser;
@@ -64,9 +63,6 @@ public class WingsFlywaveConfiguration {
                 sources.getPlains(), sources.getSharding(),
                 statementParser, segmentProcessor, schemaDefinitionLoader,
                 properties.getSchemaVersionTable());
-        revisionManager.needAsk(AskType.Mark, properties.isAskMark());
-        revisionManager.needAsk(AskType.Undo, properties.isAskUndo());
-        revisionManager.needAsk(AskType.Drop, properties.isAskDrop());
         for (String s : properties.getDropReg()) {
             revisionManager.addDropRegexp(s);
         }

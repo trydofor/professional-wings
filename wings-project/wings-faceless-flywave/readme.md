@@ -290,6 +290,19 @@ FROM
 WHERE
   EVENT_OBJECT_SCHEMA = database();
 
+-- 获取创建trigger的SQL;
+-- DELIMITER $$
+SELECT
+   TRIGGER_NAME,
+   CONCAT('DROP TRIGGER IF EXISTS ',TRIGGER_NAME,';'),
+   CONCAT('CREATE TRIGGER `', TRIGGER_NAME, '` ',
+          ACTION_TIMING, ' ', EVENT_MANIPULATION, ' ON `', EVENT_OBJECT_TABLE, '` FOR EACH ROW ',
+          ACTION_STATEMENT, '$$')
+FROM
+   INFORMATION_SCHEMA.TRIGGERS
+WHERE
+   EVENT_OBJECT_SCHEMA = database();
+
 -- 符合flywave命名规则的
 SELECT
    TRIGGER_NAME,
@@ -299,4 +312,93 @@ FROM
 WHERE
    EVENT_OBJECT_SCHEMA = DATABASE()
   AND TRIGGER_NAME RLIKE '.*\\$(bi|ai|bu|au|bd|ad)';
+```
+
+### 09.获取log表的数据量
+
+```sql
+SELECT
+    table_schema,
+    concat('delete from ',table_name,' where _dt < \'2020-07-01\';'),
+    CEILING(data_length / 1024 / 1024) AS data_mb,
+    CEILING(index_length / 1024 / 1024) AS index_mb,
+    CEILING((data_length + index_length) / 1024 / 1024) AS all_mb,
+    table_rows
+FROM
+    information_schema.tables
+WHERE
+    table_name LIKE '%$log'
+    and table_schema = 'demo_example'
+ORDER BY table_schema , all_mb DESC;
+```
+
+### 10.手动修复历史log模板
+
+```sql
+ALTER TABLE `{{TABLE_NAME}}$log`
+   MODIFY COLUMN `_id` BIGINT(20) NOT NULL AUTO_INCREMENT FIRST,
+   ADD COLUMN `_dt` DATETIME(3) NOT NULL DEFAULT '1000-01-01 00:00:00' AFTER `_id`,
+   ADD COLUMN `_tp` CHAR(1) NOT NULL DEFAULT 'Z' AFTER `_dt`;
+
+DELIMITER $$
+CREATE TRIGGER `{{TABLE_NAME}}$ai` AFTER INSERT ON `{{TABLE_NAME}}`
+   FOR EACH ROW BEGIN
+   IF (@DISABLE_FLYWAVE IS NULL) THEN
+      INSERT INTO `{{TABLE_NAME}}$log` SELECT NULL, NOW(3), 'C', t.* FROM `{{TABLE_NAME}}` t
+      WHERE t.id = NEW.id ;
+   END IF;
+END
+$$
+
+CREATE TRIGGER `{{TABLE_NAME}}$au` AFTER UPDATE ON `{{TABLE_NAME}}`
+   FOR EACH ROW BEGIN
+   IF (@DISABLE_FLYWAVE IS NULL) THEN
+      INSERT INTO `{{TABLE_NAME}}$log` SELECT NULL, NOW(3), 'U', t.* FROM `{{TABLE_NAME}}` t
+      WHERE t.id = NEW.id ;
+   END IF;
+END
+$$
+
+CREATE TRIGGER `{{TABLE_NAME}}$bd` BEFORE DELETE ON `{{TABLE_NAME}}`
+   FOR EACH ROW BEGIN
+   IF (@DISABLE_FLYWAVE IS NULL) THEN
+      INSERT INTO `{{TABLE_NAME}}$log` SELECT NULL, NOW(3), 'D', t.* FROM `{{TABLE_NAME}}` t
+      WHERE t.id = OLD.id ;
+   END IF;
+END
+$$
+DELIMITER ;
+```
+
+### 11.根据log表，局部恢复数据
+
+使用动态SQL，从log表获得最新数据，并REPLACE INTO的主表，
+期间需要关闭 Trigger @DISABLE_FLYWAVE = 1;
+
+为了避免业务干扰，可把log的max_id写入临时表，或固化的sql
+
+```sql
+-- SET @group_concat_max_len = @@global.max_allowed_packet;
+SET @tabl = 'win_user_basis';
+SET @cols = (
+SELECT CONCAT('`',GROUP_CONCAT(COLUMN_NAME SEPARATOR '`, `'), '`') 
+FROM INFORMATION_SCHEMA.COLUMNS 
+WHERE TABLE_SCHEMA = database() AND TABLE_NAME = @tabl 
+GROUP BY TABLE_NAME
+);
+SET @restoreSql = CONCAT(
+-- 'REPLACE INTO ', @tabl,
+' SELECT ', @cols,' FROM ', @tabl,'$log WHERE (_id,id) IN (',
+' SELECT max(_id), id FROM ', @tabl,'$log ',
+' WHERE _tp in (\'D\')'
+' GROUP BY id',
+')');
+
+SELECT @restoreSql;
+-- 
+
+SET @DISABLE_FLYWAVE = 1;
+PREPARE stmt FROM @restoreSql;
+EXECUTE stmt;
+SET @DISABLE_FLYWAVE = NULL;
 ```

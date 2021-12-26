@@ -32,27 +32,6 @@ public class FlywaveVerProp {
     public static final String Key$schemaJournalTable = Key + ".schema-journal-table";
 
     /**
-     * 是否开启标记（ask@）确认
-     * @see #Key$askMark
-     */
-    private boolean askMark = true;
-    public static final String Key$askMark = Key + ".ask-mark";
-
-    /**
-     * 是否开启降级确认
-     * @see #Key$askUndo
-     */
-    private boolean askUndo = true;
-    public static final String Key$askUndo = Key + ".ask-undo";
-
-    /**
-     * 是否开启Drop语句确认
-     * @see #Key$askDrop
-     */
-    private boolean askDrop = true;
-    public static final String Key$askDrop = Key + ".ask-drop";
-
-    /**
      * Drop语句的正则
      * @see #Key$dropReg
      */
