@@ -383,8 +383,8 @@ SET @tabl = 'win_user_basis';
 SET @cols = (
 SELECT CONCAT('`',GROUP_CONCAT(COLUMN_NAME SEPARATOR '`, `'), '`') 
 FROM INFORMATION_SCHEMA.COLUMNS 
-WHERE TABLE_SCHEMA = database() AND TABLE_NAME = @tabl 
-GROUP BY TABLE_NAME
+WHERE TABLE_SCHEMA = database() AND TABLE_NAME = @tabl
+ORDER BY ORDINAL_POSITION
 );
 SET @restoreSql = CONCAT(
 -- 'REPLACE INTO ', @tabl,
@@ -401,4 +401,72 @@ SET @DISABLE_FLYWAVE = 1;
 PREPARE stmt FROM @restoreSql;
 EXECUTE stmt;
 SET @DISABLE_FLYWAVE = NULL;
+```
+
+### 12.如何手工生成日志表
+
+使用flywave，可以有更好的提示，记录。但也可以通过收到sql完成.
+
+```sql
+-- tracer table
+SET @tabl = 'owt_lading_main';
+SET @cols = (
+SELECT
+	GROUP_CONCAT(CONCAT('`',COLUMN_NAME, '` ', COLUMN_TYPE,' COMMENT \'', replace(COLUMN_COMMENT,'\'','\\\''),'\''))
+FROM
+	INFORMATION_SCHEMA.COLUMNS
+WHERE
+	TABLE_SCHEMA = database()
+	AND TABLE_NAME = @tabl
+	ORDER BY ORDINAL_POSITION
+);
+SET @prik = (
+SELECT
+	GROUP_CONCAT(CONCAT('`',COLUMN_NAME, '`'))
+FROM
+	INFORMATION_SCHEMA.COLUMNS
+WHERE
+	TABLE_SCHEMA = database()
+	AND TABLE_NAME = @tabl
+    AND COLUMN_KEY = 'PRI'
+	ORDER BY ORDINAL_POSITION
+);
+
+SET @tracerSql = CONCAT(
+'CREATE TABLE ', @tabl, '$log (',
+' `_id` BIGINT(20) NOT NULL AUTO_INCREMENT, ',
+' `_dt` DATETIME(3) NOT NULL DEFAULT \'1000-01-01 00:00:00\', ',
+' `_tp` CHAR(1) NOT NULL DEFAULT \'Z\', ',
+@cols, ', '
+' PRIMARY KEY (`_id`), ',
+' KEY `RAW_TABLE_PK` (', @prik, ')',
+ ') ENGINE=INNODB DEFAULT CHARSET=UTF8MB4;');
+
+SELECT @tracerSql;
+
+PREPARE stmt FROM @tracerSql;
+EXECUTE stmt;
+
+-- trigger
+SET @tabl = 'win_user_basis';
+SET @triggerSql = CONCAT(
+   'DELIMITER $$\n',
+   'CREATE TRIGGER `', @tabl, '$ai` AFTER INSERT ON `', @tabl,'` FOR EACH ROW BEGIN',
+   ' IF (@DISABLE_FLYWAVE IS NULL) THEN',
+   ' INSERT INTO `',@tabl ,'$log` SELECT NULL, NOW(3), \'C\', t.* FROM `',@tabl ,'` t WHERE t.id = NEW.id ;',
+   ' END IF;',
+   'END$$\n',
+   'CREATE TRIGGER `', @tabl, '$au` AFTER UPDATE ON `', @tabl,'` FOR EACH ROW BEGIN',
+   ' IF (@DISABLE_FLYWAVE IS NULL) THEN',
+   ' INSERT INTO `',@tabl ,'$log` SELECT NULL, NOW(3), \'U\', t.* FROM `',@tabl ,'` t WHERE t.id = NEW.id ;',
+   ' END IF;',
+   'END$$\n',
+   'CREATE TRIGGER `', @tabl, '$bd` BEFORE DELETE ON `', @tabl,'` FOR EACH ROW BEGIN',
+   ' IF (@DISABLE_FLYWAVE IS NULL) THEN',
+   ' INSERT INTO `',@tabl ,'$log` SELECT NULL, NOW(3), \'D\', t.* FROM `',@tabl ,'` t WHERE t.id = OLD.id ;',
+   ' END IF;',
+   'END$$\n'
+   );
+
+select @triggerSql;
 ```
