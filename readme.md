@@ -774,3 +774,27 @@ wings中可以通过暴露AlternateTypeRule bean，自动注入所以Docket中�
 此外，也建议在 mysqld 的配置上，增加 `lower_case_table_names=1`
 
 https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_lower_case_table_names
+
+### 26.如何解压springboot生成的jar
+
+制作executable=true的boot.jar时，不能使用`jar -xzf`解压，需要`unzip`。
+任何时候都推荐使用unzip解压，因为 jar本身也是zip格式。
+
+为什么 executable jar 不能使用jar解压呢，因为spring按executable zip的格式重新打包。
+
+``` bash
+# 显示文件列表
+unzip -l demo-exmaple-1.0.0-SNAPSHOT.jar
+# 查看文件内容
+head demo-exmaple-1.0.0-SNAPSHOT.jar
+#!/bin/bash
+#
+#    .   ____          _            __ _ _
+#   /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+#  ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+#   \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+#    '  |____| .__|_| |_|_| |_\__, | / / / /
+#   =========|_|==============|___/=/_/_/_/
+#   :: Spring Boot Startup Script ::
+#
+```

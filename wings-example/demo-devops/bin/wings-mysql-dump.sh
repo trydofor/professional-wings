@@ -17,7 +17,7 @@ else
 host=localhost
 port=3306
 user=trydofor
-password=moilioncircle
+password=xxxxx
 EOF
   exit
 fi

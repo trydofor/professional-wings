@@ -1,4 +1,5 @@
 #!/bin/bash
+# version 2021-12-27
 
 THIS_PATH=$(pwd)
 BASE_PATH=$(cd `dirname "$0"`; dirname `pwd`)

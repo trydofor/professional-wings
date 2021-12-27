@@ -1,5 +1,6 @@
 #!/bin/sh
-#
+# version 2021-12-27
+
 # 统计提交行数
 echo 'name       '$(git config --get user.name)
 echo 'email      '$(git config --get user.email)

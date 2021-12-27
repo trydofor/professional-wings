@@ -1,7 +1,7 @@
 #!/bin/bash
 cat <<'EOF'
 #################################################
-# version 2021-12-18 # test on mac and lin
+# version 2021-12-21 # test on mac and lin
 # 使用`ln -s`把此脚本软连接到`执行目录/workdir`，
 # 其同名`env`如（wings-starter.env）会被自动载入。
 # `BOOT_CNF|BOOT_ARG|JAVA_ARG`内变量可被延时求值，
@@ -236,7 +236,11 @@ case "$ARGS_RUN" in
         else
             cpid=$(pgrep -f "$pstk" | tr '\n' ' ')
             echo -e "\033[33mNOTE: current PID=$cpid of $BOOT_JAR \033[0m"
-            timeout=60
+            timeout="$2"
+            if [[ "$timeout" == "" ]]; then
+                timeout=30
+            fi
+
             pid=$(cat "$BOOT_PID")
             if [[ $pid -ne $cpid ]]; then
                 echo -e "\033[31mWARN: pid not match, file-pid=$pid , proc-pid=$cpid \033[0m"
@@ -377,7 +381,7 @@ case "$ARGS_RUN" in
             echo -e '\033[37;41;1mERROR: unsupported command, use the following\033[m'
         fi
         echo -e '\033[32m start \033[m start the {boot-jar} and tail the log'
-        echo -e '\033[32m stop \033[m  stop the {boot-jar} gracefully'
+        echo -e '\033[32m stop [snd=30]\033[m stop the {boot-jar} gracefully in {snd} seconds'
         echo -e '\033[32m status \033[m show the {boot-jar} runtime status'
         echo -e '\033[32m warn \033[m monitor the {boot-jar} and log'
         echo -e '\033[32m clean [days=30] [y] \033[m clean up log-file {days} ago'
