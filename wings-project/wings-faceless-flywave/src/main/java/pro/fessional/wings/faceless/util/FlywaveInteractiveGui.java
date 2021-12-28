@@ -8,7 +8,9 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
+import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
@@ -48,8 +50,10 @@ public class FlywaveInteractiveGui {
         };
     }
 
+    private static final LinkedList<BiConsumer<String, String>> hooked = new LinkedList<>();
+
     public static BiConsumer<String, String> logGui() {
-        return new BiConsumer<String, String>() {
+        final BiConsumer<String, String> fun = new BiConsumer<String, String>() {
             private final AtomicInteger counter = new AtomicInteger(0);
             private final JTextPane textPane = new JTextPane();
 
@@ -57,22 +61,17 @@ public class FlywaveInteractiveGui {
                 //textPane.setBounds(0, 0, 1200, 800);
                 JScrollPane scrollPang = new JScrollPane(textPane);
                 JFrame frame = new JFrame("😺😸😹😻😼😽🙀😿😾😺");
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
                 frame.add(scrollPang);
                 frame.setSize(1200, 800);
 
-                //
-                frame.setLocationRelativeTo(null); // 居中
+                // 居中
+                frame.setLocationRelativeTo(null);
                 // 焦点
                 frame.setState(Frame.NORMAL);
                 frame.toFront();
                 frame.requestFocus();
                 frame.setVisible(true);
-
-                Runtime.getRuntime().addShutdownHook(new Thread(() -> showConfirmDialog(
-                        null, "程序退出了，要看的赶紧看",
-                        "😺😸😹😻😼😽🙀😿😾😺",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE)));
             }
 
             @Override
@@ -142,5 +141,38 @@ public class FlywaveInteractiveGui {
                 }
             }
         };
+        if (hooked.isEmpty()) {
+            hooked.add(fun);
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                int res = showConfirmDialog(null, "程序退出了，要看的赶紧看!"
+                                                  + "\n重点关注ERROR内容，logger中更全\n"
+                                                  + "\n[yes] 直接退出 \n[no] 控制台<回车>退出",
+                        "😺😸😹😻😼😽🙀😿😾😺",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (res != 0) {
+                    try {
+                        for (BiConsumer<String, String> bc : hooked) {
+                            bc.accept("WARN", "主程序已退出，在控制台(console)按<回车>退出");
+                        }
+                        System.out.println("主程序已退出，为保留日志窗口，卡 in.read() 呢！");
+                        System.out.println("要在下面按<回车>才能退出，下面↓，下面↓");
+                        //noinspection ResultOfMethodCallIgnored
+                        System.in.read();
+                    }
+                    catch (IOException e) {
+                        // ignore
+                    }
+                }
+            }));
+        }
+
+        return fun;
+    }
+
+    public static void main(String[] args) {
+        final BiConsumer<String, String> log = logGui();
+        log.accept("INFO", "message 1");
+        log.accept("WARN", "message 2");
+        log.accept("ERROR", "message 3");
     }
 }

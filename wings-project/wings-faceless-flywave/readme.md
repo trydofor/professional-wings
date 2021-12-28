@@ -403,12 +403,12 @@ EXECUTE stmt;
 SET @DISABLE_FLYWAVE = NULL;
 ```
 
-### 12.如何手工生成日志表
+### 12.如何手工生成日志表和trigger
 
-使用flywave，可以有更好的提示，记录。但也可以通过收到sql完成.
+使用flywave，可以有更好的提示，记录。但也可以通过手工sql来完成.
 
 ```sql
--- tracer table
+-- 生成log表
 SET @tabl = 'owt_lading_main';
 SET @cols = (
 SELECT
@@ -447,7 +447,7 @@ SELECT @tracerSql;
 PREPARE stmt FROM @tracerSql;
 EXECUTE stmt;
 
--- trigger
+-- 生成trigger sql
 SET @tabl = 'win_user_basis';
 SET @triggerSql = CONCAT(
    'DELIMITER $$\n',

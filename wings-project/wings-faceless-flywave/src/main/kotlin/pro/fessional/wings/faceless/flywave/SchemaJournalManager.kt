@@ -194,6 +194,8 @@ class SchemaJournalManager(
                 } else {
                     badDif.append("\ninsert-tracer")
                     interactive.log(WARN, here, "diff applied ddl-ins-tbl, should manually disable it first. table=$table, db=$plainName")
+                    interactive.log(INFO, here, dbVal["ddl_instbl"] ?: "")
+                    interactive.log(INFO, here, journalDdl.insTbl)
                     if (interactive.needAsk(AskType.ManualCheck)) {
                         interactive.ask("continue?\nupdate diff applied insert-tracer. table=$table")
                     }
@@ -207,6 +209,8 @@ class SchemaJournalManager(
                 } else {
                     badDif.append("\ninsert-trigger")
                     interactive.log(WARN, here, "diff applied ddl-ins-trg, should manually disable it first. table=$table, db=$plainName")
+                    interactive.log(INFO, here, dbVal["ddl_instrg"] ?: "")
+                    interactive.log(INFO, here, journalDdl.insTrg)
                     if (interactive.needAsk(AskType.ManualCheck)) {
                         interactive.ask("continue?\nupdate diff applied insert-trigger. table=$table")
                     }
@@ -222,6 +226,8 @@ class SchemaJournalManager(
                 } else {
                     badDif.append("\nupdate-tracer")
                     interactive.log(WARN, here, "diff applied ddl-upd-tbl, should manually disable it first. table=$table, db=$plainName")
+                    interactive.log(INFO, here, dbVal["ddl_updtbl"] ?: "")
+                    interactive.log(INFO, here, journalDdl.updTbl)
                     if (interactive.needAsk(AskType.ManualCheck)) {
                         interactive.ask("continue?\nupdate diff applied update-tracer. table=$table")
                     }
@@ -236,6 +242,8 @@ class SchemaJournalManager(
                 } else {
                     badDif.append("\nupdate-trigger")
                     interactive.log(WARN, here, "diff applied ddl-upd-trg, should manually disable it first. table=$table, db=$plainName")
+                    interactive.log(INFO, here, dbVal["ddl_updtrg"] ?: "")
+                    interactive.log(INFO, here, journalDdl.updTrg)
                     if (interactive.needAsk(AskType.ManualCheck)) {
                         interactive.ask("continue?\nupdate diff applied update-trigger. table=$table")
                     }
@@ -251,6 +259,8 @@ class SchemaJournalManager(
                 } else {
                     badDif.append("\ndelete-tracer")
                     interactive.log(WARN, here, "diff applied ddl-del-tbl, should manually disable it first. table=$table, db=$plainName")
+                    interactive.log(INFO, here, dbVal["ddl_deltbl"] ?: "")
+                    interactive.log(INFO, here, journalDdl.delTbl)
                     if (interactive.needAsk(AskType.ManualCheck)) {
                         interactive.ask("continue?\nupdate diff applied delete-tracer. table=$table")
                     }
@@ -264,6 +274,8 @@ class SchemaJournalManager(
                 } else {
                     badDif.append("\ndelete-trigger")
                     interactive.log(WARN, here, "diff applied ddl-del-trg, should manually disable it first. table=$table, db=$plainName")
+                    interactive.log(INFO, here, dbVal["ddl_deltrg"] ?: "")
+                    interactive.log(INFO, here, journalDdl.delTrg)
                     if (interactive.needAsk(AskType.ManualCheck)) {
                         interactive.ask("continue?\nupdate diff applied delete-trigger. table=$table")
                     }
@@ -278,17 +290,19 @@ class SchemaJournalManager(
                     interactive.ask("continue?\ntable=$table $badDif")
                 }
 
-                interactive.log(INFO, here, "update diff journal to database table=$table, db=$plainName")
                 updVal.add(commitId)
                 updVal.add(table)
-                val rst = tmpl.update(
-                    """
+                val sql = """
                         UPDATE $schemaJournalTable SET
                             $updSql
                             modify_dt = NOW(3),
                             commit_id = ?
                         WHERE table_name = ?
-                        """.trimIndent(), *updVal.toArray()
+                        """.trimIndent()
+                interactive.log(INFO, here, "update diff journal to database table=$table, db=$plainName")
+                interactive.log(INFO, here, sql)
+                val rst = tmpl.update(
+                    sql, *updVal.toArray()
                 )
                 if (rst != 1) {
                     throw IllegalStateException("failed to update table=$table, db=$plainName")
@@ -482,18 +496,21 @@ class SchemaJournalManager(
                 tmpl.execute(TemplateUtil.replace(tmpDdl, tmpTbl, tmpTrc))
                 interactive.log(INFO, here, "create temp-trace-table=$tmpTbl, db=$plainName")
                 try {
-                    var isSame = true
+                    val diffTbl = HashSet<String>()
                     for ((trc, stf) in trcChk) {
-                        val df = schemaDefinitionLoader.diffFullSame(plainDs, tmpTrc, trc)
+                        val df = schemaDefinitionLoader.diffBoneSame(plainDs, tmpTrc, trc)
                         if (df.isNotEmpty()) {
-                            isSame = false
+                            diffTbl.add(trc)
                             interactive.log(ERROR, here, "different trace-table=$trc of staff=$stf, error=$df")
                         }
                     }
-                    if (isSame) {
-                        interactive.log(INFO, here, "existed traces all the same table=$table, db=$plainName")
+                    if (diffTbl.isEmpty()) {
+                        interactive.log(INFO, here, "existed tracers all the same table=$table, db=$plainName")
                     } else {
-                        interactive.log(ERROR, here, "need manually check the different traces, table=$table, db=$plainName")
+                        interactive.log(ERROR, here, "need manually check different tracers. table=$table, db=$plainName, tracers=${diffTbl.joinToString(",")}")
+                        if (interactive.needAsk(AskType.ManualCheck)) {
+                            interactive.ask("continue?\ndifferent tracers tracers:\n${diffTbl.joinToString("\n")}\ntable=$table")
+                        }
                         continue
                     }
                 } finally {
