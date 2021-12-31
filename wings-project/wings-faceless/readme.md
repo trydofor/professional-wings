@@ -335,5 +335,5 @@ from the session time zone to UTC for storage, and from UTC to the session time 
 
 在mysql中，尽量使用NOW(fsp)，因为其短小明确有缓存，如无必须不可使用SYSDATE(fsp)，参考
 
-* https://dev.mysql.com/doc/refman/8.0/en/time-zone-support.html#time-zone-variables
-* https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_now
+* https://dev.mysql.com/doc/refman/5.7/en/time-zone-support.html#time-zone-variables
+* https://dev.mysql.com/doc/refman/5.7/en/date-and-time-functions.html#function_now

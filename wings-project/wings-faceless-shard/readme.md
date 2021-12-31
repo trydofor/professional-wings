@@ -19,7 +19,7 @@
 
 ## 2.3.2.执行SQL中的事项
 
-[DDL - Data Definition Statements](https://dev.mysql.com/doc/refman/8.0/en/sql-syntax-data-definition.html)
+[DDL - Data Definition Statements](https://dev.mysql.com/doc/refman/5.7/en/sql-syntax-data-definition.html)
 
  * `ALTER TABLE`
  * `CREATE INDEX`
@@ -32,7 +32,7 @@
  
  其中，系统自带的`journal`的trigger外，手写删除会出现数据不一致。
   
-[DML - Data Manipulation Statements](https://dev.mysql.com/doc/refman/8.0/en/sql-syntax-data-manipulation.html)
+[DML - Data Manipulation Statements](https://dev.mysql.com/doc/refman/5.7/en/sql-syntax-data-manipulation.html)
 
  * `DELETE`
  * `INSERT`

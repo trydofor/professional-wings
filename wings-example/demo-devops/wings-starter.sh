@@ -1,11 +1,13 @@
 #!/bin/bash
-cat <<'EOF'
+THIS_VERSION=2021-12-21
+
+cat << EOF
 #################################################
-# version 2021-12-21 # test on mac and lin
-# 使用`ln -s`把此脚本软连接到`执行目录/workdir`，
-# 其同名`env`如（wings-starter.env）会被自动载入。
-# `BOOT_CNF|BOOT_ARG|JAVA_ARG`内变量可被延时求值，
-# 使用`'`为延时求值，使用`"`为立即求值。
+# Version $THIS_VERSION # test on Mac and Lin
+# 使用'ln -s'把此脚本软连接到'执行目录/workdir'，
+# 其同名'env'如（wings-starter.env）会被自动载入。
+# 'BOOT_CNF|BOOT_ARG|JAVA_ARG' 内变量可被延时求值，
+# 使用 ' 为延时求值，使用 " 为立即求值。
 #################################################
 EOF
 ################ modify the following params ################
@@ -24,6 +26,7 @@ JAVA_XMX='4G'    # 启动参数。通过env覆盖
 WARN_TXT=''      # 预设的警告词
 WARN_AGO=''      # 日志多少秒不更新，则警报，空表示忽略
 WARN_RUN=''      # 若pid消失或日志无更新则执行
+# shellcheck disable=SC2016
 JAVA_ARG='-server
 -Djava.awt.headless=true
 -Dfile.encoding=UTF-8
@@ -61,6 +64,7 @@ this_file="$0"
 this_envs=${this_file%.*}.env
 if [[ -f "$this_envs" ]]; then
     echo "env file. $this_envs"
+    # shellcheck disable=SC1090
     source "$this_envs"
 else
     echo -e "\033[31mWARN: no env file found. $this_envs \033[0m"
@@ -80,7 +84,8 @@ if [[ -f "$1" ]]; then
     shift
 else
     # change workdir after found env-file
-    cd $(dirname $this_file) || exit
+    # shellcheck disable=SC2046
+    cd $(dirname "$this_file") || exit
 fi
 echo "work dir $(pwd)"
 
@@ -179,6 +184,7 @@ case "$ARGS_RUN" in
                 gzip "$out_bak"
             fi
 
+            # shellcheck disable=SC2086
             nohup java ${JAVA_ARG} -jar ${BOOT_JAR} ${BOOT_ARG} >${BOOT_OUT} 2>&1 &
             echo $! >"$BOOT_PID"
             sleep 2
@@ -192,6 +198,7 @@ case "$ARGS_RUN" in
             exit
         else
             echo -e "\033[37;43;1mNOTE: current PID=$cpid of $BOOT_JAR \033[0m"
+            # shellcheck disable=SC2086
             ps -fwww $cpid
         fi
 
@@ -251,6 +258,7 @@ case "$ARGS_RUN" in
                 fi
             fi
             echo -e "\033[33mNOTE: killing boot.pid=$pid of $BOOT_JAR \033[0m"
+            # shellcheck disable=SC2086
             kill $pid
 
             icon=''
@@ -274,7 +282,8 @@ case "$ARGS_RUN" in
             echo -e "\033[31mWARN: need manually check PID=$cpid of $BOOT_JAR \033[0m"
             echo -e "\033[33mNOTE: <ENTER> to 'kill -9 $pid', <Ctrl-C> to exit \033[0m"
             read -r
-            kill -9 "$pid"
+            # shellcheck disable=SC2086
+            kill -9 $pid
         fi
         ;;
     status)
@@ -292,19 +301,23 @@ case "$ARGS_RUN" in
             cpid=$(pgrep -f "$pstk" | tr '\n' ' ')
             echo -e "\033[37;43;1mNOTE: boot.pid=$pid \033[0m"
             echo -e "\033[33mNOTE: current PID=$cpid of $BOOT_JAR \033[0m"
+            # shellcheck disable=SC2086
             ps -fwww $cpid
 
             if [[ $pid -ne $cpid ]]; then
                 echo -e "\033[31mWARN: pid not match, proc-pid=$cpid, file-pid=$pid \033[0m"
             fi
 
+            # shellcheck disable=SC2009,SC2086
             mrs=$(ps -o rss $cpid | grep -v RSS | numfmt --grouping)
+            # shellcheck disable=SC2009,SC2086
             mvs=$(ps -o vsz $cpid | grep -v VSZ | numfmt --grouping)
             echo -e "\033[37;43;1mNOTE: ps -o rss -o vsz $cpid \033[0m"
             echo -e "\033[32m Resident= $mrs Kb\033[m"
             echo -e "\033[32m Virtual=  $mvs Kb\033[m"
 
             echo -e "\033[37;43;1mNOTE: jstat -gcutil $cpid 1000 5 \033[0m"
+            # shellcheck disable=SC2086
             jstat -gcutil $cpid 1000 5
 
             echo -e "\033[37;43;1mNOTE: ==== other useful command ==== \033[0m"
@@ -367,7 +380,7 @@ case "$ARGS_RUN" in
         fi
         ;;
     cron)
-        this_path=$(realpath -s $this_file)
+        this_path=$(realpath -s "$this_file")
         echo -e "\033[37;43;1mNOTE: ==== crontab usage ==== \033[0m"
         echo -e "\033[32m crontab -e -u ${USER_RUN} \033[m"
         echo -e "\033[32m crontab -l -u ${USER_RUN} \033[m"
