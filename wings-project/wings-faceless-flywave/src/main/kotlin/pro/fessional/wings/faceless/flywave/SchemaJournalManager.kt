@@ -426,7 +426,6 @@ class SchemaJournalManager(
             val drpTbl = HashMap<String, String>()
 
             val tmpTkn = "___temp_fw79"
-            val tmpTrc = "$table$tmpTkn"
 
             // clean temp table
             for ((_, tblRaw) in tables) {
@@ -489,19 +488,23 @@ class SchemaJournalManager(
 
             // 检测已存在的，所有跟踪表应该结构一致
             if (trcChk.isNotEmpty()) {
+                val tmpTrc = "$table$tmpTkn"
                 val tmpDdl = mergeDdl(tmplTbl, model, tmpTrc)
                 val tmpTbl = parseTblName(tmpDdl)
                 val safeTmp = sqlStatementParser.safeName(tmpTbl)
+                //val tmpRpl = TemplateUtil.replace(tmpDdl, tmpTbl, tmpTrc)
 
-                tmpl.execute(TemplateUtil.replace(tmpDdl, tmpTbl, tmpTrc))
+                tmpl.execute(tmpDdl)
                 interactive.log(INFO, here, "create temp-trace-table=$tmpTbl, db=$plainName")
                 try {
                     val diffTbl = HashSet<String>()
                     for ((trc, stf) in trcChk) {
-                        val df = schemaDefinitionLoader.diffBoneSame(plainDs, tmpTrc, trc)
+                        val df = schemaDefinitionLoader.diffBoneSame(plainDs, tmpTbl, trc)
                         if (df.isNotEmpty()) {
                             diffTbl.add(trc)
                             interactive.log(ERROR, here, "different trace-table=$trc of staff=$stf, error=$df")
+                        } else {
+                            interactive.log(INFO, here, "same bone column trace-table=$trc, temp-trace=$tmpTbl")
                         }
                     }
                     if (diffTbl.isEmpty()) {
