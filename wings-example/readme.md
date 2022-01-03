@@ -12,19 +12,21 @@
 
 ``` bash
 # 设置变量
-USER=trydofor
-PASS=moilioncircle
+PASS=S4f3_Password@MoilionCircle
 
 # 创建一个mysql数据库
 docker run -d \
 --name demo-mysql-5.7 \
 -e MYSQL_DATABASE=demo_example \
--e MYSQL_USER=${USER} \
 -e MYSQL_ROOT_PASSWORD=${PASS} \
--e MYSQL_PASSWORD=${PASS} \
 -p 3306:3306 \
 mysql:5.7
 ```
+
+参考以下文档或脚本，根据需要创建程序运行或数据维护用户
+
+* wings-faceless/readme.md - 单一用户
+* demo-devops/bin/wings-mysql-user.sh - 分离用户
 
 ## 9.3.压力测试
 

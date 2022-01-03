@@ -265,7 +265,7 @@ docker run -d \
 mysql:5.7
 ```
 
-可以通过以下sql创建高权限用户，建议使用wings-mysql-user.sh分离用户
+可以通过以下sql创建高权限用户，建议使用wings-mysql-user.sh独立权限的用户
 ```sql
 CREATE USER 'trydofor'@'%' IDENTIFIED BY 'moilioncircle';
 GRANT ALL ON *.*  TO 'trydofor'@'%'; -- 通常写法
