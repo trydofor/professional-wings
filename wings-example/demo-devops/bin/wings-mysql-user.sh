@@ -5,13 +5,13 @@ cat << EOF
 #################################################
 # Version $THIS_VERSION # test on Mac and Lin
 # 创建database以及和访问的用户
-- {database}.raw SELECT, TEMPORARY TABLE
-- {database}.app {raw} + INSERT, UPDATE, DELETE, EXECUTE
-- {database}.dev ALL - Drop
-- {database}.dba ALL
+- {user_pre}.raw SELECT, TEMPORARY TABLE
+- {user_pre}.app {raw} + INSERT, UPDATE, DELETE, EXECUTE
+- {user_pre}.dev ALL - Drop
+- {user_pre}.dba ALL
 
-# Usage $0 (create|passwd|help) users [config]
-- create/passwd - 创建授权/改密码
+# Usage $0 (create|grant|passwd|help) users [config]
+- create/grant/passwd - 创建/授权/改密码
 - users - 环境脚本(bash语法)，格式参考help
 - config - 存在时，使用'--defaults-extra-file'
 #################################################
@@ -27,23 +27,31 @@ command="$1"
 config="$3"
 
 if [[ "$command" == "" || "$command" == "help" ]]; then
-  # https://dev.mysql.com/doc/refman/5.7/en/account-management-statements.html
-  echo -e '\033[37;42;1mNOTE: users env file\033[m'
-  echo 'execute=true # 非true时，仅显示sql而不执行'
-  echo '# passwd 空为忽略'
-  echo 'database=数据库'
-  echo 'pass_raw=密码'
-  echo 'pass_app=密码'
-  echo 'pass_dev=密码'
-  echo 'pass_dba=密码'
-  echo 'host_raw=%'
-  echo 'host_app=10.11.%'
-  echo 'host_dev=%'
-  echo 'host_dba=%'
-  echo -e '\033[37;42;1mNOTE: user manage\033[m'
-  echo "RENAME USER 'trydofor'@'%' TO 'trydofor'@'127.0.%';"
-  echo "DROP USER IF EXISTS 'trydofor'@'%';"
-  exit
+echo -e '\033[37;42;1mNOTE: users env file\033[m'
+# https://dev.mysql.com/doc/refman/5.7/en/account-management-statements.html
+cat << 'EOF'
+execute=false
+# 用户名前缀
+user_pre=devall
+# 授权db，空格分隔。其中`_`和`%`是通配符，可`\`转义
+grant_db='%'
+# passwd 空为忽略
+pass_raw=$(passwd24)
+pass_app=$(passwd24)
+pass_dev=$(passwd24)
+pass_dba=$(passwd24)
+# host 默认，%
+host_raw=%
+host_app=10.11.%
+host_dev=%
+host_dba=%
+EOF
+echo -e '\033[37;42;1mNOTE: user manage\033[m'
+cat << 'EOF'
+RENAME USER 'trydofor'@'%' TO 'trydofor'@'127.0.%';
+DROP USER IF EXISTS 'trydofor'@'%';
+EOF
+exit
 fi
 
 if [[ -f "$2" ]]; then
@@ -52,9 +60,15 @@ if [[ -f "$2" ]]; then
   source "$2"
 fi
 
-declare database
-if [[ "$database" == "" ]]; then
-  echo -e "\033[37;41;1mERROR: need database in users config \033[0m"
+declare user_pre
+if [[ "$user_pre" == "" ]]; then
+  echo -e "\033[37;41;1mERROR: need user_pre in users config \033[0m"
+  exit
+fi
+
+declare grant_db
+if [[ "$grant_db" == "" ]]; then
+  echo -e "\033[37;41;1mERROR: need grant_db in users config \033[0m"
   exit
 fi
 
@@ -70,51 +84,57 @@ fi
 [[ "$host_dev" == "" ]] && host_dev=%
 [[ "$host_dba" == "" ]] && host_dba=%
 
-exec_cmd="cat"
+exec_cmd=":"
 if [[ "$execute" == "true" ]]; then
   unalias mysql >/dev/null 2>&1
-  exec_cmd="mysql -vvv -f -D $database"
+  exec_cmd="mysql -vvv -f "
   if [[ -f "$config" ]]; then
     echo -e "\033[0;33mNOTE: current config file \033[m"
     cat "$config"
-    exec_cmd="mysql --defaults-extra-file=$config -vvv -f -D $database"
+    exec_cmd="mysql --defaults-extra-file=$config -vvv -f "
   fi
 fi
 
 echo -e '\033[37;42;1mNOTE: users and passwd\033[m'
 grep -v '^#' << EOF
-${user_raw}$database.raw  $pass_raw
-${user_app}$database.app  $pass_app
-${user_dev}$database.dev  $pass_dev
-${user_dba}$database.dba  $pass_dba
+${user_raw}$user_pre.raw  $pass_raw
+${user_app}$user_pre.app  $pass_app
+${user_dev}$user_pre.dev  $pass_dev
+${user_dba}$user_pre.dba  $pass_dba
 EOF
 
 echo -e '\033[37;42;1mNOTE: sql script to execute\033[m'
 
 if [[ "$command" == "create" ]]; then
-db_main=${database//_/\\_}
 grep -v '^#' << EOF | tee /dev/tty | $exec_cmd
 -- create
-${user_raw}CREATE USER '$database.raw'@'$host_raw' IDENTIFIED BY '$pass_raw';
-${user_app}CREATE USER '$database.app'@'$host_app' IDENTIFIED BY '$pass_app';
-${user_dev}CREATE USER '$database.dev'@'$host_dev' IDENTIFIED BY '$pass_dev';
-${user_dba}CREATE USER '$database.dba'@'$host_dba' IDENTIFIED BY '$pass_dba';
--- grant
-${user_raw}GRANT SELECT, CREATE TEMPORARY TABLES ON \`$db_main%\`.* TO '$database.raw'@'$host_raw';
-${user_app}GRANT SELECT, CREATE TEMPORARY TABLES, INSERT, UPDATE, DELETE, EXECUTE ON \`$db_main%\`.* TO '$database.app'@'$host_app';
-${user_dev}GRANT ALL ON \`$db_main%\`.* TO '$database.dev'@'$host_dev';
-${user_dev}REVOKE DROP ON \`$db_main%\`.* FROM '$database.dev'@'$host_dev';
-${user_dba}GRANT ALL ON \`$db_main%\`.* TO '$database.dba'@'$host_dba';
+${user_raw}CREATE USER '$user_pre.raw'@'$host_raw' IDENTIFIED BY '$pass_raw';
+${user_app}CREATE USER '$user_pre.app'@'$host_app' IDENTIFIED BY '$pass_app';
+${user_dev}CREATE USER '$user_pre.dev'@'$host_dev' IDENTIFIED BY '$pass_dev';
+${user_dba}CREATE USER '$user_pre.dba'@'$host_dba' IDENTIFIED BY '$pass_dba';
 EOF
+fi
+
+if [[ "$command" == "grant" ]]; then
+for db_main in $grant_db; do
+grep -v '^#' << EOF | tee /dev/tty | $exec_cmd
+-- grant
+${user_raw}GRANT SELECT, CREATE TEMPORARY TABLES ON \`$db_main\`.* TO '$user_pre.raw'@'$host_raw';
+${user_app}GRANT SELECT, CREATE TEMPORARY TABLES, INSERT, UPDATE, DELETE, EXECUTE ON \`$db_main\`.* TO '$user_pre.app'@'$host_app';
+${user_dev}GRANT ALL ON \`$db_main\`.* TO '$user_pre.dev'@'$host_dev';
+${user_dev}REVOKE DROP ON \`$db_main\`.* FROM '$user_pre.dev'@'$host_dev';
+${user_dba}GRANT ALL ON \`$db_main\`.* TO '$user_pre.dba'@'$host_dba';
+EOF
+done
 fi
 
 if [[ "$command" == "passwd" ]]; then
 grep -v '^#' << EOF | tee /dev/tty | $exec_cmd
 -- change passwd
-${user_raw}ALTER USER '$database.raw'@'$host_raw' IDENTIFIED BY '$pass_raw';
-${user_app}ALTER USER '$database.app'@'$host_app' IDENTIFIED BY '$pass_app';
-${user_dev}ALTER USER '$database.dev'@'$host_dev' IDENTIFIED BY '$pass_dev';
-${user_dba}ALTER USER '$database.dba'@'$host_dba' IDENTIFIED BY '$pass_dba';
+${user_raw}ALTER USER '$user_pre.raw'@'$host_raw' IDENTIFIED BY '$pass_raw';
+${user_app}ALTER USER '$user_pre.app'@'$host_app' IDENTIFIED BY '$pass_app';
+${user_dev}ALTER USER '$user_pre.dev'@'$host_dev' IDENTIFIED BY '$pass_dev';
+${user_dba}ALTER USER '$user_pre.dba'@'$host_dba' IDENTIFIED BY '$pass_dba';
 EOF
 fi
 

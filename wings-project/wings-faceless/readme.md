@@ -251,6 +251,7 @@ innodb_ft_min_token_size    = 1
 ft_min_word_len             = 1
 character-set-server        = UTF8MB4
 max_allowed_packet          = 1024M
+default-time-zone           = '+8:00'
 skip_ssl
 EOF
 # 启动docker
@@ -264,12 +265,13 @@ docker run -d \
 mysql:5.7
 ```
 
+可以通过以下sql创建高权限用户，建议使用wings-mysql-user.sh分离用户
 ```sql
 CREATE USER 'trydofor'@'%' IDENTIFIED BY 'moilioncircle';
-GRANT ALL  ON *.*  TO 'trydofor'@'%'; -- 通常写法
-# GRANT ALL  ON `*`.*  TO 'trydofor'@'%'; -- 某些版本
+GRANT ALL ON *.*  TO 'trydofor'@'%'; -- 通常写法
+-- GRANT ALL  ON `%`.*  TO 'trydofor'@'%'; -- 上述有语法错误时
 SHOW GRANTS FOR 'trydofor'@'%';
-# DROP USER 'trydofor'@'%';
+-- DROP USER 'trydofor'@'%';
 FLUSH PRIVILEGES;
 ```
 
