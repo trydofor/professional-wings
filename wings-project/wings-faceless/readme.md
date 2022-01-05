@@ -252,6 +252,7 @@ ft_min_word_len             = 1
 character-set-server        = UTF8MB4
 max_allowed_packet          = 1024M
 default-time-zone           = '+8:00'
+log_bin_trust_function_creators = 1
 skip_ssl
 EOF
 # 启动docker

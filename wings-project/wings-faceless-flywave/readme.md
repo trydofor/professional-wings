@@ -247,6 +247,13 @@ WHERE table_schema = DATABASE()
     AND table_name like '%$%'
     group by tbl;
 
+SELECT
+   table_name,
+   CONCAT('DROP TABLE IF EXISTS ',table_name,';')
+FROM INFORMATION_SCHEMA.TABLES
+WHERE table_schema = DATABASE()
+  AND table_name like '%$%';
+
 -- 仅分表
 SELECT 
     reverse(substring(reverse(table_name),length(substring_index(table_name,'_',-1))+1)) as tbl,
@@ -255,6 +262,13 @@ FROM INFORMATION_SCHEMA.TABLES
 WHERE table_schema = DATABASE()
     AND table_name REGEXP '_[0-9]+$'
     group by tbl;
+
+SELECT
+   table_name,
+   CONCAT('DROP TABLE IF EXISTS ',table_name,';')
+FROM INFORMATION_SCHEMA.TABLES
+WHERE table_schema = DATABASE()
+  AND table_name REGEXP '_[0-9]+$';
 
 -- 仅主表
 SELECT table_name

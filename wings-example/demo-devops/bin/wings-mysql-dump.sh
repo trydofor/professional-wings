@@ -7,18 +7,20 @@ cat << EOF
 # 通过 mysqldump 生成 'db-ts' 开头的以下文件，
 - {db-ts}-main.sql 主表
 - {db-ts}-logs.sql log表
-- {db-ts}.log db中所有的表及dump文件
-- {db-ts}.txt scp及restore手册
+- {db-ts}-tbl.log dump的表及结果信息
+- {db-ts}-tip.txt scp及restore手册
 
-# Usage $0 database [config] [nodata]
+# Usage $0 database [option] [nodata]
 - database - 需要dump的database，必填
-- config - 存在时，使用'--defaults-extra-file'
-- nodata - 非空时，增加'--no-data'参数
+- option - 存在时，使用'--defaults-extra-file'
+- nodata - 非空时，增加'--skip-dump-rows'参数
+# option 详细参考client和mysqldump段
+- https://dev.mysql.com/doc/refman/5.7/en/option-files.html
 #################################################
 EOF
 
 database="$1"
-config="$2"
+option="$2"
 nodata="$3"
 
 if [[ "$database" == "" ]]; then
@@ -27,97 +29,126 @@ if [[ "$database" == "" ]]; then
 fi
 
 # https://dev.mysql.com/doc/refman/5.7/en/option-files.html
-my_conf=""
-if [[ -f "$config" ]]; then
-  echo -e "\033[0;33mNOTE: current config file \033[m"
-  cat "$config"
-  my_conf="--defaults-extra-file=$config"
+opt_file=""
+if [[ -f "$option" ]]; then
+  echo -e "\033[0;33mNOTE: current option file \033[m"
+  cat "$option"
+  opt_file="--defaults-extra-file=$option"
 else
   echo -e "\033[0;31mNOTE: use mysql default(my.cnf), something like\033[m"
-  echo '[client]'
-  echo 'host=127.0.0.1'
-  echo 'port=3306'
-  echo 'user=trydofor'
-  echo 'password=xxxxx'
+cat << 'EOF'
+[client]
+protocol=tcp
+host=127.0.0.1
+port=3306
+user=trydofor
+password=moilioncircle
+
+[mysqldump]
+#column-statistics=0
+max-allowed-packet=64M
+net-buffer-length=64k
+set-gtid-purged=OFF
+single-transaction
+EOF
 fi
 echo
 
-# https://dev.mysql.com/doc/refman/5.7/en/mysqldump.html#mysqldump-performance-options
-dump_opt=""
+opt_nodata=""
 if [[ "$nodata" != "" ]]; then
-  dump_opt='--no-data'
+  opt_nodata='--no-data'
 fi
 
 ###
 dump_head="${database}-$(date '+%Y%m%d%H%M%S')"
 dump_main_file="$dump_head-main.sql"
 dump_logs_file="$dump_head-logs.sql"
-dump_tbls_file="$dump_head.log"
-dump_help_file="$dump_head.txt"
-dump_gzip_file="$dump_head.gz"
+dump_tbl_file="$dump_head-tbl.log"
+dump_tip_file="$dump_head-tip.txt"
+dump_tar_file="$dump_head.tgz"
+dump_md5_file="$dump_head.md5"
 
 unalias mysql >/dev/null 2>&1
 unalias mysqldump >/dev/null 2>&1
 
-if mysql "$my_conf" -D "$database" -N -e "show tables" > "$dump_tbls_file"; then
+if mysql "$opt_file" -D "$database" -N -e "show tables" > "$dump_tbl_file"; then
   echo "successfully show tables"
 else
   echo -e "\033[37;41;1mERROR: failed to show tables of $database \033[0m"
-  rm -rf "$dump_tbls_file"
+  rm -rf "$dump_tbl_file"
   exit
 fi
 
-logs_cnt=$(grep -cF '$' "$dump_tbls_file")
+logs_cnt=$(grep -cF '$' "$dump_tbl_file")
 if [[ $logs_cnt == 0 ]]; then
   echo "no logs tables to dump"
   echo "-- no logs tables to dump" > "$dump_logs_file"
 else
   echo -e "\033[0;33mNOTE: dump logs tables without data, tables=\033[m"
-  grep -F '$' "$dump_tbls_file"
+  grep -F '$' "$dump_tbl_file"
 
   # shellcheck disable=SC2046
-  mysqldump "$my_conf" \
-  --no-data \
-  --set-gtid-purged=OFF \
-  --single-transaction \
-  --column-statistics=0 \
-  --databases "$database" \
-  --tables $(grep -F '$' "$dump_tbls_file") > "$dump_logs_file"
+  if mysqldump "$opt_file" --no-data \
+  "$database" $(grep -F '$' "$dump_tbl_file") > "$dump_logs_file"; then
+    echo "successfully dump logs"
+  else
+    echo -e "\033[37;41;1mERROR: failed to dump logs \033[0m"
+    exit
+  fi
 fi
 
-main_cnt=$(grep -cvF '$' "$dump_tbls_file")
+main_cnt=$(grep -cvF '$' "$dump_tbl_file")
 if [[ $main_cnt == 0 ]]; then
   echo "no main tables to dump"
   echo "-- no main tables to dump" > "$dump_main_file"
 else
   echo -e "\033[0;33mNOTE: dump main tables with data, count=\033[m"
   # shellcheck disable=SC2046
-  mysqldump "$my_conf" \
-  --set-gtid-purged=OFF \
-  --single-transaction \
-  --column-statistics=0 \
-  --opt $dump_opt \
-  --quick \
-  --max-allowed-packet=64M \
-  --net-buffer-length=64k \
-  --databases "$database" \
-  --tables $(grep -vF '$' "$dump_tbls_file") > "$dump_main_file"
+  if mysqldump "$opt_file" $opt_nodata \
+  "$database" $(grep -vF '$' "$dump_tbl_file") > "$dump_main_file"; then
+    echo "successfully dump main"
+  else
+    echo -e "\033[37;41;1mERROR: failed to dump main \033[0m"
+    exit
+  fi
 fi
 
 echo -e "\033[0;33mNOTE: dump file $dump_head\033[m"
-echo >> "$dump_tbls_file"
+echo >> "$dump_tbl_file"
+
 # shellcheck disable=SC2010
-ls -lsh |grep "$dump_head" | tee -a "$dump_tbls_file"
+ls -lsh |grep "$dump_head" | tee -a "$dump_tbl_file"
 
 echo -e "\033[0;33mNOTE: tips for zip, scp, restore \033[m"
-tee -a "$dump_help_file" << EOF
-gzip -c $dump_logs_file $dump_main_file> $dump_gzip_file
-scp $dump_gzip_file trydofor@moilioncircle:/data/mysql-dump/
+tee -a "$dump_tip_file" << EOF
+md5sum -c $dump_md5_file
+
+tar -tzf $dump_tar_file
+tar -xzf $dump_tar_file
+
+scp $dump_tar_file trydofor@moilioncircle:/data/mysql-dump/
 
 unalias mysql
-gzip -dc $dump_gzip_file | pv -Ipert | mysql $my_conf \\
---init-command="CREATE DATABASE IF NOT EXISTS $dump_head; use $dump_head;"
+newdb="\\\`$dump_head\\\`"
 
-nohup gzip -dc $dump_gzip_file | mysql $my_conf \\
---init-command="CREATE DATABASE IF NOT EXISTS $dump_head; use $dump_head;" &
+# with progress
+cat $dump_logs_file $dump_main_file \\
+| pv -Ipert \\
+| sed -E 's/DEFINER=[^*]+/DEFINER=CURRENT_USER/g' \\
+| mysql $opt_file \\
+--init-command="CREATE DATABASE IF NOT EXISTS \$newdb; use \$newdb;"
+
+# nohup
+nohup \\
+cat $dump_logs_file $dump_main_file \\
+| sed -E 's/DEFINER=[^*]+/DEFINER=CURRENT_USER/g' \\
+| mysql $opt_file \\
+--init-command="CREATE DATABASE IF NOT EXISTS \$newdb; use \$newdb;" \\
+&
 EOF
+
+echo -e "\033[0;33mNOTE: tar files into $dump_tar_file \033[m"
+tar -czf "$dump_tar_file" "$dump_main_file" "$dump_logs_file" "$dump_tbl_file" "$dump_tip_file" \
+&& md5sum "$dump_tar_file" | tee "$dump_md5_file" \
+&& rm -f "$dump_main_file" "$dump_logs_file" "$dump_tbl_file" "$dump_tip_file"
+

@@ -10,10 +10,12 @@ cat << EOF
 - {user_pre}.dev ALL - Drop
 - {user_pre}.dba ALL
 
-# Usage $0 (create|grant|passwd|help) users [config]
+# Usage $0 {create|grant|passwd|help} users [option]
 - create/grant/passwd - 创建/授权/改密码
 - users - 环境脚本(bash语法)，格式参考help
-- config - 存在时，使用'--defaults-extra-file'
+- option - 存在时，使用'--defaults-extra-file'
+# option 详细参考client段
+- https://dev.mysql.com/doc/refman/5.7/en/option-files.html
 #################################################
 EOF
 
@@ -24,7 +26,7 @@ function passwd24() {
 #####
 execute=false
 command="$1"
-config="$3"
+option="$3"
 
 if [[ "$command" == "" || "$command" == "help" ]]; then
 echo -e '\033[37;42;1mNOTE: users env file\033[m'
@@ -55,20 +57,20 @@ exit
 fi
 
 if [[ -f "$2" ]]; then
-  echo "load users config from $2"
+  echo "load users option from $2"
   # shellcheck disable=SC1090
   source "$2"
 fi
 
 declare user_pre
 if [[ "$user_pre" == "" ]]; then
-  echo -e "\033[37;41;1mERROR: need user_pre in users config \033[0m"
+  echo -e "\033[37;41;1mERROR: need user_pre in users option \033[0m"
   exit
 fi
 
 declare grant_db
 if [[ "$grant_db" == "" ]]; then
-  echo -e "\033[37;41;1mERROR: need grant_db in users config \033[0m"
+  echo -e "\033[37;41;1mERROR: need grant_db in users option \033[0m"
   exit
 fi
 
@@ -88,10 +90,10 @@ exec_cmd=":"
 if [[ "$execute" == "true" ]]; then
   unalias mysql >/dev/null 2>&1
   exec_cmd="mysql -vvv -f "
-  if [[ -f "$config" ]]; then
-    echo -e "\033[0;33mNOTE: current config file \033[m"
-    cat "$config"
-    exec_cmd="mysql --defaults-extra-file=$config -vvv -f "
+  if [[ -f "$option" ]]; then
+    echo -e "\033[0;33mNOTE: current option file \033[m"
+    cat "$option"
+    exec_cmd="mysql --defaults-extra-file=$option -vvv -f "
   fi
 fi
 
@@ -124,6 +126,8 @@ ${user_app}GRANT SELECT, CREATE TEMPORARY TABLES, INSERT, UPDATE, DELETE, EXECUT
 ${user_dev}GRANT ALL ON \`$db_main\`.* TO '$user_pre.dev'@'$host_dev';
 ${user_dev}REVOKE DROP ON \`$db_main\`.* FROM '$user_pre.dev'@'$host_dev';
 ${user_dba}GRANT ALL ON \`$db_main\`.* TO '$user_pre.dba'@'$host_dba';
+${user_dba}GRANT SELECT ON mysql.* TO '$user_pre.dba'@'$host_dba';
+${user_dba}GRANT RELOAD,SHOW VIEW,EXECUTE,FILE,PROCESS,REPLICATION CLIENT,REPLICATION SLAVE ON *.* TO '$user_pre.dba'@'$host_dba';
 EOF
 done
 fi
