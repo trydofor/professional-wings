@@ -91,6 +91,7 @@ public class WingsFlywaveConfiguration {
     @Bean
     public SqlStatementParser sqlStatementParser(FlywaveSqlProp conf) {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
+            logger.info("config sqlStatementParser");
             return new MySqlStatementParser();
         }
         else {
@@ -99,8 +100,19 @@ public class WingsFlywaveConfiguration {
     }
 
     @Bean
-    public SqlSegmentProcessor sqlSegmentParser(FlywaveSqlProp conf) {
+    public SqlSegmentProcessor sqlSegmentProcessor(FlywaveSqlProp conf) {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
+            final String fs = conf.getFormatShard();
+            if (fs != null && !fs.isEmpty()) {
+                logger.info("config static ShardFormat=" + fs);
+                SqlSegmentProcessor.setShardFormat(fs);
+            }
+            final String ft = conf.getFormatTrace();
+            if (ft != null && !ft.isEmpty()) {
+                logger.info("config static TraceFormat=" + ft);
+                SqlSegmentProcessor.setTraceFormat(ft);
+            }
+            logger.info("config sqlSegmentParser");
             return new SqlSegmentProcessor(conf.getCommentSingle(),
                     conf.getCommentMultiple(),
                     conf.getDelimiterDefault(),
@@ -114,6 +126,7 @@ public class WingsFlywaveConfiguration {
     @Bean
     public SchemaDefinitionLoader schemaDefinitionLoader(FlywaveSqlProp conf) {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
+            logger.info("config schemaDefinitionLoader");
             return new MysqlDefinitionLoader();
         }
         else {

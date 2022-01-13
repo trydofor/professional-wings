@@ -56,12 +56,12 @@ class SqlSegmentParserTest {
     fun `test2🦁改名🦁影子表`() {
         val segs = sqlSegmentProcessor.parse(sqlStatementParser, "ALTER TABLE `table_a` RENAME TO `table_b`")
         val segment = segs[0]
-        val tbls = segment.applyTbl(listOf("table_a", "table_a${'$'}log"))
+        val tbls = segment.applyTbl(listOf("table_a", "table_a\$log"))
 
         val sql1 = sqlSegmentProcessor.merge(segment, tbls["table_a"]!!)
         Assertions.assertEquals("ALTER TABLE `table_a` RENAME TO `table_b`", sql1)
 
-        val sql2 = sqlSegmentProcessor.merge(segment, tbls["table_a${'$'}log"]!!)
-        Assertions.assertEquals("ALTER TABLE `table_a${'$'}log` RENAME TO `table_b${'$'}log`", sql2)
+        val sql2 = sqlSegmentProcessor.merge(segment, tbls["table_a\$log"]!!)
+        Assertions.assertEquals("ALTER TABLE `table_a${'$'}log` RENAME TO `table_b\$log`", sql2)
     }
 }

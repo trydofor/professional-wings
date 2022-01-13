@@ -54,4 +54,19 @@ public class FlywaveSqlProp {
     private String commentMultiple = "/*   */";
     public static final String Key$commentMultiple = Key + ".comment-multiple";
 
+    /**
+     * 设置分表格式
+     *
+     * @see #Key$formatShard
+     */
+    private String formatShard = "";
+    public static final String Key$formatShard = Key + ".format-shard";
+
+    /**
+     * 设置跟踪表格式
+     *
+     * @see #Key$formatTrace
+     */
+    private String formatTrace = "";
+    public static final String Key$formatTrace = Key + ".format-trace";
 }

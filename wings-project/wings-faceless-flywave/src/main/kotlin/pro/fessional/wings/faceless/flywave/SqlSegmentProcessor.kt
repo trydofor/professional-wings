@@ -67,10 +67,10 @@ class SqlSegmentProcessor(
             if (tbls.isEmpty()) return emptyMap()
             val tkns = tblIdx2.values.map { (_, v) -> v }.toSet()
 
+            // table => ( token => replacement)
             return tbls.associateWith {
-                val tle = it.substringAfter(tblName)
                 tkns.associateWith { tk ->
-                    tk + tle
+                    it.replace(tblName, tk)
                 }
             }
         }
@@ -298,14 +298,60 @@ class SqlSegmentProcessor(
      */
     fun merge(segment: Segment, newTbl: Map<String, String>) = TemplateUtil.merge(segment.sqlText, segment.tblIdx2, newTbl)
 
+    @Suppress("MemberVisibilityCanBePrivate")
     companion object {
         const val TYPE_OTHER = -1
         const val TYPE_PLAIN = 0
         const val TYPE_TRACE = 1
         const val TYPE_SHARD = 2
 
-        private val regShard = "_[0-9]+".toRegex()
-        private val regTrace = "(_[0-9]+)?\\\$\\w+".toRegex()
+        /**
+         * 本表占位符，XXX
+         */
+        const val PLAIN_TABLE = "XXX"
+
+        /**
+         * XXX_01形式的shard表达式
+         */
+        const val SHARD_LINE_SEQ = "${PLAIN_TABLE}_[0-9]+"
+
+        /**
+         * XXX$log形式的trace表达式
+         */
+        const val TRACE_DOLLAR = "${PLAIN_TABLE}(_[0-9]+)?\\\$[a-z]+"
+
+        /**
+         * XXX__log形式的trace表达式
+         */
+        const val TRACE_SU2_LINE = "${PLAIN_TABLE}(_[0-9]+)?__+[a-z]+"
+
+        /**
+         * _log_XXX形式的trace表达式
+         */
+        const val TRACE_PRE_LINE = "_+([a-z]+_+)?${PLAIN_TABLE}(_[0-9]+)?"
+
+        private var regShard = SHARD_LINE_SEQ.toRegex(RegexOption.IGNORE_CASE)
+        private var regTrace = TRACE_DOLLAR.toRegex(RegexOption.IGNORE_CASE)
+
+        /**
+         * 设置分表格式表达式，以`XXX`表示主表。
+         * @param reg 正则，默认 `XXX_[0-9]+`
+         */
+        @JvmStatic
+        fun setShardFormat(reg: String) {
+            assert(reg.contains(PLAIN_TABLE)) { "Regexp MUST contains $PLAIN_TABLE" }
+            regShard = reg.toRegex(RegexOption.IGNORE_CASE)
+        }
+
+        /**
+         * 设置跟踪格式表达式，以`XXX`表示主表。
+         * @param reg 正则，默认`XXX(_[0-9]+)?\$\w+`
+         */
+        @JvmStatic
+        fun setTraceFormat(reg: String) {
+            assert(reg.contains(PLAIN_TABLE)) { "Regexp MUST contains $PLAIN_TABLE" }
+            regTrace = reg.toRegex(RegexOption.IGNORE_CASE)
+        }
 
         /**
          * 判断两表关系，忽略大小写
@@ -319,11 +365,11 @@ class SqlSegmentProcessor(
          */
         fun hasType(table: String, other: String): Int {
             val pos = other.indexOf(table, 0, true)
-            if (pos != 0) return TYPE_OTHER
+            if (pos < 0) return TYPE_OTHER
 
-            val suf = other.substring(table.length)
+            val suf = other.replace(table, PLAIN_TABLE);
             return when {
-                suf.isEmpty() -> TYPE_PLAIN
+                suf == PLAIN_TABLE -> TYPE_PLAIN
                 regShard.matches(suf) -> {
                     TYPE_SHARD
                 }
@@ -339,13 +385,13 @@ class SqlSegmentProcessor(
         // -- wgs_order@plain apply@ctr_clerk[_0-0]* error@skip ask@danger
         private val cmdReg = """([^@\s]+)?\s*@\s*([^@\s]+)""".toRegex(RegexOption.MULTILINE)
 
-        data class Opt (
-            val tbl:String = Null.Str,
-            val dbs:String = Null.Str,
-            val apl:String = Null.Str,
-            val ers:String = Null.Str,
-            val ask:String = Null.Str,
-            val trg:Boolean = false
+        data class Opt(
+            val tbl: String = Null.Str,
+            val dbs: String = Null.Str,
+            val apl: String = Null.Str,
+            val ers: String = Null.Str,
+            val ask: String = Null.Str,
+            val trg: Boolean = false
         )
 
         fun parseCmd(line: String, head: String): Opt? {

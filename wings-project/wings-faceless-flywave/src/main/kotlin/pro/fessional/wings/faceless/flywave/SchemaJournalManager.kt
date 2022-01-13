@@ -571,7 +571,7 @@ class SchemaJournalManager(
 
     private fun mergeDdl(ddl: String, map: HashMap<String, String>, table: String): String {
         val tkn = listOf(PLAIN_NAME, TABLE_NAME, TABLE_BONE, TABLE_PKEY)
-        val idx = TemplateUtil.parse(ddl, tkn)
+        val idx = TemplateUtil.parse(ddl, tkn, "'", false)
 
         map[TABLE_NAME] = table
         return TemplateUtil.merge(ddl, idx, map)

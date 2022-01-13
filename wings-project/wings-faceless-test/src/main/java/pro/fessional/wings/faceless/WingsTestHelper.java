@@ -64,7 +64,7 @@ public class WingsTestHelper {
             tmpl.query("SHOW TABLES", rs -> {
                 String tbl = rs.getString(1);
                 testcaseNotice("drop table " + tbl);
-                tmpl.execute("DROP TABLE " + tbl);
+                tmpl.execute("DROP TABLE `" + tbl + "`");
             });
         });
     }

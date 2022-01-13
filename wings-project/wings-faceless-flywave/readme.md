@@ -65,7 +65,7 @@ JDBC数据源(DataSource)，分为两种，他们会存在于`DataSourceContext`
  * 三种表，一定会保持相同的表结构（名字，类型，前后关系），同步更新。
 
 
-`$`是命名中的特殊字符，定义`跟踪表`。比如替换时。
+`$`是命名中的特殊字符，定义`跟踪表`，但dollar在很多环境中需要转义，如shell，regexp。
 sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/resources/wings-flywave/readme.md)
 
 数据库中尽量不要`nullable`，约定默认值代替，如`convention.EmptyValue`类
@@ -484,3 +484,27 @@ SET @triggerSql = CONCAT(
 
 select @triggerSql;
 ```
+
+### 13.工具或DB不支持`$`命名怎么办
+
+英数美刀下划线(`[0-9,a-z,A-Z$_]`)都是mysql官方无需转义的合法的[命名字符](https://dev.mysql.com/doc/refman/5.7/en/identifiers.html)
+但某些不完备的云DB或工具，未做好处理，属于其功能缺陷。
+
+若无法更换DB或工具，可以修改wings的默认约定及实现。
+此选项，为隐藏功能，通过基本测试，通常情况下不建议使用。
+
+* 变更后缀的分隔符，如`__`，两个下划线。
+* 使用前缀，如`_`，以下划线开头。
+
+每个方案，都会影响flywave的配表及脚本，需要逐一修改。
+使用前缀时，还会影响表名排序，视觉上无法直观的看到主表是否有跟踪表。
+
+简单的方式是修改`wings.faceless.flywave.ver.format-`配置。
+
+原理是修改 SqlSegmentProcessor.setXXXFormat方法，设置表达式，
+要求表达式必须精准，避免误判主表，分表，跟踪表的关系。
+以`XXX`表示主表，`#`表示字母，SqlSegmentProcessor 默认提供了3种表达式
+
+* TRACE_DOLLAR - 以dollar`$`后缀分隔，如`XXX$#`
+* TRACE_SU2_LINE - 以双下划线`__`后缀分隔，如`XXX__#`
+* TRACE_PRE_LINE - 以单下划线`_`前缀分隔，如`_XXX`或`_#_XXX`
