@@ -23,6 +23,7 @@ import pro.fessional.wings.slardar.security.WingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.servlet.ContentTypeHelper;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
+import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
@@ -63,16 +64,16 @@ public class LoginPageController {
     }
 
     @SuppressWarnings("MVCPathVariableInspection")
-    @ApiOperation(value = "具体验证登录默认页，根据content-type自动返回",
-            notes = "一般用于定制访问，如github页面重定向。"
-                    + "①当鉴权失败时，重定向页面，status=401;"
+    @ApiOperation(value = "具体验证登录默认页，根据content-type及extName规则做相应的处理",
+            notes = "一般用于定制访问，比如构造Oauth的重定向参数。"
+                    + "①当鉴权失败，重定向到此页面时，status=401;"
                     + "②直接访问时返回status=200;"
-                    + "参数⑴state，用于构造oauth2的有意义的state，支持MessageFormat;"
+                    + "参数⑴state，用于构造oauth2的有意义的state，支持MessageFormat，state[0]作为Format的key,state[]都为参数;"
                     + "参数⑵host，用于构造oauth2的重定向host(减少跨域)")
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginPage + "}", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<?> LoginPage(@PathVariable("authType") String authType,
                                        @PathVariable("extName") String extName,
-                                       @RequestParam(value = "state", required = false) List<String> state,
+                                       @RequestParam(value = AuthStateBuilder.ParamState, required = false) List<String> state,
                                        @RequestParam(value = "host", required = false) String host,
                                        HttpServletRequest request,
                                        HttpServletResponse response) {
@@ -121,11 +122,13 @@ public class LoginPageController {
 
     @SuppressWarnings("MVCPathVariableInspection")
     @ApiOperation(value = "登录接口，有filter处理，仅做文档",
-            notes = "根据类型自动处理，参考 wings.warlock.security.login-url")
+            notes = "根据类型自动处理，参考 wings.warlock.security.login-url"
+                    + "username可变，参考 wings.warlock.security.username-para"
+                    + "password可变，参考 wings.warlock.security.password-para")
     @PostMapping(value = "${" + WarlockSecurityProp.Key$loginUrl + "}")
     public String login(@PathVariable("authType") String authType,
-                        @RequestParam(value = "username", defaultValue = "参考 wings.warlock.security.username-para") String username,
-                        @RequestParam(value = "password", defaultValue = "参考 wings.warlock.security.password-para") String password) {
+                        @RequestParam("username") String username,
+                        @RequestParam("password") String password) {
         log.info("authType={}, username={}, password={}", authType, username, password);
         return "handler by filter, never here";
     }

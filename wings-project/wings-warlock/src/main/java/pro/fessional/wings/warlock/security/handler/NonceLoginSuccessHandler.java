@@ -50,7 +50,7 @@ public class NonceLoginSuccessHandler implements AuthenticationSuccessHandler {
             NonceTokenSessionHelper.swapNonceSid(uid, sid);
         }
 
-        final String state = authStateBuilder.parseParam(request.getParameter("state"));
+        final String state = authStateBuilder.parseParam(request.getParameter(AuthStateBuilder.ParamState));
         if (state != null) {
             log.info("parse client state={}, uid={}", state, uid);
         }

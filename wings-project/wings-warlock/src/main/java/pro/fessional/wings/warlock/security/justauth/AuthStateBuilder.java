@@ -25,6 +25,8 @@ public class AuthStateBuilder {
 
     private final Map<String, String> safeState;
 
+    public static final String ParamState = "state";
+
     @NotNull
     public String buildState(String... param) {
         // 167823d90c46cd70e3961b3f070a871c 32
