@@ -1,0 +1,13 @@
+[client]
+protocol=tcp
+host=127.0.0.1
+port=3306
+user=trydofor
+password=moilioncircle
+
+[mysqldump]
+#column-statistics=0
+max-allowed-packet=64M
+net-buffer-length=64k
+set-gtid-purged=OFF
+single-transaction

@@ -36,10 +36,10 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
 
 由以下几个子工程构成，
 
-* [沉默术士/silencer](wings-silencer/readme.md) springboot的工程化装配，I18n等
-* [虚空假面/faceless](wings-faceless/readme.md) 数据层，分表分库，数据及库的版本管理
-* [鱼人守卫/slardar](wings-slardar/readme.md) Servlet体系的WebMvc基础约定和封装
-* [术士大叔/warlock](wings-warlock/readme.md) 综合以上的基础业务模块和功能脚手架
+* [沉默术士/silencer](wings-project/wings-silencer/readme.md) springboot的工程化装配，I18n等
+* [虚空假面/faceless](wings-project/wings-faceless/readme.md) 数据层，分表分库，数据及库的版本管理
+* [鱼人守卫/slardar](wings-project/wings-slardar/readme.md) Servlet体系的WebMvc基础约定和封装
+* [术士大叔/warlock](wings-project/wings-warlock/readme.md) 综合以上的基础业务模块和功能脚手架
 * [演示例子/example](wings-example/readme.md) 集成以上的样板工程和例子
 
 wings的版本号为`4段分隔`，前3段为spring-boot版本，第4段是changelist。 build是3位数字，第1位为大版本，意味着大调整，不兼容，后2位是小版本，意味着基本兼容或容易适配。
@@ -60,6 +60,7 @@ wings的版本号为`4段分隔`，前3段为spring-boot版本，第4段是chang
 `wings-idea-live.xml`需要手动放到`$config/templates/`，没有则新建。
 
 ```
+cd wings-project
 id_config=~/Library/ApplicationSupport/JetBrains/IntelliJIdea2021.1
 # 通过复制，备份
 cat $id_config/templates/wings.xml > wings-idea-live.xml
@@ -556,6 +557,11 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。 �
 * 使用jackson注解 @JsonRawValue
 * 使用fastjson(不推荐，需1.2.69+，SafeMode, 安全漏洞)
 
+在Jackson和Fastjson的使用上，考虑到安全及兼容性，遵循以下约定
+* FastJson用于①安全环境的读写，②对不安全的写，不读入外部json
+* FastJson用于静态环境，即不能优雅注入jackson的情况
+* 此外，都应该使用Jackson
+
 ### 06.为什么是dota的英雄
 
 有这样一个团队，她是做对日金融的，穿拖鞋裤衩上班，课间可以团dota，cs，跑跑卡丁车。 日本人组团爱上了瓜子，黄飞红，米线，火锅。团队只有一个要求，活干的漂亮，快，零缺陷。
@@ -699,7 +705,7 @@ wings本身是时区敏感的，一般要求jvm和mysql在同一时区，主要�
 
 Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控制台以Error形式输出。
 
-更多信息，参考 [04.日时零值和时区问题](wings-faceless/readme.md#04.日时零值和时区问题)
+更多信息，参考 [04.日时零值和时区问题](wings-project/wings-faceless/readme.md#04.日时零值和时区问题)
 
 ### 19.无外网mysql如何执行flywave版本管理
 
@@ -758,3 +764,37 @@ wings中可以通过暴露AlternateTypeRule bean，自动注入所以Docket中�
 
 * https://hazelcast.com/blog/how-much-memory-do-i-need-for-my-data/
 * https://docs.hazelcast.org/docs/4.0.3/manual/html-single/index.html#sizing-practices
+
+### 25.create table时报 Table doesn't exist
+
+错误信息 Error Code: 1146. Table xxx doesn't exist
+这其中有些有趣的现象，结果就是我创建table，就是因为不存在啊，怎么不让我create呢。
+
+和文件系统的大小写有关，根据wings的Sql风格，建议全小写，snake_case。
+此外，也建议在 mysqld 的配置上，增加 `lower_case_table_names=1`
+
+https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_lower_case_table_names
+
+### 26.如何解压springboot生成的jar
+
+制作executable=true的boot.jar时，不能使用`jar -xzf`解压，需要`unzip`。
+任何时候都推荐使用unzip解压，因为 jar本身也是zip格式。
+
+为什么 executable jar 不能使用jar解压呢，因为spring按executable zip的格式重新打包。
+
+``` bash
+# 显示文件列表
+unzip -l demo-exmaple-1.0.0-SNAPSHOT.jar
+# 查看文件内容
+head demo-exmaple-1.0.0-SNAPSHOT.jar
+#!/bin/bash
+#
+#    .   ____          _            __ _ _
+#   /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+#  ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+#   \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+#    '  |____| .__|_| |_|_| |_\__, | / / / /
+#   =========|_|==============|___/=/_/_/_/
+#   :: Spring Boot Startup Script ::
+#
+```

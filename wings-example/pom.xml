@@ -5,8 +5,9 @@
 
     <parent>
         <groupId>pro.fessional</groupId>
-        <artifactId>wings-home</artifactId>
+        <artifactId>wings-project</artifactId>
         <version>${revision}.${changelist}</version>
+        <relativePath>../wings-project/pom.xml</relativePath>
     </parent>
 
     <groupId>com.moilioncircle.roshan</groupId>
@@ -34,7 +35,7 @@
             <!-- method 2: import dependency, manually set properties and dependencies
             <dependency>
                 <groupId>pro.fessional</groupId>
-                <artifactId>wings-home</artifactId>
+                <artifactId>wings-project</artifactId>
                 <version>${wings.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
