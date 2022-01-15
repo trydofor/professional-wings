@@ -270,6 +270,19 @@ public interface TradeService {
 
 默认开启了swagger，访问路径为 /swagger-ui/index.html
 
+因swagger注解容易使doc部分冗长，且springfox做了比较智能的推导，
+所以在能够表述清楚时，建议简化注解，参考以下注解。
+
+* @ApiOperation， 以value,notes,response表述清楚
+* @ApiModel/@ApiModelProperty，输入或输出对象
+* @ApiParam， 输入参数
+* @ApiResponses，必要时使用
+
+在notes中，支持Markdown，辅助jsdoc，可使文档更加清晰。
+`@param [name=trydofor] - Somebody's name.`  - 参考 https://jsdoc.app/tags-param.html
+`@return {200|Result(Dto)} 正常返回对象，status=200` - 小括号表示泛型(避免转义)。参考 https://jsdoc.app/tags-returns.html
+`@return {200|Result(false)} 错误时返回，status=200` - 小括号表示简单约定参数。参考 https://jsdoc.app/tags-returns.html
+
 使用swagger时，不可使用弱口令，在正式服上必须关闭。在3.0.0版本，通过设置以下属性即可。  
 `springfox.documentation.enabled=false`，或通过profile来设置（不推荐）
 

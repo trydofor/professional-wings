@@ -21,7 +21,7 @@ public class JooqLocaleConverter implements Converter<String, Locale> {
 
     @Override
     public String to(Locale lcl) {
-        // FastJson使用sun.util.BaseLocale
+        // FastJson使用sun.util.BaseLocale，为`_`分隔
         String lt = lcl.getLanguage();
         String ct = lcl.getCountry();
         final int ln = lt.length();

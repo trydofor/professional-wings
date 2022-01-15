@@ -61,7 +61,13 @@ public class LogViewer implements WarnFilter {
                 .build();
     }
 
-    @ApiOperation(value = "开启自身监控时，配合警报通知，可查看警报日志", notes = "不要在日志中记录敏感信息，无脱敏设置")
+    @ApiOperation(value = "开启自身监控时，配合警报通知，可查看警报日志", notes =
+            "# Usage \n"
+            + "alias优先于perms检测，check失败时会自动登出logout。\n"
+            + "## Params \n"
+            + "* @param id - 日志id，最多缓存2k个，36H\n"
+            + "## Returns \n"
+            + "* @return {200 | string} 对应的日志信息或empty")
     @GetMapping(value = "${" + Conf.Key$mapping + "}")
     public void view(@RequestParam("id") String id, HttpServletResponse res) throws IOException {
         if (id == null) return;
