@@ -99,7 +99,7 @@ public class MemoryUserDetailsCombo extends DefaultUserDetailsCombo {
 
         Details dtl = null;
         for (Details d : details) {
-            if (d.getAuthType() == null) {
+            if (d.getAuthType() == Null.Enm) {
                 dtl = d;
             }
             else if (d.getAuthType() == authType) {
@@ -111,7 +111,7 @@ public class MemoryUserDetailsCombo extends DefaultUserDetailsCombo {
         if (dtl == null) return null;
 
         // shallow copy with authType
-        if (dtl.getAuthType() == null) {
+        if (dtl.getAuthType() == Null.Enm) {
             dtl = dtl.toBuilder()
                      .authType(authType)
                      .build();

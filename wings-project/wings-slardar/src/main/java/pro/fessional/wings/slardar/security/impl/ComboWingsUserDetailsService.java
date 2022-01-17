@@ -54,7 +54,7 @@ public class ComboWingsUserDetailsService implements WingsUserDetailsService {
 
     public interface Combo<T extends UserDetails> extends Ordered {
         /**
-         * 不接受或无法构造返回null
+         * 不接受或无法构造返回null，非null时，表示加载成功，直接返回用去验证。
          *
          * @param username   type下身份唯一辨识，用户名，手机号，邮箱，userId等
          * @param authType   验证类型，默认null

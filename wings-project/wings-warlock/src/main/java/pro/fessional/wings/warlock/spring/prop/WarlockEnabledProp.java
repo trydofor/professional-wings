@@ -127,6 +127,7 @@ public class WarlockEnabledProp {
 
     /**
      * 是否支持为Docket全局注入AlternateTypeRule
+     *
      * @see #Key$swaggerRule
      */
     private boolean swaggerRule = true;
@@ -134,6 +135,7 @@ public class WarlockEnabledProp {
 
     /**
      * 是否支持为Docket全局注入java.time.Local*
+     *
      * @see #Key$swaggerJsr310
      */
     private boolean swaggerJsr310 = true;
@@ -141,6 +143,7 @@ public class WarlockEnabledProp {
 
     /**
      * 是否开启table CUD 监听
+     *
      * @see #Key$tableChange
      */
     private boolean tableChange = true;

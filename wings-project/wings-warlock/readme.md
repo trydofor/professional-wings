@@ -63,6 +63,8 @@ Warlock在用户通过身边鉴别（renew）后，会分别加载和用户绑�
 并扁平化其各自的所属和继承关系，全部加载到SecurityContext中。
 
 当Perm和Role(含前缀)的字符串以`-`开头时，标识排除此权限，最高优先级。
+可以通过配置`mem-auth`，进而修改用户不同登录方式的权限。
+例如，实现ComboWarlockAuthzService.Combo 也可以按条件调整权限。
 
 ## 4.3.数据权限
 
@@ -125,3 +127,24 @@ Oauth通过定制host和state参数，构造指令，完成重定向定制，参
 * NonceUserDetailsCombo - 一次性登录。
 * MemoryUserDetailsCombo - 按uid，登录名，登录方式，挂载用户和权限。
 * NonceTokenSessionHelper - oauth2流程外，通过一次性state换取sessionId。
+
+### 4.4.4.登录时验证权限
+
+因为wings的用户及权限，在一个数据库中统一管理，不同的app可能需要不同的权限。
+比如admin中，必须具有ROLE_ADMIN才可以访问，否则登录成功后，所有功能都是403，并不友好。
+
+所以在登录时，使用authType前缀，可以直接验证基本权限，如果不具备，则登录失败。
+
+此外，也可以在登录成功后，使用authedPerm验证权限，也具备自动登出功能。与前者的区别是
+
+* 前者以登录失败返回，没有写入session，是一半的登录动作，即加载信息并验证时间点。
+* 后者先登录成功，写入全局session，验证时再次登出session，是登录+登出2个动作
+
+### 4.4.5.按appName设定角色和登录
+
+此功能，默认未实现，开启时，需要遵守以下基本原则，以避免误用。
+
+* 从安全角度，不可扩大授权，应该最小化权限。
+* 从使用角度，精简权限的数据结构，每app应独立，混用容易复杂化。
+
+需要定制 ComboWarlockAuthzService.Combo，来根据spring.application.name调整权限。

@@ -253,7 +253,7 @@ public class WarlockSecurityBeanConfiguration {
             final Mu mu = en.getValue();
             Details dtl = new Details();
             dtl.setUserId(mu.getUserId());
-            dtl.setAuthType(hasText(mu.getAuthType()) ? typeParser.parse(mu.getAuthType()) : null);
+            dtl.setAuthType(typeParser.parse(mu.getAuthType()));
             dtl.setUsername(mu.getUsername());
             dtl.setPassword(mu.getPassword());
             dtl.setStatus(mu.getStatus());
@@ -310,7 +310,7 @@ public class WarlockSecurityBeanConfiguration {
             final String un = ma.getUsername();
             if (hasText(un)) {
                 final String tm = ma.getAuthType();
-                final Enum<?> at = hasText(tm) ? typeParser.parse(tm) : null;
+                final Enum<?> at = typeParser.parse(tm);
                 logger.info("Wings conf add MemAuth, username=" + un + ", auth-type=" + tm);
                 bean.addAuthz(un, at, role);
                 bean.addAuthz(un, at, perm);
@@ -395,6 +395,4 @@ public class WarlockSecurityBeanConfiguration {
         logger.info("Wings conf authSuccessListener");
         return new WarlockFailedLoginListener();
     }
-
-
 }
