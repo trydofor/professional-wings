@@ -25,8 +25,6 @@ import java.util.Map;
 public class WingsBindLoginConfigurer extends
         AbstractAuthenticationFilterConfigurer<HttpSecurity, WingsBindLoginConfigurer, WingsBindAuthFilter> {
 
-    public static final String TokenAuthType = "{authType}";
-
     public WingsBindLoginConfigurer() {
         super(new WingsBindAuthFilter(), null);
         usernameParameter("username");
@@ -98,7 +96,7 @@ public class WingsBindLoginConfigurer extends
     @Override
     public WingsBindLoginConfigurer loginProcessingUrl(String loginProcessingUrl) {
         this.loginProcessingUrl = loginProcessingUrl;
-        return super.loginProcessingUrl(loginProcessingUrl.replace(TokenAuthType, "*"));
+        return super.loginProcessingUrl(loginProcessingUrl);
     }
 
     @Override

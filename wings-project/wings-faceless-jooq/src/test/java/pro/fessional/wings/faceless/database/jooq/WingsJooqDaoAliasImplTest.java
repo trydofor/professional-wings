@@ -17,6 +17,7 @@ import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也�
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.WingsRevision;
+import pro.fessional.wings.faceless.util.FlywaveInteractiveTty;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.time.LocalDateTime;
@@ -46,7 +47,7 @@ public class WingsJooqDaoAliasImplTest {
     private WingsTestHelper wingsTestHelper;
 
     @Setter(onMethod_ = {@Autowired})
-    private SchemaRevisionManager revisionManager;
+    private SchemaRevisionManager schemaRevisionManager;
 
     @Setter(onMethod_ = {@Autowired})
     private Tst中文也分表Dao dao;
@@ -56,10 +57,11 @@ public class WingsJooqDaoAliasImplTest {
 
     @Test
     public void test0𓃬清表重置() {
+        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes);
         wingsTestHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER, WingsRevision.V01_19_0521_01_EnumI18n.classpath());
-        revisionManager.checkAndInitSql(sqls, 0, true);
-        revisionManager.publishRevision(REVISION_TEST_V2, -1);
+        schemaRevisionManager.checkAndInitSql(sqls, 0, true);
+        schemaRevisionManager.publishRevision(REVISION_TEST_V2, -1);
     }
 
     @Test

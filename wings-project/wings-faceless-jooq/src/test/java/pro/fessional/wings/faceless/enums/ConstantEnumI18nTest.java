@@ -21,6 +21,7 @@ import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.WingsRevision;
 import pro.fessional.wings.faceless.service.wini18n.StandardI18nService;
+import pro.fessional.wings.faceless.util.FlywaveInteractiveTty;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.util.List;
@@ -50,7 +51,7 @@ public class ConstantEnumI18nTest {
     WingsTestHelper wingsTestHelper;
 
     @Setter(onMethod_ = {@Autowired})
-    SchemaRevisionManager revisionManager;
+    SchemaRevisionManager schemaRevisionManager;
 
     @Setter(onMethod_ = {@Autowired})
     ApplicationContext applicationContext;
@@ -60,11 +61,12 @@ public class ConstantEnumI18nTest {
 
     @Test
     public void test1Init() {
+        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes);
         wingsTestHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner
                 .scan(REVISION_PATH_MASTER, WingsRevision.V01_19_0521_01_EnumI18n.classpath());
-        revisionManager.checkAndInitSql(sqls, 0, true);
-        revisionManager.publishRevision(WingsRevision.V01_19_0521_01_EnumI18n.revision(), -1);
+        schemaRevisionManager.checkAndInitSql(sqls, 0, true);
+        schemaRevisionManager.publishRevision(WingsRevision.V01_19_0521_01_EnumI18n.revision(), -1);
     }
 
     @Test

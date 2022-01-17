@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.WingsRevision;
+import pro.fessional.wings.faceless.util.FlywaveInteractiveTty;
 
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
@@ -27,6 +28,7 @@ public class WingsInitDatabaseSample {
 
     @Test
     public void init0601() {
+        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes);
         // 初始
         val sqls = scan(REVISION_PATH_MASTER, WingsRevision.V01_19_0521_01_EnumI18n.classpath());
         schemaRevisionManager.publishRevision(WingsRevision.V00_19_0512_01_Schema.revision(), 0);

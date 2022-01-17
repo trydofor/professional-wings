@@ -65,7 +65,8 @@ public class WarlockSecurityProp {
     public static final String Key$loginPage = Key + ".login-page";
 
     /**
-     * 处理登录的Ant格式URL（支持`{authType}`占位符，表示`*`），由filter处理，不需要controller
+     * 处理登录的Ant格式URL，由filter处理，不需要controller
+     * 支持`{authType}`，作为路径变量，参考 PathPattern
      *
      * @see #Key$loginUrl
      */
