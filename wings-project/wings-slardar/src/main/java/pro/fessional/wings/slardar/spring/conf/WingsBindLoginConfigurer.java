@@ -62,21 +62,9 @@ public class WingsBindLoginConfigurer extends
         return this;
     }
 
-    private String headerName = null;
-    private String paramName = null;
     private String loginProcessingUrl = null;
     private WingsAuthTypeSource bindAuthTypeSource = null;
     private final Map<String, Enum<?>> authTypes = new HashMap<>();
-
-    public WingsBindLoginConfigurer bindAuthTypeToHeader(String headerName) {
-        this.headerName = headerName;
-        return this;
-    }
-
-    public WingsBindLoginConfigurer bindAuthTypeToParam(String paramName) {
-        this.paramName = paramName;
-        return this;
-    }
 
     public WingsBindLoginConfigurer bindAuthTypeToEnums(String type, Enum<?> authType) {
         this.authTypes.put(type, authType);
@@ -130,7 +118,7 @@ public class WingsBindLoginConfigurer extends
                 parser = context.getBeanProvider(WingsAuthTypeParser.class).getIfAvailable();
             }
             if (parser != null) {
-                bindAuthTypeSource = new DefaultWingsAuthTypeSource(loginProcessingUrl, paramName, headerName, parser);
+                bindAuthTypeSource = new DefaultWingsAuthTypeSource(loginProcessingUrl, parser);
             }
         }
 

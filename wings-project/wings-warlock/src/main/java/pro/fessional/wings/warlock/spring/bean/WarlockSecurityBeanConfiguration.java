@@ -324,6 +324,7 @@ public class WarlockSecurityBeanConfiguration {
     public WingsAuthDetailsSource<?> wingsAuthDetailsSource(ObjectProvider<ComboWingsAuthDetailsSource.Combo<?>> combos) {
         logger.info("Wings conf wingsAuthDetailsSource");
         ComboWingsAuthDetailsSource uds = new ComboWingsAuthDetailsSource();
+
         combos.orderedStream().forEach(it -> {
             logger.info("Wings conf wingsAuthDetailsSource add " + it.getClass().getName());
             uds.add(it);

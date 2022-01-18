@@ -35,6 +35,7 @@ public class DefaultWingsAuthTypeParser implements WingsAuthTypeParser {
 
     @Override
     public @NotNull Enum<?> parse(String at) {
+        if(at == null) return Null.Enm;
         final Enum<?> en = strEnumMap.get(at);
         return en == null ? Null.Enm : en;
     }

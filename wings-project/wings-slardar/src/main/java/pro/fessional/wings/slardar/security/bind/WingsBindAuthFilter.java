@@ -49,7 +49,8 @@ public class WingsBindAuthFilter extends UsernamePasswordAuthenticationFilter {
         if (authenticationDetailsSource instanceof WingsAuthDetailsSource<?>) {
             WingsAuthDetailsSource<?> ads = (WingsAuthDetailsSource<?>) authenticationDetailsSource;
             at.setDetails(ads.buildDetails(authType, request));
-        } else {
+        }
+        else {
             at.setDetails(authenticationDetailsSource.buildDetails(request));
         }
 

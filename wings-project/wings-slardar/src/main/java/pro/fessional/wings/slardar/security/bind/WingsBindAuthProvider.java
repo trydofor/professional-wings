@@ -16,6 +16,7 @@ import org.springframework.util.Assert;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.PasswordHelper;
+import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.WingsUidPrincipalToken;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
@@ -70,8 +71,8 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
 
             if (userDetailsService instanceof WingsUserDetailsService && authentication instanceof WingsBindAuthToken) {
                 WingsUserDetailsService uds = (WingsUserDetailsService) userDetailsService;
-                WingsBindAuthToken bat = (WingsBindAuthToken) authentication;
-                details = uds.loadUserByUsername(username, bat.getAuthType(), bat.getDetails());
+                WingsBindAuthToken token = (WingsBindAuthToken) authentication;
+                details = uds.loadUserByUsername(username, token.getAuthType(), (WingsAuthDetails) token.getDetails());
             }
             else {
                 details = userDetailsService.loadUserByUsername(username);

@@ -66,7 +66,7 @@ public class WarlockSecurityProp {
 
     /**
      * 处理登录的Ant格式URL，由filter处理，不需要controller
-     * 支持`{authType}`，作为路径变量，参考 PathPattern
+     * 支持变量`authType`和`authZone`，可以通过param或path获得（PathPattern）
      *
      * @see #Key$loginUrl
      */

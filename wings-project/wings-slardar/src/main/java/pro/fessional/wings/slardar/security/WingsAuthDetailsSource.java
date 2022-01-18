@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * @see AbstractAuthenticationProcessingFilter#setAuthenticationDetailsSource(AuthenticationDetailsSource)
  * @since 2021-02-08
  */
-public interface WingsAuthDetailsSource<T> extends AuthenticationDetailsSource<HttpServletRequest, T> {
+public interface WingsAuthDetailsSource<T extends WingsAuthDetails> extends AuthenticationDetailsSource<HttpServletRequest, T> {
 
     @Override
     default T buildDetails(@NotNull HttpServletRequest request) {
@@ -31,5 +31,4 @@ public interface WingsAuthDetailsSource<T> extends AuthenticationDetailsSource<H
      * @return detail or null
      */
     T buildDetails(@NotNull Enum<?> authType, @NotNull HttpServletRequest request);
-
 }

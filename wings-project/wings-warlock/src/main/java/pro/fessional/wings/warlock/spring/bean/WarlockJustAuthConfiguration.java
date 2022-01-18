@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import pro.fessional.wings.warlock.security.justauth.AuthConfigWrapper;
+import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
 import pro.fessional.wings.warlock.security.justauth.JustAuthRequestBuilder;
 import pro.fessional.wings.warlock.security.justauth.JustAuthStateCaffeine;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
@@ -49,9 +50,9 @@ public class WarlockJustAuthConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(JustAuthRequestBuilder.class)
-    public JustAuthRequestBuilder justAuthRequestBuilder(AuthStateCache cache) {
+    public JustAuthRequestBuilder justAuthRequestBuilder(AuthStateCache cache, AuthStateBuilder builder) {
         logger.info("Wings conf justAuthRequestFactory");
-        JustAuthRequestBuilder factory = new JustAuthRequestBuilder();
+        JustAuthRequestBuilder bean = new JustAuthRequestBuilder();
         final Map<String, WarlockJustAuthProp.Http> hcs = justAuthProp.getHttpConf();
         final Map<String, Enum<?>> emp = securityProp.mapAuthTypeEnum();
 
@@ -81,8 +82,9 @@ public class WarlockJustAuthConfiguration {
             map.put(em, AuthConfigWrapper.tryWrap(ac, justAuthProp.getSafeHost()));
         }
 
-        factory.setAuthConfigMap(map);
-        factory.setAuthStateCache(cache);
-        return factory;
+        bean.setAuthConfigMap(map);
+        bean.setAuthStateCache(cache);
+        bean.setAuthStateBuilder(builder);
+        return bean;
     }
 }

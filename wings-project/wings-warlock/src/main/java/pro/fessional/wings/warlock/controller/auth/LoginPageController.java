@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.slardar.security.WingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.servlet.ContentTypeHelper;
@@ -62,7 +63,7 @@ public class LoginPageController {
             + "* @return {200} 直接访问或redirect时 \n"
             + "")
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginList + "}", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseEntity<?> loginList(@PathVariable("extName") String extName,
+    public ResponseEntity<?> loginList(@PathVariable(WingsAuthHelper.ExtName) String extName,
                                        HttpServletRequest request,
                                        HttpServletResponse response) {
         final MediaType mt = ContentTypeHelper.mediaTypeByUri(extName);
@@ -76,13 +77,15 @@ public class LoginPageController {
             + "一般用于构造访问入口，如Oauth2登录的第三方路径和参数；获取反扒登录的验证码\n"
             + "需要注意state是数组，是spring支持的http协议的参数数组，如`a=1&a=2&a=3`\n"
             + "``` bash \n"
-            + "curl -X POST 'http://localhost:8084/auth/github/login-page.json' \\\n"
-            + "--data 'state=/order-list&state=http://localhost:8080&state=&host=localhost:8080'\n"
-            + "curl -X GET  \"http://localhost:8084/auth/github/login-page.json\\\n"
-            + "?host=localhost:8080&state=/order-list&state=http://localhost%3A8080&state=\"\n"
+            + "curl -X POST 'http://localhost:8084/auth/login-page.json' \\\n"
+            + "--data 'authType=github&state=/order-list&state=http://localhost:8080&state=&host=localhost:8080'\n"
+            + "curl -X GET  \"http://localhost:8084/auth/login-page.json\\\n"
+            + "?authType=github&host=localhost:8080&state=/order-list&state=http://localhost%3A8080&state=\"\n"
             + "```\n"
             + "## Params \n"
+            + "* @param extName  - 路径参数，辅助构造返回数据 \n"
             + "* @param authType - 验证类型，系统配置项，可由【集成登录】查看，比如email,github \n"
+            + "* @param authZone - 辅助验证参数，可关联权限等 \n"
             + "* @param {string[]} state - 构造Oauth2的state，MessageFormat格式，state[0]作为Format的key,state整体是Format的参数; \n"
             + "* @param host - 构造Oauth2的重定向host，以减少跨域 \n"
             + "## Returns \n"
@@ -90,15 +93,16 @@ public class LoginPageController {
             + "* @return {200} 直接访问或redirect时 \n"
             + "")
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginPage + "}", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseEntity<?> LoginPage(@PathVariable("authType") String authType,
-                                       @PathVariable("extName") String extName,
+    public ResponseEntity<?> LoginPage(@PathVariable(WingsAuthHelper.ExtName) String extName,
+                                       @RequestParam(WingsAuthHelper.AuthType) String authType,
+                                       @RequestParam(value = WingsAuthHelper.AuthZone, required = false) String authZone,
                                        @RequestParam(value = AuthStateBuilder.ParamState, required = false) List<String> state,
                                        @RequestParam(value = "host", required = false) String host,
                                        HttpServletRequest request,
                                        HttpServletResponse response) {
         final Enum<?> em = wingsAuthTypeParser.parse(authType);
         final MediaType mt = ContentTypeHelper.mediaTypeByUri(extName, MediaType.APPLICATION_JSON);
-        log.info("{} login-page media-type={}, state={}, host={}", authType, mt, state, host);
+        log.info("login-page authType={}, authZone={}, mediaType={}, state={}, host={}", authType, authZone, mt, state, host);
         return wingsAuthPageHandler.response(em, mt, request, response);
     }
 
@@ -166,10 +170,11 @@ public class LoginPageController {
             + "* @return {200} 登录成功 \n"
             + "")
     @PostMapping(value = "${" + WarlockSecurityProp.Key$loginUrl + "}")
-    public String login(@PathVariable("authType") String authType,
+    public String login(@PathVariable(WingsAuthHelper.AuthType) String authType,
+                        @PathVariable(WingsAuthHelper.AuthZone) String authZone,
                         @RequestParam("username") String username,
                         @RequestParam("password") String password) {
-        log.info("authType={}, username={}, password={}", authType, username, password);
+        log.info("authType={}, authZone={}, username={}, password={}", authType, authZone, username, password);
         return "handler by filter, never here";
     }
 }

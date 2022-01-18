@@ -7,9 +7,7 @@ import pro.fessional.wings.slardar.cache.caffeine.WingsCaffeine;
 /**
  * 提供5分钟内有效的一次性token关联验证。
  * ①initNonce:发型一次性token
- * ②bindNonceAuth:三方验证后，绑定token和AuthDetails，bindDetail
- * ③swapNonceUid:获取用户后，通过AuthDetails，绑定token和uid
- * ④swapNonceSid:登录成功后，通过uid，绑定token和sessionId
+ * ②bindNonceSid:登录成功后，通过uid，绑定token和sessionId
  *
  * @author trydofor
  * @since 2021-07-01
@@ -22,8 +20,6 @@ public class NonceTokenSessionHelper {
     private static class Sf {
         private String ip = null;
         private String sid = null;
-        private Long uid = null;
-        private Object mid = null;
     }
 
     /**
@@ -34,55 +30,6 @@ public class NonceTokenSessionHelper {
         final Sf s = new Sf();
         s.ip = ip;
         caffeine.put(token, s);
-    }
-
-    /**
-     * 绑定token和AuthDetails
-     */
-    public static void bindNonceAuth(String token, Object auth) {
-        if (token == null || auth == null) return;
-        final Sf s = caffeine.getIfPresent(token);
-        if (s != null) {
-            s.mid = auth;
-        }
-    }
-
-    /**
-     * 通过AuthDetails交换，绑定token和uid
-     */
-    public static void swapNonceUid(long uid, Object auth) {
-        if (auth == null) return;
-        for (Sf s : caffeine.asMap().values()) {
-            if (s.mid != null && s.mid.equals(auth)) {
-                s.uid = uid;
-                s.mid = null;
-                break;
-            }
-        }
-    }
-
-    /**
-     * 通过uid交换，绑定token和sid
-     */
-    public static void swapNonceSid(long uid, String sid) {
-        if (sid == null) return;
-        for (Sf s : caffeine.asMap().values()) {
-            if (s.uid != null && s.uid.equals(uid)) {
-                s.sid = sid;
-                break;
-            }
-        }
-    }
-
-
-    /**
-     * 绑定token和uid
-     */
-    public static void bindNonceUid(String token, long uid) {
-        final Sf s = caffeine.getIfPresent(token);
-        if (s != null) {
-            s.uid = uid;
-        }
     }
 
     /**

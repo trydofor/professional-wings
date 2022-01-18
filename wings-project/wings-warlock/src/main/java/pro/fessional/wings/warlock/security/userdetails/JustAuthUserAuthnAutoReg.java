@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.zhyd.oauth.enums.AuthUserGender;
 import me.zhyd.oauth.model.AuthUser;
 import org.jetbrains.annotations.NotNull;
+import pro.fessional.mirana.best.ArgsAssert;
+import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserAuthnAutoReg;
@@ -26,8 +28,9 @@ public class JustAuthUserAuthnAutoReg extends DefaultUserAuthnAutoReg {
     }
 
     @Override
-    protected void beforeSave(Basis basis, String username, Object details) {
-        AuthUser user = (AuthUser) details;
+    protected void beforeSave(Basis basis, String username, WingsAuthDetails details) {
+        AuthUser user = (AuthUser) details.getRealData();
+        ArgsAssert.notNull(user, "need JustAuth User");
         basis.setNickname(user.getNickname());
         basis.setAvatar(user.getAvatar());
         final AuthUserGender aug = user.getGender();
@@ -46,8 +49,9 @@ public class JustAuthUserAuthnAutoReg extends DefaultUserAuthnAutoReg {
     }
 
     @Override
-    protected void beforeSave(Authn authn, String username, Object details, long userId) {
-        AuthUser user = (AuthUser) details;
+    protected void beforeSave(Authn authn, String username, WingsAuthDetails details, long userId) {
+        AuthUser user = (AuthUser) details.getRealData();
+        ArgsAssert.notNull(user, "need JustAuth User");
         authn.setUsername(user.getUuid());
         authn.setExtraPara(JSON.toJSONString(user.getToken()));
         authn.setExtraUser(JSON.toJSONString(user.getRawUserInfo()));
@@ -55,7 +59,7 @@ public class JustAuthUserAuthnAutoReg extends DefaultUserAuthnAutoReg {
     }
 
     @Override
-    public boolean accept(@NotNull Enum<?> authType, String username, Object details) {
-        return details instanceof AuthUser;
+    public boolean accept(@NotNull Enum<?> authType, String username, WingsAuthDetails details) {
+        return details.getRealData() instanceof AuthUser;
     }
 }

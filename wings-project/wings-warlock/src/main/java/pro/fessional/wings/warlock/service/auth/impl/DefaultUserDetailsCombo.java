@@ -7,11 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
+import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.event.auth.WarlockAutoRegisterEvent;
-import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthzService;
@@ -43,7 +43,7 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
     protected WarlockAuthzService warlockAuthzService;
 
     @Override
-    public final DefaultWingsUserDetails loadOrNull(String username, @NotNull Enum<?> authType, @Nullable Object authDetail) {
+    public final DefaultWingsUserDetails loadOrNull(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {
 
         Details dt = doLoad(authType, username, authDetail);
         boolean at = false;
@@ -72,8 +72,6 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
             wud.setPreAuthed(at || authed(authType));
         }
 
-        NonceTokenSessionHelper.swapNonceUid(dt.getUserId(), authDetail);
-
         return wud;
     }
 
@@ -91,7 +89,7 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
      * 加载信息
      */
     @Nullable
-    protected Details doLoad(@NotNull Enum<?> authType, String username, @Nullable Object authDetail) {
+    protected Details doLoad(@NotNull Enum<?> authType, String username, @Nullable WingsAuthDetails authDetail) {
         return warlockAuthnService.load(authType, username);
     }
 }

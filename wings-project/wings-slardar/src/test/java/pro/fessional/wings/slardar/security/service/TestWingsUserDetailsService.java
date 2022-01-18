@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import pro.fessional.mirana.bits.Md5;
 import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
+import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 
@@ -39,7 +40,7 @@ public class TestWingsUserDetailsService implements WingsUserDetailsService {
     );
 
     @Override
-    public @NotNull UserDetails loadUserByUsername(String username, @Nullable Enum<?> type, @Nullable Object authDetail) throws UsernameNotFoundException {
+    public @NotNull UserDetails loadUserByUsername(String username, @Nullable Enum<?> type, @Nullable WingsAuthDetails authDetail) throws UsernameNotFoundException {
         log.info("login type={}, username={}", type, username);
 
         DefaultWingsUserDetails ud = new DefaultWingsUserDetails();
