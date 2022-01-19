@@ -193,7 +193,9 @@ public class OkHttpClientHelper {
 
         try (Response response = client.newCall(builder.build()).execute()) {
             ResponseBody body = extract(response);
-            return body == null ? Null.Bytes : body.bytes();
+            if (body == null) return Null.Bytes;
+            final byte[] bytes = body.bytes();
+            return bytes == null ? Null.Bytes : bytes;
         }
         catch (Exception e) {
             throw new IllegalStateException("failed to download, url=" + url, e);

@@ -30,6 +30,4 @@ public class WingsAuthHelper {
     public static String getAuthZoneAttribute(HttpServletRequest request) {
         return (String) request.getAttribute(InternalRequestAuthZone);
     }
-
-
 }

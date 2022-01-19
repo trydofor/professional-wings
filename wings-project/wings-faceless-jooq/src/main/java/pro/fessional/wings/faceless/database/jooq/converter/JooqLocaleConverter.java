@@ -27,17 +27,15 @@ public class JooqLocaleConverter implements Converter<String, Locale> {
         final int ln = lt.length();
         final int cn = ct.length();
 
-        if (ln == 2 && cn == 2) {
-            return lt + "_" + ct;
-        }
-        else {
+        if (ln != 2 || cn != 2) {
             if (ln != 0) lt = lt.replace('-', '_');
             if (cn != 0) ct = ct.replace('-', '_');
 
-            if(ct.isEmpty()) return lt;
-            if(lt.isEmpty()) return ct;
-            return lt + "_" + ct;
+            if (ct.isEmpty()) return lt;
+            if (lt.isEmpty()) return ct;
         }
+
+        return lt + "_" + ct;
     }
 
     @Override

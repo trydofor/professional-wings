@@ -314,7 +314,7 @@ class SchemaShardingManager(
         for ((plainName, plainDs) in plainDataSources) {
             logger.info("[shardingData]🐵 move data from plain db={}, table={}", plainName, table)
             val plainTmpl = SimpleJdbcTemplate(plainDs, plainName)
-            tmplMap.put(plainName, plainTmpl)
+            tmplMap[plainName] = plainTmpl
 
             val count = plainTmpl.count("SELECT COUNT(1) FROM $table")
             logger.info("[shardingData]🐵 find {} records on table={}, db={}", count, table, plainName)
@@ -327,7 +327,7 @@ class SchemaShardingManager(
                     keys[i] = it.getObject(k)
                 }
                 val vals = Array<Any>(it.metaData.columnCount) {}
-                for (i in 0 until vals.size) {
+                for (i in vals.indices) {
                     vals[i] = it.getObject(i + 1)
                 }
                 insertQueue.offer(Triple(plainName, keys, vals))

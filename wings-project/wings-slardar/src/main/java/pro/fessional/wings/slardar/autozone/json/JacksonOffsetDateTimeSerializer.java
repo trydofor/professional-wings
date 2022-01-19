@@ -62,10 +62,7 @@ public class JacksonOffsetDateTimeSerializer extends InstantSerializerBase<Offse
         if (autoZone) {
             final TimeZone tz = LocaleContextHolder.getTimeZone();
             value = value.atZoneSameInstant(tz.toZoneId()).toOffsetDateTime();
-            super.serialize(value, g, provider);
         }
-        else {
-            super.serialize(value, g, provider);
-        }
+        super.serialize(value, g, provider);
     }
 }

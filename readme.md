@@ -811,3 +811,35 @@ head demo-exmaple-1.0.0-SNAPSHOT.jar
 #   :: Spring Boot Startup Script ::
 #
 ```
+
+### 27.Wings实际中如何优雅的消除null
+
+如同【攻城狮朋友圈】代码的坏味道所讲，wings工程实际，基本上以empty取代了null。
+
+* 若null是业务有效值，需要首先做业务判断。
+* 若null是业务无效值，应该采用PreCheck或以@NotNull及empty取代。
+
+分情况讲，尽管我们都主张避免使null变成业务有效值，但有时系统外的因素不可控。
+常见的数据库，API，JNI，都可能导致null进入数据流。此时，应该在进入业务流之前拦截，
+或显示的做null判断，比如 `Objects.equals`，`foo == null`等。
+
+需要注意的是，业界流传一种『高级』秘籍，流行到被视为高级程序猿标配。
+
+* `!"foo".equals(bar)` 可以安全的处理，bar是null的情况
+* `null != foo`，null前置，变成左值。
+
+这两个小技巧在工程中很容易挖坑，应当引起警觉或避免，大概的不好之处如下。
+
+* equals和hashCode的实现，有基本要求的，并非equals都对null友好。
+* 混淆了逻辑，容易搞丢逻辑分支，`!=null`和`!=foo`是两个分支。
+  - 若null是业务值，应该采用`Objects.equals`显示的合并分支；
+  - 否则应assert或PreCheck，null进入业务逻辑，就意味着沦陷了。
+* null变左值，破坏一致性，好比Junit中expected和actual互换，攻城狮应该维护一致性。
+
+理论归理论，实际中都有取舍和无奈，要尊重历史，遵守团队约定。在wings中，这样做，
+
+* `EmptyValue`和`EmptySugar`，在业务中确立了empty值及工具类。
+* Collection，Map，Array等集合或容器类型，都需要以Empty返回。
+* `Null`类，定义了用来代替null的类型和检查方法，包括enum等
+* 方法签名尽量使用`@NotNull`注解，是IDE辅助检查，编译时解决
+* `ArgsAssert`和`StateAssert`进行业务assert，支持多国语

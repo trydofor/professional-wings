@@ -47,6 +47,7 @@ import me.zhyd.oauth.request.AuthWeChatOpenRequest;
 import me.zhyd.oauth.request.AuthWeiboRequest;
 import me.zhyd.oauth.request.AuthXmlyRequest;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthDetails;
@@ -99,8 +100,8 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
             }
             else {
                 NonceTokenSessionHelper.invalidNonce(state);
-                log.warn("unsupported auto-type={}, response type={}", authType, data == null ? "null" : data.getClass().getName());
-                return null;
+                log.warn("failed to Oauth authType={}, response type={}", authType, data == null ? "null" : data.getClass().getName());
+                throw new InsufficientAuthenticationException("failed to Oauth authType=" + authType);
             }
         }
         catch (Exception e) {

@@ -431,7 +431,7 @@ public class TableCudListener extends DefaultVisitListener {
 
         if (obj instanceof Keyword) {
             Keyword k = (Keyword) obj;
-            return obj.getClass().getSimpleName() + ":" + k.toString();
+            return obj.getClass().getSimpleName() + ":" + k;
         }
 
         return obj.getClass().getSimpleName();

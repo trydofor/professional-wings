@@ -98,6 +98,22 @@ public class WarlockEnabledProp {
     public static final String Key$comboJustAuthAutoreg = Key + ".combo-just-auth-autoreg";
 
     /**
+     * 是否支持 AuthZonePermChecker
+     *
+     * @see #Key$zonePermCheck
+     */
+    private boolean zonePermCheck = false;
+    public static final String Key$zonePermCheck = Key + ".zone-perm-check";
+
+    /**
+     * 是否支持 AuthAppPermChecker
+     *
+     * @see #Key$appPermCheck
+     */
+    private boolean appPermCheck = false;
+    public static final String Key$appPermCheck = Key + ".app-perm-check";
+
+    /**
      * @see #Key$allExceptionHandler
      */
     private boolean allExceptionHandler = true;

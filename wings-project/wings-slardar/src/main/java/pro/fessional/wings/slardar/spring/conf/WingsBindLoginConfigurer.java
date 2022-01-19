@@ -9,6 +9,7 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.WingsAuthTypeSource;
 import pro.fessional.wings.slardar.security.bind.WingsBindAuthFilter;
@@ -63,7 +64,8 @@ public class WingsBindLoginConfigurer extends
     }
 
     private String loginProcessingUrl = null;
-    private WingsAuthTypeSource bindAuthTypeSource = null;
+    private WingsAuthTypeSource wingsAuthTypeSource = null;
+    private WingsAuthDetailsSource<?> wingsAuthDetailsSource = null;
     private final Map<String, Enum<?>> authTypes = new HashMap<>();
 
     public WingsBindLoginConfigurer bindAuthTypeToEnums(String type, Enum<?> authType) {
@@ -76,8 +78,13 @@ public class WingsBindLoginConfigurer extends
         return this;
     }
 
-    public WingsBindLoginConfigurer bindAuthTypeSource(WingsAuthTypeSource bindAuthTypeSource) {
-        this.bindAuthTypeSource = bindAuthTypeSource;
+    public WingsBindLoginConfigurer bindAuthTypeSource(WingsAuthTypeSource wingsAuthTypeSource) {
+        this.wingsAuthTypeSource = wingsAuthTypeSource;
+        return this;
+    }
+
+    public WingsBindLoginConfigurer bindAuthDetailsSource(WingsAuthDetailsSource<?> wingsAuthDetailsSource) {
+        this.wingsAuthDetailsSource = wingsAuthDetailsSource;
         return this;
     }
 
@@ -104,26 +111,34 @@ public class WingsBindLoginConfigurer extends
 
     private void initBindAuthTypeSource(ApplicationContext context) {
         WingsAuthTypeParser parser = null;
-        if (bindAuthTypeSource == null) {
+        if (wingsAuthTypeSource == null) {
             if (authTypes.isEmpty()) {
-                bindAuthTypeSource = context.getBeanProvider(WingsAuthTypeSource.class).getIfAvailable();
+                wingsAuthTypeSource = context.getBeanProvider(WingsAuthTypeSource.class).getIfAvailable();
             }
             else {
                 parser = new DefaultWingsAuthTypeParser(authTypes);
             }
         }
 
-        if (bindAuthTypeSource == null) {
+        if (wingsAuthTypeSource == null) {
             if (parser == null) {
                 parser = context.getBeanProvider(WingsAuthTypeParser.class).getIfAvailable();
             }
             if (parser != null) {
-                bindAuthTypeSource = new DefaultWingsAuthTypeSource(loginProcessingUrl, parser);
+                wingsAuthTypeSource = new DefaultWingsAuthTypeSource(loginProcessingUrl, parser);
             }
         }
 
-        if (bindAuthTypeSource != null) {
-            getAuthenticationFilter().setWingsBindAuthTypeSource(bindAuthTypeSource);
+        if (wingsAuthTypeSource != null) {
+            getAuthenticationFilter().setWingsBindAuthTypeSource(wingsAuthTypeSource);
+        }
+
+        //
+        if (wingsAuthDetailsSource == null) {
+            wingsAuthDetailsSource = context.getBeanProvider(WingsAuthDetailsSource.class).getIfAvailable();
+        }
+        if (wingsAuthDetailsSource != null) {
+            getAuthenticationFilter().setAuthenticationDetailsSource(wingsAuthDetailsSource);
         }
     }
 

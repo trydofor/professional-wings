@@ -74,6 +74,7 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .loginProcessingUrl("/*/login-proc.json") // filter处理，不需要controller
                     .usernameParameter("username")
                     .passwordParameter("password")
+//                    .authenticationDetailsSource(wingsAuthDetailsSource)
                     .successHandler(testLoginHandler.loginSuccess)
                     .failureHandler(testLoginHandler.loginFailure)
                     .bindAuthTypeToEnums("sms", LoginTypeEnum.Sms)

@@ -31,6 +31,13 @@ public class WarlockUrlmapProp {
      */
     private String authLoginPage = "";
     public static final String Key$authLoginPage = Key + ".auth-login-page";
+    /**
+     * 具体验证登录默认页，根据content-type自动返回，需要PathVar {extName}
+     *
+     * @see #Key$authLoginPage
+     */
+    private String authLoginPage2 = "";
+    public static final String Key$authLoginPage2 = Key + ".auth-login-page2";
 
     /**
      * 验证一次性token是否有效，oauth2使用state作为token

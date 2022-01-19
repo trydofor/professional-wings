@@ -191,7 +191,7 @@ public class ConstantEnumGenerator {
                     .stream()
                     .filter(ConstantEnumGenerator::isSuper)
                     .findFirst()
-                    .orElseGet(() -> {throw new IllegalStateException("failed to find super enum");});
+                    .orElseThrow(() -> new IllegalStateException("failed to find super enum"));
 
             String enumClass = CaseSwitcher.pascal(type);
 

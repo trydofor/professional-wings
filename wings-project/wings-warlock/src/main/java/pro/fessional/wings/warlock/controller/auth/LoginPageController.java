@@ -57,7 +57,7 @@ public class LoginPageController {
             + "列出支持的登录方式。具体恢复内容，以根据extName和request.ContentType推测的MediaType确定\n"
             + "比如`html`和`json`扩展名，默认实现中，结果都以json形式返回\n"
             + "## Params \n"
-            + "* @param extName - 路径参数，扩展名，如html,json\n"
+            + "* @param extName - PathVariable，扩展名，如html,json\n"
             + "## Returns \n"
             + "* @return {401} 当鉴权失败，有系统forward时 \n"
             + "* @return {200} 直接访问或redirect时 \n"
@@ -83,8 +83,8 @@ public class LoginPageController {
             + "?authType=github&host=localhost:8080&state=/order-list&state=http://localhost%3A8080&state=\"\n"
             + "```\n"
             + "## Params \n"
-            + "* @param extName  - 路径参数，辅助构造返回数据 \n"
-            + "* @param authType - 验证类型，系统配置项，可由【集成登录】查看，比如email,github \n"
+            + "* @param extName  - PathVariable 辅助构造返回数据 \n"
+            + "* @param authType - PathVariable 验证类型，系统配置项，可由【集成登录】查看，比如email,github \n"
             + "* @param authZone - 辅助验证参数，可关联权限等 \n"
             + "* @param {string[]} state - 构造Oauth2的state，MessageFormat格式，state[0]作为Format的key,state整体是Format的参数; \n"
             + "* @param host - 构造Oauth2的重定向host，以减少跨域 \n"
@@ -94,12 +94,31 @@ public class LoginPageController {
             + "")
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginPage + "}", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<?> LoginPage(@PathVariable(WingsAuthHelper.ExtName) String extName,
-                                       @RequestParam(WingsAuthHelper.AuthType) String authType,
+                                       @PathVariable(WingsAuthHelper.AuthType) String authType,
                                        @RequestParam(value = WingsAuthHelper.AuthZone, required = false) String authZone,
                                        @RequestParam(value = AuthStateBuilder.ParamState, required = false) List<String> state,
                                        @RequestParam(value = "host", required = false) String host,
                                        HttpServletRequest request,
                                        HttpServletResponse response) {
+        final Enum<?> em = wingsAuthTypeParser.parse(authType);
+        final MediaType mt = ContentTypeHelper.mediaTypeByUri(extName, MediaType.APPLICATION_JSON);
+        log.info("login-page authType={}, authZone={}, mediaType={}, state={}, host={}", authType, authZone, mt, state, host);
+        return wingsAuthPageHandler.response(em, mt, request, response);
+    }
+
+    @SuppressWarnings("MVCPathVariableInspection")
+    @ApiOperation(value = "具体验证登录默认页，参考" + WarlockUrlmapProp.Key$authLoginPage, notes =
+            "# Usage \n"
+            + "把" + WingsAuthHelper.AuthType + "参数从PathVariable变为RequestParam\n"
+            + "")
+    @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginPage2 + "}", method = {RequestMethod.POST, RequestMethod.GET})
+    public ResponseEntity<?> LoginPage2(@PathVariable(WingsAuthHelper.ExtName) String extName,
+                                        @RequestParam(WingsAuthHelper.AuthType) String authType,
+                                        @RequestParam(value = WingsAuthHelper.AuthZone, required = false) String authZone,
+                                        @RequestParam(value = AuthStateBuilder.ParamState, required = false) List<String> state,
+                                        @RequestParam(value = "host", required = false) String host,
+                                        HttpServletRequest request,
+                                        HttpServletResponse response) {
         final Enum<?> em = wingsAuthTypeParser.parse(authType);
         final MediaType mt = ContentTypeHelper.mediaTypeByUri(extName, MediaType.APPLICATION_JSON);
         log.info("login-page authType={}, authZone={}, mediaType={}, state={}, host={}", authType, authZone, mt, state, host);
@@ -112,7 +131,7 @@ public class LoginPageController {
             + "Oauth2使用state作为token，要求和发行client具有相同ip，agent等header信息\n"
             + "验证成功后，在header中，可同样获取login时的session和cookie\n"
             + "## Params \n"
-            + "* @param token - Oauth2使用state作为token\n"
+            + "* @param token - RequestHeader Oauth2使用state作为token\n"
             + "## Returns \n"
             + "* @return {401} 无|过期|失败 \n"
             + "* @return {200 | Result(false, message='authing')} 验证进行中 \n"
@@ -163,7 +182,8 @@ public class LoginPageController {
             + "username和password可变，参考 参考 wings.warlock.security.username-para\n"
             + "登录成功后，可在header中获得token和session\n"
             + "## Params \n"
-            + "* @param authType - 验证类型，系统配置项，可由【集成登录】查看，比如email,github \n"
+            + "* @param authType - PathVariable 验证类型，系统配置项，可由【集成登录】查看，比如email,github \n"
+            + "* @param authZone - 辅助验证参数，可关联权限等，支持path和param传参 \n"
             + "* @param username - Oauth2使用state作为token\n"
             + "* @param password - Oauth2使用state作为token\n"
             + "## Returns \n"
@@ -171,7 +191,7 @@ public class LoginPageController {
             + "")
     @PostMapping(value = "${" + WarlockSecurityProp.Key$loginUrl + "}")
     public String login(@PathVariable(WingsAuthHelper.AuthType) String authType,
-                        @PathVariable(WingsAuthHelper.AuthZone) String authZone,
+                        @RequestParam(value = WingsAuthHelper.AuthZone, required = false) String authZone,
                         @RequestParam("username") String username,
                         @RequestParam("password") String password) {
         log.info("authType={}, authZone={}, username={}, password={}", authType, authZone, username, password);

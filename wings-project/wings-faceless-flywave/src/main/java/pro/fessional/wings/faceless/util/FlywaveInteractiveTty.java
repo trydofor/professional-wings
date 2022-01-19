@@ -33,7 +33,7 @@ public class FlywaveInteractiveTty {
         };
     }
 
-    public static BiConsumer<String, String> logNil = (s, s2) -> {};
+    public static final BiConsumer<String, String> logNil = (s, s2) -> {};
 
     public static void main(String[] args) {
         final Function<String, Boolean> log = askTty();

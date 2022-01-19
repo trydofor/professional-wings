@@ -77,8 +77,8 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
         return rst
     }
 
-    override fun diffBoneSame(dataSource: DataSource, table: String, other: String, types: Int) = diffTable(dataSource, table, other, types, true);
-    override fun diffFullSame(dataSource: DataSource, table: String, other: String, types: Int) = diffTable(dataSource, table, other, types, false);
+    override fun diffBoneSame(dataSource: DataSource, table: String, other: String, types: Int) = diffTable(dataSource, table, other, types, true)
+    override fun diffFullSame(dataSource: DataSource, table: String, other: String, types: Int) = diffTable(dataSource, table, other, types, false)
 
     private fun diffTable(dataSource: DataSource, table: String, other: String, types: Int, bone: Boolean): String {
 
@@ -110,7 +110,7 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
         // 对比列
         if (types and TYPE_TBL != 0) {
             val cols = if (bone) {
-                "COLUMN_NAME, COLUMN_TYPE, COLUMN_COMMENT, ORDINAL_POSITION";
+                "COLUMN_NAME, COLUMN_TYPE, COLUMN_COMMENT, ORDINAL_POSITION"
             } else {
                 "COLUMN_NAME, COLUMN_TYPE, COLUMN_COMMENT, ORDINAL_POSITION, IS_NULLABLE, COLUMN_DEFAULT"
             }
