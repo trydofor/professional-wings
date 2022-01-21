@@ -12,10 +12,11 @@ cat <<EOF
 #################################################
 EOF
 ################ modify the following params ################
+WORK_DIR=''      # 脚本生成文件，日志的目录，默认空（脚本位置）
 TAIL_LOG='log'   # 默认tail的日志，"log|out|new|ask"
 USER_RUN="$USER" # 用来启动程序的用户
 PORT_RUN=''      # 默认端口，空时
-BOOT_JAR=''      # 主程序。通过env覆盖或$1
+BOOT_JAR=''      # 主程序。可通过$1覆盖，绝对路径或相对WORK_DIR
 ARGS_RUN='start' # 默认参数。若$1或$2指定
 BOOT_OUT=''      # 控制台日志，默认 $BOOT_JAR-*.out
 BOOT_LOG=''      # 程序日志，需要外部指定，用来tail
@@ -27,7 +28,6 @@ JAVA_XMX='4G'    # 启动参数。通过env覆盖
 WARN_TXT=''      # 预设的警告词
 WARN_AGO=''      # 日志多少秒不更新，则警报，空表示忽略
 WARN_RUN=''      # 若pid消失或日志无更新则执行
-BOOT_MD5=''      # 内部变量，以safe模式执行的文件md5sum
 # shellcheck disable=SC2016
 JAVA_ARG='-server
 -Djava.awt.headless=true
@@ -42,8 +42,8 @@ JAVA_ARG='-server
 -XX:ConcGCThreads=8
 -XX:InitiatingHeapOccupancyPercent=70
 
--XX:HeapDumpPath=${JAR_NAME}-${BOOT_DTM}.heap
--Xloggc:${JAR_NAME}-${BOOT_DTM}.gc
+-XX:HeapDumpPath=${BOOT_TKN}.heap
+-Xloggc:${BOOT_TKN}.gc
 -XX:+PrintGC
 -XX:+PrintGCDetails
 -XX:+PrintGCDateStamps
@@ -58,6 +58,11 @@ JAVA_ARG='-server
 #-XX:-OmitStackTraceInFastThrow
 
 ################ NO NEED to modify the following ################
+BOOT_DTM=$(date '+%y%m%d%H%M%S') # 启动日时
+BOOT_TKN=''                      # 启动token，由jar+dtm构成
+BOOT_MD5=''                      # 以safe模式执行的文件md5sum
+JAR_NAME=''                      # boot-jar本名
+#
 function print_help() {
     echo -e '\033[32m docker \033[m start in docker with console log'
     echo -e '\033[32m start \033[m start the {boot-jar} and tail the log'
@@ -76,6 +81,7 @@ function print_args() {
     echo -e "\033[37;42;1mINFO: ==== boot arguments ==== \033[0m"
     echo "boot-jar=$BOOT_JAR"
     echo "boot-md5=$BOOT_MD5"
+    echo "boot-tkn=$BOOT_TKN"
     echo "boot-pid=$BOOT_PID"
     echo "boot-log=$BOOT_LOG"
     echo "boot-out=$BOOT_OUT"
@@ -90,7 +96,7 @@ function check_cmd() {
     if info=$(which "$1") >/dev/null 2>&1; then
         echo -e "\033[32m $cmd \033[m $info"
     else
-        echo -e "\033[31m $cmd \033[m not found."
+        echo -e "\033[31m $cmd not found \033[m"
     fi
 }
 
@@ -111,15 +117,18 @@ function check_java() {
 
 function check_boot() {
     if [[ -L "$BOOT_JAR" || -f "$BOOT_JAR" ]]; then
-        return
+        BOOT_JAR=$(realpath -s "$BOOT_JAR")
     elif [[ "$1" == "" ]]; then
-        cnt=$(find . -name "$BOOT_JAR" | wc -l)
+        frm=$(dirname "$BOOT_JAR")
+        tkn=$(basename "$BOOT_JAR")
+
+        cnt=$(find "$frm" -name "$tkn" | wc -l)
         if [[ $cnt -ne 1 ]]; then
-            find . -name "$BOOT_JAR"
+            find "$frm" -name "$tkn"
             echo -e "\033[37;41;1mERROR: found $cnt jar file, $BOOT_JAR \033[0m"
             exit
         fi
-        BOOT_JAR=$(find . -name "$BOOT_JAR")
+        BOOT_JAR=$(find "$frm" -name "$tkn")
         check_boot end
     else
         echo -e "\033[37;41;1mERROR: can not found jar file, $BOOT_JAR \033[0m"
@@ -140,32 +149,31 @@ else
     echo -e "\033[31mWARN: no env file found. $this_envs \033[0m"
 fi
 
-# check arg & pwd
-work_dir=$(pwd)
+# change workdir
+if [[ "$WORK_DIR" == "" ]]; then
+    WORK_DIR=$(dirname "$this_file")
+fi
+cd "$WORK_DIR" || exit
+WORK_DIR=$(realpath -s "$WORK_DIR")
+echo "work-dir=$WORK_DIR"
+
+# check arg
 if [[ -L "$1" || -f "$1" ]]; then
     BOOT_JAR="$1"
-    # keep workdir relative to $1
     shift
-else
-    # change workdir after found env-file
-    work_dir=$(dirname "$this_file")
-    cd "$work_dir" || exit
 fi
-
-echo "work-dir=$(realpath -s "$work_dir")"
+if [[ "$1" != "" ]]; then
+    ARGS_RUN="$1"
+fi
 
 # check boot jar
 check_boot
 JAR_NAME=$(basename "$BOOT_JAR")
-file_md5="${JAR_NAME}.md5"
+BOOT_TKN="${JAR_NAME}-${BOOT_DTM}"
 
-BOOT_MD5=''
+file_md5="${JAR_NAME}.md5"
 if [[ -f "$file_md5" ]]; then
     BOOT_MD5=$(awk '{print $1}' <"$file_md5")
-fi
-
-if [[ "$1" != "" ]]; then
-    ARGS_RUN="$1"
 fi
 
 # check pid&out
@@ -178,7 +186,6 @@ if [[ "$BOOT_OUT" == "" ]]; then
 fi
 
 # lazy env
-BOOT_DTM=$(date '+%y%m%d%H%M%S')
 BOOT_CNF=$(eval "echo \"$BOOT_CNF\"")
 BOOT_ARG=$(eval "echo \"$BOOT_ARG\"")
 JAVA_ARG=$(eval "echo \"$JAVA_ARG\"")
@@ -207,7 +214,7 @@ case "$ARGS_RUN" in
             # shellcheck disable=SC2086
             java $JAVA_ARG -jar $BOOT_JAR $BOOT_ARG 2>&1
         else
-            echo -e "\033[37;41;1mERROR: already $count running of $BOOT_JAR \033[0m"
+            echo -e "\033[37;41;1mERROR: has $count running $BOOT_JAR \033[0m"
             pgrep -alf "$grep_key"
         fi
         ;;
@@ -216,7 +223,7 @@ case "$ARGS_RUN" in
 
         if [[ $count -ne 0 ]]; then
             print_args
-            echo -e "\033[37;41;1mERROR: already $count running of $BOOT_JAR \033[0m"
+            echo -e "\033[37;41;1mERROR: has $count running $BOOT_JAR \033[0m"
             pgrep -alf "$grep_key"
             exit
         fi
@@ -231,7 +238,7 @@ case "$ARGS_RUN" in
             ln -sf "$(basename "$safe_jar")" "$BOOT_JAR"
         fi
 
-        BOOT_OUT="${JAR_NAME}-${BOOT_DTM}.out"
+        BOOT_OUT="${BOOT_TKN}.out"
         #
         print_args
         check_user
@@ -241,14 +248,14 @@ case "$ARGS_RUN" in
         echo $! >"$BOOT_PID"
         sleep 2
 
-        cpid=$(pgrep -f "$grep_key" | tr '\n' ' ')
-        if [[ "$cpid" == "" ]]; then
+        cid=$(pgrep -f "$grep_key" | tr '\n' ' ')
+        if [[ "$cid" == "" ]]; then
             echo -e "\033[37;41;1mERROR: failed to check PID by $BOOT_JAR \033[0m"
             exit
         else
-            echo -e "\033[37;43;1mNOTE: current PID=$cpid of $BOOT_JAR \033[0m"
+            echo -e "\033[37;43;1mNOTE: current PID=$cid of $BOOT_JAR \033[0m"
             # shellcheck disable=SC2086
-            ps -fwww $cpid
+            ps -fwww $cid
         fi
 
         tail_log="$BOOT_OUT"
@@ -290,12 +297,12 @@ case "$ARGS_RUN" in
         print_args
 
         if [[ $count -eq 0 ]]; then
-            echo -e "\033[37;43;1mNOTE: not found running $BOOT_JAR \033[0m"
+            echo -e "\033[37;43;1mNOTE: not running $BOOT_JAR \033[0m"
             exit
         fi
 
-        cpid=$(pgrep -f "$grep_key" | tr '\n' ' ')
-        echo -e "\033[33mNOTE: current PID=$cpid of $BOOT_JAR \033[0m"
+        cid=$(pgrep -f "$grep_key" | tr '\n' ' ')
+        echo -e "\033[33mNOTE: current PID=$cid of $BOOT_JAR \033[0m"
         timeout="$2"
         if [[ "$timeout" == "" ]]; then
             timeout=30
@@ -304,12 +311,12 @@ case "$ARGS_RUN" in
         check_user
 
         pid=$(cat "$BOOT_PID")
-        if [[ $pid -ne $cpid ]]; then
-            echo -e "\033[31mWARN: pid not match, file-pid=$pid , proc-pid=$cpid \033[0m"
-            echo -e "\033[31mWARN: press <ENTER> to kill $pid, <y> to kill all $cpid \033[0m"
+        if [[ $pid -ne $cid ]]; then
+            echo -e "\033[31mWARN: pid not match, file-pid=$pid , proc-pid=$cid \033[0m"
+            echo -e "\033[31mWARN: press <ENTER> to kill $pid, <y> to kill all $cid \033[0m"
             read -r yon
             if [[ "$yon" == "y" ]]; then
-                pid=$cpid
+                pid=$cid
             fi
         fi
         echo -e "\033[33mNOTE: killing boot.pid=$pid of $BOOT_JAR \033[0m"
@@ -333,9 +340,9 @@ case "$ARGS_RUN" in
                 exit
             fi
         done
-        cpid=$(pgrep -f "$grep_key" | tr '\n' ' ')
+        cid=$(pgrep -f "$grep_key" | tr '\n' ' ')
         echo -e "\033[37;41;1mWARN: stopping timeout[${timeout}s], pid=$pid \033[0m"
-        echo -e "\033[31mWARN: need manually check PID=$cpid of $BOOT_JAR \033[0m"
+        echo -e "\033[31mWARN: need manually check PID=$cid of $BOOT_JAR \033[0m"
         echo -e "\033[33mNOTE: <ENTER> to 'kill -9 $pid', <Ctrl-C> to exit \033[0m"
         read -r
         # shellcheck disable=SC2086
@@ -345,7 +352,7 @@ case "$ARGS_RUN" in
         print_args
 
         if [[ $count -eq 0 ]]; then
-            echo -e "\033[37;43;1mNOTE: not found running $BOOT_JAR \033[0m"
+            echo -e "\033[37;43;1mNOTE: not running $BOOT_JAR \033[0m"
             exit
         fi
 
@@ -359,38 +366,38 @@ case "$ARGS_RUN" in
             tail -n $tail_num "$BOOT_LOG"
         fi
         pid=$(cat "$BOOT_PID")
-        cpid=$(pgrep -f "$grep_key" | tr '\n' ' ')
+        cid=$(pgrep -f "$grep_key" | tr '\n' ' ')
         echo -e "\033[37;43;1mNOTE: boot.pid=$pid \033[0m"
-        echo -e "\033[33mNOTE: current PID=$cpid of $BOOT_JAR \033[0m"
+        echo -e "\033[33mNOTE: current PID=$cid of $BOOT_JAR \033[0m"
         # shellcheck disable=SC2086
-        ps -fwww $cpid
+        ps -fwww $cid
 
-        if [[ $pid -ne $cpid ]]; then
-            echo -e "\033[31mWARN: pid not match, proc-pid=$cpid, file-pid=$pid \033[0m"
+        if [[ $pid -ne $cid ]]; then
+            echo -e "\033[31mWARN: pid not match, proc-pid=$cid, file-pid=$pid \033[0m"
         fi
 
         # shellcheck disable=SC2009,SC2086
-        mrs=$(ps -o rss $cpid | grep -v RSS | numfmt --grouping)
+        mrs=$(ps -o rss $cid | grep -v RSS | numfmt --grouping)
         # shellcheck disable=SC2009,SC2086
-        mvs=$(ps -o vsz $cpid | grep -v VSZ | numfmt --grouping)
-        echo -e "\033[37;43;1mNOTE: ps -o rss -o vsz $cpid \033[0m"
+        mvs=$(ps -o vsz $cid | grep -v VSZ | numfmt --grouping)
+        echo -e "\033[37;43;1mNOTE: ps -o rss -o vsz $cid \033[0m"
         echo -e "\033[32m Resident= $mrs Kb\033[m"
         echo -e "\033[32m Virtual=  $mvs Kb\033[m"
 
         echo -e "\033[37;43;1mNOTE: ==== other useful command ==== \033[0m"
-        echo -e "\033[32m jmap -heap $cpid \033[m mac's bug=8161164, lin's ptrace_scope"
-        echo -e "\033[32m profiler.sh -d 30 -f profile.svg $cpid \033[m https://github.com/jvm-profiling-tools/async-profiler"
-        echo -e "\033[32m java -jar arthas-boot.jar $cpid \033[m https://github.com/alibaba/arthas"
+        echo -e "\033[32m jmap -heap $cid \033[m mac's bug=8161164, lin's ptrace_scope"
+        echo -e "\033[32m profiler.sh -d 30 -f profile.svg $cid \033[m https://github.com/jvm-profiling-tools/async-profiler"
+        echo -e "\033[32m java -jar arthas-boot.jar $cid \033[m https://github.com/alibaba/arthas"
 
         check_user
-        echo -e "\033[37;43;1mNOTE: jstat -gcutil $cpid 1000 5 \033[0m"
+        echo -e "\033[37;43;1mNOTE: jstat -gcutil $cid 1000 5 \033[0m"
         # shellcheck disable=SC2086
-        jstat -gcutil $cpid 1000 5
+        jstat -gcutil $cid 1000 5
         ;;
     warn)
         warn_got=''
         if [[ $count -eq 0 ]]; then
-            echo -e "\033[33mNOTE: not found running $BOOT_JAR \033[0m"
+            echo -e "\033[33mNOTE: not running $BOOT_JAR \033[0m"
             WARN_TXT="$WARN_TXT,PID"
             warn_got="pid"
         fi
