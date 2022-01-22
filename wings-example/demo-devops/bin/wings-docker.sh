@@ -1,4 +1,6 @@
 #!/bin/bash
+THIS_VERSION=2022-01-22
+
 TEMP_DIR="../target" # 避免复制，建议在同一硬盘分区
 BOOT_JAR="../target/demo-devops-*-SNAPSHOT.jar"
 BOOT_ENV="./wings-starter.env"
@@ -8,6 +10,7 @@ DOCK_DIR="/opt/"
 DOCK_TAG="wings/demo-devops"
 
 ####
+echo -e "\033[37;42;1mScript-Version $THIS_VERSION \033[0m"
 if [[ "$1" == "help" ]]; then
     echo -e '\033[32m default print Dockerfile\033[m'
     echo -e '\033[32m build \033[m docker build image'
@@ -33,17 +36,17 @@ function link_file() {
             return
         fi
 
-        echo "hard linked $lnk_it"
         if ln "$lnk_it" "$dir_to/$name_file"; then
+            echo "hard linked $lnk_it"
             return
         fi
-        echo "copy file or exit then change TEMP_DIR [y/n]"
+        echo -e "\033[31mWARN: failed to link file, need to copy it \033[0m copy or exit [y/n]"
         read -r yon
         if [[ "$yon" != "y" ]]; then
             echo "change TEMP_DIR and files in same disk partition"
             exit
         fi
-        copy "$lnk_it" "$dir_to/$name_file"
+        cp "$lnk_it" "$dir_to/$name_file"
     elif [[ "$cmd_it" != "end" ]]; then
         frm=$(dirname "$lnk_it")
         tkn=$(basename "$lnk_it")
@@ -62,7 +65,7 @@ function link_file() {
     fi
 }
 
-tmp_dir=$TEMP_DIR/dockbuild-$(date '+%y%m%d%H%M%S')
+tmp_dir=$TEMP_DIR/docker-$(date '+%y%m%d%H%M%S')
 mkdir -p "$tmp_dir"
 
 link_file "$tmp_dir" "$BOOT_JAR"
