@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2022-01-20
+THIS_VERSION=2022-01-22
 
 cat <<EOF
 #################################################
@@ -233,9 +233,9 @@ case "$ARGS_RUN" in
         BOOT_MD5=$(awk '{print $1}' <"$file_md5")
         safe_jar="$BOOT_JAR-$BOOT_MD5"
         if [[ ! -f "$safe_jar" ]]; then
-            echo -e "\033[33mNOTE: link safe_jar  $safe_jar \033[0m"
-            mv -f "$BOOT_JAR" "$safe_jar"
-            ln -sf "$(basename "$safe_jar")" "$BOOT_JAR"
+            echo -e "\033[33mNOTE: copy safe_jar  $safe_jar \033[0m"
+            # do Not use link (soft and hard), as it can overwrite source
+            cp "$BOOT_JAR" "$safe_jar"
         fi
 
         BOOT_OUT="${BOOT_TKN}.out"
