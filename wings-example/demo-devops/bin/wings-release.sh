@@ -6,23 +6,33 @@ cat <<EOF
 # Version $THIS_VERSION # for Mac&Lin
 # 使用'ln -s'把此脚本软连接到'执行目录/workdir'，
 # 其同名'env'如（wings-release.env）会被自动载入。
-# 若PACK_JAR是目录，FLAT_SUB确定覆盖行为。
+# 若PACK_JAR是目录，SUB_FLAT确定覆盖行为。
 #################################################
 EOF
 ################ modify the following params ################
 USER_RUN="$USER" # 用来启动程序的用户
 WORK_DIR=''      # 工程目录，及工作目录
-DEST_DIR=''      # 目标目录，复制到本地或远程目录
-FLAT_SUB=true    # 打包产物是目录时，传送内容或整个目录
+DEST_DIR=''      # 目标列表，本地或远程目录
 PACK_JAR='*.jar' # 打包产物（文件或目录）的列表
-SCP_HOST=''      # scp 主机列表，`user@host`
+SUB_FLAT=true    # 打包产物是目录时，传送内容或整个目录
 SCP_ARGS=''      # scp 参数项
+PRE_PACK=''      # pack前执行的命令
 
 ################ NO NEED to modify the following ################
 function check_cmd() {
     if ! which "$1" >/dev/null; then
         echo -e "\033[31mERROR: need command $1 \033[0m"
         exit
+    fi
+}
+
+function _pre_pack() {
+    if [[ "$PRE_PACK" != "" ]]; then
+        echo -e "\033[37;42;1m ==== PRE_PACK $PRE_PACK \033[0m"
+        if ! eval "$PRE_PACK"; then
+            echo -e "\033[31mERROR: failed PRE_PACK \033[0m"
+            exit
+        fi
     fi
 }
 
@@ -43,6 +53,7 @@ function build_mvn() {
         cp $_git_log "$res/"
     done
 
+    _pre_pack
     echo -e "\033[37;42;1m ==== Package $WORK_DIR ==== \033[0m"
     mvn package
 
@@ -64,21 +75,29 @@ function build_web() {
         nvm use
     fi
 
+    _pre_pack
+
+    _cmd=$1
+    if [[ "$_cmd" == "" ]]; then
+        if [[ -f "pnpm-lock.yaml" ]]; then
+            _cmd=pnpm
+        elif [[ -f "yarn.lock" ]]; then
+            _cmd=yarn
+        elif [[ -f "package-lock.json" ]]; then
+            _cmd=npm
+        fi
+    fi
+
     # build
-    if [[ "$1" == "pnpm" || -f "pnpm-lock.yaml" ]]; then
-        echo -e "\033[32m pnpm \033[m by lockfile, $1"
-        #pnpm install
+    echo -e "\033[32m web pack $_cmd \033[m"
+    if [[ "$_cmd" == "pnpm" ]]; then
         pnpm build
-    elif [[ "$1" == "yarn" || -f "yarn.lock" ]]; then
-        echo -e "\033[32m yarn \033[m by lockfile, $1"
-        #yarn install
+    elif [[ "$_cmd" == "yarn" ]]; then
         yarn build
-    elif [[ "$1" == "npm" || -f "package-lock.json" ]]; then
-        echo -e "\033[32m npm \033[m by lockfile, $1"
-        #npm install
+    elif [[ "$_cmd" == "npm" ]]; then
         npm run build
     else
-        echo -e "\033[31mERROR: no env file found. $this_envs \033[0m"
+        echo -e "\033[31mWARN: skip unknown command $_cmd \033[0m"
     fi
 
     # git hash
@@ -91,6 +110,13 @@ function build_web() {
 }
 
 function build_auto() {
+
+    # only pre
+    if [[ "$1" == "pre" ]]; then
+        _pre_pack
+        exit
+    fi
+
     # mvn
     if [[ -f "pom.xml" || "$1" == "mvn" ]]; then
         build_mvn
@@ -160,47 +186,31 @@ case "$1" in
                 _jar_log="$_jar_log $_tmp"
             fi
         done
-
-        if [[ "$SCP_HOST" == "" ]]; then
-            echo -e "\033[37;42;1m ==== COPY $DEST_DIR ==== \033[0m"
+        for _dst in $DEST_DIR; do
+            echo -e "\033[37;42;1m ==== COPY $_dst ==== \033[0m"
             _yna="n"
             for _jar in $_jar_log; do
                 if [[ "$_yna" != "a" ]]; then
-                    echo "release $_jar [y/n/a]?"
+                    echo -e "\033[32m $_jar \033[m [y/n/a]?"
                     read -r _yna </dev/tty
                 fi
-                if [[ "$_yna" != "n" ]]; then
-                    echo "copy $_jar to $DEST_DIR"
-                    if [[ -d "$_jar" && "$FLAT_SUB" == "true" ]]; then
-                        # shellcheck disable=SC2086
-                        cp -rf $_jar/* "$DEST_DIR"
-                    else
-                        cp -rf "$_jar" "$DEST_DIR"
-                    fi
+                if [[ "$_yna" == "n" ]]; then
+                    continue
+                fi
+                _cmd="cp -r"
+                if [[ ! -d "$_dst" ]]; then
+                    _cmd="scp -r $SCP_ARGS"
+                fi
+                #echo "$_cmd $_jar to $_dst"
+                if [[ -d "$_jar" && "$SUB_FLAT" == "true" ]]; then
+                    # shellcheck disable=SC2086
+                    $_cmd $_jar/* "$_dst"
+                else
+                    # shellcheck disable=SC2086
+                    $_cmd $_jar "$_dst"
                 fi
             done
-        else
-            for _host in $SCP_HOST; do
-                echo -e "\033[37;42;1m ==== SCP $_host:$DEST_DIR ==== \033[0m"
-                _yna="n"
-                for _jar in $_jar_log; do
-                    if [[ "$_yna" != "a" ]]; then
-                        echo "release $_jar [y/n/a]?"
-                        read -r _yna </dev/tty
-                    fi
-                    if [[ "$_yna" != "n" ]]; then
-                        echo "scp $_jar to $_host:$DEST_DIR"
-                        if [[ -d "$_jar" && "$FLAT_SUB" == "true" ]]; then
-                            # shellcheck disable=SC2086
-                            scp -r $SCP_ARGS $_jar/* "$_host:$DEST_DIR"
-                        else
-                            # shellcheck disable=SC2086
-                            scp -r $SCP_ARGS "$_jar" "$_host:$DEST_DIR"
-                        fi
-                    fi
-                done
-            done
-        fi
+        done
         ;;
     *)
         echo -e '\033[37;42;1mNOTE: help info, use the following\033[m'
@@ -210,6 +220,7 @@ case "$1" in
         echo -e '\033[32m pack npm \033[m npm install, build'
         echo -e '\033[32m pack pnpm \033[m pnpm install, build'
         echo -e '\033[32m pack yarn \033[m yarn install, build'
+        echo -e '\033[32m pack pre \033[m only exec PRE_PACK'
         echo -e '\033[32m push \033[m push jar'
         ;;
 esac
