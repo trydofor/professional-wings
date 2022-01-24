@@ -10,13 +10,17 @@ cat <<EOF
 #################################################
 EOF
 ################ modify the following params ################
-USER_RUN="$USER" # 用来启动程序的用户
-WORK_DIR=''      # 工程目录，及工作目录
-DEST_DIR=''      # 目标列表，本地或远程目录
-PACK_JAR='*.jar' # 打包产物（文件或目录）的列表
-SUB_FLAT=true    # 打包产物是目录时，传送内容或整个目录
-SCP_ARGS=''      # scp 参数项
-PRE_PACK=''      # pack前执行的命令
+USER_RUN="$USER"                                   # 用来启动程序的用户
+WORK_DIR=''                                        # 工程目录，及工作目录
+DEST_DIR=''                                        # 目标列表，本地或远程目录
+PACK_JAR='*.jar'                                   # 打包产物（文件或目录）的列表
+SUB_FLAT=true                                      # 打包产物是目录时，传送内容或整个目录
+SCP_ARGS=''                                        # scp 参数项
+PRE_PACK=''                                        # pack前执行的命令
+PRE_PUSH=''                                        # push前执行的命令，支持`$_JAR`变量
+MVN_COMP='-U -Dmaven.test.skip=true clean compile' # mvn的compile命令
+MVN_PACK='-Dmaven.test.skip=true package'          # mvn的package命令
+WEB_PACK='build'                                   # web的package的命令
 
 ################ NO NEED to modify the following ################
 function check_cmd() {
@@ -28,9 +32,22 @@ function check_cmd() {
 
 function _pre_pack() {
     if [[ "$PRE_PACK" != "" ]]; then
-        echo -e "\033[37;42;1m ==== PRE_PACK $PRE_PACK \033[0m"
-        if ! eval "$PRE_PACK"; then
+        _pcm=$(eval "echo \"$PRE_PACK\"")
+        echo -e "\033[37;42;1m ==== PRE_PACK $_pcm \033[0m"
+        if ! eval "$_pcm"; then
             echo -e "\033[31mERROR: failed PRE_PACK \033[0m"
+            exit
+        fi
+    fi
+}
+
+function _pre_push() {
+    if [[ "$PRE_PUSH" != "" ]]; then
+        _JAR=$1
+        _pcm=$(eval "echo \"$PRE_PUSH\"")
+        echo -e "\033[37;42;1m ==== PRE_PUSH $_pcm \033[0m"
+        if ! eval "$_pcm"; then
+            echo -e "\033[31mERROR: failed PRE_PUSH $_JAR \033[0m"
             exit
         fi
     fi
@@ -41,7 +58,8 @@ function build_mvn() {
     check_cmd git
 
     echo -e "\033[37;42;1m ==== Compile $WORK_DIR ==== \033[0m"
-    mvn -U clean compile -Dmaven.test.skip=true
+    # shellcheck disable=SC2086
+    mvn $MVN_COMP
 
     _git_log="git-log.txt"
     _res_log="git-log.tmp"
@@ -55,7 +73,8 @@ function build_mvn() {
 
     _pre_pack
     echo -e "\033[37;42;1m ==== Package $WORK_DIR ==== \033[0m"
-    mvn package
+    # shellcheck disable=SC2086
+    mvn $MVN_PACK
 
     echo -e "\033[37;42;1m ==== GitLogs $WORK_DIR ==== \033[0m"
     cat "$_git_log"
@@ -91,11 +110,11 @@ function build_web() {
     # build
     echo -e "\033[32m web pack $_cmd \033[m"
     if [[ "$_cmd" == "pnpm" ]]; then
-        pnpm build
+        pnpm $WEB_PACK
     elif [[ "$_cmd" == "yarn" ]]; then
-        yarn build
+        yarn $WEB_PACK
     elif [[ "$_cmd" == "npm" ]]; then
-        npm run build
+        npm run $WEB_PACK
     else
         echo -e "\033[31mWARN: skip unknown command $_cmd \033[0m"
     fi
@@ -176,6 +195,7 @@ case "$1" in
         _jar_log=""
         for _jar in $PACK_JAR; do
             if [[ -f "$_jar" || -d "$_jar" ]]; then
+                _pre_push "$_jar"
                 _jar_log="$_jar_log $_jar"
             else
                 _tmp=$(find . -type f -name "$_jar")
@@ -183,9 +203,13 @@ case "$1" in
                     echo -e "\033[31mERROR: not file. $_jar \033[0m"
                     exit
                 fi
+                _pre_push "$_tmp"
                 _jar_log="$_jar_log $_tmp"
             fi
         done
+        if [[ "$2" == "pre" ]]; then
+            exit
+        fi
         for _dst in $DEST_DIR; do
             echo -e "\033[37;42;1m ==== COPY $_dst ==== \033[0m"
             _yna="n"
@@ -221,7 +245,8 @@ case "$1" in
         echo -e '\033[32m pack pnpm \033[m pnpm install, build'
         echo -e '\033[32m pack yarn \033[m yarn install, build'
         echo -e '\033[32m pack pre \033[m only exec PRE_PACK'
-        echo -e '\033[32m push \033[m push jar'
+        echo -e '\033[32m push \033[m push to dest'
+        echo -e '\033[32m push pre \033[m only exec PRE_PUSH'
         ;;
 esac
 echo
