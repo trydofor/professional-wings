@@ -28,6 +28,7 @@ JAVA_XMX='4G'    # 启动参数。通过env覆盖
 WARN_TXT=''      # 预设的警告词
 WARN_AGO=''      # 日志多少秒不更新，则警报，空表示忽略
 WARN_RUN=''      # 若pid消失或日志无更新则执行
+JDK_HOME=''      # 指定jdk版本
 # shellcheck disable=SC2016
 JAVA_ARG='-server
 -Djava.awt.headless=true
@@ -176,6 +177,13 @@ if [[ -f "$file_md5" ]]; then
     BOOT_MD5=$(awk '{print $1}' <"$file_md5")
 fi
 
+# java home & path
+if [[ "$JDK_HOME" != "" && "$JDK_HOME" != "$JAVA_HOME" ]]; then
+    PATH=$JDK_HOME/bin:$PATH
+    JAVA_HOME=$JDK_HOME
+    echo -e "\033[37;42;1mINFO: use JAVA_HOME=$JAVA_HOME ==== \033[0m"
+fi
+
 # check pid&out
 if [[ "$BOOT_PID" == "" ]]; then
     BOOT_PID="${JAR_NAME}.pid"
@@ -203,6 +211,7 @@ fi
 
 # check ps
 grep_key=" -jar ${BOOT_JAR}[ -]"
+echo -e "grep-key='$grep_key'"
 count=$(pgrep -f "$grep_key" | wc -l)
 
 # exec cmd
