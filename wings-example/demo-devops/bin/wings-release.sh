@@ -193,7 +193,15 @@ case "$1" in
         ;;
     push)
         _jar_log=""
+        _yna="n"
         for _jar in $PACK_JAR; do
+            if [[ "$_yna" != "a" ]]; then
+                echo -e "\033[32m with $_jar \033[m [y/n/a]?"
+                read -r _yna </dev/tty
+            fi
+            if [[ "$_yna" == "n" ]]; then
+                continue
+            fi
             if [[ -f "$_jar" || -d "$_jar" ]]; then
                 _pre_push "$_jar"
                 _jar_log="$_jar_log $_jar"
@@ -207,20 +215,23 @@ case "$1" in
                 _jar_log="$_jar_log $_tmp"
             fi
         done
+
         if [[ "$2" == "pre" ]]; then
             exit
         fi
+
+        _yna="n"
         for _dst in $DEST_DIR; do
-            echo -e "\033[37;42;1m ==== COPY $_dst ==== \033[0m"
-            _yna="n"
+            echo -e "\033[37;42;1m ==== PUSH $_dst ==== \033[0m"
+            if [[ "$_yna" != "a" ]]; then
+                echo -e "\033[32m $_dst \033[m [y/n/a]?"
+                read -r _yna </dev/tty
+            fi
+            if [[ "$_yna" == "n" ]]; then
+                continue
+            fi
+
             for _jar in $_jar_log; do
-                if [[ "$_yna" != "a" ]]; then
-                    echo -e "\033[32m $_jar \033[m [y/n/a]?"
-                    read -r _yna </dev/tty
-                fi
-                if [[ "$_yna" == "n" ]]; then
-                    continue
-                fi
                 _cmd="cp -r"
                 if [[ ! -d "$_dst" ]]; then
                     _cmd="scp -r $SCP_ARGS"
