@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
+import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
@@ -51,7 +52,7 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
 
     @Override
     @Transactional
-    public Details create(@NotNull Enum<?> authType, String username, Object details) {
+    public Details create(@NotNull Enum<?> authType, String username, WingsAuthDetails details) {
 
         final String mrk = "auto create auth-user auth-type=" + authType + "username=" + username;
         return journalService.submit(WarlockAuthnService.Jane.AutoSave, username, mrk, commit -> {
@@ -103,20 +104,20 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
         });
     }
 
-    protected void beforeSave(Basis basis, String username, Object details) {
+    protected void beforeSave(Basis basis, String username, WingsAuthDetails details) {
     }
 
-    protected void afterSave(Basis basis, String username, Object details, long userId) {
+    protected void afterSave(Basis basis, String username, WingsAuthDetails details, long userId) {
     }
 
-    protected void beforeSave(Authn authn, String username, Object details, long userId) {
+    protected void beforeSave(Authn authn, String username, WingsAuthDetails details, long userId) {
     }
 
-    protected void afterSave(Authn authn, String username, Object details, long userId, long authId) {
+    protected void afterSave(Authn authn, String username, WingsAuthDetails details, long userId, long authId) {
     }
 
     @Override
-    public boolean accept(@NotNull Enum<?> authType, String username, Object details) {
+    public boolean accept(@NotNull Enum<?> authType, String username, WingsAuthDetails details) {
         return false;
     }
 }

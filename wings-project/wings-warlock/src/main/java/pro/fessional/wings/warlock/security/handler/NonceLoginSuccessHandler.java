@@ -42,20 +42,13 @@ public class NonceLoginSuccessHandler implements AuthenticationSuccessHandler {
         final long uid = SecurityContextUtil.getUserId();
         final String sid = session == null ? null : session.getId();
 
-        if (sid == null) {
-            log.warn("login Success without session, uid={}", uid);
-        }
-        else {
-            log.info("login Success and swap nonce, uid={}", uid);
-            NonceTokenSessionHelper.swapNonceSid(uid, sid);
-        }
-
-        final String state = authStateBuilder.parseParam(request.getParameter("state"));
+        final String state = request.getParameter(AuthStateBuilder.ParamState);
         if (state != null) {
+            NonceTokenSessionHelper.bindNonceSid(state, sid);
             log.info("parse client state={}, uid={}", state, uid);
         }
 
-        onResponse(request, response, authentication, sid, uid, state);
+        onResponse(request, response, authentication, sid, uid, authStateBuilder.parseState(request));
     }
 
     /**

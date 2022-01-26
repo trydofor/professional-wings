@@ -15,6 +15,7 @@ import pro.fessional.mirana.best.StateAssert;
 import pro.fessional.mirana.cast.EnumConvertor;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.PasswordHelper;
+import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.event.auth.WarlockNonceSendEvent;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
@@ -50,7 +51,7 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
     }
 
     @Override
-    protected Details doLoad(@NotNull Enum<?> authType, String username, @Nullable Object authDetail) {
+    protected Details doLoad(@NotNull Enum<?> authType, String username, @Nullable WingsAuthDetails authDetail) {
         if (!acceptNonceType.contains(authType)) {
             return null;
         }

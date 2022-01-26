@@ -367,7 +367,7 @@ class SqlSegmentProcessor(
             val pos = other.indexOf(table, 0, true)
             if (pos < 0) return TYPE_OTHER
 
-            val suf = other.replace(table, PLAIN_TABLE);
+            val suf = other.replace(table, PLAIN_TABLE)
             return when {
                 suf == PLAIN_TABLE -> TYPE_PLAIN
                 regShard.matches(suf) -> {

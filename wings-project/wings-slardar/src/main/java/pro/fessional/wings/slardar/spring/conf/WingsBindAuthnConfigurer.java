@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.authentication.configurers
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import pro.fessional.wings.slardar.security.WingsAuthCheckService;
 import pro.fessional.wings.slardar.security.bind.WingsBindAuthProvider;
 
 /**
@@ -17,6 +18,7 @@ public class WingsBindAuthnConfigurer<U extends UserDetailsService> extends User
     private U userDetailsService;
     private PasswordEncoder passwordEncoder;
     private UserDetailsPasswordService userDetailsPasswordService;
+    private WingsAuthCheckService wingsAuthCheckService;
     private boolean wingsBindAuthnProvider = true;
 
     public WingsBindAuthnConfigurer<U> userDetailsService(U userDetailsService) {
@@ -44,6 +46,11 @@ public class WingsBindAuthnConfigurer<U extends UserDetailsService> extends User
         return this;
     }
 
+    public WingsBindAuthnConfigurer<U> wingsAuthCheckService(WingsAuthCheckService wingsAuthCheckService) {
+        this.wingsAuthCheckService = wingsAuthCheckService;
+        return this;
+    }
+
     @Override
     public void configure(AuthenticationManagerBuilder builder) {
         if (!wingsBindAuthnProvider) return;
@@ -56,6 +63,10 @@ public class WingsBindAuthnConfigurer<U extends UserDetailsService> extends User
 
         if (userDetailsPasswordService != null) {
             provider.setUserDetailsPasswordService(userDetailsPasswordService);
+        }
+
+        if (wingsAuthCheckService != null) {
+            provider.setWingsAuthCheckService(wingsAuthCheckService);
         }
 
         provider = postProcess(provider);

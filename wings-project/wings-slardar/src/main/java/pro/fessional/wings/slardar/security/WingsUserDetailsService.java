@@ -40,5 +40,5 @@ public interface WingsUserDetailsService extends UserDetailsService {
      * @see Authentication#getDetails
      */
     @NotNull
-    UserDetails loadUserByUsername(String username, @NotNull Enum<?> authType, @Nullable Object authDetail) throws UsernameNotFoundException;
+    UserDetails loadUserByUsername(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) throws UsernameNotFoundException;
 }

@@ -10,6 +10,7 @@ import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedRegexp
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedTable
+import pro.fessional.wings.faceless.util.FlywaveInteractiveTty
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 import java.io.File
 import javax.sql.DataSource
@@ -40,6 +41,7 @@ class SchemaFulldumpManagerTest {
 
     @Test
     fun `test0🦁清表重置`() {
+        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes)
         wingsTestHelper.cleanTable()
         schemaRevisionManager.checkAndInitSql(FlywaveRevisionScanner.scanMaster(), 0, true)
     }

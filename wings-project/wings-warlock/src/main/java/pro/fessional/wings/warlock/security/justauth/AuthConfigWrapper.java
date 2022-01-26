@@ -3,6 +3,7 @@ package pro.fessional.wings.warlock.security.justauth;
 import lombok.experimental.Delegate;
 import me.zhyd.oauth.config.AuthConfig;
 import pro.fessional.mirana.text.StringTemplate;
+import pro.fessional.wings.slardar.security.WingsAuthHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
@@ -15,10 +16,13 @@ public class AuthConfigWrapper extends AuthConfig {
 
     public static final String RedirectUriHost = "{host}";
     public static final String RedirectUriScheme = "{scheme}";
+    public static final String RedirectUriAuthType = "{" + WingsAuthHelper.AuthType + "}";
+    public static final String RedirectUriAuthZone = "{" + WingsAuthHelper.AuthZone + "}";
 
     public static AuthConfig tryWrap(AuthConfig config, Set<String> safeHost) {
         final String uri = config.getRedirectUri();
-        if (uri != null && (uri.contains(RedirectUriHost) || uri.contains(RedirectUriScheme))) {
+        if (uri != null && (uri.contains(RedirectUriHost) || uri.contains(RedirectUriScheme)
+                            || uri.contains(RedirectUriAuthType) || uri.contains(RedirectUriAuthZone))) {
             return new AuthConfigWrapper(config, safeHost, null);
         }
         return config;
@@ -62,6 +66,8 @@ public class AuthConfigWrapper extends AuthConfig {
                 .dyn(uri)
                 .bindStr(RedirectUriHost, host)
                 .bindStr(RedirectUriScheme, request.getScheme())
+                .bindStr(RedirectUriAuthType, request.getParameter(WingsAuthHelper.AuthType))
+                .bindStr(RedirectUriAuthZone, request.getParameter(WingsAuthHelper.AuthZone))
                 .toString();
     }
 }

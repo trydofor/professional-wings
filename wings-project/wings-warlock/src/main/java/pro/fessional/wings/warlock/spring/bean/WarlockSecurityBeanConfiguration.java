@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;
@@ -15,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.util.AntPathMatcher;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
@@ -24,6 +26,7 @@ import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.WingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
+import pro.fessional.wings.slardar.security.impl.ComboWingsAuthCheckService;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
@@ -42,6 +45,8 @@ import pro.fessional.wings.warlock.security.userdetails.JustAuthUserDetailsCombo
 import pro.fessional.wings.warlock.security.userdetails.MemoryUserDetailsCombo;
 import pro.fessional.wings.warlock.security.userdetails.NonceUserDetailsCombo;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
+import pro.fessional.wings.warlock.service.auth.impl.AuthAppPermChecker;
+import pro.fessional.wings.warlock.service.auth.impl.AuthZonePermChecker;
 import pro.fessional.wings.warlock.service.auth.impl.ComboWarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.impl.ComboWarlockAuthzService;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultPermRoleCombo;
@@ -68,6 +73,8 @@ import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp.Ma;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp.Mu;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -253,7 +260,7 @@ public class WarlockSecurityBeanConfiguration {
             final Mu mu = en.getValue();
             Details dtl = new Details();
             dtl.setUserId(mu.getUserId());
-            dtl.setAuthType(hasText(mu.getAuthType()) ? typeParser.parse(mu.getAuthType()) : null);
+            dtl.setAuthType(typeParser.parse(mu.getAuthType()));
             dtl.setUsername(mu.getUsername());
             dtl.setPassword(mu.getPassword());
             dtl.setStatus(mu.getStatus());
@@ -265,6 +272,45 @@ public class WarlockSecurityBeanConfiguration {
             bean.addUser(dtl);
         }
 
+        return bean;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(AuthZonePermChecker.class)
+    @ConditionalOnProperty(name = "spring.wings.warlock.enabled.zone-perm-check", havingValue = "true")
+    public AuthZonePermChecker authZonePermChecker() {
+        logger.info("Wings conf authZonePermChecker");
+        final AuthZonePermChecker bean = new AuthZonePermChecker();
+        bean.setZonePerm(securityProp.getZonePerm());
+        return bean;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(AuthAppPermChecker.class)
+    @ConditionalOnProperty(name = "spring.wings.warlock.enabled.app-perm-check", havingValue = "true")
+    public AuthAppPermChecker authAppPermChecker(@Value("${spring.application.name}") String appName) {
+        logger.info("Wings conf authAppPermChecker");
+        final AuthAppPermChecker bean = new AuthAppPermChecker();
+        final Set<String> perms = new HashSet<>();
+        final AntPathMatcher matcher = new AntPathMatcher();
+        for (Map.Entry<String, Set<String>> en : securityProp.getAppPerm().entrySet()) {
+            final String ptn = en.getKey();
+            if (matcher.match(ptn, appName)) {
+                logger.info("Wings conf authAppPermChecker, " + appName + " matches " + ptn);
+                perms.addAll(en.getValue());
+            }
+        }
+        bean.setAppPerm(perms);
+        return bean;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(ComboWingsAuthCheckService.class)
+    public ComboWingsAuthCheckService comboWingsAuthCheckService(ObjectProvider<ComboWingsAuthCheckService.Combo> combos) {
+        logger.info("Wings conf comboWingsAuthCheckService");
+        final List<ComboWingsAuthCheckService.Combo> list = combos.orderedStream().collect(Collectors.toList());
+        final ComboWingsAuthCheckService bean = new ComboWingsAuthCheckService();
+        bean.setCombos(list);
         return bean;
     }
 
@@ -310,7 +356,7 @@ public class WarlockSecurityBeanConfiguration {
             final String un = ma.getUsername();
             if (hasText(un)) {
                 final String tm = ma.getAuthType();
-                final Enum<?> at = hasText(tm) ? typeParser.parse(tm) : null;
+                final Enum<?> at = typeParser.parse(tm);
                 logger.info("Wings conf add MemAuth, username=" + un + ", auth-type=" + tm);
                 bean.addAuthz(un, at, role);
                 bean.addAuthz(un, at, perm);
@@ -324,6 +370,7 @@ public class WarlockSecurityBeanConfiguration {
     public WingsAuthDetailsSource<?> wingsAuthDetailsSource(ObjectProvider<ComboWingsAuthDetailsSource.Combo<?>> combos) {
         logger.info("Wings conf wingsAuthDetailsSource");
         ComboWingsAuthDetailsSource uds = new ComboWingsAuthDetailsSource();
+
         combos.orderedStream().forEach(it -> {
             logger.info("Wings conf wingsAuthDetailsSource add " + it.getClass().getName());
             uds.add(it);
@@ -395,6 +442,4 @@ public class WarlockSecurityBeanConfiguration {
         logger.info("Wings conf authSuccessListener");
         return new WarlockFailedLoginListener();
     }
-
-
 }

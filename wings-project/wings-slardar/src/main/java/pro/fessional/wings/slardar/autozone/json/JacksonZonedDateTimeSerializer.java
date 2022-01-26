@@ -60,10 +60,7 @@ public class JacksonZonedDateTimeSerializer extends ZonedDateTimeSerializer {
         if (autoZone) {
             final TimeZone tz = LocaleContextHolder.getTimeZone();
             value = DateLocaling.zoneZone(value, tz.toZoneId());
-            super.serialize(value, g, provider);
         }
-        else {
-            super.serialize(value, g, provider);
-        }
+        super.serialize(value, g, provider);
     }
 }

@@ -152,9 +152,9 @@ class SchemaJournalManager(
 
         for ((plainName, plainDs) in plainDataSources) {
             interactive.log(INFO, here, "ready to check journal, table=$table on db=$plainName")
-            val tables = schemaDefinitionLoader.showTables(plainDs).map {
-                it.toLowerCase() to it
-            }.toMap()
+            val tables = schemaDefinitionLoader.showTables(plainDs).associateBy {
+                it.toLowerCase()
+            }
 
             if (!tables.containsKey(table.toLowerCase())) {
                 throw IllegalArgumentException("table not existed. table=$table")
@@ -321,35 +321,40 @@ class SchemaJournalManager(
         val isInsert = "insert".equals(event, true)
         val isUpdate = "update".equals(event, true)
         val isDelete = "delete".equals(event, true)
-        val selectSql = if (isInsert) {
-            """
-            SELECT
-                ddl_instbl ddl_tbl,
-                ddl_instrg ddl_trg,
-                log_insert apply_dt
-            FROM $schemaJournalTable
-            WHERE table_name = ?
-            """.trimIndent()
-        } else if (isUpdate) {
-            """
-            SELECT
-                ddl_updtbl ddl_tbl,
-                ddl_updtrg ddl_trg,
-                log_update apply_dt
-            FROM $schemaJournalTable
-            WHERE table_name = ?
-            """.trimIndent()
-        } else if (isDelete) {
-            """
-            SELECT
-                ddl_deltbl ddl_tbl,
-                ddl_deltrg ddl_trg,
-                log_delete apply_dt
-            FROM $schemaJournalTable
-            WHERE table_name = ?
-            """.trimIndent()
-        } else {
-            throw RuntimeException("unsupported event $event")
+        val selectSql = when {
+            isInsert -> {
+                """
+                SELECT
+                    ddl_instbl ddl_tbl,
+                    ddl_instrg ddl_trg,
+                    log_insert apply_dt
+                FROM $schemaJournalTable
+                WHERE table_name = ?
+                """.trimIndent()
+            }
+            isUpdate -> {
+                """
+                SELECT
+                    ddl_updtbl ddl_tbl,
+                    ddl_updtrg ddl_trg,
+                    log_update apply_dt
+                FROM $schemaJournalTable
+                WHERE table_name = ?
+                """.trimIndent()
+            }
+            isDelete -> {
+                """
+                SELECT
+                    ddl_deltbl ddl_tbl,
+                    ddl_deltrg ddl_trg,
+                    log_delete apply_dt
+                FROM $schemaJournalTable
+                WHERE table_name = ?
+                """.trimIndent()
+            }
+            else -> {
+                throw RuntimeException("unsupported event $event")
+            }
         }
 
         val logDate = if (enable) {
@@ -408,9 +413,9 @@ class SchemaJournalManager(
                 continue
             }
 
-            val tables = schemaDefinitionLoader.showTables(plainDs).map {
-                it.toLowerCase() to it
-            }.toMap()
+            val tables = schemaDefinitionLoader.showTables(plainDs).associateBy {
+                it.toLowerCase()
+            }
 
             val staffs = tables.filter {
                 val tp = hasType(table, it.value)

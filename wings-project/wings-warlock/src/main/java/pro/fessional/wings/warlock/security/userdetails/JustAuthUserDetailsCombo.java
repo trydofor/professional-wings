@@ -5,6 +5,7 @@ import me.zhyd.oauth.config.AuthSource;
 import me.zhyd.oauth.model.AuthUser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
@@ -30,11 +31,12 @@ public class JustAuthUserDetailsCombo extends DefaultUserDetailsCombo {
     }
 
     @Override
-    protected Details doLoad(@NotNull Enum<?> authType, String username, @Nullable Object authDetail) {
-        if (!(authType instanceof AuthSource)) return null;
+    protected Details doLoad(@NotNull Enum<?> authType, String username, @Nullable WingsAuthDetails authDetail) {
+        if (!(authType instanceof AuthSource) || authDetail == null) return null;
 
-        if (username.isEmpty() && authDetail instanceof AuthUser) {
-            username = ((AuthUser) authDetail).getUuid();
+        final Object authUser = authDetail.getRealData();
+        if (username.isEmpty() && authUser instanceof AuthUser) {
+            username = ((AuthUser) authUser).getUuid();
             log.info("load auth-user by {} use uuid={}", authType, username);
         }
         return super.doLoad(authType, username, authDetail);

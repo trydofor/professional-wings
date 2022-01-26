@@ -39,6 +39,7 @@ import pro.fessional.wings.faceless.database.jooq.converter.JooqConsEnumConverte
 import pro.fessional.wings.faceless.database.jooq.helper.PageJooqHelper;
 import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
+import pro.fessional.wings.faceless.util.FlywaveInteractiveTty;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.util.Collections;
@@ -73,6 +74,7 @@ public class JooqMostSelectSample {
 
     @Test
     public void test0Init() {
+        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes);
         val sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
         schemaRevisionManager.publishRevision(REVISION_TEST_V2, 0);

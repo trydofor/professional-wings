@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class WingsBindAuthFilter extends UsernamePasswordAuthenticationFilter {
 
-    private WingsAuthTypeSource wingsAuthTypeSource;
+    protected WingsAuthTypeSource wingsAuthTypeSource;
 
     public WingsBindAuthFilter() {
         super();
@@ -45,15 +45,20 @@ public class WingsBindAuthFilter extends UsernamePasswordAuthenticationFilter {
         password = (password != null) ? password : "";
 
         Enum<?> authType = wingsAuthTypeSource.buildAuthType(request);
-        WingsBindAuthToken at = new WingsBindAuthToken(authType, username, password);
-        if (authenticationDetailsSource instanceof WingsAuthDetailsSource<?>) {
-            WingsAuthDetailsSource<?> ads = (WingsAuthDetailsSource<?>) authenticationDetailsSource;
-            at.setDetails(ads.buildDetails(authType, request));
-        } else {
-            at.setDetails(authenticationDetailsSource.buildDetails(request));
-        }
+        WingsBindAuthToken winTkn = new WingsBindAuthToken(authType, username, password);
+        final Object details = buildAuthDetails(request, winTkn);
+        winTkn.setDetails(details);
+        return this.getAuthenticationManager().authenticate(winTkn);
+    }
 
-        return this.getAuthenticationManager().authenticate(at);
+    protected Object buildAuthDetails(HttpServletRequest request, WingsBindAuthToken winTkn) {
+        if (authenticationDetailsSource instanceof WingsAuthDetailsSource<?>) {
+            WingsAuthDetailsSource<?> winAds = (WingsAuthDetailsSource<?>) authenticationDetailsSource;
+            return winAds.buildDetails(winTkn.getAuthType(), request);
+        }
+        else {
+            return authenticationDetailsSource.buildDetails(request);
+        }
     }
 
     public WingsAuthTypeSource getWingsBindAuthTypeSource() {

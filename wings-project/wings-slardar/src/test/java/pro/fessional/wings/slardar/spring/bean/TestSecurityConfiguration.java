@@ -12,6 +12,7 @@ import org.springframework.security.core.session.SessionRegistry;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.enums.LoginTypeEnum;
 import pro.fessional.wings.slardar.security.handler.TestLoginHandler;
+import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthDetails;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 
 
@@ -73,6 +74,7 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .loginProcessingUrl("/*/login-proc.json") // filter处理，不需要controller
                     .usernameParameter("username")
                     .passwordParameter("password")
+//                    .authenticationDetailsSource(wingsAuthDetailsSource)
                     .successHandler(testLoginHandler.loginSuccess)
                     .failureHandler(testLoginHandler.loginFailure)
                     .bindAuthTypeToEnums("sms", LoginTypeEnum.Sms)
@@ -116,7 +118,7 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public WingsAuthDetailsSource<Object> wingsBindAuthnDetailsSource() {
-        return (authType, request) -> null;
+    public WingsAuthDetailsSource<DefaultWingsAuthDetails> wingsBindAuthnDetailsSource() {
+        return (authType, request) -> new DefaultWingsAuthDetails();
     }
 }

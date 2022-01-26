@@ -65,7 +65,8 @@ public class WarlockSecurityProp {
     public static final String Key$loginPage = Key + ".login-page";
 
     /**
-     * 处理登录的Ant格式URL（支持`{authType}`占位符，表示`*`），由filter处理，不需要controller
+     * 处理登录的Ant格式URL，由filter处理，不需要controller
+     * 支持变量`authType`和`authZone`，可以通过param或path获得（PathPattern）
      *
      * @see #Key$loginUrl
      */
@@ -174,6 +175,21 @@ public class WarlockSecurityProp {
     private Map<String, String> authType = new HashMap<>();
     public static final String Key$authType = Key + ".auth-type";
 
+    /**
+     * 设置authZone对应的权限，若非全部满足，则不可登录，以用户名密码错误返回
+     *
+     * @see #Key$zonePerm
+     */
+    private Map<String, Set<String>> zonePerm = new HashMap<>();
+    public static final String Key$zonePerm = Key + ".zone-perm";
+
+    /**
+     * 设置spring.application.name对应的权限，若非全部满足，则不可登录，以用户名密码错误返回
+     * 支持AntPath，如`wings-*`，合并所有匹配的权限设置项
+     * @see #Key$appPerm
+     */
+    private Map<String, Set<String>> appPerm = new HashMap<>();
+    public static final String Key$appPerm = Key + ".app-perm";
 
     /**
      * 支持Nonce的验证类型

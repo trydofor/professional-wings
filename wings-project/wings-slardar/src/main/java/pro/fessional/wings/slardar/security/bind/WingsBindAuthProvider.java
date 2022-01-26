@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.security.bind;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,10 +17,13 @@ import org.springframework.util.Assert;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.PasswordHelper;
+import pro.fessional.wings.slardar.security.WingsAuthCheckService;
+import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.WingsUidPrincipalToken;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultPasssaltEncoder;
+import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthDetails;
 
 /**
  * 兼容DaoAuthenticationProvider，可替换之。如果设置onlyWingsBindAuthnToken=true，则只处理 WingsBindAuthnToken。
@@ -31,7 +35,9 @@ import pro.fessional.wings.slardar.security.impl.DefaultPasssaltEncoder;
  */
 public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProvider {
 
+    private static final String BadCredentialsCode = "AbstractUserDetailsAuthenticationProvider.badCredentials";
     private static final String USER_NOT_FOUND_PASSWORD = "TimingAttackProtectionUserNotFoundPassword";
+
     private volatile String userNotFoundEncodedPassword = null;
     private boolean onlyWingsBindAuthnToken = false;
 
@@ -39,6 +45,7 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
     private PasswordEncoder passwordEncoder;
     private PasssaltEncoder passsaltEncoder;
     private UserDetailsPasswordService userDetailsPasswordService;
+    private WingsAuthCheckService wingsAuthCheckService;
 
     public WingsBindAuthProvider(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
@@ -48,7 +55,7 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
 
     @Override
     protected void doAfterPropertiesSet() {
-        Assert.notNull(this.userDetailsService, "A UserDetailsService must be set");
+        Assert.notNull(userDetailsService, "A UserDetailsService must be set");
     }
 
     @Override
@@ -65,22 +72,21 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         prepareTimingAttackProtection();
         try {
-            final UserDetails details;
-            final UserDetailsService userDetailsService = this.getUserDetailsService();
+            final UserDetails userDetails;
 
             if (userDetailsService instanceof WingsUserDetailsService && authentication instanceof WingsBindAuthToken) {
-                WingsUserDetailsService uds = (WingsUserDetailsService) userDetailsService;
-                WingsBindAuthToken bat = (WingsBindAuthToken) authentication;
-                details = uds.loadUserByUsername(username, bat.getAuthType(), bat.getDetails());
+                WingsUserDetailsService winUds = (WingsUserDetailsService) userDetailsService;
+                WingsBindAuthToken winTkn = (WingsBindAuthToken) authentication;
+                userDetails = buildUserDetails(username, winUds, winTkn);
             }
             else {
-                details = userDetailsService.loadUserByUsername(username);
+                userDetails = userDetailsService.loadUserByUsername(username);
             }
 
-            if (details == null) {
+            if (userDetails == null) {
                 throw new InternalAuthenticationServiceException("UserDetailsService returned null, which is an interface contract violation");
             }
-            return details;
+            return userDetails;
         }
         catch (UsernameNotFoundException ex) {
             mitigateAgainstTimingAttack(authentication);
@@ -94,28 +100,52 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
         }
     }
 
+    @NotNull
+    protected UserDetails buildUserDetails(String username, WingsUserDetailsService winUds, WingsBindAuthToken winTkn) {
+        final UserDetails userDetails;
+        final Object obj = winTkn.getDetails();
+        final WingsAuthDetails winAdt;
+        if (obj instanceof WingsAuthDetails) {
+            winAdt = (WingsAuthDetails) obj;
+        }
+        else {
+            logger.info("WARN No-WingsAuthDetails-In-WingsUserDetailsService-And-WingsBindAuthToken");
+            winAdt = new DefaultWingsAuthDetails(obj);
+        }
+        userDetails = winUds.loadUserByUsername(username, winTkn.getAuthType(), winAdt);
+        return userDetails;
+    }
+
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-        if (userDetails instanceof WingsUserDetails && ((WingsUserDetails) userDetails).isPreAuthed()) {
-            return;
+        final boolean isWingsUserDetails = userDetails instanceof WingsUserDetails;
+        if (!isWingsUserDetails || !((WingsUserDetails) userDetails).isPreAuthed()) {
+            checkPassword(userDetails, authentication);
         }
 
+        if (wingsAuthCheckService != null && isWingsUserDetails && authentication instanceof WingsBindAuthToken) {
+            if (!wingsAuthCheckService.check((WingsUserDetails) userDetails, (WingsBindAuthToken) authentication)) {
+                logger.debug("Failed to post check userDetails and authentication");
+                throw new BadCredentialsException(messages.getMessage(BadCredentialsCode, "Bad credentials"));
+            }
+        }
+    }
+
+    protected void checkPassword(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) {
         if (authentication.getCredentials() == null) {
-            this.logger.debug("Failed to authenticate since no credentials provided");
-            throw new BadCredentialsException(this.messages
-                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+            logger.debug("Failed to authenticate since no credentials provided");
+            throw new BadCredentialsException(messages.getMessage(BadCredentialsCode, "Bad credentials"));
         }
 
         String presentedPassword = presentPassword(userDetails, authentication);
 
-        if (!this.passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
-            this.logger.debug("Failed to authenticate since password does not match stored value");
-            throw new BadCredentialsException(this.messages
-                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+        if (!passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
+            logger.debug("Failed to authenticate since password does not match stored value");
+            throw new BadCredentialsException(messages.getMessage(BadCredentialsCode, "Bad credentials"));
         }
     }
 
-    private String presentPassword(UserDetails details, Authentication auth) {
+    protected String presentPassword(UserDetails details, Authentication auth) {
         String presentedPassword = auth.getCredentials().toString();
         // 加盐处理
         if (passsaltEncoder != null && details instanceof WingsUserDetails) {
@@ -130,8 +160,8 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
         final UserDetails origDetails = details;
         if (userDetailsPasswordService != null && passwordEncoder.upgradeEncoding(details.getPassword())) {
             String presentedPassword = presentPassword(details, authn);
-            String newPassword = this.passwordEncoder.encode(presentedPassword);
-            details = this.userDetailsPasswordService.updatePassword(details, newPassword);
+            String newPassword = passwordEncoder.encode(presentedPassword);
+            details = userDetailsPasswordService.updatePassword(details, newPassword);
         }
 
         // super use authoritiesMapper
@@ -145,15 +175,15 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
     }
 
     protected void prepareTimingAttackProtection() {
-        if (this.userNotFoundEncodedPassword == null) {
-            this.userNotFoundEncodedPassword = this.passwordEncoder.encode(USER_NOT_FOUND_PASSWORD);
+        if (userNotFoundEncodedPassword == null) {
+            userNotFoundEncodedPassword = passwordEncoder.encode(USER_NOT_FOUND_PASSWORD);
         }
     }
 
     protected void mitigateAgainstTimingAttack(UsernamePasswordAuthenticationToken authentication) {
         if (authentication.getCredentials() != null) {
             String presentedPassword = authentication.getCredentials().toString();
-            this.passwordEncoder.matches(presentedPassword, this.userNotFoundEncodedPassword);
+            passwordEncoder.matches(presentedPassword, userNotFoundEncodedPassword);
         }
     }
 
@@ -161,7 +191,7 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
 
 
     public PasssaltEncoder getPasssaltEncoder() {
-        return passsaltEncoder;
+        return this.passsaltEncoder;
     }
 
     public void setPasssaltEncoder(PasssaltEncoder passsaltEncoder) {
@@ -201,5 +231,13 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
 
     public void setOnlyWingsBindAuthnToken(boolean onlyWingsBindAuthnToken) {
         this.onlyWingsBindAuthnToken = onlyWingsBindAuthnToken;
+    }
+
+    public WingsAuthCheckService getWingsAuthCheckService() {
+        return wingsAuthCheckService;
+    }
+
+    public void setWingsAuthCheckService(WingsAuthCheckService wingsAuthCheckService) {
+        this.wingsAuthCheckService = wingsAuthCheckService;
     }
 }

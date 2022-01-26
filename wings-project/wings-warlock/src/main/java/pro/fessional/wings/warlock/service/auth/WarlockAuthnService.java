@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.faceless.convention.EmptySugar;
+import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
@@ -67,7 +68,7 @@ public interface WarlockAuthnService {
      * @return 如果成功，返回用户信息
      */
     @Nullable
-    Details register(@NotNull Enum<?> authType, String username, Object details);
+    Details register(@NotNull Enum<?> authType, String username, WingsAuthDetails details);
 
     void auth(DefaultWingsUserDetails userDetails, Details details);
 

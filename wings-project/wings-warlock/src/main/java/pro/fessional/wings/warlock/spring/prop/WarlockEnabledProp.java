@@ -98,6 +98,22 @@ public class WarlockEnabledProp {
     public static final String Key$comboJustAuthAutoreg = Key + ".combo-just-auth-autoreg";
 
     /**
+     * 是否支持 AuthZonePermChecker
+     *
+     * @see #Key$zonePermCheck
+     */
+    private boolean zonePermCheck = false;
+    public static final String Key$zonePermCheck = Key + ".zone-perm-check";
+
+    /**
+     * 是否支持 AuthAppPermChecker
+     *
+     * @see #Key$appPermCheck
+     */
+    private boolean appPermCheck = false;
+    public static final String Key$appPermCheck = Key + ".app-perm-check";
+
+    /**
      * @see #Key$allExceptionHandler
      */
     private boolean allExceptionHandler = true;
@@ -127,6 +143,7 @@ public class WarlockEnabledProp {
 
     /**
      * 是否支持为Docket全局注入AlternateTypeRule
+     *
      * @see #Key$swaggerRule
      */
     private boolean swaggerRule = true;
@@ -134,6 +151,7 @@ public class WarlockEnabledProp {
 
     /**
      * 是否支持为Docket全局注入java.time.Local*
+     *
      * @see #Key$swaggerJsr310
      */
     private boolean swaggerJsr310 = true;
@@ -141,6 +159,7 @@ public class WarlockEnabledProp {
 
     /**
      * 是否开启table CUD 监听
+     *
      * @see #Key$tableChange
      */
     private boolean tableChange = true;

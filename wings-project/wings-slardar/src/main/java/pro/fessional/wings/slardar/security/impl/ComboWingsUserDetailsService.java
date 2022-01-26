@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import pro.fessional.mirana.func.Dcl;
+import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class ComboWingsUserDetailsService implements WingsUserDetailsService {
     private final Dcl dclCombos = Dcl.of(() -> combos.sort(Comparator.comparingInt(Combo::getOrder)));
 
     @Override
-    public @NotNull UserDetails loadUserByUsername(String username, @NotNull Enum<?> authType, @Nullable Object authDetail) throws UsernameNotFoundException {
+    public @NotNull UserDetails loadUserByUsername(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) throws UsernameNotFoundException {
         dclCombos.runIfDirty();
         for (Combo<?> combo : combos) {
             final UserDetails ud = combo.loadOrNull(username, authType, authDetail);
@@ -54,7 +55,7 @@ public class ComboWingsUserDetailsService implements WingsUserDetailsService {
 
     public interface Combo<T extends UserDetails> extends Ordered {
         /**
-         * 不接受或无法构造返回null
+         * 不接受或无法构造返回null，非null时，表示加载成功，直接返回用去验证。
          *
          * @param username   type下身份唯一辨识，用户名，手机号，邮箱，userId等
          * @param authType   验证类型，默认null
@@ -64,6 +65,6 @@ public class ComboWingsUserDetailsService implements WingsUserDetailsService {
          * @see Authentication#getDetails
          */
         @Nullable
-        T loadOrNull(String username, @NotNull Enum<?> authType, @Nullable Object authDetail);
+        T loadOrNull(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail);
     }
 }

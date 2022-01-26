@@ -1,34 +1,39 @@
 #!/bin/bash
 THIS_VERSION=2021-12-21
-echo -e "\033[37;42;1mScript-Version $THIS_VERSION \033[0m"
 
-THIS_PATH=$(pwd)
-# shellcheck disable=SC2164,SC2046,SC2006
-BASE_PATH=$(cd `dirname "$0"`; dirname `pwd`)
-echo "wings-example的目录是 $BASE_PATH"
-cd "$BASE_PATH" || exit
-
-if java -version ; then
-  echo "没有找到 javac和java环境"
-  exit
-fi
-
+# 相对于 wings-example
 JAVA_ROOT="demo-devops/src/test/java"
 CLAZ_ROOT="demo-devops/target/test-classes"
 JAVA_FILE="com/moilioncircle/roshan/devops/init/*.java"
 CLASS_RUN="com.moilioncircle.roshan.devops.init.WingsInitProjectSwing"
 
-VERS=$(grep -E '/revision>|/changelist>' ../pom.xml | \
-sort -r | tr -d '\n '| \
-sed -E 's:<revision>|</changelist>::g'| \
-sed -E 's:</revision><changelist>:.:g')
+###
+echo -e "\033[37;42;1mScript-Version $THIS_VERSION \033[0m"
 
-echo "编译java文件 $JAVA_FILE to $CLAZ_ROOT"
+## change to wings-example
+# shellcheck disable=SC2046
+_this_path=$(dirname $(realpath -s "$0"))
+# shellcheck disable=SC2164
+_base_path=$(cd "$_this_path"; cd ../..; pwd)
+echo -e "\033[37;42;1m wings-example=$_base_path \033[0m"
+cd "$_base_path" || exit
+
+if ! java -version; then
+    echo -e "\033[37;41;1mERROR: no java and javac \033[0m"
+    exit
+fi
+
+_wings_ver=$(grep -E '/revision>|/changelist>' ../pom.xml |
+    sort -r | tr -d '\n ' |
+    sed -E 's:<revision>|</changelist>::g' |
+    sed -E 's:</revision><changelist>:.:g')
+
+echo -e "\033[37;42;1m compile java $JAVA_FILE to $CLAZ_ROOT \033[0m"
 mkdir -p $CLAZ_ROOT
-javac -d $CLAZ_ROOT -encoding utf-8 "$JAVA_ROOT/$JAVA_FILE"
+# shellcheck disable=SC2086
+javac -d $CLAZ_ROOT -encoding utf-8 $JAVA_ROOT/$JAVA_FILE
 
-echo "Wings Version=$VERS"
-echo "执行class文件 $CLASS_RUN"
-java -cp $CLAZ_ROOT $CLASS_RUN "$BASE_PATH" "$THIS_PATH" "$VERS"
+echo -e "\033[37;42;1m wings-version=$_wings_ver class=$CLASS_RUN \033[0m"
+java -cp $CLAZ_ROOT $CLASS_RUN "$_base_path" "$_this_path" "$_wings_ver"
 
-echo "制作完成了，可以直接进入目录 mvn compile"
+echo -e "\033[37;42;1m done. \033[0m"

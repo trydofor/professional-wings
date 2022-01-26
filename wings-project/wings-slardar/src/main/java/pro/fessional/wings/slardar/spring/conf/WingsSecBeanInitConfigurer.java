@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
+import pro.fessional.wings.slardar.security.WingsAuthCheckService;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 import pro.fessional.wings.slardar.security.bind.WingsBindAuthProvider;
 
@@ -46,6 +47,7 @@ public class WingsSecBeanInitConfigurer extends GlobalAuthenticationConfigurerAd
             PasssaltEncoder passsaltEncoder = getBeanOrNull(PasssaltEncoder.class);
             PasswordEncoder passwordEncoder = getBeanOrNull(PasswordEncoder.class);
             UserDetailsPasswordService passwordManager = getBeanOrNull(UserDetailsPasswordService.class);
+            WingsAuthCheckService wingsAuthCheckService = getBeanOrNull(WingsAuthCheckService.class);
 
             WingsBindAuthProvider provider = new WingsBindAuthProvider(userDetailsService);
 
@@ -59,6 +61,10 @@ public class WingsSecBeanInitConfigurer extends GlobalAuthenticationConfigurerAd
 
             if (passwordManager != null) {
                 provider.setUserDetailsPasswordService(passwordManager);
+            }
+
+            if (wingsAuthCheckService != null) {
+                provider.setWingsAuthCheckService(wingsAuthCheckService);
             }
 
             provider.afterPropertiesSet();

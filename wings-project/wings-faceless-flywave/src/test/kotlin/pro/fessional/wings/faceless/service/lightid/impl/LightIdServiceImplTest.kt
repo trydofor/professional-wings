@@ -39,8 +39,8 @@ open class LightIdServiceImplTest {
 
     @Test
     fun `test0🦁清表重置`() {
-        wingsTestHelper.cleanTable()
         schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes)
+        wingsTestHelper.cleanTable()
         schemaRevisionManager.checkAndInitSql(FlywaveRevisionScanner.scanMaster(), 0, true)
     }
 

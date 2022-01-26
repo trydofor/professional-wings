@@ -47,7 +47,10 @@ import me.zhyd.oauth.request.AuthWeChatOpenRequest;
 import me.zhyd.oauth.request.AuthWeiboRequest;
 import me.zhyd.oauth.request.AuthXmlyRequest;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
+import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthDetails;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
@@ -61,16 +64,17 @@ import java.util.Map;
  */
 @Slf4j
 @Setter @Getter
-public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo<AuthUser> {
+public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo<DefaultWingsAuthDetails> {
 
     public static final int ORDER = WarlockOrderConst.AuthDetailsCombo + 9_000;
 
     private Map<Enum<?>, AuthConfig> authConfigMap = Collections.emptyMap();
     private AuthStateCache authStateCache;
+    private AuthStateBuilder authStateBuilder;
     private int order = ORDER;
 
     @Override
-    public AuthUser buildDetails(@NotNull Enum<?> authType, @NotNull HttpServletRequest request) {
+    public DefaultWingsAuthDetails buildDetails(@NotNull Enum<?> authType, @NotNull HttpServletRequest request) {
         AuthRequest ar = buildRequest(authType, request);
         if (ar == null) return null;
         AuthCallback callback = new AuthCallback();
@@ -87,13 +91,17 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
             AuthResponse<?> response = ar.login(callback);
             final Object data = response.getData();
             if (data instanceof AuthUser) {
-                NonceTokenSessionHelper.bindNonceAuth(state, data);
-                return (AuthUser) data;
+                final String az = authStateBuilder.parseAuthZone(request);
+                final DefaultWingsAuthDetails detail = new DefaultWingsAuthDetails(data);
+                if (!az.isEmpty()) {
+                    detail.getMetaData().put(WingsAuthHelper.AuthZone, az);
+                }
+                return detail;
             }
             else {
                 NonceTokenSessionHelper.invalidNonce(state);
-                log.warn("unsupported auto-type={}, response type={}", authType, data == null ? "null" : data.getClass().getName());
-                return null;
+                log.warn("failed to Oauth authType={}, response type={}", authType, data == null ? "null" : data.getClass().getName());
+                throw new InsufficientAuthenticationException("failed to Oauth authType=" + authType);
             }
         }
         catch (Exception e) {

@@ -70,7 +70,7 @@ public class SlardarOkhttp3Configuration {
                     if (cacheDir == null) {
                         cacheDir = Files.createTempDirectory("wings-okhttp-cache").toFile();
                     }
-                    builder.cache(new Cache(cacheDir, mbs * 1024 * 1024));
+                    builder.cache(new Cache(cacheDir, mbs * 1024L * 1024L));
                 } catch (Exception e) {
                     logger.warn("failed to create okhttp cache on dir=" + cacheDir, e);
                 }

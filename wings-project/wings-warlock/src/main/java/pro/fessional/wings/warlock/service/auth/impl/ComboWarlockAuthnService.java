@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
+import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAuthnTable;
@@ -141,7 +142,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
 
     @Override
     @Transactional
-    public Details register(@NotNull Enum<?> authType, String username, Object details) {
+    public Details register(@NotNull Enum<?> authType, String username, WingsAuthDetails details) {
         for (AutoReg autoReg : authAutoRegs) {
             if (autoReg.accept(authType, username, details)) {
                 final Details dt = autoReg.create(authType, username, details);
@@ -274,8 +275,8 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         /**
          * 不需要事务,在外层事务内调用
          */
-        Details create(@NotNull Enum<?> authType, String username, Object details);
+        Details create(@NotNull Enum<?> authType, String username, WingsAuthDetails details);
 
-        boolean accept(@NotNull Enum<?> authType, String username, Object details);
+        boolean accept(@NotNull Enum<?> authType, String username, WingsAuthDetails details);
     }
 }

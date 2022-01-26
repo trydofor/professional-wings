@@ -58,7 +58,7 @@ public class ConstantNaviGenerator {
                                  " * @since %s\n" +
                                  " */\n" +
                                  "public interface %s {",
-                packageName, LocalDate.now().toString(), javaName));
+                packageName, LocalDate.now(), javaName));
         if(prefixCode.length()>0){
             String indent = indent(1);
             out.append(MessageFormat.format("\n\n" +

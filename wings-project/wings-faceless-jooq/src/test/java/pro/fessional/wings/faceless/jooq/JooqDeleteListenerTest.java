@@ -16,6 +16,7 @@ import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Ta
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
 import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelp;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
+import pro.fessional.wings.faceless.util.FlywaveInteractiveTty;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.time.LocalDateTime;
@@ -49,14 +50,15 @@ public class JooqDeleteListenerTest {
     private WingsTestHelper wingsTestHelper;
 
     @Setter(onMethod_ = {@Autowired})
-    private SchemaRevisionManager revisionManager;
+    private SchemaRevisionManager schemaRevisionManager;
 
     @Test
     public void test0𓃬清表重置() {
+        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes);
         wingsTestHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER);
-        revisionManager.checkAndInitSql(sqls, 0, true);
-        revisionManager.publishRevision(REVISION_TEST_V2, -1);
+        schemaRevisionManager.checkAndInitSql(sqls, 0, true);
+        schemaRevisionManager.publishRevision(REVISION_TEST_V2, -1);
     }
     //  🦁🦁🦁<=<<
 

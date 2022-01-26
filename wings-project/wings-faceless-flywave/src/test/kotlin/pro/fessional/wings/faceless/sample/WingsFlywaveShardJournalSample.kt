@@ -10,6 +10,7 @@ import pro.fessional.wings.faceless.flywave.SchemaJournalManager
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager
 import pro.fessional.wings.faceless.flywave.WingsRevision
+import pro.fessional.wings.faceless.util.FlywaveInteractiveTty
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 
 /**
@@ -31,6 +32,8 @@ class WingsFlywaveShardJournalSample {
 
     @Test
     fun revisionShardJournal() {
+        schemaJournalManager.askWay(FlywaveInteractiveTty.askYes)
+        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes)
 
         // 初始
         val sqls = FlywaveRevisionScanner.scanMaster()
