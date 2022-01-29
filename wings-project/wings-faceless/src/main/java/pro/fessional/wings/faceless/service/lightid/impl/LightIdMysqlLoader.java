@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.wings.faceless.database.manual.single.modify.lightsequence.LightSequenceModify;
 import pro.fessional.wings.faceless.database.manual.single.select.lightsequence.LightSequenceSelect;
-import pro.fessional.wings.faceless.database.sharding.MasterRouteOnly;
+import pro.fessional.wings.faceless.database.sharding.WriteRouteOnly;
 import pro.fessional.wings.faceless.spring.prop.LightIdInsertProp;
 
 import java.util.ArrayList;
@@ -35,12 +35,12 @@ public class LightIdMysqlLoader implements Loader {
 
     @NotNull
     @Override
-    @MasterRouteOnly
+    @WriteRouteOnly
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Segment require(@NotNull String name, int block, int count) {
         Optional<NextStep> one = select.selectOneLock(block, name);
         final NextStep vo;
-        if (!one.isPresent()) {
+        if (one.isEmpty()) {
             if (properties.isAuto()) {
                 log.warn("not found and insert name={}, block={}", name, block);
                 SysLightSequence po = new SysLightSequence();
@@ -78,7 +78,7 @@ public class LightIdMysqlLoader implements Loader {
 
     @NotNull
     @Override
-    @MasterRouteOnly
+    @WriteRouteOnly
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public List<Segment> preload(int block) {
         List<NameNextStep> all = select.selectAllLock(block);

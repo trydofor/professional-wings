@@ -2,7 +2,7 @@ package pro.fessional.wings.slardar.monitor.filtter;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +61,7 @@ public class LogViewer implements WarnFilter {
                 .build();
     }
 
-    @ApiOperation(value = "开启自身监控时，配合警报通知，可查看警报日志", notes =
+    @Operation(summary = "开启自身监控时，配合警报通知，可查看警报日志", description =
             "# Usage \n"
             + "alias优先于perms检测，check失败时会自动登出logout。\n"
             + "## Params \n"

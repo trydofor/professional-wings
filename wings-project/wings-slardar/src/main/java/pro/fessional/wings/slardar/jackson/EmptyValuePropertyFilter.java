@@ -105,7 +105,7 @@ public class EmptyValuePropertyFilter implements AutoRegisterPropertyFilter {
     private boolean dealEmptyMap(Object pojo, JsonGenerator gen, SerializerProvider prov, BeanPropertyWriter writer, JavaType rt) throws Exception {
         if (rt.isTypeOrSubTypeOf(Map.class)) {
             final Object v = writer.get(pojo);
-            if (((Map<?, ?>) v).isEmpty()) {
+            if (v instanceof Map && ((Map<?, ?>) v).isEmpty()) {
                 return skipEmpty(pojo, gen, prov, writer);
             }
         }

@@ -1,6 +1,6 @@
 package pro.fessional.wings.faceless.database.sharding;
 
-import org.apache.shardingsphere.api.hint.HintManager;
+import org.apache.shardingsphere.infra.hint.HintManager;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -10,12 +10,12 @@ import org.aspectj.lang.annotation.Aspect;
  * @since 2019-08-16
  */
 @Aspect
-public class MasterRouteOnlyAround {
+public class WriteRouteOnlyAround {
 
-    @Around("@annotation(MasterRouteOnly)")
+    @Around("@annotation(WriteRouteOnly)")
     public Object masterRouteOnly(ProceedingJoinPoint joinPoint) throws Throwable {
         try (HintManager hint = HintManager.getInstance()) {
-            hint.setMasterRouteOnly();
+            hint.setWriteRouteOnly();
             return joinPoint.proceed();
         }
     }

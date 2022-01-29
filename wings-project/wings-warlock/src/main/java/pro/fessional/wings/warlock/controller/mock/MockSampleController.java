@@ -1,6 +1,6 @@
 package pro.fessional.wings.warlock.controller.mock;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -35,7 +35,7 @@ import java.util.Set;
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerMock, havingValue = "true")
 public class MockSampleController {
 
-    @ApiOperation(value = "验证码，获得图片，有interceptor处理", notes =
+    @Operation(summary = "验证码，获得图片，有interceptor处理", description =
             "# Usage \n"
             + "参考POST说明，GET方法主要用来获取及刷新验证码图片。\n"
             + "若Accept中含有base64时，则返回base64格式的图片。\n"
@@ -54,7 +54,7 @@ public class MockSampleController {
         return R.ok("should NOT return this, Please use POST. Quest=" + quest + ", Accept=" + accept);
     }
 
-    @ApiOperation(value = "验证码，获得结果，有interceptor处理", notes =
+    @Operation(summary = "验证码，获得结果，有interceptor处理", description =
             "# Usage \n"
             + "客户端正常访问此URL，验证图片由interceptor处理\n"
             + "①服务器需要验证码时，以406(Not Acceptable)返回提示json\n"
@@ -78,7 +78,7 @@ public class MockSampleController {
         return R.ok("check=" + check, data);
     }
 
-    @ApiOperation(value = "防连击，需要2次请求", notes =
+    @Operation(summary = "防连击，需要2次请求", description =
             "# Usage \n"
             + "①首次执行，会等待sleep秒数后完成。\n"
             + "②在①执行过程中再次执行，会返回202(Accepted)\n"
@@ -97,7 +97,7 @@ public class MockSampleController {
         return R.okData(sleep);
     }
 
-    @ApiOperation(value = "防篡改，GET获得编辑header(Right-Editor)", notes =
+    @Operation(summary = "防篡改，GET获得编辑header(Right-Editor)", description =
             "# Usage \n"
             + "①GET 情况获得编辑header，默认key为Right-Editor\n"
             + "②参加POST请求的文档\n"
@@ -114,7 +114,7 @@ public class MockSampleController {
         return R.okData(data);
     }
 
-    @ApiOperation(value = "防篡改，提交数据及编辑header(Right-Editor)", notes =
+    @Operation(summary = "防篡改，提交数据及编辑header(Right-Editor)", description =
             "# Usage \n"
             + "①参考GET\n"
             + "②提交时，携带编辑Header\n"
@@ -132,7 +132,7 @@ public class MockSampleController {
         return R.ok(hd, data);
     }
 
-    @ApiOperation(value = "回声测试，输入啥返回啥。", notes =
+    @Operation(summary = "回声测试，输入啥返回啥。", description =
             "# Usage \n"
             + "按输入返回status，header, cookie和RequestBody\n"
             + "## Params \n"

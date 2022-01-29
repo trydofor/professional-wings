@@ -265,7 +265,7 @@ object TemplateUtil {
             c == '_' -> false
             c == '$' -> dollar
             // 非ascii命名
-            c.toInt() > Byte.MAX_VALUE && idx > 0 && txt[idx - 1].toInt() > Byte.MAX_VALUE -> false
+            c.code > Byte.MAX_VALUE && idx > 0 && txt[idx - 1].code > Byte.MAX_VALUE -> false
             else -> true
         }
     }

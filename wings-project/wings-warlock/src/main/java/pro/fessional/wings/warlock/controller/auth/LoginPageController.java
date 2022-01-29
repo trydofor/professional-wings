@@ -1,6 +1,6 @@
 package pro.fessional.wings.warlock.controller.auth;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +52,7 @@ public class LoginPageController {
     private HttpSessionIdResolver httpSessionIdResolver;
 
     @SuppressWarnings("MVCPathVariableInspection")
-    @ApiOperation(value = "集成登录默认页，默认返回支持的type类表", notes =
+    @Operation(summary = "集成登录默认页，默认返回支持的type类表", description =
             "# Usage \n"
             + "列出支持的登录方式。具体恢复内容，以根据extName和request.ContentType推测的MediaType确定\n"
             + "比如`html`和`json`扩展名，默认实现中，结果都以json形式返回\n"
@@ -72,7 +72,7 @@ public class LoginPageController {
     }
 
     @SuppressWarnings("MVCPathVariableInspection")
-    @ApiOperation(value = "具体验证登录默认页，根据content-type及extName规则做相应的处理", notes =
+    @Operation(summary = "具体验证登录默认页，根据content-type及extName规则做相应的处理", description =
             "# Usage \n"
             + "一般用于构造访问入口，如Oauth2登录的第三方路径和参数；获取反扒登录的验证码\n"
             + "需要注意state是数组，是spring支持的http协议的参数数组，如`a=1&a=2&a=3`\n"
@@ -107,13 +107,13 @@ public class LoginPageController {
     }
 
     @SuppressWarnings("MVCPathVariableInspection")
-    @ApiOperation(value = "具体验证登录默认页，参考" + WarlockUrlmapProp.Key$authLoginPage, notes =
+    @Operation(summary = "具体验证登录默认页，参考" + WarlockUrlmapProp.Key$authLoginPage, description =
             "# Usage \n"
             + "把" + WingsAuthHelper.AuthType + "参数从PathVariable变为RequestParam\n"
             + "")
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginPage2 + "}", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<?> LoginPage2(@PathVariable(WingsAuthHelper.ExtName) String extName,
-                                        @RequestParam(WingsAuthHelper.AuthType) String authType,
+                                        @RequestParam(value = WingsAuthHelper.AuthType, required = false) String authType,
                                         @RequestParam(value = WingsAuthHelper.AuthZone, required = false) String authZone,
                                         @RequestParam(value = AuthStateBuilder.ParamState, required = false) List<String> state,
                                         @RequestParam(value = "host", required = false) String host,
@@ -126,7 +126,7 @@ public class LoginPageController {
     }
 
     @SuppressWarnings("UastIncorrectHttpHeaderInspection")
-    @ApiOperation(value = "验证一次性token是否有效", notes =
+    @Operation(summary = "验证一次性token是否有效", description =
             "# Usage \n"
             + "Oauth2使用state作为token，要求和发行client具有相同ip，agent等header信息\n"
             + "验证成功后，在header中，可同样获取login时的session和cookie\n"
@@ -161,7 +161,7 @@ public class LoginPageController {
         }
     }
 
-    @ApiOperation(value = "登出接口，有filter处理，仅做文档", notes =
+    @Operation(summary = "登出接口，有filter处理，仅做文档", description =
             "# Usage \n"
             + "默认失效Session，参考wings.warlock.security.logout-url\n"
             + "## Params \n"
@@ -176,7 +176,7 @@ public class LoginPageController {
 
 
     @SuppressWarnings("MVCPathVariableInspection")
-    @ApiOperation(value = "登录接口，有filter处理，仅做文档", notes =
+    @Operation(summary = "登录接口，有filter处理，仅做文档", description =
             "# Usage \n"
             + "根据类型自动处理，参考 wings.warlock.security.login-url\n"
             + "username和password可变，参考 参考 wings.warlock.security.username-para\n"

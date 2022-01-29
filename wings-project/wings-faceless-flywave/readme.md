@@ -508,3 +508,11 @@ select @triggerSql;
 * TRACE_DOLLAR - 以dollar`$`后缀分隔，如`XXX$#`
 * TRACE_SU2_LINE - 以双下划线`__`后缀分隔，如`XXX__#`
 * TRACE_PRE_LINE - 以单下划线`_`前缀分隔，如`_XXX`或`_#_XXX`
+
+### 14.kotlin编译失败，可能的盘错点
+
+* kotlin-maven-plugin 插件，要同时编译java和kotlin
+* kotlin-stdlib-jdk8 这是最新的stdlib
+* mvn profile中的maven.compiler.target 优先与pom.xml
+* JAVA_HOME是否指定正确的jdk版本
+

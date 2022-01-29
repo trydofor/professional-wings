@@ -1,8 +1,7 @@
 package pro.fessional.wings.warlock.controller.user;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,24 +39,24 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerUser, havingValue = "true")
 public class AuthedUserController {
 
-    @ApiModel(description = "登录用户基本信息")
+    @Schema(description = "登录用户基本信息")
     @Data
     public static class Dto {
-        @ApiModelProperty(value = "昵称", example = "trydofor")
+        @Schema(description = "昵称", example = "trydofor")
         private String nickname;
-        @ApiModelProperty(value = "语言，参考java.util.Locale", example = "zh-CN")
+        @Schema(description = "语言，参考java.util.Locale", example = "zh-CN")
         private String locale;
-        @ApiModelProperty(value = "时区，参考java.time.ZoneId", example = "Asia/Shanghai")
+        @Schema(description = "时区，参考java.time.ZoneId", example = "Asia/Shanghai")
         private String zoneid;
-        @ApiModelProperty(value = "秒差，与UTC相差的秒数", example = "28800")
+        @Schema(description = "秒差，与UTC相差的秒数", example = "28800")
         private int offset;
-        @ApiModelProperty(value = "验证类型，此session的登录类型", example = "EMAIL")
+        @Schema(description = "验证类型，此session的登录类型", example = "EMAIL")
         private String authtype;
-        @ApiModelProperty(value = "验证凭证，此session的登录凭证", example = "fd7a5475-bd3b-4086-96b0-b95d11cf1d3c")
+        @Schema(description = "验证凭证，此session的登录凭证", example = "fd7a5475-bd3b-4086-96b0-b95d11cf1d3c")
         private String token;
     }
 
-    @ApiOperation(value = "获得登录用户的基本信息", notes =
+    @Operation(summary = "获得登录用户的基本信息", description =
             "# Usage \n"
             + "只有登录用户才有信息\n"
             + "## Params \n"
@@ -90,17 +89,17 @@ public class AuthedUserController {
 
 
     @Data
-    @ApiModel(description = "精查登录用户角色权限")
+    @Schema(description = "精查登录用户角色权限")
     public static class Ins {
-        @ApiModelProperty(value = "别名项，本名为key，别名为value", example = "{\"ROLE_SYSTEM\":\"OLD_SYSTEM\"}")
+        @Schema(description = "别名项，本名为key，别名为value", example = "{\"ROLE_SYSTEM\":\"OLD_SYSTEM\"}")
         private Map<String, String> alias;
-        @ApiModelProperty(value = "权限项", example = "[\"ROLE_ADMIN\",\"ROLE_SYSTEM\"]")
+        @Schema(description = "权限项", example = "[\"ROLE_ADMIN\",\"ROLE_SYSTEM\"]")
         private Set<String> perms;
-        @ApiModelProperty(value = "检查项，若检查项未全满足，则invalidate session", example = "[\"ROLE_ADMIN\"]")
+        @Schema(description = "检查项，若检查项未全满足，则invalidate session", example = "[\"ROLE_ADMIN\"]")
         private Set<String> check;
     }
 
-    @ApiOperation(value = "检查登录用户的权限，不区分大小写比较，返回存在的权限；", notes =
+    @Operation(summary = "检查登录用户的权限，不区分大小写比较，返回存在的权限；", description =
             "# Usage \n"
             + "alias优先于perms检测，check失败时会自动登出logout。\n"
             + "## Params \n"

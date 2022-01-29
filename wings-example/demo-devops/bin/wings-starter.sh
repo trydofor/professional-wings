@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2022-01-22
+THIS_VERSION=2022-01-29
 
 cat <<EOF
 #################################################
@@ -8,13 +8,13 @@ cat <<EOF
 # 其同名'env'如（wings-starter.env）会被自动载入。
 # 同一主机环境，同一boot.jar只能执行一份，多份需更名。
 # 'BOOT_CNF|BOOT_ARG|JAVA_ARG' 内变量可被延时求值，
-# 使用 ' 为延时求值，使用 " 为立即求值。
+# 使用 ' 为延时求值，使用 " 为立即求值。 默认Java 11 G1
 #################################################
 EOF
 ################ modify the following params ################
 WORK_DIR=''      # 脚本生成文件，日志的目录，默认空（脚本位置）
 TAIL_LOG='log'   # 默认tail的日志，"log|out|new|ask"
-USER_RUN="$USER" # 用来启动程序的用户
+USER_RUN=$USER   # 用来启动程序的用户
 PORT_RUN=''      # 默认端口，空时
 BOOT_JAR=''      # 主程序。可通过$1覆盖，绝对路径或相对WORK_DIR
 ARGS_RUN='start' # 默认参数。若$1或$2指定
@@ -23,14 +23,27 @@ BOOT_LOG=''      # 程序日志，需要外部指定，用来tail
 BOOT_PID=''      # 主程序pid，默认 $BOOT_JAR.pid
 BOOT_CNF=''      # 外部配置。通过env覆盖
 BOOT_ARG=''      # 启动参数。通过env覆盖
-JAVA_XMS='2G'    # 启动参数。通过env覆盖
-JAVA_XMX='4G'    # 启动参数。通过env覆盖
+JAVA_XMS='1G'    # 启动参数。通过env覆盖
+JAVA_XMX='3G'    # 启动参数。通过env覆盖
 WARN_TXT=''      # 预设的警告词
 WARN_AGO=''      # 日志多少秒不更新，则警报，空表示忽略
 WARN_RUN=''      # 若pid消失或日志无更新则执行
-JDK_HOME=''      # 指定jdk版本
+# shellcheck disable=SC2153
+JDK_HOME=$JDK11_HOME      # 指定jdk版本
 # shellcheck disable=SC2016
-JAVA_ARG='-server
+JAVA_ARG='
+--illegal-access=permit
+--add-modules java.se
+--add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+--add-opens java.base/java.lang=ALL-UNNAMED
+--add-opens java.base/java.nio=ALL-UNNAMED
+--add-opens java.base/sun.nio.ch=ALL-UNNAMED
+--add-opens java.management/sun.management=ALL-UNNAMED
+--add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+--add-opens=java.base/sun.security.x509=ALL-UNNAMED
+--add-opens=jdk.unsupported/sun.misc=ALL-UNNAMED
+
+-server
 -Djava.awt.headless=true
 -Dfile.encoding=UTF-8
 
@@ -42,21 +55,15 @@ JAVA_ARG='-server
 -XX:ParallelGCThreads=8
 -XX:ConcGCThreads=8
 -XX:InitiatingHeapOccupancyPercent=70
+-XX:AutoBoxCacheMax=20000
+-XX:BiasedLockingStartupDelay=500
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:+ExitOnOutOfMemoryError
+-XX:MaxDirectMemorySize=1024M
 
 -XX:HeapDumpPath=${BOOT_TKN}.heap
--Xloggc:${BOOT_TKN}.gc
--XX:+PrintGC
--XX:+PrintGCDetails
--XX:+PrintGCDateStamps
+-Xlog:gc*=info:file=${BOOT_TKN}.gc:time,tid,tags:filecount=5,filesize=100m
 '
-
-#-XX:+UseConcMarkSweepGC
-#-XX:NewSize=256m
-#-XX:MaxNewSize=256m
-#-XX:+CMSClassUnloadingEnabled
-#-XX:MaxTenuringThreshold=5
-#-XX:+HeapDumpOnOutOfMemoryError
-#-XX:-OmitStackTraceInFastThrow
 
 ################ NO NEED to modify the following ################
 BOOT_DTM=$(date '+%y%m%d%H%M%S') # 启动日时

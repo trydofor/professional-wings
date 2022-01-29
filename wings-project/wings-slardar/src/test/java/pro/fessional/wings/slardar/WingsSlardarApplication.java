@@ -37,7 +37,7 @@ public class WingsSlardarApplication {
             System.out.println("===============");
 
             String[] cacheManager = ctx.getBeanNamesForType(CacheManager.class);
-            System.out.println(cacheManager.length);
+            System.out.println("=============== CacheManager count="+cacheManager.length);
         };
     }
 }

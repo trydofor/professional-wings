@@ -2,7 +2,6 @@ package pro.fessional.wings.slardar.security.impl;
 
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.cast.EnumConvertor;
-import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 
 import java.util.HashMap;
@@ -27,17 +26,18 @@ public class DefaultWingsAuthTypeParser implements WingsAuthTypeParser {
             final String v = enumStrMap.get(k);
             if (v == null) {
                 enumStrMap.put(k, en.getKey());
-            } else {
+            }
+            else {
                 throw new IllegalArgumentException("exist mapping for type=" + v + ", enum=" + EnumConvertor.enum2Str(k));
             }
         }
     }
 
     @Override
-    public @NotNull Enum<?> parse(String at) {
-        if(at == null) return Null.Enm;
+    public @NotNull Enum<?> parse(String at, @NotNull Enum<?> elz) {
+        if (at == null) return elz;
         final Enum<?> en = strEnumMap.get(at);
-        return en == null ? Null.Enm : en;
+        return en == null ? elz : en;
     }
 
     @Override

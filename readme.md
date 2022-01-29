@@ -410,13 +410,18 @@ enum Jane {
 
 * [mycat](http://www.mycat.io/)
 
-### 0.3.3.jooq
+### 0.3.3.Jooq/QueryDsl
 
 在faceless中有详细介绍，主要原因是`限制的艺术`
 
 * jooq强类型，可以受到IDE加持
 * 不能写成过于复杂的SQL，有利于分库，分服务
 * 比mybatis有更多的语言特性
+
+需要注意Jooq的双许可证，[部分开源数据库](https://www.jooq.org/download/support-matrix)为Apache 2.0
+若许可证不合适，推荐采用[QueryDSL](https://github.com/querydsl/querydsl)替代。
+
+故事：QueryDSL在4.4和5.0间断更了很久，在MySQL，PostgreSQL体系内，jooq更优。
 
 ### 0.3.4.ServiceComb
 

@@ -1,8 +1,7 @@
 package com.moilioncircle.roshan.devops.controller;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,17 +24,17 @@ public class TestLoadController {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    @ApiModel("DumyJson")
+    @Schema(description = "DumyJson")
     public static class Jn {
-        @ApiModelProperty("整数值")
+        @Schema(description = "整数值")
         private int intVal = Integer.MAX_VALUE - 1;
-        @ApiModelProperty("整数类")
+        @Schema(description = "整数类")
         private Integer intNull = null;
     }
 
     private final Random unsafeRandom = new Random();
 
-    @ApiOperation("test sleep")
+    @Operation(summary = "test sleep")
     @GetMapping("/test/load/sleep.html")
     public R<Jn> sleep(@RequestParam("ms") long ms) {
         long half = ms / 2;
@@ -50,7 +49,7 @@ public class TestLoadController {
         return R.okData(new Jn());
     }
 
-    @ApiOperation("test speed")
+    @Operation(summary = "test speed")
     @GetMapping({"/test/load/speed.html", "/index.html"})
     public String speed() {
         return "speed";

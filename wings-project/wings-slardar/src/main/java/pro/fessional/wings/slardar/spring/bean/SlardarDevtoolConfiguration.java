@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.spring.bean;
 
+import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.ClientConfigRecognizer;
 import com.hazelcast.client.config.XmlClientConfigBuilder;
@@ -9,6 +10,7 @@ import com.hazelcast.config.ConfigStream;
 import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.config.YamlConfigBuilder;
+import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,9 +19,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration;
-import org.springframework.boot.autoconfigure.hazelcast.HazelcastClientFactory;
 import org.springframework.boot.autoconfigure.hazelcast.HazelcastConfigResourceCondition;
-import org.springframework.boot.autoconfigure.hazelcast.HazelcastInstanceFactory;
 import org.springframework.boot.autoconfigure.hazelcast.HazelcastProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.devtools.autoconfigure.DevToolsProperties;
@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ResourceUtils;
+import org.springframework.util.StringUtils;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 import java.io.IOException;
@@ -67,7 +68,7 @@ public class SlardarDevtoolConfiguration {
                 NetworkConfig network = config.getNetworkConfig();
                 network.getJoin().getTcpIpConfig().setEnabled(false);
                 network.getJoin().getMulticastConfig().setEnabled(false);
-                return new HazelcastInstanceFactory(config).getHazelcastInstance();
+                return StringUtils.hasText(config.getInstanceName()) ? Hazelcast.getOrCreateHazelcastInstance(config) : Hazelcast.newHazelcastInstance(config);
             }
 
             Resource resource = properties.resolveConfigLocation();
@@ -81,7 +82,7 @@ public class SlardarDevtoolConfiguration {
                                             new XmlClientConfigBuilder(url).build();
 
                 config.setClassLoader(Thread.currentThread().getContextClassLoader());
-                return new HazelcastClientFactory(config).getHazelcastInstance();
+                return StringUtils.hasText(config.getInstanceName()) ? HazelcastClient.getOrCreateHazelcastClient(config) : HazelcastClient.newHazelcastClient(config);
             }
             else {
                 logger.info("Wings conf HazelcastServer Config=" + path);
@@ -96,7 +97,7 @@ public class SlardarDevtoolConfiguration {
                 }
                 //
                 config.setClassLoader(Thread.currentThread().getContextClassLoader());
-                return new HazelcastInstanceFactory(config).getHazelcastInstance();
+                return StringUtils.hasText(config.getInstanceName()) ? Hazelcast.getOrCreateHazelcastInstance(config) : Hazelcast.newHazelcastInstance(config);
             }
         }
 

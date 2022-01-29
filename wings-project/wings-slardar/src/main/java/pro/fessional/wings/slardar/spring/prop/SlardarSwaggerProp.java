@@ -1,14 +1,21 @@
 package pro.fessional.wings.slardar.spring.prop;
 
+import io.swagger.v3.oas.models.parameters.CookieParameter;
+import io.swagger.v3.oas.models.parameters.HeaderParameter;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.parameters.PathParameter;
+import io.swagger.v3.oas.models.parameters.QueryParameter;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.BeanUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import springfox.documentation.service.ParameterType;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author trydofor
@@ -22,84 +29,81 @@ public class SlardarSwaggerProp {
     public static final String Key = "wings.slardar.swagger";
 
     /**
-     * wings中，默认docket的设置
-     *
-     * @see #Key$api
+     * @see #Key$title
      */
-    private Api api = new Api();
-
-    public static final String Key$api = Key + ".api";
+    private String title = "";
+    public static final String Key$title = Key + ".title";
 
     /**
-     * `**` 为 `any`，支持逗号`,`分隔
-     *
-     * @see #Key$group
+     * @see #Key$description
      */
-    private Map<String, Grp> group = new HashMap<>();
-    public static final String Key$group = Key + ".group";
+    private String description = "";
+    public static final String Key$description = Key + ".description";
+
+    /**
+     * @see #Key$version
+     */
+    private String version = "";
+    public static final String Key$version = Key + ".version";
 
     /**
      * @see #Key$param
      */
-    private Map<String, Par> param = new HashMap<>();
+    private Map<String, EnabledParameter> param = new HashMap<>();
     public static final String Key$param = Key + ".param";
 
 
-    /**
-     * 在ApiMode中使用全类名的，而非SimpleName
-     *
-     * @see #Key$model
-     */
-    private Mdl model = new Mdl();
-    public static final String Key$model = Key + ".model";
+    public List<Parameter> toRefPara() {
+        List<Parameter> result = new ArrayList<>();
+        for (Map.Entry<String, EnabledParameter> en : param.entrySet()) {
+            final EnabledParameter para = en.getValue();
+            if (!para.isEnable()) continue;
 
-    @Data
-    public static class Api {
-        /**
-         * docket的标题
-         */
-        private String title;
-
-        /**
-         * docket的描述
-         */
-        private String description;
-
-        /**
-         * docket的版本
-         */
-        private String version;
+            final Parameter sub = subParam(para);
+            sub.set$ref("#/components/parameters/" + en.getKey());
+            result.add(sub);
+        }
+        return result;
     }
 
-    @Data
-    @EqualsAndHashCode(callSuper = true)
-    public static class Grp extends Api {
+    public Map<String, Parameter> toComPara() {
+        Map<String, Parameter> map = new HashMap<>();
+        for (Map.Entry<String, EnabledParameter> en : param.entrySet()) {
+            final EnabledParameter para = en.getValue();
+            if (!para.isEnable()) continue;
 
+            final Parameter sub = subParam(para);
+            BeanUtils.copyProperties(para, sub);
+            map.put(en.getKey(), para);
+        }
+
+        return map;
+    }
+
+    //  cookie|header|query|path
+    @NotNull private Parameter subParam(Parameter para) {
+        final String in = para.getIn();
+        final Parameter sub;
+        if ("cookie".equalsIgnoreCase(in)) {
+            sub = new CookieParameter();
+        }
+        else if ("header".equalsIgnoreCase(in)) {
+            sub = new HeaderParameter();
+        }
+        else if ("query".equalsIgnoreCase(in)) {
+            sub = new QueryParameter();
+        }
+        else if ("path".equalsIgnoreCase(in)) {
+            sub = new PathParameter();
+        }
+        else {
+            throw new IllegalArgumentException("unsupported type=" + para);
+        }
+        return sub;
+    }
+
+    @Setter @Getter
+    public static class EnabledParameter extends Parameter {
         private boolean enable = true;
-
-        private String host = null;
-        /**
-         * package prefix
-         */
-        private Set<String> basePackage = Collections.emptySet();
-
-        /**
-         * ant path
-         */
-        private Set<String> antPath = Collections.emptySet();
-    }
-
-    @Data
-    public static class Par {
-        private boolean enable = true;
-        private ParameterType type;
-        private String value = "";
-        private String description = "";
-    }
-
-    @Data
-    public static class Mdl {
-        private Set<String> canonical = Collections.emptySet();
-        private boolean annotation = false;
     }
 }
