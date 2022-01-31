@@ -2,7 +2,7 @@
 
 一切魔法，遭遇了他，都将归于寂静。silence fool
 
-![silencer](./silencer_full.png)
+![silencer](silencer_full.png)
 
 最小化依赖 springboot，提供以下能力
 

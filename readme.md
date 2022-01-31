@@ -1,15 +1,16 @@
 # 0.专业大翅 (pro.fessional.wings)
 
-[![Spring Boot](https://img.shields.io/badge/spring--boot-2.4.2-green)](https://spring.io/projects/spring-boot)
-[![Java 8](https://img.shields.io/badge/java-8+-red)](https://spring.io/projects/spring-boot)
-[![Kotlin 1.4](https://img.shields.io/badge/kotlin-1.4-red)](https://kotlinlang.org/docs/reference/)
+[![Spring Boot](https://img.shields.io/badge/spring--boot-2.6.3-green)](https://spring.io/projects/spring-boot)
+[![Java 11](https://img.shields.io/badge/java-11-red)](https://spring.io/projects/spring-boot)
+[![Kotlin 1.6](https://img.shields.io/badge/kotlin-1.6-red)](https://kotlinlang.org/docs/reference/)
 [![Jooq](https://img.shields.io/badge/jooq-3.14-yellow)](https://www.jooq.org/download/)
+[![QueryDsl](https://img.shields.io/badge/querydsl-5.0-yellow)](https://querydsl.com/static/querydsl/5.0.0/reference/html_single)
 [![Mysql](https://img.shields.io/badge/mysql-5.7+-blue)](https://dev.mysql.com/downloads/mysql/)
 [![H2Database](https://img.shields.io/badge/h2db-1.4-blue)](http://h2database.com/html/main.html)
 
 不是为吃货准备的伪装成吃货的项目，其核心价值是使团队快速实现业务目标，快速偿还技术债务，安全的面向程序和业务重构。
 
-![wings ti6](./wings-ti6-champion.png)
+![wings ti6](wings-ti6-champion.png)
 
 Wings是springboot的一个脚手架，没有魔法和定制，主要有以下特点：
 
@@ -208,7 +209,7 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 
 ### 0.2.6.Spring MVC中的 RequestMapping 约定
 
-wings采用的Url命名主要是场景化的，命名为[RestHalf](./rest-half.md)，单独叙述。
+wings采用的Url命名主要是场景化的，命名为[RestHalf](rest-half.md)，单独叙述。
 
 * 在方法上写全路径`@RequestMapping("/a/b/c.html")`
 * 在controller上写版本号`@RequestMapping("/v1")`
@@ -417,11 +418,11 @@ enum Jane {
 * jooq强类型，可以受到IDE加持
 * 不能写成过于复杂的SQL，有利于分库，分服务
 * 比mybatis有更多的语言特性
+* Jooq的OSS版(Apache2许可)对wings足够用（详见faceless-jooq）
+* QueryDsl的SQL方面不及jooq，但仍然比较全面。
 
-需要注意Jooq的双许可证，[部分开源数据库](https://www.jooq.org/download/support-matrix)为Apache 2.0
-若许可证不合适，推荐采用[QueryDSL](https://github.com/querydsl/querydsl)替代。
-
-故事：QueryDSL在4.4和5.0间断更了很久，在MySQL，PostgreSQL体系内，jooq更优。
+在QueryDSL及Jooq谁更合适的话题上，wings显然推荐jooq，并已深度集成。
+依然记得在选择时，jooq的社区和功能，要优些，且存在于springboot官方示例中。
 
 ### 0.3.4.ServiceComb
 

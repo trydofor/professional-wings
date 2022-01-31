@@ -2,7 +2,7 @@
 
 无视魔免的地狱火加上致命链接，可以瞬间改变局势。
 
-![slardar](./warlock_full.png)
+![slardar](warlock_full.png)
 
 基于wings脚手架，包装了一些业务组件，复用或复制，可以快速实现业务功能。
 

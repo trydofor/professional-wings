@@ -170,6 +170,11 @@
                 <artifactId>sfm-jooq</artifactId>
                 <version>${simpleflatmapper.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.simpleflatmapper</groupId>
+                <artifactId>sfm-querydsl</artifactId>
+                <version>${simpleflatmapper.version}</version>
+            </dependency>
             <!-- session cache -->
             <!-- spring-session-bom
             <dependency>

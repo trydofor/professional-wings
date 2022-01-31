@@ -2,7 +2,7 @@
 
 对膨胀的数据增加一个状态，时间在此停止，分而治之，合而用之。
 
-![faceless_void_time_dilation](./faceless_void_time_dilation.png)
+![faceless_void_time_dilation](faceless_void_time_dilation.png)
 
 使用ShardingJdbc完成数据的分表分库功能，平稳处理大数据量。
 

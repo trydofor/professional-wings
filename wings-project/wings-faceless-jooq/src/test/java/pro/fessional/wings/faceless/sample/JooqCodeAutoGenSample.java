@@ -13,7 +13,7 @@ public class JooqCodeAutoGenSample {
     // WingsJooqDaoImplTest#test0𓃬清表重置
     // 注意在目标工程中，应该注释掉.springRepository(false)，使Dao自动加载
     public static void main(String[] args) {
-        String database = "wings";
+        String database = "wings_test";
         WingsCodeGenerator.builder()
                           .jdbcDriver("com.mysql.cj.jdbc.Driver")
                           .jdbcUrl("jdbc:mysql://127.0.0.1/" + database)
@@ -26,7 +26,7 @@ public class JooqCodeAutoGenSample {
                                   "|tst_中文也分表")
                           .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
                           .targetPackage("pro.fessional.wings.faceless.database.autogen")
-                          .targetDirectory("wings-faceless-jooq/src/test/java/")
+                          .targetDirectory("wings-project/wings-faceless-jooq/src/test/java/")
 //  不用spring自动注入
 //                          .springRepository(false)
 //  使用enum类型

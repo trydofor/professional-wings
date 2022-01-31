@@ -2,7 +2,7 @@
 
 大鱼人，是一个水手，他会星星点灯
 
-![slardar](./slardar_full.png)
+![slardar](slardar_full.png)
 
 为SpringMvc(不支持webflux)提供i18n和security,cache,session的基础支持和封装。
 

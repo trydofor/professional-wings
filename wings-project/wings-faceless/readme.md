@@ -3,7 +3,7 @@
 `Void`，J8脸, `public static void main`  
 他是来自超维视界的一名访客，一个时间之外的境域。
 
-![faceless_void](./faceless_void_full.png)
+![faceless_void](faceless_void_full.png)
 
 支持MySql系(mysql及分支,h2)的一套Sharding，并有表结构和数据变更的版本管理的基本套餐。
 

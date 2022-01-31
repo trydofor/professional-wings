@@ -2,7 +2,7 @@
 
 在时空中创造一个泡状遮罩，将所有位于其中的单位定住。
 
-![faceless_void_chronosphere](./faceless_void_chronosphere.png)
+![faceless_void_chronosphere](faceless_void_chronosphere.png)
 
 ## 2.1.1.飞波(flywave)是一个实践
 
