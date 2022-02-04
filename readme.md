@@ -49,7 +49,7 @@ wings的版本号为`4段分隔`，前3段为spring-boot版本，第4段是chang
 
 涉及技术和知识点
 
-* [Spring Boot](https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/)
+* [Spring Boot](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/)
 * [Apache ShardingSphere](https://shardingsphere.apache.org/index_zh.html)
 * [Jooq - 强类型 sql-mapping](https://www.jooq.org/)
 
@@ -661,8 +661,8 @@ wings随时跟进升级spring boot的最新版本，目的是为了测试shardin
 * parent - you can also override individual dependencies by overriding a property in your own project
 * import - does not let you override individual dependencies by using properties, as explained above. To achieve the same result, you need to add entries in the dependencyManagement section of your project before the
   spring-boot-dependencies entry.
-* https://docs.spring.io/spring-boot/docs/2.4.2/maven-plugin/reference/htmlsingle/#using-parent-pom
-* https://docs.spring.io/spring-boot/docs/2.4.2/maven-plugin/reference/htmlsingle/#using-import
+* https://docs.spring.io/spring-boot/docs/2.6.3/maven-plugin/reference/htmlsingle/#using-parent-pom
+* https://docs.spring.io/spring-boot/docs/2.6.3/maven-plugin/reference/htmlsingle/#using-import
 
 对于低于wings的spring-boot版本，一般来讲指定一下jooq版本就可以完全正常。
 
@@ -716,7 +716,7 @@ at org.jooq.impl.AbstractQuery.execute(AbstractQuery.java:390)
 
 原因是maven-resources-plugin的filter目录中存在非文本文件(不可按字符串读取)， 不要降级到3.1.0，在nonFilteredFileExtension添加扩展名即可。
 
-(Automatic Property Expansion Using Maven)[https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/#howto-properties-and-configuration]
+(Automatic Property Expansion Using Maven)[https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#howto-properties-and-configuration]
 
 ### 18.通过mysql客户端能找到，wings查询不到数据
 
@@ -770,7 +770,7 @@ wings中可以通过暴露AlternateTypeRule bean，自动注入所以Docket中�
 * 方案二，自己暴露Config或ClientConfig，并设置好classloader
 * 方案三，通过restart.include设置（不推荐）
 
-不推荐在product环境使用devtool，参考springboot官方文档的[Known Limitations](https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/#using.devtools.restart.limitations)
+不推荐在product环境使用devtool，参考springboot官方文档的[Known Limitations](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#using.devtools.restart.limitations)
 
 ### 24.Hazelcast OutOfMemoryError CallerNotMemberException
 
@@ -849,3 +849,15 @@ head demo-exmaple-1.0.0-SNAPSHOT.jar
 * `Null`类，定义了用来代替null的类型和检查方法，包括enum等
 * 方法签名尽量使用`@NotNull`注解，是IDE辅助检查，编译时解决
 * `ArgsAssert`和`StateAssert`进行业务assert，支持多国语
+
+### 28.如何配置logger和log groups
+
+SpringBoot内置以下log groups [Log Groups](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#features.logging.log-groups)
+
+* org.springframework.core.codec
+* org.springframework.http
+* org.springframework.web
+* org.springframework.boot.actuate.endpoint.web
+* org.springframework.boot.web.servlet.ServletContextInitializerBeans
+* org.springframework.jdbc.core
+* org.jooq.tools.LoggerListener

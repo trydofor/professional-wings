@@ -7,8 +7,10 @@ import org.springframework.boot.context.metrics.buffering.BufferingApplicationSt
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import pro.fessional.wings.slardar.webmvc.RequestMappingHelper;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author trydofor
@@ -38,6 +40,13 @@ public class WingsSlardarApplication {
 
             String[] cacheManager = ctx.getBeanNamesForType(CacheManager.class);
             System.out.println("=============== CacheManager count="+cacheManager.length);
+
+            final List<RequestMappingHelper.Info> infos = RequestMappingHelper.infoAllMapping(ctx);
+            System.out.println("=============== RequestMappingHelper infos="+infos.size());
+            for (RequestMappingHelper.Info info : infos) {
+                System.out.println(info);
+            }
+
         };
     }
 }

@@ -107,7 +107,7 @@ wings中的spring命名，主要集中在以下（后续目录结构有详解）
 
 ### 1.2.5.参考资料
 
-[参考资料 docs.spring.io](https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/)
+[参考资料 docs.spring.io](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/)
 
  - "4.1.6. Application Events and Listeners"
  - "4.2. Externalized Configuration"

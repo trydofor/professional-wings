@@ -11,7 +11,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 /**
  * @author trydofor
- * @link https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/#howto-customize-the-jackson-objectmapper
+ * @link https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#howto-customize-the-jackson-objectmapper
  * @see InstantDeserializer#ZONED_DATE_TIME
  * @since 2019-06-26
  */

@@ -16,7 +16,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import java.util.concurrent.Executor;
 
 /**
- * https://docs.spring.io/spring-boot/docs/2.4.2/reference/html/spring-boot-features.html#boot-features-task-execution-scheduling
+ * https://docs.spring.io/spring-boot/docs/2.6.3/reference/html/spring-boot-features.html#boot-features-task-execution-scheduling
  *
  * @author trydofor
  * @see TaskExecutionAutoConfiguration
@@ -29,8 +29,6 @@ public class SlardarAsyncConfiguration {
 
     private static final Log logger = LogFactory.getLog(SlardarAsyncConfiguration.class);
 
-
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean(name = {TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME,
                   AsyncAnnotationBeanPostProcessor.DEFAULT_TASK_EXECUTOR_BEAN_NAME})
     public Executor applicationTaskExecutor(TaskExecutorBuilder builder) {

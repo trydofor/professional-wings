@@ -1,6 +1,5 @@
 package pro.fessional.wings.faceless.spring.bean;
 
-import org.jetbrains.annotations.NotNull;
 import org.jooq.ConverterProvider;
 import org.jooq.ExecuteListenerProvider;
 import org.jooq.SQLDialect;
@@ -11,13 +10,12 @@ import org.jooq.impl.DefaultVisitListenerProvider;
 import org.simpleflatmapper.jooq.JooqMapperFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.jooq.DefaultConfigurationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -56,8 +54,8 @@ public class FacelessJooqConfiguration {
     @Bean
     @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$autoQualify, havingValue = "true")
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public VisitListenerProvider autoQualifyFieldListener() {
-        logger.info("Wings conf autoQualifyFieldListener");
+    public VisitListenerProvider jooqAutoQualifyFieldListener() {
+        logger.info("Wings conf jooqAutoQualifyFieldListener");
         return new DefaultVisitListenerProvider(new AutoQualifyFieldListener());
     }
 
@@ -65,10 +63,10 @@ public class FacelessJooqConfiguration {
     @ConditionalOnBean(WingsTableCudHandler.class)
     @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$listenTableCud, havingValue = "true")
     @Order(Ordered.HIGHEST_PRECEDENCE + 1000)
-    public VisitListenerProvider tableCudListener(ObjectProvider<WingsTableCudHandler> handlers, FacelessJooqCudProp prop) {
+    public VisitListenerProvider jooqTableCudListener(ObjectProvider<WingsTableCudHandler> handlers, FacelessJooqCudProp prop) {
         final List<WingsTableCudHandler> hdl = handlers.orderedStream().collect(Collectors.toList());
         final String names = hdl.stream().map(it -> it.getClass().getName()).collect(Collectors.joining(","));
-        logger.info("Wings conf tableCudListener with handler=" + names);
+        logger.info("Wings conf jooqTableCudListener with handler=" + names);
         final TableCudListener listener = new TableCudListener();
         listener.setHandlers(hdl);
         listener.setInsert(prop.isInsert());
@@ -80,64 +78,41 @@ public class FacelessJooqConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$journalDelete, havingValue = "true")
-    public ExecuteListenerProvider journalDeleteListener() {
-        logger.info("Wings conf journalDeleteListener");
+    public ExecuteListenerProvider jooqJournalDeleteListener() {
+        logger.info("Wings conf jooqJournalDeleteListener");
         return new DefaultExecuteListenerProvider(new JournalDeleteListener());
     }
 
     @Bean
-    @Order
-    @ConditionalOnMissingBean(Settings.class)
-    public Settings settings(FacelessJooqEnabledProp config) {
-        WingsJooqEnv.daoBatchMysql = config.isBatchMysql();
-        // ObjectProvider<Settings> settings
-        return new Settings()
-                .withRenderCatalog(false)
-                .withRenderSchema(false)
-                .withParseDialect(SQLDialect.MYSQL)
+    @ConditionalOnMissingBean(name = "facelessJooqConfiguration")
+    public DefaultConfigurationCustomizer facelessJooqConfiguration(
+            FacelessJooqEnabledProp config,
+            ObjectProvider<ConverterProvider> providers,
+            ObjectProvider<org.jooq.Converter<?, ?>> converters
+    ) {
+        logger.info("Wings conf jooqConfigurationCustomizer");
+        return configuration -> {
+            final Settings settings = configuration.settings();
+            WingsJooqEnv.daoBatchMysql = config.isBatchMysql();
+            settings.withRenderCatalog(false)
+                    .withRenderSchema(false)
+                    .withParseDialect(SQLDialect.MYSQL)
 //                .withRenderTable(false)
-                ;
-    }
+            ;
+            logger.info("Wings conf jooq setting render");
 
-
-    @Bean
-    @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$simpleflatmapper, havingValue = "true")
-    public BeanPostProcessor beanPostSfmRecordMapperProvider() {
-        logger.info("Wings conf beanPostSfmRecordMapperProvider");
-
-        return new BeanPostProcessor() {
-            @Override
-            public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
-                if (!(bean instanceof org.jooq.Configuration)) return bean;
-
-                final org.jooq.Configuration cnf = (org.jooq.Configuration) bean;
-
-                logger.info("Wings conf jooqConfiguration SimpleFlatMapper, bean=" + beanName);
+            if (config.isSimpleflatmapper()) {
+                logger.info("Wings conf beanPostSfmRecordMapperProvider");
                 // into
-                cnf.set(JooqMapperFactory.newInstance().ignorePropertyNotFound().newRecordMapperProvider());
+                configuration.set(JooqMapperFactory.newInstance().ignorePropertyNotFound().newRecordMapperProvider());
                 // from
-                cnf.set(JooqMapperFactory.newInstance().ignorePropertyNotFound().newRecordUnmapperProvider(cnf));
-                return cnf;
+                configuration.set(JooqMapperFactory.newInstance().ignorePropertyNotFound().newRecordUnmapperProvider(configuration));
             }
-        };
-    }
 
-    @Bean
-    @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$converter, havingValue = "true")
-    public BeanPostProcessor beanPostJooqConfiguration(ObjectProvider<ConverterProvider> providers,
-                                                       ObjectProvider<org.jooq.Converter<?, ?>> converters) {
-        logger.info("Wings conf beanPostJooqConfiguration");
-
-        return new BeanPostProcessor() {
-            @Override
-            public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
-                if (!(bean instanceof org.jooq.Configuration)) return bean;
-
-                final org.jooq.Configuration cnf = (org.jooq.Configuration) bean;
-
-                logger.info("Wings conf jooqConfiguration ConverterProvider, bean=" + beanName);
+            if (config.isConverter()) {
+                logger.info("Wings conf jooqConfiguration ConverterProvider");
                 JooqConverterDelegate dcp = new JooqConverterDelegate();
-                dcp.add(cnf.converterProvider());
+                dcp.add(configuration.converterProvider());
 
                 providers.orderedStream().forEach(it -> {
                     dcp.add(it);
@@ -147,9 +122,7 @@ public class FacelessJooqConfiguration {
                     dcp.add(it);
                     logger.info("   add jooqConverter, class={}", it.getClass());
                 });
-                cnf.set(dcp);
-
-                return cnf;
+                configuration.set(dcp);
             }
         };
     }

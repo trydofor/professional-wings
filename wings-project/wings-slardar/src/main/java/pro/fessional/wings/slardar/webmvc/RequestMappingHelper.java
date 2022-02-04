@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -20,8 +21,8 @@ import java.util.stream.Collectors;
 /**
  * 列出所有RequestMapping标记的URL，
  * 注意，不是容器内所有 mapping
- * @see DispatcherServlet#getHandlerMappings()
  *
+ * @see DispatcherServlet#getHandlerMappings()
  */
 public class RequestMappingHelper {
 
@@ -55,6 +56,12 @@ public class RequestMappingHelper {
             final PatternsRequestCondition prc = key.getPatternsCondition();
             if(prc != null) {
                 for (String url : prc.getPatterns()) {
+                    result.add(new Info(url, httpMethod, javaClass, javaMethod));
+                }
+            }
+            final PathPatternsRequestCondition ppc = key.getPathPatternsCondition();
+            if (ppc != null) {
+                for (String url : ppc.getPatternValues()) {
                     result.add(new Info(url, httpMethod, javaClass, javaMethod));
                 }
             }
