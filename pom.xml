@@ -64,6 +64,21 @@
         <!-- mvn-build-plugin -->
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version> <!-- https://search.maven.org/search?q=flatten-maven-plugin -->
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version> <!-- https://search.maven.org/search?q=maven-gpg-plugin -->
+        <wings.java-opens>
+            --illegal-access=debug
+            --add-modules=java.se <!-- Hazelcast -->
+            --add-opens=java.base/java.nio=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=java.base/java.lang=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=java.base/java.util=ALL-UNNAMED <!-- Boot Collections$EmptySet -->
+            --add-opens=java.base/sun.nio.ch=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=java.base/sun.security.x509=ALL-UNNAMED <!-- Boot -->
+            --add-opens=java.management/sun.management=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=jdk.unsupported/sun.misc=ALL-UNNAMED <!-- Boot -->
+            --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED <!-- Boot -->
+            --add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED <!-- Boot -->
+        </wings.java-opens>
     </properties>
 
     <dependencyManagement>
@@ -301,12 +316,18 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <argLine>${wings.java-opens}</argLine>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
-
                         <compilerArgs>
                             <arg>--add-modules=java.se</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/java.nio=ALL-UNNAMED</arg> <!-- Hazelcast -->
@@ -520,22 +541,6 @@
                         <commitIdGenerationMode>full</commitIdGenerationMode>
                     </configuration>
                 </plugin>
-                <!--
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <configuration>
-                        <argLine>
-                            &#45;&#45;add-opens=java.base/jdk.internal.ref=ALL-UNNAMED
-                            &#45;&#45;add-opens=java.base/java.lang=ALL-UNNAMED
-                            &#45;&#45;add-opens=java.base/java.nio=ALL-UNNAMED
-                            &#45;&#45;add-opens=java.base/sun.nio.ch=ALL-UNNAMED
-                            &#45;&#45;add-opens=java.management/sun.management=ALL-UNNAMED
-                            &#45;&#45;add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED
-                        </argLine>
-                    </configuration>
-                </plugin>
-                -->
             </plugins>
         </pluginManagement>
     </build>

@@ -65,11 +65,4 @@ public class SmartFormatter {
         final ZonedDateTime pd = ZonedDateTime.parse(date, df);
         Assertions.assertEquals(ldt, pd.withZoneSameInstant(tz.toZoneId()).toLocalDateTime());
     }
-
-    @Test
-    public void print(){
-        LocalDateTime d = LocalDateTime.of(2021,1,2,3,0,0,0);
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy[-MM][-dd][ ][HH][:mm][:ss][ ][VV]");
-        System.out.println(d.format(df));
-    }
 }

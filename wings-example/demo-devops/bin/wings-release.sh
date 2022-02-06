@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2022-01-22
+THIS_VERSION=2022-01-29
 
 cat <<EOF
 #################################################
@@ -20,6 +20,7 @@ PRE_PACK=''                                        # pack前执行的命令
 PRE_PUSH=''                                        # push前执行的命令，支持`$_JAR`变量
 MVN_COMP='-U -Dmaven.test.skip=true clean compile' # mvn的compile命令
 MVN_PACK='-Dmaven.test.skip=true package'          # mvn的package命令
+JDK_HOME=''                                        # mvn的jdk版本
 WEB_PACK='build'                                   # web的package的命令
 
 ################ NO NEED to modify the following ################
@@ -54,6 +55,13 @@ function _pre_push() {
 }
 
 function build_mvn() {
+    # java home & path
+    if [[ "$JDK_HOME" != "" && "$JDK_HOME" != "$JAVA_HOME" ]]; then
+        PATH=$JDK_HOME/bin:$PATH
+        JAVA_HOME=$JDK_HOME
+        echo -e "\033[37;42;1mINFO: ==== JAVA_HOME=$JAVA_HOME ==== \033[0m"
+    fi
+
     check_cmd mvn
     check_cmd git
 
@@ -154,6 +162,16 @@ function build_auto() {
 # load env
 echo -e "\033[37;42;1mINFO: ==== boot env ==== \033[0m"
 this_file="$0"
+if [[ -L "$this_file" ]]; then
+    link_file=$(realpath $this_file)
+    link_envs=${link_file%.*}.env
+    if [[ -f "$link_envs" ]]; then
+        echo "env-link=$link_envs"
+        # shellcheck disable=SC1090
+        source "$link_envs"
+    fi
+fi
+
 this_envs=${this_file%.*}.env
 if [[ -f "$this_envs" ]]; then
     echo "env-file=$this_envs"
