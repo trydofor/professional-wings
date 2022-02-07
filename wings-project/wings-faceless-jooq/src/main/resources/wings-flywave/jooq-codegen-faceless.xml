@@ -23,9 +23,8 @@
             <includes>.*</includes>
             <excludes>
                 spring.* # Spring 自动创建
-                |.*\$log # 日志表
-                |.*\$upd # 日志表
-                |.*\$del # 日志表
+                |.*__[a-z]* # 日志表
+                |.*\$[a-z]* # 日志表
                 |sys_commit_journal # jdbc处理
                 |sys_light_sequence # jdbc处理
                 |sys_schema_journal # jdbc处理

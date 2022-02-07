@@ -89,9 +89,9 @@ https://github.com/alibaba/transmittable-thread-local
 
 ## 2.9.数据库知识
 
-mysql体系指mysql分支如(Percona,MariaDB)或兼容mysql协议的数据库，wings使用mysql-5.7.x（8.0未测试）。
+mysql体系指mysql分支如(Percona,MariaDB)或兼容mysql协议的数据库，wings使用mysql-8.0.x（5.7已充分测试）。
 原则上DB不应该封装（自定义function或procedure）业务逻辑，但可以使用db提供的功能，简化工作实现业务目标。
-[mysql 5.7 官方文档](https://dev.mysql.com/doc/refman/5.7/en/)
+[mysql 8.0 官方文档](https://dev.mysql.com/doc/refman/8.0/en/)
 
 ### 2.9.1.MySql非通常用法
 
@@ -263,7 +263,7 @@ docker run -d \
  -v /Users/trydofor/Docker/mysql/conf:/etc/mysql/conf.d \
  -v /Users/trydofor/Docker/mysql/data:/var/lib/mysql \
  -p 3306:3306 \
-mysql:5.7
+mysql:8.0
 ```
 
 可以通过以下sql创建高权限用户，建议使用wings-mysql-user.sh独立权限的用户
@@ -338,5 +338,5 @@ from the session time zone to UTC for storage, and from UTC to the session time 
 
 在mysql中，尽量使用NOW(fsp)，因为其短小明确有缓存，如无必须不可使用SYSDATE(fsp)，参考
 
-* https://dev.mysql.com/doc/refman/5.7/en/time-zone-support.html#time-zone-variables
-* https://dev.mysql.com/doc/refman/5.7/en/date-and-time-functions.html#function_now
+* https://dev.mysql.com/doc/refman/8.0/en/time-zone-support.html#time-zone-variables
+* https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_now

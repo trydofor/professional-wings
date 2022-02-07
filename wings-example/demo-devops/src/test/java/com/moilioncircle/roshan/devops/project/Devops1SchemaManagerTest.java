@@ -13,13 +13,13 @@ import pro.fessional.wings.warlock.project.Warlock1SchemaManager;
  * @author trydofor
  * @since 2021-02-22
  */
+@Disabled("手动初始化")
 @SpringBootTest(properties = {
         "spring.datasource.url=" + Devops0ProjectConstant.JDBC_URL,
         "spring.datasource.username=" + Devops0ProjectConstant.JDBC_USER,
         "spring.datasource.password=" + Devops0ProjectConstant.JDBC_PASS,
         "debug = true"
 })
-@Disabled("手动初始化")
 class Devops1SchemaManagerTest {
 
     @Setter(onMethod_ = {@Autowired})

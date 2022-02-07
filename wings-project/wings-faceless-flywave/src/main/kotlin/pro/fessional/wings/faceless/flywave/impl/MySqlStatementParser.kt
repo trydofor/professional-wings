@@ -130,7 +130,7 @@ class MySqlStatementParser : SqlStatementParser {
         return "`$str`"
     }
 
-    // https://dev.mysql.com/doc/refman/5.7/en/string-literals.html#character-escape-sequences
+    // https://dev.mysql.com/doc/refman/8.0/en/string-literals.html#character-escape-sequences
     override fun safeValue(obj: Any?): String {
 
         when (obj) {

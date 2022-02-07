@@ -58,15 +58,15 @@ class SqlSegmentProcessorTest {
                 "jp_parcel_post_mail",
                 "jp_parcel_post_mail_0",
                 "jp_parcel_post_mail_1",
-                "jp_parcel_post_mail_0\$upd",
-                "jp_parcel_post_mail_1\$upd",
-                "jp_parcel_post_mail\$del"
+                "jp_parcel_post_mail_0__log",
+                "jp_parcel_post_mail_1__upd",
+                "jp_parcel_post_mail__"
         ))
 
         assertEquals(setOf(
-                "jp_parcel_post_mail_0\$upd",
-                "jp_parcel_post_mail_1\$upd",
-                "jp_parcel_post_mail\$del"
+                "jp_parcel_post_mail_0__log",
+                "jp_parcel_post_mail_1__upd",
+                "jp_parcel_post_mail__"
         ), tbs.keys)
     }
 

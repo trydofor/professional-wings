@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2021-12-21
+THIS_VERSION=2022-02-06
 
 cat << EOF
 #################################################
@@ -15,7 +15,7 @@ cat << EOF
 - option - 存在时，使用'--defaults-extra-file'
 - nodata - 非空时，增加'--skip-dump-rows'参数
 # option 详细参考client和mysqldump段
-- https://dev.mysql.com/doc/refman/5.7/en/option-files.html
+- https://dev.mysql.com/doc/refman/8.0/en/option-files.html
 #################################################
 EOF
 
@@ -28,7 +28,7 @@ if [[ "$database" == "" ]]; then
   exit
 fi
 
-# https://dev.mysql.com/doc/refman/5.7/en/option-files.html
+# https://dev.mysql.com/doc/refman/8.0/en/option-files.html
 opt_file=""
 if [[ -f "$option" ]]; then
   echo -e "\033[0;33mNOTE: current option file \033[m"
@@ -79,17 +79,17 @@ else
   exit
 fi
 
-logs_cnt=$(grep -cF '$' "$dump_tbl_file")
+logs_cnt=$(grep -cE '\$|__' "$dump_tbl_file")
 if [[ $logs_cnt == 0 ]]; then
   echo "no logs tables to dump"
   echo "-- no logs tables to dump" > "$dump_logs_file"
 else
   echo -e "\033[0;33mNOTE: dump logs tables without data, tables=\033[m"
-  grep -F '$' "$dump_tbl_file"
+  grep -E '\$|_+$' "$dump_tbl_file"
 
   # shellcheck disable=SC2046
   if mysqldump "$opt_file" --no-data \
-  "$database" $(grep -F '$' "$dump_tbl_file") > "$dump_logs_file"; then
+  "$database" $(grep -E '\$|__' "$dump_tbl_file") > "$dump_logs_file"; then
     echo "successfully dump logs"
   else
     echo -e "\033[37;41;1mERROR: failed to dump logs \033[0m"
@@ -97,7 +97,7 @@ else
   fi
 fi
 
-main_cnt=$(grep -cvF '$' "$dump_tbl_file")
+main_cnt=$(grep -cvE '\$|__' "$dump_tbl_file")
 if [[ $main_cnt == 0 ]]; then
   echo "no main tables to dump"
   echo "-- no main tables to dump" > "$dump_main_file"
@@ -105,7 +105,7 @@ else
   echo -e "\033[0;33mNOTE: dump main tables with data, count=\033[m"
   # shellcheck disable=SC2046
   if mysqldump "$opt_file" $opt_nodata \
-  "$database" $(grep -vF '$' "$dump_tbl_file") > "$dump_main_file"; then
+  "$database" $(grep -vE '\$|__' "$dump_tbl_file") > "$dump_main_file"; then
     echo "successfully dump main"
   else
     echo -e "\033[37;41;1mERROR: failed to dump main \033[0m"

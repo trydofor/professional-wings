@@ -2,7 +2,6 @@ package pro.fessional.wings.faceless.spring.bean;
 
 import org.jooq.ConverterProvider;
 import org.jooq.ExecuteListenerProvider;
-import org.jooq.SQLDialect;
 import org.jooq.VisitListenerProvider;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DefaultExecuteListenerProvider;
@@ -96,10 +95,10 @@ public class FacelessJooqConfiguration {
             WingsJooqEnv.daoBatchMysql = config.isBatchMysql();
             settings.withRenderCatalog(false)
                     .withRenderSchema(false)
-                    .withParseDialect(SQLDialect.MYSQL)
+//                  .withParseDialect(SQLDialect.MYSQL)
 //                .withRenderTable(false)
             ;
-            logger.info("Wings conf jooq setting render");
+            logger.info("Wings conf jooq setting, dialect="+settings.getParseDialect());
 
             if (config.isSimpleflatmapper()) {
                 logger.info("Wings conf beanPostSfmRecordMapperProvider");

@@ -26,7 +26,7 @@
     <properties>
         <maven.version>3.8.4</maven.version>
         <revision>2.6.3</revision>
-        <changelist>202-SNAPSHOT</changelist>
+        <changelist>210-SNAPSHOT</changelist>
         <!-- https://docs.spring.io/spring-boot/docs/2.6.3/reference/html/appendix-dependency-versions.html#appendix-dependency-versions -->
         <spring-boot.version>${revision}</spring-boot.version>
         <wings.version>${revision}.${changelist}</wings.version>

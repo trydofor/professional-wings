@@ -318,12 +318,12 @@ class SqlSegmentProcessor(
         /**
          * XXX$log形式的trace表达式
          */
-        const val TRACE_DOLLAR = "${PLAIN_TABLE}(_[0-9]+)?\\\$[a-z]+"
+        const val TRACE_DOLLAR = "${PLAIN_TABLE}(_[0-9]+)?\\\$[a-z]*"
 
         /**
          * XXX__log形式的trace表达式
          */
-        const val TRACE_SU2_LINE = "${PLAIN_TABLE}(_[0-9]+)?__+[a-z]+"
+        const val TRACE_SU2_LINE = "${PLAIN_TABLE}(_[0-9]+)?__+[a-z]*"
 
         /**
          * _log_XXX形式的trace表达式
@@ -331,7 +331,7 @@ class SqlSegmentProcessor(
         const val TRACE_PRE_LINE = "_+([a-z]+_+)?${PLAIN_TABLE}(_[0-9]+)?"
 
         private var regShard = SHARD_LINE_SEQ.toRegex(RegexOption.IGNORE_CASE)
-        private var regTrace = TRACE_DOLLAR.toRegex(RegexOption.IGNORE_CASE)
+        private var regTrace = TRACE_SU2_LINE.toRegex(RegexOption.IGNORE_CASE)
 
         /**
          * 设置分表格式表达式，以`XXX`表示主表。

@@ -16,11 +16,11 @@ PASS=S4f3_Password@MoilionCircle
 
 # 创建一个mysql数据库
 docker run -d \
---name demo-mysql-5.7 \
--e MYSQL_DATABASE=demo_example \
+--name demo-mysql-8.0 \
+-e MYSQL_DATABASE=wings_example \
 -e MYSQL_ROOT_PASSWORD=${PASS} \
 -p 3306:3306 \
-mysql:5.7
+mysql:8.0
 ```
 
 参考以下文档或脚本，根据需要创建程序运行或数据维护用户

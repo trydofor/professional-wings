@@ -14,13 +14,13 @@ import java.util.SortedMap;
  * @author trydofor
  * @since 2021-02-22
  */
+@Disabled("手动初始化")
 @SpringBootTest(properties = {
         "spring.datasource.url=" + Warlock0CodegenConstant.JDBC,
         "spring.datasource.username=" + Warlock0CodegenConstant.USER,
         "spring.datasource.password=" + Warlock0CodegenConstant.PASS,
         "debug = true"
 })
-@Disabled("手动初始化")
 class Warlock1SchemaManagerTest {
 
     @Setter(onMethod_ = {@Autowired})

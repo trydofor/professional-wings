@@ -5,8 +5,8 @@
 [![Kotlin 1.6](https://img.shields.io/badge/kotlin-1.6-red)](https://kotlinlang.org/docs/reference/)
 [![Jooq](https://img.shields.io/badge/jooq-3.14-yellow)](https://www.jooq.org/download/)
 [![QueryDsl](https://img.shields.io/badge/querydsl-5.0-yellow)](https://querydsl.com/static/querydsl/5.0.0/reference/html_single)
-[![Mysql](https://img.shields.io/badge/mysql-5.7+-blue)](https://dev.mysql.com/downloads/mysql/)
-[![H2Database](https://img.shields.io/badge/h2db-1.4-blue)](http://h2database.com/html/main.html)
+[![Mysql](https://img.shields.io/badge/mysql-8.0-blue)](https://dev.mysql.com/downloads/mysql/)
+[![H2Database](https://img.shields.io/badge/h2db-2.0-blue)](http://h2database.com/html/main.html)
 
 不是为吃货准备的伪装成吃货的项目，其核心价值是使团队快速实现业务目标，快速偿还技术债务，安全的面向程序和业务重构。
 
@@ -792,7 +792,7 @@ wings中可以通过暴露AlternateTypeRule bean，自动注入所以Docket中�
 和文件系统的大小写有关，根据wings的Sql风格，建议全小写，snake_case。
 此外，也建议在 mysqld 的配置上，增加 `lower_case_table_names=1`
 
-https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_lower_case_table_names
+https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_lower_case_table_names
 
 ### 26.如何解压springboot生成的jar
 

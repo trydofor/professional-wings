@@ -1,5 +1,5 @@
 -- 时区统一(GMT+8)，编码统一(utf8mb4)
--- CREATE DATABASE `demo_example` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+-- CREATE DATABASE `wings_example` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 
 CREATE TABLE `demo_user_detail` (
     `id`        BIGINT(20)   NOT NULL COMMENT '主键',
