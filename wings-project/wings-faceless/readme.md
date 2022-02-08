@@ -242,26 +242,37 @@ jdbc:h2:~/wings-init
 
 ### 02.本地创建mysql docker
 
+wings需要mysqld中以下重点设置，包括命名小写，语音时区，用户权限，[全文检索的分词](https://dev.mysql.com/doc/refman/8.0/en/fulltext-boolean.html)
+以下配置适应于mysql5.7, mysql8, native, cloud
+
 ```bash
-sudo tee /Users/trydofor/Docker/mysql/conf/moilioncircle.cnf << EOF
+sudo tee /data/docker/mysql/conf/moilioncircle.cnf << EOF
 [mysqld]
+max_allowed_packet          = 16777216
+# table store lowercase compare case-sensitive
 lower_case_table_names      = 1
-innodb_file_per_table       = 1
-innodb_ft_min_token_size    = 1
-ft_min_word_len             = 1
-character-set-server        = UTF8MB4
-max_allowed_packet          = 1024M
-default-time-zone           = '+8:00'
+# FULLTEXT indexes by MeCab parser and ngram parser
+innodb_ft_min_token_size    = 2
+ft_min_word_len             = 2
+ngram_token_size            = 2
+# default charset and timezone
+character_set_server        = utf8mb4
+default-time_zone           = +00:00
+# binary log
 log_bin_trust_function_creators = 1
-skip_ssl
+binlog-format               = MIXED
+# local
+innodb_file_per_table       = 1
+#skip_grant_tables
 EOF
+
 # 启动docker
-docker run -d \
+sudo docker run -d \
  --name mysql \
  --restart=unless-stopped \
  -e MYSQL_ALLOW_EMPTY_PASSWORD=yes \
- -v /Users/trydofor/Docker/mysql/conf:/etc/mysql/conf.d \
- -v /Users/trydofor/Docker/mysql/data:/var/lib/mysql \
+ -v /data/docker/mysql/conf:/etc/mysql/conf.d \
+ -v /data/docker/mysql/data:/var/lib/mysql \
  -p 3306:3306 \
 mysql:8.0
 ```
