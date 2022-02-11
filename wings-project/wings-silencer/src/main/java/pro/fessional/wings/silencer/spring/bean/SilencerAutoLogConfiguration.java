@@ -87,12 +87,12 @@ public class SilencerAutoLogConfiguration {
                 }
 
                 logger.info("Wings conf LogbackFilter to ConsoleAppender");
-                logger.info("================= Mirana =================");
+                logger.info("================= Silencer =================");
                 logger.info("Auto Switch the following Appender Level to " + level);
                 for (Appender<ILoggingEvent> appender : appenders) {
                     logger.info("- "+appender.getName() + " : " + appender.getClass().getName());
                 }
-                logger.info("================= Mirana =================");
+                logger.info("================= Silencer =================");
                 final LogbackFilter filter = new LogbackFilter(level);
                 for (Appender<ILoggingEvent> appender : appenders) {
                     appender.addFilter(filter);

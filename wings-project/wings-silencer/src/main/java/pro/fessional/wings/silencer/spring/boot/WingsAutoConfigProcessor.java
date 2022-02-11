@@ -36,6 +36,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeSet;
@@ -62,12 +63,14 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
     private static final DeferredLog logger = DeferredLogFactory.getLog(WingsAutoConfigProcessor.class);
 
-    public static final String BOOTS_CONF = "application.*";
-    public static final String WINGS_CONF = "wings-conf/**/*.*";
-    public static final String WINGS_I18N = "wings-i18n/**/*.properties";
-    public static final String BLOCK_LIST = "wings-conf-block-list.cnf";
-    public static final String PROMO_PROP = "wings-prop-promotion.cnf";
+    public static final String WINGS_AUTO = "wings-auto-config.cnf";
     public static final int NAKED_SEQ = 70;
+    public static final String WINGS_I18N = "wings-i18n/**/*.properties";
+
+    public static final String WINGS_ONCE_KEY = "wings.boot.once";
+    public static final String WINGS_MORE_KEY = "wings.boot.more";
+    public static final String BLOCK_LIST_KEY = "wings.boot.block";
+    public static final String PROMO_PROP_KEY = "wings.boot.promo";
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
@@ -171,12 +174,21 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         return path.substring(p1, p2);
     }
 
+    private static class AutoConf {
+        private String[] onces = {"git.properties", "META-INF/build-info.properties"};
+        private String[] mores = {"application*.*", "wings-conf/**/*.*"};
+        private String block = "wings-conf-block-list.cnf";
+        private String promo = "wings-prop-promotion.cnf";
+    }
+
     private void processWingsConf(ConfigurableEnvironment environment) {
 
         final MutablePropertySources propertySources = environment.getPropertySources();
+        final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        final AutoConf autoConf = processWingsAuto(resolver);
 
-        final LinkedHashSet<ConfResource> confResources = scanWingsResource(propertySources);
-        final HashMap<String, String> blockList = parseBlockList(confResources);
+        final LinkedHashSet<ConfResource> confResources = scanWingsResource(propertySources, resolver, autoConf);
+        final HashMap<String, String> blockList = parseBlockList(confResources, autoConf.block);
         final List<ConfResource> sortedResources = profileBlockSort(confResources, blockList, environment.getActiveProfiles());
 
         final YamlPropertySourceLoader yamlLoader = new YamlPropertySourceLoader();
@@ -216,7 +228,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         }
 
         //
-        Set<String> props = parsePromoProp(confResources);
+        Set<String> props = parsePromoProp(confResources, autoConf.promo);
         logger.info("🦁 Wings promote property, keys count=" + props.size());
         for (String prop : props) {
             final String value = environment.getProperty(prop);
@@ -241,11 +253,11 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     }
 
     @NotNull
-    private HashMap<String, String> parseBlockList(Collection<ConfResource> sortedResources) {
+    private HashMap<String, String> parseBlockList(Collection<ConfResource> sortedResources, String block) {
         HashMap<String, String> blockList = new HashMap<>();
         for (Iterator<ConfResource> it = sortedResources.iterator(); it.hasNext(); ) {
             ConfResource conf = it.next();
-            if (isBlockList(conf.location)) {
+            if (endsWithIgnoreCase(conf.location, block)) {
                 try (InputStream is = conf.resource.getInputStream()) {
                     BufferedReader buf = new BufferedReader(new InputStreamReader(is));
                     String line;
@@ -268,11 +280,11 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         return blockList;
     }
 
-    private Set<String> parsePromoProp(Collection<ConfResource> res) {
+    private Set<String> parsePromoProp(Collection<ConfResource> res, String promo) {
         Set<String> prop = new HashSet<>();
         for (Iterator<ConfResource> it = res.iterator(); it.hasNext(); ) {
             ConfResource conf = it.next();
-            if (isPromoProp(conf.location)) {
+            if (endsWithIgnoreCase(conf.location, promo)) {
                 try (InputStream is = conf.resource.getInputStream()) {
                     BufferedReader buf = new BufferedReader(new InputStreamReader(is));
                     String line;
@@ -375,7 +387,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     }
 
     // 按路径优先级扫描
-    private LinkedHashSet<ConfResource> scanWingsResource(MutablePropertySources sources) {
+    private LinkedHashSet<ConfResource> scanWingsResource(MutablePropertySources sources, PathMatchingResourcePatternResolver resolver, AutoConf autoConf) {
         LinkedHashSet<String> sortedPath = new LinkedHashSet<>();
         for (PropertySource<?> next : sources) {
             // 1. Command line arguments. `--spring.config.location`
@@ -398,9 +410,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             putPathIfValid(sortedPath, s.trim());
         }
 
-        LinkedHashSet<ConfResource> confResources = new LinkedHashSet<>();
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-
+        final LinkedHashSet<ConfResource> confResources = new LinkedHashSet<>();
         for (String path : sortedPath) {
             // 5. `classpath:/`会被以`classpath*:/`扫描
             if (path.startsWith("classpath:")) {
@@ -418,17 +428,56 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             //  7. 以`/`结尾的当做目录，否则作为文件
             if (path.endsWith("/") || path.endsWith("\\")) {
                 // 8. 从以上路径，优先加载`application.*`，次之`wings-conf/**/*.*`
-                putConfIfValid(confResources, resolver, path + BOOTS_CONF);
-                putConfIfValid(confResources, resolver, path + WINGS_CONF);
+                for (String auto : autoConf.onces) {
+                    putConfIfValid(false, confResources, resolver, path + auto, autoConf);
+                }
+                for (String more : autoConf.mores) {
+                    putConfIfValid(true, confResources, resolver, path + more, autoConf);
+                }
             }
             else {
-                putConfIfValid(confResources, resolver, path);
+                putConfIfValid(true, confResources, resolver, path, autoConf);
             }
         }
 
         return confResources;
     }
 
+    public AutoConf processWingsAuto(PathMatchingResourcePatternResolver resolver) {
+        final Resource resource = resolver.getResource(WINGS_AUTO);
+        AutoConf autoConf = new AutoConf();
+        if (resource.isReadable()) {
+            try {
+                final Properties prop = new Properties();
+                prop.load(resource.getInputStream());
+
+                final String ck = prop.getProperty(WINGS_ONCE_KEY);
+                if (StringUtils.hasText(ck)) {
+                    logger.info("🦁 use " + WINGS_ONCE_KEY + " =" + ck);
+                    autoConf.onces = ck.trim().split("[, \t\r\n]+");
+                }
+                final String mk = prop.getProperty(WINGS_MORE_KEY);
+                if (StringUtils.hasText(mk)) {
+                    logger.info("🦁 use " + WINGS_MORE_KEY + " =" + mk);
+                    autoConf.mores = mk.trim().split("[, \t\r\n]+");
+                }
+                final String bk = prop.getProperty(BLOCK_LIST_KEY);
+                if (StringUtils.hasText(bk)) {
+                    logger.info("🦁 use " + BLOCK_LIST_KEY + " =" + bk);
+                    autoConf.block = bk.trim();
+                }
+                final String pk = prop.getProperty(PROMO_PROP_KEY);
+                if (StringUtils.hasText(pk)) {
+                    logger.info("🦁 use " + PROMO_PROP_KEY + " =" + pk);
+                    autoConf.promo = pk.trim();
+                }
+            }
+            catch (IOException e) {
+                throw new IllegalStateException("failed to load " + WINGS_AUTO, e);
+            }
+        }
+        return autoConf;
+    }
 
     private void putPathIfValid(LinkedHashSet<String> path, String conf) {
         if (conf.isEmpty() || isYml(conf) || isProperty(conf)) {
@@ -440,14 +489,28 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         path.add(conf);
     }
 
-    private void putConfIfValid(LinkedHashSet<ConfResource> confResources, PathMatchingResourcePatternResolver resolver, String path) {
+    private void putConfIfValid(boolean more, LinkedHashSet<ConfResource> confResources, PathMatchingResourcePatternResolver resolver, String path, AutoConf autoConf) {
         try {
             for (Resource res : resolver.getResources(path)) {
+                if (!res.isReadable()) {
+                    continue;
+                }
                 String url = res.getURL().getPath();
-                if (isYml(url) || isProperty(url) || isBlockList(url) || isPromoProp(url)) {
-                    ConfResource conf = new ConfResource(res, url);
-                    logger.info("🦁 Wings find " + conf);
-                    confResources.add(conf);
+                if (isYml(url) || isProperty(url) || endsWithIgnoreCase(url, autoConf.block, autoConf.promo)) {
+                    ConfResource conf = new ConfResource(res, url, more);
+                    if (more) {
+                        logger.info("🦁 Wings find " + conf);
+                        confResources.add(conf);
+                    }
+                    else {
+                        if (confResources.contains(conf)) {
+                            logger.info("🦁 Wings skip " + conf);
+                        }
+                        else {
+                            logger.info("🦁 Wings find " + conf);
+                            confResources.add(conf);
+                        }
+                    }
                 }
             }
         }
@@ -466,14 +529,16 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         private final Resource resource;
 
         private final String fullName;
+        private final boolean more;
         private String baseName;
         private int nameSeq = NAKED_SEQ;
         private String profile = "";
 
-        public ConfResource(Resource res, String url) {
+        public ConfResource(Resource res, String url, boolean more) {
             this.order = seqs.incrementAndGet();
             this.location = url;
             this.resource = res;
+            this.more = more;
 
             int p1 = Math.max(url.lastIndexOf('/'), url.lastIndexOf('\\'));
             if (p1 >= 0) {
@@ -509,13 +574,14 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
         @Override
         public int hashCode() {
-            return location.hashCode();
+            return more ? location.hashCode() : fullName.hashCode();
         }
 
         @Override
         public boolean equals(Object obj) {
             if (obj instanceof ConfResource) {
-                return location.equals(((ConfResource) obj).location);
+                final ConfResource ot = (ConfResource) obj;
+                return more ? location.equals(ot.location) : fullName.equals(ot.fullName);
             }
             else {
                 return false;
@@ -535,14 +601,6 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             }
         }
         return null;
-    }
-
-    private boolean isBlockList(String file) {
-        return endsWithIgnoreCase(file, BLOCK_LIST);
-    }
-
-    private boolean isPromoProp(String file) {
-        return endsWithIgnoreCase(file, PROMO_PROP);
     }
 
     private boolean isYml(String file) {

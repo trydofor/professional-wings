@@ -1,0 +1,9 @@
+# 字符串列表，不支持协议头，因在多协议路径下查找
+# 同名可多次加载，分层覆盖
+wings.boot.more=application*.*, wings-conf/**/*.*
+# 同名仅加载一次，不会覆盖
+wings.boot.once=git.properties, META-INF/build-info.properties
+
+# 字符串，文件名
+wings.boot.block=wings-conf-block-list.cnf
+wings.boot.promo=wings-prop-promotion.cnf
