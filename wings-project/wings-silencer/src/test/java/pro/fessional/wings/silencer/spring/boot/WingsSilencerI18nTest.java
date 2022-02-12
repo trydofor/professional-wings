@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 
 @SpringBootTest(properties = {"debug = true"})
-public class WingsSilencerApplicationTest {
+public class WingsSilencerI18nTest {
 
     private MessageSource messageSource;
     private String module;

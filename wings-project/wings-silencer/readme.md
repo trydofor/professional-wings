@@ -40,6 +40,11 @@ wings中的spring命名，主要集中在以下（后续目录结构有详解）
 * 禁用，可以通过block-list，禁止某配置文件加载
 * profile，同spring规则。
 
+wings对配置文件的处理方式，是层叠和过滤，配置以路径顺序和编号大小排序。
+
+* 层叠，排序的配置，按高优先级（前面的高）覆盖值。
+* 过滤，通过profile进行排他过滤。
+
 ### 1.2.1.配置分割
 
 实际项目开发中，只有一个 `application.*`不利于分工和管理的，应该是，
@@ -48,18 +53,18 @@ wings中的spring命名，主要集中在以下（后续目录结构有详解）
  * shardingsphere-sharding-79.properties
  * logger-logback-79.properties
 
-通过`EnvironmentPostProcessor`扫描`各路径`中`/wings-conf/**/*.*`，规则如下，
+通过`EnvironmentPostProcessor`扫描`各路径`中`/wings-conf/**/*.*`，规则同
+[features.external-config](https://docs.spring.io/spring-boot/docs/current/2.6.3/html/features.html#features.external-config)
+，和配置文件有关的`各路径`如下，其后者优先级高（为与spring文档叙述一致，程序中倒序执行，FIFO优先级）。
 
- 1. Command line arguments. `--spring.config.location`
- 2. Java System properties `spring.config.location`
- 3. OS environment variables. `SPRING_CONFIG_LOCATION`
- 4. default `classpath:/,classpath:/config/,file:./,file:./config/`
- 5. `classpath:/`会被以`classpath*:/`扫描
- 6. 任何非`classpath:`,`classpath*:`的，都以`file:`扫描
- 7. 以`/`结尾的当做目录，否则作为文件
- 8. 从以上路径，优先加载`application.*`，次之`wings-conf/**/*.*`
-
-`各路径`指按照上述顺序，把路径拆分后，依次扫描，优先级为FIFO先进先出（值覆盖有关）。
+0. 路径中，优先加载`application.*`，次之`wings-conf/**/*.*`
+1. 以`/`结尾的当做目录，否则作为文件
+2. 任何非`classpath:`,`classpath*:`的，都以`file:`扫描
+3. `classpath:/`会被以`classpath*:/`扫描
+4. default `classpath:/,classpath:/config/,file:./,file:./config/`
+5. OS environment variables. `SPRING_CONFIG_LOCATION`
+6. Java System properties `spring.config.location`
+7. Command line arguments. `--spring.config.location
 
 目前只加载 `*.yml`, `*.yaml`,`*.xml`, `*.properties`扩展名的配置文件。
 工程提供的默认配置，文件名字后面都会加上`-79`，方便根据文件名排序设置默认值。
@@ -86,6 +91,19 @@ wings中的spring命名，主要集中在以下（后续目录结构有详解）
 相同`basename`+`seq`的config是同一组，会移除掉非活动的profile
 以`@`区分profile主要是因为，wings-conf文件名中存在`-`，避免造成误解析。
 在使用`spring.profiles.active`时，要确保配置文件按spring约定加载。
+
+wings和spring的profile在处理上也有区别，默认wings有些于spring处理。
+
+* application-{profile}，wings扫描排序，spring处理。
+* wings-conf/layered-config@{profile}，wings扫描及处理。
+* 有profile覆盖无profile的配置，多个激活profile层叠覆盖。
+* 避免在wings-conf路径中，以application命名配置，会有spring和wings混合处理。
+
+spring boot目前仅支持application单配置，多profile形式，所以配置文件上仅有路径优先级。
+但多profile①排除非激活profile②激活profile按字符顺序，后者优先③无profile的垫底。
+
+而wing中存在多配置，多profile，其路径优先级和profile优先级与spring一致。
+在多配置优先级，是①profile②路径③文件序号④字符顺序，前者优先进行的。
 
 ### 1.2.3.配置禁用
 

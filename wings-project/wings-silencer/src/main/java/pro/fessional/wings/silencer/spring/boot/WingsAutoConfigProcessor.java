@@ -74,8 +74,14 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        processWingsConf(environment);
-        processWingsI18n(environment);
+        final String en = environment.getProperty("spring.wings.silencer.enabled");
+        if ("false".equalsIgnoreCase(en)) {
+            logger.info("🦁 Wings AutoConfig is disabled, skip it.");
+        }
+        else {
+            processWingsConf(environment);
+            processWingsI18n(environment);
+        }
     }
 
     // ///////////////////////////////////////////////////////
@@ -308,12 +314,11 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         return prop;
     }
 
-    // 移除非活动profile，basename相同
+    // 移除非活动profile，basename相同，application-{profile}由spring自身管理
     private List<ConfResource> profileBlockSort(LinkedHashSet<ConfResource> confResources,
                                                 HashMap<String, String> blockList,
                                                 String[] activeProfs) {
-        String profs = String.join(",", activeProfs);
-        logger.info("🦁 current active profile=[" + profs + "]");
+        logger.info("🦁 current active profile=[" + String.join(",", activeProfs) + "]");
 
         Set<ConfResource> profiledConf = confResources
                 .stream()
@@ -322,38 +327,27 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
         if (!profiledConf.isEmpty()) {
             if (activeProfs.length == 0) {
-                for (ConfResource it : profiledConf) {
-                    logger.info("🦁 inactive profile by empty, " + it);
-                    confResources.remove(it);
+                for (ConfResource cr : profiledConf) {
+                    logger.info("🦁 profile inactive [" + cr.profile + "] " + cr);
+                    confResources.remove(cr);
                 }
             }
             else {
                 HashSet<String> prof = new HashSet<>(Arrays.asList(activeProfs));
-                // 移除所有非活动
-                Set<ConfResource> act = new HashSet<>();
+                // 移除所有非活动，empty以低优先级加载
+                final Set<ConfResource> actProf = new HashSet<>();
                 for (ConfResource cr : profiledConf) {
-                    if (prof.contains(cr.profile)) {
-                        act.add(cr);
+                    if (cr.profile.isEmpty() || prof.contains(cr.profile)) {
+                        actProf.add(cr);
                     }
                     else {
-                        logger.info("🦁 inactive profile by [" + profs + "], " + cr);
+                        logger.info("🦁 profile inactive [" + cr.profile + "] " + cr);
                         confResources.remove(cr);
                     }
                 }
-
-                // 保留自己，移除所有同名者
-                confResources.removeIf(it -> {
-                    for (ConfResource cr : act) {
-                        if (it.location.equals(cr.location)) {
-                            return false;
-                        }
-                        if (it.baseName.equals(cr.baseName)) {
-                            logger.info("🦁 inactive profile by [" + cr.fullName + "], " + it);
-                            return true;
-                        }
-                    }
-                    return false;
-                });
+                for (ConfResource cr : actProf) {
+                    logger.info("🦁 profile   active [" + cr.profile + "] " + cr);
+                }
             }
         }
 
@@ -370,14 +364,23 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         }
 
         List<ConfResource> sortedConf = new ArrayList<>(confResources.size());
-        Comparator<ConfResource> sorter = Comparator.comparingInt((ConfResource o) -> o.nameSeq)
-                                                    .thenComparingInt(o -> o.order);
+        // profile(desc) > seq(asc) > order(asc)
+        Comparator<ConfResource> sorter = (r1, r2) -> {
+            if (r1.profile.isEmpty() && !r2.profile.isEmpty()) return 1;
+            if (!r1.profile.isEmpty() && r2.profile.isEmpty()) return -1;
+            final int p0 = r2.profile.compareTo(r1.profile); // spring 后者优先
+            if (p0 != 0) return p0;
+
+            final int n0 = Integer.compare(r1.nameSeq, r2.nameSeq);
+            if (n0 != 0) return n0;
+            return Integer.compare(r1.order, r2.order);
+        };
 
         for (Map.Entry<String, List<ConfResource>> e : groups.entrySet()) {
             List<ConfResource> crs = e.getValue();
             int size = crs.size();
             if (size > 1) {
-                logger.info("🦁 resorted " + size + " basename by seq" + e.getKey());
+                logger.info("🦁 resorted " + size + " basename by profile,seq " + e.getKey());
                 crs.sort(sorter);
             }
             sortedConf.addAll(crs);
@@ -453,22 +456,22 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
                 final String ck = prop.getProperty(WINGS_ONCE_KEY);
                 if (StringUtils.hasText(ck)) {
-                    logger.info("🦁 use " + WINGS_ONCE_KEY + " =" + ck);
+                    logger.info("🦁 use " + WINGS_ONCE_KEY + "=" + ck);
                     autoConf.onces = ck.trim().split("[, \t\r\n]+");
                 }
                 final String mk = prop.getProperty(WINGS_MORE_KEY);
                 if (StringUtils.hasText(mk)) {
-                    logger.info("🦁 use " + WINGS_MORE_KEY + " =" + mk);
+                    logger.info("🦁 use " + WINGS_MORE_KEY + "=" + mk);
                     autoConf.mores = mk.trim().split("[, \t\r\n]+");
                 }
                 final String bk = prop.getProperty(BLOCK_LIST_KEY);
                 if (StringUtils.hasText(bk)) {
-                    logger.info("🦁 use " + BLOCK_LIST_KEY + " =" + bk);
+                    logger.info("🦁 use " + BLOCK_LIST_KEY + "=" + bk);
                     autoConf.block = bk.trim();
                 }
                 final String pk = prop.getProperty(PROMO_PROP_KEY);
                 if (StringUtils.hasText(pk)) {
-                    logger.info("🦁 use " + PROMO_PROP_KEY + " =" + pk);
+                    logger.info("🦁 use " + PROMO_PROP_KEY + "=" + pk);
                     autoConf.promo = pk.trim();
                 }
             }
@@ -521,7 +524,8 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
 
     private static class ConfResource {
-        private static final Pattern seqProfile = Pattern.compile("(-\\d{2,})?(@.+)?$", Pattern.CASE_INSENSITIVE);
+        private static final Pattern springProfile = Pattern.compile("^application(-.+)?$");
+        private static final Pattern wingsProfile = Pattern.compile("(-\\d{2,})?(@.+)?$");
         private static final AtomicInteger seqs = new AtomicInteger(0);
 
         private final int order;
@@ -557,18 +561,31 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                 baseName = fullName;
             }
 
-            Matcher mt = seqProfile.matcher(baseName);
+            Matcher mt = springProfile.matcher(baseName);
             if (mt.find()) {
-                String g1 = mt.group(1);
+                final String g1 = mt.group(1);
                 if (g1 != null) {
-                    nameSeq = Integer.parseInt(g1.substring(1));
+                    profile = g1.substring(1);
+                    baseName = baseName.substring(0, mt.start(1));
                 }
+            }
+            else {
+                mt = wingsProfile.matcher(baseName);
+                if (mt.find()) {
+                    final String g1 = mt.group(1);
+                    if (g1 != null) {
+                        nameSeq = Integer.parseInt(g1.substring(1));
+                    }
 
-                String g2 = mt.group(2);
-                if (g2 != null) {
-                    profile = g2.substring(1);
+                    final String g2 = mt.group(2);
+                    if (g2 != null) {
+                        profile = g2.substring(1);
+                    }
+
+                    if (g1 != null || g2 != null) {
+                        baseName = baseName.substring(0, mt.start());
+                    }
                 }
-                baseName = baseName.substring(0, mt.start());
             }
         }
 
