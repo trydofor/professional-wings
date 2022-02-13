@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2022-01-29
+THIS_VERSION=2022-02-14
 
 cat <<EOF
 #################################################
@@ -86,7 +86,8 @@ function print_help() {
     echo -e '\033[32m cron \033[m show the {boot-jar} crontab usage'
     echo -e '\033[32m free \033[m check memory free'
     echo -e '\033[32m check \033[m check shell command'
-    echo -e '\033[32m config \033[m output config envs'
+    echo -e '\033[32m config \033[m print config envs'
+    echo -e '\033[32m tail \033[m tail boot log or out'
     echo -e '\033[37;43;1m default is start, for example\033[m'
     echo -e './wings-starter.sh'
     echo -e './wings-starter.sh status'
@@ -444,6 +445,19 @@ case "$ARGS_RUN" in
         jstat -gcutil "$cid" 1000 1
         echo -e "\033[37;43;1mNOTE: jstat -gc $cid 1000 1 \033[0m"
         jstat -gc "$cid" 1000 1
+        ;;
+    tail)
+        file_log=$BOOT_LOG
+        if [[ ! -f "$file_log" ]]; then
+            file_log=$BOOT_OUT
+        fi
+        if [[ ! -f "$file_log" ]]; then
+            echo -e "\033[37;41;1mERROR: no log found \033[0m"
+            exit
+        fi
+        tail_num=20
+        echo -e "\033[37;42;1mINFO: tail -f -n $tail_num $file_log \033[0m"
+        tail -f -n $tail_num "$file_log"
         ;;
     warn)
         warn_got=''

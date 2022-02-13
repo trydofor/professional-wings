@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--suppress HttpUrlsUsage -->
 <hazelcast xmlns="http://www.hazelcast.com/schema/config"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.hazelcast.com/schema/config
@@ -9,27 +10,17 @@
 
     <network>
         <port auto-increment="true" port-count="100">5701</port>
-        <reuse-address>true</reuse-address>
         <outbound-ports>
             <ports>0</ports>
         </outbound-ports>
+        <reuse-address>true</reuse-address>
         <join>
-            <multicast enabled="true">
-                <multicast-group>224.0.0.1</multicast-group>
+            <auto-detection enabled="true"/>
+            <multicast enabled="true" loopbackModeEnabled="true">
+                <multicast-group>224.2.2.3</multicast-group>
                 <multicast-port>54327</multicast-port>
             </multicast>
-            <tcp-ip enabled="false">
-                <interface>127.0.0.1</interface>
-                <member-list>
-                    <member>127.0.0.1</member>
-                    <member>127.0.0.2</member>
-                </member-list>
-            </tcp-ip>
         </join>
-        <interfaces enabled="false">
-            <interface>10.10.1.*</interface>
-        </interfaces>
-        <ssl enabled="false"/>
     </network>
 
     <cp-subsystem>
