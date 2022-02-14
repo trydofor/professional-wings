@@ -11,11 +11,11 @@
     </parent>
 
     <groupId>pro.fessional</groupId>
-    <artifactId>wings-dependency</artifactId>
+    <artifactId>wings</artifactId>
     <version>${revision}.${changelist}</version>
     <packaging>pom</packaging>
 
-    <name>wings-dependency</name>
+    <name>wings</name>
     <description>万物生长靠日</description>
 
     <modules>
@@ -35,7 +35,12 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
         <kotlin.version>1.6.10</kotlin.version>
-        <maven.test.skip>true</maven.test.skip>
+        <!-- mvn boot -->
+        <maven.test.skip>false</maven.test.skip>
+        <maven.deploy.skip>false</maven.deploy.skip>
+        <maven.install.skip>false</maven.install.skip>
+        <spring-boot.repackage.skip>false</spring-boot.repackage.skip>
+        <spring-boot.repackage.executable>false</spring-boot.repackage.executable>
         <!-- silencer -->
         <mirana.version>2.2.3-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <!-- faceless -->
@@ -323,6 +328,31 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <configuration>
+                        <!-- avoid /build/resources/resource/filtering=true -->
+                        <nonFilteredFileExtensions>
+                            <nonFilteredFileExtension>so</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>dll</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>zip</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>jar</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>icon</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>jpg</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>gif</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>png</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>wav</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>mp3</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>xls</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>doc</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>docx</nonFilteredFileExtension>
+                        </nonFilteredFileExtensions>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
                     <configuration>
@@ -388,6 +418,21 @@
                             <id>attach-javadocs</id>
                             <goals>
                                 <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <configuration>
+                        <skip>${spring-boot.repackage.skip}</skip>
+                        <executable>${spring-boot.repackage.executable}</executable>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>build-info</goal>
                             </goals>
                         </execution>
                     </executions>

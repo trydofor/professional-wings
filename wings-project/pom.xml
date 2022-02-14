@@ -5,7 +5,7 @@
 
     <parent>
         <groupId>pro.fessional</groupId>
-        <artifactId>wings-dependency</artifactId>
+        <artifactId>wings</artifactId>
         <version>${revision}.${changelist}</version>
     </parent>
 
@@ -26,6 +26,11 @@
         <module>wings-slardar</module>
         <module>wings-warlock</module>
     </modules>
+
+    <properties>
+        <maven.test.skip>true</maven.test.skip>
+        <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -104,16 +109,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>build-info</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
