@@ -17,6 +17,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -180,7 +182,7 @@ public class WingsOverloadFilter implements OrderedFilter {
         /**
          * 请求ip白名单，分号分割，前部匹配 127. 192.
          */
-        private String[] requestPermit = {"127.", "192."};
+        private Map<String,String> requestPermit = Collections.emptyMap();
 
         /**
          * 满响应（毫秒数），超过时，记录WARN日志，小于0表示关闭
@@ -202,8 +204,8 @@ public class WingsOverloadFilter implements OrderedFilter {
 
         final String ip = terminalResolver.resolveRemoteIp(httpReq);
 
-        for (String p : config.requestPermit) {
-            if (ip.startsWith(p)) {
+        for (String p : config.requestPermit.values()) {
+            if (ip.startsWith(p) && !p.isEmpty()) {
                 return null; // 白名单，不需要处理。
             }
         }

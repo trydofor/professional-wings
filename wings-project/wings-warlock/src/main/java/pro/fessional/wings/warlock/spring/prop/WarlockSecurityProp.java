@@ -82,6 +82,30 @@ public class WarlockSecurityProp {
     public static final String Key$logoutUrl = Key + ".logout-url";
 
     /**
+     * 登录成功后是否重定向
+     *
+     * @see #Key$loginSuccessRedirect
+     */
+    private boolean loginSuccessRedirect = false;
+    public static final String Key$loginSuccessRedirect = Key + ".login-success-redirect";
+
+    /**
+     * 登录成功的重定向参数
+     *
+     * @see #Key$loginSuccessRedirectParam
+     */
+    private String loginSuccessRedirectParam = "";
+    public static final String Key$loginSuccessRedirectParam = Key + ".login-success-redirect-param";
+
+    /**
+     * 登录成功的重定向默认地址
+     *
+     * @see #Key$loginSuccessRedirectDefault
+     */
+    private String loginSuccessRedirectDefault = "";
+    public static final String Key$loginSuccessRedirectDefault = Key + ".login-success-redirect-default";
+
+    /**
      * 登录成功返回的body
      *
      * @see #Key$loginSuccessBody
@@ -156,7 +180,7 @@ public class WarlockSecurityProp {
      *
      * @see #Key$authenticated
      */
-    private List<String> authenticated = Collections.emptyList();
+    private Map<String, String> authenticated = Collections.emptyMap();
     public static final String Key$authenticated = Key + ".authenticated";
 
     /**
@@ -164,7 +188,7 @@ public class WarlockSecurityProp {
      *
      * @see #Key$permitAll
      */
-    private List<String> permitAll = Collections.emptyList();
+    private Map<String, String> permitAll = Collections.emptyMap();
     public static final String Key$permitAll = Key + ".permit-all";
 
     /**
@@ -186,6 +210,7 @@ public class WarlockSecurityProp {
     /**
      * 设置spring.application.name对应的权限，若非全部满足，则不可登录，以用户名密码错误返回
      * 支持AntPath，如`wings-*`，合并所有匹配的权限设置项
+     *
      * @see #Key$appPerm
      */
     private Map<String, Set<String>> appPerm = new HashMap<>();

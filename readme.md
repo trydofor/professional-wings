@@ -861,3 +861,11 @@ SpringBoot内置以下log groups [Log Groups](https://docs.spring.io/spring-boot
 * org.springframework.boot.web.servlet.ServletContextInitializerBeans
 * org.springframework.jdbc.core
 * org.jooq.tools.LoggerListener
+
+### 29.mvn resources filtering
+
+因为在swagger的配置中使用了变量`@project.version@`，所以会配置
+build/resources/resource/filtering=true，以便mvn自动替换。
+
+但是开启filter会引起错误替换，比如二进制文件等，wings默认忽略一些二进制文件
+同时在2.6.3版后，以spring变量取代了mvn变量，因此不需要filter。

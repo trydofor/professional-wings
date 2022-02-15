@@ -52,13 +52,8 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     @Setter(onMethod_ = {@Autowired})
     protected WarlockUserLoginService warlockUserLoginService;
 
+    @Setter(onMethod_ = {@Autowired})
     private List<AutoReg> authAutoRegs = Collections.emptyList();
-
-    @Autowired(required = false)
-    public final void setAuthAutoRegs(List<AutoReg> authAutoRegs) {
-        log.info("inject auth combo, count={}", authAutoRegs.size());
-        this.authAutoRegs = authAutoRegs;
-    }
 
     @Override
     public Details load(@NotNull Enum<?> authType, String username) {

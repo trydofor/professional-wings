@@ -74,6 +74,18 @@
         </indexes>
     </map>
 
+    <map name="${spring.boot.admin.hazelcast.event-store}">
+        <in-memory-format>OBJECT</in-memory-format>
+        <backup-count>1</backup-count>
+        <merge-policy>PutIfAbsentMergePolicy</merge-policy>
+    </map>
+    <map name="${spring.boot.admin.hazelcast.sent-notifications}">
+        <in-memory-format>OBJECT</in-memory-format>
+        <backup-count>1</backup-count>
+        <merge-policy>PutIfAbsentMergePolicy</merge-policy>
+        <eviction size="10000" max-size-policy="PER_NODE" eviction-policy="LRU"/>
+    </map>
+
     <serialization>
         <serializers>
             <!-- need UnmodifiableCollectionsSerializer -->

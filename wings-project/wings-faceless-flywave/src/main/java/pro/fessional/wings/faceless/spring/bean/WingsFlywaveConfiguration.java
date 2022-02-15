@@ -63,8 +63,10 @@ public class WingsFlywaveConfiguration {
                 sources.getPlains(), sources.getSharding(),
                 statementParser, segmentProcessor, schemaDefinitionLoader,
                 properties.getSchemaVersionTable());
-        for (String s : properties.getDropReg()) {
-            revisionManager.addDropRegexp(s);
+        for (String s : properties.getDropReg().values()) {
+            if(s != null && !s.isEmpty()) {
+                revisionManager.addDropRegexp(s);
+            }
         }
         logger.info("config schemaVersionManger");
         return revisionManager;

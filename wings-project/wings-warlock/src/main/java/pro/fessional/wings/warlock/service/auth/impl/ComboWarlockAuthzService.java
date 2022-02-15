@@ -47,13 +47,8 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
     @Setter(onMethod_ = {@Autowired})
     protected WarlockGrantService warlockGrantService;
 
+    @Setter(onMethod_ = {@Autowired})
     private List<Combo> authCombos = Collections.emptyList();
-
-    @Autowired(required = false)
-    public final void setAuthCombos(List<Combo> authCombos) {
-        log.info("inject auth combo, count={}", authCombos.size());
-        this.authCombos = authCombos;
-    }
 
     @Setter @Getter
     private boolean authorityRole = true;

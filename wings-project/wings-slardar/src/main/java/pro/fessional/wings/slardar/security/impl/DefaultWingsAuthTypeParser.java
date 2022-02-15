@@ -2,13 +2,14 @@ package pro.fessional.wings.slardar.security.impl;
 
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.cast.EnumConvertor;
+import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 使用HashMap构建
+ * 使用HashMap构建，Null.Str=Null.Enm
  *
  * @author trydofor
  * @since 2021-02-22
@@ -36,12 +37,16 @@ public class DefaultWingsAuthTypeParser implements WingsAuthTypeParser {
     @Override
     public @NotNull Enum<?> parse(String at, @NotNull Enum<?> elz) {
         if (at == null) return elz;
+        if (at.equals(Null.Str)) return Null.Enm;
+
         final Enum<?> en = strEnumMap.get(at);
         return en == null ? elz : en;
     }
 
     @Override
     public @NotNull String parse(Enum<?> at) {
+        if (at == Null.Enm) return Null.Str;
+
         final String s = enumStrMap.get(at);
         if (s == null) {
             final String mes = "failed to parse enum=" + EnumConvertor.enum2Str(at);

@@ -210,7 +210,7 @@ ALTER TABLE `win_admin` DROP INDEX ix_login_name;
  * 带有`ask@*`注解的sql，强制确认
  * undo 语句确认 `wings.faceless.flywave.ver.ask-undo=true`
  * drop 类语句确认 `wings.faceless.flywave.ver.ask-drop=true`
- * drop 类语句定义 `wings.faceless.flywave.ver.drop-reg[0]`
+ * drop 类语句定义 `wings.faceless.flywave.ver.drop-reg[drop-table]`
 
 如果UnitTest中控制台中无响应，需要在IDE中打开 console，如在Idea中
 `-Deditable.java.test.console=true` ('Help' > 'Edit Custom VM Options...')

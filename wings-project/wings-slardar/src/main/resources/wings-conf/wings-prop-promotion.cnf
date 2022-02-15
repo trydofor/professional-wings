@@ -6,6 +6,10 @@ wings.slardar.cache.common.max-live
 wings.slardar.cache.common.max-idle
 wings.slardar.cache.common.max-size
 
+# spring-boot-admin
+spring.boot.admin.hazelcast.event-store
+spring.boot.admin.hazelcast.sent-notifications
+
 # https://docs.hazelcast.com/imdg/4.2/system-properties
 # https://docs.hazelcast.com/imdg/4.2/management/diagnostics
 hazelcast.diagnostics.enabled
