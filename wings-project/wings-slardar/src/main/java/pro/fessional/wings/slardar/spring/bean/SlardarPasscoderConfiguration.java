@@ -17,6 +17,7 @@ import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
+import pro.fessional.wings.slardar.security.impl.BasicPasswordEncoder;
 import pro.fessional.wings.slardar.security.impl.DefaultPasssaltEncoder;
 import pro.fessional.wings.slardar.security.impl.NeverPasswordEncoder;
 import pro.fessional.wings.slardar.spring.conf.WingsSecBeanInitConfigurer;
@@ -61,7 +62,8 @@ public class SlardarPasscoderConfiguration {
         logger.info("Wings conf PasswordEncoder bean, default encoder is " + encoder + ", decoder is " + decoder);
         Map<String, PasswordEncoder> encoders = new HashMap<>();
         encoders.put("noop", org.springframework.security.crypto.password.NoOpPasswordEncoder.getInstance());
-        encoders.put("never", new NeverPasswordEncoder());
+        encoders.put(NeverPasswordEncoder.Key, new NeverPasswordEncoder());
+        encoders.put(BasicPasswordEncoder.Key, new BasicPasswordEncoder());
         encoders.put("bcrypt", new BCryptPasswordEncoder());
         encoders.put("pbkdf2", new Pbkdf2PasswordEncoder());
         encoders.put("scrypt", new SCryptPasswordEncoder());
@@ -83,11 +85,14 @@ public class SlardarPasscoderConfiguration {
         MdHelp md;
         if (encoder.equalsIgnoreCase("sha256")) {
             md = MdHelp.sha256;
-        } else if (encoder.equalsIgnoreCase("sha1")) {
+        }
+        else if (encoder.equalsIgnoreCase("sha1")) {
             md = MdHelp.sha1;
-        } else if (encoder.equalsIgnoreCase("md5")) {
+        }
+        else if (encoder.equalsIgnoreCase("md5")) {
             md = MdHelp.md5;
-        } else {
+        }
+        else {
             throw new IllegalArgumentException("nonsupport type " + encoder);
         }
         return new DefaultPasssaltEncoder(md);

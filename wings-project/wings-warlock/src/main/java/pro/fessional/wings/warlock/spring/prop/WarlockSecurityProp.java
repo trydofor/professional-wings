@@ -68,10 +68,16 @@ public class WarlockSecurityProp {
      * 处理登录的Ant格式URL，由filter处理，不需要controller
      * 支持变量`authType`和`authZone`，可以通过param或path获得（PathPattern）
      *
-     * @see #Key$loginUrl
+     * @see #Key$loginProcUrl
      */
-    private String loginUrl = "/auth/{authType}/login.json";
-    public static final String Key$loginUrl = Key + ".login-url";
+    private String loginProcUrl = "/auth/{authType}/login.json";
+    public static final String Key$loginProcUrl = Key + ".login-proc-url";
+
+    /**
+     * @see #Key$loginProcMethod
+     */
+    private Set<String> loginProcMethod = Collections.emptySet();
+    public static final String Key$loginProcMethod = Key + ".login-proc-method";
 
     /**
      * 登出地址，由filter处理，不需要controller
@@ -190,6 +196,15 @@ public class WarlockSecurityProp {
      */
     private Map<String, String> permitAll = Collections.emptyMap();
     public static final String Key$permitAll = Key + ".permit-all";
+
+    /**
+     * 空为忽略，支持【permitAll|authenticated|anonymous|fullyAuthenticated】
+     * 任意非空，非以上字符串，任务是Authority，逗号或空白分割。
+     *
+     * @see #Key$anyRequest
+     */
+    private String anyRequest = "";
+    public static final String Key$anyRequest = Key + ".any-request";
 
     /**
      * 支持的验证类型， enum全路径，一对一，否则反向解析有问题

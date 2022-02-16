@@ -7,7 +7,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.util.StringUtils;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
+import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
 import java.util.Map;
 
@@ -23,7 +25,8 @@ public class WarlockSecurityWebConfiguration extends WebSecurityConfigurerAdapte
 
     private final static Log logger = LogFactory.getLog(WarlockSecurityWebConfiguration.class);
 
-    private final Map<String,HttpSecurityConfigure> configures;
+    private final WarlockSecurityProp warlockSecurityProp;
+    private final Map<String, HttpSecurityConfigure> configures;
 
     /**
      * The URL paths provided by the framework are
@@ -47,6 +50,28 @@ public class WarlockSecurityWebConfiguration extends WebSecurityConfigurerAdapte
         for (Map.Entry<String, HttpSecurityConfigure> en : configures.entrySet()) {
             logger.info("Wings conf HttpSecurity, bean=" + en.getKey());
             en.getValue().configure(http);
+        }
+
+        //
+        final String anyRequest = warlockSecurityProp.getAnyRequest();
+        if (StringUtils.hasText(anyRequest)) {
+            logger.info("Wings conf HttpSecurity, anyRequest=" + anyRequest);
+            String str = anyRequest.trim();
+            if ("permitAll".equalsIgnoreCase(str)) {
+                http.authorizeRequests().anyRequest().permitAll();
+            }
+            else if ("authenticated".equalsIgnoreCase(str)) {
+                http.authorizeRequests().anyRequest().authenticated();
+            }
+            else if ("anonymous".equalsIgnoreCase(str)) {
+                http.authorizeRequests().anyRequest().anonymous();
+            }
+            else if ("fullyAuthenticated".equalsIgnoreCase(str)) {
+                http.authorizeRequests().anyRequest().fullyAuthenticated();
+            }
+            else {
+                http.authorizeRequests().anyRequest().hasAnyAuthority(str.split("[, \t\r\n]+"));
+            }
         }
     }
 

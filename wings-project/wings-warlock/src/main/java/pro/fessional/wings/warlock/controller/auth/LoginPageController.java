@@ -27,7 +27,6 @@ import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
-import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
 import javax.servlet.http.HttpServletRequest;
@@ -169,7 +168,7 @@ public class LoginPageController {
             + "## Returns \n"
             + "* @return {200} 任何时候 \n"
             + "")
-    @PostMapping(value = "${" + WarlockSecurityProp.Key$logoutUrl + "}")
+    @PostMapping(value = "${" + WarlockUrlmapProp.Key$authLogoutProc + "}")
     public String logout() {
         return "handler by filter, never here";
     }
@@ -178,7 +177,7 @@ public class LoginPageController {
     @SuppressWarnings("MVCPathVariableInspection")
     @Operation(summary = "登录接口，有filter处理，仅做文档", description =
             "# Usage \n"
-            + "根据类型自动处理，参考 wings.warlock.security.login-url\n"
+            + "根据类型自动处理，参考 wings.warlock.security.login-proc-url\n"
             + "username和password可变，参考 参考 wings.warlock.security.username-para\n"
             + "登录成功后，可在header中获得token和session\n"
             + "## Params \n"
@@ -189,7 +188,7 @@ public class LoginPageController {
             + "## Returns \n"
             + "* @return {200} 登录成功 \n"
             + "")
-    @PostMapping(value = "${" + WarlockSecurityProp.Key$loginUrl + "}")
+    @PostMapping(value = "${" + WarlockUrlmapProp.Key$authLoginProc + "}")
     public String login(@PathVariable(WingsAuthHelper.AuthType) String authType,
                         @RequestParam(value = WingsAuthHelper.AuthZone, required = false) String authZone,
                         @RequestParam("username") String username,

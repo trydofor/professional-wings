@@ -7,6 +7,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -17,17 +18,18 @@ import org.springframework.security.web.savedrequest.RequestCache;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
+import pro.fessional.wings.slardar.spring.conf.WingsHttpPermitConfigurer;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 import pro.fessional.wings.warlock.spring.bean.WarlockSecurityWebConfiguration.HttpSecurityConfigure;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 
 /**
@@ -48,19 +50,22 @@ public class WarlockSecurityHttpConfiguration {
     private final LogoutSuccessHandler logoutSuccessHandler;
     private final WingsAuthDetailsSource<?> wingsAuthDetailsSource;
 
+
+    public static final int OrderWarlockBind = 1000;
+    public static final int OrderWarlockAuth = 2000;
+    public static final int OrderWarlockBase = 3000;
+    public static final int OrderWarlockAuto = 4000;
+
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpBind, havingValue = "true")
+    @Order(OrderWarlockBind)
     public HttpSecurityConfigure warlockBindHttpSecurityConfigure() {
         return http ->
                 http.apply(SecurityConfigHelper.http())
-                    .httpPermit(conf -> conf
-                            .permitCorsAll()
-                            .permitTest()
-                    )
                     .bindLogin(conf -> conf
-                            .loginPage(securityProp.getLoginPage()) // 无权限时返回的页面，
                             .loginForward(securityProp.isLoginForward()) // 无权限时返回的页面，
-                            .loginProcessingUrl(securityProp.getLoginUrl()) // filter处理，不需要controller
+                            .loginProcessingUrl(securityProp.getLoginProcUrl(), securityProp.getLoginProcMethod()) // filter处理，不需要controller
+                            .loginPage(securityProp.getLoginPage()) // 无权限时返回的页面，
                             .usernameParameter(securityProp.getUsernamePara())
                             .passwordParameter(securityProp.getPasswordPara())
                             .successHandler(authenticationSuccessHandler)
@@ -87,6 +92,7 @@ public class WarlockSecurityHttpConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpAuth, havingValue = "true")
+    @Order(OrderWarlockAuth)
     public HttpSecurityConfigure warlockAuthHttpSecurityConfigure() {
         return http -> http.authorizeRequests(conf ->
                 {
@@ -95,14 +101,14 @@ public class WarlockSecurityHttpConfiguration {
                         if (paths.isEmpty()) continue;
                         LinkedHashSet<String> uniq = new LinkedHashSet<>(paths);
                         logger.info("Wings conf HttpSecurity, bind authority=[" + en.getKey() + "] "
-                                    + String.join("\n, ", uniq));
+                                    + String.join("\n,", uniq));
                         conf.antMatchers(uniq.toArray(Null.StrArr)).hasAuthority(en.getKey());
                     }
 
-                    final Set<String> authed = new HashSet<>(securityProp.getAuthenticated().values());
+                    final Set<String> authed = new TreeSet<>(securityProp.getAuthenticated().values());
                     authed.removeIf(it -> it == null || it.isEmpty());
 
-                    final Set<String> permed = new HashSet<>(securityProp.getPermitAll().values());
+                    final Set<String> permed = new TreeSet<>(securityProp.getPermitAll().values());
                     permed.removeIf(it -> it == null || it.isEmpty());
 
                     conf.antMatchers(authed.toArray(Null.StrArr))
@@ -111,10 +117,9 @@ public class WarlockSecurityHttpConfiguration {
                         .permitAll();
 
                     logger.info("Wings conf HttpSecurity, bind Authenticated="
-                                + String.join("\n, ", authed));
+                                + String.join("\n,", authed));
                     logger.info("Wings conf HttpSecurity, bind PermitAll="
-                                + String.join("\n, ", permed));
-
+                                + String.join("\n,", permed));
                 }
         );
     }
@@ -122,16 +127,20 @@ public class WarlockSecurityHttpConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpBase, havingValue = "true")
+    @Order(OrderWarlockBase)
     public HttpSecurityConfigure warlockBaseHttpSecurityConfigure() {
         return HttpSecurity::httpBasic;
     }
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpAuto, havingValue = "true")
+    @Order(OrderWarlockAuto)
     public HttpSecurityConfigure warlockAutoHttpSecurityConfigure(
             ObjectProvider<CsrfTokenRepository> csrf,
             ObjectProvider<RequestCache> cache) {
         return http -> {
+            http.cors().configurationSource(WingsHttpPermitConfigurer.corsPermitAll());
+
             final RequestCache rc = cache.getIfAvailable();
             if (rc == null) {
                 http.requestCache().disable();

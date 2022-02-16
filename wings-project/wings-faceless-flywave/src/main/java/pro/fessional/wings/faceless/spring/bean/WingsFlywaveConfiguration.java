@@ -20,6 +20,8 @@ import pro.fessional.wings.faceless.spring.prop.FlywaveEnabledProp;
 import pro.fessional.wings.faceless.spring.prop.FlywaveSqlProp;
 import pro.fessional.wings.faceless.spring.prop.FlywaveVerProp;
 
+import java.util.TreeSet;
+
 import static pro.fessional.wings.faceless.flywave.SchemaJournalManager.JournalDdl;
 
 /**
@@ -63,7 +65,7 @@ public class WingsFlywaveConfiguration {
                 sources.getPlains(), sources.getSharding(),
                 statementParser, segmentProcessor, schemaDefinitionLoader,
                 properties.getSchemaVersionTable());
-        for (String s : properties.getDropReg().values()) {
+        for (String s : new TreeSet<>(properties.getDropReg().values())) {
             if(s != null && !s.isEmpty()) {
                 revisionManager.addDropRegexp(s);
             }
