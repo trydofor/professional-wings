@@ -18,7 +18,7 @@ import java.util.Map;
  * @author trydofor
  * @since 2019-12-01
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityConf, havingValue = "true")
 @RequiredArgsConstructor
 public class WarlockSecurityWebConfiguration extends WebSecurityConfigurerAdapter {

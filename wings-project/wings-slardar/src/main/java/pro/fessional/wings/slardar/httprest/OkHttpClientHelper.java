@@ -15,6 +15,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.mirana.netx.SslTrustAll;
@@ -236,6 +238,10 @@ public class OkHttpClientHelper {
     public static void sslTrustAll(OkHttpClient.Builder builder) {
         builder.sslSocketFactory(SslTrustAll.SSL_SOCKET_FACTORY, SslTrustAll.X509_TRUST_MANAGER)
                .hostnameVerifier(SslTrustAll.HOSTNAME_VERIFIER);
+    }
+
+    public static ClientHttpRequestFactory requestFactory(OkHttpClient client) {
+        return new OkHttp3ClientHttpRequestFactory(client);
     }
 
     public static void hostCookieJar(OkHttpClient.Builder builder) {

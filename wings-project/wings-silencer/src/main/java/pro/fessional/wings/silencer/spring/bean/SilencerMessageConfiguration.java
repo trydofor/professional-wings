@@ -17,7 +17,7 @@ import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
  * @see org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration
  * @since 2019-06-24
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(MessageSource.class)
 @ConditionalOnProperty(name = SilencerEnabledProp.Key$message, havingValue = "true")
 public class SilencerMessageConfiguration {

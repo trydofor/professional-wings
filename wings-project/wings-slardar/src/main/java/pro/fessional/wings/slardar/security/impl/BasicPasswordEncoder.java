@@ -20,30 +20,34 @@ import pro.fessional.mirana.bits.Md5;
 public class BasicPasswordEncoder implements PasswordEncoder {
 
     public static final String Key = "basic";
-    private static final String Spt = "#";
-    private static final long Abs = 3 * 60 * 1000L;
+    private static final String Splitter = "#";
+    private final long deviation;
+
+    public BasicPasswordEncoder(long deviation) {
+        this.deviation = Math.abs(deviation);
+    }
 
     @Override
     public String encode(CharSequence rawPassword) {
         final String pass = rawPassword.toString();
         final long time = System.currentTimeMillis();
-        final String hash = Md5.sum(time + Spt + pass, false);
-        return time + Spt + hash;
+        final String hash = Md5.sum(time + Splitter + pass, false);
+        return time + Splitter + hash;
     }
 
     @Override
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
         final String raw = rawPassword.toString();
-        final int pos = raw.indexOf(Spt);
+        final int pos = raw.indexOf(Splitter);
         if (pos <= 0 || pos >= raw.length() - 1) {
             return rawPassword.equals(encodedPassword);
         }
 
         final long time = Long.parseLong(raw.substring(0, pos));
-        if (Math.abs(System.currentTimeMillis() - time) > Abs) return false;
+        if (Math.abs(System.currentTimeMillis() - time) > deviation) return false;
 
         final String hash1 = raw.substring(pos + 1);
-        final String hash2 = Md5.sum(time + Spt + encodedPassword, false);
+        final String hash2 = Md5.sum(time + Splitter + encodedPassword, false);
 
         return hash1.equalsIgnoreCase(hash2);
     }

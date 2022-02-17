@@ -19,7 +19,6 @@ import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.PasswordHelper;
 import pro.fessional.wings.slardar.security.WingsAuthCheckService;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
-import pro.fessional.wings.slardar.security.WingsUidPrincipalToken;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultPasssaltEncoder;
@@ -53,19 +52,26 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
         this.passsaltEncoder = new DefaultPasssaltEncoder(MdHelp.sha256);
     }
 
-    @Override
-    protected void doAfterPropertiesSet() {
-        Assert.notNull(userDetailsService, "A UserDetailsService must be set");
-    }
+    // BGN DaoAuthenticationProvider
 
     @Override
-    public boolean supports(Class<?> authentication) {
-        if (onlyWingsBindAuthnToken) {
-            return WingsBindAuthToken.class.isAssignableFrom(authentication);
+    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+        final boolean isWingsUserDetails = userDetails instanceof WingsUserDetails;
+        if (!isWingsUserDetails || !((WingsUserDetails) userDetails).isPreAuthed()) {
+            checkPassword(userDetails, authentication);
         }
-        else {
-            return super.supports(authentication);
+
+        if (wingsAuthCheckService != null && isWingsUserDetails && authentication instanceof WingsBindAuthToken) {
+            if (!wingsAuthCheckService.check((WingsUserDetails) userDetails, (WingsBindAuthToken) authentication)) {
+                logger.debug("Failed to post check userDetails and authentication");
+                throw new BadCredentialsException(messages.getMessage(BadCredentialsCode, "Bad credentials"));
+            }
         }
+    }
+
+    @Override // same
+    protected void doAfterPropertiesSet() {
+        Assert.notNull(userDetailsService, "A UserDetailsService must be set");
     }
 
     @Override
@@ -100,6 +106,30 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
         }
     }
 
+    @Override // same
+    protected Authentication createSuccessAuthentication(Object principal, Authentication authn, UserDetails details) {
+        if (userDetailsPasswordService != null && passwordEncoder.upgradeEncoding(details.getPassword())) {
+            String presentedPassword = presentPassword(details, authn);
+            String newPassword = passwordEncoder.encode(presentedPassword);
+            details = userDetailsPasswordService.updatePassword(details, newPassword);
+        }
+
+        return super.createSuccessAuthentication(principal, authn, details);
+    }
+
+    // END DaoAuthenticationProvider
+
+    @Override
+    public boolean supports(Class<?> authentication) {
+        if (onlyWingsBindAuthnToken) {
+            return WingsBindAuthToken.class.isAssignableFrom(authentication);
+        }
+        else {
+            return super.supports(authentication);
+        }
+    }
+
+    //
     @NotNull
     protected UserDetails buildUserDetails(String username, WingsUserDetailsService winUds, WingsBindAuthToken winTkn) {
         final UserDetails userDetails;
@@ -109,26 +139,11 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
             winAdt = (WingsAuthDetails) obj;
         }
         else {
-            logger.info("WARN No-WingsAuthDetails-In-WingsUserDetailsService-And-WingsBindAuthToken");
+            logger.debug("WARN No-WingsAuthDetails-In-WingsUserDetailsService-And-WingsBindAuthToken");
             winAdt = new DefaultWingsAuthDetails(obj);
         }
         userDetails = winUds.loadUserByUsername(username, winTkn.getAuthType(), winAdt);
         return userDetails;
-    }
-
-    @Override
-    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-        final boolean isWingsUserDetails = userDetails instanceof WingsUserDetails;
-        if (!isWingsUserDetails || !((WingsUserDetails) userDetails).isPreAuthed()) {
-            checkPassword(userDetails, authentication);
-        }
-
-        if (wingsAuthCheckService != null && isWingsUserDetails && authentication instanceof WingsBindAuthToken) {
-            if (!wingsAuthCheckService.check((WingsUserDetails) userDetails, (WingsBindAuthToken) authentication)) {
-                logger.debug("Failed to post check userDetails and authentication");
-                throw new BadCredentialsException(messages.getMessage(BadCredentialsCode, "Bad credentials"));
-            }
-        }
     }
 
     protected void checkPassword(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) {
@@ -153,25 +168,6 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
             presentedPassword = helper.salt(presentedPassword, ((WingsUserDetails) details).getPasssalt());
         }
         return presentedPassword;
-    }
-
-    @Override
-    protected Authentication createSuccessAuthentication(Object principal, Authentication authn, UserDetails details) {
-        final UserDetails origDetails = details;
-        if (userDetailsPasswordService != null && passwordEncoder.upgradeEncoding(details.getPassword())) {
-            String presentedPassword = presentPassword(details, authn);
-            String newPassword = passwordEncoder.encode(presentedPassword);
-            details = userDetailsPasswordService.updatePassword(details, newPassword);
-        }
-
-        // super use authoritiesMapper
-        Authentication result = super.createSuccessAuthentication(principal, authn, details);
-        if (origDetails instanceof WingsUserDetails) {
-            return new WingsUidPrincipalToken((WingsUserDetails) origDetails, result.getAuthorities());
-        }
-        else {
-            return result;
-        }
     }
 
     protected void prepareTimingAttackProtection() {

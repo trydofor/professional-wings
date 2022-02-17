@@ -36,7 +36,7 @@ import java.util.Map;
  * @author trydofor
  * @since 2019-06-29
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$monitor, havingValue = "true")
 @EnableScheduling
 public class SlardarMonitorConfiguration {
@@ -71,13 +71,9 @@ public class SlardarMonitorConfiguration {
         return bean;
     }
 
-    @Configuration
-    @ComponentScan(basePackageClasses = LogViewer.class)
-    public static class LogViewerConfiguration {
-    }
-
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$monitorLog, havingValue = "true")
+    @ComponentScan(basePackageClasses = LogViewer.class)
     public static class LogMetricBeanRegister implements BeanFactoryPostProcessor, EnvironmentAware {
 
         private SlardarMonitorProp slardarMonitorProp;

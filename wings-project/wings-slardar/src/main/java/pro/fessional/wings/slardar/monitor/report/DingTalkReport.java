@@ -141,36 +141,32 @@ public class DingTalkReport implements WarnReport {
     }
 
     protected void mkTitleH2(StringBuilder sb, String str) {
-        sb.append("## ■ ")
-          .append(escapeQuote(str))
-          .append("\n");
+        sb.append("\n\n## ■ ")
+          .append(escapeQuote(str));
     }
 
     protected void mkItemText(StringBuilder sb, String value, String key) {
-        sb.append("- ")
+        sb.append("\n- ")
           .append(escapeQuote(value))
           .append(" | ")
-          .append(key)
-          .append("\n");
+          .append(key);
     }
 
     protected void mkItemText(StringBuilder sb, WarnMetric.Warn warn) {
-        sb.append("- ")
+        sb.append("\n- ")
           .append("**").append(warn.getWarn()).append("** | ")
           .append(escapeQuote(warn.getRule()))
           .append(" | ")
-          .append(escapeQuote(warn.getKey()))
-          .append("\n");
+          .append(escapeQuote(warn.getKey()));
     }
 
     protected void mkItemLink(StringBuilder sb, WarnMetric.Warn warn) {
-        sb.append("- [")
+        sb.append("\n- [")
           .append(escapeQuote(warn.getRule()))
           .append("](")
           .append(escapeQuote(warn.getWarn()))
           .append(") | ")
-          .append(escapeQuote(warn.getKey()))
-          .append("\n");
+          .append(escapeQuote(warn.getKey()));
     }
 
     private String escapeQuote(String str) {

@@ -33,7 +33,7 @@ import static org.apache.shardingsphere.spring.boot.util.PropertyUtil.containPro
  */
 
 @ConditionalOnProperty(name = "spring.shardingsphere.enabled", havingValue = "true", matchIfMissing = true)
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 public class FacelessShardingsphereConfiguration {
     private static final Log logger = LogFactory.getLog(FacelessShardingsphereConfiguration.class);

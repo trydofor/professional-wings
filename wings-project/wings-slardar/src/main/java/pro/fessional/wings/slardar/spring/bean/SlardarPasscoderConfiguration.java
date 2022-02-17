@@ -30,7 +30,7 @@ import java.util.Map;
  * @author trydofor
  * @since 2020-08-10
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 public class SlardarPasscoderConfiguration {
 
@@ -63,7 +63,7 @@ public class SlardarPasscoderConfiguration {
         Map<String, PasswordEncoder> encoders = new HashMap<>();
         encoders.put("noop", org.springframework.security.crypto.password.NoOpPasswordEncoder.getInstance());
         encoders.put(NeverPasswordEncoder.Key, new NeverPasswordEncoder());
-        encoders.put(BasicPasswordEncoder.Key, new BasicPasswordEncoder());
+        encoders.put(BasicPasswordEncoder.Key, new BasicPasswordEncoder(slardarPasscoderProp.getTimeDeviationMs()));
         encoders.put("bcrypt", new BCryptPasswordEncoder());
         encoders.put("pbkdf2", new Pbkdf2PasswordEncoder());
         encoders.put("scrypt", new SCryptPasswordEncoder());

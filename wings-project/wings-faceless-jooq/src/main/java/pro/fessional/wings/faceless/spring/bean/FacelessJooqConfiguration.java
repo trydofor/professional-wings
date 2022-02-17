@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  * @author trydofor
  * @since 2019-08-12
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$module, havingValue = "true")
 @ConditionalOnClass(name = "org.jooq.conf.Settings")
 public class FacelessJooqConfiguration {

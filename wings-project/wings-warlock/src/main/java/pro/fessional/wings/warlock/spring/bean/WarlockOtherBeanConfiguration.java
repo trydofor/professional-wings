@@ -25,7 +25,7 @@ import javax.sql.DataSource;
  * @author trydofor
  * @since 2019-12-01
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class WarlockOtherBeanConfiguration {
 
     private final static Log logger = LogFactory.getLog(WarlockOtherBeanConfiguration.class);

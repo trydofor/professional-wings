@@ -16,7 +16,7 @@ import java.util.HashSet;
  * @author trydofor
  * @since 2019-06-29
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$remote, havingValue = "true")
 public class SlardarRemoteConfiguration {
 

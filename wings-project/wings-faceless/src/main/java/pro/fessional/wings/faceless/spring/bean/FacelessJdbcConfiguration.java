@@ -13,13 +13,12 @@ import javax.sql.DataSource;
  * @author trydofor
  * @since 2019-06-25
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = FacelessEnabledProp.Key$jdbctemplate, havingValue = "true")
 public class FacelessJdbcConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(JdbcTemplate.class)
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }

@@ -28,7 +28,7 @@ import java.util.Set;
  * @author trydofor
  * @since 2019-06-26
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SilencerEnabledProp.Key$autoLog, havingValue = "true")
 public class SilencerAutoLogConfiguration {
 

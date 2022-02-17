@@ -44,7 +44,7 @@ import java.util.List;
  * @author trydofor
  * @since 2019-06-26
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$session, havingValue = "true")
 @EnableConfigurationProperties(ServerProperties.class)
 @RequiredArgsConstructor
@@ -54,7 +54,7 @@ public class SlardarSessionConfiguration {
 
     private final SlardarSessionProp slardarSessionProp;
 
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(HazelcastInstance.class)
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$sessionHazelcast, havingValue = "true")
     public static class SlardarHazelcastConfiguration extends HazelcastHttpSessionConfiguration {

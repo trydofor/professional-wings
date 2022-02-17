@@ -30,7 +30,7 @@ import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
  * @author trydofor
  * @since 2019-12-03
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$caching, havingValue = "true")
 @EnableCaching
 public class SlardarCacheConfiguration {
@@ -38,7 +38,7 @@ public class SlardarCacheConfiguration {
     private static final Log logger = LogFactory.getLog(SlardarCacheConfiguration.class);
 
     // //////////////////// caffeine ////////////////////
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(CaffeineCacheManager.class)
     public static class CaffeineCacheManagerConfiguration {
         @Bean(Manager.Memory)
@@ -50,7 +50,7 @@ public class SlardarCacheConfiguration {
     }
 
     // //////////////////// hazelcast ////////////////////
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass({HazelcastInstance.class, HazelcastCacheManager.class})
     public static class HazelcastCacheConfiguration {
         @ConditionalOnMissingBean(name = Manager.Server)
@@ -62,7 +62,7 @@ public class SlardarCacheConfiguration {
     }
 
     // //////////////////// resolver ////////////////////
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     @ConditionalOnMissingBean(name = "cacheManager")
     @RequiredArgsConstructor
     public static class CachingPrimary extends CachingConfigurerSupport {

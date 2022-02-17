@@ -342,8 +342,8 @@ case "$ARGS_RUN" in
         fi
 
         if [[ -f "$tail_log" ]]; then
-            echo -e "\033[37;43;1mNOTE: tail current file=$tail_log, Ctrl-C to break \033[0m"
-            tail -n 50 -f "$tail_log"
+            echo -e "\033[37;43;1mNOTE: tail -f $tail_log, Ctrl-C to break \033[0m"
+            tail -f "$tail_log"
         fi
         ;;
     stop)

@@ -15,7 +15,7 @@ import pro.fessional.wings.slardar.webmvc.PageQueryArgumentResolver;
  * @author trydofor
  * @since 2019-12-03
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$pagequery, havingValue = "true")
 @RequiredArgsConstructor
 public class SlardarPageQueryConfiguration {

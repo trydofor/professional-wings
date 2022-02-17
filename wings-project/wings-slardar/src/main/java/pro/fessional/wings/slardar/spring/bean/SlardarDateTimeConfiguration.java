@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @see ApplicationConversionService#addBeans
  * @since 2019-12-03
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$datetime, havingValue = "true")
 @RequiredArgsConstructor
 public class SlardarDateTimeConfiguration {

@@ -20,7 +20,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockLockProp;
  * @author trydofor
  * @since 2019-12-01
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 public class WarlockLockBeanConfiguration {
 

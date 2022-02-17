@@ -25,7 +25,7 @@ import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.Salt
  * @author trydofor
  * @since 2019-12-01
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class WarlockBeanPostConfiguration {
 
     private final static Log logger = LogFactory.getLog(WarlockBeanPostConfiguration.class);

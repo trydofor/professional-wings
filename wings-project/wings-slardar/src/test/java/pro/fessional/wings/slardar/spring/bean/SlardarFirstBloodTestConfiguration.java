@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author trydofor
  * @since 2019-12-03
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 public class SlardarFirstBloodTestConfiguration {
 

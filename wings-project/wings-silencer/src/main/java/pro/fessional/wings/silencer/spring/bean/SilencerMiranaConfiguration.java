@@ -16,7 +16,7 @@ import java.util.Arrays;
  * @author trydofor
  * @since 2019-06-26
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 @ConditionalOnBean(SilencerMiranaProp.class)
 public class SilencerMiranaConfiguration {

@@ -28,7 +28,7 @@ import static pro.fessional.wings.faceless.flywave.SchemaJournalManager.JournalD
  * @author trydofor
  * @since 2019-06-01
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(name = "pro.fessional.wings.faceless.database.DataSourceContext")
 @ConditionalOnProperty(name = FlywaveEnabledProp.Key$module, havingValue = "true")
 public class WingsFlywaveConfiguration {

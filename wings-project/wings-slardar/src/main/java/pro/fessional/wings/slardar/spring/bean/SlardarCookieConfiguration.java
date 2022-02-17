@@ -24,7 +24,7 @@ import static pro.fessional.wings.slardar.servlet.cookie.WingsCookieInterceptor.
  * @author trydofor
  * @since 2021-10-07
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$cookie, havingValue = "true")
 @RequiredArgsConstructor
 public class SlardarCookieConfiguration {

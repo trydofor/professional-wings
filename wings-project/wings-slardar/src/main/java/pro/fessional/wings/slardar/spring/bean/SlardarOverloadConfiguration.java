@@ -32,7 +32,7 @@ import java.io.PrintWriter;
  * @since 2019-07-23
  */
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$overload, havingValue = "true")
 @ConditionalOnClass(Filter.class)
 public class SlardarOverloadConfiguration {

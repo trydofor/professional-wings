@@ -14,7 +14,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(SlardarPasscoderProp.Key)
 public class SlardarPasscoderProp {
 
-    public static final String Key = "wings.slardar.pass-coder";
+    public static final String Key = "wings.slardar.passcoder";
 
     /**
      * 默认加密算法  never|noop|bcrypt|pbkdf2|scrypt|argon2
@@ -41,4 +41,15 @@ public class SlardarPasscoderProp {
     private String saltEncoder = "sha256";
     public static final String Key$saltEncoder = Key + ".salt-encoder";
 
+    /**
+     * BasicPasswordEncoder 时间戳偏差秒数，正数
+     *
+     * @see #Key$timeDeviation
+     */
+    private int timeDeviation = 30;
+    public static final String Key$timeDeviation = Key + ".time-deviation";
+
+    public long getTimeDeviationMs() {
+        return timeDeviation * 1000L;
+    }
 }

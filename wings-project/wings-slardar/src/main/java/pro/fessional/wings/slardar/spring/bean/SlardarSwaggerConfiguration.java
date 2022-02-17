@@ -17,7 +17,7 @@ import java.util.Map;
  * @author trydofor
  * @since 2019-10-30
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(OpenAPI.class)
 public class SlardarSwaggerConfiguration {
 

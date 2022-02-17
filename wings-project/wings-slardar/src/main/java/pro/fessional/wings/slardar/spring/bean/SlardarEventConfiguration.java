@@ -17,7 +17,7 @@ import java.util.concurrent.Executor;
  * @author trydofor
  * @since 2019-12-03
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class SlardarEventConfiguration {
 
     /**

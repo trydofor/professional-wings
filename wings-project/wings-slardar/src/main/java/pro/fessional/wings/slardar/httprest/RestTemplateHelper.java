@@ -1,9 +1,7 @@
 package pro.fessional.wings.slardar.httprest;
 
-import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
@@ -14,8 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -130,13 +126,11 @@ public class RestTemplateHelper {
     }
 
 
-    @NotNull
-    public static byte[] download(RestTemplate tmpl, String url) {
+    public static byte @NotNull [] download(RestTemplate tmpl, String url) {
         return download(tmpl, url, HttpMethod.GET);
     }
 
-    @NotNull
-    public static byte[] download(RestTemplate tmpl, String url, HttpMethod method) {
+    public static byte @NotNull [] download(RestTemplate tmpl, String url, HttpMethod method) {
         HttpEntity<String> entity = new HttpEntity<>(header(MediaType.APPLICATION_OCTET_STREAM));
         if (method == null) method = HttpMethod.GET;
         ResponseEntity<byte[]> res = tmpl.exchange(url, method, entity, byte[].class);
@@ -151,12 +145,4 @@ public class RestTemplateHelper {
         }
         return null;
     }
-
-    public static RestTemplate sslTrustAll(RestTemplateBuilder builder, OkHttpClient client) {
-        ClientHttpRequestFactory factory = new OkHttp3ClientHttpRequestFactory(client);
-        // fuck, builder return new ...
-        return builder.requestFactory(() -> factory)
-                      .build();
-    }
-
 }

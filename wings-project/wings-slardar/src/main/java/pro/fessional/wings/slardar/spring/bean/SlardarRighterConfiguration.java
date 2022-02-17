@@ -19,7 +19,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarRighterProp;
  * @since 2019-06-29
  */
 @RequiredArgsConstructor
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$righter, havingValue = "true")
 public class SlardarRighterConfiguration {
 

@@ -73,7 +73,8 @@ public class SecurityContextUtil {
     }
 
     /**
-     * 获得登录的userId，如果未登录或principal为非Long类型，返回 Long.MIN_VALUE
+     * 获得登录的userId，如果未登录或principal为非Long类型，返回 Long.MIN_VALUE。
+     * 一般下userId有区间，小的正数-内置用户；大一点正数-业务用户；负数-特殊用户。
      *
      * @return 登录uid，或Long.MIN_VALUE
      */

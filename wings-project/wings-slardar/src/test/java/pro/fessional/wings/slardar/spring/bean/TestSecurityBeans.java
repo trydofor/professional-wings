@@ -10,7 +10,7 @@ import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthDetails;
  * @author trydofor
  * @since 2022-01-29
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class TestSecurityBeans {
 
     @Bean

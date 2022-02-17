@@ -17,7 +17,7 @@ import pro.fessional.wings.faceless.spring.prop.FacelessEnabledProp;
  * @author trydofor
  * @since 2019-06-01
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = FacelessEnabledProp.Key$journal, havingValue = "true")
 public class FacelessJournalConfiguration {
 

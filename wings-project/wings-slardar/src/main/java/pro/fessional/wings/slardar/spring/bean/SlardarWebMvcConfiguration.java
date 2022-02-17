@@ -22,7 +22,7 @@ import static org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfi
  * @author trydofor
  * @since 2019-12-03
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class SlardarWebMvcConfiguration implements WebMvcConfigurer {
     private static final Log logger = LogFactory.getLog(SlardarWebMvcConfiguration.class);
 

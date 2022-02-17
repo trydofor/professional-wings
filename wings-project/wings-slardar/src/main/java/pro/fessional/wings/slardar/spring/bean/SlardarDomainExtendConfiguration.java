@@ -22,7 +22,7 @@ import java.util.Map;
  * @author trydofor
  * @since 2019-06-29
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$domainExtend, havingValue = "true")
 public class SlardarDomainExtendConfiguration {
 

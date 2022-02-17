@@ -17,7 +17,7 @@ import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
  * @author trydofor
  * @since 2019-12-01
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final static Log logger = LogFactory.getLog(TestSecurityConfiguration.class);

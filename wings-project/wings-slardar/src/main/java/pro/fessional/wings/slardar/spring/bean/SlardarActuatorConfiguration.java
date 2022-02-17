@@ -15,7 +15,7 @@ import java.util.Map;
  * @author trydofor
  * @since 2019-12-01
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class SlardarActuatorConfiguration {
 
     private final static Log logger = LogFactory.getLog(SlardarActuatorConfiguration.class);
