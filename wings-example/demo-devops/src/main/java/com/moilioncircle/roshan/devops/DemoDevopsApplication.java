@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import pro.fessional.wings.slardar.webmvc.RequestMappingHelper;
 
 import java.util.Arrays;
@@ -25,6 +26,7 @@ public class DemoDevopsApplication {
     }
 
     @Bean
+    @Lazy
     public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
         return args -> {
             System.out.println("===============");

@@ -209,7 +209,7 @@ class SchemaJournalManagerTest {
         breakpointDebug("分表触发器💰，观察数据库所有表")
         schemaJournalManager.publishInsert("tst_中文也分表", true, 0)
         wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "ai_tst_中文也分表")
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "ai__tst_中文也分表")
 
         jdbcTemplate.execute(
             """
@@ -224,7 +224,7 @@ class SchemaJournalManagerTest {
 
         schemaJournalManager.publishInsert("tst_中文也分表", false, 0)
         wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "ai_tst_中文也分表")
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "ai__tst_中文也分表")
         testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
     }
 
@@ -238,7 +238,7 @@ class SchemaJournalManagerTest {
         breakpointDebug("分表触发器💰，观察数据库所有表")
         schemaJournalManager.publishUpdate("tst_中文也分表", true, 0)
         wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "au_tst_中文也分表")
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "au__tst_中文也分表")
 
         jdbcTemplate.execute("UPDATE `tst_中文也分表_1` SET login_info='赵思', commit_id=1 WHERE id = 1")
         breakpointDebug("更新数据🐵，查询数据库各表及数据")
@@ -250,7 +250,7 @@ class SchemaJournalManagerTest {
 
         schemaJournalManager.publishUpdate("tst_中文也分表", false, 0)
         wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "au_tst_中文也分表")
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "au__tst_中文也分表")
         testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
     }
 
@@ -263,7 +263,7 @@ class SchemaJournalManagerTest {
         breakpointDebug("分表触发器💰，观察数据库所有表")
         schemaJournalManager.publishDelete("tst_中文也分表", true, 0)
         wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "bd_tst_中文也分表")
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "bd__tst_中文也分表")
 
         jdbcTemplate.execute("DELETE FROM `tst_中文也分表_1` WHERE id = 1")
         breakpointDebug("删除数据🐵，查询数据库各表及数据")
@@ -275,7 +275,7 @@ class SchemaJournalManagerTest {
 
         schemaJournalManager.publishDelete("tst_中文也分表", false, 0)
         wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "bd_tst_中文也分表")
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "bd__tst_中文也分表")
         testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
     }
 
@@ -291,9 +291,9 @@ class SchemaJournalManagerTest {
         schemaJournalManager.publishUpdate("tst_中文也分表", true, 0)
         schemaJournalManager.publishDelete("tst_中文也分表", true, 0)
         wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "ai_tst_中文也分表")
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "au_tst_中文也分表")
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "bd_tst_中文也分表")
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "ai__tst_中文也分表")
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "au__tst_中文也分表")
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "bd__tst_中文也分表")
 
         jdbcTemplate.execute(
             """
@@ -314,9 +314,9 @@ class SchemaJournalManagerTest {
         schemaJournalManager.publishInsert("tst_中文也分表", false, 0)
         schemaJournalManager.publishUpdate("tst_中文也分表", false, 0)
         schemaJournalManager.publishDelete("tst_中文也分表", false, 0)
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "ai_tst_中文也分表")
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "au_tst_中文也分表")
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "bd_tst_中文也分表")
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "ai__tst_中文也分表")
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "au__tst_中文也分表")
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "bd__tst_中文也分表")
 
         testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
     }

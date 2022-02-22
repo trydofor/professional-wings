@@ -67,7 +67,7 @@ public class AuthedUserController {
             + "* @return {401} 若设置了URL访问权限且用户未登录；")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedUser + "}")
     public R<Dto> authedUser(HttpServletRequest request) {
-        final WingsUserDetails wd = SecurityContextUtil.getDetails();
+        final WingsUserDetails wd = SecurityContextUtil.getUserDetails();
         if (wd == null) return R.ng();
 
         Dto dto = new Dto();
@@ -113,7 +113,7 @@ public class AuthedUserController {
             + "* @return {401} 若设置了URL访问权限且用户未登录；")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedPerm + "}")
     public R<Set<String>> authedPerm(HttpServletRequest request, @RequestBody Ins ins) {
-        final WingsUserDetails wd = SecurityContextUtil.getDetails();
+        final WingsUserDetails wd = SecurityContextUtil.getUserDetails();
         if (wd == null) return R.ng();
 
         final Set<String> ck = ins.getCheck();

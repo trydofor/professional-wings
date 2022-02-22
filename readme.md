@@ -869,3 +869,13 @@ build/resources/resource/filtering=true，以便mvn自动替换。
 
 但是开启filter会引起错误替换，比如二进制文件等，wings默认忽略一些二进制文件
 同时在2.6.3版后，以spring变量取代了mvn变量，因此不需要filter。
+
+### 30.not eligible for auto-proxying
+
+is not eligible for getting processed by all BeanPostProcessors
+(for example: not eligible for auto-proxying)
+
+spring的Bean在其生命周期有载入顺序，Processor，framework和业务Bean应该分开。
+若某些Bean因为依赖关系在Processor前加载，则不会被Process，可能影响业务。
+
+若是经过排查后，对业务没有影响，那么可忽略该INFO级别的Warning。

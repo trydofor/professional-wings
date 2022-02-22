@@ -38,9 +38,13 @@ public class BasicPasswordEncoder implements PasswordEncoder {
     @Override
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
         final String raw = rawPassword.toString();
+        if(rawPassword.equals(encodedPassword)){
+            return true;
+        }
+
         final int pos = raw.indexOf(Splitter);
         if (pos <= 0 || pos >= raw.length() - 1) {
-            return rawPassword.equals(encodedPassword);
+            return false;
         }
 
         final long time = Long.parseLong(raw.substring(0, pos));

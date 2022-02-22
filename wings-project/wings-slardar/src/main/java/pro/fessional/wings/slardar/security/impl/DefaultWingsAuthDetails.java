@@ -16,6 +16,8 @@ import java.util.Map;
 @EqualsAndHashCode
 public class DefaultWingsAuthDetails implements WingsAuthDetails, Serializable {
 
+    private static final long serialVersionUID = 19791023L;
+
     private final Map<String, String> metaData = new HashMap<>();
     private Object realData;
 

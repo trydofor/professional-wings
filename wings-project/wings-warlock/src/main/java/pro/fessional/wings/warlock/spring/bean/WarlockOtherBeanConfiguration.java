@@ -13,12 +13,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import pro.fessional.wings.faceless.database.helper.DatabaseChecker;
+import pro.fessional.wings.slardar.concur.impl.RighterInterceptor;
+import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
+import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.warlock.errorhandle.AllExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.CodeExceptionResolver;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockErrorProp;
 
 import javax.sql.DataSource;
+
+import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.SaltByUid;
 
 
 /**
@@ -65,6 +70,19 @@ public class WarlockOtherBeanConfiguration {
                 logger.error("failed to check timezone", e);
                 SpringApplication.exit(context);
             }
+        };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public RighterInterceptor.SecretProvider righterInterceptorSecretProvider() {
+        logger.info("Wings conf righterInterceptorSecretProvider");
+        return auth -> {
+            final Object dtl = auth.getDetails();
+            if (dtl instanceof WingsUserDetails) {
+                GlobalAttributeHolder.getAttr(SaltByUid, ((WingsUserDetails) dtl).getUserId());
+            }
+            return null;
         };
     }
 }

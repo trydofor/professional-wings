@@ -63,6 +63,7 @@
         <transmittable.version>2.12.4</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
         <bouncycastle.version>1.70</bouncycastle.version> <!-- https://bouncycastle.org/latest_releases.html -->
         <boot-admin.version>2.6.2</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
+        <sentry.version>5.6.1</sentry.version> <!-- https://docs.sentry.io/platforms/java/guides/spring-boot/ -->
         <!-- override spring boot default -->
         <lombok.version>1.18.22</lombok.version> <!-- https://projectlombok.org/changelog -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- just auth need 4, spring use 3 https://square.github.io/okhttp/changelog/ -->
@@ -264,6 +265,16 @@
                 <groupId>de.codecentric</groupId>
                 <artifactId>spring-boot-admin-starter-client</artifactId>
                 <version>${boot-admin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.sentry</groupId>
+                <artifactId>sentry-spring-boot-starter</artifactId>
+                <version>${sentry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.sentry</groupId>
+                <artifactId>sentry-logback</artifactId>
+                <version>${sentry.version}</version>
             </dependency>
             <!-- dev -->
             <dependency>

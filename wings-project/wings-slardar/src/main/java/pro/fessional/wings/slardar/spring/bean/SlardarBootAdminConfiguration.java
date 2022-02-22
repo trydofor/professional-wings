@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.spring.bean;
 
 import de.codecentric.boot.admin.client.config.ClientProperties;
+import de.codecentric.boot.admin.client.config.SpringBootAdminClientEnabledCondition;
 import de.codecentric.boot.admin.client.registration.BlockingRegistrationClient;
 import de.codecentric.boot.admin.server.config.AdminServerProperties;
 import de.codecentric.boot.admin.server.config.EnableAdminServer;
@@ -21,6 +22,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.monitor.report.DingTalkReport;
@@ -47,6 +49,7 @@ public class SlardarBootAdminConfiguration {
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(BlockingRegistrationClient.class)
+    @ConditionalOnProperty(name = "spring.boot.admin.client.enabled", havingValue = "true")
     public static class ClientConfiguration {
         /*
          * org.apache.http.client.protocol.ResponseProcessCookies : Invalid cookie header: "Set-Cookie: ...".
@@ -54,6 +57,7 @@ public class SlardarBootAdminConfiguration {
          * 因其默认采用 'EEE, dd-MMM-yy HH:mm:ss z'格式验证cookie，导致不能保持session
          */
         @Bean
+        @Conditional(SpringBootAdminClientEnabledCondition.class)
         public BlockingRegistrationClient registrationClient(RestTemplateBuilder builder, ClientProperties prop) {
             logger.info("Wings conf BootAdmin client registrationClient");
             builder = builder
@@ -69,6 +73,7 @@ public class SlardarBootAdminConfiguration {
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(EnableAdminServer.class)
+    @ConditionalOnProperty(name = "spring.boot.admin.server.enabled", havingValue = "true")
     public static class AdminConfiguration {
 
         @Bean
@@ -94,10 +99,8 @@ public class SlardarBootAdminConfiguration {
                     }
 
                     final String title = "status " + sts.getStatus() + " from " + getLastStatus(event.getInstance());
-                    return Mono.fromRunnable(() -> {
-                        reporter.report(instance.getRegistration().getName(), instance.getId().getValue(),
-                                Collections.singletonMap(title, warns));
-                    });
+                    return Mono.fromRunnable(() -> reporter.report(instance.getRegistration().getName(), instance.getId().getValue(),
+                            Collections.singletonMap(title, warns)));
                 }
             };
             bean.setEnabled(reporter != null);

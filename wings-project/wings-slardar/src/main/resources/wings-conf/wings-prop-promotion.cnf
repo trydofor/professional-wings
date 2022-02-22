@@ -6,9 +6,15 @@ wings.slardar.cache.common.max-live
 wings.slardar.cache.common.max-idle
 wings.slardar.cache.common.max-size
 
+# sentry
+sentry.properties.file
+
 # spring-boot-admin
 spring.boot.admin.hazelcast.event-store
 spring.boot.admin.hazelcast.sent-notifications
+
+# hazelcast
+hazelcast.jmx
 
 # https://docs.hazelcast.com/imdg/4.2/system-properties
 # https://docs.hazelcast.com/imdg/4.2/management/diagnostics
@@ -43,3 +49,4 @@ hazelcast.diagnostics.operationthreadsamples.period.seconds
 hazelcast.diagnostics.operationthreadsamples.sampler.period.millis
 hazelcast.diagnostics.operationthreadsamples.includeName
 hazelcast.diagnostics.wan.period.seconds
+
