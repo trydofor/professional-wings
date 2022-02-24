@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import pro.fessional.mirana.cast.TypedCastUtil;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
@@ -57,8 +58,17 @@ public class SecurityContextUtil {
     @Nullable
     public static <T> T getAuthDetails(Class<T> claz) {
         Authentication atn = getAuthentication();
-        if (atn == null) return null;
+        return getAuthDetails(claz, atn);
+    }
 
+    @Nullable
+    public static WingsAuthDetails getAuthDetails(Authentication atn) {
+        return getAuthDetails(WingsAuthDetails.class, atn);
+    }
+
+    @Nullable
+    public static <T> T getAuthDetails(Class<T> claz, Authentication atn) {
+        if (atn == null) return null;
         return TypedCastUtil.castObject(atn.getDetails(), claz);
     }
 
@@ -106,7 +116,17 @@ public class SecurityContextUtil {
 
     @Nullable
     public static WingsUserDetails getUserDetails() {
-        Authentication atn = getAuthentication();
+        return getUserDetails(getAuthentication());
+    }
+
+    @Nullable
+    public static WingsUserDetails getUserDetails(SecurityContext context) {
+        if (context == null) return null;
+        return getUserDetails(context.getAuthentication());
+    }
+
+    @Nullable
+    public static WingsUserDetails getUserDetails(Authentication atn) {
         if (atn == null) return null;
 
         final Object pri = atn.getPrincipal();

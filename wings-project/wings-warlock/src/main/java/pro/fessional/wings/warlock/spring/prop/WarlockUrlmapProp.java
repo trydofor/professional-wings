@@ -79,6 +79,23 @@ public class WarlockUrlmapProp {
     private String userAuthedPerm = "";
     public static final String Key$userAuthedPerm = Key + ".user-authed-perm";
 
+
+    /**
+     * 列出用户所有登录session
+     *
+     * @see #Key$userListSession
+     */
+    private String userListSession = "";
+    public static final String Key$userListSession = Key + ".user-list-session";
+
+    /**
+     * 踢出用户登录session
+     *
+     * @see #Key$userDropSession
+     */
+    private String userDropSession = "";
+    public static final String Key$userDropSession = Key + ".user-drop-session";
+
     /**
      * @see #Key$mockCaptcha
      */

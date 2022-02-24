@@ -3,15 +3,20 @@ package pro.fessional.wings.warlock.controller.user;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.session.MapSession;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
+import pro.fessional.wings.slardar.session.WingsSessionHelper;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
@@ -22,6 +27,7 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -71,6 +77,15 @@ public class AuthedUserController {
         if (wd == null) return R.ng();
 
         Dto dto = new Dto();
+        fillDetail(wd, dto);
+        final HttpSession session = request.getSession(false);
+        if (session != null) {
+            dto.setToken(session.getId());
+        }
+        return R.okData(dto);
+    }
+
+    private void fillDetail(WingsUserDetails wd, Dto dto) {
         final Enum<?> at = wd.getAuthType();
         if (at != null) {
             dto.setAuthtype(at.name());
@@ -80,11 +95,6 @@ public class AuthedUserController {
         final ZoneId zid = wd.getZoneId();
         dto.setZoneid(zid.getId());
         dto.setOffset(ZonedDateTime.now(zid).getOffset().getTotalSeconds());
-        final HttpSession session = request.getSession(false);
-        if (session != null) {
-            dto.setToken(session.getId());
-        }
-        return R.okData(dto);
     }
 
 
@@ -162,5 +172,62 @@ public class AuthedUserController {
         }
 
         return R.okData(res);
+    }
+
+     @Schema(description = "登录用户会话信息")
+    @Data @EqualsAndHashCode(callSuper = true)
+    public static class Ses extends Dto {
+        @Schema(description = "是否过期", example = "true")
+        private boolean expired;
+        @Schema(description = "最新访问时间", example = "true")
+        private ZonedDateTime lastAccess;
+    }
+
+    @Operation(summary = "获得登录用户的所有会话", description =
+            "# Usage \n"
+            + "只有登录用户才有信息\n"
+            + "## Params \n"
+            + "无\n"
+            + "## Returns \n"
+            + "* @return {200 | Result(Dto)} 登录用户，成功返回用户会话信息；\n"
+            + "* @return {200 | Result(false)} 未登录用户，且无URL权限；\n"
+            + "* @return {401} 若设置了URL访问权限且用户未登录；")
+    @PostMapping(value = "${" + WarlockUrlmapProp.Key$userListSession + "}")
+    public R<List<Ses>> listSession() {
+        final WingsUserDetails details = SecurityContextUtil.getUserDetails();
+        if (details == null) return R.ng();
+
+        final List<MapSession> sessions = WingsSessionHelper.findByUserId(details.getUserId());
+        final List<Ses> sess = sessions.stream().map(it -> {
+            Ses ses = new Ses();
+            ses.setToken(it.getId());
+            ses.setExpired(it.isExpired());
+            ses.setLastAccess(it.getLastAccessedTime().atZone(details.getZoneId()));
+
+            final SecurityContext ctx = WingsSessionHelper.getSecurityContext(it);
+            final WingsUserDetails dtl = SecurityContextUtil.getUserDetails(ctx);
+            if (dtl != null) {
+                fillDetail(dtl, ses);
+            }
+
+            return ses;
+        }).collect(Collectors.toList());
+
+        return R.okData(sess);
+    }
+
+    @Operation(summary = "踢掉一个登录用户的会话", description =
+            "# Usage \n"
+            + "只有登录用户才有信息\n"
+            + "## Params \n"
+            + "* @param sid - 要踢掉的会话Id/token\n"
+            + "## Returns \n"
+            + "* @return {200 | Result} 登录用户，成功返回用户会话信息；\n"
+            + "* @return {200 | Result(false)} 未登录用户，且无URL权限；\n"
+            + "* @return {401} 若设置了URL访问权限且用户未登录；")
+    @PostMapping(value = "${" + WarlockUrlmapProp.Key$userDropSession + "}")
+    public R<Void> dropSession(@RequestParam("sid") String sid) {
+        final boolean b = WingsSessionHelper.dropSession(sid);
+        return R.of(b);
     }
 }

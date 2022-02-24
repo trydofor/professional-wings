@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.StringUtils;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
+import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockJustAuthProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
@@ -33,6 +34,9 @@ public class LoginSuccessHandler extends NonceLoginSuccessHandler implements Ini
 
     @Setter(onMethod_ = {@Autowired})
     protected WarlockJustAuthProp warlockJustAuthProp;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected SlardarSessionProp slardarSessionProp;
 
     @Override
     protected void onResponse(@NotNull HttpServletRequest req, @NotNull HttpServletResponse res, @NotNull Authentication aun,

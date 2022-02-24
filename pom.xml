@@ -59,7 +59,7 @@
         <!-- others -->
         <errorprone.version>2.11.0</errorprone.version> <!-- https://github.com/google/error-prone/releases -->
         <fastjson.version>1.2.79</fastjson.version> <!-- https://github.com/alibaba/fastjson/releases -->
-        <kryo.version>5.2.1</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
+        <kryo.version>5.3.0</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
         <transmittable.version>2.12.4</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
         <bouncycastle.version>1.70</bouncycastle.version> <!-- https://bouncycastle.org/latest_releases.html -->
         <boot-admin.version>2.6.2</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->

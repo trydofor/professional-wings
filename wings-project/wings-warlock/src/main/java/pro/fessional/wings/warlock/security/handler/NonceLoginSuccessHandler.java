@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
-import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
 import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
@@ -29,9 +28,6 @@ import java.io.IOException;
 public class NonceLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     @Setter(onMethod_ = {@Autowired})
-    protected SlardarSessionProp slardarSessionProp;
-
-    @Setter(onMethod_ = {@Autowired})
     protected AuthStateBuilder authStateBuilder;
 
     @Override
@@ -47,10 +43,6 @@ public class NonceLoginSuccessHandler extends SavedRequestAwareAuthenticationSuc
             if (state != null) {
                 NonceTokenSessionHelper.bindNonceSid(state, sid);
                 log.info("parse client state={}, uid={}", state, uid);
-            }
-            if (slardarSessionProp != null) {
-                // spring session not set rightly as config
-                session.setMaxInactiveInterval(slardarSessionProp.getInactiveInterval());
             }
         }
 

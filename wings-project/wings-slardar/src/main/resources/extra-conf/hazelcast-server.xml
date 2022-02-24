@@ -64,11 +64,17 @@
         </near-cache>
         <attributes>
             <attribute extractor-class-name="org.springframework.session.hazelcast.Hazelcast4PrincipalNameExtractor">principalName</attribute>
+            <attribute extractor-class-name="pro.fessional.wings.slardar.session.HazelcastUidExtractor">userId</attribute>
         </attributes>
         <indexes>
             <index type="HASH">
                 <attributes>
                     <attribute>principalName</attribute>
+                </attributes>
+            </index>
+            <index type="HASH">
+                <attributes>
+                    <attribute>userId</attribute>
                 </attributes>
             </index>
         </indexes>
@@ -104,4 +110,15 @@
         <!--        <whitelist-prefixes>com.bar.MyClass</whitelist-prefixes>-->
         <!--        <provider-filter>HAS_ATTRIBUTE:lite</provider-filter>-->
     </user-code-deployment>
+
+    <flake-id-generator name="default">
+        <prefetch-count>100</prefetch-count>
+        <prefetch-validity-millis>600000</prefetch-validity-millis>
+        <epoch-start>1640995200000</epoch-start>
+        <node-id-offset>0</node-id-offset>
+        <bits-sequence>10</bits-sequence>
+        <bits-node-id>12</bits-node-id>
+        <allowed-future-millis>15000</allowed-future-millis>
+        <statistics-enabled>true</statistics-enabled>
+    </flake-id-generator>
 </hazelcast>
