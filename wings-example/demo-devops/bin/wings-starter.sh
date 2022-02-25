@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2022-02-14
+THIS_VERSION=2022-02-22
 
 cat <<EOF
 #################################################
@@ -163,7 +163,7 @@ function check_boot() {
 echo -e "\033[37;42;1mINFO: ==== boot env ==== \033[0m"
 this_file="$0"
 if [[ -L "$this_file" ]]; then
-    link_file=$(realpath $this_file)
+    link_file=$(realpath "$this_file")
     link_envs=${link_file%.*}.env
     if [[ -f "$link_envs" ]]; then
         echo "env-link=$link_envs"
@@ -374,26 +374,26 @@ case "$ARGS_RUN" in
         # shellcheck disable=SC2086
         kill $pid
 
-        icon=''
+        bars=''
         for ((i = 0; i < timeout; i++)); do
             for ((j = 0; j < 10; j++)); do
-                printf "[%ds][%-60s]\r" "$i" "$icon"
-                if [[ ${#icon} -ge 60 ]]; then
-                    icon=''
+                printf "[%ds][%-60s]\r" "$i" "$bars"
+                if [[ ${#bars} -ge 60 ]]; then
+                    bars=''
                 else
-                    icon='#'${icon}
+                    bars='#'${bars}
                 fi
                 sleep 0.1
             done
 
-            if [[ $(pgrep -f "$grep_key" | wc -l) -eq 0 ]]; then
+            # shellcheck disable=SC2086
+            if ! ps $pid > /dev/null; then
+                echo ""
                 echo -e "\033[33mNOTE: successfully stop in $i seconds, pid=$pid of $BOOT_JAR \033[0m"
                 exit
             fi
         done
-        cid=$(pgrep -f "$grep_key" | tr '\n' ' ')
         echo -e "\033[37;41;1mWARN: stopping timeout[${timeout}s], pid=$pid \033[0m"
-        echo -e "\033[31mWARN: need manually check PID=$cid of $BOOT_JAR \033[0m"
         echo -e "\033[33mNOTE: <ENTER> to 'kill -9 $pid', <Ctrl-C> to exit \033[0m"
         read -r
         # shellcheck disable=SC2086

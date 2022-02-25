@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2022-01-29
+THIS_VERSION=2022-02-14
 
 cat <<EOF
 #################################################
@@ -263,16 +263,25 @@ case "$1" in
 
             for _jar in $_jar_need; do
                 _cmd="cp -r"
+                _tgt=$_dst
                 if [[ ! -d "$_dst" ]]; then
                     _cmd="scp -r $SCP_ARGS"
+                    # scp://[user@]host[:port][/path]
+                    if [[ $_dst =~ scp:// && "$(man scp |grep scp://)" == "" ]]; then
+                        pt=$(echo "$_dst" | sed -E 's=scp://([^:]*:)([0-9]*)(.*)=\2=')
+                        if [[ $pt =~ ^[0-9]+$ ]]; then
+                           _cmd="$_cmd -P $pt"
+                           _tgt=$(echo "$_dst" | sed -E 's=scp://([^:]*:)([0-9]*)(.*)=\1\3=')
+                        fi
+                    fi
                 fi
                 echo "$_jar => $_dst"
                 if [[ -d "$_jar" && "$SUB_FLAT" == "true" ]]; then
                     # shellcheck disable=SC2086
-                    $_cmd $_jar/* "$_dst"
+                    $_cmd $_jar/* "$_tgt"
                 else
                     # shellcheck disable=SC2086
-                    $_cmd $_jar "$_dst"
+                    $_cmd $_jar "$_tgt"
                 fi
             done
         done
