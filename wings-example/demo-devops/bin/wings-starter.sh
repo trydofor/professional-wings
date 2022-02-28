@@ -43,6 +43,7 @@ JDK9_ARG='
 --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
 --add-opens java.base/java.lang=ALL-UNNAMED
 --add-opens=java.base/java.util=ALL-UNNAMED
+--add-opens java.base/java.io=ALL-UNNAMED
 --add-opens java.base/java.nio=ALL-UNNAMED
 --add-opens java.base/sun.nio.ch=ALL-UNNAMED
 --add-opens java.management/sun.management=ALL-UNNAMED
@@ -79,7 +80,9 @@ JAVA_OPT=''                      # java 实际启动参加
 function print_help() {
     echo -e '\033[32m docker \033[m start in docker with console log'
     echo -e '\033[32m start \033[m start the {boot-jar} and tail the log'
+    echo -e '\033[32m starts \033[m start but Not wait log'
     echo -e '\033[32m stop [snd=30]\033[m stop the {boot-jar} gracefully in {snd} seconds'
+    echo -e '\033[32m stops [snd=30]\033[m stop but Not confirm'
     echo -e '\033[32m status \033[m show the {boot-jar} runtime status'
     echo -e '\033[32m warn \033[m monitor the {boot-jar} and log'
     echo -e '\033[32m clean [days=30] [y] \033[m clean up log-file {days} ago'
@@ -269,7 +272,7 @@ case "$ARGS_RUN" in
             pgrep -alf "$grep_key"
         fi
         ;;
-    start)
+    start*)
         check_java
 
         if [[ $count -ne 0 ]]; then
@@ -311,6 +314,15 @@ case "$ARGS_RUN" in
             ps -fwww $cid
         fi
 
+        if [[ "$ARGS_RUN" != "start" ]]; then
+            echo -e "\033[37;43;1mNOTE: tail -f $BOOT_OUT \033[0m"
+            timeout -s 9 10 tail -f "$BOOT_OUT"
+            echo -e "\033[37;43;1m====== ${BOOT_JAR//?/=} ======\033[0m"
+            echo -e "\033[37;43;1m====== $BOOT_JAR ======\033[0m"
+            echo -e "\033[37;43;1m====== ${BOOT_JAR//?/=} ======\033[0m"
+            exit
+        fi
+
         tail_log="$BOOT_OUT"
         if [[ -f "$BOOT_LOG" ]]; then
             if [[ "$TAIL_LOG" == 'log' ]]; then
@@ -346,7 +358,7 @@ case "$ARGS_RUN" in
             tail -f "$tail_log"
         fi
         ;;
-    stop)
+    stop*)
         if [[ $count -eq 0 ]]; then
             echo -e "\033[37;43;1mNOTE: not running $BOOT_JAR \033[0m"
             exit
@@ -393,15 +405,17 @@ case "$ARGS_RUN" in
                 exit
             fi
         done
-        echo -e "\033[37;41;1mWARN: stopping timeout[${timeout}s], pid=$pid \033[0m"
-        echo -e "\033[33mNOTE: <ENTER> to 'kill -9 $pid', <Ctrl-C> to exit \033[0m"
-        read -r
+        echo -e "\033[37;41;1mWARN: timeout[${timeout}s] and kill -9 $pid \033[0m"
+        if [[ "$ARGS_RUN" == "stop" ]]; then
+            echo -e "\033[33mNOTE: <ENTER> to kill, <Ctrl-C> to exit \033[0m"
+            read -r
+        fi
         # shellcheck disable=SC2086
         kill -9 $pid
         ;;
     status)
         if [[ $count -eq 0 ]]; then
-            echo -e "\033[37;43;1mNOTE: not running $BOOT_JAR \033[0m"
+            echo -e "\033[37;41;1mERROR: not running $BOOT_JAR \033[0m"
             exit
         fi
 
@@ -462,8 +476,8 @@ case "$ARGS_RUN" in
     warn)
         warn_got=''
         if [[ $count -eq 0 ]]; then
-            echo -e "\033[33mNOTE: not running $BOOT_JAR \033[0m"
-            WARN_TXT="$WARN_TXT,PID"
+            echo -e "\033[37;41;1mWARN: not running $BOOT_JAR \033[0m"
+            WARN_TXT="$WARN_TXT \\nPID not found"
             warn_got="pid"
         fi
 
@@ -471,8 +485,8 @@ case "$ARGS_RUN" in
             log_time=$(date +%s -r "$BOOT_LOG")
             ago_time=$(date +%s -d "now -$WARN_AGO second")
             if [[ log_time -lt ago_time ]]; then
-                echo -e "\033[33mNOTE: no update in $WARN_AGO seconds, log $BOOT_LOG \033[0m"
-                WARN_TXT="$WARN_TXT,LOG"
+                echo -e "\033[37;41;1mWARN: no update in $WARN_AGO seconds, log $BOOT_LOG \033[0m"
+                WARN_TXT="$WARN_TXT \\nLOG not updated"
                 warn_got="log"
             fi
         fi
@@ -564,6 +578,7 @@ case "$ARGS_RUN" in
         check_cmd ps
         check_cmd realpath
         check_cmd tail
+        check_cmd timeout
         check_cmd touch
         check_cmd tr
         check_cmd wc

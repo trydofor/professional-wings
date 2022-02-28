@@ -73,6 +73,7 @@
         <wings.java-opens>
             --illegal-access=debug
             --add-modules=java.se <!-- Hazelcast -->
+            --add-opens=java.base/java.io=ALL-UNNAMED <!-- FastJson -->
             --add-opens=java.base/java.nio=ALL-UNNAMED <!-- Hazelcast -->
             --add-opens=java.base/java.lang=ALL-UNNAMED <!-- Hazelcast -->
             --add-opens=java.base/java.util=ALL-UNNAMED <!-- Boot Collections$EmptySet -->
@@ -371,6 +372,7 @@
                         <target>${java.version}</target>
                         <compilerArgs>
                             <arg>--add-modules=java.se</arg> <!-- Hazelcast -->
+                            <arg>--add-exports=java.base/java.io=ALL-UNNAMED</arg> <!-- FastJson -->
                             <arg>--add-exports=java.base/java.nio=ALL-UNNAMED</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/java.lang=ALL-UNNAMED</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</arg> <!-- Hazelcast -->
