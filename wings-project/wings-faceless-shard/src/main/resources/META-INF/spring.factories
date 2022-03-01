@@ -1,6 +1,0 @@
-#
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-pro.fessional.wings.faceless.spring.boot.FacelessShardingSwitcher
-#
-org.springframework.context.ApplicationListener=\
-pro.fessional.wings.faceless.spring.boot.FacelessShardingSwitcher.ShardSwitcher

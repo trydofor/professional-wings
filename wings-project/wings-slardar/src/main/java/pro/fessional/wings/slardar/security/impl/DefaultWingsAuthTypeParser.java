@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 使用HashMap构建
+ * 使用HashMap构建，Null.Str=Null.Enm
  *
  * @author trydofor
  * @since 2021-02-22
@@ -27,21 +27,26 @@ public class DefaultWingsAuthTypeParser implements WingsAuthTypeParser {
             final String v = enumStrMap.get(k);
             if (v == null) {
                 enumStrMap.put(k, en.getKey());
-            } else {
+            }
+            else {
                 throw new IllegalArgumentException("exist mapping for type=" + v + ", enum=" + EnumConvertor.enum2Str(k));
             }
         }
     }
 
     @Override
-    public @NotNull Enum<?> parse(String at) {
-        if(at == null) return Null.Enm;
+    public @NotNull Enum<?> parse(String at, @NotNull Enum<?> elz) {
+        if (at == null) return elz;
+        if (at.equals(Null.Str)) return Null.Enm;
+
         final Enum<?> en = strEnumMap.get(at);
-        return en == null ? Null.Enm : en;
+        return en == null ? elz : en;
     }
 
     @Override
     public @NotNull String parse(Enum<?> at) {
+        if (at == Null.Enm) return Null.Str;
+
         final String s = enumStrMap.get(at);
         if (s == null) {
             final String mes = "failed to parse enum=" + EnumConvertor.enum2Str(at);

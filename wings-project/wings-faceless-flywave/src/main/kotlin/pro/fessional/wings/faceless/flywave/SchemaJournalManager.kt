@@ -153,10 +153,10 @@ class SchemaJournalManager(
         for ((plainName, plainDs) in plainDataSources) {
             interactive.log(INFO, here, "ready to check journal, table=$table on db=$plainName")
             val tables = schemaDefinitionLoader.showTables(plainDs).associateBy {
-                it.toLowerCase()
+                it.lowercase()
             }
 
-            if (!tables.containsKey(table.toLowerCase())) {
+            if (!tables.containsKey(table.lowercase())) {
                 throw IllegalArgumentException("table not existed. table=$table")
             }
 
@@ -414,7 +414,7 @@ class SchemaJournalManager(
             }
 
             val tables = schemaDefinitionLoader.showTables(plainDs).associateBy {
-                it.toLowerCase()
+                it.lowercase()
             }
 
             val staffs = tables.filter {
@@ -473,7 +473,7 @@ class SchemaJournalManager(
 
                 // 检查跟踪表
                 var newTrc = true
-                if (tables.containsKey(curTac.toLowerCase())) {
+                if (tables.containsKey(curTac.lowercase())) {
                     interactive.log(INFO, here, "existed trace-table=$curTac, table=$tblRaw, db=$plainName")
                     val safeCurTrc = sqlStatementParser.safeName(curTac)
                     val cnt = tmpl.count("SELECT COUNT(1) FROM $safeCurTrc")

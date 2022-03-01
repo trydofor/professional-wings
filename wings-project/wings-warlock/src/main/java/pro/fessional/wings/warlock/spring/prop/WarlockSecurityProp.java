@@ -68,10 +68,16 @@ public class WarlockSecurityProp {
      * 处理登录的Ant格式URL，由filter处理，不需要controller
      * 支持变量`authType`和`authZone`，可以通过param或path获得（PathPattern）
      *
-     * @see #Key$loginUrl
+     * @see #Key$loginProcUrl
      */
-    private String loginUrl = "/auth/{authType}/login.json";
-    public static final String Key$loginUrl = Key + ".login-url";
+    private String loginProcUrl = "/auth/{authType}/login.json";
+    public static final String Key$loginProcUrl = Key + ".login-proc-url";
+
+    /**
+     * @see #Key$loginProcMethod
+     */
+    private Set<String> loginProcMethod = Collections.emptySet();
+    public static final String Key$loginProcMethod = Key + ".login-proc-method";
 
     /**
      * 登出地址，由filter处理，不需要controller
@@ -80,6 +86,30 @@ public class WarlockSecurityProp {
      */
     private String logoutUrl = "/auth/logout.json";
     public static final String Key$logoutUrl = Key + ".logout-url";
+
+    /**
+     * 登录成功后是否重定向
+     *
+     * @see #Key$loginSuccessRedirect
+     */
+    private boolean loginSuccessRedirect = false;
+    public static final String Key$loginSuccessRedirect = Key + ".login-success-redirect";
+
+    /**
+     * 登录成功的重定向参数
+     *
+     * @see #Key$loginSuccessRedirectParam
+     */
+    private String loginSuccessRedirectParam = "";
+    public static final String Key$loginSuccessRedirectParam = Key + ".login-success-redirect-param";
+
+    /**
+     * 登录成功的重定向默认地址
+     *
+     * @see #Key$loginSuccessRedirectDefault
+     */
+    private String loginSuccessRedirectDefault = "";
+    public static final String Key$loginSuccessRedirectDefault = Key + ".login-success-redirect-default";
 
     /**
      * 登录成功返回的body
@@ -156,7 +186,7 @@ public class WarlockSecurityProp {
      *
      * @see #Key$authenticated
      */
-    private List<String> authenticated = Collections.emptyList();
+    private Map<String, String> authenticated = Collections.emptyMap();
     public static final String Key$authenticated = Key + ".authenticated";
 
     /**
@@ -164,8 +194,17 @@ public class WarlockSecurityProp {
      *
      * @see #Key$permitAll
      */
-    private List<String> permitAll = Collections.emptyList();
+    private Map<String, String> permitAll = Collections.emptyMap();
     public static final String Key$permitAll = Key + ".permit-all";
+
+    /**
+     * 空为忽略，支持【permitAll|authenticated|anonymous|fullyAuthenticated】
+     * 任意非空，非以上字符串，任务是Authority，逗号或空白分割。
+     *
+     * @see #Key$anyRequest
+     */
+    private String anyRequest = "";
+    public static final String Key$anyRequest = Key + ".any-request";
 
     /**
      * 支持的验证类型， enum全路径，一对一，否则反向解析有问题
@@ -186,6 +225,7 @@ public class WarlockSecurityProp {
     /**
      * 设置spring.application.name对应的权限，若非全部满足，则不可登录，以用户名密码错误返回
      * 支持AntPath，如`wings-*`，合并所有匹配的权限设置项
+     *
      * @see #Key$appPerm
      */
     private Map<String, Set<String>> appPerm = new HashMap<>();

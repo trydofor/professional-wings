@@ -28,7 +28,7 @@ import java.util.Set;
  * @author trydofor
  * @since 2019-06-26
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SilencerEnabledProp.Key$autoLog, havingValue = "true")
 public class SilencerAutoLogConfiguration {
 
@@ -41,62 +41,66 @@ public class SilencerAutoLogConfiguration {
         return args -> {
             final SilencerMiranaProp.AutoLog autoLog = prop.getAutoLog();
             final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-            final Set<Appender<ILoggingEvent>> appenders = new HashSet<>();
-            final Set<String> matches = autoLog.getAppender();
+            final Set<String> targets = autoLog.getTarget();
+            final Set<String> exists = autoLog.getExists();
 
-            boolean only = true;
+            boolean skip = true;
+            final Set<Appender<ILoggingEvent>> appenders = new HashSet<>();
             for (Iterator<Appender<ILoggingEvent>> iter = root.iteratorForAppenders(); iter.hasNext(); ) {
                 Appender<ILoggingEvent> next = iter.next();
                 final String name = next.getName();
-                if (matches.contains(name)) {
+                if (targets.contains(name)) {
                     appenders.add(next);
-                    logger.info("find auto-log appender name=" + name);
+                    logger.info("find target appender name=" + name);
+                }
+                else if (exists.contains(name)) {
+                    logger.info("find condition appender name=" + name);
+                    skip = false;
                 }
                 else {
                     logger.info("find others appender name=" + name);
-                    only = false;
                 }
             }
 
-            if (only || appenders.isEmpty()) {
-                logger.info("skip auto-log appender for no other appender, or empty candidate");
+            if (skip || appenders.isEmpty()) {
+                logger.info("skip auto-log appender");
+                return;
             }
-            else {
-                final LogLevel ll = autoLog.getLevel() == null ? LogLevel.OFF : autoLog.getLevel();
-                final Level level;
-                // TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF
-                switch (ll) {
-                    case TRACE:
-                        level = Level.TRACE;
-                        break;
-                    case DEBUG:
-                        level = Level.DEBUG;
-                        break;
-                    case INFO:
-                        level = Level.INFO;
-                        break;
-                    case WARN:
-                        level = Level.WARN;
-                        break;
-                    case ERROR:
-                    case FATAL:
-                        level = Level.ERROR;
-                        break;
-                    default:
-                        level = Level.OFF;
-                }
 
-                logger.info("Wings conf LogbackFilter to ConsoleAppender");
-                logger.info("================= Mirana =================");
-                logger.info("Auto Switch the following Appender Level to " + level);
-                for (Appender<ILoggingEvent> appender : appenders) {
-                    logger.info("- "+appender.getName() + " : " + appender.getClass().getName());
-                }
-                logger.info("================= Mirana =================");
-                final LogbackFilter filter = new LogbackFilter(level);
-                for (Appender<ILoggingEvent> appender : appenders) {
-                    appender.addFilter(filter);
-                }
+            final LogLevel ll = autoLog.getLevel() == null ? LogLevel.OFF : autoLog.getLevel();
+            final Level level;
+            // TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF
+            switch (ll) {
+                case TRACE:
+                    level = Level.TRACE;
+                    break;
+                case DEBUG:
+                    level = Level.DEBUG;
+                    break;
+                case INFO:
+                    level = Level.INFO;
+                    break;
+                case WARN:
+                    level = Level.WARN;
+                    break;
+                case ERROR:
+                case FATAL:
+                    level = Level.ERROR;
+                    break;
+                default:
+                    level = Level.OFF;
+            }
+
+            logger.info("Wings conf LogbackFilter to ConsoleAppender");
+            logger.info("================= Silencer =================");
+            logger.info("Auto Switch the following Appender Level to " + level);
+            for (Appender<ILoggingEvent> appender : appenders) {
+                logger.info("- " + appender.getName() + " : " + appender.getClass().getName());
+            }
+            logger.info("================= Silencer =================");
+            final LogbackFilter filter = new LogbackFilter(level);
+            for (Appender<ILoggingEvent> appender : appenders) {
+                appender.addFilter(filter);
             }
         };
     }

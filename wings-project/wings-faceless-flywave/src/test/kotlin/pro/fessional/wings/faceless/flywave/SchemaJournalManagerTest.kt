@@ -40,7 +40,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
                 "    KEY `RAW_TABLE_PK` ({{TABLE_PKEY}}) " +
                 ") ENGINE=INNODB DEFAULT CHARSET=UTF8MB4",
         "wings.faceless.flywave.ver.trigger-insert=" +
-                "CREATE TRIGGER `{{TABLE_NAME}}\$ai` AFTER INSERT ON `{{TABLE_NAME}}` " +
+                "CREATE TRIGGER `ai__{{TABLE_NAME}}` AFTER INSERT ON `{{TABLE_NAME}}` " +
                 "FOR EACH ROW BEGIN " +
                 "  IF (@DISABLE_FLYWAVE IS NULL) THEN  " +
                 "    INSERT INTO `$HEAD{{TABLE_NAME}}$TAIL` SELECT NULL, NOW(3), 'C', t.* FROM `{{TABLE_NAME}}` t " +
@@ -57,7 +57,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
                 "    KEY `RAW_TABLE_PK` ({{TABLE_PKEY}}) " +
                 ") ENGINE=INNODB DEFAULT CHARSET=UTF8MB4",
         "wings.faceless.flywave.ver.trigger-update=" +
-                "CREATE TRIGGER `{{TABLE_NAME}}\$au` AFTER UPDATE ON `{{TABLE_NAME}}` " +
+                "CREATE TRIGGER `au__{{TABLE_NAME}}` AFTER UPDATE ON `{{TABLE_NAME}}` " +
                 "FOR EACH ROW BEGIN " +
                 "  IF (@DISABLE_FLYWAVE IS NULL) THEN  " +
                 "    INSERT INTO `$HEAD{{TABLE_NAME}}$TAIL` SELECT NULL, NOW(3), 'U', t.* FROM `{{TABLE_NAME}}` t " +
@@ -74,7 +74,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
                 "    KEY `RAW_TABLE_PK` ({{TABLE_PKEY}}) " +
                 ") ENGINE=INNODB DEFAULT CHARSET=UTF8MB4",
         "wings.faceless.flywave.ver.trigger-delete=" +
-                "CREATE TRIGGER `{{TABLE_NAME}}\$bd` BEFORE DELETE ON `{{TABLE_NAME}}` " +
+                "CREATE TRIGGER `bd__{{TABLE_NAME}}` BEFORE DELETE ON `{{TABLE_NAME}}` " +
                 "FOR EACH ROW BEGIN " +
                 "  IF (@DISABLE_FLYWAVE IS NULL) THEN  " +
                 "    INSERT INTO `$HEAD{{TABLE_NAME}}$TAIL` SELECT NULL, NOW(3), 'D', t.* FROM `{{TABLE_NAME}}` t " +
@@ -88,8 +88,13 @@ class SchemaJournalManagerTest {
 
     companion object {
         const val HEAD = ""
-        const val TAIL = "\$log"
-        const val TFMT = ""
+        const val TAIL = "__"
+        const val TFMT = SqlSegmentProcessor.TRACE_SU2_LINE
+
+        // OK
+//        const val HEAD = ""
+//        const val TAIL = "\$log"
+//        const val TFMT = ""
 
         // OK
 //        const val HEAD = ""
@@ -204,7 +209,7 @@ class SchemaJournalManagerTest {
         breakpointDebug("分表触发器💰，观察数据库所有表")
         schemaJournalManager.publishInsert("tst_中文也分表", true, 0)
         wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "tst_中文也分表\$ai")
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "ai__tst_中文也分表")
 
         jdbcTemplate.execute(
             """
@@ -219,7 +224,7 @@ class SchemaJournalManagerTest {
 
         schemaJournalManager.publishInsert("tst_中文也分表", false, 0)
         wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "tst_中文也分表\$ai")
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "ai__tst_中文也分表")
         testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
     }
 
@@ -233,7 +238,7 @@ class SchemaJournalManagerTest {
         breakpointDebug("分表触发器💰，观察数据库所有表")
         schemaJournalManager.publishUpdate("tst_中文也分表", true, 0)
         wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "tst_中文也分表\$au")
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "au__tst_中文也分表")
 
         jdbcTemplate.execute("UPDATE `tst_中文也分表_1` SET login_info='赵思', commit_id=1 WHERE id = 1")
         breakpointDebug("更新数据🐵，查询数据库各表及数据")
@@ -245,7 +250,7 @@ class SchemaJournalManagerTest {
 
         schemaJournalManager.publishUpdate("tst_中文也分表", false, 0)
         wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "tst_中文也分表\$au")
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "au__tst_中文也分表")
         testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
     }
 
@@ -258,7 +263,7 @@ class SchemaJournalManagerTest {
         breakpointDebug("分表触发器💰，观察数据库所有表")
         schemaJournalManager.publishDelete("tst_中文也分表", true, 0)
         wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "tst_中文也分表\$bd")
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "bd__tst_中文也分表")
 
         jdbcTemplate.execute("DELETE FROM `tst_中文也分表_1` WHERE id = 1")
         breakpointDebug("删除数据🐵，查询数据库各表及数据")
@@ -270,7 +275,7 @@ class SchemaJournalManagerTest {
 
         schemaJournalManager.publishDelete("tst_中文也分表", false, 0)
         wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "tst_中文也分表\$bd")
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "bd__tst_中文也分表")
         testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
     }
 
@@ -286,9 +291,9 @@ class SchemaJournalManagerTest {
         schemaJournalManager.publishUpdate("tst_中文也分表", true, 0)
         schemaJournalManager.publishDelete("tst_中文也分表", true, 0)
         wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "tst_中文也分表\$ai")
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "tst_中文也分表\$au")
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "tst_中文也分表\$bd")
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "ai__tst_中文也分表")
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "au__tst_中文也分表")
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "bd__tst_中文也分表")
 
         jdbcTemplate.execute(
             """
@@ -309,9 +314,9 @@ class SchemaJournalManagerTest {
         schemaJournalManager.publishInsert("tst_中文也分表", false, 0)
         schemaJournalManager.publishUpdate("tst_中文也分表", false, 0)
         schemaJournalManager.publishDelete("tst_中文也分表", false, 0)
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "tst_中文也分表\$ai")
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "tst_中文也分表\$au")
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "tst_中文也分表\$bd")
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "ai__tst_中文也分表")
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "au__tst_中文也分表")
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "bd__tst_中文也分表")
 
         testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
     }
@@ -375,7 +380,7 @@ class SchemaJournalManagerTest {
 
     private fun assertSameColumn(tbl1: String, tbl2: String) {
         val diff = schemaDefinitionLoader.diffFullSame(jdbcTemplate.dataSource!!, tbl1, tbl2, SchemaDefinitionLoader.TYPE_TBL)
-        assertEquals("", diff, diff);
+        assertEquals("", diff, diff)
     }
 
     private fun assertNotColumn(tbl: String, vararg col: String) {

@@ -8,7 +8,7 @@ import pro.fessional.wings.faceless.service.WingsTableCudHandlerTest;
  * @author trydofor
  * @since 2019-08-12
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class TableCudConfiguration {
 
     @Bean

@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author trydofor
@@ -38,7 +38,7 @@ public class FlywaveVerProp {
      *
      * @see #Key$dropReg
      */
-    private List<String> dropReg = Collections.emptyList();
+    private Map<String,String> dropReg = Collections.emptyMap();
     public static final String Key$dropReg = Key + ".drop-reg";
 
     /**

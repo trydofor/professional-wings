@@ -12,16 +12,16 @@ import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
  * @author trydofor
  * @since 2019-12-01
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class WarlockCompScanConfiguration {
 
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$jooqAutogen, havingValue = "true")
     @ComponentScan(basePackageClasses = Tables.class)
     public static class WarlockJooqDaoConfiguration {
     }
 
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$bindExceptionAdvice, havingValue = "true")
     @ComponentScan(basePackageClasses = BindExceptionAdvice.class)
     public static class BindingErrorConfig {

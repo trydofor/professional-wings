@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2022-01-22
+THIS_VERSION=2022-02-14
 
 cat <<EOF
 #################################################
@@ -20,6 +20,7 @@ PRE_PACK=''                                        # pack前执行的命令
 PRE_PUSH=''                                        # push前执行的命令，支持`$_JAR`变量
 MVN_COMP='-U -Dmaven.test.skip=true clean compile' # mvn的compile命令
 MVN_PACK='-Dmaven.test.skip=true package'          # mvn的package命令
+JDK_HOME=''                                        # mvn的jdk版本
 WEB_PACK='build'                                   # web的package的命令
 
 ################ NO NEED to modify the following ################
@@ -54,6 +55,13 @@ function _pre_push() {
 }
 
 function build_mvn() {
+    # java home & path
+    if [[ "$JDK_HOME" != "" && "$JDK_HOME" != "$JAVA_HOME" ]]; then
+        PATH=$JDK_HOME/bin:$PATH
+        JAVA_HOME=$JDK_HOME
+        echo -e "\033[37;42;1mINFO: ==== JAVA_HOME=$JAVA_HOME ==== \033[0m"
+    fi
+
     check_cmd mvn
     check_cmd git
 
@@ -154,6 +162,16 @@ function build_auto() {
 # load env
 echo -e "\033[37;42;1mINFO: ==== boot env ==== \033[0m"
 this_file="$0"
+if [[ -L "$this_file" ]]; then
+    link_file=$(realpath $this_file)
+    link_envs=${link_file%.*}.env
+    if [[ -f "$link_envs" ]]; then
+        echo "env-link=$link_envs"
+        # shellcheck disable=SC1090
+        source "$link_envs"
+    fi
+fi
+
 this_envs=${this_file%.*}.env
 if [[ -f "$this_envs" ]]; then
     echo "env-file=$this_envs"
@@ -192,46 +210,78 @@ case "$1" in
         build_auto "$2"
         ;;
     push)
-        _jar_log=""
+        echo -e "\033[37;42;1m ==== SEEK package ==== \033[0m"
+        _jar_need=""
+        _jar_info=""
+        _yna="n"
         for _jar in $PACK_JAR; do
+            _tmp=""
             if [[ -f "$_jar" || -d "$_jar" ]]; then
-                _pre_push "$_jar"
-                _jar_log="$_jar_log $_jar"
+                _tmp=$_jar
             else
                 _tmp=$(find . -type f -name "$_jar")
                 if [[ ! -f "$_tmp" ]]; then
                     echo -e "\033[31mERROR: not file. $_jar \033[0m"
-                    exit
-                fi
-                _pre_push "$_tmp"
-                _jar_log="$_jar_log $_tmp"
-            fi
-        done
-        if [[ "$2" == "pre" ]]; then
-            exit
-        fi
-        for _dst in $DEST_DIR; do
-            echo -e "\033[37;42;1m ==== COPY $_dst ==== \033[0m"
-            _yna="n"
-            for _jar in $_jar_log; do
-                if [[ "$_yna" != "a" ]]; then
-                    echo -e "\033[32m $_jar \033[m [y/n/a]?"
-                    read -r _yna </dev/tty
-                fi
-                if [[ "$_yna" == "n" ]]; then
+                    _jar_info="$_jar_info skip \033[31m $_jar \033[m => not find\n"
                     continue
                 fi
+            fi
+
+            _rp=$(realpath "$_tmp")
+            if [[ "$_yna" != "a" ]]; then
+                echo -e "[y/n/a]? \033[32m $_jar \033[m => $_rp"
+                read -r _yna </dev/tty
+            fi
+
+            if [[ "$_yna" != "n" ]]; then
+                _pre_push "$_tmp"
+                _jar_need="$_jar_need $_tmp"
+                _jar_info="$_jar_info need \033[32m $_jar \033[m => $_rp\n"
+            else
+                _jar_info="$_jar_info skip \033[33m $_jar \033[m => $_rp\n"
+            fi
+        done
+
+        echo -e "\033[37;42;1m ==== LIST package ==== \033[0m"
+        echo -e "$_jar_info"
+
+        if [[ "$2" == "pre" || "$_jar_need" == "" ]]; then
+            echo -e "\033[31mERROR: not file to push \033[0m"
+            exit
+        fi
+
+        _yna="n"
+        echo -e "\033[37;42;1m ==== PUSH package ==== \033[0m"
+        for _dst in $DEST_DIR; do
+            if [[ "$_yna" != "a" ]]; then
+                echo -e "[y/n/a]? \033[32m $_dst \033[m"
+                read -r _yna </dev/tty
+            fi
+            if [[ "$_yna" == "n" ]]; then
+                continue
+            fi
+
+            for _jar in $_jar_need; do
                 _cmd="cp -r"
+                _tgt=$_dst
                 if [[ ! -d "$_dst" ]]; then
                     _cmd="scp -r $SCP_ARGS"
+                    # scp://[user@]host[:port][/path]
+                    if [[ $_dst =~ scp:// && "$(man scp |grep scp://)" == "" ]]; then
+                        pt=$(echo "$_dst" | sed -E 's=scp://([^:]*:)([0-9]*)(.*)=\2=')
+                        if [[ $pt =~ ^[0-9]+$ ]]; then
+                           _cmd="$_cmd -P $pt"
+                           _tgt=$(echo "$_dst" | sed -E 's=scp://([^:]*:)([0-9]*)(.*)=\1\3=')
+                        fi
+                    fi
                 fi
-                #echo "$_cmd $_jar to $_dst"
+                echo "$_jar => $_dst"
                 if [[ -d "$_jar" && "$SUB_FLAT" == "true" ]]; then
                     # shellcheck disable=SC2086
-                    $_cmd $_jar/* "$_dst"
+                    $_cmd $_jar/* "$_tgt"
                 else
                     # shellcheck disable=SC2086
-                    $_cmd $_jar "$_dst"
+                    $_cmd $_jar "$_tgt"
                 fi
             done
         done

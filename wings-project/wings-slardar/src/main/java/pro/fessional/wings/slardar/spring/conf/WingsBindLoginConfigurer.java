@@ -16,8 +16,13 @@ import pro.fessional.wings.slardar.security.bind.WingsBindAuthFilter;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeSource;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author trydofor
@@ -64,6 +69,7 @@ public class WingsBindLoginConfigurer extends
     }
 
     private String loginProcessingUrl = null;
+    private Collection<String> loginProcessingMethod = Collections.emptyList();
     private WingsAuthTypeSource wingsAuthTypeSource = null;
     private WingsAuthDetailsSource<?> wingsAuthDetailsSource = null;
     private final Map<String, Enum<?>> authTypes = new HashMap<>();
@@ -90,13 +96,42 @@ public class WingsBindLoginConfigurer extends
 
     @Override
     public WingsBindLoginConfigurer loginProcessingUrl(String loginProcessingUrl) {
+        return loginProcessingUrl(loginProcessingUrl, Collections.singleton("POST"));
+    }
+
+    public WingsBindLoginConfigurer loginProcessingUrl(String loginProcessingUrl, Collection<String> method) {
         this.loginProcessingUrl = loginProcessingUrl;
+        this.loginProcessingMethod = method;
         return super.loginProcessingUrl(loginProcessingUrl);
     }
 
     @Override
     protected RequestMatcher createLoginProcessingUrlMatcher(String loginProcessingUrl) {
-        return new AntPathRequestMatcher(loginProcessingUrl);
+        if (loginProcessingMethod == null || loginProcessingMethod.isEmpty()) {
+            return new AntPathRequestMatcher(loginProcessingUrl);
+        }
+        else if (loginProcessingMethod.size() == 1) {
+            return new AntPathRequestMatcher(loginProcessingUrl, loginProcessingMethod.iterator().next());
+        }
+        else {
+            return new RequestMatcher() {
+                private final AntPathRequestMatcher matcher = new AntPathRequestMatcher(loginProcessingUrl);
+                private final Set<String> methods = new HashSet<>(loginProcessingMethod);
+
+                @Override
+                public boolean matches(HttpServletRequest request) {
+                    final boolean matches = matcher.matches(request);
+                    if (!matches) return false;
+
+                    final String method = request.getMethod();
+                    for (String s : methods) {
+                        if (s.equalsIgnoreCase(method)) return true;
+                    }
+
+                    return false;
+                }
+            };
+        }
     }
 
     @Override

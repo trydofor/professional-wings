@@ -85,23 +85,23 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
         TimeZone timeZone = resolveUserTimeZone(request);
 
         if (locale == null || timeZone == null) {
-            final WingsUserDetails dt = SecurityContextUtil.getDetails();
+            final WingsUserDetails details = SecurityContextUtil.getUserDetails();
 
             if (locale == null) {
-                if (dt == null) {
+                if (details == null) {
                     locale = Locale.getDefault();
                 }
                 else {
-                    locale = dt.getLocale();
+                    locale = details.getLocale();
                 }
             }
 
             if (timeZone == null) {
-                if (dt == null) {
+                if (details == null) {
                     timeZone = TimeZone.getDefault();
                 }
                 else {
-                    timeZone = TimeZone.getTimeZone(dt.getZoneId());
+                    timeZone = TimeZone.getTimeZone(details.getZoneId());
                 }
             }
         }

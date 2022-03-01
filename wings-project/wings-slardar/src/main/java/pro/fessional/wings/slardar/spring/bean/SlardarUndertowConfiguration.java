@@ -22,7 +22,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
  * @since 2020-07-05
  */
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(Undertow.class)
 public class SlardarUndertowConfiguration {
 

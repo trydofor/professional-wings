@@ -59,13 +59,15 @@ public class RighterControllerTest {
         final String allow = result.getResponse().getHeader(prop.getHeader());
 
         // 通过
+        System.out.println("righter .... right");
         mvc.perform(post("/test/righter.json")
                             .contentType(MediaType.APPLICATION_JSON)
                             .header(prop.getHeader(), allow))
            .andDo(print())
            .andExpect(content().json("{\"uid\":1,\"perms\":[\"a\",\"b\"]}"));
 
-        // 篡改失败
+        // 篡改，失败
+        System.out.println("righter .... failed");
         mvc.perform(post("/test/righter.json")
                             .contentType(MediaType.APPLICATION_JSON)
                             .header(prop.getHeader(), allow + "1"))

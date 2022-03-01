@@ -29,11 +29,14 @@ import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
+ * 对 http://www.jooq.org/xsd/jooq-codegen-3.14.0.xsd 的包装
+ *
  * @author trydofor
  * @since 2019-05-31
  */
@@ -81,14 +84,20 @@ public class WingsCodeGenerator {
 
 
     public static Builder builder() {
-        return new Builder(config());
+        return builder(config());
     }
 
+    public static Builder builder(Configuration conf) {
+        return new Builder(conf == null ? config() : conf);
+    }
 
     public static Configuration config() {
-        try {
-            final InputStream ins = WingsCodeGenerator.class.getResourceAsStream(JOOQ_XML);
-            assert ins != null;
+        return config(WingsCodeGenerator.class.getResourceAsStream(JOOQ_XML));
+    }
+
+    public static Configuration config(InputStream ins) {
+        Objects.requireNonNull(ins);
+        try (ins) {
             return GenerationTool.load(ins);
         }
         catch (IOException e) {
@@ -217,9 +226,10 @@ public class WingsCodeGenerator {
 
         public Builder jdbcUrl(String str) {
             this.conf.getJdbc().setUrl(str);
-            if(str.contains(":h2:")){
+            if (str.contains(":h2:")) {
                 h2();
-            }else{
+            }
+            else {
                 // jdbc:mysql://localhost:3306/wings_warlock
                 int p3 = str.indexOf("?");
                 int p2 = p3 > 0 ? p3 : str.length();
@@ -258,10 +268,38 @@ public class WingsCodeGenerator {
         }
 
         /**
-         * org.jooq.meta.h2.H2Database
+         * configuration/generator/database/name
+         * <p>
+         * CDATA[The database dialect from jooq-meta.
+         * Available dialects are named <code>org.util.[database].[database]Database</code>.
+         * <p>
+         * Natively supported values are:
+         * <ul>
+         * <li>{@link org.jooq.meta.derby.DerbyDatabase}</li>
+         * <li>{@link org.jooq.meta.firebird.FirebirdDatabase}</li>
+         * <li>{@link org.jooq.meta.h2.H2Database}</li>
+         * <li>{@link org.jooq.meta.hsqldb.HSQLDBDatabase}</li>
+         * <li>{@link org.jooq.meta.mariadb.MariaDBDatabase}</li>
+         * <li>{@link org.jooq.meta.mysql.MySQLDatabase}</li>
+         * <li>{@link org.jooq.meta.postgres.PostgresDatabase}</li>
+         * <li>{@link org.jooq.meta.sqlite.SQLiteDatabase}</li>
+         * </ul>
+         * <p>
+         * This value can be used to reverse-engineer generic JDBC DatabaseMetaData (e.g. for MS Access).
+         * <ul>
+         * <li>{@link org.jooq.meta.jdbc.JDBCDatabase}</li>
+         * </ul>
+         * <p>
+         * This value can be used to reverse-engineer standard jOOQ-meta XML formats.
+         * <ul>
+         * <li>{@link org.jooq.meta.xml.XMLDatabase}</li>
+         * </ul>
+         * <p>
+         * You can also provide your own org.jooq.meta.Database implementation
+         * here, if your database is currently not supported
          *
          * @param str AbstractDatabase
-         * @return this
+         * @return Builder
          */
         public Builder databaseName(String str) {
             this.conf.getGenerator().getDatabase().setName(str);
@@ -269,11 +307,23 @@ public class WingsCodeGenerator {
         }
 
         /**
-         * 支持正则的注释
-         * whitespace is ignored, and embedded comments starting with # are ignored until the end of a line.
+         * 注意，匹配的格式为QualifiedName，如db.table，详见 org.jooq.meta.AbstractDatabase#matches
+         * <p>
+         * configuration/generator/database/includes
+         * <p>
+         * All elements that are generated from your schema.
+         * <p>
+         * This is a Java regular expression. Use the pipe to separate several expressions.
+         * Watch out for case-sensitivity. Depending on your database, this might be
+         * important!
+         * <p>
+         * You can create case-insensitive regular expressions
+         * using this syntax: <code>(?i:expr)</code>
+         * <p>
+         * Whitespace is ignored and comments are possible unless overridden in getRegexFlags(). default COMMENTS CASE_INSENSITIVE
          *
          * @param reg 正则
-         * @return builder
+         * @return Builder
          * @see Pattern#COMMENTS
          */
         public Builder databaseIncludes(String... reg) {
@@ -283,11 +333,15 @@ public class WingsCodeGenerator {
         }
 
         /**
-         * 支持正则的注释
-         * whitespace is ignored, and embedded comments starting with # are ignored until the end of a line.
+         * configuration/generator/database/excludes
+         * <p>
+         * All elements that are excluded from your schema.
+         * <p>
+         * This is a Java regular expression. Use the pipe to separate several expressions.
+         * Excludes match before includes, i.e. excludes have a higher priority.
          *
          * @param reg 正则
-         * @return builder
+         * @return Builder
          * @see Pattern#COMMENTS
          */
         public Builder databaseExcludes(String... reg) {
@@ -296,11 +350,37 @@ public class WingsCodeGenerator {
             return this;
         }
 
+        /**
+         * configuration/generator/database/schemaVersionProvider
+         * <p>
+         * A custom version number that, if available, will be used to assess whether the
+         * getInputSchema() will need to be regenerated.
+         * <p>
+         * There are three operation modes for this element:
+         * <ul>
+         * <li>The value is a class that can be found on the classpath and that implements
+         *   {@link org.jooq.meta.SchemaVersionProvider}. Such classes must provide a default constructor</li>
+         * <li>The value is a SELECT statement that returns one record with one column. The
+         *   SELECT statement may contain a named variable called :schema_name</li>
+         * <li>The value is a constant, such as a Maven property</li>
+         * </ul>
+         * <p>
+         * Schema versions will be generated into the {@link javax.annotation.Generated} annotation on
+         * generated artefacts.
+         *
+         * @param str sql
+         * @return Builder
+         */
         public Builder databaseVersionProvider(String str) {
             this.conf.getGenerator().getDatabase().setSchemaVersionProvider(str);
             return this;
         }
 
+        /**
+         * setSchemaVersionProvider to empty
+         *
+         * @return Builder
+         */
         public Builder forceRegenerate() {
             this.conf.getGenerator().getDatabase().setSchemaVersionProvider(Null.Str);
             return this;
@@ -322,7 +402,7 @@ public class WingsCodeGenerator {
             ForcedType ft = new ForcedType()
                     .withUserType(userType.getName())
                     .withConverter(converter.getName())
-                    .withExpression(String.join("|", reg));
+                    .withIncludeExpression(String.join("|", reg));
             return forcedType(ft);
         }
 
@@ -367,7 +447,7 @@ public class WingsCodeGenerator {
                     .withUserType(userType.getName())
                     // new JooqConsEnumConverter(StandardLanguage.class)
                     .withConverter("new " + cv + "(" + userType.getName() + ".class)")
-                    .withExpression(String.join("|", reg));
+                    .withIncludeExpression(String.join("|", reg));
 
             return forcedType(ft, cv);
         }

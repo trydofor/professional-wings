@@ -1,95 +1,113 @@
 #!/bin/bash
-THIS_VERSION=2022-01-22
+THIS_VERSION=2022-02-22
 
 cat <<EOF
 #################################################
 # Version $THIS_VERSION # for Mac&Lin / BusyBox&Bash
 # 使用'ln -s'把此脚本软连接到'执行目录/workdir'，
-# 其同名'env'如（wings-starter.env）会被自动载入。
+# 链接源及链接的同名'env'，文件会被自动载入，当前覆盖源配置项。
 # 同一主机环境，同一boot.jar只能执行一份，多份需更名。
 # 'BOOT_CNF|BOOT_ARG|JAVA_ARG' 内变量可被延时求值，
-# 使用 ' 为延时求值，使用 " 为立即求值。
+# 使用 ' 为延时求值，使用 " 为立即求值。 默认Java 11 G1
 #################################################
 EOF
 ################ modify the following params ################
-WORK_DIR=''      # 脚本生成文件，日志的目录，默认空（脚本位置）
-TAIL_LOG='log'   # 默认tail的日志，"log|out|new|ask"
-USER_RUN="$USER" # 用来启动程序的用户
-PORT_RUN=''      # 默认端口，空时
-BOOT_JAR=''      # 主程序。可通过$1覆盖，绝对路径或相对WORK_DIR
-ARGS_RUN='start' # 默认参数。若$1或$2指定
-BOOT_OUT=''      # 控制台日志，默认 $BOOT_JAR-*.out
-BOOT_LOG=''      # 程序日志，需要外部指定，用来tail
-BOOT_PID=''      # 主程序pid，默认 $BOOT_JAR.pid
-BOOT_CNF=''      # 外部配置。通过env覆盖
-BOOT_ARG=''      # 启动参数。通过env覆盖
-JAVA_XMS='2G'    # 启动参数。通过env覆盖
-JAVA_XMX='4G'    # 启动参数。通过env覆盖
-WARN_TXT=''      # 预设的警告词
-WARN_AGO=''      # 日志多少秒不更新，则警报，空表示忽略
-WARN_RUN=''      # 若pid消失或日志无更新则执行
-JDK_HOME=''      # 指定jdk版本
+WORK_DIR=''          # 脚本生成文件，日志的目录，默认空（脚本位置）
+TAIL_LOG='log'       # 默认tail的日志，"log|out|new|ask"
+USER_RUN=$USER       # 用来启动程序的用户
+PORT_RUN=''          # 默认端口，空时
+ARGS_RUN='start'     # 默认参数。若$1或$2指定
+BOOT_JAR=''          # 主程序。可通过$1覆盖，绝对路径或相对WORK_DIR
+BOOT_OUT=''          # 控制台日志，默认 $BOOT_JAR-*.out
+BOOT_LOG=''          # 程序日志，需要外部指定，用来tail
+BOOT_PID=''          # 主程序pid，默认 $BOOT_JAR.pid
+BOOT_CNF=''          # 外部配置。通过env覆盖
+BOOT_ARG=''          # 启动参数。通过env覆盖
+JAVA_XMS='1G'        # 启动参数。通过env覆盖
+JAVA_XMX='3G'        # 启动参数。通过env覆盖
+WARN_TXT=''          # 预设的警告词
+WARN_AGO=''          # 日志多少秒不更新，则警报，空表示忽略
+WARN_RUN=''          # 若pid消失或日志无更新则执行
+# shellcheck disable=SC2153
+JDK_HOME=''          # 指定jdk版本
 # shellcheck disable=SC2016
-JAVA_ARG='-server
--Djava.awt.headless=true
--Dfile.encoding=UTF-8
-
--Xms${JAVA_XMS}
--Xmx${JAVA_XMX}
--XX:MetaspaceSize=128m
--XX:+UseG1GC
--XX:MaxGCPauseMillis=200
--XX:ParallelGCThreads=8
--XX:ConcGCThreads=8
--XX:InitiatingHeapOccupancyPercent=70
-
--XX:HeapDumpPath=${BOOT_TKN}.heap
+JDK8_ARG='
 -Xloggc:${BOOT_TKN}.gc
 -XX:+PrintGC
 -XX:+PrintGCDetails
 -XX:+PrintGCDateStamps
 '
-
-#-XX:+UseConcMarkSweepGC
-#-XX:NewSize=256m
-#-XX:MaxNewSize=256m
-#-XX:+CMSClassUnloadingEnabled
-#-XX:MaxTenuringThreshold=5
-#-XX:+HeapDumpOnOutOfMemoryError
-#-XX:-OmitStackTraceInFastThrow
+# shellcheck disable=SC2016
+JDK9_ARG='
+--add-modules java.se
+--add-exports java.base/jdk.internal.ref=ALL-UNNAMED
+--add-opens java.base/java.lang=ALL-UNNAMED
+--add-opens=java.base/java.util=ALL-UNNAMED
+--add-opens java.base/java.io=ALL-UNNAMED
+--add-opens java.base/java.nio=ALL-UNNAMED
+--add-opens java.base/sun.nio.ch=ALL-UNNAMED
+--add-opens java.management/sun.management=ALL-UNNAMED
+--add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+--add-opens=java.base/sun.security.x509=ALL-UNNAMED
+--add-opens=jdk.unsupported/sun.misc=ALL-UNNAMED
+-Xlog:gc*=info:file=${BOOT_TKN}.gc:time,tid,tags:filecount=5,filesize=100m
+'
+# shellcheck disable=SC2016
+JAVA_ARG='
+-server
+-Djava.awt.headless=true
+-Dfile.encoding=UTF-8
+-Xms${JAVA_XMS}
+-Xmx${JAVA_XMX}
+-XX:MetaspaceSize=256M
+-XX:AutoBoxCacheMax=20000
+-XX:MaxDirectMemorySize=1024M
+-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${BOOT_TKN}.hprof
+-XX:+UseG1GC
+-XX:MaxGCPauseMillis=200
+-XX:ParallelGCThreads=8
+-XX:ConcGCThreads=8
+'
+# -XX:+ExitOnOutOfMemoryError #docker
 
 ################ NO NEED to modify the following ################
 BOOT_DTM=$(date '+%y%m%d%H%M%S') # 启动日时
 BOOT_TKN=''                      # 启动token，由jar+dtm构成
 BOOT_MD5=''                      # 以safe模式执行的文件md5sum
 JAR_NAME=''                      # boot-jar本名
+JAVA_OPT=''                      # java 实际启动参加
 #
 function print_help() {
     echo -e '\033[32m docker \033[m start in docker with console log'
     echo -e '\033[32m start \033[m start the {boot-jar} and tail the log'
+    echo -e '\033[32m starts \033[m start but Not wait log'
     echo -e '\033[32m stop [snd=30]\033[m stop the {boot-jar} gracefully in {snd} seconds'
+    echo -e '\033[32m stops [snd=30]\033[m stop but Not confirm'
     echo -e '\033[32m status \033[m show the {boot-jar} runtime status'
     echo -e '\033[32m warn \033[m monitor the {boot-jar} and log'
     echo -e '\033[32m clean [days=30] [y] \033[m clean up log-file {days} ago'
     echo -e '\033[32m cron \033[m show the {boot-jar} crontab usage'
     echo -e '\033[32m free \033[m check memory free'
     echo -e '\033[32m check \033[m check shell command'
-    echo -e '\033[37;43;1m default ./wings-starter.sh start\033[m'
-    echo -e '\033[37;43;1m default ./wings-starter.sh boot.jar start\033[m'
+    echo -e '\033[32m config \033[m print config envs'
+    echo -e '\033[32m tail \033[m tail boot log or out'
+    echo -e '\033[37;43;1m default is start, for example\033[m'
+    echo -e './wings-starter.sh'
+    echo -e './wings-starter.sh status'
+    echo -e './wings-starter.sh boot.jar start'
 }
 
 function print_args() {
     echo -e "\033[37;42;1mINFO: ==== boot arguments ==== \033[0m"
-    echo "boot-jar=$BOOT_JAR"
-    echo "boot-md5=$BOOT_MD5"
-    echo "boot-tkn=$BOOT_TKN"
-    echo "boot-pid=$BOOT_PID"
-    echo "boot-log=$BOOT_LOG"
-    echo "boot-out=$BOOT_OUT"
-    echo "boot-arg=$BOOT_ARG"
-
+    echo "BOOT_JAR=$BOOT_JAR"
+    echo "BOOT_MD5=$BOOT_MD5"
+    echo "BOOT_TKN=$BOOT_TKN"
+    echo "BOOT_PID=$BOOT_PID"
+    echo "BOOT_LOG=$BOOT_LOG"
+    echo "BOOT_OUT=$BOOT_OUT"
+    echo "BOOT_ARG=$BOOT_ARG"
     echo -e "\033[37;42;1mINFO: ==== java arguments ==== \033[0m"
-    echo "$JAVA_ARG"
+    echo "$JAVA_OPT"
 }
 
 function check_cmd() {
@@ -113,6 +131,12 @@ function check_java() {
     if ! java -version; then
         echo -e "\033[37;41;1mERROR: can not found 'java' in the $PATH \033[0m"
         exit
+    fi
+
+    if [[ $(java -help 2>&1 | grep -cF 'add-modules') -gt 0 ]]; then
+        JAVA_OPT="$JDK9_ARG $JAVA_ARG"
+    else
+        JAVA_OPT="$JDK8_ARG $JAVA_ARG"
     fi
 }
 
@@ -141,6 +165,15 @@ function check_boot() {
 # load env
 echo -e "\033[37;42;1mINFO: ==== boot env ==== \033[0m"
 this_file="$0"
+if [[ -L "$this_file" ]]; then
+    link_file=$(realpath "$this_file")
+    link_envs=${link_file%.*}.env
+    if [[ -f "$link_envs" ]]; then
+        echo "env-link=$link_envs"
+        # shellcheck disable=SC1090
+        source "$link_envs"
+    fi
+fi
 this_envs=${this_file%.*}.env
 if [[ -f "$this_envs" ]]; then
     echo "env-file=$this_envs"
@@ -151,7 +184,7 @@ else
 fi
 
 # change workdir
-if [[ "$WORK_DIR" == "" ]]; then
+if [[ ! -d "$WORK_DIR" ]]; then
     WORK_DIR=$(dirname "$this_file")
 fi
 cd "$WORK_DIR" || exit
@@ -170,8 +203,27 @@ fi
 # check boot jar
 check_boot
 JAR_NAME=$(basename "$BOOT_JAR")
-BOOT_TKN="${JAR_NAME}-${BOOT_DTM}"
 
+# boot pid
+if [[ "$BOOT_PID" == "" ]]; then
+    BOOT_PID="${JAR_NAME}.pid"
+fi
+
+# boot tkn
+BOOT_TKN="${JAR_NAME}-${BOOT_DTM}"
+if [[ "$ARGS_RUN" != "start" && -f "$BOOT_PID" ]]; then
+   old_tkn=$(awk '{print $2}' "$BOOT_PID")
+   if [[ "$old_tkn" != "" ]]; then
+      BOOT_TKN=$old_tkn
+   fi
+fi
+
+# boot out
+if [[ "$BOOT_OUT" == "" ]]; then
+    BOOT_OUT="${BOOT_TKN}.out"
+fi
+
+# boot md5
 file_md5="${JAR_NAME}.md5"
 if [[ -f "$file_md5" ]]; then
     BOOT_MD5=$(awk '{print $1}' <"$file_md5")
@@ -181,22 +233,15 @@ fi
 if [[ "$JDK_HOME" != "" && "$JDK_HOME" != "$JAVA_HOME" ]]; then
     PATH=$JDK_HOME/bin:$PATH
     JAVA_HOME=$JDK_HOME
-    echo -e "\033[37;42;1mINFO: use JAVA_HOME=$JAVA_HOME ==== \033[0m"
-fi
-
-# check pid&out
-if [[ "$BOOT_PID" == "" ]]; then
-    BOOT_PID="${JAR_NAME}.pid"
-fi
-if [[ "$BOOT_OUT" == "" ]]; then
-    # shellcheck disable=SC2012,SC2086
-    BOOT_OUT="$(ls -t ${JAR_NAME}*.out 2>/dev/null | head -n1)"
+    echo -e "\033[37;42;1mINFO: ==== JAVA_HOME=$JAVA_HOME ==== \033[0m"
 fi
 
 # lazy env
 BOOT_CNF=$(eval "echo \"$BOOT_CNF\"")
 BOOT_ARG=$(eval "echo \"$BOOT_ARG\"")
 JAVA_ARG=$(eval "echo \"$JAVA_ARG\"")
+JDK8_ARG=$(eval "echo \"$JDK8_ARG\"")
+JDK9_ARG=$(eval "echo \"$JDK9_ARG\"")
 
 # calc arg
 if [[ "$BOOT_CNF" != "" ]]; then
@@ -221,13 +266,13 @@ case "$ARGS_RUN" in
         print_args
         if [[ $count -eq 0 ]]; then
             # shellcheck disable=SC2086
-            java $JAVA_ARG -jar $BOOT_JAR $BOOT_ARG 2>&1
+            java $JAVA_OPT -jar $BOOT_JAR $BOOT_ARG 2>&1
         else
             echo -e "\033[37;41;1mERROR: has $count running $BOOT_JAR \033[0m"
             pgrep -alf "$grep_key"
         fi
         ;;
-    start)
+    start*)
         check_java
 
         if [[ $count -ne 0 ]]; then
@@ -247,24 +292,35 @@ case "$ARGS_RUN" in
             cp "$BOOT_JAR" "$safe_jar"
         fi
 
-        BOOT_OUT="${BOOT_TKN}.out"
         #
         print_args
         check_user
 
+        touch "$BOOT_OUT"
+        real_out=$(realpath "$BOOT_OUT")
         # shellcheck disable=SC2086
-        nohup java $JAVA_ARG -jar $safe_jar $BOOT_ARG >$BOOT_OUT 2>&1 &
-        echo $! >"$BOOT_PID"
+        nohup java $JAVA_OPT -Dwings.console.out=$real_out -jar $safe_jar $BOOT_ARG >$BOOT_OUT 2>&1 &
+        echo "$! ${BOOT_TKN}" >"$BOOT_PID"
         sleep 2
 
         cid=$(pgrep -f "$grep_key" | tr '\n' ' ')
         if [[ "$cid" == "" ]]; then
             echo -e "\033[37;41;1mERROR: failed to check PID by $BOOT_JAR \033[0m"
+            cat "$BOOT_OUT"
             exit
         else
             echo -e "\033[37;43;1mNOTE: current PID=$cid of $BOOT_JAR \033[0m"
             # shellcheck disable=SC2086
             ps -fwww $cid
+        fi
+
+        if [[ "$ARGS_RUN" != "start" ]]; then
+            echo -e "\033[37;43;1mNOTE: tail -f $BOOT_OUT \033[0m"
+            timeout -s 9 10 tail -f "$BOOT_OUT"
+            echo -e "\033[37;43;1m====== ${BOOT_JAR//?/=} ======\033[0m"
+            echo -e "\033[37;43;1m====== $BOOT_JAR ======\033[0m"
+            echo -e "\033[37;43;1m====== ${BOOT_JAR//?/=} ======\033[0m"
+            exit
         fi
 
         tail_log="$BOOT_OUT"
@@ -298,13 +354,11 @@ case "$ARGS_RUN" in
         fi
 
         if [[ -f "$tail_log" ]]; then
-            echo -e "\033[37;43;1mNOTE: tail current file=$tail_log, Ctrl-C to break \033[0m"
-            tail -n 50 -f "$tail_log"
+            echo -e "\033[37;43;1mNOTE: tail -f $tail_log, Ctrl-C to break \033[0m"
+            tail -f "$tail_log"
         fi
         ;;
-    stop)
-        print_args
-
+    stop*)
         if [[ $count -eq 0 ]]; then
             echo -e "\033[37;43;1mNOTE: not running $BOOT_JAR \033[0m"
             exit
@@ -319,7 +373,7 @@ case "$ARGS_RUN" in
 
         check_user
 
-        pid=$(cat "$BOOT_PID")
+        pid=$(awk '{print $1}' "$BOOT_PID")
         if [[ $pid -ne $cid ]]; then
             echo -e "\033[31mWARN: pid not match, file-pid=$pid , proc-pid=$cid \033[0m"
             echo -e "\033[31mWARN: press <ENTER> to kill $pid, <y> to kill all $cid \033[0m"
@@ -332,63 +386,65 @@ case "$ARGS_RUN" in
         # shellcheck disable=SC2086
         kill $pid
 
-        icon=''
+        bars=''
         for ((i = 0; i < timeout; i++)); do
             for ((j = 0; j < 10; j++)); do
-                printf "[%ds][%-60s]\r" "$i" "$icon"
-                if [[ ${#icon} -ge 60 ]]; then
-                    icon=''
+                printf "[%ds][%-60s]\r" "$i" "$bars"
+                if [[ ${#bars} -ge 60 ]]; then
+                    bars=''
                 else
-                    icon='#'${icon}
+                    bars='#'${bars}
                 fi
                 sleep 0.1
             done
 
-            if [[ $(pgrep -f "$grep_key" | wc -l) -eq 0 ]]; then
+            # shellcheck disable=SC2086
+            if ! ps $pid > /dev/null; then
+                echo ""
                 echo -e "\033[33mNOTE: successfully stop in $i seconds, pid=$pid of $BOOT_JAR \033[0m"
                 exit
             fi
         done
-        cid=$(pgrep -f "$grep_key" | tr '\n' ' ')
-        echo -e "\033[37;41;1mWARN: stopping timeout[${timeout}s], pid=$pid \033[0m"
-        echo -e "\033[31mWARN: need manually check PID=$cid of $BOOT_JAR \033[0m"
-        echo -e "\033[33mNOTE: <ENTER> to 'kill -9 $pid', <Ctrl-C> to exit \033[0m"
-        read -r
+        echo -e "\033[37;41;1mWARN: timeout[${timeout}s] and kill -9 $pid \033[0m"
+        if [[ "$ARGS_RUN" == "stop" ]]; then
+            echo -e "\033[33mNOTE: <ENTER> to kill, <Ctrl-C> to exit \033[0m"
+            read -r
+        fi
         # shellcheck disable=SC2086
         kill -9 $pid
         ;;
     status)
-        print_args
-
         if [[ $count -eq 0 ]]; then
-            echo -e "\033[37;43;1mNOTE: not running $BOOT_JAR \033[0m"
+            echo -e "\033[37;41;1mERROR: not running $BOOT_JAR \033[0m"
             exit
         fi
 
-        tail_num=10
+        check_java
+        print_args
+
+        tail_num=20
         if [[ -f "$BOOT_OUT" ]]; then
-            echo -e "\033[37;43;1mNOTE: last $tail_num lines of output=$BOOT_OUT \033[0m"
+            echo -e "\033[37;43;1mNOTE: tail -n $tail_num $BOOT_OUT \033[0m"
             tail -n $tail_num "$BOOT_OUT"
         fi
         if [[ -f "$BOOT_LOG" ]]; then
-            echo -e "\033[37;43;1mNOTE: tail $tail_num lines of log-file= $BOOT_LOG \033[0m"
+            echo -e "\033[37;43;1mNOTE: tail -n $tail_num $BOOT_LOG \033[0m"
             tail -n $tail_num "$BOOT_LOG"
         fi
-        pid=$(cat "$BOOT_PID")
-        cid=$(pgrep -f "$grep_key" | tr '\n' ' ')
+        pid=$(awk '{print $1}' "$BOOT_PID")
+        cid=$(pgrep -f "$grep_key")
         echo -e "\033[37;43;1mNOTE: boot.pid=$pid \033[0m"
         echo -e "\033[33mNOTE: current PID=$cid of $BOOT_JAR \033[0m"
-        # shellcheck disable=SC2086
-        ps -fwww $cid
+        ps -fwww "$cid" || exit
 
         if [[ $pid -ne $cid ]]; then
             echo -e "\033[31mWARN: pid not match, proc-pid=$cid, file-pid=$pid \033[0m"
         fi
 
-        # shellcheck disable=SC2009,SC2086
-        mrs=$(ps -o rss $cid | grep -v RSS | numfmt --grouping)
-        # shellcheck disable=SC2009,SC2086
-        mvs=$(ps -o vsz $cid | grep -v VSZ | numfmt --grouping)
+        # shellcheck disable=SC2009
+        mrs=$(ps -o rss "$cid" | grep -v RSS | numfmt --grouping)
+        # shellcheck disable=SC2009
+        mvs=$(ps -o vsz "$cid" | grep -v VSZ | numfmt --grouping)
         echo -e "\033[37;43;1mNOTE: ps -o rss -o vsz $cid \033[0m"
         echo -e "\033[32m Resident= $mrs Kb\033[m"
         echo -e "\033[32m Virtual=  $mvs Kb\033[m"
@@ -399,15 +455,29 @@ case "$ARGS_RUN" in
         echo -e "\033[32m java -jar arthas-boot.jar $cid \033[m https://github.com/alibaba/arthas"
 
         check_user
-        echo -e "\033[37;43;1mNOTE: jstat -gcutil $cid 1000 5 \033[0m"
-        # shellcheck disable=SC2086
-        jstat -gcutil $cid 1000 5
+        echo -e "\033[37;43;1mNOTE: jstat -gcutil $cid 1000 1 \033[0m"
+        jstat -gcutil "$cid" 1000 1
+        echo -e "\033[37;43;1mNOTE: jstat -gc $cid 1000 1 \033[0m"
+        jstat -gc "$cid" 1000 1
+        ;;
+    tail)
+        file_log=$BOOT_LOG
+        if [[ ! -f "$file_log" ]]; then
+            file_log=$BOOT_OUT
+        fi
+        if [[ ! -f "$file_log" ]]; then
+            echo -e "\033[37;41;1mERROR: no log found \033[0m"
+            exit
+        fi
+        tail_num=20
+        echo -e "\033[37;42;1mINFO: tail -f -n $tail_num $file_log \033[0m"
+        tail -f -n $tail_num "$file_log"
         ;;
     warn)
         warn_got=''
         if [[ $count -eq 0 ]]; then
-            echo -e "\033[33mNOTE: not running $BOOT_JAR \033[0m"
-            WARN_TXT="$WARN_TXT,PID"
+            echo -e "\033[37;41;1mWARN: not running $BOOT_JAR \033[0m"
+            WARN_TXT="$WARN_TXT \\nPID not found"
             warn_got="pid"
         fi
 
@@ -415,8 +485,8 @@ case "$ARGS_RUN" in
             log_time=$(date +%s -r "$BOOT_LOG")
             ago_time=$(date +%s -d "now -$WARN_AGO second")
             if [[ log_time -lt ago_time ]]; then
-                echo -e "\033[33mNOTE: no update in $WARN_AGO seconds, log $BOOT_LOG \033[0m"
-                WARN_TXT="$WARN_TXT,LOG"
+                echo -e "\033[37;41;1mWARN: no update in $WARN_AGO seconds, log $BOOT_LOG \033[0m"
+                WARN_TXT="$WARN_TXT \\nLOG not updated"
                 warn_got="log"
             fi
         fi
@@ -508,10 +578,35 @@ case "$ARGS_RUN" in
         check_cmd ps
         check_cmd realpath
         check_cmd tail
+        check_cmd timeout
+        check_cmd touch
         check_cmd tr
         check_cmd wc
         check_cmd which
         check_cmd xargs
+        ;;
+    config)
+        echo -e '\033[37;42;1mNOTE: ==== conf env ==== \033[m'
+        echo "WORK_DIR=$WORK_DIR"
+        echo "TAIL_LOG=$TAIL_LOG"
+        echo "USER_RUN=$USER_RUN"
+        echo "PORT_RUN=$PORT_RUN"
+        echo "ARGS_RUN=$ARGS_RUN"
+        echo "BOOT_JAR=$BOOT_JAR"
+        echo "BOOT_OUT=$BOOT_OUT"
+        echo "BOOT_LOG=$BOOT_LOG"
+        echo "BOOT_PID=$BOOT_PID"
+        echo "BOOT_CNF=$BOOT_CNF"
+        echo "BOOT_ARG=$BOOT_ARG"
+        echo "JAVA_XMS=$JAVA_XMS"
+        echo "JAVA_XMX=$JAVA_XMX"
+        echo "JDK_HOME=$JDK_HOME"
+        echo "JDK8_ARG=$JDK8_ARG"
+        echo "JDK9_ARG=$JDK9_ARG"
+        echo "JAVA_ARG=$JAVA_ARG"
+        echo "WARN_TXT=$WARN_TXT"
+        echo "WARN_AGO=$WARN_AGO"
+        echo "WARN_RUN=$WARN_RUN"
         ;;
     *)
         if [[ "$ARGS_RUN" == "help" ]]; then

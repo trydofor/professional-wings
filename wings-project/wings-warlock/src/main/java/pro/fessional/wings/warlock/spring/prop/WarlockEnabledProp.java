@@ -25,6 +25,38 @@ public class WarlockEnabledProp {
     public static final String Key$securityConf = Key + ".security-conf";
 
     /**
+     * 是否支持 warlock security http配置
+     *
+     * @see #Key$securityHttp
+     */
+    private boolean securityHttp = true;
+    public static final String Key$securityHttp = Key + ".security-http";
+
+    /**
+     * @see #Key$securityHttpBind
+     */
+    private boolean securityHttpBind = true;
+    public static final String Key$securityHttpBind = Key + ".security-http-bind";
+
+    /**
+     * @see #Key$securityHttpAuth
+     */
+    private boolean securityHttpAuth = true;
+    public static final String Key$securityHttpAuth = Key + ".security-http-auth";
+
+    /**
+     * @see #Key$securityHttpBase
+     */
+    private boolean securityHttpBase = true;
+    public static final String Key$securityHttpBase = Key + ".security-http-base";
+
+    /**
+     * @see #Key$securityHttpAuto
+     */
+    private boolean securityHttpAuto = true;
+    public static final String Key$securityHttpAuto = Key + ".security-http-auto";
+
+    /**
      * 是否支持 warlock security 默认Bean
      *
      * @see #Key$securityBean

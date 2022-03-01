@@ -20,7 +20,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
  * @author trydofor
  * @since 2019-12-01
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$tableChange, havingValue = "true")
 public class WarlockTableChangeConfiguration {
 

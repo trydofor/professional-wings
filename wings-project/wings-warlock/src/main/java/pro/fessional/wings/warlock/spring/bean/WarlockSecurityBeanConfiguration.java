@@ -86,7 +86,7 @@ import static org.springframework.util.StringUtils.hasText;
  * @author trydofor
  * @since 2019-12-01
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityBean, havingValue = "true")
 @RequiredArgsConstructor
 public class WarlockSecurityBeanConfiguration {
@@ -347,7 +347,10 @@ public class WarlockSecurityBeanConfiguration {
                                        .collect(Collectors.toSet());
             final Set<String> perm = ma.getAuthPerm();
             final long uid = ma.getUserId();
-            if (uid > 0L) {
+            if (uid == Long.MIN_VALUE) {
+                logger.info("Wings conf skip MemAuth, userId=" + uid);
+            }
+            else {
                 logger.info("Wings conf add MemAuth, userId=" + uid);
                 bean.addAuthz(uid, role);
                 bean.addAuthz(uid, perm);
@@ -360,6 +363,9 @@ public class WarlockSecurityBeanConfiguration {
                 logger.info("Wings conf add MemAuth, username=" + un + ", auth-type=" + tm);
                 bean.addAuthz(un, at, role);
                 bean.addAuthz(un, at, perm);
+            }
+            else {
+                logger.info("Wings conf skip MemAuth, empty username");
             }
         }
         return bean;

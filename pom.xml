@@ -6,16 +6,16 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.2</version>
-        <relativePath/>
+        <version>2.6.3</version>
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>pro.fessional</groupId>
-    <artifactId>wings-dependency</artifactId>
+    <artifactId>wings</artifactId>
     <version>${revision}.${changelist}</version>
     <packaging>pom</packaging>
 
-    <name>wings-dependency</name>
+    <name>wings</name>
     <description>万物生长靠日</description>
 
     <modules>
@@ -24,48 +24,68 @@
     </modules>
 
     <properties>
-        <revision>2.4.2</revision>
-        <changelist>201-SNAPSHOT</changelist>
-        <!-- https://docs.spring.io/spring-boot/docs/2.4.2/reference/html/appendix-dependency-versions.html#appendix-dependency-versions -->
+        <maven.version>3.8.4</maven.version>
+        <revision>2.6.3</revision>
+        <changelist>210-SNAPSHOT</changelist>
+        <!-- https://docs.spring.io/spring-boot/docs/2.6.3/reference/html/appendix-dependency-versions.html#appendix-dependency-versions -->
         <spring-boot.version>${revision}</spring-boot.version>
-        <spring-session.version>2.4.1</spring-session.version> <!-- spring-session-bom.version -->
         <wings.version>${revision}.${changelist}</wings.version>
         <!-- project -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
-        <kotlin.compiler.apiVersion>1.4</kotlin.compiler.apiVersion>
-        <maven.test.skip>true</maven.test.skip>
+        <java.version>11</java.version>
+        <kotlin.version>1.6.10</kotlin.version>
+        <!-- mvn boot -->
+        <maven.test.skip>false</maven.test.skip>
+        <maven.deploy.skip>false</maven.deploy.skip>
+        <maven.install.skip>false</maven.install.skip>
+        <spring-boot.repackage.skip>false</spring-boot.repackage.skip>
+        <spring-boot.repackage.executable>false</spring-boot.repackage.executable>
         <!-- silencer -->
         <mirana.version>2.2.3-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <!-- faceless -->
         <meepo.version>1.4.1-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
-        <simpleflatmapper.version>8.2.3</simpleflatmapper.version>
-        <sharding-sphere.version>4.1.1</sharding-sphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
+        <simpleflatmapper.version>8.2.3</simpleflatmapper.version> <!-- https://simpleflatmapper.org -->
+        <shardingsphere.version>5.0.0</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <!-- slardar -->
-        <guava.version>30.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
-        <commons-io.version>2.8.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
-        <mapstruct.version>1.4.1.Final</mapstruct.version> <!-- https://mapstruct.org/news/ -->
+        <guava.version>31.0.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
+        <commons-io.version>2.11.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
+        <mapstruct.version>1.4.2.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
-        <swagger.version>3.0.0</swagger.version>
+        <springdoc.version>1.6.5</springdoc.version> <!-- https://springdoc.org/ -->
         <!-- slardar -->
-        <justauth.version>1.16.1</justauth.version>
-        <xxljob.version>2.3.0</xxljob.version>
+        <justauth.version>1.16.5</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
+        <xxljob.version>2.3.0</xxljob.version> <!-- https://github.com/xuxueli/xxl-job/releases -->
         <!-- others -->
-        <errorprone.version>2.5.1</errorprone.version>
-        <fastjson.version>1.2.75</fastjson.version>
-        <kryo.version>5.0.4</kryo.version>
-        <transmittable.version>2.12.1</transmittable.version>
-        <bouncycastle.version>1.68</bouncycastle.version>
-        <boot-admin.version>2.4.0</boot-admin.version>
+        <errorprone.version>2.11.0</errorprone.version> <!-- https://github.com/google/error-prone/releases -->
+        <fastjson.version>1.2.79</fastjson.version> <!-- https://github.com/alibaba/fastjson/releases -->
+        <kryo.version>5.3.0</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
+        <transmittable.version>2.12.4</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
+        <bouncycastle.version>1.70</bouncycastle.version> <!-- https://bouncycastle.org/latest_releases.html -->
+        <boot-admin.version>2.6.2</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
+        <sentry.version>5.6.1</sentry.version> <!-- https://docs.sentry.io/platforms/java/guides/spring-boot/ -->
         <!-- override spring boot default -->
-        <lombok.version>1.18.20</lombok.version>
-        <okhttp3.version>4.9.0</okhttp3.version> <!-- just auth need 4, spring use 3 -->
+        <lombok.version>1.18.22</lombok.version> <!-- https://projectlombok.org/changelog -->
+        <okhttp3.version>4.9.1</okhttp3.version> <!-- just auth need 4, spring use 3 https://square.github.io/okhttp/changelog/ -->
         <!-- mvn-build-plugin -->
-        <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
-        <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
+        <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version> <!-- https://search.maven.org/search?q=flatten-maven-plugin -->
+        <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version> <!-- https://search.maven.org/search?q=maven-gpg-plugin -->
+        <wings.java-opens>
+            --illegal-access=debug
+            --add-modules=java.se <!-- Hazelcast -->
+            --add-opens=java.base/java.io=ALL-UNNAMED <!-- FastJson -->
+            --add-opens=java.base/java.nio=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=java.base/java.lang=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=java.base/java.util=ALL-UNNAMED <!-- Boot Collections$EmptySet -->
+            --add-opens=java.base/sun.nio.ch=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=java.base/sun.security.x509=ALL-UNNAMED <!-- Boot -->
+            --add-opens=java.management/sun.management=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=jdk.unsupported/sun.misc=ALL-UNNAMED <!-- Boot -->
+            --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED <!-- Boot -->
+            --add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED <!-- Boot -->
+        </wings.java-opens>
     </properties>
 
     <dependencyManagement>
@@ -122,6 +142,11 @@
                 <artifactId>wings-warlock</artifactId>
                 <version>${wings.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-jdk8</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
             <!-- springboot -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -138,13 +163,18 @@
             <!-- sharding sphere -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
-                <artifactId>sharding-jdbc-core</artifactId>
-                <version>${sharding-sphere.version}</version>
+                <artifactId>shardingsphere-jdbc-core</artifactId>
+                <version>${shardingsphere.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
-                <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
-                <version>${sharding-sphere.version}</version>
+                <artifactId>shardingsphere-transaction-xa-core</artifactId>
+                <version>${shardingsphere.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shardingsphere</groupId>
+                <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
+                <version>${shardingsphere.version}</version>
             </dependency>
             <!-- mapper converter -->
             <dependency>
@@ -162,12 +192,18 @@
                 <artifactId>sfm-jooq</artifactId>
                 <version>${simpleflatmapper.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.simpleflatmapper</groupId>
+                <artifactId>sfm-querydsl</artifactId>
+                <version>${simpleflatmapper.version}</version>
+            </dependency>
             <!-- session cache -->
+            <!-- spring-session-bom
             <dependency>
                 <groupId>org.springframework.session</groupId>
                 <artifactId>spring-session-hazelcast</artifactId>
-                <version>${spring-session.version}</version>
             </dependency>
+            -->
             <dependency>
                 <groupId>com.hazelcast</groupId>
                 <artifactId>hazelcast-spring</artifactId>
@@ -231,6 +267,16 @@
                 <artifactId>spring-boot-admin-starter-client</artifactId>
                 <version>${boot-admin.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.sentry</groupId>
+                <artifactId>sentry-spring-boot-starter</artifactId>
+                <version>${sentry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.sentry</groupId>
+                <artifactId>sentry-logback</artifactId>
+                <version>${sentry.version}</version>
+            </dependency>
             <!-- dev -->
             <dependency>
                 <groupId>com.google.errorprone</groupId>
@@ -248,9 +294,14 @@
                 <version>${mapstruct.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-boot-starter</artifactId>
-                <version>${swagger.version}</version>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-security</artifactId>
+                <version>${springdoc.version}</version>
             </dependency>
             <dependency>
                 <!-- 未曾使用，但因安全漏洞，避免误用，显示移除 -->
@@ -282,11 +333,57 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <argLine>${wings.java-opens}</argLine>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <configuration>
+                        <!-- avoid /build/resources/resource/filtering=true -->
+                        <nonFilteredFileExtensions>
+                            <nonFilteredFileExtension>so</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>dll</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>zip</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>jar</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>icon</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>jpg</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>gif</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>png</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>wav</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>mp3</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>xls</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>doc</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>docx</nonFilteredFileExtension>
+                        </nonFilteredFileExtensions>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
                     <configuration>
-                        <source>${maven.compiler.source}</source>
-                        <target>${maven.compiler.target}</target>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <compilerArgs>
+                            <arg>--add-modules=java.se</arg> <!-- Hazelcast -->
+                            <arg>--add-exports=java.base/java.io=ALL-UNNAMED</arg> <!-- FastJson -->
+                            <arg>--add-exports=java.base/java.nio=ALL-UNNAMED</arg> <!-- Hazelcast -->
+                            <arg>--add-exports=java.base/java.lang=ALL-UNNAMED</arg> <!-- Hazelcast -->
+                            <arg>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</arg> <!-- Hazelcast -->
+                            <arg>--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED</arg> <!-- Hazelcast -->
+                            <arg>--add-exports=java.base/sun.security.x509=ALL-UNNAMED</arg> <!-- Boot -->
+                            <arg>--add-exports=java.management/sun.management=ALL-UNNAMED</arg> <!-- Hazelcast -->
+                            <arg>--add-exports=jdk.management/com.sun.management.internal=ALL-UNNAMED</arg> <!-- Hazelcast -->
+                            <arg>--add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED</arg> <!-- Boot -->
+                            <arg>--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg> <!-- Boot -->
+                            <arg>--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg> <!-- Boot -->
+                        </compilerArgs>
                         <annotationProcessorPaths>
                             <!--  从以下 path 查找annotationProcessor，class paths -->
                             <path>
@@ -334,6 +431,21 @@
                             <id>attach-javadocs</id>
                             <goals>
                                 <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <configuration>
+                        <skip>${spring-boot.repackage.skip}</skip>
+                        <executable>${spring-boot.repackage.executable}</executable>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>build-info</goal>
                             </goals>
                         </execution>
                     </executions>
@@ -408,6 +520,10 @@
                     <groupId>org.jetbrains.kotlin</groupId>
                     <artifactId>kotlin-maven-plugin</artifactId>
                     <version>${kotlin.version}</version>
+                    <configuration>
+                        <jvmTarget>${java.version}</jvmTarget>
+                        <javaParameters>true</javaParameters>
+                    </configuration>
                     <executions>
                         <execution>
                             <id>compile</id>

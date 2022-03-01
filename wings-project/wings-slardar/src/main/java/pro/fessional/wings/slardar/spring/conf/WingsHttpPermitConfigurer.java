@@ -89,7 +89,7 @@ public class WingsHttpPermitConfigurer extends AbstractHttpConfigurer<WingsHttpP
     }
 
     public static String[] swaggerAntPaths() {
-        return new String[]{"/*/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**"};
+        return new String[]{"/swagger*/**", "/webjars/**"};
     }
 
 }

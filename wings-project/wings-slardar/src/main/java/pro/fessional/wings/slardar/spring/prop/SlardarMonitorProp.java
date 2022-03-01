@@ -5,7 +5,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import pro.fessional.wings.slardar.monitor.filtter.LogViewer;
 import pro.fessional.wings.slardar.monitor.metric.JvmMetric;
 import pro.fessional.wings.slardar.monitor.metric.LogMetric;
-import pro.fessional.wings.slardar.monitor.report.DingTalkReport;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,8 +68,8 @@ public class SlardarMonitorProp {
      *
      * @see #Key$dingTalk
      */
-    public static final String Key$dingTalk = DingTalkReport.Conf.Key;
-    private DingTalkReport.Conf dingTalk = new DingTalkReport.Conf();
+    public static final String Key$dingTalk = DingTalkConf.Key;
+    private DingTalkConf dingTalk = new DingTalkConf();
 
 
     /**
@@ -78,4 +77,40 @@ public class SlardarMonitorProp {
      */
     private LogViewer.Conf view = null;
     public static final String Key$view = LogViewer.Conf.Key;
+
+
+    @Data
+    public static class DingTalkConf {
+        public static final String Key = SlardarMonitorProp.Key + ".ding-talk";
+
+        /**
+         * @see #Key$webhookUrl
+         */
+        private String webhookUrl = "";
+        public static final String Key$webhookUrl = Key + ".webhook-url";
+
+        /**
+         * 警报时，使用钉钉通知的access_token，空表示不使用。
+         *
+         * @see #Key$accessToken
+         */
+        private String accessToken = "";
+        public static final String Key$accessToken = Key + ".access-token";
+
+        /**
+         * 消息签名，空表示不使用
+         *
+         * @see #Key$digestSecret
+         */
+        private String digestSecret = "";
+        public static final String Key$digestSecret = Key + ".digest-secret";
+
+        /**
+         * 自定义关键词：最多可以设置10个关键词，消息中至少包含其中1个关键词才可以发送成功
+         *
+         * @see #Key$reportKeyword
+         */
+        private String reportKeyword = "";
+        public static final String Key$reportKeyword = Key + ".report-keyword";
+    }
 }

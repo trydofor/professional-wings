@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.service.perm.WarlockPermNormalizer;
@@ -98,7 +99,7 @@ public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
      * @param authz    权限和角色
      */
     public void addAuthz(@NotNull String username, Enum<?> authType, @NotNull Collection<String> authz) {
-        if (authType == null) {
+        if (authType == null || authType == Null.Enm) {
             final Set<String> set = namedAuthz.computeIfAbsent(username, k -> new CopyOnWriteArraySet<>());
             set.addAll(authz);
         }

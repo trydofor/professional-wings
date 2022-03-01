@@ -15,8 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.slardar.httprest.OkHttpClientHelper;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -54,12 +53,12 @@ class MemLoginTest {
         String au4 = OkHttpClientHelper.extractString(r4, false);
         log.warn("UsernameLogin auth4={}", au4);
 
-        final Set<String> st3 = JSON.parseObject(au3, new TypeReference<Set<String>>() {});
-        final Set<String> st4 = JSON.parseObject(au4, new TypeReference<Set<String>>() {});
+        final Set<String> st3 = JSON.parseObject(au3, new TypeReference<>() {});
+        final Set<String> st4 = JSON.parseObject(au4, new TypeReference<>() {});
         Assertions.assertEquals(st3, st4);
 
-        Set<String> exp = new HashSet<>(Arrays.asList("ROLE_SYSTEM", "user-perm"));
-        Assertions.assertEquals(exp, st3);
+        List<String> exp = Arrays.asList("ROLE_SYSTEM","ROLE_ADMIN", "user-perm");
+        Assertions.assertTrue(st3.containsAll(exp));
     }
 
     @Test
@@ -86,7 +85,6 @@ class MemLoginTest {
         final Set<String> st4 = JSON.parseObject(au4, new TypeReference<Set<String>>() {});
         Assertions.assertEquals(st3, st4);
 
-        Set<String> exp = new HashSet<>(Collections.singletonList("email-perm"));
-        Assertions.assertEquals(exp, st3);
+        Assertions.assertTrue(st3.contains("email-perm"));
     }
 }

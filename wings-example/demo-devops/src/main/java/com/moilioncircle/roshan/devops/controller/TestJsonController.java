@@ -1,9 +1,8 @@
 package com.moilioncircle.roshan.devops.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,7 +37,7 @@ public class TestJsonController {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    @ApiModel("DemoJson")
+    @Schema(description = "DemoJson")
     public static class Jn {
         private boolean boolVal = false;
         private int intVal = Integer.MAX_VALUE - 1;
@@ -56,7 +55,7 @@ public class TestJsonController {
         private ZonedDateTime zonedDateTimePtn = ZonedDateTime.now();
         private Instant instantVal = Instant.now();
         private Date utilDateVal = new Date();
-        @ApiModelProperty(dataType = "Long", example = "1234567890")
+        @Schema(type = "Long", example = "1234567890")
         private Calendar calendarVal = Calendar.getInstance();
         private List<Instant> listVal = Collections.singletonList(Instant.now());
         private Map<LocalDate, LocalDateTime> mapVal = Collections.singletonMap(LocalDate.now(), LocalDateTime.now());
@@ -65,7 +64,7 @@ public class TestJsonController {
         private ZoneId userZoneId;
     }
 
-    @ApiOperation("test json")
+    @Operation(summary = "test json")
     @GetMapping("/test/demo.json")
     public R<Jn> jsonIt() {
         Jn json = new Jn();

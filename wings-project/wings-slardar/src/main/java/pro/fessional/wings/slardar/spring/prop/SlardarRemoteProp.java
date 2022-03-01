@@ -3,9 +3,9 @@ package pro.fessional.wings.slardar.spring.prop;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.List;
+import java.util.Map;
 
-import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 
 /**
  * @author trydofor
@@ -23,7 +23,7 @@ public class SlardarRemoteProp {
      *
      * @see #Key$innerIp
      */
-    private List<String> innerIp = emptyList();
+    private Map<String, String> innerIp = emptyMap();
     public static final String Key$innerIp = Key + ".inner-ip";
 
     /**
@@ -31,7 +31,7 @@ public class SlardarRemoteProp {
      *
      * @see #Key$ipHeader
      */
-    private List<String> ipHeader = emptyList();
+    private Map<String, String> ipHeader = emptyMap();
     public static final String Key$ipHeader = Key + ".ip-header";
 
     /**
@@ -39,6 +39,6 @@ public class SlardarRemoteProp {
      *
      * @see #Key$agentHeader
      */
-    private List<String> agentHeader = emptyList();
+    private Map<String, String> agentHeader = emptyMap();
     public static final String Key$agentHeader = Key + ".agent-header";
 }

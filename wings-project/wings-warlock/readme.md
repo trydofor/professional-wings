@@ -2,7 +2,7 @@
 
 无视魔免的地狱火加上致命链接，可以瞬间改变局势。
 
-![slardar](./warlock_full.png)
+![slardar](warlock_full.png)
 
 基于wings脚手架，包装了一些业务组件，复用或复制，可以快速实现业务功能。
 
@@ -134,6 +134,10 @@ Oauth通过定制host和state参数，构造指令，完成重定向定制，参
 比如admin中，必须具有ROLE_ADMIN才可以访问，否则登录成功后，所有功能都是403，并不友好。
 
 所以在登录时，使用authType前缀，可以直接验证基本权限，如果不具备，则登录失败。
+```
+wings.warlock.security.zone-perm.admin=ROLE_ADMIN
+/auth/user-admin/login.json
+```
 
 此外，也可以在登录成功后，使用authedPerm验证权限，也具备自动登出功能。与前者的区别是
 
@@ -148,3 +152,6 @@ Oauth通过定制host和state参数，构造指令，完成重定向定制，参
 * 从使用角度，精简权限的数据结构，每app应独立，混用容易复杂化。
 
 需要定制 ComboWarlockAuthzService.Combo，来根据spring.application.name调整权限。
+
+### 4.4.6.按登录ip进行权限检查
+

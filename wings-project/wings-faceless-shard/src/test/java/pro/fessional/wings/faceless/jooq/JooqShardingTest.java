@@ -2,7 +2,7 @@ package pro.fessional.wings.faceless.jooq;
 
 import lombok.Setter;
 import lombok.val;
-import org.apache.shardingsphere.api.hint.HintManager;
+import org.apache.shardingsphere.infra.hint.HintManager;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 import org.junit.jupiter.api.Assertions;
@@ -139,7 +139,7 @@ public class JooqShardingTest {
     @Test
     public void test6𓃬查询𓃬查日志() {
         try (HintManager it = HintManager.getInstance()) {
-            it.setMasterRouteOnly();
+            it.setWriteRouteOnly();
             val ta = Tst中文也分表Table.asY8;
             val ra = dao.ctx().select(ta.Id)
                         .from(ta)

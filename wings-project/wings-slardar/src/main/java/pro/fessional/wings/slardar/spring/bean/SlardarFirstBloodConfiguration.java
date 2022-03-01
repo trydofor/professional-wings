@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @author trydofor
  * @since 2019-12-03
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$firstBlood, havingValue = "true")
 public class SlardarFirstBloodConfiguration {

@@ -12,12 +12,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.client.RestTemplateBuilderConfigurer;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import pro.fessional.wings.slardar.httprest.OkHttpClientHelper;
-import pro.fessional.wings.slardar.httprest.RestTemplateHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarOkHttpProp;
 
@@ -28,11 +28,11 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author trydofor
- * @link https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/#boot-features-resttemplate-customization
+ * @link https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#boot-features-resttemplate-customization
  * @see RestTemplateAutoConfiguration#RestTemplateAutoConfiguration()
  * @since 2020-05-22
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(OkHttpClient.class)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$okhttp, havingValue = "true")
 public class SlardarOkhttp3Configuration {
@@ -71,14 +71,17 @@ public class SlardarOkhttp3Configuration {
                         cacheDir = Files.createTempDirectory("wings-okhttp-cache").toFile();
                     }
                     builder.cache(new Cache(cacheDir, mbs * 1024L * 1024L));
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     logger.warn("failed to create okhttp cache on dir=" + cacheDir, e);
                 }
                 logger.info("Wings conf okHttpClient cache-dir=" + properties.getCacheDirectory());
-            } else {
+            }
+            else {
                 logger.info("Wings conf okHttpClient no-cache");
             }
-        } else {
+        }
+        else {
             builder.cache(cacheBean);
             logger.info("Wings conf okHttpClient cache=" + cacheBean.getClass().getName());
         }
@@ -112,11 +115,18 @@ public class SlardarOkhttp3Configuration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(RestTemplateBuilder.class)
+    public RestTemplateBuilder restTemplateBuilder(RestTemplateBuilderConfigurer configurer, OkHttpClient client) {
+        logger.info("Wings conf restTemplateBuilder");
+        final RestTemplateBuilder builder = configurer.configure(new RestTemplateBuilder());
+        return builder.requestFactory(() -> OkHttpClientHelper.requestFactory(client));
+    }
+
+    @Bean
     @ConditionalOnMissingBean(RestTemplate.class)
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public RestTemplate restTemplate(RestTemplateBuilder builder, OkHttpClient client) {
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
         logger.info("Wings conf restTemplate");
-        return RestTemplateHelper.sslTrustAll(builder, client);
+        return builder.build();
     }
 
     @Bean

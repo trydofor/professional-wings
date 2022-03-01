@@ -31,7 +31,7 @@ import static java.net.Proxy.Type.DIRECT;
  * @author trydofor
  * @since 2019-12-01
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$justAuth, havingValue = "true")
 @RequiredArgsConstructor
 public class WarlockJustAuthConfiguration {

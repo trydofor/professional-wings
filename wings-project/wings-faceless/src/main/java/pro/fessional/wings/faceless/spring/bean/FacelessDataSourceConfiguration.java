@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author trydofor
  * @since 2019-06-25
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class FacelessDataSourceConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(FacelessDataSourceConfiguration.class);

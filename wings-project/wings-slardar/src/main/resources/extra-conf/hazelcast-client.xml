@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--suppress HttpUrlsUsage -->
 <hazelcast-client xmlns="http://www.hazelcast.com/schema/client-config"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://www.hazelcast.com/schema/client-config
-                  http://www.hazelcast.com/schema/client-config/hazelcast-client-config-4.0.xsd">
+                  http://www.hazelcast.com/schema/client-config/hazelcast-client-config-4.2.xsd">
 
     <cluster-name>${wings.slardar.hazelcast.cluster-name}</cluster-name>
     <network>

@@ -2,7 +2,7 @@
 
 对膨胀的数据增加一个状态，时间在此停止，分而治之，合而用之。
 
-![faceless_void_time_dilation](./faceless_void_time_dilation.png)
+![faceless_void_time_dilation](faceless_void_time_dilation.png)
 
 使用ShardingJdbc完成数据的分表分库功能，平稳处理大数据量。
 
@@ -19,7 +19,7 @@
 
 ## 2.3.2.执行SQL中的事项
 
-[DDL - Data Definition Statements](https://dev.mysql.com/doc/refman/5.7/en/sql-syntax-data-definition.html)
+[DDL - Data Definition Statements](https://dev.mysql.com/doc/refman/8.0/en/sql-syntax-data-definition.html)
 
  * `ALTER TABLE`
  * `CREATE INDEX`
@@ -32,7 +32,7 @@
  
  其中，系统自带的`journal`的trigger外，手写删除会出现数据不一致。
   
-[DML - Data Manipulation Statements](https://dev.mysql.com/doc/refman/5.7/en/sql-syntax-data-manipulation.html)
+[DML - Data Manipulation Statements](https://dev.mysql.com/doc/refman/8.0/en/sql-syntax-data-manipulation.html)
 
  * `DELETE`
  * `INSERT`
@@ -41,3 +41,20 @@
 
 以上类型之外的SQL，请使用注解，强制指定`数据源`和`本表名`，跳过SQL自动解析。
 理论上，不应该使用flywave执行DDL,DCL和DML之外的SQL，不属于版本管理范围。
+
+## 2.3.9.常见问题
+
+### 01. No implementation class load from SPI with type `null`
+
+命名中避免使用中文，边界测试时，发现shardingsphere可以直接中文表名，但对其他命名会截断错误。
+如`sharding-algorithms.[中文也分表-inline]`，会截断错误，使其`.type=null`，从而报错，
+No implementation class load from SPI `org.apache.shardingsphere.sharding.spi.ShardingAlgorithm` with type `null`
+
+
+### 02. INSERT INTO ... ON DUPLICATE KEY UPDATE can not support update for sharding column.
+
+then append sharding column and value to WHERE Clause
+
+https://github.com/apache/shardingsphere/issues/14025
+
+此功能大概在 5.1.0发布

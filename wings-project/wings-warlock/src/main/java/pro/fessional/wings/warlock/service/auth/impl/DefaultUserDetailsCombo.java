@@ -58,10 +58,10 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
         if (dt == null) return null;
 
         if (at) {
-            log.info("autoreg auth-user, username={}, auth-type={}, class={}", username, authType, this.getClass());
+            log.debug("autoreg auth-user, username={}, auth-type={}, class={}", username, authType, this.getClass());
         }
         else {
-            log.info("loading auth-user, username={}, auth-type={}, class={}", username, authType, this.getClass());
+            log.debug("loading auth-user, username={}, auth-type={}, class={}", username, authType, this.getClass());
         }
 
         final DefaultWingsUserDetails wud = new DefaultWingsUserDetails();

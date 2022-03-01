@@ -4,6 +4,7 @@ import com.hazelcast.core.HazelcastInstance;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -20,13 +21,12 @@ import pro.fessional.wings.warlock.spring.prop.WarlockLockProp;
  * @author trydofor
  * @since 2019-12-01
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 public class WarlockLockBeanConfiguration {
 
     private final static Log logger = LogFactory.getLog(WarlockLockBeanConfiguration.class);
     private final WarlockLockProp warlockLockProp;
-
 
     @Bean
     @ConditionalOnMissingBean(JvmStaticGlobalLock.class)
@@ -39,7 +39,6 @@ public class WarlockLockBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(DatabaseGlobalLock.class)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$globalLock, havingValue = "true")
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public DatabaseGlobalLock databaseGlobalLock(JdbcTemplate jdbcTemplate) {
         logger.info("Wings conf databaseGlobalLock");
         return new DatabaseGlobalLock(jdbcTemplate);
@@ -48,7 +47,7 @@ public class WarlockLockBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(HazelcastGlobalLock.class)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$globalLock, havingValue = "true")
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    @ConditionalOnBean(HazelcastInstance.class)
     public HazelcastGlobalLock hazelcastGlobalLock(HazelcastInstance hazelcastInstance) {
         final boolean hcp = warlockLockProp.isHazelcastCp();
         logger.info("Wings conf hazelcastGlobalLock, useCpIfSafe=" + hcp);

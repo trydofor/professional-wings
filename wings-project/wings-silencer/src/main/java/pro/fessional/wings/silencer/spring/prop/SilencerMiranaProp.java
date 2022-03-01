@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.logging.LogLevel;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -70,11 +70,19 @@ public class SilencerMiranaProp {
         public static final String Key$level = Key + ".level";
 
         /**
-         * appender名字，逗号分隔
+         * 被调整的appender名字，逗号分隔
          *
-         * @see #Key$appender
+         * @see #Key$target
          */
-        private Set<String> appender = new HashSet<>();
-        public static final String Key$appender = Key + ".appender";
+        private Set<String> target = Collections.emptySet();
+        public static final String Key$target = Key + ".target";
+
+        /**
+         * 当以下appender出现的时候
+         *
+         * @see #Key$exists
+         */
+        private Set<String> exists = Collections.emptySet();
+        public static final String Key$exists = Key + ".exists";
     }
 }

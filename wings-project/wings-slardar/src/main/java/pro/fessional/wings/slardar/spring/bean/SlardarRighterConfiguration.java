@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +20,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarRighterProp;
  * @since 2019-06-29
  */
 @RequiredArgsConstructor
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$righter, havingValue = "true")
 public class SlardarRighterConfiguration {
 
@@ -28,9 +29,14 @@ public class SlardarRighterConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(RighterInterceptor.class)
-    public RighterInterceptor righterInterceptor() {
+    public RighterInterceptor righterInterceptor(ObjectProvider<RighterInterceptor.SecretProvider> secretProvider) {
         logger.info("Wings conf righterInterceptor");
-        return new RighterInterceptor(slardarRighterProp);
+        final RighterInterceptor bean = new RighterInterceptor(slardarRighterProp);
+        final RighterInterceptor.SecretProvider sp = secretProvider.getIfAvailable();
+        if (sp != null) {
+            bean.setSecretProvider(sp);
+        }
+        return bean;
     }
 
     @Bean

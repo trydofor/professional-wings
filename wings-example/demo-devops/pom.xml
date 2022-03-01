@@ -19,13 +19,13 @@
             <artifactId>demo-common</artifactId>
         </dependency>
         <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-server</artifactId>
+        </dependency>
+        <dependency>
             <groupId>pro.fessional</groupId>
             <artifactId>wings-faceless-flywave</artifactId>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-starter-server</artifactId>
         </dependency>
     </dependencies>
 </project>

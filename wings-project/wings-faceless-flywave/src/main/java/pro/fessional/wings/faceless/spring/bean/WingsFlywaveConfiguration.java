@@ -20,13 +20,15 @@ import pro.fessional.wings.faceless.spring.prop.FlywaveEnabledProp;
 import pro.fessional.wings.faceless.spring.prop.FlywaveSqlProp;
 import pro.fessional.wings.faceless.spring.prop.FlywaveVerProp;
 
+import java.util.TreeSet;
+
 import static pro.fessional.wings.faceless.flywave.SchemaJournalManager.JournalDdl;
 
 /**
  * @author trydofor
  * @since 2019-06-01
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(name = "pro.fessional.wings.faceless.database.DataSourceContext")
 @ConditionalOnProperty(name = FlywaveEnabledProp.Key$module, havingValue = "true")
 public class WingsFlywaveConfiguration {
@@ -63,8 +65,10 @@ public class WingsFlywaveConfiguration {
                 sources.getPlains(), sources.getSharding(),
                 statementParser, segmentProcessor, schemaDefinitionLoader,
                 properties.getSchemaVersionTable());
-        for (String s : properties.getDropReg()) {
-            revisionManager.addDropRegexp(s);
+        for (String s : new TreeSet<>(properties.getDropReg().values())) {
+            if(s != null && !s.isEmpty()) {
+                revisionManager.addDropRegexp(s);
+            }
         }
         logger.info("config schemaVersionManger");
         return revisionManager;

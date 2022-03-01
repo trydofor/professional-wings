@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import pro.fessional.wings.faceless.WingsTestHelper;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
@@ -48,11 +49,15 @@ public class JooqMapperCompatibleTest {
     private FacelessJooqEnabledProp facelessJooqEnabledProp;
 
     @Setter(onMethod_ = {@Autowired})
+    private WingsTestHelper wingsTestHelper;
+
+    @Setter(onMethod_ = {@Autowired})
     private Tst中文也分表Dao dao;
 
     @Test
     public void test0Init() {
         schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes);
+        wingsTestHelper.cleanTable();
         val sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
         schemaRevisionManager.publishRevision(REVISION_TEST_V2, 0);

@@ -2,7 +2,7 @@
 
 在时空中创造一个泡状遮罩，将所有位于其中的单位定住。
 
-![faceless_void_chronosphere](./faceless_void_chronosphere.png)
+![faceless_void_chronosphere](faceless_void_chronosphere.png)
 
 ## 2.1.1.飞波(flywave)是一个实践
 
@@ -92,7 +92,9 @@ sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/res
 
 
 任何数据变动，都应该有`commit_id`，记录下事件信息（人，事件，业务信息等）。
-最新的数据留在`本表`，旧数据通过`trigger`插入`跟踪表`
+最新的数据留在`本表`，旧数据通过`trigger`插入`跟踪表`。跟踪表也称`$log`表，
+因最初的命名规则是，本表+`$log`后缀，但后因某些工具缺陷，误把`$`当做变量处理，
+尽管其是mysql官方合法字符，flywave在2.6.3版后调整为双下划线`__`后缀。
 
 `journal`通过`sys_schema_journal`生成`跟踪表`和`触发器`。
 
@@ -124,7 +126,7 @@ sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/res
 * enable - `SET @DISABLE_FLYWAVE = NULL;`。
 
 参考资料
-* https://dev.mysql.com/doc/refman/5.7/en/trigger-syntax.html
+* https://dev.mysql.com/doc/refman/8.0/en/trigger-syntax.html
 
 ## 2.1.4.测试用例
 
@@ -149,7 +151,7 @@ flywave提供了以下有特殊功能的`sql注释`，称为`注解指令`
  * `目标表` 不区分大小写，全匹配。其中内定以下简写
     - 空，默认适配全部，本表+分表+跟踪表
     - `apply@nut` 只适配本表和分表 `[_0-9]*`
-    - `apply@log` 只适配跟踪表 `\$\w+`
+    - `apply@log` 只适配跟踪表 `__[a-z]*`
     - 注意，目标表不是if语句，不作为条件检查
  * `错误处理` 默认`stop`以抛异常结束，`skip`表示忽略异常继续执行。
  * `确认语句` 默认std.out输出，在std.in等待确认输入
@@ -208,7 +210,7 @@ ALTER TABLE `win_admin` DROP INDEX ix_login_name;
  * 带有`ask@*`注解的sql，强制确认
  * undo 语句确认 `wings.faceless.flywave.ver.ask-undo=true`
  * drop 类语句确认 `wings.faceless.flywave.ver.ask-drop=true`
- * drop 类语句定义 `wings.faceless.flywave.ver.drop-reg[0]`
+ * drop 类语句定义 `wings.faceless.flywave.ver.drop-reg[drop-table]`
 
 如果UnitTest中控制台中无响应，需要在IDE中打开 console，如在Idea中
 `-Deditable.java.test.console=true` ('Help' > 'Edit Custom VM Options...')
@@ -224,7 +226,7 @@ FROM
 WHERE
 	TABLE_SCHEMA = DATABASE()
 	AND INDEX_NAME NOT IN ('PRIMARY','RAW_TABLE_PK')
-	AND TABLE_NAME LIKE '%$%';
+	AND TABLE_NAME RLIKE '%$%';
 ```
 
 对于通过，`apply@` 语句指定更新表。比如，以下更新本表和分表，不更新跟踪表
@@ -240,19 +242,19 @@ ALTER TABLE `win_user`
 ```sql
 -- 仅影子表
 SELECT 
-    reverse(substring(reverse(table_name),length(substring_index(table_name,'$',-1))+1)) as tbl,
-    group_concat(SUBSTRING_INDEX(table_name,'$',-1)) as log
+    reverse(substring(reverse(table_name),length(substring_index(table_name,'__',-1))+1)) as tbl,
+    group_concat(SUBSTRING_INDEX(table_name,'__',-1)) as log
 FROM INFORMATION_SCHEMA.TABLES
 WHERE table_schema = DATABASE()
-    AND table_name like '%$%'
-    group by tbl;
+    AND table_name RLIKE '__'
+    GROUP BY tbl;
 
 SELECT
    table_name,
    CONCAT('DROP TABLE IF EXISTS ',table_name,';')
 FROM INFORMATION_SCHEMA.TABLES
 WHERE table_schema = DATABASE()
-  AND table_name like '%$%';
+  AND table_name RLIKE '\\$|__';
 
 -- 仅分表
 SELECT 
@@ -260,7 +262,7 @@ SELECT
     group_concat(SUBSTRING_INDEX(table_name,'_',-1)) as num
 FROM INFORMATION_SCHEMA.TABLES
 WHERE table_schema = DATABASE()
-    AND table_name REGEXP '_[0-9]+$'
+    AND table_name RLIKE '_[0-9]+$'
     group by tbl;
 
 SELECT
@@ -268,14 +270,14 @@ SELECT
    CONCAT('DROP TABLE IF EXISTS ',table_name,';')
 FROM INFORMATION_SCHEMA.TABLES
 WHERE table_schema = DATABASE()
-  AND table_name REGEXP '_[0-9]+$';
+  AND table_name RLIKE '_[0-9]+$';
 
 -- 仅主表
 SELECT table_name
 FROM INFORMATION_SCHEMA.TABLES
 WHERE table_schema = DATABASE()
     AND table_name NOT REGEXP '_[0-9]+$'
-    AND table_name NOT LIKE '%$%';
+    AND table_name NOT RLIKE '\\$|__';
 ```
 
 ### 07.如果使用flywave管理老工程
@@ -325,7 +327,7 @@ FROM
    INFORMATION_SCHEMA.TRIGGERS
 WHERE
    EVENT_OBJECT_SCHEMA = DATABASE()
-  AND TRIGGER_NAME RLIKE '.*\\$(bi|ai|bu|au|bd|ad)';
+  AND TRIGGER_NAME RLIKE '^(bi|ai|bu|au|bd|ad)__';
 ```
 
 ### 09.获取log表的数据量
@@ -341,42 +343,42 @@ SELECT
 FROM
     information_schema.tables
 WHERE
-    table_name LIKE '%$log'
-    and table_schema = 'demo_example'
+    table_name RLIKE '\\$|__'
+    and table_schema = DATABASE()
 ORDER BY table_schema , all_mb DESC;
 ```
 
 ### 10.手动修复历史log模板
 
 ```sql
-ALTER TABLE `{{TABLE_NAME}}$log`
+ALTER TABLE `{{TABLE_NAME}}__`
    MODIFY COLUMN `_id` BIGINT(20) NOT NULL AUTO_INCREMENT FIRST,
    ADD COLUMN `_dt` DATETIME(3) NOT NULL DEFAULT '1000-01-01 00:00:00' AFTER `_id`,
    ADD COLUMN `_tp` CHAR(1) NOT NULL DEFAULT 'Z' AFTER `_dt`;
 
 DELIMITER $$
-CREATE TRIGGER `{{TABLE_NAME}}$ai` AFTER INSERT ON `{{TABLE_NAME}}`
+CREATE TRIGGER `ai__{{TABLE_NAME}}` AFTER INSERT ON `{{TABLE_NAME}}`
    FOR EACH ROW BEGIN
    IF (@DISABLE_FLYWAVE IS NULL) THEN
-      INSERT INTO `{{TABLE_NAME}}$log` SELECT NULL, NOW(3), 'C', t.* FROM `{{TABLE_NAME}}` t
+      INSERT INTO `{{TABLE_NAME}}__` SELECT NULL, NOW(3), 'C', t.* FROM `{{TABLE_NAME}}` t
       WHERE t.id = NEW.id ;
    END IF;
 END
 $$
 
-CREATE TRIGGER `{{TABLE_NAME}}$au` AFTER UPDATE ON `{{TABLE_NAME}}`
+CREATE TRIGGER `au__{{TABLE_NAME}}` AFTER UPDATE ON `{{TABLE_NAME}}`
    FOR EACH ROW BEGIN
    IF (@DISABLE_FLYWAVE IS NULL) THEN
-      INSERT INTO `{{TABLE_NAME}}$log` SELECT NULL, NOW(3), 'U', t.* FROM `{{TABLE_NAME}}` t
+      INSERT INTO `{{TABLE_NAME}}__` SELECT NULL, NOW(3), 'U', t.* FROM `{{TABLE_NAME}}` t
       WHERE t.id = NEW.id ;
    END IF;
 END
 $$
 
-CREATE TRIGGER `{{TABLE_NAME}}$bd` BEFORE DELETE ON `{{TABLE_NAME}}`
+CREATE TRIGGER `bd__{{TABLE_NAME}}` BEFORE DELETE ON `{{TABLE_NAME}}`
    FOR EACH ROW BEGIN
    IF (@DISABLE_FLYWAVE IS NULL) THEN
-      INSERT INTO `{{TABLE_NAME}}$log` SELECT NULL, NOW(3), 'D', t.* FROM `{{TABLE_NAME}}` t
+      INSERT INTO `{{TABLE_NAME}}__` SELECT NULL, NOW(3), 'D', t.* FROM `{{TABLE_NAME}}` t
       WHERE t.id = OLD.id ;
    END IF;
 END
@@ -402,8 +404,8 @@ ORDER BY ORDINAL_POSITION
 );
 SET @restoreSql = CONCAT(
 -- 'REPLACE INTO ', @tabl,
-' SELECT ', @cols,' FROM ', @tabl,'$log WHERE (_id,id) IN (',
-' SELECT max(_id), id FROM ', @tabl,'$log ',
+' SELECT ', @cols,' FROM ', @tabl,'__ WHERE (_id,id) IN (',
+' SELECT max(_id), id FROM ', @tabl,'__ ',
 ' WHERE _tp in (\'D\')'
 ' GROUP BY id',
 ')');
@@ -447,7 +449,7 @@ WHERE
 );
 
 SET @tracerSql = CONCAT(
-'CREATE TABLE ', @tabl, '$log (',
+'CREATE TABLE ', @tabl, '__ (',
 ' `_id` BIGINT(20) NOT NULL AUTO_INCREMENT, ',
 ' `_dt` DATETIME(3) NOT NULL DEFAULT \'1000-01-01 00:00:00\', ',
 ' `_tp` CHAR(1) NOT NULL DEFAULT \'Z\', ',
@@ -465,19 +467,19 @@ EXECUTE stmt;
 SET @tabl = 'win_user_basis';
 SET @triggerSql = CONCAT(
    'DELIMITER $$\n',
-   'CREATE TRIGGER `', @tabl, '$ai` AFTER INSERT ON `', @tabl,'` FOR EACH ROW BEGIN',
+   'CREATE TRIGGER `ai__', @tabl, '` AFTER INSERT ON `', @tabl,'` FOR EACH ROW BEGIN',
    ' IF (@DISABLE_FLYWAVE IS NULL) THEN',
-   ' INSERT INTO `',@tabl ,'$log` SELECT NULL, NOW(3), \'C\', t.* FROM `',@tabl ,'` t WHERE t.id = NEW.id ;',
+   ' INSERT INTO `',@tabl ,'__` SELECT NULL, NOW(3), \'C\', t.* FROM `',@tabl ,'` t WHERE t.id = NEW.id ;',
    ' END IF;',
    'END$$\n',
-   'CREATE TRIGGER `', @tabl, '$au` AFTER UPDATE ON `', @tabl,'` FOR EACH ROW BEGIN',
+   'CREATE TRIGGER `au__', @tabl, '` AFTER UPDATE ON `', @tabl,'` FOR EACH ROW BEGIN',
    ' IF (@DISABLE_FLYWAVE IS NULL) THEN',
-   ' INSERT INTO `',@tabl ,'$log` SELECT NULL, NOW(3), \'U\', t.* FROM `',@tabl ,'` t WHERE t.id = NEW.id ;',
+   ' INSERT INTO `',@tabl ,'__` SELECT NULL, NOW(3), \'U\', t.* FROM `',@tabl ,'` t WHERE t.id = NEW.id ;',
    ' END IF;',
    'END$$\n',
-   'CREATE TRIGGER `', @tabl, '$bd` BEFORE DELETE ON `', @tabl,'` FOR EACH ROW BEGIN',
+   'CREATE TRIGGER `bd__', @tabl, '` BEFORE DELETE ON `', @tabl,'` FOR EACH ROW BEGIN',
    ' IF (@DISABLE_FLYWAVE IS NULL) THEN',
-   ' INSERT INTO `',@tabl ,'$log` SELECT NULL, NOW(3), \'D\', t.* FROM `',@tabl ,'` t WHERE t.id = OLD.id ;',
+   ' INSERT INTO `',@tabl ,'__` SELECT NULL, NOW(3), \'D\', t.* FROM `',@tabl ,'` t WHERE t.id = OLD.id ;',
    ' END IF;',
    'END$$\n'
    );
@@ -486,6 +488,8 @@ select @triggerSql;
 ```
 
 ### 13.工具或DB不支持`$`命名怎么办
+
+从2.6.3.210开始，wings以双下划线命名，取代dollar命名。
 
 英数美刀下划线(`[0-9,a-z,A-Z$_]`)都是mysql官方无需转义的合法的[命名字符](https://dev.mysql.com/doc/refman/5.7/en/identifiers.html)
 但某些不完备的云DB或工具，未做好处理，属于其功能缺陷。
@@ -508,3 +512,11 @@ select @triggerSql;
 * TRACE_DOLLAR - 以dollar`$`后缀分隔，如`XXX$#`
 * TRACE_SU2_LINE - 以双下划线`__`后缀分隔，如`XXX__#`
 * TRACE_PRE_LINE - 以单下划线`_`前缀分隔，如`_XXX`或`_#_XXX`
+
+### 14.kotlin编译失败，可能的盘错点
+
+* kotlin-maven-plugin 插件，要同时编译java和kotlin
+* kotlin-stdlib-jdk8 这是最新的stdlib
+* mvn profile中的maven.compiler.target 优先与pom.xml
+* JAVA_HOME是否指定正确的jdk版本
+

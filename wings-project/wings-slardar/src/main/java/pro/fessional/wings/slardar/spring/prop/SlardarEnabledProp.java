@@ -230,4 +230,12 @@ public class SlardarEnabledProp {
      */
     private boolean monitorLog = true;
     public static final String Key$monitorLog = Key + ".monitor-log";
+
+    /**
+     * 是否开启SpringBootAdmin配置
+     *
+     * @see #Key$bootAdmin
+     */
+    private boolean bootAdmin = true;
+    public static final String Key$bootAdmin = Key + ".boot-admin";
 }

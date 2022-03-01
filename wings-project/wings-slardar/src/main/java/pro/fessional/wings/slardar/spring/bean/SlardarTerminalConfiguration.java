@@ -15,7 +15,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
  * @author trydofor
  * @since 2019-06-29
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$terminal, havingValue = "true")
 public class SlardarTerminalConfiguration {
 

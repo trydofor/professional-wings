@@ -35,11 +35,11 @@ public class DefaultPermRoleCombo implements ComboWarlockAuthzService.Combo {
 
         final long uid = details.getUserId();
         final Map<Long, Long> roles = warlockGrantService.entryUser(GrantType.ROLE, uid);
-        log.info("got roles for uid={}, size={}", uid, roles.size());
+        log.debug("got roles for uid={}, size={}", uid, roles.size());
         role.addAll(roles.keySet());
 
         final Map<Long, Long> perms = warlockGrantService.entryUser(GrantType.PERM, uid);
-        log.info("got perms for uid={}, size={}", uid, perms.size());
+        log.debug("got perms for uid={}, size={}", uid, perms.size());
         perm.addAll(perms.keySet());
     }
 }

@@ -16,7 +16,7 @@ import java.time.ZoneOffset;
 
 /**
  * mysql服务器，程序，会话时区
- * https://dev.mysql.com/doc/refman/5.7/en/time-zone-support.html#time-zone-variables
+ * https://dev.mysql.com/doc/refman/8.0/en/time-zone-support.html#time-zone-variables
  *
  * @author trydofor
  * @since 2021-04-14

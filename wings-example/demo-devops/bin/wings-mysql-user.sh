@@ -15,7 +15,7 @@ cat << EOF
 - users - 环境脚本(bash语法)，格式参考help
 - option - 存在时，使用'--defaults-extra-file'
 # option 详细参考client段
-- https://dev.mysql.com/doc/refman/5.7/en/option-files.html
+- https://dev.mysql.com/doc/refman/8.0/en/option-files.html
 #################################################
 EOF
 
@@ -30,7 +30,7 @@ option="$3"
 
 if [[ "$command" == "" || "$command" == "help" ]]; then
 echo -e '\033[37;42;1mNOTE: users env file\033[m'
-# https://dev.mysql.com/doc/refman/5.7/en/account-management-statements.html
+# https://dev.mysql.com/doc/refman/8.0/en/account-management-statements.html
 cat << 'EOF'
 execute=false
 # 用户名前缀

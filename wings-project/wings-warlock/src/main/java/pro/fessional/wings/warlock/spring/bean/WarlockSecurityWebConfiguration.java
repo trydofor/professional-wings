@@ -7,20 +7,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import pro.fessional.mirana.data.Null;
-import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
-import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
-import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
+import org.springframework.util.StringUtils;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 
 
@@ -28,19 +18,15 @@ import java.util.Map;
  * @author trydofor
  * @since 2019-12-01
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityConf, havingValue = "true")
 @RequiredArgsConstructor
 public class WarlockSecurityWebConfiguration extends WebSecurityConfigurerAdapter {
 
     private final static Log logger = LogFactory.getLog(WarlockSecurityWebConfiguration.class);
 
-    private final SessionRegistry sessionRegistry;
-    private final WarlockSecurityProp securityProp;
-    private final AuthenticationSuccessHandler authenticationSuccessHandler;
-    private final AuthenticationFailureHandler authenticationFailureHandler;
-    private final LogoutSuccessHandler logoutSuccessHandler;
-    private final WingsAuthDetailsSource<?> wingsAuthDetailsSource;
+    private final WarlockSecurityProp warlockSecurityProp;
+    private final Map<String, HttpSecurityConfigure> configures;
 
     /**
      * The URL paths provided by the framework are
@@ -61,61 +47,35 @@ public class WarlockSecurityWebConfiguration extends WebSecurityConfigurerAdapte
     @Override
     public void configure(HttpSecurity http) throws Exception {
         logger.info("Wings conf HttpSecurity");
-        http.apply(SecurityConfigHelper.http())
-            .httpPermit(conf -> conf
-                    .permitCorsAll()
-                    .permitTest()
-            )
-            .bindLogin(conf -> conf
-                    .loginPage(securityProp.getLoginPage()) // 无权限时返回的页面，
-                    .loginForward(securityProp.isLoginForward()) // 无权限时返回的页面，
-                    .loginProcessingUrl(securityProp.getLoginUrl()) // filter处理，不需要controller
-                    .usernameParameter(securityProp.getUsernamePara())
-                    .passwordParameter(securityProp.getPasswordPara())
-                    .successHandler(authenticationSuccessHandler)
-                    .failureHandler(authenticationFailureHandler)
-                    .authenticationDetailsSource(wingsAuthDetailsSource)
-                    .bindAuthTypeToEnums(securityProp.mapAuthTypeEnum())
-            )
-            .and()
-            .authorizeRequests(conf ->
-                    {
-                        for (Map.Entry<String, List<String>> en : securityProp.getAuthority().entrySet()) {
-                            final List<String> paths = en.getValue();
-                            if (paths.isEmpty()) continue;
-                            LinkedHashSet<String> uniq = new LinkedHashSet<>(paths);
-                            logger.info("Wings conf HttpSecurity. bind authority=" + en.getKey()
-                                    + String.join("\n, ", uniq));
-                            conf.antMatchers(uniq.toArray(Null.StrArr)).hasAuthority(en.getKey());
-                        }
+        for (Map.Entry<String, HttpSecurityConfigure> en : configures.entrySet()) {
+            logger.info("Wings conf HttpSecurity, bean=" + en.getKey());
+            en.getValue().configure(http);
+        }
 
-                        conf.antMatchers(securityProp.getAuthenticated().toArray(Null.StrArr))
-                            .authenticated()
-                            .antMatchers(securityProp.getPermitAll().toArray(Null.StrArr))
-                            .permitAll();
+        //
+        final String anyRequest = warlockSecurityProp.getAnyRequest();
+        if (StringUtils.hasText(anyRequest)) {
+            logger.info("Wings conf HttpSecurity, anyRequest=" + anyRequest);
+            String str = anyRequest.trim();
+            if ("permitAll".equalsIgnoreCase(str)) {
+                http.authorizeRequests().anyRequest().permitAll();
+            }
+            else if ("authenticated".equalsIgnoreCase(str)) {
+                http.authorizeRequests().anyRequest().authenticated();
+            }
+            else if ("anonymous".equalsIgnoreCase(str)) {
+                http.authorizeRequests().anyRequest().anonymous();
+            }
+            else if ("fullyAuthenticated".equalsIgnoreCase(str)) {
+                http.authorizeRequests().anyRequest().fullyAuthenticated();
+            }
+            else {
+                http.authorizeRequests().anyRequest().hasAnyAuthority(str.split("[, \t\r\n]+"));
+            }
+        }
+    }
 
-                        logger.info("Wings conf HttpSecurity. bind Authenticated="
-                                + String.join("\n, ", securityProp.getAuthenticated()));
-                        logger.info("Wings conf HttpSecurity. bind PermitAll="
-                                + String.join("\n, ", securityProp.getPermitAll()));
-
-                    }
-            )
-            .logout(conf -> conf
-                    .logoutUrl(securityProp.getLogoutUrl())
-                    .clearAuthentication(true)
-                    .invalidateHttpSession(true)
-                    .logoutSuccessHandler(logoutSuccessHandler)
-            )
-            .sessionManagement(conf -> conf
-                    .maximumSessions(securityProp.getSessionMaximum())
-                    .sessionRegistry(sessionRegistry)
-                    .expiredSessionStrategy(event -> {
-                        HttpServletResponse response = event.getResponse();
-                        ResponseHelper.writeBodyUtf8(response, securityProp.getSessionExpiredBody());
-                    })
-            )
-            .requestCache().disable()
-            .csrf().disable();
+    public interface HttpSecurityConfigure {
+        void configure(HttpSecurity http) throws Exception;
     }
 }

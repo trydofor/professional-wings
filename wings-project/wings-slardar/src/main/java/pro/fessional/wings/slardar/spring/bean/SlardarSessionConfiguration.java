@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,10 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.session.FindByIndexNameSessionRepository;
-import org.springframework.session.Session;
-import org.springframework.session.hazelcast.Hazelcast4IndexedSessionRepository;
-import org.springframework.session.hazelcast.config.annotation.web.http.HazelcastHttpSessionConfiguration;
-import org.springframework.session.security.SpringSessionBackedSessionRegistry;
+import org.springframework.session.security.WingsSessionRegistry;
 import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
@@ -29,6 +27,7 @@ import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.best.ArgsAssert;
+import pro.fessional.wings.slardar.session.WingsSessionHelper;
 import pro.fessional.wings.slardar.session.WingsSessionIdResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
@@ -39,13 +38,13 @@ import java.util.List;
 /**
  * 通过 session-hazelcast.xml 配置好 spring session用的map，主要是index和serial
  * https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-session
- * https://docs.spring.io/spring-session/docs/2.4.2/reference/html5/#spring-security
+ * https://docs.spring.io/spring-session/docs/2.6.3/reference/html5/#spring-security
  * https://guides.hazelcast.org/spring-session-hazelcast/
  *
  * @author trydofor
  * @since 2019-06-26
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$session, havingValue = "true")
 @EnableConfigurationProperties(ServerProperties.class)
 @RequiredArgsConstructor
@@ -55,33 +54,33 @@ public class SlardarSessionConfiguration {
 
     private final SlardarSessionProp slardarSessionProp;
 
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(HazelcastInstance.class)
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$sessionHazelcast, havingValue = "true")
-    public static class SlardarHazelcastConfiguration extends HazelcastHttpSessionConfiguration {
-
-        @Bean
-        @ConditionalOnMissingBean(FindByIndexNameSessionRepository.class)
-        @Override
-        public FindByIndexNameSessionRepository<?> sessionRepository() {
-            logger.info("Wings conf sessionRepository : FindByIndexNameSessionRepository");
-            return (FindByIndexNameSessionRepository<? extends Session>) super.sessionRepository();
-        }
+    public static class SlardarHazelcastConfiguration {
 
         // concurrent session
         @Bean
-        @ConditionalOnMissingBean(SessionRegistry.class)
-        public SessionRegistry sessionRegistry(FindByIndexNameSessionRepository<? extends Session> sessionRepository, SlardarSessionProp slardarSessionProp) {
-            logger.info("Wings conf sessionRegistry");
-            if (sessionRepository instanceof Hazelcast4IndexedSessionRepository) {
-                final int seconds = slardarSessionProp.getInactiveInterval();
-                ((Hazelcast4IndexedSessionRepository) sessionRepository).setDefaultMaxInactiveInterval(seconds);
-                logger.info("Wings conf sessionRegistry DefaultMaxInactiveInterval Seconds= " + seconds);
-            }
-            return new SpringSessionBackedSessionRegistry<>(sessionRepository);
+        public WingsSessionHelper wingsSessionHelper(
+                FindByIndexNameSessionRepository<?> sessionRepository,
+                HazelcastInstance hzInstance,
+                @Value("${spring.session.hazelcast.map-name:spring:session:sessions}") String mapName) {
+
+            logger.info("Wings conf wingsSessionHelper");
+            return new WingsSessionHelper() {{
+                hazelcastMapName = StringUtils.hasText(mapName) ? mapName : null;
+                hazelcastInstance = hzInstance;
+                hazelcastRepository = sessionRepository;
+            }};
         }
     }
 
+    @Bean
+    @ConditionalOnMissingBean(SessionRegistry.class)
+    public SessionRegistry sessionRegistry(FindByIndexNameSessionRepository<?> sessionRepository) {
+        logger.info("Wings conf sessionRegistry");
+        return new WingsSessionRegistry<>(sessionRepository);
+    }
     ////////// must after SessionRegistry Bean ///////
 
     @Bean

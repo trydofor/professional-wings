@@ -3,7 +3,7 @@
 `Void`，J8脸, `public static void main`  
 他是来自超维视界的一名访客，一个时间之外的境域。
 
-![faceless_void](./faceless_void_full.png)
+![faceless_void](faceless_void_full.png)
 
 支持MySql系(mysql及分支,h2)的一套Sharding，并有表结构和数据变更的版本管理的基本套餐。
 
@@ -89,9 +89,9 @@ https://github.com/alibaba/transmittable-thread-local
 
 ## 2.9.数据库知识
 
-mysql体系指mysql分支如(Percona,MariaDB)或兼容mysql协议的数据库，wings使用mysql-5.7.x（8.0未测试）。
+mysql体系指mysql分支如(Percona,MariaDB)或兼容mysql协议的数据库，wings使用mysql-8.0.x（5.7已充分测试）。
 原则上DB不应该封装（自定义function或procedure）业务逻辑，但可以使用db提供的功能，简化工作实现业务目标。
-[mysql 5.7 官方文档](https://dev.mysql.com/doc/refman/5.7/en/)
+[mysql 8.0 官方文档](https://dev.mysql.com/doc/refman/8.0/en/)
 
 ### 2.9.1.MySql非通常用法
 
@@ -242,28 +242,39 @@ jdbc:h2:~/wings-init
 
 ### 02.本地创建mysql docker
 
+wings需要mysqld中以下重点设置，包括命名小写，语音时区，用户权限，[全文检索的分词](https://dev.mysql.com/doc/refman/8.0/en/fulltext-boolean.html)
+以下配置适应于mysql5.7, mysql8, native, cloud
+
 ```bash
-sudo tee /Users/trydofor/Docker/mysql/conf/moilioncircle.cnf << EOF
+sudo tee /data/docker/mysql/conf/moilioncircle.cnf << EOF
 [mysqld]
+max_allowed_packet          = 16777216
+# table store lowercase compare case-sensitive
 lower_case_table_names      = 1
-innodb_file_per_table       = 1
-innodb_ft_min_token_size    = 1
-ft_min_word_len             = 1
-character-set-server        = UTF8MB4
-max_allowed_packet          = 1024M
-default-time-zone           = '+8:00'
+# FULLTEXT indexes by MeCab parser and ngram parser
+innodb_ft_min_token_size    = 2
+ft_min_word_len             = 2
+ngram_token_size            = 2
+# default charset and timezone
+character_set_server        = utf8mb4
+default-time_zone           = +00:00
+# binary log
 log_bin_trust_function_creators = 1
-skip_ssl
+binlog-format               = MIXED
+# local
+innodb_file_per_table       = 1
+#skip_grant_tables
 EOF
+
 # 启动docker
-docker run -d \
+sudo docker run -d \
  --name mysql \
  --restart=unless-stopped \
  -e MYSQL_ALLOW_EMPTY_PASSWORD=yes \
- -v /Users/trydofor/Docker/mysql/conf:/etc/mysql/conf.d \
- -v /Users/trydofor/Docker/mysql/data:/var/lib/mysql \
+ -v /data/docker/mysql/conf:/etc/mysql/conf.d \
+ -v /data/docker/mysql/data:/var/lib/mysql \
  -p 3306:3306 \
-mysql:5.7
+mysql:8.0
 ```
 
 可以通过以下sql创建高权限用户，建议使用wings-mysql-user.sh独立权限的用户
@@ -338,5 +349,5 @@ from the session time zone to UTC for storage, and from UTC to the session time 
 
 在mysql中，尽量使用NOW(fsp)，因为其短小明确有缓存，如无必须不可使用SYSDATE(fsp)，参考
 
-* https://dev.mysql.com/doc/refman/5.7/en/time-zone-support.html#time-zone-variables
-* https://dev.mysql.com/doc/refman/5.7/en/date-and-time-functions.html#function_now
+* https://dev.mysql.com/doc/refman/8.0/en/time-zone-support.html#time-zone-variables
+* https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_now

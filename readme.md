@@ -1,15 +1,16 @@
 # 0.专业大翅 (pro.fessional.wings)
 
-[![Spring Boot](https://img.shields.io/badge/spring--boot-2.4.2-green)](https://spring.io/projects/spring-boot)
-[![Java 8](https://img.shields.io/badge/java-8+-red)](https://spring.io/projects/spring-boot)
-[![Kotlin 1.4](https://img.shields.io/badge/kotlin-1.4-red)](https://kotlinlang.org/docs/reference/)
+[![Spring Boot](https://img.shields.io/badge/spring--boot-2.6.3-green)](https://spring.io/projects/spring-boot)
+[![Java 11](https://img.shields.io/badge/java-11-red)](https://spring.io/projects/spring-boot)
+[![Kotlin 1.6](https://img.shields.io/badge/kotlin-1.6-red)](https://kotlinlang.org/docs/reference/)
 [![Jooq](https://img.shields.io/badge/jooq-3.14-yellow)](https://www.jooq.org/download/)
-[![Mysql](https://img.shields.io/badge/mysql-5.7+-blue)](https://dev.mysql.com/downloads/mysql/)
-[![H2Database](https://img.shields.io/badge/h2db-1.4-blue)](http://h2database.com/html/main.html)
+[![QueryDsl](https://img.shields.io/badge/querydsl-5.0-yellow)](https://querydsl.com/static/querydsl/5.0.0/reference/html_single)
+[![Mysql](https://img.shields.io/badge/mysql-8.0-blue)](https://dev.mysql.com/downloads/mysql/)
+[![H2Database](https://img.shields.io/badge/h2db-2.0-blue)](http://h2database.com/html/main.html)
 
 不是为吃货准备的伪装成吃货的项目，其核心价值是使团队快速实现业务目标，快速偿还技术债务，安全的面向程序和业务重构。
 
-![wings ti6](./wings-ti6-champion.png)
+![wings ti6](wings-ti6-champion.png)
 
 Wings是springboot的一个脚手架，没有魔法和定制，主要有以下特点：
 
@@ -48,7 +49,7 @@ wings的版本号为`4段分隔`，前3段为spring-boot版本，第4段是chang
 
 涉及技术和知识点
 
-* [Spring Boot](https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/)
+* [Spring Boot](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/)
 * [Apache ShardingSphere](https://shardingsphere.apache.org/index_zh.html)
 * [Jooq - 强类型 sql-mapping](https://www.jooq.org/)
 
@@ -208,7 +209,7 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 
 ### 0.2.6.Spring MVC中的 RequestMapping 约定
 
-wings采用的Url命名主要是场景化的，命名为[RestHalf](./rest-half.md)，单独叙述。
+wings采用的Url命名主要是场景化的，命名为[RestHalf](rest-half.md)，单独叙述。
 
 * 在方法上写全路径`@RequestMapping("/a/b/c.html")`
 * 在controller上写版本号`@RequestMapping("/v1")`
@@ -410,13 +411,18 @@ enum Jane {
 
 * [mycat](http://www.mycat.io/)
 
-### 0.3.3.jooq
+### 0.3.3.Jooq/QueryDsl
 
 在faceless中有详细介绍，主要原因是`限制的艺术`
 
 * jooq强类型，可以受到IDE加持
 * 不能写成过于复杂的SQL，有利于分库，分服务
 * 比mybatis有更多的语言特性
+* Jooq的OSS版(Apache2许可)对wings足够用（详见faceless-jooq）
+* QueryDsl的SQL方面不及jooq，但仍然比较全面。
+
+在QueryDSL及Jooq谁更合适的话题上，wings显然推荐jooq，并已深度集成。
+依然记得在选择时，jooq的社区和功能，要优些，且存在于springboot官方示例中。
 
 ### 0.3.4.ServiceComb
 
@@ -655,8 +661,8 @@ wings随时跟进升级spring boot的最新版本，目的是为了测试shardin
 * parent - you can also override individual dependencies by overriding a property in your own project
 * import - does not let you override individual dependencies by using properties, as explained above. To achieve the same result, you need to add entries in the dependencyManagement section of your project before the
   spring-boot-dependencies entry.
-* https://docs.spring.io/spring-boot/docs/2.4.2/maven-plugin/reference/htmlsingle/#using-parent-pom
-* https://docs.spring.io/spring-boot/docs/2.4.2/maven-plugin/reference/htmlsingle/#using-import
+* https://docs.spring.io/spring-boot/docs/2.6.3/maven-plugin/reference/htmlsingle/#using-parent-pom
+* https://docs.spring.io/spring-boot/docs/2.6.3/maven-plugin/reference/htmlsingle/#using-import
 
 对于低于wings的spring-boot版本，一般来讲指定一下jooq版本就可以完全正常。
 
@@ -710,7 +716,7 @@ at org.jooq.impl.AbstractQuery.execute(AbstractQuery.java:390)
 
 原因是maven-resources-plugin的filter目录中存在非文本文件(不可按字符串读取)， 不要降级到3.1.0，在nonFilteredFileExtension添加扩展名即可。
 
-(Automatic Property Expansion Using Maven)[https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/#howto-properties-and-configuration]
+(Automatic Property Expansion Using Maven)[https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#howto-properties-and-configuration]
 
 ### 18.通过mysql客户端能找到，wings查询不到数据
 
@@ -764,7 +770,7 @@ wings中可以通过暴露AlternateTypeRule bean，自动注入所以Docket中�
 * 方案二，自己暴露Config或ClientConfig，并设置好classloader
 * 方案三，通过restart.include设置（不推荐）
 
-不推荐在product环境使用devtool，参考springboot官方文档的[Known Limitations](https://docs.spring.io/spring-boot/docs/2.4.2/reference/htmlsingle/#using.devtools.restart.limitations)
+不推荐在product环境使用devtool，参考springboot官方文档的[Known Limitations](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#using.devtools.restart.limitations)
 
 ### 24.Hazelcast OutOfMemoryError CallerNotMemberException
 
@@ -786,7 +792,7 @@ wings中可以通过暴露AlternateTypeRule bean，自动注入所以Docket中�
 和文件系统的大小写有关，根据wings的Sql风格，建议全小写，snake_case。
 此外，也建议在 mysqld 的配置上，增加 `lower_case_table_names=1`
 
-https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_lower_case_table_names
+https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_lower_case_table_names
 
 ### 26.如何解压springboot生成的jar
 
@@ -843,3 +849,33 @@ head demo-exmaple-1.0.0-SNAPSHOT.jar
 * `Null`类，定义了用来代替null的类型和检查方法，包括enum等
 * 方法签名尽量使用`@NotNull`注解，是IDE辅助检查，编译时解决
 * `ArgsAssert`和`StateAssert`进行业务assert，支持多国语
+
+### 28.如何配置logger和log groups
+
+SpringBoot内置以下log groups [Log Groups](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#features.logging.log-groups)
+
+* org.springframework.core.codec
+* org.springframework.http
+* org.springframework.web
+* org.springframework.boot.actuate.endpoint.web
+* org.springframework.boot.web.servlet.ServletContextInitializerBeans
+* org.springframework.jdbc.core
+* org.jooq.tools.LoggerListener
+
+### 29.mvn resources filtering
+
+因为在swagger的配置中使用了变量`@project.version@`，所以会配置
+build/resources/resource/filtering=true，以便mvn自动替换。
+
+但是开启filter会引起错误替换，比如二进制文件等，wings默认忽略一些二进制文件
+同时在2.6.3版后，以spring变量取代了mvn变量，因此不需要filter。
+
+### 30.not eligible for auto-proxying
+
+is not eligible for getting processed by all BeanPostProcessors
+(for example: not eligible for auto-proxying)
+
+spring的Bean在其生命周期有载入顺序，Processor，framework和业务Bean应该分开。
+若某些Bean因为依赖关系在Processor前加载，则不会被Process，可能影响业务。
+
+若是经过排查后，对业务没有影响，那么可忽略该INFO级别的Warning。

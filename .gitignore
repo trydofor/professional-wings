@@ -18,6 +18,7 @@ buildNumber.properties
 
 # Log file
 *.log
+*.tmp
 *.out
 *.pid
 *.gc

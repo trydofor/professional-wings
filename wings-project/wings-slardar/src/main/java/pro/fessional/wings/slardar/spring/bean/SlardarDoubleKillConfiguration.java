@@ -18,7 +18,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
  * @author trydofor
  * @since 2019-12-03
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$doubleKill, havingValue = "true")
 public class SlardarDoubleKillConfiguration {

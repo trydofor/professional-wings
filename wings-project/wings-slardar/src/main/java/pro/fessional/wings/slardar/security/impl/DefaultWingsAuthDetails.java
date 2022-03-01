@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +14,9 @@ import java.util.Map;
  * @since 2022-01-18
  */
 @EqualsAndHashCode
-public class DefaultWingsAuthDetails implements WingsAuthDetails {
+public class DefaultWingsAuthDetails implements WingsAuthDetails, Serializable {
+
+    private static final long serialVersionUID = 19791023L;
 
     private final Map<String, String> metaData = new HashMap<>();
     private Object realData;
