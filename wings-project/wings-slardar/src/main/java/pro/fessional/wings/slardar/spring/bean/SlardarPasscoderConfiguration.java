@@ -17,9 +17,10 @@ import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
-import pro.fessional.wings.slardar.security.impl.BasicPasswordEncoder;
-import pro.fessional.wings.slardar.security.impl.DefaultPasssaltEncoder;
-import pro.fessional.wings.slardar.security.impl.NeverPasswordEncoder;
+import pro.fessional.wings.slardar.security.pass.BasicPasswordEncoder;
+import pro.fessional.wings.slardar.security.pass.DefaultPasssaltEncoder;
+import pro.fessional.wings.slardar.security.pass.HashPasswordEncoder;
+import pro.fessional.wings.slardar.security.pass.NeverPasswordEncoder;
 import pro.fessional.wings.slardar.spring.conf.WingsSecBeanInitConfigurer;
 import pro.fessional.wings.slardar.spring.prop.SlardarPasscoderProp;
 
@@ -62,8 +63,11 @@ public class SlardarPasscoderConfiguration {
         logger.info("Wings conf PasswordEncoder bean, default encoder is " + encoder + ", decoder is " + decoder);
         Map<String, PasswordEncoder> encoders = new HashMap<>();
         encoders.put("noop", org.springframework.security.crypto.password.NoOpPasswordEncoder.getInstance());
-        encoders.put(NeverPasswordEncoder.Key, new NeverPasswordEncoder());
-        encoders.put(BasicPasswordEncoder.Key, new BasicPasswordEncoder(slardarPasscoderProp.getTimeDeviationMs()));
+        encoders.put("never", new NeverPasswordEncoder("never"));
+        encoders.put("basic", new BasicPasswordEncoder(slardarPasscoderProp.getTimeDeviationMs()));
+        encoders.put("noop-md5", HashPasswordEncoder.md5());
+        encoders.put("noop-sha1", HashPasswordEncoder.sha1());
+        encoders.put("noop-sha256", HashPasswordEncoder.sha256());
         encoders.put("bcrypt", new BCryptPasswordEncoder());
         encoders.put("pbkdf2", new Pbkdf2PasswordEncoder());
         encoders.put("scrypt", new SCryptPasswordEncoder());

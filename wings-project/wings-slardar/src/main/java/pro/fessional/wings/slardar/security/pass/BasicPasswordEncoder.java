@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.security.impl;
+package pro.fessional.wings.slardar.security.pass;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pro.fessional.mirana.bits.Md5;
@@ -19,7 +19,6 @@ import pro.fessional.mirana.bits.Md5;
  */
 public class BasicPasswordEncoder implements PasswordEncoder {
 
-    public static final String Key = "basic";
     private static final String Splitter = "#";
     private final long deviation;
 

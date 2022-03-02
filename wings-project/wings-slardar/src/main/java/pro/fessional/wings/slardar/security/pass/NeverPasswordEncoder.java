@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.security.impl;
+package pro.fessional.wings.slardar.security.pass;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -10,14 +10,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 public class NeverPasswordEncoder implements PasswordEncoder {
 
-    public static final String Key = "never";
-    private static final String Tkn = "{" + Key + "}";
+    private final String token;
+
+    public NeverPasswordEncoder(String name) {
+        this.token = "{" + name + "}";
+    }
 
     @Override
     public String encode(CharSequence rawPassword) {
         final String pass = rawPassword.toString();
-        final int pos = pass.lastIndexOf(Tkn);
-        return pos < 0 ? Tkn + pass : pass.substring(pos + Tkn.length());
+        final int pos = pass.lastIndexOf(token);
+        return pos < 0 ? token + pass : pass.substring(pos + token.length());
     }
 
     @Override

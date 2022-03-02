@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.security.impl;
+package pro.fessional.wings.slardar.security.pass;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;

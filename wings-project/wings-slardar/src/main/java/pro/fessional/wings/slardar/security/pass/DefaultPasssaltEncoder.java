@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.security.impl;
+package pro.fessional.wings.slardar.security.pass;
 
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
