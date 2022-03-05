@@ -128,11 +128,18 @@ function build_web() {
     fi
 
     # git hash
+    echo -e "\033[37;42;1m ==== GitHash $WORK_DIR ==== \033[0m"
     check_cmd git
     _ver=$(git log --pretty=format:'%H - %ad %d' -1)
-    find . -maxdepth 2 -name 'index.html' | while read -r _idx; do
-        echo -e "\033[32m append git hash to \033[m $_idx"
-        echo "<!-- $_ver -->" >>"$_idx"
+    for _jar in $PACK_JAR; do
+        if [[ -d "$_jar" ]]; then
+            find "$_jar" -maxdepth 1 -name 'index.html' | while read -r _idx; do
+                echo -e "append git hash to $_idx"
+                echo "<!-- WingsGitHash $_ver -->" >>"$_idx"
+            done
+        else
+            echo "skip append git hash to $_jar"
+        fi
     done
 }
 
@@ -267,11 +274,11 @@ case "$1" in
                 if [[ ! -d "$_dst" ]]; then
                     _cmd="scp -r $SCP_ARGS"
                     # scp://[user@]host[:port][/path]
-                    if [[ $_dst =~ scp:// && "$(man scp |grep scp://)" == "" ]]; then
+                    if [[ $_dst =~ scp:// && "$(man scp | grep scp://)" == "" ]]; then
                         pt=$(echo "$_dst" | sed -E 's=scp://([^:]*:)([0-9]*)(.*)=\2=')
                         if [[ $pt =~ ^[0-9]+$ ]]; then
-                           _cmd="$_cmd -P $pt"
-                           _tgt=$(echo "$_dst" | sed -E 's=scp://([^:]*:)([0-9]*)(.*)=\1\3=')
+                            _cmd="$_cmd -P $pt"
+                            _tgt=$(echo "$_dst" | sed -E 's=scp://([^:]*:)([0-9]*)(.*)=\1\3=')
                         fi
                     fi
                 fi

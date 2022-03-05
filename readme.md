@@ -125,7 +125,7 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 * 数据库，表名，字段名，全小写。
 * SQL关键词，内置词等建议`大写`，以区别。
 * `index`以`ix_`,`uq_`,`ft_`,`pk_`区分索引类型。
-* `trigger`以`_bu`,`_bd`表示触发的时机。
+* `trigger`以`(ai|au|db)__`表示触发的时机。
 
 ### 0.2.3.时间很神奇
 
@@ -271,21 +271,22 @@ public interface TradeService {
 
 默认开启了swagger，访问路径为 /swagger-ui/index.html
 
-因swagger注解容易使doc部分冗长，且springfox做了比较智能的推导，
+因swagger注解容易使doc部分冗长，且SpringDoc做了比较智能的推导，
 所以在能够表述清楚时，建议简化注解，参考以下注解。
 
-* @ApiOperation， 以value,notes,response表述清楚
-* @ApiModel/@ApiModelProperty，输入或输出对象
-* @ApiParam， 输入参数
-* @ApiResponses，必要时使用
+* @Operation，以tag,summary,description等表述清楚
+* @Schema，输入或输出对象
+* @Parameter， 输入参数
+* @ApiResponse，必要时使用
 
-在notes中，支持Markdown，辅助jsdoc，可使文档更加清晰。
+在description中，支持Markdown，辅助jsdoc，可使文档更加清晰。
 `@param [name=trydofor] - Somebody's name.`  - 参考 https://jsdoc.app/tags-param.html
 `@return {200|Result(Dto)} 正常返回对象，status=200` - 小括号表示泛型(避免转义)。参考 https://jsdoc.app/tags-returns.html
 `@return {200|Result(false)} 错误时返回，status=200` - 小括号表示简单约定参数。参考 https://jsdoc.app/tags-returns.html
 
-使用swagger时，不可使用弱口令，在正式服上必须关闭。在3.0.0版本，通过设置以下属性即可。  
-`springfox.documentation.enabled=false`，或通过profile来设置（不推荐）
+使用swagger时，不可使用弱口令，在正式服上可通过以下属性关闭。  
+* springdoc.api-docs.enabled=true
+* springdoc.swagger-ui.enabled=true
 
 推荐在每个工程test下建立idea支持的 `*.http` 接口描述和测试脚本，官方文档如下
 
@@ -745,8 +746,11 @@ Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控�
 ### 21.Java和Kotlin版本
 
 目前编译目标是java 8，kotlin 1.4，如果在IDE中出现编译失败，很可能是编译版本不对。
+从2.6.3.210起，wings全面适配java 11，kotlin自动更新为1.6，未做java8证兼性测试。
 
 ### 22.swagger的问题
+
+**从210版本，以SpringDoc取代SpringFox后，使用swagger3.0，部分问题已不存在**
 
 `😱 Could not render n, see the console.`
 是swagger前端js错误，可能是response对象层级过深，导致swagger扫描时间太长。
@@ -879,3 +883,17 @@ spring的Bean在其生命周期有载入顺序，Processor，framework和业务B
 若某些Bean因为依赖关系在Processor前加载，则不会被Process，可能影响业务。
 
 若是经过排查后，对业务没有影响，那么可忽略该INFO级别的Warning。
+
+### 31.非科学家，不可浮点(IEEE754)型存储和计算
+
+wings中不应该有浮点类型float/double，而只有整数(int/long)，小数BigDecimal，
+他们对应的数据库类型分别为 INT/BIGINT/DECIMAL。
+
+但在实践过程中，因科普不到位，一些外部惯性未被消除而污染wings代码，尤其在js体系中更为明显。
+
+* 0.1 + 0.2 = 0.30000000000000004
+* 0.12 - 0.02 = 0.099999999999999
+
+其根本原因在用IEEE754格式，浮点型不适合非科学计算场景，除科学家外普通人慎用。
+`Effective Java`是java从业人员必备知识，在此不做赘述，参考以下章节：
+Avoid Float and Double If Exact Answers Are Required
