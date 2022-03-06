@@ -94,7 +94,7 @@ sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/res
 任何数据变动，都应该有`commit_id`，记录下事件信息（人，事件，业务信息等）。
 最新的数据留在`本表`，旧数据通过`trigger`插入`跟踪表`。跟踪表也称`$log`表，
 因最初的命名规则是，本表+`$log`后缀，但后因某些工具缺陷，误把`$`当做变量处理，
-尽管其是mysql官方合法字符，flywave在2.6.3版后调整为双下划线`__`后缀。
+尽管其是mysql官方合法字符，flywave在210版后调整为双下划线`__`后缀。
 
 `journal`通过`sys_schema_journal`生成`跟踪表`和`触发器`。
 
@@ -489,7 +489,7 @@ select @triggerSql;
 
 ### 13.工具或DB不支持`$`命名怎么办
 
-从2.6.3.210开始，wings以双下划线命名，取代dollar命名。
+从210开始，wings以双下划线命名，取代dollar命名。
 
 英数美刀下划线(`[0-9,a-z,A-Z$_]`)都是mysql官方无需转义的合法的[命名字符](https://dev.mysql.com/doc/refman/5.7/en/identifiers.html)
 但某些不完备的云DB或工具，未做好处理，属于其功能缺陷。

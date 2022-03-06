@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.3</version>
+        <version>2.6.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -24,10 +24,10 @@
     </modules>
 
     <properties>
-        <maven.version>3.8.4</maven.version>
-        <revision>2.6.3</revision>
+        <!-- https://maven.apache.org/maven-ci-friendly.html -->
+        <revision>2.6.4</revision>
         <changelist>210-SNAPSHOT</changelist>
-        <!-- https://docs.spring.io/spring-boot/docs/2.6.3/reference/html/appendix-dependency-versions.html#appendix-dependency-versions -->
+        <!-- https://docs.spring.io/spring-boot/docs/2.6.4/reference/html/appendix-dependency-versions.html#appendix-dependency-versions -->
         <spring-boot.version>${revision}</spring-boot.version>
         <wings.version>${revision}.${changelist}</wings.version>
         <!-- project -->
@@ -491,12 +491,14 @@
                     </executions>
                 </plugin>
                 <plugin>
+                    <!-- https://www.mojohaus.org/flatten-maven-plugin/flatten-mojo.html -->
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
                     <version>${flatten-maven-plugin.version}</version>
                     <configuration>
                         <updatePomFile>true</updatePomFile>
                         <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                        <flattenedPomFilename>.pom.xml</flattenedPomFilename>
                     </configuration>
                     <executions>
                         <execution>

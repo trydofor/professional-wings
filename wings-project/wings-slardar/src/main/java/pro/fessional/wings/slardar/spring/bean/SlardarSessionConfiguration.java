@@ -38,7 +38,7 @@ import java.util.List;
 /**
  * 通过 session-hazelcast.xml 配置好 spring session用的map，主要是index和serial
  * https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-session
- * https://docs.spring.io/spring-session/docs/2.6.3/reference/html5/#spring-security
+ * https://docs.spring.io/spring-session/docs/2.6.4/reference/html5/#spring-security
  * https://guides.hazelcast.org/spring-session-hazelcast/
  *
  * @author trydofor

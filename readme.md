@@ -1,6 +1,6 @@
 # 0.专业大翅 (pro.fessional.wings)
 
-[![Spring Boot](https://img.shields.io/badge/spring--boot-2.6.3-green)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/spring--boot-2.6.4-green)](https://spring.io/projects/spring-boot)
 [![Java 11](https://img.shields.io/badge/java-11-red)](https://spring.io/projects/spring-boot)
 [![Kotlin 1.6](https://img.shields.io/badge/kotlin-1.6-red)](https://kotlinlang.org/docs/reference/)
 [![Jooq](https://img.shields.io/badge/jooq-3.14-yellow)](https://www.jooq.org/download/)
@@ -49,7 +49,7 @@ wings的版本号为`4段分隔`，前3段为spring-boot版本，第4段是chang
 
 涉及技术和知识点
 
-* [Spring Boot](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/)
+* [Spring Boot](https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/)
 * [Apache ShardingSphere](https://shardingsphere.apache.org/index_zh.html)
 * [Jooq - 强类型 sql-mapping](https://www.jooq.org/)
 
@@ -662,8 +662,8 @@ wings随时跟进升级spring boot的最新版本，目的是为了测试shardin
 * parent - you can also override individual dependencies by overriding a property in your own project
 * import - does not let you override individual dependencies by using properties, as explained above. To achieve the same result, you need to add entries in the dependencyManagement section of your project before the
   spring-boot-dependencies entry.
-* https://docs.spring.io/spring-boot/docs/2.6.3/maven-plugin/reference/htmlsingle/#using-parent-pom
-* https://docs.spring.io/spring-boot/docs/2.6.3/maven-plugin/reference/htmlsingle/#using-import
+* https://docs.spring.io/spring-boot/docs/2.6.4/maven-plugin/reference/htmlsingle/#using-parent-pom
+* https://docs.spring.io/spring-boot/docs/2.6.4/maven-plugin/reference/htmlsingle/#using-import
 
 对于低于wings的spring-boot版本，一般来讲指定一下jooq版本就可以完全正常。
 
@@ -717,7 +717,7 @@ at org.jooq.impl.AbstractQuery.execute(AbstractQuery.java:390)
 
 原因是maven-resources-plugin的filter目录中存在非文本文件(不可按字符串读取)， 不要降级到3.1.0，在nonFilteredFileExtension添加扩展名即可。
 
-(Automatic Property Expansion Using Maven)[https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#howto-properties-and-configuration]
+(Automatic Property Expansion Using Maven)[https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/#howto-properties-and-configuration]
 
 ### 18.通过mysql客户端能找到，wings查询不到数据
 
@@ -738,7 +738,7 @@ Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控�
 
 ### 20.Tomcat和hazelcast的POM exclusion
 
-使用wings-home为parent时通过dependencyManagement，继承wings默认不需要修改。 但若是没有继承wings依赖，以下2项视情况需要自行调整
+使用wings-project为parent时通过dependencyManagement，继承wings默认不需要修改。 但若是没有继承wings依赖，以下2项视情况需要自行调整
 
 * spring-boot-starter-web/spring-boot-starter-tomcat，因默认使用undertow
 * spring-session-hazelcast/hazelcast，使用最新版本。
@@ -746,7 +746,7 @@ Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控�
 ### 21.Java和Kotlin版本
 
 目前编译目标是java 8，kotlin 1.4，如果在IDE中出现编译失败，很可能是编译版本不对。
-从2.6.3.210起，wings全面适配java 11，kotlin自动更新为1.6，未做java8证兼性测试。
+从210起，wings全面适配java 11，kotlin自动更新为1.6，未做java8证兼性测试。
 
 ### 22.swagger的问题
 
@@ -774,7 +774,7 @@ wings中可以通过暴露AlternateTypeRule bean，自动注入所以Docket中�
 * 方案二，自己暴露Config或ClientConfig，并设置好classloader
 * 方案三，通过restart.include设置（不推荐）
 
-不推荐在product环境使用devtool，参考springboot官方文档的[Known Limitations](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#using.devtools.restart.limitations)
+不推荐在product环境使用devtool，参考springboot官方文档的[Known Limitations](https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/#using.devtools.restart.limitations)
 
 ### 24.Hazelcast OutOfMemoryError CallerNotMemberException
 
@@ -856,7 +856,7 @@ head demo-exmaple-1.0.0-SNAPSHOT.jar
 
 ### 28.如何配置logger和log groups
 
-SpringBoot内置以下log groups [Log Groups](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#features.logging.log-groups)
+SpringBoot内置以下log groups [Log Groups](https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/#features.logging.log-groups)
 
 * org.springframework.core.codec
 * org.springframework.http
@@ -872,7 +872,7 @@ SpringBoot内置以下log groups [Log Groups](https://docs.spring.io/spring-boot
 build/resources/resource/filtering=true，以便mvn自动替换。
 
 但是开启filter会引起错误替换，比如二进制文件等，wings默认忽略一些二进制文件
-同时在2.6.3版后，以spring变量取代了mvn变量，因此不需要filter。
+同时在210版后，以spring变量取代了mvn变量，因此不需要filter。
 
 ### 30.not eligible for auto-proxying
 
