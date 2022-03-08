@@ -224,7 +224,7 @@ public class WarlockSecurityProp {
 
     /**
      * 设置spring.application.name对应的权限，若非全部满足，则不可登录，以用户名密码错误返回
-     * 支持AntPath，如`wings-*`，合并所有匹配的权限设置项
+     * 支持AntPath，如`wings-*`，合并所有匹配的权限设置项，wings默认程序为`wings-default`
      *
      * @see #Key$appPerm
      */

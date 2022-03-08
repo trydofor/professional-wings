@@ -59,7 +59,7 @@ public class JacksonZonedDateTimeSerializer extends ZonedDateTimeSerializer {
     public void serialize(ZonedDateTime value, JsonGenerator g, SerializerProvider provider) throws IOException {
         if (autoZone) {
             final TimeZone tz = LocaleContextHolder.getTimeZone();
-            value = DateLocaling.zoneZone(value, tz.toZoneId());
+            value = DateLocaling.zoned(value, tz.toZoneId());
         }
         super.serialize(value, g, provider);
     }

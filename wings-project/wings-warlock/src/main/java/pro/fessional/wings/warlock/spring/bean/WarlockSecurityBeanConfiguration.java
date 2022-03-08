@@ -288,7 +288,7 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(AuthAppPermChecker.class)
     @ConditionalOnProperty(name = "spring.wings.warlock.enabled.app-perm-check", havingValue = "true")
-    public AuthAppPermChecker authAppPermChecker(@Value("${spring.application.name}") String appName) {
+    public AuthAppPermChecker authAppPermChecker(@Value("${spring.application.name:wings-default}") String appName) {
         logger.info("Wings conf authAppPermChecker");
         final AuthAppPermChecker bean = new AuthAppPermChecker();
         final Set<String> perms = new HashSet<>();

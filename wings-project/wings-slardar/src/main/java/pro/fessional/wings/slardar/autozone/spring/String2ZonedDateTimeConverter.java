@@ -7,7 +7,6 @@ import org.springframework.core.convert.TypeDescriptor;
 import pro.fessional.mirana.time.DateLocaling;
 import pro.fessional.mirana.time.DateParser;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -46,6 +45,6 @@ public class String2ZonedDateTimeConverter extends DateTimeFormatSupport {
             zdt = DateParser.parseZoned((String) source, tz.toZoneId(), formats);
         }
 
-        return autoZone ? DateLocaling.zoneZone(zdt, ZoneId.systemDefault()) : zdt;
+        return autoZone ? DateLocaling.sysZdt(zdt) : zdt;
     }
 }
