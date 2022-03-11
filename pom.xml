@@ -46,7 +46,7 @@
         <!-- faceless -->
         <meepo.version>1.4.1-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <simpleflatmapper.version>8.2.3</simpleflatmapper.version> <!-- https://simpleflatmapper.org -->
-        <shardingsphere.version>5.0.0</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
+        <shardingsphere.version>5.1.0</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <!-- slardar -->
         <guava.version>31.0.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
         <commons-io.version>2.11.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
@@ -161,16 +161,6 @@
                 </exclusions>
             </dependency>
             <!-- sharding sphere -->
-            <dependency>
-                <groupId>org.apache.shardingsphere</groupId>
-                <artifactId>shardingsphere-jdbc-core</artifactId>
-                <version>${shardingsphere.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.shardingsphere</groupId>
-                <artifactId>shardingsphere-transaction-xa-core</artifactId>
-                <version>${shardingsphere.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>

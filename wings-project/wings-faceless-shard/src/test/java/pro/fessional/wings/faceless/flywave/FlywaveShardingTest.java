@@ -43,6 +43,7 @@ public class FlywaveShardingTest {
     @Test
     public void test0𓃬清表重置() {
         schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes);
+        schemaShardingManager.askWay(FlywaveInteractiveTty.askYes);
         wingsTestHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
@@ -89,9 +90,10 @@ public class FlywaveShardingTest {
         assertEquals(4, countRecords("writer", "tst_中文也分表_3"));
         assertEquals(4, countRecords("writer", "tst_中文也分表_4"));
 
+        // 5.x起，shardingsphere 会 SELECT count(*) FROM tst_中文也分表_0 UNION ALL SELECT count(*) FROM tst_中文也分表_#
         Integer cnt = shardingJdbcTemplate.queryForObject("SELECT count(*) FROM tst_中文也分表", Integer.class);
-        testcaseNotice("writer和reader实际未配置同步，所以从库读取为0");
-        assertEquals(0, cnt);
+//        testcaseNotice("writer和reader实际未配置同步，所以从库读取为0");
+        assertEquals(20, cnt);
     }
 
     public int countRecords(String db, String tbl) {
