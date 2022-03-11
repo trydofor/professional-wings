@@ -114,11 +114,12 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 
 * `static final` 不必全大写。如`logger`比`LOG`可读性好。
 * `BIG_SNAKE`可使用`PascalNaming`，因为大写单词不如小写易读。
-* 全大写名词（缩写或专有）只首字母大写。`Json`,`Html`,`Id`。
-* 前后缀或缩写，不可以单字母，建议3个字母。
+* 全大写名词（缩写或专有）只首字母大写驼峰法。`Json`,`Html`,`Id`。
+* 前后缀或缩写，不可以单字母，必须2字母以上，建议3个字母（驼峰法）。
 * 英文无法表达的业务词汇及行业黑话，不要用拼音，用中文。`落地配`。
 * 要求4-8字母的单词都记住。
-* 消除null。Set/List/Array/Map用empty，其他标注@NotNull或@Nullable
+* 以Empty消除null。Set/List/Array/Map用empty
+* 显示标注@NotNull，@Nullable，@Contract，声明null约束
 
 ### 0.2.2.Sql风格，`snake_case`，即全小写，下划线分割，小写词比大写容易识别。
 
@@ -126,6 +127,14 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 * SQL关键词，内置词等建议`大写`，以区别。
 * `index`以`ix_`,`uq_`,`ft_`,`pk_`区分索引类型。
 * `trigger`以`(ai|au|db)__`表示触发的时机。
+
+wings主张业务表SQL化，即使用SQL管理表及数据，而GUI或对象映射都是辅助功能。
+SQL脚本可以很好的编辑，比较，文档化，包括业务表的分层，编号及注释格式。
+
+* 表`编号/名字:解释` - 105/常量枚举:自动生成enum类
+* 字段`注释/解释:选项|选项` - 验证账号/身份辨识:邮箱|手机|union_id|api_key
+
+编号由业务层规划，如10x为系统，11x为应用，12x为用户，13x为权限，2xx为商品，3xx为订单等。
 
 ### 0.2.3.时间很神奇
 
