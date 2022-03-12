@@ -774,14 +774,19 @@ https://github.com/springfox/springfox/issues/3452
 
 wings中可以通过暴露AlternateTypeRule bean，自动注入所以Docket中。
 
-### 23.反序列化时ClassCastException (hazelcast, kryo, cache)
+### 23.反序列化时ClassCastException (hazelcast, kryo, cache)或Enum比较失败。
 
-现象是，完全一样的class，但是在序列化时却抛出 ClassCastException。 大概率是，开发时项目使用了spring-boot-devtools，导致IDE和jar处在不同的classloader。
+* 完全一样的class，但是在序列化时却抛出 ClassCastException。 
+* 同一个Enum的hash和equals不同，导致比较或map失败。
 
-* 原因：IDE工程使用了`restart` classloader, jar file 则是`base`classloader
+大概率是，开发时项目使用了spring-boot-devtools，导致IDE和jar处在不同的classloader。
+IDE使用了devtools的`restart`, 而非IDE内的jar则是`base`。
+
 * 方案一，wings中始终使用`spring.hazelcast.config`配置hazelcast
 * 方案二，自己暴露Config或ClientConfig，并设置好classloader
-* 方案三，通过restart.include设置（不推荐）
+* 方案三，配置spring-devtools.properties（不推荐，wings采用）
+
+在开发wings自身时，因为序列化需要，demo工程对wings的依赖，都希望devtools造成干扰，
 
 不推荐在product环境使用devtool，参考springboot官方文档的[Known Limitations](https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/#using.devtools.restart.limitations)
 
