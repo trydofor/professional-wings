@@ -22,6 +22,7 @@ import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,6 +41,7 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
     private CacheManager cacheManager;
     private String cacheName;
     private Set<Enum<?>> acceptNonceType = Collections.emptySet();
+    private List<DefaultUserDetailsCombo> detailCombos = Collections.emptyList();
 
     @Setter(onMethod_ = {@Autowired})
     protected PasswordEncoder passwordEncoder;
@@ -51,7 +53,7 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
     }
 
     @Override
-    protected Details doLoad(@NotNull Enum<?> authType, String username, @Nullable WingsAuthDetails authDetail) {
+    public Details doLoad(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {
         if (!acceptNonceType.contains(authType)) {
             return null;
         }
@@ -66,7 +68,19 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
             throw new NonceExpiredException("nonce expired username=" + username);
         }
 
-        final Details details = super.doLoad(authType, username, authDetail);
+        Details details = null;
+        for (DefaultUserDetailsCombo combo : detailCombos) {
+            final Details ud = combo.doLoad(username, authType, authDetail);
+            if(ud != null){
+                details = ud;
+                break;
+            }
+        }
+
+        if(details == null){
+            details = super.doLoad(username, authType, authDetail);
+        }
+
         if (details != null) {
             PasswordHelper helper = new PasswordHelper(passwordEncoder, passsaltEncoder);
             details.setPassword(helper.hash(event.getNonce(), details.getPasssalt()));

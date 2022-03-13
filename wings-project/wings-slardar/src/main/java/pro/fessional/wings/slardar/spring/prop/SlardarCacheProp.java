@@ -29,12 +29,20 @@ public class SlardarCacheProp {
     public static final String Key$primary = Key + ".primary";
 
     /**
-     * 是否允许缓存null
+     * 如何统一处理对null的缓存。weak:以Weak引用缓存; skip:不缓存null；其他值则不统一处理
      *
      * @see #Key$nulls
      */
-    private boolean nulls = false;
+    private String nulls = "weak";
     public static final String Key$nulls = Key + ".nulls";
+
+    public boolean isNullWeak() {
+        return "weak".equalsIgnoreCase(nulls);
+    }
+
+    public boolean isNullSkip() {
+        return "skip".equalsIgnoreCase(nulls);
+    }
 
     /**
      * level之外的默认配置

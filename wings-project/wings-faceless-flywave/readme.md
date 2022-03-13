@@ -66,7 +66,10 @@ JDBC数据源(DataSource)，分为两种，他们会存在于`DataSourceContext`
 
 
 `$`是命名中的特殊字符，定义`跟踪表`，但dollar在很多环境中需要转义，如shell，regexp。
-sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/resources/wings-flywave/readme.md)
+sql的书写规则详见[数据库约定](src/main/resources/wings-flywave/readme.md)
+
+尤其重要的是，一个 **SQL块必须有delimiter收尾**，哪怕是注释部分也需要。
+因为flywave对sql解析未做语法分析，估无法判断delimiter是否在字符串中。
 
 数据库中尽量不要`nullable`，约定默认值代替，如`convention.EmptyValue`类
 
@@ -128,13 +131,13 @@ sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/res
 参考资料
 * https://dev.mysql.com/doc/refman/8.0/en/trigger-syntax.html
 
-## 2.1.4.测试用例
+## 2.1.3.测试用例
 
 `kotlin`中的测试用例，主要是场景演示。需要单个执行，确保成功。
 统一执行时，springboot为了有效使用资源，不会全部重新初始化`context`，
 这样会使有些`ApplicationListener`得不到触发，可能导致部分TestCase失败。
 
-## 2.1.3.注解指令
+## 2.1.4.注解指令
 
 flywave提供了以下有特殊功能的`sql注释`，称为`注解指令`
 
@@ -307,13 +310,13 @@ WHERE
   EVENT_OBJECT_SCHEMA = database();
 
 -- 获取创建trigger的SQL;
--- DELIMITER $$
+-- DELIMITER ;;
 SELECT
    TRIGGER_NAME,
    CONCAT('DROP TRIGGER IF EXISTS ',TRIGGER_NAME,';'),
    CONCAT('CREATE TRIGGER `', TRIGGER_NAME, '` ',
           ACTION_TIMING, ' ', EVENT_MANIPULATION, ' ON `', EVENT_OBJECT_TABLE, '` FOR EACH ROW ',
-          ACTION_STATEMENT, '$$')
+          ACTION_STATEMENT, ';;')
 FROM
    INFORMATION_SCHEMA.TRIGGERS
 WHERE
@@ -356,15 +359,14 @@ ALTER TABLE `{{TABLE_NAME}}__`
    ADD COLUMN `_dt` DATETIME(3) NOT NULL DEFAULT '1000-01-01 00:00:00' AFTER `_id`,
    ADD COLUMN `_tp` CHAR(1) NOT NULL DEFAULT 'Z' AFTER `_dt`;
 
-DELIMITER $$
+DELIMITER ;;
 CREATE TRIGGER `ai__{{TABLE_NAME}}` AFTER INSERT ON `{{TABLE_NAME}}`
    FOR EACH ROW BEGIN
    IF (@DISABLE_FLYWAVE IS NULL) THEN
       INSERT INTO `{{TABLE_NAME}}__` SELECT NULL, NOW(3), 'C', t.* FROM `{{TABLE_NAME}}` t
       WHERE t.id = NEW.id ;
    END IF;
-END
-$$
+END;;
 
 CREATE TRIGGER `au__{{TABLE_NAME}}` AFTER UPDATE ON `{{TABLE_NAME}}`
    FOR EACH ROW BEGIN
@@ -372,8 +374,7 @@ CREATE TRIGGER `au__{{TABLE_NAME}}` AFTER UPDATE ON `{{TABLE_NAME}}`
       INSERT INTO `{{TABLE_NAME}}__` SELECT NULL, NOW(3), 'U', t.* FROM `{{TABLE_NAME}}` t
       WHERE t.id = NEW.id ;
    END IF;
-END
-$$
+END;;
 
 CREATE TRIGGER `bd__{{TABLE_NAME}}` BEFORE DELETE ON `{{TABLE_NAME}}`
    FOR EACH ROW BEGIN
@@ -381,8 +382,7 @@ CREATE TRIGGER `bd__{{TABLE_NAME}}` BEFORE DELETE ON `{{TABLE_NAME}}`
       INSERT INTO `{{TABLE_NAME}}__` SELECT NULL, NOW(3), 'D', t.* FROM `{{TABLE_NAME}}` t
       WHERE t.id = OLD.id ;
    END IF;
-END
-$$
+END;;
 DELIMITER ;
 ```
 
@@ -466,22 +466,22 @@ EXECUTE stmt;
 -- 生成trigger sql
 SET @tabl = 'win_user_basis';
 SET @triggerSql = CONCAT(
-   'DELIMITER $$\n',
+   'DELIMITER ;;\n',
    'CREATE TRIGGER `ai__', @tabl, '` AFTER INSERT ON `', @tabl,'` FOR EACH ROW BEGIN',
    ' IF (@DISABLE_FLYWAVE IS NULL) THEN',
    ' INSERT INTO `',@tabl ,'__` SELECT NULL, NOW(3), \'C\', t.* FROM `',@tabl ,'` t WHERE t.id = NEW.id ;',
    ' END IF;',
-   'END$$\n',
+   'END;;\n',
    'CREATE TRIGGER `au__', @tabl, '` AFTER UPDATE ON `', @tabl,'` FOR EACH ROW BEGIN',
    ' IF (@DISABLE_FLYWAVE IS NULL) THEN',
    ' INSERT INTO `',@tabl ,'__` SELECT NULL, NOW(3), \'U\', t.* FROM `',@tabl ,'` t WHERE t.id = NEW.id ;',
    ' END IF;',
-   'END$$\n',
+   'END;;\n',
    'CREATE TRIGGER `bd__', @tabl, '` BEFORE DELETE ON `', @tabl,'` FOR EACH ROW BEGIN',
    ' IF (@DISABLE_FLYWAVE IS NULL) THEN',
    ' INSERT INTO `',@tabl ,'__` SELECT NULL, NOW(3), \'D\', t.* FROM `',@tabl ,'` t WHERE t.id = OLD.id ;',
    ' END IF;',
-   'END$$\n'
+   'END;;\n'
    );
 
 select @triggerSql;

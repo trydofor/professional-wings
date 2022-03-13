@@ -239,7 +239,7 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboNonceUserDetails, havingValue = "true")
     @ConditionalOnMissingBean(NonceUserDetailsCombo.class)
-    public NonceUserDetailsCombo nonceUserDetailsCombo() {
+    public NonceUserDetailsCombo nonceUserDetailsCombo(List<DefaultUserDetailsCombo> combos) {
         logger.info("Wings conf nonceUserDetailsCombo");
         final NonceUserDetailsCombo combo = new NonceUserDetailsCombo();
         combo.setAcceptNonceType(securityProp.mapNonceAuthEnum());
@@ -247,6 +247,7 @@ public class WarlockSecurityBeanConfiguration {
         combo.setCacheName(cn);
         final CacheManager cm = applicationContext.getBean(securityProp.getNonceCacheManager(), CacheManager.class);
         combo.setCacheManager(cm);
+        combo.setDetailCombos(combos);
         return combo;
     }
 

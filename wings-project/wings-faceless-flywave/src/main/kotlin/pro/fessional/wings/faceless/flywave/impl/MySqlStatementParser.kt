@@ -52,7 +52,10 @@ class MySqlStatementParser : SqlStatementParser {
     )
 
     private val shardRegex = linkedSetOf(
-        dmlDelete.toFunction(), dmlInsert.toFunction(), dmlReplace.toFunction(), dmlUpdate.toFunction()
+        dmlDelete.toFunction(),
+        dmlInsert.toFunction(),
+        dmlReplace.toFunction(),
+        dmlUpdate.toFunction()
     )
 
     /**
@@ -91,6 +94,10 @@ class MySqlStatementParser : SqlStatementParser {
     }
 
     override fun parseTypeAndTable(sql: String): SqlStatementParser.SqlType {
+        if(sql.startsWith("SELECT ",true)) {
+            return SqlStatementParser.SqlType.Other
+        }
+
         for (ptn in plainRename) {
             val m = ptn.matcher(sql)
             if (m.find()) {

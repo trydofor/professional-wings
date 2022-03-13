@@ -84,7 +84,7 @@ public class MemoryUserDetailsCombo extends DefaultUserDetailsCombo {
     }
 
     @Override
-    protected Details doLoad(@NotNull Enum<?> authType, String username, @Nullable WingsAuthDetails authDetail) {
+    public Details doLoad(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {
         final List<Details> details = typedUser.get(username);
         if (details == null || details.isEmpty()) return null;
 
