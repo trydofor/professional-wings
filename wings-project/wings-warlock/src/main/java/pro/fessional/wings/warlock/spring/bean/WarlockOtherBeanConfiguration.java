@@ -11,13 +11,18 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import pro.fessional.wings.faceless.database.helper.DatabaseChecker;
 import pro.fessional.wings.slardar.concur.impl.RighterInterceptor;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
+import pro.fessional.wings.slardar.serialize.JsonConversion;
+import pro.fessional.wings.slardar.serialize.KryoConversion;
 import pro.fessional.wings.warlock.errorhandle.AllExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.CodeExceptionResolver;
+import pro.fessional.wings.warlock.service.conf.RuntimeConfService;
+import pro.fessional.wings.warlock.service.conf.impl.RuntimeConfServiceImpl;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockErrorProp;
 
@@ -84,5 +89,16 @@ public class WarlockOtherBeanConfiguration {
             }
             return null;
         };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public RuntimeConfService runtimeConfService(ConversionService conversion) {
+        logger.info("Wings conf runtimeConfService");
+        final RuntimeConfServiceImpl bean = new RuntimeConfServiceImpl();
+        bean.addHandler(RuntimeConfServiceImpl.PropHandler, conversion);
+        bean.addHandler(RuntimeConfServiceImpl.JsonHandler, new JsonConversion());
+        bean.addHandler(RuntimeConfServiceImpl.KryoHandler, new KryoConversion());
+        return bean;
     }
 }

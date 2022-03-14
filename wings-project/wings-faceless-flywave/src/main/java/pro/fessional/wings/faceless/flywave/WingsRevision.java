@@ -14,6 +14,7 @@ public enum WingsRevision implements FlywaveRevisionRegister {
     V01_19_0521_01_EnumI18n(2019_0521_01L, "enum and i18n", "branch/feature/01-enum-i18n"),
     V04_20_1024_01_UserLogin(2020_1024_01L, "user auth login", "master/04-auth"),
     V04_20_1024_02_RolePermit(2020_1024_02L, "user role permit", "master/04-auth"),
+    V05_21_1023_01_ConfRuntime(2021_1023_01L, "runtime config", "master/05-conf"),
     ;
 
     private final long revi;

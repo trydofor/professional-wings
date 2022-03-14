@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
+import pro.fessional.wings.faceless.flywave.WingsRevision;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.util.SortedMap;
@@ -25,6 +26,14 @@ class Warlock1SchemaManagerTest {
 
     @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;
+
+    @Test
+    void init04AuthMain() {
+        final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
+        manager.init(WingsRevision.V05_21_1023_01_ConfRuntime.revision(),
+                Warlock1SchemaManager.includeWarlockPath(),
+                Warlock1SchemaManager.includeWarlockRevi());
+    }
 
     @Test
     void init04AuthTest() {
