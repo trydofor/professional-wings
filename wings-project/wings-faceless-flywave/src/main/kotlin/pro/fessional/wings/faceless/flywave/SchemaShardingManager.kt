@@ -39,16 +39,16 @@ class SchemaShardingManager(
     private val logger = LoggerFactory.getLogger(SchemaShardingManager::class.java)
     private val interactive = DefaultInteractiveManager<AskType>(logger, plainDataSources, "🐵")
 
-    override fun logWay(func: BiConsumer<String, String>) {
-        interactive.logWay(func)
+    override fun logWay(func: BiConsumer<String, String>): BiConsumer<String, String> {
+        return interactive.logWay(func)
     }
 
-    override fun askWay(func: Function<String, Boolean>) {
-        interactive.askWay(func)
+    override fun askWay(func: Function<String, Boolean>): Function<String, Boolean> {
+        return interactive.askWay(func)
     }
 
-    override fun needAsk(ask: AskType, yes: Boolean) {
-        interactive.needAsk(ask, yes)
+    override fun needAsk(ask: AskType, yes: Boolean): Boolean? {
+        return interactive.needAsk(ask, yes)
     }
 
     /**

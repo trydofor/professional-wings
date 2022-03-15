@@ -69,6 +69,18 @@ open class SchemaRevisionMangerTest {
     }
 
     @Test
+    fun `test2🦁版本线状`() {
+        breakpointDebug("查看版本线状💰")
+        val databaseVersion = schemaRevisionManager.statusRevisions()
+        for ((d, u) in databaseVersion) {
+            println("$d -")
+            for (entry in u.entries) {
+                println(" ${entry.key} : ${entry.value}")
+            }
+        }
+    }
+
+    @Test
     fun `test3🦁回滚再发`() {
         breakpointDebug("降级到1st版本💰")
         schemaRevisionManager.publishRevision(revi1Schema, -1)

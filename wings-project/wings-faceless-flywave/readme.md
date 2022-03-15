@@ -131,13 +131,7 @@ sql的书写规则详见[数据库约定](src/main/resources/wings-flywave/readm
 参考资料
 * https://dev.mysql.com/doc/refman/8.0/en/trigger-syntax.html
 
-## 2.1.3.测试用例
-
-`kotlin`中的测试用例，主要是场景演示。需要单个执行，确保成功。
-统一执行时，springboot为了有效使用资源，不会全部重新初始化`context`，
-这样会使有些`ApplicationListener`得不到触发，可能导致部分TestCase失败。
-
-## 2.1.4.注解指令
+## 2.1.3.注解指令
 
 flywave提供了以下有特殊功能的`sql注释`，称为`注解指令`
 
@@ -183,7 +177,23 @@ ALTER TABLE `win_admin` DROP INDEX ix_login_name;
 
 推荐使用单行注释`--`，对应多行注释`/* */`不可置于行中。
 
-## 2.1.5.常见问题
+## 2.1.4.自动检查
+
+通过 `wings.faceless.flywave.fit.*` 配置文件可以设置对revision的依赖。
+因无法确认程序执行账号是否具有CREATE权限，wings除init为FAIL外，默认是WARN
+
+* 若需要关闭检查，可以根据log提示设置SKIP
+* 若需要执行Revision，把SKIP替换成EXEC即可
+
+wings的内置Revision和真实日期无关，版本号主要集中在2019和2020，不超过2022。
+
+## 2.1.7.测试用例
+
+`kotlin`中的测试用例，主要是场景演示。需要单个执行，确保成功。
+统一执行时，springboot为了有效使用资源，不会全部重新初始化`context`，
+这样会使有些`ApplicationListener`得不到触发，可能导致部分TestCase失败。
+
+## 2.1.9.常见问题
 
 ### 01.控制flywave时，spring找不到bean `SchemaRevisionManager`
 

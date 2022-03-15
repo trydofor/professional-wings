@@ -9,7 +9,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
  * @author trydofor
  * @since 2021-03-17
  */
-public interface FlywaveRevisionRegister {
+public interface RevisionRegister {
 
     /**
      * 版本

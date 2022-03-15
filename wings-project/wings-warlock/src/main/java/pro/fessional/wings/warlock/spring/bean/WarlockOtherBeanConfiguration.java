@@ -11,6 +11,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import pro.fessional.wings.faceless.database.helper.DatabaseChecker;
@@ -64,6 +65,7 @@ public class WarlockOtherBeanConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$checkDatabase, havingValue = "true")
+    @Order(Ordered.HIGHEST_PRECEDENCE + 1000)
     public CommandLineRunner databaseChecker(DataSource dataSource, ApplicationContext context) {
         logger.info("Wings conf databaseChecker");
         return args -> {

@@ -8,6 +8,7 @@ import pro.fessional.mirana.data.Null
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager.AskType
+import pro.fessional.wings.faceless.flywave.SchemaRevisionManager.Status
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor
 import pro.fessional.wings.faceless.flywave.SqlSegmentProcessor.ErrType
 import pro.fessional.wings.faceless.flywave.SqlStatementParser
@@ -17,6 +18,7 @@ import pro.fessional.wings.faceless.flywave.util.TemplateUtil
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.commentInfo
 import java.util.LinkedList
 import java.util.SortedMap
+import java.util.TreeMap
 import java.util.concurrent.atomic.AtomicLong
 import java.util.function.BiConsumer
 import java.util.function.Function
@@ -47,16 +49,16 @@ class DefaultRevisionManager(
     private val interactive = DefaultInteractiveManager<AskType>(logger, plainDataSources, "🐝")
     private val dropReg = HashMap<String, Regex>()
 
-    override fun logWay(func: BiConsumer<String, String>) {
-        interactive.logWay(func)
+    override fun logWay(func: BiConsumer<String, String>): BiConsumer<String, String> {
+        return interactive.logWay(func)
     }
 
-    override fun askWay(func: Function<String, Boolean>) {
-        interactive.askWay(func)
+    override fun askWay(func: Function<String, Boolean>): Function<String, Boolean> {
+        return interactive.askWay(func)
     }
 
-    override fun needAsk(ask: AskType, yes: Boolean) {
-        interactive.needAsk(ask, yes)
+    override fun needAsk(ask: AskType, yes: Boolean): Boolean? {
+        return interactive.needAsk(ask, yes)
     }
 
     /**
@@ -71,6 +73,12 @@ class DefaultRevisionManager(
         val tmpl = SimpleJdbcTemplate(it.value, it.key)
         val revi = getRevision(tmpl)
         it.key to revi
+    }.toMap()
+
+    override fun statusRevisions() = plainDataSources.map {
+        val tmpl = SimpleJdbcTemplate(it.value, it.key)
+        val line = lineRevision(tmpl)
+        it.key to line
     }.toMap()
 
     override fun publishRevision(revision: Long, commitId: Long) {
@@ -617,6 +625,42 @@ class DefaultRevisionManager(
             interactive.log(WARN, here, "failed to get un-init-1st revision, return -1, db=${tmpl.name}")
             -1
         }
+    }
+
+    private fun lineRevision(tmpl: SimpleJdbcTemplate): SortedMap<Long, Status> {
+        val here = "lineRevision"
+        val tree = TreeMap<Long, Status>()
+        var last = -1L
+        try {
+            tmpl.query("SELECT revision, apply_dt FROM $schemaVersionTable order by revision") {
+                val r = it.getLong(1)
+                val d = it.getString(2)
+                tree[r] = when {
+                    isRunning(d) -> {
+                        last = r
+                        Status.Running
+                    }
+                    isUnapply(d) -> Status.Future
+                    else -> {
+                        last = r
+                        Status.Applied
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            assertNot1st(tmpl.dataSource, e)
+            interactive.log(WARN, here, "failed to get un-init-1st revision, return -1, db=${tmpl.name}")
+        }
+
+        if(last > 0 && tree.isNotEmpty()){
+            for (entry in tree.entries) {
+                if(entry.key < last && entry.value == Status.Future){
+                    entry.setValue(Status.Broken)
+                }
+            }
+        }
+
+        return tree
     }
 
     private fun runSegment(tmpl: SimpleJdbcTemplate, tables: List<String>, seg: SqlSegmentProcessor.Segment, revi: Long = 0) {

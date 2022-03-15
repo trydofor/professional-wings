@@ -1,7 +1,7 @@
 package pro.fessional.wings.faceless.spring.bean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Configuration(proxyBeanMethods = false)
 public class FacelessDataSourceConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(FacelessDataSourceConfiguration.class);
+    private static final Log logger = LogFactory.getLog(FacelessDataSourceConfiguration.class);
 
     @Bean
     public DataSourceContext dataSourceContext(
@@ -32,33 +32,37 @@ public class FacelessDataSourceConfiguration {
         final AtomicBoolean skipOther = new AtomicBoolean(false);
         modifiers.orderedStream().forEach(it -> {
             if (skipOther.get()) {
-                logger.info("init bean dataSourceContext skip modifier, clz={}", it.getClass());
-            } else {
+                logger.info("init bean dataSourceContext skip modifier, clz=" + it.getClass());
+            }
+            else {
                 final boolean md = it.customize(ctx);
-                logger.info("init bean dataSourceContext by modifier skipOthers={}, clz={}", md, it.getClass());
+                logger.info("init bean dataSourceContext by modifier skipOthers=" + md + ", clz=" + it.getClass());
                 skipOther.set(md);
             }
         });
 
         if (ctx.getPrimary() != null) {
-            logger.info("init bean dataSourceContext's inuse, by modifier skipOthers={}", skipOther.get());
-        } else {
+            logger.info("init bean dataSourceContext's inuse, by modifier skipOthers=" + skipOther.get());
+        }
+        else {
             Optional<DataSource> ds = dataSources.orderedStream().findFirst();
             if (ds.isPresent()) {
                 logger.info("init bean dataSourceContext by 1st data-source");
                 ctx.setPrimary(ds.get());
-            } else {
+            }
+            else {
                 throw new IllegalStateException("can not find any data-source");
             }
         }
 
         final int ps = ctx.getPlains().size();
         if (ps > 0) {
-            logger.info("init bean dataSourceContext's plains, by modifier, count={}", ps);
-        } else {
+            logger.info("init bean dataSourceContext's plains, by modifier, count=" + ps);
+        }
+        else {
             AtomicInteger cnt = new AtomicInteger(0);
             dataSources.orderedStream().forEach(it -> ctx.addPlain("ds-" + cnt.incrementAndGet(), it));
-            logger.info("init bean dataSourceContext's plains, by all datasource, count={}", cnt.get());
+            logger.info("init bean dataSourceContext's plains, by all datasource, count=" + cnt.get());
         }
 
         if (logger.isInfoEnabled()) {
@@ -68,7 +72,8 @@ public class FacelessDataSourceConfiguration {
             final DataSource shard = ctx.getSharding();
             if (shard != null) {
                 logger.info("[Wings]🦄 database-sharding-url=" + ctx.cacheJdbcUrl(shard));
-            } else {
+            }
+            else {
                 logger.info("[Wings]🦄 database-sharding-url=no-shard-plain-database");
             }
             logger.info("[Wings]🦄 database-primary-url=" + ctx.cacheJdbcUrl(ctx.getPrimary()));

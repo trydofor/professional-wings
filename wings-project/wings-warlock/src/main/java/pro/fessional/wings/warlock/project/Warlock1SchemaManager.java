@@ -110,7 +110,7 @@ public class Warlock1SchemaManager {
                 WingsRevision.V01_19_0521_01_EnumI18n,
                 WingsRevision.V04_20_1024_01_UserLogin,
                 WingsRevision.V04_20_1024_02_RolePermit,
-                WingsRevision.V05_21_1023_01_ConfRuntime
+                WingsRevision.V05_20_1025_01_ConfRuntime
         );
     }
 
@@ -121,7 +121,7 @@ public class Warlock1SchemaManager {
             helper.include(WingsRevision.V01_19_0521_01_EnumI18n);
             helper.include(WingsRevision.V04_20_1024_01_UserLogin);
             helper.include(WingsRevision.V04_20_1024_02_RolePermit);
-            helper.include(WingsRevision.V05_21_1023_01_ConfRuntime);
+            helper.include(WingsRevision.V05_20_1025_01_ConfRuntime);
         };
     }
 }

@@ -8,11 +8,13 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StreamUtils;
 import pro.fessional.mirana.text.BuilderHelper;
 import pro.fessional.wings.faceless.convention.EmptySugar;
-import pro.fessional.wings.faceless.flywave.FlywaveRevisionRegister;
+import pro.fessional.wings.faceless.flywave.RevisionRegister;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager.RevisionSql;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -184,9 +186,9 @@ public class FlywaveRevisionScanner {
      * @see PathMatchingResourcePatternResolver
      */
     @NotNull
-    public static SortedMap<Long, RevisionSql> scan(@NotNull FlywaveRevisionRegister... path) {
+    public static SortedMap<Long, RevisionSql> scan(@NotNull RevisionRegister... path) {
         TreeMap<Long, RevisionSql> result = new TreeMap<>();
-        for (FlywaveRevisionRegister p : path) {
+        for (RevisionRegister p : path) {
             scan(result, p.classpath());
         }
         return result;
@@ -204,6 +206,11 @@ public class FlywaveRevisionScanner {
      */
     @NotNull
     public static SortedMap<Long, RevisionSql> scan(@NotNull String... path) {
+        return scan(Arrays.asList(path));
+    }
+
+    @NotNull
+    public static SortedMap<Long, RevisionSql> scan(@NotNull Collection<String> path) {
         TreeMap<Long, RevisionSql> result = new TreeMap<>();
         for (String p : path) {
             scan(result, p);
@@ -336,8 +343,8 @@ public class FlywaveRevisionScanner {
         private final LinkedHashMap<BiConsumer<Long, RevisionSql>, String> modifier = new LinkedHashMap<>();
         private final LinkedHashSet<String> paths = new LinkedHashSet<>();
 
-        public Helper path(FlywaveRevisionRegister... path) {
-            for (FlywaveRevisionRegister s : path) {
+        public Helper path(RevisionRegister... path) {
+            for (RevisionRegister s : path) {
                 paths.add(s.classpath());
             }
             return this;
@@ -511,7 +518,7 @@ public class FlywaveRevisionScanner {
         }
 
 
-        public Helper include(FlywaveRevisionRegister revi) {
+        public Helper include(RevisionRegister revi) {
             return include(revi.description(), revi.revision());
         }
 
@@ -537,7 +544,7 @@ public class FlywaveRevisionScanner {
         }
 
 
-        public Helper exclude(FlywaveRevisionRegister revi) {
+        public Helper exclude(RevisionRegister revi) {
             return exclude(revi.description(), revi.revision());
         }
 

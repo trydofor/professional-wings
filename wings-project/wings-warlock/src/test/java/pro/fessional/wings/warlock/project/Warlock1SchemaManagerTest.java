@@ -30,7 +30,7 @@ class Warlock1SchemaManagerTest {
     @Test
     void init04AuthMain() {
         final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
-        manager.init(WingsRevision.V05_21_1023_01_ConfRuntime.revision(),
+        manager.init(WingsRevision.V05_20_1025_01_ConfRuntime.revision(),
                 Warlock1SchemaManager.includeWarlockPath(),
                 Warlock1SchemaManager.includeWarlockRevi());
     }

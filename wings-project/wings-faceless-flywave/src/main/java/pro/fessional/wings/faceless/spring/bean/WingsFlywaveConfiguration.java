@@ -1,12 +1,16 @@
 package pro.fessional.wings.faceless.spring.bean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import pro.fessional.wings.faceless.database.DataSourceContext;
+import pro.fessional.wings.faceless.flywave.RevisionFitness;
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader;
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager;
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager;
@@ -17,6 +21,7 @@ import pro.fessional.wings.faceless.flywave.impl.DefaultRevisionManager;
 import pro.fessional.wings.faceless.flywave.impl.MySqlStatementParser;
 import pro.fessional.wings.faceless.flywave.impl.MysqlDefinitionLoader;
 import pro.fessional.wings.faceless.spring.prop.FlywaveEnabledProp;
+import pro.fessional.wings.faceless.spring.prop.FlywaveFitProp;
 import pro.fessional.wings.faceless.spring.prop.FlywaveSqlProp;
 import pro.fessional.wings.faceless.spring.prop.FlywaveVerProp;
 
@@ -33,9 +38,10 @@ import static pro.fessional.wings.faceless.flywave.SchemaJournalManager.JournalD
 @ConditionalOnProperty(name = FlywaveEnabledProp.Key$module, havingValue = "true")
 public class WingsFlywaveConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(WingsFlywaveConfiguration.class);
+    private static final Log logger = LogFactory.getLog(WingsFlywaveConfiguration.class);
 
     @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public SchemaJournalManager schemaJournalManager(
             DataSourceContext facelessDs,
             SqlStatementParser statementParser,
@@ -55,26 +61,28 @@ public class WingsFlywaveConfiguration {
     }
 
     @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public DefaultRevisionManager schemaVersionManger(
             DataSourceContext sources,
             SqlStatementParser statementParser,
             SqlSegmentProcessor segmentProcessor,
             SchemaDefinitionLoader schemaDefinitionLoader,
             FlywaveVerProp properties) {
-        DefaultRevisionManager revisionManager = new DefaultRevisionManager(
+        DefaultRevisionManager bean = new DefaultRevisionManager(
                 sources.getPlains(), sources.getSharding(),
                 statementParser, segmentProcessor, schemaDefinitionLoader,
                 properties.getSchemaVersionTable());
         for (String s : new TreeSet<>(properties.getDropReg().values())) {
-            if(s != null && !s.isEmpty()) {
-                revisionManager.addDropRegexp(s);
+            if (s != null && !s.isEmpty()) {
+                bean.addDropRegexp(s);
             }
         }
         logger.info("config schemaVersionManger");
-        return revisionManager;
+        return bean;
     }
 
     @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public SchemaShardingManager schemaShardingManager(
             DataSourceContext sources,
             SqlStatementParser statementParser,
@@ -136,5 +144,15 @@ public class WingsFlywaveConfiguration {
         else {
             throw new IllegalArgumentException("only support mysql");
         }
+    }
+
+    @Bean
+    public CommandLineRunner revisionChecker(DefaultRevisionManager manager, FlywaveFitProp prop) {
+        logger.info("Wings conf revisionChecker");
+        return args -> {
+            final RevisionFitness fits = new RevisionFitness();
+            fits.addFits(prop.getFit());
+            fits.checkRevision(manager);
+        };
     }
 }
