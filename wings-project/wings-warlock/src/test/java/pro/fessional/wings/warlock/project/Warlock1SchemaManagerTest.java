@@ -30,7 +30,7 @@ class Warlock1SchemaManagerTest {
     @Test
     void init04AuthMain() {
         final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
-        manager.init(WingsRevision.V05_20_1025_01_ConfRuntime.revision(),
+        manager.mergePublish(WingsRevision.V05_20_1025_01_ConfRuntime.revision(),
                 Warlock1SchemaManager.includeWarlockPath(),
                 Warlock1SchemaManager.includeWarlockRevi());
     }
@@ -38,7 +38,7 @@ class Warlock1SchemaManagerTest {
     @Test
     void init04AuthTest() {
         final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
-        manager.init(2020_10_24_03,
+        manager.mergePublish(2020_10_24_03,
                 Warlock1SchemaManager.includeWarlockPath(),
                 Warlock1SchemaManager.includeWarlockRevi(),
                 helper -> helper.branch("test/").include(2020_10_24_03));
