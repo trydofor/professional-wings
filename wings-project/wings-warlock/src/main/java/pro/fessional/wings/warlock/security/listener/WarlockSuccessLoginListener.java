@@ -24,7 +24,7 @@ public class WarlockSuccessLoginListener implements ApplicationListener<Authenti
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
         final Object source = event.getSource();
         if (!(source instanceof Authentication)) return;
-        final Object detail = ((Authentication) source).getDetails();
+        final Object detail = ((Authentication) source).getPrincipal();
         if (!(detail instanceof WingsUserDetails)) {
             log.debug("skip non-WingsUserDetails, type={}", source.getClass().getName());
             return;

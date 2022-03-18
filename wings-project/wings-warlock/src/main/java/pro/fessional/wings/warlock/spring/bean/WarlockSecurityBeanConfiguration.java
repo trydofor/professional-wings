@@ -440,13 +440,13 @@ public class WarlockSecurityBeanConfiguration {
     ///////// Listener /////////
     @Bean
     public WarlockSuccessLoginListener warlockSuccessLoginListener() {
-        logger.info("Wings conf authSuccessListener");
+        logger.info("Wings conf warlockSuccessLoginListener");
         return new WarlockSuccessLoginListener();
     }
 
     @Bean
     public WarlockFailedLoginListener warlockFailedLoginListener() {
-        logger.info("Wings conf authSuccessListener");
+        logger.info("Wings conf warlockFailedLoginListener");
         return new WarlockFailedLoginListener();
     }
 }
