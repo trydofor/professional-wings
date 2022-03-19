@@ -104,7 +104,7 @@ public class DataSourceContext {
      */
     @NotNull
     public String cacheJdbcUrl(DataSource ds) {
-        return ds == null ? "datasource-is-null" : dataSourceUrls.computeIfAbsent(ds, this::extractUrl);
+        return ds == null ? "datasource-is-null" : dataSourceUrls.computeIfAbsent(ds, DataSourceContext::extractUrl);
     }
 
     /**
@@ -114,7 +114,7 @@ public class DataSourceContext {
      * @return jdbc url
      */
     @NotNull
-    public String extractUrl(DataSource ds) {
+    public static String extractUrl(DataSource ds) {
         try {
             return JdbcUtils.extractDatabaseMetaData(ds, it -> {
                 try {

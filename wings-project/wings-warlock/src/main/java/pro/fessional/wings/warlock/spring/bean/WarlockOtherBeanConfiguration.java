@@ -3,10 +3,8 @@ package pro.fessional.wings.warlock.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +22,7 @@ import pro.fessional.wings.warlock.errorhandle.AllExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.CodeExceptionResolver;
 import pro.fessional.wings.warlock.service.conf.RuntimeConfService;
 import pro.fessional.wings.warlock.service.conf.impl.RuntimeConfServiceImpl;
+import pro.fessional.wings.warlock.spring.prop.WarlockCheckProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockErrorProp;
 
@@ -66,17 +65,11 @@ public class WarlockOtherBeanConfiguration {
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$checkDatabase, havingValue = "true")
     @Order(Ordered.HIGHEST_PRECEDENCE + 1000)
-    public CommandLineRunner databaseChecker(DataSource dataSource, ApplicationContext context) {
+    public CommandLineRunner databaseChecker(DataSource dataSource, WarlockCheckProp prop) {
         logger.info("Wings conf databaseChecker");
         return args -> {
-            try {
-                DatabaseChecker.version(dataSource);
-                DatabaseChecker.timezone(dataSource);
-            }
-            catch (Exception e) {
-                logger.error("failed to check timezone", e);
-                SpringApplication.exit(context);
-            }
+            DatabaseChecker.version(dataSource);
+            DatabaseChecker.timezone(dataSource, prop.getTzOffset(), prop.isTzFail());
         };
     }
 

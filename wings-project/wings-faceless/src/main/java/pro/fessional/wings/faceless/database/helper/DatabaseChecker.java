@@ -6,6 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.JdbcUtils;
+import pro.fessional.mirana.time.DateFormatter;
+import pro.fessional.mirana.time.DateParser;
+import pro.fessional.wings.faceless.database.DataSourceContext;
 
 import javax.sql.DataSource;
 import java.sql.DatabaseMetaData;
@@ -13,6 +16,9 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.TimeZone;
+
+import static java.time.ZoneOffset.UTC;
 
 /**
  * mysql服务器，程序，会话时区
@@ -41,50 +47,75 @@ public class DatabaseChecker {
         });
     }
 
-    /**
-     * 如果不一致，抛出 IllegalStateException
-     *
-     * @param ds jdbc template
-     */
     public static void timezone(DataSource ds) {
+        timezone(ds, 5, true);
+    }
+
+    /**
+     * 判断数据库和jvm时差，根据其绝对值的最大值，判断是否终止或log
+     *
+     * @param ds   datasource
+     * @param off  时差绝对值的最大值
+     * @param fail IllegalStateException还是仅log.ERROR
+     */
+    public static void timezone(DataSource ds, int off, boolean fail) {
         if (isH2(ds)) {
             log.info("skip timezone check for h2database");
             return;
         }
 
-        final String zdt = "1979-01-01T00:00:00";
-        final LocalDateTime ldt = LocalDateTime.parse(zdt);
+        final String epo = "1979-01-01 00:00:00";
+        final LocalDateTime ldt = DateParser.parseDateTime(epo);
         final String sql = "SELECT @@system_time_zone,  @@global.time_zone, @@session.time_zone,"
-                           + "TIMESTAMPDIFF(SECOND,'" + zdt.replace('T', ' ') + "', ?) from dual;";
+                           + " NOW()," // db now vs jvm now
+                           + " TIMESTAMPDIFF(SECOND, ?, '" + epo + "')" // sql-string vs prepared
+                           + " FROM dual";
 
         final JdbcTemplate tmpl = new JdbcTemplate(ds);
 
         tmpl.query(sql, rs -> {
+            final LocalDateTime jvNow = LocalDateTime.now();
             final StringBuilder sb = new StringBuilder();
-            sb.append("\nsystem_time_zone=").append(rs.getString(1));
-            sb.append("\nglobal.time_zone=").append(rs.getString(2));
-            sb.append("\nsession.time_zone=").append(rs.getString(3));
-            sb.append("\njvm-timezone=").append(ZoneId.systemDefault().getId());
+            final String dbStz = rs.getString(1);
+            final String dbGtz = rs.getString(2);
+            final String dbNtz = rs.getString(3);
+            final LocalDateTime dbNow = DateParser.parseDateTime(rs.getString(4));
+            final int dbOff = rs.getInt(5);
+            final int jvOff = (int) (jvNow.toEpochSecond(UTC) - dbNow.toEpochSecond(UTC));
 
-            final int off = rs.getInt(4);
+            sb.append("\ndb-system_time_zone=").append(dbStz);
+            sb.append("\ndb-global.time_zone=").append(dbGtz);
 
-            sb.append("\nZoneOffset=").append(ZoneOffset.ofTotalSeconds(off));
+            sb.append("\ndb-session.time_zone=").append(dbNtz);
+            sb.append("\njvm-default-timezone=").append(ZoneOffset.ofTotalSeconds(TimeZone.getDefault().getRawOffset() / 1000))
+              .append(", ").append(ZoneId.systemDefault().getId());
 
-            log.info(sb.substring(1).replace("\n", ", "));
+            sb.append("\ndb-session.now=").append(DateFormatter.full19(dbNow));
+            sb.append("\njvm-local.now =").append(DateFormatter.full19(jvNow));
 
-            if (off == 0) {
+            sb.append("\ndb-zone-offset =").append(ZoneOffset.ofTotalSeconds(dbOff));
+            sb.append("\njvm-zone-offset=").append(ZoneOffset.ofTotalSeconds(jvOff));
+
+            if (Math.abs(jvOff) <= Math.abs(off) && Math.abs(dbOff) <= Math.abs(off)) {
+                log.info(sb.substring(1).replace("\n", ", "));
                 return;
             }
 
-            sb.append("\n=== DIFF TIMEZONE===");
-            sb.append("\nthe flowing can make session at same zone.");
-            sb.append("\n - mysql server `default-time-zone = '+08:00'`");
-            sb.append("\n - jdbc url `?serverTimezone=Asia/Shanghai`");
-            sb.append("\n - wings conf `wings.silencer.i18n.zoneid=Asia/Shanghai`");
-            sb.append("\n - java args `-Duser.timezone=Asia/Shanghai`");
-            sb.append("\n - java code `TimeZone.setDefault(TimeZone.getTimeZone(\"Asia/Shanghai\"));`");
+            sb.append("\n=== DIFF TIMEZONE ===");
+            sb.append("\nthe flowing can make session at same zone. be careful of Daylight Saving Time");
+            sb.append("\n- mysql server `default-time-zone = '+08:00'`");
+            sb.append("\n- jdbc url `?connectionTimeZone=%2B08:00&forceConnectionTimeZoneToSession=true`");
+            sb.append("\n- wings conf `wings.silencer.i18n.zoneid=Asia/Shanghai`");
+            sb.append("\n- java args `-Duser.timezone=Asia/Shanghai`");
+            sb.append("\n- java code `TimeZone.setDefault(TimeZone.getTimeZone(\"Asia/Shanghai\"));`");
+            sb.append("\n- https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-reference-configuration-properties.html");
 
-            throw new IllegalStateException(sb.toString());
+            if (fail) {
+                throw new IllegalStateException(sb.toString());
+            }
+            else {
+                log.error(sb.toString());
+            }
         }, Timestamp.valueOf(ldt));
     }
 
@@ -93,7 +124,7 @@ public class DatabaseChecker {
 
         final String ver = isH2(ds) ? "H2VERSION()" : "VERSION()";
         tmpl.query("SELECT " + ver + " FROM dual", rs -> {
-            log.info("{}={}", ver, rs.getString(1));
+            log.info("{}={}, primary={}", ver, rs.getString(1), DataSourceContext.extractUrl(ds));
         });
 
         String rev = "SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1111-11-11'";
