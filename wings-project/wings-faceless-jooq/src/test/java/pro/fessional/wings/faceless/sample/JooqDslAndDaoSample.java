@@ -17,7 +17,6 @@ import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
 import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelp;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
-import pro.fessional.wings.faceless.util.FlywaveInteractiveTty;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.time.LocalDateTime;
@@ -46,7 +45,6 @@ public class JooqDslAndDaoSample {
 
     @Test
     public void test0Init() {
-        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes);
         val sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0);

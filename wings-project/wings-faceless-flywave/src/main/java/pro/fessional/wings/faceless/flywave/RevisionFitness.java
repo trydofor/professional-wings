@@ -10,6 +10,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -141,61 +142,77 @@ public class RevisionFitness {
 
     private TreeMap<Long, Set<Act>> checkUnapply(SchemaRevisionManager manager) {
         HashMap<Long, Status> reviStatus = null;
-        boolean diff = false;
+        HashMap<Long, Map<String, Status>> reviDbDiff = new HashMap<>();
+        String headDb = "";
         for (Map.Entry<String, SortedMap<Long, Status>> en : manager.statusRevisions().entrySet()) {
-            final String db = en.getKey();
-            log.info("Wings Revision Check Database={}", db);
+            final String nextDb = en.getKey();
+            log.info("Wings Revision Check Database={}", nextDb);
             if (reviStatus == null) {
                 reviStatus = new HashMap<>(en.getValue());
+                headDb = nextDb;
             }
             else {
-                Map<Long, Status> lm = new HashMap<>(reviStatus);
-                Map<Long, Status> rm = new HashMap<>();
+                Map<Long, Status> headStatus = new HashMap<>(reviStatus);
+                Map<Long, Status> nextStatus = new HashMap<>();
                 for (Map.Entry<Long, Status> st : en.getValue().entrySet()) {
                     final Long rv = st.getKey();
                     final Status rs = st.getValue();
-                    if (rs == lm.get(rv)) {
-                        lm.remove(rv);
+                    if (rs == headStatus.get(rv)) {
+                        headStatus.remove(rv);
                     }
                     else {
-                        rm.put(rv, rs);
+                        nextStatus.put(rv, rs);
                     }
                 }
-                if (!lm.isEmpty()) {
-                    diff = true;
-                    for (Map.Entry<Long, Status> e : lm.entrySet()) {
-                        log.warn("Wings Revision Diff lost revi={}, status={}", e.getKey(), e.getValue());
-                    }
+                for (Map.Entry<Long, Status> e : headStatus.entrySet()) {
+                    final Map<String, Status> diff = reviDbDiff.computeIfAbsent(e.getKey(), k -> new LinkedHashMap<>());
+                    diff.put(headDb, e.getValue());
                 }
-                if (!rm.isEmpty()) {
-                    diff = true;
-                    for (Map.Entry<Long, Status> e : rm.entrySet()) {
-                        log.warn("Wings Revision Diff have revi={}, status={}", e.getKey(), e.getValue());
-                    }
+                for (Map.Entry<Long, Status> e : nextStatus.entrySet()) {
+                    final Map<String, Status> diff = reviDbDiff.computeIfAbsent(e.getKey(), k -> new LinkedHashMap<>());
+                    diff.put(nextDb, e.getValue());
                 }
             }
-        }
-
-        if (diff) {
-            throw new IllegalStateException("Wings Revision Diff Found, check the log warnning");
         }
 
         if (reviStatus == null || reviStatus.isEmpty()) {
             log.info("Wings Revision Unapply all-revi");
             return reviAct;
         }
-        else {
-            final TreeMap<Long, Set<Act>> map = new TreeMap<>();
-            for (Map.Entry<Long, Set<Act>> revi : reviAct.entrySet()) {
-                final Long rv = revi.getKey();
-                final Status st = reviStatus.get(rv);
-                if (st != Status.Applied) {
-                    map.put(rv, revi.getValue());
-                    log.info("Wings Revision Unapply revi={}, status={}", rv, st);
-                }
+
+        final StringBuilder diffWarn = new StringBuilder();
+        boolean needFail = false;
+        for (Map.Entry<Long, Map<String, Status>> en : reviDbDiff.entrySet()) {
+            final Long rv = en.getKey();
+            final Set<Act> acts = reviAct.get(rv);
+            diffWarn.append("\nWARN Diff-Revi=").append(rv);
+            for (Map.Entry<String, Status> mp : en.getValue().entrySet()) {
+                diffWarn.append(", ").append(mp.getKey()).append("=").append(mp.getValue());
             }
-            return map;
+            if (acts != null && !needFail && acts.contains(Act.FAIL)) {
+                needFail = true;
+            }
         }
+
+        if (diffWarn.length() > 0) {
+            if (needFail) {
+                throw new IllegalStateException("Wings Revision Diff Schemas Found:" + diffWarn);
+            }
+            else {
+                log.warn("Wings Revision Diff Schemas Found:" + diffWarn);
+            }
+        }
+
+        final TreeMap<Long, Set<Act>> map = new TreeMap<>();
+        for (Map.Entry<Long, Set<Act>> revi : reviAct.entrySet()) {
+            final Long rv = revi.getKey();
+            final Status st = reviStatus.get(rv);
+            if (st != Status.Applied) {
+                map.put(rv, revi.getValue());
+                log.info("Wings Revision Unapply revi={}, status={}", rv, st);
+            }
+        }
+        return map;
     }
 
     // ////////

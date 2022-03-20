@@ -180,7 +180,7 @@ ALTER TABLE `win_admin` DROP INDEX ix_login_name;
 ## 2.1.4.自动检查
 
 通过 `wings.faceless.flywave.fit.*` 配置文件可以设置对revision的依赖。
-因无法确认程序执行账号是否具有CREATE权限，wings除init为FAIL外，默认是WARN
+因无法确认程序执行账号是否具有CREATE权限，wings默认是WARN，但建议重要版本为FAIL或EXEC。
 
 * 若需要关闭检查，可以根据log提示设置SKIP
 * 若需要执行Revision，把SKIP替换成EXEC即可

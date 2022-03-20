@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import pro.fessional.wings.faceless.WingsTestHelper;
 import pro.fessional.wings.faceless.database.DataSourceContext;
-import pro.fessional.wings.faceless.util.FlywaveInteractiveTty;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.util.SortedMap;
@@ -42,8 +41,6 @@ public class FlywaveShardingTest {
 
     @Test
     public void test0𓃬清表重置() {
-        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes);
-        schemaShardingManager.askWay(FlywaveInteractiveTty.askYes);
         wingsTestHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);

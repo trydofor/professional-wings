@@ -23,7 +23,7 @@ class DefaultInteractiveManager<T>(
     private val askType = HashMap<T, Boolean>()
 
     private var msgFunc: BiConsumer<String, String> = FlywaveInteractiveTty.logNil
-    private var askFunc: Function<String, Boolean> = FlywaveInteractiveTty.askTty()
+    private var askFunc: Function<String, Boolean> = FlywaveInteractiveTty.askYes
 
     val lastMessage = AtomicReference<Pair<String, String>>()
     fun log(level: Level, where: String, info: String, er: Exception? = null) {

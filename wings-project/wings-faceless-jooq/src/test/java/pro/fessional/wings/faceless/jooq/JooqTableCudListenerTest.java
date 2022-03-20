@@ -21,7 +21,6 @@ import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也
 import pro.fessional.wings.faceless.database.jooq.listener.TableCudListener;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.service.WingsTableCudHandlerTest;
-import pro.fessional.wings.faceless.util.FlywaveInteractiveTty;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.time.LocalDateTime;
@@ -67,7 +66,6 @@ public class JooqTableCudListenerTest {
 
     @Test
     public void test0Init() {
-        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes);
         wingsTestHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER);
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);

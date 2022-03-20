@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
 import pro.fessional.wings.faceless.WingsTestHelper.breakpointDebug
-import pro.fessional.wings.faceless.util.FlywaveInteractiveTty
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 
 /**
@@ -37,7 +36,6 @@ open class SchemaRevisionMangerTest {
 
     @Test
     fun `test0🦁清表重置`() {
-        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes)
         wingsTestHelper.cleanTable()
         val sqls = FlywaveRevisionScanner.helper()
                 .master()

@@ -16,7 +16,6 @@ import pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.HEAD
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.TAIL
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.TFMT
-import pro.fessional.wings.faceless.util.FlywaveInteractiveTty
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 
 /**
@@ -134,10 +133,6 @@ class SchemaJournalManagerTest {
 
     @Test
     fun `test0🦁清表`() {
-        schemaJournalManager.askWay(FlywaveInteractiveTty.askYes)
-        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes)
-        shcemaShardingManager.askWay(FlywaveInteractiveTty.askYes)
-
         wingsTestHelper.cleanTable()
         val sqls = FlywaveRevisionScanner
             .helper()

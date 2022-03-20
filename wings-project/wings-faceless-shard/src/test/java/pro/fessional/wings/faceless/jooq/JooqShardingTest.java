@@ -20,7 +20,6 @@ import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也�
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
-import pro.fessional.wings.faceless.util.FlywaveInteractiveTty;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.time.LocalDateTime;
@@ -56,8 +55,6 @@ public class JooqShardingTest {
 
     @Test
     public void test0𓃬清表重置() {
-        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes);
-        schemaShardingManager.askWay(FlywaveInteractiveTty.askYes);
         wingsTestHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
