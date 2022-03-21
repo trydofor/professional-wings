@@ -2,6 +2,7 @@ package pro.fessional.wings.faceless.database.manual.single.select.lightsequence
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -15,24 +16,34 @@ import java.util.Optional;
 public interface LightSequenceSelect {
 
     @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
     class NextStep {
         private long nextVal;
         private int stepVal;
+        private long lastVal;
+
+        public NextStep() {
+        }
+
+        public NextStep(long nextVal, int stepVal) {
+            this(nextVal, stepVal, nextVal);
+        }
+
+        public NextStep(long nextVal, int stepVal, long lastVal) {
+            this.nextVal = nextVal;
+            this.stepVal = stepVal;
+            this.lastVal = lastVal;
+        }
     }
 
     Optional<NextStep> selectOneLock(int block, String name);
 
     @Data
+    @EqualsAndHashCode(callSuper = true)
     @AllArgsConstructor
     @NoArgsConstructor
-    class NameNextStep {
+    class NameNextStep extends NextStep {
         private String seqName;
-        private long nextVal;
-        private int stepVal;
     }
-
 
     List<NameNextStep> selectAllLock(int block);
 }

@@ -11,9 +11,12 @@ import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.WingsRevision
 import pro.fessional.wings.faceless.service.journal.JournalService
 import pro.fessional.wings.faceless.service.lightid.LightIdService
-import pro.fessional.wings.faceless.util.FlywaveInteractiveTty
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicLong
+
 
 /**
  * @author trydofor
@@ -37,9 +40,10 @@ open class LightIdServiceImplTest {
     @Autowired
     lateinit var journalService: JournalService
 
+    private val seqName = "sys_commit_journal"
+
     @Test
     fun `test0🦁清表重置`() {
-        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes)
         wingsTestHelper.cleanTable()
         schemaRevisionManager.checkAndInitSql(FlywaveRevisionScanner.scanMaster(), 0, true)
     }
@@ -48,7 +52,6 @@ open class LightIdServiceImplTest {
     fun `test1🦁获取ID`() {
         schemaRevisionManager.publishRevision(WingsRevision.V01_19_0520_01_IdLog.revision(), 0)
 
-        val seqName = "sys_commit_journal"
         val bgn = AtomicLong(0)
         val stp = AtomicLong(0)
         jdbcTemplate.query("SELECT next_val, step_val FROM sys_light_sequence WHERE seq_name='$seqName'") {
@@ -70,5 +73,26 @@ open class LightIdServiceImplTest {
 
         // function
         journalService.submit(this.javaClass) { it.commitDt }
+    }
+
+    @Test
+    fun `test3🦁竞争ID`() {
+        val threadCnt = 100
+        val loopCount = 5000
+        val idCache = ConcurrentHashMap<Long, Long>()
+        val service = Executors.newFixedThreadPool(threadCnt / 2)
+
+        val latch = CountDownLatch(threadCnt)
+        for (i in 0 until threadCnt) {
+            service.submit {
+                for (j in 0 until loopCount) {
+                    val id = lightIdService.getId(seqName, 0)
+                    idCache[id] = id
+                }
+                latch.countDown()
+            }
+        }
+        latch.await()
+        assertEquals(loopCount * threadCnt, idCache.size)
     }
 }

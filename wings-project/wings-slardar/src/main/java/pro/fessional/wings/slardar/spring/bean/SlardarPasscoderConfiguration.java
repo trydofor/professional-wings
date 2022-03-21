@@ -3,7 +3,6 @@ package pro.fessional.wings.slardar.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +11,6 @@ import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
-import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 import pro.fessional.wings.slardar.security.pass.DefaultPasssaltEncoder;
 import pro.fessional.wings.slardar.security.pass.PasswordEncoders;
 import pro.fessional.wings.slardar.spring.conf.WingsSecBeanInitConfigurer;
@@ -84,7 +82,6 @@ public class SlardarPasscoderConfiguration {
      * 使用wings配置，提到spring默认配置
      */
     @Bean
-    @ConditionalOnBean(WingsUserDetailsService.class)
     public WingsSecBeanInitConfigurer wingsInitBeanManagerConfigurer(ApplicationContext context) {
         logger.info("Wings conf wingsInitBeanManagerConfigurer ");
         return new WingsSecBeanInitConfigurer(context);

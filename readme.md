@@ -911,3 +911,9 @@ wings中不应该有浮点类型float/double，而只有整数(int/long)，小�
 其根本原因在用IEEE754格式，浮点型不适合非科学计算场景，除科学家外普通人慎用。
 `Effective Java`是java从业人员必备知识，在此不做赘述，参考以下章节：
 Avoid Float and Double If Exact Answers Are Required
+
+### 32.时区检查失败 DIFF TIMEZONE，应用无法启动
+
+* 根据异常的提醒，设置正确的时区
+* 确认jdbc驱动 mysql-connector版本不小于8.0.23
+* 若不希望检查，设置`wings.warlock.check.tz-fail=false`

@@ -4,7 +4,6 @@ import com.hazelcast.core.HazelcastInstance;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -47,7 +46,6 @@ public class WarlockLockBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(HazelcastGlobalLock.class)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$globalLock, havingValue = "true")
-    @ConditionalOnBean(HazelcastInstance.class)
     public HazelcastGlobalLock hazelcastGlobalLock(HazelcastInstance hazelcastInstance) {
         final boolean hcp = warlockLockProp.isHazelcastCp();
         logger.info("Wings conf hazelcastGlobalLock, useCpIfSafe=" + hcp);

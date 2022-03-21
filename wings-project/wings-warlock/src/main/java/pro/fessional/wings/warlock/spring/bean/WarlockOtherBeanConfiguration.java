@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.spring.bean;
 
+import com.hazelcast.core.HazelcastInstance;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -22,6 +23,8 @@ import pro.fessional.wings.warlock.errorhandle.AllExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.CodeExceptionResolver;
 import pro.fessional.wings.warlock.service.conf.RuntimeConfService;
 import pro.fessional.wings.warlock.service.conf.impl.RuntimeConfServiceImpl;
+import pro.fessional.wings.warlock.service.flakeid.FlakeIdService;
+import pro.fessional.wings.warlock.service.flakeid.impl.FlakeIdHazelcastImpl;
 import pro.fessional.wings.warlock.spring.prop.WarlockCheckProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockErrorProp;
@@ -95,5 +98,12 @@ public class WarlockOtherBeanConfiguration {
         bean.addHandler(RuntimeConfServiceImpl.JsonHandler, new JsonConversion());
         bean.addHandler(RuntimeConfServiceImpl.KryoHandler, new KryoConversion());
         return bean;
+    }
+
+
+    @Bean
+    public FlakeIdService hazelcastFlakeId(HazelcastInstance instance) {
+        logger.info("wings conf FlakeIdHazelcastImpl");
+        return new FlakeIdHazelcastImpl(instance);
     }
 }

@@ -251,7 +251,6 @@ public class SlardarJacksonConfiguration {
     }
 
     @Bean
-    @ConditionalOnBean(AutoRegisterPropertyFilter.class)
     public FilterProvider slardarFilterProvider(List<AutoRegisterPropertyFilter> filters) {
         final SimpleFilterProvider bean = new SimpleFilterProvider();
         for (AutoRegisterPropertyFilter filter : filters) {

@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.wings.faceless.database.manual.single.modify.lightsequence.LightSequenceModify;
-import pro.fessional.wings.faceless.database.manual.single.select.lightsequence.LightSequenceSelect;
+import pro.fessional.wings.faceless.database.manual.single.select.lightsequence.LightSequenceSelect.NameNextStep;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -39,17 +39,17 @@ public class LightSequenceModifyJdbc implements LightSequenceModify {
     }
 
     @Override
-    public int[] updateNextPlusStep(List<LightSequenceSelect.NameNextStep> all, final int block) {
+    public int[] updateNextPlusStep(List<NameNextStep> all, final int block) {
         return jdbcTemplate.batchUpdate(updateSql, new BatchPreparedStatementSetter() {
-            private final ArrayList<LightSequenceSelect.NameNextStep> objs = new ArrayList<>(all);
+            private final ArrayList<NameNextStep> objs = new ArrayList<>(all);
 
             @Override
             public void setValues(@NotNull PreparedStatement ps, int i) throws SQLException {
-                LightSequenceSelect.NameNextStep obj = objs.get(i);
+                NameNextStep obj = objs.get(i);
                 ps.setLong(1, obj.getNextVal() + obj.getStepVal());
                 ps.setInt(2, block);
                 ps.setString(3, obj.getSeqName());
-                ps.setLong(4, obj.getNextVal());
+                ps.setLong(4, obj.getLastVal());
             }
 
             @Override
