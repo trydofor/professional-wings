@@ -108,10 +108,26 @@ wings.slardar.number.decimal.separator=_
 * @JsonNaming - 命名规则
 * @JsonRootName(value = "user") - 增加一个头key
 * @JsonUnwrapped - 干掉包装类
+* @JsonSerialize(as=BasicType.class) - 以别人的样子输出
+* @JsonView - 以不同视图过滤属性（可作用在RequestMapping）
 
-[jackson注解](https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations)
-[spring定制jackson](https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/#howto-customize-the-jackson-objectmapper)
-9.4.3. Customize the Jackson ObjectMapper
+通常要避免全局类型的Filter和MixIn，推荐Session级的注解。
+
+* 同一pojo，不同场景的属性名不同，比如password和secret
+* 同一pojo，不同场景的属性值不同，比如yyyy-MM-dd和MMM-dd,yyyy
+
+对于以上场景，仍然要遵循静态性和强类型原则，通常可以采用以下建议，
+
+* 自己的类，使用@JsonView + 不同的getter区分不同场景
+* 第三方类，使用Override子类 + MapStruct复制属性
+* 自定义JsonSerialize或Converter，不推荐
+* 自定义 ResponseBodyAdvice，不推荐
+
+默认配置下，仅有@JsonView可作用于RequestMapping，其他注解要注到Pojo上。参考资料，
+
+* [baeldung 示例](https://www.baeldung.com/jackson-annotations)
+* [jackson注解](https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations)
+* [spring定制jackson](https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/#howto-customize-the-jackson-objectmapper) 9.4.3. Customize the Jackson ObjectMapper
 
 Jackson中涉及到泛型，参数类型，必备技能
 
