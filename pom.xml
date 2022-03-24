@@ -48,11 +48,11 @@
         <simpleflatmapper.version>8.2.3</simpleflatmapper.version> <!-- https://simpleflatmapper.org -->
         <shardingsphere.version>5.1.0</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <!-- slardar -->
-        <guava.version>31.0.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
+        <guava.version>31.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
         <commons-io.version>2.11.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
         <mapstruct.version>1.4.2.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
-        <springdoc.version>1.6.5</springdoc.version> <!-- https://springdoc.org/ -->
+        <springdoc.version>1.6.6</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi -->
         <!-- slardar -->
         <justauth.version>1.16.5</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
         <xxljob.version>2.3.0</xxljob.version> <!-- https://github.com/xuxueli/xxl-job/releases -->
@@ -60,13 +60,13 @@
         <errorprone.version>2.11.0</errorprone.version> <!-- https://github.com/google/error-prone/releases -->
         <fastjson.version>1.2.79</fastjson.version> <!-- https://github.com/alibaba/fastjson/releases -->
         <kryo.version>5.3.0</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
-        <transmittable.version>2.12.4</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
+        <transmittable.version>2.12.6</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
         <bouncycastle.version>1.70</bouncycastle.version> <!-- https://bouncycastle.org/latest_releases.html -->
         <boot-admin.version>2.6.2</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
-        <sentry.version>5.6.1</sentry.version> <!-- https://docs.sentry.io/platforms/java/guides/spring-boot/ -->
+        <sentry.version>5.7.0</sentry.version> <!-- https://docs.sentry.io/platforms/java/guides/spring-boot/ -->
         <!-- override spring boot default -->
         <lombok.version>1.18.22</lombok.version> <!-- https://projectlombok.org/changelog -->
-        <okhttp3.version>4.9.1</okhttp3.version> <!-- just auth need 4, spring use 3 https://square.github.io/okhttp/changelog/ -->
+        <okhttp3.version>4.9.3</okhttp3.version> <!-- just auth need 4, spring use 3 https://square.github.io/okhttp/changelog/ -->
         <!-- mvn-build-plugin -->
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version> <!-- https://search.maven.org/search?q=flatten-maven-plugin -->
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version> <!-- https://search.maven.org/search?q=maven-gpg-plugin -->
