@@ -93,7 +93,17 @@ mysql体系指mysql分支如(Percona,MariaDB)或兼容mysql协议的数据库，
 原则上DB不应该封装（自定义function或procedure）业务逻辑，但可以使用db提供的功能，简化工作实现业务目标。
 [mysql 8.0 官方文档](https://dev.mysql.com/doc/refman/8.0/en/)
 
-### 2.9.1.MySql非通常用法
+### 2.9.1.写高质量的SQL
+
+wings中，数据库仅用持久化功能，估应避免SQL含有运算和业务逻辑。
+
+* 必须知道where条件的索引情况。
+* 把字段运算比较，做等式变换后，变为定值比较。
+* 避免复杂SQL，鼓励单表查询。
+* 分页时，先定分页数据，再定向补充关联数据。
+* 避免循环查询和N+1查询。
+
+### 2.9.3.MySql非通常用法
 
 #### 01.FIND_IN_SET
 
@@ -217,7 +227,7 @@ SELECT 'Michael!' NOT REGEXP '.*';
 * MySQL has hard limit of 4096 columns
 * maximum row size limit of 65535 bytes
 
-### 2.9.2.本地(文件/内存)数据库H2
+### 2.9.3.本地(文件/内存)数据库H2
 
 在不方便提供mysql数据库的时候，如演示或本地数据库应用，可以使用H2，配置如下。
 ```
