@@ -5,9 +5,11 @@ import org.jooq.Converter;
 import org.jooq.codegen.GenerationTool;
 import org.jooq.meta.TableDefinition;
 import org.jooq.meta.jaxb.Configuration;
+import org.jooq.meta.jaxb.Database;
 import org.jooq.meta.jaxb.ForcedType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.CodeEnum;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.io.InputStreams;
@@ -309,7 +311,7 @@ public class WingsCodeGenerator {
         /**
          * 注意，匹配的格式为QualifiedName，如db.table，详见 org.jooq.meta.AbstractDatabase#matches
          * <p>
-         * configuration/generator/database/includes
+         * replace configuration/generator/database/includes
          * <p>
          * All elements that are generated from your schema.
          * <p>
@@ -327,13 +329,27 @@ public class WingsCodeGenerator {
          * @see Pattern#COMMENTS
          */
         public Builder databaseIncludes(String... reg) {
+            return databaseIncludes(false, reg);
+        }
+
+        /**
+         * append or replace configuration/generator/database/includes
+         */
+        public Builder databaseIncludes(boolean append, String... reg) {
             final String join = String.join("|", reg);
-            this.conf.getGenerator().getDatabase().setIncludes(join);
+            final Database db = this.conf.getGenerator().getDatabase();
+            final String old = db.getIncludes();
+            if (append && StringUtils.hasText(old)) {
+                db.setIncludes(old + "|" + join);
+            }
+            else {
+                db.setIncludes(join);
+            }
             return this;
         }
 
         /**
-         * configuration/generator/database/excludes
+         * replace configuration/generator/database/excludes
          * <p>
          * All elements that are excluded from your schema.
          * <p>
@@ -345,8 +361,22 @@ public class WingsCodeGenerator {
          * @see Pattern#COMMENTS
          */
         public Builder databaseExcludes(String... reg) {
+            return databaseExcludes(false, reg);
+        }
+
+        /**
+         * append or replace configuration/generator/database/excludes
+         */
+        public Builder databaseExcludes(boolean append, String... reg) {
             final String join = String.join("|", reg);
-            this.conf.getGenerator().getDatabase().setExcludes(join);
+            final Database db = this.conf.getGenerator().getDatabase();
+            final String old = db.getExcludes();
+            if (append && StringUtils.hasText(old)) {
+                db.setExcludes(old + "|" + join);
+            }
+            else {
+                db.setExcludes(join);
+            }
             return this;
         }
 
