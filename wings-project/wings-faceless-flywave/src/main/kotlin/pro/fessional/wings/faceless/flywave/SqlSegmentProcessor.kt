@@ -237,10 +237,33 @@ class SqlSegmentProcessor(
                 lineBgn = lineCur
             }
 
-            val den = ln.endsWith(delimiter, true)
+            var idx = ln.lastIndexOf(delimiter, ignoreCase = true)
+            var den = false
+            if (idx >= 0) {
+                val idl = ln.indexOf(delimiter, ignoreCase = true)
+                val lst = if (idl < idx) {
+                    ln.substring(idl + delimiter.length, idx).trim()
+                } else {
+                    ln.substring(idx + delimiter.length).trim()
+                }
+
+                if (lst.isEmpty()) {
+                    den = true
+                } else if (lst.startsWith(singleComment)) {
+                    den = true
+                    if (idx == idl) idx = ln.length
+                } else if (lst.startsWith(blockComment1) && lst.indexOf(blockComment2, ignoreCase = true) == lst.length - blockComment2.length) {
+                    den = true
+                    if (idx == idl) idx = ln.length
+                } else {
+                    logger.warn("find middle delimiter=$delimiter in line=$ln")
+                    den = idx == ln.length - delimiter.length
+                }
+            }
+
             if (den || lineCur == total) {
                 if (den) {
-                    builder.append(ln, 0, ln.length - delimiter.length)
+                    builder.append(ln, 0, idx)
                 } else {
                     builder.append(ln)
                 }

@@ -26,12 +26,12 @@ public class JustAuthUserDetailsCombo extends DefaultUserDetailsCombo {
     }
 
     @Override
-    protected boolean authed(Enum<?> authType) {
+    public boolean authed(Enum<?> authType) {
         return true;
     }
 
     @Override
-    protected Details doLoad(@NotNull Enum<?> authType, String username, @Nullable WingsAuthDetails authDetail) {
+    public Details doLoad(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {
         if (!(authType instanceof AuthSource) || authDetail == null) return null;
 
         final Object authUser = authDetail.getRealData();
@@ -39,6 +39,6 @@ public class JustAuthUserDetailsCombo extends DefaultUserDetailsCombo {
             username = ((AuthUser) authUser).getUuid();
             log.info("load auth-user by {} use uuid={}", authType, username);
         }
-        return super.doLoad(authType, username, authDetail);
+        return super.doLoad(username, authType, authDetail);
     }
 }

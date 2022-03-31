@@ -54,7 +54,7 @@ wings对配置文件的处理方式，是层叠和过滤，配置以路径顺序
  * logger-logback-79.properties
 
 通过`EnvironmentPostProcessor`扫描`各路径`中`/wings-conf/**/*.*`，规则同
-[features.external-config](https://docs.spring.io/spring-boot/docs/current/2.6.3/html/features.html#features.external-config)
+[features.external-config](https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/#features.external-config)
 ，和配置文件有关的`各路径`如下，其后者优先级高（为与spring文档叙述一致，程序中倒序执行，FIFO优先级）。
 
 0. 路径中，优先加载`application.*`，次之`wings-conf/**/*.*`
@@ -125,7 +125,7 @@ spring boot目前仅支持application单配置，多profile形式，所以配置
 
 ### 1.2.5.参考资料
 
-[参考资料 docs.spring.io](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/)
+[参考资料 docs.spring.io](https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/)
 
  - "4.1.6. Application Events and Listeners"
  - "4.2. Externalized Configuration"

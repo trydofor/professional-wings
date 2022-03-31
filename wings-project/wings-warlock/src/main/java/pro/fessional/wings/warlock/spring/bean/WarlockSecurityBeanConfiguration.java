@@ -239,7 +239,7 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboNonceUserDetails, havingValue = "true")
     @ConditionalOnMissingBean(NonceUserDetailsCombo.class)
-    public NonceUserDetailsCombo nonceUserDetailsCombo() {
+    public NonceUserDetailsCombo nonceUserDetailsCombo(List<DefaultUserDetailsCombo> combos) {
         logger.info("Wings conf nonceUserDetailsCombo");
         final NonceUserDetailsCombo combo = new NonceUserDetailsCombo();
         combo.setAcceptNonceType(securityProp.mapNonceAuthEnum());
@@ -247,6 +247,7 @@ public class WarlockSecurityBeanConfiguration {
         combo.setCacheName(cn);
         final CacheManager cm = applicationContext.getBean(securityProp.getNonceCacheManager(), CacheManager.class);
         combo.setCacheManager(cm);
+        combo.setDetailCombos(combos);
         return combo;
     }
 
@@ -288,7 +289,7 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(AuthAppPermChecker.class)
     @ConditionalOnProperty(name = "spring.wings.warlock.enabled.app-perm-check", havingValue = "true")
-    public AuthAppPermChecker authAppPermChecker(@Value("${spring.application.name}") String appName) {
+    public AuthAppPermChecker authAppPermChecker(@Value("${spring.application.name:wings-default}") String appName) {
         logger.info("Wings conf authAppPermChecker");
         final AuthAppPermChecker bean = new AuthAppPermChecker();
         final Set<String> perms = new HashSet<>();
@@ -439,13 +440,13 @@ public class WarlockSecurityBeanConfiguration {
     ///////// Listener /////////
     @Bean
     public WarlockSuccessLoginListener warlockSuccessLoginListener() {
-        logger.info("Wings conf authSuccessListener");
+        logger.info("Wings conf warlockSuccessLoginListener");
         return new WarlockSuccessLoginListener();
     }
 
     @Bean
     public WarlockFailedLoginListener warlockFailedLoginListener() {
-        logger.info("Wings conf authSuccessListener");
+        logger.info("Wings conf warlockFailedLoginListener");
         return new WarlockFailedLoginListener();
     }
 }

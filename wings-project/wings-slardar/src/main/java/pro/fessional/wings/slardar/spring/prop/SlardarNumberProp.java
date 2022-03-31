@@ -49,7 +49,7 @@ public class SlardarNumberProp {
          */
         private RoundingMode round = null;
         /*
-         * 整数位分隔符，如千分位，可替换format中的`,`
+         * 当Shape==ANY时，整数位分隔符，如千分位，可替换format中的`,`
          */
         private String separator = ",";
 

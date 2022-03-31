@@ -116,8 +116,8 @@
         <prefetch-validity-millis>600000</prefetch-validity-millis>
         <epoch-start>1640995200000</epoch-start>
         <node-id-offset>0</node-id-offset>
-        <bits-sequence>10</bits-sequence>
-        <bits-node-id>12</bits-node-id>
+        <bits-sequence>12</bits-sequence>
+        <bits-node-id>10</bits-node-id>
         <allowed-future-millis>15000</allowed-future-millis>
         <statistics-enabled>true</statistics-enabled>
     </flake-id-generator>

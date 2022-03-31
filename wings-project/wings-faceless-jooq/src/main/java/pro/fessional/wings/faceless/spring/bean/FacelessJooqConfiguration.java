@@ -1,5 +1,7 @@
 package pro.fessional.wings.faceless.spring.bean;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jooq.ConverterProvider;
 import org.jooq.ExecuteListenerProvider;
 import org.jooq.VisitListenerProvider;
@@ -7,10 +9,7 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.jooq.impl.DefaultVisitListenerProvider;
 import org.simpleflatmapper.jooq.JooqMapperFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -40,7 +39,7 @@ import java.util.stream.Collectors;
 @ConditionalOnClass(name = "org.jooq.conf.Settings")
 public class FacelessJooqConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(FacelessJooqConfiguration.class);
+    private static final Log logger = LogFactory.getLog(FacelessJooqConfiguration.class);
 
     /**
      * workaround before Version 3.14.0
@@ -59,7 +58,6 @@ public class FacelessJooqConfiguration {
     }
 
     @Bean
-    @ConditionalOnBean(WingsTableCudHandler.class)
     @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$listenTableCud, havingValue = "true")
     @Order(Ordered.HIGHEST_PRECEDENCE + 1000)
     public VisitListenerProvider jooqTableCudListener(ObjectProvider<WingsTableCudHandler> handlers, FacelessJooqCudProp prop) {
@@ -98,7 +96,7 @@ public class FacelessJooqConfiguration {
 //                  .withParseDialect(SQLDialect.MYSQL)
 //                .withRenderTable(false)
             ;
-            logger.info("Wings conf jooq setting, dialect="+settings.getParseDialect());
+            logger.info("Wings conf jooq setting, dialect=" + settings.getParseDialect());
 
             if (config.isSimpleflatmapper()) {
                 logger.info("Wings conf beanPostSfmRecordMapperProvider");
@@ -115,11 +113,11 @@ public class FacelessJooqConfiguration {
 
                 providers.orderedStream().forEach(it -> {
                     dcp.add(it);
-                    logger.info("   add jooqConverterProvider, class={}", it.getClass());
+                    logger.info("   add jooqConverterProvider, class=" + it.getClass());
                 });
                 converters.orderedStream().forEach(it -> {
                     dcp.add(it);
-                    logger.info("   add jooqConverter, class={}", it.getClass());
+                    logger.info("   add jooqConverter, class=" + it.getClass());
                 });
                 configuration.set(dcp);
             }

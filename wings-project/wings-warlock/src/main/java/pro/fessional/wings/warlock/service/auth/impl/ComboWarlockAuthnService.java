@@ -7,9 +7,14 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.wings.faceless.service.journal.JournalService;
+import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
@@ -21,6 +26,7 @@ import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAuthnDao;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasisDao;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.event.auth.WarlockMaxFailedEvent;
+import pro.fessional.wings.warlock.event.cache.TableChangeEvent;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.help.AuthnDetailsMapper;
 import pro.fessional.wings.warlock.service.user.WarlockUserAttribute;
@@ -35,7 +41,11 @@ import java.util.List;
  * @since 2021-02-23
  */
 @Slf4j
+@CacheConfig(cacheNames = ComboWarlockAuthnService.CacheName, cacheManager = ComboWarlockAuthnService.ManagerName)
 public class ComboWarlockAuthnService implements WarlockAuthnService {
+
+    public static final String CacheName = WingsCache.Level.Service + "ComboWarlockAuthnService";
+    public static final String ManagerName = WingsCache.Manager.Memory;
 
     @Setter(onMethod_ = {@Autowired})
     protected WinUserBasisDao winUserBasisDao;
@@ -56,6 +66,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     private List<AutoReg> authAutoRegs = Collections.emptyList();
 
     @Override
+    @Cacheable
     public Details load(@NotNull Enum<?> authType, String username) {
         final WinUserBasisTable user = winUserBasisDao.getAlias();
         final WinUserAuthnTable auth = winUserAuthnDao.getAlias();
@@ -71,6 +82,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     }
 
     @Override
+    @Cacheable
     public Details load(@NotNull Enum<?> authType, long userId) {
         final WinUserBasisTable user = winUserBasisDao.getAlias();
         final WinUserAuthnTable auth = winUserAuthnDao.getAlias();
@@ -83,7 +95,28 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
                                       .and(auth.onlyLiveData);
 
         return selectDetails(user, auth, authType, cond);
+    }
 
+    /**
+     * 异步清理缓存，event可以为null
+     *
+     * @param event 可以为null
+     */
+    @EventListener
+    @CacheEvict(allEntries = true, condition = "#result")
+    public boolean evictAllAuthnCache(TableChangeEvent event) {
+        if (event == null) {
+            log.info("evict allEntries by NULL");
+            return true;
+        }
+
+        if ((event.isDelete() || event.isUpdate()) &&
+            (WinUserBasisTable.WinUserBasis.getName().equalsIgnoreCase(event.getTable()) ||
+             WinUserAuthnTable.WinUserAuthn.getName().equalsIgnoreCase(event.getTable()))) {
+            log.info("evict allEntries by {}", event.getTable());
+            return true;
+        }
+        return false;
     }
 
     private Details selectDetails(WinUserBasisTable user, WinUserAuthnTable auth,

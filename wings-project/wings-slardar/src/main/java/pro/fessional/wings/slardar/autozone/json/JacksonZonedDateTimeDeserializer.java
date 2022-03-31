@@ -71,6 +71,6 @@ public class JacksonZonedDateTimeDeserializer extends InstantDeserializer<ZonedD
         final ZoneId zid = LocaleContextHolder.getTimeZone().toZoneId();
         final ZonedDateTime zdt = DateParser.parseZoned(tma, zid);
 
-        return autoZone ? DateLocaling.zoneZone(zdt, ZoneId.systemDefault()) : zdt;
+        return autoZone ? DateLocaling.sysZdt(zdt) : zdt;
     }
 }

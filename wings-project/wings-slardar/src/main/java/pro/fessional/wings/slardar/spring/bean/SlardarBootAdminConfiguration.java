@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.monitor.report.DingTalkReport;
-import pro.fessional.wings.slardar.security.impl.BasicPasswordEncoder;
+import pro.fessional.wings.slardar.security.pass.BasicPasswordEncoder;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarPasscoderProp;
 import reactor.core.publisher.Mono;

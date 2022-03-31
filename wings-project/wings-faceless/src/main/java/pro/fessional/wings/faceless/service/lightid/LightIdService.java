@@ -19,16 +19,6 @@ public interface LightIdService {
     }
 
     /**
-     * 按Jooq的Table命名获得，去掉结尾的`Table`后缀，按 小写_小写命名。
-     *
-     * @param clazz 标记的class
-     * @return id
-     */
-    default long getId(@NotNull Class<? extends LightIdAware> clazz) {
-        return getId(clazz, geBlockId());
-    }
-
-    /**
      * 按名字获得id，不区分大小写，默认全小写。
      *
      * @param name 名字
@@ -37,15 +27,6 @@ public interface LightIdService {
     default long getId(@NotNull String name) {
         return getId(name, geBlockId());
     }
-
-    /**
-     * 按Jooq的Table命名获得，去掉结尾的`Table`后缀，按 小写_小写命名。
-     *
-     * @param clazz 标记的class
-     * @param block 区块
-     * @return id
-     */
-    long getId(@NotNull Class<? extends LightIdAware> clazz, int block);
 
     /**
      * 按Jooq的Table命名获得，去掉结尾的`Table`后缀，按 小写_小写命名。
@@ -65,7 +46,7 @@ public interface LightIdService {
      * @return id
      */
     default long getId(@NotNull LightIdAware table) {
-        return getId(table.getSeqName(), geBlockId());
+        return getId(table, geBlockId());
     }
 
     /**

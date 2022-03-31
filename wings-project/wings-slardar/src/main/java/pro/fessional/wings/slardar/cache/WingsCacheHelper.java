@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.cache;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import pro.fessional.mirana.best.StateAssert;
@@ -17,6 +18,23 @@ public class WingsCacheHelper {
     protected WingsCacheHelper(CacheManager mem, CacheManager ser) {
         memory = mem;
         server = ser;
+    }
+
+    @Nullable
+    public static CacheManager getCacheManager(String name) {
+        if (WingsCache.Manager.Memory.equalsIgnoreCase(name)) {
+            return memory;
+        }
+        if (WingsCache.Manager.Server.equalsIgnoreCase(name)) {
+            return server;
+        }
+        return null;
+    }
+
+    @Nullable
+    public static Cache getCache(String manager, String cache) {
+        final CacheManager cm = getCacheManager(manager);
+        return cm == null ? null : cm.getCache(cache);
     }
 
     @NotNull

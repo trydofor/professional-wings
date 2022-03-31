@@ -68,7 +68,7 @@ public class LightIdMysqlLoader implements Loader {
         int page = (count - 1) / vo.getStepVal() + 1;
 
         long newNext = vo.getNextVal() + (long) vo.getStepVal() * page;
-        int upd = modify.updateNextVal(newNext, block, name, vo.getNextVal());
+        int upd = modify.updateNextVal(newNext, block, name, vo.getLastVal());
         if (upd != 1) {
             throw new IllegalStateException("failed to require, name=" + name + ",block=" + block);
         }

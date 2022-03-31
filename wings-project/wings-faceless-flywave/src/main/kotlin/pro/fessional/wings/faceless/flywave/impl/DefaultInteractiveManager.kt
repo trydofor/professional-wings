@@ -14,12 +14,16 @@ import javax.sql.DataSource
  * @author trydofor
  * @since 2021-12-24
  */
-class DefaultInteractiveManager<T>(private val logger: Logger, private val plainDataSources: Map<String, DataSource>, private val emoji: String = "🐝") : InteractiveManager<T> {
+class DefaultInteractiveManager<T>(
+    private val logger: Logger,
+    private val plainDataSources: Map<String, DataSource>,
+    private val emoji: String = "🐝"
+) : InteractiveManager<T> {
 
     private val askType = HashMap<T, Boolean>()
 
     private var msgFunc: BiConsumer<String, String> = FlywaveInteractiveTty.logNil
-    private var askFunc: Function<String, Boolean> = FlywaveInteractiveTty.askTty()
+    private var askFunc: Function<String, Boolean> = FlywaveInteractiveTty.askYes
 
     val lastMessage = AtomicReference<Pair<String, String>>()
     fun log(level: Level, where: String, info: String, er: Exception? = null) {
@@ -50,7 +54,7 @@ class DefaultInteractiveManager<T>(private val logger: Logger, private val plain
         msgFunc.accept(tkn, info)
 
         if (fst) {
-            logger.warn("[askSegment]🐝🙀if no console, add '-Deditable.java.test.console=true' ('Help' > 'Edit Custom VM Options...')")
+            logger.info("[askSegment]🐝🙀 if no console, add '-Deditable.java.test.console=true' ('Help' > 'Edit Custom VM Options...')")
 
             if (plainDataSources.isNotEmpty()) {
                 val bd = StringBuffer("apply to databases?")
@@ -66,7 +70,7 @@ class DefaultInteractiveManager<T>(private val logger: Logger, private val plain
     fun ask(msg: String, quit: Boolean = true): Boolean {
         val y = askFunc.apply(msg)
         if (y) {
-            log(Level.WARN, "Confirm-Yes", msg)
+            log(Level.INFO, "Confirm-Yes", msg)
         } else {
             if (quit) {
                 log(Level.ERROR, "Confirm-NO", msg)
@@ -82,15 +86,19 @@ class DefaultInteractiveManager<T>(private val logger: Logger, private val plain
         return askType[ask] != false
     }
 
-    override fun needAsk(ask: T, yes: Boolean) {
-        askType[ask] = yes
+    override fun needAsk(ask: T, yes: Boolean): Boolean? {
+        return askType.put(ask, yes)
     }
 
-    override fun askWay(func: Function<String, Boolean>) {
+    override fun askWay(func: Function<String, Boolean>): Function<String, Boolean> {
+        val old = askFunc
         askFunc = func
+        return old
     }
 
-    override fun logWay(func: BiConsumer<String, String>) {
+    override fun logWay(func: BiConsumer<String, String>): BiConsumer<String, String> {
+        val old = msgFunc
         msgFunc = func
+        return old
     }
 }

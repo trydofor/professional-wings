@@ -4,11 +4,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Condition;
 import org.jooq.Configuration;
-import org.jooq.OrderField;
+import org.jooq.QueryPart;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
-import org.jooq.Result;
-import org.jooq.SelectField;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.UpdatableRecord;
@@ -50,48 +48,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
         super(table, type, conf);
     }
 
-    ///////////////// select /////////////////////
-
-    /**
-     * @see #fetch(Table, Condition)
-     */
-    @NotNull
-    public List<P> fetchLive(Function<T, Condition> fun) {
-        return fetchLive(table, fun.apply(table));
-    }
-
-    /**
-     * @see #fetch(Table, Condition)
-     */
-    @NotNull
-    public List<P> fetchLive(T table, Condition cond) {
-        return fetch(table, table.onlyLive(cond));
-    }
-
-    /**
-     * @see #fetch(Table, int, int, Condition, OrderField[])
-     */
-    @NotNull
-    public List<P> fetchLive(T table, int offset, int limit, Condition cond, OrderField<?>... orderBy) {
-        return fetch(table, offset, limit, table.onlyLive(cond), orderBy);
-    }
-
-    /**
-     * @see #fetch(Table, Condition)
-     */
-    @Nullable
-    public P fetchOneLive(Function<T, Condition> fun) {
-        return fetchOneLive(table, fun.apply(table));
-    }
-
-    /**
-     * @see #fetchOne(Table, Condition)
-     */
-    @Nullable
-    public P fetchOneLive(T table, Condition cond) {
-        return fetchOne(table, table.onlyLive(cond));
-    }
-
+    ///////////////// fields /////////////////////
     @SuppressWarnings("unchecked")
     @NotNull
     public <Z> List<P> fetchRangeLive(TableField<R, Z> field, Z lowerInclusive, Z upperInclusive) {
@@ -122,53 +79,259 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
         return Optional.ofNullable(fetchOneLive(field, value));
     }
 
-    ///////////////// select into /////////////////////
-
-    public <E> E fetchOneLive(Class<E> claz, T table, SelectField<?>... fields) {
-        return fetchOneLive(claz, table, null, fields);
-    }
-
-    public <E> E fetchOneLive(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
-        return fetchOne(claz, table, table.onlyLive(cond), fields);
-    }
-
-    public <E> E fetchOneLive(RecordMapper<? super Record, E> mapper, T table, SelectField<?>... fields) {
-        return fetchOneLive(mapper, table, null, fields);
-    }
-
-    public <E> E fetchOneLive(RecordMapper<? super Record, E> mapper, T table, Condition cond, SelectField<?>... fields) {
-        return fetchOne(mapper, table, table.onlyLive(cond), fields);
-    }
-
+    ///////////////// select list /////////////////////
 
     @NotNull
-    public Result<Record> fetchLive(T table, Condition cond, SelectField<?>... fields) {
-        return fetch(table, table.onlyLive(cond), fields);
+    public List<P> fetchLive(Function<T, Fn> fun) {
+        final Fn fn = fun.apply(table);
+        return fetchLive(table, table.onlyLive(fn.cond), fn.part);
+    }
+
+    @NotNull
+    public List<P> fetchLive(int limit, Function<T, Fn> fun) {
+        return fetchLive(0, limit, fun);
+    }
+
+    @NotNull
+    public List<P> fetchLive(int offset, int limit, Function<T, Fn> fun) {
+        final Fn fn = fun.apply(table);
+        return fetch(table, offset, limit, table.onlyLive(fn.cond), fn.part);
+    }
+
+    ////////
+    @NotNull
+    public List<P> fetchLive(T table, Condition cond) {
+        return fetchLive(table, -1, -1, table.onlyLive(cond));
+    }
+
+    @NotNull
+    public List<P> fetchLive(T table, Condition cond, QueryPart... selectsOrders) {
+        return fetch(table, -1, -1, table.onlyLive(cond), selectsOrders);
+    }
+
+    @NotNull
+    public List<P> fetchLive(T table, int limit, QueryPart... selectsOrders) {
+        return fetch(table, 0, limit, table.getOnlyLive(), selectsOrders);
+    }
+
+    @NotNull
+    public List<P> fetchLive(T table, int offset, int limit, QueryPart... selectsOrders) {
+        return fetch(table, offset, limit, table.getOnlyLive(), selectsOrders);
+    }
+
+    @NotNull
+    public List<P> fetchLive(T table, int limit, Condition cond, QueryPart... selectsOrders) {
+        return fetch(table, 0, limit, table.onlyLive(cond), selectsOrders);
+    }
+
+    @NotNull
+    public List<P> fetchLive(T table, int offset, int limit, Condition cond, QueryPart... selectsOrders) {
+        return fetch(table, offset, limit, table.onlyLive(cond), selectsOrders);
+    }
+
+    ////////
+    @NotNull
+    public <E> List<E> fetchLive(Class<E> claz, T table, QueryPart... selectsOrders) {
+        return fetch(claz, table, table.getOnlyLive(), selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetchLive(Class<E> claz, T table, Condition cond, QueryPart... selectsOrders) {
+        return fetch(claz, -1, -1, table, table.onlyLive(cond), selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetchLive(Class<E> claz, int limit, T table, QueryPart... selectsOrders) {
+        return fetch(claz, 0, limit, table, table.getOnlyLive(), selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetchLive(Class<E> claz, int offset, int limit, T table, QueryPart... selectsOrders) {
+        return fetch(claz, offset, limit, table, table.getOnlyLive(), selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetchLive(Class<E> claz, int limit, T table, Condition cond, QueryPart... selectsOrders) {
+        return fetch(claz, 0, limit, table, table.onlyLive(cond), selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetchLive(Class<E> claz, int offset, int limit, T table, Condition cond, QueryPart... selectsOrders) {
+        return fetch(claz, offset, limit, table, table.onlyLive(cond), selectsOrders);
+    }
+
+    ////////
+    @NotNull
+    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, T table, QueryPart... selectsOrders) {
+        return fetch(mapper, table, table.getOnlyLive(), selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, T table, Condition cond, QueryPart... selectsOrders) {
+        return fetch(mapper, -1, -1, table, table.onlyLive(cond), selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, int limit, T table, QueryPart... selectsOrders) {
+        return fetch(mapper, 0, limit, table, table.getOnlyLive(), selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, int offset, int limit, T table, QueryPart... selectsOrders) {
+        return fetch(mapper, offset, limit, table, table.getOnlyLive(), selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, int limit, T table, Condition cond, QueryPart... selectsOrders) {
+        return fetch(mapper, 0, limit, table, table.onlyLive(cond), selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, int offset, int limit, T table, Condition cond, QueryPart... selectsOrders) {
+        return fetch(mapper, offset, limit, table, table.onlyLive(cond), selectsOrders);
+    }
+
+    ///////////////// select one /////////////////////
+    @Nullable
+    public P fetchOneLive(Function<T, Fn> fun) {
+        final Fn fn = fun.apply(table);
+        return fetchOne(table, table.onlyLive(fn.cond), fn.part);
     }
 
     @Nullable
-    public Record fetchOneLive(T table, Condition cond, SelectField<?>... fields) {
-        return fetchOne(table, table.onlyLive(cond), fields);
+    public P fetchLimitOneLive(Function<T, Fn> fun) {
+        final Fn fn = fun.apply(table);
+        return fetchLimitOne(table, table.onlyLive(fn.cond), fn.part);
     }
 
     @NotNull
-    public <E> List<E> fetchLive(Class<E> claz, T table, SelectField<?>... fields) {
-        return fetchLive(claz, table, null, fields);
+    public Optional<P> fetchOptionalLive(Function<T, Fn> fun) {
+        return Optional.ofNullable(fetchOne(fun));
     }
 
     @NotNull
-    public <E> List<E> fetchLive(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
-        return fetch(claz, table, table.onlyLive(cond), fields);
+    public Optional<P> fetchLimitOptionalLive(Function<T, Fn> fun) {
+        return Optional.ofNullable(fetchLimitOne(fun));
+    }
+
+    /////////////////
+    @Nullable
+    public P fetchOneLive(T table, QueryPart... selectsOrders) {
+        return fetchOne(table, table.getOnlyLive(), selectsOrders);
+    }
+
+    @Nullable
+    public P fetchLimitOneLive(T table, QueryPart... selectsOrders) {
+        return fetchLimitOne(table, table.getOnlyLive(), selectsOrders);
     }
 
     @NotNull
-    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, T table, SelectField<?>... fields) {
-        return fetchLive(mapper, table, null, fields);
+    public Optional<P> fetchOptionalLive(T table, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchOne(table, table.getOnlyLive(), selectsOrders));
     }
 
     @NotNull
-    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, T table, Condition cond, SelectField<?>... fields) {
-        return fetch(mapper, table, table.onlyLive(cond), fields);
+    public Optional<P> fetchLimitOptionalLive(T table, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchLimitOne(table, table.getOnlyLive(), selectsOrders));
+    }
+
+    public P fetchOneLive(T table, Condition cond, QueryPart... selectsOrders) {
+        return fetchOne(table, table.onlyLive(cond), selectsOrders);
+    }
+
+    @Nullable
+    public P fetchLimitOneLive(T table, Condition cond, QueryPart... selectsOrders) {
+        return fetchOne(table, table.onlyLive(cond), selectsOrders);
+    }
+
+    @NotNull
+    public Optional<P> fetchOptionalLive(T table, Condition cond, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchOne(table, table.onlyLive(cond), selectsOrders));
+    }
+
+    @NotNull
+    public Optional<P> fetchLimitOptionalLive(T table, Condition cond, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchLimitOne(table, table.onlyLive(cond), selectsOrders));
+    }
+
+    /////////////////
+    @Nullable
+    public <E> E fetchOneLive(Class<E> claz, T table, QueryPart... selectsOrders) {
+        return fetchOne(claz, table, table.getOnlyLive(), selectsOrders);
+    }
+
+    @Nullable
+    public <E> E fetchLimitOneLive(Class<E> claz, T table, QueryPart... selectsOrders) {
+        return fetchLimitOne(claz, table, table.getOnlyLive(), selectsOrders);
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchOptionalLive(Class<E> claz, T table, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchOne(claz, table, table.getOnlyLive(), selectsOrders));
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchLimitOptionalLive(Class<E> claz, T table, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchLimitOne(claz, table, table.getOnlyLive(), selectsOrders));
+    }
+
+    public <E> E fetchOneLive(Class<E> claz, T table, Condition cond, QueryPart... selectsOrders) {
+        return fetchOne(claz, table, table.onlyLive(cond), selectsOrders);
+    }
+
+    @Nullable
+    public <E> E fetchLimitOneLive(Class<E> claz, T table, Condition cond, QueryPart... selectsOrders) {
+        return fetchOne(claz, table, table.onlyLive(cond), selectsOrders);
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchOptionalLive(Class<E> claz, T table, Condition cond, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchOne(claz, table, table.onlyLive(cond), selectsOrders));
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchLimitOptionalLive(Class<E> claz, T table, Condition cond, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchLimitOne(claz, table, table.onlyLive(cond), selectsOrders));
+    }
+
+    /////////////////
+    @Nullable
+    public <E> E fetchOneLive(RecordMapper<? super Record, E> mapper, T table, QueryPart... selectsOrders) {
+        return fetchOne(mapper, table, table.getOnlyLive(), selectsOrders);
+    }
+
+    @Nullable
+    public <E> E fetchLimitOneLive(RecordMapper<? super Record, E> mapper, T table, QueryPart... selectsOrders) {
+        return fetchLimitOne(mapper, table, table.getOnlyLive(), selectsOrders);
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchOptionalLive(RecordMapper<? super Record, E> mapper, T table, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchOne(mapper, table, table.getOnlyLive(), selectsOrders));
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchLimitOptionalLive(RecordMapper<? super Record, E> mapper, T table, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchLimitOne(mapper, table, table.getOnlyLive(), selectsOrders));
+    }
+
+    public <E> E fetchOneLive(RecordMapper<? super Record, E> mapper, T table, Condition cond, QueryPart... selectsOrders) {
+        return fetchOne(mapper, table, table.onlyLive(cond), selectsOrders);
+    }
+
+    @Nullable
+    public <E> E fetchLimitOneLive(RecordMapper<? super Record, E> mapper, T table, Condition cond, QueryPart... selectsOrders) {
+        return fetchOne(mapper, table, table.onlyLive(cond), selectsOrders);
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchOptionalLive(RecordMapper<? super Record, E> mapper, T table, Condition cond, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchOne(mapper, table, table.onlyLive(cond), selectsOrders));
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchLimitOptionalLive(RecordMapper<? super Record, E> mapper, T table, Condition cond, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchLimitOne(mapper, table, table.onlyLive(cond), selectsOrders));
     }
 
     ///////////////// delete /////////////////////
@@ -248,6 +411,6 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
      */
     @NotNull
     public List<P> findAllLive() {
-        return fetchLive(table, null);
+        return fetch(table, table.getOnlyLive());
     }
 }

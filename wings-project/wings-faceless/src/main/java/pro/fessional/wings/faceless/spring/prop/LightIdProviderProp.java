@@ -67,4 +67,12 @@ public class LightIdProviderProp {
      */
     private String sequenceGetAll;
     public static final String Key$sequenceGetAll = Key + ".sequence-get-all";
+
+    /**
+     * 从数据库获取可以校验和调整的表名和自动，第一列表名，第二列主键名
+     *
+     * @see #Key$sequenceAdjust
+     */
+    private String sequenceAdjust = "";
+    public static final String Key$sequenceAdjust = Key + ".sequence-adjust";
 }

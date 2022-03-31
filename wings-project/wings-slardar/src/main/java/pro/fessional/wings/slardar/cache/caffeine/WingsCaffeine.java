@@ -6,6 +6,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
+import pro.fessional.wings.slardar.cache.NullsCache;
 import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
 
@@ -64,16 +65,28 @@ public class WingsCaffeine {
         private final ConcurrentHashMap<String, Cache<Object, Object>> holder = new ConcurrentHashMap<>();
 
         public Manager(SlardarCacheProp config) {
-            this.slardarCacheProp = config;
-            this.loader = null;
-            setAllowNullValues(config.isNulls());
+            this(config, null);
         }
 
         public Manager(SlardarCacheProp config, CacheLoader<Object, Object> loader) {
             this.slardarCacheProp = config;
             this.loader = loader;
-            setAllowNullValues(config.isNulls());
             setCacheLoader(loader);
+        }
+
+        @Override
+        public org.springframework.cache.Cache getCache(@NotNull String name) {
+            final org.springframework.cache.Cache cache = super.getCache(name);
+
+            if (slardarCacheProp.isNullWeak()) {
+                return new NullsCache(cache, false);
+            }
+            else if (slardarCacheProp.isNullSkip()) {
+                return new NullsCache(cache, true);
+            }
+            else {
+                return cache;
+            }
         }
 
         @Override

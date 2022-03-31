@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author trydofor
- * @link https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#howto-customize-the-jackson-objectmapper
+ * @link https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/#howto-customize-the-jackson-objectmapper
  * @see InstantDeserializer#ZONED_DATE_TIME
  * @since 2019-06-26
  */
@@ -251,7 +251,6 @@ public class SlardarJacksonConfiguration {
     }
 
     @Bean
-    @ConditionalOnBean(AutoRegisterPropertyFilter.class)
     public FilterProvider slardarFilterProvider(List<AutoRegisterPropertyFilter> filters) {
         final SimpleFilterProvider bean = new SimpleFilterProvider();
         for (AutoRegisterPropertyFilter filter : filters) {

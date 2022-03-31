@@ -47,6 +47,7 @@ hs_err_pid*
 .idea/
 *.iml
 .flattened-pom.xml
+.pom.xml
 
 ###
 *~

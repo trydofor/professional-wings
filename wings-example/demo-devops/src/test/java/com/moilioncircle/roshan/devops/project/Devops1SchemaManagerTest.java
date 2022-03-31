@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.Helper;
 import pro.fessional.wings.warlock.project.Warlock1SchemaManager;
+
+import static pro.fessional.wings.warlock.project.Warlock1SchemaManager.includeWarlockPath;
 
 /**
  * @author trydofor
@@ -29,9 +32,9 @@ class Devops1SchemaManagerTest {
     void initDemo() {
         final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
 //        manager.init(WingsRevision.V04_20_1024_02_RolePermit.revision(),
-        manager.init(9999_9999_01L,
-                Warlock1SchemaManager.includeWarlockPath(),
-                FlywaveRevisionScanner.Helper::master
+        manager.mergePublish(9999_9999_01L,
+                includeWarlockPath(),
+                Helper::master
         );
     }
 
@@ -39,9 +42,17 @@ class Devops1SchemaManagerTest {
     void resetDemo() {
         long revi = 9999_9999_01L;
         final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
-        final FlywaveRevisionScanner.Helper helper = FlywaveRevisionScanner.helper();
-        Warlock1SchemaManager.includeWarlockPath().accept(helper);
+        final Helper helper = FlywaveRevisionScanner.helper();
+        includeWarlockPath().accept(helper);
         helper.master();
-        manager.forceDownThenMergePub(helper.scan(), 0, revi);
+        manager.downThenMergePublish(helper.scan(), 0, revi);
+    }
+
+    @Test
+    void forceApply() {
+        final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
+        final Helper helper = FlywaveRevisionScanner.helper()
+                .master("05-conf");
+        manager.mergeForceApply(helper.scan(), 0, true);
     }
 }

@@ -66,7 +66,10 @@ JDBC数据源(DataSource)，分为两种，他们会存在于`DataSourceContext`
 
 
 `$`是命名中的特殊字符，定义`跟踪表`，但dollar在很多环境中需要转义，如shell，regexp。
-sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/resources/wings-flywave/readme.md)
+sql的书写规则详见[数据库约定](src/main/resources/wings-flywave/readme.md)
+
+尤其重要的是，一个 **SQL块必须有delimiter收尾**，哪怕是注释部分也需要。
+因为flywave对sql解析未做语法分析，估无法判断delimiter是否在字符串中。
 
 数据库中尽量不要`nullable`，约定默认值代替，如`convention.EmptyValue`类
 
@@ -94,7 +97,7 @@ sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/res
 任何数据变动，都应该有`commit_id`，记录下事件信息（人，事件，业务信息等）。
 最新的数据留在`本表`，旧数据通过`trigger`插入`跟踪表`。跟踪表也称`$log`表，
 因最初的命名规则是，本表+`$log`后缀，但后因某些工具缺陷，误把`$`当做变量处理，
-尽管其是mysql官方合法字符，flywave在2.6.3版后调整为双下划线`__`后缀。
+尽管其是mysql官方合法字符，flywave在210版后调整为双下划线`__`后缀。
 
 `journal`通过`sys_schema_journal`生成`跟踪表`和`触发器`。
 
@@ -127,12 +130,6 @@ sql的书写规则详见[数据库约定](../wings-faceless-flywave/src/main/res
 
 参考资料
 * https://dev.mysql.com/doc/refman/8.0/en/trigger-syntax.html
-
-## 2.1.4.测试用例
-
-`kotlin`中的测试用例，主要是场景演示。需要单个执行，确保成功。
-统一执行时，springboot为了有效使用资源，不会全部重新初始化`context`，
-这样会使有些`ApplicationListener`得不到触发，可能导致部分TestCase失败。
 
 ## 2.1.3.注解指令
 
@@ -180,7 +177,23 @@ ALTER TABLE `win_admin` DROP INDEX ix_login_name;
 
 推荐使用单行注释`--`，对应多行注释`/* */`不可置于行中。
 
-## 2.1.5.常见问题
+## 2.1.4.自动检查
+
+通过 `wings.faceless.flywave.fit.*` 配置文件可以设置对revision的依赖。
+因无法确认程序执行账号是否具有CREATE权限，wings默认是WARN，但建议重要版本为FAIL或EXEC。
+
+* 若需要关闭检查，可以根据log提示设置SKIP
+* 若需要执行Revision，把SKIP替换成EXEC即可
+
+wings的内置Revision和真实日期无关，版本号主要集中在2019和2020，不超过2022。
+
+## 2.1.7.测试用例
+
+`kotlin`中的测试用例，主要是场景演示。需要单个执行，确保成功。
+统一执行时，springboot为了有效使用资源，不会全部重新初始化`context`，
+这样会使有些`ApplicationListener`得不到触发，可能导致部分TestCase失败。
+
+## 2.1.9.常见问题
 
 ### 01.控制flywave时，spring找不到bean `SchemaRevisionManager`
 
@@ -307,13 +320,13 @@ WHERE
   EVENT_OBJECT_SCHEMA = database();
 
 -- 获取创建trigger的SQL;
--- DELIMITER $$
+-- DELIMITER ;;
 SELECT
    TRIGGER_NAME,
    CONCAT('DROP TRIGGER IF EXISTS ',TRIGGER_NAME,';'),
    CONCAT('CREATE TRIGGER `', TRIGGER_NAME, '` ',
           ACTION_TIMING, ' ', EVENT_MANIPULATION, ' ON `', EVENT_OBJECT_TABLE, '` FOR EACH ROW ',
-          ACTION_STATEMENT, '$$')
+          ACTION_STATEMENT, ';;')
 FROM
    INFORMATION_SCHEMA.TRIGGERS
 WHERE
@@ -356,15 +369,14 @@ ALTER TABLE `{{TABLE_NAME}}__`
    ADD COLUMN `_dt` DATETIME(3) NOT NULL DEFAULT '1000-01-01 00:00:00' AFTER `_id`,
    ADD COLUMN `_tp` CHAR(1) NOT NULL DEFAULT 'Z' AFTER `_dt`;
 
-DELIMITER $$
+DELIMITER ;;
 CREATE TRIGGER `ai__{{TABLE_NAME}}` AFTER INSERT ON `{{TABLE_NAME}}`
    FOR EACH ROW BEGIN
    IF (@DISABLE_FLYWAVE IS NULL) THEN
       INSERT INTO `{{TABLE_NAME}}__` SELECT NULL, NOW(3), 'C', t.* FROM `{{TABLE_NAME}}` t
       WHERE t.id = NEW.id ;
    END IF;
-END
-$$
+END;;
 
 CREATE TRIGGER `au__{{TABLE_NAME}}` AFTER UPDATE ON `{{TABLE_NAME}}`
    FOR EACH ROW BEGIN
@@ -372,8 +384,7 @@ CREATE TRIGGER `au__{{TABLE_NAME}}` AFTER UPDATE ON `{{TABLE_NAME}}`
       INSERT INTO `{{TABLE_NAME}}__` SELECT NULL, NOW(3), 'U', t.* FROM `{{TABLE_NAME}}` t
       WHERE t.id = NEW.id ;
    END IF;
-END
-$$
+END;;
 
 CREATE TRIGGER `bd__{{TABLE_NAME}}` BEFORE DELETE ON `{{TABLE_NAME}}`
    FOR EACH ROW BEGIN
@@ -381,8 +392,7 @@ CREATE TRIGGER `bd__{{TABLE_NAME}}` BEFORE DELETE ON `{{TABLE_NAME}}`
       INSERT INTO `{{TABLE_NAME}}__` SELECT NULL, NOW(3), 'D', t.* FROM `{{TABLE_NAME}}` t
       WHERE t.id = OLD.id ;
    END IF;
-END
-$$
+END;;
 DELIMITER ;
 ```
 
@@ -466,22 +476,22 @@ EXECUTE stmt;
 -- 生成trigger sql
 SET @tabl = 'win_user_basis';
 SET @triggerSql = CONCAT(
-   'DELIMITER $$\n',
+   'DELIMITER ;;\n',
    'CREATE TRIGGER `ai__', @tabl, '` AFTER INSERT ON `', @tabl,'` FOR EACH ROW BEGIN',
    ' IF (@DISABLE_FLYWAVE IS NULL) THEN',
    ' INSERT INTO `',@tabl ,'__` SELECT NULL, NOW(3), \'C\', t.* FROM `',@tabl ,'` t WHERE t.id = NEW.id ;',
    ' END IF;',
-   'END$$\n',
+   'END;;\n',
    'CREATE TRIGGER `au__', @tabl, '` AFTER UPDATE ON `', @tabl,'` FOR EACH ROW BEGIN',
    ' IF (@DISABLE_FLYWAVE IS NULL) THEN',
    ' INSERT INTO `',@tabl ,'__` SELECT NULL, NOW(3), \'U\', t.* FROM `',@tabl ,'` t WHERE t.id = NEW.id ;',
    ' END IF;',
-   'END$$\n',
+   'END;;\n',
    'CREATE TRIGGER `bd__', @tabl, '` BEFORE DELETE ON `', @tabl,'` FOR EACH ROW BEGIN',
    ' IF (@DISABLE_FLYWAVE IS NULL) THEN',
    ' INSERT INTO `',@tabl ,'__` SELECT NULL, NOW(3), \'D\', t.* FROM `',@tabl ,'` t WHERE t.id = OLD.id ;',
    ' END IF;',
-   'END$$\n'
+   'END;;\n'
    );
 
 select @triggerSql;
@@ -489,7 +499,7 @@ select @triggerSql;
 
 ### 13.工具或DB不支持`$`命名怎么办
 
-从2.6.3.210开始，wings以双下划线命名，取代dollar命名。
+从210开始，wings以双下划线命名，取代dollar命名。
 
 英数美刀下划线(`[0-9,a-z,A-Z$_]`)都是mysql官方无需转义的合法的[命名字符](https://dev.mysql.com/doc/refman/5.7/en/identifiers.html)
 但某些不完备的云DB或工具，未做好处理，属于其功能缺陷。

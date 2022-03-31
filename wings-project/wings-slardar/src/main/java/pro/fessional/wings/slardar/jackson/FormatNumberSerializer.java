@@ -15,6 +15,8 @@ import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.fasterxml.jackson.annotation.JsonFormat.Shape.ANY;
+
 /**
  * 直接JsonFormat和DecimalFormat来格式化数字
  *
@@ -34,7 +36,8 @@ public class FormatNumberSerializer extends NumberSerializer {
 
     private final DecimalFormat format;
     private final Digital digital;
-    private final Map<String, DecimalFormat> pools = new ConcurrentHashMap<>();
+    private final Map<String, DecimalFormat> poolsAuto = new ConcurrentHashMap<>();
+    private final Map<String, DecimalFormat> poolsNoop = new ConcurrentHashMap<>();
 
     /**
      * @param rawType 类型
@@ -54,12 +57,23 @@ public class FormatNumberSerializer extends NumberSerializer {
         JsonFormat.Value jf = findFormatOverrides(prov, property, handledType());
         final String ptn = jf == null ? null : jf.getPattern();
         if (StringUtils.hasLength(ptn)) {
-            DecimalFormat df = pools.computeIfAbsent(ptn, k -> {
-                DecimalFormat d = new DecimalFormat(ptn);
-                d.setDecimalFormatSymbols(format.getDecimalFormatSymbols());
-                d.setRoundingMode(format.getRoundingMode());
-                return d;
-            });
+            final DecimalFormat df;
+            if (jf.getShape() == ANY) {
+                df = poolsAuto.computeIfAbsent(ptn, k -> {
+                    DecimalFormat d = new DecimalFormat(ptn);
+                    d.setRoundingMode(format.getRoundingMode());
+                    d.setDecimalFormatSymbols(format.getDecimalFormatSymbols());
+                    return d;
+                });
+            }
+            else {
+                df = poolsNoop.computeIfAbsent(ptn, k -> {
+                    DecimalFormat d = new DecimalFormat(ptn);
+                    d.setRoundingMode(format.getRoundingMode());
+                    return d;
+                });
+            }
+
             return new FormatNumberSerializer(_handledType, df, digital);
         }
         return this;

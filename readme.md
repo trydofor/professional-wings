@@ -1,6 +1,6 @@
 # 0.专业大翅 (pro.fessional.wings)
 
-[![Spring Boot](https://img.shields.io/badge/spring--boot-2.6.3-green)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/spring--boot-2.6.4-green)](https://spring.io/projects/spring-boot)
 [![Java 11](https://img.shields.io/badge/java-11-red)](https://spring.io/projects/spring-boot)
 [![Kotlin 1.6](https://img.shields.io/badge/kotlin-1.6-red)](https://kotlinlang.org/docs/reference/)
 [![Jooq](https://img.shields.io/badge/jooq-3.14-yellow)](https://www.jooq.org/download/)
@@ -49,7 +49,7 @@ wings的版本号为`4段分隔`，前3段为spring-boot版本，第4段是chang
 
 涉及技术和知识点
 
-* [Spring Boot](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/)
+* [Spring Boot](https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/)
 * [Apache ShardingSphere](https://shardingsphere.apache.org/index_zh.html)
 * [Jooq - 强类型 sql-mapping](https://www.jooq.org/)
 
@@ -114,18 +114,27 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 
 * `static final` 不必全大写。如`logger`比`LOG`可读性好。
 * `BIG_SNAKE`可使用`PascalNaming`，因为大写单词不如小写易读。
-* 全大写名词（缩写或专有）只首字母大写。`Json`,`Html`,`Id`。
-* 前后缀或缩写，不可以单字母，建议3个字母。
+* 全大写名词（缩写或专有）只首字母大写驼峰法。`Json`,`Html`,`Id`。
+* 前后缀或缩写，不可以单字母，必须2字母以上，建议3个字母（驼峰法）。
 * 英文无法表达的业务词汇及行业黑话，不要用拼音，用中文。`落地配`。
 * 要求4-8字母的单词都记住。
-* 消除null。Set/List/Array/Map用empty，其他标注@NotNull或@Nullable
+* 以Empty消除null。Set/List/Array/Map用empty
+* 显示标注@NotNull，@Nullable，@Contract，声明null约束
 
 ### 0.2.2.Sql风格，`snake_case`，即全小写，下划线分割，小写词比大写容易识别。
 
 * 数据库，表名，字段名，全小写。
 * SQL关键词，内置词等建议`大写`，以区别。
 * `index`以`ix_`,`uq_`,`ft_`,`pk_`区分索引类型。
-* `trigger`以`_bu`,`_bd`表示触发的时机。
+* `trigger`以`(ai|au|db)__`表示触发的时机。
+
+wings主张业务表SQL化，即使用SQL管理表及数据，而GUI或对象映射都是辅助功能。
+SQL脚本可以很好的编辑，比较，文档化，包括业务表的分层，编号及注释格式。
+
+* 表`编号/名字:解释` - 105/常量枚举:自动生成enum类
+* 字段`注释/解释:选项|选项` - 验证账号/身份辨识:邮箱|手机|union_id|api_key
+
+编号由业务层规划，如10x为系统，11x为应用，12x为用户，13x为权限，2xx为商品，3xx为订单等。
 
 ### 0.2.3.时间很神奇
 
@@ -271,21 +280,22 @@ public interface TradeService {
 
 默认开启了swagger，访问路径为 /swagger-ui/index.html
 
-因swagger注解容易使doc部分冗长，且springfox做了比较智能的推导，
+因swagger注解容易使doc部分冗长，且SpringDoc做了比较智能的推导，
 所以在能够表述清楚时，建议简化注解，参考以下注解。
 
-* @ApiOperation， 以value,notes,response表述清楚
-* @ApiModel/@ApiModelProperty，输入或输出对象
-* @ApiParam， 输入参数
-* @ApiResponses，必要时使用
+* @Operation，以tag,summary,description等表述清楚
+* @Schema，输入或输出对象
+* @Parameter， 输入参数
+* @ApiResponse，必要时使用
 
-在notes中，支持Markdown，辅助jsdoc，可使文档更加清晰。
+在description中，支持Markdown，辅助jsdoc，可使文档更加清晰。
 `@param [name=trydofor] - Somebody's name.`  - 参考 https://jsdoc.app/tags-param.html
 `@return {200|Result(Dto)} 正常返回对象，status=200` - 小括号表示泛型(避免转义)。参考 https://jsdoc.app/tags-returns.html
 `@return {200|Result(false)} 错误时返回，status=200` - 小括号表示简单约定参数。参考 https://jsdoc.app/tags-returns.html
 
-使用swagger时，不可使用弱口令，在正式服上必须关闭。在3.0.0版本，通过设置以下属性即可。  
-`springfox.documentation.enabled=false`，或通过profile来设置（不推荐）
+使用swagger时，不可使用弱口令，在正式服上可通过以下属性关闭。  
+* springdoc.api-docs.enabled=true
+* springdoc.swagger-ui.enabled=true
 
 推荐在每个工程test下建立idea支持的 `*.http` 接口描述和测试脚本，官方文档如下
 
@@ -661,8 +671,8 @@ wings随时跟进升级spring boot的最新版本，目的是为了测试shardin
 * parent - you can also override individual dependencies by overriding a property in your own project
 * import - does not let you override individual dependencies by using properties, as explained above. To achieve the same result, you need to add entries in the dependencyManagement section of your project before the
   spring-boot-dependencies entry.
-* https://docs.spring.io/spring-boot/docs/2.6.3/maven-plugin/reference/htmlsingle/#using-parent-pom
-* https://docs.spring.io/spring-boot/docs/2.6.3/maven-plugin/reference/htmlsingle/#using-import
+* https://docs.spring.io/spring-boot/docs/2.6.4/maven-plugin/reference/htmlsingle/#using-parent-pom
+* https://docs.spring.io/spring-boot/docs/2.6.4/maven-plugin/reference/htmlsingle/#using-import
 
 对于低于wings的spring-boot版本，一般来讲指定一下jooq版本就可以完全正常。
 
@@ -716,7 +726,7 @@ at org.jooq.impl.AbstractQuery.execute(AbstractQuery.java:390)
 
 原因是maven-resources-plugin的filter目录中存在非文本文件(不可按字符串读取)， 不要降级到3.1.0，在nonFilteredFileExtension添加扩展名即可。
 
-(Automatic Property Expansion Using Maven)[https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#howto-properties-and-configuration]
+(Automatic Property Expansion Using Maven)[https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/#howto-properties-and-configuration]
 
 ### 18.通过mysql客户端能找到，wings查询不到数据
 
@@ -737,7 +747,7 @@ Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控�
 
 ### 20.Tomcat和hazelcast的POM exclusion
 
-使用wings-home为parent时通过dependencyManagement，继承wings默认不需要修改。 但若是没有继承wings依赖，以下2项视情况需要自行调整
+使用wings-project为parent时通过dependencyManagement，继承wings默认不需要修改。 但若是没有继承wings依赖，以下2项视情况需要自行调整
 
 * spring-boot-starter-web/spring-boot-starter-tomcat，因默认使用undertow
 * spring-session-hazelcast/hazelcast，使用最新版本。
@@ -745,8 +755,11 @@ Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控�
 ### 21.Java和Kotlin版本
 
 目前编译目标是java 8，kotlin 1.4，如果在IDE中出现编译失败，很可能是编译版本不对。
+从210起，wings全面适配java 11，kotlin自动更新为1.6，未做java8证兼性测试。
 
 ### 22.swagger的问题
+
+**从210版本，以SpringDoc取代SpringFox后，使用swagger3.0，部分问题已不存在**
 
 `😱 Could not render n, see the console.`
 是swagger前端js错误，可能是response对象层级过深，导致swagger扫描时间太长。
@@ -761,16 +774,21 @@ https://github.com/springfox/springfox/issues/3452
 
 wings中可以通过暴露AlternateTypeRule bean，自动注入所以Docket中。
 
-### 23.反序列化时ClassCastException (hazelcast, kryo, cache)
+### 23.反序列化时ClassCastException (hazelcast, kryo, cache)或Enum比较失败。
 
-现象是，完全一样的class，但是在序列化时却抛出 ClassCastException。 大概率是，开发时项目使用了spring-boot-devtools，导致IDE和jar处在不同的classloader。
+* 完全一样的class，但是在序列化时却抛出 ClassCastException。 
+* 同一个Enum的hash和equals不同，导致比较或map失败。
 
-* 原因：IDE工程使用了`restart` classloader, jar file 则是`base`classloader
+大概率是，开发时项目使用了spring-boot-devtools，导致IDE和jar处在不同的classloader。
+IDE使用了devtools的`restart`, 而非IDE内的jar则是`base`。
+
 * 方案一，wings中始终使用`spring.hazelcast.config`配置hazelcast
 * 方案二，自己暴露Config或ClientConfig，并设置好classloader
-* 方案三，通过restart.include设置（不推荐）
+* 方案三，配置spring-devtools.properties（不推荐，wings采用）
 
-不推荐在product环境使用devtool，参考springboot官方文档的[Known Limitations](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#using.devtools.restart.limitations)
+在开发wings自身时，因为序列化需要，demo工程对wings的依赖，都希望devtools造成干扰，
+
+不推荐在product环境使用devtool，参考springboot官方文档的[Known Limitations](https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/#using.devtools.restart.limitations)
 
 ### 24.Hazelcast OutOfMemoryError CallerNotMemberException
 
@@ -852,7 +870,7 @@ head demo-exmaple-1.0.0-SNAPSHOT.jar
 
 ### 28.如何配置logger和log groups
 
-SpringBoot内置以下log groups [Log Groups](https://docs.spring.io/spring-boot/docs/2.6.3/reference/htmlsingle/#features.logging.log-groups)
+SpringBoot内置以下log groups [Log Groups](https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/#features.logging.log-groups)
 
 * org.springframework.core.codec
 * org.springframework.http
@@ -868,7 +886,7 @@ SpringBoot内置以下log groups [Log Groups](https://docs.spring.io/spring-boot
 build/resources/resource/filtering=true，以便mvn自动替换。
 
 但是开启filter会引起错误替换，比如二进制文件等，wings默认忽略一些二进制文件
-同时在2.6.3版后，以spring变量取代了mvn变量，因此不需要filter。
+同时在210版后，以spring变量取代了mvn变量，因此不需要filter。
 
 ### 30.not eligible for auto-proxying
 
@@ -879,3 +897,23 @@ spring的Bean在其生命周期有载入顺序，Processor，framework和业务B
 若某些Bean因为依赖关系在Processor前加载，则不会被Process，可能影响业务。
 
 若是经过排查后，对业务没有影响，那么可忽略该INFO级别的Warning。
+
+### 31.非科学家，不可浮点(IEEE754)型存储和计算
+
+wings中不应该有浮点类型float/double，而只有整数(int/long)，小数BigDecimal，
+他们对应的数据库类型分别为 INT/BIGINT/DECIMAL。
+
+但在实践过程中，因科普不到位，一些外部惯性未被消除而污染wings代码，尤其在js体系中更为明显。
+
+* 0.1 + 0.2 = 0.30000000000000004
+* 0.12 - 0.02 = 0.099999999999999
+
+其根本原因在用IEEE754格式，浮点型不适合非科学计算场景，除科学家外普通人慎用。
+`Effective Java`是java从业人员必备知识，在此不做赘述，参考以下章节：
+Avoid Float and Double If Exact Answers Are Required
+
+### 32.时区检查失败 DIFF TIMEZONE，应用无法启动
+
+* 根据异常的提醒，设置正确的时区
+* 确认jdbc驱动 mysql-connector版本不小于8.0.23
+* 若不希望检查，设置`wings.warlock.check.tz-fail=false`

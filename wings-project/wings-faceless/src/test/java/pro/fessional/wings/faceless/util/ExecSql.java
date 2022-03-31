@@ -10,9 +10,18 @@ import pro.fessional.mirana.io.InputStreams;
 public class ExecSql {
 
     public static void execWingsSql(JdbcTemplate jdbcTemplate, String path) {
-        String sqls = InputStreams.readText(ExecSql.class.getResourceAsStream("/wings-flywave/"+path));
-        for (String sql : sqls.split(";[ \t]*[\r\n]")) {
-            jdbcTemplate.execute(sql);
+        String sqls = InputStreams.readText(ExecSql.class.getResourceAsStream("/wings-flywave/" + path));
+        for (String sql : sqls.split(
+                ";+[ \\t]*[\\r\\n]+"
+                + "|"
+                + ";+[ \\t]*--[^\\r\\n]+[\\r\\n]+"
+                + "|"
+                + ";+[ \\t]*/\\*[^\\r\\n]+\\*/[ \\t]*[\\r\\n]+"
+        )) {
+            String s = sql.trim();
+            if (!s.isEmpty()) {
+                jdbcTemplate.execute(s);
+            }
         }
     }
 }

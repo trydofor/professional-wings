@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.3</version>
+        <version>2.6.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -24,10 +24,10 @@
     </modules>
 
     <properties>
-        <maven.version>3.8.4</maven.version>
-        <revision>2.6.3</revision>
+        <!-- https://maven.apache.org/maven-ci-friendly.html -->
+        <revision>2.6.4</revision>
         <changelist>210-SNAPSHOT</changelist>
-        <!-- https://docs.spring.io/spring-boot/docs/2.6.3/reference/html/appendix-dependency-versions.html#appendix-dependency-versions -->
+        <!-- https://docs.spring.io/spring-boot/docs/2.6.4/reference/html/appendix-dependency-versions.html#appendix-dependency-versions -->
         <spring-boot.version>${revision}</spring-boot.version>
         <wings.version>${revision}.${changelist}</wings.version>
         <!-- project -->
@@ -42,17 +42,17 @@
         <spring-boot.repackage.skip>false</spring-boot.repackage.skip>
         <spring-boot.repackage.executable>false</spring-boot.repackage.executable>
         <!-- silencer -->
-        <mirana.version>2.2.3-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
+        <mirana.version>2.2.4-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <!-- faceless -->
         <meepo.version>1.4.1-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <simpleflatmapper.version>8.2.3</simpleflatmapper.version> <!-- https://simpleflatmapper.org -->
-        <shardingsphere.version>5.0.0</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
+        <shardingsphere.version>5.1.0</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <!-- slardar -->
-        <guava.version>31.0.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
+        <guava.version>31.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
         <commons-io.version>2.11.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
         <mapstruct.version>1.4.2.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
-        <springdoc.version>1.6.5</springdoc.version> <!-- https://springdoc.org/ -->
+        <springdoc.version>1.6.6</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi -->
         <!-- slardar -->
         <justauth.version>1.16.5</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
         <xxljob.version>2.3.0</xxljob.version> <!-- https://github.com/xuxueli/xxl-job/releases -->
@@ -60,13 +60,13 @@
         <errorprone.version>2.11.0</errorprone.version> <!-- https://github.com/google/error-prone/releases -->
         <fastjson.version>1.2.79</fastjson.version> <!-- https://github.com/alibaba/fastjson/releases -->
         <kryo.version>5.3.0</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
-        <transmittable.version>2.12.4</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
+        <transmittable.version>2.12.6</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
         <bouncycastle.version>1.70</bouncycastle.version> <!-- https://bouncycastle.org/latest_releases.html -->
         <boot-admin.version>2.6.2</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
-        <sentry.version>5.6.1</sentry.version> <!-- https://docs.sentry.io/platforms/java/guides/spring-boot/ -->
+        <sentry.version>5.7.0</sentry.version> <!-- https://docs.sentry.io/platforms/java/guides/spring-boot/ -->
         <!-- override spring boot default -->
         <lombok.version>1.18.22</lombok.version> <!-- https://projectlombok.org/changelog -->
-        <okhttp3.version>4.9.1</okhttp3.version> <!-- just auth need 4, spring use 3 https://square.github.io/okhttp/changelog/ -->
+        <okhttp3.version>4.9.3</okhttp3.version> <!-- just auth need 4, spring use 3 https://square.github.io/okhttp/changelog/ -->
         <!-- mvn-build-plugin -->
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version> <!-- https://search.maven.org/search?q=flatten-maven-plugin -->
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version> <!-- https://search.maven.org/search?q=maven-gpg-plugin -->
@@ -161,16 +161,6 @@
                 </exclusions>
             </dependency>
             <!-- sharding sphere -->
-            <dependency>
-                <groupId>org.apache.shardingsphere</groupId>
-                <artifactId>shardingsphere-jdbc-core</artifactId>
-                <version>${shardingsphere.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.shardingsphere</groupId>
-                <artifactId>shardingsphere-transaction-xa-core</artifactId>
-                <version>${shardingsphere.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
@@ -491,12 +481,14 @@
                     </executions>
                 </plugin>
                 <plugin>
+                    <!-- https://www.mojohaus.org/flatten-maven-plugin/flatten-mojo.html -->
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
                     <version>${flatten-maven-plugin.version}</version>
                     <configuration>
                         <updatePomFile>true</updatePomFile>
                         <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                        <flattenedPomFilename>.pom.xml</flattenedPomFilename>
                     </configuration>
                     <executions>
                         <execution>

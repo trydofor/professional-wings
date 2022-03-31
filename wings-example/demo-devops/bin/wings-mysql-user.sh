@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2021-12-21
+THIS_VERSION=2022-02-14
 
 cat << EOF
 #################################################
@@ -8,14 +8,15 @@ cat << EOF
 - {user_pre}.raw SELECT, TEMPORARY TABLE
 - {user_pre}.app {raw} + INSERT, UPDATE, DELETE, EXECUTE
 - {user_pre}.dev ALL - Drop
-- {user_pre}.dba ALL
+- {user_pre}.dba ALL + SELECT on mysql/sys
 
-# Usage $0 {create|grant|passwd|help} users [option]
+# Usage $0 {create|grant|passwd|help} userenv [option]
 - create/grant/passwd - 创建/授权/改密码
-- users - 环境脚本(bash语法)，格式参考help
+- userenv - 环境脚本(bash语法)，wings-mysql-user.env
 - option - 存在时，使用'--defaults-extra-file'
 # option 详细参考client段
 - https://dev.mysql.com/doc/refman/8.0/en/option-files.html
+./wings-mysql-user.sh wings-mysql-user.env wings-mysql-client.cnf
 #################################################
 EOF
 
@@ -26,6 +27,7 @@ function passwd24() {
 #####
 execute=false
 command="$1"
+userenv="$2"
 option="$3"
 
 if [[ "$command" == "" || "$command" == "help" ]]; then
@@ -56,10 +58,11 @@ EOF
 exit
 fi
 
-if [[ -f "$2" ]]; then
-  echo "load users option from $2"
+declare more_dba
+if [[ -f "$userenv" ]]; then
+  echo "load users option from $userenv"
   # shellcheck disable=SC1090
-  source "$2"
+  source "$userenv"
 fi
 
 declare user_pre
@@ -126,9 +129,13 @@ ${user_app}GRANT SELECT, CREATE TEMPORARY TABLES, INSERT, UPDATE, DELETE, EXECUT
 ${user_dev}GRANT ALL ON \`$db_main\`.* TO '$user_pre.dev'@'$host_dev';
 ${user_dev}REVOKE DROP ON \`$db_main\`.* FROM '$user_pre.dev'@'$host_dev';
 ${user_dba}GRANT ALL ON \`$db_main\`.* TO '$user_pre.dba'@'$host_dba';
-${user_dba}GRANT SELECT ON mysql.* TO '$user_pre.dba'@'$host_dba';
 ${user_dba}GRANT RELOAD,SHOW VIEW,EXECUTE,FILE,PROCESS,REPLICATION CLIENT,REPLICATION SLAVE ON *.* TO '$user_pre.dba'@'$host_dba';
 EOF
+for mb in $more_dba; do
+grep -v '^#' << EOF | tee /dev/tty | $exec_cmd
+${user_dba}GRANT SELECT ON \`$mb\`.* TO '$user_pre.dba'@'$host_dba';
+EOF
+done
 done
 fi
 

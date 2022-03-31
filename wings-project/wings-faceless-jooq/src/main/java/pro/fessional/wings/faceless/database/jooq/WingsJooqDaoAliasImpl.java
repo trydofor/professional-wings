@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless.database.jooq;
 
 import com.google.common.collect.Lists;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.BatchBindStep;
@@ -15,25 +16,32 @@ import org.jooq.Loader;
 import org.jooq.LoaderOptionsStep;
 import org.jooq.Name;
 import org.jooq.OrderField;
+import org.jooq.QueryPart;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.Result;
-import org.jooq.SelectField;
+import org.jooq.SelectConditionStep;
+import org.jooq.SelectFieldOrAsterisk;
+import org.jooq.SelectSelectStep;
 import org.jooq.Table;
 import org.jooq.TableRecord;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
 import org.jooq.impl.TableImpl;
+import pro.fessional.mirana.cast.TypedCastUtil;
 import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.data.U;
 import pro.fessional.mirana.pain.IORuntimeException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -630,185 +638,376 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
         return Lists.partition(rds, size);
     }
 
-    ///////////////// select /////////////////////
+    ///////////////// select list /////////////////////
 
-    /**
-     * @see #fetch(Table, Condition)
-     */
-    @NotNull
-    public List<P> fetch(Function<T, Condition> fun) {
-        return fetch(table, fun.apply(table));
+    @RequiredArgsConstructor
+    public static class Fn {
+        public final Condition cond;
+        public final QueryPart[] part;
+
+        public static Fn of(QueryPart... part) {
+            return new Fn(null, part);
+        }
+
+        public static Fn of(Condition cond, QueryPart... part) {
+            return new Fn(cond, part);
+        }
     }
 
-    /**
-     * 按表查询，要求table和cond中的字段必须同源
-     * <pre>
-     * val t = dao.getTable();
-     * val c = t.Id.eq(1L).and(t.CommitId.eq(2L));
-     * val r = dao.fetch(t, c);
-     * </pre>
-     *
-     * @param table 表
-     * @param cond  条件
-     * @return 结果
-     */
+    @NotNull
+    public List<P> fetch(Function<T, Fn> fun) {
+        final Fn fn = fun.apply(table);
+        return fetch(table, fn.cond, fn.part);
+    }
+
+    @NotNull
+    public List<P> fetch(int limit, Function<T, Fn> fun) {
+        return fetch(0, limit, fun);
+    }
+
+    @NotNull
+    public List<P> fetch(int offset, int limit, Function<T, Fn> fun) {
+        final Fn fn = fun.apply(table);
+        return fetch(table, offset, limit, fn.cond, fn.part);
+    }
+
+    ////////
     @NotNull
     public List<P> fetch(T table, Condition cond) {
-        return ctx().selectFrom(table)
-                    .where(cond)
-                    .fetch()
-                    .map(mapper());
+        return fetch(table, -1, -1, cond, Collections.emptyList(), Collections.emptyList());
     }
 
-    /**
-     * 按表分页排序查询，要求table和cond中的字段必须同源
-     * <pre>
-     * val t = dao.getTable();
-     * val c = t.Id.eq(1L).and(t.CommitId.eq(2L));
-     * val r = dao.fetch(t, 10, 20, c, t.Id.desc());
-     * </pre>
-     *
-     * @param table   表
-     * @param offset  offset
-     * @param limit   limit
-     * @param cond    条件
-     * @param orderBy order by
-     * @return 结果
-     */
     @NotNull
-    public List<P> fetch(T table, int offset, int limit, Condition cond, OrderField<?>... orderBy) {
-        DSLContext dsl = ctx();
-        if (orderBy == null || orderBy.length == 0) {
-            return dsl.selectFrom(table)
-                      .where(cond)
-                      .limit(offset, limit)
-                      .fetch()
-                      .map(mapper());
+    public List<P> fetch(T table, Condition cond, QueryPart... selectsOrders) {
+        return fetch(table, -1, -1, cond, selectsOrders);
+    }
+
+    @NotNull
+    public List<P> fetch(T table, int limit, QueryPart... selectsOrders) {
+        return fetch(table, 0, limit, null, selectsOrders);
+    }
+
+    @NotNull
+    public List<P> fetch(T table, int offset, int limit, QueryPart... selectsOrders) {
+        return fetch(table, offset, limit, null, selectsOrders);
+    }
+
+    @NotNull
+    public List<P> fetch(T table, int limit, Condition cond, QueryPart... selectsOrders) {
+        return fetch(table, 0, limit, cond, selectsOrders);
+    }
+
+    @NotNull
+    public List<P> fetch(T table, int offset, int limit, Condition cond, QueryPart... selectsOrders) {
+        return fetch(getType(), offset, limit, table, cond, selectsOrders);
+    }
+
+    @NotNull
+    public List<P> fetch(T table, int offset, int limit, Condition cond, Collection<SelectFieldOrAsterisk> selects, Collection<OrderField<?>> orderBy) {
+        return fetch(getType(), offset, limit, table, cond, selects, orderBy);
+    }
+
+    ////////
+    @NotNull
+    public <E> List<E> fetch(Class<E> claz, T table, QueryPart... selectsOrders) {
+        return fetch(claz, table, null, selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetch(Class<E> claz, T table, Condition cond, QueryPart... selectsOrders) {
+        return fetch(claz, -1, -1, table, cond, selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetch(Class<E> claz, int limit, T table, QueryPart... selectsOrders) {
+        return fetch(claz, 0, limit, table, null, selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetch(Class<E> claz, int offset, int limit, T table, QueryPart... selectsOrders) {
+        return fetch(claz, offset, limit, table, null, selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetch(Class<E> claz, int limit, T table, Condition cond, QueryPart... selectsOrders) {
+        return fetch(claz, 0, limit, table, cond, selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetch(Class<E> claz, int offset, int limit, T table, Condition cond, QueryPart... selectsOrders) {
+        final U.Two<Collection<SelectFieldOrAsterisk>, Collection<OrderField<?>>> two = selectAndOrders(selectsOrders);
+        return fetch(claz, offset, limit, table, cond, two.one(), two.two());
+    }
+
+    @NotNull
+    public <E> List<E> fetch(Class<E> claz, int offset, int limit, T table, Condition cond, Collection<SelectFieldOrAsterisk> selects, Collection<OrderField<?>> orderBy) {
+        final SelectConditionStep<R> where = selectWhere(table, cond, selects);
+
+        if (offset < 0 || limit < 0) {
+            if (orderBy == null || orderBy.isEmpty()) {
+                return where.fetch().into(claz);
+            }
+            else {
+                return where.orderBy(orderBy).fetch().into(claz);
+            }
         }
         else {
-            return dsl.selectFrom(table)
-                      .where(cond)
-                      .orderBy(orderBy)
-                      .limit(offset, limit)
-                      .fetch()
-                      .map(mapper());
+            if (orderBy == null || orderBy.isEmpty()) {
+                return where.limit(offset, limit).fetch().into(claz);
+            }
+            else {
+                return where.orderBy(orderBy).limit(offset, limit).fetch().into(claz);
+            }
         }
     }
 
-    /**
-     * @see #fetchOne(Table, Condition)
-     */
-    @Nullable
-    public P fetchOne(Function<T, Condition> fun) {
-        return fetchOne(table, fun.apply(table));
-    }
-
-    /**
-     * 按表取一个，要求table和cond中的字段必须同源
-     * <pre>
-     * val t = dao.getTable();
-     * val c = t.Id.eq(1L).and(t.CommitId.eq(2L));
-     * val r = dao.fetch(t, c);
-     * </pre>
-     *
-     * @param table 表
-     * @param cond  条件
-     * @return 结果
-     */
-    @Nullable
-    public P fetchOne(T table, Condition cond) {
-        R record = ctx().selectFrom(table)
-                        .where(cond)
-                        .fetchOne();
-
-        return record == null ? null : mapper().map(record);
-    }
-
-    ///////////////// select into /////////////////////
-
-    @Nullable
-    public <E> E fetchOne(Class<E> claz, T table, SelectField<?>... fields) {
-        return fetchOne(claz, table, null, fields);
-    }
-
-    @Nullable
-    public <E> E fetchOne(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
-        if (fields == null || fields.length == 0) {
-            fields = table.fields();
-        }
-        return ctx().select(fields)
-                    .from(table)
-                    .where(cond)
-                    .fetchOneInto(claz);
-    }
-
-    @Nullable
-    public <E> E fetchOne(RecordMapper<? super Record, E> mapper, T table, SelectField<?>... fields) {
-        return fetchOne(mapper, table, null, fields);
-    }
-
-    @Nullable
-    public <E> E fetchOne(RecordMapper<? super Record, E> mapper, T table, Condition cond, SelectField<?>... fields) {
-        if (fields == null || fields.length == 0) {
-            fields = table.fields();
-        }
-        return ctx().select(fields)
-                    .from(table)
-                    .where(cond)
-                    .fetchOne(mapper);
+    ////////
+    @NotNull
+    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, T table, QueryPart... selectsOrders) {
+        return fetch(mapper, table, null, selectsOrders);
     }
 
     @NotNull
-    public <E> List<E> fetch(Class<E> claz, T table, SelectField<?>... fields) {
-        return fetch(claz, table, null, fields);
+    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, T table, Condition cond, QueryPart... selectsOrders) {
+        return fetch(mapper, -1, -1, table, cond, selectsOrders);
     }
 
     @NotNull
-    public <E> List<E> fetch(Class<E> claz, T table, Condition cond, SelectField<?>... fields) {
-        if (fields == null || fields.length == 0) {
-            fields = table.fields();
+    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, int limit, T table, QueryPart... selectsOrders) {
+        return fetch(mapper, 0, limit, table, null, selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, int offset, int limit, T table, QueryPart... selectsOrders) {
+        return fetch(mapper, offset, limit, table, null, selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, int limit, T table, Condition cond, QueryPart... selectsOrders) {
+        return fetch(mapper, 0, limit, table, cond, selectsOrders);
+    }
+
+    @NotNull
+    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, int offset, int limit, T table, Condition cond, QueryPart... selectsOrders) {
+        final U.Two<Collection<SelectFieldOrAsterisk>, Collection<OrderField<?>>> two = selectAndOrders(selectsOrders);
+        return fetch(mapper, offset, limit, table, cond, two.one(), two.two());
+    }
+
+    @NotNull
+    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, int offset, int limit, T table, Condition cond, Collection<SelectFieldOrAsterisk> selects, Collection<OrderField<?>> orderBy) {
+        final SelectConditionStep<R> where = selectWhere(table, cond, selects);
+        if (offset < 0 || limit < 0) {
+            if (orderBy == null || orderBy.isEmpty()) {
+                return where.fetch().map(mapper);
+            }
+            else {
+                return where.orderBy(orderBy).fetch().map(mapper);
+            }
         }
-        return ctx().select(fields)
-                    .from(table)
-                    .where(cond)
-                    .fetch()
-                    .into(claz);
-    }
-
-    @NotNull
-    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, T table, SelectField<?>... fields) {
-        return fetch(mapper, table, null, fields);
-    }
-
-    @NotNull
-    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, T table, Condition cond, SelectField<?>... fields) {
-        if (fields == null || fields.length == 0) {
-            fields = table.fields();
+        else {
+            if (orderBy == null || orderBy.isEmpty()) {
+                return where.limit(offset, limit).fetch().map(mapper);
+            }
+            else {
+                return where.orderBy(orderBy).limit(offset, limit).fetch().map(mapper);
+            }
         }
-        return ctx().select(fields)
-                    .from(table)
-                    .where(cond)
-                    .fetch()
-                    .map(mapper);
     }
 
-    @NotNull
-    public Result<Record> fetch(T table, Condition cond, SelectField<?>... fields) {
-        return ctx().select(fields)
-                    .from(table)
-                    .where(cond)
-                    .fetch();
+    ///////////////// select one /////////////////////
+    @Nullable
+    public P fetchOne(Function<T, Fn> fun) {
+        final Fn fn = fun.apply(table);
+        return fetchOne(table, fn.cond, fn.part);
     }
 
     @Nullable
-    public Record fetchOne(T table, Condition cond, SelectField<?>... fields) {
-        if (fields == null || fields.length == 0) {
-            fields = table.fields();
+    public P fetchLimitOne(Function<T, Fn> fun) {
+        final Fn fn = fun.apply(table);
+        return fetchLimitOne(table, fn.cond, fn.part);
+    }
+
+    @NotNull
+    public Optional<P> fetchOptional(Function<T, Fn> fun) {
+        return Optional.ofNullable(fetchOne(fun));
+    }
+
+    @NotNull
+    public Optional<P> fetchLimitOptional(Function<T, Fn> fun) {
+        return Optional.ofNullable(fetchLimitOne(fun));
+    }
+
+    /////////////////
+    @Nullable
+    public P fetchOne(T table, QueryPart... selectsOrders) {
+        return fetchOne(table, null, selectsOrders);
+    }
+
+    @Nullable
+    public P fetchLimitOne(T table, QueryPart... selectsOrders) {
+        return fetchLimitOne(table, null, selectsOrders);
+    }
+
+    @NotNull
+    public Optional<P> fetchOptional(T table, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchOne(table, null, selectsOrders));
+    }
+
+    @NotNull
+    public Optional<P> fetchLimitOptional(T table, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchLimitOne(table, null, selectsOrders));
+    }
+
+    public P fetchOne(T table, Condition cond, QueryPart... selectsOrders) {
+        final U.Two<Collection<SelectFieldOrAsterisk>, Collection<OrderField<?>>> two = selectAndOrders(selectsOrders);
+        return fetchOne(table, cond, two.one(), two.two(), false);
+    }
+
+    @Nullable
+    public P fetchLimitOne(T table, Condition cond, QueryPart... selectsOrders) {
+        final U.Two<Collection<SelectFieldOrAsterisk>, Collection<OrderField<?>>> two = selectAndOrders(selectsOrders);
+        return fetchOne(table, cond, two.one(), two.two(), true);
+    }
+
+    @NotNull
+    public Optional<P> fetchOptional(T table, Condition cond, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchOne(table, cond, selectsOrders));
+    }
+
+    @NotNull
+    public Optional<P> fetchLimitOptional(T table, Condition cond, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchLimitOne(table, cond, selectsOrders));
+    }
+
+    @Nullable
+    public P fetchOne(T table, Condition cond, Collection<SelectFieldOrAsterisk> selects, Collection<OrderField<?>> orderBy, boolean limit) {
+        return fetchOne(getType(), table, cond, selects, orderBy, limit);
+    }
+
+    /////////////////
+    @Nullable
+    public <E> E fetchOne(Class<E> claz, T table, QueryPart... selectsOrders) {
+        return fetchOne(claz, table, null, selectsOrders);
+    }
+
+    @Nullable
+    public <E> E fetchLimitOne(Class<E> claz, T table, QueryPart... selectsOrders) {
+        return fetchLimitOne(claz, table, null, selectsOrders);
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchOptional(Class<E> claz, T table, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchOne(claz, table, null, selectsOrders));
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchLimitOptional(Class<E> claz, T table, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchLimitOne(claz, table, null, selectsOrders));
+    }
+
+    public <E> E fetchOne(Class<E> claz, T table, Condition cond, QueryPart... selectsOrders) {
+        final U.Two<Collection<SelectFieldOrAsterisk>, Collection<OrderField<?>>> two = selectAndOrders(selectsOrders);
+        return fetchOne(claz, table, cond, two.one(), two.two(), false);
+    }
+
+    @Nullable
+    public <E> E fetchLimitOne(Class<E> claz, T table, Condition cond, QueryPart... selectsOrders) {
+        final U.Two<Collection<SelectFieldOrAsterisk>, Collection<OrderField<?>>> two = selectAndOrders(selectsOrders);
+        return fetchOne(claz, table, cond, two.one(), two.two(), true);
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchOptional(Class<E> claz, T table, Condition cond, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchOne(claz, table, cond, selectsOrders));
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchLimitOptional(Class<E> claz, T table, Condition cond, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchLimitOne(claz, table, cond, selectsOrders));
+    }
+
+    @Nullable
+    public <E> E fetchOne(Class<E> claz, T table, Condition cond, Collection<SelectFieldOrAsterisk> selects, Collection<OrderField<?>> orderBy, boolean limit) {
+        final SelectConditionStep<R> where = selectWhere(table, cond, selects);
+        if (limit) {
+            if (orderBy == null || orderBy.isEmpty()) {
+                return where.fetchOneInto(claz);
+            }
+            else {
+                return where.orderBy(orderBy).fetchOneInto(claz);
+            }
         }
-        return ctx().select(fields)
-                    .from(table)
-                    .where(cond)
-                    .fetchOne();
+        else {
+            if (orderBy == null || orderBy.isEmpty()) {
+                return where.limit(1).fetchOneInto(claz);
+            }
+            else {
+                return where.orderBy(orderBy).limit(1).fetchOneInto(claz);
+            }
+        }
+    }
+
+    /////////////////
+    @Nullable
+    public <E> E fetchOne(RecordMapper<? super Record, E> mapper, T table, QueryPart... selectsOrders) {
+        return fetchOne(mapper, table, null, selectsOrders);
+    }
+
+    @Nullable
+    public <E> E fetchLimitOne(RecordMapper<? super Record, E> mapper, T table, QueryPart... selectsOrders) {
+        return fetchLimitOne(mapper, table, null, selectsOrders);
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchOptional(RecordMapper<? super Record, E> mapper, T table, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchOne(mapper, table, null, selectsOrders));
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchLimitOptional(RecordMapper<? super Record, E> mapper, T table, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchLimitOne(mapper, table, null, selectsOrders));
+    }
+
+    public <E> E fetchOne(RecordMapper<? super Record, E> mapper, T table, Condition cond, QueryPart... selectsOrders) {
+        final U.Two<Collection<SelectFieldOrAsterisk>, Collection<OrderField<?>>> two = selectAndOrders(selectsOrders);
+        return fetchOne(mapper, table, cond, two.one(), two.two(), false);
+    }
+
+    @Nullable
+    public <E> E fetchLimitOne(RecordMapper<? super Record, E> mapper, T table, Condition cond, QueryPart... selectsOrders) {
+        final U.Two<Collection<SelectFieldOrAsterisk>, Collection<OrderField<?>>> two = selectAndOrders(selectsOrders);
+        return fetchOne(mapper, table, cond, two.one(), two.two(), true);
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchOptional(RecordMapper<? super Record, E> mapper, T table, Condition cond, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchOne(mapper, table, cond, selectsOrders));
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchLimitOptional(RecordMapper<? super Record, E> mapper, T table, Condition cond, QueryPart... selectsOrders) {
+        return Optional.ofNullable(fetchLimitOne(mapper, table, cond, selectsOrders));
+    }
+
+    @Nullable
+    public <E> E fetchOne(RecordMapper<? super Record, E> mapper, T table, Condition cond, Collection<SelectFieldOrAsterisk> selects, Collection<OrderField<?>> orderBy, boolean limit) {
+        final SelectConditionStep<R> where = selectWhere(table, cond, selects);
+        if (limit) {
+            if (orderBy == null || orderBy.isEmpty()) {
+                return where.fetchOne(mapper);
+            }
+            else {
+                return where.orderBy(orderBy).fetchOne(mapper);
+            }
+        }
+        else {
+            if (orderBy == null || orderBy.isEmpty()) {
+                return where.limit(1).fetchOne(mapper);
+            }
+            else {
+                return where.orderBy(orderBy).limit(1).fetchOne(mapper);
+            }
+        }
     }
 
     ///////////////// delete /////////////////////
@@ -965,4 +1164,37 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
             WingsJooqUtil.skipNullVals(record);
         }
     }
+
+    ////////
+    private U.Two<Collection<SelectFieldOrAsterisk>, Collection<OrderField<?>>> selectAndOrders(QueryPart[] selectsOrders) {
+        if (selectsOrders == null || selectsOrders.length == 0) {
+            return U.of(Collections.emptyList(), Collections.emptyList());
+        }
+
+        final ArrayList<SelectFieldOrAsterisk> fields = new ArrayList<>(selectsOrders.length);
+        final ArrayList<OrderField<?>> orders = new ArrayList<>(selectsOrders.length);
+
+        for (QueryPart qp : selectsOrders) {
+            if (qp instanceof SelectFieldOrAsterisk) {
+                fields.add((SelectFieldOrAsterisk) qp);
+            }
+            else if (qp instanceof OrderField) {
+                orders.add((OrderField<?>) qp);
+            }
+        }
+
+        return U.of(fields, orders);
+    }
+
+    private SelectConditionStep<R> selectWhere(T table, Condition cond, Collection<SelectFieldOrAsterisk> selects) {
+        final SelectConditionStep<R> where;
+        if (selects == null || selects.isEmpty()) {
+            return ctx().selectFrom(table).where(cond);
+        }
+        else {
+            final SelectSelectStep<R> select = TypedCastUtil.castObject(ctx().select(selects));
+            return select.from(table).where(cond);
+        }
+    }
+
 }

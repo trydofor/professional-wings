@@ -331,3 +331,14 @@ Jooq有[开源版和商业版](https://www.jooq.org/download/)，两者的区别
  * only charge for developer workstations, not server workstations.
  * This does not affect your build, test, and production servers, 
    however, which will be licensed for free forever, in any price plan.
+
+### 10. Jooq的性能及线程安全
+
+jOOQ's overhead compared to plain JDBC is typically less than 1ms per query.
+以上与纯JDBC对比，而任何SqlMapping都具有动态性，离不开字符串解析和拼接，反射构造等损耗，估相差不大。
+
+Configuration 初始化后就不要动了。
+DSLContext 在spring中Autowired和Dao中获取都可安全使用。
+
+* https://www.jooq.org/doc/3.14/manual/sql-execution/performance-considerations/
+* https://www.jooq.org/doc/3.14/manual/sql-building/dsl-context/thread-safety/

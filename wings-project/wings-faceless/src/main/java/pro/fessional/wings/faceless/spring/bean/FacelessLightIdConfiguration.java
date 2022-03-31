@@ -32,8 +32,12 @@ public class FacelessLightIdConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(LightSequenceSelect.class)
-    public LightSequenceSelect lightSequenceSelect(LightIdProviderProp provider, JdbcTemplate jdbcTemplate) {
-        return new LightSequenceSelectJdbc(jdbcTemplate, provider.getSequenceGetOne(), provider.getSequenceGetAll());
+    public LightSequenceSelect lightSequenceSelect(LightIdProviderProp prop, JdbcTemplate jdbcTemplate) {
+        return new LightSequenceSelectJdbc(
+                jdbcTemplate,
+                prop.getSequenceGetOne(),
+                prop.getSequenceGetAll(),
+                prop.getSequenceAdjust());
     }
 
     @Bean
@@ -77,7 +81,8 @@ public class FacelessLightIdConfiguration {
                                          ObjectProvider<JdbcTemplate> jdbcTemplate) {
         if ("sql".equalsIgnoreCase(provider.getBlockType())) {
             return new DefaultBlockIdProvider(provider.getBlockPara(), jdbcTemplate.getIfAvailable());
-        } else {
+        }
+        else {
             final int id = Integer.parseInt(provider.getBlockPara());
             return () -> id;
         }

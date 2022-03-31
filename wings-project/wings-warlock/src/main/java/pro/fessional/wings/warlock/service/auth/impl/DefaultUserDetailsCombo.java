@@ -45,7 +45,7 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
     @Override
     public final DefaultWingsUserDetails loadOrNull(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {
 
-        Details dt = doLoad(authType, username, authDetail);
+        Details dt = doLoad(username, authType, authDetail);
         boolean at = false;
         if (dt == null && autoRegisterType.contains(authType)) {
             dt = warlockAuthnService.register(authType, username, authDetail);
@@ -81,7 +81,7 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
      * @param authType 类型
      * @return false
      */
-    protected boolean authed(Enum<?> authType) {
+    public boolean authed(Enum<?> authType) {
         return false;
     }
 
@@ -89,7 +89,7 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
      * 加载信息
      */
     @Nullable
-    protected Details doLoad(@NotNull Enum<?> authType, String username, @Nullable WingsAuthDetails authDetail) {
+    public Details doLoad(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {
         return warlockAuthnService.load(authType, username);
     }
 }

@@ -8,6 +8,7 @@ import com.hazelcast.map.IMap;
 import com.hazelcast.spring.cache.HazelcastCacheManager;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import pro.fessional.wings.slardar.cache.NullsCache;
 import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
 
@@ -43,6 +44,21 @@ public class WingsHazelcast {
         public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
             super.setHazelcastInstance(hazelcastInstance);
             checkWingsLevelPattern();
+        }
+
+        @Override
+        public org.springframework.cache.Cache getCache(@NotNull String name) {
+            final org.springframework.cache.Cache cache = super.getCache(name);
+
+            if (slardarCacheProp.isNullWeak()) {
+                return new NullsCache(cache, false);
+            }
+            else if (slardarCacheProp.isNullSkip()) {
+                return new NullsCache(cache, true);
+            }
+            else {
+                return cache;
+            }
         }
 
         @Override

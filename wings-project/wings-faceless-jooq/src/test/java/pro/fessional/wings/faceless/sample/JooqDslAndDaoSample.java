@@ -15,9 +15,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
+import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoAliasImpl;
 import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelp;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
-import pro.fessional.wings.faceless.util.FlywaveInteractiveTty;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.time.LocalDateTime;
@@ -46,7 +46,6 @@ public class JooqDslAndDaoSample {
 
     @Test
     public void test0Init() {
-        schemaRevisionManager.askWay(FlywaveInteractiveTty.askYes);
         val sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0);
@@ -57,13 +56,18 @@ public class JooqDslAndDaoSample {
 
         testcaseNotice("使用alias");
         val a = dao.getAlias();
-        val c = a.Id.eq(1L).and(a.CommitId.eq(2L));
+        val c = a.Id.gt(1L).and(a.CommitId.lt(200L));
 
         testcaseNotice("select count(*) from `tst_中文也分表` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?)");
         val i = dao.count(a, c);
-        testcaseNotice("from `tst_中文也分表` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?) limit ?");
-        val fetch = dao.fetch(a, 0, 10, c);
-        System.out.println("============count " + i + ", fetch'size=" + fetch.size());
+        testcaseNotice("select * from `tst_中文也分表` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?) limit ?");
+        val ft1 = dao.fetch(a, 0, 2, c, a.Id.desc());
+        System.out.println("============count " + i + ", ft2'size=" + ft1.size());
+        testcaseNotice("select id, commit_id  from `tst_中文也分表` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?) limit ?");
+        val ft2 = dao.fetch(0, 2, (t) -> WingsJooqDaoAliasImpl.Fn.of(
+                t.Id.gt(1L).and(t.CommitId.lt(200L)),
+                t.Id, t.CommitId, t.Id.desc()));
+        System.out.println("============count " + i + ", ft2'size=" + ft2.size());
 
         // table
         testcaseNotice("使用table");

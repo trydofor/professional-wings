@@ -20,7 +20,7 @@ import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_M
  */
 public class WingsJooqGenHelp {
 
-    public static final AtomicReference<Function<TableDefinition,String>> funSeqName = new AtomicReference<>();
+    public static final AtomicReference<Function<TableDefinition, String>> funSeqName = new AtomicReference<>();
 
     public static final Predicate<ColumnDefinition> JournalAware = it -> {
         String name = it.getName();
@@ -30,11 +30,11 @@ public class WingsJooqGenHelp {
         }
 
         return name.equalsIgnoreCase(COL_CREATE_DT)
-                || name.equalsIgnoreCase(COL_MODIFY_DT)
-                || name.equalsIgnoreCase(COL_MODIFY_TM)
-                || name.equalsIgnoreCase(COL_DELETE_DT)
-                || name.equalsIgnoreCase(COL_IS_DELETED)
-                || name.equalsIgnoreCase(COL_COMMIT_ID);
+               || name.equalsIgnoreCase(COL_MODIFY_DT)
+               || name.equalsIgnoreCase(COL_MODIFY_TM)
+               || name.equalsIgnoreCase(COL_DELETE_DT)
+               || name.equalsIgnoreCase(COL_IS_DELETED)
+               || name.equalsIgnoreCase(COL_COMMIT_ID);
     };
 
     public static final Predicate<ColumnDefinition> LightIdAware = it -> {

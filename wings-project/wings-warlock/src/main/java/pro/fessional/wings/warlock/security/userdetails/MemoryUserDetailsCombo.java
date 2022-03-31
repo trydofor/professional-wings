@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
+import pro.fessional.wings.slardar.security.pass.PasswordEncoders;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
@@ -45,19 +46,8 @@ public class MemoryUserDetailsCombo extends DefaultUserDetailsCombo {
      */
     public void addUser(@NotNull Details dtl) {
         final List<Details> set = typedUser.computeIfAbsent(dtl.getUsername(), k -> new CopyOnWriteArrayList<>());
-
-        final String psw = dtl.getPassword();
-        final int bc = psw.indexOf("}", 2);
-        final String enc;
-        if (psw.startsWith("{") && bc > 0) {
-            enc = psw.substring(1, bc);
-        }
-        else {
-            enc = "{noop}";
-            dtl.setPassword(enc + psw);
-        }
-
-        log.info("add MemoryUser. uid={}, username={}, authType={}, encoder={}", dtl.getUserId(), dtl.getUsername(), dtl.getAuthType(), enc);
+        dtl.setPassword(PasswordEncoders.delegated(dtl.getPassword(), PasswordEncoders.NoopMd5));
+        log.info("add MemoryUser. uid={}, username={}, authType={}", dtl.getUserId(), dtl.getUsername(), dtl.getAuthType());
         set.removeIf(it -> it.getAuthType() == dtl.getAuthType());
         set.add(dtl);
     }
@@ -94,7 +84,7 @@ public class MemoryUserDetailsCombo extends DefaultUserDetailsCombo {
     }
 
     @Override
-    protected Details doLoad(@NotNull Enum<?> authType, String username, @Nullable WingsAuthDetails authDetail) {
+    public Details doLoad(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {
         final List<Details> details = typedUser.get(username);
         if (details == null || details.isEmpty()) return null;
 

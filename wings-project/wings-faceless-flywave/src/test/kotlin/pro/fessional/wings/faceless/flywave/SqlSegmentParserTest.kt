@@ -11,7 +11,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
  * @author trydofor
  * @since 2019-06-10
  */
-@SpringBootTest
+@SpringBootTest(properties = ["debug = true"])
 class SqlSegmentParserTest {
 
     @Autowired
@@ -48,7 +48,7 @@ class SqlSegmentParserTest {
         println(">>> revi=${revi}, from=${segment.lineBgn} ,to=${segment.lineEnd}, dbsType=${segment.dbsType}, table=${segment.tblName}, errType=${segment.errType}, tblRegx=${segment.tblRegx}")
         for (i in 0..1) {
             val sql = sqlSegmentProcessor.merge(segment, mapOf(segment.tblName to segment.tblName + "_" + i))
-            println(sql)
+            println(">>>>$i\n$sql")
         }
     }
 

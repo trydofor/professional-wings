@@ -155,3 +155,18 @@ wings.warlock.security.zone-perm.admin=ROLE_ADMIN
 
 ### 4.4.6.按登录ip进行权限检查
 
+
+## 4.9.常见问题
+
+### 001.权限设置应该在Filter(Url)还是Method(Aop)
+
+通过Url前缀特征，比较集中和简单，推荐使用。而Aop比较分散，粒度更细致。
+
+在通过Url做Matcher时，尽量避免规则交叉，特殊配置在前，AnyRequest在最后做默认配置，
+当规则交叉时，按配置FIFO匹配，spring中的调用关系如下，其底层数据结构是LinkedHashMap。
+
+* FilterSecurityInterceptor.beforeInvocation
+* DefaultFilterInvocationSecurityMetadataSource.getAttributes
+
+wings配置顺序由宽松到严格(PermitAll > Authenticated > Authority)，最后AnyRequest收尾。
+在Authority配置时，会按URL分组合并权限，最后以URL的ascii倒序设置，即英数先于`*`，宽松规则在后。

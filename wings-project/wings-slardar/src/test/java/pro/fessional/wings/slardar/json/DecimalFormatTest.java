@@ -4,17 +4,21 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDate;
 import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,17 +27,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author trydofor
  * @since 2021-07-05
  */
-@SpringBootTest(properties =
-        {"debug = true",
-         "spring.wings.slardar.enabled.number=true",
-         "wings.slardar.number.decimal.separator=_",
-         "wings.slardar.number.floats.format=#.00",
-         "wings.slardar.number.decimal.format=#.00",
-        })
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties =
+                {"debug = true",
+                 "spring.wings.slardar.enabled.number=true",
+                 "wings.slardar.number.decimal.separator=_",
+                 "wings.slardar.number.floats.format=#.00",
+                 "wings.slardar.number.decimal.format=#.00",
+                })
 public class DecimalFormatTest {
 
     @Setter(onMethod_ = {@Autowired})
     private ObjectMapper objectMapper;
+
+    @Setter(onMethod_ = {@Autowired})
+    private RestTemplate restTemplate;
+
+    @Setter(onMethod_ = {@Value("http://127.0.0.1:${local.server.port}")})
+    private String domain;
+
 
     @Test
     public void testFloat() {
@@ -94,6 +106,8 @@ public class DecimalFormatTest {
         private Double doubleObj = doubleVal;
         @JsonFormat(pattern = "￥,####.0")
         private BigDecimal decimalObj = new BigDecimal("123456.789");
+        @JsonFormat(pattern = "￥,####.0", shape = JsonFormat.Shape.STRING)
+        private BigDecimal decimalShp = new BigDecimal("123456.789");
     }
 
     @Data
@@ -163,7 +177,8 @@ public class DecimalFormatTest {
                                 + "\"floatObj\":\"12,3456.7\","
                                 + "\"doubleVal\":\"12,3456.7\","
                                 + "\"doubleObj\":\"12,3456.7\","
-                                + "\"decimalObj\":\"￥12_3456.7\"}"
+                                + "\"decimalObj\":\"￥12_3456.7\","
+                                + "\"decimalShp\":\"￥12,3456.7\"}"
                 , decFmt);
     }
 
@@ -185,5 +200,43 @@ public class DecimalFormatTest {
                                 + "\"minSafe1\":\"-9007199254740991\","
                                 + "\"minSafe2\":\"-9007199254740992\"}"
                 , jsFmt);
+    }
+
+    @Data
+    public static class DateFmt {
+        private LocalDate ldt = LocalDate.of(2022, 2, 2);
+        private String str = "string";
+    }
+
+    public static class DateMmm extends DateFmt {
+        @JsonFormat(pattern = "MMM dd, yyyy")
+        private LocalDate ldt;
+    }
+
+    public static class DateWrp {
+        @JsonSerialize(as = DateMmm.class)
+        private DateFmt df;
+    }
+
+    @Test
+    public void testDateFmt() throws JsonProcessingException {
+        final DateFmt df = new DateFmt();
+        Assertions.assertEquals("{\"ldt\":\"2022-02-02\",\"str\":\"string\"}", objectMapper.writeValueAsString(df));
+        final DateWrp dw = new DateWrp();
+        dw.df = df;
+        Assertions.assertEquals("{\"df\":{\"ldt\":\"Feb 02, 2022\",\"str\":\"string\"}}", objectMapper.writeValueAsString(dw));
+    }
+
+    @Test
+    public void testViewDec() {
+        final String dec = restTemplate.getForObject(domain + "/test/json-dec.json", String.class);
+        final String sub = restTemplate.getForObject(domain + "/test/json-sub.json", String.class);
+        final String api = restTemplate.getForObject(domain + "/test/json-api.json", String.class);
+        System.out.println("dec=" + dec);
+        System.out.println("sub=" + sub);
+        System.out.println("api=" + api);
+        Assertions.assertEquals("{\"success\":true,\"data\":{\"dec\":\"12345.67\",\"str\":\"string\"}}", dec);
+        Assertions.assertEquals("{\"success\":true,\"data\":{\"dec\":\"12,345.67\",\"str\":\"string\"}}", sub);
+        Assertions.assertEquals("{\"success\":true,\"data\":{\"key\":\"12,345.67\"}}", api);
     }
 }

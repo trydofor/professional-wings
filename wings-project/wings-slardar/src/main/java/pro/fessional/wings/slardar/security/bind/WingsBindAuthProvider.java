@@ -21,8 +21,8 @@ import pro.fessional.wings.slardar.security.WingsAuthCheckService;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
-import pro.fessional.wings.slardar.security.impl.DefaultPasssaltEncoder;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthDetails;
+import pro.fessional.wings.slardar.security.pass.DefaultPasssaltEncoder;
 
 /**
  * 兼容DaoAuthenticationProvider，可替换之。如果设置onlyWingsBindAuthnToken=true，则只处理 WingsBindAuthnToken。

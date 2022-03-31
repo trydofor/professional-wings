@@ -49,7 +49,7 @@ CREATE TABLE `win_user_login` (
     PRIMARY KEY (`id`),
     INDEX ix_user_id (`user_id`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4 COMMENT ='122/用户登录表/只读，超过最大失败次数不记录';
+  DEFAULT CHARSET = utf8mb4 COMMENT ='122/用户登录表:只读，超过最大失败次数不记录';
 
 -- -----------
 

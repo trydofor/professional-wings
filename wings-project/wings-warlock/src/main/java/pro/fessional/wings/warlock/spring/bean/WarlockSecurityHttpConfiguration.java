@@ -25,10 +25,11 @@ import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 
@@ -94,34 +95,36 @@ public class WarlockSecurityHttpConfiguration {
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpAuth, havingValue = "true")
     @Order(OrderWarlockAuth)
     public HttpSecurityConfigure warlockAuthHttpSecurityConfigure() {
-        return http -> http.authorizeRequests(conf ->
-                {
-                    for (Map.Entry<String, List<String>> en : securityProp.getAuthority().entrySet()) {
-                        final List<String> paths = en.getValue();
-                        if (paths.isEmpty()) continue;
-                        LinkedHashSet<String> uniq = new LinkedHashSet<>(paths);
-                        logger.info("Wings conf HttpSecurity, bind authority=[" + en.getKey() + "] "
-                                    + String.join("\n,", uniq));
-                        conf.antMatchers(uniq.toArray(Null.StrArr)).hasAuthority(en.getKey());
-                    }
+        return http -> http.authorizeRequests(conf -> {
+            // 1
+            final Set<String> permed = new TreeSet<>(securityProp.getPermitAll().values());
+            permed.removeIf(it -> it == null || it.isEmpty());
+            logger.info("Wings conf HttpSecurity, bind PermitAll=" + String.join("\n,", permed));
+            conf.antMatchers(permed.toArray(Null.StrArr)).permitAll();
 
-                    final Set<String> authed = new TreeSet<>(securityProp.getAuthenticated().values());
-                    authed.removeIf(it -> it == null || it.isEmpty());
+            // 2
+            final Set<String> authed = new TreeSet<>(securityProp.getAuthenticated().values());
+            authed.removeIf(it -> it == null || it.isEmpty());
+            logger.info("Wings conf HttpSecurity, bind Authenticated=" + String.join("\n,", authed));
+            conf.antMatchers(authed.toArray(Null.StrArr)).authenticated();
 
-                    final Set<String> permed = new TreeSet<>(securityProp.getPermitAll().values());
-                    permed.removeIf(it -> it == null || it.isEmpty());
-
-                    conf.antMatchers(authed.toArray(Null.StrArr))
-                        .authenticated()
-                        .antMatchers(permed.toArray(Null.StrArr))
-                        .permitAll();
-
-                    logger.info("Wings conf HttpSecurity, bind Authenticated="
-                                + String.join("\n,", authed));
-                    logger.info("Wings conf HttpSecurity, bind PermitAll="
-                                + String.join("\n,", permed));
+            // 3.group
+            final TreeMap<String, Set<String>> urlPerm = new TreeMap<>();
+            for (Map.Entry<String, List<String>> en : securityProp.getAuthority().entrySet()) {
+                final String perm = en.getKey();
+                for (String url : en.getValue()) {
+                    final Set<String> st = urlPerm.computeIfAbsent(url, k -> new HashSet<>());
+                    st.add(perm);
                 }
-        );
+            }
+            // 3.desc
+            for (Map.Entry<String, Set<String>> en : urlPerm.descendingMap().entrySet()) {
+                final String url = en.getKey();
+                final Set<String> pms = en.getValue();
+                logger.info("Wings conf HttpSecurity, bind url=" + url + ", any-permit=[" + String.join(",", pms) + "]");
+                conf.antMatchers(url).hasAnyAuthority(pms.toArray(Null.StrArr));
+            }
+        });
     }
 
 

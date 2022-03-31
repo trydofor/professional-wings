@@ -1,12 +1,19 @@
 package pro.fessional.wings.faceless.database.manual.single.select.lightsequence.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
+import pro.fessional.mirana.data.U;
+import pro.fessional.mirana.math.AnyIntegerUtil;
 import pro.fessional.wings.faceless.database.manual.single.select.lightsequence.LightSequenceSelect;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -14,15 +21,19 @@ import java.util.Optional;
  * @since 2019-06-03
  */
 @RequiredArgsConstructor
+@Slf4j
 public class LightSequenceSelectJdbc implements LightSequenceSelect {
 
     private final JdbcTemplate jdbcTemplate;
     private final String selectOne;
     private final String selectAll;
+    private final String adjustTbl;
 
     private final RowMapper<NextStep> mapperNextStep = (rs, rowNum) -> {
         NextStep one = new NextStep();
-        one.setNextVal(rs.getLong("next_val"));
+        final long nextVal = rs.getLong("next_val");
+        one.setNextVal(nextVal);
+        one.setLastVal(nextVal);
         one.setStepVal(rs.getInt("step_val"));
         return one;
     };
@@ -33,9 +44,13 @@ public class LightSequenceSelectJdbc implements LightSequenceSelect {
         int size = list.size();
         if (size == 0) {
             return Optional.empty();
-        } else if (size == 1) {
-            return Optional.of(list.get(0));
-        } else {
+        }
+        else if (size == 1) {
+            final NextStep st = list.get(0);
+            final NameNextStep ad = checkTableAndAdjust(st, name);
+            return Optional.of(ad == null ? st : ad);
+        }
+        else {
             throw new IllegalStateException("find " + size + " records, block=" + block + ", name=" + name);
         }
     }
@@ -50,6 +65,64 @@ public class LightSequenceSelectJdbc implements LightSequenceSelect {
 
     @Override
     public List<NameNextStep> selectAllLock(int block) {
-        return jdbcTemplate.query(selectAll, mapperNameNextStep, block);
+        final List<NameNextStep> all = jdbcTemplate.query(selectAll, mapperNameNextStep, block);
+        try {
+            List<NameNextStep> adjust = new ArrayList<>(all.size());
+            for (NameNextStep st : all) {
+                final NameNextStep ad = checkTableAndAdjust(st, st.getSeqName());
+                adjust.add(ad == null ? st : ad);
+            }
+            return adjust;
+        }
+        catch (Exception e) {
+            log.error("failed to adjust LightSequence", e);
+            return all;
+        }
+    }
+
+    private final Map<String, Long> adjusted = new ConcurrentHashMap<>();
+
+    private final ResultSetExtractor<U.Two<String, String>> headTableKey = rs ->
+            rs.next() ? U.of(rs.getString(1), rs.getString(2)) : null;
+
+    private NameNextStep checkTableAndAdjust(NextStep step, String name) {
+        if (adjustTbl == null || adjustTbl.isEmpty()) return null;
+
+        final long dbMax = adjusted.computeIfAbsent(name, k -> {
+            try {
+                final U.Two<String, String> two = jdbcTemplate.query(adjustTbl, headTableKey, name);
+                if (two == null) {
+                    return Long.MIN_VALUE;
+                }
+                else {
+                    final String sql = "SELECT MAX(" + two.two() + ") FROM " + two.one();
+                    final Long max = jdbcTemplate.queryForObject(sql, Long.class);
+                    return max == null ? Long.MIN_VALUE : max;
+                }
+            }
+            catch (Exception e) {
+                log.warn("LightSequence failed to load dbMax, name=" + name, e);
+                return Long.MIN_VALUE;
+            }
+        });
+
+        final long cur = step.getNextVal();
+        if (dbMax < cur) {
+            if (dbMax > 0) {
+                log.info("LightSequence current, name={}, cur={}, db={}", name, cur, dbMax);
+            }
+            return null;
+        }
+
+        final long nid = AnyIntegerUtil.next64(dbMax, 10);
+        log.warn("LightSequence adjust, name={}, cur={}, db={}, to={}", name, cur, dbMax, nid);
+
+        final NameNextStep nn = new NameNextStep();
+        nn.setSeqName(name);
+        nn.setNextVal(nid);
+        nn.setLastVal(step.getLastVal());
+        nn.setStepVal(step.getStepVal());
+
+        return nn;
     }
 }
