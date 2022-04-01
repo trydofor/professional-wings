@@ -127,7 +127,7 @@ wings.slardar.number.decimal.separator=_
 
 * [baeldung 示例](https://www.baeldung.com/jackson-annotations)
 * [jackson注解](https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations)
-* [spring定制jackson](https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/#howto-customize-the-jackson-objectmapper) 9.4.3. Customize the Jackson ObjectMapper
+* [spring定制jackson](https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#howto-customize-the-jackson-objectmapper) 9.4.3. Customize the Jackson ObjectMapper
 
 Jackson中涉及到泛型，参数类型，必备技能
 
@@ -485,7 +485,7 @@ cacheManager = Manager.Server)
 直接使用，默认**信任所有ssl证书**，如安全高，需要关闭。
 如果需要按scope定制，使用RestTemplateBuilder，全局应用使用RestTemplateCustomizer。
 
-[RestTemplate 定制](https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/#boot-features-resttemplate-customization)
+[RestTemplate 定制](https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#boot-features-resttemplate-customization)
 org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 
 在springboot默认是3.x，而just-auth需要4.x，所以需要手动okhttp3.version属性
@@ -622,7 +622,7 @@ public class AcmeControllerAdvice extends ResponseEntityExceptionHandler
 public ModelAndView resolveErrorView(HttpServletRequest request,
 ```
 
-[error-handling](https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/#boot-features-error-handling)
+[error-handling](https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#boot-features-error-handling)
 
 ### 05.undertow 启动时warn UT026010
 

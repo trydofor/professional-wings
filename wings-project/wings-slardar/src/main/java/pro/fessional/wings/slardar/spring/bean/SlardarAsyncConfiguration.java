@@ -21,7 +21,7 @@ import static org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfi
 import static org.springframework.scheduling.annotation.AsyncAnnotationBeanPostProcessor.DEFAULT_TASK_EXECUTOR_BEAN_NAME;
 
 /**
- * https://docs.spring.io/spring-boot/docs/2.6.4/reference/htmlsingle/#features.task-execution-and-scheduling
+ * https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#features.task-execution-and-scheduling
  * https://github.com/alibaba/transmittable-thread-local
  *
  * @author trydofor
