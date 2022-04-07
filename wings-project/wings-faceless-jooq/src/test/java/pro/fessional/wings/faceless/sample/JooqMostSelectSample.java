@@ -12,6 +12,7 @@ import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectOrderByStep;
 import org.jooq.TableOnConditionStep;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
@@ -494,8 +495,10 @@ public class JooqMostSelectSample {
         testcaseNotice("包装count",
                 "select count(*) as `c` from (select `id` from `tst_中文也分表` where `id` > ?) as `q`",
                 "select `id` from `tst_中文也分表` where `id` > ?");
-        SelectConditionStep<Record1<Long>> qry = dsl.select(t.Id).from(t).where(t.Id.gt(1L));
+        SelectConditionStep<Record1<Long>> qry1 = dsl.select(t.Id).from(t).where(t.Id.gt(1L));
+        SelectOrderByStep<Record1<Long>> qry = dsl.select(t.Id).from(t).where(t.Id.gt(1L)).groupBy(t.Id);
         int cnt0 = dsl.fetchCount(qry);
+        int cnt00 = dsl.fetchCount(qry1);
         List<Tst中文也分表> lst0 = qry.fetch().into(Tst中文也分表.class);
 
         // 单表count
