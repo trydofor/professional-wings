@@ -22,10 +22,12 @@ import java.util.List;
 public class WingsSessionRegistry<S extends Session> extends SpringSessionBackedSessionRegistry<S> {
 
     private final FindByIndexNameSessionRepository<S> sessionRepository;
+    private final WingsSessionHelper wingsSessionHelper;
 
-    public WingsSessionRegistry(FindByIndexNameSessionRepository<S> sessionRepository) {
+    public WingsSessionRegistry(FindByIndexNameSessionRepository<S> sessionRepository, WingsSessionHelper sessionHelper) {
         super(sessionRepository);
         this.sessionRepository = sessionRepository;
+        this.wingsSessionHelper = sessionHelper;
     }
 
     @Override
@@ -50,7 +52,7 @@ public class WingsSessionRegistry<S extends Session> extends SpringSessionBacked
     }
 
     private boolean isSameUid(Session session, long uid) {
-        final SecurityContext ctx = WingsSessionHelper.getSecurityContext(session);
+        final SecurityContext ctx = wingsSessionHelper.getSecurityContext(session);
         if (ctx == null) return false;
         final WingsUserDetails dtl = SecurityContextUtil.getUserDetails(ctx.getAuthentication());
         return dtl != null && dtl.getUserId() == uid;

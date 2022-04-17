@@ -5,7 +5,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.session.MapSession;
@@ -44,6 +46,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerUser, havingValue = "true")
 public class AuthedUserController {
+
+    @Setter(onMethod_ = {@Autowired})
+    private WingsSessionHelper wingsSessionHelper;
 
     @Schema(description = "登录用户基本信息")
     @Data
@@ -174,7 +179,7 @@ public class AuthedUserController {
         return R.okData(res);
     }
 
-     @Schema(description = "登录用户会话信息")
+    @Schema(description = "登录用户会话信息")
     @Data @EqualsAndHashCode(callSuper = true)
     public static class Ses extends Dto {
         @Schema(description = "是否过期", example = "true")
@@ -197,14 +202,14 @@ public class AuthedUserController {
         final WingsUserDetails details = SecurityContextUtil.getUserDetails();
         if (details == null) return R.ng();
 
-        final List<MapSession> sessions = WingsSessionHelper.findByUserId(details.getUserId());
+        final List<MapSession> sessions = wingsSessionHelper.findByUserId(details.getUserId());
         final List<Ses> sess = sessions.stream().map(it -> {
             Ses ses = new Ses();
             ses.setToken(it.getId());
             ses.setExpired(it.isExpired());
             ses.setLastAccess(it.getLastAccessedTime().atZone(details.getZoneId()));
 
-            final SecurityContext ctx = WingsSessionHelper.getSecurityContext(it);
+            final SecurityContext ctx = wingsSessionHelper.getSecurityContext(it);
             final WingsUserDetails dtl = SecurityContextUtil.getUserDetails(ctx);
             if (dtl != null) {
                 fillDetail(dtl, ses);
@@ -227,7 +232,7 @@ public class AuthedUserController {
             + "* @return {401} 若设置了URL访问权限且用户未登录；")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userDropSession + "}")
     public R<Void> dropSession(@RequestParam("sid") String sid) {
-        final boolean b = WingsSessionHelper.dropSession(sid);
+        final boolean b = wingsSessionHelper.dropSession(sid);
         return R.of(b);
     }
 }

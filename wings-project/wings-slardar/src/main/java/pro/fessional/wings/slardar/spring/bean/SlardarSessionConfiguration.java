@@ -1,13 +1,9 @@
 package pro.fessional.wings.slardar.spring.bean;
 
-import com.hazelcast.core.HazelcastInstance;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.session.DefaultCookieSerializerCustomizer;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -16,10 +12,7 @@ import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.boot.web.servlet.server.Session.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
-import org.springframework.session.FindByIndexNameSessionRepository;
-import org.springframework.session.security.WingsSessionRegistry;
 import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
@@ -27,7 +20,6 @@ import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.best.ArgsAssert;
-import pro.fessional.wings.slardar.session.WingsSessionHelper;
 import pro.fessional.wings.slardar.session.WingsSessionIdResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
@@ -53,35 +45,6 @@ public class SlardarSessionConfiguration {
     private static final Log logger = LogFactory.getLog(SlardarSessionConfiguration.class);
 
     private final SlardarSessionProp slardarSessionProp;
-
-    @Configuration(proxyBeanMethods = false)
-    @ConditionalOnClass(HazelcastInstance.class)
-    @ConditionalOnProperty(name = SlardarEnabledProp.Key$sessionHazelcast, havingValue = "true")
-    public static class SlardarHazelcastConfiguration {
-
-        // concurrent session
-        @Bean
-        public WingsSessionHelper wingsSessionHelper(
-                FindByIndexNameSessionRepository<?> sessionRepository,
-                HazelcastInstance hzInstance,
-                @Value("${spring.session.hazelcast.map-name:spring:session:sessions}") String mapName) {
-
-            logger.info("Wings conf wingsSessionHelper");
-            return new WingsSessionHelper() {{
-                hazelcastMapName = StringUtils.hasText(mapName) ? mapName : null;
-                hazelcastInstance = hzInstance;
-                hazelcastRepository = sessionRepository;
-            }};
-        }
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(SessionRegistry.class)
-    public SessionRegistry sessionRegistry(FindByIndexNameSessionRepository<?> sessionRepository) {
-        logger.info("Wings conf sessionRegistry");
-        return new WingsSessionRegistry<>(sessionRepository);
-    }
-    ////////// must after SessionRegistry Bean ///////
 
     @Bean
     public HttpSessionEventPublisher httpSessionEventPublisher() {

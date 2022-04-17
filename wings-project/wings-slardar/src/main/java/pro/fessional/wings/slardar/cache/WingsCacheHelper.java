@@ -15,11 +15,6 @@ public class WingsCacheHelper {
     private static CacheManager memory;
     private static CacheManager server;
 
-    protected WingsCacheHelper(CacheManager mem, CacheManager ser) {
-        memory = mem;
-        server = ser;
-    }
-
     @Nullable
     public static CacheManager getCacheManager(String name) {
         if (WingsCache.Manager.Memory.equalsIgnoreCase(name)) {
@@ -51,6 +46,14 @@ public class WingsCacheHelper {
         return cache;
     }
 
+
+    public static void setMemory(CacheManager memory) {
+        WingsCacheHelper.memory = memory;
+    }
+
+    public static void setServer(CacheManager server) {
+        WingsCacheHelper.server = server;
+    }
 
     @NotNull
     public static CacheManager getMemory() {

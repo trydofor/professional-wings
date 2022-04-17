@@ -191,14 +191,6 @@ public class SlardarEnabledProp {
     public static final String Key$swagger = Key + ".swagger";
 
     /**
-     * 是否开在有spring-boot-devtool时开启devtool兼容配置
-     *
-     * @see #Key$devtool
-     */
-    private boolean devtool = true;
-    public static final String Key$devtool = Key + ".devtool";
-
-    /**
      * 在devtool时，以standalone方式启动，可减少集群影响。
      * 高级测试，参考 https://github.com/hazelcast/hazelcast-simulator/blob/master/README.md
      *

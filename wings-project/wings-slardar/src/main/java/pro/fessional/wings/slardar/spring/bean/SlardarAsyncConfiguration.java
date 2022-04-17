@@ -3,16 +3,20 @@ package pro.fessional.wings.slardar.spring.bean;
 import com.alibaba.ttl.threadpool.TtlExecutors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration;
 import org.springframework.boot.task.TaskExecutorBuilder;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 import java.util.concurrent.Executor;
@@ -34,6 +38,7 @@ import static org.springframework.scheduling.annotation.AsyncAnnotationBeanPostP
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$async, havingValue = "true")
 public class SlardarAsyncConfiguration {
 
+    public static final String SLARDAR_EVENT_EXECUTOR_BEAN_NAME = "slardarEventExecutor";
     private static final Log logger = LogFactory.getLog(SlardarAsyncConfiguration.class);
 
     @Bean(name = DEFAULT_TASK_EXECUTOR_BEAN_NAME)
@@ -53,5 +58,25 @@ public class SlardarAsyncConfiguration {
         final ThreadPoolTaskExecutor executor = builder.build();
         executor.initialize();
         return TtlExecutors.getTtlExecutor(executor);
+    }
+
+    @Bean(name = SLARDAR_EVENT_EXECUTOR_BEAN_NAME)
+    public Executor slardarEventExecutor() {
+        logger.info("Wings conf slardarEventExecutor");
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setThreadNamePrefix("slardar-event-");
+        executor.setKeepAliveSeconds(30);
+        executor.setMaxPoolSize(8);
+        executor.setQueueCapacity(512);
+        return executor;
+    }
+
+    @Bean
+    public CommandLineRunner eventPublishHelperRunner(ApplicationEventPublisher publisher, @Qualifier(SLARDAR_EVENT_EXECUTOR_BEAN_NAME) Executor executor) {
+        return (arg) -> {
+            EventPublishHelper.setExecutor(executor);
+            EventPublishHelper.setSpringPublisher(publisher);
+            logger.info("Wings conf eventPublishHelper");
+        };
     }
 }

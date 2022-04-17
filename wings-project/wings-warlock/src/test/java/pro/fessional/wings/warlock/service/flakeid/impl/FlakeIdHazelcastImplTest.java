@@ -5,7 +5,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pro.fessional.wings.warlock.service.flakeid.FlakeIdService;
+import pro.fessional.wings.faceless.service.flakeid.FlakeIdService;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;

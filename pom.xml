@@ -19,8 +19,9 @@
     <description>万物生长靠日</description>
 
     <modules>
-        <module>wings-project</module>
         <module>wings-example</module>
+        <module>wings-project</module>
+        <module>wings-radiant</module>
     </modules>
 
     <properties>
@@ -136,6 +137,16 @@
             <dependency>
                 <groupId>pro.fessional</groupId>
                 <artifactId>wings-slardar</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional</groupId>
+                <artifactId>wings-slardar-hazelcast</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional</groupId>
+                <artifactId>wings-slardar-test</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
@@ -595,4 +606,14 @@
             </plugins>
         </pluginManagement>
     </build>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 </project>

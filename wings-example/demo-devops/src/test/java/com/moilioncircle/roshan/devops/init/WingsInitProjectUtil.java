@@ -91,7 +91,7 @@ public class WingsInitProjectUtil {
             message.accept("mkdir for wings common resources");
 
             final String common = "java/" + pkg.replace('.', '/') + "/common/";
-            new File(root, common + "service").mkdirs();
+            new File(root, common + "pro/fessional/wings/slardar/service").mkdirs();
             new File(root, common + "spring/bean").mkdirs();
             new File(root, common + "spring/boot").mkdirs();
             new File(root, common + "spring/prop").mkdirs();

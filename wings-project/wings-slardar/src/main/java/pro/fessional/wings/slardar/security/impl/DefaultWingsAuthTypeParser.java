@@ -5,6 +5,7 @@ import pro.fessional.mirana.cast.EnumConvertor;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,18 +21,19 @@ public class DefaultWingsAuthTypeParser implements WingsAuthTypeParser {
     private final Map<Enum<?>, String> enumStrMap;
 
     public DefaultWingsAuthTypeParser(Map<String, Enum<?>> authType) {
-        this.strEnumMap = authType;
-        this.enumStrMap = new HashMap<>(authType.size());
+        this.strEnumMap = Collections.unmodifiableMap(authType);
+        Map<Enum<?>, String> map = new HashMap<>(authType.size());
         for (Map.Entry<String, Enum<?>> en : authType.entrySet()) {
             Enum<?> k = en.getValue();
-            final String v = enumStrMap.get(k);
+            final String v = map.get(k);
             if (v == null) {
-                enumStrMap.put(k, en.getKey());
+                map.put(k, en.getKey());
             }
             else {
                 throw new IllegalArgumentException("exist mapping for type=" + v + ", enum=" + EnumConvertor.enum2Str(k));
             }
         }
+        this.enumStrMap = Collections.unmodifiableMap(map);
     }
 
     @Override
@@ -53,5 +55,10 @@ public class DefaultWingsAuthTypeParser implements WingsAuthTypeParser {
             throw new IllegalArgumentException(mes);
         }
         return s;
+    }
+
+    @Override
+    public @NotNull Map<String, Enum<?>> types() {
+        return strEnumMap;
     }
 }

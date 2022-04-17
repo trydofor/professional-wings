@@ -28,11 +28,11 @@ public class WarlockTableChangeConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(TableChangePublisher.class)
-    public TableChangePublisher tableChangePublisher(EventPublishHelper eventPublishHelper) {
+    public TableChangePublisher tableChangePublisher() {
         final ApplicationEventPublisher publisher;
-        if (EventPublishHelper.hasHazelcast()) {
-            publisher = EventPublishHelper.AsyncHazelcast;
-            logger.info("Wings conf tableChangePublisher with hazelcast, helper=" + eventPublishHelper.getClass());
+        if (EventPublishHelper.hasAsyncGlobal()) {
+            publisher = EventPublishHelper.AsyncGlobal;
+            logger.info("Wings conf tableChangePublisher with async global");
         }
         else {
             publisher = EventPublishHelper.AsyncSpring;
