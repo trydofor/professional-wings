@@ -31,13 +31,13 @@ public abstract class AbstractAuthPermCheckCombo implements ComboWingsAuthCheckS
                                            .map(GrantedAuthority::getAuthority)
                                            .collect(Collectors.toSet());
         for (String s : permit) {
-            if (!all.contains(s)) {
-                log.info("reject login, require permit {}", s);
-                return false;
+            if (all.contains(s)) {
+                return true;
             }
         }
 
-        return true;
+        log.info("reject login, require any permit {}", permit);
+        return false;
     }
 
     protected abstract Collection<String> requirePermit(WingsUserDetails userDetails, WingsBindAuthToken authentication);

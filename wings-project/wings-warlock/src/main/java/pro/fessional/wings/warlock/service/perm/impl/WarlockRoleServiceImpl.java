@@ -14,6 +14,7 @@ import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
+import pro.fessional.wings.warlock.caching.CacheEventHelper;
 import pro.fessional.wings.warlock.database.autogen.tables.WinRoleEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinRoleEntryDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinRoleEntry;
@@ -24,15 +25,16 @@ import pro.fessional.wings.warlock.service.perm.WarlockRoleService;
 
 import java.util.Map;
 
-import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheConst.KeyRoleAll;
-import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheConst.SpelRoleAll;
+import static pro.fessional.wings.warlock.caching.CacheConst.WarlockRoleService.CacheManager;
+import static pro.fessional.wings.warlock.caching.CacheConst.WarlockRoleService.CacheName;
+import static pro.fessional.wings.warlock.caching.CacheConst.WarlockRoleService.EventTables;
 
 /**
  * @author trydofor
  * @since 2021-03-07
  */
 @Slf4j
-@CacheConfig(cacheNames = WarlockPermCacheConst.CacheName, cacheManager = WarlockPermCacheConst.ManagerName)
+@CacheConfig(cacheNames = CacheName, cacheManager = CacheManager)
 public class WarlockRoleServiceImpl implements WarlockRoleService {
 
     @Setter(onMethod_ = {@Autowired})
@@ -48,7 +50,7 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
     protected WarlockPermNormalizer permNormalizer;
 
     @Override
-    @Cacheable(key = SpelRoleAll)
+    @Cacheable
     public Map<Long, String> loadRoleAll() {
         final WinRoleEntryTable t = winRoleEntryDao.getTable();
 
@@ -69,17 +71,15 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
      * @param event 可以为null
      */
     @EventListener
-    @CacheEvict(key = "#result", condition = "#result != null")
-    public Object evictRoleAllCache(TableChangeEvent event) {
-        if (event == null) {
-            log.info("evict cache={} by NULL", KeyRoleAll);
-            return KeyRoleAll;
+    @CacheEvict(allEntries = true, condition = "#result")
+    public boolean evictRoleAllCache(TableChangeEvent event) {
+        final String tb = CacheEventHelper.fire(event, EventTables);
+        if (tb != null) {
+            log.info("evictRoleAllCache by {}, {}", tb, event == null ? -1 : event.getChange());
+            return true;
         }
-        else if (WinRoleEntryTable.WinRoleEntry.getName().equalsIgnoreCase(event.getTable())) {
-            log.info("evict cache={} by {}", KeyRoleAll, event.getTable());
-            return KeyRoleAll;
-        }
-        return null;
+
+        return false;
     }
 
     @Override

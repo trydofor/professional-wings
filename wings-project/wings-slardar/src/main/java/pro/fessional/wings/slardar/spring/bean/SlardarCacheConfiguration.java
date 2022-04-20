@@ -5,14 +5,20 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.AbstractCachingConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.annotation.ProxyCachingConfiguration;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
+import org.springframework.cache.interceptor.CacheInterceptor;
+import org.springframework.cache.interceptor.CacheOperationSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.cache.WingsCacheHelper;
 import pro.fessional.wings.slardar.cache.caffeine.WingsCaffeine;
+import pro.fessional.wings.slardar.cache.spring.CacheEvictResult;
+import pro.fessional.wings.slardar.cache.spring.WingsCacheAnnoOprSource;
+import pro.fessional.wings.slardar.cache.spring.WingsCacheInterceptor;
 import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
@@ -22,6 +28,7 @@ import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
 
 /**
  * @author trydofor
+ * @see ProxyCachingConfiguration
  * @since 2019-12-03
  */
 @Configuration(proxyBeanMethods = false)
@@ -30,6 +37,29 @@ import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
 public class SlardarCacheConfiguration {
 
     private static final Log logger = LogFactory.getLog(SlardarCacheConfiguration.class);
+
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnProperty(name = SlardarEnabledProp.Key$cachingAop, havingValue = "true")
+    public static class SlardarCacheAopConfiguration extends AbstractCachingConfiguration {
+
+        @Primary
+        @Bean
+        public CacheOperationSource wingsCacheOperationSource() {
+            logger.info("Wings conf cacheOperationSource");
+            return new WingsCacheAnnoOprSource();
+        }
+
+        @Primary
+        @Bean
+        public CacheInterceptor wingsCacheInterceptor(CacheOperationSource cacheOperationSource) {
+            logger.info("Wings conf cacheInterceptor");
+            CacheEvictResult.wingsSupport = true;
+            WingsCacheInterceptor interceptor = new WingsCacheInterceptor();
+            interceptor.configure(this.errorHandler, this.keyGenerator, this.cacheResolver, this.cacheManager);
+            interceptor.setCacheOperationSource(cacheOperationSource);
+            return interceptor;
+        }
+    }
 
     // //////////////////// caffeine ////////////////////
     @Bean(Manager.Memory)
@@ -42,16 +72,8 @@ public class SlardarCacheConfiguration {
     @Bean
     @Primary
     public CacheManager cacheManager(Map<String, CacheManager> managers, SlardarCacheProp prop) {
-        final CacheManager ser = managers.get(WingsCache.Manager.Server);
-        if (ser != null) {
-            logger.info("Wings conf WingsCacheHelper Server=" + ser.getClass().getName());
-            WingsCacheHelper.setServer(ser);
-        }
-        final CacheManager mem = managers.get(WingsCache.Manager.Memory);
-        if (mem != null) {
-            logger.info("Wings conf WingsCacheHelper Memory=" + mem.getClass().getName());
-            WingsCacheHelper.setMemory(mem);
-        }
+        logger.info("Wings conf WingsCacheHelper managers count=" + managers.size());
+        WingsCacheHelper.setManagers(managers);
 
         CacheManager pre = null;
         String cnm = null;

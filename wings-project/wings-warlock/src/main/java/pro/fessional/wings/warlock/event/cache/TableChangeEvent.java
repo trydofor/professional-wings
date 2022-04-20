@@ -36,11 +36,15 @@ public class TableChangeEvent implements WarlockMetadataEvent {
         return (change & DELETE) != 0;
     }
 
+    public boolean hasChange(int mod) {
+        return mod == 0 || (change & mod) != 0;
+    }
+
     public void addSource(String src) {
         source.add(src);
     }
 
-    public boolean hasSource(String src){
+    public boolean hasSource(String src) {
         return source.contains(src);
     }
 }

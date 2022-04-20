@@ -39,6 +39,13 @@ public class SlardarEnabledProp {
      */
     private boolean caching = true;
     public static final String Key$caching = Key + ".caching";
+    /**
+     * 是否开启cache配置的替换
+     *
+     * @see #Key$caching
+     */
+    private boolean cachingAop = true;
+    public static final String Key$cachingAop = Key + ".caching-aop";
 
     /**
      * 是否实现cookie定制
