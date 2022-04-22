@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless;
 
 import lombok.Setter;
+import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-
-import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
  * @author trydofor
@@ -95,7 +94,7 @@ public class WingsTestHelper {
             }
         });
 
-        assertTrue(type.name() + "不一致，查看日志，", good.get());
+        Assertions.assertTrue(good.get(), type.name() + "不一致，查看日志，");
     }
 
     public void assertHas(Type type, String... str) {
@@ -109,7 +108,7 @@ public class WingsTestHelper {
             }
         });
 
-        assertTrue(type.name() + "不一致，查看日志，", good.get());
+        Assertions.assertTrue(good.get(), type.name() + "不一致，查看日志，");
     }
 
     public void assertNot(Type type, String... str) {
@@ -123,7 +122,7 @@ public class WingsTestHelper {
             }
         });
 
-        assertTrue(type.name() + "不一致，查看日志，", good.get());
+        Assertions.assertTrue(good.get(), type.name() + "不一致，查看日志，");
     }
 
     private List<String> lowerCase(String... str) {

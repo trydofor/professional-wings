@@ -4,19 +4,15 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import com.hazelcast.query.Predicates;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.session.MapSession;
-import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
+import pro.fessional.wings.slardar.security.DefaultUserId;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
 /**
  * @author trydofor
@@ -24,9 +20,6 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
  * @since 2022-02-24
  */
 public class HazelcastSessionHelper implements WingsSessionHelper {
-
-
-    public static final String UserIdKey = "userId";
 
     private final SessionRepository<?> hazelcastRepository;
     private final IMap<String, MapSession> hazelcastSessionMap;
@@ -37,15 +30,9 @@ public class HazelcastSessionHelper implements WingsSessionHelper {
     }
 
     @Override
-    @Nullable
-    public SecurityContext getSecurityContext(Session session) {
-        return session.getAttribute(SPRING_SECURITY_CONTEXT_KEY);
-    }
-
-    @Override
     @NotNull
     public List<MapSession> findByUserId(Long userId) {
-        if (userId == null || userId == Long.MIN_VALUE || hazelcastSessionMap == null) {
+        if (userId == null || userId == DefaultUserId.Unknown || hazelcastSessionMap == null) {
             return Collections.emptyList();
         }
 

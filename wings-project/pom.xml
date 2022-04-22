@@ -18,6 +18,7 @@
 
     <modules>
         <module>wings-silencer</module>
+        <module>wings-silencer-test</module>
         <module>wings-faceless</module>
         <module>wings-faceless-flywave</module>
         <module>wings-faceless-jooq</module>

@@ -162,7 +162,7 @@ public class WingsJacksonMapperTest {
         private ZonedDateTime zonedDateTimeValZ = zonedDateTimeVal.withZoneSameInstant(userTz.toZoneId());
         private Instant instantVal = Instant.parse("2020-06-01T12:34:46.000Z");
         private List<String> listVal = Arrays.asList("字符串", "列表");
-        private Map<String, Long> mapVal = new HashMap<String, Long>() {{put("Map", 1L);}};
+        private Map<String, Long> mapVal = new HashMap<>() {{put("Map", 1L);}};
         // empty
         private LocalDateTime localDateTimeEmpty = LocalDateTime.parse("1970-01-01T00:00:00");
         private LocalDateTime localDateTimeEmpty1 = localDateTimeEmpty.minusHours(12);

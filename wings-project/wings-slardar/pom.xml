@@ -109,7 +109,7 @@
         <!-- Argon2PasswordEncoder -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
+            <artifactId>bcpkix-jdk18on</artifactId>
         </dependency>
         <dependency>
             <groupId>pro.fessional</groupId>
@@ -167,6 +167,11 @@
             <groupId>io.sentry</groupId>
             <artifactId>sentry-logback</artifactId>
             <optional>true</optional>
+        </dependency>
+        <!-- test -->
+        <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>wings-silencer-test</artifactId>
         </dependency>
     </dependencies>
 </project>

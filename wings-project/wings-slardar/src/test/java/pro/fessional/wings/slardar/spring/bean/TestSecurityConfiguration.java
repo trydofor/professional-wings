@@ -1,14 +1,11 @@
 package pro.fessional.wings.slardar.spring.bean;
 
-import lombok.Setter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import pro.fessional.wings.slardar.security.enums.LoginTypeEnum;
-import pro.fessional.wings.slardar.security.handler.TestLoginHandler;
+import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 
 
@@ -20,23 +17,6 @@ import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final static Log logger = LogFactory.getLog(TestSecurityConfiguration.class);
-
-    @Setter(onMethod_ = {@Autowired})
-    private TestLoginHandler testLoginHandler;
-
-/*
-    @Setter(onMethod_ = {@Autowired})
-    private WingsUserDetailsService wingsUserDetailsService;
-
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.apply(SecurityConfigHelper.auth())
-            .userDetailsService(wingsUserDetailsService)
-        .and()
-        ;
-    }
-*/
 
     /**
      * The URL paths provided by the framework are
@@ -67,11 +47,10 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
                             .loginProcessingUrl("/*/login-proc.json") // filter处理，不需要controller
                             .usernameParameter("username")
                             .passwordParameter("password")
-//                    .authenticationDetailsSource(wingsAuthDetailsSource)
-                            .successHandler(testLoginHandler.loginSuccess)
-                            .failureHandler(testLoginHandler.loginFailure)
-                            .bindAuthTypeToEnums("sms", LoginTypeEnum.Sms)
-                            .bindAuthTypeToEnums("user", LoginTypeEnum.User)
+                            .successHandler((request, response, authentication) -> logger.info("successHandler"))
+                            .failureHandler((request, response, exception) -> logger.info("failureHandler"))
+                            .bindAuthTypeToEnums("user", Null.Enm)
+
             )
             .and()
             .authorizeRequests(conf -> conf
@@ -90,7 +69,7 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .logoutUrl("/user/logout.json")
                     .clearAuthentication(true)
                     .invalidateHttpSession(true)
-                    .logoutSuccessHandler(testLoginHandler.logoutSuccess)
+                    .logoutSuccessHandler((request, response, authentication) -> logger.info("logoutSuccessHandler"))
             )
 //            .exceptionHandling(conf -> conf
 //                    .accessDeniedHandler()
