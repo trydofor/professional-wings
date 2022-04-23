@@ -926,3 +926,20 @@ find . -name '*.log' -o -name '*.tmp'  | xargs rm -f
 # 重新flatten
 find . -name '.pom.xml' | xargs rm -f
 ```
+
+### 34.json的泛型，深度泛型类的反序列化
+
+spring中，使用ResolvableType和TypeDescriptor描述类型。
+```
+TypeDescriptor.map(Map.class, strTd, strTd)
+TypeDescriptor.collection(List.class, strTd)
+ResolvableType.forClassWithGenerics(R.class, Dto.class)
+```
+
+FastJson中，使用com.alibaba.fastjson.TypeReference，
+注意，TypeReference一定要单行声明，避免自动推导，而丢失类型。
+```
+// 以下类型等价，
+Type tp1 = new TypeReference<R<Dto>>(){}.getType();
+Type tp2 = ResolvableType.forClassWithGenerics(R.class, Dto.class).getType();
+```

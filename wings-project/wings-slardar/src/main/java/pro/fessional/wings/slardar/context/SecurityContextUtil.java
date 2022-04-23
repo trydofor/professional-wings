@@ -19,6 +19,9 @@ import java.util.Collections;
  * <p>
  * 尽量在controller层使用，当异步时，context会失效。
  * 因为spring的threadlocal仅支持手动inherit。
+ * <p>
+ * wings中Authentication为UsernamePasswordAuthenticationToken类型；
+ * details为WingsAuthDetails类型；principal为WingsUserDetails类型；
  *
  * @author trydofor
  * @since 2019-07-09
@@ -74,10 +77,7 @@ public class SecurityContextUtil {
     }
 
     /**
-     * 一般为登录的用户名，String
-     *
-     * @param <T> Principal 类型
-     * @return Principal
+     * wings中，登录前为用户名，登录成功后为WingsUserDetails
      */
     @Nullable
     @SuppressWarnings("unchecked")

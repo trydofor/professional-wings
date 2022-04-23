@@ -1,12 +1,17 @@
 package pro.fessional.wings.slardar.json;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import lombok.Data;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
+import pro.fessional.mirana.data.R;
+import pro.fessional.wings.slardar.serialize.JSONParser;
 import pro.fessional.wings.slardar.serialize.JsonConversion;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -80,5 +85,27 @@ class JsonConversionTest {
 
         Object lst1 = conversionService.convert(jsonLst, null, TypeDescriptor.collection(List.class, strTd));
         Assertions.assertEquals(lst, lst1);
+    }
+
+    @Test
+    void parse() {
+        Dto dto = new Dto();
+        R<Dto> rd = R.okData(dto);
+        String rd0 = JSON.toJSONString(rd);
+        //
+        Type rdt = new TypeReference<R<Dto>>(){}.getType();
+        R<Dto> rd1 = JSON.parseObject(rd0, rdt);
+        System.out.println(rd1);
+        //
+        final ResolvableType tat = ResolvableType.forClassWithGenerics(R.class, Dto.class);
+        R<Dto> rd2 = JSON.parseObject(rd0, tat.getType());
+        System.out.println(rd2);
+        //
+        R<Dto> rd3 = JSONParser.parse(rd0, tat);
+        System.out.println(rd3);
+
+        Assertions.assertEquals(dto, rd1.getData());
+        Assertions.assertEquals(dto, rd2.getData());
+        Assertions.assertEquals(dto, rd3.getData());
     }
 }

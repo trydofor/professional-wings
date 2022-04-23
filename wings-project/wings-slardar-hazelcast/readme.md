@@ -1,6 +1,12 @@
 # 3.5.鱼人守卫/Hazelcast
 
-使用hazelcast作为session，缓存和消息中间件
+使用hazelcast作为session，缓存和消息中间件，包括，
+
+* spring session - Hazelcast4IndexedSessionRepository
+* server cache - WingsHazelcast
+* global lock -  HazelcastGlobalLock
+* global event - HazelcastSyncPublisher
+* snowflake id - FlakeIdHazelcastImpl
 
 ### 3.5.1.hazelcast 管理
 
@@ -33,38 +39,9 @@ hazelcast提供了3类锁，推荐使用CP系统，但集群要求至少3台，�
 * https://hazelcast.com/blog/hazelcast-imdg-3-12-introduces-cp-subsystem/
 * https://hazelcast.com/blog/long-live-distributed-locks/
 
-## 3.5.2.缓存Caffeine和Hazelcast
+## 3.5.2.远程缓存Hazelcast
 
-默认提供JCache约定下的Memory和Server两个CacheManager，名字和实现如下，
-
-* MemoryCacheManager caffeineCacheManager
-* ServerCacheManager hazelcastCacheManager
-
-因为已注入了CacheManager，会使spring-boot的自动配置不满足条件而无效。 If you have not defined a bean of type CacheManager or a CacheResolver
-named cacheResolver (see CachingConfigurer)
-, Spring Boot tries to detect the following providers (in the indicated order):
-
-三种不同缓存级别前缀，分别定义不同的ttl,idle,size
-
-* `program.` - 程序级，程序或服务运行期间
-* `general.` - 标准配置，1天
-* `service.` - 服务级的，1小时
-* `session.` - 会话级的，10分钟
-
-具有相同前缀的cache，会采用相同的配置项(ttl,idle,size)。
-
-``` java
-@CacheConfig(cacheManager = Manager.Memory, 
-cacheNames = Level.GENERAL + "OperatorService")
-
-@Cacheable(key = "'all'", 
-cacheNames = Level.GENERAL + "StandardRegion", 
-cacheManager = Manager.Server)
-
-@CacheEvict(key = "'all'", 
-cacheNames = Level.GENERAL + "StandardRegion", 
-cacheManager = Manager.Server)
-```
+通过hazelcastCacheManager用hazelcast实现ServerCacheManager
 
 对于hazelcast的MapConfig若无配置，则wings会根据level自动配置以下MapConf。
 
@@ -73,13 +50,3 @@ cacheManager = Manager.Server)
 <max-idle-seconds>0</max-idle-seconds>
 <eviction size="5000"/>
 ```
-
-## 3.5.3.同步/异步/单机/集群的事件驱动
-
-EventPublishHelper默认提供了3种事件发布机制
-
-* SyncSpring - 同步，spring原生的jvm内
-* AsyncSpring - 异步，spring原生的jvm内，使用slardarEventExecutor线程池
-* AsyncHazelcast - 异步，基于Hazelcast集群的topic的发布订阅机制
-
-其中，jooq对表的CUD事件，默认通过AsyncHazelcast发布，可供表和字段有关缓存evict

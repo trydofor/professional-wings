@@ -163,13 +163,12 @@ public class OkHttpClientHelper {
         }
     }
 
-    @NotNull
-    public static byte[] download(OkHttpClient client, String url) {
+
+    public static byte @NotNull[] download(OkHttpClient client, String url) {
         return download(client, url, HttpMethod.GET);
     }
 
-    @NotNull
-    public static byte[] download(OkHttpClient client, String url, HttpMethod method) {
+    public static byte @NotNull[] download(OkHttpClient client, String url, HttpMethod method) {
         Request.Builder builder = new Request.Builder().url(url);
         switch (method) {
             case GET:
