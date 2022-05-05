@@ -33,9 +33,9 @@ import org.jooq.Record8;
 import org.jooq.Record9;
 import org.jooq.RecordMapper;
 import org.jooq.Result;
-import org.jooq.SelectConditionStep;
 import org.jooq.SelectField;
 import org.jooq.SelectFieldOrAsterisk;
+import org.jooq.SelectOrderByStep;
 import org.jooq.Table;
 import org.jooq.TableLike;
 import org.jooq.UpdatableRecord;
@@ -117,7 +117,7 @@ public class PageJooqHelper extends PageJdbcHelper {
         private TableLike<?>[] from;
         private Condition where;
         private List<OrderField<?>> order = Collections.emptyList();
-        private SelectConditionStep<R> wrap;
+        private SelectOrderByStep<R> wrap;
         // out
         private Result<R> result;
         private int total = -1;
@@ -165,14 +165,14 @@ public class PageJooqHelper extends PageJdbcHelper {
         }
 
         @SuppressWarnings("unchecked")
-        public <S extends Record> WrapJooq<S> wrap(SelectConditionStep<S> select) {
+        public <S extends Record> WrapJooq<S> wrap(SelectOrderByStep<S> select) {
             ContextJooq<S> ctx = (ContextJooq<S>) context;
             ctx.wrap = select;
             return new WrapJooq<>(ctx);
         }
 
         @SuppressWarnings("unchecked")
-        public <S extends Record> WrapJooq<S> wrap(SelectConditionStep<S> select, OrderField<?>... bys) {
+        public <S extends Record> WrapJooq<S> wrap(SelectOrderByStep<S> select, OrderField<?>... bys) {
             ContextJooq<S> ctx = (ContextJooq<S>) context;
             ctx.wrap = select;
             ctx.orderBy(bys);
@@ -180,7 +180,7 @@ public class PageJooqHelper extends PageJdbcHelper {
         }
 
         @SuppressWarnings("unchecked")
-        public <S extends Record> WrapJooq<S> wrap(SelectConditionStep<S> select, Map<String, Field<?>> bys) {
+        public <S extends Record> WrapJooq<S> wrap(SelectOrderByStep<S> select, Map<String, Field<?>> bys) {
             ContextJooq<S> ctx = (ContextJooq<S>) context;
             ctx.wrap = select;
             ctx.orderBy(bys);

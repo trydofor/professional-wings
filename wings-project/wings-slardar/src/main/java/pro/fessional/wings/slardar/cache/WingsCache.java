@@ -21,7 +21,7 @@ public interface WingsCache {
          */
         public static final String Memory = "MemoryCacheManager";
         /**
-         * 外部服务缓存，默认hazelcast
+         * 外部服务缓存，默认hazelcast，可选用redis
          */
         public static final String Server = "ServerCacheManager";
     }

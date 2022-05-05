@@ -39,6 +39,13 @@ public class SlardarEnabledProp {
      */
     private boolean caching = true;
     public static final String Key$caching = Key + ".caching";
+    /**
+     * 是否开启cache配置的替换
+     *
+     * @see #Key$caching
+     */
+    private boolean cachingAop = true;
+    public static final String Key$cachingAop = Key + ".caching-aop";
 
     /**
      * 是否实现cookie定制
@@ -189,14 +196,6 @@ public class SlardarEnabledProp {
      */
     private boolean swagger = true;
     public static final String Key$swagger = Key + ".swagger";
-
-    /**
-     * 是否开在有spring-boot-devtool时开启devtool兼容配置
-     *
-     * @see #Key$devtool
-     */
-    private boolean devtool = true;
-    public static final String Key$devtool = Key + ".devtool";
 
     /**
      * 在devtool时，以standalone方式启动，可减少集群影响。

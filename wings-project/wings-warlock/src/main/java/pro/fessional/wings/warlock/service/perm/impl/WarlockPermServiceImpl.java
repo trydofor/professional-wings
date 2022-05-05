@@ -11,6 +11,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.event.EventListener;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
+import pro.fessional.wings.warlock.caching.CacheEventHelper;
 import pro.fessional.wings.warlock.database.autogen.tables.WinPermEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinPermEntryDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinPermEntry;
@@ -22,16 +23,17 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static pro.fessional.wings.warlock.caching.CacheConst.WarlockPermService.CacheManager;
+import static pro.fessional.wings.warlock.caching.CacheConst.WarlockPermService.CacheName;
+import static pro.fessional.wings.warlock.caching.CacheConst.WarlockPermService.EventTables;
 import static pro.fessional.wings.warlock.service.grant.PermGrantHelper.unitePermit;
-import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheConst.KeyPermAll;
-import static pro.fessional.wings.warlock.service.perm.impl.WarlockPermCacheConst.SpelPermAll;
 
 /**
  * @author trydofor
  * @since 2021-03-07
  */
 @Slf4j
-@CacheConfig(cacheNames = WarlockPermCacheConst.CacheName, cacheManager = WarlockPermCacheConst.ManagerName)
+@CacheConfig(cacheNames = CacheName, cacheManager = CacheManager)
 public class WarlockPermServiceImpl implements WarlockPermService {
 
     @Setter(onMethod_ = {@Autowired})
@@ -44,7 +46,7 @@ public class WarlockPermServiceImpl implements WarlockPermService {
     protected JournalService journalService;
 
     @Override
-    @Cacheable(key = SpelPermAll)
+    @Cacheable
     public Map<Long, String> loadPermAll() {
         final WinPermEntryTable t = winPermEntryDao.getTable();
 
@@ -65,17 +67,15 @@ public class WarlockPermServiceImpl implements WarlockPermService {
      * @param event 可以为null
      */
     @EventListener
-    @CacheEvict(key = "#result", condition = "#result != null")
-    public Object evictPermAllCache(TableChangeEvent event) {
-        if (event == null) {
-            log.info("evict cache={} by NULL", KeyPermAll);
-            return KeyPermAll;
+    @CacheEvict(allEntries = true, condition = "#result")
+    public boolean evictPermAllCache(TableChangeEvent event) {
+        final String tb = CacheEventHelper.fire(event, EventTables);
+        if (tb != null) {
+            log.info("evictPermAllCache by {}, {}", tb, event == null ? -1 : event.getChange());
+            return true;
         }
-        else if (WinPermEntryTable.WinPermEntry.getName().equalsIgnoreCase(event.getTable())) {
-            log.info("evict cache={} by {}", KeyPermAll, event.getTable());
-            return KeyPermAll;
-        }
-        return null;
+
+        return false;
     }
 
     @Override

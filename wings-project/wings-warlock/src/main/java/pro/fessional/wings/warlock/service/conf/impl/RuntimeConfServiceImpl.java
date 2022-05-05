@@ -12,7 +12,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
 import pro.fessional.mirana.data.Null;
-import pro.fessional.wings.slardar.cache.WingsCache;
+import pro.fessional.wings.warlock.caching.CacheEventHelper;
 import pro.fessional.wings.warlock.database.autogen.tables.WinConfRuntimeTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinConfRuntimeDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinConfRuntime;
@@ -23,12 +23,18 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static pro.fessional.wings.warlock.caching.CacheConst.RuntimeConfService.CacheManager;
+import static pro.fessional.wings.warlock.caching.CacheConst.RuntimeConfService.CacheName;
+import static pro.fessional.wings.warlock.caching.CacheConst.RuntimeConfService.EventTables;
+import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.DELETE;
+import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.UPDATE;
+
 /**
  * @author trydofor
  * @since 2022-03-09
  */
-@CacheConfig(cacheNames = WingsCache.Level.General + "RuntimeConfService")
 @Slf4j
+@CacheConfig(cacheNames = CacheName, cacheManager = CacheManager)
 public class RuntimeConfServiceImpl implements RuntimeConfService {
 
     public static final String PropHandler = "prop";
@@ -46,7 +52,7 @@ public class RuntimeConfServiceImpl implements RuntimeConfService {
 
     @SuppressWarnings("unchecked")
     @Override
-    @Cacheable(cacheManager = WingsCache.Manager.Memory)
+    @Cacheable
     public <T> T getObject(String key, TypeDescriptor type) {
         final WinConfRuntimeTable t = winConfRuntimeDao.getTable();
         final Record2<String, String> r2 = winConfRuntimeDao
@@ -75,7 +81,8 @@ public class RuntimeConfServiceImpl implements RuntimeConfService {
                 .update(t)
                 .set(t.Current, str)
                 .set(t.Previous, t.Current)
-                .where(t.Key.eq(key));
+                .where(t.Key.eq(key))
+                .execute();
     }
 
     @Override
@@ -110,14 +117,12 @@ public class RuntimeConfServiceImpl implements RuntimeConfService {
     @EventListener
     @CacheEvict(allEntries = true, condition = "#result")
     public boolean evictAllConfCache(TableChangeEvent event) {
-        if (event == null) {
-            log.info("evict allEntries by NULL");
+        final String tb = CacheEventHelper.fire(event, EventTables, DELETE | UPDATE);
+        if (tb != null) {
+            log.info("evictAllConfCache by {}, {}", tb, event == null ? -1 : event.getChange());
             return true;
         }
-        else if (WinConfRuntimeTable.WinConfRuntime.getName().equalsIgnoreCase(event.getTable())) {
-            log.info("evict allEntries by {}", event.getTable());
-            return true;
-        }
+
         return false;
     }
 

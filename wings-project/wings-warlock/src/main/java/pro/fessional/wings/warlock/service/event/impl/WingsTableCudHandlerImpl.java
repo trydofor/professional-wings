@@ -22,7 +22,7 @@ public class WingsTableCudHandlerImpl implements WingsTableCudHandler {
 
     @Override
     public void handle(@NotNull Cud cud, @NotNull String table, @NotNull Map<String, List<?>> field) {
-        log.debug("handle cud={}, table={}, field={}", cud, table, field);
+        log.debug("handle CUD={}, table={}, field={}", cud, table, field);
 
         if (cud == Cud.Create) {
             tableChangePublisher.publishInsert(WingsTableCudHandlerImpl.class, table, field);

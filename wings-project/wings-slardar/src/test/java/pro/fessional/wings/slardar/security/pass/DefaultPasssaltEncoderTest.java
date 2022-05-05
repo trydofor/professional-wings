@@ -11,6 +11,7 @@ import pro.fessional.mirana.code.RandCode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
 /**
  * @author trydofor
  * @since 2021-02-25

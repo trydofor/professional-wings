@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author trydofor
  * @since 2020-12-29
  */
-class SpringPageHelperTest {
+public class SpringPageHelperTest {
 
     @Test
     void from() {

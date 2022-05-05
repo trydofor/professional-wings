@@ -16,6 +16,7 @@
     <version>${revision}-SNAPSHOT</version>
 
     <name>wings-example</name>
+    <description>一些许的样板和示例</description>
 
     <modules>
         <module>demo-admin</module>

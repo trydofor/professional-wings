@@ -57,8 +57,14 @@ class MemLoginTest {
         final Set<String> st4 = JSON.parseObject(au4, new TypeReference<>() {});
         Assertions.assertEquals(st3, st4);
 
-        List<String> exp = Arrays.asList("ROLE_SYSTEM","ROLE_ADMIN", "user-perm");
+        List<String> exp = Arrays.asList("ROLE_SYSTEM", "ROLE_ADMIN", "user-perm");
         Assertions.assertTrue(st3.containsAll(exp));
+
+        //
+        final Response r5 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder()
+                .url(host + "/auth/current-principal.json"), false);
+        String au5 = OkHttpClientHelper.extractString(r5, false);
+        log.info("current-principal={}", au5);
     }
 
     @Test

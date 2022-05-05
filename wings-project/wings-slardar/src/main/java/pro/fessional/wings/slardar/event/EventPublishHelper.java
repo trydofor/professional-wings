@@ -1,12 +1,8 @@
 package pro.fessional.wings.slardar.event;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.topic.Message;
-import com.hazelcast.topic.MessageListener;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.context.ApplicationEventPublisher;
-import pro.fessional.wings.slardar.spring.bean.SlardarEventConfiguration;
+import pro.fessional.mirana.best.StateAssert;
 
 import java.util.concurrent.Executor;
 
@@ -17,7 +13,6 @@ import java.util.concurrent.Executor;
  * ③hazelcast的topic(#HazelcastTopic)按SpringEvent模式。
  *
  * @author trydofor
- * @see #HazelcastTopic
  * @since 2021-06-07
  */
 
@@ -30,8 +25,6 @@ public class EventPublishHelper {
 
     /**
      * 使用Executor(默认SLARDAR_EVENT_EXECUTOR)包装的异步无序ApplicationEventPublisher
-     *
-     * @see SlardarEventConfiguration#SLARDAR_EVENT_EXECUTOR
      */
     public static final ApplicationEventPublisher AsyncSpring = new AsyncPub();
 
@@ -39,36 +32,35 @@ public class EventPublishHelper {
      * 包装Hazelcast的(HazelcastTopic)topic转成SpringEvent。
      * 默认异步无序, fire and forget。若需要有序，自行设置globalOrderEnabled=true
      *
-     * @see #HazelcastTopic
+     * @see #hasAsyncGlobal
      */
-    public static final ApplicationEventPublisher AsyncHazelcast = new HazelcastPub();
+    public static final ApplicationEventPublisher AsyncGlobal = new GlobalPub();
 
-    public static final String HazelcastTopic = "SlardarApplicationEvent";
-
-    //
     private static Executor executor;
-    private static ApplicationEventPublisher publisher;
-    private static HazelcastInstance hazelcast;
+    private static ApplicationEventPublisher springPublisher;
+    private static ApplicationEventPublisher globalPublisher;
 
-    protected EventPublishHelper(@NotNull ApplicationEventPublisher pub, @NotNull Executor exe,
-                                 @Nullable HazelcastInstance hzc) {
-        if (hzc != null && hzc != hazelcast) {
-            hzc.getTopic(HazelcastTopic).addMessageListener(new HazelcastRepublish());
-        }
-        hazelcast = hzc;
-        publisher = pub;
-        executor = exe;
+    public static void setGlobalPublisher(ApplicationEventPublisher globalPublisher) {
+        EventPublishHelper.globalPublisher = globalPublisher;
     }
 
-    public static boolean hasHazelcast() {
-        return hazelcast != null;
+    public static void setExecutor(Executor executor) {
+        EventPublishHelper.executor = executor;
+    }
+
+    public static void setSpringPublisher(ApplicationEventPublisher springPublisher) {
+        EventPublishHelper.springPublisher = springPublisher;
+    }
+
+    public static boolean hasAsyncGlobal() {
+        return globalPublisher != null;
     }
 
     private static class SyncPub implements ApplicationEventPublisher {
 
         @Override
         public void publishEvent(@NotNull Object event) {
-            publisher.publishEvent(event);
+            springPublisher.publishEvent(event);
         }
     }
 
@@ -76,22 +68,16 @@ public class EventPublishHelper {
 
         @Override
         public void publishEvent(@NotNull Object event) {
-            executor.execute(() -> publisher.publishEvent(event));
+            executor.execute(() -> springPublisher.publishEvent(event));
         }
     }
 
-    private static class HazelcastPub implements ApplicationEventPublisher {
+    private static class GlobalPub implements ApplicationEventPublisher {
 
         @Override
         public void publishEvent(@NotNull Object event) {
-            hazelcast.getTopic(HazelcastTopic).publish(event);
-        }
-    }
-
-    private static class HazelcastRepublish implements MessageListener<Object> {
-        @Override
-        public void onMessage(Message<Object> message) {
-            publisher.publishEvent(message.getMessageObject());
+            StateAssert.notNull(globalPublisher, "no globalPublisher, use #hasAsyncGlobal to test");
+            executor.execute(() -> globalPublisher.publishEvent(event));
         }
     }
 }

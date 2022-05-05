@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import pro.fessional.mirana.cast.TypedCastUtil;
+import pro.fessional.wings.slardar.security.DefaultUserId;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 
@@ -18,6 +19,9 @@ import java.util.Collections;
  * <p>
  * 尽量在controller层使用，当异步时，context会失效。
  * 因为spring的threadlocal仅支持手动inherit。
+ * <p>
+ * wings中Authentication为UsernamePasswordAuthenticationToken类型；
+ * details为WingsAuthDetails类型；principal为WingsUserDetails类型；
  *
  * @author trydofor
  * @since 2019-07-09
@@ -73,10 +77,7 @@ public class SecurityContextUtil {
     }
 
     /**
-     * 一般为登录的用户名，String
-     *
-     * @param <T> Principal 类型
-     * @return Principal
+     * wings中，登录前为用户名，登录成功后为WingsUserDetails
      */
     @Nullable
     @SuppressWarnings("unchecked")
@@ -150,13 +151,14 @@ public class SecurityContextUtil {
 
 
     /**
-     * 获得登录的userId，如果未登录或非wings类型，返回 Long.MIN_VALUE。
+     * 获得登录的userId，如果未登录或非wings类型，返回 DefaultUserId#Unknown
      * 一般下userId有区间，小的正数-内置用户；大一点正数-业务用户；负数-特殊用户。
      *
-     * @return 登录uid，或Long.MIN_VALUE
+     * @return 登录uid，或DefaultUserId#Unknown
+     * @see DefaultUserId#Unknown
      */
     public static long getUserId() {
         final WingsUserDetails dtl = getUserDetails();
-        return dtl == null ? Long.MIN_VALUE : dtl.getUserId();
+        return dtl == null ? DefaultUserId.Unknown : dtl.getUserId();
     }
 }

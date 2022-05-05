@@ -18,12 +18,15 @@
 
     <modules>
         <module>wings-silencer</module>
+        <module>wings-silencer-test</module>
         <module>wings-faceless</module>
         <module>wings-faceless-flywave</module>
         <module>wings-faceless-jooq</module>
         <module>wings-faceless-shard</module>
         <module>wings-faceless-test</module>
         <module>wings-slardar</module>
+        <module>wings-slardar-hazelcast</module>
+        <module>wings-slardar-test</module>
         <module>wings-warlock</module>
     </modules>
 
@@ -115,14 +118,4 @@
             </plugin>
         </plugins>
     </build>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 </project>

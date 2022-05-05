@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.slardar.security.DefaultUserId;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthType;
-import pro.fessional.wings.warlock.service.user.DefaultUserId;
 import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
 
 /**

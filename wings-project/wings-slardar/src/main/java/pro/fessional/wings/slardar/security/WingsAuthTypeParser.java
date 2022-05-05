@@ -3,6 +3,8 @@ package pro.fessional.wings.slardar.security;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.data.Null;
 
+import java.util.Map;
+
 /**
  * @author trydofor
  * @since 2021-02-08
@@ -25,7 +27,7 @@ public interface WingsAuthTypeParser {
      * @return 枚举类
      */
     @NotNull
-    default Enum<?> parse(String authType){
+    default Enum<?> parse(String authType) {
         return parse(authType, Null.Enm);
     }
 
@@ -36,5 +38,12 @@ public interface WingsAuthTypeParser {
      * @return 字符串型
      * @throws IllegalArgumentException 无法转换时
      */
-    @NotNull String parse(Enum<?> authType);
+    @NotNull
+    String parse(Enum<?> authType);
+
+    /**
+     * 获取全部映射关系
+     */
+    @NotNull
+    Map<String, Enum<?>> types();
 }

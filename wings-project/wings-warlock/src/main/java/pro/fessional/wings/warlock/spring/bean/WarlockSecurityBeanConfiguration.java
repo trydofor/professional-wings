@@ -348,13 +348,11 @@ public class WarlockSecurityBeanConfiguration {
                                        .collect(Collectors.toSet());
             final Set<String> perm = ma.getAuthPerm();
             final long uid = ma.getUserId();
-            if (uid == Long.MIN_VALUE) {
-                logger.info("Wings conf skip MemAuth, userId=" + uid);
-            }
-            else {
-                logger.info("Wings conf add MemAuth, userId=" + uid);
-                bean.addAuthz(uid, role);
-                bean.addAuthz(uid, perm);
+            logger.info("Wings conf add MemAuth, userId=" + uid);
+            bean.addAuthz(uid, role);
+            bean.addAuthz(uid, perm);
+            if (uid < 0) {
+                logger.warn("should NOT use negative UserId");
             }
 
             final String un = ma.getUsername();

@@ -69,10 +69,6 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.hazelcast</groupId>
-            <artifactId>hazelcast-spring</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
@@ -103,7 +99,7 @@
         <!-- session-->
         <dependency>
             <groupId>org.springframework.session</groupId>
-            <artifactId>spring-session-hazelcast</artifactId>
+            <artifactId>spring-session-core</artifactId>
         </dependency>
         <!-- security -->
         <dependency>
@@ -113,7 +109,7 @@
         <!-- Argon2PasswordEncoder -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
+            <artifactId>bcpkix-jdk18on</artifactId>
         </dependency>
         <dependency>
             <groupId>pro.fessional</groupId>
@@ -172,16 +168,10 @@
             <artifactId>sentry-logback</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <!-- test : i18n -->
+        <!-- test -->
         <dependency>
             <groupId>pro.fessional</groupId>
-            <artifactId>wings-faceless-test</artifactId>
-            <scope>test</scope>
+            <artifactId>wings-silencer-test</artifactId>
         </dependency>
     </dependencies>
 </project>

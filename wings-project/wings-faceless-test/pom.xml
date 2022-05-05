@@ -18,13 +18,12 @@
     <dependencies>
         <dependency>
             <groupId>pro.fessional</groupId>
-            <artifactId>mirana</artifactId>
+            <artifactId>wings-faceless</artifactId>
         </dependency>
         <dependency>
             <groupId>pro.fessional</groupId>
-            <artifactId>wings-faceless</artifactId>
+            <artifactId>wings-silencer-test</artifactId>
         </dependency>
-        <!-- test -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -32,10 +31,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-xml</artifactId>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

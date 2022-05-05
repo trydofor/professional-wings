@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.time.DateFormatter;
-import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 /**
@@ -23,6 +23,8 @@ import java.time.ZonedDateTime;
  */
 @RestController
 public class TestDateTimeController {
+
+    public static final ZoneId ZONE_CN = ZoneId.of("Asia/Shanghai");
 
     @Data
     public static class Xdt {
@@ -64,7 +66,7 @@ public class TestDateTimeController {
     @RequestMapping(value = "/test/ldt-zdt.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public Xdt ldtZdt(@RequestParam("d") LocalDateTime ldt) {
         final Xdt xdt = new Xdt();
-        xdt.zdt = ldt.atZone(StandardTimezone.ASIA𓃬SHANGHAI.toZoneId());
+        xdt.zdt = ldt.atZone(ZONE_CN);
         xdt.ldt = ldt;
         System.out.println("ldtZdt>>>" + xdt);
         System.out.println("userTz>>>" + LocaleContextHolder.getTimeZone());
@@ -74,7 +76,7 @@ public class TestDateTimeController {
     @RequestMapping(value = "/test/ldt-odt.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public Xdt ldtOdt(@RequestParam("d") LocalDateTime ldt) {
         final Xdt xdt = new Xdt();
-        final ZonedDateTime zdt = ldt.atZone(StandardTimezone.ASIA𓃬SHANGHAI.toZoneId());
+        final ZonedDateTime zdt = ldt.atZone(ZONE_CN);
         xdt.odt = zdt.toOffsetDateTime();
         xdt.ldt = ldt;
         System.out.println("ldtOdt>>>" + xdt);
@@ -85,7 +87,7 @@ public class TestDateTimeController {
     @RequestMapping(value = "/test/ldt-zdt-body.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public Xdt ldtZdtBody(@RequestBody Ldt ldt) {
         final Xdt xdt = new Xdt();
-        xdt.zdt = ldt.ldt.atZone(StandardTimezone.ASIA𓃬SHANGHAI.toZoneId());
+        xdt.zdt = ldt.ldt.atZone(ZONE_CN);
         xdt.ldt = ldt.ldt;
         System.out.println("ldtZdtBody>>>" + xdt);
         System.out.println("userTz>>>" + LocaleContextHolder.getTimeZone());
@@ -95,7 +97,7 @@ public class TestDateTimeController {
     @RequestMapping(value = "/test/ldt-odt-body.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public Xdt ldtOdtBody(@RequestBody Ldt ldt) {
         final Xdt xdt = new Xdt();
-        xdt.odt = ldt.ldt.atZone(StandardTimezone.ASIA𓃬SHANGHAI.toZoneId()).toOffsetDateTime();
+        xdt.odt = ldt.ldt.atZone(ZONE_CN).toOffsetDateTime();
         xdt.ldt = ldt.ldt;
         System.out.println("ldtOdtBody>>>" + xdt);
         System.out.println("userTz>>>" + LocaleContextHolder.getTimeZone());

@@ -18,7 +18,7 @@ public class DoubleKillService {
     @Cacheable(cacheManager = WingsCache.Manager.Memory, cacheNames = WingsCache.Level.Service + "DoubleKillService")
     public String sleepCache(String type, int s) {
         try {
-            Thread.sleep(s * 1000);
+            Thread.sleep(s * 1000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -30,7 +30,7 @@ public class DoubleKillService {
     @DoubleKill
     public String sleepSecond(String type, int s) {
         try {
-            Thread.sleep(s * 1000);
+            Thread.sleep(s * 1000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -42,7 +42,7 @@ public class DoubleKillService {
     @DoubleKill("static-key")
     public String sleepSecondStr(String type, int s) {
         try {
-            Thread.sleep(s * 1000);
+            Thread.sleep(s * 1000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -54,7 +54,7 @@ public class DoubleKillService {
     @DoubleKill(expression = "#root.methodName + #root.targetClass + #type + '-' + #p1 * 1000")
     public String sleepSecondExp(String type, int s) {
         try {
-            Thread.sleep(s * 1000);
+            Thread.sleep(s * 1000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

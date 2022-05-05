@@ -253,7 +253,7 @@ public class WarlockSecurityProp {
      *
      * @see #Key$nonceCacheLevel
      */
-    private String nonceCacheLevel = "service";
+    private String nonceCacheLevel = "pro/fessional/wings/slardar/service";
     public static final String Key$nonceCacheLevel = Key + ".nonce-cache-level";
 
 

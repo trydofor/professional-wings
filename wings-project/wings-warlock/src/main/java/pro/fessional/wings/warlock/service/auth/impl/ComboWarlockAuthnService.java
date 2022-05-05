@@ -14,12 +14,12 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.wings.faceless.service.journal.JournalService;
-import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
+import pro.fessional.wings.warlock.caching.CacheEventHelper;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAuthnTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAuthnDao;
@@ -36,16 +36,19 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import static pro.fessional.wings.warlock.caching.CacheConst.WarlockAuthnService.CacheManager;
+import static pro.fessional.wings.warlock.caching.CacheConst.WarlockAuthnService.CacheName;
+import static pro.fessional.wings.warlock.caching.CacheConst.WarlockAuthnService.EventTables;
+import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.DELETE;
+import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.UPDATE;
+
 /**
  * @author trydofor
  * @since 2021-02-23
  */
 @Slf4j
-@CacheConfig(cacheNames = ComboWarlockAuthnService.CacheName, cacheManager = ComboWarlockAuthnService.ManagerName)
+@CacheConfig(cacheNames = CacheName, cacheManager = CacheManager)
 public class ComboWarlockAuthnService implements WarlockAuthnService {
-
-    public static final String CacheName = WingsCache.Level.Service + "ComboWarlockAuthnService";
-    public static final String ManagerName = WingsCache.Manager.Memory;
 
     @Setter(onMethod_ = {@Autowired})
     protected WinUserBasisDao winUserBasisDao;
@@ -105,15 +108,9 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     @EventListener
     @CacheEvict(allEntries = true, condition = "#result")
     public boolean evictAllAuthnCache(TableChangeEvent event) {
-        if (event == null) {
-            log.info("evict allEntries by NULL");
-            return true;
-        }
-
-        if ((event.isDelete() || event.isUpdate()) &&
-            (WinUserBasisTable.WinUserBasis.getName().equalsIgnoreCase(event.getTable()) ||
-             WinUserAuthnTable.WinUserAuthn.getName().equalsIgnoreCase(event.getTable()))) {
-            log.info("evict allEntries by {}", event.getTable());
+        final String tb = CacheEventHelper.fire(event, EventTables, DELETE | UPDATE);
+        if (tb != null) {
+            log.info("evictAllAuthnCache by {}, {}", tb, event == null ? -1 : event.getChange());
             return true;
         }
         return false;

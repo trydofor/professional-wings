@@ -7,7 +7,8 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
 
 /**
- * 普通json格式，对于非常用类型，可能存在精度问题
+ * 底层实现为FastJson，仅限于信任服务的简单类型，在非信任领域可能存在安全问题。
+ * 对于有泛型的复杂类型，fastjson正确解析，此外有点注意js中number的精度问题。
  *
  * @author trydofor
  * @since 2022-03-09

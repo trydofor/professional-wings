@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.4</version>
+        <version>2.6.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -19,53 +19,54 @@
     <description>万物生长靠日</description>
 
     <modules>
-        <module>wings-project</module>
         <module>wings-example</module>
+        <module>wings-project</module>
+        <module>wings-radiant</module>
     </modules>
 
     <properties>
+        <!-- https://github.com/spring-projects/spring-boot/releases -->
+        <revision>2.6.6</revision>
         <!-- https://maven.apache.org/maven-ci-friendly.html -->
-        <revision>2.6.4</revision>
         <changelist>210-SNAPSHOT</changelist>
-        <!-- https://docs.spring.io/spring-boot/docs/2.6.4/reference/html/appendix-dependency-versions.html#appendix-dependency-versions -->
+        <!-- https://docs.spring.io/spring-boot/docs/2.6.6/reference/html/dependency-versions.html -->
         <spring-boot.version>${revision}</spring-boot.version>
         <wings.version>${revision}.${changelist}</wings.version>
         <!-- project -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
-        <kotlin.version>1.6.10</kotlin.version>
         <!-- mvn boot -->
         <maven.test.skip>false</maven.test.skip>
         <maven.deploy.skip>false</maven.deploy.skip>
         <maven.install.skip>false</maven.install.skip>
         <spring-boot.repackage.skip>false</spring-boot.repackage.skip>
         <spring-boot.repackage.executable>false</spring-boot.repackage.executable>
+        <!-- common -->
+        <errorprone.version>2.13.1</errorprone.version> <!-- https://github.com/google/error-prone/releases -->
+        <mapstruct.version>1.4.2.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
+        <guava.version>31.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
+        <commons-io.version>2.11.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
         <!-- silencer -->
         <mirana.version>2.2.4-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <!-- faceless -->
         <meepo.version>1.4.1-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
-        <simpleflatmapper.version>8.2.3</simpleflatmapper.version> <!-- https://simpleflatmapper.org -->
-        <shardingsphere.version>5.1.0</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
+        <simpleflatmapper.version>8.2.3</simpleflatmapper.version> <!-- https://github.com/arnaudroger/SimpleFlatMapper/tags -->
+        <shardingsphere.version>5.1.1</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <!-- slardar -->
-        <guava.version>31.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
-        <commons-io.version>2.11.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
-        <mapstruct.version>1.4.2.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
-        <springdoc.version>1.6.6</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi -->
-        <!-- slardar -->
-        <justauth.version>1.16.5</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
-        <xxljob.version>2.3.0</xxljob.version> <!-- https://github.com/xuxueli/xxl-job/releases -->
-        <!-- others -->
-        <errorprone.version>2.11.0</errorprone.version> <!-- https://github.com/google/error-prone/releases -->
+        <springdoc.version>1.6.7</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases -->
         <fastjson.version>1.2.79</fastjson.version> <!-- https://github.com/alibaba/fastjson/releases -->
         <kryo.version>5.3.0</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
         <transmittable.version>2.12.6</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
-        <bouncycastle.version>1.70</bouncycastle.version> <!-- https://bouncycastle.org/latest_releases.html -->
-        <boot-admin.version>2.6.2</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
-        <sentry.version>5.7.0</sentry.version> <!-- https://docs.sentry.io/platforms/java/guides/spring-boot/ -->
+        <bouncycastle.version>1.71</bouncycastle.version> <!-- https://bouncycastle.org/releasenotes.html -->
+        <!-- warlock -->
+        <justauth.version>1.16.5</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
+        <!-- others -->
+        <boot-admin.version>2.6.6</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
+        <sentry.version>5.7.3</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases -->
+        <xxljob.version>2.3.0</xxljob.version> <!-- https://github.com/xuxueli/xxl-job/releases -->
         <!-- override spring boot default -->
-        <lombok.version>1.18.22</lombok.version> <!-- https://projectlombok.org/changelog -->
         <okhttp3.version>4.9.3</okhttp3.version> <!-- just auth need 4, spring use 3 https://square.github.io/okhttp/changelog/ -->
         <!-- mvn-build-plugin -->
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version> <!-- https://search.maven.org/search?q=flatten-maven-plugin -->
@@ -109,6 +110,11 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional</groupId>
+                <artifactId>wings-silencer-test</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional</groupId>
                 <artifactId>wings-faceless</artifactId>
                 <version>${wings.version}</version>
             </dependency>
@@ -135,6 +141,16 @@
             <dependency>
                 <groupId>pro.fessional</groupId>
                 <artifactId>wings-slardar</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional</groupId>
+                <artifactId>wings-slardar-hazelcast</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional</groupId>
+                <artifactId>wings-slardar-test</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
@@ -243,7 +259,7 @@
             <!-- Argon2PasswordEncoder -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
-                <artifactId>bcpkix-jdk15on</artifactId>
+                <artifactId>bcpkix-jdk18on</artifactId>
                 <version>${bouncycastle.version}</version>
             </dependency>
             <!-- ops -->
@@ -286,11 +302,6 @@
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-ui</artifactId>
-                <version>${springdoc.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-security</artifactId>
                 <version>${springdoc.version}</version>
             </dependency>
             <dependency>
@@ -594,4 +605,14 @@
             </plugins>
         </pluginManagement>
     </build>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 </project>

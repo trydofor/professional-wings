@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
+import pro.fessional.wings.slardar.cache.WingsCacheHelper;
+import pro.fessional.wings.warlock.caching.CacheConst;
 import pro.fessional.wings.warlock.service.conf.impl.RuntimeConfServiceImpl;
 import pro.fessional.wings.warlock.service.conf.mode.RunMode;
 
@@ -16,6 +19,7 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author trydofor
@@ -37,6 +41,14 @@ class RuntimeConfServiceTest {
         assertSimple(ZonedDateTime.class, ZonedDateTime.of(ldt, ZoneId.of("Asia/Shanghai")));
         assertSimple(Long.class, 1023L);
         assertSimple(Integer.class, 10);
+        //
+        final Map<String, CacheManager> mgr = WingsCacheHelper.getManager(RuntimeConfServiceImpl.class);
+        Assertions.assertTrue(mgr.containsKey(CacheConst.RuntimeConfService.CacheManager));
+
+        final Map<String, Set<String>> cas = WingsCacheHelper.getCacheMeta(RuntimeConfServiceImpl.class, "getObject");
+        final Set<String> v = cas.get(CacheConst.RuntimeConfService.CacheManager);
+        Assertions.assertNotNull(v);
+        Assertions.assertTrue(v.contains(CacheConst.RuntimeConfService.CacheName));
     }
 
     <T> void assertSimple(Class<T> clz, T obj) {
@@ -91,7 +103,7 @@ class RuntimeConfServiceTest {
         final List<RunMode> arm1 = runtimeConfService.getEnums(RunMode.class);
         Assertions.assertEquals(arm, arm1);
 
-        runtimeConfService.newObject(RunMode.class, RunMode.Develop, "test RunMode");
+        runtimeConfService.setObject(RunMode.class, RunMode.Develop);
         final RunMode rm1 = runtimeConfService.getEnum(RunMode.class);
         Assertions.assertEquals(RunMode.Develop, rm1);
     }
