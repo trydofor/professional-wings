@@ -1,7 +1,7 @@
 package pro.fessional.wings.slardar.serialize;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.parser.Feature;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONReader;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
 
@@ -16,7 +16,7 @@ import java.lang.reflect.Type;
 public class JSONParser {
 
     @SuppressWarnings("unchecked")
-    public static <T> T parse(String json, TypeDescriptor targetType, Feature... fts) {
+    public static <T> T parse(String json, TypeDescriptor targetType, JSONReader.Feature... fts) {
         final Class<T> clz = (Class<T>) targetType.getType();
         return JSON.parseObject(json, clz, fts);
     }
@@ -26,7 +26,7 @@ public class JSONParser {
      * new TypeReference&lt;R&lt;Dto&gt;&gt;(){}.getType();
      * ResolvableType.forClassWithGenerics(R.class, Dto.class).getType()
      */
-    public static <T> T parse(String json, ResolvableType targetType, Feature... fts) {
+    public static <T> T parse(String json, ResolvableType targetType, JSONReader.Feature... fts) {
         final Type clz =  targetType.getType();
         return JSON.parseObject(json, clz, fts);
     }

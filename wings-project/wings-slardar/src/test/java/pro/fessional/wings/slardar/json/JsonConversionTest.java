@@ -1,7 +1,7 @@
 package pro.fessional.wings.slardar.json;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.TypeReference;
 import lombok.Data;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -67,9 +67,9 @@ class JsonConversionTest {
         dto.setGrow(lst);
         dto.setNote(map);
 
-        String jsonDto = JSON.toJSONString(dto, true);
-        String jsonMap = JSON.toJSONString(map, true);
-        String jsonLst = JSON.toJSONString(lst, true);
+        String jsonDto = JSON.toJSONString(dto);
+        String jsonMap = JSON.toJSONString(map);
+        String jsonLst = JSON.toJSONString(lst);
         System.out.println("jsonDto=\n" + jsonDto);
         System.out.println("jsonMap=\n" + jsonMap);
         System.out.println("jsonLst=\n" + jsonLst);
