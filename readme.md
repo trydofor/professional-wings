@@ -402,6 +402,15 @@ enum Jane {
 * 能内部Listen的，就不用外部的Subscribe。
 * 能同步的就不用异步
 
+### 0.2.14.有个过渡设计和技术债务
+
+因为需求的渐进明细，外部的环境变化，几乎所有业务系统的开发都是演进式。
+基于以上事实，在实际交付中，力求完美很容易误人误事，应该遵循以下规则：
+
+* 仅做高出能力的10%的挑战，小于20%的远见。
+* 任何技术或方案的妥协都不得牺牲质量。
+* 每次迭代，偿还10%-20%的技术债务。
+
 ## 0.3.技术选型
 
 技术选型，遵循Unix哲学，主要回答，`为什么`和`为什么不？`
@@ -942,4 +951,20 @@ FastJson中，使用com.alibaba.fastjson.TypeReference，
 // 以下类型等价，
 Type tp1 = new TypeReference<R<Dto>>(){}.getType();
 Type tp2 = ResolvableType.forClassWithGenerics(R.class, Dto.class).getType();
+```
+
+### 35.SPA及反向代理的缓存设置
+
+默认情况下springboot自动增加以下Response Header，使得反向代理无需设置
+`Cache-Control`=`no-cache,no-store,max-age=0,must-revalidate`
+
+但对于SPA页面，需要进行如下的手动设置。
+```nginx
+location / {
+    #add_header 'Access-Control-Allow-Origin' '*'; #允许跨域
+    root /data/static/demo-admin-spa/;
+    if ($request_filename ~* \.(html|htm)$){
+        add_header Cache-Control no-cache,no-store,max-age=0,must-revalidate;
+    }
+}
 ```

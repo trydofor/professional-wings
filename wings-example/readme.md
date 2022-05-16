@@ -133,6 +133,9 @@ server {
     location / {
         #add_header 'Access-Control-Allow-Origin' '*'; #允许跨域
         root /data/static/demo-admin-spa/;
+        if ($request_filename ~* \.(html|htm)$){
+            add_header Cache-Control no-cache,no-store,max-age=0,must-revalidate;
+        }
     }
 }
 ```
