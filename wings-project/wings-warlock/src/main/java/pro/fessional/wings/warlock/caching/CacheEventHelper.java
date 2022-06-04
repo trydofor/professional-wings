@@ -1,6 +1,6 @@
 package pro.fessional.wings.warlock.caching;
 
-import pro.fessional.mirana.cond.Contains;
+import pro.fessional.mirana.cond.EqualsUtil;
 import pro.fessional.wings.warlock.event.cache.TableChangeEvent;
 
 import java.util.Collection;
@@ -16,7 +16,7 @@ public class CacheEventHelper {
         if (event == null) return "NULL";
 
         final String tb = event.getTable();
-        if (Contains.igCase(tb, tables)) {
+        if (EqualsUtil.inNoCase(tb, tables)) {
             return tb;
         }
 
@@ -27,7 +27,7 @@ public class CacheEventHelper {
         if (event == null) return "NULL";
 
         final String tb = event.getTable();
-        if (event.hasChange(change) && Contains.igCase(tb, tables)) {
+        if (event.hasChange(change) && EqualsUtil.inNoCase(tb, tables)) {
             return tb;
         }
 
