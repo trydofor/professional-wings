@@ -9,7 +9,6 @@ import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import org.springframework.web.util.ServletRequestPathUtils;
-import pro.fessional.wings.slardar.servlet.request.WingsRequestWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -47,8 +46,8 @@ public class DefaultDomainRequestMatcher implements DomainRequestMatcher {
         checkInitMapping();
 
         String domainUrl = pathPrefix + domain + request.getRequestURI();
-        WingsRequestWrapper wrapper = new WingsRequestWrapper(request)
-                .setRequestURI(domainUrl);
+        DomainRequestWrapper wrapper = new DomainRequestWrapper(request);
+        wrapper.setRequestURI(domainUrl);
 
         Boolean b = matchedUrl.getIfPresent(domainUrl);
         if (b != null && b) {

@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import pro.fessional.wings.slardar.servlet.request.WingsRequestWrapper;
-import pro.fessional.wings.slardar.servlet.response.WingsResponseWrapper;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -44,10 +42,6 @@ public class TestCookieController {
         res.addCookie(newCookie("ck2", ins.ck2, false, true));
         res.addCookie(newCookie("oth", ins.oth, false, false));
         log.info("/test/cookie.json ck1={} ck2={}", ck1, ck2);
-        final WingsRequestWrapper irq = WingsRequestWrapper.infer(req);
-        log.info("wings req wrapper={}", irq);
-        final WingsResponseWrapper irs = WingsResponseWrapper.infer(res);
-        log.info("wings res wrapper={}", irs);
         return ck1 + ck2;
     }
 

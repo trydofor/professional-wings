@@ -32,7 +32,7 @@ public class WingsCaffeine {
      * 创建一个caffeine (Builder)
      *
      * @param max 最大值
-     * @param ttl 存货秒数
+     * @param ttl 存活秒数
      * @param tti 空闲秒数
      * @return cache
      */
@@ -48,7 +48,7 @@ public class WingsCaffeine {
      * 创建一个caffeine Cache，使用 EchoLoader
      *
      * @param max 最大值
-     * @param ttl 存货秒数
+     * @param ttl 存活秒数
      * @param tti 空闲秒数
      * @return cache
      */
