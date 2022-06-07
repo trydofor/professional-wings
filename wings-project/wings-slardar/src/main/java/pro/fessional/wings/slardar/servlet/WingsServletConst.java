@@ -9,7 +9,10 @@ public class WingsServletConst {
     public static int wingsOrder = -10_0_9 * (10 + 7);
     public static final int ORDER_FILTER_OVERLOAD = (wingsOrder++) * 70;
     public static final int ORDER_FILTER_DOMAINEX = (wingsOrder++) * 70;
-    public static final int ORDER_FILTER_COOKIES = (wingsOrder++) * 70;
+    public static final int ORDER_FILTER_RECOOKIE = (wingsOrder++) * 70;
+    public static final int ORDER_FILTER_RESTREAM = (wingsOrder++) * 70;
+
+    //
     public static final int ORDER_FIRST_BLOOD_IMG = (wingsOrder++) * 70;
 
     //

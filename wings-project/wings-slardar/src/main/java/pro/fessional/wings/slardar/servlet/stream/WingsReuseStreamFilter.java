@@ -1,7 +1,6 @@
-package pro.fessional.wings.slardar.servlet.cookie;
+package pro.fessional.wings.slardar.servlet.stream;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.Ordered;
@@ -18,27 +17,18 @@ import java.io.IOException;
  * @author trydofor
  * @since 2019-11-14
  */
-@RequiredArgsConstructor
-public class WingsCookieFilter extends OncePerRequestFilter implements Ordered {
+public class WingsReuseStreamFilter extends OncePerRequestFilter implements Ordered {
 
     @Setter @Getter
-    private int order = WingsServletConst.ORDER_FILTER_RECOOKIE;
-
-    private final WingsCookieInterceptor interceptor;
+    private int order = WingsServletConst.ORDER_FILTER_RESTREAM;
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest req, @NotNull HttpServletResponse res, @NotNull FilterChain chain)
             throws ServletException, IOException {
 
-        if (interceptor.notIntercept()) {
-            chain.doFilter(req, res);
-            return;
-        }
-
-        // read
-        CookieRequestWrapper request = new CookieRequestWrapper(req, interceptor::read);
-        // write
-        CookieResponseWrapper response = new CookieResponseWrapper(res, interceptor::write);
+        ReuseStreamRequestWrapper request = new ReuseStreamRequestWrapper(req);
+        ReuseStreamResponseWrapper response = new ReuseStreamResponseWrapper(res);
         chain.doFilter(request, response);
+        response.copyBodyToResponse();
     }
 }

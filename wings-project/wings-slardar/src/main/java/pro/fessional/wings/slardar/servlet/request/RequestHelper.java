@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.servlet.request;
 
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,10 +10,14 @@ import org.springframework.validation.ObjectError;
 import pro.fessional.mirana.cast.TypedCastUtil;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.Wildcard;
+import pro.fessional.wings.slardar.servlet.stream.ReuseStreamRequestWrapper;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -247,5 +252,23 @@ public class RequestHelper {
 
     public static boolean isForwarding(HttpServletRequest request) {
         return request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI) != null;
+    }
+
+    @SneakyThrows
+    public static InputStream tryCircleInputStream(ServletRequest request) {
+        final ReuseStreamRequestWrapper inf = ReuseStreamRequestWrapper.infer(request);
+        if (inf != null && inf.circleInputStream(true)) {
+            return inf.getInputStream();
+        }
+        return null;
+    }
+
+    @SneakyThrows
+    public static BufferedReader tryCircleBufferedReader(ServletRequest request) {
+        final ReuseStreamRequestWrapper inf = ReuseStreamRequestWrapper.infer(request);
+        if (inf != null && inf.circleInputStream(true)) {
+            return inf.getReader();
+        }
+        return null;
     }
 }

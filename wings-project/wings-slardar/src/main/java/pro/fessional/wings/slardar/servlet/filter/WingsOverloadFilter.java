@@ -3,7 +3,9 @@ package pro.fessional.wings.slardar.servlet.filter;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
@@ -33,6 +35,9 @@ public class WingsOverloadFilter implements OrderedFilter {
 
     private final Log logger = LogFactory.getLog(WingsOverloadFilter.class);
 
+    @Setter @Getter
+    private int order = WingsServletConst.ORDER_FILTER_OVERLOAD;
+
     private final AtomicInteger requestCapacity = new AtomicInteger(0);
     private final AtomicInteger requestProcess = new AtomicInteger(0);
 
@@ -56,7 +61,8 @@ public class WingsOverloadFilter implements OrderedFilter {
 
         if (config.requestInterval <= 0 || config.requestCalmdown <= 0) {
             this.spiderCache = null;
-        } else {
+        }
+        else {
             int capacity = initCapacity(config);
             requestCapacity.set(capacity);
 
@@ -67,7 +73,8 @@ public class WingsOverloadFilter implements OrderedFilter {
         }
         if (config.responseInfoStat <= 0) {
             responseCost = new AtomicLong[0];
-        } else {
+        }
+        else {
             responseCost = new AtomicLong[500];
         }
         for (int i = 0; i < responseCost.length; i++) {
@@ -104,7 +111,8 @@ public class WingsOverloadFilter implements OrderedFilter {
                     lastWarnSlow.put(calmDown.ip, now);
                 }
                 return; // 直接返回
-            } else {
+            }
+            else {
                 if (!isFst) calmDown.firstRequest.set(now);
                 if (isCnt) calmDown.heardRequest.addAndGet(-rqs);
             }
@@ -114,7 +122,8 @@ public class WingsOverloadFilter implements OrderedFilter {
         try {
             chain.doFilter(request, response);
             checkAndStats(httpReq, response, now, System.currentTimeMillis());
-        } finally {
+        }
+        finally {
             requestProcess.decrementAndGet();
         }
     }
@@ -125,19 +134,6 @@ public class WingsOverloadFilter implements OrderedFilter {
 
     public int getRequestProcess() {
         return requestProcess.get();
-    }
-
-
-    //
-    private int order = WingsServletConst.ORDER_FILTER_OVERLOAD;
-
-    @Override
-    public int getOrder() {
-        return this.order;
-    }
-
-    public void setOrder(int order) {
-        this.order = order;
     }
 
     //
@@ -182,7 +178,7 @@ public class WingsOverloadFilter implements OrderedFilter {
         /**
          * 请求ip白名单，分号分割，前部匹配 127. 192.
          */
-        private Map<String,String> requestPermit = Collections.emptyMap();
+        private Map<String, String> requestPermit = Collections.emptyMap();
 
         /**
          * 满响应（毫秒数），超过时，记录WARN日志，小于0表示关闭
@@ -244,13 +240,14 @@ public class WingsOverloadFilter implements OrderedFilter {
             int idx = (int) (cost % costStep);
             if (idx >= responseCost.length) {
                 responseCost[responseCost.length - 1].incrementAndGet();
-            } else {
+            }
+            else {
                 responseCost[idx].incrementAndGet();
             }
             long total = responseTotal.incrementAndGet();
             if (logger.isInfoEnabled()
-                    && (config.responseInfoStat == 0 || total % config.responseInfoStat == 0)
-                    && end - lastInfoStat.get() > config.responseInfoStat) {
+                && (config.responseInfoStat == 0 || total % config.responseInfoStat == 0)
+                && end - lastInfoStat.get() > config.responseInfoStat) {
 
                 long sum = 0;
                 int p99 = 0;
@@ -271,12 +268,12 @@ public class WingsOverloadFilter implements OrderedFilter {
                 }
 
                 logger.info("wings-snap-response "
-                        + ", total-resp=" + total
-                        + ", p99=" + p99
-                        + ", p95=" + p95
-                        + ", p90=" + p90
-                        + ", process=" + requestProcess.get()
-                        + ", capacity=" + requestCapacity.get());
+                            + ", total-resp=" + total
+                            + ", p99=" + p99
+                            + ", p95=" + p95
+                            + ", p90=" + p90
+                            + ", process=" + requestProcess.get()
+                            + ", capacity=" + requestCapacity.get());
                 lastInfoStat.set(end);
             }
         }

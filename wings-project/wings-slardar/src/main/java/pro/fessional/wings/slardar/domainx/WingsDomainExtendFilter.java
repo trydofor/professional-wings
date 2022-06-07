@@ -1,6 +1,8 @@
 package pro.fessional.wings.slardar.domainx;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.Ordered;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -23,6 +25,9 @@ import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_DOMAIN_
  */
 @RequiredArgsConstructor
 public class WingsDomainExtendFilter extends OncePerRequestFilter implements Ordered {
+
+    @Setter @Getter
+    private int order = WingsServletConst.ORDER_FILTER_DOMAINEX;
 
     private final Map<String, List<String[]>> hostWildcard;
     private final DomainRequestMatcher domainRequestMatcher;
@@ -52,17 +57,4 @@ public class WingsDomainExtendFilter extends OncePerRequestFilter implements Ord
 
         chain.doFilter(wrap, res);
     }
-
-    //
-    private int order = WingsServletConst.ORDER_FILTER_DOMAINEX;
-
-    @Override
-    public int getOrder() {
-        return this.order;
-    }
-
-    public void setOrder(int order) {
-        this.order = order;
-    }
-
 }

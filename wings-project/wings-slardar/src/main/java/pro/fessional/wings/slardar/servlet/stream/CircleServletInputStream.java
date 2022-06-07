@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.servlet.request;
+package pro.fessional.wings.slardar.servlet.stream;
 
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.io.CircleInputStream;

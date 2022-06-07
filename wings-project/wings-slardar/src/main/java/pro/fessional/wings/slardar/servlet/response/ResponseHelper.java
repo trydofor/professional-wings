@@ -4,16 +4,22 @@ import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.io.Zipper;
 import pro.fessional.mirana.pain.IORuntimeException;
 import pro.fessional.mirana.text.StringTemplate;
 import pro.fessional.wings.slardar.concur.WingsCaptchaHelper;
 import pro.fessional.wings.slardar.servlet.ContentTypeHelper;
+import pro.fessional.wings.slardar.servlet.stream.ReuseStreamResponseWrapper;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -21,7 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -61,13 +66,8 @@ public class ResponseHelper {
         }
         else {
             dis.append(new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
-            try {
-                final String enc = URLEncoder.encode(fileName, "UTF8");
-                dis.append(";fileName*=UTF-8''").append(enc);
-            }
-            catch (UnsupportedEncodingException e) {
-                // ignore
-            }
+            final String enc = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+            dis.append(";fileName*=UTF-8''").append(enc);
         }
         return dis.toString();
     }
@@ -217,6 +217,32 @@ public class ResponseHelper {
         }
         catch (IOException e) {
             throw new IORuntimeException(e);
+        }
+    }
+
+    @SneakyThrows
+    public static InputStream tryCachingOutputStream(ServletResponse response) {
+        final ReuseStreamResponseWrapper inf = ReuseStreamResponseWrapper.infer(response);
+        if (inf != null && inf.cachingOutputStream(true)) {
+            return inf.getContentInputStream();
+        }
+        return null;
+    }
+
+    public static void renderModelAndView(ModelAndView mav, HttpServletResponse res, HttpServletRequest req) {
+        final HttpStatus status = mav.getStatus();
+        if (status != null) {
+            res.setStatus(status.value());
+        }
+
+        final View view = mav.getView();
+        if (view != null) {
+            try {
+                view.render(mav.getModel(), req, res);
+            }
+            catch (Exception e) {
+                throw new IORuntimeException(e);
+            }
         }
     }
 }

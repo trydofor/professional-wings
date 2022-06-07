@@ -450,22 +450,32 @@ org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 
 在springboot默认是3.x，而just-auth需要4.x，所以需要手动okhttp3.version属性
 
-## 3.7.2.防止连击
+## 3.7.2.后端防抖
 
-通常业务场景下，可以通过前端在dom或js层面做好用户的防连击。而服务器端防连击，主要是API类的误操作。
-因filter和interceptor会对所有请求检查，slardar采用的是AOP方式，类似Cacheable。
+与前端(LodashJs)相似，不同的是后端业务优先，只支持先调用后等待的leading防抖。
+即在第一个请求时处理业务，有后续请求出现时，可以有以下处理方式
 
-沿用dota命名，此处命名为 @DoubleKill注解，通过Jvm全局锁和DoubleKillException完成。
+* 不复用leading结果时，直接返回预设的response(默认208 Already Reported)。否则，
+* 等待waiting毫秒数，超时或被leading唤醒。然后，
+* 若有leading有response，则复用；否则，返回预设response。
 
-在controller层，需要使用@RequestParam 或@RequestHeader等注入参数。
-对应session级别的控制，可使用@bean进行处理。默认返回202(Accepted)
+`@Debounce`底层基于HandlerInterceptor和，request流复用和response流缓存。
+作用于Controller层，Session级，以URL特征及参数为判断重复的依据。
+
+## 3.7.3.防止连击 
+
+与Debounce不同，`@DoubleKill`类似Cacheable采用AOP方式，主要用于Service层防抖。
+沿用Dota命名，通过Jvm全局锁和DoubleKillException完成重复检查和流程控制。
+
+也可以作用于Controller层，需要显示使用并通过Spel指定参数，如@RequestParam等参数。
+默认是session级别的控制，可使用@bean进行处理。默认返回202 Accepted
 
 默认对DoubleKillException返回固定的json字符串，注入DoubleKillExceptionResolver可替换，
 需要注意ExceptionResolver或ExceptionHandler的Order，避免异常捕获的层级错误。
 
 详细用法，可参考TestDoubleKillController和DoubleKillService
 
-## 3.7.3.验证码
+## 3.7.4.验证码
 
 对于受保护的资源，要采取一定的验证码，有时是为了延缓时间，有时是为了区分行为。 
 验证码可以header或param进行校验（默认param）去请求验证码图片等。
@@ -493,7 +503,7 @@ slardar验证码的默认是基于图片的，在现今的AI算法识别上，�
 
 若需集成其他验证码，如第三方服务或消息验证码，实现并注入FirstBloodHandler即可
 
-### 3.7.4.防止篡改
+### 3.7.5.防止篡改
 
 通过在http header中设置信息，进行编辑保护，防止客户端篡改。默认返回409(Conflict)。
 详见 wings-righter-79.properties 和 RighterContext。实现原理和使用方法是，
@@ -503,13 +513,13 @@ slardar验证码的默认是基于图片的，在现今的AI算法识别上，�
 * 提交时需要提交此签名，并被校验，签名错误时直接409
 * 签名通过后，通过RighterContext获取数据，程序自行检验数据项是否一致
 
-### 3.7.5.终端信息
+### 3.7.6.终端信息
 
 通过handlerInterceptor，在当前线程和request中设置terminal信息
 
 TerminalContext保存了，远程ip，agent信息，locale和timezone
 
-## 3.7.6.同步/异步/单机/集群的事件驱动
+## 3.7.7.同步/异步/单机/集群的事件驱动
 
 EventPublishHelper默认提供了3种事件发布机制
 

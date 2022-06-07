@@ -88,6 +88,22 @@ public class SlardarEnabledProp {
     public static final String Key$righter = Key + ".righter";
 
     /**
+     * 是否开启Debounce默认的Interceptor和图形验证码
+     *
+     * @see #Key$debounce
+     */
+    private boolean debounce = true;
+    public static final String Key$debounce = Key + ".debounce";
+
+    /**
+     * 是否开启reuse stream filter
+     *
+     * @see #Key$restream
+     */
+    private boolean restream = true;
+    public static final String Key$restream = Key + ".restream";
+
+    /**
      * 是否开启FirstBlood默认的Interceptor和图形验证码
      *
      * @see #Key$firstBlood

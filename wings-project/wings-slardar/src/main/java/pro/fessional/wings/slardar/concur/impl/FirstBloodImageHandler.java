@@ -5,14 +5,11 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 import pro.fessional.mirana.bits.Md5;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.data.Null;
-import pro.fessional.mirana.pain.IORuntimeException;
 import pro.fessional.wings.slardar.concur.FirstBlood;
 import pro.fessional.wings.slardar.servlet.request.RequestHelper;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
@@ -121,20 +118,8 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
      * @param token    身份标记
      */
     protected void needCaptcha(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, String token) {
-        final HttpStatus status = needCaptchaResponse.getStatus();
-        if (status != null) {
-            response.setStatus(status.value());
-        }
         ResponseHelper.bothHeadCookie(response, clientTicketKey, token, 600);
-        final View view = needCaptchaResponse.getView();
-        if (view != null) {
-            try {
-                view.render(needCaptchaResponse.getModel(), request, response);
-            }
-            catch (Exception e) {
-                throw new IORuntimeException(e);
-            }
-        }
+        ResponseHelper.renderModelAndView(needCaptchaResponse, response, request);
     }
 
     /**

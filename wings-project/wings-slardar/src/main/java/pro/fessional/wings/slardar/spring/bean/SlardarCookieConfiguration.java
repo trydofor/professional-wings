@@ -80,7 +80,7 @@ public class SlardarCookieConfiguration {
     public WingsCookieFilter wingsCookieFilter(WingsCookieInterceptor wingsCookieInterceptor) {
         logger.info("Wings conf WingsCookieFilter");
         WingsCookieFilter filter = new WingsCookieFilter(wingsCookieInterceptor);
-        filter.setOrder(WingsServletConst.ORDER_FILTER_COOKIES);
+        filter.setOrder(WingsServletConst.ORDER_FILTER_RECOOKIE);
         return filter;
     }
 }
