@@ -18,8 +18,8 @@
 在github上设置，需要`App ID`，`Client ID`和`Client secret`，注意不用外泄。 设置入口如下 Settings |
 Developer settings | GitHub Apps
 
-* Homepage URL - http://127.0.0.1:8084
-* Callback URL - http://127.0.0.1:8084/auth/github/login.json
+* Homepage URL - <http://127.0.0.1:8084>
+* Callback URL - <http://127.0.0.1:8084/auth/github/login.json>
 
 ## 4.2.功能权限
 
@@ -97,6 +97,7 @@ Warlock在用户通过身边鉴别（renew）后，会分别加载和用户绑�
 默认实现中，login中会在cookie和header中放置sessionId，logout是清空session。
 
 需要注意的是，http协议的header和cookie的大小写问题，因此建议全小写。
+
 * header RFC2616 *不*区分大小写，有些代理或工具会自动转为全小写。
 * cookie RFC2019 区分大小写，一般保存原样。
 * 已知header默认自动转小写有swagger-ui和webpack-dev-server(node http)
@@ -105,11 +106,13 @@ NonceLoginSuccessHandler配合NonceTokenSessionHelper实现了oauth一次性toke
 所以如果需要此功能，需要在自行实现AuthenticationSuccessHandler继承NonceLoginSuccessHandler。
 
 Oauth通过定制host和state参数，构造指令，完成重定向定制，参考 AuthStateBuilder 类。
+
 * 重定向 - `http`或`/`开头的302 跳转。
 * 回写 - 非空的内容，直接写回到response。
 * 考虑到安全性，以上必须预设在配置文件中，参考`wings.warlock.just-auth.safe-*`
 
 注意 safe-host对以下功能有约束。
+
 * 用request有host参数时，检查redirect-uri的{host}，通过则使用host参数构造uri
 * state中重定向是以http开头时，检查host，不通过时，直接回写，而非重定向。
 
@@ -134,7 +137,7 @@ Oauth通过定制host和state参数，构造指令，完成重定向定制，参
 比如admin中，必须具有ROLE_ADMIN才可以访问，否则登录成功后，所有功能都是403，并不友好。
 
 所以在登录时，使用authType前缀，可以直接验证基本权限，如果不具备，则登录失败。
-```
+```java
 wings.warlock.security.zone-perm.admin=ROLE_ADMIN
 /auth/user-admin/login.json
 ```
@@ -155,10 +158,9 @@ wings.warlock.security.zone-perm.admin=ROLE_ADMIN
 
 ### 4.4.6.按登录ip进行权限检查
 
-
 ## 4.9.常见问题
 
-### 001.权限设置应该在Filter(Url)还是Method(Aop)
+### 01.权限设置应该在Filter(Url)还是Method(Aop)
 
 通过Url前缀特征，比较集中和简单，推荐使用。而Aop比较分散，粒度更细致。
 

@@ -4,13 +4,13 @@
 
 ## 9.1.前置条件
 
- * 了解 `maven`，缺什么，补什么。
- * 了解 `spring*`，`看官方文档，不要百度` x 3！
- * 了解 `mysql*`数据库，mysql
+* 了解 `maven`，缺什么，补什么。
+* 了解 `spring*`，`看官方文档，不要百度` x 3！
+* 了解 `mysql*`数据库，mysql
 
 ## 9.2.自建环境
 
-``` bash
+```bash
 # 设置变量
 PASS=S4f3_Password@MoilionCircle
 
@@ -34,7 +34,7 @@ mysql:8.0
 
 ### maven 打包和启动
 
-``` bash
+```bash
 mvn -U clean package
 demo-devops/wings-starter.sh start
 # Ctrl-C停止日志输出
@@ -65,7 +65,7 @@ jmeter -n \
 
 复制 wings-starter.sh 到服务器，并使用软连接建立启动脚本和env文件，以demo-admin为例。
 
-``` bash
+```bash
 # 建立启动脚本，一个boot一个
 ln -s wings-starter.sh demo-admin.sh
 # 复制 wings-starter.env内容，与启动脚本同名(扩展名不同)
@@ -75,7 +75,7 @@ vi demo-admin.env
 在env中，port,jar,log容易理解，按项目需要配置即可。
 BOOT_CNF是用来替换默认配置的运行时配置，结构如下。
 
-```
+```text
 ├── application.properties // 程序级设置
 ├── wings-conf // 自动配置，按需覆盖内部文件
 │     └── spring-datasource.properties
@@ -85,7 +85,7 @@ BOOT_CNF是用来替换默认配置的运行时配置，结构如下。
 
 通常的配置参考，包括强制https，保护误操作.git，前后端分离。
 
-``` nginx
+```nginx
 upstream demo_admin {
     ip_hash;
     server demo_appser_01:8090;
@@ -146,7 +146,7 @@ server {
 * include /data/nginx/conf/vhost/*.nginx;
 * include /data/nginx/down/*.nginx;
 
-``` nginx
+```nginx
 # sudo vi /etc/nginx/nginx.conf
 
 server {
@@ -161,7 +161,7 @@ server {
 
 http段有关的长连接和反向代理设置。
 
-``` nginx
+```nginx
 http {
     keepalive_timeout 1800;
     keepalive_requests 8192;

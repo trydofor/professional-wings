@@ -14,7 +14,7 @@
 
 全工程的java文件，替换以下字符串
 
-``` bash
+```bash
 sed -i 's/user_anthn/user_authn/g'
 sed -i 's/UserAnthn/UserAuthn/g'
 ```

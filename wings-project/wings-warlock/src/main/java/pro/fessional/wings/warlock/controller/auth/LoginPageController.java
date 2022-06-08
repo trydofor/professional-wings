@@ -75,7 +75,7 @@ public class LoginPageController {
             "# Usage \n"
             + "一般用于构造访问入口，如Oauth2登录的第三方路径和参数；获取反扒登录的验证码\n"
             + "需要注意state是数组，是spring支持的http协议的参数数组，如`a=1&a=2&a=3`\n"
-            + "``` bash \n"
+            + "```bash \n"
             + "curl -X POST 'http://localhost:8084/auth/login-page.json' \\\n"
             + "--data 'authType=github&state=/order-list&state=http://localhost:8080&state=&host=localhost:8080'\n"
             + "curl -X GET  \"http://localhost:8084/auth/login-page.json\\\n"

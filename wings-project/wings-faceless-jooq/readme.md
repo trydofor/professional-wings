@@ -5,8 +5,8 @@
 
 ![faceless_void_time_walk](faceless_void_time_walk.png)
 
- * 从数据库自动生成jooq代码，pojo, table, dao
- * 通过jooq的强类型，保证数据层面的变更和重构稳定
+* 从数据库自动生成jooq代码，pojo, table, dao
+* 通过jooq的强类型，保证数据层面的变更和重构稳定
 
 ## 2.2.1.强类型(jooq)数据库操作
 
@@ -15,9 +15,9 @@
 MyBatis虽是大部分项目的首选，固有其优秀之处，但开发人员的懒惰或约束力量的不足，
 使得项目不高效，偶尔很难维护，项目中容易蔓生出以下问题。
 
- * 经常被 `select *`，带有大量无用信息。
- * 很容易写出复杂的大SQL，使得服务难以拆分。
- * 字符串及弱类型，IDE的眷顾有限。
+* 经常被 `select *`，带有大量无用信息。
+* 很容易写出复杂的大SQL，使得服务难以拆分。
+* 字符串及弱类型，IDE的眷顾有限。
 
 使用Jooq，强类型，编程高于配置，并且SQL友好，又恰好有限制能力的能力。
 
@@ -29,17 +29,17 @@ MyBatis虽是大部分项目的首选，固有其优秀之处，但开发人员�
 
 自动生成的`*Dao`，有大量可直接使用的数据库操作方法，免去很多手写代码量。
 
- * `getAlias` 获得select用的别名表，`Table as az`
-   - 运行时，Table唯一，采用excel格式的az进制表示
-   - 自命名时，采用数字结尾，避免与系统发生冲突。
- * `getTable` 获得modify用的不使用别名的表 `Table`
- * 使用preparedStatement的batch批量插入和更新大量数据
- * 使用mysql特效，`insert ignore`和`replace into`处理重复数据
- * 使用`on duplicate key update`或`select+insert+update`部分更新唯一记录。
+* `getAlias` 获得select用的别名表，`Table as az`
+  - 运行时，Table唯一，采用excel格式的az进制表示
+  - 自命名时，采用数字结尾，避免与系统发生冲突。
+* `getTable` 获得modify用的不使用别名的表 `Table`
+* 使用preparedStatement的batch批量插入和更新大量数据
+* 使用mysql特效，`insert ignore`和`replace into`处理重复数据
+* 使用`on duplicate key update`或`select+insert+update`部分更新唯一记录。
 
 值得注意的是，在Dao中使用alias表和本表时，必须保持同源，否则报语法错误。
 
-``` kotlin
+```kotlin
 val da = dao.alias
 // val rd = dao.fetch(da.Id.eq(id)) 别名和本表不同源，语法错误
 // select * from win_user where `y8`.`id` = ?
@@ -49,18 +49,18 @@ val rd = dao.fetch(da, da.Id.eq(id))
 
 在复杂数据操作必须手写代码时，遵循以下约定，
 
- * 任何对数据库的操作，都应该在`database`包内进行。
- * DSLContext和DataSource不应该离开database层。
- * `single/`包，表示单表，可含简单的条件子查询，一个包名一个表。
- * `couple/`包， 表示多表，一般为join查询或子查询，包名以主表命名。
- * `select|modify`分别对应数据库操作。
- * 也可以`select|insert|update|delete`分类，只是autowired时比较多
- * 数据传递以Dto结尾，放到最临近使用的位子。
- * Dto以静态内类形似存在，用lombok做@Value或@Data。
- * `forUpdate`这种带锁操作，方法名以`Lock`结尾。
- * 类名以`表名`+`Insert|Modify`。
- * `Record`等同于`Dao`不应该在外部使用，应该用`Pojo`或`Dto`
- * 主要 Dao，完成 dsl，等相关操作即可
+* 任何对数据库的操作，都应该在`database`包内进行。
+* DSLContext和DataSource不应该离开database层。
+* `single/`包，表示单表，可含简单的条件子查询，一个包名一个表。
+* `couple/`包， 表示多表，一般为join查询或子查询，包名以主表命名。
+* `select|modify`分别对应数据库操作。
+* 也可以`select|insert|update|delete`分类，只是autowired时比较多
+* 数据传递以Dto结尾，放到最临近使用的位子。
+* Dto以静态内类形似存在，用lombok做@Value或@Data。
+* `forUpdate`这种带锁操作，方法名以`Lock`结尾。
+* 类名以`表名`+`Insert|Modify`。
+* `Record`等同于`Dao`不应该在外部使用，应该用`Pojo`或`Dto`
+* 主要 Dao，完成 dsl，等相关操作即可
 
 JdbcTemplate用于功能性或复杂的数据库操作，以自动注入Bean。
 参考 `JdbcTemplateConfiguration`的注入。
@@ -68,10 +68,10 @@ JdbcTemplate用于功能性或复杂的数据库操作，以自动注入Bean。
 命名上，接口直接命名，不需要前后缀，Dto放在接口之内。
 实现类，放到`impl/`包内，用后缀表示实现方式不同。
 
- * `Jooq`，Jooq实现
- * `Jdbc`，JdbcTemplate实现
- * `Impl`，混合实现。
- 
+* `Jooq`，Jooq实现
+* `Jdbc`，JdbcTemplate实现
+* `Impl`，混合实现。
+
 如`LightId`在读写分离时，需要强制master，可使用注解`MasterRouteOnly`。
 
 ## 2.2.2.JOOQ与ShardingSphere的兼容问题
@@ -83,64 +83,63 @@ JdbcTemplate用于功能性或复杂的数据库操作，以自动注入Bean。
 jooq生成代码，默认使用`table.column`限定列名，而ShardingJdbc做当前版本不支持。
 最优解决办法是使ShardingJdbc支持，当前最简单的办法是修改Jooq生成策略，参考以下Issue。
 
- * [JOOQ#8893 Add Settings.renderTable](https://github.com/jOOQ/jOOQ/issues/8893)
- * [JOOQ#9055 should NO table qualify if NO table alias](https://github.com/jOOQ/jOOQ/pull/9055)
- * [ShardingSphere#2859 `table.column` can not sharding](https://github.com/apache/incubator-shardingsphere/issues/2859)
- * [ShardingSphere#5330 replace into](https://github.com/apache/shardingsphere/issues/5330)
- * [ShardingSphere#5210 on duplicate key update](https://github.com/apache/shardingsphere/issues/5210)
-
+* [JOOQ#8893 Add Settings.renderTable](https://github.com/jOOQ/jOOQ/issues/8893)
+* [JOOQ#9055 should NO table qualify if NO table alias](https://github.com/jOOQ/jOOQ/pull/9055)
+* [ShardingSphere#2859 `table.column` can not sharding](https://github.com/apache/incubator-shardingsphere/issues/2859)
+* [ShardingSphere#5330 replace into](https://github.com/apache/shardingsphere/issues/5330)
+* [ShardingSphere#5210 on duplicate key update](https://github.com/apache/shardingsphere/issues/5210)
 
 在jooq`3.17.0`版本之前，使用`spring.wings.faceless.jooq.enabled.auto-qualify=true`，
 完成限定名的自动处理，其规则是，`不存在alias时，不增加限定名`。
 
 使用Jooq的主要原因之一是`限制的艺术`，避免写出比较复杂的SQL，所以约定如下，
 
- * 鼓励单表操作，放在`single`包内，使用`本名`(如，WinUserLoginTable)
- * 操作多表时，`别名`(如，WinUserLoginTable.asA2)优于`本名`
- * INSERT 使用`本名`，不可使用`别名`
- * DELETE 使用`本名`，不可使用`别名`
- * UPDATE 使用`别名`优先于`本名`
- * SELECT 单表时，用`本名`；多表时，`别名`优先于`本名`
- * **不要** 使用中文表名，例子代码只是极端测试。
+* 鼓励单表操作，放在`single`包内，使用`本名`(如，WinUserLoginTable)
+* 操作多表时，`别名`(如，WinUserLoginTable.asA2)优于`本名`
+* INSERT 使用`本名`，不可使用`别名`
+* DELETE 使用`本名`，不可使用`别名`
+* UPDATE 使用`别名`优先于`本名`
+* SELECT 单表时，用`本名`；多表时，`别名`优先于`本名`
+* **不要** 使用中文表名，例子代码只是极端测试。
 
 JOOQ参考资料
 
- * [Jooq patch](https://github.com/trydofor/jOOQ/commit/0be23d2e90a1196def8916b9625fbe2ebffd4753)
- * [批量操作 record](https://www.jooq.org/doc/3.12/manual/sql-execution/crud-with-updatablerecords/batch-execution-for-crud/)
- * [批量操作 jdbc](https://www.jooq.org/doc/3.12/manual/sql-execution/batch-execution/)
- * [使用别名，支持分表](https://www.jooq.org/doc/3.12/manual/sql-building/table-expressions/aliased-tables/)
- * [SQL的执行](https://www.jooq.org/doc/3.12/manual/sql-execution/)
+* [Jooq patch](https://github.com/trydofor/jOOQ/commit/0be23d2e90a1196def8916b9625fbe2ebffd4753)
+* [批量操作 record](https://www.jooq.org/doc/3.12/manual/sql-execution/crud-with-updatablerecords/batch-execution-for-crud/)
+* [批量操作 jdbc](https://www.jooq.org/doc/3.12/manual/sql-execution/batch-execution/)
+* [使用别名，支持分表](https://www.jooq.org/doc/3.12/manual/sql-building/table-expressions/aliased-tables/)
+* [SQL的执行](https://www.jooq.org/doc/3.12/manual/sql-execution/)
 
 ## 2.2.3.Record Mapper
 
 jooq 默认有2中Mapper都区分大小写，对应的功能如下
 
- * DefaultRecordMapper 负责Record#into(Class), Result#into(Class)
- * DefaultRecordUnmapper 负责DSL.newRecord(Table, Object), Record#from(Object)
+* DefaultRecordMapper 负责Record#into(Class), Result#into(Class)
+* DefaultRecordUnmapper 负责DSL.newRecord(Table, Object), Record#from(Object)
 
 SimpleFlatMapper的mapper更为宽松，不区分大小写，单有一下不足。
 
- * [intoArray的bug](https://github.com/arnaudroger/SimpleFlatMapper/issues/764)
- * 不支持primary type，如int.class，仅Integer.class
+* [intoArray的bug](https://github.com/arnaudroger/SimpleFlatMapper/issues/764)
+* 不支持primary type，如int.class，仅Integer.class
 
 在官方修复前，不推荐使用，因为除了以上bug，并未充分测试。
 
-## 2.2.4.常见问题
+## 2.2.9.常见问题
 
 ### 01.使用jooq执行plain sql
 
 在执行plain sql时，可以使用jdbcTemplate或jooq，jooq的好处是，会进行parse（性能），进行兼容性调整（如果需要），
 所以，在运行时，不考虑兼容性，推荐用 jdbcTemplate，在需要语法分析或合并等场景，使用jooq。
 
- * https://www.jooq.org/doc/3.12/manual/sql-building/plain-sql/
- * https://www.jooq.org/doc/3.12/manual/sql-building/plain-sql-templating/
- * https://www.jooq.org/doc/3.12/manual/sql-building/queryparts/plain-sql-queryparts/
- * https://www.jooq.org/doc/3.12/manual/sql-building/bind-values/
- * https://www.jooq.org/doc/3.12/manual/sql-building/sql-parser/sql-parser-grammar/
- * https://blog.jooq.org/2020/03/05/using-java-13-text-blocks-for-plain-sql-with-jooq/
- * https://docs.oracle.com/cd/E13157_01/wlevs/docs30/jdbc_drivers/sqlescape.html
+* <https://www.jooq.org/doc/3.12/manual/sql-building/plain-sql/>
+* <https://www.jooq.org/doc/3.12/manual/sql-building/plain-sql-templating/>
+* <https://www.jooq.org/doc/3.12/manual/sql-building/queryparts/plain-sql-queryparts/>
+* <https://www.jooq.org/doc/3.12/manual/sql-building/bind-values/>
+* <https://www.jooq.org/doc/3.12/manual/sql-building/sql-parser/sql-parser-grammar/>
+* <https://blog.jooq.org/2020/03/05/using-java-13-text-blocks-for-plain-sql-with-jooq/>
+* <https://docs.oracle.com/cd/E13157_01/wlevs/docs30/jdbc_drivers/sqlescape.html>
 
-``` java
+```java
 class SelectPlain {
 public void test(){
 // 其中的 {0}是，0-base的，直接字符串替换的。使用不当会构成sql注入
@@ -180,16 +179,35 @@ query(
 ```
 
 Plain SQL templating specification
-Templating with QueryPart placeholders (or bind value placeholders) requires a simple parsing logic to be applied to SQL strings. The jOOQ template parser behaves according to the following rules:
+Templating with QueryPart placeholders (or bind value placeholders)
+requires a simple parsing logic to be applied to SQL strings.
+The jOOQ template parser behaves according to the following rules:
 
- * Single-line comments (starting with `--` in all databases (or #) in MySQL) are rendered without modification. Any bind variable or QueryPart placeholders in such comments are ignored.
- * Multi-line comments (starting with `/*` and ending with `*/` in all databases) are rendered without modification. Any bind variable or QueryPart placeholders in such comments are ignored.
- * String literals (starting and ending with `'` in all databases, where all databases support escaping of the quote character by duplication as such: `''`, or in MySQL by escaping as such: `\'` (if Settings.backslashEscaping is turned on)) are rendered without modification. Any bind variable or QueryPart placeholders in such comments are ignored.
- * Quoted names (starting and ending with `"` in most databases, with \` in MySQL, or with `[` and `]` in T-SQL databases) are rendered without modification. Any bind variable or QueryPart placeholders in such comments are ignored.
- * JDBC escape syntax (`{fn ...}`, `{d ...}`, `{t ...}`, `{ts ...}`) is rendered without modification. Any bind variable or QueryPart placeholders in such comments are ignored.
- * Bind variable placeholders (? or :name for named bind variables) are replaced by the matching bind value in case inlining is activated, e.g. through Settings.statementType == STATIC_STATEMENT.
- * QueryPart placeholders (`{number}`) are replaced by the matching QueryPart.
- * Keywords (`{identifier}`) are treated like keywords and rendered in the correct case according to Settings.renderKeywordStyle.
+* Single-line comments (starting with `--` in all databases (or #) in MySQL)
+  are rendered without modification. Any bind variable or QueryPart
+  placeholders in such comments are ignored.
+* Multi-line comments (starting with `/*` and ending with `*/` in
+  all databases) are rendered without modification. Any bind variable
+  or QueryPart placeholders in such comments are ignored.
+* String literals (starting and ending with `'` in all databases,
+  where all databases support escaping of the quote character by duplication
+  as such: `''`, or in MySQL by escaping as such: `\'` (if Settings.backslashEscaping
+  is turned on)) are rendered without modification. Any bind variable or
+  QueryPart placeholders in such comments are ignored.
+
+* Quoted names (starting and ending with `"` in most databases,
+  with \` in MySQL, or with `[` and `]` in T-SQL databases) are
+  rendered without modification. Any bind variable or QueryPart
+  placeholders in such comments are ignored.
+* JDBC escape syntax (`{fn ...}`, `{d ...}`, `{t ...}`, `{ts ...}`)
+  is rendered without modification. Any bind variable or QueryPart
+  placeholders in such comments are ignored.
+* Bind variable placeholders (? or :name for named bind variables)
+  are replaced by the matching bind value in case inlining is activated,
+  e.g. through Settings.statementType == STATIC_STATEMENT.
+* QueryPart placeholders (`{number}`) are replaced by the matching QueryPart.
+* Keywords (`{identifier}`) are treated like keywords and rendered in
+  the correct case according to Settings.renderKeywordStyle.
 
 ### 02.如何禁用Jooq功能
 
@@ -197,7 +215,7 @@ Templating with QueryPart placeholders (or bind value placeholders) requires a s
 
 运行时禁用，设置spring.wings 开关，把jooq disable,`spring.wings.faceless.jooq.enabled.module=false`
 但如果有jooq自动生成的代码，是带有`@Repository`，需要禁止spring注入。
-```
+```java
 @ComponentScan(excludeFilters = 
 @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WingsJooqDaoImpl.class))  
 ```
@@ -206,7 +224,7 @@ Templating with QueryPart placeholders (or bind value placeholders) requires a s
 
 更多信息，参考`官方文档`和sample代码`pro.fessional.wings.faceless.sample`
 
-https://www.jooq.org/doc/latest/manual/sql-execution/fetching/
+<https://www.jooq.org/doc/latest/manual/sql-execution/fetching/>
 
 ```java
 class SelectFetch {
@@ -239,26 +257,26 @@ Map<Integer, List<String>>       group4 = create.selectFrom(BOOK).fetchGroups(BO
 分页查询中，count结果根据需要，可以进行缓存，或业务侧不要求必须精确，这样可以避免每次执行。
 通过WingsPageHelper工具类，可以构造2类分页查询，count+select 和 wrap select，参考
 
- * JooqMostSelectSample #test6PageJooq, #test7PageJdbc
- * [count(*)和count(1)谁快](https://blog.jooq.org/2019/09/19/whats-faster-count-or-count1/)
+* JooqMostSelectSample #test6PageJooq, #test7PageJdbc
+* [count(*)和count(1)谁快](https://blog.jooq.org/2019/09/19/whats-faster-count-or-count1/)
 
 在SpringMvc的`@RequestMapping`中构建`PageQuery`，可以把`@ModelAttribute`放在参数上，
 
- * pageNumber，大于等于1的整数
- * pageSize，大于等于1的整数
- * sortBy，字符串
+* pageNumber，大于等于1的整数
+* pageSize，大于等于1的整数
+* sortBy，字符串
 
 参考Spring的`Pageable`和SQL的 order by，以下参数是效果相同的
 
- * PageQuery - pageSize=100&pageNumber=3&sortBy=id,-name
- * Pageable - size=100&page=3&sort=id,asc&sort=name,desc
- * SQL - order by id asc, name desc
+* PageQuery - pageSize=100&pageNumber=3&sortBy=id,-name
+* Pageable - size=100&page=3&sort=id,asc&sort=name,desc
+* SQL - order by id asc, name desc
 
 ### 05.如何转换sql语法
 
- * sql到sql，不同语法间转换，https://www.jooq.org/translate/ (需要翻墙)
- * sql到jooq，可以使用any2dto插件，做了简单的select语法映射。
- * jooq到sql，调用toSql方法，或开启debug，在日志中查看。
+* sql到sql，不同语法间转换，<https://www.jooq.org/translate/> (需要翻墙)
+* sql到jooq，可以使用any2dto插件，做了简单的select语法映射。
+* jooq到sql，调用toSql方法，或开启debug，在日志中查看。
 
 ### 06.TINYINT映射Boolean,Byte,Integer
 
@@ -273,7 +291,7 @@ Map<Integer, List<String>>       group4 = create.selectFrom(BOOK).fetchGroups(BO
 在wings实践中，以强类型为基础，因此数据库中的类别类型，通常在service层使用enum类。
 在jooq中，可以通过forcedType，使用converter自动映射类型，在MapStruct中也可。
 
-``` java
+```java
 // 每个表，每个字段映射，变更数据类型
 .forcedType(new ForcedType()
         .withUserType("pro.fessional.wings.faceless.enums.autogen.StandardLanguage")
@@ -284,14 +302,14 @@ Map<Integer, List<String>>       group4 = create.selectFrom(BOOK).fetchGroups(BO
 但对于某些情况，并不能在code generate时做类型转换，全局或局部的ConverterProvider。
 可以使用wings的配置约定，声明ConverterProvider或Converter的bean，即可完成全局注入。
 
-```
+```java
 // 单select，局部类型转换
 DataType<StandardLanguage> lang = SQLDataType.INTEGER.asConvertedDataType(new StandardLanguageConverter());
 dao.ctx()
    .select(t.Id, DSL.field(t.Language.getName(), lang))
 ```
 
-``` java
+```java
 @Mapper
 public interface Record22EnumDto {
     @Named("languageConverter")
@@ -300,13 +318,12 @@ public interface Record22EnumDto {
     }
 }
 ```
-https://blog.jooq.org/tag/converter/
+<https://blog.jooq.org/tag/converter/>
 
 ### 08. H2Database的兼容性
 
 * 手动指定 spring.jooq.sql-dialect=mysql
 * 数据库指定 jdbc:h2:~/studies;MODE=MySQL
-
 
 ### 09. OSS版Jooq的授权和注意点
 
@@ -321,15 +338,15 @@ Jooq有[开源版和商业版](https://www.jooq.org/download/)，两者的区别
 以MySql为例，OSS版仅提供了最新版(8.0)的Dialect，而商业版提供了5.6, 5.7, 8.0三个版本。
 而8.0的Dialect对于5.7存在一定的向后兼容，比如`FROM DUAL`移除。详见一下issue
 
- * https://github.com/jOOQ/jOOQ/issues/7421
- * https://github.com/jOOQ/jOOQ/issues/11827
+* <https://github.com/jOOQ/jOOQ/issues/7421>
+* <https://github.com/jOOQ/jOOQ/issues/11827>
 
-因此，若开发中存在兼容问题，或需要更多功能或便利，推荐使用商业授权，从[FAQ: Commercial Licensing](https://www.jooq.org/legal/licensing) 
+因此，若开发中存在兼容问题，或需要更多功能或便利，推荐使用商业授权，从[FAQ: Commercial Licensing](https://www.jooq.org/legal/licensing)
 中可见（本人仅做FAQ的部分节选，不对其正确性负任何责任）
 
- * One for every developer workstation which is used to write jOOQ code.
- * only charge for developer workstations, not server workstations.
- * This does not affect your build, test, and production servers, 
+* One for every developer workstation which is used to write jOOQ code.
+* only charge for developer workstations, not server workstations.
+* This does not affect your build, test, and production servers,
    however, which will be licensed for free forever, in any price plan.
 
 ### 10. Jooq的性能及线程安全
@@ -340,5 +357,5 @@ jOOQ's overhead compared to plain JDBC is typically less than 1ms per query.
 Configuration 初始化后就不要动了。
 DSLContext 在spring中Autowired和Dao中获取都可安全使用。
 
-* https://www.jooq.org/doc/3.14/manual/sql-execution/performance-considerations/
-* https://www.jooq.org/doc/3.14/manual/sql-building/dsl-context/thread-safety/
+* <https://www.jooq.org/doc/3.14/manual/sql-execution/performance-considerations/>
+* <https://www.jooq.org/doc/3.14/manual/sql-building/dsl-context/thread-safety/>

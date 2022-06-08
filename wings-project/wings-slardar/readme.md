@@ -59,7 +59,7 @@
 
 例如，默认配置 wings-datetime-79.properties 中的LocalDate支持
 
-``` properties
+```properties
 # 输出时以 2021-01-30格式
 wings.slardar.datetime.date.format=yyyy[-MM][-dd]
 # 输入的时候，支持 2021-01-30 和 Jan/30/2021等多种
@@ -76,14 +76,14 @@ wings.slardar.datetime.date.parser=\
 在wings约定内，常用的Number类型，应该只有Int，Long和BigDecimal。
 
 例如，默认配置 wings-number-79.properties 中的Decimal支持，
-``` properties
+```properties
 # 以Floor方式，保留2位小数
 wings.slardar.number.decimal.format=#.00
 wings.slardar.number.decimal.round=FLOOR
 wings.slardar.number.decimal.separator=,
 ```
 也可以设置，按中国人习惯，每4位用`_`分隔，增加CNY符号
-``` properties
+```properties
 wings.slardar.number.decimal.format=￥,####.00
 wings.slardar.number.decimal.separator=_
 # 参考 DecimalFormatTest.java
@@ -92,7 +92,7 @@ wings.slardar.number.decimal.separator=_
 当JS场景数字value超越 Number.M##_SAFE_INTEGER时，`digital=auto`自动切换number和string。
 默认配置中，仅对int32和int64使用了auto，需要谨慎使用，检查类型或关闭auto为false
 
-### 3.1.4.empty数据处理，
+### 3.1.4.empty数据处理
 
 此功能默认开启，会造成正反序列化的不一致。需要自行处理差异
 
@@ -127,11 +127,11 @@ wings.slardar.number.decimal.separator=_
 
 * [baeldung 示例](https://www.baeldung.com/jackson-annotations)
 * [jackson注解](https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations)
-* [spring定制jackson](https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#howto-customize-the-jackson-objectmapper) 9.4.3. Customize the Jackson ObjectMapper
+* [spring定制jackson](https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/howto-customize-the-jackson-objectmapper)
 
 Jackson中涉及到泛型，参数类型，必备技能
 
-``` java
+```java
 TypeReference ref = new TypeReference<List<Integer>>() { };
 // TypeFactory 中有很丰富的类型构造
 JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, Foo.class)
@@ -180,7 +180,7 @@ JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, Foo.
 
 根据wings mapping约定，避免使用相对路径，所以，b.com要在在class级做前缀。
 
-``` java
+```java
 @Controller
 @RequestMapping("/domain/b")
 public class UserController {
@@ -248,12 +248,12 @@ wings通过WingsDomainFilter，先检查host，如果是继承域，则构造子
 在js环境中，可以用`Intl.DateTimeFormat().resolvedOptions().timeZone`获得。
 当client端无法获得zoneid时，可以取得服务器支持的zone及其offset,country自行判断。
 
-## 3.3.1.多国语I18n的格式
+### 3.3.1.多国语I18n的格式
 
 在@Valid的JavaBean Validation验证中， 支持Unified Expression Language (JSR 341)
 使用`${}`访问外部变量，使用`{}`范围annotation内变量，如以下例子
 
-```
+```java
 @Size( min = 5, max = 14, message = "{common.email.size}")
 # 在 i18n信息中设置
 common.email.size=The author email '${validatedValue}' must be between {min} and {max} characters long
@@ -261,7 +261,7 @@ common.email.size=The author email '${validatedValue}' must be between {min} and
 
 而在 Message的ResourceBundle中，默认使用java.text.MessageFormat的数组`{0}`格式。
 
-## 3.3.2.时区的LocalDateTime，ZonedDateTime和OffsetDateTime
+### 3.3.2.时区的LocalDateTime，ZonedDateTime和OffsetDateTime
 
 多时区，要兼顾数据可读性和编码便利性，在slardar中统一约定如下。
 
@@ -302,6 +302,7 @@ common.email.size=The author email '${validatedValue}' must be between {min} and
 header的名字和cookie同名，默认是`session`。
 
 实施建议，
+
 * 不建议使用rememberMe，设置session的timeout和cookie的maxAge较长时间。
 * 如果没有特殊要求，建议使用cookie体系，因其生态成熟。
 
@@ -318,6 +319,7 @@ cookie体系下，可通过定制Filter和Wrapper实现以下功能。
 * 定制 http-only, secure, domain, path。
 
 其中需要注意的是，
+
 * http-only会使js无法读取，有时需要放开（注意CSRF攻击）
 * session的设置，应该在spring-session-79.properties 中设置
 
@@ -375,7 +377,7 @@ RunAsManager - 有意思，调查一下，好像可以马甲
 
 Session和SecurityContext的调用关系如下
 
-``` plantuml
+```plantuml
 @startuml
 SessionRepositoryFilter -> SessionRepositoryRequestWrapper
 SecurityContextPersistenceFilter -> SecurityContextRepository: loadContext()
@@ -404,7 +406,7 @@ rememberMe SpringSessionRememberMeServices
 若使用`@Enable*HttpSession`表示手动配置，则`spring.session.*`不会自动配置。
 `springSessionRepositoryFilter`会置顶，以便wrap掉原始的HttpRequest和HttpSession
 
-## 3.5.本地Caffeine和远程缓存
+## 3.5.本地和远程缓存
 
 默认提供JCache约定下的Memory和Server两个CacheManager，名字和实现如下，
 
@@ -424,7 +426,7 @@ type CacheManager or a CacheResolver named cacheResolver (see CachingConfigurer)
 
 具有相同前缀的cache，会采用相同的配置项(ttl,idle,size)。
 
-``` java
+```java
 @CacheConfig(cacheManager = Manager.Memory, 
 cacheNames = Level.GENERAL + "OperatorService")
 
@@ -437,20 +439,9 @@ cacheNames = Level.GENERAL + "StandardRegion",
 cacheManager = Manager.Server)
 ```
 
-## 3.7.常用功能
+## 3.6.常用功能
 
-## 3.7.1.restTemplate和okhttp
-
-默认使用okhttp3作为restTemplate的实现。按spring boot官方文档和源码约定。 并可以 Autowired OkHttpClient
-直接使用，默认**信任所有ssl证书**，如安全高，需要关闭。
-如果需要按scope定制，使用RestTemplateBuilder，全局应用使用RestTemplateCustomizer。
-
-[RestTemplate 定制](https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#boot-features-resttemplate-customization)
-org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
-
-在springboot默认是3.x，而just-auth需要4.x，所以需要手动okhttp3.version属性
-
-## 3.7.2.后端防抖
+### 3.6.1.后端请求防抖
 
 与前端(LodashJs)相似，不同的是后端业务优先，只支持先调用后等待的leading防抖。
 即在第一个请求时处理业务，有后续请求出现时，可以有以下处理方式
@@ -462,7 +453,7 @@ org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 `@Debounce`底层基于HandlerInterceptor和，request流复用和response流缓存。
 作用于Controller层，Session级，以URL特征及参数为判断重复的依据。
 
-## 3.7.3.防止连击 
+### 3.6.2.服务防止连击
 
 与Debounce不同，`@DoubleKill`类似Cacheable采用AOP方式，主要用于Service层防抖。
 沿用Dota命名，通过Jvm全局锁和DoubleKillException完成重复检查和流程控制。
@@ -475,9 +466,9 @@ org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 
 详细用法，可参考TestDoubleKillController和DoubleKillService
 
-## 3.7.4.验证码
+### 3.6.3.请求验证码
 
-对于受保护的资源，要采取一定的验证码，有时是为了延缓时间，有时是为了区分行为。 
+对于受保护的资源，要采取一定的验证码，有时是为了延缓时间，有时是为了区分行为。
 验证码可以header或param进行校验（默认param）去请求验证码图片等。
 
 在spring Security中，对401和403有以下约定，所以验证码使用406(Not Acceptable)
@@ -503,7 +494,7 @@ slardar验证码的默认是基于图片的，在现今的AI算法识别上，�
 
 若需集成其他验证码，如第三方服务或消息验证码，实现并注入FirstBloodHandler即可
 
-### 3.7.5.防止篡改
+### 3.6.4.防止篡改
 
 通过在http header中设置信息，进行编辑保护，防止客户端篡改。默认返回409(Conflict)。
 详见 wings-righter-79.properties 和 RighterContext。实现原理和使用方法是，
@@ -513,13 +504,13 @@ slardar验证码的默认是基于图片的，在现今的AI算法识别上，�
 * 提交时需要提交此签名，并被校验，签名错误时直接409
 * 签名通过后，通过RighterContext获取数据，程序自行检验数据项是否一致
 
-### 3.7.6.终端信息
+### 3.6.5.终端信息
 
 通过handlerInterceptor，在当前线程和request中设置terminal信息
 
 TerminalContext保存了，远程ip，agent信息，locale和timezone
 
-## 3.7.7.同步/异步/单机/集群的事件驱动
+### 3.6.6.同步/异步/单机/集群的事件驱动
 
 EventPublishHelper默认提供了3种事件发布机制
 
@@ -529,11 +520,45 @@ EventPublishHelper默认提供了3种事件发布机制
 
 其中，jooq对表的CUD事件，默认通过AsyncGlobal发布，可供表和字段有关缓存evict
 
-## 3.8.特别用途的 Filter
+### 3.6.7.请求及应答日志
 
-## 3.8.1.OverloadFilter过载
+通过WingsReuseStreamFilter注入RequestResponseLogging可实现请求应答日志。
+相比于CommonsRequestLoggingFilter，此功能按需复用，同时支持request和response。
 
-是否限定请求并发，默认`spring.wings.slardar.enabled.overload=false`
+实现AbstractRequestResponseLogging，并通过以下方式set到WingsReuseStreamFilter中，
+
+* @AutoConfigureBefore(SlardarRestreamConfiguration.class)
+* 获取 WingsReuseStreamFilter，然后setRequestResponseLogging
+
+## 3.7.其他功能
+
+### 3.7.1.restTemplate和okhttp
+
+默认使用okhttp3作为restTemplate的实现。按spring boot官方文档和源码约定。 并可以 Autowired OkHttpClient
+直接使用，默认**信任所有ssl证书**，如安全高，需要关闭。
+如果需要按scope定制，使用RestTemplateBuilder，全局应用使用RestTemplateCustomizer。
+
+[RestTemplate 定制](https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#boot-features-resttemplate-customization)
+org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
+
+在springboot默认是3.x，而just-auth需要4.x，所以需要手动okhttp3.version属性
+
+### 3.7.2.请求复用和应答缓存
+
+WingsReuseStreamFilter 实行了request流的循环读，和response的缓存。
+在使用以下filter时，会出现bytes重复复制而浪费空间，建议自行Override。
+
+* CommonsRequestLoggingFilter
+* ShallowEtagHeaderFilter
+
+ReuseStream的流仅提供了复用功能，默认不开启，不使用时无空间和性能损失。
+仅在需要时，由filter，interceptor，advice等机制在使用其开启复用功能。
+
+需要注意filter的order，以保证该filter在使用之前完成wrapper。
+
+### 3.7.3.负载过滤器
+
+OverloadFilter可限定请求并发，默认`spring.wings.slardar.enabled.overload=false`
 
 * 自动或手动设置`最大同时进行请求数`。超过时，执行`fallback`。
 * 不影响性能的情况下，记录慢响应URI和运行状态。
@@ -585,7 +610,7 @@ hazelcast的方案。其理由如下。
 * 模板，src/main/resources/templates/error/5xx.ftlh
 * `class MyErrorPageRegistrar implements ErrorPageRegistrar`
 
-```
+```java
 @ControllerAdvice(basePackageClasses = AcmeController.class)
 public class AcmeControllerAdvice extends ResponseEntityExceptionHandler
 // ///////
@@ -634,12 +659,13 @@ SavedRequestAwareAuthenticationSuccessHandler和RequestCache 进行搭配即可�
 在sendStartAuthentication方法中，对requestCache或authenticationEntryPoint上进行定制。
 也可以通过interceptor对loginPage进行定制。
 
-* https://www.baeldung.com/spring-security-redirect-login
-* https://www.baeldung.com/spring-security-redirect-logged-in
+* <https://www.baeldung.com/spring-security-redirect-login>
+* <https://www.baeldung.com/spring-security-redirect-logged-in>
 
 ### 10.数组及对象参数如通过key-value传递
 
 在http协议中，没有明确的规定数组及对象的传递方法，因此实践中，spring及js体系下有不同的默认规则。
+
 * `a=1&a=2&a=3`，servlet支持，spring支持，js的qs需要`{ indices: false }` (推荐)
 * `a[]=1&a[]=2&a[]=3`，spring支持，js的qs需要`{ arrayFormat: 'brackets' }`
 * `a[0]=1&a[1]=2&a[2]=3`，spring支持，js的qs默认格式
@@ -647,6 +673,7 @@ SavedRequestAwareAuthenticationSuccessHandler和RequestCache 进行搭配即可�
 其中，servlet支持时，@RequestParam也生效；spring支持指，默认的DataBinding
 
 参考资料
+
 * [qs#stringifying](https://github.com/ljharb/qs#stringifying)
 * [nested properties Conventions](https://docs.spring.io/spring-framework/docs/5.0.0.M4/spring-framework-reference/html/validation.html#beans-beans-conventions)
 * [@MatrixVariable](https://docs.spring.io/spring-framework/docs/5.0.0.M4/spring-framework-reference/html/mvc.html#mvc-ann-matrix-variables)

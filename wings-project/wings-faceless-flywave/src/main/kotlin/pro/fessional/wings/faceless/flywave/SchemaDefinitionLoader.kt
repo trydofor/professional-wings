@@ -51,7 +51,7 @@ interface SchemaDefinitionLoader {
     /**
      * 至少列出当前表的`字段名`，`类型`，`注释`三项的DDL部分
      * 用来填充 `TABLE_BONE` 环境变量。各字段逗号分隔后，符合SQL语法（末行无逗号）
-     * ``` sql
+     * ```sql
      *   `LOGIN_INFO` text COMMENT 'login info',
      *   `OTHER_INFO` text COMMENT 'other info'
      * ```

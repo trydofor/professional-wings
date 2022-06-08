@@ -8,7 +8,7 @@
 * global event - HazelcastSyncPublisher
 * snowflake id - FlakeIdHazelcastImpl
 
-### 3.5.1.hazelcast 管理
+## 3.5.1.hazelcast 管理
 
 * ClassNotFound - user-code-deployment需要设置
 * 重连机制，client时，需要设置重连时间
@@ -36,8 +36,8 @@ hazelcast提供了3类锁，推荐使用CP系统，但集群要求至少3台，�
 
 参考资料如下，
 
-* https://hazelcast.com/blog/hazelcast-imdg-3-12-introduces-cp-subsystem/
-* https://hazelcast.com/blog/long-live-distributed-locks/
+* <https://hazelcast.com/blog/hazelcast-imdg-3-12-introduces-cp-subsystem/>
+* <https://hazelcast.com/blog/long-live-distributed-locks/>
 
 ## 3.5.2.远程缓存Hazelcast
 
@@ -45,7 +45,7 @@ hazelcast提供了3类锁，推荐使用CP系统，但集群要求至少3台，�
 
 对于hazelcast的MapConfig若无配置，则wings会根据level自动配置以下MapConf。
 
-``` xml
+```xml
 <time-to-live-seconds>3600</time-to-live-seconds>
 <max-idle-seconds>0</max-idle-seconds>
 <eviction size="5000"/>
