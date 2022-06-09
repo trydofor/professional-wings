@@ -22,13 +22,42 @@ public class WingsReuseStreamFilter extends OncePerRequestFilter implements Orde
     @Setter @Getter
     private int order = WingsServletConst.ORDER_FILTER_RESTREAM;
 
+    @Getter @Setter
+    private RequestResponseLogging requestResponseLogging;
+
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest req, @NotNull HttpServletResponse res, @NotNull FilterChain chain)
             throws ServletException, IOException {
 
         ReuseStreamRequestWrapper request = new ReuseStreamRequestWrapper(req);
         ReuseStreamResponseWrapper response = new ReuseStreamResponseWrapper(res);
+
+        final RequestResponseLogging.Conf cnf;
+        if (requestResponseLogging != null) {
+            cnf = requestResponseLogging.loggingConfig(request);
+            if (cnf != null) {
+                if (cnf.isRequestEnable()) {
+                    if (cnf.isRequestPayload()) {
+                        request.circleInputStream(false);
+                    }
+                    requestResponseLogging.beforeRequest(cnf, request);
+                }
+
+                if (cnf.isResponseEnable() && cnf.isResponsePayload()) {
+                    response.cachingOutputStream(false);
+                }
+            }
+        }
+        else {
+            cnf = null;
+        }
+
         chain.doFilter(request, response);
+
+        if (cnf != null && cnf.isResponseEnable()) {
+            requestResponseLogging.afterResponse(cnf, request, response);
+        }
+
         response.copyBodyToResponse();
     }
 }

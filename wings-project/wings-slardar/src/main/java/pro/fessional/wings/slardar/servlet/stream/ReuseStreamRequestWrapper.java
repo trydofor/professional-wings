@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.servlet.stream;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.springframework.web.util.WebUtils;
 
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author trydofor
@@ -17,14 +19,21 @@ import java.io.InputStreamReader;
  */
 public class ReuseStreamRequestWrapper extends HttpServletRequestWrapper {
 
+    private static final AtomicLong RequestId = new AtomicLong(0);
+
     public static ReuseStreamRequestWrapper infer(ServletRequest request) {
         return WebUtils.getNativeRequest(request, ReuseStreamRequestWrapper.class);
     }
 
+    @Getter
+    private final long requestId;
+
     public ReuseStreamRequestWrapper(HttpServletRequest request) {
         super(request);
+        this.requestId = RequestId.getAndIncrement();
     }
 
+    //
     private ServletInputStream inputStream;
     private BufferedReader bufferedReader;
     private boolean backend = false;
