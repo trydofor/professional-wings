@@ -26,7 +26,9 @@ public class SlardarRestreamConfiguration {
     public WingsReuseStreamFilter wingsReuseStreamFilter(ObjectProvider<RequestResponseLogging> logging) {
         final WingsReuseStreamFilter filter = new WingsReuseStreamFilter();
         final RequestResponseLogging lg = logging.getIfAvailable();
-        filter.setRequestResponseLogging(lg);
+        if (lg != null) {
+            filter.setRequestResponseLogging(lg);
+        }
         logger.info("Wings conf wingsReuseStreamFilter, logging=" + (lg == null ? null : lg.getClass()));
         return filter;
     }

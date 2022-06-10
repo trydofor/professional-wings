@@ -1,7 +1,6 @@
 package pro.fessional.wings.slardar.security;
 
 import org.jetbrains.annotations.NotNull;
-import pro.fessional.mirana.data.Null;
 
 import java.util.Map;
 
@@ -10,15 +9,6 @@ import java.util.Map;
  * @since 2021-02-08
  */
 public interface WingsAuthTypeParser {
-    /**
-     * 获取通过字符串别名，解析成enum类
-     *
-     * @param authType authType
-     * @param elz      default
-     * @return 枚举类
-     */
-    @NotNull
-    Enum<?> parse(String authType, @NotNull Enum<?> elz);
 
     /**
      * 获取通过字符串别名，解析成enum类，null返回Null.Enm
@@ -27,9 +17,7 @@ public interface WingsAuthTypeParser {
      * @return 枚举类
      */
     @NotNull
-    default Enum<?> parse(String authType) {
-        return parse(authType, Null.Enm);
-    }
+    Enum<?> parse(String authType);
 
     /**
      * 把enum类，变成字符串别名，无法转换时PC异常

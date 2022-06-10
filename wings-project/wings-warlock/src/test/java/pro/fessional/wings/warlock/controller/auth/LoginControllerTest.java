@@ -2,7 +2,9 @@ package pro.fessional.wings.warlock.controller.auth;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Data;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,9 +17,9 @@ import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
+import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.warlock.event.auth.WarlockNonceSendEvent;
-import pro.fessional.wings.warlock.service.auth.WarlockAuthType;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -39,9 +41,12 @@ import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.Role
 @Slf4j
 public class LoginControllerTest {
 
+    @Setter(onMethod_ = {@Autowired})
+    private WingsAuthTypeParser authTypeParser;
+
     @GetMapping("/auth/console-nonce.json")
-    public String loginPageDefault(@RequestParam("username") String user) {
-        Enum<?> authType = WarlockAuthType.USERNAME;
+    public String loginPageDefault(@RequestParam("username") String user, @RequestParam("authtype") String type) {
+        Enum<?> authType = authTypeParser.parse(type);
         String pass = RandCode.human(16);
         long expire = System.currentTimeMillis() + 300_000;
         WarlockNonceSendEvent event = new WarlockNonceSendEvent();
@@ -50,7 +55,7 @@ public class LoginControllerTest {
         event.setUsername(user);
         event.setNonce(pass);
         EventPublishHelper.AsyncSpring.publishEvent(event);
-        log.warn(user + " username-nonce is " + pass);
+        log.warn("{} {} nonce is {}", user, type, pass);
         return pass;
     }
 

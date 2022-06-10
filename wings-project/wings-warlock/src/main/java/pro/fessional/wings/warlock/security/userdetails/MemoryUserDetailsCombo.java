@@ -90,7 +90,7 @@ public class MemoryUserDetailsCombo extends DefaultUserDetailsCombo {
 
         Details dtl = null;
         for (Details d : details) {
-            if (d.getAuthType() == Null.Enm) {
+            if (d.getAuthType() == Null.Enm || authType == Null.Enm) {
                 dtl = d;
             }
             else if (d.getAuthType() == authType) {

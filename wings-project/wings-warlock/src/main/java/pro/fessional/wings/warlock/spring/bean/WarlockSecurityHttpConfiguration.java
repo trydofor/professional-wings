@@ -52,9 +52,9 @@ public class WarlockSecurityHttpConfiguration {
     private final WingsAuthDetailsSource<?> wingsAuthDetailsSource;
 
 
-    public static final int OrderWarlockBind = 1000;
-    public static final int OrderWarlockAuth = 2000;
-    public static final int OrderWarlockBase = 3000;
+    public static final int OrderWarlockBase = 1000;
+    public static final int OrderWarlockBind = 2000;
+    public static final int OrderWarlockAuth = 3000;
     public static final int OrderWarlockAuto = 4000;
 
     @Bean
@@ -64,14 +64,17 @@ public class WarlockSecurityHttpConfiguration {
         return http ->
                 http.apply(SecurityConfigHelper.http())
                     .bindLogin(conf -> conf
-                            .loginForward(securityProp.isLoginForward()) // 无权限时返回的页面，
+                            // 初始authenticationEntryPoint
+                            .loginPage(securityProp.getLoginPage()) // 无权限时返回的页面。
+                            // 初始filter.RequestMatcher
                             .loginProcessingUrl(securityProp.getLoginProcUrl(), securityProp.getLoginProcMethod()) // filter处理，不需要controller
-                            .loginPage(securityProp.getLoginPage()) // 无权限时返回的页面，
+                            .loginForward(securityProp.isLoginForward()) // 无权限时返回的页面，
                             .usernameParameter(securityProp.getUsernamePara())
                             .passwordParameter(securityProp.getPasswordPara())
                             .successHandler(authenticationSuccessHandler)
                             .failureHandler(authenticationFailureHandler)
                             .authenticationDetailsSource(wingsAuthDetailsSource)
+                            .bindAuthTypeDefault(securityProp.mapAuthTypeDefault())
                             .bindAuthTypeToEnums(securityProp.mapAuthTypeEnum())
                     )
                     .and()
@@ -142,8 +145,10 @@ public class WarlockSecurityHttpConfiguration {
             ObjectProvider<CsrfTokenRepository> csrf,
             ObjectProvider<RequestCache> cache) {
         return http -> {
+            // cors
             http.cors().configurationSource(WingsHttpPermitConfigurer.corsPermitAll());
 
+            // cache
             final RequestCache rc = cache.getIfAvailable();
             if (rc == null) {
                 http.requestCache().disable();
@@ -154,6 +159,7 @@ public class WarlockSecurityHttpConfiguration {
                 logger.info("Wings conf HttpSecurity, requestCache " + rc.getClass().getName());
             }
 
+            // csrf
             final CsrfTokenRepository ct = csrf.getIfAvailable();
             if (ct == null) {
                 http.csrf().disable();

@@ -215,6 +215,14 @@ public class WarlockSecurityProp {
     public static final String Key$authType = Key + ".auth-type";
 
     /**
+     * 默认auth-type
+     *
+     * @see #Key$authTypeDefault
+     */
+    private String authTypeDefault = "";
+    public static final String Key$authTypeDefault = Key + ".auth-type-default";
+
+    /**
      * 设置authZone对应的权限，若非全部满足，则不可登录，以用户名密码错误返回
      *
      * @see #Key$zonePerm
@@ -324,6 +332,10 @@ public class WarlockSecurityProp {
     }
 
     // ////
+    public Enum<?> mapAuthTypeDefault() {
+        return str2Enum(authTypeDefault);
+    }
+
     public Map<String, Enum<?>> mapAuthTypeEnum() {
         return authType.entrySet()
                        .stream()

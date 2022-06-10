@@ -2,7 +2,6 @@ package pro.fessional.wings.slardar.security.impl;
 
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.cast.EnumConvertor;
-import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 
 import java.util.Collections;
@@ -10,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 使用HashMap构建，Null.Str=Null.Enm
+ * 使用HashMap构建，除default值外，一对一映射。
  *
  * @author trydofor
  * @since 2021-02-22
@@ -19,11 +18,13 @@ public class DefaultWingsAuthTypeParser implements WingsAuthTypeParser {
 
     private final Map<String, Enum<?>> strEnumMap;
     private final Map<Enum<?>, String> enumStrMap;
+    private final String defaultAuthTypeName;
+    private final Enum<?> defaultAuthTypeEnum;
 
-    public DefaultWingsAuthTypeParser(Map<String, Enum<?>> authType) {
+    public DefaultWingsAuthTypeParser(Enum<?> defaultType, Map<String, Enum<?>> authType) {
         this.strEnumMap = Collections.unmodifiableMap(authType);
-        Map<Enum<?>, String> map = new HashMap<>(authType.size());
-        for (Map.Entry<String, Enum<?>> en : authType.entrySet()) {
+        Map<Enum<?>, String> map = new HashMap<>(strEnumMap.size());
+        for (Map.Entry<String, Enum<?>> en : strEnumMap.entrySet()) {
             Enum<?> k = en.getValue();
             final String v = map.get(k);
             if (v == null) {
@@ -33,28 +34,26 @@ public class DefaultWingsAuthTypeParser implements WingsAuthTypeParser {
                 throw new IllegalArgumentException("exist mapping for type=" + v + ", enum=" + EnumConvertor.enum2Str(k));
             }
         }
+        final String dae = map.get(defaultType);
+        if (defaultType == null || dae == null) {
+            throw new IllegalArgumentException("default MUST mapping, enum=" + EnumConvertor.enum2Str(defaultType));
+        }
+
         this.enumStrMap = Collections.unmodifiableMap(map);
+        this.defaultAuthTypeEnum = defaultType;
+        this.defaultAuthTypeName = dae;
     }
 
     @Override
-    public @NotNull Enum<?> parse(String at, @NotNull Enum<?> elz) {
-        if (at == null) return elz;
-        if (at.equals(Null.Str)) return Null.Enm;
-
-        final Enum<?> en = strEnumMap.get(at);
-        return en == null ? elz : en;
+    public @NotNull Enum<?> parse(String at) {
+        if (at == null) return defaultAuthTypeEnum;
+        return strEnumMap.getOrDefault(at, defaultAuthTypeEnum);
     }
 
     @Override
     public @NotNull String parse(Enum<?> at) {
-        if (at == Null.Enm) return Null.Str;
-
-        final String s = enumStrMap.get(at);
-        if (s == null) {
-            final String mes = "failed to parse enum=" + EnumConvertor.enum2Str(at);
-            throw new IllegalArgumentException(mes);
-        }
-        return s;
+        if (at == null) return defaultAuthTypeName;
+        return enumStrMap.getOrDefault(at, defaultAuthTypeName);
     }
 
     @Override

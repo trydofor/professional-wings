@@ -76,6 +76,7 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
                             .failureHandler(testLoginHandler.loginFailure)
                             .bindAuthTypeToEnums("sms", LoginTypeEnum.Sms)
                             .bindAuthTypeToEnums("user", LoginTypeEnum.User)
+                            .bindAuthTypeDefault(LoginTypeEnum.User)
             )
             .and()
             .authorizeRequests(conf -> conf

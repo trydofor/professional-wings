@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * 同 FormLoginConfigurer（final无法继承）
+ *
  * @author trydofor
  * @since 2021-02-07
  */
@@ -43,7 +45,7 @@ public class WingsBindLoginConfigurer extends
     }
 
     public WingsBindLoginConfigurer loginForward(boolean forward) {
-        ((LoginUrlAuthenticationEntryPoint) this.getAuthenticationEntryPoint()).setUseForward(forward);
+        ((LoginUrlAuthenticationEntryPoint) getAuthenticationEntryPoint()).setUseForward(forward);
         return this;
     }
 
@@ -72,6 +74,7 @@ public class WingsBindLoginConfigurer extends
     private Collection<String> loginProcessingMethod = Collections.emptyList();
     private WingsAuthTypeSource wingsAuthTypeSource = null;
     private WingsAuthDetailsSource<?> wingsAuthDetailsSource = null;
+    private Enum<?> defaultAuthType = null;
     private final Map<String, Enum<?>> authTypes = new HashMap<>();
 
     public WingsBindLoginConfigurer bindAuthTypeToEnums(String type, Enum<?> authType) {
@@ -81,6 +84,11 @@ public class WingsBindLoginConfigurer extends
 
     public WingsBindLoginConfigurer bindAuthTypeToEnums(Map<String, Enum<?>> authType) {
         this.authTypes.putAll(authType);
+        return this;
+    }
+
+    public WingsBindLoginConfigurer bindAuthTypeDefault(Enum<?> authType) {
+        this.defaultAuthType = authType;
         return this;
     }
 
@@ -144,6 +152,11 @@ public class WingsBindLoginConfigurer extends
         initBindAuthTypeSource(context);
     }
 
+    public LoginUrlAuthenticationEntryPoint getLoginUrlAuthenticationEntryPoint() {
+        return (LoginUrlAuthenticationEntryPoint) getAuthenticationEntryPoint();
+    }
+
+    //
     private void initBindAuthTypeSource(ApplicationContext context) {
         WingsAuthTypeParser parser = null;
         if (wingsAuthTypeSource == null) {
@@ -151,7 +164,10 @@ public class WingsBindLoginConfigurer extends
                 wingsAuthTypeSource = context.getBeanProvider(WingsAuthTypeSource.class).getIfAvailable();
             }
             else {
-                parser = new DefaultWingsAuthTypeParser(authTypes);
+                if (defaultAuthType == null && authTypes.size() == 1) {
+                    defaultAuthType = authTypes.values().iterator().next();
+                }
+                parser = new DefaultWingsAuthTypeParser(defaultAuthType, authTypes);
             }
         }
 

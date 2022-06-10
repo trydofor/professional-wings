@@ -12,10 +12,11 @@ import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.NonceExpiredException;
 import pro.fessional.mirana.best.StateAssert;
-import pro.fessional.mirana.cast.EnumConvertor;
+import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.PasswordHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
+import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.event.auth.WarlockNonceSendEvent;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
@@ -47,6 +48,8 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
     protected PasswordEncoder passwordEncoder;
     @Setter(onMethod_ = {@Autowired})
     protected PasssaltEncoder passsaltEncoder;
+    @Setter(onMethod_ = {@Autowired})
+    protected WingsAuthTypeParser authTypeParser;
 
     public NonceUserDetailsCombo() {
         setOrder(ORDER);
@@ -54,7 +57,7 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
 
     @Override
     public Details doLoad(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {
-        if (!acceptNonceType.contains(authType)) {
+        if (authType != Null.Enm && !acceptNonceType.contains(authType)) {
             return null;
         }
 
@@ -71,13 +74,13 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
         Details details = null;
         for (DefaultUserDetailsCombo combo : detailCombos) {
             final Details ud = combo.doLoad(username, authType, authDetail);
-            if(ud != null){
+            if (ud != null) {
                 details = ud;
                 break;
             }
         }
 
-        if(details == null){
+        if (details == null) {
             details = super.doLoad(username, authType, authDetail);
         }
 
@@ -97,7 +100,7 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
     }
 
     private String cacheKey(Enum<?> authType, String username) {
-        return username + "@" + EnumConvertor.enum2Str(authType);
+        return username + "@" + authTypeParser.parse(authType);
     }
 
     private Cache getCache() {

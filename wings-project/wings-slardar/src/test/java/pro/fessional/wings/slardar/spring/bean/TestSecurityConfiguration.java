@@ -50,7 +50,6 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
                             .successHandler((request, response, authentication) -> logger.info("successHandler"))
                             .failureHandler((request, response, exception) -> logger.info("failureHandler"))
                             .bindAuthTypeToEnums("user", Null.Enm)
-
             )
             .and()
             .authorizeRequests(conf -> conf

@@ -40,16 +40,10 @@ public class SlardarSwaggerConfiguration {
             }
 
             final Map<String, Parameter> comPara = slardarSwaggerProp.toComPara();
-//            final Components components = openApi.getComponents();
-//            for (Map.Entry<String, Parameter> en : comPara.entrySet()) {
-//                components.addParameters(en.getKey(), en.getValue());
-//            }
-
-//            final List<Parameter> refPara = slardarSwaggerProp.toRefPara();
-            openApi.getPaths().values().stream()
+            openApi.getPaths().values()
+                   .stream()
                    .flatMap(pathItem -> pathItem.readOperations().stream())
                    .forEach(operation -> {
-//                       for (Parameter param : refPara) {
                        for (Parameter param : comPara.values()) {
                            operation.addParametersItem(param);
                        }

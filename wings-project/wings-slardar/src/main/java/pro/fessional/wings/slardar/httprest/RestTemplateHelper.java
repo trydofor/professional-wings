@@ -12,8 +12,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 import pro.fessional.mirana.data.Null;
 
@@ -27,6 +29,17 @@ import java.io.InputStream;
  * @since 2020-06-02
  */
 public class RestTemplateHelper {
+
+    public static final ResponseErrorHandler NopErrorHandler = new ResponseErrorHandler() {
+        @Override
+        public boolean hasError(@NotNull ClientHttpResponse response) {
+            return false;
+        }
+
+        @Override
+        public void handleError(@NotNull ClientHttpResponse response) {
+        }
+    };
 
     @NotNull
     public static HttpHeaders header(MediaType mediaType) {

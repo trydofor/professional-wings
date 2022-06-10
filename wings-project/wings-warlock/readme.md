@@ -172,3 +172,40 @@ wings.warlock.security.zone-perm.admin=ROLE_ADMIN
 
 wings配置顺序由宽松到严格(PermitAll > Authenticated > Authority)，最后AnyRequest收尾。
 在Authority配置时，会按URL分组合并权限，最后以URL的ascii倒序设置，即英数先于`*`，宽松规则在后。
+
+### 02.401时是401还是302
+
+当请求禁止访问 UNAUTHORIZED 时，spring会抛出AccessDeniedException，
+再由ExceptionTranslationFilter使用AuthenticationEntryPoint选择合适的登录入口。
+
+wings中，默认存在2个AuthenticationEntryPoint，
+
+* LoginUrlAuthenticationEntryPoint - 用户侧的的通常登录
+* BasicAuthenticationEntryPoint - 监控侧的basic验证
+
+对于LoginUrl可以配置login-forward，选择以何种形式提供给用户端登录。
+
+在EntryPoint的选择上，可以通过设置http header以满足匹配规则。
+以跳过basic为例，详见 HttpBasicConfigurer.registerDefaults
+
+* 不含：X-Requested-With: XMLHttpRequest
+* `Accept`中包括以下任意即可
+  - application/xhtml+xml
+  - image/*
+  - text/html
+  - text/plain
+
+在 OpenAPI3 规范中 `Accept`，`Content-Type`和`Authorization`不许修改。
+
+<https://swagger.io/docs/specification/describing-parameters/#header-parameters>
+
+> Note: Header parameters named Accept, Content-Type and Authorization
+> are not allowed. To describe these headers, use the corresponding OpenAPI keywords:
+
+所以在swagger中，默认不能够以302返回，需要使用curl或ajax
+
+```bash
+curl -vX 'POST' \
+  'http://127.0.0.1:8084/user/authed-user.json' \
+  -H 'accept: text/html'
+```

@@ -17,7 +17,6 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.util.AntPathMatcher;
-import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
@@ -101,8 +100,8 @@ public class WarlockSecurityBeanConfiguration {
     public WingsAuthTypeParser wingsAuthTypeParser() {
         logger.info("Wings conf wingsAuthTypeParser");
         final Map<String, Enum<?>> authType = securityProp.mapAuthTypeEnum();
-        authType.put("null", Null.Enm);
-        return new DefaultWingsAuthTypeParser(authType);
+        final Enum<?> atd = securityProp.mapAuthTypeDefault();
+        return new DefaultWingsAuthTypeParser(atd, authType);
     }
 
     @Bean
