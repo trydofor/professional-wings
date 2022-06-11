@@ -205,7 +205,7 @@ SQL脚本可以很好的编辑，比较，文档化，包括业务表的分层�
 ### 0.2.5.Spring注入风格，在`silencer`和`faceless`有详细说明
 
 * 优先使用`constructor`注入，用`lombok`的`@RequiredArgsConstructor`。
-* 次之使用`setter`注入，用`lombok`的`@Setter(onMethod = @__({@Autowired}))`
+* 次之使用`setter`注入，用`lombok`的`@Setter(onMethod_ = {@Autowired})`
   或`kotlin`的`@Autowired lateinit var`。
 * 不要使用`Field`注入，坏处自己搜。
 * 通常required时constructor注入，optional时setter注入。

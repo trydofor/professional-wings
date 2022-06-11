@@ -45,7 +45,7 @@ public class LoginControllerTest {
     private WingsAuthTypeParser authTypeParser;
 
     @GetMapping("/auth/console-nonce.json")
-    public String loginPageDefault(@RequestParam("username") String user, @RequestParam("authtype") String type) {
+    public String loginPageDefault(@RequestParam("username") String user, @RequestParam(value = "authtype", required = false) String type) {
         Enum<?> authType = authTypeParser.parse(type);
         String pass = RandCode.human(16);
         long expire = System.currentTimeMillis() + 300_000;

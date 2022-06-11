@@ -52,6 +52,11 @@ public class SlardarSwaggerProp {
     private Map<String, EnabledParameter> param = new HashMap<>();
     public static final String Key$param = Key + ".param";
 
+    /**
+     * @see #Key$accept
+     */
+    private Map<String, String> accept = new HashMap<>();
+    public static final String Key$accept = Key + ".accept";
 
     public List<Parameter> toRefPara() {
         List<Parameter> result = new ArrayList<>();

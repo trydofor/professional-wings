@@ -202,7 +202,8 @@ wings中，默认存在2个AuthenticationEntryPoint，
 > Note: Header parameters named Accept, Content-Type and Authorization
 > are not allowed. To describe these headers, use the corresponding OpenAPI keywords:
 
-所以在swagger中，默认不能够以302返回，需要使用curl或ajax
+wings默认配置swagger，提供了text和json类型，分别对应LoginUrl和Basic的EntryPoint。
+注意到302时，swagger自动导向目标页面，最终以200显示。此过程可以debug或curl看到。
 
 ```bash
 curl -vX 'POST' \
