@@ -1,35 +1,24 @@
 #!/bin/bash
-THIS_VERSION=2022-02-22
-
-cat <<EOF
-#################################################
-# Version $THIS_VERSION # for Mac&Lin / BusyBox&Bash
-# 使用'ln -s'把此脚本软连接到'执行目录/workdir'，
-# 链接源及链接的同名'env'，文件会被自动载入，当前覆盖源配置项。
-# 同一主机环境，同一boot.jar只能执行一份，多份需更名。
-# 'BOOT_CNF|BOOT_ARG|JAVA_ARG' 内变量可被延时求值，
-# 使用 ' 为延时求值，使用 " 为立即求值。 默认Java 11 G1
-#################################################
-EOF
+THIS_VERSION=2022-06-01
 ################ modify the following params ################
-WORK_DIR=''          # 脚本生成文件，日志的目录，默认空（脚本位置）
-TAIL_LOG='log'       # 默认tail的日志，"log|out|new|ask"
-USER_RUN=$USER       # 用来启动程序的用户
-PORT_RUN=''          # 默认端口，空时
-ARGS_RUN='start'     # 默认参数。若$1或$2指定
-BOOT_JAR=''          # 主程序。可通过$1覆盖，绝对路径或相对WORK_DIR
-BOOT_OUT=''          # 控制台日志，默认 $BOOT_JAR-*.out
-BOOT_LOG=''          # 程序日志，需要外部指定，用来tail
-BOOT_PID=''          # 主程序pid，默认 $BOOT_JAR.pid
-BOOT_CNF=''          # 外部配置。通过env覆盖
-BOOT_ARG=''          # 启动参数。通过env覆盖
-JAVA_XMS='1G'        # 启动参数。通过env覆盖
-JAVA_XMX='3G'        # 启动参数。通过env覆盖
-WARN_TXT=''          # 预设的警告词
-WARN_AGO=''          # 日志多少秒不更新，则警报，空表示忽略
-WARN_RUN=''          # 若pid消失或日志无更新则执行
+WORK_DIR=''      # 脚本生成文件，日志的目录，默认空（脚本位置）
+TAIL_LOG='log'   # 默认tail的日志，"log|out|new|ask"
+USER_RUN=$USER   # 用来启动程序的用户
+PORT_RUN=''      # 默认端口，空时
+ARGS_RUN='start' # 默认参数。若$1或$2指定
+BOOT_JAR=''      # 主程序。可通过$1覆盖，绝对路径或相对WORK_DIR
+BOOT_OUT=''      # 控制台日志，默认 $BOOT_JAR-*.out
+BOOT_LOG=''      # 程序日志，需要外部指定，用来tail
+BOOT_PID=''      # 主程序pid，默认 $BOOT_JAR.pid
+BOOT_CNF=''      # 外部配置。通过env覆盖
+BOOT_ARG=''      # 启动参数。通过env覆盖
+JAVA_XMS='1G'    # 启动参数。通过env覆盖
+JAVA_XMX='3G'    # 启动参数。通过env覆盖
+WARN_TXT=''      # 预设的警告词
+WARN_AGO=''      # 日志多少秒不更新，则警报，空表示忽略
+WARN_RUN=''      # 若pid消失或日志无更新则执行
 # shellcheck disable=SC2153
-JDK_HOME=''          # 指定jdk版本
+JDK_HOME='' # 指定jdk版本
 # shellcheck disable=SC2016
 JDK8_ARG='
 -Xloggc:${BOOT_TKN}.gc
@@ -78,6 +67,22 @@ BOOT_MD5=''                      # 以safe模式执行的文件md5sum
 JAR_NAME=''                      # boot-jar本名
 JAVA_OPT=''                      # java 实际启动参加
 #
+function print_envs() {
+    echo -e "#################################################"
+    echo -e "# Version \033[32m$THIS_VERSION\033[m # for Mac&Lin / BusyBox&Bash"
+    echo -e "# 使用'ln -s'把此脚本软连接到'执行目录/workdir'，"
+    echo -e "# 链接源及链接的同名'env'，文件会被自动载入，当前覆盖源配置项。"
+    echo -e "# 同一主机环境，同一boot.jar只能执行一份，多份需更名。"
+    echo -e "# 'BOOT_CNF|BOOT_ARG|JAVA_ARG' 内变量可被延时求值，"
+    echo -e "# 使用 ' 为延时求值，使用 \" 为立即求值。 默认Java 11 G1"
+    echo -e "#################################################"
+    echo -e "\033[37;42;1mINFO: ==== boot env ==== \033[0m"
+    echo "work-dir=$WORK_DIR"
+    echo "env-link=$link_envs"
+    echo "env-file=$this_envs"
+    echo "grep-key='$grep_key'"
+}
+
 function print_help() {
     echo -e '\033[32m docker \033[m start in docker with console log'
     echo -e '\033[32m start \033[m start the {boot-jar} and tail the log'
@@ -164,20 +169,18 @@ function check_boot() {
 
 ################ script body ################
 # load env
-echo -e "\033[37;42;1mINFO: ==== boot env ==== \033[0m"
 this_file="$0"
+link_envs=""
 if [[ -L "$this_file" ]]; then
     link_file=$(realpath "$this_file")
     link_envs=${link_file%.*}.env
     if [[ -f "$link_envs" ]]; then
-        echo "env-link=$link_envs"
         # shellcheck disable=SC1090
         source "$link_envs"
     fi
 fi
 this_envs=${this_file%.*}.env
 if [[ -f "$this_envs" ]]; then
-    echo "env-file=$this_envs"
     # shellcheck disable=SC1090
     source "$this_envs"
 else
@@ -190,7 +193,6 @@ if [[ ! -d "$WORK_DIR" ]]; then
 fi
 cd "$WORK_DIR" || exit
 WORK_DIR=$(realpath -s "$WORK_DIR")
-echo "work-dir=$WORK_DIR"
 
 # check arg
 if [[ -L "$1" || -f "$1" ]]; then
@@ -213,10 +215,10 @@ fi
 # boot tkn
 BOOT_TKN="${JAR_NAME}-${BOOT_DTM}"
 if [[ "$ARGS_RUN" != "start" && -f "$BOOT_PID" ]]; then
-   old_tkn=$(awk '{print $2}' "$BOOT_PID")
-   if [[ "$old_tkn" != "" ]]; then
-      BOOT_TKN=$old_tkn
-   fi
+    old_tkn=$(awk '{print $2}' "$BOOT_PID")
+    if [[ "$old_tkn" != "" ]]; then
+        BOOT_TKN=$old_tkn
+    fi
 fi
 
 # boot out
@@ -257,12 +259,12 @@ fi
 
 # check ps
 grep_key=" -jar ${BOOT_JAR}[ -]"
-echo -e "grep-key='$grep_key'"
 count=$(pgrep -f "$grep_key" | wc -l)
 
 # exec cmd
 case "$ARGS_RUN" in
     docker)
+        print_envs
         check_java
         print_args
         if [[ $count -eq 0 ]]; then
@@ -274,6 +276,7 @@ case "$ARGS_RUN" in
         fi
         ;;
     start*)
+        print_envs
         check_java
 
         if [[ $count -ne 0 ]]; then
@@ -400,7 +403,7 @@ case "$ARGS_RUN" in
             done
 
             # shellcheck disable=SC2086
-            if ! ps $pid > /dev/null; then
+            if ! ps $pid >/dev/null; then
                 echo ""
                 echo -e "\033[33mNOTE: successfully stop in $i seconds, pid=$pid of $BOOT_JAR \033[0m"
                 exit
@@ -415,6 +418,7 @@ case "$ARGS_RUN" in
         kill -9 $pid
         ;;
     status)
+        print_envs
         if [[ $count -eq 0 ]]; then
             echo -e "\033[37;41;1mERROR: not running $BOOT_JAR \033[0m"
             exit
@@ -494,7 +498,7 @@ case "$ARGS_RUN" in
 
         if [[ "$warn_got" != "" ]]; then
             if [[ "$WARN_RUN" == "" ]]; then
-                echo -e "\033[33mNOTE: skip monitor for empty WARN_RUN \033[0m"
+                echo -e "\033[33mNOTE: skip notice for empty WARN_RUN \033[0m"
             else
                 echo "$WARN_RUN"
                 eval "$WARN_RUN"
@@ -502,7 +506,7 @@ case "$ARGS_RUN" in
                 echo -e "\033[33mNOTE: sent warn notice \033[0m"
             fi
         else
-            echo -e "\033[37;42;1mNOTE: good status : PID and LOG \033[0m"
+            echo -e "\033[37;42;1mNOTE: $BOOT_JAR good status in PID and LOG \033[0m"
         fi
         ;;
     clean)
@@ -616,6 +620,6 @@ case "$ARGS_RUN" in
             echo -e '\033[37;41;1mERROR: unsupported command, use the following\033[m'
         fi
         print_help
+        print_envs
         ;;
 esac
-echo
