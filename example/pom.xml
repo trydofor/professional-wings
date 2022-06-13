@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>pro.fessional</groupId>
+        <artifactId>wings</artifactId>
+        <version>${revision}.${changelist}</version>
+        <relativePath>../buyback/pom.xml</relativePath>
+    </parent>
+
+    <groupId>com.moilioncircle.wings</groupId>
+    <artifactId>example</artifactId>
+    <packaging>pom</packaging>
+    <version>${revision}-SNAPSHOT</version>
+
+    <name>wings-example</name>
+    <description>一些许的样板和示例</description>
+
+    <modules>
+        <module>demo-admin</module>
+        <module>demo-front</module>
+        <module>demo-codegen</module>
+        <module>demo-common</module>
+        <!-- <module>demo-batch</module> -->
+        <!-- <module>demo-api</module> -->
+        <module>demo-devops</module>
+    </modules>
+
+    <properties>
+        <demo-revision>1.0.0-SNAPSHOT</demo-revision>
+        <maven.test.skip>true</maven.test.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.install.skip>true</maven.install.skip>
+        <spring-boot.repackage.skip>false</spring-boot.repackage.skip>
+        <spring-boot.repackage.executable>false</spring-boot.repackage.executable>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.moilioncircle.wings</groupId>
+                <artifactId>demo-admin</artifactId>
+                <version>${revision}-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.moilioncircle.wings</groupId>
+                <artifactId>demo-front</artifactId>
+                <version>${revision}-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.moilioncircle.wings</groupId>
+                <artifactId>demo-codegen</artifactId>
+                <version>${revision}-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.moilioncircle.wings</groupId>
+                <artifactId>demo-common</artifactId>
+                <version>${revision}-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.moilioncircle.wings</groupId>
+                <artifactId>demo-devops</artifactId>
+                <version>${revision}-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <!--
+    <repositories>
+        <repository>
+            <id>ossrh-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots><enabled>true</enabled></snapshots>
+            <releases><enabled>false</enabled></releases>
+        </repository>
+    </repositories>
+    -->
+</project>

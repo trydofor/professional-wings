@@ -10,18 +10,18 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>pro.fessional</groupId>
-    <artifactId>wings</artifactId>
+    <groupId>pro.fessional.wings</groupId>
+    <artifactId>ancient</artifactId>
     <version>${revision}.${changelist}</version>
     <packaging>pom</packaging>
 
-    <name>wings</name>
+    <name>wings ancient</name>
     <description>万物生长靠日</description>
 
     <modules>
-        <module>wings-example</module>
-        <module>wings-project</module>
-        <module>wings-radiant</module>
+        <module>buyback</module>
+        <module>example</module>
+        <module>radiant</module>
     </modules>
 
     <properties>
@@ -44,6 +44,7 @@
         <spring-boot.repackage.executable>false</spring-boot.repackage.executable>
         <!-- common -->
         <errorprone.version>2.13.1</errorprone.version> <!-- https://github.com/google/error-prone/releases -->
+        <annotations.version>23.0.0</annotations.version> <!-- https://github.com/JetBrains/java-annotations -->
         <mapstruct.version>1.5.1.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
         <guava.version>31.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
         <commons-io.version>2.11.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
@@ -106,58 +107,58 @@
             </dependency>
             <!-- pro.fessional.wings -->
             <dependency>
-                <groupId>pro.fessional</groupId>
-                <artifactId>wings-silencer</artifactId>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>silencer</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
-                <groupId>pro.fessional</groupId>
-                <artifactId>wings-silencer-test</artifactId>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>silencer-test</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
-                <groupId>pro.fessional</groupId>
-                <artifactId>wings-faceless</artifactId>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>faceless</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
-                <groupId>pro.fessional</groupId>
-                <artifactId>wings-faceless-flywave</artifactId>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>faceless-flywave</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
-                <groupId>pro.fessional</groupId>
-                <artifactId>wings-faceless-jooq</artifactId>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>faceless-jooq</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
-                <groupId>pro.fessional</groupId>
-                <artifactId>wings-faceless-shard</artifactId>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>faceless-shard</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
-                <groupId>pro.fessional</groupId>
-                <artifactId>wings-faceless-test</artifactId>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>faceless-test</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
-                <groupId>pro.fessional</groupId>
-                <artifactId>wings-slardar</artifactId>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>slardar</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
-                <groupId>pro.fessional</groupId>
-                <artifactId>wings-slardar-hazelcast</artifactId>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>slardar-hazelcast</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
-                <groupId>pro.fessional</groupId>
-                <artifactId>wings-slardar-test</artifactId>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>slardar-test</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
-                <groupId>pro.fessional</groupId>
-                <artifactId>wings-warlock</artifactId>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>warlock</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
@@ -292,6 +293,11 @@
                 <version>${sentry.version}</version>
             </dependency>
             <!-- dev -->
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${annotations.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.google.errorprone</groupId>
                 <artifactId>error_prone_annotations</artifactId>

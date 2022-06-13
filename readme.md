@@ -41,11 +41,11 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
 
 由以下几个子工程构成，
 
-* [沉默术士/silencer](wings-project/wings-silencer/readme.md) springboot的工程化装配，I18n等
-* [虚空假面/faceless](wings-project/wings-faceless/readme.md) 数据层，分表分库，数据及库的版本管理
-* [鱼人守卫/slardar](wings-project/wings-slardar/readme.md) Servlet体系的WebMvc基础约定和封装
-* [术士大叔/warlock](wings-project/wings-warlock/readme.md) 综合以上的基础业务模块和功能脚手架
-* [演示例子/example](wings-example/readme.md) 集成以上的样板工程和例子
+* [沉默术士/silencer](buyback/silencer/readme.md) springboot的工程化装配，I18n等
+* [虚空假面/faceless](buyback/faceless/readme.md) 数据层，分表分库，数据及库的版本管理
+* [鱼人守卫/slardar](buyback/slardar/readme.md) Servlet体系的WebMvc基础约定和封装
+* [术士大叔/warlock](buyback/warlock/readme.md) 综合以上的基础业务模块和功能脚手架
+* [演示例子/example](example/readme.md) 集成以上的样板工程和例子
 
 wings的版本号为`4段分隔`，前3段为spring-boot版本，第4段是build号。
 build是3位数字，第1位为大版本，意味着不兼容性；后2位是小版本，意味着基本兼容或容易适配。
@@ -67,7 +67,7 @@ build是3位数字，第1位为大版本，意味着不兼容性；后2位是小
 `wings-idea-live.xml`需要手动放到`$config/templates/`，没有则新建。
 
 ```bash
-cd wings-project
+cd buyback
 id_config=~/Library/ApplicationSupport/JetBrains/IntelliJIdea2021.1
 # 通过复制，备份
 cat $id_config/templates/wings.xml > wings-idea-live.xml
@@ -538,9 +538,9 @@ cat /etc/hosts
 find . -name 'spring-wings-enabled.properties' \
 | egrep -v -E 'target/|example/' 
 
-./wings-slardar/src/main/resources/wings-conf/spring-wings-enabled.properties
-./wings-faceless/src/main/resources/wings-conf/spring-wings-enabled.properties
-./wings-silencer/src/main/resources/wings-conf/spring-wings-enabled.properties
+./slardar/src/main/resources/wings-conf/spring-wings-enabled.properties
+./faceless/src/main/resources/wings-conf/spring-wings-enabled.properties
+./silencer/src/main/resources/wings-conf/spring-wings-enabled.properties
 
 # 找到所false的开关
 find . -name 'spring-wings-enabled.properties' \
@@ -557,10 +557,10 @@ spring.wings.faceless.enabled.enumi18n=false
 ```bash
 git clone https://gitee.com/trydofor/pro.fessional.wings.git
 cd pro.fessional.wings
-wings-example/wings-init-project.sh
+example/wings-init-project.sh
 
 # 如果不能执行bash，那么自行编译和执行
-cd wings-example/src/test/java/
+cd example/src/test/java/
 pro/fessional/wings/example/exec/Wings0InitProject.java
 ```
 
@@ -781,7 +781,7 @@ flywave版本管理和journal的delete_dt时，都采用了时间，可以快速
 
 Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控制台以Error形式输出。
 
-更多信息，参考 [04.日时零值和时区问题](wings-project/wings-faceless/readme.md#04.日时零值和时区问题)
+更多信息，参考 [04.日时零值和时区问题](buyback/faceless/readme.md#04日时零值和时区问题)
 
 ### 19.无外网mysql如何执行flywave版本管理
 
@@ -794,7 +794,7 @@ Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控�
 
 ### 20.Tomcat和hazelcast的POM exclusion
 
-使用wings-project为parent时通过dependencyManagement，继承wings默认不需要修改。
+使用wings为parent时通过dependencyManagement，继承wings默认不需要修改。
 但若是没有继承wings依赖，以下2项视情况需要自行调整。
 
 * spring-boot-starter-web/spring-boot-starter-tomcat，因默认使用undertow
