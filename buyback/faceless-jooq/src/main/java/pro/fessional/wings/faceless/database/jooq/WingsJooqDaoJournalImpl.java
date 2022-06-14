@@ -82,20 +82,20 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     ///////////////// select list /////////////////////
 
     @NotNull
-    public List<P> fetchLive(Function<T, Fn> fun) {
-        final Fn fn = fun.apply(table);
-        return fetchLive(table, table.onlyLive(fn.cond), fn.part);
+    public List<P> fetchLive(Function<T, Condition> fun) {
+        final Condition cond = fun.apply(table);
+        return fetchLive(table, table.onlyLive(cond), SelectOrderCondition.getSelectsOrders(cond));
     }
 
     @NotNull
-    public List<P> fetchLive(int limit, Function<T, Fn> fun) {
+    public List<P> fetchLive(int limit, Function<T, Condition> fun) {
         return fetchLive(0, limit, fun);
     }
 
     @NotNull
-    public List<P> fetchLive(int offset, int limit, Function<T, Fn> fun) {
-        final Fn fn = fun.apply(table);
-        return fetch(table, offset, limit, table.onlyLive(fn.cond), fn.part);
+    public List<P> fetchLive(int offset, int limit, Function<T, Condition> fun) {
+        final Condition cond = fun.apply(table);
+        return fetch(table, offset, limit, table.onlyLive(cond), SelectOrderCondition.getSelectsOrders(cond));
     }
 
     ////////
@@ -193,24 +193,24 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
 
     ///////////////// select one /////////////////////
     @Nullable
-    public P fetchOneLive(Function<T, Fn> fun) {
-        final Fn fn = fun.apply(table);
-        return fetchOne(table, table.onlyLive(fn.cond), fn.part);
+    public P fetchOneLive(Function<T, Condition> fun) {
+        final Condition cond = fun.apply(table);
+        return fetchOne(table, table.onlyLive(cond), SelectOrderCondition.getSelectsOrders(cond));
     }
 
     @Nullable
-    public P fetchLimitOneLive(Function<T, Fn> fun) {
-        final Fn fn = fun.apply(table);
-        return fetchLimitOne(table, table.onlyLive(fn.cond), fn.part);
+    public P fetchLimitOneLive(Function<T, Condition> fun) {
+        final Condition cond = fun.apply(table);
+        return fetchLimitOne(table, table.onlyLive(cond),SelectOrderCondition.getSelectsOrders(cond));
     }
 
     @NotNull
-    public Optional<P> fetchOptionalLive(Function<T, Fn> fun) {
+    public Optional<P> fetchOptionalLive(Function<T, Condition> fun) {
         return Optional.ofNullable(fetchOne(fun));
     }
 
     @NotNull
-    public Optional<P> fetchLimitOptionalLive(Function<T, Fn> fun) {
+    public Optional<P> fetchLimitOptionalLive(Function<T, Condition> fun) {
         return Optional.ofNullable(fetchLimitOne(fun));
     }
 

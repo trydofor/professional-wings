@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
-import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoAliasImpl;
+import pro.fessional.wings.faceless.database.jooq.SelectOrderCondition;
 import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelp;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
@@ -64,7 +64,7 @@ public class JooqDslAndDaoSample {
         val ft1 = dao.fetch(a, 0, 2, c, a.Id.desc());
         System.out.println("============count " + i + ", ft2'size=" + ft1.size());
         testcaseNotice("select id, commit_id  from `tst_中文也分表` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?) limit ?");
-        val ft2 = dao.fetch(0, 2, (t) -> WingsJooqDaoAliasImpl.Fn.of(
+        val ft2 = dao.fetch(0, 2, (t) -> SelectOrderCondition.of(
                 t.Id.gt(1L).and(t.CommitId.lt(200L)),
                 t.Id, t.CommitId, t.Id.desc()));
         System.out.println("============count " + i + ", ft2'size=" + ft2.size());

@@ -1,7 +1,6 @@
 package pro.fessional.wings.faceless.database.jooq;
 
 import com.google.common.collect.Lists;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.BatchBindStep;
@@ -640,35 +639,21 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
 
     ///////////////// select list /////////////////////
 
-    @RequiredArgsConstructor
-    public static class Fn {
-        public final Condition cond;
-        public final QueryPart[] part;
-
-        public static Fn of(QueryPart... part) {
-            return new Fn(null, part);
-        }
-
-        public static Fn of(Condition cond, QueryPart... part) {
-            return new Fn(cond, part);
-        }
+    @NotNull
+    public List<P> fetch(Function<T, Condition> fun) {
+        final Condition cond = fun.apply(table);
+        return fetch(table, cond, SelectOrderCondition.getSelectsOrders(cond));
     }
 
     @NotNull
-    public List<P> fetch(Function<T, Fn> fun) {
-        final Fn fn = fun.apply(table);
-        return fetch(table, fn.cond, fn.part);
-    }
-
-    @NotNull
-    public List<P> fetch(int limit, Function<T, Fn> fun) {
+    public List<P> fetch(int limit, Function<T, Condition> fun) {
         return fetch(0, limit, fun);
     }
 
     @NotNull
-    public List<P> fetch(int offset, int limit, Function<T, Fn> fun) {
-        final Fn fn = fun.apply(table);
-        return fetch(table, offset, limit, fn.cond, fn.part);
+    public List<P> fetch(int offset, int limit, Function<T, Condition> fun) {
+        final Condition cond = fun.apply(table);
+        return fetch(table, offset, limit, cond, SelectOrderCondition.getSelectsOrders(cond));
     }
 
     ////////
@@ -816,24 +801,24 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
 
     ///////////////// select one /////////////////////
     @Nullable
-    public P fetchOne(Function<T, Fn> fun) {
-        final Fn fn = fun.apply(table);
-        return fetchOne(table, fn.cond, fn.part);
+    public P fetchOne(Function<T, Condition> fun) {
+        final Condition cond = fun.apply(table);
+        return fetchOne(table, cond, SelectOrderCondition.getSelectsOrders(cond));
     }
 
     @Nullable
-    public P fetchLimitOne(Function<T, Fn> fun) {
-        final Fn fn = fun.apply(table);
-        return fetchLimitOne(table, fn.cond, fn.part);
+    public P fetchLimitOne(Function<T, Condition> fun) {
+        final Condition cond = fun.apply(table);
+        return fetchLimitOne(table, cond, SelectOrderCondition.getSelectsOrders(cond));
     }
 
     @NotNull
-    public Optional<P> fetchOptional(Function<T, Fn> fun) {
+    public Optional<P> fetchOptional(Function<T, Condition> fun) {
         return Optional.ofNullable(fetchOne(fun));
     }
 
     @NotNull
-    public Optional<P> fetchLimitOptional(Function<T, Fn> fun) {
+    public Optional<P> fetchLimitOptional(Function<T, Condition> fun) {
         return Optional.ofNullable(fetchLimitOne(fun));
     }
 

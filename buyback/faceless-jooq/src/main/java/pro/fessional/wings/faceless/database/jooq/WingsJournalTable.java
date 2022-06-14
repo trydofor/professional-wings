@@ -3,7 +3,6 @@ package pro.fessional.wings.faceless.database.jooq;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.jooq.Field;
-import org.jooq.True;
 import org.jooq.impl.DSL;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 
@@ -39,16 +38,7 @@ public interface WingsJournalTable<T> extends WingsAliasTable<T> {
      */
     @NotNull
     default Condition onlyDied(Condition cond) {
-        Condition died = getOnlyDied();
-        if (died instanceof True) {
-            return cond;
-        } else {
-            if (cond == null) {
-                return died;
-            } else {
-                return cond.and(died);
-            }
-        }
+        return DSL.and(cond, getOnlyDied());
     }
 
     /**
@@ -59,15 +49,6 @@ public interface WingsJournalTable<T> extends WingsAliasTable<T> {
      */
     @NotNull
     default Condition onlyLive(Condition cond) {
-        Condition live = getOnlyLive();
-        if (live instanceof True) {
-            return cond;
-        } else {
-            if (cond == null) {
-                return live;
-            } else {
-                return cond.and(live);
-            }
-        }
+        return DSL.and(cond, getOnlyLive());
     }
 }
