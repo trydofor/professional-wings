@@ -15,11 +15,11 @@
     <version>${revision}.${changelist}</version>
     <packaging>pom</packaging>
 
-    <name>wings ancient</name>
+    <name>wings-ancient</name>
     <description>万物生长靠日</description>
 
     <modules>
-        <module>buyback</module>
+        <module>wings</module>
         <module>example</module>
         <module>radiant</module>
     </modules>

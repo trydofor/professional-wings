@@ -7,7 +7,7 @@
         <groupId>pro.fessional</groupId>
         <artifactId>wings</artifactId>
         <version>${revision}.${changelist}</version>
-        <relativePath>../buyback/pom.xml</relativePath>
+        <relativePath>../wings/pom.xml</relativePath>
     </parent>
 
     <groupId>com.moilioncircle.wings</groupId>
