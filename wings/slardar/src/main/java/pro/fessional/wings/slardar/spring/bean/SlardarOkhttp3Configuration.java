@@ -4,6 +4,7 @@ import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.CookieJar;
 import okhttp3.Dns;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import pro.fessional.wings.slardar.httprest.OkHttpClientHelper;
+import pro.fessional.wings.slardar.httprest.OkHttpInterceptor;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarOkHttpProp;
 
@@ -40,25 +42,67 @@ public class SlardarOkhttp3Configuration {
     private static final Log logger = LogFactory.getLog(SlardarOkhttp3Configuration.class);
 
     @Bean
+    @ConditionalOnMissingBean(ConnectionPool.class)
+    public ConnectionPool okHttp3ConnectionPool(SlardarOkHttpProp config) {
+        logger.info("Wings conf okHttp3ConnectionPool");
+        int maxIdleConnections = config.getMaxIdle();
+        return new ConnectionPool(maxIdleConnections, config.getKeepAlive(), TimeUnit.SECONDS);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(RestTemplateBuilder.class)
+    public RestTemplateBuilder restTemplateBuilder(RestTemplateBuilderConfigurer configurer, OkHttpClient client) {
+        logger.info("Wings conf restTemplateBuilder");
+        final RestTemplateBuilder builder = configurer.configure(new RestTemplateBuilder());
+        return builder.requestFactory(() -> OkHttpClientHelper.requestFactory(client));
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(RestTemplate.class)
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        logger.info("Wings conf restTemplate");
+        return builder.build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(value = SlardarOkHttpProp.Key$hostCookie, havingValue = "true")
+    public CookieJar hostCookieJar() {
+        logger.info("Wings conf hostCookieJar");
+        return new OkHttpClientHelper.HostCookieJar();
+    }
+
+    @Bean
     @ConditionalOnMissingBean(OkHttpClient.class)
     public OkHttpClient okHttpClient(
             ObjectProvider<Cache> cacheProvier,
             ObjectProvider<CookieJar> cookieProvider,
             ObjectProvider<Dns> dnsProvider,
             ConnectionPool connectionPool,
+            ObjectProvider<Interceptor> interceptors,
             SlardarOkHttpProp properties
     ) {
         logger.info("Wings conf okHttpClient");
         // check builder return new ...
-        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+        final OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .connectTimeout(Duration.ofSeconds(properties.getTimeoutConn()))
                 .readTimeout(Duration.ofSeconds(properties.getTimeoutRead()))
                 .writeTimeout(Duration.ofSeconds(properties.getTimeoutWrite()))
                 .pingInterval(Duration.ofSeconds(properties.getPingInterval()))
-
                 .followRedirects(properties.isFollowRedirect())
                 .followSslRedirects(properties.isFollowRedirectSsl())
                 .retryOnConnectionFailure(properties.isRetryFailure());
+
+        // interceptors
+        interceptors.orderedStream().forEach(it -> {
+            if (it instanceof OkHttpInterceptor && ((OkHttpInterceptor) it).isNetwork()) {
+                logger.info("Wings conf okHttpClient addNetworkInterceptor:" + it.getClass());
+                builder.addNetworkInterceptor(it);
+            }
+            else {
+                logger.info("Wings conf okHttpClient addInterceptor:" + it.getClass());
+                builder.addInterceptor(it);
+            }
+        });
 
         // cache
         Cache cacheBean = cacheProvier.getIfAvailable();
@@ -104,35 +148,5 @@ public class SlardarOkhttp3Configuration {
             OkHttpClientHelper.sslTrustAll(builder);
         }
         return builder.build();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(ConnectionPool.class)
-    public ConnectionPool okHttp3ConnectionPool(SlardarOkHttpProp config) {
-        logger.info("Wings conf okHttp3ConnectionPool");
-        int maxIdleConnections = config.getMaxIdle();
-        return new ConnectionPool(maxIdleConnections, config.getKeepAlive(), TimeUnit.SECONDS);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(RestTemplateBuilder.class)
-    public RestTemplateBuilder restTemplateBuilder(RestTemplateBuilderConfigurer configurer, OkHttpClient client) {
-        logger.info("Wings conf restTemplateBuilder");
-        final RestTemplateBuilder builder = configurer.configure(new RestTemplateBuilder());
-        return builder.requestFactory(() -> OkHttpClientHelper.requestFactory(client));
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(RestTemplate.class)
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        logger.info("Wings conf restTemplate");
-        return builder.build();
-    }
-
-    @Bean
-    @ConditionalOnProperty(value = SlardarOkHttpProp.Key$hostCookie, havingValue = "true")
-    public CookieJar hostCookieJar() {
-        logger.info("Wings conf hostCookieJar");
-        return new OkHttpClientHelper.HostCookieJar();
     }
 }
