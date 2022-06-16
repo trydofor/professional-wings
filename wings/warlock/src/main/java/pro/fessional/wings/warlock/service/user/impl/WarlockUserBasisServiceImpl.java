@@ -46,6 +46,8 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, Ini
 
     @Override
     public void afterPropertiesSet() {
+        if (winUserBasisDao.notTableExist()) return;
+
         log.info("warlock conf SaltByUid for GlobalAttributeHolder");
         GlobalAttributeHolder.regLoader(SaltByUid, key -> {
             final WinUserBasisTable t = winUserBasisDao.getTable();

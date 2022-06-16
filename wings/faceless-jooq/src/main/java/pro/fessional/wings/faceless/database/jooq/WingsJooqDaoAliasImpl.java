@@ -26,6 +26,7 @@ import org.jooq.Table;
 import org.jooq.TableRecord;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
+import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 import pro.fessional.mirana.cast.TypedCastUtil;
 import pro.fessional.mirana.data.Null;
@@ -69,6 +70,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
 
     protected final T table;
     protected final Field<?>[] pkeys;
+    protected volatile int tableExist = -1; // -1:未检出 | 0:不存：1:存在
 
     protected WingsJooqDaoAliasImpl(T table, Class<P> type) {
         this(table, type, null);
@@ -78,6 +80,41 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
         super(table, type, conf);
         this.table = table;
         this.pkeys = WingsJooqUtil.primaryKeys(table);
+    }
+
+    /**
+     * -1:未检出 | 0:不存：1:存在
+     *
+     * @param type -1|0|1
+     */
+    public void setTableExist(int type) {
+        tableExist = type;
+    }
+
+    /**
+     * 默认以select count(*) from table where 1 = 0检查数据库中是否存在此表
+     *
+     * @return 存在与否
+     */
+    public boolean notTableExist() {
+        if (tableExist < 0) {
+            synchronized (this) {
+                if (tableExist < 0) {
+                    try {
+                        ctx().selectCount()
+                             .from(table)
+                             .where(DSL.falseCondition())
+                             .execute();
+                        tableExist = 1;
+                    }
+                    catch (Exception e) {
+                        tableExist = 0;
+                    }
+                }
+            }
+        }
+        //
+        return tableExist == 0;
     }
 
     /**

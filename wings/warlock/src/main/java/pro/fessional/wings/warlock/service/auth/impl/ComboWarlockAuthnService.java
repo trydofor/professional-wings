@@ -71,6 +71,8 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     @Override
     @Cacheable
     public Details load(@NotNull Enum<?> authType, String username) {
+        if (winUserBasisDao.notTableExist() || winUserAuthnDao.notTableExist()) return null;
+
         final WinUserBasisTable user = winUserBasisDao.getAlias();
         final WinUserAuthnTable auth = winUserAuthnDao.getAlias();
         final String at = wingsAuthTypeParser.parse(authType);
@@ -87,6 +89,8 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     @Override
     @Cacheable
     public Details load(@NotNull Enum<?> authType, long userId) {
+        if (winUserBasisDao.notTableExist() || winUserAuthnDao.notTableExist()) return null;
+
         final WinUserBasisTable user = winUserBasisDao.getAlias();
         final WinUserAuthnTable auth = winUserAuthnDao.getAlias();
         final String at = wingsAuthTypeParser.parse(authType);
@@ -182,6 +186,8 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
 
     @Override
     public void onSuccess(@NotNull Enum<?> authType, long userId, String details) {
+        if (winUserAuthnDao.notTableExist()) return;
+
         final String at = wingsAuthTypeParser.parse(authType);
         journalService.commit(Jane.Success, userId, "success login auth-type=" + at, commit -> {
             WarlockUserLoginService.Auth la = new WarlockUserLoginService.Auth();
@@ -205,7 +211,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
 
     @Override
     public void onFailure(@NotNull Enum<?> authType, String username) {
-        if (username == null || username.isEmpty()) return;
+        if (username == null || username.isEmpty() || winUserAuthnDao.notTableExist()) return;
 
         final String at = wingsAuthTypeParser.parse(authType);
         final WinUserAuthnTable ta = winUserAuthnDao.getTable();
@@ -247,7 +253,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
 
         journalService.commit(Jane.Failure, uid, "failed login auth-id=" + aid, commit -> {
             // 锁账号
-            if (cnt >= max) {
+            if (cnt >= max && !winUserBasisDao.notTableExist()) {
                 final WinUserBasisTable tu = winUserBasisDao.getTable();
                 winUserBasisDao
                         .ctx()

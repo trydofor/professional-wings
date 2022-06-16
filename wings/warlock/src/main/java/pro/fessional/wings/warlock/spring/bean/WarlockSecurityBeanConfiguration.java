@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;
@@ -182,7 +183,8 @@ public class WarlockSecurityBeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboJustAuthAutoreg, havingValue = "true")
+    @ConditionalOnExpression("${" + WarlockEnabledProp.Key$justAuth + ":false} "
+                             + " && ${" + WarlockEnabledProp.Key$comboJustAuthAutoreg + ":false}")
     @ConditionalOnMissingBean(JustAuthUserAuthnAutoReg.class)
     public JustAuthUserAuthnAutoReg justAuthUserAuthnAutoReg() {
         logger.info("Wings conf justAuthUserAuthnAutoReg");
@@ -315,7 +317,8 @@ public class WarlockSecurityBeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboJustAuthUserDetails, havingValue = "true")
+    @ConditionalOnExpression("${" + WarlockEnabledProp.Key$justAuth + ":false} "
+                             + " && ${" + WarlockEnabledProp.Key$comboJustAuthUserDetails + ":false}")
     @ConditionalOnMissingBean(JustAuthUserDetailsCombo.class)
     public JustAuthUserDetailsCombo justAuthUserDetailsCombo() {
         logger.info("Wings conf justAuthUserDetailsCombo");
@@ -419,7 +422,8 @@ public class WarlockSecurityBeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboJustAuthLoginPage, havingValue = "true")
+    @ConditionalOnExpression("${" + WarlockEnabledProp.Key$justAuth + ":false} "
+                             + " && ${" + WarlockEnabledProp.Key$comboJustAuthLoginPage + ":false}")
     @ConditionalOnMissingBean(JustAuthLoginPageCombo.class)
     public JustAuthLoginPageCombo justAuthLoginPageCombo() {
         logger.info("Wings conf justAuthLoginPageCombo");

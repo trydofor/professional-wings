@@ -14,6 +14,7 @@ import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserLogin;
 import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,6 +35,8 @@ public class WarlockUserLoginServiceImpl implements WarlockUserLoginService {
 
     @Override
     public @NotNull List<Item> list(long userId, PageQuery query) {
+        if (winUserLoginDao.notTableExist()) return Collections.emptyList();
+
         final WinUserLoginTable t = winUserLoginDao.getTable();
         return winUserLoginDao
                 .ctx()
@@ -47,6 +50,7 @@ public class WarlockUserLoginServiceImpl implements WarlockUserLoginService {
 
     @Override
     public void auth(Auth auth) {
+        if (winUserLoginDao.notTableExist()) return;
 
         WinUserLogin po = new WinUserLogin();
         po.setId(lightIdService.getId(winUserLoginDao.getTable()));

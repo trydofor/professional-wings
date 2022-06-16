@@ -23,6 +23,7 @@ import pro.fessional.wings.warlock.event.cache.TableChangeEvent;
 import pro.fessional.wings.warlock.service.perm.WarlockPermNormalizer;
 import pro.fessional.wings.warlock.service.perm.WarlockRoleService;
 
+import java.util.Collections;
 import java.util.Map;
 
 import static pro.fessional.wings.warlock.caching.CacheConst.WarlockRoleService.CacheManager;
@@ -52,6 +53,8 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
     @Override
     @Cacheable
     public Map<Long, String> loadRoleAll() {
+        if (winRoleEntryDao.notTableExist()) return Collections.emptyMap();
+
         final WinRoleEntryTable t = winRoleEntryDao.getTable();
 
         final Map<Long, String> all = winRoleEntryDao

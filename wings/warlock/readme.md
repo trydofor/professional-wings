@@ -210,3 +210,11 @@ curl -vX 'POST' \
   'http://127.0.0.1:8084/user/authed-user.json' \
   -H 'accept: text/html'
 ```
+
+### 03.部分使用authNz-perm-role体系
+
+默认实现的authn-authz和perm-role体系，依赖于全局UserId，具有一定限制。
+任何系统中，登录及权限都有重要的安防和性能意义，通常有较高的集成度和复杂度。
+所以，在部分使用此功能时，需要逐一排查配置项及注入的Bean。
+
+默认实现中，读取及累积计数时，若数据库不存在对应表，则返回empty或忽略。

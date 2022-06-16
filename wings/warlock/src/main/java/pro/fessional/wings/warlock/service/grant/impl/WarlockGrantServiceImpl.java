@@ -18,6 +18,7 @@ import pro.fessional.wings.warlock.service.grant.WarlockGrantService;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -101,6 +102,8 @@ public class WarlockGrantServiceImpl implements WarlockGrantService {
 
     @Override
     public Map<Long, Long> entryUser(@NotNull GrantType type, @NotNull Collection<Long> userId) {
+        if (winUserGrantDao.notTableExist()) return Collections.emptyMap();
+
         final WinUserGrantTable t = winUserGrantDao.getTable();
         return winUserGrantDao
                 .ctx()
@@ -113,8 +116,10 @@ public class WarlockGrantServiceImpl implements WarlockGrantService {
 
     @Override
     public Map<Long, Long> entryRole(@NotNull GrantType type, @NotNull Collection<Long> roleId) {
+        if (winRoleGrantDao.notTableExist()) return Collections.emptyMap();
+
         final WinRoleGrantTable t = winRoleGrantDao.getTable();
-        return winUserGrantDao
+        return winRoleGrantDao
                 .ctx()
                 .select(t.GrantEntry, t.ReferRole)
                 .from(t)

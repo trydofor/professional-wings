@@ -20,6 +20,7 @@ import pro.fessional.wings.warlock.service.perm.WarlockPermService;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,8 @@ public class WarlockPermServiceImpl implements WarlockPermService {
     @Override
     @Cacheable
     public Map<Long, String> loadPermAll() {
+        if (winPermEntryDao.notTableExist()) return Collections.emptyMap();
+
         final WinPermEntryTable t = winPermEntryDao.getTable();
 
         final Map<Long, String> all = winPermEntryDao

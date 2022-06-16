@@ -26,6 +26,7 @@ import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -193,6 +194,8 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
     @Override
     public @NotNull List<Item> list(long userId) {
+        if (winUserAuthnDao.notTableExist()) return Collections.emptyList();
+
         final WinUserAuthnTable t = winUserAuthnDao.getTable();
         return winUserAuthnDao.fetchLive(Item.class, t,
                 t.Username,
