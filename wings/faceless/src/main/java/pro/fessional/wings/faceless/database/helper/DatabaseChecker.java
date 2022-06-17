@@ -106,6 +106,7 @@ public class DatabaseChecker {
             sb.append("\n- mysql server `default-time-zone = '+08:00'`");
             sb.append("\n- jdbc url `?connectionTimeZone=%2B08:00&forceConnectionTimeZoneToSession=true`");
             sb.append("\n- wings conf `wings.silencer.i18n.zoneid=Asia/Shanghai`");
+            sb.append("\n- wings stater.sh `TIME_ZID=Asia/Shanghai`");
             sb.append("\n- java args `-Duser.timezone=Asia/Shanghai`");
             sb.append("\n- java code `TimeZone.setDefault(TimeZone.getTimeZone(\"Asia/Shanghai\"));`");
             sb.append("\n- https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-reference-configuration-properties.html");

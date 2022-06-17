@@ -59,6 +59,7 @@ JAVA_ARG='
 -XX:ConcGCThreads=8
 '
 # -XX:+ExitOnOutOfMemoryError #docker
+TIME_ZID=''    # java时区，如UTC, GMT+8, Asia/Shanghai
 
 ################ NO NEED to modify the following ################
 BOOT_DTM=$(date '+%y%m%d%H%M%S') # 启动日时
@@ -143,6 +144,10 @@ function check_java() {
         JAVA_OPT="$JDK9_ARG $JAVA_ARG"
     else
         JAVA_OPT="$JDK8_ARG $JAVA_ARG"
+    fi
+
+    if [[ "$TIME_ZID" != "" ]]; then
+        JAVA_OPT="$JAVA_OPT -Duser.timezone=$TIME_ZID"
     fi
 }
 
@@ -609,6 +614,7 @@ case "$ARGS_RUN" in
         echo "JDK8_ARG=$JDK8_ARG"
         echo "JDK9_ARG=$JDK9_ARG"
         echo "JAVA_ARG=$JAVA_ARG"
+        echo "TIME_ZID=$TIME_ZID"
         echo "WARN_TXT=$WARN_TXT"
         echo "WARN_AGO=$WARN_AGO"
         echo "WARN_RUN=$WARN_RUN"
