@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 import static pro.fessional.mirana.cast.EnumConvertor.str2Enum;
+import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.validValue;
 import static pro.fessional.wings.warlock.enums.autogen.UserStatus.ACTIVE;
 
 /**
@@ -31,6 +31,12 @@ import static pro.fessional.wings.warlock.enums.autogen.UserStatus.ACTIVE;
 public class WarlockSecurityProp {
 
     public static final String Key = "wings.warlock.security";
+
+    /**
+     * @see #Key$webDebug
+     */
+    private boolean webDebug = false;
+    public static final String Key$webDebug = Key + ".web-debug";
 
     /**
      * 权限是否使用Role
@@ -178,7 +184,7 @@ public class WarlockSecurityProp {
     /**
      * @see #Key$authority
      */
-    private Map<String, List<String>> authority = Collections.emptyMap();
+    private Map<String, Set<String>> authority = Collections.emptyMap();
     public static final String Key$authority = Key + ".authority";
 
     /**
@@ -190,12 +196,20 @@ public class WarlockSecurityProp {
     public static final String Key$authenticated = Key + ".authenticated";
 
     /**
-     * 无权限访问的路径，antMatcher，逗号分隔，斜杠换行
+     * 都允许访问的路径，antMatcher，逗号分隔，斜杠换行
      *
      * @see #Key$permitAll
      */
     private Map<String, String> permitAll = Collections.emptyMap();
     public static final String Key$permitAll = Key + ".permit-all";
+
+    /**
+     * 忽略项，无SecurityFilter流程及功能，如静态资源。
+     *
+     * @see #Key$webIgnore
+     */
+    private Map<String, String> webIgnore = Collections.emptyMap();
+    public static final String Key$webIgnore = Key + ".web-ignore";
 
     /**
      * 空为忽略，支持【permitAll|authenticated|anonymous|fullyAuthenticated】
@@ -339,6 +353,7 @@ public class WarlockSecurityProp {
     public Map<String, Enum<?>> mapAuthTypeEnum() {
         return authType.entrySet()
                        .stream()
+                       .filter(it -> validValue(it.getValue()))
                        .collect(toMap(Map.Entry::getKey, en -> str2Enum(en.getValue())));
     }
 

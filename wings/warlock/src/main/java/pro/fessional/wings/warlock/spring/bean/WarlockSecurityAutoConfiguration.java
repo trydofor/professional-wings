@@ -19,14 +19,14 @@ import java.util.Map;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(name = WarlockEnabledProp.Key$securityConf, havingValue = "true")
+@ConditionalOnProperty(name = WarlockEnabledProp.Key$securityAuto, havingValue = "true")
 @RequiredArgsConstructor
-public class WarlockSecurityWebConfiguration extends WebSecurityConfigurerAdapter {
+public class WarlockSecurityAutoConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final static Log logger = LogFactory.getLog(WarlockSecurityWebConfiguration.class);
+    private final static Log logger = LogFactory.getLog(WarlockSecurityAutoConfiguration.class);
 
     private final WarlockSecurityProp warlockSecurityProp;
-    private final Map<String, HttpSecurityConfigure> configures;
+    private final Map<String, HttpSecurityCustomizer> configures;
 
     /**
      * The URL paths provided by the framework are
@@ -47,9 +47,9 @@ public class WarlockSecurityWebConfiguration extends WebSecurityConfigurerAdapte
     @Override
     public void configure(HttpSecurity http) throws Exception {
         logger.info("Wings conf HttpSecurity");
-        for (Map.Entry<String, HttpSecurityConfigure> en : configures.entrySet()) {
+        for (Map.Entry<String, HttpSecurityCustomizer> en : configures.entrySet()) {
             logger.info("Wings conf HttpSecurity, bean=" + en.getKey());
-            en.getValue().configure(http);
+            en.getValue().customize(http);
         }
 
         //
@@ -75,7 +75,7 @@ public class WarlockSecurityWebConfiguration extends WebSecurityConfigurerAdapte
         }
     }
 
-    public interface HttpSecurityConfigure {
-        void configure(HttpSecurity http) throws Exception;
+    public interface HttpSecurityCustomizer {
+        void customize(HttpSecurity http) throws Exception;
     }
 }

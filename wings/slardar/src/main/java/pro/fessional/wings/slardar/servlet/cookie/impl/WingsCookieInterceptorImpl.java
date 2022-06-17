@@ -15,6 +15,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.invalidValue;
+
 /**
  * 设计目的为非运行时调整，故不提供写保护
  *
@@ -196,6 +198,9 @@ public class WingsCookieInterceptorImpl implements WingsCookieInterceptor {
         for (Map.Entry<String, String> en : alias.entrySet()) {
             final String k = en.getKey();
             final String v = en.getValue();
+            if (k.equals(v) || invalidValue(v)) {
+                continue;
+            }
             aliasEnc.put(k, v);
             aliasDec.put(v, k);
         }

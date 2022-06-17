@@ -17,6 +17,8 @@ import pro.fessional.wings.slardar.spring.prop.SlardarSwaggerProp;
 
 import java.util.Map;
 
+import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.validValue;
+
 /**
  * @author trydofor
  * @since 2019-10-30
@@ -44,7 +46,7 @@ public class SlardarSwaggerConfiguration {
             }
 
             final Map<String, Parameter> params = slardarSwaggerProp.toComPara();
-            final Map<String, String> accepts = slardarSwaggerProp.getAccept();
+            final Map<String, String> accepts = validValue(slardarSwaggerProp.getAccept());
             if (params.isEmpty() && accepts.isEmpty()) return;
 
             openApi.getPaths().values()

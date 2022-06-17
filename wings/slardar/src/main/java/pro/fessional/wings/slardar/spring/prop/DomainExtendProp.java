@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 构造 prefix+host+url的新路径
@@ -41,7 +42,7 @@ public class DomainExtendProp {
      *
      * @see #Key$host
      */
-    private Map<String, List<String>> host = Collections.emptyMap();
+    private Map<String, Set<String>> host = Collections.emptyMap();
     public static final String Key$host = Key + ".host";
 
     /**

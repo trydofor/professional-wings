@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author trydofor
@@ -33,8 +34,8 @@ public class SlardarDomainExtendConfiguration {
     public WingsDomainExtendFilter wingsDomainFilter(DomainExtendProp config, DispatcherServlet dispatcher) {
         logger.info("Wings conf Domain filter");
         Map<String, List<String[]>> hostMatcher = new HashMap<>();
-        for (Map.Entry<String, List<String>> entry : config.getHost().entrySet()) {
-            List<String> vs = entry.getValue();
+        for (Map.Entry<String, Set<String>> entry : config.getHost().entrySet()) {
+            Set<String> vs = entry.getValue();
             List<String[]> ls = new ArrayList<>(vs.size());
             for (String v : vs) {
                 ls.add(Wildcard.compile(v));

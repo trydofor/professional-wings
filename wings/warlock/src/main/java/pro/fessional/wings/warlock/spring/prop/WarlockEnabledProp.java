@@ -17,20 +17,20 @@ public class WarlockEnabledProp {
     public static final String Key = "spring.wings.warlock.enabled";
 
     /**
-     * 是否支持 warlock security 默认配置
+     * 是否支持 warlock security web and http配置
      *
-     * @see #Key$securityConf
+     * @see #Key$securityAuto
      */
-    private boolean securityConf = true;
-    public static final String Key$securityConf = Key + ".security-conf";
+    private boolean securityAuto = true;
+    public static final String Key$securityAuto = Key + ".security-auto";
 
     /**
-     * 是否支持 warlock security http配置
+     * 是否支持 Web 自动配置，firewall，debug等
      *
-     * @see #Key$securityHttp
+     * @see #Key$securityWebAutos
      */
-    private boolean securityHttp = true;
-    public static final String Key$securityHttp = Key + ".security-http";
+    private boolean securityWebAutos = true;
+    public static final String Key$securityWebAutos = Key + ".security-web-autos";
 
     /**
      * @see #Key$securityHttpBind

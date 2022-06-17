@@ -80,6 +80,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.springframework.util.StringUtils.hasText;
+import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.validValue;
 
 
 /**
@@ -391,7 +392,7 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnMissingBean(AuthStateBuilder.class)
     public AuthStateBuilder authStateBuilder(WarlockJustAuthProp prop) {
         logger.info("Wings conf authStateBuilder");
-        return new AuthStateBuilder(prop.getSafeState());
+        return new AuthStateBuilder(validValue(prop.getSafeState()));
     }
 
     @Bean
@@ -429,7 +430,6 @@ public class WarlockSecurityBeanConfiguration {
         logger.info("Wings conf justAuthLoginPageCombo");
         return new JustAuthLoginPageCombo();
     }
-
 
     @Bean
     @ConditionalOnMissingBean(GrantedAuthorityDefaults.class)
