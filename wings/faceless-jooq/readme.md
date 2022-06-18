@@ -347,7 +347,7 @@ Jooq有[开源版和商业版](https://www.jooq.org/download/)，两者的区别
 * One for every developer workstation which is used to write jOOQ code.
 * only charge for developer workstations, not server workstations.
 * This does not affect your build, test, and production servers,
-   however, which will be licensed for free forever, in any price plan.
+  however, which will be licensed for free forever, in any price plan.
 
 ### 10. Jooq的性能及线程安全
 

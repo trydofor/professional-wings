@@ -233,13 +233,14 @@ wings的内置Revision和真实日期无关，版本号主要集中在2019和202
 如果已有索引更新到了影子库，并影响了写入性能，或唯一索引，通过以下sql查看。
 
 ```sql
-SELECT DISTINCT CONCAT('DROP INDEX ',INDEX_NAME,' ON ',TABLE_NAME, ';')
+SELECT
+  DISTINCT CONCAT('DROP INDEX ',INDEX_NAME,' ON ',TABLE_NAME, ';')
 FROM
- INFORMATION_SCHEMA.STATISTICS
+  INFORMATION_SCHEMA.STATISTICS
 WHERE
- TABLE_SCHEMA = DATABASE()
- AND INDEX_NAME NOT IN ('PRIMARY','RAW_TABLE_PK')
- AND TABLE_NAME RLIKE '%$%';
+  TABLE_SCHEMA = DATABASE()
+  AND INDEX_NAME NOT IN ('PRIMARY','RAW_TABLE_PK')
+  AND TABLE_NAME RLIKE '%$%';
 ```
 
 对于通过，`apply@` 语句指定更新表。比如，以下更新本表和分表，不更新跟踪表
@@ -255,32 +256,32 @@ ALTER TABLE `win_user`
 ```sql
 -- 仅影子表
 SELECT 
-    reverse(substring(reverse(table_name),length(substring_index(table_name,'__',-1))+1)) as tbl,
-    group_concat(SUBSTRING_INDEX(table_name,'__',-1)) as log
+  reverse(substring(reverse(table_name),length(substring_index(table_name,'__',-1))+1)) as tbl,
+  group_concat(SUBSTRING_INDEX(table_name,'__',-1)) as log
 FROM INFORMATION_SCHEMA.TABLES
 WHERE table_schema = DATABASE()
-    AND table_name RLIKE '__'
-    GROUP BY tbl;
+  AND table_name RLIKE '__'
+  GROUP BY tbl;
 
 SELECT
-   table_name,
-   CONCAT('DROP TABLE IF EXISTS ',table_name,';')
+  table_name,
+  CONCAT('DROP TABLE IF EXISTS ',table_name,';')
 FROM INFORMATION_SCHEMA.TABLES
 WHERE table_schema = DATABASE()
   AND table_name RLIKE '\\$|__';
 
 -- 仅分表
 SELECT 
-    reverse(substring(reverse(table_name),length(substring_index(table_name,'_',-1))+1)) as tbl,
-    group_concat(SUBSTRING_INDEX(table_name,'_',-1)) as num
+  reverse(substring(reverse(table_name),length(substring_index(table_name,'_',-1))+1)) as tbl,
+  group_concat(SUBSTRING_INDEX(table_name,'_',-1)) as num
 FROM INFORMATION_SCHEMA.TABLES
 WHERE table_schema = DATABASE()
-    AND table_name RLIKE '_[0-9]+$'
-    group by tbl;
+  AND table_name RLIKE '_[0-9]+$'
+  group by tbl;
 
 SELECT
-   table_name,
-   CONCAT('DROP TABLE IF EXISTS ',table_name,';')
+  table_name,
+  CONCAT('DROP TABLE IF EXISTS ',table_name,';')
 FROM INFORMATION_SCHEMA.TABLES
 WHERE table_schema = DATABASE()
   AND table_name RLIKE '_[0-9]+$';
@@ -289,8 +290,8 @@ WHERE table_schema = DATABASE()
 SELECT table_name
 FROM INFORMATION_SCHEMA.TABLES
 WHERE table_schema = DATABASE()
-    AND table_name NOT REGEXP '_[0-9]+$'
-    AND table_name NOT RLIKE '\\$|__';
+  AND table_name NOT REGEXP '_[0-9]+$'
+  AND table_name NOT RLIKE '\\$|__';
 ```
 
 ### 07.如果使用flywave管理老工程
@@ -309,37 +310,37 @@ WHERE table_schema = DATABASE()
 
 ```sql
 SELECT
- EVENT_OBJECT_TABLE,
- TRIGGER_NAME,
- ACTION_TIMING,
- EVENT_MANIPULATION,
- ACTION_STATEMENT
+  EVENT_OBJECT_TABLE,
+  TRIGGER_NAME,
+  ACTION_TIMING,
+  EVENT_MANIPULATION,
+  ACTION_STATEMENT
 FROM
- INFORMATION_SCHEMA.TRIGGERS
+  INFORMATION_SCHEMA.TRIGGERS
 WHERE
   EVENT_OBJECT_SCHEMA = database();
 
 -- 获取创建trigger的SQL;
 -- DELIMITER ;;
 SELECT
-   TRIGGER_NAME,
-   CONCAT('DROP TRIGGER IF EXISTS ',TRIGGER_NAME,';'),
-   CONCAT('CREATE TRIGGER `', TRIGGER_NAME, '` ',
-          ACTION_TIMING, ' ', EVENT_MANIPULATION, ' ON `', EVENT_OBJECT_TABLE, '` FOR EACH ROW ',
-          ACTION_STATEMENT, ';;')
+  TRIGGER_NAME,
+  CONCAT('DROP TRIGGER IF EXISTS ',TRIGGER_NAME,';'),
+  CONCAT('CREATE TRIGGER `', TRIGGER_NAME, '` ',
+    ACTION_TIMING, ' ', EVENT_MANIPULATION, ' ON `', EVENT_OBJECT_TABLE, '` FOR EACH ROW ',
+    ACTION_STATEMENT, ';;')
 FROM
-   INFORMATION_SCHEMA.TRIGGERS
+  INFORMATION_SCHEMA.TRIGGERS
 WHERE
-   EVENT_OBJECT_SCHEMA = database();
+  EVENT_OBJECT_SCHEMA = database();
 
 -- 符合flywave命名规则的
 SELECT
-   TRIGGER_NAME,
-   concat('DROP TRIGGER IF EXISTS ',TRIGGER_NAME,';')
+  TRIGGER_NAME,
+  concat('DROP TRIGGER IF EXISTS ',TRIGGER_NAME,';')
 FROM
-   INFORMATION_SCHEMA.TRIGGERS
+  INFORMATION_SCHEMA.TRIGGERS
 WHERE
-   EVENT_OBJECT_SCHEMA = DATABASE()
+  EVENT_OBJECT_SCHEMA = DATABASE()
   AND TRIGGER_NAME RLIKE '^(bi|ai|bu|au|bd|ad)__';
 ```
 
@@ -347,17 +348,17 @@ WHERE
 
 ```sql
 SELECT
-    table_schema,
-    concat('delete from ',table_name,' where _dt < \'2020-07-01\';'),
-    CEILING(data_length / 1024 / 1024) AS data_mb,
-    CEILING(index_length / 1024 / 1024) AS index_mb,
-    CEILING((data_length + index_length) / 1024 / 1024) AS all_mb,
-    table_rows
+  table_schema,
+  concat('delete from ',table_name,' where _dt < \'2020-07-01\';'),
+  CEILING(data_length / 1024 / 1024) AS data_mb,
+  CEILING(index_length / 1024 / 1024) AS index_mb,
+  CEILING((data_length + index_length) / 1024 / 1024) AS all_mb,
+  table_rows
 FROM
-    information_schema.tables
+  information_schema.tables
 WHERE
-    table_name RLIKE '\\$|__'
-    and table_schema = DATABASE()
+  table_name RLIKE '\\$|__'
+  and table_schema = DATABASE()
 ORDER BY table_schema , all_mb DESC;
 ```
 
@@ -365,33 +366,33 @@ ORDER BY table_schema , all_mb DESC;
 
 ```sql
 ALTER TABLE `{{TABLE_NAME}}__`
-   MODIFY COLUMN `_id` BIGINT(20) NOT NULL AUTO_INCREMENT FIRST,
-   ADD COLUMN `_dt` DATETIME(3) NOT NULL DEFAULT '1000-01-01 00:00:00' AFTER `_id`,
-   ADD COLUMN `_tp` CHAR(1) NOT NULL DEFAULT 'Z' AFTER `_dt`;
+  MODIFY COLUMN `_id` BIGINT(20) NOT NULL AUTO_INCREMENT FIRST,
+  ADD COLUMN `_dt` DATETIME(3) NOT NULL DEFAULT '1000-01-01 00:00:00' AFTER `_id`,
+  ADD COLUMN `_tp` CHAR(1) NOT NULL DEFAULT 'Z' AFTER `_dt`;
 
 DELIMITER ;;
 CREATE TRIGGER `ai__{{TABLE_NAME}}` AFTER INSERT ON `{{TABLE_NAME}}`
-   FOR EACH ROW BEGIN
-   IF (@DISABLE_FLYWAVE IS NULL) THEN
-      INSERT INTO `{{TABLE_NAME}}__` SELECT NULL, NOW(3), 'C', t.* FROM `{{TABLE_NAME}}` t
-      WHERE t.id = NEW.id ;
-   END IF;
+  FOR EACH ROW BEGIN
+  IF (@DISABLE_FLYWAVE IS NULL) THEN
+    INSERT INTO `{{TABLE_NAME}}__` SELECT NULL, NOW(3), 'C', t.* FROM `{{TABLE_NAME}}` t
+    WHERE t.id = NEW.id ;
+  END IF;
 END;;
 
 CREATE TRIGGER `au__{{TABLE_NAME}}` AFTER UPDATE ON `{{TABLE_NAME}}`
-   FOR EACH ROW BEGIN
-   IF (@DISABLE_FLYWAVE IS NULL) THEN
-      INSERT INTO `{{TABLE_NAME}}__` SELECT NULL, NOW(3), 'U', t.* FROM `{{TABLE_NAME}}` t
-      WHERE t.id = NEW.id ;
-   END IF;
+  FOR EACH ROW BEGIN
+  IF (@DISABLE_FLYWAVE IS NULL) THEN
+    INSERT INTO `{{TABLE_NAME}}__` SELECT NULL, NOW(3), 'U', t.* FROM `{{TABLE_NAME}}` t
+    WHERE t.id = NEW.id ;
+  END IF;
 END;;
 
 CREATE TRIGGER `bd__{{TABLE_NAME}}` BEFORE DELETE ON `{{TABLE_NAME}}`
-   FOR EACH ROW BEGIN
-   IF (@DISABLE_FLYWAVE IS NULL) THEN
-      INSERT INTO `{{TABLE_NAME}}__` SELECT NULL, NOW(3), 'D', t.* FROM `{{TABLE_NAME}}` t
-      WHERE t.id = OLD.id ;
-   END IF;
+  FOR EACH ROW BEGIN
+  IF (@DISABLE_FLYWAVE IS NULL) THEN
+    INSERT INTO `{{TABLE_NAME}}__` SELECT NULL, NOW(3), 'D', t.* FROM `{{TABLE_NAME}}` t
+    WHERE t.id = OLD.id ;
+  END IF;
 END;;
 DELIMITER ;
 ```
@@ -407,10 +408,10 @@ DELIMITER ;
 -- SET @group_concat_max_len = @@global.max_allowed_packet;
 SET @tabl = 'win_user_basis';
 SET @cols = (
-SELECT CONCAT('`',GROUP_CONCAT(COLUMN_NAME SEPARATOR '`, `'), '`') 
-FROM INFORMATION_SCHEMA.COLUMNS 
-WHERE TABLE_SCHEMA = database() AND TABLE_NAME = @tabl
-ORDER BY ORDINAL_POSITION
+  SELECT CONCAT('`',GROUP_CONCAT(COLUMN_NAME SEPARATOR '`, `'), '`') 
+  FROM INFORMATION_SCHEMA.COLUMNS 
+  WHERE TABLE_SCHEMA = database() AND TABLE_NAME = @tabl
+  ORDER BY ORDINAL_POSITION
 );
 SET @restoreSql = CONCAT(
 -- 'REPLACE INTO ', @tabl,
@@ -438,24 +439,24 @@ SET @DISABLE_FLYWAVE = NULL;
 SET @tabl = 'owt_lading_main';
 SET @cols = (
 SELECT
- GROUP_CONCAT(CONCAT('`',COLUMN_NAME, '` ', COLUMN_TYPE,' COMMENT \'', replace(COLUMN_COMMENT,'\'','\\\''),'\''))
+  GROUP_CONCAT(CONCAT('`',COLUMN_NAME, '` ', COLUMN_TYPE,' COMMENT \'', replace(COLUMN_COMMENT,'\'','\\\''),'\''))
 FROM
- INFORMATION_SCHEMA.COLUMNS
+  INFORMATION_SCHEMA.COLUMNS
 WHERE
- TABLE_SCHEMA = database()
- AND TABLE_NAME = @tabl
- ORDER BY ORDINAL_POSITION
+  TABLE_SCHEMA = database()
+  AND TABLE_NAME = @tabl
+  ORDER BY ORDINAL_POSITION
 );
 SET @prik = (
 SELECT
- GROUP_CONCAT(CONCAT('`',COLUMN_NAME, '`'))
+  GROUP_CONCAT(CONCAT('`',COLUMN_NAME, '`'))
 FROM
- INFORMATION_SCHEMA.COLUMNS
+  INFORMATION_SCHEMA.COLUMNS
 WHERE
- TABLE_SCHEMA = database()
- AND TABLE_NAME = @tabl
+  TABLE_SCHEMA = database()
+  AND TABLE_NAME = @tabl
     AND COLUMN_KEY = 'PRI'
- ORDER BY ORDINAL_POSITION
+  ORDER BY ORDINAL_POSITION
 );
 
 SET @tracerSql = CONCAT(

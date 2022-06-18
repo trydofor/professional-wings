@@ -218,3 +218,21 @@ curl -vX 'POST' \
 所以，在部分使用此功能时，需要逐一排查配置项及注入的Bean。
 
 默认实现中，读取及累积计数时，若数据库不存在对应表，则返回empty或忽略。
+
+### 04.自定义WebSecurityConfigurerAdapter
+
+* WebSecurity - expose WebSecurityCustomizer Bean
+* HttpWebSecurity - expose HttpSecurityCustomizer Bean
+
+WebSecurity在SpringBoot需要继承Adapter实现配置，其约束很多，
+因此在使用wings提供的自动配置功能时，需要注意以下特殊Bean的声明。
+
+> Is there an unresolvable circular reference?
+> Error creating bean with name 'springSecurityFilterChain':
+> Requested bean is currently in creation.
+
+以上错误，会发生在注入WebSecurityConfiguration的`@Bean`时。
+
+总之，WebSecurity有特殊Bean，Configurer的链式调用也有顺序要求。
+
+

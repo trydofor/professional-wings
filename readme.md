@@ -1009,3 +1009,11 @@ location / {
     }
 }
 ```
+
+### 36.如何忽略一个配置项
+
+wings原则上，所以配置项都必有默认配置，而有时候需要忽略一些默认key或value。
+
+* `String`无效值 - `空`或`-`是默认的无效值
+* `Map<String,String>`  - 无效值key的value
+* `Map<String,Set<String>>` - 全覆盖key的value
