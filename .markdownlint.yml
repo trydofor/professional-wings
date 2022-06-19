@@ -1,0 +1,33 @@
+# https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.yaml
+
+# MD004/ul-style - Unordered list style
+MD004:
+  style: "sublist"
+
+# MD013/line-length - Line length
+MD013:
+  line_length: 120
+  heading_line_length: 40
+  code_block_line_length: 180
+
+# MD024/no-duplicate-heading/no-duplicate-header - Multiple headings with the same content
+MD024:
+  siblings_only: true
+
+# MD031/blanks-around-fences - Fenced code blocks should be surrounded by blank lines
+MD031: false # 代码紧凑一点
+
+# MD033/no-inline-html - Inline HTML
+MD033: false
+
+# MD048/code-fence-style - Code fence style
+MD048:
+  style: "backtick"
+
+# MD049/emphasis-style - Emphasis style should be consistent
+MD049:
+  style: "asterisk"
+
+# MD050/strong-style - Strong style should be consistent
+MD050:
+  style: "asterisk"

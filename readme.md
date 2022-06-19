@@ -8,7 +8,7 @@
 [![Mysql](https://img.shields.io/badge/mysql-8.0-blue)](https://dev.mysql.com/downloads/mysql/)
 [![H2Database](https://img.shields.io/badge/h2db-2.0-blue)](http://h2database.com/html/main.html)
 
-不是为吃货准备的伪装成吃货的项目，其核心价值是使团队快速实现业务目标，快速偿还技术债务，安全的面向程序和业务重构。
+不是为吃货准备的伪装成吃货的项目，其核心价值是：①使团队快速实现业务目标；②快速偿还技术债务；③安全的面向程序和业务重构。
 
 ![wings ti6](wings-ti6-champion.png)
 
@@ -21,36 +21,42 @@ Wings是springboot的一个脚手架，没有魔法和定制，主要有以下�
 * 功能池很深，对功能有独到的理解（读3遍官方文档，debug部分源码）
 * 不懂代码的看文档，都看不懂别用（这是你的homework，及格线）
 
-其目标是使小创业团队，平稳的实现从单应用，到分表分库，到服务化的过渡。 在任何项目阶段和规模下，安全快速的重构业务，变更数据模型及服务，管理版本及兼容性。 运行时的数据变化亦可追溯，复盘，恢复。对抗业务变化快，设计不足的技术债务。
+其目标是使小创业团队，平稳的实现从单应用，到分表分库，到服务化的演变。在任何项目阶段和规模下能够，
+
+* 安全快速的重构业务，变更数据模型及服务，管理版本及兼容性。
+* 运行时的数据变化亦可追溯，复盘，恢复。
+* 对抗业务变化快，设计不足的技术债务。
 
 ## 0.1.项目技术
 
 项目秉承以下价值观和团队规则
 
-* 静态优于动态，能编码的就不反射。
+* 静态优于动态，能编码的就不反射
 * 强类型优于弱类型，能class就不map，能enum就不const
 * 编译时优于运行时，能在编译时解决的必须解决
 * IDE优于editor，IDE能提供语法分析，上下文解析
 * 命名规约中，可读性优先。不怕长，不怕怪异
 * 奥卡姆剃刀，能简单的实现，就不用搞复杂的
-* 防御性编程风格，默认输入数据不可信，必须验证。
+* 防御性编程风格，默认输入数据不可信，必须验证
 
 由以下几个子工程构成，
 
-* [沉默术士/silencer](wings-project/wings-silencer/readme.md) springboot的工程化装配，I18n等
-* [虚空假面/faceless](wings-project/wings-faceless/readme.md) 数据层，分表分库，数据及库的版本管理
-* [鱼人守卫/slardar](wings-project/wings-slardar/readme.md) Servlet体系的WebMvc基础约定和封装
-* [术士大叔/warlock](wings-project/wings-warlock/readme.md) 综合以上的基础业务模块和功能脚手架
-* [演示例子/example](wings-example/readme.md) 集成以上的样板工程和例子
+* [沉默术士/silencer](wings/silencer/readme.md) springboot的工程化装配，I18n等
+* [虚空假面/faceless](wings/faceless/readme.md) 数据层，分表分库，数据及库的版本管理
+* [鱼人守卫/slardar](wings/slardar/readme.md) Servlet体系的WebMvc基础约定和封装
+* [术士大叔/warlock](wings/warlock/readme.md) 综合以上的基础业务模块和功能脚手架
+* [演示例子/example](example/readme.md) 集成以上的样板工程和例子
 
-wings的版本号为`4段分隔`，前3段为spring-boot版本，第4段是changelist。 build是3位数字，第1位为大版本，意味着大调整，不兼容，后2位是小版本，意味着基本兼容或容易适配。
+wings的版本号为`4段分隔`，前3段为spring-boot版本，第4段是build号。
+build是3位数字，第1位为大版本，意味着不兼容性；后2位是小版本，意味着基本兼容或容易适配。
 
-例如，`2.4.2.100-SNAPSHOT`，标识基于boot 2.4.2，是wings的`1##-SNAPSHOT`的系列。 因为wings使用了`revision`和`changelist`的CI占位属性，所以需要Maven 3.5.0 以上。
+例如，`2.4.2.100-SNAPSHOT`，表示基于boot2.4.2，是wings的`1##`的系列。
+因为wings使用了`revision`和`changelist`的CI占位属性，所以需要Maven 3.5.0 以上。
 
 涉及技术和知识点
 
-* [Spring Boot](https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/)
-* [Apache ShardingSphere](https://shardingsphere.apache.org/index_zh.html)
+* [Spring Boot 严格遵循](https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/)
+* [Apache ShardingSphere 分表分库](https://shardingsphere.apache.org/index_zh.html)
 * [Jooq - 强类型 sql-mapping](https://www.jooq.org/)
 
 ## 0.2.编码风格
@@ -60,8 +66,8 @@ wings的版本号为`4段分隔`，前3段为spring-boot版本，第4段是chang
 
 `wings-idea-live.xml`需要手动放到`$config/templates/`，没有则新建。
 
-```
-cd wings-project
+```bash
+cd wings
 id_config=~/Library/ApplicationSupport/JetBrains/IntelliJIdea2021.1
 # 通过复制，备份
 cat $id_config/templates/wings.xml > wings-idea-live.xml
@@ -73,7 +79,8 @@ cat wings-idea-style.xml > $id_config/codestyles/Wings-Idea.xml
 find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 ```
 
-关于live-template的使用，分为Insert和Surround，对应插入和编辑，一般 选择文本时，`Surround... ⌥⌘J`，无选择文本时，使用 `Insert... ⌘J`
+关于live-template的使用，分为Insert和Surround，对应插入和编辑，一般选择文本时，
+`Surround... ⌥⌘J`，无选择文本时，使用 `Insert... ⌘J`
 
 * WIN `%HOMEPATH%\.IntelliJIdea2019.2\config`
 * LIN `~/.IntelliJIdea2019.2/config`
@@ -110,7 +117,7 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 * String Manipulation - 对字符串的各种操作和转换。
 * HTTP Client - 官方对`*.http`文件格式的支持
 
-### 0.2.1.Java风格，遵循标准的java规范，但**可读性优先**。
+### 0.2.1.Java风格，遵循标准的java规范，但**可读性优先**
 
 * `static final` 不必全大写。如`logger`比`LOG`可读性好。
 * `BIG_SNAKE`可使用`PascalNaming`，因为大写单词不如小写易读。
@@ -121,7 +128,7 @@ find . -name '*.iml' -o -name '.idea' | tr '\n' '\0' | xargs -0 rm -r
 * 以Empty消除null。Set/List/Array/Map用empty
 * 显示标注@NotNull，@Nullable，@Contract，声明null约束
 
-### 0.2.2.Sql风格，`snake_case`，即全小写，下划线分割，小写词比大写容易识别。
+### 0.2.2.Sql风格，`snake_case`，即全小写，下划线分割，小写词比大写容易识别
 
 * 数据库，表名，字段名，全小写。
 * SQL关键词，内置词等建议`大写`，以区别。
@@ -146,7 +153,9 @@ SQL脚本可以很好的编辑，比较，文档化，包括业务表的分层�
 * `时区`，以`VARCHAR(40)`或`INT(11)`存储。
 * 特别场景，以`BIGINT(20)`或`VARCHAR(20)`存储。
 
-以跨境海淘场景为例，服务器群采用`UTC`时区（系统时间），中国用户`Asia/Shanghai`（用户时间）, 纽约NY商家`America/New_York`（数据时间），洛杉矶LA商家`America/Los_Angeles`（数据时间）。 为什么说`UTC-5`初级呢？因为同一经线上国家很多，又要考虑`夏令时`，所以需要city标志`zoneid`。
+以跨境电商场景为例，服务器群采用`UTC`时区（系统时间），中国用户`Asia/Shanghai`（用户时间）,
+纽约NY商家`America/New_York`（数据时间），洛杉矶LA商家`America/Los_Angeles`（数据时间）。
+为什么说`UTC-5`初级呢？因为同一经线上国家很多，又要考虑`夏令时`，所以需要city标志`zoneid`。
 
 本地日时，必须有`时区`配合，又分为`用户时间`和`数据时间`，命名后缀如下，
 
@@ -193,10 +202,10 @@ SQL脚本可以很好的编辑，比较，文档化，包括业务表的分层�
   - 提供默认配置，使用`-79`序号
 * 推荐`kebab-caseae`命名，即`key`全小写，使用`-`分割。
 
-### 0.2.5.Spring注入风格，在`silencer`和`faceless`有详细说明。
+### 0.2.5.Spring注入风格，在`silencer`和`faceless`有详细说明
 
 * 优先使用`constructor`注入，用`lombok`的`@RequiredArgsConstructor`。
-* 次之使用`setter`注入，用`lombok`的`@Setter(onMethod = @__({@Autowired}))`
+* 次之使用`setter`注入，用`lombok`的`@Setter(onMethod_ = {@Autowired})`
   或`kotlin`的`@Autowired lateinit var`。
 * 不要使用`Field`注入，坏处自己搜。
 * 通常required时constructor注入，optional时setter注入。
@@ -216,7 +225,7 @@ SQL脚本可以很好的编辑，比较，文档化，包括业务表的分层�
 * 继承时，一旦父类有setter，请不要override，除非确保DI无碍。
 * 继承时，不希望父类DI，子类override，并自行注入。
 
-### 0.2.6.Spring MVC中的 RequestMapping 约定
+### 0.2.6.MVC中的RequestMapping约定
 
 wings采用的Url命名主要是场景化的，命名为[RestHalf](rest-half.md)，单独叙述。
 
@@ -226,14 +235,16 @@ wings采用的Url命名主要是场景化的，命名为[RestHalf](rest-half.md)
 * 不要使用prefix拼接路径(view，url)，避免无意义的碎片。
 * 不管REST还是其他，url一定有扩展名，用来标识MIME和过滤
 
-### 0.2.7.Spring Service 的接口和 DTO 约定
+### 0.2.7.Service接口和DTO约定
 
 interface上使用annotation时，遵循以下规则，
 
-* @Component类注解，不要放在接口上，放在具体实现上
-* 功能约定类，放在接口上，如 @Transactional
+* `@Component`类注解，不要放在接口上，放在具体实现上
+* 功能约定类，放在接口上，如`@Transactional`
 
-Service定义为接口，Service中的DTO，定义为内类，作为锲约。 DTO间的转换和复制，使用工具类生成Helper静态对拷属性。 禁止使用反射，不仅是因为一点性能，主要是动态性，脱离了编译时检查。
+Service定义为接口，Service中的DTO，定义为内类，作为锲约。
+DTO间的转换和复制，使用工具类生成Helper静态对拷属性。
+禁止使用反射，不仅是因为一点性能，主要是动态性，脱离了编译时检查。
 
 直接单向输出的model对象，可以使用map，否则一定强类型的class。
 
@@ -289,21 +300,25 @@ public interface TradeService {
 * @ApiResponse，必要时使用
 
 在description中，支持Markdown，辅助jsdoc，可使文档更加清晰。
-`@param [name=trydofor] - Somebody's name.`  - 参考 https://jsdoc.app/tags-param.html
-`@return {200|Result(Dto)} 正常返回对象，status=200` - 小括号表示泛型(避免转义)。参考 https://jsdoc.app/tags-returns.html
-`@return {200|Result(false)} 错误时返回，status=200` - 小括号表示简单约定参数。参考 https://jsdoc.app/tags-returns.html
+
+* 参考param <https://jsdoc.app/tags-param.html>
+* 参考returns <https://jsdoc.app/tags-returns.html>
+* `@param [name=trydofor] - Somebody's name.`  -
+* `@return {200|Result(Dto)} 正常返回对象，status=200` - 小括号表示泛型(避免转义)。
+* `@return {200|Result(false)} 错误时返回，status=200` - 小括号表示简单约定参数。
 
 使用swagger时，不可使用弱口令，在正式服上可通过以下属性关闭。  
+
 * springdoc.api-docs.enabled=true
 * springdoc.swagger-ui.enabled=true
 
 推荐在每个工程test下建立idea支持的 `*.http` 接口描述和测试脚本，官方文档如下
 
-* https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html
-* https://www.jetbrains.com/help/idea/exploring-http-syntax.html
-* https://www.jetbrains.com/help/idea/http-response-handling-api-reference.html
-* https://www.jetbrains.com/help/idea/http-client-reference.html
-* https://www.jetbrains.com/help/idea/http-response-reference.html
+* <https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html>
+* <https://www.jetbrains.com/help/idea/exploring-http-syntax.html>
+* <https://www.jetbrains.com/help/idea/http-response-handling-api-reference.html>
+* <https://www.jetbrains.com/help/idea/http-client-reference.html>
+* <https://www.jetbrains.com/help/idea/http-response-reference.html>
 
 使用建议如下
 
@@ -312,7 +327,7 @@ public interface TradeService {
 * 处理Response. prepend it with `>` and enclose it in `{%` `%}`
 * 很长的请求折多个短行. Indent all query string lines but the first one.
 * HTTP Response Handler 的2个对象 client 和 response
-* https://www.jetbrains.com/help/idea/http-response-handling-examples.html
+* <https://www.jetbrains.com/help/idea/http-response-handling-examples.html>
 
 ### 0.2.11.工程目录结构
 
@@ -320,7 +335,7 @@ public interface TradeService {
 
 #### 01. resources
 
-```
+```text
 src/main/resources
 ├── META-INF - spring 自动配置入口等
 │   └── spring.factories - EnableAutoConfiguration入口
@@ -337,7 +352,7 @@ src/main/resources
 
 #### 02.database访问层
 
-```
+```text
 src/**/database/ - 数据访问层
 ├── autogen/ - 自动生成的代码，jooq，mybatis等
 ├── helper/ - 业务帮助类
@@ -357,7 +372,7 @@ src/**/database/ - 数据访问层
 
 #### 03.spring有个目录
 
-```
+```text
 src/**/spring - spring有个配置
 ├── bean/ - 自动扫描，产生可被Autowired的Bean
 │   └── WingsLightIdConfiguration.java - 内部用项目前缀，对外使用Wings前缀
@@ -386,7 +401,7 @@ src/**/spring - spring有个配置
 * Ins/Out
 * Query/Reply
 
-```
+```java
 // Service中Journal 枚举类
 enum Jane {
     Create, // 新建
@@ -402,9 +417,18 @@ enum Jane {
 * 能内部Listen的，就不用外部的Subscribe。
 * 能同步的就不用异步
 
+### 0.2.14.有个过渡设计和技术债务
+
+因为需求的渐进明细，外部的环境变化，几乎所有业务系统的开发都是演进式。
+基于以上事实，在实际交付中，力求完美很容易误人误事，应该遵循以下规则：
+
+* 仅做高出能力的10%的挑战，小于20%的远见。
+* 任何技术或方案的妥协都不得牺牲质量。
+* 每次迭代，偿还10%-20%的技术债务。
+
 ## 0.3.技术选型
 
-技术选型，遵循Unix哲学，主要回答，`为什么`和`为什么不？`
+技术选型，遵循Unix哲学，主要回答，`为什么`和`为什么不`
 
 ### 0.3.1.Spring Boot
 
@@ -440,7 +464,8 @@ enum Jane {
 
 `dubbo`更多的是服务治理，中断又重启，虽社区呼声大，但时过境迁了。
 
-`sofa`技术栈，有着金服实践，功能强大，社区活跃，仍在不断开源干货中。 如果团队够大，项目够复杂，管理和协作成本很高时，推荐使用。
+`sofa`技术栈，有着金服实践，功能强大，社区活跃，仍在不断开源干货中。
+如果团队够大，项目够复杂，管理和协作成本很高时，推荐使用。
 
 * [servicecomb](http://servicecomb.apache.org/)
 * [dubbo](http://dubbo.apache.org)
@@ -454,15 +479,17 @@ enum Jane {
 
 ### 0.3.6.webmvc
 
-尽管`webflux`在模型和性能好于serverlet体系，当前更多的是阻塞IO，多线程场景。 所以，当前只考虑 webmvc，用thymeleaf模板引擎。
+尽管`webflux`在模型和性能好于serverlet体系，当前更多的是阻塞IO，多线程场景。
+所以，当前只考虑 webmvc，用thymeleaf模板引擎。
 
 ### 0.3.7.lombok
 
-简化代码，开发时，需要自己在pom中引入。使用了Experimental功能，可能会突然编译不过去。 错误大概类似于 `cannot find symbol class __`，官方文档表示，
+简化代码，开发时，需要自己在pom中引入。使用了Experimental功能，可能会突然编译不过去。
+错误大概类似于 `cannot find symbol class __`，官方文档表示，
 
 javac8+, you add an `_` after `onMethod`, `onParam`, or `onConstructor`.
 
-``` java
+```java
 //  @Getter(onMethod=@__({@Id, @Column(name="unique-id")})) //JDK7
 //  @Setter(onParam=@__(@Max(10000))) //JDK7
 @Getter(onMethod_={@Id, @Column(name="unique-id")}) //JDK8
@@ -484,35 +511,36 @@ javac8+, you add an `_` after `onMethod`, `onParam`, or `onConstructor`.
 
 以下3个是java程序员进阶必备的工具包，其中commons-lang3，spring-boot定义了版本。
 
-* guava - https://github.com/google/guava
-* commons-lang3 - https://commons.apache.org/proper/commons-lang/
-* commons-io - http://commons.apache.org/proper/commons-io/
+* guava - <https://github.com/google/guava>
+* commons-lang3 - <https://commons.apache.org/proper/commons-lang/>
+* commons-io - <http://commons.apache.org/proper/commons-io/>
 
-## 0.5.常见问题
+## 0.9.常见问题
 
 ### 01.getHostName() took 5004 milliseconds
 
-InetAddress.getLocalHost().getHostName() took 5004 milliseconds to respond. Please verify your network configuration (macOS machines may need to add entries to /etc/hosts)
+InetAddress.getLocalHost().getHostName() took 5004 milliseconds to respond.
+Please verify your network configuration (macOS machines may need to add entries to /etc/hosts)
 
-``` bash
+```bash
 hostname
 # 输出 trydofors-Hackintosh.local
 
 cat /etc/hosts
 # 在localhost后面，填上 trydofors-Hackintosh.local
-127.0.0.1	    localhost trydofors-Hackintosh.local
+127.0.0.1     localhost trydofors-Hackintosh.local
 ```
 
 ### 02.工程中哪些参数是必须打开的
 
-``` bash
+```bash
 # 找到所以开关文件
 find . -name 'spring-wings-enabled.properties' \
 | egrep -v -E 'target/|example/' 
 
-./wings-slardar/src/main/resources/wings-conf/spring-wings-enabled.properties
-./wings-faceless/src/main/resources/wings-conf/spring-wings-enabled.properties
-./wings-silencer/src/main/resources/wings-conf/spring-wings-enabled.properties
+./slardar/src/main/resources/wings-conf/spring-wings-enabled.properties
+./faceless/src/main/resources/wings-conf/spring-wings-enabled.properties
+./silencer/src/main/resources/wings-conf/spring-wings-enabled.properties
 
 # 找到所false的开关
 find . -name 'spring-wings-enabled.properties' \
@@ -522,17 +550,17 @@ find . -name 'spring-wings-enabled.properties' \
 # 以下2个需要在flywave和enum时开启
 spring.wings.faceless.flywave.enabled.module=false
 spring.wings.faceless.enabled.enumi18n=false
-``` 
+```
 
 ### 03.如何创建一个工程
 
-``` bash
+```bash
 git clone https://gitee.com/trydofor/pro.fessional.wings.git
 cd pro.fessional.wings
-wings-example/wings-init-project.sh
+example/wings-init-project.sh
 
 # 如果不能执行bash，那么自行编译和执行
-cd wings-example/src/test/java/
+cd example/src/test/java/
 pro/fessional/wings/example/exec/Wings0InitProject.java
 ```
 
@@ -540,7 +568,7 @@ pro/fessional/wings/example/exec/Wings0InitProject.java
 
 Springboot的打包机制使boot.jar 不是普通的lib.jar
 
-``` xml
+```xml
 <plugin>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-maven-plugin</artifactId>
@@ -552,7 +580,7 @@ Springboot的打包机制使boot.jar 不是普通的lib.jar
 
 lib工程的配置，跳过repackage，参考example之外的工程
 
-``` xml
+```xml
 <plugin>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-maven-plugin</artifactId>
@@ -570,30 +598,36 @@ lib工程的配置，跳过repackage，参考example之外的工程
 </plugin>
 ```
 
-所以，wings推荐的工程结构是，在parent工程pom.xml的`project/build/plugins`中， 对以下`plugin`的`configuration`设置，
+所以，wings推荐的工程结构是，在parent工程pom.xml的`project/build/plugins`中，
+对以下`plugin`的`configuration`设置，
 
 * spring-boot-maven-plugin executable=true
 * maven-deploy-plugin skip=true
 * maven-install-plugin skip=true
 
-这样，为所以子模块，以boot工程提供默认的build（boot打包，不deploy，不install）。 在lib子模块中跳过boot打包，spring-boot-maven-plugin/repackage skip=true
+这样，为所以子模块，以boot工程提供默认的build（boot打包，不deploy，不install）。
+在lib子模块中跳过boot打包，spring-boot-maven-plugin/repackage skip=true
 
 ### 05.jackson和fastjson
 
-wings中和springboot一样，默认采用了jackson进行json和xml绑定。 不过wings的中对json的格式有特殊约定，比如日期格式，数字以字符串传递。 再与外部api交换数据时可能格式不匹配，这时需要用有background
+wings中和springboot一样，默认采用了jackson进行json和xml绑定。
+不过wings的中对json的格式有特殊约定，比如日期格式，数字以字符串传递。
+再与外部api交换数据时可能格式不匹配，这时需要用有background
 
 * 使用2套jackson配置
 * 使用jackson注解 @JsonRawValue
 * 使用fastjson(不推荐，需1.2.69+，SafeMode, 安全漏洞)
 
 在Jackson和Fastjson的使用上，考虑到安全及兼容性，遵循以下约定
+
 * FastJson用于①安全环境的读写，②对不安全的写，不读入外部json
 * FastJson用于静态环境，即不能优雅注入jackson的情况
 * 此外，都应该使用Jackson
 
 ### 06.为什么是dota的英雄
 
-有这样一个团队，她是做对日金融的，穿拖鞋裤衩上班，课间可以团dota，cs，跑跑卡丁车。 日本人组团爱上了瓜子，黄飞红，米线，火锅。团队只有一个要求，活干的漂亮，快，零缺陷。
+有这样一个团队，她是做对日金融的，穿拖鞋裤衩上班，课间可以团dota，cs，跑跑卡丁车。
+日本人组团爱上了瓜子，黄飞红，米线，火锅。团队只有一个要求，活干的漂亮，快，零缺陷。
 
 我本人与dota有缘无分，现在也就连直播都不爱看了，只是心中有个地方，叫dota
 
@@ -610,11 +644,15 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。 �
 * [MapStruct ide&mvn支持](https://mapstruct.org/documentation/installation/)
 * [Jdbc-Performance](https://github.com/arnaudroger/SimpleFlatMapper/wiki/Jdbc-Performance-Local-Mysql)
 
-在编码过程中，我们经常要处理各种O的转换，赋值，比如DTO，PO，VO，POJO。 同时我们又希望强类型，以便可以通过IDE提示提供效率，并把错误暴露在编译时。 这样就一定要避免弱类型(map,json)和反射（bean copy）,势必需要代码生成工具。
+在编码过程中，我们经常要处理各种O的转换，赋值，比如DTO，PO，VO，POJO。
+同时我们又希望强类型，以便可以通过IDE提示提供效率，并把错误暴露在编译时。
+这样就一定要避免弱类型(map,json)和反射（bean copy）,势必需要代码生成工具。
 
-对于比较复杂的mapping，使用expression，qualifiedByName，spring注入。 自动生成的代码位于`target/generated-sources/annotations/`
+对于比较复杂的mapping，使用expression，qualifiedByName，spring注入。
+自动生成的代码位于`target/generated-sources/annotations/`
 
-在wings中，推荐使用列编辑和正则（分享视频有讲），对于使用MapStruct的时候， 可以使用wings提供的`wgmp`(live template)做`A2B`的into生成器。
+在wings中，推荐使用列编辑和正则（分享视频有讲），对于使用MapStruct的时候，
+可以使用wings提供的`wgmp`(live template)做`A2B`的into生成器。
 
 * 在业务层代码，推荐MapStruct或列编辑和正则（分享视频有讲）手工制品。
 * 在jdbc中推荐`SimpleFlatMapper`或手工RowMapper，避免使用`BeanPropertyRowMapper`。
@@ -625,33 +663,35 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。 �
 
 ### 08.文件系统或对象存储
 
-需要权限才能访问的文件资源，不可以放到CDN，需要自建对象存储或使用物理文件系统 当使用本地FS是，需要注意子文件或子目录的数量限制，一般控制在30k以下，理由。
+需要权限才能访问的文件资源，不可以放到CDN，需要自建对象存储或使用物理文件系统，
+当使用本地FS是，需要注意子文件或子目录的数量限制，一般控制在30k以下，理由。
 
 * The ext2/ext3 filesystems have a hard limit of 31998 links.
 * 数量过多时，ls读取巨慢，索引也会慢。
 
 如果自建对象存储，推荐以下方案
 
-* https://docs.min.io/cn/ 推荐使用
-* https://github.com/happyfish100/fastdfs
+* <https://docs.min.io/cn/> 推荐使用
+* <https://github.com/happyfish100/fastdfs>
 
 ### 09.客户端或服务器信息
 
 收集用户画像，需要获得UA信息，可使用以下工具包
 
-* https://www.bitwalker.eu/software/user-agent-utils 浏览器（停止维护）
-* https://github.com/browscap/browscap/wiki/Using-Browscap 浏览器工具家族
-* https://github.com/blueconic/browscap-java 浏览器（推荐）
+* <https://www.bitwalker.eu/software/user-agent-utils> 浏览器（停止维护）
+* <https://github.com/browscap/browscap/wiki/Using-Browscap> 浏览器工具家族
+* <https://github.com/blueconic/browscap-java> 浏览器（推荐）
 
 获取服务器运行信息，使用以下工具包
 
-* https://github.com/oshi/oshi 系统信息
+* <https://github.com/oshi/oshi> 系统信息
 
 ### 10.缺少mirana和meepo依赖lib
 
-因是非吃货的大翅项目，一些`-SNAPSHOT`依赖，需要自行编译并本地安装。 偶尔可以在`sonatype`上找到，需要自行添加`repository`，如`~/.m2/settings.xml`
+因是非吃货的大翅项目，一些`-SNAPSHOT`依赖，需要自行编译并本地安装。
+偶尔可以在`sonatype`上找到，需要自行添加`repository`，如`~/.m2/settings.xml`
 
-```
+```xml
 <repository>
     <id>ossrh-snapshots</id>
     <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -662,17 +702,20 @@ wings中和springboot一样，默认采用了jackson进行json和xml绑定。 �
 
 ### 11.调整springboot版本和依赖
 
-wings工程，仅对spring-boot的标准生命周期进行了配置文件加载的hook，非强依赖于任何固定版本。 对于不想跟随wings一同升级spring及其依赖的，只把wings做dependency，而不parent和import即可。
+wings工程，仅对spring-boot的标准生命周期进行了配置文件加载的hook，非强依赖于任何固定版本。
+对于不想跟随wings一同升级spring及其依赖的，只把wings做dependency，而不parent和import即可。
 
-wings随时跟进升级spring boot的最新版本，目的是为了测试sharding-jdbc和jooq的兼容性。 而在二进制兼容方面，wings编译的版本是java=1.8，kotlin=1.4。
+wings随时跟进升级spring boot的最新版本，目的是为了测试sharding-jdbc和jooq的兼容性。
+而在二进制兼容方面，wings编译的版本是java=1.8，kotlin=1.4。
 
 对于maven继承ri依赖有parent和import两种，其重要区别在于property覆盖。
 
 * parent - you can also override individual dependencies by overriding a property in your own project
-* import - does not let you override individual dependencies by using properties, as explained above. To achieve the same result, you need to add entries in the dependencyManagement section of your project before the
-  spring-boot-dependencies entry.
-* https://docs.spring.io/spring-boot/docs/2.6.6/maven-plugin/reference/htmlsingle/#using-parent-pom
-* https://docs.spring.io/spring-boot/docs/2.6.6/maven-plugin/reference/htmlsingle/#using-import
+* import - does not let you override individual dependencies by using properties,
+  as explained above. To achieve the same result, you need to add entries in the dependencyManagement
+  section of your project before the spring-boot-dependencies entry.
+* <https://docs.spring.io/spring-boot/docs/2.6.6/maven-plugin/reference/htmlsingle/#using-parent-pom>
+* <https://docs.spring.io/spring-boot/docs/2.6.6/maven-plugin/reference/htmlsingle/#using-import>
 
 对于低于wings的spring-boot版本，一般来讲指定一下jooq版本就可以完全正常。
 
@@ -681,14 +724,14 @@ wings随时跟进升级spring boot的最新版本，目的是为了测试shardin
 * 密码长度不可设置上限，一般要求8位以上
 * 支持中文密码，标点，全角半角
 * 不发送明文密码，密码初级散列策略为md5(pass+':'+pass).toUpperCase(Hex大写)
-* js侧md5需要支持UTF8，如 https://github.com/emn178/js-md5
+* js侧md5需要支持UTF8，如 <https://github.com/emn178/js-md5>
 
 ### 13.关于内网穿透，第三方集成调试
 
 在Oauth，支付等第三方集成调试时，需要有公网ip或域名，然后把公网请求转发到开发机调试。
 
 * 临时用 ssh - `ssh -R 9988:127.0.0.1:8080 user@remote`
-* 持久用 frp - https://gofrp.org/docs/
+* 持久用 frp - <https://gofrp.org/docs/>
 
 ### 14.占位符
 
@@ -700,15 +743,17 @@ wings随时跟进升级spring boot的最新版本，目的是为了测试shardin
 
 导入wings工程，Idea会无法处理spring.factories中的WingsAutoConfiguration，会报类似以下信息
 
-Not registered via @EnableConfigurationProperties, marked as Spring component, or scanned via @ConfigurationPropertiesScan
+Not registered via @EnableConfigurationProperties, marked as Spring component,
+or scanned via @ConfigurationPropertiesScan
 
-此时在，Project Structure中的Facets中的spring，对每个主工程， 导入`Code based configuration`，选择WingsAutoConfiguration，即可。
+此时在，Project Structure中的Facets中的spring，对每个主工程，
+导入`Code based configuration`，选择WingsAutoConfiguration，即可。
 
 ### 16.Jooq隐秘的NullPointerException
 
 在jooq映射enum类型是，如果converter错误，可能会出现以下NPE，不能通过stack定位问题，需要分析SQL
 
-```
+```text
 java.lang.NullPointerException
 at org.jooq.impl.DefaultExecuteContext.exception(DefaultExecuteContext.java:737)
 at org.springframework.boot.autoconfigure.jooq.JooqExceptionTranslator.handle(JooqExceptionTranslator.java:83)
@@ -717,24 +762,26 @@ at org.jooq.impl.ExecuteListeners.exception(ExecuteListeners.java:274)
 at org.jooq.impl.AbstractQuery.execute(AbstractQuery.java:390)
 ```
 
-### 17.resources的`Input length = 1` 错误
+### 17.错误`Input length = 1`
 
-```
+```text
  Failed to execute goal org.apache.maven.plugins:maven-resources-plugin:3.2.0:resources
   (default-resources) on project xxx-common: Input length = 1
 ```
 
-原因是maven-resources-plugin的filter目录中存在非文本文件(不可按字符串读取)， 不要降级到3.1.0，在nonFilteredFileExtension添加扩展名即可。
+原因是maven-resources-plugin的filter目录中存在非文本文件(不可按字符串读取)，
+不要降级到3.1.0，在nonFilteredFileExtension添加扩展名即可。
 
-(Automatic Property Expansion Using Maven)[https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#howto-properties-and-configuration]
+[Automatic Property Expansion Using Maven](https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#howto-properties-and-configuration)
 
 ### 18.通过mysql客户端能找到，wings查询不到数据
 
-wings本身是时区敏感的，一般要求jvm和mysql在同一时区，主要体现在， flywave版本管理和journal的delete_dt时，都采用了时间，可以快速发现问题。
+wings本身是时区敏感的，一般要求jvm和mysql在同一时区，主要体现在，
+flywave版本管理和journal的delete_dt时，都采用了时间，可以快速发现问题。
 
 Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控制台以Error形式输出。
 
-更多信息，参考 [04.日时零值和时区问题](wings-project/wings-faceless/readme.md#04.日时零值和时区问题)
+更多信息，参考 [04.日时零值和时区问题](wings/faceless/readme.md#04日时零值和时区问题)
 
 ### 19.无外网mysql如何执行flywave版本管理
 
@@ -747,7 +794,8 @@ Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控�
 
 ### 20.Tomcat和hazelcast的POM exclusion
 
-使用wings-project为parent时通过dependencyManagement，继承wings默认不需要修改。 但若是没有继承wings依赖，以下2项视情况需要自行调整
+使用wings为parent时通过dependencyManagement，继承wings默认不需要修改。
+但若是没有继承wings依赖，以下2项视情况需要自行调整。
 
 * spring-boot-starter-web/spring-boot-starter-tomcat，因默认使用undertow
 * spring-session-hazelcast/hazelcast，使用最新版本。
@@ -759,7 +807,7 @@ Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控�
 
 ### 22.swagger的问题
 
-**从210版本，以SpringDoc取代SpringFox后，使用swagger3.0，部分问题已不存在**
+**从210版本，以SpringDoc取代SpringFox后**，使用swagger3.0，部分问题已不存在
 
 `😱 Could not render n, see the console.`
 是swagger前端js错误，可能是response对象层级过深，导致swagger扫描时间太长。
@@ -770,13 +818,15 @@ Warlock启动时自动检查jvm，jdbc和mysql的时区，不一致时，在控�
 * ModelKey{qualifiedModelName=ModelName{namespace='java.time', name='LocalDateTime'}
 
 springfox的swagger3.0.0有bug，会在3.0.1修复，
-https://github.com/springfox/springfox/issues/3452
+<https://github.com/springfox/springfox/issues/3452>
 
 wings中可以通过暴露AlternateTypeRule bean，自动注入所以Docket中。
 
-### 23.反序列化时ClassCastException (hazelcast, kryo, cache)或Enum比较失败。
+### 23.反序列化时ClassCastException或Enum比较失败
 
-* 完全一样的class，但是在序列化时却抛出 ClassCastException。 
+涉及的反序列化lib包括，hazelcast, kryo, cache
+
+* 完全一样的class，但是在序列化时却抛出 ClassCastException。
 * 同一个Enum的hash和equals不同，导致比较或map失败。
 
 大概率是，开发时项目使用了spring-boot-devtools，导致IDE和jar处在不同的classloader。
@@ -790,19 +840,19 @@ IDE使用了devtools的`restart`, 而非IDE内的jar则是`base`。
 
 不推荐在product环境使用devtool，参考springboot官方文档的[Known Limitations](https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#using.devtools.restart.limitations)
 
-### 24.Hazelcast OutOfMemoryError CallerNotMemberException
+### 24.Hazelcast的`OutOfMemoryError`及`CallerNotMemberException`
 
 当内存紧张时，hazelcast会出现OutOfMemoryError，然后集群以CallerNotMemberException拒绝此实例。
 
 通常并发量级不过万，为实例jvm分配2-4G，主机预留一个1个实例的物理内存空闲可适用大部分场景。
 
-> For this reason, we recommend that you plan to use only 60% of available memory, 
+> For this reason, we recommend that you plan to use only 60% of available memory,
 > with 40% headroom to handle member failure or shutdown.
 
-* https://hazelcast.com/blog/how-much-memory-do-i-need-for-my-data/
-* https://docs.hazelcast.org/docs/4.0.3/manual/html-single/index.html#sizing-practices
+* <https://hazelcast.com/blog/how-much-memory-do-i-need-for-my-data/>
+* <https://docs.hazelcast.org/docs/4.0.3/manual/html-single/index.html#sizing-practices>
 
-### 25.create table时报 Table doesn't exist
+### 25.建表时的`Table doesn't exist`
 
 错误信息 Error Code: 1146. Table xxx doesn't exist
 这其中有些有趣的现象，结果就是我创建table，就是因为不存在啊，怎么不让我create呢。
@@ -810,7 +860,7 @@ IDE使用了devtools的`restart`, 而非IDE内的jar则是`base`。
 和文件系统的大小写有关，根据wings的Sql风格，建议全小写，snake_case。
 此外，也建议在 mysqld 的配置上，增加 `lower_case_table_names=1`
 
-https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_lower_case_table_names
+<https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_lower_case_table_names>
 
 ### 26.如何解压springboot生成的jar
 
@@ -819,7 +869,7 @@ https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_lowe
 
 为什么 executable jar 不能使用jar解压呢，因为spring按executable zip的格式重新打包。
 
-``` bash
+```bash
 # 显示文件列表
 unzip -l demo-exmaple-1.0.0-SNAPSHOT.jar
 # 查看文件内容
@@ -930,7 +980,7 @@ find . -name '.pom.xml' | xargs rm -f
 ### 34.json的泛型，深度泛型类的反序列化
 
 spring中，使用ResolvableType和TypeDescriptor描述类型。
-```
+```java
 TypeDescriptor.map(Map.class, strTd, strTd)
 TypeDescriptor.collection(List.class, strTd)
 ResolvableType.forClassWithGenerics(R.class, Dto.class)
@@ -938,8 +988,32 @@ ResolvableType.forClassWithGenerics(R.class, Dto.class)
 
 FastJson中，使用com.alibaba.fastjson.TypeReference，
 注意，TypeReference一定要单行声明，避免自动推导，而丢失类型。
-```
+```java
 // 以下类型等价，
 Type tp1 = new TypeReference<R<Dto>>(){}.getType();
 Type tp2 = ResolvableType.forClassWithGenerics(R.class, Dto.class).getType();
 ```
+
+### 35.SPA及反向代理的缓存设置
+
+默认情况下springboot自动增加以下Response Header，使得反向代理无需设置
+`Cache-Control`=`no-cache,no-store,max-age=0,must-revalidate`
+
+但对于SPA页面，需要进行如下的手动设置。
+```nginx
+location / {
+    #add_header 'Access-Control-Allow-Origin' '*'; #允许跨域
+    root /data/static/demo-admin-spa/;
+    if ($request_filename ~* \.(html|htm)$){
+        add_header Cache-Control no-cache,no-store,max-age=0,must-revalidate;
+    }
+}
+```
+
+### 36.如何忽略一个配置项
+
+wings原则上，所以配置项都必有默认配置，而有时候需要忽略一些默认key或value。
+
+* `String`无效值 - `空`或`-`是默认的无效值
+* `Map<String,String>`  - 无效值key的value
+* `Map<String,Set<String>>` - 全覆盖key的value
