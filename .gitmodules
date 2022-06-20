@@ -1,0 +1,9 @@
+[submodule "observe/mirana"]
+	path = observe/mirana
+	url = ../../trydofor/pro.fessional.mirana.git
+[submodule "observe/meepo"]
+	path = observe/meepo
+	url = ../../trydofor/pro.fessional.meepo.git
+[submodule "observe/docs"]
+	path = observe/docs
+	url = ../../fessionalpro/wings-doc.git
