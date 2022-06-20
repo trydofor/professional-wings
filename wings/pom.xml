@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
 
     <name>wings</name>
-    <description>不是为吃货准备的伪装成吃货的项目</description>
+    <description>WingsBoot=BKB+飞鞋+SpringBoot</description>
 
     <modules>
         <module>silencer</module>

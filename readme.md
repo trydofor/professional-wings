@@ -1,4 +1,4 @@
-# 0.专业大翅 (pro.fessional.wings)
+# 0.WingsBoot (pro.fessional.wings)
 
 [![Spring Boot](https://img.shields.io/badge/spring--boot-2.6.6-green)](https://spring.io/projects/spring-boot)
 [![Java 11](https://img.shields.io/badge/java-11-red)](https://spring.io/projects/spring-boot)
@@ -8,7 +8,7 @@
 [![Mysql](https://img.shields.io/badge/mysql-8.0-blue)](https://dev.mysql.com/downloads/mysql/)
 [![H2Database](https://img.shields.io/badge/h2db-2.0-blue)](http://h2database.com/html/main.html)
 
-不是为吃货准备的伪装成吃货的项目，其核心价值是：①使团队快速实现业务目标；②快速偿还技术债务；③安全的面向程序和业务重构。
+WingsBoot=BKB+飞鞋+SpringBoot。其核心价值是：①使团队快速实现业务目标；②快速偿还技术债务；③安全的面向程序和业务重构。
 
 ![wings ti6](wings-ti6-champion.png)
 
