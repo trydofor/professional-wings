@@ -19,17 +19,17 @@
     <description>一些许的样板和示例</description>
 
     <modules>
-        <module>demo-admin</module>
-        <module>demo-front</module>
-        <module>demo-codegen</module>
-        <module>demo-common</module>
-        <!-- <module>demo-batch</module> -->
-        <!-- <module>demo-api</module> -->
-        <module>demo-devops</module>
+        <module>winx-admin</module>
+        <module>winx-front</module>
+        <module>winx-codegen</module>
+        <module>winx-common</module>
+        <!-- <module>winx-batch</module> -->
+        <!-- <module>winx-api</module> -->
+        <module>winx-devops</module>
     </modules>
 
     <properties>
-        <demo-revision>1.0.0-SNAPSHOT</demo-revision>
+        <winx-revision>1.0.0-SNAPSHOT</winx-revision>
         <maven.test.skip>true</maven.test.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
         <maven.install.skip>true</maven.install.skip>
@@ -41,27 +41,27 @@
         <dependencies>
             <dependency>
                 <groupId>com.moilioncircle.wings</groupId>
-                <artifactId>demo-admin</artifactId>
+                <artifactId>winx-admin</artifactId>
                 <version>${revision}-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.moilioncircle.wings</groupId>
-                <artifactId>demo-front</artifactId>
+                <artifactId>winx-front</artifactId>
                 <version>${revision}-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.moilioncircle.wings</groupId>
-                <artifactId>demo-codegen</artifactId>
+                <artifactId>winx-codegen</artifactId>
                 <version>${revision}-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.moilioncircle.wings</groupId>
-                <artifactId>demo-common</artifactId>
+                <artifactId>winx-common</artifactId>
                 <version>${revision}-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.moilioncircle.wings</groupId>
-                <artifactId>demo-devops</artifactId>
+                <artifactId>winx-devops</artifactId>
                 <version>${revision}-SNAPSHOT</version>
             </dependency>
         </dependencies>

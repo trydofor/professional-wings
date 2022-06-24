@@ -10,7 +10,7 @@
 
 WingsBoot=BKB+飞鞋+SpringBoot。其核心价值是：①使团队快速实现业务目标；②快速偿还技术债务；③安全的面向程序和业务重构。
 
-![wings ti6](wings-ti6-champion.png)
+![wings ti6](observe/docs/docs/.vuepress/public/wings-ti6-champion.png)
 
 Wings是springboot的一个脚手架，没有魔法和定制，主要有以下特点：
 
@@ -836,7 +836,7 @@ IDE使用了devtools的`restart`, 而非IDE内的jar则是`base`。
 * 方案二，自己暴露Config或ClientConfig，并设置好classloader
 * 方案三，配置spring-devtools.properties（不推荐，wings采用）
 
-在开发wings自身时，因为序列化需要，demo工程对wings的依赖，都希望devtools造成干扰，
+在开发wings自身时，因为序列化需要，演示工程对wings的依赖，都希望devtools造成干扰，
 
 不推荐在product环境使用devtool，参考springboot官方文档的[Known Limitations](https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#using.devtools.restart.limitations)
 
@@ -871,9 +871,9 @@ IDE使用了devtools的`restart`, 而非IDE内的jar则是`base`。
 
 ```bash
 # 显示文件列表
-unzip -l demo-exmaple-1.0.0-SNAPSHOT.jar
+unzip -l winx-exmaple-1.0.0-SNAPSHOT.jar
 # 查看文件内容
-head demo-exmaple-1.0.0-SNAPSHOT.jar
+head winx-exmaple-1.0.0-SNAPSHOT.jar
 #!/bin/bash
 #
 #    .   ____          _            __ _ _
@@ -1003,7 +1003,7 @@ Type tp2 = ResolvableType.forClassWithGenerics(R.class, Dto.class).getType();
 ```nginx
 location / {
     #add_header 'Access-Control-Allow-Origin' '*'; #允许跨域
-    root /data/static/demo-admin-spa/;
+    root /data/static/winx-admin-spa/;
     if ($request_filename ~* \.(html|htm)$){
         add_header Cache-Control no-cache,no-store,max-age=0,must-revalidate;
     }

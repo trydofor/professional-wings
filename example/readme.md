@@ -1,6 +1,6 @@
 # 9.演示例子(example)
 
-运行`demo-devops/wings-init-project.sh`生成一个样板工程。
+运行`winx-devops/wings-init-project.sh`生成一个样板工程。
 
 ## 9.1.前置条件
 
@@ -16,7 +16,7 @@ PASS=S4f3_Password@MoilionCircle
 
 # 创建一个mysql数据库
 docker run -d \
---name demo-mysql-8.0 \
+--name winx-mysql-8.0 \
 -e MYSQL_DATABASE=wings_example \
 -e MYSQL_ROOT_PASSWORD=${PASS} \
 -p 3306:3306 \
@@ -26,7 +26,7 @@ mysql:8.0
 参考以下文档或脚本，根据需要创建程序运行或数据维护用户
 
 * wings-faceless/readme.md - 单一用户
-* demo-devops/bin/wings-mysql-user.sh - 分离用户
+* winx-devops/bin/wings-mysql-user.sh - 分离用户
 
 ## 9.3.压力测试
 
@@ -36,9 +36,9 @@ mysql:8.0
 
 ```bash
 mvn -U clean package
-demo-devops/wings-starter.sh start
+winx-devops/wings-starter.sh start
 # Ctrl-C停止日志输出
-demo-devops/wings-starter.sh stop
+winx-devops/wings-starter.sh stop
 ```
 
 ### jmeter 模拟10K用户
@@ -51,25 +51,25 @@ ulimit -n 20000
 
 JVM_ARGS="-Xmx4G -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:G1ReservePercent=20"
 
-rm -rf demo-devops/target/load-test/ &&\
-mkdir -p demo-devops/target/load-test/report
+rm -rf winx-devops/target/load-test/ &&\
+mkdir -p winx-devops/target/load-test/report
 
 jmeter -n \
--t demo-devops/src/test/jmeter/load-test.jmx \
--l demo-devops/target/load-test/load-test.jtl \
--j demo-devops/target/load-test/load-test.log \
--e -o demo-devops/target/load-test/report
+-t winx-devops/src/test/jmeter/load-test.jmx \
+-l winx-devops/target/load-test/load-test.jtl \
+-j winx-devops/target/load-test/load-test.log \
+-e -o winx-devops/target/load-test/report
 ```
 
 ## 9.4. 程序部署
 
-复制 wings-starter.sh 到服务器，并使用软连接建立启动脚本和env文件，以demo-admin为例。
+复制 wings-starter.sh 到服务器，并使用软连接建立启动脚本和env文件，以winx-admin为例。
 
 ```bash
 # 建立启动脚本，一个boot一个
-ln -s wings-starter.sh demo-admin.sh
+ln -s wings-starter.sh winx-admin.sh
 # 复制 wings-starter.env内容，与启动脚本同名(扩展名不同)
-vi demo-admin.env
+vi winx-admin.env
 ```
 
 在env中，port,jar,log容易理解，按项目需要配置即可。
@@ -86,10 +86,10 @@ BOOT_CNF是用来替换默认配置的运行时配置，结构如下。
 通常的配置参考，包括强制https，保护误操作.git，前后端分离。
 
 ```nginx
-upstream demo_admin {
+upstream winx_admin {
     ip_hash;
-    server demo_appser_01:8090;
-    server demo_appser_02:8090;
+    server winx_appser_01:8090;
+    server winx_appser_02:8090;
     keepalive 300; # 长连接
 }
 
@@ -117,7 +117,7 @@ server {
 
     # 后端分流，资源类遵循res-id-{base64_urlsafe}.{pdf}格式
     location ~* (\.json|/res-id-[\-=_0-9a-z]+\.[0-9a-z]+)$ {
-        proxy_pass http://demo_admin;
+        proxy_pass http://winx_admin;
         proxy_http_version  1.1;
         proxy_cache_bypass  $http_upgrade;
     
@@ -132,7 +132,7 @@ server {
     # 前端分流
     location / {
         #add_header 'Access-Control-Allow-Origin' '*'; #允许跨域
-        root /data/static/demo-admin-spa/;
+        root /data/static/winx-admin-spa/;
         if ($request_filename ~* \.(html|htm)$){
             add_header Cache-Control no-cache,no-store,max-age=0,must-revalidate;
         }

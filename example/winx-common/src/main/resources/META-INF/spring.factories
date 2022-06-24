@@ -1,0 +1,3 @@
+#
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.moilioncircle.wings.common.spring.boot.WinxAutoConfiguration
