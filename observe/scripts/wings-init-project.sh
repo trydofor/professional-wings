@@ -14,7 +14,7 @@ echo -e "\033[37;42;1mScript-Version $THIS_VERSION \033[0m"
 # shellcheck disable=SC2046
 _this_path=$(dirname $(realpath -s "$0"))
 # shellcheck disable=SC2164
-_base_path=$(cd "$_this_path"; cd ../..; pwd)
+_base_path=$(cd "$_this_path"; cd ../../example; pwd)
 echo -e "\033[37;42;1m wings-example=$_base_path \033[0m"
 cd "$_base_path" || exit
 

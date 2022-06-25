@@ -1,8 +1,8 @@
 #!/bin/bash
 THIS_VERSION=2022-01-22
 
-TEMP_DIR="../target" # 避免复制，建议在同一硬盘分区
-BOOT_JAR="../target/winx-devops-*-SNAPSHOT.jar"
+TEMP_DIR="../../example/winx-devops/target" # 避免复制，建议在同一硬盘分区
+BOOT_JAR="./../example/winx-devops/target/winx-devops-*-SNAPSHOT.jar"
 BOOT_ENV="./wings-starter.env"
 BOOT_BSH="./wings-starter.sh"
 
