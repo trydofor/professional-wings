@@ -40,7 +40,7 @@ public class WarlockErrorProp {
 
         /**
          * CodeExceptionResolver 回复的文本内容。
-         * 支持变量 {key} 和 {ttl}
+         * 支持变量 {message}
          *
          * @see #Key$responseBody
          */

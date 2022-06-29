@@ -63,7 +63,7 @@ public class SlardarDatetimeProp {
     @Data
     public static class Df {
         /**
-         * 是否支持自动转换
+         * 是否支持自动转换时区
          */
         private boolean auto = false;
         /**

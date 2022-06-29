@@ -7,8 +7,7 @@
 [![QueryDsl](https://img.shields.io/badge/querydsl-5.0-yellow)](https://querydsl.com/static/querydsl/5.0.0/reference/html_single)
 [![Mysql](https://img.shields.io/badge/mysql-8.0-blue)](https://dev.mysql.com/downloads/mysql/)
 [![H2Database](https://img.shields.io/badge/h2db-2.0-blue)](http://h2database.com/html/main.html)
-
-![wings ti6](observe/docs/docs/.vuepress/public/wings-ti6-champion.png)
+[![Hazelcast](https://img.shields.io/badge/hazelcast-4.2-lightblue)](https://hazelcast.org/imdg/)
 
 > WingsBoot(代号神翼)=BKB+飞鞋+SpringBoot，如果你也喜欢过Dota，你懂的。
 
@@ -21,6 +20,6 @@
 ## 2.常用命令
 
 ```bash
-# 管理 submodule
-
+# 更新 observe 子模块
+git submodule update --remote --init
 ```

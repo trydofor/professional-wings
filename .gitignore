@@ -1,3 +1,7 @@
+## wings boot
+.flattened-pom.xml
+.pom.xml
+
 # Created by .ignore support plugin (hsz.mobi)
 ### Maven template
 target/
@@ -46,8 +50,6 @@ hs_err_pid*
 
 .idea/
 *.iml
-.flattened-pom.xml
-.pom.xml
 
 ###
 *~
