@@ -13,9 +13,9 @@
 
 ## 1.技术文档
 
-* 官方网站 - <https://wings.fessional.pro>
-* 文档Github - <https://github.com/fessionalpro/wings-doc>
-* 文档Gitee - <https://gitee.com/fessionalpro/wings-doc>
+* 官方文档 - <https://wings.fessional.pro>
+* Doc GitHub - <https://github.com/fessionalpro/wings-doc>
+* Doc Gitee - <https://gitee.com/fessionalpro/wings-doc>
 
 ## 2.常用命令
 
@@ -23,3 +23,11 @@
 # 更新 observe 子模块
 git submodule update --remote --init
 ```
+
+## 3.免责声明
+
+WingsBoot及其submodule项目，均以Apache2授权。但本人，
+
+* 不对滥用技术或手册造成的任何损失负责。
+* 没有义务提供咨询，答疑，开发等服务。
+* 可付费咨询，3K CNY/H
