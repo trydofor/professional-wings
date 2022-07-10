@@ -3,11 +3,14 @@ package pro.fessional.wings.faceless.jooqgen;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
+import org.jooq.codegen.GeneratorStrategy;
 import org.jooq.codegen.JavaGenerator;
 import org.jooq.codegen.JavaWriter;
 import org.jooq.impl.DAOImpl;
+import org.jooq.meta.CatalogDefinition;
 import org.jooq.meta.ColumnDefinition;
 import org.jooq.meta.Definition;
+import org.jooq.meta.SchemaDefinition;
 import org.jooq.meta.TableDefinition;
 import org.jooq.meta.TypedElementDefinition;
 import org.jooq.meta.UDTDefinition;
@@ -18,8 +21,11 @@ import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoAliasImpl;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoJournalImpl;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 
+import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +39,41 @@ import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_D
 import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_IS_DELETED;
 
 public class WingsJavaGenerator extends JavaGenerator {
+
+    private GeneratorStrategy proxyStrategy = null;
+
+    @Override
+    public GeneratorStrategy getStrategy() {
+        final GeneratorStrategy wrapper = super.getStrategy();
+        if (WingsCodeGenConf.notGlobalSuffix()) {
+            return wrapper;
+        }
+
+        if (proxyStrategy == null) {
+            final String[] defs = {"DefaultCatalog", "DefaultSchema"};
+            InvocationHandler han = (proxy, method, args) -> {
+                Object obj = method.invoke(wrapper, args);
+                final String methodName = method.getName();
+                if (methodName.equals("getJavaClassName") || methodName.equals("getFullJavaIdentifier")) {
+                    final Object arg = args[0];
+                    if (arg instanceof CatalogDefinition || arg instanceof SchemaDefinition) {
+                        return WingsCodeGenConf.tryGlobalSuffix((String) obj, defs);
+                    }
+                }
+                if (methodName.equals("getFile")) {
+                    final Object arg = args[0];
+                    if (arg instanceof CatalogDefinition || arg instanceof SchemaDefinition) {
+                        return WingsCodeGenConf.tryGlobalSuffix((File) obj, defs);
+                    }
+                }
+                return obj;
+            };
+
+            proxyStrategy = (GeneratorStrategy) Proxy.newProxyInstance(wrapper.getClass().getClassLoader(), new Class[]{GeneratorStrategy.class}, han);
+        }
+
+        return proxyStrategy;
+    }
 
     @Override
     public void printSingletonInstance(JavaWriter out, Definition definition) {
@@ -111,18 +152,21 @@ public class WingsJavaGenerator extends JavaGenerator {
                     markDelete = "commit.getCommitDt()";
                     out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.DATE_TIME);", fldDel);
                     out.println("public final Condition onlyLiveData = %s.eq(EmptyValue.DATE_TIME);", fldDel);
-                } else if (colType.contains("int")) {
+                }
+                else if (colType.contains("int")) {
                     markDelete = "DateNumber.dateTime17(commit.getCommitDt())";
                     out.ref(DateNumber.class);
                     out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.BIGINT);", fldDel);
                     out.println("public final Condition onlyLiveData = %s.eq(EmptyValue.BIGINT);", fldDel);
-                } else {
+                }
+                else {
                     markDelete = "DateFormatter.full23(commit.getCommitDt())";
                     out.ref(DateFormatter.class);
                     out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.VARCHAR);", fldDel);
                     out.println("public final Condition onlyLiveData = %s.eq(EmptyValue.VARCHAR);", fldDel);
                 }
-            } else {
+            }
+            else {
                 // COL_IS_DELETED
                 markDelete = "Boolean.TRUE";
                 out.println("public final Condition onlyDiedData = %s.eq(Boolean.TRUE);", fldDel);
@@ -199,10 +243,11 @@ public class WingsJavaGenerator extends JavaGenerator {
         impt.remove(DAOImpl.class.getName());
 
         final Class<?> implClass;
-        // TODO
+
         if (table.getColumns().stream().anyMatch(WingsJooqGenHelp.JournalAware)) {
             implClass = WingsJooqDaoJournalImpl.class;
-        } else {
+        }
+        else {
             implClass = WingsJooqDaoAliasImpl.class;
         }
         impt.add(implClass.getName());
@@ -262,7 +307,8 @@ public class WingsJavaGenerator extends JavaGenerator {
                     Method ref = clz.getDeclaredMethod("ref", String.class, int.class);
                     ref.setAccessible(true);
                     return ref;
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     clz = clz.getSuperclass();
                 }
             }
@@ -272,7 +318,8 @@ public class WingsJavaGenerator extends JavaGenerator {
         try {
             Object rst = md.invoke(out, str, kep);
             return (String) rst;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new IllegalStateException(e);
         }
     }
@@ -289,7 +336,8 @@ public class WingsJavaGenerator extends JavaGenerator {
                     Field fld = clz.getDeclaredField("qualifiedTypes");
                     fld.setAccessible(true);
                     return fld;
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     clz = clz.getSuperclass();
                 }
             }
@@ -298,7 +346,8 @@ public class WingsJavaGenerator extends JavaGenerator {
 
         try {
             return (Set<String>) fd.get(out);
-        } catch (IllegalAccessException e) {
+        }
+        catch (IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -313,7 +362,8 @@ public class WingsJavaGenerator extends JavaGenerator {
                     Field fld = clz.getDeclaredField("sb");
                     fld.setAccessible(true);
                     return fld;
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     clz = clz.getSuperclass();
                 }
             }
@@ -321,7 +371,8 @@ public class WingsJavaGenerator extends JavaGenerator {
         });
         try {
             return (StringBuilder) fd.get(out);
-        } catch (IllegalAccessException e) {
+        }
+        catch (IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
     }

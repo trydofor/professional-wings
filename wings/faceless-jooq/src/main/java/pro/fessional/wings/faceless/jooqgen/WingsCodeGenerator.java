@@ -52,9 +52,10 @@ public class WingsCodeGenerator {
      *
      * @param conf        配置文件，建议使用 #Builder 生产。
      * @param incremental 是否增量生成，即不删除本次中不存在的文件。
+     * @param suffix      为DefaultCatalog，DefaultSchema和Global对象增加后缀，以区分增量生成。
      */
 
-    public static void generate(Configuration conf, boolean incremental) {
+    public static void generate(Configuration conf, boolean incremental, String suffix) {
         if (conf == null) {
             conf = config();
         }
@@ -69,6 +70,7 @@ public class WingsCodeGenerator {
             logger.info("safely generate, tmp-dir=" + tdr);
 
             // generator
+            WingsCodeGenConf.setGlobalSuffix(suffix);
             GenerationTool.generate(conf);
 
             // clean and move
@@ -183,6 +185,7 @@ public class WingsCodeGenerator {
 
         private final Configuration conf;
         private boolean incr = false;
+        private String suffix = null;
 
         public Builder(Configuration conf) {
             this.conf = conf;
@@ -198,11 +201,16 @@ public class WingsCodeGenerator {
             return this;
         }
 
+        public Builder setGlobalSuffix(String suffix) {
+            this.suffix = suffix;
+            return this;
+        }
+
         /**
          * 直接生成代码
          */
         public void buildAndGenerate() {
-            generate(conf, incr);
+            generate(conf, incr, suffix);
         }
 
         public Configuration configuration() {
