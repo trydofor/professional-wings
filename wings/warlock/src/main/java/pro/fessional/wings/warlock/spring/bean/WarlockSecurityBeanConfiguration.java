@@ -49,6 +49,7 @@ import pro.fessional.wings.warlock.service.auth.impl.AuthAppPermChecker;
 import pro.fessional.wings.warlock.service.auth.impl.AuthZonePermChecker;
 import pro.fessional.wings.warlock.service.auth.impl.ComboWarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.impl.ComboWarlockAuthzService;
+import pro.fessional.wings.warlock.service.auth.impl.DefaultDaoAuthnCombo;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultPermRoleCombo;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserAuthnAutoReg;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
@@ -155,6 +156,13 @@ public class WarlockSecurityBeanConfiguration {
     public ComboWarlockAuthnService comboWarlockAuthnService() {
         logger.info("Wings conf comboWarlockAuthnService");
         return new ComboWarlockAuthnService();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(DefaultDaoAuthnCombo.class)
+    public DefaultDaoAuthnCombo defaultDaoAuthnCombo() {
+        logger.info("Wings conf defaultDaoAuthnCombo");
+        return new DefaultDaoAuthnCombo();
     }
 
     @Bean

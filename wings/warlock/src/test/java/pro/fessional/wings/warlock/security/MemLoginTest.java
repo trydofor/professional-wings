@@ -1,7 +1,7 @@
 package pro.fessional.wings.warlock.security;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.TypeReference;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -53,8 +53,9 @@ class MemLoginTest {
         String au4 = OkHttpClientHelper.extractString(r4, false);
         log.warn("UsernameLogin auth4={}", au4);
 
-        final Set<String> st3 = JSON.parseObject(au3, new TypeReference<>() {});
-        final Set<String> st4 = JSON.parseObject(au4, new TypeReference<>() {});
+        final TypeReference<Set<String>> setRef = new TypeReference<>() {};
+        final Set<String> st3 = JSON.parseObject(au3, setRef);
+        final Set<String> st4 = JSON.parseObject(au4, setRef);
         Assertions.assertEquals(st3, st4);
 
         List<String> exp = Arrays.asList("ROLE_SYSTEM", "ROLE_ADMIN", "user-perm");

@@ -50,11 +50,6 @@ INSERT IGNORE INTO `sys_light_sequence` (`seq_name`, `block_id`, `next_val`, `st
 VALUES ('win_perm_entry', 0, 10000, 100, '动态插入5位起，静态5位'),
        ('win_role_entry', 0, 10000, 100, '动态插入5位起，静态5位');
 
-REPLACE INTO `sys_constant_enum` (`id`, `type`, `code`, `hint`, `info`)
-VALUES (1330100, 'grant_type', 'grant_type', '授权类别', 'classpath:/wings-tmpl/ConstantEnumTemplate.java'),
-       (1330101, 'grant_type', 'perm', '权限', '权限'),
-       (1330102, 'grant_type', 'role', '角色', '角色');
-
 REPLACE INTO `win_perm_entry`(`id`, `create_dt`, `commit_id`, `scopes`, `action`, `remark`)
 VALUES (1, NOW(3), 0, '', '*', '顶级权限，不对外使用'),
        -- User
