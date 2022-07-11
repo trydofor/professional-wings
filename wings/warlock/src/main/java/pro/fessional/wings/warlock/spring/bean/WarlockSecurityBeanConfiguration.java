@@ -49,25 +49,24 @@ import pro.fessional.wings.warlock.service.auth.impl.AuthAppPermChecker;
 import pro.fessional.wings.warlock.service.auth.impl.AuthZonePermChecker;
 import pro.fessional.wings.warlock.service.auth.impl.ComboWarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.impl.ComboWarlockAuthzService;
-import pro.fessional.wings.warlock.service.auth.impl.DefaultDaoAuthnCombo;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultPermRoleCombo;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserAuthnAutoReg;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
 import pro.fessional.wings.warlock.service.auth.impl.MemoryTypedAuthzCombo;
 import pro.fessional.wings.warlock.service.grant.WarlockGrantService;
-import pro.fessional.wings.warlock.service.grant.impl.WarlockGrantServiceImpl;
+import pro.fessional.wings.warlock.service.grant.impl.WarlockGrantServiceDummy;
 import pro.fessional.wings.warlock.service.other.TerminalJournalService;
 import pro.fessional.wings.warlock.service.perm.WarlockPermNormalizer;
 import pro.fessional.wings.warlock.service.perm.WarlockPermService;
 import pro.fessional.wings.warlock.service.perm.WarlockRoleService;
-import pro.fessional.wings.warlock.service.perm.impl.WarlockPermServiceImpl;
-import pro.fessional.wings.warlock.service.perm.impl.WarlockRoleServiceImpl;
+import pro.fessional.wings.warlock.service.perm.impl.WarlockPermServiceDummy;
+import pro.fessional.wings.warlock.service.perm.impl.WarlockRoleServiceDummy;
 import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
 import pro.fessional.wings.warlock.service.user.WarlockUserBasisService;
 import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
-import pro.fessional.wings.warlock.service.user.impl.WarlockUserAuthnServiceImpl;
-import pro.fessional.wings.warlock.service.user.impl.WarlockUserBasisServiceImpl;
-import pro.fessional.wings.warlock.service.user.impl.WarlockUserLoginServiceImpl;
+import pro.fessional.wings.warlock.service.user.impl.WarlockUserAuthnServiceDummy;
+import pro.fessional.wings.warlock.service.user.impl.WarlockUserBasisServiceDummy;
+import pro.fessional.wings.warlock.service.user.impl.WarlockUserLoginServiceDummy;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockJustAuthProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
@@ -159,13 +158,6 @@ public class WarlockSecurityBeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(DefaultDaoAuthnCombo.class)
-    public DefaultDaoAuthnCombo defaultDaoAuthnCombo() {
-        logger.info("Wings conf defaultDaoAuthnCombo");
-        return new DefaultDaoAuthnCombo();
-    }
-
-    @Bean
     @ConditionalOnMissingBean(ComboWarlockAuthzService.class)
     public ComboWarlockAuthzService comboWarlockAuthzService() {
         logger.info("Wings conf comboWarlockAuthzService");
@@ -212,29 +204,29 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnMissingBean(WarlockGrantService.class)
     public WarlockGrantService warlockGrantService() {
         // 存在子类，则不需要此bean，如JustAuthUserAuthnAutoReg
-        logger.info("Wings conf warlockGrantService");
-        return new WarlockGrantServiceImpl();
+        logger.info("Wings conf WarlockGrantServiceDummy");
+        return new WarlockGrantServiceDummy();
     }
 
     @Bean
     @ConditionalOnMissingBean(WarlockPermService.class)
     public WarlockPermService warlockPermService() {
-        logger.info("Wings conf warlockPermService");
-        return new WarlockPermServiceImpl();
+        logger.info("Wings conf WarlockPermServiceDummy");
+        return new WarlockPermServiceDummy();
     }
 
     @Bean
     @ConditionalOnMissingBean(WarlockRoleService.class)
     public WarlockRoleService warlockRoleService() {
-        logger.info("Wings conf warlockRoleService");
-        return new WarlockRoleServiceImpl();
+        logger.info("Wings conf WarlockRoleServiceDummy");
+        return new WarlockRoleServiceDummy();
     }
 
     @Bean
     @ConditionalOnMissingBean(WarlockUserAuthnService.class)
     public WarlockUserAuthnService warlockUserAuthnService() {
-        logger.info("Wings conf warlockUserAuthnService");
-        return new WarlockUserAuthnServiceImpl();
+        logger.info("Wings conf WarlockUserAuthnServiceDummy");
+        return new WarlockUserAuthnServiceDummy();
     }
 
     ///////// UserDetails /////////
@@ -243,7 +235,7 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnMissingBean(WarlockUserBasisService.class)
     public WarlockUserBasisService warlockUserBasisService() {
         logger.info("Wings conf warlockUserBasisService");
-        return new WarlockUserBasisServiceImpl();
+        return new WarlockUserBasisServiceDummy();
     }
 
     @Bean
@@ -406,8 +398,8 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(WarlockUserLoginService.class)
     public WarlockUserLoginService warlockUserLoginService() {
-        logger.info("Wings conf warlockUserLoginService");
-        return new WarlockUserLoginServiceImpl();
+        logger.info("Wings conf WarlockUserLoginServiceDummy");
+        return new WarlockUserLoginServiceDummy();
     }
 
     @Bean

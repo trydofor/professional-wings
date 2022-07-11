@@ -7,13 +7,6 @@ package pro.fessional.wings.warlock.database.autogen;
 import pro.fessional.wings.warlock.database.autogen.tables.SysConstantEnumTable;
 import pro.fessional.wings.warlock.database.autogen.tables.SysStandardI18nTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinConfRuntimeTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinPermEntryTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinRoleEntryTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinRoleGrantTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserAuthnTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserGrantTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserLoginTable;
 
 import javax.annotation.processing.Generated;
 
@@ -47,38 +40,4 @@ public class Tables {
      */
     public static final WinConfRuntimeTable WinConfRuntime = WinConfRuntimeTable.WinConfRuntime;
 
-    /**
-     * The table <code>win_perm_entry</code>.
-     */
-    public static final WinPermEntryTable WinPermEntry = WinPermEntryTable.WinPermEntry;
-
-    /**
-     * The table <code>win_role_entry</code>.
-     */
-    public static final WinRoleEntryTable WinRoleEntry = WinRoleEntryTable.WinRoleEntry;
-
-    /**
-     * The table <code>win_role_grant</code>.
-     */
-    public static final WinRoleGrantTable WinRoleGrant = WinRoleGrantTable.WinRoleGrant;
-
-    /**
-     * The table <code>win_user_authn</code>.
-     */
-    public static final WinUserAuthnTable WinUserAuthn = WinUserAuthnTable.WinUserAuthn;
-
-    /**
-     * The table <code>win_user_basis</code>.
-     */
-    public static final WinUserBasisTable WinUserBasis = WinUserBasisTable.WinUserBasis;
-
-    /**
-     * The table <code>win_user_grant</code>.
-     */
-    public static final WinUserGrantTable WinUserGrant = WinUserGrantTable.WinUserGrant;
-
-    /**
-     * The table <code>win_user_login</code>.
-     */
-    public static final WinUserLoginTable WinUserLogin = WinUserLoginTable.WinUserLogin;
 }

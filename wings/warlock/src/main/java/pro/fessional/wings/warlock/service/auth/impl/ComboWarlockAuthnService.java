@@ -35,7 +35,7 @@ import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.UPDATE;
 @CacheConfig(cacheNames = CacheName, cacheManager = CacheManager)
 public class ComboWarlockAuthnService implements WarlockAuthnService {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = {@Autowired(required = false)})
     private List<Combo> combos = Collections.emptyList();
 
     @Setter(onMethod_ = {@Autowired})
