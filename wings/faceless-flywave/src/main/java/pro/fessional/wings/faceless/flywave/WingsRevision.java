@@ -12,7 +12,7 @@ public enum WingsRevision implements RevisionRegister {
     V00_19_0512_02_Fix227(2019_0512_02L, "fix v227", "branch/somefix/01-v227-fix"),
     V01_19_0520_01_IdLog(2019_0520_01L, "lightId and journal", "master/01-light"),
     V01_19_0521_01_EnumI18n(2019_0521_01L, "enum and i18n", "branch/feature/01-enum-i18n"),
-    V04_20_1023_01_AuthEnum(2020_1023_01L, "auth enum", "master/03-enum"),
+    V03_20_1023_01_AuthEnum(2020_1023_01L, "auth enum", "master/03-enum"),
     V04_20_1024_01_UserLogin(2020_1024_01L, "user auth login", "master/04-auth"),
     V04_20_1024_02_RolePermit(2020_1024_02L, "user role permit", "master/04-auth"),
     V05_20_1025_01_ConfRuntime(2020_1025_01L, "runtime config", "master/05-conf"),

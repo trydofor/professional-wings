@@ -3,7 +3,7 @@ package pro.fessional.wings.warlock.spring.bean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.warlock.database.autogen.Tables;
+import pro.fessional.wings.warlock.database.autogen.tables.daos.SysConstantEnumDao;
 import pro.fessional.wings.warlock.errorhandle.auto.BindExceptionAdvice;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 
@@ -17,7 +17,7 @@ public class WarlockCompScanConfiguration {
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$jooqAutogen, havingValue = "true")
-    @ComponentScan(basePackageClasses = Tables.class)
+    @ComponentScan(basePackageClasses = SysConstantEnumDao.class)
     public static class WarlockJooqDaoConfiguration {
     }
 

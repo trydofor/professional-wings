@@ -24,7 +24,6 @@ import java.util.function.Consumer;
 @Getter
 public class Warlock1SchemaManager {
 
-    public static final long InitRevision = 2020_10_24_02;
     protected final SchemaRevisionManager schemaRevisionManager;
 
     public Warlock1SchemaManager(SchemaRevisionManager schemaRevisionManager) {
@@ -65,6 +64,15 @@ public class Warlock1SchemaManager {
     public void mergePublish(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls, long commitId, long revision) {
         schemaRevisionManager.checkAndInitSql(sqls, commitId, true);
         schemaRevisionManager.publishRevision(revision, commitId);
+    }
+
+    @SafeVarargs
+    public final void mergeForceApply(boolean isUpto, Consumer<Helper>... customize) {
+        final Helper helper = FlywaveRevisionScanner.helper();
+        for (Consumer<Helper> consumer : customize) {
+            consumer.accept(helper);
+        }
+        mergeForceApply(helper.scan(), -System.currentTimeMillis(), isUpto);
     }
 
     /**
@@ -111,9 +119,7 @@ public class Warlock1SchemaManager {
                 WingsRevision.V00_19_0512_01_Schema,
                 WingsRevision.V01_19_0520_01_IdLog,
                 WingsRevision.V01_19_0521_01_EnumI18n,
-                WingsRevision.V04_20_1023_01_AuthEnum,
-                WingsRevision.V04_20_1024_01_UserLogin,
-                WingsRevision.V04_20_1024_02_RolePermit,
+                WingsRevision.V03_20_1023_01_AuthEnum,
                 WingsRevision.V05_20_1025_01_ConfRuntime
         );
     }
@@ -123,9 +129,7 @@ public class Warlock1SchemaManager {
             helper.include(WingsRevision.V00_19_0512_01_Schema);
             helper.include(WingsRevision.V01_19_0520_01_IdLog);
             helper.include(WingsRevision.V01_19_0521_01_EnumI18n);
-            helper.include(WingsRevision.V04_20_1023_01_AuthEnum);
-            helper.include(WingsRevision.V04_20_1024_01_UserLogin);
-            helper.include(WingsRevision.V04_20_1024_02_RolePermit);
+            helper.include(WingsRevision.V03_20_1023_01_AuthEnum);
             helper.include(WingsRevision.V05_20_1025_01_ConfRuntime);
         };
     }

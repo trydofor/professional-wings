@@ -71,7 +71,21 @@ public class Warlock3JooqGenerator {
                 .databaseIncludes(
                         "sys_constant_enum",
                         "sys_standard_i18n",
-                        "win_.*"
+                        "win_conf_runtime"
+                );
+    }
+
+    public static Consumer<Builder> includeWarlockBond() {
+        return builder -> builder
+                // 支持 pattern的注释写法
+                .databaseIncludes(
+                        "win_perm_entry",
+                        "win_role_entry",
+                        "win_role_grant",
+                        "win_user_authn",
+                        "win_user_basis",
+                        "win_user_grant",
+                        "win_user_login"
                 )
                 .forcedIntConsEnum(UserGender.class, ".*\\.gender")
                 .forcedIntConsEnum(UserStatus.class, "win_user_basis\\.status")
