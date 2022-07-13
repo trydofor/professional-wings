@@ -38,7 +38,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     @Setter(onMethod_ = {@Autowired(required = false)})
     private List<Combo> combos = Collections.emptyList();
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = {@Autowired(required = false)})
     private List<AutoReg> authAutoRegs = Collections.emptyList();
 
     @Override

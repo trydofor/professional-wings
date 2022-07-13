@@ -18,6 +18,7 @@ import pro.fessional.wings.faceless.database.jooq.converter.JooqCodeEnumConverte
 import pro.fessional.wings.faceless.database.jooq.converter.JooqConsEnumConverter;
 import pro.fessional.wings.faceless.database.jooq.converter.JooqLocaleConverter;
 import pro.fessional.wings.faceless.database.jooq.converter.JooqZoneIdConverter;
+import pro.fessional.wings.faceless.database.jooq.converter.JooqZoneStrConverter;
 import pro.fessional.wings.faceless.enums.ConstantEnum;
 
 import java.io.File;
@@ -28,7 +29,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -143,8 +146,8 @@ public class WingsCodeGenerator {
         }
 
         // 忽略注释，import排序和serialVersionUID
-        // The table <code>jetplus_20200515.jp_account</code>.
-        // The schema <code>jetplus</code>.
+        // The table <code>trydofor_20200515.jp_account</code>.
+        // The schema <code>trydofor</code>.
         // date = "2019-09-09T01:33:51.762Z",
         // schema version:2019090903
         // serialVersionUID = 319604016;
@@ -431,8 +434,9 @@ public class WingsCodeGenerator {
             return forcedType(ft);
         }
 
-        public Builder forcedType(ForcedType ft) {
-            this.conf.getGenerator().getDatabase().getForcedTypes().add(ft);
+        public Builder forcedType(ForcedType... ft) {
+            final List<ForcedType> fts = this.conf.getGenerator().getDatabase().getForcedTypes();
+            fts.addAll(Arrays.asList(ft));
             return this;
         }
 
@@ -470,7 +474,19 @@ public class WingsCodeGenerator {
         }
 
         public Builder forcedZoneId(String... reg) {
-            return forcedType(ZoneId.class, JooqZoneIdConverter.class, reg);
+            final String zid = ZoneId.class.getName();
+            final String exp = String.join("|", reg);
+            ForcedType ft1 = new ForcedType()
+                    .withUserType(zid)
+                    .withConverter(JooqZoneIdConverter.class.getName())
+                    .withIncludeTypes("INT.*")
+                    .withIncludeExpression(exp);
+            ForcedType ft2 = new ForcedType()
+                    .withUserType(zid)
+                    .withConverter(JooqZoneStrConverter.class.getName())
+                    .withIncludeTypes("(VAR)?CHAR.*")
+                    .withIncludeExpression(exp);
+            return forcedType(ft1, ft2);
         }
 
         public Builder funSeqName(Function<TableDefinition, String> fn) {
