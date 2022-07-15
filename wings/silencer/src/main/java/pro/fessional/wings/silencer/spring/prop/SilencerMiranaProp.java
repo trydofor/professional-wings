@@ -55,6 +55,12 @@ public class SilencerMiranaProp {
          */
         private int[] crc8Long;
         public static final String Key$crc8Long = Key + ".crc8-long";
+
+        /**
+         * @see #Key$aesKey
+         */
+        private String aesKey = "默认uuid";
+        public static final String Key$aesKey = Key + ".aes-key";
     }
 
     @Data

@@ -29,7 +29,7 @@ public @interface DoubleKill {
     String value() default "";
 
     /**
-     * 使用方法同`@Cacheable`的`key`，默认空，表示不使用。当有static-key时，expression无效。
+     * 使用方法同`@Cacheable`的`key`，默认空，使用全部参数。当有static-key时，expression无效。
      * 可以使用`@beanName`获得Bean
      * <p>
      * Spring Expression Language (SpEL) expression for computing the key dynamically
