@@ -47,7 +47,7 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
     @Setter(onMethod_ = {@Autowired})
     protected WarlockGrantService warlockGrantService;
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = {@Autowired(required = false)})
     private List<Combo> authCombos = Collections.emptyList();
 
     @Setter @Getter

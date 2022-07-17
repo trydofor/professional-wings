@@ -1,11 +1,8 @@
 package pro.fessional.wings.warlock.service.auth.impl;
 
-import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
-import org.jooq.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -13,24 +10,12 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
 import org.springframework.transaction.annotation.Transactional;
-import pro.fessional.wings.faceless.service.journal.JournalService;
-import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
-import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
-import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.caching.CacheEventHelper;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserAuthnTable;
-import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
-import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAuthnDao;
-import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasisDao;
-import pro.fessional.wings.warlock.enums.autogen.UserStatus;
-import pro.fessional.wings.warlock.event.auth.WarlockMaxFailedEvent;
 import pro.fessional.wings.warlock.event.cache.TableChangeEvent;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.help.AuthnDetailsMapper;
-import pro.fessional.wings.warlock.service.user.WarlockUserAttribute;
-import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -50,58 +35,32 @@ import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.UPDATE;
 @CacheConfig(cacheNames = CacheName, cacheManager = CacheManager)
 public class ComboWarlockAuthnService implements WarlockAuthnService {
 
-    @Setter(onMethod_ = {@Autowired})
-    protected WinUserBasisDao winUserBasisDao;
+    @Setter(onMethod_ = {@Autowired(required = false)})
+    private List<Combo> combos = Collections.emptyList();
 
-    @Setter(onMethod_ = {@Autowired})
-    protected WinUserAuthnDao winUserAuthnDao;
-
-    @Setter(onMethod_ = {@Autowired})
-    protected WingsAuthTypeParser wingsAuthTypeParser;
-
-    @Setter(onMethod_ = {@Autowired})
-    protected JournalService journalService;
-
-    @Setter(onMethod_ = {@Autowired})
-    protected WarlockUserLoginService warlockUserLoginService;
-
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = {@Autowired(required = false)})
     private List<AutoReg> authAutoRegs = Collections.emptyList();
 
     @Override
     @Cacheable
     public Details load(@NotNull Enum<?> authType, String username) {
-        if (winUserBasisDao.notTableExist() || winUserAuthnDao.notTableExist()) return null;
-
-        final WinUserBasisTable user = winUserBasisDao.getAlias();
-        final WinUserAuthnTable auth = winUserAuthnDao.getAlias();
-        final String at = wingsAuthTypeParser.parse(authType);
-
-        final Condition cond = user.Id.eq(auth.UserId)
-                                      .and(auth.AuthType.eq(at))
-                                      .and(auth.Username.eq(username))
-                                      .and(user.onlyLiveData)
-                                      .and(auth.onlyLiveData);
-
-        return selectDetails(user, auth, authType, cond);
+        Details dtl = null;
+        for (Combo cmb : combos) {
+            dtl = cmb.load(authType, username);
+            if (dtl != null) break;
+        }
+        return dtl;
     }
 
     @Override
     @Cacheable
     public Details load(@NotNull Enum<?> authType, long userId) {
-        if (winUserBasisDao.notTableExist() || winUserAuthnDao.notTableExist()) return null;
-
-        final WinUserBasisTable user = winUserBasisDao.getAlias();
-        final WinUserAuthnTable auth = winUserAuthnDao.getAlias();
-        final String at = wingsAuthTypeParser.parse(authType);
-
-        final Condition cond = user.Id.eq(auth.UserId)
-                                      .and(auth.AuthType.eq(at))
-                                      .and(auth.UserId.eq(userId))
-                                      .and(user.onlyLiveData)
-                                      .and(auth.onlyLiveData);
-
-        return selectDetails(user, auth, authType, cond);
+        Details dtl = null;
+        for (Combo cmb : combos) {
+            dtl = cmb.load(authType, userId);
+            if (dtl != null) break;
+        }
+        return dtl;
     }
 
     /**
@@ -118,26 +77,6 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
             return true;
         }
         return false;
-    }
-
-    private Details selectDetails(WinUserBasisTable user, WinUserAuthnTable auth,
-                                  Enum<?> authType, Condition cond) {
-        final Details details = winUserAuthnDao
-                .ctx()
-                .select(auth.UserId, user.Nickname,
-                        user.Locale, user.Zoneid.as("zoneId"),
-                        user.Status, auth.Username,
-                        auth.Password, auth.ExpiredDt)
-                .from(user, auth)
-                .where(cond)
-                .fetchOneInto(Details.class);
-
-        if (details != null) {
-            details.setAuthType(authType);
-            final String passsalt = GlobalAttributeHolder.getAttr(WarlockUserAttribute.SaltByUid, details.getUserId());
-            details.setPasssalt(passsalt);
-        }
-        return details;
     }
 
     @Override
@@ -186,119 +125,59 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
 
     @Override
     public void onSuccess(@NotNull Enum<?> authType, long userId, String details) {
-        if (winUserAuthnDao.notTableExist()) return;
-
-        final String at = wingsAuthTypeParser.parse(authType);
-        journalService.commit(Jane.Success, userId, "success login auth-type=" + at, commit -> {
-            WarlockUserLoginService.Auth la = new WarlockUserLoginService.Auth();
-            la.setAuthType(authType);
-            la.setUserId(userId);
-            la.setDetails(details);
-            la.setFailed(false);
-            warlockUserLoginService.auth(la);
-
-            final WinUserAuthnTable ta = winUserAuthnDao.getTable();
-            winUserAuthnDao
-                    .ctx()
-                    .update(ta)
-                    .set(ta.FailedCnt, 0)
-                    .set(ta.CommitId, commit.getCommitId())
-                    .set(ta.ModifyDt, commit.getCommitDt())
-                    .where(ta.UserId.eq(userId))
-                    .execute();
-        });
+        for (Combo cmb : combos) {
+            cmb.onSuccess(authType, userId, details);
+        }
     }
 
     @Override
     public void onFailure(@NotNull Enum<?> authType, String username) {
-        if (username == null || username.isEmpty() || winUserAuthnDao.notTableExist()) return;
-
-        final String at = wingsAuthTypeParser.parse(authType);
-        final WinUserAuthnTable ta = winUserAuthnDao.getTable();
-        val auth = winUserAuthnDao
-                .ctx()
-                .select(ta.UserId, ta.FailedCnt, ta.FailedMax, ta.Id)
-                .from(ta)
-                .where(ta.Username.eq(username).and(ta.AuthType.eq(at)).and(ta.onlyLiveData))
-                .fetchOne();
-
-        if (auth == null) {
-            log.info("ignore login failure by not found auth-type={}, username={}", at, username);
-            timingAttack();
-            return;
-        }
-
-        final long uid = auth.value1();
-        final int cnt = auth.value2();
-        final long aid = auth.value4();
-        final int max = auth.value3();
-
-        //
-        if (cnt > max - 3) {
-            WarlockMaxFailedEvent evt = new WarlockMaxFailedEvent();
-            evt.setCurrent(cnt);
-            evt.setMaximum(max);
-            evt.setUserId(uid);
-            EventPublishHelper.SyncSpring.publishEvent(evt);
-        }
-
-        if (cnt > max) {
-            log.info("ignore login failure by reach max-count={}, auth-type={}, username={}", auth.value3(), at, username);
-            timingAttack();
-            return;
-        }
-
         final long bgn = System.currentTimeMillis();
-
-
-        journalService.commit(Jane.Failure, uid, "failed login auth-id=" + aid, commit -> {
-            // 锁账号
-            if (cnt >= max && !winUserBasisDao.notTableExist()) {
-                final WinUserBasisTable tu = winUserBasisDao.getTable();
-                winUserBasisDao
-                        .ctx()
-                        .update(tu)
-                        .set(tu.Status, UserStatus.DANGER)
-                        .set(tu.CommitId, commit.getCommitId())
-                        .set(tu.ModifyDt, commit.getCommitDt())
-                        .set(tu.Remark, "locked by reach the max failure count=" + max)
-                        .where(tu.Id.eq(uid))
-                        .execute();
-            }
-
-            WarlockUserLoginService.Auth la = new WarlockUserLoginService.Auth();
-            la.setAuthType(authType);
-            la.setUserId(uid);
-            la.setDetails("");
-            la.setFailed(true);
-            warlockUserLoginService.auth(la);
-
-            winUserAuthnDao
-                    .ctx()
-                    .update(ta)
-                    .set(ta.FailedCnt, ta.FailedCnt.add(1))
-                    .set(ta.CommitId, commit.getCommitId())
-                    .set(ta.ModifyDt, commit.getCommitDt())
-                    .where(ta.Id.eq(aid))
-                    .execute();
-
-            lastTiming = System.currentTimeMillis() - bgn;
-        });
+        for (Combo cmb : combos) {
+            cmb.onFailure(authType, username);
+        }
+        // timing attack
+        final long cost = System.currentTimeMillis() - bgn;
+        timingAttack(cost);
     }
 
-    @Setter(AccessLevel.NONE)
-    private volatile long lastTiming = 0;
+    private final long[] lastTiming = new long[10];
 
-    private void timingAttack() {
-        final long t = lastTiming;
-        if (t > 10 && t < 10000) {
-            try {
-                Thread.sleep(t);
-            }
-            catch (InterruptedException e) {
-                // ignore
+    private void timingAttack(long cost) {
+        long sum = 0, cnt = 0;
+        for (long t : lastTiming) {
+            if (t > 0) {
+                sum += t;
+                cnt++;
             }
         }
+
+        final long slp = cnt == 0 ? -1 : sum / cnt - cost;
+
+        if (cost > 0) {
+            System.arraycopy(lastTiming, 0, lastTiming, 1, lastTiming.length - 1);
+            lastTiming[0] = cost;
+        }
+
+        if (slp <= 10) return;
+
+        try {
+            Thread.sleep(slp);
+        }
+        catch (InterruptedException e) {
+            // ignore
+        }
+    }
+
+    public interface Combo extends Ordered {
+
+        Details load(@NotNull Enum<?> authType, String username);
+
+        Details load(@NotNull Enum<?> authType, long userId);
+
+        void onSuccess(@NotNull Enum<?> authType, long userId, String details);
+
+        void onFailure(@NotNull Enum<?> authType, String username);
     }
 
     // /////

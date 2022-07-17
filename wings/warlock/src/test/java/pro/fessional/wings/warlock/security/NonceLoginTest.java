@@ -32,26 +32,6 @@ class NonceLoginTest {
     private OkHttpClient okHttpClient;
 
     @Test
-    public void testRootLogin() {
-
-        final String host = "http://127.0.0.1:" + port;
-        final Response r1 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/console-nonce.json?username=root"), false);
-        String nonce = OkHttpClientHelper.extractString(r1, false);
-        log.warn("get nonce for root, nonce=" + nonce);
-        Assertions.assertEquals(200, r1.code(), "如果失败，单独执行，排除Event干扰");
-
-        final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/username/login.json?username=root&password=" + nonce), false);
-        String login = OkHttpClientHelper.extractString(r2, false);
-        log.warn("get login res = " + login);
-        Assertions.assertTrue(login.contains("true"), "如果失败，单独执行，排除Event干扰");
-
-        final Response r3 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/list-auth.json"), false);
-        String auths = OkHttpClientHelper.extractString(r3, false);
-        log.warn("get auths = " + auths);
-        Assertions.assertTrue(auths.contains("ROLE_ROOT"));
-    }
-
-    @Test
     public void testTestNyLogin() {
         final String host = "http://127.0.0.1:" + port;
 //        final String host = "http://localhost:" + port;

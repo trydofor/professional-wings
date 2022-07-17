@@ -1,9 +1,8 @@
 package pro.fessional.wings.warlock.security.justauth;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.zhyd.oauth.utils.UuidUtils;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.data.Null;
@@ -15,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 
 /**
@@ -54,8 +54,8 @@ public class AuthStateBuilder {
 
         buildParaMap(request, paraMap);
 
-        // 167823d90c46cd70e3961b3f070a871c 32
-        String uuid = UuidUtils.getUUID();
+        // 167823d90c46cd70e3961b3f070a871c 32 非性能优先
+        String uuid = UUID.randomUUID().toString().replace("-","");
         // 防御性写法
         final int len = uuid.length();
         if (len < UUID_LEN) {

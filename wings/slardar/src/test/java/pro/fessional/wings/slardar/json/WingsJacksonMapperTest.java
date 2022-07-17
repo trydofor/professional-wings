@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +21,8 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
+import pro.fessional.wings.slardar.jackson.Aes128StringDeserializer;
+import pro.fessional.wings.slardar.jackson.Aes128StringSerializer;
 import pro.fessional.wings.slardar.jackson.JsonI18nString;
 import pro.fessional.wings.slardar.jackson.StringMapGenerator;
 import pro.fessional.wings.slardar.jackson.StringMapHelper;
@@ -424,5 +428,28 @@ public class WingsJacksonMapperTest {
         //
         assertEquals("{\"numLong\":10000,\"numInt\":10000,\"numDouble\":\"3.14159\",\"numDecimal\":\"2.71828\"}", s1);
         assertEquals("{\"numLong\":10000,\"numInt\":10000,\"numDouble\":3.14159,\"numDecimal\":2.71828}", s2);
+    }
+
+    @Data
+    public static class Aes128String {
+        @JsonSerialize(using = Aes128StringSerializer.class)
+        @JsonDeserialize(using = Aes128StringDeserializer.class)
+        private String aes128;
+    }
+
+    @Test
+    public void testAes128String() throws JsonProcessingException {
+        Aes128String aes = new Aes128String();
+        final String txt = "1234567890";
+        aes.setAes128(txt);
+
+        NumberAsNumber nan = new NumberAsNumber();
+        String s1 = objectMapper.writeValueAsString(aes);
+        Aes128String aes2 = objectMapper.readValue(s1, Aes128String.class);
+
+        //
+        System.out.println(s1);
+        assertEquals(aes, aes2);
+        assertFalse(s1.contains(txt));
     }
 }

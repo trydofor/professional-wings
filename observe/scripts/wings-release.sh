@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2022-02-14
+THIS_VERSION=2022-07-07
 
 cat <<EOF
 #################################################
@@ -115,10 +115,13 @@ function build_web() {
     # build
     echo -e "\033[32m web pack $_cmd \033[m"
     if [[ "$_cmd" == "pnpm" ]]; then
+        pnpm install
         pnpm $WEB_PACK
     elif [[ "$_cmd" == "yarn" ]]; then
+        yarn install
         yarn $WEB_PACK
     elif [[ "$_cmd" == "npm" ]]; then
+        npm install
         npm run $WEB_PACK
     else
         echo -e "\033[31mWARN: skip unknown command $_cmd \033[0m"
@@ -294,10 +297,10 @@ case "$1" in
         echo -e '\033[37;42;1mNOTE: help info, use the following\033[m'
         echo -e '\033[32m pull \033[m git pull remote'
         echo -e '\033[32m pack \033[m auto mvn/npm/yarn/pnpm '
-        echo -e '\033[32m pack mvn \033[m mvn clean,compile, package'
-        echo -e '\033[32m pack npm \033[m npm install, build'
-        echo -e '\033[32m pack pnpm \033[m pnpm install, build'
-        echo -e '\033[32m pack yarn \033[m yarn install, build'
+        echo -e '\033[32m pack mvn \033[m mvn clean compile package'
+        echo -e '\033[32m pack npm \033[m npm build'
+        echo -e '\033[32m pack pnpm \033[m pnpm build'
+        echo -e '\033[32m pack yarn \033[m yarn build'
         echo -e '\033[32m pack pre \033[m only exec PRE_PACK'
         echo -e '\033[32m push \033[m push to dest'
         echo -e '\033[32m push pre \033[m only exec PRE_PUSH'

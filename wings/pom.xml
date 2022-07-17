@@ -29,6 +29,7 @@
         <module>slardar-hazelcast</module>
         <module>slardar-test</module>
         <module>warlock</module>
+        <module>warlock-bond</module>
     </modules>
 
     <properties>

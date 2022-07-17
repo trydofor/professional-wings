@@ -60,4 +60,10 @@ public class WingsJavaStrategy extends DefaultGeneratorStrategy {
             return super.getJavaIdentifier(definition);
         }
     }
+
+    @Override
+    public String getGlobalReferencesJavaClassName(Definition container, Class<? extends Definition> objectType) {
+        final String name = super.getGlobalReferencesJavaClassName(container, objectType);
+        return WingsCodeGenConf.tryGlobalSuffix(name);
+    }
 }

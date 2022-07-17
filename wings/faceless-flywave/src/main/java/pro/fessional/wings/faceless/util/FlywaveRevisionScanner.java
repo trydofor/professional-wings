@@ -127,6 +127,7 @@ public class FlywaveRevisionScanner {
                 info.add(s);
             }
         }
+        info.removeIf(String::isBlank);
 
         return String.join(", ", info);
     }

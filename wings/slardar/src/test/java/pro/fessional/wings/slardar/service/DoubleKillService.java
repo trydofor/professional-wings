@@ -51,7 +51,9 @@ public class DoubleKillService {
         return r;
     }
 
-    @DoubleKill(expression = "#root.methodName + #root.targetClass + #type + '-' + #p1 * 1000")
+//    @DoubleKill(expression = "#root.methodName + #root.targetClass + #type + '-' + #p1 * 1000")
+//    @DoubleKill(expression = "{#type, #p1}")
+    @DoubleKill(expression = "#root.args")
     public String sleepSecondExp(String type, int s) {
         try {
             Thread.sleep(s * 1000L);
