@@ -12,6 +12,8 @@ import pro.fessional.wings.faceless.database.manual.single.modify.lightsequence.
 import pro.fessional.wings.faceless.database.manual.single.modify.lightsequence.impl.LightSequenceModifyJdbc;
 import pro.fessional.wings.faceless.database.manual.single.select.lightsequence.LightSequenceSelect;
 import pro.fessional.wings.faceless.database.manual.single.select.lightsequence.impl.LightSequenceSelectJdbc;
+import pro.fessional.wings.faceless.service.flakeid.FlakeIdService;
+import pro.fessional.wings.faceless.service.flakeid.impl.FlakeIdLightIdImpl;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.faceless.service.lightid.impl.DefaultBlockIdProvider;
@@ -69,13 +71,6 @@ public class FacelessLightIdConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(LightIdService.class)
-    public LightIdService lightIdService(LightIdProvider lightIdProvider,
-                                         BlockIdProvider blockIdProvider) {
-        return new LightIdServiceImpl(lightIdProvider, blockIdProvider);
-    }
-
-    @Bean
     @ConditionalOnMissingBean(BlockIdProvider.class)
     public BlockIdProvider blockProvider(LightIdProviderProp provider,
                                          ObjectProvider<JdbcTemplate> jdbcTemplate) {
@@ -86,5 +81,18 @@ public class FacelessLightIdConfiguration {
             final int id = Integer.parseInt(provider.getBlockPara());
             return () -> id;
         }
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(LightIdService.class)
+    public LightIdService lightIdService(LightIdProvider lightIdProvider,
+                                         BlockIdProvider blockIdProvider) {
+        return new LightIdServiceImpl(lightIdProvider, blockIdProvider);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(FlakeIdService.class)
+    public FlakeIdService flakeIdService(LightIdService lightIdService) {
+        return new FlakeIdLightIdImpl(lightIdService);
     }
 }

@@ -24,6 +24,7 @@
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless</artifactId>
+            <!-- FlakeIdService impl -->
             <optional>true</optional>
         </dependency>
         <!-- cache -->
