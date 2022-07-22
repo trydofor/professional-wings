@@ -119,4 +119,16 @@ public class WarlockUrlmapProp {
      */
     private String mockEcho0o0 = "";
     public static final String Key$mockEcho0o0 = Key + ".mock-echo0o0";
+
+    /**
+     * @see #Key$testRunMode
+     */
+    private String testRunMode = "";
+    public static final String Key$testRunMode = Key + ".test-run-mode";
+
+    /**
+     * @see #Key$testTimestamp
+     */
+    private String testTimestamp = "";
+    public static final String Key$testTimestamp = Key + ".test-timestamp";
 }
