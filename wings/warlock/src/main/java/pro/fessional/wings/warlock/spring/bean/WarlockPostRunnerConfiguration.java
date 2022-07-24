@@ -15,6 +15,7 @@ import pro.fessional.wings.warlock.service.conf.mode.ApiMode;
 import pro.fessional.wings.warlock.service.conf.mode.RunMode;
 import pro.fessional.wings.warlock.service.conf.mode.RuntimeMode;
 import pro.fessional.wings.warlock.spring.prop.WarlockI18nProp;
+import pro.fessional.wings.warlock.spring.prop.WarlockRuntimeProp;
 
 /**
  * @author trydofor
@@ -59,7 +60,7 @@ public class WarlockPostRunnerConfiguration {
     }
 
     @Bean    // 静态注入，执行一次即可
-    public CommandLineRunner registerRuntimeModeRunner(ObjectProvider<RuntimeConfService> provider) {
+    public CommandLineRunner registerRuntimeModeRunner(ObjectProvider<RuntimeConfService> provider, ObjectProvider<WarlockRuntimeProp> properties) {
         return (arg) -> {
             final RuntimeConfService confService = provider.getIfAvailable();
             if (confService == null) {
@@ -67,14 +68,23 @@ public class WarlockPostRunnerConfiguration {
                 return;
             }
 
+            final WarlockRuntimeProp prop = properties.getIfAvailable();
+
             RuntimeMode.setRunMode(() -> {
-                final RunMode runMode = confService.getEnum(RunMode.class);
+                RunMode runMode = confService.getEnum(RunMode.class);
+                if (runMode == null && prop != null) {
+                    runMode = prop.getRunMode();
+                }
                 logger.info("Wings conf registerRuntimeMode RunMode=" + runMode);
                 return runMode == null ? RunMode.Local : runMode;
             });
 
             RuntimeMode.setApiMode(() -> {
-                final ApiMode apiMode = confService.getEnum(ApiMode.class);
+                ApiMode apiMode = confService.getEnum(ApiMode.class);
+                if (apiMode == null && prop != null) {
+                    apiMode = prop.getApiMode();
+                }
+
                 logger.info("Wings conf registerRuntimeMode apiMode=" + apiMode);
                 return apiMode == null ? ApiMode.Nothing : apiMode;
             });
