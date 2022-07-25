@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.session.web.http.HttpSessionIdResolver;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -27,6 +28,7 @@ import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
+import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
 import javax.servlet.http.HttpServletRequest;
@@ -168,9 +170,9 @@ public class LoginPageController {
             + "## Returns \n"
             + "* @return {200} 任何时候 \n"
             + "")
-    @PostMapping(value = "${" + WarlockUrlmapProp.Key$authLogoutProc + "}")
-    public String logout() {
-        return "handler by filter, never here";
+    @GetMapping(value = "${" + WarlockSecurityProp.Key$logoutUrl + "}")
+    public R<Void> logout() {
+        return R.ng("handler by filter, never here");
     }
 
 
@@ -188,12 +190,12 @@ public class LoginPageController {
             + "## Returns \n"
             + "* @return {200} 登录成功 \n"
             + "")
-    @PostMapping(value = "${" + WarlockUrlmapProp.Key$authLoginProc + "}")
-    public String login(@PathVariable(WingsAuthHelper.AuthType) String authType,
-                        @RequestParam(value = WingsAuthHelper.AuthZone, required = false) String authZone,
-                        @RequestParam("username") String username,
-                        @RequestParam("password") String password) {
+    @PostMapping(value = "${" + WarlockSecurityProp.Key$loginProcUrl + "}")
+    public R<Void> login(@PathVariable(WingsAuthHelper.AuthType) String authType,
+                         @RequestParam(value = WingsAuthHelper.AuthZone, required = false) String authZone,
+                         @RequestParam("username") String username,
+                         @RequestParam("password") String password) {
         log.info("authType={}, authZone={}, username={}, password={}", authType, authZone, username, password);
-        return "handler by filter, never here";
+        return R.ng("handler by filter, never here");
     }
 }

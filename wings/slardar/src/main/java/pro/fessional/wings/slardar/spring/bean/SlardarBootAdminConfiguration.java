@@ -14,10 +14,13 @@ import de.codecentric.boot.admin.server.notify.AbstractStatusChangeNotifier;
 import de.codecentric.boot.admin.server.notify.Notifier;
 import de.codecentric.boot.admin.server.web.client.BasicAuthHttpHeaderProvider;
 import de.codecentric.boot.admin.server.web.client.BasicAuthHttpHeaderProvider.InstanceCredentials;
+import de.codecentric.boot.admin.server.web.servlet.AdminControllerHandlerMapping;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -75,6 +78,20 @@ public class SlardarBootAdminConfiguration {
     @ConditionalOnClass(EnableAdminServer.class)
     @ConditionalOnProperty(name = "spring.boot.admin.server.enabled", havingValue = "true")
     public static class AdminConfiguration {
+
+        @Bean
+        public BeanPostProcessor bootAdminMappingOrderPostProcessor() {
+            logger.info("Wings conf BootAdmin server bootAdminMappingOrderPostProcessor");
+            return new BeanPostProcessor() {
+                @Override
+                public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
+                    if (bean instanceof AdminControllerHandlerMapping) {
+                        ((AdminControllerHandlerMapping) bean).setOrder(-1);
+                    }
+                    return bean;
+                }
+            };
+        }
 
         @Bean
         public Notifier dingTalkNotifier(InstanceRepository repository, ObjectProvider<DingTalkReport> reportProvider) {

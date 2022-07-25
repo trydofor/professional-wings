@@ -9,10 +9,11 @@ import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -27,11 +28,14 @@ import java.util.stream.Collectors;
 public class RequestMappingHelper {
 
     public static Map<RequestMappingInfo, HandlerMethod> listAllMapping(ApplicationContext context) {
-//        Map<String, HandlerMapping> matchingBeans =
-//                BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerMapping.class, true, false);
+        final Map<String, RequestMappingInfoHandlerMapping> handlers = context.getBeansOfType(RequestMappingInfoHandlerMapping.class, true, false);
 
-        RequestMappingHandlerMapping mapping = context.getBean(RequestMappingHandlerMapping.class);
-        return mapping.getHandlerMethods();
+        final Map<RequestMappingInfo, HandlerMethod> mapping = new LinkedHashMap<>();
+        for (RequestMappingInfoHandlerMapping hm : handlers.values()) {
+            mapping.putAll(hm.getHandlerMethods());
+        }
+
+        return mapping;
     }
 
     public static void dealAllMapping(ApplicationContext context, BiConsumer<RequestMappingInfo, HandlerMethod> consumer) {
@@ -54,7 +58,7 @@ public class RequestMappingHelper {
             String httpMethod = key.getMethodsCondition().getMethods().stream().map(Enum::name).collect(Collectors.joining(","));
 
             final PatternsRequestCondition prc = key.getPatternsCondition();
-            if(prc != null) {
+            if (prc != null) {
                 for (String url : prc.getPatterns()) {
                     result.add(new Info(url, httpMethod, javaClass, javaMethod));
                 }

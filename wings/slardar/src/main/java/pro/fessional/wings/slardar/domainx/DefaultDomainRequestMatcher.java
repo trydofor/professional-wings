@@ -4,7 +4,6 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
@@ -15,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static pro.fessional.wings.slardar.servlet.request.ResourceHttpRequestUtil.existResource;
 
@@ -29,16 +29,16 @@ public class DefaultDomainRequestMatcher implements DomainRequestMatcher {
     private final List<HandlerMapping> mappingUrl = new ArrayList<>();
     private final AntPathMatcher antMatcher = new AntPathMatcher();
     private final LinkedHashSet<String> otherUrl = new LinkedHashSet<>();
-    private final DispatcherServlet dispatcherServlet;
     private final Cache<String, Boolean> matchedUrl;
     private final Cache<String, Boolean> notfoundUrl;
+    private final Supplier<List<HandlerMapping>> handlerMappingSupplier;
 
-    public DefaultDomainRequestMatcher(DispatcherServlet dispatcher, String pathPrefix, Collection<String> otherUrl, int cacheSize) {
-        this.dispatcherServlet = dispatcher;
+    public DefaultDomainRequestMatcher(String pathPrefix, Collection<String> otherUrl, int cacheSize, Supplier<List<HandlerMapping>> supplier) {
         this.pathPrefix = pathPrefix;
         this.otherUrl.addAll(otherUrl);
         this.matchedUrl = Caffeine.newBuilder().maximumSize(cacheSize).build();
         this.notfoundUrl = Caffeine.newBuilder().maximumSize(cacheSize).build();
+        this.handlerMappingSupplier = supplier;
     }
 
     @Override
@@ -103,7 +103,7 @@ public class DefaultDomainRequestMatcher implements DomainRequestMatcher {
 
         synchronized (mappingUrl) {
             if (initMapping) return;
-            List<HandlerMapping> mappings = dispatcherServlet.getHandlerMappings();
+            List<HandlerMapping> mappings = handlerMappingSupplier.get();
             if (mappings != null) {
                 for (HandlerMapping mapping : mappings) {
                     log.info("add HandlerMapping={}", mapping.getClass());

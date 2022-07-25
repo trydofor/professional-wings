@@ -63,12 +63,16 @@ public class WarlockSecurityConfConfiguration {
                 logger.info("Wings conf WebSecurity, WebDebug=true");
                 web.debug(true);
             }
+
+            // You are asking Spring Security to ignore Ant . This is not recommended
+            // https://github.com/spring-projects/spring-security/issues/10938
             final Map<String, String> webIgnore = securityProp.getWebIgnore();
             if (!webIgnore.isEmpty()) {
                 final Set<String> ignores = validValue(webIgnore.values());
                 logger.info("Wings conf WebSecurity, ignoring=" + String.join("\n,", ignores));
                 web.ignoring().antMatchers(ignores.toArray(Null.StrArr));
             }
+
             final HttpFirewall firewall = httpFirewall.getIfAvailable();
             if (firewall != null) {
                 logger.info("Wings conf WebSecurity, httpFirewall=" + firewall.getClass());
@@ -94,7 +98,7 @@ public class WarlockSecurityConfConfiguration {
             logger.info("Wings conf HttpSecurity, successHandler=" + (authOkHandler == null ? "null" : authOkHandler.getClass()));
             logger.info("Wings conf HttpSecurity, failureHandler=" + (authNgHandler == null ? "null" : authNgHandler.getClass()));
             logger.info("Wings conf HttpSecurity, authenticationDetailsSource=" + (authDetailSource == null ? "null" : authDetailSource.getClass()));
-            logger.info("Wings conf HttpSecurity, logoutSuccessHandler=" + (logoutSuccessHandler == null ? "null" : logoutSuccessHandler.getClass()));
+            logger.info("Wings conf HttpSecurity, logoutSuccessHandler=" + (logoutOkHandler == null ? "null" : logoutOkHandler.getClass()));
 
             http.apply(SecurityConfigHelper.http())
                 .bindLogin(conf -> conf
@@ -135,37 +139,43 @@ public class WarlockSecurityConfConfiguration {
     @Order(OrderWarlockAuth)
     public HttpSecurityCustomizer warlockAuthHttpSecurityConfigure() {
         return http -> http.authorizeRequests(conf -> {
-            // 1
+            // 1 PermitAll
             final Set<String> permed = validValue(securityProp.getPermitAll().values());
-            logger.info("Wings conf HttpSecurity, bind PermitAll=" + String.join("\n,", permed));
-            conf.antMatchers(permed.toArray(Null.StrArr)).permitAll();
+            if (!permed.isEmpty()) {
+                logger.info("Wings conf HttpSecurity, bind PermitAll=" + String.join("\n,", permed));
+                conf.antMatchers(permed.toArray(Null.StrArr)).permitAll();
+            }
 
-            // 2
+            // 2 Authenticated
             final Set<String> authed = validValue(securityProp.getAuthenticated().values());
-            logger.info("Wings conf HttpSecurity, bind Authenticated=" + String.join("\n,", authed));
-            conf.antMatchers(authed.toArray(Null.StrArr)).authenticated();
+            if (!authed.isEmpty()) {
+                logger.info("Wings conf HttpSecurity, bind Authenticated=" + String.join("\n,", authed));
+                conf.antMatchers(authed.toArray(Null.StrArr)).authenticated();
+            }
 
-            // 3.group
-            final TreeMap<String, Set<String>> urlPerm = new TreeMap<>();
-            for (Map.Entry<String, Set<String>> en : securityProp.getAuthority().entrySet()) {
-                final String perm = en.getKey();
-                for (String url : en.getValue()) {
-                    if (validValue(url)) {
-                        final Set<String> st = urlPerm.computeIfAbsent(url, k -> new HashSet<>());
-                        st.add(perm);
+            // 3 Authority
+            if (!securityProp.getAuthority().isEmpty()) {
+                // group
+                final TreeMap<String, Set<String>> urlPerm = new TreeMap<>();
+                for (Map.Entry<String, Set<String>> en : securityProp.getAuthority().entrySet()) {
+                    final String perm = en.getKey();
+                    for (String url : en.getValue()) {
+                        if (validValue(url)) {
+                            final Set<String> st = urlPerm.computeIfAbsent(url, k -> new HashSet<>());
+                            st.add(perm);
+                        }
                     }
                 }
-            }
-            // 3.desc
-            for (Map.Entry<String, Set<String>> en : urlPerm.descendingMap().entrySet()) {
-                final String url = en.getKey();
-                final Set<String> pms = validValue(en.getValue());
-                logger.info("Wings conf HttpSecurity, bind url=" + url + ", any-permit=[" + String.join(",", pms) + "]");
-                conf.antMatchers(url).hasAnyAuthority(pms.toArray(Null.StrArr));
+                // desc
+                for (Map.Entry<String, Set<String>> en : urlPerm.descendingMap().entrySet()) {
+                    final String url = en.getKey();
+                    final Set<String> pms = validValue(en.getValue());
+                    logger.info("Wings conf HttpSecurity, bind url=" + url + ", any-permit=[" + String.join(",", pms) + "]");
+                    conf.antMatchers(url).hasAnyAuthority(pms.toArray(Null.StrArr));
+                }
             }
         });
     }
-
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpBase, havingValue = "true")

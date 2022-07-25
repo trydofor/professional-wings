@@ -86,7 +86,8 @@ public class SlardarSwaggerProp {
     }
 
     //  cookie|header|query|path
-    @NotNull private Parameter subParam(Parameter para) {
+    @NotNull
+    private Parameter subParam(Parameter para) {
         final String in = para.getIn();
         final Parameter sub;
         if ("cookie".equalsIgnoreCase(in)) {

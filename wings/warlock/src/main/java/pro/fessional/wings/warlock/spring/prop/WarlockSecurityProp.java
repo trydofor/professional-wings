@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -325,7 +326,7 @@ public class WarlockSecurityProp {
     @Data
     public static class Mu {
         private long userId;
-        private String authType;
+        private Set<String> authType = new HashSet<>();
         private String username;
         private String password;
         private UserStatus status = ACTIVE;

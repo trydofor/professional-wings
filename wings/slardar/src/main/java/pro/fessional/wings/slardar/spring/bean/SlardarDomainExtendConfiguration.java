@@ -2,10 +2,13 @@ package pro.fessional.wings.slardar.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.web.servlet.HandlerMapping;
 import pro.fessional.mirana.text.Wildcard;
 import pro.fessional.wings.slardar.domainx.DefaultDomainRequestMatcher;
 import pro.fessional.wings.slardar.domainx.WingsDomainExtendFilter;
@@ -18,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * @author trydofor
@@ -30,8 +34,7 @@ public class SlardarDomainExtendConfiguration {
     private final static Log logger = LogFactory.getLog(SlardarDomainExtendConfiguration.class);
 
     @Bean
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public WingsDomainExtendFilter wingsDomainFilter(DomainExtendProp config, DispatcherServlet dispatcher) {
+    public WingsDomainExtendFilter wingsDomainFilter(DomainExtendProp config, ApplicationContext context) {
         logger.info("Wings conf Domain filter");
         Map<String, List<String[]>> hostMatcher = new HashMap<>();
         for (Map.Entry<String, Set<String>> entry : config.getHost().entrySet()) {
@@ -51,8 +54,17 @@ public class SlardarDomainExtendConfiguration {
             prefix = prefix + "/";
         }
 
-        DefaultDomainRequestMatcher requestMatcher = new DefaultDomainRequestMatcher(dispatcher, prefix,
-                config.getOtherUrl(), config.getCacheSize());
+        final Supplier<List<HandlerMapping>> supplier = () -> {
+            Map<String, HandlerMapping> matchingBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerMapping.class, true, false);
+            ArrayList<HandlerMapping> handlerMappings = new ArrayList<>(matchingBeans.values());
+            // We keep HandlerMappings in sorted order.
+            AnnotationAwareOrderComparator.sort(handlerMappings);
+            return handlerMappings;
+        };
+
+        DefaultDomainRequestMatcher requestMatcher = new DefaultDomainRequestMatcher(prefix,
+                config.getOtherUrl(), config.getCacheSize(), supplier);
+
         WingsDomainExtendFilter filter = new WingsDomainExtendFilter(
                 hostMatcher,
                 requestMatcher);
