@@ -95,33 +95,41 @@ public class WarlockSecurityConfConfiguration {
             final AuthenticationFailureHandler authNgHandler = authenticationFailureHandler.getIfAvailable();
             final WingsAuthDetailsSource<?> authDetailSource = wingsAuthDetailsSource.getIfAvailable();
             final LogoutSuccessHandler logoutOkHandler = logoutSuccessHandler.getIfAvailable();
-            logger.info("Wings conf HttpSecurity, successHandler=" + (authOkHandler == null ? "null" : authOkHandler.getClass()));
-            logger.info("Wings conf HttpSecurity, failureHandler=" + (authNgHandler == null ? "null" : authNgHandler.getClass()));
             logger.info("Wings conf HttpSecurity, authenticationDetailsSource=" + (authDetailSource == null ? "null" : authDetailSource.getClass()));
-            logger.info("Wings conf HttpSecurity, logoutSuccessHandler=" + (logoutOkHandler == null ? "null" : logoutOkHandler.getClass()));
 
             http.apply(SecurityConfigHelper.http())
-                .bindLogin(conf -> conf
-                        // 初始authenticationEntryPoint
-                        .loginPage(securityProp.getLoginPage()) // 无权限时返回的页面。
-                        // 初始filter.RequestMatcher
-                        .loginProcessingUrl(securityProp.getLoginProcUrl(), securityProp.getLoginProcMethod()) // filter处理，不需要controller
-                        .loginForward(securityProp.isLoginForward()) // 无权限时返回的页面，
-                        .usernameParameter(securityProp.getUsernamePara())
-                        .passwordParameter(securityProp.getPasswordPara())
-                        .successHandler(authOkHandler)
-                        .failureHandler(authNgHandler)
-                        .authenticationDetailsSource(authDetailSource)
-                        .bindAuthTypeDefault(securityProp.mapAuthTypeDefault())
-                        .bindAuthTypeToEnums(securityProp.mapAuthTypeEnum())
+                .bindLogin(conf -> {
+                            conf.loginPage(securityProp.getLoginPage()) // 初始authenticationEntryPoint，无权限时返回的页面。
+                                // 初始filter.RequestMatcher
+                                .loginProcessingUrl(securityProp.getLoginProcUrl(), securityProp.getLoginProcMethod()) // filter处理，不需要controller
+                                .loginForward(securityProp.isLoginForward()) // 无权限时返回的页面，
+                                .usernameParameter(securityProp.getUsernamePara())
+                                .passwordParameter(securityProp.getPasswordPara())
+                                .authenticationDetailsSource(authDetailSource)
+                                .bindAuthTypeDefault(securityProp.mapAuthTypeDefault())
+                                .bindAuthTypeToEnums(securityProp.mapAuthTypeEnum());
+
+                            if (authOkHandler != null) {
+                                logger.info("Wings conf HttpSecurity, successHandler=" + authOkHandler.getClass());
+                                conf.successHandler(authOkHandler);
+                            }
+                            if (authNgHandler != null) {
+                                logger.info("Wings conf HttpSecurity, failureHandler=" + authNgHandler.getClass());
+                                conf.failureHandler(authNgHandler);
+                            }
+                        }
                 )
                 .and()
-                .logout(conf -> conf
-                        .logoutUrl(securityProp.getLogoutUrl())
-                        .clearAuthentication(true)
-                        .invalidateHttpSession(true)
-                        .logoutSuccessHandler(logoutOkHandler)
+                .logout(conf -> {
+                            conf.logoutUrl(securityProp.getLogoutUrl())
+                                .clearAuthentication(true)
+                                .invalidateHttpSession(true);
 
+                            if (logoutOkHandler != null) {
+                                logger.info("Wings conf HttpSecurity, logoutSuccessHandler=" + logoutOkHandler.getClass());
+                                conf.logoutSuccessHandler(logoutOkHandler);
+                            }
+                        }
                 )
                 .sessionManagement(conf -> conf
                         .maximumSessions(securityProp.getSessionMaximum())

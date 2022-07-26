@@ -80,6 +80,7 @@ public class SlardarBootAdminConfiguration {
     public static class AdminConfiguration {
 
         @Bean
+        @ConditionalOnProperty(name = "spring.wings.warlock.enabled.controller-proc", havingValue = "true")
         public BeanPostProcessor bootAdminMappingOrderPostProcessor() {
             logger.info("Wings conf BootAdmin server bootAdminMappingOrderPostProcessor");
             return new BeanPostProcessor() {

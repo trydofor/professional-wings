@@ -121,6 +121,7 @@ public class WarlockSecurityBeanConfiguration {
     ///////// handler /////////
     @Bean
     @ConditionalOnMissingBean(AuthenticationSuccessHandler.class)
+    @ConditionalOnExpression("!'${" + WarlockSecurityProp.Key$loginSuccessBody + "}'.isEmpty()")
     public AuthenticationSuccessHandler loginSuccessHandler() {
         logger.info("Wings conf loginSuccessHandler");
         return new LoginSuccessHandler();
@@ -128,6 +129,7 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(AuthenticationFailureHandler.class)
+    @ConditionalOnExpression("!'${" + WarlockSecurityProp.Key$loginFailureBody + "}'.isEmpty()")
     public AuthenticationFailureHandler loginFailureHandler() {
         logger.info("Wings conf loginFailureHandler");
         return new LoginFailureHandler();
@@ -135,6 +137,7 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(LogoutSuccessHandler.class)
+    @ConditionalOnExpression("!'${" + WarlockSecurityProp.Key$logoutSuccessBody + "}'.isEmpty()")
     public LogoutSuccessHandler logoutSuccessHandler() {
         logger.info("Wings conf logoutSuccessHandler");
         return new LogoutOkHandler();
