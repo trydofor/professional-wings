@@ -110,9 +110,9 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$terminal, havingValue = "true")
     public TerminalJournalService terminalJournalService(
-            LightIdService lightIdService,
-            BlockIdProvider blockIdProvider,
-            CommitJournalModify journalModify
+            @SuppressWarnings("all") LightIdService lightIdService,
+            @SuppressWarnings("all") BlockIdProvider blockIdProvider,
+            @SuppressWarnings("all") CommitJournalModify journalModify
     ) {
         logger.info("Wings conf terminalJournalService");
         return new TerminalJournalService(lightIdService, blockIdProvider, journalModify);
@@ -147,7 +147,7 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(WarlockPermNormalizer.class)
-    public WarlockPermNormalizer warlockPermNormalizer(GrantedAuthorityDefaults gad) {
+    public WarlockPermNormalizer warlockPermNormalizer(@SuppressWarnings("all") GrantedAuthorityDefaults gad) {
         logger.info("Wings conf warlockPermNormalizer");
         final WarlockPermNormalizer bean = new WarlockPermNormalizer();
         bean.setRolePrefix(gad.getRolePrefix());
@@ -259,7 +259,7 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(MemoryUserDetailsCombo.class)
-    public MemoryUserDetailsCombo memoryUserDetailsCombo(WingsAuthTypeParser typeParser) {
+    public MemoryUserDetailsCombo memoryUserDetailsCombo(@SuppressWarnings("all") WingsAuthTypeParser typeParser) {
         logger.info("Wings conf memoryUserDetailsCombo");
         final MemoryUserDetailsCombo bean = new MemoryUserDetailsCombo();
         for (Map.Entry<String, Mu> en : securityProp.getMemUser().entrySet()) {
@@ -350,7 +350,9 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(MemoryTypedAuthzCombo.class)
-    public MemoryTypedAuthzCombo memoryTypedAuthzCombo(WingsAuthTypeParser typeParser, WarlockPermNormalizer normalizer) {
+    public MemoryTypedAuthzCombo memoryTypedAuthzCombo(
+            @SuppressWarnings("all") WingsAuthTypeParser typeParser,
+            @SuppressWarnings("all") WarlockPermNormalizer normalizer) {
         logger.info("Wings conf memoryTypedAuthzCombo");
         final MemoryTypedAuthzCombo bean = new MemoryTypedAuthzCombo();
         for (Map.Entry<String, Ma> en : securityProp.getMemAuth().entrySet()) {

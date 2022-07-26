@@ -52,10 +52,13 @@ public class WingsReuseStreamFilter extends OncePerRequestFilter implements Orde
             cnf = null;
         }
 
-        chain.doFilter(request, response);
-
-        if (cnf != null && cnf.isResponseEnable()) {
-            requestResponseLogging.afterResponse(cnf, request, response);
+        try {
+            chain.doFilter(request, response);
+        }
+        finally {
+            if (cnf != null && cnf.isResponseEnable()) {
+                requestResponseLogging.afterResponse(cnf, request, response);
+            }
         }
 
         response.copyBodyToResponse();

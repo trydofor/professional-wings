@@ -44,14 +44,21 @@ public abstract class AbstractRequestResponseLogging implements RequestResponseL
 
     @Override
     public void beforeRequest(@NotNull Conf cnf, @NotNull ReuseStreamRequestWrapper req) {
-        final String msg = createRequestMessage((Condition) cnf, req);
-        logging(msg);
+        if(!cnf.isRequestLogAfter()) {
+            final String msg = createRequestMessage((Condition) cnf, req);
+            logging(msg);
+        }
     }
 
     @Override
     public void afterResponse(@NotNull Conf cnf, @NotNull ReuseStreamRequestWrapper req, @NotNull ReuseStreamResponseWrapper res) {
-        final String msg = createResponseMessage((Condition) cnf, req, res);
-        logging(msg);
+        if(cnf.isRequestLogAfter()) {
+            final String reqMsg = createRequestMessage((Condition) cnf, req);
+            logging(reqMsg);
+        }
+
+        final String resMsg = createResponseMessage((Condition) cnf, req, res);
+        logging(resMsg);
     }
 
     protected String createRequestMessage(@NotNull Condition cnf, @NotNull ReuseStreamRequestWrapper request) {
