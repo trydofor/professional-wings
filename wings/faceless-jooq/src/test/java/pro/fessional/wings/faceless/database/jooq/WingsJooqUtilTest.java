@@ -2,6 +2,7 @@ package pro.fessional.wings.faceless.database.jooq;
 
 import org.jooq.Condition;
 import org.junit.jupiter.api.Test;
+import pro.fessional.wings.faceless.database.autogen.tables.SysStandardI18nTable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -98,11 +99,43 @@ class WingsJooqUtilTest {
                                     .grp(d2).or(d3).or(d3, false).end()
                                     .and().and(d4, false)
                                     .and(null)
-                                    .andNotNull(d1,nil)
+                                    .andNotNull(d1, nil)
                                     .andNotEmpty(d1, Collections.EMPTY_LIST)
                                     .grp(d4).or(d5).and(d5, false).end()
                                     .end()
                                     .build();
         assertEquals(c0.toString(), c1.toString());
+    }
+
+    @Test
+    void condEqSkip() {
+        SysStandardI18nTable t = SysStandardI18nTable.SysStandardI18n;
+        final Condition c1 = WingsJooqUtil.condEqSkip(t.Base, Arrays.asList("a", "b", null));
+        final Condition a = t.Base.eq("a");
+        final Condition b = t.Base.eq("b");
+        assertEquals(c1.toString(), a.toString());
+
+        final Condition c2 = WingsJooqUtil.condEqSkip(t.Base, Arrays.asList(null, "b", null));
+        assertEquals(c2.toString(), b.toString());
+
+        final Condition e = WingsJooqUtil.condEqSkip(t.Base, Collections.emptyList());
+        assertEquals(a.and(e).toString(), a.toString());
+        assertEquals(b.and(e).toString(), b.toString());
+        assertEquals(a.or(e).toString(), a.toString());
+        assertEquals(b.or(e).toString(), b.toString());
+        assertEquals(e.and(a).toString(), a.toString());
+        assertEquals(e.and(b).toString(), b.toString());
+        assertEquals(e.or(a).toString(), a.toString());
+        assertEquals(e.or(b).toString(), b.toString());
+    }
+
+    @Test
+    void condInSkip() {
+        SysStandardI18nTable t = SysStandardI18nTable.SysStandardI18n;
+        final Condition c1 = WingsJooqUtil.condInSkip(t.Base, Arrays.asList("a", "b", null));
+        assertEquals(c1.toString(), t.Base.in("a","b").toString());
+
+        final Condition c2 = WingsJooqUtil.condInSkip(t.Base, Arrays.asList(null, "b", null));
+        assertEquals(c2.toString(), t.Base.in("b").toString());
     }
 }

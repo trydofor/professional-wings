@@ -16,7 +16,6 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 import pro.fessional.mirana.cast.BoxedCastUtil;
 import pro.fessional.mirana.data.Null;
-import pro.fessional.mirana.data.Z;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +24,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author trydofor
@@ -82,61 +83,73 @@ public class WingsJooqUtil extends DSL {
         int pos = buildHolder(sql, 0, fields.length);
         sql.append(") values (");
         buildHolder(sql, pos, fields.length);
-        sql.append(")");
+        sql.append(')');
 
         return query(sql.toString(), qps);
     }
 
     ///////////////// Condition /////////////////////
 
+    /**
+     * 若 value.isEmpty，则返回NoCondition，否则返回eq NotNull
+     *
+     * @param filed 字段
+     * @param value 数据
+     * @param <Z>   类型
+     * @return 条件
+     */
     @NotNull
-    public static Condition andNotNull(@NotNull Condition first, @Nullable Condition other, @Nullable Object... value) {
-        return condNotNull(Operator.AND, first, other, value);
+    public static <Z> Condition condEqSkip(Field<Z> filed, Collection<Z> value) {
+        return condEqSkip(filed, value, Objects::nonNull);
     }
 
+    /**
+     * 若 value.isEmpty，则返回NoCondition，否则返回eq NotNull
+     *
+     * @param filed  字段
+     * @param value  数据
+     * @param filter 过滤
+     * @param <Z>    类型
+     * @return 条件
+     */
     @NotNull
-    public static Condition orNotNull(@NotNull Condition first, @Nullable Condition other, @Nullable Object... value) {
-        return condNotNull(Operator.OR, first, other, value);
-    }
+    public static <Z> Condition condEqSkip(Field<Z> filed, Collection<Z> value, Predicate<Z> filter) {
+        if (value == null || value.isEmpty()) return noCondition();
 
-    @NotNull
-    public static Condition condNotNull(@NotNull Operator opr, @NotNull Condition first, @Nullable Condition other, @Nullable Object... value) {
-        return cond(opr, first, other, Z.notNull(value) != null);
-    }
-
-    @NotNull
-    public static Condition andNotEmpty(@NotNull Condition first, @Nullable Condition other, @Nullable Collection<?> value) {
-        return condNotEmpty(Operator.AND, first, other, value);
-    }
-
-    @NotNull
-    public static Condition orNotEmpty(@NotNull Condition first, @Nullable Condition other, @Nullable Collection<?> value) {
-        return condNotEmpty(Operator.OR, first, other, value);
-    }
-
-    @NotNull
-    public static Condition condNotEmpty(@NotNull Operator opr, @NotNull Condition first, @Nullable Condition other, @Nullable Collection<?> value) {
-        return cond(opr, first, other, value != null && !value.isEmpty());
-    }
-
-    @NotNull
-    public static Condition and(@NotNull Condition first, @Nullable Condition other, boolean valid) {
-        return cond(Operator.AND, first, other, valid);
-    }
-
-    @NotNull
-    public static Condition or(@NotNull Condition first, @Nullable Condition other, boolean valid) {
-        return cond(Operator.OR, first, other, valid);
-    }
-
-    @NotNull
-    public static Condition cond(@NotNull Operator opr, @NotNull Condition first, @Nullable Condition other, boolean valid) {
-        if (other != null && valid) {
-            return condition(opr, first, other);
+        for (Z v : value) {
+            if (filter.test(v)) return filed.eq(v);
         }
-        else {
-            return first;
-        }
+
+        return noCondition();
+    }
+
+    /**
+     * 若 value.isEmpty，则返回NoCondition，否则返回in
+     *
+     * @param filed 字段
+     * @param value 数据
+     * @param <Z>   类型
+     * @return 条件
+     */
+    @NotNull
+    public static <Z> Condition condInSkip(Field<Z> filed, Collection<Z> value) {
+        return condInSkip(filed, value, Objects::nonNull);
+    }
+
+    /**
+     * 若 value.isEmpty，则返回NoCondition，否则返回in
+     *
+     * @param filed  字段
+     * @param value  数据
+     * @param filter 过滤
+     * @param <Z>    类型
+     * @return 条件
+     */
+    @NotNull
+    public static <Z> Condition condInSkip(Field<Z> filed, Collection<Z> value, Predicate<Z> filter) {
+        return value == null || value.isEmpty() ?
+               noCondition() :
+               filed.in(value.stream().filter(filter).collect(Collectors.toList()));
     }
 
     /**
@@ -152,7 +165,7 @@ public class WingsJooqUtil extends DSL {
     public static <Z> Condition condRange(Field<Z> field, Z lowerInclusive, Z upperInclusive) {
         if (lowerInclusive == null) {
             if (upperInclusive == null) {
-                return trueCondition();
+                return noCondition();
             }
             else {
                 return field.le(upperInclusive);
@@ -259,7 +272,7 @@ public class WingsJooqUtil extends DSL {
     @NotNull
     public static Condition condChain(Operator andOr, TableRecord<?> record, boolean ignoreNull) {
         List<Condition> conds = condField(record, ignoreNull);
-        return conds.isEmpty() ? trueCondition() : condition(andOr, conds);
+        return conds.isEmpty() ? noCondition() : condition(andOr, conds);
     }
 
     /**
@@ -325,7 +338,7 @@ public class WingsJooqUtil extends DSL {
             }
         }
 
-        if (fvs.isEmpty()) return trueCondition();
+        if (fvs.isEmpty()) return noCondition();
 
         List<Condition> cds = new ArrayList<>(fvs.size());
         for (Map.Entry<Field<?>, Object> en : fvs.entrySet()) {
@@ -503,7 +516,7 @@ public class WingsJooqUtil extends DSL {
          */
         @NotNull
         public CondBuilder andNotNull(Condition cond, Object... value) {
-            final boolean vd = cond != null && Z.notNull(value) != null;
+            final boolean vd = cond != null && pro.fessional.mirana.data.Z.notNull(value) != null;
             return cond(Operator.AND, cond, vd);
         }
 
@@ -549,7 +562,7 @@ public class WingsJooqUtil extends DSL {
          */
         @NotNull
         public CondBuilder orNotNull(Condition cond, Object... value) {
-            final boolean vd = cond != null && Z.notNull(value) != null;
+            final boolean vd = cond != null && pro.fessional.mirana.data.Z.notNull(value) != null;
             return cond(Operator.OR, cond, vd);
         }
 
@@ -784,7 +797,7 @@ public class WingsJooqUtil extends DSL {
         if (len == 0) return pos;
 
         for (int i = 0; i < len; i++) {
-            sql.append("{");
+            sql.append('{');
             sql.append(++pos);
             sql.append("},");
         }

@@ -9,6 +9,9 @@ import pro.fessional.wings.faceless.service.journal.JournalService;
 import java.util.Collections;
 import java.util.Map;
 
+import static org.jooq.impl.DSL.falseCondition;
+import static org.jooq.impl.DSL.noCondition;
+
 /**
  * @author trydofor
  * @since 2020-08-12
@@ -22,12 +25,12 @@ public interface WingsJournalTable<T> extends WingsAliasTable<T> {
 
     @NotNull
     default Condition getOnlyDied() {
-        return DSL.falseCondition();
+        return falseCondition();
     }
 
     @NotNull
     default Condition getOnlyLive() {
-        return DSL.trueCondition();
+        return noCondition();
     }
 
     /**
