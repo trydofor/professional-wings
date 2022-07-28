@@ -395,6 +395,10 @@ public class WarlockSecurityBeanConfiguration {
             logger.info("Wings conf wingsAuthDetailsSource add " + it.getClass().getName());
             uds.add(it);
         });
+
+        final Set<String> set = new HashSet<>();
+        set.add(securityProp.getPasswordPara());
+        uds.setIgnoredMetaKey(set);
         return uds;
     }
 

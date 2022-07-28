@@ -1,5 +1,7 @@
 package pro.fessional.wings.slardar.security.impl;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.Ordered;
 import pro.fessional.mirana.func.Dcl;
@@ -10,9 +12,12 @@ import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author trydofor
@@ -22,6 +27,9 @@ public class ComboWingsAuthDetailsSource implements WingsAuthDetailsSource<Wings
 
     private final List<Combo<?>> combos = new ArrayList<>();
     private final Dcl dclCombos = Dcl.of(() -> combos.sort(Comparator.comparingInt(Combo::getOrder)));
+
+    @Setter @Getter
+    private Set<String> ignoredMetaKey = Collections.emptySet();
 
     @Override
     public WingsAuthDetails buildDetails(@NotNull Enum<?> authType, @NotNull HttpServletRequest request) {
@@ -55,8 +63,15 @@ public class ComboWingsAuthDetailsSource implements WingsAuthDetailsSource<Wings
     protected void buildMetaData(@NotNull Enum<?> authType, @NotNull HttpServletRequest request, @NotNull WingsAuthDetails details) {
         final Map<String, String> map = details.getMetaData();
         final String zone = WingsAuthHelper.getAuthZoneAttribute(request);
-        if(zone != null) {
+        if (zone != null) {
             map.putIfAbsent(WingsAuthHelper.AuthZone, zone);
+        }
+        final Enumeration<String> names = request.getParameterNames();
+        while (names.hasMoreElements()) {
+            final String n = names.nextElement();
+            if (!ignoredMetaKey.contains(n)) {
+                map.putIfAbsent(n, request.getParameter(n));
+            }
         }
     }
 
