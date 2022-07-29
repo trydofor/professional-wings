@@ -62,6 +62,8 @@
         <transmittable.version>2.12.6</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
         <bouncycastle.version>1.71</bouncycastle.version> <!-- https://bouncycastle.org/releasenotes.html -->
         <justauth.version>1.16.5</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
+        <!-- servicecomb -->
+        <servicecomb-chassis.version>2.7.5</servicecomb-chassis.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
         <!-- others -->
         <boot-admin.version>2.6.6</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
         <sentry.version>5.7.3</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases -->

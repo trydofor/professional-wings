@@ -30,6 +30,7 @@
         <module>slardar-test</module>
         <module>warlock</module>
         <module>warlock-bond</module>
+        <module>batrider</module>
     </modules>
 
     <properties>
