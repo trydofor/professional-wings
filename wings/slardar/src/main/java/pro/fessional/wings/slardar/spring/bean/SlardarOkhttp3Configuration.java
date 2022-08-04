@@ -59,8 +59,8 @@ public class SlardarOkhttp3Configuration {
 
     @Bean
     @ConditionalOnMissingBean(RestTemplate.class)
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        logger.info("Wings conf restTemplate");
+    public RestTemplate okRestTemplate(RestTemplateBuilder builder) {
+        logger.info("Wings conf okRestTemplate");
         return builder.build();
     }
 

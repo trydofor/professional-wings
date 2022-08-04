@@ -46,28 +46,28 @@
         <errorprone.version>2.14.0</errorprone.version> <!-- https://github.com/google/error-prone/releases -->
         <annotations.version>23.0.0</annotations.version> <!-- https://github.com/JetBrains/java-annotations -->
         <!-- common utils-->
-        <mapstruct.version>1.5.1.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
+        <mapstruct.version>1.5.2.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
         <guava.version>31.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
         <commons-io.version>2.11.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
         <!-- wings project -->
         <mirana.version>2.4.0-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <meepo.version>1.4.1-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <simpleflatmapper.version>8.2.3</simpleflatmapper.version> <!-- https://github.com/arnaudroger/SimpleFlatMapper/tags -->
-        <shardingsphere.version>5.1.1</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
+        <shardingsphere.version>5.1.2</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
-        <springdoc.version>1.6.7</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases -->
-        <fastjson2.version>2.0.8</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
+        <springdoc.version>1.6.8</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases -->
+        <fastjson2.version>2.0.10</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
         <fastjson.version>1.2.83</fastjson.version> <!-- https://github.com/alibaba/fastjson/releases -->
         <kryo.version>5.3.0</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
-        <transmittable.version>2.12.6</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
+        <transmittable.version>2.13.2</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
         <bouncycastle.version>1.71</bouncycastle.version> <!-- https://bouncycastle.org/releasenotes.html -->
         <justauth.version>1.16.5</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
         <!-- servicecomb -->
-        <servicecomb-chassis.version>2.7.5</servicecomb-chassis.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
+        <servicecomb.version>2.7.7</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
         <!-- others -->
-        <boot-admin.version>2.6.6</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
+        <boot-admin.version>2.6.7</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
         <sentry.version>5.7.3</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases -->
-        <xxljob.version>2.3.0</xxljob.version> <!-- https://github.com/xuxueli/xxl-job/releases -->
+        <xxljob.version>2.3.1</xxljob.version> <!-- https://github.com/xuxueli/xxl-job/releases -->
         <!-- override spring boot default -->
         <okhttp3.version>4.9.3</okhttp3.version> <!-- just auth need 4, spring use 3 https://square.github.io/okhttp/changelog/ -->
         <!-- mvn-build-plugin -->
@@ -164,6 +164,16 @@
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
                 <artifactId>warlock-bond</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>batrider</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>batrider-test</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
@@ -338,6 +348,13 @@
                         <artifactId>log4j-to-slf4j</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.servicecomb</groupId>
+                <artifactId>java-chassis-dependencies</artifactId>
+                <version>${servicecomb.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
