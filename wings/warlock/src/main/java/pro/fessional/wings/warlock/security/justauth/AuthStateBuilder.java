@@ -1,6 +1,8 @@
 package pro.fessional.wings.warlock.security.justauth;
 
-import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONB;
+import com.alibaba.fastjson2.JSONReader;
+import com.alibaba.fastjson2.JSONWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +71,7 @@ public class AuthStateBuilder {
             return uuid;
         }
         else {
-            final byte[] bytes = JSON.toJSONBytes(paraMap);
+            final byte[] bytes = JSONB.toBytes(paraMap, JSONWriter.Feature.WriteClassName);
             final String state = Base64.encode(bytes);
             log.info("AuthStateBuilder, buildState={}", state);
             return uuid + state;
@@ -92,7 +94,7 @@ public class AuthStateBuilder {
         }
 
         final byte[] bytes = Base64.decode(state.substring(UUID_LEN));
-        final Map<String, Object> args = JSON.parseObject(bytes, Map.class);
+        final Map<String, Object> args = JSONB.parseObject(bytes, Map.class, JSONReader.Feature.SupportAutoType);
         request.setAttribute(AuthStateBuilder.class.getName(), args);
         return args;
     }
