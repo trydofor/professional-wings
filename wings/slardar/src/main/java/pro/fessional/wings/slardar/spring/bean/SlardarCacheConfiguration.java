@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;
@@ -39,7 +40,7 @@ public class SlardarCacheConfiguration {
     private static final Log logger = LogFactory.getLog(SlardarCacheConfiguration.class);
 
     @Configuration(proxyBeanMethods = false)
-    @ConditionalOnProperty(name = SlardarEnabledProp.Key$cachingAop, havingValue = "true")
+    @ConditionalOnExpression("${" + SlardarEnabledProp.Key$caching + ":false} && ${" + SlardarEnabledProp.Key$cachingAop + ":false}")
     public static class SlardarCacheAopConfiguration extends AbstractCachingConfiguration {
 
         @Primary

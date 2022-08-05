@@ -13,7 +13,7 @@
     <version>${revision}.${changelist}</version>
     <packaging>pom</packaging>
 
-    <name>wings-radiant</name>
+    <name>Radiant::</name>
     <description>邮轮模型下的功能组件</description>
 
     <modules>

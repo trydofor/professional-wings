@@ -13,7 +13,7 @@
     <artifactId>faceless-jooq</artifactId>
     <packaging>jar</packaging>
 
-    <name>wings-faceless-jooq</name>
+    <name>Wings::Faceless::Jooq</name>
     <description>虚空假面①时间漫游(jooq)</description>
 
     <dependencies>

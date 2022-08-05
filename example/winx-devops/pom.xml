@@ -13,6 +13,9 @@
     <artifactId>winx-devops</artifactId>
     <packaging>jar</packaging>
 
+    <name>Example::Winx::Devops</name>
+    <description>运维端</description>
+
     <dependencies>
         <dependency>
             <groupId>com.moilioncircle.wings</groupId>

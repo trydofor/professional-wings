@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
     <version>${revision}-SNAPSHOT</version>
 
-    <name>wings-example</name>
+    <name>Example::</name>
     <description>一些许的样板和示例</description>
 
     <modules>

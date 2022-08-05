@@ -13,7 +13,7 @@
     <artifactId>faceless-shard</artifactId>
     <packaging>jar</packaging>
 
-    <name>wings-faceless-shard</name>
+    <name>Wings::Faceless::Shard</name>
     <description>虚空假面②时间膨胀(shard)</description>
 
     <dependencies>

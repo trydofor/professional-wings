@@ -13,7 +13,7 @@
     <artifactId>slardar-hazelcast</artifactId>
     <packaging>jar</packaging>
 
-    <name>wings-slardar-hazelcast</name>
+    <name>Wings::Slardar::Hazelcast</name>
     <description>鱼人守卫①黑走卡斯特</description>
 
     <dependencies>

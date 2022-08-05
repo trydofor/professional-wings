@@ -13,7 +13,7 @@
     <artifactId>batrider</artifactId>
     <packaging>jar</packaging>
 
-    <name>wings-batrider</name>
+    <name>Wings::Batrider</name>
     <description>蝙蝠骑士</description>
 
     <dependencies>

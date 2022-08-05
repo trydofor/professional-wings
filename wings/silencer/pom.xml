@@ -13,7 +13,7 @@
     <artifactId>silencer</artifactId>
     <packaging>jar</packaging>
 
-    <name>wings-silencer</name>
+    <name>Wings::Silencer</name>
     <description>沉默术士</description>
 
     <dependencies>

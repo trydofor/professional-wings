@@ -14,7 +14,7 @@
     <version>${revision}.${changelist}</version>
     <packaging>pom</packaging>
 
-    <name>wings</name>
+    <name>Wings::</name>
     <description>WingsBoot=BKB+飞鞋+SpringBoot</description>
 
     <modules>

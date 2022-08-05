@@ -13,7 +13,7 @@
     <artifactId>slardar</artifactId>
     <packaging>jar</packaging>
 
-    <name>wings-slardar</name>
+    <name>Wings::Slardar</name>
     <description>鱼人守卫</description>
 
     <dependencies>

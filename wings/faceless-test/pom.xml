@@ -13,7 +13,7 @@
     <artifactId>faceless-test</artifactId>
     <packaging>jar</packaging>
 
-    <name>wings-faceless-test</name>
+    <name>Wings::Faceless::Test</name>
     <description>虚空假面测试依赖</description>
 
     <dependencies>

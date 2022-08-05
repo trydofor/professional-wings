@@ -13,6 +13,9 @@
     <artifactId>winx-common</artifactId>
     <packaging>jar</packaging>
 
+    <name>Example::Winx::Common</name>
+    <description>业务包</description>
+
     <properties>
         <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
     </properties>

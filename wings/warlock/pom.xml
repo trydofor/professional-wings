@@ -13,7 +13,7 @@
     <artifactId>warlock</artifactId>
     <packaging>jar</packaging>
 
-    <name>wings-warlock</name>
+    <name>Wings::Warlock</name>
     <description>术士大叔</description>
 
     <dependencies>

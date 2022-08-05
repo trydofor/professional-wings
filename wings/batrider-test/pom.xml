@@ -13,7 +13,7 @@
     <artifactId>batrider-test</artifactId>
     <packaging>jar</packaging>
 
-    <name>wings-batrider-test</name>
+    <name>Wings::Batrider::Test</name>
     <description>蝙蝠骑士测试依赖</description>
 
     <dependencies>

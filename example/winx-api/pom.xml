@@ -13,6 +13,9 @@
     <artifactId>winx-api</artifactId>
     <packaging>jar</packaging>
 
+    <name>Example::Winx::Api</name>
+    <description>接口</description>
+
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
