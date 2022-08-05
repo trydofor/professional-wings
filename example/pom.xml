@@ -24,7 +24,7 @@
         <module>winx-codegen</module>
         <module>winx-common</module>
         <!-- <module>winx-batch</module> -->
-        <!-- <module>winx-api</module> -->
+         <module>winx-api</module>
         <module>winx-devops</module>
     </modules>
 

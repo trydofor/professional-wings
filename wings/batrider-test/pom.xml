@@ -10,32 +10,26 @@
     </parent>
 
     <groupId>pro.fessional.wings</groupId>
-    <artifactId>batrider</artifactId>
+    <artifactId>batrider-test</artifactId>
     <packaging>jar</packaging>
 
-    <name>wings-batrider</name>
-    <description>蝙蝠骑士</description>
+    <name>wings-batrider-test</name>
+    <description>蝙蝠骑士测试依赖</description>
 
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>silencer</artifactId>
+            <artifactId>batrider</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.servicecomb</groupId>
-            <artifactId>java-chassis-spring-boot-starter-servlet</artifactId>
+            <!-- 权限部分 -->
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>warlock</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.servicecomb</groupId>
-            <artifactId>registry-zero-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicecomb</groupId>
-            <artifactId>handler-publickey-auth</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicecomb</groupId>
-            <artifactId>handler-loadbalance</artifactId>
+            <!-- 数据源 -->
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
         </dependency>
     </dependencies>
 </project>
