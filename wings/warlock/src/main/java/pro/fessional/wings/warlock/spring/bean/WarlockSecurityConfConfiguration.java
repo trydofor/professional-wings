@@ -94,7 +94,7 @@ public class WarlockSecurityConfConfiguration {
             logger.info("Wings conf HttpSecurity, successHandler=" + (authOkHandler == null ? "null" : authOkHandler.getClass()));
             logger.info("Wings conf HttpSecurity, failureHandler=" + (authNgHandler == null ? "null" : authNgHandler.getClass()));
             logger.info("Wings conf HttpSecurity, authenticationDetailsSource=" + (authDetailSource == null ? "null" : authDetailSource.getClass()));
-            logger.info("Wings conf HttpSecurity, logoutSuccessHandler=" + (logoutSuccessHandler == null ? "null" : logoutSuccessHandler.getClass()));
+            logger.info("Wings conf HttpSecurity, logoutSuccessHandler=" + (logoutOkHandler == null ? "null" : logoutOkHandler.getClass()));
 
             http.apply(SecurityConfigHelper.http())
                 .bindLogin(conf -> conf
