@@ -55,7 +55,7 @@ public @interface DoubleKill {
     boolean principal() default true;
 
     /**
-     * 是否异步执行改方法，默认同步。
+     * 是否异步执行该方法，默认同步。
      * 异步执行时，执行中都以ReturnOrException任务进度。
      * 默认使用spring @Async线程池
      *
