@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Example::Winx::Admin</name>
-    <description>管理端</description>
+    <description>样板之管理端</description>
 
     <dependencies>
         <dependency>

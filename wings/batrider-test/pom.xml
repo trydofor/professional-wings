@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Batrider::Test</name>
-    <description>蝙蝠骑士测试依赖</description>
+    <description>蝙蝠骑士之测试</description>
 
     <dependencies>
         <dependency>

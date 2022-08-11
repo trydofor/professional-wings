@@ -10,21 +10,16 @@
     </parent>
 
     <groupId>pro.fessional.wings</groupId>
-    <artifactId>silencer-test</artifactId>
+    <artifactId>silencer-curse</artifactId>
     <packaging>jar</packaging>
 
-    <name>Wings::Silencer::Test</name>
-    <description>沉默术士之测试</description>
+    <name>Wings::Silencer::Curse</name>
+    <description>沉默术士之磕死</description>
 
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>silencer-curse</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>compile</scope>
+            <artifactId>silencer</artifactId>
         </dependency>
     </dependencies>
 </project>

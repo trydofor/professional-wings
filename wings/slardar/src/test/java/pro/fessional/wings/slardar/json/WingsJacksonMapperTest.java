@@ -72,7 +72,7 @@ public class WingsJacksonMapperTest {
     private Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder;
 
     @BeforeEach
-    private void init() {
+    public void init() {
         System.out.println("=== set locale to us ===");
         Locale.setDefault(Locale.US);
         // user timezone

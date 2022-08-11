@@ -19,6 +19,7 @@
 
     <modules>
         <module>silencer</module>
+        <module>silencer-curse</module>
         <module>silencer-test</module>
         <module>faceless</module>
         <module>faceless-flywave</module>
