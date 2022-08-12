@@ -26,7 +26,7 @@ import java.util.List;
 public class ComboWingsAuthPageHandler implements WingsAuthPageHandler {
 
     private final List<Combo> combos = new ArrayList<>();
-    private final Dcl dclCombos = Dcl.of(() -> combos.sort(Comparator.comparingInt(Combo::getOrder)));
+    private final Dcl<Void> dclCombos = Dcl.of(() -> combos.sort(Comparator.comparingInt(Combo::getOrder)));
 
     private final ResponseEntity<?> NOT_FOUND = ResponseEntity.notFound().build();
 

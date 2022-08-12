@@ -10,6 +10,7 @@ import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import pro.fessional.mirana.cast.StringCastUtil;
+import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 
 import java.io.IOException;
@@ -30,7 +31,11 @@ public class WingsSpringBeanScanner implements ApplicationListener<ApplicationPr
 
     @Override
     public void onApplicationEvent(ApplicationPreparedEvent event) {
-        ConfigurableApplicationContext context = event.getApplicationContext();
+        final ConfigurableApplicationContext context = event.getApplicationContext();
+
+        new ApplicationContextHelper(context) {};
+        logger.info("Wings bean init ApplicationContextHelper");
+
         if (!(context instanceof BeanDefinitionRegistry)) return;
 
         String enable = context.getEnvironment().getProperty(SilencerEnabledProp.Key$scanner);
@@ -49,11 +54,13 @@ public class WingsSpringBeanScanner implements ApplicationListener<ApplicationPr
                 try {
                     String path = res.getURL().getPath();
                     guessClassPackage(pathPackage, path, loader);
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     logger.warn("failed to parse package name of res=" + res.getDescription());
                 }
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             logger.warn("failed to scan /spring/bean/*.class", e);
         }
 
@@ -117,7 +124,8 @@ public class WingsSpringBeanScanner implements ApplicationListener<ApplicationPr
             String pkg = c.getPackage().getName();
             map.put(path.substring(0, ps), pkg);
             return true;
-        } catch (ClassNotFoundException e) {
+        }
+        catch (ClassNotFoundException e) {
             return false;
         }
     }

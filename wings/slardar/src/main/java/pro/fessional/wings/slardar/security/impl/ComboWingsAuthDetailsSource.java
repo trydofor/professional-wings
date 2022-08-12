@@ -26,7 +26,7 @@ import java.util.Set;
 public class ComboWingsAuthDetailsSource implements WingsAuthDetailsSource<WingsAuthDetails> {
 
     private final List<Combo<?>> combos = new ArrayList<>();
-    private final Dcl dclCombos = Dcl.of(() -> combos.sort(Comparator.comparingInt(Combo::getOrder)));
+    private final Dcl<Void> dclCombos = Dcl.of(() -> combos.sort(Comparator.comparingInt(Combo::getOrder)));
 
     @Setter @Getter
     private Set<String> ignoredMetaKey = Collections.emptySet();

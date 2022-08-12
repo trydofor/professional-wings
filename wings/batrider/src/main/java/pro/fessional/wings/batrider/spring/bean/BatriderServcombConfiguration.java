@@ -9,5 +9,5 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableServiceComb
-public class ServiceCombConfiguration {
+public class BatriderServcombConfiguration {
 }
