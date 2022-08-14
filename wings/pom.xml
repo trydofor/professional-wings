@@ -33,6 +33,7 @@
         <module>warlock-bond</module>
         <module>batrider</module>
         <module>batrider-test</module>
+        <module>batrider-zero</module>
     </modules>
 
     <properties>

@@ -10,26 +10,20 @@
     </parent>
 
     <groupId>pro.fessional.wings</groupId>
-    <artifactId>batrider-test</artifactId>
+    <artifactId>batrider-zero</artifactId>
     <packaging>jar</packaging>
 
-    <name>Wings::Batrider::Test</name>
-    <description>蝙蝠骑士之测试</description>
+    <name>Wings::Batrider::Zero</name>
+    <description>蝙蝠骑士之零配置</description>
 
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>batrider-zero</artifactId>
+            <artifactId>batrider</artifactId>
         </dependency>
         <dependency>
-            <!-- 权限部分 -->
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>warlock</artifactId>
-        </dependency>
-        <dependency>
-            <!-- 数据源 -->
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
+            <groupId>org.apache.servicecomb</groupId>
+            <artifactId>registry-zero-config</artifactId>
         </dependency>
     </dependencies>
 </project>
