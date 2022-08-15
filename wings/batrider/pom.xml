@@ -27,6 +27,10 @@
         </dependency>
         <dependency>
             <groupId>org.apache.servicecomb</groupId>
+            <artifactId>swagger-invocation-validator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicecomb</groupId>
             <artifactId>handler-publickey-auth</artifactId>
         </dependency>
         <dependency>

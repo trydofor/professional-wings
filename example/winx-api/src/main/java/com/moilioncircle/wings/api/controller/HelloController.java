@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2022-08-04
  */
 @RestController
-public class ApiController {
+public class HelloController {
 
-    @RequestMapping(path = "/hey", method = RequestMethod.GET)
-    public String sayHey(@RequestParam(name = "name") String name) {
-        return "Hey " + name;
+    @RequestMapping(path = "/api/say-hello", method = RequestMethod.GET)
+    public String sayHello(@RequestParam(name = "name") String name) {
+        return "hello " + name;
     }
 
 }
