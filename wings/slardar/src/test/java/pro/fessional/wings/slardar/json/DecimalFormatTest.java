@@ -43,7 +43,7 @@ public class DecimalFormatTest {
     @Setter(onMethod_ = {@Autowired})
     private RestTemplate restTemplate;
 
-    @Setter(onMethod_ = {@Value("http://127.0.0.1:${local.server.port}")})
+    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
     private String domain;
 
 

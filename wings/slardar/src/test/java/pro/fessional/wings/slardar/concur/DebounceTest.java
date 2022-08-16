@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
         })
 class DebounceTest {
 
-    @Setter(onMethod_ = {@Value("http://127.0.0.1:${local.server.port}")})
+    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
     private String doubleKillHost;
 
     @Setter(onMethod_ = {@Autowired})

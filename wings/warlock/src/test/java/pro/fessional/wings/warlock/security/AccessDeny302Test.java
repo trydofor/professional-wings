@@ -27,7 +27,7 @@ class AccessDeny302Test {
     @Test
     public void test302() {
         RestTemplate tmpl = new RestTemplate();
-        final String host = "http://127.0.0.1:" + port;
+        final String host = "http://localhost:" + port;
 
         RequestEntity<?> entity = RequestEntity
                 .post(host + "/user/authed-user.json")

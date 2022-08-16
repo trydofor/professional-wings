@@ -22,14 +22,12 @@
             <artifactId>batrider-zero</artifactId>
         </dependency>
         <dependency>
-            <!-- 权限部分 -->
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>warlock</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <!-- 数据源 -->
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
         </dependency>
     </dependencies>
 </project>
