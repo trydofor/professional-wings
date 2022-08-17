@@ -30,18 +30,19 @@ class Warlock1SchemaManagerTest {
     @Test
     void init04AuthMain() {
         final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
-        manager.mergePublish(WingsRevision.V05_20_1025_01_ConfRuntime.revision(),
-                Warlock1SchemaManager.includeWarlockPath(),
-                Warlock1SchemaManager.includeWarlockRevi());
+        manager.mergeForceApply(true,
+                h -> h.path(WingsRevision.V04_20_1024_01_UserLogin)
+                        .include(WingsRevision.V04_20_1024_01_UserLogin)
+                        .include(WingsRevision.V04_20_1024_02_RolePermit)
+        );
     }
 
     @Test
     void init04AuthTest() {
         final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
-        manager.mergePublish(2020_10_24_03,
-                Warlock1SchemaManager.includeWarlockPath(),
-                Warlock1SchemaManager.includeWarlockRevi(),
-                helper -> helper.branch("test/").include(2020_10_24_03));
+        manager.mergeForceApply(true,
+                h -> h.branch("test/")
+                                .include(2020_10_24_03));
     }
 
 

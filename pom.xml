@@ -35,7 +35,11 @@
         <!-- project -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- override spring boot default -->
         <java.version>11</java.version>
+        <kotlin.version>1.6.21</kotlin.version>
+        <jooq.version>3.14.16</jooq.version>
+        <okhttp3.version>4.9.3</okhttp3.version> <!-- just auth need 4, spring use 3 https://square.github.io/okhttp/changelog/ -->
         <!-- mvn boot -->
         <maven.test.skip>false</maven.test.skip>
         <maven.deploy.skip>false</maven.deploy.skip>
@@ -43,7 +47,7 @@
         <spring-boot.repackage.skip>false</spring-boot.repackage.skip>
         <spring-boot.repackage.executable>false</spring-boot.repackage.executable>
         <!-- common quality-->
-        <errorprone.version>2.14.0</errorprone.version> <!-- https://github.com/google/error-prone/releases -->
+        <errorprone.version>2.15.0</errorprone.version> <!-- https://github.com/google/error-prone/releases -->
         <annotations.version>23.0.0</annotations.version> <!-- https://github.com/JetBrains/java-annotations -->
         <!-- common utils-->
         <mapstruct.version>1.5.2.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
@@ -55,21 +59,19 @@
         <simpleflatmapper.version>8.2.3</simpleflatmapper.version> <!-- https://github.com/arnaudroger/SimpleFlatMapper/tags -->
         <shardingsphere.version>5.1.2</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
-        <springdoc.version>1.6.8</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases -->
-        <fastjson2.version>2.0.10</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
+        <fastjson2.version>2.0.11</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
         <fastjson.version>1.2.83</fastjson.version> <!-- https://github.com/alibaba/fastjson/releases -->
         <kryo.version>5.3.0</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
-        <transmittable.version>2.13.2</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
+        <transmittable.version>2.14.0</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
         <bouncycastle.version>1.71</bouncycastle.version> <!-- https://bouncycastle.org/releasenotes.html -->
         <justauth.version>1.16.5</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
         <!-- servicecomb -->
-        <servicecomb.version>2.7.7</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
+        <servicecomb.version>2.7.8</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
         <!-- others -->
+        <springdoc.version>1.6.10</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases -->
         <boot-admin.version>2.6.7</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
-        <sentry.version>5.7.3</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases -->
+        <sentry.version>6.3.1</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases -->
         <xxljob.version>2.3.1</xxljob.version> <!-- https://github.com/xuxueli/xxl-job/releases -->
-        <!-- override spring boot default -->
-        <okhttp3.version>4.9.3</okhttp3.version> <!-- just auth need 4, spring use 3 https://square.github.io/okhttp/changelog/ -->
         <!-- mvn-build-plugin -->
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version> <!-- https://search.maven.org/search?q=flatten-maven-plugin -->
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version> <!-- https://search.maven.org/search?q=maven-gpg-plugin -->
@@ -138,6 +140,11 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
+                <artifactId>faceless-jooqgen</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
                 <artifactId>faceless-shard</artifactId>
                 <version>${wings.version}</version>
             </dependency>
@@ -169,6 +176,11 @@
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
                 <artifactId>warlock-bond</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>warlock-codegen</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>

@@ -24,26 +24,6 @@ public class ConsEnumConverter<E extends ConstantEnum> implements WingsConverter
     }
 
     @Override
-    public E from(Integer databaseObject) {
-        return toTarget(databaseObject);
-    }
-
-    @Override
-    public Integer to(E userObject) {
-        return toSource(userObject);
-    }
-
-    @Override
-    public @NotNull Class<Integer> fromType() {
-        return srcClz;
-    }
-
-    @Override
-    public @NotNull Class<E> toType() {
-        return tgtClz;
-    }
-
-    @Override
     public @NotNull Class<Integer> sourceType() {
         return srcClz;
     }

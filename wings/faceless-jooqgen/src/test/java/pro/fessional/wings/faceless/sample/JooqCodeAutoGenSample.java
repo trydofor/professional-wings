@@ -27,7 +27,7 @@ public class JooqCodeAutoGenSample {
                                   "|tst_中文也分表")
                           .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
                           .targetPackage("pro.fessional.wings.faceless.database.autogen")
-                          .targetDirectory("src/test/java/")
+                          .targetDirectory("../faceless-jooq/src/test/java/")
 //  不用spring自动注入
 //                          .springRepository(false)
 //  使用enum类型

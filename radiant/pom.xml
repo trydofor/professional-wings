@@ -44,11 +44,6 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-codegen</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
             <optional>true</optional>

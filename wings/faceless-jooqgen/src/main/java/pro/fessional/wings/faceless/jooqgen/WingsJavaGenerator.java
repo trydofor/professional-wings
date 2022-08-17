@@ -77,21 +77,13 @@ public class WingsJavaGenerator extends JavaGenerator {
 
     @Override
     public void printSingletonInstance(JavaWriter out, Definition definition) {
+        super.printSingletonInstance(out,definition);
+        // 🦁>>>
         // table is TableDefinition : SysCommitJournalTable, SysCommitJournal
         final String className = getStrategy().getJavaClassName(definition);
         final String identifier = getStrategy().getJavaIdentifier(definition);
-
-        // 🦁>>>
         val aliasName = genAlias(identifier); // N6
         val aliasLower = "pro.fessional.wings.faceless.database.jooq.WingsJooqEnv.uniqueAlias()"; // n6
-        // 🦁<<<
-
-        out.javadoc("The reference instance of <code>%s</code>", definition.getQualifiedOutputName());
-
-        // public static final SysCommitJournalTable SysCommitJournal = new SysCommitJournalTable();
-        out.println("public static final %s %s = new %s();", className, identifier, className);
-
-        // 🦁>>>
         // public static final SysCommitJournalTable asN6 = SysCommitJournal.as(WingsJooqEnv.uniqueRuntimeAlias());
         out.println("public static final %s %s = %s.as(%s);", className, aliasName, identifier, aliasLower);
         // 🦁<<<
@@ -238,7 +230,7 @@ public class WingsJavaGenerator extends JavaGenerator {
     @Override
     public void generateDao(TableDefinition table, JavaWriter out) {
         super.generateDao(table, out);
-
+        // 🦁>>>
         Set<String> impt = reflectFieldQt(out);
         impt.remove(DAOImpl.class.getName());
 
@@ -276,6 +268,7 @@ public class WingsJavaGenerator extends JavaGenerator {
         if (java.length() == 0) {
             java.append(dao);
         }
+        // 🦁<<<
     }
     /////////////////
 

@@ -24,6 +24,7 @@
         <module>faceless</module>
         <module>faceless-flywave</module>
         <module>faceless-jooq</module>
+        <module>faceless-jooqgen</module>
         <module>faceless-shard</module>
         <module>faceless-test</module>
         <module>slardar</module>
@@ -31,6 +32,7 @@
         <module>slardar-test</module>
         <module>warlock</module>
         <module>warlock-bond</module>
+        <module>warlock-codegen</module>
         <module>batrider</module>
         <module>batrider-test</module>
         <module>batrider-zero</module>
@@ -61,11 +63,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-codegen</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>

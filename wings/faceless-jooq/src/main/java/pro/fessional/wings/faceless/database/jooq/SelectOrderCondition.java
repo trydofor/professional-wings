@@ -81,20 +81,7 @@ public class SelectOrderCondition implements Condition {
 
     @Override
     @NotNull
-    public Condition and(Boolean other) {
-        return and(condition(other));
-    }
-
-
-    @Override
-    @NotNull
     public final Condition or(Field<Boolean> other) {
-        return or(condition(other));
-    }
-
-    @Override
-    @NotNull
-    public final Condition or(Boolean other) {
         return or(condition(other));
     }
 
@@ -160,12 +147,6 @@ public class SelectOrderCondition implements Condition {
 
     @Override
     @NotNull
-    public final Condition andNot(Boolean other) {
-        return andNot(condition(other));
-    }
-
-    @Override
-    @NotNull
     public final Condition orNot(Condition other) {
         return or(other.not());
     }
@@ -173,12 +154,6 @@ public class SelectOrderCondition implements Condition {
     @Override
     @NotNull
     public final Condition orNot(Field<Boolean> other) {
-        return orNot(condition(other));
-    }
-
-    @Override
-    @NotNull
-    public final Condition orNot(Boolean other) {
         return orNot(condition(other));
     }
 
@@ -206,4 +181,23 @@ public class SelectOrderCondition implements Condition {
         return or(notExists(select));
     }
 
+    @Override
+    public @NotNull Condition and(Boolean other) {
+        throw new IllegalStateException("removed in 3.16");
+    }
+
+    @Override
+    public @NotNull Condition andNot(Boolean other) {
+        throw new IllegalStateException("removed in 3.16");
+    }
+
+    @Override
+    public @NotNull Condition or(Boolean other) {
+        throw new IllegalStateException("removed in 3.16");
+    }
+
+    @Override
+    public @NotNull Condition orNot(Boolean other) {
+        throw new IllegalStateException("removed in 3.16");
+    }
 }

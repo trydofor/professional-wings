@@ -285,6 +285,7 @@ public class TableCudListener extends DefaultVisitListener {
                 context.data(Key.EXECUTING_WHERE_KEY, null);
             }
         }
+        // 3.16后使用QOM，3.14为query instanceof Keyword
         else if ((clause == Clause.CONDITION_COMPARISON || clause == Clause.CONDITION_IN) && query instanceof Keyword) {
             if (context.data(Key.EXECUTING_WHERE_KEY) == null) {
                 log.debug("skip comparison without where-key or careless");

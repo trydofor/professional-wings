@@ -27,8 +27,8 @@
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-flywave</artifactId>
-            <optional>true</optional>
+            <artifactId>warlock-codegen</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

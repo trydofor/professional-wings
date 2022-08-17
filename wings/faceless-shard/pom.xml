@@ -43,12 +43,7 @@
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-jooq</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-codegen</artifactId>
+            <artifactId>faceless-jooqgen</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

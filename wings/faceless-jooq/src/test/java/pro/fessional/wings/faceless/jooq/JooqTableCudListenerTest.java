@@ -128,7 +128,7 @@ public class JooqTableCudListenerTest {
         pojo.setCommitId(-301L);
 
         testcaseNotice("单个更新");
-        assertCud(false, Cud.Update, singletonList(singletonList(301L)), () -> testDao.update(pojo, true));
+        assertCud(true, Cud.Update, singletonList(singletonList(301L)), () -> testDao.update(pojo, true));
 
         final long c1 = testDao.count(t, t.CommitId.eq(-301L));
         Assertions.assertEquals(1L, c1);
