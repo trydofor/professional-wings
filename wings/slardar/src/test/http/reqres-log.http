@@ -1,0 +1,109 @@
+### json+body:1
+POST http://localhost:8083/test/reqres-log-body.html?p=param-query-1
+Content-Type: application/json
+
+{"body":"json"}
+
+### json+body:2
+POST http://localhost:8083/test/reqres-log-body.html?p=param-query-2
+Content-Type: application/json
+XX-Log-Payload: true
+
+{"body":"json"}
+
+### json+body:3
+POST http://localhost:8083/test/reqres-log-body.html?p=param-query-3
+Content-Type: application/json
+XX-Log-Payload: true
+XX-Log-After: true
+
+{"body":"json"}
+
+### form+para:1
+POST http://localhost:8083/test/reqres-log-para.html?x=param-query-4
+Content-Type: application/x-www-form-urlencoded
+
+p=param-form-urlencoded&a=apple
+
+### form+para:2
+POST http://localhost:8083/test/reqres-log-para.html?x=param-query-5
+Content-Type: application/x-www-form-urlencoded
+XX-Log-Payload: true
+
+p=param-form-urlencoded&a=apple
+
+### form+para:3
+POST http://localhost:8083/test/reqres-log-para.html?x=param-query-6
+Content-Type: application/x-www-form-urlencoded
+XX-Log-Payload: true
+XX-Log-After: true
+
+p=param-form-urlencoded&a=apple
+
+### form+body:1
+POST http://localhost:8083/test/reqres-log-body.html?x=param-query-7
+Content-Type: application/x-www-form-urlencoded
+
+p=param-form-urlencoded&a=apple
+
+### form+body:2
+POST http://localhost:8083/test/reqres-log-body.html?x=param-query-8
+Content-Type: application/x-www-form-urlencoded
+XX-Log-Payload: true
+
+p=param-form-urlencoded&a=apple&x=2
+
+### form+body:3
+POST http://localhost:8083/test/reqres-log-body.html?x=param-query-9
+Content-Type: application/x-www-form-urlencoded
+XX-Log-Payload: true
+XX-Log-After: true
+
+p=param-form-urlencoded&a=apple
+
+
+### form+file:1
+POST http://localhost:8083/test/reqres-log-file.html?x=param-query-a
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="p"
+
+param-multipart
+--WebAppBoundary
+Content-Disposition: form-data; name="f"; filename="reqres-log.http"
+
+< reqres-log.http
+--WebAppBoundary--
+
+### form+file:2
+POST http://localhost:8083/test/reqres-log-file.html?x=param-query-b
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+XX-Log-Payload: true
+
+--WebAppBoundary
+Content-Disposition: form-data; name="p"
+
+param-multipart
+--WebAppBoundary
+Content-Disposition: form-data; name="f"; filename="reqres-log.http"
+
+< reqres-log.http
+--WebAppBoundary--
+
+### form+file:3
+POST http://localhost:8083/test/reqres-log-file.html?x=param-query-c
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+XX-Log-Payload: true
+XX-Log-After: true
+
+--WebAppBoundary
+Content-Disposition: form-data; name="p"
+
+param-multipart
+--WebAppBoundary
+Content-Disposition: form-data; name="f"; filename="reqres-log.http"
+
+< reqres-log.http
+--WebAppBoundary--
+

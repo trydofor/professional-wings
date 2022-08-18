@@ -5,6 +5,7 @@ import pro.fessional.mirana.io.CircleInputStream;
 
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
@@ -21,6 +22,11 @@ public class CircleServletInputStream extends ServletInputStream {
     public CircleServletInputStream(ServletInputStream backend) {
         this.backend = backend;
         this.circled = new CircleInputStream(backend);
+    }
+
+    public CircleServletInputStream(ServletInputStream backend, ByteArrayOutputStream content) {
+        this.backend = backend;
+        this.circled = new CircleInputStream(content);
     }
 
     @Override
@@ -47,7 +53,8 @@ public class CircleServletInputStream extends ServletInputStream {
     public boolean isReady() {
         try {
             return this.circled.available() > 0;
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             return false;
         }
     }
