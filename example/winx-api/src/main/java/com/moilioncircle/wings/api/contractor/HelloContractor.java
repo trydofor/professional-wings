@@ -9,14 +9,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
+ * Rpc风格，接口定义SchemaId，basePath指定SchemaId
+ *
  * @author trydofor
  * @since 2022-08-04
  */
-@RestSchema(schemaId = "winx-hello")
-@RequestMapping(path = "/")
+@RestSchema(schemaId = HelloContract.SchemaId)
+@RequestMapping(path = HelloContract.SchemaId)
 public class HelloContractor implements HelloContract {
 
-    @RequestMapping(path = "/winx-hello/say-hello", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(path = "/say-hello", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     @Override
     public String sayHello(@RequestParam(name = "name") String name) {
