@@ -204,6 +204,12 @@ public class WarlockEnabledProp {
     public static final String Key$controllerAuth = Key + ".controller-auth";
 
     /**
+     * @see #Key$controllerProc
+     */
+    private boolean controllerProc = true;
+    public static final String Key$controllerProc = Key + ".controller-proc";
+
+    /**
      * @see #Key$controllerUser
      */
     private boolean controllerUser = true;
@@ -214,4 +220,10 @@ public class WarlockEnabledProp {
      */
     private boolean controllerMock = true;
     public static final String Key$controllerMock = Key + ".controller-mock";
+
+    /**
+     * @see #Key$controllerTest
+     */
+    private String controllerTest = "";
+    public static final String Key$controllerTest = Key + ".controller-test";
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.bind.Binder;
@@ -72,7 +73,7 @@ public class SlardarMonitorConfiguration {
     }
 
     @Configuration(proxyBeanMethods = false)
-    @ConditionalOnProperty(name = SlardarEnabledProp.Key$monitorLog, havingValue = "true")
+    @ConditionalOnExpression("${" + SlardarEnabledProp.Key$monitor + ":false} && ${" + SlardarEnabledProp.Key$monitorLog + ":false}")
     @ComponentScan(basePackageClasses = LogViewer.class)
     public static class LogMetricBeanRegister implements BeanFactoryPostProcessor, EnvironmentAware {
 

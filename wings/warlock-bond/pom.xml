@@ -13,7 +13,7 @@
     <artifactId>warlock-bond</artifactId>
     <packaging>jar</packaging>
 
-    <name>wings-warlock-bond</name>
+    <name>Wings::Warlock::Bond</name>
     <description>术士大叔①链接</description>
 
     <dependencies>

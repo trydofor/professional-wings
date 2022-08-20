@@ -13,6 +13,9 @@
     <artifactId>winx-admin</artifactId>
     <packaging>jar</packaging>
 
+    <name>Example::Winx::Admin</name>
+    <description>样板之管理端</description>
+
     <dependencies>
         <dependency>
             <groupId>com.moilioncircle.wings</groupId>

@@ -13,7 +13,7 @@
     <artifactId>faceless-jooq</artifactId>
     <packaging>jar</packaging>
 
-    <name>wings-faceless-jooq</name>
+    <name>Wings::Faceless::Jooq</name>
     <description>虚空假面①时间漫游(jooq)</description>
 
     <dependencies>
@@ -26,27 +26,26 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
             <!--  仅测试用，不推荐使用 -->
             <groupId>org.simpleflatmapper</groupId>
             <artifactId>sfm-jooq</artifactId>
             <optional>true</optional>
         </dependency>
-        <!-- jooq auto gen -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jooq</artifactId>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>javax.persistence-api</artifactId>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
         </dependency>
         <!-- test -->
         <dependency>

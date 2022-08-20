@@ -24,7 +24,7 @@ import java.util.List;
 public class ComboWingsUserDetailsService implements WingsUserDetailsService {
 
     private final List<Combo<?>> combos = new ArrayList<>();
-    private final Dcl dclCombos = Dcl.of(() -> combos.sort(Comparator.comparingInt(Combo::getOrder)));
+    private final Dcl<Void> dclCombos = Dcl.of(() -> combos.sort(Comparator.comparingInt(Combo::getOrder)));
 
     @Override
     public @NotNull UserDetails loadUserByUsername(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) throws UsernameNotFoundException {

@@ -45,7 +45,7 @@ public class FacelessJooqCudProp {
     public static final String Key$delete = Key + ".delete";
 
     /**
-     * cud 关系的表及字段，不区分大小写
+     * cud 关系的表及字段，区分大小写
      *
      * @see #Key$table
      */

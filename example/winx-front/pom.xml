@@ -13,6 +13,9 @@
     <artifactId>winx-front</artifactId>
     <packaging>jar</packaging>
 
+    <name>Example::Winx::Front</name>
+    <description>样板之客户端</description>
+
     <dependencies>
         <dependency>
             <groupId>com.moilioncircle.wings</groupId>

@@ -2,7 +2,7 @@
 THIS_VERSION=2022-01-22
 
 TEMP_DIR="../../example/winx-devops/target" # 避免复制，建议在同一硬盘分区
-BOOT_JAR="./../example/winx-devops/target/winx-devops-*-SNAPSHOT.jar"
+BOOT_JAR="../../example/winx-devops/target/winx-devops-*-SNAPSHOT.jar"
 BOOT_ENV="./wings-starter.env"
 BOOT_BSH="./wings-starter.sh"
 
@@ -10,15 +10,13 @@ DOCK_DIR="/opt/"
 DOCK_TAG="wings/winx-devops"
 
 ####
-echo -e "\033[37;42;1mScript-Version $THIS_VERSION \033[0m"
-if [[ "$1" == "help" ]]; then
+function show_help() {
     echo -e '\033[32m default print Dockerfile\033[m'
+    echo -e '\033[32m clean \033[m clean docker temp dir'
     echo -e '\033[32m build \033[m docker build image'
     echo -e '\033[32m help \033[m show this'
-    exit
-fi
+}
 
-####
 function link_file() {
     dir_to=$1
     lnk_it=$2
@@ -54,7 +52,7 @@ function link_file() {
         cnt=$(find "$frm" -name "$tkn" | wc -l)
         if [[ $cnt -ne 1 ]]; then
             find "$frm" -name "$tkn"
-            echo -e "\033[37;41;1mERROR: found $cnt file, $lnk_it \033[0m"
+            echo -e "\033[37;41;1mERROR: found $cnt file, $lnk_it \033[0m should clean"
             exit
         fi
         arg=$(find "$frm" -name "$tkn")
@@ -65,8 +63,22 @@ function link_file() {
     fi
 }
 
-tmp_dir=$TEMP_DIR/docker-$(date '+%y%m%d%H%M%S')
+####
+echo -e "\033[37;42;1mScript-Version $THIS_VERSION \033[0m"
+if [[ "$1" == "help" ]]; then
+    show_help
+    exit
+fi
+
+tmp_pre="$TEMP_DIR/docker"
+tmp_dir=$tmp_pre-$(date '+%y%m%d%H%M%S')
 mkdir -p "$tmp_dir"
+
+if [[ "$1" == "clean" ]]; then
+    echo "clean tempdir $tmp_pre-[0-9]*"
+    rm -rf $tmp_pre-[0-9]*
+    exit
+fi
 
 link_file "$tmp_dir" "$BOOT_JAR"
 link_file "$tmp_dir" "$BOOT_ENV" env
@@ -78,7 +90,7 @@ echo "temp-dir=$tmp_dir"
 echo -e "\033[37;42;1m ==== Dockerfile ==== \033[0m"
 
 tee Dockerfile <<EOF
-FROM openjdk:8-jdk
+FROM openjdk:11-jdk
 
 EXPOSE 80
 VOLUME /data
@@ -101,6 +113,8 @@ fi
 rm -rf "$tmp_dir"
 echo -e "\033[37;42;1m ==== Other Message ==== \033[0m"
 cat <<EOF
+(cd "$tmp_dir" && docker build -t "$DOCK_TAG" .)
 docker run -it --rm $DOCK_TAG
 docker run -it --rm --entrypoint /bin/sh $DOCK_TAG
+# use help as param1 to see help
 EOF

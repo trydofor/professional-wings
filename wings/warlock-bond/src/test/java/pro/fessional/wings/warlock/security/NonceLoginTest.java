@@ -34,7 +34,7 @@ class NonceLoginTest {
     @Test
     public void testRootLogin() {
 
-        final String host = "http://127.0.0.1:" + port;
+        final String host = "http://localhost:" + port;
         final Response r1 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/console-nonce.json?username=root"), false);
         String nonce = OkHttpClientHelper.extractString(r1, false);
         log.warn("get nonce for root, nonce=" + nonce);

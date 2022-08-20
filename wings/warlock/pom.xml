@@ -13,7 +13,7 @@
     <artifactId>warlock</artifactId>
     <packaging>jar</packaging>
 
-    <name>wings-warlock</name>
+    <name>Wings::Warlock</name>
     <description>术士大叔</description>
 
     <dependencies>
@@ -28,11 +28,6 @@
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-jooq</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-flywave</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>me.zhyd.oauth</groupId>

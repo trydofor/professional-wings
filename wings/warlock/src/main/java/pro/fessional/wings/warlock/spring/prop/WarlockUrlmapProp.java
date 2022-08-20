@@ -48,22 +48,6 @@ public class WarlockUrlmapProp {
     public static final String Key$authNonceCheck = Key + ".auth-nonce-check";
 
     /**
-     * 登录实际处理url
-     *
-     * @see #Key$authLoginProc
-     */
-    private String authLoginProc = "";
-    public static final String Key$authLoginProc = Key + ".auth-login-proc";
-
-    /**
-     * 登出实际处理url
-     *
-     * @see #Key$authLogoutProc
-     */
-    private String authLogoutProc = "";
-    public static final String Key$authLogoutProc = Key + ".auth-logout-proc";
-
-    /**
      * 获得登录用户的自身基本信息
      *
      * @see #Key$userAuthedUser
@@ -119,4 +103,16 @@ public class WarlockUrlmapProp {
      */
     private String mockEcho0o0 = "";
     public static final String Key$mockEcho0o0 = Key + ".mock-echo0o0";
+
+    /**
+     * @see #Key$testRunMode
+     */
+    private String testRunMode = "";
+    public static final String Key$testRunMode = Key + ".test-run-mode";
+
+    /**
+     * @see #Key$testTimestamp
+     */
+    private String testTimestamp = "";
+    public static final String Key$testTimestamp = Key + ".test-timestamp";
 }

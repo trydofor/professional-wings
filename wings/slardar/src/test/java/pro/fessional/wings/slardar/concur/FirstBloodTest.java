@@ -34,10 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Slf4j
 class FirstBloodTest {
 
-    @Setter(onMethod_ = {@Value("http://127.0.0.1:${local.server.port}/test/captcha.json")})
+    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}/test/captcha.json")})
     private String firstBloodUrl0;
 
-    @Setter(onMethod_ = {@Value("http://127.0.0.1:${local.server.port}/test/captcha-30.json")})
+    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}/test/captcha-30.json")})
     private String firstBloodUrl30;
 
     @Setter(onMethod_ = {@Autowired})

@@ -54,6 +54,8 @@ public class RuntimeConfServiceImpl implements RuntimeConfService {
     @Override
     @Cacheable
     public <T> T getObject(String key, TypeDescriptor type) {
+        if(winConfRuntimeDao.notTableExist()) return null;
+
         final WinConfRuntimeTable t = winConfRuntimeDao.getTable();
         final Record2<String, String> r2 = winConfRuntimeDao
                 .ctx()

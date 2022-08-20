@@ -13,6 +13,9 @@
     <artifactId>winx-codegen</artifactId>
     <packaging>jar</packaging>
 
+    <name>Example::Winx::Codegen</name>
+    <description>样板之代码生成</description>
+
     <properties>
         <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
     </properties>

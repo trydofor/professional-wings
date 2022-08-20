@@ -73,6 +73,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp.Ma;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp.Mu;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -109,9 +110,9 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$terminal, havingValue = "true")
     public TerminalJournalService terminalJournalService(
-            LightIdService lightIdService,
-            BlockIdProvider blockIdProvider,
-            CommitJournalModify journalModify
+            @SuppressWarnings("all") LightIdService lightIdService,
+            @SuppressWarnings("all") BlockIdProvider blockIdProvider,
+            @SuppressWarnings("all") CommitJournalModify journalModify
     ) {
         logger.info("Wings conf terminalJournalService");
         return new TerminalJournalService(lightIdService, blockIdProvider, journalModify);
@@ -120,6 +121,7 @@ public class WarlockSecurityBeanConfiguration {
     ///////// handler /////////
     @Bean
     @ConditionalOnMissingBean(AuthenticationSuccessHandler.class)
+    @ConditionalOnExpression("!'${" + WarlockSecurityProp.Key$loginSuccessBody + "}'.isEmpty()")
     public AuthenticationSuccessHandler loginSuccessHandler() {
         logger.info("Wings conf loginSuccessHandler");
         return new LoginSuccessHandler();
@@ -127,6 +129,7 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(AuthenticationFailureHandler.class)
+    @ConditionalOnExpression("!'${" + WarlockSecurityProp.Key$loginFailureBody + "}'.isEmpty()")
     public AuthenticationFailureHandler loginFailureHandler() {
         logger.info("Wings conf loginFailureHandler");
         return new LoginFailureHandler();
@@ -134,6 +137,7 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(LogoutSuccessHandler.class)
+    @ConditionalOnExpression("!'${" + WarlockSecurityProp.Key$logoutSuccessBody + "}'.isEmpty()")
     public LogoutSuccessHandler logoutSuccessHandler() {
         logger.info("Wings conf logoutSuccessHandler");
         return new LogoutOkHandler();
@@ -143,7 +147,7 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(WarlockPermNormalizer.class)
-    public WarlockPermNormalizer warlockPermNormalizer(GrantedAuthorityDefaults gad) {
+    public WarlockPermNormalizer warlockPermNormalizer(@SuppressWarnings("all") GrantedAuthorityDefaults gad) {
         logger.info("Wings conf warlockPermNormalizer");
         final WarlockPermNormalizer bean = new WarlockPermNormalizer();
         bean.setRolePrefix(gad.getRolePrefix());
@@ -255,24 +259,30 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(MemoryUserDetailsCombo.class)
-    public MemoryUserDetailsCombo memoryUserDetailsCombo(WingsAuthTypeParser typeParser) {
+    public MemoryUserDetailsCombo memoryUserDetailsCombo(@SuppressWarnings("all") WingsAuthTypeParser typeParser) {
         logger.info("Wings conf memoryUserDetailsCombo");
         final MemoryUserDetailsCombo bean = new MemoryUserDetailsCombo();
         for (Map.Entry<String, Mu> en : securityProp.getMemUser().entrySet()) {
             logger.info("Wings conf add MemUser=" + en.getKey());
             final Mu mu = en.getValue();
-            Details dtl = new Details();
-            dtl.setUserId(mu.getUserId());
-            dtl.setAuthType(typeParser.parse(mu.getAuthType()));
-            dtl.setUsername(mu.getUsername());
-            dtl.setPassword(mu.getPassword());
-            dtl.setStatus(mu.getStatus());
-            dtl.setNickname(hasText(mu.getNickname()) ? mu.getNickname() : mu.getUsername());
-            dtl.setPasssalt(mu.getPasssalt());
-            dtl.setLocale(mu.getLocale());
-            dtl.setZoneId(mu.getZoneId());
-            dtl.setExpiredDt(mu.getExpired());
-            bean.addUser(dtl);
+            Set<String> ats = mu.getAuthType();
+            if (ats == null || ats.isEmpty()) {
+                ats = Collections.singleton("");
+            }
+            for (String at : ats) {
+                Details dtl = new Details();
+                dtl.setUserId(mu.getUserId());
+                dtl.setAuthType(typeParser.parse(at));
+                dtl.setUsername(mu.getUsername());
+                dtl.setPassword(mu.getPassword());
+                dtl.setStatus(mu.getStatus());
+                dtl.setNickname(hasText(mu.getNickname()) ? mu.getNickname() : mu.getUsername());
+                dtl.setPasssalt(mu.getPasssalt());
+                dtl.setLocale(mu.getLocale());
+                dtl.setZoneId(mu.getZoneId());
+                dtl.setExpiredDt(mu.getExpired());
+                bean.addUser(dtl);
+            }
         }
 
         return bean;
@@ -340,7 +350,9 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(MemoryTypedAuthzCombo.class)
-    public MemoryTypedAuthzCombo memoryTypedAuthzCombo(WingsAuthTypeParser typeParser, WarlockPermNormalizer normalizer) {
+    public MemoryTypedAuthzCombo memoryTypedAuthzCombo(
+            @SuppressWarnings("all") WingsAuthTypeParser typeParser,
+            @SuppressWarnings("all") WarlockPermNormalizer normalizer) {
         logger.info("Wings conf memoryTypedAuthzCombo");
         final MemoryTypedAuthzCombo bean = new MemoryTypedAuthzCombo();
         for (Map.Entry<String, Ma> en : securityProp.getMemAuth().entrySet()) {
@@ -383,6 +395,10 @@ public class WarlockSecurityBeanConfiguration {
             logger.info("Wings conf wingsAuthDetailsSource add " + it.getClass().getName());
             uds.add(it);
         });
+
+        final Set<String> set = new HashSet<>();
+        set.add(securityProp.getPasswordPara());
+        uds.setIgnoredMetaKey(set);
         return uds;
     }
 

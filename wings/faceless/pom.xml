@@ -13,7 +13,7 @@
     <artifactId>faceless</artifactId>
     <packaging>jar</packaging>
 
-    <name>wings-faceless</name>
+    <name>Wings::Faceless</name>
     <description>虚空假面</description>
 
     <dependencies>

@@ -35,7 +35,7 @@ class MemLoginTest {
 
     @Test
     public void testUsernameLogin() {
-        final String host = "http://127.0.0.1:" + port;
+        final String host = "http://localhost:" + port;
 
         final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder()
                 .url(host + "/auth/username/login.json?username=trydofor&password=moMxVKXxA8Pe9XX9"), false);
@@ -70,7 +70,7 @@ class MemLoginTest {
 
     @Test
     public void testEmailLogin() {
-        final String host = "http://127.0.0.1:" + port;
+        final String host = "http://localhost:" + port;
 
         final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder()
                 .url(host + "/auth/email/login.json?username=trydofor@qq.com&password=3bvlPy7oQbds28c1"), false);

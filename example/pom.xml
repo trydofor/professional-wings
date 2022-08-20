@@ -15,8 +15,8 @@
     <packaging>pom</packaging>
     <version>${revision}-SNAPSHOT</version>
 
-    <name>wings-example</name>
-    <description>一些许的样板和示例</description>
+    <name>Example::</name>
+    <description>样板间</description>
 
     <modules>
         <module>winx-admin</module>
@@ -24,7 +24,7 @@
         <module>winx-codegen</module>
         <module>winx-common</module>
         <!-- <module>winx-batch</module> -->
-        <!-- <module>winx-api</module> -->
+         <module>winx-api</module>
         <module>winx-devops</module>
     </modules>
 

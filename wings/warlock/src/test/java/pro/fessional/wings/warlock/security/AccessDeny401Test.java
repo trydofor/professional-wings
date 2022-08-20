@@ -33,7 +33,7 @@ class AccessDeny401Test {
 
     @Test
     public void test401Form() {
-        final String url = "http://127.0.0.1:" + port + "/user/authed-user.json";
+        final String url = "http://localhost:" + port + "/user/authed-user.json";
         RequestEntity<?> entity = RequestEntity
                 .post(url)
                 .accept(MediaType.TEXT_HTML)
@@ -47,7 +47,7 @@ class AccessDeny401Test {
     }
     @Test
     public void test401Basic() {
-        final String url = "http://127.0.0.1:" + port + "/user/authed-user.json";
+        final String url = "http://localhost:" + port + "/user/authed-user.json";
         RequestEntity<?> entity = RequestEntity
                 .post(url)
                 .accept(MediaType.APPLICATION_JSON)

@@ -1,0 +1,3 @@
+<config>
+    <handler id="auth9-provider" class="pro.fessional.wings.batrider.servcomb.handler.ProviderAuth9Handler"/>
+</config>

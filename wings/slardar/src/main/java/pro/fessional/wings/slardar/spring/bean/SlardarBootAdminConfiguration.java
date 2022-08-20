@@ -14,11 +14,15 @@ import de.codecentric.boot.admin.server.notify.AbstractStatusChangeNotifier;
 import de.codecentric.boot.admin.server.notify.Notifier;
 import de.codecentric.boot.admin.server.web.client.BasicAuthHttpHeaderProvider;
 import de.codecentric.boot.admin.server.web.client.BasicAuthHttpHeaderProvider.InstanceCredentials;
+import de.codecentric.boot.admin.server.web.servlet.AdminControllerHandlerMapping;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -43,13 +47,12 @@ import java.util.Objects;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(name = SlardarEnabledProp.Key$bootAdmin, havingValue = "true")
 public class SlardarBootAdminConfiguration {
     private final static Log logger = LogFactory.getLog(SlardarBootAdminConfiguration.class);
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(BlockingRegistrationClient.class)
-    @ConditionalOnProperty(name = "spring.boot.admin.client.enabled", havingValue = "true")
+    @ConditionalOnExpression("${" + SlardarEnabledProp.Key$bootAdmin + ":false} && ${spring.boot.admin.client.enabled:false}")
     public static class ClientConfiguration {
         /*
          * org.apache.http.client.protocol.ResponseProcessCookies : Invalid cookie header: "Set-Cookie: ...".
@@ -73,8 +76,23 @@ public class SlardarBootAdminConfiguration {
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(EnableAdminServer.class)
-    @ConditionalOnProperty(name = "spring.boot.admin.server.enabled", havingValue = "true")
+    @ConditionalOnExpression("${" + SlardarEnabledProp.Key$bootAdmin + ":false} && ${spring.boot.admin.server.enabled:false}")
     public static class AdminConfiguration {
+
+        @Bean
+        @ConditionalOnProperty(name = "spring.wings.warlock.enabled.controller-proc", havingValue = "true")
+        public BeanPostProcessor bootAdminMappingOrderPostProcessor() {
+            logger.info("Wings conf BootAdmin server bootAdminMappingOrderPostProcessor");
+            return new BeanPostProcessor() {
+                @Override
+                public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
+                    if (bean instanceof AdminControllerHandlerMapping) {
+                        ((AdminControllerHandlerMapping) bean).setOrder(-1);
+                    }
+                    return bean;
+                }
+            };
+        }
 
         @Bean
         public Notifier dingTalkNotifier(InstanceRepository repository, ObjectProvider<DingTalkReport> reportProvider) {

@@ -13,6 +13,9 @@
     <artifactId>winx-devops</artifactId>
     <packaging>jar</packaging>
 
+    <name>Example::Winx::Devops</name>
+    <description>样板之运维端</description>
+
     <dependencies>
         <dependency>
             <groupId>com.moilioncircle.wings</groupId>
@@ -24,8 +27,8 @@
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-flywave</artifactId>
-            <optional>true</optional>
+            <artifactId>warlock-codegen</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

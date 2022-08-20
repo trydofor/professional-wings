@@ -31,16 +31,16 @@ class DefaultWingsAuthTypeSourceTest {
 
     @Test
     void parse2() {
-        final PathPattern ptn = patternParser.parse("/auth/{authType:[^-]+}{authZone}/login.json");
-        final PathPattern.PathMatchInfo f1 = ptn.matchAndExtract(PathContainer.parsePath("/auth/user-name/login.json"));
+        final PathPattern ptn = patternParser.parse("/auth/{authType:[^-]+}{splitter:-?}{authZone:[^-]*}/login.json");
+        final PathPattern.PathMatchInfo f1 = ptn.matchAndExtract(PathContainer.parsePath("/auth/username-admin/login.json"));
         assertNotNull(f1);
-        assertEquals("user", f1.getUriVariables().get(WingsAuthHelper.AuthType));
-        assertEquals("-name", f1.getUriVariables().get(WingsAuthHelper.AuthZone));
+        assertEquals("username", f1.getUriVariables().get(WingsAuthHelper.AuthType));
+        assertEquals("admin", f1.getUriVariables().get(WingsAuthHelper.AuthZone));
 
-        final PathPattern.PathMatchInfo f2 = ptn.matchAndExtract(PathContainer.parsePath("/auth/user-/login.json"));
+        final PathPattern.PathMatchInfo f2 = ptn.matchAndExtract(PathContainer.parsePath("/auth/username-/login.json"));
         assertNotNull(f2);
-        assertEquals("user", f2.getUriVariables().get(WingsAuthHelper.AuthType));
-        assertEquals("-", f2.getUriVariables().get(WingsAuthHelper.AuthZone));
+        assertEquals("username", f2.getUriVariables().get(WingsAuthHelper.AuthType));
+        assertEquals("", f2.getUriVariables().get(WingsAuthHelper.AuthZone));
 
         final PathPattern.PathMatchInfo f3 = ptn.matchAndExtract(PathContainer.parsePath("/auth/username/login.json"));
         assertNotNull(f3);

@@ -32,7 +32,7 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
         String remoteIp = remoteResolver.resolveRemoteIp(request);
         String agentInfo = remoteResolver.resolveAgentInfo(request);
 
-        final WingsUserDetails details = SecurityContextUtil.getUserDetails();
+        final WingsUserDetails details = SecurityContextUtil.getUserDetails(true);
         if (details == null) {
             TerminalContext.guest(locale.getLocale(), locale.getTimeZone(), remoteIp, agentInfo);
         }
