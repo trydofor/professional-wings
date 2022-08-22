@@ -80,7 +80,7 @@ public class WarlockOtherBeanConfiguration {
         return auth -> {
             final Object dtl = auth.getDetails();
             if (dtl instanceof WingsUserDetails) {
-                GlobalAttributeHolder.getAttr(SaltByUid, ((WingsUserDetails) dtl).getUserId());
+                return GlobalAttributeHolder.getAttr(SaltByUid, ((WingsUserDetails) dtl).getUserId());
             }
             return null;
         };
