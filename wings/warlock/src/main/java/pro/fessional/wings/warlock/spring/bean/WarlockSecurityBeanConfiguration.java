@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.util.AntPathMatcher;
+import pro.fessional.mirana.bits.Aes128;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
@@ -406,9 +407,17 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(AuthStateBuilder.class)
-    public AuthStateBuilder authStateBuilder(WarlockJustAuthProp prop) {
-        logger.info("Wings conf authStateBuilder");
-        return new AuthStateBuilder(validValue(prop.getSafeState()));
+    public AuthStateBuilder authStateBuilder(WarlockJustAuthProp prop, ObjectProvider<Aes128> aes128Provider) {
+        final AuthStateBuilder bean = new AuthStateBuilder(validValue(prop.getSafeState()));
+        final Aes128 aes128 = aes128Provider.getIfAvailable();
+        if (aes128 != null) {
+            bean.setAes128(aes128);
+            logger.info("Wings conf authStateBuilder with Global Aes128 Bean");
+        }
+        else {
+            logger.info("Wings conf authStateBuilder with Random Aes128 Bean");
+        }
+        return bean;
     }
 
     @Bean
