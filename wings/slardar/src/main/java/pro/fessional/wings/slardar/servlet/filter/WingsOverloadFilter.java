@@ -33,7 +33,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
  */
 public class WingsOverloadFilter implements OrderedFilter {
 
-    private final Log logger = LogFactory.getLog(WingsOverloadFilter.class);
+    private final Log log = LogFactory.getLog(WingsOverloadFilter.class);
 
     @Setter @Getter
     private int order = WingsServletConst.ORDER_FILTER_OVERLOAD;
@@ -106,8 +106,8 @@ public class WingsOverloadFilter implements OrderedFilter {
             final boolean isFst = now - calmDown.firstRequest.get() < config.requestInterval;
             if (isCnt && isFst) {
                 fallBack.fallback(request, response);
-                if (logger.isWarnEnabled() && now > config.getLoggerInterval() + lastWarnSlow.getOrDefault(calmDown.ip, 0L)) {
-                    logger.warn("wings-clam-request, now=" + rqs + ", ip=" + calmDown.ip + ", uri=" + httpReq.getRequestURI());
+                if (log.isWarnEnabled() && now > config.getLogInterval() + lastWarnSlow.getOrDefault(calmDown.ip, 0L)) {
+                    log.warn("wings-clam-request, now=" + rqs + ", ip=" + calmDown.ip + ", uri=" + httpReq.getRequestURI());
                     lastWarnSlow.put(calmDown.ip, now);
                 }
                 return; // 直接返回
@@ -149,7 +149,7 @@ public class WingsOverloadFilter implements OrderedFilter {
         /**
          * 日志的记录间隔（毫秒）
          */
-        private long loggerInterval = 3000;
+        private long logInterval = 3000;
 
         /**
          * 过载时，默认http status code
@@ -227,10 +227,10 @@ public class WingsOverloadFilter implements OrderedFilter {
         // 慢响应
         final long cost = end - bgn;
         final long warnSlow = config.responseWarnSlow;
-        if (logger.isWarnEnabled() && warnSlow > 0 && cost > warnSlow) {
+        if (log.isWarnEnabled() && warnSlow > 0 && cost > warnSlow) {
             String uri = request.getRequestURI();
-            if (end > config.getLoggerInterval() + lastWarnSlow.getOrDefault(uri, 0L)) {
-                logger.warn("wings-slow-response, slow=" + warnSlow + ", cost=" + cost + ", uri=" + uri);
+            if (end > config.getLogInterval() + lastWarnSlow.getOrDefault(uri, 0L)) {
+                log.warn("wings-slow-response, slow=" + warnSlow + ", cost=" + cost + ", uri=" + uri);
                 lastWarnSlow.put(uri, end);
             }
         }
@@ -245,7 +245,7 @@ public class WingsOverloadFilter implements OrderedFilter {
                 responseCost[idx].incrementAndGet();
             }
             long total = responseTotal.incrementAndGet();
-            if (logger.isInfoEnabled()
+            if (log.isInfoEnabled()
                 && (config.responseInfoStat == 0 || total % config.responseInfoStat == 0)
                 && end - lastInfoStat.get() > config.responseInfoStat) {
 
@@ -267,7 +267,7 @@ public class WingsOverloadFilter implements OrderedFilter {
                     }
                 }
 
-                logger.info("wings-snap-response "
+                log.info("wings-snap-response "
                             + ", total-resp=" + total
                             + ", p99=" + p99
                             + ", p95=" + p95

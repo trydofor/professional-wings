@@ -1,5 +1,7 @@
 package pro.fessional.wings.slardar.security.bind;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -34,6 +36,8 @@ import pro.fessional.wings.slardar.security.pass.DefaultPasssaltEncoder;
  */
 public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProvider {
 
+    private final static Log log = LogFactory.getLog(WingsBindAuthProvider.class);
+
     private static final String BadCredentialsCode = "AbstractUserDetailsAuthenticationProvider.badCredentials";
     private static final String USER_NOT_FOUND_PASSWORD = "TimingAttackProtectionUserNotFoundPassword";
 
@@ -63,7 +67,7 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
 
         if (wingsAuthCheckService != null && isWingsUserDetails && authentication instanceof WingsBindAuthToken) {
             if (!wingsAuthCheckService.check((WingsUserDetails) userDetails, (WingsBindAuthToken) authentication)) {
-                logger.debug("Failed to post check userDetails and authentication");
+                log.debug("Failed to post check userDetails and authentication");
                 throw new BadCredentialsException(messages.getMessage(BadCredentialsCode, "Bad credentials"));
             }
         }
@@ -139,7 +143,7 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
             winAdt = (WingsAuthDetails) obj;
         }
         else {
-            logger.debug("WARN No-WingsAuthDetails-In-WingsUserDetailsService-And-WingsBindAuthToken");
+            log.debug("WARN No-WingsAuthDetails-In-WingsUserDetailsService-And-WingsBindAuthToken");
             winAdt = new DefaultWingsAuthDetails(obj);
         }
         userDetails = winUds.loadUserByUsername(username, winTkn.getAuthType(), winAdt);
@@ -148,14 +152,14 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
 
     protected void checkPassword(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) {
         if (authentication.getCredentials() == null) {
-            logger.debug("Failed to authenticate since no credentials provided");
+            log.debug("Failed to authenticate since no credentials provided");
             throw new BadCredentialsException(messages.getMessage(BadCredentialsCode, "Bad credentials"));
         }
 
         String presentedPassword = presentPassword(userDetails, authentication);
 
         if (!passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
-            logger.debug("Failed to authenticate since password does not match stored value");
+            log.debug("Failed to authenticate since password does not match stored value");
             throw new BadCredentialsException(messages.getMessage(BadCredentialsCode, "Bad credentials"));
         }
     }

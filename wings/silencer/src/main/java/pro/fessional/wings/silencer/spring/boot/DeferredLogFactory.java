@@ -14,14 +14,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DeferredLogFactory implements ApplicationListener<ApplicationPreparedEvent> {
 
-    private static final ConcurrentHashMap<Class<?>, DeferredLog> loggers = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Class<?>, DeferredLog> logs = new ConcurrentHashMap<>();
 
     public static DeferredLog getLog(Class<?> claz) {
-        return loggers.computeIfAbsent(claz, k -> new DeferredLog());
+        return logs.computeIfAbsent(claz, k -> new DeferredLog());
     }
 
     @Override
     public void onApplicationEvent(@NotNull ApplicationPreparedEvent event) {
-        loggers.forEach(Integer.MAX_VALUE, (k, v) -> v.replayTo(k));
+        logs.forEach(Integer.MAX_VALUE, (k, v) -> v.replayTo(k));
     }
 }

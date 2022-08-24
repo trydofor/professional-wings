@@ -42,7 +42,7 @@ import java.util.Map;
 @EnableScheduling
 public class SlardarMonitorConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SlardarMonitorConfiguration.class);
+    private static final Log log = LogFactory.getLog(SlardarMonitorConfiguration.class);
 
     @Setter(onMethod_ = {@Autowired})
     private SlardarMonitorProp slardarMonitorProp;
@@ -51,7 +51,7 @@ public class SlardarMonitorConfiguration {
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$monitorJvm, havingValue = "true")
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public JvmMetric jvmMetric() {
-        logger.info("Wings conf jvmMetric");
+        log.info("Wings conf jvmMetric");
         final JvmMetric.Rule rule = slardarMonitorProp.getJvm();
         return new JvmMetric(rule);
     }
@@ -59,14 +59,14 @@ public class SlardarMonitorConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public DingTalkReport dingTalkReport(OkHttpClient okHttpClient) {
-        logger.info("Wings conf dingTalkReport");
+        log.info("Wings conf dingTalkReport");
         return new DingTalkReport(slardarMonitorProp.getDingTalk(), okHttpClient);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public MonitorTask monitorTask() {
-        logger.info("Wings conf monitorTask");
+        log.info("Wings conf monitorTask");
         final MonitorTask bean = new MonitorTask();
         bean.setHookSelf(slardarMonitorProp.isHook());
         return bean;
@@ -88,14 +88,14 @@ public class SlardarMonitorConfiguration {
 
         @Override
         public void postProcessBeanFactory(@NotNull ConfigurableListableBeanFactory beanFactory) throws BeansException {
-            logger.info("Wings conf LogMetric beans");
+            log.info("Wings conf LogMetric beans");
             final Map<String, LogMetric.Rule> logs = slardarMonitorProp.getLog();
             LogMetric.Rule defaults = logs.get("default");
 
             for (Map.Entry<String, LogMetric.Rule> entry : logs.entrySet()) {
                 String key = LogMetric.Rule.Key + "." + entry.getKey();
                 if (beanFactory.containsBean(key)) {
-                    logger.info("Wings skip LogMetric bean=" + key + ", for existed");
+                    log.info("Wings skip LogMetric bean=" + key + ", for existed");
                     continue;
                 }
 
@@ -106,14 +106,14 @@ public class SlardarMonitorConfiguration {
                     if (new File(rf).exists()) {
                         LogMetric bean = new LogMetric(key, rule);
                         beanFactory.registerSingleton(key, bean);
-                        logger.info("Wings conf LogMetric bean=" + key);
+                        log.info("Wings conf LogMetric bean=" + key);
                     }
                     else {
-                        logger.warn("Wings skip LogMetric bean for file not exist, file=" + rf);
+                        log.warn("Wings skip LogMetric bean for file not exist, file=" + rf);
                     }
                 }
                 else {
-                    logger.info("Wings skip LogMetric bean=" + key + ", for disabled");
+                    log.info("Wings skip LogMetric bean=" + key + ", for disabled");
                 }
             }
         }

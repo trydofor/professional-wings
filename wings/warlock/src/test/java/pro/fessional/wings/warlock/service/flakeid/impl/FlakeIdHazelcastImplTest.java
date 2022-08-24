@@ -1,6 +1,7 @@
 package pro.fessional.wings.warlock.service.flakeid.impl;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 2022-03-20
  */
 @SpringBootTest
+@Slf4j
 class FlakeIdHazelcastImplTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -38,7 +40,7 @@ class FlakeIdHazelcastImplTest {
                     val id = flakeIdService.getId(sn);
                     final Long old = idCache.put(id, id);
                     if(old != null){
-                        System.out.println(sn+":"+old);
+                        log.info(sn+":"+old);
                     }
                 }
                 latch.countDown();

@@ -27,14 +27,14 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class SlardarFirstBloodTestConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SlardarFirstBloodTestConfiguration.class);
+    private static final Log log = LogFactory.getLog(SlardarFirstBloodTestConfiguration.class);
 
     private final SlardarFirstBloodProp firstBloodProp;
 
     @Bean
     @ConditionalOnProperty(value = "spring.wings.slardar.enabled.first-blood-image-test", havingValue = "true")
     public FirstBloodImageHandler firstBloodImageHandler(@Autowired(required = false) WingsRemoteResolver remoteResolver) {
-        logger.info("Wings conf firstBloodImageHandler for test");
+        log.info("Wings conf firstBloodImageHandler for test");
         final FirstBloodImageHandler handler = new Test();
         handler.setClientTicketKey(firstBloodProp.getClientTicketKey());
         handler.setQuestCaptchaKey(firstBloodProp.getQuestCaptchaKey());
@@ -57,7 +57,7 @@ public class SlardarFirstBloodTestConfiguration {
 
         @Override
         protected void showCaptcha(@NotNull HttpServletResponse response, String code, String fmt) {
-            logger.warn("set captcha code=" + code + ", fmt=" + fmt);
+            log.warn("set captcha code=" + code + ", fmt=" + fmt);
             ResponseHelper.writeBodyUtf8(response, code);
         }
     }

@@ -19,7 +19,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$restream, havingValue = "true")
 public class SlardarRestreamConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SlardarRestreamConfiguration.class);
+    private static final Log log = LogFactory.getLog(SlardarRestreamConfiguration.class);
 
     @Bean
     @ConditionalOnMissingBean(WingsReuseStreamFilter.class)
@@ -29,7 +29,7 @@ public class SlardarRestreamConfiguration {
         if (lg != null) {
             filter.setRequestResponseLogging(lg);
         }
-        logger.info("Wings conf wingsReuseStreamFilter, logging=" + (lg == null ? null : lg.getClass()));
+        log.info("Wings conf wingsReuseStreamFilter, logging=" + (lg == null ? null : lg.getClass()));
         return filter;
     }
 }

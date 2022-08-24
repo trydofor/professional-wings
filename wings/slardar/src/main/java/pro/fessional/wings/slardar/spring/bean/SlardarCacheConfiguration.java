@@ -37,7 +37,7 @@ import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
 @EnableCaching
 public class SlardarCacheConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SlardarCacheConfiguration.class);
+    private static final Log log = LogFactory.getLog(SlardarCacheConfiguration.class);
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnExpression("${" + SlardarEnabledProp.Key$caching + ":false} && ${" + SlardarEnabledProp.Key$cachingAop + ":false}")
@@ -46,14 +46,14 @@ public class SlardarCacheConfiguration {
         @Primary
         @Bean
         public CacheOperationSource wingsCacheOperationSource() {
-            logger.info("Wings conf cacheOperationSource");
+            log.info("Wings conf cacheOperationSource");
             return new WingsCacheAnnoOprSource();
         }
 
         @Primary
         @Bean
         public CacheInterceptor wingsCacheInterceptor(CacheOperationSource cacheOperationSource) {
-            logger.info("Wings conf cacheInterceptor");
+            log.info("Wings conf cacheInterceptor");
             CacheEvictResult.wingsSupport = true;
             WingsCacheInterceptor interceptor = new WingsCacheInterceptor();
             interceptor.configure(this.errorHandler, this.keyGenerator, this.cacheResolver, this.cacheManager);
@@ -66,14 +66,14 @@ public class SlardarCacheConfiguration {
     @Bean(Manager.Memory)
     @ConditionalOnMissingBean(CaffeineCacheManager.class)
     public CaffeineCacheManager caffeineCacheManager(SlardarCacheProp conf) {
-        logger.info("Wings conf caffeine as " + Manager.Memory);
+        log.info("Wings conf caffeine as " + Manager.Memory);
         return new WingsCaffeine.Manager(conf);
     }
 
     @Bean
     @Primary
     public CacheManager cacheManager(Map<String, CacheManager> managers, SlardarCacheProp prop) {
-        logger.info("Wings conf WingsCacheHelper managers count=" + managers.size());
+        log.info("Wings conf WingsCacheHelper managers count=" + managers.size());
         WingsCacheHelper.setManagers(managers);
 
         CacheManager pre = null;
@@ -82,7 +82,7 @@ public class SlardarCacheConfiguration {
         for (Map.Entry<String, CacheManager> en : managers.entrySet()) {
             final String name = en.getKey();
             if (name.equalsIgnoreCase(prim)) {
-                logger.info("Wings conf primary CacheManager=" + name);
+                log.info("Wings conf primary CacheManager=" + name);
                 return en.getValue();
             }
             else if (pre == null && name.startsWith(prim)) {
@@ -90,7 +90,7 @@ public class SlardarCacheConfiguration {
                 pre = en.getValue();
             }
         }
-        logger.info("Wings conf primary CacheManager=" + cnm);
+        log.info("Wings conf primary CacheManager=" + cnm);
         return pre;
     }
 }

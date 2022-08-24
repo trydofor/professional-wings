@@ -19,11 +19,11 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 @RequiredArgsConstructor
 public class SlardarI18nConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SlardarI18nConfiguration.class);
+    private static final Log log = LogFactory.getLog(SlardarI18nConfiguration.class);
 
     @Bean
     public LocalValidatorFactoryBean localValidatorFactoryBean(MessageSource messageSource) {
-        logger.info("Wings conf localValidatorFactoryBean");
+        log.info("Wings conf localValidatorFactoryBean");
         LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
         bean.setValidationMessageSource(messageSource);
         return bean;

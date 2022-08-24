@@ -31,11 +31,11 @@ import java.util.function.Supplier;
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$domainExtend, havingValue = "true")
 public class SlardarDomainExtendConfiguration {
 
-    private final static Log logger = LogFactory.getLog(SlardarDomainExtendConfiguration.class);
+    private final static Log log = LogFactory.getLog(SlardarDomainExtendConfiguration.class);
 
     @Bean
     public WingsDomainExtendFilter wingsDomainFilter(DomainExtendProp config, ApplicationContext context) {
-        logger.info("Wings conf Domain filter");
+        log.info("Wings conf Domain filter");
         Map<String, List<String[]>> hostMatcher = new HashMap<>();
         for (Map.Entry<String, Set<String>> entry : config.getHost().entrySet()) {
             Set<String> vs = entry.getValue();
@@ -45,7 +45,7 @@ public class SlardarDomainExtendConfiguration {
             }
             String key = entry.getKey();
             // spring official log is common log
-            logger.info(" - conf Domain filter - " + key + ":" + String.join(",", vs));
+            log.info(" - conf Domain filter - " + key + ":" + String.join(",", vs));
             hostMatcher.put(key, ls);
         }
 

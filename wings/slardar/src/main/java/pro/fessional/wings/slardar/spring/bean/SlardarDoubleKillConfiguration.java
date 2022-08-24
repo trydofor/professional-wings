@@ -23,19 +23,19 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$doubleKill, havingValue = "true")
 public class SlardarDoubleKillConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SlardarDoubleKillConfiguration.class);
+    private static final Log log = LogFactory.getLog(SlardarDoubleKillConfiguration.class);
     private final SlardarDoubleKillProp doubleKillProp;
 
     @Bean
     public DoubleKillAround doubleKillAround() {
-        logger.info("Wings conf doubleKillAround");
+        log.info("Wings conf doubleKillAround");
         return new DoubleKillAround();
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "doubleKillExceptionResolver")
     public HandlerExceptionResolver doubleKillExceptionResolver() {
-        logger.info("Wings conf doubleKillExceptionResolver");
+        log.info("Wings conf doubleKillExceptionResolver");
         final DoubleKillExceptionResolver bean = new DoubleKillExceptionResolver(
                 doubleKillProp.getHttpStatus(),
                 doubleKillProp.getContentType(),

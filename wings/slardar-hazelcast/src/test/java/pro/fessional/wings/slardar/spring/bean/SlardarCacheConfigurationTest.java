@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.spring.bean;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 
 @SpringBootTest(properties = {"debug = true", "wings.slardar.cache.level.general.maxLive=10"})
+@Slf4j
 public class SlardarCacheConfigurationTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -52,12 +54,12 @@ public class SlardarCacheConfigurationTest {
         c2 = cacheService.cacheServer("cacheCall");
         assertEquals(2, c2);
 
-        System.out.println("sleep 20 s");
+        log.info("sleep 20 s");
         Thread.sleep(20 * 1000);
 
         c1 = cacheService.cacheMemory("cacheCall");
         c2 = cacheService.cacheServer("cacheCall");
-        System.out.println("c1=" + c1 + ", c2=" + c2);
+        log.info("c1=" + c1 + ", c2=" + c2);
 
         assertTrue(c1 >= 2);
         assertTrue(c2 >= 3);

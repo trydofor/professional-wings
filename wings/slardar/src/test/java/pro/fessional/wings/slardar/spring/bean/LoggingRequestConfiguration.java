@@ -24,11 +24,11 @@ import java.util.Collection;
 @AutoConfigureBefore(SlardarRestreamConfiguration.class)
 public class LoggingRequestConfiguration {
 
-    private static final Log logger = LogFactory.getLog(LoggingRequestConfiguration.class);
+    private static final Log log = LogFactory.getLog(LoggingRequestConfiguration.class);
 
 //    @Bean
 //    public CommonsRequestLoggingFilter commonsRequestLoggingFilter() {
-//        logger.info("Wings conf commonsRequestLoggingFilter");
+//        log.info("Wings conf commonsRequestLoggingFilter");
 //        CommonsRequestLoggingFilter filter = new CommonsRequestLoggingFilter();
 //        filter.setIncludeQueryString(true);
 //        filter.setIncludePayload(true);
@@ -78,7 +78,7 @@ public class LoggingRequestConfiguration {
 
             @Override
             protected void logging(@NotNull String message) {
-                logger.warn(message);
+                log.warn(message);
             }
         };
     }

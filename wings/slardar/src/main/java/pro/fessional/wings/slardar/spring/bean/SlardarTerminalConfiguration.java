@@ -19,12 +19,12 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$terminal, havingValue = "true")
 public class SlardarTerminalConfiguration {
 
-    private final Log logger = LogFactory.getLog(SlardarTerminalConfiguration.class);
+    private final Log log = LogFactory.getLog(SlardarTerminalConfiguration.class);
 
     @Bean
     @ConditionalOnBean({WingsLocaleResolver.class, WingsRemoteResolver.class})
     public TerminalInterceptor terminalInterceptor(WingsLocaleResolver localeResolver, WingsRemoteResolver remoteResolver) {
-        logger.info("Wings conf Terminal filter");
+        log.info("Wings conf Terminal filter");
         return new TerminalInterceptor(localeResolver, remoteResolver);
     }
 }

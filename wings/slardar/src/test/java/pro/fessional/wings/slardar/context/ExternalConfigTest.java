@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.context;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since 2021-07-05
  */
 @SpringBootTest
+@Slf4j
 public class ExternalConfigTest {
 
     @Value("${random.value}")
@@ -20,7 +22,7 @@ public class ExternalConfigTest {
 
     @Test
     public void testRandom() {
-        System.out.println("random-value=" + randomValue);
-        System.out.println("random-uuid=" + randomUuid);
+        log.info("random-value=" + randomValue);
+        log.info("random-uuid=" + randomUuid);
     }
 }

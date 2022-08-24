@@ -1,6 +1,7 @@
 package pro.fessional.wings.silencer.info;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @SpringBootTest
 @Disabled("maven build")
+@Slf4j
 public class InfoPrintTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -23,8 +25,8 @@ public class InfoPrintTest {
     private GitProperties gitProperties;
 
     @Test
-    public void printTest(){
-        System.out.println(buildProperties);
-        System.out.println(gitProperties);
+    public void printTest() {
+        log.info("{}", buildProperties);
+        log.info("{}", gitProperties);
     }
 }

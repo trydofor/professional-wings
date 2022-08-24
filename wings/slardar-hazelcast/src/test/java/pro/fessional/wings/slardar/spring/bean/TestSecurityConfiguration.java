@@ -20,7 +20,7 @@ import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 @Configuration(proxyBeanMethods = false)
 public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final static Log logger = LogFactory.getLog(TestSecurityConfiguration.class);
+    private final static Log log = LogFactory.getLog(TestSecurityConfiguration.class);
 
     @Setter(onMethod_ = {@Autowired})
     private TestLoginHandler testLoginHandler;
@@ -60,7 +60,7 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        logger.info("config HttpSecurity");
+        log.info("config HttpSecurity");
         http.apply(SecurityConfigHelper.http())
             .httpPermit(conf -> conf
                     .permitCorsAll()

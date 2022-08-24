@@ -20,13 +20,13 @@ import pro.fessional.wings.slardar.webmvc.PageQueryArgumentResolver;
 @RequiredArgsConstructor
 public class SlardarPageQueryConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SlardarPageQueryConfiguration.class);
+    private static final Log log = LogFactory.getLog(SlardarPageQueryConfiguration.class);
 
     private final SlardarPagequeryProp config;
 
     @Bean
     public PageQueryArgumentResolver pageQueryArgumentResolver() {
-        logger.info("Wings conf PageQueryArgumentResolver");
+        log.info("Wings conf PageQueryArgumentResolver");
         final PageQueryArgumentResolver resolver = new PageQueryArgumentResolver();
         resolver.setPage(config.getPage());
         resolver.setSize(config.getSize());

@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.concur;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
                 "wings.slardar.debounce.content-type=text/plain",
                 "wings.slardar.debounce.response-body=debounced",
         })
+@Slf4j
 class DebounceTest {
 
     @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
@@ -63,10 +65,10 @@ class DebounceTest {
 
         final ResponseEntity<String> r1 = restTemplate.postForEntity(this.doubleKillHost + url, q, String.class);
         assertEquals(HttpStatus.OK, r1.getStatusCode());
-        System.out.println(">>r1>>" + r1.getBody());
+        log.info(">>r1>>" + r1.getBody());
 
         final ResponseEntity<String> r2 = restTemplate.postForEntity(this.doubleKillHost + url, q, String.class);
-        System.out.println(">>r2>>" + r2.getBody());
+        log.info(">>r2>>" + r2.getBody());
         if (reuse) {
             assertEquals(HttpStatus.OK, r2.getStatusCode());
             assertEquals(r1.getBody(), r2.getBody());
@@ -78,7 +80,7 @@ class DebounceTest {
 
         Thread.sleep(1000);
         final ResponseEntity<String> r3 = restTemplate.postForEntity(this.doubleKillHost + url, q, String.class);
-        System.out.println(">>r3>>" + r3.getBody());
+        log.info(">>r3>>" + r3.getBody());
         assertEquals(HttpStatus.OK, r3.getStatusCode());
         assertNotEquals(r2.getBody(), r3.getBody());
     }

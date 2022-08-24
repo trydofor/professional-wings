@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.monitor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.Map;
  * @since 2021-07-16
  */
 // @Component
+@Slf4j
 public class TestCpuHeavyTask {
 
     @Scheduled(fixedRate = 10_000)
@@ -18,6 +20,6 @@ public class TestCpuHeavyTask {
         for (double i = 1; i < 10_0000; i++) {
             map.put("" + i, "pi=" + (Math.PI * Math.pow(i, 3)));
         }
-        System.out.println(map.size());
+        log.info("map size={}", map.size());
     }
 }

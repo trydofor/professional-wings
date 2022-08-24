@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  */
 public class ConstantEnumGenerator {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConstantEnumGenerator.class);
+    private static final Logger log = LoggerFactory.getLogger(ConstantEnumGenerator.class);
 
     /**
      * 对java中非合法命名的字符进行替换，设置为空，以忽略非命名字符
@@ -146,14 +146,14 @@ public class ConstantEnumGenerator {
                     String jb = jtxt.replaceAll("@since [0-9-]+", "").trim();
                     String tb = text.replaceAll("@since [0-9-]+", "").trim();
                     if (jb.equals(tb)) {
-                        logger.info("skip same {}", java.getName());
+                        log.info("skip same {}", java.getName());
                         continue;
                     }
                 }
                 try (FileOutputStream fos = new FileOutputStream(java)) {
                     fos.write(text.getBytes(StandardCharsets.UTF_8));
                     nowFiles.add(java);
-                    logger.info("make {} to {}", claz, java.getAbsolutePath());
+                    log.info("make {} to {}", claz, java.getAbsolutePath());
                 }
             }
         } catch (IOException e) {
@@ -164,7 +164,7 @@ public class ConstantEnumGenerator {
         if (files != null) {
             for (File file : files) {
                 if (!nowFiles.contains(file)) {
-                    logger.info("exceed file {}", file.getAbsolutePath());
+                    log.info("exceed file {}", file.getAbsolutePath());
                 }
             }
         }
@@ -180,7 +180,7 @@ public class ConstantEnumGenerator {
         Map<String, String> javaFiles = new HashMap<>();
         int count = 1;
         for (Map.Entry<String, List<ConstantEnum>> e : enums.entrySet()) {
-            logger.info("load {} enum type = {}, count={}", count++, e.getKey(), e.getValue().size());
+            log.info("load {} enum type = {}, count={}", count++, e.getKey(), e.getValue().size());
         }
 
         for (Map.Entry<String, List<ConstantEnum>> enun : enums.entrySet()) {

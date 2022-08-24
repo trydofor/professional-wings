@@ -94,7 +94,7 @@ import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.validVal
 @RequiredArgsConstructor
 public class WarlockSecurityBeanConfiguration {
 
-    private final static Log logger = LogFactory.getLog(WarlockSecurityBeanConfiguration.class);
+    private final static Log log = LogFactory.getLog(WarlockSecurityBeanConfiguration.class);
 
     private final WarlockSecurityProp securityProp;
     private final ApplicationContext applicationContext;
@@ -102,7 +102,7 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(WingsAuthTypeParser.class)
     public WingsAuthTypeParser wingsAuthTypeParser() {
-        logger.info("Wings conf wingsAuthTypeParser");
+        log.info("Wings conf wingsAuthTypeParser");
         final Map<String, Enum<?>> authType = securityProp.mapAuthTypeEnum();
         final Enum<?> atd = securityProp.mapAuthTypeDefault();
         return new DefaultWingsAuthTypeParser(atd, authType);
@@ -115,7 +115,7 @@ public class WarlockSecurityBeanConfiguration {
             @SuppressWarnings("all") BlockIdProvider blockIdProvider,
             @SuppressWarnings("all") CommitJournalModify journalModify
     ) {
-        logger.info("Wings conf terminalJournalService");
+        log.info("Wings conf terminalJournalService");
         return new TerminalJournalService(lightIdService, blockIdProvider, journalModify);
     }
 
@@ -124,7 +124,7 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnMissingBean(AuthenticationSuccessHandler.class)
     @ConditionalOnExpression("!'${" + WarlockSecurityProp.Key$loginSuccessBody + "}'.isEmpty()")
     public AuthenticationSuccessHandler loginSuccessHandler() {
-        logger.info("Wings conf loginSuccessHandler");
+        log.info("Wings conf loginSuccessHandler");
         return new LoginSuccessHandler();
     }
 
@@ -132,7 +132,7 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnMissingBean(AuthenticationFailureHandler.class)
     @ConditionalOnExpression("!'${" + WarlockSecurityProp.Key$loginFailureBody + "}'.isEmpty()")
     public AuthenticationFailureHandler loginFailureHandler() {
-        logger.info("Wings conf loginFailureHandler");
+        log.info("Wings conf loginFailureHandler");
         return new LoginFailureHandler();
     }
 
@@ -140,7 +140,7 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnMissingBean(LogoutSuccessHandler.class)
     @ConditionalOnExpression("!'${" + WarlockSecurityProp.Key$logoutSuccessBody + "}'.isEmpty()")
     public LogoutSuccessHandler logoutSuccessHandler() {
-        logger.info("Wings conf logoutSuccessHandler");
+        log.info("Wings conf logoutSuccessHandler");
         return new LogoutOkHandler();
     }
 
@@ -149,7 +149,7 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(WarlockPermNormalizer.class)
     public WarlockPermNormalizer warlockPermNormalizer(@SuppressWarnings("all") GrantedAuthorityDefaults gad) {
-        logger.info("Wings conf warlockPermNormalizer");
+        log.info("Wings conf warlockPermNormalizer");
         final WarlockPermNormalizer bean = new WarlockPermNormalizer();
         bean.setRolePrefix(gad.getRolePrefix());
         return bean;
@@ -158,14 +158,14 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(ComboWarlockAuthnService.class)
     public ComboWarlockAuthnService comboWarlockAuthnService() {
-        logger.info("Wings conf comboWarlockAuthnService");
+        log.info("Wings conf comboWarlockAuthnService");
         return new ComboWarlockAuthnService();
     }
 
     @Bean
     @ConditionalOnMissingBean(ComboWarlockAuthzService.class)
     public ComboWarlockAuthzService comboWarlockAuthzService() {
-        logger.info("Wings conf comboWarlockAuthzService");
+        log.info("Wings conf comboWarlockAuthzService");
         final ComboWarlockAuthzService bean = new ComboWarlockAuthzService();
         bean.setAuthorityRole(securityProp.isAuthorityRole());
         bean.setAuthorityPerm(securityProp.isAuthorityPerm());
@@ -175,14 +175,14 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(DefaultPermRoleCombo.class)
     public DefaultPermRoleCombo defaultPermRoleCombo() {
-        logger.info("Wings conf defaultPermRoleCombo");
+        log.info("Wings conf defaultPermRoleCombo");
         return new DefaultPermRoleCombo();
     }
 
     @Bean
     @ConditionalOnMissingBean(DefaultUserDetailsCombo.class)
     public DefaultUserDetailsCombo defaultUserDetailsCombo() {
-        logger.info("Wings conf defaultUserDetailsCombo");
+        log.info("Wings conf defaultUserDetailsCombo");
         final DefaultUserDetailsCombo bean = new DefaultUserDetailsCombo();
         bean.setAutoRegisterType(securityProp.mapAutoregAuthEnum());
         return bean;
@@ -193,7 +193,7 @@ public class WarlockSecurityBeanConfiguration {
                              + " && ${" + WarlockEnabledProp.Key$comboJustAuthAutoreg + ":false}")
     @ConditionalOnMissingBean(JustAuthUserAuthnAutoReg.class)
     public JustAuthUserAuthnAutoReg justAuthUserAuthnAutoReg() {
-        logger.info("Wings conf justAuthUserAuthnAutoReg");
+        log.info("Wings conf justAuthUserAuthnAutoReg");
         return new JustAuthUserAuthnAutoReg();
     }
 
@@ -201,7 +201,7 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnMissingBean(DefaultUserAuthnAutoReg.class)
     public DefaultUserAuthnAutoReg defaultUserAuthnAutoReg() {
         // 存在子类，则不需要此bean，如JustAuthUserAuthnAutoReg
-        logger.info("Wings conf defaultUserAuthnAutoReg");
+        log.info("Wings conf defaultUserAuthnAutoReg");
         return new DefaultUserAuthnAutoReg();
     }
 
@@ -209,28 +209,28 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnMissingBean(WarlockGrantService.class)
     public WarlockGrantService warlockGrantService() {
         // 存在子类，则不需要此bean，如JustAuthUserAuthnAutoReg
-        logger.info("Wings conf WarlockGrantServiceDummy");
+        log.info("Wings conf WarlockGrantServiceDummy");
         return new WarlockGrantServiceDummy();
     }
 
     @Bean
     @ConditionalOnMissingBean(WarlockPermService.class)
     public WarlockPermService warlockPermService() {
-        logger.info("Wings conf WarlockPermServiceDummy");
+        log.info("Wings conf WarlockPermServiceDummy");
         return new WarlockPermServiceDummy();
     }
 
     @Bean
     @ConditionalOnMissingBean(WarlockRoleService.class)
     public WarlockRoleService warlockRoleService() {
-        logger.info("Wings conf WarlockRoleServiceDummy");
+        log.info("Wings conf WarlockRoleServiceDummy");
         return new WarlockRoleServiceDummy();
     }
 
     @Bean
     @ConditionalOnMissingBean(WarlockUserAuthnService.class)
     public WarlockUserAuthnService warlockUserAuthnService() {
-        logger.info("Wings conf WarlockUserAuthnServiceDummy");
+        log.info("Wings conf WarlockUserAuthnServiceDummy");
         return new WarlockUserAuthnServiceDummy();
     }
 
@@ -239,7 +239,7 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(WarlockUserBasisService.class)
     public WarlockUserBasisService warlockUserBasisService() {
-        logger.info("Wings conf warlockUserBasisService");
+        log.info("Wings conf warlockUserBasisService");
         return new WarlockUserBasisServiceDummy();
     }
 
@@ -247,7 +247,7 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboNonceUserDetails, havingValue = "true")
     @ConditionalOnMissingBean(NonceUserDetailsCombo.class)
     public NonceUserDetailsCombo nonceUserDetailsCombo(List<DefaultUserDetailsCombo> combos) {
-        logger.info("Wings conf nonceUserDetailsCombo");
+        log.info("Wings conf nonceUserDetailsCombo");
         final NonceUserDetailsCombo combo = new NonceUserDetailsCombo();
         combo.setAcceptNonceType(securityProp.mapNonceAuthEnum());
         final String cn = WingsCache.Level.join(securityProp.getNonceCacheLevel(), "NonceUserDetailsCombo");
@@ -261,10 +261,10 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(MemoryUserDetailsCombo.class)
     public MemoryUserDetailsCombo memoryUserDetailsCombo(@SuppressWarnings("all") WingsAuthTypeParser typeParser) {
-        logger.info("Wings conf memoryUserDetailsCombo");
+        log.info("Wings conf memoryUserDetailsCombo");
         final MemoryUserDetailsCombo bean = new MemoryUserDetailsCombo();
         for (Map.Entry<String, Mu> en : securityProp.getMemUser().entrySet()) {
-            logger.info("Wings conf add MemUser=" + en.getKey());
+            log.info("Wings conf add MemUser=" + en.getKey());
             final Mu mu = en.getValue();
             Set<String> ats = mu.getAuthType();
             if (ats == null || ats.isEmpty()) {
@@ -293,7 +293,7 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnMissingBean(AuthZonePermChecker.class)
     @ConditionalOnProperty(name = "spring.wings.warlock.enabled.zone-perm-check", havingValue = "true")
     public AuthZonePermChecker authZonePermChecker() {
-        logger.info("Wings conf authZonePermChecker");
+        log.info("Wings conf authZonePermChecker");
         final AuthZonePermChecker bean = new AuthZonePermChecker();
         bean.setZonePerm(securityProp.getZonePerm());
         return bean;
@@ -303,14 +303,14 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnMissingBean(AuthAppPermChecker.class)
     @ConditionalOnProperty(name = "spring.wings.warlock.enabled.app-perm-check", havingValue = "true")
     public AuthAppPermChecker authAppPermChecker(@Value("${spring.application.name:wings-default}") String appName) {
-        logger.info("Wings conf authAppPermChecker");
+        log.info("Wings conf authAppPermChecker");
         final AuthAppPermChecker bean = new AuthAppPermChecker();
         final Set<String> perms = new HashSet<>();
         final AntPathMatcher matcher = new AntPathMatcher();
         for (Map.Entry<String, Set<String>> en : securityProp.getAppPerm().entrySet()) {
             final String ptn = en.getKey();
             if (matcher.match(ptn, appName)) {
-                logger.info("Wings conf authAppPermChecker, " + appName + " matches " + ptn);
+                log.info("Wings conf authAppPermChecker, " + appName + " matches " + ptn);
                 perms.addAll(en.getValue());
             }
         }
@@ -321,7 +321,7 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(ComboWingsAuthCheckService.class)
     public ComboWingsAuthCheckService comboWingsAuthCheckService(ObjectProvider<ComboWingsAuthCheckService.Combo> combos) {
-        logger.info("Wings conf comboWingsAuthCheckService");
+        log.info("Wings conf comboWingsAuthCheckService");
         final List<ComboWingsAuthCheckService.Combo> list = combos.orderedStream().collect(Collectors.toList());
         final ComboWingsAuthCheckService bean = new ComboWingsAuthCheckService();
         bean.setCombos(list);
@@ -333,17 +333,17 @@ public class WarlockSecurityBeanConfiguration {
                              + " && ${" + WarlockEnabledProp.Key$comboJustAuthUserDetails + ":false}")
     @ConditionalOnMissingBean(JustAuthUserDetailsCombo.class)
     public JustAuthUserDetailsCombo justAuthUserDetailsCombo() {
-        logger.info("Wings conf justAuthUserDetailsCombo");
+        log.info("Wings conf justAuthUserDetailsCombo");
         return new JustAuthUserDetailsCombo();
     }
 
     @Bean
     @ConditionalOnMissingBean(UserDetailsService.class)
     public WingsUserDetailsService wingsUserDetailsService(ObjectProvider<ComboWingsUserDetailsService.Combo<?>> combos) {
-        logger.info("Wings conf wingsUserDetailsService");
+        log.info("Wings conf wingsUserDetailsService");
         ComboWingsUserDetailsService uds = new ComboWingsUserDetailsService();
         combos.orderedStream().forEach(it -> {
-            logger.info("Wings conf wingsUserDetailsService add " + it.getClass().getName());
+            log.info("Wings conf wingsUserDetailsService add " + it.getClass().getName());
             uds.add(it);
         });
         return uds;
@@ -354,7 +354,7 @@ public class WarlockSecurityBeanConfiguration {
     public MemoryTypedAuthzCombo memoryTypedAuthzCombo(
             @SuppressWarnings("all") WingsAuthTypeParser typeParser,
             @SuppressWarnings("all") WarlockPermNormalizer normalizer) {
-        logger.info("Wings conf memoryTypedAuthzCombo");
+        log.info("Wings conf memoryTypedAuthzCombo");
         final MemoryTypedAuthzCombo bean = new MemoryTypedAuthzCombo();
         for (Map.Entry<String, Ma> en : securityProp.getMemAuth().entrySet()) {
             final Ma ma = en.getValue();
@@ -364,23 +364,23 @@ public class WarlockSecurityBeanConfiguration {
                                        .collect(Collectors.toSet());
             final Set<String> perm = ma.getAuthPerm();
             final long uid = ma.getUserId();
-            logger.info("Wings conf add MemAuth, userId=" + uid);
+            log.info("Wings conf add MemAuth, userId=" + uid);
             bean.addAuthz(uid, role);
             bean.addAuthz(uid, perm);
             if (uid < 0) {
-                logger.warn("should NOT use negative UserId");
+                log.warn("should NOT use negative UserId");
             }
 
             final String un = ma.getUsername();
             if (hasText(un)) {
                 final String tm = ma.getAuthType();
                 final Enum<?> at = typeParser.parse(tm);
-                logger.info("Wings conf add MemAuth, username=" + un + ", auth-type=" + tm);
+                log.info("Wings conf add MemAuth, username=" + un + ", auth-type=" + tm);
                 bean.addAuthz(un, at, role);
                 bean.addAuthz(un, at, perm);
             }
             else {
-                logger.info("Wings conf skip MemAuth, empty username");
+                log.info("Wings conf skip MemAuth, empty username");
             }
         }
         return bean;
@@ -389,11 +389,11 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(WingsAuthDetailsSource.class)
     public WingsAuthDetailsSource<?> wingsAuthDetailsSource(ObjectProvider<ComboWingsAuthDetailsSource.Combo<?>> combos) {
-        logger.info("Wings conf wingsAuthDetailsSource");
+        log.info("Wings conf wingsAuthDetailsSource");
         ComboWingsAuthDetailsSource uds = new ComboWingsAuthDetailsSource();
 
         combos.orderedStream().forEach(it -> {
-            logger.info("Wings conf wingsAuthDetailsSource add " + it.getClass().getName());
+            log.info("Wings conf wingsAuthDetailsSource add " + it.getClass().getName());
             uds.add(it);
         });
 
@@ -412,10 +412,10 @@ public class WarlockSecurityBeanConfiguration {
         final Aes128 aes128 = aes128Provider.getIfAvailable();
         if (aes128 != null) {
             bean.setAes128(aes128);
-            logger.info("Wings conf authStateBuilder with Global Aes128 Bean");
+            log.info("Wings conf authStateBuilder with Global Aes128 Bean");
         }
         else {
-            logger.info("Wings conf authStateBuilder with Random Aes128 Bean");
+            log.info("Wings conf authStateBuilder with Random Aes128 Bean");
         }
         return bean;
     }
@@ -423,17 +423,17 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(WarlockUserLoginService.class)
     public WarlockUserLoginService warlockUserLoginService() {
-        logger.info("Wings conf WarlockUserLoginServiceDummy");
+        log.info("Wings conf WarlockUserLoginServiceDummy");
         return new WarlockUserLoginServiceDummy();
     }
 
     @Bean
     @ConditionalOnMissingBean(WingsAuthPageHandler.class)
     public WingsAuthPageHandler wingsAuthPageHandler(ObjectProvider<ComboWingsAuthPageHandler.Combo> combos) {
-        logger.info("Wings conf wingsAuthPageHandler");
+        log.info("Wings conf wingsAuthPageHandler");
         ComboWingsAuthPageHandler uds = new ComboWingsAuthPageHandler();
         combos.orderedStream().forEach(it -> {
-            logger.info("Wings conf wingsAuthPageHandler add " + it.getClass().getName());
+            log.info("Wings conf wingsAuthPageHandler add " + it.getClass().getName());
             uds.add(it);
         });
         return uds;
@@ -443,7 +443,7 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboListAllLoginPage, havingValue = "true")
     @ConditionalOnMissingBean(ListAllLoginPageCombo.class)
     public ListAllLoginPageCombo listAllLoginPageCombo() {
-        logger.info("Wings conf listAllLoginPageCombo");
+        log.info("Wings conf listAllLoginPageCombo");
         return new ListAllLoginPageCombo();
     }
 
@@ -452,27 +452,27 @@ public class WarlockSecurityBeanConfiguration {
                              + " && ${" + WarlockEnabledProp.Key$comboJustAuthLoginPage + ":false}")
     @ConditionalOnMissingBean(JustAuthLoginPageCombo.class)
     public JustAuthLoginPageCombo justAuthLoginPageCombo() {
-        logger.info("Wings conf justAuthLoginPageCombo");
+        log.info("Wings conf justAuthLoginPageCombo");
         return new JustAuthLoginPageCombo();
     }
 
     @Bean
     @ConditionalOnMissingBean(GrantedAuthorityDefaults.class)
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
-        logger.info("Wings conf grantedAuthorityDefaults");
+        log.info("Wings conf grantedAuthorityDefaults");
         return new GrantedAuthorityDefaults(securityProp.getRolePrefix());
     }
 
     ///////// Listener /////////
     @Bean
     public WarlockSuccessLoginListener warlockSuccessLoginListener() {
-        logger.info("Wings conf warlockSuccessLoginListener");
+        log.info("Wings conf warlockSuccessLoginListener");
         return new WarlockSuccessLoginListener();
     }
 
     @Bean
     public WarlockFailedLoginListener warlockFailedLoginListener() {
-        logger.info("Wings conf warlockFailedLoginListener");
+        log.info("Wings conf warlockFailedLoginListener");
         return new WarlockFailedLoginListener();
     }
 }

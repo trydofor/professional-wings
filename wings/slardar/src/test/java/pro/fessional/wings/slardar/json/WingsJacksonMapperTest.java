@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
                               "wings.slardar.jackson.empty-list=true",
                               "wings.slardar.jackson.empty-map=true",
 })
+@Slf4j
 public class WingsJacksonMapperTest {
 
     final static TimeZone systemTz = TimeZone.getTimeZone("Asia/Shanghai");
@@ -73,7 +75,7 @@ public class WingsJacksonMapperTest {
 
     @BeforeEach
     public void init() {
-        System.out.println("=== set locale to us ===");
+        log.info("=== set locale to us ===");
         Locale.setDefault(Locale.US);
         // user timezone
         TimeZone.setDefault(systemTz);
@@ -114,24 +116,24 @@ public class WingsJacksonMapperTest {
     public void testNaming() throws JsonProcessingException {
         NamingManual n1 = new NamingManual();
         String s1 = objectMapper.writeValueAsString(n1);
-        System.out.println(s1);
+        log.info(s1);
         NamingLombok n2 = new NamingLombok();
         String s2 = objectMapper.writeValueAsString(n2);
-        System.out.println(s2);
+        log.info(s2);
     }
 
     @Test
     public void testEquals() throws IOException {
-        System.out.println("=== ZoneId= " + ZoneId.systemDefault());
+        log.info("=== ZoneId= " + ZoneId.systemDefault());
         JsonIt it = new JsonIt();
-        System.out.println("===== to string ======");
-        System.out.println(it);
+        log.info("===== to string ======");
+        log.info("it={}", it);
         String json = objectMapper.writeValueAsString(it);
-        System.out.println("===== write json ======");
-        System.out.println(json);
+        log.info("===== write json ======");
+        log.info(json);
         JsonIt obj = objectMapper.readValue(json, JsonIt.class);
-        System.out.println("===== read json ======");
-        System.out.println(obj);
+        log.info("===== read json ======");
+        log.info("obj={}", obj);
 
         String json2 = objectMapper.writeValueAsString(obj);
         JsonIt obj2 = objectMapper.readValue(json2, JsonIt.class);
@@ -365,7 +367,7 @@ public class WingsJacksonMapperTest {
                       "</JsonIt>").replaceAll("\\s", ""), json.replaceAll("\\s", ""));
 
         JsonIt xmlJsonIt = xmlMapper.readValue(json, JsonIt.class);
-        System.out.println(xmlJsonIt);
+        log.info("it={}", xmlJsonIt);
     }
 
     @Test
@@ -447,8 +449,7 @@ public class WingsJacksonMapperTest {
         String s1 = objectMapper.writeValueAsString(aes);
         Aes128String aes2 = objectMapper.readValue(s1, Aes128String.class);
 
-        //
-        System.out.println(s1);
+        log.info(s1);
         assertEquals(aes, aes2);
         assertFalse(s1.contains(txt));
     }

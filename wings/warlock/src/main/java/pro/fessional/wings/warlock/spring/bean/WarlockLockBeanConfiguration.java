@@ -24,14 +24,14 @@ import pro.fessional.wings.warlock.spring.prop.WarlockLockProp;
 @RequiredArgsConstructor
 public class WarlockLockBeanConfiguration {
 
-    private final static Log logger = LogFactory.getLog(WarlockLockBeanConfiguration.class);
+    private final static Log log = LogFactory.getLog(WarlockLockBeanConfiguration.class);
     private final WarlockLockProp warlockLockProp;
 
     @Bean
     @ConditionalOnMissingBean(JvmStaticGlobalLock.class)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$globalLock, havingValue = "true")
     public JvmStaticGlobalLock jvmStaticGlobalLock() {
-        logger.info("Wings conf jvmStaticGlobalLock");
+        log.info("Wings conf jvmStaticGlobalLock");
         return new JvmStaticGlobalLock();
     }
 
@@ -39,7 +39,7 @@ public class WarlockLockBeanConfiguration {
     @ConditionalOnMissingBean(DatabaseGlobalLock.class)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$globalLock, havingValue = "true")
     public DatabaseGlobalLock databaseGlobalLock(JdbcTemplate jdbcTemplate) {
-        logger.info("Wings conf databaseGlobalLock");
+        log.info("Wings conf databaseGlobalLock");
         return new DatabaseGlobalLock(jdbcTemplate);
     }
 
@@ -48,7 +48,7 @@ public class WarlockLockBeanConfiguration {
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$globalLock, havingValue = "true")
     public HazelcastGlobalLock hazelcastGlobalLock(HazelcastInstance hazelcastInstance) {
         final boolean hcp = warlockLockProp.isHazelcastCp();
-        logger.info("Wings conf hazelcastGlobalLock, useCpIfSafe=" + hcp);
+        log.info("Wings conf hazelcastGlobalLock, useCpIfSafe=" + hcp);
         return new HazelcastGlobalLock(hazelcastInstance, hcp);
     }
 }

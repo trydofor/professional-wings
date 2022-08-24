@@ -11,7 +11,7 @@ import pro.fessional.wings.slardar.servlet.filter.WingsOverloadFilter;
 public class SlardarOverloadProp extends WingsOverloadFilter.Config {
     public static final String Key = "wings.slardar.overload";
 
-    public static final String Key$loggerInterval = Key + ".logger-interval";
+    public static final String Key$logInterval = Key + ".log-interval";
     public static final String Key$fallbackCode = Key + ".fallback-code";
     public static final String Key$fallbackBody = Key + ".fallback-body";
     public static final String Key$requestCapacity = Key + ".request-capacity";

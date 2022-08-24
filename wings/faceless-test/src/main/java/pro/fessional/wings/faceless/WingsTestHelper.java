@@ -30,7 +30,7 @@ public class WingsTestHelper {
     public static final long REVISION_TEST_V1 = 2019_0601_01L;
     public static final long REVISION_TEST_V2 = 2019_0601_02L;
 
-    private static final Logger logger = LoggerFactory.getLogger(WingsTestHelper.class);
+    private static final Logger log = LoggerFactory.getLogger(WingsTestHelper.class);
 
     @Setter(onMethod_ = {@Autowired})
     private DataSourceContext dataSourceContext;
@@ -145,11 +145,11 @@ public class WingsTestHelper {
 
     public static void testcaseNotice(String... mes) {
         for (String s : mes) {
-            logger.info(">>=>🦁🦁🦁 " + s + " 🦁🦁🦁<=<<");
+            log.info(">>=>🦁🦁🦁 " + s + " 🦁🦁🦁<=<<");
         }
     }
 
     public static void breakpointDebug(String... mes) {
-        Arrays.stream(mes).forEach(s -> logger.debug(">>=>🐶🐶🐶 " + s + " 🐶🐶🐶<=<<"));
+        Arrays.stream(mes).forEach(s -> log.debug(">>=>🐶🐶🐶 " + s + " 🐶🐶🐶<=<<"));
     }
 }

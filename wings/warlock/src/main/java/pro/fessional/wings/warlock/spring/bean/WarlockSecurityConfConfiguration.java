@@ -44,7 +44,7 @@ import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.validVal
 @RequiredArgsConstructor
 public class WarlockSecurityConfConfiguration {
 
-    private final static Log logger = LogFactory.getLog(WarlockSecurityConfConfiguration.class);
+    private final static Log log = LogFactory.getLog(WarlockSecurityConfConfiguration.class);
 
     private final SessionRegistry sessionRegistry;
     private final WarlockSecurityProp securityProp;
@@ -57,10 +57,10 @@ public class WarlockSecurityConfConfiguration {
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityWebAutos, havingValue = "true")
     public WebSecurityCustomizer warlockWebCustomizer(ObjectProvider<HttpFirewall> httpFirewall) {
-        logger.info("Wings conf warlockWebCustomizer");
+        log.info("Wings conf warlockWebCustomizer");
         return web -> {
             if (securityProp.isWebDebug()) {
-                logger.info("Wings conf WebSecurity, WebDebug=true");
+                log.info("Wings conf WebSecurity, WebDebug=true");
                 web.debug(true);
             }
 
@@ -69,13 +69,13 @@ public class WarlockSecurityConfConfiguration {
             final Map<String, String> webIgnore = securityProp.getWebIgnore();
             if (!webIgnore.isEmpty()) {
                 final Set<String> ignores = validValue(webIgnore.values());
-                logger.info("Wings conf WebSecurity, ignoring=" + String.join("\n,", ignores));
+                log.info("Wings conf WebSecurity, ignoring=" + String.join("\n,", ignores));
                 web.ignoring().antMatchers(ignores.toArray(Null.StrArr));
             }
 
             final HttpFirewall firewall = httpFirewall.getIfAvailable();
             if (firewall != null) {
-                logger.info("Wings conf WebSecurity, httpFirewall=" + firewall.getClass());
+                log.info("Wings conf WebSecurity, httpFirewall=" + firewall.getClass());
                 web.httpFirewall(firewall);
             }
         };
@@ -95,7 +95,7 @@ public class WarlockSecurityConfConfiguration {
             final AuthenticationFailureHandler authNgHandler = authenticationFailureHandler.getIfAvailable();
             final WingsAuthDetailsSource<?> authDetailSource = wingsAuthDetailsSource.getIfAvailable();
             final LogoutSuccessHandler logoutOkHandler = logoutSuccessHandler.getIfAvailable();
-            logger.info("Wings conf HttpSecurity, authenticationDetailsSource=" + (authDetailSource == null ? "null" : authDetailSource.getClass()));
+            log.info("Wings conf HttpSecurity, authenticationDetailsSource=" + (authDetailSource == null ? "null" : authDetailSource.getClass()));
 
             http.apply(SecurityConfigHelper.http())
                 .bindLogin(conf -> {
@@ -110,11 +110,11 @@ public class WarlockSecurityConfConfiguration {
                                 .bindAuthTypeToEnums(securityProp.mapAuthTypeEnum());
 
                             if (authOkHandler != null) {
-                                logger.info("Wings conf HttpSecurity, successHandler=" + authOkHandler.getClass());
+                                log.info("Wings conf HttpSecurity, successHandler=" + authOkHandler.getClass());
                                 conf.successHandler(authOkHandler);
                             }
                             if (authNgHandler != null) {
-                                logger.info("Wings conf HttpSecurity, failureHandler=" + authNgHandler.getClass());
+                                log.info("Wings conf HttpSecurity, failureHandler=" + authNgHandler.getClass());
                                 conf.failureHandler(authNgHandler);
                             }
                         }
@@ -126,7 +126,7 @@ public class WarlockSecurityConfConfiguration {
                                 .invalidateHttpSession(true);
 
                             if (logoutOkHandler != null) {
-                                logger.info("Wings conf HttpSecurity, logoutSuccessHandler=" + logoutOkHandler.getClass());
+                                log.info("Wings conf HttpSecurity, logoutSuccessHandler=" + logoutOkHandler.getClass());
                                 conf.logoutSuccessHandler(logoutOkHandler);
                             }
                         }
@@ -150,14 +150,14 @@ public class WarlockSecurityConfConfiguration {
             // 1 PermitAll
             final Set<String> permed = validValue(securityProp.getPermitAll().values());
             if (!permed.isEmpty()) {
-                logger.info("Wings conf HttpSecurity, bind PermitAll=" + String.join("\n,", permed));
+                log.info("Wings conf HttpSecurity, bind PermitAll=" + String.join("\n,", permed));
                 conf.antMatchers(permed.toArray(Null.StrArr)).permitAll();
             }
 
             // 2 Authenticated
             final Set<String> authed = validValue(securityProp.getAuthenticated().values());
             if (!authed.isEmpty()) {
-                logger.info("Wings conf HttpSecurity, bind Authenticated=" + String.join("\n,", authed));
+                log.info("Wings conf HttpSecurity, bind Authenticated=" + String.join("\n,", authed));
                 conf.antMatchers(authed.toArray(Null.StrArr)).authenticated();
             }
 
@@ -178,7 +178,7 @@ public class WarlockSecurityConfConfiguration {
                 for (Map.Entry<String, Set<String>> en : urlPerm.descendingMap().entrySet()) {
                     final String url = en.getKey();
                     final Set<String> pms = validValue(en.getValue());
-                    logger.info("Wings conf HttpSecurity, bind url=" + url + ", any-permit=[" + String.join(",", pms) + "]");
+                    log.info("Wings conf HttpSecurity, bind url=" + url + ", any-permit=[" + String.join(",", pms) + "]");
                     conf.antMatchers(url).hasAnyAuthority(pms.toArray(Null.StrArr));
                 }
             }
@@ -206,22 +206,22 @@ public class WarlockSecurityConfConfiguration {
             final RequestCache rc = cache.getIfAvailable();
             if (rc == null) {
                 http.requestCache().disable();
-                logger.info("Wings conf HttpSecurity, requestCache disable");
+                log.info("Wings conf HttpSecurity, requestCache disable");
             }
             else {
                 http.requestCache().requestCache(rc);
-                logger.info("Wings conf HttpSecurity, requestCache " + rc.getClass().getName());
+                log.info("Wings conf HttpSecurity, requestCache " + rc.getClass().getName());
             }
 
             // csrf
             final CsrfTokenRepository ct = csrf.getIfAvailable();
             if (ct == null) {
                 http.csrf().disable();
-                logger.info("Wings conf HttpSecurity, csrf disable");
+                log.info("Wings conf HttpSecurity, csrf disable");
             }
             else {
                 http.csrf().csrfTokenRepository(ct);
-                logger.info("Wings conf HttpSecurity, csrf " + ct.getClass().getName());
+                log.info("Wings conf HttpSecurity, csrf " + ct.getClass().getName());
             }
         };
     }

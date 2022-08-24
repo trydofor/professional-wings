@@ -42,13 +42,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SlardarSessionConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SlardarSessionConfiguration.class);
+    private static final Log log = LogFactory.getLog(SlardarSessionConfiguration.class);
 
     private final SlardarSessionProp slardarSessionProp;
 
     @Bean
     public HttpSessionEventPublisher httpSessionEventPublisher() {
-        logger.info("Wings conf httpSessionEventPublisher");
+        log.info("Wings conf httpSessionEventPublisher");
         return new HttpSessionEventPublisher();
     }
 
@@ -56,11 +56,11 @@ public class SlardarSessionConfiguration {
     public DefaultCookieSerializerCustomizer slardarCookieSerializerCustomizer() {
         return it -> {
             final boolean base64 = slardarSessionProp.isCookieBase64();
-            logger.info("Wings conf Session Cookie Base64=" + base64);
+            log.info("Wings conf Session Cookie Base64=" + base64);
             it.setUseBase64Encoding(base64);
             final String jvmRoute = slardarSessionProp.getCookieRoute();
             if (StringUtils.hasText(jvmRoute)) {
-                logger.info("Wings conf Session Cookie jvmRoute=" + jvmRoute);
+                log.info("Wings conf Session Cookie jvmRoute=" + jvmRoute);
                 it.setJvmRoute(jvmRoute);
             }
         };
@@ -80,15 +80,15 @@ public class SlardarSessionConfiguration {
             final String propName = slardarSessionProp.getCookieName();
             final String servName = cookie.getName();
             if (propName.equals(servName)) {
-                logger.info("Wings conf cookieHttpSessionIdResolver by server.servlet.session.cookie.name=" + propName);
+                log.info("Wings conf cookieHttpSessionIdResolver by server.servlet.session.cookie.name=" + propName);
             }
             else {
-                logger.warn("Wings conf cookieHttpSessionIdResolver by cookie.name=" + propName + ", but server.servlet.session.cookie.name =" + servName);
+                log.warn("Wings conf cookieHttpSessionIdResolver by cookie.name=" + propName + ", but server.servlet.session.cookie.name =" + servName);
             }
 
             CookieSerializer serializer = cookieSerializer.getIfAvailable();
             if (serializer == null) {
-                logger.info("Wings conf httpSessionIdResolver CookieSerializer by default");
+                log.info("Wings conf httpSessionIdResolver CookieSerializer by default");
                 DefaultCookieSerializer defaultCookieSerializer = new DefaultCookieSerializer();
                 PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();
                 map.from(propName).to(defaultCookieSerializer::setCookieName);
@@ -108,7 +108,7 @@ public class SlardarSessionConfiguration {
         final String headerName = slardarSessionProp.getHeaderName();
         if (StringUtils.hasText(headerName)) {
             final HeaderHttpSessionIdResolver headerHttpSessionIdResolver = new HeaderHttpSessionIdResolver(headerName);
-            logger.info("Wings conf headerHttpSessionIdResolver by header.name=" + headerName);
+            log.info("Wings conf headerHttpSessionIdResolver by header.name=" + headerName);
             resolvers.add(headerHttpSessionIdResolver);
         }
 

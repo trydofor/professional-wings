@@ -23,14 +23,14 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$debounce, havingValue = "true")
 public class SlardarDebounceConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SlardarDebounceConfiguration.class);
+    private static final Log log = LogFactory.getLog(SlardarDebounceConfiguration.class);
 
     @Bean
     @ConditionalOnMissingBean(DebounceInterceptor.class)
     public DebounceInterceptor debounceInterceptor(SlardarDebounceProp debounceProp) {
         final long cap = debounceProp.getCapacity();
         final int max = debounceProp.getMaxWait();
-        logger.info("Wings conf debounceInterceptor, capacity=" + cap + ", max-wait=" + max);
+        log.info("Wings conf debounceInterceptor, capacity=" + cap + ", max-wait=" + max);
         final ModelAndView mav = new ModelAndView();
         PlainTextView pv = new PlainTextView(debounceProp.getContentType(), debounceProp.getResponseBody());
         mav.setStatus(HttpStatus.valueOf(debounceProp.getHttpStatus()));

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
                  "wings.slardar.number.floats.format=#.00",
                  "wings.slardar.number.decimal.format=#.00",
                 })
+@Slf4j
 public class DecimalFormatTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -135,7 +137,7 @@ public class DecimalFormatTest {
     @Test
     public void testDecStr() throws JsonProcessingException {
         final String decStr = objectMapper.writeValueAsString(new DecStr());
-        System.out.println(decStr);
+        log.info(decStr);
         Assertions.assertEquals("{\"intVal\":123456,"
                                 + "\"intObj\":123456,"
                                 + "\"longVal\":123456,"
@@ -151,7 +153,7 @@ public class DecimalFormatTest {
     @Test
     public void testDecRaw() throws JsonProcessingException {
         final String decRaw = objectMapper.writeValueAsString(new DecRaw());
-        System.out.println(decRaw);
+        log.info(decRaw);
         Assertions.assertEquals("{\"intVal\":123456,"
                                 + "\"intObj\":123456,"
                                 + "\"longVal\":123456,"
@@ -168,7 +170,7 @@ public class DecimalFormatTest {
     @Test
     public void testDecFmt() throws JsonProcessingException {
         final String decFmt = objectMapper.writeValueAsString(new DecFmt());
-        System.out.println(decFmt);
+        log.info(decFmt);
         Assertions.assertEquals("{\"intVal\":12,34,56.0,"
                                 + "\"intObj\":12,34,56.0,"
                                 + "\"longVal\":123,456.0,"
@@ -192,7 +194,7 @@ public class DecimalFormatTest {
         js.put("minSafe1", -9007199254740991L);
         js.put("minSafe2", -9007199254740992L);
         final String jsFmt = objectMapper.writeValueAsString(js);
-        System.out.println(jsFmt);
+        log.info(jsFmt);
         Assertions.assertEquals("{\"maxSafe0\":9007199254740990,"
                                 + "\"maxSafe1\":\"9007199254740991\","
                                 + "\"maxSafe2\":\"9007199254740992\","
@@ -232,9 +234,9 @@ public class DecimalFormatTest {
         final String dec = restTemplate.getForObject(domain + "/test/json-dec.json", String.class);
         final String sub = restTemplate.getForObject(domain + "/test/json-sub.json", String.class);
         final String api = restTemplate.getForObject(domain + "/test/json-api.json", String.class);
-        System.out.println("dec=" + dec);
-        System.out.println("sub=" + sub);
-        System.out.println("api=" + api);
+        log.info("dec=" + dec);
+        log.info("sub=" + sub);
+        log.info("api=" + api);
         Assertions.assertEquals("{\"success\":true,\"data\":{\"dec\":\"12345.67\",\"str\":\"string\"}}", dec);
         Assertions.assertEquals("{\"success\":true,\"data\":{\"dec\":\"12,345.67\",\"str\":\"string\"}}", sub);
         Assertions.assertEquals("{\"success\":true,\"data\":{\"key\":\"12,345.67\"}}", api);

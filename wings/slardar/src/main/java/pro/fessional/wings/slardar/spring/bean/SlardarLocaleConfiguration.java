@@ -19,12 +19,12 @@ import pro.fessional.wings.slardar.spring.prop.SlardarLocaleProp;
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$locale, havingValue = "true")
 public class SlardarLocaleConfiguration {
 
-    private final Log logger = LogFactory.getLog(SlardarLocaleConfiguration.class);
+    private final Log log = LogFactory.getLog(SlardarLocaleConfiguration.class);
 
     @Bean
     @ConditionalOnClass(LocaleResolver.class)
     public WingsLocaleResolver wingsLocaleResolver(SlardarLocaleProp conf) {
-        logger.info("Wings conf WingsLocaleResolver");
+        log.info("Wings conf WingsLocaleResolver");
         final WingsLocaleResolver resolver = new WingsLocaleResolver();
         resolver.addLocaleCookie(conf.getLocaleCookie());
         resolver.addLocaleHeader(conf.getLocaleHeader());

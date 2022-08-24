@@ -26,7 +26,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SlardarPasscoderConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SlardarPasscoderConfiguration.class);
+    private static final Log log = LogFactory.getLog(SlardarPasscoderConfiguration.class);
 
     private final SlardarPasscoderProp slardarPasscoderProp;
 
@@ -49,7 +49,7 @@ public class SlardarPasscoderConfiguration {
     public PasswordEncoder passwordEncoder() {
         final String encoder = slardarPasscoderProp.getPassEncoder();
         final String decoder = slardarPasscoderProp.getPassDecoder();
-        logger.info("Wings conf PasswordEncoder bean, default encoder is " + encoder + ", decoder is " + decoder);
+        log.info("Wings conf PasswordEncoder bean, default encoder is " + encoder + ", decoder is " + decoder);
         Map<String, PasswordEncoder> encoders = PasswordEncoders.initEncoders(slardarPasscoderProp.getTimeDeviationMs());
         DelegatingPasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(encoder, encoders);
         passwordEncoder.setDefaultPasswordEncoderForMatches(encoders.get(decoder));
@@ -60,7 +60,7 @@ public class SlardarPasscoderConfiguration {
     @ConditionalOnMissingBean(PasssaltEncoder.class)
     public PasssaltEncoder passsaltEncoder() {
         final String encoder = slardarPasscoderProp.getSaltEncoder();
-        logger.info("Wings conf passsaltEncoder bean, default encoder is " + encoder);
+        log.info("Wings conf passsaltEncoder bean, default encoder is " + encoder);
 
         MdHelp md;
         if (encoder.equalsIgnoreCase("sha256")) {
@@ -83,7 +83,7 @@ public class SlardarPasscoderConfiguration {
      */
     @Bean
     public WingsSecBeanInitConfigurer wingsInitBeanManagerConfigurer(ApplicationContext context) {
-        logger.info("Wings conf wingsInitBeanManagerConfigurer ");
+        log.info("Wings conf wingsInitBeanManagerConfigurer ");
         return new WingsSecBeanInitConfigurer(context);
     }
 }

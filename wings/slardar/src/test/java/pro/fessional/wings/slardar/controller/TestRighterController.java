@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.controller;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,7 @@ import java.util.List;
  * @since 2021-02-01
  */
 @RestController
+@Slf4j
 public class TestRighterController {
 
     @Data
@@ -38,7 +40,7 @@ public class TestRighterController {
     @Righter
     public Inn postEdit() {
         final Inn audit = RighterContext.getAudit(true);
-        System.out.println(audit);
+        log.info("audit={}", audit);
         return audit;
     }
 }

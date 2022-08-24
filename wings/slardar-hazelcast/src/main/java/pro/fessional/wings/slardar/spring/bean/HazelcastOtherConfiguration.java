@@ -21,20 +21,20 @@ import pro.fessional.wings.slardar.service.flakeid.FlakeIdHazelcastImpl;
 @Configuration(proxyBeanMethods = false)
 public class HazelcastOtherConfiguration {
 
-    private static final Log logger = LogFactory.getLog(HazelcastOtherConfiguration.class);
+    private static final Log log = LogFactory.getLog(HazelcastOtherConfiguration.class);
 
     @Bean
     @ConditionalOnClass(FlakeIdService.class)
     @Primary
     public FlakeIdService hazelcastFlakeId(HazelcastInstance instance) {
-        logger.info("wings conf FlakeIdHazelcastImpl");
+        log.info("wings conf FlakeIdHazelcastImpl");
         return new FlakeIdHazelcastImpl(instance);
     }
 
     @Bean
     public CommandLineRunner hazelcastSyncPublisherRunner(HazelcastInstance instance, ApplicationEventPublisher publisher) {
         return (arg) -> {
-            logger.info("wings conf HazelcastSyncPublisher as GlobalPublisher");
+            log.info("wings conf HazelcastSyncPublisher as GlobalPublisher");
             HazelcastSyncPublisher global = new HazelcastSyncPublisher(instance, publisher);
             EventPublishHelper.setGlobalPublisher(global);
         };

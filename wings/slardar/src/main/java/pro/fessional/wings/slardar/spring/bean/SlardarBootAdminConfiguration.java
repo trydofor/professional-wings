@@ -48,7 +48,7 @@ import java.util.Objects;
  */
 @Configuration(proxyBeanMethods = false)
 public class SlardarBootAdminConfiguration {
-    private final static Log logger = LogFactory.getLog(SlardarBootAdminConfiguration.class);
+    private final static Log log = LogFactory.getLog(SlardarBootAdminConfiguration.class);
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(BlockingRegistrationClient.class)
@@ -62,7 +62,7 @@ public class SlardarBootAdminConfiguration {
         @Bean
         @Conditional(SpringBootAdminClientEnabledCondition.class)
         public BlockingRegistrationClient registrationClient(RestTemplateBuilder builder, ClientProperties prop) {
-            logger.info("Wings conf BootAdmin client registrationClient");
+            log.info("Wings conf BootAdmin client registrationClient");
             builder = builder
                     .setConnectTimeout(prop.getConnectTimeout())
                     .setReadTimeout(prop.getReadTimeout());
@@ -82,7 +82,7 @@ public class SlardarBootAdminConfiguration {
         @Bean
         @ConditionalOnProperty(name = "spring.wings.warlock.enabled.controller-proc", havingValue = "true")
         public BeanPostProcessor bootAdminMappingOrderPostProcessor() {
-            logger.info("Wings conf BootAdmin server bootAdminMappingOrderPostProcessor");
+            log.info("Wings conf BootAdmin server bootAdminMappingOrderPostProcessor");
             return new BeanPostProcessor() {
                 @Override
                 public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
@@ -96,7 +96,7 @@ public class SlardarBootAdminConfiguration {
 
         @Bean
         public Notifier dingTalkNotifier(InstanceRepository repository, ObjectProvider<DingTalkReport> reportProvider) {
-            logger.info("Wings conf BootAdmin server dingTalkNotifier");
+            log.info("Wings conf BootAdmin server dingTalkNotifier");
             final DingTalkReport reporter = reportProvider.getIfAvailable();
             final AbstractStatusChangeNotifier bean = new AbstractStatusChangeNotifier(repository) {
                 @Override
@@ -142,7 +142,7 @@ public class SlardarBootAdminConfiguration {
                 serviceMap = Collections.emptyMap();
             }
 
-            logger.info("Wings conf BootAdmin server basicAuthHttpHeadersProvider, instanceAuth=" + instanceAuth.isEnabled());
+            log.info("Wings conf BootAdmin server basicAuthHttpHeadersProvider, instanceAuth=" + instanceAuth.isEnabled());
             return new BasicAuthHttpHeaderProvider(defaultUserName, defaultPassword, serviceMap) {
                 private final BasicPasswordEncoder encoder = new BasicPasswordEncoder(passProp.getTimeDeviationMs());
 
@@ -157,9 +157,9 @@ public class SlardarBootAdminConfiguration {
 //        @Bean
 //        public InstanceExchangeFilterFunction bootAdminSessionFilter() {
 //            return (instance, request, next) -> next.exchange(request).doOnSubscribe((s) -> {
-//                logger.info(">>>" + request.url());
-//                logger.info(">>>" + request.headers());
-//                logger.info(">>>" + request.cookies());
+//                log.info(">>>" + request.url());
+//                log.info(">>>" + request.headers());
+//                log.info(">>>" + request.cookies());
 //            });
 //        }
     }

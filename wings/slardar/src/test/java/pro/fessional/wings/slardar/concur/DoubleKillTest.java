@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.concur;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.fail;
                 "wings.slardar.double-kill.content-type=text/plain",
                 "wings.slardar.double-kill.response-body=double-killed ttl=${ttl}, key=${key}",
         })
+@Slf4j
 class DoubleKillTest {
 
     @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
@@ -56,10 +58,10 @@ class DoubleKillTest {
         final String body = r2.getBody();
         assertNotNull(body);
         assertTrue(body.contains("double-killed"));
-        System.out.println(body);
+        log.info("body={}", body);
         String key = body.substring(body.lastIndexOf("=") + 1);
         final ProgressContext.Bar bar = ProgressContext.get(key);
-        System.out.println(bar);
+        log.info("bar={}", bar);
     }
 
     @Test
@@ -79,25 +81,25 @@ class DoubleKillTest {
         final String body = r2.getBody();
         assertNotNull(body);
         assertTrue(body.contains("double-killed"));
-        System.out.println(body);
+        log.info("body={}", body);
         String key = body.substring(body.lastIndexOf("=") + 1);
         final ProgressContext.Bar bar = ProgressContext.get(key);
-        System.out.println(bar);
+        log.info("bar={}", bar);
     }
 
     @Test
     void doubleKillArg() throws InterruptedException {
         new Thread(() -> {
-            System.out.println("before thread call");
+            log.info("before thread call");
             doubleKillService.sleepSecond("sleep", 10);
-            System.out.println("after  thread call");
+            log.info("after  thread call");
         }).start();
 
         Thread.sleep(1000);
         try {
-            System.out.println("before main call");
+            log.info("before main call");
             doubleKillService.sleepSecond("sleep", 10);
-            System.out.println("after  main call");
+            log.info("after  main call");
             fail();
         } catch (DoubleKillException e) {
             assertTrue(true);
@@ -107,16 +109,16 @@ class DoubleKillTest {
     @Test
     void doubleKillStr() throws InterruptedException {
         new Thread(() -> {
-            System.out.println("before thread call");
+            log.info("before thread call");
             doubleKillService.sleepSecondStr("sleep", 10);
-            System.out.println("after  thread call");
+            log.info("after  thread call");
         }).start();
 
         Thread.sleep(1000);
         try {
-            System.out.println("before main call");
+            log.info("before main call");
             doubleKillService.sleepSecondStr("sleep", 10);
-            System.out.println("after  main call");
+            log.info("after  main call");
             fail();
         } catch (DoubleKillException e) {
             assertTrue(true);
@@ -126,16 +128,16 @@ class DoubleKillTest {
     @Test
     void doubleKillExp() throws InterruptedException {
         new Thread(() -> {
-            System.out.println("before thread call");
+            log.info("before thread call");
             doubleKillService.sleepSecondExp("sleep", 10);
-            System.out.println("after  thread call");
+            log.info("after  thread call");
         }).start();
 
         Thread.sleep(1000);
         try {
-            System.out.println("before main call");
+            log.info("before main call");
             doubleKillService.sleepSecondExp("sleep", 10);
-            System.out.println("after  main call");
+            log.info("after  main call");
             fail();
         } catch (DoubleKillException e) {
             assertTrue(true);

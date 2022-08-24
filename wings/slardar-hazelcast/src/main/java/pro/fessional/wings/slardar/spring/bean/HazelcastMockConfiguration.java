@@ -20,11 +20,11 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$mockHazelcast, havingValue = "true")
 public class HazelcastMockConfiguration {
 
-    private static final Log logger = LogFactory.getLog(HazelcastMockConfiguration.class);
+    private static final Log log = LogFactory.getLog(HazelcastMockConfiguration.class);
 
     @Bean
     public HazelcastInstance hazelcastInstance() {
-        logger.info("Wings conf Standalone hazelcastInstance for mock");
+        log.info("Wings conf Standalone hazelcastInstance for mock");
         Config config = new Config();
         config.setClusterName("slardar-standalone");
         config.setProperty("hazelcast.shutdownhook.enabled", "false");

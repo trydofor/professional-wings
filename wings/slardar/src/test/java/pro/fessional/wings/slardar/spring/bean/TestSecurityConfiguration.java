@@ -16,7 +16,7 @@ import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 @Configuration(proxyBeanMethods = false)
 public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final static Log logger = LogFactory.getLog(TestSecurityConfiguration.class);
+    private final static Log log = LogFactory.getLog(TestSecurityConfiguration.class);
 
     /**
      * The URL paths provided by the framework are
@@ -36,7 +36,7 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        logger.info("config HttpSecurity");
+        log.info("config HttpSecurity");
         http.apply(SecurityConfigHelper.http())
             .httpPermit(conf -> conf
                     .permitCorsAll()
@@ -47,8 +47,8 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
                             .loginProcessingUrl("/*/login-proc.json") // filter处理，不需要controller
                             .usernameParameter("username")
                             .passwordParameter("password")
-                            .successHandler((request, response, authentication) -> logger.info("successHandler"))
-                            .failureHandler((request, response, exception) -> logger.info("failureHandler"))
+                            .successHandler((request, response, authentication) -> log.info("successHandler"))
+                            .failureHandler((request, response, exception) -> log.info("failureHandler"))
                             .bindAuthTypeToEnums("user", Null.Enm)
             )
             .and()
@@ -68,7 +68,7 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .logoutUrl("/user/logout.json")
                     .clearAuthentication(true)
                     .invalidateHttpSession(true)
-                    .logoutSuccessHandler((request, response, authentication) -> logger.info("logoutSuccessHandler"))
+                    .logoutSuccessHandler((request, response, authentication) -> log.info("logoutSuccessHandler"))
             )
 //            .exceptionHandling(conf -> conf
 //                    .accessDeniedHandler()

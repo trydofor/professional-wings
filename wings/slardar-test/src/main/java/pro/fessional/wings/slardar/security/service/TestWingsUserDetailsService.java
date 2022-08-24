@@ -60,6 +60,6 @@ public class TestWingsUserDetailsService implements WingsUserDetailsService {
         final String origPassword = "大翅挺好吃";
         //
         final String sendPassword = Md5.sum(origPassword + ":" + origPassword);
-        System.out.println(sendPassword);
+        log.info("password={}", sendPassword);
     }
 }

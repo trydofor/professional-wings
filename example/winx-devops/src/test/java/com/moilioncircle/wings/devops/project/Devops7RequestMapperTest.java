@@ -1,6 +1,7 @@
 package com.moilioncircle.wings.devops.project;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @SpringBootTest
 @Disabled("手动执行，版本更新时处理")
+@Slf4j
 public class Devops7RequestMapperTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -28,7 +30,7 @@ public class Devops7RequestMapperTest {
     public void infoAllMapping() {
         List<RequestMappingHelper.Info> infos = RequestMappingHelper.infoAllMapping(context);
         for (RequestMappingHelper.Info info : infos) {
-            System.out.println(info.toJson());
+            log.info(info.toJson());
         }
     }
 }

@@ -23,7 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class WarlockSecurityAutoConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final static Log logger = LogFactory.getLog(WarlockSecurityAutoConfiguration.class);
+    private final static Log log = LogFactory.getLog(WarlockSecurityAutoConfiguration.class);
 
     private final WarlockSecurityProp warlockSecurityProp;
     private final Map<String, HttpSecurityCustomizer> configures;
@@ -46,16 +46,16 @@ public class WarlockSecurityAutoConfiguration extends WebSecurityConfigurerAdapt
      */
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        logger.info("Wings conf HttpSecurity");
+        log.info("Wings conf HttpSecurity");
         for (Map.Entry<String, HttpSecurityCustomizer> en : configures.entrySet()) {
-            logger.info("Wings conf HttpSecurity, bean=" + en.getKey());
+            log.info("Wings conf HttpSecurity, bean=" + en.getKey());
             en.getValue().customize(http);
         }
 
         //
         final String anyRequest = warlockSecurityProp.getAnyRequest();
         if (StringUtils.hasText(anyRequest)) {
-            logger.info("Wings conf HttpSecurity, anyRequest=" + anyRequest);
+            log.info("Wings conf HttpSecurity, anyRequest=" + anyRequest);
             String str = anyRequest.trim();
             if ("permitAll".equalsIgnoreCase(str)) {
                 http.authorizeRequests().anyRequest().permitAll();

@@ -23,12 +23,12 @@ import pro.fessional.wings.slardar.session.WingsSessionRegistry;
 @AutoConfigureAfter(SessionAutoConfiguration.class)
 public class HazelcastSessionConfiguration {
 
-    private static final Log logger = LogFactory.getLog(HazelcastSessionConfiguration.class);
+    private static final Log log = LogFactory.getLog(HazelcastSessionConfiguration.class);
 
     @Bean
     @ConditionalOnMissingBean(SessionRegistry.class)
     public SessionRegistry sessionRegistry(FindByIndexNameSessionRepository<?> repository, WingsSessionHelper helper) {
-        logger.info("Wings conf sessionRegistry");
+        log.info("Wings conf sessionRegistry");
         return new WingsSessionRegistry<>(repository, helper);
     }
 
@@ -38,7 +38,7 @@ public class HazelcastSessionConfiguration {
             HazelcastInstance hzInstance,
             @Value("${spring.session.hazelcast.map-name:spring:session:sessions}") String mapName) {
 
-        logger.info("Wings conf wingsSessionHelper");
+        log.info("Wings conf wingsSessionHelper");
         return new HazelcastSessionHelper(sessionRepository, hzInstance, mapName);
     }
 }

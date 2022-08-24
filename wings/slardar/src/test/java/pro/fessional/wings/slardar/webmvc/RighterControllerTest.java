@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.webmvc;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "wings.slardar.righter.response-body=forgery")
 @AutoConfigureMockMvc
+@Slf4j
 public class RighterControllerTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -59,7 +61,7 @@ public class RighterControllerTest {
         final String allow = result.getResponse().getHeader(prop.getHeader());
 
         // 通过
-        System.out.println("righter .... right");
+        log.info("righter .... right");
         mvc.perform(post("/test/righter.json")
                             .contentType(MediaType.APPLICATION_JSON)
                             .header(prop.getHeader(), allow))
@@ -67,7 +69,7 @@ public class RighterControllerTest {
            .andExpect(content().json("{\"uid\":1,\"perms\":[\"a\",\"b\"]}"));
 
         // 篡改，失败
-        System.out.println("righter .... failed");
+        log.info("righter .... failed");
         mvc.perform(post("/test/righter.json")
                             .contentType(MediaType.APPLICATION_JSON)
                             .header(prop.getHeader(), allow + "1"))

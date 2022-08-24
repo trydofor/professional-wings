@@ -38,13 +38,13 @@ public class OtherControllerTest {
 
     @RequestMapping("/test/binding-error-from.json")
     public R<?> bindingErrorFrom(@Valid Ins ins) {
-        System.out.println(">>>" + ins.toString());
+        log.info(">>>" + ins.toString());
         return R.okData(ins);
     }
 
     @RequestMapping("/test/binding-error-json.json")
     public R<?> bindingErrorJson(@Valid @RequestBody Ins ins) {
-        System.out.println(">>>" + ins.toString());
+        log.info(">>>" + ins.toString());
         return R.okData(ins);
     }
 }

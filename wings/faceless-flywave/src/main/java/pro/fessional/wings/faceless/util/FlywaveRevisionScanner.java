@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  */
 public class FlywaveRevisionScanner {
 
-    private static final Logger logger = LoggerFactory.getLogger(FlywaveRevisionScanner.class);
+    private static final Logger log = LoggerFactory.getLogger(FlywaveRevisionScanner.class);
 
     public static final String REVISION_PATH_REVIFILE_EXTN = ".sql";
     public static final String REVISION_PATH_REVIFILE_TAIL = "**/*" + REVISION_PATH_REVIFILE_EXTN;
@@ -229,7 +229,7 @@ public class FlywaveRevisionScanner {
         try {
             PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
             Resource[] resources = resolver.getResources(path);
-            logger.info("[FlywaveRevisionScanner]🐝 scanned " + resources.length + " resources in path=" + path);
+            log.info("[FlywaveRevisionScanner]🐝 scanned " + resources.length + " resources in path=" + path);
             Pattern reviRegex = Pattern.compile("([-_0-9]{8,})([uv])([0-9]{2,})[^/]*\\.sql$", Pattern.CASE_INSENSITIVE);
             Charset utf8 = StandardCharsets.UTF_8;
 
@@ -239,7 +239,7 @@ public class FlywaveRevisionScanner {
                 file = res.getURL().getPath();
                 Matcher m = reviRegex.matcher(file);
                 if (!m.find()) {
-                    logger.info("[FlywaveRevisionScanner]🐝 skip unsupported resource=" + file);
+                    log.info("[FlywaveRevisionScanner]🐝 skip unsupported resource=" + file);
                     continue;
                 }
                 boolean undo = m.group(2).equalsIgnoreCase("u");
@@ -260,11 +260,11 @@ public class FlywaveRevisionScanner {
                 if (undo) {
                     final String ou = d.getUndoPath();
                     if (EmptySugar.asEmptyValue(ou)) {
-                        logger.info("[FlywaveRevisionScanner]🐝 scan " + revi + " undo↓ resource=" + file);
+                        log.info("[FlywaveRevisionScanner]🐝 scan " + revi + " undo↓ resource=" + file);
                     }
                     else {
                         rplRevi.add(revi);
-                        logger.warn("[FlywaveRevisionScanner]🐝 replace " + revi + " undo↓ new=" + file + ", old=" + ou);
+                        log.warn("[FlywaveRevisionScanner]🐝 replace " + revi + " undo↓ new=" + file + ", old=" + ou);
                     }
                     d.setUndoPath(file);
                     d.setUndoText(text);
@@ -272,17 +272,17 @@ public class FlywaveRevisionScanner {
                 else {
                     final String ou = d.getUptoPath();
                     if (EmptySugar.asEmptyValue(ou)) {
-                        logger.info("[FlywaveRevisionScanner]🐝 scan " + revi + " upto↑ resource=" + file);
+                        log.info("[FlywaveRevisionScanner]🐝 scan " + revi + " upto↑ resource=" + file);
                     }
                     else {
                         rplRevi.add(revi);
-                        logger.warn("[FlywaveRevisionScanner]🐝 replace " + revi + " upto↑ new=" + file + ", old=" + ou);
+                        log.warn("[FlywaveRevisionScanner]🐝 replace " + revi + " upto↑ new=" + file + ", old=" + ou);
                     }
                     d.setUptoPath(file);
                     d.setUptoText(text);
                 }
             }
-            logger.info("[FlywaveRevisionScanner]🐝 scanned revisions new=" + newRevi.size() + ", replace=" + rplRevi.size());
+            log.info("[FlywaveRevisionScanner]🐝 scanned revisions new=" + newRevi.size() + ", replace=" + rplRevi.size());
         }
         catch (Exception e) {
             throw new IllegalStateException("failed to scan path = " + path + ", file=" + file, e);
@@ -448,7 +448,7 @@ public class FlywaveRevisionScanner {
                 modify("replace " + from + " to " + to + " with sql", to, it -> {
                     it.setUptoText(mod.apply(it.getUptoText()));
                     it.setUndoText(mod.apply(it.getUndoText()));
-                    logger.info("[FlywaveRevisionScanner]🐝 replace revi from=" + from + " to=" + to + " with sql text");
+                    log.info("[FlywaveRevisionScanner]🐝 replace revi from=" + from + " to=" + to + " with sql text");
                 });
             }
             return this;
@@ -593,7 +593,7 @@ public class FlywaveRevisionScanner {
 
                 final RevisionSql tor = result.put(nv, old);
                 if (tor != null) {
-                    logger.info("[FlywaveRevisionScanner]🐝 replace revi from=" + ov + " to=" + nv + ", exist=" + tor);
+                    log.info("[FlywaveRevisionScanner]🐝 replace revi from=" + ov + " to=" + nv + ", exist=" + tor);
                 }
             }
 
@@ -604,15 +604,15 @@ public class FlywaveRevisionScanner {
                         if (ent.getKey().test(it.getKey())) {
                             final String info = ent.getValue();
                             if (info != null && !info.isEmpty()) {
-                                logger.info("[FlywaveRevisionScanner]🐝 include " + it.getKey() + " by " + info);
+                                log.info("[FlywaveRevisionScanner]🐝 include " + it.getKey() + " by " + info);
                             }
                             else {
-                                logger.info("[FlywaveRevisionScanner]🐝 include " + it.getKey());
+                                log.info("[FlywaveRevisionScanner]🐝 include " + it.getKey());
                             }
                             return false;
                         }
                     }
-                    logger.info("[FlywaveRevisionScanner]🐝 remove " + it.getKey() + " by include filter unmatched");
+                    log.info("[FlywaveRevisionScanner]🐝 remove " + it.getKey() + " by include filter unmatched");
                     return true;
                 });
             }
@@ -624,10 +624,10 @@ public class FlywaveRevisionScanner {
                         if (ent.getKey().test(it.getKey())) {
                             final String info = ent.getValue();
                             if (info == null || info.isEmpty()) {
-                                logger.info("[FlywaveRevisionScanner]🐝 remove " + it.getKey() + " by exclude filter matched");
+                                log.info("[FlywaveRevisionScanner]🐝 remove " + it.getKey() + " by exclude filter matched");
                             }
                             else {
-                                logger.info("[FlywaveRevisionScanner]🐝 remove " + it.getKey() + " by " + info);
+                                log.info("[FlywaveRevisionScanner]🐝 remove " + it.getKey() + " by " + info);
                             }
                             return true;
                         }
@@ -638,7 +638,7 @@ public class FlywaveRevisionScanner {
 
             // modifier
             for (Map.Entry<BiConsumer<Long, RevisionSql>, String> mod : modifier.entrySet()) {
-                logger.info("[FlywaveRevisionScanner]🐝 modify RevisionSql by " + mod.getValue());
+                log.info("[FlywaveRevisionScanner]🐝 modify RevisionSql by " + mod.getValue());
                 final BiConsumer<Long, RevisionSql> fn = mod.getKey();
                 for (Map.Entry<Long, RevisionSql> ent : result.entrySet()) {
                     fn.accept(ent.getKey(), ent.getValue());

@@ -22,12 +22,12 @@ import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
 @AutoConfigureBefore(SlardarCacheConfiguration.class)
 public class HazelcastCacheConfiguration {
 
-    private static final Log logger = LogFactory.getLog(HazelcastCacheConfiguration.class);
+    private static final Log log = LogFactory.getLog(HazelcastCacheConfiguration.class);
 
     @Bean(Manager.Server)
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$caching, havingValue = "true")
     public HazelcastCacheManager hazelcastCacheManager(SlardarCacheProp conf, HazelcastInstance instance) {
-        logger.info("Wings conf hazelcast as " + Manager.Server);
+        log.info("Wings conf hazelcast as " + Manager.Server);
         return new WingsHazelcast.Manager(conf, instance);
     }
 }

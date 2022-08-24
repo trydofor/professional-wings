@@ -26,7 +26,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 @ConditionalOnClass(Undertow.class)
 public class SlardarUndertowConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SlardarUndertowConfiguration.class);
+    private static final Log log = LogFactory.getLog(SlardarUndertowConfiguration.class);
 
     /**
      * UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
@@ -34,7 +34,7 @@ public class SlardarUndertowConfiguration {
     @Bean
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$undertowWs, havingValue = "true")
     public WebServerFactoryCustomizer<UndertowServletWebServerFactory> ut026010Customizer(ServerProperties properties) {
-        logger.info("Wings conf ut026010Customizer");
+        log.info("Wings conf ut026010Customizer");
 
         UndertowDeploymentInfoCustomizer customizer = deploymentInfo -> {
             ServerProperties.Undertow undertow = properties.getUndertow();
@@ -47,7 +47,7 @@ public class SlardarUndertowConfiguration {
             Integer wt = undertow.getThreads().getWorker();
             int wks = wt == null ? its * 8 : wt;
 
-            logger.info("config Undertow websocket buffer, direct=" + dtb
+            log.info("config Undertow websocket buffer, direct=" + dtb
                         + ", bufferSize=" + bss
                         + ",maximumPoolSize=" + wks
                         + ", threadLocalCacheSize=" + its);

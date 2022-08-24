@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.controller;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
@@ -22,6 +23,7 @@ import java.time.ZonedDateTime;
  * @since 2019-11-13
  */
 @RestController
+@Slf4j
 public class TestDateTimeController {
 
     public static final ZoneId ZONE_CN = ZoneId.of("Asia/Shanghai");
@@ -68,8 +70,8 @@ public class TestDateTimeController {
         final Xdt xdt = new Xdt();
         xdt.zdt = ldt.atZone(ZONE_CN);
         xdt.ldt = ldt;
-        System.out.println("ldtZdt>>>" + xdt);
-        System.out.println("userTz>>>" + LocaleContextHolder.getTimeZone());
+        log.info("ldtZdt>>>" + xdt);
+        log.info("userTz>>>" + LocaleContextHolder.getTimeZone());
         return xdt;
     }
 
@@ -79,8 +81,8 @@ public class TestDateTimeController {
         final ZonedDateTime zdt = ldt.atZone(ZONE_CN);
         xdt.odt = zdt.toOffsetDateTime();
         xdt.ldt = ldt;
-        System.out.println("ldtOdt>>>" + xdt);
-        System.out.println("userTz>>>" + LocaleContextHolder.getTimeZone());
+        log.info("ldtOdt>>>" + xdt);
+        log.info("userTz>>>" + LocaleContextHolder.getTimeZone());
         return xdt;
     }
 
@@ -89,8 +91,8 @@ public class TestDateTimeController {
         final Xdt xdt = new Xdt();
         xdt.zdt = ldt.ldt.atZone(ZONE_CN);
         xdt.ldt = ldt.ldt;
-        System.out.println("ldtZdtBody>>>" + xdt);
-        System.out.println("userTz>>>" + LocaleContextHolder.getTimeZone());
+        log.info("ldtZdtBody>>>" + xdt);
+        log.info("userTz>>>" + LocaleContextHolder.getTimeZone());
         return xdt;
     }
 
@@ -99,8 +101,8 @@ public class TestDateTimeController {
         final Xdt xdt = new Xdt();
         xdt.odt = ldt.ldt.atZone(ZONE_CN).toOffsetDateTime();
         xdt.ldt = ldt.ldt;
-        System.out.println("ldtOdtBody>>>" + xdt);
-        System.out.println("userTz>>>" + LocaleContextHolder.getTimeZone());
+        log.info("ldtOdtBody>>>" + xdt);
+        log.info("userTz>>>" + LocaleContextHolder.getTimeZone());
         return xdt;
     }
 
@@ -109,7 +111,7 @@ public class TestDateTimeController {
         final Xdt xdt = new Xdt();
         xdt.zdt = zdt;
         xdt.ldt = zdt.toLocalDateTime();
-        System.out.println("zdtLdt>>>" + xdt);
+        log.info("zdtLdt>>>" + xdt);
         return xdt;
     }
 
@@ -118,7 +120,7 @@ public class TestDateTimeController {
         final Xdt xdt = new Xdt();
         xdt.odt = odt;
         xdt.ldt = odt.toLocalDateTime();
-        System.out.println("zdtLdt>>>" + xdt);
+        log.info("zdtLdt>>>" + xdt);
         return xdt;
     }
 
@@ -127,7 +129,7 @@ public class TestDateTimeController {
         final Xdt xdt = new Xdt();
         xdt.zdt = zdt.zdt;
         xdt.ldt = zdt.zdt.toLocalDateTime();
-        System.out.println("zdtLdtBody>>>" + xdt);
+        log.info("zdtLdtBody>>>" + xdt);
         return xdt;
     }
 
@@ -136,19 +138,19 @@ public class TestDateTimeController {
         final Xdt xdt = new Xdt();
         xdt.odt = odt.odt;
         xdt.ldt = odt.odt.toLocalDateTime();
-        System.out.println("zdtLdtBody>>>" + xdt);
+        log.info("zdtLdtBody>>>" + xdt);
         return xdt;
     }
 
     @RequestMapping(value = "/test/ld-ld-body.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public Ld ldLd(@RequestBody Ld ld) {
-        System.out.println("LdBody>>>" + ld);
+        log.info("LdBody>>>" + ld);
         return ld;
     }
 
     @RequestMapping(value = "/test/lt-lt-body.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public Lt ltLt(@RequestBody Lt lt) {
-        System.out.println("LtBody>>>" + lt);
+        log.info("LtBody>>>" + lt);
         return lt;
     }
 

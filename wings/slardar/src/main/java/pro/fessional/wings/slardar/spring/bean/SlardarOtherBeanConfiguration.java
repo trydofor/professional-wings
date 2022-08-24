@@ -18,12 +18,12 @@ import java.util.Map;
 @Configuration(proxyBeanMethods = false)
 public class SlardarOtherBeanConfiguration {
 
-    private final static Log logger = LogFactory.getLog(SlardarOtherBeanConfiguration.class);
+    private final static Log log = LogFactory.getLog(SlardarOtherBeanConfiguration.class);
 
     @Bean
     @ConditionalOnAvailableEndpoint
     public SlardarCacheEndpoint slardarCacheManageEndpoint(Map<String, CacheManager> cacheManagers) {
-        logger.info("wings conf slardarCacheManageEndpoint");
+        log.info("wings conf slardarCacheManageEndpoint");
         return new SlardarCacheEndpoint(cacheManagers);
     }
 }

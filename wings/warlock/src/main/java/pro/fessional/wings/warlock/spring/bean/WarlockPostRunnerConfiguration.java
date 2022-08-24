@@ -24,19 +24,19 @@ import pro.fessional.wings.warlock.spring.prop.WarlockRuntimeProp;
 @Configuration(proxyBeanMethods = false)
 public class WarlockPostRunnerConfiguration {
 
-    private final static Log logger = LogFactory.getLog(WarlockPostRunnerConfiguration.class);
+    private final static Log log = LogFactory.getLog(WarlockPostRunnerConfiguration.class);
 
     @Bean
     public CommandLineRunner registerEnumUtilRunner(ObjectProvider<WarlockI18nProp> provider) {
         return (arg) -> {
             final WarlockI18nProp warlockI18nProp = provider.getIfAvailable();
             if (warlockI18nProp == null) {
-                logger.info("Wings conf skip registerEnumUtil for NULL ");
+                log.info("Wings conf skip registerEnumUtil for NULL ");
                 return;
             }
 
             for (String s : warlockI18nProp.getLocaleEnum()) {
-                logger.info("Wings conf locale enum " + s);
+                log.info("Wings conf locale enum " + s);
                 final Class<?> cz = Class.forName(s);
                 if (!(cz.isEnum() && StandardLanguageEnum.class.isAssignableFrom(cz))) {
                     throw new IllegalArgumentException(s + " is not enum and StandardLanguageEnum");
@@ -47,7 +47,7 @@ public class WarlockPostRunnerConfiguration {
             }
 
             for (String s : warlockI18nProp.getZoneidEnum()) {
-                logger.info("Wings conf zoneid enum " + s);
+                log.info("Wings conf zoneid enum " + s);
                 final Class<?> cz = Class.forName(s);
                 if (!(cz.isEnum() && StandardTimezoneEnum.class.isAssignableFrom(cz))) {
                     throw new IllegalArgumentException(s + " is not enum and StandardTimezoneEnum");
@@ -64,7 +64,7 @@ public class WarlockPostRunnerConfiguration {
         return (arg) -> {
             final RuntimeConfService confService = provider.getIfAvailable();
             if (confService == null) {
-                logger.info("Wings conf skip registerRuntimeMode for NULL ");
+                log.info("Wings conf skip registerRuntimeMode for NULL ");
                 return;
             }
 
@@ -75,7 +75,7 @@ public class WarlockPostRunnerConfiguration {
                 if (runMode == null && prop != null) {
                     runMode = prop.getRunMode();
                 }
-                logger.info("Wings conf registerRuntimeMode RunMode=" + runMode);
+                log.info("Wings conf registerRuntimeMode RunMode=" + runMode);
                 return runMode == null ? RunMode.Local : runMode;
             });
 
@@ -85,7 +85,7 @@ public class WarlockPostRunnerConfiguration {
                     apiMode = prop.getApiMode();
                 }
 
-                logger.info("Wings conf registerRuntimeMode apiMode=" + apiMode);
+                log.info("Wings conf registerRuntimeMode apiMode=" + apiMode);
                 return apiMode == null ? ApiMode.Nothing : apiMode;
             });
         };

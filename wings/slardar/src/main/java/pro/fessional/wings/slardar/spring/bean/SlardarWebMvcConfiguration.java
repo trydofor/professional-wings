@@ -24,7 +24,7 @@ import static org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfi
  */
 @Configuration(proxyBeanMethods = false)
 public class SlardarWebMvcConfiguration implements WebMvcConfigurer {
-    private static final Log logger = LogFactory.getLog(SlardarWebMvcConfiguration.class);
+    private static final Log log = LogFactory.getLog(SlardarWebMvcConfiguration.class);
 
     private final List<AutoRegisterInterceptor> interceptors;
     private final PageQueryArgumentResolver pageQueryArgumentResolver;
@@ -42,7 +42,7 @@ public class SlardarWebMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(@NotNull InterceptorRegistry registry) {
         for (AutoRegisterInterceptor it : interceptors) {
-            logger.info("Wings conf Interceptor=" + it.getClass().getName());
+            log.info("Wings conf Interceptor=" + it.getClass().getName());
             registry.addInterceptor(it);
         }
     }
@@ -50,7 +50,7 @@ public class SlardarWebMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(@NotNull List<HandlerMethodArgumentResolver> resolvers) {
         if (pageQueryArgumentResolver != null) {
-            logger.info("Wings conf HandlerMethodArgumentResolver=" + pageQueryArgumentResolver.getClass().getName());
+            log.info("Wings conf HandlerMethodArgumentResolver=" + pageQueryArgumentResolver.getClass().getName());
             resolvers.add(pageQueryArgumentResolver);
         }
     }

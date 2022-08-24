@@ -38,13 +38,13 @@ import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.Salt
 @Configuration(proxyBeanMethods = false)
 public class WarlockOtherBeanConfiguration {
 
-    private final static Log logger = LogFactory.getLog(WarlockOtherBeanConfiguration.class);
+    private final static Log log = LogFactory.getLog(WarlockOtherBeanConfiguration.class);
 
     @Bean
     @ConditionalOnMissingBean(name = "codeExceptionResolver")
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$codeExceptionHandler, havingValue = "true")
     public HandlerExceptionResolver codeExceptionResolver(MessageSource messageSource, WarlockErrorProp prop) {
-        logger.info("Wings conf codeExceptionResolver");
+        log.info("Wings conf codeExceptionResolver");
         final WarlockErrorProp.CodeException cp = prop.getCodeException();
         final CodeExceptionResolver bean = new CodeExceptionResolver(messageSource, cp.getHttpStatus(), cp.getContentType(), cp.getResponseBody());
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1000);
@@ -55,7 +55,7 @@ public class WarlockOtherBeanConfiguration {
     @ConditionalOnMissingBean(name = "allExceptionResolver")
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$allExceptionHandler, havingValue = "true")
     public HandlerExceptionResolver allExceptionResolver(WarlockErrorProp prop) {
-        logger.info("Wings conf allExceptionResolver");
+        log.info("Wings conf allExceptionResolver");
         final WarlockErrorProp.CodeException cp = prop.getAllException();
         final AllExceptionResolver bean = new AllExceptionResolver(cp.getHttpStatus(), cp.getContentType(), cp.getResponseBody());
         bean.setOrder(Ordered.LOWEST_PRECEDENCE);
@@ -66,7 +66,7 @@ public class WarlockOtherBeanConfiguration {
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$checkDatabase, havingValue = "true")
     @Order(Ordered.HIGHEST_PRECEDENCE + 1000)
     public CommandLineRunner databaseChecker(DataSource dataSource, WarlockCheckProp prop) {
-        logger.info("Wings conf databaseChecker");
+        log.info("Wings conf databaseChecker");
         return args -> {
             DatabaseChecker.version(dataSource);
             DatabaseChecker.timezone(dataSource, prop.getTzOffset(), prop.isTzFail());
@@ -76,7 +76,7 @@ public class WarlockOtherBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public RighterInterceptor.SecretProvider righterInterceptorSecretProvider() {
-        logger.info("Wings conf righterInterceptorSecretProvider");
+        log.info("Wings conf righterInterceptorSecretProvider");
         return auth -> {
             final Object dtl = auth.getDetails();
             if (dtl instanceof WingsUserDetails) {
@@ -89,7 +89,7 @@ public class WarlockOtherBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public RuntimeConfService runtimeConfService(ConversionService conversion) {
-        logger.info("Wings conf runtimeConfService");
+        log.info("Wings conf runtimeConfService");
         final RuntimeConfServiceImpl bean = new RuntimeConfServiceImpl();
         bean.addHandler(RuntimeConfServiceImpl.PropHandler, conversion);
         bean.addHandler(RuntimeConfServiceImpl.JsonHandler, new JsonConversion());

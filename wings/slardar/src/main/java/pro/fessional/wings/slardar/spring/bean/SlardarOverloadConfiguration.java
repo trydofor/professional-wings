@@ -37,7 +37,7 @@ import java.io.PrintWriter;
 @ConditionalOnClass(Filter.class)
 public class SlardarOverloadConfiguration {
 
-    private final Log logger = LogFactory.getLog(SlardarOverloadConfiguration.class);
+    private final Log log = LogFactory.getLog(SlardarOverloadConfiguration.class);
 
     @Component
     @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -48,7 +48,7 @@ public class SlardarOverloadConfiguration {
         @Override
         public void onApplicationEvent(@NotNull ContextClosedEvent event) {
             overloadFilter.setRequestCapacity(Integer.MIN_VALUE);
-            logger.warn("Wings shutting down, deny new request, current=" + overloadFilter.getRequestProcess());
+            log.warn("Wings shutting down, deny new request, current=" + overloadFilter.getRequestProcess());
             for (long breaks = 60 * 1000, step = 30; overloadFilter.getRequestProcess() > 0 && breaks > 0; ) {
                 try {
                     Thread.sleep(step); // 忙等
@@ -57,7 +57,7 @@ public class SlardarOverloadConfiguration {
                     // ignore
                 }
             }
-            logger.warn("Wings safely shutting down, no request in processing");
+            log.warn("Wings safely shutting down, no request in processing");
         }
     }
 
@@ -83,7 +83,7 @@ public class SlardarOverloadConfiguration {
     public WingsOverloadFilter wingsOverloadFilter(WingsOverloadFilter.Config config,
                                                    WingsOverloadFilter.FallBack fallBack,
                                                    WingsRemoteResolver resolver) {
-        logger.info("Wings conf Overload filter");
+        log.info("Wings conf Overload filter");
         WingsOverloadFilter filter = new WingsOverloadFilter(fallBack, config, resolver);
         filter.setOrder(WingsServletConst.ORDER_FILTER_OVERLOAD);
         return filter;

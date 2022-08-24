@@ -27,11 +27,11 @@ import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.validVal
 @ConditionalOnClass(OpenAPI.class)
 public class SlardarSwaggerConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SlardarSwaggerConfiguration.class);
+    private static final Log log = LogFactory.getLog(SlardarSwaggerConfiguration.class);
 
     @Bean
     public OpenApiCustomiser slardarOpenApiCustomizer(SlardarSwaggerProp slardarSwaggerProp) {
-        logger.info("Wings conf slardarOpenApiCustomizer");
+        log.info("Wings conf slardarOpenApiCustomizer");
 
         return openApi -> {
             final Info info = openApi.getInfo();

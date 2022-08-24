@@ -29,7 +29,7 @@ import static pro.fessional.wings.slardar.servlet.cookie.WingsCookieInterceptor.
 @RequiredArgsConstructor
 public class SlardarCookieConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SlardarCookieConfiguration.class);
+    private static final Log log = LogFactory.getLog(SlardarCookieConfiguration.class);
 
     private final SlardarCookieProp slardarCookieProp;
 
@@ -37,10 +37,10 @@ public class SlardarCookieConfiguration {
     public WingsCookieInterceptor wingsCookieInterceptor() {
         final String aesKey = slardarCookieProp.getAesKey();
         if (aesKey != null && aesKey.length() > 5) {
-            logger.info("Wings conf WingsCookieInterceptor, key=" + aesKey.substring(0, 5) + "...");
+            log.info("Wings conf WingsCookieInterceptor, key=" + aesKey.substring(0, 5) + "...");
         }
         else {
-            logger.info("Wings conf WingsCookieInterceptor");
+            log.info("Wings conf WingsCookieInterceptor");
         }
 
         WingsCookieInterceptorImpl interceptor = new WingsCookieInterceptorImpl(aesKey);
@@ -78,7 +78,7 @@ public class SlardarCookieConfiguration {
 
     @Bean
     public WingsCookieFilter wingsCookieFilter(WingsCookieInterceptor wingsCookieInterceptor) {
-        logger.info("Wings conf WingsCookieFilter");
+        log.info("Wings conf WingsCookieFilter");
         WingsCookieFilter filter = new WingsCookieFilter(wingsCookieInterceptor);
         filter.setOrder(WingsServletConst.ORDER_FILTER_RECOOKIE);
         return filter;

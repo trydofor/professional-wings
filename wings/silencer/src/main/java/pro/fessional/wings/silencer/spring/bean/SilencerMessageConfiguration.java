@@ -22,7 +22,7 @@ import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 @ConditionalOnProperty(name = SilencerEnabledProp.Key$message, havingValue = "true")
 public class SilencerMessageConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SilencerMessageConfiguration.class);
+    private static final Log log = LogFactory.getLog(SilencerMessageConfiguration.class);
 
     @Bean
     public CombinableMessageSource combinableMessageSource(MessageSource messageSource) {
@@ -31,13 +31,13 @@ public class SilencerMessageConfiguration {
             HierarchicalMessageSource hierarchy = (HierarchicalMessageSource) messageSource;
             MessageSource parent = hierarchy.getParentMessageSource();
             if (parent != null) {
-                logger.info("set parent for CombinableMessageSource");
+                log.info("set parent for CombinableMessageSource");
                 combinable.setParentMessageSource(parent);
             }
-            logger.info("change messageSource to CombinableMessageSource");
+            log.info("change messageSource to CombinableMessageSource");
             hierarchy.setParentMessageSource(combinable);
         } else {
-            logger.info("skip non HierarchicalMessageSource for CombinableMessageSource");
+            log.info("skip non HierarchicalMessageSource for CombinableMessageSource");
         }
 
         return combinable;

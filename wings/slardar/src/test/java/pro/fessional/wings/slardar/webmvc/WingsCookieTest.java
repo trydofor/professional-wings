@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.webmvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -60,6 +61,7 @@ import static pro.fessional.wings.slardar.httprest.OkHttpClientHelper.APPLICATIO
         res.addCookie(newCookie("ck2", ins.ck2,false,true));
  */
 @AutoConfigureMockMvc
+@Slf4j
 public class WingsCookieTest {
 
     public static final String PREFIX = "ti_";
@@ -154,7 +156,7 @@ public class WingsCookieTest {
             assertEquals(ins.getCk1() + ins.getCk2(), resBody.string());
 
             final Set<String> cookies = new HashSet<>(response.headers("Set-Cookie"));
-            System.out.println(String.join("|", cookies));
+            log.info(String.join("|", cookies));
             assertTrue(cookies.contains(PREFIX + "ck1=" + ins.getCk1() + "; HttpOnly"));
             assertTrue(cookies.contains(PREFIX + CK2OTH + "=" + ins.getCk2() + "; HttpOnly"));
             assertTrue(cookies.contains(PREFIX + "b64=" + Base64.encode(ins.getB64())));

@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.security.pass;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author trydofor
  * @since 2021-02-25
  */
+@Slf4j
 class DefaultPasssaltEncoderTest {
 
 
@@ -47,13 +49,13 @@ class DefaultPasssaltEncoderTest {
     private void time(PasswordEncoder enc, String str) {
         long s = System.currentTimeMillis();
         int tm = 10;
-        System.out.println();
+        log.info("=====");
         for (int i = 0; i < tm; i++) {
             String pass = enc.encode(str);
-            System.out.println(pass);
+            log.info(pass);
         }
         long e = System.currentTimeMillis();
-        System.out.println(enc.getClass().getSimpleName() + " ms/" + tm + " =" + (e - s));
+        log.info(enc.getClass().getSimpleName() + " ms/" + tm + " =" + (e - s));
     }
 
     @Test
@@ -62,9 +64,9 @@ class DefaultPasssaltEncoderTest {
         final String salt = RandCode.strong(100);
         final String p1 = sha256.salt(pass, salt);
         final String p2 = sha256.salt(pass, salt);
-        System.out.println(pass);
-        System.out.println(salt);
-        System.out.println(p1);
+        log.info(pass);
+        log.info(salt);
+        log.info(p1);
         assertEquals(p1, p2);
     }
 }

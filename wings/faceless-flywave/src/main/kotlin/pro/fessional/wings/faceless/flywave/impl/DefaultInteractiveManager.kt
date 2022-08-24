@@ -15,7 +15,7 @@ import javax.sql.DataSource
  * @since 2021-12-24
  */
 class DefaultInteractiveManager<T>(
-    private val logger: Logger,
+    private val log: Logger,
     private val plainDataSources: Map<String, DataSource>,
     private val emoji: String = "🐝"
 ) : InteractiveManager<T> {
@@ -30,21 +30,21 @@ class DefaultInteractiveManager<T>(
         val msg = "[$where] $emoji $info"
         if (level == Level.ERROR) {
             if (er == null) {
-                logger.error(msg)
+                log.error(msg)
             } else {
-                logger.error(msg, er)
+                log.error(msg, er)
             }
         } else if (level == Level.WARN) {
             if (er == null) {
-                logger.warn(msg)
+                log.warn(msg)
             } else {
-                logger.warn(msg, er)
+                log.warn(msg, er)
             }
         } else {
             if (er == null) {
-                logger.info(msg)
+                log.info(msg)
             } else {
-                logger.info(msg, er)
+                log.info(msg, er)
             }
         }
 
@@ -54,7 +54,7 @@ class DefaultInteractiveManager<T>(
         msgFunc.accept(tkn, info)
 
         if (fst) {
-            logger.info("[askSegment]🐝🙀 if no console, add '-Deditable.java.test.console=true' ('Help' > 'Edit Custom VM Options...')")
+            log.info("[askSegment]🐝🙀 if no console, add '-Deditable.java.test.console=true' ('Help' > 'Edit Custom VM Options...')")
 
             if (plainDataSources.isNotEmpty()) {
                 val bd = StringBuffer("apply to databases?")

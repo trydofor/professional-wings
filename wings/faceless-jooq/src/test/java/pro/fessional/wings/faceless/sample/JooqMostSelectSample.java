@@ -2,6 +2,7 @@ package pro.fessional.wings.faceless.sample;
 
 import lombok.Data;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -64,6 +65,7 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 
 @SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
 @TestMethodOrder(MethodOrderer.MethodName.class)
+@Slf4j
 public class JooqMostSelectSample {
 
     @Setter(onMethod_ = {@Autowired})
@@ -209,7 +211,7 @@ public class JooqMostSelectSample {
                                   });
 
 
-        System.out.println("debug here to see");
+        log.info("debug here to see");
     }
 
     @Test
@@ -262,7 +264,7 @@ public class JooqMostSelectSample {
                                 .fetch()
                                 .into(SameName.class);
 
-        System.out.println();
+        log.info("rc2", rc2);
     }
 
     @Test
@@ -310,7 +312,7 @@ public class JooqMostSelectSample {
                                        "ORDER BY login_info DESC,id", WingsJooqUtil.bindNamed(rc))
                                 .into(SameName.class);
 
-        System.out.println();
+        log.info("");
     }
 
     @Test
@@ -391,7 +393,7 @@ public class JooqMostSelectSample {
 
         // 更新字段，可以直接使用dao.update()
 
-        System.out.println();
+        log.info("");
     }
 
     @Setter(onMethod_ = {@Autowired})
@@ -421,7 +423,7 @@ public class JooqMostSelectSample {
                     return a;
                 }, 105L);
 
-        System.out.println();
+        log.info("");
     }
 
     @Test
@@ -516,8 +518,8 @@ public class JooqMostSelectSample {
                                  .limit(0, 10)
                                  .fetch()
                                  .into(Tst中文也分表.class);
-        System.out.println(cnt1);
-        System.out.println(lst1.size());
+        log.info("cnt1={}", cnt1);
+        log.info("lst1={}", lst1.size());
 
         // 联表count
         // DSL.countDistinct()
@@ -528,7 +530,7 @@ public class JooqMostSelectSample {
                           .where(t1.Id.eq(t2.Id).and(t1.Id.gt(1L)))
                           .fetchOptionalInto(Integer.class)
                           .orElse(0);
-        System.out.println(cnt2);
+        log.info("cnt2={}", cnt2);
 
         testcaseNotice("左联查询",
                 "select count(`t1`.`id`) from `tst_中文也分表` as `t1` left outer join `tst_中文也分表` as `t2` on `t1`.`id` = `t2`.`id` where `t1`.`id` > ?");
@@ -538,7 +540,7 @@ public class JooqMostSelectSample {
                           .where(t1.Id.gt(1L))
                           .fetchOptionalInto(Integer.class)
                           .orElse(0);
-        System.out.println(cnt3);
+        log.info("cnt3={}", cnt3);
     }
 
     @Test
@@ -557,7 +559,7 @@ public class JooqMostSelectSample {
                                                  .bind(1L)
                                                  .fetchInto(Tst中文也分表.class, WingsEnumConverters.Id2Language);
 
-        System.out.println(pr1.getData().size());
+        log.info("pr1={}", pr1.getData().size());
 
         testcaseNotice("使用helperJdbc正常",
                 "SELECT count(*) from `tst_中文也分表` where id >= ?",
@@ -571,7 +573,7 @@ public class JooqMostSelectSample {
                                                  .fetch("id,login_info,other_info")
                                                  .into(Tst中文也分表.class, WingsEnumConverters.Id2Language);
 
-        System.out.println(pr2.getData().size());
+        log.info("pr2={}", pr2.getData().size());
     }
 
     @Test
@@ -602,7 +604,7 @@ public class JooqMostSelectSample {
                                     .from(t)
                                     .fetch()
                                     .into(EnumDto.class);
-        System.out.println(sn);
+        log.info("sn={}", sn);
 
         // 全局注入的
         final List<EnumDto> sn2 = dao.ctx()
@@ -610,6 +612,6 @@ public class JooqMostSelectSample {
                                      .from(t)
                                      .fetch()
                                      .into(EnumDto.class);
-        System.out.println(sn2);
+        log.info("sn2={}", sn2);
     }
 }

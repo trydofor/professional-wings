@@ -32,13 +32,13 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$firstBlood, havingValue = "true")
 public class SlardarFirstBloodConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SlardarFirstBloodConfiguration.class);
+    private static final Log log = LogFactory.getLog(SlardarFirstBloodConfiguration.class);
     private final SlardarFirstBloodProp firstBloodProp;
 
     @Bean
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$firstBloodImage, havingValue = "true")
     public FirstBloodImageHandler firstBloodImageHandler(@Autowired(required = false) WingsRemoteResolver remoteResolver) {
-        logger.info("Wings conf firstBloodImageHandler");
+        log.info("Wings conf firstBloodImageHandler");
         final FirstBloodImageHandler handler = new FirstBloodImageHandler();
         handler.setScenePrefix(firstBloodProp.getCaptchaPrefix());
         handler.setClientTicketKey(firstBloodProp.getClientTicketKey());
@@ -56,7 +56,7 @@ public class SlardarFirstBloodConfiguration {
         handler.setWingsRemoteResolver(remoteResolver);
         handler.setCaseIgnore(firstBloodProp.isCaseIgnore());
         if (firstBloodProp.isChineseCaptcha()) {
-            logger.info("Wings conf firstBloodImageHandler ChineseCaptcha");
+            log.info("Wings conf firstBloodImageHandler ChineseCaptcha");
             handler.setCaptchaSupplier(() -> RandCode.mix(4));
         }
         return handler;
@@ -66,7 +66,7 @@ public class SlardarFirstBloodConfiguration {
     @ConditionalOnMissingBean(FirstBloodInterceptor.class)
     public FirstBloodInterceptor firstBloodInterceptor(ObjectProvider<FirstBloodHandler> providers) {
         final List<FirstBloodHandler> handlers = providers.orderedStream().collect(Collectors.toList());
-        logger.info("Wings conf firstBloodInterceptor, handlers count=" + handlers.size());
+        log.info("Wings conf firstBloodInterceptor, handlers count=" + handlers.size());
         return new FirstBloodInterceptor(handlers);
     }
 }
