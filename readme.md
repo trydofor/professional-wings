@@ -26,7 +26,17 @@
 git submodule update --remote --init
 ```
 
-## 3.免责声明
+## 3.如何参与
+
+所有`SNAPSHOT`都是开发版，以`rollup`方式迭代，遵循`gitflow`约定。
+`feature`以dota英雄命名，约3-4周迭代一次，保留最近2次。
+
+当前github为主站，以issue交流，如文档订正，缺陷反馈等，推荐普通问题使用。
+代码问题则推荐PR或review手谈，但PR一般会经过调整后进入gitflow流程。
+
+项目会尽可能展示贡献者信息和足迹，如@author注释，代码注释，提交信息等。
+
+## 4.免责声明
 
 WingsBoot及其submodule项目，均以Apache2授权。但本人，
 
