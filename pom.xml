@@ -72,7 +72,6 @@
         <springdoc.version>1.6.8</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases  boot-starter 2.6.7 -->
         <boot-admin.version>2.6.7</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases spring-boot.version 2.6.7-->
         <sentry.version>6.4.0</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases  springBootVersion = "2.6.8"-->
-        <xxljob.version>2.3.1</xxljob.version> <!-- https://github.com/xuxueli/xxl-job/releases -->
         <!-- mvn-build-plugin -->
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version> <!-- https://search.maven.org/search?q=flatten-maven-plugin -->
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version> <!-- https://search.maven.org/search?q=maven-gpg-plugin -->
@@ -297,11 +296,6 @@
                 <groupId>me.zhyd.oauth</groupId>
                 <artifactId>JustAuth</artifactId>
                 <version>${justauth.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.xuxueli</groupId>
-                <artifactId>xxl-job-core</artifactId>
-                <version>${xxljob.version}</version>
             </dependency>
             <!-- Argon2PasswordEncoder -->
             <dependency>

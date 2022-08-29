@@ -26,13 +26,16 @@
 git submodule update --remote --init
 ```
 
-## 3.如何参与
+## 3.用爱发电
 
 所有`SNAPSHOT`都是开发版，以`rollup`方式迭代，遵循`gitflow`约定。
-`feature`以dota英雄命名，约3-4周迭代一次，保留最近2次。
+`feature`以`dota2`英雄命名，约1推送/周，约1迭代/月，保留最近2分支。
 
-当前github为主站，以issue交流，如文档订正，缺陷反馈等，推荐普通问题使用。
-代码问题则推荐PR或review手谈，但PR一般会经过调整后进入gitflow流程。
+代码及文档管理，以github作主站，以gitee作镜像，基本同步推送。
+
+* issues - 任务类，有bug和feature两个模板，可并入discuss
+* discussions - 文档类，交流技术话题，不得讨论政治，宗教。
+* PR及Review - 代码手谈，PR会经过调整后进入gitflow流程
 
 项目会尽可能展示贡献者信息和足迹，如@author注释，代码注释，提交信息等。
 
