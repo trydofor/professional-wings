@@ -18,8 +18,6 @@ import java.util.TimeZone;
  * @since 2019-09-17
  */
 // RNA:USE /StandardTimezoneTemplate/enum-class/*
-// RNA:USE ://\s+:non-ascii:
-// @SuppressWarnings({"NonAsciiCharacters"})
 public enum StandardTimezoneTemplate implements StandardTimezoneEnum {
 
     // RNA:EACH /1/enum-items/enum

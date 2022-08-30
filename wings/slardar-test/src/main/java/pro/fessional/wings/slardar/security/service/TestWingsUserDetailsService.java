@@ -51,7 +51,7 @@ public class TestWingsUserDetailsService implements WingsUserDetailsService {
         ud.setUsername(username);
         ud.setAuthorities(auths);
         ud.setLocale(Locale.CANADA);
-        ud.setZoneId(StandardTimezone.CANADA𓃬CENTRAL.toZoneId());
+        ud.setZoneId(StandardTimezone.CANADA_CENTRAL.toZoneId());
 
         return ud;
     }

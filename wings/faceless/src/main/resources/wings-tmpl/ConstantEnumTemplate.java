@@ -14,8 +14,6 @@ import pro.fessional.wings.faceless.enums.StandardI18nEnum;
  * @since 2019-09-17
  */
 // RNA:USE /ConstantEnumTemplate/enum-class/*
-// RNA:USE ://\s+:non-ascii:
-// @SuppressWarnings({"NonAsciiCharacters"})
 public enum ConstantEnumTemplate implements ConstantEnum, StandardI18nEnum {
 
     // RNA:EACH /1/enum-items/enum

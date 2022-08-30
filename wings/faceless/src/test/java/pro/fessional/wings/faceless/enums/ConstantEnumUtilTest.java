@@ -57,14 +57,29 @@ public class ConstantEnumUtilTest {
 
     @Test
     public void groupInfo() {
-        List<StandardTimezone> usTimezone = ConstantEnumUtil.groupInfo(StandardTimezone.AMERICA𓃬CHICAGO, StandardTimezone.values());
+        List<StandardTimezone> usTimezone = ConstantEnumUtil.groupInfo(StandardTimezone.AMERICA_CHICAGO, StandardTimezone.values());
         List<StandardTimezone> objects = Arrays.asList(
-                StandardTimezone.AMERICA𓃬CHICAGO,
-                StandardTimezone.AMERICA𓃬LOS_ANGELES,
-                StandardTimezone.AMERICA𓃬NEW_YORK,
-                StandardTimezone.AMERICA𓃬PHOENIX,
-                StandardTimezone.US𓃬ALASKA,
-                StandardTimezone.US𓃬HAWAII);
+                StandardTimezone.AMERICA_CHICAGO,
+                StandardTimezone.AMERICA_LOS_ANGELES,
+                StandardTimezone.AMERICA_NEW_YORK,
+                StandardTimezone.AMERICA_PHOENIX,
+                StandardTimezone.US_ALASKA,
+                StandardTimezone.US_HAWAII);
+        assertEquals(objects, usTimezone);
+    }
+
+    @Test
+    public void namesAuto() {
+        List<StandardTimezone> usTimezone = ConstantEnumUtil.namesAuto(StandardTimezone.values(),
+                "AMERICA_CHICAGO, "
+                + "AMERICA_LOS_ANGELES "
+                + "AMERICA_NEW_YORK; "
+                + "AMERICA_PHOENIX,");
+        List<StandardTimezone> objects = Arrays.asList(
+                StandardTimezone.AMERICA_CHICAGO,
+                StandardTimezone.AMERICA_LOS_ANGELES,
+                StandardTimezone.AMERICA_NEW_YORK,
+                StandardTimezone.AMERICA_PHOENIX);
         assertEquals(objects, usTimezone);
     }
 }

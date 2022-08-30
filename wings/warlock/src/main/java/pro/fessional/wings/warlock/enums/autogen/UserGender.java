@@ -9,7 +9,6 @@ import pro.fessional.wings.faceless.enums.StandardI18nEnum;
  * @author trydofor
  * @since 2021-02-22
  */
-// @SuppressWarnings({"NonAsciiCharacters"})
 public enum UserGender implements ConstantEnum, StandardI18nEnum {
 
     SUPER(1200100, "user_gender", "性别", "classpath:/wings-tmpl/ConstantEnumTemplate.java"),

@@ -18,8 +18,6 @@ import java.util.Locale;
  * @since 2019-09-17
  */
 // RNA:USE /StandardLanguageTemplate/enum-class/*
-// RNA:USE ://\s+:non-ascii:
-// @SuppressWarnings({"NonAsciiCharacters"})
 public enum StandardLanguageTemplate implements StandardLanguageEnum {
 
     // RNA:EACH /1/enum-items/enum

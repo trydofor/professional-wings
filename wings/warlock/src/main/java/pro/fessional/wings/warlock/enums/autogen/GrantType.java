@@ -9,7 +9,6 @@ import pro.fessional.wings.faceless.enums.StandardI18nEnum;
  * @author trydofor
  * @since 2021-07-29
  */
-// @SuppressWarnings({"NonAsciiCharacters"})
 public enum GrantType implements ConstantEnum, StandardI18nEnum {
 
     SUPER(1330100, "grant_type", "授权类别", "classpath:/wings-tmpl/ConstantEnumTemplate.java"),

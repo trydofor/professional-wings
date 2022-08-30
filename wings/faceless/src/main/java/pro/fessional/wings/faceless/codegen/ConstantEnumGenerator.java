@@ -40,7 +40,7 @@ public class ConstantEnumGenerator {
     /**
      * 对java中非合法命名的字符进行替换，设置为空，以忽略非命名字符
      */
-    public static String deerChar = "𓃬";
+    public static String deerChar = "_";
 
     @Data
     @AllArgsConstructor
@@ -198,7 +198,6 @@ public class ConstantEnumGenerator {
             List<Map<String, String>> items = new ArrayList<>(vals.size());
 
             StringBuilder buff = new StringBuilder(32);
-            String nonAscii = "// ";
             for (ConstantEnum ce : vals) {
                 Map<String, String> it = new HashMap<>();
                 boolean isSuper = isSuper(ce);
@@ -222,7 +221,6 @@ public class ConstantEnumGenerator {
                             if (buff.length() > 0 && canDeer) {
                                 canDeer = false;
                                 buff.append(deerChar);
-                                nonAscii = "";
                                 continue;
                             }
                         }
@@ -243,7 +241,6 @@ public class ConstantEnumGenerator {
             ctx.put("enum-package", pkg);
             ctx.put("enum-class", enumClass);
             ctx.put("enum-type", type);
-            ctx.put("non-ascii", nonAscii);
             ctx.put("enum-idkey", String.valueOf(root.code.equalsIgnoreCase("id")));
             ctx.put("enum-items", items);
             String text = Meepo.merge(ctx, root.info);
