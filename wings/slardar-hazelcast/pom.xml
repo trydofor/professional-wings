@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Slardar::Hazelcast</name>
-    <description>鱼人守卫①黑走卡斯特</description>
+    <description>鱼人守卫之黑走卡斯特</description>
 
     <dependencies>
         <dependency>

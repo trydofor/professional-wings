@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Faceless::Shard</name>
-    <description>虚空假面②时间膨胀(shard)</description>
+    <description>虚空假面之时间膨胀(shard)</description>
 
     <dependencies>
         <dependency>
