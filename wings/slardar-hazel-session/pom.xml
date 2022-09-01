@@ -10,24 +10,26 @@
     </parent>
 
     <groupId>pro.fessional.wings</groupId>
-    <artifactId>warlock</artifactId>
+    <artifactId>slardar-hazel-session</artifactId>
     <packaging>jar</packaging>
 
-    <name>Wings::Warlock</name>
-    <description>术士大叔</description>
+    <name>Wings::Slardar::HazelSession</name>
+    <description>鱼人守卫之黑走晒神</description>
 
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>slardar-sprint</artifactId>
+            <artifactId>slardar-hazel-caching</artifactId>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-jooq</artifactId>
+            <artifactId>slardar-webmvc</artifactId>
         </dependency>
+        <!-- test -->
         <dependency>
-            <groupId>me.zhyd.oauth</groupId>
-            <artifactId>JustAuth</artifactId>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>slardar-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

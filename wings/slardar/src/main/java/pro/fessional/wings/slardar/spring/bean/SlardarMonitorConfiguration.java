@@ -23,7 +23,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.unit.DataSize;
 import pro.fessional.wings.slardar.monitor.MonitorTask;
-import pro.fessional.wings.slardar.monitor.filtter.LogViewer;
 import pro.fessional.wings.slardar.monitor.metric.JvmMetric;
 import pro.fessional.wings.slardar.monitor.metric.LogMetric;
 import pro.fessional.wings.slardar.monitor.report.DingTalkReport;
@@ -74,7 +73,7 @@ public class SlardarMonitorConfiguration {
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnExpression("${" + SlardarEnabledProp.Key$monitor + ":false} && ${" + SlardarEnabledProp.Key$monitorLog + ":false}")
-    @ComponentScan(basePackageClasses = LogViewer.class)
+    @ComponentScan(basePackageClasses = MonitorTask.class)
     public static class LogMetricBeanRegister implements BeanFactoryPostProcessor, EnvironmentAware {
 
         private SlardarMonitorProp slardarMonitorProp;

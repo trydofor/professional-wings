@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress HttpUrlsUsage -->
+<hazelcast xmlns="http://www.hazelcast.com/schema/config"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.hazelcast.com/schema/config
+           http://www.hazelcast.com/schema/config/hazelcast-config-4.2.xsd">
+
+    <map name="${spring.boot.admin.hazelcast.event-store}">
+        <in-memory-format>OBJECT</in-memory-format>
+        <backup-count>1</backup-count>
+        <merge-policy>PutIfAbsentMergePolicy</merge-policy>
+    </map>
+    <map name="${spring.boot.admin.hazelcast.sent-notifications}">
+        <in-memory-format>OBJECT</in-memory-format>
+        <backup-count>1</backup-count>
+        <merge-policy>PutIfAbsentMergePolicy</merge-policy>
+        <eviction size="10000" max-size-policy="PER_NODE" eviction-policy="LRU"/>
+    </map>
+</hazelcast>

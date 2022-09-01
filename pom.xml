@@ -160,7 +160,22 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
-                <artifactId>slardar-hazelcast</artifactId>
+                <artifactId>slardar-hazel-caching</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>slardar-hazel-session</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>slardar-webmvc</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>slardar-sprint</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>

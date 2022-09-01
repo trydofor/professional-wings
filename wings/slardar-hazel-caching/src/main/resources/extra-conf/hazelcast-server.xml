@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress HttpUrlsUsage -->
+<hazelcast xmlns="http://www.hazelcast.com/schema/config"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.hazelcast.com/schema/config
+           http://www.hazelcast.com/schema/config/hazelcast-config-4.2.xsd">
+
+    <!-- hazelcast-full-example.xml -->
+    <cluster-name>${wings.slardar.hazelcast.cluster-name}</cluster-name>
+
+    <network>
+        <port auto-increment="true" port-count="100">5701</port>
+        <outbound-ports>
+            <ports>0</ports>
+        </outbound-ports>
+        <reuse-address>true</reuse-address>
+        <join>
+            <auto-detection enabled="true"/>
+            <multicast enabled="true" loopbackModeEnabled="true">
+                <multicast-group>224.2.2.3</multicast-group>
+                <multicast-port>54327</multicast-port>
+            </multicast>
+        </join>
+    </network>
+
+    <cp-subsystem>
+        <cp-member-count>0</cp-member-count>
+        <group-size>0</group-size>
+        <session-time-to-live-seconds>300</session-time-to-live-seconds>
+        <session-heartbeat-interval-seconds>5</session-heartbeat-interval-seconds>
+        <missing-cp-member-auto-removal-seconds>14400</missing-cp-member-auto-removal-seconds>
+        <fail-on-indeterminate-operation-state>false</fail-on-indeterminate-operation-state>
+    </cp-subsystem>
+
+    <map name="default">
+        <!--
+        For the key, the equals/hashcode is determined based on the binary format.
+        https://hazelcast.com/blog/in-memory-format/
+        -->
+        <in-memory-format>BINARY</in-memory-format>
+        <time-to-live-seconds>0</time-to-live-seconds>
+        <max-idle-seconds>0</max-idle-seconds>
+        <near-cache name="default">
+            <in-memory-format>OBJECT</in-memory-format>
+            <time-to-live-seconds>0</time-to-live-seconds>
+            <max-idle-seconds>0</max-idle-seconds>
+            <invalidate-on-change>true</invalidate-on-change>
+            <cache-local-entries>false</cache-local-entries>
+            <eviction eviction-policy="LRU" max-size-policy="ENTRY_COUNT" size="10000"/>
+        </near-cache>
+    </map>
+
+    <serialization>
+        <serializers>
+            <!-- need UnmodifiableCollectionsSerializer -->
+            <global-serializer>pro.fessional.wings.slardar.serialize.KryoHazelcast</global-serializer>
+            <!-- spring FindByIndexNameSessionRepository -->
+            <serializer class-name="org.springframework.session.hazelcast.HazelcastSessionSerializer"
+                        type-class="org.springframework.session.MapSession"/>
+        </serializers>
+    </serialization>
+
+    <!-- HazelcastSerializationException: java.lang.ClassNotFoundException -->
+    <user-code-deployment enabled="true">
+        <class-cache-mode>ETERNAL</class-cache-mode>
+        <provider-mode>LOCAL_AND_CACHED_CLASSES</provider-mode>
+        <!--        <blacklist-prefixes>com.foo,com.bar</blacklist-prefixes>-->
+        <!--        <whitelist-prefixes>com.bar.MyClass</whitelist-prefixes>-->
+        <!--        <provider-filter>HAS_ATTRIBUTE:lite</provider-filter>-->
+    </user-code-deployment>
+
+    <flake-id-generator name="default">
+        <prefetch-count>100</prefetch-count>
+        <prefetch-validity-millis>600000</prefetch-validity-millis>
+        <epoch-start>1640995200000</epoch-start>
+        <node-id-offset>0</node-id-offset>
+        <bits-sequence>12</bits-sequence>
+        <bits-node-id>10</bits-node-id>
+        <allowed-future-millis>15000</allowed-future-millis>
+        <statistics-enabled>true</statistics-enabled>
+    </flake-id-generator>
+</hazelcast>

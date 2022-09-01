@@ -28,7 +28,10 @@
         <module>faceless-shard</module>
         <module>faceless-test</module>
         <module>slardar</module>
-        <module>slardar-hazelcast</module>
+        <module>slardar-hazel-caching</module>
+        <module>slardar-hazel-session</module>
+        <module>slardar-webmvc</module>
+        <module>slardar-sprint</module>
         <module>slardar-test</module>
         <module>warlock</module>
         <module>warlock-bond</module>
@@ -63,11 +66,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>

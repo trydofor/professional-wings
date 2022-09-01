@@ -3,15 +3,10 @@ package pro.fessional.wings.slardar.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 import pro.fessional.wings.slardar.concur.impl.DoubleKillAround;
-import pro.fessional.wings.slardar.concur.impl.DoubleKillExceptionResolver;
-import pro.fessional.wings.slardar.spring.prop.SlardarDoubleKillProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 /**
@@ -24,7 +19,6 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 public class SlardarDoubleKillConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarDoubleKillConfiguration.class);
-    private final SlardarDoubleKillProp doubleKillProp;
 
     @Bean
     public DoubleKillAround doubleKillAround() {
@@ -32,15 +26,4 @@ public class SlardarDoubleKillConfiguration {
         return new DoubleKillAround();
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "doubleKillExceptionResolver")
-    public HandlerExceptionResolver doubleKillExceptionResolver() {
-        log.info("Wings conf doubleKillExceptionResolver");
-        final DoubleKillExceptionResolver bean = new DoubleKillExceptionResolver(
-                doubleKillProp.getHttpStatus(),
-                doubleKillProp.getContentType(),
-                doubleKillProp.getResponseBody());
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1000);
-        return bean;
-    }
 }

@@ -1,0 +1,6 @@
+# session
+spring.session.hazelcast.map-name
+
+# spring-boot-admin
+spring.boot.admin.hazelcast.event-store
+spring.boot.admin.hazelcast.sent-notifications
