@@ -4,8 +4,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import pro.fessional.wings.faceless.database.helper.DatabaseChecker;
 import pro.fessional.wings.faceless.enums.LanguageEnumUtil;
 import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 import pro.fessional.wings.faceless.enums.StandardTimezoneEnum;
@@ -14,8 +18,12 @@ import pro.fessional.wings.warlock.service.conf.RuntimeConfService;
 import pro.fessional.wings.warlock.service.conf.mode.ApiMode;
 import pro.fessional.wings.warlock.service.conf.mode.RunMode;
 import pro.fessional.wings.warlock.service.conf.mode.RuntimeMode;
+import pro.fessional.wings.warlock.spring.prop.WarlockCheckProp;
+import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockI18nProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockRuntimeProp;
+
+import javax.sql.DataSource;
 
 /**
  * @author trydofor
@@ -90,4 +98,16 @@ public class WarlockPostRunnerConfiguration {
             });
         };
     }
+
+    @Bean
+    @ConditionalOnProperty(name = WarlockEnabledProp.Key$checkDatabase, havingValue = "true")
+    @Order(Ordered.HIGHEST_PRECEDENCE + 1000)
+    public CommandLineRunner databaseChecker(DataSource dataSource, WarlockCheckProp prop) {
+        log.info("Wings conf databaseChecker");
+        return args -> {
+            DatabaseChecker.version(dataSource);
+            DatabaseChecker.timezone(dataSource, prop.getTzOffset(), prop.isTzFail());
+        };
+    }
+
 }

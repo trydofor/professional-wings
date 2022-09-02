@@ -22,6 +22,10 @@
             <artifactId>winx-common</artifactId>
         </dependency>
         <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>warlock-bond</artifactId>
+        </dependency>
+        <dependency>
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-starter-server</artifactId>
         </dependency>

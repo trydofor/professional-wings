@@ -21,5 +21,9 @@
             <groupId>com.moilioncircle.wings</groupId>
             <artifactId>winx-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>warlock-bond</artifactId>
+        </dependency>
     </dependencies>
 </project>

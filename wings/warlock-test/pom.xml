@@ -10,27 +10,20 @@
     </parent>
 
     <groupId>pro.fessional.wings</groupId>
-    <artifactId>warlock-bond</artifactId>
+    <artifactId>warlock-test</artifactId>
     <packaging>jar</packaging>
 
-    <name>Wings::Warlock::Bond</name>
-    <description>术士大叔之致命链接</description>
+    <name>Wings::Warlock::Test</name>
+    <description>术士大叔之测试</description>
 
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>warlock-shadow</artifactId>
+            <artifactId>slardar</artifactId>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-flywave</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <!-- test -->
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>warlock-test</artifactId>
-            <scope>test</scope>
+            <artifactId>faceless-jooq</artifactId>
         </dependency>
     </dependencies>
 </project>

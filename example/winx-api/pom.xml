@@ -22,6 +22,10 @@
             <artifactId>batrider-zero</artifactId>
         </dependency>
         <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>slardar-webmvc</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.moilioncircle.wings</groupId>
             <artifactId>winx-common</artifactId>
             <exclusions>

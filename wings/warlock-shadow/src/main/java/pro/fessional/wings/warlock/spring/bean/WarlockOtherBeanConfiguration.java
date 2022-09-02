@@ -1,32 +1,26 @@
 package pro.fessional.wings.warlock.spring.bean;
 
+import com.hazelcast.core.HazelcastInstance;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import pro.fessional.wings.faceless.database.helper.DatabaseChecker;
+import pro.fessional.wings.slardar.concur.HazelcastGlobalLock;
 import pro.fessional.wings.slardar.concur.impl.RighterInterceptor;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
-import pro.fessional.wings.slardar.serialize.JsonConversion;
-import pro.fessional.wings.slardar.serialize.KryoConversion;
 import pro.fessional.wings.warlock.errorhandle.AllExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.CodeExceptionResolver;
-import pro.fessional.wings.warlock.service.conf.RuntimeConfService;
-import pro.fessional.wings.warlock.service.conf.impl.RuntimeConfServiceImpl;
-import pro.fessional.wings.warlock.spring.prop.WarlockCheckProp;
+import pro.fessional.wings.warlock.errorhandle.auto.BindExceptionAdvice;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockErrorProp;
-
-import javax.sql.DataSource;
+import pro.fessional.wings.warlock.spring.prop.WarlockLockProp;
 
 import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.SaltByUid;
 
@@ -39,6 +33,12 @@ import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.Salt
 public class WarlockOtherBeanConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockOtherBeanConfiguration.class);
+
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnProperty(name = WarlockEnabledProp.Key$bindExceptionAdvice, havingValue = "true")
+    @ComponentScan(basePackageClasses = BindExceptionAdvice.class)
+    public static class BindingErrorConfig {
+    }
 
     @Bean
     @ConditionalOnMissingBean(name = "codeExceptionResolver")
@@ -63,17 +63,6 @@ public class WarlockOtherBeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$checkDatabase, havingValue = "true")
-    @Order(Ordered.HIGHEST_PRECEDENCE + 1000)
-    public CommandLineRunner databaseChecker(DataSource dataSource, WarlockCheckProp prop) {
-        log.info("Wings conf databaseChecker");
-        return args -> {
-            DatabaseChecker.version(dataSource);
-            DatabaseChecker.timezone(dataSource, prop.getTzOffset(), prop.isTzFail());
-        };
-    }
-
-    @Bean
     @ConditionalOnMissingBean
     public RighterInterceptor.SecretProvider righterInterceptorSecretProvider() {
         log.info("Wings conf righterInterceptorSecretProvider");
@@ -87,13 +76,11 @@ public class WarlockOtherBeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
-    public RuntimeConfService runtimeConfService(ConversionService conversion) {
-        log.info("Wings conf runtimeConfService");
-        final RuntimeConfServiceImpl bean = new RuntimeConfServiceImpl();
-        bean.addHandler(RuntimeConfServiceImpl.PropHandler, conversion);
-        bean.addHandler(RuntimeConfServiceImpl.JsonHandler, new JsonConversion());
-        bean.addHandler(RuntimeConfServiceImpl.KryoHandler, new KryoConversion());
-        return bean;
+    @ConditionalOnMissingBean(HazelcastGlobalLock.class)
+    @ConditionalOnProperty(name = WarlockEnabledProp.Key$globalLock, havingValue = "true")
+    public HazelcastGlobalLock hazelcastGlobalLock(HazelcastInstance hazelcastInstance, WarlockLockProp warlockLockProp) {
+        final boolean hcp = warlockLockProp.isHazelcastCp();
+        log.info("Wings conf hazelcastGlobalLock, useCpIfSafe=" + hcp);
+        return new HazelcastGlobalLock(hazelcastInstance, hcp);
     }
 }

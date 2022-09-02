@@ -10,21 +10,24 @@
     </parent>
 
     <groupId>pro.fessional.wings</groupId>
-    <artifactId>warlock-bond</artifactId>
+    <artifactId>warlock-shadow</artifactId>
     <packaging>jar</packaging>
 
-    <name>Wings::Warlock::Bond</name>
-    <description>术士大叔之致命链接</description>
+    <name>Wings::Warlock::Shadow</name>
+    <description>术士大叔之暗言术法</description>
 
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>warlock-shadow</artifactId>
+            <artifactId>slardar-sprint</artifactId>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-flywave</artifactId>
-            <optional>true</optional>
+            <artifactId>warlock</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>me.zhyd.oauth</groupId>
+            <artifactId>JustAuth</artifactId>
         </dependency>
         <!-- test -->
         <dependency>

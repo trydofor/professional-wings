@@ -200,6 +200,16 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
+                <artifactId>warlock-shadow</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>warlock-test</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
                 <artifactId>batrider</artifactId>
                 <version>${wings.version}</version>
             </dependency>

@@ -90,5 +90,11 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- test -->
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>silencer-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

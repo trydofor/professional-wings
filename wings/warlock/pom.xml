@@ -19,15 +19,17 @@
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>slardar-sprint</artifactId>
+            <artifactId>slardar</artifactId>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-jooq</artifactId>
         </dependency>
+        <!-- test -->
         <dependency>
-            <groupId>me.zhyd.oauth</groupId>
-            <artifactId>JustAuth</artifactId>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>warlock-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

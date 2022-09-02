@@ -36,6 +36,8 @@
         <module>warlock</module>
         <module>warlock-bond</module>
         <module>warlock-codegen</module>
+        <module>warlock-shadow</module>
+        <module>warlock-test</module>
         <module>batrider</module>
         <module>batrider-test</module>
         <module>batrider-zero</module>
