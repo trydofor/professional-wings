@@ -29,15 +29,31 @@ public class ComboWingsUserDetailsService implements WingsUserDetailsService {
     @Override
     public @NotNull UserDetails loadUserByUsername(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) throws UsernameNotFoundException {
         dclCombos.runIfDirty();
+        UserDetails userDetails = null;
         for (Combo<?> combo : combos) {
-            final UserDetails ud = combo.loadOrNull(username, authType, authDetail);
-            if (ud != null) {
+            userDetails = combo.loadOrNull(username, authType, authDetail);
+            if (userDetails != null) {
                 log.info("loadUserByUsername by combo={}", combo.getClass());
-                return ud;
+                break;
             }
         }
 
-        throw new UsernameNotFoundException("failed load user-details, username=" + username + ", auth-type=" + authType);
+        if (userDetails != null) {
+            for (Combo<?> combo : combos) {
+                userDetails = combo.postAudit(userDetails, username, authType, authDetail);
+                if (userDetails == null) {
+                    log.info("postAudit deny by combo={}", combo.getClass());
+                    break;
+                }
+            }
+        }
+
+        if (userDetails == null) {
+            throw new UsernameNotFoundException("failed load user-details, username=" + username + ", auth-type=" + authType);
+        }
+        else {
+            return userDetails;
+        }
     }
 
 
@@ -65,6 +81,22 @@ public class ComboWingsUserDetailsService implements WingsUserDetailsService {
          * @see Authentication#getDetails
          */
         @Nullable
-        T loadOrNull(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail);
+        default T loadOrNull(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {
+            return null;
+        }
+
+        /**
+         * 对加载的useDetail后置审查，返回null等同于load失败
+         *
+         * @param useDetail  已加载的useDetail
+         * @param username   原始 username
+         * @param authType   原始 authType
+         * @param authDetail 原始 authDetail
+         * @return 加工后的useDetail
+         */
+        @Nullable
+        default UserDetails postAudit(@NotNull UserDetails useDetail, String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {
+            return useDetail;
+        }
     }
 }

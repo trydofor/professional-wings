@@ -23,7 +23,7 @@ import pro.fessional.wings.slardar.httprest.OkHttpClientHelper;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class NonceLoginTest {
+class NoncePermLoginTest {
 
     @Setter(onMethod_ = {@Value("${local.server.port}")})
     private int port;
