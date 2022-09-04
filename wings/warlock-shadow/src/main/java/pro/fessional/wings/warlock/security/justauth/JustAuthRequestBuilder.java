@@ -66,12 +66,10 @@ import java.util.Map;
 @Setter @Getter
 public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo<DefaultWingsAuthDetails> {
 
-    public static final int ORDER = WarlockOrderConst.AuthDetailsCombo + 9_000;
-
     private Map<Enum<?>, AuthConfig> authConfigMap = Collections.emptyMap();
     private AuthStateCache authStateCache;
     private AuthStateBuilder authStateBuilder;
-    private int order = ORDER;
+    private int order = WarlockOrderConst.JustAuthRequestBuilder;
 
     @Override
     public DefaultWingsAuthDetails buildDetails(@NotNull Enum<?> authType, @NotNull HttpServletRequest request) {

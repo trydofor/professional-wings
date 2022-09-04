@@ -6,7 +6,6 @@ import me.zhyd.oauth.model.AuthUser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
 
@@ -18,12 +17,6 @@ import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
  */
 @Slf4j
 public class JustAuthUserDetailsCombo extends DefaultUserDetailsCombo {
-
-    public static final int ORDER = WarlockOrderConst.UserDetailsCombo + 9_000;
-
-    public JustAuthUserDetailsCombo() {
-        setOrder(ORDER);
-    }
 
     @Override
     public boolean authed(Enum<?> authType) {

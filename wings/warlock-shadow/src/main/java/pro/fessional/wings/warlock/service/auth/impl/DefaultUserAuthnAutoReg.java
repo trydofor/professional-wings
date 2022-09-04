@@ -33,10 +33,8 @@ import static pro.fessional.wings.warlock.service.user.WarlockUserBasisService.B
 @Slf4j
 public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg {
 
-    public static final int ORDER = WarlockOrderConst.UserAuthnCombo + 10_000;
-
     @Getter @Setter
-    private int order = ORDER;
+    private int order = WarlockOrderConst.DefaultUserAuthnAutoReg;
 
     @Setter(onMethod_ = {@Autowired})
     protected WarlockUserBasisService warlockUserBasisService;

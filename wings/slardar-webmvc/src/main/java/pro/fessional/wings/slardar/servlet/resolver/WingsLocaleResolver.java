@@ -21,7 +21,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
 
-import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_I18N_CONTEXT;
+import static pro.fessional.wings.slardar.constants.SlardarServletConst.AttrI18nContext;
 
 /**
  * 按以下优先顺序获得用户语言和时区设置。
@@ -76,7 +76,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
 
     public TimeZoneAwareLocaleContext resolveI18nContext(HttpServletRequest request) {
 
-        Object obj = request.getAttribute(ATTR_I18N_CONTEXT);
+        Object obj = request.getAttribute(AttrI18nContext);
         if (obj instanceof TimeZoneAwareLocaleContext) {
             return (TimeZoneAwareLocaleContext) obj;
         }
@@ -107,7 +107,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
         }
 
         SimpleTimeZoneAwareLocaleContext context = new SimpleTimeZoneAwareLocaleContext(locale, timeZone);
-        request.setAttribute(ATTR_I18N_CONTEXT, context);
+        request.setAttribute(AttrI18nContext, context);
 
         return context;
     }
@@ -115,7 +115,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
     @Override
     public void setLocaleContext(@NotNull HttpServletRequest request, HttpServletResponse response, LocaleContext context) {
         if (context instanceof TimeZoneAwareLocaleContext) {
-            request.setAttribute(ATTR_I18N_CONTEXT, context);
+            request.setAttribute(AttrI18nContext, context);
             return;
         }
 
@@ -123,7 +123,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
         final TimeZone timeZone = resolveUserTimeZone(request);
 
         context = new SimpleTimeZoneAwareLocaleContext(locale == null ? Locale.getDefault() : locale, timeZone);
-        request.setAttribute(ATTR_I18N_CONTEXT, context);
+        request.setAttribute(AttrI18nContext, context);
     }
 
     // /////////////////

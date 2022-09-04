@@ -2,12 +2,15 @@ package pro.fessional.wings.slardar.concur.impl;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import pro.fessional.mirana.bits.Md5;
 import pro.fessional.wings.slardar.concur.Debounce;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.servlet.request.RequestHelper;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.servlet.stream.ReuseStreamResponseWrapper;
@@ -34,6 +37,9 @@ public class DebounceInterceptor implements AutoRegisterInterceptor {
     private final AtomicLong seq = new AtomicLong(0);
     private final Cache<String, Dto> cache;
     private final ModelAndView modelAndView;
+
+    @Getter @Setter
+    private int order = SlardarOrderConst.OrderDebounceInterceptor;
 
     public DebounceInterceptor(long capacity, int maxWait, ModelAndView res) {
         this.cache = Caffeine.newBuilder()

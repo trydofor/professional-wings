@@ -9,7 +9,7 @@ import lombok.Setter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
-import pro.fessional.wings.slardar.servlet.WingsServletConst;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 
 import javax.servlet.FilterChain;
@@ -36,7 +36,7 @@ public class WingsOverloadFilter implements OrderedFilter {
     private final Log log = LogFactory.getLog(WingsOverloadFilter.class);
 
     @Setter @Getter
-    private int order = WingsServletConst.ORDER_FILTER_OVERLOAD;
+    private int order = SlardarOrderConst.OrderFilterOverload;
 
     private final AtomicInteger requestCapacity = new AtomicInteger(0);
     private final AtomicInteger requestProcess = new AtomicInteger(0);

@@ -21,12 +21,6 @@ import static pro.fessional.wings.warlock.service.user.WarlockUserBasisService.B
 @Slf4j
 public class JustAuthUserAuthnAutoReg extends DefaultUserAuthnAutoReg {
 
-    public static final int ORDER = DefaultUserAuthnAutoReg.ORDER - 10;
-
-    public JustAuthUserAuthnAutoReg() {
-        setOrder(ORDER);
-    }
-
     @Override
     protected void beforeSave(Basis basis, String username, WingsAuthDetails details) {
         AuthUser user = (AuthUser) details.getRealData();

@@ -13,6 +13,7 @@ import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.slardar.concur.Righter;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.serialize.KryoSimple;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
@@ -35,6 +36,9 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
     public static final String Secret = RandCode.strong(60);
 
     private final SlardarRighterProp prop;
+
+    @Getter @Setter
+    private int order = SlardarOrderConst.OrderRighterInterceptor;
 
     /**
      * 根据 SecurityContext.Principal 获得用户加密用的密码

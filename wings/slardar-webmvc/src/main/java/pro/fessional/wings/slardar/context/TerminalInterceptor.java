@@ -1,9 +1,12 @@
 package pro.fessional.wings.slardar.context;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
@@ -21,6 +24,9 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
 
     private final WingsLocaleResolver localeResolver;
     private final WingsRemoteResolver remoteResolver;
+
+    @Getter @Setter
+    private int order = SlardarOrderConst.OrderTerminalInterceptor;
 
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request,

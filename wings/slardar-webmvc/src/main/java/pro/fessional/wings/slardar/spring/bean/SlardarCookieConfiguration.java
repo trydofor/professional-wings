@@ -6,7 +6,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.slardar.servlet.WingsServletConst;
 import pro.fessional.wings.slardar.servlet.cookie.WingsCookieFilter;
 import pro.fessional.wings.slardar.servlet.cookie.WingsCookieInterceptor;
 import pro.fessional.wings.slardar.servlet.cookie.impl.WingsCookieInterceptorImpl;
@@ -79,8 +78,6 @@ public class SlardarCookieConfiguration {
     @Bean
     public WingsCookieFilter wingsCookieFilter(WingsCookieInterceptor wingsCookieInterceptor) {
         log.info("Wings conf WingsCookieFilter");
-        WingsCookieFilter filter = new WingsCookieFilter(wingsCookieInterceptor);
-        filter.setOrder(WingsServletConst.ORDER_FILTER_RECOOKIE);
-        return filter;
+        return new WingsCookieFilter(wingsCookieInterceptor);
     }
 }

@@ -5,7 +5,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.Ordered;
 import org.springframework.web.filter.OncePerRequestFilter;
-import pro.fessional.wings.slardar.servlet.WingsServletConst;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -20,7 +20,7 @@ import java.io.IOException;
 public class WingsReuseStreamFilter extends OncePerRequestFilter implements Ordered {
 
     @Setter @Getter
-    private int order = WingsServletConst.ORDER_FILTER_RESTREAM;
+    private int order = SlardarOrderConst.OrderFilterReStream;
 
     @Getter @Setter
     private RequestResponseLogging requestResponseLogging;

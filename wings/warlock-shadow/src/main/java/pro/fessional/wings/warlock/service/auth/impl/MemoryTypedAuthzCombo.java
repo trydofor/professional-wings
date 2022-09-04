@@ -27,10 +27,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Slf4j
 public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
 
-    public static final int ORDER = WarlockOrderConst.UserAuthzCombo + 11_000;
-
     @Getter @Setter
-    private int order = ORDER;
+    private int order = WarlockOrderConst.MemoryTypedAuthzCombo;
 
     @Setter(onMethod_ = {@Autowired})
     protected WarlockPermNormalizer permNormalizer;

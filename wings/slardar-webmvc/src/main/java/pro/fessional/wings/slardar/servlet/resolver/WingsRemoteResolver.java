@@ -8,8 +8,8 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_AGENT_INFO;
-import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_REMOTE_IP;
+import static pro.fessional.wings.slardar.constants.SlardarServletConst.AttrAgentInfo;
+import static pro.fessional.wings.slardar.constants.SlardarServletConst.AttrRemoteIp;
 
 /**
  * @author trydofor
@@ -52,7 +52,7 @@ public class WingsRemoteResolver {
 
     @NotNull
     public String resolveRemoteIp(HttpServletRequest request) {
-        Object atr = request.getAttribute(ATTR_REMOTE_IP);
+        Object atr = request.getAttribute(AttrRemoteIp);
         if (atr instanceof String) {
             return (String) atr;
         }
@@ -66,7 +66,7 @@ public class WingsRemoteResolver {
             ip = request.getRemoteAddr();
         }
 
-        request.setAttribute(ATTR_REMOTE_IP, ip);
+        request.setAttribute(AttrRemoteIp, ip);
         return ip;
     }
 
@@ -88,7 +88,7 @@ public class WingsRemoteResolver {
 
     @NotNull
     public String resolveAgentInfo(HttpServletRequest request) {
-        Object atr = request.getAttribute(ATTR_AGENT_INFO);
+        Object atr = request.getAttribute(AttrAgentInfo);
         if (atr instanceof String) {
             return (String) atr;
         }
@@ -99,7 +99,7 @@ public class WingsRemoteResolver {
             if (h != null) sb.append(h).append(";");
         }
         String info = sb.toString();
-        request.setAttribute(ATTR_AGENT_INFO, info);
+        request.setAttribute(AttrAgentInfo, info);
         return info;
     }
 }

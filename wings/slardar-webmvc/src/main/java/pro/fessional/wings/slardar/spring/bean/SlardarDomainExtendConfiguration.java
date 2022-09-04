@@ -12,7 +12,6 @@ import org.springframework.web.servlet.HandlerMapping;
 import pro.fessional.mirana.text.Wildcard;
 import pro.fessional.wings.slardar.domainx.DefaultDomainRequestMatcher;
 import pro.fessional.wings.slardar.domainx.WingsDomainExtendFilter;
-import pro.fessional.wings.slardar.servlet.WingsServletConst;
 import pro.fessional.wings.slardar.spring.prop.DomainExtendProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
@@ -65,10 +64,8 @@ public class SlardarDomainExtendConfiguration {
         DefaultDomainRequestMatcher requestMatcher = new DefaultDomainRequestMatcher(prefix,
                 config.getOtherUrl(), config.getCacheSize(), supplier);
 
-        WingsDomainExtendFilter filter = new WingsDomainExtendFilter(
+        return new WingsDomainExtendFilter(
                 hostMatcher,
                 requestMatcher);
-        filter.setOrder(WingsServletConst.ORDER_FILTER_DOMAINEX);
-        return filter;
     }
 }

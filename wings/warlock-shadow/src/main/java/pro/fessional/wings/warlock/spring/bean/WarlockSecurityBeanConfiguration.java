@@ -33,6 +33,7 @@ import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeParser;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
+import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.security.handler.LoginFailureHandler;
 import pro.fessional.wings.warlock.security.handler.LoginSuccessHandler;
 import pro.fessional.wings.warlock.security.handler.LogoutOkHandler;
@@ -194,7 +195,9 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnMissingBean(JustAuthUserAuthnAutoReg.class)
     public JustAuthUserAuthnAutoReg justAuthUserAuthnAutoReg() {
         log.info("Wings conf justAuthUserAuthnAutoReg");
-        return new JustAuthUserAuthnAutoReg();
+        final JustAuthUserAuthnAutoReg bean = new JustAuthUserAuthnAutoReg();
+        bean.setOrder(WarlockOrderConst.JustAuthUserAuthnAutoReg);
+        return bean;
     }
 
     @Bean
@@ -248,13 +251,14 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnMissingBean(NonceUserDetailsCombo.class)
     public NonceUserDetailsCombo nonceUserDetailsCombo() {
         log.info("Wings conf nonceUserDetailsCombo");
-        final NonceUserDetailsCombo combo = new NonceUserDetailsCombo();
-        combo.setAcceptNonceType(securityProp.mapNonceAuthEnum());
+        final NonceUserDetailsCombo bean = new NonceUserDetailsCombo();
+        bean.setOrder(WarlockOrderConst.NonceUserDetailsCombo);
+        bean.setAcceptNonceType(securityProp.mapNonceAuthEnum());
         final String cn = WingsCache.Level.join(securityProp.getNonceCacheLevel(), "NonceUserDetailsCombo");
-        combo.setCacheName(cn);
+        bean.setCacheName(cn);
         final CacheManager cm = applicationContext.getBean(securityProp.getNonceCacheManager(), CacheManager.class);
-        combo.setCacheManager(cm);
-        return combo;
+        bean.setCacheManager(cm);
+        return bean;
     }
 
     @Bean
@@ -262,6 +266,7 @@ public class WarlockSecurityBeanConfiguration {
     public MemoryUserDetailsCombo memoryUserDetailsCombo(@SuppressWarnings("all") WingsAuthTypeParser typeParser) {
         log.info("Wings conf memoryUserDetailsCombo");
         final MemoryUserDetailsCombo bean = new MemoryUserDetailsCombo();
+        bean.setOrder(WarlockOrderConst.MemoryUserDetailsCombo);
         for (Map.Entry<String, Mu> en : securityProp.getMemUser().entrySet()) {
             log.info("Wings conf add MemUser=" + en.getKey());
             final Mu mu = en.getValue();
@@ -333,7 +338,9 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnMissingBean(JustAuthUserDetailsCombo.class)
     public JustAuthUserDetailsCombo justAuthUserDetailsCombo() {
         log.info("Wings conf justAuthUserDetailsCombo");
-        return new JustAuthUserDetailsCombo();
+        final JustAuthUserDetailsCombo bean = new JustAuthUserDetailsCombo();
+        bean.setOrder(WarlockOrderConst.JustAuthUserDetailsCombo);
+        return bean;
     }
 
     @Bean

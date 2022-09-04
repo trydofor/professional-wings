@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.core.Ordered;
 import org.springframework.web.filter.OncePerRequestFilter;
 import pro.fessional.mirana.text.Wildcard;
-import pro.fessional.wings.slardar.servlet.WingsServletConst;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_DOMAIN_EXTEND;
+import static pro.fessional.wings.slardar.constants.SlardarServletConst.AttrDomainExtend;
 
 /**
  * @author trydofor
@@ -27,7 +27,7 @@ import static pro.fessional.wings.slardar.servlet.WingsServletConst.ATTR_DOMAIN_
 public class WingsDomainExtendFilter extends OncePerRequestFilter implements Ordered {
 
     @Setter @Getter
-    private int order = WingsServletConst.ORDER_FILTER_DOMAINEX;
+    private int order = SlardarOrderConst.OrderFilterDomainEx;
 
     private final Map<String, List<String[]>> hostWildcard;
     private final DomainRequestMatcher domainRequestMatcher;
@@ -51,7 +51,7 @@ public class WingsDomainExtendFilter extends OncePerRequestFilter implements Ord
 
         HttpServletRequest wrap = request;
         if (domain != null) {
-            request.setAttribute(ATTR_DOMAIN_EXTEND, domain);
+            request.setAttribute(AttrDomainExtend, domain);
             wrap = domainRequestMatcher.match(request, domain);
         }
 

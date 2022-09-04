@@ -14,7 +14,6 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import pro.fessional.wings.slardar.servlet.WingsServletConst;
 import pro.fessional.wings.slardar.servlet.filter.WingsOverloadFilter;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
@@ -53,7 +52,8 @@ public class SlardarOverloadConfiguration {
                 try {
                     Thread.sleep(step); // 忙等
                     breaks -= step;
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException e) {
                     // ignore
                 }
             }
@@ -73,7 +73,8 @@ public class SlardarOverloadConfiguration {
                 PrintWriter writer = response.getWriter();
                 writer.println(config.getFallbackBody());
                 writer.flush();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 // ignore
             }
         };
@@ -84,8 +85,6 @@ public class SlardarOverloadConfiguration {
                                                    WingsOverloadFilter.FallBack fallBack,
                                                    WingsRemoteResolver resolver) {
         log.info("Wings conf Overload filter");
-        WingsOverloadFilter filter = new WingsOverloadFilter(fallBack, config, resolver);
-        filter.setOrder(WingsServletConst.ORDER_FILTER_OVERLOAD);
-        return filter;
+        return new WingsOverloadFilter(fallBack, config, resolver);
     }
 }

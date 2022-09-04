@@ -22,10 +22,8 @@ import java.util.Set;
 @Slf4j
 public class DefaultPermRoleCombo implements ComboWarlockAuthzService.Combo {
 
-    public static final int ORDER = WarlockOrderConst.UserAuthzCombo + 10_000;
-
     @Getter @Setter
-    private int order = ORDER;
+    private int order = WarlockOrderConst.DefaultPermRoleCombo;
 
     @Setter(onMethod_ = {@Autowired})
     protected WarlockGrantService warlockGrantService;

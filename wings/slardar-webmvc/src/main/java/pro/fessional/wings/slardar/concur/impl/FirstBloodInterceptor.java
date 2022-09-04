@@ -1,10 +1,13 @@
 package pro.fessional.wings.slardar.concur.impl;
 
 import com.github.benmanes.caffeine.cache.Cache;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.method.HandlerMethod;
 import pro.fessional.wings.slardar.concur.FirstBlood;
 import pro.fessional.wings.slardar.concur.ProgressContext;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +22,9 @@ import java.util.List;
 public class FirstBloodInterceptor implements AutoRegisterInterceptor {
 
     private final List<FirstBloodHandler> handlers;
+
+    @Getter @Setter
+    private int order = SlardarOrderConst.OrderFirstBloodInterceptor;
 
     public FirstBloodInterceptor(List<FirstBloodHandler> handlers) {
         this.handlers = handlers;

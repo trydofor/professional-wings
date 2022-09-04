@@ -18,7 +18,6 @@ import pro.fessional.wings.slardar.security.PasswordHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.event.auth.WarlockNonceSendEvent;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
 
@@ -36,8 +35,6 @@ import java.util.Set;
 @Setter @Getter
 public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
 
-    public static final int ORDER = WarlockOrderConst.UserDetailsCombo + 1_000;
-
     private CacheManager cacheManager;
     private String cacheName;
     private Set<Enum<?>> acceptNonceType = Collections.emptySet();
@@ -48,10 +45,6 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
     protected PasssaltEncoder passsaltEncoder;
     @Setter(onMethod_ = {@Autowired})
     protected WingsAuthTypeParser authTypeParser;
-
-    public NonceUserDetailsCombo() {
-        setOrder(ORDER);
-    }
 
     @Override
     @Nullable

@@ -11,6 +11,7 @@ import pro.fessional.mirana.bits.Md5;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.concur.FirstBlood;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.servlet.request.RequestHelper;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
@@ -21,7 +22,6 @@ import javax.servlet.http.HttpSession;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
-import static pro.fessional.wings.slardar.servlet.WingsServletConst.ORDER_FIRST_BLOOD_IMG;
 
 /**
  * 接受scene为空或以image开始的验证，
@@ -35,7 +35,8 @@ import static pro.fessional.wings.slardar.servlet.WingsServletConst.ORDER_FIRST_
 @Getter
 public class FirstBloodImageHandler implements FirstBloodHandler {
 
-    private int order = ORDER_FIRST_BLOOD_IMG;
+    private int order = SlardarOrderConst.OrderFirstBloodImg;
+
     private String clientTicketKey = "Client-Ticket";
     private String questCaptchaKey = "quest-captcha-image";
     private String checkCaptchaKey = "check-captcha-image";

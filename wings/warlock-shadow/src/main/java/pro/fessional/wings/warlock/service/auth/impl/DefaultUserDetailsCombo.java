@@ -28,10 +28,8 @@ import java.util.Set;
 @Slf4j
 public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Combo<DefaultWingsUserDetails> {
 
-    public static final int ORDER = WarlockOrderConst.UserDetailsCombo + 10_000;
-
     @Getter @Setter
-    private int order = ORDER;
+    private int order = WarlockOrderConst.DefaultUserDetailsCombo;
 
     @Getter @Setter
     private Set<Enum<?>> autoRegisterType = new HashSet<>();

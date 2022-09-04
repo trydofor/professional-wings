@@ -22,10 +22,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ListAllLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
 
-    public static final int ORDER = WarlockOrderConst.AuthPageCombo + 10_000;
-
     @Setter @Getter
-    private int order = ORDER;
+    private int order = WarlockOrderConst.ListAllLoginPageCombo;
 
     @Setter(onMethod_ = {@Autowired})
     protected WarlockSecurityProp warlockSecurityProp;

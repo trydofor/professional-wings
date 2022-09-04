@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.pass.PasswordEncoders;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
@@ -30,14 +29,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Slf4j
 public class MemoryUserDetailsCombo extends DefaultUserDetailsCombo {
 
-    public static final int ORDER = WarlockOrderConst.UserDetailsCombo + 2_000;
-
     // 以 username+authType去重
     private final Map<String, List<Details>> typedUser = new ConcurrentHashMap<>();
-
-    public MemoryUserDetailsCombo() {
-        setOrder(ORDER);
-    }
 
     /**
      * 添加一个内存用户, AuthType=null表示所有类型
