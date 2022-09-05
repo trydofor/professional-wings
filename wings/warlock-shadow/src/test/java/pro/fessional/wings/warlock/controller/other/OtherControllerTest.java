@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pro.fessional.mirana.best.ArgsAssert;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
@@ -23,7 +24,8 @@ public class OtherControllerTest {
 
     @RequestMapping("/test/code-exception.json")
     public String codeException() {
-        throw new CodeException(CommonErrorEnum.AssertEmpty1, "test");
+        ArgsAssert.isTrue(true,CommonErrorEnum.AssertEmpty1,"args");
+        throw new CodeException(false, CommonErrorEnum.AssertEmpty1, "test");
     }
 
     @Data

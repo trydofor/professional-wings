@@ -55,7 +55,12 @@ public enum StandardBoolean implements ConstantEnum {
     }
 
     @Override
-    public long getSuperId() {
+    public int getSuperId() {
         return SuperId;
+    }
+
+    @Override
+    public boolean isStandard() {
+        return true;
     }
 }

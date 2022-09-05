@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public interface ConstantEnum {
 
     /**
-     * id:动态9位数起，静态8位以下，建议3-2-2分段（表-段-值）,00结尾为SUPER
+     * id:动态9位数起，静态8位以下；建议3-2-2分段（表-组-值）；00结尾为SUPER
      *
      * @return id
      */
@@ -28,10 +28,14 @@ public interface ConstantEnum {
      * @return type
      */
     @NotNull
-    String getType();
+    default String getType() {
+        return "";
+    }
 
     @NotNull
-    String getInfo();
+    default String getInfo() {
+        return "";
+    }
 
     /**
      * 00 结尾的是组别
@@ -56,7 +60,16 @@ public interface ConstantEnum {
         return e != null && sameSuper(e.getId());
     }
 
-    default long getSuperId() {
+    default int getSuperId() {
         return (getId() / 100) * 100;
+    }
+
+    /**
+     * 是否为标致的数据库兼容的x-2-2格式
+     *
+     * @return 是否标准
+     */
+    default boolean isStandard() {
+        return getId() >= 100_00_00;
     }
 }
