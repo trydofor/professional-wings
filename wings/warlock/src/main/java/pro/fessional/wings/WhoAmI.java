@@ -6,6 +6,6 @@ package pro.fessional.wings;
  */
 public class WhoAmI {
     public static void main(String[] args) {
-        System.out.println("FacelessVoid: Where do you think you're going.");
+        System.out.println("Warlock: The victors write the grimoires of history!");
     }
 }
