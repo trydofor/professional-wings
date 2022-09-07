@@ -1,15 +1,17 @@
-package pro.fessional.wings.faceless;
+package pro.fessional.wings.warlock;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author trydofor
- * @since 2019-06-25
+ * @since 2019-07-20
  */
 @SpringBootApplication
-public class WingsFacelessApplication {
+public class WingsWarlockBondApplication {
+
     public static void main(String[] args) {
-        SpringApplication.run(WingsFacelessApplication.class, args);
+        SpringApplication.run(WingsWarlockBondApplication.class, args);
     }
+
 }

@@ -46,7 +46,7 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
         Details dt = doLoad(username, authType, authDetail);
         boolean at = false;
         if (dt == null && autoRegisterType.contains(authType)) {
-            dt = warlockAuthnService.register(authType, username, authDetail);
+            dt = autoreg(username, authType, authDetail);
             if (dt != null) {
                 at = true;
                 EventPublishHelper.SyncSpring.publishEvent(new WarlockAutoRegisterEvent(dt));
@@ -71,6 +71,10 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
         }
 
         return wud;
+    }
+
+    protected Details autoreg(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {
+        return warlockAuthnService.register(authType, username, authDetail);
     }
 
     /**

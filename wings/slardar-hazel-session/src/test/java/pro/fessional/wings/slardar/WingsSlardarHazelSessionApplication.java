@@ -9,10 +9,10 @@ import org.springframework.boot.context.metrics.buffering.BufferingApplicationSt
  * @since 2019-07-20
  */
 @SpringBootApplication
-public class WingsSlardarHazelcastApplication {
+public class WingsSlardarHazelSessionApplication {
 
     public static void main(String[] args) {
-        SpringApplication app = new SpringApplication(WingsSlardarHazelcastApplication.class);
+        SpringApplication app = new SpringApplication(WingsSlardarHazelSessionApplication.class);
         app.setApplicationStartup(new BufferingApplicationStartup(4096));
         app.run(args);
     }

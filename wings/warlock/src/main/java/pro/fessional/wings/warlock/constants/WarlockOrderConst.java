@@ -10,10 +10,10 @@ public interface WarlockOrderConst {
     int ListAllLoginPageCombo = 10_000_000;
     int JustAuthLoginPageCombo = 10_000 + 900;
 
-    int DefaultUserDetailsCombo = 10_000_000;
-    int MemoryUserDetailsCombo = 10_000_000 + 200;
-    int NonceUserDetailsCombo = 10_000_000 + 100;
-    int JustAuthUserDetailsCombo = 10_000_000 + 900;
+    int MemoryUserDetailsCombo = 10_000_000 - 300;
+    int NonceUserDetailsCombo = 10_000_000 - 200;
+    int JustAuthUserDetailsCombo = 10_000_000 - 100;
+    int DefaultUserDetailsCombo = 10_000_000; // 置于末尾
 
     int DefaultUserAuthnAutoReg = 10_000_000;
     int JustAuthUserAuthnAutoReg = 10_000_000 - 10;

@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @since 2019-06-25
  */
 @SpringBootApplication
-public class WingsFacelessApplication {
+public class WingsFacelessShardApplication {
     public static void main(String[] args) {
-        SpringApplication.run(WingsFacelessApplication.class, args);
+        SpringApplication.run(WingsFacelessShardApplication.class, args);
     }
 }
