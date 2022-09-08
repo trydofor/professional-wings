@@ -223,6 +223,18 @@
                 <artifactId>batrider-zero</artifactId>
                 <version>${wings.version}</version>
             </dependency>
+            <!-- pro.fessional.wings radiant -->
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>tiny-task</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>tiny-mail</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <!-- kotlin -->
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-jdk8</artifactId>

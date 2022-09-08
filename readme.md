@@ -13,11 +13,12 @@
 > WingsBoot(代号神翼)=BKB+飞鞋+SpringBoot，如果你也喜欢过Dota，你懂的。  
 > 我们主张防御式编程风格，May The `false` Be With You !
 
-## 1.技术文档
+## 1.关联文档
 
-* 官方文档 - <https://wings.fessional.pro>
+* Official Doc - <https://wings.fessional.pro>
 * Doc GitHub - <https://github.com/fessionalpro/wings-doc>
 * Doc Gitee - <https://gitee.com/fessionalpro/wings-doc>
+* Bad Code - <https://java-code-review.moilioncircle.com>
 
 ## 2.常用命令
 
