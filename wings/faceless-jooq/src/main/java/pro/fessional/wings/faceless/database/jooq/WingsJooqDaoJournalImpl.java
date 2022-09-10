@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Condition;
 import org.jooq.Configuration;
+import org.jooq.Field;
 import org.jooq.QueryPart;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
@@ -12,12 +13,14 @@ import org.jooq.TableField;
 import org.jooq.UpdatableRecord;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
 import static org.jooq.impl.DSL.noCondition;
+import static org.jooq.impl.DSL.row;
 
 /**
  * <pre>
@@ -201,7 +204,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     @Nullable
     public P fetchLimitOneLive(Function<T, Condition> fun) {
         final Condition cond = fun.apply(table);
-        return fetchLimitOne(table, table.onlyLive(cond),SelectOrderCondition.getSelectsOrders(cond));
+        return fetchLimitOne(table, table.onlyLive(cond), SelectOrderCondition.getSelectsOrders(cond));
     }
 
     @NotNull
@@ -365,8 +368,10 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
      */
     @SafeVarargs
     public final int deleteById(JournalService.Journal commit, K... ids) {
-        return delete(commit, table, WingsJooqUtil.condCombo(ids, pkeys));
+        return deleteById(commit, Arrays.asList(ids));
     }
+
+    private static final Record[] EMPTY_RECORD = {};
 
     /**
      * 按id逻辑删除
@@ -376,7 +381,26 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
      * @return 影响的数据条数
      */
     public int deleteById(JournalService.Journal commit, Collection<K> ids) {
-        return delete(commit, table, WingsJooqUtil.condCombo(ids, pkeys));
+        // 参考DAOImpl deleteById
+        final Condition cond;
+        if (pkeys.length == 1) {
+            @SuppressWarnings("unchecked")
+            final Field<Object> pk = (Field<Object>) pkeys[0];
+            if (ids.size() == 1) {
+                cond = pk.eq(pk.getDataType().convert(ids.iterator().next()));
+            }
+            else {
+                cond = pk.in(pk.getDataType().convert(ids));
+            }
+        }
+        // [#2573] Composite key T types are of type Record[N]
+        else {
+            @SuppressWarnings("SuspiciousToArrayCall")
+            final Record[] rn = ids.toArray(EMPTY_RECORD);
+            cond = row(pkeys).in(rn);
+        }
+
+        return delete(commit, table, cond);
     }
 
     ///////////////// update /////////////////////
