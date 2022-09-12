@@ -54,8 +54,7 @@ public class SlardarOkhttpConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(OkHttpClient.class)
-    public OkHttpClient okHttpClient(
+    public OkHttpClient.Builder okHttpClientBuilder(
             ObjectProvider<Cache> cacheProvier,
             ObjectProvider<CookieJar> cookieProvider,
             ObjectProvider<Dns> dnsProvider,
@@ -129,6 +128,12 @@ public class SlardarOkhttpConfiguration {
             log.info("Wings conf okHttpClient sslTrustAll");
             OkHttpClientHelper.sslTrustAll(builder);
         }
+        return builder;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(OkHttpClient.class)
+    public OkHttpClient okHttpClient(OkHttpClient.Builder builder) {
         return builder.build();
     }
 }

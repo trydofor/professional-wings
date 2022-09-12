@@ -43,6 +43,7 @@ public class OkHttpClientHelper {
     public static final MediaType APPLICATION_CBOR_VALUE = MediaType.parse("application/cbor");
     public static final MediaType APPLICATION_FORM_URLENCODED_VALUE = MediaType.parse("application/x-www-form-urlencoded");
     public static final MediaType APPLICATION_JSON_VALUE = MediaType.parse("application/json");
+    public static final MediaType APPLICATION_JSON_UTF8_VALUE = MediaType.parse("application/json;charset=UTF-8");
     public static final MediaType APPLICATION_OCTET_STREAM_VALUE = MediaType.parse("application/octet-stream");
     public static final MediaType APPLICATION_PDF_VALUE = MediaType.parse("application/pdf");
     public static final MediaType APPLICATION_PROBLEM_JSON_VALUE = MediaType.parse("application/problem+json");

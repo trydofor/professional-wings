@@ -65,7 +65,7 @@ class DoubleKillTest {
     }
 
     @Test
-    void doubleKillAysnc() throws InterruptedException {
+    void doubleKillAsync() throws InterruptedException {
         final String url = this.doubleKillHost + "/test/double-kill-async.json";
         new Thread(() -> {
             final ResponseEntity<String> r1 = restTemplate.getForEntity(url, String.class);

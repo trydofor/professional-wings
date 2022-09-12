@@ -65,7 +65,7 @@ public class TestRestTmplController {
 
     @Data
     public static class Bad {
-        private String sStr;
+        private String sStr; // bad naming
         private String ssStr;
     }
 
