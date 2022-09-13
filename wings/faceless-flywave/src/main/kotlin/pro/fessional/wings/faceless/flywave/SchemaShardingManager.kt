@@ -36,8 +36,8 @@ class SchemaShardingManager(
         DropTable, ManualCheck
     }
 
-    private val logger = LoggerFactory.getLogger(SchemaShardingManager::class.java)
-    private val interactive = DefaultInteractiveManager<AskType>(logger, plainDataSources, "🐵")
+    private val log = LoggerFactory.getLogger(SchemaShardingManager::class.java)
+    private val interactive = DefaultInteractiveManager<AskType>(log, plainDataSources, "🐵")
 
     override fun logWay(func: BiConsumer<String, String>): BiConsumer<String, String> {
         return interactive.logWay(func)
@@ -170,7 +170,7 @@ class SchemaShardingManager(
      */
     fun shardingData(table: String, stopOnError: Boolean = false) {
         if (shardDataSource == null) {
-            logger.error("[shardingData]🐵 can NOT shard without sharding datasource, table={}", table)
+            log.error("[shardingData]🐵 can NOT shard without sharding datasource, table={}", table)
             return
         }
 
@@ -194,7 +194,7 @@ class SchemaShardingManager(
         }
 
         if (pks.isEmpty()) {
-            logger.error("[shardingData]🐵 can NOT shard without pk, table={}", table)
+            log.error("[shardingData]🐵 can NOT shard without pk, table={}", table)
             return
         }
 
@@ -241,7 +241,7 @@ class SchemaShardingManager(
                         if (stopOnError) {
                             throw IllegalStateException(err, e)
                         } else {
-                            logger.error(err, e)
+                            log.error(err, e)
                         }
                         continue
                     }
@@ -250,21 +250,21 @@ class SchemaShardingManager(
                         deleteQueue.offer(Pair(dsName, keys))
                         val cnt = insertCounter.incrementAndGet()
                         if (cnt % 100 == 0) {
-                            logger.info("[shardingData]🐵 insert {} records on shard table={}", cnt, table)
+                            log.info("[shardingData]🐵 insert {} records on shard table={}", cnt, table)
                         }
                     } else {
                         val err = "[shardingData]🐵 failed, insert $rst records, shard table=$table"
                         if (stopOnError) {
                             throw IllegalStateException(err)
                         } else {
-                            logger.error(err)
+                            log.error(err)
                         }
                     }
                     triple = insertQueue.take()
                 }
             } finally {
                 deleteQueue.offer(Pair(Null.Str, emptyArray()))
-                logger.info("[shardingData]🐵 finished, total insert {} records on table={}", insertCounter.get(), table)
+                log.info("[shardingData]🐵 finished, total insert {} records on table={}", insertCounter.get(), table)
             }
         }
 
@@ -286,7 +286,7 @@ class SchemaShardingManager(
                         if (stopOnError) {
                             throw IllegalStateException(err, e)
                         } else {
-                            logger.error(err, e)
+                            log.error(err, e)
                         }
                         continue
                     }
@@ -294,30 +294,30 @@ class SchemaShardingManager(
                     val vls = vals.joinToString()
                     if (rst == 1) {
                         val cnt = deleteCounter.incrementAndGet()
-                        logger.info("[shardingData]🐵 delete {} records on table={}, db={}, pks={}", cnt, table, plainName, vls)
+                        log.info("[shardingData]🐵 delete {} records on table={}, db={}, pks={}", cnt, table, plainName, vls)
                     } else {
                         val err = "[shardingData]🐵 delete $rst records, table=$table, db=$plainName, pks=$vls"
                         if (stopOnError) {
                             throw IllegalStateException(err)
                         } else {
-                            logger.error(err)
+                            log.error(err)
                         }
                     }
                 }
             } finally {
-                logger.info("[shardingData]🐵 finished, total delete {} records on table={}", deleteCounter.get(), table)
+                log.info("[shardingData]🐵 finished, total delete {} records on table={}", deleteCounter.get(), table)
                 latch.countDown()
             }
         }
 
         // main select thread
         for ((plainName, plainDs) in plainDataSources) {
-            logger.info("[shardingData]🐵 move data from plain db={}, table={}", plainName, table)
+            log.info("[shardingData]🐵 move data from plain db={}, table={}", plainName, table)
             val plainTmpl = SimpleJdbcTemplate(plainDs, plainName)
             tmplMap[plainName] = plainTmpl
 
             val count = plainTmpl.count("SELECT COUNT(1) FROM $table")
-            logger.info("[shardingData]🐵 find {} records on table={}, db={}", count, table, plainName)
+            log.info("[shardingData]🐵 find {} records on table={}, db={}", count, table, plainName)
 
             // select loop
             val lastCnt = selectCounter.get()
@@ -333,14 +333,14 @@ class SchemaShardingManager(
                 insertQueue.offer(Triple(plainName, keys, vals))
                 val cnt = selectCounter.incrementAndGet()
                 if (cnt % 100 == 0) {
-                    logger.info("[shardingData]🐵 select {} records on table={}, db={}", cnt, table, plainName)
+                    log.info("[shardingData]🐵 select {} records on table={}, db={}", cnt, table, plainName)
                 }
             }
-            logger.info("[shardingData]🐵 finish one select. {} records on table={}, db={}", selectCounter.get() - lastCnt, table, plainName)
+            log.info("[shardingData]🐵 finish one select. {} records on table={}, db={}", selectCounter.get() - lastCnt, table, plainName)
         }
 
         insertQueue.offer(Triple(Null.Str, emptyArray(), emptyArray()))
-        logger.info("[shardingData]🐵 finish all select. {} records on table={}, and wait for insert and delete done", selectCounter.get(), table)
+        log.info("[shardingData]🐵 finish all select. {} records on table={}, and wait for insert and delete done", selectCounter.get(), table)
         latch.await()
     }
 }

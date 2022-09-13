@@ -52,8 +52,8 @@ class SchemaJournalManager(
         const val TABLE_PKEY = "{{TABLE_PKEY}}"
     }
 
-    private val logger = LoggerFactory.getLogger(SchemaJournalManager::class.java)
-    private val interactive = DefaultInteractiveManager<AskType>(logger, plainDataSources, "🐶")
+    private val log = LoggerFactory.getLogger(SchemaJournalManager::class.java)
+    private val interactive = DefaultInteractiveManager<AskType>(log, plainDataSources, "🐶")
 
     override fun logWay(func: BiConsumer<String, String>): BiConsumer<String, String> {
         return interactive.logWay(func)

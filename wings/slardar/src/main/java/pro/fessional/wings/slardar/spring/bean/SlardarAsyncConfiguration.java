@@ -39,17 +39,17 @@ import static org.springframework.scheduling.annotation.AsyncAnnotationBeanPostP
 public class SlardarAsyncConfiguration {
 
     public static final String SLARDAR_EVENT_EXECUTOR_BEAN_NAME = "slardarEventExecutor";
-    private static final Log logger = LogFactory.getLog(SlardarAsyncConfiguration.class);
+    private static final Log log = LogFactory.getLog(SlardarAsyncConfiguration.class);
 
     @Bean(name = DEFAULT_TASK_EXECUTOR_BEAN_NAME)
     public Executor taskExecutor(TaskExecutorBuilder builder) {
-        logger.info("Wings conf TtlExecutor for taskExecutor");
+        log.info("Wings conf TtlExecutor for taskExecutor");
         return ttlExecutor(builder);
     }
 
     @Bean(name = APPLICATION_TASK_EXECUTOR_BEAN_NAME)
     public AsyncTaskExecutor applicationTaskExecutor(TaskExecutorBuilder builder) {
-        logger.info("Wings conf TtlExecutor for applicationTaskExecutor");
+        log.info("Wings conf TtlExecutor for applicationTaskExecutor");
         final Executor executor = ttlExecutor(builder);
         return new ConcurrentTaskExecutor(executor);
     }
@@ -62,7 +62,7 @@ public class SlardarAsyncConfiguration {
 
     @Bean(name = SLARDAR_EVENT_EXECUTOR_BEAN_NAME)
     public Executor slardarEventExecutor() {
-        logger.info("Wings conf slardarEventExecutor");
+        log.info("Wings conf slardarEventExecutor");
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setThreadNamePrefix("slardar-event-");
         executor.setKeepAliveSeconds(30);
@@ -76,7 +76,7 @@ public class SlardarAsyncConfiguration {
         return (arg) -> {
             EventPublishHelper.setExecutor(executor);
             EventPublishHelper.setSpringPublisher(publisher);
-            logger.info("Wings conf eventPublishHelper");
+            log.info("Wings conf eventPublishHelper");
         };
     }
 }

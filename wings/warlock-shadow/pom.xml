@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>pro.fessional</groupId>
+        <artifactId>wings</artifactId>
+        <version>${revision}.${changelist}</version>
+    </parent>
+
+    <groupId>pro.fessional.wings</groupId>
+    <artifactId>warlock-shadow</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Wings::Warlock::Shadow</name>
+    <description>术士大叔之暗言术法</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>slardar-sprint</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>warlock</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>me.zhyd.oauth</groupId>
+            <artifactId>JustAuth</artifactId>
+        </dependency>
+        <!-- test -->
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>warlock-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

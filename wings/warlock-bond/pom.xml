@@ -14,21 +14,23 @@
     <packaging>jar</packaging>
 
     <name>Wings::Warlock::Bond</name>
-    <description>术士大叔①链接</description>
+    <description>术士大叔之致命链接</description>
 
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>warlock</artifactId>
+            <artifactId>warlock-shadow</artifactId>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-flywave</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- test -->
         <dependency>
-            <groupId>me.zhyd.oauth</groupId>
-            <artifactId>JustAuth</artifactId>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>warlock-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

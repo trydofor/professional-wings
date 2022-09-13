@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.context;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder.Reg;
 
@@ -9,6 +10,7 @@ import java.util.Set;
  * @author trydofor
  * @since 2021-03-31
  */
+@Slf4j
 class GlobalAttributeHolderTest {
 
     public interface Solos {
@@ -18,7 +20,7 @@ class GlobalAttributeHolderTest {
 
     @Test
     public void testSolo() {
-        System.out.println(Solos.PasssaltByUid);
-        System.out.println(Solos.PermitsByUid);
+        log.info("PasssaltByUid={}", Solos.PasssaltByUid);
+        log.info("PermitsByUid={}", Solos.PermitsByUid);
     }
 }

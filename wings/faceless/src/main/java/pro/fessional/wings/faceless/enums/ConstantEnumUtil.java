@@ -7,9 +7,12 @@ import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.math.AnyIntegerUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 /**
  * @author trydofor
@@ -17,9 +20,9 @@ import java.util.function.Function;
  */
 public class ConstantEnumUtil {
 
-    public static boolean in(Enum<?> en, Enum<?>... ens){
+    public static boolean in(Enum<?> en, Enum<?>... ens) {
         for (Enum<?> e : ens) {
-            if(en == e) return true;
+            if (en == e) return true;
         }
         return false;
     }
@@ -46,7 +49,8 @@ public class ConstantEnumUtil {
         T t = intOrNull(id, es);
         if (t == null) {
             throw new IllegalArgumentException("can not found ConstantEnum by id=" + id);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -57,7 +61,8 @@ public class ConstantEnumUtil {
         T t = idOrNull(id, es);
         if (t == null) {
             throw new IllegalArgumentException("can not found ConstantEnum by id=" + id);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -68,7 +73,8 @@ public class ConstantEnumUtil {
         T t = intOrNull(id, es);
         if (t == null) {
             throw new IllegalArgumentException(hint);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -79,7 +85,8 @@ public class ConstantEnumUtil {
         T t = idOrNull(id, es);
         if (t == null) {
             throw new IllegalArgumentException(hint);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -116,7 +123,8 @@ public class ConstantEnumUtil {
         T t = nameOrNull(name, es);
         if (t == null) {
             throw new IllegalArgumentException("can not found ConstantEnum by name=" + name);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -127,7 +135,8 @@ public class ConstantEnumUtil {
         T t = nameOrNull(name, es);
         if (t == null) {
             throw new IllegalArgumentException(hint);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -157,7 +166,8 @@ public class ConstantEnumUtil {
         T t = codeOrNull(code, es);
         if (t == null) {
             throw new IllegalArgumentException("can not found ConstantEnum by code=" + code);
-        } else {
+        }
+        else {
             return t;
         }
     }
@@ -242,6 +252,15 @@ public class ConstantEnumUtil {
         return list;
     }
 
+
+    public static final Pattern JoinerRegex = Pattern.compile("[^a-z0-9_$]+", Pattern.CASE_INSENSITIVE);
+
+    @NotNull
+    public static <T extends CodeEnum> List<T> codesAuto(T[] es, String codes) {
+        if (codes == null || codes.isEmpty()) return Collections.emptyList();
+        return codes(es, JoinerRegex.split(codes));
+    }
+
     @NotNull
     public static <T extends CodeEnum> List<T> codes(T[] es, String... codes) {
         if (codes == null || codes.length == 0) return Collections.emptyList();
@@ -254,6 +273,12 @@ public class ConstantEnumUtil {
     }
 
     @NotNull
+    public static <T extends ConstantEnum> List<T> idsAuto(T[] es, String codes) {
+        if (codes == null || codes.isEmpty()) return Collections.emptyList();
+        return ids(es, JoinerRegex.split(codes));
+    }
+
+    @NotNull
     public static <T extends ConstantEnum> List<T> ids(T[] es, String... ids) {
         if (ids == null || ids.length == 0) return Collections.emptyList();
         List<T> result = new ArrayList<>(ids.length);
@@ -262,6 +287,12 @@ public class ConstantEnumUtil {
             if (c != null) result.add(c);
         }
         return result;
+    }
+
+    @NotNull
+    public static <T extends Enum<?>> List<T> namesAuto(T[] es, String codes) {
+        if (codes == null || codes.isEmpty()) return Collections.emptyList();
+        return names(es, JoinerRegex.split(codes));
     }
 
     @NotNull
@@ -279,6 +310,12 @@ public class ConstantEnumUtil {
     @NotNull
     public static <T extends ConstantEnum> String joinIds(String delimiter, T... es) {
         if (es == null || es.length == 0) return Null.Str;
+        return joinIds(delimiter, Arrays.asList(es));
+    }
+
+    @NotNull
+    public static <T extends ConstantEnum> String joinIds(String delimiter, Collection<T> es) {
+        if (es == null || es.isEmpty()) return Null.Str;
         StringBuilder sb = new StringBuilder();
         for (T e : es) {
             sb.append(delimiter);
@@ -291,6 +328,12 @@ public class ConstantEnumUtil {
     @NotNull
     public static <T extends Enum<?>> String joinNames(String delimiter, T... es) {
         if (es == null || es.length == 0) return Null.Str;
+        return joinNames(delimiter, Arrays.asList(es));
+    }
+
+    @NotNull
+    public static <T extends Enum<?>> String joinNames(String delimiter, Collection<T> es) {
+        if (es == null || es.isEmpty()) return Null.Str;
         StringBuilder sb = new StringBuilder();
         for (T e : es) {
             sb.append(delimiter);
@@ -303,6 +346,12 @@ public class ConstantEnumUtil {
     @NotNull
     public static <T extends CodeEnum> String joinCodes(String delimiter, T... es) {
         if (es == null || es.length == 0) return Null.Str;
+        return joinCodes(delimiter, Arrays.asList(es));
+    }
+
+    @NotNull
+    public static <T extends CodeEnum> String joinCodes(String delimiter, Collection<T> es) {
+        if (es == null || es.isEmpty()) return Null.Str;
         StringBuilder sb = new StringBuilder();
         for (T e : es) {
             sb.append(delimiter);

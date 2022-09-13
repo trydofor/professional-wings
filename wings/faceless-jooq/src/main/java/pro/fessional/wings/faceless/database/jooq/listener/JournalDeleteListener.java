@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  */
 public class JournalDeleteListener extends DefaultExecuteListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(JournalDeleteListener.class);
+    private static final Logger log = LoggerFactory.getLogger(JournalDeleteListener.class);
 
     @Override
     public void renderEnd(ExecuteContext ctx) {
@@ -59,7 +59,7 @@ public class JournalDeleteListener extends DefaultExecuteListener {
         String updateSql = buildUpdateSql(ctx.dsl(), sql, table, params);
         if (updateSql == null) return;
 
-        logger.info("Wings journal-delete, sql={}", updateSql);
+        log.info("Wings journal-delete, sql={}", updateSql);
 
         try {
             if (params.isEmpty()) {
@@ -77,7 +77,7 @@ public class JournalDeleteListener extends DefaultExecuteListener {
             }
         }
         catch (Exception e) {
-            logger.error(updateSql, e);
+            log.error(updateSql, e);
         }
     }
 

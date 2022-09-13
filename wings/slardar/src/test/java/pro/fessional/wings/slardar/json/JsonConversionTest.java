@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.json;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ResolvableType;
@@ -24,6 +25,7 @@ import java.util.Map;
  * @author trydofor
  * @since 2022-03-09
  */
+@Slf4j
 class JsonConversionTest {
 
     private final JsonConversion conversionService = new JsonConversion();
@@ -70,9 +72,9 @@ class JsonConversionTest {
         String jsonDto = JSON.toJSONString(dto);
         String jsonMap = JSON.toJSONString(map);
         String jsonLst = JSON.toJSONString(lst);
-        System.out.println("jsonDto=\n" + jsonDto);
-        System.out.println("jsonMap=\n" + jsonMap);
-        System.out.println("jsonLst=\n" + jsonLst);
+        log.info("jsonDto=\n" + jsonDto);
+        log.info("jsonMap=\n" + jsonMap);
+        log.info("jsonLst=\n" + jsonLst);
 
         Dto dto1 = conversionService.convert(jsonDto, Dto.class);
         Assertions.assertEquals(dto, dto1);
@@ -95,14 +97,14 @@ class JsonConversionTest {
         //
         Type rdt = new TypeReference<R<Dto>>(){}.getType();
         R<Dto> rd1 = JSON.parseObject(rd0, rdt);
-        System.out.println(rd1);
+        log.info("rd1={}", rd1);
         //
         final ResolvableType tat = ResolvableType.forClassWithGenerics(R.class, Dto.class);
         R<Dto> rd2 = JSON.parseObject(rd0, tat.getType());
-        System.out.println(rd2);
+        log.info("rd2={}", rd2);
         //
         R<Dto> rd3 = JSONParser.parse(rd0, tat);
-        System.out.println(rd3);
+        log.info("rd3={}", rd3);
 
         Assertions.assertEquals(dto, rd1.getData());
         Assertions.assertEquals(dto, rd2.getData());

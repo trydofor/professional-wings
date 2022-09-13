@@ -25,7 +25,7 @@ import java.util.Map;
  */
 public class WingsSpringBeanScanner implements ApplicationListener<ApplicationPreparedEvent> {
 
-    private static final Log logger = LogFactory.getLog(WingsSpringBeanScanner.class);
+    private static final Log log = LogFactory.getLog(WingsSpringBeanScanner.class);
 
     public static final String WINGS_BEAN = "**/spring/bean/**/*.class";
 
@@ -34,13 +34,13 @@ public class WingsSpringBeanScanner implements ApplicationListener<ApplicationPr
         final ConfigurableApplicationContext context = event.getApplicationContext();
 
         new ApplicationContextHelper(context) {};
-        logger.info("Wings bean init ApplicationContextHelper");
+        log.info("Wings bean init ApplicationContextHelper");
 
         if (!(context instanceof BeanDefinitionRegistry)) return;
 
         String enable = context.getEnvironment().getProperty(SilencerEnabledProp.Key$scanner);
         if (!StringCastUtil.asTrue(enable)) {
-            logger.info("Wings bean scanner is disabled, skip it.");
+            log.info("Wings bean scanner is disabled, skip it.");
             return;
         }
 
@@ -49,19 +49,19 @@ public class WingsSpringBeanScanner implements ApplicationListener<ApplicationPr
         final ClassLoader loader = resolver.getClassLoader();
         try {
             Resource[] resources = resolver.getResources("classpath*:/" + WINGS_BEAN);
-            logger.info("Wings scanned " + resources.length + " resources of */spring/bean/*");
+            log.info("Wings scanned " + resources.length + " resources of */spring/bean/*");
             for (Resource res : resources) {
                 try {
                     String path = res.getURL().getPath();
                     guessClassPackage(pathPackage, path, loader);
                 }
                 catch (IOException e) {
-                    logger.warn("failed to parse package name of res=" + res.getDescription());
+                    log.warn("failed to parse package name of res=" + res.getDescription());
                 }
             }
         }
         catch (IOException e) {
-            logger.warn("failed to scan /spring/bean/*.class", e);
+            log.warn("failed to scan /spring/bean/*.class", e);
         }
 
         if (pathPackage.isEmpty()) {
@@ -71,7 +71,7 @@ public class WingsSpringBeanScanner implements ApplicationListener<ApplicationPr
         String[] basePackages = new String[pathPackage.size()];
         int idx = 0;
         for (String pkg : pathPackage.values()) {
-            logger.info("Wings add scan component base package=" + pkg);
+            log.info("Wings add scan component base package=" + pkg);
             basePackages[idx++] = pkg;
         }
 

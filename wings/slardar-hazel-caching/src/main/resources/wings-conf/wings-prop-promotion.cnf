@@ -1,0 +1,39 @@
+wings.slardar.hazelcast.cluster-name
+
+# hazelcast
+hazelcast.jmx
+
+# https://docs.hazelcast.com/imdg/4.2/system-properties
+# https://docs.hazelcast.com/imdg/4.2/management/diagnostics
+hazelcast.diagnostics.enabled
+hazelcast.diagnostics.metric.level
+hazelcast.diagnostics.pending.invocations.period.seconds
+hazelcast.diagnostics.slowoperations.period.seconds
+
+hazelcast.diagnostics.directory
+hazelcast.diagnostics.filename.prefix
+hazelcast.diagnostics.max.rolled.file.size.mb
+hazelcast.diagnostics.max.rolled.file.count
+
+hazelcast.diagnostics.metrics.period.seconds
+hazelcast.diagnostics.invocation.sample.period.seconds
+hazelcast.diagnostics.invocation.slow.threshold.seconds
+hazelcast.diagnostics.invocation-profiler.period.seconds
+hazelcast.diagnostics.operation-profiler.period.seconds
+hazelcast.diagnostics.memberinfo.period.second
+hazelcast.diagnostics.event.queue.period.seconds
+hazelcast.diagnostics.event.queue.threshold
+hazelcast.diagnostics.event.queue.samples
+hazelcast.diagnostics.systemlog.enabled
+hazelcast.diagnostics.systemlog.partitions
+hazelcast.diagnostics.storeLatency.period.seconds
+hazelcast.diagnostics.storeLatency.reset.period.seconds
+hazelcast.diagnostics.operation-heartbeat.seconds
+hazelcast.diagnostics.operation-heartbeat.max-deviation-percentage
+hazelcast.diagnostics.member-heartbeat.seconds
+hazelcast.diagnostics.member-heartbeat.max-deviation-percentage
+hazelcast.diagnostics.operationthreadsamples.period.seconds
+hazelcast.diagnostics.operationthreadsamples.sampler.period.millis
+hazelcast.diagnostics.operationthreadsamples.includeName
+hazelcast.diagnostics.wan.period.seconds
+

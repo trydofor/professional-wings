@@ -7,7 +7,6 @@ import org.jooq.Field;
 import org.jooq.Operator;
 import org.jooq.Param;
 import org.jooq.QueryPart;
-import org.jooq.Record;
 import org.jooq.RowCountQuery;
 import org.jooq.Table;
 import org.jooq.TableRecord;
@@ -15,7 +14,6 @@ import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 import pro.fessional.mirana.cast.BoxedCastUtil;
-import pro.fessional.mirana.data.Null;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -178,63 +176,6 @@ public class WingsJooqUtil extends DSL {
             else {
                 return field.between(lowerInclusive, upperInclusive);
             }
-        }
-    }
-
-    /**
-     * 单key=?或复合key条件 (type,name) = (1,'dog')
-     *
-     * @param valN 复合值
-     * @param rowN 复合Col
-     * @return 条件
-     */
-    @NotNull
-    public static Condition condCombo(Object valN, Field<?>... rowN) {
-        if (rowN.length == 1) {
-            @SuppressWarnings("unchecked")
-            Field<Object> fd = (Field<Object>) rowN[0];
-            return fd.eq(fd.getDataType().convert(valN));
-        }
-        // [#2573] Composite key T types are of type Record[N]
-        else {
-            return row(rowN).eq((Record) valN);
-        }
-    }
-
-    /**
-     * 单key=?或复合key条件 (type,name) = (1,'dog')
-     *
-     * @param valN 复合值
-     * @param rowN 复合Col
-     * @return 条件
-     */
-    @NotNull
-    public static Condition condCombo(Collection<?> valN, Field<?>... rowN) {
-        return condCombo(valN.toArray(Null.Objects), rowN);
-    }
-
-    /**
-     * 单key in (?)或复合key条件 (type,name) in (1,'dog')
-     *
-     * @param valN 复合值
-     * @param rowN 复合Col
-     * @return 条件
-     */
-    public static Condition condCombo(Object[] valN, Field<?>... rowN) {
-        if (rowN.length == 1) {
-            if (valN.length == 1) {
-                return condCombo(valN[0], rowN);
-            }
-            else {
-                @SuppressWarnings("unchecked")
-                Field<Object> fd = (Field<Object>) rowN[0];
-                return fd.in(fd.getDataType().convert(valN));
-            }
-        }
-
-        // [#2573] Composite key T types are of type Record[N]
-        else {
-            return row(rowN).in((Record[]) valN);
         }
     }
 

@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 @ConditionalOnClass(name = "org.jooq.conf.Settings")
 public class FacelessJooqConfiguration {
 
-    private static final Log logger = LogFactory.getLog(FacelessJooqConfiguration.class);
+    private static final Log log = LogFactory.getLog(FacelessJooqConfiguration.class);
 
     /**
      * workaround before Version 3.14.0
@@ -53,7 +53,7 @@ public class FacelessJooqConfiguration {
     @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$autoQualify, havingValue = "true")
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public VisitListenerProvider jooqAutoQualifyFieldListener() {
-        logger.info("Wings conf jooqAutoQualifyFieldListener");
+        log.info("Wings conf jooqAutoQualifyFieldListener");
         return new DefaultVisitListenerProvider(new AutoQualifyFieldListener());
     }
 
@@ -63,7 +63,7 @@ public class FacelessJooqConfiguration {
     public VisitListenerProvider jooqTableCudListener(ObjectProvider<WingsTableCudHandler> handlers, FacelessJooqCudProp prop) {
         final List<WingsTableCudHandler> hdl = handlers.orderedStream().collect(Collectors.toList());
         final String names = hdl.stream().map(it -> it.getClass().getName()).collect(Collectors.joining(","));
-        logger.info("Wings conf jooqTableCudListener with handler=" + names);
+        log.info("Wings conf jooqTableCudListener with handler=" + names);
         final TableCudListener listener = new TableCudListener();
         listener.setHandlers(hdl);
         listener.setInsert(prop.isInsert());
@@ -76,7 +76,7 @@ public class FacelessJooqConfiguration {
     @Bean
     @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$journalDelete, havingValue = "true")
     public ExecuteListenerProvider jooqJournalDeleteListener() {
-        logger.info("Wings conf jooqJournalDeleteListener");
+        log.info("Wings conf jooqJournalDeleteListener");
         return new DefaultExecuteListenerProvider(new JournalDeleteListener());
     }
 
@@ -87,7 +87,7 @@ public class FacelessJooqConfiguration {
             ObjectProvider<ConverterProvider> providers,
             ObjectProvider<org.jooq.Converter<?, ?>> converters
     ) {
-        logger.info("Wings conf jooqConfigurationCustomizer");
+        log.info("Wings conf jooqConfigurationCustomizer");
         return configuration -> {
             final Settings settings = configuration.settings();
             WingsJooqEnv.daoBatchMysql = config.isBatchMysql();
@@ -96,10 +96,10 @@ public class FacelessJooqConfiguration {
 //                  .withParseDialect(SQLDialect.MYSQL)
 //                .withRenderTable(false)
             ;
-            logger.info("Wings conf jooq setting, dialect=" + settings.getParseDialect());
+            log.info("Wings conf jooq setting, dialect=" + settings.getParseDialect());
 
             if (config.isSimpleflatmapper()) {
-                logger.info("Wings conf beanPostSfmRecordMapperProvider");
+                log.info("Wings conf beanPostSfmRecordMapperProvider");
                 // into
                 configuration.set(JooqMapperFactory.newInstance().ignorePropertyNotFound().newRecordMapperProvider());
                 // from
@@ -107,17 +107,17 @@ public class FacelessJooqConfiguration {
             }
 
             if (config.isConverter()) {
-                logger.info("Wings conf jooqConfiguration ConverterProvider");
+                log.info("Wings conf jooqConfiguration ConverterProvider");
                 JooqConverterDelegate dcp = new JooqConverterDelegate();
                 dcp.add(configuration.converterProvider());
 
                 providers.orderedStream().forEach(it -> {
                     dcp.add(it);
-                    logger.info("   add jooqConverterProvider, class=" + it.getClass());
+                    log.info("   add jooqConverterProvider, class=" + it.getClass());
                 });
                 converters.orderedStream().forEach(it -> {
                     dcp.add(it);
-                    logger.info("   add jooqConverter, class=" + it.getClass());
+                    log.info("   add jooqConverter, class=" + it.getClass());
                 });
                 configuration.set(dcp);
             }

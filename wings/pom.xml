@@ -28,11 +28,16 @@
         <module>faceless-shard</module>
         <module>faceless-test</module>
         <module>slardar</module>
-        <module>slardar-hazelcast</module>
+        <module>slardar-hazel-caching</module>
+        <module>slardar-hazel-session</module>
+        <module>slardar-webmvc</module>
+        <module>slardar-sprint</module>
         <module>slardar-test</module>
         <module>warlock</module>
         <module>warlock-bond</module>
         <module>warlock-codegen</module>
+        <module>warlock-shadow</module>
+        <module>warlock-test</module>
         <module>batrider</module>
         <module>batrider-test</module>
         <module>batrider-zero</module>
@@ -66,13 +71,9 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <scope>provided</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -96,6 +97,10 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
@@ -106,10 +111,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 public class WingsCodeGenerator {
 
     public static final String JOOQ_XML = "/wings-flywave/jooq-codegen-faceless.xml";
-    private static final Logger logger = LoggerFactory.getLogger(WingsCodeGenerator.class);
+    private static final Logger log = LoggerFactory.getLogger(WingsCodeGenerator.class);
 
     /**
      * 生成 Jooq 代码
@@ -70,7 +70,7 @@ public class WingsCodeGenerator {
             val tmp = Files.createTempDirectory("jooq-safe-gen").toFile();
             val tdr = tmp.getAbsolutePath();
             conf.getGenerator().getTarget().setDirectory(tdr);
-            logger.info("safely generate, tmp-dir=" + tdr);
+            log.info("safely generate, tmp-dir=" + tdr);
 
             // generator
             WingsCodeGenConf.setGlobalSuffix(suffix);
@@ -85,7 +85,7 @@ public class WingsCodeGenerator {
                  .forEach(File::delete);
         }
         catch (Exception e) {
-            logger.error("failed to generate", e);
+            log.error("failed to generate", e);
         }
     }
 
@@ -135,12 +135,12 @@ public class WingsCodeGenerator {
         val dest = walkDir(src, pkg);
 
         if (!inc && dest.size() > 0) {
-            logger.info("not incremental, Removing excess files in " + src);
+            log.info("not incremental, Removing excess files in " + src);
             for (Map.Entry<String, File> entry : dest.entrySet()) {
                 String key = entry.getKey();
                 if (!from.containsKey(key)) {
                     boolean r = entry.getValue().delete();
-                    logger.info("delete [" + r + "] excess file=" + key);
+                    log.info("delete [" + r + "] excess file=" + key);
                 }
             }
         }
@@ -168,17 +168,17 @@ public class WingsCodeGenerator {
                 //noinspection ResultOfMethodCallIgnored
                 t.getParentFile().mkdirs();
                 Files.copy(f.toPath(), t.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                logger.info("create new file=" + k);
+                log.info("create new file=" + k);
             }
             else {
                 val ft = ignoreRegex.matcher(InputStreams.readText(new FileInputStream(f))).replaceAll(Null.Str);
                 val dt = ignoreRegex.matcher(InputStreams.readText(new FileInputStream(d))).replaceAll(Null.Str);
                 if (ft.equals(dt)) {
-                    logger.info("skip main same file=" + k);
+                    log.info("skip main same file=" + k);
                 }
                 else {
                     Files.copy(f.toPath(), d.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                    logger.info("copy new file=" + k);
+                    log.info("copy new file=" + k);
                 }
             }
         }

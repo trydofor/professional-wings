@@ -1,6 +1,8 @@
 package com.moilioncircle.wings.devops;
 
 import de.codecentric.boot.admin.server.config.EnableAdminServer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,6 +23,8 @@ import java.util.List;
 @EnableAdminServer
 public class WinxDevopsApplication {
 
+    private final static Log log = LogFactory.getLog(WinxDevopsApplication.class);
+
     public static void main(String[] args) {
         SpringApplication.run(WinxDevopsApplication.class, args);
     }
@@ -29,22 +33,22 @@ public class WinxDevopsApplication {
     @Lazy
     public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
         return args -> {
-            System.out.println("===============");
+            log.info("===============");
             String[] beanNames = ctx.getBeanDefinitionNames();
             Arrays.sort(beanNames);
             for (String beanName : beanNames) {
                 final Object bean = ctx.getBean(beanName);
-                System.out.println(beanName + ":" + bean.getClass().getCanonicalName());
+                log.info(beanName + ":" + bean.getClass().getCanonicalName());
             }
-            System.out.println("===============");
+            log.info("===============");
 
             String[] cacheManager = ctx.getBeanNamesForType(CacheManager.class);
-            System.out.println("=============== CacheManager count="+cacheManager.length);
+            log.info("=============== CacheManager count={}" + cacheManager.length);
 
             final List<RequestMappingHelper.Info> infos = RequestMappingHelper.infoAllMapping(ctx);
-            System.out.println("=============== RequestMappingHelper infos="+infos.size());
+            log.info("=============== RequestMappingHelper infos=" + infos.size());
             for (RequestMappingHelper.Info info : infos) {
-                System.out.println(info);
+                log.info(info);
             }
 
         };

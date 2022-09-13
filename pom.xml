@@ -39,6 +39,7 @@
         <java.version>11</java.version>
         <kotlin.version>1.6.21</kotlin.version>
         <jooq.version>3.14.16</jooq.version>
+        <h2.version>2.1.214</h2.version>
         <okhttp3.version>4.9.3</okhttp3.version> <!-- just auth need 4, spring use 3 https://square.github.io/okhttp/changelog/ -->
         <!-- mvn boot -->
         <maven.test.skip>false</maven.test.skip>
@@ -59,8 +60,8 @@
         <simpleflatmapper.version>8.2.3</simpleflatmapper.version> <!-- https://github.com/arnaudroger/SimpleFlatMapper/tags -->
         <shardingsphere.version>5.1.2</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
-        <fastjson2.version>2.0.11</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
-        <fastjson.version>1.2.83</fastjson.version> <!-- https://github.com/alibaba/fastjson/releases -->
+        <fastjson2.version>2.0.12</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
+        <fastjson.version>${fastjson2.version}</fastjson.version> <!-- https://github.com/alibaba/fastjson/releases -->
         <kryo.version>5.3.0</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
         <transmittable.version>2.14.0</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
         <bouncycastle.version>1.71</bouncycastle.version> <!-- https://bouncycastle.org/releasenotes.html -->
@@ -68,10 +69,10 @@
         <!-- servicecomb -->
         <servicecomb.version>2.7.8</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
         <!-- others -->
-        <springdoc.version>1.6.10</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases -->
-        <boot-admin.version>2.6.7</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
-        <sentry.version>6.3.1</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases -->
-        <xxljob.version>2.3.1</xxljob.version> <!-- https://github.com/xuxueli/xxl-job/releases -->
+        <springdoc.version>1.6.8</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases  boot-starter 2.6.7 -->
+        <boot-admin.version>2.6.7</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases spring-boot.version 2.6.7-->
+        <sentry.version>6.4.0</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases  springBootVersion = "2.6.8"-->
+        <retrofit.version>2.9.0</retrofit.version> <!-- https://github.com/square/retrofit/tags -->
         <!-- mvn-build-plugin -->
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version> <!-- https://search.maven.org/search?q=flatten-maven-plugin -->
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version> <!-- https://search.maven.org/search?q=maven-gpg-plugin -->
@@ -160,7 +161,22 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
-                <artifactId>slardar-hazelcast</artifactId>
+                <artifactId>slardar-hazel-caching</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>slardar-hazel-session</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>slardar-webmvc</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>slardar-sprint</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
@@ -185,6 +201,16 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
+                <artifactId>warlock-shadow</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>warlock-test</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
                 <artifactId>batrider</artifactId>
                 <version>${wings.version}</version>
             </dependency>
@@ -198,6 +224,18 @@
                 <artifactId>batrider-zero</artifactId>
                 <version>${wings.version}</version>
             </dependency>
+            <!-- pro.fessional.wings radiant -->
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>tiny-task</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>tiny-mail</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <!-- kotlin -->
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-jdk8</artifactId>
@@ -297,16 +335,21 @@
                 <artifactId>JustAuth</artifactId>
                 <version>${justauth.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.xuxueli</groupId>
-                <artifactId>xxl-job-core</artifactId>
-                <version>${xxljob.version}</version>
-            </dependency>
             <!-- Argon2PasswordEncoder -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcpkix-jdk18on</artifactId>
                 <version>${bouncycastle.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.retrofit2</groupId>
+                <artifactId>retrofit</artifactId>
+                <version>${retrofit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.retrofit2</groupId>
+                <artifactId>converter-jackson</artifactId>
+                <version>${retrofit.version}</version>
             </dependency>
             <!-- ops -->
             <dependency>

@@ -32,12 +32,12 @@ import java.util.Set;
 @ConditionalOnProperty(name = SilencerEnabledProp.Key$autoLog, havingValue = "true")
 public class SilencerAutoLogConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SilencerAutoLogConfiguration.class);
+    private static final Log log = LogFactory.getLog(SilencerAutoLogConfiguration.class);
 
     @Bean
     @ConditionalOnClass(ConsoleAppender.class)
     public ApplicationRunner autoAddFilterLogbackConsole(SilencerMiranaProp prop) {
-        logger.info("Wings conf autoAddFilterLogbackConsole");
+        log.info("Wings conf autoAddFilterLogbackConsole");
         return args -> {
             final SilencerMiranaProp.AutoLog autoLog = prop.getAutoLog();
             final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
@@ -51,19 +51,19 @@ public class SilencerAutoLogConfiguration {
                 final String name = next.getName();
                 if (targets.contains(name)) {
                     appenders.add(next);
-                    logger.info("find target appender name=" + name);
+                    log.info("find target appender name=" + name);
                 }
                 else if (exists.contains(name)) {
-                    logger.info("find condition appender name=" + name);
+                    log.info("find condition appender name=" + name);
                     skip = false;
                 }
                 else {
-                    logger.info("find others appender name=" + name);
+                    log.info("find others appender name=" + name);
                 }
             }
 
             if (skip || appenders.isEmpty()) {
-                logger.info("skip auto-log appender");
+                log.info("skip auto-log appender");
                 return;
             }
 
@@ -91,13 +91,13 @@ public class SilencerAutoLogConfiguration {
                     level = Level.OFF;
             }
 
-            logger.info("Wings conf LogbackFilter to ConsoleAppender");
-            logger.info("================= Silencer =================");
-            logger.info("Auto Switch the following Appender Level to " + level);
+            log.info("Wings conf LogbackFilter to ConsoleAppender");
+            log.info("================= Silencer =================");
+            log.info("Auto Switch the following Appender Level to " + level);
             for (Appender<ILoggingEvent> appender : appenders) {
-                logger.info("- " + appender.getName() + " : " + appender.getClass().getName());
+                log.info("- " + appender.getName() + " : " + appender.getClass().getName());
             }
-            logger.info("================= Silencer =================");
+            log.info("================= Silencer =================");
             final LogbackFilter filter = new LogbackFilter(level);
             for (Appender<ILoggingEvent> appender : appenders) {
                 appender.addFilter(filter);

@@ -14,12 +14,16 @@
     <packaging>jar</packaging>
 
     <name>Example::Winx::Devops</name>
-    <description>样板之运维端</description>
+    <description>样板间之运维端</description>
 
     <dependencies>
         <dependency>
             <groupId>com.moilioncircle.wings</groupId>
             <artifactId>winx-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>warlock-bond</artifactId>
         </dependency>
         <dependency>
             <groupId>de.codecentric</groupId>

@@ -31,11 +31,11 @@ import static org.apache.shardingsphere.spring.boot.util.PropertyUtil.containPro
 @ConditionalOnProperty(name = "spring.shardingsphere.enabled", havingValue = "true", matchIfMissing = true)
 @Configuration(proxyBeanMethods = false)
 public class FacelessShardingsphereConfiguration {
-    private static final Log logger = LogFactory.getLog(FacelessShardingsphereConfiguration.class);
+    private static final Log log = LogFactory.getLog(FacelessShardingsphereConfiguration.class);
 
     @Bean
     public WriteRouteOnlyAround writeRouteOnlyAround() {
-        logger.info("[Wings]🦄 config writeRouteOnlyAround");
+        log.info("[Wings]🦄 config writeRouteOnlyAround");
         return new WriteRouteOnlyAround();
     }
 
@@ -56,7 +56,7 @@ public class FacelessShardingsphereConfiguration {
         final boolean separate = containPropertyPrefix(environment, "spring.shardingsphere.opRules.readwrite-splitting");
         final Map<String, DataSource> dsMap = DataSourceMapSetter.getDataSourceMap(environment);
 
-        logger.info("[Wings]🦄 config shardingSphereCustomizer shard=" + (shard != null) + ", separate=" + separate);
+        log.info("[Wings]🦄 config shardingSphereCustomizer shard=" + (shard != null) + ", separate=" + separate);
 
         return (ctx) -> {
             ctx.cleanPlain()

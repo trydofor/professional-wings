@@ -6,6 +6,7 @@ import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.Output;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import pro.fessional.mirana.data.R;
@@ -23,14 +24,15 @@ import java.time.ZonedDateTime;
  * @author trydofor
  * @since 2021-07-08
  */
+@Slf4j
 public class ResultTest {
 
     @Test
     public void testZoneid() {
         final int totalSeconds = ZonedDateTime.now(ZoneId.systemDefault()).getOffset().getTotalSeconds();
-        System.out.println(totalSeconds);
+        log.info("{}", totalSeconds);
         final int t2 = ZonedDateTime.now(ZoneId.of("GMT-5")).getOffset().getTotalSeconds();
-        System.out.println(t2);
+        log.info("{}", t2);
     }
 
     @SneakyThrows
@@ -45,7 +47,7 @@ public class ResultTest {
                 .setI18nMessage("i18nCode", "1");
         ObjectMapper om = new ObjectMapper();
         final String json = om.writeValueAsString(r1);
-        System.out.println(json);
+        log.info(json);
         final R<Object> r2 = om.readValue(json, new com.fasterxml.jackson.core.type.TypeReference<R<Object>>() {});
         Assertions.assertEquals(r1, r2);
         Assertions.assertNull(r2.getCause());
@@ -64,7 +66,7 @@ public class ResultTest {
                 .setCause("cause")
                 .setI18nMessage("i18nCode", "1");
         final String json = JSON.toJSONString(r1);
-        System.out.println(json);
+        log.info(json);
         final R<Object> r2 = JSON.parseObject(json, new com.alibaba.fastjson2.TypeReference<R<Object>>() {});
         Assertions.assertEquals(r1, r2);
         Assertions.assertNull(r2.getCause());
@@ -74,8 +76,8 @@ public class ResultTest {
         PageResult<String> p1 = new PageResult<String>()
                 .addData("1")
                 .setTotalInfo(30, 20);
-        System.out.println(JSON.toJSONString(p1));
-        System.out.println(JSON.toJSONString(p1.addMeta("left", 10)));
+        log.info(JSON.toJSONString(p1));
+        log.info(JSON.toJSONString(p1.addMeta("left", 10)));
     }
 
     @SuppressWarnings("unchecked")

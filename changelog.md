@@ -12,8 +12,8 @@ Help Yourself, Go to [Commit] History
 
 ## 2.7.x Planning
 
-- [spring-boot 2.7.x](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.7-Release-Notes)
-- [jooq 3.16.x](https://www.jooq.org/notes#3.16.0)
+- [spring-boot 2.7.x] 💥 OkHttp, Hazelcast, Cache2k
+- [jooq 3.16.x] 💥 VisitListener QOM
 
 ## 2.6.6.210-SNAPSHOT Current [Developing]
 

@@ -15,10 +15,8 @@ import java.lang.reflect.Type;
  */
 public class JSONParser {
 
-    @SuppressWarnings("unchecked")
     public static <T> T parse(String json, TypeDescriptor targetType, JSONReader.Feature... fts) {
-        final Class<T> clz = (Class<T>) targetType.getType();
-        return JSON.parseObject(json, clz, fts);
+        return parse(json, targetType.getResolvableType(), fts);
     }
 
     /**
@@ -27,7 +25,7 @@ public class JSONParser {
      * ResolvableType.forClassWithGenerics(R.class, Dto.class).getType()
      */
     public static <T> T parse(String json, ResolvableType targetType, JSONReader.Feature... fts) {
-        final Type clz =  targetType.getType();
+        final Type clz = targetType.getType();
         return JSON.parseObject(json, clz, fts);
     }
 }

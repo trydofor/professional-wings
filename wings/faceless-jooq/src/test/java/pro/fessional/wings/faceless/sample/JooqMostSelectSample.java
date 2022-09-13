@@ -2,15 +2,18 @@ package pro.fessional.wings.faceless.sample;
 
 import lombok.Data;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.DataType;
+import org.jooq.DatePart;
 import org.jooq.Field;
 import org.jooq.Param;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record2;
+import org.jooq.Row2;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectOrderByStep;
 import org.jooq.TableOnConditionStep;
@@ -42,6 +45,8 @@ import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +69,7 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 
 @SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
 @TestMethodOrder(MethodOrderer.MethodName.class)
+@Slf4j
 public class JooqMostSelectSample {
 
     @Setter(onMethod_ = {@Autowired})
@@ -80,7 +86,7 @@ public class JooqMostSelectSample {
     }
 
     @Test
-    public void test1按字段选择() {
+    public void test1按需选择() {
         DSLContext ctx = dao.ctx();
         Tst中文也分表Table t = dao.getTable();
         Condition c = t.Id.gt(1L).and(t.Id.le(105L));
@@ -170,7 +176,7 @@ public class JooqMostSelectSample {
     }
 
     @Test
-    public void test2存入新Pojo() {
+    public void test2存入Pojo() {
         DSLContext ctx = dao.ctx();
         Tst中文也分表Table t = dao.getTable();
         Condition c = t.Id.gt(1L).and(t.Id.le(105L));
@@ -209,7 +215,7 @@ public class JooqMostSelectSample {
                                   });
 
 
-        System.out.println("debug here to see");
+        log.info("debug here to see");
     }
 
     @Test
@@ -262,11 +268,11 @@ public class JooqMostSelectSample {
                                 .fetch()
                                 .into(SameName.class);
 
-        System.out.println();
+        log.info("rc2", rc2);
     }
 
     @Test
-    public void test4绑定SQL() {
+    public void test3绑定SQL() {
         DSLContext ctx = dao.ctx();
 
         testcaseNotice("按map绑定，或者通过 jackson pojo to map");
@@ -280,7 +286,7 @@ public class JooqMostSelectSample {
                                        "WHERE id >=:idMin AND id <=:idMax\n" +
                                        "ORDER BY login_info DESC,id\n" +
                                        "LIMIT :offset, :count",
-                WingsJooqUtil.bindNamed(bd1))
+                                        WingsJooqUtil.bindNamed(bd1))
                                 .into(SameName.class);
 
         // 按数组绑定
@@ -310,11 +316,11 @@ public class JooqMostSelectSample {
                                        "ORDER BY login_info DESC,id", WingsJooqUtil.bindNamed(rc))
                                 .into(SameName.class);
 
-        System.out.println();
+        log.info("");
     }
 
     @Test
-    public void test5动态SQL() {
+    public void test3动态SQL() {
         // 条件构造，多参加 condition和cond*方法
         Tst中文也分表Table t = dao.getTable();
 
@@ -391,14 +397,14 @@ public class JooqMostSelectSample {
 
         // 更新字段，可以直接使用dao.update()
 
-        System.out.println();
+        log.info("");
     }
 
     @Setter(onMethod_ = {@Autowired})
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    public void test5JdbcTemplate() {
+    public void test4JdbcTemplate() {
         // 单字段查询
         Integer cnt = jdbcTemplate.queryForObject(
                 "SELECT COUNT(1) FROM tst_中文也分表 WHERE id > ?",
@@ -421,11 +427,11 @@ public class JooqMostSelectSample {
                     return a;
                 }, 105L);
 
-        System.out.println();
+        log.info("");
     }
 
     @Test
-    public void test6PageJooq() {
+    public void test5分页Jooq() {
         DSLContext dsl = dao.ctx();
         Tst中文也分表Table t = dao.getTable();
         Tst中文也分表Table t1 = dao.getAlias();
@@ -516,33 +522,33 @@ public class JooqMostSelectSample {
                                  .limit(0, 10)
                                  .fetch()
                                  .into(Tst中文也分表.class);
-        System.out.println(cnt1);
-        System.out.println(lst1.size());
+        log.info("cnt1={}", cnt1);
+        log.info("lst1={}", lst1.size());
 
         // 联表count
         // DSL.countDistinct()
         testcaseNotice("内联count",
                 "select count(`t1`.`id`) from `tst_中文也分表` as `t1`, `tst_中文也分表` as `t2` where (`t1`.`id` = `t2`.`id` and `t1`.`id` > ?)");
-        Integer cnt2 = dsl.select(DSL.count(t1.Id))
-                          .from(t1, t2)
-                          .where(t1.Id.eq(t2.Id).and(t1.Id.gt(1L)))
-                          .fetchOptionalInto(Integer.class)
-                          .orElse(0);
-        System.out.println(cnt2);
+        int cnt2 = dsl.select(DSL.count(t1.Id))
+                      .from(t1, t2)
+                      .where(t1.Id.eq(t2.Id).and(t1.Id.gt(1L)))
+                      .fetchOptionalInto(Integer.class)
+                      .orElse(0);
+        log.info("cnt2={}", cnt2);
 
         testcaseNotice("左联查询",
                 "select count(`t1`.`id`) from `tst_中文也分表` as `t1` left outer join `tst_中文也分表` as `t2` on `t1`.`id` = `t2`.`id` where `t1`.`id` > ?");
         TableOnConditionStep<Record> jt = t1.leftJoin(t2).on(t1.Id.eq(t2.Id));
-        Integer cnt3 = dsl.select(DSL.count(t1.Id))
-                          .from(jt)
-                          .where(t1.Id.gt(1L))
-                          .fetchOptionalInto(Integer.class)
-                          .orElse(0);
-        System.out.println(cnt3);
+        int cnt3 = dsl.select(DSL.count(t1.Id))
+                      .from(jt)
+                      .where(t1.Id.gt(1L))
+                      .fetchOptionalInto(Integer.class)
+                      .orElse(0);
+        log.info("cnt3={}", cnt3);
     }
 
     @Test
-    public void test7PageJdbc() {
+    public void test5分页Jdbc() {
         //
         testcaseNotice("使用helperJdbc包装",
                 "SELECT count(*) FROM (select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ?) WINGS_WRAP",
@@ -557,7 +563,7 @@ public class JooqMostSelectSample {
                                                  .bind(1L)
                                                  .fetchInto(Tst中文也分表.class, WingsEnumConverters.Id2Language);
 
-        System.out.println(pr1.getData().size());
+        log.info("pr1={}", pr1.getData().size());
 
         testcaseNotice("使用helperJdbc正常",
                 "SELECT count(*) from `tst_中文也分表` where id >= ?",
@@ -571,19 +577,8 @@ public class JooqMostSelectSample {
                                                  .fetch("id,login_info,other_info")
                                                  .into(Tst中文也分表.class, WingsEnumConverters.Id2Language);
 
-        System.out.println(pr2.getData().size());
+        log.info("pr2={}", pr2.getData().size());
     }
-
-    @Test
-    public void test8JooqSelect() {
-        testcaseNotice("使用helperJdbc正常",
-                "SELECT count(*) from `tst_中文也分表` where id >= ?",
-                "SELECT id,login_info,other_info from `tst_中文也分表` where id >= ? order by id limit 5");
-
-        final Tst中文也分表Table t = dao.getTable();
-        final List<SameName> sn = dao.ctx().selectFrom(t).fetchInto(SameName.class);
-    }
-
 
     // 同名，自动转换
     @Data
@@ -593,7 +588,7 @@ public class JooqMostSelectSample {
     }
 
     @Test
-    public void test9MappperEnum() {
+    public void test6MapperEnum() {
         final Tst中文也分表Table t = dao.getTable();
         DataType<StandardLanguage> lang = SQLDataType.INTEGER.asConvertedDataType(JooqConsEnumConverter.of(StandardLanguage.class));
         final Field<StandardLanguage> langField = DSL.field(t.Language.getName(), lang);
@@ -602,7 +597,7 @@ public class JooqMostSelectSample {
                                     .from(t)
                                     .fetch()
                                     .into(EnumDto.class);
-        System.out.println(sn);
+        log.info("sn={}", sn);
 
         // 全局注入的
         final List<EnumDto> sn2 = dao.ctx()
@@ -610,6 +605,37 @@ public class JooqMostSelectSample {
                                      .from(t)
                                      .fetch()
                                      .into(EnumDto.class);
-        System.out.println(sn2);
+        log.info("sn2={}", sn2);
+    }
+
+    @Test
+    public void test7函数方言() {
+        testcaseNotice("通过DSL，获取特定函数，DSL特别大，各种方言函数都有的",
+                "select `id` from `tst_中文也分表` where (`modify_dt` > date_add(?, interval ? day) and substring(`other_info`, ?, ?) like ?)");
+
+        final Tst中文也分表Table t = dao.getTable();
+        final String sql1 = dao
+                .ctx()
+                .select(t.Id)
+                .from(t)
+                .where(t.ModifyDt.gt(DSL.localDateTimeAdd(LocalDateTime.now(), 2, DatePart.DAY)))
+                .and(DSL.substring(t.OtherInfo, 0, 3).like(""))
+                .getSQL();
+        log.info("sql1={}", sql1);
+
+        testcaseNotice("通过DSL，元组条件查询 https://www.jooq.org/doc/3.14/manual/sql-building/column-expressions/row-value-expressions/",
+                "select `id` from `tst_中文也分表` where (`id`, `login_info`) in ((?, ?), (?, ?))");
+
+        final List<Row2<Long, String>> rw2 = new ArrayList<>();
+        rw2.add(DSL.row(1L, "1"));
+        rw2.add(DSL.row(2L, "2"));
+
+        final String sql2 = dao
+                .ctx()
+                .select(t.Id)
+                .from(t)
+                .where(DSL.row(t.Id, t.LoginInfo).in(rw2))
+                .getSQL();
+        log.info("sql2={}", sql2);
     }
 }

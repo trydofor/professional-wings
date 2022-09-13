@@ -90,8 +90,11 @@ public class EmptySugar {
                         && v.getSecond() == EmptyValue.TIME.getSecond());
     }
 
+    /**
+     * 仅比较日期，不比较时间
+     */
     public static boolean asEmptyValue(LocalDateTime v) {
-        return v == null || (asEmptyValue(v.toLocalDate()) && asEmptyValue(v.toLocalTime()));
+        return v == null || asEmptyValue(v.toLocalDate());
     }
 
     //

@@ -13,7 +13,6 @@ import java.util.Locale;
  * @see Locale#toString()
  * @since 2021-02-21
  */
-// @SuppressWarnings({"NonAsciiCharacters"})
 public enum StandardLanguage implements StandardLanguageEnum {
 
     SUPER(1020100, "standard_language", "标准语言", "classpath:/wings-tmpl/StandardLanguageTemplate.java"),

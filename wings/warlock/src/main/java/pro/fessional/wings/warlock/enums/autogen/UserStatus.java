@@ -9,7 +9,6 @@ import pro.fessional.wings.faceless.enums.StandardI18nEnum;
  * @author trydofor
  * @since 2021-04-15
  */
-// @SuppressWarnings({"NonAsciiCharacters"})
 public enum UserStatus implements ConstantEnum, StandardI18nEnum {
 
     SUPER(1200200, "user_status", "用户状态", "classpath:/wings-tmpl/ConstantEnumTemplate.java"),

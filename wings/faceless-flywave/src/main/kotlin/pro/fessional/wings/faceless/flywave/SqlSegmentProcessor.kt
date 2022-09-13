@@ -81,7 +81,7 @@ class SqlSegmentProcessor(
         fun isPlain() = dbsType == DbsType.Plain
     }
 
-    private val logger = LoggerFactory.getLogger(SqlSegmentProcessor::class.java)
+    private val log = LoggerFactory.getLogger(SqlSegmentProcessor::class.java)
 
     private val singleComment: String
     private val blockComment1: String
@@ -96,7 +96,7 @@ class SqlSegmentProcessor(
         } else {
             this.singleComment = commentSingle.trim()
         }
-        logger.debug("[init] use single-comment= {}", this.singleComment)
+        log.debug("[init] use single-comment= {}", this.singleComment)
 
         // wings.faceless.flywave.sql.comment-multiple="/*   */"
         if (commentMultiple.isBlank()) {
@@ -107,7 +107,7 @@ class SqlSegmentProcessor(
             this.blockComment1 = spt[0].trim()
             this.blockComment2 = spt[1].trim()
         }
-        logger.debug("[init] use multiple-comment={} {}", this.blockComment1, this.blockComment2)
+        log.debug("[init] use multiple-comment={} {}", this.blockComment1, this.blockComment2)
 
         // wings.faceless.flywave.sql.delimiter-default=";"
         if (delimiterDefault.isBlank()) {
@@ -115,7 +115,7 @@ class SqlSegmentProcessor(
         } else {
             this.delimiterDefault = delimiterDefault.trim()
         }
-        logger.debug("[init] use delimiter={}", this.delimiterDefault)
+        log.debug("[init] use delimiter={}", this.delimiterDefault)
 
         // wings.faceless.flywave.sql.delimiter-command="DELIMITER"
         if (delimiterCommand.isBlank()) {
@@ -123,7 +123,7 @@ class SqlSegmentProcessor(
         } else {
             this.delimiterCommand = delimiterCommand.trim()
         }
-        logger.debug("[init] use delimiter command={}", this.delimiterCommand)
+        log.debug("[init] use delimiter command={}", this.delimiterCommand)
     }
 
     /**
@@ -136,7 +136,7 @@ class SqlSegmentProcessor(
             return emptyList()
         }
 
-        logger.debug("[parse] parse sql start")
+        log.debug("[parse] parse sql start")
         var lineBgn = -1
         var dbsAnot = 0
         var tblName = Null.Str
@@ -168,13 +168,13 @@ class SqlSegmentProcessor(
                     parseCmd(ln, singleComment)
                 } else {
                     val ts = comment.toString().trim()
-                    logger.debug("[parse] multi-comment {}", ts)
+                    log.debug("[parse] multi-comment {}", ts)
                     comment.setLength(0)
                     parseCmd(ts, blockComment1)
                 }
 
                 if (mt != null) {
-                    logger.debug("[parse] got annotation, line={} , options={}", lineCur, mt)
+                    log.debug("[parse] got annotation, line={} , options={}", lineCur, mt)
 
                     if (mt.tbl.isNotEmpty()) {
                         tblName = mt.tbl
@@ -229,7 +229,7 @@ class SqlSegmentProcessor(
 
             if (ln.startsWith(delimiterCommand, true)) {
                 delimiter = ln.substringAfter(delimiterCommand).trim()
-                logger.debug("[parse] got delimiter command, delimiter={}", delimiter)
+                log.debug("[parse] got delimiter command, delimiter={}", delimiter)
                 continue
             }
 
@@ -256,7 +256,7 @@ class SqlSegmentProcessor(
                     den = true
                     if (idx == idl) idx = ln.length
                 } else {
-                    logger.warn("find middle delimiter=$delimiter in line=$ln")
+                    log.warn("find middle delimiter=$delimiter in line=$ln")
                     den = idx == ln.length - delimiter.length
                 }
             }
@@ -271,7 +271,7 @@ class SqlSegmentProcessor(
                 if (sql.isNotEmpty()) {
                     var rename = Null.Str
                     if (tblName.isEmpty()) {
-                        logger.debug("[parse] use statementParser to get tableName and shard/plain")
+                        log.debug("[parse] use statementParser to get tableName and shard/plain")
                         when (val st = statementParser.parseTypeAndTable(sql)) {
                             is SqlStatementParser.SqlType.Plain -> {
                                 tblName = st.table
@@ -284,7 +284,7 @@ class SqlSegmentProcessor(
                                 if (dbsAnot == 0) dbsAnot = 1
                             }
                             SqlStatementParser.SqlType.Other ->
-                                logger.warn("[parse] unsupported type, use shard datasource to run, sql=$sql")
+                                log.warn("[parse] unsupported type, use shard datasource to run, sql=$sql")
                         }
                     }
 
@@ -293,7 +293,7 @@ class SqlSegmentProcessor(
                     val tblIdx2 = TemplateUtil.parse(sql, tblList)
                     val dbsType = if (dbsAnot < 0) DbsType.Plain else DbsType.Shard
                     val tblRegx = if (tbApply.isEmpty()) null else tbApply.toRegex(RegexOption.IGNORE_CASE)
-                    logger.debug("[parse] got a segment line from={}, to={}, tableName={}, dbsType={}, errType={}, tblRegx={}", lineBgn, lineCur, tblName, dbsType, errType, tbApply)
+                    log.debug("[parse] got a segment line from={}, to={}, tableName={}, dbsType={}, errType={}, tblRegx={}", lineBgn, lineCur, tblName, dbsType, errType, tbApply)
                     result.add(Segment(dbsType, lineBgn, lineCur, tblName, tblIdx2, sql, errType, askText, tblRegx, trgJour, dicName))
                 }
                 // reset for next
@@ -309,7 +309,7 @@ class SqlSegmentProcessor(
                 builder.append(ln).append("\n")
             }
         }
-        logger.debug("[parse] parse sql done")
+        log.debug("[parse] parse sql done")
         return result
     }
 

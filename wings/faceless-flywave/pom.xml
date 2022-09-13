@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Faceless::Flywave</name>
-    <description>虚空假面④时间结界(flywave)</description>
+    <description>虚空假面之时间结界(flywave)</description>
 
     <dependencies>
         <dependency>

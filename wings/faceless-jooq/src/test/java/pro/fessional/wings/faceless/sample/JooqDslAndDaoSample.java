@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless.sample;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -36,6 +37,7 @@ import static pro.fessional.wings.faceless.service.journal.JournalService.Journa
 @SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Disabled("手动执行，以有JooqShardingTest覆盖测试 ")
+@Slf4j
 public class JooqDslAndDaoSample {
 
     @Setter(onMethod_ = {@Autowired})
@@ -62,12 +64,12 @@ public class JooqDslAndDaoSample {
         val i = dao.count(a, c);
         testcaseNotice("select * from `tst_中文也分表` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?) limit ?");
         val ft1 = dao.fetch(a, 0, 2, c, a.Id.desc());
-        System.out.println("============count " + i + ", ft2'size=" + ft1.size());
+        log.info("============count {}, ft2'size={}", i, ft1.size());
         testcaseNotice("select id, commit_id  from `tst_中文也分表` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?) limit ?");
         val ft2 = dao.fetch(0, 2, t -> SelectOrderCondition.of(
                 t.Id.gt(1L).and(t.CommitId.lt(200L)),
                 t.Id, t.CommitId, t.Id.desc()));
-        System.out.println("============count " + i + ", ft2'size=" + ft2.size());
+        log.info("============count {}, ft2'size={}", i, ft2.size());
 
         // table
         testcaseNotice("使用table");
@@ -77,14 +79,14 @@ public class JooqDslAndDaoSample {
         setter.put(t.CommitId, t.Id.add(1L));
         testcaseNotice("update `tst_中文也分表` set `commit_id` = (`id` + ?), `login_info` = ? where `id` = ?");
         val u1 = dao.update(t, setter, t.Id.eq(2L));
-        System.out.println("============update " + u1);
+        log.info("============update {}", u1);
 
         val po = new Tst中文也分表();
         po.setCommitId(2L);
         po.setLoginInfo("info");
         testcaseNotice("update `tst_中文也分表` set `commit_id` = ?, `login_info` = ? where `id` = ?");
         val u2 = dao.update(t, po, t.Id.eq(2L));
-        System.out.println("============update " + u2);
+        log.info("============update {}", u2);
     }
 
     @Test
@@ -103,7 +105,7 @@ public class JooqDslAndDaoSample {
 //                .orderBy(t.Id, nullOrder) // IllegalArgumentException: Field not supported : null
 //                .orderBy(nullOrder) // IllegalArgumentException: Field not supported : null
                      .getSQL();
-        System.out.println(sql);
+        log.info(sql);
 
         testcaseNotice("plain sql delete");
         int rc = dsl.execute("DELETE FROM tst_中文也分表 WHERE id < ?", 1L);
@@ -119,14 +121,14 @@ public class JooqDslAndDaoSample {
         val s1 = new HashMap<>();
         val t = Tst中文也分表Table.Tst中文也分表;
         JournalJooqHelp.create(journal, t, s1);
-        System.out.println(s1);
+        log.info("map1={}", s1);
 
         val s2 = new HashMap<>();
         JournalJooqHelp.modify(journal, t, s2);
-        System.out.println(s2);
+        log.info("map2={}", s2);
         val s3 = new HashMap<>();
         JournalJooqHelp.delete(journal, t, s3);
-        System.out.println(s3);
+        log.info("map3={}", s3);
 
         val s4 = new HashMap<>();
         val ob = new Tst中文也分表();
@@ -139,16 +141,16 @@ public class JooqDslAndDaoSample {
             journal.create(ob);
         }
         val start3 = System.currentTimeMillis();
-        System.out.println("cost1=" + (start2 - start1) + ", cost2=" + (start3 - start2));
+        log.info("cost1={}, cost2={}", start2 - start1, start3 - start2);
     }
 
     @Test
     public void test4DeleteDt() {
         testcaseNotice("逻辑删除");
         val c1 = dao.count();
-        System.out.println(c1);
+        log.info("count1={}", c1);
         val c2 = dao.count(it -> it.onlyDiedData);
-        System.out.println(c2);
+        log.info("count2={}", c2);
     }
 
     @Test
@@ -156,6 +158,6 @@ public class JooqDslAndDaoSample {
         testcaseNotice("影子表");
         Tst中文也分表Table upd = dao.newTable("", "$upd");
         val c1 = dao.count(upd, null);
-        System.out.println(c1);
+        log.info("count1={}", c1);
     }
 }

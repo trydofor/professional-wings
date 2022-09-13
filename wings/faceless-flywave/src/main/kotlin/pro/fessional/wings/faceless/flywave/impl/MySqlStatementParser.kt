@@ -18,7 +18,7 @@ import java.util.regex.Pattern
  */
 class MySqlStatementParser : SqlStatementParser {
 
-    private val logger = LoggerFactory.getLogger(MySqlStatementParser::class.java)
+    private val log = LoggerFactory.getLogger(MySqlStatementParser::class.java)
 
     private val options = Pattern.MULTILINE or Pattern.CASE_INSENSITIVE
     private val ddlRenameTable = "^ALTER\\s+TABLE\\s+([^(\\s]+)\\s+RENAME\\s+TO\\s+([^(\\s]+)".toPattern(options)
@@ -120,7 +120,7 @@ class MySqlStatementParser : SqlStatementParser {
         }
 
         // 备用方案，一般不会到达。
-        logger.warn("unmatched sql type, return Other. sql=[$sql]")
+        log.warn("unmatched sql type, return Other. sql=[$sql]")
         return SqlStatementParser.SqlType.Other
     }
 

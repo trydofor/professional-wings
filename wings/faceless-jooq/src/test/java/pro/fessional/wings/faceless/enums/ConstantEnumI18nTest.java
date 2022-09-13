@@ -80,7 +80,7 @@ public class ConstantEnumI18nTest {
     @Test
     public void test3Code() {
         StandardLanguage zhCN = StandardLanguage.ZH_CN;
-        StandardTimezone tzUs = StandardTimezone.AMERICA𓃬CHICAGO;
+        StandardTimezone tzUs = StandardTimezone.AMERICA_CHICAGO;
         assertEquals(zhCN.getBase() + "." + zhCN.getKind() + "." + zhCN.getCode(), zhCN.getI18nCode());
         assertEquals(tzUs.getBase() + "." + zhCN.getKind() + ".id" + tzUs.getId(), tzUs.getI18nCode());
     }

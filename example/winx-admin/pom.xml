@@ -14,12 +14,16 @@
     <packaging>jar</packaging>
 
     <name>Example::Winx::Admin</name>
-    <description>样板之管理端</description>
+    <description>样板间之管理端</description>
 
     <dependencies>
         <dependency>
             <groupId>com.moilioncircle.wings</groupId>
             <artifactId>winx-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>warlock-bond</artifactId>
         </dependency>
     </dependencies>
 </project>

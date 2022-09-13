@@ -51,7 +51,7 @@ public class TestWingsUserDetailsService implements WingsUserDetailsService {
         ud.setUsername(username);
         ud.setAuthorities(auths);
         ud.setLocale(Locale.CANADA);
-        ud.setZoneId(StandardTimezone.CANADA𓃬CENTRAL.toZoneId());
+        ud.setZoneId(StandardTimezone.CANADA_CENTRAL.toZoneId());
 
         return ud;
     }
@@ -60,6 +60,6 @@ public class TestWingsUserDetailsService implements WingsUserDetailsService {
         final String origPassword = "大翅挺好吃";
         //
         final String sendPassword = Md5.sum(origPassword + ":" + origPassword);
-        System.out.println(sendPassword);
+        log.info("password={}", sendPassword);
     }
 }

@@ -2,9 +2,9 @@ package pro.fessional.wings.slardar.spring.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import pro.fessional.wings.slardar.monitor.filtter.LogViewer;
 import pro.fessional.wings.slardar.monitor.metric.JvmMetric;
 import pro.fessional.wings.slardar.monitor.metric.LogMetric;
+import pro.fessional.wings.slardar.monitor.viewer.LogConf;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -75,8 +75,8 @@ public class SlardarMonitorProp {
     /**
      * @see #Key$view
      */
-    private LogViewer.Conf view = null;
-    public static final String Key$view = LogViewer.Conf.Key;
+    private LogConf view = null;
+    public static final String Key$view = LogConf.Key;
 
 
     @Data

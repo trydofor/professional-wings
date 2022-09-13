@@ -41,7 +41,7 @@ public class ConstantEnumI18nTest {
     @Test
     public void test3Code() {
         StandardLanguage zhCN = StandardLanguage.ZH_CN;
-        StandardTimezone tzUs = StandardTimezone.AMERICA𓃬CHICAGO;
+        StandardTimezone tzUs = StandardTimezone.AMERICA_CHICAGO;
         assertEquals(zhCN.getBase() + "." + zhCN.getKind() + "." + zhCN.getCode(), zhCN.getI18nCode());
         assertEquals(tzUs.getBase() + "." + zhCN.getKind() + ".id" + tzUs.getId(), tzUs.getI18nCode());
     }
@@ -52,12 +52,12 @@ public class ConstantEnumI18nTest {
         ExecSql.execWingsSql(jdbcTemplate, "master/01-light/2019-05-20v01-light-commit.sql");
         ExecSql.execWingsSql(jdbcTemplate, "branch/feature/01-enum-i18n/2019-05-21u01-enum-i18n.sql");
         ExecSql.execWingsSql(jdbcTemplate, "branch/feature/01-enum-i18n/2019-05-21v01-enum-i18n.sql");
-        StandardLanguage zhCN = StandardLanguage.ZH_CN;
+        StandardLanguage zhCn = StandardLanguage.ZH_CN;
         StandardLanguage enUs = StandardLanguage.EN_US;
-        assertEquals("简体中文", standardI18nService.load(zhCN, zhCN));
-        assertEquals("Simplified Chinese", standardI18nService.load(zhCN, enUs));
-        String mcn = messageSource.getMessage(zhCN.getI18nCode(), Null.StrArr, zhCN.toLocale());
-        String men = messageSource.getMessage(zhCN.getI18nCode(), Null.StrArr, enUs.toLocale());
+        assertEquals("简体中文", standardI18nService.load(zhCn, zhCn));
+        assertEquals("Simplified Chinese", standardI18nService.load(zhCn, enUs));
+        String mcn = messageSource.getMessage(zhCn.getI18nCode(), Null.StrArr, zhCn.toLocale());
+        String men = messageSource.getMessage(zhCn.getI18nCode(), Null.StrArr, enUs.toLocale());
         assertEquals("简体中文", mcn);
         assertEquals("Simplified Chinese", men);
     }

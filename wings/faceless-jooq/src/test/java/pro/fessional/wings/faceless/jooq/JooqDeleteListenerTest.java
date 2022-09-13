@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless.jooq;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.BatchBindStep;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.MethodOrderer;
@@ -37,6 +38,7 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
 @ActiveProfiles("init")
 @SpringBootTest(properties = {"debug = true", "spring.wings.faceless.jooq.enabled.journal-delete=true"})
 @Tag("init")
+@Slf4j
 public class JooqDeleteListenerTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -100,7 +102,7 @@ public class JooqDeleteListenerTest {
         batch.bind(12L, 12L);
         batch.bind(13L, 13L);
         int[] rs = batch.execute();
-        System.out.println(Arrays.toString(rs));
+        log.info(Arrays.toString(rs));
         testcaseNotice(
                 "检查日志，id >= 9的sql，只有delete，如下",
                 "delete from `tst_中文也分表` where `id` = ?"

@@ -19,7 +19,7 @@ class SchemaFulldumpManager(
         private val sqlStatementParser: SqlStatementParser,
         private val schemaDefinitionLoader: SchemaDefinitionLoader
 ) {
-    private val logger = LoggerFactory.getLogger(SchemaFulldumpManager::class.java)
+    private val log = LoggerFactory.getLogger(SchemaFulldumpManager::class.java)
 
     companion object {
         const val prefix = "--"
@@ -192,12 +192,12 @@ class SchemaFulldumpManager(
         val tables = schemaDefinitionLoader.showTables(database)
         for (table in filterSorter(tables)) {
             if (table.startsWith(prefix)) {
-                logger.info("[dumpDdl] insert comment, {}", table)
+                log.info("[dumpDdl] insert comment, {}", table)
                 result.add(SqlString(table, SqlType.StrComment, table.trim()))
                 continue
             }
 
-            logger.info("[dumpDdl] dump ddls for table={}", table)
+            log.info("[dumpDdl] dump ddls for table={}", table)
             val ddls = schemaDefinitionLoader.showFullDdl(database, table)
             for (ddl in ddls) {
                 val sql = ddl.trim()
@@ -236,12 +236,12 @@ class SchemaFulldumpManager(
         val builder = StringBuilder()
         for (table in filterSorter(tables)) {
             if (table.startsWith(prefix)) {
-                logger.info("[dumpRec] insert comment, {}", table)
+                log.info("[dumpRec] insert comment, {}", table)
                 result.add(SqlString(table, SqlType.StrComment, table.trim()))
                 continue
             }
 
-            logger.info("[dumpRec] dump record for table={}", table)
+            log.info("[dumpRec] dump record for table={}", table)
             val tbl = sqlStatementParser.safeName(table)
             var ist = true
             tmpl.query("select * from $tbl") { rs ->
@@ -284,6 +284,6 @@ class SchemaFulldumpManager(
             result.add(SqlString(Null.Str, SqlType.StrComment, sb.toString()))
         }
     } catch (e: Exception) {
-        logger.warn("[getRevision] failed to revision", e)
+        log.warn("[getRevision] failed to revision", e)
     }
 }

@@ -23,14 +23,14 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class SilencerMiranaConfiguration {
 
-    private static final Log logger = LogFactory.getLog(SilencerMiranaConfiguration.class);
+    private static final Log log = LogFactory.getLog(SilencerMiranaConfiguration.class);
 
     private final SilencerMiranaProp prop;
 
     @Bean
     public Crc8Long crc8Long() {
         int[] seed = prop.getCode().getCrc8Long();
-        logger.info("Wings make Crc8Long, seed = " + Arrays.toString(seed));
+        log.info("Wings make Crc8Long, seed = " + Arrays.toString(seed));
         if (seed == null || seed.length == 0) {
             return new Crc8Long();
         }
@@ -42,7 +42,7 @@ public class SilencerMiranaConfiguration {
     @Bean
     public LeapCode leapCode() {
         String seed = prop.getCode().getLeapCode();
-        logger.info("Wings make LeapCode, seed = " + seed);
+        log.info("Wings make LeapCode, seed = " + seed);
         if (seed == null) {
             return new LeapCode();
         }
@@ -54,7 +54,7 @@ public class SilencerMiranaConfiguration {
     @Bean
     public Aes128 aes128() {
         String key = prop.getCode().getAesKey();
-        logger.info("Wings make aes128");
+        log.info("Wings make aes128");
         return Aes128.of(key);
     }
 }

@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless.jooq;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.shardingsphere.infra.hint.HintManager;
 import org.jooq.Field;
@@ -39,6 +40,7 @@ import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
 @SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
 @ActiveProfiles("shard")
 @TestMethodOrder(MethodOrderer.MethodName.class)
+@Slf4j
 public class JooqShardingTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -228,7 +230,7 @@ public class JooqShardingTest {
         testcaseNotice("批量Insert，查看日志,replace, 307-309，分2批，replace into");
         try {
             val rs2 = dao.batchInsert(rds, 2, false);
-            System.out.println(Arrays.toString(rs2));
+            log.info("{}", Arrays.toString(rs2));
             //assertArrayEquals(intArrayOf(2, 2, 2), rs2)
         } catch (Exception e) {
             testcaseNotice("Sharding 不支持，replace into https://github.com/apache/shardingsphere/issues/5330");
@@ -243,7 +245,7 @@ public class JooqShardingTest {
                     new Tst中文也分表Record(318L, now, now, now, 9L, "批量合并318", "其他318", ZH_CN.getId()),
                     new Tst中文也分表Record(319L, now, now, now, 9L, "批量合并319", "其他319", ZH_CN.getId())
             ), 2, tbl.LoginInfo, tbl.OtherInfo);
-            System.out.println(Arrays.toString(rs3));
+            log.info("{}", Arrays.toString(rs3));
             //assertArrayEquals(intArrayOf(1, 1, 1), rs3)
         } catch (Exception e) {
             testcaseNotice("Sharding 不支持，on duplicate key update https://github.com/apache/shardingsphere/issues/5210");

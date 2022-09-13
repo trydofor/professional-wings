@@ -14,12 +14,16 @@
     <packaging>jar</packaging>
 
     <name>Example::Winx::Api</name>
-    <description>样板之接口</description>
+    <description>样板间之接口</description>
 
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>batrider-zero</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>slardar-webmvc</artifactId>
         </dependency>
         <dependency>
             <groupId>com.moilioncircle.wings</groupId>

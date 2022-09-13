@@ -28,13 +28,13 @@ public class MonitorTask implements InitializingBean {
     private Environment environment;
 
     @Setter(onMethod_ = {@Autowired})
-    private List<WarnMetric> warnMetrics;
+    private List<WarnMetric> warnMetrics = Collections.emptyList();
 
     @Setter(onMethod_ = {@Autowired})
-    private List<WarnReport> warnReports;
+    private List<WarnReport> warnReports = Collections.emptyList();
 
-    @Setter(onMethod_ = {@Autowired})
-    private List<WarnFilter> warnFilters;
+    @Setter(onMethod_ = {@Autowired(required = false)})
+    private List<WarnFilter> warnFilters = Collections.emptyList();
 
     private String applicationName = null;
     private boolean hookSelf = true;

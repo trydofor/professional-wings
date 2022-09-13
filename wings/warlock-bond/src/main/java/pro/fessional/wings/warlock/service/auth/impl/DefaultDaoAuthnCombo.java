@@ -29,10 +29,8 @@ import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
 @Slf4j
 public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
 
-    public static final int ORDER = WarlockOrderConst.UserAuthnCombo + 10_000;
-
     @Getter @Setter
-    private int order = ORDER;
+    private int order = WarlockOrderConst.DefaultDaoAuthnCombo;
 
     @Setter(onMethod_ = {@Autowired})
     protected WinUserBasisDao winUserBasisDao;

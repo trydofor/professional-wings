@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress HttpUrlsUsage -->
+<hazelcast xmlns="http://www.hazelcast.com/schema/config"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.hazelcast.com/schema/config
+           http://www.hazelcast.com/schema/config/hazelcast-config-4.2.xsd">
+
+    <!-- spring FindByIndexNameSessionRepository -->
+    <map name="${spring.session.hazelcast.map-name}">
+        <in-memory-format>BINARY</in-memory-format>
+        <time-to-live-seconds>0</time-to-live-seconds>
+        <eviction size="100000"/>
+        <near-cache>
+            <in-memory-format>OBJECT</in-memory-format>
+            <time-to-live-seconds>0</time-to-live-seconds>
+            <invalidate-on-change>true</invalidate-on-change>
+            <cache-local-entries>false</cache-local-entries>
+            <eviction size="10000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
+        </near-cache>
+        <attributes>
+            <attribute extractor-class-name="org.springframework.session.hazelcast.Hazelcast4PrincipalNameExtractor">principalName</attribute>
+            <attribute extractor-class-name="pro.fessional.wings.slardar.session.HazelcastUidExtractor">userId</attribute>
+        </attributes>
+        <indexes>
+            <index type="HASH">
+                <attributes>
+                    <attribute>principalName</attribute>
+                </attributes>
+            </index>
+            <index type="HASH">
+                <attributes>
+                    <attribute>userId</attribute>
+                </attributes>
+            </index>
+        </indexes>
+    </map>
+
+</hazelcast>

@@ -41,12 +41,12 @@ class DefaultRevisionManager(
 ) : SchemaRevisionManager {
 
     private val revi1st = WingsRevision.V00_19_0512_01_Schema.revision()
-    private val logger = LoggerFactory.getLogger(DefaultRevisionManager::class.java)
+    private val log = LoggerFactory.getLogger(DefaultRevisionManager::class.java)
     private val unapplyMark = "1000-01-01"
     private val runningFlag = "17.521"
     private val runningMark = "$unapplyMark 00:00:$runningFlag"
 
-    private val interactive = DefaultInteractiveManager<AskType>(logger, plainDataSources, "🐝")
+    private val interactive = DefaultInteractiveManager<AskType>(log, plainDataSources, "🐝")
     private val dropReg = HashMap<String, Regex>()
 
     override fun logWay(func: BiConsumer<String, String>): BiConsumer<String, String> {
@@ -760,7 +760,7 @@ class DefaultRevisionManager(
         try {
             val tables = schemaDefinitionLoader.showTables(ds)
             if (tables.find { it.equals(schemaVersionTable, true) } != null) {
-                logger.error("exist $schemaVersionTable without any records, need manual fixed: drop empty table or insert records")
+                log.error("exist $schemaVersionTable without any records, need manual fixed: drop empty table or insert records")
                 throw er // 存在 $schemaVersionTable 表，报出原异常
             }
         } catch (e: Exception) {

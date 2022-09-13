@@ -38,7 +38,7 @@ import static pro.fessional.wings.faceless.flywave.SchemaJournalManager.JournalD
 @ConditionalOnProperty(name = FlywaveEnabledProp.Key$module, havingValue = "true")
 public class WingsFlywaveConfiguration {
 
-    private static final Log logger = LogFactory.getLog(WingsFlywaveConfiguration.class);
+    private static final Log log = LogFactory.getLog(WingsFlywaveConfiguration.class);
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -56,7 +56,7 @@ public class WingsFlywaveConfiguration {
                 properties.getJournalDelete(),
                 properties.getTriggerDelete()
         );
-        logger.info("config schemaJournalManager");
+        log.info("config schemaJournalManager");
         return new SchemaJournalManager(facelessDs.getPlains(), statementParser, schemaDefinitionLoader, ddl, properties.getSchemaJournalTable());
     }
 
@@ -77,7 +77,7 @@ public class WingsFlywaveConfiguration {
                 bean.addDropRegexp(s);
             }
         }
-        logger.info("config schemaVersionManger");
+        log.info("config schemaVersionManger");
         return bean;
     }
 
@@ -87,7 +87,7 @@ public class WingsFlywaveConfiguration {
             DataSourceContext sources,
             SqlStatementParser statementParser,
             SchemaDefinitionLoader schemaDefinitionLoader) {
-        logger.info("config schemaShardingManager");
+        log.info("config schemaShardingManager");
         return new SchemaShardingManager(sources.getPlains(), sources.getSharding(),
                 statementParser, schemaDefinitionLoader);
     }
@@ -96,14 +96,14 @@ public class WingsFlywaveConfiguration {
     public SchemaFulldumpManager schemaFulldumpManager(
             SqlStatementParser statementParser,
             SchemaDefinitionLoader schemaDefinitionLoader) {
-        logger.info("config schemaFulldumpManager");
+        log.info("config schemaFulldumpManager");
         return new SchemaFulldumpManager(statementParser, schemaDefinitionLoader);
     }
 
     @Bean
     public SqlStatementParser sqlStatementParser(FlywaveSqlProp conf) {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
-            logger.info("config sqlStatementParser");
+            log.info("config sqlStatementParser");
             return new MySqlStatementParser();
         }
         else {
@@ -116,15 +116,15 @@ public class WingsFlywaveConfiguration {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
             final String fs = conf.getFormatShard();
             if (fs != null && !fs.isEmpty()) {
-                logger.info("config static ShardFormat=" + fs);
+                log.info("config static ShardFormat=" + fs);
                 SqlSegmentProcessor.setShardFormat(fs);
             }
             final String ft = conf.getFormatTrace();
             if (ft != null && !ft.isEmpty()) {
-                logger.info("config static TraceFormat=" + ft);
+                log.info("config static TraceFormat=" + ft);
                 SqlSegmentProcessor.setTraceFormat(ft);
             }
-            logger.info("config sqlSegmentParser");
+            log.info("config sqlSegmentParser");
             return new SqlSegmentProcessor(conf.getCommentSingle(),
                     conf.getCommentMultiple(),
                     conf.getDelimiterDefault(),
@@ -138,7 +138,7 @@ public class WingsFlywaveConfiguration {
     @Bean
     public SchemaDefinitionLoader schemaDefinitionLoader(FlywaveSqlProp conf) {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
-            logger.info("config schemaDefinitionLoader");
+            log.info("config schemaDefinitionLoader");
             return new MysqlDefinitionLoader();
         }
         else {
@@ -148,7 +148,7 @@ public class WingsFlywaveConfiguration {
 
     @Bean
     public CommandLineRunner revisionChecker(DefaultRevisionManager manager, FlywaveFitProp prop) {
-        logger.info("Wings conf revisionChecker");
+        log.info("Wings conf revisionChecker");
         return args -> {
             final RevisionFitness fits = new RevisionFitness();
             fits.addFits(prop.getFit());

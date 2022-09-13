@@ -19,7 +19,7 @@ import java.util.TimeZone;
  */
 public class TestLoginHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(TestLoginHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(TestLoginHandler.class);
 
     @Setter(onMethod_ = {@Autowired})
     private WingsLocaleResolver wingsLocaleResolver;
@@ -34,10 +34,10 @@ public class TestLoginHandler {
         if (tz != null) {
             res.setHeader("UserZoneid", tz.toZoneId().getId());
         }
-        logger.info("loginSuccess");
+        log.info("loginSuccess");
     };
 
-    public AuthenticationFailureHandler loginFailure = (req, res, auth) -> logger.info("loginFailure");
+    public AuthenticationFailureHandler loginFailure = (req, res, auth) -> log.info("loginFailure");
 
-    public LogoutSuccessHandler logoutSuccess = (req, res, auth) -> logger.info("logoutSuccess");
+    public LogoutSuccessHandler logoutSuccess = (req, res, auth) -> log.info("logoutSuccess");
 }

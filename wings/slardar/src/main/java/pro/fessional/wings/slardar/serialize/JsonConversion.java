@@ -30,11 +30,17 @@ public class JsonConversion implements ConversionService {
     @SneakyThrows
     @Override
     public <T> T convert(Object source, @NotNull Class<T> targetType) {
+        if (String.class.equals(targetType)) {
+            if (source instanceof String) {
+                return (T) source;
+            }
+            else {
+                return (T) JSON.toJSONString(source);
+            }
+        }
+
         if (source instanceof String) {
             return JSON.parseObject((String) source, targetType);
-        }
-        if (String.class.equals(targetType)) {
-            return (T) JSON.toJSONString(source);
         }
         return null;
     }
@@ -42,11 +48,18 @@ public class JsonConversion implements ConversionService {
     @SneakyThrows
     @Override
     public Object convert(Object source, TypeDescriptor sourceType, @NotNull TypeDescriptor targetType) {
-        if (source instanceof String) {
-            return JSON.parseObject((String) source, targetType.getType());
-        }
+
         if (String.class.equals(targetType.getType())) {
-            return JSON.toJSONString(source);
+            if (source instanceof String) {
+                return source;
+            }
+            else {
+                return JSON.toJSONString(source);
+            }
+        }
+
+        if (source instanceof String) {
+            return JSON.parseObject((String) source, targetType.getResolvableType().getType());
         }
         return null;
     }
