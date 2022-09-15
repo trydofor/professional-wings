@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.spring.bean;
 import com.alibaba.ttl.threadpool.TtlExecutors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -12,6 +13,8 @@ import org.springframework.boot.task.TaskExecutorBuilder;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
@@ -19,6 +22,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
+import java.lang.reflect.Method;
 import java.util.concurrent.Executor;
 
 import static org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME;
@@ -72,11 +76,39 @@ public class SlardarAsyncConfiguration {
     }
 
     @Bean
-    public CommandLineRunner eventPublishHelperRunner(ApplicationEventPublisher publisher, @Qualifier(SLARDAR_EVENT_EXECUTOR_BEAN_NAME) Executor executor) {
+    public CommandLineRunner eventPublishHelperRunner(ApplicationEventPublisher publisher,
+                                                      ApplicationEventMulticaster multicaster,
+                                                      @Qualifier(SLARDAR_EVENT_EXECUTOR_BEAN_NAME) Executor executor) {
         return (arg) -> {
             EventPublishHelper.setExecutor(executor);
+            log.info("Wings conf eventPublishHelper ApplicationEventPublisher=" + publisher.getClass());
             EventPublishHelper.setSpringPublisher(publisher);
-            log.info("Wings conf eventPublishHelper");
+            log.info("Wings conf eventPublishHelper ApplicationEventMulticaster=" + multicaster.getClass());
+            if (multicaster instanceof SimpleApplicationEventMulticaster) {
+                SimpleApplicationEventMulticaster mc = (SimpleApplicationEventMulticaster) multicaster;
+                try {
+                    final Method getTaskExecutor = BeanUtils.findMethod(SimpleApplicationEventMulticaster.class, "getTaskExecutor");
+                    if (getTaskExecutor != null) {
+                        getTaskExecutor.setAccessible(true);
+                        final Object te = getTaskExecutor.invoke(mc);
+                        if (te != null) {
+                            log.warn("Wings conf eventPublishHelper SimpleApplicationEventMulticaster should without TaskExecutor");
+                        }
+                    }
+
+                    final Method getErrorHandler = BeanUtils.findMethod(SimpleApplicationEventMulticaster.class, "getErrorHandler");
+                    if (getErrorHandler != null) {
+                        getErrorHandler.setAccessible(true);
+                        final Object eh = getErrorHandler.invoke(mc);
+                        if (eh != null) {
+                            log.warn("Wings conf eventPublishHelper SimpleApplicationEventMulticaster should without ErrorHandler");
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    log.info("failed to check SimpleApplicationEventMulticaster", e);
+                }
+            }
         };
     }
 }
