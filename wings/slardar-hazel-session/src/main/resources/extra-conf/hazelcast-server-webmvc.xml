@@ -5,8 +5,8 @@
            xsi:schemaLocation="http://www.hazelcast.com/schema/config
            http://www.hazelcast.com/schema/config/hazelcast-config-4.2.xsd">
 
-    <!-- classpath: do NOT start with `/` -->
-    <import resource="classpath:extra-conf/hazelcast-server.xml"/>
-    <import resource="classpath:extra-conf/hazelcast-server-bootadmin.xml"/>
-    <import resource="classpath:extra-conf/hazelcast-server-session.xml"/>
+    <!-- 不要使用classpath: 参考 https://github.com/hazelcast/hazelcast/issues/22245 -->
+    <import resource="extra-conf/hazelcast-server.xml"/>
+    <import resource="extra-conf/hazelcast-server-bootadmin.xml"/>
+    <import resource="extra-conf/hazelcast-server-session.xml"/>
 </hazelcast>

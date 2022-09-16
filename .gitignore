@@ -25,6 +25,7 @@ buildNumber.properties
 *.tmp
 *.out
 *.pid
+*.md5
 *.gc
 *.heap
 *.bak
