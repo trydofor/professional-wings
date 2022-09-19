@@ -7,7 +7,7 @@ import pro.fessional.wings.faceless.enums.StandardI18nEnum;
 
 /**
  * @author trydofor
- * @since 2021-04-15
+ * @since 2022-09-19
  */
 public enum UserStatus implements ConstantEnum, StandardI18nEnum {
 
@@ -47,7 +47,7 @@ public enum UserStatus implements ConstantEnum, StandardI18nEnum {
         this.code = code;
         this.hint = hint;
         this.info = info;
-        this.ukey = useIdAsKey ? "id" + id : code;
+        this.ukey = useIdAsKey ? "id." + id : "user_status." + code;
         this.rkey = "sys_constant_enum.hint." + ukey;
     }
 

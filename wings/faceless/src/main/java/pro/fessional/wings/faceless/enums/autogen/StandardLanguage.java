@@ -11,7 +11,7 @@ import java.util.Locale;
  *
  * @author trydofor
  * @see Locale#toString()
- * @since 2021-02-21
+ * @since 2022-09-19
  */
 public enum StandardLanguage implements StandardLanguageEnum {
 
@@ -57,7 +57,7 @@ public enum StandardLanguage implements StandardLanguageEnum {
         this.code = code;
         this.hint = hint;
         this.info = info;
-        this.ukey = useIdAsKey ? "id" + id : code;
+        this.ukey = useIdAsKey ? "id." + id : "standard_language." + code;
         this.rkey = "sys_constant_enum.hint." + ukey;
         this.locl = LocaleResolver.locale(code);
     }

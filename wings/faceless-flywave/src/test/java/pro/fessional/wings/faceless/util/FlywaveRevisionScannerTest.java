@@ -34,8 +34,8 @@ public class FlywaveRevisionScannerTest {
     @Test
     public void commentPath() {
         assertEquals("master/2019-0601_01-test.sql", FlywaveRevisionScanner.commentInfo(
-                "/Users/trydofor/Workspace/github.com/pro.fessional.wings/wings-faceless/src/test/resources/wings-flywave/master/20190601u01-test.sql",
-                "/Users/trydofor/Workspace/github.com/pro.fessional.wings/wings-faceless/src/test/resources/wings-flywave/master/20190601v01-test.sql"
+                "/Users/trydofor/Workspace/github.com/pro.fessional.wings/wings/faceless/src/test/resources/wings-flywave/master/20190601u01-test.sql",
+                "/Users/trydofor/Workspace/github.com/pro.fessional.wings/wings/faceless/src/test/resources/wings-flywave/master/20190601v01-test.sql"
         ));
     }
 

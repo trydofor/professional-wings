@@ -16,7 +16,7 @@ public class MessageHelper {
     @NotNull
     public static String get(MessageSource ms, CodeEnum code, Object... args) {
         try {
-            return ms.getMessage(code.getCode(), args, LocaleContextHolder.getLocale());
+            return ms.getMessage(code.getI18nCode(), args, LocaleContextHolder.getLocale());
         }
         catch (NoSuchMessageException e) {
             return Null.Str;

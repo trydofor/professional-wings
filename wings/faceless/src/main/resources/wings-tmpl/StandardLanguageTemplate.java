@@ -45,12 +45,13 @@ public enum StandardLanguageTemplate implements StandardLanguageEnum {
     private final String rkey;
     private final Locale locl;
 
+    // RNA:USE /standard_language/enum-type/*
     StandardLanguageTemplate(int id, String code, String hint, String info) {
         this.id = id;
         this.code = code;
         this.hint = hint;
         this.info = info;
-        this.ukey = useIdAsKey ? "id" + id : code;
+        this.ukey = useIdAsKey ? "id." + id : "standard_language." + code;
         this.rkey = "sys_constant_enum.hint." + ukey;
         this.locl = LocaleResolver.locale(code);
     }
@@ -60,7 +61,6 @@ public enum StandardLanguageTemplate implements StandardLanguageEnum {
         return id;
     }
 
-    // RNA:USE /standard_language/enum-type/
     @Override
     public @NotNull String getType() {
         return "standard_language";

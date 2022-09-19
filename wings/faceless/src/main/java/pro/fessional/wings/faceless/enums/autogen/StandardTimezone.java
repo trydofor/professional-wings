@@ -11,7 +11,7 @@ import java.util.TimeZone;
 /**
  * @author trydofor
  * @see ZoneId#getAvailableZoneIds()
- * @since 2021-02-21
+ * @since 2022-09-19
  */
 public enum StandardTimezone implements StandardTimezoneEnum {
 
@@ -78,7 +78,7 @@ public enum StandardTimezone implements StandardTimezoneEnum {
         this.code = code;
         this.hint = hint;
         this.info = info;
-        this.ukey = useIdAsKey ? "id" + id : code;
+        this.ukey = useIdAsKey ? "id." + id : "standard_timezone." + code;
         this.rkey = "sys_constant_enum.hint." + ukey;
         this.tzid = ZoneIdResolver.zoneId(code);
         this.zone = ZoneIdResolver.timeZone(code);

@@ -62,7 +62,7 @@ class ConstantEnumGeneratorTest {
 
     public static void main(String[] args) {
         ConstantEnumGenerator.builder()
-                             .targetDirectory("wings-faceless/src/test/java/")
+                             .targetDirectory("wings/faceless/src/test/java/")
                              .targetPackage("pro.fessional.wings.faceless.enums.autogen")
                              .generate(mockPos());
     }

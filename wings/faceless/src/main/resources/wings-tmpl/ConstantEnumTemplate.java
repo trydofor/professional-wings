@@ -41,12 +41,13 @@ public enum ConstantEnumTemplate implements ConstantEnum, StandardI18nEnum {
     private final String ukey;
     private final String rkey;
 
+    // RNA:USE /standard_language/enum-type/*
     ConstantEnumTemplate(int id, String code, String hint, String info) {
         this.id = id;
         this.code = code;
         this.hint = hint;
         this.info = info;
-        this.ukey = useIdAsKey ? "id" + id : code;
+        this.ukey = useIdAsKey ? "id." + id : "standard_language." + code;
         this.rkey = "sys_constant_enum.hint." + ukey;
     }
 
@@ -55,7 +56,6 @@ public enum ConstantEnumTemplate implements ConstantEnum, StandardI18nEnum {
         return id;
     }
 
-    // RNA:USE /standard_language/enum-type/
     @Override
     public @NotNull String getType() {
         return "standard_language";

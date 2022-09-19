@@ -7,7 +7,7 @@ import pro.fessional.wings.faceless.enums.StandardI18nEnum;
 
 /**
  * @author trydofor
- * @since 2021-02-22
+ * @since 2022-09-19
  */
 public enum UserGender implements ConstantEnum, StandardI18nEnum {
 
@@ -35,7 +35,7 @@ public enum UserGender implements ConstantEnum, StandardI18nEnum {
         this.code = code;
         this.hint = hint;
         this.info = info;
-        this.ukey = useIdAsKey ? "id" + id : code;
+        this.ukey = useIdAsKey ? "id." + id : "user_gender." + code;
         this.rkey = "sys_constant_enum.hint." + ukey;
     }
 
