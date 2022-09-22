@@ -25,6 +25,7 @@ public class DefaultJournalService implements JournalService {
 
     public static final String SEQ_JOURNAL = "sys_commit_journal";
 
+    /** no leak, for try-finally */
     private final TransmittableThreadLocal<Journal> context = new TransmittableThreadLocal<>();
     private final LightIdService lightIdService;
     private final BlockIdProvider blockIdProvider;

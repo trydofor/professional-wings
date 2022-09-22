@@ -5,7 +5,9 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.DefaultArraySerializers;
 import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
+import org.jetbrains.annotations.NotNull;
 import org.objenesis.strategy.StdInstantiatorStrategy;
+import pro.fessional.mirana.anti.S;
 import pro.fessional.wings.slardar.serialize.javakaffee.SynchronizedCollectionsSerializer;
 import pro.fessional.wings.slardar.serialize.javakaffee.UnmodifiableCollectionsSerializer;
 
@@ -15,19 +17,27 @@ import pro.fessional.wings.slardar.serialize.javakaffee.UnmodifiableCollectionsS
  */
 public class KryoSimple {
 
-    private static final ThreadLocal<Output> output = ThreadLocal.withInitial(() -> {
-        return new Output(4096, 1024 * 1024); // 4k-1M
-    });
+    private static final S<Output> output = new S<>() {
+        @Override
+        @NotNull
+        public Output initValue() {
+            return new Output(4096, 1024 * 1024);
+        }
+    };
 
-    private static final ThreadLocal<Kryo> kryo = ThreadLocal.withInitial(() -> {
-        Kryo ko = new Kryo();
-        ko.setReferences(false);
-        ko.setRegistrationRequired(false);
-        ko.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
-        ko.setClassLoader(Thread.currentThread().getContextClassLoader());
-        register(ko);
-        return ko;
-    });
+    /** no leak, for static */
+    private static final S<Kryo> kryo = new S<>() {
+        @Override
+        @NotNull public Kryo initValue() {
+            Kryo ko = new Kryo();
+            ko.setReferences(false);
+            ko.setRegistrationRequired(false);
+            ko.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+            ko.setClassLoader(Thread.currentThread().getContextClassLoader());
+            register(ko);
+            return ko;
+        }
+    };
 
     /**
      * 增加 用户Serializer，大部分Kryo自己实现了
@@ -42,11 +52,11 @@ public class KryoSimple {
     }
 
     public static Kryo getKryo() {
-        return kryo.get();
+        return kryo.use();
     }
 
     public static Output getOutput() {
-        final Output out = output.get();
+        final Output out = output.use();
         out.reset();
         return out;
     }
@@ -58,34 +68,34 @@ public class KryoSimple {
 
     @SuppressWarnings("unchecked")
     public static <T> T readClassAndObject(Input input) {
-        return (T) kryo.get().readClassAndObject(input);
+        return (T) kryo.use().readClassAndObject(input);
     }
 
     public static <T> T readObject(Input input, Class<T> clz) {
-        return kryo.get().readObject(input, clz);
+        return kryo.use().readObject(input, clz);
     }
 
     public static <T> T readObjectOrNull(Input input, Class<T> clz) {
-        return kryo.get().readObjectOrNull(input, clz);
+        return kryo.use().readObjectOrNull(input, clz);
     }
 
     //
     public static byte[] writeClassAndObject(Object obj) {
         final Output out = getOutput();
-        kryo.get().writeClassAndObject(out, obj);
+        kryo.use().writeClassAndObject(out, obj);
         out.flush();
         return out.toBytes();
     }
 
     public static void writeClassAndObject(Output out, Object obj) {
-        kryo.get().writeClassAndObject(out, obj);
+        kryo.use().writeClassAndObject(out, obj);
     }
 
     public static void writeObject(Output out, Object obj) {
-        kryo.get().writeObject(out, obj);
+        kryo.use().writeObject(out, obj);
     }
 
     public static void writeObjectOrNull(Output out, Object obj, Class<?> clz) {
-        kryo.get().writeObjectOrNull(out, obj, clz);
+        kryo.use().writeObjectOrNull(out, obj, clz);
     }
 }

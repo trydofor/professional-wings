@@ -15,7 +15,9 @@ import java.util.function.Consumer;
  */
 public class RighterContext {
 
+    /** no leak, for static */
     private static final ThreadLocal<Consumer<Object>> ResAllow = new ThreadLocal<>();
+    /** no leak, for static */
     private static final ThreadLocal<Object> ReqAudit = new ThreadLocal<>();
 
     /**

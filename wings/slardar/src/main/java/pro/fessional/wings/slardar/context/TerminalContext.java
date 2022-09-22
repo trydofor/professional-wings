@@ -13,13 +13,16 @@ import static pro.fessional.wings.slardar.context.TerminalContext.Context.Guest;
 
 /**
  * 在service层使用，TransmittableThreadLocal有自动的线程继承性。
+ * 由 TerminalInterceptor.preHandle 设值，afterCompletion清理。
+ * 注：无 WeakReference Leak，因static及Interceptor清理。
  *
  * @author trydofor
  * @since 2019-11-25
  */
 public class TerminalContext {
 
-    public static final TransmittableThreadLocal<Context> context = new TransmittableThreadLocal<>();
+    /** no leak, for static and Interceptor clean */
+    private static final TransmittableThreadLocal<Context> context = new TransmittableThreadLocal<>();
 
     @NotNull
     public static Context get() {
