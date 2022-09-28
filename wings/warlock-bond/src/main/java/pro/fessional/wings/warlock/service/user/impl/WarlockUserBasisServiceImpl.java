@@ -72,12 +72,12 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, Ini
             GlobalAttributeHolder.putAttr(SaltByUid, uid, passsalt);
             po.setPasssalt(passsalt);
 
-            po.setAvatar(Z.notNull(user.getAvatar(), Null.Str));
-            po.setGender(Z.notNull(user.getGender(), UserGender.UNKNOWN));
-            po.setLocale(Z.notNull(user.getLocale(), Locale.getDefault()));
-            po.setZoneid(Z.notNull(user.getZoneId(), ZoneId.systemDefault()));
-            po.setRemark(Z.notNull(user.getRemark(), Null.Str));
-            po.setStatus(Z.notNull(user.getStatus(), UserStatus.UNINIT));
+            po.setAvatar(Z.notNullSafe(Null.Str, user.getAvatar()));
+            po.setGender(Z.notNullSafe(UserGender.UNKNOWN, user.getGender()));
+            po.setLocale(Z.notNullSafe(Locale.getDefault(), user.getLocale()));
+            po.setZoneid(Z.notNullSafe(ZoneId.systemDefault(), user.getZoneId()));
+            po.setRemark(Z.notNullSafe(Null.Str, user.getRemark()));
+            po.setStatus(Z.notNullSafe(UserStatus.UNINIT, user.getStatus()));
             commit.create(po);
             winUserBasisDao.insert(po);
             return uid;

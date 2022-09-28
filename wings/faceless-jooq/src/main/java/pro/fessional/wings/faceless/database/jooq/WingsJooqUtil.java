@@ -14,6 +14,7 @@ import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 import pro.fessional.mirana.cast.BoxedCastUtil;
+import pro.fessional.mirana.data.Z;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -457,7 +458,7 @@ public class WingsJooqUtil extends DSL {
          */
         @NotNull
         public CondBuilder andNotNull(Condition cond, Object... value) {
-            final boolean vd = cond != null && pro.fessional.mirana.data.Z.notNull(value) != null;
+            final boolean vd = cond != null && Z.notNull(value) != null;
             return cond(Operator.AND, cond, vd);
         }
 
@@ -503,7 +504,7 @@ public class WingsJooqUtil extends DSL {
          */
         @NotNull
         public CondBuilder orNotNull(Condition cond, Object... value) {
-            final boolean vd = cond != null && pro.fessional.mirana.data.Z.notNull(value) != null;
+            final boolean vd = cond != null && Z.notNull(value) != null;
             return cond(Operator.OR, cond, vd);
         }
 
