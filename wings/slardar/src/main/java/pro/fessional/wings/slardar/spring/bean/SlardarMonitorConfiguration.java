@@ -28,6 +28,7 @@ import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.monitor.metric.JvmMetric;
 import pro.fessional.wings.slardar.monitor.metric.LogMetric;
 import pro.fessional.wings.slardar.monitor.report.DingTalkReport;
+import pro.fessional.wings.slardar.notice.DingTalkNotice;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarMonitorProp;
 
@@ -59,9 +60,16 @@ public class SlardarMonitorConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public DingTalkReport dingTalkReport(OkHttpClient okHttpClient) {
+    public DingTalkNotice dingTalkNotice(OkHttpClient okHttpClient) {
+        log.info("Wings conf dingTalkNotice");
+        return new DingTalkNotice(okHttpClient);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DingTalkReport dingTalkReport(DingTalkNotice dingTalkNotice) {
         log.info("Wings conf dingTalkReport");
-        return new DingTalkReport(slardarMonitorProp.getDingTalk(), okHttpClient);
+        return new DingTalkReport(slardarMonitorProp.getDingTalk(), dingTalkNotice);
     }
 
     @Bean
