@@ -42,8 +42,8 @@ public class ConstantEnumI18nTest {
     public void test3Code() {
         StandardLanguage zhCN = StandardLanguage.ZH_CN;
         StandardTimezone tzUs = StandardTimezone.AMERICA_CHICAGO;
-        assertEquals(zhCN.getBase() + "." + zhCN.getKind() + "." + zhCN.getCode(), zhCN.getI18nCode());
-        assertEquals(tzUs.getBase() + "." + zhCN.getKind() + ".id" + tzUs.getId(), tzUs.getI18nCode());
+        assertEquals(zhCN.getBase() + "." + zhCN.getKind() + "." + zhCN.getType() + "." + zhCN.getCode(), zhCN.getI18nCode());
+        assertEquals(tzUs.getBase() + "." + tzUs.getKind() + "." + tzUs.getType() + ".id." + tzUs.getId(), tzUs.getI18nCode());
     }
 
     @Test

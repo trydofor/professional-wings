@@ -2,7 +2,9 @@
 // RNA:USE /pro.fessional.wings.faceless.enums.templet/enum-package/
 package pro.fessional.wings.faceless.enums.templet;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.i18n.LocaleResolver;
 import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 
@@ -51,7 +53,7 @@ public enum StandardLanguageTemplate implements StandardLanguageEnum {
         this.code = code;
         this.hint = hint;
         this.info = info;
-        this.ukey = useIdAsKey ? "id." + id : "standard_language." + code;
+        this.ukey = "standard_language." + (useIdAsKey ? "id." + id : code);
         this.rkey = "sys_constant_enum.hint." + ukey;
         this.locl = LocaleResolver.locale(code);
     }
@@ -104,5 +106,41 @@ public enum StandardLanguageTemplate implements StandardLanguageEnum {
     @Override
     public @NotNull String getI18nCode() {
         return rkey;
+    }
+
+    @Nullable
+    public static StandardLanguageTemplate valueOf(int id) {
+        for (StandardLanguageTemplate v : StandardLanguageTemplate.values()) {
+            if (id == v.id) return v;
+        }
+        return null;
+    }
+
+    @Contract("_, !null -> !null")
+    public static StandardLanguageTemplate idOf(Integer id, StandardLanguageTemplate elz) {
+        if (id == null) return elz;
+        final int i = id;
+        for (StandardLanguageTemplate v : StandardLanguageTemplate.values()) {
+            if (i == v.id) return v;
+        }
+        return elz;
+    }
+
+    @Contract("_, !null -> !null")
+    public static StandardLanguageTemplate codeOf(String code, StandardLanguageTemplate elz) {
+        if (code == null) return elz;
+        for (StandardLanguageTemplate v : StandardLanguageTemplate.values()) {
+            if (code.equalsIgnoreCase(v.code)) return v;
+        }
+        return elz;
+    }
+
+    @Contract("_, !null -> !null")
+    public static StandardLanguageTemplate nameOf(String name, StandardLanguageTemplate elz) {
+        if (name == null) return elz;
+        for (StandardLanguageTemplate v : StandardLanguageTemplate.values()) {
+            if (name.equalsIgnoreCase(v.name())) return v;
+        }
+        return elz;
     }
 }
