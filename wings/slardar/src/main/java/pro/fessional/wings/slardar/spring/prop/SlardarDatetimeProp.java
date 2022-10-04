@@ -21,14 +21,6 @@ public class SlardarDatetimeProp {
     public static final String Key = "wings.slardar.datetime";
 
     /**
-     * LocalDateTime
-     *
-     * @see #Key$patternDatetime
-     */
-    private Df datetime;
-    public static final String Key$patternDatetime = Key + ".datetime";
-
-    /**
      * LocalDate
      *
      * @see #Key$patternDate
@@ -43,6 +35,14 @@ public class SlardarDatetimeProp {
      */
     private Df time;
     public static final String Key$patternTime = Key + ".time";
+
+    /**
+     * LocalDateTime
+     *
+     * @see #Key$patternDatetime
+     */
+    private Df datetime;
+    public static final String Key$patternDatetime = Key + ".datetime";
 
     /**
      * ZonedDateTime

@@ -18,13 +18,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author trydofor
  * @since 2020-06-03
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "wings.slardar.datetime.zoned.auto=true")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = {"wings.silencer.i18n.zoneid=" + DateTimeConverterTest.SYS_TZ, "wings.slardar.datetime.zoned.auto=true"})
 @AutoConfigureMockMvc
 public class DateTimeConverterTest {
+
+    public static final String SYS_TZ = "Asia/Shanghai";
+    public static final String SYS_OZ = "+08:00";
 
     @Setter(onMethod_ = {@Autowired})
     private MockMvc mockMvc;
 
+    /**
+     * 测试格式及补全
+     */
     @Test
     public void testFmtDate() throws Exception {
         assertFmtDate("Jan_01_2020", "2020-01-01");
@@ -38,6 +45,9 @@ public class DateTimeConverterTest {
                .andExpect(content().string(v));
     }
 
+    /**
+     * 测试格式及补全
+     */
     @Test
     public void testFullDate() throws Exception {
         assertFullDate("2020-", "2020-01-01 00:00:00.000");
@@ -55,6 +65,9 @@ public class DateTimeConverterTest {
                .andExpect(content().string(v));
     }
 
+    /**
+     * 测试格式及补全
+     */
     @Test
     public void testLocalDate() throws Exception {
         assertLocalDate("January/1/20", "2020-01-01");
@@ -76,6 +89,9 @@ public class DateTimeConverterTest {
                .andExpect(content().string(v));
     }
 
+    /**
+     * 测试格式及补全
+     */
     @Test
     public void testLocalTime() throws Exception {
         assertLocalTime("12", "12:00:00.000");
@@ -92,7 +108,7 @@ public class DateTimeConverterTest {
 
 
     /**
-     * 用户时区GMT+9，系统时区GMT+8，使用LocalDateTime在接受输入，按系统时区处理。
+     * 用户时区GMT+9，系统时区GMT+8，使用@RequestParam输入LocalDateTime，并作为系统时时间，
      * 希望json输出时，把系统时区自动变为用户时区，+1小时。
      *
      * @see pro.fessional.wings.slardar.json.WingsJacksonMapperTest
@@ -107,14 +123,28 @@ public class DateTimeConverterTest {
         testLdtZdt("2020-12-30 20:34:56", "2020-12-30 20:34:56", "2020-12-30 12:34:56", "GMT");
     }
 
-    private void testLdtZdt(String d, String d2, String v, String z) throws Exception {
-        final MockHttpServletRequestBuilder builder = post("/test/ldt-zdt.json?d=" + d)
-                                                              .header("Zone-Id", z);
+    /**
+     * @param udt 用户的输入时间
+     * @param cdt 收到的输入时间
+     * @param zdt 把udt作为系统时间，输出为用户时间
+     * @param utz 用户时区
+     */
+    private void testLdtZdt(String udt, String cdt, String zdt, String utz) throws Exception {
+        final MockHttpServletRequestBuilder builder = post("/test/ldt-zdt.json?d=" + udt)
+                .header("Zone-Id", utz);
         mockMvc.perform(builder)
                .andDo(print())
-               .andExpect(content().json("{\"zdt\":\"" + v + " " + z + "\",\"ldt\":\"" + d2 + "\"}", false));
+               .andExpect(content().json(
+                       "{\"zdt\":\"" + zdt + " " + utz
+                       + "\",\"ldt\":\"" + cdt
+                       + "\",\"sdt\":\"" + cdt + " " + SYS_TZ + "\"}",
+                       true));
     }
 
+    /**
+     * 用户时区GMT+9，系统时区GMT+8，使用@RequestBody输入LocalDateTime，并作为系统时时间，
+     * 希望json输出时，把系统时区自动变为用户时区，+1小时。
+     */
     @Test
     public void testLdtZdtBody() throws Exception {
         // GMT+9 -> GMT+8
@@ -125,18 +155,28 @@ public class DateTimeConverterTest {
         testLdtZdtBody("2020-12-30 20:34:56", "2020-12-30 20:34:56", "2020-12-30 12:34:56", "GMT");
     }
 
-    private void testLdtZdtBody(String d, String d2, String v, String z) throws Exception {
+    /**
+     * @param udt 用户的输入时间
+     * @param cdt 收到的输入时间
+     * @param zdt 把udt作为系统时间，输出为用户时间
+     * @param utz 用户时区
+     */
+    private void testLdtZdtBody(String udt, String cdt, String zdt, String utz) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/ldt-zdt-body.json")
-                                                              .header("Zone-Id", z)
-                                                              .contentType(MediaType.APPLICATION_JSON)
-                                                              .content("{\"ldt\":\"" + d + "\"}");
+                .header("Zone-Id", utz)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"ldt\":\"" + udt + "\"}");
         mockMvc.perform(builder)
                .andDo(print())
-               .andExpect(content().json("{\"zdt\":\"" + v + " " + z + "\",\"ldt\":\"" + d2 + "\"}", false));
+               .andExpect(content().json(
+                       "{\"zdt\":\"" + zdt + " " + utz
+                       + "\",\"ldt\":\"" + cdt
+                       + "\",\"sdt\":\"" + cdt + " " + SYS_TZ + "\"}",
+                       true));
     }
 
     /**
-     * 用户时区GMT+9，系统时区GMT+8，使用ZonedDateTime在接受输入时自动转换到系统时区。
+     * 用户时区GMT+9，系统时区GMT+8，使用@RequestParam输入ZonedDateTime，并转换一次，变为系统时区。
      * 输出时，自动变为用户时区。（不要使用有夏令时的时区测试，以免刚好切换）
      */
     @Test
@@ -147,14 +187,28 @@ public class DateTimeConverterTest {
         testZdtLdt("2020-12-30 13:34:56", "2020-12-30 13:34:56", "2020-12-30 21:34:56", "GMT");
     }
 
-    private void testZdtLdt(String d, String vz, String v, String z) throws Exception {
-        final MockHttpServletRequestBuilder builder = get("/test/zdt-ldt.json?d=" + d)
-                                                              .header("Zone-Id", z);
+    /**
+     * @param udt 用户的输入时间，以ZonedDateTime接受，会变成用户时区
+     * @param zdt 收到的输入时间，自动转为系统时间，并输出时再次转为用户时区
+     * @param cdt 收到的输入时间，自动转为系统时间，以LocalDateTime显示
+     * @param utz 用户时区
+     */
+    private void testZdtLdt(String udt, String zdt, String cdt, String utz) throws Exception {
+        final MockHttpServletRequestBuilder builder = get("/test/zdt-ldt.json?d=" + udt)
+                .header("Zone-Id", utz);
         mockMvc.perform(builder)
                .andDo(print())
-               .andExpect(content().json("{\"zdt\":\"" + vz + " " + z + "\",\"ldt\":\"" + v + "\"}", false));
+               .andExpect(content().json(
+                       "{\"zdt\":\"" + zdt + " " + utz
+                       + "\",\"ldt\":\"" + cdt
+                       + "\",\"sdt\":\"" + cdt + " " + SYS_TZ + "\"}",
+                       true));
     }
 
+    /**
+     * 用户时区GMT+9，系统时区GMT+8，使用@RequestBody输入ZonedDateTime，并转换一次，变为系统时区。
+     * 输出时，自动变为用户时区。（不要使用有夏令时的时区测试，以免刚好切换）
+     */
     @Test
     public void testZdtLdtBody() throws Exception {
         testZdtLdtBody("2020-12-30 12:34:56", "2020-12-30 12:34:56", "2020-12-30 11:34:56", "Asia/Tokyo");
@@ -163,21 +217,29 @@ public class DateTimeConverterTest {
         testZdtLdtBody("2020-12-30 13:34:56", "2020-12-30 13:34:56", "2020-12-30 21:34:56", "GMT");
     }
 
-    private void testZdtLdtBody(String d, String vz, String v, String z) throws Exception {
+    /**
+     * @param udt 用户的输入时间，以ZonedDateTime接受，会变成用户时区
+     * @param zdt 收到的输入时间，自动转为系统时间，并输出时再次转为用户时区
+     * @param cdt 收到的输入时间，自动转为系统时间，以LocalDateTime显示
+     * @param utz 用户时区
+     */
+    private void testZdtLdtBody(String udt, String zdt, String cdt, String utz) throws Exception {
         final MockHttpServletRequestBuilder builder = get("/test/zdt-ldt-body.json")
-                                                              .header("Zone-Id", z)
-                                                              .contentType(MediaType.APPLICATION_JSON)
-                                                              .content("{\"zdt\":\"" + d + "\"}");
+                .header("Zone-Id", utz)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"zdt\":\"" + udt + "\"}");
         mockMvc.perform(builder)
                .andDo(print())
-               .andExpect(content().json("{\"zdt\":\"" + vz + " " + z + "\",\"ldt\":\"" + v + "\"}", false));
+               .andExpect(content().json(
+                       "{\"zdt\":\"" + zdt + " " + utz
+                       + "\",\"ldt\":\"" + cdt
+                       + "\",\"sdt\":\"" + cdt + " " + SYS_TZ + "\"}"
+                       , true));
     }
 
     /**
-     * 用户时区GMT+9，系统时区GMT+8，使用LocalDateTime在接受输入，按系统时区处理。
+     * 用户时区GMT+9，系统时区GMT+8，用@RequestParam接收LocalDateTime输入，按系统时区处理。
      * 希望json输出时，把系统时区自动变为用户时区，+1小时。
-     *
-     * @see pro.fessional.wings.slardar.json.WingsJacksonMapperTest
      */
     @Test
     public void testLdtOdt() throws Exception {
@@ -189,13 +251,29 @@ public class DateTimeConverterTest {
         testLdtOdt("2020-12-30 20:34:56", "2020-12-30 20:34:56", "2020-12-30 12:34:56", "GMT", "+00:00");
     }
 
-    private void testLdtOdt(String d, String d2, String v, String z, String o) throws Exception {
-        final MockHttpServletRequestBuilder builder = post("/test/ldt-odt.json?d=" + d)
-                                                              .header("Zone-Id", z);
+    /**
+     * @param udt 用户的输入时间，以LocalDateTime接受
+     * @param ldt 收到的输入时间
+     * @param odt 以收到的udt作为系统时间，以OffsetDateTime输出
+     * @param utz 用户时区
+     * @param otz 输出的Offset
+     */
+    private void testLdtOdt(String udt, String ldt, String odt, String utz, String otz) throws Exception {
+        final MockHttpServletRequestBuilder builder = post("/test/ldt-odt.json?d=" + udt)
+                .header("Zone-Id", utz);
         mockMvc.perform(builder)
                .andDo(print())
-               .andExpect(content().json("{\"odt\":\"" + v + " " + o + "\",\"ldt\":\"" + d2 + "\"}", false));
+               .andExpect(content().json(
+                       "{\"odt\":\"" + odt + " " + otz
+                       + "\",\"ldt\":\"" + ldt
+                       + "\",\"sdt\":\"" + ldt + " " + SYS_OZ + "\"}",
+                       true));
     }
+
+    /**
+     * 用户时区GMT+9，系统时区GMT+8，用@RequestBody接收LocalDateTime输入，按系统时区处理。
+     * 希望json输出时，把系统时区自动变为用户时区，+1小时。
+     */
 
     @Test
     public void testLdtOdtBody() throws Exception {
@@ -207,18 +285,29 @@ public class DateTimeConverterTest {
         testLdtOdtBody("2020-12-30 20:34:56", "2020-12-30 20:34:56", "2020-12-30 12:34:56", "GMT", "+00:00");
     }
 
-    private void testLdtOdtBody(String d, String d2, String v, String z, String o) throws Exception {
+    /**
+     * @param udt 用户的输入时间，以LocalDateTime接受
+     * @param ldt 收到的输入时间
+     * @param odt 以收到的udt作为系统时间，以OffsetDateTime输出
+     * @param utz 用户时区
+     * @param otz 输出的Offset
+     */
+    private void testLdtOdtBody(String udt, String ldt, String odt, String utz, String otz) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/ldt-odt-body.json")
-                                                              .header("Zone-Id", z)
-                                                              .contentType(MediaType.APPLICATION_JSON)
-                                                              .content("{\"ldt\":\"" + d + "\"}");
+                .header("Zone-Id", utz)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"ldt\":\"" + udt + "\"}");
         mockMvc.perform(builder)
                .andDo(print())
-               .andExpect(content().json("{\"odt\":\"" + v + " " + o + "\",\"ldt\":\"" + d2 + "\"}", false));
+               .andExpect(content().json(
+                       "{\"odt\":\"" + odt + " " + otz
+                       + "\",\"ldt\":\"" + ldt
+                       + "\",\"sdt\":\"" + ldt + " " + SYS_OZ + "\"}"
+                       , true));
     }
 
     /**
-     * 用户时区GMT+9，系统时区GMT+8，使用ZonedDateTime在接受输入时自动转换到系统时区。
+     * 用户时区GMT+9，系统时区GMT+8，以@RequestParam接收OffsetDateTime输入，自动转换，并作为系统时间。
      * 输出时，自动变为用户时区。（不要使用有夏令时的时区测试，以免刚好切换）
      */
     @Test
@@ -229,14 +318,29 @@ public class DateTimeConverterTest {
         testOdtLdt("2020-12-30 13:34:56", "2020-12-30 13:34:56", "2020-12-30 21:34:56", "GMT", "+00:00");
     }
 
-    private void testOdtLdt(String d, String vz, String v, String z, String o) throws Exception {
-        final MockHttpServletRequestBuilder builder = get("/test/odt-ldt.json?d=" + d)
-                                                              .header("Zone-Id", z);
+    /**
+     * @param udt 用户的输入时间，以OffsetDateTime接受，自动转为用户时区，在转为系统时间
+     * @param odt 以收到的udt，再转为系统时间
+     * @param cdt 以收到的udt，再转为系统时间，以Ldt显示
+     * @param utz 用户时区
+     * @param otz 输出的Offset
+     */
+    private void testOdtLdt(String udt, String odt, String cdt, String utz, String otz) throws Exception {
+        final MockHttpServletRequestBuilder builder = get("/test/odt-ldt.json?d=" + udt)
+                .header("Zone-Id", utz);
         mockMvc.perform(builder)
                .andDo(print())
-               .andExpect(content().json("{\"odt\":\"" + vz + " " + o + "\",\"ldt\":\"" + v + "\"}", false));
+               .andExpect(content().json(
+                       "{\"odt\":\"" + odt + " " + otz
+                       + "\",\"ldt\":\"" + cdt
+                       + "\",\"sdt\":\"" + cdt + " " + SYS_OZ + "\"}",
+                       true));
     }
 
+    /**
+     * 用户时区GMT+9，系统时区GMT+8，以@RequestBody接收OffsetDateTime输入，自动转换，并作为系统时间。
+     * 输出时，自动变为用户时区。（不要使用有夏令时的时区测试，以免刚好切换）
+     */
     @Test
     public void testOdtLdtBody() throws Exception {
         testOdtLdtBody("2020-12-30 12:34:56", "2020-12-30 12:34:56", "2020-12-30 11:34:56", "Asia/Tokyo", "+09:00");
@@ -245,14 +349,25 @@ public class DateTimeConverterTest {
         testOdtLdtBody("2020-12-30 13:34:56", "2020-12-30 13:34:56", "2020-12-30 21:34:56", "GMT", "+00:00");
     }
 
-    private void testOdtLdtBody(String d, String vz, String v, String z, String o) throws Exception {
+    /**
+     * @param udt 用户的输入时间，以OffsetDateTime接受，自动转为用户时区，在转为系统时间
+     * @param odt 以收到的udt，再转为系统时间
+     * @param cdt 以收到的udt，再转为系统时间，以Ldt显示
+     * @param utz 用户时区
+     * @param otz 输出的Offset
+     */
+    private void testOdtLdtBody(String udt, String odt, String cdt, String utz, String otz) throws Exception {
         final MockHttpServletRequestBuilder builder = get("/test/odt-ldt-body.json")
-                                                              .header("Zone-Id", z)
-                                                              .contentType(MediaType.APPLICATION_JSON)
-                                                              .content("{\"odt\":\"" + d + "\"}");
+                .header("Zone-Id", utz)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"odt\":\"" + udt + "\"}");
         mockMvc.perform(builder)
                .andDo(print())
-               .andExpect(content().json("{\"odt\":\"" + vz + " " + o + "\",\"ldt\":\"" + v + "\"}", false));
+               .andExpect(content().json(
+                       "{\"odt\":\"" + odt + " " + otz
+                       + "\",\"ldt\":\"" + cdt
+                       + "\",\"sdt\":\"" + cdt + " " + SYS_OZ + "\"}"
+                       , true));
     }
 
     @Test
@@ -265,12 +380,12 @@ public class DateTimeConverterTest {
 
     private void testLdLdBody(String d, String v) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/ld-ld-body.json")
-                                                              .contentType(MediaType.APPLICATION_JSON)
-                                                              .content("{\"ld\":\"" + d + "\"}");
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"ld\":\"" + d + "\"}");
 
         mockMvc.perform(builder)
                .andDo(print())
-               .andExpect(content().json("{\"ld\":\"" + v + "\"}", false));
+               .andExpect(content().json("{\"ld\":\"" + v + "\"}", true));
     }
 
     @Test
@@ -283,11 +398,50 @@ public class DateTimeConverterTest {
 
     private void testLtLtBody(String d, String v) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/lt-lt-body.json")
-                                                              .contentType(MediaType.APPLICATION_JSON)
-                                                              .content("{\"lt\":\"" + d + "\"}");
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"lt\":\"" + d + "\"}");
 
         mockMvc.perform(builder)
                .andDo(print())
-               .andExpect(content().json("{\"lt\":\"" + v + "\"}", false));
+               .andExpect(content().json("{\"lt\":\"" + v + "\"}", true));
+    }
+
+    @Test
+    public void testLdxAuto1() throws Exception {
+        final String utz = "Asia/Tokyo";
+        // 用户+9的12点，变为系统+8的11点
+        final MockHttpServletRequestBuilder b1q = post("/test/ldx-body-req.json")
+                .header("Zone-Id", utz)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"ldt\":\"2022-10-03T12:34:56\"}");
+        mockMvc.perform(b1q)
+               .andDo(print())
+               .andExpect(content().string("2022-10-03T11:34:56"));
+
+        // 系统+8的12点，变为用户+9的13点
+        final MockHttpServletRequestBuilder b1s = post("/test/ldx-body-res.json?d=2022-10-03T12:34:56")
+                .header("Zone-Id", utz);
+        mockMvc.perform(b1s)
+               .andDo(print())
+               .andExpect(content().json("{\"ldt\":\"2022-10-03 13:34:56\"}", true));
+    }
+
+    @Test
+    public void testLdxAuto2() throws Exception {
+        final String utz = "Asia/Tokyo";
+
+        // 用户+9的12点，变为系统+8的11点
+        final MockHttpServletRequestBuilder b2q = post("/test/ldt-para-req.json?d=2022-10-03T12:34:56")
+                .header("Zone-Id", utz);
+        mockMvc.perform(b2q)
+               .andDo(print())
+               .andExpect(content().string("2022-10-03T11:34:56"));
+
+        // NOTE 注意，json无法直接获取在return上的注解，需要动用BodyAdvice，比较重。此用法不常见，因此不支持此种场景
+        final MockHttpServletRequestBuilder b2s = post("/test/ldt-para-res.json?d=2022-10-03T12:34:56")
+                .header("Zone-Id", utz);
+        mockMvc.perform(b2s)
+               .andDo(print())
+               .andExpect(content().string("\"2022-10-03 12:34:56\""));
     }
 }

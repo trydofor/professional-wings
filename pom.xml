@@ -41,6 +41,7 @@
         <jooq.version>3.14.16</jooq.version>
         <h2.version>2.1.214</h2.version>
         <okhttp3.version>4.9.3</okhttp3.version> <!-- just auth need 4, spring use 3 https://square.github.io/okhttp/changelog/ -->
+        <jackson-jsr310.version>2.14.0-rc1</jackson-jsr310.version> <!-- https://github.com/FasterXML/jackson-modules-java8/issues/230 TODO -->
         <!-- mvn boot -->
         <maven.test.skip>false</maven.test.skip>
         <maven.deploy.skip>false</maven.deploy.skip>
@@ -253,6 +254,11 @@
                         <artifactId>spring-boot-starter-tomcat</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson-jsr310.version}</version>
             </dependency>
             <!-- sharding sphere -->
             <dependency>

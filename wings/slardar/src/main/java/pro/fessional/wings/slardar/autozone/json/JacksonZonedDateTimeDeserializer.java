@@ -2,11 +2,14 @@ package pro.fessional.wings.slardar.autozone.json;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
-import org.springframework.context.i18n.LocaleContextHolder;
-import pro.fessional.mirana.time.DateLocaling;
 import pro.fessional.mirana.time.DateParser;
+import pro.fessional.wings.slardar.autozone.AutoTimeZone;
+import pro.fessional.wings.slardar.autozone.AutoZoneAware;
+import pro.fessional.wings.slardar.autozone.AutoZoneType;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -14,18 +17,24 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author trydofor
  * @since 2019-09-01
  */
-public class JacksonZonedDateTimeDeserializer extends InstantDeserializer<ZonedDateTime> {
+public class JacksonZonedDateTimeDeserializer extends InstantDeserializer<ZonedDateTime> implements AutoZoneAware {
 
-    private final boolean autoZone;
     private final List<DateTimeFormatter> formats;
 
+    private AutoZoneType autoZone;
+
     public JacksonZonedDateTimeDeserializer(DateTimeFormatter formatter, List<DateTimeFormatter> formats, boolean auto) {
+        this(formatter, formats, AutoZoneType.valueOf(auto));
+    }
+
+    public JacksonZonedDateTimeDeserializer(DateTimeFormatter formatter, List<DateTimeFormatter> formats, AutoZoneType auto) {
         super(ZonedDateTime.class,
                 formatter,
                 temporal -> DateParser.parseZoned(temporal, ZoneId.systemDefault()),
@@ -38,17 +47,30 @@ public class JacksonZonedDateTimeDeserializer extends InstantDeserializer<ZonedD
         this.autoZone = auto;
     }
 
-    public JacksonZonedDateTimeDeserializer(JacksonZonedDateTimeDeserializer jacksonZonedDeserializer, Boolean leniency, List<DateTimeFormatter> formats, boolean auto) {
+    @Override
+    public ZonedDateTime deserialize(JsonParser parser, DeserializationContext context) throws IOException {
+        TemporalAccessor tma = DateParser.parseTemporal(parser.getText(), formats, true);
+        if (tma != null) {
+            return autoZonedRequest(tma, autoZone);
+        }
+
+        return super.deserialize(parser, context);
+    }
+
+    ///
+    protected JacksonZonedDateTimeDeserializer(JacksonZonedDateTimeDeserializer jacksonZonedDeserializer, Boolean leniency, List<DateTimeFormatter> formats, AutoZoneType auto) {
         super(jacksonZonedDeserializer, leniency);
         this.formats = formats;
         this.autoZone = auto;
     }
 
-
     @Override
     protected JacksonZonedDateTimeDeserializer withDateFormat(DateTimeFormatter dtf) {
         if (dtf == _formatter) return this;
-        return new JacksonZonedDateTimeDeserializer(dtf, formats, autoZone);
+        final List<DateTimeFormatter> fts = new ArrayList<>(formats.size());
+        fts.add(dtf);
+        fts.addAll(formats);
+        return new JacksonZonedDateTimeDeserializer(dtf, fts, autoZone);
     }
 
     @Override
@@ -62,15 +84,14 @@ public class JacksonZonedDateTimeDeserializer extends InstantDeserializer<ZonedD
     }
 
     @Override
-    public ZonedDateTime deserialize(JsonParser parser, DeserializationContext context) throws IOException {
-        String str = parser.getText().trim();
-        TemporalAccessor tma = DateParser.parseTemporal(str, formats, true);
-        if (tma == null) {
-            return super.deserialize(parser, context);
+    public JacksonZonedDateTimeDeserializer createContextual(DeserializationContext ctxt, BeanProperty property) throws JsonMappingException {
+        JacksonZonedDateTimeDeserializer dsr = (JacksonZonedDateTimeDeserializer) super.createContextual(ctxt, property);
+        if (property != null) {
+            final AutoTimeZone anno = property.getAnnotation(AutoTimeZone.class);
+            if (anno != null) {
+                dsr.autoZone = anno.value();
+            }
         }
-        final ZoneId zid = LocaleContextHolder.getTimeZone().toZoneId();
-        final ZonedDateTime zdt = DateParser.parseZoned(tma, zid);
-
-        return autoZone ? DateLocaling.sysZdt(zdt) : zdt;
+        return dsr;
     }
 }

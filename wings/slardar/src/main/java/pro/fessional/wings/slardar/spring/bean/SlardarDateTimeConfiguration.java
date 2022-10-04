@@ -84,14 +84,14 @@ public class SlardarDateTimeConfiguration {
                                      .stream()
                                      .map(DateTimeFormatter::ofPattern)
                                      .collect(Collectors.toList());
-        return new String2LocalDateTimeConverter(fmt);
+        return new String2LocalDateTimeConverter(fmt, slardarDatetimeProp.getDatetime().isAuto());
     }
 
     @Bean
     public LocalDateTime2StringConverter localDateTimeStringConverter() {
         log.info("Wings conf localDateTimeStringConverter");
         final DateTimeFormatter fmt = DateTimeFormatter.ofPattern(slardarDatetimeProp.getDatetime().getFormat());
-        return new LocalDateTime2StringConverter(fmt);
+        return new LocalDateTime2StringConverter(fmt, slardarDatetimeProp.getDatetime().isAuto());
     }
 
     @Bean
