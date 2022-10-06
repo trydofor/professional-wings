@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.jackson;
+package pro.fessional.wings.slardar.autodto;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 //@JacksonAnnotationsInside
 //@JsonSerialize(using = I18nStringSerializer.class)
-public @interface JsonI18nString {
+public @interface AutoI18nString {
     /**
      * enable 1i8n serials
      *

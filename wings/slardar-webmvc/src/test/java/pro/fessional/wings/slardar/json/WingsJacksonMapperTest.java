@@ -22,9 +22,9 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
+import pro.fessional.wings.slardar.autodto.AutoI18nString;
 import pro.fessional.wings.slardar.jackson.Aes128StringDeserializer;
 import pro.fessional.wings.slardar.jackson.Aes128StringSerializer;
-import pro.fessional.wings.slardar.jackson.JsonI18nString;
 import pro.fessional.wings.slardar.jackson.StringMapGenerator;
 import pro.fessional.wings.slardar.jackson.StringMapHelper;
 
@@ -221,18 +221,18 @@ public class WingsJacksonMapperTest {
     @Data
     @XmlRootElement
     public static class I18nJson {
-        @JsonI18nString // 有效
+        @AutoI18nString // 有效
         private String codeManual = "base.not-empty";
         private String codeIgnore = "base.not-empty";
         // 自动
         private I18nString textAuto = new I18nString("base.not-empty", "", "textAuto");
-        @JsonI18nString(false) //禁用
+        @AutoI18nString(false) //禁用
         private I18nString textDisabled = new I18nString("base.not-empty", "", "textDisabled");
-        @JsonI18nString // 无效
+        @AutoI18nString // 无效
         private Long longIgnore = 0L;
-        @JsonI18nString // 无效
+        @AutoI18nString // 无效
         private Map<String, String> mapIgnore = Collections.singletonMap("ikey", "ival");
-        @JsonI18nString(false) //禁用
+        @AutoI18nString(false) //禁用
         private Map<String, I18nString> mapDisabled = Collections.singletonMap("i18n", textDisabled);
         // 自动
         private Map<String, I18nString> mapAuto = Collections.singletonMap("i18n", textAuto);
