@@ -1,15 +1,12 @@
 package pro.fessional.wings.slardar.autozone;
 
-import org.springframework.context.i18n.LocaleContextHolder;
-import pro.fessional.mirana.time.DateLocaling;
-import pro.fessional.mirana.time.DateParser;
+import org.jetbrains.annotations.NotNull;
+import pro.fessional.wings.slardar.autodto.AutoDtoHelper;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAccessor;
-import java.util.TimeZone;
 
 /**
  * Request时，自动把用户时间调至系统时区。
@@ -21,65 +18,34 @@ import java.util.TimeZone;
 public interface AutoZoneAware {
 
     // request : String to DateTime, Default Client to System
-    default LocalDateTime autoLocalRequest(TemporalAccessor tma, AutoZoneType auto) {
-        if (auto == AutoZoneType.Off) {
-            return tma.query(DateParser.QueryDateTime);
-        }
-
-        final ZonedDateTime zdt = autoZonedRequest(tma, auto);
-        return zdt.toLocalDateTime();
+    @NotNull
+    default LocalDateTime autoLocalRequest(@NotNull TemporalAccessor dateTime, @NotNull AutoZoneType autoType) {
+        return AutoZoneUtil.autoLocalRequest(dateTime, autoType, AutoDtoHelper.ZoneIdSupplier);
     }
 
-    default ZonedDateTime autoZonedRequest(TemporalAccessor tma, AutoZoneType auto) {
-        // ① tma是用户发出，先调整为Client时间
-        final ZoneId utz = LocaleContextHolder.getTimeZone().toZoneId();
-        final ZonedDateTime zdt = DateParser.parseZoned(tma, utz);
-
-        // ② 变为System时区
-        if (auto == AutoZoneType.Auto || auto == AutoZoneType.System) {
-            return zdt.withZoneSameInstant(ZoneId.systemDefault());
-        }
-
-        return zdt;
+    @NotNull
+    default ZonedDateTime autoZonedRequest(@NotNull TemporalAccessor dateTime, @NotNull AutoZoneType autoType) {
+        return AutoZoneUtil.autoZonedRequest(dateTime, autoType, AutoDtoHelper.ZoneIdSupplier);
     }
 
-    default OffsetDateTime autoOffsetRequest(TemporalAccessor tma, AutoZoneType auto) {
-        final ZonedDateTime zdt = autoZonedRequest(tma, auto);
-        return zdt.toOffsetDateTime();
+    @NotNull
+    default OffsetDateTime autoOffsetRequest(@NotNull TemporalAccessor dateTime, @NotNull AutoZoneType autoType) {
+        return AutoZoneUtil.autoOffsetRequest(dateTime, autoType, AutoDtoHelper.ZoneIdSupplier);
     }
 
     // response : DateTime to String, Default System to Client
-    default LocalDateTime autoLocalResponse(LocalDateTime ldt, AutoZoneType auto) {
-        // 假设LocalDateTime都是系统时区
-        if (auto == AutoZoneType.Auto || auto == AutoZoneType.Client) {
-            final TimeZone tz = LocaleContextHolder.getTimeZone();
-            return DateLocaling.useLdt(ldt, tz.toZoneId());
-        }
-
-        return ldt;
+    @NotNull
+    default LocalDateTime autoLocalResponse(@NotNull LocalDateTime dateTime, @NotNull AutoZoneType autoType) {
+        return AutoZoneUtil.autoLocalResponse(dateTime, autoType, AutoDtoHelper.ZoneIdSupplier);
     }
 
-    default ZonedDateTime autoZonedResponse(ZonedDateTime zdt, AutoZoneType auto) {
-        if (auto == AutoZoneType.Auto || auto == AutoZoneType.Client) {
-            final TimeZone tz = LocaleContextHolder.getTimeZone();
-            return zdt.withZoneSameInstant(tz.toZoneId());
-        }
-        else if (auto == AutoZoneType.System) {
-            return zdt.withZoneSameInstant(ZoneId.systemDefault());
-        }
-
-        return zdt;
+    @NotNull
+    default ZonedDateTime autoZonedResponse(@NotNull ZonedDateTime dateTime, @NotNull AutoZoneType autoType) {
+        return AutoZoneUtil.autoZonedResponse(dateTime, autoType, AutoDtoHelper.ZoneIdSupplier);
     }
 
-    default OffsetDateTime autoOffsetResponse(OffsetDateTime odt, AutoZoneType auto) {
-        if (auto == AutoZoneType.Auto || auto == AutoZoneType.Client) {
-            final TimeZone tz = LocaleContextHolder.getTimeZone();
-            return odt.atZoneSameInstant(tz.toZoneId()).toOffsetDateTime();
-        }
-        else if (auto == AutoZoneType.System) {
-            return odt.atZoneSameInstant(ZoneId.systemDefault()).toOffsetDateTime();
-        }
-
-        return odt;
+    @NotNull
+    default OffsetDateTime autoOffsetResponse(@NotNull OffsetDateTime dateTime, @NotNull AutoZoneType autoType) {
+        return AutoZoneUtil.autoOffsetResponse(dateTime, autoType, AutoDtoHelper.ZoneIdSupplier);
     }
 }

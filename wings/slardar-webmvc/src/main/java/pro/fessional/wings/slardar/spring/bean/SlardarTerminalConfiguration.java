@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.context.TerminalInterceptor;
 import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
@@ -25,6 +26,7 @@ public class SlardarTerminalConfiguration {
     @ConditionalOnBean({WingsLocaleResolver.class, WingsRemoteResolver.class})
     public TerminalInterceptor terminalInterceptor(WingsLocaleResolver localeResolver, WingsRemoteResolver remoteResolver) {
         log.info("Wings conf Terminal filter");
+        TerminalContext.setActive(true);
         return new TerminalInterceptor(localeResolver, remoteResolver);
     }
 }

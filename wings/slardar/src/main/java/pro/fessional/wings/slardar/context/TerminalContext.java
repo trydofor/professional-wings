@@ -24,6 +24,16 @@ public class TerminalContext {
     /** no leak, for static and Interceptor clean */
     private static final TransmittableThreadLocal<Context> context = new TransmittableThreadLocal<>();
 
+    private static volatile boolean active;
+
+    public static boolean isActive() {
+        return active;
+    }
+
+    public static void setActive(boolean b) {
+        active = b;
+    }
+
     @NotNull
     public static Context get() {
         Context ctx = TerminalContext.context.get();
@@ -44,14 +54,31 @@ public class TerminalContext {
         return ctx;
     }
 
+    @NotNull
+    public static Context login(long userId, @Nullable Locale locale, @Nullable ZoneId timeZone, @Nullable String ip, @Nullable String agent) {
+        Context ctx = new Context(userId, locale, timeZone, ip, agent);
+        context.set(ctx);
+        return ctx;
+    }
+
+    @NotNull
+    public static Context guest(@Nullable Locale locale, @Nullable ZoneId timeZone, @Nullable String ip, @Nullable String agent) {
+        Context ctx = new Context(Guest, locale, timeZone, ip, agent);
+        context.set(ctx);
+        return ctx;
+    }
+
     public static void clear() {
+        context.remove();
+    }
+    public static void logout() {
         context.remove();
     }
 
     @Data
     public static class Context {
         public static final long Guest = Integer.MIN_VALUE;
-        public static final Context NULL = new Context(Guest, null, null, null, null);
+        public static final Context NULL = new Context(Guest, Locale.getDefault(), TimeZone.getDefault(), null, null);
 
         private final long userId;
         private final Locale locale;
@@ -68,6 +95,16 @@ public class TerminalContext {
             this.agentInfo = agentInfo == null ? "" : agentInfo;
             //
             this.zoneId = this.timeZone.toZoneId();
+        }
+
+        public Context(long userId, Locale locale, ZoneId timeZone, String remoteIp, String agentInfo) {
+            this.userId = userId;
+            this.locale = locale == null ? Locale.getDefault() : locale;
+            this.zoneId = timeZone == null ? ZoneId.systemDefault() : timeZone;
+            this.remoteIp = remoteIp == null ? "" : remoteIp;
+            this.agentInfo = agentInfo == null ? "" : agentInfo;
+            //
+            this.timeZone = TimeZone.getTimeZone(this.zoneId);
         }
 
         /**
