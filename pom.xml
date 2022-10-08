@@ -58,7 +58,6 @@
         <!-- wings project -->
         <mirana.version>2.4.0-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <meepo.version>1.4.1-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
-        <simpleflatmapper.version>8.2.3</simpleflatmapper.version> <!-- https://github.com/arnaudroger/SimpleFlatMapper/tags -->
         <shardingsphere.version>5.1.2</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
         <fastjson2.version>2.0.12</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
@@ -74,6 +73,8 @@
         <boot-admin.version>2.6.7</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases spring-boot.version 2.6.7-->
         <sentry.version>6.4.0</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases  springBootVersion = "2.6.8"-->
         <retrofit.version>2.9.0</retrofit.version> <!-- https://github.com/square/retrofit/tags -->
+        <!-- predefine -->
+        <bull.version>2.2.2</bull.version> <!-- https://github.com/ExpediaGroup/bull/tags -->
         <!-- mvn-build-plugin -->
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version> <!-- https://search.maven.org/search?q=flatten-maven-plugin -->
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version> <!-- https://search.maven.org/search?q=maven-gpg-plugin -->
@@ -266,27 +267,6 @@
                 <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
                 <version>${shardingsphere.version}</version>
             </dependency>
-            <!-- mapper converter -->
-            <dependency>
-                <groupId>org.simpleflatmapper</groupId>
-                <artifactId>sfm-jdbc</artifactId>
-                <version>${simpleflatmapper.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.simpleflatmapper</groupId>
-                <artifactId>sfm-springjdbc</artifactId>
-                <version>${simpleflatmapper.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.simpleflatmapper</groupId>
-                <artifactId>sfm-jooq</artifactId>
-                <version>${simpleflatmapper.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.simpleflatmapper</groupId>
-                <artifactId>sfm-querydsl</artifactId>
-                <version>${simpleflatmapper.version}</version>
-            </dependency>
             <!-- session cache -->
             <!-- spring-session-bom
             <dependency>
@@ -319,6 +299,17 @@
                 <groupId>com.alibaba.fastjson2</groupId>
                 <artifactId>fastjson2</artifactId>
                 <version>${fastjson2.version}</version>
+            </dependency>
+            <!--  bean utils   -->
+            <dependency>
+                <groupId>com.expediagroup.beans</groupId>
+                <artifactId>bull-bean-transformer</artifactId>
+                <version>${bull.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.expediagroup.beans</groupId>
+                <artifactId>bull-map-transformer</artifactId>
+                <version>${bull.version}</version>
             </dependency>
             <dependency>
                 <!-- wings内禁用，为间接引用的第三方定义安全的版本号 -->

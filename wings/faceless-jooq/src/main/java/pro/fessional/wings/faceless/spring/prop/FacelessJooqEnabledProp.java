@@ -25,14 +25,6 @@ public class FacelessJooqEnabledProp {
     public static final String Key$module = Key + ".module";
 
     /**
-     * 是否注使用 simpleflatmapper, bug https://github.com/arnaudroger/SimpleFlatMapper/issues/764
-     *
-     * @see #Key$simpleflatmapper
-     */
-    private boolean simpleflatmapper = false;
-    public static final String Key$simpleflatmapper = Key + ".simpleflatmapper";
-
-    /**
      * 自动配置table限定，无alias时不使用
      *
      * @see #Key$autoQualify

@@ -8,7 +8,6 @@ import org.jooq.VisitListenerProvider;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.jooq.impl.DefaultVisitListenerProvider;
-import org.simpleflatmapper.jooq.JooqMapperFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -97,14 +96,6 @@ public class FacelessJooqConfiguration {
 //                .withRenderTable(false)
             ;
             log.info("Wings conf jooq setting, dialect=" + settings.getParseDialect());
-
-            if (config.isSimpleflatmapper()) {
-                log.info("Wings conf beanPostSfmRecordMapperProvider");
-                // into
-                configuration.set(JooqMapperFactory.newInstance().ignorePropertyNotFound().newRecordMapperProvider());
-                // from
-                configuration.set(JooqMapperFactory.newInstance().ignorePropertyNotFound().newRecordUnmapperProvider(configuration));
-            }
 
             if (config.isConverter()) {
                 log.info("Wings conf jooqConfiguration ConverterProvider");
