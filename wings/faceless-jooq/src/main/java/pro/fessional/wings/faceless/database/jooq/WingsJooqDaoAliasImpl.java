@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless.database.jooq;
 
 import com.google.common.collect.Lists;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.BatchBindStep;
@@ -42,6 +43,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -679,7 +681,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     @NotNull
     public List<P> fetch(Function<T, Condition> fun) {
         final Condition cond = fun.apply(table);
-        return fetch(table, cond, SelectOrderCondition.getSelectsOrders(cond));
+        return fetch(table, cond);
     }
 
     @NotNull
@@ -690,7 +692,26 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     @NotNull
     public List<P> fetch(int offset, int limit, Function<T, Condition> fun) {
         final Condition cond = fun.apply(table);
-        return fetch(table, offset, limit, cond, SelectOrderCondition.getSelectsOrders(cond));
+        return fetch(table, offset, limit, cond);
+    }
+
+    @NotNull
+    public List<P> fetch(BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetch(table, soc.getWhere(), soc.getParts());
+    }
+
+    @NotNull
+    public List<P> fetch(int limit, BiConsumer<T, SelectWhereOrder> fun) {
+        return fetch(0, limit, fun);
+    }
+
+    @NotNull
+    public List<P> fetch(int offset, int limit, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetch(table, offset, limit, soc.getWhere(), soc.getParts());
     }
 
     ////////
@@ -840,13 +861,13 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     @Nullable
     public P fetchOne(Function<T, Condition> fun) {
         final Condition cond = fun.apply(table);
-        return fetchOne(table, cond, SelectOrderCondition.getSelectsOrders(cond));
+        return fetchOne(table, cond);
     }
 
     @Nullable
     public P fetchLimitOne(Function<T, Condition> fun) {
         final Condition cond = fun.apply(table);
-        return fetchLimitOne(table, cond, SelectOrderCondition.getSelectsOrders(cond));
+        return fetchLimitOne(table, cond);
     }
 
     @NotNull
@@ -856,6 +877,30 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
 
     @NotNull
     public Optional<P> fetchLimitOptional(Function<T, Condition> fun) {
+        return Optional.ofNullable(fetchLimitOne(fun));
+    }
+
+    @Nullable
+    public P fetchOne(BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetchOne(table, soc.getWhere(), soc.getParts());
+    }
+
+    @Nullable
+    public P fetchLimitOne(BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetchLimitOne(table, soc.getWhere(), soc.getParts());
+    }
+
+    @NotNull
+    public Optional<P> fetchOptional(BiConsumer<T, SelectWhereOrder> fun) {
+        return Optional.ofNullable(fetchOne(fun));
+    }
+
+    @NotNull
+    public Optional<P> fetchLimitOptional(BiConsumer<T, SelectWhereOrder> fun) {
         return Optional.ofNullable(fetchLimitOne(fun));
     }
 
@@ -1209,7 +1254,6 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     private SelectConditionStep<R> selectWhere(T table, Condition cond, Collection<SelectFieldOrAsterisk> selects) {
-        final SelectConditionStep<R> where;
         if (selects == null || selects.isEmpty()) {
             return ctx().selectFrom(table).where(cond);
         }
@@ -1219,4 +1263,46 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
         }
     }
 
+    /////
+    public static class SelectWhereOrder {
+
+        private static final QueryPart[] EMPTY = new QueryPart[0];
+
+        private Condition where = null;
+        private QueryPart[] parts = null;
+
+        /**
+         * t.Id.gt(1L).and(t.CommitId.lt(200L))
+         *
+         * @param cond condition
+         * @return this
+         */
+        @Contract("_ -> this")
+        public SelectWhereOrder where(Condition cond) {
+            where = cond;
+            return this;
+        }
+
+        /**
+         * t.Id, t.CommitId, t.Id.desc()
+         *
+         * @param part fields to select and order by
+         * @return this
+         */
+        @Contract("_ -> this")
+        public SelectWhereOrder order(QueryPart... part) {
+            parts = part;
+            return this;
+        }
+
+        @NotNull
+        public Condition getWhere() {
+            return where == null ? DSL.noCondition() : where;
+        }
+
+        @NotNull
+        public QueryPart[] getParts() {
+            return parts == null ? EMPTY : parts;
+        }
+    }
 }
