@@ -23,17 +23,13 @@ import java.time.format.DateTimeFormatter;
 public class JacksonOffsetDateTimeSerializer extends InstantSerializerBase<OffsetDateTime> implements AutoZoneAware {
 
     public static DateTimeFormatter defaultFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-    public static boolean defaultAutoZone = true;
+    public static AutoZoneType defaultAutoZone = AutoZoneType.Auto;
 
     private AutoZoneType autoZone;
 
     // has no default (no arg) constructor
     public JacksonOffsetDateTimeSerializer() {
         this(defaultFormatter, defaultAutoZone);
-    }
-
-    public JacksonOffsetDateTimeSerializer(DateTimeFormatter formatter, boolean auto) {
-        this(formatter, AutoZoneType.valueOf(auto));
     }
 
     public JacksonOffsetDateTimeSerializer(DateTimeFormatter formatter, AutoZoneType auto) {

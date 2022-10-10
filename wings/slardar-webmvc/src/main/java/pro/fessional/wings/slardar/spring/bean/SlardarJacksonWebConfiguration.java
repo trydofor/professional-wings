@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
+import pro.fessional.wings.slardar.autozone.AutoZoneType;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeSerializer;
@@ -127,7 +128,7 @@ public class SlardarJacksonWebConfiguration {
 
             // auto local
             val full = DateTimeFormatter.ofPattern(slardarDatetimeProp.getDatetime().getFormat());
-            final boolean autoLocal = slardarDatetimeProp.getDatetime().isAuto();
+            final AutoZoneType autoLocal = AutoZoneType.valueOf(slardarDatetimeProp.getDatetime().isAuto());
             JacksonLocalDateTimeSerializer.defaultFormatter = full;
             JacksonLocalDateTimeSerializer.defaultAutoZone = autoLocal;
             builder.serializerByType(LocalDateTime.class, new JacksonLocalDateTimeSerializer(full, autoLocal));
@@ -142,7 +143,7 @@ public class SlardarJacksonWebConfiguration {
 
             // auto zoned
             DateTimeFormatter zoned = DateTimeFormatter.ofPattern(slardarDatetimeProp.getZoned().getFormat());
-            final boolean autoZone = slardarDatetimeProp.getZoned().isAuto();
+            final AutoZoneType autoZone = AutoZoneType.valueOf(slardarDatetimeProp.getZoned().isAuto());
             JacksonZonedDateTimeSerializer.defaultFormatter = zoned;
             JacksonZonedDateTimeSerializer.defaultAutoZone = autoZone;
             builder.serializerByType(ZonedDateTime.class, new JacksonZonedDateTimeSerializer(zoned, autoZone));
@@ -158,7 +159,7 @@ public class SlardarJacksonWebConfiguration {
 
             // auto offset
             DateTimeFormatter offset = DateTimeFormatter.ofPattern(slardarDatetimeProp.getOffset().getFormat());
-            final boolean autoOffset = slardarDatetimeProp.getOffset().isAuto();
+            final AutoZoneType autoOffset = AutoZoneType.valueOf(slardarDatetimeProp.getOffset().isAuto());
             JacksonOffsetDateTimeSerializer.defaultFormatter = offset;
             JacksonOffsetDateTimeSerializer.defaultAutoZone = autoOffset;
             builder.serializerByType(OffsetDateTime.class, new JacksonOffsetDateTimeSerializer(offset, autoOffset));

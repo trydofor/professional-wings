@@ -24,17 +24,13 @@ import java.time.format.DateTimeFormatter;
 public class JacksonLocalDateTimeSerializer extends LocalDateTimeSerializer implements AutoZoneAware {
 
     public static DateTimeFormatter defaultFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-    public static boolean defaultAutoZone = false;
+    public static AutoZoneType defaultAutoZone = AutoZoneType.Off;
 
     private AutoZoneType autoZone;
 
     // has no default (no arg) constructor
     public JacksonLocalDateTimeSerializer() {
         this(defaultFormatter, defaultAutoZone);
-    }
-
-    public JacksonLocalDateTimeSerializer(DateTimeFormatter f, boolean auto) {
-        this(f, AutoZoneType.valueOf(auto));
     }
 
     public JacksonLocalDateTimeSerializer(DateTimeFormatter f, AutoZoneType auto) {

@@ -6,6 +6,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.i18n.SimpleTimeZoneAwareLocaleContext;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.context.TerminalInterceptor;
 import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
@@ -27,6 +29,16 @@ public class SlardarTerminalConfiguration {
     public TerminalInterceptor terminalInterceptor(WingsLocaleResolver localeResolver, WingsRemoteResolver remoteResolver) {
         log.info("Wings conf Terminal filter");
         TerminalContext.setActive(true);
+
+        TerminalContext.putThreadLocalListener("LocaleContextHolder", ctx -> {
+            if (ctx == null) {
+                LocaleContextHolder.resetLocaleContext();
+            }
+            else {
+                LocaleContextHolder.setLocaleContext(new SimpleTimeZoneAwareLocaleContext(ctx.getLocale(), ctx.getTimeZone()));
+            }
+        });
+
         return new TerminalInterceptor(localeResolver, remoteResolver);
     }
 }

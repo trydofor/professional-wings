@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
 import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
@@ -45,12 +44,10 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
             else {
                 TerminalContext.login(details.getUserId(), locale.getLocale(), locale.getTimeZone(), remoteIp, agentInfo);
             }
-            //
-            LocaleContextHolder.setLocaleContext(locale);
         }
         catch (Exception e) {
             // should Not be here
-            TerminalContext.clear();
+            TerminalContext.logout();
             return false;
         }
         //
@@ -61,6 +58,6 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
     public void afterCompletion(@NotNull HttpServletRequest request,
                                 @NotNull HttpServletResponse response,
                                 @NotNull Object handler, Exception ex) {
-        TerminalContext.clear();
+        TerminalContext.logout();
     }
 }

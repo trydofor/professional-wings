@@ -12,6 +12,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import pro.fessional.wings.slardar.autodto.AutoDtoHelper;
 import pro.fessional.wings.slardar.autodto.AutoZoneVisitor;
 import pro.fessional.wings.slardar.autodto.I18nStringVisitor;
+import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
 
 /**
  * @author trydofor
@@ -36,16 +37,16 @@ public class SlardarI18nConfiguration {
     @Bean
     public CommandLineRunner registerDtoUtilVtzRunner(MessageSource messageSource) {
         return (arg) -> new AutoDtoHelper() {{
-            final I18nStringVisitor i18nStringVisitor = new I18nStringVisitor(messageSource, AutoDtoHelper.LocaleSupplier);
+            final I18nStringVisitor i18nStringVisitor = new I18nStringVisitor(messageSource, LocaleZoneIdUtil.LocaleNonnull);
 
             RequestVisitor.add(AutoDtoHelper.AutoDtoVisitor);
-            RequestVisitor.add(new AutoZoneVisitor(AutoDtoHelper.ZoneIdSupplier, true));
+            RequestVisitor.add(new AutoZoneVisitor(LocaleZoneIdUtil.ZoneIdNonnull, true));
             log.info("Wings conf addRequestVisitor AutoZoneVisitorRequest");
             RequestVisitor.add(i18nStringVisitor);
             log.info("Wings conf addRequestVisitor I18nStringVisitor");
 
             ResponseVisitor.add(AutoDtoHelper.AutoDtoVisitor);
-            ResponseVisitor.add(new AutoZoneVisitor(AutoDtoHelper.ZoneIdSupplier, false));
+            ResponseVisitor.add(new AutoZoneVisitor(LocaleZoneIdUtil.ZoneIdNonnull, false));
             log.info("Wings conf addResponseVisitor AutoZoneVisitorResponse");
             ResponseVisitor.add(i18nStringVisitor);
             log.info("Wings conf addResponseVisitor I18nStringVisitor");

@@ -17,12 +17,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
 import pro.fessional.wings.slardar.autodto.AutoI18nString;
+import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.jackson.Aes128StringDeserializer;
 import pro.fessional.wings.slardar.jackson.Aes128StringSerializer;
 import pro.fessional.wings.slardar.jackson.StringMapGenerator;
@@ -79,7 +79,7 @@ public class WingsJacksonMapperTest {
         Locale.setDefault(Locale.US);
         // user timezone
         TimeZone.setDefault(systemTz);
-        LocaleContextHolder.setDefaultTimeZone(userTz);
+        TerminalContext.login(1, Locale.US, userTz, "localhost", "test");
     }
 
     @Data
@@ -396,7 +396,7 @@ public class WingsJacksonMapperTest {
 
         assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, ikey=ival, longIgnore=0, textAuto=textAuto can not be empty}", j1.toString());
         assertEquals("{Map=1, bool-val=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, instantVal=2020-06-01T12:34:46Z, intVal=2147483646, listVal=列表, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, longVal=9223372036854775806, zonedDateTimeVal=2020-06-01 13:34:46 Asia/Tokyo, zonedDateTimeValV=2020-06-01 13:34:46.000 Asia/Tokyo, zonedDateTimeValZ=2020-06-01 13:34:46.000 +0900}", j2.toString());
-        assertEquals("{args=textDisabled, codeIgnore=base.not-empty, codeManual=base.not-empty, hint=, key=ikey, longIgnore=0, value=ival}", x1.toString());
+        assertEquals("{codeIgnore=base.not-empty, codeManual=base.not-empty, hint=, key=ikey, longIgnore=0, value=ival}", x1.toString());
         assertEquals("{boolVal=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, intVal=2147483646, key=Map, listVal=列表, longVal=9223372036854775806, value=1}", x2.toString());
     }
 
