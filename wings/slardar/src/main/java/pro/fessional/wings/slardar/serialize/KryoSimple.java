@@ -17,7 +17,7 @@ import pro.fessional.wings.slardar.serialize.javakaffee.UnmodifiableCollectionsS
  */
 public class KryoSimple {
 
-    private static final S<Output> output = new S<>() {
+    private static final S<Output> output = new S<>(new ThreadLocal<>()) {
         @Override
         @NotNull
         public Output initValue() {
@@ -26,7 +26,7 @@ public class KryoSimple {
     };
 
     /** no leak, for static */
-    private static final S<Kryo> kryo = new S<>() {
+    private static final S<Kryo> kryo = new S<>(new ThreadLocal<>()) {
         @Override
         @NotNull public Kryo initValue() {
             Kryo ko = new Kryo();

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import pro.fessional.mirana.page.PageQuery;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
+import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserLoginTable;
@@ -13,7 +14,6 @@ import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserLoginDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserLogin;
 import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,7 +56,7 @@ public class WarlockUserLoginServiceImpl implements WarlockUserLoginService {
         po.setId(lightIdService.getId(winUserLoginDao.getTable()));
 
         po.setUserId(auth.getUserId());
-        po.setLoginDt(LocalDateTime.now());
+        po.setLoginDt(Now.localDateTime());
         po.setDetails(auth.getDetails());
         po.setFailed(auth.isFailed());
 

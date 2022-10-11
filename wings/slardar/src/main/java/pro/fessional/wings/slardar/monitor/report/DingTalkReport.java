@@ -4,12 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
+import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.monitor.WarnReport;
 import pro.fessional.wings.slardar.notice.DingTalkNotice;
 import pro.fessional.wings.slardar.spring.prop.SlardarMonitorProp;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -76,7 +76,7 @@ public class DingTalkReport implements WarnReport {
         StringBuilder sb = new StringBuilder();
         mkTitleH2(sb, app);
         mkItemText(sb, jvm, "jvm-name");
-        mkItemText(sb, ZonedDateTime.now().toString(), "rpt-time");
+        mkItemText(sb, Now.zonedDateTime().toString(), "rpt-time");
         text.accept(sb);
         return dingTalkNotice.buildMarkdown(conf, app + " " + conf.getNoticeKeyword(), sb.toString());
     }

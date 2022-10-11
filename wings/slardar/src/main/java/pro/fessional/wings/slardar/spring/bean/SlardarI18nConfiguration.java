@@ -35,7 +35,7 @@ public class SlardarI18nConfiguration {
     }
 
     @Bean
-    public CommandLineRunner registerDtoUtilVtzRunner(MessageSource messageSource) {
+    public CommandLineRunner initAutoDtoHelperRunner(MessageSource messageSource) {
         return (arg) -> new AutoDtoHelper() {{
             final I18nStringVisitor i18nStringVisitor = new I18nStringVisitor(messageSource, LocaleZoneIdUtil.LocaleNonnull);
 

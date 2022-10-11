@@ -142,6 +142,7 @@ public class TerminalContext {
         else {
             context.set(ctx);
         }
+        active = true;
         fireThreadLocalListener(ctx);
     }
 

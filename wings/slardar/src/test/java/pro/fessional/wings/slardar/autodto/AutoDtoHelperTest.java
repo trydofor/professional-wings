@@ -37,7 +37,6 @@ class AutoDtoHelperTest {
      */
     @Test
     void autoRequest() {
-        TerminalContext.setActive(true);
         TerminalContext.login(-1, Locale.CHINA, ZONE_JP, "localhost", "SpringTest");
 
         I18nItem it = initI18nItem(ZONE_JP);
@@ -79,7 +78,6 @@ class AutoDtoHelperTest {
      */
     @Test
     void autoResponse() {
-        TerminalContext.setActive(true);
         TerminalContext.login(-1, Locale.US, ZONE_JP, "localhost", "SpringTest");
 
         I18nItem it = initI18nItem(ZONE_CN);
