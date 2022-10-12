@@ -7,10 +7,7 @@ import com.hazelcast.topic.MessageListener;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationEventPublisher;
 
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * ApplicationEventPublisher辅助类。一般用于非事务Event处理，主要功能：
@@ -26,16 +23,19 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HazelcastSyncPublisher implements ApplicationEventPublisher, MessageListener<Object> {
 
     public static final String HazelcastTopic = "SlardarApplicationEvent";
-    private static final Map<UUID, Boolean> Listeners = new ConcurrentHashMap<>();
 
     private final ApplicationEventPublisher publisher;
     private final ITopic<Object> topic;
+    private final UUID uuid;
 
     public HazelcastSyncPublisher(@NotNull HazelcastInstance instance, @NotNull ApplicationEventPublisher publisher) {
         this.publisher = publisher;
         topic = instance.getTopic(HazelcastTopic);
-        final UUID last = topic.addMessageListener(this);
-        final Set<UUID> uuids = Listeners.keySet();
+        uuid = topic.addMessageListener(this);
+    }
+
+    public UUID getMessageListenerUuid() {
+        return uuid;
     }
 
     @Override

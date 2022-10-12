@@ -34,9 +34,9 @@ public class HazelcastOtherConfiguration {
     @Bean
     public CommandLineRunner hazelcastSyncPublisherRunner(HazelcastInstance instance, ApplicationEventPublisher publisher) {
         return (arg) -> {
-            log.info("wings conf HazelcastSyncPublisher as GlobalPublisher");
             HazelcastSyncPublisher global = new HazelcastSyncPublisher(instance, publisher);
             EventPublishHelper.setGlobalPublisher(global);
+            log.info("wings conf HazelcastSyncPublisher as GlobalPublisher, uuid=" + global.getMessageListenerUuid());
         };
     }
 }
