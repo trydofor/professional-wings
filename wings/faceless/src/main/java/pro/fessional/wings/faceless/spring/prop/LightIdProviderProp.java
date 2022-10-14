@@ -18,6 +18,7 @@ public class LightIdProviderProp {
      * blockId提供方法，默认sql。
      * sql - 查询数据库，唯一返回值为id。
      * fix - 固定数字，int。
+     * biz - 使用自定义的业务Bean
      *
      * @see #Key$blockType
      */
