@@ -29,7 +29,7 @@ public class SlardarRestreamConfiguration {
         if (lg != null) {
             filter.setRequestResponseLogging(lg);
         }
-        log.info("Wings conf wingsReuseStreamFilter, logging=" + (lg == null ? null : lg.getClass()));
+        log.info("SlardarWebmvc spring-bean wingsReuseStreamFilter, logging=" + (lg == null ? null : lg.getClass()));
         return filter;
     }
 }

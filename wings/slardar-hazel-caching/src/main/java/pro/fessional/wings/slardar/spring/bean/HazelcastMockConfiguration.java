@@ -24,7 +24,7 @@ public class HazelcastMockConfiguration {
 
     @Bean
     public HazelcastInstance hazelcastInstance() {
-        log.info("Wings conf Standalone hazelcastInstance for mock");
+        log.info("SlardarHazelCaching spring-bean Standalone hazelcastInstance for mock");
         Config config = new Config();
         config.setClusterName("slardar-standalone");
         config.setProperty("hazelcast.shutdownhook.enabled", "false");

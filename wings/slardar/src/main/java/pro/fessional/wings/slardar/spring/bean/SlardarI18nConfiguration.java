@@ -28,7 +28,7 @@ public class SlardarI18nConfiguration {
 
     @Bean
     public LocalValidatorFactoryBean localValidatorFactoryBean(MessageSource messageSource) {
-        log.info("Wings conf localValidatorFactoryBean");
+        log.info("Slardar spring-bean localValidatorFactoryBean");
         LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
         bean.setValidationMessageSource(messageSource);
         return bean;
@@ -36,20 +36,21 @@ public class SlardarI18nConfiguration {
 
     @Bean
     public CommandLineRunner initAutoDtoHelperRunner(MessageSource messageSource) {
+        log.info("Slardar spring-runs initAutoDtoHelperRunner");
         return (arg) -> new AutoDtoHelper() {{
             final I18nStringVisitor i18nStringVisitor = new I18nStringVisitor(messageSource, LocaleZoneIdUtil.LocaleNonnull);
 
             RequestVisitor.add(AutoDtoHelper.AutoDtoVisitor);
             RequestVisitor.add(new AutoZoneVisitor(LocaleZoneIdUtil.ZoneIdNonnull, true));
-            log.info("Wings conf addRequestVisitor AutoZoneVisitorRequest");
+            log.info("Slardar conf addRequestVisitor AutoZoneVisitorRequest");
             RequestVisitor.add(i18nStringVisitor);
-            log.info("Wings conf addRequestVisitor I18nStringVisitor");
+            log.info("Slardar conf addRequestVisitor I18nStringVisitor");
 
             ResponseVisitor.add(AutoDtoHelper.AutoDtoVisitor);
             ResponseVisitor.add(new AutoZoneVisitor(LocaleZoneIdUtil.ZoneIdNonnull, false));
-            log.info("Wings conf addResponseVisitor AutoZoneVisitorResponse");
+            log.info("Slardar conf addResponseVisitor AutoZoneVisitorResponse");
             ResponseVisitor.add(i18nStringVisitor);
-            log.info("Wings conf addResponseVisitor I18nStringVisitor");
+            log.info("Slardar conf addResponseVisitor I18nStringVisitor");
         }};
     }
 }

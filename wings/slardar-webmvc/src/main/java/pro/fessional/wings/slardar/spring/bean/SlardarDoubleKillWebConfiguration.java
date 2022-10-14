@@ -30,7 +30,7 @@ public class SlardarDoubleKillWebConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "doubleKillExceptionResolver")
     public HandlerExceptionResolver doubleKillExceptionResolver() {
-        log.info("Wings conf doubleKillExceptionResolver");
+        log.info("SlardarWebmvc spring-bean doubleKillExceptionResolver");
         final DoubleKillExceptionResolver bean = new DoubleKillExceptionResolver(
                 doubleKillProp.getHttpStatus(),
                 doubleKillProp.getContentType(),

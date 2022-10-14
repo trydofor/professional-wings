@@ -46,14 +46,14 @@ public class SlardarCacheConfiguration {
         @Primary
         @Bean
         public CacheOperationSource wingsCacheOperationSource() {
-            log.info("Wings conf cacheOperationSource");
+            log.info("Slardar spring-bean wingsCacheOperationSource Primary");
             return new WingsCacheAnnoOprSource();
         }
 
         @Primary
         @Bean
         public CacheInterceptor wingsCacheInterceptor(CacheOperationSource cacheOperationSource) {
-            log.info("Wings conf cacheInterceptor");
+            log.info("Slardar spring-bean wingsCacheInterceptor Primary");
             CacheEvictResult.wingsSupport = true;
             WingsCacheInterceptor interceptor = new WingsCacheInterceptor();
             interceptor.configure(this.errorHandler, this.keyGenerator, this.cacheResolver, this.cacheManager);
@@ -66,14 +66,13 @@ public class SlardarCacheConfiguration {
     @Bean(Manager.Memory)
     @ConditionalOnMissingBean(CaffeineCacheManager.class)
     public CaffeineCacheManager caffeineCacheManager(SlardarCacheProp conf) {
-        log.info("Wings conf caffeine as " + Manager.Memory);
+        log.info("Slardar spring-bean caffeineCacheManager as " + Manager.Memory);
         return new WingsCaffeine.Manager(conf);
     }
 
     @Bean
     @Primary
     public CacheManager cacheManager(Map<String, CacheManager> managers, SlardarCacheProp prop) {
-        log.info("Wings conf WingsCacheHelper managers count=" + managers.size());
         WingsCacheHelper.setManagers(managers);
 
         CacheManager pre = null;
@@ -82,7 +81,7 @@ public class SlardarCacheConfiguration {
         for (Map.Entry<String, CacheManager> en : managers.entrySet()) {
             final String name = en.getKey();
             if (name.equalsIgnoreCase(prim)) {
-                log.info("Wings conf primary CacheManager=" + name);
+                log.info("Slardar spring-bean cacheManager Primary=" + name);
                 return en.getValue();
             }
             else if (pre == null && name.startsWith(prim)) {
@@ -90,7 +89,7 @@ public class SlardarCacheConfiguration {
                 pre = en.getValue();
             }
         }
-        log.info("Wings conf primary CacheManager=" + cnm);
+        log.info("Slardar spring-bean cacheManager Primary=" + cnm);
         return pre;
     }
 }

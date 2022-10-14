@@ -34,7 +34,7 @@ public class SlardarDomainExtendConfiguration {
 
     @Bean
     public WingsDomainExtendFilter wingsDomainFilter(DomainExtendProp config, ApplicationContext context) {
-        log.info("Wings conf Domain filter");
+        log.info("SlardarWebmvc spring-bean wingsDomainFilter");
         Map<String, List<String[]>> hostMatcher = new HashMap<>();
         for (Map.Entry<String, Set<String>> entry : config.getHost().entrySet()) {
             Set<String> vs = entry.getValue();

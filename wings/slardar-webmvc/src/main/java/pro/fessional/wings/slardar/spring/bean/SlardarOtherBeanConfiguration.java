@@ -23,7 +23,7 @@ public class SlardarOtherBeanConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     public SlardarCacheEndpoint slardarCacheManageEndpoint(Map<String, CacheManager> cacheManagers) {
-        log.info("wings conf slardarCacheManageEndpoint");
+        log.info("SlardarWebmvc spring-bean slardarCacheManageEndpoint");
         return new SlardarCacheEndpoint(cacheManagers);
     }
 }

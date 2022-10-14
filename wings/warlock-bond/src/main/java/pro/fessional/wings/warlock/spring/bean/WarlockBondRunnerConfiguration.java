@@ -21,17 +21,18 @@ public class WarlockBondRunnerConfiguration {
 
     @Bean    // 静态注入，执行一次即可
     public CommandLineRunner registerCacheConstRunner() {
+        log.info("WarlockBond spring-runs registerCacheConstRunner");
         return (arg) -> {
             CacheConst.WarlockAuthnService.EventTables.add(WinUserBasisTable.WinUserBasis.getName());
             CacheConst.WarlockAuthnService.EventTables.add(WinUserAuthnTable.WinUserAuthn.getName());
-            log.info("Wings conf WarlockAuthnService.EventTables");
+            log.info("WarlockBond conf WarlockAuthnService.EventTables");
 
             CacheConst.WarlockPermService.EventTables.add(WinUserBasisTable.WinUserBasis.getName());
             CacheConst.WarlockPermService.EventTables.add(WinUserAuthnTable.WinUserAuthn.getName());
-            log.info("Wings conf WarlockPermService.EventTables");
+            log.info("WarlockBond conf WarlockPermService.EventTables");
 
             CacheConst.WarlockRoleService.EventTables.add(WinRoleEntryTable.WinRoleEntry.getName());
-            log.info("Wings conf WinRoleEntryTable.EventTables");
+            log.info("WarlockBond conf WinRoleEntryTable.EventTables");
         };
     }
 }

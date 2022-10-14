@@ -35,7 +35,7 @@ public class WarlockCommonConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public RuntimeConfService runtimeConfService(ObjectProvider<ConversionService> conversionProvider) {
-        log.info("Wings conf runtimeConfService");
+        log.info("Warlock spring-bean runtimeConfService");
         final RuntimeConfServiceImpl bean = new RuntimeConfServiceImpl();
         conversionProvider.ifAvailable(it -> bean.addHandler(RuntimeConfServiceImpl.PropHandler, it));
         bean.addHandler(RuntimeConfServiceImpl.JsonHandler, new JsonConversion());

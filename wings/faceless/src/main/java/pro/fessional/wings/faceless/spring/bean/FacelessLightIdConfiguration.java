@@ -44,12 +44,12 @@ public class FacelessLightIdConfiguration {
     public void forceLightIdLayout(LightIdLayoutProp prop) {
         final Boolean bf = prop.getBlockFirst();
         if (bf != null) {
-            log.info("Faceless conf forceLightIdLayout forceBlockFirst=" + bf);
+            log.info("Faceless spring-auto forceLightIdLayout forceBlockFirst=" + bf);
             LightIdUtil.forceBlockFirst(bf);
         }
         final Integer bb = prop.getBlockBits();
         if (bb != null) {
-            log.info("Faceless conf forceLightIdLayout forceBlockBit=" + bb);
+            log.info("Faceless spring-auto forceLightIdLayout forceBlockBit=" + bb);
             LightIdUtil.forceBlockBit(bb);
         }
     }
@@ -57,7 +57,7 @@ public class FacelessLightIdConfiguration {
     @Bean
     @ConditionalOnMissingBean(LightSequenceSelect.class)
     public LightSequenceSelect lightSequenceSelect(LightIdProviderProp prop, JdbcTemplate jdbcTemplate) {
-        log.info("Faceless bean lightSequenceSelect");
+        log.info("Faceless spring-bean lightSequenceSelect");
         return new LightSequenceSelectJdbc(
                 jdbcTemplate,
                 prop.getSequenceGetOne(),
@@ -68,7 +68,7 @@ public class FacelessLightIdConfiguration {
     @Bean
     @ConditionalOnMissingBean(LightSequenceModify.class)
     public LightSequenceModify lightSequenceModify(LightIdProviderProp provider, JdbcTemplate jdbcTemplate) {
-        log.info("Faceless bean lightSequenceModify");
+        log.info("Faceless spring-bean lightSequenceModify");
         return new LightSequenceModifyJdbc(jdbcTemplate, provider.getSequenceInsert(), provider.getSequenceUpdate());
     }
 
@@ -77,7 +77,7 @@ public class FacelessLightIdConfiguration {
     public LightIdProvider.Loader lightIdLoader(LightSequenceSelect lightSequenceSelect,
                                                 LightSequenceModify lightSequenceModify,
                                                 LightIdInsertProp properties) {
-        log.info("Faceless bean lightIdLoader");
+        log.info("Faceless spring-bean lightIdLoader");
         return new LightIdMysqlLoader(lightSequenceSelect, lightSequenceModify, properties);
     }
 
@@ -85,7 +85,7 @@ public class FacelessLightIdConfiguration {
     @ConditionalOnMissingBean(LightIdProvider.class)
     public LightIdProvider lightIdProvider(LightIdProvider.Loader lightIdLoader,
                                            LightIdLoaderProp properties) {
-        log.info("Faceless bean lightIdProvider");
+        log.info("Faceless spring-bean lightIdProvider");
         LightIdBufferedProvider provider = new LightIdBufferedProvider(lightIdLoader);
         provider.setTimeout(properties.getTimeout());
         provider.setErrAlive(properties.getErrAlive());
@@ -101,7 +101,7 @@ public class FacelessLightIdConfiguration {
     public BlockIdProvider blockProvider(LightIdProviderProp provider,
                                          ObjectProvider<JdbcTemplate> jdbcTemplate) {
         final String blockType = provider.getBlockType();
-        log.info("Faceless bean lightIdProvider" + blockType);
+        log.info("Faceless spring-bean lightIdProvider" + blockType);
         if ("sql".equalsIgnoreCase(blockType)) {
             return new DefaultBlockIdProvider(provider.getBlockPara(), jdbcTemplate.getIfAvailable());
         }
@@ -121,14 +121,14 @@ public class FacelessLightIdConfiguration {
     @ConditionalOnMissingBean(LightIdService.class)
     public LightIdService lightIdService(LightIdProvider lightIdProvider,
                                          BlockIdProvider blockIdProvider) {
-        log.info("Faceless bean lightIdService");
+        log.info("Faceless spring-bean lightIdService");
         return new LightIdServiceImpl(lightIdProvider, blockIdProvider);
     }
 
     @Bean
     @ConditionalOnMissingBean(FlakeIdService.class)
     public FlakeIdService flakeIdService(LightIdService lightIdService) {
-        log.info("Faceless bean flakeIdService");
+        log.info("Faceless spring-bean flakeIdService");
         return new FlakeIdLightIdImpl(lightIdService);
     }
 }

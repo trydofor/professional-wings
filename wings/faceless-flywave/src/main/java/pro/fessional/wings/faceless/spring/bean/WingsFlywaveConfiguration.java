@@ -56,7 +56,7 @@ public class WingsFlywaveConfiguration {
                 properties.getJournalDelete(),
                 properties.getTriggerDelete()
         );
-        log.info("config schemaJournalManager");
+        log.info("FacelessFlywave spring-bean schemaJournalManager");
         return new SchemaJournalManager(facelessDs.getPlains(), statementParser, schemaDefinitionLoader, ddl, properties.getSchemaJournalTable());
     }
 
@@ -77,7 +77,7 @@ public class WingsFlywaveConfiguration {
                 bean.addDropRegexp(s);
             }
         }
-        log.info("config schemaVersionManger");
+        log.info("FacelessFlywave spring-bean schemaVersionManger");
         return bean;
     }
 
@@ -87,7 +87,7 @@ public class WingsFlywaveConfiguration {
             DataSourceContext sources,
             SqlStatementParser statementParser,
             SchemaDefinitionLoader schemaDefinitionLoader) {
-        log.info("config schemaShardingManager");
+        log.info("FacelessFlywave spring-bean schemaShardingManager");
         return new SchemaShardingManager(sources.getPlains(), sources.getSharding(),
                 statementParser, schemaDefinitionLoader);
     }
@@ -96,14 +96,14 @@ public class WingsFlywaveConfiguration {
     public SchemaFulldumpManager schemaFulldumpManager(
             SqlStatementParser statementParser,
             SchemaDefinitionLoader schemaDefinitionLoader) {
-        log.info("config schemaFulldumpManager");
+        log.info("FacelessFlywave spring-bean schemaFulldumpManager");
         return new SchemaFulldumpManager(statementParser, schemaDefinitionLoader);
     }
 
     @Bean
     public SqlStatementParser sqlStatementParser(FlywaveSqlProp conf) {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
-            log.info("config sqlStatementParser");
+            log.info("FacelessFlywave spring-bean sqlStatementParser");
             return new MySqlStatementParser();
         }
         else {
@@ -116,15 +116,15 @@ public class WingsFlywaveConfiguration {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
             final String fs = conf.getFormatShard();
             if (fs != null && !fs.isEmpty()) {
-                log.info("config static ShardFormat=" + fs);
+                log.info("FacelessFlywave spring-bean static ShardFormat=" + fs);
                 SqlSegmentProcessor.setShardFormat(fs);
             }
             final String ft = conf.getFormatTrace();
             if (ft != null && !ft.isEmpty()) {
-                log.info("config static TraceFormat=" + ft);
+                log.info("FacelessFlywave spring-bean static TraceFormat=" + ft);
                 SqlSegmentProcessor.setTraceFormat(ft);
             }
-            log.info("config sqlSegmentParser");
+            log.info("FacelessFlywave spring-bean sqlSegmentParser");
             return new SqlSegmentProcessor(conf.getCommentSingle(),
                     conf.getCommentMultiple(),
                     conf.getDelimiterDefault(),
@@ -138,7 +138,7 @@ public class WingsFlywaveConfiguration {
     @Bean
     public SchemaDefinitionLoader schemaDefinitionLoader(FlywaveSqlProp conf) {
         if ("mysql".equalsIgnoreCase(conf.getDialect())) {
-            log.info("config schemaDefinitionLoader");
+            log.info("FacelessFlywave spring-bean schemaDefinitionLoader");
             return new MysqlDefinitionLoader();
         }
         else {
@@ -148,7 +148,7 @@ public class WingsFlywaveConfiguration {
 
     @Bean
     public CommandLineRunner revisionChecker(DefaultRevisionManager manager, FlywaveFitProp prop) {
-        log.info("Wings conf revisionChecker");
+        log.info("FacelessFlywave spring-runs revisionChecker");
         return args -> {
             final RevisionFitness fits = new RevisionFitness();
             fits.addFits(prop.getFit());

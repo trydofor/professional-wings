@@ -36,15 +36,16 @@ public class WarlockPostRunnerConfiguration {
 
     @Bean
     public CommandLineRunner registerEnumUtilRunner(ObjectProvider<WarlockI18nProp> provider) {
+        log.info("Warlock spring-runs registerEnumUtilRunner");
         return (arg) -> {
             final WarlockI18nProp warlockI18nProp = provider.getIfAvailable();
             if (warlockI18nProp == null) {
-                log.info("Wings conf skip registerEnumUtil for NULL ");
+                log.info("Warlock conf skip registerEnumUtil for NULL ");
                 return;
             }
 
             for (String s : warlockI18nProp.getLocaleEnum()) {
-                log.info("Wings conf locale enum " + s);
+                log.info("Warlock conf locale enum " + s);
                 final Class<?> cz = Class.forName(s);
                 if (!(cz.isEnum() && StandardLanguageEnum.class.isAssignableFrom(cz))) {
                     throw new IllegalArgumentException(s + " is not enum and StandardLanguageEnum");
@@ -55,7 +56,7 @@ public class WarlockPostRunnerConfiguration {
             }
 
             for (String s : warlockI18nProp.getZoneidEnum()) {
-                log.info("Wings conf zoneid enum " + s);
+                log.info("Warlock conf zoneid enum " + s);
                 final Class<?> cz = Class.forName(s);
                 if (!(cz.isEnum() && StandardTimezoneEnum.class.isAssignableFrom(cz))) {
                     throw new IllegalArgumentException(s + " is not enum and StandardTimezoneEnum");
@@ -69,10 +70,11 @@ public class WarlockPostRunnerConfiguration {
 
     @Bean    // 静态注入，执行一次即可
     public CommandLineRunner registerRuntimeModeRunner(ObjectProvider<RuntimeConfService> provider, ObjectProvider<WarlockRuntimeProp> properties) {
+        log.info("Warlock spring-runs registerRuntimeModeRunner");
         return (arg) -> {
             final RuntimeConfService confService = provider.getIfAvailable();
             if (confService == null) {
-                log.info("Wings conf skip registerRuntimeMode for NULL ");
+                log.info("Warlock conf skip registerRuntimeMode for NULL ");
                 return;
             }
 
@@ -83,7 +85,7 @@ public class WarlockPostRunnerConfiguration {
                 if (runMode == null && prop != null) {
                     runMode = prop.getRunMode();
                 }
-                log.info("Wings conf registerRuntimeMode RunMode=" + runMode);
+                log.info("Warlock conf registerRuntimeMode RunMode=" + runMode);
                 return runMode == null ? RunMode.Local : runMode;
             });
 
@@ -93,7 +95,7 @@ public class WarlockPostRunnerConfiguration {
                     apiMode = prop.getApiMode();
                 }
 
-                log.info("Wings conf registerRuntimeMode apiMode=" + apiMode);
+                log.info("Warlock conf registerRuntimeMode apiMode=" + apiMode);
                 return apiMode == null ? ApiMode.Nothing : apiMode;
             });
         };
@@ -103,11 +105,10 @@ public class WarlockPostRunnerConfiguration {
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$checkDatabase, havingValue = "true")
     @Order(Ordered.HIGHEST_PRECEDENCE + 1000)
     public CommandLineRunner databaseChecker(DataSource dataSource, WarlockCheckProp prop) {
-        log.info("Wings conf databaseChecker");
+        log.info("Warlock spring-runs databaseChecker");
         return args -> {
             DatabaseChecker.version(dataSource);
             DatabaseChecker.timezone(dataSource, prop.getTzOffset(), prop.isTzFail());
         };
     }
-
 }

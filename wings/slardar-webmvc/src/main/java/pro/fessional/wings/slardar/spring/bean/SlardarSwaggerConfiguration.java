@@ -31,7 +31,7 @@ public class SlardarSwaggerConfiguration {
 
     @Bean
     public OpenApiCustomiser slardarOpenApiCustomizer(SlardarSwaggerProp slardarSwaggerProp) {
-        log.info("Wings conf slardarOpenApiCustomizer");
+        log.info("SlardarWebmvc spring-bean slardarOpenApiCustomizer");
 
         return openApi -> {
             final Info info = openApi.getInfo();

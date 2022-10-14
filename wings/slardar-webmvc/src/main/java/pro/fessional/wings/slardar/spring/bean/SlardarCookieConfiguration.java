@@ -36,10 +36,10 @@ public class SlardarCookieConfiguration {
     public WingsCookieInterceptor wingsCookieInterceptor() {
         final String aesKey = slardarCookieProp.getAesKey();
         if (aesKey != null && aesKey.length() > 5) {
-            log.info("Wings conf WingsCookieInterceptor, key=" + aesKey.substring(0, 5) + "...");
+            log.info("SlardarWebmvc spring-bean wingsCookieInterceptor, key=" + aesKey.substring(0, 5) + "...");
         }
         else {
-            log.info("Wings conf WingsCookieInterceptor");
+            log.info("SlardarWebmvc spring-bean wingsCookieInterceptor");
         }
 
         WingsCookieInterceptorImpl interceptor = new WingsCookieInterceptorImpl(aesKey);
@@ -77,7 +77,7 @@ public class SlardarCookieConfiguration {
 
     @Bean
     public WingsCookieFilter wingsCookieFilter(WingsCookieInterceptor wingsCookieInterceptor) {
-        log.info("Wings conf WingsCookieFilter");
+        log.info("SlardarWebmvc spring-bean wingsCookieFilter");
         return new WingsCookieFilter(wingsCookieInterceptor);
     }
 }

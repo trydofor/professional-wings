@@ -26,18 +26,19 @@ public class SilencerMessageConfiguration {
 
     @Bean
     public CombinableMessageSource combinableMessageSource(MessageSource messageSource) {
+        log.info("Silencer spring-bean combinableMessageSource");
         CombinableMessageSource combinable = new CombinableMessageSource();
         if (messageSource instanceof HierarchicalMessageSource) {
             HierarchicalMessageSource hierarchy = (HierarchicalMessageSource) messageSource;
             MessageSource parent = hierarchy.getParentMessageSource();
             if (parent != null) {
-                log.info("set parent for CombinableMessageSource");
+                log.info("Silencer set parent for CombinableMessageSource");
                 combinable.setParentMessageSource(parent);
             }
-            log.info("change messageSource to CombinableMessageSource");
+            log.info("Silencer change messageSource to CombinableMessageSource");
             hierarchy.setParentMessageSource(combinable);
         } else {
-            log.info("skip non HierarchicalMessageSource for CombinableMessageSource");
+            log.info("Silencer skip non HierarchicalMessageSource for CombinableMessageSource");
         }
 
         return combinable;

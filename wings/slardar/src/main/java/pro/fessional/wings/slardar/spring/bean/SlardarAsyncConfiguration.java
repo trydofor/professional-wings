@@ -47,13 +47,13 @@ public class SlardarAsyncConfiguration {
 
     @Bean(name = DEFAULT_TASK_EXECUTOR_BEAN_NAME)
     public Executor taskExecutor(TaskExecutorBuilder builder) {
-        log.info("Wings conf TtlExecutor for taskExecutor");
+        log.info("Slardar spring-bean taskExecutor via ttlExecutor");
         return ttlExecutor(builder);
     }
 
     @Bean(name = APPLICATION_TASK_EXECUTOR_BEAN_NAME)
     public AsyncTaskExecutor applicationTaskExecutor(TaskExecutorBuilder builder) {
-        log.info("Wings conf TtlExecutor for applicationTaskExecutor");
+        log.info("Slardar spring-bean applicationTaskExecutor via ttlExecutor");
         final Executor executor = ttlExecutor(builder);
         return new ConcurrentTaskExecutor(executor);
     }
@@ -66,7 +66,7 @@ public class SlardarAsyncConfiguration {
 
     @Bean(name = SLARDAR_EVENT_EXECUTOR_BEAN_NAME)
     public Executor slardarEventExecutor() {
-        log.info("Wings conf slardarEventExecutor");
+        log.info("Slardar spring-bean slardarEventExecutor");
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setThreadNamePrefix("slardar-event-");
         executor.setKeepAliveSeconds(30);
@@ -79,11 +79,12 @@ public class SlardarAsyncConfiguration {
     public CommandLineRunner eventPublishHelperRunner(ApplicationEventPublisher publisher,
                                                       ApplicationEventMulticaster multicaster,
                                                       @Qualifier(SLARDAR_EVENT_EXECUTOR_BEAN_NAME) Executor executor) {
+        log.info("Slardar spring-runs eventPublishHelperRunner");
         return (arg) -> {
             EventPublishHelper.setExecutor(executor);
-            log.info("Wings conf eventPublishHelper ApplicationEventPublisher=" + publisher.getClass());
+            log.info("Slardar conf eventPublishHelper ApplicationEventPublisher=" + publisher.getClass());
             EventPublishHelper.setSpringPublisher(publisher);
-            log.info("Wings conf eventPublishHelper ApplicationEventMulticaster=" + multicaster.getClass());
+            log.info("Slardar conf eventPublishHelper ApplicationEventMulticaster=" + multicaster.getClass());
             if (multicaster instanceof SimpleApplicationEventMulticaster) {
                 SimpleApplicationEventMulticaster mc = (SimpleApplicationEventMulticaster) multicaster;
                 try {
@@ -92,7 +93,7 @@ public class SlardarAsyncConfiguration {
                         getTaskExecutor.setAccessible(true);
                         final Object te = getTaskExecutor.invoke(mc);
                         if (te != null) {
-                            log.warn("Wings conf eventPublishHelper SimpleApplicationEventMulticaster should without TaskExecutor");
+                            log.warn("Slardar conf eventPublishHelper SimpleApplicationEventMulticaster should without TaskExecutor");
                         }
                     }
 
@@ -101,7 +102,7 @@ public class SlardarAsyncConfiguration {
                         getErrorHandler.setAccessible(true);
                         final Object eh = getErrorHandler.invoke(mc);
                         if (eh != null) {
-                            log.warn("Wings conf eventPublishHelper SimpleApplicationEventMulticaster should without ErrorHandler");
+                            log.warn("Slardar conf eventPublishHelper SimpleApplicationEventMulticaster should without ErrorHandler");
                         }
                     }
                 }

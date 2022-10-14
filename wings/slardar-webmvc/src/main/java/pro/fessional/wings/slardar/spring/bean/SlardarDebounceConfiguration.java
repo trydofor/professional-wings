@@ -30,7 +30,7 @@ public class SlardarDebounceConfiguration {
     public DebounceInterceptor debounceInterceptor(SlardarDebounceProp debounceProp) {
         final long cap = debounceProp.getCapacity();
         final int max = debounceProp.getMaxWait();
-        log.info("Wings conf debounceInterceptor, capacity=" + cap + ", max-wait=" + max);
+        log.info("SlardarWebmvc spring-bean debounceInterceptor, capacity=" + cap + ", max-wait=" + max);
         final ModelAndView mav = new ModelAndView();
         PlainTextView pv = new PlainTextView(debounceProp.getContentType(), debounceProp.getResponseBody());
         mav.setStatus(HttpStatus.valueOf(debounceProp.getHttpStatus()));

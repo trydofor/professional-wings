@@ -1,5 +1,7 @@
 package pro.fessional.wings.faceless.spring.bean;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +23,8 @@ import pro.fessional.wings.faceless.spring.prop.FacelessEnabledProp;
 @ConditionalOnProperty(name = FacelessEnabledProp.Key$journal, havingValue = "true")
 public class FacelessJournalConfiguration {
 
+    private static final Log log = LogFactory.getLog(FacelessJournalConfiguration.class);
+
     @Bean
     @ConditionalOnMissingBean(JournalService.class)
     public JournalService journalService(
@@ -28,6 +32,7 @@ public class FacelessJournalConfiguration {
             BlockIdProvider blockIdProvider,
             CommitJournalModify journalModify
     ) {
+        log.info("Faceless spring-bean journalService");
         return new DefaultJournalService(lightIdService, blockIdProvider, journalModify);
     }
 
@@ -35,6 +40,7 @@ public class FacelessJournalConfiguration {
     @Bean
     @ConditionalOnMissingBean(CommitJournalModify.class)
     public CommitJournalModify commitJournalModify(JdbcTemplate jdbcTemplate) {
+        log.info("Faceless spring-bean commitJournalModify");
         return new CommitJournalModifyJdbc(jdbcTemplate);
     }
 }

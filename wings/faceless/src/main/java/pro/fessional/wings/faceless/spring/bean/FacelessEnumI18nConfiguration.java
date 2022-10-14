@@ -1,5 +1,7 @@
 package pro.fessional.wings.faceless.spring.bean;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -21,12 +23,15 @@ import pro.fessional.wings.silencer.message.CombinableMessageSource;
 @ConditionalOnClass(name = "pro.fessional.wings.silencer.message.CombinableMessageSource")
 public class FacelessEnumI18nConfiguration {
 
+    private static final Log log = LogFactory.getLog(FacelessEnumI18nConfiguration.class);
+
     @Bean
     @ConditionalOnMissingBean(StandardI18nService.class)
     public StandardI18nService standardI18nService(
             JdbcTemplate jdbcTemplate,
             ObjectProvider<CombinableMessageSource> combinableMessageSource
     ) {
+        log.info("Faceless spring-bean standardI18nService");
         return new StandardI18nServiceJdbc(jdbcTemplate, combinableMessageSource.getIfAvailable());
     }
 }
