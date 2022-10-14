@@ -38,7 +38,7 @@ public class SlardarFirstBloodConfiguration {
     @Bean
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$firstBloodImage, havingValue = "true")
     public FirstBloodImageHandler firstBloodImageHandler(@Autowired(required = false) WingsRemoteResolver remoteResolver) {
-        log.info("Wings conf firstBloodImageHandler");
+        log.info("SlardarWebmvc spring-bean firstBloodImageHandler");
         final FirstBloodImageHandler handler = new FirstBloodImageHandler();
         handler.setScenePrefix(firstBloodProp.getCaptchaPrefix());
         handler.setClientTicketKey(firstBloodProp.getClientTicketKey());
@@ -56,7 +56,7 @@ public class SlardarFirstBloodConfiguration {
         handler.setWingsRemoteResolver(remoteResolver);
         handler.setCaseIgnore(firstBloodProp.isCaseIgnore());
         if (firstBloodProp.isChineseCaptcha()) {
-            log.info("Wings conf firstBloodImageHandler ChineseCaptcha");
+            log.info("SlardarWebmvc conf firstBloodImageHandler ChineseCaptcha");
             handler.setCaptchaSupplier(() -> RandCode.mix(4));
         }
         return handler;
@@ -66,7 +66,7 @@ public class SlardarFirstBloodConfiguration {
     @ConditionalOnMissingBean(FirstBloodInterceptor.class)
     public FirstBloodInterceptor firstBloodInterceptor(ObjectProvider<FirstBloodHandler> providers) {
         final List<FirstBloodHandler> handlers = providers.orderedStream().collect(Collectors.toList());
-        log.info("Wings conf firstBloodInterceptor, handlers count=" + handlers.size());
+        log.info("SlardarWebmvc spring-bean firstBloodInterceptor, handlers count=" + handlers.size());
         return new FirstBloodInterceptor(handlers);
     }
 }

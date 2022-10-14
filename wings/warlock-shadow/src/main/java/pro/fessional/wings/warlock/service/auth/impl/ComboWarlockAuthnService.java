@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
 import org.springframework.transaction.annotation.Transactional;
+import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.caching.CacheEventHelper;
@@ -17,7 +18,6 @@ import pro.fessional.wings.warlock.event.cache.TableChangeEvent;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.help.AuthnDetailsMapper;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -105,7 +105,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
                 userDetails.setAccountNonLocked(false);
         }
 
-        userDetails.setCredentialsNonExpired(details.getExpiredDt().isAfter(LocalDateTime.now()));
+        userDetails.setCredentialsNonExpired(details.getExpiredDt().isAfter(Now.localDateTime()));
     }
 
     @Override

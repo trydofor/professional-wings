@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.logging.LogLevel;
@@ -36,8 +36,8 @@ public class SilencerAutoLogConfiguration {
 
     @Bean
     @ConditionalOnClass(ConsoleAppender.class)
-    public ApplicationRunner autoAddFilterLogbackConsole(SilencerMiranaProp prop) {
-        log.info("Wings conf autoAddFilterLogbackConsole");
+    public CommandLineRunner autoAddFilterLogbackConsole(SilencerMiranaProp prop) {
+        log.info("SilencerCurse spring-runs autoAddFilterLogbackConsole");
         return args -> {
             final SilencerMiranaProp.AutoLog autoLog = prop.getAutoLog();
             final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);

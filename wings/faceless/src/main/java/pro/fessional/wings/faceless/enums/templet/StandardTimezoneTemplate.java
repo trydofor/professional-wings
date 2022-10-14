@@ -3,7 +3,9 @@
 package pro.fessional.wings.faceless.enums.templet;
 
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.i18n.ZoneIdResolver;
 import pro.fessional.wings.faceless.enums.StandardTimezoneEnum;
 
@@ -48,12 +50,13 @@ public enum StandardTimezoneTemplate implements StandardTimezoneEnum {
     private final ZoneId tzid;
 
 
+    // RNA:USE /standard_language/enum-type/*
     StandardTimezoneTemplate(int id, String code, String hint, String info) {
         this.id = id;
         this.code = code;
         this.hint = hint;
         this.info = info;
-        this.ukey = useIdAsKey ? "id" + id : code;
+        this.ukey = "standard_language." + (useIdAsKey ? "id." + id : code);
         this.rkey = "sys_constant_enum.hint." + ukey;
         this.tzid = ZoneIdResolver.zoneId(code);
         this.zone = ZoneIdResolver.timeZone(code);
@@ -64,7 +67,6 @@ public enum StandardTimezoneTemplate implements StandardTimezoneEnum {
         return id;
     }
 
-    // RNA:USE /standard_language/enum-type/
     @Override
     public @NotNull String getType() {
         return "standard_language";
@@ -113,5 +115,41 @@ public enum StandardTimezoneTemplate implements StandardTimezoneEnum {
     @Override
     public @NotNull String getI18nCode() {
         return rkey;
+    }
+
+    @Nullable
+    public static StandardTimezoneTemplate valueOf(int id) {
+        for (StandardTimezoneTemplate v : StandardTimezoneTemplate.values()) {
+            if (id == v.id) return v;
+        }
+        return null;
+    }
+
+    @Contract("_, !null -> !null")
+    public static StandardTimezoneTemplate idOf(Integer id, StandardTimezoneTemplate elz) {
+        if (id == null) return elz;
+        final int i = id;
+        for (StandardTimezoneTemplate v : StandardTimezoneTemplate.values()) {
+            if (i == v.id) return v;
+        }
+        return elz;
+    }
+
+    @Contract("_, !null -> !null")
+    public static StandardTimezoneTemplate codeOf(String code, StandardTimezoneTemplate elz) {
+        if (code == null) return elz;
+        for (StandardTimezoneTemplate v : StandardTimezoneTemplate.values()) {
+            if (code.equalsIgnoreCase(v.code)) return v;
+        }
+        return elz;
+    }
+
+    @Contract("_, !null -> !null")
+    public static StandardTimezoneTemplate nameOf(String name, StandardTimezoneTemplate elz) {
+        if (name == null) return elz;
+        for (StandardTimezoneTemplate v : StandardTimezoneTemplate.values()) {
+            if (name.equalsIgnoreCase(v.name())) return v;
+        }
+        return elz;
     }
 }

@@ -17,14 +17,6 @@ public class FacelessEnabledProp {
     public static final String Key = "spring.wings.faceless.enabled";
 
     /**
-     * 是否注入 jdbcTemplate
-     *
-     * @see #Key$jdbctemplate
-     */
-    private boolean jdbctemplate = true;
-    public static final String Key$jdbctemplate = Key + ".jdbctemplate";
-
-    /**
      * 是否注入lingthid
      *
      * @see #Key$lightid

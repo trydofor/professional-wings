@@ -46,16 +46,16 @@ public class WarlockSecurityAutoConfiguration extends WebSecurityConfigurerAdapt
      */
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        log.info("Wings conf HttpSecurity");
+        log.info("WarlockShadow conf HttpSecurity");
         for (Map.Entry<String, HttpSecurityCustomizer> en : configures.entrySet()) {
-            log.info("Wings conf HttpSecurity, bean=" + en.getKey());
+            log.info("WarlockShadow conf HttpSecurity, bean=" + en.getKey());
             en.getValue().customize(http);
         }
 
         //
         final String anyRequest = warlockSecurityProp.getAnyRequest();
         if (StringUtils.hasText(anyRequest)) {
-            log.info("Wings conf HttpSecurity, anyRequest=" + anyRequest);
+            log.info("WarlockShadow conf HttpSecurity, anyRequest=" + anyRequest);
             String str = anyRequest.trim();
             if ("permitAll".equalsIgnoreCase(str)) {
                 http.authorizeRequests().anyRequest().permitAll();

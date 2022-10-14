@@ -14,7 +14,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(WarlockErrorProp.Key)
 public class WarlockErrorProp {
 
-    public static final String Key = "wings.slardar.error";
+    public static final String Key = "wings.warlock.error";
 
     private final CodeException codeException = new CodeException();
     private final CodeException allException = new CodeException();

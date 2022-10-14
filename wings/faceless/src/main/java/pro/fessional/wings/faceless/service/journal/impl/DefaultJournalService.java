@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.helper.ModifyAssert;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
@@ -13,7 +14,6 @@ import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 
-import java.time.LocalDateTime;
 import java.util.function.Function;
 
 /**
@@ -25,6 +25,7 @@ public class DefaultJournalService implements JournalService {
 
     public static final String SEQ_JOURNAL = "sys_commit_journal";
 
+    /** no leak, for try-finally */
     private final TransmittableThreadLocal<Journal> context = new TransmittableThreadLocal<>();
     private final LightIdService lightIdService;
     private final BlockIdProvider blockIdProvider;
@@ -39,7 +40,7 @@ public class DefaultJournalService implements JournalService {
         if (commit == null) {
             long id = lightIdService.getId(SEQ_JOURNAL, blockIdProvider.getBlockId());
 
-            Journal journal = new Journal(id, LocalDateTime.now(), eventName,
+            Journal journal = new Journal(id, ThreadNow.localDateTime(), eventName,
                     targetKey == null ? EmptyValue.VARCHAR : targetKey,
                     loginInfo == null ? EmptyValue.VARCHAR : loginInfo,
                     otherInfo == null ? EmptyValue.VARCHAR : otherInfo

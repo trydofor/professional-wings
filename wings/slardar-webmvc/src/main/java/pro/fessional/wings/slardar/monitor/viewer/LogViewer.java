@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pro.fessional.mirana.id.Ulid;
 import pro.fessional.wings.slardar.monitor.WarnFilter;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.spring.prop.SlardarMonitorProp;
@@ -27,7 +28,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * @author trydofor
@@ -99,7 +99,7 @@ public class LogViewer implements WarnFilter {
                         wd.setType(WarnMetric.Type.Link);
                         wd.setKey(next.getKey());
                         wd.setRule(next.getRule());
-                        final String id = UUID.randomUUID().toString();
+                        final String id = Ulid.next();
                         cache.put(id, next.getWarn());
                         wd.setWarn(conf.getDomain() + conf.getMapping() + "?id=" + id);
                         flt.add(wd);

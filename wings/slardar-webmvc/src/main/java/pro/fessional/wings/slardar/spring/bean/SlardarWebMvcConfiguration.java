@@ -42,7 +42,7 @@ public class SlardarWebMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(@NotNull InterceptorRegistry registry) {
         for (AutoRegisterInterceptor it : interceptors) {
-            log.info("Wings conf Interceptor=" + it.getClass().getName());
+            log.info("SlardarWebmvc conf Interceptor=" + it.getClass().getName());
             registry.addInterceptor(it);
         }
     }
@@ -50,7 +50,7 @@ public class SlardarWebMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(@NotNull List<HandlerMethodArgumentResolver> resolvers) {
         if (pageQueryArgumentResolver != null) {
-            log.info("Wings conf HandlerMethodArgumentResolver=" + pageQueryArgumentResolver.getClass().getName());
+            log.info("SlardarWebmvc conf HandlerMethodArgumentResolver=" + pageQueryArgumentResolver.getClass().getName());
             resolvers.add(pageQueryArgumentResolver);
         }
     }

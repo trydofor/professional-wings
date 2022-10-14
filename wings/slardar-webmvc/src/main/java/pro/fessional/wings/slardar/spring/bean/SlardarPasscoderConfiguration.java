@@ -49,7 +49,7 @@ public class SlardarPasscoderConfiguration {
     public PasswordEncoder passwordEncoder() {
         final String encoder = slardarPasscoderProp.getPassEncoder();
         final String decoder = slardarPasscoderProp.getPassDecoder();
-        log.info("Wings conf PasswordEncoder bean, default encoder is " + encoder + ", decoder is " + decoder);
+        log.info("SlardarWebmvc spring-bean passwordEncoder, default encoder=" + encoder + ", decoder is " + decoder);
         Map<String, PasswordEncoder> encoders = PasswordEncoders.initEncoders(slardarPasscoderProp.getTimeDeviationMs());
         DelegatingPasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(encoder, encoders);
         passwordEncoder.setDefaultPasswordEncoderForMatches(encoders.get(decoder));
@@ -60,7 +60,7 @@ public class SlardarPasscoderConfiguration {
     @ConditionalOnMissingBean(PasssaltEncoder.class)
     public PasssaltEncoder passsaltEncoder() {
         final String encoder = slardarPasscoderProp.getSaltEncoder();
-        log.info("Wings conf passsaltEncoder bean, default encoder is " + encoder);
+        log.info("SlardarWebmvc spring-bean passsaltEncoder, default encoder=" + encoder);
 
         MdHelp md;
         if (encoder.equalsIgnoreCase("sha256")) {
@@ -83,7 +83,7 @@ public class SlardarPasscoderConfiguration {
      */
     @Bean
     public WingsSecBeanInitConfigurer wingsInitBeanManagerConfigurer(ApplicationContext context) {
-        log.info("Wings conf wingsInitBeanManagerConfigurer ");
+        log.info("SlardarWebmvc spring-bean wingsInitBeanManagerConfigurer");
         return new WingsSecBeanInitConfigurer(context);
     }
 }

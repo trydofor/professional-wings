@@ -7,9 +7,9 @@ import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
 
 import java.util.Locale;
 
@@ -41,7 +41,7 @@ public class I18nResultPropertyFilter implements AutoRegisterPropertyFilter {
                 final R<?> value = (R<?>) pojo;
                 String i18nCode = value.getI18nCode();
                 if (StringUtils.hasText(i18nCode)) {
-                    Locale locale = LocaleContextHolder.getLocale();
+                    Locale locale = LocaleZoneIdUtil.LocaleNonnull.get();
                     String i18n = messageSource.getMessage(i18nCode, value.getI18nArgs(), locale);
                     if (StringUtils.hasText(i18n) && !i18n.equalsIgnoreCase(i18nCode)) {
                         value.setMessage(i18n);

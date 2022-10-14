@@ -32,22 +32,22 @@ public class FacelessDataSourceConfiguration {
         final AtomicBoolean skipOther = new AtomicBoolean(false);
         modifiers.orderedStream().forEach(it -> {
             if (skipOther.get()) {
-                log.info("init bean dataSourceContext skip modifier, clz=" + it.getClass());
+                log.info("Faceless spring-bean dataSourceContext skip modifier, clz=" + it.getClass());
             }
             else {
                 final boolean md = it.customize(ctx);
-                log.info("init bean dataSourceContext by modifier skipOthers=" + md + ", clz=" + it.getClass());
+                log.info("Faceless spring-bean dataSourceContext by modifier skipOthers=" + md + ", clz=" + it.getClass());
                 skipOther.set(md);
             }
         });
 
         if (ctx.getPrimary() != null) {
-            log.info("init bean dataSourceContext's inuse, by modifier skipOthers=" + skipOther.get());
+            log.info("Faceless spring-bean dataSourceContext's inuse, by modifier skipOthers=" + skipOther.get());
         }
         else {
             Optional<DataSource> ds = dataSources.orderedStream().findFirst();
             if (ds.isPresent()) {
-                log.info("init bean dataSourceContext by 1st data-source");
+                log.info("Faceless spring-bean dataSourceContext by 1st data-source");
                 ctx.setPrimary(ds.get());
             }
             else {
@@ -57,27 +57,27 @@ public class FacelessDataSourceConfiguration {
 
         final int ps = ctx.getPlains().size();
         if (ps > 0) {
-            log.info("init bean dataSourceContext's plains, by modifier, count=" + ps);
+            log.info("Faceless spring-bean dataSourceContext's plains, by modifier, count=" + ps);
         }
         else {
             AtomicInteger cnt = new AtomicInteger(0);
             dataSources.orderedStream().forEach(it -> ctx.addPlain("ds-" + cnt.incrementAndGet(), it));
-            log.info("init bean dataSourceContext's plains, by all datasource, count=" + cnt.get());
+            log.info("Faceless spring-bean dataSourceContext's plains, by all datasource, count=" + cnt.get());
         }
 
         if (log.isInfoEnabled()) {
             for (Map.Entry<String, DataSource> e : ctx.getPlains().entrySet()) {
-                log.info("[Wings]🦄 database-" + e.getKey() + "-url=" + ctx.cacheJdbcUrl(e.getValue()));
+                log.info("Faceless🦄 database-" + e.getKey() + "-url=" + ctx.cacheJdbcUrl(e.getValue()));
             }
             final DataSource shard = ctx.getSharding();
             if (shard != null) {
-                log.info("[Wings]🦄 database-sharding-url=" + ctx.cacheJdbcUrl(shard));
+                log.info("Faceless🦄 database-sharding-url=" + ctx.cacheJdbcUrl(shard));
             }
             else {
-                log.info("[Wings]🦄 database-sharding-url=no-shard-plain-database");
+                log.info("Faceless🦄 database-sharding-url=no-shard-plain-database");
             }
-            log.info("[Wings]🦄 database-primary-url=" + ctx.cacheJdbcUrl(ctx.getPrimary()));
-            log.info("[Wings]🦄 database-separate=" + ctx.isSeparate());
+            log.info("Faceless🦄 database-primary-url=" + ctx.cacheJdbcUrl(ctx.getPrimary()));
+            log.info("Faceless🦄 database-separate=" + ctx.isSeparate());
         }
 
         return ctx;

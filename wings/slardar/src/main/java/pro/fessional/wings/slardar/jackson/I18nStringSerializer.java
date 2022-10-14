@@ -6,8 +6,9 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import pro.fessional.mirana.i18n.I18nString;
+import pro.fessional.wings.slardar.autodto.AutoI18nString;
+import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -36,15 +37,17 @@ public class I18nStringSerializer extends JsonSerializer<Object> implements Cont
             return;
         }
 
-        Locale locale = LocaleContextHolder.getLocale();
-
         if (value instanceof CharSequence) {
             String text = value.toString();
-            if (enabled) text = messageSource.getMessage(text, new Object[]{}, locale);
+            if (enabled){
+                Locale locale = LocaleZoneIdUtil.LocaleNonnull.get();
+                text = messageSource.getMessage(text, new Object[]{}, locale);
+            }
             gen.writeString(text);
         } else { // value instanceof I18nString
             I18nString i18n = (I18nString) value;
             if (enabled) {
+                Locale locale = LocaleZoneIdUtil.LocaleNonnull.get();
                 String text = messageSource.getMessage(i18n.getCode(), i18n.getArgs(), locale);
                 if (text.equalsIgnoreCase(i18n.getCode())) {
                     text = i18n.toString(locale);
@@ -64,7 +67,7 @@ public class I18nStringSerializer extends JsonSerializer<Object> implements Cont
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider provider, BeanProperty property) {
         if (property == null) return this;
-        JsonI18nString ann = property.getAnnotation(JsonI18nString.class);
+        AutoI18nString ann = property.getAnnotation(AutoI18nString.class);
         if (ann == null || ann.value() == enabled) return this;
 
         I18nStringSerializer that = oppositeOne.get();

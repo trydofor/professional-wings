@@ -41,7 +41,7 @@ public class SlardarJacksonConfiguration {
     @Bean
     @ConditionalOnProperty(name = SlardarJacksonProp.Key$i18nResult, havingValue = "true")
     public AutoRegisterPropertyFilter i18nResultPropertyFilter() {
-        log.info("Wings conf i18nResultPropertyFilter");
+        log.info("Slardar spring-bean i18nResultPropertyFilter");
         return new I18nResultPropertyFilter(messageSource);
     }
 
@@ -52,7 +52,7 @@ public class SlardarJacksonConfiguration {
                              + "|| ${" + SlardarJacksonProp.Key$emptyMap + ":false}"
     )
     public AutoRegisterPropertyFilter emptyValuePropertyFilter() {
-        log.info("Wings conf emptyValuePropertyFilter");
+        log.info("Slardar spring-bean emptyValuePropertyFilter");
 
         final LocalDate ed = slardarJacksonProp.getEmptyDate() == null ? null :
                              DateParser.parseDate(slardarJacksonProp.getEmptyDate());

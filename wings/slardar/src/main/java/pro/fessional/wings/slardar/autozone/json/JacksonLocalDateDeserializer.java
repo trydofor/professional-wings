@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,7 +43,10 @@ public class JacksonLocalDateDeserializer extends LocalDateDeserializer {
     @Override
     protected LocalDateDeserializer withDateFormat(DateTimeFormatter dtf) {
         if (dtf == _formatter) return this;
-        return new JacksonLocalDateDeserializer(this, dtf, formats);
+        final List<DateTimeFormatter> fts = new ArrayList<>(formats.size());
+        fts.add(dtf);
+        fts.addAll(formats);
+        return new JacksonLocalDateDeserializer(this, dtf, fts);
     }
 
     @Override
@@ -57,8 +61,7 @@ public class JacksonLocalDateDeserializer extends LocalDateDeserializer {
 
     @Override
     public LocalDate deserialize(JsonParser parser, DeserializationContext context) throws IOException {
-        String str = parser.getText().trim();
-        TemporalAccessor tma = DateParser.parseTemporal(str, formats, true);
+        TemporalAccessor tma = DateParser.parseTemporal(parser.getText(), formats, true);
         if (tma == null) {
             return super.deserialize(parser, context);
         }

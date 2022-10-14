@@ -44,14 +44,14 @@ public class WarlockJustAuthConfiguration {
     @Bean
     @ConditionalOnMissingBean(AuthStateCache.class)
     public AuthStateCache authStateCache() {
-        log.info("Wings conf authStateCache");
+        log.info("WarlockShadow spring-bean authStateCache");
         return new JustAuthStateCaffeine(justAuthProp.getCacheSize(), justAuthProp.getCacheLive());
     }
 
     @Bean
     @ConditionalOnMissingBean(JustAuthRequestBuilder.class)
     public JustAuthRequestBuilder justAuthRequestBuilder(AuthStateCache cache, AuthStateBuilder builder) {
-        log.info("Wings conf justAuthRequestFactory");
+        log.info("WarlockShadow spring-bean justAuthRequestFactory");
         JustAuthRequestBuilder bean = new JustAuthRequestBuilder();
         final Map<String, WarlockJustAuthProp.Http> hcs = justAuthProp.getHttpConf();
         final Map<String, Enum<?>> emp = securityProp.mapAuthTypeEnum();
@@ -65,7 +65,7 @@ public class WarlockJustAuthConfiguration {
             AuthConfig ac = en.getValue();
             WarlockJustAuthProp.Http hc = hcs.get(k);
             if (hc == null || !StringUtils.hasText(hc.getProxyHost()) || DIRECT.name().equalsIgnoreCase(hc.getProxyType())) {
-                log.info("Wings conf justAuthRequestFactory auth-type " + k);
+                log.info("WarlockShadow conf justAuthRequestFactory auth-type " + k);
             }
             else {
                 final Proxy.Type ht = Proxy.Type.valueOf(hc.getProxyType());
@@ -75,7 +75,7 @@ public class WarlockJustAuthConfiguration {
                         .timeout(hc.getTimeout() * 1000)
                         .proxy(proxy)
                         .build());
-                log.info("Wings conf justAuthRequestFactory auth-type " + k + ", proxy=" + hc.getProxyType());
+                log.info("WarlockShadow conf justAuthRequestFactory auth-type " + k + ", proxy=" + hc.getProxyType());
             }
 
             // 处理动态redirect-uri

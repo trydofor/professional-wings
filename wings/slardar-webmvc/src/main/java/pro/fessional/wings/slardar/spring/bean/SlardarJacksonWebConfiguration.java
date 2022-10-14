@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -22,8 +21,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
+import pro.fessional.wings.slardar.autozone.AutoZoneType;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeDeserializer;
+import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeSerializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalTimeDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeSerializer;
@@ -76,14 +77,14 @@ public class SlardarJacksonWebConfiguration {
     @Primary
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
-        log.info("Wings conf jackson ObjectMapper");
+        log.info("SlardarWebmvc spring-bean jackson ObjectMapper");
         return builder.createXmlMapper(false).build();
     }
 
     @Bean
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public XmlMapper xmlMapper(Jackson2ObjectMapperBuilder builder) {
-        log.info("Wings conf jackson XmlMapper");
+        log.info("SlardarWebmvc spring-bean jackson XmlMapper");
         return builder.createXmlMapper(true).build();
     }
 */
@@ -102,19 +103,9 @@ public class SlardarJacksonWebConfiguration {
      */
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer customizerObjectMapperDatetime() {
-        log.info("Wings conf customizerObjectMapperDatetime");
+        log.info("SlardarWebmvc spring-bean customizerObjectMapperDatetime");
         return builder -> {
             // local
-            val full = DateTimeFormatter.ofPattern(slardarDatetimeProp.getDatetime().getFormat());
-            val fullPsr = slardarDatetimeProp.getDatetime()
-                                             .getSupport()
-                                             .stream()
-                                             .map(DateTimeFormatter::ofPattern)
-                                             .collect(Collectors.toList());
-            builder.serializerByType(LocalDateTime.class, new LocalDateTimeSerializer(full));
-            builder.deserializerByType(LocalDateTime.class, new JacksonLocalDateTimeDeserializer(full, fullPsr));
-            log.info("Wings conf Jackson2ObjectMapperBuilderCustomizer LocalDateTime");
-
             val date = DateTimeFormatter.ofPattern(slardarDatetimeProp.getDate().getFormat());
             val datePsr = slardarDatetimeProp.getDate()
                                              .getSupport()
@@ -123,7 +114,7 @@ public class SlardarJacksonWebConfiguration {
                                              .collect(Collectors.toList());
             builder.serializerByType(LocalDate.class, new LocalDateSerializer(date));
             builder.deserializerByType(LocalDate.class, new JacksonLocalDateDeserializer(date, datePsr));
-            log.info("Wings conf Jackson2ObjectMapperBuilderCustomizer LocalDate");
+            log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer LocalDate");
 
             val time = DateTimeFormatter.ofPattern(slardarDatetimeProp.getTime().getFormat());
             val timePsr = slardarDatetimeProp.getTime()
@@ -133,11 +124,26 @@ public class SlardarJacksonWebConfiguration {
                                              .collect(Collectors.toList());
             builder.serializerByType(LocalTime.class, new LocalTimeSerializer(time));
             builder.deserializerByType(LocalTime.class, new JacksonLocalTimeDeserializer(time, timePsr));
-            log.info("Wings conf Jackson2ObjectMapperBuilderCustomizer LocalTime");
+            log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer LocalTime");
+
+            // auto local
+            val full = DateTimeFormatter.ofPattern(slardarDatetimeProp.getDatetime().getFormat());
+            final AutoZoneType autoLocal = AutoZoneType.valueOf(slardarDatetimeProp.getDatetime().isAuto());
+            JacksonLocalDateTimeSerializer.defaultFormatter = full;
+            JacksonLocalDateTimeSerializer.defaultAutoZone = autoLocal;
+            builder.serializerByType(LocalDateTime.class, new JacksonLocalDateTimeSerializer(full, autoLocal));
+
+            val fullPsr = slardarDatetimeProp.getDatetime()
+                                             .getSupport()
+                                             .stream()
+                                             .map(DateTimeFormatter::ofPattern)
+                                             .collect(Collectors.toList());
+            builder.deserializerByType(LocalDateTime.class, new JacksonLocalDateTimeDeserializer(full, fullPsr, autoLocal));
+            log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer LocalDateTime");
 
             // auto zoned
             DateTimeFormatter zoned = DateTimeFormatter.ofPattern(slardarDatetimeProp.getZoned().getFormat());
-            final boolean autoZone = slardarDatetimeProp.getZoned().isAuto();
+            final AutoZoneType autoZone = AutoZoneType.valueOf(slardarDatetimeProp.getZoned().isAuto());
             JacksonZonedDateTimeSerializer.defaultFormatter = zoned;
             JacksonZonedDateTimeSerializer.defaultAutoZone = autoZone;
             builder.serializerByType(ZonedDateTime.class, new JacksonZonedDateTimeSerializer(zoned, autoZone));
@@ -149,11 +155,11 @@ public class SlardarJacksonWebConfiguration {
                                              .collect(Collectors.toList());
 
             builder.deserializerByType(ZonedDateTime.class, new JacksonZonedDateTimeDeserializer(zoned, zonePsr, autoZone));
-            log.info("Wings conf Jackson2ObjectMapperBuilderCustomizer ZonedDateTime");
+            log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer ZonedDateTime");
 
             // auto offset
             DateTimeFormatter offset = DateTimeFormatter.ofPattern(slardarDatetimeProp.getOffset().getFormat());
-            final boolean autoOffset = slardarDatetimeProp.getOffset().isAuto();
+            final AutoZoneType autoOffset = AutoZoneType.valueOf(slardarDatetimeProp.getOffset().isAuto());
             JacksonOffsetDateTimeSerializer.defaultFormatter = offset;
             JacksonOffsetDateTimeSerializer.defaultAutoZone = autoOffset;
             builder.serializerByType(OffsetDateTime.class, new JacksonOffsetDateTimeSerializer(offset, autoOffset));
@@ -165,21 +171,21 @@ public class SlardarJacksonWebConfiguration {
                                             .collect(Collectors.toList());
 
             builder.deserializerByType(OffsetDateTime.class, new JacksonOffsetDateTimeDeserializer(offset, offPsr, autoOffset));
-            log.info("Wings conf Jackson2ObjectMapperBuilderCustomizer OffsetDateTime");
+            log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer OffsetDateTime");
         };
     }
 
     @Bean
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$number, havingValue = "true")
     public Jackson2ObjectMapperBuilderCustomizer customizerObjectMapperNumber() {
-        log.info("Wings conf customizerObjectMapperNumber");
+        log.info("SlardarWebmvc spring-bean customizerObjectMapperNumber");
         return builder -> {
             // Number
             final SlardarNumberProp.Nf ints = slardarNumberProp.getInteger();
             if (ints.isEnable()) {
                 final DecimalFormat df = ints.getWellFormat();
                 final Digital digital = ints.getDigital();
-                log.info("Wings conf Jackson2ObjectMapperBuilderCustomizer Integer&Long serializer");
+                log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer Integer&Long serializer");
                 builder.serializerByType(Integer.class, new FormatNumberSerializer(Integer.class, df, digital));
                 builder.serializerByType(Integer.TYPE, new FormatNumberSerializer(Integer.TYPE, df, digital));
                 builder.serializerByType(Long.class, new FormatNumberSerializer(Long.class, df, digital));
@@ -190,7 +196,7 @@ public class SlardarJacksonWebConfiguration {
             if (floats.isEnable()) {
                 final DecimalFormat df = floats.getWellFormat();
                 final Digital digital = floats.getDigital();
-                log.info("Wings conf Jackson2ObjectMapperBuilderCustomizer Float&Double serializer");
+                log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer Float&Double serializer");
                 builder.serializerByType(Float.class, new FormatNumberSerializer(Float.class, df, digital));
                 builder.serializerByType(Float.TYPE, new FormatNumberSerializer(Float.TYPE, df, digital));
                 builder.serializerByType(Double.class, new FormatNumberSerializer(Double.class, df, digital));
@@ -200,7 +206,7 @@ public class SlardarJacksonWebConfiguration {
             final SlardarNumberProp.Nf decimal = slardarNumberProp.getDecimal();
             if (decimal.isEnable()) {
                 final DecimalFormat df = decimal.getWellFormat();
-                log.info("Wings conf Jackson2ObjectMapperBuilderCustomizer BigDecimal serializer");
+                log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer BigDecimal serializer");
                 builder.serializerByType(BigDecimal.class, new FormatNumberSerializer(BigDecimal.class, df, decimal.getDigital()));
             }
         };
@@ -208,16 +214,16 @@ public class SlardarJacksonWebConfiguration {
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer customizerObjectMapperJackson() {
-        log.info("Wings conf customizerObjectMapperJackson");
+        log.info("SlardarWebmvc spring-bean customizerObjectMapperJackson");
         return builder -> {
             if (StringUtils.hasText(slardarJacksonProp.getEmptyDate()) ||
                 slardarJacksonProp.isEmptyMap() || slardarJacksonProp.isEmptyList()) {
-                log.info("Wings conf EmptyValuePropertyFilter's EmptyDateMixin");
+                log.info("SlardarWebmvc conf EmptyValuePropertyFilter's EmptyDateMixin");
                 builder.mixIn(Object.class, EmptyValuePropertyFilter.EmptyDateMixin.class);
             }
 
             if (slardarJacksonProp.isI18nResult()) {
-                log.info("Wings conf I18nResultPropertyFilter's I18nResultMixin");
+                log.info("SlardarWebmvc conf I18nResultPropertyFilter's I18nResultMixin");
                 builder.serializerByType(I18nString.class, new I18nStringSerializer(messageSource, true));
                 builder.serializerByType(CharSequence.class, new I18nStringSerializer(messageSource, false));
                 builder.mixIn(R.class, I18nResultPropertyFilter.I18nResultMixin.class);
@@ -227,6 +233,7 @@ public class SlardarJacksonWebConfiguration {
 
     @Bean
     public FilterProvider slardarFilterProvider(List<AutoRegisterPropertyFilter> filters) {
+        log.info("SlardarWebmvc spring-bean slardarFilterProvider");
         final SimpleFilterProvider bean = new SimpleFilterProvider();
         for (AutoRegisterPropertyFilter filter : filters) {
             bean.addFilter(filter.getId(), filter);
@@ -237,7 +244,7 @@ public class SlardarJacksonWebConfiguration {
     @Bean
     @ConditionalOnBean(FilterProvider.class)
     public Jackson2ObjectMapperBuilderCustomizer customizerObjectMapperFilterProvider(FilterProvider filterProvider) {
-        log.info("Wings conf customizerObjectMapperFilterProvider");
+        log.info("SlardarWebmvc spring-bean customizerObjectMapperFilterProvider");
         return builder -> builder.filters(filterProvider);
     }
 }

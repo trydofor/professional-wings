@@ -30,7 +30,7 @@ public class SlardarRighterConfiguration {
     @Bean
     @ConditionalOnMissingBean(RighterInterceptor.class)
     public RighterInterceptor righterInterceptor(ObjectProvider<RighterInterceptor.SecretProvider> secretProvider) {
-        log.info("Wings conf righterInterceptor");
+        log.info("SlardarWebmvc spring-bean righterInterceptor");
         final RighterInterceptor bean = new RighterInterceptor(slardarRighterProp);
         final RighterInterceptor.SecretProvider sp = secretProvider.getIfAvailable();
         if (sp != null) {
@@ -43,7 +43,7 @@ public class SlardarRighterConfiguration {
     @ConditionalOnMissingBean(name = "righterExceptionResolver")
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$righter, havingValue = "true")
     public HandlerExceptionResolver righterExceptionResolver() {
-        log.info("Wings conf righterExceptionResolver");
+        log.info("SlardarWebmvc spring-bean righterExceptionResolver");
         final RighterExceptionResolver bean = new RighterExceptionResolver(
                 slardarRighterProp.getHttpStatus(),
                 slardarRighterProp.getContentType(),

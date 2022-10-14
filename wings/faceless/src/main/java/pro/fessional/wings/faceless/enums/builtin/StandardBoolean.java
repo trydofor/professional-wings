@@ -1,6 +1,8 @@
 package pro.fessional.wings.faceless.enums.builtin;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.lang.Nullable;
 import pro.fessional.wings.faceless.enums.ConstantEnum;
 
 /**
@@ -62,5 +64,47 @@ public enum StandardBoolean implements ConstantEnum {
     @Override
     public boolean isStandard() {
         return true;
+    }
+
+    @NotNull
+    public static StandardBoolean valueOf(boolean bool) {
+        return bool ? True : False;
+    }
+
+    @Nullable
+    public static StandardBoolean valueOf(int v) {
+        if (v == True.id) return True;
+        if (v == False.id) return False;
+        return null;
+    }
+
+    @Contract("_, !null -> !null")
+    public static StandardBoolean idOf(Integer id, StandardBoolean elz) {
+        if (id == null) return elz;
+        final int v = id;
+        if (v == True.id) return True;
+        if (v == False.id) return False;
+        return elz;
+    }
+
+    @Contract("_, !null -> !null")
+    public static StandardBoolean codeOf(String code, StandardBoolean elz) {
+        if (code == null) return elz;
+        if (code.equalsIgnoreCase("true") || code.equalsIgnoreCase("t")
+            || code.equalsIgnoreCase("yes") || code.equalsIgnoreCase("y")
+            || code.equalsIgnoreCase("on")) {
+            return True;
+        }
+        if (code.equalsIgnoreCase("false") || code.equalsIgnoreCase("f")
+            || code.equalsIgnoreCase("no") || code.equalsIgnoreCase("n")
+            || code.equalsIgnoreCase("off")) {
+            return False;
+        }
+        return elz;
+    }
+
+    @Contract("_, !null -> !null")
+    public static StandardBoolean nameOf(String name, StandardBoolean elz) {
+        return codeOf(name, elz);
     }
 }

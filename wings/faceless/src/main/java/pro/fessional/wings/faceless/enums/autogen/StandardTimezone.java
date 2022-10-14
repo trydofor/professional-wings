@@ -1,7 +1,9 @@
 package pro.fessional.wings.faceless.enums.autogen;
 
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.i18n.ZoneIdResolver;
 import pro.fessional.wings.faceless.enums.StandardTimezoneEnum;
 
@@ -11,7 +13,7 @@ import java.util.TimeZone;
 /**
  * @author trydofor
  * @see ZoneId#getAvailableZoneIds()
- * @since 2021-02-21
+ * @since 2022-10-03
  */
 public enum StandardTimezone implements StandardTimezoneEnum {
 
@@ -78,7 +80,7 @@ public enum StandardTimezone implements StandardTimezoneEnum {
         this.code = code;
         this.hint = hint;
         this.info = info;
-        this.ukey = useIdAsKey ? "id" + id : code;
+        this.ukey = "standard_timezone." + (useIdAsKey ? "id." + id : code);
         this.rkey = "sys_constant_enum.hint." + ukey;
         this.tzid = ZoneIdResolver.zoneId(code);
         this.zone = ZoneIdResolver.timeZone(code);
@@ -137,5 +139,41 @@ public enum StandardTimezone implements StandardTimezoneEnum {
     @Override
     public @NotNull String getI18nCode() {
         return rkey;
+    }
+
+    @Nullable
+    public static StandardTimezone valueOf(int id) {
+        for (StandardTimezone v : StandardTimezone.values()) {
+            if (id == v.id) return v;
+        }
+        return null;
+    }
+
+    @Contract("_, !null -> !null")
+    public static StandardTimezone idOf(Integer id, StandardTimezone elz) {
+        if (id == null) return elz;
+        final int i = id;
+        for (StandardTimezone v : StandardTimezone.values()) {
+            if (i == v.id) return v;
+        }
+        return elz;
+    }
+
+    @Contract("_, !null -> !null")
+    public static StandardTimezone codeOf(String code, StandardTimezone elz) {
+        if (code == null) return elz;
+        for (StandardTimezone v : StandardTimezone.values()) {
+            if (code.equalsIgnoreCase(v.code)) return v;
+        }
+        return elz;
+    }
+
+    @Contract("_, !null -> !null")
+    public static StandardTimezone nameOf(String name, StandardTimezone elz) {
+        if (name == null) return elz;
+        for (StandardTimezone v : StandardTimezone.values()) {
+            if (name.equalsIgnoreCase(v.name())) return v;
+        }
+        return elz;
     }
 }

@@ -23,7 +23,7 @@ public class SlardarRemoteConfiguration {
 
     @Bean
     public WingsRemoteResolver wingsTerminalResolver(SlardarRemoteProp conf) {
-        log.info("Wings conf WingsRemoteResolver");
+        log.info("SlardarWebmvc spring-bean WingsRemoteResolver");
         final WingsRemoteResolver resolver = new WingsRemoteResolver();
         resolver.addInnerIp(validValue(conf.getInnerIp().values()));
         resolver.addAgentHeader(validValue(conf.getAgentHeader().values()));

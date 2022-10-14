@@ -26,7 +26,7 @@ public class SlardarPageQueryConfiguration {
 
     @Bean
     public PageQueryArgumentResolver pageQueryArgumentResolver() {
-        log.info("Wings conf PageQueryArgumentResolver");
+        log.info("SlardarWebmvc spring-bean pageQueryArgumentResolver");
         final PageQueryArgumentResolver resolver = new PageQueryArgumentResolver();
         resolver.setPage(config.getPage());
         resolver.setSize(config.getSize());

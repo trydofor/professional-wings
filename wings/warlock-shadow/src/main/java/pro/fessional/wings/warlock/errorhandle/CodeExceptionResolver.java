@@ -3,12 +3,13 @@ package pro.fessional.wings.warlock.errorhandle;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.pain.CodeException;
+import pro.fessional.mirana.pain.HttpStatusException;
 import pro.fessional.mirana.text.StringTemplate;
+import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
 import pro.fessional.wings.slardar.webmvc.WingsExceptionResolver;
 
 import java.util.Locale;
@@ -35,16 +36,18 @@ public class CodeExceptionResolver extends WingsExceptionResolver<CodeException>
             message = ce.getMessage();
         }
         else {
-            Locale locale = LocaleContextHolder.getLocale();
+            Locale locale = LocaleZoneIdUtil.LocaleNonnull.get();
             final Object[] args = ce.getI18nArgs();
             message = messageSource.getMessage(code, Null.notNull(args), locale);
         }
 
         final String body = StringTemplate
-                                    .dyn(responseBody)
-                                    .bindStr("{message}", message)
-                                    .toString();
+                .dyn(responseBody)
+                .bindStr("{message}", message)
+                .toString();
 
-        return new Body(httpStatus, contentType, body);
+
+        final int status = ce instanceof HttpStatusException ? ((HttpStatusException) ce).getStatus() : httpStatus;
+        return new Body(status, contentType, body);
     }
 }

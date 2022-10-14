@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2022-06-01
+THIS_VERSION=2022-09-01
 ################ modify the following params ################
 WORK_DIR=''      # 脚本生成文件，日志的目录，默认空（脚本位置）
 TAIL_LOG='log'   # 默认tail的日志，"log|out|new|ask"
@@ -60,6 +60,10 @@ JAVA_ARG='
 '
 # -XX:+ExitOnOutOfMemoryError #docker
 TIME_ZID=''    # java时区，如UTC, GMT+8, Asia/Shanghai
+
+# ext args
+JAVA_EXT=''
+BOOT_EXT=''
 
 ################ NO NEED to modify the following ################
 BOOT_DTM=$(date '+%y%m%d%H%M%S') # 启动日时
@@ -148,6 +152,10 @@ function check_java() {
 
     if [[ "$TIME_ZID" != "" ]]; then
         JAVA_OPT="$JAVA_OPT -Duser.timezone=$TIME_ZID"
+    fi
+
+    if [[ "$JAVA_EXT" != "" ]]; then
+        JAVA_OPT="$JAVA_OPT $JAVA_EXT"
     fi
 }
 
@@ -260,6 +268,9 @@ if [[ "$PORT_RUN" != "" ]]; then
 fi
 if [[ "$BOOT_LOG" != "" ]]; then
     BOOT_ARG="--logging.file.name=$BOOT_LOG $BOOT_ARG"
+fi
+if [[ "$BOOT_EXT" != "" ]]; then
+    BOOT_ARG="$BOOT_ARG $BOOT_EXT"
 fi
 
 # check ps

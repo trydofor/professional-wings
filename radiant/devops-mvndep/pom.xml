@@ -22,12 +22,6 @@
             <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
             <version>${shardingsphere.version}</version>
         </dependency>
-        <!-- mapper converter -->
-        <dependency>
-            <groupId>org.simpleflatmapper</groupId>
-            <artifactId>sfm-jdbc</artifactId>
-            <version>${simpleflatmapper.version}</version>
-        </dependency>
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast-spring</artifactId>
@@ -43,6 +37,11 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.expediagroup.beans</groupId>
+            <artifactId>bull-map-transformer</artifactId>
+            <version>${bull.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional</groupId>

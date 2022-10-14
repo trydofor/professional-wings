@@ -39,7 +39,7 @@ public class WarlockBondBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(DefaultDaoAuthnCombo.class)
     public DefaultDaoAuthnCombo defaultDaoAuthnCombo() {
-        log.info("Wings conf defaultDaoAuthnCombo");
+        log.info("WarlockBond spring-bean defaultDaoAuthnCombo");
         return new DefaultDaoAuthnCombo();
     }
 
@@ -47,28 +47,28 @@ public class WarlockBondBeanConfiguration {
     @ConditionalOnMissingBean(WarlockGrantService.class)
     public WarlockGrantService warlockGrantService() {
         // 存在子类，则不需要此bean，如JustAuthUserAuthnAutoReg
-        log.info("Wings conf warlockGrantService");
+        log.info("WarlockBond spring-bean warlockGrantService");
         return new WarlockGrantServiceImpl();
     }
 
     @Bean
     @ConditionalOnMissingBean(WarlockPermService.class)
     public WarlockPermService warlockPermService() {
-        log.info("Wings conf warlockPermService");
+        log.info("WarlockBond spring-bean warlockPermService");
         return new WarlockPermServiceImpl();
     }
 
     @Bean
     @ConditionalOnMissingBean(WarlockRoleService.class)
     public WarlockRoleService warlockRoleService() {
-        log.info("Wings conf warlockRoleService");
+        log.info("WarlockBond spring-bean warlockRoleService");
         return new WarlockRoleServiceImpl();
     }
 
     @Bean
     @ConditionalOnMissingBean(WarlockUserAuthnService.class)
     public WarlockUserAuthnService warlockUserAuthnService() {
-        log.info("Wings conf warlockUserAuthnService");
+        log.info("WarlockBond spring-bean warlockUserAuthnService");
         return new WarlockUserAuthnServiceImpl();
     }
 
@@ -76,7 +76,7 @@ public class WarlockBondBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(WarlockUserBasisService.class)
     public WarlockUserBasisService warlockUserBasisService() {
-        log.info("Wings conf warlockUserBasisService");
+        log.info("WarlockBond spring-bean warlockUserBasisService");
         return new WarlockUserBasisServiceImpl();
     }
 
@@ -85,7 +85,7 @@ public class WarlockBondBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(WarlockUserLoginService.class)
     public WarlockUserLoginService warlockUserLoginService() {
-        log.info("Wings conf warlockUserLoginService");
+        log.info("WarlockBond spring-bean warlockUserLoginService");
         return new WarlockUserLoginServiceImpl();
     }
 

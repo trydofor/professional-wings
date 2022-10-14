@@ -1,6 +1,8 @@
 package pro.fessional.wings.faceless.enums.autogen;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.i18n.LocaleResolver;
 import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 
@@ -11,7 +13,7 @@ import java.util.Locale;
  *
  * @author trydofor
  * @see Locale#toString()
- * @since 2021-02-21
+ * @since 2022-10-03
  */
 public enum StandardLanguage implements StandardLanguageEnum {
 
@@ -57,7 +59,7 @@ public enum StandardLanguage implements StandardLanguageEnum {
         this.code = code;
         this.hint = hint;
         this.info = info;
-        this.ukey = useIdAsKey ? "id" + id : code;
+        this.ukey = "standard_language." + (useIdAsKey ? "id." + id : code);
         this.rkey = "sys_constant_enum.hint." + ukey;
         this.locl = LocaleResolver.locale(code);
     }
@@ -110,5 +112,41 @@ public enum StandardLanguage implements StandardLanguageEnum {
     @Override
     public @NotNull String getI18nCode() {
         return rkey;
+    }
+
+    @Nullable
+    public static StandardLanguage valueOf(int id) {
+        for (StandardLanguage v : StandardLanguage.values()) {
+            if (id == v.id) return v;
+        }
+        return null;
+    }
+
+    @Contract("_, !null -> !null")
+    public static StandardLanguage idOf(Integer id, StandardLanguage elz) {
+        if (id == null) return elz;
+        final int i = id;
+        for (StandardLanguage v : StandardLanguage.values()) {
+            if (i == v.id) return v;
+        }
+        return elz;
+    }
+
+    @Contract("_, !null -> !null")
+    public static StandardLanguage codeOf(String code, StandardLanguage elz) {
+        if (code == null) return elz;
+        for (StandardLanguage v : StandardLanguage.values()) {
+            if (code.equalsIgnoreCase(v.code)) return v;
+        }
+        return elz;
+    }
+
+    @Contract("_, !null -> !null")
+    public static StandardLanguage nameOf(String name, StandardLanguage elz) {
+        if (name == null) return elz;
+        for (StandardLanguage v : StandardLanguage.values()) {
+            if (name.equalsIgnoreCase(v.name())) return v;
+        }
+        return elz;
     }
 }

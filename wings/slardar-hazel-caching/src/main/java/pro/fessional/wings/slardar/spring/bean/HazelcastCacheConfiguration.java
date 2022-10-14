@@ -27,7 +27,7 @@ public class HazelcastCacheConfiguration {
     @Bean(Manager.Server)
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$caching, havingValue = "true")
     public HazelcastCacheManager hazelcastCacheManager(SlardarCacheProp conf, HazelcastInstance instance) {
-        log.info("Wings conf hazelcast as " + Manager.Server);
+        log.info("SlardarHazelCaching spring-bean hazelcast as " + Manager.Server);
         return new WingsHazelcast.Manager(conf, instance);
     }
 }

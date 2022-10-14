@@ -35,8 +35,7 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 
 @SpringBootTest(properties = {
         "debug = true",
-        "logging.level.org.jooq.tools.LoggerListener=debug",
-        "spring.wings.faceless.jooq.enabled.simpleflatmapper=false",
+        "logging.level.org.jooq.tools.LoggerListener=debug"
 })
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class JooqMapperCompatibleTest {
@@ -82,12 +81,7 @@ public class JooqMapperCompatibleTest {
                           .fetchOneInto(SameName.class);
 
         Assertions.assertNotNull(vo1);
-        if (facelessJooqEnabledProp.isSimpleflatmapper()) {
-            Assertions.assertNotNull(vo1.getLoginInfo(), "Sfm不区分大小写");
-        }
-        else {
-            Assertions.assertNull(vo1.getLoginInfo(), "Jooq区分大小写");
-        }
+        Assertions.assertNull(vo1.getLoginInfo(), "Jooq区分大小写");
     }
 
     @Test
@@ -128,9 +122,9 @@ public class JooqMapperCompatibleTest {
         Tst中文也分表Table t = dao.getTable();
         Condition c = t.Id.eq(105L);
         final Tst中文也分表Record rd = dao.ctx()
-                .selectFrom(t)
-                .where(c)
-                .fetchOne();
+                                     .selectFrom(t)
+                                     .where(c)
+                                     .fetchOne();
         Assertions.assertNotNull(rd);
         Assertions.assertNotNull(rd.getLoginInfo());
         final Object[] arr = rd.intoArray();

@@ -27,7 +27,7 @@ public class WarlockLockBeanConfiguration {
     @ConditionalOnMissingBean(JvmStaticGlobalLock.class)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$globalLock, havingValue = "true")
     public JvmStaticGlobalLock jvmStaticGlobalLock() {
-        log.info("Wings conf jvmStaticGlobalLock");
+        log.info("Warlock spring-bean jvmStaticGlobalLock");
         return new JvmStaticGlobalLock();
     }
 
@@ -35,7 +35,7 @@ public class WarlockLockBeanConfiguration {
     @ConditionalOnMissingBean(DatabaseGlobalLock.class)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$globalLock, havingValue = "true")
     public DatabaseGlobalLock databaseGlobalLock(JdbcTemplate jdbcTemplate) {
-        log.info("Wings conf databaseGlobalLock");
+        log.info("Warlock spring-bean databaseGlobalLock");
         return new DatabaseGlobalLock(jdbcTemplate);
     }
 }

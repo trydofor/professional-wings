@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.data.Null;
+import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.pass.PasswordEncoders;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
@@ -101,7 +102,7 @@ public class MemoryUserDetailsCombo extends DefaultUserDetailsCombo {
                      .build();
         }
         else {
-            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime now = Now.localDateTime();
             if (now.isAfter(dtl.getExpiredDt())) {
                 details.removeIf(it -> now.isAfter(it.getExpiredDt()));
                 dtl = null;

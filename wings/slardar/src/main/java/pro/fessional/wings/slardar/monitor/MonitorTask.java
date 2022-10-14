@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.StringUtils;
+import pro.fessional.wings.slardar.context.Now;
 
 import java.lang.management.ManagementFactory;
-import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -109,7 +109,7 @@ public class MonitorTask implements InitializingBean {
             wn.setType(WarnMetric.Type.Text);
             wn.setKey(key);
             wn.setRule("time");
-            wn.setWarn(ZonedDateTime.now().toString());
+            wn.setWarn(Now.zonedDateTime().toString());
             List<WarnMetric.Warn> ws = Collections.singletonList(wn);
             final Map<String, List<WarnMetric.Warn>> warns = Collections.singletonMap("wings.slardar.monitor.hook", ws);
             report(warns);

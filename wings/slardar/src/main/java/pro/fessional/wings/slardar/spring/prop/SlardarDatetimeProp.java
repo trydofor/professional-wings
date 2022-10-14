@@ -21,14 +21,6 @@ public class SlardarDatetimeProp {
     public static final String Key = "wings.slardar.datetime";
 
     /**
-     * LocalDateTime
-     *
-     * @see #Key$patternDatetime
-     */
-    private Df datetime;
-    public static final String Key$patternDatetime = Key + ".datetime";
-
-    /**
      * LocalDate
      *
      * @see #Key$patternDate
@@ -45,6 +37,14 @@ public class SlardarDatetimeProp {
     public static final String Key$patternTime = Key + ".time";
 
     /**
+     * LocalDateTime
+     *
+     * @see #Key$patternDatetime
+     */
+    private Df datetime;
+    public static final String Key$patternDatetime = Key + ".datetime";
+
+    /**
      * ZonedDateTime
      *
      * @see #Key$patternZoned
@@ -59,6 +59,14 @@ public class SlardarDatetimeProp {
      */
     private Df offset;
     public static final String Key$patternOffset = Key + ".offset";
+
+    /**
+     * 设置系统时钟 offset ms
+     *
+     * @see #Key$clockOffset
+     */
+    private long clockOffset = 0;
+    public static final String Key$clockOffset = Key + ".clock-offset";
 
     @Data
     public static class Df {

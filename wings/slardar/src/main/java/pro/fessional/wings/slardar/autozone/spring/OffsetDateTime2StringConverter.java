@@ -2,14 +2,15 @@ package pro.fessional.wings.slardar.autozone.spring;
 
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.convert.TypeDescriptor;
+import pro.fessional.wings.slardar.autozone.AutoTimeZone;
+import pro.fessional.wings.slardar.autozone.AutoZoneAware;
+import pro.fessional.wings.slardar.autozone.AutoZoneType;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Set;
-import java.util.TimeZone;
 
 /**
  * ConversionService
@@ -19,11 +20,15 @@ import java.util.TimeZone;
  */
 
 @RequiredArgsConstructor
-public class OffsetDateTime2StringConverter extends DateTimeFormatSupport {
+public class OffsetDateTime2StringConverter extends DateTimeFormatSupport implements AutoZoneAware {
 
     private final DateTimeFormatter format;
+    private final AutoZoneType autoZone;
     private final Set<ConvertiblePair> pairs = Collections.singleton(new ConvertiblePair(OffsetDateTime.class, String.class));
-    private final boolean autoZone;
+
+    public OffsetDateTime2StringConverter(DateTimeFormatter format, boolean auto) {
+        this(format, AutoZoneType.valueOf(auto));
+    }
 
     @Override
     public Set<ConvertiblePair> getConvertibleTypes() {
@@ -32,14 +37,8 @@ public class OffsetDateTime2StringConverter extends DateTimeFormatSupport {
 
     @Override
     public Object convert(Object source, @NotNull TypeDescriptor sourceType, @NotNull TypeDescriptor targetType) {
-        final OffsetDateTime odt;
-        if (autoZone) {
-            final TimeZone tz = LocaleContextHolder.getTimeZone();
-            odt = ((OffsetDateTime) source).atZoneSameInstant(tz.toZoneId()).toOffsetDateTime();
-        }
-        else {
-            odt = (OffsetDateTime) source;
-        }
+        final AutoTimeZone anno = targetType.getAnnotation(AutoTimeZone.class);
+        final OffsetDateTime odt = autoOffsetResponse((OffsetDateTime) source, anno == null ? autoZone : anno.value());
         final DateTimeFormatter fmt = getFormatter(targetType);
         return odt.format(fmt == null ? format : fmt);
     }

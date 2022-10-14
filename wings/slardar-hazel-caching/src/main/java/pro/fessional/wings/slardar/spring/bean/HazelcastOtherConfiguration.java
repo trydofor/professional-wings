@@ -27,16 +27,17 @@ public class HazelcastOtherConfiguration {
     @ConditionalOnClass(FlakeIdService.class)
     @Primary
     public FlakeIdService hazelcastFlakeId(HazelcastInstance instance) {
-        log.info("wings conf FlakeIdHazelcastImpl");
+        log.info("SlardarHazelCaching spring-bean hazelcastFlakeId");
         return new FlakeIdHazelcastImpl(instance);
     }
 
     @Bean
     public CommandLineRunner hazelcastSyncPublisherRunner(HazelcastInstance instance, ApplicationEventPublisher publisher) {
+        log.info("SlardarHazelCaching spring-runs hazelcastSyncPublisherRunner");
         return (arg) -> {
-            log.info("wings conf HazelcastSyncPublisher as GlobalPublisher");
             HazelcastSyncPublisher global = new HazelcastSyncPublisher(instance, publisher);
             EventPublishHelper.setGlobalPublisher(global);
+            log.info("SlardarHazelCaching conf HazelcastSyncPublisher as GlobalPublisher, uuid=" + global.getMessageListenerUuid());
         };
     }
 }

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.bits.Aes128;
 import pro.fessional.mirana.bits.Base64;
+import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.FormatUtil;
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
@@ -18,7 +19,6 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 
 /**
@@ -31,7 +31,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AuthStateBuilder {
 
-    private static final int UUID_LEN = 32;
+    private static final int RAND_LEN = 32;
 
     private final Map<String, String> safeState;
     public static final String ParamState = "state";
@@ -40,7 +40,7 @@ public class AuthStateBuilder {
     public static final Type ParamType = new TypeReference<Map<String, String[]>>() {}.getType();
 
     @Setter
-    private Aes128 aes128 = Aes128.of(UUID.randomUUID().toString().replace("-", ""));
+    private Aes128 aes128 = Aes128.of(RandCode.strong(RAND_LEN));
 
     @NotNull
     public String buildState(HttpServletRequest request) {
@@ -62,16 +62,7 @@ public class AuthStateBuilder {
         buildParaMap(request, paraMap);
 
         // 167823d90c46cd70e3961b3f070a871c 32 非性能优先
-        String uuid = UUID.randomUUID().toString().replace("-", "");
-        // 防御性写法
-        final int len = uuid.length();
-        if (len < UUID_LEN) {
-            uuid = uuid + Long.toHexString(System.currentTimeMillis());
-        }
-        if (len > UUID_LEN) {
-            uuid = uuid.substring(0, UUID_LEN);
-        }
-
+        String uuid = RandCode.numlet(RAND_LEN);
         if (paraMap.isEmpty()) {
             return uuid;
         }
@@ -95,11 +86,11 @@ public class AuthStateBuilder {
             return (Map<String, String[]>) attr;
         }
         final String state = request.getParameter(ParamState);
-        if (state == null || state.length() <= UUID_LEN) {
+        if (state == null || state.length() <= RAND_LEN) {
             return Collections.emptyMap();
         }
 
-        final byte[] bytes = Base64.decode(state.substring(UUID_LEN));
+        final byte[] bytes = Base64.decode(state.substring(RAND_LEN));
         final byte[] decode = aes128.decode(bytes);
         final Map<String, String[]> args = JSON.parseObject(decode, ParamType);
         request.setAttribute(AuthStateBuilder.class.getName(), args);

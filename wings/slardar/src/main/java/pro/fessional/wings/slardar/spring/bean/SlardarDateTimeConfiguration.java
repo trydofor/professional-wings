@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.convert.ApplicationConversionService;
 import org.springframework.context.annotation.Bean;
@@ -18,9 +19,11 @@ import pro.fessional.wings.slardar.autozone.spring.String2LocalTimeConverter;
 import pro.fessional.wings.slardar.autozone.spring.String2OffsetDateTimeConverter;
 import pro.fessional.wings.slardar.autozone.spring.String2ZonedDateTimeConverter;
 import pro.fessional.wings.slardar.autozone.spring.ZonedDateTime2StringConverter;
+import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
+import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
@@ -42,7 +45,7 @@ public class SlardarDateTimeConfiguration {
     // spring boot can expose Beans instead of WebMvcConfigurer
     @Bean
     public String2LocalDateConverter stringLocalDateConverter() {
-        log.info("Wings conf stringLocalDateConverter");
+        log.info("Slardar spring-bean stringLocalDateConverter");
         val fmt = slardarDatetimeProp.getDate()
                                      .getSupport()
                                      .stream()
@@ -53,14 +56,14 @@ public class SlardarDateTimeConfiguration {
 
     @Bean
     public LocalDate2StringConverter localDateStringConverter() {
-        log.info("Wings conf localDateStringConverter");
+        log.info("Slardar spring-bean localDateStringConverter");
         final DateTimeFormatter fmt = DateTimeFormatter.ofPattern(slardarDatetimeProp.getDate().getFormat());
         return new LocalDate2StringConverter(fmt);
     }
 
     @Bean
     public String2LocalTimeConverter stringLocalTimeConverter() {
-        log.info("Wings conf stringLocalTimeConverter");
+        log.info("Slardar spring-bean stringLocalTimeConverter");
         val fmt = slardarDatetimeProp.getTime()
                                      .getSupport()
                                      .stream()
@@ -71,32 +74,32 @@ public class SlardarDateTimeConfiguration {
 
     @Bean
     public LocalTime2StringConverter localTimeStringConverter() {
-        log.info("Wings conf localTimeStringConverter");
+        log.info("Slardar spring-bean localTimeStringConverter");
         final DateTimeFormatter fmt = DateTimeFormatter.ofPattern(slardarDatetimeProp.getTime().getFormat());
         return new LocalTime2StringConverter(fmt);
     }
 
     @Bean
     public String2LocalDateTimeConverter stringLocalDateTimeConverter() {
-        log.info("Wings conf stringLocalDateTimeConverter");
+        log.info("Slardar spring-bean stringLocalDateTimeConverter");
         val fmt = slardarDatetimeProp.getDatetime()
                                      .getSupport()
                                      .stream()
                                      .map(DateTimeFormatter::ofPattern)
                                      .collect(Collectors.toList());
-        return new String2LocalDateTimeConverter(fmt);
+        return new String2LocalDateTimeConverter(fmt, slardarDatetimeProp.getDatetime().isAuto());
     }
 
     @Bean
     public LocalDateTime2StringConverter localDateTimeStringConverter() {
-        log.info("Wings conf localDateTimeStringConverter");
+        log.info("Slardar spring-bean localDateTimeStringConverter");
         final DateTimeFormatter fmt = DateTimeFormatter.ofPattern(slardarDatetimeProp.getDatetime().getFormat());
-        return new LocalDateTime2StringConverter(fmt);
+        return new LocalDateTime2StringConverter(fmt, slardarDatetimeProp.getDatetime().isAuto());
     }
 
     @Bean
     public String2ZonedDateTimeConverter stringZonedDateTimeConverter() {
-        log.info("Wings conf stringZonedDateTimeConverter");
+        log.info("Slardar spring-bean stringZonedDateTimeConverter");
         val fmt = slardarDatetimeProp.getZoned()
                                      .getSupport()
                                      .stream()
@@ -107,14 +110,14 @@ public class SlardarDateTimeConfiguration {
 
     @Bean
     public ZonedDateTime2StringConverter zonedDateTimeStringConverter() {
-        log.info("Wings conf zonedDateTimeStringConverter");
+        log.info("Slardar spring-bean zonedDateTimeStringConverter");
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern(slardarDatetimeProp.getZoned().getFormat());
         return new ZonedDateTime2StringConverter(fmt, slardarDatetimeProp.getZoned().isAuto());
     }
 
     @Bean
     public String2OffsetDateTimeConverter stringOffsetDateTimeConverter() {
-        log.info("Wings conf stringOffsetDateTimeConverter");
+        log.info("Slardar spring-bean stringOffsetDateTimeConverter");
         val fmt = slardarDatetimeProp.getOffset()
                                      .getSupport()
                                      .stream()
@@ -125,8 +128,17 @@ public class SlardarDateTimeConfiguration {
 
     @Bean
     public OffsetDateTime2StringConverter offsetDateTimeStringConverter() {
-        log.info("Wings conf offsetDateTimeStringConverter");
+        log.info("Slardar spring-bean offsetDateTimeStringConverter");
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern(slardarDatetimeProp.getOffset().getFormat());
         return new OffsetDateTime2StringConverter(fmt, slardarDatetimeProp.getOffset().isAuto());
+    }
+
+    @Bean
+    public CommandLineRunner initThreadNowRunner() {
+        final long clockOffset = slardarDatetimeProp.getClockOffset();
+        return (arg) -> {
+            log.info("Slardar spring-bean initThreadNowRunner clock-offset=" + clockOffset);
+            Now.initClock(Duration.ofMillis(clockOffset));
+        };
     }
 }

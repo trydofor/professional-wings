@@ -87,8 +87,8 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             else {
                 auth.setExpiredDt(authn.getExpiredDt());
             }
-            auth.setFailedCnt(Z.notNull(authn.getFailedCnt(), 0));
-            auth.setFailedMax(Z.notNull(authn.getFailedMax(), warlockSecurityProp.getAutoregMaxFailed()));
+            auth.setFailedCnt(Z.notNullSafe(0,authn.getFailedCnt()));
+            auth.setFailedMax(Z.notNullSafe(warlockSecurityProp.getAutoregMaxFailed(), authn.getFailedMax()));
 
             commit.create(auth);
 

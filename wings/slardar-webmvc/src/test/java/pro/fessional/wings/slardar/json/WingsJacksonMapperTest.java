@@ -17,14 +17,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
+import pro.fessional.wings.slardar.autodto.AutoI18nString;
+import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.jackson.Aes128StringDeserializer;
 import pro.fessional.wings.slardar.jackson.Aes128StringSerializer;
-import pro.fessional.wings.slardar.jackson.JsonI18nString;
 import pro.fessional.wings.slardar.jackson.StringMapGenerator;
 import pro.fessional.wings.slardar.jackson.StringMapHelper;
 
@@ -79,7 +79,7 @@ public class WingsJacksonMapperTest {
         Locale.setDefault(Locale.US);
         // user timezone
         TimeZone.setDefault(systemTz);
-        LocaleContextHolder.setDefaultTimeZone(userTz);
+        TerminalContext.login(1, Locale.US, userTz, "localhost", "test");
     }
 
     @Data
@@ -221,18 +221,18 @@ public class WingsJacksonMapperTest {
     @Data
     @XmlRootElement
     public static class I18nJson {
-        @JsonI18nString // 有效
+        @AutoI18nString // 有效
         private String codeManual = "base.not-empty";
         private String codeIgnore = "base.not-empty";
         // 自动
         private I18nString textAuto = new I18nString("base.not-empty", "", "textAuto");
-        @JsonI18nString(false) //禁用
+        @AutoI18nString(false) //禁用
         private I18nString textDisabled = new I18nString("base.not-empty", "", "textDisabled");
-        @JsonI18nString // 无效
+        @AutoI18nString // 无效
         private Long longIgnore = 0L;
-        @JsonI18nString // 无效
+        @AutoI18nString // 无效
         private Map<String, String> mapIgnore = Collections.singletonMap("ikey", "ival");
-        @JsonI18nString(false) //禁用
+        @AutoI18nString(false) //禁用
         private Map<String, I18nString> mapDisabled = Collections.singletonMap("i18n", textDisabled);
         // 自动
         private Map<String, I18nString> mapAuto = Collections.singletonMap("i18n", textAuto);
@@ -396,7 +396,7 @@ public class WingsJacksonMapperTest {
 
         assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, ikey=ival, longIgnore=0, textAuto=textAuto can not be empty}", j1.toString());
         assertEquals("{Map=1, bool-val=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, instantVal=2020-06-01T12:34:46Z, intVal=2147483646, listVal=列表, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, longVal=9223372036854775806, zonedDateTimeVal=2020-06-01 13:34:46 Asia/Tokyo, zonedDateTimeValV=2020-06-01 13:34:46.000 Asia/Tokyo, zonedDateTimeValZ=2020-06-01 13:34:46.000 +0900}", j2.toString());
-        assertEquals("{args=textDisabled, codeIgnore=base.not-empty, codeManual=base.not-empty, hint=, key=ikey, longIgnore=0, value=ival}", x1.toString());
+        assertEquals("{codeIgnore=base.not-empty, codeManual=base.not-empty, hint=, key=ikey, longIgnore=0, value=ival}", x1.toString());
         assertEquals("{boolVal=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, intVal=2147483646, key=Map, listVal=列表, longVal=9223372036854775806, value=1}", x2.toString());
     }
 

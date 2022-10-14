@@ -47,7 +47,7 @@ public class SlardarOverloadConfiguration {
         @Override
         public void onApplicationEvent(@NotNull ContextClosedEvent event) {
             overloadFilter.setRequestCapacity(Integer.MIN_VALUE);
-            log.warn("Wings shutting down, deny new request, current=" + overloadFilter.getRequestProcess());
+            log.warn("SlardarWebmvc shutting down, deny new request, current=" + overloadFilter.getRequestProcess());
             for (long breaks = 60 * 1000, step = 30; overloadFilter.getRequestProcess() > 0 && breaks > 0; ) {
                 try {
                     Thread.sleep(step); // 忙等
@@ -57,13 +57,14 @@ public class SlardarOverloadConfiguration {
                     // ignore
                 }
             }
-            log.warn("Wings safely shutting down, no request in processing");
+            log.warn("SlardarWebmvc safely shutting down, no request in processing");
         }
     }
 
     @Bean
     @ConditionalOnMissingBean(WingsOverloadFilter.FallBack.class)
     public WingsOverloadFilter.FallBack overloadFallback(WingsOverloadFilter.Config config) {
+        log.info("SlardarWebmvc spring-bean overloadFallback");
         return (request, response) -> {
             try {
                 if (response instanceof HttpServletResponse) {
@@ -84,7 +85,7 @@ public class SlardarOverloadConfiguration {
     public WingsOverloadFilter wingsOverloadFilter(WingsOverloadFilter.Config config,
                                                    WingsOverloadFilter.FallBack fallBack,
                                                    WingsRemoteResolver resolver) {
-        log.info("Wings conf Overload filter");
+        log.info("SlardarWebmvc spring-bean wingsOverloadFilter");
         return new WingsOverloadFilter(fallBack, config, resolver);
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.time.DateFormatter;
+import pro.fessional.wings.slardar.autozone.AutoTimeZone;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,6 +18,8 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+
+import static pro.fessional.wings.slardar.autozone.AutoZoneType.Auto;
 
 /**
  * @author trydofor
@@ -30,46 +33,49 @@ public class TestDateTimeController {
 
     @Data
     public static class Xdt {
-        public OffsetDateTime odt;
-        public ZonedDateTime zdt;
-        public LocalDateTime ldt;
+        private OffsetDateTime odt;
+        private ZonedDateTime zdt;
+        private LocalDateTime ldt;
+        private String sdt;
     }
 
     @Data
     public static class Ldt {
         @javax.validation.constraints.NotNull
-        public LocalDateTime ldt;
+        private LocalDateTime ldt;
     }
 
     @Data
     public static class Zdt {
         @javax.validation.constraints.NotNull
-        public ZonedDateTime zdt;
+        private ZonedDateTime zdt;
     }
 
     @Data
     public static class Odt {
         @javax.validation.constraints.NotNull
-        public OffsetDateTime odt;
+        private OffsetDateTime odt;
     }
 
     @Data
     public static class Ld {
         @javax.validation.constraints.NotNull
-        public LocalDate ld;
+        private LocalDate ld;
     }
 
     @Data
     public static class Lt {
         @javax.validation.constraints.NotNull
-        public LocalTime lt;
+        private LocalTime lt;
     }
 
     @RequestMapping(value = "/test/ldt-zdt.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public Xdt ldtZdt(@RequestParam("d") LocalDateTime ldt) {
         final Xdt xdt = new Xdt();
-        xdt.zdt = ldt.atZone(ZONE_CN);
+        final ZonedDateTime zdt = ldt.atZone(ZONE_CN);
+        xdt.zdt = zdt;
         xdt.ldt = ldt;
+        xdt.sdt = DateFormatter.fullTz(zdt);
         log.info("ldtZdt>>>" + xdt);
         log.info("userTz>>>" + LocaleContextHolder.getTimeZone());
         return xdt;
@@ -78,9 +84,10 @@ public class TestDateTimeController {
     @RequestMapping(value = "/test/ldt-odt.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public Xdt ldtOdt(@RequestParam("d") LocalDateTime ldt) {
         final Xdt xdt = new Xdt();
-        final ZonedDateTime zdt = ldt.atZone(ZONE_CN);
-        xdt.odt = zdt.toOffsetDateTime();
+        final OffsetDateTime odt = ldt.atZone(ZONE_CN).toOffsetDateTime();
+        xdt.odt = odt;
         xdt.ldt = ldt;
+        xdt.sdt = DateFormatter.fullTz(odt);
         log.info("ldtOdt>>>" + xdt);
         log.info("userTz>>>" + LocaleContextHolder.getTimeZone());
         return xdt;
@@ -89,8 +96,10 @@ public class TestDateTimeController {
     @RequestMapping(value = "/test/ldt-zdt-body.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public Xdt ldtZdtBody(@RequestBody Ldt ldt) {
         final Xdt xdt = new Xdt();
-        xdt.zdt = ldt.ldt.atZone(ZONE_CN);
+        final ZonedDateTime zdt = ldt.ldt.atZone(ZONE_CN);
+        xdt.zdt = zdt;
         xdt.ldt = ldt.ldt;
+        xdt.sdt = DateFormatter.fullTz(zdt);
         log.info("ldtZdtBody>>>" + xdt);
         log.info("userTz>>>" + LocaleContextHolder.getTimeZone());
         return xdt;
@@ -99,8 +108,10 @@ public class TestDateTimeController {
     @RequestMapping(value = "/test/ldt-odt-body.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public Xdt ldtOdtBody(@RequestBody Ldt ldt) {
         final Xdt xdt = new Xdt();
-        xdt.odt = ldt.ldt.atZone(ZONE_CN).toOffsetDateTime();
+        final OffsetDateTime odt = ldt.ldt.atZone(ZONE_CN).toOffsetDateTime();
+        xdt.odt = odt;
         xdt.ldt = ldt.ldt;
+        xdt.sdt = DateFormatter.fullTz(odt);
         log.info("ldtOdtBody>>>" + xdt);
         log.info("userTz>>>" + LocaleContextHolder.getTimeZone());
         return xdt;
@@ -111,6 +122,7 @@ public class TestDateTimeController {
         final Xdt xdt = new Xdt();
         xdt.zdt = zdt;
         xdt.ldt = zdt.toLocalDateTime();
+        xdt.sdt = DateFormatter.fullTz(zdt);
         log.info("zdtLdt>>>" + xdt);
         return xdt;
     }
@@ -120,6 +132,7 @@ public class TestDateTimeController {
         final Xdt xdt = new Xdt();
         xdt.odt = odt;
         xdt.ldt = odt.toLocalDateTime();
+        xdt.sdt = DateFormatter.fullTz(odt);
         log.info("zdtLdt>>>" + xdt);
         return xdt;
     }
@@ -129,6 +142,7 @@ public class TestDateTimeController {
         final Xdt xdt = new Xdt();
         xdt.zdt = zdt.zdt;
         xdt.ldt = zdt.zdt.toLocalDateTime();
+        xdt.sdt = DateFormatter.fullTz(zdt.zdt);
         log.info("zdtLdtBody>>>" + xdt);
         return xdt;
     }
@@ -138,6 +152,7 @@ public class TestDateTimeController {
         final Xdt xdt = new Xdt();
         xdt.odt = odt.odt;
         xdt.ldt = odt.odt.toLocalDateTime();
+        xdt.sdt = DateFormatter.fullTz(odt.odt);
         log.info("zdtLdtBody>>>" + xdt);
         return xdt;
     }
@@ -152,6 +167,39 @@ public class TestDateTimeController {
     public Lt ltLt(@RequestBody Lt lt) {
         log.info("LtBody>>>" + lt);
         return lt;
+    }
+
+    @Data
+    public static class Ldx {
+        @javax.validation.constraints.NotNull
+        @AutoTimeZone(Auto)
+        private LocalDateTime ldt;
+    }
+
+    @RequestMapping(value = "/test/ldx-body-req.json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String ldxBodyReq(@RequestBody Ldx ldx) {
+        log.info("ldx>>>" + ldx);
+        return ldx.ldt.toString();
+    }
+
+    @RequestMapping(value = "/test/ldx-body-res.json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Ldx ldxBodyRes(@RequestParam("d") String ldt) {
+        log.info("ldt>>>" + ldt);
+        Ldx ldx = new Ldx();
+        ldx.setLdt(LocalDateTime.parse(ldt));
+        return ldx;
+    }
+
+    @RequestMapping(value = "/test/ldt-para-req.json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String ldtParaReq(@AutoTimeZone @RequestParam("d") LocalDateTime ldt) {
+        log.info("ldt>>>" + ldt);
+        return ldt.toString();
+    }
+
+    @RequestMapping(value = "/test/ldt-para-res.json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public LocalDateTime ldtParaRes(@RequestParam("d") String ldt) {
+        log.info("ldx>>>" + ldt);
+        return LocalDateTime.parse(ldt);
     }
 
     @RequestMapping(value = "/test/datetime-fmt-date.json")

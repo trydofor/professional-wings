@@ -3,7 +3,9 @@
 package pro.fessional.wings.faceless.enums.templet;
 
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.faceless.enums.ConstantEnum;
 import pro.fessional.wings.faceless.enums.StandardI18nEnum;
 
@@ -41,12 +43,13 @@ public enum ConstantEnumTemplate implements ConstantEnum, StandardI18nEnum {
     private final String ukey;
     private final String rkey;
 
+    // RNA:USE /standard_language/enum-type/*
     ConstantEnumTemplate(int id, String code, String hint, String info) {
         this.id = id;
         this.code = code;
         this.hint = hint;
         this.info = info;
-        this.ukey = useIdAsKey ? "id" + id : code;
+        this.ukey = "standard_language." + (useIdAsKey ? "id." + id : code);
         this.rkey = "sys_constant_enum.hint." + ukey;
     }
 
@@ -55,7 +58,6 @@ public enum ConstantEnumTemplate implements ConstantEnum, StandardI18nEnum {
         return id;
     }
 
-    // RNA:USE /standard_language/enum-type/
     @Override
     public @NotNull String getType() {
         return "standard_language";
@@ -94,5 +96,41 @@ public enum ConstantEnumTemplate implements ConstantEnum, StandardI18nEnum {
     @Override
     public @NotNull String getI18nCode() {
         return rkey;
+    }
+
+    @Nullable
+    public static ConstantEnumTemplate valueOf(int id) {
+        for (ConstantEnumTemplate v : ConstantEnumTemplate.values()) {
+            if (id == v.id) return v;
+        }
+        return null;
+    }
+
+    @Contract("_, !null -> !null")
+    public static ConstantEnumTemplate idOf(Integer id, ConstantEnumTemplate elz) {
+        if (id == null) return elz;
+        final int i = id;
+        for (ConstantEnumTemplate v : ConstantEnumTemplate.values()) {
+            if (i == v.id) return v;
+        }
+        return elz;
+    }
+
+    @Contract("_, !null -> !null")
+    public static ConstantEnumTemplate codeOf(String code, ConstantEnumTemplate elz) {
+        if (code == null) return elz;
+        for (ConstantEnumTemplate v : ConstantEnumTemplate.values()) {
+            if (code.equalsIgnoreCase(v.code)) return v;
+        }
+        return elz;
+    }
+
+    @Contract("_, !null -> !null")
+    public static ConstantEnumTemplate nameOf(String name, ConstantEnumTemplate elz) {
+        if (name == null) return elz;
+        for (ConstantEnumTemplate v : ConstantEnumTemplate.values()) {
+            if (name.equalsIgnoreCase(v.name())) return v;
+        }
+        return elz;
     }
 }

@@ -166,7 +166,8 @@ class SchemaJournalManagerTest {
             "sys_light_sequence",
             "${schemaPrefix}journal",
             "${schemaPrefix}version",
-            "tst_中文也分表"
+            "tst_中文也分表",
+            "tst_中文也分表_postfix",
         )
         testcaseNotice("可检查日志或debug观察，wing0和wing1表名")
     }

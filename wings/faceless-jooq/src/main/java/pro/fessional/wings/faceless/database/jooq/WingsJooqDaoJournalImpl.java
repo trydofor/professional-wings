@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static org.jooq.impl.DSL.noCondition;
@@ -87,7 +88,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     @NotNull
     public List<P> fetchLive(Function<T, Condition> fun) {
         final Condition cond = fun.apply(table);
-        return fetchLive(table, table.onlyLive(cond), SelectOrderCondition.getSelectsOrders(cond));
+        return fetchLive(table, table.onlyLive(cond));
     }
 
     @NotNull
@@ -98,7 +99,26 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     @NotNull
     public List<P> fetchLive(int offset, int limit, Function<T, Condition> fun) {
         final Condition cond = fun.apply(table);
-        return fetch(table, offset, limit, table.onlyLive(cond), SelectOrderCondition.getSelectsOrders(cond));
+        return fetch(table, offset, limit, table.onlyLive(cond));
+    }
+
+    @NotNull
+    public List<P> fetchLive(BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetchLive(table, table.onlyLive(soc.getWhere()), soc.getParts());
+    }
+
+    @NotNull
+    public List<P> fetchLive(int limit, BiConsumer<T, SelectWhereOrder> fun) {
+        return fetchLive(0, limit, fun);
+    }
+
+    @NotNull
+    public List<P> fetchLive(int offset, int limit, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetch(table, offset, limit, table.onlyLive(soc.getWhere()), soc.getParts());
     }
 
     ////////
@@ -198,13 +218,13 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     @Nullable
     public P fetchOneLive(Function<T, Condition> fun) {
         final Condition cond = fun.apply(table);
-        return fetchOne(table, table.onlyLive(cond), SelectOrderCondition.getSelectsOrders(cond));
+        return fetchOne(table, table.onlyLive(cond));
     }
 
     @Nullable
     public P fetchLimitOneLive(Function<T, Condition> fun) {
         final Condition cond = fun.apply(table);
-        return fetchLimitOne(table, table.onlyLive(cond), SelectOrderCondition.getSelectsOrders(cond));
+        return fetchLimitOne(table, table.onlyLive(cond));
     }
 
     @NotNull
@@ -214,6 +234,30 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
 
     @NotNull
     public Optional<P> fetchLimitOptionalLive(Function<T, Condition> fun) {
+        return Optional.ofNullable(fetchLimitOne(fun));
+    }
+
+    @Nullable
+    public P fetchOneLive(BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetchOne(table, table.onlyLive(soc.getWhere()), soc.getParts());
+    }
+
+    @Nullable
+    public P fetchLimitOneLive(BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetchLimitOne(table, table.onlyLive(soc.getWhere()), soc.getParts());
+    }
+
+    @NotNull
+    public Optional<P> fetchOptionalLive(BiConsumer<T, SelectWhereOrder> fun) {
+        return Optional.ofNullable(fetchOne(fun));
+    }
+
+    @NotNull
+    public Optional<P> fetchLimitOptionalLive(BiConsumer<T, SelectWhereOrder> fun) {
         return Optional.ofNullable(fetchLimitOne(fun));
     }
 
@@ -384,8 +428,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
         // 参考DAOImpl deleteById
         final Condition cond;
         if (pkeys.length == 1) {
-            @SuppressWarnings("unchecked")
-            final Field<Object> pk = (Field<Object>) pkeys[0];
+            @SuppressWarnings("unchecked") final Field<Object> pk = (Field<Object>) pkeys[0];
             if (ids.size() == 1) {
                 cond = pk.eq(pk.getDataType().convert(ids.iterator().next()));
             }
@@ -395,8 +438,7 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
         }
         // [#2573] Composite key T types are of type Record[N]
         else {
-            @SuppressWarnings("SuspiciousToArrayCall")
-            final Record[] rn = ids.toArray(EMPTY_RECORD);
+            @SuppressWarnings("SuspiciousToArrayCall") final Record[] rn = ids.toArray(EMPTY_RECORD);
             cond = row(pkeys).in(rn);
         }
 

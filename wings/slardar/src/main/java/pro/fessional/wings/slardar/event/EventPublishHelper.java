@@ -2,17 +2,28 @@ package pro.fessional.wings.slardar.event;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.ResolvableType;
 import pro.fessional.mirana.best.StateAssert;
 
 import java.util.concurrent.Executor;
 
 /**
+ * <pre>
  * ApplicationEventPublisher辅助类。一般用于非事务Event处理，主要功能：
  * ①异步发布。
  * ②IDE提示导航。
  * ③hazelcast的topic(#HazelcastTopic)按SpringEvent模式。
  *
+ * 注意，不要为ApplicationEventMulticaster变为异步，或处理异常，会破坏Spring默认的同步机制。
+ * </pre>
+ *
  * @author trydofor
+ * @see ApplicationEventPublisher
+ * @see ApplicationEventMulticaster
+ * @see AbstractApplicationContext#initApplicationEventMulticaster()
+ * @see AbstractApplicationContext#publishEvent(Object, ResolvableType)
  * @since 2021-06-07
  */
 

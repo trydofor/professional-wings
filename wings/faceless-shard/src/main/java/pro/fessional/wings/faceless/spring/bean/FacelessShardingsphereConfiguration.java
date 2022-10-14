@@ -35,7 +35,7 @@ public class FacelessShardingsphereConfiguration {
 
     @Bean
     public WriteRouteOnlyAround writeRouteOnlyAround() {
-        log.info("[Wings]🦄 config writeRouteOnlyAround");
+        log.info("FacelessShard spring-bean writeRouteOnlyAround");
         return new WriteRouteOnlyAround();
     }
 
@@ -56,7 +56,7 @@ public class FacelessShardingsphereConfiguration {
         final boolean separate = containPropertyPrefix(environment, "spring.shardingsphere.opRules.readwrite-splitting");
         final Map<String, DataSource> dsMap = DataSourceMapSetter.getDataSourceMap(environment);
 
-        log.info("[Wings]🦄 config shardingSphereCustomizer shard=" + (shard != null) + ", separate=" + separate);
+        log.info("FacelessShard spring-bean shardingSphereCustomizer shard=" + (shard != null) + ", separate=" + separate);
 
         return (ctx) -> {
             ctx.cleanPlain()

@@ -28,6 +28,15 @@ public interface StandardI18nService {
      */
     int reloadBase(String base);
 
+    /**
+     * 同数据表 sys_standard_i18n 对应
+     *
+     * @param base 基点，表名或java包名
+     * @param kind 种类，字段或java类名
+     * @param ukey 键值，唯一性值，如id.###|type.code|enum
+     * @param lang 语言
+     * @return 多国语
+     */
     @Nullable
     String load(String base, String kind, String ukey, Locale lang);
 
@@ -36,7 +45,7 @@ public interface StandardI18nService {
      *
      * @param enu  I18nEnum
      * @param lang locale
-     * @return i18n messge
+     * @return i18n message
      */
     @Nullable
     default String load(StandardI18nEnum enu, StandardLanguageEnum lang) {
@@ -49,7 +58,7 @@ public interface StandardI18nService {
      *
      * @param enu  I18nEnum
      * @param lang locale
-     * @return i18n messge
+     * @return i18n message
      */
     @Nullable
     default String load(StandardI18nEnum enu, Locale lang) {
@@ -62,7 +71,7 @@ public interface StandardI18nService {
      *
      * @param enu  enum
      * @param lang locale
-     * @return i18n messge
+     * @return i18n message
      */
     @Nullable
     default String loadEnum(Enum<?> enu, StandardLanguageEnum lang) {
@@ -75,15 +84,15 @@ public interface StandardI18nService {
      *
      * @param enu  enum
      * @param lang locale
-     * @return i18n messge
+     * @return i18n message
      */
     @Nullable
     default String loadEnum(Enum<?> enu, Locale lang) {
         if (enu == null || lang == null) return null;
-        final Class<?> clz = enu.getClass();
-        final String pkg = clz.getPackageName();
-        final String sn = clz.getName();
-        return load(pkg, sn.substring(pkg.length() + 1), enu.name(), lang);
+        final Class<?> clz = enu.getDeclaringClass();
+        final String base = clz.getPackageName();
+        final String kind = clz.getName().substring(base.length() + 1);
+        return load(base, kind, enu.name(), lang);
     }
 
     /**
@@ -91,7 +100,7 @@ public interface StandardI18nService {
      *
      * @param enu  CodeEnum
      * @param lang locale
-     * @return i18n messge
+     * @return i18n message
      */
     @Nullable
     default String loadCode(CodeEnum enu, StandardLanguageEnum lang) {
@@ -104,14 +113,14 @@ public interface StandardI18nService {
      *
      * @param enu  CodeEnum
      * @param lang locale
-     * @return i18n messge
+     * @return i18n message
      */
     @Nullable
     default String loadCode(CodeEnum enu, Locale lang) {
         if (enu == null || lang == null) return null;
         final Class<?> clz = enu.getClass();
-        final String pkg = clz.getPackageName();
-        final String sn = clz.getName();
-        return load(pkg, sn.substring(pkg.length() + 1), enu.getCode(), lang);
+        final String base = clz.getPackageName();
+        final String kind = clz.getName().substring(base.length() + 1);
+        return load(base, kind, enu.getCode(), lang);
     }
 }

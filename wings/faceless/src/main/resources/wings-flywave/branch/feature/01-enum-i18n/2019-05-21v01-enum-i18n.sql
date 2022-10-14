@@ -4,15 +4,16 @@ CREATE TABLE `sys_constant_enum` (
     `code` VARCHAR(100) NOT NULL COMMENT 'enum名字:为SUPER时固定code|id，表示对外key,编码友好',
     `hint` VARCHAR(100) NOT NULL COMMENT '显示内容:线上',
     `info` VARCHAR(500) NOT NULL COMMENT '扩展信息:分类，过滤等，如果SUPER时，为模板Resource格式',
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX uq_type_code (`type`, `code`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='105/常量枚举:自动生成enum类';
 
 CREATE TABLE `sys_standard_i18n` (
-    `base` VARCHAR(100)  NOT NULL COMMENT '基集合:表或类',
-    `kind` VARCHAR(100)  NOT NULL COMMENT '多国语字段：code或列名',
-    `ukey` VARCHAR(200)  NOT NULL COMMENT '唯一键:code|id###',
-    `lang` CHAR(5)       NOT NULL COMMENT '国家语言标记，下划线分隔:zh_CN',
+    `base` VARCHAR(100)  NOT NULL COMMENT '基点:表名|包名',
+    `kind` VARCHAR(100)  NOT NULL COMMENT '种类:列名|类名',
+    `ukey` VARCHAR(200)  NOT NULL COMMENT '键值:id.###|type.code|enum',
+    `lang` CHAR(5)       NOT NULL COMMENT '语言:下划线分隔:zh_CN',
     `hint` VARCHAR(3000) NOT NULL COMMENT '显示内容:中国/东北三省|攻城狮',
     PRIMARY KEY (`base`, `kind`, `ukey`, `lang`)
 ) ENGINE = InnoDB
@@ -68,113 +69,113 @@ VALUES (1010100, 'standard_timezone', 'id', '标准时区', 'classpath:/wings-tm
 
 -- https://24timezones.com/zh_clock/united_states_time.php
 REPLACE INTO `sys_standard_i18n`(`base`, `kind`, `ukey`, `lang`, `hint`)
-VALUES ('sys_constant_enum', 'hint', 'id1010101', 'zh_CN', '格林威治时间(零时区)'),
-       ('sys_constant_enum', 'hint', 'id1010101', 'en_US', 'Greenwich Mean Time'),
+VALUES ('sys_constant_enum', 'hint', 'id.1010101', 'zh_CN', '格林威治时间(零时区)'),
+       ('sys_constant_enum', 'hint', 'id.1010101', 'en_US', 'Greenwich Mean Time'),
 
-       ('sys_constant_enum', 'hint', 'id1010201', 'zh_CN', '北京时间：北京、上海、香港'),
-       ('sys_constant_enum', 'hint', 'id1010201', 'en_US', 'China: BeiJing, ShangHai, HongKong'),
+       ('sys_constant_enum', 'hint', 'id.1010201', 'zh_CN', '北京时间：北京、上海、香港'),
+       ('sys_constant_enum', 'hint', 'id.1010201', 'en_US', 'China: BeiJing, ShangHai, HongKong'),
 
-       ('sys_constant_enum', 'hint', 'id1010301', 'zh_CN', '中部时(CST)：芝加哥、休斯顿'),
-       ('sys_constant_enum', 'hint', 'id1010301', 'en_US', 'CST: Chicago, Houston'),
+       ('sys_constant_enum', 'hint', 'id.1010301', 'zh_CN', '中部时(CST)：芝加哥、休斯顿'),
+       ('sys_constant_enum', 'hint', 'id.1010301', 'en_US', 'CST: Chicago, Houston'),
 
-       ('sys_constant_enum', 'hint', 'id1010302', 'zh_CN', '西部时间(PST)：西雅图、洛杉矶'),
-       ('sys_constant_enum', 'hint', 'id1010302', 'en_US', 'PST: L.A., Seattle'),
+       ('sys_constant_enum', 'hint', 'id.1010302', 'zh_CN', '西部时间(PST)：西雅图、洛杉矶'),
+       ('sys_constant_enum', 'hint', 'id.1010302', 'en_US', 'PST: L.A., Seattle'),
 
-       ('sys_constant_enum', 'hint', 'id1010303', 'zh_CN', '东部时(EST)：纽约、华盛顿'),
-       ('sys_constant_enum', 'hint', 'id1010303', 'en_US', 'EST: NewYork, D.C.'),
+       ('sys_constant_enum', 'hint', 'id.1010303', 'zh_CN', '东部时(EST)：纽约、华盛顿'),
+       ('sys_constant_enum', 'hint', 'id.1010303', 'en_US', 'EST: NewYork, D.C.'),
 
-       ('sys_constant_enum', 'hint', 'id1010304', 'zh_CN', '山地时(MST)：丹佛、凤凰城'),
-       ('sys_constant_enum', 'hint', 'id1010304', 'en_US', 'MST: Denver, Phoenix'),
+       ('sys_constant_enum', 'hint', 'id.1010304', 'zh_CN', '山地时(MST)：丹佛、凤凰城'),
+       ('sys_constant_enum', 'hint', 'id.1010304', 'en_US', 'MST: Denver, Phoenix'),
 
-       ('sys_constant_enum', 'hint', 'id1010305', 'zh_CN', '阿拉斯加时间(AKST)：安克雷奇'),
-       ('sys_constant_enum', 'hint', 'id1010305', 'en_US', 'AKST: Alaska, Fairbanks'),
+       ('sys_constant_enum', 'hint', 'id.1010305', 'zh_CN', '阿拉斯加时间(AKST)：安克雷奇'),
+       ('sys_constant_enum', 'hint', 'id.1010305', 'en_US', 'AKST: Alaska, Fairbanks'),
 
-       ('sys_constant_enum', 'hint', 'id1010306', 'zh_CN', '夏威夷时间(HST)：火鲁奴奴'),
-       ('sys_constant_enum', 'hint', 'id1010306', 'en_US', 'HST: Hawaii, Honolulu'),
+       ('sys_constant_enum', 'hint', 'id.1010306', 'zh_CN', '夏威夷时间(HST)：火鲁奴奴'),
+       ('sys_constant_enum', 'hint', 'id.1010306', 'en_US', 'HST: Hawaii, Honolulu'),
 
-       ('sys_constant_enum', 'hint', 'id1010401', 'zh_CN', '印度尼西亚：雅加达、泗水、棉兰'),
-       ('sys_constant_enum', 'hint', 'id1010401', 'en_US', 'Indonesia：Jakarta, Surabaya、Medan'),
+       ('sys_constant_enum', 'hint', 'id.1010401', 'zh_CN', '印度尼西亚：雅加达、泗水、棉兰'),
+       ('sys_constant_enum', 'hint', 'id.1010401', 'en_US', 'Indonesia：Jakarta, Surabaya、Medan'),
 
-       ('sys_constant_enum', 'hint', 'id1010402', 'zh_CN', '印度尼西亚：查亚普拉、马诺夸里'),
-       ('sys_constant_enum', 'hint', 'id1010402', 'en_US', 'Indonesia：Jayapura、Manokwari'),
+       ('sys_constant_enum', 'hint', 'id.1010402', 'zh_CN', '印度尼西亚：查亚普拉、马诺夸里'),
+       ('sys_constant_enum', 'hint', 'id.1010402', 'en_US', 'Indonesia：Jayapura、Manokwari'),
 
-       ('sys_constant_enum', 'hint', 'id1010403', 'zh_CN', '印度尼西亚：望加锡、万鸦老、阿克'),
-       ('sys_constant_enum', 'hint', 'id1010403', 'en_US', 'Indonesia：Makassar、Manado、Balikpapan'),
+       ('sys_constant_enum', 'hint', 'id.1010403', 'zh_CN', '印度尼西亚：望加锡、万鸦老、阿克'),
+       ('sys_constant_enum', 'hint', 'id.1010403', 'en_US', 'Indonesia：Makassar、Manado、Balikpapan'),
 
-       ('sys_constant_enum', 'hint', 'id1010501', 'zh_CN', '马来西亚：吉隆坡'),
-       ('sys_constant_enum', 'hint', 'id1010501', 'en_US', 'Malaysia: KualaLumpur'),
+       ('sys_constant_enum', 'hint', 'id.1010501', 'zh_CN', '马来西亚：吉隆坡'),
+       ('sys_constant_enum', 'hint', 'id.1010501', 'en_US', 'Malaysia: KualaLumpur'),
 
-       ('sys_constant_enum', 'hint', 'id1010601', 'zh_CN', '韩国时间：首尔'),
-       ('sys_constant_enum', 'hint', 'id1010601', 'en_US', 'Korea: Seoul'),
+       ('sys_constant_enum', 'hint', 'id.1010601', 'zh_CN', '韩国时间：首尔'),
+       ('sys_constant_enum', 'hint', 'id.1010601', 'en_US', 'Korea: Seoul'),
 
-       ('sys_constant_enum', 'hint', 'id1010701', 'zh_CN', '新加坡时间'),
-       ('sys_constant_enum', 'hint', 'id1010701', 'en_US', 'Singapore'),
+       ('sys_constant_enum', 'hint', 'id.1010701', 'zh_CN', '新加坡时间'),
+       ('sys_constant_enum', 'hint', 'id.1010701', 'en_US', 'Singapore'),
 
-       ('sys_constant_enum', 'hint', 'id1010801', 'zh_CN', '日本时间：东京'),
-       ('sys_constant_enum', 'hint', 'id1010801', 'en_US', 'Japan: Tokyo'),
+       ('sys_constant_enum', 'hint', 'id.1010801', 'zh_CN', '日本时间：东京'),
+       ('sys_constant_enum', 'hint', 'id.1010801', 'en_US', 'Japan: Tokyo'),
 
-       ('sys_constant_enum', 'hint', 'id1010901', 'zh_CN', '大西洋时(AST)：哈利法克斯'),
-       ('sys_constant_enum', 'hint', 'id1010901', 'en_US', 'AST: Halifax'),
+       ('sys_constant_enum', 'hint', 'id.1010901', 'zh_CN', '大西洋时(AST)：哈利法克斯'),
+       ('sys_constant_enum', 'hint', 'id.1010901', 'en_US', 'AST: Halifax'),
 
-       ('sys_constant_enum', 'hint', 'id1010902', 'zh_CN', '中部时(CST)：温尼伯'),
-       ('sys_constant_enum', 'hint', 'id1010902', 'en_US', 'CST: Winnipeg'),
+       ('sys_constant_enum', 'hint', 'id.1010902', 'zh_CN', '中部时(CST)：温尼伯'),
+       ('sys_constant_enum', 'hint', 'id.1010902', 'en_US', 'CST: Winnipeg'),
 
-       ('sys_constant_enum', 'hint', 'id1010903', 'zh_CN', '东部时(EST)：多伦多、渥太华、魁北克城'),
-       ('sys_constant_enum', 'hint', 'id1010903', 'en_US', 'EST: Toronto, Ottawa, Quebec'),
+       ('sys_constant_enum', 'hint', 'id.1010903', 'zh_CN', '东部时(EST)：多伦多、渥太华、魁北克城'),
+       ('sys_constant_enum', 'hint', 'id.1010903', 'en_US', 'EST: Toronto, Ottawa, Quebec'),
 
-       ('sys_constant_enum', 'hint', 'id1010904', 'zh_CN', '山地时(MST)：埃德蒙顿、卡尔加里'),
-       ('sys_constant_enum', 'hint', 'id1010904', 'en_US', 'MST: Edmonton, Calgary'),
+       ('sys_constant_enum', 'hint', 'id.1010904', 'zh_CN', '山地时(MST)：埃德蒙顿、卡尔加里'),
+       ('sys_constant_enum', 'hint', 'id.1010904', 'en_US', 'MST: Edmonton, Calgary'),
 
-       ('sys_constant_enum', 'hint', 'id1010905', 'zh_CN', '纽芬兰时(NST)：圣约翰斯'),
-       ('sys_constant_enum', 'hint', 'id1010905', 'en_US', 'NST: St.John'),
+       ('sys_constant_enum', 'hint', 'id.1010905', 'zh_CN', '纽芬兰时(NST)：圣约翰斯'),
+       ('sys_constant_enum', 'hint', 'id.1010905', 'en_US', 'NST: St.John'),
 
-       ('sys_constant_enum', 'hint', 'id1010906', 'zh_CN', '太平洋时(PST)：温哥华'),
-       ('sys_constant_enum', 'hint', 'id1010906', 'en_US', 'PST: Vancouver');
+       ('sys_constant_enum', 'hint', 'id.1010906', 'zh_CN', '太平洋时(PST)：温哥华'),
+       ('sys_constant_enum', 'hint', 'id.1010906', 'en_US', 'PST: Vancouver');
 
 -- java.util.Locale#toLanguageTag
 REPLACE INTO `sys_standard_i18n`(`base`, `kind`, `ukey`, `lang`, `hint`)
-VALUES ('sys_constant_enum', 'hint', 'zh_CN', 'zh_CN', '简体中文'),
-       ('sys_constant_enum', 'hint', 'zh_CN', 'en_US', 'Simplified Chinese'),
+VALUES ('sys_constant_enum', 'hint', 'standard_language.zh_CN', 'zh_CN', '简体中文'),
+       ('sys_constant_enum', 'hint', 'standard_language.zh_CN', 'en_US', 'Simplified Chinese'),
 
-       ('sys_constant_enum', 'hint', 'zh_HK', 'zh_HK', '繁體中文'),
-       ('sys_constant_enum', 'hint', 'zh_HK', 'zh_CN', '繁体中文'),
-       ('sys_constant_enum', 'hint', 'zh_HK', 'en_US', 'Traditional Chinese'),
+       ('sys_constant_enum', 'hint', 'standard_language.zh_HK', 'zh_HK', '繁體中文'),
+       ('sys_constant_enum', 'hint', 'standard_language.zh_HK', 'zh_CN', '繁体中文'),
+       ('sys_constant_enum', 'hint', 'standard_language.zh_HK', 'en_US', 'Traditional Chinese'),
 
-       ('sys_constant_enum', 'hint', 'ja_JP', 'ja_JP', '日本語'),
-       ('sys_constant_enum', 'hint', 'ja_JP', 'zh_CN', '日语'),
-       ('sys_constant_enum', 'hint', 'ja_JP', 'en_US', 'Japanese'),
+       ('sys_constant_enum', 'hint', 'standard_language.ja_JP', 'ja_JP', '日本語'),
+       ('sys_constant_enum', 'hint', 'standard_language.ja_JP', 'zh_CN', '日语'),
+       ('sys_constant_enum', 'hint', 'standard_language.ja_JP', 'en_US', 'Japanese'),
 
-       ('sys_constant_enum', 'hint', 'ko_KR', 'ko_KR', '한국어'),
-       ('sys_constant_enum', 'hint', 'ko_KR', 'zh_CN', '韩语'),
-       ('sys_constant_enum', 'hint', 'ko_KR', 'en_US', 'Korean'),
+       ('sys_constant_enum', 'hint', 'standard_language.ko_KR', 'ko_KR', '한국어'),
+       ('sys_constant_enum', 'hint', 'standard_language.ko_KR', 'zh_CN', '韩语'),
+       ('sys_constant_enum', 'hint', 'standard_language.ko_KR', 'en_US', 'Korean'),
 
-       ('sys_constant_enum', 'hint', 'ru_RU', 'ru_RU', 'русский язык'),
-       ('sys_constant_enum', 'hint', 'ru_RU', 'zh_CN', '俄语'),
-       ('sys_constant_enum', 'hint', 'ru_RU', 'en_US', 'Russian'),
+       ('sys_constant_enum', 'hint', 'standard_language.ru_RU', 'ru_RU', 'русский язык'),
+       ('sys_constant_enum', 'hint', 'standard_language.ru_RU', 'zh_CN', '俄语'),
+       ('sys_constant_enum', 'hint', 'standard_language.ru_RU', 'en_US', 'Russian'),
 
-       ('sys_constant_enum', 'hint', 'de_DE', 'de_DE', 'Deutsch'),
-       ('sys_constant_enum', 'hint', 'de_DE', 'zh_CN', '德语'),
-       ('sys_constant_enum', 'hint', 'de_DE', 'en_US', 'German'),
+       ('sys_constant_enum', 'hint', 'standard_language.de_DE', 'de_DE', 'Deutsch'),
+       ('sys_constant_enum', 'hint', 'standard_language.de_DE', 'zh_CN', '德语'),
+       ('sys_constant_enum', 'hint', 'standard_language.de_DE', 'en_US', 'German'),
 
-       ('sys_constant_enum', 'hint', 'es_ES', 'es_ES', 'Español'),
-       ('sys_constant_enum', 'hint', 'es_ES', 'zh_CN', '西班牙语'),
-       ('sys_constant_enum', 'hint', 'es_ES', 'en_US', 'Spanish'),
+       ('sys_constant_enum', 'hint', 'standard_language.es_ES', 'es_ES', 'Español'),
+       ('sys_constant_enum', 'hint', 'standard_language.es_ES', 'zh_CN', '西班牙语'),
+       ('sys_constant_enum', 'hint', 'standard_language.es_ES', 'en_US', 'Spanish'),
 
-       ('sys_constant_enum', 'hint', 'fr_FR', 'fr_FR', 'Français'),
-       ('sys_constant_enum', 'hint', 'fr_FR', 'zh_CN', '法语'),
-       ('sys_constant_enum', 'hint', 'fr_FR', 'en_US', 'Franch'),
+       ('sys_constant_enum', 'hint', 'standard_language.fr_FR', 'fr_FR', 'Français'),
+       ('sys_constant_enum', 'hint', 'standard_language.fr_FR', 'zh_CN', '法语'),
+       ('sys_constant_enum', 'hint', 'standard_language.fr_FR', 'en_US', 'Franch'),
 
-       ('sys_constant_enum', 'hint', 'it_IT', 'it_IT', 'Italiano'),
-       ('sys_constant_enum', 'hint', 'it_IT', 'zh_CN', '意大利语'),
-       ('sys_constant_enum', 'hint', 'it_IT', 'en_US', 'Italian'),
+       ('sys_constant_enum', 'hint', 'standard_language.it_IT', 'it_IT', 'Italiano'),
+       ('sys_constant_enum', 'hint', 'standard_language.it_IT', 'zh_CN', '意大利语'),
+       ('sys_constant_enum', 'hint', 'standard_language.it_IT', 'en_US', 'Italian'),
 
-       ('sys_constant_enum', 'hint', 'th_TH', 'th_TH', 'ภาษาไทย'),
-       ('sys_constant_enum', 'hint', 'th_TH', 'zh_CN', '泰国语'),
-       ('sys_constant_enum', 'hint', 'th_TH', 'en_US', 'Thai'),
+       ('sys_constant_enum', 'hint', 'standard_language.th_TH', 'th_TH', 'ภาษาไทย'),
+       ('sys_constant_enum', 'hint', 'standard_language.th_TH', 'zh_CN', '泰国语'),
+       ('sys_constant_enum', 'hint', 'standard_language.th_TH', 'en_US', 'Thai'),
 
-       ('sys_constant_enum', 'hint', 'ar_AE', 'ar_AE', 'عربي ،'),
-       ('sys_constant_enum', 'hint', 'ar_AE', 'zh_CN', '阿拉伯联合酋长国'),
-       ('sys_constant_enum', 'hint', 'ar_AE', 'en_US', 'Arabic'),
+       ('sys_constant_enum', 'hint', 'standard_language.ar_AE', 'ar_AE', 'عربي ،'),
+       ('sys_constant_enum', 'hint', 'standard_language.ar_AE', 'zh_CN', '阿拉伯联合酋长国'),
+       ('sys_constant_enum', 'hint', 'standard_language.ar_AE', 'en_US', 'Arabic'),
 
-       ('sys_constant_enum', 'hint', 'en_US', 'en_US', 'English(US)'),
-       ('sys_constant_enum', 'hint', 'en_US', 'zh_CN', '美国英语');
+       ('sys_constant_enum', 'hint', 'standard_language.en_US', 'en_US', 'English(US)'),
+       ('sys_constant_enum', 'hint', 'standard_language.en_US', 'zh_CN', '美国英语');

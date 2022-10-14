@@ -28,7 +28,7 @@ public class HazelcastSessionConfiguration {
     @Bean
     @ConditionalOnMissingBean(SessionRegistry.class)
     public SessionRegistry sessionRegistry(FindByIndexNameSessionRepository<?> repository, WingsSessionHelper helper) {
-        log.info("Wings conf sessionRegistry");
+        log.info("SlardarHazelSession spring-bean sessionRegistry");
         return new WingsSessionRegistry<>(repository, helper);
     }
 
@@ -38,7 +38,7 @@ public class HazelcastSessionConfiguration {
             HazelcastInstance hzInstance,
             @Value("${spring.session.hazelcast.map-name:spring:session:sessions}") String mapName) {
 
-        log.info("Wings conf wingsSessionHelper");
+        log.info("SlardarHazelSession spring-bean wingsSessionHelper");
         return new HazelcastSessionHelper(sessionRepository, hzInstance, mapName);
     }
 }

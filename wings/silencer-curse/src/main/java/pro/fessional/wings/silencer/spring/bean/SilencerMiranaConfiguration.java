@@ -30,7 +30,7 @@ public class SilencerMiranaConfiguration {
     @Bean
     public Crc8Long crc8Long() {
         int[] seed = prop.getCode().getCrc8Long();
-        log.info("Wings make Crc8Long, seed = " + Arrays.toString(seed));
+        log.info("SilencerCurse spring-bean crc8Long, seed=" + Arrays.toString(seed));
         if (seed == null || seed.length == 0) {
             return new Crc8Long();
         }
@@ -42,7 +42,7 @@ public class SilencerMiranaConfiguration {
     @Bean
     public LeapCode leapCode() {
         String seed = prop.getCode().getLeapCode();
-        log.info("Wings make LeapCode, seed = " + seed);
+        log.info("SilencerCurse spring-bean leapCode, seed=" + seed);
         if (seed == null) {
             return new LeapCode();
         }
@@ -53,8 +53,8 @@ public class SilencerMiranaConfiguration {
 
     @Bean
     public Aes128 aes128() {
+        log.info("SilencerCurse spring-bean aes128");
         String key = prop.getCode().getAesKey();
-        log.info("Wings make aes128");
         return Aes128.of(key);
     }
 }

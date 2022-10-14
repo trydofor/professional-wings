@@ -15,7 +15,7 @@ public class JooqCodeAutoGenSample {
         String database = "wings";
         WingsCodeGenerator.builder()
                           .jdbcDriver("com.mysql.cj.jdbc.Driver")
-                          .jdbcUrl("jdbc:mysql://127.0.0.1/" + database)
+                          .jdbcUrl("jdbc:mysql://localhost/" + database)
                           .jdbcUser("trydofor")
                           .jdbcPassword("moilioncircle")
                           .databaseSchema(database)
@@ -23,7 +23,7 @@ public class JooqCodeAutoGenSample {
                           .databaseIncludes("tst_中文也分表")
                           .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
                           .targetPackage("pro.fessional.wings.faceless.database.autogen")
-                          .targetDirectory("wings-faceless-shard/src/test/java/")
+                          .targetDirectory("wings/faceless-shard/src/test/java/")
                           .buildAndGenerate();
     }
 }

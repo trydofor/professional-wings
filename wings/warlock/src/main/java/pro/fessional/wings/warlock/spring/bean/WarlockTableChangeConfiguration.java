@@ -29,14 +29,15 @@ public class WarlockTableChangeConfiguration {
     @Bean
     @ConditionalOnMissingBean(TableChangePublisher.class)
     public TableChangePublisher tableChangePublisher() {
+        log.info("Warlock spring-bean tableChangePublisher");
         final ApplicationEventPublisher publisher;
         if (EventPublishHelper.hasAsyncGlobal()) {
             publisher = EventPublishHelper.AsyncGlobal;
-            log.info("Wings conf tableChangePublisher with async global");
+            log.info("Warlock conf tableChangePublisher with async global");
         }
         else {
             publisher = EventPublishHelper.AsyncSpring;
-            log.info("Wings conf tableChangePublisher with async spring");
+            log.info("Warlock conf tableChangePublisher with async spring");
         }
         return new TableChangePublisherImpl(publisher);
     }
@@ -44,7 +45,7 @@ public class WarlockTableChangeConfiguration {
     @Bean
     @ConditionalOnBean(TableChangePublisher.class)
     public WingsTableCudHandler wingsTableCudHandler() {
-        log.info("Wings conf wingsTableCudHandler");
+        log.info("Warlock spring-bean wingsTableCudHandler");
         return new WingsTableCudHandlerImpl();
     }
 }

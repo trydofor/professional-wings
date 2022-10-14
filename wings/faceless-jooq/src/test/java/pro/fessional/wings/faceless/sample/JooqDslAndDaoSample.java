@@ -16,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
-import pro.fessional.wings.faceless.database.jooq.SelectOrderCondition;
 import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelp;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
@@ -49,7 +48,7 @@ public class JooqDslAndDaoSample {
     @Test
     public void test0Init() {
         val sqls = FlywaveRevisionScanner.scanMaster();
-        schemaRevisionManager.checkAndInitSql(sqls, 0, false);
+        schemaRevisionManager.checkAndInitSql(sqls, 0, true);
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0);
     }
 
@@ -66,9 +65,9 @@ public class JooqDslAndDaoSample {
         val ft1 = dao.fetch(a, 0, 2, c, a.Id.desc());
         log.info("============count {}, ft2'size={}", i, ft1.size());
         testcaseNotice("select id, commit_id  from `tst_中文也分表` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?) limit ?");
-        val ft2 = dao.fetch(0, 2, t -> SelectOrderCondition.of(
-                t.Id.gt(1L).and(t.CommitId.lt(200L)),
-                t.Id, t.CommitId, t.Id.desc()));
+        val ft2 = dao.fetch(0, 2, (t, w) -> w
+                .where(t.Id.gt(1L).and(t.CommitId.lt(200L)))
+                .order(t.Id, t.CommitId, t.Id.desc()));
         log.info("============count {}, ft2'size={}", i, ft2.size());
 
         // table
@@ -95,7 +94,7 @@ public class JooqDslAndDaoSample {
         Condition nullCond = null;
         Field<Long> nullField = null;
 //        val nullOrder: OrderField<Long>? = null
-        val emptyOrder = new OrderField[]{null};
+        val emptyOrder = new OrderField[]{};
         val t = Tst中文也分表Table.Tst中文也分表;
         DSLContext dsl = dao.ctx();
         val sql = dsl.select(t.Id, nullField) // null safe
@@ -156,7 +155,7 @@ public class JooqDslAndDaoSample {
     @Test
     public void test4Shadow() {
         testcaseNotice("影子表");
-        Tst中文也分表Table upd = dao.newTable("", "$upd");
+        Tst中文也分表Table upd = dao.newTable("", "_postfix");
         val c1 = dao.count(upd, null);
         log.info("count1={}", c1);
     }

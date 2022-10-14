@@ -31,7 +31,7 @@ public class SlardarOkhttpWebConfiguration {
     @Bean
     @ConditionalOnMissingBean(RestTemplateBuilder.class)
     public RestTemplateBuilder restTemplateBuilder(RestTemplateBuilderConfigurer configurer, OkHttpClient client) {
-        log.info("Wings conf restTemplateBuilder");
+        log.info("SlardarWebmvc spring-bean restTemplateBuilder");
         final RestTemplateBuilder builder = configurer.configure(new RestTemplateBuilder());
         return builder.requestFactory(() -> new OkHttp3ClientHttpRequestFactory(client));
     }
@@ -39,7 +39,7 @@ public class SlardarOkhttpWebConfiguration {
     @Bean
     @ConditionalOnMissingBean(RestTemplate.class)
     public RestTemplate okRestTemplate(RestTemplateBuilder builder) {
-        log.info("Wings conf okRestTemplate");
+        log.info("SlardarWebmvc spring-bean okRestTemplate");
         return builder.build();
     }
 

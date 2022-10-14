@@ -34,7 +34,7 @@ public class SlardarUndertowConfiguration {
     @Bean
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$undertowWs, havingValue = "true")
     public WebServerFactoryCustomizer<UndertowServletWebServerFactory> ut026010Customizer(ServerProperties properties) {
-        log.info("Wings conf ut026010Customizer");
+        log.info("SlardarWebmvc spring-bean ut026010Customizer");
 
         UndertowDeploymentInfoCustomizer customizer = deploymentInfo -> {
             ServerProperties.Undertow undertow = properties.getUndertow();

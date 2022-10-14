@@ -23,7 +23,8 @@ import static com.google.code.kaptcha.Constants.KAPTCHA_TEXTPRODUCER_FONT_SIZE;
 public class WingsCaptchaHelper {
 
     public static final int CODE_LEN = 6;
-    private static final ThreadLocal<Producer> kaptcha = ThreadLocal.withInitial(WingsCaptchaHelper::kaptcha);
+    /** no leak, for static */
+    private static final ThreadLocal<Producer> Kaptcha = ThreadLocal.withInitial(WingsCaptchaHelper::kaptcha);
 
     /**
      * 从23456789ABCDEFGHJKLMPQRSTUWXY中，生成6位，200x60
@@ -68,6 +69,6 @@ public class WingsCaptchaHelper {
     }
 
     public static BufferedImage createImage(String code) {
-        return kaptcha.get().createImage(code);
+        return Kaptcha.get().createImage(code);
     }
 }

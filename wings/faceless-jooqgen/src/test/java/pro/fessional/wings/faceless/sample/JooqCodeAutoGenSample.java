@@ -17,7 +17,7 @@ public class JooqCodeAutoGenSample {
         String database = "wings_test";
         WingsCodeGenerator.builder()
                           .jdbcDriver("com.mysql.cj.jdbc.Driver")
-                          .jdbcUrl("jdbc:mysql://127.0.0.1/" + database)
+                          .jdbcUrl("jdbc:mysql://localhost/" + database)
                           .jdbcUser("trydofor")
                           .jdbcPassword("moilioncircle")
                           .databaseSchema(database)

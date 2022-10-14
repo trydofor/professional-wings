@@ -1,13 +1,15 @@
 package pro.fessional.wings.warlock.enums.autogen;
 
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.faceless.enums.ConstantEnum;
 import pro.fessional.wings.faceless.enums.StandardI18nEnum;
 
 /**
  * @author trydofor
- * @since 2021-04-15
+ * @since 2022-10-03
  */
 public enum UserStatus implements ConstantEnum, StandardI18nEnum {
 
@@ -47,7 +49,7 @@ public enum UserStatus implements ConstantEnum, StandardI18nEnum {
         this.code = code;
         this.hint = hint;
         this.info = info;
-        this.ukey = useIdAsKey ? "id" + id : code;
+        this.ukey = "user_status." + (useIdAsKey ? "id." + id : code);
         this.rkey = "sys_constant_enum.hint." + ukey;
     }
 
@@ -94,5 +96,41 @@ public enum UserStatus implements ConstantEnum, StandardI18nEnum {
     @Override
     public @NotNull String getI18nCode() {
         return rkey;
+    }
+
+    @Nullable
+    public static UserStatus valueOf(int id) {
+        for (UserStatus v : UserStatus.values()) {
+            if (id == v.id) return v;
+        }
+        return null;
+    }
+
+    @Contract("_, !null -> !null")
+    public static UserStatus idOf(Integer id, UserStatus elz) {
+        if (id == null) return elz;
+        final int i = id;
+        for (UserStatus v : UserStatus.values()) {
+            if (i == v.id) return v;
+        }
+        return elz;
+    }
+
+    @Contract("_, !null -> !null")
+    public static UserStatus codeOf(String code, UserStatus elz) {
+        if (code == null) return elz;
+        for (UserStatus v : UserStatus.values()) {
+            if (code.equalsIgnoreCase(v.code)) return v;
+        }
+        return elz;
+    }
+
+    @Contract("_, !null -> !null")
+    public static UserStatus nameOf(String name, UserStatus elz) {
+        if (name == null) return elz;
+        for (UserStatus v : UserStatus.values()) {
+            if (name.equalsIgnoreCase(v.name())) return v;
+        }
+        return elz;
     }
 }

@@ -24,7 +24,7 @@ public class SlardarLocaleConfiguration {
     @Bean
     @ConditionalOnClass(LocaleResolver.class)
     public WingsLocaleResolver wingsLocaleResolver(SlardarLocaleProp conf) {
-        log.info("Wings conf WingsLocaleResolver");
+        log.info("SlardarWebmvc spring-bean wingsLocaleResolver");
         final WingsLocaleResolver resolver = new WingsLocaleResolver();
         resolver.addLocaleCookie(conf.getLocaleCookie());
         resolver.addLocaleHeader(conf.getLocaleHeader());

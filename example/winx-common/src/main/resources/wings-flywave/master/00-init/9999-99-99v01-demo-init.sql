@@ -11,7 +11,7 @@ CREATE TABLE `winx_user_detail` (
     `user_type` INT(11)      NOT NULL DEFAULT '0' COMMENT '用户类型/21001##:用户|运营|客服',
     `email`     VARCHAR(100) NOT NULL DEFAULT '' COMMENT '用户邮箱',
     PRIMARY KEY (`id`),
-    UNIQUE INDEX uk_user_id (`user_id`),
+    UNIQUE INDEX uq_user_id (`user_id`),
     UNIQUE INDEX ix_email (`email`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='210/用户详情';

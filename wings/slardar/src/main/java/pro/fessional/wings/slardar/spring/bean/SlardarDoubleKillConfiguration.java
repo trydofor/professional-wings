@@ -22,7 +22,7 @@ public class SlardarDoubleKillConfiguration {
 
     @Bean
     public DoubleKillAround doubleKillAround() {
-        log.info("Wings conf doubleKillAround");
+        log.info("Slardar spring-bean doubleKillAround");
         return new DoubleKillAround();
     }
 
