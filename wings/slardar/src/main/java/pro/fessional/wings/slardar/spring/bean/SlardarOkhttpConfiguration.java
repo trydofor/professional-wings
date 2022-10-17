@@ -55,7 +55,7 @@ public class SlardarOkhttpConfiguration {
 
     @Bean
     public OkHttpClient.Builder okHttpClientBuilder(
-            ObjectProvider<Cache> cacheProvier,
+            ObjectProvider<Cache> cacheProvider,
             ObjectProvider<CookieJar> cookieProvider,
             ObjectProvider<Dns> dnsProvider,
             ConnectionPool connectionPool,
@@ -86,7 +86,7 @@ public class SlardarOkhttpConfiguration {
         });
 
         // cache
-        Cache cacheBean = cacheProvier.getIfAvailable();
+        Cache cacheBean = cacheProvider.getIfAvailable();
         if (cacheBean == null) {
             int mbs = properties.getCacheMegabyte();
             if (mbs > 0) {

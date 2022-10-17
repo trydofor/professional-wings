@@ -84,14 +84,15 @@ public class FacelessLightIdConfiguration {
     @Bean
     @ConditionalOnMissingBean(LightIdProvider.class)
     public LightIdProvider lightIdProvider(LightIdProvider.Loader lightIdLoader,
-                                           LightIdLoaderProp properties) {
+                                           LightIdLoaderProp properties,
+                                           ObjectProvider<LightIdBufferedProvider.SequenceHandler> sequenceHandler) {
         log.info("Faceless spring-bean lightIdProvider");
         LightIdBufferedProvider provider = new LightIdBufferedProvider(lightIdLoader);
         provider.setTimeout(properties.getTimeout());
         provider.setErrAlive(properties.getErrAlive());
         provider.setMaxError(properties.getMaxError());
         provider.setMaxCount(properties.getMaxCount());
-
+        sequenceHandler.ifAvailable(provider::setSequenceHandler);
         return provider;
     }
 
