@@ -39,11 +39,6 @@
             <version>${commons-io.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.expediagroup.beans</groupId>
-            <artifactId>bull-map-transformer</artifactId>
-            <version>${bull.version}</version>
-        </dependency>
-        <dependency>
             <groupId>pro.fessional</groupId>
             <artifactId>kaptcha</artifactId>
             <version>${kaptcha.version}</version>
