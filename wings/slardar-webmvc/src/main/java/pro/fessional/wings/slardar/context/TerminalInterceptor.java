@@ -33,16 +33,16 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
                              @NotNull Object handler) {
 
         try {
-            TimeZoneAwareLocaleContext locale = localeResolver.resolveI18nContext(request);
             String remoteIp = remoteResolver.resolveRemoteIp(request);
             String agentInfo = remoteResolver.resolveAgentInfo(request);
 
-            final WingsUserDetails details = SecurityContextUtil.getUserDetails(true);
+            final WingsUserDetails details = SecurityContextUtil.getUserDetails(false);
             if (details == null) {
+                TimeZoneAwareLocaleContext locale = localeResolver.resolveI18nContext(request);
                 TerminalContext.guest(locale.getLocale(), locale.getTimeZone(), remoteIp, agentInfo);
             }
             else {
-                TerminalContext.login(details.getUserId(), locale.getLocale(), locale.getTimeZone(), remoteIp, agentInfo);
+                TerminalContext.login(details.getUserId(), details.getLocale(), details.getZoneId(), remoteIp, agentInfo);
             }
         }
         catch (Exception e) {

@@ -2,6 +2,7 @@ package pro.fessional.wings.silencer.spring.help;
 
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.Resource;
@@ -50,6 +51,11 @@ public class ApplicationContextHelper {
     @NotNull
     public static <T> T getBean(Class<T> type) {
         return context.getBean(type);
+    }
+
+    @NotNull
+    public static <T> ObjectProvider<T> getBeanProvider(Class<T> type) {
+        return context.getBeanProvider(type);
     }
 
     public static String getMessage(String code, Locale locale, Object... arg) {

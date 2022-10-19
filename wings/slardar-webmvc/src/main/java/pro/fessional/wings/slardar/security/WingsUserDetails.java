@@ -35,6 +35,13 @@ public interface WingsUserDetails extends UserDetails {
     ZoneId getZoneId();
 
     /**
+     * 验证类型
+     *
+     * @return 类型
+     */
+    Enum<?> getAuthType();
+
+    /**
      * 获得用户昵称
      *
      * @return 昵称，默认使用username
@@ -52,11 +59,7 @@ public interface WingsUserDetails extends UserDetails {
         return "";
     }
 
-    default Enum<?> getAuthType() {
-        return null;
-    }
-
-    default boolean isPreAuthed(){
+    default boolean isPreAuthed() {
         return false;
     }
 }

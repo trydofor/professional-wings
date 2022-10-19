@@ -51,6 +51,7 @@ import org.springframework.security.authentication.InsufficientAuthenticationExc
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthDetails;
+import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
@@ -69,6 +70,7 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
     private Map<Enum<?>, AuthConfig> authConfigMap = Collections.emptyMap();
     private AuthStateCache authStateCache;
     private AuthStateBuilder authStateBuilder;
+    private WingsRemoteResolver remoteResolver;
     private int order = WarlockOrderConst.JustAuthRequestBuilder;
 
     @Override
@@ -89,11 +91,11 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
             AuthResponse<?> response = ar.login(callback);
             final Object data = response.getData();
             if (data instanceof AuthUser) {
-                final String az = authStateBuilder.parseAuthZone(request);
                 final DefaultWingsAuthDetails detail = new DefaultWingsAuthDetails(data);
-                if (!az.isEmpty()) {
-                    detail.getMetaData().put(WingsAuthHelper.AuthZone, az);
-                }
+                final Map<String, String> meta = detail.getMetaData();
+                meta.put(WingsAuthHelper.AuthZone, authStateBuilder.parseAuthZone(request));
+                meta.put(WingsAuthHelper.AuthAddr, remoteResolver.resolveRemoteIp(request));
+                meta.put(WingsAuthHelper.AuthAgent, remoteResolver.resolveAgentInfo(request));
                 return detail;
             }
             else {

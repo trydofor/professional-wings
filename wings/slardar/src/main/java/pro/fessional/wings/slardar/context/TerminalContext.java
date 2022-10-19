@@ -96,10 +96,28 @@ public class TerminalContext {
         return threadLocalListener.remove(name);
     }
 
+    /**
+     * 仅登录的上下文，若未登录则抛异常
+     */
     @NotNull
     public static Context get() {
+        return get(true);
+    }
+
+    /**
+     * 未登录用户以Guest返回，还是抛异常，
+     *
+     * @param onlyLogin 是否仅登录用户，否则包括Guest
+     * @return 上下文
+     */
+    @NotNull
+    public static Context get(boolean onlyLogin) {
         Context ctx = TerminalContext.context.get();
-        return ctx == null ? Context.NULL : ctx;
+        if (ctx == null) ctx = Context.NULL;
+        if (onlyLogin && ctx.isGuest()) {
+            throw new IllegalStateException("must login user");
+        }
+        return ctx;
     }
 
     @NotNull

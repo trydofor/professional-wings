@@ -59,7 +59,7 @@ public class DoubleKillAround {
         final Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         final DoubleKill doubleKill = method.getAnnotation(DoubleKill.class);
 
-        final Object uid = doubleKill.principal() ? TerminalContext.get().getUserId() : TerminalContext.Context.Guest;
+        final Object uid = doubleKill.principal() ? TerminalContext.get(false).getUserId() : TerminalContext.Context.Guest;
         final Object[] args = joinPoint.getArgs();
 
         final String keyStr = doubleKill.value();

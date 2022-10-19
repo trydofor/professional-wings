@@ -90,7 +90,7 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
         }
 
         // 一般只有登录用户才有权限修改，使用用户slat作为密码
-        final Authentication atn = SecurityContextUtil.getAuthentication(true);
+        final Authentication atn = SecurityContextUtil.getAuthentication(false);
         if (atn == null) return true;
 
         // 检查签名

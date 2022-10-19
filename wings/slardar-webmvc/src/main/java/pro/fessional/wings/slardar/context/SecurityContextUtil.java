@@ -31,7 +31,7 @@ public class SecurityContextUtil {
     @NotNull
     @SuppressWarnings("unchecked")
     public static Collection<GrantedAuthority> getAuthorities() {
-        Authentication atn = getAuthentication(true);
+        Authentication atn = getAuthentication(false);
         if (atn == null) return Collections.emptyList();
 
         Collection<? extends GrantedAuthority> ats = atn.getAuthorities();
@@ -43,21 +43,20 @@ public class SecurityContextUtil {
 
     @NotNull
     public static <T extends GrantedAuthority> Collection<T> getAuthorities(Class<T> claz) {
-        Authentication atn = getAuthentication(true);
+        Authentication atn = getAuthentication(false);
         if (atn == null) return Collections.emptyList();
         return TypedCastUtil.castCollection(atn.getAuthorities(), claz);
-
     }
 
     @NotNull
     public static Authentication getAuthentication() {
-        return getAuthentication(false);
+        return getAuthentication(true);
     }
 
-    @Contract("false -> !null")
-    public static Authentication getAuthentication(boolean nullable) {
+    @Contract("true -> !null")
+    public static Authentication getAuthentication(boolean notnull) {
         final Authentication an = SecurityContextHolder.getContext().getAuthentication();
-        if (an == null && !nullable) {
+        if (an == null && notnull) {
             throw new NullPointerException("failed to getAuthentication");
         }
         return an;
@@ -65,13 +64,13 @@ public class SecurityContextUtil {
 
     @NotNull
     public static WingsAuthDetails getAuthDetails() {
-        return getAuthDetails(false);
+        return getAuthDetails(true);
     }
 
-    @Contract("false -> !null")
-    public static WingsAuthDetails getAuthDetails(boolean nullable) {
+    @Contract("true -> !null")
+    public static WingsAuthDetails getAuthDetails(boolean notnull) {
         final WingsAuthDetails an = getAuthDetails(WingsAuthDetails.class);
-        if (an == null && !nullable) {
+        if (an == null && notnull) {
             throw new NullPointerException("failed to getAuthDetails");
         }
         return an;
@@ -79,7 +78,7 @@ public class SecurityContextUtil {
 
     @Nullable
     public static <T> T getAuthDetails(Class<T> claz) {
-        Authentication atn = getAuthentication();
+        Authentication atn = getAuthentication(false);
         return getAuthDetails(claz, atn);
     }
 
@@ -99,15 +98,15 @@ public class SecurityContextUtil {
      */
     @NotNull
     public static <T> T getPrincipal() {
-        return getPrincipal(false);
+        return getPrincipal(true);
     }
 
     @SuppressWarnings("unchecked")
-    @Contract("false -> !null")
-    public static <T> T getPrincipal(boolean nullable) {
-        Authentication atn = getAuthentication(nullable);
+    @Contract("true -> !null")
+    public static <T> T getPrincipal(boolean notnull) {
+        Authentication atn = getAuthentication(notnull);
         final Object pt = atn.getPrincipal();
-        if (pt == null && !nullable) {
+        if (pt == null && notnull) {
             throw new NullPointerException("failed to getPrincipal");
         }
         return (T) pt;
@@ -121,7 +120,7 @@ public class SecurityContextUtil {
      */
     @Nullable
     public static <T> T getPrincipal(Class<T> claz) {
-        Authentication atn = getAuthentication(true);
+        Authentication atn = getAuthentication(false);
         if (atn == null) return null;
         return TypedCastUtil.castObject(atn.getPrincipal(), claz);
     }
@@ -129,27 +128,27 @@ public class SecurityContextUtil {
     @Nullable
     @SuppressWarnings("unchecked")
     public static <T> T getCredentials() {
-        Authentication atn = getAuthentication(true);
+        Authentication atn = getAuthentication(false);
         if (atn == null) return null;
         return (T) atn.getCredentials();
     }
 
     @Nullable
     public static <T> T getCredentials(Class<T> claz) {
-        Authentication atn = getAuthentication(true);
+        Authentication atn = getAuthentication(false);
         if (atn == null) return null;
         return TypedCastUtil.castObject(atn.getCredentials(), claz);
     }
 
     @NotNull
     public static WingsUserDetails getUserDetails() {
-        return getUserDetails(false);
+        return getUserDetails(true);
     }
 
-    @Contract("false -> !null")
-    public static WingsUserDetails getUserDetails(boolean nullable) {
-        final WingsUserDetails dt = getUserDetails(getAuthentication(nullable));
-        if (dt == null && !nullable) {
+    @Contract("true -> !null")
+    public static WingsUserDetails getUserDetails(boolean notnull) {
+        final WingsUserDetails dt = getUserDetails(getAuthentication(notnull));
+        if (dt == null && notnull) {
             throw new NullPointerException("failed to getUserDetails");
         }
         return dt;
@@ -185,12 +184,12 @@ public class SecurityContextUtil {
     }
 
     public static long getUserId() {
-        return getUserId(false);
+        return getUserId(true);
     }
 
-    @Contract("false -> !null")
-    public static Long getUserId(boolean nullable) {
-        final WingsUserDetails dtl = getUserDetails(nullable);
+    @Contract("true -> !null")
+    public static Long getUserId(boolean notnull) {
+        final WingsUserDetails dtl = getUserDetails(notnull);
         return dtl == null ? null : dtl.getUserId();
     }
 }

@@ -18,7 +18,7 @@ public class LocaleZoneIdUtil {
     public static final Supplier<ZoneId> ZoneIdNullable = () -> {
         final ZoneId zid;
         if (TerminalContext.isActive()) {
-            zid = TerminalContext.get().getZoneId();
+            zid = TerminalContext.get(false).getZoneId();
         }
         else {
             zid = LocaleContextHolder.getTimeZone().toZoneId();
@@ -32,7 +32,7 @@ public class LocaleZoneIdUtil {
     public static final Supplier<Locale> LocaleNullable = () -> {
         final Locale lcl;
         if (TerminalContext.isActive()) {
-            lcl = TerminalContext.get().getLocale();
+            lcl = TerminalContext.get(false).getLocale();
         }
         else {
             lcl = LocaleContextHolder.getLocale();

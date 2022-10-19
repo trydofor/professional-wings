@@ -32,6 +32,7 @@ import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeParser;
+import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.security.handler.LoginFailureHandler;
@@ -394,9 +395,10 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(WingsAuthDetailsSource.class)
-    public WingsAuthDetailsSource<?> wingsAuthDetailsSource(ObjectProvider<ComboWingsAuthDetailsSource.Combo<?>> combos) {
+    public WingsAuthDetailsSource<?> wingsAuthDetailsSource(ObjectProvider<ComboWingsAuthDetailsSource.Combo<?>> combos,
+                                                            ObjectProvider<WingsRemoteResolver> rrs) {
         log.info("WarlockShadow spring-bean wingsAuthDetailsSource");
-        ComboWingsAuthDetailsSource uds = new ComboWingsAuthDetailsSource();
+        final ComboWingsAuthDetailsSource uds = new ComboWingsAuthDetailsSource();
 
         combos.orderedStream().forEach(it -> {
             log.info("WarlockShadow conf wingsAuthDetailsSource add " + it.getClass().getName());
@@ -406,6 +408,9 @@ public class WarlockSecurityBeanConfiguration {
         final Set<String> set = new HashSet<>();
         set.add(securityProp.getPasswordPara());
         uds.setIgnoredMetaKey(set);
+
+        rrs.ifAvailable(uds::setWingsRemoteResolver);
+
         return uds;
     }
 
