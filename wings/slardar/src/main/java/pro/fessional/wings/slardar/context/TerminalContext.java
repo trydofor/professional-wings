@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.function.Consumer;
 
-import static pro.fessional.wings.slardar.context.TerminalContext.Context.Guest;
+import static pro.fessional.wings.slardar.security.DefaultUserId.Guest;
 
 /**
  * 在service层使用，TransmittableThreadLocal有自动的线程继承性。
@@ -177,7 +177,6 @@ public class TerminalContext {
 
     @Data
     public static class Context {
-        public static final long Guest = Integer.MIN_VALUE;
         public static final Context NULL = new Context(Guest, Locale.getDefault(), TimeZone.getDefault(), null, null);
 
         private final long userId;
@@ -208,23 +207,17 @@ public class TerminalContext {
         }
 
         /**
-         * userId == Guest
-         *
-         * @return 是否等于Guest
-         * @see #Guest
+         * userId == DefaultUserId#Guest
          */
         public boolean isGuest() {
             return userId == Guest;
         }
 
         /**
-         * userId != Guest
-         *
-         * @return Login
-         * @see #Guest
+         * userId >= DefaultUserId#Guest
          */
-        public boolean isLogin() {
-            return userId != Guest;
+        public boolean asLogin() {
+            return userId >= Guest;
         }
 
         @Override

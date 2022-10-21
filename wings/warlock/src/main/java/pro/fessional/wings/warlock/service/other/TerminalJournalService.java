@@ -27,7 +27,7 @@ public class TerminalJournalService extends DefaultJournalService {
     public @NotNull <R> R submit(@NotNull String eventName, @Nullable String loginInfo, @Nullable String targetKey, @Nullable String otherInfo, @NotNull Function<Journal, R> commitSet) {
         if (loginInfo == null || loginInfo.isEmpty()) {
             final TerminalContext.Context ctx = TerminalContext.get(false);
-            if (ctx.isLogin()) {
+            if (ctx.asLogin()) {
                 loginInfo = ctx.toString();
             }
         }

@@ -39,7 +39,7 @@ public interface WingsSessionHelper {
             }
         }
 
-        return DefaultUserId.Unknown;
+        return DefaultUserId.Guest;
     }
 
     /**

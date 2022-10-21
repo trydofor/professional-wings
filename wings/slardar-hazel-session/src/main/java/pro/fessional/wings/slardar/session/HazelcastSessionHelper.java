@@ -32,7 +32,7 @@ public class HazelcastSessionHelper implements WingsSessionHelper {
     @Override
     @NotNull
     public List<MapSession> findByUserId(Long userId) {
-        if (userId == null || userId == DefaultUserId.Unknown || hazelcastSessionMap == null) {
+        if (DefaultUserId.asGuest(userId) || hazelcastSessionMap == null) {
             return Collections.emptyList();
         }
 
