@@ -12,7 +12,6 @@ import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.boot.web.servlet.server.Session.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
@@ -45,12 +44,6 @@ public class SlardarSessionConfiguration {
     private static final Log log = LogFactory.getLog(SlardarSessionConfiguration.class);
 
     private final SlardarSessionProp slardarSessionProp;
-
-    @Bean
-    public HttpSessionEventPublisher httpSessionEventPublisher() {
-        log.info("SlardarWebmvc spring-bean httpSessionEventPublisher");
-        return new HttpSessionEventPublisher();
-    }
 
     @Bean
     public DefaultCookieSerializerCustomizer slardarCookieSerializerCustomizer() {

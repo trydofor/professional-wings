@@ -25,21 +25,5 @@
             <groupId>pro.fessional.wings</groupId>
             <artifactId>slardar-webmvc</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.moilioncircle.wings</groupId>
-            <artifactId>winx-common</artifactId>
-            <exclusions>
-                <!-- ApplicationContextHelper in diff classloader -->
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-devtools</artifactId>
-                </exclusion>
-                <!-- skip boot-admin -->
-                <exclusion>
-                    <groupId>de.codecentric</groupId>
-                    <artifactId>spring-boot-admin-starter-client</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
     </dependencies>
 </project>

@@ -8,12 +8,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.session.SessionRegistry;
-import pro.fessional.wings.slardar.security.enums.LoginTypeEnum;
 import pro.fessional.wings.slardar.security.handler.TestLoginHandler;
-import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 
 
 /**
+ * WingsSessionTest 使用
+ *
  * @author trydofor
  * @since 2019-12-01
  */
@@ -61,36 +61,18 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         log.info("config HttpSecurity");
-        http.apply(SecurityConfigHelper.http())
-            .httpPermit(conf -> conf
-                    .permitCorsAll()
-                    .permitTest()
-            )
-            .bindLogin(conf -> conf
-                            .loginPage("/user/login.json") // 无权限时返回的页面，
-                            .loginProcessingUrl("/*/login-proc.json") // filter处理，不需要controller
-                            .usernameParameter("username")
-                            .passwordParameter("password")
-//                    .authenticationDetailsSource(wingsAuthDetailsSource)
-                            .successHandler(testLoginHandler.loginSuccess)
-                            .failureHandler(testLoginHandler.loginFailure)
-                            .bindAuthTypeToEnums("sms", LoginTypeEnum.Sms)
-                            .bindAuthTypeToEnums("user", LoginTypeEnum.User)
-                            .bindAuthTypeDefault(LoginTypeEnum.User)
-            )
-            .and()
-            .authorizeRequests(conf -> conf
+        http.authorizeRequests(conf -> conf
                     .antMatchers("/authed/*").authenticated()
             )
-//            .formLogin(conf -> conf
-//                    .loginPage("/user/login.json") // 无权限时返回的页面，
-//                    .loginProcessingUrl("/user/login-proc.json") // filter处理，不需要controller
-//                    .usernameParameter("username")
-//                    .passwordParameter("password")
-//                    .successHandler(testLoginHandler.loginSuccess)
-//                    .failureHandler(testLoginHandler.loginFailure)
-//
-//            )
+            .formLogin(conf -> conf
+                    .loginPage("/user/login.json") // 无权限时返回的页面，
+                    .loginProcessingUrl("/user/login-proc.json") // filter处理，不需要controller
+                    .usernameParameter("username")
+                    .passwordParameter("password")
+                    .successHandler(testLoginHandler.loginSuccess)
+                    .failureHandler(testLoginHandler.loginFailure)
+
+            )
             .logout(conf -> conf
                     .logoutUrl("/user/logout.json")
                     .clearAuthentication(true)

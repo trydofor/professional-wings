@@ -54,7 +54,7 @@ public class RighterControllerTest {
     @WithMockUser("wings-admin")
     public void righter() throws Exception {
         final MvcResult result = mvc.perform(get("/test/righter.json")
-                                                     .contentType(MediaType.APPLICATION_JSON))
+                                            .contentType(MediaType.APPLICATION_JSON))
                                     .andDo(print())
                                     .andExpect(status().isOk())
                                     .andReturn();
@@ -63,16 +63,16 @@ public class RighterControllerTest {
         // 通过
         log.info("righter .... right");
         mvc.perform(post("/test/righter.json")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header(prop.getHeader(), allow))
+                   .contentType(MediaType.APPLICATION_JSON)
+                   .header(prop.getHeader(), allow))
            .andDo(print())
            .andExpect(content().json("{\"uid\":1,\"perms\":[\"a\",\"b\"]}"));
 
         // 篡改，失败
         log.info("righter .... failed");
         mvc.perform(post("/test/righter.json")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header(prop.getHeader(), allow + "1"))
+                   .contentType(MediaType.APPLICATION_JSON)
+                   .header(prop.getHeader(), allow + "1"))
            .andDo(print())
            .andExpect(status().isConflict())
            .andExpect(content().string("forgery"));

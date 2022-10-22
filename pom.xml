@@ -40,8 +40,9 @@
         <kotlin.version>1.6.21</kotlin.version>
         <jooq.version>3.14.16</jooq.version>
         <h2.version>2.1.214</h2.version>
-        <okhttp3.version>4.9.3</okhttp3.version> <!-- just auth need 4, spring use 3 https://square.github.io/okhttp/changelog/ -->
-        <jackson-jsr310.version>2.14.0-rc1</jackson-jsr310.version> <!-- https://github.com/FasterXML/jackson-modules-java8/issues/230 TODO -->
+        <okhttp3.version>4.9.3</okhttp3.version> <!-- just auth need 4, spring use 3 https://square.github.io/okhttp/changelog/ FIXME in boot2.7-->
+        <jackson-jsr310.version>2.14.0-rc1</jackson-jsr310.version> <!-- https://github.com/FasterXML/jackson-modules-java8/issues/230 FIXME in 2.14 -->
+        <snakeyaml.version>1.33</snakeyaml.version> <!-- https://github.com/apache/shardingsphere/issues/21476 FIXME -->
         <!-- mvn boot -->
         <maven.test.skip>false</maven.test.skip>
         <maven.deploy.skip>false</maven.deploy.skip>
@@ -67,7 +68,7 @@
         <bouncycastle.version>1.72</bouncycastle.version> <!-- https://bouncycastle.org/releasenotes.html -->
         <justauth.version>1.16.5</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
         <!-- servicecomb -->
-        <servicecomb.version>2.7.8</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
+        <servicecomb.version>2.8.0</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
         <!-- others -->
         <springdoc.version>1.6.8</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases  boot-starter 2.6.7 -->
         <boot-admin.version>2.6.7</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases spring-boot.version 2.6.7-->
