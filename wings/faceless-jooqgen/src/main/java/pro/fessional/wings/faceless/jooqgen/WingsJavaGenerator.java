@@ -34,9 +34,9 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_COMMIT_ID;
-import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_DELETE_DT;
-import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_IS_DELETED;
+import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL_COMMIT_ID;
+import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL_DELETE_DT;
+import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL_IS_DELETED;
 
 public class WingsJavaGenerator extends JavaGenerator {
 
@@ -99,13 +99,13 @@ public class WingsJavaGenerator extends JavaGenerator {
 
         out.ref(NotNull.class);
         final List<ColumnDefinition> columns = table.getColumns();
-        if (columns.stream().anyMatch(WingsJooqGenHelp.LightIdAware)) {
+        if (columns.stream().anyMatch(WingsJooqGenHelper.LightIdAware)) {
             out.javadoc("LightIdAware seqName");
             out.println("@Override");
             out.println("@NotNull");
             out.println("public String getSeqName() {");
 
-            final Function<TableDefinition, String> fun = WingsJooqGenHelp.funSeqName.get();
+            final Function<TableDefinition, String> fun = WingsJooqGenHelper.funSeqName.get();
             String seqName = fun != null ? fun.apply(table) : table.getOutputName();
 
             out.println("return \"%s\";", seqName);
@@ -236,7 +236,7 @@ public class WingsJavaGenerator extends JavaGenerator {
 
         final Class<?> implClass;
 
-        if (table.getColumns().stream().anyMatch(WingsJooqGenHelp.JournalAware)) {
+        if (table.getColumns().stream().anyMatch(WingsJooqGenHelper.JournalAware)) {
             implClass = WingsJooqDaoJournalImpl.class;
         }
         else {

@@ -10,7 +10,7 @@ import org.jooq.conf.ParamType;
 import org.jooq.impl.DefaultExecuteListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelp;
+import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelper;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -169,7 +169,7 @@ public class JournalDeleteListener extends DefaultExecuteListener {
         upd.append(" SET ");
         upd.append(cidSql);
         upd.append(" ");
-        String jf = JournalJooqHelp.getJournalDateColumn(dsl, table);
+        String jf = JournalJooqHelper.getJournalDateColumn(dsl, table);
         if (!jf.isEmpty()) {
             upd.append(",").append(jf).append(" = NOW(3) ");
         }

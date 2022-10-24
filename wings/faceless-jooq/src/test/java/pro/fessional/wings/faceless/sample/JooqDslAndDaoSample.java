@@ -16,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
-import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelp;
+import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelper;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
@@ -119,21 +119,21 @@ public class JooqDslAndDaoSample {
 
         val s1 = new HashMap<>();
         val t = Tst中文也分表Table.Tst中文也分表;
-        JournalJooqHelp.create(journal, t, s1);
+        JournalJooqHelper.create(journal, t, s1);
         log.info("map1={}", s1);
 
         val s2 = new HashMap<>();
-        JournalJooqHelp.modify(journal, t, s2);
+        JournalJooqHelper.modify(journal, t, s2);
         log.info("map2={}", s2);
         val s3 = new HashMap<>();
-        JournalJooqHelp.delete(journal, t, s3);
+        JournalJooqHelper.delete(journal, t, s3);
         log.info("map3={}", s3);
 
         val s4 = new HashMap<>();
         val ob = new Tst中文也分表();
         val start1 = System.currentTimeMillis();
         for (int i = 0; i < 10000; i++) {
-            JournalJooqHelp.create(journal, t, s4);
+            JournalJooqHelper.create(journal, t, s4);
         }
         val start2 = System.currentTimeMillis();
         for (int i = 0; i < 10000; i++) {
