@@ -14,7 +14,6 @@ import org.jooq.InsertOnDuplicateSetStep;
 import org.jooq.InsertReturningStep;
 import org.jooq.Loader;
 import org.jooq.LoaderOptionsStep;
-import org.jooq.Name;
 import org.jooq.OrderField;
 import org.jooq.QueryPart;
 import org.jooq.Record;
@@ -29,10 +28,13 @@ import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
+import pro.fessional.mirana.best.StateAssert;
 import pro.fessional.mirana.cast.TypedCastUtil;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.U;
 import pro.fessional.mirana.pain.IORuntimeException;
+import pro.fessional.wings.faceless.database.jooq.helper.JournalDiffHelper;
+import pro.fessional.wings.faceless.service.journal.JournalDiff;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -241,28 +243,76 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
      * @return 执行结果，使用 ModifyAssert判断
      */
     public int insertInto(P pojo, boolean ignoreOrReplace) {
+        return insertInto(pojo, ignoreOrReplace, null);
+    }
 
-        DSLContext dsl = ctx();
-        R record = dsl.newRecord(table, pojo);
+    /**
+     * 以ignoreOrReplace=false 插入，并获取diff
+     *
+     * @see #diffInsert(Object, boolean)
+     */
+    @NotNull
+    public JournalDiff diffInsert(P pojo) {
+        return diffInsert(pojo, false);
+    }
+
+    /**
+     * 插入，并获取diff
+     *
+     * @see #insertInto(Object, boolean)
+     */
+    @NotNull
+    public JournalDiff diffInsert(P pojo, boolean ignoreOrReplace) {
+        final JournalDiff diff = new JournalDiff(table.getName());
+        insertInto(pojo, ignoreOrReplace, diff);
+        return diff;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private int insertInto(P pojo, boolean ignoreOrReplace, JournalDiff diff) {
+
+        final DSLContext dsl = ctx();
+        final R record = dsl.newRecord(table, pojo);
+        final int rc;
+        final @NotNull Field<?>[] fields = table.fields();
+        final @NotNull Object[] values = record.intoArray();
         if (ignoreOrReplace) {
             // insert ignore
-            return dsl.insertInto(table)
-                      .columns(table.fields())
-                      .values(record.intoArray())
-                      .onDuplicateKeyIgnore()
-                      .execute();
+            rc = dsl.insertInto(table)
+                    .columns(fields)
+                    .values(values)
+                    .onDuplicateKeyIgnore()
+                    .execute();
 
         }
         else {
 //            RowCountQuery query = WingsJooqUtil.replaceInto(record);
 //            return dsl.execute(query);
-            return dsl.insertInto(table)
-                      .columns(table.fields())
-                      .values(record.intoArray())
-                      .onDuplicateKeyUpdate()
-                      .set(record)
-                      .execute();
+            rc = dsl.insertInto(table)
+                    .columns(fields)
+                    .values(values)
+                    .onDuplicateKeyUpdate()
+                    .set(record)
+                    .execute();
         }
+
+        if (diff != null) {
+            final Result<? extends Record> rs2;
+            Condition cond = null;
+            for (Field pk : pkeys) {
+                final Object v = record.get(pk);
+                Condition c = pk.eq(v);
+                cond = cond == null ? c : cond.and(c);
+            }
+            // maybe ignore some value ,re-select
+            rs2 = dsl.selectFrom(table)
+                     .where(cond)
+                     .fetch();
+            StateAssert.aEqb(1, rs2.size(), "should find 1 record after insert");
+            JournalDiffHelper.helpInsert(diff, rs2);
+        }
+
+        return rc;
     }
 
     /**
@@ -1096,7 +1146,61 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
                     .execute();
     }
 
+    /**
+     * 删除一条记录，并获取Diff
+     */
+    @NotNull
+    public JournalDiff diffDelete(T table, Condition cond) {
+        final JournalDiff diff = new JournalDiff(table.getName());
+        final DSLContext dsl = ctx();
+        Result<R> rs1 = dsl.selectFrom(table)
+                           .where(cond)
+                           .fetch();
+
+        final int size = rs1.size();
+        if (size == 0) {
+            return diff;
+        }
+
+        int rc = dsl.delete(table)
+                    .where(cond)
+                    .execute();
+
+        StateAssert.aEqb(rc, size, "delete mismatched records. cond={}", cond);
+        JournalDiffHelper.helpDelete(diff, rs1);
+        return diff;
+    }
+
     ///////////////// update /////////////////////
+
+    /**
+     * 更新记录，并获取Diff
+     */
+    @NotNull
+    public JournalDiff diffUpdate(T table, Map<Field<?>, ?> setter, Condition cond) {
+        final JournalDiff diff = new JournalDiff(table.getName());
+        final DSLContext dsl = ctx();
+        final Field<?>[] fields = setter.keySet().toArray(Field<?>[]::new);
+
+        final SelectConditionStep<Record> select = dsl.select(fields)
+                                                      .from(table)
+                                                      .where(cond);
+        final Result<Record> rs1 = select.fetch();
+        final int size = rs1.size();
+
+        if (size == 0) return diff;
+
+        int rc = dsl.update(table)
+                    .set(setter)
+                    .where(cond)
+                    .execute();
+
+        StateAssert.aEqb(rc, size, "update mismatched records. cond={}", cond);
+        final Result<Record> rs2 = select.fetch();
+
+        JournalDiffHelper.helpUpdate(diff, rs1, rs2);
+        return diff;
+    }
 
     /**
      * @see #update(Table, Map, Condition, boolean)
@@ -1107,7 +1211,8 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
 
     /**
      * <pre>
-     * Keys can either be of type {@link String}, {@link Name}, or {@link Field}.
+     * Keys can either be of type String, Name, or Field.
+     * Values can either be of type <T> or Field<T>.
      *
      * val t = dao.tableForWriter
      * val setter = hashMapOf<Any, Any>()

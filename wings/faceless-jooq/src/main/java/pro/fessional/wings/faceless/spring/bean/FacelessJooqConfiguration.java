@@ -9,6 +9,7 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.jooq.impl.DefaultVisitListenerProvider;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -20,6 +21,7 @@ import org.springframework.core.annotation.Order;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqEnv;
 import pro.fessional.wings.faceless.database.jooq.converter.JooqConverterDelegate;
+import pro.fessional.wings.faceless.database.jooq.helper.JournalDiffHelper;
 import pro.fessional.wings.faceless.database.jooq.listener.AutoQualifyFieldListener;
 import pro.fessional.wings.faceless.database.jooq.listener.JournalDeleteListener;
 import pro.fessional.wings.faceless.database.jooq.listener.TableCudListener;
@@ -113,5 +115,11 @@ public class FacelessJooqConfiguration {
                 configuration.set(dcp);
             }
         };
+    }
+
+    @Autowired
+    public void initJournalDiffHelper(FacelessJooqCudProp prop) {
+        log.info("FacelessJooq spring-auto initJournalDiffHelper");
+        JournalDiffHelper.putDefaultIgnore(prop.getDiff());
     }
 }

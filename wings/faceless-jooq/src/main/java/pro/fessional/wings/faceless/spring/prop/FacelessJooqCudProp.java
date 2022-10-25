@@ -52,4 +52,11 @@ public class FacelessJooqCudProp {
     private Map<String, Set<String>> table = Collections.emptyMap();
     public static final String Key$table = Key + ".table";
 
+    /**
+     * JournalDiff中忽略的字段, default表示所有表，否则为具体表
+     *
+     * @see #Key$diff
+     */
+    private Map<String, Set<String>> diff = Collections.emptyMap();
+    public static final String Key$diff = Key + ".diff";
 }
