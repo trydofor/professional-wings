@@ -17,6 +17,7 @@ import java.util.Objects;
  * - delete - value1 != empty, value2 == empty
  *
  * 此外，column.size * count == value#.size，可表示多条记录。
+ * 生成时携带类型，但JSON序列化后会类型丢失，JSON反序列化时，value仅有String和Number类型
  * </pre>
  *
  * @author trydofor
@@ -35,11 +36,14 @@ public class JournalDiff {
     @NotNull
     private List<Object> value2 = Collections.emptyList();
 
-    public JournalDiff() {
-    }
+    private transient boolean typed = false;
 
-    public JournalDiff(@NotNull String table) {
-        this.table = table;
+    /**
+     * values是否存在类型，jooq生成存在类型
+     */
+    @Transient
+    public boolean isTyped() {
+        return typed;
     }
 
     /**

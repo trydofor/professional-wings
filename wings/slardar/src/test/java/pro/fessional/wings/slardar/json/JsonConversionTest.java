@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
 import pro.fessional.mirana.data.R;
-import pro.fessional.wings.slardar.serialize.JSONParser;
+import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.serialize.JsonConversion;
 
 import java.lang.reflect.Type;
@@ -103,7 +103,7 @@ class JsonConversionTest {
         R<Dto> rd2 = JSON.parseObject(rd0, tat.getType());
         log.info("rd2={}", rd2);
         //
-        R<Dto> rd3 = JSONParser.parse(rd0, tat);
+        R<Dto> rd3 = FastJsonHelper.object(rd0, tat);
         log.info("rd3={}", rd3);
 
         Assertions.assertEquals(dto, rd1.getData());

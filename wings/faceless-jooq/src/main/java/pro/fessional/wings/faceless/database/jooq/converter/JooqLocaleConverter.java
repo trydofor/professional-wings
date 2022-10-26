@@ -1,7 +1,6 @@
 package pro.fessional.wings.faceless.database.jooq.converter;
 
-import org.jetbrains.annotations.NotNull;
-import org.jooq.Converter;
+import org.jooq.impl.AbstractConverter;
 import pro.fessional.mirana.i18n.LocaleResolver;
 
 import java.util.Locale;
@@ -12,7 +11,11 @@ import java.util.Locale;
  * @author trydofor
  * @since 2021-01-18
  */
-public class JooqLocaleConverter implements Converter<String, Locale> {
+public class JooqLocaleConverter extends AbstractConverter<String, Locale> {
+
+    public JooqLocaleConverter() {
+        super(String.class, Locale.class);
+    }
 
     @Override
     public Locale from(String str) {
@@ -36,15 +39,5 @@ public class JooqLocaleConverter implements Converter<String, Locale> {
         }
 
         return lt + "_" + ct;
-    }
-
-    @Override
-    public @NotNull Class<String> fromType() {
-        return String.class;
-    }
-
-    @Override
-    public @NotNull Class<Locale> toType() {
-        return Locale.class;
     }
 }

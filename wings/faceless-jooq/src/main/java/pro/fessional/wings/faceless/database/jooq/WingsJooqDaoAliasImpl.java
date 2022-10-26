@@ -263,7 +263,9 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
      */
     @NotNull
     public JournalDiff diffInsert(P pojo, boolean ignoreOrReplace) {
-        final JournalDiff diff = new JournalDiff(table.getName());
+        final JournalDiff diff = new JournalDiff();
+        diff.setTable(table.getName());
+        diff.setTyped(true);
         insertInto(pojo, ignoreOrReplace, diff);
         return diff;
     }
@@ -1151,7 +1153,10 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
      */
     @NotNull
     public JournalDiff diffDelete(T table, Condition cond) {
-        final JournalDiff diff = new JournalDiff(table.getName());
+        final JournalDiff diff = new JournalDiff();
+        diff.setTable(table.getName());
+        diff.setTyped(true);
+
         final DSLContext dsl = ctx();
         Result<R> rs1 = dsl.selectFrom(table)
                            .where(cond)
@@ -1178,7 +1183,10 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
      */
     @NotNull
     public JournalDiff diffUpdate(T table, Map<Field<?>, ?> setter, Condition cond) {
-        final JournalDiff diff = new JournalDiff(table.getName());
+        final JournalDiff diff = new JournalDiff();
+        diff.setTable(table.getName());
+        diff.setTyped(true);
+
         final DSLContext dsl = ctx();
         final Field<?>[] fields = setter.keySet().toArray(Field<?>[]::new);
 

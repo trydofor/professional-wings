@@ -48,7 +48,10 @@ public class JournalDiffHelper {
         exec.run();
         final Result<?> rs2 = query.fetch();
 
-        final JournalDiff diff = new JournalDiff(table.getName());
+        final JournalDiff diff = new JournalDiff();
+        diff.setTable(table.getName());
+        diff.setTyped(true);
+
         helpInsert(diff, rs2);
         return diff;
     }
@@ -58,7 +61,10 @@ public class JournalDiffHelper {
         exec.run();
         final Result<?> rs2 = query.fetch();
 
-        final JournalDiff diff = new JournalDiff(table.getName());
+        final JournalDiff diff = new JournalDiff();
+        diff.setTable(table.getName());
+        diff.setTyped(true);
+
         helpUpdate(diff, rs1, rs2);
         return diff;
     }
@@ -67,7 +73,10 @@ public class JournalDiffHelper {
         final Result<?> rs1 = query.fetch();
         exec.run();
 
-        final JournalDiff diff = new JournalDiff(table.getName());
+        final JournalDiff diff = new JournalDiff();
+        diff.setTable(table.getName());
+        diff.setTyped(true);
+
         helpDelete(diff, rs1);
         return diff;
     }
