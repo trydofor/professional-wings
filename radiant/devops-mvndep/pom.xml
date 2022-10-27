@@ -27,6 +27,12 @@
             <artifactId>hazelcast-spring</artifactId>
             <version>${hazelcast.version}</version>
         </dependency>
+        <!-- jdbc -->
+        <dependency>
+            <groupId>org.jdbi</groupId>
+            <artifactId>jdbi3-core</artifactId>
+            <version>${jdbi.version}</version>
+        </dependency>
         <!-- utils -->
         <dependency>
             <groupId>com.google.guava</groupId>
