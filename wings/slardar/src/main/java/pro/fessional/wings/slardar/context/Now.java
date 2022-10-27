@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.context;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
 import org.jetbrains.annotations.NotNull;
+import pro.fessional.mirana.evil.ThreadLocalAttention;
 import pro.fessional.mirana.time.ThreadNow;
 
 import java.time.Clock;
@@ -23,8 +24,12 @@ import static pro.fessional.wings.slardar.context.LocaleZoneIdUtil.ZoneIdNonnull
 public class Now extends ThreadNow {
 
     static {
-        //noinspection UnstableApiUsage
-        init(new TransmittableThreadLocal<>(), 3);
+        try {
+            init(new TransmittableThreadLocal<>());
+        }
+        catch (ThreadLocalAttention e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /**
@@ -32,7 +37,6 @@ public class Now extends ThreadNow {
      */
     public static void initClock(@NotNull Duration offset) {
         if (!Duration.ZERO.equals(offset)) {
-            //noinspection UnstableApiUsage
             init(Clock.offset(Clock.systemDefaultZone(), offset));
         }
     }

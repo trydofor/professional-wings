@@ -2,7 +2,6 @@ package pro.fessional.wings.silencer.spring.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.logging.LogLevel;
 
 import java.util.Collections;
 import java.util.Set;
@@ -24,7 +23,7 @@ public class SilencerMiranaProp {
      *
      * @see #Key$code
      */
-    private Code code = null;
+    private Code code = new Code();
     public static final String Key$code = Key + ".code";
 
 
@@ -36,31 +35,54 @@ public class SilencerMiranaProp {
     private AutoLog autoLog = new AutoLog();
     public static final String Key$autoLog = Key + ".auto-log";
 
+    /**
+     * @see #Key$pain
+     */
+    private Debug debug = new Debug();
+    public static final String Key$pain = Key + ".debug";
+
+
     @Data
     public static class Code {
 
         public static final String Key = Key$code;
         /**
-         * LeapCode seed
+         * LeapCode seed，安全有关，需要修改
          *
          * @see #Key$leapCode
          */
-        private String leapCode = "安全有关，需要修改";
+        private String leapCode = null;
         public static final String Key$leapCode = Key + ".leap-code";
 
         /**
-         * Crc8Long seed
+         * Crc8Long seed，安全有关，需要修改
          *
          * @see #Key$crc8Long
          */
-        private int[] crc8Long;
+        private int[] crc8Long = null;
         public static final String Key$crc8Long = Key + ".crc8-long";
 
         /**
+         * 全局Aeskey，安全有关，需要修改
+         *
          * @see #Key$aesKey
          */
-        private String aesKey = "默认uuid";
+        private String aesKey = null;
         public static final String Key$aesKey = Key + ".aes-key";
+    }
+
+    @Data
+    public static class Debug {
+        public static final String Key = Key$pain;
+
+        /**
+         * 设置CodeException的Global有栈或无栈
+         *
+         * @see #Key$stack
+         */
+        private boolean stack = false;
+        public static final String Key$stack = Key + ".stack";
+
     }
 
     @Data
@@ -72,7 +94,7 @@ public class SilencerMiranaProp {
          *
          * @see #Key$level
          */
-        private LogLevel level = LogLevel.WARN;
+        private String level = "WARN";
         public static final String Key$level = Key + ".level";
 
         /**

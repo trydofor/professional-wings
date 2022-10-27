@@ -30,9 +30,9 @@ import javax.sql.DataSource;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-public class WarlockPostRunnerConfiguration {
+public class WarlockAutoRunConfiguration {
 
-    private final static Log log = LogFactory.getLog(WarlockPostRunnerConfiguration.class);
+    private final static Log log = LogFactory.getLog(WarlockAutoRunConfiguration.class);
 
     @Bean
     public CommandLineRunner registerEnumUtilRunner(ObjectProvider<WarlockI18nProp> provider) {
