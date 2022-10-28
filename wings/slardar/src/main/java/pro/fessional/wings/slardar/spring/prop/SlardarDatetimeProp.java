@@ -60,14 +60,6 @@ public class SlardarDatetimeProp {
     private Df offset;
     public static final String Key$patternOffset = Key + ".offset";
 
-    /**
-     * 设置系统时钟 offset ms
-     *
-     * @see #Key$clockOffset
-     */
-    private long clockOffset = 0;
-    public static final String Key$clockOffset = Key + ".clock-offset";
-
     @Data
     public static class Df {
         /**

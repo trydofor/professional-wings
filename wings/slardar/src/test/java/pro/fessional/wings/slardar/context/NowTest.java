@@ -15,7 +15,7 @@ import java.util.Locale;
  * @since 2022-10-10
  */
 @SpringBootTest(properties = {
-        "wings.slardar.datetime.clock-offset = " + NowTest.Offset,
+        "wings.silencer.debug.clock-offset = " + NowTest.Offset,
         "wings.silencer.i18n.zoneid=" + NowTest.Cn})
 class NowTest {
 

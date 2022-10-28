@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.wings.faceless.convention.EmptyValue;
+import pro.fessional.wings.slardar.context.Now;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -90,7 +91,7 @@ public interface WarlockUserAuthnService {
     default void enable(long userId, @NotNull Enum<?> authType, Duration expireIn) {
         Renew renew = new Renew();
         renew.setAuthType(authType);
-        renew.setExpiredDt(LocalDateTime.now().plusSeconds(expireIn.getSeconds()));
+        renew.setExpiredDt(Now.localDateTime().plusSeconds(expireIn.getSeconds()));
         renew(userId, renew);
     }
 

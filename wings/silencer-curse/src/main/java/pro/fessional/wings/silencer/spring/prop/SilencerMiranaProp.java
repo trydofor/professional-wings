@@ -35,13 +35,6 @@ public class SilencerMiranaProp {
     private AutoLog autoLog = new AutoLog();
     public static final String Key$autoLog = Key + ".auto-log";
 
-    /**
-     * @see #Key$pain
-     */
-    private Debug debug = new Debug();
-    public static final String Key$pain = Key + ".debug";
-
-
     @Data
     public static class Code {
 
@@ -63,26 +56,12 @@ public class SilencerMiranaProp {
         public static final String Key$crc8Long = Key + ".crc8-long";
 
         /**
-         * 全局Aeskey，安全有关，需要修改
+         * 全局AesKey，安全有关，需要修改
          *
          * @see #Key$aesKey
          */
         private String aesKey = null;
         public static final String Key$aesKey = Key + ".aes-key";
-    }
-
-    @Data
-    public static class Debug {
-        public static final String Key = Key$pain;
-
-        /**
-         * 设置CodeException的Global有栈或无栈
-         *
-         * @see #Key$stack
-         */
-        private boolean stack = false;
-        public static final String Key$stack = Key + ".stack";
-
     }
 
     @Data

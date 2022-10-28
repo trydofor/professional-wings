@@ -1,12 +1,9 @@
 package pro.fessional.wings.slardar.context;
 
-import com.alibaba.ttl.TransmittableThreadLocal;
 import org.jetbrains.annotations.NotNull;
-import pro.fessional.mirana.evil.ThreadLocalAttention;
 import pro.fessional.mirana.time.ThreadNow;
 
 import java.time.Clock;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,25 +19,6 @@ import static pro.fessional.wings.slardar.context.LocaleZoneIdUtil.ZoneIdNonnull
  * @since 2022-10-10
  */
 public class Now extends ThreadNow {
-
-    static {
-        try {
-            init(new TransmittableThreadLocal<>());
-        }
-        catch (ThreadLocalAttention e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    /**
-     * 设置默认的系统时钟，通过偏移量，毫秒
-     */
-    public static void initClock(@NotNull Duration offset) {
-        if (!Duration.ZERO.equals(offset)) {
-            init(Clock.offset(Clock.systemDefaultZone(), offset));
-        }
-    }
-
     @NotNull
     public static Clock clientClock() {
         return clock(ZoneIdNonnull.get());

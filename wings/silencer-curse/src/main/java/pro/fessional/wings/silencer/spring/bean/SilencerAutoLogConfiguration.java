@@ -32,8 +32,8 @@ public class SilencerAutoLogConfiguration {
 
     @Bean
     @ConditionalOnClass(ConsoleAppender.class)
-    public CommandLineRunner autoAddFilterLogbackConsole(SilencerMiranaProp prop) {
-        log.info("SilencerCurse spring-runs autoAddFilterLogbackConsole");
+    public CommandLineRunner silenceLogbackConsole(SilencerMiranaProp prop) {
+        log.info("SilencerCurse spring-runs silenceLogbackConsole");
         return args -> {
             final SilencerMiranaProp.AutoLog autoLog = prop.getAutoLog();
             final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
@@ -70,14 +70,12 @@ public class SilencerAutoLogConfiguration {
             for (Appender<ILoggingEvent> appender : appenders) {
                 log.info("- " + appender.getName() + " : " + appender.getClass().getName());
             }
-            
             log.info("================= Silencer =================");
-            final ThresholdFilter filter = new ThresholdFilter();
-            filter.setLevel(level);
+            final ThresholdFilter tft = new ThresholdFilter();
+            tft.setLevel(level);
             for (Appender<ILoggingEvent> appender : appenders) {
-                appender.addFilter(filter);
+                appender.addFilter(tft);
             }
         };
     }
-
 }
