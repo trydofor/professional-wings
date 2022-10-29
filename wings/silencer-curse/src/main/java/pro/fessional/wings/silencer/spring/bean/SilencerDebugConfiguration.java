@@ -1,10 +1,13 @@
 package pro.fessional.wings.silencer.spring.bean;
 
+import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.spi.FilterReply;
 import com.alibaba.ttl.TransmittableThreadLocal;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.slf4j.LoggerFactory;
+import org.slf4j.TtlMDCAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -16,7 +19,6 @@ import pro.fessional.mirana.evil.ThreadLocalAttention;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.silencer.debug.LoggerDebug;
-import pro.fessional.wings.silencer.logback.WingsThresholdFilter;
 import pro.fessional.wings.silencer.spring.prop.SilencerDebugProp;
 
 import java.time.Duration;
@@ -31,13 +33,6 @@ public class SilencerDebugConfiguration {
     private static final Log log = LogFactory.getLog(SilencerDebugConfiguration.class);
 
     private final SilencerDebugProp silencerDebugProp;
-
-    @Bean
-    @ConditionalOnClass(FilterReply.class)
-    public WingsThresholdFilter wingsThresholdFilter() {
-        // TODO
-        return null;
-    }
 
     @Autowired
     public void autoCodeExceptionDebug() throws ThreadLocalAttention {
@@ -58,10 +53,17 @@ public class SilencerDebugConfiguration {
     @Bean
     @ConditionalOnClass(FilterReply.class)
     public CommandLineRunner autoLogbackDebug(LoggingSystem system, LoggerGroups groups) {
-        log.info("SilencerCurse spring-runs autoLogbackDebug");
+        log.info("SilencerCurse spring-runs autoLogbackDebug, init TtlMDC");
+        TtlMDCAdapter.initMdc();// 尽早初始化
         return args -> {
+            if (silencerDebugProp.isMdcThreshold()) {
+                log.info("SilencerCurse spring-conf autoLogbackDebug WingsMdcThresholdFilter");
+                LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+                lc.getTurboFilterList().add(0, LoggerDebug.MdcThresholdFilter);
+            }
+            // 尽晚初始化
+            log.info("SilencerCurse spring-conf autoLogbackDebug LoggerDebug");
             LoggerDebug.initGlobal(system, groups);
-            // TODO
         };
     }
 }

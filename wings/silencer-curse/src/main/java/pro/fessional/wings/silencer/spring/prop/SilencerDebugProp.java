@@ -29,4 +29,13 @@ public class SilencerDebugProp {
      */
     private long clockOffset = 0;
     public static final String Key$clockOffset = Key + ".clock-offset";
+
+
+    /**
+     * 是否配置WingsMdcThresholdFilter
+     *
+     * @see #Key$mdcThreshold
+     */
+    private boolean mdcThreshold = true;
+    public static final String Key$mdcThreshold = Key + ".mdc-threshold";
 }

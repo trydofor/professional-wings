@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jooq.DefaultConfigurationCustomizer;
+import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author trydofor
+ * @see JooqAutoConfiguration
  * @since 2019-08-12
  */
 @Configuration(proxyBeanMethods = false)
