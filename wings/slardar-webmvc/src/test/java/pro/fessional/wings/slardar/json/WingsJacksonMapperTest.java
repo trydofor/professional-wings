@@ -79,7 +79,12 @@ public class WingsJacksonMapperTest {
         Locale.setDefault(Locale.US);
         // user timezone
         TimeZone.setDefault(systemTz);
-        TerminalContext.login(1, Locale.US, userTz, "localhost", "test");
+        TerminalContext.login()
+                       .withLocale(Locale.US)
+                       .withTimeZone(userTz)
+                       .withRemoteIp("localhost")
+                       .withAgentInfo("test")
+                       .asUser(1);
     }
 
     @Data

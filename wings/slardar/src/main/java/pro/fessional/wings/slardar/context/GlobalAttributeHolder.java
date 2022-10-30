@@ -2,19 +2,16 @@ package pro.fessional.wings.slardar.context;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import lombok.Data;
-import lombok.ToString;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import pro.fessional.mirana.best.TypedReg;
+import pro.fessional.mirana.best.TypedReg.Key;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +31,7 @@ public class GlobalAttributeHolder {
     private static final Cache<Key<?, ?>, Object> CACHE = Caffeine.newBuilder()
                                                                   .expireAfterAccess(12, TimeUnit.HOURS)
                                                                   .build();
-    private static final ConcurrentHashMap<Reg<?, ?>, Function<?, ?>> LOADER = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<TypedReg<?, ?>, Function<?, ?>> LOADER = new ConcurrentHashMap<>();
 
     /**
      * 注册一个属性及其加载器
@@ -44,7 +41,7 @@ public class GlobalAttributeHolder {
      * @param <K>    key类型
      * @param <V>    value类型
      */
-    public static <K, V> void regLoader(@NotNull Reg<K, V> reg, @NotNull Function<Key<K, V>, V> loader) {
+    public static <K, V> void regLoader(@NotNull TypedReg<K, V> reg, @NotNull Function<Key<K, V>, V> loader) {
         LOADER.put(reg, loader);
     }
 
@@ -57,7 +54,7 @@ public class GlobalAttributeHolder {
      * @param <K>   key类型
      * @param <V>   value类型
      */
-    public static <K, V> void putAttr(@NotNull Reg<K, V> reg, @NotNull K key, @NotNull V value) {
+    public static <K, V> void putAttr(@NotNull TypedReg<K, V> reg, @NotNull K key, @NotNull V value) {
         Key<K, V> k = new Key<>(reg, key);
         CACHE.put(k, value);
     }
@@ -70,7 +67,7 @@ public class GlobalAttributeHolder {
      * @param <K> key类型
      * @param <V> value类型
      */
-    public static <K, V> void putAttr(@NotNull Reg<K, V> reg, @NotNull Map<K, V> map) {
+    public static <K, V> void putAttr(@NotNull TypedReg<K, V> reg, @NotNull Map<K, V> map) {
         Map<Key<K, V>, V> kvs = new HashMap<>(map.size());
         for (Map.Entry<K, V> en : map.entrySet()) {
             kvs.put(new Key<>(reg, en.getKey()), en.getValue());
@@ -88,8 +85,8 @@ public class GlobalAttributeHolder {
      * @param <V>  value类型
      * @return 返回值
      */
-    @NotNull
-    public static <K, V> V tryAttr(@NotNull Reg<K, V> reg, @NotNull K key, @NotNull V elze) {
+    @Contract("_,_,!null->!null")
+    public static <K, V> V tryAttr(@NotNull TypedReg<K, V> reg, @NotNull K key, V elze) {
         final V obj = tryAttr(reg, key, false);
         return obj == null ? elze : obj;
     }
@@ -104,7 +101,7 @@ public class GlobalAttributeHolder {
      * @return 返回值
      */
     @NotNull
-    public static <K, V> V tryAttr(@NotNull Reg<K, V> reg, @NotNull K key) {
+    public static <K, V> V tryAttr(@NotNull TypedReg<K, V> reg, @NotNull K key) {
         return tryAttr(reg, key, true);
     }
 
@@ -120,7 +117,7 @@ public class GlobalAttributeHolder {
      */
     @SuppressWarnings("unchecked")
     @Contract("_,_,true ->!null")
-    public static <K, V> V tryAttr(@NotNull Reg<K, V> reg, @NotNull K key, boolean notnull) {
+    public static <K, V> V tryAttr(@NotNull TypedReg<K, V> reg, @NotNull K key, boolean notnull) {
         Key<K, V> k = new Key<>(reg, key);
         final Function<Key<?, ?>, ?> ld = (Function<Key<?, ?>, ?>) LOADER.get(reg);
         final Object rst;
@@ -147,7 +144,7 @@ public class GlobalAttributeHolder {
      * @return 返回值
      */
     @SuppressWarnings("unchecked")
-    public static <K, V> V getAttr(@NotNull Reg<K, V> reg, @NotNull K key) {
+    public static <K, V> V getAttr(@NotNull TypedReg<K, V> reg, @NotNull K key) {
         Key<K, V> k = new Key<>(reg, key);
         final Object rst = CACHE.getIfPresent(k);
         return (V) rst;
@@ -160,7 +157,7 @@ public class GlobalAttributeHolder {
      * @param key 唯一key，如userId
      * @param <K> key类型
      */
-    public static <K> void ridAttr(Reg<K, ?> reg, K key) {
+    public static <K> void ridAttr(TypedReg<K, ?> reg, K key) {
         CACHE.invalidate(new Key<>(reg, key));
     }
 
@@ -172,7 +169,7 @@ public class GlobalAttributeHolder {
      * @param <K> key类型
      */
     @SafeVarargs
-    public static <K> void ridAttr(Reg<K, ?> reg, K... key) {
+    public static <K> void ridAttr(TypedReg<K, ?> reg, K... key) {
         if (key == null || key.length == 0) return;
         ridAttrs(reg, Arrays.asList(key));
     }
@@ -184,7 +181,7 @@ public class GlobalAttributeHolder {
      * @param reg 类型
      * @param key 唯一key，如userId
      */
-    public static <K> void ridAttrs(Reg<K, ?> reg, Collection<? extends K> key) {
+    public static <K> void ridAttrs(TypedReg<K, ?> reg, Collection<? extends K> key) {
         if (key == null || key.isEmpty()) return;
         final Set<Key<K, ?>> ks = new HashSet<>();
         for (K k : key) {
@@ -198,7 +195,7 @@ public class GlobalAttributeHolder {
      *
      * @param reg 类型
      */
-    public static void ridAttrAll(Reg<?, ?>... reg) {
+    public static void ridAttrAll(TypedReg<?, ?>... reg) {
         if (reg == null || reg.length == 0) return;
         ridAttrAll(Arrays.asList(reg));
     }
@@ -208,12 +205,12 @@ public class GlobalAttributeHolder {
      *
      * @param reg 类型
      */
-    public static void ridAttrAll(Collection<? extends Reg<?, ?>> reg) {
+    public static void ridAttrAll(Collection<? extends TypedReg<?, ?>> reg) {
         if (reg == null || reg.isEmpty()) return;
-        final Set<Reg<?, ?>> rgs;
+        final Set<TypedReg<?, ?>> rgs;
         if (reg instanceof Set) {
             //noinspection unchecked
-            rgs = (Set<Reg<?, ?>>) reg;
+            rgs = (Set<TypedReg<?, ?>>) reg;
         }
         else {
             rgs = new HashSet<>(reg);
@@ -232,7 +229,7 @@ public class GlobalAttributeHolder {
      *
      * @param reg 注册类型
      */
-    public static void ridLoader(Reg<?, ?>... reg) {
+    public static void ridLoader(TypedReg<?, ?>... reg) {
         if (reg == null || reg.length == 0) return;
         ridLoader(Arrays.asList(reg));
     }
@@ -242,72 +239,12 @@ public class GlobalAttributeHolder {
      *
      * @param reg 注册类型
      */
-    public static void ridLoader(Collection<? extends Reg<?, ?>> reg) {
+    public static void ridLoader(Collection<? extends TypedReg<?, ?>> reg) {
         if (reg == null || reg.isEmpty()) return;
 
-        for (Reg<?, ?> r : reg) {
+        for (TypedReg<?, ?> r : reg) {
             LOADER.remove(r);
         }
         ridAttrAll(reg);
-    }
-
-    // ////
-    @Data
-    @ToString
-    public static class Key<K, R> {
-        private final Reg<K, R> reg;
-        private final K key;
-    }
-
-    /**
-     * 使用方法，在接口中构造子类。
-     * <pre>
-     * public interface Solos {
-     *  Reg<Integer, String> PasssaltByUid = new Reg<Integer, String>() {};
-     *  Reg<Integer, Set<String>> PermitsByUid = new Reg<Integer, Set<String>>() {};
-     * }
-     * </pre>
-     *
-     * @param <K> key类型
-     * @param <V> value类型
-     */
-    public static abstract class Reg<K, V> {
-        private final Type keyType;
-        private final Type valType;
-        private final Class<?> regType;
-
-        protected Reg() {
-            final Class<?> clz = getClass();
-            final Type sup = clz.getGenericSuperclass();
-            final Type[] tps = ((ParameterizedType) sup).getActualTypeArguments();
-            keyType = tps[0];
-            valType = tps[1];
-            regType = clz;
-        }
-
-        public Type getKeyType() {
-            return keyType;
-        }
-
-        public Type getValType() {
-            return valType;
-        }
-
-        public Class<?> getRegType() {
-            return regType;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Reg)) return false;
-            Reg<?, ?> reg = (Reg<?, ?>) o;
-            return Objects.equals(regType, reg.regType);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(regType);
-        }
     }
 }

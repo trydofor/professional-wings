@@ -26,7 +26,7 @@ public class SlardarTerminalConfiguration {
     @ConditionalOnBean({WingsLocaleResolver.class, WingsRemoteResolver.class})
     public TerminalInterceptor terminalInterceptor(WingsLocaleResolver localeResolver, WingsRemoteResolver remoteResolver) {
         log.info("SlardarWebmvc spring-bean terminalInterceptor");
-        TerminalContext.setActive(true);
+        TerminalContext.initActive(true);
         return new TerminalInterceptor(localeResolver, remoteResolver);
     }
 }

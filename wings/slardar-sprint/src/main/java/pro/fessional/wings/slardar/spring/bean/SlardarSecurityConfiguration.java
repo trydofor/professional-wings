@@ -3,6 +3,8 @@ package pro.fessional.wings.slardar.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -108,12 +110,15 @@ public class SlardarSecurityConfiguration {
     public void addTerminalInterceptorThreadLocalListener() {
         final String name = "LocaleContextHolder";
         log.info("SlardarWebmvc spring-auto addTerminalInterceptorThreadLocalListener, name=" + name);
-        TerminalContext.putThreadLocalListener(name, ctx -> {
-            if (ctx == null) {
-                LocaleContextHolder.resetLocaleContext();
-            }
-            else {
+        TerminalContext.registerListener(name, new TerminalContext.ContextChangeListener() {
+            @Override
+            public void assign(TerminalContext.@NotNull Context ctx) {
                 LocaleContextHolder.setLocaleContext(new SimpleTimeZoneAwareLocaleContext(ctx.getLocale(), ctx.getTimeZone()));
+            }
+
+            @Override
+            public void remove(TerminalContext.@Nullable Context ctx) {
+                LocaleContextHolder.resetLocaleContext();
             }
         });
     }

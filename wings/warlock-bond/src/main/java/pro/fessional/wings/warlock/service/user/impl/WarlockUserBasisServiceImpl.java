@@ -49,12 +49,12 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, Ini
         if (winUserBasisDao.notTableExist()) return;
 
         log.info("warlock conf SaltByUid for GlobalAttributeHolder");
-        GlobalAttributeHolder.regLoader(SaltByUid, key -> {
+        GlobalAttributeHolder.regLoader(SaltByUid, k -> {
             final WinUserBasisTable t = winUserBasisDao.getTable();
             return winUserBasisDao.ctx()
                                   .select(t.Passsalt)
                                   .from(t)
-                                  .where(t.Id.eq(key.getKey()))
+                                  .where(t.Id.eq(k.key))
                                   .fetchOneInto(String.class);
         });
     }

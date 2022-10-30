@@ -1,6 +1,6 @@
 package pro.fessional.wings.silencer.debug;
 
-import pro.fessional.mirana.pain.CodeException;
+import static pro.fessional.mirana.pain.CodeException.TweakStack;
 
 /**
  * @author trydofor
@@ -10,19 +10,19 @@ public class StackDebug {
 
     // global
     public static void debugGlobal(boolean stack) {
-        CodeException.adaptGlobalStack(stack);
+        TweakStack.tweakGlobal(stack);
     }
 
     public static void resetGlobal() {
-        CodeException.resetThreadStack();
+        TweakStack.resetGlobal();
     }
 
     // thread
     public static void debugThread(boolean stack) {
-        CodeException.adaptGlobalStack(stack);
+        TweakStack.tweakThread(stack);
     }
 
     public static void resetThread() {
-        CodeException.resetThreadStack();
+        TweakStack.resetThread();
     }
 }

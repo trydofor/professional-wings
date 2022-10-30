@@ -57,7 +57,12 @@ public class WarlockSuccessLoginListener implements ApplicationListener<Authenti
             WingsAuthDetails authDetails = (WingsAuthDetails) dtl;
             final Map<String, String> meta = authDetails.getMetaData();
             dtlMap.putAll(meta);
-            TerminalContext.login(userId, ud.getLocale(), ud.getZoneId(), meta.get(WingsAuthHelper.AuthAddr), meta.get(WingsAuthHelper.AuthAgent));
+            TerminalContext.login()
+                           .withLocale(ud.getLocale())
+                           .withTimeZone(ud.getZoneId())
+                           .withRemoteIp(meta.get(WingsAuthHelper.AuthAddr))
+                           .withAgentInfo(meta.get(WingsAuthHelper.AuthAgent))
+                           .asUser(userId);
         }
 
         warlockAuthnService.onSuccess(authType, userId, JSON.toJSONString(dtlMap));

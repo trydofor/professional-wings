@@ -1,6 +1,7 @@
 package pro.fessional.wings.warlock.service.user;
 
-import pro.fessional.wings.slardar.context.GlobalAttributeHolder.Reg;
+
+import pro.fessional.mirana.best.TypedReg;
 
 import java.util.Set;
 
@@ -10,7 +11,7 @@ import java.util.Set;
  */
 public interface WarlockUserAttribute {
 
-    Reg<Long, String> SaltByUid = new Reg<>() {};
-    Reg<Long, Set<String>> PermsByUid = new Reg<>() {};
-    Reg<Long, Set<String>> RolesByUid = new Reg<>() {};
+    TypedReg<Long, String> SaltByUid = new TypedReg<>() {};
+    TypedReg<Long, Set<String>> PermsByUid = new TypedReg<>() {};
+    TypedReg<Long, Set<String>> RolesByUid = new TypedReg<>() {};
 }

@@ -21,6 +21,7 @@ import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.silencer.debug.LoggerDebug;
 import pro.fessional.wings.silencer.spring.prop.SilencerDebugProp;
 
+import java.time.Clock;
 import java.time.Duration;
 
 /**
@@ -38,16 +39,20 @@ public class SilencerDebugConfiguration {
     public void autoCodeExceptionDebug() throws ThreadLocalAttention {
         final boolean stack = silencerDebugProp.isCodeStack();
         log.info("SilencerCurse spring-auto autoCodeExceptionDebug with TransmittableThreadLocal, stack=" + stack);
-        CodeException.initThreadStack(new TransmittableThreadLocal<>());
-        CodeException.initGlobalStack(stack);
+        CodeException.TweakStack.initThread(new TransmittableThreadLocal<>());
+        CodeException.TweakStack.initGlobal(stack);
     }
 
     @Autowired
     public void autoThreadNowDebug() throws ThreadLocalAttention {
         final long ms = silencerDebugProp.getClockOffset();
         log.info("SilencerCurse spring-auto autoThreadNowDebug with TransmittableThreadLocal, offset=" + ms);
-        ThreadNow.initThread(new TransmittableThreadLocal<>());
-        ThreadNow.initGlobal(Duration.ofMillis(ms));
+        ThreadNow.TweakClock.initThread(new TransmittableThreadLocal<>());
+        final Duration dr = Duration.ofMillis(ms);
+        if (!dr.isZero()) {
+            final Clock clock = ThreadNow.TweakClock.current(true);
+            ThreadNow.TweakClock.initGlobal(Clock.offset(clock, dr));
+        }
     }
 
     @Bean
