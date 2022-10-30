@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import pro.fessional.mirana.bits.Aes128;
@@ -14,7 +13,6 @@ import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.slardar.concur.Righter;
 import pro.fessional.wings.slardar.constants.SlardarOrderConst;
-import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.serialize.KryoSimple;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarRighterProp;
@@ -22,6 +20,8 @@ import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.function.Function;
 
 /**
  * https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-handlermapping-interceptor
@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class RighterInterceptor implements AutoRegisterInterceptor {
 
-    public static final String Secret = RandCode.strong(60);
+    public static final String Secret = RandCode.strong(20);
 
     private final SlardarRighterProp prop;
 
@@ -41,20 +41,15 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
     private int order = SlardarOrderConst.OrderRighterInterceptor;
 
     /**
-     * 根据 SecurityContext.Principal 获得用户加密用的密码
+     * 根据 HttpSession 获得用户加密的密码
      */
     @Setter @Getter
-    private SecretProvider secretProvider = key -> Secret;
+    private SecretProvider secretProvider = null;
 
-    public interface SecretProvider {
-        /**
-         * 若返回null，则使用 RighterInterceptor.Secret
-         *
-         * @param auth Authentication
-         * @return secret or null
-         * @see #Secret
-         */
-        String apply(Authentication auth);
+    /**
+     * 若返回null，则使用 RighterInterceptor.Secret
+     */
+    public interface SecretProvider extends Function<HttpSession, String> {
     }
 
     @Override
@@ -70,6 +65,7 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
         // 使用前清空
         RighterContext.delAudit();
 
+        final HttpSession session = request.getSession(false);
         final String audit = request.getHeader(prop.getHeader());
         if (audit == null) {
             if (anno.value()) {
@@ -78,7 +74,8 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
             }
             else {
                 RighterContext.funAllow((obj) -> {
-                    final String allow = encodeAllow(SecurityContextUtil.getAuthentication(), obj);
+                    final String key = getKey(session);
+                    final String allow = encodeAllow(key, obj);
                     final int len = allow.length();
                     if (len > 5_000) {
                         log.warn("browser may 8k header, but 4k is too much. uri={}", request.getRequestURI());
@@ -90,13 +87,14 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
         }
 
         // 一般只有登录用户才有权限修改，使用用户slat作为密码
-        final Authentication atn = SecurityContextUtil.getAuthentication(true);
-        if (atn == null) return true;
+
+        if (session == null) return true;
 
         // 检查签名
-        byte[] bytes = decodeAudit(atn, audit);
+        final String key = getKey(session);
+        byte[] bytes = decodeAudit(key, audit);
         if (bytes == null) {
-            log.info("failed to check digest. principal={}, audit={}", atn.getPrincipal(), audit);
+            log.info("failed to check digest. session={}, audit={}", session.getId(), audit);
             responseError(response);
             return false;
         }
@@ -108,7 +106,7 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
             return true;
         }
         catch (Exception e) {
-            log.warn("failed to deserialize. principal=" + atn.getPrincipal() + ", audit=" + audit, e);
+            log.warn("failed to deserialize. session=" + session + ", audit=" + audit, e);
             responseError(response);
             return false;
         }
@@ -137,9 +135,9 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
         RighterContext.delAllow();
     }
 
-    private String getKey(Authentication key) {
+    private String getKey(HttpSession session) {
         if (secretProvider != null) {
-            String k = secretProvider.apply(key);
+            String k = secretProvider.apply(session);
             if (k != null && !k.isEmpty()) {
                 return k;
             }
@@ -157,11 +155,10 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
         return Aes128.of(k);
     }
 
-    private String encodeAllow(Authentication auth, Object obj) {
+    private String encodeAllow(String key, Object obj) {
         // 序列化对象
         final byte[] bytes = KryoSimple.writeClassAndObject(obj);
         // 加密
-        String key = getKey(auth);
         final Aes128 aes = genAesKey(key);
         final String b64 = Base64.encode(aes.encode(bytes));
         final String sum = MdHelp.sha1.sum(b64 + key); // 40c
@@ -169,13 +166,12 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
         return sum + b64;
     }
 
-    private byte[] decodeAudit(Authentication auth, String audit) {
+    private byte[] decodeAudit(String key, String audit) {
         final int sha1Pos = 40;
         if (audit.length() <= sha1Pos) return null;
 
         String sum = audit.substring(0, sha1Pos);
         String b64 = audit.substring(sha1Pos);
-        String key = getKey(auth);
 
         if (MdHelp.sha1.check(sum, b64 + key)) {
             final byte[] bys = Base64.decode(b64);

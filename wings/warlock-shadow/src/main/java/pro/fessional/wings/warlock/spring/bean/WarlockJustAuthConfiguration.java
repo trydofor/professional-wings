@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
+import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.warlock.security.justauth.AuthConfigWrapper;
 import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
 import pro.fessional.wings.warlock.security.justauth.JustAuthRequestBuilder;
@@ -50,7 +51,7 @@ public class WarlockJustAuthConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(JustAuthRequestBuilder.class)
-    public JustAuthRequestBuilder justAuthRequestBuilder(AuthStateCache cache, AuthStateBuilder builder) {
+    public JustAuthRequestBuilder justAuthRequestBuilder(AuthStateCache cache, AuthStateBuilder builder, WingsRemoteResolver resolver) {
         log.info("WarlockShadow spring-bean justAuthRequestFactory");
         JustAuthRequestBuilder bean = new JustAuthRequestBuilder();
         final Map<String, WarlockJustAuthProp.Http> hcs = justAuthProp.getHttpConf();
@@ -85,6 +86,8 @@ public class WarlockJustAuthConfiguration {
         bean.setAuthConfigMap(map);
         bean.setAuthStateCache(cache);
         bean.setAuthStateBuilder(builder);
+        bean.setRemoteResolver(resolver);
+
         return bean;
     }
 }

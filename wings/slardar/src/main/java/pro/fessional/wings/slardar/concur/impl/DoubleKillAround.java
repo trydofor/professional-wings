@@ -27,6 +27,7 @@ import pro.fessional.wings.slardar.concur.DoubleKill;
 import pro.fessional.wings.slardar.concur.DoubleKillException;
 import pro.fessional.wings.slardar.concur.ProgressContext;
 import pro.fessional.wings.slardar.context.TerminalContext;
+import pro.fessional.wings.slardar.security.DefaultUserId;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class DoubleKillAround {
         final Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         final DoubleKill doubleKill = method.getAnnotation(DoubleKill.class);
 
-        final Object uid = doubleKill.principal() ? TerminalContext.get().getUserId() : TerminalContext.Context.Guest;
+        final Object uid = doubleKill.principal() ? TerminalContext.get(false).getUserId() : DefaultUserId.Guest;
         final Object[] args = joinPoint.getArgs();
 
         final String keyStr = doubleKill.value();

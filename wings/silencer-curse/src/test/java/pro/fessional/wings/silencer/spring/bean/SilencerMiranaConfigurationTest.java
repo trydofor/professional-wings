@@ -30,14 +30,14 @@ public class SilencerMiranaConfigurationTest {
     }
 
     @Test
-    public void testCode(){
+    public void testCode() {
         long number = 1979L;
         long encode = crc8Long.encode(number);
         long decode = crc8Long.decode(encode);
-        assertEquals(number,decode);
+        assertEquals(number, decode);
 
         String s = leapCode.encode26(number);
         long decode1 = leapCode.decode(s);
-        assertEquals(number,decode1);
+        assertEquals(number, decode1);
     }
 }

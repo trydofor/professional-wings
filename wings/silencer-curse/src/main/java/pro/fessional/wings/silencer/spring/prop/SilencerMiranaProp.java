@@ -2,7 +2,6 @@ package pro.fessional.wings.silencer.spring.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.logging.LogLevel;
 
 import java.util.Collections;
 import java.util.Set;
@@ -24,7 +23,7 @@ public class SilencerMiranaProp {
      *
      * @see #Key$code
      */
-    private Code code = null;
+    private Code code = new Code();
     public static final String Key$code = Key + ".code";
 
 
@@ -41,25 +40,27 @@ public class SilencerMiranaProp {
 
         public static final String Key = Key$code;
         /**
-         * LeapCode seed
+         * LeapCode seed，安全有关，需要修改
          *
          * @see #Key$leapCode
          */
-        private String leapCode = "安全有关，需要修改";
+        private String leapCode = null;
         public static final String Key$leapCode = Key + ".leap-code";
 
         /**
-         * Crc8Long seed
+         * Crc8Long seed，安全有关，需要修改
          *
          * @see #Key$crc8Long
          */
-        private int[] crc8Long;
+        private int[] crc8Long = null;
         public static final String Key$crc8Long = Key + ".crc8-long";
 
         /**
+         * 全局AesKey，安全有关，需要修改
+         *
          * @see #Key$aesKey
          */
-        private String aesKey = "默认uuid";
+        private String aesKey = null;
         public static final String Key$aesKey = Key + ".aes-key";
     }
 
@@ -72,7 +73,7 @@ public class SilencerMiranaProp {
          *
          * @see #Key$level
          */
-        private LogLevel level = LogLevel.WARN;
+        private String level = "WARN";
         public static final String Key$level = Key + ".level";
 
         /**

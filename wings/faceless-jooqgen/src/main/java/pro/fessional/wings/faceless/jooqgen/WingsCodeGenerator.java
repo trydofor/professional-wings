@@ -490,7 +490,7 @@ public class WingsCodeGenerator {
         }
 
         public Builder funSeqName(Function<TableDefinition, String> fn) {
-            WingsJooqGenHelp.funSeqName.set(fn);
+            WingsJooqGenHelper.funSeqName.set(fn);
             return this;
         }
 

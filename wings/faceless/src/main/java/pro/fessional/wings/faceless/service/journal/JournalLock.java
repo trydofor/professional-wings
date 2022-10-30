@@ -11,11 +11,11 @@ import lombok.Data;
 @Data
 public class JournalLock<T> {
 
-    private final T id;
     private final Long commitId;
+    private final T id;
 
     // ////
-    public static <U> JournalLock<U> of(U id, Long commitId) {
-        return new JournalLock<>(id, commitId);
+    public static <U> JournalLock<U> of(long commitId, U id) {
+        return new JournalLock<>(commitId, id);
     }
 }

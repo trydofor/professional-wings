@@ -8,6 +8,7 @@ import pro.fessional.mirana.func.Dcl;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
+import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ public class ComboWingsAuthDetailsSource implements WingsAuthDetailsSource<Wings
 
     @Setter @Getter
     private Set<String> ignoredMetaKey = Collections.emptySet();
+
+    @Setter @Getter
+    private WingsRemoteResolver wingsRemoteResolver = null;
 
     @Override
     public WingsAuthDetails buildDetails(@NotNull Enum<?> authType, @NotNull HttpServletRequest request) {
@@ -66,6 +70,11 @@ public class ComboWingsAuthDetailsSource implements WingsAuthDetailsSource<Wings
         if (zone != null) {
             map.putIfAbsent(WingsAuthHelper.AuthZone, zone);
         }
+        if (wingsRemoteResolver != null) {
+            map.put(WingsAuthHelper.AuthAddr, wingsRemoteResolver.resolveRemoteIp(request));
+            map.put(WingsAuthHelper.AuthAgent, wingsRemoteResolver.resolveAgentInfo(request));
+        }
+
         final Enumeration<String> names = request.getParameterNames();
         while (names.hasMoreElements()) {
             final String n = names.nextElement();

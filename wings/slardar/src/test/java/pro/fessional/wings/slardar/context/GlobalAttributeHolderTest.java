@@ -2,7 +2,7 @@ package pro.fessional.wings.slardar.context;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import pro.fessional.wings.slardar.context.GlobalAttributeHolder.Reg;
+import pro.fessional.mirana.best.TypedReg;
 
 import java.util.Set;
 
@@ -14,8 +14,8 @@ import java.util.Set;
 class GlobalAttributeHolderTest {
 
     public interface Solos {
-        Reg<Integer, String> PasssaltByUid = new Reg<>() {};
-        Reg<Integer, Set<String>> PermitsByUid = new Reg<>() {};
+        TypedReg<Integer, String> PasssaltByUid = new TypedReg<>() {};
+        TypedReg<Integer, Set<String>> PermitsByUid = new TypedReg<>() {};
     }
 
     @Test

@@ -73,7 +73,7 @@ public class LoginSuccessHandler extends NonceLoginSuccessHandler implements Ini
     }
 
     protected boolean isSafeRedirect(String state) {
-        if (!state.startsWith("http")) return false;
+        if (!state.startsWith("http")) return false; // http or https
         final Set<String> safe = warlockJustAuthProp.getSafeHost();
         if (safe == null || safe.isEmpty()) return false;
 

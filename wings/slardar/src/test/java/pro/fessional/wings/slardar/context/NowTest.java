@@ -15,7 +15,7 @@ import java.util.Locale;
  * @since 2022-10-10
  */
 @SpringBootTest(properties = {
-        "wings.slardar.datetime.clock-offset = " + NowTest.Offset,
+        "wings.silencer.debug.clock-offset = " + NowTest.Offset,
         "wings.silencer.i18n.zoneid=" + NowTest.Cn})
 class NowTest {
 
@@ -34,7 +34,12 @@ class NowTest {
     @Test
     void clientClock() {
         ZoneId jp = ZoneId.of("Asia/Tokyo");
-        TerminalContext.login(1, Locale.US, jp, "localhost", "test");
+        TerminalContext.login()
+                       .withLocale(Locale.US)
+                       .withTimeZone(jp)
+                       .withRemoteIp("localhost")
+                       .withAgentInfo("Test")
+                       .asUser(1);
 
         ZonedDateTime szd = Now.zonedDateTime();
         ZonedDateTime czd = Now.clientZonedDateTime();

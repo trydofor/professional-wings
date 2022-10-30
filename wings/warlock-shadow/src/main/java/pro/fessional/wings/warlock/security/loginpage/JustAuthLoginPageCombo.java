@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 public class JustAuthLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
 
     @Setter @Getter
-    private int order = WarlockOrderConst.JustAuthLoginPageCombo ;
+    private int order = WarlockOrderConst.JustAuthLoginPageCombo;
 
     @Setter(onMethod_ = {@Autowired})
     protected JustAuthRequestBuilder justAuthRequestBuilder;

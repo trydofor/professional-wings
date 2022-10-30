@@ -95,7 +95,7 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
 
             result.setUsername(authn.getUsername());
             result.setPassword(authn.getPassword());
-            result.setPasssalt(GlobalAttributeHolder.getAttr(WarlockUserAttribute.SaltByUid, uid));
+            result.setPasssalt(GlobalAttributeHolder.tryAttr(WarlockUserAttribute.SaltByUid, uid));
             result.setExpiredDt(authn.getExpiredDt());
 
             return result;

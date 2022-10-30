@@ -1,12 +1,15 @@
 [submodule "observe/mirana"]
 	path = observe/mirana
-	url = ../../trydofor/pro.fessional.mirana.git
+	url = ../pro.fessional.mirana.git
 	branch = master
+	shallow = true
 [submodule "observe/meepo"]
 	path = observe/meepo
-	url = ../../trydofor/pro.fessional.meepo.git
+	url = ../pro.fessional.meepo.git
 	branch = master
+	shallow = true
 [submodule "observe/docs"]
 	path = observe/docs
-	url = ../../fessionalpro/wings-doc.git
+	url = https://github.com/fessionalpro/wings-doc.git
 	branch = main
+	shallow = true

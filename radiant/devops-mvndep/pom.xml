@@ -27,6 +27,12 @@
             <artifactId>hazelcast-spring</artifactId>
             <version>${hazelcast.version}</version>
         </dependency>
+        <!-- jdbc -->
+        <dependency>
+            <groupId>org.jdbi</groupId>
+            <artifactId>jdbi3-core</artifactId>
+            <version>${jdbi.version}</version>
+        </dependency>
         <!-- utils -->
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -37,11 +43,6 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.expediagroup.beans</groupId>
-            <artifactId>bull-map-transformer</artifactId>
-            <version>${bull.version}</version>
         </dependency>
         <dependency>
             <groupId>pro.fessional</groupId>

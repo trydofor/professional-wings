@@ -2,10 +2,13 @@ package pro.fessional.wings.faceless.service.lightid.impl
 
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
+import pro.fessional.mirana.id.LightIdBufferedProvider
 import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.WingsRevision
@@ -23,6 +26,7 @@ import java.util.concurrent.atomic.AtomicLong
  * @since 2019-06-04
  */
 @SpringBootTest
+@TestMethodOrder(MethodOrderer.MethodName::class)
 open class LightIdServiceImplTest {
 
     @Autowired
@@ -39,6 +43,9 @@ open class LightIdServiceImplTest {
 
     @Autowired
     lateinit var journalService: JournalService
+
+    @Autowired
+    lateinit var lightIdBufferedProvider: LightIdBufferedProvider
 
     private val seqName = "sys_commit_journal"
 
@@ -94,5 +101,17 @@ open class LightIdServiceImplTest {
         }
         latch.await()
         assertEquals(loopCount * threadCnt, idCache.size)
+    }
+
+    @Test
+    fun `test4🦁区间ID`() {
+        val rg = 999_000_000_000L;
+        val id = lightIdService.getId(seqName, 0)
+        lightIdBufferedProvider.setSequenceHandler { seq -> seq + rg }
+        val id1 = lightIdService.getId(seqName, 0)
+        assertEquals(rg + 1, id1 - id)
+        lightIdBufferedProvider.sequenceHandler = null
+        val id2 = lightIdService.getId(seqName, 0)
+        assertEquals(2, id2 - id)
     }
 }

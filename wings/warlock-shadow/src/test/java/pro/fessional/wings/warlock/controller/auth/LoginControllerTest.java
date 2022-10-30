@@ -69,8 +69,8 @@ public class LoginControllerTest {
     public Set<String> listAllHold() {
         Set<String> set = new HashSet<>();
         final long uid = SecurityContextUtil.getUserId();
-        set.addAll(GlobalAttributeHolder.getAttr(RolesByUid, uid));
-        set.addAll(GlobalAttributeHolder.getAttr(PermsByUid, uid));
+        set.addAll(GlobalAttributeHolder.tryAttr(RolesByUid, uid));
+        set.addAll(GlobalAttributeHolder.tryAttr(PermsByUid, uid));
         return set;
     }
 

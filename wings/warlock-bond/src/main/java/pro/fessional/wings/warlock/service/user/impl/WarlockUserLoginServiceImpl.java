@@ -64,8 +64,8 @@ public class WarlockUserLoginServiceImpl implements WarlockUserLoginService {
         po.setAuthType(at);
 
         final TerminalContext.Context tc = TerminalContext.get();
-        po.setLoginIp(tc.getRemoteIp());
-        po.setTerminal(tc.getAgentInfo());
+        po.setLoginIp(tc.getTerminal(TerminalContext.RemoteIp));
+        po.setTerminal(tc.getTerminal(TerminalContext.AgentInfo));
         winUserLoginDao.insert(po);
     }
 }

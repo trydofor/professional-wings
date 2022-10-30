@@ -38,7 +38,7 @@ public class WingsSessionRegistry<S extends Session> implements SessionRegistry,
     @Override
     public List<SessionInformation> getAllSessions(Object principal, boolean includeExpiredSessions) {
         final String name;
-        long userId = DefaultUserId.Unknown;
+        long userId = DefaultUserId.Guest;
         if (principal instanceof WingsUserDetails) {
             final WingsUserDetails dt = (WingsUserDetails) principal;
             name = dt.getUsername();
@@ -57,7 +57,7 @@ public class WingsSessionRegistry<S extends Session> implements SessionRegistry,
         for (S ss : sessions) {
             if (includeExpiredSessions || !wingsSessionHelper.isExpired(ss)) {
                 // 默认情况principal和userId一对一，实际也支持principal和userId一对多
-                if (userId == DefaultUserId.Unknown || userId == wingsSessionHelper.getUserId(ss)) {
+                if (userId == DefaultUserId.Guest || userId == wingsSessionHelper.getUserId(ss)) {
                     infos.add(new WingsSessionInformation<>(ss, sessionRepository));
                 }
             }

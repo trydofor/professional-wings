@@ -14,7 +14,7 @@ public interface DefaultUserId {
     /**
      * 非登录用户的统称。
      */
-    long Unknown = -1;
+    long Guest = -1;
 
     /**
      * 无权用户，-2:Unprivileged User
@@ -30,4 +30,18 @@ public interface DefaultUserId {
      * 守护进程，1:System Services
      */
     long Daemon = 2;
+
+    /**
+     * 是否等于Guest (eq -1)
+     */
+    static boolean isGuest(long uid) {
+        return uid == Guest;
+    }
+
+    /**
+     * 是否视为Guest (null | le -1)
+     */
+    static boolean asGuest(Long uid) {
+        return uid == null || uid <= Guest;
+    }
 }

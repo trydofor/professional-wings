@@ -15,9 +15,9 @@ import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-public class WarlockBondRunnerConfiguration {
+public class WarlockBondAutoRunConfiguration {
 
-    private final static Log log = LogFactory.getLog(WarlockBondRunnerConfiguration.class);
+    private final static Log log = LogFactory.getLog(WarlockBondAutoRunConfiguration.class);
 
     @Bean    // 静态注入，执行一次即可
     public CommandLineRunner registerCacheConstRunner() {

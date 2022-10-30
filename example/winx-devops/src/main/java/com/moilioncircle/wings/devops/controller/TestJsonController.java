@@ -69,7 +69,7 @@ public class TestJsonController {
     public R<Jn> jsonIt() {
         Jn json = new Jn();
         ZonedDateTime now = ZonedDateTime.now();
-        final TerminalContext.Context ctx = TerminalContext.get();
+        final TerminalContext.Context ctx = TerminalContext.get(false);
         final ZoneId zid = ctx.getTimeZone().toZoneId();
         ZonedDateTime userDate = now.withZoneSameInstant(zid);
         json.setZonedDateTimeVal(userDate);

@@ -20,7 +20,7 @@ public class BatriderController {
 
     private final HelloContract batriderHelloContract = Invoker.createProxy("batrider", "batrider-hello", HelloContract.class);
 
-    @RpcReference(microserviceName = "winx-api", schemaId = "winx-hello")
+    @Setter(onMethod_ = {@RpcReference(microserviceName = "winx-api", schemaId = "winx-hello")})
     private HelloContract winxHelloContract;
 
     @Setter(onMethod_ = {@Autowired})

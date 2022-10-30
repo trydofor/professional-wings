@@ -7,18 +7,18 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_COMMIT_ID;
-import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_CREATE_DT;
-import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_DELETE_DT;
-import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_IS_DELETED;
-import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_MODIFY_DT;
-import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelp.COL_MODIFY_TM;
+import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL_COMMIT_ID;
+import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL_CREATE_DT;
+import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL_DELETE_DT;
+import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL_IS_DELETED;
+import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL_MODIFY_DT;
+import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL_MODIFY_TM;
 
 /**
  * @author trydofor
  * @since 2021-01-20
  */
-public class WingsJooqGenHelp {
+public class WingsJooqGenHelper {
 
     public static final AtomicReference<Function<TableDefinition, String>> funSeqName = new AtomicReference<>();
 

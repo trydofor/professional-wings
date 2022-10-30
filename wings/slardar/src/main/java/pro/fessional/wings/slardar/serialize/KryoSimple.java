@@ -7,7 +7,8 @@ import com.esotericsoftware.kryo.serializers.DefaultArraySerializers;
 import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.objenesis.strategy.StdInstantiatorStrategy;
-import pro.fessional.mirana.anti.S;
+import pro.fessional.mirana.evil.ThreadLocalAttention;
+import pro.fessional.mirana.evil.ThreadLocalSoft;
 import pro.fessional.wings.slardar.serialize.javakaffee.SynchronizedCollectionsSerializer;
 import pro.fessional.wings.slardar.serialize.javakaffee.UnmodifiableCollectionsSerializer;
 
@@ -17,27 +18,45 @@ import pro.fessional.wings.slardar.serialize.javakaffee.UnmodifiableCollectionsS
  */
 public class KryoSimple {
 
-    private static final S<Output> output = new S<>(new ThreadLocal<>()) {
-        @Override
-        @NotNull
-        public Output initValue() {
-            return new Output(4096, 1024 * 1024);
+    private static final ThreadLocalSoft<Output> output;
+
+    static {
+        try {
+            output = new ThreadLocalSoft<>(new ThreadLocal<>()) {
+                @Override
+                @NotNull
+                public Output initValue() {
+                    return new Output(4096, 1024 * 1024);
+                }
+            };
         }
-    };
+        catch (ThreadLocalAttention e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     /** no leak, for static */
-    private static final S<Kryo> kryo = new S<>(new ThreadLocal<>()) {
-        @Override
-        @NotNull public Kryo initValue() {
-            Kryo ko = new Kryo();
-            ko.setReferences(false);
-            ko.setRegistrationRequired(false);
-            ko.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
-            ko.setClassLoader(Thread.currentThread().getContextClassLoader());
-            register(ko);
-            return ko;
+    private static final ThreadLocalSoft<Kryo> kryo;
+
+    static {
+        try {
+            kryo = new ThreadLocalSoft<>(new ThreadLocal<>()) {
+                @Override
+                @NotNull public Kryo initValue() {
+                    Kryo ko = new Kryo();
+                    ko.setReferences(false);
+                    ko.setRegistrationRequired(false);
+                    ko.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+                    ko.setClassLoader(Thread.currentThread().getContextClassLoader());
+                    register(ko);
+                    return ko;
+                }
+            };
         }
-    };
+        catch (ThreadLocalAttention e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     /**
      * 增加 用户Serializer，大部分Kryo自己实现了

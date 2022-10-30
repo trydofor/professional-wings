@@ -37,7 +37,12 @@ class AutoDtoHelperTest {
      */
     @Test
     void autoRequest() {
-        TerminalContext.login(-1, Locale.CHINA, ZONE_JP, "localhost", "SpringTest");
+        TerminalContext.login()
+                       .withLocale(Locale.CHINA)
+                       .withTimeZone(ZONE_JP)
+                       .withRemoteIp("localhost")
+                       .withAgentInfo("SpringTest")
+                       .asUser(-1);
 
         I18nItem it = initI18nItem(ZONE_JP);
         I18nMaps mp = initI18nMaps(it);
@@ -78,7 +83,12 @@ class AutoDtoHelperTest {
      */
     @Test
     void autoResponse() {
-        TerminalContext.login(-1, Locale.US, ZONE_JP, "localhost", "SpringTest");
+        TerminalContext.login()
+                       .withLocale(Locale.US)
+                       .withTimeZone(ZONE_JP)
+                       .withRemoteIp("localhost")
+                       .withAgentInfo("SpringTest")
+                       .asUser(-1);
 
         I18nItem it = initI18nItem(ZONE_CN);
         I18nMaps mp = initI18nMaps(it);

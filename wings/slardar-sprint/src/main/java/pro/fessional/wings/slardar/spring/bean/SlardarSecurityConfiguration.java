@@ -3,13 +3,22 @@ package pro.fessional.wings.slardar.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.i18n.SimpleTimeZoneAwareLocaleContext;
+import org.springframework.security.config.annotation.SecurityConfigurer;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import pro.fessional.mirana.bits.MdHelp;
+import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.pass.DefaultPasssaltEncoder;
 import pro.fessional.wings.slardar.security.pass.PasswordEncoders;
@@ -24,9 +33,10 @@ import java.util.Map;
  */
 @Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
-public class SlardarPasscoderConfiguration {
+@ConditionalOnClass(SecurityConfigurer.class)
+public class SlardarSecurityConfiguration {
 
-    private static final Log log = LogFactory.getLog(SlardarPasscoderConfiguration.class);
+    private static final Log log = LogFactory.getLog(SlardarSecurityConfiguration.class);
 
     private final SlardarPasscoderProp slardarPasscoderProp;
 
@@ -57,6 +67,12 @@ public class SlardarPasscoderConfiguration {
     }
 
     @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        log.info("SlardarWebmvc spring-bean httpSessionEventPublisher");
+        return new HttpSessionEventPublisher();
+    }
+
+    @Bean
     @ConditionalOnMissingBean(PasssaltEncoder.class)
     public PasssaltEncoder passsaltEncoder() {
         final String encoder = slardarPasscoderProp.getSaltEncoder();
@@ -82,8 +98,28 @@ public class SlardarPasscoderConfiguration {
      * 使用wings配置，提到spring默认配置
      */
     @Bean
-    public WingsSecBeanInitConfigurer wingsInitBeanManagerConfigurer(ApplicationContext context) {
-        log.info("SlardarWebmvc spring-bean wingsInitBeanManagerConfigurer");
+    public WingsSecBeanInitConfigurer wingsSecBeanInitConfigurer(ApplicationContext context) {
+        log.info("SlardarWebmvc spring-bean wingsSecBeanInitConfigurer");
         return new WingsSecBeanInitConfigurer(context);
+    }
+
+    /**
+     * 与TerminalContext同步处理Locale和TimeZone
+     */
+    @Autowired
+    public void addTerminalInterceptorThreadLocalListener() {
+        final String name = "LocaleContextHolder";
+        log.info("SlardarWebmvc spring-auto addTerminalInterceptorThreadLocalListener, name=" + name);
+        TerminalContext.registerListener(name, new TerminalContext.ContextChangeListener() {
+            @Override
+            public void assign(TerminalContext.@NotNull Context ctx) {
+                LocaleContextHolder.setLocaleContext(new SimpleTimeZoneAwareLocaleContext(ctx.getLocale(), ctx.getTimeZone()));
+            }
+
+            @Override
+            public void remove(TerminalContext.@Nullable Context ctx) {
+                LocaleContextHolder.resetLocaleContext();
+            }
+        });
     }
 }

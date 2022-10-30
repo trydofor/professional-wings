@@ -27,14 +27,14 @@ public class WingsJavaStrategy extends DefaultGeneratorStrategy {
 
         List<ColumnDefinition> columns = ((TableDefinition) definition).getColumns();
         if (mode == GeneratorStrategy.Mode.INTERFACE) {
-            if (columns.stream().anyMatch(WingsJooqGenHelp.JournalAware)) {
+            if (columns.stream().anyMatch(WingsJooqGenHelper.JournalAware)) {
                 impls.add(JournalAware.class.getName());
             }
         }
         else if (mode == GeneratorStrategy.Mode.DEFAULT) {
             String java = getJavaClassName(definition, mode);
             impls.add(WingsJournalTable.class.getName() + "<" + java + ">");
-            if (columns.stream().anyMatch(WingsJooqGenHelp.LightIdAware)) {
+            if (columns.stream().anyMatch(WingsJooqGenHelper.LightIdAware)) {
                 impls.add(LightIdAware.class.getName());
             }
         }

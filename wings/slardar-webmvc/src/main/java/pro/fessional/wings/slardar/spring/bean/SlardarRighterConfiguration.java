@@ -32,10 +32,7 @@ public class SlardarRighterConfiguration {
     public RighterInterceptor righterInterceptor(ObjectProvider<RighterInterceptor.SecretProvider> secretProvider) {
         log.info("SlardarWebmvc spring-bean righterInterceptor");
         final RighterInterceptor bean = new RighterInterceptor(slardarRighterProp);
-        final RighterInterceptor.SecretProvider sp = secretProvider.getIfAvailable();
-        if (sp != null) {
-            bean.setSecretProvider(sp);
-        }
+        secretProvider.ifAvailable(bean::setSecretProvider);
         return bean;
     }
 

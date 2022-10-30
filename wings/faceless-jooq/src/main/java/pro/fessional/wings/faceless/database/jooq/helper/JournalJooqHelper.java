@@ -11,7 +11,7 @@ import org.jooq.UpdatableRecord;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DAOImpl;
 import pro.fessional.wings.faceless.convention.EmptyValue;
-import pro.fessional.wings.faceless.database.helper.JournalJdbcHelp;
+import pro.fessional.wings.faceless.database.helper.JournalJdbcHelper;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 
 import java.sql.ResultSet;
@@ -26,7 +26,7 @@ import static org.jooq.impl.DSL.field;
  * @author trydofor
  * @since 2020-08-11
  */
-public class JournalJooqHelp extends JournalJdbcHelp {
+public class JournalJooqHelper extends JournalJdbcHelper {
 
     public static String getJournalDateColumn(DSLContext dsl, String table) {
         return getJournalDateColumn(table, s -> {

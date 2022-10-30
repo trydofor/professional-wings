@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.convert.ApplicationConversionService;
 import org.springframework.context.annotation.Bean;
@@ -19,11 +18,9 @@ import pro.fessional.wings.slardar.autozone.spring.String2LocalTimeConverter;
 import pro.fessional.wings.slardar.autozone.spring.String2OffsetDateTimeConverter;
 import pro.fessional.wings.slardar.autozone.spring.String2ZonedDateTimeConverter;
 import pro.fessional.wings.slardar.autozone.spring.ZonedDateTime2StringConverter;
-import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
-import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
@@ -131,14 +128,5 @@ public class SlardarDateTimeConfiguration {
         log.info("Slardar spring-bean offsetDateTimeStringConverter");
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern(slardarDatetimeProp.getOffset().getFormat());
         return new OffsetDateTime2StringConverter(fmt, slardarDatetimeProp.getOffset().isAuto());
-    }
-
-    @Bean
-    public CommandLineRunner initThreadNowRunner() {
-        final long clockOffset = slardarDatetimeProp.getClockOffset();
-        return (arg) -> {
-            log.info("Slardar spring-bean initThreadNowRunner clock-offset=" + clockOffset);
-            Now.initClock(Duration.ofMillis(clockOffset));
-        };
     }
 }

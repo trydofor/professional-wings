@@ -2,6 +2,7 @@ package pro.fessional.wings.faceless.database.helper;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import pro.fessional.mirana.best.DummyBlock;
 import pro.fessional.mirana.time.DateFormatter;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 
@@ -22,7 +23,7 @@ import java.util.function.Function;
  * @author trydofor
  * @since 2019-09-28
  */
-public class JournalJdbcHelp {
+public class JournalJdbcHelper {
 
     public static final String COL_CREATE_DT = "create_dt";
     public static final String COL_MODIFY_DT = "modify_dt";
@@ -41,7 +42,7 @@ public class JournalJdbcHelp {
             if (columns[1] != null) return columns[1];
         }
         catch (SQLException e) {
-            //
+            DummyBlock.ignore(e);
         }
         finally {
             if (needClose) {
@@ -49,7 +50,7 @@ public class JournalJdbcHelp {
                     rs.close();
                 }
                 catch (SQLException e) {
-                    //
+                    DummyBlock.ignore(e);
                 }
             }
         }
@@ -61,7 +62,8 @@ public class JournalJdbcHelp {
     }
 
     public static String getJournalDateColumn(JdbcTemplate tmpl, String table) {
-        return getJournalDateColumn(table, s -> tmpl.query("select * from " + s + " where 1 = 0", filedJournal));
+        //noinspection SqlConstantExpression
+        return getJournalDateColumn(table, s -> tmpl.query("SELECT * FROM " + s + " WHERE 1 = 0", filedJournal));
     }
 
     // jdbc
@@ -92,10 +94,10 @@ public class JournalJdbcHelp {
 
         StringBuilder where = new StringBuilder(" WHERE id IN (");
         for (Long id : ids) {
-            where.append(id).append(",");
+            where.append(id).append(',');
         }
         where.deleteCharAt(where.length() - 1);
-        where.append(")");
+        where.append(')');
         return deleteWhere(tmpl, table, commitId, now, where.toString());
     }
 
@@ -117,9 +119,11 @@ public class JournalJdbcHelp {
             journalSetter = ", " + jf + "=" + ldt + " ";
         }
 
+        @SuppressWarnings("SqlWithoutWhere") // checked
         String update = "UPDATE " + table + " SET " + COL_COMMIT_ID + "=" + commitId + journalSetter + where;
         tmpl.update(update, args);
 
+        @SuppressWarnings("SqlWithoutWhere") // checked
         String delete = "DELETE FROM " + table + " " + where;
         return tmpl.update(delete, args);
     }
@@ -145,9 +149,15 @@ public class JournalJdbcHelp {
     // ////
 
     private static void checkWhere(String where) {
-        if (where == null || where.isEmpty()) throw new IllegalArgumentException("where is empty");
+        if (where == null || where.isEmpty()) {
+            throw new IllegalArgumentException("where clause is empty");
+        }
         if (where.contains(";")) {
-            throw new IllegalArgumentException("where is may be sql-injected");
+            throw new IllegalArgumentException("where clause may be sql-injected, should not contains ';'");
+        }
+        final String key = " WHERE ";
+        if (!where.regionMatches(true, 0, key, 0, key.length())) {
+            throw new IllegalArgumentException("missing ' WHERE ' in where clause");
         }
     }
 

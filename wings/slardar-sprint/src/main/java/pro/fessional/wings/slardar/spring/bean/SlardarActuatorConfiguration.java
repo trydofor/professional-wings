@@ -16,9 +16,9 @@ import java.util.Map;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-public class SlardarOtherBeanConfiguration {
+public class SlardarActuatorConfiguration {
 
-    private final static Log log = LogFactory.getLog(SlardarOtherBeanConfiguration.class);
+    private final static Log log = LogFactory.getLog(SlardarActuatorConfiguration.class);
 
     @Bean
     @ConditionalOnAvailableEndpoint

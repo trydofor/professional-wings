@@ -190,7 +190,7 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
 
         if (details != null) {
             details.setAuthType(authType);
-            final String passsalt = GlobalAttributeHolder.getAttr(WarlockUserAttribute.SaltByUid, details.getUserId());
+            final String passsalt = GlobalAttributeHolder.tryAttr(WarlockUserAttribute.SaltByUid, details.getUserId());
             details.setPasssalt(passsalt);
         }
         return details;

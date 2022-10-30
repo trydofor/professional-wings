@@ -13,16 +13,13 @@ import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import pro.fessional.wings.slardar.concur.HazelcastGlobalLock;
 import pro.fessional.wings.slardar.concur.impl.RighterInterceptor;
-import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
-import pro.fessional.wings.slardar.security.WingsUserDetails;
+import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.warlock.errorhandle.AllExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.CodeExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.auto.BindExceptionAdvice;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockErrorProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockLockProp;
-
-import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.SaltByUid;
 
 
 /**
@@ -66,12 +63,9 @@ public class WarlockOtherBeanConfiguration {
     @ConditionalOnMissingBean
     public RighterInterceptor.SecretProvider righterInterceptorSecretProvider() {
         log.info("WarlockShadow spring-bean righterInterceptorSecretProvider");
-        return auth -> {
-            final Object dtl = auth.getDetails();
-            if (dtl instanceof WingsUserDetails) {
-                return GlobalAttributeHolder.getAttr(SaltByUid, ((WingsUserDetails) dtl).getUserId());
-            }
-            return null;
+        return ss -> {
+            final Long uid = SecurityContextUtil.getUserId(false);
+            return uid == null ? null : ss.getId() + uid;
         };
     }
 

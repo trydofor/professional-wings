@@ -1,7 +1,6 @@
 package pro.fessional.wings.faceless.database.jooq.converter;
 
-import org.jetbrains.annotations.NotNull;
-import org.jooq.Converter;
+import org.jooq.impl.AbstractConverter;
 import pro.fessional.mirana.i18n.ZoneIdResolver;
 
 import java.time.ZoneId;
@@ -10,7 +9,11 @@ import java.time.ZoneId;
  * @author trydofor
  * @since 2021-01-18
  */
-public class JooqZoneStrConverter implements Converter<String, ZoneId> {
+public class JooqZoneStrConverter extends AbstractConverter<String, ZoneId> {
+
+    public JooqZoneStrConverter() {
+        super(String.class, ZoneId.class);
+    }
 
     @Override
     public ZoneId from(String zid) {
@@ -20,15 +23,5 @@ public class JooqZoneStrConverter implements Converter<String, ZoneId> {
     @Override
     public String to(ZoneId zid) {
         return zid.getId();
-    }
-
-    @Override
-    public @NotNull Class<String> fromType() {
-        return String.class;
-    }
-
-    @Override
-    public @NotNull Class<ZoneId> toType() {
-        return ZoneId.class;
     }
 }
