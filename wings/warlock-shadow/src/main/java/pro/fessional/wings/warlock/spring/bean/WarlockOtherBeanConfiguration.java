@@ -42,7 +42,7 @@ public class WarlockOtherBeanConfiguration {
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$codeExceptionHandler, havingValue = "true")
     public HandlerExceptionResolver codeExceptionResolver(MessageSource messageSource, WarlockErrorProp prop) {
         log.info("WarlockShadow spring-bean codeExceptionResolver");
-        final WarlockErrorProp.CodeException cp = prop.getCodeException();
+        final WarlockErrorProp.ErrorProp cp = prop.getCodeException();
         final CodeExceptionResolver bean = new CodeExceptionResolver(messageSource, cp.getHttpStatus(), cp.getContentType(), cp.getResponseBody());
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1000);
         return bean;
@@ -53,7 +53,7 @@ public class WarlockOtherBeanConfiguration {
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$allExceptionHandler, havingValue = "true")
     public HandlerExceptionResolver allExceptionResolver(WarlockErrorProp prop) {
         log.info("WarlockShadow spring-bean allExceptionResolver");
-        final WarlockErrorProp.CodeException cp = prop.getAllException();
+        final WarlockErrorProp.ErrorProp cp = prop.getAllException();
         final AllExceptionResolver bean = new AllExceptionResolver(cp.getHttpStatus(), cp.getContentType(), cp.getResponseBody());
         bean.setOrder(Ordered.LOWEST_PRECEDENCE);
         return bean;

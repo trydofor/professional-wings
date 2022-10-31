@@ -3,6 +3,7 @@ package pro.fessional.wings.faceless.flywave;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import pro.fessional.mirana.math.AnyIntegerUtil;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager.RevisionSql;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager.Status;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
@@ -112,7 +113,7 @@ public class RevisionFitness {
         }
 
         // exec sql
-        final long cid = -System.currentTimeMillis();
+        final long cid = -ThreadNow.millis();
         for (Map.Entry<Long, Set<String>> en : exec.entrySet()) {
             Long rv = en.getKey();
             final Set<String> ms = en.getValue();

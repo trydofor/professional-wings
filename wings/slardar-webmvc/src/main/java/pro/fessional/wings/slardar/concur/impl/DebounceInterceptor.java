@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import pro.fessional.mirana.bits.Md5;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.concur.Debounce;
 import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.servlet.request.RequestHelper;
@@ -66,7 +67,7 @@ public class DebounceInterceptor implements AutoRegisterInterceptor {
         final String key = genKey(request, anno);
         request.setAttribute(DebounceKey, key);
 
-        final long bgn = System.currentTimeMillis();
+        final long bgn = ThreadNow.millis();
         final long cur = seq.getAndIncrement();
 
         final Dto dto;

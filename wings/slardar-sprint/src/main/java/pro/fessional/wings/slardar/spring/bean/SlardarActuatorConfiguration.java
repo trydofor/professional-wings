@@ -23,7 +23,7 @@ public class SlardarActuatorConfiguration {
     @Bean
     @ConditionalOnAvailableEndpoint
     public SlardarCacheEndpoint slardarCacheManageEndpoint(Map<String, CacheManager> cacheManagers) {
-        log.info("SlardarWebmvc spring-bean slardarCacheManageEndpoint");
+        log.info("SlardarSprint spring-bean slardarCacheManageEndpoint");
         return new SlardarCacheEndpoint(cacheManagers);
     }
 }

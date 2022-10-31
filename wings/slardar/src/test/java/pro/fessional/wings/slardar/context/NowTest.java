@@ -34,12 +34,13 @@ class NowTest {
     @Test
     void clientClock() {
         ZoneId jp = ZoneId.of("Asia/Tokyo");
-        TerminalContext.login()
-                       .withLocale(Locale.US)
-                       .withTimeZone(jp)
-                       .withRemoteIp("localhost")
-                       .withAgentInfo("Test")
-                       .asUser(1);
+        TerminalContext.Builder builder = new TerminalContext.Builder()
+                .locale(Locale.US)
+                .timeZone(jp)
+                .terminalAddr("localhost")
+                .terminalAgent("Test")
+                .user(1);
+        TerminalContext.login(builder);
 
         ZonedDateTime szd = Now.zonedDateTime();
         ZonedDateTime czd = Now.clientZonedDateTime();

@@ -6,7 +6,7 @@ import static pro.fessional.mirana.pain.CodeException.TweakStack;
  * @author trydofor
  * @since 2022-10-27
  */
-public class StackDebug {
+public class DebugStack {
 
     // global
     public static void debugGlobal(boolean stack) {

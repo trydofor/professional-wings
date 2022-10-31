@@ -16,11 +16,11 @@ public class WarlockErrorProp {
 
     public static final String Key = "wings.warlock.error";
 
-    private final CodeException codeException = new CodeException();
-    private final CodeException allException = new CodeException();
+    private final ErrorProp codeException = new ErrorProp();
+    private final ErrorProp allException = new ErrorProp();
 
     @Data
-    public static class CodeException {
+    public static class ErrorProp {
 
         /**
          * CodeExceptionResolver 回复的http-status

@@ -14,6 +14,7 @@ import pro.fessional.wings.slardar.serialize.KryoConversion;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.SysConstantEnumDao;
 import pro.fessional.wings.warlock.service.conf.RuntimeConfService;
 import pro.fessional.wings.warlock.service.conf.impl.RuntimeConfServiceImpl;
+import pro.fessional.wings.warlock.service.event.DebugEventListener;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 
 
@@ -41,5 +42,12 @@ public class WarlockCommonConfiguration {
         bean.addHandler(RuntimeConfServiceImpl.JsonHandler, new JsonConversion());
         bean.addHandler(RuntimeConfServiceImpl.KryoHandler, new KryoConversion());
         return bean;
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = WarlockEnabledProp.Key$dynamicDebug, havingValue = "true")
+    public DebugEventListener debugEventListener() {
+        log.info("Warlock spring-bean debugEventListener");
+        return new DebugEventListener();
     }
 }

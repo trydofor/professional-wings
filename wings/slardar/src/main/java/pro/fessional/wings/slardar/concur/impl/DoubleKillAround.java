@@ -23,6 +23,7 @@ import org.springframework.scheduling.annotation.AsyncAnnotationBeanPostProcesso
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.lock.ArrayKey;
 import pro.fessional.mirana.lock.JvmStaticGlobalLock;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.concur.DoubleKill;
 import pro.fessional.wings.slardar.concur.DoubleKillException;
 import pro.fessional.wings.slardar.concur.ProgressContext;
@@ -87,7 +88,7 @@ public class DoubleKillAround {
             }
         }
 
-        final long now = System.currentTimeMillis();
+        final long now = ThreadNow.millis();
         final Lock lock = JvmStaticGlobalLock.get(arrKey);
         final int ttl = doubleKill.progress();
         if (lock.tryLock()) {

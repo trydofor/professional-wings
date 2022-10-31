@@ -30,9 +30,9 @@ public class SilenceDebugTest {
     @Test
     public void testNow() {
         final LocalDateTime n0 = ThreadNow.localDateTime();
-        NowDebug.debugThread(Duration.ofSeconds(60));
+        DebugClock.debugThread(Duration.ofSeconds(60));
         final LocalDateTime n1 = ThreadNow.localDateTime();
-        NowDebug.resetThread();
+        DebugClock.resetThread();
         final LocalDateTime n2 = ThreadNow.localDateTime();
         Assertions.assertTrue(Duration.between(n0, n2).getSeconds() <= 1);
         Assertions.assertTrue(Duration.between(n0, n1).getSeconds() >= 59);
@@ -40,21 +40,21 @@ public class SilenceDebugTest {
 
     @Test
     public void testStack() {
-        StackDebug.debugGlobal(true);
+        DebugStack.debugGlobal(true);
         final MessageException me0 = new MessageException("test message");
         final StackTraceElement[] st0 = me0.getStackTrace();
         Assertions.assertTrue(st0.length > 0);
 
-        StackDebug.resetGlobal();
+        DebugStack.resetGlobal();
         final MessageException me1 = new MessageException("test message");
         final StackTraceElement[] st1 = me1.getStackTrace();
         Assertions.assertTrue(st1.length > 0);
 
-        StackDebug.debugGlobal(false);
+        DebugStack.debugGlobal(false);
         final MessageException me2 = new MessageException("test message");
         final StackTraceElement[] st2 = me2.getStackTrace();
         Assertions.assertFalse(st2.length > 0);
-        StackDebug.resetGlobal();
+        DebugStack.resetGlobal();
     }
 
     @Test
@@ -81,9 +81,9 @@ public class SilenceDebugTest {
         root.addAppender(debug);
 
         log.trace("===1=== before debug, hide");
-        LoggerDebug.debugThread(LogLevel.TRACE);
+        DebugLogger.debugThread(LogLevel.TRACE);
         log.trace("===2=== after debug1, show");
-        LoggerDebug.resetThread();
+        DebugLogger.resetThread();
         log.trace("===3=== after debug2, hide");
 
         Assertions.assertNull(map.get(1));
@@ -92,9 +92,9 @@ public class SilenceDebugTest {
         map.clear();
 
         log.trace("===1=== before debug, hide");
-        LoggerDebug.debugGlobal(LogLevel.TRACE);
+        DebugLogger.debugGlobal(LogLevel.TRACE);
         log.trace("===2=== after debug1, show");
-        LoggerDebug.resetGlobal();
+        DebugLogger.resetGlobal();
         log.trace("===3=== after debug2, hide");
 
         Assertions.assertNull(map.get(1));

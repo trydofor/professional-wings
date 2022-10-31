@@ -111,8 +111,32 @@ public class WarlockUrlmapProp {
     public static final String Key$testRunMode = Key + ".test-run-mode";
 
     /**
-     * @see #Key$testTimestamp
+     * @see #Key$testSystemMills
      */
-    private String testTimestamp = "";
-    public static final String Key$testTimestamp = Key + ".test-timestamp";
+    private String testSystemMills = "";
+    public static final String Key$testSystemMills = Key + ".test-system-mills";
+
+    /**
+     * @see #Key$testThreadMills
+     */
+    private String testThreadMills = "";
+    public static final String Key$testThreadMills = Key + ".test-thread-mills";
+
+    /**
+     * @see #Key$adminDebugLogger
+     */
+    private String adminDebugLogger = "";
+    public static final String Key$adminDebugLogger = Key + ".admin-debug-logger";
+
+    /**
+     * @see #Key$adminDebugStack
+     */
+    private String adminDebugStack = "";
+    public static final String Key$adminDebugStack = Key + ".admin-debug-stack";
+
+    /**
+     * @see #Key$adminDebugClock
+     */
+    private String adminDebugClock = "";
+    public static final String Key$adminDebugClock = Key + ".admin-debug-clock";
 }

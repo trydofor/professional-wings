@@ -11,7 +11,7 @@ import static pro.fessional.mirana.time.ThreadNow.TweakClock;
  * @author trydofor
  * @since 2022-10-28
  */
-public class NowDebug {
+public class DebugClock {
 
     // global
     public static void debugGlobal(@NotNull Duration offset) {

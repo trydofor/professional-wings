@@ -20,8 +20,8 @@ public class WarlockBondAutoRunConfiguration {
     private final static Log log = LogFactory.getLog(WarlockBondAutoRunConfiguration.class);
 
     @Bean    // 静态注入，执行一次即可
-    public CommandLineRunner registerCacheConstRunner() {
-        log.info("WarlockBond spring-runs registerCacheConstRunner");
+    public CommandLineRunner runnerRegisterCacheConst() {
+        log.info("WarlockBond spring-runs runnerRegisterCacheConst");
         return (arg) -> {
             CacheConst.WarlockAuthnService.EventTables.add(WinUserBasisTable.WinUserBasis.getName());
             CacheConst.WarlockAuthnService.EventTables.add(WinUserAuthnTable.WinUserAuthn.getName());

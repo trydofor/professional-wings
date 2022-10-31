@@ -65,21 +65,21 @@ public class ComboWingsAuthDetailsSource implements WingsAuthDetailsSource<Wings
     }
 
     protected void buildMetaData(@NotNull Enum<?> authType, @NotNull HttpServletRequest request, @NotNull WingsAuthDetails details) {
-        final Map<String, String> map = details.getMetaData();
+        final Map<String, String> meta = details.getMetaData();
         final String zone = WingsAuthHelper.getAuthZoneAttribute(request);
         if (zone != null) {
-            map.putIfAbsent(WingsAuthHelper.AuthZone, zone);
+            meta.putIfAbsent(WingsAuthHelper.AuthZone, zone);
         }
         if (wingsRemoteResolver != null) {
-            map.put(WingsAuthHelper.AuthAddr, wingsRemoteResolver.resolveRemoteIp(request));
-            map.put(WingsAuthHelper.AuthAgent, wingsRemoteResolver.resolveAgentInfo(request));
+            meta.put(WingsAuthHelper.AuthAddr, wingsRemoteResolver.resolveRemoteIp(request));
+            meta.put(WingsAuthHelper.AuthAgent, wingsRemoteResolver.resolveAgentInfo(request));
         }
 
         final Enumeration<String> names = request.getParameterNames();
         while (names.hasMoreElements()) {
             final String n = names.nextElement();
             if (!ignoredMetaKey.contains(n)) {
-                map.putIfAbsent(n, request.getParameter(n));
+                meta.putIfAbsent(n, request.getParameter(n));
             }
         }
     }

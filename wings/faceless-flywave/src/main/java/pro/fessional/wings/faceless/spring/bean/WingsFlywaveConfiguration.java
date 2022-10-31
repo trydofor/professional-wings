@@ -147,8 +147,8 @@ public class WingsFlywaveConfiguration {
     }
 
     @Bean
-    public CommandLineRunner revisionChecker(DefaultRevisionManager manager, FlywaveFitProp prop) {
-        log.info("FacelessFlywave spring-runs revisionChecker");
+    public CommandLineRunner runnerRevisionChecker(DefaultRevisionManager manager, FlywaveFitProp prop) {
+        log.info("FacelessFlywave spring-runs runnerRevisionChecker");
         return args -> {
             final RevisionFitness fits = new RevisionFitness();
             fits.addFits(prop.getFit());

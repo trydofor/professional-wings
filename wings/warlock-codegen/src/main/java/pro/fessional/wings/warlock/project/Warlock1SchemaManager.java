@@ -1,6 +1,7 @@
 package pro.fessional.wings.warlock.project;
 
 import lombok.Getter;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.WingsRevision;
 import pro.fessional.wings.faceless.util.FlywaveInteractiveGui;
@@ -50,7 +51,7 @@ public class Warlock1SchemaManager {
         for (Consumer<Helper> consumer : customize) {
             consumer.accept(helper);
         }
-        mergePublish(helper.scan(), -System.currentTimeMillis(), revi);
+        mergePublish(helper.scan(), -ThreadNow.millis(), revi);
     }
 
     /**
@@ -72,7 +73,7 @@ public class Warlock1SchemaManager {
         for (Consumer<Helper> consumer : customize) {
             consumer.accept(helper);
         }
-        mergeForceApply(helper.scan(), -System.currentTimeMillis(), isUpto);
+        mergeForceApply(helper.scan(), -ThreadNow.millis(), isUpto);
     }
 
     /**

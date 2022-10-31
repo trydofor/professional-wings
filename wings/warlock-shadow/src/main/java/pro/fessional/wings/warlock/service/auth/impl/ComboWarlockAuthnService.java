@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
 import org.springframework.transaction.annotation.Transactional;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
@@ -132,12 +133,12 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
 
     @Override
     public void onFailure(@NotNull Enum<?> authType, String username) {
-        final long bgn = System.currentTimeMillis();
+        final long bgn = ThreadNow.millis();
         for (Combo cmb : combos) {
             cmb.onFailure(authType, username);
         }
         // timing attack
-        final long cost = System.currentTimeMillis() - bgn;
+        final long cost = ThreadNow.millis() - bgn;
         timingAttack(cost);
     }
 

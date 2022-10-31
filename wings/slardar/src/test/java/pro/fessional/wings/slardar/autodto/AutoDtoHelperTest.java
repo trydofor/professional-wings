@@ -37,12 +37,13 @@ class AutoDtoHelperTest {
      */
     @Test
     void autoRequest() {
-        TerminalContext.login()
-                       .withLocale(Locale.CHINA)
-                       .withTimeZone(ZONE_JP)
-                       .withRemoteIp("localhost")
-                       .withAgentInfo("SpringTest")
-                       .asUser(-1);
+        TerminalContext.Builder builder = new TerminalContext.Builder()
+                .locale(Locale.CHINA)
+                .timeZone(ZONE_JP)
+                .terminalAddr("localhost")
+                .terminalAgent("SpringTest")
+                .user(-1);
+        TerminalContext.login(builder);
 
         I18nItem it = initI18nItem(ZONE_JP);
         I18nMaps mp = initI18nMaps(it);
@@ -83,12 +84,13 @@ class AutoDtoHelperTest {
      */
     @Test
     void autoResponse() {
-        TerminalContext.login()
-                       .withLocale(Locale.US)
-                       .withTimeZone(ZONE_JP)
-                       .withRemoteIp("localhost")
-                       .withAgentInfo("SpringTest")
-                       .asUser(-1);
+        TerminalContext.Builder builder = new TerminalContext.Builder()
+                .locale(Locale.US)
+                .timeZone(ZONE_JP)
+                .terminalAddr("localhost")
+                .terminalAgent("SpringTest")
+                .user(-1);
+        TerminalContext.login(builder);
 
         I18nItem it = initI18nItem(ZONE_CN);
         I18nMaps mp = initI18nMaps(it);

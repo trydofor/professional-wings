@@ -1,30 +1,32 @@
 package pro.fessional.wings.slardar.context;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
 import pro.fessional.wings.slardar.constants.SlardarOrderConst;
-import pro.fessional.wings.slardar.security.WingsUserDetails;
-import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
-import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author trydofor
  * @since 2019-11-16
  */
-@RequiredArgsConstructor
 @Slf4j
 public class TerminalInterceptor implements AutoRegisterInterceptor {
 
-    private final WingsLocaleResolver localeResolver;
-    private final WingsRemoteResolver remoteResolver;
+    @Getter
+    private final List<TerminalBuilder> terminalBuilders = new ArrayList<>();
+
+    public void addTerminalBuilder(TerminalBuilder builder) {
+        if (builder != null) {
+            terminalBuilders.add(builder);
+        }
+    }
 
     @Getter @Setter
     private int order = SlardarOrderConst.OrderTerminalInterceptor;
@@ -35,23 +37,11 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
                              @NotNull Object handler) {
 
         try {
-            final WingsUserDetails details = SecurityContextUtil.getUserDetails(false);
-            final TerminalContext.Builder builder = TerminalContext
-                    .login()
-                    .withRemoteIp(remoteResolver.resolveRemoteIp(request))
-                    .withAgentInfo(remoteResolver.resolveAgentInfo(request));
-
-            if (details == null) {
-                TimeZoneAwareLocaleContext locale = localeResolver.resolveI18nContext(request);
-                builder.withLocale(locale.getLocale())
-                       .withTimeZone(locale.getTimeZone())
-                       .asGuest();
+            final TerminalContext.Builder builder = new TerminalContext.Builder();
+            for (TerminalBuilder build : terminalBuilders) {
+                build.build(builder, request);
             }
-            else {
-                builder.withLocale(details.getLocale())
-                       .withTimeZone(details.getZoneId())
-                       .asUser(details.getUserId());
-            }
+            TerminalContext.login(builder);
         }
         catch (Exception e) {
             log.error("should NOT be here", e);
@@ -67,5 +57,9 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
                                 @NotNull HttpServletResponse response,
                                 @NotNull Object handler, Exception ex) {
         TerminalContext.logout();
+    }
+
+    public interface TerminalBuilder {
+        void build(@NotNull TerminalContext.Builder builder, @NotNull HttpServletRequest request);
     }
 }

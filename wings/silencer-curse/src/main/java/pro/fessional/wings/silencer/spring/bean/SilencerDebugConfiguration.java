@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.evil.ThreadLocalAttention;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.time.ThreadNow;
-import pro.fessional.wings.silencer.debug.LoggerDebug;
+import pro.fessional.wings.silencer.debug.DebugLogger;
 import pro.fessional.wings.silencer.spring.prop.SilencerDebugProp;
 
 import java.time.Clock;
@@ -36,17 +36,17 @@ public class SilencerDebugConfiguration {
     private final SilencerDebugProp silencerDebugProp;
 
     @Autowired
-    public void autoCodeExceptionDebug() throws ThreadLocalAttention {
+    public void initCodeExceptionDebug() throws ThreadLocalAttention {
         final boolean stack = silencerDebugProp.isCodeStack();
-        log.info("SilencerCurse spring-auto autoCodeExceptionDebug with TransmittableThreadLocal, stack=" + stack);
+        log.info("SilencerCurse spring-auto initCodeExceptionDebug with TransmittableThreadLocal, stack=" + stack);
         CodeException.TweakStack.initThread(new TransmittableThreadLocal<>());
         CodeException.TweakStack.initGlobal(stack);
     }
 
     @Autowired
-    public void autoThreadNowDebug() throws ThreadLocalAttention {
+    public void initThreadClockDebug() throws ThreadLocalAttention {
         final long ms = silencerDebugProp.getClockOffset();
-        log.info("SilencerCurse spring-auto autoThreadNowDebug with TransmittableThreadLocal, offset=" + ms);
+        log.info("SilencerCurse spring-auto initThreadClockDebug with TransmittableThreadLocal, offset=" + ms);
         ThreadNow.TweakClock.initThread(new TransmittableThreadLocal<>());
         final Duration dr = Duration.ofMillis(ms);
         if (!dr.isZero()) {
@@ -57,18 +57,18 @@ public class SilencerDebugConfiguration {
 
     @Bean
     @ConditionalOnClass(FilterReply.class)
-    public CommandLineRunner autoLogbackDebug(LoggingSystem system, LoggerGroups groups) {
-        log.info("SilencerCurse spring-runs autoLogbackDebug, init TtlMDC");
+    public CommandLineRunner runnerLogbackDebug(LoggingSystem system, LoggerGroups groups) {
+        log.info("SilencerCurse spring-runs runnerLogbackDebug, init TtlMDC");
         TtlMDCAdapter.initMdc();// 尽早初始化
         return args -> {
             if (silencerDebugProp.isMdcThreshold()) {
                 log.info("SilencerCurse spring-conf autoLogbackDebug WingsMdcThresholdFilter");
                 LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-                lc.getTurboFilterList().add(0, LoggerDebug.MdcThresholdFilter);
+                lc.getTurboFilterList().add(0, DebugLogger.MdcThresholdFilter);
             }
             // 尽晚初始化
             log.info("SilencerCurse spring-conf autoLogbackDebug LoggerDebug");
-            LoggerDebug.initGlobal(system, groups);
+            DebugLogger.initGlobal(system, groups);
         };
     }
 }

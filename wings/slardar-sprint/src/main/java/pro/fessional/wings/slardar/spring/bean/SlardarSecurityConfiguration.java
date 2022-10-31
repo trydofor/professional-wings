@@ -3,9 +3,7 @@ package pro.fessional.wings.slardar.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
@@ -59,7 +57,7 @@ public class SlardarSecurityConfiguration {
     public PasswordEncoder passwordEncoder() {
         final String encoder = slardarPasscoderProp.getPassEncoder();
         final String decoder = slardarPasscoderProp.getPassDecoder();
-        log.info("SlardarWebmvc spring-bean passwordEncoder, default encoder=" + encoder + ", decoder is " + decoder);
+        log.info("SlardarSprint spring-bean passwordEncoder, default encoder=" + encoder + ", decoder is " + decoder);
         Map<String, PasswordEncoder> encoders = PasswordEncoders.initEncoders(slardarPasscoderProp.getTimeDeviationMs());
         DelegatingPasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(encoder, encoders);
         passwordEncoder.setDefaultPasswordEncoderForMatches(encoders.get(decoder));
@@ -68,7 +66,7 @@ public class SlardarSecurityConfiguration {
 
     @Bean
     public HttpSessionEventPublisher httpSessionEventPublisher() {
-        log.info("SlardarWebmvc spring-bean httpSessionEventPublisher");
+        log.info("SlardarSprint spring-bean httpSessionEventPublisher");
         return new HttpSessionEventPublisher();
     }
 
@@ -76,7 +74,7 @@ public class SlardarSecurityConfiguration {
     @ConditionalOnMissingBean(PasssaltEncoder.class)
     public PasssaltEncoder passsaltEncoder() {
         final String encoder = slardarPasscoderProp.getSaltEncoder();
-        log.info("SlardarWebmvc spring-bean passsaltEncoder, default encoder=" + encoder);
+        log.info("SlardarSprint spring-bean passsaltEncoder, default encoder=" + encoder);
 
         MdHelp md;
         if (encoder.equalsIgnoreCase("sha256")) {
@@ -99,27 +97,35 @@ public class SlardarSecurityConfiguration {
      */
     @Bean
     public WingsSecBeanInitConfigurer wingsSecBeanInitConfigurer(ApplicationContext context) {
-        log.info("SlardarWebmvc spring-bean wingsSecBeanInitConfigurer");
+        log.info("SlardarSprint spring-bean wingsSecBeanInitConfigurer");
         return new WingsSecBeanInitConfigurer(context);
+    }
+
+    @Bean
+    public TerminalContext.Listener LocaleContextHolderTerminalContextListener() {
+        log.info("SlardarSprint spring-bean LocaleContextHolder");
+        return (del, ctx) -> {
+            if (del) {
+                LocaleContextHolder.resetLocaleContext();
+            }
+            else {
+                LocaleContextHolder.setLocaleContext(new SimpleTimeZoneAwareLocaleContext(ctx.getLocale(), ctx.getTimeZone()));
+            }
+        };
     }
 
     /**
      * 与TerminalContext同步处理Locale和TimeZone
      */
-    @Autowired
-    public void addTerminalInterceptorThreadLocalListener() {
-        final String name = "LocaleContextHolder";
-        log.info("SlardarWebmvc spring-auto addTerminalInterceptorThreadLocalListener, name=" + name);
-        TerminalContext.registerListener(name, new TerminalContext.ContextChangeListener() {
-            @Override
-            public void assign(TerminalContext.@NotNull Context ctx) {
-                LocaleContextHolder.setLocaleContext(new SimpleTimeZoneAwareLocaleContext(ctx.getLocale(), ctx.getTimeZone()));
+    @Bean
+    public CommandLineRunner runnerTerminalContextListener(Map<String, TerminalContext.Listener> listeners) {
+        log.info("SlardarSprint spring-runs runnerTerminalContextListener");
+        return args -> {
+            for (Map.Entry<String, TerminalContext.Listener> en : listeners.entrySet()) {
+                final String name = en.getKey();
+                log.info("SlardarSprint spring-conf runnerTerminalContextListener, name=" + name);
+                TerminalContext.registerListener(name, en.getValue());
             }
-
-            @Override
-            public void remove(TerminalContext.@Nullable Context ctx) {
-                LocaleContextHolder.resetLocaleContext();
-            }
-        });
+        };
     }
 }

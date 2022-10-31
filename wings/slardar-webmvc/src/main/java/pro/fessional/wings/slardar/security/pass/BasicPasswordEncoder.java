@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.security.pass;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pro.fessional.mirana.bits.Md5;
+import pro.fessional.mirana.time.ThreadNow;
 
 /**
  * 折中BasicAuthentication与DigestAuthentication，仅避免明文传递密码。
@@ -29,7 +30,7 @@ public class BasicPasswordEncoder implements PasswordEncoder {
     @Override
     public String encode(CharSequence rawPassword) {
         final String pass = rawPassword.toString();
-        final long time = System.currentTimeMillis();
+        final long time = ThreadNow.millis();
         final String hash = Md5.sum(time + Splitter + pass, false);
         return time + Splitter + hash;
     }
@@ -47,7 +48,7 @@ public class BasicPasswordEncoder implements PasswordEncoder {
         }
 
         final long time = Long.parseLong(raw.substring(0, pos));
-        if (Math.abs(System.currentTimeMillis() - time) > deviation) return false;
+        if (Math.abs(ThreadNow.millis() - time) > deviation) return false;
 
         final String hash1 = raw.substring(pos + 1);
         final String hash2 = Md5.sum(time + Splitter + encodedPassword, false);

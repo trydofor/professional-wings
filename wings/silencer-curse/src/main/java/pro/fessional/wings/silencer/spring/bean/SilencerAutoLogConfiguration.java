@@ -32,8 +32,8 @@ public class SilencerAutoLogConfiguration {
 
     @Bean
     @ConditionalOnClass(ConsoleAppender.class)
-    public CommandLineRunner silenceLogbackConsole(SilencerMiranaProp prop) {
-        log.info("SilencerCurse spring-runs silenceLogbackConsole");
+    public CommandLineRunner runnerSilenceLogbackConsole(SilencerMiranaProp prop) {
+        log.info("SilencerCurse spring-runs runnerSilenceLogbackConsole");
         return args -> {
             final SilencerMiranaProp.AutoLog autoLog = prop.getAutoLog();
             final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);

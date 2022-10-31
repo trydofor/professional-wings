@@ -12,6 +12,10 @@ package pro.fessional.wings.slardar.security;
 public interface DefaultUserId {
 
     /**
+     * Null用户
+     */
+    long Null = Long.MIN_VALUE;
+    /**
      * 非登录用户的统称。
      */
     long Guest = -1;

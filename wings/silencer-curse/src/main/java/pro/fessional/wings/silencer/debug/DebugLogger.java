@@ -14,6 +14,7 @@ import org.springframework.boot.logging.LoggerConfiguration;
 import org.springframework.boot.logging.LoggerGroup;
 import org.springframework.boot.logging.LoggerGroups;
 import org.springframework.boot.logging.LoggingSystem;
+import pro.fessional.mirana.data.Null;
 
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -24,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author trydofor
  * @since 2022-10-27
  */
-public class LoggerDebug {
+public class DebugLogger {
 
     private static LoggingSystem loggingSystem = null;
     private static LoggerGroups loggerGroups = null;
@@ -101,40 +102,51 @@ public class LoggerDebug {
     public static final TurboFilter MdcThresholdFilter = new TurboFilter() {
         @Override
         public FilterReply decide(Marker marker, Logger logger, Level level, String format, Object[] params, Throwable t) {
-            final Level lvl = Level.toLevel(MDC.get(LevelKey));
-            if (level.isGreaterOrEqual(lvl)) return FilterReply.ACCEPT;
+            final Level lvl = Level.toLevel(MDC.get(LevelKey), null);
+            if (lvl != null) {
+                final FilterReply rpl = level.isGreaterOrEqual(lvl) ? FilterReply.ACCEPT : FilterReply.DENY;
+                final String lgn = MDC.get(LoggerKey);
+                if (lgn == null || lgn.isEmpty()) {
+                    return rpl;
+                }
 
-            final String lgn = MDC.get(LoggerKey);
-            if (lgn != null && !lgn.isEmpty()) {
                 final String nm = logger.getName();
                 if (nm.contains(lgn) || lgn.contains(nm)) {
-                    return FilterReply.ACCEPT;
+                    return rpl;
                 }
             }
-
             return FilterReply.NEUTRAL;
         }
     };
 
+    /**
+     * level为null或OFF时，为reset
+     */
     public static void debugThread(@Nullable LogLevel level) {
-        if (level == null) {
-            MDC.remove(LevelKey);
-        }
-        else {
-            final String lvl;
-            if (level == LogLevel.FATAL) {
-                lvl = "ERROR";
-            }
-            else {
-                lvl = level.name();
-            }
-            MDC.put(LevelKey, lvl);
-        }
+        debugThread(Null.Str, level);
     }
 
+    /**
+     * level为null或OFF时，为reset
+     */
     public static void debugThread(@NotNull String name, @Nullable LogLevel level) {
-        debugThread(level);
-        MDC.put(LoggerKey, name);
+        if (level == null || level == LogLevel.OFF) {
+            resetThread();
+            return;
+        }
+
+        final String lvl;
+        if (level == LogLevel.FATAL) {
+            lvl = "ERROR";
+        }
+        else {
+            lvl = level.name();
+        }
+        MDC.put(LevelKey, lvl);
+
+        if (!name.isEmpty()) {
+            MDC.put(LoggerKey, name);
+        }
     }
 
     public static void resetThread() {
