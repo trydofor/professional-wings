@@ -18,8 +18,8 @@ import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.evil.ThreadLocalAttention;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.time.ThreadNow;
-import pro.fessional.wings.silencer.debug.DebugLogger;
-import pro.fessional.wings.silencer.spring.prop.SilencerDebugProp;
+import pro.fessional.wings.silencer.spring.prop.SilencerTweakProp;
+import pro.fessional.wings.silencer.tweak.TweakLogger;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -30,23 +30,23 @@ import java.time.Duration;
  */
 @Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
-public class SilencerDebugConfiguration {
-    private static final Log log = LogFactory.getLog(SilencerDebugConfiguration.class);
+public class SilencerTweakConfiguration {
+    private static final Log log = LogFactory.getLog(SilencerTweakConfiguration.class);
 
-    private final SilencerDebugProp silencerDebugProp;
+    private final SilencerTweakProp silencerTweakProp;
 
     @Autowired
-    public void initCodeExceptionDebug() throws ThreadLocalAttention {
-        final boolean stack = silencerDebugProp.isCodeStack();
-        log.info("SilencerCurse spring-auto initCodeExceptionDebug with TransmittableThreadLocal, stack=" + stack);
+    public void initCodeExceptionTweak() throws ThreadLocalAttention {
+        final boolean stack = silencerTweakProp.isCodeStack();
+        log.info("SilencerCurse spring-auto initCodeExceptionTweak with TransmittableThreadLocal, stack=" + stack);
         CodeException.TweakStack.initThread(new TransmittableThreadLocal<>());
         CodeException.TweakStack.initGlobal(stack);
     }
 
     @Autowired
-    public void initThreadClockDebug() throws ThreadLocalAttention {
-        final long ms = silencerDebugProp.getClockOffset();
-        log.info("SilencerCurse spring-auto initThreadClockDebug with TransmittableThreadLocal, offset=" + ms);
+    public void initThreadClockTweak() throws ThreadLocalAttention {
+        final long ms = silencerTweakProp.getClockOffset();
+        log.info("SilencerCurse spring-auto initThreadClockTweak with TransmittableThreadLocal, offset=" + ms);
         ThreadNow.TweakClock.initThread(new TransmittableThreadLocal<>());
         final Duration dr = Duration.ofMillis(ms);
         if (!dr.isZero()) {
@@ -57,18 +57,18 @@ public class SilencerDebugConfiguration {
 
     @Bean
     @ConditionalOnClass(FilterReply.class)
-    public CommandLineRunner runnerLogbackDebug(LoggingSystem system, LoggerGroups groups) {
-        log.info("SilencerCurse spring-runs runnerLogbackDebug, init TtlMDC");
+    public CommandLineRunner runnerLogbackTweak(LoggingSystem system, LoggerGroups groups) {
+        log.info("SilencerCurse spring-runs runnerLogbackTweak, init TtlMDC");
         TtlMDCAdapter.initMdc();// 尽早初始化
         return args -> {
-            if (silencerDebugProp.isMdcThreshold()) {
-                log.info("SilencerCurse spring-conf autoLogbackDebug WingsMdcThresholdFilter");
+            if (silencerTweakProp.isMdcThreshold()) {
+                log.info("SilencerCurse spring-conf runnerLogbackTweak WingsMdcThresholdFilter");
                 LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-                lc.getTurboFilterList().add(0, DebugLogger.MdcThresholdFilter);
+                lc.getTurboFilterList().add(0, TweakLogger.MdcThresholdFilter);
             }
             // 尽晚初始化
-            log.info("SilencerCurse spring-conf autoLogbackDebug LoggerDebug");
-            DebugLogger.initGlobal(system, groups);
+            log.info("SilencerCurse spring-conf runnerLogbackTweak TweakLogger");
+            TweakLogger.initGlobal(system, groups);
         };
     }
 }

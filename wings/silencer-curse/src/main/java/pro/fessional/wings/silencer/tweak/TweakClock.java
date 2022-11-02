@@ -1,4 +1,4 @@
-package pro.fessional.wings.silencer.debug;
+package pro.fessional.wings.silencer.tweak;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -11,17 +11,17 @@ import static pro.fessional.mirana.time.ThreadNow.TweakClock;
  * @author trydofor
  * @since 2022-10-28
  */
-public class DebugClock {
+public class TweakClock {
 
     // global
-    public static void debugGlobal(@NotNull Duration offset) {
+    public static void tweakGlobal(@NotNull Duration offset) {
         if (!offset.isZero()) {
             final Clock clock = TweakClock.current(true);
             TweakClock.tweakGlobal(Clock.offset(clock, offset));
         }
     }
 
-    public static void debugGlobal(@NotNull Clock clock) {
+    public static void tweakGlobal(@NotNull Clock clock) {
         TweakClock.tweakGlobal(clock);
     }
 
@@ -30,7 +30,7 @@ public class DebugClock {
     }
 
     // thread
-    public static void debugThread(@NotNull Duration offset) {
+    public static void tweakThread(@NotNull Duration offset) {
         if (!offset.isZero()) {
             final Clock clock = TweakClock.current(true);
             TweakClock.tweakThread(Clock.offset(clock, offset));
@@ -38,7 +38,7 @@ public class DebugClock {
 
     }
 
-    public static void debugThread(@NotNull Clock clock) {
+    public static void tweakThread(@NotNull Clock clock) {
         TweakClock.tweakThread(clock);
     }
 

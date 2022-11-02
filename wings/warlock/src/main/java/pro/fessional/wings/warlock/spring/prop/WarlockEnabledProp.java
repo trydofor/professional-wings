@@ -17,14 +17,6 @@ public class WarlockEnabledProp {
     public static final String Key = "spring.wings.warlock.enabled";
 
     /**
-     * 是否支持动态debug
-     *
-     * @see #Key$dynamicDebug
-     */
-    private boolean dynamicDebug = true;
-    public static final String Key$dynamicDebug = Key + ".dynamic-debug";
-
-    /**
      * 是否支持 warlock security web and http配置
      *
      * @see #Key$securityAuto
@@ -238,6 +230,6 @@ public class WarlockEnabledProp {
     /**
      * @see #Key$controllerTest
      */
-    private boolean controllerDebug = false;
-    public static final String Key$controllerDebug = Key + ".controller-debug";
+    private boolean controllerTweak = false;
+    public static final String Key$controllerTweak = Key + ".controller-tweak";
 }

@@ -123,20 +123,20 @@ public class WarlockUrlmapProp {
     public static final String Key$testThreadMills = Key + ".test-thread-mills";
 
     /**
-     * @see #Key$adminDebugLogger
+     * @see #Key$adminTweakLogger
      */
-    private String adminDebugLogger = "";
-    public static final String Key$adminDebugLogger = Key + ".admin-debug-logger";
+    private String adminTweakLogger = "";
+    public static final String Key$adminTweakLogger = Key + ".admin-tweak-logger";
 
     /**
-     * @see #Key$adminDebugStack
+     * @see #Key$adminTweakStack
      */
-    private String adminDebugStack = "";
-    public static final String Key$adminDebugStack = Key + ".admin-debug-stack";
+    private String adminTweakStack = "";
+    public static final String Key$adminTweakStack = Key + ".admin-tweak-stack";
 
     /**
-     * @see #Key$adminDebugClock
+     * @see #Key$adminTweakClock
      */
-    private String adminDebugClock = "";
-    public static final String Key$adminDebugClock = Key + ".admin-debug-clock";
+    private String adminTweakClock = "";
+    public static final String Key$adminTweakClock = Key + ".admin-tweak-clock";
 }

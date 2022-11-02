@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
-import pro.fessional.wings.warlock.event.debug.DebugClockEvent;
-import pro.fessional.wings.warlock.event.debug.DebugLoggerEvent;
-import pro.fessional.wings.warlock.event.debug.DebugStackEvent;
+import pro.fessional.wings.slardar.event.tweak.TweakClockEvent;
+import pro.fessional.wings.slardar.event.tweak.TweakLoggerEvent;
+import pro.fessional.wings.slardar.event.tweak.TweakStackEvent;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
@@ -21,8 +21,8 @@ import static pro.fessional.wings.slardar.event.EventPublishHelper.SyncSpring;
  * @since 2022-10-31
  */
 @RestController
-@ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerDebug, havingValue = "true")
-public class AdminDebugController {
+@ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerTweak, havingValue = "true")
+public class AdminTweakController {
 
     @Operation(summary = "线程级设置日志级别", description =
             "# Usage \n"
@@ -34,10 +34,10 @@ public class AdminDebugController {
             + "* @return {401} 权限不够时 \n"
             + "* @return {200} 直接访问或redirect时 \n"
             + "")
-    @PostMapping(value = "${" + WarlockUrlmapProp.Key$adminDebugLogger + "}")
+    @PostMapping(value = "${" + WarlockUrlmapProp.Key$adminTweakLogger + "}")
     @ResponseBody
-    public R<Void> adminDebugLogger(@RequestParam("userId") long uid, @RequestParam("level") LogLevel level) {
-        DebugLoggerEvent ev = new DebugLoggerEvent();
+    public R<Void> adminTweakLogger(@RequestParam("userId") long uid, @RequestParam("level") LogLevel level) {
+        TweakLoggerEvent ev = new TweakLoggerEvent();
         ev.setUserId(uid);
         ev.setLevel(level);
         SyncSpring.publishEvent(ev);
@@ -58,10 +58,10 @@ public class AdminDebugController {
             + "* @return {401} 权限不够时 \n"
             + "* @return {200} 直接访问或redirect时 \n"
             + "")
-    @PostMapping(value = "${" + WarlockUrlmapProp.Key$adminDebugClock + "}")
+    @PostMapping(value = "${" + WarlockUrlmapProp.Key$adminTweakClock + "}")
     @ResponseBody
-    public R<Void> adminDebugClock(@RequestParam("userId") long uid, @RequestParam("mills") long mills) {
-        DebugClockEvent ev = new DebugClockEvent();
+    public R<Void> adminTweakClock(@RequestParam("userId") long uid, @RequestParam("mills") long mills) {
+        TweakClockEvent ev = new TweakClockEvent();
         ev.setUserId(uid);
         ev.setMills(mills);
         SyncSpring.publishEvent(ev);
@@ -78,15 +78,13 @@ public class AdminDebugController {
             + "* @return {401} 权限不够时 \n"
             + "* @return {200} 直接访问或redirect时 \n"
             + "")
-    @PostMapping(value = "${" + WarlockUrlmapProp.Key$adminDebugStack + "}")
+    @PostMapping(value = "${" + WarlockUrlmapProp.Key$adminTweakStack + "}")
     @ResponseBody
-    public R<Void> adminDebugStack(@RequestParam("userId") long uid, @RequestParam(value = "stack", required = false) Boolean stack) {
-        DebugStackEvent ev = new DebugStackEvent();
+    public R<Void> adminTweakStack(@RequestParam("userId") long uid, @RequestParam(value = "stack", required = false) Boolean stack) {
+        TweakStackEvent ev = new TweakStackEvent();
         ev.setUserId(uid);
         ev.setStack(stack);
         SyncSpring.publishEvent(ev);
         return R.ok();
     }
-
-
 }

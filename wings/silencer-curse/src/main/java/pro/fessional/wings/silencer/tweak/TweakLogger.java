@@ -1,4 +1,4 @@
-package pro.fessional.wings.silencer.debug;
+package pro.fessional.wings.silencer.tweak;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -14,18 +14,19 @@ import org.springframework.boot.logging.LoggerConfiguration;
 import org.springframework.boot.logging.LoggerGroup;
 import org.springframework.boot.logging.LoggerGroups;
 import org.springframework.boot.logging.LoggingSystem;
-import pro.fessional.mirana.data.Null;
 
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.springframework.boot.logging.LoggingSystem.ROOT_LOGGER_NAME;
+
 /**
  * @author trydofor
  * @since 2022-10-27
  */
-public class DebugLogger {
+public class TweakLogger {
 
     private static LoggingSystem loggingSystem = null;
     private static LoggerGroups loggerGroups = null;
@@ -38,11 +39,11 @@ public class DebugLogger {
     // global
     private static final ConcurrentHashMap<String, LogLevel> GlobalLevel = new ConcurrentHashMap<>();
 
-    public static void debugGlobal(@Nullable LogLevel level) {
-        debugGlobal(LoggingSystem.ROOT_LOGGER_NAME, level);
+    public static void tweakGlobal(@Nullable LogLevel level) {
+        tweakGlobal(ROOT_LOGGER_NAME, level);
     }
 
-    public static void debugGlobal(@NotNull String name, @Nullable LogLevel level) {
+    public static void tweakGlobal(@NotNull String name, @Nullable LogLevel level) {
         if (loggingSystem == null) {
             throw new IllegalStateException("must initLogging first");
         }
@@ -55,19 +56,19 @@ public class DebugLogger {
         if (loggerGroups != null) {
             LoggerGroup group = loggerGroups.get(name);
             if (group != null) {
-                GlobalLevel.putIfAbsent(name, group.getConfiguredLevel());
+                GlobalLevel.put(name, group.getConfiguredLevel());
                 group.configureLogLevel(level, loggingSystem::setLogLevel);
                 return;
             }
         }
 
         LoggerConfiguration configuration = loggingSystem.getLoggerConfiguration(name);
-        GlobalLevel.putIfAbsent(name, configuration.getEffectiveLevel());
+        GlobalLevel.put(name, configuration.getEffectiveLevel());
         loggingSystem.setLogLevel(name, level);
     }
 
     public static void resetGlobal(@NotNull String name) {
-        debugGlobal(name, null);
+        tweakGlobal(name, null);
     }
 
     public static void resetGlobal() {
@@ -79,8 +80,21 @@ public class DebugLogger {
         }
         // deal
         for (String key : keys) {
-            debugGlobal(key, null);
+            tweakGlobal(key, null);
         }
+    }
+
+    @NotNull
+    public static LogLevel globalLevel(@NotNull String name) {
+        return GlobalLevel.computeIfAbsent(name, k -> {
+            if (loggerGroups != null) {
+                LoggerGroup group = loggerGroups.get(name);
+                if (group != null) return group.getConfiguredLevel();
+            }
+
+            LoggerConfiguration configuration = loggingSystem.getLoggerConfiguration(name);
+            return configuration.getEffectiveLevel();
+        });
     }
 
     // thread
@@ -106,7 +120,7 @@ public class DebugLogger {
             if (lvl != null) {
                 final FilterReply rpl = level.isGreaterOrEqual(lvl) ? FilterReply.ACCEPT : FilterReply.DENY;
                 final String lgn = MDC.get(LoggerKey);
-                if (lgn == null || lgn.isEmpty()) {
+                if (lgn == null || lgn.isEmpty() || ROOT_LOGGER_NAME.equalsIgnoreCase(lgn)) {
                     return rpl;
                 }
 
@@ -122,14 +136,15 @@ public class DebugLogger {
     /**
      * level为null或OFF时，为reset
      */
-    public static void debugThread(@Nullable LogLevel level) {
-        debugThread(Null.Str, level);
+    public static void tweakThread(@Nullable LogLevel level) {
+        tweakThread(ROOT_LOGGER_NAME, level);
     }
 
     /**
-     * level为null或OFF时，为reset
+     * level为null或OFF时，为reset。
+     * name为ROOT或空为全局
      */
-    public static void debugThread(@NotNull String name, @Nullable LogLevel level) {
+    public static void tweakThread(@NotNull String name, @Nullable LogLevel level) {
         if (level == null || level == LogLevel.OFF) {
             resetThread();
             return;
@@ -154,4 +169,20 @@ public class DebugLogger {
         MDC.remove(LoggerKey);
     }
 
+
+    @Nullable
+    public static LogLevel threadLevel() {
+        final String lvl = MDC.get(LevelKey);
+        if (lvl == null || lvl.isEmpty()) return null;
+        for (LogLevel v : LogLevel.values()) {
+            if (v.name().equalsIgnoreCase(lvl)) return v;
+        }
+        return null;
+    }
+
+    @NotNull
+    public static LogLevel currentLevel(@NotNull String name) {
+        LogLevel lvl = threadLevel();
+        return lvl != null ? lvl : globalLevel(name);
+    }
 }

@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
  */
 @RestController
 @Slf4j
-public class DebugControllerTest {
+public class TweakControllerTest {
 
-    @GetMapping("/test/debug/logger-level.json")
+    @GetMapping("/test/tweak/logger-level.json")
     public R<Void> loggerLevel() {
         log.trace("loggerLevel >>>>> trace");
         log.debug("loggerLevel >>>>> debug");
@@ -27,13 +27,13 @@ public class DebugControllerTest {
         return R.ok();
     }
 
-    @GetMapping("/test/debug/code-stack.json")
+    @GetMapping("/test/tweak/code-stack.json")
     public R<Void> codeStack() {
         log.error("codeStack >>>>>", new CodeException("test code"));
         return R.ok();
     }
 
-    @GetMapping("/test/debug/clock-now.json")
+    @GetMapping("/test/tweak/clock-now.json")
     public R<LocalDateTime> clockNow() {
         final LocalDateTime ldt = Now.localDateTime();
         log.warn("clockNow >>>>> ldt={}", ldt);

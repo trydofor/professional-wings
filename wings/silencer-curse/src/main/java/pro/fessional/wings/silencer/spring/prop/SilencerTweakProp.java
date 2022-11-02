@@ -9,10 +9,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @since 2021-02-14
  */
 @Data
-@ConfigurationProperties(SilencerDebugProp.Key)
-public class SilencerDebugProp {
+@ConfigurationProperties(SilencerTweakProp.Key)
+public class SilencerTweakProp {
 
-    public static final String Key = "wings.silencer.debug";
+    public static final String Key = "wings.silencer.tweak";
 
     /**
      * 初始CodeException的Global有栈或无栈

@@ -1,14 +1,13 @@
-package pro.fessional.wings.warlock.event.debug;
+package pro.fessional.wings.slardar.event.tweak;
 
 import lombok.Data;
-import pro.fessional.wings.warlock.event.WarlockMetadataEvent;
 
 /**
  * @author trydofor
  * @since 2022-10-31
  */
 @Data
-public class DebugStackEvent implements WarlockMetadataEvent {
+public class TweakStackEvent {
     /**
      * userId为Long.MAX_VALUE时，为全部用户
      */

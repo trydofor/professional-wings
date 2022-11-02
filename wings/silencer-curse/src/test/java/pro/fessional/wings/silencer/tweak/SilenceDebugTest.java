@@ -1,4 +1,4 @@
-package pro.fessional.wings.silencer.debug;
+package pro.fessional.wings.silencer.tweak;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -22,17 +22,17 @@ import java.util.Map;
  * @since 2022-10-29
  */
 @SpringBootTest(properties = {"debug = true",
-                              "wings.silencer.debug.code-stack=true",
-                              "wings.silencer.debug.mdc-threshold=true"})
+                              "wings.silencer.tweak.code-stack=true",
+                              "wings.silencer.tweak.mdc-threshold=true"})
 @Slf4j
 public class SilenceDebugTest {
 
     @Test
     public void testNow() {
         final LocalDateTime n0 = ThreadNow.localDateTime();
-        DebugClock.debugThread(Duration.ofSeconds(60));
+        TweakClock.tweakThread(Duration.ofSeconds(60));
         final LocalDateTime n1 = ThreadNow.localDateTime();
-        DebugClock.resetThread();
+        TweakClock.resetThread();
         final LocalDateTime n2 = ThreadNow.localDateTime();
         Assertions.assertTrue(Duration.between(n0, n2).getSeconds() <= 1);
         Assertions.assertTrue(Duration.between(n0, n1).getSeconds() >= 59);
@@ -40,21 +40,21 @@ public class SilenceDebugTest {
 
     @Test
     public void testStack() {
-        DebugStack.debugGlobal(true);
+        TweakStack.tweakGlobal(true);
         final MessageException me0 = new MessageException("test message");
         final StackTraceElement[] st0 = me0.getStackTrace();
         Assertions.assertTrue(st0.length > 0);
 
-        DebugStack.resetGlobal();
+        TweakStack.resetGlobal();
         final MessageException me1 = new MessageException("test message");
         final StackTraceElement[] st1 = me1.getStackTrace();
         Assertions.assertTrue(st1.length > 0);
 
-        DebugStack.debugGlobal(false);
+        TweakStack.tweakGlobal(false);
         final MessageException me2 = new MessageException("test message");
         final StackTraceElement[] st2 = me2.getStackTrace();
         Assertions.assertFalse(st2.length > 0);
-        DebugStack.resetGlobal();
+        TweakStack.resetGlobal();
     }
 
     @Test
@@ -81,9 +81,9 @@ public class SilenceDebugTest {
         root.addAppender(debug);
 
         log.trace("===1=== before debug, hide");
-        DebugLogger.debugThread(LogLevel.TRACE);
+        TweakLogger.tweakThread(LogLevel.TRACE);
         log.trace("===2=== after debug1, show");
-        DebugLogger.resetThread();
+        TweakLogger.resetThread();
         log.trace("===3=== after debug2, hide");
 
         Assertions.assertNull(map.get(1));
@@ -92,9 +92,9 @@ public class SilenceDebugTest {
         map.clear();
 
         log.trace("===1=== before debug, hide");
-        DebugLogger.debugGlobal(LogLevel.TRACE);
+        TweakLogger.tweakGlobal(LogLevel.TRACE);
         log.trace("===2=== after debug1, show");
-        DebugLogger.resetGlobal();
+        TweakLogger.resetGlobal();
         log.trace("===3=== after debug2, hide");
 
         Assertions.assertNull(map.get(1));

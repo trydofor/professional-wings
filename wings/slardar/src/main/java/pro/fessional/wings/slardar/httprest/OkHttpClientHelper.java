@@ -130,6 +130,20 @@ public class OkHttpClientHelper {
         }
     }
 
+    @NotNull
+    public static String getText(OkHttpClient client, String url) {
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url(url)
+                .get()
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            return extractString(response);
+        }
+        catch (Exception e) {
+            throw new IllegalStateException("failed to post file, url=" + url, e);
+        }
+    }
+
     @Nullable
     public static ResponseBody extract(Response response) {
         if (response.isSuccessful()) {
