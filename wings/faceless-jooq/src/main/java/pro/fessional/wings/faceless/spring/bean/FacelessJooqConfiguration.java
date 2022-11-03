@@ -2,6 +2,7 @@ package pro.fessional.wings.faceless.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.ConverterProvider;
 import org.jooq.ExecuteListenerProvider;
 import org.jooq.VisitListenerProvider;
@@ -120,7 +121,7 @@ public class FacelessJooqConfiguration {
     }
 
     @Autowired
-    public void initJournalDiffHelper(FacelessJooqCudProp prop) {
+    public void initJournalDiffHelper(@NotNull FacelessJooqCudProp prop) {
         log.info("FacelessJooq spring-auto initJournalDiffHelper");
         JournalDiffHelper.putDefaultIgnore(prop.getDiff());
     }

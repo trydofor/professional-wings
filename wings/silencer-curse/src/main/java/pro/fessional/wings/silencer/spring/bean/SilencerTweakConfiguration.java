@@ -3,7 +3,6 @@ package pro.fessional.wings.silencer.spring.bean;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.spi.FilterReply;
 import com.alibaba.ttl.TransmittableThreadLocal;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.slf4j.LoggerFactory;
@@ -29,25 +28,22 @@ import java.time.Duration;
  * @since 2022-10-27
  */
 @Configuration(proxyBeanMethods = false)
-@RequiredArgsConstructor
 public class SilencerTweakConfiguration {
     private static final Log log = LogFactory.getLog(SilencerTweakConfiguration.class);
 
-    private final SilencerTweakProp silencerTweakProp;
-
     @Autowired
-    public void initCodeExceptionTweak() throws ThreadLocalAttention {
-        final boolean stack = silencerTweakProp.isCodeStack();
+    public void initCodeExceptionTweak(SilencerTweakProp prop) throws ThreadLocalAttention {
+        final boolean stack = prop.isCodeStack();
         log.info("SilencerCurse spring-auto initCodeExceptionTweak with TransmittableThreadLocal, stack=" + stack);
-        CodeException.TweakStack.initThread(new TransmittableThreadLocal<>());
+        CodeException.TweakStack.initThread(new TransmittableThreadLocal<>(), false);
         CodeException.TweakStack.initGlobal(stack);
     }
 
     @Autowired
-    public void initThreadClockTweak() throws ThreadLocalAttention {
-        final long ms = silencerTweakProp.getClockOffset();
+    public void initThreadClockTweak(SilencerTweakProp prop) throws ThreadLocalAttention {
+        final long ms = prop.getClockOffset();
         log.info("SilencerCurse spring-auto initThreadClockTweak with TransmittableThreadLocal, offset=" + ms);
-        ThreadNow.TweakClock.initThread(new TransmittableThreadLocal<>());
+        ThreadNow.TweakClock.initThread(new TransmittableThreadLocal<>(), false);
         final Duration dr = Duration.ofMillis(ms);
         if (!dr.isZero()) {
             final Clock clock = ThreadNow.TweakClock.current(true);
@@ -57,11 +53,11 @@ public class SilencerTweakConfiguration {
 
     @Bean
     @ConditionalOnClass(FilterReply.class)
-    public CommandLineRunner runnerLogbackTweak(LoggingSystem system, LoggerGroups groups) {
+    public CommandLineRunner runnerLogbackTweak(SilencerTweakProp prop, LoggingSystem system, LoggerGroups groups) {
         log.info("SilencerCurse spring-runs runnerLogbackTweak, init TtlMDC");
         TtlMDCAdapter.initMdc();// 尽早初始化
         return args -> {
-            if (silencerTweakProp.isMdcThreshold()) {
+            if (prop.isMdcThreshold()) {
                 log.info("SilencerCurse spring-conf runnerLogbackTweak WingsMdcThresholdFilter");
                 LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
                 lc.getTurboFilterList().add(0, TweakLogger.MdcThresholdFilter);

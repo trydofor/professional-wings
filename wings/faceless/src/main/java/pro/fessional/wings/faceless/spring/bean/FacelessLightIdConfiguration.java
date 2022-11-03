@@ -2,6 +2,7 @@ package pro.fessional.wings.faceless.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -39,20 +40,6 @@ import pro.fessional.wings.faceless.spring.prop.LightIdProviderProp;
 public class FacelessLightIdConfiguration {
 
     private static final Log log = LogFactory.getLog(FacelessLightIdConfiguration.class);
-
-    @Autowired
-    public void forceLightIdLayout(LightIdLayoutProp prop) {
-        final Boolean bf = prop.getBlockFirst();
-        if (bf != null) {
-            log.info("Faceless spring-auto forceLightIdLayout forceBlockFirst=" + bf);
-            LightIdUtil.forceBlockFirst(bf);
-        }
-        final Integer bb = prop.getBlockBits();
-        if (bb != null) {
-            log.info("Faceless spring-auto forceLightIdLayout forceBlockBit=" + bb);
-            LightIdUtil.forceBlockBit(bb);
-        }
-    }
 
     @Bean
     @ConditionalOnMissingBean(LightSequenceSelect.class)
@@ -131,5 +118,19 @@ public class FacelessLightIdConfiguration {
     public FlakeIdService flakeIdService(LightIdService lightIdService) {
         log.info("Faceless spring-bean flakeIdService");
         return new FlakeIdLightIdImpl(lightIdService);
+    }
+
+    @Autowired
+    public void forceLightIdLayout(@NotNull LightIdLayoutProp prop) {
+        final Boolean bf = prop.getBlockFirst();
+        if (bf != null) {
+            log.info("Faceless spring-auto forceLightIdLayout forceBlockFirst=" + bf);
+            LightIdUtil.forceBlockFirst(bf);
+        }
+        final Integer bb = prop.getBlockBits();
+        if (bb != null) {
+            log.info("Faceless spring-auto forceLightIdLayout forceBlockBit=" + bb);
+            LightIdUtil.forceBlockBit(bb);
+        }
     }
 }
