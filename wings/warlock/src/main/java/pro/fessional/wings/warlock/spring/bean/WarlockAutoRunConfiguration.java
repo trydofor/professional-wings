@@ -7,13 +7,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import pro.fessional.wings.faceless.database.helper.DatabaseChecker;
 import pro.fessional.wings.faceless.enums.LanguageEnumUtil;
 import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 import pro.fessional.wings.faceless.enums.StandardTimezoneEnum;
 import pro.fessional.wings.faceless.enums.TimezoneEnumUtil;
+import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
 import pro.fessional.wings.warlock.service.conf.RuntimeConfService;
 import pro.fessional.wings.warlock.service.conf.mode.ApiMode;
 import pro.fessional.wings.warlock.service.conf.mode.RunMode;
@@ -103,7 +103,7 @@ public class WarlockAutoRunConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$checkDatabase, havingValue = "true")
-    @Order(Ordered.HIGHEST_PRECEDENCE + 1000)
+    @Order(WingsBeanOrdered.BaseLine)
     public CommandLineRunner runnerDatabaseChecker(DataSource dataSource, WarlockCheckProp prop) {
         log.info("Warlock spring-runs runnerDatabaseChecker");
         return args -> {

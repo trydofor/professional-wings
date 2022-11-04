@@ -1,8 +1,8 @@
 package pro.fessional.wings.slardar.concur.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
 import pro.fessional.wings.slardar.concur.RighterException;
 import pro.fessional.wings.slardar.webmvc.WingsExceptionResolver;
 
@@ -11,7 +11,7 @@ import pro.fessional.wings.slardar.webmvc.WingsExceptionResolver;
  * @since 2021-03-10
  */
 @RequiredArgsConstructor
-@Order(Ordered.HIGHEST_PRECEDENCE + 1000)
+@Order(WingsBeanOrdered.BaseLine)
 public class RighterExceptionResolver extends WingsExceptionResolver<RighterException> {
 
     private final int httpStatus;

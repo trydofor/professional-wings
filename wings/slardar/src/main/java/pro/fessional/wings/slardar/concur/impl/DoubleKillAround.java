@@ -14,7 +14,6 @@ import org.springframework.context.expression.AnnotatedElementKey;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.context.expression.CachedExpressionEvaluator;
 import org.springframework.context.expression.MethodBasedEvaluationContext;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
@@ -24,6 +23,7 @@ import org.springframework.util.StringUtils;
 import pro.fessional.mirana.lock.ArrayKey;
 import pro.fessional.mirana.lock.JvmStaticGlobalLock;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
 import pro.fessional.wings.slardar.concur.DoubleKill;
 import pro.fessional.wings.slardar.concur.DoubleKillException;
 import pro.fessional.wings.slardar.concur.ProgressContext;
@@ -44,7 +44,7 @@ import java.util.concurrent.locks.Lock;
  * @since 2021-03-09
  */
 @Aspect
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(WingsBeanOrdered.BaseLine)
 @Slf4j
 public class DoubleKillAround {
 

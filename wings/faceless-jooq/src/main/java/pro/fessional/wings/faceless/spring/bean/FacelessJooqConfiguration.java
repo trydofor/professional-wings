@@ -18,7 +18,6 @@ import org.springframework.boot.autoconfigure.jooq.DefaultConfigurationCustomize
 import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqEnv;
@@ -29,6 +28,7 @@ import pro.fessional.wings.faceless.database.jooq.listener.JournalDeleteListener
 import pro.fessional.wings.faceless.database.jooq.listener.TableCudListener;
 import pro.fessional.wings.faceless.spring.prop.FacelessJooqCudProp;
 import pro.fessional.wings.faceless.spring.prop.FacelessJooqEnabledProp;
+import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,7 +55,7 @@ public class FacelessJooqConfiguration {
      */
     @Bean
     @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$autoQualify, havingValue = "true")
-    @Order(Ordered.HIGHEST_PRECEDENCE)
+    @Order(WingsBeanOrdered.BaseLine)
     public VisitListenerProvider jooqAutoQualifyFieldListener() {
         log.info("FacelessJooq spring-bean jooqAutoQualifyFieldListener");
         return new DefaultVisitListenerProvider(new AutoQualifyFieldListener());
@@ -63,7 +63,7 @@ public class FacelessJooqConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$listenTableCud, havingValue = "true")
-    @Order(Ordered.HIGHEST_PRECEDENCE + 1000)
+    @Order(WingsBeanOrdered.BaseLine + 1000)
     public VisitListenerProvider jooqTableCudListener(ObjectProvider<WingsTableCudHandler> handlers, FacelessJooqCudProp prop) {
         final List<WingsTableCudHandler> hdl = handlers.orderedStream().collect(Collectors.toList());
         final String names = hdl.stream().map(it -> it.getClass().getName()).collect(Collectors.joining(","));

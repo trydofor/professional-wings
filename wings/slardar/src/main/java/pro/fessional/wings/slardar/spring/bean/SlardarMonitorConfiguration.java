@@ -18,8 +18,6 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.unit.DataSize;
@@ -51,7 +49,6 @@ public class SlardarMonitorConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$monitorJvm, havingValue = "true")
-    @Order(Ordered.HIGHEST_PRECEDENCE)
     public JvmMetric jvmMetric() {
         log.info("Slardar spring-bean jvmMetric");
         final JvmMetric.Rule rule = slardarMonitorProp.getJvm();

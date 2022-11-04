@@ -11,9 +11,10 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextClosedEvent;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import pro.fessional.mirana.best.DummyBlock;
+import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
 import pro.fessional.wings.slardar.servlet.filter.WingsOverloadFilter;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
@@ -39,12 +40,13 @@ public class SlardarOverloadConfiguration {
     private final Log log = LogFactory.getLog(SlardarOverloadConfiguration.class);
 
     @Component
-    @Order(Ordered.HIGHEST_PRECEDENCE)
+    @Order(WingsBeanOrdered.BaseLine)
     @RequiredArgsConstructor
     public class SafelyShutdown implements ApplicationListener<ContextClosedEvent> {
         private final WingsOverloadFilter overloadFilter;
 
         @Override
+        @SuppressWarnings("BusyWait")
         public void onApplicationEvent(@NotNull ContextClosedEvent event) {
             overloadFilter.setRequestCapacity(Integer.MIN_VALUE);
             log.warn("SlardarWebmvc shutting down, deny new request, current=" + overloadFilter.getRequestProcess());
@@ -54,7 +56,7 @@ public class SlardarOverloadConfiguration {
                     breaks -= step;
                 }
                 catch (InterruptedException e) {
-                    // ignore
+                    DummyBlock.ignore(e);
                 }
             }
             log.warn("SlardarWebmvc safely shutting down, no request in processing");
@@ -71,12 +73,13 @@ public class SlardarOverloadConfiguration {
                     HttpServletResponse res = (HttpServletResponse) response;
                     res.setStatus(config.getFallbackCode());
                 }
+                @SuppressWarnings("resource")
                 PrintWriter writer = response.getWriter();
                 writer.println(config.getFallbackBody());
                 writer.flush();
             }
             catch (IOException e) {
-                // ignore
+                DummyBlock.ignore(e);
             }
         };
     }

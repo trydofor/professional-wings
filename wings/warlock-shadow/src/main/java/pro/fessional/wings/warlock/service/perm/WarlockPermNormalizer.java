@@ -11,7 +11,7 @@ import lombok.Setter;
  */
 public class WarlockPermNormalizer {
 
-    public static final String EXCLUDE = "-";
+    public static final String DenyPrefix = "-";
 
     @Setter @Getter
     private String rolePrefix = "ROLE_";
@@ -20,7 +20,7 @@ public class WarlockPermNormalizer {
      * 标准化role，增加`负项`或`前缀`
      */
     public String role(String name) {
-        int p = name.startsWith(EXCLUDE) ? EXCLUDE.length() : 0;
+        int p = name.startsWith(DenyPrefix) ? DenyPrefix.length() : 0;
         if (p == 0) {
             return name.startsWith(rolePrefix) ? name : rolePrefix + name;
         }
@@ -30,7 +30,7 @@ public class WarlockPermNormalizer {
                 return name;
             }
             else {
-                return EXCLUDE + rolePrefix + name.substring(p);
+                return DenyPrefix + rolePrefix + name.substring(p);
             }
         }
     }
@@ -41,8 +41,8 @@ public class WarlockPermNormalizer {
      * @param name 角色字符串
      * @return -1表示非排除项。
      */
-    public int indexExcludePrefix(String name) {
-        return name.startsWith(EXCLUDE) ? EXCLUDE.length() : -1;
+    public int indexDenyPrefix(String name) {
+        return name.startsWith(DenyPrefix) ? DenyPrefix.length() : -1;
     }
 
     /**
@@ -52,7 +52,7 @@ public class WarlockPermNormalizer {
      * @return -1表示无前缀排除项。
      */
     public int indexRolePrefix(String name) {
-        int p = name.startsWith(EXCLUDE) ? EXCLUDE.length() : 0;
+        int p = name.startsWith(DenyPrefix) ? DenyPrefix.length() : 0;
         final int r = name.indexOf(rolePrefix, p);
         return r == p ? r + rolePrefix.length() : -1;
     }

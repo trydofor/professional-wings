@@ -3,12 +3,12 @@ package pro.fessional.wings.warlock.errorhandle;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.pain.HttpStatusException;
 import pro.fessional.mirana.text.StringTemplate;
+import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
 import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
 import pro.fessional.wings.slardar.webmvc.WingsExceptionResolver;
 
@@ -20,7 +20,7 @@ import java.util.Locale;
  */
 @RequiredArgsConstructor
 @Slf4j
-@Order(Ordered.HIGHEST_PRECEDENCE + 1000)
+@Order(WingsBeanOrdered.BaseLine)
 public class CodeExceptionResolver extends WingsExceptionResolver<CodeException> {
 
     private final MessageSource messageSource;
