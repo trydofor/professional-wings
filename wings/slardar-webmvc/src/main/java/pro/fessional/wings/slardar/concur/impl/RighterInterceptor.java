@@ -7,7 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
-import pro.fessional.mirana.bits.Aes128;
+import pro.fessional.mirana.bits.Aes;
+import pro.fessional.mirana.bits.Aes256;
 import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.mirana.code.RandCode;
@@ -146,20 +147,20 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
         return Secret;
     }
 
-    private Aes128 genAesKey(String k) {
+    private Aes genAesKey(String k) {
         final int len = k.length();
         final int min = 20;
         if (len < min) {
             k = k.repeat((min - 1) / len + 1);
         }
-        return Aes128.of(k);
+        return Aes256.of(k);
     }
 
     private String encodeAllow(String key, Object obj) {
         // 序列化对象
         final byte[] bytes = KryoSimple.writeClassAndObject(obj);
         // 加密
-        final Aes128 aes = genAesKey(key);
+        final Aes aes = genAesKey(key);
         final String b64 = Base64.encode(aes.encode(bytes));
         final String sum = MdHelp.sha1.sum(b64 + key); // 40c
 
@@ -175,7 +176,7 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
 
         if (MdHelp.sha1.check(sum, b64 + key)) {
             final byte[] bys = Base64.decode(b64);
-            final Aes128 aes = genAesKey(key);
+            final Aes aes = genAesKey(key);
             return aes.decode(bys);
         }
         else {

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import pro.fessional.mirana.bits.Aes128;
+import pro.fessional.mirana.bits.Aes;
 
 import java.io.IOException;
 
@@ -13,14 +13,14 @@ import java.io.IOException;
  * @author trydofor
  * @since 2022-07-15
  */
-public class Aes128StringDeserializer extends JsonDeserializer<String> {
+public class AesStringDeserializer extends JsonDeserializer<String> {
 
     @Setter(onMethod_ = {@Autowired})
-    private Aes128 aes128;
+    private Aes aes;
 
     @Override
     public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         String value = p.getValueAsString();
-        return aes128.decode64(value);
+        return aes.decode64(value);
     }
 }

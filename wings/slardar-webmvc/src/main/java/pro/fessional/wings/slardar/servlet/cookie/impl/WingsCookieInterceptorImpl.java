@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.util.StringUtils;
-import pro.fessional.mirana.bits.Aes128;
+import pro.fessional.mirana.best.DummyBlock;
+import pro.fessional.mirana.bits.Aes;
+import pro.fessional.mirana.bits.Aes256;
 import pro.fessional.mirana.bits.Base64;
 import pro.fessional.wings.slardar.servlet.cookie.WingsCookieInterceptor;
 
@@ -30,7 +32,7 @@ public class WingsCookieInterceptorImpl implements WingsCookieInterceptor {
     @Setter @Getter
     private Coder coder = Coder.Aes;
 
-    private final Aes128 aes128;
+    private final Aes aes;
     private final Map<String, String> aliasEnc = new HashMap<>();
     private final Map<String, String> aliasDec = new HashMap<>();
     private final Set<String> codeNop = new HashSet<>();
@@ -42,7 +44,7 @@ public class WingsCookieInterceptorImpl implements WingsCookieInterceptor {
     private final Map<String, String> path = new HashMap<>();
 
     public WingsCookieInterceptorImpl(String aesKey) {
-        aes128 = StringUtils.hasText(aesKey) ? Aes128.of(aesKey) : null;
+        aes = StringUtils.hasText(aesKey) ? Aes256.of(aesKey) : null;
     }
 
 
@@ -51,7 +53,7 @@ public class WingsCookieInterceptorImpl implements WingsCookieInterceptor {
                && coder == Coder.Nop
                && aliasEnc.isEmpty()
                && codeB64.isEmpty()
-               && (aes128 == null || codeAes.isEmpty())
+               && (aes == null || codeAes.isEmpty())
                && httpOnly.isEmpty()
                && secure.isEmpty()
                && path.isEmpty()
@@ -79,7 +81,7 @@ public class WingsCookieInterceptorImpl implements WingsCookieInterceptor {
         // value 解码
         String value = cookie.getValue();
         if (codeAes.contains(name)) {
-            value = aes128.decode64(value);
+            value = aes.decode64(value);
             did = true;
         }
         else if (codeB64.contains(name)) {
@@ -87,11 +89,11 @@ public class WingsCookieInterceptorImpl implements WingsCookieInterceptor {
             did = true;
         }
         else if (codeNop.contains(name)) {
-            // nothing
+            DummyBlock.empty();
         }
         else {
             if (coder == Coder.Aes) {
-                value = aes128.decode64(value);
+                value = aes.decode64(value);
                 did = true;
             }
             else if (coder == Coder.B64) {
@@ -112,7 +114,7 @@ public class WingsCookieInterceptorImpl implements WingsCookieInterceptor {
         // value 编码
         String value = cookie.getValue();
         if (codeAes.contains(name)) {
-            value = aes128.encode64(value);
+            value = aes.encode64(value);
             did = true;
         }
         else if (codeB64.contains(name)) {
@@ -120,11 +122,11 @@ public class WingsCookieInterceptorImpl implements WingsCookieInterceptor {
             did = true;
         }
         else if (codeNop.contains(name)) {
-            // nothing
+            DummyBlock.empty();
         }
         else {
             if (coder == Coder.Aes) {
-                value = aes128.encode64(value);
+                value = aes.encode64(value);
                 did = true;
             }
             else if (coder == Coder.B64) {

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import pro.fessional.mirana.bits.Aes128;
+import pro.fessional.mirana.bits.Aes;
 
 import java.io.IOException;
 
@@ -13,13 +13,13 @@ import java.io.IOException;
  * @author trydofor
  * @since 2022-07-15
  */
-public class Aes128StringSerializer extends JsonSerializer<String> {
+public class AesStringSerializer extends JsonSerializer<String> {
 
     @Setter(onMethod_ = {@Autowired})
-    private Aes128 aes128;
+    private Aes aes;
 
     @Override
     public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        gen.writeString(aes128.encode64(value));
+        gen.writeString(aes.encode64(value));
     }
 }

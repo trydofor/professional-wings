@@ -2,16 +2,20 @@ package pro.fessional.wings.slardar.servlet.response;
 
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
+import org.springframework.web.util.UriComponentsBuilder;
 import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.io.Zipper;
 import pro.fessional.mirana.pain.IORuntimeException;
 import pro.fessional.mirana.text.StringTemplate;
 import pro.fessional.wings.slardar.concur.WingsCaptchaHelper;
+import pro.fessional.wings.slardar.jackson.WingsJacksonHelper;
 import pro.fessional.wings.slardar.servlet.ContentTypeHelper;
 import pro.fessional.wings.slardar.servlet.stream.ReuseStreamResponseWrapper;
 
@@ -31,7 +35,9 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 import static pro.fessional.wings.slardar.servlet.ContentTypeHelper.findByFileName;
 
 /**
@@ -244,5 +250,35 @@ public class ResponseHelper {
                 throw new IORuntimeException(e);
             }
         }
+    }
+
+    /**
+     * 那以下顺序执行，并返回3种形式，Accept头严格匹配，因浏览器发送多头
+     * ① 200 xml,  accept=application/xml
+     * ② 200 json, accept=application/json 或 uri=null 或③未命中
+     * ③ 302 uri, uri != null
+     */
+    @SneakyThrows
+    @NotNull
+    public static ResponseEntity<String> flatResponse(Map<String, ?> data, String accept, String uri) {
+        if (StringUtils.equals(accept, APPLICATION_XML_VALUE)) {
+            final String str = WingsJacksonHelper.XmlDefault.writeValueAsString(data);
+            return ResponseEntity.ok(str);
+        }
+
+        // 302
+        if (uri != null && !StringUtils.equals(accept, APPLICATION_JSON_VALUE)) {
+            final UriComponentsBuilder bd = UriComponentsBuilder.fromHttpUrl(uri);
+            for (Map.Entry<String, ?> en : data.entrySet()) {
+                bd.queryParam(en.getKey(), en.getValue());
+            }
+            final String url = bd.build().toUriString();
+            return ResponseEntity.status(HttpStatus.FOUND)
+                                 .header("Location", url)
+                                 .build();
+        }
+
+        final String str = WingsJacksonHelper.JsonDefault.writeValueAsString(data);
+        return ResponseEntity.ok(str);
     }
 }
