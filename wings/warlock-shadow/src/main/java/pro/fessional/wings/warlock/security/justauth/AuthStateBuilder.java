@@ -12,6 +12,7 @@ import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.FormatUtil;
+import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.slardar.servlet.request.RequestHelper;
 
@@ -68,7 +69,7 @@ public class AuthStateBuilder {
             return uuid;
         }
         else {
-            final byte[] bytes = JSON.toJSONBytes(paraMap);
+            final byte[] bytes = JSON.toJSONBytes(paraMap, FastJsonHelper.DefaultWriter());
             final byte[] encode = aes.encode(bytes);
             final String state = Base64.encode(encode);
             log.info("AuthStateBuilder, buildState={}", state);
@@ -93,7 +94,7 @@ public class AuthStateBuilder {
 
         final byte[] bytes = Base64.decode(state.substring(RAND_LEN));
         final byte[] decode = aes.decode(bytes);
-        final Map<String, String[]> args = JSON.parseObject(decode, ParamType);
+        final Map<String, String[]> args = JSON.parseObject(decode, ParamType, FastJsonHelper.DefaultReader());
         request.setAttribute(AuthStateBuilder.class.getName(), args);
         return args;
     }

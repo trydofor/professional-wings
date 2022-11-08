@@ -1,10 +1,10 @@
 package pro.fessional.wings.slardar.serialize;
 
-import com.alibaba.fastjson2.JSON;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
+import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 
 /**
  * 底层实现为FastJson，仅限于信任服务的简单类型，在非信任领域可能存在安全问题。
@@ -35,12 +35,12 @@ public class JsonConversion implements ConversionService {
                 return (T) source;
             }
             else {
-                return (T) JSON.toJSONString(source);
+                return (T) FastJsonHelper.string(source);
             }
         }
 
         if (source instanceof String) {
-            return JSON.parseObject((String) source, targetType);
+            return FastJsonHelper.object((String) source, targetType);
         }
         return null;
     }
@@ -54,12 +54,12 @@ public class JsonConversion implements ConversionService {
                 return source;
             }
             else {
-                return JSON.toJSONString(source);
+                return FastJsonHelper.string(source);
             }
         }
 
         if (source instanceof String) {
-            return JSON.parseObject((String) source, targetType.getResolvableType().getType());
+            return FastJsonHelper.object((String) source, targetType);
         }
         return null;
     }

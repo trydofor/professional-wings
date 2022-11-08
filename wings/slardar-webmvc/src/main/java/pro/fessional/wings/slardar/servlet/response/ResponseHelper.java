@@ -15,7 +15,7 @@ import pro.fessional.mirana.io.Zipper;
 import pro.fessional.mirana.pain.IORuntimeException;
 import pro.fessional.mirana.text.StringTemplate;
 import pro.fessional.wings.slardar.concur.WingsCaptchaHelper;
-import pro.fessional.wings.slardar.jackson.WingsJacksonHelper;
+import pro.fessional.wings.slardar.jackson.JacksonHelper;
 import pro.fessional.wings.slardar.servlet.ContentTypeHelper;
 import pro.fessional.wings.slardar.servlet.stream.ReuseStreamResponseWrapper;
 
@@ -262,7 +262,7 @@ public class ResponseHelper {
     @NotNull
     public static ResponseEntity<String> flatResponse(Map<String, ?> data, String accept, String uri) {
         if (StringUtils.equals(accept, APPLICATION_XML_VALUE)) {
-            final String str = WingsJacksonHelper.XmlDefault.writeValueAsString(data);
+            final String str = JacksonHelper.XmlDefault.writeValueAsString(data);
             return ResponseEntity.ok(str);
         }
 
@@ -278,7 +278,7 @@ public class ResponseHelper {
                                  .build();
         }
 
-        final String str = WingsJacksonHelper.JsonDefault.writeValueAsString(data);
+        final String str = JacksonHelper.JsonDefault.writeValueAsString(data);
         return ResponseEntity.ok(str);
     }
 }

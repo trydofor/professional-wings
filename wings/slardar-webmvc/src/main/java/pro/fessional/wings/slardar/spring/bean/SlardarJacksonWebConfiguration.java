@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -18,6 +19,7 @@ import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilde
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
@@ -36,6 +38,7 @@ import pro.fessional.wings.slardar.jackson.FormatNumberSerializer;
 import pro.fessional.wings.slardar.jackson.FormatNumberSerializer.Digital;
 import pro.fessional.wings.slardar.jackson.I18nResultPropertyFilter;
 import pro.fessional.wings.slardar.jackson.I18nStringSerializer;
+import pro.fessional.wings.slardar.jackson.JacksonHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarJacksonProp;
@@ -71,23 +74,6 @@ public class SlardarJacksonWebConfiguration {
     private final SlardarDatetimeProp slardarDatetimeProp;
     private final SlardarNumberProp slardarNumberProp;
     private final MessageSource messageSource;
-
-/*
-    @Bean
-    @Primary
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
-        log.info("SlardarWebmvc spring-bean jackson ObjectMapper");
-        return builder.createXmlMapper(false).build();
-    }
-
-    @Bean
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public XmlMapper xmlMapper(Jackson2ObjectMapperBuilder builder) {
-        log.info("SlardarWebmvc spring-bean jackson XmlMapper");
-        return builder.createXmlMapper(true).build();
-    }
-*/
 
     /**
      * The context’s Jackson2ObjectMapperBuilder can be customized by one or more
@@ -246,5 +232,17 @@ public class SlardarJacksonWebConfiguration {
     public Jackson2ObjectMapperBuilderCustomizer customizerObjectMapperFilterProvider(FilterProvider filterProvider) {
         log.info("SlardarWebmvc spring-bean customizerObjectMapperFilterProvider");
         return builder -> builder.filters(filterProvider);
+    }
+
+    @Bean
+    public CommandLineRunner runnerJacksonHelper(Jackson2ObjectMapperBuilder builder) {
+        log.info("SlardarWebmvc spring-runs runnerJacksonHelper");
+        return args -> {
+            log.info("SlardarWebmvc spring-conf JacksonHelper.initGlobal");
+            JacksonHelper.initGlobal(
+                    builder.createXmlMapper(false).build(),
+                    builder.createXmlMapper(true).build()
+            );
+        };
     }
 }

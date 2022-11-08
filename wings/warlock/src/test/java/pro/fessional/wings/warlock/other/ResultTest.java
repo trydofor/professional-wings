@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.page.PageResult;
+import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.serialize.KryoSimple;
 
 import java.io.ByteArrayInputStream;
@@ -65,9 +66,9 @@ public class ResultTest {
                 .setCode("code")
                 .setCause("cause")
                 .setI18nMessage("i18nCode", "1");
-        final String json = JSON.toJSONString(r1);
+        final String json = JSON.toJSONString(r1, FastJsonHelper.DefaultWriter());
         log.info(json);
-        final R<Object> r2 = JSON.parseObject(json, new com.alibaba.fastjson2.TypeReference<R<Object>>() {});
+        final R<Object> r2 = JSON.parseObject(json, new com.alibaba.fastjson2.TypeReference<R<Object>>() {}, FastJsonHelper.DefaultReader());
         Assertions.assertEquals(r1, r2);
         Assertions.assertNull(r2.getCause());
         Assertions.assertNull(r2.getI18nArgs());
@@ -76,8 +77,8 @@ public class ResultTest {
         PageResult<String> p1 = new PageResult<String>()
                 .addData("1")
                 .setTotalInfo(30, 20);
-        log.info(JSON.toJSONString(p1));
-        log.info(JSON.toJSONString(p1.addMeta("left", 10)));
+        log.info(JSON.toJSONString(p1, FastJsonHelper.DefaultWriter()));
+        log.info(JSON.toJSONString(p1.addMeta("left", 10), FastJsonHelper.DefaultWriter()));
     }
 
     @SuppressWarnings("unchecked")

@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import pro.fessional.wings.slardar.context.TerminalContext;
+import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
@@ -66,6 +67,6 @@ public class WarlockSuccessLoginListener implements ApplicationListener<Authenti
             TerminalContext.login(builder);
         }
 
-        warlockAuthnService.onSuccess(authType, userId, JSON.toJSONString(dtlMap));
+        warlockAuthnService.onSuccess(authType, userId, JSON.toJSONString(dtlMap, FastJsonHelper.DefaultWriter()));
     }
 }
