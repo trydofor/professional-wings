@@ -8,7 +8,9 @@ import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
 import org.springframework.web.servlet.i18n.AbstractLocaleContextResolver;
 import pro.fessional.mirana.i18n.LocaleResolver;
 import pro.fessional.mirana.i18n.ZoneIdResolver;
+import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
+import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 
 import javax.servlet.http.Cookie;
@@ -22,6 +24,8 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import static pro.fessional.wings.slardar.constants.SlardarServletConst.AttrI18nContext;
+import static pro.fessional.wings.slardar.context.TerminalAttribute.LocaleByUid;
+import static pro.fessional.wings.slardar.context.TerminalAttribute.ZoneIdByUid;
 
 /**
  * 按以下优先顺序获得用户语言和时区设置。
@@ -74,7 +78,13 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
         return resolveI18nContext(request);
     }
 
+    @NotNull
     public TimeZoneAwareLocaleContext resolveI18nContext(HttpServletRequest request) {
+        return resolveI18nContext(request, null);
+    }
+
+    @NotNull
+    public TimeZoneAwareLocaleContext resolveI18nContext(HttpServletRequest request, Long userId) {
 
         Object obj = request.getAttribute(AttrI18nContext);
         if (obj instanceof TimeZoneAwareLocaleContext) {
@@ -89,19 +99,34 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
 
             if (locale == null) {
                 if (details == null) {
-                    locale = Locale.getDefault();
+                    if (userId != null) {
+                        locale = GlobalAttributeHolder.tryAttr(LocaleByUid, userId, false);
+                    }
                 }
                 else {
                     locale = details.getLocale();
+                }
+
+                if (locale == null) {
+                    locale = TerminalContext.defaultLocale();
                 }
             }
 
             if (timeZone == null) {
                 if (details == null) {
-                    timeZone = TimeZone.getDefault();
+                    if (userId != null) {
+                        final ZoneId zid = GlobalAttributeHolder.tryAttr(ZoneIdByUid, userId, false);
+                        if (zid != null) {
+                            timeZone = TimeZone.getTimeZone(zid);
+                        }
+                    }
                 }
                 else {
                     timeZone = TimeZone.getTimeZone(details.getZoneId());
+                }
+
+                if (details == null) {
+                    timeZone = TerminalContext.defaultTimeZone();
                 }
             }
         }
@@ -119,10 +144,20 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
             return;
         }
 
-        final Locale locale = context.getLocale();
-        final TimeZone timeZone = resolveUserTimeZone(request);
+        Locale locale = context.getLocale();
+        if (locale == null) {
+            locale = resolveUserLocale(request);
+        }
+        if (locale == null) {
+            locale = TerminalContext.defaultLocale();
+        }
 
-        context = new SimpleTimeZoneAwareLocaleContext(locale == null ? Locale.getDefault() : locale, timeZone);
+        TimeZone timeZone = resolveUserTimeZone(request);
+        if (timeZone == null) {
+            timeZone = TerminalContext.defaultTimeZone();
+        }
+
+        context = new SimpleTimeZoneAwareLocaleContext(locale, timeZone);
         request.setAttribute(AttrI18nContext, context);
     }
 

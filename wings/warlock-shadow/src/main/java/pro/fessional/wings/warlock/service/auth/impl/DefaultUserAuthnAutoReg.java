@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
+import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
@@ -19,9 +20,6 @@ import pro.fessional.wings.warlock.service.user.WarlockUserAttribute;
 import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
 import pro.fessional.wings.warlock.service.user.WarlockUserBasisService;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
-
-import java.time.ZoneId;
-import java.util.Locale;
 
 import static pro.fessional.wings.warlock.service.user.WarlockUserAuthnService.Authn;
 import static pro.fessional.wings.warlock.service.user.WarlockUserBasisService.Basis;
@@ -58,8 +56,8 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
             user.setNickname(username);
             user.setAvatar("");
             user.setGender(UserGender.UNKNOWN);
-            user.setLocale(Locale.getDefault());
-            user.setZoneId((ZoneId.systemDefault()));
+            user.setLocale(TerminalContext.defaultLocale());
+            user.setZoneId(TerminalContext.defaultZoneId());
             user.setRemark("auto register");
             user.setStatus(UserStatus.UNINIT);
 

@@ -2,6 +2,7 @@ package pro.fessional.wings.warlock.spring.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
 import java.time.Duration;
@@ -332,8 +333,8 @@ public class WarlockSecurityProp {
         private UserStatus status = ACTIVE;
         private String nickname;
         private String passsalt = "";
-        private Locale locale = Locale.getDefault();
-        private ZoneId zoneId = ZoneId.systemDefault();
+        private Locale locale = TerminalContext.defaultLocale();
+        private ZoneId zoneId = TerminalContext.defaultZoneId();
         private LocalDateTime expired = LocalDateTime.MAX;
     }
 
