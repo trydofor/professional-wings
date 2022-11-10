@@ -9,6 +9,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.context.TerminalInterceptor;
@@ -16,6 +19,11 @@ import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
+import pro.fessional.wings.slardar.spring.prop.SlardarTerminalProp;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author trydofor
@@ -26,7 +34,6 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 public class SlardarTerminalConfiguration {
 
     private final Log log = LogFactory.getLog(SlardarTerminalConfiguration.class);
-
 
     @Bean
     @ConditionalOnBean({WingsRemoteResolver.class})
@@ -45,8 +52,8 @@ public class SlardarTerminalConfiguration {
             final WingsUserDetails details = SecurityContextUtil.getUserDetails(false);
             if (details == null) {
                 TimeZoneAwareLocaleContext locale = resolver.resolveI18nContext(request);
-                builder.locale(locale.getLocale())
-                       .timeZone(locale.getTimeZone())
+                builder.localeIfAbsent(locale.getLocale())
+                       .timeZoneIfAbsent(locale.getTimeZone())
                        .guest();
             }
             else {
@@ -59,11 +66,23 @@ public class SlardarTerminalConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public TerminalInterceptor terminalInterceptor(ObjectProvider<TerminalInterceptor.TerminalBuilder> builders) {
+    public TerminalInterceptor terminalInterceptor(SlardarTerminalProp prop, ObjectProvider<TerminalInterceptor.TerminalBuilder> builders) {
         log.info("SlardarWebmvc spring-bean terminalInterceptor");
         TerminalContext.initActive(true);
         final TerminalInterceptor bean = new TerminalInterceptor();
         builders.orderedStream().forEach(bean::addTerminalBuilder);
+        //
+        final Map<String, String> igns = prop.getRequestIgnore();
+        final int size = igns.size();
+        if (size > 0) {
+            List<RequestMatcher> ants = new ArrayList<>(size);
+            for (String value : igns.values()) {
+                log.info("SlardarWebmvc spring-conf terminalInterceptor ignore=" + value);
+                ants.add(new AntPathRequestMatcher(value));
+            }
+            bean.setRequestIgnore(new OrRequestMatcher(ants));
+        }
+
         return bean;
     }
 }

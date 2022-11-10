@@ -299,8 +299,22 @@ public class TerminalContext {
             return this;
         }
 
+        public Builder localeIfAbsent(Locale lcl) {
+            if (locale == null) {
+                locale = lcl;
+            }
+            return this;
+        }
+
         public Builder timeZone(TimeZone tz) {
             timeZone = tz;
+            return this;
+        }
+
+        public Builder timeZoneIfAbsent(TimeZone tz) {
+            if (timeZone == null) {
+                timeZone = tz;
+            }
             return this;
         }
 
@@ -309,8 +323,20 @@ public class TerminalContext {
             return this;
         }
 
+        public Builder timeZoneIfAbsent(ZoneId tz) {
+            if (timeZone == null) {
+                timeZone = TimeZone.getTimeZone(tz);
+            }
+            return this;
+        }
+
         public <V> Builder terminal(TypedKey<V> key, V value) {
             params.put(key, value);
+            return this;
+        }
+
+        public <V> Builder terminalIfAbsent(TypedKey<V> key, V value) {
+            params.putIfAbsent(key, value);
             return this;
         }
 
@@ -321,13 +347,32 @@ public class TerminalContext {
             return this;
         }
 
+        public Builder terminalIfAbsent(Map<TypedKey<?>, Object> kvs) {
+            if (kvs != null) {
+                for (Map.Entry<TypedKey<?>, Object> en : kvs.entrySet()) {
+                    params.putIfAbsent(en.getKey(), en.getValue());
+                }
+            }
+            return this;
+        }
+
         public Builder terminalAddr(String ip) {
             params.put(TerminalAddr, ip);
             return this;
         }
 
+        public Builder terminalAddrIfAbsent(String ip) {
+            params.putIfAbsent(TerminalAddr, ip);
+            return this;
+        }
+
         public Builder terminalAgent(String info) {
             params.put(TerminalAgent, info);
+            return this;
+        }
+
+        public Builder terminalAgentIfAbsent(String info) {
+            params.putIfAbsent(TerminalAgent, info);
             return this;
         }
 

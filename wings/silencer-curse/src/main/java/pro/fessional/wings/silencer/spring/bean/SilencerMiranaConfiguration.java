@@ -58,9 +58,9 @@ public class SilencerMiranaConfiguration {
     @Bean
     public Aes aes256() {
         String key = prop.getCode().getAesKey();
-        if (key == null) {
+        if (key == null || key.isBlank()) {
             log.warn("SilencerCurse spring-bean aes256, should NOT use default");
-            return Aes256.of(RandCode.strong(16));
+            return Aes256.of(RandCode.strong(32));
         }
         else {
             log.info("SilencerCurse spring-bean aes256");
