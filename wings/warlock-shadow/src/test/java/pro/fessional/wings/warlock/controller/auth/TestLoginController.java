@@ -39,7 +39,7 @@ import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.Role
  */
 @RestController
 @Slf4j
-public class LoginControllerTest {
+public class TestLoginController {
 
     @Setter(onMethod_ = {@Autowired})
     private WingsAuthTypeParser authTypeParser;

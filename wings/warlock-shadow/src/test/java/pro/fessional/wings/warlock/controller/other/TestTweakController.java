@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  */
 @RestController
 @Slf4j
-public class TweakControllerTest {
+public class TestTweakController {
 
     @GetMapping("/test/tweak/logger-level.json")
     public R<Void> loggerLevel() {

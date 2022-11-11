@@ -232,4 +232,10 @@ public class WarlockEnabledProp {
      */
     private boolean controllerTweak = false;
     public static final String Key$controllerTweak = Key + ".controller-tweak";
+
+    /**
+     * @see #Key$controllerOauth
+     */
+    private boolean controllerOauth = true;
+    public static final String Key$controllerOauth = Key + ".controller-oauth";
 }

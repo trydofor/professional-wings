@@ -20,7 +20,7 @@ import javax.validation.constraints.NotBlank;
  */
 @RestController
 @Slf4j
-public class OtherControllerTest {
+public class TestOtherController {
 
     @RequestMapping("/test/code-exception.json")
     public String codeException() {

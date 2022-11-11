@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @Slf4j
-public class LoginControllerTest {
+public class TestLoginPageController {
 
     @Setter(onMethod_ = {@Autowired})
     private WingsAuthTypeParser authTypeParser;

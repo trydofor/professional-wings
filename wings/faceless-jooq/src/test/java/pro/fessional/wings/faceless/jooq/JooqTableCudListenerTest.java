@@ -45,7 +45,7 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
 @ActiveProfiles("init")
 @SpringBootTest(properties = {
         "debug = true",
-//        "spring.wings.faceless.jooq.enabled.journal-delete=true",
+        "wings.faceless.jooq.cud.table[tst_中文也分表]=id,login_info",
         "spring.wings.faceless.jooq.enabled.listen-table-cud=true"
 })
 @Tag("init")
