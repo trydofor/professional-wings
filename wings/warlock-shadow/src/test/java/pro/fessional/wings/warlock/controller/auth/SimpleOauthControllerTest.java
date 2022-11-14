@@ -63,6 +63,7 @@ class SimpleOauthControllerTest {
 
         mvc.perform(post(warlockUrlmapProp.getOauthRevokeToken())
                    .contentType(MediaType.APPLICATION_JSON)
+                   .param(SimpleOauthController.KeyClientId, clientId)
                    .param(SimpleOauthController.KeyCode, code2)
            )
            .andDo(print())
@@ -87,10 +88,7 @@ class SimpleOauthControllerTest {
         final JSONObject json1 = JSON.parseObject(body1);
         if (error == null) {
             Assertions.assertEquals(scopes, json1.getString(SimpleOauthController.KeyScope));
-            final String atk = json1.getString(SimpleOauthController.KeyAccessToken);
-            final String rtk = json1.getString(SimpleOauthController.KeyRefreshToken);
-            Assertions.assertEquals(atk, rtk);
-            return atk;
+            return json1.getString(SimpleOauthController.KeyAccessToken);
         }
         else {
             Assertions.assertEquals(error, json1.getString(SimpleOauthController.KeyError));

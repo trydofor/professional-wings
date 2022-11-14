@@ -23,14 +23,18 @@ import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.warlock.service.auth.WarlockTicketService;
 import pro.fessional.wings.warlock.service.auth.WarlockTicketService.Pass;
+import pro.fessional.wings.warlock.service.auth.WarlockTicketService.SimpleTerm;
 import pro.fessional.wings.warlock.service.auth.WarlockTicketService.Term;
 import pro.fessional.wings.warlock.service.auth.impl.SimpleTicketServiceImpl;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockTicketProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * 简单的模仿Oauth验证，方便测试和API使用，
@@ -56,7 +60,6 @@ public class SimpleOauthController implements InitializingBean {
     public static final String KeyErrorDescription = "error_description";
     public static final String KeyExpireIn = "expires_in";
     public static final String KeyAccessToken = "access_token";
-    public static final String KeyRefreshToken = "refresh_token";
 
     @Setter @Getter
     private Duration authCodeTtl = null;
@@ -99,7 +102,8 @@ public class SimpleOauthController implements InitializingBean {
                                             @RequestParam(value = KeyRedirectUri, required = false) String redirectUri,
                                             @RequestParam(value = KeyScope, required = false) String scope,
                                             @RequestParam(value = KeyState, required = false) String state,
-                                            @RequestHeader(value = KeyAccept, required = false) String accept) {
+                                            @RequestHeader(value = KeyAccept, required = false) String accept,
+                                            HttpServletRequest request) {
         final OAuth data = new OAuth();
         final Pass pass = warlockTicketService.findPass(clientId);
         if (pass == null) {
@@ -113,10 +117,15 @@ public class SimpleOauthController implements InitializingBean {
         else {
             final int seq = warlockTicketService.nextSeq(pass.getUserId(), Term.TypeAuthorizeCode);
             final long due = warlockTicketService.calcDue(authCodeTtl);
-            Term term = new Term();
+            Term term = new SimpleTerm();
             term.setType(Term.TypeAuthorizeCode);
             term.setUserId(pass.getUserId());
             term.setScopes(scope);
+            term.setClientId(clientId);
+            final HttpSession session = request.getSession(false);
+            if (session != null) {
+                term.setSessionId(session.getId());
+            }
             final Ticket tk = helper.encode(seq, due, Term.encode(term));
 
             data.put(KeyCode, tk.serialize());
@@ -154,7 +163,7 @@ public class SimpleOauthController implements InitializingBean {
                                          @RequestParam(value = KeyRedirectUri, required = false) String redirectUri,
                                          @RequestHeader(value = KeyAccept, required = false) String accept) {
         final OAuth data = new OAuth();
-        final Term term = parse(data, code);
+        final Term term = parse(data, code, clientId);
         if (!data.isEmpty() || term == null) {
             return ResponseHelper.flatResponse(data, accept, redirectUri);
         }
@@ -173,7 +182,6 @@ public class SimpleOauthController implements InitializingBean {
 
         final String token = tk1.serialize();
         data.put(KeyAccessToken, token);
-        data.put(KeyRefreshToken, token);
         data.put(KeyExpireIn, accessTokenTtl.toSeconds());
         data.put(KeyScope, term.getScopes());
 
@@ -196,17 +204,17 @@ public class SimpleOauthController implements InitializingBean {
             + "* @return {200} json/xml\n"
             + "")
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$oauthRevokeToken + "}", method = {RequestMethod.POST})
-    public ResponseEntity<String> revokeToken(@RequestParam(KeyCode) String code,
+    public ResponseEntity<String> revokeToken(@RequestParam(KeyClientId) String clientId,
+                                              @RequestParam(KeyCode) String code,
                                               @RequestParam(value = KeyRedirectUri, required = false) String redirectUri,
                                               @RequestHeader(value = KeyAccept, required = false) String accept) {
         final OAuth data = new OAuth();
-        final Term term = parse(data, code);
+        final Term term = parse(data, code, clientId);
         if (data.isEmpty() && term != null) {
             warlockTicketService.revokeAll(term.getUserId());
             log.info("revoke all token, term={}", term);
 
             data.put(KeyAccessToken, Null.Str);
-            data.put(KeyRefreshToken, Null.Str);
             data.put(KeyExpireIn, 0);
             data.put(KeyScope, term.getScopes());
         }
@@ -214,26 +222,27 @@ public class SimpleOauthController implements InitializingBean {
         return ResponseHelper.flatResponse(data, accept, redirectUri);
     }
 
-    private Term parse(OAuth data, String code) {
+    private Term parse(OAuth data, String code, String clientId) {
         final Ticket tk = TicketHelp.parse(code, helper::accept);
-        if (tk == null || tk.getPubDue() * 1000 < Now.millis()) {
-            data.put(KeyError, "invalid_request");
-            data.put(KeyErrorDescription, "invalid ticket");
-            return null;
+        for (int i = 0; i < 1; i++) {
+            if (tk == null || tk.getPubDue() * 1000 < Now.millis()) {
+                break;
+            }
+
+            final Term term = new SimpleTerm();
+            final boolean ok = term.decode(helper.decode(tk));
+            if (!ok || !Objects.equals(clientId, term.getClientId())) {
+                break;
+            }
+
+            if (warlockTicketService.checkSeq(term.getUserId(), term.getType(), tk.getPubSeq())) {
+                return term;
+            }
         }
 
-        final Term term = Term.decode(helper.decode(tk));
-        if (term == null) {
-            data.put(KeyError, "invalid_request");
-            data.put(KeyErrorDescription, "invalid ticket");
-            return null;
-        }
-
-        if (!warlockTicketService.checkSeq(term.getUserId(), term.getType(), tk.getPubSeq())) {
-            data.put(KeyError, "invalid_request");
-            data.put(KeyErrorDescription, "invalid ticket");
-        }
-        return term;
+        data.put(KeyError, "invalid_request");
+        data.put(KeyErrorDescription, "invalid ticket");
+        return null;
     }
 
     @Override

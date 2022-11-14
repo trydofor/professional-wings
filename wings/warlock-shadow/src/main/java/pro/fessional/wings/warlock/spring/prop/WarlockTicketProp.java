@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * wings-warlock-lock-77.properties
+ * wings-warlock-ticket-77.properties
  *
  * @author trydofor
  * @see #Key

@@ -64,50 +64,114 @@ public interface WarlockTicketService {
         protected String secret = Null.Str;
     }
 
-    @Data
-    class Term {
+    interface Term {
 
-        public static final int TypeEmpty = 0;
-        public static final int TypeAuthorizeCode = 1;
-        public static final int TypeAccessToken = 2;
+        int TypeEmpty = 0;
+        int TypeAuthorizeCode = 1;
+        int TypeAccessToken = 2;
+
+        /**
+         * 能否精确解析，完全匹配
+         */
+        default boolean decode(String str) {
+            return decode(str, true);
+        }
+
+        /**
+         * 能否成功的以term解析字符串，并赋值
+         */
+        default boolean decode(String str, boolean exactly) {
+            final int size = getSize();
+            final ArrayList<String> parts = BarString.split(str, size, exactly);
+            if (parts.size() < size) return false;
+
+            final Iterator<String> it = parts.iterator();
+            setType(Integer.parseInt(it.next()));
+            setUserId(Long.parseLong(it.next()));
+            setScopes(it.next());
+            setClientId(it.next());
+            setSessionId(it.next());
+            return true;
+        }
+
+
+        static String encode(Term term) {
+            BarString buff = new BarString();
+            buff.append(term.getType());
+            buff.append(term.getUserId());
+            buff.append(term.getScopes());
+            buff.append(term.getClientId());
+            buff.append(term.getSessionId());
+            return buff.toString();
+        }
+
+        /**
+         * 包含的字段数
+         */
+        int getSize();
 
         /**
          * 类别，AuthCode或AccessToken，非enum以备扩展
          */
+        int getType();
+
+        /**
+         * 类别，AuthCode或AccessToken，非enum以备扩展
+         */
+        void setType(int type);
+
+        /**
+         * 资源访问者对应的user
+         */
+        long getUserId();
+
+        /**
+         * 资源访问者对应的user
+         */
+        void setUserId(long userId);
+
+        /**
+         * 资源对应的scope，空格分割，对应于权限
+         */
+        String getScopes();
+
+        /**
+         * 资源对应的scope，空格分割，对应于权限
+         */
+        void setScopes(String scopes);
+
+        /**
+         * 资源访问者的client id，支持一对多的场景
+         */
+        String getClientId();
+
+        /**
+         * 资源访问者的client id，支持一对多的场景
+         */
+        void setClientId(String clientId);
+
+        /**
+         * 资源拥有者的session，api不需要session
+         */
+        String getSessionId();
+
+        /**
+         * 资源拥有者的session，api不需要session
+         */
+        void setSessionId(String sessionId);
+    }
+
+    @Data
+    class SimpleTerm implements Term {
         protected int type = TypeEmpty;
-        /**
-         * 关联的user id
-         */
         protected long userId = DefaultUserId.Null;
-        /**
-         * oauth scope，空格分割，对应于权限
-         */
         protected String scopes = Null.Str;
-        /**
-         * 绑定的session，api不需要session
-         */
+        protected String clientId = Null.Str;
         protected String sessionId = Null.Str;
 
-        public static String encode(Term term) {
-            BarString buff = new BarString();
-            buff.append(term.type);
-            buff.append(term.userId);
-            buff.append(term.scopes);
-            buff.append(term.sessionId);
-            return buff.toString();
-        }
-
-        public static Term decode(String str) {
-            final ArrayList<String> parts = BarString.split(str, 4, true);
-            if (parts.isEmpty()) return null;
-
-            Term term = new Term();
-            final Iterator<String> it = parts.iterator();
-            term.type = Integer.parseInt(it.next());
-            term.userId = Long.parseLong(it.next());
-            term.scopes = it.next();
-            term.sessionId = it.next();
-            return term;
+        @Override
+        public int getSize() {
+            return 5;
         }
     }
 }

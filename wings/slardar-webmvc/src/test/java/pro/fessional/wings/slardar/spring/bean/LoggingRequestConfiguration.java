@@ -40,6 +40,7 @@ public class LoggingRequestConfiguration {
 
     @Bean
     public RequestResponseLogging requestResponseLogging() {
+        log.info("SlardarWebmvc spring-bean requestResponseLogging");
         return new AbstractRequestResponseLogging() {
             @Override
             public Condition loggingConfig(@NotNull ReuseStreamRequestWrapper req) {
