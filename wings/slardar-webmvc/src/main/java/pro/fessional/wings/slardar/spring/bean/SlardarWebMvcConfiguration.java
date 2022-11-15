@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
@@ -43,7 +44,16 @@ public class SlardarWebMvcConfiguration implements WebMvcConfigurer {
     public void addInterceptors(@NotNull InterceptorRegistry registry) {
         for (AutoRegisterInterceptor it : interceptors) {
             log.info("SlardarWebmvc conf Interceptor=" + it.getClass().getName());
-            registry.addInterceptor(it);
+            final InterceptorRegistration ir = registry.addInterceptor(it);
+            ir.order(it.getOrder());
+            final List<String> ic = it.getIncludePatterns();
+            if (!ic.isEmpty()) {
+                ir.addPathPatterns(ic);
+            }
+            final List<String> ie = it.getExcludePatterns();
+            if (!ie.isEmpty()) {
+                ir.excludePathPatterns(ie);
+            }
         }
     }
 

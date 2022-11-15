@@ -18,9 +18,18 @@ public class SlardarTerminalProp {
     public static final String Key = "wings.slardar.terminal";
 
     /**
-     * @see #Key$requestIgnore
+     * 不需要TerminalInterceptor处理的URL
+     *
+     * @see #Key$excludePatterns
      */
-    private Map<String, String> requestIgnore = Collections.emptyMap();
-    public static final String Key$requestIgnore = Key + ".request-ignore";
+    private Map<String, String> excludePatterns = Collections.emptyMap();
+    public static final String Key$excludePatterns = Key + ".exclude-patterns";
 
+    /**
+     * exclude优先于include
+     *
+     * @see #Key$includePatterns
+     */
+    private Map<String, String> includePatterns = Collections.emptyMap();
+    public static final String Key$includePatterns = Key + ".include-patterns";
 }

@@ -4,13 +4,13 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static pro.fessional.wings.slardar.constants.SlardarServletConst.AttrTerminalLogin;
@@ -24,8 +24,10 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
 
     @Getter
     private final List<TerminalBuilder> terminalBuilders = new ArrayList<>();
-    @Setter
-    private RequestMatcher requestIgnore;
+
+    @Setter @Getter
+    @NotNull
+    private List<String> excludePatterns = Collections.emptyList();
 
     public void addTerminalBuilder(TerminalBuilder builder) {
         if (builder != null) {
@@ -40,11 +42,6 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
     public boolean preHandle(@NotNull HttpServletRequest request,
                              @NotNull HttpServletResponse response,
                              @NotNull Object handler) {
-
-        if (requestIgnore != null && requestIgnore.matches(request)) {
-            return true;
-        }
-
         try {
             final TerminalContext.Builder builder = new TerminalContext.Builder();
             for (TerminalBuilder build : terminalBuilders) {
