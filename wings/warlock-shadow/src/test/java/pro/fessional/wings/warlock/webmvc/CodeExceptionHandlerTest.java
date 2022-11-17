@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 2020-06-03
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
-        "wings.warlock.error.code-exception.response-body={message}"
+        "wings.warlock.error.code-exception.message-body={message}"
 })
 @AutoConfigureMockMvc
 public class CodeExceptionHandlerTest {

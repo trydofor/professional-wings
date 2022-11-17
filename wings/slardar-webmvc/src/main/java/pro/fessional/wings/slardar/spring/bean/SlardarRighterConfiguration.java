@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import pro.fessional.wings.slardar.concur.impl.RighterExceptionResolver;
 import pro.fessional.wings.slardar.concur.impl.RighterInterceptor;
@@ -41,11 +40,6 @@ public class SlardarRighterConfiguration {
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$righter, havingValue = "true")
     public HandlerExceptionResolver righterExceptionResolver() {
         log.info("SlardarWebmvc spring-bean righterExceptionResolver");
-        final RighterExceptionResolver bean = new RighterExceptionResolver(
-                slardarRighterProp.getHttpStatus(),
-                slardarRighterProp.getContentType(),
-                slardarRighterProp.getResponseBody());
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1000);
-        return bean;
+        return new RighterExceptionResolver(slardarRighterProp);
     }
 }

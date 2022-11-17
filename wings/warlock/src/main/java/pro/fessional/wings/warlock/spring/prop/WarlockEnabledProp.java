@@ -146,10 +146,10 @@ public class WarlockEnabledProp {
     public static final String Key$appPermCheck = Key + ".app-perm-check";
 
     /**
-     * @see #Key$allExceptionHandler
+     * @see #Key$defaultExceptionHandler
      */
-    private boolean allExceptionHandler = true;
-    public static final String Key$allExceptionHandler = Key + ".all-exception-handler";
+    private boolean defaultExceptionHandler = true;
+    public static final String Key$defaultExceptionHandler = Key + ".default-exception-handler";
 
     /**
      * @see #Key$codeExceptionHandler

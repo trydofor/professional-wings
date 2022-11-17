@@ -1,31 +1,33 @@
 package pro.fessional.wings.slardar.concur.impl;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import pro.fessional.mirana.text.StringTemplate;
 import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
 import pro.fessional.wings.slardar.concur.DoubleKillException;
-import pro.fessional.wings.slardar.webmvc.WingsExceptionResolver;
+import pro.fessional.wings.slardar.webmvc.SimpleExceptionResolver;
+import pro.fessional.wings.slardar.webmvc.SimpleResponse;
 
 /**
  * @author trydofor
  * @since 2021-03-10
  */
-@RequiredArgsConstructor
 @Order(WingsBeanOrdered.BaseLine)
-public class DoubleKillExceptionResolver extends WingsExceptionResolver<DoubleKillException> {
+public class DoubleKillExceptionResolver extends SimpleExceptionResolver<DoubleKillException> {
 
-    private final int httpStatus;
-    private final String contentType;
-    private final String responseBody;
+    public DoubleKillExceptionResolver(SimpleResponse defaultResponse) {
+        super(defaultResponse);
+    }
 
     @Override
-    protected Body resolve(DoubleKillException e) {
+    protected SimpleResponse resolve(DoubleKillException e) {
         final String body = StringTemplate
-                .dyn(responseBody)
+                .dyn(defaultResponse.getResponseBody())
                 .bindStr("{key}", e.getProgressKey())
                 .bindStr("{ttl}", e.getRunningSecond())
                 .toString();
-        return new Body(httpStatus, contentType, body);
+        return new SimpleResponse(
+                defaultResponse.getHttpStatus(),
+                defaultResponse.getContentType(),
+                body);
     }
 }
