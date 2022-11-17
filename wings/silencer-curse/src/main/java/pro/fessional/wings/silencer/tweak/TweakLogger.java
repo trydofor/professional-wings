@@ -23,6 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.springframework.boot.logging.LoggingSystem.ROOT_LOGGER_NAME;
 
 /**
+ * https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.logging
+ *
  * @author trydofor
  * @since 2022-10-27
  */
@@ -30,10 +32,54 @@ public class TweakLogger {
 
     private static LoggingSystem loggingSystem = null;
     private static LoggerGroups loggerGroups = null;
+    private static LogLevel CoreLevel = null;
 
-    public static void initGlobal(LoggingSystem system, LoggerGroups groups) {
+    private static Set<String> LazyCoreLevel = null;
+
+    public static void initGlobal(LoggingSystem system, LoggerGroups groups, LogLevel core) {
         loggingSystem = system;
         loggerGroups = groups;
+
+        if (core != null) {
+            CoreLevel = core;
+            if (LazyCoreLevel != null) {
+                for (String name : LazyCoreLevel) {
+                    tweakGlobal(name, core, false);
+                }
+            }
+        }
+
+        if (LazyCoreLevel != null) {
+            LazyCoreLevel.clear();
+            LazyCoreLevel = null;
+        }
+    }
+
+    /**
+     * trace=true
+     * debug=true
+     * When the debug mode is enabled,
+     * a selection of core loggers (embedded container, Hibernate, and Spring Boot)
+     * are configured to output more information.
+     * Enabling the debug mode does not configure your application to
+     * log all messages with DEBUG level.
+     */
+    public static LogLevel getCoreLevel() {
+        return CoreLevel;
+    }
+
+    public static void asCoreLevel(@NotNull String name) {
+        if (loggingSystem != null) {
+            if (CoreLevel != null) {
+                tweakGlobal(name, CoreLevel, false);
+            }
+        }
+        else {
+            if (LazyCoreLevel == null) {
+                LazyCoreLevel = new HashSet<>();
+            }
+            LazyCoreLevel.add(name);
+        }
     }
 
     // global
@@ -44,12 +90,15 @@ public class TweakLogger {
     }
 
     public static void tweakGlobal(@NotNull String name, @Nullable LogLevel level) {
+        tweakGlobal(name, level, true);
+    }
+
+    public static void tweakGlobal(@NotNull String name, @Nullable LogLevel level, boolean cache) {
         if (loggingSystem == null) {
             throw new IllegalStateException("must initLogging first");
         }
 
         if (level == null) {
-            // try reset
             level = GlobalLevel.get(name);
         }
 
@@ -62,8 +111,11 @@ public class TweakLogger {
             }
         }
 
-        LoggerConfiguration configuration = loggingSystem.getLoggerConfiguration(name);
-        GlobalLevel.put(name, configuration.getEffectiveLevel());
+        if (cache) {
+            LoggerConfiguration configuration = loggingSystem.getLoggerConfiguration(name);
+            GlobalLevel.put(name, configuration.getEffectiveLevel());
+        }
+        //
         loggingSystem.setLogLevel(name, level);
     }
 
@@ -182,7 +234,15 @@ public class TweakLogger {
 
     @NotNull
     public static LogLevel currentLevel(@NotNull String name) {
-        LogLevel lvl = threadLevel();
-        return lvl != null ? lvl : globalLevel(name);
+        final LogLevel tvl = threadLevel();
+        if (tvl != null) return tvl;
+
+        final LogLevel gvl = globalLevel(name);
+        if (CoreLevel != null && gvl.ordinal() > CoreLevel.ordinal()) {
+            return CoreLevel;
+        }
+        else {
+            return gvl;
+        }
     }
 }

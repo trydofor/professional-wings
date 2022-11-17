@@ -8,8 +8,10 @@ import org.apache.commons.logging.LogFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.TtlMDCAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggerGroups;
 import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.context.annotation.Bean;
@@ -53,7 +55,12 @@ public class SilencerTweakConfiguration {
 
     @Bean
     @ConditionalOnClass(FilterReply.class)
-    public CommandLineRunner runnerLogbackTweak(SilencerTweakProp prop, LoggingSystem system, LoggerGroups groups) {
+    public CommandLineRunner runnerLogbackTweak(SilencerTweakProp prop,
+                                                LoggingSystem system,
+                                                LoggerGroups groups,
+                                                @Value("${debug:false}") boolean debug,
+                                                @Value("${trace:false}") boolean trace
+    ) {
         log.info("SilencerCurse spring-runs runnerLogbackTweak, init TtlMDC");
         TtlMDCAdapter.initMdc();// 尽早初始化
         return args -> {
@@ -63,8 +70,18 @@ public class SilencerTweakConfiguration {
                 lc.getTurboFilterList().add(0, TweakLogger.MdcThresholdFilter);
             }
             // 尽晚初始化
-            log.info("SilencerCurse spring-conf runnerLogbackTweak TweakLogger");
-            TweakLogger.initGlobal(system, groups);
+            final LogLevel core;
+            if (debug) {
+                core = LogLevel.DEBUG;
+            }
+            else if (trace) {
+                core = LogLevel.TRACE;
+            }
+            else {
+                core = null;
+            }
+            log.info("SilencerCurse spring-conf runnerLogbackTweak TweakLogger, coreLevel=" + core);
+            TweakLogger.initGlobal(system, groups, core);
         };
     }
 }

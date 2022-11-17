@@ -42,6 +42,7 @@ public class OkHttpTweakLogInterceptor implements OkHttpInterceptor {
 
     public OkHttpTweakLogInterceptor() {
         resetMapping();
+        TweakLogger.asCoreLevel(log.getName());
     }
 
     /**
