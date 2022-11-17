@@ -64,7 +64,7 @@ public class WarlockSuccessLoginListener implements ApplicationListener<Authenti
                     .terminalAddr(meta.get(WingsAuthHelper.AuthAddr))
                     .terminalAgent(meta.get(WingsAuthHelper.AuthAgent))
                     .user(userId);
-            TerminalContext.login(builder);
+            TerminalContext.login(builder.build());
         }
 
         warlockAuthnService.onSuccess(authType, userId, JSON.toJSONString(dtlMap, FastJsonHelper.DefaultWriter()));

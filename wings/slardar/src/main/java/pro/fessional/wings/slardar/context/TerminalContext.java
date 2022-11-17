@@ -141,12 +141,6 @@ public class TerminalContext {
         return ctx;
     }
 
-    public static Context login(@NotNull Builder builder) {
-        final Context ctx = new Context(builder.userId, builder.locale, builder.timeZone, builder.params);
-        TerminalContext.login(ctx);
-        return ctx;
-    }
-
     /**
      * login，当ctx为null时，执行为logout
      *
@@ -383,6 +377,10 @@ public class TerminalContext {
 
         public Builder guest() {
             return user(DefaultUserId.Guest);
+        }
+
+        public Context build() {
+            return new Context(userId, locale, timeZone, params);
         }
     }
 }

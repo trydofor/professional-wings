@@ -11,4 +11,5 @@ public interface SlardarServletConst {
     String AttrRemoteIp = "WINGS.ATTR.REMOTE_IP";
     String AttrAgentInfo = "WINGS.ATTR.AGENT_INFO";
     String AttrTerminalLogin = "WINGS.ATTR.TERMINAL_LOGIN";
+    String AttrUserId = "WINGS.ATTR.USER_ID";
 }

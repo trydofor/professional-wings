@@ -214,14 +214,25 @@ public class OkHttpClientHelper {
 
     @NotNull
     public static Response execute(OkHttpClient client, Request.Builder builder) throws IOException {
-        return client.newCall(builder.build()).execute();
+        return execute(client, builder.build());
+    }
+
+    @NotNull
+    public static Response execute(OkHttpClient client, Request request) throws IOException {
+        return client.newCall(request).execute();
     }
 
     @Nullable
     @Contract("_,_,false->!null")
     public static Response execute(OkHttpClient client, Request.Builder builder, boolean nullWhenThrow) {
+        return execute(client, builder.build(), nullWhenThrow);
+    }
+
+    @Nullable
+    @Contract("_,_,false->!null")
+    public static Response execute(OkHttpClient client, Request request, boolean nullWhenThrow) {
         try {
-            return client.newCall(builder.build()).execute();
+            return client.newCall(request).execute();
         }
         catch (IOException e) {
             if (nullWhenThrow) {
@@ -235,7 +246,12 @@ public class OkHttpClientHelper {
 
     @Nullable
     public static <T> T execute(OkHttpClient client, Request.Builder builder, BiFunction<Response, IOException, T> fun) {
-        try (final Response res = client.newCall(builder.build()).execute()) {
+        return execute(client, builder.build(), fun);
+    }
+
+    @Nullable
+    public static <T> T execute(OkHttpClient client, Request request, BiFunction<Response, IOException, T> fun) {
+        try (final Response res = client.newCall(request).execute()) {
             return fun.apply(res, null);
         }
         catch (IOException e) {

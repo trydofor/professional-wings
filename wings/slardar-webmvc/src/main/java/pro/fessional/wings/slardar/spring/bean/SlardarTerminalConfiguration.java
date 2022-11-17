@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
+import pro.fessional.wings.slardar.constants.SlardarServletConst;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.context.TerminalInterceptor;
@@ -42,15 +43,26 @@ public class SlardarTerminalConfiguration {
 
     @Bean
     @ConditionalOnBean({WingsRemoteResolver.class})
-    public TerminalInterceptor.TerminalBuilder localeTerminalBuilder(WingsLocaleResolver resolver) {
-        log.info("SlardarWebmvc spring-bean localeTerminalBuilder");
+    public TerminalInterceptor.TerminalBuilder userI18nTerminalBuilder(WingsLocaleResolver resolver) {
+        log.info("SlardarWebmvc spring-bean userI18nTerminalBuilder");
         return (builder, request) -> {
             final WingsUserDetails details = SecurityContextUtil.getUserDetails(false);
             if (details == null) {
-                TimeZoneAwareLocaleContext locale = resolver.resolveI18nContext(request);
-                builder.localeIfAbsent(locale.getLocale())
-                       .timeZoneIfAbsent(locale.getTimeZone())
-                       .guest();
+                final Long userId = (Long) request.getAttribute(SlardarServletConst.AttrUserId);
+                if (userId != null) {
+                    TimeZoneAwareLocaleContext locale = resolver.resolveI18nContext(request, userId);
+                    builder.locale(locale.getLocale())
+                           .timeZone(locale.getTimeZone())
+                           .user(userId);
+                }
+                else {
+                    // 默认值的优先级最低
+                    TimeZoneAwareLocaleContext locale = resolver.resolveI18nContext(request, null);
+                    builder.localeIfAbsent(locale.getLocale())
+                           .timeZoneIfAbsent(locale.getTimeZone())
+                           .guest();
+                }
+
             }
             else {
                 builder.locale(details.getLocale())
@@ -76,7 +88,7 @@ public class SlardarTerminalConfiguration {
         }
 
         final Map<String, String> ic = prop.getIncludePatterns();
-        if(!ic.isEmpty()){
+        if (!ic.isEmpty()) {
             final ArrayList<String> vs = new ArrayList<>(ic.values());
             log.info("SlardarWebmvc spring-conf terminalInterceptor IncludePatterns=" + vs);
             bean.setExcludePatterns(vs);

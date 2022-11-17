@@ -99,7 +99,7 @@ public class ResponseHelper {
     }
 
     /**
-     * 直接以HttpServletResponse下载名为fileName的流
+     * 直接以HttpServletResponse下载名为fileName的流，并关闭流
      *
      * @param response HttpServletResponse
      * @param fileName 下载时提示的文件名
@@ -108,7 +108,6 @@ public class ResponseHelper {
     public static void downloadFile(@NotNull HttpServletResponse response, @Nullable String fileName, @NotNull InputStream stream) {
         setDownloadContentType(response, fileName);
         setDownloadContentDisposition(response, fileName);
-        response.setHeader("Content-Disposition", getDownloadContentDisposition(fileName));
         try {
             IOUtils.copy(stream, response.getOutputStream(), 1024);
         }

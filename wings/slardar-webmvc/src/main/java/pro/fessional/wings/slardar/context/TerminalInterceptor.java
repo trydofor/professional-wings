@@ -5,6 +5,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.slardar.context.TerminalContext.Builder;
+import pro.fessional.wings.slardar.context.TerminalContext.Context;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +37,45 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
         }
     }
 
+    @NotNull
+    public Builder buildTerminal(@NotNull HttpServletRequest request) {
+        final Builder builder = new Builder();
+        for (TerminalBuilder build : terminalBuilders) {
+            build.build(builder, request);
+        }
+        return builder;
+    }
+
+    /**
+     * 登录terminal，必须和logoutTerminal 以 try-finally形式出现。
+     */
+    public Context loginTerminal(@NotNull HttpServletRequest request, @NotNull Builder builder) {
+        try {
+            final Context ctx = builder.build();
+            TerminalContext.login(ctx);
+            request.setAttribute(AttrTerminalLogin, Boolean.TRUE);
+            return ctx;
+        }
+        catch (Exception e) {
+            log.error("should NOT be here", e);
+            TerminalContext.logout();
+            return null;
+        }
+    }
+
+    /**
+     * 登出，返回之前是否成功login
+     */
+    public boolean logoutTerminal(@NotNull HttpServletRequest request) {
+        if (request.getAttribute(AttrTerminalLogin) == Boolean.TRUE) {
+            TerminalContext.logout();
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     @Getter @Setter
     private int order = SlardarOrderConst.OrderTerminalInterceptor;
 
@@ -42,33 +83,18 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
     public boolean preHandle(@NotNull HttpServletRequest request,
                              @NotNull HttpServletResponse response,
                              @NotNull Object handler) {
-        try {
-            final TerminalContext.Builder builder = new TerminalContext.Builder();
-            for (TerminalBuilder build : terminalBuilders) {
-                build.build(builder, request);
-            }
-            request.setAttribute(AttrTerminalLogin, Boolean.TRUE);
-            TerminalContext.login(builder);
-        }
-        catch (Exception e) {
-            log.error("should NOT be here", e);
-            TerminalContext.logout();
-            return false;
-        }
-        //
-        return true;
+        final Builder builder = buildTerminal(request);
+        return loginTerminal(request, builder) != null;
     }
 
     @Override
     public void afterCompletion(@NotNull HttpServletRequest request,
                                 @NotNull HttpServletResponse response,
                                 @NotNull Object handler, Exception ex) {
-        if (request.getAttribute(AttrTerminalLogin) == Boolean.TRUE) {
-            TerminalContext.logout();
-        }
+        logoutTerminal(request);
     }
 
     public interface TerminalBuilder {
-        void build(@NotNull TerminalContext.Builder builder, @NotNull HttpServletRequest request);
+        void build(@NotNull Builder builder, @NotNull HttpServletRequest request);
     }
 }

@@ -85,7 +85,7 @@ public class WingsJacksonMapperTest {
                 .terminalAddr("localhost")
                 .terminalAgent("test")
                 .user(1);
-        TerminalContext.login(builder);
+        TerminalContext.login(builder.build());
     }
 
     @Data

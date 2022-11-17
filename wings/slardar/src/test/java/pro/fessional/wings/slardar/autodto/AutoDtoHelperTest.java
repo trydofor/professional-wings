@@ -43,7 +43,7 @@ class AutoDtoHelperTest {
                 .terminalAddr("localhost")
                 .terminalAgent("SpringTest")
                 .user(-1);
-        TerminalContext.login(builder);
+        TerminalContext.login(builder.build());
 
         I18nItem it = initI18nItem(ZONE_JP);
         I18nMaps mp = initI18nMaps(it);
@@ -90,7 +90,7 @@ class AutoDtoHelperTest {
                 .terminalAddr("localhost")
                 .terminalAgent("SpringTest")
                 .user(-1);
-        TerminalContext.login(builder);
+        TerminalContext.login(builder.build());
 
         I18nItem it = initI18nItem(ZONE_CN);
         I18nMaps mp = initI18nMaps(it);

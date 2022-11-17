@@ -40,7 +40,7 @@ class NowTest {
                 .terminalAddr("localhost")
                 .terminalAgent("Test")
                 .user(1);
-        TerminalContext.login(builder);
+        TerminalContext.login(builder.build());
 
         ZonedDateTime szd = Now.zonedDateTime();
         ZonedDateTime czd = Now.clientZonedDateTime();
