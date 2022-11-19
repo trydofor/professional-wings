@@ -4,8 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pro.fessional.mirana.tk.Ticket;
+import pro.fessional.mirana.tk.TicketHelp;
+import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.warlock.service.auth.WarlockTicketService;
 
+import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -32,6 +36,33 @@ public class SimpleTicketServiceImpl implements WarlockTicketService {
     private volatile int authorizeCodeMax = 3;
     @Setter @Getter
     private volatile int accessTokenMax = 5;
+    @Setter @Getter
+    protected TicketHelp.Helper<String> helper;
+
+    @Override
+    public Term decode(String token) {
+        final Ticket tk = TicketHelp.parse(token, helper::accept);
+
+        if (tk == null || tk.getPubDue() * 1000 < Now.millis()) {
+            return null;
+        }
+
+        final Term term = new SimpleTerm();
+        boolean ok = term.decode(helper.decode(tk));
+        if (ok) {
+            ok = checkSeq(term.getUserId(), term.getType(), tk.getPubSeq());
+        }
+        return ok ? term : null;
+    }
+
+    @Override
+    @NotNull
+    public String encode(@NotNull Term term, @NotNull Duration ttl) {
+        final int seq = nextSeq(term.getUserId(), term.getType());
+        final long due = calcDue(ttl);
+        final Ticket ticket = helper.encode(seq, due, Term.encode(term));
+        return ticket.serialize();
+    }
 
     @Override
     @Nullable

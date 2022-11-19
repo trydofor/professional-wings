@@ -3,6 +3,7 @@ package pro.fessional.wings.warlock.spring.prop;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.unit.DataSize;
+import pro.fessional.wings.slardar.webmvc.MessageResponse;
 
 /**
  * wings-warlock-apiauth-77.properties
@@ -59,4 +60,39 @@ public class WarlockApiAuthProp {
      */
     private DataSize digestMax = DataSize.ofMegabytes(10);
     public static final String Key$digestMax = Key + ".digest-max";
+
+    /**
+     * 是否一定要签名，可兼容旧api
+     *
+     * @see #Key$mustSignature
+     */
+    private boolean mustSignature = true;
+    public static final String Key$mustSignature = Key + ".must-signature";
+
+
+    /**
+     * 既又文件又有json的时候，以此命名json body作为File提交
+     *
+     * @see #Key$fileJsonBody
+     */
+    private String fileJsonBody = "FILE_JSON_BODY";
+    public static final String Key$fileJsonBody = Key + ".file-json-body";
+
+    /**
+     * @see #Key$errorClient
+     */
+    private MessageResponse errorClient = new MessageResponse();
+    public static final String Key$errorClient = Key + ".error-client";
+
+    /**
+     * @see #Key$errorSignature
+     */
+    private MessageResponse errorSignature = new MessageResponse();
+    public static final String Key$errorSignature = Key + ".error-signature";
+
+    /**
+     * @see #Key$errorUnhandled
+     */
+    private MessageResponse errorUnhandled = new MessageResponse();
+    public static final String Key$errorUnhandled = Key + ".error-unhandled";
 }

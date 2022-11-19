@@ -119,7 +119,7 @@ public class ReuseStreamRequestWrapper extends HttpServletRequestWrapper {
             final Collection<Part> pts = req.getParts();
             this.parts = new ArrayList<>(pts.size());
             for (Part pt : pts) {
-                parts.add(new CircleTempPart(pt));
+                parts.add(new CirclePart(pt));
             }
         }
 

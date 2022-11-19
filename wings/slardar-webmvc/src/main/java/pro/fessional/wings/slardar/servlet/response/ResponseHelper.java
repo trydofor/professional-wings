@@ -60,20 +60,21 @@ public class ResponseHelper {
 
     /**
      * 为下载文件 fileName，获得正确的ContentDisposition
+     * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
      *
      * @param fileName 文件名
      * @return ContentDisposition
      */
     @NotNull
     public static String getDownloadContentDisposition(@Nullable String fileName) {
-        StringBuilder dis = new StringBuilder("attachment;fileName=");
+        StringBuilder dis = new StringBuilder("attachment;filename=");
         if (fileName == null) {
             dis.append("download-file");
         }
         else {
-            dis.append(new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
+            dis.append(fileName);
             final String enc = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
-            dis.append(";fileName*=UTF-8''").append(enc);
+            dis.append(";filename*=UTF-8''").append(enc);
         }
         return dis.toString();
     }

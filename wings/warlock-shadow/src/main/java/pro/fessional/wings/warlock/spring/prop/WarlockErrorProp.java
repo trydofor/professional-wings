@@ -21,26 +21,7 @@ public class WarlockErrorProp {
     private MessageResponse defaultException = new MessageResponse();
     private MessageResponse codeException = new MessageResponse();
 
-    public void defaultIfAbsent(@NotNull MessageResponse res) {
-
-        final int hs = res.getHttpStatus();
-        if (hs <= 0) {
-            res.setHttpStatus(defaultException.getHttpStatus());
-        }
-
-        final String ct = res.getContentType();
-        if (ct == null || ct.isEmpty()) {
-            res.setContentType(defaultException.getContentType());
-        }
-
-        final String mb = res.getMessageBody();
-        if (mb == null || mb.isEmpty()) {
-            res.setMessageBody(defaultException.getMessageBody());
-        }
-
-        final String db = res.getDefaultBody();
-        if (db == null || db.isEmpty()) {
-            res.setDefaultBody(defaultException.getDefaultBody());
-        }
+    public void fillAbsent(@NotNull MessageResponse res) {
+        res.fillAbsent(defaultException);
     }
 }

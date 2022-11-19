@@ -2,6 +2,7 @@ package pro.fessional.wings.silencer.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -16,8 +17,9 @@ import javax.annotation.PostConstruct;
 /**
  * constructor
  * testAutowired1
- * postConstruct2
  * postConstruct1
+ * postConstruct2
+ * afterPropertiesSet
  * testBean1
  * testBean2
  * testApplicationStartedEvent
@@ -29,7 +31,7 @@ import javax.annotation.PostConstruct;
  * @since 2022-11-02
  */
 @Configuration(proxyBeanMethods = false)
-public class SpringOrderConfiguration {
+public class SpringOrderConfiguration implements InitializingBean {
     private static final Log log = LogFactory.getLog(SpringOrderConfiguration.class);
 
     public SpringOrderConfiguration(SilencerEnabledProp prop) {
@@ -71,5 +73,10 @@ public class SpringOrderConfiguration {
     @EventListener
     public void testApplicationReadyEvent(ApplicationReadyEvent event) {
         log.info(">>>>> ApplicationReadyEvent timestamp=" + event.getTimestamp());
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        log.info(">>>>> afterPropertiesSet");
     }
 }

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import pro.fessional.mirana.pain.ThrowableUtil;
-import pro.fessional.mirana.text.StringTemplate;
 
 /**
  * @author trydofor
@@ -36,15 +35,7 @@ public class MessageExceptionResolver<T extends Exception> extends WingsExceptio
     }
 
     protected String resolveBody(String msg) {
-        if (msg == null || msg.isEmpty()) {
-            return defaultResponse.getDefaultBody();
-        }
-        else {
-            return StringTemplate
-                    .dyn(defaultResponse.getMessageBody())
-                    .bindStr("{message}", msg)
-                    .toString();
-        }
+        return defaultResponse.responseBody(msg);
     }
 
     protected String resolveMessage(T ce) {

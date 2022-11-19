@@ -12,21 +12,23 @@ import java.util.Collection;
  * @author trydofor
  * @since 2022-08-18
  */
-public class CircleTempPart implements Part {
+public class CirclePart implements Part {
 
     private final Part backend;
-    private final CircleInputStream circled;
     private final long size;
+    private CircleInputStream circled;
 
     @SneakyThrows
-    public CircleTempPart(Part backend) {
+    public CirclePart(Part backend) {
         this.backend = backend;
-        this.circled = new CircleInputStream(backend.getInputStream());
         this.size = backend.getSize();
     }
 
 
-    @Override public InputStream getInputStream() {
+    @Override public InputStream getInputStream() throws IOException {
+        if (circled == null) {
+            circled = new CircleInputStream(backend.getInputStream());
+        }
         return circled;
     }
 
@@ -48,10 +50,12 @@ public class CircleTempPart implements Part {
 
     @Override
     public void write(String fileName) throws IOException {
+        backend.write(fileName);
     }
 
     @Override
     public void delete() throws IOException {
+        backend.delete();
     }
 
     @Override

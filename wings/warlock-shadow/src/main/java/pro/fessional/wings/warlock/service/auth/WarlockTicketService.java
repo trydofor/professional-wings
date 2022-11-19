@@ -18,6 +18,12 @@ import java.util.Iterator;
  */
 public interface WarlockTicketService {
 
+    @Nullable
+    Term decode(String token);
+
+    @NotNull
+    String encode(@NotNull Term term, @NotNull Duration ttl);
+
     /**
      * 获取ClientId对应的信息，null为不存在
      */
@@ -34,6 +40,7 @@ public interface WarlockTicketService {
      */
     void revokeAll(long uid);
 
+
     /**
      * 获取凭证的过期时间戳
      *
@@ -48,13 +55,6 @@ public interface WarlockTicketService {
      */
     default boolean checkSeq(long uid, int type, int seq) {
         return seq >= 0;
-    }
-
-    /**
-     * 检查 scope是否合法
-     */
-    default boolean checkScope(long uid, String scope) {
-        return true;
     }
 
     @Data
