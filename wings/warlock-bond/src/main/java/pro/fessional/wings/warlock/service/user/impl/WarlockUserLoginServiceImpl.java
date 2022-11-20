@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import pro.fessional.mirana.page.PageQuery;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.slardar.context.Now;
+import pro.fessional.wings.slardar.context.TerminalAttribute;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserLoginTable;
@@ -64,8 +65,8 @@ public class WarlockUserLoginServiceImpl implements WarlockUserLoginService {
         po.setAuthType(at);
 
         final TerminalContext.Context tc = TerminalContext.get();
-        po.setLoginIp(tc.getTerminal(TerminalContext.TerminalAddr));
-        po.setTerminal(tc.getTerminal(TerminalContext.TerminalAgent));
+        po.setLoginIp(tc.getTerminal(TerminalAttribute.TerminalAddr));
+        po.setTerminal(tc.getTerminal(TerminalAttribute.TerminalAgent));
         winUserLoginDao.insert(po);
     }
 }

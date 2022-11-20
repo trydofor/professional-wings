@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
+import org.springframework.security.core.GrantedAuthority;
 import pro.fessional.wings.slardar.constants.SlardarServletConst;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.context.TerminalContext;
@@ -21,6 +22,10 @@ import pro.fessional.wings.slardar.spring.prop.SlardarTerminalProp;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAddr;
+import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgent;
 
 /**
  * @author trydofor
@@ -37,14 +42,14 @@ public class SlardarTerminalConfiguration {
     public TerminalInterceptor.TerminalBuilder remoteTerminalBuilder(WingsRemoteResolver resolver) {
         log.info("SlardarWebmvc spring-bean remoteTerminalBuilder");
         return (builder, request) -> builder
-                .terminalAddr(resolver.resolveRemoteIp(request))
-                .terminalAgent(resolver.resolveAgentInfo(request));
+                .terminal(TerminalAddr, resolver.resolveRemoteIp(request))
+                .terminal(TerminalAgent, resolver.resolveAgentInfo(request));
     }
 
     @Bean
     @ConditionalOnBean({WingsRemoteResolver.class})
-    public TerminalInterceptor.TerminalBuilder userI18nTerminalBuilder(WingsLocaleResolver resolver) {
-        log.info("SlardarWebmvc spring-bean userI18nTerminalBuilder");
+    public TerminalInterceptor.TerminalBuilder securityTerminalBuilder(WingsLocaleResolver resolver) {
+        log.info("SlardarWebmvc spring-bean securityTerminalBuilder");
         return (builder, request) -> {
             final WingsUserDetails details = SecurityContextUtil.getUserDetails(false);
             if (details == null) {
@@ -67,7 +72,11 @@ public class SlardarTerminalConfiguration {
             else {
                 builder.locale(details.getLocale())
                        .timeZone(details.getZoneId())
-                       .user(details.getUserId());
+                       .user(details.getUserId())
+                       .authType(details.getAuthType())
+                       .authPerm(details.getAuthorities().stream()
+                                        .map(GrantedAuthority::getAuthority)
+                                        .collect(Collectors.toSet()));
             }
         };
     }

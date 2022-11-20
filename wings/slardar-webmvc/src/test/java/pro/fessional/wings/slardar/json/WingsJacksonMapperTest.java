@@ -49,6 +49,8 @@ import java.util.TimeZone;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAddr;
+import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgent;
 
 /**
  * @author trydofor
@@ -82,8 +84,8 @@ public class WingsJacksonMapperTest {
         TerminalContext.Builder builder = new TerminalContext.Builder()
                 .locale(Locale.US)
                 .timeZone(userTz)
-                .terminalAddr("localhost")
-                .terminalAgent("test")
+                .terminal(TerminalAddr, "localhost")
+                .terminal(TerminalAgent, "test")
                 .user(1);
         TerminalContext.login(builder.build());
     }

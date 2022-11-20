@@ -9,10 +9,14 @@ import pro.fessional.mirana.best.TypedKey;
 import pro.fessional.wings.slardar.security.DefaultUserId;
 
 import java.time.ZoneId;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,9 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class TerminalContext {
 
-    public static final Context Null = new Context(DefaultUserId.Null, null, null, null);
-    public static final TypedKey<String> TerminalAddr = new TypedKey<>() {};
-    public static final TypedKey<String> TerminalAgent = new TypedKey<>() {};
+    public static final Context Null = new Context(DefaultUserId.Null, null, null, null, null, null);
 
     /** no leak, for static and Interceptor clean */
     private static final TransmittableThreadLocal<Context> ContextLocal = new TransmittableThreadLocal<>();
@@ -190,22 +192,27 @@ public class TerminalContext {
     public static class Context {
 
         private final long userId;
-        @Nullable
         private final Locale locale;
-        @Nullable
         private final TimeZone timeZone;
-        @NotNull
+        private final Enum<?> authType;
+        private final Set<String> authPerm;
         private final Map<TypedKey<?>, Object> terminal;
 
-        public Context(long userId, Locale locale, TimeZone timeZone) {
-            this(userId, locale, timeZone, null);
+        public Context(long userId, Locale locale, TimeZone timeZone, Map<TypedKey<?>,
+                Object> params, Enum<?> authType, Set<String> authPerm) {
+            this.userId = userId;
+            this.locale = locale != null ? locale : DefaultLocale;
+            this.timeZone = timeZone != null ? timeZone : DefaultTimeZone;
+            this.terminal = params != null ? params : Collections.emptyMap();
+            this.authType = authType != null ? authType : pro.fessional.mirana.data.Null.Enm;
+            this.authPerm = authPerm != null ? authPerm : Collections.emptySet();
         }
 
-        public Context(long userId, @Nullable Locale locale, @Nullable TimeZone timeZone, Map<TypedKey<?>, Object> params) {
-            this.userId = userId;
-            this.locale = locale;
-            this.timeZone = timeZone;
-            this.terminal = params != null ? params : new HashMap<>();
+        /**
+         * userId == DefaultUserId#Null
+         */
+        public boolean isNull() {
+            return userId == DefaultUserId.Null;
         }
 
         /**
@@ -228,12 +235,12 @@ public class TerminalContext {
 
         @NotNull
         public Locale getLocale() {
-            return locale != null ? locale : defaultLocale();
+            return locale;
         }
 
         @NotNull
         public TimeZone getTimeZone() {
-            return timeZone != null ? timeZone : defaultTimeZone();
+            return timeZone;
         }
 
         @NotNull
@@ -241,8 +248,33 @@ public class TerminalContext {
             return getTimeZone().toZoneId();
         }
 
-        public <T> void putTerminal(@NotNull TypedKey<T> key, T value) {
-            terminal.put(key, value);
+        @NotNull
+        public Enum<?> getAuthType() {
+            return authType;
+        }
+
+        @NotNull
+        public Set<String> getAuthPerm() {
+            return authPerm;
+        }
+
+        public boolean hasAuthPerm(String auth) {
+            return authPerm.contains(auth);
+        }
+
+        public boolean anyAuthPerm(Collection<String> auths) {
+            if (auths == null) return false;
+            for (String auth : auths) {
+                if (authPerm.contains(auth)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public boolean allAuthPerm(Collection<String> auths) {
+            if (auths == null) return true;
+            return authPerm.containsAll(auths);
         }
 
         @Nullable
@@ -286,7 +318,9 @@ public class TerminalContext {
         private long userId;
         private Locale locale;
         private TimeZone timeZone;
-        private final Map<TypedKey<?>, Object> params = new HashMap<>();
+        private Enum<?> authType;
+        private final Set<String> authPerm = new HashSet<>();
+        private final Map<TypedKey<?>, Object> terminal = new HashMap<>();
 
         public Builder locale(Locale lcl) {
             locale = lcl;
@@ -324,19 +358,34 @@ public class TerminalContext {
             return this;
         }
 
+        public Builder authType(Enum<?> at) {
+            authType = at;
+            return this;
+        }
+
+        public Builder authPerm(String pm) {
+            authPerm.add(pm);
+            return this;
+        }
+
+        public Builder authPerm(Collection<String> pm) {
+            authPerm.addAll(pm);
+            return this;
+        }
+
         public <V> Builder terminal(TypedKey<V> key, V value) {
-            params.put(key, value);
+            terminal.put(key, value);
             return this;
         }
 
         public <V> Builder terminalIfAbsent(TypedKey<V> key, V value) {
-            params.putIfAbsent(key, value);
+            terminal.putIfAbsent(key, value);
             return this;
         }
 
         public Builder terminal(Map<TypedKey<?>, Object> kvs) {
             if (kvs != null) {
-                params.putAll(kvs);
+                terminal.putAll(kvs);
             }
             return this;
         }
@@ -344,29 +393,9 @@ public class TerminalContext {
         public Builder terminalIfAbsent(Map<TypedKey<?>, Object> kvs) {
             if (kvs != null) {
                 for (Map.Entry<TypedKey<?>, Object> en : kvs.entrySet()) {
-                    params.putIfAbsent(en.getKey(), en.getValue());
+                    terminal.putIfAbsent(en.getKey(), en.getValue());
                 }
             }
-            return this;
-        }
-
-        public Builder terminalAddr(String ip) {
-            params.put(TerminalAddr, ip);
-            return this;
-        }
-
-        public Builder terminalAddrIfAbsent(String ip) {
-            params.putIfAbsent(TerminalAddr, ip);
-            return this;
-        }
-
-        public Builder terminalAgent(String info) {
-            params.put(TerminalAgent, info);
-            return this;
-        }
-
-        public Builder terminalAgentIfAbsent(String info) {
-            params.putIfAbsent(TerminalAgent, info);
             return this;
         }
 
@@ -380,7 +409,7 @@ public class TerminalContext {
         }
 
         public Context build() {
-            return new Context(userId, locale, timeZone, params);
+            return new Context(userId, locale, timeZone, terminal, authType, authPerm);
         }
     }
 }

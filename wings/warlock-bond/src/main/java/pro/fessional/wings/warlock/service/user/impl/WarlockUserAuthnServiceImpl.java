@@ -17,11 +17,11 @@ import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.PasswordHelper;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
+import pro.fessional.wings.warlock.constants.WarlockGlobalAttribute;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAuthnTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAuthnDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserAuthn;
 import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
-import pro.fessional.wings.warlock.service.user.WarlockUserAttribute;
 import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
@@ -74,7 +74,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             auth.setAuthType(wingsAuthTypeParser.parse(authType));
             auth.setUsername(authn.getUsername());
 
-            final String salt = GlobalAttributeHolder.tryAttr(WarlockUserAttribute.SaltByUid, userId);
+            final String salt = GlobalAttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, userId);
             PasswordHelper helper = new PasswordHelper(passwordEncoder, passsaltEncoder);
             auth.setPassword(helper.hash(authn.getPassword(), salt));
 
@@ -116,7 +116,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
             if (authn.getPassword() != null) {
                 PasswordHelper helper = new PasswordHelper(passwordEncoder, passsaltEncoder);
-                final String slat = GlobalAttributeHolder.tryAttr(WarlockUserAttribute.SaltByUid, userId);
+                final String slat = GlobalAttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, userId);
                 setter.put(t.Password, helper.hash(authn.getPassword(), slat));
             }
 
@@ -153,7 +153,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             Map<Field<?>, Object> setter = new HashMap<>();
 
             if (renew.getPassword() != null) {
-                final String slat = GlobalAttributeHolder.tryAttr(WarlockUserAttribute.SaltByUid, userId);
+                final String slat = GlobalAttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, userId);
                 PasswordHelper helper = new PasswordHelper(passwordEncoder, passsaltEncoder);
                 setter.put(t.Password, helper.hash(renew.getPassword(), slat));
             }

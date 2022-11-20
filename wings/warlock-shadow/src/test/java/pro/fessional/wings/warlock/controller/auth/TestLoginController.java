@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
-import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
+import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
@@ -29,9 +29,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.PermsByUid;
-import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.RolesByUid;
 
 /**
  * @author trydofor
@@ -68,10 +65,8 @@ public class TestLoginController {
     @GetMapping("/auth/list-hold.json")
     public Set<String> listAllHold() {
         Set<String> set = new HashSet<>();
-        final long uid = SecurityContextUtil.getUserId();
-        set.addAll(GlobalAttributeHolder.tryAttr(RolesByUid, uid));
-        set.addAll(GlobalAttributeHolder.tryAttr(PermsByUid, uid));
-        return set;
+        final TerminalContext.Context cxt = TerminalContext.get();
+        return cxt.getAuthPerm();
     }
 
     /**

@@ -21,6 +21,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAddr;
+import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgent;
+
 /**
  * @author trydofor
  * @since 2022-10-06
@@ -40,8 +43,8 @@ class AutoDtoHelperTest {
         TerminalContext.Builder builder = new TerminalContext.Builder()
                 .locale(Locale.CHINA)
                 .timeZone(ZONE_JP)
-                .terminalAddr("localhost")
-                .terminalAgent("SpringTest")
+                .terminal(TerminalAddr, "localhost")
+                .terminal(TerminalAgent, "SpringTest")
                 .user(-1);
         TerminalContext.login(builder.build());
 
@@ -87,8 +90,8 @@ class AutoDtoHelperTest {
         TerminalContext.Builder builder = new TerminalContext.Builder()
                 .locale(Locale.US)
                 .timeZone(ZONE_JP)
-                .terminalAddr("localhost")
-                .terminalAgent("SpringTest")
+                .terminal(TerminalAddr, "localhost")
+                .terminal(TerminalAgent, "SpringTest")
                 .user(-1);
         TerminalContext.login(builder.build());
 

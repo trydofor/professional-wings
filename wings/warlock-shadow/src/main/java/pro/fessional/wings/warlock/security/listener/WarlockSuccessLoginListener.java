@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
@@ -16,6 +17,10 @@ import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAddr;
+import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgent;
 
 /**
  * @author trydofor
@@ -61,9 +66,13 @@ public class WarlockSuccessLoginListener implements ApplicationListener<Authenti
             TerminalContext.Builder builder = new TerminalContext.Builder()
                     .locale(ud.getLocale())
                     .timeZone(ud.getZoneId())
-                    .terminalAddr(meta.get(WingsAuthHelper.AuthAddr))
-                    .terminalAgent(meta.get(WingsAuthHelper.AuthAgent))
-                    .user(userId);
+                    .terminal(TerminalAddr, meta.get(WingsAuthHelper.AuthAddr))
+                    .terminal(TerminalAgent, meta.get(WingsAuthHelper.AuthAgent))
+                    .user(userId)
+                    .authType(authType)
+                    .authPerm(ud.getAuthorities().stream()
+                                .map(GrantedAuthority::getAuthority)
+                                .collect(Collectors.toSet()));
             TerminalContext.login(builder.build());
         }
 

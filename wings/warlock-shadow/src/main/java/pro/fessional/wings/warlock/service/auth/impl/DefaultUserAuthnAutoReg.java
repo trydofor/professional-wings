@@ -11,12 +11,12 @@ import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
+import pro.fessional.wings.warlock.constants.WarlockGlobalAttribute;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
-import pro.fessional.wings.warlock.service.user.WarlockUserAttribute;
 import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
 import pro.fessional.wings.warlock.service.user.WarlockUserBasisService;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
@@ -93,7 +93,7 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
 
             result.setUsername(authn.getUsername());
             result.setPassword(authn.getPassword());
-            result.setPasssalt(GlobalAttributeHolder.tryAttr(WarlockUserAttribute.SaltByUid, uid));
+            result.setPasssalt(GlobalAttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, uid));
             result.setExpiredDt(authn.getExpiredDt());
 
             return result;

@@ -10,6 +10,9 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 
+import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAddr;
+import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgent;
+
 /**
  * @author trydofor
  * @since 2022-10-10
@@ -37,8 +40,8 @@ class NowTest {
         TerminalContext.Builder builder = new TerminalContext.Builder()
                 .locale(Locale.US)
                 .timeZone(jp)
-                .terminalAddr("localhost")
-                .terminalAgent("Test")
+                .terminal(TerminalAddr, "localhost")
+                .terminal(TerminalAgent, "Test")
                 .user(1);
         TerminalContext.login(builder.build());
 

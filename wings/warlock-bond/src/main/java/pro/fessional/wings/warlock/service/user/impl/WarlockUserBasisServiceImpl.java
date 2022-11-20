@@ -29,7 +29,7 @@ import java.util.Map;
 
 import static pro.fessional.wings.slardar.context.TerminalAttribute.LocaleByUid;
 import static pro.fessional.wings.slardar.context.TerminalAttribute.ZoneIdByUid;
-import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.SaltByUid;
+import static pro.fessional.wings.warlock.constants.WarlockGlobalAttribute.SaltByUid;
 
 /**
  * @author trydofor

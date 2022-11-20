@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthzService;
 import pro.fessional.wings.warlock.service.grant.PermGrantHelper;
@@ -27,8 +26,6 @@ import java.util.Set;
 
 import static pro.fessional.wings.warlock.enums.autogen.GrantType.PERM;
 import static pro.fessional.wings.warlock.enums.autogen.GrantType.ROLE;
-import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.PermsByUid;
-import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.RolesByUid;
 
 /**
  * @author trydofor
@@ -98,21 +95,6 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
         for (Combo combo : authCombos) {
             combo.postAuth(details, auths);
         }
-
-        final HashSet<String> roleStr = new HashSet<>(); // 保证类型
-        final HashSet<String> permStr = new HashSet<>(); // 保证类型
-        for (String au : auths.keySet()) {
-            if (permNormalizer.indexRolePrefix(au) >= 0) {
-                roleStr.add(au);
-            }
-            else {
-                permStr.add(au);
-            }
-        }
-
-        final long uid = details.getUserId();
-        GlobalAttributeHolder.putAttr(RolesByUid, uid, roleStr);
-        GlobalAttributeHolder.putAttr(PermsByUid, uid, permStr);
 
         details.setAuthorities(new HashSet<>(auths.values()));
     }
