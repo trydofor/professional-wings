@@ -8,4 +8,5 @@ import org.springframework.core.Ordered;
  */
 public interface WingsBeanOrdered extends Ordered {
     int BaseLine = -10_000_000;
+    int WatchingAround = BaseLine - 100;
 }

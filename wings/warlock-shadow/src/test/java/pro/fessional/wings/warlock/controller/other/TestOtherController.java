@@ -1,7 +1,9 @@
 package pro.fessional.wings.warlock.controller.other;
 
 import lombok.Data;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,6 +11,7 @@ import pro.fessional.mirana.best.ArgsAssert;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
+import pro.fessional.wings.warlock.service.watching.WatchingService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
@@ -48,5 +51,17 @@ public class TestOtherController {
     public R<?> bindingErrorJson(@Valid @RequestBody Ins ins) {
         log.info(">>>" + ins.toString());
         return R.okData(ins);
+    }
+
+
+    @Setter(onMethod_ = {@Autowired})
+    protected WatchingService watchingService;
+
+    @RequestMapping("/test/watching.json")
+    public R<?> watching() {
+        watchingService.asyncWatch();
+        watchingService.normalFetch();
+        watchingService.errorFetch();
+        return R.ok();
     }
 }

@@ -1,6 +1,9 @@
 package pro.fessional.wings.warlock.controller.api;
 
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.wings.slardar.context.TerminalContext;
+import pro.fessional.wings.warlock.service.watching.WatchingService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +32,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @since 2022-11-12
  */
 @RestController
+@Slf4j
 public class TestToyApiController extends AbstractApiAuthController {
+
+    @Setter(onMethod_ = {@Autowired})
+    protected WatchingService watchingService;
 
     @PostMapping(value = "/api/test.json", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> testJsonApi(
@@ -108,6 +116,10 @@ public class TestToyApiController extends AbstractApiAuthController {
         else {
             entity.setResText(reqPara.get(ResJsonBody));
         }
+
+        log.warn("TestToyApiController={}", TerminalContext.get());
+        watchingService.asyncTerminal();
+        watchingService.logTerminal();
 
         return true;
     }

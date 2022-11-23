@@ -22,6 +22,7 @@ import pro.fessional.mirana.text.FormatUtil;
 import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.httprest.OkHttpClientHelper;
 import pro.fessional.wings.warlock.service.auth.WarlockOauthService;
+import pro.fessional.wings.warlock.service.watching.WatchingService;
 import pro.fessional.wings.warlock.spring.prop.WarlockApiAuthProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
@@ -61,7 +62,7 @@ import static pro.fessional.wings.warlock.controller.api.TestToyApiController.Te
                 "wings.warlock.apiauth.must-signature=false",
         })
 @Slf4j
-class AbstractApiAuthControllerTest {
+class ApiAuthControllerTest {
 
     @Setter(onMethod_ = {@Autowired})
     private WarlockApiAuthProp apiAuthProp;
@@ -137,6 +138,8 @@ class AbstractApiAuthControllerTest {
                 jsonJson(c, t, null);
             }
         }
+        final long uid = WatchingService.AsyncContext.getUserId();
+        Assertions.assertEquals(userId, Long.toString(uid));
     }
 
     private void jsonJson(String client, String timestamp, Function<String, String> sumFun) throws IOException {

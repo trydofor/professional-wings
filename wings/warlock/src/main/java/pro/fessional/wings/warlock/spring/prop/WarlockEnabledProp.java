@@ -238,4 +238,13 @@ public class WarlockEnabledProp {
      */
     private boolean controllerOauth = true;
     public static final String Key$controllerOauth = Key + ".controller-oauth";
+
+
+    /**
+     * 是否支持计时分析
+     *
+     * @see #Key$watching
+     */
+    private boolean watching = false;
+    public static final String Key$watching = Key + ".watching";
 }

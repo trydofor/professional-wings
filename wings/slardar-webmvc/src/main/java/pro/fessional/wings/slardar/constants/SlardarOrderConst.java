@@ -17,6 +17,7 @@ public interface SlardarOrderConst extends WingsBeanOrdered {
     int OrderDebounceInterceptor = BaseLine - 200;
     int OrderFirstBloodInterceptor = BaseLine - 100;
     int OrderTerminalInterceptor = BaseLine;
+    int OrderSlowResponseInterceptor = BaseLine + 100;
 
     //
     int OrderFirstBloodImg = BaseLine;

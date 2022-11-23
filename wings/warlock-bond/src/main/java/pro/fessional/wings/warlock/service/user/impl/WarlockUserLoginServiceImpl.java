@@ -9,6 +9,7 @@ import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.context.TerminalAttribute;
 import pro.fessional.wings.slardar.context.TerminalContext;
+import pro.fessional.wings.slardar.context.TerminalContextAware;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserLoginTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserLoginDao;
@@ -23,7 +24,7 @@ import java.util.List;
  * @since 2021-03-26
  */
 @Slf4j
-public class WarlockUserLoginServiceImpl implements WarlockUserLoginService {
+public class WarlockUserLoginServiceImpl implements WarlockUserLoginService, TerminalContextAware {
 
     @Setter(onMethod_ = {@Autowired})
     protected WinUserLoginDao winUserLoginDao;
@@ -64,7 +65,7 @@ public class WarlockUserLoginServiceImpl implements WarlockUserLoginService {
         final String at = wingsAuthTypeParser.parse(auth.getAuthType());
         po.setAuthType(at);
 
-        final TerminalContext.Context tc = TerminalContext.get();
+        final TerminalContext.Context tc = getTerminalContext();
         po.setLoginIp(tc.getTerminal(TerminalAttribute.TerminalAddr));
         po.setTerminal(tc.getTerminal(TerminalAttribute.TerminalAgent));
         winUserLoginDao.insert(po);

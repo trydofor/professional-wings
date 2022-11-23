@@ -25,11 +25,6 @@
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless</artifactId>
         </dependency>
-        <!-- annotation -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
         <!--sharding sphere-->
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
