@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
+import pro.fessional.wings.slardar.httprest.retrofit.FastJsonConverterFactory;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -23,10 +24,10 @@ import java.io.FileInputStream;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pro.fessional.wings.slardar.httprest.OkHttpClientHelper.APPLICATION_OCTET_STREAM_VALUE;
-import static pro.fessional.wings.slardar.httprest.OkHttpClientHelper.MULTIPART_FORM_DATA_VALUE;
 import static pro.fessional.wings.slardar.httprest.RetrofitCaller.Bad;
 import static pro.fessional.wings.slardar.httprest.RetrofitCaller.Ins;
+import static pro.fessional.wings.slardar.httprest.okhttp.OkHttpMediaType.APPLICATION_OCTET_STREAM_VALUE;
+import static pro.fessional.wings.slardar.httprest.okhttp.OkHttpMediaType.MULTIPART_FORM_DATA_VALUE;
 
 
 /**
@@ -68,7 +69,7 @@ public class RetrofitTest {
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(host)
                 .client(okHttpClient)
-                .addConverterFactory(FastJsonConvertFactory.create())
+                .addConverterFactory(FastJsonConverterFactory.create())
                 .build();
 
         RetrofitCaller caller = retrofit.create(RetrofitCaller.class);

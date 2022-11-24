@@ -26,7 +26,6 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -64,7 +63,6 @@ public class TestLoginController {
 
     @GetMapping("/auth/list-hold.json")
     public Set<String> listAllHold() {
-        Set<String> set = new HashSet<>();
         final TerminalContext.Context cxt = TerminalContext.get();
         return cxt.getAuthPerm();
     }

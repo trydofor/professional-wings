@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.httprest.impl;
+package pro.fessional.wings.slardar.httprest.okhttp;
 
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Interceptor;
@@ -8,7 +8,6 @@ import okhttp3.logging.HttpLoggingInterceptor.Level;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.logging.LogLevel;
 import pro.fessional.wings.silencer.tweak.TweakLogger;
-import pro.fessional.wings.slardar.httprest.OkHttpInterceptor;
 
 import java.io.IOException;
 import java.util.EnumMap;
@@ -98,5 +97,10 @@ public class OkHttpTweakLogInterceptor implements OkHttpInterceptor {
         final LogLevel lvl = TweakLogger.currentLevel(log.getName());
         final HttpLoggingInterceptor itc = mapping.get(lvl);
         return itc.intercept(chain);
+    }
+
+    @Override
+    public boolean isNetwork() {
+        return true;
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.slardar.event.TweakEventListener;
-import pro.fessional.wings.slardar.httprest.impl.OkHttpTweakLogInterceptor;
+import pro.fessional.wings.slardar.httprest.okhttp.OkHttpTweakLogInterceptor;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 /**

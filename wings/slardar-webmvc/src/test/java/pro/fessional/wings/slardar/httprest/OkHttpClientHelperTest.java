@@ -12,9 +12,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pro.fessional.wings.slardar.httprest.OkHttpClientHelper.download;
-import static pro.fessional.wings.slardar.httprest.OkHttpClientHelper.postFile;
-import static pro.fessional.wings.slardar.httprest.OkHttpClientHelper.postJson;
+import static pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper.download;
+import static pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper.postFile;
+import static pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper.postJson;
 
 
 /**

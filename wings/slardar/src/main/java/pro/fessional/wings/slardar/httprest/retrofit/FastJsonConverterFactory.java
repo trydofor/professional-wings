@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.httprest;
+package pro.fessional.wings.slardar.httprest.retrofit;
 
 import com.alibaba.fastjson2.JSON;
 import okhttp3.RequestBody;
@@ -8,19 +8,21 @@ import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-import static pro.fessional.wings.slardar.httprest.OkHttpClientHelper.APPLICATION_JSON_UTF8_VALUE;
+import static pro.fessional.wings.slardar.httprest.okhttp.OkHttpMediaType.APPLICATION_JSON_UTF8_VALUE;
 
 /**
  * @author trydofor
+ * @see JacksonConverterFactory
  * @since 2022-09-11
  */
-public class FastJsonConvertFactory extends Converter.Factory {
+public class FastJsonConverterFactory extends Converter.Factory {
 
-    private static final FastJsonConvertFactory INSTANCE = new FastJsonConvertFactory();
+    private static final FastJsonConverterFactory INSTANCE = new FastJsonConverterFactory();
 
     public static Converter.Factory create() {
         return INSTANCE;

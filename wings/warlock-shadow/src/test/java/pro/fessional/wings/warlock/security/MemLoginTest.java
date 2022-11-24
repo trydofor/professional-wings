@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
-import pro.fessional.wings.slardar.httprest.OkHttpClientHelper;
+import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 
 import java.util.Arrays;
 import java.util.List;

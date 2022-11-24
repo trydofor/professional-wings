@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.silencer.tweak.TweakLogger;
+import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 
 /**
  * @author trydofor

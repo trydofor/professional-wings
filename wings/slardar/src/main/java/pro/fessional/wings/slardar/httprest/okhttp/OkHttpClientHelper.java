@@ -1,10 +1,5 @@
-package pro.fessional.wings.slardar.httprest;
+package pro.fessional.wings.slardar.httprest.okhttp;
 
-import lombok.Data;
-import okhttp3.Cookie;
-import okhttp3.CookieJar;
-import okhttp3.HttpUrl;
-import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -16,19 +11,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.io.InputStreams;
-import pro.fessional.mirana.netx.SslTrustAll;
 import pro.fessional.mirana.pain.IORuntimeException;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 /**
  * 保持，谁用response谁关闭，采用 try-close模式
@@ -38,47 +26,44 @@ import java.util.stream.Collectors;
  */
 public class OkHttpClientHelper {
 
-    public static final MediaType ALL_VALUE = MediaType.parse("*/*");
-    public static final MediaType APPLICATION_ATOM_XML_VALUE = MediaType.parse("application/atom+xml");
-    public static final MediaType APPLICATION_CBOR_VALUE = MediaType.parse("application/cbor");
-    public static final MediaType APPLICATION_FORM_URLENCODED_VALUE = MediaType.parse("application/x-www-form-urlencoded");
-    public static final MediaType APPLICATION_JSON_VALUE = MediaType.parse("application/json");
-    public static final MediaType APPLICATION_JSON_UTF8_VALUE = MediaType.parse("application/json;charset=UTF-8");
-    public static final MediaType APPLICATION_OCTET_STREAM_VALUE = MediaType.parse("application/octet-stream");
-    public static final MediaType APPLICATION_PDF_VALUE = MediaType.parse("application/pdf");
-    public static final MediaType APPLICATION_PROBLEM_JSON_VALUE = MediaType.parse("application/problem+json");
-    public static final MediaType APPLICATION_PROBLEM_JSON_UTF8_VALUE = MediaType.parse("application/problem+json;charset=UTF-8");
-    public static final MediaType APPLICATION_PROBLEM_XML_VALUE = MediaType.parse("application/problem+xml");
-    public static final MediaType APPLICATION_RSS_XML_VALUE = MediaType.parse("application/rss+xml");
-    public static final MediaType APPLICATION_STREAM_JSON_VALUE = MediaType.parse("application/stream+json");
-    public static final MediaType APPLICATION_XHTML_XML_VALUE = MediaType.parse("application/xhtml+xml");
-    public static final MediaType APPLICATION_XML_VALUE = MediaType.parse("application/xml");
-    public static final MediaType IMAGE_GIF_VALUE = MediaType.parse("image/gif");
-    public static final MediaType IMAGE_JPEG_VALUE = MediaType.parse("image/jpeg");
-    public static final MediaType IMAGE_PNG_VALUE = MediaType.parse("image/png");
-    public static final MediaType MULTIPART_FORM_DATA_VALUE = MediaType.parse("multipart/form-data");
-    public static final MediaType MULTIPART_MIXED_VALUE = MediaType.parse("multipart/mixed");
-    public static final MediaType MULTIPART_RELATED_VALUE = MediaType.parse("multipart/related");
-    public static final MediaType TEXT_EVENT_STREAM_VALUE = MediaType.parse("text/event-stream");
-    public static final MediaType TEXT_HTML_VALUE = MediaType.parse("text/html");
-    public static final MediaType TEXT_MARKDOWN_VALUE = MediaType.parse("text/markdown");
-    public static final MediaType TEXT_PLAIN_VALUE = MediaType.parse("text/plain");
-    public static final MediaType TEXT_XML_VALUE = MediaType.parse("text/xml");
+    // lazy initialization holder class idiom
+    private static final class DefaultClientHolder {
+        private static final OkHttpClient DefaultClient = OkHttpClientBuilder.staticBuilder().build();
+    }
 
-    public static final RequestBody EMPTY = RequestBody.create("", ALL_VALUE);
+    /**
+     * 静态全局的默认初始化的
+     */
+    @NotNull
+    public static OkHttpClient staticClient() {
+        return DefaultClientHolder.DefaultClient;
+    }
+
+    protected static OkHttpClient SpringClient;
+
+    /**
+     * 注入的Spring Bean
+     */
+    @NotNull
+    public static OkHttpClient springClient() {
+        return SpringClient != null ? SpringClient : staticClient();
+    }
+
+    //
+    public static final RequestBody EMPTY = RequestBody.create("", OkHttpMediaType.ALL_VALUE);
 
     @NotNull
     public static MultipartBody.Builder postFile(String key, File file) {
         return new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart(key, file.getName(), RequestBody.create(file, MULTIPART_FORM_DATA_VALUE));
+                .addFormDataPart(key, file.getName(), RequestBody.create(file, OkHttpMediaType.MULTIPART_FORM_DATA_VALUE));
     }
 
     @NotNull
     public static MultipartBody.Builder postFile(String key, byte[] file, String fileName) {
         return new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart(key, fileName, RequestBody.create(file, MULTIPART_FORM_DATA_VALUE));
+                .addFormDataPart(key, fileName, RequestBody.create(file, OkHttpMediaType.MULTIPART_FORM_DATA_VALUE));
     }
 
     @NotNull
@@ -117,7 +102,7 @@ public class OkHttpClientHelper {
 
     @NotNull
     public static String postJson(OkHttpClient client, String url, CharSequence json) {
-        okhttp3.RequestBody body = RequestBody.create(json.toString(), APPLICATION_JSON_VALUE);
+        okhttp3.RequestBody body = RequestBody.create(json.toString(), OkHttpMediaType.APPLICATION_JSON_VALUE);
         okhttp3.Request request = new okhttp3.Request.Builder()
                 .url(url)
                 .post(body)
@@ -257,52 +242,5 @@ public class OkHttpClientHelper {
         catch (IOException e) {
             return fun.apply(null, e);
         }
-    }
-
-    public static void sslTrustAll(OkHttpClient.Builder builder) {
-        builder.sslSocketFactory(SslTrustAll.SSL_SOCKET_FACTORY, SslTrustAll.X509_TRUST_MANAGER)
-               .hostnameVerifier(SslTrustAll.HOSTNAME_VERIFIER);
-    }
-
-    public static void hostCookieJar(OkHttpClient.Builder builder) {
-        builder.cookieJar(new HostCookieJar());
-    }
-
-    public static class HostCookieJar implements CookieJar {
-
-        private final Map<String, Map<Ckk, Cookie>> cookies = new ConcurrentHashMap<>();
-
-        @Override
-        public void saveFromResponse(HttpUrl url, @NotNull List<Cookie> cks) {
-            Map<Ckk, Cookie> cookies = this.cookies.computeIfAbsent(url.host(), s -> new LinkedHashMap<>());
-            for (Cookie ck : cks) {
-                Ckk k = new Ckk();
-                k.setHost(ck.domain());
-                k.setPath(ck.path());
-                k.setName(ck.name());
-                k.setSecure(ck.secure());
-                //
-                cookies.remove(k);
-                cookies.put(k, ck);
-            }
-        }
-
-        @Override
-        @NotNull
-        public List<Cookie> loadForRequest(HttpUrl url) {
-            Map<Ckk, Cookie> cookies = this.cookies.get(url.host());
-            if (cookies == null) return Collections.emptyList();
-            return cookies.values().stream()
-                          .filter(it -> it.matches(url))
-                          .collect(Collectors.toList());
-        }
-    }
-
-    @Data
-    private static class Ckk {
-        private String host;
-        private String path;
-        private String name;
-        private boolean secure;
     }
 }

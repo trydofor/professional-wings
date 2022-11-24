@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.httprest;
+package pro.fessional.wings.slardar.httprest.okhttp;
 
 import okhttp3.Interceptor;
 

@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.time.StopWatch;
 import pro.fessional.wings.silencer.watch.Watches;
-import pro.fessional.wings.slardar.httprest.OkHttpClientHelper;
+import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 import pro.fessional.wings.warlock.service.watching.WatchingService;
 
 /**

@@ -9,7 +9,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.text.JsonTemplate;
 import pro.fessional.mirana.time.ThreadNow;
-import pro.fessional.wings.slardar.httprest.OkHttpClientHelper;
+import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
