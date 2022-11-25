@@ -1,6 +1,7 @@
 package pro.fessional.wings.warlock.controller.api;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -50,11 +51,17 @@ import static pro.fessional.wings.slardar.servlet.response.ResponseHelper.downlo
  */
 public abstract class AbstractApiAuthController {
 
+    public static final int MD5_LEN = MdHelp.LEN_MD5_HEX;
+    public static final int SHA1_LEN = MdHelp.LEN_SHA1_HEX;
+    public static final int HMAC_LEN = 64;
+
     protected final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
-    public static final int MD5_LEN = 32;
-    public static final int SHA1_LEN = 40;
-    public static final int HMAC_LEN = 64;
+    /**
+     * 是否兼容直传clientId，还是仅支持ticket体系
+     */
+    @Setter @Getter
+    private boolean compatible = true;
 
     @Setter(onMethod_ = {@Autowired})
     protected WarlockApiAuthProp apiAuthProp;
@@ -70,19 +77,18 @@ public abstract class AbstractApiAuthController {
      */
     public void requestMapping(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         //
-        final Pass pass;
+        Pass pass = null;
         final String cid = request.getHeader(apiAuthProp.getClientHeader());
         if (cid != null) {
             final Term term = ticketService.decode(cid);
-            if (term == null) {
-                pass = ticketService.findPass(cid);
-            }
-            else {
+            if (term != null) {
                 pass = ticketService.findPass(term.getClientId());
             }
-        }
-        else {
-            pass = null;
+            else { // 无效token或compatible模式
+                if (compatible) {
+                    pass = ticketService.findPass(cid);
+                }
+            }
         }
 
         if (pass == null) {
