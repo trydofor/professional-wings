@@ -22,21 +22,20 @@ public interface WarlockOauthService {
     String ExpireIn = "expires_in";
     String AccessToken = "access_token";
 
+    /**
+     * 需要检查scope和redirectUri，session 第三方用户的sessionId
+     */
     @NotNull
-    OAuth authorizeCode(@NotNull String clientId, String scope, String session);
+    OAuth authorizeCode(@NotNull String clientId, String scope, String redirectUri, String session);
 
+    /**
+     * token为empty时，为client_credentials模式，否则为authorization_code
+     */
     @NotNull
-    OAuth accessToken(@NotNull String clientId, @NotNull String clientSecret, @NotNull String token);
+    OAuth accessToken(@NotNull String clientId, @NotNull String clientSecret, String token);
 
     @NotNull
     OAuth revokeToken(@NotNull String clientId, @NotNull String token);
-
-    /**
-     * 检查 scope是否合法
-     */
-    default boolean checkScope(long uid, String scope) {
-        return true;
-    }
 
     @JacksonXmlRootElement(localName = "OAuth")
     class OAuth extends HashMap<String, Object> {

@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pro.fessional.mirana.text.WhiteUtil;
 
 /**
  * @author trydofor
@@ -51,55 +52,69 @@ public class JacksonHelper {
     @SneakyThrows
     @Contract("!null,_->!null")
     public static <T> T object(@Nullable String text, @NotNull Class<T> targetType) {
-        return object(text, targetType, true);
-    }
-
-    @SneakyThrows
-    @Contract("!null,_,_->!null")
-    public static <T> T object(@Nullable String text, @NotNull Class<T> targetType, boolean json) {
-        if (text == null) return null;
-        if (json) {
-            return JsonWings.readValue(text, targetType);
+        if (asXml(text)) {
+            return XmlWings.readValue(text, targetType);
         }
         else {
-            return XmlWings.readValue(text, targetType);
+            return JsonWings.readValue(text, targetType);
         }
     }
 
     @SneakyThrows
     @Contract("!null,_->!null")
     public static <T> T object(@Nullable String text, @NotNull JavaType targetType) {
-        return object(text, targetType, true);
-    }
-
-    @SneakyThrows
-    @Contract("!null,_,_->!null")
-    public static <T> T object(@Nullable String text, @NotNull JavaType targetType, boolean json) {
-        if (text == null) return null;
-        if (json) {
-            return JsonWings.readValue(text, targetType);
+        if (asXml(text)) {
+            return XmlWings.readValue(text, targetType);
         }
         else {
-            return XmlWings.readValue(text, targetType);
+            return JsonWings.readValue(text, targetType);
         }
     }
 
     @SneakyThrows
     @Contract("!null,_->!null")
     public static <T> T object(@Nullable String text, @NotNull TypeReference<T> targetType) {
-        return object(text, targetType, true);
-    }
-
-    @SneakyThrows
-    @Contract("!null,_,_->!null")
-    public static <T> T object(@Nullable String text, @NotNull TypeReference<T> targetType, boolean json) {
-        if (text == null) return null;
-        if (json) {
-            return JsonWings.readValue(text, targetType);
-        }
-        else {
+        if (asXml(text)) {
             return XmlWings.readValue(text, targetType);
         }
+        else {
+            return JsonWings.readValue(text, targetType);
+        }
+    }
+
+    /**
+     * str是否具有xml特征，即，收尾的字符是否为尖角括号
+     */
+    public static boolean asXml(@Nullable String str) {
+        if (str == null) return false;
+        int cnt = 0;
+        final int len = str.length();
+        for (int i = 0; i < len; i++) {
+            char c = str.charAt(i);
+            if (!WhiteUtil.isWhiteSpace(c)) {
+                if (c == '<') {
+                    cnt++;
+                    break;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        for (int i = len - 1; i > 0; i--) {
+            char c = str.charAt(i);
+            if (!WhiteUtil.isWhiteSpace(c)) {
+                if (c == '>') {
+                    cnt++;
+                    break;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+
+        return cnt == 2;
     }
 
     /**

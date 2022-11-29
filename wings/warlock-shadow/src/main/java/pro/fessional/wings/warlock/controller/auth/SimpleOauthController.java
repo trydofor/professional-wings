@@ -63,15 +63,16 @@ public class SimpleOauthController {
                                             HttpServletRequest request) {
         final HttpSession session = request.getSession(false);
         final String sid = session != null ? session.getId() : null;
-        final OAuth data = warlockOauthService.authorizeCode(clientId, scope, sid);
+        final OAuth data = warlockOauthService.authorizeCode(clientId, scope, redirectUri, sid);
         data.put(WarlockOauthService.State, state);
         return ResponseHelper.flatResponse(data, accept, redirectUri);
     }
 
-    @Operation(summary = "简单模拟Oauth2，仅支持授权码模式", description =
+    @Operation(summary = "简单模拟Oauth2，仅支持authorization-code和client-credentials模式", description =
             "# Usage \n"
             + "参考 https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps\n"
-            + "参考 https://www.oauth.com/oauth2-servers/access-tokens/access-token-response\n"
+            + "参考 https://www.oauth.com/oauth2-servers/access-tokens/authorization-code-request/\n"
+            + "参考 https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/\n"
             + "* 默认为标准的302重定向\n"
             + "* 当Accept: application/json返回json\n"
             + "* 当Accept: application/xml返回xml\n"
@@ -80,7 +81,7 @@ public class SimpleOauthController {
             + "## Params \n"
             + "* @param client_id  - Required. The client ID \n"
             + "* @param client_secret  - Required. The client secret \n"
-            + "* @param code - Required. AuthorizationCode \n"
+            + "* @param code - 有值时为authorization_code, 否则为client_credentials \n"
             + "* @param redirect_uri - 重定向或直接返回数据 \n"
             + "* @header Accept  - application/json返回json，application/xml返回xml \n"
             + "## Returns \n"
@@ -90,9 +91,10 @@ public class SimpleOauthController {
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$oauthAccessToken + "}", method = {RequestMethod.POST})
     public ResponseEntity<?> accessToken(@RequestParam(WarlockOauthService.ClientId) String clientId,
                                          @RequestParam(WarlockOauthService.ClientSecret) String clientSecret,
-                                         @RequestParam(WarlockOauthService.Code) String code,
+                                         @RequestParam(value = WarlockOauthService.Code, required = false) String code,
                                          @RequestParam(value = WarlockOauthService.RedirectUri, required = false) String redirectUri,
                                          @RequestHeader(value = "Accept", required = false) String accept) {
+
         final OAuth data = warlockOauthService.accessToken(clientId, clientSecret, code);
         return ResponseHelper.flatResponse(data, accept, redirectUri);
     }

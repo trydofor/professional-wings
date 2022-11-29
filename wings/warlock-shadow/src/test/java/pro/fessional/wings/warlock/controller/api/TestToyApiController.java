@@ -4,6 +4,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.wings.slardar.context.TerminalContext;
+import pro.fessional.wings.slardar.httprest.okhttp.OkHttpTokenizeOauth;
+import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
 import pro.fessional.wings.warlock.service.watching.WatchingService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +40,8 @@ public class TestToyApiController extends AbstractApiAuthController {
 
     @Setter(onMethod_ = {@Autowired})
     protected WatchingService watchingService;
+    @Setter(onMethod_ = {@Autowired})
+    private SlardarSessionProp slardarSessionProp;
 
     @PostMapping(value = "/api/test.json", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> testJsonApi(
@@ -65,6 +70,26 @@ public class TestToyApiController extends AbstractApiAuthController {
     public ResponseEntity<String> testDummyApi(@NotNull HttpServletRequest request) {
         final ApiEntity api = parse(request, false);
         return ResponseEntity.ok("ok");
+    }
+
+    @PostMapping(value = "/api/oauth.json")
+    public ResponseEntity<String> testOauthApi(@NotNull HttpServletRequest request) {
+        final String authHeader = request.getHeader(OkHttpTokenizeOauth.AuthHeader);
+        if (authHeader == null || !authHeader.startsWith(OkHttpTokenizeOauth.BearerPrefix)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        return ResponseEntity.ok(authHeader);
+    }
+
+    @PostMapping(value = "/api/login.json")
+    public ResponseEntity<String> testFormLogin(@NotNull HttpServletRequest request) {
+        final String authHeader = request.getHeader(slardarSessionProp.getHeaderName());
+        if (authHeader == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        return ResponseEntity.ok(authHeader);
     }
 
     public static final String ApiSimple = "/api/simple.json";

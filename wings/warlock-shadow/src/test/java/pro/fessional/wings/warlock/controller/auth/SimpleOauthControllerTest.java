@@ -16,6 +16,10 @@ import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.warlock.service.auth.WarlockOauthService;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -38,11 +42,11 @@ class SimpleOauthControllerTest {
 
     final String clientId = "wings-trydofor";
     final String clientSecret = "wings-trydofor-secret";
-    final String scopes = "scope1 scope2";
+    final String scopes = "api1 api2";
     final String state = RandCode.human(16);
 
     @Test
-    void normal() throws Exception {
+    void authorizationCode() throws Exception {
         final MvcResult authResult = mvc.perform(get(warlockUrlmapProp.getOauthAuthorize())
                                                 .contentType(MediaType.APPLICATION_JSON)
                                                 .param(WarlockOauthService.ClientId, clientId)
@@ -58,9 +62,15 @@ class SimpleOauthControllerTest {
         Assertions.assertEquals(state, json0.getString(WarlockOauthService.State));
 
         final String code = json0.getString(WarlockOauthService.Code);
-        final String code1 = accessToken(code, null);
+        // scopes 是否正确
+        Assertions.assertNotNull(code);
+
+        final String code1 = accessToken(clientId, clientSecret, code, null);
         Assertions.assertNotNull(code1);
-        final String code2 = accessToken(code1, null);
+        final String code2 = accessToken(clientId, clientSecret, code1, null);
+
+        accessToken(clientId+"bad", clientSecret, code2, "invalid_client");
+        accessToken(clientId, clientSecret+"bad", code2, "invalid_client");
 
         mvc.perform(post(warlockUrlmapProp.getOauthRevokeToken())
                    .contentType(MediaType.APPLICATION_JSON)
@@ -69,16 +79,26 @@ class SimpleOauthControllerTest {
            )
            .andDo(print())
            .andExpect(status().isOk());
-        accessToken(code, "invalid_request");
-        accessToken(code1, "invalid_request");
-        accessToken(code2, "invalid_request");
+        accessToken(clientId, clientSecret, code, "invalid_request");
+        accessToken(clientId, clientSecret, code1, "invalid_request");
+        accessToken(clientId, clientSecret, code2, "invalid_request");
+        accessToken(clientId+"bad", clientSecret, code2, "invalid_request");
+        accessToken(clientId, clientSecret+"bad", code2, "invalid_request");
     }
 
-    private String accessToken(String code, String error) throws Exception {
+    @Test
+    void clientCredentials() throws Exception {
+        final String code1 = accessToken(clientId, clientSecret, null, null);
+        Assertions.assertNotNull(code1);
+        accessToken(clientId, clientSecret + "bad", null, "invalid_client");
+        accessToken(clientId + "bad", clientSecret, null, "invalid_client");
+    }
+
+    private String accessToken(String cid, String cct, String code, String error) throws Exception {
         final MvcResult codeResult = mvc.perform(post(warlockUrlmapProp.getOauthAccessToken())
                                                 .contentType(MediaType.APPLICATION_JSON)
-                                                .param(WarlockOauthService.ClientId, clientId)
-                                                .param(WarlockOauthService.ClientSecret, clientSecret)
+                                                .param(WarlockOauthService.ClientId, cid)
+                                                .param(WarlockOauthService.ClientSecret, cct)
                                                 .param(WarlockOauthService.Code, code)
                                         )
                                         .andDo(print())
@@ -88,7 +108,9 @@ class SimpleOauthControllerTest {
         final String body1 = codeResult.getResponse().getContentAsString();
         final JSONObject json1 = JSON.parseObject(body1);
         if (error == null) {
-            Assertions.assertEquals(scopes, json1.getString(WarlockOauthService.Scope));
+            Set<String> s1 = new HashSet<>(Arrays.asList(scopes.split(" ")));
+            Set<String> s2 = new HashSet<>(Arrays.asList(json1.getString(WarlockOauthService.Scope).split(" ")));
+            Assertions.assertEquals(s1, s2);
             return json1.getString(WarlockOauthService.AccessToken);
         }
         else {

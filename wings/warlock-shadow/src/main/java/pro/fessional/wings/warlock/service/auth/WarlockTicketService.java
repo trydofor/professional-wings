@@ -10,7 +10,9 @@ import pro.fessional.wings.slardar.security.DefaultUserId;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * @author trydofor
@@ -62,6 +64,11 @@ public interface WarlockTicketService {
         protected long userId = DefaultUserId.Null;
         protected String client = Null.Str;
         protected String secret = Null.Str;
+        protected Set<String> scopes = Collections.emptySet();
+        /**
+         * 302的主机名，不要使用ipv6
+         */
+        protected Set<String> hosts = Collections.emptySet();
     }
 
     interface Term {

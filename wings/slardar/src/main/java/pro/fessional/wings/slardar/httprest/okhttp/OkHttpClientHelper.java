@@ -113,19 +113,6 @@ public class OkHttpClientHelper {
         }
     }
 
-    @NotNull
-    public static String getText(OkHttpClient client, String url) {
-        Request.Builder builder = new okhttp3.Request.Builder()
-                .url(url)
-                .get();
-        try (Response response = execute(client, builder)) {
-            return extractString(response);
-        }
-        catch (Exception e) {
-            throw new IllegalStateException("failed to post file, url=" + url, e);
-        }
-    }
-
     @Nullable
     public static ResponseBody extract(Response response) {
         if (response.isSuccessful()) {
@@ -195,16 +182,44 @@ public class OkHttpClientHelper {
     }
 
     @NotNull
+    public static String getText(OkHttpClient client, String url) {
+        Request.Builder builder = new okhttp3.Request.Builder()
+                .url(url)
+                .get();
+        try (Response response = execute(client, builder)) {
+            return extractString(response);
+        }
+        catch (Exception e) {
+            throw new IllegalStateException("failed to post file, url=" + url, e);
+        }
+    }
+
+    @Contract("_,_,false->!null")
+    public static String executeString(OkHttpClient client, Request request, boolean nullWhenThrow) {
+
+        try (Response response = execute(client, request)) {
+            return extractString(response);
+        }
+        catch (Exception e) {
+            if (nullWhenThrow) {
+                return null;
+            }
+            else {
+                throw new IORuntimeException(e);
+            }
+        }
+    }
+
+    @NotNull
     public static Response execute(OkHttpClient client, Request request) throws IOException {
         return client.newCall(request).execute();
     }
 
 
-    @Nullable
     @Contract("_,_,false->!null")
     public static Response execute(OkHttpClient client, Request request, boolean nullWhenThrow) {
         try {
-            return client.newCall(request).execute();
+            return execute(client, request);
         }
         catch (IOException e) {
             if (nullWhenThrow) {
@@ -218,7 +233,7 @@ public class OkHttpClientHelper {
 
     @Nullable
     public static <T> T execute(OkHttpClient client, Request request, BiFunction<Response, IOException, T> fun) {
-        try (final Response res = client.newCall(request).execute()) {
+        try (final Response res = execute(client, request)) {
             return fun.apply(res, null);
         }
         catch (IOException e) {
@@ -236,7 +251,6 @@ public class OkHttpClientHelper {
         }
     }
 
-    @Nullable
     @Contract("_,_,false->!null")
     public static Response execute(OkHttpClient client, Request.Builder builder, boolean nullWhenThrow) {
         try {

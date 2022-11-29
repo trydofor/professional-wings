@@ -262,7 +262,7 @@ public class ResponseHelper {
     @NotNull
     public static ResponseEntity<String> flatResponse(Map<String, ?> data, String accept, String uri) {
         if (StringUtils.equals(accept, APPLICATION_XML_VALUE)) {
-            final String str = JacksonHelper.XmlDefault.writeValueAsString(data);
+            final String str = JacksonHelper.string(data, false);
             return ResponseEntity.ok(str);
         }
 
@@ -278,7 +278,7 @@ public class ResponseHelper {
                                  .build();
         }
 
-        final String str = JacksonHelper.JsonDefault.writeValueAsString(data);
+        final String str = JacksonHelper.string(data, true);
         return ResponseEntity.ok(str);
     }
 }

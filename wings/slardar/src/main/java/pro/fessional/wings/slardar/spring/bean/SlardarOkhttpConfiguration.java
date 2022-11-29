@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
@@ -21,6 +22,7 @@ import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientBuilder;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpHostCookie;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpInterceptor;
+import pro.fessional.wings.slardar.httprest.okhttp.OkHttpRedirectNopInterceptor;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarOkHttpProp;
 
@@ -55,6 +57,14 @@ public class SlardarOkhttpConfiguration {
     public CookieJar hostCookieJar() {
         log.info("Slardar spring-bean hostCookieJar");
         return new OkHttpHostCookie();
+    }
+
+    @Bean
+    @ConditionalOnExpression("${" + SlardarOkHttpProp.Key$redirectNop + ":false}"
+                             + "&& (${" + SlardarOkHttpProp.Key$followRedirect + ":false} || ${" + SlardarOkHttpProp.Key$followRedirect + ":false})")
+    public OkHttpRedirectNopInterceptor okHttpRedirectNopInterceptor() {
+        log.info("Slardar spring-bean okHttpRedirectNopInterceptor");
+        return new OkHttpRedirectNopInterceptor();
     }
 
     @Bean
