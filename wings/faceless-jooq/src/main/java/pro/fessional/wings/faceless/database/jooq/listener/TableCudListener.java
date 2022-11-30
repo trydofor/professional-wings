@@ -54,7 +54,7 @@ public class TableCudListener extends DefaultVisitListener {
     @Setter @Getter
     private Map<String, Set<String>> tableField = new HashMap<>();
 
-    private enum Key {
+    public enum ContextKey {
         EXECUTING_VISIT_CUD, // Cud
         EXECUTING_TABLE_STR, // String
         EXECUTING_FIELD_KEY, // SET<String>
@@ -106,12 +106,12 @@ public class TableCudListener extends DefaultVisitListener {
                 if (WarnVisit) {
                     log.warn(">>> got DATA_COUNT_BIND_VALUES");
                 }
-                context.data(Key.EXECUTING_VISIT_CUD, cud);
+                context.data(ContextKey.EXECUTING_VISIT_CUD, cud);
                 return;
             }
         }
 
-        context.data(Key.EXECUTING_VISIT_CUD, null);
+        context.data(ContextKey.EXECUTING_VISIT_CUD, null);
     }
 
     @Override
@@ -129,7 +129,7 @@ public class TableCudListener extends DefaultVisitListener {
             }
         }
 
-        final Cud cud = (Cud) context.data(Key.EXECUTING_VISIT_CUD);
+        final Cud cud = (Cud) context.data(ContextKey.EXECUTING_VISIT_CUD);
         if (cud == null) return;
 
         final Clause clause = context.clause();
@@ -139,13 +139,13 @@ public class TableCudListener extends DefaultVisitListener {
 
         if (context.renderContext() == null) return;
 
-        final String table = (String) context.data(Key.EXECUTING_TABLE_STR);
+        final String table = (String) context.data(ContextKey.EXECUTING_TABLE_STR);
         if (table == null) {
             log.warn("find CUD without table, may be unsupported, sql={}", context.renderContext());
             return;
         }
 
-        Map<String, List<?>> field = (Map<String, List<?>>) context.data(Key.EXECUTING_FIELD_MAP);
+        Map<String, List<?>> field = (Map<String, List<?>>) context.data(ContextKey.EXECUTING_FIELD_MAP);
         if (field == null) field = Collections.emptyMap();
 
         log.debug("handle CUD={}, table={}, filed={}", cud, table, field);
@@ -184,7 +184,7 @@ public class TableCudListener extends DefaultVisitListener {
         if (handlers.isEmpty() || tableField.isEmpty()) return;
         if (context.renderContext() == null) return;
 
-        final Cud cud = (Cud) context.data(Key.EXECUTING_VISIT_CUD);
+        final Cud cud = (Cud) context.data(ContextKey.EXECUTING_VISIT_CUD);
         if (cud == null) return;
 
         if (cud == Cud.Create) {
@@ -207,7 +207,7 @@ public class TableCudListener extends DefaultVisitListener {
         }
         else if (clause == Clause.DELETE_WHERE && query instanceof Keyword) {
             log.debug("handle delete-where");
-            context.data(Key.EXECUTING_WHERE_CMP, Null.Str);
+            context.data(ContextKey.EXECUTING_WHERE_CMP, Null.Str);
         }
         else {
             handleWhere(context, clause, query);
@@ -224,13 +224,13 @@ public class TableCudListener extends DefaultVisitListener {
             handleTable(context, (TableImpl<?>) query);
         }
         else if (clause == Clause.UPDATE_SET && query instanceof Map) {
-            final Set<String> fds = (Set<String>) context.data(Key.EXECUTING_FIELD_KEY);
+            final Set<String> fds = (Set<String>) context.data(ContextKey.EXECUTING_FIELD_KEY);
             if (fds == null) {
                 log.debug("should not be here, update-table without key");
                 return;
             }
 
-            final Map<String, List<Object>> map = (Map<String, List<Object>>) context.data(Key.EXECUTING_FIELD_MAP);
+            final Map<String, List<Object>> map = (Map<String, List<Object>>) context.data(ContextKey.EXECUTING_FIELD_MAP);
             if (map == null) {
                 log.debug("should not be here, update-table without map");
                 return;
@@ -255,7 +255,7 @@ public class TableCudListener extends DefaultVisitListener {
         }
         else if (clause == Clause.UPDATE_WHERE && query instanceof Keyword) {
             log.debug("handle update-where");
-            context.data(Key.EXECUTING_WHERE_CMP, Null.Str);
+            context.data(ContextKey.EXECUTING_WHERE_CMP, Null.Str);
         }
         else {
             handleWhere(context, clause, query);
@@ -265,12 +265,12 @@ public class TableCudListener extends DefaultVisitListener {
     @SuppressWarnings({"deprecation", "unchecked"})
     private void handleWhere(VisitContext context, Clause clause, QueryPart query) {
         if (clause == Clause.FIELD_REFERENCE && query instanceof TableField) {
-            if (context.data(Key.EXECUTING_WHERE_CMP) == null) {
+            if (context.data(ContextKey.EXECUTING_WHERE_CMP) == null) {
                 log.debug("skip where without where-clause");
                 return;
             }
 
-            final Set<String> fds = (Set<String>) context.data(Key.EXECUTING_FIELD_KEY);
+            final Set<String> fds = (Set<String>) context.data(ContextKey.EXECUTING_FIELD_KEY);
             if (fds == null) {
                 log.debug("should not be here, table without key");
                 return;
@@ -278,16 +278,16 @@ public class TableCudListener extends DefaultVisitListener {
             final String fd = ((TableField<?, ?>) query).getName();
             if (fds.contains(fd)) {
                 log.debug("handle where-field={}", fd);
-                context.data(Key.EXECUTING_WHERE_KEY, fd);
+                context.data(ContextKey.EXECUTING_WHERE_KEY, fd);
             }
             else {
                 log.debug("skip careless where-field={}", fd);
-                context.data(Key.EXECUTING_WHERE_KEY, null);
+                context.data(ContextKey.EXECUTING_WHERE_KEY, null);
             }
         }
         // 3.16后使用QOM，3.14为query instanceof Keyword
         else if ((clause == Clause.CONDITION_COMPARISON || clause == Clause.CONDITION_IN) && query instanceof Keyword) {
-            if (context.data(Key.EXECUTING_WHERE_KEY) == null) {
+            if (context.data(ContextKey.EXECUTING_WHERE_KEY) == null) {
                 log.debug("skip comparison without where-key or careless");
                 return;
             }
@@ -295,30 +295,30 @@ public class TableCudListener extends DefaultVisitListener {
             final String cmp = query.toString();
             if (cmp.equals("=") || cmp.equals(">=") || cmp.equals("<=")) {
                 log.debug("handle comparison. key={}", cmp);
-                context.data(Key.EXECUTING_WHERE_CMP, WHERE_EQ);
+                context.data(ContextKey.EXECUTING_WHERE_CMP, WHERE_EQ);
             }
             else if (cmp.equalsIgnoreCase("in")) {
                 log.debug("handle comparison. key=in");
-                context.data(Key.EXECUTING_WHERE_CMP, WHERE_IN);
+                context.data(ContextKey.EXECUTING_WHERE_CMP, WHERE_IN);
             }
             else {
                 log.debug("skip comparison. key={}", cmp);
             }
         }
         else if (clause == Clause.FIELD_VALUE && query instanceof Param) {
-            final String fd = (String) context.data(Key.EXECUTING_WHERE_KEY);
+            final String fd = (String) context.data(ContextKey.EXECUTING_WHERE_KEY);
             if (fd == null) {
                 log.debug("skip where-field without where-key or careless");
                 return;
             }
 
-            final Map<String, List<Object>> map = (Map<String, List<Object>>) context.data(Key.EXECUTING_FIELD_MAP);
+            final Map<String, List<Object>> map = (Map<String, List<Object>>) context.data(ContextKey.EXECUTING_FIELD_MAP);
             if (map == null) {
                 log.debug("skip where-field without where-table or careless");
                 return;
             }
 
-            final Object cmp = context.data(Key.EXECUTING_WHERE_CMP);
+            final Object cmp = context.data(ContextKey.EXECUTING_WHERE_CMP);
             if (cmp == WHERE_EQ || cmp == WHERE_IN) {
                 log.debug("handle where-value key={}", cmp);
                 final List<Object> set = map.computeIfAbsent(fd, k -> new ArrayList<>());
@@ -337,13 +337,13 @@ public class TableCudListener extends DefaultVisitListener {
             else {
                 log.debug("skip careless table={}", tbl);
             }
-            context.data(Key.EXECUTING_VISIT_CUD, null);
+            context.data(ContextKey.EXECUTING_VISIT_CUD, null);
         }
         else {
             log.debug("handle table={}", tbl);
-            context.data(Key.EXECUTING_TABLE_STR, tbl);
-            context.data(Key.EXECUTING_FIELD_KEY, fds);
-            context.data(Key.EXECUTING_FIELD_MAP, new LinkedHashMap<>());
+            context.data(ContextKey.EXECUTING_TABLE_STR, tbl);
+            context.data(ContextKey.EXECUTING_FIELD_KEY, fds);
+            context.data(ContextKey.EXECUTING_FIELD_MAP, new LinkedHashMap<>());
         }
     }
 
@@ -357,7 +357,7 @@ public class TableCudListener extends DefaultVisitListener {
         }
         // QueryPartCollectionView
         else if (clause == Clause.INSERT_INSERT_INTO && query instanceof Collection) {
-            final Set<String> fds = (Set<String>) context.data(Key.EXECUTING_FIELD_KEY);
+            final Set<String> fds = (Set<String>) context.data(ContextKey.EXECUTING_FIELD_KEY);
             if (fds == null) {
                 log.debug("should not be here, insert-table without key");
                 return;
@@ -378,17 +378,17 @@ public class TableCudListener extends DefaultVisitListener {
             }
             if (cnt > 0) {
                 log.debug("handle insert-fields. count={}", cnt);
-                context.data(Key.EXECUTING_INSERT_CNT, new AtomicInteger(0));
-                context.data(Key.EXECUTING_INSERT_IDX, idx);
+                context.data(ContextKey.EXECUTING_INSERT_CNT, new AtomicInteger(0));
+                context.data(ContextKey.EXECUTING_INSERT_IDX, idx);
             }
         }
         else if (clause == Clause.FIELD_VALUE && query instanceof Param) {
-            final AtomicInteger cnt = (AtomicInteger) context.data(Key.EXECUTING_INSERT_CNT);
+            final AtomicInteger cnt = (AtomicInteger) context.data(ContextKey.EXECUTING_INSERT_CNT);
             if (cnt == null) {
                 log.debug("should not be here, insert-fields without cnt");
                 return;
             }
-            final Map<Integer, String> idx = (Map<Integer, String>) context.data(Key.EXECUTING_INSERT_IDX);
+            final Map<Integer, String> idx = (Map<Integer, String>) context.data(ContextKey.EXECUTING_INSERT_IDX);
             if (idx == null) {
                 log.debug("skip careless insert-fields without index");
                 return;
@@ -398,7 +398,7 @@ public class TableCudListener extends DefaultVisitListener {
                 log.debug("skip careless insert-field not in index");
             }
             else {
-                final Map<String, List<Object>> map = (Map<String, List<Object>>) context.data(Key.EXECUTING_FIELD_MAP);
+                final Map<String, List<Object>> map = (Map<String, List<Object>>) context.data(ContextKey.EXECUTING_FIELD_MAP);
                 if (map == null) {
                     log.debug("should not be here, insert-field without map");
                 }

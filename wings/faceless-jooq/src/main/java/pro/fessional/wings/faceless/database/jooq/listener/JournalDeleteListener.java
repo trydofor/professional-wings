@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.database.jooq.listener;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Delete;
@@ -8,8 +9,6 @@ import org.jooq.Param;
 import org.jooq.Query;
 import org.jooq.conf.ParamType;
 import org.jooq.impl.DefaultExecuteListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelper;
 
 import java.util.LinkedHashMap;
@@ -26,9 +25,8 @@ import java.util.regex.Pattern;
  * @author trydofor
  * @since 2021-01-14
  */
+@Slf4j
 public class JournalDeleteListener extends DefaultExecuteListener {
-
-    private static final Logger log = LoggerFactory.getLogger(JournalDeleteListener.class);
 
     @Override
     public void renderEnd(ExecuteContext ctx) {
@@ -168,10 +166,10 @@ public class JournalDeleteListener extends DefaultExecuteListener {
         upd.append(table);
         upd.append(" SET ");
         upd.append(cidSql);
-        upd.append(" ");
+        upd.append(' ');
         String jf = JournalJooqHelper.getJournalDateColumn(dsl, table);
         if (!jf.isEmpty()) {
-            upd.append(",").append(jf).append(" = NOW(3) ");
+            upd.append(',').append(jf).append(" = NOW(3) ");
         }
 
         String where = del.substring(StringUtils.indexOfIgnoreCase(del, "where"));

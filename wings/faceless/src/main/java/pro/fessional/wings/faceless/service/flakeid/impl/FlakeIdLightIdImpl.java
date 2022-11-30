@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.id.LightId;
 import pro.fessional.mirana.id.LightIdUtil;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.faceless.service.flakeid.FlakeIdService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 
@@ -39,7 +40,7 @@ public class FlakeIdLightIdImpl implements FlakeIdService {
         final long id = lightIdService.getId(name);
         final LightId lid = LightIdUtil.toLightId(id);
 
-        long fid = (System.currentTimeMillis() - TMS_EPO) & MAX_TMS;
+        long fid = (ThreadNow.millis() - TMS_EPO) & MAX_TMS;
         if (lid.getBlock() == 0) {
             fid = (fid << BIT_SEQ_WHL) | (lid.getSequence() & MAX_SEQ_WHL);
         }

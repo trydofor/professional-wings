@@ -6,17 +6,23 @@ import okhttp3.CookieJar;
 import okhttp3.Dns;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.OkHttpClient.Builder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.slardar.httprest.OkHttpClientHelper;
-import pro.fessional.wings.slardar.httprest.OkHttpInterceptor;
+import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientBuilder;
+import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
+import pro.fessional.wings.slardar.httprest.okhttp.OkHttpHostCookie;
+import pro.fessional.wings.slardar.httprest.okhttp.OkHttpInterceptor;
+import pro.fessional.wings.slardar.httprest.okhttp.OkHttpRedirectNopInterceptor;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarOkHttpProp;
 
@@ -50,11 +56,19 @@ public class SlardarOkhttpConfiguration {
     @ConditionalOnProperty(value = SlardarOkHttpProp.Key$hostCookie, havingValue = "true")
     public CookieJar hostCookieJar() {
         log.info("Slardar spring-bean hostCookieJar");
-        return new OkHttpClientHelper.HostCookieJar();
+        return new OkHttpHostCookie();
     }
 
     @Bean
-    public OkHttpClient.Builder okHttpClientBuilder(
+    @ConditionalOnExpression("${" + SlardarOkHttpProp.Key$redirectNop + ":false}"
+                             + "&& (${" + SlardarOkHttpProp.Key$followRedirect + ":false} || ${" + SlardarOkHttpProp.Key$followRedirect + ":false})")
+    public OkHttpRedirectNopInterceptor okHttpRedirectNopInterceptor() {
+        log.info("Slardar spring-bean okHttpRedirectNopInterceptor");
+        return new OkHttpRedirectNopInterceptor();
+    }
+
+    @Bean
+    public Builder okHttpClientBuilder(
             ObjectProvider<Cache> cacheProvider,
             ObjectProvider<CookieJar> cookieProvider,
             ObjectProvider<Dns> dnsProvider,
@@ -64,7 +78,7 @@ public class SlardarOkhttpConfiguration {
     ) {
         log.info("Slardar spring-bean okHttpClientBuilder");
         // check builder return new ...
-        final OkHttpClient.Builder builder = new OkHttpClient.Builder()
+        final Builder builder = new Builder()
                 .connectTimeout(Duration.ofSeconds(properties.getTimeoutConn()))
                 .readTimeout(Duration.ofSeconds(properties.getTimeoutRead()))
                 .writeTimeout(Duration.ofSeconds(properties.getTimeoutWrite()))
@@ -126,15 +140,39 @@ public class SlardarOkhttpConfiguration {
 
         if (properties.isSslTrustAll()) {
             log.info("Slardar conf okHttpClient sslTrustAll");
-            OkHttpClientHelper.sslTrustAll(builder);
+            OkHttpClientBuilder.sslTrustAll(builder);
         }
         return builder;
     }
 
     @Bean
     @ConditionalOnMissingBean(OkHttpClient.class)
-    public OkHttpClient okHttpClient(OkHttpClient.Builder builder) {
+    public OkHttpClient okHttpClient(Builder builder) {
         log.info("Slardar spring-bean okHttpClient");
         return builder.build();
+    }
+
+    @Bean
+    public CommandLineRunner runnerOkHttpHelper(
+            ObjectProvider<Builder> opb,
+            ObjectProvider<OkHttpClient> ohc) {
+        log.info("FacelessFlywave spring-runs runnerOkHttpHelper");
+        return args -> {
+            final Builder ob = opb.getIfAvailable();
+            if (ob != null) {
+                log.info("FacelessFlywave spring-conf OkHttpClientBuilder");
+                new OkHttpClientBuilder() {{
+                    SpringBuilder = ob;
+                }};
+            }
+
+            final OkHttpClient oc = ohc.getIfAvailable();
+            if (oc != null) {
+                log.info("FacelessFlywave spring-conf OkHttpClientHelper");
+                new OkHttpClientHelper() {{
+                    SpringClient = oc;
+                }};
+            }
+        };
     }
 }

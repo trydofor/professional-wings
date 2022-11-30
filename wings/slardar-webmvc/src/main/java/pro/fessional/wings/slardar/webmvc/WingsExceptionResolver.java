@@ -1,6 +1,5 @@
 package pro.fessional.wings.slardar.webmvc;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
@@ -39,7 +38,7 @@ public abstract class WingsExceptionResolver<T extends Exception> extends Abstra
             @NotNull Exception ex) {
 
         if (acceptClass.isInstance(ex)) {
-            final Body body = resolve((T) ex);
+            final SimpleResponse body = resolve((T) ex);
             if (body == null) return null;
             ModelAndView mav = new ModelAndView();
             PlainTextView pv = new PlainTextView(body.getContentType(), body.getResponseBody());
@@ -57,12 +56,5 @@ public abstract class WingsExceptionResolver<T extends Exception> extends Abstra
      * @param ex 当前异常
      * @return null 如果不支持
      */
-    protected abstract Body resolve(T ex);
-
-    @Data
-    public static class Body {
-        private final int httpStatus;
-        private final String contentType;
-        private final String responseBody;
-    }
+    protected abstract SimpleResponse resolve(T ex);
 }

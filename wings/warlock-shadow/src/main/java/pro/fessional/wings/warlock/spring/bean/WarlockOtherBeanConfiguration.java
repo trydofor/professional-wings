@@ -9,13 +9,13 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import pro.fessional.wings.slardar.concur.HazelcastGlobalLock;
 import pro.fessional.wings.slardar.concur.impl.RighterInterceptor;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
-import pro.fessional.wings.warlock.errorhandle.AllExceptionResolver;
+import pro.fessional.wings.slardar.webmvc.MessageResponse;
 import pro.fessional.wings.warlock.errorhandle.CodeExceptionResolver;
+import pro.fessional.wings.warlock.errorhandle.DefaultExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.auto.BindExceptionAdvice;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockErrorProp;
@@ -42,21 +42,18 @@ public class WarlockOtherBeanConfiguration {
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$codeExceptionHandler, havingValue = "true")
     public HandlerExceptionResolver codeExceptionResolver(MessageSource messageSource, WarlockErrorProp prop) {
         log.info("WarlockShadow spring-bean codeExceptionResolver");
-        final WarlockErrorProp.CodeException cp = prop.getCodeException();
-        final CodeExceptionResolver bean = new CodeExceptionResolver(messageSource, cp.getHttpStatus(), cp.getContentType(), cp.getResponseBody());
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1000);
-        return bean;
+        final MessageResponse cp = prop.getCodeException();
+        prop.fillAbsent(cp);
+        return new CodeExceptionResolver(cp, messageSource);
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "allExceptionResolver")
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$allExceptionHandler, havingValue = "true")
-    public HandlerExceptionResolver allExceptionResolver(WarlockErrorProp prop) {
-        log.info("WarlockShadow spring-bean allExceptionResolver");
-        final WarlockErrorProp.CodeException cp = prop.getAllException();
-        final AllExceptionResolver bean = new AllExceptionResolver(cp.getHttpStatus(), cp.getContentType(), cp.getResponseBody());
-        bean.setOrder(Ordered.LOWEST_PRECEDENCE);
-        return bean;
+    @ConditionalOnMissingBean(name = "defaultExceptionResolver")
+    @ConditionalOnProperty(name = WarlockEnabledProp.Key$defaultExceptionHandler, havingValue = "true")
+    public HandlerExceptionResolver defaultExceptionResolver(WarlockErrorProp prop) {
+        log.info("WarlockShadow spring-bean defaultExceptionResolver");
+        final MessageResponse cp = prop.getDefaultException();
+        return new DefaultExceptionResolver(cp);
     }
 
     @Bean

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.faceless.convention.EmptySugar;
+import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
@@ -31,8 +32,8 @@ public interface WarlockAuthnService {
         // user
         private long userId;
         private String nickname;
-        private Locale locale = Locale.getDefault();
-        private ZoneId zoneId = ZoneId.systemDefault();
+        private Locale locale = TerminalContext.defaultLocale();
+        private ZoneId zoneId = TerminalContext.defaultZoneId();
         private UserStatus status;
 
         // auth

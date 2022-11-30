@@ -14,21 +14,12 @@
     <packaging>jar</packaging>
 
     <name>Wings::Faceless::Shard</name>
-    <description>虚空假面之时间膨胀(shard)</description>
+    <description>虚空假面之时间膨胀：ShardingSphere的分表分库配置</description>
 
     <dependencies>
         <dependency>
-            <groupId>pro.fessional</groupId>
-            <artifactId>mirana</artifactId>
-        </dependency>
-        <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless</artifactId>
-        </dependency>
-        <!-- annotation -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <!--sharding sphere-->
         <dependency>

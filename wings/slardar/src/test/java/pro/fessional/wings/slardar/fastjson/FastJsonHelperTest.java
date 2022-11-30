@@ -42,9 +42,9 @@ class FastJsonHelperTest {
     @Test
     public void testDefault() {
         Dto d0 = new Dto();
-        final String s0 = JSON.toJSONString(d0);
+        final String s0 = JSON.toJSONString(d0, FastJsonHelper.DefaultWriter());
         log.warn("testDefault, s0={}", s0);
-        final Dto d1 = JSON.parseObject(s0, Dto.class);
+        final Dto d1 = JSON.parseObject(s0, Dto.class, FastJsonHelper.DefaultReader());
         Assertions.assertEquals(d0, d1);
     }
 

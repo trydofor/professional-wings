@@ -6,13 +6,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.View;
-import pro.fessional.wings.slardar.servlet.response.view.PlainTextView;
 
 import java.nio.charset.StandardCharsets;
 
 /**
+ * 手动看日志，reqres-log.http，或swagger
+ *
  * @author trydofor
  * @since 2021-02-01
  */
@@ -20,21 +21,23 @@ import java.nio.charset.StandardCharsets;
 public class TestReqresLogController {
 
     @PostMapping("/test/reqres-log-body.html")
-    public View logBody(@RequestParam String p, @RequestBody String q) {
-        return new PlainTextView("plain/text", p + "::" + q);
+    @ResponseBody
+    public String logBody(@RequestParam String p, @RequestBody String q) {
+        return p + "::" + q;
     }
 
     @PostMapping("/test/reqres-log-para.html")
-    public View logPara(@RequestParam String p) {
-        return new PlainTextView("plain/text", p);
+    @ResponseBody
+    public String logPara(@RequestParam String p) {
+        return p;
     }
 
     @SneakyThrows @PostMapping("/test/reqres-log-file.html")
-    public View logFile(@RequestParam String p, @RequestParam MultipartFile f) {
+    @ResponseBody
+    public String logFile(@RequestParam String p, @RequestParam MultipartFile f) {
         final String s = IOUtils.toString(f.getInputStream(), StandardCharsets.UTF_8);
-        return new PlainTextView("plain/text",
-                p + "::" + f.getOriginalFilename() +
-                "::" + s.substring(0, 30).replace("\n", ""));
+        return p + "::" + f.getOriginalFilename() +
+               "::" + s.substring(0, 30).replace("\n", "");
     }
 
 }

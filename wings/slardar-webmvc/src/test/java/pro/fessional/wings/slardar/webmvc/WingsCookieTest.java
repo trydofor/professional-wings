@@ -15,7 +15,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import pro.fessional.mirana.bits.Aes128;
+import pro.fessional.mirana.bits.Aes;
+import pro.fessional.mirana.bits.Aes256;
 import pro.fessional.mirana.bits.Base64;
 import pro.fessional.wings.slardar.controller.TestCookieController.Ins;
 import pro.fessional.wings.slardar.spring.prop.SlardarCookieProp;
@@ -32,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static pro.fessional.wings.slardar.httprest.OkHttpClientHelper.APPLICATION_JSON_VALUE;
+import static pro.fessional.wings.slardar.httprest.okhttp.OkHttpMediaType.APPLICATION_JSON_VALUE;
 
 /**
  * @author trydofor
@@ -103,7 +104,7 @@ public class WingsCookieTest {
         ins.setAes("aes 128");
         ins.setOth("other");
 
-        Aes128 aes128 = Aes128.of(prop.getAesKey());
+        Aes aes256 = Aes256.of(prop.getAesKey());
 
         mockMvc.perform(
                 post(url)
@@ -123,10 +124,10 @@ public class WingsCookieTest {
                .andExpect(cookie().value(PREFIX + "b64", Base64.encode(ins.getB64())))
                .andExpect(cookie().httpOnly(PREFIX + "b64", false))
                .andExpect(cookie().secure(PREFIX + "b64", false))
-               .andExpect(cookie().value(PREFIX + "aes", aes128.encode64(ins.getAes())))
+               .andExpect(cookie().value(PREFIX + "aes", aes256.encode64(ins.getAes())))
                .andExpect(cookie().httpOnly(PREFIX + "aes", false))
                .andExpect(cookie().secure(PREFIX + "aes", false))
-               .andExpect(cookie().value(PREFIX + "oth", aes128.encode64(ins.getOth())))
+               .andExpect(cookie().value(PREFIX + "oth", aes256.encode64(ins.getOth())))
                .andExpect(content().string(ins.getCk1() + ins.getCk2()))
         ;
     }
@@ -139,7 +140,7 @@ public class WingsCookieTest {
         ins.setAes("aes 128");
         ins.setOth("other");
 
-        Aes128 aes128 = Aes128.of(prop.getAesKey());
+        Aes256 aes256 = Aes256.of(prop.getAesKey());
 
         String cookieValue = PREFIX + "ck1=" + ins.getCk1() + "; " + PREFIX + CK2OTH + "=" + ins.getCk2();
 
@@ -160,8 +161,8 @@ public class WingsCookieTest {
             assertTrue(cookies.contains(PREFIX + "ck1=" + ins.getCk1() + "; HttpOnly"));
             assertTrue(cookies.contains(PREFIX + CK2OTH + "=" + ins.getCk2() + "; HttpOnly"));
             assertTrue(cookies.contains(PREFIX + "b64=" + Base64.encode(ins.getB64())));
-            assertTrue(cookies.contains(PREFIX + "aes=" + aes128.encode64(ins.getAes())));
-            assertTrue(cookies.contains(PREFIX + "oth=" + aes128.encode64(ins.getOth())));
+            assertTrue(cookies.contains(PREFIX + "aes=" + aes256.encode64(ins.getAes())));
+            assertTrue(cookies.contains(PREFIX + "oth=" + aes256.encode64(ins.getOth())));
         }
     }
 }

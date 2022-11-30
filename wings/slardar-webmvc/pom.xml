@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Slardar::Webmvc</name>
-    <description>鱼人守卫之艾末微细</description>
+    <description>鱼人守卫之艾末微细：webmvc/session/security-web</description>
 
     <dependencies>
         <dependency>

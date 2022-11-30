@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.util.StringUtils;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
+import pro.fessional.wings.warlock.security.SafeHttpHelper;
 import pro.fessional.wings.warlock.spring.prop.WarlockJustAuthProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
@@ -17,7 +18,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Set;
 
 /**
  * cookie和header返回sid,
@@ -73,21 +73,7 @@ public class LoginSuccessHandler extends NonceLoginSuccessHandler implements Ini
     }
 
     protected boolean isSafeRedirect(String state) {
-        if (!state.startsWith("http")) return false; // http or https
-        final Set<String> safe = warlockJustAuthProp.getSafeHost();
-        if (safe == null || safe.isEmpty()) return false;
-
-        final String tkn = "://";
-        int p0 = state.indexOf(tkn);
-        if (p0 < 0) return false;
-
-        final int p1 = p0 + tkn.length();
-        int p2 = state.indexOf("/", p1);
-        if (p2 > p1) {
-            final String host = state.substring(p1, p2);
-            return safe.contains(host);
-        }
-        return false;
+        return SafeHttpHelper.isSafeRedirect(state, warlockJustAuthProp.getSafeHost());
     }
 
     protected void writeResponseBody(@NotNull String body, @NotNull HttpServletRequest req, @NotNull HttpServletResponse res,

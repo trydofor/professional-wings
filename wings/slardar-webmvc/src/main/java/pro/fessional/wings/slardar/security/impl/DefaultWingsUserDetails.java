@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 
 import java.time.ZoneId;
@@ -24,8 +25,8 @@ public class DefaultWingsUserDetails implements WingsUserDetails {
 
     private long userId;
     private String nickname;
-    private Locale locale = Locale.getDefault();
-    private ZoneId zoneId = ZoneId.systemDefault();
+    private Locale locale = TerminalContext.defaultLocale();
+    private ZoneId zoneId = TerminalContext.defaultZoneId();
 
     // additionalAuthenticationChecks
     private String username;

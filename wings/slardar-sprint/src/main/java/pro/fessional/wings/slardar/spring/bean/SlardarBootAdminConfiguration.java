@@ -62,7 +62,7 @@ public class SlardarBootAdminConfiguration {
         @Bean
         @Conditional(SpringBootAdminClientEnabledCondition.class)
         public BlockingRegistrationClient registrationClient(RestTemplateBuilder builder, ClientProperties prop) {
-            log.info("SlardarWebmvc spring-bean registrationClient of BootAdmin client");
+            log.info("SlardarSprint spring-bean registrationClient of BootAdmin client");
             builder = builder
                     .setConnectTimeout(prop.getConnectTimeout())
                     .setReadTimeout(prop.getReadTimeout());
@@ -82,7 +82,7 @@ public class SlardarBootAdminConfiguration {
         @Bean
         @ConditionalOnProperty(name = "spring.wings.warlock.enabled.controller-proc", havingValue = "true")
         public BeanPostProcessor bootAdminMappingOrderPostProcessor() {
-            log.info("SlardarWebmvc spring-bean bootAdminMappingOrderPostProcessor of BootAdmin server");
+            log.info("SlardarSprint spring-bean bootAdminMappingOrderPostProcessor of BootAdmin server");
             return new BeanPostProcessor() {
                 @Override
                 public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
@@ -96,7 +96,7 @@ public class SlardarBootAdminConfiguration {
 
         @Bean
         public Notifier dingTalkNotifier(InstanceRepository repository, ObjectProvider<DingTalkReport> reportProvider) {
-            log.info("SlardarWebmvc spring-bean dingTalkNotifier of BootAdmin server");
+            log.info("SlardarSprint spring-bean dingTalkNotifier of BootAdmin server");
             final DingTalkReport reporter = reportProvider.getIfAvailable();
             final AbstractStatusChangeNotifier bean = new AbstractStatusChangeNotifier(repository) {
                 @Override
@@ -127,7 +127,7 @@ public class SlardarBootAdminConfiguration {
 
         @Bean
         public BasicAuthHttpHeaderProvider basicAuthHttpHeadersProvider(AdminServerProperties adminProp, SlardarPasscoderProp passProp) {
-            log.info("SlardarWebmvc spring-bean basicAuthHttpHeadersProvider of BootAdmin server");
+            log.info("SlardarSprint spring-bean basicAuthHttpHeadersProvider of BootAdmin server");
             AdminServerProperties.InstanceAuthProperties instanceAuth = adminProp.getInstanceAuth();
             final String defaultUserName;
             final String defaultPassword;

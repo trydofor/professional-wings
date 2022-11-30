@@ -304,7 +304,7 @@ class DefaultRevisionManager(
 
     override fun checkAndInitSql(sqls: SortedMap<Long, SchemaRevisionManager.RevisionSql>, commitId: Long, updateDiff: Boolean) {
         val here = "checkAndInitSql"
-        if (sqls.isNullOrEmpty()) {
+        if (sqls.isEmpty()) {
             interactive.log(WARN, here, "skip empty local sqls, should be removed")
             return
         }
@@ -627,7 +627,7 @@ class DefaultRevisionManager(
         }
     }
 
-    private fun lineRevision(tmpl: SimpleJdbcTemplate): SortedMap<Long, Status> {
+    private fun lineRevision(tmpl: SimpleJdbcTemplate): SortedMap<Long, Status>? {
         val here = "lineRevision"
         val tree = TreeMap<Long, Status>()
         var last = -1L
@@ -649,12 +649,13 @@ class DefaultRevisionManager(
             }
         } catch (e: Exception) {
             assertNot1st(tmpl.dataSource, e)
-            interactive.log(WARN, here, "failed to get un-init-1st revision, return -1, db=${tmpl.name}")
+            interactive.log(WARN, here, "failed to get un-init-1st revision, return null, db=${tmpl.name}")
+            return null
         }
 
-        if(last > 0 && tree.isNotEmpty()){
+        if (last > 0 && tree.isNotEmpty()) {
             for (entry in tree.entries) {
-                if(entry.key < last && entry.value == Status.Future){
+                if (entry.key < last && entry.value == Status.Future) {
                     entry.setValue(Status.Broken)
                 }
             }

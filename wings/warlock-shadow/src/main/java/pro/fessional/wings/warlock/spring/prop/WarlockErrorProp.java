@@ -1,7 +1,9 @@
 package pro.fessional.wings.warlock.spring.prop;
 
 import lombok.Data;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import pro.fessional.wings.slardar.webmvc.MessageResponse;
 
 /**
  * wings-warlock-error-77.properties
@@ -16,36 +18,10 @@ public class WarlockErrorProp {
 
     public static final String Key = "wings.warlock.error";
 
-    private final CodeException codeException = new CodeException();
-    private final CodeException allException = new CodeException();
+    private MessageResponse defaultException = new MessageResponse();
+    private MessageResponse codeException = new MessageResponse();
 
-    @Data
-    public static class CodeException {
-
-        /**
-         * CodeExceptionResolver 回复的http-status
-         *
-         * @see #Key$httpStatus
-         */
-        private int httpStatus = 200;
-        public static final String Key$httpStatus = Key + ".code-exception.http-status";
-
-        /**
-         * CodeExceptionResolver 回复的content-type
-         *
-         * @see #Key$contentType
-         */
-        private String contentType = "";
-        public static final String Key$contentType = Key + ".code-exception.content-type";
-
-        /**
-         * CodeExceptionResolver 回复的文本内容。
-         * 支持变量 {message}
-         *
-         * @see #Key$responseBody
-         */
-        private String responseBody = "";
-        public static final String Key$responseBody = Key + ".code-exception.response-body";
+    public void fillAbsent(@NotNull MessageResponse res) {
+        res.fillAbsent(defaultException);
     }
-
 }

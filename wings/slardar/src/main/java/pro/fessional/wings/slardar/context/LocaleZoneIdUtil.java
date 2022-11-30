@@ -45,7 +45,7 @@ public class LocaleZoneIdUtil {
      */
     public static final Supplier<ZoneId> ZoneIdNonnull = () -> {
         final ZoneId zid = ZoneIdNullable.get();
-        return zid != null ? zid : ZoneId.systemDefault();
+        return zid != null ? zid : TerminalContext.defaultZoneId();
     };
 
     /**
@@ -53,6 +53,6 @@ public class LocaleZoneIdUtil {
      */
     public static final Supplier<Locale> LocaleNonnull = () -> {
         final Locale lcl = LocaleNullable.get();
-        return lcl != null ? lcl : Locale.getDefault();
+        return lcl != null ? lcl : TerminalContext.defaultLocale();
     };
 }

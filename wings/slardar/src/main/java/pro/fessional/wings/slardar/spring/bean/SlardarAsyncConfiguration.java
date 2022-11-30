@@ -76,10 +76,11 @@ public class SlardarAsyncConfiguration {
     }
 
     @Bean
-    public CommandLineRunner eventPublishHelperRunner(ApplicationEventPublisher publisher,
-                                                      ApplicationEventMulticaster multicaster,
-                                                      @Qualifier(SLARDAR_EVENT_EXECUTOR_BEAN_NAME) Executor executor) {
-        log.info("Slardar spring-runs eventPublishHelperRunner");
+    public CommandLineRunner runnerEventPublishHelper(
+            ApplicationEventPublisher publisher,
+            ApplicationEventMulticaster multicaster,
+            @Qualifier(SLARDAR_EVENT_EXECUTOR_BEAN_NAME) Executor executor) {
+        log.info("Slardar spring-runs runnerEventPublishHelper");
         return (arg) -> {
             EventPublishHelper.setExecutor(executor);
             log.info("Slardar conf eventPublishHelper ApplicationEventPublisher=" + publisher.getClass());

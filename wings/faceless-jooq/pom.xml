@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Faceless::Jooq</name>
-    <description>虚空假面之时间漫游(jooq)</description>
+    <description>虚空假面之时间漫游：Jooq的数据库访问层</description>
 
     <dependencies>
         <dependency>

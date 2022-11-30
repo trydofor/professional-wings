@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Silencer::Curse</name>
-    <description>沉默术士之磕死</description>
+    <description>沉默术士之磕死：WingsBoot的基本功能和能力</description>
 
     <dependencies>
         <dependency>
@@ -24,6 +24,10 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>transmittable-thread-local</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
     </dependencies>
 </project>

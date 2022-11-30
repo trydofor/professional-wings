@@ -6,11 +6,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import pro.fessional.mirana.bits.Aes128;
+import pro.fessional.mirana.bits.Aes;
+import pro.fessional.mirana.bits.Aes256;
 import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.FormatUtil;
+import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.slardar.servlet.request.RequestHelper;
 
@@ -40,7 +42,7 @@ public class AuthStateBuilder {
     public static final Type ParamType = new TypeReference<Map<String, String[]>>() {}.getType();
 
     @Setter
-    private Aes128 aes128 = Aes128.of(RandCode.strong(RAND_LEN));
+    private Aes aes = Aes256.of(RandCode.strong(RAND_LEN));
 
     @NotNull
     public String buildState(HttpServletRequest request) {
@@ -67,8 +69,8 @@ public class AuthStateBuilder {
             return uuid;
         }
         else {
-            final byte[] bytes = JSON.toJSONBytes(paraMap);
-            final byte[] encode = aes128.encode(bytes);
+            final byte[] bytes = JSON.toJSONBytes(paraMap, FastJsonHelper.DefaultWriter());
+            final byte[] encode = aes.encode(bytes);
             final String state = Base64.encode(encode);
             log.info("AuthStateBuilder, buildState={}", state);
             return uuid + state;
@@ -91,8 +93,8 @@ public class AuthStateBuilder {
         }
 
         final byte[] bytes = Base64.decode(state.substring(RAND_LEN));
-        final byte[] decode = aes128.decode(bytes);
-        final Map<String, String[]> args = JSON.parseObject(decode, ParamType);
+        final byte[] decode = aes.decode(bytes);
+        final Map<String, String[]> args = JSON.parseObject(decode, ParamType, FastJsonHelper.DefaultReader());
         request.setAttribute(AuthStateBuilder.class.getName(), args);
         return args;
     }

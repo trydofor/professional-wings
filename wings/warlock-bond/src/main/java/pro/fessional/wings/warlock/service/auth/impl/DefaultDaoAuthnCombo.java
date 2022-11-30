@@ -11,6 +11,7 @@ import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
+import pro.fessional.wings.warlock.constants.WarlockGlobalAttribute;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAuthnTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
@@ -19,7 +20,6 @@ import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasisDao;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.event.auth.WarlockMaxFailedEvent;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
-import pro.fessional.wings.warlock.service.user.WarlockUserAttribute;
 import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
 
 /**
@@ -190,7 +190,7 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
 
         if (details != null) {
             details.setAuthType(authType);
-            final String passsalt = GlobalAttributeHolder.tryAttr(WarlockUserAttribute.SaltByUid, details.getUserId());
+            final String passsalt = GlobalAttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, details.getUserId());
             details.setPasssalt(passsalt);
         }
         return details;

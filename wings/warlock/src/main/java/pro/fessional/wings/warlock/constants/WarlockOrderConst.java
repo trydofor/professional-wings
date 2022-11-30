@@ -1,25 +1,32 @@
 package pro.fessional.wings.warlock.constants;
 
+import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
+
 /**
  * @author trydofor
  * @since 2021-02-19
  */
-public interface WarlockOrderConst {
-    int JustAuthRequestBuilder = 10_000_000;
+public interface WarlockOrderConst extends WingsBeanOrdered {
+    int JustAuthRequestBuilder = BaseLine;
 
-    int ListAllLoginPageCombo = 10_000_000;
-    int JustAuthLoginPageCombo = 10_000 + 900;
+    int JustAuthLoginPageCombo = BaseLine - 100;
+    int ListAllLoginPageCombo = BaseLine;
 
-    int MemoryUserDetailsCombo = 10_000_000 - 300;
-    int NonceUserDetailsCombo = 10_000_000 - 200;
-    int JustAuthUserDetailsCombo = 10_000_000 - 100;
-    int DefaultUserDetailsCombo = 10_000_000; // 置于末尾
+    int MemoryUserDetailsCombo = BaseLine - 300;
+    int NonceUserDetailsCombo = BaseLine - 200;
+    int JustAuthUserDetailsCombo = BaseLine - 100;
+    int DefaultUserDetailsCombo = BaseLine;
 
-    int DefaultUserAuthnAutoReg = 10_000_000;
-    int JustAuthUserAuthnAutoReg = 10_000_000 - 10;
+    int JustAuthUserAuthnAutoReg = BaseLine - 10;
+    int DefaultUserAuthnAutoReg = BaseLine;
 
-    int DefaultDaoAuthnCombo = 10_000_000;
+    int DefaultDaoAuthnCombo = BaseLine;
 
-    int DefaultPermRoleCombo = 10_000_000;
-    int MemoryTypedAuthzCombo = 10_000_000 + 100;
+    int DefaultPermRoleCombo = BaseLine;
+    int MemoryTypedAuthzCombo = BaseLine + 100;
+
+    int SecurityHttpBase = BaseLine + 100;
+    int SecurityBindHttp = BaseLine + 200;
+    int SecurityAuthHttp = BaseLine + 300;
+    int SecurityAutoHttp = BaseLine + 400;
 }

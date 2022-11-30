@@ -31,7 +31,7 @@ public class WinxDevopsApplication {
 
     @Bean
     @Lazy
-    public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
+    public CommandLineRunner runnerListAllBeans(ApplicationContext ctx) {
         return args -> {
             log.info("===============");
             String[] beanNames = ctx.getBeanDefinitionNames();

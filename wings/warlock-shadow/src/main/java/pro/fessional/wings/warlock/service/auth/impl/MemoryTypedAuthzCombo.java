@@ -12,6 +12,7 @@ import pro.fessional.wings.warlock.service.perm.WarlockPermNormalizer;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -191,7 +192,7 @@ public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
     }
 
     @Override
-    public void auth(@NotNull DefaultWingsUserDetails details, @NotNull Set<Object> role, @NotNull Set<Object> perm) {
+    public boolean preAuth(@NotNull DefaultWingsUserDetails details, @NotNull HashSet<Object> role, @NotNull HashSet<Object> perm) {
 
         final Set<String> uaz = userAuthz.get(details.getUserId());
         if (uaz != null) {
@@ -238,5 +239,7 @@ public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
                 }
             }
         }
+
+        return false;
     }
 }

@@ -8,7 +8,9 @@ import okhttp3.OkHttpClient;
 import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.text.JsonTemplate;
-import pro.fessional.wings.slardar.httprest.OkHttpClientHelper;
+import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.silencer.notice.SmallNotice;
+import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -58,7 +60,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
 
         final String digestSecret = config.getDigestSecret();
         if (digestSecret != null && !digestSecret.isEmpty()) {
-            final long now = System.currentTimeMillis();
+            final long now = ThreadNow.millis();
             String stringToSign = now + "\n" + digestSecret;
             final Mac hmacSHA256 = Mac.getInstance("HmacSHA256");
             hmacSHA256.init(new SecretKeySpec(digestSecret.getBytes(UTF_8), "HmacSHA256"));

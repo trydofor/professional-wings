@@ -10,12 +10,15 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 
+import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAddr;
+import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgent;
+
 /**
  * @author trydofor
  * @since 2022-10-10
  */
 @SpringBootTest(properties = {
-        "wings.silencer.debug.clock-offset = " + NowTest.Offset,
+        "wings.silencer.tweak.clock-offset = " + NowTest.Offset,
         "wings.silencer.i18n.zoneid=" + NowTest.Cn})
 class NowTest {
 
@@ -34,12 +37,13 @@ class NowTest {
     @Test
     void clientClock() {
         ZoneId jp = ZoneId.of("Asia/Tokyo");
-        TerminalContext.login()
-                       .withLocale(Locale.US)
-                       .withTimeZone(jp)
-                       .withRemoteIp("localhost")
-                       .withAgentInfo("Test")
-                       .asUser(1);
+        TerminalContext.Builder builder = new TerminalContext.Builder()
+                .locale(Locale.US)
+                .timeZone(jp)
+                .terminal(TerminalAddr, "localhost")
+                .terminal(TerminalAgent, "Test")
+                .user(1);
+        TerminalContext.login(builder.build());
 
         ZonedDateTime szd = Now.zonedDateTime();
         ZonedDateTime czd = Now.clientZonedDateTime();

@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * wings-just-auth-77.properties
+ * wings-warlock-justauth-77.properties
  *
  * @author trydofor
  * @see #Key

@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 
@@ -95,7 +96,7 @@ public class WingsOverloadFilter implements OrderedFilter {
         }
 
         // 只能处理http的，目前的情况
-        final long now = System.currentTimeMillis();
+        final long now = ThreadNow.millis();
         final HttpServletRequest httpReq = (HttpServletRequest) request;
         final CalmDown calmDown = letCalmDown(httpReq);
 
@@ -121,7 +122,7 @@ public class WingsOverloadFilter implements OrderedFilter {
         requestProcess.incrementAndGet();
         try {
             chain.doFilter(request, response);
-            checkAndStats(httpReq, response, now, System.currentTimeMillis());
+            checkAndStats(httpReq, response, now, ThreadNow.millis());
         }
         finally {
             requestProcess.decrementAndGet();

@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import pro.fessional.wings.slardar.httprest.OkHttpClientHelper;
+import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 
 /**
  * https://docs.spring.io/spring-framework/docs/current/reference/html/testing.html#testcontext-parallel-test-execution

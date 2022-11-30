@@ -146,10 +146,10 @@ public class WarlockEnabledProp {
     public static final String Key$appPermCheck = Key + ".app-perm-check";
 
     /**
-     * @see #Key$allExceptionHandler
+     * @see #Key$defaultExceptionHandler
      */
-    private boolean allExceptionHandler = true;
-    public static final String Key$allExceptionHandler = Key + ".all-exception-handler";
+    private boolean defaultExceptionHandler = true;
+    public static final String Key$defaultExceptionHandler = Key + ".default-exception-handler";
 
     /**
      * @see #Key$codeExceptionHandler
@@ -224,6 +224,27 @@ public class WarlockEnabledProp {
     /**
      * @see #Key$controllerTest
      */
-    private String controllerTest = "";
+    private boolean controllerTest = true;
     public static final String Key$controllerTest = Key + ".controller-test";
+
+    /**
+     * @see #Key$controllerTest
+     */
+    private boolean controllerTweak = false;
+    public static final String Key$controllerTweak = Key + ".controller-tweak";
+
+    /**
+     * @see #Key$controllerOauth
+     */
+    private boolean controllerOauth = true;
+    public static final String Key$controllerOauth = Key + ".controller-oauth";
+
+
+    /**
+     * 是否支持计时分析
+     *
+     * @see #Key$watching
+     */
+    private boolean watching = false;
+    public static final String Key$watching = Key + ".watching";
 }

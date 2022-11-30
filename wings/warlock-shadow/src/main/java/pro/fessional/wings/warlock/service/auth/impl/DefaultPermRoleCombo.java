@@ -10,8 +10,8 @@ import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.enums.autogen.GrantType;
 import pro.fessional.wings.warlock.service.grant.WarlockGrantService;
 
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 通过user和permit的map关系构造 GrantedAuthority
@@ -29,7 +29,7 @@ public class DefaultPermRoleCombo implements ComboWarlockAuthzService.Combo {
     protected WarlockGrantService warlockGrantService;
 
     @Override
-    public void auth(@NotNull DefaultWingsUserDetails details, @NotNull Set<Object> role, @NotNull Set<Object> perm) {
+    public boolean preAuth(@NotNull DefaultWingsUserDetails details, @NotNull HashSet<Object> role, @NotNull HashSet<Object> perm) {
 
         final long uid = details.getUserId();
         final Map<Long, Long> roles = warlockGrantService.entryUser(GrantType.ROLE, uid);
@@ -39,5 +39,7 @@ public class DefaultPermRoleCombo implements ComboWarlockAuthzService.Combo {
         final Map<Long, Long> perms = warlockGrantService.entryUser(GrantType.PERM, uid);
         log.debug("got perms for uid={}, size={}", uid, perms.size());
         perm.addAll(perms.keySet());
+
+        return false;
     }
 }

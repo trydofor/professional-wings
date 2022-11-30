@@ -21,6 +21,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAddr;
+import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgent;
+
 /**
  * @author trydofor
  * @since 2022-10-06
@@ -37,12 +40,13 @@ class AutoDtoHelperTest {
      */
     @Test
     void autoRequest() {
-        TerminalContext.login()
-                       .withLocale(Locale.CHINA)
-                       .withTimeZone(ZONE_JP)
-                       .withRemoteIp("localhost")
-                       .withAgentInfo("SpringTest")
-                       .asUser(-1);
+        TerminalContext.Builder builder = new TerminalContext.Builder()
+                .locale(Locale.CHINA)
+                .timeZone(ZONE_JP)
+                .terminal(TerminalAddr, "localhost")
+                .terminal(TerminalAgent, "SpringTest")
+                .user(-1);
+        TerminalContext.login(builder.build());
 
         I18nItem it = initI18nItem(ZONE_JP);
         I18nMaps mp = initI18nMaps(it);
@@ -83,12 +87,13 @@ class AutoDtoHelperTest {
      */
     @Test
     void autoResponse() {
-        TerminalContext.login()
-                       .withLocale(Locale.US)
-                       .withTimeZone(ZONE_JP)
-                       .withRemoteIp("localhost")
-                       .withAgentInfo("SpringTest")
-                       .asUser(-1);
+        TerminalContext.Builder builder = new TerminalContext.Builder()
+                .locale(Locale.US)
+                .timeZone(ZONE_JP)
+                .terminal(TerminalAddr, "localhost")
+                .terminal(TerminalAgent, "SpringTest")
+                .user(-1);
+        TerminalContext.login(builder.build());
 
         I18nItem it = initI18nItem(ZONE_CN);
         I18nMaps mp = initI18nMaps(it);

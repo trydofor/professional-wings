@@ -1,16 +1,15 @@
 package pro.fessional.wings.warlock.errorhandle;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.pain.HttpStatusException;
-import pro.fessional.mirana.text.StringTemplate;
+import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
 import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
-import pro.fessional.wings.slardar.webmvc.WingsExceptionResolver;
+import pro.fessional.wings.slardar.webmvc.MessageExceptionResolver;
+import pro.fessional.wings.slardar.webmvc.MessageResponse;
 
 import java.util.Locale;
 
@@ -18,36 +17,34 @@ import java.util.Locale;
  * @author trydofor
  * @since 2021-03-25
  */
-@RequiredArgsConstructor
 @Slf4j
-@Order(Ordered.HIGHEST_PRECEDENCE + 1000)
-public class CodeExceptionResolver extends WingsExceptionResolver<CodeException> {
+@Order(WingsBeanOrdered.BaseLine)
+public class CodeExceptionResolver extends MessageExceptionResolver<CodeException> {
 
     private final MessageSource messageSource;
-    private final int httpStatus;
-    private final String contentType;
-    private final String responseBody;
+
+    public CodeExceptionResolver(MessageResponse defaultBody, MessageSource messageSource) {
+        super(defaultBody);
+        this.messageSource = messageSource;
+    }
 
     @Override
-    protected Body resolve(CodeException ce) {
+    protected int resolveStatus(CodeException ce) {
+        return ce instanceof HttpStatusException
+               ? ((HttpStatusException) ce).getStatus()
+               : defaultResponse.getHttpStatus();
+    }
+
+    @Override
+    protected String resolveMessage(CodeException ce) {
         final String code = ce.getI18nCode();
-        final String message;
         if (code == null) {
-            message = ce.getMessage();
+            return ce.getMessage();
         }
         else {
             Locale locale = LocaleZoneIdUtil.LocaleNonnull.get();
             final Object[] args = ce.getI18nArgs();
-            message = messageSource.getMessage(code, Null.notNull(args), locale);
+            return messageSource.getMessage(code, Null.notNull(args), locale);
         }
-
-        final String body = StringTemplate
-                .dyn(responseBody)
-                .bindStr("{message}", message)
-                .toString();
-
-
-        final int status = ce instanceof HttpStatusException ? ((HttpStatusException) ce).getStatus() : httpStatus;
-        return new Body(status, contentType, body);
     }
 }

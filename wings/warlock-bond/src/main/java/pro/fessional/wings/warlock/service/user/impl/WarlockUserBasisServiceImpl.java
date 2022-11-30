@@ -13,6 +13,7 @@ import pro.fessional.wings.faceless.database.helper.ModifyAssert;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
+import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasisDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserBasis;
@@ -26,7 +27,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static pro.fessional.wings.warlock.service.user.WarlockUserAttribute.SaltByUid;
+import static pro.fessional.wings.slardar.context.TerminalAttribute.LocaleByUid;
+import static pro.fessional.wings.slardar.context.TerminalAttribute.ZoneIdByUid;
+import static pro.fessional.wings.warlock.constants.WarlockGlobalAttribute.SaltByUid;
 
 /**
  * @author trydofor
@@ -57,6 +60,26 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, Ini
                                   .where(t.Id.eq(k.key))
                                   .fetchOneInto(String.class);
         });
+
+        log.info("warlock conf LocaleByUid for GlobalAttributeHolder");
+        GlobalAttributeHolder.regLoader(LocaleByUid, k -> {
+            final WinUserBasisTable t = winUserBasisDao.getTable();
+            return winUserBasisDao.ctx()
+                                  .select(t.Locale)
+                                  .from(t)
+                                  .where(t.Id.eq(k.key))
+                                  .fetchOneInto(Locale.class);
+        });
+
+        log.info("warlock conf ZoneIdByUid for GlobalAttributeHolder");
+        GlobalAttributeHolder.regLoader(ZoneIdByUid, k -> {
+            final WinUserBasisTable t = winUserBasisDao.getTable();
+            return winUserBasisDao.ctx()
+                                  .select(t.Zoneid)
+                                  .from(t)
+                                  .where(t.Id.eq(k.key))
+                                  .fetchOneInto(ZoneId.class);
+        });
     }
 
     @Override
@@ -74,8 +97,8 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, Ini
 
             po.setAvatar(Z.notNullSafe(Null.Str, user.getAvatar()));
             po.setGender(Z.notNullSafe(UserGender.UNKNOWN, user.getGender()));
-            po.setLocale(Z.notNullSafe(Locale.getDefault(), user.getLocale()));
-            po.setZoneid(Z.notNullSafe(ZoneId.systemDefault(), user.getZoneId()));
+            po.setLocale(Z.notNullSafe(TerminalContext::defaultLocale, user.getLocale()));
+            po.setZoneid(Z.notNullSafe(TerminalContext::defaultZoneId, user.getZoneId()));
             po.setRemark(Z.notNullSafe(Null.Str, user.getRemark()));
             po.setStatus(Z.notNullSafe(UserStatus.UNINIT, user.getStatus()));
             commit.create(po);

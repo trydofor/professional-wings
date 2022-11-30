@@ -22,6 +22,7 @@ import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.spring.conf.WingsHttpPermitConfigurer;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
+import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.spring.bean.WarlockSecurityAutoConfiguration.HttpSecurityCustomizer;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
@@ -48,11 +49,6 @@ public class WarlockSecurityConfConfiguration {
 
     private final SessionRegistry sessionRegistry;
     private final WarlockSecurityProp securityProp;
-
-    public static final int OrderWarlockBase = 1000;
-    public static final int OrderWarlockBind = 2000;
-    public static final int OrderWarlockAuth = 3000;
-    public static final int OrderWarlockAuto = 4000;
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityWebAutos, havingValue = "true")
@@ -83,14 +79,14 @@ public class WarlockSecurityConfConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpBind, havingValue = "true")
-    @Order(OrderWarlockBind)
-    public HttpSecurityCustomizer warlockBindHttpSecurityConfigure(
+    @Order(WarlockOrderConst.SecurityBindHttp)
+    public HttpSecurityCustomizer warlockSecurityBindHttpConfigure(
             ObjectProvider<AuthenticationSuccessHandler> authenticationSuccessHandler,
             ObjectProvider<AuthenticationFailureHandler> authenticationFailureHandler,
             ObjectProvider<WingsAuthDetailsSource<?>> wingsAuthDetailsSource,
             ObjectProvider<LogoutSuccessHandler> logoutSuccessHandler
     ) {
-        log.info("WarlockShadow spring-bean warlockBindHttpSecurityConfigure");
+        log.info("WarlockShadow spring-bean warlockSecurityBindHttpConfigure");
         return http -> {
             final AuthenticationSuccessHandler authOkHandler = authenticationSuccessHandler.getIfAvailable();
             final AuthenticationFailureHandler authNgHandler = authenticationFailureHandler.getIfAvailable();
@@ -145,9 +141,9 @@ public class WarlockSecurityConfConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpAuth, havingValue = "true")
-    @Order(OrderWarlockAuth)
-    public HttpSecurityCustomizer warlockAuthHttpSecurityConfigure() {
-        log.info("WarlockShadow spring-bean warlockAuthHttpSecurityConfigure");
+    @Order(WarlockOrderConst.SecurityAuthHttp)
+    public HttpSecurityCustomizer warlockSecurityAuthHttpConfigure() {
+        log.info("WarlockShadow spring-bean warlockSecurityAuthHttpConfigure");
         return http -> http.authorizeRequests(conf -> {
             // 1 PermitAll
             final Set<String> permed = validValue(securityProp.getPermitAll().values());
@@ -189,19 +185,19 @@ public class WarlockSecurityConfConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpBase, havingValue = "true")
-    @Order(OrderWarlockBase)
-    public HttpSecurityCustomizer warlockBaseHttpSecurityConfigure() {
-        log.info("WarlockShadow spring-bean warlockBaseHttpSecurityConfigure");
+    @Order(WarlockOrderConst.SecurityHttpBase)
+    public HttpSecurityCustomizer warlockSecurityHttpBaseConfigure() {
+        log.info("WarlockShadow spring-bean warlockSecurityHttpBaseConfigure");
         return HttpSecurity::httpBasic;
     }
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpAuto, havingValue = "true")
-    @Order(OrderWarlockAuto)
-    public HttpSecurityCustomizer warlockAutoHttpSecurityConfigure(
+    @Order(WarlockOrderConst.SecurityAutoHttp)
+    public HttpSecurityCustomizer warlockSecurityAutoHttpConfigure(
             ObjectProvider<CsrfTokenRepository> csrf,
             ObjectProvider<RequestCache> cache) {
-        log.info("WarlockShadow spring-bean warlockAutoHttpSecurityConfigure");
+        log.info("WarlockShadow spring-bean warlockSecurityAutoHttpConfigure");
         return http -> {
             // cors
             http.cors().configurationSource(WingsHttpPermitConfigurer.corsPermitAll());

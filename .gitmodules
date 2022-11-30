@@ -10,6 +10,6 @@
 	shallow = true
 [submodule "observe/docs"]
 	path = observe/docs
-	url = https://github.com/fessionalpro/wings-doc.git
+	url = ../wings-doc.git
 	branch = main
 	shallow = true

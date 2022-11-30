@@ -119,4 +119,12 @@ public class SlardarOkHttpProp {
      */
     private boolean hostCookie = true;
     public static final String Key$hostCookie = Key + ".host-cookie";
+
+    /**
+     * 是否在follow-redirect时，暂时不follow
+     *
+     * @see #Key$redirectNop
+     */
+    private boolean redirectNop = false;
+    public static final String Key$redirectNop = Key + ".redirect-nop";
 }

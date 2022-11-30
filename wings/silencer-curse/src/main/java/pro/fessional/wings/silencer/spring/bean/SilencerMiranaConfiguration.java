@@ -6,7 +6,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.mirana.bits.Aes128;
+import pro.fessional.mirana.bits.Aes;
+import pro.fessional.mirana.bits.Aes256;
 import pro.fessional.mirana.code.Crc8Long;
 import pro.fessional.mirana.code.LeapCode;
 import pro.fessional.mirana.code.RandCode;
@@ -55,15 +56,15 @@ public class SilencerMiranaConfiguration {
     }
 
     @Bean
-    public Aes128 aes128() {
+    public Aes aes256() {
         String key = prop.getCode().getAesKey();
-        if (key == null) {
-            log.warn("SilencerCurse spring-bean aes128, should NOT use default");
-            return Aes128.of(RandCode.strong(16));
+        if (key == null || key.isBlank()) {
+            log.warn("SilencerCurse spring-bean aes256, should NOT use default");
+            return Aes256.of(RandCode.strong(32));
         }
         else {
-            log.info("SilencerCurse spring-bean aes128");
-            return Aes128.of(key);
+            log.info("SilencerCurse spring-bean aes256");
+            return Aes256.of(key);
         }
     }
 }

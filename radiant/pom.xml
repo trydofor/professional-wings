@@ -17,7 +17,7 @@
     <description>邮轮模型下的功能组件</description>
 
     <modules>
-        <module>devops-mvndep</module>
+        <module>devs-mvndep</module>
         <module>tiny-mail</module>
         <module>tiny-task</module>
     </modules>

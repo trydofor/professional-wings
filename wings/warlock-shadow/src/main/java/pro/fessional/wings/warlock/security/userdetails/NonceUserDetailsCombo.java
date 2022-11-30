@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pro.fessional.mirana.best.StateAssert;
 import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.PasswordHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
@@ -59,7 +60,7 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
         if (event == null) return useDetail;
         //
         cache.evict(key);
-        if (event.getExpired() < System.currentTimeMillis()) {
+        if (event.getExpired() < ThreadNow.millis()) {
             log.info("nonce expired username={}", useDetail.getUsername());
             return useDetail;
         }

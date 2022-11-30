@@ -7,9 +7,11 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
+import pro.fessional.mirana.best.DummyBlock;
 import pro.fessional.mirana.bits.Md5;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.concur.FirstBlood;
 import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.servlet.request.RequestHelper;
@@ -64,7 +66,7 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
 
         final String uri = request.getRequestURI();
         final String uk = getClientTicketKey(request);
-        final long now = System.currentTimeMillis();
+        final long now = ThreadNow.millis();
         final Key key;
         final Tkn tkn;
         if (uk.isEmpty()) {
@@ -82,7 +84,7 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
         final String ck = getKeyCode(request, questCaptchaKey);
         if (!ck.isEmpty()) {
             if (tkn.check(ck, caseIgnore, false)) {
-                // ignore
+                DummyBlock.empty();
             }
             else {
                 final String accept = request.getHeader("Accept");
@@ -155,7 +157,7 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
             remoteIp = wingsRemoteResolver.resolveRemoteIp(request);
         }
 
-        return Md5.sum(remoteIp + System.currentTimeMillis());
+        return Md5.sum(remoteIp + ThreadNow.millis());
     }
 
     /**

@@ -4,8 +4,10 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONFactory;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.JSONWriter;
+import com.alibaba.fastjson2.TypeReference;
 import com.alibaba.fastjson2.filter.Filter;
 import com.alibaba.fastjson2.reader.ObjectReaderProvider;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.core.ResolvableType;
@@ -18,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * FastJson的工具类
+ * FastJson的工具类，不推荐在复杂类型中使用，兼容性问题较大，推荐是用JacksonHelper
  *
  * @author trydofor
  * @since 2022-04-22
@@ -153,36 +155,56 @@ public class FastJsonHelper {
     }
 
     ////
-    @Nullable
-    public static <T> T object(@Nullable String json, @NotNull TypeDescriptor targetType, @NotNull JSONReader.Feature... fts) {
-        return object(json, targetType.getResolvableType(), fts);
-    }
 
     /**
-     * 以下两者相等
-     * new TypeReference&lt;R&lt;Dto&gt;&gt;(){}.getType();
-     * ResolvableType.forClassWithGenerics(R.class, Dto.class).getType()
+     * 采用wings约定反序列化
      */
-    @Nullable
-    public static <T> T object(@Nullable String json, @NotNull ResolvableType targetType, @NotNull JSONReader.Feature... fts) {
+    @Contract("!null,_->!null")
+    public static <T> T object(@Nullable String json, @NotNull ResolvableType targetType) {
         if (json == null) return null;
-        final Type clz = targetType.getType();
-        return JSON.parseObject(json, clz, fts);
+        return JSON.parseObject(json, targetType.getType(), DefaultReader());
     }
 
     /**
      * 采用wings约定反序列化
      */
-    @Nullable
-    public static <T> T object(@Nullable String json, @NotNull Class<T> claz) {
+    @Contract("!null,_->!null")
+    public static <T> T object(@Nullable String json, @NotNull TypeDescriptor targetType) {
         if (json == null) return null;
-        return JSON.parseObject(json, claz, DefaultReader());
+        return JSON.parseObject(json, targetType.getResolvableType().getType(), DefaultReader());
+    }
+
+    /**
+     * 采用wings约定反序列化
+     */
+    @Contract("!null,_->!null")
+    public static <T> T object(@Nullable String json, @NotNull TypeReference<T> targetType) {
+        if (json == null) return null;
+        return JSON.parseObject(json, targetType, DefaultReader());
+    }
+
+    /**
+     * 采用wings约定反序列化
+     */
+    @Contract("!null,_->!null")
+    public static <T> T object(@Nullable String json, @NotNull Type targetType) {
+        if (json == null) return null;
+        return JSON.parseObject(json, targetType, DefaultReader());
+    }
+
+    /**
+     * 采用wings约定反序列化
+     */
+    @Contract("!null,_->!null")
+    public static <T> T object(@Nullable String json, @NotNull Class<T> targetType) {
+        if (json == null) return null;
+        return JSON.parseObject(json, targetType, DefaultReader());
     }
 
     /**
      * 采用wings约定序列化，尽可能以字符串输出，保证数据精度，但不影响Java类型反解析
      */
-    @Nullable
+    @Contract("!null->!null")
     public static String string(@Nullable Object obj) {
         if (obj == null) return null;
         return JSON.toJSONString(obj, DefaultFilter(), DefaultWriter());

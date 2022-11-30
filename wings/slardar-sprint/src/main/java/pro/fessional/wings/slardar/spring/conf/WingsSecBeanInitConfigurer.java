@@ -1,12 +1,12 @@
 package pro.fessional.wings.slardar.spring.conf;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.WingsAuthCheckService;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
@@ -18,7 +18,7 @@ import pro.fessional.wings.slardar.security.bind.WingsBindAuthProvider;
  * @author trydofor
  * @since 2021-02-09
  */
-@Order(Ordered.LOWEST_PRECEDENCE - 5010)
+@Order(WingsBeanOrdered.BaseLine)
 public class WingsSecBeanInitConfigurer extends GlobalAuthenticationConfigurerAdapter {
 
     private final ApplicationContext context;

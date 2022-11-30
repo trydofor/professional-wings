@@ -48,6 +48,30 @@ public class WarlockUrlmapProp {
     public static final String Key$authNonceCheck = Key + ".auth-nonce-check";
 
     /**
+     * 简单的authorization code授权类型
+     *
+     * @see #Key$oauthAuthorize
+     */
+    private String oauthAuthorize = "";
+    public static final String Key$oauthAuthorize = Key + ".oauth-authorize";
+
+    /**
+     * 简单的获取access-token
+     *
+     * @see #Key$oauthAccessToken
+     */
+    private String oauthAccessToken = "";
+    public static final String Key$oauthAccessToken = Key + ".oauth-access-token";
+
+    /**
+     * 吊销authorize或access-token
+     *
+     * @see #Key$oauthRevokeToken
+     */
+    private String oauthRevokeToken = "";
+    public static final String Key$oauthRevokeToken = Key + ".oauth-revoke-token";
+
+    /**
      * 获得登录用户的自身基本信息
      *
      * @see #Key$userAuthedUser
@@ -111,8 +135,32 @@ public class WarlockUrlmapProp {
     public static final String Key$testRunMode = Key + ".test-run-mode";
 
     /**
-     * @see #Key$testTimestamp
+     * @see #Key$testSystemMills
      */
-    private String testTimestamp = "";
-    public static final String Key$testTimestamp = Key + ".test-timestamp";
+    private String testSystemMills = "";
+    public static final String Key$testSystemMills = Key + ".test-system-mills";
+
+    /**
+     * @see #Key$testThreadMills
+     */
+    private String testThreadMills = "";
+    public static final String Key$testThreadMills = Key + ".test-thread-mills";
+
+    /**
+     * @see #Key$adminTweakLogger
+     */
+    private String adminTweakLogger = "";
+    public static final String Key$adminTweakLogger = Key + ".admin-tweak-logger";
+
+    /**
+     * @see #Key$adminTweakStack
+     */
+    private String adminTweakStack = "";
+    public static final String Key$adminTweakStack = Key + ".admin-tweak-stack";
+
+    /**
+     * @see #Key$adminTweakClock
+     */
+    private String adminTweakClock = "";
+    public static final String Key$adminTweakClock = Key + ".admin-tweak-clock";
 }

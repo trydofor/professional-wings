@@ -16,10 +16,12 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
  * @author trydofor
  * @since 2019-06-05
  */
-@SpringBootTest(properties = [
-    "debug = true",
-    "wings.faceless.flywave.ver.schema-version-table=win_schema_version",
-])
+@SpringBootTest(
+    properties = [
+        "debug = true",
+        "wings.faceless.flywave.ver.schema-version-table=win_schema_version",
+    ]
+)
 @TestMethodOrder(MethodName::class)
 open class SchemaRevisionMangerTest {
 
@@ -38,16 +40,16 @@ open class SchemaRevisionMangerTest {
     fun `test0🦁清表重置`() {
         wingsTestHelper.cleanTable()
         val sqls = FlywaveRevisionScanner.helper()
-                .master()
-                .replace(revi1Schema, revi1Schema + 1, true)
-                .modify(revi1Schema + 1, "sys_schema_version", schemaVersion)
+            .master()
+            .replace(revi1Schema, revi1Schema + 1, true)
+            .modify(revi1Schema + 1, "sys_schema_version", schemaVersion)
 //                .modify("更名win_schema_version") { _, sql ->
 //                    if (sql.revision == REVISION_1ST_SCHEMA) {
 //                        sql.undoText = sql.undoText.replace("sys_schema_version", schemaVersion)
 //                        sql.uptoText = sql.uptoText.replace("sys_schema_version", schemaVersion)
 //                    }
 //                }
-                .scan()
+            .scan()
         schemaRevisionManager.checkAndInitSql(sqls, 0, true)
     }
 
@@ -71,9 +73,13 @@ open class SchemaRevisionMangerTest {
         breakpointDebug("查看版本线状💰")
         val databaseVersion = schemaRevisionManager.statusRevisions()
         for ((d, u) in databaseVersion) {
-            println("$d -")
-            for (entry in u.entries) {
-                println(" ${entry.key} : ${entry.value}")
+            if (u == null) {
+                println("$d - -1")
+            } else {
+                println("$d -")
+                for (entry in u.entries) {
+                    println(" ${entry.key} : ${entry.value}")
+                }
             }
         }
     }
@@ -93,7 +99,8 @@ open class SchemaRevisionMangerTest {
     @Test
     fun `test4🦁强加版本`() {
         breakpointDebug("强制增加版本615💰，但未执行")
-        schemaRevisionManager.forceUpdateSql(test3rdRevision, """
+        schemaRevisionManager.forceUpdateSql(
+            test3rdRevision, """
             CREATE TABLE `test_temp`(
               `SEQ_NAME` varchar(100) NOT NULL COMMENT '序列名'
             ) ENGINE = InnoDB
@@ -110,8 +117,9 @@ open class SchemaRevisionMangerTest {
               DEFAULT CHARSET = utf8mb4 COMMENT ='test_temp';
             """.trimIndent(),
 
-                "DROP TABLE IF EXISTS `test_temp`",
-                -2)
+            "DROP TABLE IF EXISTS `test_temp`",
+            -2
+        )
     }
 
     @Test
@@ -139,14 +147,16 @@ open class SchemaRevisionMangerTest {
     @Test
     fun `test7🦁强制执行Sql`() {
         breakpointDebug("强制执行Sql💰")
-        schemaRevisionManager.forceExecuteSql("""
+        schemaRevisionManager.forceExecuteSql(
+            """
             CREATE TABLE `test_temp_x`(
               `SEQ_NAME` varchar(100) NOT NULL COMMENT '序列名'
             ) ENGINE = InnoDB
               DEFAULT CHARSET = utf8mb4 COMMENT ='test_temp';
 
             DROP TABLE IF EXISTS `test_temp_x`;
-            """.trimIndent())
+            """.trimIndent()
+        )
         wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "test_temp_x")
     }
 
@@ -162,14 +172,18 @@ open class SchemaRevisionMangerTest {
     @Test
     fun `test9🦁断版维护`() {
         breakpointDebug("制作执行失败的断裂版本💰")
-        schemaRevisionManager.forceExecuteSql("""
+        schemaRevisionManager.forceExecuteSql(
+            """
             UPDATE `$schemaVersion` SET `apply_dt` = '1000-01-01 00:00:17' WHERE `revision` = '$REVISION_TEST_V1';
-            """.trimIndent())
+            """.trimIndent()
+        )
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
         breakpointDebug("因断裂版本不能执行，看日志💰")
-        schemaRevisionManager.forceExecuteSql("""
+        schemaRevisionManager.forceExecuteSql(
+            """
             UPDATE `$schemaVersion` SET `apply_dt` = '1000-01-01 00:00:00' WHERE `revision` = '$REVISION_TEST_V1';
-            """.trimIndent())
+            """.trimIndent()
+        )
         breakpointDebug("修复断裂，降级版本💰")
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
     }

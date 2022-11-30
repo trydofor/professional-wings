@@ -7,13 +7,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import pro.fessional.wings.faceless.database.helper.DatabaseChecker;
 import pro.fessional.wings.faceless.enums.LanguageEnumUtil;
 import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 import pro.fessional.wings.faceless.enums.StandardTimezoneEnum;
 import pro.fessional.wings.faceless.enums.TimezoneEnumUtil;
+import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
 import pro.fessional.wings.warlock.service.conf.RuntimeConfService;
 import pro.fessional.wings.warlock.service.conf.mode.ApiMode;
 import pro.fessional.wings.warlock.service.conf.mode.RunMode;
@@ -35,8 +35,8 @@ public class WarlockAutoRunConfiguration {
     private final static Log log = LogFactory.getLog(WarlockAutoRunConfiguration.class);
 
     @Bean
-    public CommandLineRunner registerEnumUtilRunner(ObjectProvider<WarlockI18nProp> provider) {
-        log.info("Warlock spring-runs registerEnumUtilRunner");
+    public CommandLineRunner runnerRegisterEnumUtil(ObjectProvider<WarlockI18nProp> provider) {
+        log.info("Warlock spring-runs runnerRegisterEnumUtil");
         return (arg) -> {
             final WarlockI18nProp warlockI18nProp = provider.getIfAvailable();
             if (warlockI18nProp == null) {
@@ -69,8 +69,8 @@ public class WarlockAutoRunConfiguration {
     }
 
     @Bean    // 静态注入，执行一次即可
-    public CommandLineRunner registerRuntimeModeRunner(ObjectProvider<RuntimeConfService> provider, ObjectProvider<WarlockRuntimeProp> properties) {
-        log.info("Warlock spring-runs registerRuntimeModeRunner");
+    public CommandLineRunner runnerRegisterRuntimeMode(ObjectProvider<RuntimeConfService> provider, ObjectProvider<WarlockRuntimeProp> properties) {
+        log.info("Warlock spring-runs runnerRegisterRuntimeMode");
         return (arg) -> {
             final RuntimeConfService confService = provider.getIfAvailable();
             if (confService == null) {
@@ -103,9 +103,9 @@ public class WarlockAutoRunConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$checkDatabase, havingValue = "true")
-    @Order(Ordered.HIGHEST_PRECEDENCE + 1000)
-    public CommandLineRunner databaseChecker(DataSource dataSource, WarlockCheckProp prop) {
-        log.info("Warlock spring-runs databaseChecker");
+    @Order(WingsBeanOrdered.BaseLine)
+    public CommandLineRunner runnerDatabaseChecker(DataSource dataSource, WarlockCheckProp prop) {
+        log.info("Warlock spring-runs runnerDatabaseChecker");
         return args -> {
             DatabaseChecker.version(dataSource);
             DatabaseChecker.timezone(dataSource, prop.getTzOffset(), prop.isTzFail());

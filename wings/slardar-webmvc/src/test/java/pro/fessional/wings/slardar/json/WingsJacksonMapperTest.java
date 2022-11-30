@@ -23,8 +23,8 @@ import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
 import pro.fessional.wings.slardar.autodto.AutoI18nString;
 import pro.fessional.wings.slardar.context.TerminalContext;
-import pro.fessional.wings.slardar.jackson.Aes128StringDeserializer;
-import pro.fessional.wings.slardar.jackson.Aes128StringSerializer;
+import pro.fessional.wings.slardar.jackson.AesStringDeserializer;
+import pro.fessional.wings.slardar.jackson.AesStringSerializer;
 import pro.fessional.wings.slardar.jackson.StringMapGenerator;
 import pro.fessional.wings.slardar.jackson.StringMapHelper;
 
@@ -49,6 +49,8 @@ import java.util.TimeZone;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAddr;
+import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgent;
 
 /**
  * @author trydofor
@@ -79,12 +81,13 @@ public class WingsJacksonMapperTest {
         Locale.setDefault(Locale.US);
         // user timezone
         TimeZone.setDefault(systemTz);
-        TerminalContext.login()
-                       .withLocale(Locale.US)
-                       .withTimeZone(userTz)
-                       .withRemoteIp("localhost")
-                       .withAgentInfo("test")
-                       .asUser(1);
+        TerminalContext.Builder builder = new TerminalContext.Builder()
+                .locale(Locale.US)
+                .timeZone(userTz)
+                .terminal(TerminalAddr, "localhost")
+                .terminal(TerminalAgent, "test")
+                .user(1);
+        TerminalContext.login(builder.build());
     }
 
     @Data
@@ -438,21 +441,21 @@ public class WingsJacksonMapperTest {
     }
 
     @Data
-    public static class Aes128String {
-        @JsonSerialize(using = Aes128StringSerializer.class)
-        @JsonDeserialize(using = Aes128StringDeserializer.class)
-        private String aes128;
+    public static class Aes256String {
+        @JsonSerialize(using = AesStringSerializer.class)
+        @JsonDeserialize(using = AesStringDeserializer.class)
+        private String aes256;
     }
 
     @Test
-    public void testAes128String() throws JsonProcessingException {
-        Aes128String aes = new Aes128String();
+    public void testAes256String() throws JsonProcessingException {
+        Aes256String aes = new Aes256String();
         final String txt = "1234567890";
-        aes.setAes128(txt);
+        aes.setAes256(txt);
 
         NumberAsNumber nan = new NumberAsNumber();
         String s1 = objectMapper.writeValueAsString(aes);
-        Aes128String aes2 = objectMapper.readValue(s1, Aes128String.class);
+        Aes256String aes2 = objectMapper.readValue(s1, Aes256String.class);
 
         log.info(s1);
         assertEquals(aes, aes2);

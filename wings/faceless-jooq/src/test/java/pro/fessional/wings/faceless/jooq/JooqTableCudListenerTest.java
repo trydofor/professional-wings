@@ -3,6 +3,7 @@ package pro.fessional.wings.faceless.jooq;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
@@ -29,6 +30,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 
 import static java.util.Collections.singletonList;
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
@@ -45,12 +48,18 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
 @ActiveProfiles("init")
 @SpringBootTest(properties = {
         "debug = true",
-//        "spring.wings.faceless.jooq.enabled.journal-delete=true",
+        "wings.faceless.jooq.cud.table[tst_中文也分表]=id,login_info",
         "spring.wings.faceless.jooq.enabled.listen-table-cud=true"
 })
 @Tag("init")
 @Slf4j
 public class JooqTableCudListenerTest {
+
+    private static final AtomicReference<String> LastSql = new AtomicReference<>();
+    public static BiConsumer<Long, String> SlowSql = (c, s) -> {
+        log.warn("SLOW-SQL,cost={}, sql={}", c, s);
+        LastSql.set(s);
+    };
 
     @Setter(onMethod_ = {@Autowired})
     private Tst中文也分表Dao testDao;
@@ -87,14 +96,17 @@ public class JooqTableCudListenerTest {
         pojo.setOtherInfo("other-info-301");
 
         testcaseNotice("单个插入 normal");
-        assertCud(false, Cud.Create, singletonList(singletonList(301L)), () -> testDao.insert(pojo));
+        assertCud(false, Cud.Create, singletonList(singletonList(301L)), () -> testDao.insert(pojo),
+                "insert into");
 
 
         testcaseNotice("单个插入 ignore");
-        assertCud(false, Cud.Create, singletonList(singletonList(301L)), () -> testDao.insertInto(pojo, true));
+        assertCud(false, Cud.Create, singletonList(singletonList(301L)), () -> testDao.insertInto(pojo, true),
+                "insert ignore into");
 
         testcaseNotice("单个插入 replace");
-        assertCud(false, Cud.Create, singletonList(singletonList(301L)), () -> testDao.insertInto(pojo, false));
+        assertCud(false, Cud.Create, singletonList(singletonList(301L)), () -> testDao.insertInto(pojo, false),
+                "duplicate key update");
 
         final Tst中文也分表Table t = testDao.getTable();
         final long c1 = testDao.count(t, t.Id.eq(301L));
@@ -107,13 +119,16 @@ public class JooqTableCudListenerTest {
         );
 
         testcaseNotice("批量插入 normal");
-        assertCud(false, Cud.Create, Arrays.asList(singletonList(302L), singletonList(303L), singletonList(304L)), () -> testDao.batchInsert(rds, 10));
+        assertCud(false, Cud.Create, Arrays.asList(singletonList(302L), singletonList(303L), singletonList(304L)), () -> testDao.batchInsert(rds, 10),
+                "insert into");
 
         testcaseNotice("批量插入 ignore");
-        assertCud(false, null, Collections.emptyList(), () -> testDao.batchInsert(rds, 10, true));
+        assertCud(false, null, Collections.emptyList(), () -> testDao.batchInsert(rds, 10, true),
+                "insert ignore into");
 
         testcaseNotice("批量插入 replace");
-        assertCud(false, null, Collections.emptyList(), () -> testDao.batchInsert(rds, 10, false));
+        assertCud(false, null, Collections.emptyList(), () -> testDao.batchInsert(rds, 10, false),
+                "duplicate key update");
 
         final long c2 = testDao.count(t, t.Id.ge(302L).and(t.Id.le(303L)));
         Assertions.assertEquals(2L, c2);
@@ -128,18 +143,21 @@ public class JooqTableCudListenerTest {
         pojo.setCommitId(-301L);
 
         testcaseNotice("单个更新");
-        assertCud(true, Cud.Update, singletonList(singletonList(301L)), () -> testDao.update(pojo, true));
+        assertCud(true, Cud.Update, singletonList(singletonList(301L)), () -> testDao.update(pojo, true),
+                "update");
 
         final long c1 = testDao.count(t, t.CommitId.eq(-301L));
+        Assertions.assertTrue(StringUtils.containsIgnoreCase(LastSql.get(), "select count"));
         Assertions.assertEquals(1L, c1);
 
         testcaseNotice("批量更新");
         assertCud(false, Cud.Update, singletonList(Arrays.asList(302L, 303L, 302L, 304L)), () -> testDao
-                .ctx()
-                .update(t)
-                .set(t.CommitId, -302L)
-                .where(t.Id.in(302L, 303L).or(t.Id.ge(302L).and(t.Id.le(304L))))
-                .execute());
+                        .ctx()
+                        .update(t)
+                        .set(t.CommitId, -302L)
+                        .where(t.Id.in(302L, 303L).or(t.Id.ge(302L).and(t.Id.le(304L))))
+                        .execute(),
+                "update");
 
         final long c2 = testDao.count(t, t.CommitId.eq(-302L));
         Assertions.assertEquals(3L, c2);
@@ -153,7 +171,8 @@ public class JooqTableCudListenerTest {
                 .ctx()
                 .delete(t)
                 .where(t.Id.eq(301L))
-                .execute()
+                .execute(),
+                "delete from"
         );
 
         testcaseNotice("范围删除");
@@ -161,7 +180,8 @@ public class JooqTableCudListenerTest {
                 .ctx()
                 .delete(t)
                 .where(t.Id.ge(302L).and(t.Id.le(304L)))
-                .execute()
+                .execute(),
+                "delete from"
         );
 
 
@@ -169,10 +189,13 @@ public class JooqTableCudListenerTest {
         Assertions.assertEquals(0L, c1);
     }
 
-    private void assertCud(boolean wv, Cud cud, List<List<Long>> ids, Runnable run) {
+    private void assertCud(boolean wv, Cud cud, List<List<Long>> ids, Runnable run, String sqlPart) {
         wingsTableCudHandlerTest.reset();
         TableCudListener.WarnVisit = wv;
         run.run();
+        final String sql = LastSql.get();
+        Assertions.assertTrue(StringUtils.containsIgnoreCase(sql, sqlPart));
+
         TableCudListener.WarnVisit = false;
         final List<Cud> d = wingsTableCudHandlerTest.getCud();
         final List<String> t = wingsTableCudHandlerTest.getTable();

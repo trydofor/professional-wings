@@ -253,4 +253,12 @@ public class SlardarEnabledProp {
      */
     private boolean bootAdmin = true;
     public static final String Key$bootAdmin = Key + ".boot-admin";
+
+    /**
+     * 是否支持动态Tweaking
+     *
+     * @see #Key$tweaking
+     */
+    private boolean tweaking = true;
+    public static final String Key$tweaking = Key + ".tweaking";
 }

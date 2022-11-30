@@ -6,17 +6,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.best.DummyBlock;
 import pro.fessional.mirana.best.TypedKey;
+import pro.fessional.wings.slardar.security.DefaultUserId;
 
 import java.time.ZoneId;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static pro.fessional.wings.slardar.security.DefaultUserId.Guest;
 
 /**
  * 在service层使用，TransmittableThreadLocal有自动的线程继承性。
@@ -28,13 +30,11 @@ import static pro.fessional.wings.slardar.security.DefaultUserId.Guest;
  */
 public class TerminalContext {
 
-    public static final Context NULL = new Context(Guest, null, null, null);
-    public static final TypedKey<String> RemoteIp = new TypedKey<>() {};
-    public static final TypedKey<String> AgentInfo = new TypedKey<>() {};
+    public static final Context Null = new Context(DefaultUserId.Null, null, null, null, null, null);
 
     /** no leak, for static and Interceptor clean */
     private static final TransmittableThreadLocal<Context> ContextLocal = new TransmittableThreadLocal<>();
-    private static final ConcurrentHashMap<String, ContextChangeListener> ContextListeners = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Listener> ContextListeners = new ConcurrentHashMap<>();
 
     private static volatile boolean Active;
     @NotNull
@@ -105,7 +105,7 @@ public class TerminalContext {
      * @param listener 监听器
      * @return null或旧值
      */
-    public static ContextChangeListener registerListener(String name, ContextChangeListener listener) {
+    public static Listener registerListener(String name, Listener listener) {
         return ContextListeners.put(name, listener);
     }
 
@@ -115,7 +115,7 @@ public class TerminalContext {
      * @param name 名字
      * @return null或旧值
      */
-    public static ContextChangeListener removeListener(String name) {
+    public static Listener removeListener(String name) {
         return ContextListeners.remove(name);
     }
 
@@ -136,16 +136,11 @@ public class TerminalContext {
     @NotNull
     public static Context get(boolean onlyLogin) {
         Context ctx = TerminalContext.ContextLocal.get();
-        if (ctx == null) ctx = NULL;
+        if (ctx == null) ctx = Null;
         if (onlyLogin && ctx.isGuest()) {
             throw new IllegalStateException("must login user");
         }
         return ctx;
-    }
-
-    @NotNull
-    public static Builder login() {
-        return new Builder();
     }
 
     /**
@@ -154,34 +149,28 @@ public class TerminalContext {
      * @param ctx 上下文
      */
     public static void login(Context ctx) {
-        if (ctx == null) {
+        if (ctx == null || ctx == Null) {
             final Context old = ContextLocal.get();
             ContextLocal.remove();
-            fireContextChange(false, old);
+            fireContextChange(true, old);
         }
         else {
             ContextLocal.set(ctx);
-            fireContextChange(true, ctx);
+            fireContextChange(false, ctx);
         }
         Active = true;
     }
 
     public static void logout() {
-        login(null);
+        login(Null);
     }
 
-    private static void fireContextChange(boolean assign, Context ctx) {
+    private static void fireContextChange(boolean del, Context ctx) {
         if (ContextListeners.isEmpty()) return;
 
-        final Collection<ContextChangeListener> vs = ContextListeners.values();
-        for (ContextChangeListener listener : ContextListeners.values()) {
+        for (Listener listener : ContextListeners.values()) {
             try {
-                if (assign) {
-                    listener.assign(ctx);
-                }
-                else {
-                    listener.remove(ctx);
-                }
+                listener.onChange(del, ctx);
             }
             catch (RuntimeException e) {
                 DummyBlock.ignore(e);
@@ -189,51 +178,55 @@ public class TerminalContext {
         }
     }
 
-    public interface ContextChangeListener {
+    public interface Listener {
         /**
-         * 登入现值
+         * 赋新值或删除旧值，新值为NotNull，旧值可能为Null
+         *
+         * @param del 是否为删除，否则为赋值
+         * @param ctx del时为Nullable，否则为NotNull
          */
-        void assign(@NotNull Context ctx);
-
-        /**
-         * 登出前值
-         */
-        void remove(@Nullable Context ctx);
+        @Contract("false,!null->_")
+        void onChange(boolean del, Context ctx);
     }
 
     public static class Context {
 
         private final long userId;
-        @Nullable
         private final Locale locale;
-        @Nullable
         private final TimeZone timeZone;
-        @NotNull
+        private final Enum<?> authType;
+        private final Set<String> authPerm;
         private final Map<TypedKey<?>, Object> terminal;
 
-        public Context(long userId, Locale locale, TimeZone timeZone) {
-            this(userId, locale, timeZone, null);
+        public Context(long userId, Locale locale, TimeZone timeZone, Map<TypedKey<?>,
+                Object> params, Enum<?> authType, Set<String> authPerm) {
+            this.userId = userId;
+            this.locale = locale != null ? locale : DefaultLocale;
+            this.timeZone = timeZone != null ? timeZone : DefaultTimeZone;
+            this.terminal = params != null ? params : Collections.emptyMap();
+            this.authType = authType != null ? authType : pro.fessional.mirana.data.Null.Enm;
+            this.authPerm = authPerm != null ? authPerm : Collections.emptySet();
         }
 
-        public Context(long userId, @Nullable Locale locale, @Nullable TimeZone timeZone, Map<TypedKey<?>, Object> params) {
-            this.userId = userId;
-            this.locale = locale;
-            this.timeZone = timeZone;
-            this.terminal = params != null ? params : new HashMap<>();
+        /**
+         * userId == DefaultUserId#Null
+         */
+        public boolean isNull() {
+            return userId == DefaultUserId.Null;
         }
 
         /**
          * userId == DefaultUserId#Guest
          */
         public boolean isGuest() {
-            return userId == Guest;
+            return userId == DefaultUserId.Guest;
         }
 
         /**
          * userId >= DefaultUserId#Guest
          */
         public boolean asLogin() {
-            return userId >= Guest;
+            return userId >= DefaultUserId.Guest;
         }
 
         public long getUserId() {
@@ -242,12 +235,12 @@ public class TerminalContext {
 
         @NotNull
         public Locale getLocale() {
-            return locale != null ? locale : defaultLocale();
+            return locale;
         }
 
         @NotNull
         public TimeZone getTimeZone() {
-            return timeZone != null ? timeZone : defaultTimeZone();
+            return timeZone;
         }
 
         @NotNull
@@ -255,8 +248,33 @@ public class TerminalContext {
             return getTimeZone().toZoneId();
         }
 
-        public <T> void putTerminal(@NotNull TypedKey<T> key, T value) {
-            terminal.put(key, value);
+        @NotNull
+        public Enum<?> getAuthType() {
+            return authType;
+        }
+
+        @NotNull
+        public Set<String> getAuthPerm() {
+            return authPerm;
+        }
+
+        public boolean hasAuthPerm(String auth) {
+            return authPerm.contains(auth);
+        }
+
+        public boolean anyAuthPerm(Collection<String> auths) {
+            if (auths == null) return false;
+            for (String auth : auths) {
+                if (authPerm.contains(auth)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public boolean allAuthPerm(Collection<String> auths) {
+            if (auths == null) return true;
+            return authPerm.containsAll(auths);
         }
 
         @Nullable
@@ -297,55 +315,101 @@ public class TerminalContext {
     }
 
     public static class Builder {
+        private long userId;
         private Locale locale;
         private TimeZone timeZone;
-        private final Map<TypedKey<?>, Object> params = new HashMap<>();
+        private Enum<?> authType;
+        private final Set<String> authPerm = new HashSet<>();
+        private final Map<TypedKey<?>, Object> terminal = new HashMap<>();
 
-        public Builder withLocale(Locale lcl) {
+        public Builder locale(Locale lcl) {
             locale = lcl;
             return this;
         }
 
-        public Builder withTimeZone(TimeZone tz) {
-            timeZone = tz;
-            return this;
-        }
-
-        public Builder withTimeZone(ZoneId tz) {
-            timeZone = TimeZone.getTimeZone(tz);
-            return this;
-        }
-
-        public <V> Builder withTerminal(TypedKey<V> key, V value) {
-            params.put(key, value);
-            return this;
-        }
-
-        public Builder withTerminal(Map<TypedKey<?>, Object> kvs) {
-            if (kvs != null) {
-                params.putAll(kvs);
+        public Builder localeIfAbsent(Locale lcl) {
+            if (locale == null) {
+                locale = lcl;
             }
             return this;
         }
 
-        public <V> Builder withRemoteIp(String value) {
-            params.put(RemoteIp, value);
+        public Builder timeZone(TimeZone tz) {
+            timeZone = tz;
             return this;
         }
 
-        public <V> Builder withAgentInfo(String value) {
-            params.put(AgentInfo, value);
+        public Builder timeZoneIfAbsent(TimeZone tz) {
+            if (timeZone == null) {
+                timeZone = tz;
+            }
             return this;
         }
 
-        public Context asUser(long uid) {
-            final Context ctx = new Context(uid, locale, timeZone, params);
-            TerminalContext.login(ctx);
-            return ctx;
+        public Builder timeZone(ZoneId tz) {
+            timeZone = TimeZone.getTimeZone(tz);
+            return this;
         }
 
-        public Context asGuest() {
-            return asUser(Guest);
+        public Builder timeZoneIfAbsent(ZoneId tz) {
+            if (timeZone == null) {
+                timeZone = TimeZone.getTimeZone(tz);
+            }
+            return this;
+        }
+
+        public Builder authType(Enum<?> at) {
+            authType = at;
+            return this;
+        }
+
+        public Builder authPerm(String pm) {
+            authPerm.add(pm);
+            return this;
+        }
+
+        public Builder authPerm(Collection<String> pm) {
+            authPerm.addAll(pm);
+            return this;
+        }
+
+        public <V> Builder terminal(TypedKey<V> key, V value) {
+            terminal.put(key, value);
+            return this;
+        }
+
+        public <V> Builder terminalIfAbsent(TypedKey<V> key, V value) {
+            terminal.putIfAbsent(key, value);
+            return this;
+        }
+
+        public Builder terminal(Map<TypedKey<?>, Object> kvs) {
+            if (kvs != null) {
+                terminal.putAll(kvs);
+            }
+            return this;
+        }
+
+        public Builder terminalIfAbsent(Map<TypedKey<?>, Object> kvs) {
+            if (kvs != null) {
+                for (Map.Entry<TypedKey<?>, Object> en : kvs.entrySet()) {
+                    terminal.putIfAbsent(en.getKey(), en.getValue());
+                }
+            }
+            return this;
+        }
+
+        public Builder user(long uid) {
+            userId = uid;
+            return this;
+        }
+
+        public Builder guest() {
+            return user(DefaultUserId.Guest);
+        }
+
+        public Context build() {
+            return new Context(userId, locale, timeZone, terminal, authType, authPerm);
         }
     }
 }
