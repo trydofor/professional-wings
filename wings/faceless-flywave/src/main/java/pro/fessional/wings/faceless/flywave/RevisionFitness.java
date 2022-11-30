@@ -24,6 +24,7 @@ import java.util.TreeMap;
 @Slf4j
 public class RevisionFitness {
 
+    public static final Long UnInit = -1L;
     private final Set<String> scanPath = new HashSet<>();
     private final TreeMap<Long, Set<Act>> reviAct = new TreeMap<>(); // No Skip
     private final HashMap<Long, Set<String>> reviMsg = new HashMap<>();
@@ -67,6 +68,18 @@ public class RevisionFitness {
     private void applyRevision(SchemaRevisionManager manager, TreeMap<Long, Set<Act>> revi) {
         TreeMap<Long, Set<String>> exec = new TreeMap<>();
         boolean failed = false;
+        if (revi.containsKey(UnInit)) {
+            for (Set<Act> at : revi.values()) {
+                if (at.contains(Act.EXEC)) {
+                    throw new IllegalStateException("Wings flywave revision is NOT existed, you can,"
+                                                    + "\n1.stop checker: spring.wings.faceless.flywave.enabled.checker=false"
+                                                    + "\n2.revision fitness do NOT set EXEC"
+                                                    + "\n3.init flywave revision manually");
+                }
+            }
+            revi.remove(UnInit);
+        }
+
         for (Map.Entry<Long, Set<Act>> en : revi.entrySet()) {
             final Long rv = en.getKey();
             final Set<Act> ts = en.getValue();
@@ -145,17 +158,24 @@ public class RevisionFitness {
         HashMap<Long, Status> reviStatus = null;
         HashMap<Long, Map<String, Status>> reviDbDiff = new HashMap<>();
         String headDb = "";
+        boolean unInit = false;
         for (Map.Entry<String, SortedMap<Long, Status>> en : manager.statusRevisions().entrySet()) {
             final String nextDb = en.getKey();
             log.info("Wings Revision Check Database={}", nextDb);
+            Map<Long, Status> sts = en.getValue();
+            if (sts == null) {
+                unInit = true;
+                sts = Map.of(UnInit, Status.Future);
+            }
+
             if (reviStatus == null) {
-                reviStatus = new HashMap<>(en.getValue());
+                reviStatus = new HashMap<>(sts);
                 headDb = nextDb;
             }
             else {
                 Map<Long, Status> headStatus = new HashMap<>(reviStatus);
                 Map<Long, Status> nextStatus = new HashMap<>();
-                for (Map.Entry<Long, Status> st : en.getValue().entrySet()) {
+                for (Map.Entry<Long, Status> st : sts.entrySet()) {
                     final Long rv = st.getKey();
                     final Status rs = st.getValue();
                     if (rs == headStatus.get(rv)) {
@@ -177,8 +197,16 @@ public class RevisionFitness {
         }
 
         if (reviStatus == null || reviStatus.isEmpty()) {
-            log.info("Wings Revision Unapply all-revi");
-            return reviAct;
+            if (unInit) {
+                log.warn("Wings Revision UnInit all-revi");
+                final TreeMap<Long, Set<Act>> map = new TreeMap<>(reviAct);
+                map.put(UnInit, Set.of(Act.WARN));
+                return map;
+            }
+            else {
+                log.info("Wings Revision Unapply all-revi");
+                return reviAct;
+            }
         }
 
         final StringBuilder diffWarn = new StringBuilder();
@@ -188,7 +216,7 @@ public class RevisionFitness {
             final Set<Act> acts = reviAct.get(rv);
             diffWarn.append("\nWARN Diff-Revi=").append(rv);
             for (Map.Entry<String, Status> mp : en.getValue().entrySet()) {
-                diffWarn.append(", ").append(mp.getKey()).append("=").append(mp.getValue());
+                diffWarn.append(", ").append(mp.getKey()).append('=').append(mp.getValue());
             }
             if (acts != null && !needFail && acts.contains(Act.FAIL)) {
                 needFail = true;
@@ -212,6 +240,11 @@ public class RevisionFitness {
                 map.put(rv, revi.getValue());
                 log.info("Wings Revision Unapply revi={}, status={}", rv, st);
             }
+        }
+        if (unInit) {
+            log.warn("Wings Revision UnInit all-revi");
+            map.put(UnInit, Set.of(Act.WARN));
+            return map;
         }
         return map;
     }

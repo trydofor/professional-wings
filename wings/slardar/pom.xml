@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Slardar</name>
-    <description>鱼人守卫</description>
+    <description>鱼人守卫：缓存，事件，序列化等基本功能</description>
 
     <dependencies>
         <dependency>

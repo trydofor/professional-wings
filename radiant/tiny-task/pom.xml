@@ -16,6 +16,20 @@
     <description>小小的任务模块</description>
 
     <dependencies>
-
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>faceless-jooq</artifactId>
+        </dependency>
+        <!-- 代码生成与版本检查 -->
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>faceless-flywave</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>faceless-jooqgen</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Batrider::Zero</name>
-    <description>蝙蝠骑士之零配置</description>
+    <description>蝙蝠骑士之零配置：组播的registry-zero-config</description>
 
     <dependencies>
         <dependency>

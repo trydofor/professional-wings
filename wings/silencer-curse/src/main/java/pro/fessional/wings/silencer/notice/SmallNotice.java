@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.notice;
+package pro.fessional.wings.silencer.notice;
 
 import org.jetbrains.annotations.NotNull;
 

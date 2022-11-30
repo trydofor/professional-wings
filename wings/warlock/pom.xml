@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Warlock</name>
-    <description>术士大叔</description>
+    <description>术士大叔：集成Jooq和Slardar</description>
 
     <dependencies>
         <dependency>

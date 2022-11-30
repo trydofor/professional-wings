@@ -9,10 +9,10 @@
         <version>${revision}.${changelist}</version>
     </parent>
 
-    <artifactId>devops-mvndep</artifactId>
+    <artifactId>devs-mvndep</artifactId>
     <packaging>jar</packaging>
 
-    <name>Radiant::Devops::Mvndep</name>
+    <name>Radiant::Devs::Mvndep</name>
     <description>用maven-dependency-checker检查依赖的版本</description>
 
     <dependencies>

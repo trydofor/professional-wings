@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Silencer</name>
-    <description>沉默术士</description>
+    <description>沉默术士：SpringBoot零入侵自动配置Bean和I18nMessage</description>
 
     <dependencies>
         <dependency>

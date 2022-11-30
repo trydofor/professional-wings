@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Slardar::Sprint</name>
-    <description>鱼人守卫之守卫冲刺</description>
+    <description>鱼人守卫之守卫冲刺：集成后的WebMvc/hazelcast/security-conf/admin/actuator</description>
 
     <dependencies>
         <dependency>

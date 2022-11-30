@@ -147,6 +147,7 @@ public class WingsFlywaveConfiguration {
     }
 
     @Bean
+    @ConditionalOnProperty(name = FlywaveEnabledProp.Key$checker, havingValue = "true")
     public CommandLineRunner runnerRevisionChecker(DefaultRevisionManager manager, FlywaveFitProp prop) {
         log.info("FacelessFlywave spring-runs runnerRevisionChecker");
         return args -> {

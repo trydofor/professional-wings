@@ -36,9 +36,9 @@ interface SchemaRevisionManager : InteractiveManager<SchemaRevisionManager.AskTy
     fun currentRevision(): Map<String, Long>
 
     /**
-     * 获得所有真实数据源的版本状态，从低到高排序。
+     * 获得所有真实数据源的版本状态，从低到高排序。null表示未初始化
      */
-    fun statusRevisions(): Map<String, SortedMap<Long, Status>>
+    fun statusRevisions(): Map<String, SortedMap<Long, Status>?>
 
     /**
      * 指定数据库版本，可能级联升级或降级。

@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Slardar::HazelCaching</name>
-    <description>鱼人守卫之黑走开晴</description>
+    <description>鱼人守卫之黑走开晴：基于hazelcast的分布式缓存和对象</description>
 
     <dependencies>
         <dependency>
