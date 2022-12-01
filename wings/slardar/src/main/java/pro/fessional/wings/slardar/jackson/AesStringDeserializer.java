@@ -19,8 +19,8 @@ public class AesStringDeserializer extends JsonDeserializer<String> {
     private Aes aes;
 
     @Override
-    public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        String value = p.getValueAsString();
+    public String deserialize(JsonParser parser, DeserializationContext context) throws IOException {
+        String value = parser.getValueAsString();
         return aes.decode64(value);
     }
 }

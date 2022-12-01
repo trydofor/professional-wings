@@ -1,0 +1,27 @@
+<Result>
+    <method>truck.quotes</method>
+    <version>1.0</version>
+    <app_id>33781697</app_id>
+    <request_id>1234121234123</request_id>
+    <data>
+        <delivery>
+            <name>bb</name>
+            <placeId>ChIJaaVUOST-kFQRowwW6fiOX28</placeId>
+            <accessorials>appointment</accessorials>
+            <accessorials>tradeshow</accessorials>
+            <phoneNumber>9092827930</phoneNumber>
+            <street>1222 83rd Street Court East</street>
+            <city>Tacoma</city>
+            <state>WA</state>
+            <zip>98404</zip>
+            <referenceNumber></referenceNumber>
+            <notes></notes>
+            <subStreet></subStreet>
+            <openTime>0900</openTime>
+            <closeTime>1545</closeTime>
+        </delivery>
+        <pickupDate>2022-11-02 09:30:00</pickupDate>
+        <customerNumber>206467069066101</customerNumber>
+        <declaredFreightValue>150</declaredFreightValue>
+    </data>
+</Result>

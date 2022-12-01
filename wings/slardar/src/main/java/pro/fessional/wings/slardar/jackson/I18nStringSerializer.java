@@ -30,10 +30,10 @@ public class I18nStringSerializer extends JsonSerializer<Object> implements Cont
     }
 
     @Override
-    public void serialize(Object value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serialize(Object value, JsonGenerator generator, SerializerProvider provider) throws IOException {
 
         if (!(value instanceof CharSequence) && !(value instanceof I18nString)) {
-            provider.defaultSerializeValue(value, gen);
+            provider.defaultSerializeValue(value, generator);
             return;
         }
 
@@ -43,7 +43,7 @@ public class I18nStringSerializer extends JsonSerializer<Object> implements Cont
                 Locale locale = LocaleZoneIdUtil.LocaleNonnull.get();
                 text = messageSource.getMessage(text, new Object[]{}, locale);
             }
-            gen.writeString(text);
+            generator.writeString(text);
         } else { // value instanceof I18nString
             I18nString i18n = (I18nString) value;
             if (enabled) {
@@ -52,14 +52,14 @@ public class I18nStringSerializer extends JsonSerializer<Object> implements Cont
                 if (text.equalsIgnoreCase(i18n.getCode())) {
                     text = i18n.toString(locale);
                 }
-                gen.writeString(text);
+                generator.writeString(text);
             } else {
-                gen.writeStartObject();
-                gen.writeStringField("code", i18n.getCode());
-                gen.writeStringField("hint", i18n.getHint());
-                gen.writeFieldName("args");
-                gen.writeObject(i18n.getArgs());
-                gen.writeEndObject();
+                generator.writeStartObject();
+                generator.writeStringField("code", i18n.getCode());
+                generator.writeStringField("hint", i18n.getHint());
+                generator.writeFieldName("args");
+                generator.writeObject(i18n.getArgs());
+                generator.writeEndObject();
             }
         }
     }

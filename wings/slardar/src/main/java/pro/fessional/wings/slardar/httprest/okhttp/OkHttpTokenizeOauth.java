@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.httprest.okhttp;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,8 +19,6 @@ import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.jackson.JacksonHelper;
-
-import java.util.Map;
 
 /**
  * https://developer.fedex.com/api/en-us/catalog/authorization/v1/docs.html
@@ -66,7 +65,10 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
     private String keyAccessToken = "access_token";
     private String keyExpiresIn = "expires_in";
 
-
+    /**
+     * 过期的缓冲ms，以便提前获取，避免过期
+     */
+    private int expireBuff = 30_000;
     private transient Token token;
 
     @Override
@@ -240,8 +242,8 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
         final ResponseBody body = response.body();
         if (body != null) {
             if (headerAccept.contains("json") || headerAccept.contains("xml")) {
-                final Map<?, ?> map = JacksonHelper.object(body.string(), Map.class);
-                return (String) map.get(keyCode);
+                final JsonNode node = JacksonHelper.object(body.string());
+                return JacksonHelper.getString(node, keyCode, null);
             }
         }
         return null;
@@ -257,28 +259,22 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
     protected Token parseToken(String str) {
         if (str == null) return null;
 
-        final Map<?, ?> map;
+        final JsonNode node;
         if (headerAccept.contains("json") || headerAccept.contains("xml")) {
-            map = JacksonHelper.object(str, Map.class);
+            node = JacksonHelper.object(str);
         }
         else {
             return null;
         }
 
-        final Object exp = map.get(keyExpiresIn);
-        final String act = (String) map.get(keyAccessToken);
-        if (exp == null || act == null) return null;
+        final String act = JacksonHelper.getString(node, keyAccessToken, null);
+        final int exp = JacksonHelper.getInt(node, keyExpiresIn, 0) * 1000;
+        if (act == null || exp < expireBuff) return null;
 
-        int ems;
-        if (exp instanceof Number) {
-            ems = ((Number) exp).intValue() * 1000;
-        }
-        else {
-            ems = Integer.parseInt(exp.toString()) * 1000;
-        }
+        long ms = Now.millis() + exp - expireBuff;
+        final String rft = JacksonHelper.getString(node, keyRefreshToken, null);
 
-        long ms = Now.millis() + ems - 30_000;
-        return new Token(ms, BearerPrefix + act, (String) map.get(keyRefreshToken));
+        return new Token(ms, BearerPrefix + act, rft);
     }
 
     @Data

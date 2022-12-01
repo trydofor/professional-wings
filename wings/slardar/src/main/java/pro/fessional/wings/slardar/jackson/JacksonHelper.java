@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.jackson;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.SneakyThrows;
@@ -11,6 +12,11 @@ import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.text.WhiteUtil;
 
 /**
+ * [XML limitation](https://github.com/FasterXML/jackson-dataformat-xml#known-limitations)
+ * 常见的有：
+ * ①单个元素的节点，XML不能区分是单值还是数组中只有一个值，除非嵌套了wrap。
+ * ②Xml无法识别数据类型，而Json有string,number,boolean,object,array
+ *
  * @author trydofor
  * @since 2022-11-05
  */
@@ -49,6 +55,14 @@ public class JacksonHelper {
         return XmlWings;
     }
 
+    @NotNull
+    public static ObjectMapper wings(boolean json) {
+        return json ? JsonWings : XmlWings;
+    }
+
+    /**
+     * 根据text是否有xml特征，自动选择Wings读取Xml/Json
+     */
     @SneakyThrows
     @Contract("!null,_->!null")
     public static <T> T object(@Nullable String text, @NotNull Class<T> targetType) {
@@ -60,6 +74,9 @@ public class JacksonHelper {
         }
     }
 
+    /**
+     * 根据text是否有xml特征，自动选择Wings读取Xml/Json
+     */
     @SneakyThrows
     @Contract("!null,_->!null")
     public static <T> T object(@Nullable String text, @NotNull JavaType targetType) {
@@ -71,6 +88,9 @@ public class JacksonHelper {
         }
     }
 
+    /**
+     * 根据text是否有xml特征，自动选择Wings读取Xml/Json
+     */
     @SneakyThrows
     @Contract("!null,_->!null")
     public static <T> T object(@Nullable String text, @NotNull TypeReference<T> targetType) {
@@ -83,7 +103,21 @@ public class JacksonHelper {
     }
 
     /**
-     * str是否具有xml特征，即，收尾的字符是否为尖角括号
+     * 根据text是否有xml特征，自动选择Wings读取Xml/Json
+     */
+    @SneakyThrows
+    @Contract("!null->!null")
+    public static JsonNode object(@Nullable String text) {
+        if (asXml(text)) {
+            return XmlWings.readTree(text);
+        }
+        else {
+            return JsonWings.readTree(text);
+        }
+    }
+
+    /**
+     * str是否具有xml特征，即，首尾的字符是否为尖角括号
      */
     public static boolean asXml(@Nullable String str) {
         if (str == null) return false;
@@ -139,5 +173,36 @@ public class JacksonHelper {
         else {
             return XmlWings.writeValueAsString(obj);
         }
+    }
+
+    @Contract("_,_,!null->!null")
+    public static String getString(JsonNode node, String field, String defaults) {
+        if (node == null) return defaults;
+        final JsonNode jn = node.get(field);
+        return jn != null ? jn.asText(defaults) : defaults;
+    }
+
+    public static boolean getBoolean(JsonNode node, String field, boolean defaults) {
+        if (node == null) return defaults;
+        final JsonNode jn = node.get(field);
+        return jn != null ? jn.asBoolean(defaults) : defaults;
+    }
+
+    public static int getInt(JsonNode node, String field, int defaults) {
+        if (node == null) return defaults;
+        final JsonNode jn = node.get(field);
+        return jn != null ? jn.asInt(defaults) : defaults;
+    }
+
+    public static long getLong(JsonNode node, String field, long defaults) {
+        if (node == null) return defaults;
+        final JsonNode jn = node.get(field);
+        return jn != null ? jn.asLong(defaults) : defaults;
+    }
+
+    public static double getDouble(JsonNode node, String field, double defaults) {
+        if (node == null) return defaults;
+        final JsonNode jn = node.get(field);
+        return jn != null ? jn.asDouble(defaults) : defaults;
     }
 }

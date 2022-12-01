@@ -19,7 +19,7 @@ public class AesStringSerializer extends JsonSerializer<String> {
     private Aes aes;
 
     @Override
-    public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        gen.writeString(aes.encode64(value));
+    public void serialize(String value, JsonGenerator generator, SerializerProvider serializers) throws IOException {
+        generator.writeString(aes.encode64(value));
     }
 }
