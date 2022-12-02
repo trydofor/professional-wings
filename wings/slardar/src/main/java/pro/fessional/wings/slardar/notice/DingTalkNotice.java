@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.NotNull;
+import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.JsonTemplate;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.silencer.notice.SmallNotice;
@@ -34,7 +35,9 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
 
     @SneakyThrows
     @Override
-    public boolean send(@NotNull Conf config, @NotNull String content) {
+    public boolean send(@NotNull Conf config, String subject, String content) {
+        if (subject == null && content == null) return false;
+
         /*
         curl 'https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxx' \
          -H 'Content-Type: application/json' \
@@ -70,8 +73,16 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
             host = host + "&timestamp=" + now + "&sign=" + sign;
         }
 
-        log.debug("ding-talk post message, host={}, text={}", host, content);
-        final String s = OkHttpClientHelper.postJson(okHttpClient, host, content);
+        final String message;
+        if ("markdown".equalsIgnoreCase(config.getMsgType())) {
+            message = buildMarkdown(config, subject, content);
+        }
+        else {
+            message = buildText(config, subject, content);
+        }
+
+        log.debug("ding-talk post message, host={}, text={}", host, message);
+        final String s = OkHttpClientHelper.postJson(okHttpClient, host, message);
         log.debug("ding-talk result={}", s);
         return s.contains("\"errcode\":0,");
     }
@@ -90,10 +101,13 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
      * }
      * }
      */
-    public String buildText(Conf conf, String text) {
+    public String buildText(Conf conf, String subject, String content) {
+        if (subject == null) subject = Null.Str;
+        if (content == null) content = Null.Str;
+        final String message = subject + content;
         return JsonTemplate.obj(t -> t
                 .putVal("msgtype", "text")
-                .putObj("text", o -> o.putVal("content", buildContent(conf, text)))
+                .putObj("text", o -> o.putVal("content", buildContent(conf, message)))
                 .putObj("at", o -> buildNotice(conf, o))
         );
     }
@@ -107,24 +121,26 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
      * }
      * }
      */
-    public String buildMarkdown(Conf conf, String title, String text) {
+    public String buildMarkdown(Conf conf, String subject, String content) {
         return JsonTemplate.obj(t -> t
                 .putVal("msgtype", "markdown")
                 .putObj("markdown", o -> o
-                        .putVal("title", title)
-                        .putVal("text", buildContent(conf, text, title)))
+                        .putVal("title", subject != null ? subject : "untitled")
+                        .putVal("text", buildContent(conf, content, subject)))
                 .putObj("at", o -> buildNotice(conf, o))
         );
     }
 
-    private String buildContent(Conf conf, String main, String... ext) {
+    private String buildContent(Conf conf, String main, String... kws) {
+        if (main == null) main = Null.Str;
+
         StringBuilder sb = new StringBuilder();
         final String kw = conf.getNoticeKeyword();
         if (kw != null && !kw.isEmpty()) {
             boolean ng = !main.contains(kw);
-            if (ng) {
-                for (String s : ext) {
-                    if (s.contains(kw)) {
+            if (ng && kws != null) {
+                for (String s : kws) {
+                    if (s != null && s.contains(kw)) {
                         ng = false;
                         break;
                     }
@@ -176,5 +192,9 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
          */
         private Set<String> noticeMobiles = Collections.emptySet();
 
+        /**
+         * 消息类型，支持 text, markdown
+         */
+        private String msgType = "markdown";
     }
 }

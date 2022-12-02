@@ -50,7 +50,7 @@ public class DingTalkReport implements WarnReport {
             return Sts.Skip;
         }
 
-        String text = buildMarkdown(appName, jvmName, sb -> {
+        String text = buildMkContent(appName, jvmName, sb -> {
             for (Map.Entry<String, List<WarnMetric.Warn>> entry : warn.entrySet()) {
                 mkTitleH2(sb, entry.getKey());
                 for (WarnMetric.Warn w : entry.getValue()) {
@@ -64,23 +64,18 @@ public class DingTalkReport implements WarnReport {
             }
         });
 
-        final boolean rst = dingTalkNotice.send(conf, text);
+        final boolean rst = dingTalkNotice.send(conf, appName + " " + conf.getNoticeKeyword(), text);
         return rst ? Sts.Done : Sts.Fail;
     }
 
-    public void post(String text) {
-        dingTalkNotice.post(conf, text);
-    }
-
-    public String buildMarkdown(String app, String jvm, Consumer<StringBuilder> text) {
+    public String buildMkContent(String app, String jvm, Consumer<StringBuilder> builder) {
         StringBuilder sb = new StringBuilder();
         mkTitleH2(sb, app);
         mkItemText(sb, jvm, "jvm-name");
         mkItemText(sb, Now.zonedDateTime().toString(), "rpt-time");
-        text.accept(sb);
-        return dingTalkNotice.buildMarkdown(conf, app + " " + conf.getNoticeKeyword(), sb.toString());
+        builder.accept(sb);
+        return sb.toString();
     }
-
 
     protected void mkTitleH2(StringBuilder sb, String str) {
         sb.append("\n\n## ■ ")

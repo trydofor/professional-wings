@@ -87,5 +87,6 @@ public class SlardarMonitorProp {
         public static final String Key$digestSecret = Key + ".digest-secret";
         public static final String Key$noticeKeyword = Key + ".notice-keyword";
         public static final String Key$noticeMobiles = Key + ".notice-mobiles";
+        public static final String Key$msgType = Key + ".msg-type";
     }
 }
