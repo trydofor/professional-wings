@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration;
 import org.springframework.boot.task.TaskExecutorBuilder;
+import org.springframework.boot.task.TaskSchedulerBuilder;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,8 @@ import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import pro.fessional.wings.slardar.async.TtlThreadPoolTaskScheduler;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
@@ -29,8 +32,10 @@ import static org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfi
 import static org.springframework.scheduling.annotation.AsyncAnnotationBeanPostProcessor.DEFAULT_TASK_EXECUTOR_BEAN_NAME;
 
 /**
+ * <pre>
  * https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#features.task-execution-and-scheduling
  * https://github.com/alibaba/transmittable-thread-local
+ * </pre>
  *
  * @author trydofor
  * @see TaskExecutionAutoConfiguration
@@ -48,31 +53,29 @@ public class SlardarAsyncConfiguration {
     @Bean(name = DEFAULT_TASK_EXECUTOR_BEAN_NAME)
     public Executor taskExecutor(TaskExecutorBuilder builder) {
         log.info("Slardar spring-bean taskExecutor via ttlExecutor");
-        return ttlExecutor(builder);
+        return buildTtlExecutor(builder, null);
     }
 
     @Bean(name = APPLICATION_TASK_EXECUTOR_BEAN_NAME)
     public AsyncTaskExecutor applicationTaskExecutor(TaskExecutorBuilder builder) {
         log.info("Slardar spring-bean applicationTaskExecutor via ttlExecutor");
-        final Executor executor = ttlExecutor(builder);
+        final Executor executor = buildTtlExecutor(builder, null);
         return new ConcurrentTaskExecutor(executor);
     }
 
-    private Executor ttlExecutor(TaskExecutorBuilder builder) {
-        final ThreadPoolTaskExecutor executor = builder.build();
-        executor.initialize();
-        return TtlExecutors.getTtlExecutor(executor);
+    @Bean
+//    @ConditionalOnBean(name = TaskManagementConfigUtils.SCHEDULED_ANNOTATION_PROCESSOR_BEAN_NAME)
+//    @ConditionalOnMissingBean({SchedulingConfigurer.class, TaskScheduler.class, ScheduledExecutorService.class})
+    public ThreadPoolTaskScheduler taskScheduler(TaskSchedulerBuilder builder) {
+        log.info("Slardar spring-bean taskScheduler via TtlThreadPoolTaskScheduler");
+        final TtlThreadPoolTaskScheduler scheduler = new TtlThreadPoolTaskScheduler();
+        return builder.configure(scheduler);
     }
 
     @Bean(name = SLARDAR_EVENT_EXECUTOR_BEAN_NAME)
-    public Executor slardarEventExecutor() {
-        log.info("Slardar spring-bean slardarEventExecutor");
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setThreadNamePrefix("slardar-event-");
-        executor.setKeepAliveSeconds(30);
-        executor.setMaxPoolSize(8);
-        executor.setQueueCapacity(512);
-        return executor;
+    public Executor slardarEventExecutor(TaskExecutorBuilder builder) {
+        log.info("Slardar spring-bean slardarEventExecutor via TtlThreadPoolTaskExecutor");
+        return buildTtlExecutor(builder, "win-event-");
     }
 
     @Bean
@@ -112,5 +115,15 @@ public class SlardarAsyncConfiguration {
                 }
             }
         };
+    }
+
+    //
+    private Executor buildTtlExecutor(TaskExecutorBuilder builder, String namePrefix) {
+        final ThreadPoolTaskExecutor executor = builder.build();
+        if (namePrefix != null) {
+            executor.setThreadNamePrefix(namePrefix);
+        }
+        executor.initialize();
+        return TtlExecutors.getTtlExecutor(executor);
     }
 }
