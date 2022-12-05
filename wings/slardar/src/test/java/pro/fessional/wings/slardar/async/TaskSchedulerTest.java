@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import pro.fessional.wings.slardar.context.TerminalContext;
@@ -13,6 +14,8 @@ import pro.fessional.wings.slardar.context.TerminalContext;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME;
 
 /**
  * @author trydofor
@@ -22,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @SpringBootTest(properties = {"debug = true"})
 public class TaskSchedulerTest {
 
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = {@Autowired, @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME)})
     protected ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
     @Setter(onMethod_ = {@Autowired})
@@ -57,10 +60,16 @@ public class TaskSchedulerTest {
     }
 
     private void delayUid(String caller, long userId, AtomicInteger cnt, AtomicInteger eqs) {
-        final long ud = TerminalContext.get().getUserId();
-        log.info("{} delay {}, uid={}", caller, cnt.incrementAndGet(), ud);
-        if (ud == userId) {
-            eqs.incrementAndGet();
+        final String name = Thread.currentThread().getName();
+        if (name.startsWith("win-task-")) {
+            final long ud = TerminalContext.get().getUserId();
+            log.info("{} delay {}, uid={}", caller, cnt.incrementAndGet(), ud);
+            if (ud == userId) {
+                eqs.incrementAndGet();
+            }
+        }
+        else {
+            log.error("bad thread prefix, should start with 'win-task-'");
         }
     }
 }

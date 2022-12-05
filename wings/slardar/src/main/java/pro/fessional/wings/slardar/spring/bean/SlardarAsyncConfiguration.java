@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
+import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
 import org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration;
+import org.springframework.boot.autoconfigure.task.TaskSchedulingProperties;
 import org.springframework.boot.task.TaskExecutorBuilder;
 import org.springframework.boot.task.TaskSchedulerBuilder;
 import org.springframework.context.ApplicationEventPublisher;
@@ -21,8 +23,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import pro.fessional.wings.slardar.async.TaskSchedulerHelper;
 import pro.fessional.wings.slardar.async.TtlThreadPoolTaskScheduler;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
+import pro.fessional.wings.slardar.spring.prop.SlardarAsyncProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 import java.lang.reflect.Method;
@@ -30,6 +34,9 @@ import java.util.concurrent.Executor;
 
 import static org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME;
 import static org.springframework.scheduling.annotation.AsyncAnnotationBeanPostProcessor.DEFAULT_TASK_EXECUTOR_BEAN_NAME;
+import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME;
+import static pro.fessional.wings.slardar.constants.SlardarNameConst.SlardarEventExecutorBean;
+import static pro.fessional.wings.slardar.constants.SlardarNameConst.SlardarHeavySchedulerBean;
 
 /**
  * <pre>
@@ -47,42 +54,73 @@ import static org.springframework.scheduling.annotation.AsyncAnnotationBeanPostP
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$async, havingValue = "true")
 public class SlardarAsyncConfiguration {
 
-    public static final String SLARDAR_EVENT_EXECUTOR_BEAN_NAME = "slardarEventExecutor";
     private static final Log log = LogFactory.getLog(SlardarAsyncConfiguration.class);
 
     @Bean(name = DEFAULT_TASK_EXECUTOR_BEAN_NAME)
     public Executor taskExecutor(TaskExecutorBuilder builder) {
-        log.info("Slardar spring-bean taskExecutor via ttlExecutor");
-        return buildTtlExecutor(builder, null);
+        final ThreadPoolTaskExecutor executor = builder.build();
+        executor.initialize();
+        log.info("Slardar spring-bean taskExecutor via ttlExecutor, prefix=" + executor.getThreadNamePrefix());
+        return TtlExecutors.getTtlExecutor(executor);
     }
 
     @Bean(name = APPLICATION_TASK_EXECUTOR_BEAN_NAME)
     public AsyncTaskExecutor applicationTaskExecutor(TaskExecutorBuilder builder) {
-        log.info("Slardar spring-bean applicationTaskExecutor via ttlExecutor");
-        final Executor executor = buildTtlExecutor(builder, null);
-        return new ConcurrentTaskExecutor(executor);
+        final ThreadPoolTaskExecutor executor = builder.build();
+        executor.initialize();
+        final Executor ttlExecutor = TtlExecutors.getTtlExecutor(executor);
+        log.info("Slardar spring-bean applicationTaskExecutor via ttlExecutor, prefix=" + executor.getThreadNamePrefix());
+        return new ConcurrentTaskExecutor(ttlExecutor);
     }
 
-    @Bean
-//    @ConditionalOnBean(name = TaskManagementConfigUtils.SCHEDULED_ANNOTATION_PROCESSOR_BEAN_NAME)
-//    @ConditionalOnMissingBean({SchedulingConfigurer.class, TaskScheduler.class, ScheduledExecutorService.class})
+    //    @Primary， 不可以设置@Primary，否则@Async线程池被覆盖
+    @Bean(name = DEFAULT_TASK_SCHEDULER_BEAN_NAME)
     public ThreadPoolTaskScheduler taskScheduler(TaskSchedulerBuilder builder) {
-        log.info("Slardar spring-bean taskScheduler via TtlThreadPoolTaskScheduler");
         final TtlThreadPoolTaskScheduler scheduler = new TtlThreadPoolTaskScheduler();
-        return builder.configure(scheduler);
+        final TtlThreadPoolTaskScheduler bean = builder.configure(scheduler);
+        log.info("Slardar spring-bean taskScheduler via TtlThreadPoolTaskScheduler, prefix=" + bean.getThreadNamePrefix());
+        return bean;
     }
 
-    @Bean(name = SLARDAR_EVENT_EXECUTOR_BEAN_NAME)
-    public Executor slardarEventExecutor(TaskExecutorBuilder builder) {
-        log.info("Slardar spring-bean slardarEventExecutor via TtlThreadPoolTaskExecutor");
-        return buildTtlExecutor(builder, "win-event-");
+    @Bean(name = SlardarEventExecutorBean)
+    public Executor slardarEventExecutor(SlardarAsyncProp prop) {
+        TaskExecutorBuilder builder = new TaskExecutorBuilder();
+        final TaskExecutionProperties event = prop.getEvent();
+        final TaskExecutionProperties.Pool pool = event.getPool();
+        builder = builder.queueCapacity(pool.getQueueCapacity());
+        builder = builder.corePoolSize(pool.getCoreSize());
+        builder = builder.maxPoolSize(pool.getMaxSize());
+        builder = builder.allowCoreThreadTimeOut(pool.isAllowCoreThreadTimeout());
+        builder = builder.keepAlive(pool.getKeepAlive());
+        TaskExecutionProperties.Shutdown shutdown = event.getShutdown();
+        builder = builder.awaitTermination(shutdown.isAwaitTermination());
+        builder = builder.awaitTerminationPeriod(shutdown.getAwaitTerminationPeriod());
+        builder = builder.threadNamePrefix(event.getThreadNamePrefix());
+        log.info("Slardar spring-bean slardarEventExecutor via TtlThreadPoolTaskExecutor, prefix=" + event.getThreadNamePrefix());
+        final ThreadPoolTaskExecutor executor = builder.build();
+        executor.initialize();
+        return TtlExecutors.getTtlExecutor(executor);
+    }
+
+    @Bean(name = SlardarHeavySchedulerBean)
+    public ThreadPoolTaskScheduler slardarHeavyScheduler(SlardarAsyncProp prop) {
+        final TtlThreadPoolTaskScheduler scheduler = new TtlThreadPoolTaskScheduler();
+        TaskSchedulerBuilder builder = new TaskSchedulerBuilder();
+        final TaskSchedulingProperties heavy = prop.getHeavy();
+        builder = builder.poolSize(heavy.getPool().getSize());
+        TaskSchedulingProperties.Shutdown shutdown = heavy.getShutdown();
+        builder = builder.awaitTermination(shutdown.isAwaitTermination());
+        builder = builder.awaitTerminationPeriod(shutdown.getAwaitTerminationPeriod());
+        builder = builder.threadNamePrefix(heavy.getThreadNamePrefix());
+        log.info("Slardar spring-bean slardarHeavyScheduler via TtlThreadPoolTaskExecutor, prefix=" + heavy.getThreadNamePrefix());
+        return builder.configure(scheduler);
     }
 
     @Bean
     public CommandLineRunner runnerEventPublishHelper(
             ApplicationEventPublisher publisher,
             ApplicationEventMulticaster multicaster,
-            @Qualifier(SLARDAR_EVENT_EXECUTOR_BEAN_NAME) Executor executor) {
+            @Qualifier(SlardarEventExecutorBean) Executor executor) {
         log.info("Slardar spring-runs runnerEventPublishHelper");
         return (arg) -> {
             EventPublishHelper.setExecutor(executor);
@@ -117,13 +155,17 @@ public class SlardarAsyncConfiguration {
         };
     }
 
-    //
-    private Executor buildTtlExecutor(TaskExecutorBuilder builder, String namePrefix) {
-        final ThreadPoolTaskExecutor executor = builder.build();
-        if (namePrefix != null) {
-            executor.setThreadNamePrefix(namePrefix);
-        }
-        executor.initialize();
-        return TtlExecutors.getTtlExecutor(executor);
+    @Bean
+    public CommandLineRunner runnerTaskSchedulerHelper(
+            @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME) ThreadPoolTaskScheduler light,
+            @Qualifier(SlardarHeavySchedulerBean) ThreadPoolTaskScheduler heavy) {
+        log.info("Slardar spring-runs runnerTaskSchedulerHelper");
+        return (arg) -> {
+            new TaskSchedulerHelper() {{
+                log.info("Slardar conf TaskSchedulerHelper");
+                LightTasker = light;
+                HeavyTasker = heavy;
+            }};
+        };
     }
 }
