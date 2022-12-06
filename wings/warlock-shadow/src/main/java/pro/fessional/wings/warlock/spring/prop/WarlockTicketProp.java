@@ -22,15 +22,6 @@ public class WarlockTicketProp {
     public static final String Key = "wings.warlock.ticket";
 
     /**
-     * Aes256的key
-     *
-     * @see #Key$aesKey
-     */
-    private String aesKey = "";
-    public static final String Key$aesKey = Key + ".aes-key";
-
-
-    /**
      * ticket的PubMod
      *
      * @see #Key$pubMod

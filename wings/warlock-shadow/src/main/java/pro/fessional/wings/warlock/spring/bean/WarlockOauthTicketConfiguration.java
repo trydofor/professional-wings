@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.tk.TicketHelp;
+import pro.fessional.wings.silencer.encrypt.SecretProvider;
 import pro.fessional.wings.warlock.service.auth.WarlockOauthService;
 import pro.fessional.wings.warlock.service.auth.WarlockTicketService;
 import pro.fessional.wings.warlock.service.auth.impl.SimpleTicketServiceImpl;
@@ -33,7 +34,7 @@ public class WarlockOauthTicketConfiguration {
         bean.setAuthorizeCodeMax(warlockTicketProp.getCodeMax());
         bean.setAccessTokenMax(warlockTicketProp.getTokenMax());
 
-        String key = warlockTicketProp.getAesKey();
+        String key = SecretProvider.get(SecretProvider.Ticket, false);
         if (key == null || key.isBlank()) {
             log.info("WarlockShadow spring-conf random aes-key, may fail api-call in cluster");
             key = RandCode.strong(32);

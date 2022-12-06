@@ -46,13 +46,13 @@ public class SilencerEnabledProp {
      * @see #Key$autoLog
      */
     private boolean autoLog = true;
-    public static final String Key$autoLog = Key + ".auto-log";
+    public static final String Key$autoLog = Key + ".autolog";
 
     /**
-     * 是否在自动配置mirana
+     * 是否在自动配置encrypt
      *
-     * @see #Key$mirana
+     * @see #Key$encrypt
      */
-    private boolean mirana = true;
-    public static final String Key$mirana = Key + ".mirana";
+    private boolean encrypt = true;
+    public static final String Key$encrypt = Key + ".encrypt";
 }

@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.best.DummyBlock;
 
 /**
- * 短小的通知，线程安全
+ * 短小的通知，线程安全。Conf若有个人信息，需要加密，如@AesString
  *
  * @param <C> 配置文件，一般为内容之外的属性，如方式，收发件人等
  * @author trydofor

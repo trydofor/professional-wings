@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,13 +16,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
+import pro.fessional.wings.silencer.encrypt.Aes256Provider;
+import pro.fessional.wings.silencer.encrypt.SecretProvider;
 import pro.fessional.wings.slardar.autodto.AutoI18nString;
 import pro.fessional.wings.slardar.context.TerminalContext;
-import pro.fessional.wings.slardar.jackson.AesStringDeserializer;
-import pro.fessional.wings.slardar.jackson.AesStringSerializer;
+import pro.fessional.wings.slardar.jackson.AesString;
 import pro.fessional.wings.slardar.jackson.StringMapGenerator;
 import pro.fessional.wings.slardar.jackson.StringMapHelper;
 
@@ -49,6 +49,7 @@ import java.util.TimeZone;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAddr;
 import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgent;
 
@@ -442,23 +443,41 @@ public class WingsJacksonMapperTest {
 
     @Data
     public static class Aes256String {
-        @JsonSerialize(using = AesStringSerializer.class)
-        @JsonDeserialize(using = AesStringDeserializer.class)
+        @AesString
         private String aes256;
+        @AesString(SecretProvider.Config)
+        private String aes256Config;
+        @AesString(value = "unknown", misfire = AesString.Misfire.Masks)
+        private String aes256Mask;
+        @AesString(value = "unknown", misfire = AesString.Misfire.Empty)
+        private String aes256Empty;
     }
+
 
     @Test
     public void testAes256String() throws JsonProcessingException {
         Aes256String aes = new Aes256String();
         final String txt = "1234567890";
         aes.setAes256(txt);
+        aes.setAes256Config(txt);
+        aes.setAes256Mask(txt);
+        aes.setAes256Empty(txt);
 
-        NumberAsNumber nan = new NumberAsNumber();
         String s1 = objectMapper.writeValueAsString(aes);
+        log.info(s1);
+
         Aes256String aes2 = objectMapper.readValue(s1, Aes256String.class);
 
-        log.info(s1);
-        assertEquals(aes, aes2);
+        final String as = Aes256Provider.system().encode64(txt);
+        final String ac = Aes256Provider.config().encode64(txt);
+
+        assertTrue(s1.contains(as));
+        assertTrue(s1.contains(ac));
+        assertTrue(s1.contains(AesString.ValueMask));
         assertFalse(s1.contains(txt));
+
+        aes.setAes256Mask(AesString.ValueMask);
+        aes.setAes256Empty(Null.Str);
+        assertEquals(aes, aes2);
     }
 }

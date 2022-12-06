@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 
 @SpringBootTest(properties = {"debug = true"})
-public class SilencerMiranaConfigurationTest {
+public class SilencerEncryptConfigurationTest {
 
     private Crc8Long crc8Long;
     private LeapCode leapCode;

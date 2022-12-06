@@ -10,8 +10,10 @@ import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.JsonTemplate;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.silencer.encrypt.SecretProvider;
 import pro.fessional.wings.silencer.notice.SmallNotice;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
+import pro.fessional.wings.slardar.jackson.AesString;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -175,11 +177,13 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
         /**
          * 消息签名，空表示不使用
          */
+        @AesString(SecretProvider.Config)
         private String digestSecret = "";
 
         /**
          * 警报时，使用钉钉通知的access_token，空表示不使用。
          */
+        @AesString(SecretProvider.Config)
         private String accessToken = "";
 
         /**
