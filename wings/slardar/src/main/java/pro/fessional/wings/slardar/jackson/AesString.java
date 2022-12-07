@@ -47,5 +47,5 @@ public @interface AesString {
         Masks,
     }
 
-    String ValueMask = "*****";
+    String MaskedValue = "*****";
 }

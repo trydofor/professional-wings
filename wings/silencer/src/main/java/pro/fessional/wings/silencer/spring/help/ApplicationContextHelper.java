@@ -24,6 +24,18 @@ public class ApplicationContextHelper {
         environment = Objects.requireNonNull(ctx.getEnvironment());
     }
 
+    /**
+     * 获取spring.application.name属性 或 context#getApplicationName
+     */
+    @NotNull
+    public static String getApplicationName() {
+        String app = environment.getProperty("spring.application.name");
+        if (app == null || app.isEmpty()) {
+            app = context.getApplicationName();
+        }
+        return app;
+    }
+
     @NotNull
     public static ConfigurableApplicationContext getContext() {
         return context;

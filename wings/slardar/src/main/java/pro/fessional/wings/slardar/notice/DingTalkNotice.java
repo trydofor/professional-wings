@@ -33,12 +33,42 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Slf4j
 public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
 
+    @NotNull
     private final OkHttpClient okHttpClient;
+    @NotNull
+    private final Conf defaultConfig;
+
+    @Override
+    @NotNull
+    public DingTalkNotice.Conf defaultConfig() {
+        return defaultConfig;
+    }
+
+    @Override
+    @NotNull
+    public DingTalkNotice.Conf combineConfig(Conf that) {
+        Conf conf = new Conf();
+        conf.webhookUrl = validItem(that.webhookUrl, defaultConfig.webhookUrl);
+        conf.digestSecret = validItem(that.digestSecret, defaultConfig.digestSecret);
+        conf.accessToken = validItem(that.accessToken, defaultConfig.accessToken);
+        conf.noticeKeyword = validItem(that.noticeKeyword, defaultConfig.noticeKeyword);
+        conf.noticeMobiles = that.noticeMobiles != null ? that.noticeMobiles : defaultConfig.noticeMobiles;
+        conf.msgType = validItem(that.msgType, defaultConfig.msgType);
+        return conf;
+    }
+
+    private String validItem(String conf, String that) {
+        return (conf == null || conf.isEmpty() || AesString.MaskedValue.equals(conf)) ? that : conf;
+    }
 
     @SneakyThrows
     @Override
-    public boolean send(@NotNull Conf config, String subject, String content) {
+    public boolean send(Conf config, String subject, String content) {
         if (subject == null && content == null) return false;
+
+        if (config == null) {
+            config = defaultConfig;
+        }
 
         /*
         curl 'https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxx' \

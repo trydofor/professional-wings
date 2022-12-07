@@ -15,7 +15,7 @@ import pro.fessional.wings.silencer.encrypt.Aes256Provider;
 
 import java.io.IOException;
 
-import static pro.fessional.wings.slardar.jackson.AesString.ValueMask;
+import static pro.fessional.wings.slardar.jackson.AesString.MaskedValue;
 
 /**
  * @author trydofor
@@ -26,7 +26,7 @@ public class AesStringSerializer extends JsonSerializer<String> implements Conte
     @Setter(onMethod_ = {@Autowired})
     private Aes aes;
     @NotNull
-    private String mis = ValueMask;
+    private String mis = MaskedValue;
 
     @Override
     public void serialize(String value, JsonGenerator generator, SerializerProvider serializers) throws IOException {
@@ -49,7 +49,7 @@ public class AesStringSerializer extends JsonSerializer<String> implements Conte
         ser.aes = aes256;
 
         if (mf == AesString.Misfire.Masks) {
-            ser.mis = ValueMask;
+            ser.mis = MaskedValue;
         }
         else if (mf == AesString.Misfire.Empty) {
             ser.mis = Null.Str;

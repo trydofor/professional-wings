@@ -1,10 +1,12 @@
 package pro.fessional.wings.silencer.spring.bean;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.code.Crc8Long;
 import pro.fessional.mirana.code.LeapCode;
+import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -13,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 2019-10-05
  */
 
-@SpringBootTest(properties = {"debug = true"})
+@SpringBootTest(properties = {"debug = true","spring.application.name=curse"})
 public class SilencerEncryptConfigurationTest {
 
     private Crc8Long crc8Long;
@@ -39,5 +41,11 @@ public class SilencerEncryptConfigurationTest {
         String s = leapCode.encode26(number);
         long decode1 = leapCode.decode(s);
         assertEquals(number, decode1);
+    }
+
+    @Test
+    public void testOther(){
+        final String app = ApplicationContextHelper.getApplicationName();
+        Assertions.assertEquals("curse", app);
     }
 }

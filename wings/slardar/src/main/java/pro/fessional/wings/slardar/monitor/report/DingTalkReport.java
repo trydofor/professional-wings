@@ -8,7 +8,6 @@ import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.monitor.WarnReport;
 import pro.fessional.wings.slardar.notice.DingTalkNotice;
-import pro.fessional.wings.slardar.spring.prop.SlardarMonitorProp;
 
 import java.util.List;
 import java.util.Map;
@@ -24,16 +23,15 @@ import java.util.function.Consumer;
 @Getter @Setter
 public class DingTalkReport implements WarnReport {
 
-    private final DingTalkNotice.Conf conf;
     private final DingTalkNotice dingTalkNotice;
 
-    public DingTalkReport(SlardarMonitorProp.DingTalkConf conf, DingTalkNotice notice) {
+    public DingTalkReport(DingTalkNotice notice) {
         this.dingTalkNotice = notice;
-        this.conf = conf;
     }
 
     @Override
     public Sts report(String appName, String jvmName, Map<String, List<WarnMetric.Warn>> warn) {
+        final DingTalkNotice.Conf conf = dingTalkNotice.defaultConfig();
         final String atk = conf.getAccessToken();
         if (!StringUtils.hasText(atk)) {
             log.info("accessToken is empty, skip");

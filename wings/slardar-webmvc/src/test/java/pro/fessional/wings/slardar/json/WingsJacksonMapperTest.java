@@ -473,10 +473,10 @@ public class WingsJacksonMapperTest {
 
         assertTrue(s1.contains(as));
         assertTrue(s1.contains(ac));
-        assertTrue(s1.contains(AesString.ValueMask));
+        assertTrue(s1.contains(AesString.MaskedValue));
         assertFalse(s1.contains(txt));
 
-        aes.setAes256Mask(AesString.ValueMask);
+        aes.setAes256Mask(AesString.MaskedValue);
         aes.setAes256Empty(Null.Str);
         assertEquals(aes, aes2);
     }

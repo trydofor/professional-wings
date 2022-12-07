@@ -59,14 +59,14 @@ public class SlardarMonitorConfiguration {
     @ConditionalOnMissingBean
     public DingTalkNotice dingTalkNotice(OkHttpClient okHttpClient) {
         log.info("Slardar spring-bean dingTalkNotice");
-        return new DingTalkNotice(okHttpClient);
+        return new DingTalkNotice(okHttpClient, slardarMonitorProp.getDingTalk());
     }
 
     @Bean
     @ConditionalOnMissingBean
     public DingTalkReport dingTalkReport(DingTalkNotice dingTalkNotice) {
         log.info("Slardar spring-bean dingTalkReport");
-        return new DingTalkReport(slardarMonitorProp.getDingTalk(), dingTalkNotice);
+        return new DingTalkReport(dingTalkNotice);
     }
 
     @Bean

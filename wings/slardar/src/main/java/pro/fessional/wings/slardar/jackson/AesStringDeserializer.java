@@ -16,7 +16,7 @@ import pro.fessional.wings.slardar.jackson.AesString.Misfire;
 
 import java.io.IOException;
 
-import static pro.fessional.wings.slardar.jackson.AesString.ValueMask;
+import static pro.fessional.wings.slardar.jackson.AesString.MaskedValue;
 
 /**
  * @author trydofor
@@ -27,7 +27,7 @@ public class AesStringDeserializer extends JsonDeserializer<String> implements C
     @Setter(onMethod_ = {@Autowired})
     private Aes aes;
     @NotNull
-    private String mis = ValueMask;
+    private String mis = MaskedValue;
 
     @Override
     public String deserialize(JsonParser parser, DeserializationContext context) throws IOException {
@@ -50,7 +50,7 @@ public class AesStringDeserializer extends JsonDeserializer<String> implements C
         ser.aes = aes256;
 
         if (mf == Misfire.Masks) {
-            ser.mis = ValueMask;
+            ser.mis = MaskedValue;
         }
         else if (mf == Misfire.Empty) {
             ser.mis = Null.Str;
