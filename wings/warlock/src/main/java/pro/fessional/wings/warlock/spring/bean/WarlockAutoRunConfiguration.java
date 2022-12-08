@@ -13,15 +13,14 @@ import pro.fessional.wings.faceless.enums.LanguageEnumUtil;
 import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 import pro.fessional.wings.faceless.enums.StandardTimezoneEnum;
 import pro.fessional.wings.faceless.enums.TimezoneEnumUtil;
+import pro.fessional.wings.silencer.modulate.ApiMode;
+import pro.fessional.wings.silencer.modulate.RunMode;
+import pro.fessional.wings.silencer.modulate.RuntimeMode;
 import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
 import pro.fessional.wings.warlock.service.conf.RuntimeConfService;
-import pro.fessional.wings.warlock.service.conf.mode.ApiMode;
-import pro.fessional.wings.warlock.service.conf.mode.RunMode;
-import pro.fessional.wings.warlock.service.conf.mode.RuntimeMode;
 import pro.fessional.wings.warlock.spring.prop.WarlockCheckProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockI18nProp;
-import pro.fessional.wings.warlock.spring.prop.WarlockRuntimeProp;
 
 import javax.sql.DataSource;
 
@@ -68,8 +67,8 @@ public class WarlockAutoRunConfiguration {
         };
     }
 
-    @Bean    // 静态注入，执行一次即可
-    public CommandLineRunner runnerRegisterRuntimeMode(ObjectProvider<RuntimeConfService> provider, ObjectProvider<WarlockRuntimeProp> properties) {
+    @Bean    // 数据库值覆盖工程配置
+    public CommandLineRunner runnerRegisterRuntimeMode(ObjectProvider<RuntimeConfService> provider) {
         log.info("Warlock spring-runs runnerRegisterRuntimeMode");
         return (arg) -> {
             final RuntimeConfService confService = provider.getIfAvailable();
@@ -78,26 +77,17 @@ public class WarlockAutoRunConfiguration {
                 return;
             }
 
-            final WarlockRuntimeProp prop = properties.getIfAvailable();
+            final RunMode dbRunMode = confService.getEnum(RunMode.class);
+            final ApiMode dbApiMode = confService.getEnum(ApiMode.class);
 
-            RuntimeMode.setRunMode(() -> {
-                RunMode runMode = confService.getEnum(RunMode.class);
-                if (runMode == null && prop != null) {
-                    runMode = prop.getRunMode();
+            new RuntimeMode() {{
+                if (dbRunMode != null) {
+                    runMode = dbRunMode;
                 }
-                log.info("Warlock conf registerRuntimeMode RunMode=" + runMode);
-                return runMode == null ? RunMode.Local : runMode;
-            });
-
-            RuntimeMode.setApiMode(() -> {
-                ApiMode apiMode = confService.getEnum(ApiMode.class);
-                if (apiMode == null && prop != null) {
-                    apiMode = prop.getApiMode();
+                if (dbApiMode != null) {
+                    apiMode = dbApiMode;
                 }
-
-                log.info("Warlock conf registerRuntimeMode apiMode=" + apiMode);
-                return apiMode == null ? ApiMode.Nothing : apiMode;
-            });
+            }};
         };
     }
 

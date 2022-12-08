@@ -34,7 +34,7 @@ public class SilencerTweakConfiguration {
     private static final Log log = LogFactory.getLog(SilencerTweakConfiguration.class);
 
     @Autowired
-    public void initCodeExceptionTweak(SilencerTweakProp prop) throws ThreadLocalAttention {
+    public void autowireCodeExceptionTweak(SilencerTweakProp prop) throws ThreadLocalAttention {
         final boolean stack = prop.isCodeStack();
         log.info("SilencerCurse spring-auto initCodeExceptionTweak with TransmittableThreadLocal, stack=" + stack);
         CodeException.TweakStack.initThread(new TransmittableThreadLocal<>(), false);
@@ -42,7 +42,7 @@ public class SilencerTweakConfiguration {
     }
 
     @Autowired
-    public void initThreadClockTweak(SilencerTweakProp prop) throws ThreadLocalAttention {
+    public void autowireThreadClockTweak(SilencerTweakProp prop) throws ThreadLocalAttention {
         final long ms = prop.getClockOffset();
         log.info("SilencerCurse spring-auto initThreadClockTweak with TransmittableThreadLocal, offset=" + ms);
         ThreadNow.TweakClock.initThread(new TransmittableThreadLocal<>(), false);

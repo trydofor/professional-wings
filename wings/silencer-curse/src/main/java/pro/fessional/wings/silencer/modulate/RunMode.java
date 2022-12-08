@@ -1,4 +1,4 @@
-package pro.fessional.wings.warlock.service.conf.mode;
+package pro.fessional.wings.silencer.modulate;
 
 /**
  * @author trydofor

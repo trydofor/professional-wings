@@ -19,7 +19,7 @@ public class HazelcastPublisherConfiguration {
     private static final Log log = LogFactory.getLog(HazelcastPublisherConfiguration.class);
 
     @Autowired
-    public void initHazelcastSyncPublisher(HazelcastInstance instance, ApplicationEventPublisher publisher) {
+    public void autowireHazelcastSyncPublisher(HazelcastInstance instance, ApplicationEventPublisher publisher) {
         HazelcastSyncPublisher global = new HazelcastSyncPublisher(instance, publisher);
         EventPublishHelper.setGlobalPublisher(global);
         log.info("SlardarHazelCaching spring-auto initHazelcastSyncPublisher, uuid=" + global.getMessageListenerUuid());

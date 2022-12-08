@@ -50,7 +50,7 @@ public class WarlockWatchingTest {
         final boolean del = Watches.release(false, "testWatching");
         Assertions.assertEquals(1, watch.owner.getWatches().size());
         Assertions.assertTrue(del);
-
+        // async in async task pool
         Assertions.assertTrue(2 <= WatchingService.AsyncWatch.size());
         Assertions.assertTrue(WatchingService.WatchOwner.getWatches().isEmpty());
     }

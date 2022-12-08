@@ -1,9 +1,9 @@
-package pro.fessional.wings.warlock.spring.prop;
+package pro.fessional.wings.silencer.spring.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import pro.fessional.wings.warlock.service.conf.mode.ApiMode;
-import pro.fessional.wings.warlock.service.conf.mode.RunMode;
+import pro.fessional.wings.silencer.modulate.ApiMode;
+import pro.fessional.wings.silencer.modulate.RunMode;
 
 /**
  * wings-warlock-runtime-77.properties
@@ -13,10 +13,10 @@ import pro.fessional.wings.warlock.service.conf.mode.RunMode;
  * @since 2021-10-09
  */
 @Data
-@ConfigurationProperties(WarlockRuntimeProp.Key)
-public class WarlockRuntimeProp {
+@ConfigurationProperties(SilencerRuntimeProp.Key)
+public class SilencerRuntimeProp {
 
-    public static final String Key = "wings.warlock.runtime";
+    public static final String Key = "wings.silencer.runtime";
 
     /**
      * @see #Key$runMode

@@ -121,7 +121,7 @@ public class FacelessJooqConfiguration {
     }
 
     @Autowired
-    public void initJournalDiffHelper(@NotNull FacelessJooqCudProp prop) {
+    public void autowireJournalDiffHelper(@NotNull FacelessJooqCudProp prop) {
         log.info("FacelessJooq spring-auto initJournalDiffHelper");
         JournalDiffHelper.putDefaultIgnore(prop.getDiff());
     }
