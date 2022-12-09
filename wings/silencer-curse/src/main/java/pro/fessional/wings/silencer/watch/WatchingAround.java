@@ -36,16 +36,13 @@ public class WatchingAround {
             name = sn.getDeclaringType().getSimpleName() + "#" + sn.getName();
         }
 
-        final Watch watch = Watches.acquire().start(name);
-        final Object result;
+        final Watch watch = Watches.acquire(name);
         try {
-            result = joinPoint.proceed();
+            return joinPoint.proceed();
         }
         finally {
             watch.close();
             Watches.release(true, watch.getElapseMs() < thresholdMillis ? null : "WatchingAround");
         }
-
-        return result;
     }
 }

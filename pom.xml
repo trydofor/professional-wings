@@ -41,7 +41,7 @@
         <jooq.version>3.14.16</jooq.version>
         <h2.version>2.1.214</h2.version>
         <okhttp3.version>4.9.3</okhttp3.version> <!-- just auth need 4, spring use 3 https://square.github.io/okhttp/changelog/ FIXME in boot2.7-->
-        <jackson-jsr310.version>2.14.0-rc1</jackson-jsr310.version> <!-- https://github.com/FasterXML/jackson-modules-java8/issues/230 FIXME in 2.14 -->
+        <jackson-jsr310.version>2.14.1</jackson-jsr310.version> <!-- https://github.com/FasterXML/jackson-modules-java8/issues/230 FIXME in 2.14 -->
         <snakeyaml.version>1.33</snakeyaml.version> <!-- https://github.com/apache/shardingsphere/issues/21476 FIXME -->
         <!-- mvn boot -->
         <maven.test.skip>false</maven.test.skip>

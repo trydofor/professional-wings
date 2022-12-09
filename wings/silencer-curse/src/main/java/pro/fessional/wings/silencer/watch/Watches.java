@@ -33,12 +33,26 @@ public class Watches {
         return watch;
     }
 
+    @NotNull
+    public static StopWatch.Watch acquire(String name) {
+        return acquire().start(name);
+    }
+
     /**
      * 获取当前线程的StopWatch，建议通过Watch.owner获取
      */
     @Nullable
     public static StopWatch current() {
         return StopWatches.get();
+    }
+
+    /**
+     * 获取当前线程的StopWatch，建议通过Watch.owner获取
+     */
+    @Nullable
+    public static StopWatch.Watch current(String name) {
+        final StopWatch watch = StopWatches.get();
+        return watch == null ? null : watch.start(name);
     }
 
     /**

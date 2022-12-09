@@ -45,7 +45,7 @@ public class SlowSqlListener extends DefaultExecuteListener {
             name = name + query.getClass().getSimpleName();
         }
 
-        final Watch watch = Watches.acquire().start(name);
+        final Watch watch = Watches.acquire(name);
         ctx.data(ContextKey.EXECUTING_STOP_WATCH, watch);
     }
 

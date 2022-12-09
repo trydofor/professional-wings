@@ -41,7 +41,7 @@ public class SlowResponseInterceptor implements AutoRegisterInterceptor {
                              @NotNull Object handler) {
         if (thresholdMillis < 0) return true;
 
-        final Watch watch = Watches.acquire().start(request.getRequestURI());
+        final Watch watch = Watches.acquire(request.getRequestURI());
         request.setAttribute(SlardarServletConst.AttrStopWatch, watch);
 
         return true;
