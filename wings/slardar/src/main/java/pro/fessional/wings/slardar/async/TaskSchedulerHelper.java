@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.async;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import pro.fessional.mirana.time.ThreadNow;
 
@@ -40,13 +41,20 @@ public class TaskSchedulerHelper {
     }
 
     /**
+     * 获取Light或Heavy
+     */
+    @NotNull
+    public static ThreadPoolTaskScheduler referScheduler(boolean fast) {
+        return fast ? Light() : Heavy();
+    }
+
+    /**
      * 异步立即执行一个任务，fast表示此任务很快会结束，如10s
      *
      * @see ThreadPoolTaskScheduler#execute(Runnable)
      */
     public static void execute(boolean fast, @NotNull Runnable task) {
-        ThreadPoolTaskScheduler scheduler = fast ? Light() : Heavy();
-        scheduler.execute(task);
+        referScheduler(fast).execute(task);
     }
 
     /**
@@ -55,7 +63,7 @@ public class TaskSchedulerHelper {
      * @see ThreadPoolTaskScheduler#schedule(Runnable, Date)
      */
     public static ScheduledFuture<?> execute(boolean fast, long delayMs, @NotNull Runnable task) {
-        return execute(fast, new Date(ThreadNow.millis() + delayMs), task);
+        return referScheduler(fast).schedule(task, new Date(ThreadNow.millis() + delayMs));
     }
 
     /**
@@ -64,7 +72,16 @@ public class TaskSchedulerHelper {
      * @see ThreadPoolTaskScheduler#schedule(Runnable, Date)
      */
     public static ScheduledFuture<?> execute(boolean fast, Date start, @NotNull Runnable task) {
-        ThreadPoolTaskScheduler scheduler = fast ? Light() : Heavy();
-        return scheduler.schedule(task, start);
+        return referScheduler(fast).schedule(task, start);
+    }
+
+    /**
+     * 指定trigger，异步执行一个任务，fast表示此任务很快会结束，如10s，
+     * errorHandler不同于其他方法，不识别DelegatingErrorHandlingRunnable
+     *
+     * @see ThreadPoolTaskScheduler#schedule(Runnable, Trigger)
+     */
+    public static ScheduledFuture<?> execute(boolean fast, Trigger trigger, @NotNull Runnable task) {
+        return referScheduler(fast).schedule(task, trigger);
     }
 }
