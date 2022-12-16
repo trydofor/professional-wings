@@ -20,6 +20,10 @@
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-jooq</artifactId>
         </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>slardar</artifactId>
+        </dependency>
         <!-- 代码生成与版本检查 -->
         <dependency>
             <groupId>pro.fessional.wings</groupId>

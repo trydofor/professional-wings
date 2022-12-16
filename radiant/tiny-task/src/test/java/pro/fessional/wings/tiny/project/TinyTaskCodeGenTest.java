@@ -20,8 +20,10 @@ import pro.fessional.wings.faceless.project.ProjectSchemaManager;
         "spring.datasource.password=" + TinyTaskCodeGenTest.PASS,
         "spring.wings.faceless.flywave.enabled.module=true",
         "spring.wings.faceless.flywave.enabled.checker=false",
+        "wings.tiny.task.enabled.autoreg=false",
         "debug = true"
 })
+@Disabled("手动执行")
 public class TinyTaskCodeGenTest {
 
     public static final String JDBC = "jdbc:mysql://localhost:3306/wings_radiant?connectionTimeZone=%2B08:00&forceConnectionTimeZoneToSession=true";
@@ -32,15 +34,13 @@ public class TinyTaskCodeGenTest {
     @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;
 
-    @Test
-    @Disabled
-    void initAll() {
-        initMaster();
-        genJooq();
-    }
+//    @Test
+//    void initAll() {
+//        initMaster();
+//        genJooq();
+//    }
 
     @Test
-    @Disabled
     void initMaster() {
         final ProjectSchemaManager manager = new ProjectSchemaManager(schemaRevisionManager);
         manager.mergeForceApply(true,
@@ -49,13 +49,12 @@ public class TinyTaskCodeGenTest {
     }
 
     @Test
-    @Disabled
     public void genJooq() {
         ProjectJooqGenerator generator = new ProjectJooqGenerator();
         generator.setTargetDir(BASE + "tiny-task/src/main/java/");
         generator.setTargetPkg("pro.fessional.wings.tiny.task.database.autogen");
         generator.gen(JDBC, USER, PASS,
-                bd -> bd.databaseIncludes("win_task_delayed"),
+                bd -> bd.databaseIncludes("win_task_define", "win_task_result"),
                 bd -> bd.setGlobalSuffix("TinyTask"));
     }
 
