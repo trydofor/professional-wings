@@ -46,12 +46,14 @@ public class WinTaskDefine implements IWinTaskDefine {
     private LocalDateTime deleteDt;
     private Long          commitId;
     private Boolean       enabled;
+    private Boolean       autorun;
+    private Integer       version;
     private String        taskerBean;
     private String        taskerPara;
+    private String        taskerName;
     private Boolean       taskerFast;
     private String        taskerApps;
     private String        taskerRuns;
-    private String        taskerName;
     private String        noticeBean;
     private String        noticeWhen;
     private String        noticeConf;
@@ -87,12 +89,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.deleteDt = value.getDeleteDt();
         this.commitId = value.getCommitId();
         this.enabled = value.getEnabled();
+        this.autorun = value.getAutorun();
+        this.version = value.getVersion();
         this.taskerBean = value.getTaskerBean();
         this.taskerPara = value.getTaskerPara();
+        this.taskerName = value.getTaskerName();
         this.taskerFast = value.getTaskerFast();
         this.taskerApps = value.getTaskerApps();
         this.taskerRuns = value.getTaskerRuns();
-        this.taskerName = value.getTaskerName();
         this.noticeBean = value.getNoticeBean();
         this.noticeWhen = value.getNoticeWhen();
         this.noticeConf = value.getNoticeConf();
@@ -127,12 +131,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         LocalDateTime deleteDt,
         Long          commitId,
         Boolean       enabled,
+        Boolean       autorun,
+        Integer       version,
         String        taskerBean,
         String        taskerPara,
+        String        taskerName,
         Boolean       taskerFast,
         String        taskerApps,
         String        taskerRuns,
-        String        taskerName,
         String        noticeBean,
         String        noticeWhen,
         String        noticeConf,
@@ -165,12 +171,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.deleteDt = deleteDt;
         this.commitId = commitId;
         this.enabled = enabled;
+        this.autorun = autorun;
+        this.version = version;
         this.taskerBean = taskerBean;
         this.taskerPara = taskerPara;
+        this.taskerName = taskerName;
         this.taskerFast = taskerFast;
         this.taskerApps = taskerApps;
         this.taskerRuns = taskerRuns;
-        this.taskerName = taskerName;
         this.noticeBean = noticeBean;
         this.noticeWhen = noticeWhen;
         this.noticeConf = noticeConf;
@@ -304,6 +312,40 @@ public class WinTaskDefine implements IWinTaskDefine {
     }
 
     /**
+     * Getter for <code>win_task_define.autorun</code>.
+     */
+    @Column(name = "autorun", nullable = false)
+    @Override
+    public Boolean getAutorun() {
+        return this.autorun;
+    }
+
+    /**
+     * Setter for <code>win_task_define.autorun</code>.
+     */
+    @Override
+    public void setAutorun(Boolean autorun) {
+        this.autorun = autorun;
+    }
+
+    /**
+     * Getter for <code>win_task_define.version</code>.
+     */
+    @Column(name = "version", nullable = false, precision = 10)
+    @Override
+    public Integer getVersion() {
+        return this.version;
+    }
+
+    /**
+     * Setter for <code>win_task_define.version</code>.
+     */
+    @Override
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    /**
      * Getter for <code>win_task_define.tasker_bean</code>.
      */
     @Column(name = "tasker_bean", nullable = false, length = 300)
@@ -337,6 +379,24 @@ public class WinTaskDefine implements IWinTaskDefine {
     @Override
     public void setTaskerPara(String taskerPara) {
         this.taskerPara = taskerPara;
+    }
+
+    /**
+     * Getter for <code>win_task_define.tasker_name</code>.
+     */
+    @Column(name = "tasker_name", nullable = false, length = 200)
+    @Size(max = 200)
+    @Override
+    public String getTaskerName() {
+        return this.taskerName;
+    }
+
+    /**
+     * Setter for <code>win_task_define.tasker_name</code>.
+     */
+    @Override
+    public void setTaskerName(String taskerName) {
+        this.taskerName = taskerName;
     }
 
     /**
@@ -390,24 +450,6 @@ public class WinTaskDefine implements IWinTaskDefine {
     @Override
     public void setTaskerRuns(String taskerRuns) {
         this.taskerRuns = taskerRuns;
-    }
-
-    /**
-     * Getter for <code>win_task_define.tasker_name</code>.
-     */
-    @Column(name = "tasker_name", nullable = false, length = 200)
-    @Size(max = 200)
-    @Override
-    public String getTaskerName() {
-        return this.taskerName;
-    }
-
-    /**
-     * Setter for <code>win_task_define.tasker_name</code>.
-     */
-    @Override
-    public void setTaskerName(String taskerName) {
-        this.taskerName = taskerName;
     }
 
     /**
@@ -888,6 +930,18 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
         else if (!enabled.equals(other.enabled))
             return false;
+        if (autorun == null) {
+            if (other.autorun != null)
+                return false;
+        }
+        else if (!autorun.equals(other.autorun))
+            return false;
+        if (version == null) {
+            if (other.version != null)
+                return false;
+        }
+        else if (!version.equals(other.version))
+            return false;
         if (taskerBean == null) {
             if (other.taskerBean != null)
                 return false;
@@ -899,6 +953,12 @@ public class WinTaskDefine implements IWinTaskDefine {
                 return false;
         }
         else if (!taskerPara.equals(other.taskerPara))
+            return false;
+        if (taskerName == null) {
+            if (other.taskerName != null)
+                return false;
+        }
+        else if (!taskerName.equals(other.taskerName))
             return false;
         if (taskerFast == null) {
             if (other.taskerFast != null)
@@ -917,12 +977,6 @@ public class WinTaskDefine implements IWinTaskDefine {
                 return false;
         }
         else if (!taskerRuns.equals(other.taskerRuns))
-            return false;
-        if (taskerName == null) {
-            if (other.taskerName != null)
-                return false;
-        }
-        else if (!taskerName.equals(other.taskerName))
             return false;
         if (noticeBean == null) {
             if (other.noticeBean != null)
@@ -1087,12 +1141,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         result = prime * result + ((this.deleteDt == null) ? 0 : this.deleteDt.hashCode());
         result = prime * result + ((this.commitId == null) ? 0 : this.commitId.hashCode());
         result = prime * result + ((this.enabled == null) ? 0 : this.enabled.hashCode());
+        result = prime * result + ((this.autorun == null) ? 0 : this.autorun.hashCode());
+        result = prime * result + ((this.version == null) ? 0 : this.version.hashCode());
         result = prime * result + ((this.taskerBean == null) ? 0 : this.taskerBean.hashCode());
         result = prime * result + ((this.taskerPara == null) ? 0 : this.taskerPara.hashCode());
+        result = prime * result + ((this.taskerName == null) ? 0 : this.taskerName.hashCode());
         result = prime * result + ((this.taskerFast == null) ? 0 : this.taskerFast.hashCode());
         result = prime * result + ((this.taskerApps == null) ? 0 : this.taskerApps.hashCode());
         result = prime * result + ((this.taskerRuns == null) ? 0 : this.taskerRuns.hashCode());
-        result = prime * result + ((this.taskerName == null) ? 0 : this.taskerName.hashCode());
         result = prime * result + ((this.noticeBean == null) ? 0 : this.noticeBean.hashCode());
         result = prime * result + ((this.noticeWhen == null) ? 0 : this.noticeWhen.hashCode());
         result = prime * result + ((this.noticeConf == null) ? 0 : this.noticeConf.hashCode());
@@ -1131,12 +1187,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         sb.append(", ").append(deleteDt);
         sb.append(", ").append(commitId);
         sb.append(", ").append(enabled);
+        sb.append(", ").append(autorun);
+        sb.append(", ").append(version);
         sb.append(", ").append(taskerBean);
         sb.append(", ").append(taskerPara);
+        sb.append(", ").append(taskerName);
         sb.append(", ").append(taskerFast);
         sb.append(", ").append(taskerApps);
         sb.append(", ").append(taskerRuns);
-        sb.append(", ").append(taskerName);
         sb.append(", ").append(noticeBean);
         sb.append(", ").append(noticeWhen);
         sb.append(", ").append(noticeConf);
@@ -1179,12 +1237,14 @@ public class WinTaskDefine implements IWinTaskDefine {
         setDeleteDt(from.getDeleteDt());
         setCommitId(from.getCommitId());
         setEnabled(from.getEnabled());
+        setAutorun(from.getAutorun());
+        setVersion(from.getVersion());
         setTaskerBean(from.getTaskerBean());
         setTaskerPara(from.getTaskerPara());
+        setTaskerName(from.getTaskerName());
         setTaskerFast(from.getTaskerFast());
         setTaskerApps(from.getTaskerApps());
         setTaskerRuns(from.getTaskerRuns());
-        setTaskerName(from.getTaskerName());
         setNoticeBean(from.getNoticeBean());
         setNoticeWhen(from.getNoticeWhen());
         setNoticeConf(from.getNoticeConf());

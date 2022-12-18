@@ -109,6 +109,28 @@ public interface IWinTaskDefine extends JournalAware, Serializable {
     public Boolean getEnabled();
 
     /**
+     * Setter for <code>win_task_define.autorun</code>.
+     */
+    public void setAutorun(Boolean value);
+
+    /**
+     * Getter for <code>win_task_define.autorun</code>.
+     */
+    @Column(name = "autorun", nullable = false)
+    public Boolean getAutorun();
+
+    /**
+     * Setter for <code>win_task_define.version</code>.
+     */
+    public void setVersion(Integer value);
+
+    /**
+     * Getter for <code>win_task_define.version</code>.
+     */
+    @Column(name = "version", nullable = false, precision = 10)
+    public Integer getVersion();
+
+    /**
      * Setter for <code>win_task_define.tasker_bean</code>.
      */
     public void setTaskerBean(String value);
@@ -131,6 +153,18 @@ public interface IWinTaskDefine extends JournalAware, Serializable {
     @Column(name = "tasker_para", length = 65535)
     @Size(max = 65535)
     public String getTaskerPara();
+
+    /**
+     * Setter for <code>win_task_define.tasker_name</code>.
+     */
+    public void setTaskerName(String value);
+
+    /**
+     * Getter for <code>win_task_define.tasker_name</code>.
+     */
+    @Column(name = "tasker_name", nullable = false, length = 200)
+    @Size(max = 200)
+    public String getTaskerName();
 
     /**
      * Setter for <code>win_task_define.tasker_fast</code>.
@@ -166,18 +200,6 @@ public interface IWinTaskDefine extends JournalAware, Serializable {
     @Column(name = "tasker_runs", nullable = false, length = 100)
     @Size(max = 100)
     public String getTaskerRuns();
-
-    /**
-     * Setter for <code>win_task_define.tasker_name</code>.
-     */
-    public void setTaskerName(String value);
-
-    /**
-     * Getter for <code>win_task_define.tasker_name</code>.
-     */
-    @Column(name = "tasker_name", nullable = false, length = 200)
-    @Size(max = 200)
-    public String getTaskerName();
 
     /**
      * Setter for <code>win_task_define.notice_bean</code>.

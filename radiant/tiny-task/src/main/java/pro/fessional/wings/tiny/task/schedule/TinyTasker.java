@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 public @interface TinyTasker {
 
     /**
-     * 配置的属性名，默认为Class#method，
+     * 配置的属性名(tasker_prop)，默认为Class#method，
      * 其属性类型为Map[String,TaskerConf]，位于前缀默认为wings.tiny.task.define下
      * 如 wings.tiny.task.define[pro.fessional.wings.tiny.task.schedule.TaskerTest#test].enable=false
      */

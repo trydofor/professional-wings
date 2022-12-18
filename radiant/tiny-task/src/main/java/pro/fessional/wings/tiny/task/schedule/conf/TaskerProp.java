@@ -1,7 +1,9 @@
 package pro.fessional.wings.tiny.task.schedule.conf;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * TinyTask的配置项，一个taskerBean只能存在一条
@@ -11,15 +13,21 @@ import lombok.Data;
  */
 @Data
 @Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class TaskerProp {
     /**
-     * 是否可以被自动注册和执行，null时使用Default配置
+     * 是否可以注册及执行，不会使用Default配置
      */
-    private Boolean enabled = null;
-
-    public boolean notEnabled() {
-        return enabled == null;
-    }
+    private boolean enabled = true;
+    /**
+     * 是否可以自动注册并启动，不会使用Default配置
+     */
+    private boolean autorun = true;
+    /**
+     * 版本号，版本高的配置覆盖版本低的，不会使用Default配置
+     */
+    private long version = 0;
 
     /**
      * 由TinyTasker注解的Bean，格式为Class#method，默认自动识别，不会使用Default配置
@@ -32,13 +40,14 @@ public class TaskerProp {
     private String taskerPara = null;
 
     /**
-     * 是否为轻任务，执行快，秒级完成，null时使用Default配置
+     * 任务名字，用于通知和日志，可读性好一些，默认为'[全类名#方法名]'，不会使用Default配置
      */
-    private Boolean taskerFast = null;
+    private String taskerName = null;
 
-    public boolean notTaskerFast() {
-        return taskerFast == null;
-    }
+    /**
+     * 是否为轻任务，执行快，秒级完成，不会使用Default配置
+     */
+    private boolean taskerFast = true;
 
     /**
      * 所属程序，逗号分隔，推荐一个，使用spring.application.name，null及空时使用Default配置
@@ -59,11 +68,6 @@ public class TaskerProp {
     public boolean notTaskerRuns() {
         return taskerRuns == null || taskerRuns.isEmpty();
     }
-
-    /**
-     * 任务名字，用于通知和日志，可读性好一些，默认为'[全类名#方法名]'，不会使用Default配置
-     */
-    private String taskerName = null;
 
     /**
      * 通知Bean，SmallNotice类型，格式为Class，默认无通知。null及空时使用Default配置

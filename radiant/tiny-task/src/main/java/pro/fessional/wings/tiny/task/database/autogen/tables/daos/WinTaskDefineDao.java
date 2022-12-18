@@ -144,6 +144,34 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
     }
 
     /**
+     * Fetch records that have <code>autorun BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinTaskDefine> fetchRangeOfAutorun(Boolean lowerInclusive, Boolean upperInclusive) {
+        return fetchRange(WinTaskDefineTable.WinTaskDefine.Autorun, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>autorun IN (values)</code>
+     */
+    public List<WinTaskDefine> fetchByAutorun(Boolean... values) {
+        return fetch(WinTaskDefineTable.WinTaskDefine.Autorun, values);
+    }
+
+    /**
+     * Fetch records that have <code>version BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinTaskDefine> fetchRangeOfVersion(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRange(WinTaskDefineTable.WinTaskDefine.Version, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>version IN (values)</code>
+     */
+    public List<WinTaskDefine> fetchByVersion(Integer... values) {
+        return fetch(WinTaskDefineTable.WinTaskDefine.Version, values);
+    }
+
+    /**
      * Fetch records that have <code>tasker_bean BETWEEN lowerInclusive AND upperInclusive</code>
      */
     public List<WinTaskDefine> fetchRangeOfTaskerBean(String lowerInclusive, String upperInclusive) {
@@ -169,6 +197,20 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
      */
     public List<WinTaskDefine> fetchByTaskerPara(String... values) {
         return fetch(WinTaskDefineTable.WinTaskDefine.TaskerPara, values);
+    }
+
+    /**
+     * Fetch records that have <code>tasker_name BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinTaskDefine> fetchRangeOfTaskerName(String lowerInclusive, String upperInclusive) {
+        return fetchRange(WinTaskDefineTable.WinTaskDefine.TaskerName, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>tasker_name IN (values)</code>
+     */
+    public List<WinTaskDefine> fetchByTaskerName(String... values) {
+        return fetch(WinTaskDefineTable.WinTaskDefine.TaskerName, values);
     }
 
     /**
@@ -211,20 +253,6 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
      */
     public List<WinTaskDefine> fetchByTaskerRuns(String... values) {
         return fetch(WinTaskDefineTable.WinTaskDefine.TaskerRuns, values);
-    }
-
-    /**
-     * Fetch records that have <code>tasker_name BETWEEN lowerInclusive AND upperInclusive</code>
-     */
-    public List<WinTaskDefine> fetchRangeOfTaskerName(String lowerInclusive, String upperInclusive) {
-        return fetchRange(WinTaskDefineTable.WinTaskDefine.TaskerName, lowerInclusive, upperInclusive);
-    }
-
-    /**
-     * Fetch records that have <code>tasker_name IN (values)</code>
-     */
-    public List<WinTaskDefine> fetchByTaskerName(String... values) {
-        return fetch(WinTaskDefineTable.WinTaskDefine.TaskerName, values);
     }
 
     /**
@@ -670,6 +698,34 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
     }
 
     /**
+     * Fetch records that have <code>autorun BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinTaskDefine> fetchRangeOfAutorunLive(Boolean lowerInclusive, Boolean upperInclusive) {
+        return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.Autorun, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>autorun IN (values)</code>
+     */
+    public List<WinTaskDefine> fetchByAutorunLive(Boolean... values) {
+        return fetchLive(WinTaskDefineTable.WinTaskDefine.Autorun, values);
+    }
+
+    /**
+     * Fetch records that have <code>version BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinTaskDefine> fetchRangeOfVersionLive(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.Version, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>version IN (values)</code>
+     */
+    public List<WinTaskDefine> fetchByVersionLive(Integer... values) {
+        return fetchLive(WinTaskDefineTable.WinTaskDefine.Version, values);
+    }
+
+    /**
      * Fetch records that have <code>tasker_bean BETWEEN lowerInclusive AND upperInclusive</code>
      */
     public List<WinTaskDefine> fetchRangeOfTaskerBeanLive(String lowerInclusive, String upperInclusive) {
@@ -695,6 +751,20 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
      */
     public List<WinTaskDefine> fetchByTaskerParaLive(String... values) {
         return fetchLive(WinTaskDefineTable.WinTaskDefine.TaskerPara, values);
+    }
+
+    /**
+     * Fetch records that have <code>tasker_name BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinTaskDefine> fetchRangeOfTaskerNameLive(String lowerInclusive, String upperInclusive) {
+        return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.TaskerName, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>tasker_name IN (values)</code>
+     */
+    public List<WinTaskDefine> fetchByTaskerNameLive(String... values) {
+        return fetchLive(WinTaskDefineTable.WinTaskDefine.TaskerName, values);
     }
 
     /**
@@ -737,20 +807,6 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
      */
     public List<WinTaskDefine> fetchByTaskerRunsLive(String... values) {
         return fetchLive(WinTaskDefineTable.WinTaskDefine.TaskerRuns, values);
-    }
-
-    /**
-     * Fetch records that have <code>tasker_name BETWEEN lowerInclusive AND upperInclusive</code>
-     */
-    public List<WinTaskDefine> fetchRangeOfTaskerNameLive(String lowerInclusive, String upperInclusive) {
-        return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.TaskerName, lowerInclusive, upperInclusive);
-    }
-
-    /**
-     * Fetch records that have <code>tasker_name IN (values)</code>
-     */
-    public List<WinTaskDefine> fetchByTaskerNameLive(String... values) {
-        return fetchLive(WinTaskDefineTable.WinTaskDefine.TaskerName, values);
     }
 
     /**
