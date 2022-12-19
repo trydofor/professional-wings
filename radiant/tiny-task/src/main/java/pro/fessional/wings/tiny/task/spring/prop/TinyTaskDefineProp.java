@@ -24,6 +24,9 @@ public class TinyTaskDefineProp extends LinkedHashMap<String, TaskerProp> {
     public static final String Key$default = Key + ".default";
 
     public TaskerProp getDefault() {
+        if (Default == null) {
+            Default = get("default");
+        }
         return Default;
     }
 

@@ -7,6 +7,7 @@ CREATE TABLE `win_task_define` (
     `enabled`     TINYINT(1)   NOT NULL DEFAULT '1' COMMENT '是否可以被注册和执行',
     `autorun`     TINYINT(1)   NOT NULL DEFAULT '1' COMMENT '是否自动注册并启动',
     `version`     INT(11)      NOT NULL DEFAULT '0' COMMENT '版本号，版本高的配置覆盖版本低的',
+    `propkey`     VARCHAR(200) NOT NULL DEFAULT '' COMMENT '配置文件的key，自动生成',
     `tasker_bean` VARCHAR(300) NOT NULL DEFAULT '' COMMENT '由TinyTasker注解的Bean，格式为Class#method',
     `tasker_para` TEXT         NULL     DEFAULT NULL COMMENT '任务的参数，对象数组的json格式，默认null无参数',
     `tasker_name` VARCHAR(200) NOT NULL DEFAULT '' COMMENT '任务名字，用于通知和日志，可读性好一些，默认为短Class#method',

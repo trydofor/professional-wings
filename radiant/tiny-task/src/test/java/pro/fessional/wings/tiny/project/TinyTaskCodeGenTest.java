@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.project.ProjectJooqGenerator;
 import pro.fessional.wings.faceless.project.ProjectSchemaManager;
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 
 /**
@@ -43,9 +44,13 @@ public class TinyTaskCodeGenTest {
     @Test
     void initMaster() {
         final ProjectSchemaManager manager = new ProjectSchemaManager(schemaRevisionManager);
-        manager.mergeForceApply(true,
-                hp -> hp.master().exclude(2020_1023_01)
-        );
+        final FlywaveRevisionScanner.Helper helper = FlywaveRevisionScanner.helper();
+        helper.master().exclude(2020_1023_01);
+        manager.downThenMergePublish(helper.scan(), 0, 2020_1026_01L);
+
+//        manager.mergeForceApply(true,
+//                hp -> hp.master().exclude(2020_1023_01)
+//        );
     }
 
     @Test

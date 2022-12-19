@@ -24,6 +24,8 @@ class TinyTaskServiceTest {
 
     @Test
     void schedule() {
+//        TableCudListener.WarnVisit =true;
+
         TestServiceManual bean = new TestServiceManual();
         tinyTaskService.schedule(Lam.ref(bean::strStr), null);
         System.out.println(tinyTaskDefineProp.getDefault());

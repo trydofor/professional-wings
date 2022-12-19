@@ -183,11 +183,29 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     }
 
     /**
+     * Setter for <code>win_task_define.propkey</code>.
+     */
+    @Override
+    public void setPropkey(String value) {
+        set(8, value);
+    }
+
+    /**
+     * Getter for <code>win_task_define.propkey</code>.
+     */
+    @Column(name = "propkey", nullable = false, length = 200)
+    @Size(max = 200)
+    @Override
+    public String getPropkey() {
+        return (String) get(8);
+    }
+
+    /**
      * Setter for <code>win_task_define.tasker_bean</code>.
      */
     @Override
     public void setTaskerBean(String value) {
-        set(8, value);
+        set(9, value);
     }
 
     /**
@@ -197,7 +215,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Size(max = 300)
     @Override
     public String getTaskerBean() {
-        return (String) get(8);
+        return (String) get(9);
     }
 
     /**
@@ -205,7 +223,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setTaskerPara(String value) {
-        set(9, value);
+        set(10, value);
     }
 
     /**
@@ -215,7 +233,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Size(max = 65535)
     @Override
     public String getTaskerPara() {
-        return (String) get(9);
+        return (String) get(10);
     }
 
     /**
@@ -223,7 +241,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setTaskerName(String value) {
-        set(10, value);
+        set(11, value);
     }
 
     /**
@@ -233,7 +251,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Size(max = 200)
     @Override
     public String getTaskerName() {
-        return (String) get(10);
+        return (String) get(11);
     }
 
     /**
@@ -241,7 +259,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setTaskerFast(Boolean value) {
-        set(11, value);
+        set(12, value);
     }
 
     /**
@@ -250,7 +268,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "tasker_fast", nullable = false)
     @Override
     public Boolean getTaskerFast() {
-        return (Boolean) get(11);
+        return (Boolean) get(12);
     }
 
     /**
@@ -258,7 +276,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setTaskerApps(String value) {
-        set(12, value);
+        set(13, value);
     }
 
     /**
@@ -268,7 +286,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Size(max = 500)
     @Override
     public String getTaskerApps() {
-        return (String) get(12);
+        return (String) get(13);
     }
 
     /**
@@ -276,7 +294,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setTaskerRuns(String value) {
-        set(13, value);
+        set(14, value);
     }
 
     /**
@@ -286,7 +304,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Size(max = 100)
     @Override
     public String getTaskerRuns() {
-        return (String) get(13);
+        return (String) get(14);
     }
 
     /**
@@ -294,7 +312,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setNoticeBean(String value) {
-        set(14, value);
+        set(15, value);
     }
 
     /**
@@ -304,7 +322,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Size(max = 200)
     @Override
     public String getNoticeBean() {
-        return (String) get(14);
+        return (String) get(15);
     }
 
     /**
@@ -312,7 +330,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setNoticeWhen(String value) {
-        set(15, value);
+        set(16, value);
     }
 
     /**
@@ -322,7 +340,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Size(max = 100)
     @Override
     public String getNoticeWhen() {
-        return (String) get(15);
+        return (String) get(16);
     }
 
     /**
@@ -330,7 +348,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setNoticeConf(String value) {
-        set(16, value);
+        set(17, value);
     }
 
     /**
@@ -340,7 +358,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Size(max = 65535)
     @Override
     public String getNoticeConf() {
-        return (String) get(16);
+        return (String) get(17);
     }
 
     /**
@@ -348,7 +366,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setTimingZone(String value) {
-        set(17, value);
+        set(18, value);
     }
 
     /**
@@ -358,7 +376,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Size(max = 100)
     @Override
     public String getTimingZone() {
-        return (String) get(17);
+        return (String) get(18);
     }
 
     /**
@@ -366,7 +384,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setTimingType(String value) {
-        set(18, value);
+        set(19, value);
     }
 
     /**
@@ -376,7 +394,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Size(max = 100)
     @Override
     public String getTimingType() {
-        return (String) get(18);
+        return (String) get(19);
     }
 
     /**
@@ -384,7 +402,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setTimingCron(String value) {
-        set(19, value);
+        set(20, value);
     }
 
     /**
@@ -394,7 +412,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Size(max = 100)
     @Override
     public String getTimingCron() {
-        return (String) get(19);
+        return (String) get(20);
     }
 
     /**
@@ -402,7 +420,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setTimingIdle(Integer value) {
-        set(20, value);
+        set(21, value);
     }
 
     /**
@@ -411,7 +429,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "timing_idle", nullable = false, precision = 10)
     @Override
     public Integer getTimingIdle() {
-        return (Integer) get(20);
+        return (Integer) get(21);
     }
 
     /**
@@ -419,7 +437,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setTimingRate(Integer value) {
-        set(21, value);
+        set(22, value);
     }
 
     /**
@@ -428,7 +446,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "timing_rate", nullable = false, precision = 10)
     @Override
     public Integer getTimingRate() {
-        return (Integer) get(21);
+        return (Integer) get(22);
     }
 
     /**
@@ -436,7 +454,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setTimingMiss(Integer value) {
-        set(22, value);
+        set(23, value);
     }
 
     /**
@@ -445,7 +463,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "timing_miss", nullable = false, precision = 10)
     @Override
     public Integer getTimingMiss() {
-        return (Integer) get(22);
+        return (Integer) get(23);
     }
 
     /**
@@ -453,7 +471,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setDuringFrom(String value) {
-        set(23, value);
+        set(24, value);
     }
 
     /**
@@ -463,7 +481,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Size(max = 20)
     @Override
     public String getDuringFrom() {
-        return (String) get(23);
+        return (String) get(24);
     }
 
     /**
@@ -471,7 +489,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setDuringStop(String value) {
-        set(24, value);
+        set(25, value);
     }
 
     /**
@@ -481,7 +499,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Size(max = 20)
     @Override
     public String getDuringStop() {
-        return (String) get(24);
+        return (String) get(25);
     }
 
     /**
@@ -489,7 +507,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setDuringExec(Integer value) {
-        set(25, value);
+        set(26, value);
     }
 
     /**
@@ -498,7 +516,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "during_exec", nullable = false, precision = 10)
     @Override
     public Integer getDuringExec() {
-        return (Integer) get(25);
+        return (Integer) get(26);
     }
 
     /**
@@ -506,7 +524,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setDuringFail(Integer value) {
-        set(26, value);
+        set(27, value);
     }
 
     /**
@@ -515,7 +533,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "during_fail", nullable = false, precision = 10)
     @Override
     public Integer getDuringFail() {
-        return (Integer) get(26);
+        return (Integer) get(27);
     }
 
     /**
@@ -523,7 +541,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setDuringDone(Integer value) {
-        set(27, value);
+        set(28, value);
     }
 
     /**
@@ -532,7 +550,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "during_done", nullable = false, precision = 10)
     @Override
     public Integer getDuringDone() {
-        return (Integer) get(27);
+        return (Integer) get(28);
     }
 
     /**
@@ -540,7 +558,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setResultKeep(Integer value) {
-        set(28, value);
+        set(29, value);
     }
 
     /**
@@ -549,7 +567,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "result_keep", nullable = false, precision = 10)
     @Override
     public Integer getResultKeep() {
-        return (Integer) get(28);
+        return (Integer) get(29);
     }
 
     /**
@@ -557,7 +575,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setLastExec(Long value) {
-        set(29, value);
+        set(30, value);
     }
 
     /**
@@ -566,7 +584,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "last_exec", nullable = false, precision = 19)
     @Override
     public Long getLastExec() {
-        return (Long) get(29);
+        return (Long) get(30);
     }
 
     /**
@@ -574,7 +592,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setLastFail(Long value) {
-        set(30, value);
+        set(31, value);
     }
 
     /**
@@ -583,7 +601,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "last_fail", nullable = false, precision = 19)
     @Override
     public Long getLastFail() {
-        return (Long) get(30);
+        return (Long) get(31);
     }
 
     /**
@@ -591,7 +609,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setLastDone(Long value) {
-        set(31, value);
+        set(32, value);
     }
 
     /**
@@ -600,7 +618,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "last_done", nullable = false, precision = 19)
     @Override
     public Long getLastDone() {
-        return (Long) get(31);
+        return (Long) get(32);
     }
 
     /**
@@ -608,7 +626,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setNextExec(Long value) {
-        set(32, value);
+        set(33, value);
     }
 
     /**
@@ -617,7 +635,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "next_exec", nullable = false, precision = 19)
     @Override
     public Long getNextExec() {
-        return (Long) get(32);
+        return (Long) get(33);
     }
 
     /**
@@ -625,7 +643,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setNextMiss(Long value) {
-        set(33, value);
+        set(34, value);
     }
 
     /**
@@ -634,7 +652,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "next_miss", nullable = false, precision = 19)
     @Override
     public Long getNextMiss() {
-        return (Long) get(33);
+        return (Long) get(34);
     }
 
     /**
@@ -642,7 +660,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setNextLock(Long value) {
-        set(34, value);
+        set(35, value);
     }
 
     /**
@@ -651,7 +669,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "next_lock", nullable = false, precision = 19)
     @Override
     public Long getNextLock() {
-        return (Long) get(34);
+        return (Long) get(35);
     }
 
     /**
@@ -659,7 +677,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setCoreFail(Long value) {
-        set(35, value);
+        set(36, value);
     }
 
     /**
@@ -668,7 +686,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "core_fail", nullable = false, precision = 19)
     @Override
     public Long getCoreFail() {
-        return (Long) get(35);
+        return (Long) get(36);
     }
 
     /**
@@ -676,7 +694,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setSumsExec(Long value) {
-        set(36, value);
+        set(37, value);
     }
 
     /**
@@ -685,7 +703,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "sums_exec", nullable = false, precision = 19)
     @Override
     public Long getSumsExec() {
-        return (Long) get(36);
+        return (Long) get(37);
     }
 
     /**
@@ -693,7 +711,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setSumsFail(Long value) {
-        set(37, value);
+        set(38, value);
     }
 
     /**
@@ -702,7 +720,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "sums_fail", nullable = false, precision = 19)
     @Override
     public Long getSumsFail() {
-        return (Long) get(37);
+        return (Long) get(38);
     }
 
     /**
@@ -710,7 +728,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setSumsDone(Long value) {
-        set(38, value);
+        set(39, value);
     }
 
     /**
@@ -719,7 +737,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "sums_done", nullable = false, precision = 19)
     @Override
     public Long getSumsDone() {
-        return (Long) get(38);
+        return (Long) get(39);
     }
 
     // -------------------------------------------------------------------------
@@ -745,6 +763,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
         setEnabled(from.getEnabled());
         setAutorun(from.getAutorun());
         setVersion(from.getVersion());
+        setPropkey(from.getPropkey());
         setTaskerBean(from.getTaskerBean());
         setTaskerPara(from.getTaskerPara());
         setTaskerName(from.getTaskerName());
@@ -798,7 +817,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     /**
      * Create a detached, initialised WinTaskDefineRecord
      */
-    public WinTaskDefineRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, Boolean enabled, Boolean autorun, Integer version, String taskerBean, String taskerPara, String taskerName, Boolean taskerFast, String taskerApps, String taskerRuns, String noticeBean, String noticeWhen, String noticeConf, String timingZone, String timingType, String timingCron, Integer timingIdle, Integer timingRate, Integer timingMiss, String duringFrom, String duringStop, Integer duringExec, Integer duringFail, Integer duringDone, Integer resultKeep, Long lastExec, Long lastFail, Long lastDone, Long nextExec, Long nextMiss, Long nextLock, Long coreFail, Long sumsExec, Long sumsFail, Long sumsDone) {
+    public WinTaskDefineRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, Boolean enabled, Boolean autorun, Integer version, String propkey, String taskerBean, String taskerPara, String taskerName, Boolean taskerFast, String taskerApps, String taskerRuns, String noticeBean, String noticeWhen, String noticeConf, String timingZone, String timingType, String timingCron, Integer timingIdle, Integer timingRate, Integer timingMiss, String duringFrom, String duringStop, Integer duringExec, Integer duringFail, Integer duringDone, Integer resultKeep, Long lastExec, Long lastFail, Long lastDone, Long nextExec, Long nextMiss, Long nextLock, Long coreFail, Long sumsExec, Long sumsFail, Long sumsDone) {
         super(WinTaskDefineTable.WinTaskDefine);
 
         setId(id);
@@ -809,6 +828,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
         setEnabled(enabled);
         setAutorun(autorun);
         setVersion(version);
+        setPropkey(propkey);
         setTaskerBean(taskerBean);
         setTaskerPara(taskerPara);
         setTaskerName(taskerName);

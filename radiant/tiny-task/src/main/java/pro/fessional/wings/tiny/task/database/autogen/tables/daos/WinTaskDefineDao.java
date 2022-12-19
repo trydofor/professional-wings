@@ -172,6 +172,20 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
     }
 
     /**
+     * Fetch records that have <code>propkey BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinTaskDefine> fetchRangeOfPropkey(String lowerInclusive, String upperInclusive) {
+        return fetchRange(WinTaskDefineTable.WinTaskDefine.Propkey, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>propkey IN (values)</code>
+     */
+    public List<WinTaskDefine> fetchByPropkey(String... values) {
+        return fetch(WinTaskDefineTable.WinTaskDefine.Propkey, values);
+    }
+
+    /**
      * Fetch records that have <code>tasker_bean BETWEEN lowerInclusive AND upperInclusive</code>
      */
     public List<WinTaskDefine> fetchRangeOfTaskerBean(String lowerInclusive, String upperInclusive) {
@@ -723,6 +737,20 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
      */
     public List<WinTaskDefine> fetchByVersionLive(Integer... values) {
         return fetchLive(WinTaskDefineTable.WinTaskDefine.Version, values);
+    }
+
+    /**
+     * Fetch records that have <code>propkey BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinTaskDefine> fetchRangeOfPropkeyLive(String lowerInclusive, String upperInclusive) {
+        return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.Propkey, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>propkey IN (values)</code>
+     */
+    public List<WinTaskDefine> fetchByPropkeyLive(String... values) {
+        return fetchLive(WinTaskDefineTable.WinTaskDefine.Propkey, values);
     }
 
     /**

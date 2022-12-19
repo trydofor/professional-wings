@@ -3,10 +3,12 @@ package pro.fessional.wings.tiny.task.service;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pro.fessional.mirana.data.Diff;
 import pro.fessional.wings.tiny.task.schedule.conf.TaskerConf;
 import pro.fessional.wings.tiny.task.schedule.conf.TaskerProp;
 
 import java.lang.reflect.Method;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -49,4 +51,7 @@ public interface TinyTaskConfService {
      */
     @Contract("_,true->!null")
     TaskerProp property(@NotNull String key, boolean nonnull);
+
+    @NotNull
+    LinkedHashMap<String, Diff.V<?>> diffProp(long id);
 }

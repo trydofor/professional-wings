@@ -103,6 +103,11 @@ public class WinTaskDefineTable extends TableImpl<WinTaskDefineRecord> implement
     public final TableField<WinTaskDefineRecord, Integer> Version = createField(DSL.name("version"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
 
     /**
+     * The column <code>win_task_define.propkey</code>.
+     */
+    public final TableField<WinTaskDefineRecord, String> Propkey = createField(DSL.name("propkey"), SQLDataType.VARCHAR(200).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
+
+    /**
      * The column <code>win_task_define.tasker_bean</code>.
      */
     public final TableField<WinTaskDefineRecord, String> TaskerBean = createField(DSL.name("tasker_bean"), SQLDataType.VARCHAR(300).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
