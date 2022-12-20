@@ -132,62 +132,11 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     }
 
     /**
-     * Setter for <code>win_task_define.enabled</code>.
-     */
-    @Override
-    public void setEnabled(Boolean value) {
-        set(5, value);
-    }
-
-    /**
-     * Getter for <code>win_task_define.enabled</code>.
-     */
-    @Column(name = "enabled", nullable = false)
-    @Override
-    public Boolean getEnabled() {
-        return (Boolean) get(5);
-    }
-
-    /**
-     * Setter for <code>win_task_define.autorun</code>.
-     */
-    @Override
-    public void setAutorun(Boolean value) {
-        set(6, value);
-    }
-
-    /**
-     * Getter for <code>win_task_define.autorun</code>.
-     */
-    @Column(name = "autorun", nullable = false)
-    @Override
-    public Boolean getAutorun() {
-        return (Boolean) get(6);
-    }
-
-    /**
-     * Setter for <code>win_task_define.version</code>.
-     */
-    @Override
-    public void setVersion(Integer value) {
-        set(7, value);
-    }
-
-    /**
-     * Getter for <code>win_task_define.version</code>.
-     */
-    @Column(name = "version", nullable = false, precision = 10)
-    @Override
-    public Integer getVersion() {
-        return (Integer) get(7);
-    }
-
-    /**
      * Setter for <code>win_task_define.propkey</code>.
      */
     @Override
     public void setPropkey(String value) {
-        set(8, value);
+        set(5, value);
     }
 
     /**
@@ -197,7 +146,58 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Size(max = 200)
     @Override
     public String getPropkey() {
-        return (String) get(8);
+        return (String) get(5);
+    }
+
+    /**
+     * Setter for <code>win_task_define.enabled</code>.
+     */
+    @Override
+    public void setEnabled(Boolean value) {
+        set(6, value);
+    }
+
+    /**
+     * Getter for <code>win_task_define.enabled</code>.
+     */
+    @Column(name = "enabled", nullable = false)
+    @Override
+    public Boolean getEnabled() {
+        return (Boolean) get(6);
+    }
+
+    /**
+     * Setter for <code>win_task_define.autorun</code>.
+     */
+    @Override
+    public void setAutorun(Boolean value) {
+        set(7, value);
+    }
+
+    /**
+     * Getter for <code>win_task_define.autorun</code>.
+     */
+    @Column(name = "autorun", nullable = false)
+    @Override
+    public Boolean getAutorun() {
+        return (Boolean) get(7);
+    }
+
+    /**
+     * Setter for <code>win_task_define.version</code>.
+     */
+    @Override
+    public void setVersion(Integer value) {
+        set(8, value);
+    }
+
+    /**
+     * Getter for <code>win_task_define.version</code>.
+     */
+    @Column(name = "version", nullable = false, precision = 10)
+    @Override
+    public Integer getVersion() {
+        return (Integer) get(8);
     }
 
     /**
@@ -760,10 +760,10 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
         setModifyDt(from.getModifyDt());
         setDeleteDt(from.getDeleteDt());
         setCommitId(from.getCommitId());
+        setPropkey(from.getPropkey());
         setEnabled(from.getEnabled());
         setAutorun(from.getAutorun());
         setVersion(from.getVersion());
-        setPropkey(from.getPropkey());
         setTaskerBean(from.getTaskerBean());
         setTaskerPara(from.getTaskerPara());
         setTaskerName(from.getTaskerName());
@@ -817,7 +817,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     /**
      * Create a detached, initialised WinTaskDefineRecord
      */
-    public WinTaskDefineRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, Boolean enabled, Boolean autorun, Integer version, String propkey, String taskerBean, String taskerPara, String taskerName, Boolean taskerFast, String taskerApps, String taskerRuns, String noticeBean, String noticeWhen, String noticeConf, String timingZone, String timingType, String timingCron, Integer timingIdle, Integer timingRate, Integer timingMiss, String duringFrom, String duringStop, Integer duringExec, Integer duringFail, Integer duringDone, Integer resultKeep, Long lastExec, Long lastFail, Long lastDone, Long nextExec, Long nextMiss, Long nextLock, Long coreFail, Long sumsExec, Long sumsFail, Long sumsDone) {
+    public WinTaskDefineRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, String propkey, Boolean enabled, Boolean autorun, Integer version, String taskerBean, String taskerPara, String taskerName, Boolean taskerFast, String taskerApps, String taskerRuns, String noticeBean, String noticeWhen, String noticeConf, String timingZone, String timingType, String timingCron, Integer timingIdle, Integer timingRate, Integer timingMiss, String duringFrom, String duringStop, Integer duringExec, Integer duringFail, Integer duringDone, Integer resultKeep, Long lastExec, Long lastFail, Long lastDone, Long nextExec, Long nextMiss, Long nextLock, Long coreFail, Long sumsExec, Long sumsFail, Long sumsDone) {
         super(WinTaskDefineTable.WinTaskDefine);
 
         setId(id);
@@ -825,10 +825,10 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
         setModifyDt(modifyDt);
         setDeleteDt(deleteDt);
         setCommitId(commitId);
+        setPropkey(propkey);
         setEnabled(enabled);
         setAutorun(autorun);
         setVersion(version);
-        setPropkey(propkey);
         setTaskerBean(taskerBean);
         setTaskerPara(taskerPara);
         setTaskerName(taskerName);

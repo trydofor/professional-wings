@@ -3,6 +3,7 @@ package pro.fessional.wings.tiny.task.schedule.help;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.aop.support.AopUtils;
+import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Method;
 
@@ -21,6 +22,29 @@ public class TaskerHelper {
             sb.append(MethodPrefix).append(method);
         }
         return sb.toString();
+    }
+
+    @SneakyThrows
+    public static Method referMethod(@NotNull String token) {
+        int p = token.indexOf(MethodPrefix);
+        if (p <= 0) {
+            throw new IllegalArgumentException("miss method part, token=" + token);
+        }
+        final Class<?> clz = ClassUtils.forName(token.substring(0, p), null);
+        final String mdn = token.substring(p + 1);
+        for (Method md : clz.getDeclaredMethods()) {
+            if (md.getName().equals(mdn)) {
+                return md;
+            }
+        }
+        throw new NoSuchMethodException(token);
+    }
+
+    @SneakyThrows
+    public static Class<?> referClass(@NotNull String token) {
+        int p = token.indexOf(MethodPrefix);
+        String clz = p > 0 ? token.substring(0, p) : token;
+        return ClassUtils.forName(clz, null);
     }
 
     @SneakyThrows

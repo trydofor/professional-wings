@@ -1,5 +1,7 @@
 package pro.fessional.wings.tiny.task.spring.prop;
 
+import lombok.Getter;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import pro.fessional.wings.tiny.task.schedule.conf.TaskerProp;
 
@@ -12,7 +14,7 @@ import java.util.LinkedHashMap;
  * @since 2022-12-09
  */
 @ConfigurationProperties(TinyTaskDefineProp.Key)
-public class TinyTaskDefineProp extends LinkedHashMap<String, TaskerProp> {
+public class TinyTaskDefineProp extends LinkedHashMap<String, TaskerProp> implements InitializingBean {
     public static final String Key = "wings.tiny.task.define";
 
     /**
@@ -20,17 +22,16 @@ public class TinyTaskDefineProp extends LinkedHashMap<String, TaskerProp> {
      *
      * @see #Key$default
      */
+    @Getter
     private TaskerProp Default;
     public static final String Key$default = Key + ".default";
 
-    public TaskerProp getDefault() {
-        if (Default == null) {
-            Default = get("default");
-        }
-        return Default;
-    }
 
-    public void setDefault(TaskerProp defaults) {
-        this.Default = defaults;
+    @Override
+    public void afterPropertiesSet() {
+        Default = get("default");
+        if (Default == null) {
+            throw new IllegalStateException("must have 'default' define");
+        }
     }
 }

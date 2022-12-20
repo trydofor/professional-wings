@@ -45,10 +45,10 @@ public class WinTaskDefine implements IWinTaskDefine {
     private LocalDateTime modifyDt;
     private LocalDateTime deleteDt;
     private Long          commitId;
+    private String        propkey;
     private Boolean       enabled;
     private Boolean       autorun;
     private Integer       version;
-    private String        propkey;
     private String        taskerBean;
     private String        taskerPara;
     private String        taskerName;
@@ -89,10 +89,10 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.modifyDt = value.getModifyDt();
         this.deleteDt = value.getDeleteDt();
         this.commitId = value.getCommitId();
+        this.propkey = value.getPropkey();
         this.enabled = value.getEnabled();
         this.autorun = value.getAutorun();
         this.version = value.getVersion();
-        this.propkey = value.getPropkey();
         this.taskerBean = value.getTaskerBean();
         this.taskerPara = value.getTaskerPara();
         this.taskerName = value.getTaskerName();
@@ -132,10 +132,10 @@ public class WinTaskDefine implements IWinTaskDefine {
         LocalDateTime modifyDt,
         LocalDateTime deleteDt,
         Long          commitId,
+        String        propkey,
         Boolean       enabled,
         Boolean       autorun,
         Integer       version,
-        String        propkey,
         String        taskerBean,
         String        taskerPara,
         String        taskerName,
@@ -173,10 +173,10 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.modifyDt = modifyDt;
         this.deleteDt = deleteDt;
         this.commitId = commitId;
+        this.propkey = propkey;
         this.enabled = enabled;
         this.autorun = autorun;
         this.version = version;
-        this.propkey = propkey;
         this.taskerBean = taskerBean;
         this.taskerPara = taskerPara;
         this.taskerName = taskerName;
@@ -299,6 +299,24 @@ public class WinTaskDefine implements IWinTaskDefine {
     }
 
     /**
+     * Getter for <code>win_task_define.propkey</code>.
+     */
+    @Column(name = "propkey", nullable = false, length = 200)
+    @Size(max = 200)
+    @Override
+    public String getPropkey() {
+        return this.propkey;
+    }
+
+    /**
+     * Setter for <code>win_task_define.propkey</code>.
+     */
+    @Override
+    public void setPropkey(String propkey) {
+        this.propkey = propkey;
+    }
+
+    /**
      * Getter for <code>win_task_define.enabled</code>.
      */
     @Column(name = "enabled", nullable = false)
@@ -347,24 +365,6 @@ public class WinTaskDefine implements IWinTaskDefine {
     @Override
     public void setVersion(Integer version) {
         this.version = version;
-    }
-
-    /**
-     * Getter for <code>win_task_define.propkey</code>.
-     */
-    @Column(name = "propkey", nullable = false, length = 200)
-    @Size(max = 200)
-    @Override
-    public String getPropkey() {
-        return this.propkey;
-    }
-
-    /**
-     * Setter for <code>win_task_define.propkey</code>.
-     */
-    @Override
-    public void setPropkey(String propkey) {
-        this.propkey = propkey;
     }
 
     /**
@@ -946,6 +946,12 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
         else if (!commitId.equals(other.commitId))
             return false;
+        if (propkey == null) {
+            if (other.propkey != null)
+                return false;
+        }
+        else if (!propkey.equals(other.propkey))
+            return false;
         if (enabled == null) {
             if (other.enabled != null)
                 return false;
@@ -963,12 +969,6 @@ public class WinTaskDefine implements IWinTaskDefine {
                 return false;
         }
         else if (!version.equals(other.version))
-            return false;
-        if (propkey == null) {
-            if (other.propkey != null)
-                return false;
-        }
-        else if (!propkey.equals(other.propkey))
             return false;
         if (taskerBean == null) {
             if (other.taskerBean != null)
@@ -1168,10 +1168,10 @@ public class WinTaskDefine implements IWinTaskDefine {
         result = prime * result + ((this.modifyDt == null) ? 0 : this.modifyDt.hashCode());
         result = prime * result + ((this.deleteDt == null) ? 0 : this.deleteDt.hashCode());
         result = prime * result + ((this.commitId == null) ? 0 : this.commitId.hashCode());
+        result = prime * result + ((this.propkey == null) ? 0 : this.propkey.hashCode());
         result = prime * result + ((this.enabled == null) ? 0 : this.enabled.hashCode());
         result = prime * result + ((this.autorun == null) ? 0 : this.autorun.hashCode());
         result = prime * result + ((this.version == null) ? 0 : this.version.hashCode());
-        result = prime * result + ((this.propkey == null) ? 0 : this.propkey.hashCode());
         result = prime * result + ((this.taskerBean == null) ? 0 : this.taskerBean.hashCode());
         result = prime * result + ((this.taskerPara == null) ? 0 : this.taskerPara.hashCode());
         result = prime * result + ((this.taskerName == null) ? 0 : this.taskerName.hashCode());
@@ -1215,10 +1215,10 @@ public class WinTaskDefine implements IWinTaskDefine {
         sb.append(", ").append(modifyDt);
         sb.append(", ").append(deleteDt);
         sb.append(", ").append(commitId);
+        sb.append(", ").append(propkey);
         sb.append(", ").append(enabled);
         sb.append(", ").append(autorun);
         sb.append(", ").append(version);
-        sb.append(", ").append(propkey);
         sb.append(", ").append(taskerBean);
         sb.append(", ").append(taskerPara);
         sb.append(", ").append(taskerName);
@@ -1266,10 +1266,10 @@ public class WinTaskDefine implements IWinTaskDefine {
         setModifyDt(from.getModifyDt());
         setDeleteDt(from.getDeleteDt());
         setCommitId(from.getCommitId());
+        setPropkey(from.getPropkey());
         setEnabled(from.getEnabled());
         setAutorun(from.getAutorun());
         setVersion(from.getVersion());
-        setPropkey(from.getPropkey());
         setTaskerBean(from.getTaskerBean());
         setTaskerPara(from.getTaskerPara());
         setTaskerName(from.getTaskerName());

@@ -50,7 +50,7 @@ public class TaskerProp {
     protected boolean taskerFast = true;
 
     /**
-     * 所属程序，逗号分隔，推荐一个，使用spring.application.name，null及空时使用Default配置
+     * 所属程序，逗号分隔，推荐一个，使用spring.application.name，空时使用Default配置
      */
     protected String taskerApps = null;
 
@@ -59,20 +59,20 @@ public class TaskerProp {
     }
 
     /**
-     * 执行模式，RunMode(product|test|develop|local)，逗号分隔忽略大小写，空表示所有。null时使用Default配置
+     * 执行模式，RunMode(product|test|develop|local)，逗号分隔忽略大小写，空表示所有。空时使用Default配置
      *
      * @see pro.fessional.wings.silencer.modulate.RunMode
      */
-    protected String taskerRuns = null;
+    protected String taskerRuns = "";
 
     public boolean notTaskerRuns() {
         return taskerRuns == null || taskerRuns.isEmpty();
     }
 
     /**
-     * 通知Bean，SmallNotice类型，格式为Class，默认无通知。null及空时使用Default配置
+     * 通知Bean，SmallNotice类型，格式为Class，默认无通知。空时使用Default配置
      */
-    protected String noticeBean = null;
+    protected String noticeBean = "";
 
     public boolean notNoticeBean() {
         return noticeBean == null || noticeBean.isEmpty();
@@ -80,30 +80,30 @@ public class TaskerProp {
 
     /**
      * <pre>
-     * 通知的时机，exec|fail|done，逗号分隔忽略大小写，默认fail。null及空时使用Default配置
+     * 通知的时机，exec|fail|done，逗号分隔忽略大小写，默认fail。空时使用Default配置
      * 时机大概表述为：exec;try{run...;done}catch{fail}
      * exec - 初始任务
      * done - 执行成功
      * fail - 执行失败
      * </pre>
      */
-    protected String noticeWhen = null;
+    protected String noticeWhen = "";
 
     public boolean notNoticeWhen() {
         return noticeWhen == null || noticeWhen.isEmpty();
     }
 
     /**
-     * 对noticeBean的默认配置的覆盖，默认为json格式，不做补充，null及空时使用Default配置
+     * 对noticeBean的默认配置的覆盖，默认为json格式，不做补充，空时使用Default配置
      */
-    protected String noticeConf = null;
+    protected String noticeConf = "";
 
     public boolean notNoticeConf() {
         return noticeConf == null || noticeConf.isEmpty();
     }
 
     /**
-     * 调度时区的ZoneId格式，默认系统时区，null及空时使用Default配置
+     * 调度时区的ZoneId格式，默认系统时区，空时使用Default配置，null为自动替换
      */
     protected String timingZone = null;
 
@@ -112,9 +112,9 @@ public class TaskerProp {
     }
 
     /**
-     * 调度表达式类型，影响timingCron的解析方式，默认为spring的cron格式，null及空时使用Default配置
+     * 调度表达式类型，影响timingCron的解析方式，默认为spring的cron格式，空时使用Default配置
      */
-    protected String timingType = null;
+    protected String timingType = "";
 
     public boolean notTimingType() {
         return timingType == null || timingType.isEmpty();
@@ -157,6 +157,13 @@ public class TaskerProp {
     }
 
     /**
+     * 是否 hasTimingCron或hasTimingIdle或hasTimingRate
+     */
+    public boolean hasAnyTiming() {
+        return hasTimingCron() || hasTimingIdle() || hasTimingRate();
+    }
+
+    /**
      * 错过调度（misfire）多少秒内，需要补救执行，0表示不补救，不会使用Default配置
      */
     protected int timingMiss = 0;
@@ -183,12 +190,12 @@ public class TaskerProp {
     protected int duringDone = 0;
 
     /**
-     * 执行结果保存的天数，0为不保存，null时使用Default配置
+     * 执行结果保存的天数，负数为不保存，0为使用Default配置
      */
-    protected Integer resultKeep = null;
+    protected int resultKeep = 0;
 
     public boolean notResultKeep() {
-        return resultKeep == null;
+        return resultKeep == 0;
     }
 
 }

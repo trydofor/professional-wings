@@ -98,6 +98,18 @@ public interface IWinTaskDefine extends JournalAware, Serializable {
     public Long getCommitId();
 
     /**
+     * Setter for <code>win_task_define.propkey</code>.
+     */
+    public void setPropkey(String value);
+
+    /**
+     * Getter for <code>win_task_define.propkey</code>.
+     */
+    @Column(name = "propkey", nullable = false, length = 200)
+    @Size(max = 200)
+    public String getPropkey();
+
+    /**
      * Setter for <code>win_task_define.enabled</code>.
      */
     public void setEnabled(Boolean value);
@@ -129,18 +141,6 @@ public interface IWinTaskDefine extends JournalAware, Serializable {
      */
     @Column(name = "version", nullable = false, precision = 10)
     public Integer getVersion();
-
-    /**
-     * Setter for <code>win_task_define.propkey</code>.
-     */
-    public void setPropkey(String value);
-
-    /**
-     * Getter for <code>win_task_define.propkey</code>.
-     */
-    @Column(name = "propkey", nullable = false, length = 200)
-    @Size(max = 200)
-    public String getPropkey();
 
     /**
      * Setter for <code>win_task_define.tasker_bean</code>.

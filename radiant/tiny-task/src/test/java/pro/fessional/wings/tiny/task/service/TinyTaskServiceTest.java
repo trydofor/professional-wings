@@ -27,7 +27,6 @@ class TinyTaskServiceTest {
 //        TableCudListener.WarnVisit =true;
 
         TestServiceManual bean = new TestServiceManual();
-        tinyTaskService.schedule(Lam.ref(bean::strStr), null);
-        System.out.println(tinyTaskDefineProp.getDefault());
+        tinyTaskService.schedule(Lam.ref(bean::strStr), "trydofor test string");
     }
 }
