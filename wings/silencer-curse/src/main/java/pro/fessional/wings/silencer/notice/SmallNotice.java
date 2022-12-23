@@ -22,7 +22,7 @@ public interface SmallNotice<C> {
      * 以that值优先，当that项无效时，使用默认配置，构造一个新配置。
      */
     @NotNull
-    C combineConfig(C that);
+    C combineConfig(@NotNull C that);
 
     /**
      * 以默认配置同步发送，发送成功或失败，或异常，subject和content同时为null时返回false

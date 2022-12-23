@@ -153,19 +153,19 @@ public class WinTaskResultRecord extends UpdatableRecordImpl<WinTaskResultRecord
     }
 
     /**
-     * Setter for <code>win_task_result.time_stop</code>.
+     * Setter for <code>win_task_result.time_done</code>.
      */
     @Override
-    public void setTimeStop(LocalDateTime value) {
+    public void setTimeDone(LocalDateTime value) {
         set(6, value);
     }
 
     /**
-     * Getter for <code>win_task_result.time_stop</code>.
+     * Getter for <code>win_task_result.time_done</code>.
      */
-    @Column(name = "time_stop", nullable = false, precision = 3)
+    @Column(name = "time_done", nullable = false, precision = 3)
     @Override
-    public LocalDateTime getTimeStop() {
+    public LocalDateTime getTimeDone() {
         return (LocalDateTime) get(6);
     }
 
@@ -241,7 +241,7 @@ public class WinTaskResultRecord extends UpdatableRecordImpl<WinTaskResultRecord
 
     @Override
     public Field<LocalDateTime> field7() {
-        return WinTaskResultTable.WinTaskResult.TimeStop;
+        return WinTaskResultTable.WinTaskResult.TimeDone;
     }
 
     @Override
@@ -281,7 +281,7 @@ public class WinTaskResultRecord extends UpdatableRecordImpl<WinTaskResultRecord
 
     @Override
     public LocalDateTime component7() {
-        return getTimeStop();
+        return getTimeDone();
     }
 
     @Override
@@ -321,7 +321,7 @@ public class WinTaskResultRecord extends UpdatableRecordImpl<WinTaskResultRecord
 
     @Override
     public LocalDateTime value7() {
-        return getTimeStop();
+        return getTimeDone();
     }
 
     @Override
@@ -367,7 +367,7 @@ public class WinTaskResultRecord extends UpdatableRecordImpl<WinTaskResultRecord
 
     @Override
     public WinTaskResultRecord value7(LocalDateTime value) {
-        setTimeStop(value);
+        setTimeDone(value);
         return this;
     }
 
@@ -402,7 +402,7 @@ public class WinTaskResultRecord extends UpdatableRecordImpl<WinTaskResultRecord
         setTaskMsg(from.getTaskMsg());
         setTimeExec(from.getTimeExec());
         setTimeFail(from.getTimeFail());
-        setTimeStop(from.getTimeStop());
+        setTimeDone(from.getTimeDone());
         setTimeCost(from.getTimeCost());
     }
 
@@ -426,7 +426,7 @@ public class WinTaskResultRecord extends UpdatableRecordImpl<WinTaskResultRecord
     /**
      * Create a detached, initialised WinTaskResultRecord
      */
-    public WinTaskResultRecord(Long id, Long taskId, String taskApp, String taskMsg, LocalDateTime timeExec, LocalDateTime timeFail, LocalDateTime timeStop, Long timeCost) {
+    public WinTaskResultRecord(Long id, Long taskId, String taskApp, String taskMsg, LocalDateTime timeExec, LocalDateTime timeFail, LocalDateTime timeDone, Long timeCost) {
         super(WinTaskResultTable.WinTaskResult);
 
         setId(id);
@@ -435,7 +435,7 @@ public class WinTaskResultRecord extends UpdatableRecordImpl<WinTaskResultRecord
         setTaskMsg(taskMsg);
         setTimeExec(timeExec);
         setTimeFail(timeFail);
-        setTimeStop(timeStop);
+        setTimeDone(timeDone);
         setTimeCost(timeCost);
     }
 }

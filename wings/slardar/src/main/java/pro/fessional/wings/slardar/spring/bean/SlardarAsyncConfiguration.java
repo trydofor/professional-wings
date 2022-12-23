@@ -156,16 +156,14 @@ public class SlardarAsyncConfiguration {
     }
 
     @Bean
-    public CommandLineRunner runnerTaskSchedulerHelper(
+    public TaskSchedulerHelper taskSchedulerHelper(
             @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME) ThreadPoolTaskScheduler light,
             @Qualifier(SlardarHeavySchedulerBean) ThreadPoolTaskScheduler heavy) {
-        log.info("Slardar spring-runs runnerTaskSchedulerHelper");
-        return (arg) -> {
-            new TaskSchedulerHelper() {{
-                log.info("Slardar conf TaskSchedulerHelper");
-                LightTasker = light;
-                HeavyTasker = heavy;
-            }};
-        };
+        log.info("Slardar spring-bean taskSchedulerHelper");
+        return new TaskSchedulerHelper() {{
+            log.info("Slardar conf TaskSchedulerHelper");
+            LightTasker = light;
+            HeavyTasker = heavy;
+        }};
     }
 }

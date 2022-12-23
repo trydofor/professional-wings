@@ -676,68 +676,68 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      * Setter for <code>win_task_define.core_fail</code>.
      */
     @Override
-    public void setCoreFail(Long value) {
+    public void setCoreFail(Integer value) {
         set(36, value);
     }
 
     /**
      * Getter for <code>win_task_define.core_fail</code>.
      */
-    @Column(name = "core_fail", nullable = false, precision = 19)
+    @Column(name = "core_fail", nullable = false, precision = 10)
     @Override
-    public Long getCoreFail() {
-        return (Long) get(36);
+    public Integer getCoreFail() {
+        return (Integer) get(36);
     }
 
     /**
      * Setter for <code>win_task_define.sums_exec</code>.
      */
     @Override
-    public void setSumsExec(Long value) {
+    public void setSumsExec(Integer value) {
         set(37, value);
     }
 
     /**
      * Getter for <code>win_task_define.sums_exec</code>.
      */
-    @Column(name = "sums_exec", nullable = false, precision = 19)
+    @Column(name = "sums_exec", nullable = false, precision = 10)
     @Override
-    public Long getSumsExec() {
-        return (Long) get(37);
+    public Integer getSumsExec() {
+        return (Integer) get(37);
     }
 
     /**
      * Setter for <code>win_task_define.sums_fail</code>.
      */
     @Override
-    public void setSumsFail(Long value) {
+    public void setSumsFail(Integer value) {
         set(38, value);
     }
 
     /**
      * Getter for <code>win_task_define.sums_fail</code>.
      */
-    @Column(name = "sums_fail", nullable = false, precision = 19)
+    @Column(name = "sums_fail", nullable = false, precision = 10)
     @Override
-    public Long getSumsFail() {
-        return (Long) get(38);
+    public Integer getSumsFail() {
+        return (Integer) get(38);
     }
 
     /**
      * Setter for <code>win_task_define.sums_done</code>.
      */
     @Override
-    public void setSumsDone(Long value) {
+    public void setSumsDone(Integer value) {
         set(39, value);
     }
 
     /**
      * Getter for <code>win_task_define.sums_done</code>.
      */
-    @Column(name = "sums_done", nullable = false, precision = 19)
+    @Column(name = "sums_done", nullable = false, precision = 10)
     @Override
-    public Long getSumsDone() {
-        return (Long) get(39);
+    public Integer getSumsDone() {
+        return (Integer) get(39);
     }
 
     // -------------------------------------------------------------------------
@@ -817,7 +817,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     /**
      * Create a detached, initialised WinTaskDefineRecord
      */
-    public WinTaskDefineRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, String propkey, Boolean enabled, Boolean autorun, Integer version, String taskerBean, String taskerPara, String taskerName, Boolean taskerFast, String taskerApps, String taskerRuns, String noticeBean, String noticeWhen, String noticeConf, String timingZone, String timingType, String timingCron, Integer timingIdle, Integer timingRate, Integer timingMiss, String duringFrom, String duringStop, Integer duringExec, Integer duringFail, Integer duringDone, Integer resultKeep, Long lastExec, Long lastFail, Long lastDone, Long nextExec, Long nextMiss, Long nextLock, Long coreFail, Long sumsExec, Long sumsFail, Long sumsDone) {
+    public WinTaskDefineRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, String propkey, Boolean enabled, Boolean autorun, Integer version, String taskerBean, String taskerPara, String taskerName, Boolean taskerFast, String taskerApps, String taskerRuns, String noticeBean, String noticeWhen, String noticeConf, String timingZone, String timingType, String timingCron, Integer timingIdle, Integer timingRate, Integer timingMiss, String duringFrom, String duringStop, Integer duringExec, Integer duringFail, Integer duringDone, Integer resultKeep, Long lastExec, Long lastFail, Long lastDone, Long nextExec, Long nextMiss, Long nextLock, Integer coreFail, Integer sumsExec, Integer sumsFail, Integer sumsDone) {
         super(WinTaskDefineTable.WinTaskDefine);
 
         setId(id);

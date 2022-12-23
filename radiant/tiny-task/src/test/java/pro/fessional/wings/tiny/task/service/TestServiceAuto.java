@@ -12,23 +12,27 @@ import pro.fessional.wings.tiny.task.schedule.TinyTasker;
 public class TestServiceAuto {
 
     @TinyTasker(cron = "0 0 * * * *")
-    public String strStr(String msg) {
+    public String strStr(String msg) throws Exception {
         log.info("TestServiceAuto.strStr {}", msg);
+        Thread.sleep(1500);
         return msg;
     }
 
-    @TinyTasker(rate = 60)
-    public void strVoid(String msg) {
+    @TinyTasker(rate = 60)// 使用prop值，30
+    public void strVoid(String msg) throws Exception {
         log.info("TestServiceAuto.strVoid {}", msg);
+        Thread.sleep(1500);
     }
 
-    @TinyTasker(value = "voidStrAuto", idle = 60)
-    public void voidStr(String msg) {
+    @TinyTasker(value = "voidStrAuto", idle = 60) // 使用注解值
+    public void voidStr(String msg) throws Exception {
         log.info("TestServiceAuto.voidStr {}", msg);
+        Thread.sleep(1500);
     }
 
-    @TinyTasker(value = "voidVoidAuto", cron = "0 0 * * * *")
-    public void voidVoid() {
+    @TinyTasker(value = "voidVoidAuto", cron = "0 * * * * *") // 使用prop enabled=false
+    public void voidVoid() throws Exception {
         log.info("TestServiceAuto.voidVoid");
+        Thread.sleep(1500);
     }
 }

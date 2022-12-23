@@ -108,15 +108,15 @@ public interface IWinTaskResult extends Serializable {
     public LocalDateTime getTimeFail();
 
     /**
-     * Setter for <code>win_task_result.time_stop</code>.
+     * Setter for <code>win_task_result.time_done</code>.
      */
-    public void setTimeStop(LocalDateTime value);
+    public void setTimeDone(LocalDateTime value);
 
     /**
-     * Getter for <code>win_task_result.time_stop</code>.
+     * Getter for <code>win_task_result.time_done</code>.
      */
-    @Column(name = "time_stop", nullable = false, precision = 3)
-    public LocalDateTime getTimeStop();
+    @Column(name = "time_done", nullable = false, precision = 3)
+    public LocalDateTime getTimeDone();
 
     /**
      * Setter for <code>win_task_result.time_cost</code>.

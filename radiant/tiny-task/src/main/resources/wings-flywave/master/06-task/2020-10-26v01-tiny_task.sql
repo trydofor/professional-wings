@@ -35,15 +35,12 @@ CREATE TABLE `win_task_define` (
     `next_exec`   BIGINT(20)   NOT NULL DEFAULT '0' COMMENT '下次执行开始时间（epoch毫秒）默认为停止',
     `next_miss`   BIGINT(20)   NOT NULL DEFAULT '0' COMMENT '下次执行补救时间（epoch毫秒）默认已无效',
     `next_lock`   BIGINT(20)   NOT NULL DEFAULT '0' COMMENT '独占锁定期限（epoch毫秒）默认无锁定',
-    `core_fail`   BIGINT(20)   NOT NULL DEFAULT '0' COMMENT '连续失败次数',
-    `sums_exec`   BIGINT(20)   NOT NULL DEFAULT '0' COMMENT '合计开始次数',
-    `sums_fail`   BIGINT(20)   NOT NULL DEFAULT '0' COMMENT '合计失败次数',
-    `sums_done`   BIGINT(20)   NOT NULL DEFAULT '0' COMMENT '合计成功次数',
+    `core_fail`   INT(11)      NOT NULL DEFAULT '0' COMMENT '连续失败次数',
+    `sums_exec`   INT(11)      NOT NULL DEFAULT '0' COMMENT '合计开始次数',
+    `sums_fail`   INT(11)      NOT NULL DEFAULT '0' COMMENT '合计失败次数',
+    `sums_done`   INT(11)      NOT NULL DEFAULT '0' COMMENT '合计成功次数',
     PRIMARY KEY (`id`),
-    UNIQUE INDEX uq_tasker_bean (`tasker_bean`),
-    INDEX ix_next_exec (`next_exec`),
-    INDEX ix_next_miss (`next_miss`),
-    INDEX ix_next_lock (`next_lock`)
+    UNIQUE INDEX uq_tasker_bean (`tasker_bean`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='120/任务定义';
 
@@ -54,7 +51,7 @@ CREATE TABLE `win_task_result` (
     `task_msg`  TEXT         NULL     DEFAULT NULL COMMENT '正常或异常的信息',
     `time_exec` DATETIME(3)  NOT NULL DEFAULT NOW(3) COMMENT '执行开始时间，服务时间',
     `time_fail` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT '执行停止时间，服务时间',
-    `time_stop` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT '执行停止时间，服务时间',
+    `time_done` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT '执行停止时间，服务时间',
     `time_cost` BIGINT(20)   NOT NULL DEFAULT '0' COMMENT '耗时毫秒数',
     PRIMARY KEY (`id`),
     INDEX ix_task_id (`task_id`)

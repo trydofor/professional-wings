@@ -56,14 +56,14 @@ public class TaskerExec {
         this.beanMethod = beanMethod;
     }
 
-    public Object decodePara(String conf) {
-        if (conf == null) return null;
-        return paraDecoder.apply(conf, paraClass);
+    public Object decodePara(String para) {
+        if (para == null) return null;
+        return paraDecoder.apply(para, paraClass);
     }
 
-    public String encodePara(Object conf) {
-        if (conf == null) return null;
-        return paraEncoder.apply(conf);
+    public String encodePara(Object para) {
+        if (para == null) return null;
+        return paraEncoder.apply(para);
     }
 
 
@@ -82,11 +82,14 @@ public class TaskerExec {
     }
 
     @SneakyThrows
-    public Object invoke(Object arg) {
+    public Object invoke(Object arg, boolean encodedString) {
         if (paraClass == null) {
             return beanMethod.invoke(beanObject);
         }
         else {
+            if (encodedString) {
+                arg = decodePara((String) arg);
+            }
             return beanMethod.invoke(beanObject, arg);
         }
     }

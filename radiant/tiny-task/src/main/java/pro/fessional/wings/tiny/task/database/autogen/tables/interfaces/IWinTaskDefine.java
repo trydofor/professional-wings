@@ -455,46 +455,46 @@ public interface IWinTaskDefine extends JournalAware, Serializable {
     /**
      * Setter for <code>win_task_define.core_fail</code>.
      */
-    public void setCoreFail(Long value);
+    public void setCoreFail(Integer value);
 
     /**
      * Getter for <code>win_task_define.core_fail</code>.
      */
-    @Column(name = "core_fail", nullable = false, precision = 19)
-    public Long getCoreFail();
+    @Column(name = "core_fail", nullable = false, precision = 10)
+    public Integer getCoreFail();
 
     /**
      * Setter for <code>win_task_define.sums_exec</code>.
      */
-    public void setSumsExec(Long value);
+    public void setSumsExec(Integer value);
 
     /**
      * Getter for <code>win_task_define.sums_exec</code>.
      */
-    @Column(name = "sums_exec", nullable = false, precision = 19)
-    public Long getSumsExec();
+    @Column(name = "sums_exec", nullable = false, precision = 10)
+    public Integer getSumsExec();
 
     /**
      * Setter for <code>win_task_define.sums_fail</code>.
      */
-    public void setSumsFail(Long value);
+    public void setSumsFail(Integer value);
 
     /**
      * Getter for <code>win_task_define.sums_fail</code>.
      */
-    @Column(name = "sums_fail", nullable = false, precision = 19)
-    public Long getSumsFail();
+    @Column(name = "sums_fail", nullable = false, precision = 10)
+    public Integer getSumsFail();
 
     /**
      * Setter for <code>win_task_define.sums_done</code>.
      */
-    public void setSumsDone(Long value);
+    public void setSumsDone(Integer value);
 
     /**
      * Getter for <code>win_task_define.sums_done</code>.
      */
-    @Column(name = "sums_done", nullable = false, precision = 19)
-    public Long getSumsDone();
+    @Column(name = "sums_done", nullable = false, precision = 10)
+    public Integer getSumsDone();
 
     // -------------------------------------------------------------------------
     // FROM and INTO

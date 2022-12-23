@@ -245,22 +245,22 @@ public class WinTaskDefineTable extends TableImpl<WinTaskDefineRecord> implement
     /**
      * The column <code>win_task_define.core_fail</code>.
      */
-    public final TableField<WinTaskDefineRecord, Long> CoreFail = createField(DSL.name("core_fail"), SQLDataType.BIGINT.nullable(false).defaultValue(DSL.inline("0", SQLDataType.BIGINT)), this, "");
+    public final TableField<WinTaskDefineRecord, Integer> CoreFail = createField(DSL.name("core_fail"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
 
     /**
      * The column <code>win_task_define.sums_exec</code>.
      */
-    public final TableField<WinTaskDefineRecord, Long> SumsExec = createField(DSL.name("sums_exec"), SQLDataType.BIGINT.nullable(false).defaultValue(DSL.inline("0", SQLDataType.BIGINT)), this, "");
+    public final TableField<WinTaskDefineRecord, Integer> SumsExec = createField(DSL.name("sums_exec"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
 
     /**
      * The column <code>win_task_define.sums_fail</code>.
      */
-    public final TableField<WinTaskDefineRecord, Long> SumsFail = createField(DSL.name("sums_fail"), SQLDataType.BIGINT.nullable(false).defaultValue(DSL.inline("0", SQLDataType.BIGINT)), this, "");
+    public final TableField<WinTaskDefineRecord, Integer> SumsFail = createField(DSL.name("sums_fail"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
 
     /**
      * The column <code>win_task_define.sums_done</code>.
      */
-    public final TableField<WinTaskDefineRecord, Long> SumsDone = createField(DSL.name("sums_done"), SQLDataType.BIGINT.nullable(false).defaultValue(DSL.inline("0", SQLDataType.BIGINT)), this, "");
+    public final TableField<WinTaskDefineRecord, Integer> SumsDone = createField(DSL.name("sums_done"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
 
     private WinTaskDefineTable(Name alias, Table<WinTaskDefineRecord> aliased) {
         this(alias, aliased, null);

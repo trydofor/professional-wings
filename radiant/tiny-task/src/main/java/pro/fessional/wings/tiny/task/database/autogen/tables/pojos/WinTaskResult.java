@@ -46,7 +46,7 @@ public class WinTaskResult implements IWinTaskResult {
     private String        taskMsg;
     private LocalDateTime timeExec;
     private LocalDateTime timeFail;
-    private LocalDateTime timeStop;
+    private LocalDateTime timeDone;
     private Long          timeCost;
 
     public WinTaskResult() {}
@@ -58,7 +58,7 @@ public class WinTaskResult implements IWinTaskResult {
         this.taskMsg = value.getTaskMsg();
         this.timeExec = value.getTimeExec();
         this.timeFail = value.getTimeFail();
-        this.timeStop = value.getTimeStop();
+        this.timeDone = value.getTimeDone();
         this.timeCost = value.getTimeCost();
     }
 
@@ -69,7 +69,7 @@ public class WinTaskResult implements IWinTaskResult {
         String        taskMsg,
         LocalDateTime timeExec,
         LocalDateTime timeFail,
-        LocalDateTime timeStop,
+        LocalDateTime timeDone,
         Long          timeCost
     ) {
         this.id = id;
@@ -78,7 +78,7 @@ public class WinTaskResult implements IWinTaskResult {
         this.taskMsg = taskMsg;
         this.timeExec = timeExec;
         this.timeFail = timeFail;
-        this.timeStop = timeStop;
+        this.timeDone = timeDone;
         this.timeCost = timeCost;
     }
 
@@ -189,20 +189,20 @@ public class WinTaskResult implements IWinTaskResult {
     }
 
     /**
-     * Getter for <code>win_task_result.time_stop</code>.
+     * Getter for <code>win_task_result.time_done</code>.
      */
-    @Column(name = "time_stop", nullable = false, precision = 3)
+    @Column(name = "time_done", nullable = false, precision = 3)
     @Override
-    public LocalDateTime getTimeStop() {
-        return this.timeStop;
+    public LocalDateTime getTimeDone() {
+        return this.timeDone;
     }
 
     /**
-     * Setter for <code>win_task_result.time_stop</code>.
+     * Setter for <code>win_task_result.time_done</code>.
      */
     @Override
-    public void setTimeStop(LocalDateTime timeStop) {
-        this.timeStop = timeStop;
+    public void setTimeDone(LocalDateTime timeDone) {
+        this.timeDone = timeDone;
     }
 
     /**
@@ -267,11 +267,11 @@ public class WinTaskResult implements IWinTaskResult {
         }
         else if (!timeFail.equals(other.timeFail))
             return false;
-        if (timeStop == null) {
-            if (other.timeStop != null)
+        if (timeDone == null) {
+            if (other.timeDone != null)
                 return false;
         }
-        else if (!timeStop.equals(other.timeStop))
+        else if (!timeDone.equals(other.timeDone))
             return false;
         if (timeCost == null) {
             if (other.timeCost != null)
@@ -292,7 +292,7 @@ public class WinTaskResult implements IWinTaskResult {
         result = prime * result + ((this.taskMsg == null) ? 0 : this.taskMsg.hashCode());
         result = prime * result + ((this.timeExec == null) ? 0 : this.timeExec.hashCode());
         result = prime * result + ((this.timeFail == null) ? 0 : this.timeFail.hashCode());
-        result = prime * result + ((this.timeStop == null) ? 0 : this.timeStop.hashCode());
+        result = prime * result + ((this.timeDone == null) ? 0 : this.timeDone.hashCode());
         result = prime * result + ((this.timeCost == null) ? 0 : this.timeCost.hashCode());
         return result;
     }
@@ -307,7 +307,7 @@ public class WinTaskResult implements IWinTaskResult {
         sb.append(", ").append(taskMsg);
         sb.append(", ").append(timeExec);
         sb.append(", ").append(timeFail);
-        sb.append(", ").append(timeStop);
+        sb.append(", ").append(timeDone);
         sb.append(", ").append(timeCost);
 
         sb.append(")");
@@ -326,7 +326,7 @@ public class WinTaskResult implements IWinTaskResult {
         setTaskMsg(from.getTaskMsg());
         setTimeExec(from.getTimeExec());
         setTimeFail(from.getTimeFail());
-        setTimeStop(from.getTimeStop());
+        setTimeDone(from.getTimeDone());
         setTimeCost(from.getTimeCost());
     }
 

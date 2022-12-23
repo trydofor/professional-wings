@@ -76,10 +76,10 @@ public class WinTaskDefine implements IWinTaskDefine {
     private Long          nextExec;
     private Long          nextMiss;
     private Long          nextLock;
-    private Long          coreFail;
-    private Long          sumsExec;
-    private Long          sumsFail;
-    private Long          sumsDone;
+    private Integer       coreFail;
+    private Integer       sumsExec;
+    private Integer       sumsFail;
+    private Integer       sumsDone;
 
     public WinTaskDefine() {}
 
@@ -163,10 +163,10 @@ public class WinTaskDefine implements IWinTaskDefine {
         Long          nextExec,
         Long          nextMiss,
         Long          nextLock,
-        Long          coreFail,
-        Long          sumsExec,
-        Long          sumsFail,
-        Long          sumsDone
+        Integer       coreFail,
+        Integer       sumsExec,
+        Integer       sumsFail,
+        Integer       sumsDone
     ) {
         this.id = id;
         this.createDt = createDt;
@@ -842,9 +842,9 @@ public class WinTaskDefine implements IWinTaskDefine {
     /**
      * Getter for <code>win_task_define.core_fail</code>.
      */
-    @Column(name = "core_fail", nullable = false, precision = 19)
+    @Column(name = "core_fail", nullable = false, precision = 10)
     @Override
-    public Long getCoreFail() {
+    public Integer getCoreFail() {
         return this.coreFail;
     }
 
@@ -852,16 +852,16 @@ public class WinTaskDefine implements IWinTaskDefine {
      * Setter for <code>win_task_define.core_fail</code>.
      */
     @Override
-    public void setCoreFail(Long coreFail) {
+    public void setCoreFail(Integer coreFail) {
         this.coreFail = coreFail;
     }
 
     /**
      * Getter for <code>win_task_define.sums_exec</code>.
      */
-    @Column(name = "sums_exec", nullable = false, precision = 19)
+    @Column(name = "sums_exec", nullable = false, precision = 10)
     @Override
-    public Long getSumsExec() {
+    public Integer getSumsExec() {
         return this.sumsExec;
     }
 
@@ -869,16 +869,16 @@ public class WinTaskDefine implements IWinTaskDefine {
      * Setter for <code>win_task_define.sums_exec</code>.
      */
     @Override
-    public void setSumsExec(Long sumsExec) {
+    public void setSumsExec(Integer sumsExec) {
         this.sumsExec = sumsExec;
     }
 
     /**
      * Getter for <code>win_task_define.sums_fail</code>.
      */
-    @Column(name = "sums_fail", nullable = false, precision = 19)
+    @Column(name = "sums_fail", nullable = false, precision = 10)
     @Override
-    public Long getSumsFail() {
+    public Integer getSumsFail() {
         return this.sumsFail;
     }
 
@@ -886,16 +886,16 @@ public class WinTaskDefine implements IWinTaskDefine {
      * Setter for <code>win_task_define.sums_fail</code>.
      */
     @Override
-    public void setSumsFail(Long sumsFail) {
+    public void setSumsFail(Integer sumsFail) {
         this.sumsFail = sumsFail;
     }
 
     /**
      * Getter for <code>win_task_define.sums_done</code>.
      */
-    @Column(name = "sums_done", nullable = false, precision = 19)
+    @Column(name = "sums_done", nullable = false, precision = 10)
     @Override
-    public Long getSumsDone() {
+    public Integer getSumsDone() {
         return this.sumsDone;
     }
 
@@ -903,7 +903,7 @@ public class WinTaskDefine implements IWinTaskDefine {
      * Setter for <code>win_task_define.sums_done</code>.
      */
     @Override
-    public void setSumsDone(Long sumsDone) {
+    public void setSumsDone(Integer sumsDone) {
         this.sumsDone = sumsDone;
     }
 

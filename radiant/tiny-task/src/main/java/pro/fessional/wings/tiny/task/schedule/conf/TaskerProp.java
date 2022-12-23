@@ -159,8 +159,8 @@ public class TaskerProp {
     /**
      * 是否 hasTimingCron或hasTimingIdle或hasTimingRate
      */
-    public boolean hasAnyTiming() {
-        return hasTimingCron() || hasTimingIdle() || hasTimingRate();
+    public boolean notTimingPlan() {
+        return !hasTimingCron() && !hasTimingIdle() && !hasTimingRate();
     }
 
     /**

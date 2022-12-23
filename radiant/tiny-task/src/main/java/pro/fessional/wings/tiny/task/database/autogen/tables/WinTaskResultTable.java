@@ -89,9 +89,9 @@ public class WinTaskResultTable extends TableImpl<WinTaskResultRecord> implement
     public final TableField<WinTaskResultRecord, LocalDateTime> TimeFail = createField(DSL.name("time_fail"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
 
     /**
-     * The column <code>win_task_result.time_stop</code>.
+     * The column <code>win_task_result.time_done</code>.
      */
-    public final TableField<WinTaskResultRecord, LocalDateTime> TimeStop = createField(DSL.name("time_stop"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
+    public final TableField<WinTaskResultRecord, LocalDateTime> TimeDone = createField(DSL.name("time_done"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
 
     /**
      * The column <code>win_task_result.time_cost</code>.

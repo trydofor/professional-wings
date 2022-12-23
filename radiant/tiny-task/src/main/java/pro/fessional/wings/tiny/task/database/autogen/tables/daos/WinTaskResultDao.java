@@ -144,17 +144,17 @@ public class WinTaskResultDao extends WingsJooqDaoAliasImpl<WinTaskResultTable, 
     }
 
     /**
-     * Fetch records that have <code>time_stop BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>time_done BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskResult> fetchRangeOfTimeStop(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
-        return fetchRange(WinTaskResultTable.WinTaskResult.TimeStop, lowerInclusive, upperInclusive);
+    public List<WinTaskResult> fetchRangeOfTimeDone(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRange(WinTaskResultTable.WinTaskResult.TimeDone, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>time_stop IN (values)</code>
+     * Fetch records that have <code>time_done IN (values)</code>
      */
-    public List<WinTaskResult> fetchByTimeStop(LocalDateTime... values) {
-        return fetch(WinTaskResultTable.WinTaskResult.TimeStop, values);
+    public List<WinTaskResult> fetchByTimeDone(LocalDateTime... values) {
+        return fetch(WinTaskResultTable.WinTaskResult.TimeDone, values);
     }
 
     /**

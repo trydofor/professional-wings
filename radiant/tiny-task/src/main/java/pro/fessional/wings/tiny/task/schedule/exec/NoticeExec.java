@@ -19,6 +19,11 @@ import java.util.function.Function;
 @Getter
 @Slf4j
 public class NoticeExec<C> {
+
+    public static final String WhenExec = "exec";
+    public static final String WhenFail = "fail";
+    public static final String WhenDone = "done";
+
     @NotNull
     protected final Class<C> confClass;
     @NotNull
@@ -68,8 +73,13 @@ public class NoticeExec<C> {
      * 组合decode的配置，post一个notice
      */
     public void postNotice(String config, String subject, String content) {
-        final C tmp = decodeConf(config);
-        final C conf = beanObject.combineConfig(tmp);
-        beanObject.post(conf, subject, content);
+        try {
+            final C tmp = decodeConf(config);
+            final C conf = tmp == null ? beanObject.defaultConfig() : beanObject.combineConfig(tmp);
+            beanObject.post(conf, subject, content);
+        }
+        catch (Exception e) {
+            log.warn("failed to post notice, subject=" + subject + ", content=" + content, e);
+        }
     }
 }

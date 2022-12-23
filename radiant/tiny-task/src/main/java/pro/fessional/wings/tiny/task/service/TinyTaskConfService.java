@@ -1,5 +1,6 @@
 package pro.fessional.wings.tiny.task.service;
 
+import lombok.Data;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,16 +28,16 @@ public interface TinyTaskConfService {
      * 若database存在，version大的优先，若property大，则存入database，否则无操作。
      * </pre>
      */
-    long config(@NotNull Object bean, @NotNull Method method, @Nullable Object para);
+    Conf config(@NotNull Object bean, @NotNull Method method, @Nullable Object para);
 
     /**
-     * 配置TinyTasker标记的enabled且autoreg的所有方法，并返回taskId和有效的配置。
-     * 若autoreg但para不正确的，则报错。
+     * 配置TinyTasker标记的所有方法，并返回taskId和有效的配置。
+     * 若autorun但para不正确的，则报错。
      *
      * @see #config(Object, Method, Object)
      */
     @NotNull
-    Set<Long> config(@NotNull Object bean);
+    Set<Conf> config(@NotNull Object bean);
 
     /**
      * 从数据库获取配置
@@ -52,4 +53,11 @@ public interface TinyTaskConfService {
 
     @NotNull
     LinkedHashMap<String, Diff.V<?>> diffProp(long id);
+
+    @Data
+    class Conf {
+        private final long id;
+        private final boolean enabled;
+        private final boolean autorun;
+    }
 }

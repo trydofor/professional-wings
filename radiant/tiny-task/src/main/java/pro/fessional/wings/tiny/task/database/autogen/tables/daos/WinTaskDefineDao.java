@@ -566,56 +566,56 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
     /**
      * Fetch records that have <code>core_fail BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfCoreFail(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfCoreFail(Integer lowerInclusive, Integer upperInclusive) {
         return fetchRange(WinTaskDefineTable.WinTaskDefine.CoreFail, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>core_fail IN (values)</code>
      */
-    public List<WinTaskDefine> fetchByCoreFail(Long... values) {
+    public List<WinTaskDefine> fetchByCoreFail(Integer... values) {
         return fetch(WinTaskDefineTable.WinTaskDefine.CoreFail, values);
     }
 
     /**
      * Fetch records that have <code>sums_exec BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfSumsExec(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfSumsExec(Integer lowerInclusive, Integer upperInclusive) {
         return fetchRange(WinTaskDefineTable.WinTaskDefine.SumsExec, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>sums_exec IN (values)</code>
      */
-    public List<WinTaskDefine> fetchBySumsExec(Long... values) {
+    public List<WinTaskDefine> fetchBySumsExec(Integer... values) {
         return fetch(WinTaskDefineTable.WinTaskDefine.SumsExec, values);
     }
 
     /**
      * Fetch records that have <code>sums_fail BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfSumsFail(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfSumsFail(Integer lowerInclusive, Integer upperInclusive) {
         return fetchRange(WinTaskDefineTable.WinTaskDefine.SumsFail, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>sums_fail IN (values)</code>
      */
-    public List<WinTaskDefine> fetchBySumsFail(Long... values) {
+    public List<WinTaskDefine> fetchBySumsFail(Integer... values) {
         return fetch(WinTaskDefineTable.WinTaskDefine.SumsFail, values);
     }
 
     /**
      * Fetch records that have <code>sums_done BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfSumsDone(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfSumsDone(Integer lowerInclusive, Integer upperInclusive) {
         return fetchRange(WinTaskDefineTable.WinTaskDefine.SumsDone, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>sums_done IN (values)</code>
      */
-    public List<WinTaskDefine> fetchBySumsDone(Long... values) {
+    public List<WinTaskDefine> fetchBySumsDone(Integer... values) {
         return fetch(WinTaskDefineTable.WinTaskDefine.SumsDone, values);
     }
 
@@ -1134,56 +1134,56 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
     /**
      * Fetch records that have <code>core_fail BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfCoreFailLive(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfCoreFailLive(Integer lowerInclusive, Integer upperInclusive) {
         return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.CoreFail, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>core_fail IN (values)</code>
      */
-    public List<WinTaskDefine> fetchByCoreFailLive(Long... values) {
+    public List<WinTaskDefine> fetchByCoreFailLive(Integer... values) {
         return fetchLive(WinTaskDefineTable.WinTaskDefine.CoreFail, values);
     }
 
     /**
      * Fetch records that have <code>sums_exec BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfSumsExecLive(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfSumsExecLive(Integer lowerInclusive, Integer upperInclusive) {
         return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.SumsExec, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>sums_exec IN (values)</code>
      */
-    public List<WinTaskDefine> fetchBySumsExecLive(Long... values) {
+    public List<WinTaskDefine> fetchBySumsExecLive(Integer... values) {
         return fetchLive(WinTaskDefineTable.WinTaskDefine.SumsExec, values);
     }
 
     /**
      * Fetch records that have <code>sums_fail BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfSumsFailLive(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfSumsFailLive(Integer lowerInclusive, Integer upperInclusive) {
         return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.SumsFail, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>sums_fail IN (values)</code>
      */
-    public List<WinTaskDefine> fetchBySumsFailLive(Long... values) {
+    public List<WinTaskDefine> fetchBySumsFailLive(Integer... values) {
         return fetchLive(WinTaskDefineTable.WinTaskDefine.SumsFail, values);
     }
 
     /**
      * Fetch records that have <code>sums_done BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfSumsDoneLive(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfSumsDoneLive(Integer lowerInclusive, Integer upperInclusive) {
         return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.SumsDone, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>sums_done IN (values)</code>
      */
-    public List<WinTaskDefine> fetchBySumsDoneLive(Long... values) {
+    public List<WinTaskDefine> fetchBySumsDoneLive(Integer... values) {
         return fetchLive(WinTaskDefineTable.WinTaskDefine.SumsDone, values);
     }
 }

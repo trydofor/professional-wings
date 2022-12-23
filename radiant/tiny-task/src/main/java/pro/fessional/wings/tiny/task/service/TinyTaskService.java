@@ -1,5 +1,6 @@
 package pro.fessional.wings.tiny.task.service;
 
+import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.scheduling.Trigger;
@@ -9,12 +10,16 @@ import pro.fessional.mirana.time.ThreadNow;
 
 import java.lang.reflect.Method;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
 /**
- * 基于 ThreadPoolTaskScheduler 和 Database 的任务
+ * <pre>
+ * 基于 ThreadPoolTaskScheduler 和 Database 的任务。
+ * execute方法仅为执行，不做通知及database
+ * schedule方法会自动通知和database，通过id管理任务
+ * </pre>
  *
  * @author trydofor
  * @since 2022-11-29
@@ -78,22 +83,28 @@ public interface TinyTaskService {
      * @see ThreadPoolTaskScheduler#schedule(Runnable, Trigger)
      */
     @NotNull
-    List<Long> schedule(@NotNull Object taskerBean);
+    Set<Task> schedule(@NotNull Object taskerBean);
 
     /**
-     * 把TaskerBean中TinyTask标注的方法，作为任务初始并执行
+     * 把TaskerBean中TinyTask标注的方法，作为任务初始并执行，返回TaskId，-1为未启动
      *
      * @see ThreadPoolTaskScheduler#schedule(Runnable, Trigger)
      */
-    long schedule(@NotNull Object taskerBean, @NotNull Method taskerCall, @Nullable Object taskerPara);
+    Task schedule(@NotNull Object taskerBean, @NotNull Method taskerCall, @Nullable Object taskerPara);
 
     /**
-     * 把TaskerBean中TinyTask标注的方法，作为任务初始并执行
+     * 把TaskerBean中TinyTask标注的方法，作为任务初始并执行，返回TaskId，-1为未启动
      * 通过对象引用的lambda方式获取，格式如 Lam.ref(taskerBean::method)
      *
      * @see ThreadPoolTaskScheduler#schedule(Runnable, Trigger)
      */
-    default long schedule(@NotNull Lam.Ref lambdaRefer, @Nullable Object taskerPara) {
+    default Task schedule(@NotNull Lam.Ref lambdaRefer, @Nullable Object taskerPara) {
         return schedule(lambdaRefer.object, lambdaRefer.method, taskerPara);
+    }
+
+    @Data
+    class Task {
+        private final long id;
+        private final boolean scheduled;
     }
 }

@@ -46,7 +46,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
 
     @Override
     @NotNull
-    public DingTalkNotice.Conf combineConfig(Conf that) {
+    public DingTalkNotice.Conf combineConfig(@NotNull Conf that) {
         Conf conf = new Conf();
         conf.webhookUrl = validItem(that.webhookUrl, defaultConfig.webhookUrl);
         conf.digestSecret = validItem(that.digestSecret, defaultConfig.digestSecret);

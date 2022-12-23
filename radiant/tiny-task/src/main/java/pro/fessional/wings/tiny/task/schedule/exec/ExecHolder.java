@@ -1,5 +1,6 @@
 package pro.fessional.wings.tiny.task.schedule.exec;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +28,7 @@ public class ExecHolder {
 
     @Contract("_,true->!null")
     public static NoticeExec<?> getNotice(String token, boolean nonnull) {
-        final NoticeExec<?> exec = token == null ? null : Notice.get(token);
+        final NoticeExec<?> exec = StringUtils.isEmpty(token) ? null : Notice.get(token);
         if (nonnull && exec == null) {
             throw new IllegalStateException("notice not found, token=" + token);
         }
@@ -36,7 +37,7 @@ public class ExecHolder {
 
     @Contract("_,true->!null")
     public static TaskerExec getTasker(String token, boolean nonnull) {
-        final TaskerExec exec = token == null ? null : Tasker.get(token);
+        final TaskerExec exec = StringUtils.isEmpty(token) ? null : Tasker.get(token);
         if (nonnull && exec == null) {
             throw new IllegalStateException("tasker not found, token=" + token);
         }
