@@ -1,6 +1,7 @@
 package pro.fessional.wings.tiny.task.service;
 
 import lombok.Setter;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,5 +29,11 @@ class TinyTaskServiceTest {
 
         TestServiceManual bean = new TestServiceManual();
         tinyTaskService.schedule(Lam.ref(bean::strStr), "trydofor test string");
+    }
+
+    @Test
+    @Disabled
+    void sleep180() throws InterruptedException {
+        Thread.sleep(180*1000L);
     }
 }

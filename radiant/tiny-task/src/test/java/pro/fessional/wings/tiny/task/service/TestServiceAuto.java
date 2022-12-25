@@ -11,7 +11,7 @@ import pro.fessional.wings.tiny.task.schedule.TinyTasker;
 @Slf4j
 public class TestServiceAuto {
 
-    @TinyTasker(cron = "0 0 * * * *")
+    @TinyTasker(cron = "0 * * * * *")
     public String strStr(String msg) throws Exception {
         log.info("TestServiceAuto.strStr {}", msg);
         Thread.sleep(1500);

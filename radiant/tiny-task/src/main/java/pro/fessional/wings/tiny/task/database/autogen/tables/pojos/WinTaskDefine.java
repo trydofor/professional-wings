@@ -74,8 +74,7 @@ public class WinTaskDefine implements IWinTaskDefine {
     private Long          lastFail;
     private Long          lastDone;
     private Long          nextExec;
-    private Long          nextMiss;
-    private Long          nextLock;
+    private Integer       nextLock;
     private Integer       coreFail;
     private Integer       sumsExec;
     private Integer       sumsFail;
@@ -118,7 +117,6 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.lastFail = value.getLastFail();
         this.lastDone = value.getLastDone();
         this.nextExec = value.getNextExec();
-        this.nextMiss = value.getNextMiss();
         this.nextLock = value.getNextLock();
         this.coreFail = value.getCoreFail();
         this.sumsExec = value.getSumsExec();
@@ -161,8 +159,7 @@ public class WinTaskDefine implements IWinTaskDefine {
         Long          lastFail,
         Long          lastDone,
         Long          nextExec,
-        Long          nextMiss,
-        Long          nextLock,
+        Integer       nextLock,
         Integer       coreFail,
         Integer       sumsExec,
         Integer       sumsFail,
@@ -202,7 +199,6 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.lastFail = lastFail;
         this.lastDone = lastDone;
         this.nextExec = nextExec;
-        this.nextMiss = nextMiss;
         this.nextLock = nextLock;
         this.coreFail = coreFail;
         this.sumsExec = sumsExec;
@@ -806,28 +802,11 @@ public class WinTaskDefine implements IWinTaskDefine {
     }
 
     /**
-     * Getter for <code>win_task_define.next_miss</code>.
-     */
-    @Column(name = "next_miss", nullable = false, precision = 19)
-    @Override
-    public Long getNextMiss() {
-        return this.nextMiss;
-    }
-
-    /**
-     * Setter for <code>win_task_define.next_miss</code>.
-     */
-    @Override
-    public void setNextMiss(Long nextMiss) {
-        this.nextMiss = nextMiss;
-    }
-
-    /**
      * Getter for <code>win_task_define.next_lock</code>.
      */
-    @Column(name = "next_lock", nullable = false, precision = 19)
+    @Column(name = "next_lock", nullable = false, precision = 10)
     @Override
-    public Long getNextLock() {
+    public Integer getNextLock() {
         return this.nextLock;
     }
 
@@ -835,7 +814,7 @@ public class WinTaskDefine implements IWinTaskDefine {
      * Setter for <code>win_task_define.next_lock</code>.
      */
     @Override
-    public void setNextLock(Long nextLock) {
+    public void setNextLock(Integer nextLock) {
         this.nextLock = nextLock;
     }
 
@@ -1120,12 +1099,6 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
         else if (!nextExec.equals(other.nextExec))
             return false;
-        if (nextMiss == null) {
-            if (other.nextMiss != null)
-                return false;
-        }
-        else if (!nextMiss.equals(other.nextMiss))
-            return false;
         if (nextLock == null) {
             if (other.nextLock != null)
                 return false;
@@ -1197,7 +1170,6 @@ public class WinTaskDefine implements IWinTaskDefine {
         result = prime * result + ((this.lastFail == null) ? 0 : this.lastFail.hashCode());
         result = prime * result + ((this.lastDone == null) ? 0 : this.lastDone.hashCode());
         result = prime * result + ((this.nextExec == null) ? 0 : this.nextExec.hashCode());
-        result = prime * result + ((this.nextMiss == null) ? 0 : this.nextMiss.hashCode());
         result = prime * result + ((this.nextLock == null) ? 0 : this.nextLock.hashCode());
         result = prime * result + ((this.coreFail == null) ? 0 : this.coreFail.hashCode());
         result = prime * result + ((this.sumsExec == null) ? 0 : this.sumsExec.hashCode());
@@ -1244,7 +1216,6 @@ public class WinTaskDefine implements IWinTaskDefine {
         sb.append(", ").append(lastFail);
         sb.append(", ").append(lastDone);
         sb.append(", ").append(nextExec);
-        sb.append(", ").append(nextMiss);
         sb.append(", ").append(nextLock);
         sb.append(", ").append(coreFail);
         sb.append(", ").append(sumsExec);
@@ -1295,7 +1266,6 @@ public class WinTaskDefine implements IWinTaskDefine {
         setLastFail(from.getLastFail());
         setLastDone(from.getLastDone());
         setNextExec(from.getNextExec());
-        setNextMiss(from.getNextMiss());
         setNextLock(from.getNextLock());
         setCoreFail(from.getCoreFail());
         setSumsExec(from.getSumsExec());

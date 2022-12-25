@@ -639,37 +639,20 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     }
 
     /**
-     * Setter for <code>win_task_define.next_miss</code>.
-     */
-    @Override
-    public void setNextMiss(Long value) {
-        set(34, value);
-    }
-
-    /**
-     * Getter for <code>win_task_define.next_miss</code>.
-     */
-    @Column(name = "next_miss", nullable = false, precision = 19)
-    @Override
-    public Long getNextMiss() {
-        return (Long) get(34);
-    }
-
-    /**
      * Setter for <code>win_task_define.next_lock</code>.
      */
     @Override
-    public void setNextLock(Long value) {
-        set(35, value);
+    public void setNextLock(Integer value) {
+        set(34, value);
     }
 
     /**
      * Getter for <code>win_task_define.next_lock</code>.
      */
-    @Column(name = "next_lock", nullable = false, precision = 19)
+    @Column(name = "next_lock", nullable = false, precision = 10)
     @Override
-    public Long getNextLock() {
-        return (Long) get(35);
+    public Integer getNextLock() {
+        return (Integer) get(34);
     }
 
     /**
@@ -677,7 +660,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setCoreFail(Integer value) {
-        set(36, value);
+        set(35, value);
     }
 
     /**
@@ -686,7 +669,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "core_fail", nullable = false, precision = 10)
     @Override
     public Integer getCoreFail() {
-        return (Integer) get(36);
+        return (Integer) get(35);
     }
 
     /**
@@ -694,7 +677,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setSumsExec(Integer value) {
-        set(37, value);
+        set(36, value);
     }
 
     /**
@@ -703,7 +686,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "sums_exec", nullable = false, precision = 10)
     @Override
     public Integer getSumsExec() {
-        return (Integer) get(37);
+        return (Integer) get(36);
     }
 
     /**
@@ -711,7 +694,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setSumsFail(Integer value) {
-        set(38, value);
+        set(37, value);
     }
 
     /**
@@ -720,7 +703,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "sums_fail", nullable = false, precision = 10)
     @Override
     public Integer getSumsFail() {
-        return (Integer) get(38);
+        return (Integer) get(37);
     }
 
     /**
@@ -728,7 +711,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setSumsDone(Integer value) {
-        set(39, value);
+        set(38, value);
     }
 
     /**
@@ -737,7 +720,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "sums_done", nullable = false, precision = 10)
     @Override
     public Integer getSumsDone() {
-        return (Integer) get(39);
+        return (Integer) get(38);
     }
 
     // -------------------------------------------------------------------------
@@ -789,7 +772,6 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
         setLastFail(from.getLastFail());
         setLastDone(from.getLastDone());
         setNextExec(from.getNextExec());
-        setNextMiss(from.getNextMiss());
         setNextLock(from.getNextLock());
         setCoreFail(from.getCoreFail());
         setSumsExec(from.getSumsExec());
@@ -817,7 +799,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     /**
      * Create a detached, initialised WinTaskDefineRecord
      */
-    public WinTaskDefineRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, String propkey, Boolean enabled, Boolean autorun, Integer version, String taskerBean, String taskerPara, String taskerName, Boolean taskerFast, String taskerApps, String taskerRuns, String noticeBean, String noticeWhen, String noticeConf, String timingZone, String timingType, String timingCron, Integer timingIdle, Integer timingRate, Integer timingMiss, String duringFrom, String duringStop, Integer duringExec, Integer duringFail, Integer duringDone, Integer resultKeep, Long lastExec, Long lastFail, Long lastDone, Long nextExec, Long nextMiss, Long nextLock, Integer coreFail, Integer sumsExec, Integer sumsFail, Integer sumsDone) {
+    public WinTaskDefineRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, String propkey, Boolean enabled, Boolean autorun, Integer version, String taskerBean, String taskerPara, String taskerName, Boolean taskerFast, String taskerApps, String taskerRuns, String noticeBean, String noticeWhen, String noticeConf, String timingZone, String timingType, String timingCron, Integer timingIdle, Integer timingRate, Integer timingMiss, String duringFrom, String duringStop, Integer duringExec, Integer duringFail, Integer duringDone, Integer resultKeep, Long lastExec, Long lastFail, Long lastDone, Long nextExec, Integer nextLock, Integer coreFail, Integer sumsExec, Integer sumsFail, Integer sumsDone) {
         super(WinTaskDefineTable.WinTaskDefine);
 
         setId(id);
@@ -854,7 +836,6 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
         setLastFail(lastFail);
         setLastDone(lastDone);
         setNextExec(nextExec);
-        setNextMiss(nextMiss);
         setNextLock(nextLock);
         setCoreFail(coreFail);
         setSumsExec(sumsExec);

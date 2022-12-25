@@ -17,6 +17,7 @@ public interface TinyTaskExecService {
 
     /**
      * 取消一个任务，若任务不存在视为成功。
+     * 应用重启或再次launch时，任务恢复
      */
     boolean cancel(long id);
 

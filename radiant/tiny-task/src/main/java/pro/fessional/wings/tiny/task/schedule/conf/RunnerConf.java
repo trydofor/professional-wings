@@ -29,12 +29,9 @@ public class RunnerConf {
      * 下次执行开始时间（epoch毫秒）默认为停止
      */
     private long nextExec = 0;
+
     /**
-     * 下次执行补救时间（epoch毫秒）默认已无效
-     */
-    private long nextMiss = 0;
-    /**
-     * 独占锁定期限（epoch毫秒）默认无锁定
+     * exec执行的乐观锁
      */
     private long nextLock = 0;
 

@@ -431,26 +431,15 @@ public interface IWinTaskDefine extends JournalAware, Serializable {
     public Long getNextExec();
 
     /**
-     * Setter for <code>win_task_define.next_miss</code>.
-     */
-    public void setNextMiss(Long value);
-
-    /**
-     * Getter for <code>win_task_define.next_miss</code>.
-     */
-    @Column(name = "next_miss", nullable = false, precision = 19)
-    public Long getNextMiss();
-
-    /**
      * Setter for <code>win_task_define.next_lock</code>.
      */
-    public void setNextLock(Long value);
+    public void setNextLock(Integer value);
 
     /**
      * Getter for <code>win_task_define.next_lock</code>.
      */
-    @Column(name = "next_lock", nullable = false, precision = 19)
-    public Long getNextLock();
+    @Column(name = "next_lock", nullable = false, precision = 10)
+    public Integer getNextLock();
 
     /**
      * Setter for <code>win_task_define.core_fail</code>.

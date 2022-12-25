@@ -83,6 +83,7 @@ public class TableCudListener extends DefaultVisitListener {
             }
         }
 
+        if (handlers.isEmpty() || tableField.isEmpty()) return;
         if (context.renderContext() == null) return;
 
         final Clause clause = context.clause();
@@ -129,6 +130,8 @@ public class TableCudListener extends DefaultVisitListener {
             }
         }
 
+        if (handlers.isEmpty() || tableField.isEmpty()) return;
+
         final Cud cud = (Cud) context.data(ContextKey.EXECUTING_VISIT_CUD);
         if (cud == null) return;
 
@@ -161,7 +164,7 @@ public class TableCudListener extends DefaultVisitListener {
                 if (!field.isEmpty()) {
                     msg.append(", field=");
                     for (Map.Entry<String, List<?>> en : field.entrySet()) {
-                        msg.append(",").append(en.getKey()).append(":").append(en.getValue());
+                        msg.append(',').append(en.getKey()).append(':').append(en.getValue());
                     }
                 }
                 log.error(msg.toString(), e);

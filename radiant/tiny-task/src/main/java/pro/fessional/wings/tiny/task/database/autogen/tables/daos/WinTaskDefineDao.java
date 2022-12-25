@@ -536,30 +536,16 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
     }
 
     /**
-     * Fetch records that have <code>next_miss BETWEEN lowerInclusive AND upperInclusive</code>
-     */
-    public List<WinTaskDefine> fetchRangeOfNextMiss(Long lowerInclusive, Long upperInclusive) {
-        return fetchRange(WinTaskDefineTable.WinTaskDefine.NextMiss, lowerInclusive, upperInclusive);
-    }
-
-    /**
-     * Fetch records that have <code>next_miss IN (values)</code>
-     */
-    public List<WinTaskDefine> fetchByNextMiss(Long... values) {
-        return fetch(WinTaskDefineTable.WinTaskDefine.NextMiss, values);
-    }
-
-    /**
      * Fetch records that have <code>next_lock BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfNextLock(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfNextLock(Integer lowerInclusive, Integer upperInclusive) {
         return fetchRange(WinTaskDefineTable.WinTaskDefine.NextLock, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>next_lock IN (values)</code>
      */
-    public List<WinTaskDefine> fetchByNextLock(Long... values) {
+    public List<WinTaskDefine> fetchByNextLock(Integer... values) {
         return fetch(WinTaskDefineTable.WinTaskDefine.NextLock, values);
     }
 
@@ -1104,30 +1090,16 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
     }
 
     /**
-     * Fetch records that have <code>next_miss BETWEEN lowerInclusive AND upperInclusive</code>
-     */
-    public List<WinTaskDefine> fetchRangeOfNextMissLive(Long lowerInclusive, Long upperInclusive) {
-        return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.NextMiss, lowerInclusive, upperInclusive);
-    }
-
-    /**
-     * Fetch records that have <code>next_miss IN (values)</code>
-     */
-    public List<WinTaskDefine> fetchByNextMissLive(Long... values) {
-        return fetchLive(WinTaskDefineTable.WinTaskDefine.NextMiss, values);
-    }
-
-    /**
      * Fetch records that have <code>next_lock BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfNextLockLive(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfNextLockLive(Integer lowerInclusive, Integer upperInclusive) {
         return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.NextLock, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>next_lock IN (values)</code>
      */
-    public List<WinTaskDefine> fetchByNextLockLive(Long... values) {
+    public List<WinTaskDefine> fetchByNextLockLive(Integer... values) {
         return fetchLive(WinTaskDefineTable.WinTaskDefine.NextLock, values);
     }
 

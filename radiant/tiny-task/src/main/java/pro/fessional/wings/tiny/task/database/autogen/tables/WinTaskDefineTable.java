@@ -233,14 +233,9 @@ public class WinTaskDefineTable extends TableImpl<WinTaskDefineRecord> implement
     public final TableField<WinTaskDefineRecord, Long> NextExec = createField(DSL.name("next_exec"), SQLDataType.BIGINT.nullable(false).defaultValue(DSL.inline("0", SQLDataType.BIGINT)), this, "");
 
     /**
-     * The column <code>win_task_define.next_miss</code>.
-     */
-    public final TableField<WinTaskDefineRecord, Long> NextMiss = createField(DSL.name("next_miss"), SQLDataType.BIGINT.nullable(false).defaultValue(DSL.inline("0", SQLDataType.BIGINT)), this, "");
-
-    /**
      * The column <code>win_task_define.next_lock</code>.
      */
-    public final TableField<WinTaskDefineRecord, Long> NextLock = createField(DSL.name("next_lock"), SQLDataType.BIGINT.nullable(false).defaultValue(DSL.inline("0", SQLDataType.BIGINT)), this, "");
+    public final TableField<WinTaskDefineRecord, Integer> NextLock = createField(DSL.name("next_lock"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
 
     /**
      * The column <code>win_task_define.core_fail</code>.
