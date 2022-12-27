@@ -24,6 +24,12 @@
             <groupId>pro.fessional.wings</groupId>
             <artifactId>slardar</artifactId>
         </dependency>
+        <dependency>
+            <!-- controller-->
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>slardar-webmvc</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!-- 代码生成与版本检查 -->
         <dependency>
             <groupId>pro.fessional.wings</groupId>

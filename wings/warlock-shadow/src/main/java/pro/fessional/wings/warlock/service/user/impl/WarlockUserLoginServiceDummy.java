@@ -2,10 +2,8 @@ package pro.fessional.wings.warlock.service.user.impl;
 
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.page.PageQuery;
+import pro.fessional.mirana.page.PageResult;
 import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author trydofor
@@ -13,8 +11,8 @@ import java.util.List;
  */
 public class WarlockUserLoginServiceDummy implements WarlockUserLoginService {
     @Override
-    public @NotNull List<Item> list(long userId, PageQuery query) {
-        return Collections.emptyList();
+    public @NotNull PageResult<Item> list(long userId, PageQuery query) {
+        return PageResult.empty();
     }
 
     @Override

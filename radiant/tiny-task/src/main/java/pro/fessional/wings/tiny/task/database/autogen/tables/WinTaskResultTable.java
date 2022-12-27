@@ -7,7 +7,7 @@ package pro.fessional.wings.tiny.task.database.autogen.tables;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
 import org.jooq.Name;
-import org.jooq.Row8;
+import org.jooq.Row9;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -72,6 +72,11 @@ public class WinTaskResultTable extends TableImpl<WinTaskResultRecord> implement
      * The column <code>win_task_result.task_app</code>.
      */
     public final TableField<WinTaskResultRecord, String> TaskApp = createField(DSL.name("task_app"), SQLDataType.VARCHAR(300).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
+
+    /**
+     * The column <code>win_task_result.task_pid</code>.
+     */
+    public final TableField<WinTaskResultRecord, Integer> TaskPid = createField(DSL.name("task_pid"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
 
     /**
      * The column <code>win_task_result.task_msg</code>.
@@ -171,12 +176,12 @@ public class WinTaskResultTable extends TableImpl<WinTaskResultRecord> implement
     }
 
     // -------------------------------------------------------------------------
-    // Row8 type methods
+    // Row9 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row8<Long, Long, String, String, LocalDateTime, LocalDateTime, LocalDateTime, Long> fieldsRow() {
-        return (Row8) super.fieldsRow();
+    public Row9<Long, Long, String, Integer, String, LocalDateTime, LocalDateTime, LocalDateTime, Long> fieldsRow() {
+        return (Row9) super.fieldsRow();
     }
 
     /**

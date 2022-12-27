@@ -54,6 +54,16 @@ public interface TinyTaskConfService {
     @NotNull
     LinkedHashMap<String, Diff.V<?>> diffProp(long id);
 
+    /**
+     * 启用或禁用task
+     */
+    boolean enable(long id, boolean enabled);
+
+    /**
+     * 保存配置到数据库
+     */
+    boolean replace(long id, TaskerProp prop);
+
     @Data
     class Conf {
         private final long id;

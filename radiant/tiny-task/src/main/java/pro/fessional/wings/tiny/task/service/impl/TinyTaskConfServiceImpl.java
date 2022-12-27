@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ClassUtils;
 import pro.fessional.mirana.best.ArgsAssert;
 import pro.fessional.mirana.cast.BoxedCastUtil;
@@ -64,12 +65,14 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
     protected JournalService journalService;
 
     @Override
+    @Transactional
     public Conf config(@NotNull Object bean, @NotNull Method method, @Nullable Object para) {
         return config(AopUtils.getTargetClass(bean), bean, method, para);
     }
 
     @Override
     @NotNull
+    @Transactional
     public Set<Conf> config(@NotNull Object bean) {
         final Class<?> claz = AopUtils.getTargetClass(bean);
         final Map<Method, TinyTasker> map = selectMethods(claz, (MethodIntrospector.MetadataLookup<TinyTasker>)
@@ -179,6 +182,27 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         return md.getAnnotation(TinyTasker.class);
     }
 
+    @Override
+    @Transactional
+    public boolean enable(long id, boolean enabled) {
+        return journalService.submit(Jane.Enable, journal -> {
+            final WinTaskDefineTable t = winTaskDefineDao.getTable();
+            final int rc = winTaskDefineDao.ctx().update(t)
+                                           .set(t.Enabled, enabled)
+                                           .set(t.CommitId, journal.getCommitId())
+                                           .set(t.ModifyDt, journal.getCommitDt())
+                                           .where(t.Id.eq(id))
+                                           .execute();
+            return rc > 0;
+        });
+    }
+
+    @Override
+    @Transactional
+    public boolean replace(long id, TaskerProp prop) {
+        return updateProp(prop, null, id);
+    }
+
     @SuppressWarnings("unchecked")
     @SneakyThrows
     private Conf config(@NotNull Class<?> claz, @NotNull Object bean, @NotNull Method method, @Nullable Object para) {
@@ -284,12 +308,13 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         return id;
     }
 
-    private void updateProp(TaskerProp prop, String key, long id) {
-        journalService.commit(Jane.Update, journal -> {
+    private boolean updateProp(TaskerProp prop, String key, long id) {
+        return journalService.submit(Jane.Update, journal -> {
             WinTaskDefine po = genWinTaskDefine(prop, key);
             po.setId(id);
             journal.modify(po);
-            winTaskDefineDao.update(po, true);
+            final int rc = winTaskDefineDao.update(po, true);
+            return rc > 0;
         });
     }
 
@@ -383,6 +408,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
 
     public enum Jane {
         Insert,
-        Update
+        Update,
+        Enable
     }
 }

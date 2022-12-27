@@ -43,6 +43,7 @@ public class WinTaskResult implements IWinTaskResult {
     private Long          id;
     private Long          taskId;
     private String        taskApp;
+    private Integer       taskPid;
     private String        taskMsg;
     private LocalDateTime timeExec;
     private LocalDateTime timeFail;
@@ -55,6 +56,7 @@ public class WinTaskResult implements IWinTaskResult {
         this.id = value.getId();
         this.taskId = value.getTaskId();
         this.taskApp = value.getTaskApp();
+        this.taskPid = value.getTaskPid();
         this.taskMsg = value.getTaskMsg();
         this.timeExec = value.getTimeExec();
         this.timeFail = value.getTimeFail();
@@ -66,6 +68,7 @@ public class WinTaskResult implements IWinTaskResult {
         Long          id,
         Long          taskId,
         String        taskApp,
+        Integer       taskPid,
         String        taskMsg,
         LocalDateTime timeExec,
         LocalDateTime timeFail,
@@ -75,6 +78,7 @@ public class WinTaskResult implements IWinTaskResult {
         this.id = id;
         this.taskId = taskId;
         this.taskApp = taskApp;
+        this.taskPid = taskPid;
         this.taskMsg = taskMsg;
         this.timeExec = timeExec;
         this.timeFail = timeFail;
@@ -134,6 +138,23 @@ public class WinTaskResult implements IWinTaskResult {
     @Override
     public void setTaskApp(String taskApp) {
         this.taskApp = taskApp;
+    }
+
+    /**
+     * Getter for <code>win_task_result.task_pid</code>.
+     */
+    @Column(name = "task_pid", nullable = false, precision = 10)
+    @Override
+    public Integer getTaskPid() {
+        return this.taskPid;
+    }
+
+    /**
+     * Setter for <code>win_task_result.task_pid</code>.
+     */
+    @Override
+    public void setTaskPid(Integer taskPid) {
+        this.taskPid = taskPid;
     }
 
     /**
@@ -249,6 +270,12 @@ public class WinTaskResult implements IWinTaskResult {
         }
         else if (!taskApp.equals(other.taskApp))
             return false;
+        if (taskPid == null) {
+            if (other.taskPid != null)
+                return false;
+        }
+        else if (!taskPid.equals(other.taskPid))
+            return false;
         if (taskMsg == null) {
             if (other.taskMsg != null)
                 return false;
@@ -289,6 +316,7 @@ public class WinTaskResult implements IWinTaskResult {
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
         result = prime * result + ((this.taskId == null) ? 0 : this.taskId.hashCode());
         result = prime * result + ((this.taskApp == null) ? 0 : this.taskApp.hashCode());
+        result = prime * result + ((this.taskPid == null) ? 0 : this.taskPid.hashCode());
         result = prime * result + ((this.taskMsg == null) ? 0 : this.taskMsg.hashCode());
         result = prime * result + ((this.timeExec == null) ? 0 : this.timeExec.hashCode());
         result = prime * result + ((this.timeFail == null) ? 0 : this.timeFail.hashCode());
@@ -304,6 +332,7 @@ public class WinTaskResult implements IWinTaskResult {
         sb.append(id);
         sb.append(", ").append(taskId);
         sb.append(", ").append(taskApp);
+        sb.append(", ").append(taskPid);
         sb.append(", ").append(taskMsg);
         sb.append(", ").append(timeExec);
         sb.append(", ").append(timeFail);
@@ -323,6 +352,7 @@ public class WinTaskResult implements IWinTaskResult {
         setId(from.getId());
         setTaskId(from.getTaskId());
         setTaskApp(from.getTaskApp());
+        setTaskPid(from.getTaskPid());
         setTaskMsg(from.getTaskMsg());
         setTimeExec(from.getTimeExec());
         setTimeFail(from.getTimeFail());

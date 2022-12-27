@@ -13,7 +13,9 @@ import pro.fessional.wings.tiny.task.spring.prop.TinyTaskDefineProp;
  * @since 2022-12-13
  */
 @SpringBootTest(properties = {
-        "debug = true"
+        "debug = true",
+        "wings.tiny.task.define[TinyTaskCleanResult].timing-cron=0 */2 * * * *",
+        "wings.tiny.task.define[TinyTaskCheckHealth].timing-idle=40"
 })
 class TinyTaskServiceTest {
 

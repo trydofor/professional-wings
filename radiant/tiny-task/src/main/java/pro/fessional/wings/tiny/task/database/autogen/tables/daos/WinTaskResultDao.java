@@ -102,6 +102,20 @@ public class WinTaskResultDao extends WingsJooqDaoAliasImpl<WinTaskResultTable, 
     }
 
     /**
+     * Fetch records that have <code>task_pid BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinTaskResult> fetchRangeOfTaskPid(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRange(WinTaskResultTable.WinTaskResult.TaskPid, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>task_pid IN (values)</code>
+     */
+    public List<WinTaskResult> fetchByTaskPid(Integer... values) {
+        return fetch(WinTaskResultTable.WinTaskResult.TaskPid, values);
+    }
+
+    /**
      * Fetch records that have <code>task_msg BETWEEN lowerInclusive AND upperInclusive</code>
      */
     public List<WinTaskResult> fetchRangeOfTaskMsg(String lowerInclusive, String upperInclusive) {

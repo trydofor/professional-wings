@@ -3,9 +3,9 @@ package pro.fessional.wings.warlock.service.user;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.page.PageQuery;
+import pro.fessional.mirana.page.PageResult;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * 用户登录验证
@@ -32,7 +32,7 @@ public interface WarlockUserLoginService {
      * @return 登录信息
      */
     @NotNull
-    List<Item> list(long userId, PageQuery query);
+    PageResult<Item> list(long userId, PageQuery query);
 
 
     @Data

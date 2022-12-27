@@ -46,7 +46,7 @@ public class NoticeExec<C> {
     }
 
     public C decodeConf(String conf) {
-        if (conf == null) return null;
+        if (conf == null || conf.isEmpty()) return null;
         return confDecoder.apply(conf, confClass);
     }
 

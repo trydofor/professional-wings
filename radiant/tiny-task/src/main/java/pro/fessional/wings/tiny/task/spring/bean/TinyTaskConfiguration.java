@@ -5,11 +5,13 @@ import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.wings.tiny.task.schedule.TinyTasker;
 import pro.fessional.wings.tiny.task.service.TinyTaskService;
 import pro.fessional.wings.tiny.task.spring.prop.TinyTaskEnabledProp;
@@ -45,5 +47,11 @@ public class TinyTaskConfiguration {
                 service.schedule(en.getValue());
             }
         };
+    }
+
+    @Configuration(proxyBeanMethods = false)
+    @ComponentScan("pro.fessional.wings.tiny.task.controller")
+    @ConditionalOnClass(RestController.class)
+    public static class MvcController {
     }
 }

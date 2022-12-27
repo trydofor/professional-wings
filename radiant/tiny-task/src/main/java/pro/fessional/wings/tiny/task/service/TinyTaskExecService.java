@@ -11,9 +11,14 @@ import java.util.Set;
 public interface TinyTaskExecService {
 
     /**
-     * 启动一个任务
+     * 调度一个任务
      */
     boolean launch(long id);
+
+    /**
+     * 强制执行一个任务，不记入调度
+     */
+    boolean force(long id);
 
     /**
      * 取消一个任务，若任务不存在视为成功。

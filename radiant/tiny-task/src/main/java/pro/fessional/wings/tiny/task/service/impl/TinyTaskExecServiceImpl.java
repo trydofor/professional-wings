@@ -85,6 +85,54 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     }
 
     @Override
+    public boolean force(long id) {
+        final WinTaskDefine td = winTaskDefineDao.fetchOneById(id);
+        if (td == null) {
+            log.info("skip task for not found, id={}", id);
+            return false;
+        }
+
+        final boolean fast = BoxedCastUtil.orTrue(td.getTaskerFast());
+        TaskSchedulerHelper.referScheduler(fast).schedule(() -> {
+            long execTms = ThreadNow.millis();
+            long doneTms = -1;
+            long failTms = -1;
+            final String taskerName = td.getTaskerName() + " force";
+            final String noticeConf = td.getNoticeConf();
+
+            String taskMsg = null;
+            NoticeExec<?> notice = null;
+            Set<String> ntcWhen = Collections.emptySet();
+            try {
+                final TaskerExec tasker = ExecHolder.getTasker(td.getTaskerBean(), true);
+
+                notice = ExecHolder.getNotice(td.getNoticeBean(), false);
+                if (notice != null) ntcWhen = noticeWhen(td.getNoticeWhen());
+
+                postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, execTms, WhenExec);
+                log.info("task force exec, id={}", id);
+
+                final Object result = tasker.invoke(td.getTaskerPara(), true);
+                log.info("task force done, id={}", id);
+                //
+                doneTms = ThreadNow.millis();
+                taskMsg = stringResult(result);
+                postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, doneTms, WhenDone);
+            }
+            catch (Exception e) {
+                log.warn("task force fail, id=" + id, e);
+                failTms = ThreadNow.millis();
+                taskMsg = ThrowableUtil.toString(e);
+                postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, failTms, WhenFail);
+            }
+            finally {
+                saveResult(id, execTms, failTms, doneTms, taskMsg, td.getCoreFail());
+            }
+        }, new Date(ThreadNow.millis()));
+        return true;
+    }
+
+    @Override
     public boolean cancel(long id) {
         Cancel.put(id, Boolean.TRUE);
         final ScheduledFuture<?> ft = Handle.get(id);
@@ -306,7 +354,8 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         final WinTaskResult po = new WinTaskResult();
         po.setId(lightIdService.getId(winTaskResultDao.getTable()));
         po.setTaskId(id);
-        po.setTaskApp(appName + "@" + JvmStat.jvmPid());
+        po.setTaskApp(appName);
+        po.setTaskPid(JvmStat.jvmPid());
         po.setTaskMsg(msg);
 
         po.setTimeExec(milliLdt(exec));

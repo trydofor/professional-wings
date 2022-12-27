@@ -46,7 +46,8 @@ CREATE TABLE `win_task_define` (
 CREATE TABLE `win_task_result` (
     `id`        BIGINT(20)   NOT NULL COMMENT '主键/task_id',
     `task_id`   BIGINT(20)   NOT NULL DEFAULT '0' COMMENT '任务id，win_task_define.id',
-    `task_app`  VARCHAR(300) NOT NULL DEFAULT '' COMMENT '所属程序，逗号分隔，默认使用spring.application.name',
+    `task_app`  VARCHAR(300) NOT NULL DEFAULT '' COMMENT '所属程序，默认使用spring.application.name',
+    `task_pid`  INT(11)      NOT NULL DEFAULT '0' COMMENT '所属jvmpid',
     `task_msg`  TEXT         NULL     DEFAULT NULL COMMENT '正常或异常的信息',
     `time_exec` DATETIME(3)  NOT NULL DEFAULT NOW(3) COMMENT '执行开始时间，服务时间',
     `time_fail` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT '执行停止时间，服务时间',

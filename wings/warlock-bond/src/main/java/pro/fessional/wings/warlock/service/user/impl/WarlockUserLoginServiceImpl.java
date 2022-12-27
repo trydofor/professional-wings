@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import pro.fessional.mirana.page.PageQuery;
+import pro.fessional.mirana.page.PageResult;
+import pro.fessional.wings.faceless.database.jooq.helper.PageJooqHelper;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.context.TerminalAttribute;
@@ -15,9 +17,6 @@ import pro.fessional.wings.warlock.database.autogen.tables.WinUserLoginTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserLoginDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserLogin;
 import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author trydofor
@@ -36,18 +35,17 @@ public class WarlockUserLoginServiceImpl implements WarlockUserLoginService, Ter
     protected LightIdService lightIdService;
 
     @Override
-    public @NotNull List<Item> list(long userId, PageQuery query) {
-        if (winUserLoginDao.notTableExist()) return Collections.emptyList();
+    public @NotNull PageResult<Item> list(long userId, PageQuery query) {
+        if (winUserLoginDao.notTableExist()) return PageResult.empty();
 
         final WinUserLoginTable t = winUserLoginDao.getTable();
-        return winUserLoginDao
-                .ctx()
-                .select(t.AuthType, t.LoginIp, t.LoginDt, t.Terminal, t.Failed)
-                .from(t)
-                .orderBy(t.LoginDt.desc())
-                .limit(query.toOffset(), query.getSize())
-                .fetch()
-                .into(Item.class);
+        return PageJooqHelper.use(winUserLoginDao, query)
+                             .count()
+                             .from(t)
+                             .whereTrue()
+                             .order(t.LoginDt.desc())
+                             .fetch(t.AuthType, t.LoginIp, t.LoginDt, t.Terminal, t.Failed)
+                             .into(Item.class);
     }
 
     @Override

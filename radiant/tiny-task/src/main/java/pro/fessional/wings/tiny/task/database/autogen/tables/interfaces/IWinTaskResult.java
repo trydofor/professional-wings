@@ -74,6 +74,17 @@ public interface IWinTaskResult extends Serializable {
     public String getTaskApp();
 
     /**
+     * Setter for <code>win_task_result.task_pid</code>.
+     */
+    public void setTaskPid(Integer value);
+
+    /**
+     * Getter for <code>win_task_result.task_pid</code>.
+     */
+    @Column(name = "task_pid", nullable = false, precision = 10)
+    public Integer getTaskPid();
+
+    /**
      * Setter for <code>win_task_result.task_msg</code>.
      */
     public void setTaskMsg(String value);
