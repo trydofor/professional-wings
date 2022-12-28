@@ -13,7 +13,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.session.MapSession;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
@@ -221,6 +220,11 @@ public class AuthedUserController {
         return R.okData(sess);
     }
 
+    @Data
+    public static class Sid {
+        private String sid;
+    }
+
     @Operation(summary = "踢掉一个登录用户的会话", description =
             "# Usage \n"
             + "只有登录用户才有信息\n"
@@ -231,8 +235,8 @@ public class AuthedUserController {
             + "* @return {200 | Result(false)} 未登录用户，且无URL权限；\n"
             + "* @return {401} 若设置了URL访问权限且用户未登录；")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userDropSession + "}")
-    public R<Void> dropSession(@RequestParam("sid") String sid) {
-        final boolean b = wingsSessionHelper.dropSession(sid);
-        return R.of(b);
+    public R<Boolean> dropSession(@RequestBody Sid sid) {
+        final boolean b = wingsSessionHelper.dropSession(sid.sid);
+        return R.okData(b);
     }
 }

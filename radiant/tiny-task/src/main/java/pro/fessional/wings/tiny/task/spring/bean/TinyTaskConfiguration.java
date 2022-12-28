@@ -31,7 +31,7 @@ public class TinyTaskConfiguration {
     private static final Log log = LogFactory.getLog(TinyTaskConfiguration.class);
 
     @Bean
-    @ConditionalOnProperty(name = TinyTaskEnabledProp.Key$autoreg, havingValue = "true")
+    @ConditionalOnProperty(name = TinyTaskEnabledProp.Key$autorun, havingValue = "true")
     public CommandLineRunner runnerTinyTaskerAuto(@NotNull ApplicationContext context, ObjectProvider<TinyTaskService> tinyTaskService) {
         log.info("TinyTask spring-runs runnerTinyTaskerAuto");
         return args -> {

@@ -19,8 +19,8 @@ public class TinyTaskEnabledProp {
     /**
      * 是否允许自动注册TinyTask.Auto
      *
-     * @see #Key$autoreg
+     * @see #Key$autorun
      */
-    private boolean autoreg = true;
-    public static final String Key$autoreg = Key + ".autoreg";
+    private boolean autorun = true;
+    public static final String Key$autorun = Key + ".autoreg";
 }
