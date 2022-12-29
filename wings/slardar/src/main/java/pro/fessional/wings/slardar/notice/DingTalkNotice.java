@@ -1,12 +1,16 @@
 package pro.fessional.wings.slardar.notice;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import org.apache.commons.codec.binary.Base64;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.JsonTemplate;
 import pro.fessional.mirana.time.ThreadNow;
@@ -19,6 +23,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.net.URLEncoder;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -38,6 +43,9 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
     @NotNull
     private final Conf defaultConfig;
 
+    @Setter @Getter
+    private Map<String, Conf> configs = Collections.emptyMap();
+
     @Override
     @NotNull
     public DingTalkNotice.Conf defaultConfig() {
@@ -55,6 +63,18 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
         conf.noticeMobiles = that.noticeMobiles != null ? that.noticeMobiles : defaultConfig.noticeMobiles;
         conf.msgType = validItem(that.msgType, defaultConfig.msgType);
         return conf;
+    }
+
+    @Override
+    @Contract("_,true->!null")
+    public Conf provideConfig(@Nullable String name, boolean combine) {
+        final Conf conf = configs.get(name);
+        if (combine) {
+            return conf == null ? defaultConfig : combineConfig(conf);
+        }
+        else {
+            return conf;
+        }
     }
 
     private String validItem(String conf, String that) {

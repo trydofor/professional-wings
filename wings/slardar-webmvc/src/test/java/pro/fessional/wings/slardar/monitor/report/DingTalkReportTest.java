@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.notice.DingTalkNotice;
-import pro.fessional.wings.slardar.spring.prop.SlardarMonitorProp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +18,9 @@ import java.util.TreeMap;
  * @author trydofor
  * @since 2021-07-15
  */
-@SpringBootTest(properties = "wings.slardar.monitor.ding-talk.access-token=${DING_TALK_TOKEN:}")
+@SpringBootTest(properties = "wings.slardar.ding-notice.default.access-token=${DING_TALK_TOKEN:}")
 @Disabled
 class DingTalkReportTest {
-
-    @Setter(onMethod_ = {@Autowired})
-    private SlardarMonitorProp slardarMonitorProp;
 
     @Setter(onMethod_ = {@Autowired})
     private DingTalkReport dingTalkReport;
@@ -48,7 +44,7 @@ class DingTalkReportTest {
 
     @Test
     void postNotice() {
-        final SlardarMonitorProp.DingTalkConf conf = slardarMonitorProp.getDingTalk();
+        final DingTalkNotice.Conf conf = dingTalkNotice.provideConfig("monitor", true);
         conf.setNoticeMobiles(Set.of("155XXXX1991"));
         dingTalkNotice.post(conf, "测试标题", "##测试正文\n\n- **列表** 正常");
     }

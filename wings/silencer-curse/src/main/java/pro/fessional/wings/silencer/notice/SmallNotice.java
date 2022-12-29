@@ -1,6 +1,8 @@
 package pro.fessional.wings.silencer.notice;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.best.DummyBlock;
 
 /**
@@ -23,6 +25,12 @@ public interface SmallNotice<C> {
      */
     @NotNull
     C combineConfig(@NotNull C that);
+
+    /**
+     * 根据名字，提供不同的配置。combine时与default合并。conf == null ? defaultConfig() : combineConfig(conf);
+     */
+    @Contract("_,true->!null")
+    C provideConfig(@Nullable String name, boolean combine);
 
     /**
      * 以默认配置同步发送，发送成功或失败，或异常，subject和content同时为null时返回false

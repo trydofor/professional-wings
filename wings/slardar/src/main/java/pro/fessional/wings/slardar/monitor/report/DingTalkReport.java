@@ -23,15 +23,17 @@ import java.util.function.Consumer;
 @Getter @Setter
 public class DingTalkReport implements WarnReport {
 
+    private final String dingConfig;
     private final DingTalkNotice dingTalkNotice;
 
-    public DingTalkReport(DingTalkNotice notice) {
+    public DingTalkReport(DingTalkNotice notice, String config) {
         this.dingTalkNotice = notice;
+        this.dingConfig = config;
     }
 
     @Override
     public Sts report(String appName, String jvmName, Map<String, List<WarnMetric.Warn>> warn) {
-        final DingTalkNotice.Conf conf = dingTalkNotice.defaultConfig();
+        final DingTalkNotice.Conf conf = dingTalkNotice.provideConfig(dingConfig, true);
         final String atk = conf.getAccessToken();
         if (!StringUtils.hasText(atk)) {
             log.info("accessToken is empty, skip");
