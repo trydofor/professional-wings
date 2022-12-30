@@ -94,7 +94,7 @@ public class TaskerProp {
     }
 
     /**
-     * 对noticeBean的默认配置的覆盖，默认为json格式，不做补充，空时使用Default配置
+     * 通知Bean的配置文件名字，默认自动，空时使用Default配置
      */
     protected String noticeConf = "";
 
@@ -169,6 +169,10 @@ public class TaskerProp {
     protected int timingMiss = 0;
 
     /**
+     * 心跳间隔秒数，last_exec距今超过2个心态任务task异常，默认自动。取rate或idle最大值，cron需要自行指定，不会使用Default配置
+     */
+    protected int timingBeat = 0;
+    /**
      * 调度开始的日期时间，timingZone时区，yyyy-MM-dd HH:mm:ss，0表示无效，不会使用Default配置
      */
     protected String duringFrom = "";
@@ -188,6 +192,10 @@ public class TaskerProp {
      * 总计成功执行多少次后，结束调度，不会使用Default配置
      */
     protected int duringDone = 0;
+    /**
+     * 每应用每启动时重新计数，总计成功执行多少次后，结束调度，默认无效，不会使用Default配置
+     */
+    protected int duringBoot = 0;
 
     /**
      * 执行结果保存的天数，负数为不保存，0为使用Default配置

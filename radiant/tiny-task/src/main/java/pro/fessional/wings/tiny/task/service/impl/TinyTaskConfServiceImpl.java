@@ -344,12 +344,14 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         po.setTimingIdle(prop.getTimingIdle());
         po.setTimingRate(prop.getTimingRate());
         po.setTimingMiss(prop.getTimingMiss());
+        po.setTimingBeat(prop.getTimingBeat());
 
         po.setDuringFrom(prop.getDuringFrom());
         po.setDuringStop(prop.getDuringStop());
         po.setDuringExec(prop.getDuringExec());
         po.setDuringFail(prop.getDuringFail());
         po.setDuringDone(prop.getDuringDone());
+        po.setDuringBoot(prop.getDuringBoot());
 
         po.setResultKeep(prop.getResultKeep());
         return po;
@@ -363,8 +365,8 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
                         t.Enabled, t.Autorun, t.Version,
                         t.TaskerBean, t.TaskerPara, t.TaskerName, t.TaskerFast, t.TaskerApps, t.TaskerRuns,
                         t.NoticeBean, t.NoticeWhen, t.NoticeConf,
-                        t.TimingZone, t.TimingType, t.TimingCron, t.TimingIdle, t.TimingRate, t.TimingMiss,
-                        t.DuringFrom, t.DuringStop, t.DuringExec, t.DuringFail, t.DuringDone,
+                        t.TimingZone, t.TimingType, t.TimingCron, t.TimingIdle, t.TimingRate, t.TimingMiss, t.TimingBeat,
+                        t.DuringFrom, t.DuringStop, t.DuringExec, t.DuringFail, t.DuringDone, t.DuringBoot,
                         t.ResultKeep)
                 .from(t)
                 .where(cond.apply(t))
@@ -394,12 +396,14 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         Diff.V.diff(result, "timingIdle", v1.getTimingIdle(), v2.getTimingIdle());
         Diff.V.diff(result, "timingRate", v1.getTimingRate(), v2.getTimingRate());
         Diff.V.diff(result, "timingMiss", v1.getTimingMiss(), v2.getTimingMiss());
+        Diff.V.diff(result, "timingBeat", v1.getTimingBeat(), v2.getTimingBeat());
 
         Diff.V.diff(result, "duringFrom", v1.getDuringFrom(), v2.getDuringFrom());
         Diff.V.diff(result, "duringStop", v1.getDuringStop(), v2.getDuringStop());
         Diff.V.diff(result, "duringExec", v1.getDuringExec(), v2.getDuringExec());
         Diff.V.diff(result, "duringFail", v1.getDuringFail(), v2.getDuringFail());
         Diff.V.diff(result, "duringDone", v1.getDuringDone(), v2.getDuringDone());
+        Diff.V.diff(result, "duringBoot", v1.getDuringBoot(), v2.getDuringBoot());
 
         Diff.V.diff(result, "resultKeep", v1.getResultKeep(), v2.getResultKeep());
 

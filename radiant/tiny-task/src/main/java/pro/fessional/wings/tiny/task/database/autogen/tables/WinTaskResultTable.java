@@ -86,7 +86,7 @@ public class WinTaskResultTable extends TableImpl<WinTaskResultRecord> implement
     /**
      * The column <code>win_task_result.time_exec</code>.
      */
-    public final TableField<WinTaskResultRecord, LocalDateTime> TimeExec = createField(DSL.name("time_exec"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.field("CURRENT_TIMESTAMP(3)", SQLDataType.LOCALDATETIME)), this, "");
+    public final TableField<WinTaskResultRecord, LocalDateTime> TimeExec = createField(DSL.name("time_exec"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
 
     /**
      * The column <code>win_task_result.time_fail</code>.

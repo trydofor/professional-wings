@@ -12,7 +12,7 @@ public interface TinyTaskBeatService {
     int cleanResult();
 
     /**
-     * 检查任务健康状态
+     * 检查任务健康状态，非空时发生通知
      */
     String checkHealth();
 }

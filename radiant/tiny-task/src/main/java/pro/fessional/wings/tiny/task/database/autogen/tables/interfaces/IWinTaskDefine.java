@@ -245,8 +245,8 @@ public interface IWinTaskDefine extends JournalAware, Serializable {
     /**
      * Getter for <code>win_task_define.notice_conf</code>.
      */
-    @Column(name = "notice_conf", length = 65535)
-    @Size(max = 65535)
+    @Column(name = "notice_conf", nullable = false, length = 200)
+    @Size(max = 200)
     public String getNoticeConf();
 
     /**
@@ -319,6 +319,17 @@ public interface IWinTaskDefine extends JournalAware, Serializable {
     public Integer getTimingMiss();
 
     /**
+     * Setter for <code>win_task_define.timing_beat</code>.
+     */
+    public void setTimingBeat(Integer value);
+
+    /**
+     * Getter for <code>win_task_define.timing_beat</code>.
+     */
+    @Column(name = "timing_beat", nullable = false, precision = 10)
+    public Integer getTimingBeat();
+
+    /**
      * Setter for <code>win_task_define.during_from</code>.
      */
     public void setDuringFrom(String value);
@@ -376,6 +387,17 @@ public interface IWinTaskDefine extends JournalAware, Serializable {
     public Integer getDuringDone();
 
     /**
+     * Setter for <code>win_task_define.during_boot</code>.
+     */
+    public void setDuringBoot(Integer value);
+
+    /**
+     * Getter for <code>win_task_define.during_boot</code>.
+     */
+    @Column(name = "during_boot", nullable = false, precision = 10)
+    public Integer getDuringBoot();
+
+    /**
      * Setter for <code>win_task_define.result_keep</code>.
      */
     public void setResultKeep(Integer value);
@@ -389,46 +411,46 @@ public interface IWinTaskDefine extends JournalAware, Serializable {
     /**
      * Setter for <code>win_task_define.last_exec</code>.
      */
-    public void setLastExec(Long value);
+    public void setLastExec(LocalDateTime value);
 
     /**
      * Getter for <code>win_task_define.last_exec</code>.
      */
-    @Column(name = "last_exec", nullable = false, precision = 19)
-    public Long getLastExec();
+    @Column(name = "last_exec", nullable = false, precision = 3)
+    public LocalDateTime getLastExec();
 
     /**
      * Setter for <code>win_task_define.last_fail</code>.
      */
-    public void setLastFail(Long value);
+    public void setLastFail(LocalDateTime value);
 
     /**
      * Getter for <code>win_task_define.last_fail</code>.
      */
-    @Column(name = "last_fail", nullable = false, precision = 19)
-    public Long getLastFail();
+    @Column(name = "last_fail", nullable = false, precision = 3)
+    public LocalDateTime getLastFail();
 
     /**
      * Setter for <code>win_task_define.last_done</code>.
      */
-    public void setLastDone(Long value);
+    public void setLastDone(LocalDateTime value);
 
     /**
      * Getter for <code>win_task_define.last_done</code>.
      */
-    @Column(name = "last_done", nullable = false, precision = 19)
-    public Long getLastDone();
+    @Column(name = "last_done", nullable = false, precision = 3)
+    public LocalDateTime getLastDone();
 
     /**
      * Setter for <code>win_task_define.next_exec</code>.
      */
-    public void setNextExec(Long value);
+    public void setNextExec(LocalDateTime value);
 
     /**
      * Getter for <code>win_task_define.next_exec</code>.
      */
-    @Column(name = "next_exec", nullable = false, precision = 19)
-    public Long getNextExec();
+    @Column(name = "next_exec", nullable = false, precision = 3)
+    public LocalDateTime getNextExec();
 
     /**
      * Setter for <code>win_task_define.next_lock</code>.

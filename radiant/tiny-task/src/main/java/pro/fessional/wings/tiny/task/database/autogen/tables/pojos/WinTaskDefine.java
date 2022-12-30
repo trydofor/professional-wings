@@ -64,16 +64,18 @@ public class WinTaskDefine implements IWinTaskDefine {
     private Integer       timingIdle;
     private Integer       timingRate;
     private Integer       timingMiss;
+    private Integer       timingBeat;
     private String        duringFrom;
     private String        duringStop;
     private Integer       duringExec;
     private Integer       duringFail;
     private Integer       duringDone;
+    private Integer       duringBoot;
     private Integer       resultKeep;
-    private Long          lastExec;
-    private Long          lastFail;
-    private Long          lastDone;
-    private Long          nextExec;
+    private LocalDateTime lastExec;
+    private LocalDateTime lastFail;
+    private LocalDateTime lastDone;
+    private LocalDateTime nextExec;
     private Integer       nextLock;
     private Integer       coreFail;
     private Integer       sumsExec;
@@ -107,11 +109,13 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.timingIdle = value.getTimingIdle();
         this.timingRate = value.getTimingRate();
         this.timingMiss = value.getTimingMiss();
+        this.timingBeat = value.getTimingBeat();
         this.duringFrom = value.getDuringFrom();
         this.duringStop = value.getDuringStop();
         this.duringExec = value.getDuringExec();
         this.duringFail = value.getDuringFail();
         this.duringDone = value.getDuringDone();
+        this.duringBoot = value.getDuringBoot();
         this.resultKeep = value.getResultKeep();
         this.lastExec = value.getLastExec();
         this.lastFail = value.getLastFail();
@@ -149,16 +153,18 @@ public class WinTaskDefine implements IWinTaskDefine {
         Integer       timingIdle,
         Integer       timingRate,
         Integer       timingMiss,
+        Integer       timingBeat,
         String        duringFrom,
         String        duringStop,
         Integer       duringExec,
         Integer       duringFail,
         Integer       duringDone,
+        Integer       duringBoot,
         Integer       resultKeep,
-        Long          lastExec,
-        Long          lastFail,
-        Long          lastDone,
-        Long          nextExec,
+        LocalDateTime lastExec,
+        LocalDateTime lastFail,
+        LocalDateTime lastDone,
+        LocalDateTime nextExec,
         Integer       nextLock,
         Integer       coreFail,
         Integer       sumsExec,
@@ -189,11 +195,13 @@ public class WinTaskDefine implements IWinTaskDefine {
         this.timingIdle = timingIdle;
         this.timingRate = timingRate;
         this.timingMiss = timingMiss;
+        this.timingBeat = timingBeat;
         this.duringFrom = duringFrom;
         this.duringStop = duringStop;
         this.duringExec = duringExec;
         this.duringFail = duringFail;
         this.duringDone = duringDone;
+        this.duringBoot = duringBoot;
         this.resultKeep = resultKeep;
         this.lastExec = lastExec;
         this.lastFail = lastFail;
@@ -509,8 +517,8 @@ public class WinTaskDefine implements IWinTaskDefine {
     /**
      * Getter for <code>win_task_define.notice_conf</code>.
      */
-    @Column(name = "notice_conf", length = 65535)
-    @Size(max = 65535)
+    @Column(name = "notice_conf", nullable = false, length = 200)
+    @Size(max = 200)
     @Override
     public String getNoticeConf() {
         return this.noticeConf;
@@ -630,6 +638,23 @@ public class WinTaskDefine implements IWinTaskDefine {
     }
 
     /**
+     * Getter for <code>win_task_define.timing_beat</code>.
+     */
+    @Column(name = "timing_beat", nullable = false, precision = 10)
+    @Override
+    public Integer getTimingBeat() {
+        return this.timingBeat;
+    }
+
+    /**
+     * Setter for <code>win_task_define.timing_beat</code>.
+     */
+    @Override
+    public void setTimingBeat(Integer timingBeat) {
+        this.timingBeat = timingBeat;
+    }
+
+    /**
      * Getter for <code>win_task_define.during_from</code>.
      */
     @Column(name = "during_from", nullable = false, length = 20)
@@ -717,6 +742,23 @@ public class WinTaskDefine implements IWinTaskDefine {
     }
 
     /**
+     * Getter for <code>win_task_define.during_boot</code>.
+     */
+    @Column(name = "during_boot", nullable = false, precision = 10)
+    @Override
+    public Integer getDuringBoot() {
+        return this.duringBoot;
+    }
+
+    /**
+     * Setter for <code>win_task_define.during_boot</code>.
+     */
+    @Override
+    public void setDuringBoot(Integer duringBoot) {
+        this.duringBoot = duringBoot;
+    }
+
+    /**
      * Getter for <code>win_task_define.result_keep</code>.
      */
     @Column(name = "result_keep", nullable = false, precision = 10)
@@ -736,9 +778,9 @@ public class WinTaskDefine implements IWinTaskDefine {
     /**
      * Getter for <code>win_task_define.last_exec</code>.
      */
-    @Column(name = "last_exec", nullable = false, precision = 19)
+    @Column(name = "last_exec", nullable = false, precision = 3)
     @Override
-    public Long getLastExec() {
+    public LocalDateTime getLastExec() {
         return this.lastExec;
     }
 
@@ -746,16 +788,16 @@ public class WinTaskDefine implements IWinTaskDefine {
      * Setter for <code>win_task_define.last_exec</code>.
      */
     @Override
-    public void setLastExec(Long lastExec) {
+    public void setLastExec(LocalDateTime lastExec) {
         this.lastExec = lastExec;
     }
 
     /**
      * Getter for <code>win_task_define.last_fail</code>.
      */
-    @Column(name = "last_fail", nullable = false, precision = 19)
+    @Column(name = "last_fail", nullable = false, precision = 3)
     @Override
-    public Long getLastFail() {
+    public LocalDateTime getLastFail() {
         return this.lastFail;
     }
 
@@ -763,16 +805,16 @@ public class WinTaskDefine implements IWinTaskDefine {
      * Setter for <code>win_task_define.last_fail</code>.
      */
     @Override
-    public void setLastFail(Long lastFail) {
+    public void setLastFail(LocalDateTime lastFail) {
         this.lastFail = lastFail;
     }
 
     /**
      * Getter for <code>win_task_define.last_done</code>.
      */
-    @Column(name = "last_done", nullable = false, precision = 19)
+    @Column(name = "last_done", nullable = false, precision = 3)
     @Override
-    public Long getLastDone() {
+    public LocalDateTime getLastDone() {
         return this.lastDone;
     }
 
@@ -780,16 +822,16 @@ public class WinTaskDefine implements IWinTaskDefine {
      * Setter for <code>win_task_define.last_done</code>.
      */
     @Override
-    public void setLastDone(Long lastDone) {
+    public void setLastDone(LocalDateTime lastDone) {
         this.lastDone = lastDone;
     }
 
     /**
      * Getter for <code>win_task_define.next_exec</code>.
      */
-    @Column(name = "next_exec", nullable = false, precision = 19)
+    @Column(name = "next_exec", nullable = false, precision = 3)
     @Override
-    public Long getNextExec() {
+    public LocalDateTime getNextExec() {
         return this.nextExec;
     }
 
@@ -797,7 +839,7 @@ public class WinTaskDefine implements IWinTaskDefine {
      * Setter for <code>win_task_define.next_exec</code>.
      */
     @Override
-    public void setNextExec(Long nextExec) {
+    public void setNextExec(LocalDateTime nextExec) {
         this.nextExec = nextExec;
     }
 
@@ -1039,6 +1081,12 @@ public class WinTaskDefine implements IWinTaskDefine {
         }
         else if (!timingMiss.equals(other.timingMiss))
             return false;
+        if (timingBeat == null) {
+            if (other.timingBeat != null)
+                return false;
+        }
+        else if (!timingBeat.equals(other.timingBeat))
+            return false;
         if (duringFrom == null) {
             if (other.duringFrom != null)
                 return false;
@@ -1068,6 +1116,12 @@ public class WinTaskDefine implements IWinTaskDefine {
                 return false;
         }
         else if (!duringDone.equals(other.duringDone))
+            return false;
+        if (duringBoot == null) {
+            if (other.duringBoot != null)
+                return false;
+        }
+        else if (!duringBoot.equals(other.duringBoot))
             return false;
         if (resultKeep == null) {
             if (other.resultKeep != null)
@@ -1160,11 +1214,13 @@ public class WinTaskDefine implements IWinTaskDefine {
         result = prime * result + ((this.timingIdle == null) ? 0 : this.timingIdle.hashCode());
         result = prime * result + ((this.timingRate == null) ? 0 : this.timingRate.hashCode());
         result = prime * result + ((this.timingMiss == null) ? 0 : this.timingMiss.hashCode());
+        result = prime * result + ((this.timingBeat == null) ? 0 : this.timingBeat.hashCode());
         result = prime * result + ((this.duringFrom == null) ? 0 : this.duringFrom.hashCode());
         result = prime * result + ((this.duringStop == null) ? 0 : this.duringStop.hashCode());
         result = prime * result + ((this.duringExec == null) ? 0 : this.duringExec.hashCode());
         result = prime * result + ((this.duringFail == null) ? 0 : this.duringFail.hashCode());
         result = prime * result + ((this.duringDone == null) ? 0 : this.duringDone.hashCode());
+        result = prime * result + ((this.duringBoot == null) ? 0 : this.duringBoot.hashCode());
         result = prime * result + ((this.resultKeep == null) ? 0 : this.resultKeep.hashCode());
         result = prime * result + ((this.lastExec == null) ? 0 : this.lastExec.hashCode());
         result = prime * result + ((this.lastFail == null) ? 0 : this.lastFail.hashCode());
@@ -1206,11 +1262,13 @@ public class WinTaskDefine implements IWinTaskDefine {
         sb.append(", ").append(timingIdle);
         sb.append(", ").append(timingRate);
         sb.append(", ").append(timingMiss);
+        sb.append(", ").append(timingBeat);
         sb.append(", ").append(duringFrom);
         sb.append(", ").append(duringStop);
         sb.append(", ").append(duringExec);
         sb.append(", ").append(duringFail);
         sb.append(", ").append(duringDone);
+        sb.append(", ").append(duringBoot);
         sb.append(", ").append(resultKeep);
         sb.append(", ").append(lastExec);
         sb.append(", ").append(lastFail);
@@ -1256,11 +1314,13 @@ public class WinTaskDefine implements IWinTaskDefine {
         setTimingIdle(from.getTimingIdle());
         setTimingRate(from.getTimingRate());
         setTimingMiss(from.getTimingMiss());
+        setTimingBeat(from.getTimingBeat());
         setDuringFrom(from.getDuringFrom());
         setDuringStop(from.getDuringStop());
         setDuringExec(from.getDuringExec());
         setDuringFail(from.getDuringFail());
         setDuringDone(from.getDuringDone());
+        setDuringBoot(from.getDuringBoot());
         setResultKeep(from.getResultKeep());
         setLastExec(from.getLastExec());
         setLastFail(from.getLastFail());

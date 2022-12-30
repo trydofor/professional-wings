@@ -1,16 +1,11 @@
 package pro.fessional.wings.tiny.task.schedule.exec;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.aop.support.AopUtils;
 import pro.fessional.wings.silencer.notice.SmallNotice;
-import pro.fessional.wings.slardar.jackson.JacksonHelper;
 import pro.fessional.wings.tiny.task.schedule.help.TaskerHelper;
-
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * @author trydofor
@@ -23,36 +18,16 @@ public class NoticeExec<C> {
     public static final String WhenExec = "exec";
     public static final String WhenFail = "fail";
     public static final String WhenDone = "done";
+    public static final String WhenFeed = "feed";
 
-    @NotNull
-    protected final Class<C> confClass;
     @NotNull
     protected final SmallNotice<C> beanObject;
     @NotNull
     protected final Class<?> beanClass;
 
-    @NotNull
-    @Setter
-    protected Function<C, String> confEncoder = JacksonHelper::string;
-    @NotNull
-    @Setter
-    protected BiFunction<String, Class<C>, C> confDecoder = JacksonHelper::object;
-
-    @SuppressWarnings("unchecked")
     public NoticeExec(@NotNull SmallNotice<C> beanObject) {
-        this.confClass = (Class<C>) AopUtils.getTargetClass(beanObject.defaultConfig());
         this.beanClass = AopUtils.getTargetClass(beanObject);
         this.beanObject = beanObject;
-    }
-
-    public C decodeConf(String conf) {
-        if (conf == null || conf.isEmpty()) return null;
-        return confDecoder.apply(conf, confClass);
-    }
-
-    public String encodeConf(C conf) {
-        if (conf == null) return null;
-        return confEncoder.apply(conf);
     }
 
     /**
@@ -74,8 +49,7 @@ public class NoticeExec<C> {
      */
     public void postNotice(String config, String subject, String content) {
         try {
-            final C tmp = decodeConf(config);
-            final C conf = tmp == null ? beanObject.defaultConfig() : beanObject.combineConfig(tmp);
+            final C conf = beanObject.provideConfig(config, true);
             beanObject.post(conf, subject, content);
         }
         catch (Exception e) {

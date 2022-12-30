@@ -396,6 +396,20 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
     }
 
     /**
+     * Fetch records that have <code>timing_beat BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinTaskDefine> fetchRangeOfTimingBeat(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRange(WinTaskDefineTable.WinTaskDefine.TimingBeat, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>timing_beat IN (values)</code>
+     */
+    public List<WinTaskDefine> fetchByTimingBeat(Integer... values) {
+        return fetch(WinTaskDefineTable.WinTaskDefine.TimingBeat, values);
+    }
+
+    /**
      * Fetch records that have <code>during_from BETWEEN lowerInclusive AND upperInclusive</code>
      */
     public List<WinTaskDefine> fetchRangeOfDuringFrom(String lowerInclusive, String upperInclusive) {
@@ -466,6 +480,20 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
     }
 
     /**
+     * Fetch records that have <code>during_boot BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinTaskDefine> fetchRangeOfDuringBoot(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRange(WinTaskDefineTable.WinTaskDefine.DuringBoot, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>during_boot IN (values)</code>
+     */
+    public List<WinTaskDefine> fetchByDuringBoot(Integer... values) {
+        return fetch(WinTaskDefineTable.WinTaskDefine.DuringBoot, values);
+    }
+
+    /**
      * Fetch records that have <code>result_keep BETWEEN lowerInclusive AND upperInclusive</code>
      */
     public List<WinTaskDefine> fetchRangeOfResultKeep(Integer lowerInclusive, Integer upperInclusive) {
@@ -482,56 +510,56 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
     /**
      * Fetch records that have <code>last_exec BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfLastExec(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfLastExec(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
         return fetchRange(WinTaskDefineTable.WinTaskDefine.LastExec, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>last_exec IN (values)</code>
      */
-    public List<WinTaskDefine> fetchByLastExec(Long... values) {
+    public List<WinTaskDefine> fetchByLastExec(LocalDateTime... values) {
         return fetch(WinTaskDefineTable.WinTaskDefine.LastExec, values);
     }
 
     /**
      * Fetch records that have <code>last_fail BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfLastFail(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfLastFail(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
         return fetchRange(WinTaskDefineTable.WinTaskDefine.LastFail, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>last_fail IN (values)</code>
      */
-    public List<WinTaskDefine> fetchByLastFail(Long... values) {
+    public List<WinTaskDefine> fetchByLastFail(LocalDateTime... values) {
         return fetch(WinTaskDefineTable.WinTaskDefine.LastFail, values);
     }
 
     /**
      * Fetch records that have <code>last_done BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfLastDone(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfLastDone(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
         return fetchRange(WinTaskDefineTable.WinTaskDefine.LastDone, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>last_done IN (values)</code>
      */
-    public List<WinTaskDefine> fetchByLastDone(Long... values) {
+    public List<WinTaskDefine> fetchByLastDone(LocalDateTime... values) {
         return fetch(WinTaskDefineTable.WinTaskDefine.LastDone, values);
     }
 
     /**
      * Fetch records that have <code>next_exec BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfNextExec(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfNextExec(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
         return fetchRange(WinTaskDefineTable.WinTaskDefine.NextExec, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>next_exec IN (values)</code>
      */
-    public List<WinTaskDefine> fetchByNextExec(Long... values) {
+    public List<WinTaskDefine> fetchByNextExec(LocalDateTime... values) {
         return fetch(WinTaskDefineTable.WinTaskDefine.NextExec, values);
     }
 
@@ -950,6 +978,20 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
     }
 
     /**
+     * Fetch records that have <code>timing_beat BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinTaskDefine> fetchRangeOfTimingBeatLive(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.TimingBeat, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>timing_beat IN (values)</code>
+     */
+    public List<WinTaskDefine> fetchByTimingBeatLive(Integer... values) {
+        return fetchLive(WinTaskDefineTable.WinTaskDefine.TimingBeat, values);
+    }
+
+    /**
      * Fetch records that have <code>during_from BETWEEN lowerInclusive AND upperInclusive</code>
      */
     public List<WinTaskDefine> fetchRangeOfDuringFromLive(String lowerInclusive, String upperInclusive) {
@@ -1020,6 +1062,20 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
     }
 
     /**
+     * Fetch records that have <code>during_boot BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinTaskDefine> fetchRangeOfDuringBootLive(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.DuringBoot, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>during_boot IN (values)</code>
+     */
+    public List<WinTaskDefine> fetchByDuringBootLive(Integer... values) {
+        return fetchLive(WinTaskDefineTable.WinTaskDefine.DuringBoot, values);
+    }
+
+    /**
      * Fetch records that have <code>result_keep BETWEEN lowerInclusive AND upperInclusive</code>
      */
     public List<WinTaskDefine> fetchRangeOfResultKeepLive(Integer lowerInclusive, Integer upperInclusive) {
@@ -1036,56 +1092,56 @@ public class WinTaskDefineDao extends WingsJooqDaoJournalImpl<WinTaskDefineTable
     /**
      * Fetch records that have <code>last_exec BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfLastExecLive(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfLastExecLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
         return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.LastExec, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>last_exec IN (values)</code>
      */
-    public List<WinTaskDefine> fetchByLastExecLive(Long... values) {
+    public List<WinTaskDefine> fetchByLastExecLive(LocalDateTime... values) {
         return fetchLive(WinTaskDefineTable.WinTaskDefine.LastExec, values);
     }
 
     /**
      * Fetch records that have <code>last_fail BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfLastFailLive(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfLastFailLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
         return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.LastFail, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>last_fail IN (values)</code>
      */
-    public List<WinTaskDefine> fetchByLastFailLive(Long... values) {
+    public List<WinTaskDefine> fetchByLastFailLive(LocalDateTime... values) {
         return fetchLive(WinTaskDefineTable.WinTaskDefine.LastFail, values);
     }
 
     /**
      * Fetch records that have <code>last_done BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfLastDoneLive(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfLastDoneLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
         return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.LastDone, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>last_done IN (values)</code>
      */
-    public List<WinTaskDefine> fetchByLastDoneLive(Long... values) {
+    public List<WinTaskDefine> fetchByLastDoneLive(LocalDateTime... values) {
         return fetchLive(WinTaskDefineTable.WinTaskDefine.LastDone, values);
     }
 
     /**
      * Fetch records that have <code>next_exec BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinTaskDefine> fetchRangeOfNextExecLive(Long lowerInclusive, Long upperInclusive) {
+    public List<WinTaskDefine> fetchRangeOfNextExecLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
         return fetchRangeLive(WinTaskDefineTable.WinTaskDefine.NextExec, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>next_exec IN (values)</code>
      */
-    public List<WinTaskDefine> fetchByNextExecLive(Long... values) {
+    public List<WinTaskDefine> fetchByNextExecLive(LocalDateTime... values) {
         return fetchLive(WinTaskDefineTable.WinTaskDefine.NextExec, values);
     }
 

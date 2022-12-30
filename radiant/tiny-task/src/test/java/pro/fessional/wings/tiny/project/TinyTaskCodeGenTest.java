@@ -21,7 +21,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
         "spring.datasource.password=" + TinyTaskCodeGenTest.PASS,
         "spring.wings.faceless.flywave.enabled.module=true",
         "spring.wings.faceless.flywave.enabled.checker=false",
-        "wings.tiny.task.enabled.autoreg=false",
+        "wings.tiny.task.enabled.autorun=false",
         "debug = true"
 })
 @Disabled("手动执行")
@@ -35,11 +35,11 @@ public class TinyTaskCodeGenTest {
     @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;
 
-//    @Test
-//    void initAll() {
-//        initMaster();
-//        genJooq();
-//    }
+    @Test
+    void initAll() {
+        initMaster();
+        genJooq();
+    }
 
     @Test
     void initMaster() {

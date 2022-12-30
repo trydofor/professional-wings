@@ -22,5 +22,5 @@ public class TinyTaskEnabledProp {
      * @see #Key$autorun
      */
     private boolean autorun = true;
-    public static final String Key$autorun = Key + ".autoreg";
+    public static final String Key$autorun = Key + ".autorun";
 }

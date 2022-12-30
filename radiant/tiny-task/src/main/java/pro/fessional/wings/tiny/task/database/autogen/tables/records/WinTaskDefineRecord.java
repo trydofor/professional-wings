@@ -354,8 +354,8 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     /**
      * Getter for <code>win_task_define.notice_conf</code>.
      */
-    @Column(name = "notice_conf", length = 65535)
-    @Size(max = 65535)
+    @Column(name = "notice_conf", nullable = false, length = 200)
+    @Size(max = 200)
     @Override
     public String getNoticeConf() {
         return (String) get(17);
@@ -467,11 +467,28 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     }
 
     /**
+     * Setter for <code>win_task_define.timing_beat</code>.
+     */
+    @Override
+    public void setTimingBeat(Integer value) {
+        set(24, value);
+    }
+
+    /**
+     * Getter for <code>win_task_define.timing_beat</code>.
+     */
+    @Column(name = "timing_beat", nullable = false, precision = 10)
+    @Override
+    public Integer getTimingBeat() {
+        return (Integer) get(24);
+    }
+
+    /**
      * Setter for <code>win_task_define.during_from</code>.
      */
     @Override
     public void setDuringFrom(String value) {
-        set(24, value);
+        set(25, value);
     }
 
     /**
@@ -481,7 +498,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Size(max = 20)
     @Override
     public String getDuringFrom() {
-        return (String) get(24);
+        return (String) get(25);
     }
 
     /**
@@ -489,7 +506,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setDuringStop(String value) {
-        set(25, value);
+        set(26, value);
     }
 
     /**
@@ -499,7 +516,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Size(max = 20)
     @Override
     public String getDuringStop() {
-        return (String) get(25);
+        return (String) get(26);
     }
 
     /**
@@ -507,7 +524,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setDuringExec(Integer value) {
-        set(26, value);
+        set(27, value);
     }
 
     /**
@@ -516,7 +533,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "during_exec", nullable = false, precision = 10)
     @Override
     public Integer getDuringExec() {
-        return (Integer) get(26);
+        return (Integer) get(27);
     }
 
     /**
@@ -524,7 +541,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setDuringFail(Integer value) {
-        set(27, value);
+        set(28, value);
     }
 
     /**
@@ -533,7 +550,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "during_fail", nullable = false, precision = 10)
     @Override
     public Integer getDuringFail() {
-        return (Integer) get(27);
+        return (Integer) get(28);
     }
 
     /**
@@ -541,7 +558,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setDuringDone(Integer value) {
-        set(28, value);
+        set(29, value);
     }
 
     /**
@@ -550,7 +567,24 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "during_done", nullable = false, precision = 10)
     @Override
     public Integer getDuringDone() {
-        return (Integer) get(28);
+        return (Integer) get(29);
+    }
+
+    /**
+     * Setter for <code>win_task_define.during_boot</code>.
+     */
+    @Override
+    public void setDuringBoot(Integer value) {
+        set(30, value);
+    }
+
+    /**
+     * Getter for <code>win_task_define.during_boot</code>.
+     */
+    @Column(name = "during_boot", nullable = false, precision = 10)
+    @Override
+    public Integer getDuringBoot() {
+        return (Integer) get(30);
     }
 
     /**
@@ -558,7 +592,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setResultKeep(Integer value) {
-        set(29, value);
+        set(31, value);
     }
 
     /**
@@ -567,75 +601,75 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "result_keep", nullable = false, precision = 10)
     @Override
     public Integer getResultKeep() {
-        return (Integer) get(29);
+        return (Integer) get(31);
     }
 
     /**
      * Setter for <code>win_task_define.last_exec</code>.
      */
     @Override
-    public void setLastExec(Long value) {
-        set(30, value);
+    public void setLastExec(LocalDateTime value) {
+        set(32, value);
     }
 
     /**
      * Getter for <code>win_task_define.last_exec</code>.
      */
-    @Column(name = "last_exec", nullable = false, precision = 19)
+    @Column(name = "last_exec", nullable = false, precision = 3)
     @Override
-    public Long getLastExec() {
-        return (Long) get(30);
+    public LocalDateTime getLastExec() {
+        return (LocalDateTime) get(32);
     }
 
     /**
      * Setter for <code>win_task_define.last_fail</code>.
      */
     @Override
-    public void setLastFail(Long value) {
-        set(31, value);
+    public void setLastFail(LocalDateTime value) {
+        set(33, value);
     }
 
     /**
      * Getter for <code>win_task_define.last_fail</code>.
      */
-    @Column(name = "last_fail", nullable = false, precision = 19)
+    @Column(name = "last_fail", nullable = false, precision = 3)
     @Override
-    public Long getLastFail() {
-        return (Long) get(31);
+    public LocalDateTime getLastFail() {
+        return (LocalDateTime) get(33);
     }
 
     /**
      * Setter for <code>win_task_define.last_done</code>.
      */
     @Override
-    public void setLastDone(Long value) {
-        set(32, value);
+    public void setLastDone(LocalDateTime value) {
+        set(34, value);
     }
 
     /**
      * Getter for <code>win_task_define.last_done</code>.
      */
-    @Column(name = "last_done", nullable = false, precision = 19)
+    @Column(name = "last_done", nullable = false, precision = 3)
     @Override
-    public Long getLastDone() {
-        return (Long) get(32);
+    public LocalDateTime getLastDone() {
+        return (LocalDateTime) get(34);
     }
 
     /**
      * Setter for <code>win_task_define.next_exec</code>.
      */
     @Override
-    public void setNextExec(Long value) {
-        set(33, value);
+    public void setNextExec(LocalDateTime value) {
+        set(35, value);
     }
 
     /**
      * Getter for <code>win_task_define.next_exec</code>.
      */
-    @Column(name = "next_exec", nullable = false, precision = 19)
+    @Column(name = "next_exec", nullable = false, precision = 3)
     @Override
-    public Long getNextExec() {
-        return (Long) get(33);
+    public LocalDateTime getNextExec() {
+        return (LocalDateTime) get(35);
     }
 
     /**
@@ -643,7 +677,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setNextLock(Integer value) {
-        set(34, value);
+        set(36, value);
     }
 
     /**
@@ -652,7 +686,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "next_lock", nullable = false, precision = 10)
     @Override
     public Integer getNextLock() {
-        return (Integer) get(34);
+        return (Integer) get(36);
     }
 
     /**
@@ -660,7 +694,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setCoreFail(Integer value) {
-        set(35, value);
+        set(37, value);
     }
 
     /**
@@ -669,7 +703,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "core_fail", nullable = false, precision = 10)
     @Override
     public Integer getCoreFail() {
-        return (Integer) get(35);
+        return (Integer) get(37);
     }
 
     /**
@@ -677,7 +711,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setSumsExec(Integer value) {
-        set(36, value);
+        set(38, value);
     }
 
     /**
@@ -686,7 +720,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "sums_exec", nullable = false, precision = 10)
     @Override
     public Integer getSumsExec() {
-        return (Integer) get(36);
+        return (Integer) get(38);
     }
 
     /**
@@ -694,7 +728,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setSumsFail(Integer value) {
-        set(37, value);
+        set(39, value);
     }
 
     /**
@@ -703,7 +737,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "sums_fail", nullable = false, precision = 10)
     @Override
     public Integer getSumsFail() {
-        return (Integer) get(37);
+        return (Integer) get(39);
     }
 
     /**
@@ -711,7 +745,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
      */
     @Override
     public void setSumsDone(Integer value) {
-        set(38, value);
+        set(40, value);
     }
 
     /**
@@ -720,7 +754,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     @Column(name = "sums_done", nullable = false, precision = 10)
     @Override
     public Integer getSumsDone() {
-        return (Integer) get(38);
+        return (Integer) get(40);
     }
 
     // -------------------------------------------------------------------------
@@ -762,11 +796,13 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
         setTimingIdle(from.getTimingIdle());
         setTimingRate(from.getTimingRate());
         setTimingMiss(from.getTimingMiss());
+        setTimingBeat(from.getTimingBeat());
         setDuringFrom(from.getDuringFrom());
         setDuringStop(from.getDuringStop());
         setDuringExec(from.getDuringExec());
         setDuringFail(from.getDuringFail());
         setDuringDone(from.getDuringDone());
+        setDuringBoot(from.getDuringBoot());
         setResultKeep(from.getResultKeep());
         setLastExec(from.getLastExec());
         setLastFail(from.getLastFail());
@@ -799,7 +835,7 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
     /**
      * Create a detached, initialised WinTaskDefineRecord
      */
-    public WinTaskDefineRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, String propkey, Boolean enabled, Boolean autorun, Integer version, String taskerBean, String taskerPara, String taskerName, Boolean taskerFast, String taskerApps, String taskerRuns, String noticeBean, String noticeWhen, String noticeConf, String timingZone, String timingType, String timingCron, Integer timingIdle, Integer timingRate, Integer timingMiss, String duringFrom, String duringStop, Integer duringExec, Integer duringFail, Integer duringDone, Integer resultKeep, Long lastExec, Long lastFail, Long lastDone, Long nextExec, Integer nextLock, Integer coreFail, Integer sumsExec, Integer sumsFail, Integer sumsDone) {
+    public WinTaskDefineRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, String propkey, Boolean enabled, Boolean autorun, Integer version, String taskerBean, String taskerPara, String taskerName, Boolean taskerFast, String taskerApps, String taskerRuns, String noticeBean, String noticeWhen, String noticeConf, String timingZone, String timingType, String timingCron, Integer timingIdle, Integer timingRate, Integer timingMiss, Integer timingBeat, String duringFrom, String duringStop, Integer duringExec, Integer duringFail, Integer duringDone, Integer duringBoot, Integer resultKeep, LocalDateTime lastExec, LocalDateTime lastFail, LocalDateTime lastDone, LocalDateTime nextExec, Integer nextLock, Integer coreFail, Integer sumsExec, Integer sumsFail, Integer sumsDone) {
         super(WinTaskDefineTable.WinTaskDefine);
 
         setId(id);
@@ -826,11 +862,13 @@ public class WinTaskDefineRecord extends UpdatableRecordImpl<WinTaskDefineRecord
         setTimingIdle(timingIdle);
         setTimingRate(timingRate);
         setTimingMiss(timingMiss);
+        setTimingBeat(timingBeat);
         setDuringFrom(duringFrom);
         setDuringStop(duringStop);
         setDuringExec(duringExec);
         setDuringFail(duringFail);
         setDuringDone(duringDone);
+        setDuringBoot(duringBoot);
         setResultKeep(resultKeep);
         setLastExec(lastExec);
         setLastFail(lastFail);

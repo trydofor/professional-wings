@@ -1,19 +1,21 @@
 package pro.fessional.wings.tiny.task.service.impl;
 
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
 import org.jooq.Record2;
-import org.jooq.Record3;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.silencer.datetime.DefaultTimeZone;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskDefineTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskResultTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.daos.WinTaskDefineDao;
 import pro.fessional.wings.tiny.task.database.autogen.tables.daos.WinTaskResultDao;
+import pro.fessional.wings.tiny.task.database.autogen.tables.pojos.WinTaskDefine;
 import pro.fessional.wings.tiny.task.schedule.TinyTasker;
 import pro.fessional.wings.tiny.task.service.TinyTaskBeatService;
 
@@ -35,6 +37,11 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
 
     @Setter(onMethod_ = {@Autowired})
     protected WinTaskResultDao winTaskResultDao;
+
+    @Setter @Getter
+    protected int beatTimes = 2;
+
+    private volatile boolean warmed = false;
 
     @Override
     @TinyTasker("TinyTaskCleanResult")
@@ -83,38 +90,35 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
     @Override
     @TinyTasker("TinyTaskCheckHealth")
     public String checkHealth() {
-        final long now = ThreadNow.millis() - 120_000L;
+        final long now = ThreadNow.millis();
         final WinTaskDefineTable td = winTaskDefineDao.getTable();
-        final Result<Record3<Long, String, Long>> r3 = winTaskDefineDao
+        List<WinTaskDefine> tks = winTaskDefineDao
                 .ctx()
-                .select(td.Id, td.TaskerName, td.NextExec)
+                .select(td.Id, td.TaskerName, td.LastExec,
+                        td.TimingBeat, td.TimingRate, td.TimingIdle)
                 .from(td)
                 .where(td.Enabled.eq(Boolean.TRUE))
-                .fetch();
+                .fetch()
+                .into(WinTaskDefine.class);
 
-        StringBuilder msg1 = new StringBuilder("misfired:"); //
-        StringBuilder msg2 = new StringBuilder(); // 0
-        StringBuilder msg3 = new StringBuilder(); // > now
+        final StringBuilder mis = new StringBuilder();
 
-        for (Record3<Long, String, Long> r : r3) {
-            final long nxt = r.value3();
-            if (nxt > now) {
-                msg3.append('\n').append(r.value1()).append('@').append(r.value2());
+        for (WinTaskDefine r : tks) {
+            log.info("check health task id={}, name={}", r.getId(), r.getTaskerName());
+            int beat = r.getTimingBeat();
+            if (beat <= 0) {
+                beat = Math.max(r.getTimingRate(), r.getTimingIdle());
             }
-            else if (nxt <= 0) {
-                msg2.append('\n').append(r.value1()).append('@').append(r.value2());
-            }
-            else {
-                msg1.append('\n').append(r.value1()).append('@').append(r.value2());
+            if (beat <= 0) continue;
+
+            final long last = r.getLastExec().atZone(DefaultTimeZone.ZID_UTC).toInstant().toEpochMilli();
+            if (warmed && last + beat * beatTimes * 1000L < now) {
+                log.info("misfired task id={}, name={}", r.getId(), r.getTaskerName());
+                mis.append(r.getId()).append('@').append(r.getTaskerName()).append('\n');
             }
         }
 
-        if (msg2.length() > 0) {
-            msg1.append("\n\nfinished:").append(msg2);
-        }
-        if (msg3.length() > 0) {
-            msg1.append("\n\nplanning:").append(msg3);
-        }
-        return msg1.toString();
+        warmed = true;
+        return mis.length() == 0 ? null : "misfired task id@name\n" + mis;
     }
 }

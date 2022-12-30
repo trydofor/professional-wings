@@ -66,7 +66,6 @@ public class TaskerExec {
         return paraEncoder.apply(para);
     }
 
-
     /**
      * 格式为name:Class，优先匹配name，然后Class
      */

@@ -150,7 +150,7 @@ public class WinTaskDefineTable extends TableImpl<WinTaskDefineRecord> implement
     /**
      * The column <code>win_task_define.notice_conf</code>.
      */
-    public final TableField<WinTaskDefineRecord, String> NoticeConf = createField(DSL.name("notice_conf"), SQLDataType.CLOB, this, "");
+    public final TableField<WinTaskDefineRecord, String> NoticeConf = createField(DSL.name("notice_conf"), SQLDataType.VARCHAR(200).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>win_task_define.timing_zone</code>.
@@ -183,6 +183,11 @@ public class WinTaskDefineTable extends TableImpl<WinTaskDefineRecord> implement
     public final TableField<WinTaskDefineRecord, Integer> TimingMiss = createField(DSL.name("timing_miss"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
 
     /**
+     * The column <code>win_task_define.timing_beat</code>.
+     */
+    public final TableField<WinTaskDefineRecord, Integer> TimingBeat = createField(DSL.name("timing_beat"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
+
+    /**
      * The column <code>win_task_define.during_from</code>.
      */
     public final TableField<WinTaskDefineRecord, String> DuringFrom = createField(DSL.name("during_from"), SQLDataType.VARCHAR(20).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
@@ -208,6 +213,11 @@ public class WinTaskDefineTable extends TableImpl<WinTaskDefineRecord> implement
     public final TableField<WinTaskDefineRecord, Integer> DuringDone = createField(DSL.name("during_done"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
 
     /**
+     * The column <code>win_task_define.during_boot</code>.
+     */
+    public final TableField<WinTaskDefineRecord, Integer> DuringBoot = createField(DSL.name("during_boot"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
+
+    /**
      * The column <code>win_task_define.result_keep</code>.
      */
     public final TableField<WinTaskDefineRecord, Integer> ResultKeep = createField(DSL.name("result_keep"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("60", SQLDataType.INTEGER)), this, "");
@@ -215,22 +225,22 @@ public class WinTaskDefineTable extends TableImpl<WinTaskDefineRecord> implement
     /**
      * The column <code>win_task_define.last_exec</code>.
      */
-    public final TableField<WinTaskDefineRecord, Long> LastExec = createField(DSL.name("last_exec"), SQLDataType.BIGINT.nullable(false).defaultValue(DSL.inline("0", SQLDataType.BIGINT)), this, "");
+    public final TableField<WinTaskDefineRecord, LocalDateTime> LastExec = createField(DSL.name("last_exec"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
 
     /**
      * The column <code>win_task_define.last_fail</code>.
      */
-    public final TableField<WinTaskDefineRecord, Long> LastFail = createField(DSL.name("last_fail"), SQLDataType.BIGINT.nullable(false).defaultValue(DSL.inline("0", SQLDataType.BIGINT)), this, "");
+    public final TableField<WinTaskDefineRecord, LocalDateTime> LastFail = createField(DSL.name("last_fail"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
 
     /**
      * The column <code>win_task_define.last_done</code>.
      */
-    public final TableField<WinTaskDefineRecord, Long> LastDone = createField(DSL.name("last_done"), SQLDataType.BIGINT.nullable(false).defaultValue(DSL.inline("0", SQLDataType.BIGINT)), this, "");
+    public final TableField<WinTaskDefineRecord, LocalDateTime> LastDone = createField(DSL.name("last_done"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
 
     /**
      * The column <code>win_task_define.next_exec</code>.
      */
-    public final TableField<WinTaskDefineRecord, Long> NextExec = createField(DSL.name("next_exec"), SQLDataType.BIGINT.nullable(false).defaultValue(DSL.inline("0", SQLDataType.BIGINT)), this, "");
+    public final TableField<WinTaskDefineRecord, LocalDateTime> NextExec = createField(DSL.name("next_exec"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
 
     /**
      * The column <code>win_task_define.next_lock</code>.
