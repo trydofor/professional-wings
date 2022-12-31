@@ -56,12 +56,12 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
     @NotNull
     public DingTalkNotice.Conf combineConfig(@NotNull Conf that) {
         Conf conf = new Conf();
-        conf.webhookUrl = validItem(that.webhookUrl, defaultConfig.webhookUrl);
-        conf.digestSecret = validItem(that.digestSecret, defaultConfig.digestSecret);
-        conf.accessToken = validItem(that.accessToken, defaultConfig.accessToken);
-        conf.noticeKeyword = validItem(that.noticeKeyword, defaultConfig.noticeKeyword);
+        conf.webhookUrl = orElse(that.webhookUrl, defaultConfig.webhookUrl);
+        conf.digestSecret = orElse(that.digestSecret, defaultConfig.digestSecret);
+        conf.accessToken = orElse(that.accessToken, defaultConfig.accessToken);
+        conf.noticeKeyword = orElse(that.noticeKeyword, defaultConfig.noticeKeyword);
         conf.noticeMobiles = that.noticeMobiles != null ? that.noticeMobiles : defaultConfig.noticeMobiles;
-        conf.msgType = validItem(that.msgType, defaultConfig.msgType);
+        conf.msgType = orElse(that.msgType, defaultConfig.msgType);
         return conf;
     }
 
@@ -77,7 +77,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
         }
     }
 
-    private String validItem(String conf, String that) {
+    private String orElse(String conf, String that) {
         return (conf == null || conf.isEmpty() || AesString.MaskedValue.equals(conf)) ? that : conf;
     }
 

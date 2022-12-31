@@ -16,6 +16,34 @@
     <description>小小的邮件模块</description>
 
     <dependencies>
-
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>faceless-jooq</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>slardar</artifactId>
+        </dependency>
+        <dependency>
+            <!-- controller-->
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>slardar-webmvc</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <!-- 代码生成与版本检查 -->
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>faceless-flywave</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>faceless-jooqgen</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
