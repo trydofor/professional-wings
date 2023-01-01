@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,8 +13,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.wings.tiny.mail.notice.MailNotice;
-import pro.fessional.wings.tiny.mail.sender.MailSenderProvider;
-import pro.fessional.wings.tiny.mail.spring.prop.TinyMailConfigProp;
+import pro.fessional.wings.tiny.mail.provider.MailConfigProvider;
+import pro.fessional.wings.tiny.mail.provider.MailSenderProvider;
+import pro.fessional.wings.tiny.mail.spring.prop.TinyMailNoticeProp;
 
 /**
  * @author trydofor
@@ -29,11 +31,18 @@ public class TinyMailConfiguration {
 
     private static final Log log = LogFactory.getLog(TinyMailConfiguration.class);
 
-    private final TinyMailConfigProp tinyMailConfigProp;
+    private final TinyMailNoticeProp tinyMailConfigProp;
 
     @Bean
-    public MailSenderProvider mailSenderProvider(JavaMailSender javaMailSender) {
-        return new MailSenderProvider(javaMailSender, tinyMailConfigProp);
+    public MailConfigProvider mailConfigProvider() {
+        log.info("TinyMail spring-bean mailConfigProvider");
+        return new MailConfigProvider(tinyMailConfigProp);
+    }
+
+    @Bean
+    public MailSenderProvider mailSenderProvider(JavaMailSender javaMailSender, MailProperties mailProperties) {
+        log.info("TinyMail spring-bean mailSenderProvider");
+        return new MailSenderProvider(javaMailSender, mailProperties);
     }
 
     @Bean

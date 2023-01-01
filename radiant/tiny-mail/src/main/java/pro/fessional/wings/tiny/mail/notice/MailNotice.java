@@ -2,16 +2,23 @@ package pro.fessional.wings.tiny.mail.notice;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
+import org.springframework.core.io.Resource;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import pro.fessional.mirana.cast.BoxedCastUtil;
 import pro.fessional.wings.silencer.notice.SmallNotice;
 import pro.fessional.wings.slardar.jackson.AesString;
-import pro.fessional.wings.tiny.mail.sender.MailSenderProvider;
-import pro.fessional.wings.tiny.mail.spring.prop.TinyMailConfigProp;
+import pro.fessional.wings.tiny.mail.provider.MailSenderProvider;
+import pro.fessional.wings.tiny.mail.spring.prop.TinyMailNoticeProp;
 
+import javax.mail.internet.MimeMessage;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -34,7 +41,7 @@ public class MailNotice implements SmallNotice<MailNotice.Conf> {
         this.senderProvider = senderProvider;
     }
 
-    public MailNotice(@NotNull TinyMailConfigProp configProp, @NotNull MailSenderProvider defaultSender) {
+    public MailNotice(@NotNull TinyMailNoticeProp configProp, @NotNull MailSenderProvider defaultSender) {
         this(configProp.getDefault(), defaultSender);
         this.configs = configProp;
     }
@@ -58,6 +65,7 @@ public class MailNotice implements SmallNotice<MailNotice.Conf> {
         conf.mailBcc = orElse(that.mailBcc, defaultConfig.mailBcc);
         conf.mailReply = orElse(that.mailReply, defaultConfig.mailReply);
         conf.mailHtml = BoxedCastUtil.orElse(that.mailHtml, defaultConfig.mailHtml);
+        conf.mailFile = that.mailFile != null ? that.mailFile : defaultConfig.mailFile;
         conf.copy(that);
         return conf;
     }
@@ -73,9 +81,67 @@ public class MailNotice implements SmallNotice<MailNotice.Conf> {
         }
     }
 
+    @SneakyThrows
     @Override
     public boolean send(Conf config, String subject, String content) {
-        return false;
+        final JavaMailSender sender = senderProvider.cachingSender(config);
+        final Map<String, Resource> fileMap = config.mailFile != null ? config.mailFile : Collections.emptyMap();
+        final boolean isHtml = config.mailHtml != null ? config.mailHtml : content != null && content.startsWith("<");
+
+        if (isHtml || !fileMap.isEmpty()) {
+            final MimeMessage message = sender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(config.mailTo);
+            if (StringUtils.isNotEmpty(config.mailFrom)) {
+                helper.setFrom(config.mailFrom);
+            }
+            if (config.mailCc != null) {
+                helper.setCc(config.mailCc);
+            }
+            if (config.mailBcc != null) {
+                helper.setBcc(config.mailBcc);
+            }
+            if (StringUtils.isNotEmpty(config.mailReply)) {
+                helper.setReplyTo(config.mailReply);
+            }
+            if (subject != null) {
+                helper.setSubject(subject);
+            }
+            if (content != null) {
+                helper.setText(content, isHtml);
+            }
+            //
+            for (Map.Entry<String, Resource> en : fileMap.entrySet()) {
+                helper.addAttachment(en.getKey(), en.getValue());
+            }
+            sender.send(message);
+        }
+        else {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(config.mailTo);
+            if (StringUtils.isNotEmpty(config.mailFrom)) {
+                message.setFrom(config.mailFrom);
+            }
+            if (config.mailCc != null) {
+                message.setCc(config.mailCc);
+            }
+            if (config.mailBcc != null) {
+                message.setBcc(config.mailBcc);
+            }
+            if (StringUtils.isNotEmpty(config.mailReply)) {
+                message.setReplyTo(config.mailReply);
+            }
+            if (subject != null) {
+                message.setSubject(subject);
+            }
+            if (content != null) {
+                message.setText(content);
+            }
+
+            sender.send(message);
+        }
+
+        return true;
     }
 
     private String orElse(String conf, String that) {
@@ -98,6 +164,7 @@ public class MailNotice implements SmallNotice<MailNotice.Conf> {
         private String[] mailBcc;
         private String mailReply;
         private Boolean mailHtml;
+        private Map<String, Resource> mailFile;
 
         public void copy(MailProperties prop) {
             setHost(prop.getHost());
