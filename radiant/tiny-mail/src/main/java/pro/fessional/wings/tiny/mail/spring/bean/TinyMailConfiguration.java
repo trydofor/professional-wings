@@ -3,6 +3,7 @@ package pro.fessional.wings.tiny.mail.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
@@ -11,11 +12,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.wings.tiny.mail.notice.MailNotice;
 import pro.fessional.wings.tiny.mail.provider.MailConfigProvider;
 import pro.fessional.wings.tiny.mail.provider.MailSenderProvider;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailNoticeProp;
+
+import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME;
 
 /**
  * @author trydofor
@@ -46,9 +50,9 @@ public class TinyMailConfiguration {
     }
 
     @Bean
-    public MailNotice mailNotice(MailSenderProvider sender) {
+    public MailNotice mailNotice(MailSenderProvider sender, @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME) ThreadPoolTaskScheduler executor) {
         log.info("TinyMail spring-bean mailNotice");
-        return new MailNotice(tinyMailConfigProp, sender);
+        return new MailNotice(tinyMailConfigProp, sender, executor);
     }
 
     @Configuration(proxyBeanMethods = false)

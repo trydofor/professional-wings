@@ -1,11 +1,13 @@
 package pro.fessional.wings.tiny.mail;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import pro.fessional.mirana.time.StopWatch;
 import pro.fessional.wings.tiny.mail.notice.MailNotice;
 
 /**
@@ -17,6 +19,7 @@ import pro.fessional.wings.tiny.mail.notice.MailNotice;
         "wings.tiny.mail.notice.default.mail-file[application.properties]=classpath:./application.properties"
 })
 @Disabled
+@Slf4j
 public class MailNoticeTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -27,7 +30,17 @@ public class MailNoticeTest {
 
     @Test
     public void testDefault() {
-        mailNotice.send("test tiny mail", "test");
+        final StopWatch stopWatch = new StopWatch();
+        try (final StopWatch.Watch w = stopWatch.start("emit")){
+            mailNotice.emit("test tiny mail emit", "test emit");
+        }
+        try (final StopWatch.Watch w = stopWatch.start("post")){
+            mailNotice.post("test tiny mail post", "test post");
+        }
+        try (final StopWatch.Watch w = stopWatch.start("send")){
+            mailNotice.send("test tiny mail send", "test send");
+        }
+        log.info(stopWatch.toString());
     }
 
     @Test

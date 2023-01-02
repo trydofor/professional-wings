@@ -25,6 +25,7 @@ import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executor;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -42,6 +43,8 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
     private final OkHttpClient okHttpClient;
     @NotNull
     private final Conf defaultConfig;
+    @NotNull
+    private final Executor executor;
 
     @Setter @Getter
     private Map<String, Conf> configs = Collections.emptyMap();
@@ -137,6 +140,11 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
         final String s = OkHttpClientHelper.postJson(okHttpClient, host, message);
         log.debug("ding-talk result={}", s);
         return s.contains("\"errcode\":0,");
+    }
+
+    @Override
+    public void emit(Conf config, String subject, String content) {
+        executor.execute(() -> send(config, subject, content));
     }
 
     /**

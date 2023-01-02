@@ -78,4 +78,24 @@ public interface SmallNotice<C> {
             DummyBlock.ignore(e);
         }
     }
+
+    /**
+     * 以默认配置异步发送，fire and forget，不会抛出异常
+     *
+     * @param subject 主题
+     * @param content 正文
+     */
+
+    default void emit(String subject, String content) {
+        emit(defaultConfig(), subject, content);
+    }
+
+    /**
+     * 以指定配置异步发送，fire and forget，不会抛出异常
+     *
+     * @param config  配置文件，无效配置项，可由默认配置覆盖。
+     * @param subject 主题
+     * @param content 正文
+     */
+    void emit(C config, String subject, String content);
 }

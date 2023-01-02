@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 
 /**
  * @author trydofor
@@ -35,14 +36,17 @@ public class MailNotice implements SmallNotice<MailNotice.Conf> {
     private final Conf defaultConfig;
     @NotNull
     private final MailSenderProvider senderProvider;
+    @NotNull
+    private final Executor executor;
 
-    public MailNotice(@NotNull Conf defaultConfig, @NotNull MailSenderProvider senderProvider) {
+    public MailNotice(@NotNull Conf defaultConfig, @NotNull MailSenderProvider senderProvider, @NotNull Executor executor) {
         this.defaultConfig = defaultConfig;
         this.senderProvider = senderProvider;
+        this.executor = executor;
     }
 
-    public MailNotice(@NotNull TinyMailNoticeProp configProp, @NotNull MailSenderProvider defaultSender) {
-        this(configProp.getDefault(), defaultSender);
+    public MailNotice(@NotNull TinyMailNoticeProp configProp, @NotNull MailSenderProvider defaultSender, @NotNull Executor executor) {
+        this(configProp.getDefault(), defaultSender, executor);
         this.configs = configProp;
     }
 
@@ -142,6 +146,12 @@ public class MailNotice implements SmallNotice<MailNotice.Conf> {
         }
 
         return true;
+    }
+
+
+    @Override
+    public void emit(Conf config, String subject, String content) {
+        executor.execute(() -> send(config, subject, content));
     }
 
     private String orElse(String conf, String that) {

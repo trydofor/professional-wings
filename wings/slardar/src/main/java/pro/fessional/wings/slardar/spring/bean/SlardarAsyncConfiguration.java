@@ -73,7 +73,7 @@ public class SlardarAsyncConfiguration {
         return new ConcurrentTaskExecutor(ttlExecutor);
     }
 
-    //    @Primary， 不可以设置@Primary，否则@Async线程池被覆盖
+    //不可以使用@Primary，否则@Async线程池被覆盖
     @Bean(name = DEFAULT_TASK_SCHEDULER_BEAN_NAME)
     public ThreadPoolTaskScheduler taskScheduler(TaskSchedulerBuilder builder) {
         final TtlThreadPoolTaskScheduler scheduler = new TtlThreadPoolTaskScheduler();
