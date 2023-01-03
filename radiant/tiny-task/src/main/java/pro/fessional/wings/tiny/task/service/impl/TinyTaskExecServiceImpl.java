@@ -2,6 +2,7 @@ package pro.fessional.wings.tiny.task.service.impl;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Field;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ import pro.fessional.wings.tiny.task.schedule.exec.ExecHolder;
 import pro.fessional.wings.tiny.task.schedule.exec.NoticeExec;
 import pro.fessional.wings.tiny.task.schedule.exec.TaskerExec;
 import pro.fessional.wings.tiny.task.service.TinyTaskExecService;
+import pro.fessional.wings.tiny.task.spring.prop.TinyTaskEnabledProp;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -82,6 +84,9 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     @Setter(onMethod_ = {@Autowired})
     protected JournalService journalService;
 
+    @Setter(onMethod_ = {@Value("${" + TinyTaskEnabledProp.Key$dryrun + "}")})
+    protected boolean dryrun = false;
+
     @Override
     public boolean launch(long id) {
         Cancel.remove(id);
@@ -116,8 +121,17 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, execTms, WhenExec);
                 log.info("task force exec, id={}", id);
 
-                final Object result = tasker.invoke(td.getTaskerPara(), true);
-                log.info("task force done, id={}", id);
+                final Object result;
+                if (dryrun) {
+                    final int slp = RandomUtils.nextInt(10, 2000);
+                    result = "dryrun and sleep " + slp;
+                    Thread.sleep(slp);
+                    log.info("task force done, dryrun and sleep {} ms, id={}", slp, id);
+                }
+                else {
+                    result = tasker.invoke(td.getTaskerPara(), true);
+                    log.info("task force done, id={}", id);
+                }
                 //
                 doneTms = ThreadNow.millis();
                 taskMsg = stringResult(result);
@@ -223,8 +237,17 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                     postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, execTms, WhenExec);
                     log.info("task exec, id={}", id);
 
-                    final Object result = tasker.invoke(td.getTaskerPara(), true);
-                    log.info("task done, id={}", id);
+                    final Object result;
+                    if (dryrun) {
+                        final int slp = RandomUtils.nextInt(10, 2000);
+                        result = "dryrun and sleep " + slp;
+                        Thread.sleep(slp);
+                        log.info("task done, dryrun and sleep {} ms, id={}", slp, id);
+                    }
+                    else {
+                        result = tasker.invoke(td.getTaskerPara(), true);
+                        log.info("task done, id={}", id);
+                    }
                     //
                     doneTms = ThreadNow.millis();
                     taskMsg = stringResult(result);
@@ -310,7 +333,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         for (String w : wh) {
             if (whs.contains(w)) {
                 if (w.equals(WhenFeed)) {
-                    if (StringUtils.isNotEmpty(msg)) {
+                    if (!dryrun && StringUtils.isNotEmpty(msg)) {
                         ntc.postNotice(cnf, tn + " " + w.toUpperCase(), zdt + "\n\n" + msg);
                         return;
                     }

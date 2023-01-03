@@ -156,11 +156,11 @@ public class SlardarOkhttpConfiguration {
     public CommandLineRunner runnerOkHttpHelper(
             ObjectProvider<Builder> opb,
             ObjectProvider<OkHttpClient> ohc) {
-        log.info("FacelessFlywave spring-runs runnerOkHttpHelper");
+        log.info("Slardar spring-runs runnerOkHttpHelper");
         return args -> {
             final Builder ob = opb.getIfAvailable();
             if (ob != null) {
-                log.info("FacelessFlywave spring-conf OkHttpClientBuilder");
+                log.info("Slardar spring-conf OkHttpClientBuilder");
                 new OkHttpClientBuilder() {{
                     SpringBuilder = ob;
                 }};
@@ -168,7 +168,7 @@ public class SlardarOkhttpConfiguration {
 
             final OkHttpClient oc = ohc.getIfAvailable();
             if (oc != null) {
-                log.info("FacelessFlywave spring-conf OkHttpClientHelper");
+                log.info("Slardar spring-conf OkHttpClientHelper");
                 new OkHttpClientHelper() {{
                     SpringClient = oc;
                 }};

@@ -17,6 +17,7 @@ import pro.fessional.wings.tiny.task.spring.prop.TinyTaskDefineProp;
         "wings.tiny.task.define[TinyTaskCleanResult].timing-cron=0 */2 * * * *",
         "wings.tiny.task.define[TinyTaskCheckHealth].timing-idle=40",
         "wings.tiny.task.define[TinyTaskCheckHealth].during-boot=2",
+//        "wings.tiny.task.enabled.dryrun=true",
         "wings.slardar.ding-notice.default.access-token=${DING_TALK_TOKEN:}"
 })
 class TinyTaskServiceTest {

@@ -23,4 +23,12 @@ public class TinyTaskEnabledProp {
      */
     private boolean autorun = true;
     public static final String Key$autorun = Key + ".autorun";
+
+    /**
+     * 是否干跑，仅记录日志不真正执行任务
+     *
+     * @see #Key$dryrun
+     */
+    private boolean dryrun = false;
+    public static final String Key$dryrun = Key + ".dryrun";
 }
