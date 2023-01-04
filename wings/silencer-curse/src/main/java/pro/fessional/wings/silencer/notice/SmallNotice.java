@@ -21,15 +21,15 @@ public interface SmallNotice<C> {
     C defaultConfig();
 
     /**
-     * 以that值优先，当that项无效时，使用默认配置，构造一个新配置。
+     * 构造一个新配置，以that值优先，当that项无效时，使用默认配置。
      */
-    @NotNull
-    C combineConfig(@NotNull C that);
+    @Contract("_->new")
+    C combineConfig(@Nullable C that);
 
     /**
      * 根据名字，提供不同的配置。combine时与default合并。conf == null ? defaultConfig() : combineConfig(conf);
      */
-    @Contract("_,true->!null")
+    @Contract("_,true->new")
     C provideConfig(@Nullable String name, boolean combine);
 
     /**

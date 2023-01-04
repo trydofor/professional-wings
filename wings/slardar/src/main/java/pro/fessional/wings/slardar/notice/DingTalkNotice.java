@@ -11,6 +11,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.JsonTemplate;
 import pro.fessional.mirana.time.ThreadNow;
@@ -26,8 +28,10 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME;
 
 /**
  * https://open.dingtalk.com/document/robots/custom-robot-access
@@ -43,8 +47,9 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
     private final OkHttpClient okHttpClient;
     @NotNull
     private final Conf defaultConfig;
-    @NotNull
-    private final Executor executor;
+
+    @Setter(onMethod_ = {@Autowired(required = false), @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME)})
+    private Executor executor;
 
     @Setter @Getter
     private Map<String, Conf> configs = Collections.emptyMap();
@@ -56,15 +61,16 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
     }
 
     @Override
-    @NotNull
-    public DingTalkNotice.Conf combineConfig(@NotNull Conf that) {
-        Conf conf = new Conf();
-        conf.webhookUrl = orElse(that.webhookUrl, defaultConfig.webhookUrl);
-        conf.digestSecret = orElse(that.digestSecret, defaultConfig.digestSecret);
-        conf.accessToken = orElse(that.accessToken, defaultConfig.accessToken);
-        conf.noticeKeyword = orElse(that.noticeKeyword, defaultConfig.noticeKeyword);
-        conf.noticeMobiles = that.noticeMobiles != null ? that.noticeMobiles : defaultConfig.noticeMobiles;
-        conf.msgType = orElse(that.msgType, defaultConfig.msgType);
+    public DingTalkNotice.Conf combineConfig(@Nullable Conf that) {
+        final Conf conf = new Conf();
+
+        conf.webhookUrl = that == null || isEmpty(that.webhookUrl) ? defaultConfig.webhookUrl : that.webhookUrl;
+        conf.digestSecret = that == null || isEmpty(that.digestSecret) ? defaultConfig.digestSecret : that.digestSecret;
+        conf.accessToken = that == null || isEmpty(that.accessToken) ? defaultConfig.accessToken : that.accessToken;
+        conf.noticeKeyword = that == null || isEmpty(that.noticeKeyword) ? defaultConfig.noticeKeyword : that.noticeKeyword;
+        conf.noticeMobiles = that == null || that.noticeMobiles == null ? defaultConfig.noticeMobiles : that.noticeMobiles;
+        conf.msgType = that == null || isEmpty(that.msgType) ? defaultConfig.msgType : that.msgType;
+
         return conf;
     }
 
@@ -73,15 +79,15 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
     public Conf provideConfig(@Nullable String name, boolean combine) {
         final Conf conf = configs.get(name);
         if (combine) {
-            return conf == null ? defaultConfig : combineConfig(conf);
+            return combineConfig(conf == null ? defaultConfig : conf);
         }
         else {
             return conf;
         }
     }
 
-    private String orElse(String conf, String that) {
-        return (conf == null || conf.isEmpty() || AesString.MaskedValue.equals(conf)) ? that : conf;
+    private boolean isEmpty(String str) {
+        return str == null || str.isEmpty() || AesString.MaskedValue.equals(str);
     }
 
     @SneakyThrows
@@ -144,6 +150,10 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
 
     @Override
     public void emit(Conf config, String subject, String content) {
+        if (executor == null) {
+            log.warn("should reuse autowired thread pool");
+            executor = Executors.newSingleThreadExecutor();
+        }
         executor.execute(() -> send(config, subject, content));
     }
 
