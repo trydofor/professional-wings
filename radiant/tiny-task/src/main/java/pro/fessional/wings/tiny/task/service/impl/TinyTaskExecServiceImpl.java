@@ -17,6 +17,7 @@ import pro.fessional.mirana.lock.JvmStaticGlobalLock;
 import pro.fessional.mirana.pain.ThrowableUtil;
 import pro.fessional.mirana.stat.JvmStat;
 import pro.fessional.mirana.time.DateParser;
+import pro.fessional.mirana.time.Sleep;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.faceless.convention.EmptySugar;
 import pro.fessional.wings.faceless.convention.EmptyValue;
@@ -125,7 +126,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 if (dryrun) {
                     final int slp = RandomUtils.nextInt(10, 2000);
                     result = "dryrun and sleep " + slp;
-                    Thread.sleep(slp);
+                    Sleep.ignoreInterrupt(slp);
                     log.info("task force done, dryrun and sleep {} ms, id={}", slp, id);
                 }
                 else {
@@ -241,7 +242,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                     if (dryrun) {
                         final int slp = RandomUtils.nextInt(10, 2000);
                         result = "dryrun and sleep " + slp;
-                        Thread.sleep(slp);
+                        Sleep.ignoreInterrupt(slp);
                         log.info("task done, dryrun and sleep {} ms, id={}", slp, id);
                     }
                     else {

@@ -1,4 +1,4 @@
-package pro.fessional.wings.tiny.mail;
+package pro.fessional.wings.tiny.mail.sender;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.time.StopWatch;
-import pro.fessional.wings.tiny.mail.notice.MailNotice;
 
 /**
  * @author trydofor
@@ -16,7 +15,7 @@ import pro.fessional.wings.tiny.mail.notice.MailNotice;
  */
 @SpringBootTest(properties = {
         "debug = true",
-        "wings.tiny.mail.notice.default.mail-file[application.properties]=classpath:./application.properties"
+        "wings.tiny.mail.notice.default.file[application.properties]=classpath:./application.properties"
 })
 @Disabled
 @Slf4j
@@ -31,13 +30,13 @@ public class MailNoticeTest {
     @Test
     public void testDefault() {
         final StopWatch stopWatch = new StopWatch();
-        try (final StopWatch.Watch w = stopWatch.start("emit")){
+        try (final StopWatch.Watch w = stopWatch.start("emit")) {
             mailNotice.emit("test tiny mail emit", "test emit");
         }
-        try (final StopWatch.Watch w = stopWatch.start("post")){
+        try (final StopWatch.Watch w = stopWatch.start("post")) {
             mailNotice.post("test tiny mail post", "test post");
         }
-        try (final StopWatch.Watch w = stopWatch.start("send")){
+        try (final StopWatch.Watch w = stopWatch.start("send")) {
             mailNotice.send("test tiny mail send", "test send");
         }
         log.info(stopWatch.toString());
@@ -45,7 +44,7 @@ public class MailNoticeTest {
 
     @Test
     public void testGmail() {
-        final MailNotice.Conf gmail = mailNotice.provideConfig("gmail", true);
+        final TinyMailConfig gmail = mailNotice.provideConfig("gmail", true);
         mailNotice.send(gmail, "test tiny mail gmail", "test gmail");
     }
 }

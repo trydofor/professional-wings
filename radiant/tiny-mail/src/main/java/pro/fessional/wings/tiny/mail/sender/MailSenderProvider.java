@@ -1,4 +1,4 @@
-package pro.fessional.wings.tiny.mail.provider;
+package pro.fessional.wings.tiny.mail.sender;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -10,9 +10,10 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import javax.mail.Session;
 import javax.naming.NamingException;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static pro.fessional.wings.tiny.mail.spring.prop.TinyMailConfigProp.KeyDefault;
 
 /**
  * @author trydofor
@@ -23,11 +24,11 @@ public class MailSenderProvider {
     @NotNull
     private final JavaMailSender defaultSender;
 
-    private final ConcurrentHashMap<Key, JavaMailSender> senders = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, JavaMailSender> senders = new ConcurrentHashMap<>();
 
-    public MailSenderProvider(@NotNull JavaMailSender defaultSender, @NotNull MailProperties defaultConfig) {
+    public MailSenderProvider(@NotNull JavaMailSender defaultSender) {
         this.defaultSender = defaultSender;
-        this.senders.put(new Key(defaultConfig), defaultSender);
+        this.senders.put(KeyDefault, defaultSender);
     }
 
     @NotNull
@@ -36,8 +37,8 @@ public class MailSenderProvider {
     }
 
     @NotNull
-    public JavaMailSender cachingSender(final @NotNull MailProperties prop) {
-        return senders.computeIfAbsent(new Key(prop), k -> newSender(prop));
+    public JavaMailSender singletonSender(@NotNull TinyMailConfig config) {
+        return senders.computeIfAbsent(config.getName(), k -> newSender(config));
     }
 
     @NotNull
@@ -78,37 +79,4 @@ public class MailSenderProvider {
         return sender;
     }
 
-
-    protected static class Key {
-        private final String host;
-        private final Integer port;
-        private final String username;
-        private final String protocol;
-        private final String jndiName;
-
-        public Key(@NotNull MailProperties prop) {
-            this.host = prop.getHost();
-            this.port = prop.getPort();
-            this.username = prop.getUsername();
-            this.protocol = prop.getProtocol();
-            this.jndiName = prop.getJndiName();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Key)) return false;
-            Key key = (Key) o;
-            return Objects.equals(host, key.host)
-                   && Objects.equals(port, key.port)
-                   && Objects.equals(username, key.username)
-                   && Objects.equals(protocol, key.protocol)
-                   && Objects.equals(jndiName, key.jndiName);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(host, port, username, protocol, jndiName);
-        }
-    }
 }
