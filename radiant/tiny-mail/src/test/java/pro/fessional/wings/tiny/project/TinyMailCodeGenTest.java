@@ -59,7 +59,7 @@ public class TinyMailCodeGenTest {
         generator.setTargetDir(BASE + "tiny-mail/src/main/java/");
         generator.setTargetPkg("pro.fessional.wings.tiny.mail.database.autogen");
         generator.gen(JDBC, USER, PASS,
-                bd -> bd.databaseIncludes("win_mail_send"),
+                bd -> bd.databaseIncludes("win_mail_sender"),
                 bd -> bd.setGlobalSuffix("TinyMail"));
     }
 

@@ -61,7 +61,7 @@ public class TinyMailSenderProp {
      *
      * @see #Key$perIdle
      */
-    private Duration perIdle = Duration.ZERO;
+    private Map<String, Duration> perIdle = Collections.emptyMap();
     public static final String Key$perIdle = Key + ".per-idle";
 
     /**
@@ -69,7 +69,7 @@ public class TinyMailSenderProp {
      *
      * @see #Key$maxIdle
      */
-    private Duration maxIdle = Duration.ZERO;
+    private Map<String, Duration> maxIdle = Collections.emptyMap();
     public static final String Key$maxIdle = Key + ".max-idle";
 
     /**

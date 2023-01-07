@@ -10,6 +10,7 @@ import org.jooq.Condition;
 import org.jooq.Record2;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,8 @@ import pro.fessional.mirana.cast.BoxedCastUtil;
 import pro.fessional.mirana.data.Diff;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
+import pro.fessional.wings.silencer.modulate.RunMode;
+import pro.fessional.wings.silencer.modulate.RuntimeMode;
 import pro.fessional.wings.silencer.notice.SmallNotice;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskDefineTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.daos.WinTaskDefineDao;
@@ -53,6 +56,8 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.findMerg
 @Slf4j
 public class TinyTaskConfServiceImpl implements TinyTaskConfService {
 
+    @Setter(onMethod_ = {@Value("${spring.application.name}")})
+    protected String appName;
     @Setter(onMethod_ = {@Autowired})
     protected ApplicationContext applicationContext;
     @Setter(onMethod_ = {@Autowired})
@@ -331,8 +336,18 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         po.setTaskerPara(prop.getTaskerPara());
         po.setTaskerName(prop.getTaskerName());
         po.setTaskerFast(prop.isTaskerFast());
-        po.setTaskerApps(prop.getTaskerApps());
-        po.setTaskerRuns(prop.getTaskerRuns());
+
+        final String apps = prop.getTaskerApps();
+        po.setTaskerApps(isEmpty(apps) ? appName : apps);
+
+        final String runs = prop.getTaskerRuns();
+        if (isEmpty(runs)) {
+            final RunMode rm = RuntimeMode.getRunMode();
+            po.setTaskerRuns(rm == null ? "" : rm.name().toLowerCase());
+        }
+        else {
+            po.setTaskerRuns(runs);
+        }
 
         po.setNoticeBean(prop.getNoticeBean());
         po.setNoticeWhen(prop.getNoticeWhen());

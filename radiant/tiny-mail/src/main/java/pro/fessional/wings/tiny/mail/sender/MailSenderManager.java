@@ -9,6 +9,7 @@ import org.apache.commons.lang3.RandomUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.MailSendException;
@@ -29,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -86,6 +88,9 @@ public class MailSenderManager {
             return;
         }
 
+        final String host = message.getHost();
+        checkHostWaitOrIdle(host);
+
         final JavaMailSender sender = senderProvider.singletonSender(message);
         final MimeMessage mimeMessage = prepareMimeMessage(message, preparer, sender);
         long now = -1;
@@ -96,7 +101,7 @@ public class MailSenderManager {
             final long ms = dealErrorWait(me);
             if (ms > 0) {
                 now = ThreadNow.millis();
-                mailHostWait.put(message.getHost(), now + ms);
+                mailHostWait.put(host, now + ms);
                 log.warn("failed to send and host wait for " + ms + "ms, message=" + message.toMainString(), me);
                 throw new MailWaitException(ms, me);
             }
@@ -104,11 +109,7 @@ public class MailSenderManager {
             throw me;
         }
         finally {
-            final long idle = senderProp.getPerIdle().toMillis();
-            if (idle > 0) {
-                if (now < 0) now = ThreadNow.millis();
-                mailHostIdle.put(message.getHost(), now + idle);
-            }
+            treatHostIdle(host, now);
         }
     }
 
@@ -135,6 +136,10 @@ public class MailSenderManager {
                 results.add(br);
             }
             return results;
+        }
+
+        for (String host : messages.stream().map(MailProperties::getHost).collect(Collectors.toSet())) {
+            checkHostWaitOrIdle(host);
         }
 
         final HashMap<JavaMailSender, ArrayList<BatchResult>> senderGroup = new HashMap<>();
@@ -208,11 +213,9 @@ public class MailSenderManager {
                         log.warn("failed to batch send message=" + br.tinyMessage.toMainString());
                     }
                 }
-                final long idle = senderProp.getPerIdle().toMillis();
-                if (idle > 0) {
-                    for (String host : hosts) {
-                        mailHostIdle.put(host, now + idle);
-                    }
+
+                for (String host : hosts) {
+                    treatHostIdle(host, now);
                 }
             }
         }
@@ -220,37 +223,51 @@ public class MailSenderManager {
         return results;
     }
 
-    private MimeMessage prepareMimeMessage(TinyMailMessage message, MimeMessagePrepareHelper preparer, JavaMailSender sender) throws Exception {
+    private void treatHostIdle(String host, long now) {
+        final long idle = senderProp.getPerIdle().getOrDefault(host, Duration.ZERO).toMillis();
+        if (idle > 0) {
+            if (now < 0) now = ThreadNow.millis();
+            mailHostIdle.put(host, now + idle);
+        }
+    }
 
-        final String host = message.getHost();
+    private void checkHostWaitOrIdle(String host) {
         final Long wait = mailHostWait.get(host);
         long now = -1;
         if (wait != null) {
             now = ThreadNow.millis();
             if (wait > now) {
-                throw new MailWaitException(wait - now, null);
+                final long tm = wait - now;
+                log.warn("mail need wait {}ms, host={}", host, tm);
+                throw new MailWaitException(tm, null);
             }
             else {
                 mailHostWait.remove(host);
             }
         }
 
-        final long perIdle = senderProp.getPerIdle().toMillis();
+        final long perIdle = senderProp.getPerIdle().getOrDefault(host, Duration.ZERO).toMillis();
         if (perIdle > 0) {
             final Long idle = mailHostIdle.get(host);
-            if (idle != null) {
+            if (idle != null && idle > 0) {
                 if (now < 0) now = ThreadNow.millis();
                 if (idle > now) {
-                    final long maxIdle = senderProp.getMaxIdle().toMillis();
+                    final long maxIdle = senderProp.getMaxIdle().getOrDefault(host, Duration.ZERO).toMillis();
+                    final long tm = idle - now;
+                    log.warn("mail need idle {}ms, host={} ", host, tm);
                     if (maxIdle > 0 && idle > now + maxIdle) {
-                        throw new MailWaitException(idle - now, null);
+                        throw new MailWaitException(tm, null);
                     }
                     else {
-                        Sleep.ignoreInterrupt(idle - now);
+                        Sleep.ignoreInterrupt(tm);
                     }
                 }
+                mailHostIdle.put(host, 0L);
             }
         }
+    }
+
+    private MimeMessage prepareMimeMessage(TinyMailMessage message, MimeMessagePrepareHelper preparer, JavaMailSender sender) throws Exception {
 
         if (sender == null) {
             sender = senderProvider.singletonSender(message);

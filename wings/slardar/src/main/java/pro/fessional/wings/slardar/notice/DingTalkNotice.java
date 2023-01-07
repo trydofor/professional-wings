@@ -149,6 +149,17 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
     }
 
     @Override
+    public boolean post(Conf config, String subject, String content) {
+        try {
+            return send(config, subject, content);
+        }
+        catch (Exception e) {
+            log.error("failed to post dingtalk notice", e);
+            return false;
+        }
+    }
+
+    @Override
     public void emit(Conf config, String subject, String content) {
         if (executor == null) {
             log.warn("should reuse autowired thread pool");

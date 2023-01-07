@@ -3,7 +3,6 @@ package pro.fessional.wings.silencer.notice;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pro.fessional.mirana.best.DummyBlock;
 
 /**
  * 短小的通知，线程安全。Conf若有个人信息，需要加密，如@AesString
@@ -59,8 +58,8 @@ public interface SmallNotice<C> {
      * @param subject 主题
      * @param content 正文
      */
-    default void post(String subject, String content) {
-        post(defaultConfig(), subject, content);
+    default boolean post(String subject, String content) {
+        return post(defaultConfig(), subject, content);
     }
 
     /**
@@ -70,14 +69,7 @@ public interface SmallNotice<C> {
      * @param subject 主题
      * @param content 正文
      */
-    default void post(C config, String subject, String content) {
-        try {
-            send(config, subject, content);
-        }
-        catch (Exception e) {
-            DummyBlock.ignore(e);
-        }
-    }
+    boolean post(C config, String subject, String content);
 
     /**
      * 以默认配置异步发送，fire and forget，不会抛出异常

@@ -24,6 +24,7 @@ import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.silencer.datetime.DefaultTimeZone;
+import pro.fessional.wings.silencer.modulate.RunMode;
 import pro.fessional.wings.silencer.modulate.RuntimeMode;
 import pro.fessional.wings.slardar.async.TaskSchedulerHelper;
 import pro.fessional.wings.slardar.jackson.JacksonHelper;
@@ -300,7 +301,13 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     private boolean notRuns(String runs, long id) {
         if (StringUtils.isEmpty(runs)) return false;
 
-        final String rm = RuntimeMode.getRunMode().name();
+        final RunMode rmd = RuntimeMode.getRunMode();
+        if (rmd == null) {
+            log.info("skip task for not runs={}, cur is null, id={}", runs, id);
+            return true;
+        }
+
+        final String rm = rmd.name();
         for (String s : StringUtils.split(runs, ',')) {
             if (s.trim().equalsIgnoreCase(rm)) return false;
         }
