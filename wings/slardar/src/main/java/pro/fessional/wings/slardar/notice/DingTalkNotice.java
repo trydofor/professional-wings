@@ -11,6 +11,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import pro.fessional.mirana.data.Null;
@@ -32,6 +33,7 @@ import java.util.concurrent.Executors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME;
+import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue;
 
 /**
  * https://open.dingtalk.com/document/robots/custom-robot-access
@@ -41,7 +43,7 @@ import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanP
  */
 @RequiredArgsConstructor
 @Slf4j
-public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
+public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf>, InitializingBean {
 
     @NotNull
     private final OkHttpClient okHttpClient;
@@ -64,12 +66,12 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
     public DingTalkNotice.Conf combineConfig(@Nullable Conf that) {
         final Conf conf = new Conf();
 
-        conf.webhookUrl = that == null || isEmpty(that.webhookUrl) ? defaultConfig.webhookUrl : that.webhookUrl;
-        conf.digestSecret = that == null || isEmpty(that.digestSecret) ? defaultConfig.digestSecret : that.digestSecret;
-        conf.accessToken = that == null || isEmpty(that.accessToken) ? defaultConfig.accessToken : that.accessToken;
-        conf.noticeKeyword = that == null || isEmpty(that.noticeKeyword) ? defaultConfig.noticeKeyword : that.noticeKeyword;
+        conf.webhookUrl = that == null || notValue(that.webhookUrl) ? defaultConfig.webhookUrl : that.webhookUrl;
+        conf.digestSecret = that == null || notValue(that.digestSecret) ? defaultConfig.digestSecret : that.digestSecret;
+        conf.accessToken = that == null || notValue(that.accessToken) ? defaultConfig.accessToken : that.accessToken;
+        conf.noticeKeyword = that == null || notValue(that.noticeKeyword) ? defaultConfig.noticeKeyword : that.noticeKeyword;
         conf.noticeMobiles = that == null || that.noticeMobiles == null ? defaultConfig.noticeMobiles : that.noticeMobiles;
-        conf.msgType = that == null || isEmpty(that.msgType) ? defaultConfig.msgType : that.msgType;
+        conf.msgType = that == null || notValue(that.msgType) ? defaultConfig.msgType : that.msgType;
 
         return conf;
     }
@@ -84,10 +86,6 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
         else {
             return conf;
         }
-    }
-
-    private boolean isEmpty(String str) {
-        return str == null || str.isEmpty() || AesString.MaskedValue.equals(str);
     }
 
     @SneakyThrows
@@ -161,11 +159,15 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf> {
 
     @Override
     public void emit(Conf config, String subject, String content) {
+        executor.execute(() -> send(config, subject, content));
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
         if (executor == null) {
             log.warn("should reuse autowired thread pool");
             executor = Executors.newSingleThreadExecutor();
         }
-        executor.execute(() -> send(config, subject, content));
     }
 
     /**

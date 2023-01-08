@@ -1,9 +1,9 @@
 package pro.fessional.wings.silencer.spring.help;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * @author trydofor
@@ -12,29 +12,31 @@ import java.util.TreeSet;
 public class CommonPropHelper {
 
     public static final String DisabledValue = "-";
+    public static final String MaskingValue = "*****";
 
-    public static boolean invalidValue(String value) {
-        return value == null || value.isEmpty() || DisabledValue.equals(value);
+    public static boolean notValue(String str) {
+        return str == null || str.isEmpty() || DisabledValue.equals(str) || MaskingValue.equals(str);
     }
 
-    public static boolean validValue(String value) {
-        return !invalidValue(value);
+    public static boolean hasValue(String value) {
+        return !notValue(value);
     }
 
-    public static TreeSet<String> validValue(Collection<String> values) {
-        TreeSet<String> set = new TreeSet<>(values);
-        set.removeIf(CommonPropHelper::invalidValue);
+    public static LinkedHashSet<String> onlyValue(Collection<String> values) {
+        LinkedHashSet<String> set = new LinkedHashSet<>(values);
+        set.removeIf(CommonPropHelper::notValue);
         return set;
     }
 
-    public static TreeMap<String, String> validValue(Map<String, String> values) {
-        TreeMap<String, String> map = new TreeMap<>();
+    public static LinkedHashMap<String, String> onlyValue(Map<String, String> values) {
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
         for (Map.Entry<String, String> en : values.entrySet()) {
             final String value = en.getValue();
-            if (validValue(value)) {
+            if (hasValue(value)) {
                 map.put(en.getKey(), value);
             }
         }
         return map;
     }
+
 }

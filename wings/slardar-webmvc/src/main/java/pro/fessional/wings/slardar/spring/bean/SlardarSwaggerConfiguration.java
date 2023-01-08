@@ -13,11 +13,10 @@ import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarSwaggerProp;
 
 import java.util.Map;
-
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.validValue;
 
 /**
  * @author trydofor
@@ -46,7 +45,7 @@ public class SlardarSwaggerConfiguration {
             }
 
             final Map<String, Parameter> params = slardarSwaggerProp.toComPara();
-            final Map<String, String> accepts = validValue(slardarSwaggerProp.getAccept());
+            final Map<String, String> accepts = CommonPropHelper.onlyValue(slardarSwaggerProp.getAccept());
             if (params.isEmpty() && accepts.isEmpty()) return;
 
             openApi.getPaths().values()

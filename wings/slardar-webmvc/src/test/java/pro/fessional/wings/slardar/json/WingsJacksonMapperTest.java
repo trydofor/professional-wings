@@ -50,6 +50,7 @@ import java.util.TimeZone;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.MaskingValue;
 import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAddr;
 import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgent;
 
@@ -473,10 +474,10 @@ public class WingsJacksonMapperTest {
 
         assertTrue(s1.contains(as));
         assertTrue(s1.contains(ac));
-        assertTrue(s1.contains(AesString.MaskedValue));
+        assertTrue(s1.contains(MaskingValue));
         assertFalse(s1.contains(txt));
 
-        aes.setAes256Mask(AesString.MaskedValue);
+        aes.setAes256Mask(MaskingValue);
         aes.setAes256Empty(Null.Str);
         assertEquals(aes, aes2);
     }
