@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
 import pro.fessional.wings.slardar.context.TerminalContext;
 
@@ -75,7 +76,7 @@ public class TestJsonController {
         json.setZonedDateTimeVal(userDate);
         json.setHello("hello");
         json.setUserZoneId(zid);
-        json.setSystemZoneId(ZoneId.systemDefault());
+        json.setSystemZoneId(ThreadNow.sysZoneId());
         return R.okData(json);
     }
 }

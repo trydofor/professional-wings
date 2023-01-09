@@ -302,15 +302,16 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
     }
 
     private long insertProp(TaskerProp prop, String key) {
-        final WinTaskDefineTable t = winTaskDefineDao.getTable();
-        final long id = lightIdService.getId(t);
-        journalService.commit(Jane.Insert, journal -> {
-            WinTaskDefine po = genWinTaskDefine(prop, key);
+        return journalService.submit(Jane.Insert, journal -> {
+            final WinTaskDefineTable t = winTaskDefineDao.getTable();
+            final long id = lightIdService.getId(t);
+            final WinTaskDefine po = genWinTaskDefine(prop, key);
             po.setId(id);
+            po.setNextLock(0);
             journal.create(po);
             winTaskDefineDao.insert(po);
+            return id;
         });
-        return id;
     }
 
     private boolean updateProp(TaskerProp prop, String key, long id) {

@@ -140,13 +140,18 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, doneTms, WhenFeed, WhenDone);
             }
             catch (Exception e) {
-                log.warn("task force fail, id=" + id, e);
+                log.error("task force fail, id=" + id, e);
                 failTms = ThreadNow.millis();
                 taskMsg = ThrowableUtil.toString(e);
                 postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, failTms, WhenFail);
             }
             finally {
-                saveResult(id, execTms, failTms, doneTms, taskMsg, td.getCoreFail());
+                try {
+                    saveResult(id, execTms, failTms, doneTms, taskMsg, td.getCoreFail());
+                }
+                catch (Exception e) {
+                    log.error("failed to save result, id=" + id, e);
+                }
             }
         }, new Date(ThreadNow.millis()));
         return true;
@@ -256,14 +261,20 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                     postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, doneTms, WhenFeed, WhenDone);
                 }
                 catch (Exception e) {
-                    log.warn("task fail, id=" + id, e);
+                    log.error("task fail, id=" + id, e);
                     failTms = ThreadNow.millis();
                     taskMsg = ThrowableUtil.toString(e);
                     postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, failTms, WhenFail);
                 }
                 finally {
-                    Handle.remove(id);
-                    saveResult(id, execTms, failTms, doneTms, taskMsg, td.getCoreFail());
+                    try {
+                        Handle.remove(id);
+                        saveResult(id, execTms, failTms, doneTms, taskMsg, td.getCoreFail());
+                    }
+                    catch (Exception e) {
+                        log.error("failed to save result, id=" + id, e);
+                    }
+
                     if (canRelaunch(id, doneTms, failTms, td)) { // 被取消
                         relaunch(id);
                     }
@@ -337,7 +348,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
 
     private void postNotice(NoticeExec<?> ntc, String cnf, Set<String> whs, String tn, String msg, long ms, String... wh) {
         if (ntc == null) return;
-        final String zdt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(ms), ZoneId.systemDefault()).toString();
+        final String zdt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(ms), ThreadNow.sysZoneId()).toString();
         for (String w : wh) {
             if (whs.contains(w)) {
                 if (w.equals(WhenFeed)) {
@@ -406,7 +417,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         po.setTaskPid(JvmStat.jvmPid());
         po.setTaskMsg(msg);
 
-        final ZoneId zidSys = ZoneId.systemDefault();
+        final ZoneId zidSys = ThreadNow.sysZoneId();
         po.setTimeExec(milliLdt(exec, zidSys));
         po.setTimeFail(milliLdt(fail, zidSys));
         po.setTimeDone(milliLdt(done, zidSys));
@@ -416,7 +427,8 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             //
             setter.put(td.CommitId, journal.getCommitId());
             setter.put(td.ModifyDt, journal.getCommitDt());
-            winTaskDefineDao.ctx().update(td)
+            winTaskDefineDao.ctx()
+                            .update(td)
                             .set(setter)
                             .where(td.Id.eq(id))
                             .execute();
@@ -472,7 +484,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
 
     private long calcNextExec(WinTaskDefine td) {
         final String zid = td.getTimingZone();
-        final ZoneId zone = StringUtils.isEmpty(zid) ? ZoneId.systemDefault() : ZoneId.of(zid);
+        final ZoneId zone = StringUtils.isEmpty(zid) ? ThreadNow.sysZoneId() : ZoneId.of(zid);
 
         final long now = ThreadNow.millis();
         if (notRanged(td, zone, now)) return -1;

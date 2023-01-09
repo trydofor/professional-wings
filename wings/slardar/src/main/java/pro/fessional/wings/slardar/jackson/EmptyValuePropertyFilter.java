@@ -8,12 +8,12 @@ import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
+import pro.fessional.mirana.time.ThreadNow;
 
 import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Date;
@@ -137,7 +137,7 @@ public class EmptyValuePropertyFilter implements AutoRegisterPropertyFilter {
     }
 
     private boolean emptyDateTime(Date dt) {
-        final LocalDateTime ldt = dt.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        final LocalDateTime ldt = dt.toInstant().atZone(ThreadNow.sysZoneId()).toLocalDateTime();
         return emptyDateTime(ldt);
     }
 

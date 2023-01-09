@@ -16,6 +16,7 @@ import pro.fessional.mirana.cast.StringCastUtil;
 import pro.fessional.mirana.i18n.LocaleResolver;
 import pro.fessional.mirana.i18n.ZoneIdResolver;
 import pro.fessional.mirana.pain.IORuntimeException;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.silencer.spring.help.Utf8ResourceDecorator;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 import pro.fessional.wings.silencer.spring.prop.SilencerI18nProp;
@@ -110,7 +111,9 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             String tz = System.getProperty("user.timezone");
             log.info("🦁 set wings-zoneid=" + zid + ", current user.timezone=" + tz);
             System.setProperty("user.timezone", zid);
-            TimeZone.setDefault(ZoneIdResolver.timeZone(zid));
+            final TimeZone timeZone = ZoneIdResolver.timeZone(zid);
+            TimeZone.setDefault(timeZone);
+            ThreadNow.TweakZone.tweakGlobal(timeZone);
         }
 
         final LinkedHashSet<String> baseNames = new LinkedHashSet<>();

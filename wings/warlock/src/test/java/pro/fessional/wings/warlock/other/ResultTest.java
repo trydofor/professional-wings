@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.page.PageResult;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.serialize.KryoSimple;
 
@@ -30,7 +31,7 @@ public class ResultTest {
 
     @Test
     public void testZoneid() {
-        final int totalSeconds = ZonedDateTime.now(ZoneId.systemDefault()).getOffset().getTotalSeconds();
+        final int totalSeconds = ZonedDateTime.now(ThreadNow.sysZoneId()).getOffset().getTotalSeconds();
         log.info("{}", totalSeconds);
         final int t2 = ZonedDateTime.now(ZoneId.of("GMT-5")).getOffset().getTotalSeconds();
         log.info("{}", t2);

@@ -19,6 +19,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
 import pro.fessional.wings.silencer.encrypt.Aes256Provider;
 import pro.fessional.wings.silencer.encrypt.SecretProvider;
@@ -36,7 +37,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -134,7 +134,7 @@ public class WingsJacksonMapperTest {
 
     @Test
     public void testEquals() throws IOException {
-        log.info("=== ZoneId= " + ZoneId.systemDefault());
+        log.info("=== ZoneId= " + ThreadNow.sysZoneId());
         JsonIt it = new JsonIt();
         log.info("===== to string ======");
         log.info("it={}", it);

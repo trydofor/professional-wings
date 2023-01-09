@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.best.DummyBlock;
 import pro.fessional.mirana.best.TypedKey;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.security.DefaultUserId;
 
 import java.time.ZoneId;
@@ -39,7 +40,7 @@ public class TerminalContext {
 
     private static volatile boolean Active;
     @NotNull
-    private static volatile TimeZone DefaultTimeZone = TimeZone.getDefault();
+    private static volatile TimeZone DefaultTimeZone = ThreadNow.sysTimeZone();
     @NotNull
     private static volatile Locale DefaultLocale = Locale.getDefault();
 
