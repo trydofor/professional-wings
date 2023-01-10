@@ -2,31 +2,43 @@ package pro.fessional.wings.warlock.constants;
 
 import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
 
+import static pro.fessional.wings.slardar.constants.SlardarOrderConst.WebSimpleExceptionResolver;
+
 /**
  * @author trydofor
  * @since 2021-02-19
  */
 public interface WarlockOrderConst extends WingsBeanOrdered {
-    int JustAuthRequestBuilder = BaseLine;
+    int SecJustAuthRequestBuilder = Lv4Application;
+    int SecJustAuthLoginPageCombo = Lv4Application;
+    int SecListAllLoginPageCombo = Lv4Application + 100;
 
-    int JustAuthLoginPageCombo = BaseLine - 100;
-    int ListAllLoginPageCombo = BaseLine;
+    int MemoryUserDetailsCombo = Lv3Service + 100;
+    int NonceUserDetailsCombo = Lv3Service + 200;
+    int JustAuthUserDetailsCombo = Lv3Service + 300;
+    int DefaultUserDetailsCombo = Lv3Service + 900;
 
-    int MemoryUserDetailsCombo = BaseLine - 300;
-    int NonceUserDetailsCombo = BaseLine - 200;
-    int JustAuthUserDetailsCombo = BaseLine - 100;
-    int DefaultUserDetailsCombo = BaseLine;
+    int DefaultPermRoleCombo = Lv3Service;
+    int MemoryTypedAuthzCombo = Lv3Service + 100;
 
-    int JustAuthUserAuthnAutoReg = BaseLine - 10;
-    int DefaultUserAuthnAutoReg = BaseLine;
+    int JustAuthUserAuthnAutoReg = Lv3Service;
+    int DefaultUserAuthnAutoReg = Lv3Service + 10;
 
-    int DefaultDaoAuthnCombo = BaseLine;
+    int DefaultDaoAuthnCombo = Lv4Application;
 
-    int DefaultPermRoleCombo = BaseLine;
-    int MemoryTypedAuthzCombo = BaseLine + 100;
 
-    int SecurityHttpBase = BaseLine + 100;
-    int SecurityBindHttp = BaseLine + 200;
-    int SecurityAuthHttp = BaseLine + 300;
-    int SecurityAutoHttp = BaseLine + 400;
+    int SecurityHttpBase = Lv4Application + 100;
+    int SecurityBindHttp = Lv4Application + 200;
+    int SecurityAuthHttp = Lv4Application + 300;
+    int SecurityAutoHttp = Lv4Application + 400;
+
+    int CodeExceptionResolver = WebSimpleExceptionResolver + 100;
+    int DefaultExceptionResolver = WebSimpleExceptionResolver + 900;
+
+    int BindExceptionAdvice = Lv4Application;
+
+    int RunnerDatabaseChecker = Lv2Resource;
+    int RunnerRegisterRuntimeMode = Lv3Service;
+    int RunnerRegisterCacheConst = Lv3Service;
+    int RunnerRegisterEnumUtil = Lv4Application;
 }

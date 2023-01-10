@@ -17,7 +17,7 @@ import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
  * @since 2022-11-21
  */
 @Aspect
-@Order(WingsBeanOrdered.WatchingAround)
+@Order(WingsBeanOrdered.Lv5Supervisor)
 public class WatchingAround {
 
     @Getter @Setter

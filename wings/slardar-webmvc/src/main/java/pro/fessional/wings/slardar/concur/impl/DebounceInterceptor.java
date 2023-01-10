@@ -40,7 +40,7 @@ public class DebounceInterceptor implements AutoRegisterInterceptor {
     private final ModelAndView modelAndView;
 
     @Getter @Setter
-    private int order = SlardarOrderConst.OrderDebounceInterceptor;
+    private int order = SlardarOrderConst.MvcDebounceInterceptor;
 
     public DebounceInterceptor(long capacity, int maxWait, ModelAndView res) {
         this.cache = Caffeine.newBuilder()

@@ -14,7 +14,7 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import pro.fessional.mirana.best.DummyBlock;
-import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.servlet.filter.WingsOverloadFilter;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
@@ -40,7 +40,7 @@ public class SlardarOverloadConfiguration {
     private final Log log = LogFactory.getLog(SlardarOverloadConfiguration.class);
 
     @Component
-    @Order(WingsBeanOrdered.BaseLine)
+    @Order(SlardarOrderConst.AppSafelyShutdownListener)
     @RequiredArgsConstructor
     public class SafelyShutdown implements ApplicationListener<ContextClosedEvent> {
         private final WingsOverloadFilter overloadFilter;

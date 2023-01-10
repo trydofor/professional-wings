@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ListAllLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
 
     @Setter @Getter
-    private int order = WarlockOrderConst.ListAllLoginPageCombo;
+    private int order = WarlockOrderConst.SecListAllLoginPageCombo;
 
     @Setter(onMethod_ = {@Autowired})
     protected WarlockSecurityProp warlockSecurityProp;

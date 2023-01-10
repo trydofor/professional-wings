@@ -3,12 +3,12 @@ package pro.fessional.wings.faceless.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import pro.fessional.wings.faceless.constants.FacelessOrderConst;
 import pro.fessional.wings.faceless.database.DataSourceContext;
 import pro.fessional.wings.faceless.flywave.RevisionFitness;
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader;
@@ -24,6 +24,7 @@ import pro.fessional.wings.faceless.spring.prop.FlywaveEnabledProp;
 import pro.fessional.wings.faceless.spring.prop.FlywaveFitProp;
 import pro.fessional.wings.faceless.spring.prop.FlywaveSqlProp;
 import pro.fessional.wings.faceless.spring.prop.FlywaveVerProp;
+import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
 
 import java.util.TreeSet;
 
@@ -148,12 +149,13 @@ public class WingsFlywaveConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = FlywaveEnabledProp.Key$checker, havingValue = "true")
-    public CommandLineRunner runnerRevisionChecker(DefaultRevisionManager manager, FlywaveFitProp prop) {
+    public CommandLineRunnerOrdered runnerRevisionChecker(DefaultRevisionManager manager, FlywaveFitProp prop) {
         log.info("FacelessFlywave spring-runs runnerRevisionChecker");
-        return args -> {
+        return new CommandLineRunnerOrdered(FacelessOrderConst.RunnerRevisionChecker, args -> {
+            log.info("FacelessFlywave check RevisionFitness");
             final RevisionFitness fits = new RevisionFitness();
             fits.addFits(prop.getFit());
             fits.checkRevision(manager);
-        };
+        });
     }
 }

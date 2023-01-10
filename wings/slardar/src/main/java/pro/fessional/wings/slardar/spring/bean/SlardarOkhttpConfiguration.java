@@ -10,7 +10,6 @@ import okhttp3.OkHttpClient.Builder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -18,6 +17,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientBuilder;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpHostCookie;
@@ -153,11 +154,9 @@ public class SlardarOkhttpConfiguration {
     }
 
     @Bean
-    public CommandLineRunner runnerOkHttpHelper(
-            ObjectProvider<Builder> opb,
-            ObjectProvider<OkHttpClient> ohc) {
+    public CommandLineRunnerOrdered runnerOkHttpHelper(ObjectProvider<Builder> opb, ObjectProvider<OkHttpClient> ohc) {
         log.info("Slardar spring-runs runnerOkHttpHelper");
-        return args -> {
+        return new CommandLineRunnerOrdered(SlardarOrderConst.RunnerOkHttpHelper, args -> {
             final Builder ob = opb.getIfAvailable();
             if (ob != null) {
                 log.info("Slardar spring-conf OkHttpClientBuilder");
@@ -173,6 +172,6 @@ public class SlardarOkhttpConfiguration {
                     SpringClient = oc;
                 }};
             }
-        };
+        });
     }
 }

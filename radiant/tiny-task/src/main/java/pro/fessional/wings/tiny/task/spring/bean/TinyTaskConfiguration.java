@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
@@ -12,6 +11,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
+import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
 import pro.fessional.wings.tiny.task.schedule.TinyTasker;
 import pro.fessional.wings.tiny.task.service.TinyTaskService;
 import pro.fessional.wings.tiny.task.spring.prop.TinyTaskEnabledProp;
@@ -32,9 +33,9 @@ public class TinyTaskConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = TinyTaskEnabledProp.Key$autorun, havingValue = "true")
-    public CommandLineRunner runnerTinyTaskerAuto(@NotNull ApplicationContext context, ObjectProvider<TinyTaskService> tinyTaskService) {
+    public CommandLineRunnerOrdered runnerTinyTaskerAuto(@NotNull ApplicationContext context, ObjectProvider<TinyTaskService> tinyTaskService) {
         log.info("TinyTask spring-runs runnerTinyTaskerAuto");
-        return args -> {
+        return new CommandLineRunnerOrdered(WingsBeanOrdered.Lv3Service, args -> {
             final TinyTaskService service = tinyTaskService.getIfAvailable();
             if (service == null) {
                 log.warn("tinyTaskService is null, skip TinyTasker.Auto config ");
@@ -46,7 +47,7 @@ public class TinyTaskConfiguration {
                 log.info("TinyTask spring-conf runnerTinyTaskerAuto, name=" + en.getKey());
                 service.schedule(en.getValue());
             }
-        };
+        });
     }
 
     @Configuration(proxyBeanMethods = false)

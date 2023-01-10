@@ -5,7 +5,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
@@ -23,8 +22,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
 import pro.fessional.wings.slardar.async.TaskSchedulerHelper;
 import pro.fessional.wings.slardar.async.TtlThreadPoolTaskScheduler;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarAsyncProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
@@ -117,12 +118,12 @@ public class SlardarAsyncConfiguration {
     }
 
     @Bean
-    public CommandLineRunner runnerEventPublishHelper(
+    public CommandLineRunnerOrdered runnerEventPublishHelper(
             ApplicationEventPublisher publisher,
             ApplicationEventMulticaster multicaster,
             @Qualifier(SlardarEventExecutorBean) Executor executor) {
         log.info("Slardar spring-runs runnerEventPublishHelper");
-        return (arg) -> {
+        return new CommandLineRunnerOrdered(SlardarOrderConst.RunnerEventPublishHelper, args -> {
             EventPublishHelper.setExecutor(executor);
             log.info("Slardar conf eventPublishHelper ApplicationEventPublisher=" + publisher.getClass());
             EventPublishHelper.setSpringPublisher(publisher);
@@ -152,7 +153,7 @@ public class SlardarAsyncConfiguration {
                     log.info("failed to check SimpleApplicationEventMulticaster", e);
                 }
             }
-        };
+        });
     }
 
     @Bean

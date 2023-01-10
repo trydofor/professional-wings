@@ -37,7 +37,7 @@ public class WingsOverloadFilter implements OrderedFilter {
     private final Log log = LogFactory.getLog(WingsOverloadFilter.class);
 
     @Setter @Getter
-    private int order = SlardarOrderConst.OrderFilterOverload;
+    private int order = SlardarOrderConst.WebFilterOverload;
 
     private final AtomicInteger requestCapacity = new AtomicInteger(0);
     private final AtomicInteger requestProcess = new AtomicInteger(0);

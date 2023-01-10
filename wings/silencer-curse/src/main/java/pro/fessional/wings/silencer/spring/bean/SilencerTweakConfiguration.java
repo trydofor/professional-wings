@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.TtlMDCAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggerGroups;
@@ -19,6 +18,8 @@ import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.evil.ThreadLocalAttention;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
 import pro.fessional.wings.silencer.spring.prop.SilencerTweakProp;
 import pro.fessional.wings.silencer.tweak.TweakLogger;
 
@@ -55,15 +56,15 @@ public class SilencerTweakConfiguration {
 
     @Bean
     @ConditionalOnClass(FilterReply.class)
-    public CommandLineRunner runnerLogbackTweak(SilencerTweakProp prop,
-                                                LoggingSystem system,
-                                                LoggerGroups groups,
-                                                @Value("${debug:false}") boolean debug,
-                                                @Value("${trace:false}") boolean trace
+    public CommandLineRunnerOrdered runnerLogbackTweak(SilencerTweakProp prop,
+                                                       LoggingSystem system,
+                                                       LoggerGroups groups,
+                                                       @Value("${debug:false}") boolean debug,
+                                                       @Value("${trace:false}") boolean trace
     ) {
         log.info("SilencerCurse spring-runs runnerLogbackTweak, init TtlMDC");
         TtlMDCAdapter.initMdc();// 尽早初始化
-        return args -> {
+        return new CommandLineRunnerOrdered(WingsBeanOrdered.Lv5Supervisor, args -> {
             if (prop.isMdcThreshold()) {
                 log.info("SilencerCurse spring-conf runnerLogbackTweak WingsMdcThresholdFilter");
                 LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -82,6 +83,6 @@ public class SilencerTweakConfiguration {
             }
             log.info("SilencerCurse spring-conf runnerLogbackTweak TweakLogger, coreLevel=" + core);
             TweakLogger.initGlobal(system, groups, core);
-        };
+        });
     }
 }

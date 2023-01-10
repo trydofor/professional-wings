@@ -37,7 +37,7 @@ import java.util.function.Supplier;
 @Getter
 public class FirstBloodImageHandler implements FirstBloodHandler {
 
-    private int order = SlardarOrderConst.OrderFirstBloodImg;
+    private int order = SlardarOrderConst.MvcFirstBloodImageHandler;
 
     private String clientTicketKey = "Client-Ticket";
     private String questCaptchaKey = "quest-captcha-image";

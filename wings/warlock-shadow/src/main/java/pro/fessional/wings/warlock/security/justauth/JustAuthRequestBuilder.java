@@ -71,7 +71,7 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
     private AuthStateCache authStateCache;
     private AuthStateBuilder authStateBuilder;
     private WingsRemoteResolver remoteResolver;
-    private int order = WarlockOrderConst.JustAuthRequestBuilder;
+    private int order = WarlockOrderConst.SecJustAuthRequestBuilder;
 
     @Override
     public DefaultWingsAuthDetails buildDetails(@NotNull Enum<?> authType, @NotNull HttpServletRequest request) {

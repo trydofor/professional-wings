@@ -22,7 +22,7 @@ import java.io.IOException;
 public class WingsCookieFilter extends OncePerRequestFilter implements Ordered {
 
     @Setter @Getter
-    private int order = SlardarOrderConst.OrderFilterReCookie;
+    private int order = SlardarOrderConst.WebFilterReCookie;
 
     private final WingsCookieInterceptor interceptor;
 

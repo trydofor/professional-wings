@@ -27,7 +27,7 @@ import static pro.fessional.wings.slardar.constants.SlardarServletConst.AttrDoma
 public class WingsDomainExtendFilter extends OncePerRequestFilter implements Ordered {
 
     @Setter @Getter
-    private int order = SlardarOrderConst.OrderFilterDomainEx;
+    private int order = SlardarOrderConst.WebFilterDomainEx;
 
     private final Map<String, List<String[]>> hostWildcard;
     private final DomainRequestMatcher domainRequestMatcher;

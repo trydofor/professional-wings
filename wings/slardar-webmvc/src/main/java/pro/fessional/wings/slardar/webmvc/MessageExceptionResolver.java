@@ -2,7 +2,6 @@ package pro.fessional.wings.slardar.webmvc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.annotation.Order;
 import pro.fessional.mirana.pain.ThrowableUtil;
 
 /**
@@ -11,7 +10,6 @@ import pro.fessional.mirana.pain.ThrowableUtil;
  */
 @RequiredArgsConstructor
 @Slf4j
-@Order
 public class MessageExceptionResolver<T extends Exception> extends WingsExceptionResolver<T> {
 
     protected final MessageResponse defaultResponse;

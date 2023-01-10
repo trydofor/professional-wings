@@ -4,14 +4,15 @@ import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
 import pro.fessional.wings.slardar.autodto.AutoDtoHelper;
 import pro.fessional.wings.slardar.autodto.AutoZoneVisitor;
 import pro.fessional.wings.slardar.autodto.I18nStringVisitor;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
 
 /**
@@ -35,9 +36,9 @@ public class SlardarI18nConfiguration {
     }
 
     @Bean
-    public CommandLineRunner runnerAutoDtoHelper(MessageSource messageSource) {
+    public CommandLineRunnerOrdered runnerAutoDtoHelper(MessageSource messageSource) {
         log.info("Slardar spring-runs runnerAutoDtoHelper");
-        return (arg) -> new AutoDtoHelper() {{
+        return new CommandLineRunnerOrdered(SlardarOrderConst.RunnerAutoDtoHelper, arg -> new AutoDtoHelper() {{
             final I18nStringVisitor i18nStringVisitor = new I18nStringVisitor(messageSource, LocaleZoneIdUtil.LocaleNonnull);
 
             RequestVisitor.add(AutoDtoHelper.AutoDtoVisitor);
@@ -51,6 +52,6 @@ public class SlardarI18nConfiguration {
             log.info("Slardar conf addResponseVisitor AutoZoneVisitorResponse");
             ResponseVisitor.add(i18nStringVisitor);
             log.info("Slardar conf addResponseVisitor I18nStringVisitor");
-        }};
+        }});
     }
 }

@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -23,6 +22,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
+import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
 import pro.fessional.wings.slardar.autozone.AutoZoneType;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeDeserializer;
@@ -32,6 +32,7 @@ import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeDeserializ
 import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeSerializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeSerializer;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.jackson.AutoRegisterPropertyFilter;
 import pro.fessional.wings.slardar.jackson.EmptyValuePropertyFilter;
 import pro.fessional.wings.slardar.jackson.FormatNumberSerializer;
@@ -235,14 +236,14 @@ public class SlardarJacksonWebConfiguration {
     }
 
     @Bean
-    public CommandLineRunner runnerJacksonHelper(Jackson2ObjectMapperBuilder builder) {
+    public CommandLineRunnerOrdered runnerJacksonHelper(Jackson2ObjectMapperBuilder builder) {
         log.info("SlardarWebmvc spring-runs runnerJacksonHelper");
-        return args -> {
+        return new CommandLineRunnerOrdered(SlardarOrderConst.RunnerJacksonHelper, args -> {
             log.info("SlardarWebmvc spring-conf JacksonHelper.initGlobal");
             JacksonHelper.initGlobal(
                     builder.createXmlMapper(false).build(),
                     builder.createXmlMapper(true).build()
             );
-        };
+        });
     }
 }

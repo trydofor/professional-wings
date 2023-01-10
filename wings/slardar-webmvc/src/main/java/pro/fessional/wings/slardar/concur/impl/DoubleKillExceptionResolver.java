@@ -2,8 +2,8 @@ package pro.fessional.wings.slardar.concur.impl;
 
 import org.springframework.core.annotation.Order;
 import pro.fessional.mirana.text.StringTemplate;
-import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
 import pro.fessional.wings.slardar.concur.DoubleKillException;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.webmvc.SimpleExceptionResolver;
 import pro.fessional.wings.slardar.webmvc.SimpleResponse;
 
@@ -11,7 +11,7 @@ import pro.fessional.wings.slardar.webmvc.SimpleResponse;
  * @author trydofor
  * @since 2021-03-10
  */
-@Order(WingsBeanOrdered.BaseLine)
+@Order(SlardarOrderConst.WebDoubleKillExceptionResolver)
 public class DoubleKillExceptionResolver extends SimpleExceptionResolver<DoubleKillException> {
 
     public DoubleKillExceptionResolver(SimpleResponse defaultResponse) {

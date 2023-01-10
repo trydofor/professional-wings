@@ -2,7 +2,6 @@ package pro.fessional.wings.slardar.webmvc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.annotation.Order;
 
 /**
  * @author trydofor
@@ -10,7 +9,6 @@ import org.springframework.core.annotation.Order;
  */
 @RequiredArgsConstructor
 @Slf4j
-@Order
 public class SimpleExceptionResolver<T extends Exception> extends WingsExceptionResolver<T> {
 
     protected final SimpleResponse defaultResponse;
