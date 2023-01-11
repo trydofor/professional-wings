@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
+ * isXxx为精确比较，asXxx为范围比较
+ *
  * @author trydofor
  * @since 2019-05-13
  */
@@ -76,18 +78,24 @@ public class EmptySugar {
         return v == null || (v.compareTo(EmptyValue.DECIMAL_AS_MIN) > 0 && v.compareTo(EmptyValue.DECIMAL_AS_MAX) < 0);
     }
 
+    /**
+     * 考虑时区，±24H
+     */
     public static boolean asEmptyValue(LocalDate v) {
         return v == null ||
-                (v.getYear() == EmptyValue.DATE.getYear()
-                        && v.getMonth() == EmptyValue.DATE.getMonth()
-                        && v.getDayOfMonth() == EmptyValue.DATE.getDayOfMonth());
+               EmptyValue.DATE.equals(v) ||
+               EmptyValue.DATE_AS_MIN.equals(v) ||
+               EmptyValue.DATE_AS_MAX.equals(v);
     }
 
+    /**
+     * 仅比较时分秒，不考虑秒以下时间
+     */
     public static boolean asEmptyValue(LocalTime v) {
         return v == null ||
-                (v.getHour() == EmptyValue.TIME.getHour()
-                        && v.getMinute() == EmptyValue.TIME.getMinute()
-                        && v.getSecond() == EmptyValue.TIME.getSecond());
+               (v.getHour() == EmptyValue.TIME.getHour()
+                && v.getMinute() == EmptyValue.TIME.getMinute()
+                && v.getSecond() == EmptyValue.TIME.getSecond());
     }
 
     /**
