@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import pro.fessional.mirana.page.PageQuery;
 import pro.fessional.mirana.page.PageResult;
 import pro.fessional.mirana.time.DateFormatter;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.faceless.database.jooq.helper.PageJooqHelper;
-import pro.fessional.wings.silencer.datetime.DefaultTimeZone;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskDefineTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskResultTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.daos.WinTaskDefineDao;
@@ -100,11 +100,11 @@ public class TinyTaskListServiceImpl implements TinyTaskListService {
             tm.setSumsDone(it.get(t.SumsDone));
 
 
-            final ZonedDateTime lastExec = it.get(t.LastExec).atZone(DefaultTimeZone.ZID_UTC);
+            final ZonedDateTime lastExec = it.get(t.LastExec).atZone(ThreadNow.UtcZoneId);
             tm.setLastExec(DateFormatter.fullTz(lastExec));
-            final ZonedDateTime lastFail = it.get(t.LastFail).atZone(DefaultTimeZone.ZID_UTC);
+            final ZonedDateTime lastFail = it.get(t.LastFail).atZone(ThreadNow.UtcZoneId);
             tm.setLastFail(DateFormatter.fullTz(lastFail));
-            final ZonedDateTime lastDone = it.get(t.LastDone).atZone(DefaultTimeZone.ZID_UTC);
+            final ZonedDateTime lastDone = it.get(t.LastDone).atZone(ThreadNow.UtcZoneId);
             tm.setLastDone(DateFormatter.fullTz(lastDone));
             return tm;
         };

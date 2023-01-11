@@ -9,8 +9,8 @@ import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pro.fessional.mirana.time.DateLocaling;
 import pro.fessional.mirana.time.ThreadNow;
-import pro.fessional.wings.silencer.datetime.DefaultTimeZone;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskDefineTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskResultTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.daos.WinTaskDefineDao;
@@ -111,7 +111,7 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
             }
             if (beat <= 0) continue;
 
-            final long last = r.getLastExec().atZone(DefaultTimeZone.ZID_UTC).toInstant().toEpochMilli();
+            final long last = DateLocaling.utcEpoch(r.getLastExec());
             if (warmed && last + beat * beatTimes * 1000L < now) {
                 log.info("misfired task id={}, name={}", r.getId(), r.getTaskerName());
                 mis.append(r.getId()).append('@').append(r.getTaskerName()).append('\n');

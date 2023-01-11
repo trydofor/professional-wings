@@ -9,7 +9,7 @@ import pro.fessional.mirana.func.Lam;
 import pro.fessional.mirana.time.ThreadNow;
 
 import java.lang.reflect.Method;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -52,18 +52,18 @@ public interface TinyTaskService {
     /**
      * 在delayMs毫秒（ThreadNow）后，异步执行一个任务，fast为轻任务，执行快，秒级完成
      *
-     * @see ThreadPoolTaskScheduler#schedule(Runnable, Date)
+     * @see ThreadPoolTaskScheduler#schedule(Runnable, Instant)
      */
     default ScheduledFuture<?> execute(boolean fast, long delayMs, @NotNull Runnable task) {
-        return execute(fast, new Date(ThreadNow.millis() + delayMs), task);
+        return execute(fast, Instant.ofEpochMilli(ThreadNow.millis() + delayMs), task);
     }
 
     /**
      * 在指定时间（fastTime构建，不考虑时区），异步执行一个任务，fast为轻任务，执行快，秒级完成
      *
-     * @see ThreadPoolTaskScheduler#schedule(Runnable, Date)
+     * @see ThreadPoolTaskScheduler#schedule(Runnable, Instant)
      */
-    default ScheduledFuture<?> execute(boolean fast, Date startTime, @NotNull Runnable task) {
+    default ScheduledFuture<?> execute(boolean fast, Instant startTime, @NotNull Runnable task) {
         return referScheduler(fast).schedule(task, startTime);
     }
 

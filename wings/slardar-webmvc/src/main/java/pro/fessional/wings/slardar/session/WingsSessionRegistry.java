@@ -100,7 +100,7 @@ public class WingsSessionRegistry<S extends Session> implements SessionRegistry,
 
         S backend = sessionRepository.findById(session.getId());
         if (backend == null) {
-            log.warn("Could not find Session with id " + session.getId() + " to set UserId");
+            log.warn("Could not find Session with id={} to set UserId", session.getId());
         }
         else {
             backend.setAttribute(WingsSessionHelper.UserIdKey, dtl.getUserId());

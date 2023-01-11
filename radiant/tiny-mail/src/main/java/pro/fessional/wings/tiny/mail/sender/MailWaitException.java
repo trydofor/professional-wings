@@ -10,11 +10,11 @@ import org.springframework.mail.MailException;
 public class MailWaitException extends MailException {
 
     @Getter
-    private final long waitUntil;
+    private final long waitEpoch;
 
     public MailWaitException(long epoch, Throwable cause) {
         super("need wait until epoch " + epoch + "ms for exception", cause);
-        this.waitUntil = epoch;
+        this.waitEpoch = epoch;
     }
 
 }

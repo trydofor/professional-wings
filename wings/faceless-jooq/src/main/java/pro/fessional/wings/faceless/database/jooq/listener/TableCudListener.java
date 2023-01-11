@@ -79,7 +79,7 @@ public class TableCudListener extends DefaultVisitListener {
                         , new RuntimeException("debug for call stack"));
             }
             else {
-                log.warn(">>> clauseStart Clause=" + clause + ", Query=" + clz);
+                log.warn(">>> clauseStart Clause={}, Query={}", clause, clz);
             }
         }
 
@@ -123,10 +123,10 @@ public class TableCudListener extends DefaultVisitListener {
             final String clz = scn(context.queryPart());
             final Clause clause = context.clause();
             if (clause == Clause.INSERT || clause == Clause.UPDATE || clause == Clause.DELETE) {
-                log.warn("<<< clauseEnd   Clause=" + clause + ", Query=" + clz + "\n\n");
+                log.warn("<<< clauseEnd   Clause={}, Query={}\n\n", clause, clz);
             }
             else {
-                log.warn(">>> clauseStart Clause=" + clause + ", Query=" + clz);
+                log.warn(">>> clauseStart Clause={}, Query={}", clause, clz);
             }
         }
 

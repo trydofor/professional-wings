@@ -6,8 +6,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.constants.SlardarOrderConst;
@@ -20,31 +19,30 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
+ * 不建议使用，因实现过于简单，未考虑复杂情况。
+ *
  * @author trydofor
  * @since 2019-11-14
  */
+@Slf4j
+@Deprecated
 public class WingsOverloadFilter implements OrderedFilter {
-
-    private final Log log = LogFactory.getLog(WingsOverloadFilter.class);
 
     @Setter @Getter
     private int order = SlardarOrderConst.WebFilterOverload;
 
     private final AtomicInteger requestCapacity = new AtomicInteger(0);
     private final AtomicInteger requestProcess = new AtomicInteger(0);
-
-    private final ConcurrentHashMap<String, Long> lastWarnSlow = new ConcurrentHashMap<>();
     private final AtomicLong lastInfoStat = new AtomicLong(0);
-
 
     private final int costStep = 20;
     private final AtomicLong[] responseCost; // 10s
@@ -54,6 +52,7 @@ public class WingsOverloadFilter implements OrderedFilter {
     private final Config config;
     private final WingsRemoteResolver terminalResolver;
     private final Cache<String, CalmDown> spiderCache;
+    private final Cache<String, Long> lastWarnSlow;
 
     public WingsOverloadFilter(FallBack fallBack, Config config, WingsRemoteResolver terminalResolver) {
         this.fallBack = fallBack;
@@ -72,6 +71,12 @@ public class WingsOverloadFilter implements OrderedFilter {
                                        .expireAfterAccess(config.requestInterval * config.requestCalmdown * 2, MILLISECONDS)
                                        .build();
         }
+
+        lastWarnSlow = Caffeine.newBuilder()
+                               .maximumSize(2000)
+                               .expireAfterAccess(Duration.ofHours(2))
+                               .build();
+
         if (config.responseInfoStat <= 0) {
             responseCost = new AtomicLong[0];
         }
@@ -107,8 +112,10 @@ public class WingsOverloadFilter implements OrderedFilter {
             final boolean isFst = now - calmDown.firstRequest.get() < config.requestInterval;
             if (isCnt && isFst) {
                 fallBack.fallback(request, response);
-                if (log.isWarnEnabled() && now > config.getLogInterval() + lastWarnSlow.getOrDefault(calmDown.ip, 0L)) {
-                    log.warn("wings-clam-request, now=" + rqs + ", ip=" + calmDown.ip + ", uri=" + httpReq.getRequestURI());
+                final Long lw = lastWarnSlow.getIfPresent(calmDown.ip);
+                final long lwl = lw == null ? 0L : lw;
+                if (log.isWarnEnabled() && now > config.getLogInterval() + lwl) {
+                    log.warn("wings-clam-request, now={}, ip={}, uri={}", rqs, calmDown.ip, httpReq.getRequestURI());
                     lastWarnSlow.put(calmDown.ip, now);
                 }
                 return; // 直接返回
@@ -230,8 +237,10 @@ public class WingsOverloadFilter implements OrderedFilter {
         final long warnSlow = config.responseWarnSlow;
         if (log.isWarnEnabled() && warnSlow > 0 && cost > warnSlow) {
             String uri = request.getRequestURI();
-            if (end > config.getLogInterval() + lastWarnSlow.getOrDefault(uri, 0L)) {
-                log.warn("wings-slow-response, slow=" + warnSlow + ", cost=" + cost + ", uri=" + uri);
+            final Long lw = lastWarnSlow.getIfPresent(uri);
+            final long lwl = lw == null ? 0L : lw;
+            if (end > config.getLogInterval() + lwl) {
+                log.warn("wings-slow-response, slow={}, cost={}, uri={}", warnSlow, cost, uri);
                 lastWarnSlow.put(uri, end);
             }
         }
@@ -269,12 +278,12 @@ public class WingsOverloadFilter implements OrderedFilter {
                 }
 
                 log.info("wings-snap-response "
-                            + ", total-resp=" + total
-                            + ", p99=" + p99
-                            + ", p95=" + p95
-                            + ", p90=" + p90
-                            + ", process=" + requestProcess.get()
-                            + ", capacity=" + requestCapacity.get());
+                         + ", total-resp=" + total
+                         + ", p99=" + p99
+                         + ", p95=" + p95
+                         + ", p90=" + p90
+                         + ", process=" + requestProcess.get()
+                         + ", capacity=" + requestCapacity.get());
                 lastInfoStat.set(end);
             }
         }

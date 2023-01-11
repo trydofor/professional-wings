@@ -3,13 +3,12 @@ package pro.fessional.wings.tiny.mail.sender;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
-import pro.fessional.wings.slardar.jackson.AesString;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue;
 
 /**
  * hashCode和equals会使用MailProperties的host,port,username,protocol
@@ -117,20 +116,20 @@ public class TinyMailConfig extends MailProperties {
     public void merge(MailProperties that) {
         if (that == null) return;
 
-        if (isEmpty(getHost())) {
+        if (notValue(getHost())) {
             setHost(that.getHost());
         }
         if (getPort() == null) {
             setPort(that.getPort());
         }
-        if (isEmpty(getUsername())) {
+        if (notValue(getUsername())) {
             setUsername(that.getUsername());
         }
         final String password = getPassword();
-        if (isEmpty(password) || AesString.MaskedValue.equals(password)) {
+        if (notValue(password)) {
             setPassword(that.getPassword());
         }
-        if (isEmpty(getProtocol())) {
+        if (notValue(getProtocol())) {
             setProtocol(that.getProtocol());
         }
         if (getDefaultEncoding() == null) {
@@ -146,7 +145,7 @@ public class TinyMailConfig extends MailProperties {
             else {
                 for (Map.Entry<String, String> en : thisProp.entrySet()) {
                     final String v = en.getValue();
-                    if (isEmpty(v)) {
+                    if (notValue(v)) {
                         final String tv = thatProp.get(en.getKey());
                         en.setValue(tv);
                     }
@@ -162,12 +161,12 @@ public class TinyMailConfig extends MailProperties {
         if (that == null) return;
         merge((MailProperties) that);
 
-        if (isEmpty(name)) name = that.name;
-        if (isEmpty(from)) from = that.from;
+        if (notValue(name)) name = that.name;
+        if (notValue(from)) from = that.from;
         if (to == null) to = that.to;
         if (cc == null) cc = that.cc;
         if (bcc == null) bcc = that.bcc;
-        if (isEmpty(reply)) reply = that.reply;
+        if (notValue(reply)) reply = that.reply;
         if (html == null) html = that.html;
     }
 }

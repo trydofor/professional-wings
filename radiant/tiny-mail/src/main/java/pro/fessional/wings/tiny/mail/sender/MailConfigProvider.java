@@ -23,7 +23,7 @@ public class MailConfigProvider {
 
     @Nullable
     public TinyMailConfig bynamedConfig(String name) {
-        return configProp.get(name);
+        return name == null || name.isEmpty() ? defaultConfig() : configProp.get(name);
     }
 
     @Contract("_->new")

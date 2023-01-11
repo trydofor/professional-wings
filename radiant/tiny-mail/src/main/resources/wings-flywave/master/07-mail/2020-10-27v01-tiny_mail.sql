@@ -15,17 +15,20 @@ CREATE TABLE `win_mail_sender` (
     `mail_subj`  VARCHAR(400)  NOT NULL DEFAULT '' COMMENT '邮件标题',
     `mail_text`  TEXT          NULL     DEFAULT NULL COMMENT '邮件正文',
     `mail_html`  TINYINT(1)    NOT NULL DEFAULT '1' COMMENT '是否为HTML邮件',
-    `mail_file`  VARCHAR(9000) NOT NULL DEFAULT '' COMMENT '邮件附件路径，逗号分隔',
-    `mark_word`  VARCHAR(400)  NOT NULL DEFAULT '' COMMENT '标记关键词',
+    `mail_file`  VARCHAR(9000) NOT NULL DEFAULT '' COMMENT '邮件附件路径，map的json格式',
+    `mark_word`  VARCHAR(200)  NOT NULL DEFAULT '' COMMENT '标记关键词，空格分隔业务key',
     `last_send`  DATETIME(3)   NOT NULL DEFAULT '1000-01-01' COMMENT '上次发送（UTC时区）',
     `last_fail`  TEXT          NULL     DEFAULT NULL COMMENT '上次失败信息',
+    `last_done`  DATETIME(3)   NOT NULL DEFAULT '1000-01-01' COMMENT '上次发送成功（UTC时区）',
     `last_cost`  INT(11)       NOT NULL DEFAULT '0' COMMENT '上次发送耗时毫秒数',
     `next_send`  DATETIME(3)   NOT NULL DEFAULT '1000-01-01' COMMENT '下次发送（UTC时区）',
     `next_lock`  INT(11)       NOT NULL DEFAULT '0' COMMENT '发送执行的乐观锁',
     `sums_send`  INT(11)       NOT NULL DEFAULT '0' COMMENT '合计发送次数',
     `sums_fail`  INT(11)       NOT NULL DEFAULT '0' COMMENT '合计失败次数',
+    `sums_done`  INT(11)       NOT NULL DEFAULT '0' COMMENT '合计成功次数',
     PRIMARY KEY (`id`),
     INDEX ix_next_send (`next_send`),
-    INDEX ix_mark_word (`mark_word`)
+    INDEX ix_sums_done (`sums_done`),
+    FULLTEXT ft_mark_word (`mark_word`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='124/邮件发送';

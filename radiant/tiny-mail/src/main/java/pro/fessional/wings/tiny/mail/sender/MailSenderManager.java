@@ -24,6 +24,7 @@ import pro.fessional.wings.tiny.mail.spring.prop.TinyMailSenderProp;
 import javax.mail.internet.MimeMessage;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -101,9 +102,10 @@ public class MailSenderManager {
             final long ms = dealErrorWait(me);
             if (ms > 0) {
                 now = ThreadNow.millis();
-                mailHostWait.put(host, now + ms);
+                final long epo = now + ms;
+                mailHostWait.put(host, epo);
                 log.warn("failed to send and host wait for " + ms + "ms, message=" + message.toMainString(), me);
-                throw new MailWaitException(ms, me);
+                throw new MailWaitException(epo, me);
             }
             log.warn("failed to send message= " + message.toMainString(), me);
             throw me;
@@ -113,14 +115,14 @@ public class MailSenderManager {
         }
     }
 
-    public List<BatchResult> batchSend(List<TinyMailMessage> messages) {
+    public List<BatchResult> batchSend(Collection<? extends TinyMailMessage> messages) {
         return batchSend(messages, null);
     }
 
     /**
      * 支持dryrun，一次链接验证，发送批量邮件，需要单个处理结果
      */
-    public List<BatchResult> batchSend(List<TinyMailMessage> messages, @Nullable MimeMessagePrepareHelper preparer) {
+    public List<BatchResult> batchSend(Collection<? extends TinyMailMessage> messages, @Nullable MimeMessagePrepareHelper preparer) {
         if (messages.isEmpty()) return Collections.emptyList();
 
         final List<BatchResult> results = new ArrayList<>(messages.size());
@@ -132,7 +134,7 @@ public class MailSenderManager {
             for (TinyMailMessage message : messages) {
                 final BatchResult br = new BatchResult();
                 br.tinyMessage = message;
-                br.millis = avg;
+                br.costMillis = avg;
                 results.add(br);
             }
             return results;
@@ -181,9 +183,10 @@ public class MailSenderManager {
             }
             catch (Exception me) {
                 final long ms = dealErrorWait(me);
+                final long epo = start + ms;
                 if (ms > 0) {
                     for (String host : hosts) {
-                        mailHostWait.put(host, start + ms);
+                        mailHostWait.put(host, epo);
                     }
                     log.warn("failed to send and host wait for " + ms + "ms, hosts=" + hosts, me);
                 }
@@ -193,12 +196,12 @@ public class MailSenderManager {
                     for (BatchResult br : result) {
                         final Exception ex = fms.get(br.mimeMessage);
                         if (ex != null) {
-                            br.exception = ms > 0 ? new MailWaitException(ms, ex) : ex;
+                            br.exception = ms > 0 ? new MailWaitException(epo, ex) : ex;
                         }
                     }
                 }
                 else {
-                    final Exception mw = ms > 0 ? new MailWaitException(ms, me) : me;
+                    final Exception mw = ms > 0 ? new MailWaitException(epo, me) : me;
                     for (BatchResult br : result) {
                         br.exception = mw;
                     }
@@ -208,7 +211,8 @@ public class MailSenderManager {
                 final long now = ThreadNow.millis();
                 long avg = (now - start) / len;
                 for (BatchResult br : result) {
-                    br.millis = avg;
+                    br.costMillis = avg;
+                    br.doneMillis = now;
                     if (br.exception != null) {
                         log.warn("failed to batch send message=" + br.tinyMessage.toMainString());
                     }
@@ -239,7 +243,7 @@ public class MailSenderManager {
             if (wait > now) {
                 final long tm = wait - now;
                 log.warn("mail need wait {}ms, host={}", host, tm);
-                throw new MailWaitException(tm, null);
+                throw new MailWaitException(wait, null);
             }
             else {
                 mailHostWait.remove(host);
@@ -256,7 +260,7 @@ public class MailSenderManager {
                     final long tm = idle - now;
                     log.warn("mail need idle {}ms, host={} ", host, tm);
                     if (maxIdle > 0 && idle > now + maxIdle) {
-                        throw new MailWaitException(tm, null);
+                        throw new MailWaitException(idle, null);
                     }
                     else {
                         Sleep.ignoreInterrupt(tm);
@@ -386,7 +390,9 @@ public class MailSenderManager {
         @Getter
         private TinyMailMessage tinyMessage;
         @Getter
-        private long millis = 0;
+        private long costMillis = 0;
+        @Getter
+        private long doneMillis = 0;
         @Getter
         private Exception exception;
 

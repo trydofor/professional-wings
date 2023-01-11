@@ -37,4 +37,28 @@ public class TinyMailServiceProp {
      */
     private Duration maxNext = Duration.ofDays(1);
     public static final String Key$maxNext = Key + ".max-next";
+
+    /**
+     * 失败后多久进行重试，默认1分钟
+     *
+     * @see #Key$tryNext
+     */
+    private Duration tryNext = Duration.ofMinutes(1);
+    public static final String Key$tryNext = Key + ".try-next";
+
+    /**
+     * 批量发送时，一次发的最大件数
+     *
+     * @see #Key$batSize
+     */
+    private int batSize = 10;
+    public static final String Key$batSize = Key + ".bat-size";
+
+    /**
+     * 超过此容量时，以Warn记录日志
+     *
+     * @see #Key$warSize
+     */
+    private int warSize = 1000;
+    public static final String Key$warSize = Key + ".war-size";
 }

@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import pro.fessional.wings.silencer.notice.SmallNotice;
@@ -24,7 +25,7 @@ import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanP
  */
 @Slf4j
 @RequiredArgsConstructor
-public class MailNotice implements SmallNotice<TinyMailConfig> {
+public class MailNotice implements SmallNotice<TinyMailConfig>, InitializingBean {
 
     @NotNull @Getter
     protected final MailConfigProvider configProvider;
@@ -83,11 +84,14 @@ public class MailNotice implements SmallNotice<TinyMailConfig> {
 
     @Override
     public void emit(TinyMailConfig config, String subject, String content) {
+        executor.execute(() -> send(config, subject, content));
+    }
+
+    @Override
+    public void afterPropertiesSet() {
         if (executor == null) {
             log.warn("should reuse autowired thread pool");
             executor = Executors.newSingleThreadExecutor();
         }
-        executor.execute(() -> send(config, subject, content));
     }
-
 }

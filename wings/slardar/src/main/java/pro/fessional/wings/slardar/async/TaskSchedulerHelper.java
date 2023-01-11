@@ -5,7 +5,7 @@ import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import pro.fessional.mirana.time.ThreadNow;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.concurrent.ScheduledFuture;
 
 /**
@@ -60,18 +60,18 @@ public class TaskSchedulerHelper {
     /**
      * 在delayMs毫秒（ThreadNow）后，异步执行一个任务，fast表示此任务很快会结束，如10s
      *
-     * @see ThreadPoolTaskScheduler#schedule(Runnable, Date)
+     * @see ThreadPoolTaskScheduler#schedule(Runnable, Instant)
      */
     public static ScheduledFuture<?> execute(boolean fast, long delayMs, @NotNull Runnable task) {
-        return referScheduler(fast).schedule(task, new Date(ThreadNow.millis() + delayMs));
+        return referScheduler(fast).schedule(task, Instant.ofEpochMilli(ThreadNow.millis() + delayMs));
     }
 
     /**
      * 在指定时间（fastTime构建，系统默认时区），异步执行一个任务，fast表示此任务很快会结束，如10s
      *
-     * @see ThreadPoolTaskScheduler#schedule(Runnable, Date)
+     * @see ThreadPoolTaskScheduler#schedule(Runnable, Instant)
      */
-    public static ScheduledFuture<?> execute(boolean fast, Date start, @NotNull Runnable task) {
+    public static ScheduledFuture<?> execute(boolean fast, Instant start, @NotNull Runnable task) {
         return referScheduler(fast).schedule(task, start);
     }
 

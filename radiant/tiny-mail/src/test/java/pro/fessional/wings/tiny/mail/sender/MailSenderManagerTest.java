@@ -82,10 +82,10 @@ public class MailSenderManagerTest {
             for (MailSenderManager.BatchResult result : results) {
                 final Exception ex = result.getException();
                 if (ex != null) {
-                    log.warn("error, cost={}, message={}", result.getMillis(), result.getTinyMessage().toMainString(), ex);
+                    log.warn("error, cost={}, message={}", result.getCostMillis(), result.getTinyMessage().toMainString(), ex);
                 }
                 else {
-                    log.info("success, cost={}, message={}", result.getMillis(), result.getTinyMessage().toMainString());
+                    log.info("success, cost={}, message={}", result.getCostMillis(), result.getTinyMessage().toMainString());
                 }
             }
         }
