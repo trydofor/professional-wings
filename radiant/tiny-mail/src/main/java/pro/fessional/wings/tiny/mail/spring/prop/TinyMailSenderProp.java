@@ -49,12 +49,20 @@ public class TinyMailSenderProp {
     public static final String Key$errAuth = Key + ".err-auth";
 
     /**
-     * 根据error特征，确定等待时间
+     * 包括以下异常信息时，对此host进行多少秒的等待。秒为key，以小数部分仅用来区分key，负数为建议停止发送
      *
-     * @see #Key$errLike
+     * @see #Key$errHost
      */
-    private Map<String, Duration> errLike = Collections.emptyMap();
-    public static final String Key$errLike = Key + ".err-like";
+    private Map<Double, String> errHost = Collections.emptyMap();
+    public static final String Key$errHost = Key + ".err-host";
+
+    /**
+     * 包括以下异常信息时，对此邮件的重发进行多少秒的等待。秒为key，以小数部分仅用来区分key，负数为建议停止发送
+     *
+     * @see #Key$errMail
+     */
+    private Map<Double, String> errMail = Collections.emptyMap();
+    public static final String Key$errMail = Key + ".err-mail";
 
     /**
      * 同一邮件host每次登录的间隔，避免限频，默认无视

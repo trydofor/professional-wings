@@ -15,7 +15,7 @@ import pro.fessional.mirana.time.StopWatch;
  */
 @SpringBootTest(properties = {
         "debug = true",
-        "wings.tiny.mail.notice.default.file[application.properties]=classpath:./application.properties"
+//        "wings.tiny.mail.notice.default.file[application.properties]=classpath:./application.properties"
 })
 @Disabled
 @Slf4j

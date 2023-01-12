@@ -99,13 +99,14 @@ public class MailSenderManager {
             sender.send(mimeMessage);
         }
         catch (Exception me) {
-            final long ms = dealErrorWait(me);
-            if (ms > 0) {
-                now = ThreadNow.millis();
-                final long epo = now + ms;
-                mailHostWait.put(host, epo);
-                log.warn("failed to send and host wait for " + ms + "ms, message=" + message.toMainString(), me);
-                throw new MailWaitException(epo, me);
+            now = ThreadNow.millis();
+            final Wait wt = dealErrorWait(me, now);
+            if (wt != null) {
+                if (wt.host) {
+                    mailHostWait.put(host, wt.wait);
+                }
+                log.warn("failed to send and host wait for " + (wt.wait - now) + "ms, message=" + message.toMainString(), me);
+                throw new MailWaitException(wt.wait, wt.host, wt.stop, me);
             }
             log.warn("failed to send message= " + message.toMainString(), me);
             throw me;
@@ -178,17 +179,19 @@ public class MailSenderManager {
             }
 
             long start = ThreadNow.millis();
+            long now = -1;
             try {
                 sender.send(mineMessages);
             }
             catch (Exception me) {
-                final long ms = dealErrorWait(me);
-                final long epo = start + ms;
-                if (ms > 0) {
+                now = ThreadNow.millis();
+                final Wait wt = dealErrorWait(me, now);
+                if (wt != null) {
+                    // 一个sender应该只有一个host，因以按sender分组
                     for (String host : hosts) {
-                        mailHostWait.put(host, epo);
+                        mailHostWait.put(host, wt.wait);
                     }
-                    log.warn("failed to send and host wait for " + ms + "ms, hosts=" + hosts, me);
+                    log.warn("failed to send and host wait for " + (wt.wait - now) + "ms, hosts=" + hosts, me);
                 }
 
                 if (me instanceof MailSendException) {
@@ -196,19 +199,20 @@ public class MailSenderManager {
                     for (BatchResult br : result) {
                         final Exception ex = fms.get(br.mimeMessage);
                         if (ex != null) {
-                            br.exception = ms > 0 ? new MailWaitException(epo, ex) : ex;
+                            br.exception = wt != null ? new MailWaitException(wt.wait, wt.host, wt.stop, ex) : ex;
                         }
                     }
                 }
                 else {
-                    final Exception mw = ms > 0 ? new MailWaitException(epo, me) : me;
+                    final Exception mw = wt != null ? new MailWaitException(wt.wait, wt.host, wt.stop, me) : me;
                     for (BatchResult br : result) {
                         br.exception = mw;
                     }
                 }
             }
             finally {
-                final long now = ThreadNow.millis();
+                if (now < 0) now = ThreadNow.millis();
+
                 long avg = (now - start) / len;
                 for (BatchResult br : result) {
                     br.costMillis = avg;
@@ -241,9 +245,8 @@ public class MailSenderManager {
         if (wait != null) {
             now = ThreadNow.millis();
             if (wait > now) {
-                final long tm = wait - now;
-                log.warn("mail need wait {}ms, host={}", host, tm);
-                throw new MailWaitException(wait, null);
+                log.warn("mail need wait {}ms, host={}", host, wait - now);
+                throw new MailWaitException(wait, true, false, null);
             }
             else {
                 mailHostWait.remove(host);
@@ -260,7 +263,7 @@ public class MailSenderManager {
                     final long tm = idle - now;
                     log.warn("mail need idle {}ms, host={} ", host, tm);
                     if (maxIdle > 0 && idle > now + maxIdle) {
-                        throw new MailWaitException(idle, null);
+                        throw new MailWaitException(idle, true, false, null);
                     }
                     else {
                         Sleep.ignoreInterrupt(tm);
@@ -346,8 +349,8 @@ public class MailSenderManager {
         }
 
         final String bizMark = senderProp.getBizMark();
-        if (isNotEmpty(bizId) && isNotEmpty(message.getBizMark())) {
-            mineMessage.addHeader(bizId, message.getBizMark());
+        if (isNotEmpty(bizMark) && isNotEmpty(message.getBizMark())) {
+            mineMessage.addHeader(bizMark, message.getBizMark());
         }
 
         if (preparer != null) {
@@ -357,14 +360,20 @@ public class MailSenderManager {
         return mineMessage;
     }
 
-    private long dealErrorWait(Exception me) {
+    private Wait dealErrorWait(Exception me, long now) {
         final Throwable cause = me.getCause();
         final String msg = cause == null ? me.getMessage() : cause.getMessage();
 
         if (msg != null) {
-            for (Map.Entry<String, Duration> en : senderProp.getErrLike().entrySet()) {
-                if (msg.contains(en.getKey())) {
-                    return en.getValue().toMillis();
+            for (Map.Entry<Double, String> en : senderProp.getErrHost().entrySet()) {
+                if (msg.contains(en.getValue())) {
+                    return Wait.host(now + en.getKey().longValue() * 1000);
+                }
+            }
+
+            for (Map.Entry<Double, String> en : senderProp.getErrMail().entrySet()) {
+                if (msg.contains(en.getValue())) {
+                    return Wait.host(now + en.getKey().longValue() * 1000);
                 }
             }
         }
@@ -372,18 +381,38 @@ public class MailSenderManager {
         if (me instanceof MailAuthenticationException) {
             final Duration dur = senderProp.getErrAuth();
             if (dur != null) {
-                return dur.toMillis();
+                return Wait.mail(now + dur.toMillis());
             }
         }
 
         if (me instanceof MailSendException) {
             final Duration dur = senderProp.getErrSend();
             if (dur != null) {
-                return dur.toMillis();
+                return Wait.mail(now + dur.toMillis());
             }
         }
 
-        return -1L;
+        return null;
+    }
+
+    private static class Wait {
+        private final long wait;
+        private final boolean host;
+        private final boolean stop;
+
+        public Wait(long wait, boolean host) {
+            this.wait = Math.abs(wait);
+            this.host = host;
+            this.stop = wait < 0;
+        }
+
+        private static Wait host(long ms) {
+            return new Wait(ms, true);
+        }
+
+        private static Wait mail(long ms) {
+            return new Wait(ms, false);
+        }
     }
 
     public static class BatchResult {

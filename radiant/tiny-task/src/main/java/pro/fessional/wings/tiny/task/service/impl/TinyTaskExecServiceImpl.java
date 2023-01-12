@@ -313,17 +313,17 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         if (StringUtils.isEmpty(runs)) return false;
 
         final RunMode rmd = RuntimeMode.getRunMode();
-        if (rmd == null) {
+        if (rmd == RunMode.Nothing) {
             log.info("skip task for not runs={}, cur is null, id={}", runs, id);
             return true;
         }
 
-        final String rm = rmd.name();
-        for (String s : StringUtils.split(runs, ',')) {
-            if (s.trim().equalsIgnoreCase(rm)) return false;
+        if (!RuntimeMode.hasRunMode(StringUtils.split(runs, ','))) {
+            log.info("skip task for not runs={}, cur={}, id={}", runs, rmd, id);
+            return true;
         }
-        log.info("skip task for not runs={}, cur={}, id={}", runs, rm, id);
-        return true;
+
+        return false;
     }
 
     private Set<String> noticeWhen(String nw) {

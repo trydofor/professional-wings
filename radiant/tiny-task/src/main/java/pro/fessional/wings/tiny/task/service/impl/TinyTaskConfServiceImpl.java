@@ -344,7 +344,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         final String runs = prop.getTaskerRuns();
         if (isEmpty(runs)) {
             final RunMode rm = RuntimeMode.getRunMode();
-            po.setTaskerRuns(rm == null ? "" : rm.name().toLowerCase());
+            po.setTaskerRuns(rm == RunMode.Nothing ? "" : rm.name().toLowerCase());
         }
         else {
             po.setTaskerRuns(runs);

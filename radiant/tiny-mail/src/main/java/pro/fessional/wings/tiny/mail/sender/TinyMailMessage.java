@@ -89,15 +89,19 @@ public class TinyMailMessage extends TinyMailConfig {
 
     public boolean asHtml() {
         if (html != null) return html;
+        return asHtml(context, true);
+    }
 
-        for (int i = 0, len = context.length(); i < len; i++) {
-            char c = context.charAt(0);
+    public static boolean asHtml(String str, boolean elze) {
+        if (str == null) return elze;
+
+        for (int i = 0, len = str.length(); i < len; i++) {
+            char c = str.charAt(0);
             if (WhiteUtil.notWhiteSpace(c)) {
-                html = c == '<';
-                return html;
+                return c == '<';
             }
         }
 
-        return false;
+        return elze;
     }
 }

@@ -49,16 +49,40 @@ public class TinyMailServiceProp {
     /**
      * 批量发送时，一次发的最大件数
      *
-     * @see #Key$batSize
+     * @see #Key$batchSize
      */
-    private int batSize = 10;
-    public static final String Key$batSize = Key + ".bat-size";
+    private int batchSize = 10;
+    public static final String Key$batchSize = Key + ".batch-size";
 
     /**
      * 超过此容量时，以Warn记录日志
      *
-     * @see #Key$warSize
+     * @see #Key$warnSize
      */
-    private int warSize = 1000;
-    public static final String Key$warSize = Key + ".war-size";
+    private int warnSize = 1000;
+    public static final String Key$warnSize = Key + ".warn-size";
+
+    /**
+     * 启动后多少秒，扫描未发送的邮件，-1为不扫描
+     *
+     * @see #Key$bootScan
+     */
+    private Duration bootScan = Duration.ofSeconds(60);
+    public static final String Key$bootScan = Key + ".boot-scan";
+
+    /**
+     * 是否仅发送本app的邮件
+     *
+     * @see #Key$onlyApp
+     */
+    private boolean onlyApp = false;
+    public static final String Key$onlyApp = Key + ".only-app";
+
+    /**
+     * 是否仅发送本RumMode的邮件
+     *
+     * @see #Key$onlyRun
+     */
+    private boolean onlyRun = true;
+    public static final String Key$onlyRun = Key + ".only-run";
 }

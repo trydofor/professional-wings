@@ -38,7 +38,10 @@ public class MailSenderProvider {
 
     @NotNull
     public JavaMailSender singletonSender(@NotNull TinyMailConfig config) {
-        return senders.computeIfAbsent(config.getName(), k -> newSender(config));
+        final String name = config.getName();
+        return name == null || name.isEmpty()
+               ? defaultSender
+               : senders.computeIfAbsent(name, k -> newSender(config));
     }
 
     @NotNull

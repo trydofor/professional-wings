@@ -18,7 +18,7 @@ public enum ApiMode {
      */
     Dryrun,
     /**
-     * 不执行任何动作
+     * 未定义，不执行任何动作
      */
     Nothing
 }

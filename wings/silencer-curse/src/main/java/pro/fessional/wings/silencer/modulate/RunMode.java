@@ -23,5 +23,10 @@ public enum RunMode {
     /**
      * unit test
      */
-    Local
+    Local,
+
+    /**
+     * undefined
+     */
+    Nothing,
 }

@@ -29,8 +29,7 @@ public class TestEnvsController {
     @ResponseBody
     public R<String> testRunMode() {
         final RunMode rm = RuntimeMode.getRunMode();
-        final String rt = rm == null ? null : rm.name();
-        return R.okData(rt);
+        return R.okData(rm.name());
     }
 
     @Operation(summary = "获取系统 Timestamp", description =
