@@ -11,10 +11,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.R;
@@ -440,6 +443,16 @@ public class WingsJacksonMapperTest {
         //
         assertEquals("{\"numLong\":10000,\"numInt\":10000,\"numDouble\":\"3.14159\",\"numDecimal\":\"2.71828\"}", s1);
         assertEquals("{\"numLong\":10000,\"numInt\":10000,\"numDouble\":3.14159,\"numDecimal\":2.71828}", s2);
+    }
+
+
+
+    @Test
+    public void testResource() throws JsonProcessingException {
+        Map<String, Resource> res = new HashMap<>();
+        res.put("wings-jackson-79.properties", new ClassPathResource("wings-conf/wings-jackson-79.properties"));
+        final String json = objectMapper.writeValueAsString(res);
+        Assertions.assertEquals("{\"wings-jackson-79.properties\":\"classpath:wings-conf/wings-jackson-79.properties\"}", json);
     }
 
     @Data

@@ -18,6 +18,7 @@ import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilde
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.R;
@@ -40,6 +41,7 @@ import pro.fessional.wings.slardar.jackson.FormatNumberSerializer.Digital;
 import pro.fessional.wings.slardar.jackson.I18nResultPropertyFilter;
 import pro.fessional.wings.slardar.jackson.I18nStringSerializer;
 import pro.fessional.wings.slardar.jackson.JacksonHelper;
+import pro.fessional.wings.slardar.jackson.ResourceSerializer;
 import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarJacksonProp;
@@ -159,6 +161,14 @@ public class SlardarJacksonWebConfiguration {
 
             builder.deserializerByType(OffsetDateTime.class, new JacksonOffsetDateTimeDeserializer(offset, offPsr, autoOffset));
             log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer OffsetDateTime");
+        };
+    }
+
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer customizerObjectMapperResource() {
+        log.info("SlardarWebmvc spring-bean customizerObjectMapperResource");
+        return builder -> {
+            builder.serializerByType(Resource.class, new ResourceSerializer());
         };
     }
 
