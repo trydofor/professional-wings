@@ -3,6 +3,7 @@ package pro.fessional.wings.tiny.mail.spring.prop;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Map;
@@ -49,19 +50,19 @@ public class TinyMailSenderProp {
     public static final String Key$errAuth = Key + ".err-auth";
 
     /**
-     * 包括以下异常信息时，对此host进行多少秒的等待。秒为key，以小数部分仅用来区分key，负数为建议停止发送
+     * 包括以下异常信息时，对此host进行多少秒的等待。秒为key，以小数部分仅用来区分key，负数为建议停止重发
      *
      * @see #Key$errHost
      */
-    private Map<Double, String> errHost = Collections.emptyMap();
+    private Map<BigDecimal, String> errHost = Collections.emptyMap();
     public static final String Key$errHost = Key + ".err-host";
 
     /**
-     * 包括以下异常信息时，对此邮件的重发进行多少秒的等待。秒为key，以小数部分仅用来区分key，负数为建议停止发送
-     *
+     * 包括以下异常信息时，对此邮件的重发进行多少秒的等待。秒为key，以小数部分仅用来区分key，负数为建议停止重发
+     * 如 `501001.001`的意义为，501为错误号，001为host编号，.001为区别位
      * @see #Key$errMail
      */
-    private Map<Double, String> errMail = Collections.emptyMap();
+    private Map<BigDecimal, String> errMail = Collections.emptyMap();
     public static final String Key$errMail = Key + ".err-mail";
 
     /**

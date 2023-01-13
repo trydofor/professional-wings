@@ -21,7 +21,9 @@ import pro.fessional.wings.faceless.convention.EmptySugar;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailEnabledProp;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailSenderProp;
 
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -274,7 +276,7 @@ public class MailSenderManager {
         }
     }
 
-    private MimeMessage prepareMimeMessage(TinyMailMessage message, MimeMessagePrepareHelper preparer, JavaMailSender sender) throws Exception {
+    private MimeMessage prepareMimeMessage(TinyMailMessage message, MimeMessagePrepareHelper preparer, JavaMailSender sender) throws MessagingException {
 
         if (sender == null) {
             sender = senderProvider.singletonSender(message);
@@ -361,19 +363,17 @@ public class MailSenderManager {
     }
 
     private Wait dealErrorWait(Exception me, long now) {
-        final Throwable cause = me.getCause();
-        final String msg = cause == null ? me.getMessage() : cause.getMessage();
-
-        if (msg != null) {
-            for (Map.Entry<Double, String> en : senderProp.getErrHost().entrySet()) {
+        final String msg = me.getMessage();
+        if (isNotEmpty(msg)) {
+            for (Map.Entry<BigDecimal, String> en : senderProp.getErrHost().entrySet()) {
                 if (msg.contains(en.getValue())) {
-                    return Wait.host(now + en.getKey().longValue() * 1000);
+                    return Wait.host(now + Math.abs(en.getKey().longValue() * 1000));
                 }
             }
 
-            for (Map.Entry<Double, String> en : senderProp.getErrMail().entrySet()) {
+            for (Map.Entry<BigDecimal, String> en : senderProp.getErrMail().entrySet()) {
                 if (msg.contains(en.getValue())) {
-                    return Wait.host(now + en.getKey().longValue() * 1000);
+                    return Wait.mail(now + Math.abs(en.getKey().longValue() * 1000));
                 }
             }
         }
@@ -401,7 +401,7 @@ public class MailSenderManager {
         private final boolean stop;
 
         public Wait(long wait, boolean host) {
-            this.wait = Math.abs(wait);
+            this.wait = wait;
             this.host = host;
             this.stop = wait < 0;
         }
@@ -430,6 +430,6 @@ public class MailSenderManager {
     }
 
     public interface MimeMessagePrepareHelper {
-        void prepare(TinyMailConfig config, MimeMessageHelper helper) throws Exception;
+        void prepare(TinyMailConfig config, MimeMessageHelper helper) throws MessagingException;
     }
 }

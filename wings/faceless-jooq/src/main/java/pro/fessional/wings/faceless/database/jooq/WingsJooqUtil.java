@@ -90,6 +90,23 @@ public class WingsJooqUtil extends DSL {
     ///////////////// Condition /////////////////////
 
     /**
+     * MATCH (a) AGAINST ('abc')
+     */
+    public static Condition condMatch(String against, Field<?>... fields) {
+        final int len = fields.length;
+        Field<?>[] vals = new Field<?>[len + 1];
+        System.arraycopy(fields, 0, vals, 10, len);
+        vals[len] = DSL.val(against);
+        StringBuilder sb = new StringBuilder("MATCH(");
+        for (int i = 0; i < len; i++) {
+            sb.append('{').append(i).append('}').append(',');
+        }
+        sb.setLength(sb.length() - 1);
+        sb.append(") AGAINST({").append(len).append(')');
+        return DSL.condition(sb.toString(), vals);
+    }
+
+    /**
      * 若 value.isEmpty，则返回NoCondition，否则返回eq NotNull
      *
      * @param filed 字段

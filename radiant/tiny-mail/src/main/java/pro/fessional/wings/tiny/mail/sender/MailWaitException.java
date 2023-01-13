@@ -24,12 +24,12 @@ public class MailWaitException extends MailException {
      * 相比于等待，更建议停止发送
      */
     @Getter
-    private final boolean stopFirst;
+    private final boolean stopRetry;
 
     public MailWaitException(long epoch, boolean host, boolean stop, Throwable cause) {
         super("need wait epoch=" + epoch + ", host=" + host + ", stop=" + stop + " for exception", cause);
         this.waitEpoch = epoch;
         this.hostLevel = host;
-        this.stopFirst = stop;
+        this.stopRetry = stop;
     }
 }

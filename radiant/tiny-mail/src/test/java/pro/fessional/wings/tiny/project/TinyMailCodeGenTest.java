@@ -22,6 +22,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
         "spring.wings.faceless.flywave.enabled.module=true",
         "spring.wings.faceless.flywave.enabled.checker=false",
         "wings.tiny.task.enabled.autorun=false",
+        "wings.tiny.mail.service.boot-scan=0",
         "debug = true"
 })
 @Disabled("手动执行")

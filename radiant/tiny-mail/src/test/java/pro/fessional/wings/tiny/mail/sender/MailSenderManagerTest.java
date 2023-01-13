@@ -17,6 +17,7 @@ import java.util.List;
  */
 @SpringBootTest(properties = {
         "debug = true",
+        "wings.tiny.mail.service.boot-scan=0",
 })
 @Disabled
 @Slf4j

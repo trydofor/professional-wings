@@ -22,6 +22,7 @@ import pro.fessional.wings.tiny.task.service.TinyTaskListService;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -51,7 +52,7 @@ public class TinyTaskListServiceImpl implements TinyTaskListService {
                 .count()
                 .from(t)
                 .where(t.Id.in(ids))
-                .order(t.Id)
+                .order(Map.of("done", t.LastDone, "exec", t.LastExec), t.LastDone.desc())
                 .fetch(t.Id, t.Enabled, t.Autorun, t.Version,
                         t.TaskerName, t.TaskerApps, t.TaskerRuns,
                         t.TimingCron, t.TimingIdle, t.TimingRate,
@@ -69,7 +70,7 @@ public class TinyTaskListServiceImpl implements TinyTaskListService {
                 .count()
                 .from(t)
                 .whereTrue()
-                .order(t.Id)
+                .order(Map.of("done", t.LastDone, "exec", t.LastExec), t.LastDone.desc())
                 .fetch(t.Id, t.Enabled, t.Autorun, t.Version,
                         t.TaskerName, t.TaskerApps, t.TaskerRuns,
                         t.TimingCron, t.TimingIdle, t.TimingRate,
@@ -119,7 +120,7 @@ public class TinyTaskListServiceImpl implements TinyTaskListService {
                 .count()
                 .from(t)
                 .where(t.TaskId.eq(id))
-                .order(t.Id)
+                .order(Map.of("id", t.Id), t.Id.desc())
                 .fetch()
                 .into(WinTaskResult.class);
     }

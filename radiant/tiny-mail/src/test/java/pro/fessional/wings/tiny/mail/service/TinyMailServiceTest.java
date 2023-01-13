@@ -11,7 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since 2023-01-10
  */
 @SpringBootTest(properties = {
-        "debug = true"
+        "debug = true",
+        "wings.tiny.mail.service.boot-scan=0",
 })
 @Disabled
 class TinyMailServiceTest {
@@ -21,33 +22,30 @@ class TinyMailServiceTest {
 
     @Test
     void sendOk() {
-        TinyMailService.TinyMail message = new TinyMailService.TinyMail();
+        TinyMail message = new TinyMail();
         message.setSubject("Mail Service Test");
         message.setContextHtml("Nothing");
+        message.setMark("wings tiny mail");
         tinyMailService.send(message, true);
     }
 
     // 501 Mail from address must be same as authorization user.
     @Test
     void sendNgFrom() {
-        TinyMailService.TinyMail message = new TinyMailService.TinyMail();
+        TinyMail message = new TinyMail();
         message.setSubject("Mail Service Test");
         message.setContextHtml("Nothing");
         message.setFrom("admin@qq.com");
         tinyMailService.send(message, true);
     }
 
+    // javax.mail.internet.AddressException: Local address contains dot-dot
     @Test
-    void sendNgTo() {
-        TinyMailService.TinyMail message = new TinyMailService.TinyMail();
+    void sendBadTo() {
+        TinyMail message = new TinyMail();
         message.setSubject("Mail Service Test");
         message.setContextHtml("Nothing");
-        // 501 Mail from address must be same as authorization user.
-        message.setFrom("admin@qq.com");
+        message.setTo("t.r.y...d.o...f.o.r@qq.com");
         tinyMailService.send(message, true);
-    }
-
-    @Test
-    void emit() {
     }
 }

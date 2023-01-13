@@ -23,12 +23,12 @@ public class TinyMailServiceProp {
     public static final String Key$maxFail = Key + ".max-fail";
 
     /**
-     * 同一邮件最大发送次数
+     * 同一邮件最大成功次数
      *
-     * @see #Key$maxSend
+     * @see #Key$maxDone
      */
-    private int maxSend = 0;
-    public static final String Key$maxSend = Key + ".max-send";
+    private int maxDone = 0;
+    public static final String Key$maxDone = Key + ".max-done";
 
     /**
      * 超过多少时间的邮件不需要发送，默认1天
