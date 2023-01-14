@@ -46,6 +46,12 @@ public class MailListController {
         return tinyMailListService.listUndone(pq);
     }
 
+    @Operation(summary = "根据Biz-Mark获取邮件的简要信息，默认倒序")
+    @PostMapping(value = "${" + TinyMailUrlmapProp.Key$byBizmark + "}")
+    @ResponseBody
+    public PageResult<TinyMailPlain> byBizMark(@RequestBody Q<String> q, @ParameterObject PageQuery pq) {
+        return tinyMailListService.listByBizMark(q.getQ(), pq);
+    }
 
     @Operation(summary = "根据正则比较收件人to/cc/bcc获取邮件的简要信息，默认倒序")
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$byRecipient + "}")

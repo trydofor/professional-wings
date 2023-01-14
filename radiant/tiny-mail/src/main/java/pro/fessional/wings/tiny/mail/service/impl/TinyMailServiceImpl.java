@@ -166,9 +166,8 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     public int scan() {
         log.info("scan misfire mail to queue");
         final long now = ThreadNow.millis();
-        final long mis = now - tinyMailServiceProp.getMaxNext().toMillis();
-        final LocalDateTime min = DateLocaling.utcLdt(mis);
-        final LocalDateTime max = DateLocaling.utcLdt(now);
+        final LocalDateTime min = DateLocaling.sysLdt(now - tinyMailServiceProp.getMaxNext().toMillis());
+        final LocalDateTime max = DateLocaling.sysLdt(now + tinyMailServiceProp.getTryNext().toMillis());
 
         final WinMailSenderTable t = winMailSenderDao.getTable();
         final List<AsyncMail> pos = winMailSenderDao
@@ -179,7 +178,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                 .into(WinMailSender.class)
                 .stream()
                 .filter(po -> !notMatchProp(po))
-                .map(it -> new AsyncMail(it.getId(), DateLocaling.utcEpoch(it.getNextSend()), true, it, null))
+                .map(it -> new AsyncMail(it.getId(), DateLocaling.sysEpoch(it.getNextSend()), true, it, null))
                 .collect(Collectors.toList());
 
         //
@@ -261,7 +260,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
         // 乐观锁
         po.setNextLock(0);
-        po.setNextSend(ThreadNow.localDateTime(ThreadNow.UtcZoneId));
+        po.setNextSend(ThreadNow.localDateTime());
         // 检查结束
         po.setSumsSend(0);
         po.setSumsFail(0);
@@ -320,7 +319,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                 .ctx()
                 .update(t)
                 .set(t.NextLock, t.NextLock.add(1))
-                .set(t.LastSend, DateLocaling.utcLdt(now))
+                .set(t.LastSend, DateLocaling.sysLdt(now))
                 .where(t.Id.eq(po.getId()).and(t.NextLock.eq(po.getNextLock())))
                 .execute();
 
@@ -339,7 +338,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             final Map<Object, Object> setter = new HashMap<>();
             if (exception == null) {
                 setter.put(t.LastFail, null);
-                setter.put(t.LastDone, DateLocaling.utcLdt(now));
+                setter.put(t.LastDone, DateLocaling.sysLdt(now));
                 setter.put(t.LastCost, cost);
 
                 if (po.getSumsDone() + 1 >= tinyMailServiceProp.getMaxDone()) {
@@ -348,7 +347,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                 }
                 else {
                     nextSend = now + tinyMailServiceProp.getTryNext().toMillis();
-                    setter.put(t.NextSend, DateLocaling.utcLdt(nextSend));
+                    setter.put(t.NextSend, DateLocaling.sysLdt(nextSend));
                     log.info("next done-mail id={}, subject={}", po.getId(), po.getMailSubj());
                 }
 
@@ -384,7 +383,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                     }
 
                     if (nextSend > 0) {
-                        setter.put(t.NextSend, DateLocaling.utcLdt(nextSend));
+                        setter.put(t.NextSend, DateLocaling.sysLdt(nextSend));
                         log.info("next fail-mail id={}, subject={}", po.getId(), po.getMailSubj());
                     }
                 }
@@ -422,7 +421,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             if (retry && nextSend > 0 && nextSend - now < tinyMailServiceProp.getMaxNext().toMillis()) {
                 asyncMails.add(new AsyncMail(po.getId(), nextSend, retry, null, message));
                 taskScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(nextSend));
-                log.warn("schedule fail-mail send, id=" + po.getId() + ", subject=" + po.getMailSubj(), exception);
+                log.info("schedule fail-mail send, id=" + po.getId() + ", subject=" + po.getMailSubj());
             }
             else {
                 if (rethrow) {
@@ -434,7 +433,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                     }
                 }
                 else {
-                    log.warn("no rethrow or retry mail, id=" + po.getId() + ", subject=" + po.getMailSubj(), exception);
+                    log.info("no rethrow or retry mail, id=" + po.getId() + ", subject=" + po.getMailSubj());
                 }
             }
         }

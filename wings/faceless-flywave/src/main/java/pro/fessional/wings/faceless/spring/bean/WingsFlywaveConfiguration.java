@@ -155,7 +155,7 @@ public class WingsFlywaveConfiguration {
             log.info("FacelessFlywave check RevisionFitness");
             final RevisionFitness fits = new RevisionFitness();
             fits.addFits(prop.getFit());
-            fits.checkRevision(manager);
+            fits.checkRevision(manager, prop.isAutoInit());
         });
     }
 }

@@ -220,7 +220,7 @@ public class MailSenderManager {
                     br.costMillis = avg;
                     br.doneMillis = now;
                     if (br.exception != null) {
-                        log.warn("failed to batch send message=" + br.tinyMessage.toMainString());
+                        log.warn("failed to batch send message, " + br.tinyMessage.toMainString());
                     }
                 }
 
@@ -367,13 +367,13 @@ public class MailSenderManager {
         if (isNotEmpty(msg)) {
             for (Map.Entry<BigDecimal, String> en : senderProp.getErrHost().entrySet()) {
                 if (msg.contains(en.getValue())) {
-                    return Wait.host(now + Math.abs(en.getKey().longValue() * 1000));
+                    return Wait.host(now, en.getKey().longValue() * 1000);
                 }
             }
 
             for (Map.Entry<BigDecimal, String> en : senderProp.getErrMail().entrySet()) {
                 if (msg.contains(en.getValue())) {
-                    return Wait.mail(now + Math.abs(en.getKey().longValue() * 1000));
+                    return Wait.mail(now, en.getKey().longValue() * 1000);
                 }
             }
         }
@@ -381,14 +381,14 @@ public class MailSenderManager {
         if (me instanceof MailAuthenticationException) {
             final Duration dur = senderProp.getErrAuth();
             if (dur != null) {
-                return Wait.mail(now + dur.toMillis());
+                return Wait.mail(now, dur.toMillis());
             }
         }
 
         if (me instanceof MailSendException) {
             final Duration dur = senderProp.getErrSend();
             if (dur != null) {
-                return Wait.mail(now + dur.toMillis());
+                return Wait.mail(now, dur.toMillis());
             }
         }
 
@@ -400,18 +400,18 @@ public class MailSenderManager {
         private final boolean host;
         private final boolean stop;
 
-        public Wait(long wait, boolean host) {
+        public Wait(long wait, boolean host, boolean stop) {
             this.wait = wait;
             this.host = host;
-            this.stop = wait < 0;
+            this.stop = stop;
         }
 
-        private static Wait host(long ms) {
-            return new Wait(ms, true);
+        private static Wait host(long now, long dur) {
+            return new Wait(now + Math.abs(dur), true, dur < 0);
         }
 
-        private static Wait mail(long ms) {
-            return new Wait(ms, false);
+        private static Wait mail(long now, long dur) {
+            return new Wait(now + Math.abs(dur), false, dur < 0);
         }
     }
 

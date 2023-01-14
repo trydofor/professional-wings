@@ -17,6 +17,14 @@ public class FlywaveFitProp {
     public static final String Key = "wings.faceless.flywave";
 
     /**
+     * 是否允许自动初始化，非空数据库，最好手工初始化
+     *
+     * @see #Key$autoInit
+     */
+    private boolean autoInit = false;
+    public static final String Key$autoInit = Key + ".auto-init";
+
+    /**
      * 具体依赖项目
      *
      * @see #Key$fit

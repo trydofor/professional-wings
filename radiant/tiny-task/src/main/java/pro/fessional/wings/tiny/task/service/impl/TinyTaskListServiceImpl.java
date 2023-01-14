@@ -101,11 +101,11 @@ public class TinyTaskListServiceImpl implements TinyTaskListService {
             tm.setSumsDone(it.get(t.SumsDone));
 
 
-            final ZonedDateTime lastExec = it.get(t.LastExec).atZone(ThreadNow.UtcZoneId);
+            final ZonedDateTime lastExec = it.get(t.LastExec).atZone(ThreadNow.sysZoneId());
             tm.setLastExec(DateFormatter.fullTz(lastExec));
-            final ZonedDateTime lastFail = it.get(t.LastFail).atZone(ThreadNow.UtcZoneId);
+            final ZonedDateTime lastFail = it.get(t.LastFail).atZone(ThreadNow.sysZoneId());
             tm.setLastFail(DateFormatter.fullTz(lastFail));
-            final ZonedDateTime lastDone = it.get(t.LastDone).atZone(ThreadNow.UtcZoneId);
+            final ZonedDateTime lastDone = it.get(t.LastDone).atZone(ThreadNow.sysZoneId());
             tm.setLastDone(DateFormatter.fullTz(lastDone));
             return tm;
         };

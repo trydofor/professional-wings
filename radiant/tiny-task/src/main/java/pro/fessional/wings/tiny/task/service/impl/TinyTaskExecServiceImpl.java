@@ -371,7 +371,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             winTaskDefineDao.ctx().update(t)
                             .set(t.CommitId, journal.getCommitId())
                             .set(t.ModifyDt, journal.getCommitDt())
-                            .set(t.NextExec, milliLdt(next, ThreadNow.UtcZoneId))
+                            .set(t.NextExec, milliLdt(next, ThreadNow.sysZoneId()))
                             .where(t.Id.eq(td.getId()))
                             .execute();
         });
@@ -383,7 +383,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 .ctx()
                 .update(t)
                 .set(t.NextLock, t.NextLock.add(1))
-                .set(t.LastExec, milliLdt(now, ThreadNow.UtcZoneId))
+                .set(t.LastExec, milliLdt(now, ThreadNow.sysZoneId()))
                 .where(t.Id.eq(td.getId()).and(t.NextLock.eq(td.getNextLock())))
                 .execute();
         return rc <= 0;
@@ -394,19 +394,19 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         final WinTaskDefineTable td = winTaskDefineDao.getTable();
         Map<Field<?>, Object> setter = new HashMap<>();
 
-        setter.put(td.LastExec, milliLdt(exec, ThreadNow.UtcZoneId));
+        setter.put(td.LastExec, milliLdt(exec, ThreadNow.sysZoneId()));
         setter.put(td.SumsExec, td.SumsExec.add(1));
         setter.put(td.NextExec, EmptyValue.DATE_TIME);
 
         if (fail > 0) {
-            setter.put(td.LastFail, milliLdt(fail, ThreadNow.UtcZoneId));
+            setter.put(td.LastFail, milliLdt(fail, ThreadNow.sysZoneId()));
             setter.put(td.LastDone, EmptyValue.DATE_TIME);
             setter.put(td.SumsFail, td.SumsFail.add(1));
             setter.put(td.CoreFail, cf > 0 ? td.CoreFail.add(1) : 1);
         }
         else { // done
             setter.put(td.LastFail, EmptyValue.DATE_TIME);
-            setter.put(td.LastDone, milliLdt(done, ThreadNow.UtcZoneId));
+            setter.put(td.LastDone, milliLdt(done, ThreadNow.sysZoneId()));
             setter.put(td.SumsDone, td.SumsDone.add(1));
             setter.put(td.CoreFail, 0);
         }
@@ -494,7 +494,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
 
         final long timingMiss = td.getTimingMiss() * 1000L;
         // 规划中，但执行结束前程序killed
-        final long nextMs = DateLocaling.utcEpoch(td.getNextExec());
+        final long nextMs = DateLocaling.sysEpoch(td.getNextExec());
         if (nextMs + timingMiss >= now) {
             log.info("launch misfire task, id={}", id);
             return nextMs;
@@ -533,13 +533,13 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         Date lastActual = null;
         final LocalDateTime lastExec = td.getLastExec();
         if (!EmptySugar.asEmptyValue(lastExec)) {
-            lastActual = new Date(DateLocaling.utcEpoch(lastExec));
+            lastActual = new Date(DateLocaling.sysEpoch(lastExec));
         }
 
         Date lastCompletion = null;
         final LocalDateTime lastDone = td.getLastDone();
         if (!EmptySugar.asEmptyValue(lastDone)) {
-            lastCompletion = new Date(DateLocaling.utcEpoch(lastDone));
+            lastCompletion = new Date(DateLocaling.sysEpoch(lastDone));
         }
 
         return new SimpleTriggerContext(lastActual, lastActual, lastCompletion);
