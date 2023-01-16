@@ -36,8 +36,8 @@ public interface TinyTaskListService {
         private String lastExec;
         private String lastFail;
         private String lastDone;
-        private int sumsExec;
-        private int sumsFail;
-        private int sumsDone;
+        private int sumExec;
+        private int sumFail;
+        private int sumDone;
     }
 }

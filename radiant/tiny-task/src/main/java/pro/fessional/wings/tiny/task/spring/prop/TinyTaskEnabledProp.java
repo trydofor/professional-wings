@@ -31,4 +31,29 @@ public class TinyTaskEnabledProp {
      */
     private boolean dryrun = false;
     public static final String Key$dryrun = Key + ".dryrun";
+
+    /**
+     * 是否开启 TaskConfController
+     *
+     * @see #Key$controllerConf
+     */
+    private boolean controllerConf = true;
+    public static final String Key$controllerConf = Key + ".controller-conf";
+
+    /**
+     * 是否开启 TaskExecController
+     *
+     * @see #Key$controllerExec
+     */
+    private boolean controllerExec = true;
+    public static final String Key$controllerExec = Key + ".controller-exec";
+
+    /**
+     * 是否开启 TaskListController
+     *
+     * @see #Key$controllerList
+     */
+    private boolean controllerList = true;
+    public static final String Key$controllerList = Key + ".controller-list";
+
 }

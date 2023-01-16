@@ -24,7 +24,7 @@ class TinyMailServiceTest {
     void sendOk() {
         TinyMail message = new TinyMail();
         message.setSubject("Mail Service Test");
-        message.setContextHtml("Nothing");
+        message.setContentHtml("Nothing");
         message.setMark("wings tiny mail");
         tinyMailService.send(message, true);
     }
@@ -34,7 +34,7 @@ class TinyMailServiceTest {
     void sendNgFrom() {
         TinyMail message = new TinyMail();
         message.setSubject("Mail Service Test");
-        message.setContextHtml("Nothing");
+        message.setContentHtml("Nothing");
         message.setFrom("admin@qq.com");
         tinyMailService.send(message, true);
     }
@@ -44,7 +44,7 @@ class TinyMailServiceTest {
     void sendBadTo() {
         TinyMail message = new TinyMail();
         message.setSubject("Mail Service Test");
-        message.setContextHtml("Nothing");
+        message.setContentHtml("Nothing");
         message.setTo("t.r.y...d.o...f.o.r@qq.com");
         tinyMailService.send(message, true);
     }

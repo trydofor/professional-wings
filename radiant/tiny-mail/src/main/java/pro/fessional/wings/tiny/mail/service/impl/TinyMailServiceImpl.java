@@ -41,6 +41,7 @@ import pro.fessional.wings.tiny.mail.sender.MailWaitException;
 import pro.fessional.wings.tiny.mail.sender.TinyMailConfig;
 import pro.fessional.wings.tiny.mail.sender.TinyMailMessage;
 import pro.fessional.wings.tiny.mail.service.TinyMail;
+import pro.fessional.wings.tiny.mail.service.TinyMailPlain;
 import pro.fessional.wings.tiny.mail.service.TinyMailService;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailServiceProp;
 
@@ -99,7 +100,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
         final WinMailSender po = saveMailSender(config, message);
         final TinyMailMessage mailMessage = makeMailMessage(config, po, message);
-        return doSyncSend(po, mailMessage, retry);
+        return doSyncSend(po, mailMessage, retry, true);
     }
 
     @Override
@@ -120,11 +121,11 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         ArgsAssert.notNull(config, "mail conf={} not found", conf);
         final WinMailSender po = saveMailSender(config, message);
         final TinyMailMessage mailMessage = makeMailMessage(config, po, message);
-        doAsyncFreshSend(po, mailMessage, retry);
+        doAsyncFreshSend(po, mailMessage, retry, true);
     }
 
     @Override
-    public boolean send(long id, boolean retry) {
+    public boolean send(long id, boolean retry, boolean check) {
         final WinMailSender po = winMailSenderDao.fetchOneById(id);
         if (po == null) {
             log.warn("mail not found by id={}, skip send", id);
@@ -138,13 +139,13 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         }
 
         final TinyMailMessage mailMessage = makeMailMessage(config, po, null);
-        return doSyncSend(po, mailMessage, retry);
+        return doSyncSend(po, mailMessage, retry, check);
     }
 
     @Override
-    public boolean post(long id, boolean retry) {
+    public boolean post(long id, boolean retry, boolean check) {
         try {
-            return send(id, retry);
+            return send(id, retry, check);
         }
         catch (Exception e) {
             log.error("fail to post mail, id=" + id, e);
@@ -153,13 +154,85 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     }
 
     @Override
-    public void emit(long id, boolean retry) {
+    public void emit(long id, boolean retry, boolean check) {
         final WinMailSender po = winMailSenderDao.fetchOneById(id);
         if (po == null) {
             log.warn("mail not found by id={}, skip emit", id);
             return;
         }
-        doAsyncFreshSend(po, null, retry);
+        doAsyncFreshSend(po, null, retry, check);
+    }
+
+    @Override
+    public long save(@NotNull TinyMailPlain message) {
+        final String conf = message.getConf();
+        final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
+        ArgsAssert.notNull(config, "mail conf={} not found", conf);
+
+        final WinMailSender po = new WinMailSender();
+        final boolean isNew = message.getId() == null || message.getId() <= 0;
+        final long id;
+        if (isNew) {
+            id = lightIdService.getId(winMailSenderDao.getTable());
+            po.setId(id);
+            po.setMailApps(message.getApps());
+            po.setMailRuns(message.getRuns());
+            po.setMailConf(message.getConf());
+            po.setMailFrom(toString(message.getFrom(), config.getFrom()));
+            po.setMailTo(toString(message.getTo(), config.getTo()));
+            po.setMailCc(toString(message.getCc(), config.getCc()));
+            po.setMailBcc(toString(message.getBcc(), config.getBcc()));
+            po.setMailReply(toString(message.getReply(), config.getReply()));
+            po.setMailSubj(toString(message.getSubject(), (String) null));
+            po.setMailText(message.getContent());
+            po.setMailHtml(BoxedCastUtil.orElse(message.getHtml(), config.getHtml()));
+            po.setMailFile(toStringMap(message.getAttachment()));
+            po.setMarkWord(toString(message.getMark(), (String) null));
+            po.setMaxFail(message.getMaxFail());
+            po.setMaxDone(message.getMaxDone());
+
+            // 乐观锁
+            po.setNextLock(0);
+            po.setNextSend(ThreadNow.localDateTime());
+            // 检查结束
+            po.setSumSend(0);
+            po.setSumFail(0);
+            po.setSumDone(0);
+        }
+        else {
+            id = message.getId();
+            po.setId(id);
+            po.setMailApps(message.getApps());
+            po.setMailRuns(message.getRuns());
+            po.setMailConf(message.getConf());
+            po.setMailFrom(message.getFrom());
+            po.setMailTo(message.getTo());
+            po.setMailCc(message.getCc());
+            po.setMailBcc(message.getBcc());
+            po.setMailReply(message.getReply());
+            po.setMailSubj(message.getSubject());
+            po.setMailText(message.getContent());
+            po.setMailHtml(message.getHtml());
+            po.setMailFile(toStringMap(message.getAttachment()));
+            po.setMarkWord(message.getMark());
+
+            Null.notNull(message.getNextSend(), po::setNextSend);
+            Null.notNull(message.getMaxFail(), po::setMaxFail);
+            Null.notNull(message.getMaxDone(), po::setMaxDone);
+        }
+
+        journalService.commit(Jane.Insert, journal -> {
+            if (isNew) {
+                journal.create(po);
+                winMailSenderDao.insert(po);
+            }
+            else {
+                journal.modify(po);
+                winMailSenderDao.update(po, false);
+            }
+        });
+
+        return id;
     }
 
     @Override
@@ -178,7 +251,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                 .into(WinMailSender.class)
                 .stream()
                 .filter(po -> !notMatchProp(po))
-                .map(it -> new AsyncMail(it.getId(), DateLocaling.sysEpoch(it.getNextSend()), true, it, null))
+                .map(it -> new AsyncMail(it.getId(), DateLocaling.sysEpoch(it.getNextSend()), true, true, it, null))
                 .collect(Collectors.toList());
 
         //
@@ -215,7 +288,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             message.setReply(toStrOrNull(po.getMailReply()));
             message.setHtml(po.getMailHtml());
             message.setSubject(po.getMailSubj());
-            message.setContext(po.getMailText());
+            message.setContent(po.getMailText());
             final Map<String, Resource> files = toResource(po.getMailFile());
             if (!files.isEmpty()) {
                 message.setAttachment(files);
@@ -230,7 +303,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             if (msg.getReply() != null) message.setReply(msg.getReply());
             if (msg.getHtml() != null) message.setHtml(msg.getHtml());
             message.setSubject(msg.getSubject());
-            message.setContext(msg.getContext());
+            message.setContent(msg.getContent());
             message.setAttachment(msg.getAttachment());
             message.setBizMark(msg.getMark());
         }
@@ -252,19 +325,21 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         po.setMailCc(toString(msg.getCc(), config.getCc()));
         po.setMailBcc(toString(msg.getBcc(), config.getBcc()));
         po.setMailReply(toString(msg.getReply(), config.getReply()));
-        po.setMailSubj(toString(msg.getSubject(), null));
-        po.setMailText(msg.getContext());
+        po.setMailSubj(toString(msg.getSubject(), (String) null));
+        po.setMailText(msg.getContent());
         po.setMailHtml(BoxedCastUtil.orElse(msg.getHtml(), config.getHtml()));
         po.setMailFile(toString(msg.getAttachment()));
-        po.setMarkWord(toString(msg.getMark(), null));
+        po.setMarkWord(toString(msg.getMark(), (String) null));
+        po.setMaxFail(msg.getMaxFail());
+        po.setMaxDone(msg.getMaxDone());
 
         // 乐观锁
         po.setNextLock(0);
         po.setNextSend(ThreadNow.localDateTime());
         // 检查结束
-        po.setSumsSend(0);
-        po.setSumsFail(0);
-        po.setSumsDone(0);
+        po.setSumSend(0);
+        po.setSumFail(0);
+        po.setSumDone(0);
 
         journalService.commit(Jane.Insert, journal -> {
             journal.create(po);
@@ -296,15 +371,15 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             }
         }
 
-        final int maxDone = tinyMailServiceProp.getMaxDone();
-        final int sumDone = BoxedCastUtil.orElse(po.getSumsDone(), 0);
+        final int maxDone = BoxedCastUtil.orElse(po.getMaxDone(), 0) > 0 ? po.getMaxDone() : tinyMailServiceProp.getMaxDone();
+        final int sumDone = BoxedCastUtil.orElse(po.getSumDone(), 0);
         if (sumDone >= maxDone) {
             log.info("skip max-send, max={}, sum={}, id={}", maxDone, sumDone, po.getId());
             return true;
         }
 
-        final int maxFail = tinyMailServiceProp.getMaxFail();
-        final int sumFail = BoxedCastUtil.orElse(po.getSumsFail(), 0);
+        final int maxFail = BoxedCastUtil.orElse(po.getMaxFail(), 0) > 0 ? po.getMaxFail() : tinyMailServiceProp.getMaxFail();
+        final int sumFail = BoxedCastUtil.orElse(po.getSumFail(), 0);
         if (sumFail >= maxFail) {
             log.info("skip max-fail, max={}, sum={}, id={}", maxFail, sumFail, po.getId());
             return true;
@@ -331,7 +406,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         return false;
     }
 
-    private void saveStatusAndNext(@NotNull WinMailSender po, TinyMailMessage message, long cost, long now, Exception exception, boolean retry, boolean rethrow) {
+    private void saveStatusAndRetry(@NotNull WinMailSender po, TinyMailMessage message, long cost, long now, Exception exception, boolean retry, boolean check, boolean rethrow) {
         long nextSend = -1;
         try {
             final WinMailSenderTable t = winMailSenderDao.getTable();
@@ -341,7 +416,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                 setter.put(t.LastDone, DateLocaling.sysLdt(now));
                 setter.put(t.LastCost, cost);
 
-                if (po.getSumsDone() + 1 >= tinyMailServiceProp.getMaxDone()) {
+                if (po.getSumDone() + 1 >= tinyMailServiceProp.getMaxDone()) {
                     setter.put(t.NextSend, EmptyValue.DATE_TIME);
                     log.info("done mail by max-send id={}, subject={}", po.getId(), po.getMailSubj());
                 }
@@ -351,15 +426,16 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                     log.info("next done-mail id={}, subject={}", po.getId(), po.getMailSubj());
                 }
 
-                setter.put(t.SumsSend, t.SumsSend.add(1));
-                setter.put(t.SumsDone, t.SumsDone.add(1));
+                setter.put(t.SumSend, t.SumSend.add(1));
+                setter.put(t.SumDone, t.SumDone.add(1));
             }
             else {
                 setter.put(t.LastFail, ThrowableUtil.toString(exception));
                 setter.put(t.LastDone, EmptyValue.DATE_TIME);
                 setter.put(t.LastCost, cost);
 
-                if (po.getSumsFail() + 1 >= tinyMailServiceProp.getMaxFail()) {
+                final int maxFail = BoxedCastUtil.orElse(po.getMaxFail(), 0) > 0 ? po.getMaxFail() : tinyMailServiceProp.getMaxFail();
+                if (po.getSumFail() + 1 >= maxFail) {
                     setter.put(t.NextSend, EmptyValue.DATE_TIME);
                     log.info("done mail by max-fail id={}, subject={}", po.getId(), po.getMailSubj());
                 }
@@ -391,8 +467,8 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                     setter.put(t.NextSend, EmptyValue.DATE_TIME);
                     log.error("stop not-retry mail, id=" + po.getId(), exception);
                 }
-                setter.put(t.SumsSend, t.SumsSend.add(1));
-                setter.put(t.SumsFail, t.SumsFail.add(1));
+                setter.put(t.SumSend, t.SumSend.add(1));
+                setter.put(t.SumFail, t.SumFail.add(1));
             }
 
             journalService.commit(Jane.Update, journal -> {
@@ -412,14 +488,14 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
         if (exception == null) {
             if (nextSend > 0) {
-                asyncMails.add(new AsyncMail(po.getId(), nextSend, retry, null, message));
+                asyncMails.add(new AsyncMail(po.getId(), nextSend, retry, check, null, message));
                 taskScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(nextSend));
                 log.info("schedule done-mail send, id={}, subject={}", po.getId(), po.getMailSubj());
             }
         }
         else {
             if (retry && nextSend > 0 && nextSend - now < tinyMailServiceProp.getMaxNext().toMillis()) {
-                asyncMails.add(new AsyncMail(po.getId(), nextSend, retry, null, message));
+                asyncMails.add(new AsyncMail(po.getId(), nextSend, retry, check, null, message));
                 taskScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(nextSend));
                 log.info("schedule fail-mail send, id=" + po.getId() + ", subject=" + po.getMailSubj());
             }
@@ -439,14 +515,20 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         }
     }
 
-    private boolean doSyncSend(@NotNull WinMailSender po, TinyMailMessage mailMessage, boolean retry) {
-        if (notMatchProp(po)) {
-            return false;
-        }
+    private boolean doSyncSend(@NotNull WinMailSender po, TinyMailMessage mailMessage, boolean retry, boolean check) {
+        final long start;
+        if (check) {
+            if (notMatchProp(po)) {
+                return false;
+            }
 
-        final long start = ThreadNow.millis();
-        if (notNextLock(po, start)) {
-            return false;
+            start = ThreadNow.millis();
+            if (notNextLock(po, start)) {
+                return false;
+            }
+        }
+        else {
+            start = ThreadNow.millis();
         }
 
         Exception exception = null;
@@ -458,17 +540,17 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         }
         finally {
             final long now = ThreadNow.millis();
-            saveStatusAndNext(po, mailMessage, now - start, now, exception, retry, true);
+            saveStatusAndRetry(po, mailMessage, now - start, now, exception, retry, check, true);
         }
 
-        return exception != null;
+        return exception == null;
     }
 
-    private void doAsyncFreshSend(@NotNull WinMailSender po, TinyMailMessage message, boolean retry) {
-        if (notMatchProp(po)) return;
+    private void doAsyncFreshSend(@NotNull WinMailSender po, TinyMailMessage message, boolean retry, boolean check) {
+        if (check && notMatchProp(po)) return;
 
         final long now = ThreadNow.millis();
-        asyncMails.add(new AsyncMail(po.getId(), now, retry, po, message));
+        asyncMails.add(new AsyncMail(po.getId(), now, retry, check, po, message));
         taskScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(now));
     }
 
@@ -514,9 +596,12 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
             final List<TinyMailMessage> messages = new ArrayList<>(freshPo.size());
             for (WinMailSender po : freshPo.values()) {
-                if (notMatchProp(po) || notNextLock(po, start)) continue;
-
                 final AsyncMail am = mails.get(po.getId());
+
+                if (am != null && am.check && (notMatchProp(po) || notNextLock(po, start))) {
+                    continue;
+                }
+
                 if (am != null && am.message != null) {
                     messages.add(am.message);
                 }
@@ -536,7 +621,8 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             for (BatchResult result : results) {
                 final TinyMailMessage msg = result.getTinyMessage();
                 final WinMailSender po = freshPo.get(msg.getBizId()); // must not null
-                saveStatusAndNext(po, msg, result.getCostMillis(), result.getDoneMillis(), result.getException(), true, false);
+                final AsyncMail am = mails.get(po.getId());
+                saveStatusAndRetry(po, msg, result.getCostMillis(), result.getDoneMillis(), result.getException(), am != null && am.retry, am != null && am.check, false);
             }
         }
         finally {
@@ -561,6 +647,15 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     }
 
     @Nullable
+    private String toString(String str, String[] elz) {
+        return notValue(str)
+               ? (elz == null || elz.length == 0)
+                 ? null
+                 : String.join(",", elz)
+               : str;
+    }
+
+    @Nullable
     private String toString(String str, String elz) {
         return notValue(str) ? elz : str;
     }
@@ -574,6 +669,13 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
             nameUrl.put(en.getKey(), CommonPropHelper.toString(en.getValue()));
         }
         return JacksonHelper.string(nameUrl, true);
+    }
+
+    @SneakyThrows
+    @NotNull
+    private String toStringMap(Map<String, String> file) {
+        if (file == null || file.isEmpty()) return Null.Str;
+        return JacksonHelper.string(file, true);
     }
 
     @Nullable
@@ -603,6 +705,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         private final long id;
         private final long next;
         private final boolean retry;
+        private final boolean check;
         @Nullable
         private final WinMailSender fresher;
         @Nullable

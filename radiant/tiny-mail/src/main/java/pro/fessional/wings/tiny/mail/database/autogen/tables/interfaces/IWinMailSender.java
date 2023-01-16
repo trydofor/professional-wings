@@ -320,37 +320,59 @@ public interface IWinMailSender extends JournalAware, Serializable {
     public Integer getNextLock();
 
     /**
-     * Setter for <code>win_mail_sender.sums_send</code>.
+     * Setter for <code>win_mail_sender.sum_send</code>.
      */
-    public void setSumsSend(Integer value);
+    public void setSumSend(Integer value);
 
     /**
-     * Getter for <code>win_mail_sender.sums_send</code>.
+     * Getter for <code>win_mail_sender.sum_send</code>.
      */
-    @Column(name = "sums_send", nullable = false, precision = 10)
-    public Integer getSumsSend();
+    @Column(name = "sum_send", nullable = false, precision = 10)
+    public Integer getSumSend();
 
     /**
-     * Setter for <code>win_mail_sender.sums_fail</code>.
+     * Setter for <code>win_mail_sender.sum_fail</code>.
      */
-    public void setSumsFail(Integer value);
+    public void setSumFail(Integer value);
 
     /**
-     * Getter for <code>win_mail_sender.sums_fail</code>.
+     * Getter for <code>win_mail_sender.sum_fail</code>.
      */
-    @Column(name = "sums_fail", nullable = false, precision = 10)
-    public Integer getSumsFail();
+    @Column(name = "sum_fail", nullable = false, precision = 10)
+    public Integer getSumFail();
 
     /**
-     * Setter for <code>win_mail_sender.sums_done</code>.
+     * Setter for <code>win_mail_sender.sum_done</code>.
      */
-    public void setSumsDone(Integer value);
+    public void setSumDone(Integer value);
 
     /**
-     * Getter for <code>win_mail_sender.sums_done</code>.
+     * Getter for <code>win_mail_sender.sum_done</code>.
      */
-    @Column(name = "sums_done", nullable = false, precision = 10)
-    public Integer getSumsDone();
+    @Column(name = "sum_done", nullable = false, precision = 10)
+    public Integer getSumDone();
+
+    /**
+     * Setter for <code>win_mail_sender.max_fail</code>.
+     */
+    public void setMaxFail(Integer value);
+
+    /**
+     * Getter for <code>win_mail_sender.max_fail</code>.
+     */
+    @Column(name = "max_fail", nullable = false, precision = 10)
+    public Integer getMaxFail();
+
+    /**
+     * Setter for <code>win_mail_sender.max_done</code>.
+     */
+    public void setMaxDone(Integer value);
+
+    /**
+     * Getter for <code>win_mail_sender.max_done</code>.
+     */
+    @Column(name = "max_done", nullable = false, precision = 10)
+    public Integer getMaxDone();
 
     // -------------------------------------------------------------------------
     // FROM and INTO

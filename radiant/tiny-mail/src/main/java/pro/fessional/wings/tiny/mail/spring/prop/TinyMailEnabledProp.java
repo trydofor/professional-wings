@@ -23,4 +23,21 @@ public class TinyMailEnabledProp {
      */
     private boolean dryrun = false;
     public static final String Key$dryrun = Key + ".dryrun";
+
+    /**
+     * 是否开启 MailListController
+     *
+     * @see #Key$controllerList
+     */
+    private boolean controllerList = true;
+    public static final String Key$controllerList = Key + ".controller-list";
+
+    /**
+     * 是否开启 MailSendController
+     *
+     * @see #Key$controllerSend
+     */
+    private boolean controllerSend = true;
+    public static final String Key$controllerSend = Key + ".controller-send";
+
 }

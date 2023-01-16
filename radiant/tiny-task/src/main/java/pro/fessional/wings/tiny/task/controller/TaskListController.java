@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.Setter;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -13,6 +14,7 @@ import pro.fessional.mirana.page.PageQuery;
 import pro.fessional.mirana.page.PageResult;
 import pro.fessional.wings.tiny.task.database.autogen.tables.pojos.WinTaskResult;
 import pro.fessional.wings.tiny.task.service.TinyTaskListService;
+import pro.fessional.wings.tiny.task.spring.prop.TinyTaskEnabledProp;
 import pro.fessional.wings.tiny.task.spring.prop.TinyTaskUrlmapProp;
 
 /**
@@ -20,6 +22,7 @@ import pro.fessional.wings.tiny.task.spring.prop.TinyTaskUrlmapProp;
  * @since 2022-12-26
  */
 @RestController
+@ConditionalOnProperty(name = TinyTaskEnabledProp.Key$controllerList, havingValue = "true")
 public class TaskListController {
 
     @Setter(onMethod_ = {@Autowired})

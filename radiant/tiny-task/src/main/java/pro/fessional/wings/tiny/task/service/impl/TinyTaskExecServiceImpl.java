@@ -147,7 +147,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             }
             finally {
                 try {
-                    saveResult(id, execTms, failTms, doneTms, taskMsg, td.getCoreFail());
+                    saveResult(id, execTms, failTms, doneTms, taskMsg, td.getDurFail());
                 }
                 catch (Exception e) {
                     log.error("failed to save result, id=" + id, e);
@@ -269,7 +269,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 finally {
                     try {
                         Handle.remove(id);
-                        saveResult(id, execTms, failTms, doneTms, taskMsg, td.getCoreFail());
+                        saveResult(id, execTms, failTms, doneTms, taskMsg, td.getDurFail());
                     }
                     catch (Exception e) {
                         log.error("failed to save result, id=" + id, e);
@@ -395,20 +395,20 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         Map<Field<?>, Object> setter = new HashMap<>();
 
         setter.put(td.LastExec, milliLdt(exec, ThreadNow.sysZoneId()));
-        setter.put(td.SumsExec, td.SumsExec.add(1));
+        setter.put(td.SumExec, td.SumExec.add(1));
         setter.put(td.NextExec, EmptyValue.DATE_TIME);
 
         if (fail > 0) {
             setter.put(td.LastFail, milliLdt(fail, ThreadNow.sysZoneId()));
             setter.put(td.LastDone, EmptyValue.DATE_TIME);
-            setter.put(td.SumsFail, td.SumsFail.add(1));
-            setter.put(td.CoreFail, cf > 0 ? td.CoreFail.add(1) : 1);
+            setter.put(td.SumFail, td.SumFail.add(1));
+            setter.put(td.DurFail, cf > 0 ? td.DurFail.add(1) : 1);
         }
         else { // done
             setter.put(td.LastFail, EmptyValue.DATE_TIME);
             setter.put(td.LastDone, milliLdt(done, ThreadNow.sysZoneId()));
-            setter.put(td.SumsDone, td.SumsDone.add(1));
-            setter.put(td.CoreFail, 0);
+            setter.put(td.SumDone, td.SumDone.add(1));
+            setter.put(td.DurFail, 0);
         }
 
         final WinTaskResult po = new WinTaskResult();
@@ -422,7 +422,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         po.setTimeExec(milliLdt(exec, zidSys));
         po.setTimeFail(milliLdt(fail, zidSys));
         po.setTimeDone(milliLdt(done, zidSys));
-        po.setTimeCost(Math.max(done, fail) - exec);
+        po.setTimeCost((int) (Math.max(done, fail) - exec));
 
         journalService.commit(Jane.SaveResult, journal -> {
             //
@@ -446,23 +446,23 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
 
     private boolean canRelaunch(long id, long doneTms, long failTms, WinTaskDefine td) {
         final int duringExec = td.getDuringExec();
-        final int sumsExec = td.getSumsExec();
-        if (duringExec > 0 && duringExec <= sumsExec + 1) {
-            log.info("remove task for duringExec={}, sumsExec={}, id={}", duringExec, sumsExec, id);
+        final int sumExec = td.getSumExec();
+        if (duringExec > 0 && duringExec <= sumExec + 1) {
+            log.info("remove task for duringExec={}, sumExec={}, id={}", duringExec, sumExec, id);
             return false;
         }
 
         final int duringDone = td.getDuringDone();
-        final int sumsDone = td.getSumsDone();
-        if (duringDone > 0 && duringDone <= (doneTms < 0 ? sumsDone : sumsDone + 1)) {
-            log.info("remove task for duringDone={}, sumsDone={}, id={}", duringDone, sumsDone, id);
+        final int sumDone = td.getSumDone();
+        if (duringDone > 0 && duringDone <= (doneTms < 0 ? sumDone : sumDone + 1)) {
+            log.info("remove task for duringDone={}, sumDone={}, id={}", duringDone, sumDone, id);
             return false;
         }
 
         final int duringFail = td.getDuringFail();
-        final int coreFail = td.getCoreFail();
-        if (duringFail > 0 && duringFail <= (failTms < 0 ? coreFail : coreFail + 1)) {
-            log.info("remove task for duringFail={}, coreFail={}, id={}", duringFail, coreFail, id);
+        final int durFail = td.getDurFail();
+        if (duringFail > 0 && duringFail <= (failTms < 0 ? durFail : durFail + 1)) {
+            log.info("remove task for duringFail={}, durFail={}, id={}", duringFail, durFail, id);
             return false;
         }
 
@@ -593,20 +593,20 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         }
 
         final int duringExec = td.getDuringExec();
-        if (duringExec > 0 && duringExec <= td.getSumsExec()) {
-            log.info("skip task for duringExec={}, SumsExec={}", duringExec, td.getSumsExec());
+        if (duringExec > 0 && duringExec <= td.getSumExec()) {
+            log.info("skip task for duringExec={}, sumExec={}", duringExec, td.getSumExec());
             return true;
         }
 
         final int duringDone = td.getDuringDone();
-        if (duringDone > 0 && duringDone <= td.getSumsDone()) {
-            log.info("skip task for duringDone={}, SumsDone={}", duringDone, td.getSumsDone());
+        if (duringDone > 0 && duringDone <= td.getSumDone()) {
+            log.info("skip task for duringDone={}, sumDone={}", duringDone, td.getSumDone());
             return true;
         }
 
         final int duringFail = td.getDuringFail();
-        if (duringFail > 0 && duringFail <= td.getCoreFail()) {
-            log.info("skip task for duringFail={}, CoreFail={}", duringFail, td.getCoreFail());
+        if (duringFail > 0 && duringFail <= td.getDurFail()) {
+            log.info("skip task for duringFail={}, durFail={}", duringFail, td.getDurFail());
             return true;
         }
 

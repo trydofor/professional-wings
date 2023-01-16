@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.function.Consumer;
 
 /**
  * isXxx为精确比较，asXxx为范围比较
@@ -189,5 +190,41 @@ public class EmptySugar {
 
     public static Boolean emptyToNull(Boolean v) {
         return nullToTrue(v) ? null : v;
+    }
+
+    public static void ifNotAsEmpty(String v, Consumer<String> con) {
+        if (!asEmptyValue(v)) con.accept(v);
+    }
+
+    public static void ifNotAsEmpty(Integer v, Consumer<Integer> con) {
+        if (!asEmptyValue(v)) con.accept(v);
+    }
+
+    public static void ifNotAsEmpty(Long v, Consumer<Long> con) {
+        if (!asEmptyValue(v)) con.accept(v);
+    }
+
+    public static void ifNotAsEmpty(Double v, Consumer<Double> con) {
+        if (!asEmptyValue(v)) con.accept(v);
+    }
+
+    public static void ifNotAsEmpty(Float v, Consumer<Float> con) {
+        if (!asEmptyValue(v)) con.accept(v);
+    }
+
+    public static void ifNotAsEmpty(BigDecimal v, Consumer<BigDecimal> con) {
+        if (!asEmptyValue(v)) con.accept(v);
+    }
+
+    public static void ifNotAsEmpty(LocalDate v, Consumer<LocalDate> con) {
+        if (!asEmptyValue(v)) con.accept(v);
+    }
+
+    public static void ifNotAsEmpty(LocalTime v, Consumer<LocalTime> con) {
+        if (!asEmptyValue(v)) con.accept(v);
+    }
+
+    public static void ifNotAsEmpty(LocalDateTime v, Consumer<LocalDateTime> con) {
+        if (!asEmptyValue(v)) con.accept(v);
     }
 }

@@ -468,54 +468,88 @@ public class WinMailSenderRecord extends UpdatableRecordImpl<WinMailSenderRecord
     }
 
     /**
-     * Setter for <code>win_mail_sender.sums_send</code>.
+     * Setter for <code>win_mail_sender.sum_send</code>.
      */
     @Override
-    public void setSumsSend(Integer value) {
+    public void setSumSend(Integer value) {
         set(24, value);
     }
 
     /**
-     * Getter for <code>win_mail_sender.sums_send</code>.
+     * Getter for <code>win_mail_sender.sum_send</code>.
      */
-    @Column(name = "sums_send", nullable = false, precision = 10)
+    @Column(name = "sum_send", nullable = false, precision = 10)
     @Override
-    public Integer getSumsSend() {
+    public Integer getSumSend() {
         return (Integer) get(24);
     }
 
     /**
-     * Setter for <code>win_mail_sender.sums_fail</code>.
+     * Setter for <code>win_mail_sender.sum_fail</code>.
      */
     @Override
-    public void setSumsFail(Integer value) {
+    public void setSumFail(Integer value) {
         set(25, value);
     }
 
     /**
-     * Getter for <code>win_mail_sender.sums_fail</code>.
+     * Getter for <code>win_mail_sender.sum_fail</code>.
      */
-    @Column(name = "sums_fail", nullable = false, precision = 10)
+    @Column(name = "sum_fail", nullable = false, precision = 10)
     @Override
-    public Integer getSumsFail() {
+    public Integer getSumFail() {
         return (Integer) get(25);
     }
 
     /**
-     * Setter for <code>win_mail_sender.sums_done</code>.
+     * Setter for <code>win_mail_sender.sum_done</code>.
      */
     @Override
-    public void setSumsDone(Integer value) {
+    public void setSumDone(Integer value) {
         set(26, value);
     }
 
     /**
-     * Getter for <code>win_mail_sender.sums_done</code>.
+     * Getter for <code>win_mail_sender.sum_done</code>.
      */
-    @Column(name = "sums_done", nullable = false, precision = 10)
+    @Column(name = "sum_done", nullable = false, precision = 10)
     @Override
-    public Integer getSumsDone() {
+    public Integer getSumDone() {
         return (Integer) get(26);
+    }
+
+    /**
+     * Setter for <code>win_mail_sender.max_fail</code>.
+     */
+    @Override
+    public void setMaxFail(Integer value) {
+        set(27, value);
+    }
+
+    /**
+     * Getter for <code>win_mail_sender.max_fail</code>.
+     */
+    @Column(name = "max_fail", nullable = false, precision = 10)
+    @Override
+    public Integer getMaxFail() {
+        return (Integer) get(27);
+    }
+
+    /**
+     * Setter for <code>win_mail_sender.max_done</code>.
+     */
+    @Override
+    public void setMaxDone(Integer value) {
+        set(28, value);
+    }
+
+    /**
+     * Getter for <code>win_mail_sender.max_done</code>.
+     */
+    @Column(name = "max_done", nullable = false, precision = 10)
+    @Override
+    public Integer getMaxDone() {
+        return (Integer) get(28);
     }
 
     // -------------------------------------------------------------------------
@@ -557,9 +591,11 @@ public class WinMailSenderRecord extends UpdatableRecordImpl<WinMailSenderRecord
         setLastCost(from.getLastCost());
         setNextSend(from.getNextSend());
         setNextLock(from.getNextLock());
-        setSumsSend(from.getSumsSend());
-        setSumsFail(from.getSumsFail());
-        setSumsDone(from.getSumsDone());
+        setSumSend(from.getSumSend());
+        setSumFail(from.getSumFail());
+        setSumDone(from.getSumDone());
+        setMaxFail(from.getMaxFail());
+        setMaxDone(from.getMaxDone());
     }
 
     @Override
@@ -582,7 +618,7 @@ public class WinMailSenderRecord extends UpdatableRecordImpl<WinMailSenderRecord
     /**
      * Create a detached, initialised WinMailSenderRecord
      */
-    public WinMailSenderRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, String mailApps, String mailRuns, String mailConf, String mailFrom, String mailTo, String mailCc, String mailBcc, String mailReply, String mailSubj, String mailText, Boolean mailHtml, String mailFile, String markWord, LocalDateTime lastSend, String lastFail, LocalDateTime lastDone, Integer lastCost, LocalDateTime nextSend, Integer nextLock, Integer sumsSend, Integer sumsFail, Integer sumsDone) {
+    public WinMailSenderRecord(Long id, LocalDateTime createDt, LocalDateTime modifyDt, LocalDateTime deleteDt, Long commitId, String mailApps, String mailRuns, String mailConf, String mailFrom, String mailTo, String mailCc, String mailBcc, String mailReply, String mailSubj, String mailText, Boolean mailHtml, String mailFile, String markWord, LocalDateTime lastSend, String lastFail, LocalDateTime lastDone, Integer lastCost, LocalDateTime nextSend, Integer nextLock, Integer sumSend, Integer sumFail, Integer sumDone, Integer maxFail, Integer maxDone) {
         super(WinMailSenderTable.WinMailSender);
 
         setId(id);
@@ -609,8 +645,10 @@ public class WinMailSenderRecord extends UpdatableRecordImpl<WinMailSenderRecord
         setLastCost(lastCost);
         setNextSend(nextSend);
         setNextLock(nextLock);
-        setSumsSend(sumsSend);
-        setSumsFail(sumsFail);
-        setSumsDone(sumsDone);
+        setSumSend(sumSend);
+        setSumFail(sumFail);
+        setSumDone(sumDone);
+        setMaxFail(maxFail);
+        setMaxDone(maxDone);
     }
 }

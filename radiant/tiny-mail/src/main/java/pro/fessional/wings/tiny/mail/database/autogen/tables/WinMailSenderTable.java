@@ -183,19 +183,29 @@ public class WinMailSenderTable extends TableImpl<WinMailSenderRecord> implement
     public final TableField<WinMailSenderRecord, Integer> NextLock = createField(DSL.name("next_lock"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
 
     /**
-     * The column <code>win_mail_sender.sums_send</code>.
+     * The column <code>win_mail_sender.sum_send</code>.
      */
-    public final TableField<WinMailSenderRecord, Integer> SumsSend = createField(DSL.name("sums_send"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
+    public final TableField<WinMailSenderRecord, Integer> SumSend = createField(DSL.name("sum_send"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
 
     /**
-     * The column <code>win_mail_sender.sums_fail</code>.
+     * The column <code>win_mail_sender.sum_fail</code>.
      */
-    public final TableField<WinMailSenderRecord, Integer> SumsFail = createField(DSL.name("sums_fail"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
+    public final TableField<WinMailSenderRecord, Integer> SumFail = createField(DSL.name("sum_fail"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
 
     /**
-     * The column <code>win_mail_sender.sums_done</code>.
+     * The column <code>win_mail_sender.sum_done</code>.
      */
-    public final TableField<WinMailSenderRecord, Integer> SumsDone = createField(DSL.name("sums_done"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
+    public final TableField<WinMailSenderRecord, Integer> SumDone = createField(DSL.name("sum_done"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
+
+    /**
+     * The column <code>win_mail_sender.max_fail</code>.
+     */
+    public final TableField<WinMailSenderRecord, Integer> MaxFail = createField(DSL.name("max_fail"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
+
+    /**
+     * The column <code>win_mail_sender.max_done</code>.
+     */
+    public final TableField<WinMailSenderRecord, Integer> MaxDone = createField(DSL.name("max_done"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
 
     private WinMailSenderTable(Name alias, Table<WinMailSenderRecord> aliased) {
         this(alias, aliased, null);

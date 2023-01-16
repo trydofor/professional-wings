@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.Setter;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -13,6 +14,7 @@ import pro.fessional.mirana.page.PageQuery;
 import pro.fessional.mirana.page.PageResult;
 import pro.fessional.wings.tiny.mail.service.TinyMailListService;
 import pro.fessional.wings.tiny.mail.service.TinyMailPlain;
+import pro.fessional.wings.tiny.mail.spring.prop.TinyMailEnabledProp;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailUrlmapProp;
 
 /**
@@ -20,6 +22,7 @@ import pro.fessional.wings.tiny.mail.spring.prop.TinyMailUrlmapProp;
  * @since 2023-01-13
  */
 @RestController
+@ConditionalOnProperty(name = TinyMailEnabledProp.Key$controllerList, havingValue = "true")
 public class MailListController {
 
     @Setter(onMethod_ = {@Autowired})

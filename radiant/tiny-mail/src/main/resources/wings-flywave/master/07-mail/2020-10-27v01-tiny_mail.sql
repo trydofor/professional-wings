@@ -23,12 +23,14 @@ CREATE TABLE `win_mail_sender` (
     `last_cost`  INT(11)       NOT NULL DEFAULT '0' COMMENT '上次发送耗时毫秒数',
     `next_send`  DATETIME(3)   NOT NULL DEFAULT '1000-01-01' COMMENT '下次发送（系统时区）',
     `next_lock`  INT(11)       NOT NULL DEFAULT '0' COMMENT '发送执行的乐观锁',
-    `sums_send`  INT(11)       NOT NULL DEFAULT '0' COMMENT '合计发送次数',
-    `sums_fail`  INT(11)       NOT NULL DEFAULT '0' COMMENT '合计失败次数',
-    `sums_done`  INT(11)       NOT NULL DEFAULT '0' COMMENT '合计成功次数',
+    `sum_send`  INT(11)       NOT NULL DEFAULT '0' COMMENT '合计发送次数',
+    `sum_fail`  INT(11)       NOT NULL DEFAULT '0' COMMENT '合计失败次数',
+    `sum_done`  INT(11)       NOT NULL DEFAULT '0' COMMENT '合计成功次数',
+    `max_fail`  INT(11)       NOT NULL DEFAULT '0' COMMENT '最大失败次数，0为采用配置值',
+    `max_done`  INT(11)       NOT NULL DEFAULT '0' COMMENT '最大成功次数，0为采用配置值',
     PRIMARY KEY (`id`),
     INDEX ix_next_send (`next_send`),
-    INDEX ix_sums_done (`sums_done`),
+    INDEX ix_sum_done (`sum_done`),
     FULLTEXT ft_mark_word (`mark_word`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='124/邮件发送';

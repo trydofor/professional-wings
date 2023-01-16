@@ -57,7 +57,7 @@ public class MailSenderManagerTest {
                 TinyMailMessage message = new TinyMailMessage();
                 message.adopt(config);
                 message.setSubject("test single tiny mail " + i);
-                message.setContext("test single tiny mail " + i);
+                message.setContent("test single tiny mail " + i);
                 log.info("single {} send start ====", i);
                 mailSenderManager.singleSend(message);
                 log.info("single {} send done ====", i);
@@ -71,7 +71,7 @@ public class MailSenderManagerTest {
                 TinyMailMessage message = new TinyMailMessage();
                 message.adopt(config);
                 message.setSubject("test batch tiny mail " + i);
-                message.setContext("test batch tiny mail " + i);
+                message.setContent("test batch tiny mail " + i);
                 messages.add(message);
             }
             log.info("batch {} send start ====", size);

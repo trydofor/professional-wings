@@ -35,7 +35,7 @@ public class TinyMailMessage extends TinyMailConfig {
     /**
      * 邮件正文
      */
-    protected String context;
+    protected String content;
 
     /**
      * 邮件附件
@@ -69,7 +69,7 @@ public class TinyMailMessage extends TinyMailConfig {
         bizId = that.bizId;
         bizMark = that.bizMark;
         subject = that.subject;
-        context = that.context;
+        content = that.content;
         attachment = that.attachment;
     }
 
@@ -83,13 +83,13 @@ public class TinyMailMessage extends TinyMailConfig {
         if (bizId == null) bizId = that.bizId;
         if (bizMark == null) bizMark = that.bizMark;
         if (isEmpty(subject)) subject = that.subject;
-        if (isEmpty(context)) context = that.context;
+        if (isEmpty(content)) content = that.content;
         if (attachment == null) attachment = that.attachment;
     }
 
     public boolean asHtml() {
         if (html != null) return html;
-        return asHtml(context, true);
+        return asHtml(content, true);
     }
 
     public static boolean asHtml(String str, boolean elze) {

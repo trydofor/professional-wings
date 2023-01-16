@@ -396,45 +396,73 @@ public class WinMailSenderDao extends WingsJooqDaoJournalImpl<WinMailSenderTable
     }
 
     /**
-     * Fetch records that have <code>sums_send BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>sum_send BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinMailSender> fetchRangeOfSumsSend(Integer lowerInclusive, Integer upperInclusive) {
-        return fetchRange(WinMailSenderTable.WinMailSender.SumsSend, lowerInclusive, upperInclusive);
+    public List<WinMailSender> fetchRangeOfSumSend(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRange(WinMailSenderTable.WinMailSender.SumSend, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>sums_send IN (values)</code>
+     * Fetch records that have <code>sum_send IN (values)</code>
      */
-    public List<WinMailSender> fetchBySumsSend(Integer... values) {
-        return fetch(WinMailSenderTable.WinMailSender.SumsSend, values);
+    public List<WinMailSender> fetchBySumSend(Integer... values) {
+        return fetch(WinMailSenderTable.WinMailSender.SumSend, values);
     }
 
     /**
-     * Fetch records that have <code>sums_fail BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>sum_fail BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinMailSender> fetchRangeOfSumsFail(Integer lowerInclusive, Integer upperInclusive) {
-        return fetchRange(WinMailSenderTable.WinMailSender.SumsFail, lowerInclusive, upperInclusive);
+    public List<WinMailSender> fetchRangeOfSumFail(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRange(WinMailSenderTable.WinMailSender.SumFail, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>sums_fail IN (values)</code>
+     * Fetch records that have <code>sum_fail IN (values)</code>
      */
-    public List<WinMailSender> fetchBySumsFail(Integer... values) {
-        return fetch(WinMailSenderTable.WinMailSender.SumsFail, values);
+    public List<WinMailSender> fetchBySumFail(Integer... values) {
+        return fetch(WinMailSenderTable.WinMailSender.SumFail, values);
     }
 
     /**
-     * Fetch records that have <code>sums_done BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>sum_done BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinMailSender> fetchRangeOfSumsDone(Integer lowerInclusive, Integer upperInclusive) {
-        return fetchRange(WinMailSenderTable.WinMailSender.SumsDone, lowerInclusive, upperInclusive);
+    public List<WinMailSender> fetchRangeOfSumDone(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRange(WinMailSenderTable.WinMailSender.SumDone, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>sums_done IN (values)</code>
+     * Fetch records that have <code>sum_done IN (values)</code>
      */
-    public List<WinMailSender> fetchBySumsDone(Integer... values) {
-        return fetch(WinMailSenderTable.WinMailSender.SumsDone, values);
+    public List<WinMailSender> fetchBySumDone(Integer... values) {
+        return fetch(WinMailSenderTable.WinMailSender.SumDone, values);
+    }
+
+    /**
+     * Fetch records that have <code>max_fail BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinMailSender> fetchRangeOfMaxFail(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRange(WinMailSenderTable.WinMailSender.MaxFail, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>max_fail IN (values)</code>
+     */
+    public List<WinMailSender> fetchByMaxFail(Integer... values) {
+        return fetch(WinMailSenderTable.WinMailSender.MaxFail, values);
+    }
+
+    /**
+     * Fetch records that have <code>max_done BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinMailSender> fetchRangeOfMaxDone(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRange(WinMailSenderTable.WinMailSender.MaxDone, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>max_done IN (values)</code>
+     */
+    public List<WinMailSender> fetchByMaxDone(Integer... values) {
+        return fetch(WinMailSenderTable.WinMailSender.MaxDone, values);
     }
 
 
@@ -782,44 +810,72 @@ public class WinMailSenderDao extends WingsJooqDaoJournalImpl<WinMailSenderTable
     }
 
     /**
-     * Fetch records that have <code>sums_send BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>sum_send BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinMailSender> fetchRangeOfSumsSendLive(Integer lowerInclusive, Integer upperInclusive) {
-        return fetchRangeLive(WinMailSenderTable.WinMailSender.SumsSend, lowerInclusive, upperInclusive);
+    public List<WinMailSender> fetchRangeOfSumSendLive(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRangeLive(WinMailSenderTable.WinMailSender.SumSend, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>sums_send IN (values)</code>
+     * Fetch records that have <code>sum_send IN (values)</code>
      */
-    public List<WinMailSender> fetchBySumsSendLive(Integer... values) {
-        return fetchLive(WinMailSenderTable.WinMailSender.SumsSend, values);
+    public List<WinMailSender> fetchBySumSendLive(Integer... values) {
+        return fetchLive(WinMailSenderTable.WinMailSender.SumSend, values);
     }
 
     /**
-     * Fetch records that have <code>sums_fail BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>sum_fail BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinMailSender> fetchRangeOfSumsFailLive(Integer lowerInclusive, Integer upperInclusive) {
-        return fetchRangeLive(WinMailSenderTable.WinMailSender.SumsFail, lowerInclusive, upperInclusive);
+    public List<WinMailSender> fetchRangeOfSumFailLive(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRangeLive(WinMailSenderTable.WinMailSender.SumFail, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>sums_fail IN (values)</code>
+     * Fetch records that have <code>sum_fail IN (values)</code>
      */
-    public List<WinMailSender> fetchBySumsFailLive(Integer... values) {
-        return fetchLive(WinMailSenderTable.WinMailSender.SumsFail, values);
+    public List<WinMailSender> fetchBySumFailLive(Integer... values) {
+        return fetchLive(WinMailSenderTable.WinMailSender.SumFail, values);
     }
 
     /**
-     * Fetch records that have <code>sums_done BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>sum_done BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinMailSender> fetchRangeOfSumsDoneLive(Integer lowerInclusive, Integer upperInclusive) {
-        return fetchRangeLive(WinMailSenderTable.WinMailSender.SumsDone, lowerInclusive, upperInclusive);
+    public List<WinMailSender> fetchRangeOfSumDoneLive(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRangeLive(WinMailSenderTable.WinMailSender.SumDone, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>sums_done IN (values)</code>
+     * Fetch records that have <code>sum_done IN (values)</code>
      */
-    public List<WinMailSender> fetchBySumsDoneLive(Integer... values) {
-        return fetchLive(WinMailSenderTable.WinMailSender.SumsDone, values);
+    public List<WinMailSender> fetchBySumDoneLive(Integer... values) {
+        return fetchLive(WinMailSenderTable.WinMailSender.SumDone, values);
+    }
+
+    /**
+     * Fetch records that have <code>max_fail BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinMailSender> fetchRangeOfMaxFailLive(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRangeLive(WinMailSenderTable.WinMailSender.MaxFail, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>max_fail IN (values)</code>
+     */
+    public List<WinMailSender> fetchByMaxFailLive(Integer... values) {
+        return fetchLive(WinMailSenderTable.WinMailSender.MaxFail, values);
+    }
+
+    /**
+     * Fetch records that have <code>max_done BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinMailSender> fetchRangeOfMaxDoneLive(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRangeLive(WinMailSenderTable.WinMailSender.MaxDone, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>max_done IN (values)</code>
+     */
+    public List<WinMailSender> fetchByMaxDoneLive(Integer... values) {
+        return fetchLive(WinMailSenderTable.WinMailSender.MaxDone, values);
     }
 }

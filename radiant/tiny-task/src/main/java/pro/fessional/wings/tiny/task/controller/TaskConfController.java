@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,6 +15,7 @@ import pro.fessional.mirana.data.Q;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.tiny.task.schedule.conf.TaskerProp;
 import pro.fessional.wings.tiny.task.service.TinyTaskConfService;
+import pro.fessional.wings.tiny.task.spring.prop.TinyTaskEnabledProp;
 import pro.fessional.wings.tiny.task.spring.prop.TinyTaskUrlmapProp;
 
 import java.util.LinkedHashMap;
@@ -24,6 +26,7 @@ import java.util.Map;
  * @since 2022-12-26
  */
 @RestController
+@ConditionalOnProperty(name = TinyTaskEnabledProp.Key$controllerConf, havingValue = "true")
 public class TaskConfController {
 
     @Setter(onMethod_ = {@Autowired})

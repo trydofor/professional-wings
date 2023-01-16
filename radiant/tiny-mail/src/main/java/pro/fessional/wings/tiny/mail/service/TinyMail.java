@@ -61,7 +61,7 @@ public class TinyMail {
     /**
      * 邮件正文，空时使用默认值
      */
-    protected String context;
+    protected String content;
     /**
      * 邮件附件，仅null时使用默认值
      */
@@ -71,18 +71,27 @@ public class TinyMail {
      */
     protected String mark;
 
-    public void setContextText(String context) {
-        this.context = context;
+    /**
+     * 最大失败次数，默认为系统配置
+     */
+    protected int maxFail = 0;
+    /**
+     * 最大成功次数，默认为系统配置
+     */
+    protected int maxDone = 0;
+
+    public void setContentText(String content) {
+        this.content = content;
         this.html = false;
     }
 
-    public void setContextHtml(String context) {
-        this.context = context;
+    public void setContentHtml(String content) {
+        this.content = content;
         this.html = true;
     }
 
-    public void setContextHtml(String context, Boolean html) {
-        this.context = context;
+    public void setContentHtml(String content, Boolean html) {
+        this.content = content;
         this.html = html;
     }
 }

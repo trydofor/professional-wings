@@ -75,9 +75,11 @@ public class TinyMailListServiceImpl implements TinyMailListService, Initializin
         bo.setLastFail(po.getLastFail());
         bo.setLastDone(po.getLastDone());
         bo.setNextSend(po.getNextSend());
-        bo.setSumsSend(po.getSumsSend());
-        bo.setSumsFail(po.getSumsFail());
-        bo.setSumsDone(po.getSumsDone());
+        bo.setSumSend(po.getSumSend());
+        bo.setSumFail(po.getSumFail());
+        bo.setSumDone(po.getSumDone());
+        bo.setMaxFail(po.getMaxFail());
+        bo.setMaxDone(po.getMaxDone());
 
         return bo;
     };
@@ -102,7 +104,7 @@ public class TinyMailListServiceImpl implements TinyMailListService, Initializin
                 .use(winMailSenderDao, pq)
                 .count()
                 .from(t)
-                .where(t.SumsDone.eq(0).and(t.SumsFail.gt(0)))
+                .where(t.SumDone.eq(0).and(t.SumFail.gt(0)))
                 .order(sortsFields, t.Id.desc())
                 .fetch(plainFields)
                 .into(mapper);
@@ -115,7 +117,7 @@ public class TinyMailListServiceImpl implements TinyMailListService, Initializin
                 .use(winMailSenderDao, pq)
                 .count()
                 .from(t)
-                .where(t.SumsDone.eq(0))
+                .where(t.SumDone.eq(0))
                 .order(sortsFields, t.Id.desc())
                 .fetch(plainFields)
                 .into(mapper);
@@ -196,7 +198,7 @@ public class TinyMailListServiceImpl implements TinyMailListService, Initializin
                 t.MailReply, t.MailSubj, /*t.MailText,*/ t.MailFile,
                 t.MailHtml, t.MarkWord,
                 t.CreateDt, t.LastSend, /*t.LastFail,*/ t.LastDone,
-                t.NextSend, t.SumsSend, t.SumsFail, t.SumsDone,
+                t.NextSend, t.SumSend, t.SumFail, t.SumDone, t.MaxFail, t.MaxDone,
                 };
 
         sortsFields.put("id", t.Id);

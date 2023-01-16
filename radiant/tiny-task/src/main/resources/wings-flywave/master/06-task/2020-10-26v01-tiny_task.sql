@@ -36,10 +36,10 @@ CREATE TABLE `win_task_define` (
     `last_done`   DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT '上次执行成功时间（系统时区）',
     `next_exec`   DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT '下次执行开始时间（系统时区）默认为停止',
     `next_lock`   INT(11)      NOT NULL DEFAULT '0' COMMENT 'exec执行的乐观锁',
-    `core_fail`   INT(11)      NOT NULL DEFAULT '0' COMMENT '连续失败次数',
-    `sums_exec`   INT(11)      NOT NULL DEFAULT '0' COMMENT '合计开始次数',
-    `sums_fail`   INT(11)      NOT NULL DEFAULT '0' COMMENT '合计失败次数',
-    `sums_done`   INT(11)      NOT NULL DEFAULT '0' COMMENT '合计成功次数',
+    `dur_fail`    INT(11)      NOT NULL DEFAULT '0' COMMENT '连续失败次数',
+    `sum_exec`    INT(11)      NOT NULL DEFAULT '0' COMMENT '合计开始次数',
+    `sum_fail`    INT(11)      NOT NULL DEFAULT '0' COMMENT '合计失败次数',
+    `sum_done`    INT(11)      NOT NULL DEFAULT '0' COMMENT '合计成功次数',
     PRIMARY KEY (`id`),
     UNIQUE INDEX uq_tasker_bean (`tasker_bean`)
 ) ENGINE = InnoDB
@@ -54,7 +54,7 @@ CREATE TABLE `win_task_result` (
     `time_exec` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT '执行开始时间，系统时区',
     `time_fail` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT '执行停止时间，系统时区',
     `time_done` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT '执行停止时间，系统时区',
-    `time_cost` BIGINT(20)   NOT NULL DEFAULT '0' COMMENT '耗时毫秒数',
+    `time_cost` INT(11)      NOT NULL DEFAULT '0' COMMENT '耗时毫秒数',
     PRIMARY KEY (`id`),
     INDEX ix_task_id (`task_id`)
 ) ENGINE = InnoDB

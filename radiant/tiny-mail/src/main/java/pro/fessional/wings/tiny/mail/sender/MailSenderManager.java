@@ -74,7 +74,15 @@ public class MailSenderManager {
 
 
     public void singleSend(@NotNull TinyMailMessage message) {
-        singleSend(message, null);
+        singleSend(message, 0, null);
+    }
+
+    public void singleSend(@NotNull TinyMailMessage message, long maxWait) {
+        singleSend(message, maxWait, null);
+    }
+
+    public void singleSend(@NotNull TinyMailMessage message, @Nullable MimeMessagePrepareHelper preparer) {
+        singleSend(message, 0, preparer);
     }
 
     /**
@@ -83,7 +91,7 @@ public class MailSenderManager {
      * @throws MailWaitException 需要处理waitMillis及cause非null时的原始异常
      */
     @SneakyThrows
-    public void singleSend(@NotNull TinyMailMessage message, @Nullable MimeMessagePrepareHelper preparer) {
+    public void singleSend(@NotNull TinyMailMessage message, long maxWait, @Nullable MimeMessagePrepareHelper preparer) {
         if (dryrun) {
             final int slp = RandomUtils.nextInt(10, 2000);
             Sleep.ignoreInterrupt(slp);
@@ -92,7 +100,7 @@ public class MailSenderManager {
         }
 
         final String host = message.getHost();
-        checkHostWaitOrIdle(host);
+        checkHostWaitOrIdle(host, maxWait);
 
         final JavaMailSender sender = senderProvider.singletonSender(message);
         final MimeMessage mimeMessage = prepareMimeMessage(message, preparer, sender);
@@ -119,13 +127,21 @@ public class MailSenderManager {
     }
 
     public List<BatchResult> batchSend(Collection<? extends TinyMailMessage> messages) {
-        return batchSend(messages, null);
+        return batchSend(messages, 0, null);
+    }
+
+    public List<BatchResult> batchSend(Collection<? extends TinyMailMessage> messages, long maxWait) {
+        return batchSend(messages, maxWait, null);
+    }
+
+    public List<BatchResult> batchSend(Collection<? extends TinyMailMessage> messages, @Nullable MimeMessagePrepareHelper preparer) {
+        return batchSend(messages, 0, preparer);
     }
 
     /**
      * 支持dryrun，一次链接验证，发送批量邮件，需要单个处理结果
      */
-    public List<BatchResult> batchSend(Collection<? extends TinyMailMessage> messages, @Nullable MimeMessagePrepareHelper preparer) {
+    public List<BatchResult> batchSend(Collection<? extends TinyMailMessage> messages, long maxWait, @Nullable MimeMessagePrepareHelper preparer) {
         if (messages.isEmpty()) return Collections.emptyList();
 
         final List<BatchResult> results = new ArrayList<>(messages.size());
@@ -144,7 +160,7 @@ public class MailSenderManager {
         }
 
         for (String host : messages.stream().map(MailProperties::getHost).collect(Collectors.toSet())) {
-            checkHostWaitOrIdle(host);
+            checkHostWaitOrIdle(host, maxWait);
         }
 
         final HashMap<JavaMailSender, ArrayList<BatchResult>> senderGroup = new HashMap<>();
@@ -241,7 +257,7 @@ public class MailSenderManager {
         }
     }
 
-    private void checkHostWaitOrIdle(String host) {
+    private void checkHostWaitOrIdle(String host, long maxWait) {
         final Long wait = mailHostWait.get(host);
         long now = -1;
         if (wait != null) {
@@ -261,7 +277,7 @@ public class MailSenderManager {
             if (idle != null && idle > 0) {
                 if (now < 0) now = ThreadNow.millis();
                 if (idle > now) {
-                    final long maxIdle = senderProp.getMaxIdle().getOrDefault(host, Duration.ZERO).toMillis();
+                    final long maxIdle = maxWait > 0 ? maxWait : senderProp.getMaxIdle().getOrDefault(host, Duration.ZERO).toMillis();
                     final long tm = idle - now;
                     log.warn("mail need idle {}ms, host={} ", host, tm);
                     if (maxIdle > 0 && idle > now + maxIdle) {
@@ -342,8 +358,7 @@ public class MailSenderManager {
             helper.setSubject(subject);
         }
 
-        final String context = EmptySugar.nullToEmpty(message.getContext());
-        helper.setText(context, message.asHtml());
+        helper.setText(EmptySugar.nullToEmpty(message.getContent()), message.asHtml());
 
         final String bizId = senderProp.getBizId();
         if (isNotEmpty(bizId) && message.getBizId() != null) {

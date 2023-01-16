@@ -57,7 +57,7 @@ public class TinyTaskListServiceImpl implements TinyTaskListService {
                         t.TaskerName, t.TaskerApps, t.TaskerRuns,
                         t.TimingCron, t.TimingIdle, t.TimingRate,
                         t.LastExec, t.LastFail, t.LastDone,
-                        t.SumsExec, t.SumsFail, t.SumsDone)
+                        t.SumExec, t.SumFail, t.SumDone)
                 .into(r16Item(t));
     }
 
@@ -75,7 +75,7 @@ public class TinyTaskListServiceImpl implements TinyTaskListService {
                         t.TaskerName, t.TaskerApps, t.TaskerRuns,
                         t.TimingCron, t.TimingIdle, t.TimingRate,
                         t.LastExec, t.LastFail, t.LastDone,
-                        t.SumsExec, t.SumsFail, t.SumsDone)
+                        t.SumExec, t.SumFail, t.SumDone)
                 .into(r16Item(t));
     }
 
@@ -96,9 +96,9 @@ public class TinyTaskListServiceImpl implements TinyTaskListService {
             tm.setTimingIdle(it.get(t.TimingIdle));
             tm.setTimingRate(it.get(t.TimingRate));
 
-            tm.setSumsExec(it.get(t.SumsExec));
-            tm.setSumsFail(it.get(t.SumsFail));
-            tm.setSumsDone(it.get(t.SumsDone));
+            tm.setSumExec(it.get(t.SumExec));
+            tm.setSumFail(it.get(t.SumFail));
+            tm.setSumDone(it.get(t.SumDone));
 
 
             final ZonedDateTime lastExec = it.get(t.LastExec).atZone(ThreadNow.sysZoneId());

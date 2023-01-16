@@ -75,4 +75,36 @@ public class TinyMailUrlmapProp {
      */
     private String loadDetail = "";
     public static final String Key$loadDetail = Key + ".load-detail";
+
+    /**
+     * 新建或编辑邮件，并同步立即或异步定时发送
+     *
+     * @see #Key$sendMail
+     */
+    private String sendMail = "";
+    public static final String Key$sendMail = Key + ".send-mail";
+
+    /**
+     * 仅新建或编辑邮件，但并不发送
+     *
+     * @see #Key$sendSave
+     */
+    private String sendSave = "";
+    public static final String Key$sendSave = Key + ".send-save";
+
+    /**
+     * 同步重试失败的邮件，发送成功或失败，或异常
+     *
+     * @see #Key$sendRetry
+     */
+    private String sendRetry = "";
+    public static final String Key$sendRetry = Key + ".send-retry";
+
+    /**
+     * 同步扫需要描补发的邮件，并异步发送，返回补发的件数
+     *
+     * @see #Key$sendScan
+     */
+    private String sendScan = "";
+    public static final String Key$sendScan = Key + ".send-scan";
 }

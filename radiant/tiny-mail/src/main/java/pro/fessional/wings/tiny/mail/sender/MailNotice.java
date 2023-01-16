@@ -66,7 +66,7 @@ public class MailNotice implements SmallNotice<TinyMailConfig>, InitializingBean
         TinyMailMessage message = new TinyMailMessage();
         message.adopt(config);
         message.setSubject(subject);
-        message.setContext(content);
+        message.setContent(content);
         senderManager.singleSend(message);
         return true;
     }

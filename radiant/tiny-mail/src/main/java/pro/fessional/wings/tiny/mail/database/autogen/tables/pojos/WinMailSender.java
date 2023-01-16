@@ -64,9 +64,11 @@ public class WinMailSender implements IWinMailSender {
     private Integer       lastCost;
     private LocalDateTime nextSend;
     private Integer       nextLock;
-    private Integer       sumsSend;
-    private Integer       sumsFail;
-    private Integer       sumsDone;
+    private Integer       sumSend;
+    private Integer       sumFail;
+    private Integer       sumDone;
+    private Integer       maxFail;
+    private Integer       maxDone;
 
     public WinMailSender() {}
 
@@ -95,9 +97,11 @@ public class WinMailSender implements IWinMailSender {
         this.lastCost = value.getLastCost();
         this.nextSend = value.getNextSend();
         this.nextLock = value.getNextLock();
-        this.sumsSend = value.getSumsSend();
-        this.sumsFail = value.getSumsFail();
-        this.sumsDone = value.getSumsDone();
+        this.sumSend = value.getSumSend();
+        this.sumFail = value.getSumFail();
+        this.sumDone = value.getSumDone();
+        this.maxFail = value.getMaxFail();
+        this.maxDone = value.getMaxDone();
     }
 
     public WinMailSender(
@@ -125,9 +129,11 @@ public class WinMailSender implements IWinMailSender {
         Integer       lastCost,
         LocalDateTime nextSend,
         Integer       nextLock,
-        Integer       sumsSend,
-        Integer       sumsFail,
-        Integer       sumsDone
+        Integer       sumSend,
+        Integer       sumFail,
+        Integer       sumDone,
+        Integer       maxFail,
+        Integer       maxDone
     ) {
         this.id = id;
         this.createDt = createDt;
@@ -153,9 +159,11 @@ public class WinMailSender implements IWinMailSender {
         this.lastCost = lastCost;
         this.nextSend = nextSend;
         this.nextLock = nextLock;
-        this.sumsSend = sumsSend;
-        this.sumsFail = sumsFail;
-        this.sumsDone = sumsDone;
+        this.sumSend = sumSend;
+        this.sumFail = sumFail;
+        this.sumDone = sumDone;
+        this.maxFail = maxFail;
+        this.maxDone = maxDone;
     }
 
     /**
@@ -583,54 +591,88 @@ public class WinMailSender implements IWinMailSender {
     }
 
     /**
-     * Getter for <code>win_mail_sender.sums_send</code>.
+     * Getter for <code>win_mail_sender.sum_send</code>.
      */
-    @Column(name = "sums_send", nullable = false, precision = 10)
+    @Column(name = "sum_send", nullable = false, precision = 10)
     @Override
-    public Integer getSumsSend() {
-        return this.sumsSend;
+    public Integer getSumSend() {
+        return this.sumSend;
     }
 
     /**
-     * Setter for <code>win_mail_sender.sums_send</code>.
+     * Setter for <code>win_mail_sender.sum_send</code>.
      */
     @Override
-    public void setSumsSend(Integer sumsSend) {
-        this.sumsSend = sumsSend;
+    public void setSumSend(Integer sumSend) {
+        this.sumSend = sumSend;
     }
 
     /**
-     * Getter for <code>win_mail_sender.sums_fail</code>.
+     * Getter for <code>win_mail_sender.sum_fail</code>.
      */
-    @Column(name = "sums_fail", nullable = false, precision = 10)
+    @Column(name = "sum_fail", nullable = false, precision = 10)
     @Override
-    public Integer getSumsFail() {
-        return this.sumsFail;
+    public Integer getSumFail() {
+        return this.sumFail;
     }
 
     /**
-     * Setter for <code>win_mail_sender.sums_fail</code>.
+     * Setter for <code>win_mail_sender.sum_fail</code>.
      */
     @Override
-    public void setSumsFail(Integer sumsFail) {
-        this.sumsFail = sumsFail;
+    public void setSumFail(Integer sumFail) {
+        this.sumFail = sumFail;
     }
 
     /**
-     * Getter for <code>win_mail_sender.sums_done</code>.
+     * Getter for <code>win_mail_sender.sum_done</code>.
      */
-    @Column(name = "sums_done", nullable = false, precision = 10)
+    @Column(name = "sum_done", nullable = false, precision = 10)
     @Override
-    public Integer getSumsDone() {
-        return this.sumsDone;
+    public Integer getSumDone() {
+        return this.sumDone;
     }
 
     /**
-     * Setter for <code>win_mail_sender.sums_done</code>.
+     * Setter for <code>win_mail_sender.sum_done</code>.
      */
     @Override
-    public void setSumsDone(Integer sumsDone) {
-        this.sumsDone = sumsDone;
+    public void setSumDone(Integer sumDone) {
+        this.sumDone = sumDone;
+    }
+
+    /**
+     * Getter for <code>win_mail_sender.max_fail</code>.
+     */
+    @Column(name = "max_fail", nullable = false, precision = 10)
+    @Override
+    public Integer getMaxFail() {
+        return this.maxFail;
+    }
+
+    /**
+     * Setter for <code>win_mail_sender.max_fail</code>.
+     */
+    @Override
+    public void setMaxFail(Integer maxFail) {
+        this.maxFail = maxFail;
+    }
+
+    /**
+     * Getter for <code>win_mail_sender.max_done</code>.
+     */
+    @Column(name = "max_done", nullable = false, precision = 10)
+    @Override
+    public Integer getMaxDone() {
+        return this.maxDone;
+    }
+
+    /**
+     * Setter for <code>win_mail_sender.max_done</code>.
+     */
+    @Override
+    public void setMaxDone(Integer maxDone) {
+        this.maxDone = maxDone;
     }
 
     @Override
@@ -786,23 +828,35 @@ public class WinMailSender implements IWinMailSender {
         }
         else if (!nextLock.equals(other.nextLock))
             return false;
-        if (sumsSend == null) {
-            if (other.sumsSend != null)
+        if (sumSend == null) {
+            if (other.sumSend != null)
                 return false;
         }
-        else if (!sumsSend.equals(other.sumsSend))
+        else if (!sumSend.equals(other.sumSend))
             return false;
-        if (sumsFail == null) {
-            if (other.sumsFail != null)
+        if (sumFail == null) {
+            if (other.sumFail != null)
                 return false;
         }
-        else if (!sumsFail.equals(other.sumsFail))
+        else if (!sumFail.equals(other.sumFail))
             return false;
-        if (sumsDone == null) {
-            if (other.sumsDone != null)
+        if (sumDone == null) {
+            if (other.sumDone != null)
                 return false;
         }
-        else if (!sumsDone.equals(other.sumsDone))
+        else if (!sumDone.equals(other.sumDone))
+            return false;
+        if (maxFail == null) {
+            if (other.maxFail != null)
+                return false;
+        }
+        else if (!maxFail.equals(other.maxFail))
+            return false;
+        if (maxDone == null) {
+            if (other.maxDone != null)
+                return false;
+        }
+        else if (!maxDone.equals(other.maxDone))
             return false;
         return true;
     }
@@ -835,9 +889,11 @@ public class WinMailSender implements IWinMailSender {
         result = prime * result + ((this.lastCost == null) ? 0 : this.lastCost.hashCode());
         result = prime * result + ((this.nextSend == null) ? 0 : this.nextSend.hashCode());
         result = prime * result + ((this.nextLock == null) ? 0 : this.nextLock.hashCode());
-        result = prime * result + ((this.sumsSend == null) ? 0 : this.sumsSend.hashCode());
-        result = prime * result + ((this.sumsFail == null) ? 0 : this.sumsFail.hashCode());
-        result = prime * result + ((this.sumsDone == null) ? 0 : this.sumsDone.hashCode());
+        result = prime * result + ((this.sumSend == null) ? 0 : this.sumSend.hashCode());
+        result = prime * result + ((this.sumFail == null) ? 0 : this.sumFail.hashCode());
+        result = prime * result + ((this.sumDone == null) ? 0 : this.sumDone.hashCode());
+        result = prime * result + ((this.maxFail == null) ? 0 : this.maxFail.hashCode());
+        result = prime * result + ((this.maxDone == null) ? 0 : this.maxDone.hashCode());
         return result;
     }
 
@@ -869,9 +925,11 @@ public class WinMailSender implements IWinMailSender {
         sb.append(", ").append(lastCost);
         sb.append(", ").append(nextSend);
         sb.append(", ").append(nextLock);
-        sb.append(", ").append(sumsSend);
-        sb.append(", ").append(sumsFail);
-        sb.append(", ").append(sumsDone);
+        sb.append(", ").append(sumSend);
+        sb.append(", ").append(sumFail);
+        sb.append(", ").append(sumDone);
+        sb.append(", ").append(maxFail);
+        sb.append(", ").append(maxDone);
 
         sb.append(")");
         return sb.toString();
@@ -907,9 +965,11 @@ public class WinMailSender implements IWinMailSender {
         setLastCost(from.getLastCost());
         setNextSend(from.getNextSend());
         setNextLock(from.getNextLock());
-        setSumsSend(from.getSumsSend());
-        setSumsFail(from.getSumsFail());
-        setSumsDone(from.getSumsDone());
+        setSumSend(from.getSumSend());
+        setSumFail(from.getSumFail());
+        setSumDone(from.getSumDone());
+        setMaxFail(from.getMaxFail());
+        setMaxDone(from.getMaxDone());
     }
 
     @Override
