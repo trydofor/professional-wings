@@ -52,8 +52,17 @@ public class MailSendController {
 
     @Data
     public static class Ins {
+        /**
+         * 邮件id
+         */
         private long id;
+        /**
+         * 若失败，是否异步重试
+         */
         private boolean retry;
+        /**
+         * 是否检查发送条件，否则为强制发送
+         */
         private boolean check;
     }
 

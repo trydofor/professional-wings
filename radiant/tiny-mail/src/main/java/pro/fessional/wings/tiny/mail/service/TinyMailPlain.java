@@ -1,49 +1,152 @@
 package pro.fessional.wings.tiny.mail.service;
 
 import lombok.Data;
-import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 
 /**
+ * 使用基本类型，与外部交换数据
+ *
  * @author trydofor
  * @since 2023-01-13
  */
 @Data
 public class TinyMailPlain {
 
-    @Nullable("insert:null|update:!null")
+    /**
+     * 新建时为null，更新时为目标id
+     */
     private Long id;
 
-    @Nullable("insert|update") private String apps;
-    @Nullable("insert|update") private String runs;
-    @Nullable("insert|update") private String conf;
-    @Nullable("insert|update") private String from;
-    @Nullable("insert|update") private String to;
-    @Nullable("insert|update") private String cc;
-    @Nullable("insert|update") private String bcc;
-    @Nullable("insert|update") private String reply;
-    @Nullable("insert|update") private String subject;
-    @Nullable("insert|update") private String content;
-    @Nullable("insert|update") private Map<String, String> attachment = Collections.emptyMap();
-    @Nullable("insert|update") private Boolean html;
-    @Nullable("insert|update") private String mark;
+    /**
+     * 所属app，空时使用当前spring.application.name
+     */
+    private String apps;
 
-    @Nullable("update:skip null") private LocalDateTime nextSend;
-    @Nullable("update:skip null") private Integer maxFail;
-    @Nullable("update:skip null") private Integer maxDone;
+    /**
+     * 所需RunMode，空时使用当前RuntimeMode.getRunMode
+     */
+    private String runs;
 
-    @Nullable("readonly") private LocalDateTime createDt;
-    @Nullable("readonly") private LocalDateTime lastSend;
-    @Nullable("readonly") private String lastFail;
-    @Nullable("readonly") private LocalDateTime lastDone;
-    @Nullable("readonly") private Integer lastCost;
-    @Nullable("readonly") private Integer sumSend;
-    @Nullable("readonly") private Integer sumFail;
-    @Nullable("readonly") private Integer sumDone;
+    /**
+     * 邮件配置的名字
+     */
+    private String conf;
 
-    @Nullable("param") private Boolean retry;
-    @Nullable("param") private Boolean check;
+    /**
+     * 发件人，空时使用conf默认配置
+     */
+    private String from;
+
+    /**
+     * 收件人，空时使用conf默认配置
+     */
+    private String to;
+
+    /**
+     * 抄送，空时使用conf默认配置
+     */
+    private String cc;
+
+    /**
+     * 暗送，空时使用conf默认配置
+     */
+    private String bcc;
+
+    /**
+     * 回复，空时使用conf默认配置
+     */
+    private String reply;
+
+    /**
+     * 邮件标题，空时使用conf默认配置
+     */
+    private String subject;
+
+    /**
+     * 邮件正文，空时使用conf默认配置
+     */
+    private String content;
+
+    /**
+     * 邮件附件，显示名和Resource的Map，其中Resource支持classpath，file，url格式
+     */
+    private Map<String, String> attachment = Collections.emptyMap();
+
+    /**
+     * 是否为html邮件，空时使用conf默认配置
+     */
+    private Boolean html;
+
+    /**
+     * 业务标记，主要用了失败业务
+     */
+    private String mark;
+
+    /**
+     * 下次发送时间，系统时区，非null时更新
+     */
+    private LocalDateTime nextSend;
+
+    /**
+     * 最大失败次数，系统时区，非null时更新
+     */
+    private Integer maxFail;
+
+    /**
+     * 最大成功次数，系统时区，非null时更新
+     */
+    private Integer maxDone;
+
+    /**
+     * 邮件创建的系统时间，只读，仅用来显示
+     */
+    private LocalDateTime createDt;
+
+    /**
+     * 邮件上次发送的系统时间，只读，仅用来显示
+     */
+    private LocalDateTime lastSend;
+
+    /**
+     * 邮件上次发送失败原因，null为未失败，只读，仅用来显示
+     */
+    private String lastFail;
+
+    /**
+     * 邮件上次发送成功的系统时间，只读，仅用来显示
+     */
+    private LocalDateTime lastDone;
+
+    /**
+     * 邮件上次发送耗时毫秒数，只读，仅用来显示
+     */
+    private Integer lastCost;
+
+    /**
+     * 邮件总计发送次数，只读，仅用来显示
+     */
+    private Integer sumSend;
+
+    /**
+     * 邮件总计失败次数，只读，仅用来显示
+     */
+    private Integer sumFail;
+
+    /**
+     * 邮件总计成功次数，只读，仅用来显示
+     */
+    private Integer sumDone;
+
+    /**
+     * 发送参数，发送失败时，是否重试
+     */
+    private Boolean retry;
+
+    /**
+     * 发送参数，是否检查发送条件，否则为强制发送
+     */
+    private Boolean check;
 }

@@ -74,11 +74,11 @@ public class TinyMail {
     /**
      * 最大失败次数，默认为系统配置
      */
-    protected int maxFail = 0;
+    protected Integer maxFail = 0;
     /**
      * 最大成功次数，默认为系统配置
      */
-    protected int maxDone = 0;
+    protected Integer maxDone = 0;
 
     public void setContentText(String content) {
         this.content = content;

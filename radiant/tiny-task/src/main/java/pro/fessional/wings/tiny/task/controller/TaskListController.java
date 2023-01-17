@@ -2,7 +2,6 @@ package pro.fessional.wings.tiny.task.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.Setter;
-import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,14 +30,14 @@ public class TaskListController {
     @Operation(summary = "列出当前运行中的任务")
     @PostMapping(value = "${" + TinyTaskUrlmapProp.Key$taskRunning + "}")
     @ResponseBody
-    public PageResult<TinyTaskListService.Item> taskRunning(@ParameterObject PageQuery pq) {
+    public PageResult<TinyTaskListService.Item> taskRunning(PageQuery pq) {
         return tinyTaskListService.listRunning(pq);
     }
 
     @Operation(summary = "列出已定义的任务")
     @PostMapping(value = "${" + TinyTaskUrlmapProp.Key$taskDefined + "}")
     @ResponseBody
-    public PageResult<TinyTaskListService.Item> taskDefined(@ParameterObject PageQuery pq) {
+    public PageResult<TinyTaskListService.Item> taskDefined(PageQuery pq) {
         return tinyTaskListService.listDefined(pq);
     }
 
@@ -50,7 +49,7 @@ public class TaskListController {
             + "")
     @PostMapping(value = "${" + TinyTaskUrlmapProp.Key$taskResult + "}")
     @ResponseBody
-    public PageResult<WinTaskResult> taskResult(@RequestBody Q.Id ins, @ParameterObject PageQuery pq) {
+    public PageResult<WinTaskResult> taskResult(@RequestBody Q.Id ins, PageQuery pq) {
         return tinyTaskListService.listResult(ins.getId(), pq);
     }
 }

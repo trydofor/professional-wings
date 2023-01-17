@@ -172,25 +172,11 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         final WinMailSender po = new WinMailSender();
         final boolean isNew = message.getId() == null || message.getId() <= 0;
         final long id;
+        final RunMode rm = RuntimeMode.getRunMode();
+        final String crm = rm == RunMode.Nothing ? "" : rm.name().toLowerCase();
+
         if (isNew) {
             id = lightIdService.getId(winMailSenderDao.getTable());
-            po.setId(id);
-            po.setMailApps(message.getApps());
-            po.setMailRuns(message.getRuns());
-            po.setMailConf(message.getConf());
-            po.setMailFrom(toString(message.getFrom(), config.getFrom()));
-            po.setMailTo(toString(message.getTo(), config.getTo()));
-            po.setMailCc(toString(message.getCc(), config.getCc()));
-            po.setMailBcc(toString(message.getBcc(), config.getBcc()));
-            po.setMailReply(toString(message.getReply(), config.getReply()));
-            po.setMailSubj(toString(message.getSubject(), (String) null));
-            po.setMailText(message.getContent());
-            po.setMailHtml(BoxedCastUtil.orElse(message.getHtml(), config.getHtml()));
-            po.setMailFile(toStringMap(message.getAttachment()));
-            po.setMarkWord(toString(message.getMark(), (String) null));
-            po.setMaxFail(message.getMaxFail());
-            po.setMaxDone(message.getMaxDone());
-
             // 乐观锁
             po.setNextLock(0);
             po.setNextSend(ThreadNow.localDateTime());
@@ -201,25 +187,26 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         }
         else {
             id = message.getId();
-            po.setId(id);
-            po.setMailApps(message.getApps());
-            po.setMailRuns(message.getRuns());
-            po.setMailConf(message.getConf());
-            po.setMailFrom(message.getFrom());
-            po.setMailTo(message.getTo());
-            po.setMailCc(message.getCc());
-            po.setMailBcc(message.getBcc());
-            po.setMailReply(message.getReply());
-            po.setMailSubj(message.getSubject());
-            po.setMailText(message.getContent());
-            po.setMailHtml(message.getHtml());
-            po.setMailFile(toStringMap(message.getAttachment()));
-            po.setMarkWord(message.getMark());
-
             Null.notNull(message.getNextSend(), po::setNextSend);
-            Null.notNull(message.getMaxFail(), po::setMaxFail);
-            Null.notNull(message.getMaxDone(), po::setMaxDone);
         }
+
+        po.setId(id);
+        po.setMailApps(toString(message.getApps(), appName));
+        po.setMailRuns(toString(message.getRuns(), crm));
+        po.setMailConf(message.getConf());
+        po.setMailFrom(toString(message.getFrom(), config.getFrom()));
+        po.setMailTo(toString(message.getTo(), config.getTo()));
+        po.setMailCc(toString(message.getCc(), config.getCc()));
+        po.setMailBcc(toString(message.getBcc(), config.getBcc()));
+        po.setMailReply(toString(message.getReply(), config.getReply()));
+        po.setMailSubj(toString(message.getSubject(), (String) null));
+        po.setMailText(message.getContent());
+        po.setMailHtml(BoxedCastUtil.orElse(message.getHtml(), config.getHtml()));
+        po.setMailFile(toStringMap(message.getAttachment()));
+        po.setMarkWord(toString(message.getMark(), (String) null));
+
+        Null.notNull(message.getMaxFail(), po::setMaxFail);
+        Null.notNull(message.getMaxDone(), po::setMaxDone);
 
         journalService.commit(Jane.Insert, journal -> {
             if (isNew) {
@@ -330,8 +317,8 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         po.setMailHtml(BoxedCastUtil.orElse(msg.getHtml(), config.getHtml()));
         po.setMailFile(toString(msg.getAttachment()));
         po.setMarkWord(toString(msg.getMark(), (String) null));
-        po.setMaxFail(msg.getMaxFail());
-        po.setMaxDone(msg.getMaxDone());
+        po.setMaxFail(BoxedCastUtil.orElse(msg.getMaxFail(), tinyMailServiceProp.getMaxFail()));
+        po.setMaxDone(BoxedCastUtil.orElse(msg.getMaxDone(), tinyMailServiceProp.getMaxDone()));
 
         // 乐观锁
         po.setNextLock(0);
