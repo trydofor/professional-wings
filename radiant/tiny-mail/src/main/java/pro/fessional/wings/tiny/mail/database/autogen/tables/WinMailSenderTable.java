@@ -148,9 +148,14 @@ public class WinMailSenderTable extends TableImpl<WinMailSenderRecord> implement
     public final TableField<WinMailSenderRecord, String> MailFile = createField(DSL.name("mail_file"), SQLDataType.VARCHAR(9000).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
 
     /**
-     * The column <code>win_mail_sender.mark_word</code>.
+     * The column <code>win_mail_sender.mail_mark</code>.
      */
-    public final TableField<WinMailSenderRecord, String> MarkWord = createField(DSL.name("mark_word"), SQLDataType.VARCHAR(200).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
+    public final TableField<WinMailSenderRecord, String> MailMark = createField(DSL.name("mail_mark"), SQLDataType.VARCHAR(200).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
+
+    /**
+     * The column <code>win_mail_sender.mail_date</code>.
+     */
+    public final TableField<WinMailSenderRecord, LocalDateTime> MailDate = createField(DSL.name("mail_date"), SQLDataType.LOCALDATETIME(3).nullable(false).defaultValue(DSL.inline("1000-01-01 00:00:00.000", SQLDataType.LOCALDATETIME)), this, "");
 
     /**
      * The column <code>win_mail_sender.last_send</code>.
@@ -206,6 +211,21 @@ public class WinMailSenderTable extends TableImpl<WinMailSenderRecord> implement
      * The column <code>win_mail_sender.max_done</code>.
      */
     public final TableField<WinMailSenderRecord, Integer> MaxDone = createField(DSL.name("max_done"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
+
+    /**
+     * The column <code>win_mail_sender.ref_type</code>.
+     */
+    public final TableField<WinMailSenderRecord, Integer> RefType = createField(DSL.name("ref_type"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.inline("0", SQLDataType.INTEGER)), this, "");
+
+    /**
+     * The column <code>win_mail_sender.ref_key1</code>.
+     */
+    public final TableField<WinMailSenderRecord, Long> RefKey1 = createField(DSL.name("ref_key1"), SQLDataType.BIGINT.nullable(false).defaultValue(DSL.inline("0", SQLDataType.BIGINT)), this, "");
+
+    /**
+     * The column <code>win_mail_sender.ref_key2</code>.
+     */
+    public final TableField<WinMailSenderRecord, String> RefKey2 = createField(DSL.name("ref_key2"), SQLDataType.VARCHAR(500).nullable(false).defaultValue(DSL.inline("", SQLDataType.VARCHAR)), this, "");
 
     private WinMailSenderTable(Name alias, Table<WinMailSenderRecord> aliased) {
         this(alias, aliased, null);

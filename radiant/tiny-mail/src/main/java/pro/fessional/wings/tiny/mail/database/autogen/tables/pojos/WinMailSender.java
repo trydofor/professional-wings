@@ -57,7 +57,8 @@ public class WinMailSender implements IWinMailSender {
     private String        mailText;
     private Boolean       mailHtml;
     private String        mailFile;
-    private String        markWord;
+    private String        mailMark;
+    private LocalDateTime mailDate;
     private LocalDateTime lastSend;
     private String        lastFail;
     private LocalDateTime lastDone;
@@ -69,6 +70,9 @@ public class WinMailSender implements IWinMailSender {
     private Integer       sumDone;
     private Integer       maxFail;
     private Integer       maxDone;
+    private Integer       refType;
+    private Long          refKey1;
+    private String        refKey2;
 
     public WinMailSender() {}
 
@@ -90,7 +94,8 @@ public class WinMailSender implements IWinMailSender {
         this.mailText = value.getMailText();
         this.mailHtml = value.getMailHtml();
         this.mailFile = value.getMailFile();
-        this.markWord = value.getMarkWord();
+        this.mailMark = value.getMailMark();
+        this.mailDate = value.getMailDate();
         this.lastSend = value.getLastSend();
         this.lastFail = value.getLastFail();
         this.lastDone = value.getLastDone();
@@ -102,6 +107,9 @@ public class WinMailSender implements IWinMailSender {
         this.sumDone = value.getSumDone();
         this.maxFail = value.getMaxFail();
         this.maxDone = value.getMaxDone();
+        this.refType = value.getRefType();
+        this.refKey1 = value.getRefKey1();
+        this.refKey2 = value.getRefKey2();
     }
 
     public WinMailSender(
@@ -122,7 +130,8 @@ public class WinMailSender implements IWinMailSender {
         String        mailText,
         Boolean       mailHtml,
         String        mailFile,
-        String        markWord,
+        String        mailMark,
+        LocalDateTime mailDate,
         LocalDateTime lastSend,
         String        lastFail,
         LocalDateTime lastDone,
@@ -133,7 +142,10 @@ public class WinMailSender implements IWinMailSender {
         Integer       sumFail,
         Integer       sumDone,
         Integer       maxFail,
-        Integer       maxDone
+        Integer       maxDone,
+        Integer       refType,
+        Long          refKey1,
+        String        refKey2
     ) {
         this.id = id;
         this.createDt = createDt;
@@ -152,7 +164,8 @@ public class WinMailSender implements IWinMailSender {
         this.mailText = mailText;
         this.mailHtml = mailHtml;
         this.mailFile = mailFile;
-        this.markWord = markWord;
+        this.mailMark = mailMark;
+        this.mailDate = mailDate;
         this.lastSend = lastSend;
         this.lastFail = lastFail;
         this.lastDone = lastDone;
@@ -164,6 +177,9 @@ public class WinMailSender implements IWinMailSender {
         this.sumDone = sumDone;
         this.maxFail = maxFail;
         this.maxDone = maxDone;
+        this.refType = refType;
+        this.refKey1 = refKey1;
+        this.refKey2 = refKey2;
     }
 
     /**
@@ -470,21 +486,38 @@ public class WinMailSender implements IWinMailSender {
     }
 
     /**
-     * Getter for <code>win_mail_sender.mark_word</code>.
+     * Getter for <code>win_mail_sender.mail_mark</code>.
      */
-    @Column(name = "mark_word", nullable = false, length = 200)
+    @Column(name = "mail_mark", nullable = false, length = 200)
     @Size(max = 200)
     @Override
-    public String getMarkWord() {
-        return this.markWord;
+    public String getMailMark() {
+        return this.mailMark;
     }
 
     /**
-     * Setter for <code>win_mail_sender.mark_word</code>.
+     * Setter for <code>win_mail_sender.mail_mark</code>.
      */
     @Override
-    public void setMarkWord(String markWord) {
-        this.markWord = markWord;
+    public void setMailMark(String mailMark) {
+        this.mailMark = mailMark;
+    }
+
+    /**
+     * Getter for <code>win_mail_sender.mail_date</code>.
+     */
+    @Column(name = "mail_date", nullable = false, precision = 3)
+    @Override
+    public LocalDateTime getMailDate() {
+        return this.mailDate;
+    }
+
+    /**
+     * Setter for <code>win_mail_sender.mail_date</code>.
+     */
+    @Override
+    public void setMailDate(LocalDateTime mailDate) {
+        this.mailDate = mailDate;
     }
 
     /**
@@ -675,6 +708,58 @@ public class WinMailSender implements IWinMailSender {
         this.maxDone = maxDone;
     }
 
+    /**
+     * Getter for <code>win_mail_sender.ref_type</code>.
+     */
+    @Column(name = "ref_type", nullable = false, precision = 10)
+    @Override
+    public Integer getRefType() {
+        return this.refType;
+    }
+
+    /**
+     * Setter for <code>win_mail_sender.ref_type</code>.
+     */
+    @Override
+    public void setRefType(Integer refType) {
+        this.refType = refType;
+    }
+
+    /**
+     * Getter for <code>win_mail_sender.ref_key1</code>.
+     */
+    @Column(name = "ref_key1", nullable = false, precision = 19)
+    @Override
+    public Long getRefKey1() {
+        return this.refKey1;
+    }
+
+    /**
+     * Setter for <code>win_mail_sender.ref_key1</code>.
+     */
+    @Override
+    public void setRefKey1(Long refKey1) {
+        this.refKey1 = refKey1;
+    }
+
+    /**
+     * Getter for <code>win_mail_sender.ref_key2</code>.
+     */
+    @Column(name = "ref_key2", nullable = false, length = 500)
+    @Size(max = 500)
+    @Override
+    public String getRefKey2() {
+        return this.refKey2;
+    }
+
+    /**
+     * Setter for <code>win_mail_sender.ref_key2</code>.
+     */
+    @Override
+    public void setRefKey2(String refKey2) {
+        this.refKey2 = refKey2;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -786,11 +871,17 @@ public class WinMailSender implements IWinMailSender {
         }
         else if (!mailFile.equals(other.mailFile))
             return false;
-        if (markWord == null) {
-            if (other.markWord != null)
+        if (mailMark == null) {
+            if (other.mailMark != null)
                 return false;
         }
-        else if (!markWord.equals(other.markWord))
+        else if (!mailMark.equals(other.mailMark))
+            return false;
+        if (mailDate == null) {
+            if (other.mailDate != null)
+                return false;
+        }
+        else if (!mailDate.equals(other.mailDate))
             return false;
         if (lastSend == null) {
             if (other.lastSend != null)
@@ -858,6 +949,24 @@ public class WinMailSender implements IWinMailSender {
         }
         else if (!maxDone.equals(other.maxDone))
             return false;
+        if (refType == null) {
+            if (other.refType != null)
+                return false;
+        }
+        else if (!refType.equals(other.refType))
+            return false;
+        if (refKey1 == null) {
+            if (other.refKey1 != null)
+                return false;
+        }
+        else if (!refKey1.equals(other.refKey1))
+            return false;
+        if (refKey2 == null) {
+            if (other.refKey2 != null)
+                return false;
+        }
+        else if (!refKey2.equals(other.refKey2))
+            return false;
         return true;
     }
 
@@ -882,7 +991,8 @@ public class WinMailSender implements IWinMailSender {
         result = prime * result + ((this.mailText == null) ? 0 : this.mailText.hashCode());
         result = prime * result + ((this.mailHtml == null) ? 0 : this.mailHtml.hashCode());
         result = prime * result + ((this.mailFile == null) ? 0 : this.mailFile.hashCode());
-        result = prime * result + ((this.markWord == null) ? 0 : this.markWord.hashCode());
+        result = prime * result + ((this.mailMark == null) ? 0 : this.mailMark.hashCode());
+        result = prime * result + ((this.mailDate == null) ? 0 : this.mailDate.hashCode());
         result = prime * result + ((this.lastSend == null) ? 0 : this.lastSend.hashCode());
         result = prime * result + ((this.lastFail == null) ? 0 : this.lastFail.hashCode());
         result = prime * result + ((this.lastDone == null) ? 0 : this.lastDone.hashCode());
@@ -894,6 +1004,9 @@ public class WinMailSender implements IWinMailSender {
         result = prime * result + ((this.sumDone == null) ? 0 : this.sumDone.hashCode());
         result = prime * result + ((this.maxFail == null) ? 0 : this.maxFail.hashCode());
         result = prime * result + ((this.maxDone == null) ? 0 : this.maxDone.hashCode());
+        result = prime * result + ((this.refType == null) ? 0 : this.refType.hashCode());
+        result = prime * result + ((this.refKey1 == null) ? 0 : this.refKey1.hashCode());
+        result = prime * result + ((this.refKey2 == null) ? 0 : this.refKey2.hashCode());
         return result;
     }
 
@@ -918,7 +1031,8 @@ public class WinMailSender implements IWinMailSender {
         sb.append(", ").append(mailText);
         sb.append(", ").append(mailHtml);
         sb.append(", ").append(mailFile);
-        sb.append(", ").append(markWord);
+        sb.append(", ").append(mailMark);
+        sb.append(", ").append(mailDate);
         sb.append(", ").append(lastSend);
         sb.append(", ").append(lastFail);
         sb.append(", ").append(lastDone);
@@ -930,6 +1044,9 @@ public class WinMailSender implements IWinMailSender {
         sb.append(", ").append(sumDone);
         sb.append(", ").append(maxFail);
         sb.append(", ").append(maxDone);
+        sb.append(", ").append(refType);
+        sb.append(", ").append(refKey1);
+        sb.append(", ").append(refKey2);
 
         sb.append(")");
         return sb.toString();
@@ -958,7 +1075,8 @@ public class WinMailSender implements IWinMailSender {
         setMailText(from.getMailText());
         setMailHtml(from.getMailHtml());
         setMailFile(from.getMailFile());
-        setMarkWord(from.getMarkWord());
+        setMailMark(from.getMailMark());
+        setMailDate(from.getMailDate());
         setLastSend(from.getLastSend());
         setLastFail(from.getLastFail());
         setLastDone(from.getLastDone());
@@ -970,6 +1088,9 @@ public class WinMailSender implements IWinMailSender {
         setSumDone(from.getSumDone());
         setMaxFail(from.getMaxFail());
         setMaxDone(from.getMaxDone());
+        setRefType(from.getRefType());
+        setRefKey1(from.getRefKey1());
+        setRefKey2(from.getRefKey2());
     }
 
     @Override

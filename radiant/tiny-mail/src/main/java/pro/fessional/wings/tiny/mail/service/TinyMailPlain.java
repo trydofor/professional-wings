@@ -86,6 +86,11 @@ public class TinyMailPlain {
     private String mark;
 
     /**
+     * 邮件定时发送时间，系统时区
+     */
+    private LocalDateTime date;
+
+    /**
      * 下次发送时间，系统时区，非null时更新
      */
     private LocalDateTime nextSend;
@@ -99,6 +104,21 @@ public class TinyMailPlain {
      * 最大成功次数，系统时区，非null时更新
      */
     private Integer maxDone;
+
+    /**
+     * 引用类型，标记key1，key2用途
+     */
+    private Integer refType;
+
+    /**
+     * 引用key1，一般为主键
+     */
+    private Long refKey1;
+
+    /**
+     * 引用key2，一般为符合类型
+     */
+    private String refKey2;
 
     /**
      * 邮件创建的系统时间，只读，仅用来显示

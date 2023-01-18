@@ -298,17 +298,31 @@ public class WinMailSenderDao extends WingsJooqDaoJournalImpl<WinMailSenderTable
     }
 
     /**
-     * Fetch records that have <code>mark_word BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>mail_mark BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinMailSender> fetchRangeOfMarkWord(String lowerInclusive, String upperInclusive) {
-        return fetchRange(WinMailSenderTable.WinMailSender.MarkWord, lowerInclusive, upperInclusive);
+    public List<WinMailSender> fetchRangeOfMailMark(String lowerInclusive, String upperInclusive) {
+        return fetchRange(WinMailSenderTable.WinMailSender.MailMark, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>mark_word IN (values)</code>
+     * Fetch records that have <code>mail_mark IN (values)</code>
      */
-    public List<WinMailSender> fetchByMarkWord(String... values) {
-        return fetch(WinMailSenderTable.WinMailSender.MarkWord, values);
+    public List<WinMailSender> fetchByMailMark(String... values) {
+        return fetch(WinMailSenderTable.WinMailSender.MailMark, values);
+    }
+
+    /**
+     * Fetch records that have <code>mail_date BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinMailSender> fetchRangeOfMailDate(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRange(WinMailSenderTable.WinMailSender.MailDate, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>mail_date IN (values)</code>
+     */
+    public List<WinMailSender> fetchByMailDate(LocalDateTime... values) {
+        return fetch(WinMailSenderTable.WinMailSender.MailDate, values);
     }
 
     /**
@@ -463,6 +477,48 @@ public class WinMailSenderDao extends WingsJooqDaoJournalImpl<WinMailSenderTable
      */
     public List<WinMailSender> fetchByMaxDone(Integer... values) {
         return fetch(WinMailSenderTable.WinMailSender.MaxDone, values);
+    }
+
+    /**
+     * Fetch records that have <code>ref_type BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinMailSender> fetchRangeOfRefType(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRange(WinMailSenderTable.WinMailSender.RefType, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>ref_type IN (values)</code>
+     */
+    public List<WinMailSender> fetchByRefType(Integer... values) {
+        return fetch(WinMailSenderTable.WinMailSender.RefType, values);
+    }
+
+    /**
+     * Fetch records that have <code>ref_key1 BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinMailSender> fetchRangeOfRefKey1(Long lowerInclusive, Long upperInclusive) {
+        return fetchRange(WinMailSenderTable.WinMailSender.RefKey1, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>ref_key1 IN (values)</code>
+     */
+    public List<WinMailSender> fetchByRefKey1(Long... values) {
+        return fetch(WinMailSenderTable.WinMailSender.RefKey1, values);
+    }
+
+    /**
+     * Fetch records that have <code>ref_key2 BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinMailSender> fetchRangeOfRefKey2(String lowerInclusive, String upperInclusive) {
+        return fetchRange(WinMailSenderTable.WinMailSender.RefKey2, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>ref_key2 IN (values)</code>
+     */
+    public List<WinMailSender> fetchByRefKey2(String... values) {
+        return fetch(WinMailSenderTable.WinMailSender.RefKey2, values);
     }
 
 
@@ -712,17 +768,31 @@ public class WinMailSenderDao extends WingsJooqDaoJournalImpl<WinMailSenderTable
     }
 
     /**
-     * Fetch records that have <code>mark_word BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>mail_mark BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    public List<WinMailSender> fetchRangeOfMarkWordLive(String lowerInclusive, String upperInclusive) {
-        return fetchRangeLive(WinMailSenderTable.WinMailSender.MarkWord, lowerInclusive, upperInclusive);
+    public List<WinMailSender> fetchRangeOfMailMarkLive(String lowerInclusive, String upperInclusive) {
+        return fetchRangeLive(WinMailSenderTable.WinMailSender.MailMark, lowerInclusive, upperInclusive);
     }
 
     /**
-     * Fetch records that have <code>mark_word IN (values)</code>
+     * Fetch records that have <code>mail_mark IN (values)</code>
      */
-    public List<WinMailSender> fetchByMarkWordLive(String... values) {
-        return fetchLive(WinMailSenderTable.WinMailSender.MarkWord, values);
+    public List<WinMailSender> fetchByMailMarkLive(String... values) {
+        return fetchLive(WinMailSenderTable.WinMailSender.MailMark, values);
+    }
+
+    /**
+     * Fetch records that have <code>mail_date BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinMailSender> fetchRangeOfMailDateLive(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRangeLive(WinMailSenderTable.WinMailSender.MailDate, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>mail_date IN (values)</code>
+     */
+    public List<WinMailSender> fetchByMailDateLive(LocalDateTime... values) {
+        return fetchLive(WinMailSenderTable.WinMailSender.MailDate, values);
     }
 
     /**
@@ -877,5 +947,47 @@ public class WinMailSenderDao extends WingsJooqDaoJournalImpl<WinMailSenderTable
      */
     public List<WinMailSender> fetchByMaxDoneLive(Integer... values) {
         return fetchLive(WinMailSenderTable.WinMailSender.MaxDone, values);
+    }
+
+    /**
+     * Fetch records that have <code>ref_type BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinMailSender> fetchRangeOfRefTypeLive(Integer lowerInclusive, Integer upperInclusive) {
+        return fetchRangeLive(WinMailSenderTable.WinMailSender.RefType, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>ref_type IN (values)</code>
+     */
+    public List<WinMailSender> fetchByRefTypeLive(Integer... values) {
+        return fetchLive(WinMailSenderTable.WinMailSender.RefType, values);
+    }
+
+    /**
+     * Fetch records that have <code>ref_key1 BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinMailSender> fetchRangeOfRefKey1Live(Long lowerInclusive, Long upperInclusive) {
+        return fetchRangeLive(WinMailSenderTable.WinMailSender.RefKey1, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>ref_key1 IN (values)</code>
+     */
+    public List<WinMailSender> fetchByRefKey1Live(Long... values) {
+        return fetchLive(WinMailSenderTable.WinMailSender.RefKey1, values);
+    }
+
+    /**
+     * Fetch records that have <code>ref_key2 BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    public List<WinMailSender> fetchRangeOfRefKey2Live(String lowerInclusive, String upperInclusive) {
+        return fetchRangeLive(WinMailSenderTable.WinMailSender.RefKey2, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>ref_key2 IN (values)</code>
+     */
+    public List<WinMailSender> fetchByRefKey2Live(String... values) {
+        return fetchLive(WinMailSenderTable.WinMailSender.RefKey2, values);
     }
 }

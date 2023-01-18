@@ -3,6 +3,7 @@ package pro.fessional.wings.tiny.mail.service;
 import lombok.Data;
 import org.springframework.core.io.Resource;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -72,6 +73,11 @@ public class TinyMail {
     protected String mark;
 
     /**
+     * 邮件定时发送时间（系统时区）
+     */
+    protected LocalDateTime date;
+
+    /**
      * 最大失败次数，默认为系统配置
      */
     protected Integer maxFail = 0;
@@ -79,6 +85,23 @@ public class TinyMail {
      * 最大成功次数，默认为系统配置
      */
     protected Integer maxDone = 0;
+
+    /**
+     * 引用类型，标记key1，key2用途
+     */
+    private Integer refType;
+
+    /**
+     * 引用key1，一般为主键
+     */
+    private Long refKey1;
+
+    /**
+     * 引用key2，一般为符合类型
+     */
+    private String refKey2;
+
+    //
 
     public void setContentText(String content) {
         this.content = content;

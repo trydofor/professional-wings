@@ -2,6 +2,9 @@ package pro.fessional.wings.tiny.mail.service;
 
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.cast.BoxedCastUtil;
+import pro.fessional.mirana.time.ThreadNow;
+
+import java.time.LocalDateTime;
 
 /**
  * 可选择同步或异步发送邮件，首先存入database，保证邮件一定发送。
@@ -22,9 +25,9 @@ public interface TinyMailService {
     boolean post(@NotNull TinyMail message, boolean retry);
 
     /**
-     * 异步发送，忽略异常，自动进行批量处理。失败时，可进行异步retry
+     * 异步发送，忽略异常，自动进行批量处理。失败时，可进行异步retry，返回预计发送时间，-1为失败
      */
-    void emit(@NotNull TinyMail message, boolean retry);
+    long emit(@NotNull TinyMail message, boolean retry);
 
     /**
      * 同步发送，发送成功或失败，或异常。失败时，可进行异步retry
@@ -43,11 +46,11 @@ public interface TinyMailService {
     }
 
     /**
-     * 异步发送，忽略异常，自动进行批量处理。失败时，可进行异步retry
+     * 异步发送，忽略异常，自动进行批量处理。失败时，可进行异步retry，返回预计发送时间，-1为失败
      */
-    default void emit(@NotNull TinyMailPlain message) {
+    default long emit(@NotNull TinyMailPlain message) {
         final long id = save(message);
-        emit(id, BoxedCastUtil.orFalse(message.getRetry()), BoxedCastUtil.orFalse(message.getCheck()));
+        return emit(id, BoxedCastUtil.orFalse(message.getRetry()), BoxedCastUtil.orFalse(message.getCheck()));
     }
 
     /**
@@ -61,9 +64,9 @@ public interface TinyMailService {
     boolean post(long id, boolean retry, boolean check);
 
     /**
-     * 异步发送，忽略异常，自动进行批量处理。失败时，可进行异步retry，发送前是否check状态
+     * 异步发送，忽略异常，自动进行批量处理。失败时，可进行异步retry，发送前是否check状态，返回预计发送时间，-1为失败
      */
-    void emit(long id, boolean retry, boolean check);
+    long emit(long id, boolean retry, boolean check);
 
     /**
      * 新建(id为空)或编辑一个邮件，返回id
@@ -75,4 +78,33 @@ public interface TinyMailService {
      */
     int scan();
 
+
+    /**
+     * 自动发送，根据时间自行决定同步还是异步发送，-1为发送失败，0为同步发送，否则为异步发送时间
+     */
+    default long auto(@NotNull TinyMail message, boolean retry) {
+        final LocalDateTime md = message.getDate();
+        if (md == null || md.isBefore(ThreadNow.localDateTime())) {
+            final boolean ok = send(message, retry);
+            return ok ? 0 : -1;
+        }
+        else {
+            return emit(message, retry);
+        }
+    }
+
+    /**
+     * 自动发送，根据时间自行决定同步还是异步发送，-1为发送失败，0为同步发送，否则为异步发送时间
+     */
+    default long auto(@NotNull TinyMailPlain message) {
+        final long id = save(message);
+        final LocalDateTime md = message.getDate();
+        if (md == null || md.isBefore(ThreadNow.localDateTime())) {
+            final boolean ok = send(id, BoxedCastUtil.orFalse(message.getRetry()), BoxedCastUtil.orFalse(message.getCheck()));
+            return ok ? 0 : -1;
+        }
+        else {
+            return emit(id, BoxedCastUtil.orFalse(message.getRetry()), BoxedCastUtil.orFalse(message.getCheck()));
+        }
+    }
 }

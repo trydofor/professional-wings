@@ -26,12 +26,12 @@ public class MailSendController {
     @Setter(onMethod_ = {@Autowired})
     protected TinyMailService tinyMailService;
 
-    @Operation(summary = "新建或编辑邮件，并同步立即或异步定时发送")
+    @Operation(summary = "新建或编辑邮件，并同步立即或异步定时，-1为失败，0为同步，否则为异步")
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$sendMail + "}")
     @ResponseBody
-    public R<Boolean> sendMail(@RequestBody TinyMailPlain mail) {
-        final boolean ok = tinyMailService.send(mail);
-        return R.okData(ok);
+    public R<Long> sendMail(@RequestBody TinyMailPlain mail) {
+        final long ms = tinyMailService.auto(mail);
+        return R.okData(ms);
     }
 
     @Operation(summary = "仅新建或编辑邮件，但并不发送")
@@ -66,7 +66,7 @@ public class MailSendController {
         private boolean check;
     }
 
-    @Operation(summary = "仅新建或编辑邮件，但并不发送")
+    @Operation(summary = "同步重试失败的邮件，发送成功或失败，或异常")
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$sendRetry + "}")
     @ResponseBody
     public R<Boolean> sendRetry(@RequestBody Ins mail) {

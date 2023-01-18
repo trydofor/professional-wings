@@ -77,6 +77,12 @@ public class MailSenderManager {
         singleSend(message, 0, null);
     }
 
+    @SneakyThrows
+    public void checkMessage(@NotNull TinyMailMessage message) {
+        final JavaMailSender sender = senderProvider.singletonSender(message);
+        prepareMimeMessage(message, null, sender);
+    }
+
     public void singleSend(@NotNull TinyMailMessage message, long maxWait) {
         singleSend(message, maxWait, null);
     }

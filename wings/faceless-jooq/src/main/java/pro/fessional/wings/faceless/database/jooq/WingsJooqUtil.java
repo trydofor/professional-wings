@@ -55,6 +55,24 @@ public class WingsJooqUtil extends DSL {
         }
     }
 
+    /**
+     * CONCAT_WS(separator,str1,str2,...)
+     */
+    @SuppressWarnings("all")
+    public static Field<String> concatWs(String separator, Object... vals) {
+        final StringBuilder sb = new StringBuilder("CONCAT_WS({0}");
+        final int len = vals.length;
+        final Object[] objs = new Object[len + 1];
+        objs[0] = separator;
+        for (int i = 0; i < len; i++) {
+            sb.append(',').append('{').append(i + 1).append('}');
+        }
+        sb.append(')');
+        System.arraycopy(vals, 0, objs, 1, len);
+        final Field<?> fld = (Field<?>) DSL.field(sb.toString(), objs);
+        return (Field<String>) fld;
+    }
+
     ///////////////// replace into /////////////////////
 
     /**

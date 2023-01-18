@@ -241,16 +241,27 @@ public interface IWinMailSender extends JournalAware, Serializable {
     public String getMailFile();
 
     /**
-     * Setter for <code>win_mail_sender.mark_word</code>.
+     * Setter for <code>win_mail_sender.mail_mark</code>.
      */
-    public void setMarkWord(String value);
+    public void setMailMark(String value);
 
     /**
-     * Getter for <code>win_mail_sender.mark_word</code>.
+     * Getter for <code>win_mail_sender.mail_mark</code>.
      */
-    @Column(name = "mark_word", nullable = false, length = 200)
+    @Column(name = "mail_mark", nullable = false, length = 200)
     @Size(max = 200)
-    public String getMarkWord();
+    public String getMailMark();
+
+    /**
+     * Setter for <code>win_mail_sender.mail_date</code>.
+     */
+    public void setMailDate(LocalDateTime value);
+
+    /**
+     * Getter for <code>win_mail_sender.mail_date</code>.
+     */
+    @Column(name = "mail_date", nullable = false, precision = 3)
+    public LocalDateTime getMailDate();
 
     /**
      * Setter for <code>win_mail_sender.last_send</code>.
@@ -373,6 +384,40 @@ public interface IWinMailSender extends JournalAware, Serializable {
      */
     @Column(name = "max_done", nullable = false, precision = 10)
     public Integer getMaxDone();
+
+    /**
+     * Setter for <code>win_mail_sender.ref_type</code>.
+     */
+    public void setRefType(Integer value);
+
+    /**
+     * Getter for <code>win_mail_sender.ref_type</code>.
+     */
+    @Column(name = "ref_type", nullable = false, precision = 10)
+    public Integer getRefType();
+
+    /**
+     * Setter for <code>win_mail_sender.ref_key1</code>.
+     */
+    public void setRefKey1(Long value);
+
+    /**
+     * Getter for <code>win_mail_sender.ref_key1</code>.
+     */
+    @Column(name = "ref_key1", nullable = false, precision = 19)
+    public Long getRefKey1();
+
+    /**
+     * Setter for <code>win_mail_sender.ref_key2</code>.
+     */
+    public void setRefKey2(String value);
+
+    /**
+     * Getter for <code>win_mail_sender.ref_key2</code>.
+     */
+    @Column(name = "ref_key2", nullable = false, length = 500)
+    @Size(max = 500)
+    public String getRefKey2();
 
     // -------------------------------------------------------------------------
     // FROM and INTO

@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import pro.fessional.mirana.time.Sleep;
+import pro.fessional.wings.slardar.context.Now;
 
 /**
  * @author trydofor
@@ -27,6 +29,17 @@ class TinyMailServiceTest {
         message.setContentHtml("Nothing");
         message.setMark("wings tiny mail");
         tinyMailService.send(message, true);
+    }
+
+    @Test
+    void sendNxt() {
+        TinyMail message = new TinyMail();
+        message.setSubject("Mail Service Test");
+        message.setContentHtml("Nothing");
+        message.setMark("wings tiny mail");
+        message.setDate(Now.localDateTime().plusSeconds(60));
+        tinyMailService.emit(message, true);
+        Sleep.ignoreInterrupt(70_000L);
     }
 
     // 501 Mail from address must be same as authorization user.

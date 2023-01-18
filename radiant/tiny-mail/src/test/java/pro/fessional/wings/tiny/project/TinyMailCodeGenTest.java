@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import pro.fessional.wings.faceless.flywave.SchemaJournalManager;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.project.ProjectJooqGenerator;
 import pro.fessional.wings.faceless.project.ProjectSchemaManager;
@@ -35,6 +36,8 @@ public class TinyMailCodeGenTest {
 
     @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;
+    @Setter(onMethod_ = {@Autowired})
+    private SchemaJournalManager schemaJournalManager;
 
 //    @Test
 //    void initAll() {
@@ -64,4 +67,10 @@ public class TinyMailCodeGenTest {
                 bd -> bd.setGlobalSuffix("TinyMail"));
     }
 
+    @Test
+    public void trigger() {
+        schemaJournalManager.checkAndInitDdl("win_mail_sender", -1);
+        schemaJournalManager.publishInsert("win_mail_sender", true, -1);
+        schemaJournalManager.publishUpdate("win_mail_sender", true, -1);
+    }
 }

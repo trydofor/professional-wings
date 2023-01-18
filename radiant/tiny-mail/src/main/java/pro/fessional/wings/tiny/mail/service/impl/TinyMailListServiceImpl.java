@@ -68,7 +68,8 @@ public class TinyMailListServiceImpl implements TinyMailListService, Initializin
             bo.setAttachment(JacksonHelper.object(po.getMailFile(), Map.class));
         }
         bo.setHtml(po.getMailHtml());
-        bo.setMark(po.getMarkWord());
+        bo.setMark(po.getMailMark());
+        bo.setDate(po.getMailDate());
 
         bo.setCreateDt(po.getCreateDt());
         bo.setLastSend(po.getLastSend());
@@ -80,6 +81,9 @@ public class TinyMailListServiceImpl implements TinyMailListService, Initializin
         bo.setSumDone(po.getSumDone());
         bo.setMaxFail(po.getMaxFail());
         bo.setMaxDone(po.getMaxDone());
+        bo.setRefType(po.getRefType());
+        bo.setRefKey1(po.getRefKey1());
+        bo.setRefKey2(po.getRefKey2());
 
         return bo;
     };
@@ -130,7 +134,7 @@ public class TinyMailListServiceImpl implements TinyMailListService, Initializin
                 .use(winMailSenderDao, pq)
                 .count()
                 .from(t)
-                .where(WingsJooqUtil.condMatch(mark, t.MarkWord))
+                .where(WingsJooqUtil.condMatch(mark, t.MailMark))
                 .order(sortsFields, t.Id.desc())
                 .fetch(plainFields)
                 .into(mapper);
@@ -139,9 +143,9 @@ public class TinyMailListServiceImpl implements TinyMailListService, Initializin
     @Override
     public PageResult<TinyMailPlain> listByRecipient(String mailRegex, PageQuery pq) {
         final WinMailSenderTable t = winMailSenderDao.getTable();
-        final Condition cond = t.MailTo.likeRegex(mailRegex)
-                                       .or(t.MailCc.likeRegex(mailRegex))
-                                       .or(t.MailBcc.likeRegex(mailRegex));
+        final Condition cond = WingsJooqUtil
+                .concatWs(",", t.MailTo, t.MailCc, t.MailBcc)
+                .likeRegex(mailRegex);
         return PageJooqHelper
                 .use(winMailSenderDao, pq)
                 .count()
@@ -196,7 +200,7 @@ public class TinyMailListServiceImpl implements TinyMailListService, Initializin
                 t.Id, t.MailApps, t.MailRuns, t.MailConf,
                 t.MailFrom, t.MailTo, t.MailCc, t.MailBcc,
                 t.MailReply, t.MailSubj, /*t.MailText,*/ t.MailFile,
-                t.MailHtml, t.MarkWord,
+                t.MailHtml, t.MailMark, t.MailDate,
                 t.CreateDt, t.LastSend, /*t.LastFail,*/ t.LastDone,
                 t.NextSend, t.SumSend, t.SumFail, t.SumDone, t.MaxFail, t.MaxDone,
                 };
