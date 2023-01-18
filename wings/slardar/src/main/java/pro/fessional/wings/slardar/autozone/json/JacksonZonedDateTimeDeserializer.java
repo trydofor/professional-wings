@@ -7,13 +7,13 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import pro.fessional.mirana.time.DateParser;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.autozone.AutoTimeZone;
 import pro.fessional.wings.slardar.autozone.AutoZoneAware;
 import pro.fessional.wings.slardar.autozone.AutoZoneType;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
@@ -37,7 +37,7 @@ public class JacksonZonedDateTimeDeserializer extends InstantDeserializer<ZonedD
     public JacksonZonedDateTimeDeserializer(DateTimeFormatter formatter, List<DateTimeFormatter> formats, AutoZoneType auto) {
         super(ZonedDateTime.class,
                 formatter,
-                temporal -> DateParser.parseZoned(temporal, ZoneId.systemDefault()),
+                temporal -> DateParser.parseZoned(temporal, ThreadNow.sysZoneId()),
                 a -> ZonedDateTime.ofInstant(Instant.ofEpochMilli(a.value), a.zoneId),
                 a -> ZonedDateTime.ofInstant(Instant.ofEpochSecond(a.integer, a.fraction), a.zoneId),
                 (zonedDateTime, zoneId) -> zonedDateTime,

@@ -10,6 +10,8 @@ import pro.fessional.mirana.page.PageResult;
 import pro.fessional.mirana.page.PageUtil;
 import pro.fessional.wings.faceless.converter.WingsConverter;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,9 +55,9 @@ public class PageJdbcHelper {
     public static class CountJdbc {
         private final ContextJdbc context;
 
-        public OrderJdbc2 wrap(String select, Map<String, String> bys) {
+        public OrderJdbc2 wrap(String select, Map<String, String> bys, String... dft) {
             context.wrap = select;
-            context.orderBy(bys);
+            context.orderBy(bys, dft);
             return new OrderJdbc2(context);
         }
 
@@ -141,7 +143,7 @@ public class PageJdbcHelper {
                 StringBuilder sql = new StringBuilder(context.select.length() + context.fromWhere.length() + context.order.length() + 50);
                 sql.append("SELECT ");
                 sql.append(context.select);
-                sql.append(" ");
+                sql.append(' ');
                 sql.append(context.fromWhere);
                 context.orderLimit(sql);
                 list = context.tpl.query(sql.toString(), mapper, context.bind);
@@ -201,23 +203,41 @@ public class PageJdbcHelper {
         // out
         private int total = -1;
 
-        private void orderBy(Map<String, String> bys) {
-            if (bys != null && bys.size() > 0) {
-                StringBuilder sb = new StringBuilder();
-                for (PageUtil.By by : PageUtil.sort(page.getSort())) {
+        /**
+         * 以 PageQuery.sort为主，以bys作为映射，以dft作为default为辅
+         */
+        private void orderBy(Map<String, String> bys, String... dft) {
+            final List<PageUtil.By> srt = PageUtil.sort(page.getSort());
+            StringBuilder sb = new StringBuilder();
+            if (srt.isEmpty()) {
+                for (String s : dft) {
+                    sb.append(',').append(s);
+                }
+            }
+            else {
+                if (dft.length > 0) {
+                    bys = new HashMap<>(bys);
+                    for (String s : dft) {
+                        bys.putIfAbsent(s, s);
+                    }
+                }
+
+                for (PageUtil.By by : srt) {
                     String fd = bys.get(by.key);
                     if (fd != null) {
                         sb.append(',').append(fd);
                         if (by.asc) {
                             sb.append(" ASC");
-                        } else {
+                        }
+                        else {
                             sb.append(" DESC");
                         }
                     }
                 }
-                if (sb.length() > 0) {
-                    order = sb.substring(1);
-                }
+            }
+
+            if (sb.length() > 0) {
+                order = sb.substring(1);
             }
         }
 
@@ -229,7 +249,7 @@ public class PageJdbcHelper {
             sql.append(" limit ");
             int offset = page.toOffset();
             if (offset > 0) {
-                sql.append(offset).append(",");
+                sql.append(offset).append(',');
             }
             sql.append(page.getSize());
         }
@@ -253,13 +273,19 @@ public class PageJdbcHelper {
             return new BindJdbc1(context);
         }
 
+        /**
+         * 指定字段或排序语句，等效于field:field的map关系
+         */
         public BindJdbc1 order(String bys) {
-            context.order = Null.notNull(bys);
+            context.orderBy(Collections.emptyMap(), bys);
             return new BindJdbc1(context);
         }
 
-        public BindJdbc1 order(Map<String, String> bys) {
-            context.orderBy(bys);
+        /**
+         * 根据alias:filed的map关系，到PageQuery的sort中匹配排序
+         */
+        public BindJdbc1 order(Map<String, String> bys, String... dft) {
+            context.orderBy(bys, dft);
             return new BindJdbc1(context);
         }
     }
@@ -273,12 +299,12 @@ public class PageJdbcHelper {
         }
 
         public BindJdbc2 order(String bys) {
-            context.order = Null.notNull(bys);
+            context.orderBy(Collections.emptyMap(), bys);
             return new BindJdbc2(context);
         }
 
-        public BindJdbc2 order(Map<String, String> bys) {
-            context.orderBy(bys);
+        public BindJdbc2 order(Map<String, String> bys, String... dft) {
+            context.orderBy(bys, dft);
             return new BindJdbc2(context);
         }
     }

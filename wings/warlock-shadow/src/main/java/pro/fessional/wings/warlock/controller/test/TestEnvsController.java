@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.silencer.modulate.RunMode;
+import pro.fessional.wings.silencer.modulate.RuntimeMode;
 import pro.fessional.wings.slardar.context.Now;
-import pro.fessional.wings.warlock.service.conf.mode.RunMode;
-import pro.fessional.wings.warlock.service.conf.mode.RuntimeMode;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
@@ -29,8 +29,7 @@ public class TestEnvsController {
     @ResponseBody
     public R<String> testRunMode() {
         final RunMode rm = RuntimeMode.getRunMode();
-        final String rt = rm == null ? null : rm.name();
-        return R.okData(rt);
+        return R.okData(rm.name());
     }
 
     @Operation(summary = "获取系统 Timestamp", description =

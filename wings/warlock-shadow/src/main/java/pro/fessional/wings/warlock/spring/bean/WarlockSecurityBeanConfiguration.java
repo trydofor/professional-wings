@@ -22,6 +22,7 @@ import pro.fessional.mirana.bits.Aes;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
+import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
 import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.WingsAuthPageHandler;
@@ -84,7 +85,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.springframework.util.StringUtils.hasText;
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.validValue;
 
 
 /**
@@ -420,7 +420,7 @@ public class WarlockSecurityBeanConfiguration {
     @ConditionalOnMissingBean(AuthStateBuilder.class)
     public AuthStateBuilder authStateBuilder(WarlockJustAuthProp prop, ObjectProvider<Aes> aesProvider) {
         log.info("WarlockShadow spring-bean authStateBuilder");
-        final AuthStateBuilder bean = new AuthStateBuilder(validValue(prop.getSafeState()));
+        final AuthStateBuilder bean = new AuthStateBuilder(CommonPropHelper.onlyValue(prop.getSafeState()));
         final Aes aes = aesProvider.getIfAvailable();
         if (aes != null) {
             bean.setAes(aes);

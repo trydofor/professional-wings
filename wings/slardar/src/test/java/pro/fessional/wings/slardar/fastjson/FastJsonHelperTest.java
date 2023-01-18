@@ -6,11 +6,11 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import pro.fessional.mirana.time.ThreadNow;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 /**
@@ -35,7 +35,7 @@ class FastJsonHelperTest {
         private float floatVal = 100.86F;
         private BigDecimal bigDecimal = new BigDecimal("100.86");
         private LocalDateTime localDateTime = LocalDateTime.of(2022, 10, 24, 12, 34, 56);
-        private ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
+        private ZonedDateTime zonedDateTime = localDateTime.atZone(ThreadNow.sysZoneId());
         private OffsetDateTime offsetDateTime = zonedDateTime.toOffsetDateTime();
     }
 

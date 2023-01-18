@@ -41,22 +41,36 @@ public class SlardarSwaggerProp {
     public static final String Key$description = Key + ".description";
 
     /**
+     * 需要开启 build info
+     *
      * @see #Key$version
      */
     private String version = "";
     public static final String Key$version = Key + ".version";
 
     /**
+     * key采用java命名,作为$ref使用，in支持cookie|header|query|path
+     *
      * @see #Key$param
      */
     private Map<String, EnabledParameter> param = new HashMap<>();
     public static final String Key$param = Key + ".param";
 
     /**
+     * Accept/MediaType复制，以出现多个请求方式
+     *
      * @see #Key$accept
      */
     private Map<String, String> accept = new HashMap<>();
     public static final String Key$accept = Key + ".accept";
+
+    /**
+     * 是否把PageQuery扁平化，作为querystring参数
+     *
+     * @see #Key$flatPagequery
+     */
+    private boolean flatPagequery = true;
+    public static final String Key$flatPagequery = Key + ".flat-pagequery";
 
     public List<Parameter> toRefPara() {
         List<Parameter> result = new ArrayList<>();

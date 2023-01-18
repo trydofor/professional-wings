@@ -27,6 +27,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockLockProp;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
+@ComponentScan("pro.fessional.wings.warlock.controller")
 public class WarlockOtherBeanConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockOtherBeanConfiguration.class);

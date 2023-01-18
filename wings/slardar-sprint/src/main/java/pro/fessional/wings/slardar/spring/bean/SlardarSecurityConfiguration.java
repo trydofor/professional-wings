@@ -3,7 +3,6 @@ package pro.fessional.wings.slardar.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
@@ -16,6 +15,8 @@ import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import pro.fessional.mirana.bits.MdHelp;
+import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.pass.DefaultPasssaltEncoder;
@@ -118,14 +119,14 @@ public class SlardarSecurityConfiguration {
      * 与TerminalContext同步处理Locale和TimeZone
      */
     @Bean
-    public CommandLineRunner runnerTerminalContextListener(Map<String, TerminalContext.Listener> listeners) {
+    public CommandLineRunnerOrdered runnerTerminalContextListener(Map<String, TerminalContext.Listener> listeners) {
         log.info("SlardarSprint spring-runs runnerTerminalContextListener");
-        return args -> {
+        return new CommandLineRunnerOrdered(SlardarOrderConst.RunnerTerminalContextListener, args -> {
             for (Map.Entry<String, TerminalContext.Listener> en : listeners.entrySet()) {
                 final String name = en.getKey();
                 log.info("SlardarSprint spring-conf runnerTerminalContextListener, name=" + name);
                 TerminalContext.registerListener(name, en.getValue());
             }
-        };
+        });
     }
 }

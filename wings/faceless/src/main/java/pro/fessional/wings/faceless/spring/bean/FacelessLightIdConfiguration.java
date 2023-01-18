@@ -121,7 +121,7 @@ public class FacelessLightIdConfiguration {
     }
 
     @Autowired
-    public void forceLightIdLayout(@NotNull LightIdLayoutProp prop) {
+    public void autowireLightIdLayout(@NotNull LightIdLayoutProp prop) {
         final Boolean bf = prop.getBlockFirst();
         if (bf != null) {
             log.info("Faceless spring-auto forceLightIdLayout forceBlockFirst=" + bf);

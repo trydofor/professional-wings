@@ -20,7 +20,7 @@ import java.io.IOException;
 public class WingsReuseStreamFilter extends OncePerRequestFilter implements Ordered {
 
     @Setter @Getter
-    private int order = SlardarOrderConst.OrderFilterReStream;
+    private int order = SlardarOrderConst.WebFilterReStream;
 
     @Getter @Setter
     private RequestResponseLogging requestResponseLogging;

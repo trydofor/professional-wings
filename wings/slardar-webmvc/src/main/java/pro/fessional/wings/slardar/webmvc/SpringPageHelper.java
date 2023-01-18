@@ -26,9 +26,9 @@ public class SpringPageHelper {
     @NotNull
     public static Sort from(String sort) {
         if (sort == null || sort.isEmpty()) return Sort.unsorted();
-        final List<PageUtil.By> sb = PageUtil.sort(sort);
-        List<Sort.Order> ods = new ArrayList<>(sb.size());
-        for (PageUtil.By by : sb) {
+        final List<PageUtil.By> bys = PageUtil.sort(sort);
+        List<Sort.Order> ods = new ArrayList<>(bys.size());
+        for (PageUtil.By by : bys) {
             if (by.asc) {
                 ods.add(Sort.Order.asc(by.key));
             } else {

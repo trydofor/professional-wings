@@ -8,13 +8,14 @@ import ch.qos.logback.core.ConsoleAppender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
+import pro.fessional.wings.silencer.spring.prop.SilencerAutoLogProp;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
-import pro.fessional.wings.silencer.spring.prop.SilencerMiranaProp;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,10 +33,9 @@ public class SilencerAutoLogConfiguration {
 
     @Bean
     @ConditionalOnClass(ConsoleAppender.class)
-    public CommandLineRunner runnerSilenceLogbackConsole(SilencerMiranaProp prop) {
+    public CommandLineRunnerOrdered runnerSilenceLogbackConsole(SilencerAutoLogProp autoLog) {
         log.info("SilencerCurse spring-runs runnerSilenceLogbackConsole");
-        return args -> {
-            final SilencerMiranaProp.AutoLog autoLog = prop.getAutoLog();
+        return new CommandLineRunnerOrdered(WingsBeanOrdered.Lv1Config, args -> {
             final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
             final Set<String> targets = autoLog.getTarget();
             final Set<String> exists = autoLog.getExists();
@@ -76,6 +76,6 @@ public class SilencerAutoLogConfiguration {
             for (Appender<ILoggingEvent> appender : appenders) {
                 appender.addFilter(tft);
             }
-        };
+        });
     }
 }

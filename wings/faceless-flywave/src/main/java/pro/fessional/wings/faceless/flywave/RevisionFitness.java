@@ -58,23 +58,25 @@ public class RevisionFitness {
         }
     }
 
-    public void checkRevision(SchemaRevisionManager revisionManager) {
+    public void checkRevision(SchemaRevisionManager revisionManager, boolean autoInit) {
         revisionManager.askWay(it -> true);
         revisionManager.logWay((s, s2) -> {});
         final TreeMap<Long, Set<Act>> revi = checkUnapply(revisionManager);
-        applyRevision(revisionManager, revi);
+        applyRevision(revisionManager, revi, autoInit);
     }
 
-    private void applyRevision(SchemaRevisionManager manager, TreeMap<Long, Set<Act>> revi) {
+    private void applyRevision(SchemaRevisionManager manager, TreeMap<Long, Set<Act>> revi, boolean autoInit) {
         TreeMap<Long, Set<String>> exec = new TreeMap<>();
         boolean failed = false;
         if (revi.containsKey(UnInit)) {
             for (Set<Act> at : revi.values()) {
-                if (at.contains(Act.EXEC)) {
-                    throw new IllegalStateException("Wings flywave revision is NOT existed, you can,"
-                                                    + "\n1.stop checker: spring.wings.faceless.flywave.enabled.checker=false"
-                                                    + "\n2.revision fitness do NOT set EXEC"
-                                                    + "\n3.init flywave revision manually");
+                if (!autoInit && at.contains(Act.EXEC)) {
+                    throw new IllegalStateException("\nWings `flywave revision` do NOT exist, and Auto Init is dangerous, you can,"
+                                                    + "\n1.stop checker: `spring.wings.faceless.flywave.enabled.checker=false`"
+                                                    + "\n2.revision fitness do NOT contain `EXEC`"
+                                                    + "\n3.init `flywave revision` manually"
+                                                    + "\n4.auto-init: `wings.faceless.flywave.auto-init=true` At Your Own Risk"
+                                                    + "\n");
                 }
             }
             revi.remove(UnInit);

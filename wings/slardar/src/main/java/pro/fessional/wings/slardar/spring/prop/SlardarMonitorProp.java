@@ -5,7 +5,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import pro.fessional.wings.slardar.monitor.metric.JvmMetric;
 import pro.fessional.wings.slardar.monitor.metric.LogMetric;
 import pro.fessional.wings.slardar.monitor.viewer.LogConf;
-import pro.fessional.wings.slardar.notice.DingTalkNotice;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -65,27 +64,14 @@ public class SlardarMonitorProp {
     private JvmMetric.Rule jvm = new JvmMetric.Rule();
 
     /**
-     * 钉钉通知设置
-     *
-     * @see #Key$dingTalk
-     */
-    public static final String Key$dingTalk = DingTalkConf.Key;
-    private DingTalkConf dingTalk = new DingTalkConf();
-
-
-    /**
      * @see #Key$view
      */
     private LogConf view = null;
     public static final String Key$view = LogConf.Key;
 
-
-    public static class DingTalkConf extends DingTalkNotice.Conf {
-        public static final String Key = SlardarMonitorProp.Key + ".ding-talk";
-        public static final String Key$webhookUrl = Key + ".webhook-url";
-        public static final String Key$accessToken = Key + ".access-token";
-        public static final String Key$digestSecret = Key + ".digest-secret";
-        public static final String Key$noticeKeyword = Key + ".notice-keyword";
-        public static final String Key$noticeMobiles = Key + ".notice-mobiles";
-    }
+    /**
+     * @see #Key$dingNotice
+     */
+    private String dingNotice = "monitor";
+    public static final String Key$dingNotice = Key + ".ding-notice";
 }

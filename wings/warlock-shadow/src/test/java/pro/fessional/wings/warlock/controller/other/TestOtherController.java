@@ -27,7 +27,7 @@ public class TestOtherController {
 
     @RequestMapping("/test/code-exception.json")
     public String codeException() {
-        ArgsAssert.isTrue(true,CommonErrorEnum.AssertEmpty1,"args");
+        ArgsAssert.isTrue(true, CommonErrorEnum.AssertEmpty1, "args");
         throw new CodeException(false, CommonErrorEnum.AssertEmpty1, "test");
     }
 
@@ -58,8 +58,9 @@ public class TestOtherController {
     protected WatchingService watchingService;
 
     @RequestMapping("/test/watching.json")
-    public R<?> watching() {
+    public R<?> watching() throws InterruptedException {
         watchingService.asyncWatch();
+        watchingService.asyncAwait();
         watchingService.normalFetch();
         watchingService.errorFetch();
         return R.ok();

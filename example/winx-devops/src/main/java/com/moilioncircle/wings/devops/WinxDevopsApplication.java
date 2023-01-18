@@ -3,13 +3,13 @@ package com.moilioncircle.wings.devops;
 import de.codecentric.boot.admin.server.config.EnableAdminServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
+import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
 import pro.fessional.wings.slardar.webmvc.RequestMappingHelper;
 
 import java.util.Arrays;
@@ -31,8 +31,8 @@ public class WinxDevopsApplication {
 
     @Bean
     @Lazy
-    public CommandLineRunner runnerListAllBeans(ApplicationContext ctx) {
-        return args -> {
+    public CommandLineRunnerOrdered runnerListAllBeans(ApplicationContext ctx) {
+        return new CommandLineRunnerOrdered(-1, args -> {
             log.info("===============");
             String[] beanNames = ctx.getBeanDefinitionNames();
             Arrays.sort(beanNames);
@@ -51,6 +51,6 @@ public class WinxDevopsApplication {
                 log.info(info);
             }
 
-        };
+        });
     }
 }

@@ -39,7 +39,7 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
     private final SlardarRighterProp prop;
 
     @Getter @Setter
-    private int order = SlardarOrderConst.OrderRighterInterceptor;
+    private int order = SlardarOrderConst.MvcRighterInterceptor;
 
     /**
      * 根据 HttpSession 获得用户加密的密码

@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.project.ProjectJooqGenerator;
 import pro.fessional.wings.faceless.project.ProjectSchemaManager;
+import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 
 /**
@@ -20,8 +21,10 @@ import pro.fessional.wings.faceless.project.ProjectSchemaManager;
         "spring.datasource.password=" + TinyTaskCodeGenTest.PASS,
         "spring.wings.faceless.flywave.enabled.module=true",
         "spring.wings.faceless.flywave.enabled.checker=false",
+        "wings.tiny.task.enabled.autorun=false",
         "debug = true"
 })
+@Disabled("手动执行")
 public class TinyTaskCodeGenTest {
 
     public static final String JDBC = "jdbc:mysql://localhost:3306/wings_radiant?connectionTimeZone=%2B08:00&forceConnectionTimeZoneToSession=true";
@@ -33,29 +36,30 @@ public class TinyTaskCodeGenTest {
     private SchemaRevisionManager schemaRevisionManager;
 
     @Test
-    @Disabled
     void initAll() {
         initMaster();
         genJooq();
     }
 
     @Test
-    @Disabled
     void initMaster() {
         final ProjectSchemaManager manager = new ProjectSchemaManager(schemaRevisionManager);
-        manager.mergeForceApply(true,
-                hp -> hp.master().exclude(2020_1023_01)
-        );
+        final FlywaveRevisionScanner.Helper helper = FlywaveRevisionScanner.helper();
+        helper.master().exclude(2020_1023_01);
+        manager.downThenMergePublish(helper.scan(), 0, 2020_1026_01L);
+
+//        manager.mergeForceApply(true,
+//                hp -> hp.master().exclude(2020_1023_01)
+//        );
     }
 
     @Test
-    @Disabled
     public void genJooq() {
         ProjectJooqGenerator generator = new ProjectJooqGenerator();
         generator.setTargetDir(BASE + "tiny-task/src/main/java/");
         generator.setTargetPkg("pro.fessional.wings.tiny.task.database.autogen");
         generator.gen(JDBC, USER, PASS,
-                bd -> bd.databaseIncludes("win_task_delayed"),
+                bd -> bd.databaseIncludes("win_task_define", "win_task_result"),
                 bd -> bd.setGlobalSuffix("TinyTask"));
     }
 

@@ -79,10 +79,11 @@ public class TableCudListener extends DefaultVisitListener {
                         , new RuntimeException("debug for call stack"));
             }
             else {
-                log.warn(">>> clauseStart Clause=" + clause + ", Query=" + clz);
+                log.warn(">>> clauseStart Clause={}, Query={}", clause, clz);
             }
         }
 
+        if (handlers.isEmpty() || tableField.isEmpty()) return;
         if (context.renderContext() == null) return;
 
         final Clause clause = context.clause();
@@ -122,12 +123,14 @@ public class TableCudListener extends DefaultVisitListener {
             final String clz = scn(context.queryPart());
             final Clause clause = context.clause();
             if (clause == Clause.INSERT || clause == Clause.UPDATE || clause == Clause.DELETE) {
-                log.warn("<<< clauseEnd   Clause=" + clause + ", Query=" + clz + "\n\n");
+                log.warn("<<< clauseEnd   Clause={}, Query={}\n\n", clause, clz);
             }
             else {
-                log.warn(">>> clauseStart Clause=" + clause + ", Query=" + clz);
+                log.warn(">>> clauseStart Clause={}, Query={}", clause, clz);
             }
         }
+
+        if (handlers.isEmpty() || tableField.isEmpty()) return;
 
         final Cud cud = (Cud) context.data(ContextKey.EXECUTING_VISIT_CUD);
         if (cud == null) return;
@@ -161,7 +164,7 @@ public class TableCudListener extends DefaultVisitListener {
                 if (!field.isEmpty()) {
                     msg.append(", field=");
                     for (Map.Entry<String, List<?>> en : field.entrySet()) {
-                        msg.append(",").append(en.getKey()).append(":").append(en.getValue());
+                        msg.append(',').append(en.getKey()).append(':').append(en.getValue());
                     }
                 }
                 log.error(msg.toString(), e);

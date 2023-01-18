@@ -1,0 +1,29 @@
+{
+  "method": "truck.quotes",
+  "version":"1.0",
+  "app_id":"33781697",
+  "request_id":"1234121234123",
+  "data": {
+    "delivery": {
+      "name": "bb",
+      "placeId": "ChIJaaVUOST-kFQRowwW6fiOX28",
+      "accessorials": [
+        "appointment",
+        "tradeshow"
+      ],
+      "phoneNumber": "9092827930",
+      "street": "1222 83rd Street Court East",
+      "city": "Tacoma",
+      "state": "WA",
+      "zip": "98404",
+      "referenceNumber": "",
+      "notes": "",
+      "subStreet": "",
+      "openTime": "0900",
+      "closeTime": "1545"
+    },
+    "pickupDate": "2022-11-02 09:30:00",
+    "customerNumber": "206467069066101",
+    "declaredFreightValue": "150"
+  }
+}

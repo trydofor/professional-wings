@@ -403,13 +403,13 @@ class SchemaJournalManager(
             }
 
             if (olds.get() == null) {
-                interactive.log(WARN, here, "skip template not found, table=$table, db=$plainName")
+                interactive.log(WARN, here, "skip template not found, checkAndInitDdl first, table=$table, db=$plainName")
                 continue
             }
 
             val (tmplTbl, tmplTrg, applyDt) = olds.get()
             if (tmplTbl.isBlank() || tmplTrg.isBlank()) {
-                interactive.log(WARN, here, "skip blank template,table=$table, db=$plainName")
+                interactive.log(WARN, here, "skip blank template, table=$table, db=$plainName")
                 continue
             }
 

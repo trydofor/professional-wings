@@ -14,7 +14,6 @@ import pro.fessional.wings.slardar.event.tweak.TweakStackEvent;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -68,7 +67,7 @@ public class TweakEventListener implements TerminalContext.Listener {
                 conf.clock = Clock.offset(ThreadNow.TweakClock.defaultValue(true), Duration.ofMillis(offset));
             }
             else {
-                conf.clock = Clock.fixed(Instant.ofEpochMilli(offset), ZoneId.systemDefault());
+                conf.clock = Clock.fixed(Instant.ofEpochMilli(offset), ThreadNow.sysZoneId());
             }
         }
     }

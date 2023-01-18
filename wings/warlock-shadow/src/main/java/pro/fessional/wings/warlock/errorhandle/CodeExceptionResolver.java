@@ -6,10 +6,10 @@ import org.springframework.core.annotation.Order;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.pain.HttpStatusException;
-import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
 import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
 import pro.fessional.wings.slardar.webmvc.MessageExceptionResolver;
 import pro.fessional.wings.slardar.webmvc.MessageResponse;
+import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 
 import java.util.Locale;
 
@@ -18,7 +18,7 @@ import java.util.Locale;
  * @since 2021-03-25
  */
 @Slf4j
-@Order(WingsBeanOrdered.BaseLine)
+@Order(WarlockOrderConst.CodeExceptionResolver)
 public class CodeExceptionResolver extends MessageExceptionResolver<CodeException> {
 
     private final MessageSource messageSource;

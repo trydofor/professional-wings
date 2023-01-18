@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pro.fessional.wings.silencer.encrypt.SecretProvider;
 import pro.fessional.wings.slardar.servlet.cookie.WingsCookieFilter;
 import pro.fessional.wings.slardar.servlet.cookie.WingsCookieInterceptor;
 import pro.fessional.wings.slardar.servlet.cookie.impl.WingsCookieInterceptorImpl;
@@ -30,11 +31,9 @@ public class SlardarCookieConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarCookieConfiguration.class);
 
-    private final SlardarCookieProp slardarCookieProp;
-
     @Bean
-    public WingsCookieInterceptor wingsCookieInterceptor() {
-        final String aesKey = slardarCookieProp.getAesKey();
+    public WingsCookieInterceptor wingsCookieInterceptor(SlardarCookieProp slardarCookieProp) {
+        final String aesKey = SecretProvider.get(SecretProvider.Cookie, false);
         if (aesKey != null && aesKey.length() > 5) {
             log.info("SlardarWebmvc spring-bean wingsCookieInterceptor, key=" + aesKey.substring(0, 5) + "...");
         }

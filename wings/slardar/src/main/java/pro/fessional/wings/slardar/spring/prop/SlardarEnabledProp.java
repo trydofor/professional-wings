@@ -150,6 +150,13 @@ public class SlardarEnabledProp {
     public static final String Key$number = Key + ".number";
 
     /**
+     * 是否开启wings的jackson对Resource序列化成可读性好的URL
+     * @see #Key$resource
+     */
+    private boolean resource = true;
+    public static final String Key$resource = Key + ".resource";
+
+    /**
      * 是否配置undertow ws for UT026010: Buffer pool
      *
      * @see #Key$undertowWs

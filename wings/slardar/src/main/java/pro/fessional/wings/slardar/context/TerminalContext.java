@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.best.DummyBlock;
 import pro.fessional.mirana.best.TypedKey;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.security.DefaultUserId;
 
 import java.time.ZoneId;
@@ -27,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author trydofor
  * @since 2019-11-25
+ * @see <a href="https://github.com/alibaba/transmittable-thread-local/blob/master/docs/developer-guide.md#-%E6%A1%86%E6%9E%B6%E4%B8%AD%E9%97%B4%E4%BB%B6%E9%9B%86%E6%88%90ttl%E4%BC%A0%E9%80%92">框架中间件集成ttl传递</a>
  */
 public class TerminalContext {
 
@@ -38,7 +40,7 @@ public class TerminalContext {
 
     private static volatile boolean Active;
     @NotNull
-    private static volatile TimeZone DefaultTimeZone = TimeZone.getDefault();
+    private static volatile TimeZone DefaultTimeZone = ThreadNow.sysTimeZone();
     @NotNull
     private static volatile Locale DefaultLocale = Locale.getDefault();
 
@@ -315,7 +317,7 @@ public class TerminalContext {
     }
 
     public static class Builder {
-        private long userId;
+        private long userId = Null.userId;
         private Locale locale;
         private TimeZone timeZone;
         private Enum<?> authType;
@@ -409,6 +411,9 @@ public class TerminalContext {
         }
 
         public Context build() {
+            if (userId == Null.userId) {
+                throw new IllegalArgumentException("invalid userid");
+            }
             return new Context(userId, locale, timeZone, terminal, authType, authPerm);
         }
     }

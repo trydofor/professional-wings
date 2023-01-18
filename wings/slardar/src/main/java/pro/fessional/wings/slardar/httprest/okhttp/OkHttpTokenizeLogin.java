@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.httprest.okhttp;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -12,8 +13,6 @@ import okhttp3.ResponseBody;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.wings.slardar.jackson.JacksonHelper;
-
-import java.util.Map;
 
 /**
  * 传统的Form登录
@@ -136,8 +135,8 @@ public class OkHttpTokenizeLogin implements OkHttpTokenClient.Tokenize {
     protected String parseBody(String str) {
         if (str == null) return null;
         if (headerAccept.contains("json") || headerAccept.contains("xml")) {
-            final Map<?, ?> map = JacksonHelper.object(str, Map.class);
-            return (String) map.get(headerAuth);
+            final JsonNode node = JacksonHelper.object(str);
+            return JacksonHelper.getString(node, headerAuth, null);
         }
         else {
             return null;

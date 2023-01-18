@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.autozone;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.time.DateLocaling;
 import pro.fessional.mirana.time.DateParser;
+import pro.fessional.mirana.time.ThreadNow;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -35,7 +36,7 @@ public class AutoZoneUtil {
 
         // ② 变为System时区
         if (autoType == AutoZoneType.Auto || autoType == AutoZoneType.System) {
-            return zdt.withZoneSameInstant(ZoneId.systemDefault());
+            return zdt.withZoneSameInstant(ThreadNow.sysZoneId());
         }
 
         return zdt;
@@ -64,7 +65,7 @@ public class AutoZoneUtil {
             return dateTime.withZoneSameInstant(client.get());
         }
         else if (autoType == AutoZoneType.System) {
-            return dateTime.withZoneSameInstant(ZoneId.systemDefault());
+            return dateTime.withZoneSameInstant(ThreadNow.sysZoneId());
         }
 
         return dateTime;
@@ -76,7 +77,7 @@ public class AutoZoneUtil {
             return dateTime.atZoneSameInstant(client.get()).toOffsetDateTime();
         }
         else if (autoType == AutoZoneType.System) {
-            return dateTime.atZoneSameInstant(ZoneId.systemDefault()).toOffsetDateTime();
+            return dateTime.atZoneSameInstant(ThreadNow.sysZoneId()).toOffsetDateTime();
         }
 
         return dateTime;

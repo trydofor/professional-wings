@@ -77,7 +77,7 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
     }
 
     @Getter @Setter
-    private int order = SlardarOrderConst.OrderTerminalInterceptor;
+    private int order = SlardarOrderConst.MvcTerminalInterceptor;
 
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request,

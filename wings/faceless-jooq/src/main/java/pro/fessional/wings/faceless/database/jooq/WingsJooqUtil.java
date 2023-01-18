@@ -55,6 +55,24 @@ public class WingsJooqUtil extends DSL {
         }
     }
 
+    /**
+     * CONCAT_WS(separator,str1,str2,...)
+     */
+    @SuppressWarnings("all")
+    public static Field<String> concatWs(String separator, Object... vals) {
+        final StringBuilder sb = new StringBuilder("CONCAT_WS({0}");
+        final int len = vals.length;
+        final Object[] objs = new Object[len + 1];
+        objs[0] = separator;
+        for (int i = 0; i < len; i++) {
+            sb.append(',').append('{').append(i + 1).append('}');
+        }
+        sb.append(')');
+        System.arraycopy(vals, 0, objs, 1, len);
+        final Field<?> fld = (Field<?>) DSL.field(sb.toString(), objs);
+        return (Field<String>) fld;
+    }
+
     ///////////////// replace into /////////////////////
 
     /**
@@ -88,6 +106,23 @@ public class WingsJooqUtil extends DSL {
     }
 
     ///////////////// Condition /////////////////////
+
+    /**
+     * MATCH (a) AGAINST ('abc')
+     */
+    public static Condition condMatch(String against, Field<?>... fields) {
+        final int len = fields.length;
+        Field<?>[] vals = new Field<?>[len + 1];
+        System.arraycopy(fields, 0, vals, 0, len);
+        vals[len] = DSL.val(against);
+        StringBuilder sb = new StringBuilder("MATCH(");
+        for (int i = 0; i < len; i++) {
+            sb.append('{').append(i).append('}').append(',');
+        }
+        sb.setLength(sb.length() - 1);
+        sb.append(") AGAINST({").append(len).append("})");
+        return DSL.condition(sb.toString(), vals);
+    }
 
     /**
      * 若 value.isEmpty，则返回NoCondition，否则返回eq NotNull

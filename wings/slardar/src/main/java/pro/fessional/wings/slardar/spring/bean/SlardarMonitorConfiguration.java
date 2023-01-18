@@ -1,7 +1,6 @@
 package pro.fessional.wings.slardar.spring.bean;
 
 import lombok.Setter;
-import okhttp3.OkHttpClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
@@ -57,16 +56,10 @@ public class SlardarMonitorConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public DingTalkNotice dingTalkNotice(OkHttpClient okHttpClient) {
-        log.info("Slardar spring-bean dingTalkNotice");
-        return new DingTalkNotice(okHttpClient);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
     public DingTalkReport dingTalkReport(DingTalkNotice dingTalkNotice) {
-        log.info("Slardar spring-bean dingTalkReport");
-        return new DingTalkReport(slardarMonitorProp.getDingTalk(), dingTalkNotice);
+        final String name = slardarMonitorProp.getDingNotice();
+        log.info("Slardar spring-bean dingTalkReport, conf=" + name);
+        return new DingTalkReport(dingTalkNotice, name);
     }
 
     @Bean

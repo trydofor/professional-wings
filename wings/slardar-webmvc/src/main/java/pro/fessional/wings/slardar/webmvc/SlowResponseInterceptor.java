@@ -33,7 +33,7 @@ public class SlowResponseInterceptor implements AutoRegisterInterceptor {
     private BiConsumer<Long, HttpServletRequest> costAndReqConsumer = (c, r) -> log.warn("SLOW-RES cost={}ms, uri={}", c, r.getRequestURI());
 
     @Getter @Setter
-    private int order = SlardarOrderConst.OrderSlowResponseInterceptor;
+    private int order = SlardarOrderConst.MvcSlowResponseInterceptor;
 
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request,
@@ -41,7 +41,7 @@ public class SlowResponseInterceptor implements AutoRegisterInterceptor {
                              @NotNull Object handler) {
         if (thresholdMillis < 0) return true;
 
-        final Watch watch = Watches.acquire().start(request.getRequestURI());
+        final Watch watch = Watches.acquire(request.getRequestURI());
         request.setAttribute(SlardarServletConst.AttrStopWatch, watch);
 
         return true;

@@ -2,12 +2,15 @@ package pro.fessional.wings.slardar.httprest.okhttp;
 
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Interceptor;
+import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.logging.HttpLoggingInterceptor.Level;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.logging.LogLevel;
+import pro.fessional.mirana.time.StopWatch;
 import pro.fessional.wings.silencer.tweak.TweakLogger;
+import pro.fessional.wings.silencer.watch.Watches;
 
 import java.io.IOException;
 import java.util.EnumMap;
@@ -96,7 +99,21 @@ public class OkHttpTweakLogInterceptor implements OkHttpInterceptor {
     public Response intercept(@NotNull Interceptor.Chain chain) throws IOException {
         final LogLevel lvl = TweakLogger.currentLevel(log.getName());
         final HttpLoggingInterceptor itc = mapping.get(lvl);
-        return itc.intercept(chain);
+
+        final StopWatch current = Watches.current();
+        if (current == null) {
+            return itc.intercept(chain);
+        }
+
+        //
+        final Request request = chain.request();
+        final String name = "OkHttp " + request.method() + " " + request.url();
+        try (StopWatch.Watch watch = current.start(name)) {
+            return itc.intercept(chain);
+        }
+        finally {
+            Watches.release(true, null);
+        }
     }
 
     @Override

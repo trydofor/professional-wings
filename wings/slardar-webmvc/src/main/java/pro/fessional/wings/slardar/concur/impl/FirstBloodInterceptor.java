@@ -24,7 +24,7 @@ public class FirstBloodInterceptor implements AutoRegisterInterceptor {
     private final List<FirstBloodHandler> handlers;
 
     @Getter @Setter
-    private int order = SlardarOrderConst.OrderFirstBloodInterceptor;
+    private int order = SlardarOrderConst.MvcFirstBloodInterceptor;
 
     public FirstBloodInterceptor(List<FirstBloodHandler> handlers) {
         this.handlers = handlers;

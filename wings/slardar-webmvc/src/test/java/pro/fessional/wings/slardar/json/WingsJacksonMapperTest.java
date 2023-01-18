@@ -6,25 +6,29 @@ import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
+import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.silencer.datetime.DateTimePattern;
+import pro.fessional.wings.silencer.encrypt.Aes256Provider;
+import pro.fessional.wings.silencer.encrypt.SecretProvider;
 import pro.fessional.wings.slardar.autodto.AutoI18nString;
 import pro.fessional.wings.slardar.context.TerminalContext;
-import pro.fessional.wings.slardar.jackson.AesStringDeserializer;
-import pro.fessional.wings.slardar.jackson.AesStringSerializer;
+import pro.fessional.wings.slardar.jackson.AesString;
 import pro.fessional.wings.slardar.jackson.StringMapGenerator;
 import pro.fessional.wings.slardar.jackson.StringMapHelper;
 
@@ -36,7 +40,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -49,6 +52,8 @@ import java.util.TimeZone;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.MaskingValue;
 import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAddr;
 import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgent;
 
@@ -132,7 +137,7 @@ public class WingsJacksonMapperTest {
 
     @Test
     public void testEquals() throws IOException {
-        log.info("=== ZoneId= " + ZoneId.systemDefault());
+        log.info("=== ZoneId= " + ThreadNow.sysZoneId());
         JsonIt it = new JsonIt();
         log.info("===== to string ======");
         log.info("it={}", it);
@@ -440,25 +445,53 @@ public class WingsJacksonMapperTest {
         assertEquals("{\"numLong\":10000,\"numInt\":10000,\"numDouble\":3.14159,\"numDecimal\":2.71828}", s2);
     }
 
+
+
+    @Test
+    public void testResource() throws JsonProcessingException {
+        Map<String, Resource> res = new HashMap<>();
+        res.put("wings-jackson-79.properties", new ClassPathResource("wings-conf/wings-jackson-79.properties"));
+        final String json = objectMapper.writeValueAsString(res);
+        Assertions.assertEquals("{\"wings-jackson-79.properties\":\"classpath:wings-conf/wings-jackson-79.properties\"}", json);
+    }
+
     @Data
     public static class Aes256String {
-        @JsonSerialize(using = AesStringSerializer.class)
-        @JsonDeserialize(using = AesStringDeserializer.class)
+        @AesString
         private String aes256;
+        @AesString(SecretProvider.Config)
+        private String aes256Config;
+        @AesString(value = "unknown", misfire = AesString.Misfire.Masks)
+        private String aes256Mask;
+        @AesString(value = "unknown", misfire = AesString.Misfire.Empty)
+        private String aes256Empty;
     }
+
 
     @Test
     public void testAes256String() throws JsonProcessingException {
         Aes256String aes = new Aes256String();
         final String txt = "1234567890";
         aes.setAes256(txt);
+        aes.setAes256Config(txt);
+        aes.setAes256Mask(txt);
+        aes.setAes256Empty(txt);
 
-        NumberAsNumber nan = new NumberAsNumber();
         String s1 = objectMapper.writeValueAsString(aes);
+        log.info(s1);
+
         Aes256String aes2 = objectMapper.readValue(s1, Aes256String.class);
 
-        log.info(s1);
-        assertEquals(aes, aes2);
+        final String as = Aes256Provider.system().encode64(txt);
+        final String ac = Aes256Provider.config().encode64(txt);
+
+        assertTrue(s1.contains(as));
+        assertTrue(s1.contains(ac));
+        assertTrue(s1.contains(MaskingValue));
         assertFalse(s1.contains(txt));
+
+        aes.setAes256Mask(MaskingValue);
+        aes.setAes256Empty(Null.Str);
+        assertEquals(aes, aes2);
     }
 }

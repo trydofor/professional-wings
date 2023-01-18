@@ -38,7 +38,7 @@ public class SlardarCookieProp {
     public static final String Key$alias = Key + ".alias";
 
     /**
-     * cookie编码，默认b64(base64)，可选aes(aes128)和noop(不加密)
+     * cookie编码，默认b64(base64)，可选aes(aes256)和noop(不加密)
      *
      * @see #Key$coder
      */
@@ -62,12 +62,6 @@ public class SlardarCookieProp {
      */
     private Set<String> aes = Collections.emptySet();
     public static final String Key$aes = Key + ".aes";
-
-    /**
-     * @see #Key$aesKey
-     */
-    private String aesKey = "";
-    public static final String Key$aesKey = Key + ".aes-key";
 
     /**
      * http only，js不可读取

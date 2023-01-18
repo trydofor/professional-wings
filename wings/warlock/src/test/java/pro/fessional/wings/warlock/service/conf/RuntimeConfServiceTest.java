@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
+import pro.fessional.wings.silencer.modulate.RunMode;
 import pro.fessional.wings.slardar.cache.WingsCacheHelper;
 import pro.fessional.wings.warlock.caching.CacheConst;
 import pro.fessional.wings.warlock.service.conf.impl.RuntimeConfServiceImpl;
-import pro.fessional.wings.warlock.service.conf.mode.RunMode;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
