@@ -415,7 +415,7 @@ public class TableCudListener extends DefaultVisitListener {
     }
 
     @Nullable
-    private String scn(Object obj) {
+    private String scn(QueryPart obj) {
         if (obj == null) return null;
 
         if (obj instanceof TableImpl) {

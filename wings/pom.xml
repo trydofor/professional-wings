@@ -49,10 +49,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.google.errorprone</groupId>
-            <artifactId>error_prone_annotations</artifactId>
-        </dependency>
         <!-- dev tools-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

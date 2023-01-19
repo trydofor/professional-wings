@@ -27,12 +27,6 @@
             <artifactId>hazelcast-spring</artifactId>
             <version>${hazelcast.version}</version>
         </dependency>
-        <!-- jdbc -->
-        <dependency>
-            <groupId>org.jdbi</groupId>
-            <artifactId>jdbi3-core</artifactId>
-            <version>${jdbi.version}</version>
-        </dependency>
         <!-- utils -->
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -102,11 +96,6 @@
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>${annotations.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.errorprone</groupId>
-            <artifactId>error_prone_annotations</artifactId>
-            <version>${errorprone.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>

@@ -47,7 +47,7 @@ public class FacelessJooqConfiguration {
 
     /**
      * workaround before Version 3.14.0
-     * still opening, maybe 3.16.0 checked on 2021-06-06
+     * still opening, maybe 3.18.0 checked on 2023-01-18
      *
      * @link https://github.com/jOOQ/jOOQ/issues/8893
      * @link https://github.com/jOOQ/jOOQ/issues/9055

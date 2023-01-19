@@ -14,12 +14,12 @@ Help Yourself, Check [Commits]
 - Jakarta EE 9+
 - java 17
 
-## 2.7.x Planning
+## 2.7.7.220-SNAPSHOT [Current]
 
 - [spring-boot 2.7.x] 💥 OkHttp, Hazelcast, Cache2k
 - [jooq 3.16.x] 💥 VisitListener QOM
 
-## 2.6.6.210-SNAPSHOT [Current]
+## 2.6.6.210-SNAPSHOT [History]
 
 - java 11
 
