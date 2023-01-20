@@ -58,7 +58,7 @@
         <!-- override spring boot default -->
         <java.version>11</java.version>
         <kotlin.version>1.6.21</kotlin.version>
-        <jooq.version>3.14.16</jooq.version> <!-- https://www.jooq.org/download/ 3.17:java17; 3.16.13:java11 -->
+        <jooq.version>3.14.16</jooq.version> <!-- https://www.jooq.org/download/ 3.17:java17; 3.16:java11 -->
         <okhttp.version>4.10.0</okhttp.version>
         <jackson-bom.version>2.14.1</jackson-bom.version> <!-- https://github.com/FasterXML/jackson-modules-java8/issues/230 -->
         <snakeyaml.version>1.33</snakeyaml.version> <!-- https://github.com/apache/shardingsphere/issues/21476 until boot3 -->

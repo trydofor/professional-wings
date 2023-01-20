@@ -288,7 +288,7 @@ public class TableCudListener extends DefaultVisitListener {
                 context.data(ContextKey.EXECUTING_WHERE_KEY, null);
             }
         }
-        // 3.16后使用QOM，3.14为query instanceof Keyword
+        // 3.14为query instanceof Keyword
         else if ((clause == Clause.CONDITION_COMPARISON || clause == Clause.CONDITION_IN) && query instanceof Keyword) {
             if (context.data(ContextKey.EXECUTING_WHERE_KEY) == null) {
                 log.debug("skip comparison without where-key or careless");
@@ -308,6 +308,17 @@ public class TableCudListener extends DefaultVisitListener {
                 log.debug("skip comparison. key={}", cmp);
             }
         }
+        // 3.16 使用QOM
+//        else if ((clause == Clause.CONDITION_COMPARISON || clause == Clause.CONDITION_IN)) {
+//            if (query instanceof QOM.Eq || query instanceof QOM.Ge || query instanceof QOM.Le) {
+//                log.debug("handle comparison. key={}", query);
+//                context.data(ContextKey.EXECUTING_WHERE_CMP, WHERE_EQ);
+//            }
+//            else if (query instanceof QOM.In || query instanceof QOM.InList) {
+//                log.debug("handle comparison. key=in");
+//                context.data(ContextKey.EXECUTING_WHERE_CMP, WHERE_IN);
+//            }
+//        }
         else if (clause == Clause.FIELD_VALUE && query instanceof Param) {
             final String fd = (String) context.data(ContextKey.EXECUTING_WHERE_KEY);
             if (fd == null) {
