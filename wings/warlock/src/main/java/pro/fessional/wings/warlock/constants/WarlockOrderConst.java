@@ -21,9 +21,8 @@ public interface WarlockOrderConst extends WingsBeanOrdered {
     int JustAuthConfiguration = Lv4Application + Pr4Warlock;
     int OauthTicketConfiguration = Lv4Application + Pr4Warlock;
     int OtherBeanConfiguration = Lv4Application + Pr4Warlock;
-    int SecurityAutoConfiguration = Lv4Application + Pr4Warlock;
     int SecurityBeanConfiguration = Lv4Application + Pr4Warlock;
-    int SecurityConfConfiguration = Lv4Application + Pr4Warlock;
+    int SecurityConfConfiguration = Lv4Application + Pr4Warlock + 1000;
     int Watching2Configuration = Lv4Application + Pr4Warlock;
 
     // ///////// Beans /////////
@@ -48,6 +47,7 @@ public interface WarlockOrderConst extends WingsBeanOrdered {
     int SecurityBindHttp = Lv4Application + Pr4Warlock + 200;
     int SecurityAuthHttp = Lv4Application + Pr4Warlock + 300;
     int SecurityAutoHttp = Lv4Application + Pr4Warlock + 400;
+    int SecurityFilterChain = Lv4Application + Pr4Warlock + 900;
 
     int CodeExceptionResolver = WebSimpleExceptionResolver + 100;
     int DefaultExceptionResolver = WebSimpleExceptionResolver + 900;

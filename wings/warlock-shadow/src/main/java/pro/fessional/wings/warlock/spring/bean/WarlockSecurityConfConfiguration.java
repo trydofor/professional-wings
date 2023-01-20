@@ -12,12 +12,14 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
@@ -25,7 +27,7 @@ import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.spring.conf.WingsHttpPermitConfigurer;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
-import pro.fessional.wings.warlock.spring.bean.WarlockSecurityAutoConfiguration.HttpSecurityCustomizer;
+import pro.fessional.wings.warlock.spring.conf.HttpSecurityCustomizer;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
@@ -225,5 +227,55 @@ public class WarlockSecurityConfConfiguration {
                 log.info("WarlockShadow conf HttpSecurity, csrf " + ct.getClass().getName());
             }
         };
+    }
+
+    /**
+     * The URL paths provided by the framework are
+     * /oauth/authorize (the authorization endpoint),
+     * /oauth/token (the token endpoint),
+     * /oauth/confirm_access (user posts approval for grants here),
+     * /oauth/error (used to render errors in the authorization server),
+     * /oauth/check_token (used by Resource Servers to decode access tokens), and
+     * /oauth/token_key (exposes public key for token verification if using JWT tokens).
+     * <p>
+     * Note: if your Authorization Server is also a Resource Server then
+     * there is another security filter chain with lower priority controlling the API resources.
+     * Fo those requests to be protected by access tokens you need their paths
+     * not to be matched by the ones in the main user-facing filter chain,
+     * so be sure to include a request matcher that picks out
+     * only non-API resources in the WebSecurityConfigurer above.
+     */
+    @Bean
+    @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpChain, havingValue = "true")
+    @Order(WarlockOrderConst.SecurityFilterChain)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, Map<String, HttpSecurityCustomizer> configures) throws Exception {
+        log.info("WarlockShadow conf securityFilterChain, begin");
+        for (Map.Entry<String, HttpSecurityCustomizer> en : configures.entrySet()) {
+            log.info("WarlockShadow conf securityFilterChain, bean=" + en.getKey());
+            en.getValue().customize(http);
+        }
+
+        final String anyRequest = securityProp.getAnyRequest();
+        if (StringUtils.hasText(anyRequest)) {
+            log.info("WarlockShadow conf securityFilterChain, anyRequest=" + anyRequest);
+            String str = anyRequest.trim();
+            if ("permitAll".equalsIgnoreCase(str)) {
+                http.authorizeRequests().anyRequest().permitAll();
+            }
+            else if ("authenticated".equalsIgnoreCase(str)) {
+                http.authorizeRequests().anyRequest().authenticated();
+            }
+            else if ("anonymous".equalsIgnoreCase(str)) {
+                http.authorizeRequests().anyRequest().anonymous();
+            }
+            else if ("fullyAuthenticated".equalsIgnoreCase(str)) {
+                http.authorizeRequests().anyRequest().fullyAuthenticated();
+            }
+            else {
+                http.authorizeRequests().anyRequest().hasAnyAuthority(str.split("[, \t\r\n]+"));
+            }
+        }
+        log.info("WarlockShadow conf securityFilterChain, done");
+        return http.build();
     }
 }

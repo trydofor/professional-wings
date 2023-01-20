@@ -4,10 +4,11 @@ import lombok.Setter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.web.SecurityFilterChain;
 import pro.fessional.wings.slardar.security.handler.TestLoginHandler;
 
 
@@ -18,7 +19,7 @@ import pro.fessional.wings.slardar.security.handler.TestLoginHandler;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class TestSecurityConfiguration {
 
     private final static Log log = LogFactory.getLog(TestSecurityConfiguration.class);
 
@@ -58,8 +59,8 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
      * so be sure to include a request matcher that picks out
      * only non-API resources in the WebSecurityConfigurer above.
      */
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         log.info("config HttpSecurity");
         http.authorizeRequests(conf -> conf
                     .antMatchers("/authed/*").authenticated()
@@ -89,6 +90,6 @@ public class TestSecurityConfiguration extends WebSecurityConfigurerAdapter {
 //            )
             .requestCache().disable()
             .csrf().disable();
-
+        return http.build();
     }
 }
