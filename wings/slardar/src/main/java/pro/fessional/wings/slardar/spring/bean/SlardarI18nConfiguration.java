@@ -4,6 +4,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
  */
 @Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
+@AutoConfigureOrder(SlardarOrderConst.I18nConfiguration)
 public class SlardarI18nConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarI18nConfiguration.class);

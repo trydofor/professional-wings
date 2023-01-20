@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.TtlMDCAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggerGroups;
@@ -31,6 +32,7 @@ import java.time.Duration;
  * @since 2022-10-27
  */
 @Configuration(proxyBeanMethods = false)
+@AutoConfigureOrder(WingsBeanOrdered.Lv5Supervisor)
 public class SilencerTweakConfiguration {
     private static final Log log = LogFactory.getLog(SilencerTweakConfiguration.class);
 

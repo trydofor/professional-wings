@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
@@ -27,6 +28,7 @@ import java.util.Map;
 @Configuration(proxyBeanMethods = false)
 @ComponentScan({"pro.fessional.wings.tiny.task.database",
                 "pro.fessional.wings.tiny.task.service"})
+@AutoConfigureOrder(WingsBeanOrdered.Lv4Application)
 public class TinyTaskConfiguration {
 
     private static final Log log = LogFactory.getLog(TinyTaskConfiguration.class);

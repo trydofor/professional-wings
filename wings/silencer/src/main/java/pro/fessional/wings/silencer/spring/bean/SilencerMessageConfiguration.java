@@ -2,12 +2,14 @@ package pro.fessional.wings.silencer.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import pro.fessional.wings.silencer.message.CombinableMessageSource;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 
@@ -20,6 +22,7 @@ import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(MessageSource.class)
 @ConditionalOnProperty(name = SilencerEnabledProp.Key$message, havingValue = "true")
+@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 public class SilencerMessageConfiguration {
 
     private static final Log log = LogFactory.getLog(SilencerMessageConfiguration.class);

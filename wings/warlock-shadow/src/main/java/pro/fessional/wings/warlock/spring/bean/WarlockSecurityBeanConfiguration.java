@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -94,6 +95,7 @@ import static org.springframework.util.StringUtils.hasText;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityBean, havingValue = "true")
 @RequiredArgsConstructor
+@AutoConfigureOrder(WarlockOrderConst.SecurityBeanConfiguration)
 public class WarlockSecurityBeanConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockSecurityBeanConfiguration.class);

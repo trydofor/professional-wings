@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -12,6 +13,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.time.DateParser;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.jackson.AutoRegisterPropertyFilter;
 import pro.fessional.wings.slardar.jackson.EmptyValuePropertyFilter;
 import pro.fessional.wings.slardar.jackson.I18nResultPropertyFilter;
@@ -30,6 +32,7 @@ import java.time.LocalDate;
 @ConditionalOnClass(DateSerializer.class)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$jackson, havingValue = "true")
 @RequiredArgsConstructor
+@AutoConfigureOrder(SlardarOrderConst.JacksonConfiguration)
 public class SlardarJacksonConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarJacksonConfiguration.class);

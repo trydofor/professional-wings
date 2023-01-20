@@ -9,36 +9,53 @@ import static pro.fessional.wings.slardar.constants.SlardarOrderConst.WebSimpleE
  * @since 2021-02-19
  */
 public interface WarlockOrderConst extends WingsBeanOrdered {
-    int SecJustAuthRequestBuilder = Lv4Application;
-    int SecJustAuthLoginPageCombo = Lv4Application;
-    int SecListAllLoginPageCombo = Lv4Application + 100;
 
-    int MemoryUserDetailsCombo = Lv3Service + 100;
-    int NonceUserDetailsCombo = Lv3Service + 200;
-    int JustAuthUserDetailsCombo = Lv3Service + 300;
-    int DefaultUserDetailsCombo = Lv3Service + 900;
+    // ///////// Configuration /////////
+    int AutoRunConfiguration = Lv4Application + Pr4Warlock;
+    int CommonConfiguration = Lv4Application + Pr4Warlock;
+    int LockBeanConfiguration = Lv4Application + Pr4Warlock;
+    int TableChangeConfiguration = Lv4Application + Pr4Warlock;
+    int WatchingConfiguration = Lv4Application + Pr4Warlock;
+    int BondAutoRunConfiguration = Lv4Application + Pr4Warlock;
+    int BondBeanConfiguration = Lv4Application + Pr4Warlock;
+    int JustAuthConfiguration = Lv4Application + Pr4Warlock;
+    int OauthTicketConfiguration = Lv4Application + Pr4Warlock;
+    int OtherBeanConfiguration = Lv4Application + Pr4Warlock;
+    int SecurityAutoConfiguration = Lv4Application + Pr4Warlock;
+    int SecurityBeanConfiguration = Lv4Application + Pr4Warlock;
+    int SecurityConfConfiguration = Lv4Application + Pr4Warlock;
+    int Watching2Configuration = Lv4Application + Pr4Warlock;
 
-    int DefaultPermRoleCombo = Lv3Service;
-    int MemoryTypedAuthzCombo = Lv3Service + 100;
+    // ///////// Beans /////////
+    int SecJustAuthRequestBuilder = Lv4Application + Pr4Warlock;
+    int SecJustAuthLoginPageCombo = Lv4Application + Pr4Warlock;
+    int SecListAllLoginPageCombo = Lv4Application + Pr4Warlock + 100;
 
-    int JustAuthUserAuthnAutoReg = Lv3Service;
-    int DefaultUserAuthnAutoReg = Lv3Service + 10;
+    int MemoryUserDetailsCombo = Lv3Service + Pr4Warlock + 100;
+    int NonceUserDetailsCombo = Lv3Service + Pr4Warlock + 200;
+    int JustAuthUserDetailsCombo = Lv3Service + Pr4Warlock + 300;
+    int DefaultUserDetailsCombo = Lv3Service + Pr4Warlock + 900;
 
-    int DefaultDaoAuthnCombo = Lv4Application;
+    int DefaultPermRoleCombo = Lv3Service + Pr4Warlock;
+    int MemoryTypedAuthzCombo = Lv3Service + Pr4Warlock + 100;
 
+    int JustAuthUserAuthnAutoReg = Lv3Service + Pr4Warlock;
+    int DefaultUserAuthnAutoReg = Lv3Service + Pr4Warlock + 10;
 
-    int SecurityHttpBase = Lv4Application + 100;
-    int SecurityBindHttp = Lv4Application + 200;
-    int SecurityAuthHttp = Lv4Application + 300;
-    int SecurityAutoHttp = Lv4Application + 400;
+    int DefaultDaoAuthnCombo = Lv4Application + Pr4Warlock;
+
+    int SecurityHttpBase = Lv4Application + Pr4Warlock + 100;
+    int SecurityBindHttp = Lv4Application + Pr4Warlock + 200;
+    int SecurityAuthHttp = Lv4Application + Pr4Warlock + 300;
+    int SecurityAutoHttp = Lv4Application + Pr4Warlock + 400;
 
     int CodeExceptionResolver = WebSimpleExceptionResolver + 100;
     int DefaultExceptionResolver = WebSimpleExceptionResolver + 900;
 
-    int BindExceptionAdvice = Lv4Application;
+    int BindExceptionAdvice = Lv4Application + Pr4Warlock;
 
-    int RunnerDatabaseChecker = Lv2Resource;
-    int RunnerRegisterRuntimeMode = Lv3Service;
-    int RunnerRegisterCacheConst = Lv3Service;
-    int RunnerRegisterEnumUtil = Lv4Application;
+    int RunnerDatabaseChecker = Lv2Resource + Pr4Warlock;
+    int RunnerRegisterRuntimeMode = Lv3Service + Pr4Warlock;
+    int RunnerRegisterCacheConst = Lv3Service + Pr4Warlock;
+    int RunnerRegisterEnumUtil = Lv4Application + Pr4Warlock;
 }

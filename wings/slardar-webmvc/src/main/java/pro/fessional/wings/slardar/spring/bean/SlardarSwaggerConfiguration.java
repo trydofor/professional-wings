@@ -15,11 +15,13 @@ import org.springdoc.api.annotations.ParameterObject;
 import org.springdoc.core.SpringDocConfiguration;
 import org.springdoc.core.SpringDocUtils;
 import org.springdoc.core.customizers.OpenApiCustomiser;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.page.PageQuery;
 import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.spring.prop.SlardarPagequeryProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarSwaggerProp;
 
@@ -32,6 +34,7 @@ import java.util.Map;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(OpenAPI.class)
+@AutoConfigureOrder(SlardarOrderConst.SwaggerConfiguration)
 public class SlardarSwaggerConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarSwaggerConfiguration.class);

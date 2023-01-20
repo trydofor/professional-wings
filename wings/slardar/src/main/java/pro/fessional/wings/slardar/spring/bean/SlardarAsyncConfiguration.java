@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
@@ -53,6 +54,7 @@ import static pro.fessional.wings.slardar.constants.SlardarNameConst.SlardarHeav
 @EnableAsync
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$async, havingValue = "true")
+@AutoConfigureOrder(SlardarOrderConst.AsyncConfiguration)
 public class SlardarAsyncConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarAsyncConfiguration.class);

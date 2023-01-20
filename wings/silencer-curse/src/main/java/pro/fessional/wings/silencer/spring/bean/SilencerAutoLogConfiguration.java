@@ -8,6 +8,7 @@ import ch.qos.logback.core.ConsoleAppender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +28,7 @@ import java.util.Set;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SilencerEnabledProp.Key$autoLog, havingValue = "true")
+@AutoConfigureOrder(WingsBeanOrdered.Lv2Resource)
 public class SilencerAutoLogConfiguration {
 
     private static final Log log = LogFactory.getLog(SilencerAutoLogConfiguration.class);

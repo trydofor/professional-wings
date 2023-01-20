@@ -8,6 +8,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.unit.DataSize;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.monitor.MonitorTask;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.monitor.metric.JvmMetric;
@@ -39,6 +41,7 @@ import java.util.Map;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$monitor, havingValue = "true")
 @EnableScheduling
+@AutoConfigureOrder(SlardarOrderConst.MonitorConfiguration)
 public class SlardarMonitorConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarMonitorConfiguration.class);

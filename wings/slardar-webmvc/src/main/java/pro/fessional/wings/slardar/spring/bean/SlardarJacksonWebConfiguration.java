@@ -11,6 +11,7 @@ import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -69,6 +70,7 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$jackson, havingValue = "true")
 @RequiredArgsConstructor
 @AutoConfigureAfter(SlardarJacksonConfiguration.class)
+@AutoConfigureOrder(SlardarOrderConst.JacksonWebConfiguration)
 public class SlardarJacksonWebConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarJacksonWebConfiguration.class);

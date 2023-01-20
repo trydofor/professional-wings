@@ -1,7 +1,4 @@
 #
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  pro.fessional.wings.silencer.spring.boot.WingsAutoConfiguration
-#
 org.springframework.boot.env.EnvironmentPostProcessor=\
   pro.fessional.wings.silencer.spring.boot.WingsAutoConfigProcessor
 #

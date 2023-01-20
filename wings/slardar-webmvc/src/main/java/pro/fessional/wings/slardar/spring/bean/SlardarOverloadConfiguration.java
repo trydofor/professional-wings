@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -35,6 +36,7 @@ import java.io.PrintWriter;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$overload, havingValue = "true")
 @ConditionalOnClass(Filter.class)
+@AutoConfigureOrder(SlardarOrderConst.OverloadConfiguration)
 public class SlardarOverloadConfiguration {
 
     private final Log log = LogFactory.getLog(SlardarOverloadConfiguration.class);

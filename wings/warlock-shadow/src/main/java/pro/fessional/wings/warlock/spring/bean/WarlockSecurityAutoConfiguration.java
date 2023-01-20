@@ -3,11 +3,13 @@ package pro.fessional.wings.warlock.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.util.StringUtils;
+import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
@@ -21,6 +23,7 @@ import java.util.Map;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityAuto, havingValue = "true")
 @RequiredArgsConstructor
+@AutoConfigureOrder(WarlockOrderConst.SecurityAutoConfiguration)
 public class WarlockSecurityAutoConfiguration extends WebSecurityConfigurerAdapter {
 
     private final static Log log = LogFactory.getLog(WarlockSecurityAutoConfiguration.class);

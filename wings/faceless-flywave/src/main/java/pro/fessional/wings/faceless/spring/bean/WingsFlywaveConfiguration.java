@@ -3,6 +3,7 @@ package pro.fessional.wings.faceless.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +38,7 @@ import static pro.fessional.wings.faceless.flywave.SchemaJournalManager.JournalD
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(name = "pro.fessional.wings.faceless.database.DataSourceContext")
 @ConditionalOnProperty(name = FlywaveEnabledProp.Key$module, havingValue = "true")
+@AutoConfigureOrder(FacelessOrderConst.FlywaveConfiguration)
 public class WingsFlywaveConfiguration {
 
     private static final Log log = LogFactory.getLog(WingsFlywaveConfiguration.class);

@@ -1,5 +1,6 @@
 package pro.fessional.wings.tiny.mail.spring.boot;
 
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.ComponentScan;
 
@@ -9,5 +10,6 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @ComponentScan("pro.fessional.wings.tiny.mail.spring.bean")
 @ConfigurationPropertiesScan("pro.fessional.wings.tiny.mail.spring.prop")
+@AutoConfiguration
 public class WingsAutoConfiguration {
 }

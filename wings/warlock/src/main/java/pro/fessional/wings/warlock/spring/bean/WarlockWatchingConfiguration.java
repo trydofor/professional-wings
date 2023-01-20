@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jooq.ExecuteListenerProvider;
 import org.jooq.impl.DefaultExecuteListenerProvider;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.faceless.database.jooq.listener.SlowSqlListener;
 import pro.fessional.wings.silencer.watch.WatchingAround;
+import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockWatchingProp;
 
@@ -21,6 +23,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockWatchingProp;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$watching, havingValue = "true")
+@AutoConfigureOrder(WarlockOrderConst.WatchingConfiguration)
 public class WarlockWatchingConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockWatchingConfiguration.class);

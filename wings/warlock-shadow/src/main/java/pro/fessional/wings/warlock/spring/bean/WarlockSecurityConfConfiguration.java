@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,6 +43,7 @@ import java.util.TreeMap;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityAuto, havingValue = "true")
 @RequiredArgsConstructor
+@AutoConfigureOrder(WarlockOrderConst.SecurityConfConfiguration)
 public class WarlockSecurityConfConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockSecurityConfConfiguration.class);

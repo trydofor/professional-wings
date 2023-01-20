@@ -11,6 +11,7 @@ import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.jooq.impl.DefaultVisitListenerProvider;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$module, havingValue = "true")
 @ConditionalOnClass(name = "org.jooq.conf.Settings")
+@AutoConfigureOrder(FacelessOrderConst.JooqConfiguration)
 public class FacelessJooqConfiguration {
 
     private static final Log log = LogFactory.getLog(FacelessJooqConfiguration.class);

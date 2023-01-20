@@ -1,5 +1,6 @@
 package com.moilioncircle.wings.common.spring.boot;
 
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.ComponentScan;
 
@@ -12,5 +13,6 @@ import org.springframework.context.annotation.ComponentScan;
                 "com.moilioncircle.wings.common.service",
                 "com.moilioncircle.wings.common.spring.bean"})
 @ConfigurationPropertiesScan("com.moilioncircle.wings.common.spring.prop")
+@AutoConfiguration
 public class WinxAutoConfiguration {
 }

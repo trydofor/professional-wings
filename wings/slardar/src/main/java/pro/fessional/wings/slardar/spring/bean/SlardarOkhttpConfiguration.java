@@ -10,6 +10,7 @@ import okhttp3.OkHttpClient.Builder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,6 +42,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(OkHttpClient.class)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$okhttp, havingValue = "true")
+@AutoConfigureOrder(SlardarOrderConst.OkhttpConfiguration)
 public class SlardarOkhttpConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarOkhttpConfiguration.class);

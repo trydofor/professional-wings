@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.convert.ApplicationConversionService;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,7 @@ import pro.fessional.wings.slardar.autozone.spring.String2LocalTimeConverter;
 import pro.fessional.wings.slardar.autozone.spring.String2OffsetDateTimeConverter;
 import pro.fessional.wings.slardar.autozone.spring.String2ZonedDateTimeConverter;
 import pro.fessional.wings.slardar.autozone.spring.ZonedDateTime2StringConverter;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
@@ -34,6 +36,7 @@ import java.util.stream.Collectors;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$datetime, havingValue = "true")
 @RequiredArgsConstructor
+@AutoConfigureOrder(SlardarOrderConst.DateTimeConfiguration)
 public class SlardarDateTimeConfiguration {
     private static final Log log = LogFactory.getLog(SlardarDateTimeConfiguration.class);
 

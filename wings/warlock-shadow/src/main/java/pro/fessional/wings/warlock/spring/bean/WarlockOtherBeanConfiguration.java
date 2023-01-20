@@ -3,6 +3,7 @@ package pro.fessional.wings.warlock.spring.bean;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.MessageSource;
@@ -14,6 +15,7 @@ import pro.fessional.wings.slardar.concur.HazelcastGlobalLock;
 import pro.fessional.wings.slardar.concur.impl.RighterInterceptor;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.webmvc.MessageResponse;
+import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.errorhandle.CodeExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.DefaultExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.auto.BindExceptionAdvice;
@@ -28,6 +30,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockLockProp;
  */
 @Configuration(proxyBeanMethods = false)
 @ComponentScan("pro.fessional.wings.warlock.controller")
+@AutoConfigureOrder(WarlockOrderConst.OtherBeanConfiguration)
 public class WarlockOtherBeanConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockOtherBeanConfiguration.class);

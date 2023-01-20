@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
@@ -33,6 +34,7 @@ import java.util.Map;
 @Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 @ConditionalOnClass(SecurityConfigurer.class)
+@AutoConfigureOrder(SlardarOrderConst.SecurityConfiguration)
 public class SlardarSecurityConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarSecurityConfiguration.class);

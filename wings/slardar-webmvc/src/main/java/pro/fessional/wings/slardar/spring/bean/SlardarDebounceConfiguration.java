@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import pro.fessional.wings.slardar.concur.impl.DebounceInterceptor;
+import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.servlet.response.view.PlainTextView;
 import pro.fessional.wings.slardar.spring.prop.SlardarDebounceProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
@@ -21,6 +23,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 @Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$debounce, havingValue = "true")
+@AutoConfigureOrder(SlardarOrderConst.DebounceConfiguration)
 public class SlardarDebounceConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarDebounceConfiguration.class);
