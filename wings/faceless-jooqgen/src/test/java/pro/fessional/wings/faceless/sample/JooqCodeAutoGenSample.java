@@ -9,25 +9,34 @@ import pro.fessional.wings.faceless.jooqgen.WingsCodeGenerator;
  */
 public class JooqCodeAutoGenSample {
 
-    // 需要设置 Working Directory=$MODULE_WORKING_DIR$
-    // 需要 版本 20190601_01，手动执行亦可
-    // WingsJooqDaoImplTest#test0𓃬清表重置
+    // 注意路径，为工程顶级目录即可
     // 注意在目标工程中，应该注释掉.springRepository(false)，使Dao自动加载
     public static void main(String[] args) {
-        String database = "wings_test";
+        // === Must Drop And Init ===
+        // WingsJooqDaoAliasImplTest#test0DropAndInit
+
+        genJooq();
+        genShard();
+    }
+
+    private static final String database = "wings_test";
+    private static final String user = "trydofor";
+    private static final String pass = "moilioncircle";
+
+    private static void genJooq() {
         WingsCodeGenerator.builder()
                           .jdbcDriver("com.mysql.cj.jdbc.Driver")
                           .jdbcUrl("jdbc:mysql://localhost/" + database)
-                          .jdbcUser("trydofor")
-                          .jdbcPassword("moilioncircle")
+                          .jdbcUser(user)
+                          .jdbcPassword(pass)
                           .databaseSchema(database)
                           // 支持 pattern的注释写法
                           .databaseIncludes("sys_constant_enum" +
-                                  "|sys_standard_i18n" +
-                                  "|tst_中文也分表")
+                                            "|sys_standard_i18n" +
+                                            "|tst_中文也分表")
                           .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
                           .targetPackage("pro.fessional.wings.faceless.database.autogen")
-                          .targetDirectory("../faceless-jooq/src/test/java/")
+                          .targetDirectory("wings/faceless-jooq/src/test/java/")
 //  不用spring自动注入
 //                          .springRepository(false)
 //  使用enum类型
@@ -37,6 +46,21 @@ public class JooqCodeAutoGenSample {
 //                                  .withExpression("tst_中文也分表.language")
 //                          )
                           .forcedIntConsEnum(StandardLanguage.class, "tst_中文也分表.language")
+                          .buildAndGenerate();
+    }
+
+    private static void genShard() {
+        WingsCodeGenerator.builder()
+                          .jdbcDriver("com.mysql.cj.jdbc.Driver")
+                          .jdbcUrl("jdbc:mysql://localhost/" + database)
+                          .jdbcUser(user)
+                          .jdbcPassword(pass)
+                          .databaseSchema(database)
+                          // 支持 pattern的注释写法
+                          .databaseIncludes("tst_中文也分表")
+                          .databaseVersionProvider(null)
+                          .targetPackage("pro.fessional.wings.faceless.database.autogen")
+                          .targetDirectory("wings/faceless-shard/src/test/java/")
                           .buildAndGenerate();
     }
 }

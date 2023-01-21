@@ -67,9 +67,10 @@
             <emptySchemas>true</emptySchemas>
 
             <indexes>false</indexes>
-            <jpaAnnotations>true</jpaAnnotations>
             <springAnnotations>true</springAnnotations>
-            <validationAnnotations>true</validationAnnotations>
+            <!-- JavaEE / JakartaEE -->
+            <jpaAnnotations>false</jpaAnnotations>
+            <validationAnnotations>false</validationAnnotations>
 
             <javaTimeTypes>true</javaTimeTypes>
 

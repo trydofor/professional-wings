@@ -34,6 +34,15 @@ class Warlock2CodeGeneratorTest {
     }
 
     @Test
+    public void genJooqBond() {
+        Warlock3JooqGenerator generator = new Warlock3JooqGenerator();
+        generator.setTargetDir(JAVA.replace("warlock","warlock-bond"));
+        generator.gen(JDBC, USER, PASS,
+                Warlock3JooqGenerator.includeWarlockBond(),
+                bd -> bd.setGlobalSuffix("WarlockBond"));
+    }
+
+    @Test
     public void genAuth() {
         JdbcDataLoadHelper helper = JdbcDataLoadHelper.use(JDBC, USER, PASS);
         Warlock4AuthGenerator generator = new Warlock4AuthGenerator();

@@ -55,7 +55,7 @@ public class WingsJooqDaoAliasImplTest {
     private final LocalDateTime now = LocalDateTime.now();
 
     @Test
-    public void test0𓃬清表重置() {
+    public void test0DropAndInit() {
         wingsTestHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER, WingsRevision.V01_19_0521_01_EnumI18n.classpath());
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
