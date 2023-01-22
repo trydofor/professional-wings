@@ -34,7 +34,7 @@
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-jooqgen</artifactId>
+            <artifactId>faceless-codegen</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

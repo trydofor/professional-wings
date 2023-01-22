@@ -10,10 +10,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 import pro.fessional.wings.faceless.service.wini18n.StandardI18nService;
-import pro.fessional.wings.faceless.util.ExecSql;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -48,10 +48,10 @@ public class ConstantEnumI18nTest {
 
     @Test
     public void test4I18n() {
-        ExecSql.execWingsSql(jdbcTemplate, "master/01-light/2019-05-20u01-light-commit.sql");
-        ExecSql.execWingsSql(jdbcTemplate, "master/01-light/2019-05-20v01-light-commit.sql");
-        ExecSql.execWingsSql(jdbcTemplate, "branch/feature/01-enum-i18n/2019-05-21u01-enum-i18n.sql");
-        ExecSql.execWingsSql(jdbcTemplate, "branch/feature/01-enum-i18n/2019-05-21v01-enum-i18n.sql");
+        execWingsSql(jdbcTemplate, "master/01-light/2019-05-20u01-light-commit.sql");
+        execWingsSql(jdbcTemplate, "master/01-light/2019-05-20v01-light-commit.sql");
+        execWingsSql(jdbcTemplate, "branch/feature/01-enum-i18n/2019-05-21u01-enum-i18n.sql");
+        execWingsSql(jdbcTemplate, "branch/feature/01-enum-i18n/2019-05-21v01-enum-i18n.sql");
         StandardLanguage zhCn = StandardLanguage.ZH_CN;
         StandardLanguage enUs = StandardLanguage.EN_US;
         assertEquals("简体中文", standardI18nService.load(zhCn, zhCn));
@@ -67,6 +67,22 @@ public class ConstantEnumI18nTest {
         int i = 1;
         for (String bean : applicationContext.getBeanDefinitionNames()) {
             System.out.printf("[%d] %s\n", i++, bean);
+        }
+    }
+
+    public void execWingsSql(JdbcTemplate jdbcTemplate, String path) {
+        String sqls = InputStreams.readText(this.getClass().getResourceAsStream("/wings-flywave/" + path));
+        for (String sql : sqls.split(
+                ";+[ \\t]*[\\r\\n]+"
+                + "|"
+                + ";+[ \\t]*--[^\\r\\n]+[\\r\\n]+"
+                + "|"
+                + ";+[ \\t]*/\\*[^\\r\\n]+\\*/[ \\t]*[\\r\\n]+"
+        )) {
+            String s = sql.trim();
+            if (!s.isEmpty()) {
+                jdbcTemplate.execute(s);
+            }
         }
     }
 }

@@ -10,11 +10,11 @@
     </parent>
 
     <groupId>pro.fessional.wings</groupId>
-    <artifactId>faceless-jooqgen</artifactId>
+    <artifactId>faceless-codegen</artifactId>
     <packaging>jar</packaging>
 
-    <name>Wings::Faceless::JooqGen</name>
-    <description>虚空假面之Jooq代码生成</description>
+    <name>Wings::Faceless::CodeGen</name>
+    <description>虚空假面之代码生成</description>
 
     <dependencies>
         <dependency>
@@ -28,6 +28,11 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>faceless-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

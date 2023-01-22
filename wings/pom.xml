@@ -24,7 +24,7 @@
         <module>faceless</module>
         <module>faceless-flywave</module>
         <module>faceless-jooq</module>
-        <module>faceless-jooqgen</module>
+        <module>faceless-codegen</module>
         <module>faceless-shard</module>
         <module>faceless-test</module>
         <module>slardar</module>

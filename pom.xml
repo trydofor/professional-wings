@@ -161,7 +161,7 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
-                <artifactId>faceless-jooqgen</artifactId>
+                <artifactId>faceless-codegen</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
