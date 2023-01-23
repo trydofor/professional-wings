@@ -13,11 +13,11 @@ import javax.sql.DataSource;
  */
 @SpringBootTest(properties = {
         "debug = true",
-//        "spring.datasource.url=jdbc:mysql://localhost:3306/wings_test",
-//        "spring.datasource.url=jdbc:mysql://localhost:3306/wings_test?connectionTimeZone=UTC",
-//        "spring.datasource.url=jdbc:mysql://localhost:3306/wings_test?connectionTimeZone=%2B08:00",
-        "spring.datasource.url=jdbc:mysql://localhost:3306/wings_test?connectionTimeZone=%2B08:00&forceConnectionTimeZoneToSession=true",
-//        "spring.datasource.url=jdbc:mysql://localhost:3306/wings_test?connectionTimeZone=-04:00&forceConnectionTimeZoneToSession=true",
+//        "spring.datasource.url=jdbc:mysql://localhost:3306/wings_faceless",
+//        "spring.datasource.url=jdbc:mysql://localhost:3306/wings_faceless?connectionTimeZone=UTC",
+//        "spring.datasource.url=jdbc:mysql://localhost:3306/wings_faceless?connectionTimeZone=%2B08:00",
+        "spring.datasource.url=jdbc:mysql://localhost:3306/wings_faceless?connectionTimeZone=%2B08:00&forceConnectionTimeZoneToSession=true",
+//        "spring.datasource.url=jdbc:mysql://localhost:3306/wings_faceless?connectionTimeZone=-04:00&forceConnectionTimeZoneToSession=true",
 })
 class DatabaseCheckerTest {
 

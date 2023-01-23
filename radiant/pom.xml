@@ -18,6 +18,7 @@
 
     <modules>
         <module>devs-mvndep</module>
+        <module>tiny-autogen</module>
         <module>tiny-mail</module>
         <module>tiny-task</module>
     </modules>

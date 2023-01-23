@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>warlock</artifactId>
+            <artifactId>warlock-awesome</artifactId>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>

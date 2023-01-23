@@ -30,16 +30,8 @@ class Warlock2CodeGeneratorTest {
         generator.setTargetDir(JAVA);
         generator.gen(JDBC, USER, PASS,
                 Warlock3JooqGenerator.includeWarlock(),
-                bd -> bd.setGlobalSuffix("Warlock"));
-    }
-
-    @Test
-    public void genJooqBond() {
-        Warlock3JooqGenerator generator = new Warlock3JooqGenerator();
-        generator.setTargetDir(JAVA.replace("warlock","warlock-bond"));
-        generator.gen(JDBC, USER, PASS,
                 Warlock3JooqGenerator.includeWarlockBond(),
-                bd -> bd.setGlobalSuffix("WarlockBond"));
+                bd -> bd.setGlobalSuffix("Warlock"));
     }
 
     @Test

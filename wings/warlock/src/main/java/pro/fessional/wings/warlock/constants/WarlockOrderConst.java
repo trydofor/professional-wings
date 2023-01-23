@@ -12,7 +12,7 @@ public interface WarlockOrderConst extends WingsBeanOrdered {
 
     // ///////// Configuration /////////
     int AutoRunConfiguration = Lv4Application + Pr4Warlock;
-    int CommonConfiguration = Lv4Application + Pr4Warlock;
+    int AwesomeConfiguration = Lv4Application + Pr4Warlock;
     int LockBeanConfiguration = Lv4Application + Pr4Warlock;
     int TableChangeConfiguration = Lv4Application + Pr4Warlock;
     int WatchingConfiguration = Lv4Application + Pr4Warlock;

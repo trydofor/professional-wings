@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 public class Warlock2EnumGenerator extends ProjectEnumGenerator {
 
     public Warlock2EnumGenerator() {
-        targetDir = "./wings-warlock/src/main/java/";
+        targetDir = "../warlock-autogen/src/main/java/";
         targetPkg = "pro.fessional.wings.warlock.enums.autogen";
     }
 

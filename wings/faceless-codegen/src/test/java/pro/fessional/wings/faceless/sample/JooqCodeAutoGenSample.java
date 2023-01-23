@@ -19,7 +19,7 @@ public class JooqCodeAutoGenSample {
         genShard();
     }
 
-    private static final String database = "wings_test";
+    private static final String database = "wings";
     private static final String user = "trydofor";
     private static final String pass = "moilioncircle";
 

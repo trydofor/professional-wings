@@ -51,11 +51,7 @@ public class WingsTestHelper {
     public void cleanTable() {
         /*
          DROP DATABASE IF EXISTS wings;
-         DROP DATABASE IF EXISTS wings_0;
-         DROP DATABASE IF EXISTS wings_1;
          CREATE DATABASE `wings` DEFAULT CHARACTER SET utf8mb4;
-         CREATE DATABASE `wings_0` DEFAULT CHARACTER SET utf8mb4;
-         CREATE DATABASE `wings_1` DEFAULT CHARACTER SET utf8mb4;
          */
         dataSourceContext.getPlains().forEach((k, v) -> {
             testcaseNotice("clean database " + k);

@@ -151,6 +151,16 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
+                <artifactId>faceless-autogen</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>faceless-awesome</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
                 <artifactId>faceless-flywave</artifactId>
                 <version>${wings.version}</version>
             </dependency>
@@ -211,6 +221,16 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
+                <artifactId>warlock-autogen</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>warlock-awesome</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
                 <artifactId>warlock-bond</artifactId>
                 <version>${wings.version}</version>
             </dependency>
@@ -245,6 +265,11 @@
                 <version>${wings.version}</version>
             </dependency>
             <!-- pro.fessional.wings radiant -->
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>tiny-autogen</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
                 <artifactId>tiny-task</artifactId>

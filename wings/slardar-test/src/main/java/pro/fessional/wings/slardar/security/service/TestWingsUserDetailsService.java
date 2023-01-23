@@ -10,11 +10,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import pro.fessional.mirana.bits.Md5;
-import pro.fessional.wings.faceless.enums.autogen.StandardTimezone;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -51,7 +51,7 @@ public class TestWingsUserDetailsService implements WingsUserDetailsService {
         ud.setUsername(username);
         ud.setAuthorities(auths);
         ud.setLocale(Locale.CANADA);
-        ud.setZoneId(StandardTimezone.CANADA_CENTRAL.toZoneId());
+        ud.setZoneId(ZoneId.of("Canada/Central"));
 
         return ud;
     }

@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless</artifactId>
+            <artifactId>faceless-awesome</artifactId>
         </dependency>
         <!--sharding sphere-->
         <dependency>

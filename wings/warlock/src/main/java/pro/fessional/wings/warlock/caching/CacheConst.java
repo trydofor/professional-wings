@@ -1,7 +1,6 @@
 package pro.fessional.wings.warlock.caching;
 
 import pro.fessional.wings.slardar.cache.WingsCache;
-import pro.fessional.wings.warlock.database.autogen.tables.WinConfRuntimeTable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,7 +18,7 @@ public interface CacheConst {
     interface RuntimeConfService {
         String CacheName = WingsCache.Level.Service + "RuntimeConfService";
         String CacheManager = WingsCache.Manager.Memory;
-        Set<String> EventTables = new HashSet<>(singletonList(WinConfRuntimeTable.WinConfRuntime.getName()));
+        Set<String> EventTables = new HashSet<>(singletonList("win_conf_runtime"));
     }
 
     interface WarlockAuthnService {

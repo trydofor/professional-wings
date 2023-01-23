@@ -10,7 +10,7 @@ import pro.fessional.wings.faceless.project.ProjectAuthGenerator;
  */
 public class Warlock4AuthGenerator extends ProjectAuthGenerator {
     public Warlock4AuthGenerator() {
-        targetDir = "./wings-warlock/src/main/java/";
+        targetDir = "../warlock-autogen/src/main/java/";
         targetPkg = "pro.fessional.wings.warlock.security.autogen";
     }
 }

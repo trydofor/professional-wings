@@ -22,6 +22,8 @@
         <module>silencer-curse</module>
         <module>silencer-test</module>
         <module>faceless</module>
+        <module>faceless-autogen</module>
+        <module>faceless-awesome</module>
         <module>faceless-flywave</module>
         <module>faceless-jooq</module>
         <module>faceless-codegen</module>
@@ -34,6 +36,8 @@
         <module>slardar-sprint</module>
         <module>slardar-test</module>
         <module>warlock</module>
+        <module>warlock-autogen</module>
+        <module>warlock-awesome</module>
         <module>warlock-bond</module>
         <module>warlock-codegen</module>
         <module>warlock-shadow</module>

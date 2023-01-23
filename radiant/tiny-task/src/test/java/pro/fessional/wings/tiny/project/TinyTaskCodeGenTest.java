@@ -27,7 +27,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 @Disabled("手动执行")
 public class TinyTaskCodeGenTest {
 
-    public static final String JDBC = "jdbc:mysql://localhost:3306/wings_radiant?connectionTimeZone=%2B08:00&forceConnectionTimeZoneToSession=true";
+    public static final String JDBC = "jdbc:mysql://localhost:3306/wings?connectionTimeZone=%2B08:00&forceConnectionTimeZoneToSession=true";
     public static final String USER = "trydofor";
     public static final String PASS = "moilioncircle";
     public static final String BASE = "../";
