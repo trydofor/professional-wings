@@ -17,6 +17,14 @@ public class FacelessEnabledProp {
     public static final String Key = "spring.wings.faceless.enabled";
 
     /**
+     * 是否启动自动配置
+     *
+     * @see #Key$autoconf
+     */
+    private boolean autoconf = true;
+    public static final String Key$autoconf = Key + ".autoconf";
+
+    /**
      * 是否注入lingthid
      *
      * @see #Key$lightid

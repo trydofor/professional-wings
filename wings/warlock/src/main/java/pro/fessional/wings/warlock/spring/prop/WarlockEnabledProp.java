@@ -17,6 +17,14 @@ public class WarlockEnabledProp {
     public static final String Key = "spring.wings.warlock.enabled";
 
     /**
+     * 是否启动自动配置
+     *
+     * @see #Key$autoconf
+     */
+    private boolean autoconf = true;
+    public static final String Key$autoconf = Key + ".autoconf";
+
+    /**
      * 是否支持 warlock security web and http配置
      *
      * @see #Key$securityAuto

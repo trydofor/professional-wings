@@ -17,6 +17,14 @@ public class SilencerEnabledProp {
     public static final String Key = "spring.wings.silencer.enabled";
 
     /**
+     * 是否启动自动配置
+     *
+     * @see #Key$autoconf
+     */
+    private boolean autoconf = true;
+    public static final String Key$autoconf = Key + ".autoconf";
+
+    /**
      * 是否显示wings的conditional信息
      *
      * @see #Key$verbose

@@ -17,6 +17,14 @@ public class SlardarEnabledProp {
     public static final String Key = "spring.wings.slardar.enabled";
 
     /**
+     * 是否启动自动配置
+     *
+     * @see #Key$autoconf
+     */
+    private boolean autoconf = true;
+    public static final String Key$autoconf = Key + ".autoconf";
+
+    /**
      * 是否默认配置jackson
      *
      * @see #Key$jackson
@@ -222,7 +230,7 @@ public class SlardarEnabledProp {
 
     /**
      * 在devtool时，以standalone方式启动，可减少集群影响。
-     * 高级测试，参考 https://github.com/hazelcast/hazelcast-simulator/blob/master/README.md
+     * 高级测试，参考 <a href="https://github.com/hazelcast/hazelcast-simulator/blob/master/README.md">hazelcast-simulator</a>
      *
      * @see #Key$mockHazelcast
      */
