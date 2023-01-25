@@ -13,104 +13,154 @@
     <packaging>jar</packaging>
 
     <name>Radiant::Devs::Mvndep</name>
-    <description>用maven-dependency-checker检查依赖的版本</description>
+    <description>用maven-dependency-checker检查依赖的版本，自动生成代码</description>
 
     <dependencies>
+        <!-- 代码生成  -->
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>faceless-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>warlock-codegen</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>warlock-bond</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>pro.fessional.wings</groupId>
+                    <artifactId>warlock-shadow</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>tiny-mail</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>tiny-task</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- 保留version属性，便于属性查找及IDE提示-->
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
+            <artifactId>shardingsphere-sharding-api</artifactId>
             <version>${shardingsphere.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.hazelcast</groupId>
-            <artifactId>hazelcast-spring</artifactId>
+            <artifactId>hazelcast</artifactId>
             <version>${hazelcast.version}</version>
+            <scope>test</scope>
         </dependency>
         <!-- utils -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>pro.fessional</groupId>
             <artifactId>kaptcha</artifactId>
             <version>${kaptcha.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
             <version>${fastjson2.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <!-- wings内禁用，为间接引用的第三方定义安全的版本号 -->
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.esotericsoftware</groupId>
             <artifactId>kryo</artifactId>
             <version>${kryo.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>transmittable-thread-local</artifactId>
             <version>${transmittable.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>me.zhyd.oauth</groupId>
             <artifactId>JustAuth</artifactId>
             <version>${justauth.version}</version>
+            <scope>test</scope>
         </dependency>
         <!-- Argon2PasswordEncoder -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk18on</artifactId>
             <version>${bouncycastle.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.squareup.retrofit2</groupId>
             <artifactId>retrofit</artifactId>
             <version>${retrofit.version}</version>
+            <scope>test</scope>
         </dependency>
         <!-- ops -->
         <dependency>
             <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-starter-server</artifactId>
+            <artifactId>spring-boot-admin-starter-client</artifactId>
             <version>${boot-admin.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry-spring-boot-starter</artifactId>
             <version>${sentry.version}</version>
+            <scope>test</scope>
         </dependency>
         <!-- dev -->
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>${annotations.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct-processor</artifactId>
             <version>${mapstruct.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
+            <artifactId>springdoc-openapi-common</artifactId>
             <version>${springdoc.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.servicecomb</groupId>
-            <artifactId>transport-rest-servlet</artifactId>
+            <artifactId>java-chassis-core</artifactId>
             <version>${servicecomb.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

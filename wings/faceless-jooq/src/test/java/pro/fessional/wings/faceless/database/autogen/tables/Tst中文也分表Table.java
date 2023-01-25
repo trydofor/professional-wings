@@ -36,7 +36,7 @@ import java.util.Map;
 
 
 /**
- * The table <code>wings_test.tst_中文也分表</code>.
+ * The table <code>wings.tst_中文也分表</code>.
  */
 @Generated(
     value = {

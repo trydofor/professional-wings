@@ -29,8 +29,8 @@ class Warlock2CodeGeneratorTest {
         Warlock3JooqGenerator generator = new Warlock3JooqGenerator();
         generator.setTargetDir(JAVA);
         generator.gen(JDBC, USER, PASS,
-                Warlock3JooqGenerator.includeWarlock(),
-                Warlock3JooqGenerator.includeWarlockBond(),
+                Warlock3JooqGenerator.includeWarlockBase(false),
+                Warlock3JooqGenerator.includeWarlockBond(true),
                 bd -> bd.setGlobalSuffix("Warlock"));
     }
 

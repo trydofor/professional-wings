@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 
 /**
- * The table <code>wings_test.sys_standard_i18n</code>.
+ * The table <code>wings.sys_standard_i18n</code>.
  */
 @Generated(
     value = {

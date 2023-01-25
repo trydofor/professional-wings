@@ -4,6 +4,14 @@
 package pro.fessional.wings.tiny.mail.database.autogen.tables;
 
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.processing.Generated;
+
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -17,6 +25,7 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
+
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.jooq.WingsJournalTable;
 import pro.fessional.wings.faceless.service.journal.JournalService;
@@ -24,16 +33,9 @@ import pro.fessional.wings.faceless.service.lightid.LightIdAware;
 import pro.fessional.wings.tiny.mail.database.autogen.DefaultSchemaTinyMail;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.records.WinMailSenderRecord;
 
-import javax.annotation.processing.Generated;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 
 /**
- * The table <code>wings_radiant.win_mail_sender</code>.
+ * The table <code>wings.win_mail_sender</code>.
  */
 @Generated(
     value = {
@@ -307,7 +309,7 @@ public class WinMailSenderTable extends TableImpl<WinMailSenderRecord> implement
     public String getSeqName() {
         return "win_mail_sender";
     }
-
+    
 
     /**
      * alias asW3
@@ -317,26 +319,26 @@ public class WinMailSenderTable extends TableImpl<WinMailSenderRecord> implement
     public WinMailSenderTable getAliasTable() {
         return asW3;
     }
-
+    
 
     /**
      * The colDel <code>delete_dt</code> condition
      */
     public final Condition onlyDiedData = DeleteDt.gt(EmptyValue.DATE_TIME);
     public final Condition onlyLiveData = DeleteDt.eq(EmptyValue.DATE_TIME);
-
+    
     @Override
     @NotNull
     public Condition getOnlyDied() {
         return onlyDiedData;
     }
-
+    
     @Override
     @NotNull
     public Condition getOnlyLive() {
         return onlyLiveData;
     }
-
+    
     @Override
     @NotNull
     public Map<Field<?>, ?> markDelete(JournalService.Journal commit) {

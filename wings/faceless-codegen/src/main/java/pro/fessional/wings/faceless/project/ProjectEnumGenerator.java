@@ -47,8 +47,10 @@ public class ProjectEnumGenerator {
     ///
     public static Consumer<Builder> excludeStandard() {
         return builder -> builder
-                .excludeType("standard_boolean")
-                .excludeType("standard_language")
-                .excludeType("standard_timezone");
+                .excludeType(builtinEnums)
+                .excludeType(facelessEnums);
     }
+
+    public static final String[] builtinEnums = {"standard_boolean"};
+    public static final String[] facelessEnums = {"standard_language", "standard_timezone"};
 }

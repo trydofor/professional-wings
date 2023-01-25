@@ -18,13 +18,13 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -71,7 +71,8 @@ public class ConstantEnumGenerator {
                 list.add(ce);
             }
             return list;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new IllegalStateException(e);
         }
     }
@@ -83,7 +84,7 @@ public class ConstantEnumGenerator {
     public static class Builder {
         private File src;
         private String pkg;
-        private final Set<String> exs = new HashSet<>();
+        private final Map<String, Boolean> flt = new HashMap<>();
 
         public Builder targetDirectory(File src) {
             this.src = src;
@@ -101,7 +102,16 @@ public class ConstantEnumGenerator {
         }
 
         public Builder excludeType(String... typ) {
-            this.exs.addAll(Arrays.asList(typ));
+            for (String s : typ) {
+                this.flt.put(s, Boolean.FALSE);
+            }
+            return this;
+        }
+
+        public Builder includeType(String... typ) {
+            for (String s : typ) {
+                this.flt.put(s, Boolean.TRUE);
+            }
             return this;
         }
 
@@ -111,27 +121,27 @@ public class ConstantEnumGenerator {
         }
 
         public void generate(Collection<? extends ConstantEnum> pos) {
-            ConstantEnumGenerator.generate(src, pkg, pos, exs);
+            ConstantEnumGenerator.generate(src, pkg, pos, flt);
         }
     }
 
     /**
      * first, copy ConstantEnumTemplate.java to /resource/ to avoid compile
      *
-     * @param src      ./src/main/java/
-     * @param pkg      pro.fessional.wings.faceless.enums.constant
-     * @param pojos    对象数据
-     * @param excludes 排除的type组
+     * @param src    ./src/main/java/
+     * @param pkg    pro.fessional.wings.faceless.enums.constant
+     * @param pojos  对象数据
+     * @param filter 过滤type组，true为包含，false为排除
      * @see ConstantEnumTemplate
      */
-    public static void generate(File src, String pkg, Collection<? extends ConstantEnum> pojos, Set<String> excludes) {
+    public static void generate(File src, String pkg, Collection<? extends ConstantEnum> pojos, Map<String, Boolean> filter) {
         // 初始
 
         Set<File> nowFiles = new HashSet<>();
         File dst = new File(src, pkg.replace('.', '/'));
         dst.mkdirs();
 
-        Map<String, String> javaFiles = mergeJava(pkg, pojos, excludes);
+        Map<String, String> javaFiles = mergeJava(pkg, pojos, filter);
 
         try {
             for (Map.Entry<String, String> entry : javaFiles.entrySet()) {
@@ -156,7 +166,8 @@ public class ConstantEnumGenerator {
                     log.info("make {} to {}", claz, java.getAbsolutePath());
                 }
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new IORuntimeException(e);
         }
 
@@ -170,12 +181,29 @@ public class ConstantEnumGenerator {
         }
     }
 
-    public static Map<String, String> mergeJava(String pkg, Collection<? extends ConstantEnum> pos, Set<String> exc) {
+    public static Map<String, String> mergeJava(String pkg, Collection<? extends ConstantEnum> pos, Map<String, Boolean> filter) {
 
-        Map<String, List<ConstantEnum>> enums = pos
+        final Map<String, List<ConstantEnum>> temp = pos
                 .stream()
-                .filter(it -> exc.isEmpty() || !exc.contains(it.getType()))
                 .collect(Collectors.groupingBy(ConstantEnum::getType));
+
+        Map<String, List<ConstantEnum>> enums = new TreeMap<>(temp);
+        final Map<String, List<ConstantEnum>> incs = new TreeMap<>();
+        for (Map.Entry<String, Boolean> en : filter.entrySet()) {
+            if (en.getValue() == Boolean.TRUE) {
+                final List<ConstantEnum> vs = enums.get(en.getKey());
+                if (vs != null) {
+                    incs.put(en.getKey(), vs);
+                }
+            }
+            else {
+                enums.remove(en.getKey());
+            }
+        }
+
+        if (!incs.isEmpty()) {
+            enums = incs;
+        }
 
         Map<String, String> javaFiles = new HashMap<>();
         int count = 1;
@@ -203,7 +231,8 @@ public class ConstantEnumGenerator {
                 boolean isSuper = isSuper(ce);
                 if (isSuper) {
                     it.put("name", "SUPER");
-                } else {
+                }
+                else {
                     String code = ce.code;
                     int len = code.length();
                     boolean canDeer = true;
@@ -211,13 +240,17 @@ public class ConstantEnumGenerator {
                         char c = code.charAt(i);
                         if (c == '-') {
                             buff.append('_');
-                        } else if (c >= 'a' && c <= 'z') {
+                        }
+                        else if (c >= 'a' && c <= 'z') {
                             buff.append(Character.toUpperCase(c));
-                        } else if (Character.isJavaIdentifierPart(c)) {
+                        }
+                        else if (Character.isJavaIdentifierPart(c)) {
                             buff.append(c);
-                        } else if (c > 127) {
+                        }
+                        else if (c > 127) {
                             buff.append(c);
-                        } else {
+                        }
+                        else {
                             if (buff.length() > 0 && canDeer) {
                                 canDeer = false;
                                 buff.append(deerChar);

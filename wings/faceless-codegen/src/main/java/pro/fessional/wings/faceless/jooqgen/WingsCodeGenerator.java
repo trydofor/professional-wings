@@ -70,7 +70,7 @@ public class WingsCodeGenerator {
             val tmp = Files.createTempDirectory("jooq-safe-gen").toFile();
             val tdr = tmp.getAbsolutePath();
             conf.getGenerator().getTarget().setDirectory(tdr);
-            log.info("safely generate, tmp-dir=" + tdr);
+            log.info("safely generate, tmp-dir={}", tdr);
 
             // generator
             WingsCodeGenConf.setGlobalSuffix(suffix);
@@ -135,12 +135,12 @@ public class WingsCodeGenerator {
         val dest = walkDir(src, pkg);
 
         if (!inc && dest.size() > 0) {
-            log.info("not incremental, Removing excess files in " + src);
+            log.info("not incremental, Removing excess files in {}", new File(src, pkg).getCanonicalPath());
             for (Map.Entry<String, File> entry : dest.entrySet()) {
                 String key = entry.getKey();
                 if (!from.containsKey(key)) {
                     boolean r = entry.getValue().delete();
-                    log.info("delete [" + r + "] excess file=" + key);
+                    log.info("delete [{}] excess file={}", r, key);
                 }
             }
         }
@@ -168,17 +168,17 @@ public class WingsCodeGenerator {
                 //noinspection ResultOfMethodCallIgnored
                 t.getParentFile().mkdirs();
                 Files.copy(f.toPath(), t.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                log.info("create new file=" + k);
+                log.info("create new file={}", k);
             }
             else {
                 val ft = ignoreRegex.matcher(InputStreams.readText(new FileInputStream(f))).replaceAll(Null.Str);
                 val dt = ignoreRegex.matcher(InputStreams.readText(new FileInputStream(d))).replaceAll(Null.Str);
                 if (ft.equals(dt)) {
-                    log.info("skip main same file=" + k);
+                    log.info("skip main same file={}", k);
                 }
                 else {
                     Files.copy(f.toPath(), d.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                    log.info("copy new file=" + k);
+                    log.info("copy new file={}", k);
                 }
             }
         }

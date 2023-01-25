@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 
 /**
- * The table <code>wings_test.sys_constant_enum</code>.
+ * The table <code>wings.sys_constant_enum</code>.
  */
 @Generated(
     value = {

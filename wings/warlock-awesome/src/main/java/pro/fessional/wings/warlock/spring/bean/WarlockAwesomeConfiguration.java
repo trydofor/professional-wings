@@ -10,6 +10,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
+import pro.fessional.wings.silencer.modulate.ApiMode;
+import pro.fessional.wings.silencer.modulate.RunMode;
+import pro.fessional.wings.silencer.modulate.RuntimeMode;
+import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.spring.help.OrderedWarlockConst;
 import pro.fessional.wings.slardar.serialize.JsonConversion;
 import pro.fessional.wings.slardar.serialize.KryoConversion;
 import pro.fessional.wings.warlock.constants.WarlockOrderConst;
@@ -44,5 +49,30 @@ public class WarlockAwesomeConfiguration {
         bean.addHandler(RuntimeConfServiceImpl.JsonHandler, new JsonConversion());
         bean.addHandler(RuntimeConfServiceImpl.KryoHandler, new KryoConversion());
         return bean;
+    }
+
+
+    @Bean    // 数据库值覆盖工程配置
+    public CommandLineRunnerOrdered runnerRegisterRuntimeMode(ObjectProvider<RuntimeConfService> provider) {
+        log.info("Warlock spring-runs runnerRegisterRuntimeMode");
+        return new CommandLineRunnerOrdered(OrderedWarlockConst.RunnerRegisterRuntimeMode, args -> {
+            final RuntimeConfService confService = provider.getIfAvailable();
+            if (confService == null) {
+                log.info("Warlock conf skip registerRuntimeMode for NULL ");
+                return;
+            }
+
+            final RunMode dbRunMode = confService.getEnum(RunMode.class);
+            final ApiMode dbApiMode = confService.getEnum(ApiMode.class);
+
+            new RuntimeMode() {{
+                if (dbRunMode != null) {
+                    runMode = dbRunMode;
+                }
+                if (dbApiMode != null) {
+                    apiMode = dbApiMode;
+                }
+            }};
+        });
     }
 }

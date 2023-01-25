@@ -20,8 +20,9 @@ public enum WingsRevision implements RevisionRegister {
     V05_20_1025_01_ConfRuntime(2020_1025_01L, "runtime config", "master/05-conf"),
     V06_20_1026_01_TinyTask(2020_1026_01L, "tiny task", "master/06-task"),
     V07_20_1027_01_TinyMail(2020_1027_01L, "tiny mail", "master/07-mail"),
-    V01_21_0918_01_TinyMail(2021_0918_01L, "fix authn", "branch/somefix/01-authn-fix"),
-    V02_21_1220_01_TinyMail(2021_1220_01L, "fix v242.201", "branch/somefix/02-v242-201"),
+
+    V01_21_0918_01_FixAuthn(2021_0918_01L, "fix authn", "branch/somefix/01-authn-fix"),
+    V02_21_1220_01_Fix242(2021_1220_01L, "fix v242.201", "branch/somefix/02-v242-201"),
     ;
 
     private final long revi;
