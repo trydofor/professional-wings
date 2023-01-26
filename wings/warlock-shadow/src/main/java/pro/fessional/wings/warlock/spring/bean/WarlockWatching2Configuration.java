@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.slardar.webmvc.SlowResponseInterceptor;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockWatchingProp;
 
@@ -20,7 +20,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockWatchingProp;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$watching, havingValue = "true")
-@AutoConfigureOrder(WarlockOrderConst.Watching2Configuration)
+@AutoConfigureOrder(OrderedWarlockConst.Watching2Configuration)
 public class WarlockWatching2Configuration {
 
     private final static Log log = LogFactory.getLog(WarlockWatching2Configuration.class);

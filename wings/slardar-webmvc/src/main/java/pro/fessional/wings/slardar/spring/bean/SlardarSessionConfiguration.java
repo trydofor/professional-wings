@@ -20,7 +20,7 @@ import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.best.ArgsAssert;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.session.WingsSessionIdResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
@@ -41,7 +41,7 @@ import java.util.List;
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$session, havingValue = "true")
 @EnableConfigurationProperties(ServerProperties.class)
 @RequiredArgsConstructor
-@AutoConfigureOrder(SlardarOrderConst.SessionConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.SessionConfiguration)
 public class SlardarSessionConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarSessionConfiguration.class);

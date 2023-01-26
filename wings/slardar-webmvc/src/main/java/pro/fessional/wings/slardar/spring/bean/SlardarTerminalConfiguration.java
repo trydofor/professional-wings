@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
 import org.springframework.security.core.GrantedAuthority;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.constants.SlardarServletConst;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.context.TerminalContext;
@@ -35,7 +35,7 @@ import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgen
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$terminal, havingValue = "true")
-@AutoConfigureOrder(SlardarOrderConst.TerminalConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.TerminalConfiguration)
 public class SlardarTerminalConfiguration {
 
     private final Log log = LogFactory.getLog(SlardarTerminalConfiguration.class);
@@ -85,7 +85,7 @@ public class SlardarTerminalConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(TerminalInterceptor.class)
     public TerminalInterceptor terminalInterceptor(SlardarTerminalProp prop, ObjectProvider<TerminalInterceptor.TerminalBuilder> builders) {
         log.info("SlardarWebmvc spring-bean terminalInterceptor");
         TerminalContext.initActive(true);

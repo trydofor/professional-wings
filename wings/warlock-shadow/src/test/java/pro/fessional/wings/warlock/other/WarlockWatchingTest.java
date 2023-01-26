@@ -52,6 +52,6 @@ public class WarlockWatchingTest {
         Assertions.assertTrue(del);
         // async in async task pool
         Assertions.assertTrue(2 <= WatchingService.AsyncWatch.size());
-        Assertions.assertTrue(WatchingService.WatchOwner.getWatches().isEmpty());
+        Assertions.assertTrue(WatchingService.WatchOwner.getWatches().isEmpty(),"需要先初始化数据库 Warlock1SchemaCreator#init0Schema");
     }
 }

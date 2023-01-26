@@ -18,6 +18,7 @@
     <description>WingsBoot=BKB+飞鞋+SpringBoot</description>
 
     <modules>
+        <module>aegis</module>
         <module>silencer</module>
         <module>silencer-curse</module>
         <module>silencer-test</module>

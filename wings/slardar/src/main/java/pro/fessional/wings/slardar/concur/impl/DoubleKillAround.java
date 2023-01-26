@@ -23,10 +23,10 @@ import org.springframework.util.StringUtils;
 import pro.fessional.mirana.lock.ArrayKey;
 import pro.fessional.mirana.lock.JvmStaticGlobalLock;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.concur.DoubleKill;
 import pro.fessional.wings.slardar.concur.DoubleKillException;
 import pro.fessional.wings.slardar.concur.ProgressContext;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.DefaultUserId;
 
@@ -44,7 +44,7 @@ import java.util.concurrent.locks.Lock;
  * @since 2021-03-09
  */
 @Aspect
-@Order(SlardarOrderConst.AopDoubleKillAround)
+@Order(OrderedSlardarConst.AopDoubleKillAround)
 @Slf4j
 public class DoubleKillAround {
 

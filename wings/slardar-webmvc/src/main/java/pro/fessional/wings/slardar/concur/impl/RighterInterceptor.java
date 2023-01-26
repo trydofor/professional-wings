@@ -13,7 +13,7 @@ import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.slardar.concur.Righter;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.serialize.KryoSimple;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarRighterProp;
@@ -39,7 +39,7 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
     private final SlardarRighterProp prop;
 
     @Getter @Setter
-    private int order = SlardarOrderConst.MvcRighterInterceptor;
+    private int order = OrderedSlardarConst.MvcRighterInterceptor;
 
     /**
      * 根据 HttpSession 获得用户加密的密码

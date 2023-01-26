@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.method.HandlerMethod;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.concur.FirstBlood;
 import pro.fessional.wings.slardar.concur.ProgressContext;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ public class FirstBloodInterceptor implements AutoRegisterInterceptor {
     private final List<FirstBloodHandler> handlers;
 
     @Getter @Setter
-    private int order = SlardarOrderConst.MvcFirstBloodInterceptor;
+    private int order = OrderedSlardarConst.MvcFirstBloodInterceptor;
 
     public FirstBloodInterceptor(List<FirstBloodHandler> handlers) {
         this.handlers = handlers;

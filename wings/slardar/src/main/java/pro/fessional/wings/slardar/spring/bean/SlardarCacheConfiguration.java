@@ -21,7 +21,7 @@ import pro.fessional.wings.slardar.cache.caffeine.WingsCaffeine;
 import pro.fessional.wings.slardar.cache.spring.CacheEvictResult;
 import pro.fessional.wings.slardar.cache.spring.WingsCacheAnnoOprSource;
 import pro.fessional.wings.slardar.cache.spring.WingsCacheInterceptor;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
@@ -37,7 +37,7 @@ import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$caching, havingValue = "true")
 @EnableCaching
-@AutoConfigureOrder(SlardarOrderConst.CacheConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.CacheConfiguration)
 public class SlardarCacheConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarCacheConfiguration.class);

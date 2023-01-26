@@ -42,7 +42,7 @@ class Warlock1SchemaManagerTest {
         final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
         manager.mergeForceApply(true,
                 h -> h.branch("test/")
-                                .include(2020_10_24_03));
+                                .include(2020_1024_03));
     }
 
 

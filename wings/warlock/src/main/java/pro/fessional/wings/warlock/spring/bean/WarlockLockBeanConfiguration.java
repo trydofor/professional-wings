@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.mirana.lock.JvmStaticGlobalLock;
 import pro.fessional.wings.faceless.concur.DatabaseGlobalLock;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 
 
@@ -21,7 +21,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
  */
 @Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
-@AutoConfigureOrder(WarlockOrderConst.LockBeanConfiguration)
+@AutoConfigureOrder(OrderedWarlockConst.LockBeanConfiguration)
 public class WarlockLockBeanConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockLockBeanConfiguration.class);

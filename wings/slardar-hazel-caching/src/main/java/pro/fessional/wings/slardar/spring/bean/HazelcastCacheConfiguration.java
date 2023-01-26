@@ -9,8 +9,8 @@ import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.cache.hazelcast.WingsHazelcast;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
@@ -22,7 +22,7 @@ import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
  */
 @Configuration(proxyBeanMethods = false)
 @AutoConfigureBefore(SlardarCacheConfiguration.class)
-@AutoConfigureOrder(SlardarOrderConst.HazelcastCacheConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.HazelcastCacheConfiguration)
 public class HazelcastCacheConfiguration {
 
     private static final Log log = LogFactory.getLog(HazelcastCacheConfiguration.class);

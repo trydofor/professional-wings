@@ -20,7 +20,7 @@ import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import pro.fessional.wings.faceless.constants.FacelessOrderConst;
+import pro.fessional.wings.spring.consts.OrderedFacelessConst;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqEnv;
 import pro.fessional.wings.faceless.database.jooq.converter.JooqConverterDelegate;
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$module, havingValue = "true")
 @ConditionalOnClass(name = "org.jooq.conf.Settings")
-@AutoConfigureOrder(FacelessOrderConst.JooqConfiguration)
+@AutoConfigureOrder(OrderedFacelessConst.JooqConfiguration)
 public class FacelessJooqConfiguration {
 
     private static final Log log = LogFactory.getLog(FacelessJooqConfiguration.class);
@@ -57,7 +57,7 @@ public class FacelessJooqConfiguration {
      */
     @Bean
     @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$autoQualify, havingValue = "true")
-    @Order(FacelessOrderConst.JooqQualifyListener)
+    @Order(OrderedFacelessConst.JooqQualifyListener)
     public VisitListenerProvider jooqAutoQualifyFieldListener() {
         log.info("FacelessJooq spring-bean jooqAutoQualifyFieldListener");
         return new DefaultVisitListenerProvider(new AutoQualifyFieldListener());
@@ -65,7 +65,7 @@ public class FacelessJooqConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$listenTableCud, havingValue = "true")
-    @Order(FacelessOrderConst.JooqTableCudListener)
+    @Order(OrderedFacelessConst.JooqTableCudListener)
     public VisitListenerProvider jooqTableCudListener(ObjectProvider<WingsTableCudHandler> handlers, FacelessJooqCudProp prop) {
         final List<WingsTableCudHandler> hdl = handlers.orderedStream().collect(Collectors.toList());
         final String names = hdl.stream().map(it -> it.getClass().getName()).collect(Collectors.joining(","));

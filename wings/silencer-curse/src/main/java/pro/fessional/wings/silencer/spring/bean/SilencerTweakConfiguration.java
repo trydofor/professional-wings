@@ -20,7 +20,7 @@ import pro.fessional.mirana.evil.ThreadLocalAttention;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
-import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
+import pro.fessional.wings.spring.consts.WingsBeanOrdered;
 import pro.fessional.wings.silencer.spring.prop.SilencerTweakProp;
 import pro.fessional.wings.silencer.tweak.TweakLogger;
 

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.session.FindByIndexNameSessionRepository;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.session.HazelcastSessionHelper;
 import pro.fessional.wings.slardar.session.WingsSessionHelper;
 import pro.fessional.wings.slardar.session.WingsSessionRegistry;
@@ -23,7 +23,7 @@ import pro.fessional.wings.slardar.session.WingsSessionRegistry;
  */
 @Configuration(proxyBeanMethods = false)
 @AutoConfigureAfter(SessionAutoConfiguration.class)
-@AutoConfigureOrder(SlardarOrderConst.HazelcastPublisherConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.HazelcastPublisherConfiguration)
 public class HazelcastSessionConfiguration {
 
     private static final Log log = LogFactory.getLog(HazelcastSessionConfiguration.class);

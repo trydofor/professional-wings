@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.notice.DingTalkNotice;
 import pro.fessional.wings.slardar.spring.prop.SlardarDingNoticeProp;
 
@@ -18,7 +18,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarDingNoticeProp;
  * @since 2019-06-29
  */
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureOrder(SlardarOrderConst.DingNoticeConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.DingNoticeConfiguration)
 public class SlardarDingNoticeConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarDingNoticeConfiguration.class);
@@ -27,7 +27,7 @@ public class SlardarDingNoticeConfiguration {
     private SlardarDingNoticeProp slardarDingNoticeProp;
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(DingTalkNotice.class)
     public DingTalkNotice dingTalkNotice(OkHttpClient okHttpClient) {
         log.info("Slardar spring-bean dingTalkNotice");
         final DingTalkNotice bean = new DingTalkNotice(okHttpClient, slardarDingNoticeProp.getDefault());

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.RestController;
-import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
+import pro.fessional.wings.spring.consts.WingsBeanOrdered;
 import pro.fessional.wings.tiny.mail.sender.MailConfigProvider;
 import pro.fessional.wings.tiny.mail.sender.MailNotice;
 import pro.fessional.wings.tiny.mail.sender.MailSenderManager;

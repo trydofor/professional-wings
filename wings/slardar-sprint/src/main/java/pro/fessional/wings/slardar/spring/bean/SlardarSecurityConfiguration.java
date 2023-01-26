@@ -17,7 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.pass.DefaultPasssaltEncoder;
@@ -34,7 +34,7 @@ import java.util.Map;
 @Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 @ConditionalOnClass(SecurityConfigurer.class)
-@AutoConfigureOrder(SlardarOrderConst.SecurityConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.SecurityConfiguration)
 public class SlardarSecurityConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarSecurityConfiguration.class);
@@ -123,7 +123,7 @@ public class SlardarSecurityConfiguration {
     @Bean
     public CommandLineRunnerOrdered runnerTerminalContextListener(Map<String, TerminalContext.Listener> listeners) {
         log.info("SlardarSprint spring-runs runnerTerminalContextListener");
-        return new CommandLineRunnerOrdered(SlardarOrderConst.RunnerTerminalContextListener, args -> {
+        return new CommandLineRunnerOrdered(OrderedSlardarConst.RunnerTerminalContextListener, args -> {
             for (Map.Entry<String, TerminalContext.Listener> en : listeners.entrySet()) {
                 final String name = en.getKey();
                 log.info("SlardarSprint spring-conf runnerTerminalContextListener, name=" + name);

@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.event.TweakEventListener;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpTweakLogInterceptor;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
@@ -17,7 +17,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$tweaking, havingValue = "true")
-@AutoConfigureOrder(SlardarOrderConst.TweakingConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.TweakingConfiguration)
 public class SlardarTweakingConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarTweakingConfiguration.class);

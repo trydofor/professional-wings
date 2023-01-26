@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.security.justauth.AuthConfigWrapper;
 import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
 import pro.fessional.wings.warlock.security.justauth.JustAuthRequestBuilder;
@@ -37,7 +37,7 @@ import static java.net.Proxy.Type.DIRECT;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$justAuth, havingValue = "true")
 @RequiredArgsConstructor
-@AutoConfigureOrder(WarlockOrderConst.JustAuthConfiguration)
+@AutoConfigureOrder(OrderedWarlockConst.JustAuthConfiguration)
 public class WarlockJustAuthConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockJustAuthConfiguration.class);

@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.servlet.stream.RequestResponseLogging;
 import pro.fessional.wings.slardar.servlet.stream.WingsReuseStreamFilter;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
@@ -19,7 +19,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$restream, havingValue = "true")
-@AutoConfigureOrder(SlardarOrderConst.RestreamConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.RestreamConfiguration)
 public class SlardarRestreamConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarRestreamConfiguration.class);

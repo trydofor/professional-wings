@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.page.PageQuery;
 import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.spring.prop.SlardarPagequeryProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarSwaggerProp;
 
@@ -34,7 +34,7 @@ import java.util.Map;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(OpenAPI.class)
-@AutoConfigureOrder(SlardarOrderConst.SwaggerConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.SwaggerConfiguration)
 public class SlardarSwaggerConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarSwaggerConfiguration.class);

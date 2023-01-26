@@ -6,7 +6,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.WingsAuthCheckService;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
@@ -18,7 +18,7 @@ import pro.fessional.wings.slardar.security.bind.WingsBindAuthProvider;
  * @author trydofor
  * @since 2021-02-09
  */
-@Order(SlardarOrderConst.CnfSecurityBeanInitConfigurer)
+@Order(OrderedSlardarConst.CnfSecurityBeanInitConfigurer)
 public class WingsSecBeanInitConfigurer extends GlobalAuthenticationConfigurerAdapter {
 
     private final ApplicationContext context;

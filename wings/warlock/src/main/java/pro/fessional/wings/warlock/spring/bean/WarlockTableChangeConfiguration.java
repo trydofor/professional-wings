@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.service.event.TableChangePublisher;
 import pro.fessional.wings.warlock.service.event.impl.TableChangePublisherImpl;
 import pro.fessional.wings.warlock.service.event.impl.WingsTableCudHandlerImpl;
@@ -24,7 +24,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$tableChange, havingValue = "true")
-@AutoConfigureOrder(WarlockOrderConst.TableChangeConfiguration)
+@AutoConfigureOrder(OrderedWarlockConst.TableChangeConfiguration)
 public class WarlockTableChangeConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockTableChangeConfiguration.class);

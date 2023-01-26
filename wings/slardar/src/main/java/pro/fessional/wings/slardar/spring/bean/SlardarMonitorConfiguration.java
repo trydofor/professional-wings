@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.unit.DataSize;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.monitor.MonitorTask;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.monitor.metric.JvmMetric;
@@ -41,7 +41,7 @@ import java.util.Map;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$monitor, havingValue = "true")
 @EnableScheduling
-@AutoConfigureOrder(SlardarOrderConst.MonitorConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.MonitorConfiguration)
 public class SlardarMonitorConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarMonitorConfiguration.class);
@@ -58,7 +58,7 @@ public class SlardarMonitorConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(DingTalkReport.class)
     public DingTalkReport dingTalkReport(DingTalkNotice dingTalkNotice) {
         final String name = slardarMonitorProp.getDingNotice();
         log.info("Slardar spring-bean dingTalkReport, conf=" + name);
@@ -66,7 +66,7 @@ public class SlardarMonitorConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(MonitorTask.class)
     @ConditionalOnBean(WarnMetric.class)
     public MonitorTask monitorTask() {
         log.info("Slardar spring-bean monitorTask");

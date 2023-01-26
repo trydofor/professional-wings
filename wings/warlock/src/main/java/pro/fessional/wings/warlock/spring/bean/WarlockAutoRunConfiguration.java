@@ -13,7 +13,7 @@ import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 import pro.fessional.wings.faceless.enums.StandardTimezoneEnum;
 import pro.fessional.wings.faceless.enums.TimezoneEnumUtil;
 import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.spring.prop.WarlockCheckProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockI18nProp;
@@ -25,7 +25,7 @@ import javax.sql.DataSource;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureOrder(WarlockOrderConst.AutoRunConfiguration)
+@AutoConfigureOrder(OrderedWarlockConst.AutoRunConfiguration)
 public class WarlockAutoRunConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockAutoRunConfiguration.class);
@@ -33,7 +33,7 @@ public class WarlockAutoRunConfiguration {
     @Bean
     public CommandLineRunnerOrdered runnerRegisterEnumUtil(ObjectProvider<WarlockI18nProp> provider) {
         log.info("Warlock spring-runs runnerRegisterEnumUtil");
-        return new CommandLineRunnerOrdered(WarlockOrderConst.RunnerRegisterEnumUtil, args -> {
+        return new CommandLineRunnerOrdered(OrderedWarlockConst.RunnerRegisterEnumUtil, args -> {
             final WarlockI18nProp warlockI18nProp = provider.getIfAvailable();
             if (warlockI18nProp == null) {
                 log.info("Warlock conf skip registerEnumUtil for NULL ");
@@ -68,7 +68,7 @@ public class WarlockAutoRunConfiguration {
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$checkDatabase, havingValue = "true")
     public CommandLineRunnerOrdered runnerDatabaseChecker(DataSource dataSource, WarlockCheckProp prop) {
         log.info("Warlock spring-runs runnerDatabaseChecker");
-        return new CommandLineRunnerOrdered(WarlockOrderConst.RunnerDatabaseChecker, args -> {
+        return new CommandLineRunnerOrdered(OrderedWarlockConst.RunnerDatabaseChecker, args -> {
             DatabaseChecker.version(dataSource);
             DatabaseChecker.timezone(dataSource, prop.getTzOffset(), prop.isTzFail());
         });

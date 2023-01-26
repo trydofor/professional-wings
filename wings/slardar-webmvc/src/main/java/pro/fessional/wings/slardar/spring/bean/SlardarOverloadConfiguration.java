@@ -15,7 +15,7 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import pro.fessional.mirana.best.DummyBlock;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.servlet.filter.WingsOverloadFilter;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
@@ -36,13 +36,13 @@ import java.io.PrintWriter;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$overload, havingValue = "true")
 @ConditionalOnClass(Filter.class)
-@AutoConfigureOrder(SlardarOrderConst.OverloadConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.OverloadConfiguration)
 public class SlardarOverloadConfiguration {
 
     private final Log log = LogFactory.getLog(SlardarOverloadConfiguration.class);
 
     @Component
-    @Order(SlardarOrderConst.AppSafelyShutdownListener)
+    @Order(OrderedSlardarConst.AppSafelyShutdownListener)
     @RequiredArgsConstructor
     public class SafelyShutdown implements ApplicationListener<ContextClosedEvent> {
         private final WingsOverloadFilter overloadFilter;

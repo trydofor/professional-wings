@@ -12,8 +12,8 @@ import pro.fessional.mirana.bits.Md5;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.concur.FirstBlood;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.servlet.request.RequestHelper;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
@@ -37,7 +37,7 @@ import java.util.function.Supplier;
 @Getter
 public class FirstBloodImageHandler implements FirstBloodHandler {
 
-    private int order = SlardarOrderConst.MvcFirstBloodImageHandler;
+    private int order = OrderedSlardarConst.MvcFirstBloodImageHandler;
 
     private String clientTicketKey = "Client-Ticket";
     private String questCaptchaKey = "quest-captcha-image";

@@ -1,4 +1,4 @@
-package pro.fessional.wings.silencer.spring.help;
+package pro.fessional.wings.spring.consts;
 
 /**
  * @author trydofor

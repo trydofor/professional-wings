@@ -6,7 +6,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.faceless.constants.FacelessOrderConst;
+import pro.fessional.wings.spring.consts.OrderedFacelessConst;
 import pro.fessional.wings.faceless.database.DataSourceContext;
 
 import javax.sql.DataSource;
@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2019-06-25
  */
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureOrder(FacelessOrderConst.DataSourceConfiguration)
+@AutoConfigureOrder(OrderedFacelessConst.DataSourceConfiguration)
 public class FacelessDataSourceConfiguration {
 
     private static final Log log = LogFactory.getLog(FacelessDataSourceConfiguration.class);

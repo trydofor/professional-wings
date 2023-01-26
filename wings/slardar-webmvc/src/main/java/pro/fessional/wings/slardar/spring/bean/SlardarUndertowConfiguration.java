@@ -16,7 +16,7 @@ import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.unit.DataSize;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 /**
@@ -26,7 +26,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(Undertow.class)
-@AutoConfigureOrder(SlardarOrderConst.UndertowConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.UndertowConfiguration)
 public class SlardarUndertowConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarUndertowConfiguration.class);

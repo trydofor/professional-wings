@@ -12,7 +12,7 @@ import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.warlock.constants.WarlockGlobalAttribute;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAuthnTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAuthnDao;
@@ -30,7 +30,7 @@ import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
 public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
 
     @Getter @Setter
-    private int order = WarlockOrderConst.DefaultDaoAuthnCombo;
+    private int order = OrderedWarlockConst.DefaultDaoAuthnCombo;
 
     @Setter(onMethod_ = {@Autowired})
     protected WinUserBasisDao winUserBasisDao;

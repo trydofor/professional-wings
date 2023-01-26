@@ -11,9 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
 import pro.fessional.wings.warlock.security.justauth.JustAuthRequestBuilder;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 public class JustAuthLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
 
     @Setter @Getter
-    private int order = WarlockOrderConst.SecJustAuthLoginPageCombo;
+    private int order = OrderedWarlockConst.SecJustAuthLoginPageCombo;
 
     @Setter(onMethod_ = {@Autowired})
     protected JustAuthRequestBuilder justAuthRequestBuilder;

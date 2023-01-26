@@ -1,12 +1,11 @@
-package pro.fessional.wings.slardar.constants;
+package pro.fessional.wings.spring.consts;
 
-import pro.fessional.wings.silencer.spring.help.WingsBeanNaming;
 
 /**
  * @author trydofor
  * @since 2022-12-05
  */
-public interface SlardarNameConst extends WingsBeanNaming {
+public interface NamingSlardarConst extends WingsBeanNaming {
     String SlardarEventExecutorBean = "slardarEventExecutor";
     String SlardarHeavySchedulerBean = "slardarHeavyScheduler";
 }

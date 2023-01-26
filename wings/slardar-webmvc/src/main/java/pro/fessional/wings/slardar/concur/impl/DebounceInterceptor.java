@@ -10,8 +10,8 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import pro.fessional.mirana.bits.Md5;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.concur.Debounce;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.servlet.request.RequestHelper;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.servlet.stream.ReuseStreamResponseWrapper;
@@ -40,7 +40,7 @@ public class DebounceInterceptor implements AutoRegisterInterceptor {
     private final ModelAndView modelAndView;
 
     @Getter @Setter
-    private int order = SlardarOrderConst.MvcDebounceInterceptor;
+    private int order = OrderedSlardarConst.MvcDebounceInterceptor;
 
     public DebounceInterceptor(long capacity, int maxWait, ModelAndView res) {
         this.cache = Caffeine.newBuilder()

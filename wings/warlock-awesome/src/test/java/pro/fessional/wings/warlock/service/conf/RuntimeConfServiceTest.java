@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * 需要先初始化数据库 Warlock1SchemaCreator#init0Schema
+ *
  * @author trydofor
  * @since 2022-03-09
  */
@@ -82,7 +84,7 @@ class RuntimeConfServiceTest {
     @Test
     void testJson() {
         Dto dto = new Dto();
-        runtimeConfService.newObject(Dto.class, dto, "test dto");
+        runtimeConfService.newObject(Dto.class, dto, "需要先初始化数据库 Warlock1SchemaCreator#init0Schema");
         final Dto dto1 = runtimeConfService.getSimple(Dto.class, Dto.class);
         Assertions.assertEquals(dto, dto1);
     }

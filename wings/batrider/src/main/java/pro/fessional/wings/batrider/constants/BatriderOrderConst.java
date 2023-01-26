@@ -1,6 +1,6 @@
 package pro.fessional.wings.batrider.constants;
 
-import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
+import pro.fessional.wings.spring.consts.WingsBeanOrdered;
 
 /**
  * @author trydofor
@@ -8,5 +8,5 @@ import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
  */
 public interface BatriderOrderConst extends WingsBeanOrdered {
 
-    int ServcombBaseline = Lv4Application + Pr5Batrider;
+    int ServcombBaseline = Lv4Application + PriorityD;
 }

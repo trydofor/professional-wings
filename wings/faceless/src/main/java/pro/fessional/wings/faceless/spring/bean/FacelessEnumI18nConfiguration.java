@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
-import pro.fessional.wings.faceless.constants.FacelessOrderConst;
+import pro.fessional.wings.spring.consts.OrderedFacelessConst;
 import pro.fessional.wings.faceless.service.wini18n.StandardI18nService;
 import pro.fessional.wings.faceless.service.wini18n.impl.StandardI18nServiceJdbc;
 import pro.fessional.wings.faceless.spring.prop.FacelessEnabledProp;
@@ -23,7 +23,7 @@ import pro.fessional.wings.silencer.message.CombinableMessageSource;
 @Configuration
 @ConditionalOnProperty(name = FacelessEnabledProp.Key$enumi18n, havingValue = "true")
 @ConditionalOnClass(name = "pro.fessional.wings.silencer.message.CombinableMessageSource")
-@AutoConfigureOrder(FacelessOrderConst.EnumI18nConfiguration)
+@AutoConfigureOrder(OrderedFacelessConst.EnumI18nConfiguration)
 public class FacelessEnumI18nConfiguration {
 
     private static final Log log = LogFactory.getLog(FacelessEnumI18nConfiguration.class);

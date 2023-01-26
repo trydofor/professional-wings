@@ -48,11 +48,11 @@ import me.zhyd.oauth.request.AuthWeiboRequest;
 import me.zhyd.oauth.request.AuthXmlyRequest;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthDetails;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -71,7 +71,7 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
     private AuthStateCache authStateCache;
     private AuthStateBuilder authStateBuilder;
     private WingsRemoteResolver remoteResolver;
-    private int order = WarlockOrderConst.SecJustAuthRequestBuilder;
+    private int order = OrderedWarlockConst.SecJustAuthRequestBuilder;
 
     @Override
     public DefaultWingsAuthDetails buildDetails(@NotNull Enum<?> authType, @NotNull HttpServletRequest request) {

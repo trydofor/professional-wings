@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import pro.fessional.wings.faceless.constants.FacelessOrderConst;
+import pro.fessional.wings.spring.consts.OrderedFacelessConst;
 import pro.fessional.wings.faceless.database.DataSourceContext;
 import pro.fessional.wings.faceless.database.sharding.WriteRouteOnlyAround;
 
@@ -32,7 +32,7 @@ import static org.apache.shardingsphere.spring.boot.util.PropertyUtil.containPro
 
 @ConditionalOnProperty(name = "spring.shardingsphere.enabled", havingValue = "true", matchIfMissing = true)
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureOrder(FacelessOrderConst.ShardingsphereConfiguration)
+@AutoConfigureOrder(OrderedFacelessConst.ShardingsphereConfiguration)
 public class FacelessShardingsphereConfiguration {
     private static final Log log = LogFactory.getLog(FacelessShardingsphereConfiguration.class);
 

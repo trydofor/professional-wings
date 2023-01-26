@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
-import pro.fessional.wings.faceless.constants.FacelessOrderConst;
+import pro.fessional.wings.spring.consts.OrderedFacelessConst;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.impl.CommitJournalModifyJdbc;
 import pro.fessional.wings.faceless.service.journal.JournalService;
@@ -23,7 +23,7 @@ import pro.fessional.wings.faceless.spring.prop.FacelessEnabledProp;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = FacelessEnabledProp.Key$journal, havingValue = "true")
-@AutoConfigureOrder(FacelessOrderConst.JournalConfiguration)
+@AutoConfigureOrder(OrderedFacelessConst.JournalConfiguration)
 public class FacelessJournalConfiguration {
 
     private static final Log log = LogFactory.getLog(FacelessJournalConfiguration.class);

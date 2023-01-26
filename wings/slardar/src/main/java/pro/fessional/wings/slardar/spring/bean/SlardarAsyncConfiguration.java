@@ -24,9 +24,9 @@ import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.async.TaskSchedulerHelper;
 import pro.fessional.wings.slardar.async.TtlThreadPoolTaskScheduler;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarAsyncProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
@@ -37,8 +37,8 @@ import java.util.concurrent.Executor;
 import static org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME;
 import static org.springframework.scheduling.annotation.AsyncAnnotationBeanPostProcessor.DEFAULT_TASK_EXECUTOR_BEAN_NAME;
 import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME;
-import static pro.fessional.wings.slardar.constants.SlardarNameConst.SlardarEventExecutorBean;
-import static pro.fessional.wings.slardar.constants.SlardarNameConst.SlardarHeavySchedulerBean;
+import static pro.fessional.wings.spring.consts.NamingSlardarConst.SlardarEventExecutorBean;
+import static pro.fessional.wings.spring.consts.NamingSlardarConst.SlardarHeavySchedulerBean;
 
 /**
  * <pre>
@@ -54,7 +54,7 @@ import static pro.fessional.wings.slardar.constants.SlardarNameConst.SlardarHeav
 @EnableAsync
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$async, havingValue = "true")
-@AutoConfigureOrder(SlardarOrderConst.AsyncConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.AsyncConfiguration)
 public class SlardarAsyncConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarAsyncConfiguration.class);
@@ -125,7 +125,7 @@ public class SlardarAsyncConfiguration {
             ApplicationEventMulticaster multicaster,
             @Qualifier(SlardarEventExecutorBean) Executor executor) {
         log.info("Slardar spring-runs runnerEventPublishHelper");
-        return new CommandLineRunnerOrdered(SlardarOrderConst.RunnerEventPublishHelper, args -> {
+        return new CommandLineRunnerOrdered(OrderedSlardarConst.RunnerEventPublishHelper, args -> {
             EventPublishHelper.setExecutor(executor);
             log.info("Slardar conf eventPublishHelper ApplicationEventPublisher=" + publisher.getClass());
             EventPublishHelper.setSpringPublisher(publisher);

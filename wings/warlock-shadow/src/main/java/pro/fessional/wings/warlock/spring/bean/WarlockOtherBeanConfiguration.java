@@ -15,7 +15,7 @@ import pro.fessional.wings.slardar.concur.HazelcastGlobalLock;
 import pro.fessional.wings.slardar.concur.impl.RighterInterceptor;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.webmvc.MessageResponse;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.errorhandle.CodeExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.DefaultExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.auto.BindExceptionAdvice;
@@ -30,7 +30,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockLockProp;
  */
 @Configuration(proxyBeanMethods = false)
 @ComponentScan("pro.fessional.wings.warlock.controller")
-@AutoConfigureOrder(WarlockOrderConst.OtherBeanConfiguration)
+@AutoConfigureOrder(OrderedWarlockConst.OtherBeanConfiguration)
 public class WarlockOtherBeanConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockOtherBeanConfiguration.class);
@@ -61,7 +61,7 @@ public class WarlockOtherBeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(RighterInterceptor.SecretProvider.class)
     public RighterInterceptor.SecretProvider righterInterceptorSecretProvider() {
         log.info("WarlockShadow spring-bean righterInterceptorSecretProvider");
         return ss -> {

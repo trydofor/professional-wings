@@ -9,8 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ListAllLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
 
     @Setter @Getter
-    private int order = WarlockOrderConst.SecListAllLoginPageCombo;
+    private int order = OrderedWarlockConst.SecListAllLoginPageCombo;
 
     @Setter(onMethod_ = {@Autowired})
     protected WarlockSecurityProp warlockSecurityProp;

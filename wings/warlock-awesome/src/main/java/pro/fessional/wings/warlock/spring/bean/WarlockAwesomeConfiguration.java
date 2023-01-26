@@ -14,10 +14,9 @@ import pro.fessional.wings.silencer.modulate.ApiMode;
 import pro.fessional.wings.silencer.modulate.RunMode;
 import pro.fessional.wings.silencer.modulate.RuntimeMode;
 import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
-import pro.fessional.wings.silencer.spring.help.OrderedWarlockConst;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.slardar.serialize.JsonConversion;
 import pro.fessional.wings.slardar.serialize.KryoConversion;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.SysConstantEnumDao;
 import pro.fessional.wings.warlock.service.conf.RuntimeConfService;
 import pro.fessional.wings.warlock.service.conf.impl.RuntimeConfServiceImpl;
@@ -29,7 +28,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureOrder(WarlockOrderConst.AwesomeConfiguration)
+@AutoConfigureOrder(OrderedWarlockConst.AwesomeConfiguration)
 public class WarlockAwesomeConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockAwesomeConfiguration.class);
@@ -41,7 +40,7 @@ public class WarlockAwesomeConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(RuntimeConfService.class)
     public RuntimeConfService runtimeConfService(ObjectProvider<ConversionService> conversionProvider) {
         log.info("Warlock spring-bean runtimeConfService");
         final RuntimeConfServiceImpl bean = new RuntimeConfServiceImpl();

@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 /**
@@ -26,7 +26,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(OkHttpClient.class)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$okhttp, havingValue = "true")
-@AutoConfigureOrder(SlardarOrderConst.OkhttpWebConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.OkhttpWebConfiguration)
 public class SlardarOkhttpWebConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarOkhttpWebConfiguration.class);

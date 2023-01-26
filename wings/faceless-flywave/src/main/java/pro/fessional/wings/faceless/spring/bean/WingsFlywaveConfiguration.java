@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import pro.fessional.wings.faceless.constants.FacelessOrderConst;
+import pro.fessional.wings.spring.consts.OrderedFacelessConst;
 import pro.fessional.wings.faceless.database.DataSourceContext;
 import pro.fessional.wings.faceless.flywave.RevisionFitness;
 import pro.fessional.wings.faceless.flywave.SchemaDefinitionLoader;
@@ -38,7 +38,7 @@ import static pro.fessional.wings.faceless.flywave.SchemaJournalManager.JournalD
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(name = "pro.fessional.wings.faceless.database.DataSourceContext")
 @ConditionalOnProperty(name = FlywaveEnabledProp.Key$module, havingValue = "true")
-@AutoConfigureOrder(FacelessOrderConst.FlywaveConfiguration)
+@AutoConfigureOrder(OrderedFacelessConst.FlywaveConfiguration)
 public class WingsFlywaveConfiguration {
 
     private static final Log log = LogFactory.getLog(WingsFlywaveConfiguration.class);
@@ -153,7 +153,7 @@ public class WingsFlywaveConfiguration {
     @ConditionalOnProperty(name = FlywaveEnabledProp.Key$checker, havingValue = "true")
     public CommandLineRunnerOrdered runnerRevisionChecker(DefaultRevisionManager manager, FlywaveFitProp prop) {
         log.info("FacelessFlywave spring-runs runnerRevisionChecker");
-        return new CommandLineRunnerOrdered(FacelessOrderConst.RunnerRevisionChecker, args -> {
+        return new CommandLineRunnerOrdered(OrderedFacelessConst.RunnerRevisionChecker, args -> {
             log.info("FacelessFlywave check RevisionFitness");
             final RevisionFitness fits = new RevisionFitness();
             fits.addFits(prop.getFit());

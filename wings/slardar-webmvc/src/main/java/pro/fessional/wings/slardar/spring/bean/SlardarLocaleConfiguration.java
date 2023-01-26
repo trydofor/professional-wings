@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarLocaleProp;
@@ -19,7 +19,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarLocaleProp;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$locale, havingValue = "true")
-@AutoConfigureOrder(SlardarOrderConst.LocaleConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.LocaleConfiguration)
 public class SlardarLocaleConfiguration {
 
     private final Log log = LogFactory.getLog(SlardarLocaleConfiguration.class);

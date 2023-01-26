@@ -13,7 +13,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.time.DateParser;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.jackson.AutoRegisterPropertyFilter;
 import pro.fessional.wings.slardar.jackson.EmptyValuePropertyFilter;
 import pro.fessional.wings.slardar.jackson.I18nResultPropertyFilter;
@@ -32,7 +32,7 @@ import java.time.LocalDate;
 @ConditionalOnClass(DateSerializer.class)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$jackson, havingValue = "true")
 @RequiredArgsConstructor
-@AutoConfigureOrder(SlardarOrderConst.JacksonConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.JacksonConfiguration)
 public class SlardarJacksonConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarJacksonConfiguration.class);

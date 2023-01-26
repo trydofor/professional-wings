@@ -10,10 +10,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.autodto.AutoDtoHelper;
 import pro.fessional.wings.slardar.autodto.AutoZoneVisitor;
 import pro.fessional.wings.slardar.autodto.I18nStringVisitor;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
 
 /**
@@ -24,7 +24,7 @@ import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
  */
 @Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
-@AutoConfigureOrder(SlardarOrderConst.I18nConfiguration)
+@AutoConfigureOrder(OrderedSlardarConst.I18nConfiguration)
 public class SlardarI18nConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarI18nConfiguration.class);
@@ -40,7 +40,7 @@ public class SlardarI18nConfiguration {
     @Bean
     public CommandLineRunnerOrdered runnerAutoDtoHelper(MessageSource messageSource) {
         log.info("Slardar spring-runs runnerAutoDtoHelper");
-        return new CommandLineRunnerOrdered(SlardarOrderConst.RunnerAutoDtoHelper, arg -> new AutoDtoHelper() {{
+        return new CommandLineRunnerOrdered(OrderedSlardarConst.RunnerAutoDtoHelper, arg -> new AutoDtoHelper() {{
             final I18nStringVisitor i18nStringVisitor = new I18nStringVisitor(messageSource, LocaleZoneIdUtil.LocaleNonnull);
 
             RequestVisitor.add(AutoDtoHelper.AutoDtoVisitor);

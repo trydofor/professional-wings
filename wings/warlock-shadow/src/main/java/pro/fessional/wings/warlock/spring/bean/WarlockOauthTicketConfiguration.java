@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.tk.TicketHelp;
 import pro.fessional.wings.silencer.encrypt.SecretProvider;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.service.auth.WarlockOauthService;
 import pro.fessional.wings.warlock.service.auth.WarlockTicketService;
 import pro.fessional.wings.warlock.service.auth.impl.SimpleTicketServiceImpl;
@@ -24,7 +24,7 @@ import java.util.Map;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureOrder(WarlockOrderConst.OauthTicketConfiguration)
+@AutoConfigureOrder(OrderedWarlockConst.OauthTicketConfiguration)
 public class WarlockOauthTicketConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockOauthTicketConfiguration.class);
