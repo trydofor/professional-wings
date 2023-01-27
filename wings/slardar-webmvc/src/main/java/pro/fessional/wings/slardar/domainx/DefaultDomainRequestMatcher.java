@@ -1,8 +1,8 @@
 package pro.fessional.wings.slardar.domainx;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
+import org.cache2k.Cache;
+import org.cache2k.Cache2kBuilder;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerMapping;
@@ -36,8 +36,8 @@ public class DefaultDomainRequestMatcher implements DomainRequestMatcher {
     public DefaultDomainRequestMatcher(String pathPrefix, Collection<String> otherUrl, int cacheSize, Supplier<List<HandlerMapping>> supplier) {
         this.pathPrefix = pathPrefix;
         this.otherUrl.addAll(otherUrl);
-        this.matchedUrl = Caffeine.newBuilder().maximumSize(cacheSize).build();
-        this.notfoundUrl = Caffeine.newBuilder().maximumSize(cacheSize).build();
+        this.matchedUrl = Cache2kBuilder.of(String.class, Boolean.class).entryCapacity(cacheSize).build();
+        this.notfoundUrl = Cache2kBuilder.of(String.class, Boolean.class).entryCapacity(cacheSize).build();
         this.handlerMappingSupplier = supplier;
     }
 
@@ -49,7 +49,7 @@ public class DefaultDomainRequestMatcher implements DomainRequestMatcher {
         DomainRequestWrapper wrapper = new DomainRequestWrapper(request);
         wrapper.setRequestURI(domainUrl);
 
-        Boolean b = matchedUrl.getIfPresent(domainUrl);
+        Boolean b = matchedUrl.get(domainUrl);
         if (b != null && b) {
             return wrapper;
         }
@@ -61,7 +61,7 @@ public class DefaultDomainRequestMatcher implements DomainRequestMatcher {
             }
         }
 
-        if (notfoundUrl.getIfPresent(domainUrl) != null) {
+        if (notfoundUrl.get(domainUrl) != null) {
             return request;
         }
 

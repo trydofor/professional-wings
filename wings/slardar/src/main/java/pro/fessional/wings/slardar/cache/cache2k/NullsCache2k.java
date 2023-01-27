@@ -1,26 +1,23 @@
-package pro.fessional.wings.slardar.cache;
+package pro.fessional.wings.slardar.cache.cache2k;
 
+import org.cache2k.Cache;
 import org.cache2k.Cache2kBuilder;
+import org.cache2k.extra.spring.SpringCache2kCache;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.cache.Cache;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 对nulls进行统一处理的缓存，支持weak及skip处理。
- * 正数:缓存大小，默认ttl=3600s; 0:不缓存null；其他值则不统一处理
- *
  * @author trydofor
- * @since 2022-03-13
+ * @since 2023-01-25
  */
-public class NullsCache implements Cache {
+public class NullsCache2k extends SpringCache2kCache {
 
-    private final Cache backend;
     private final org.cache2k.Cache<Object, Object> nulls;
 
-    public NullsCache(Cache cache, int size, int live) {
-        this.backend = cache;
+    public NullsCache2k(Cache<Object, Object> cache, int size, int live) {
+        super(cache);
         this.nulls = size > 0 ? Cache2kBuilder.forUnknownTypes()
                 .entryCapacity(size)
                 .expireAfterWrite(live, TimeUnit.SECONDS)
@@ -28,21 +25,11 @@ public class NullsCache implements Cache {
     }
 
     @Override
-    public @NotNull String getName() {
-        return backend.getName();
-    }
-
-    @Override
-    public @NotNull Object getNativeCache() {
-        return backend.getNativeCache();
-    }
-
-    @Override
     public ValueWrapper get(@NotNull Object key) {
         if (nulls != null && nulls.get(key) != null) {
             return null;
         }
-        return backend.get(key);
+        return super.get(key);
     }
 
     @Override
@@ -50,7 +37,7 @@ public class NullsCache implements Cache {
         if (nulls != null && nulls.get(key) != null) {
             return null;
         }
-        return backend.get(key, type);
+        return super.get(key, type);
     }
 
     @Override
@@ -59,7 +46,7 @@ public class NullsCache implements Cache {
             return null;
         }
 
-        final T value = backend.get(key, valueLoader);
+        final T value = super.get(key, valueLoader);
         if (value == null && nulls != null) {
             nulls.put(key, Boolean.TRUE);
         }
@@ -77,13 +64,13 @@ public class NullsCache implements Cache {
             }
         }
         else {
-            backend.put(key, value);
+            super.put(key, value);
         }
     }
 
     @Override
     public void evict(@NotNull Object key) {
-        backend.evict(key);
+        super.evict(key);
         if (nulls != null) {
             nulls.remove(key);
         }
@@ -91,7 +78,7 @@ public class NullsCache implements Cache {
 
     @Override
     public void clear() {
-        backend.clear();
+        super.clear();
         if (nulls != null) {
             nulls.removeAll();
         }

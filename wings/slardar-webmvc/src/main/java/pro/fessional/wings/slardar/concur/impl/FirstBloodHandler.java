@@ -1,6 +1,6 @@
 package pro.fessional.wings.slardar.concur.impl;
 
-import com.github.benmanes.caffeine.cache.Cache;
+import org.cache2k.Cache;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.Ordered;
 import org.springframework.web.method.HandlerMethod;

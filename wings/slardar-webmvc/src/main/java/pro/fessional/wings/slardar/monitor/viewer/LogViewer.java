@@ -1,11 +1,11 @@
 package pro.fessional.wings.slardar.monitor.viewer;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.cache2k.Cache;
+import org.cache2k.Cache2kBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,11 +49,9 @@ public class LogViewer implements WarnFilter {
 
     public LogViewer(LogConf conf) {
         this.conf = conf;
-        this.cache = Caffeine
-                .newBuilder()
-                .maximumSize(2_000)
+        this.cache = Cache2kBuilder.of(String.class, String.class)
+                .entryCapacity(2_000)
                 .expireAfterWrite(conf.getAlive())
-                .expireAfterAccess(conf.getAlive())
                 .build();
     }
 
@@ -67,7 +65,7 @@ public class LogViewer implements WarnFilter {
     @GetMapping(value = "${" + LogConf.Key$mapping + "}")
     public void view(@RequestParam("id") String id, HttpServletResponse res) throws IOException {
         if (id == null) return;
-        final String log = cache.getIfPresent(id);
+        final String log = cache.get(id);
         if (log == null) return;
         File file = new File(log);
         if (!file.canRead()) return;

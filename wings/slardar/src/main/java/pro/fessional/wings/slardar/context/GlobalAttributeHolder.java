@@ -1,7 +1,7 @@
 package pro.fessional.wings.slardar.context;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
+import org.cache2k.Cache;
+import org.cache2k.Cache2kBuilder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.best.TypedReg;
@@ -28,8 +28,9 @@ public class GlobalAttributeHolder {
 
 
     //
-    private static final Cache<Key<?, ?>, Object> CACHE = Caffeine.newBuilder()
-                                                                  .expireAfterAccess(12, TimeUnit.HOURS)
+    @SuppressWarnings("all")
+    private static final Cache<Key, Object> CACHE = Cache2kBuilder.of(Key.class, Object.class)
+                                                                  .expireAfterWrite(12L, TimeUnit.HOURS)
                                                                   .build();
     private static final ConcurrentHashMap<TypedReg<?, ?>, Function<?, ?>> LOADER = new ConcurrentHashMap<>();
 
@@ -115,17 +116,17 @@ public class GlobalAttributeHolder {
      * @param <V>     value类型
      * @return 返回值
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Contract("_,_,true ->!null")
     public static <K, V> V tryAttr(@NotNull TypedReg<K, V> reg, @NotNull K key, boolean notnull) {
         Key<K, V> k = new Key<>(reg, key);
-        final Function<Key<?, ?>, ?> ld = (Function<Key<?, ?>, ?>) LOADER.get(reg);
+        final Function<Key, ?> ld = (Function<Key, ?>) LOADER.get(reg);
         final Object rst;
         if (ld == null) {
-            rst = CACHE.getIfPresent(k);
+            rst = CACHE.get(k);
         }
         else {
-            rst = CACHE.get(k, ld);
+            rst = CACHE.computeIfAbsent(k, ld);
         }
 
         if (rst == null && notnull) {
@@ -146,7 +147,7 @@ public class GlobalAttributeHolder {
     @SuppressWarnings("unchecked")
     public static <K, V> V getAttr(@NotNull TypedReg<K, V> reg, @NotNull K key) {
         Key<K, V> k = new Key<>(reg, key);
-        final Object rst = CACHE.getIfPresent(k);
+        final Object rst = CACHE.get(k);
         return (V) rst;
     }
 
@@ -158,7 +159,7 @@ public class GlobalAttributeHolder {
      * @param <K> key类型
      */
     public static <K> void ridAttr(TypedReg<K, ?> reg, K key) {
-        CACHE.invalidate(new Key<>(reg, key));
+        CACHE.remove(new Key<>(reg, key));
     }
 
     /**
@@ -187,7 +188,7 @@ public class GlobalAttributeHolder {
         for (K k : key) {
             ks.add(new Key<>(reg, k));
         }
-        CACHE.invalidate(ks);
+        CACHE.removeAll(ks);
     }
 
     /**
@@ -216,12 +217,13 @@ public class GlobalAttributeHolder {
             rgs = new HashSet<>(reg);
         }
 
-        final Set<?> keys = CACHE.asMap()
-                                 .keySet()
-                                 .stream()
-                                 .filter(it -> rgs.contains(it.reg))
-                                 .collect(Collectors.toSet());
-        CACHE.invalidateAll(keys);
+        @SuppressWarnings("rawtypes") final Set<Key> keys = CACHE
+                .asMap()
+                .keySet()
+                .stream()
+                .filter(it -> rgs.contains(it.reg))
+                .collect(Collectors.toSet());
+        CACHE.removeAll(keys);
     }
 
     /**

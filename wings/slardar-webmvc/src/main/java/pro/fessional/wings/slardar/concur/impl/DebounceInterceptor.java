@@ -1,10 +1,10 @@
 package pro.fessional.wings.slardar.concur.impl;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.cache2k.Cache;
+import org.cache2k.Cache2kBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -43,10 +43,10 @@ public class DebounceInterceptor implements AutoRegisterInterceptor {
     private int order = OrderedSlardarConst.MvcDebounceInterceptor;
 
     public DebounceInterceptor(long capacity, int maxWait, ModelAndView res) {
-        this.cache = Caffeine.newBuilder()
-                             .maximumSize(capacity)
-                             .expireAfterWrite(maxWait, TimeUnit.SECONDS)
-                             .build();
+        this.cache = Cache2kBuilder.of(String.class, Dto.class)
+                                   .entryCapacity(capacity)
+                                   .expireAfterWrite(maxWait, TimeUnit.SECONDS)
+                                   .build();
         this.modelAndView = res;
     }
 
@@ -72,7 +72,7 @@ public class DebounceInterceptor implements AutoRegisterInterceptor {
 
         final Dto dto;
         synchronized (cache) {
-            Dto d = cache.getIfPresent(key);
+            Dto d = cache.get(key);
             if (d == null || d.ttl < bgn) {
                 d = new Dto(bgn + anno.waiting(), cur, anno.reuse());
                 cache.put(key, d);
@@ -126,12 +126,12 @@ public class DebounceInterceptor implements AutoRegisterInterceptor {
                                 @NotNull HttpServletResponse response,
                                 @NotNull Object handler, Exception ex) {
         // not handle exception
-        if(ex != null) return;
+        if (ex != null) return;
 
         // normal return or handled exception
         final String key = (String) request.getAttribute(DebounceKey);
         if (key == null) return;
-        final Dto dto = cache.getIfPresent(key);
+        final Dto dto = cache.get(key);
         if (dto == null || !dto.ruz) return;
 
         final ReuseStreamResponseWrapper inf = ReuseStreamResponseWrapper.infer(response);

@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static pro.fessional.wings.slardar.spring.prop.SlardarCacheProp.wildcard;
 
@@ -33,6 +34,7 @@ public class WingsHazelcast {
      */
     public static class Manager extends HazelcastCacheManager implements WingsCache.State {
         private final SlardarCacheProp slardarCacheProp;
+        private final ConcurrentHashMap<String, NullsCache> nullsCache = new ConcurrentHashMap<>();
 
         public Manager(SlardarCacheProp config, HazelcastInstance hazelcastInstance) {
             super(hazelcastInstance);
@@ -48,16 +50,12 @@ public class WingsHazelcast {
 
         @Override
         public org.springframework.cache.Cache getCache(@NotNull String name) {
-            final org.springframework.cache.Cache cache = super.getCache(name);
-
-            if (slardarCacheProp.isNullWeak()) {
-                return new NullsCache(cache, false);
-            }
-            else if (slardarCacheProp.isNullSkip()) {
-                return new NullsCache(cache, true);
+            final int size = slardarCacheProp.getNullSize();
+            if (size < 0) {
+                return super.getCache(name);
             }
             else {
-                return cache;
+                return nullsCache.computeIfAbsent(name, k -> new NullsCache(super.getCache(k), size, slardarCacheProp.getNullLive()));
             }
         }
 

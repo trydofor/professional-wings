@@ -17,7 +17,7 @@ import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.security.justauth.AuthConfigWrapper;
 import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
 import pro.fessional.wings.warlock.security.justauth.JustAuthRequestBuilder;
-import pro.fessional.wings.warlock.security.justauth.JustAuthStateCaffeine;
+import pro.fessional.wings.warlock.security.justauth.JustAuthStateCache;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockJustAuthProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
@@ -49,7 +49,7 @@ public class WarlockJustAuthConfiguration {
     @ConditionalOnMissingBean(AuthStateCache.class)
     public AuthStateCache authStateCache() {
         log.info("WarlockShadow spring-bean authStateCache");
-        return new JustAuthStateCaffeine(justAuthProp.getCacheSize(), justAuthProp.getCacheLive());
+        return new JustAuthStateCache(justAuthProp.getCacheSize(), justAuthProp.getCacheLive());
     }
 
     @Bean

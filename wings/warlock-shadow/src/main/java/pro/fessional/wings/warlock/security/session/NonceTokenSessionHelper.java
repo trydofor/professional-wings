@@ -1,8 +1,12 @@
 package pro.fessional.wings.warlock.security.session;
 
-import com.github.benmanes.caffeine.cache.Cache;
+
+import org.cache2k.Cache;
+import org.cache2k.Cache2kBuilder;
 import pro.fessional.mirana.data.Null;
-import pro.fessional.wings.slardar.cache.caffeine.WingsCaffeine;
+
+import java.util.concurrent.TimeUnit;
+
 
 /**
  * 提供5分钟内有效的一次性token关联验证。
@@ -14,8 +18,11 @@ import pro.fessional.wings.slardar.cache.caffeine.WingsCaffeine;
  */
 public class NonceTokenSessionHelper {
 
-    private static final Cache<String, Sf> caffeine = WingsCaffeine
-            .builder(100_000, 300, 0).build();
+    private static final Cache<String, Sf> cache = Cache2kBuilder
+            .of(String.class, Sf.class)
+            .entryCapacity(100_000)
+            .expireAfterWrite(300, TimeUnit.SECONDS)
+            .build();
 
     private static class Sf {
         private String ip = null;
@@ -29,14 +36,14 @@ public class NonceTokenSessionHelper {
         if (token == null) return;
         final Sf s = new Sf();
         s.ip = ip;
-        caffeine.put(token, s);
+        cache.put(token, s);
     }
 
     /**
      * 绑定token和sid
      */
     public static void bindNonceSid(String token, String sid) {
-        final Sf s = caffeine.getIfPresent(token);
+        final Sf s = cache.get(token);
         if (s != null) {
             s.sid = sid;
         }
@@ -46,7 +53,7 @@ public class NonceTokenSessionHelper {
      * 无效掉token
      */
     public static void invalidNonce(String token) {
-        caffeine.invalidate(token);
+        cache.remove(token);
     }
 
     /**
@@ -60,7 +67,7 @@ public class NonceTokenSessionHelper {
     public static String authNonce(String token, String ip) {
         if (token == null || token.isEmpty()) return null;
 
-        final Sf s = caffeine.getIfPresent(token);
+        final Sf s = cache.get(token);
         if (s == null) return null;
         if (s.sid == null) return Null.Str;
 

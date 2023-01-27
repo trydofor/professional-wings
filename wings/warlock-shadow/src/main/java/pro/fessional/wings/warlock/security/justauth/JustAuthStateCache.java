@@ -1,19 +1,25 @@
 package pro.fessional.wings.warlock.security.justauth;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import me.zhyd.oauth.cache.AuthStateCache;
-import pro.fessional.wings.slardar.cache.caffeine.WingsCaffeine;
+import org.cache2k.Cache;
+import org.cache2k.Cache2kBuilder;
+
+import java.util.concurrent.TimeUnit;
+
 
 /**
  * @author trydofor
  * @since 2021-02-18
  */
-public class JustAuthStateCaffeine implements AuthStateCache {
+public class JustAuthStateCache implements AuthStateCache {
 
     private final Cache<String, String> caffeine;
 
-    public JustAuthStateCaffeine(int max, int ttl) {
-        this.caffeine = WingsCaffeine.builder(max, ttl, 0).build();
+    public JustAuthStateCache(int max, int ttl) {
+        this.caffeine = Cache2kBuilder.of(String.class, String.class)
+                                      .entryCapacity(max)
+                                      .expireAfterWrite(ttl, TimeUnit.SECONDS)
+                                      .build();
     }
 
     @Override
@@ -28,11 +34,11 @@ public class JustAuthStateCaffeine implements AuthStateCache {
 
     @Override
     public String get(String key) {
-        return caffeine.getIfPresent(key);
+        return caffeine.get(key);
     }
 
     @Override
     public boolean containsKey(String key) {
-        return caffeine.getIfPresent(key) != null;
+        return caffeine.get(key) != null;
     }
 }

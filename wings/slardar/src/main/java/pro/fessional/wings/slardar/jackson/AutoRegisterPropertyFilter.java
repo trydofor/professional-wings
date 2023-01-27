@@ -27,6 +27,7 @@ public interface AutoRegisterPropertyFilter extends PropertyFilter {
     }
 
     @Override
+    @Deprecated
     default void depositSchemaProperty(PropertyWriter writer, ObjectNode propertiesNode, SerializerProvider provider) throws JsonMappingException {
         writer.depositSchemaProperty(propertiesNode, provider);
     }

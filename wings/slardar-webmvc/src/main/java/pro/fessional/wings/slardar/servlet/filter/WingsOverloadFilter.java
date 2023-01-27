@@ -1,12 +1,12 @@
 package pro.fessional.wings.slardar.servlet.filter;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.cache2k.Cache;
+import org.cache2k.Cache2kBuilder;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.spring.consts.OrderedSlardarConst;
@@ -66,16 +66,16 @@ public class WingsOverloadFilter implements OrderedFilter {
             int capacity = initCapacity(config);
             requestCapacity.set(capacity);
 
-            this.spiderCache = Caffeine.newBuilder()
-                                       .maximumSize(capacity)
-                                       .expireAfterAccess(config.requestInterval * config.requestCalmdown * 2, MILLISECONDS)
-                                       .build();
+            this.spiderCache = Cache2kBuilder.of(String.class, CalmDown.class)
+                                             .entryCapacity(capacity)
+                                             .idleScanTime(config.requestInterval * config.requestCalmdown * 2, MILLISECONDS)
+                                             .build();
         }
 
-        lastWarnSlow = Caffeine.newBuilder()
-                               .maximumSize(2000)
-                               .expireAfterAccess(Duration.ofHours(2))
-                               .build();
+        lastWarnSlow = Cache2kBuilder.of(String.class, Long.class)
+                .entryCapacity(2000)
+                .idleScanTime(Duration.ofHours(2))
+                .build();
 
         if (config.responseInfoStat <= 0) {
             responseCost = new AtomicLong[0];
@@ -112,7 +112,7 @@ public class WingsOverloadFilter implements OrderedFilter {
             final boolean isFst = now - calmDown.firstRequest.get() < config.requestInterval;
             if (isCnt && isFst) {
                 fallBack.fallback(request, response);
-                final Long lw = lastWarnSlow.getIfPresent(calmDown.ip);
+                final Long lw = lastWarnSlow.get(calmDown.ip);
                 final long lwl = lw == null ? 0L : lw;
                 if (log.isWarnEnabled() && now > config.getLogInterval() + lwl) {
                     log.warn("wings-clam-request, now={}, ip={}, uri={}", rqs, calmDown.ip, httpReq.getRequestURI());
@@ -214,7 +214,7 @@ public class WingsOverloadFilter implements OrderedFilter {
             }
         }
 
-        return spiderCache.get(ip, CalmDown::new);
+        return spiderCache.computeIfAbsent(ip, CalmDown::new);
     }
 
     private int initCapacity(Config config) {
@@ -237,7 +237,7 @@ public class WingsOverloadFilter implements OrderedFilter {
         final long warnSlow = config.responseWarnSlow;
         if (log.isWarnEnabled() && warnSlow > 0 && cost > warnSlow) {
             String uri = request.getRequestURI();
-            final Long lw = lastWarnSlow.getIfPresent(uri);
+            final Long lw = lastWarnSlow.get(uri);
             final long lwl = lw == null ? 0L : lw;
             if (end > config.getLogInterval() + lwl) {
                 log.warn("wings-slow-response, slow={}, cost={}, uri={}", warnSlow, cost, uri);

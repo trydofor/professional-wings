@@ -13,7 +13,13 @@ import java.util.Set;
  */
 public interface WingsCache {
 
-    String Joiner = ":";
+    /**
+     * For maximum compatibility cache names should only be composed with the characters [-_.a-zA-Z0-9].
+     * The characters {}|\^&=";:<>*?/ are not allowed in a cache name.
+     * The reason for restricting the characters in names, is that the names may be used to derive other resource names from it,
+     * e.g. for file based storage. The characters * and ? are used for wildcards in JMX and cannot be used in an object name.
+     */
+    String Joiner = "#";
 
     class Manager {
         /**

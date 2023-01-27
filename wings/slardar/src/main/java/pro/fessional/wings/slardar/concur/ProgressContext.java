@@ -1,11 +1,12 @@
 package pro.fessional.wings.slardar.concur;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import lombok.Getter;
+import org.cache2k.Cache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.code.LeapCode;
-import pro.fessional.wings.slardar.cache.caffeine.CaffeineSlot;
+import pro.fessional.wings.slardar.cache.cache2k.Cache2kSlot;
+
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
@@ -16,7 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class ProgressContext {
 
-    private static final CaffeineSlot slots = new CaffeineSlot(24 * 3600, 300);
+    private static final Cache2kSlot slots = new Cache2kSlot(24 * 3600, 300);
     private static final AtomicLong count = new AtomicLong(0);
     private static final LeapCode leapCode = new LeapCode();
 
@@ -47,10 +48,11 @@ public class ProgressContext {
         if (key == null) return null;
 
         final Cache<Object, Object> cache = slots.getCache(second);
-        final Object obj = cache.getIfPresent(key);
+        final Object obj = cache.get(key);
         if (obj instanceof Bar) {
             return (Bar) obj;
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -96,14 +98,14 @@ public class ProgressContext {
     public static String key(long started, int second) {
         StringBuilder sb = new StringBuilder(30);
         sb.append(leapCode.encode26(second, 5));
-        sb.append("-");
+        sb.append('-');
         sb.append(leapCode.encode26(started, 10));
         long cnt = count.incrementAndGet();
         while (cnt <= 0) {
             count.set(0);
             cnt = count.incrementAndGet();
         }
-        sb.append("-");
+        sb.append('-');
         sb.append(leapCode.encode26(cnt, 5));
         return sb.toString();
     }
@@ -149,11 +151,11 @@ public class ProgressContext {
         @Override
         public String toString() {
             return "Bar{" +
-                    "key='" + key + '\'' +
-                    ", started=" + started +
-                    ", done=" + done +
-                    ", error=" + error +
-                    '}';
+                   "key='" + key + '\'' +
+                   ", started=" + started +
+                   ", done=" + done +
+                   ", error=" + error +
+                   '}';
         }
     }
 }

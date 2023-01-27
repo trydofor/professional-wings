@@ -1,9 +1,9 @@
 package pro.fessional.wings.slardar.concur.impl;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.cache2k.Cache;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -71,14 +71,13 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
         final Tkn tkn;
         if (uk.isEmpty()) {
             key = new Key(uri, makeClientTicket(request));
-            tkn = (Tkn) cache.get(key, k -> new Tkn(now));
+            tkn = (Tkn) cache.computeIfAbsent(key, k -> new Tkn(now));
             sendClientTicket(response, key.clientCode);
         }
         else {
             key = new Key(uri, uk);
-            tkn = (Tkn) cache.get(key, k -> new Tkn(now));
+            tkn = (Tkn) cache.computeIfAbsent(key, k -> new Tkn(now));
         }
-        assert tkn != null;
 
         // 获取验证图，或验证
         final String ck = getKeyCode(request, questCaptchaKey);
