@@ -1,11 +1,10 @@
-package pro.fessional.wings.slardar.cache;
+package pro.fessional.wings.slardar.cache.spring;
 
-import org.cache2k.Cache2kBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.Cache;
+import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 对nulls进行统一处理的缓存，支持weak及skip处理。
@@ -21,10 +20,7 @@ public class NullsCache implements Cache {
 
     public NullsCache(Cache cache, int size, int live) {
         this.backend = cache;
-        this.nulls = size > 0 ? Cache2kBuilder.forUnknownTypes()
-                .entryCapacity(size)
-                .expireAfterWrite(live, TimeUnit.SECONDS)
-                .build() : null;
+        this.nulls = size > 0 ? WingsCache2k.builder(NullsCache.class, "nulls", size, live, -1).build() : null;
     }
 
     @Override

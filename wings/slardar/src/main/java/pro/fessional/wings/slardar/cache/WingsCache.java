@@ -14,16 +14,13 @@ import java.util.Set;
 public interface WingsCache {
 
     /**
-     * For maximum compatibility cache names should only be composed with the characters [-_.a-zA-Z0-9].
-     * The characters {}|\^&=";:<>*?/ are not allowed in a cache name.
-     * The reason for restricting the characters in names, is that the names may be used to derive other resource names from it,
-     * e.g. for file based storage. The characters * and ? are used for wildcards in JMX and cannot be used in an object name.
+     * <a href="https://github.com/cache2k/cache2k/issues/201">valid chars</a>
      */
-    String Joiner = "#";
+    String Joiner = "~";
 
     class Manager {
         /**
-         * 内存缓存，默认 caffeine
+         * 内存缓存，默认 cache2k
          */
         public static final String Memory = "MemoryCacheManager";
         /**

@@ -1,12 +1,10 @@
 package pro.fessional.wings.slardar.cache.cache2k;
 
 import org.cache2k.Cache;
-import org.cache2k.Cache2kBuilder;
 import org.cache2k.extra.spring.SpringCache2kCache;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author trydofor
@@ -18,10 +16,7 @@ public class NullsCache2k extends SpringCache2kCache {
 
     public NullsCache2k(Cache<Object, Object> cache, int size, int live) {
         super(cache);
-        this.nulls = size > 0 ? Cache2kBuilder.forUnknownTypes()
-                .entryCapacity(size)
-                .expireAfterWrite(live, TimeUnit.SECONDS)
-                .build() : null;
+        this.nulls = size > 0 ? WingsCache2k.builder(NullsCache2k.class, "nulls", size, live, -1).build() : null;
     }
 
     @Override

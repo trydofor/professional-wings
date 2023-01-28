@@ -8,7 +8,7 @@ import com.hazelcast.map.IMap;
 import com.hazelcast.spring.cache.HazelcastCacheManager;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import pro.fessional.wings.slardar.cache.NullsCache;
+import pro.fessional.wings.slardar.cache.spring.NullsCache;
 import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
 

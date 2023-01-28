@@ -1,13 +1,10 @@
 package pro.fessional.wings.slardar.cache.cache2k;
 
 import org.cache2k.Cache;
-import org.cache2k.Cache2kBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * @author trydofor
@@ -60,11 +57,6 @@ public class Cache2kSlot {
             slot = max;
         }
 
-        return this.slot.computeIfAbsent(slot,
-                k -> Cache2kBuilder.forUnknownTypes()
-                        .entryCapacity(Integer.MAX_VALUE)
-                        .expireAfterWrite(k.longValue() * step, SECONDS)
-                        .build()
-        );
+        return this.slot.computeIfAbsent(slot, k -> WingsCache2k.builder(Cache2kSlot.class, "step" + (k * step), -1, k * step, -1).build());
     }
 }

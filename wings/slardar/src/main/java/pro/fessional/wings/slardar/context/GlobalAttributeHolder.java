@@ -1,12 +1,13 @@
 package pro.fessional.wings.slardar.context;
 
 import org.cache2k.Cache;
-import org.cache2k.Cache2kBuilder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.best.TypedReg;
 import pro.fessional.mirana.best.TypedReg.Key;
+import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,7 +15,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -29,9 +29,7 @@ public class GlobalAttributeHolder {
 
     //
     @SuppressWarnings("all")
-    private static final Cache<Key, Object> CACHE = Cache2kBuilder.of(Key.class, Object.class)
-                                                                  .expireAfterWrite(12L, TimeUnit.HOURS)
-                                                                  .build();
+    private static final Cache<Key, Object> CACHE = WingsCache2k.builder(GlobalAttributeHolder.class, "CACHE", -1, Duration.ofHours(12), null, Key.class, Object.class).build();
     private static final ConcurrentHashMap<TypedReg<?, ?>, Function<?, ?>> LOADER = new ConcurrentHashMap<>();
 
     /**

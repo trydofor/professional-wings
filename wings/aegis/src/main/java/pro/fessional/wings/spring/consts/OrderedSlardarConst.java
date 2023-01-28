@@ -39,9 +39,11 @@ public interface OrderedSlardarConst extends WingsBeanOrdered {
     int UndertowConfiguration = Lv2Resource + PriorityD;
     int WebMvcConfiguration = Lv2Resource + PriorityD;
 
-    int HazelcastCacheConfiguration = Lv2Resource + PriorityD;
+    int HazelcastCacheConfiguration = CacheConfiguration;
     int HazelcastMockConfiguration = Lv2Resource + PriorityD;
     int HazelcastPublisherConfiguration = Lv2Resource + PriorityD;
+
+    int CachingConfigurerSupport = CacheConfiguration + 1_000;
 
     // ///////// Override /////////
     int HazelcastFlakeIdConfiguration = OrderedFacelessConst.FlakeIdConfiguration - 100;

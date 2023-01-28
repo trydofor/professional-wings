@@ -76,10 +76,6 @@ public class SlardarCacheProp {
 
     // /////////////////
 
-    public static int maxInt(int max) {
-        return max <= 0 ? Integer.MAX_VALUE : max;
-    }
-
     public static String wildcard(String level) {
         return WingsCache.Level.join(level, "*");
     }

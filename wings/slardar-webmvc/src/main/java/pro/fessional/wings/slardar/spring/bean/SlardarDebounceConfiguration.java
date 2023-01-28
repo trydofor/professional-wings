@@ -31,7 +31,7 @@ public class SlardarDebounceConfiguration {
     @Bean
     @ConditionalOnMissingBean(DebounceInterceptor.class)
     public DebounceInterceptor debounceInterceptor(SlardarDebounceProp debounceProp) {
-        final long cap = debounceProp.getCapacity();
+        final int cap = debounceProp.getCapacity();
         final int max = debounceProp.getMaxWait();
         log.info("SlardarWebmvc spring-bean debounceInterceptor, capacity=" + cap + ", max-wait=" + max);
         final ModelAndView mav = new ModelAndView();

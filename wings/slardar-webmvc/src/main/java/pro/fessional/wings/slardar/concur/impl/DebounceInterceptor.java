@@ -4,18 +4,18 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.cache2k.Cache;
-import org.cache2k.Cache2kBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import pro.fessional.mirana.bits.Md5;
 import pro.fessional.mirana.time.ThreadNow;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
+import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 import pro.fessional.wings.slardar.concur.Debounce;
 import pro.fessional.wings.slardar.servlet.request.RequestHelper;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.servlet.stream.ReuseStreamResponseWrapper;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +23,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -42,11 +41,8 @@ public class DebounceInterceptor implements AutoRegisterInterceptor {
     @Getter @Setter
     private int order = OrderedSlardarConst.MvcDebounceInterceptor;
 
-    public DebounceInterceptor(long capacity, int maxWait, ModelAndView res) {
-        this.cache = Cache2kBuilder.of(String.class, Dto.class)
-                                   .entryCapacity(capacity)
-                                   .expireAfterWrite(maxWait, TimeUnit.SECONDS)
-                                   .build();
+    public DebounceInterceptor(int capacity, int maxWait, ModelAndView res) {
+        this.cache = WingsCache2k.builder(DebounceInterceptor.class, "cache", capacity, maxWait, -1, String.class, Dto.class).build();
         this.modelAndView = res;
     }
 

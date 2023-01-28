@@ -2,12 +2,12 @@ package pro.fessional.wings.slardar.domainx;
 
 import lombok.extern.slf4j.Slf4j;
 import org.cache2k.Cache;
-import org.cache2k.Cache2kBuilder;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import org.springframework.web.util.ServletRequestPathUtils;
+import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -36,8 +36,8 @@ public class DefaultDomainRequestMatcher implements DomainRequestMatcher {
     public DefaultDomainRequestMatcher(String pathPrefix, Collection<String> otherUrl, int cacheSize, Supplier<List<HandlerMapping>> supplier) {
         this.pathPrefix = pathPrefix;
         this.otherUrl.addAll(otherUrl);
-        this.matchedUrl = Cache2kBuilder.of(String.class, Boolean.class).entryCapacity(cacheSize).build();
-        this.notfoundUrl = Cache2kBuilder.of(String.class, Boolean.class).entryCapacity(cacheSize).build();
+        this.matchedUrl = WingsCache2k.builder(DefaultDomainRequestMatcher.class, "matchedUrl", cacheSize, -1, -1, String.class, Boolean.class).build();
+        this.notfoundUrl = WingsCache2k.builder(DefaultDomainRequestMatcher.class, "notfoundUrl", cacheSize, -1, -1, String.class, Boolean.class).build();
         this.handlerMappingSupplier = supplier;
     }
 

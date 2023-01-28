@@ -16,9 +16,9 @@ import java.util.List;
  * @see SimpleKeyGenerator#generateKey(Object...)
  * @since 2022-04-18
  */
-public class CacheEvictResult {
+public class CacheEvictMultiKeys {
 
-    public static final CacheEvictResult EvictAll = new CacheEvictResult(true);
+    public static final CacheEvictMultiKeys EvictAll = new CacheEvictMultiKeys(true);
     public static volatile boolean wingsSupport = false;
 
     @Getter @Setter
@@ -26,14 +26,14 @@ public class CacheEvictResult {
     @Getter @Setter
     private List<Object> evictKey = Collections.emptyList();
 
-    public CacheEvictResult() {
+    public CacheEvictMultiKeys() {
     }
 
-    public CacheEvictResult(boolean all) {
+    public CacheEvictMultiKeys(boolean all) {
         this.evictAll = all;
     }
 
-    public CacheEvictResult(boolean all, @NotNull List<Object> keys) {
+    public CacheEvictMultiKeys(boolean all, @NotNull List<Object> keys) {
         this.evictAll = all;
         this.evictKey = keys;
     }
@@ -50,7 +50,7 @@ public class CacheEvictResult {
         }
     }
 
-    public CacheEvictResult addKey(Object... arg) {
+    public CacheEvictMultiKeys addKey(Object... arg) {
         if (evictKey.isEmpty()) {
             evictKey = new LinkedList<>();
         }

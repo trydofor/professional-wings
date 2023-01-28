@@ -5,13 +5,13 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.cache2k.Cache;
-import org.cache2k.Cache2kBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.id.Ulid;
+import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 import pro.fessional.wings.slardar.monitor.WarnFilter;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.spring.prop.SlardarMonitorProp;
@@ -49,10 +49,7 @@ public class LogViewer implements WarnFilter {
 
     public LogViewer(LogConf conf) {
         this.conf = conf;
-        this.cache = Cache2kBuilder.of(String.class, String.class)
-                .entryCapacity(2_000)
-                .expireAfterWrite(conf.getAlive())
-                .build();
+        this.cache = WingsCache2k.builder(LogViewer.class, "cache", 2_000, conf.getAlive(), null, String.class, String.class).build();
     }
 
     @Operation(summary = "开启自身监控时，配合警报通知，可查看警报日志", description =

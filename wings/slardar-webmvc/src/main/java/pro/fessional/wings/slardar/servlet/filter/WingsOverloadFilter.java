@@ -6,11 +6,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.cache2k.Cache;
-import org.cache2k.Cache2kBuilder;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
 import pro.fessional.mirana.time.ThreadNow;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
+import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -24,8 +24,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
  * 不建议使用，因实现过于简单，未考虑复杂情况。
@@ -65,17 +63,13 @@ public class WingsOverloadFilter implements OrderedFilter {
         else {
             int capacity = initCapacity(config);
             requestCapacity.set(capacity);
-
-            this.spiderCache = Cache2kBuilder.of(String.class, CalmDown.class)
-                                             .entryCapacity(capacity)
-                                             .idleScanTime(config.requestInterval * config.requestCalmdown * 2, MILLISECONDS)
-                                             .build();
+            final Duration ttl = Duration.ofMillis(config.requestInterval * config.requestCalmdown * 2);
+            this.spiderCache = WingsCache2k.builder(WingsOverloadFilter.class, "spiderCache", capacity, ttl, null, String.class, CalmDown.class)
+                                           .build();
         }
 
-        lastWarnSlow = Cache2kBuilder.of(String.class, Long.class)
-                .entryCapacity(2000)
-                .idleScanTime(Duration.ofHours(2))
-                .build();
+        lastWarnSlow = WingsCache2k.builder(WingsOverloadFilter.class, "lastWarnSlow", 2000, Duration.ofHours(2), null, String.class, Long.class)
+                                   .build();
 
         if (config.responseInfoStat <= 0) {
             responseCost = new AtomicLong[0];

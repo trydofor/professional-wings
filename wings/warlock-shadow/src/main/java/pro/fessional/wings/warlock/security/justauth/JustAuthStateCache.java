@@ -2,9 +2,7 @@ package pro.fessional.wings.warlock.security.justauth;
 
 import me.zhyd.oauth.cache.AuthStateCache;
 import org.cache2k.Cache;
-import org.cache2k.Cache2kBuilder;
-
-import java.util.concurrent.TimeUnit;
+import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 
 
 /**
@@ -13,32 +11,30 @@ import java.util.concurrent.TimeUnit;
  */
 public class JustAuthStateCache implements AuthStateCache {
 
-    private final Cache<String, String> caffeine;
+    private final Cache<String, String> cache;
 
     public JustAuthStateCache(int max, int ttl) {
-        this.caffeine = Cache2kBuilder.of(String.class, String.class)
-                                      .entryCapacity(max)
-                                      .expireAfterWrite(ttl, TimeUnit.SECONDS)
-                                      .build();
+        this.cache = WingsCache2k.builder(JustAuthStateCache.class, "cache", max, ttl, -1, String.class, String.class)
+                                 .build();
     }
 
     @Override
     public void cache(String key, String value) {
-        caffeine.put(key, value);
+        cache.put(key, value);
     }
 
     @Override
     public void cache(String key, String value, long timeout) {
-        caffeine.put(key, value);
+        cache.put(key, value);
     }
 
     @Override
     public String get(String key) {
-        return caffeine.get(key);
+        return cache.get(key);
     }
 
     @Override
     public boolean containsKey(String key) {
-        return caffeine.get(key) != null;
+        return cache.get(key) != null;
     }
 }

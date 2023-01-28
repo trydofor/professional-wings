@@ -24,7 +24,7 @@ public class SlardarDebounceProp extends SimpleResponse {
      *
      * @see #Key$capacity
      */
-    private long capacity = 10_000;
+    private int capacity = 10_000;
     public static final String Key$capacity = Key + ".capacity";
 
     /**
