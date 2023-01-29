@@ -29,6 +29,14 @@ public class SlardarCacheProp {
     public static final String Key$primary = Key + ".primary";
 
     /**
+     * 是否对cache name的进行Resolve扩展，即追加所在类
+     *
+     * @see #Key$expand
+     */
+    private boolean expand = true;
+    public static final String Key$expand = Key + ".expand";
+
+    /**
      * 原则上不缓存null，但可对null统一处理。正数:缓存大小；0:不缓存null；负数:不统一处理
      *
      * @see #Key$nullSize

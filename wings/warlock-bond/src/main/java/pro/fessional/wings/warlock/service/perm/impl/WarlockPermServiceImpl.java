@@ -24,8 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static pro.fessional.wings.warlock.caching.CacheConst.WarlockPermService.CacheManager;
 import static pro.fessional.wings.warlock.caching.CacheConst.WarlockPermService.CacheName;
+import static pro.fessional.wings.warlock.caching.CacheConst.WarlockPermService.CacheResolver;
 import static pro.fessional.wings.warlock.caching.CacheConst.WarlockPermService.EventTables;
 import static pro.fessional.wings.warlock.service.grant.PermGrantHelper.unitePermit;
 
@@ -34,7 +34,7 @@ import static pro.fessional.wings.warlock.service.grant.PermGrantHelper.unitePer
  * @since 2021-03-07
  */
 @Slf4j
-@CacheConfig(cacheNames = CacheName, cacheManager = CacheManager)
+@CacheConfig(cacheNames = CacheName, cacheResolver = CacheResolver)
 public class WarlockPermServiceImpl implements WarlockPermService {
 
     @Setter(onMethod_ = {@Autowired})

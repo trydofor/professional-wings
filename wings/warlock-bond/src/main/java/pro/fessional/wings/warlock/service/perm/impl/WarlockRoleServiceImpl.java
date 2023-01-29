@@ -26,7 +26,7 @@ import pro.fessional.wings.warlock.service.perm.WarlockRoleService;
 import java.util.Collections;
 import java.util.Map;
 
-import static pro.fessional.wings.warlock.caching.CacheConst.WarlockRoleService.CacheManager;
+import static pro.fessional.wings.warlock.caching.CacheConst.WarlockRoleService.CacheResolver;
 import static pro.fessional.wings.warlock.caching.CacheConst.WarlockRoleService.CacheName;
 import static pro.fessional.wings.warlock.caching.CacheConst.WarlockRoleService.EventTables;
 
@@ -35,7 +35,7 @@ import static pro.fessional.wings.warlock.caching.CacheConst.WarlockRoleService.
  * @since 2021-03-07
  */
 @Slf4j
-@CacheConfig(cacheNames = CacheName, cacheManager = CacheManager)
+@CacheConfig(cacheNames = CacheName, cacheResolver = CacheResolver)
 public class WarlockRoleServiceImpl implements WarlockRoleService {
 
     @Setter(onMethod_ = {@Autowired})

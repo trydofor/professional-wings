@@ -43,7 +43,7 @@ public class WinxDevopsApplication {
             log.info("===============");
 
             String[] cacheManager = ctx.getBeanNamesForType(CacheManager.class);
-            log.info("=============== CacheManager count={}" + cacheManager.length);
+            log.info("=============== CacheManager count=" + cacheManager.length);
 
             final List<RequestMappingHelper.Info> infos = RequestMappingHelper.infoAllMapping(ctx);
             log.info("=============== RequestMappingHelper infos=" + infos.size());

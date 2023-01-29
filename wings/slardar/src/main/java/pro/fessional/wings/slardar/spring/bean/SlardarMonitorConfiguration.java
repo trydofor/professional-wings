@@ -75,6 +75,7 @@ public class SlardarMonitorConfiguration {
         return bean;
     }
 
+    // 动态注册Bean，LogMetric
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnExpression("${" + SlardarEnabledProp.Key$monitor + ":false} && ${" + SlardarEnabledProp.Key$monitorLog + ":false}")
     @ComponentScan(basePackageClasses = MonitorTask.class)
@@ -109,7 +110,7 @@ public class SlardarMonitorConfiguration {
                     if (new File(rf).exists()) {
                         LogMetric bean = new LogMetric(key, rule);
                         beanFactory.registerSingleton(key, bean);
-                        log.info("Slardar spring-bean LogMetric bean=" + key);
+                        log.info("Slardar spring-bean register dynamic LogMetric bean=" + key);
                     }
                     else {
                         log.warn("Wings skip LogMetric bean for file not exist, file=" + rf);

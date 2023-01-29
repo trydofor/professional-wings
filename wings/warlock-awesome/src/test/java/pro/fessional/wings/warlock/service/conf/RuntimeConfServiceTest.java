@@ -44,11 +44,14 @@ class RuntimeConfServiceTest {
         assertSimple(Long.class, 1023L);
         assertSimple(Integer.class, 10);
         //
-        final Map<String, CacheManager> mgr = WingsCacheHelper.getManager(RuntimeConfServiceImpl.class);
-        Assertions.assertTrue(mgr.containsKey(CacheConst.RuntimeConfService.CacheManager));
+        final Map<CacheManager, Set<String>> mgr = WingsCacheHelper.getManager(RuntimeConfServiceImpl.class);
+        Assertions.assertEquals(1, mgr.size());
+        final Set<String> names = mgr.values().iterator().next();
+        Assertions.assertTrue(names.contains(CacheConst.RuntimeConfService.CacheManager));
+        Assertions.assertTrue(names.contains(CacheConst.RuntimeConfService.CacheResolver));
 
         final Map<String, Set<String>> cas = WingsCacheHelper.getCacheMeta(RuntimeConfServiceImpl.class, "getObject");
-        final Set<String> v = cas.get(CacheConst.RuntimeConfService.CacheManager);
+        final Set<String> v = cas.get(CacheConst.RuntimeConfService.CacheResolver);
         Assertions.assertNotNull(v);
         Assertions.assertTrue(v.contains(CacheConst.RuntimeConfService.CacheName));
     }

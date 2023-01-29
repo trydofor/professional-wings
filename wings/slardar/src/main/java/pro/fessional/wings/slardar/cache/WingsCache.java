@@ -18,6 +18,11 @@ public interface WingsCache {
      */
     String Joiner = "~";
 
+    /**
+     * 以此结尾表示扩展为实现类
+     */
+    String Extend = "!";
+
     class Manager {
         /**
          * 内存缓存，默认 cache2k
@@ -27,6 +32,20 @@ public interface WingsCache {
          * 外部服务缓存，默认hazelcast，可选用redis
          */
         public static final String Server = "ServerCacheManager";
+    }
+
+    class Resolver {
+
+        public static final String _Suffix = "Resolver";
+
+        /**
+         * 内存缓存，默认 cache2k
+         */
+        public static final String Memory = Manager.Memory + _Suffix;
+        /**
+         * 外部服务缓存，默认hazelcast，可选用redis
+         */
+        public static final String Server = Manager.Server + _Suffix;
     }
 
     class Level {

@@ -16,26 +16,30 @@ import static java.util.Collections.singletonList;
 public interface CacheConst {
 
     interface RuntimeConfService {
-        String CacheName = WingsCache.Level.Service + "RuntimeConfService";
+        String CacheName = WingsCache.Level.Service + "RuntimeConfService" + WingsCache.Extend;
         String CacheManager = WingsCache.Manager.Memory;
+        String CacheResolver = WingsCache.Resolver.Memory;
         Set<String> EventTables = new HashSet<>(singletonList("win_conf_runtime"));
     }
 
     interface WarlockAuthnService {
-        String CacheName = WingsCache.Level.Service + "WarlockAuthnService";
+        String CacheName = WingsCache.Level.Service + "WarlockAuthnService" + WingsCache.Extend;
         String CacheManager = WingsCache.Manager.Memory;
+        String CacheResolver = WingsCache.Resolver.Memory;
         Set<String> EventTables = new HashSet<>();
     }
 
     interface WarlockPermService {
-        String CacheName = WingsCache.Level.Service + "WarlockPermService";
+        String CacheName = WingsCache.Level.Service + "WarlockPermService" + WingsCache.Extend;
         String CacheManager = WingsCache.Manager.Memory;
+        String CacheResolver = WingsCache.Resolver.Memory;
         Set<String> EventTables = new HashSet<>();
     }
 
     interface WarlockRoleService {
-        String CacheName = WingsCache.Level.Service + "WarlockRoleService";
+        String CacheName = WingsCache.Level.Service + "WarlockRoleService" + WingsCache.Extend;
         String CacheManager = WingsCache.Manager.Memory;
+        String CacheResolver = WingsCache.Resolver.Memory;
         Set<String> EventTables = new HashSet<>();
     }
 }

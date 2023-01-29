@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
 
 /**
  * @author trydofor
@@ -27,6 +28,7 @@ import static java.util.Collections.emptyMap;
 public class WingsCacheHelper {
 
     private static final Map<String, CacheManager> managers = new ConcurrentHashMap<>();
+    private static final Map<CacheManager, Set<String>> namings = new ConcurrentHashMap<>();
     private static CacheManager memory;
     private static CacheManager server;
 
@@ -39,6 +41,11 @@ public class WingsCacheHelper {
             return server;
         }
         return managers.get(name);
+    }
+
+    public static Set<String> getManagerNames(CacheManager manage) {
+        if (manage == null) return emptySet();
+        return namings.getOrDefault(manage, emptySet());
     }
 
     @Nullable
@@ -61,10 +68,19 @@ public class WingsCacheHelper {
         return cache;
     }
 
-    public static void setManagers(Map<String, CacheManager> mgs) {
-        managers.putAll(mgs);
+    /**
+     * 设置 CacheManager 名字及Resolver对应关系
+     */
+    public static void putManagers(Map<String, CacheManager> mngs) {
+        managers.putAll(mngs);
+
         memory = managers.get(WingsCache.Manager.Memory);
         server = managers.get(WingsCache.Manager.Server);
+
+        namings.clear();
+        for (Map.Entry<String, CacheManager> en : managers.entrySet()) {
+            namings.computeIfAbsent(en.getValue(), k -> new HashSet<>()).add(en.getKey());
+        }
     }
 
     @NotNull
@@ -84,21 +100,25 @@ public class WingsCacheHelper {
 
     public static class Meta {
         private final Map<String, Set<String>> metaMap = new HashMap<>();
-        private final Map<String, CacheManager> objManager = new HashMap<>();
+        private final Map<CacheManager, Set<String>> objManager = new HashMap<>();
         private final Map<String, Set<Cache>> objCache = new HashMap<>();
 
-        public void initOperation(String cm, Set<String> cs) {
-            final Set<String> set = metaMap.computeIfAbsent(cm, k -> new HashSet<>());
-            set.addAll(cs);
+        public void initOperation(String cr, String cm, Set<String> cs) {
+            if (!cr.isEmpty()) {
+                metaMap.computeIfAbsent(cr, k -> new HashSet<>()).addAll(cs);
+            }
+            if (!cm.isEmpty()) {
+                metaMap.computeIfAbsent(cm, k -> new HashSet<>()).addAll(cs);
+            }
         }
 
-        public Map<String, CacheManager> getManagers() {
+        public Map<CacheManager, Set<String>> getManagers() {
             if (metaMap.isEmpty()) return objManager;
             if (objManager.isEmpty()) {
-                for (String k : metaMap.keySet()) {
-                    final CacheManager m = managers.get(k);
-                    StateAssert.notNull(m, "no CacheManager for {}", k);
-                    objManager.put(k, m);
+                for (String nm : metaMap.keySet()) {
+                    final CacheManager m = getCacheManager(nm);
+                    StateAssert.notNull(m, "no CacheManager for {}", nm);
+                    objManager.put(m, getManagerNames(m));
                 }
             }
             return objManager;
@@ -109,7 +129,7 @@ public class WingsCacheHelper {
             if (objCache.isEmpty()) {
                 for (Map.Entry<String, Set<String>> en : metaMap.entrySet()) {
                     String k = en.getKey();
-                    final CacheManager m = managers.get(k);
+                    final CacheManager m = getCacheManager(k);
                     StateAssert.notNull(m, "no CacheManager for {}", k);
                     Set<Cache> st = new HashSet<>();
                     for (String c : en.getValue()) {
@@ -137,12 +157,12 @@ public class WingsCacheHelper {
     }
 
     @NotNull
-    public static Map<String, CacheManager> getManager(Class<?> clz) {
+    public static Map<CacheManager, Set<String>> getManager(Class<?> clz) {
         return getManager(clz, Null.Str);
     }
 
     @NotNull
-    public static Map<String, CacheManager> getManager(Class<?> claz, String method) {
+    public static Map<CacheManager, Set<String>> getManager(Class<?> claz, String method) {
         final Map<String, Meta> map = classes.get(claz);
         if (map == null) return emptyMap();
         if (method == null) method = Null.Str;
@@ -171,10 +191,11 @@ public class WingsCacheHelper {
         final Meta mod = entry.computeIfAbsent(method.getName(), k -> new Meta());
 
         for (CacheOperation op : opr) {
+            final String cr = op.getCacheResolver();
             final String cm = op.getCacheManager();
             final Set<String> cs = op.getCacheNames();
-            top.initOperation(cm, cs);
-            mod.initOperation(cm, cs);
+            top.initOperation(cr, cm, cs);
+            mod.initOperation(cr, cm, cs);
         }
     }
 }

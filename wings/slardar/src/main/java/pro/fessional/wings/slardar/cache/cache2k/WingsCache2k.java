@@ -32,7 +32,7 @@ import static pro.fessional.wings.slardar.spring.prop.SlardarCacheProp.inLevel;
 @Slf4j
 public class WingsCache2k {
 
-    public static final Class<? extends ToggleFeature> FeatureJmx;
+    public static Class<? extends ToggleFeature> FeatureJmx;
 
     static {
         Class<? extends ToggleFeature> clz = null;
@@ -106,7 +106,8 @@ public class WingsCache2k {
         private final Feature levelingFeature;
         private Function<Cache2kBuilder<?, ?>, Cache2kBuilder<?, ?>> defaultSetup = null;
 
-        public Manager(SlardarCacheProp slardarCacheProp) {
+        public Manager(String name, SlardarCacheProp slardarCacheProp) {
+            super(name == null ? DEFAULT_SPRING_CACHE_MANAGER_NAME : name);
             this.slardarCacheProp = slardarCacheProp;
             this.levelingFeature = new Feature() {
                 @Override

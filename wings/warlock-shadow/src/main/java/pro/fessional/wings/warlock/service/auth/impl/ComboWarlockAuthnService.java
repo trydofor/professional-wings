@@ -22,7 +22,7 @@ import pro.fessional.wings.warlock.service.auth.help.AuthnDetailsMapper;
 import java.util.Collections;
 import java.util.List;
 
-import static pro.fessional.wings.warlock.caching.CacheConst.WarlockAuthnService.CacheManager;
+import static pro.fessional.wings.warlock.caching.CacheConst.WarlockAuthnService.CacheResolver;
 import static pro.fessional.wings.warlock.caching.CacheConst.WarlockAuthnService.CacheName;
 import static pro.fessional.wings.warlock.caching.CacheConst.WarlockAuthnService.EventTables;
 import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.DELETE;
@@ -33,7 +33,7 @@ import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.UPDATE;
  * @since 2021-02-23
  */
 @Slf4j
-@CacheConfig(cacheNames = CacheName, cacheManager = CacheManager)
+@CacheConfig(cacheNames = CacheName, cacheResolver = CacheResolver)
 public class ComboWarlockAuthnService implements WarlockAuthnService {
 
     @Setter(onMethod_ = {@Autowired(required = false)})

@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static pro.fessional.wings.warlock.caching.CacheConst.RuntimeConfService.CacheManager;
+import static pro.fessional.wings.warlock.caching.CacheConst.RuntimeConfService.CacheResolver;
 import static pro.fessional.wings.warlock.caching.CacheConst.RuntimeConfService.CacheName;
 import static pro.fessional.wings.warlock.caching.CacheConst.RuntimeConfService.EventTables;
 import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.DELETE;
@@ -34,7 +34,7 @@ import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.UPDATE;
  * @since 2022-03-09
  */
 @Slf4j
-@CacheConfig(cacheNames = CacheName, cacheManager = CacheManager)
+@CacheConfig(cacheNames = CacheName, cacheResolver = CacheResolver)
 public class RuntimeConfServiceImpl implements RuntimeConfService {
 
     public static final String PropHandler = "prop";

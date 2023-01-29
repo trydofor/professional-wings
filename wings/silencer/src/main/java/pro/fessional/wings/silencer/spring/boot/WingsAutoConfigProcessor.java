@@ -610,7 +610,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
         @Override
         public String toString() {
-            return String.format("[%02d] %s🦁%s", order, fullName, location);
+            return String.format("[%03d] %s🦁%s", order, fullName, location);
         }
     }
 
