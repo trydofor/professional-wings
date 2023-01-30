@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2022-09-01
+THIS_VERSION=2023-01-29
 ################ modify the following params ################
 WORK_DIR=''      # 脚本生成文件，日志的目录，默认空（脚本位置）
 TAIL_LOG='log'   # 默认tail的日志，"log|out|new|ask"
@@ -530,7 +530,7 @@ case "$ARGS_RUN" in
         if [[ "$dys" == "" ]]; then
             dys=30
         fi
-        echo -e "\033[32m find . -name \"${JAR_NAME}[.-]*\" -type f -mtime +$dys \033[m"
+        echo -e "\033[32m find $(pwd) -name \"${JAR_NAME}[.-]*\" -type f -mtime +$dys \033[m"
         old=$(find . -name "${JAR_NAME}[.-]*" -type f -mtime +$dys | wc -l)
         if [[ $old -gt 10 ]]; then
             find . -name "${JAR_NAME}[.-]*" -type f -mtime +$dys
@@ -539,14 +539,14 @@ case "$ARGS_RUN" in
 
             yon="$3"
             if [[ "$3" == "" ]]; then
-                echo -e "\033[31mWARN: press <y> to rm them all \033[0m"
+                echo -e "\033[31mWARN: press <y> to rm them all, pwd=${WORK_DIR} \033[0m"
                 read -r yon
             fi
             if [[ "$yon" == "y" ]]; then
                 find . -name "${JAR_NAME}[.-]*" -type f -mtime +$dys -print0 | xargs -0 rm -f
             fi
         else
-            echo -e "\033[37;42;1mNOTE: few ${dys}-days ago logs \033[0m"
+            echo -e "\033[37;42;1mNOTE: few ${dys}-days ago logs, pwd=${WORK_DIR} \033[0m"
         fi
         ;;
     cron)

@@ -1,6 +1,5 @@
 package pro.fessional.wings.warlock.spring.bean;
 
-import com.hazelcast.core.HazelcastInstance;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -11,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import pro.fessional.wings.slardar.concur.HazelcastGlobalLock;
 import pro.fessional.wings.slardar.concur.impl.RighterInterceptor;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.webmvc.MessageResponse;
@@ -21,7 +19,6 @@ import pro.fessional.wings.warlock.errorhandle.DefaultExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.auto.BindExceptionAdvice;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockErrorProp;
-import pro.fessional.wings.warlock.spring.prop.WarlockLockProp;
 
 
 /**
@@ -68,14 +65,5 @@ public class WarlockOtherBeanConfiguration {
             final Long uid = SecurityContextUtil.getUserId(false);
             return uid == null ? null : ss.getId() + uid;
         };
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(HazelcastGlobalLock.class)
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$globalLock, havingValue = "true")
-    public HazelcastGlobalLock hazelcastGlobalLock(HazelcastInstance hazelcastInstance, WarlockLockProp warlockLockProp) {
-        final boolean hcp = warlockLockProp.isHazelcastCp();
-        log.info("WarlockShadow spring-bean hazelcastGlobalLock, useCpIfSafe=" + hcp);
-        return new HazelcastGlobalLock(hazelcastInstance, hcp);
     }
 }
