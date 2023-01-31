@@ -4,9 +4,8 @@
 package pro.fessional.wings.warlock.database.autogen;
 
 
+import jakarta.annotation.Generated;
 import org.jooq.impl.CatalogImpl;
-
-import javax.annotation.processing.Generated;
 
 
 /**

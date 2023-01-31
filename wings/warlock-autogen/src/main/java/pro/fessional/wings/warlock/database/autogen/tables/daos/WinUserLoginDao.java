@@ -4,6 +4,7 @@
 package pro.fessional.wings.warlock.database.autogen.tables.daos;
 
 
+import jakarta.annotation.Generated;
 import org.jooq.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,6 @@ import pro.fessional.wings.warlock.database.autogen.tables.WinUserLoginTable;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserLogin;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinUserLoginRecord;
 
-import javax.annotation.Generated;
 import java.time.LocalDateTime;
 import java.util.List;
 

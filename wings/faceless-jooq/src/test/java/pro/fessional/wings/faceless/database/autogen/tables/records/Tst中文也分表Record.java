@@ -4,6 +4,7 @@
 package pro.fessional.wings.faceless.database.autogen.tables.records;
 
 
+import jakarta.annotation.Generated;
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record8;
@@ -13,7 +14,6 @@ import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Ta
 import pro.fessional.wings.faceless.database.autogen.tables.interfaces.ITst中文也分表;
 import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 
-import javax.annotation.processing.Generated;
 import java.time.LocalDateTime;
 
 

@@ -3,8 +3,8 @@ package pro.fessional.wings.faceless.database.jooq.listener;
 import lombok.Getter;
 import lombok.Setter;
 import org.jooq.ExecuteContext;
+import org.jooq.ExecuteListener;
 import org.jooq.Query;
-import org.jooq.impl.DefaultExecuteListener;
 import pro.fessional.mirana.time.StopWatch.Watch;
 import pro.fessional.wings.silencer.watch.Watches;
 
@@ -17,7 +17,7 @@ import java.util.function.BiConsumer;
  * @since 2021-01-14
  */
 
-public class SlowSqlListener extends DefaultExecuteListener {
+public class SlowSqlListener implements ExecuteListener {
 
     public enum ContextKey {
         EXECUTING_STOP_WATCH

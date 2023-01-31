@@ -4,14 +4,7 @@
 package pro.fessional.wings.faceless.database.autogen.tables;
 
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.processing.Generated;
-
+import jakarta.annotation.Generated;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -26,13 +19,18 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
-
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.autogen.DefaultSchema;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
 import pro.fessional.wings.faceless.database.jooq.WingsJournalTable;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdAware;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -194,7 +192,7 @@ public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record>
     public String getSeqName() {
         return "tst_中文也分表";
     }
-    
+
 
     /**
      * alias asY8
@@ -204,26 +202,26 @@ public class Tst中文也分表Table extends TableImpl<Tst中文也分表Record>
     public Tst中文也分表Table getAliasTable() {
         return asY8;
     }
-    
+
 
     /**
      * The colDel <code>delete_dt</code> condition
      */
     public final Condition onlyDiedData = DeleteDt.gt(EmptyValue.DATE_TIME);
     public final Condition onlyLiveData = DeleteDt.eq(EmptyValue.DATE_TIME);
-    
+
     @Override
     @NotNull
     public Condition getOnlyDied() {
         return onlyDiedData;
     }
-    
+
     @Override
     @NotNull
     public Condition getOnlyLive() {
         return onlyLiveData;
     }
-    
+
     @Override
     @NotNull
     public Map<Field<?>, ?> markDelete(JournalService.Journal commit) {

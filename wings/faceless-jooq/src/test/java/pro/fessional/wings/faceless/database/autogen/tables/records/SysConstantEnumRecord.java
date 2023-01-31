@@ -4,6 +4,7 @@
 package pro.fessional.wings.faceless.database.autogen.tables.records;
 
 
+import jakarta.annotation.Generated;
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record5;
@@ -11,8 +12,6 @@ import org.jooq.Row5;
 import org.jooq.impl.UpdatableRecordImpl;
 import pro.fessional.wings.faceless.database.autogen.tables.SysConstantEnumTable;
 import pro.fessional.wings.faceless.database.autogen.tables.interfaces.ISysConstantEnum;
-
-import javax.annotation.processing.Generated;
 
 
 /**

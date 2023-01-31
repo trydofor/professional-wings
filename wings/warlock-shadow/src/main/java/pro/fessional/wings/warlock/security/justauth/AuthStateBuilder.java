@@ -2,6 +2,7 @@ package pro.fessional.wings.warlock.security.justauth;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,6 @@ import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.slardar.servlet.request.RequestHelper;
 
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashMap;

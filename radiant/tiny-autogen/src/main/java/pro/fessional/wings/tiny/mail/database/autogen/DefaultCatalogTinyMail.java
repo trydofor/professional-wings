@@ -4,9 +4,8 @@
 package pro.fessional.wings.tiny.mail.database.autogen;
 
 
+import jakarta.annotation.Generated;
 import org.jooq.impl.CatalogImpl;
-
-import javax.annotation.processing.Generated;
 
 
 /**

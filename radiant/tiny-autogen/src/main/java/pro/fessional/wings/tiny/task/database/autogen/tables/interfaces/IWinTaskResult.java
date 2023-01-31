@@ -4,7 +4,8 @@
 package pro.fessional.wings.tiny.task.database.autogen.tables.interfaces;
 
 
-import javax.annotation.processing.Generated;
+import jakarta.annotation.Generated;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 

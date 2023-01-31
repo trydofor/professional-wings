@@ -1,5 +1,8 @@
 package pro.fessional.wings.warlock.controller.api;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,10 +29,6 @@ import pro.fessional.wings.warlock.service.auth.WarlockTicketService.Pass;
 import pro.fessional.wings.warlock.service.auth.WarlockTicketService.Term;
 import pro.fessional.wings.warlock.spring.prop.WarlockApiAuthProp;
 
-import javax.annotation.WillClose;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -174,7 +173,7 @@ public abstract class AbstractApiAuthController {
             }
 
             final String data;
-            @WillClose final InputStream body;
+            final InputStream body;
             if (sumLen == MD5_LEN || sumLen == SHA1_LEN) {
                 body = new CircleInputStream(entity.resFile);
                 final String digest = digest(body, sumLen);

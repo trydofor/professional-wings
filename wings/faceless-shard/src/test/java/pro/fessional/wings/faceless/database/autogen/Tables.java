@@ -4,8 +4,7 @@
 package pro.fessional.wings.faceless.database.autogen;
 
 
-import javax.annotation.processing.Generated;
-
+import jakarta.annotation.Generated;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 
 

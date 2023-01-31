@@ -1,15 +1,15 @@
 package pro.fessional.wings.slardar.servlet.stream;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.Part;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.springframework.web.util.WebUtils;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.Part;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,18 +28,18 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class ReuseStreamRequestWrapper extends HttpServletRequestWrapper {
 
-    private static final AtomicLong RequestId = new AtomicLong(0);
+    private static final AtomicLong RequestSeq = new AtomicLong(0);
 
     public static ReuseStreamRequestWrapper infer(ServletRequest request) {
         return WebUtils.getNativeRequest(request, ReuseStreamRequestWrapper.class);
     }
 
     @Getter
-    private final long requestId;
+    private final long requestSeq;
 
     public ReuseStreamRequestWrapper(HttpServletRequest request) {
         super(request);
-        this.requestId = RequestId.getAndIncrement();
+        this.requestSeq = RequestSeq.getAndIncrement();
     }
 
     //

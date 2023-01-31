@@ -12,7 +12,7 @@ import pro.fessional.wings.warlock.database.autogen.tables.WinPermEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinPermEntry;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinPermEntryRecord;
 
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 import java.time.LocalDateTime;
 import java.util.List;
 

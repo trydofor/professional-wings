@@ -4,16 +4,14 @@
 package pro.fessional.wings.faceless.database.autogen;
 
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.processing.Generated;
-
+import jakarta.annotation.Generated;
 import org.jooq.Catalog;
 import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
-
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 /**

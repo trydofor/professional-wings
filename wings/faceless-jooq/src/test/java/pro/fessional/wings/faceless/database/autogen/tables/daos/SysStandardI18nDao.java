@@ -4,6 +4,7 @@
 package pro.fessional.wings.faceless.database.autogen.tables.daos;
 
 
+import jakarta.annotation.Generated;
 import org.jooq.Configuration;
 import org.jooq.Record4;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import pro.fessional.wings.faceless.database.autogen.tables.pojos.SysStandardI18
 import pro.fessional.wings.faceless.database.autogen.tables.records.SysStandardI18nRecord;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoAliasImpl;
 
-import javax.annotation.Generated;
 import java.util.List;
 
 

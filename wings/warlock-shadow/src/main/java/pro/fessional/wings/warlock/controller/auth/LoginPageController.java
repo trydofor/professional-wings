@@ -1,6 +1,8 @@
 package pro.fessional.wings.warlock.controller.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +31,6 @@ import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -51,16 +51,16 @@ public class LoginPageController {
     private HttpSessionIdResolver httpSessionIdResolver;
 
     @SuppressWarnings("MVCPathVariableInspection")
-    @Operation(summary = "集成登录默认页，默认返回支持的type类表", description =
-            "# Usage \n"
-            + "列出支持的登录方式。具体恢复内容，以根据extName和request.ContentType推测的MediaType确定\n"
-            + "比如`html`和`json`扩展名，默认实现中，结果都以json形式返回\n"
-            + "## Params \n"
-            + "* @param extName - PathVariable，扩展名，如html,json\n"
-            + "## Returns \n"
-            + "* @return {401} 当鉴权失败，有系统forward时 \n"
-            + "* @return {200} 直接访问或redirect时 \n"
-            + "")
+    @Operation(summary = "集成登录默认页，默认返回支持的type类表", description = """
+            # Usage
+            列出支持的登录方式。具体恢复内容，以根据extName和request.ContentType推测的MediaType确定
+            比如`html`和`json`扩展名，默认实现中，结果都以json形式返回
+            ## Params
+            * @param extName - PathVariable，扩展名，如html,json
+            ## Returns
+            * @return {401} 当鉴权失败，有系统forward时
+            * @return {200} 直接访问或redirect时
+            """)
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginList + "}", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<?> loginList(@PathVariable(WingsAuthHelper.ExtName) String extName,
                                        HttpServletRequest request,
@@ -71,26 +71,26 @@ public class LoginPageController {
     }
 
     @SuppressWarnings("MVCPathVariableInspection")
-    @Operation(summary = "具体验证登录默认页，根据content-type及extName规则做相应的处理", description =
-            "# Usage \n"
-            + "一般用于构造访问入口，如Oauth2登录的第三方路径和参数；获取反扒登录的验证码\n"
-            + "需要注意state是数组，是spring支持的http协议的参数数组，如`a=1&a=2&a=3`\n"
-            + "```bash \n"
-            + "curl -X POST 'http://localhost:8084/auth/login-page.json' \\\n"
-            + "--data 'authType=github&state=/order-list&state=http://localhost:8080&state=&host=localhost:8080'\n"
-            + "curl -X GET  \"http://localhost:8084/auth/login-page.json\\\n"
-            + "?authType=github&host=localhost:8080&state=/order-list&state=http://localhost%3A8080&state=\"\n"
-            + "```\n"
-            + "## Params \n"
-            + "* @param extName  - PathVariable 辅助构造返回数据 \n"
-            + "* @param authType - PathVariable 验证类型，系统配置项，可由【集成登录】查看，比如email,github \n"
-            + "* @param authZone - 辅助验证参数，可关联权限等 \n"
-            + "* @param {string[]} state - 构造Oauth2的state，MessageFormat格式，state[0]作为Format的key,state整体是Format的参数; \n"
-            + "* @param host - 构造Oauth2的重定向host，以减少跨域 \n"
-            + "## Returns \n"
-            + "* @return {401} 当鉴权失败，有系统forward时 \n"
-            + "* @return {200} 直接访问或redirect时 \n"
-            + "")
+    @Operation(summary = "具体验证登录默认页，根据content-type及extName规则做相应的处理", description = """
+            # Usage
+            一般用于构造访问入口，如Oauth2登录的第三方路径和参数；获取反扒登录的验证码
+            需要注意state是数组，是spring支持的http协议的参数数组，如`a=1&a=2&a=3`
+            ```bash
+            curl -X POST 'http://localhost:8084/auth/login-page.json' \\
+            --data 'authType=github&state=/order-list&state=http://localhost:8080&state=&host=localhost:8080'
+            curl -X GET  "http://localhost:8084/auth/login-page.json\\
+            ?authType=github&host=localhost:8080&state=/order-list&state=http://localhost%3A8080&state="
+            ```
+            ## Params
+            * @param extName  - PathVariable 辅助构造返回数据
+            * @param authType - PathVariable 验证类型，系统配置项，可由【集成登录】查看，比如email,github
+            * @param authZone - 辅助验证参数，可关联权限等
+            * @param {string[]} state - 构造Oauth2的state，MessageFormat格式，state[0]作为Format的key,state整体是Format的参数;
+            * @param host - 构造Oauth2的重定向host，以减少跨域
+            ## Returns
+            * @return {401} 当鉴权失败，有系统forward时
+            * @return {200} 直接访问或redirect时
+            """)
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$authLoginPage + "}", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<?> LoginPage(@PathVariable(WingsAuthHelper.ExtName) String extName,
                                        @PathVariable(WingsAuthHelper.AuthType) String authType,
@@ -125,17 +125,17 @@ public class LoginPageController {
     }
 
     @SuppressWarnings("UastIncorrectHttpHeaderInspection")
-    @Operation(summary = "验证一次性token是否有效", description =
-            "# Usage \n"
-            + "Oauth2使用state作为token，要求和发行client具有相同ip，agent等header信息\n"
-            + "验证成功后，在header中，可同样获取login时的session和cookie\n"
-            + "## Params \n"
-            + "* @param token - RequestHeader Oauth2使用state作为token\n"
-            + "## Returns \n"
-            + "* @return {401} 无|过期|失败 \n"
-            + "* @return {200 | Result(false, message='authing')} 验证进行中 \n"
-            + "* @return {200 | Result(true, data=sessionId)} 验证成功 \n"
-            + "")
+    @Operation(summary = "验证一次性token是否有效", description = """
+            # Usage
+            Oauth2使用state作为token，要求和发行client具有相同ip，agent等header信息
+            验证成功后，在header中，可同样获取login时的session和cookie
+            ## Params
+            * @param token - RequestHeader Oauth2使用state作为token
+            ## Returns
+            * @return {401} 无|过期|失败
+            * @return {200 | Result(false, message='authing')} 验证进行中
+            * @return {200 | Result(true, data=sessionId)} 验证成功
+            """)
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$authNonceCheck + "}")
     public ResponseEntity<R<?>> nonceCheck(@RequestHeader("token") String token, HttpServletRequest request, HttpServletResponse response) {
         final String sid = NonceTokenSessionHelper.authNonce(token, wingsRemoteResolver.resolveRemoteKey(request));

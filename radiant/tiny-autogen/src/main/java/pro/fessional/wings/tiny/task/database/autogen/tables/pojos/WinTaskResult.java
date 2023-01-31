@@ -4,9 +4,9 @@
 package pro.fessional.wings.tiny.task.database.autogen.tables.pojos;
 
 
+import jakarta.annotation.Generated;
 import pro.fessional.wings.tiny.task.database.autogen.tables.interfaces.IWinTaskResult;
 
-import javax.annotation.processing.Generated;
 import java.time.LocalDateTime;
 
 

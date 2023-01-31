@@ -4,11 +4,11 @@
 package pro.fessional.wings.warlock.database.autogen.tables.pojos;
 
 
+import jakarta.annotation.Generated;
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.IWinUserBasis;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
-import javax.annotation.processing.Generated;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Locale;

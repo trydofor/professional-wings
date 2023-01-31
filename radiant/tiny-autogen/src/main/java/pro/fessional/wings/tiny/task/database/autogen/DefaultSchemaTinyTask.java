@@ -10,7 +10,7 @@ import org.jooq.impl.SchemaImpl;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskDefineTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskResultTable;
 
-import javax.annotation.processing.Generated;
+import jakarta.annotation.Generated;
 import java.util.Arrays;
 import java.util.List;
 

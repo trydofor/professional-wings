@@ -7,7 +7,7 @@ import org.springframework.jndi.JndiLocatorDelegate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import javax.mail.Session;
+import jakarta.mail.Session;
 import javax.naming.NamingException;
 import java.util.Map;
 import java.util.Properties;

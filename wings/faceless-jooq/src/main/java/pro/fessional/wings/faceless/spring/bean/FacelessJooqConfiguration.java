@@ -20,7 +20,6 @@ import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import pro.fessional.wings.spring.consts.OrderedFacelessConst;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqEnv;
 import pro.fessional.wings.faceless.database.jooq.converter.JooqConverterDelegate;
@@ -30,9 +29,12 @@ import pro.fessional.wings.faceless.database.jooq.listener.JournalDeleteListener
 import pro.fessional.wings.faceless.database.jooq.listener.TableCudListener;
 import pro.fessional.wings.faceless.spring.prop.FacelessJooqCudProp;
 import pro.fessional.wings.faceless.spring.prop.FacelessJooqEnabledProp;
+import pro.fessional.wings.spring.consts.OrderedFacelessConst;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static pro.fessional.wings.spring.consts.NamingFacelessConst.jooqWingsConfigCustomizer;
 
 /**
  * @author trydofor
@@ -86,15 +88,21 @@ public class FacelessJooqConfiguration {
         return new DefaultExecuteListenerProvider(new JournalDeleteListener());
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "facelessJooqConfiguration")
-    public DefaultConfigurationCustomizer facelessJooqConfiguration(
+    @Bean(name = jooqWingsConfigCustomizer)
+    @ConditionalOnMissingBean(name = jooqWingsConfigCustomizer)
+    public DefaultConfigurationCustomizer jooqWingsConfigCustomizer(
             FacelessJooqEnabledProp config,
             ObjectProvider<ConverterProvider> providers,
-            ObjectProvider<org.jooq.Converter<?, ?>> converters
+            ObjectProvider<org.jooq.Converter<?, ?>> converters,
+            ObjectProvider<VisitListenerProvider> visitListenerProviders
     ) {
-        log.info("FacelessJooq spring-bean jooqConfigurationCustomizer");
+        log.info("FacelessJooq spring-bean " + jooqWingsConfigCustomizer);
         return configuration -> {
+
+            final VisitListenerProvider[] visitArr = visitListenerProviders.orderedStream().toArray(VisitListenerProvider[]::new);
+            log.info("FacelessJooq conf visitListener, size=" + visitArr.length);
+            configuration.set(visitArr); // boot 3.0 remove visit autoconfig
+
             final Settings settings = configuration.settings();
             WingsJooqEnv.daoBatchMysql = config.isBatchMysql();
             settings.withRenderCatalog(false)

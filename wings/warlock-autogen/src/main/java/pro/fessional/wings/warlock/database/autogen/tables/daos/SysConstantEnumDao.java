@@ -12,7 +12,7 @@ import pro.fessional.wings.warlock.database.autogen.tables.SysConstantEnumTable;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.SysConstantEnum;
 import pro.fessional.wings.warlock.database.autogen.tables.records.SysConstantEnumRecord;
 
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 import java.util.List;
 
 

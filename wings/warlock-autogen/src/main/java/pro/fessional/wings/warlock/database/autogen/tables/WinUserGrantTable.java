@@ -4,12 +4,7 @@
 package pro.fessional.wings.warlock.database.autogen.tables;
 
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.processing.Generated;
-
+import jakarta.annotation.Generated;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
 import org.jooq.Name;
@@ -23,11 +18,14 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
-
 import pro.fessional.wings.faceless.database.jooq.WingsJournalTable;
 import pro.fessional.wings.faceless.database.jooq.converter.JooqConsEnumConverter;
 import pro.fessional.wings.warlock.database.autogen.DefaultSchemaWarlock;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinUserGrantRecord;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -165,7 +163,7 @@ public class WinUserGrantTable extends TableImpl<WinUserGrantRecord> implements 
     public Row5<Long, pro.fessional.wings.warlock.enums.autogen.GrantType, Long, LocalDateTime, Long> fieldsRow() {
         return (Row5) super.fieldsRow();
     }
-    
+
 
     /**
      * alias asR2

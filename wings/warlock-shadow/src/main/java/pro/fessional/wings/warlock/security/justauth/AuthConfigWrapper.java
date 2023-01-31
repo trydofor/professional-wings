@@ -1,11 +1,11 @@
 package pro.fessional.wings.warlock.security.justauth;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.experimental.Delegate;
 import me.zhyd.oauth.config.AuthConfig;
 import pro.fessional.mirana.text.StringTemplate;
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
 /**

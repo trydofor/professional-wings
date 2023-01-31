@@ -16,6 +16,8 @@ import pro.fessional.wings.silencer.watch.WatchingAround;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockWatchingProp;
 
+import static pro.fessional.wings.spring.consts.NamingWarlockConst.slowSqlJooqListener;
+
 
 /**
  * @author trydofor
@@ -39,12 +41,12 @@ public class WarlockWatchingConfiguration {
         return bean;
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "slowSqlListener")
+    @Bean(name = slowSqlJooqListener)
+    @ConditionalOnMissingBean(name = slowSqlJooqListener)
     @ConditionalOnExpression("${" + WarlockWatchingProp.Key$jooqThreshold + ":-1} >=0")
-    public ExecuteListenerProvider slowSqlListener(WarlockWatchingProp prop) {
+    public ExecuteListenerProvider slowSqlJooqListener(WarlockWatchingProp prop) {
         final long ms = prop.getJooqThreshold();
-        log.info("Warlock spring-bean slowSqlListener, threshold=" + ms);
+        log.info("Warlock spring-bean "+slowSqlJooqListener+", threshold=" + ms);
         final SlowSqlListener bean = new SlowSqlListener();
         bean.setThresholdMillis(ms);
         return new DefaultExecuteListenerProvider(bean);

@@ -14,7 +14,7 @@ import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinRoleGrant;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinRoleGrantRecord;
 import pro.fessional.wings.warlock.enums.autogen.GrantType;
 
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 import java.time.LocalDateTime;
 import java.util.List;
 

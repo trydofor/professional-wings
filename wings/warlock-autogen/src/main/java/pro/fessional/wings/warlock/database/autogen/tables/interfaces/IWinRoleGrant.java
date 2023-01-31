@@ -4,10 +4,10 @@
 package pro.fessional.wings.warlock.database.autogen.tables.interfaces;
 
 
+import jakarta.annotation.Generated;
 import pro.fessional.wings.faceless.service.journal.JournalAware;
 import pro.fessional.wings.warlock.enums.autogen.GrantType;
 
-import javax.annotation.processing.Generated;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 

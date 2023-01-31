@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.7</version>
+        <version>3.0.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -16,7 +16,7 @@
     <packaging>pom</packaging>
 
     <name>Ancient::</name>
-    <description>万物生长靠日</description>
+    <description>万物生长靠日:Growing Need a F^king Sun</description>
 
     <url>https://wings.fessional.pro</url>
 
@@ -46,9 +46,9 @@
 
     <properties>
         <!-- https://github.com/spring-projects/spring-boot/releases -->
-        <revision>2.7.7</revision>
+        <revision>3.0.2</revision>
         <!-- https://maven.apache.org/maven-ci-friendly.html -->
-        <changelist>220-SNAPSHOT</changelist>
+        <changelist>300-SNAPSHOT</changelist>
         <!-- https://docs.spring.io/spring-boot/docs/2.7.7/reference/html/dependency-versions.html -->
         <spring-boot.version>${revision}</spring-boot.version>
         <wings.version>${revision}.${changelist}</wings.version>
@@ -56,13 +56,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- override spring boot default -->
-        <java.version>11</java.version>
-        <kotlin.version>1.6.21</kotlin.version>
-        <jooq.version>3.14.16</jooq.version> <!-- https://www.jooq.org/download/ 3.17:java17; 3.16:java11 -->
-        <okhttp.version>4.10.0</okhttp.version>
-        <jackson-bom.version>2.14.1</jackson-bom.version> <!-- https://github.com/FasterXML/jackson-modules-java8/issues/230 -->
-        <snakeyaml.version>1.33</snakeyaml.version> <!-- https://github.com/apache/shardingsphere/issues/21476 until boot3 -->
         <!-- mvn boot -->
+        <java.version>17</java.version>
         <maven.test.skip>false</maven.test.skip>
         <maven.deploy.skip>false</maven.deploy.skip>
         <maven.install.skip>false</maven.install.skip>
@@ -75,7 +70,7 @@
         <guava.version>31.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
         <commons-io.version>2.11.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
         <!-- wings project -->
-        <mirana.version>2.4.0-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
+        <mirana.version>2.4.4-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <meepo.version>1.4.1-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <shardingsphere.version>5.2.1</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
@@ -88,16 +83,15 @@
         <!-- servicecomb -->
         <servicecomb.version>2.8.4</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
         <!-- others -->
-        <springdoc.version>1.6.14</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases  boot-starter 2.7.6 -->
+        <springdoc.version>2.0.2</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases  boot-starter v1 vs 2.7.6 v2 vs 3.0.0 https://springdoc.org/v2/-->
         <therapi.version>0.15.0</therapi.version> <!-- https://github.com/dnault/therapi-runtime-javadoc  springdoc Javadoc support -->
-        <boot-admin.version>2.7.10</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases spring-boot.version 2.7.6-->
+        <boot-admin.version>3.0.0</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases spring-boot.version 3.0.0 vs 3.0.2 2.7.10 vs 2.7.6-->
         <sentry.version>6.12.1</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases buildSrc/src/main/java/Config.kt springBootVersion = "2.7.5" -->
         <retrofit.version>2.9.0</retrofit.version> <!-- https://github.com/square/retrofit/tags -->
         <!-- mvn-build-plugin -->
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version> <!-- https://search.maven.org/search?q=flatten-maven-plugin -->
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version> <!-- https://search.maven.org/search?q=maven-gpg-plugin -->
         <wings.java-opens>
-            --illegal-access=debug
             --add-modules=java.se <!-- Hazelcast -->
             --add-opens=java.base/java.io=ALL-UNNAMED <!-- FastJson -->
             --add-opens=java.base/java.nio=ALL-UNNAMED <!-- Hazelcast -->
@@ -446,12 +440,7 @@
             </dependency>
             <dependency>
                 <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-ui</artifactId>
-                <version>${springdoc.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-javadoc</artifactId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${springdoc.version}</version>
             </dependency>
             <dependency>
@@ -486,8 +475,9 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
                     <configuration>
-                        <argLine>${wings.java-opens}</argLine>
+                        <argLine>@{wings.java-opens}</argLine>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -528,7 +518,7 @@
                             <arg>--add-exports=java.base/java.nio=ALL-UNNAMED</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/java.lang=ALL-UNNAMED</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/java.lang.invoke=ALL-UNNAMED</arg> <!-- FastJson2 -->
-                            <arg>--add-opens=java.base/java.util=ALL-UNNAMED</arg> <!-- Boot Collections$EmptySet -->
+                            <arg>--add-exports=java.base/java.util=ALL-UNNAMED</arg> <!-- Boot Collections$EmptySet -->
                             <arg>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/sun.security.x509=ALL-UNNAMED</arg> <!-- Boot -->
@@ -597,6 +587,7 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${revision}</version>
                     <configuration>
                         <skip>${spring-boot.repackage.skip}</skip>
                         <executable>${spring-boot.repackage.executable}</executable>
@@ -730,8 +721,8 @@
                 </plugin>
                 <!-- build info -->
                 <plugin>
-                    <groupId>pl.project13.maven</groupId>
-                    <artifactId>git-commit-id-plugin</artifactId>
+                    <groupId>io.github.git-commit-id</groupId>
+                    <artifactId>git-commit-id-maven-plugin</artifactId>
                     <version>${git-commit-id-plugin.version}</version>
                     <executions>
                         <execution>

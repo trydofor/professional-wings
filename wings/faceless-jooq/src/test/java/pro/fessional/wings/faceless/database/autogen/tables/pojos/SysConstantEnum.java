@@ -4,9 +4,8 @@
 package pro.fessional.wings.faceless.database.autogen.tables.pojos;
 
 
+import jakarta.annotation.Generated;
 import pro.fessional.wings.faceless.database.autogen.tables.interfaces.ISysConstantEnum;
-
-import javax.annotation.processing.Generated;
 
 
 /**

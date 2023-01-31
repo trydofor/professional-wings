@@ -4,9 +4,9 @@
 package pro.fessional.wings.tiny.mail.database.autogen.tables.pojos;
 
 
+import jakarta.annotation.Generated;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.interfaces.IWinMailSender;
 
-import javax.annotation.processing.Generated;
 import java.time.LocalDateTime;
 
 

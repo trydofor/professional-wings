@@ -45,7 +45,7 @@ import pro.fessional.wings.tiny.mail.service.TinyMailPlain;
 import pro.fessional.wings.tiny.mail.service.TinyMailService;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailServiceProp;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -249,7 +249,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                 .stream()
                 .filter(po -> !notMatchProp(po))
                 .map(it -> new AsyncMail(it.getId(), DateLocaling.sysEpoch(it.getNextSend()), true, true, it, null))
-                .collect(Collectors.toList());
+                .toList();
 
         //
         final int size = pos.size();
@@ -443,8 +443,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                     log.info("done mail by max-fail id={}, subject={}", po.getId(), po.getMailSubj());
                 }
                 else if (retry) {
-                    if (exception instanceof MailWaitException) {
-                        MailWaitException mwe = ((MailWaitException) exception);
+                    if (exception instanceof MailWaitException mwe) {
                         if (mwe.isStopRetry()) {
                             setter.put(t.NextSend, EmptyValue.DATE_TIME);
                             log.error("stop stop-retry mail, id=" + po.getId(), exception);

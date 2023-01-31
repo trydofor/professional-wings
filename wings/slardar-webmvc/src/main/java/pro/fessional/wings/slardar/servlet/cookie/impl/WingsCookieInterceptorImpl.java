@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.servlet.cookie.impl;
 
+import jakarta.servlet.http.Cookie;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +11,6 @@ import pro.fessional.mirana.bits.Aes256;
 import pro.fessional.mirana.bits.Base64;
 import pro.fessional.wings.slardar.servlet.cookie.WingsCookieInterceptor;
 
-import javax.servlet.http.Cookie;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -179,15 +179,10 @@ public class WingsCookieInterceptorImpl implements WingsCookieInterceptor {
         if (path != null) {
             nc.setPath(path);
         }
-        final String comment = cookie.getComment();
-        if (comment != null) {
-            nc.setComment(comment);
-        }
 
         nc.setMaxAge(cookie.getMaxAge());
         nc.setHttpOnly(cookie.isHttpOnly());
         nc.setSecure(cookie.getSecure());
-        nc.setVersion(cookie.getVersion());
         return nc;
     }
 

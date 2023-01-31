@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,8 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.concur.DoubleKill;
 import pro.fessional.wings.slardar.service.DoubleKillService;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author trydofor

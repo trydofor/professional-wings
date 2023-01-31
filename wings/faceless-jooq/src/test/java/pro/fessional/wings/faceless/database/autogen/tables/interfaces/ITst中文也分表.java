@@ -4,10 +4,10 @@
 package pro.fessional.wings.faceless.database.autogen.tables.interfaces;
 
 
+import jakarta.annotation.Generated;
 import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 import pro.fessional.wings.faceless.service.journal.JournalAware;
 
-import javax.annotation.processing.Generated;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 

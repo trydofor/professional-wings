@@ -12,7 +12,7 @@ import pro.fessional.wings.warlock.database.autogen.tables.WinConfRuntimeTable;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinConfRuntime;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinConfRuntimeRecord;
 
-import javax.annotation.processing.Generated;
+import jakarta.annotation.Generated;
 import java.util.List;
 
 

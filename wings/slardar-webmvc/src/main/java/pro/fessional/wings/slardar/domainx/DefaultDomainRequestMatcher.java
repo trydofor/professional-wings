@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.domainx;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.cache2k.Cache;
 import org.springframework.util.AntPathMatcher;
@@ -9,7 +10,6 @@ import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import org.springframework.web.util.ServletRequestPathUtils;
 import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;

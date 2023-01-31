@@ -4,6 +4,7 @@
 package pro.fessional.wings.faceless.database.autogen.tables;
 
 
+import jakarta.annotation.Generated;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
 import org.jooq.Name;
@@ -21,7 +22,6 @@ import pro.fessional.wings.faceless.database.autogen.DefaultSchema;
 import pro.fessional.wings.faceless.database.autogen.tables.records.SysConstantEnumRecord;
 import pro.fessional.wings.faceless.database.jooq.WingsJournalTable;
 
-import javax.annotation.processing.Generated;
 import java.util.Arrays;
 import java.util.List;
 

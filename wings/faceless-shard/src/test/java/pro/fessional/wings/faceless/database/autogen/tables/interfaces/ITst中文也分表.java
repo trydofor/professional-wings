@@ -4,12 +4,11 @@
 package pro.fessional.wings.faceless.database.autogen.tables.interfaces;
 
 
+import jakarta.annotation.Generated;
+import pro.fessional.wings.faceless.service.journal.JournalAware;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
-
-import javax.annotation.processing.Generated;
-
-import pro.fessional.wings.faceless.service.journal.JournalAware;
 
 
 /**

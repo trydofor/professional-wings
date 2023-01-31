@@ -4,9 +4,8 @@
 package pro.fessional.wings.warlock.database.autogen.tables.pojos;
 
 
+import jakarta.annotation.Generated;
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.ISysConstantEnum;
-
-import javax.annotation.processing.Generated;
 
 
 /**

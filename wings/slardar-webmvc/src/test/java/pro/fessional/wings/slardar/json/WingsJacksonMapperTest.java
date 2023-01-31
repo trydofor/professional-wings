@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,7 +33,6 @@ import pro.fessional.wings.slardar.jackson.AesString;
 import pro.fessional.wings.slardar.jackson.StringMapGenerator;
 import pro.fessional.wings.slardar.jackson.StringMapHelper;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -205,30 +205,31 @@ public class WingsJacksonMapperTest {
         I18nJson obj = new I18nJson();
         ObjectWriter jackson = objectMapper.writerWithDefaultPrettyPrinter();
         String json = jackson.writeValueAsString(obj);
-        assertEquals("{\n" +
-                     "  \"codeManual\" : \"{0} can not be empty\",\n" +
-                     "  \"codeIgnore\" : \"base.not-empty\",\n" +
-                     "  \"textAuto\" : \"textAuto can not be empty\",\n" +
-                     "  \"textDisabled\" : {\n" +
-                     "    \"code\" : \"base.not-empty\",\n" +
-                     "    \"hint\" : \"\",\n" +
-                     "    \"args\" : [ \"textDisabled\" ]\n" +
-                     "  },\n" +
-                     "  \"longIgnore\" : 0,\n" +
-                     "  \"mapIgnore\" : {\n" +
-                     "    \"ikey\" : \"ival\"\n" +
-                     "  },\n" +
-                     "  \"mapDisabled\" : {\n" +
-                     "    \"i18n\" : {\n" +
-                     "      \"code\" : \"base.not-empty\",\n" +
-                     "      \"hint\" : \"\",\n" +
-                     "      \"args\" : [ \"textDisabled\" ]\n" +
-                     "    }\n" +
-                     "  },\n" +
-                     "  \"mapAuto\" : {\n" +
-                     "    \"i18n\" : \"textAuto can not be empty\"\n" +
-                     "  }\n" +
-                     "}", json.trim());
+        assertEquals("""
+                {
+                  "codeManual" : "{0} can not be empty",
+                  "codeIgnore" : "base.not-empty",
+                  "textAuto" : "textAuto can not be empty",
+                  "textDisabled" : {
+                    "code" : "base.not-empty",
+                    "hint" : "",
+                    "args" : [ "textDisabled" ]
+                  },
+                  "longIgnore" : 0,
+                  "mapIgnore" : {
+                    "ikey" : "ival"
+                  },
+                  "mapDisabled" : {
+                    "i18n" : {
+                      "code" : "base.not-empty",
+                      "hint" : "",
+                      "args" : [ "textDisabled" ]
+                    }
+                  },
+                  "mapAuto" : {
+                    "i18n" : "textAuto can not be empty"
+                  }
+                }""", json.trim());
     }
 
     @Data
@@ -258,65 +259,67 @@ public class WingsJacksonMapperTest {
 
         R<I18nJson> r1 = R.ok("这是一个消息", new I18nJson());
         String j1 = jackson.writeValueAsString(r1);
-        assertEquals("{\n" +
-                     "  \"success\" : true,\n" +
-                     "  \"message\" : \"这是一个消息\",\n" +
-                     "  \"data\" : {\n" +
-                     "    \"codeManual\" : \"{0} can not be empty\",\n" +
-                     "    \"codeIgnore\" : \"base.not-empty\",\n" +
-                     "    \"textAuto\" : \"textAuto can not be empty\",\n" +
-                     "    \"textDisabled\" : {\n" +
-                     "      \"code\" : \"base.not-empty\",\n" +
-                     "      \"hint\" : \"\",\n" +
-                     "      \"args\" : [ \"textDisabled\" ]\n" +
-                     "    },\n" +
-                     "    \"longIgnore\" : 0,\n" +
-                     "    \"mapIgnore\" : {\n" +
-                     "      \"ikey\" : \"ival\"\n" +
-                     "    },\n" +
-                     "    \"mapDisabled\" : {\n" +
-                     "      \"i18n\" : {\n" +
-                     "        \"code\" : \"base.not-empty\",\n" +
-                     "        \"hint\" : \"\",\n" +
-                     "        \"args\" : [ \"textDisabled\" ]\n" +
-                     "      }\n" +
-                     "    },\n" +
-                     "    \"mapAuto\" : {\n" +
-                     "      \"i18n\" : \"textAuto can not be empty\"\n" +
-                     "    }\n" +
-                     "  }\n" +
-                     "}", j1);
+        assertEquals("""
+                {
+                  "success" : true,
+                  "message" : "这是一个消息",
+                  "data" : {
+                    "codeManual" : "{0} can not be empty",
+                    "codeIgnore" : "base.not-empty",
+                    "textAuto" : "textAuto can not be empty",
+                    "textDisabled" : {
+                      "code" : "base.not-empty",
+                      "hint" : "",
+                      "args" : [ "textDisabled" ]
+                    },
+                    "longIgnore" : 0,
+                    "mapIgnore" : {
+                      "ikey" : "ival"
+                    },
+                    "mapDisabled" : {
+                      "i18n" : {
+                        "code" : "base.not-empty",
+                        "hint" : "",
+                        "args" : [ "textDisabled" ]
+                      }
+                    },
+                    "mapAuto" : {
+                      "i18n" : "textAuto can not be empty"
+                    }
+                  }
+                }""", j1);
 
         R<I18nJson> r2 = r1.setI18nMessage("base.not-empty", "第一个参数");
         String j2 = jackson.writeValueAsString(r2);
-        assertEquals("{\n" +
-                     "  \"success\" : true,\n" +
-                     "  \"message\" : \"第一个参数 can not be empty\",\n" +
-                     "  \"data\" : {\n" +
-                     "    \"codeManual\" : \"{0} can not be empty\",\n" +
-                     "    \"codeIgnore\" : \"base.not-empty\",\n" +
-                     "    \"textAuto\" : \"textAuto can not be empty\",\n" +
-                     "    \"textDisabled\" : {\n" +
-                     "      \"code\" : \"base.not-empty\",\n" +
-                     "      \"hint\" : \"\",\n" +
-                     "      \"args\" : [ \"textDisabled\" ]\n" +
-                     "    },\n" +
-                     "    \"longIgnore\" : 0,\n" +
-                     "    \"mapIgnore\" : {\n" +
-                     "      \"ikey\" : \"ival\"\n" +
-                     "    },\n" +
-                     "    \"mapDisabled\" : {\n" +
-                     "      \"i18n\" : {\n" +
-                     "        \"code\" : \"base.not-empty\",\n" +
-                     "        \"hint\" : \"\",\n" +
-                     "        \"args\" : [ \"textDisabled\" ]\n" +
-                     "      }\n" +
-                     "    },\n" +
-                     "    \"mapAuto\" : {\n" +
-                     "      \"i18n\" : \"textAuto can not be empty\"\n" +
-                     "    }\n" +
-                     "  }\n" +
-                     "}", j2);
+        assertEquals("""
+                {
+                  "success" : true,
+                  "message" : "第一个参数 can not be empty",
+                  "data" : {
+                    "codeManual" : "{0} can not be empty",
+                    "codeIgnore" : "base.not-empty",
+                    "textAuto" : "textAuto can not be empty",
+                    "textDisabled" : {
+                      "code" : "base.not-empty",
+                      "hint" : "",
+                      "args" : [ "textDisabled" ]
+                    },
+                    "longIgnore" : 0,
+                    "mapIgnore" : {
+                      "ikey" : "ival"
+                    },
+                    "mapDisabled" : {
+                      "i18n" : {
+                        "code" : "base.not-empty",
+                        "hint" : "",
+                        "args" : [ "textDisabled" ]
+                      }
+                    },
+                    "mapAuto" : {
+                      "i18n" : "textAuto can not be empty"
+                    }
+                  }
+                }""", j2);
     }
 
     @Test
@@ -328,56 +331,58 @@ public class WingsJacksonMapperTest {
         JsonIt jsonIt = new JsonIt();
         String i18n = xmlMapper.writeValueAsString(i18nJson);
         String json = xmlMapper.writeValueAsString(jsonIt);
-        assertEquals(("<I18nJson>\n" +
-                      "  <codeManual>{0} can not be empty</codeManual>\n" +
-                      "  <codeIgnore>base.not-empty</codeIgnore>\n" +
-                      "  <textAuto>textAuto can not be empty</textAuto>\n" +
-                      "  <textDisabled>\n" +
-                      "    <code>base.not-empty</code>\n" +
-                      "    <hint></hint>\n" +
-                      "    <args>\n" +
-                      "      <item>textDisabled</item>\n" +
-                      "    </args>\n" +
-                      "  </textDisabled>\n" +
-                      "  <longIgnore>0</longIgnore>\n" +
-                      "  <mapIgnore>\n" +
-                      "    <ikey>ival</ikey>\n" +
-                      "  </mapIgnore>\n" +
-                      "  <mapDisabled>\n" +
-                      "    <i18n>\n" +
-                      "      <code>base.not-empty</code>\n" +
-                      "      <hint></hint>\n" +
-                      "      <args>\n" +
-                      "        <item>textDisabled</item>\n" +
-                      "      </args>\n" +
-                      "    </i18n>\n" +
-                      "  </mapDisabled>\n" +
-                      "  <mapAuto>\n" +
-                      "    <i18n>textAuto can not be empty</i18n>\n" +
-                      "  </mapAuto>\n" +
-                      "</I18nJson>").replaceAll("\\s", ""), i18n.replaceAll("\\s", ""));
-        assertEquals(("<JsonIt>\n" +
-                      "  <intVal>2147483646</intVal>\n" +
-                      "  <longVal>9223372036854775806</longVal>\n" +
-                      "  <floatVal>1.1</floatVal>\n" +
-                      "  <doubleVal>2.2</doubleVal>\n" +
-                      "  <decimalVal>3.3</decimalVal>\n" +
-                      "  <localDateTimeVal>2020-06-01 12:34:46</localDateTimeVal>\n" +
-                      "  <localDateVal>2020-06-01</localDateVal>\n" +
-                      "  <localTimeVal>12:34:46</localTimeVal>\n" +
-                      "  <zonedDateTimeVal>2020-06-01 13:34:46 Asia/Tokyo</zonedDateTimeVal>\n" +
-                      "  <zonedDateTimeValV>2020-06-01 13:34:46.000 Asia/Tokyo</zonedDateTimeValV>\n" +
-                      "  <zonedDateTimeValZ>2020-06-01 13:34:46.000 +0900</zonedDateTimeValZ>\n" +
-                      "  <instantVal>2020-06-01T12:34:46Z</instantVal>\n" +
-                      "  <listVal>\n" +
-                      "    <listVal>字符串</listVal>\n" +
-                      "    <listVal>列表</listVal>\n" +
-                      "  </listVal>\n" +
-                      "  <mapVal>\n" +
-                      "    <Map>1</Map>\n" +
-                      "  </mapVal>\n" +
-                      "  <bool-val>false</bool-val>\n" +
-                      "</JsonIt>").replaceAll("\\s", ""), json.replaceAll("\\s", ""));
+        assertEquals(("""
+                              <I18nJson>
+                                <codeManual>{0} can not be empty</codeManual>
+                                <codeIgnore>base.not-empty</codeIgnore>
+                                <textAuto>textAuto can not be empty</textAuto>
+                                <textDisabled>
+                                  <code>base.not-empty</code>
+                                  <hint></hint>
+                                  <args>
+                                    <item>textDisabled</item>
+                                  </args>
+                                </textDisabled>
+                                <longIgnore>0</longIgnore>
+                                <mapIgnore>
+                                  <ikey>ival</ikey>
+                                </mapIgnore>
+                                <mapDisabled>
+                                  <i18n>
+                                    <code>base.not-empty</code>
+                                    <hint></hint>
+                                    <args>
+                                      <item>textDisabled</item>
+                                    </args>
+                                  </i18n>
+                                </mapDisabled>
+                                <mapAuto>
+                                  <i18n>textAuto can not be empty</i18n>
+                                </mapAuto>
+                              </I18nJson>""").replaceAll("\\s", ""), i18n.replaceAll("\\s", ""));
+        assertEquals(("""
+                              <JsonIt>
+                                <intVal>2147483646</intVal>
+                                <longVal>9223372036854775806</longVal>
+                                <floatVal>1.1</floatVal>
+                                <doubleVal>2.2</doubleVal>
+                                <decimalVal>3.3</decimalVal>
+                                <localDateTimeVal>2020-06-01 12:34:46</localDateTimeVal>
+                                <localDateVal>2020-06-01</localDateVal>
+                                <localTimeVal>12:34:46</localTimeVal>
+                                <zonedDateTimeVal>2020-06-01 13:34:46 Asia/Tokyo</zonedDateTimeVal>
+                                <zonedDateTimeValV>2020-06-01 13:34:46.000 Asia/Tokyo</zonedDateTimeValV>
+                                <zonedDateTimeValZ>2020-06-01 13:34:46.000 +0900</zonedDateTimeValZ>
+                                <instantVal>2020-06-01T12:34:46Z</instantVal>
+                                <listVal>
+                                  <listVal>字符串</listVal>
+                                  <listVal>列表</listVal>
+                                </listVal>
+                                <mapVal>
+                                  <Map>1</Map>
+                                </mapVal>
+                                <bool-val>false</bool-val>
+                              </JsonIt>""").replaceAll("\\s", ""), json.replaceAll("\\s", ""));
 
         JsonIt xmlJsonIt = xmlMapper.readValue(json, JsonIt.class);
         log.info("it={}", xmlJsonIt);

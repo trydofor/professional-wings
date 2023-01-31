@@ -4,6 +4,7 @@
 package pro.fessional.wings.faceless.database.autogen.tables;
 
 
+import jakarta.annotation.Generated;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -27,7 +28,6 @@ import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdAware;
 
-import javax.annotation.processing.Generated;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;

@@ -12,7 +12,8 @@ import org.jooq.Param;
 import org.jooq.QueryPart;
 import org.jooq.TableField;
 import org.jooq.VisitContext;
-import org.jooq.impl.DefaultVisitListener;
+import org.jooq.VisitListener;
+import org.jooq.impl.QOM;
 import org.jooq.impl.TableImpl;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler;
@@ -39,7 +40,7 @@ import static pro.fessional.wings.faceless.database.WingsTableCudHandler.Cud;
  * @since 2021-01-14
  */
 @Slf4j
-public class TableCudListener extends DefaultVisitListener {
+public class TableCudListener implements VisitListener {
 
     public static boolean WarnVisit = false;
 
@@ -289,36 +290,36 @@ public class TableCudListener extends DefaultVisitListener {
             }
         }
         // 3.14为query instanceof Keyword
-        else if ((clause == Clause.CONDITION_COMPARISON || clause == Clause.CONDITION_IN) && query instanceof Keyword) {
-            if (context.data(ContextKey.EXECUTING_WHERE_KEY) == null) {
-                log.debug("skip comparison without where-key or careless");
-                return;
-            }
-
-            final String cmp = query.toString();
-            if (cmp.equals("=") || cmp.equals(">=") || cmp.equals("<=")) {
-                log.debug("handle comparison. key={}", cmp);
-                context.data(ContextKey.EXECUTING_WHERE_CMP, WHERE_EQ);
-            }
-            else if (cmp.equalsIgnoreCase("in")) {
-                log.debug("handle comparison. key=in");
-                context.data(ContextKey.EXECUTING_WHERE_CMP, WHERE_IN);
-            }
-            else {
-                log.debug("skip comparison. key={}", cmp);
-            }
-        }
-        // 3.16 使用QOM
-//        else if ((clause == Clause.CONDITION_COMPARISON || clause == Clause.CONDITION_IN)) {
-//            if (query instanceof QOM.Eq || query instanceof QOM.Ge || query instanceof QOM.Le) {
-//                log.debug("handle comparison. key={}", query);
+//        else if ((clause == Clause.CONDITION_COMPARISON || clause == Clause.CONDITION_IN) && query instanceof Keyword) {
+//            if (context.data(ContextKey.EXECUTING_WHERE_KEY) == null) {
+//                log.debug("skip comparison without where-key or careless");
+//                return;
+//            }
+//
+//            final String cmp = query.toString();
+//            if (cmp.equals("=") || cmp.equals(">=") || cmp.equals("<=")) {
+//                log.debug("handle comparison. key={}", cmp);
 //                context.data(ContextKey.EXECUTING_WHERE_CMP, WHERE_EQ);
 //            }
-//            else if (query instanceof QOM.In || query instanceof QOM.InList) {
+//            else if (cmp.equalsIgnoreCase("in")) {
 //                log.debug("handle comparison. key=in");
 //                context.data(ContextKey.EXECUTING_WHERE_CMP, WHERE_IN);
 //            }
+//            else {
+//                log.debug("skip comparison. key={}", cmp);
+//            }
 //        }
+        // 3.16 使用QOM
+        else if ((clause == Clause.CONDITION_COMPARISON || clause == Clause.CONDITION_IN)) {
+            if (query instanceof QOM.Eq || query instanceof QOM.Ge || query instanceof QOM.Le) {
+                log.debug("handle comparison. key={}", query);
+                context.data(ContextKey.EXECUTING_WHERE_CMP, WHERE_EQ);
+            }
+            else if (query instanceof QOM.In || query instanceof QOM.InList) {
+                log.debug("handle comparison. key=in");
+                context.data(ContextKey.EXECUTING_WHERE_CMP, WHERE_IN);
+            }
+        }
         else if (clause == Clause.FIELD_VALUE && query instanceof Param) {
             final String fd = (String) context.data(ContextKey.EXECUTING_WHERE_KEY);
             if (fd == null) {

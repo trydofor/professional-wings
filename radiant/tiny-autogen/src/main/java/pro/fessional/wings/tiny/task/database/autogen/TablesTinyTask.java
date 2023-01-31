@@ -7,7 +7,7 @@ package pro.fessional.wings.tiny.task.database.autogen;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskDefineTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskResultTable;
 
-import javax.annotation.processing.Generated;
+import jakarta.annotation.Generated;
 
 
 /**

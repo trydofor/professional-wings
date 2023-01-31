@@ -4,14 +4,7 @@
 package pro.fessional.wings.warlock.database.autogen.tables;
 
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.processing.Generated;
-
+import jakarta.annotation.Generated;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -25,13 +18,18 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
-
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.jooq.WingsJournalTable;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdAware;
 import pro.fessional.wings.warlock.database.autogen.DefaultSchemaWarlock;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinRoleEntryRecord;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -188,7 +186,7 @@ public class WinRoleEntryTable extends TableImpl<WinRoleEntryRecord> implements 
     public String getSeqName() {
         return "win_role_entry";
     }
-    
+
 
     /**
      * alias asC2
@@ -198,26 +196,26 @@ public class WinRoleEntryTable extends TableImpl<WinRoleEntryRecord> implements 
     public WinRoleEntryTable getAliasTable() {
         return asC2;
     }
-    
+
 
     /**
      * The colDel <code>delete_dt</code> condition
      */
     public final Condition onlyDiedData = DeleteDt.gt(EmptyValue.DATE_TIME);
     public final Condition onlyLiveData = DeleteDt.eq(EmptyValue.DATE_TIME);
-    
+
     @Override
     @NotNull
     public Condition getOnlyDied() {
         return onlyDiedData;
     }
-    
+
     @Override
     @NotNull
     public Condition getOnlyLive() {
         return onlyLiveData;
     }
-    
+
     @Override
     @NotNull
     public Map<Field<?>, ?> markDelete(JournalService.Journal commit) {

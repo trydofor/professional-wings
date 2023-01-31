@@ -1,6 +1,6 @@
 package pro.fessional.wings.slardar.servlet.cookie;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 /**
  * @author trydofor

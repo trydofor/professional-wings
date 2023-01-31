@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.spring.bean;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,8 +17,6 @@ import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.servlet.response.view.PlainTextView;
 import pro.fessional.wings.slardar.spring.prop.SlardarFirstBloodProp;
-
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author trydofor

@@ -4,11 +4,10 @@
 package pro.fessional.wings.faceless.database.autogen;
 
 
+import jakarta.annotation.Generated;
 import pro.fessional.wings.faceless.database.autogen.tables.SysConstantEnumTable;
 import pro.fessional.wings.faceless.database.autogen.tables.SysStandardI18nTable;
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
-
-import javax.annotation.Generated;
 
 
 /**

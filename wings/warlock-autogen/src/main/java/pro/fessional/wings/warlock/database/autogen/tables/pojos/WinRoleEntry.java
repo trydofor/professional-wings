@@ -4,9 +4,9 @@
 package pro.fessional.wings.warlock.database.autogen.tables.pojos;
 
 
+import jakarta.annotation.Generated;
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.IWinRoleEntry;
 
-import javax.annotation.processing.Generated;
 import java.time.LocalDateTime;
 
 

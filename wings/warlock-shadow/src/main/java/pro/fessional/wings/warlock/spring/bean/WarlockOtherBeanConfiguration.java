@@ -20,6 +20,9 @@ import pro.fessional.wings.warlock.errorhandle.auto.BindExceptionAdvice;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockErrorProp;
 
+import static pro.fessional.wings.spring.consts.NamingWarlockConst.codeExceptionResolver;
+import static pro.fessional.wings.spring.consts.NamingWarlockConst.defaultExceptionResolver;
+
 
 /**
  * @author trydofor
@@ -38,21 +41,21 @@ public class WarlockOtherBeanConfiguration {
     public static class BindingErrorConfig {
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "codeExceptionResolver")
+    @Bean(name = codeExceptionResolver)
+    @ConditionalOnMissingBean(name = codeExceptionResolver)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$codeExceptionHandler, havingValue = "true")
     public HandlerExceptionResolver codeExceptionResolver(MessageSource messageSource, WarlockErrorProp prop) {
-        log.info("WarlockShadow spring-bean codeExceptionResolver");
+        log.info("WarlockShadow spring-bean " + codeExceptionResolver);
         final MessageResponse cp = prop.getCodeException();
         prop.fillAbsent(cp);
         return new CodeExceptionResolver(cp, messageSource);
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "defaultExceptionResolver")
+    @Bean(name = defaultExceptionResolver)
+    @ConditionalOnMissingBean(name = defaultExceptionResolver)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$defaultExceptionHandler, havingValue = "true")
     public HandlerExceptionResolver defaultExceptionResolver(WarlockErrorProp prop) {
-        log.info("WarlockShadow spring-bean defaultExceptionResolver");
+        log.info("WarlockShadow spring-bean " + defaultExceptionResolver);
         final MessageResponse cp = prop.getDefaultException();
         return new DefaultExceptionResolver(cp);
     }

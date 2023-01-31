@@ -21,8 +21,8 @@ import pro.fessional.wings.faceless.convention.EmptySugar;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailEnabledProp;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailSenderProp;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.ArrayList;

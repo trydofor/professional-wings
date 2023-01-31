@@ -12,7 +12,7 @@ import pro.fessional.wings.warlock.database.autogen.tables.WinRoleEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinRoleEntry;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinRoleEntryRecord;
 
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 import java.time.LocalDateTime;
 import java.util.List;
 

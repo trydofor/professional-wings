@@ -4,6 +4,7 @@
 package pro.fessional.wings.tiny.task.database.autogen.tables.records;
 
 
+import jakarta.annotation.Generated;
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record9;
@@ -12,7 +13,6 @@ import org.jooq.impl.UpdatableRecordImpl;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskResultTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.interfaces.IWinTaskResult;
 
-import javax.annotation.processing.Generated;
 import java.time.LocalDateTime;
 
 

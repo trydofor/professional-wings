@@ -62,8 +62,8 @@ public class TestSecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         log.info("config HttpSecurity");
-        http.authorizeRequests(conf -> conf
-                    .antMatchers("/authed/*").authenticated()
+        http.authorizeHttpRequests(conf -> conf
+                    .requestMatchers("/authed/*").authenticated()
             )
             .formLogin(conf -> conf
                     .loginPage("/user/login.json") // 无权限时返回的页面，

@@ -6,6 +6,8 @@ package pro.fessional.wings.spring.consts;
  * @since 2022-12-05
  */
 public interface NamingSlardarConst extends WingsBeanNaming {
-    String SlardarEventExecutorBean = "slardarEventExecutor";
-    String SlardarHeavySchedulerBean = "slardarHeavyScheduler";
+    String slardarEventExecutor = "slardarEventExecutor";
+    String slardarHeavyScheduler = "slardarHeavyScheduler";
+    String doubleKillExceptionResolver = "doubleKillExceptionResolver";
+    String righterExceptionResolver = "righterExceptionResolver";
 }

@@ -443,7 +443,7 @@ public class JooqMostSelectSample {
                 "select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ? order by `id` asc limit ?");
         PageQuery page = new PageQuery().setSize(5).setPage(1).setSort("d");
         Map<String, Field<?>> order = new HashMap<>();
-        order.put("d", t.Id);
+        order.put("d", t1.Id);
         PageResult<Tst中文也分表> pr1 = PageJooqHelper.use(dao, page)
                                                  .count()
                                                  .from(t1)

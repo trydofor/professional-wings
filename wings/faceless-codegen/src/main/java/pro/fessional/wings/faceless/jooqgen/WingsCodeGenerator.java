@@ -406,7 +406,7 @@ public class WingsCodeGenerator {
          * <li>The value is a constant, such as a Maven property</li>
          * </ul>
          * <p>
-         * Schema versions will be generated into the {@link javax.annotation.Generated} annotation on
+         * Schema versions will be generated into the {@link jakarta.annotation.Generated} annotation on
          * generated artefacts.
          *
          * @param str sql

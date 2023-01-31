@@ -18,7 +18,7 @@
             <eviction size="10000" max-size-policy="ENTRY_COUNT" eviction-policy="LFU"/>
         </near-cache>
         <attributes>
-            <attribute extractor-class-name="org.springframework.session.hazelcast.Hazelcast4PrincipalNameExtractor">principalName</attribute>
+            <attribute extractor-class-name="org.springframework.session.hazelcast.PrincipalNameExtractor">principalName</attribute>
             <attribute extractor-class-name="pro.fessional.wings.slardar.session.HazelcastUidExtractor">userId</attribute>
         </attributes>
         <indexes>

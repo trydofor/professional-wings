@@ -1,5 +1,7 @@
 package pro.fessional.wings.warlock.security.handler;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +13,6 @@ import pro.fessional.wings.slardar.context.RequestContextUtil;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.warlock.event.auth.WarlockMaxFailedEvent;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author trydofor

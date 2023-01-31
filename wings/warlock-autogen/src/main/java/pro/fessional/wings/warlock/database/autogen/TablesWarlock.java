@@ -4,8 +4,7 @@
 package pro.fessional.wings.warlock.database.autogen;
 
 
-import javax.annotation.processing.Generated;
-
+import jakarta.annotation.Generated;
 import pro.fessional.wings.warlock.database.autogen.tables.SysConstantEnumTable;
 import pro.fessional.wings.warlock.database.autogen.tables.SysStandardI18nTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinConfRuntimeTable;

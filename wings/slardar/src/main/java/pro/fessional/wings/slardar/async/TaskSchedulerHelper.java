@@ -30,7 +30,7 @@ public class TaskSchedulerHelper {
     }
 
     /**
-     * @see NamingSlardarConst#SlardarHeavySchedulerBean
+     * @see NamingSlardarConst#slardarHeavyScheduler
      */
     @NotNull
     public static ThreadPoolTaskScheduler Heavy() {

@@ -4,6 +4,7 @@
 package pro.fessional.wings.warlock.database.autogen.tables.records;
 
 
+import jakarta.annotation.Generated;
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record8;
@@ -12,7 +13,6 @@ import org.jooq.impl.UpdatableRecordImpl;
 import pro.fessional.wings.warlock.database.autogen.tables.WinPermEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.IWinPermEntry;
 
-import javax.annotation.processing.Generated;
 import java.time.LocalDateTime;
 
 

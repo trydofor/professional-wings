@@ -6,8 +6,8 @@ import org.jooq.QueryPart;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.VisitContext;
+import org.jooq.VisitListener;
 import org.jooq.impl.DSL;
-import org.jooq.impl.DefaultVisitListener;
 import org.jooq.impl.TableImpl;
 
 /**
@@ -15,7 +15,7 @@ import org.jooq.impl.TableImpl;
  * @author trydofor
  * @since 2021-01-14
  */
-public class AutoQualifyFieldListener extends DefaultVisitListener {
+public class AutoQualifyFieldListener implements VisitListener {
 
     @Override
     public void visitStart(VisitContext context) {

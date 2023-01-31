@@ -4,12 +4,12 @@
 package pro.fessional.wings.tiny.task.database.autogen.tables.records;
 
 
+import jakarta.annotation.Generated;
 import org.jooq.Record1;
 import org.jooq.impl.UpdatableRecordImpl;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskDefineTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.interfaces.IWinTaskDefine;
 
-import javax.annotation.processing.Generated;
 import java.time.LocalDateTime;
 
 

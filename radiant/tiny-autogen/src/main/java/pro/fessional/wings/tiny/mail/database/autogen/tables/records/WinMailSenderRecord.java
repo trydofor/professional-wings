@@ -4,12 +4,12 @@
 package pro.fessional.wings.tiny.mail.database.autogen.tables.records;
 
 
+import jakarta.annotation.Generated;
 import org.jooq.Record1;
 import org.jooq.impl.UpdatableRecordImpl;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.WinMailSenderTable;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.interfaces.IWinMailSender;
 
-import javax.annotation.processing.Generated;
 import java.time.LocalDateTime;
 
 

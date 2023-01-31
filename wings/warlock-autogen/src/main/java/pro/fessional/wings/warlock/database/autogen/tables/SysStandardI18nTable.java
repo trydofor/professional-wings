@@ -4,11 +4,7 @@
 package pro.fessional.wings.warlock.database.autogen.tables;
 
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.processing.Generated;
-
+import jakarta.annotation.Generated;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
 import org.jooq.Name;
@@ -22,10 +18,12 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
-
 import pro.fessional.wings.faceless.database.jooq.WingsJournalTable;
 import pro.fessional.wings.warlock.database.autogen.DefaultSchemaWarlock;
 import pro.fessional.wings.warlock.database.autogen.tables.records.SysStandardI18nRecord;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -163,7 +161,7 @@ public class SysStandardI18nTable extends TableImpl<SysStandardI18nRecord> imple
     public Row5<String, String, String, String, String> fieldsRow() {
         return (Row5) super.fieldsRow();
     }
-    
+
 
     /**
      * alias asM5

@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.spring.bean;
 
+import jakarta.servlet.http.Part;
 import lombok.SneakyThrows;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,7 +12,6 @@ import pro.fessional.wings.slardar.servlet.stream.AbstractRequestResponseLogging
 import pro.fessional.wings.slardar.servlet.stream.RequestResponseLogging;
 import pro.fessional.wings.slardar.servlet.stream.ReuseStreamRequestWrapper;
 
-import javax.servlet.http.Part;
 import java.util.Collection;
 
 /**

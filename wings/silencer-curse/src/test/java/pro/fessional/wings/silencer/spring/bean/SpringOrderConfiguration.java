@@ -1,5 +1,6 @@
 package pro.fessional.wings.silencer.spring.bean;
 
+import jakarta.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -11,8 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
-
-import javax.annotation.PostConstruct;
 
 /**
  * constructor

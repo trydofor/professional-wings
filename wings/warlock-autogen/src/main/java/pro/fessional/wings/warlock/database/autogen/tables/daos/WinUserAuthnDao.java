@@ -12,7 +12,7 @@ import pro.fessional.wings.warlock.database.autogen.tables.WinUserAuthnTable;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserAuthn;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinUserAuthnRecord;
 
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 import java.time.LocalDateTime;
 import java.util.List;
 

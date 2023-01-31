@@ -53,8 +53,8 @@ public class TestSecurityConfiguration {
                     .bindAuthTypeToEnums("user", Null.Enm)
             )
             .and()
-            .authorizeRequests(conf -> conf
-                    .antMatchers("/authed/*").authenticated()
+            .authorizeHttpRequests(conf -> conf
+                    .requestMatchers("/authed/*").authenticated()
             )
 //            .formLogin(conf -> conf
 //                    .loginPage("/user/login.json") // 无权限时返回的页面，

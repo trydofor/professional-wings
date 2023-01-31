@@ -4,6 +4,7 @@
 package pro.fessional.wings.warlock.database.autogen.tables.records;
 
 
+import jakarta.annotation.Generated;
 import org.jooq.Field;
 import org.jooq.Record4;
 import org.jooq.Record5;
@@ -11,8 +12,6 @@ import org.jooq.Row5;
 import org.jooq.impl.UpdatableRecordImpl;
 import pro.fessional.wings.warlock.database.autogen.tables.SysStandardI18nTable;
 import pro.fessional.wings.warlock.database.autogen.tables.interfaces.ISysStandardI18n;
-
-import javax.annotation.processing.Generated;
 
 
 /**

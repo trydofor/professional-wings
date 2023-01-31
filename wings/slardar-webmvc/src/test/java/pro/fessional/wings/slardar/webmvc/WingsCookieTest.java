@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.webmvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -20,7 +21,6 @@ import pro.fessional.mirana.bits.Base64;
 import pro.fessional.wings.silencer.encrypt.Aes256Provider;
 import pro.fessional.wings.slardar.controller.TestCookieController.Ins;
 
-import javax.servlet.http.Cookie;
 import java.util.HashSet;
 import java.util.Set;
 

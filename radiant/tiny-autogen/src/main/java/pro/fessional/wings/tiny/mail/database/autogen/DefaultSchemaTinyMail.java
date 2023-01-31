@@ -4,12 +4,12 @@
 package pro.fessional.wings.tiny.mail.database.autogen;
 
 
+import jakarta.annotation.Generated;
 import org.jooq.Catalog;
 import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.WinMailSenderTable;
 
-import javax.annotation.processing.Generated;
 import java.util.Arrays;
 import java.util.List;
 

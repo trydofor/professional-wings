@@ -4,6 +4,7 @@
 package pro.fessional.wings.tiny.mail.database.autogen.tables.daos;
 
 
+import jakarta.annotation.Generated;
 import org.jooq.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,6 @@ import pro.fessional.wings.tiny.mail.database.autogen.tables.WinMailSenderTable;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.pojos.WinMailSender;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.records.WinMailSenderRecord;
 
-import javax.annotation.processing.Generated;
 import java.time.LocalDateTime;
 import java.util.List;
 

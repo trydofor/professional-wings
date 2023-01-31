@@ -1,8 +1,8 @@
 package pro.fessional.wings.slardar.spring.conf;
 
+import lombok.val;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -49,18 +49,18 @@ public class WingsHttpPermitConfigurer extends AbstractHttpConfigurer<WingsHttpP
             http.cors().configurationSource(corsPermitAll());
         }
 
-        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http.authorizeRequests();
+        val registry = http.authorizeHttpRequests();
         if (flagLogin) {
-            registry.antMatchers(loginAntPaths()).permitAll();
+            registry.requestMatchers(loginAntPaths()).permitAll();
         }
         if (flagOAuth2) {
-            registry.antMatchers(oauth2AntPaths()).permitAll();
+            registry.requestMatchers(oauth2AntPaths()).permitAll();
         }
         if (flagSwagger) {
-            registry.antMatchers(swaggerAntPaths()).permitAll();
+            registry.requestMatchers(swaggerAntPaths()).permitAll();
         }
         if (flagTest) {
-            registry.antMatchers(testAntPaths()).permitAll();
+            registry.requestMatchers(testAntPaths()).permitAll();
         }
     }
 

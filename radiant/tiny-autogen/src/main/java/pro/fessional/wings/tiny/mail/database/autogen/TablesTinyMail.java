@@ -4,9 +4,8 @@
 package pro.fessional.wings.tiny.mail.database.autogen;
 
 
+import jakarta.annotation.Generated;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.WinMailSenderTable;
-
-import javax.annotation.processing.Generated;
 
 
 /**

@@ -4,19 +4,17 @@
 package pro.fessional.wings.faceless.database.autogen.tables.daos;
 
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import javax.annotation.processing.Generated;
-
+import jakarta.annotation.Generated;
 import org.jooq.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
 import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoJournalImpl;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 /**

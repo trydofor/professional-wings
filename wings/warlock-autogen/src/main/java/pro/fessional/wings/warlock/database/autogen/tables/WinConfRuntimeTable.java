@@ -4,11 +4,7 @@
 package pro.fessional.wings.warlock.database.autogen.tables;
 
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.processing.Generated;
-
+import jakarta.annotation.Generated;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
 import org.jooq.Name;
@@ -22,10 +18,12 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
-
 import pro.fessional.wings.faceless.database.jooq.WingsJournalTable;
 import pro.fessional.wings.warlock.database.autogen.DefaultSchemaWarlock;
 import pro.fessional.wings.warlock.database.autogen.tables.records.WinConfRuntimeRecord;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -168,7 +166,7 @@ public class WinConfRuntimeTable extends TableImpl<WinConfRuntimeRecord> impleme
     public Row6<String, String, String, String, String, String> fieldsRow() {
         return (Row6) super.fieldsRow();
     }
-    
+
 
     /**
      * alias asS4

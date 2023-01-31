@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.security.justauth;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -48,14 +49,13 @@ import me.zhyd.oauth.request.AuthWeiboRequest;
 import me.zhyd.oauth.request.AuthXmlyRequest;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthDetails;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Map;
 
@@ -136,6 +136,7 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
             case OSCHINA:
                 return new AuthOschinaRequest(config, authStateCache);
             case ALIPAY:
+                //noinspection deprecation
                 return new AuthAlipayRequest(config, authStateCache);
             case QQ:
                 return new AuthQqRequest(config, authStateCache);

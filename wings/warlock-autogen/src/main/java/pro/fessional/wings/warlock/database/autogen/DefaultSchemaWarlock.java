@@ -4,15 +4,10 @@
 package pro.fessional.wings.warlock.database.autogen;
 
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.processing.Generated;
-
+import jakarta.annotation.Generated;
 import org.jooq.Catalog;
 import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
-
 import pro.fessional.wings.warlock.database.autogen.tables.SysConstantEnumTable;
 import pro.fessional.wings.warlock.database.autogen.tables.SysStandardI18nTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinConfRuntimeTable;
@@ -23,6 +18,9 @@ import pro.fessional.wings.warlock.database.autogen.tables.WinUserAuthnTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserGrantTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserLoginTable;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 /**

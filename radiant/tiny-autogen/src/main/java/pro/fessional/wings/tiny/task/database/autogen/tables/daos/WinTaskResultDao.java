@@ -4,6 +4,7 @@
 package pro.fessional.wings.tiny.task.database.autogen.tables.daos;
 
 
+import jakarta.annotation.Generated;
 import org.jooq.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,6 @@ import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskResultTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.pojos.WinTaskResult;
 import pro.fessional.wings.tiny.task.database.autogen.tables.records.WinTaskResultRecord;
 
-import javax.annotation.processing.Generated;
 import java.time.LocalDateTime;
 import java.util.List;
 

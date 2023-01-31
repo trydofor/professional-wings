@@ -4,6 +4,7 @@
 package pro.fessional.wings.faceless.database.autogen.tables.daos;
 
 
+import jakarta.annotation.Generated;
 import org.jooq.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,6 @@ import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也
 import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoJournalImpl;
 import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 
-import javax.annotation.Generated;
 import java.time.LocalDateTime;
 import java.util.List;
 

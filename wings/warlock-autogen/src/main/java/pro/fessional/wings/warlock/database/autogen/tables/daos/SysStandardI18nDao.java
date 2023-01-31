@@ -13,7 +13,7 @@ import pro.fessional.wings.warlock.database.autogen.tables.SysStandardI18nTable;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.SysStandardI18n;
 import pro.fessional.wings.warlock.database.autogen.tables.records.SysStandardI18nRecord;
 
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 import java.util.List;
 
 

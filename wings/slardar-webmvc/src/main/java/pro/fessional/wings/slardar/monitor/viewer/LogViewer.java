@@ -1,6 +1,8 @@
 package pro.fessional.wings.slardar.monitor.viewer;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -16,8 +18,6 @@ import pro.fessional.wings.slardar.monitor.WarnFilter;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.spring.prop.SlardarMonitorProp;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;

@@ -14,7 +14,7 @@ import pro.fessional.wings.warlock.database.autogen.tables.records.WinUserBasisR
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;

@@ -16,7 +16,8 @@ import pro.fessional.wings.warlock.project.Warlock1SchemaManager;
 @Disabled("手动初始化")
 @SpringBootTest(properties = {
         "spring.datasource.url=jdbc:mysql://localhost:3306/wings_warlock"
-        + "?autoReconnect=true&useSSL=false"
+        + "?autoReconnect=true"
+        + "&useSSL=false&allowPublicKeyRetrieval=true"
         + "&useUnicode=true&characterEncoding=UTF-8"
         + "&connectionTimeZone=%2B08:00&forceConnectionTimeZoneToSession=true",
         "debug = true"

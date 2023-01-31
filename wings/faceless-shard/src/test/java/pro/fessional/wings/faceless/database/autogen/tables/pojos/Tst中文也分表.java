@@ -4,11 +4,10 @@
 package pro.fessional.wings.faceless.database.autogen.tables.pojos;
 
 
-import java.time.LocalDateTime;
-
-import javax.annotation.processing.Generated;
-
+import jakarta.annotation.Generated;
 import pro.fessional.wings.faceless.database.autogen.tables.interfaces.ITst中文也分表;
+
+import java.time.LocalDateTime;
 
 
 /**
