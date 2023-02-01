@@ -2,14 +2,34 @@ package pro.fessional.wings.silencer.modulate;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * @author trydofor
  * @since 2022-03-11
  */
 public class RuntimeMode {
 
+    private static final AtomicReference<Boolean> unitTest = new AtomicReference<>(null);
+
+    public static boolean isUnitTest() {
+        Boolean b = unitTest.get();
+        if (b == null) {
+            b = false;
+            for (StackTraceElement el : new RuntimeException().getStackTrace()) {
+                if (el.getClassName().startsWith("org.junit.")) {
+                    b = true;
+                    break;
+                }
+            }
+            unitTest.set(b);
+        }
+        return b;
+    }
+
     @NotNull
     protected static RunMode runMode = RunMode.Nothing;
+
 
     @NotNull
     public static RunMode getRunMode() {

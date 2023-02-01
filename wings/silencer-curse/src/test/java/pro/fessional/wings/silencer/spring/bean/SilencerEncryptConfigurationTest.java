@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.code.Crc8Long;
 import pro.fessional.mirana.code.LeapCode;
 import pro.fessional.wings.silencer.WingsSilencerCurseApplication;
+import pro.fessional.wings.silencer.modulate.RuntimeMode;
 import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,6 +40,11 @@ public class SilencerEncryptConfigurationTest {
     }
 
     @Test
+    public void testUnit() {
+        Assertions.assertTrue(RuntimeMode.isUnitTest());
+    }
+
+    @Test
     public void testCode() {
         long number = 1979L;
         long encode = crc8Long.encode(number);
@@ -58,13 +64,13 @@ public class SilencerEncryptConfigurationTest {
         final Class<?> ic = innerFace.getClass();
         final String nn = ic.getName();
         final String cn = ic.getCanonicalName();
-        log.info("getName={}",nn);
-        log.info("getCanonicalName={}",cn);
+        log.info("getName={}", nn);
+        log.info("getCanonicalName={}", cn);
         Class<?> c1 = Class.forName(nn);
         final Object b0 = ApplicationContextHelper.getBean(ic);
         final Object b1 = ApplicationContextHelper.getBean(c1);
         String[] allBeanNames = ApplicationContextHelper.getContext().getBeanDefinitionNames();
-        for(String beanName : allBeanNames) {
+        for (String beanName : allBeanNames) {
             log.info(beanName);
         }
 
