@@ -66,6 +66,22 @@ public class AutogenDependencyTest {
     }
 
     @Test
+    void test01AllTestCode() {
+        test11FacelessJooqTest();// faceless-jooq
+        test11FacelessShardTest();// faceless-shard
+    }
+
+    @Test
+    void test01AllMainCode() {
+        test10FacelessAutogen();// faceless-autogen/enums
+        test20WarlockAutogenEnum();// warlock-autogen/enums
+        test20WarlockAutogenAuth();// warlock-autogen/security
+        test21WarlockAutogenJooq();// warlock-autogen/database
+        test31TinyMailAutogenJooq();// tiny-autogen/mail
+        test31TinyTaskAutogenJooq();// tiny-autogen/task
+    }
+
+    @Test
     void test10FacelessAutogen() {
         final JdbcDataLoadHelper helper = JdbcDataLoadHelper.use(dataSource);
         final List<ConstantEnumGenerator.ConstantEnum> enums = ConstantEnumJdbcLoader.load(helper);
@@ -131,6 +147,7 @@ public class AutogenDependencyTest {
                 bd -> bd.databaseIncludes("win_mail_sender"),
                 bd -> bd.setGlobalSuffix("TinyMail"));
     }
+
     @Test
     void test31TinyTaskAutogenJooq() {
         ProjectJooqGenerator generator = new ProjectJooqGenerator();

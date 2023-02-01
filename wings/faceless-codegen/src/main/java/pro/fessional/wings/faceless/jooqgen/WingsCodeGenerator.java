@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * 对 http://www.jooq.org/xsd/jooq-codegen-3.14.0.xsd 的包装
+ * 对 <a href="http://www.jooq.org/xsd/jooq-codegen-3.17.0.xsd">jooq-codegen-3.17.0.xsd</a> 的包装
  *
  * @author trydofor
  * @since 2019-05-31
@@ -58,7 +58,7 @@ public class WingsCodeGenerator {
      * @param suffix      为DefaultCatalog，DefaultSchema和Global对象增加后缀，以区分增量生成。
      */
 
-    public static void generate(Configuration conf, boolean incremental, String suffix) {
+    @SuppressWarnings("resource") public static void generate(Configuration conf, boolean incremental, String suffix) {
         if (conf == null) {
             conf = config();
         }

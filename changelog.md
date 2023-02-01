@@ -10,14 +10,18 @@ Help Yourself, Check [Commits]
 
 ## 3.x. Roadmap
 
-- spring-boot 3.x
+- stable api
+
+## 3.0.2.300-SNAPSHOT [Current]
+
+- spring-boot 3.0.2
 - Jakarta EE 9+
 - java 17
+- jooq 3.17.x
 
-## 2.7.7.220-SNAPSHOT [Current]
+## 2.7.7.220-SNAPSHOT [Temporary]
 
-- [spring-boot 2.7.x] 💥 OkHttp, Hazelcast, Cache2k
-- [jooq 3.16.x] 💥 VisitListener QOM
+- spring-boot 2.7.7 💥 OkHttp, Hazelcast, Cache2k
 
 ## 2.6.6.210-SNAPSHOT [History]
 
@@ -27,10 +31,8 @@ Help Yourself, Check [Commits]
 
 - java 8
 
-
-[spring-boot 2.7.x]: https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.7-Release-Notes
-[jooq 3.16.x]: https://www.jooq.org/notes#3.16.0
 [Current]: https://github.com/trydofor/pro.fessional.wings
 [History]: https://github.com/trydofor/pro.fessional.wings/tags
+[Temporary]: https://github.com/trydofor/pro.fessional.wings/tags
 [Commits]: https://github.com/trydofor/pro.fessional.wings/commits/develop
 [Changes]: https://wings.fessional.pro/9-example/9a.wings-change/

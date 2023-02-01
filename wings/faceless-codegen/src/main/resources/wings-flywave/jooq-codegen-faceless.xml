@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.14.0.xsd">
+<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.17.0.xsd">
     <logging>INFO</logging>
     <jdbc>
         <driver>!!your-config-here!!</driver>

@@ -38,6 +38,14 @@ import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL
 import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL_DELETE_DT;
 import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL_IS_DELETED;
 
+/**
+ * 升级jooq时，需要确认Override及反射方法是否兼容
+ * 『🦁>>>』和『🦁<<<』间的代码不需要确认
+ * 仅支持java，不支持kotlin及scala
+ *
+ * @author trydofor
+ * @since 2019-05-31
+ */
 public class WingsJavaGenerator extends JavaGenerator {
 
     private GeneratorStrategy proxyStrategy = null;
@@ -75,9 +83,9 @@ public class WingsJavaGenerator extends JavaGenerator {
         return proxyStrategy;
     }
 
-    @Override
+    @Override // 无需确认，可对比
     public void printSingletonInstance(JavaWriter out, Definition definition) {
-        super.printSingletonInstance(out,definition);
+        super.printSingletonInstance(out, definition);
         // 🦁>>>
         // table is TableDefinition : SysCommitJournalTable, SysCommitJournal
         final String className = getStrategy().getJavaClassName(definition);
@@ -89,7 +97,7 @@ public class WingsJavaGenerator extends JavaGenerator {
         // 🦁<<<
     }
 
-    @Override
+    @Override // 无需确认，父方法empty
     public void generateTableClassFooter(TableDefinition table, JavaWriter out) {
         // 🦁>>>
         // table is TableDefinition : SysCommitJournalTable, SysCommitJournal
@@ -227,7 +235,7 @@ public class WingsJavaGenerator extends JavaGenerator {
     private final Pattern daoFetches = Pattern.compile("\n +/[* \n]+Fetch records", Pattern.MULTILINE);
     private final Pattern daoFetchMd = Pattern.compile("(fetch[^(]*)\\(");
 
-    @Override
+    @Override // 确认替换后代码，diff即可
     public void generateDao(TableDefinition table, JavaWriter out) {
         super.generateDao(table, out);
         // 🦁>>>
@@ -250,6 +258,7 @@ public class WingsJavaGenerator extends JavaGenerator {
         Matcher me = daoExtends.matcher(dao);
         dao = me.replaceFirst("public class $1Dao extends " + implClass.getSimpleName() + "<$1Table, ");
 
+        // 重置内容，正则替换
         java.setLength(0);
         if (implClass.equals(WingsJooqDaoJournalImpl.class)) {
             final Matcher md = daoFetches.matcher(dao);
