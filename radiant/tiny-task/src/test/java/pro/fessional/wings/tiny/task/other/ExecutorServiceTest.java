@@ -1,6 +1,7 @@
 package pro.fessional.wings.tiny.task.other;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -17,6 +18,7 @@ import java.util.concurrent.ScheduledFuture;
         "debug = true"
 })
 @Slf4j
+@Disabled("manual")
 class ExecutorServiceTest {
 
     @Test

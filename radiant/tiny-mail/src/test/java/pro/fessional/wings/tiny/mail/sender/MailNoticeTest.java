@@ -2,6 +2,7 @@ package pro.fessional.wings.tiny.mail.sender;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,6 @@ import pro.fessional.mirana.time.StopWatch;
         "wings.tiny.mail.service.boot-scan=0",
 //        "wings.tiny.mail.notice.default.file[application.properties]=classpath:./application.properties"
 })
-@Disabled
 @Slf4j
 public class MailNoticeTest {
 
@@ -29,6 +29,13 @@ public class MailNoticeTest {
     protected String mailTo;
 
     @Test
+    public void testPost() {
+        final boolean snd = mailNotice.post("test tiny mail send", "test send");
+        Assertions.assertTrue(snd,"可能需要设置 QQ_MAIL_USER, QQ_MAIL_USER");
+    }
+
+    @Test
+    @Disabled("timing")
     public void testDefault() {
         final StopWatch stopWatch = new StopWatch();
         try (final StopWatch.Watch w = stopWatch.start("emit")) {
@@ -44,6 +51,7 @@ public class MailNoticeTest {
     }
 
     @Test
+    @Disabled("manual")
     public void testGmail() {
         final TinyMailConfig gmail = mailNotice.provideConfig("gmail", true);
         mailNotice.send(gmail, "test tiny mail gmail", "test gmail");
