@@ -36,7 +36,7 @@ trydofor/pro.fessional.wings.git
 git submodule update --remote --init
 (cd observe/meepo && mvn package install)
 (cd observe/mirana && mvn package install)
-# ③ 安装wings，java-11
+# ③ 安装wings，java-17
 sdk use java 17.0.6-tem
 mvn package install
 ```

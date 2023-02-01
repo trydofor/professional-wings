@@ -42,7 +42,7 @@ import static pro.fessional.wings.spring.consts.NamingSlardarConst.slardarHeavyS
 
 /**
  * <pre>
- * https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#features.task-execution-and-scheduling
+ * <a href="https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/#features.task-execution-and-scheduling">Task Execution and Scheduling</a>
  * https://github.com/alibaba/transmittable-thread-local
  * </pre>
  *

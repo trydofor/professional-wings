@@ -25,7 +25,7 @@ import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import java.util.function.Function;
 
 /**
- * https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-handlermapping-interceptor
+ * <a href="https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-handlermapping-interceptor">Interception</a>
  *
  * @author trydofor
  * @since 2019-11-16

@@ -14,12 +14,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 /**
  * @author trydofor
- * @link https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#boot-features-resttemplate-customization
+ * @link <a href="https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/#io.rest-client.resttemplate.customization">RestTemplate Customization</a>
  * @see RestTemplateAutoConfiguration#RestTemplateAutoConfiguration()
  * @since 2020-05-22
  */

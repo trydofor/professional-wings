@@ -15,7 +15,7 @@ import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 
 /**
  * @author trydofor
- * @link https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#boot-features-internationalization
+ * @link <a href="https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/#features.internationalization">Internationalization</a>
  * @see org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration
  * @since 2019-06-24
  */
@@ -31,8 +31,7 @@ public class SilencerMessageConfiguration {
     public CombinableMessageSource combinableMessageSource(MessageSource messageSource) {
         log.info("Silencer spring-bean combinableMessageSource");
         CombinableMessageSource combinable = new CombinableMessageSource();
-        if (messageSource instanceof HierarchicalMessageSource) {
-            HierarchicalMessageSource hierarchy = (HierarchicalMessageSource) messageSource;
+        if (messageSource instanceof HierarchicalMessageSource hierarchy) {
             MessageSource parent = hierarchy.getParentMessageSource();
             if (parent != null) {
                 log.info("Silencer set parent for CombinableMessageSource");
@@ -40,7 +39,8 @@ public class SilencerMessageConfiguration {
             }
             log.info("Silencer change messageSource to CombinableMessageSource");
             hierarchy.setParentMessageSource(combinable);
-        } else {
+        }
+        else {
             log.info("Silencer skip non HierarchicalMessageSource for CombinableMessageSource");
         }
 

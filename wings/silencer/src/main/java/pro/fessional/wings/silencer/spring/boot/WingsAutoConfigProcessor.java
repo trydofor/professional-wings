@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
 /**
  * 自动加载配置路径中的 /wings-conf/*.{yml,yaml,properties}配置。
  * <pre>
- * [参考资料 docs.spring.io](https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/)
+ * <a href="https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/">参考资料docs.spring.io</a>
  *  - #boot-features-application-events-and-listeners
  *  - #boot-features-external-config
  *  - #howto-change-the-location-of-external-properties
@@ -599,8 +599,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj instanceof ConfResource) {
-                final ConfResource ot = (ConfResource) obj;
+            if (obj instanceof final ConfResource ot) {
                 return more ? location.equals(ot.location) : fullName.equals(ot.fullName);
             }
             else {

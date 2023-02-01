@@ -14,7 +14,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 
 /**
- * https://docs.spring.io/spring-framework/docs/current/reference/html/testing.html#testcontext-parallel-test-execution
+ * <a href="https://docs.spring.io/spring-framework/docs/current/reference/html/testing.html#testcontext-parallel-test-execution">Parallel Test Execution</a>
  *
  * @author trydofor
  * @since 2021-03-09

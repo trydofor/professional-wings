@@ -25,7 +25,6 @@ import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.autozone.AutoZoneType;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeDeserializer;
@@ -47,6 +46,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarJacksonProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarNumberProp;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -61,7 +61,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author trydofor
- * @link https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#howto-customize-the-jackson-objectmapper
+ * @link <a href="https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/#howto.spring-mvc.customize-jackson-objectmapper">Customize the Jackson ObjectMapper</a>
  * @see InstantDeserializer#ZONED_DATE_TIME
  * @since 2019-06-26
  */
@@ -169,9 +169,7 @@ public class SlardarJacksonWebConfiguration {
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer customizerObjectMapperResource() {
         log.info("SlardarWebmvc spring-bean customizerObjectMapperResource");
-        return builder -> {
-            builder.serializerByType(Resource.class, new ResourceSerializer());
-        };
+        return builder -> builder.serializerByType(Resource.class, new ResourceSerializer());
     }
 
     @Bean

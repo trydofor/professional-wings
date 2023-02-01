@@ -20,19 +20,19 @@ import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.best.ArgsAssert;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.session.WingsSessionIdResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 通过 session-hazelcast.xml 配置好 spring session用的map，主要是index和serial
- * https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-session
- * https://docs.spring.io/spring-session/docs/2.6.6/reference/html5/#spring-security
- * https://guides.hazelcast.org/spring-session-hazelcast/
+ * <a href="https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/#web.spring-session">Spring Session</a>
+ * <a href="https://docs.spring.io/spring-session/reference/spring-security.html">spring-security</a>
+ * <a href="https://docs.hazelcast.com/tutorials/spring-session-hazelcast">spring-session-hazelcast</a>
  *
  * @author trydofor
  * @since 2019-06-26
