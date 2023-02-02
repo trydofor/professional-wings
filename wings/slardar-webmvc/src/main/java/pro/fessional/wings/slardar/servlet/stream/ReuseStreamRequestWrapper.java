@@ -67,11 +67,10 @@ public class ReuseStreamRequestWrapper extends HttpServletRequestWrapper {
 
     @SneakyThrows
     private CircleServletInputStream initCircleServletInputStream(ServletRequest request) {
-        if (!(request instanceof HttpServletRequest)) {
+        if (!(request instanceof final HttpServletRequest req)) {
             return new CircleServletInputStream(request.getInputStream());
         }
 
-        final HttpServletRequest req = (HttpServletRequest) request;
         final String contentType = req.getContentType();
         boolean multip = false;
         boolean simple = true;

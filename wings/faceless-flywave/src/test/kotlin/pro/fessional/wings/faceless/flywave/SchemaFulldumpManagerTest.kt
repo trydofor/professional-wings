@@ -21,7 +21,7 @@ import javax.sql.DataSource
 
 @SpringBootTest
 @TestMethodOrder(MethodName::class)
-@Disabled("手动执行，避免污染Git提交文件")
+@Disabled("导出表结构和数据，避免污染Git提交文件")
 class SchemaFulldumpManagerTest {
 
     @Autowired

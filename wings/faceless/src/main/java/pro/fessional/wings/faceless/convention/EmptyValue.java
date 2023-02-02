@@ -11,6 +11,7 @@ import java.time.LocalTime;
  * @author trydofor
  * @since 2019-05-13
  */
+@SuppressWarnings("CanBeFinal")
 public class EmptyValue {
 
     private EmptyValue() {

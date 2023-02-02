@@ -133,7 +133,7 @@
         </dependency>
         <dependency>
             <groupId>io.sentry</groupId>
-            <artifactId>sentry-spring-boot-starter</artifactId>
+            <artifactId>sentry-spring-boot-starter-jakarta</artifactId>
             <version>${sentry.version}</version>
             <scope>test</scope>
         </dependency>

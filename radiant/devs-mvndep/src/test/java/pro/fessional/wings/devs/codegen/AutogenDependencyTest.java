@@ -29,7 +29,7 @@ import java.util.List;
  * @author trydofor
  * @since 2023-01-23
  */
-@Disabled("手动初始化")
+@Disabled("自动生成代码，手动初始化")
 @SpringBootTest(properties = {
         "debug = true"
 })

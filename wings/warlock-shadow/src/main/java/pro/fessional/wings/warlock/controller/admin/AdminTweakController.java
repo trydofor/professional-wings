@@ -24,16 +24,16 @@ import static pro.fessional.wings.slardar.event.EventPublishHelper.SyncSpring;
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerTweak, havingValue = "true")
 public class AdminTweakController {
 
-    @Operation(summary = "线程级设置日志级别", description =
-            "# Usage \n"
-            + "根据userId设置日志级别，level==OFF时，为关闭线程设定，复原系统原设置。\n"
-            + "## Params \n"
-            + "* @param userId - 必填，用户id，MAX_VALUE为全部用户\n"
-            + "* @param level - 选填，日志级别，TRACE, DEBUG, INFO, WARN, ERROR和OFF\n"
-            + "## Returns \n"
-            + "* @return {401} 权限不够时 \n"
-            + "* @return {200} 直接访问或redirect时 \n"
-            + "")
+    @Operation(summary = "线程级设置日志级别", description = """
+            # Usage
+            根据userId设置日志级别，level==OFF时，为关闭线程设定，复原系统原设置。
+            ## Params
+            * @param userId - 必填，用户id，MAX_VALUE为全部用户
+            * @param level - 选填，日志级别，TRACE, DEBUG, INFO, WARN, ERROR和OFF
+            ## Returns
+            * @return {401} 权限不够时
+            * @return {200} 直接访问或redirect时
+            """)
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$adminTweakLogger + "}")
     @ResponseBody
     public R<Void> adminTweakLogger(@RequestParam("userId") long uid, @RequestParam("level") LogLevel level) {
@@ -44,20 +44,20 @@ public class AdminTweakController {
         return R.ok();
     }
 
-    @Operation(summary = "线程级设置时钟级别", description =
-            "# Usage \n"
-            + "根据userId设时钟志级别，mills==OFF时，为关闭线程设定，复原系统原设置。\n"
-            + "判断条件，mills在未来3650天(315360000000)，约1980前\n"
-            + " * ①与系统时钟相差的毫秒数\n"
-            + " * ②固定时间(1970-01-01)\n"
-            + " * ③0表示reset\n"
-            + "## Params \n"
-            + "* @param userId - 必填，用户id，MAX_VALUE为全部用户\n"
-            + "* @param mills - 必填，毫秒数\n"
-            + "## Returns \n"
-            + "* @return {401} 权限不够时 \n"
-            + "* @return {200} 直接访问或redirect时 \n"
-            + "")
+    @Operation(summary = "线程级设置时钟级别", description = """
+            # Usage
+            根据userId设时钟志级别，mills==OFF时，为关闭线程设定，复原系统原设置。
+            判断条件，mills在未来3650天(315360000000)，约1980前
+             * ①与系统时钟相差的毫秒数
+             * ②固定时间(1970-01-01)
+             * ③0表示reset
+            ## Params
+            * @param userId - 必填，用户id，MAX_VALUE为全部用户
+            * @param mills - 必填，毫秒数
+            ## Returns
+            * @return {401} 权限不够时
+            * @return {200} 直接访问或redirect时
+            """)
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$adminTweakClock + "}")
     @ResponseBody
     public R<Void> adminTweakClock(@RequestParam("userId") long uid, @RequestParam("mills") long mills) {
@@ -68,16 +68,16 @@ public class AdminTweakController {
         return R.ok();
     }
 
-    @Operation(summary = "线程级设置时钟级别", description =
-            "# Usage \n"
-            + "根据userId设时钟志级别，stack==null时，为关闭线程设定，复原系统原设置。\n"
-            + "## Params \n"
-            + "* @param userId - 必填，用户id，MAX_VALUE为全部用户\n"
-            + "* @param stack - 选填，是否有堆栈\n"
-            + "## Returns \n"
-            + "* @return {401} 权限不够时 \n"
-            + "* @return {200} 直接访问或redirect时 \n"
-            + "")
+    @Operation(summary = "线程级设置时钟级别", description = """
+            # Usage
+            根据userId设时钟志级别，stack==null时，为关闭线程设定，复原系统原设置。
+            ## Params
+            * @param userId - 必填，用户id，MAX_VALUE为全部用户
+            * @param stack - 选填，是否有堆栈
+            ## Returns
+            * @return {401} 权限不够时
+            * @return {200} 直接访问或redirect时
+            """)
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$adminTweakStack + "}")
     @ResponseBody
     public R<Void> adminTweakStack(@RequestParam("userId") long uid, @RequestParam(value = "stack", required = false) Boolean stack) {

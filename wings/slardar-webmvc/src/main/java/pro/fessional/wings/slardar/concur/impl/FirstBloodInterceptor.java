@@ -35,11 +35,10 @@ public class FirstBloodInterceptor implements AutoRegisterInterceptor {
                              @NotNull HttpServletResponse response,
                              @NotNull Object handler) {
 
-        if (!(handler instanceof HandlerMethod) || handlers == null || handlers.isEmpty()) {
+        if (!(handler instanceof final HandlerMethod handlerMethod) || handlers == null || handlers.isEmpty()) {
             return true;
         }
 
-        final HandlerMethod handlerMethod = (HandlerMethod) handler;
         final Method method = handlerMethod.getMethod();
         final FirstBlood anno = method.getAnnotation(FirstBlood.class);
 

@@ -65,7 +65,7 @@ public class TinyMailMessage extends TinyMailConfig {
      */
     public void adopt(TinyMailMessage that) {
         if (that == null) return;
-        super.adopt((TinyMailConfig) that);
+        super.adopt(that);
         bizId = that.bizId;
         bizMark = that.bizMark;
         subject = that.subject;
@@ -78,7 +78,7 @@ public class TinyMailMessage extends TinyMailConfig {
      */
     public void merge(TinyMailMessage that) {
         if (that == null) return;
-        super.merge((TinyMailConfig) that);
+        super.merge(that);
 
         if (bizId == null) bizId = that.bizId;
         if (bizMark == null) bizMark = that.bizMark;

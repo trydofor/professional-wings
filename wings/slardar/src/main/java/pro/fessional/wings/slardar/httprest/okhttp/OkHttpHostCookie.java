@@ -133,8 +133,7 @@ public class OkHttpHostCookie implements CookieJar {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof Ck)) return false;
-            Ck ck = (Ck) o;
+            if (!(o instanceof Ck ck)) return false;
             return secure == ck.secure
                    && Objects.equals(host, ck.host)
                    && Objects.equals(path, ck.path)

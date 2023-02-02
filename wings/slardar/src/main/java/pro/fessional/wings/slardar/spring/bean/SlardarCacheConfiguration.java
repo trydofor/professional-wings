@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.AbstractCachingConfiguration;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.annotation.ProxyCachingConfiguration;
 import org.springframework.cache.interceptor.AbstractCacheResolver;
@@ -99,7 +99,7 @@ public class SlardarCacheConfiguration {
     @Configuration(proxyBeanMethods = false)
     @RequiredArgsConstructor
     @AutoConfigureOrder(OrderedSlardarConst.CachingConfigurerSupport)
-    public static class SlardarCachingConfigurerSupport extends CachingConfigurerSupport {
+    public static class SlardarCachingConfigurerSupport implements CachingConfigurer {
         private final Map<String, CacheManager> managers;
         private final Map<String, AbstractCacheResolver> resolvers;
         private final SlardarCacheProp cacheProp;

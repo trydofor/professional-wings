@@ -89,14 +89,13 @@ public class WingsOverloadFilter implements OrderedFilter {
             return;
         }
 
-        if (!(request instanceof HttpServletRequest)) {
+        if (!(request instanceof final HttpServletRequest httpReq)) {
             chain.doFilter(request, response);
             return;
         }
 
         // 只能处理http的，目前的情况
         final long now = ThreadNow.millis();
-        final HttpServletRequest httpReq = (HttpServletRequest) request;
         final CalmDown calmDown = letCalmDown(httpReq);
 
         // 快请求，累积后清零
@@ -221,9 +220,8 @@ public class WingsOverloadFilter implements OrderedFilter {
 
     private void checkAndStats(HttpServletRequest request, ServletResponse response, long bgn, long end) {
         // 只处理成功的，其他的忽略。
-        if (!(response instanceof HttpServletResponse)) return;
+        if (!(response instanceof HttpServletResponse res)) return;
 
-        HttpServletResponse res = (HttpServletResponse) response;
         if (res.getStatus() != 200) return;
 
         // 慢响应

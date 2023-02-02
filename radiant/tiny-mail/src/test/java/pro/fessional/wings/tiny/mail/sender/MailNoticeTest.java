@@ -35,7 +35,7 @@ public class MailNoticeTest {
     }
 
     @Test
-    @Disabled("timing")
+    @Disabled("统计耗时")
     public void testDefault() {
         final StopWatch stopWatch = new StopWatch();
         try (final StopWatch.Watch w = stopWatch.start("emit")) {
@@ -51,7 +51,7 @@ public class MailNoticeTest {
     }
 
     @Test
-    @Disabled("manual")
+    @Disabled("gmail")
     public void testGmail() {
         final TinyMailConfig gmail = mailNotice.provideConfig("gmail", true);
         mailNotice.send(gmail, "test tiny mail gmail", "test gmail");

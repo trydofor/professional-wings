@@ -71,12 +71,14 @@ public class RevisionFitness {
         if (revi.containsKey(UnInit)) {
             for (Set<Act> at : revi.values()) {
                 if (!autoInit && at.contains(Act.EXEC)) {
-                    throw new IllegalStateException("\nWings `flywave revision` do NOT exist, and Auto Init is dangerous, you can,"
-                                                    + "\n1.stop checker: `spring.wings.faceless.flywave.enabled.checker=false`"
-                                                    + "\n2.revision fitness do NOT contain `EXEC`"
-                                                    + "\n3.init `flywave revision` manually"
-                                                    + "\n4.auto-init: `wings.faceless.flywave.auto-init=true` At Your Own Risk"
-                                                    + "\n");
+                    throw new IllegalStateException("""
+
+                            Wings `flywave revision` do NOT exist, and Auto Init is dangerous, you can,
+                            1.stop checker: `spring.wings.faceless.flywave.enabled.checker=false`
+                            2.revision fitness do NOT contain `EXEC`
+                            3.init `flywave revision` manually
+                            4.auto-init: `wings.faceless.flywave.auto-init=true` At Your Own Risk
+                            """);
                 }
             }
             revi.remove(UnInit);

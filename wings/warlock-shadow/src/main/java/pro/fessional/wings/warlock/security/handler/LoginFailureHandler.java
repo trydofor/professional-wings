@@ -32,8 +32,7 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
 
         final String msg;
         final Object atr = request.getAttribute(eventKey);
-        if (atr instanceof WarlockMaxFailedEvent) {
-            WarlockMaxFailedEvent evt = (WarlockMaxFailedEvent) atr;
+        if (atr instanceof WarlockMaxFailedEvent evt) {
             int lft = evt.getMaximum() - evt.getCurrent();
 
             msg = lft > 0 ? "login failed, " + lft + " times left" : "login failed, and locked";

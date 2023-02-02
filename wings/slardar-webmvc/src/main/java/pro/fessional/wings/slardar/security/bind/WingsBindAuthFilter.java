@@ -51,8 +51,7 @@ public class WingsBindAuthFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     protected Object buildAuthDetails(HttpServletRequest request, WingsBindAuthToken winTkn) {
-        if (authenticationDetailsSource instanceof WingsAuthDetailsSource<?>) {
-            WingsAuthDetailsSource<?> winAds = (WingsAuthDetailsSource<?>) authenticationDetailsSource;
+        if (authenticationDetailsSource instanceof WingsAuthDetailsSource<?> winAds) {
             return winAds.buildDetails(winTkn.getAuthType(), request);
         }
         else {

@@ -37,6 +37,7 @@ import java.io.PrintWriter;
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$overload, havingValue = "true")
 @ConditionalOnClass(Filter.class)
 @AutoConfigureOrder(OrderedSlardarConst.OverloadConfiguration)
+@Deprecated
 public class SlardarOverloadConfiguration {
 
     private final Log log = LogFactory.getLog(SlardarOverloadConfiguration.class);
@@ -71,11 +72,10 @@ public class SlardarOverloadConfiguration {
         log.info("SlardarWebmvc spring-bean overloadFallback");
         return (request, response) -> {
             try {
-                if (response instanceof HttpServletResponse) {
-                    HttpServletResponse res = (HttpServletResponse) response;
+                if (response instanceof HttpServletResponse res) {
                     res.setStatus(config.getFallbackCode());
                 }
-                @SuppressWarnings("resource")
+                @SuppressWarnings({"resource", "RedundantSuppression"})
                 PrintWriter writer = response.getWriter();
                 writer.println(config.getFallbackBody());
                 writer.flush();

@@ -96,8 +96,7 @@ public class JournalDiff {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof JournalDiff)) return false;
-        JournalDiff diff = (JournalDiff) o;
+        if (!(o instanceof JournalDiff diff)) return false;
         return count == diff.count && table.equals(diff.table) &&
                column.equals(diff.column) &&
                value1.equals(diff.value1) &&

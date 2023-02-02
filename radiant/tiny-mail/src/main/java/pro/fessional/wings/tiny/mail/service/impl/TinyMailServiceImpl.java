@@ -1,6 +1,7 @@
 package pro.fessional.wings.tiny.mail.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.mail.MessagingException;
 import lombok.Data;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -45,7 +46,6 @@ import pro.fessional.wings.tiny.mail.service.TinyMailPlain;
 import pro.fessional.wings.tiny.mail.service.TinyMailService;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailServiceProp;
 
-import jakarta.mail.MessagingException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -57,7 +57,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME;
 import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue;
@@ -164,6 +163,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     }
 
     @Override
+    @SuppressWarnings("DuplicatedCode")
     public long save(@NotNull TinyMailPlain message) {
         final String conf = message.getConf();
         final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);

@@ -74,7 +74,7 @@ class DebounceTest {
             assertEquals(r1.getBody(), r2.getBody());
         }
         else {
-            assertEquals(202, r2.getStatusCodeValue());
+            assertEquals(202, r2.getStatusCode().value());
             assertEquals("debounced", r2.getBody());
         }
 

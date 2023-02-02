@@ -39,6 +39,7 @@ import static pro.fessional.wings.faceless.database.WingsTableCudHandler.Cud;
  * @author trydofor
  * @since 2021-01-14
  */
+@SuppressWarnings("removal")
 @Slf4j
 public class TableCudListener implements VisitListener {
 
@@ -70,7 +71,6 @@ public class TableCudListener implements VisitListener {
     private static final String WHERE_IN = "in";
 
     @Override
-    @SuppressWarnings("deprecation")
     public void clauseStart(VisitContext context) {
         if (WarnVisit) {
             final String clz = scn(context.queryPart());
@@ -117,7 +117,7 @@ public class TableCudListener implements VisitListener {
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "deprecation"})
+    @SuppressWarnings({"unchecked"})
     public void clauseEnd(VisitContext context) {
 
         if (WarnVisit) {
@@ -202,7 +202,6 @@ public class TableCudListener implements VisitListener {
         }
     }
 
-    @SuppressWarnings({"deprecation"})
     private void handleDelete(VisitContext context) {
         final Clause clause = context.clause();
         final QueryPart query = context.queryPart();
@@ -218,7 +217,7 @@ public class TableCudListener implements VisitListener {
         }
     }
 
-    @SuppressWarnings({"deprecation", "unchecked"})
+    @SuppressWarnings({"unchecked"})
     private void handleUpdate(VisitContext context) {
         final Clause clause = context.clause();
         final QueryPart query = context.queryPart();
@@ -227,7 +226,7 @@ public class TableCudListener implements VisitListener {
         if (clause == Clause.TABLE_REFERENCE && query instanceof TableImpl) {
             handleTable(context, (TableImpl<?>) query);
         }
-        else if (clause == Clause.UPDATE_SET && query instanceof Map) {
+        else if (clause == Clause.UPDATE_SET && query instanceof final Map<?, ?> updSet) {
             final Set<String> fds = (Set<String>) context.data(ContextKey.EXECUTING_FIELD_KEY);
             if (fds == null) {
                 log.debug("should not be here, update-table without key");
@@ -240,7 +239,6 @@ public class TableCudListener implements VisitListener {
                 return;
             }
 
-            final Map<?, ?> updSet = (Map<?, ?>) query;
             for (Map.Entry<?, ?> en : updSet.entrySet()) {
                 final Object ky = en.getKey();
                 final Object vl = en.getValue();
@@ -266,7 +264,7 @@ public class TableCudListener implements VisitListener {
         }
     }
 
-    @SuppressWarnings({"deprecation", "unchecked"})
+    @SuppressWarnings({"unchecked", "UnstableApiUsage"})
     private void handleWhere(VisitContext context, Clause clause, QueryPart query) {
         if (clause == Clause.FIELD_REFERENCE && query instanceof TableField) {
             if (context.data(ContextKey.EXECUTING_WHERE_CMP) == null) {
@@ -362,7 +360,7 @@ public class TableCudListener implements VisitListener {
         }
     }
 
-    @SuppressWarnings({"deprecation", "unchecked"})
+    @SuppressWarnings({"unchecked"})
     private void handleInsert(VisitContext context) {
         final Clause clause = context.clause();
         final QueryPart query = context.queryPart();
@@ -371,14 +369,13 @@ public class TableCudListener implements VisitListener {
             handleTable(context, (TableImpl<?>) query);
         }
         // QueryPartCollectionView
-        else if (clause == Clause.INSERT_INSERT_INTO && query instanceof Collection) {
+        else if (clause == Clause.INSERT_INSERT_INTO && query instanceof final Collection<?> col) {
             final Set<String> fds = (Set<String>) context.data(ContextKey.EXECUTING_FIELD_KEY);
             if (fds == null) {
                 log.debug("should not be here, insert-table without key");
                 return;
             }
 
-            final Collection<?> col = (Collection<?>) query;
             int cnt = 0;
             final Map<Integer, String> idx = new HashMap<>();
             for (Object o : col) {
@@ -430,23 +427,19 @@ public class TableCudListener implements VisitListener {
     private String scn(QueryPart obj) {
         if (obj == null) return null;
 
-        if (obj instanceof TableImpl) {
-            TableImpl<?> f = (TableImpl<?>) obj;
+        if (obj instanceof TableImpl<?> f) {
             return obj.getClass().getSimpleName() + ":" + f.getName();
         }
 
-        if (obj instanceof TableField) {
-            TableField<?, ?> f = (TableField<?, ?>) obj;
+        if (obj instanceof TableField<?, ?> f) {
             return obj.getClass().getSimpleName() + ":" + f.getName();
         }
 
-        if (obj instanceof Param) {
-            Param<?> p = (Param<?>) obj;
+        if (obj instanceof Param<?> p) {
             return obj.getClass().getSimpleName() + ":name=" + p.getParamName() + ",value=" + p.getValue();
         }
 
-        if (obj instanceof Keyword) {
-            Keyword k = (Keyword) obj;
+        if (obj instanceof Keyword k) {
             return obj.getClass().getSimpleName() + ":" + k;
         }
 

@@ -35,6 +35,6 @@ class AccessDeny302Test {
                 .build();
         final ResponseEntity<String> res = tmpl.exchange(entity, String.class);
 
-        Assertions.assertEquals(302, res.getStatusCodeValue());
+        Assertions.assertEquals(302, res.getStatusCode().value());
     }
 }

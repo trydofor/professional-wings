@@ -65,8 +65,7 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
             return useDetail;
         }
 
-        if (useDetail instanceof DefaultWingsUserDetails) {
-            DefaultWingsUserDetails details = (DefaultWingsUserDetails) useDetail;
+        if (useDetail instanceof DefaultWingsUserDetails details) {
             PasswordHelper helper = new PasswordHelper(passwordEncoder, passsaltEncoder);
             details.setPassword(helper.hash(event.getNonce(), details.getPasssalt()));
         }

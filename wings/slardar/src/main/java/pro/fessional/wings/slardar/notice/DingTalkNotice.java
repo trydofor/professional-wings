@@ -36,7 +36,7 @@ import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanP
 import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue;
 
 /**
- * https://open.dingtalk.com/document/robots/custom-robot-access
+ * <a href="https://open.dingtalk.com/document/robots/custom-robot-access">custom-robot-access</a>
  *
  * @author trydofor
  * @since 2022-09-29
@@ -163,7 +163,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf>, Initial
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         if (executor == null) {
             log.warn("should reuse autowired thread pool");
             executor = Executors.newSingleThreadExecutor();
@@ -196,6 +196,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf>, Initial
     }
 
     /**
+     * <pre>
      * {
      * "msgtype": "markdown",
      * "markdown": {
@@ -203,7 +204,9 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf>, Initial
      * "text": "#### 杭州天气 @150XXXXXXXX \n > 9度，西北风1级，空气良89，相对温度73%\n > ![screenshot](https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png)\n > ###### 10点20分发布 [天气](https://www.dingtalk.com) \n"
      * }
      * }
+     * </pre>
      */
+    @SuppressWarnings("JavadocLinkAsPlainText")
     public String buildMarkdown(Conf conf, String subject, String content) {
         return JsonTemplate.obj(t -> t
                 .putVal("msgtype", "markdown")

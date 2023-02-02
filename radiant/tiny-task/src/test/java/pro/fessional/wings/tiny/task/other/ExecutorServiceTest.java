@@ -18,7 +18,7 @@ import java.util.concurrent.ScheduledFuture;
         "debug = true"
 })
 @Slf4j
-@Disabled("manual")
+@Disabled("模拟批处理，人工观察")
 class ExecutorServiceTest {
 
     @Test

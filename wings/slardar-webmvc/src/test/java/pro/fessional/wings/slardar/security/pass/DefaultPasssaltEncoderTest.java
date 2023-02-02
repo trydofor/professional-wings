@@ -17,13 +17,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author trydofor
  * @since 2021-02-25
  */
+@SuppressWarnings("ALL")
 @Slf4j
 class DefaultPasssaltEncoderTest {
-    private PasswordEncoder bcrypt = new BCryptPasswordEncoder();
-    private PasswordEncoder pbkdf2 = Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_5();
-    private PasswordEncoder scrypt = SCryptPasswordEncoder.defaultsForSpringSecurity_v4_1();
-    private PasswordEncoder argon2 = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_2();
-    private DefaultPasssaltEncoder sha256 = new DefaultPasssaltEncoder(MdHelp.sha256);
+    private final PasswordEncoder bcrypt = new BCryptPasswordEncoder();
+    private final PasswordEncoder pbkdf2 = Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_5();
+    private final PasswordEncoder scrypt = SCryptPasswordEncoder.defaultsForSpringSecurity_v4_1();
+    private final PasswordEncoder argon2 = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_2();
+    private final DefaultPasssaltEncoder sha256 = new DefaultPasssaltEncoder(MdHelp.sha256);
 
     /**
      * BCryptPasswordEncoder ms/100 =7745

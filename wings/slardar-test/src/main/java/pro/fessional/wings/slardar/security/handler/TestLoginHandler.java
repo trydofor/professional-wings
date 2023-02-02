@@ -17,6 +17,7 @@ import java.util.TimeZone;
  * @author trydofor
  * @since 2021-02-01
  */
+@SuppressWarnings({"UastIncorrectHttpHeaderInspection", "CanBeFinal"})
 public class TestLoginHandler {
 
     private static final Logger log = LoggerFactory.getLogger(TestLoginHandler.class);

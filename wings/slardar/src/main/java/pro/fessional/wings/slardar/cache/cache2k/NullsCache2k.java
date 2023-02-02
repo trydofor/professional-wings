@@ -48,6 +48,7 @@ public class NullsCache2k extends SpringCache2kCache {
         return value;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public void put(@NotNull Object key, Object value) {
         if (value == null) {

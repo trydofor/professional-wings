@@ -101,8 +101,11 @@ public class WingsInitProjectUtil {
         }
 
         if (root.isDirectory()) {
-            for (File f : root.listFiles()) {
-                makeWings(f, code, pkg, message);
+            final File[] fs = root.listFiles();
+            if (fs != null) {
+                for (File f : fs) {
+                    makeWings(f, code, pkg, message);
+                }
             }
         }
     }
@@ -116,8 +119,11 @@ public class WingsInitProjectUtil {
         }
 
         if (src.isDirectory()) {
-            for (File f : src.listFiles()) {
-                copyTree(info, f, exc, message);
+            final File[] files = src.listFiles();
+            if (files != null) {
+                for (File f : files) {
+                    copyTree(info, f, exc, message);
+                }
             }
             return;
         }

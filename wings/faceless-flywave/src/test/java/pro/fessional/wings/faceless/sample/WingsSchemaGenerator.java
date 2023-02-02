@@ -28,7 +28,8 @@ import java.util.SortedMap;
 //         "spring.shardingsphere.datasource.writer.username=trydofor",
 //         "spring.shardingsphere.datasource.writer.password=moilioncircle",
         })
-@Disabled("手动执行一次，初始化步骤，危险操作")
+@Disabled("初始化数据库，已有devs统一管理")
+@SuppressWarnings("NewClassNamingConvention")
 public class WingsSchemaGenerator {
 
     @Setter(onMethod_ = {@Autowired})

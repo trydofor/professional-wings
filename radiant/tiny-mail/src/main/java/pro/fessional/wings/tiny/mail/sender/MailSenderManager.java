@@ -1,5 +1,7 @@
 package pro.fessional.wings.tiny.mail.sender;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -21,8 +23,6 @@ import pro.fessional.wings.faceless.convention.EmptySugar;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailEnabledProp;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailSenderProp;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.ArrayList;

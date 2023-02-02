@@ -13,7 +13,7 @@ import pro.fessional.wings.warlock.project.Warlock1SchemaManager;
  * @author trydofor
  * @since 2021-02-22
  */
-@Disabled("手动初始化")
+@Disabled("初始化数据库，已有devs统一管理")
 @SpringBootTest(properties = {
         "spring.datasource.url=jdbc:mysql://localhost:3306/wings_warlock"
         + "?autoReconnect=true"

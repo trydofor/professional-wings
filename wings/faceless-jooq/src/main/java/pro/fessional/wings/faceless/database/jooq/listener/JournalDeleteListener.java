@@ -118,9 +118,9 @@ public class JournalDeleteListener implements ExecuteListener {
     // delete from `tst_中文也分表` where (`id` = ? and `commit_id` = ?)
     // commit_id = :commit_id and `id` = ?
     private final Pattern ptnCommitId = Pattern
-            .compile("\\band\\s+([`'\"]?commit_id[`'\"]?[\\s]*=[\\s]*([^()=\\s]+))" +
+            .compile("\\band\\s+([`'\"]?commit_id[`'\"]?\\s*=\\s*([^()=\\s]+))" +
                      "|" +
-                     "([`'\"]?commit_id[`'\"]?[\\s]*=[\\s]*([^()=\\s]+))\\s+and\\b"
+                     "([`'\"]?commit_id[`'\"]?\\s*=\\s*([^()=\\s]+))\\s+and\\b"
                     , Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     private String buildUpdateSql(DSLContext dsl, String del, String table, Map<String, Param<?>> params) {

@@ -21,7 +21,7 @@ import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.jackson.JacksonHelper;
 
 /**
- * https://developer.fedex.com/api/en-us/catalog/authorization/v1/docs.html
+ * <a href="https://developer.fedex.com/api/en-us/catalog/authorization/v1/docs.html">fedex authorization v1</a>
  *
  * @author trydofor
  * @since 2022-11-26
@@ -106,6 +106,7 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
         return newTkn != null;
     }
 
+    @SuppressWarnings("DuplicatedCode")
     protected Token fetchByRefresh(@NotNull OkHttpClient client, @NotNull String refresh) {
         // POST https://gitee.com/oauth/token?grant_type=refresh_token&refresh_token={refresh_token}
         final FormBody.Builder builder = buildRefresh(new FormBody.Builder())
@@ -152,6 +153,7 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
         return fetchAccessToken(client, code);
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @Nullable
     protected Token fetchAccessToken(@NotNull OkHttpClient client, String code) {
         // POST https://gitee.com/oauth/token
@@ -168,6 +170,7 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
         if (redirectUri != null) {
             builder.add(keyRedirectUri, redirectUri);
         }
+
         if (code != null) {
             builder.add(keyCode, code);
         }

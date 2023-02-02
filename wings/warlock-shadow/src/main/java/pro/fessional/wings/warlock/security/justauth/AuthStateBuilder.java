@@ -78,6 +78,7 @@ public class AuthStateBuilder {
     }
 
     protected void buildParaMap(HttpServletRequest request, Map<String, String[]> paraMap) {
+        // for impl
     }
 
     @SuppressWarnings({"unchecked"})

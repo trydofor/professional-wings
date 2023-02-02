@@ -52,12 +52,13 @@ public class ConstantNaviGenerator {
         dst.mkdirs();
 
         StringBuilder out = new StringBuilder();
-        out.append(String.format("package %s;\n" +
-                                 "\n" +
-                                 "/**\n" +
-                                 " * @since %s\n" +
-                                 " */\n" +
-                                 "public interface %s {",
+        out.append(String.format("""
+                        package %s;
+
+                        /**
+                         * @since %s
+                         */
+                        public interface %s {""",
                 packageName, LocalDate.now(), javaName));
         if(prefixCode.length()>0){
             String indent = indent(1);

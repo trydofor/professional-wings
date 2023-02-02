@@ -37,6 +37,7 @@ public class ResultTest {
         log.info("{}", t2);
     }
 
+    @SuppressWarnings("Convert2Diamond")
     @SneakyThrows
     @Test
     public void testJackson() {

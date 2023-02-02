@@ -34,6 +34,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @author trydofor
  * @since 2022-11-12
  */
+@SuppressWarnings("UastIncorrectHttpHeaderInspection")
 @RestController
 @Slf4j
 public class TestToyApiController extends AbstractApiAuthController {
@@ -51,7 +52,6 @@ public class TestToyApiController extends AbstractApiAuthController {
             @RequestParam Map<String, String> para,
             @RequestBody String body
     ) {
-
         return ResponseEntity.ok("ok");
     }
 

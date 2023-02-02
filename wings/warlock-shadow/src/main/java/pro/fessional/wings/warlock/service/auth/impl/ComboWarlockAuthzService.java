@@ -120,8 +120,7 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
                     auth.putIfAbsent(str, new SimpleGrantedAuthority(str));
                 }
             }
-            else if (ro instanceof GrantedAuthority) {
-                final GrantedAuthority gt = (GrantedAuthority) ro;
+            else if (ro instanceof final GrantedAuthority gt) {
                 final String au = permNormalizer.role(gt.getAuthority());
                 log.debug("add role by aut={}", au);
                 auth.put(au, gt);  // 以存在值优先
@@ -182,8 +181,7 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
                     permStr.add(s);
                 }
             }
-            else if (po instanceof String) {
-                String pm = (String) po;
+            else if (po instanceof String pm) {
                 final int off = permNormalizer.indexDenyPrefix(pm);
                 if (off < 0) {
                     permStr.add(pm);
@@ -193,8 +191,7 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
                     denyStr.add(pm.substring(off));
                 }
             }
-            else if (po instanceof GrantedAuthority) {
-                final GrantedAuthority gt = (GrantedAuthority) po;
+            else if (po instanceof final GrantedAuthority gt) {
                 final String au = gt.getAuthority();
                 auth.put(au, gt); // 以存在值优先
                 permStr.add(au);

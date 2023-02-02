@@ -8,8 +8,8 @@ import com.hazelcast.map.IMap;
 import com.hazelcast.spring.cache.HazelcastCacheManager;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import pro.fessional.wings.slardar.cache.spring.NullsCache;
 import pro.fessional.wings.slardar.cache.WingsCache;
+import pro.fessional.wings.slardar.cache.spring.NullsCache;
 import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
 
 import java.util.Collection;
@@ -29,8 +29,10 @@ import static pro.fessional.wings.slardar.spring.prop.SlardarCacheProp.wildcard;
 public class WingsHazelcast {
 
     /**
-     * https://docs.hazelcast.org/docs/4.0.3/manual/html-single/index.html#dynamically-adding-data-structure-configuration-on-a-cluster
-     * https://docs.hazelcast.org/docs/4.0.3/manual/html-single/index.html#configuration-pattern-matcher
+     * <a href="https://docs.hazelcast.org/docs/4.0.3/manual/html-single/index.html#dynamically-adding-data-structure-configuration-on-a-cluster">v4.0.3: Dynamically Adding Data Structure Configuration on a Cluster</a>
+     * <a href="https://docs.hazelcast.org/docs/4.0.3/manual/html-single/index.html#configuration-pattern-matcher">v4.0.3: Configuration Pattern Matcher</a>
+     * <a href="https://docs.hazelcast.com/hazelcast/5.1/configuration/dynamic-config-programmatic-api">v5.1 Dynamic Configuration with Programmatic APIs (Java)</a>
+     * <a href="https://docs.hazelcast.com/hazelcast/5.1/configuration/using-wildcards">v5.1 Using Wildcards</a>
      */
     public static class Manager extends HazelcastCacheManager implements WingsCache.State {
         private final SlardarCacheProp slardarCacheProp;
@@ -65,8 +67,7 @@ public class WingsHazelcast {
             Collection<DistributedObject> dst = getHazelcastInstance().getDistributedObjects();
             final Map<String, Integer> stats = new TreeMap<>();
             for (DistributedObject distributedObject : dst) {
-                if (distributedObject instanceof IMap) {
-                    IMap<?, ?> map = (IMap<?, ?>) distributedObject;
+                if (distributedObject instanceof IMap<?, ?> map) {
                     stats.put(map.getName(), map.size());
                 }
             }
@@ -79,8 +80,7 @@ public class WingsHazelcast {
         public Set<Object> statsCacheKeys(String name) {
             Collection<DistributedObject> dst = getHazelcastInstance().getDistributedObjects();
             for (DistributedObject distributedObject : dst) {
-                if (distributedObject instanceof IMap) {
-                    IMap<?, ?> map = (IMap<?, ?>) distributedObject;
+                if (distributedObject instanceof IMap<?, ?> map) {
                     if (map.getName().equals(name)) {
                         return (Set<Object>) map.keySet();
                     }
@@ -144,7 +144,7 @@ public class WingsHazelcast {
                     }
 
                     if (diff) {
-                        log.warn("Wings hazelcast dynamically change may has conflict. \nsee https://docs.hazelcast.org/docs/4.0.3/manual/html-single/index.html#dynamically-adding-data-structure-configuration-on-a-cluster");
+                        log.warn("Wings hazelcast dynamically change may has conflict. \nsee https://docs.hazelcast.com/hazelcast/5.1/configuration/dynamic-config-programmatic-api");
                     }
                 }
             }

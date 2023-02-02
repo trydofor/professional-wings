@@ -17,6 +17,7 @@ import java.io.File;
  *
  * @author trydofor
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class WingsInitProjectSwing extends javax.swing.JFrame {
 
     /**

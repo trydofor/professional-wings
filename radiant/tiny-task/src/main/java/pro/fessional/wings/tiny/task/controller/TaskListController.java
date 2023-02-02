@@ -41,12 +41,12 @@ public class TaskListController {
         return tinyTaskListService.listDefined(pq);
     }
 
-    @Operation(summary = "列出任务的结果", description =
-            "# Usage \n"
-            + "列出任务的结果。\n"
-            + "## Params \n"
-            + "* @param id - 必填，任务id\n"
-            + "")
+    @Operation(summary = "列出任务的结果", description = """
+            # Usage
+            列出任务的结果。
+            ## Params
+            * @param id - 必填，任务id
+            """)
     @PostMapping(value = "${" + TinyTaskUrlmapProp.Key$taskResult + "}")
     @ResponseBody
     public PageResult<WinTaskResult> taskResult(@RequestBody Q.Id ins, PageQuery pq) {

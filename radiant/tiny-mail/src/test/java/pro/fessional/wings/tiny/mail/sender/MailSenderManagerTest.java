@@ -19,7 +19,7 @@ import java.util.List;
         "debug = true",
         "wings.tiny.mail.service.boot-scan=0",
 })
-@Disabled
+@Disabled("批量发邮件，手动执行")
 @Slf4j
 public class MailSenderManagerTest {
 
@@ -52,7 +52,7 @@ public class MailSenderManagerTest {
         final StopWatch stopWatch = new StopWatch();
         int size = 5;
 
-        try (final StopWatch.Watch w = stopWatch.start("single")) {
+        try (final StopWatch.Watch ignored = stopWatch.start("single")) {
             for (int i = 0; i < size; i++) {
                 TinyMailMessage message = new TinyMailMessage();
                 message.adopt(config);
@@ -65,7 +65,7 @@ public class MailSenderManagerTest {
         }
 
         List<MailSenderManager.BatchResult> results;
-        try (final StopWatch.Watch w = stopWatch.start("batch")) {
+        try (final StopWatch.Watch ignored = stopWatch.start("batch")) {
             List<TinyMailMessage> messages = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
                 TinyMailMessage message = new TinyMailMessage();

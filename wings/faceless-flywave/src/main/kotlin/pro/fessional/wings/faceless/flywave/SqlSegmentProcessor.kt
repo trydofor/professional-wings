@@ -42,7 +42,7 @@ class SqlSegmentProcessor(
          * 筛选出可以被应用的table以及替换的关键词
          */
         fun applyTbl(tables: List<String>?): Map<String, Map<String, String>> {
-            if (tables == null || tables.isEmpty() || tblIdx2.isEmpty() || tblName.isEmpty()) return emptyMap()
+            if (tables.isNullOrEmpty() || tblIdx2.isEmpty() || tblName.isEmpty()) return emptyMap()
 
             val tbls = if (tblRegx == null) {
                 tables.filter {

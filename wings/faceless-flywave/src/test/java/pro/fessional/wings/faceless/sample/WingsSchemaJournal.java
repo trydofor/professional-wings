@@ -17,8 +17,9 @@ import java.util.List;
  */
 
 @SpringBootTest
-@Disabled("手动执行，版本更新时处理")
+@Disabled("日志表个管理，数据维护使用")
 @Slf4j
+@SuppressWarnings("NewClassNamingConvention")
 public class WingsSchemaJournal {
 
     @Setter(onMethod_ = {@Autowired})

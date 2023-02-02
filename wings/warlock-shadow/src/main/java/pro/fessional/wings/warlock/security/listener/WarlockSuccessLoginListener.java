@@ -35,16 +35,14 @@ public class WarlockSuccessLoginListener implements ApplicationListener<Authenti
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
         final Object source = event.getSource();
-        if (!(source instanceof Authentication)) return;
+        if (!(source instanceof final Authentication authn)) return;
 
-        final Authentication authn = (Authentication) source;
         final Object principal = authn.getPrincipal();
-        if (!(principal instanceof WingsUserDetails)) {
+        if (!(principal instanceof final WingsUserDetails ud)) {
             log.debug("skip non-WingsUserDetails, type={}", source.getClass().getName());
             return;
         }
 
-        final WingsUserDetails ud = (WingsUserDetails) principal;
         Enum<?> authType = ud.getAuthType();
         long userId = ud.getUserId();
         if (authType == null) {
@@ -59,8 +57,7 @@ public class WarlockSuccessLoginListener implements ApplicationListener<Authenti
         dtlMap.put("username", ud.getUsername());
 
         final Object dtl = authn.getDetails();
-        if (dtl instanceof WingsAuthDetails) {
-            WingsAuthDetails authDetails = (WingsAuthDetails) dtl;
+        if (dtl instanceof WingsAuthDetails authDetails) {
             final Map<String, String> meta = authDetails.getMetaData();
             dtlMap.putAll(meta);
             TerminalContext.Builder builder = new TerminalContext.Builder()

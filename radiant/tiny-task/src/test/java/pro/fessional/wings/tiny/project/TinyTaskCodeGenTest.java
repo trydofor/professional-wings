@@ -20,7 +20,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
         "spring.wings.tiny.task.enabled.autorun=false",
         "debug = true"
 })
-@Disabled("手动执行")
+@Disabled("生成代码，已有devs统一管理")
 public class TinyTaskCodeGenTest {
 
     @Setter(onMethod_ = {@Autowired})

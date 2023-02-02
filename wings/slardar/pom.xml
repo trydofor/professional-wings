@@ -104,7 +104,7 @@
         <!-- sentry -->
         <dependency>
             <groupId>io.sentry</groupId>
-            <artifactId>sentry-spring-boot-starter</artifactId>
+            <artifactId>sentry-spring-boot-starter-jakarta</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>

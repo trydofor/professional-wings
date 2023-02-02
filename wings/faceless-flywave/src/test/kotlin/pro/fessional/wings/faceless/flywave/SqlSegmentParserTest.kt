@@ -21,7 +21,7 @@ class SqlSegmentParserTest {
     lateinit var sqlStatementParser: SqlStatementParser
 
     @Test
-    @Disabled
+    @Disabled("遇到解析问题是，用于人工识别")
     fun `test1🦁分析🦁人脑分析`() {
         val scan = FlywaveRevisionScanner.scanMaster()
         for ((k, v) in scan) {

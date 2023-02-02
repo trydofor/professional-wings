@@ -75,7 +75,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        final String en = environment.getProperty("spring.wings.silencer.enabled");
+        final String en = environment.getProperty(SilencerEnabledProp.Key$autoconf);
         if ("false".equalsIgnoreCase(en)) {
             log.info("🦁 Wings AutoConfig is disabled, skip it.");
         }

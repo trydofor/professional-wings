@@ -432,9 +432,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     private final BiPredicate<Object, Object> caseIgnore = (o1, o2) -> {
-        if (o1 instanceof String && o2 instanceof String) {
-            String s1 = (String) o1;
-            String s2 = (String) o2;
+        if (o1 instanceof String s1 && o2 instanceof String s2) {
             return s1.equalsIgnoreCase(s2);
         }
         else {

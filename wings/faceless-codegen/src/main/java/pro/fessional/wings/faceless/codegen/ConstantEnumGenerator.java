@@ -40,6 +40,7 @@ public class ConstantEnumGenerator {
     /**
      * 对java中非合法命名的字符进行替换，设置为空，以忽略非命名字符
      */
+    @SuppressWarnings("CanBeFinal")
     public static String deerChar = "_";
 
     @Data

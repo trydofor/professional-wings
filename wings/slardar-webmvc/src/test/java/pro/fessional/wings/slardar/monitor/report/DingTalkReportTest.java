@@ -19,7 +19,7 @@ import java.util.TreeMap;
  * @since 2021-07-15
  */
 @SpringBootTest(properties = "wings.slardar.ding-notice.default.access-token=${DING_TALK_TOKEN:}")
-@Disabled
+@Disabled("钉钉通知，避免频繁调用")
 class DingTalkReportTest {
 
     @Setter(onMethod_ = {@Autowired})

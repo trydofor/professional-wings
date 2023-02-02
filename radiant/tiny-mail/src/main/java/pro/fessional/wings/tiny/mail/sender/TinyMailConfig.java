@@ -50,8 +50,7 @@ public class TinyMailConfig extends MailProperties {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TinyMailConfig)) return false;
-        TinyMailConfig conf = (TinyMailConfig) o;
+        if (!(o instanceof TinyMailConfig conf)) return false;
         return Objects.equals(html, conf.html)
                && Objects.equals(from, conf.from)
                && Objects.equals(reply, conf.reply)

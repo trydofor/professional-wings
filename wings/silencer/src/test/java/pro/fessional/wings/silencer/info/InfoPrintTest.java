@@ -14,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since 2021-06-02
  */
 @SpringBootTest
-@Disabled("maven build")
+@Disabled("仅显示BuildProperties, GitProperties")
 @Slf4j
 public class InfoPrintTest {
 

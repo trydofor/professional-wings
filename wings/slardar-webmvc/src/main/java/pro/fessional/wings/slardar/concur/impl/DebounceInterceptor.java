@@ -52,9 +52,8 @@ public class DebounceInterceptor implements AutoRegisterInterceptor {
                              @NotNull HttpServletResponse response,
                              @NotNull Object handler) {
 
-        if (!(handler instanceof HandlerMethod)) return true;
+        if (!(handler instanceof final HandlerMethod handlerMethod)) return true;
 
-        final HandlerMethod handlerMethod = (HandlerMethod) handler;
         final Method method = handlerMethod.getMethod();
         final Debounce anno = method.getAnnotation(Debounce.class);
 

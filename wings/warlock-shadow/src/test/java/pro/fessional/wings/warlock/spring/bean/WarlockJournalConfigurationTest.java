@@ -8,8 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.warlock.service.other.TerminalJournalService;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * @author trydofor
  * @since 2023-01-25

@@ -21,7 +21,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
         "wings.tiny.mail.service.boot-scan=0",
         "debug = true"
 })
-@Disabled("手动执行")
+@Disabled("生成代码，已有devs统一管理")
 public class TinyMailCodeGenTest {
     @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;

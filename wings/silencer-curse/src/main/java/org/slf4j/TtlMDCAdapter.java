@@ -18,6 +18,7 @@ import java.util.Set;
  * @see ch.qos.logback.classic.util.LogbackMDCAdapter
  * @since 2022-10-29
  */
+@SuppressWarnings({"all", "Convert2Diamond"})
 public class TtlMDCAdapter implements MDCAdapter {
 
     // BGN: trydofor
