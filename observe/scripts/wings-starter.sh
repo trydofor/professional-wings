@@ -59,7 +59,7 @@ JAVA_ARG='
 -XX:ConcGCThreads=8
 '
 # -XX:+ExitOnOutOfMemoryError #docker
-TIME_ZID=''    # java时区，如UTC, GMT+8, Asia/Shanghai
+TIME_ZID='' # java时区，如UTC, GMT+8, Asia/Shanghai
 
 # ext args
 JAVA_EXT=''
@@ -96,7 +96,8 @@ function print_help() {
     echo -e '\033[32m stops [snd=30]\033[m stop but Not confirm'
     echo -e '\033[32m status \033[m show the {boot-jar} runtime status'
     echo -e '\033[32m warn \033[m monitor the {boot-jar} and log'
-    echo -e '\033[32m clean [days=30] [y] \033[m clean up log-file {days} ago'
+    echo -e '\033[32m clean [days=30] [y] \033[m clean up log-file {days} ago but newest'
+    echo -e '\033[32m clean-jar [days=30] [y] \033[m clean up boot-jar {days} ago but newest'
     echo -e '\033[32m cron \033[m show the {boot-jar} crontab usage'
     echo -e '\033[32m free \033[m check memory free'
     echo -e '\033[32m check \033[m check shell command'
@@ -225,7 +226,7 @@ if [[ "$BOOT_PID" == "" ]]; then
     BOOT_PID="${JAR_NAME}.pid"
 fi
 
-# boot tkn
+# boot tkn `-` as delimiter
 BOOT_TKN="${JAR_NAME}-${BOOT_DTM}"
 if [[ "$ARGS_RUN" != "start" && -f "$BOOT_PID" ]]; then
     old_tkn=$(awk '{print $2}' "$BOOT_PID")
@@ -305,7 +306,8 @@ case "$ARGS_RUN" in
         # safe backup
         md5sum "$BOOT_JAR" >"$file_md5"
         BOOT_MD5=$(awk '{print $1}' <"$file_md5")
-        safe_jar="$BOOT_JAR-$BOOT_MD5"
+        # `_` as delimiter
+        safe_jar="${BOOT_JAR}_${BOOT_MD5}"
         if [[ ! -f "$safe_jar" ]]; then
             echo -e "\033[33mNOTE: copy safe_jar  $safe_jar \033[0m"
             # do Not use link (soft and hard), as it can overwrite source
@@ -530,10 +532,18 @@ case "$ARGS_RUN" in
         if [[ "$dys" == "" ]]; then
             dys=30
         fi
-        echo -e "\033[32m find $(pwd) -name \"${JAR_NAME}[.-]*\" -type f -mtime +$dys \033[m"
-        old=$(find . -name "${JAR_NAME}[.-]*" -type f -mtime +$dys | wc -l)
+        nwt=5
+        echo -e "\033[32m top log ${nwt}-newest ${JAR_NAME} \033[m"
+        # shellcheck disable=SC2012
+        ls -lt "./${JAR_NAME}"-* | head -n $nwt
+        echo -e "\033[32m find $(pwd) -name \"${JAR_NAME}-*\" -type f -mtime +$dys \033[m"
+        old=$(find . -name "${JAR_NAME}-*" -type f -mtime +$dys | wc -l)
         if [[ $old -gt 10 ]]; then
-            find . -name "${JAR_NAME}[.-]*" -type f -mtime +$dys
+            exs="newest-log-${JAR_NAME}.tmp"
+            # shellcheck disable=SC2012
+            ls -t "./${JAR_NAME}"-* | head -n $nwt >"$exs"
+
+            find . -name "${JAR_NAME}-*" -type f -mtime +$dys -print0 | grep -zvFf "$exs" | xargs -0 ls -lt
             echo -e "\033[37;43;1mNOTE: ==== clear ${dys}-days ago log file ==== \033[0m"
             check_user
 
@@ -543,10 +553,45 @@ case "$ARGS_RUN" in
                 read -r yon
             fi
             if [[ "$yon" == "y" ]]; then
-                find . -name "${JAR_NAME}[.-]*" -type f -mtime +$dys -print0 | xargs -0 rm -f
+                find . -name "${JAR_NAME}-*" -type f -mtime +$dys -print0 | grep -zvFf "$exs" | xargs -0 rm -f
             fi
+            rm -f "$exs"
         else
             echo -e "\033[37;42;1mNOTE: few ${dys}-days ago logs, pwd=${WORK_DIR} \033[0m"
+        fi
+        ;;
+    clean-jar)
+        dys="$2"
+        if [[ "$dys" == "" ]]; then
+            dys=30
+        fi
+        jrt=$(dirname "$BOOT_JAR")
+        nwt=5
+        echo -e "\033[32m top jar ${nwt}-newest ${JAR_NAME} \033[m"
+        # shellcheck disable=SC2012
+        ls -lt "${jrt}/${JAR_NAME}"[_-]* | head -n $nwt
+        echo -e "\033[32m find $jrt -name \"${JAR_NAME}[_-]*\" -type f -mtime +$dys \033[m"
+        old=$(find "$jrt" -name "${JAR_NAME}[_-]*" -type f -mtime +$dys | wc -l)
+        if [[ $old -gt 10 ]]; then
+            exs="newest-jar-${JAR_NAME}.tmp"
+            # shellcheck disable=SC2012
+            ls -t "${jrt}/${JAR_NAME}"[_-]* | head -n $nwt >"$exs"
+
+            find "$jrt" -name "${JAR_NAME}[_-]*" -type f -mtime +$dys -print0 | grep -zvFf "$exs" | xargs -0 ls -lt
+            echo -e "\033[37;43;1mNOTE: ==== clear ${dys}-days ago jar, exclude top ${nwt}-newest ==== \033[0m"
+            check_user
+
+            yon="$3"
+            if [[ "$3" == "" ]]; then
+                echo -e "\033[31mWARN: press <y> to rm them all, pwd=$jrt \033[0m"
+                read -r yon
+            fi
+            if [[ "$yon" == "y" ]]; then
+                find "$jrt" -name "${JAR_NAME}[_-]*" -type f -mtime +$dys -print0 | grep -zvFf "$exs" | xargs -0 rm -f
+            fi
+            rm -f "$exs"
+        else
+            echo -e "\033[37;42;1mNOTE: few ${dys}-days ago jars, pwd=$jrt \033[0m"
         fi
         ;;
     cron)
