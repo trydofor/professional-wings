@@ -37,7 +37,7 @@ public class TinyTaskConfiguration {
     @ConditionalOnProperty(name = TinyTaskEnabledProp.Key$autorun, havingValue = "true")
     public CommandLineRunnerOrdered runnerTinyTaskerAuto(@NotNull ApplicationContext context, ObjectProvider<TinyTaskService> tinyTaskService) {
         log.info("TinyTask spring-runs runnerTinyTaskerAuto");
-        return new CommandLineRunnerOrdered(WingsBeanOrdered.Lv3Service, args -> {
+        return new CommandLineRunnerOrdered(WingsBeanOrdered.Lv3Service, ignoredArgs -> {
             final TinyTaskService service = tinyTaskService.getIfAvailable();
             if (service == null) {
                 log.warn("tinyTaskService is null, skip TinyTasker.Auto config ");

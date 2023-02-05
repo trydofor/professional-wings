@@ -25,7 +25,7 @@ public class WarlockBondAutoRunConfiguration {
     @Bean    // 静态注入，执行一次即可
     public CommandLineRunnerOrdered runnerRegisterCacheConst() {
         log.info("WarlockBond spring-runs runnerRegisterCacheConst");
-        return new CommandLineRunnerOrdered(OrderedWarlockConst.RunnerRegisterCacheConst, args -> {
+        return new CommandLineRunnerOrdered(OrderedWarlockConst.RunnerRegisterCacheConst, ignoredArgs -> {
             CacheConst.WarlockAuthnService.EventTables.add(WinUserBasisTable.WinUserBasis.getName());
             CacheConst.WarlockAuthnService.EventTables.add(WinUserAuthnTable.WinUserAuthn.getName());
             log.info("WarlockBond conf WarlockAuthnService.EventTables");

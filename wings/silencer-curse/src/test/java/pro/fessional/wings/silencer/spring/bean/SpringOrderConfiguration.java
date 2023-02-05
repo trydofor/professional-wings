@@ -40,7 +40,7 @@ public class SpringOrderConfiguration implements InitializingBean {
     @Bean
     public CommandLineRunner testBean1(SilencerEnabledProp prop) {
         log.info(">>>>> testBean1 可自动注入参数 AutoLog=" + prop.isAutoLog());
-        return args -> log.info(">>>>> CommandLineRunner1 " + prop.isAutoLog());
+        return ignoredArgs -> log.info(">>>>> CommandLineRunner1 " + prop.isAutoLog());
     }
 
     @PostConstruct
@@ -61,7 +61,7 @@ public class SpringOrderConfiguration implements InitializingBean {
     @Bean
     public CommandLineRunner testBean2(SilencerEnabledProp prop) {
         log.info(">>>>> testBean2 AutoLog=" + prop.isAutoLog());
-        return args -> log.info(">>>>> CommandLineRunner2 AutoLog=" + prop.isAutoLog());
+        return ignoredArgs -> log.info(">>>>> CommandLineRunner2 AutoLog=" + prop.isAutoLog());
     }
 
     @EventListener(ApplicationStartedEvent.class)

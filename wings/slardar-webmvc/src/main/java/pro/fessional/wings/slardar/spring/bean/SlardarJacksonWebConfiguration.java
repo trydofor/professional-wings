@@ -248,7 +248,7 @@ public class SlardarJacksonWebConfiguration {
     @Bean
     public CommandLineRunnerOrdered runnerJacksonHelper(Jackson2ObjectMapperBuilder builder) {
         log.info("SlardarWebmvc spring-runs runnerJacksonHelper");
-        return new CommandLineRunnerOrdered(OrderedSlardarConst.RunnerJacksonHelper, args -> {
+        return new CommandLineRunnerOrdered(OrderedSlardarConst.RunnerJacksonHelper, ignoredArgs -> {
             log.info("SlardarWebmvc spring-conf JacksonHelper.initGlobal");
             JacksonHelper.initGlobal(
                     builder.createXmlMapper(false).build(),

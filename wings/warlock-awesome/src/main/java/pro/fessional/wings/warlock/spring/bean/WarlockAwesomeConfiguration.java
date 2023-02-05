@@ -14,9 +14,9 @@ import pro.fessional.wings.silencer.modulate.ApiMode;
 import pro.fessional.wings.silencer.modulate.RunMode;
 import pro.fessional.wings.silencer.modulate.RuntimeMode;
 import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.slardar.serialize.JsonConversion;
 import pro.fessional.wings.slardar.serialize.KryoConversion;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.SysConstantEnumDao;
 import pro.fessional.wings.warlock.service.conf.RuntimeConfService;
 import pro.fessional.wings.warlock.service.conf.impl.RuntimeConfServiceImpl;
@@ -54,7 +54,7 @@ public class WarlockAwesomeConfiguration {
     @Bean    // 数据库值覆盖工程配置
     public CommandLineRunnerOrdered runnerRegisterRuntimeMode(ObjectProvider<RuntimeConfService> provider) {
         log.info("Warlock spring-runs runnerRegisterRuntimeMode");
-        return new CommandLineRunnerOrdered(OrderedWarlockConst.RunnerRegisterRuntimeMode, args -> {
+        return new CommandLineRunnerOrdered(OrderedWarlockConst.RunnerRegisterRuntimeMode, ignoredArgs -> {
             final RuntimeConfService confService = provider.getIfAvailable();
             if (confService == null) {
                 log.info("Warlock conf skip registerRuntimeMode for NULL ");

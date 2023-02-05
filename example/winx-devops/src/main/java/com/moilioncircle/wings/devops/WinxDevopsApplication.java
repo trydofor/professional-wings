@@ -32,7 +32,7 @@ public class WinxDevopsApplication {
     @Bean
     @Lazy
     public CommandLineRunnerOrdered runnerListAllBeans(ApplicationContext ctx) {
-        return new CommandLineRunnerOrdered(-1, args -> {
+        return new CommandLineRunnerOrdered(-1, ignoredArgs -> {
             log.info("===============");
             String[] beanNames = ctx.getBeanDefinitionNames();
             Arrays.sort(beanNames);

@@ -37,7 +37,7 @@ public class SilencerMessageConfiguration {
                 log.info("Silencer set parent for CombinableMessageSource");
                 combinable.setParentMessageSource(parent);
             }
-            log.info("Silencer change messageSource to CombinableMessageSource");
+            log.info("Silencer change messageSource's parent to CombinableMessageSource");
             hierarchy.setParentMessageSource(combinable);
         }
         else {

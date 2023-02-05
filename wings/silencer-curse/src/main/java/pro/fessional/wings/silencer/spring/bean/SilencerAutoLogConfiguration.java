@@ -14,9 +14,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
-import pro.fessional.wings.spring.consts.WingsBeanOrdered;
 import pro.fessional.wings.silencer.spring.prop.SilencerAutoLogProp;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
+import pro.fessional.wings.spring.consts.OrderedSilencerConst;
+import pro.fessional.wings.spring.consts.WingsBeanOrdered;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,7 +29,7 @@ import java.util.Set;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SilencerEnabledProp.Key$autoLog, havingValue = "true")
-@AutoConfigureOrder(WingsBeanOrdered.Lv2Resource)
+@AutoConfigureOrder(OrderedSilencerConst.AutoLogConfiguration)
 public class SilencerAutoLogConfiguration {
 
     private static final Log log = LogFactory.getLog(SilencerAutoLogConfiguration.class);
@@ -37,7 +38,7 @@ public class SilencerAutoLogConfiguration {
     @ConditionalOnClass(ConsoleAppender.class)
     public CommandLineRunnerOrdered runnerSilenceLogbackConsole(SilencerAutoLogProp autoLog) {
         log.info("SilencerCurse spring-runs runnerSilenceLogbackConsole");
-        return new CommandLineRunnerOrdered(WingsBeanOrdered.Lv1Config, args -> {
+        return new CommandLineRunnerOrdered(WingsBeanOrdered.Lv1Config, ignoredArgs -> {
             final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
             final Set<String> targets = autoLog.getTarget();
             final Set<String> exists = autoLog.getExists();
