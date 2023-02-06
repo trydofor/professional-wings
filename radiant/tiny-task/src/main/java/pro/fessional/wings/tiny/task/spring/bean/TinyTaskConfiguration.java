@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.runner.ApplicationReadyEventRunner;
 import pro.fessional.wings.spring.consts.WingsBeanOrdered;
 import pro.fessional.wings.tiny.task.schedule.TinyTasker;
 import pro.fessional.wings.tiny.task.service.TinyTaskService;
@@ -35,9 +35,9 @@ public class TinyTaskConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = TinyTaskEnabledProp.Key$autorun, havingValue = "true")
-    public CommandLineRunnerOrdered runnerTinyTaskerAuto(@NotNull ApplicationContext context, ObjectProvider<TinyTaskService> tinyTaskService) {
+    public ApplicationReadyEventRunner runnerTinyTaskerAuto(@NotNull ApplicationContext context, ObjectProvider<TinyTaskService> tinyTaskService) {
         log.info("TinyTask spring-runs runnerTinyTaskerAuto");
-        return new CommandLineRunnerOrdered(WingsBeanOrdered.Lv3Service, ignoredArgs -> {
+        return new ApplicationReadyEventRunner(WingsBeanOrdered.Lv3Service, ignoredArgs -> {
             final TinyTaskService service = tinyTaskService.getIfAvailable();
             if (service == null) {
                 log.warn("tinyTaskService is null, skip TinyTasker.Auto config ");

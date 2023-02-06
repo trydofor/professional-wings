@@ -24,7 +24,7 @@ import pro.fessional.wings.faceless.spring.prop.FlywaveEnabledProp;
 import pro.fessional.wings.faceless.spring.prop.FlywaveFitProp;
 import pro.fessional.wings.faceless.spring.prop.FlywaveSqlProp;
 import pro.fessional.wings.faceless.spring.prop.FlywaveVerProp;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.runner.ApplicationRunnerOrdered;
 import pro.fessional.wings.spring.consts.OrderedFacelessConst;
 
 import java.util.TreeSet;
@@ -151,9 +151,9 @@ public class WingsFlywaveConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = FlywaveEnabledProp.Key$checker, havingValue = "true")
-    public CommandLineRunnerOrdered runnerRevisionChecker(DefaultRevisionManager manager, FlywaveFitProp prop) {
+    public ApplicationRunnerOrdered runnerRevisionChecker(DefaultRevisionManager manager, FlywaveFitProp prop) {
         log.info("FacelessFlywave spring-runs runnerRevisionChecker");
-        return new CommandLineRunnerOrdered(OrderedFacelessConst.RunnerRevisionChecker, ignoredArgs -> {
+        return new ApplicationRunnerOrdered(OrderedFacelessConst.RunnerRevisionChecker, ignoredArgs -> {
             log.info("FacelessFlywave check RevisionFitness");
             final RevisionFitness fits = new RevisionFitness();
             fits.addFits(prop.getFit());

@@ -23,7 +23,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
 import pro.fessional.wings.slardar.async.TaskSchedulerHelper;
 import pro.fessional.wings.slardar.async.TtlThreadPoolTaskScheduler;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
@@ -120,12 +120,12 @@ public class SlardarAsyncConfiguration {
     }
 
     @Bean
-    public CommandLineRunnerOrdered runnerEventPublishHelper(
+    public ApplicationStartedEventRunner runnerEventPublishHelper(
             ApplicationEventPublisher publisher,
             ApplicationEventMulticaster multicaster,
             @Qualifier(slardarEventExecutor) Executor executor) {
         log.info("Slardar spring-runs runnerEventPublishHelper");
-        return new CommandLineRunnerOrdered(OrderedSlardarConst.RunnerEventPublishHelper, ignoredArgs -> {
+        return new ApplicationStartedEventRunner(OrderedSlardarConst.RunnerEventPublishHelper, ignoredArgs -> {
             EventPublishHelper.setExecutor(executor);
             log.info("Slardar conf eventPublishHelper ApplicationEventPublisher=" + publisher.getClass());
             EventPublishHelper.setSpringPublisher(publisher);

@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import pro.fessional.mirana.bits.MdHelp;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.runner.CommandLineRunnerOrdered;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.pass.DefaultPasssaltEncoder;

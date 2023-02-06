@@ -13,7 +13,7 @@ import org.springframework.core.convert.ConversionService;
 import pro.fessional.wings.silencer.modulate.ApiMode;
 import pro.fessional.wings.silencer.modulate.RunMode;
 import pro.fessional.wings.silencer.modulate.RuntimeMode;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.runner.CommandLineRunnerOrdered;
 import pro.fessional.wings.slardar.serialize.JsonConversion;
 import pro.fessional.wings.slardar.serialize.KryoConversion;
 import pro.fessional.wings.spring.consts.OrderedWarlockConst;

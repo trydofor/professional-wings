@@ -9,7 +9,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.runner.CommandLineRunnerOrdered;
 import pro.fessional.wings.slardar.webmvc.RequestMappingHelper;
 
 import java.util.Arrays;

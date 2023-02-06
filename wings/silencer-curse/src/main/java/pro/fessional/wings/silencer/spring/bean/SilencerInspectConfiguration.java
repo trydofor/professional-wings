@@ -2,14 +2,12 @@ package pro.fessional.wings.silencer.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.silencer.inspect.InspectCommandLineRunner;
+import pro.fessional.wings.silencer.runner.ApplicationInspectRunner;
 import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
 import pro.fessional.wings.silencer.spring.prop.SilencerInspectProp;
 import pro.fessional.wings.spring.consts.OrderedSilencerConst;
 
@@ -29,9 +27,9 @@ public class SilencerInspectConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = SilencerInspectProp.Key$properties, havingValue = "true")
-    public InspectCommandLineRunner inspectPropertiesCommandLine() {
-        log.info("SilencerCurse spring-bean runnerInspectCommandLine");
-        return new InspectCommandLineRunner(OrderedSilencerConst.Lv5Supervisor, ignoredArgs -> {
+    public ApplicationInspectRunner inspectApplicationRunner() {
+        log.info("SilencerCurse spring-bean inspectApplicationRunner");
+        return new ApplicationInspectRunner(OrderedSilencerConst.Lv5Supervisor, ignoredArgs -> {
             final Map<String, List<String>> map = ApplicationContextHelper.listPropertySource();
             final Map<String, List<String>> key = new LinkedHashMap<>();
 
@@ -56,25 +54,6 @@ public class SilencerInspectConfiguration {
                     }
                 }
             }
-        });
-    }
-
-    @Bean
-    public CommandLineRunnerOrdered runnerInspectCommandLine(ObjectProvider<InspectCommandLineRunner> runners) {
-        log.info("SilencerCurse spring-runs runnerInspectCommandLine");
-        return new CommandLineRunnerOrdered(OrderedSilencerConst.RunnerInspectCommandLine, args -> {
-            log.info("===>>> runnerInspectCommandLine");
-            runners.orderedStream().forEach(run -> {
-                log.info("===>>> BGN InspectCommandLineRunner=" + run.getName());
-                try {
-                    run.run(args);
-                }
-                catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                log.info("===<<< END InspectCommandLineRunner=" + run.getName());
-            });
-            log.info("===<<< runnerInspectCommandLine");
         });
     }
 }

@@ -24,7 +24,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
 import pro.fessional.wings.slardar.autozone.AutoZoneType;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeDeserializer;
@@ -246,9 +246,9 @@ public class SlardarJacksonWebConfiguration {
     }
 
     @Bean
-    public CommandLineRunnerOrdered runnerJacksonHelper(Jackson2ObjectMapperBuilder builder) {
+    public ApplicationStartedEventRunner runnerJacksonHelper(Jackson2ObjectMapperBuilder builder) {
         log.info("SlardarWebmvc spring-runs runnerJacksonHelper");
-        return new CommandLineRunnerOrdered(OrderedSlardarConst.RunnerJacksonHelper, ignoredArgs -> {
+        return new ApplicationStartedEventRunner(OrderedSlardarConst.RunnerJacksonHelper, ignoredArgs -> {
             log.info("SlardarWebmvc spring-conf JacksonHelper.initGlobal");
             JacksonHelper.initGlobal(
                     builder.createXmlMapper(false).build(),

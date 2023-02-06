@@ -18,7 +18,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.runner.CommandLineRunnerOrdered;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientBuilder;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpHostCookie;

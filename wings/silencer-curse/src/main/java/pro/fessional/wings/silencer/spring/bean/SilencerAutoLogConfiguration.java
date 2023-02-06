@@ -13,7 +13,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.runner.ApplicationReadyEventRunner;
 import pro.fessional.wings.silencer.spring.prop.SilencerAutoLogProp;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 import pro.fessional.wings.spring.consts.OrderedSilencerConst;
@@ -34,11 +34,14 @@ public class SilencerAutoLogConfiguration {
 
     private static final Log log = LogFactory.getLog(SilencerAutoLogConfiguration.class);
 
+    /**
+     * 配置结束，服务开始之前，切换日志
+     */
     @Bean
     @ConditionalOnClass(ConsoleAppender.class)
-    public CommandLineRunnerOrdered runnerSilenceLogbackConsole(SilencerAutoLogProp autoLog) {
+    public ApplicationReadyEventRunner runnerSilenceLogbackConsole(SilencerAutoLogProp autoLog) {
         log.info("SilencerCurse spring-runs runnerSilenceLogbackConsole");
-        return new CommandLineRunnerOrdered(WingsBeanOrdered.Lv1Config, ignoredArgs -> {
+        return new ApplicationReadyEventRunner(WingsBeanOrdered.Lv1Config, ignoredArgs -> {
             final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
             final Set<String> targets = autoLog.getTarget();
             final Set<String> exists = autoLog.getExists();

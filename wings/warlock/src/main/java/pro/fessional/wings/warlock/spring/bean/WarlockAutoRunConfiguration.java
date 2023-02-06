@@ -12,7 +12,8 @@ import pro.fessional.wings.faceless.enums.LanguageEnumUtil;
 import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 import pro.fessional.wings.faceless.enums.StandardTimezoneEnum;
 import pro.fessional.wings.faceless.enums.TimezoneEnumUtil;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
+import pro.fessional.wings.silencer.runner.CommandLineRunnerOrdered;
 import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.spring.prop.WarlockCheckProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
@@ -31,9 +32,9 @@ public class WarlockAutoRunConfiguration {
     private final static Log log = LogFactory.getLog(WarlockAutoRunConfiguration.class);
 
     @Bean
-    public CommandLineRunnerOrdered runnerRegisterEnumUtil(ObjectProvider<WarlockI18nProp> provider) {
+    public ApplicationStartedEventRunner runnerRegisterEnumUtil(ObjectProvider<WarlockI18nProp> provider) {
         log.info("Warlock spring-runs runnerRegisterEnumUtil");
-        return new CommandLineRunnerOrdered(OrderedWarlockConst.RunnerRegisterEnumUtil, ignoredArgs -> {
+        return new ApplicationStartedEventRunner(OrderedWarlockConst.RunnerRegisterEnumUtil, ignoredArgs -> {
             final WarlockI18nProp warlockI18nProp = provider.getIfAvailable();
             if (warlockI18nProp == null) {
                 log.info("Warlock conf skip registerEnumUtil for NULL ");

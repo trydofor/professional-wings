@@ -9,7 +9,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
 import pro.fessional.wings.slardar.autodto.AutoDtoHelper;
 import pro.fessional.wings.slardar.autodto.AutoZoneVisitor;
 import pro.fessional.wings.slardar.autodto.I18nStringVisitor;
@@ -38,9 +38,9 @@ public class SlardarI18nConfiguration {
     }
 
     @Bean
-    public CommandLineRunnerOrdered runnerAutoDtoHelper(MessageSource messageSource) {
+    public ApplicationStartedEventRunner runnerAutoDtoHelper(MessageSource messageSource) {
         log.info("Slardar spring-runs runnerAutoDtoHelper");
-        return new CommandLineRunnerOrdered(OrderedSlardarConst.RunnerAutoDtoHelper, arg -> new AutoDtoHelper() {{
+        return new ApplicationStartedEventRunner(OrderedSlardarConst.RunnerAutoDtoHelper, ignoredArg -> new AutoDtoHelper() {{
             final I18nStringVisitor i18nStringVisitor = new I18nStringVisitor(messageSource, LocaleZoneIdUtil.LocaleNonnull);
 
             RequestVisitor.add(AutoDtoHelper.AutoDtoVisitor);
