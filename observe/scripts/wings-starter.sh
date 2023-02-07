@@ -275,7 +275,7 @@ if [[ "$BOOT_EXT" != "" ]]; then
 fi
 
 # check ps
-grep_key=" -jar ${BOOT_JAR}[ -]"
+grep_key=" -jar ${BOOT_JAR}[ _-]"
 count=$(pgrep -f "$grep_key" | wc -l)
 
 # exec cmd

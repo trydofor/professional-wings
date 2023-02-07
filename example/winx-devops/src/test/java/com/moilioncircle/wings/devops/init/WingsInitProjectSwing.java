@@ -340,7 +340,8 @@ public class WingsInitProjectSwing extends javax.swing.JFrame {
             info.version = txtWingsVer.getText().trim();
 
             WingsInitProjectUtil.initProject(info, it -> message("复制:" + it));
-            pgbGenerate.setString("完成了，进度条，逗你玩的");
+            message("完成了 ¯\\_(ツ)_/¯");
+            pgbGenerate.setString("完成了，¯\\_(ツ)_/¯");
         }
         catch (Exception e) {
             e.printStackTrace();

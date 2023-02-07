@@ -9,7 +9,8 @@ import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
-import pro.fessional.wings.silencer.runner.CommandLineRunnerOrdered;
+import org.springframework.core.metrics.jfr.FlightRecorderApplicationStartup;
+import pro.fessional.wings.silencer.runner.ApplicationInspectRunner;
 import pro.fessional.wings.slardar.webmvc.RequestMappingHelper;
 
 import java.util.Arrays;
@@ -26,13 +27,17 @@ public class WinxDevopsApplication {
     private final static Log log = LogFactory.getLog(WinxDevopsApplication.class);
 
     public static void main(String[] args) {
-        SpringApplication.run(WinxDevopsApplication.class, args);
+        SpringApplication application = new SpringApplication(WinxDevopsApplication.class);
+        // https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/#features.spring-application.application-events-and-listeners
+//        application.setApplicationStartup(new BufferingApplicationStartup(8192));
+        application.setApplicationStartup(new FlightRecorderApplicationStartup()); // java -XX:StartFlightRecording:filename=recording.jfr,duration=10s -jar demo.jar
+        application.run(args);
     }
 
     @Bean
     @Lazy
-    public CommandLineRunnerOrdered runnerListAllBeans(ApplicationContext ctx) {
-        return new CommandLineRunnerOrdered(-1, ignoredArgs -> {
+    public ApplicationInspectRunner runnerListAllBeans(ApplicationContext ctx) {
+        return new ApplicationInspectRunner(-1, ignoredArgs -> {
             log.info("===============");
             String[] beanNames = ctx.getBeanDefinitionNames();
             Arrays.sort(beanNames);

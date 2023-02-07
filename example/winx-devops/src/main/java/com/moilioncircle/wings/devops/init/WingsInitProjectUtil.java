@@ -51,12 +51,12 @@ public class WingsInitProjectUtil {
         final String[] copyFiles = {
                 ".gitignore",
                 "pom.xml",
-                "readme.md",
                 "winx-admin/",
-                "winx-front/",
+                "winx-api/",
                 "winx-codegen/",
                 "winx-common/",
                 "winx-devops/",
+                "winx-front/",
                 };
 
         final Predicate<String> excludes = (path) -> {
@@ -138,7 +138,8 @@ public class WingsInitProjectUtil {
                  path.endsWith(".sql") ||
                  path.endsWith(".md") ||
                  path.endsWith(".properties") ||
-                 path.endsWith("spring.factories")
+                 path.endsWith("spring.factories") ||
+                 path.endsWith("org.springframework.boot.autoconfigure.AutoConfiguration.imports")
         ) {
             bytes = copyTxtSrc(info, src);
         }
