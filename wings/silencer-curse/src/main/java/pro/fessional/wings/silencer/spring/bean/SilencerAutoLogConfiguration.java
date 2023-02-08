@@ -70,18 +70,18 @@ public class SilencerAutoLogConfiguration {
             }
 
             final String level = autoLog.getLevel();
-            log.info("Wings conf LogbackFilter to ConsoleAppender");
             log.info("================= Silencer =================");
             log.info("Auto Switch the following Appender Level to " + level);
             for (Appender<ILoggingEvent> appender : appenders) {
                 log.info("- " + appender.getName() + " : " + appender.getClass().getName());
             }
-            log.info("================= Silencer =================");
             final ThresholdFilter tft = new ThresholdFilter();
             tft.setLevel(level);
             for (Appender<ILoggingEvent> appender : appenders) {
                 appender.addFilter(tft);
             }
+            log.info("================= Silencer =================");
+            tft.start();
         });
     }
 }

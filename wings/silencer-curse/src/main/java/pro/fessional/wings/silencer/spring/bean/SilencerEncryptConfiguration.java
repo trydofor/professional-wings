@@ -74,11 +74,11 @@ public class SilencerEncryptConfiguration {
 
     @Bean
     public SecretProvider secretProvider() {
-        log.warn("SilencerCurse spring-bean secretProvider");
+        log.info("SilencerCurse spring-bean secretProvider");
         return new SecretProvider() {{
             for (Map.Entry<String, String> en : prop.getAesKey().entrySet()) {
                 final String name = en.getKey();
-                log.warn("SilencerCurse spring-conf secretProvider, name=" + name);
+                log.info("SilencerCurse spring-conf secretProvider, name=" + name);
                 SecretProvider.put(name, en.getValue(), false);
             }
         }};
