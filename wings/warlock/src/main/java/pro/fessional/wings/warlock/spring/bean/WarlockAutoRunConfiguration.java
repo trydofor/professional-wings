@@ -34,7 +34,7 @@ public class WarlockAutoRunConfiguration {
     @Bean
     public ApplicationStartedEventRunner runnerRegisterEnumUtil(ObjectProvider<WarlockI18nProp> provider) {
         log.info("Warlock spring-runs runnerRegisterEnumUtil");
-        return new ApplicationStartedEventRunner(OrderedWarlockConst.RunnerRegisterEnumUtil, ignoredArgs -> {
+        return new ApplicationStartedEventRunner(OrderedWarlockConst.RunnerRegisterEnumUtil, ignored -> {
             final WarlockI18nProp warlockI18nProp = provider.getIfAvailable();
             if (warlockI18nProp == null) {
                 log.info("Warlock conf skip registerEnumUtil for NULL ");
@@ -69,7 +69,7 @@ public class WarlockAutoRunConfiguration {
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$checkDatabase, havingValue = "true")
     public CommandLineRunnerOrdered runnerDatabaseChecker(DataSource dataSource, WarlockCheckProp prop) {
         log.info("Warlock spring-runs runnerDatabaseChecker");
-        return new CommandLineRunnerOrdered(OrderedWarlockConst.RunnerDatabaseChecker, ignoredArgs -> {
+        return new CommandLineRunnerOrdered(OrderedWarlockConst.RunnerDatabaseChecker, ignored -> {
             DatabaseChecker.version(dataSource);
             DatabaseChecker.timezone(dataSource, prop.getTzOffset(), prop.isTzFail());
         });

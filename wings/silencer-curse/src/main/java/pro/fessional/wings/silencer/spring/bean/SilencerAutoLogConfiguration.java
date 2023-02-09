@@ -41,7 +41,7 @@ public class SilencerAutoLogConfiguration {
     @ConditionalOnClass(ConsoleAppender.class)
     public ApplicationReadyEventRunner runnerSilenceLogbackConsole(SilencerAutoLogProp autoLog) {
         log.info("SilencerCurse spring-runs runnerSilenceLogbackConsole");
-        return new ApplicationReadyEventRunner(WingsBeanOrdered.Lv1Config, ignoredArgs -> {
+        return new ApplicationReadyEventRunner(WingsBeanOrdered.Lv1Config, ignored -> {
             final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
             final Set<String> targets = autoLog.getTarget();
             final Set<String> exists = autoLog.getExists();

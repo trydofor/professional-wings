@@ -138,13 +138,13 @@ public class ApplicationContextHelper {
         }
         else if (src instanceof EnumerablePropertySource<?> eps) {
             for (String key : eps.getPropertyNames()) {
-                srcKey.computeIfAbsent(prefix + src.getName(), ignoredK -> new ArrayList<>())
+                srcKey.computeIfAbsent(prefix + src.getName(), ignored -> new ArrayList<>())
                       .add(key);
 
             }
         }
         else {
-            srcKey.computeIfAbsent(PropertySourceUnsupported, ignoredK -> new ArrayList<>())
+            srcKey.computeIfAbsent(PropertySourceUnsupported, ignored -> new ArrayList<>())
                   .add(prefix + src.getName() + PropertySourceDelimiter + src.getClass().getName());
         }
     }

@@ -37,7 +37,7 @@ public class WinxDevopsApplication {
     @Bean
     @Lazy
     public ApplicationInspectRunner runnerListAllBeans(ApplicationContext ctx) {
-        return new ApplicationInspectRunner(-1, ignoredArgs -> {
+        return new ApplicationInspectRunner(-1, ignored -> {
             log.info("===============");
             String[] beanNames = ctx.getBeanDefinitionNames();
             Arrays.sort(beanNames);

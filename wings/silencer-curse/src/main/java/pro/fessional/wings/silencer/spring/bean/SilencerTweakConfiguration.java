@@ -66,7 +66,7 @@ public class SilencerTweakConfiguration {
     ) {
         log.info("SilencerCurse spring-runs runnerLogbackTweak, init TtlMDC");
         TtlMDCAdapter.initMdc();// 尽早初始化
-        return new CommandLineRunnerOrdered(OrderedSilencerConst.RunnerLogbackTweak, ignoredArgs -> {
+        return new CommandLineRunnerOrdered(OrderedSilencerConst.RunnerLogbackTweak, ignored -> {
             if (prop.isMdcThreshold()) {
                 log.info("SilencerCurse spring-conf runnerLogbackTweak WingsMdcThresholdFilter");
                 LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();

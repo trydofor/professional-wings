@@ -71,9 +71,7 @@ public class DefaultDomainRequestMatcher implements DomainRequestMatcher {
             try {
                 HandlerExecutionChain hdc = hm.getHandler(wrapper);
                 if (hdc != null) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("find handler={}, in {}", hdc.getClass(), hm.getClass());
-                    }
+                    log.debug("find handler={}, in {}", hdc.getClass(), hm.getClass());
                     Object hd = hdc.getHandler();
                     if (hd instanceof ResourceHttpRequestHandler) {
                         if (existResource((ResourceHttpRequestHandler) hd, wrapper)) {

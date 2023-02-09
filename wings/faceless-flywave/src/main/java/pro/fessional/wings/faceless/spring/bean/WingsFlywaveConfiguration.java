@@ -153,7 +153,7 @@ public class WingsFlywaveConfiguration {
     @ConditionalOnProperty(name = FlywaveEnabledProp.Key$checker, havingValue = "true")
     public ApplicationRunnerOrdered runnerRevisionChecker(DefaultRevisionManager manager, FlywaveFitProp prop) {
         log.info("FacelessFlywave spring-runs runnerRevisionChecker");
-        return new ApplicationRunnerOrdered(OrderedFacelessConst.RunnerRevisionChecker, ignoredArgs -> {
+        return new ApplicationRunnerOrdered(OrderedFacelessConst.RunnerRevisionChecker, ignored -> {
             log.info("FacelessFlywave check RevisionFitness");
             final RevisionFitness fits = new RevisionFitness();
             fits.addFits(prop.getFit());

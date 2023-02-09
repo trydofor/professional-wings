@@ -34,18 +34,16 @@ public class WingsSessionInformation<S extends Session> extends SessionInformati
 
     @Override
     public void expireNow() {
-        if (log.isDebugEnabled()) {
-            log.debug("Expiring session " + getSessionId() + " for user '" + getPrincipal()
-                      + "', presumably because maximum allowed concurrent " + "sessions was exceeded");
-        }
+        final String sid = getSessionId();
+        log.debug("Expiring session {} for user '{}', presumably because maximum allowed concurrent sessions was exceeded", sid, getPrincipal());
         super.expireNow();
-        S session = sessionRepository.findById(getSessionId());
+        S session = sessionRepository.findById(sid);
         if (session != null) {
             session.setAttribute(ExpiredKey, Boolean.TRUE);
             sessionRepository.save(session);
         }
         else {
-            log.info("Could not find Session with id " + getSessionId() + " to mark as expired");
+            log.info("Could not find Session with id {} to mark as expired", sid);
         }
     }
 }

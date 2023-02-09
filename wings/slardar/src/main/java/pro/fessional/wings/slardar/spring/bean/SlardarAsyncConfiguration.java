@@ -125,7 +125,7 @@ public class SlardarAsyncConfiguration {
             ApplicationEventMulticaster multicaster,
             @Qualifier(slardarEventExecutor) Executor executor) {
         log.info("Slardar spring-runs runnerEventPublishHelper");
-        return new ApplicationStartedEventRunner(OrderedSlardarConst.RunnerEventPublishHelper, ignoredArgs -> {
+        return new ApplicationStartedEventRunner(OrderedSlardarConst.RunnerEventPublishHelper, ignored -> {
             EventPublishHelper.setExecutor(executor);
             log.info("Slardar conf eventPublishHelper ApplicationEventPublisher=" + publisher.getClass());
             EventPublishHelper.setSpringPublisher(publisher);

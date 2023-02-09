@@ -45,8 +45,8 @@ public class RevisionFitness {
         final Set<String> revi = fit.getRevi();
         for (String str : revi) {
             Long r = AnyIntegerUtil.obj64(str);
-            reviAct.computeIfAbsent(r, k -> new HashSet<>()).add(act);
-            reviMsg.computeIfAbsent(r, k -> new HashSet<>()).add(msg);
+            reviAct.computeIfAbsent(r, ignored -> new HashSet<>()).add(act);
+            reviMsg.computeIfAbsent(r, ignored -> new HashSet<>()).add(msg);
         }
 
         log.info("found fit {}. `wings.faceless.flywave.fit[{}].lost=SKIP` to skip", revi, msg);
@@ -59,8 +59,8 @@ public class RevisionFitness {
     }
 
     public void checkRevision(SchemaRevisionManager revisionManager, boolean autoInit) {
-        revisionManager.askWay(it -> true);
-        revisionManager.logWay((s, s2) -> {});
+        revisionManager.askWay(ignored -> true);
+        revisionManager.logWay((ignored1, ignored2) -> {});
         final TreeMap<Long, Set<Act>> revi = checkUnapply(revisionManager);
         applyRevision(revisionManager, revi, autoInit);
     }
@@ -89,14 +89,10 @@ public class RevisionFitness {
             final Set<Act> ts = en.getValue();
             final Set<String> ms = reviMsg.get(rv);
             if (ts.contains(Act.WARN)) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Wings Revision Lost revi={}. Manual={}", rv, manual(ms));
-                }
+                log.warn("Wings Revision Lost revi={}. Manual={}", rv, manual(ms));
             }
             if (ts.contains(Act.FAIL)) {
-                if (log.isErrorEnabled()) {
-                    log.error("Wings Revision Lost revi={}. Manual={}", rv, manual(ms));
-                }
+                log.error("Wings Revision Lost revi={}. Manual={}", rv, manual(ms));
                 failed = true;
             }
             if (ts.contains(Act.EXEC)) {
@@ -190,11 +186,11 @@ public class RevisionFitness {
                     }
                 }
                 for (Map.Entry<Long, Status> e : headStatus.entrySet()) {
-                    final Map<String, Status> diff = reviDbDiff.computeIfAbsent(e.getKey(), k -> new LinkedHashMap<>());
+                    final Map<String, Status> diff = reviDbDiff.computeIfAbsent(e.getKey(), ignored -> new LinkedHashMap<>());
                     diff.put(headDb, e.getValue());
                 }
                 for (Map.Entry<Long, Status> e : nextStatus.entrySet()) {
-                    final Map<String, Status> diff = reviDbDiff.computeIfAbsent(e.getKey(), k -> new LinkedHashMap<>());
+                    final Map<String, Status> diff = reviDbDiff.computeIfAbsent(e.getKey(), ignored -> new LinkedHashMap<>());
                     diff.put(nextDb, e.getValue());
                 }
             }

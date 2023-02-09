@@ -49,9 +49,7 @@ public class I18nResultPropertyFilter implements AutoRegisterPropertyFilter {
                 }
             }
             catch (Exception ex) {
-                if (log.isDebugEnabled()) {
-                    log.warn("failed to trans i18n code to message", ex);
-                }
+                log.warn("failed to trans i18n code to message", ex);
             }
         }
         writer.serializeAsField(pojo, gen, prov);

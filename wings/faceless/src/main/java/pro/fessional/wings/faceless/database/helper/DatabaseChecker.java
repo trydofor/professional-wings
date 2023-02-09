@@ -11,7 +11,10 @@ import pro.fessional.mirana.time.DateParser;
 import pro.fessional.wings.faceless.database.DataSourceContext;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -22,7 +25,7 @@ import static java.time.ZoneOffset.UTC;
 
 /**
  * mysql服务器，程序，会话时区
- * https://dev.mysql.com/doc/refman/8.0/en/time-zone-support.html#time-zone-variables
+ * <a href="https://dev.mysql.com/doc/refman/8.0/en/time-zone-support.html#time-zone-variables">time-zone-variables</a>
  *
  * @author trydofor
  * @since 2021-04-14
@@ -30,10 +33,16 @@ import static java.time.ZoneOffset.UTC;
 @Slf4j
 public class DatabaseChecker {
 
+    /**
+     * 自动释放链接
+     */
     public static boolean isH2(DataSource ds) {
         return extractJdbcUrl(ds).contains(":h2:");
     }
 
+    /**
+     * 自动释放链接
+     */
     @SneakyThrows
     @NotNull
     public static String extractJdbcUrl(DataSource ds) {
@@ -42,17 +51,21 @@ public class DatabaseChecker {
                 return (String) DatabaseMetaData.class.getMethod("getURL").invoke(it);
             }
             catch (Exception e) {
+                log.warn("failed to get jdbcUrl", e);
                 return "";
             }
         });
     }
 
+    /**
+     * 自动释放链接
+     */
     public static void timezone(DataSource ds) {
         timezone(ds, 5, true);
     }
 
     /**
-     * 判断数据库和jvm时差，根据其绝对值的最大值，判断是否终止或log
+     * 自动释放链接，判断数据库和jvm时差，根据其绝对值的最大值，判断是否终止或log
      *
      * @param ds   datasource
      * @param off  时差绝对值的最大值
@@ -120,6 +133,10 @@ public class DatabaseChecker {
         }, Timestamp.valueOf(ldt));
     }
 
+    /**
+     * 自动释放链接，在日志中输出数据库版本信息
+     */
+
     public static void version(DataSource ds) {
         final JdbcTemplate tmpl = new JdbcTemplate(ds);
 
@@ -136,6 +153,20 @@ public class DatabaseChecker {
         }
         catch (DataAccessException e) {
             log.info("flywave revision is unknown, for no sys_schema_version");
+        }
+    }
+
+    /**
+     * 手工关闭链接，SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME=? AND TABLE_SCHEMA=SCHEMA()
+     * <a href="https://www.jooq.org/doc/latest/manual/sql-building/column-expressions/system-functions/current-schema-function/">current-schema-function</a>
+     */
+    @SneakyThrows
+    public static boolean existTable(Connection conn, String table) {
+        final String sql = "SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME=? AND TABLE_SCHEMA=SCHEMA()";
+        try (PreparedStatement stm = conn.prepareStatement(sql)) {
+            stm.setString(1, table);
+            final ResultSet rs = stm.executeQuery();
+            return rs.next();
         }
     }
 }

@@ -54,7 +54,7 @@ public class WarlockAwesomeConfiguration {
     @Bean    // 数据库值覆盖工程配置
     public CommandLineRunnerOrdered runnerRegisterRuntimeMode(ObjectProvider<RuntimeConfService> provider) {
         log.info("Warlock spring-runs runnerRegisterRuntimeMode");
-        return new CommandLineRunnerOrdered(OrderedWarlockConst.RunnerRegisterRuntimeMode, ignoredArgs -> {
+        return new CommandLineRunnerOrdered(OrderedWarlockConst.RunnerRegisterRuntimeMode, ignored -> {
             final RuntimeConfService confService = provider.getIfAvailable();
             if (confService == null) {
                 log.info("Warlock conf skip registerRuntimeMode for NULL ");

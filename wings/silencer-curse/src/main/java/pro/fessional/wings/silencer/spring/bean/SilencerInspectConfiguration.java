@@ -29,7 +29,7 @@ public class SilencerInspectConfiguration {
     @ConditionalOnProperty(name = SilencerInspectProp.Key$properties, havingValue = "true")
     public ApplicationInspectRunner inspectApplicationRunner() {
         log.info("SilencerCurse spring-bean inspectApplicationRunner");
-        return new ApplicationInspectRunner(OrderedSilencerConst.Lv5Supervisor, ignoredArgs -> {
+        return new ApplicationInspectRunner(OrderedSilencerConst.Lv5Supervisor, ignored -> {
             final Map<String, List<String>> map = ApplicationContextHelper.listPropertySource();
             final Map<String, List<String>> key = new LinkedHashMap<>();
 

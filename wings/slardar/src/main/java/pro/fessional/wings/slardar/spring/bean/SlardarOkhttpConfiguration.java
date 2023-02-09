@@ -158,7 +158,7 @@ public class SlardarOkhttpConfiguration {
     @Bean
     public CommandLineRunnerOrdered runnerOkHttpHelper(ObjectProvider<Builder> opb, ObjectProvider<OkHttpClient> ohc) {
         log.info("Slardar spring-runs runnerOkHttpHelper");
-        return new CommandLineRunnerOrdered(OrderedSlardarConst.RunnerOkHttpHelper, ignoredArgs -> {
+        return new CommandLineRunnerOrdered(OrderedSlardarConst.RunnerOkHttpHelper, ignored -> {
             final Builder ob = opb.getIfAvailable();
             if (ob != null) {
                 log.info("Slardar spring-conf OkHttpClientBuilder");

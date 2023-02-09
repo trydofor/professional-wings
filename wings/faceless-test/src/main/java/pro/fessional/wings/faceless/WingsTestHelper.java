@@ -66,7 +66,7 @@ public class WingsTestHelper {
 
     public enum Type {
         Table("SHOW TABLES"),
-        Trigger("SELECT TRIGGER_NAME FROM INFORMATION_SCHEMA.TRIGGERS WHERE EVENT_OBJECT_SCHEMA = database()"),
+        Trigger("SELECT TRIGGER_NAME FROM INFORMATION_SCHEMA.TRIGGERS WHERE EVENT_OBJECT_SCHEMA = SCHEMA()"),
         ;
         private final String sql;
 
@@ -132,7 +132,7 @@ public class WingsTestHelper {
                         Collectors.toMap(
                                 Map.Entry::getKey,
                                 e -> new HashSet<>(new JdbcTemplate(e.getValue())
-                                        .query(sql, (rs, i) -> rs.getString(1).toLowerCase())
+                                        .query(sql, (rs, ignored) -> rs.getString(1).toLowerCase())
                                 )
                         )
                 );

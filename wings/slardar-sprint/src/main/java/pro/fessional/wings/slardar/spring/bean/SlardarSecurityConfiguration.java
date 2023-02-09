@@ -123,7 +123,7 @@ public class SlardarSecurityConfiguration {
     @Bean
     public CommandLineRunnerOrdered runnerTerminalContextListener(Map<String, TerminalContext.Listener> listeners) {
         log.info("SlardarSprint spring-runs runnerTerminalContextListener");
-        return new CommandLineRunnerOrdered(OrderedSlardarConst.RunnerTerminalContextListener, ignoredArgs -> {
+        return new CommandLineRunnerOrdered(OrderedSlardarConst.RunnerTerminalContextListener, ignored -> {
             for (Map.Entry<String, TerminalContext.Listener> en : listeners.entrySet()) {
                 final String name = en.getKey();
                 log.info("SlardarSprint spring-conf runnerTerminalContextListener, name=" + name);
