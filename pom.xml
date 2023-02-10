@@ -56,13 +56,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- override spring boot default -->
-        <!-- mvn boot -->
         <java.version>17</java.version>
+        <kotlin.version>1.7.22</kotlin.version>
+        <!-- mvn boot -->
         <maven.test.skip>false</maven.test.skip>
         <maven.deploy.skip>false</maven.deploy.skip>
         <maven.install.skip>false</maven.install.skip>
         <spring-boot.repackage.skip>false</spring-boot.repackage.skip>
         <spring-boot.repackage.executable>false</spring-boot.repackage.executable>
+        <gpg.skip>true</gpg.skip>
         <!-- common quality-->
         <annotations.version>24.0.0</annotations.version> <!-- https://github.com/JetBrains/java-annotations/releases -->
         <!-- common utils-->
@@ -483,6 +485,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
                     <configuration>
                         <!-- avoid /build/resources/resource/filtering=true -->
                         <nonFilteredFileExtensions>
@@ -513,6 +516,7 @@
                         <source>${java.version}</source>
                         <target>${java.version}</target>
                         <compilerArgs>
+                            <arg>-parameters</arg>
                             <arg>--add-modules=java.se</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/java.io=ALL-UNNAMED</arg> <!-- FastJson -->
                             <arg>--add-exports=java.base/java.nio=ALL-UNNAMED</arg> <!-- Hazelcast -->
@@ -602,12 +606,10 @@
                 </plugin>
                 <!--  deploy  -->
                 <plugin>
+                    <!-- https://maven.apache.org/plugins/maven-gpg-plugin/sign-mojo.html -->
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>${maven-gpg-plugin.version}</version>
-                    <configuration>
-                        <skip>${deploy.private.repository}</skip>
-                    </configuration>
                     <executions>
                         <execution>
                             <id>sign-artifacts</id>
@@ -774,4 +776,62 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
+    <profiles>
+        <profile>
+            <id>kotlin-support</id>
+            <activation>
+                <file>
+                    <exists>src/test/kotlin</exists>
+                </file>
+            </activation>
+            <properties>
+                <kotlin-supported>true</kotlin-supported>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-stdlib-jdk8</artifactId>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <!-- https://kotlinlang.org/docs/maven.html#compile-kotlin-and-java-sources -->
+                    <plugin>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <!-- Replacing default-compile as it is treated specially by maven -->
+                            <execution>
+                                <id>default-compile</id>
+                                <phase>none</phase>
+                            </execution>
+                            <!-- Replacing default-testCompile as it is treated specially by maven -->
+                            <execution>
+                                <id>default-testCompile</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>java-compile</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>java-test-compile</id>
+                                <phase>test-compile</phase>
+                                <goals>
+                                    <goal>testCompile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
