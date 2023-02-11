@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Slardar::HazelSession</name>
-    <description>鱼人守卫之黑走晒神： 基于hazelcast的分布式session</description>
+    <description>Distributed SpringSession based on hazelcast</description>
 
     <dependencies>
         <dependency>

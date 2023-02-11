@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Warlock::Codegen</name>
-    <description>术士大叔之代码生成</description>
+    <description>Code Generator of Warlock</description>
 
     <dependencies>
         <dependency>

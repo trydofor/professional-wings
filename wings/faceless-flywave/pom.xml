@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Faceless::Flywave</name>
-    <description>虚空假面之时间结界：Flywave数据库版本管理</description>
+    <description>Database and it's Data Versioning</description>
 
     <dependencies>
         <dependency>

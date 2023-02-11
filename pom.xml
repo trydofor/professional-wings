@@ -16,7 +16,7 @@
     <packaging>pom</packaging>
 
     <name>Ancient::</name>
-    <description>万物生长靠日:Growing Need a F^king Sun</description>
+    <description>万物生长靠日 ☀️ Growing Need the F^king Sun</description>
 
     <url>https://wings.fessional.pro</url>
 
@@ -292,7 +292,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
                 <version>${spring-boot.version}</version>
-                <!-- 测试上看 undertow 新能最好 -->
+                <!-- undertow has a better benchmark -->
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework.boot</groupId>
@@ -366,7 +366,7 @@
                 <version>${fastjson2.version}</version>
             </dependency>
             <dependency>
-                <!-- wings内禁用，为间接引用的第三方定义安全的版本号 -->
+                <!-- DENIED by wings，define safe version numbers for indirectly 3rd lib -->
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
@@ -446,10 +446,10 @@
                 <version>${springdoc.version}</version>
             </dependency>
             <dependency>
-                <!-- 未曾使用，但因安全漏洞，避免误用，显示移除 -->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-logging</artifactId>
                 <version>${spring-boot.version}</version>
+                <!-- NOT used, explicitly removed for security reasons to prevent misuse -->
                 <exclusions>
                     <exclusion>
                         <groupId>org.apache.logging.log4j</groupId>
@@ -533,7 +533,7 @@
                             <arg>--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg> <!-- Boot -->
                         </compilerArgs>
                         <annotationProcessorPaths>
-                            <!--  从以下 path 查找annotationProcessor，class paths -->
+                            <!--  find annotationProcessors in the following paths -->
                             <path>
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>

@@ -13,7 +13,7 @@
     <packaging>jar</packaging>
 
     <name>Radiant::Tiny::Autogen</name>
-    <description>小小的自动依赖</description>
+    <description>Autogen Codes for all Tiny component</description>
 
     <dependencies>
         <dependency>

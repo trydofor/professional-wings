@@ -16,7 +16,7 @@
     <version>${revision}-SNAPSHOT</version>
 
     <name>Example::</name>
-    <description>样板间</description>
+    <description>Sample and Template</description>
 
     <modules>
         <module>winx-admin</module>

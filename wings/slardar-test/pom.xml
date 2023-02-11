@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Slardar::Test</name>
-    <description>鱼人守卫之测试</description>
+    <description>Testing of Slardar</description>
 
     <dependencies>
         <dependency>

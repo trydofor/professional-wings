@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
 
     <name>Radiant::</name>
-    <description>邮轮模型下的功能组件</description>
+    <description>Radiant components under GhostShip Model</description>
 
     <modules>
         <module>devs-mvndep</module>

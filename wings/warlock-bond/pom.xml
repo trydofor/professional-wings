@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Warlock::Bond</name>
-    <description>术士大叔之致命链接：集成登录授权的实现</description>
+    <description>Implementation of login and authN/authZ</description>
 
     <dependencies>
         <dependency>

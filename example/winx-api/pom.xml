@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Example::Winx::Api</name>
-    <description>样板间之接口</description>
+    <description>Open Api endpoint</description>
 
     <dependencies>
         <dependency>

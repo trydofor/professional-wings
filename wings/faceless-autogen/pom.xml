@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Faceless::AutoGen</name>
-    <description>虚空假面之自动依赖</description>
+    <description>Autogen Codes for all Faceless module</description>
 
     <dependencies>
         <dependency>

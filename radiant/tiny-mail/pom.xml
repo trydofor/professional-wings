@@ -13,7 +13,7 @@
     <packaging>jar</packaging>
 
     <name>Radiant::Tiny::Mail</name>
-    <description>小小的邮件模块</description>
+    <description>Tiny Mail component</description>
 
     <dependencies>
         <dependency>
@@ -34,11 +34,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
-        <!-- 代码生成与版本检查 -->
+        <!-- version check and code gen -->
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-flywave</artifactId>
-            <optional>true</optional>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>

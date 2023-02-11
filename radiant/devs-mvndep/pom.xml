@@ -13,10 +13,10 @@
     <packaging>jar</packaging>
 
     <name>Radiant::Devs::Mvndep</name>
-    <description>用maven-dependency-checker检查依赖的版本，自动生成代码</description>
+    <description>check dependency's version by maven-dependency-checker, generate the code automatically</description>
 
     <dependencies>
-        <!-- 代码生成  -->
+        <!-- codegen  -->
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-test</artifactId>
@@ -48,7 +48,7 @@
             <artifactId>tiny-task</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- 保留version属性，便于属性查找及IDE提示-->
+        <!-- Keep the version in test scope, get easy search and IDE hint -->
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>shardingsphere-sharding-api</artifactId>
@@ -87,7 +87,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- wings内禁用，为间接引用的第三方定义安全的版本号 -->
+            <!-- DENIED by wings，define safe version numbers for indirectly 3rd lib -->
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>

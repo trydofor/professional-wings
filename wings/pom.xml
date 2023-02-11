@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
 
     <name>Wings::</name>
-    <description>WingsBoot=BKB+飞鞋+SpringBoot</description>
+    <description>WingsBoot=BKB + BootsOfTravel + SpringBoot</description>
 
     <modules>
         <module>aegis</module>

@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Example::Winx::Codegen</name>
-    <description>样板间之代码生成</description>
+    <description>Code generator</description>
 
     <properties>
         <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
