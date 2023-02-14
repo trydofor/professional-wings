@@ -11,8 +11,8 @@ import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
-import pro.fessional.wings.warlock.constants.WarlockGlobalAttribute;
 import pro.fessional.wings.spring.consts.OrderedWarlockConst;
+import pro.fessional.wings.warlock.constants.WarlockGlobalAttribute;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAuthnTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAuthnDao;
@@ -58,8 +58,8 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
         final Condition cond = user.Id.eq(auth.UserId)
                                       .and(auth.AuthType.eq(at))
                                       .and(auth.Username.eq(username))
-                                      .and(user.onlyLiveData)
-                                      .and(auth.onlyLiveData);
+                                      .and(user.getOnlyLive())
+                                      .and(auth.getOnlyLive());
 
         return selectDetails(user, auth, authType, cond);
     }
@@ -75,8 +75,8 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
         final Condition cond = user.Id.eq(auth.UserId)
                                       .and(auth.AuthType.eq(at))
                                       .and(auth.UserId.eq(userId))
-                                      .and(user.onlyLiveData)
-                                      .and(auth.onlyLiveData);
+                                      .and(user.getOnlyLive())
+                                      .and(auth.getOnlyLive());
 
         return selectDetails(user, auth, authType, cond);
     }
@@ -116,7 +116,7 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
                 .ctx()
                 .select(ta.UserId, ta.FailedCnt, ta.FailedMax, ta.Id)
                 .from(ta)
-                .where(ta.Username.eq(username).and(ta.AuthType.eq(at)).and(ta.onlyLiveData))
+                .where(ta.Username.eq(username).and(ta.AuthType.eq(at)).and(ta.getOnlyLive()))
                 .fetchOne();
 
         if (auth == null) {

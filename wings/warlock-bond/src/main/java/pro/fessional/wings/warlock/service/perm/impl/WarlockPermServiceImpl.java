@@ -57,7 +57,7 @@ public class WarlockPermServiceImpl implements WarlockPermService {
                 .ctx()
                 .select(t.Id, t.Scopes, t.Action)
                 .from(t)
-                .where(t.onlyLiveData)
+                .where(t.getOnlyLive())
                 .fetch()
                 .intoMap(Record3::value1, it -> unitePermit(it.value2(), it.value3()));
         log.info("loadPermAll size={}", all.size());

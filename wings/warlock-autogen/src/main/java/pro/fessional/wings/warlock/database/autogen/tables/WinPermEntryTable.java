@@ -230,19 +230,19 @@ public class WinPermEntryTable extends TableImpl<WinPermEntryRecord> implements 
     /**
      * The colDel <code>delete_dt</code> condition
      */
-    public final Condition onlyDiedData = DeleteDt.gt(EmptyValue.DATE_TIME);
-    public final Condition onlyLiveData = DeleteDt.eq(EmptyValue.DATE_TIME);
+    public final Condition DiedDataCondition = DeleteDt.gt(EmptyValue.DATE_TIME_AS_MAX);
+    public final Condition LiveDataCondition = DeleteDt.lt(EmptyValue.DATE_TIME_AS_MAX);
 
     @Override
     @NotNull
     public Condition getOnlyDied() {
-        return onlyDiedData;
+        return DiedDataCondition;
     }
 
     @Override
     @NotNull
     public Condition getOnlyLive() {
-        return onlyLiveData;
+        return LiveDataCondition;
     }
 
     @Override

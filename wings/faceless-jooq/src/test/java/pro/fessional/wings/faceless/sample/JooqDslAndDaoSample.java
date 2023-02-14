@@ -158,7 +158,7 @@ public class JooqDslAndDaoSample {
         testcaseNotice("逻辑删除");
         val c1 = dao.count();
         log.info("count1={}", c1);
-        val c2 = dao.count(it -> it.onlyDiedData);
+        val c2 = dao.count(it -> it.getOnlyDied());
         log.info("count2={}", c2);
     }
 

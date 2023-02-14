@@ -209,6 +209,11 @@ public class WingsCodeGenerator {
             return this;
         }
 
+        public Builder setLiveDataByMax(boolean asMax) {
+            WingsCodeGenConf.setLiveDataByMax(asMax);
+            return this;
+        }
+
         /**
          * 直接生成代码
          */

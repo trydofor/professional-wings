@@ -26,8 +26,8 @@ import pro.fessional.wings.warlock.service.perm.WarlockRoleService;
 import java.util.Collections;
 import java.util.Map;
 
-import static pro.fessional.wings.warlock.caching.CacheConst.WarlockRoleService.CacheResolver;
 import static pro.fessional.wings.warlock.caching.CacheConst.WarlockRoleService.CacheName;
+import static pro.fessional.wings.warlock.caching.CacheConst.WarlockRoleService.CacheResolver;
 import static pro.fessional.wings.warlock.caching.CacheConst.WarlockRoleService.EventTables;
 
 /**
@@ -61,7 +61,7 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
                 .ctx()
                 .select(t.Id, t.Name)
                 .from(t)
-                .where(t.onlyLiveData)
+                .where(t.getOnlyLive())
                 .fetch()
                 .intoMap(Record2::value1, it -> permNormalizer.role(it.value2()));
         log.info("loadRoleAll size={}", all.size());

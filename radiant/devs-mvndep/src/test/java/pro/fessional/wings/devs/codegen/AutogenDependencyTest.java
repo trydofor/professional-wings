@@ -81,6 +81,8 @@ public class AutogenDependencyTest {
         test31TinyTaskAutogenJooq();// tiny-autogen/task
     }
 
+    // ////////////////// individual test  //////////////////
+
     @Test
     void test10FacelessAutogen() {
         final JdbcDataLoadHelper helper = JdbcDataLoadHelper.use(dataSource);

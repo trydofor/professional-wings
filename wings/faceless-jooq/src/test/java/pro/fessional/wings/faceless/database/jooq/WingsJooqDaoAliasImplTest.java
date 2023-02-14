@@ -166,6 +166,6 @@ public class WingsJooqDaoAliasImplTest {
         dao.fetchOneById(1L);
         dao.count();
         final Tst中文也分表Table tbl = dao.getTable();
-        dao.count(tbl, tbl.onlyLiveData);
+        dao.count(tbl, tbl.getOnlyLive());
     }
 }

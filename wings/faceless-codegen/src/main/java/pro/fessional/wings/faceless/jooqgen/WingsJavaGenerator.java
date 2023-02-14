@@ -59,7 +59,7 @@ public class WingsJavaGenerator extends JavaGenerator {
 
         if (proxyStrategy == null) {
             final String[] defs = {"DefaultCatalog", "DefaultSchema"};
-            InvocationHandler han = (proxy, method, args) -> {
+            InvocationHandler han = (ignoredProxy, method, args) -> {
                 Object obj = method.invoke(wrapper, args);
                 final String methodName = method.getName();
                 if (methodName.equals("getJavaClassName") || methodName.equals("getFullJavaIdentifier")) {
@@ -150,41 +150,47 @@ public class WingsJavaGenerator extends JavaGenerator {
                 val colType = colDel.getDefinedType().getType().toLowerCase();
                 if (colType.contains("time")) {
                     markDelete = "commit.getCommitDt()";
-                    out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.DATE_TIME);", fldDel);
-                    out.println("public final Condition onlyLiveData = %s.eq(EmptyValue.DATE_TIME);", fldDel);
+                    if (WingsCodeGenConf.isLiveDataByMax()) {
+                        out.println("public final Condition DiedDataCondition = %s.gt(EmptyValue.DATE_TIME_AS_MAX);", fldDel);
+                        out.println("public final Condition LiveDataCondition = %s.lt(EmptyValue.DATE_TIME_AS_MAX);", fldDel);
+                    }
+                    else {
+                        out.println("public final Condition DiedDataCondition = %s.gt(EmptyValue.DATE_TIME);", fldDel);
+                        out.println("public final Condition LiveDataCondition = %s.eq(EmptyValue.DATE_TIME);", fldDel);
+                    }
                 }
                 else if (colType.contains("int")) {
                     markDelete = "DateNumber.dateTime17(commit.getCommitDt())";
                     out.ref(DateNumber.class);
-                    out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.BIGINT);", fldDel);
-                    out.println("public final Condition onlyLiveData = %s.eq(EmptyValue.BIGINT);", fldDel);
+                    out.println("public final Condition DiedDataCondition = %s.gt(EmptyValue.BIGINT);", fldDel);
+                    out.println("public final Condition LiveDataCondition = %s.eq(EmptyValue.BIGINT);", fldDel);
                 }
                 else {
                     markDelete = "DateFormatter.full23(commit.getCommitDt())";
                     out.ref(DateFormatter.class);
-                    out.println("public final Condition onlyDiedData = %s.gt(EmptyValue.VARCHAR);", fldDel);
-                    out.println("public final Condition onlyLiveData = %s.eq(EmptyValue.VARCHAR);", fldDel);
+                    out.println("public final Condition DiedDataCondition = %s.gt(EmptyValue.VARCHAR);", fldDel);
+                    out.println("public final Condition LiveDataCondition = %s.eq(EmptyValue.VARCHAR);", fldDel);
                 }
             }
             else {
                 // COL_IS_DELETED
                 markDelete = "Boolean.TRUE";
-                out.println("public final Condition onlyDiedData = %s.eq(Boolean.TRUE);", fldDel);
-                out.println("public final Condition onlyLiveData = %s.eq(Boolean.FALSE);", fldDel);
+                out.println("public final Condition DiedDataCondition = %s.eq(Boolean.TRUE);", fldDel);
+                out.println("public final Condition LiveDataCondition = %s.eq(Boolean.FALSE);", fldDel);
             }
 
             out.println("");
             out.println("@Override");
             out.println("@NotNull");
             out.println("public Condition getOnlyDied() {");
-            out.println("return onlyDiedData;");
+            out.println("return DiedDataCondition;");
             out.println("}");
 
             out.println("");
             out.println("@Override");
             out.println("@NotNull");
             out.println("public Condition getOnlyLive() {");
-            out.println("return onlyLiveData;");
+            out.println("return LiveDataCondition;");
             out.println("}");
 
             out.println("");

@@ -57,4 +57,14 @@ public class WingsCodeGenConf {
         }
         return normal.endsWith(globalSuffix) ? normal : normal + globalSuffix;
     }
+
+    private static boolean liveDataByMax = true;
+
+    public static boolean isLiveDataByMax() {
+        return liveDataByMax;
+    }
+
+    public static void setLiveDataByMax(boolean b) {
+        liveDataByMax = b;
+    }
 }

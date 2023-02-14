@@ -38,6 +38,10 @@ public class EmptyValue {
     public static final LocalDate DATE_AS_MIN = DATE.minusDays(1);
     public static final LocalDate DATE_AS_MAX = DATE.plusDays(1);
 
+    public static final LocalDateTime DATE_TIME_AS_MIN = LocalDateTime.of(DATE_AS_MIN, TIME);
+
+    public static final LocalDateTime DATE_TIME_AS_MAX = LocalDateTime.of(DATE_AS_MAX, TIME);
+
     // 可以外部赋值，以改变asEmptyValue的范围
     public static double DOUBLE_AS_MIN = -0.00001D;
     public static double DOUBLE_AS_MAX = 0.00001D;
