@@ -12,7 +12,7 @@
 * [![Mysql-8](https://img.shields.io/badge/mysql-8.0-blue)](https://dev.mysql.com/downloads/mysql/) Main business database, 8 recommended, 5.7 compatible 💡 [GPLv2]
 * [![H2Database-2.1](https://img.shields.io/badge/h2db-2.1-blue)](https://h2database.com/html/main.html) Standalone database for offline and disconnected operations [MPL2] or [EPL1]
 * [![Hazelcast-5.1](https://img.shields.io/badge/hazelcast-5.1-violet)](https://hazelcast.org/imdg/) IMDG，Distributed caching, messaging, streaming, etc. [Apache2]
-* [![ServiceComb-2.8](https://img.shields.io/badge/servicecomb-2.8-violet)](https://servicecomb.apache.org) more engineering and compact Cloud solution [Apache2]
+* [![ServiceComb-2.8](https://img.shields.io/badge/servicecomb-2.8-violet)](https://servicecomb.apache.org) more engineering and compact miscroservice solution [Apache2]
 
 [Apache2]: https://www.apache.org/licenses/LICENSE-2.0
 [GPLv2+CE]: https://openjdk.org/legal/gplv2+ce.html
@@ -22,7 +22,7 @@
 
 ## 1.Related Documents
 
-* Official Doc - <https://wings.fessional.pro>
+* Official Doc - <https://wings.fessional.pro/en/>
 * NotBad Review - <https://java-code-review.moilioncircle.com>
 * Doc GitHub - <https://github.com/fessionalpro/wings-doc>
 * [Gitee](https://gitee.com/trydofor) is the mirror site
