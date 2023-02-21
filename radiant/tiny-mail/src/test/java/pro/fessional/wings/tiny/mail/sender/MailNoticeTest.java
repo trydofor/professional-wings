@@ -17,6 +17,10 @@ import pro.fessional.mirana.time.StopWatch;
 @SpringBootTest(properties = {
         "debug = true",
         "wings.tiny.mail.service.boot-scan=0",
+//        "wings.tiny.mail.config.gmail.host=smtp.gmail.com",
+        "wings.tiny.mail.config.gmail.username=${GMAIL_USER:}",
+        "wings.tiny.mail.config.gmail.password=${GMAIL_PASS:}",
+//        "wings.tiny.mail.config.gmail.port=587",
 //        "wings.tiny.mail.notice.default.file[application.properties]=classpath:./application.properties"
 })
 @Slf4j
@@ -24,6 +28,9 @@ public class MailNoticeTest {
 
     @Setter(onMethod_ = {@Autowired})
     protected MailNotice mailNotice;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected MailConfigProvider mailConfigProvider;
 
     @Setter(onMethod_ = {@Value("${QQ_MAIL_USER}")})
     protected String mailTo;
@@ -38,13 +45,13 @@ public class MailNoticeTest {
     @Disabled("统计耗时")
     public void testDefault() {
         final StopWatch stopWatch = new StopWatch();
-        try (final StopWatch.Watch w = stopWatch.start("emit")) {
+        try (final StopWatch.Watch ignored = stopWatch.start("emit")) {
             mailNotice.emit("test tiny mail emit", "test emit");
         }
-        try (final StopWatch.Watch w = stopWatch.start("post")) {
+        try (final StopWatch.Watch ignored = stopWatch.start("post")) {
             mailNotice.post("test tiny mail post", "test post");
         }
-        try (final StopWatch.Watch w = stopWatch.start("send")) {
+        try (final StopWatch.Watch ignored = stopWatch.start("send")) {
             mailNotice.send("test tiny mail send", "test send");
         }
         log.info(stopWatch.toString());
@@ -53,7 +60,15 @@ public class MailNoticeTest {
     @Test
     @Disabled("gmail")
     public void testGmail() {
-        final TinyMailConfig gmail = mailNotice.provideConfig("gmail", true);
+        // dynamic config
+        final String name = "gmail";
+        TinyMailConfig conf = new TinyMailConfig();
+        conf.setName(name);
+        conf.setHost("smtp.gmail.com");
+        conf.setPort(587);
+        mailConfigProvider.putMailConfig(conf);
+
+        final TinyMailConfig gmail = mailNotice.provideConfig(name, true);
         mailNotice.send(gmail, "test tiny mail gmail", "test gmail");
     }
 }

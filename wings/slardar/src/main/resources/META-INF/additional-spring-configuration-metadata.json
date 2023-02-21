@@ -5,11 +5,11 @@
       "values": [
         {
           "value": "Memory",
-          "description": "内存缓存，默认caffeine."
+          "description": "jvm cache, cache2k by default."
         },
         {
           "value": "Server",
-          "description": "外部服务缓存，默认hazelcast."
+          "description": "server/distributed cache, hazelcast by default."
         }
       ]
     },
@@ -18,19 +18,19 @@
       "values": [
         {
           "value": "program",
-          "description": "程序级，程序或服务运行期间."
+          "description": "program level caching, ttl available in app running."
         },
         {
           "value": "general",
-          "description": "通常，1天."
+          "description": "general level 24 hours."
         },
         {
           "value": "service",
-          "description": "服务级，1小时."
+          "description": "service level 1 hour."
         },
         {
           "value": "session",
-          "description": "会话级，10分钟."
+          "description": "session，10 minutes."
         }
       ]
     },

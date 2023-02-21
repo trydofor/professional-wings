@@ -5,44 +5,46 @@ import lombok.Setter;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Objects;
 
+import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.mergeNotValue;
 import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue;
 
 /**
- * hashCode和equals会使用MailProperties的host,port,username,protocol
+ * hashCode and equals with
+ * host, port, username, protocol from MailProperties, and
+ * TinyMailConfig without name
  */
 @Getter
 @Setter
 public class TinyMailConfig extends MailProperties {
 
     /**
-     * 配置的名字，自动设置，不纳入hash
+     * the name of mail config. automatically set in static config, manually set in dynamic config,
      */
     protected String name;
     /**
-     * 默认发件人
+     * default mail from
      */
     protected String from;
     /**
-     * 默认收件人
+     * default mail to
      */
     protected String[] to;
     /**
-     * 默认抄送
+     * default mail cc
      */
     protected String[] cc;
     /**
-     * 默认暗送
+     * default mail bcc
      */
     protected String[] bcc;
     /**
-     * 默认回复
+     * default mail reply
      */
     protected String reply;
     /**
-     * 默认是否发送html邮件(text/html)，否则纯文本(text/plain)
+     * mail content type, send html mail(text/html) if true ,otherwise plain mail(text/plain)
      */
     protected Boolean html;
 
@@ -80,7 +82,7 @@ public class TinyMailConfig extends MailProperties {
     }
 
     /**
-     * 全部使用that值
+     * use all properties from that
      */
     public void adopt(MailProperties that) {
         if (that == null) return;
@@ -94,7 +96,7 @@ public class TinyMailConfig extends MailProperties {
     }
 
     /**
-     * 全部使用that值
+     * use all properties from that
      */
     public void adopt(TinyMailConfig that) {
         if (that == null) return;
@@ -110,7 +112,8 @@ public class TinyMailConfig extends MailProperties {
     }
 
     /**
-     * this值无效时，使用that值
+     * if this.property is invalid, then use that.property.
+     * except for 'properties' which merge value only if key matches.
      */
     public void merge(MailProperties that) {
         if (that == null) return;
@@ -135,26 +138,11 @@ public class TinyMailConfig extends MailProperties {
             setDefaultEncoding(that.getDefaultEncoding());
         }
 
-        final Map<String, String> thisProp = getProperties();
-        final Map<String, String> thatProp = that.getProperties();
-        if (!thatProp.isEmpty()) {
-            if (thisProp.isEmpty()) {
-                thisProp.putAll(thatProp);
-            }
-            else {
-                for (Map.Entry<String, String> en : thisProp.entrySet()) {
-                    final String v = en.getValue();
-                    if (notValue(v)) {
-                        final String tv = thatProp.get(en.getKey());
-                        en.setValue(tv);
-                    }
-                }
-            }
-        }
+        mergeNotValue(getProperties(), that.getProperties());
     }
 
     /**
-     * this值无效时，使用that值
+     * if this.property is invalid, then use that.property.
      */
     public void merge(TinyMailConfig that) {
         if (that == null) return;

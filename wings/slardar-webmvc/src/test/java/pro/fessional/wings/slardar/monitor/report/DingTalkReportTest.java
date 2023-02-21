@@ -6,19 +6,22 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
+import pro.fessional.wings.slardar.notice.DingTalkConf;
 import pro.fessional.wings.slardar.notice.DingTalkNotice;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 /**
  * @author trydofor
  * @since 2021-07-15
  */
-@SpringBootTest(properties = "wings.slardar.ding-notice.default.access-token=${DING_TALK_TOKEN:}")
+@SpringBootTest(properties = {
+        "wings.slardar.ding-notice.default.access-token=${DING_TALK_TOKEN:}",
+        "wings.slardar.ding-notice.default.notice-mobiles.god9=155XXXX1991",
+})
 @Disabled("钉钉通知，避免频繁调用")
 class DingTalkReportTest {
 
@@ -44,8 +47,8 @@ class DingTalkReportTest {
 
     @Test
     void postNotice() {
-        final DingTalkNotice.Conf conf = dingTalkNotice.provideConfig("monitor", true);
-        conf.setNoticeMobiles(Set.of("155XXXX1991"));
+        final DingTalkConf conf = dingTalkNotice.provideConfig("monitor", true);
+        conf.setNoticeMobiles(Map.of("a9", "155XXXX1992"));
         dingTalkNotice.post(conf, "测试标题", "##测试正文\n\n- **列表** 正常");
     }
 }

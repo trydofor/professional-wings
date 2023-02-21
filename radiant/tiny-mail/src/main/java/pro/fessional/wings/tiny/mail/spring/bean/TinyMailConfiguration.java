@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -36,24 +37,28 @@ public class TinyMailConfiguration {
     private static final Log log = LogFactory.getLog(TinyMailConfiguration.class);
 
     @Bean
+    @ConditionalOnMissingBean(MailSenderProvider.class)
     public MailSenderProvider mailSenderProvider(JavaMailSender defaultSender) {
         log.info("TinyMail spring-bean mailSenderProvider");
         return new MailSenderProvider(defaultSender);
     }
 
     @Bean
+    @ConditionalOnMissingBean(MailConfigProvider.class)
     public MailConfigProvider mailConfigProvider(TinyMailConfigProp tinyMailConfigProp) {
         log.info("TinyMail spring-bean mailConfigProvider");
         return new MailConfigProvider(tinyMailConfigProp);
     }
 
     @Bean
+    @ConditionalOnMissingBean(MailSenderManager.class)
     public MailSenderManager mailSenderManager(TinyMailSenderProp senderProp, MailSenderProvider senderProvider) {
         log.info("TinyMail spring-bean mailSenderManager");
         return new MailSenderManager(senderProp, senderProvider);
     }
 
     @Bean
+    @ConditionalOnMissingBean(MailNotice.class)
     public MailNotice mailNotice(MailConfigProvider configProvider, MailSenderManager senderManager) {
         log.info("TinyMail spring-bean mailNotice");
         return new MailNotice(configProvider, senderManager);

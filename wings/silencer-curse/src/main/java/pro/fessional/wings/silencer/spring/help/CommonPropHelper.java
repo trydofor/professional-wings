@@ -2,6 +2,7 @@ package pro.fessional.wings.silencer.spring.help;
 
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ResourceUtils;
@@ -66,4 +67,26 @@ public class CommonPropHelper {
         return resource.getURL().toExternalForm();
     }
 
+    /**
+     * if this.value is invalid, then use that.value by key matches.
+     *
+     * @param thiz this map
+     * @param that that map
+     */
+    public static void mergeNotValue(@NotNull Map<String, String> thiz, @Nullable Map<String, String> that) {
+        if (that == null || that.isEmpty()) return;
+
+        if (thiz.isEmpty()) {
+            thiz.putAll(that);
+        }
+        else {
+            for (Map.Entry<String, String> en : thiz.entrySet()) {
+                final String v = en.getValue();
+                if (notValue(v)) {
+                    final String tv = that.get(en.getKey());
+                    en.setValue(tv);
+                }
+            }
+        }
+    }
 }
