@@ -35,10 +35,13 @@ public class MailNoticeTest {
     @Setter(onMethod_ = {@Value("${QQ_MAIL_USER}")})
     protected String mailTo;
 
+    @Setter(onMethod_ = {@Value("${QQ_MAIL_PASS}")})
+    protected String mailPass;
+
     @Test
     public void testPost() {
         final boolean snd = mailNotice.post("test tiny mail send", "test send");
-        Assertions.assertTrue(snd,"可能需要设置 QQ_MAIL_USER, QQ_MAIL_USER");
+        Assertions.assertTrue(snd, "need env QQ_MAIL_USER, QQ_MAIL_PASS, current user=" + mailTo + ", pass=" + mailPass);
     }
 
     @Test

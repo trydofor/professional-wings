@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
+import okhttp3.Call;
 import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanP
 public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBean {
 
     @NotNull
-    private final OkHttpClient okHttpClient;
+    private final Call.Factory callFactory;
     @NotNull
     private final SlardarDingNoticeProp configProp;
 
@@ -163,7 +163,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
         }
 
         log.debug("ding-talk post message, host={}, text={}", host, message);
-        final String s = OkHttpClientHelper.postJson(okHttpClient, host, message);
+        final String s = OkHttpClientHelper.postJson(callFactory, host, message);
         log.debug("ding-talk result={}", s);
         return s.contains("\"errcode\":0,");
     }
