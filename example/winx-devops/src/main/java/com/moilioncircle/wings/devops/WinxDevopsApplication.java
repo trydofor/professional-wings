@@ -28,7 +28,7 @@ public class WinxDevopsApplication {
 
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(WinxDevopsApplication.class);
-        // https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/#features.spring-application.application-events-and-listeners
+        // https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/#features.spring-application.application-events-and-listeners
 //        application.setApplicationStartup(new BufferingApplicationStartup(8192));
         application.setApplicationStartup(new FlightRecorderApplicationStartup()); // java -XX:StartFlightRecording:filename=recording.jfr,duration=10s -jar demo.jar
         application.run(args);

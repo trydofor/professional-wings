@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
- * <a href="https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/#features.external-config">Externalized Configuration</a>
+ * <a href="https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/#features.external-config">Externalized Configuration</a>
  *
  * @author trydofor
  * @since 2021-07-05

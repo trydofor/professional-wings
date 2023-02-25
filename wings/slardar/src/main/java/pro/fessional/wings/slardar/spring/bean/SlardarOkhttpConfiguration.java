@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author trydofor
- * @link <a href="https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/#io.rest-client.resttemplate.customization">RestTemplate Customization</a>
+ * @link <a href="https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/#io.rest-client.resttemplate.customization">RestTemplate Customization</a>
  * @see RestTemplateAutoConfiguration#RestTemplateAutoConfiguration()
  * @since 2020-05-22
  */

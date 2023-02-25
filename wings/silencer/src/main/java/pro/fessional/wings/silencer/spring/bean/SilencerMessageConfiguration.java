@@ -15,7 +15,7 @@ import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 
 /**
  * @author trydofor
- * @link <a href="https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/#features.internationalization">Internationalization</a>
+ * @link <a href="https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/#features.internationalization">Internationalization</a>
  * @see org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration
  * @since 2019-06-24
  */

@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
 /**
  * 自动加载配置路径中的 /wings-conf/*.{yml,yaml,properties}配置。
  * <pre>
- * <a href="https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/">参考资料docs.spring.io</a>
+ * <a href="https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/">参考资料docs.spring.io</a>
  *  - #boot-features-application-events-and-listeners
  *  - #boot-features-external-config
  *  - #howto-change-the-location-of-external-properties
@@ -74,7 +74,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     public static final String PROMO_PROP_KEY = "wings.boot.promo";
 
     @Override
-    public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+    public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication ignored) {
         final String en = environment.getProperty(SilencerEnabledProp.Key$autoconf);
         if ("false".equalsIgnoreCase(en)) {
             log.info("🦁 Wings AutoConfig is disabled, skip it.");
@@ -356,7 +356,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
         // 按名字分组，排序
         LinkedHashMap<String, List<ConfResource>> groups = new LinkedHashMap<>(confResources.size());
-        Function<String, List<ConfResource>> newList = k -> new ArrayList<>();
+        Function<String, List<ConfResource>> newList = ignored -> new ArrayList<>();
         for (ConfResource cr : confResources) {
             String blocked = isBlockedBy(blockList, cr.location);
             if (blocked != null) {

@@ -12,9 +12,9 @@ Help Yourself, Check [Commits]
 
 - stable api
 
-## 3.0.2.300-SNAPSHOT [Current]
+## 3.0.3.300-SNAPSHOT [Current]
 
-- spring-boot 3.0.2
+- spring-boot 3.0.3
 - Jakarta EE 9+
 - java 17
 - jooq 3.17.x

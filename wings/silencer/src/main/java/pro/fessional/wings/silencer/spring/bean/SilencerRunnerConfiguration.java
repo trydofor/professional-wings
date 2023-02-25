@@ -23,7 +23,7 @@ import java.util.Map;
  * 当前在SpringApplication#callRunners中，applicationRunner先于commandLineRunner执行
  *
  * @author trydofor
- * @link <a href="https://docs.spring.io/spring-boot/docs/3.0.2/reference/htmlsingle/#features.spring-application.application-events-and-listeners">Application Events and Listeners</a>
+ * @link <a href="https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/#features.spring-application.application-events-and-listeners">Application Events and Listeners</a>
  * @since 2023-02-06
  */
 @Configuration(proxyBeanMethods = false)
