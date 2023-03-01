@@ -6,10 +6,12 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 /**
@@ -18,6 +20,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$mockHazelcast, havingValue = "true")
+@AutoConfigureOrder(OrderedSlardarConst.HazelcastMockConfiguration)
 public class HazelcastMockConfiguration {
 
     private static final Log log = LogFactory.getLog(HazelcastMockConfiguration.class);

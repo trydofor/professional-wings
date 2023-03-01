@@ -18,9 +18,10 @@ import java.util.List;
  */
 
 
-@SpringBootTest
-@Disabled("手动执行，版本更新时处理")
 @Slf4j
+@SpringBootTest
+@Disabled("导出数据库表结构，备份数据时使用")
+@SuppressWarnings("NewClassNamingConvention")
 public class WingsSchemaDumper {
 
     @Setter(onMethod_ = {@Autowired})

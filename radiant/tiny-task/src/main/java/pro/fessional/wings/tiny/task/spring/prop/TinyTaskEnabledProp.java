@@ -14,7 +14,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(TinyTaskEnabledProp.Key)
 public class TinyTaskEnabledProp {
 
-    public static final String Key = "wings.tiny.task.enabled";
+    public static final String Key = "spring.wings.tiny.task.enabled";
+
+    /**
+     * 是否启动自动配置
+     *
+     * @see #Key$autoconf
+     */
+    private boolean autoconf = true;
+    public static final String Key$autoconf = Key + ".autoconf";
+
 
     /**
      * 是否允许自动注册TinyTask.Auto

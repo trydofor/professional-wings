@@ -16,23 +16,23 @@
     <version>${revision}-SNAPSHOT</version>
 
     <name>Example::</name>
-    <description>样板间</description>
+    <description>Sample and Template</description>
 
     <modules>
         <module>winx-admin</module>
-        <module>winx-front</module>
+        <module>winx-api</module>
+        <!-- <module>winx-batch</module> -->
         <module>winx-codegen</module>
         <module>winx-common</module>
-        <!-- <module>winx-batch</module> -->
-         <module>winx-api</module>
         <module>winx-devops</module>
+        <module>winx-front</module>
     </modules>
 
     <properties>
         <winx-revision>1.0.0-SNAPSHOT</winx-revision>
         <maven.test.skip>true</maven.test.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
-        <maven.install.skip>true</maven.install.skip>
+        <maven.install.skip>false</maven.install.skip>
         <spring-boot.repackage.skip>false</spring-boot.repackage.skip>
         <spring-boot.repackage.executable>false</spring-boot.repackage.executable>
     </properties>

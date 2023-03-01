@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
@@ -22,13 +23,13 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
 import pro.fessional.wings.slardar.async.TaskSchedulerHelper;
 import pro.fessional.wings.slardar.async.TtlThreadPoolTaskScheduler;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarAsyncProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.Executor;
@@ -36,12 +37,12 @@ import java.util.concurrent.Executor;
 import static org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME;
 import static org.springframework.scheduling.annotation.AsyncAnnotationBeanPostProcessor.DEFAULT_TASK_EXECUTOR_BEAN_NAME;
 import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME;
-import static pro.fessional.wings.slardar.constants.SlardarNameConst.SlardarEventExecutorBean;
-import static pro.fessional.wings.slardar.constants.SlardarNameConst.SlardarHeavySchedulerBean;
+import static pro.fessional.wings.spring.consts.NamingSlardarConst.slardarEventExecutor;
+import static pro.fessional.wings.spring.consts.NamingSlardarConst.slardarHeavyScheduler;
 
 /**
  * <pre>
- * https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#features.task-execution-and-scheduling
+ * <a href="https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/#features.task-execution-and-scheduling">Task Execution and Scheduling</a>
  * https://github.com/alibaba/transmittable-thread-local
  * </pre>
  *
@@ -53,6 +54,7 @@ import static pro.fessional.wings.slardar.constants.SlardarNameConst.SlardarHeav
 @EnableAsync
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$async, havingValue = "true")
+@AutoConfigureOrder(OrderedSlardarConst.AsyncConfiguration)
 public class SlardarAsyncConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarAsyncConfiguration.class);
@@ -83,7 +85,7 @@ public class SlardarAsyncConfiguration {
         return bean;
     }
 
-    @Bean(name = SlardarEventExecutorBean)
+    @Bean(name = slardarEventExecutor)
     public Executor slardarEventExecutor(SlardarAsyncProp prop) {
         TaskExecutorBuilder builder = new TaskExecutorBuilder();
         final TaskExecutionProperties event = prop.getEvent();
@@ -103,7 +105,7 @@ public class SlardarAsyncConfiguration {
         return TtlExecutors.getTtlExecutor(executor);
     }
 
-    @Bean(name = SlardarHeavySchedulerBean)
+    @Bean(name = slardarHeavyScheduler)
     public ThreadPoolTaskScheduler slardarHeavyScheduler(SlardarAsyncProp prop) {
         final TtlThreadPoolTaskScheduler scheduler = new TtlThreadPoolTaskScheduler();
         TaskSchedulerBuilder builder = new TaskSchedulerBuilder();
@@ -118,18 +120,17 @@ public class SlardarAsyncConfiguration {
     }
 
     @Bean
-    public CommandLineRunnerOrdered runnerEventPublishHelper(
+    public ApplicationStartedEventRunner runnerEventPublishHelper(
             ApplicationEventPublisher publisher,
             ApplicationEventMulticaster multicaster,
-            @Qualifier(SlardarEventExecutorBean) Executor executor) {
+            @Qualifier(slardarEventExecutor) Executor executor) {
         log.info("Slardar spring-runs runnerEventPublishHelper");
-        return new CommandLineRunnerOrdered(SlardarOrderConst.RunnerEventPublishHelper, args -> {
+        return new ApplicationStartedEventRunner(OrderedSlardarConst.RunnerEventPublishHelper, ignored -> {
             EventPublishHelper.setExecutor(executor);
             log.info("Slardar conf eventPublishHelper ApplicationEventPublisher=" + publisher.getClass());
             EventPublishHelper.setSpringPublisher(publisher);
             log.info("Slardar conf eventPublishHelper ApplicationEventMulticaster=" + multicaster.getClass());
-            if (multicaster instanceof SimpleApplicationEventMulticaster) {
-                SimpleApplicationEventMulticaster mc = (SimpleApplicationEventMulticaster) multicaster;
+            if (multicaster instanceof SimpleApplicationEventMulticaster mc) {
                 try {
                     final Method getTaskExecutor = BeanUtils.findMethod(SimpleApplicationEventMulticaster.class, "getTaskExecutor");
                     if (getTaskExecutor != null) {
@@ -159,7 +160,7 @@ public class SlardarAsyncConfiguration {
     @Bean
     public TaskSchedulerHelper taskSchedulerHelper(
             @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME) ThreadPoolTaskScheduler light,
-            @Qualifier(SlardarHeavySchedulerBean) ThreadPoolTaskScheduler heavy) {
+            @Qualifier(slardarHeavyScheduler) ThreadPoolTaskScheduler heavy) {
         log.info("Slardar spring-bean taskSchedulerHelper");
         return new TaskSchedulerHelper() {{
             log.info("Slardar conf TaskSchedulerHelper");

@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.httprest.okhttp;
 
+import okhttp3.Call;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -72,26 +73,26 @@ public class OkHttpClientHelper {
     }
 
     @NotNull
-    public static String postFile(OkHttpClient client, String url, String key, File file) {
-        return postFile(client, url, postFile(key, file).build());
+    public static String postFile(Call.Factory callFactory, String url, String key, File file) {
+        return postFile(callFactory, url, postFile(key, file).build());
     }
 
     @NotNull
-    public static String postFile(OkHttpClient client, String url, String key, byte[] file, String fileName) {
-        return postFile(client, url, postFile(key, file, fileName).build());
+    public static String postFile(Call.Factory callFactory, String url, String key, byte[] file, String fileName) {
+        return postFile(callFactory, url, postFile(key, file, fileName).build());
     }
 
     @NotNull
-    public static String postFile(OkHttpClient client, String url, String key, InputStream file, String fileName) {
-        return postFile(client, url, postFile(key, file, fileName).build());
+    public static String postFile(Call.Factory callFactory, String url, String key, InputStream file, String fileName) {
+        return postFile(callFactory, url, postFile(key, file, fileName).build());
     }
 
     @NotNull
-    public static String postFile(OkHttpClient client, String url, MultipartBody body) {
+    public static String postFile(Call.Factory callFactory, String url, MultipartBody body) {
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .post(body);
-        try (Response response = execute(client, builder)) {
+        try (Response response = execute(callFactory, builder)) {
             return extractString(response);
         }
         catch (Exception e) {
@@ -100,12 +101,12 @@ public class OkHttpClientHelper {
     }
 
     @NotNull
-    public static String postJson(OkHttpClient client, String url, CharSequence json) {
+    public static String postJson(Call.Factory callFactory, String url, CharSequence json) {
         okhttp3.RequestBody body = RequestBody.create(json.toString(), OkHttpMediaType.APPLICATION_JSON_VALUE);
         Request.Builder builder = new okhttp3.Request.Builder()
                 .url(url)
                 .post(body);
-        try (Response response = execute(client, builder)) {
+        try (Response response = execute(callFactory, builder)) {
             return extractString(response);
         }
         catch (Exception e) {
@@ -145,11 +146,11 @@ public class OkHttpClientHelper {
     }
 
 
-    public static byte @NotNull [] download(OkHttpClient client, String url) {
-        return download(client, url, "GET");
+    public static byte @NotNull [] download(Call.Factory callFactory, String url) {
+        return download(callFactory, url, "GET");
     }
 
-    public static byte @NotNull [] download(OkHttpClient client, String url, String method) {
+    public static byte @NotNull [] download(Call.Factory callFactory, String url, String method) {
         Request.Builder builder = new Request.Builder().url(url);
         if ("GET".equalsIgnoreCase(method)) {
             builder.get();
@@ -170,7 +171,7 @@ public class OkHttpClientHelper {
             builder.delete();
         }
 
-        try (Response response = execute(client, builder)) {
+        try (Response response = execute(callFactory, builder)) {
             ResponseBody body = extract(response);
             if (body == null) return Null.Bytes;
             final byte[] bytes = body.bytes();
@@ -182,11 +183,11 @@ public class OkHttpClientHelper {
     }
 
     @NotNull
-    public static String getText(OkHttpClient client, String url) {
+    public static String getText(Call.Factory callFactory, String url) {
         Request.Builder builder = new okhttp3.Request.Builder()
                 .url(url)
                 .get();
-        try (Response response = execute(client, builder)) {
+        try (Response response = execute(callFactory, builder)) {
             return extractString(response);
         }
         catch (Exception e) {
@@ -195,9 +196,9 @@ public class OkHttpClientHelper {
     }
 
     @Contract("_,_,false->!null")
-    public static String executeString(OkHttpClient client, Request request, boolean nullWhenThrow) {
+    public static String executeString(Call.Factory callFactory, Request request, boolean nullWhenThrow) {
 
-        try (Response response = execute(client, request)) {
+        try (Response response = execute(callFactory, request)) {
             return extractString(response);
         }
         catch (Exception e) {
@@ -211,15 +212,15 @@ public class OkHttpClientHelper {
     }
 
     @NotNull
-    public static Response execute(OkHttpClient client, Request request) throws IOException {
-        return client.newCall(request).execute();
+    public static Response execute(Call.Factory callFactory, Request request) throws IOException {
+        return callFactory.newCall(request).execute();
     }
 
 
     @Contract("_,_,false->!null")
-    public static Response execute(OkHttpClient client, Request request, boolean nullWhenThrow) {
+    public static Response execute(Call.Factory callFactory, Request request, boolean nullWhenThrow) {
         try {
-            return execute(client, request);
+            return execute(callFactory, request);
         }
         catch (IOException e) {
             if (nullWhenThrow) {
@@ -232,8 +233,8 @@ public class OkHttpClientHelper {
     }
 
     @Nullable
-    public static <T> T execute(OkHttpClient client, Request request, BiFunction<Response, IOException, T> fun) {
-        try (final Response res = execute(client, request)) {
+    public static <T> T execute(Call.Factory callFactory, Request request, BiFunction<Response, IOException, T> fun) {
+        try (final Response res = execute(callFactory, request)) {
             return fun.apply(res, null);
         }
         catch (IOException e) {
@@ -242,19 +243,19 @@ public class OkHttpClientHelper {
     }
 
     @NotNull
-    public static Response execute(OkHttpClient client, Request.Builder builder) throws IOException {
-        if (client instanceof OkHttpBuildableClient) {
-            return ((OkHttpBuildableClient) client).newCall(builder).execute();
+    public static Response execute(Call.Factory callFactory, Request.Builder builder) throws IOException {
+        if (callFactory instanceof OkHttpBuildableClient) {
+            return ((OkHttpBuildableClient) callFactory).newCall(builder).execute();
         }
         else {
-            return client.newCall(builder.build()).execute();
+            return callFactory.newCall(builder.build()).execute();
         }
     }
 
     @Contract("_,_,false->!null")
-    public static Response execute(OkHttpClient client, Request.Builder builder, boolean nullWhenThrow) {
+    public static Response execute(Call.Factory callFactory, Request.Builder builder, boolean nullWhenThrow) {
         try {
-            return execute(client, builder);
+            return execute(callFactory, builder);
         }
         catch (IOException e) {
             if (nullWhenThrow) {
@@ -267,8 +268,8 @@ public class OkHttpClientHelper {
     }
 
     @Nullable
-    public static <T> T execute(OkHttpClient client, Request.Builder builder, BiFunction<Response, IOException, T> fun) {
-        try (final Response res = execute(client, builder)) {
+    public static <T> T execute(Call.Factory callFactory, Request.Builder builder, BiFunction<Response, IOException, T> fun) {
+        try (final Response res = execute(callFactory, builder)) {
             return fun.apply(res, null);
         }
         catch (IOException e) {

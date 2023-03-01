@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.security.bind;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.io.Serial;
 import java.util.Collection;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Collection;
  */
 public class WingsBindAuthToken extends UsernamePasswordAuthenticationToken {
 
-    private static final long serialVersionUID = 1023L;
+    @Serial private static final long serialVersionUID = 1023L;
 
     private final Enum<?> authType;
 

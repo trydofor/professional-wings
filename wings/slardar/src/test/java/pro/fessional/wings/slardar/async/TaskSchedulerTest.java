@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import pro.fessional.wings.slardar.context.TerminalContext;
 
+import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -46,14 +47,14 @@ public class TaskSchedulerTest {
         Thread.sleep(500);
         // 若非TtlThreadPoolTaskScheduler设置，却用了ttlExecutor，
         // 则仅一个线程能会TTL成功，其会失败，
-        final ScheduledFuture<?> task1 = threadPoolTaskScheduler.scheduleWithFixedDelay(() -> delayUid("TaskSchedulerTest Default", userId, cnt1, eqs1), 1_000);
+        final ScheduledFuture<?> task1 = threadPoolTaskScheduler.scheduleWithFixedDelay(() -> delayUid("TaskSchedulerTest Default", userId, cnt1, eqs1), Duration.ofMillis(1_000));
         Thread.sleep(5_000);
         task1.cancel(false);
         Assertions.assertEquals(cnt1.get(), eqs1.get(), "userid not equals, see log");
         cnt1.set(0);
         eqs1.set(0);
         Thread.sleep(500);
-        final ScheduledFuture<?> task2 = threadPoolTaskScheduler.scheduleWithFixedDelay(TtlRunnable.get(() -> delayUid("TaskSchedulerTest TtlRun", userId, cnt1, eqs1), false, true), 1_000);
+        final ScheduledFuture<?> task2 = threadPoolTaskScheduler.scheduleWithFixedDelay(TtlRunnable.get(() -> delayUid("TaskSchedulerTest TtlRun", userId, cnt1, eqs1), false, true), Duration.ofMillis(1_000));
         Thread.sleep(5_000);
         task2.cancel(false);
         Assertions.assertEquals(cnt1.get(), eqs1.get(), "userid not equals, see log");

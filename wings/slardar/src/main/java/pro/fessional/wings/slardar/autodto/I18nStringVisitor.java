@@ -39,8 +39,7 @@ public class I18nStringVisitor extends BeanVisitor.ContainerVisitor {
         if (obj instanceof String) {
             return messageSource.getMessage((String) obj, Null.Objects, localeSupplier.get());
         }
-        if (obj instanceof I18nString) {
-            final I18nString s = (I18nString) obj;
+        if (obj instanceof final I18nString s) {
             final String n = messageSource.getMessage(s.getI18nCode(), s.getI18nArgs(), localeSupplier.get());
             s.setI18n(n);
             return s;

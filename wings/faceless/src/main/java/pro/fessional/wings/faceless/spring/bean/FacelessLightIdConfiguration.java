@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -14,12 +15,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.mirana.id.LightIdBufferedProvider;
 import pro.fessional.mirana.id.LightIdProvider;
 import pro.fessional.mirana.id.LightIdUtil;
+import pro.fessional.wings.spring.consts.OrderedFacelessConst;
 import pro.fessional.wings.faceless.database.manual.single.modify.lightsequence.LightSequenceModify;
 import pro.fessional.wings.faceless.database.manual.single.modify.lightsequence.impl.LightSequenceModifyJdbc;
 import pro.fessional.wings.faceless.database.manual.single.select.lightsequence.LightSequenceSelect;
 import pro.fessional.wings.faceless.database.manual.single.select.lightsequence.impl.LightSequenceSelectJdbc;
-import pro.fessional.wings.faceless.service.flakeid.FlakeIdService;
-import pro.fessional.wings.faceless.service.flakeid.impl.FlakeIdLightIdImpl;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.faceless.service.lightid.impl.DefaultBlockIdProvider;
@@ -37,6 +37,7 @@ import pro.fessional.wings.faceless.spring.prop.LightIdProviderProp;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = FacelessEnabledProp.Key$lightid, havingValue = "true")
+@AutoConfigureOrder(OrderedFacelessConst.LightIdConfiguration)
 public class FacelessLightIdConfiguration {
 
     private static final Log log = LogFactory.getLog(FacelessLightIdConfiguration.class);
@@ -111,13 +112,6 @@ public class FacelessLightIdConfiguration {
                                          BlockIdProvider blockIdProvider) {
         log.info("Faceless spring-bean lightIdService");
         return new LightIdServiceImpl(lightIdProvider, blockIdProvider);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(FlakeIdService.class)
-    public FlakeIdService flakeIdService(LightIdService lightIdService) {
-        log.info("Faceless spring-bean flakeIdService");
-        return new FlakeIdLightIdImpl(lightIdService);
     }
 
     @Autowired

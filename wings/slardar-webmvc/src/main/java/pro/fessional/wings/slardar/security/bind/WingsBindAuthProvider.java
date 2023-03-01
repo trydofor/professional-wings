@@ -84,9 +84,7 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
         try {
             final UserDetails userDetails;
 
-            if (userDetailsService instanceof WingsUserDetailsService && authentication instanceof WingsBindAuthToken) {
-                WingsUserDetailsService winUds = (WingsUserDetailsService) userDetailsService;
-                WingsBindAuthToken winTkn = (WingsBindAuthToken) authentication;
+            if (userDetailsService instanceof WingsUserDetailsService winUds && authentication instanceof WingsBindAuthToken winTkn) {
                 userDetails = buildUserDetails(username, winUds, winTkn);
             }
             else {

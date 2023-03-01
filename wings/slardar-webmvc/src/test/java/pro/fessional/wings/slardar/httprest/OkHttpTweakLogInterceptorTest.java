@@ -2,7 +2,7 @@ package pro.fessional.wings.slardar.httprest;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
+import okhttp3.Call;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.logging.LogLevel;
@@ -20,7 +20,7 @@ import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 class OkHttpTweakLogInterceptorTest {
 
     @Setter(onMethod_ = {@Autowired})
-    private OkHttpClient okHttpClient;
+    private Call.Factory okHttpClient;
 
     @Test
     void intercept() {

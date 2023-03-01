@@ -4,25 +4,27 @@ import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
 import pro.fessional.wings.slardar.autodto.AutoDtoHelper;
 import pro.fessional.wings.slardar.autodto.AutoZoneVisitor;
 import pro.fessional.wings.slardar.autodto.I18nStringVisitor;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 /**
  * @author trydofor
- * @link https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#howto-customize-the-jackson-objectmapper
+ * @link <a href="https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/#howto.spring-mvc.customize-jackson-objectmapper">Customize the Jackson ObjectMapper</a>
  * @see InstantDeserializer#ZONED_DATE_TIME
  * @since 2019-06-26
  */
 @Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
+@AutoConfigureOrder(OrderedSlardarConst.I18nConfiguration)
 public class SlardarI18nConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarI18nConfiguration.class);
@@ -36,9 +38,9 @@ public class SlardarI18nConfiguration {
     }
 
     @Bean
-    public CommandLineRunnerOrdered runnerAutoDtoHelper(MessageSource messageSource) {
+    public ApplicationStartedEventRunner runnerAutoDtoHelper(MessageSource messageSource) {
         log.info("Slardar spring-runs runnerAutoDtoHelper");
-        return new CommandLineRunnerOrdered(SlardarOrderConst.RunnerAutoDtoHelper, arg -> new AutoDtoHelper() {{
+        return new ApplicationStartedEventRunner(OrderedSlardarConst.RunnerAutoDtoHelper, ignored -> new AutoDtoHelper() {{
             final I18nStringVisitor i18nStringVisitor = new I18nStringVisitor(messageSource, LocaleZoneIdUtil.LocaleNonnull);
 
             RequestVisitor.add(AutoDtoHelper.AutoDtoVisitor);

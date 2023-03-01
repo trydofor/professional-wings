@@ -13,16 +13,16 @@
     <packaging>jar</packaging>
 
     <name>Radiant::Tiny::Task</name>
-    <description>小小的任务模块</description>
+    <description>Tiny Task component</description>
 
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-jooq</artifactId>
+            <artifactId>slardar</artifactId>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>slardar</artifactId>
+            <artifactId>tiny-autogen</artifactId>
         </dependency>
         <dependency>
             <!-- controller-->
@@ -30,15 +30,15 @@
             <artifactId>slardar-webmvc</artifactId>
             <optional>true</optional>
         </dependency>
-        <!-- 代码生成与版本检查 -->
+        <!-- version check and code gen -->
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-flywave</artifactId>
-            <optional>true</optional>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-jooqgen</artifactId>
+            <artifactId>faceless-codegen</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

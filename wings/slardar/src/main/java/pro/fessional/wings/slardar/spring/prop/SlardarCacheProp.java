@@ -29,20 +29,26 @@ public class SlardarCacheProp {
     public static final String Key$primary = Key + ".primary";
 
     /**
-     * 如何统一处理对null的缓存。weak:以Weak引用缓存; skip:不缓存null；其他值则不统一处理
+     * 是否对cache name的进行Resolve扩展，即追加所在类
      *
-     * @see #Key$nulls
+     * @see #Key$expand
      */
-    private String nulls = "weak";
-    public static final String Key$nulls = Key + ".nulls";
+    private boolean expand = true;
+    public static final String Key$expand = Key + ".expand";
 
-    public boolean isNullWeak() {
-        return "weak".equalsIgnoreCase(nulls);
-    }
+    /**
+     * 原则上不缓存null，但可对null统一处理。正数:缓存大小；0:不缓存null；负数:不统一处理
+     *
+     * @see #Key$nullSize
+     */
+    private int nullSize = 1000;
+    public static final String Key$nullSize = Key + ".null-size";
 
-    public boolean isNullSkip() {
-        return "skip".equalsIgnoreCase(nulls);
-    }
+    /**
+     * @see #Key$nullLive
+     */
+    private int nullLive = 300;
+    public static final String Key$nullLive = Key + ".null-live";
 
     /**
      * level之外的默认配置
@@ -77,10 +83,6 @@ public class SlardarCacheProp {
     }
 
     // /////////////////
-
-    public static int maxInt(int max) {
-        return max <= 0 ? Integer.MAX_VALUE : max;
-    }
 
     public static String wildcard(String level) {
         return WingsCache.Level.join(level, "*");

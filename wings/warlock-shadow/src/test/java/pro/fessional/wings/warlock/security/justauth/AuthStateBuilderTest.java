@@ -1,10 +1,10 @@
 package pro.fessional.wings.warlock.security.justauth;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pro.fessional.mirana.data.Null;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

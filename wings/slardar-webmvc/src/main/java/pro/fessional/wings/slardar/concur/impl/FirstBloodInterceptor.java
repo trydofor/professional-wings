@@ -1,17 +1,17 @@
 package pro.fessional.wings.slardar.concur.impl;
 
-import com.github.benmanes.caffeine.cache.Cache;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.Setter;
+import org.cache2k.Cache;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.method.HandlerMethod;
 import pro.fessional.wings.slardar.concur.FirstBlood;
 import pro.fessional.wings.slardar.concur.ProgressContext;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class FirstBloodInterceptor implements AutoRegisterInterceptor {
     private final List<FirstBloodHandler> handlers;
 
     @Getter @Setter
-    private int order = SlardarOrderConst.MvcFirstBloodInterceptor;
+    private int order = OrderedSlardarConst.MvcFirstBloodInterceptor;
 
     public FirstBloodInterceptor(List<FirstBloodHandler> handlers) {
         this.handlers = handlers;
@@ -35,11 +35,10 @@ public class FirstBloodInterceptor implements AutoRegisterInterceptor {
                              @NotNull HttpServletResponse response,
                              @NotNull Object handler) {
 
-        if (!(handler instanceof HandlerMethod) || handlers == null || handlers.isEmpty()) {
+        if (!(handler instanceof final HandlerMethod handlerMethod) || handlers == null || handlers.isEmpty()) {
             return true;
         }
 
-        final HandlerMethod handlerMethod = (HandlerMethod) handler;
         final Method method = handlerMethod.getMethod();
         final FirstBlood anno = method.getAnnotation(FirstBlood.class);
 

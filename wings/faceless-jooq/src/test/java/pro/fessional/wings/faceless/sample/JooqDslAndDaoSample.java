@@ -46,7 +46,6 @@ import static pro.fessional.wings.faceless.service.journal.JournalService.Journa
 
 @SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
 @TestMethodOrder(MethodOrderer.MethodName.class)
-//@Disabled("手动执行，以有JooqShardingTest覆盖测试 ")
 @Slf4j
 public class JooqDslAndDaoSample {
 
@@ -159,7 +158,7 @@ public class JooqDslAndDaoSample {
         testcaseNotice("逻辑删除");
         val c1 = dao.count();
         log.info("count1={}", c1);
-        val c2 = dao.count(it -> it.onlyDiedData);
+        val c2 = dao.count(it -> it.getOnlyDied());
         log.info("count2={}", c2);
     }
 
@@ -251,9 +250,7 @@ public class JooqDslAndDaoSample {
         po.setLanguage(ZH_CN);
 
         final SelectConditionStep<Tst中文也分表Record> query = dsl.selectFrom(t).where(t.Id.eq(id));
-        final JournalDiff d0 = JournalDiffHelper.diffInsert(t, query, () -> {
-            dao.insert(po);
-        });
+        final JournalDiff d0 = JournalDiffHelper.diffInsert(t, query, () -> dao.insert(po));
         log.warn("diffInsert0={}", d0);
         Assertions.assertNotNull(d0);
         Assertions.assertEquals(1, d0.getCount());
@@ -263,14 +260,13 @@ public class JooqDslAndDaoSample {
         Assertions.assertTrue(d0.getValue1().isEmpty());
         Assertions.assertEquals(Arrays.asList(id, now, DATE_TIME, DATE_TIME, id, "login by diff insert", "other by diff insert", ZH_CN), d0.getValue2());
 
-        final JournalDiff d2 = JournalDiffHelper.diffUpdate(t, query, () -> {
-            dsl.update(t)
-               .set(t.CommitId, t.CommitId.add(1))
-               .set(t.LoginInfo, "login by diff update")
-               .set(t.ModifyDt, now)
-               .where(t.Id.eq(id))
-               .execute();
-        });
+        final JournalDiff d2 = JournalDiffHelper.diffUpdate(t, query, () ->
+                dsl.update(t)
+                   .set(t.CommitId, t.CommitId.add(1))
+                   .set(t.LoginInfo, "login by diff update")
+                   .set(t.ModifyDt, now)
+                   .where(t.Id.eq(id))
+                   .execute());
         log.warn("diffUpdate2={}", d2);
         Assertions.assertNotNull(d2);
         Assertions.assertEquals(1, d2.getCount());
@@ -284,9 +280,7 @@ public class JooqDslAndDaoSample {
         Assertions.assertEquals(List.of("login by diff update"), d2.getValue2());
 
 
-        final JournalDiff d3 = JournalDiffHelper.diffDelete(t, query, () -> {
-            dsl.delete(t).where(t.Id.ge(id));
-        });
+        final JournalDiff d3 = JournalDiffHelper.diffDelete(t, query, () -> dsl.delete(t).where(t.Id.ge(id)));
         log.warn("diffDelete3={}", d3);
         JournalDiffHelper.tidy(d3, t.Language); // 默认withDefault
         Assertions.assertNotNull(d3);

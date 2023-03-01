@@ -1,8 +1,7 @@
 package pro.fessional.wings.slardar.security;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.jetbrains.annotations.NotNull;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author trydofor

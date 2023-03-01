@@ -51,11 +51,7 @@ public class WingsTestHelper {
     public void cleanTable() {
         /*
          DROP DATABASE IF EXISTS wings;
-         DROP DATABASE IF EXISTS wings_0;
-         DROP DATABASE IF EXISTS wings_1;
          CREATE DATABASE `wings` DEFAULT CHARACTER SET utf8mb4;
-         CREATE DATABASE `wings_0` DEFAULT CHARACTER SET utf8mb4;
-         CREATE DATABASE `wings_1` DEFAULT CHARACTER SET utf8mb4;
          */
         dataSourceContext.getPlains().forEach((k, v) -> {
             testcaseNotice("clean database " + k);
@@ -70,7 +66,7 @@ public class WingsTestHelper {
 
     public enum Type {
         Table("SHOW TABLES"),
-        Trigger("SELECT TRIGGER_NAME FROM INFORMATION_SCHEMA.TRIGGERS WHERE EVENT_OBJECT_SCHEMA = database()"),
+        Trigger("SELECT TRIGGER_NAME FROM INFORMATION_SCHEMA.TRIGGERS WHERE EVENT_OBJECT_SCHEMA = SCHEMA()"),
         ;
         private final String sql;
 
@@ -136,7 +132,7 @@ public class WingsTestHelper {
                         Collectors.toMap(
                                 Map.Entry::getKey,
                                 e -> new HashSet<>(new JdbcTemplate(e.getValue())
-                                        .query(sql, (rs, i) -> rs.getString(1).toLowerCase())
+                                        .query(sql, (rs, ignored) -> rs.getString(1).toLowerCase())
                                 )
                         )
                 );

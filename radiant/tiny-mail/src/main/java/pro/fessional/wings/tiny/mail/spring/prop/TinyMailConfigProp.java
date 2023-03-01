@@ -30,6 +30,8 @@ public class TinyMailConfigProp extends LinkedHashMap<String, TinyMailConfig> im
     @Getter
     private TinyMailConfig Default;
 
+    public static final String Key$default = Key + "." + KeyDefault;
+
     @Override
     public void afterPropertiesSet() {
         Default = get(KeyDefault);
@@ -48,7 +50,13 @@ public class TinyMailConfigProp extends LinkedHashMap<String, TinyMailConfig> im
         Default.getProperties().putAll(springMail.getProperties());
 
         for (Map.Entry<String, TinyMailConfig> en : entrySet()) {
-            en.getValue().setName(en.getKey());
+            final String key = en.getKey();
+            final TinyMailConfig tmc = en.getValue();
+            final String tmn = tmc.getName();
+            if (tmn != null && !tmn.isEmpty() && !tmn.equals(key)) {
+                throw new IllegalStateException("use 'key' as name in static config, remove " + key + ".name=" + tmn);
+            }
+            tmc.setName(key);
         }
     }
 }

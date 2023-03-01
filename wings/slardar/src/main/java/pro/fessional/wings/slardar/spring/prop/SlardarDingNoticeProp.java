@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import pro.fessional.wings.slardar.notice.DingTalkNotice.Conf;
+import pro.fessional.wings.slardar.notice.DingTalkConf;
 
 import java.util.LinkedHashMap;
 
@@ -16,10 +16,11 @@ import java.util.LinkedHashMap;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ConfigurationProperties(SlardarDingNoticeProp.Key)
-public class SlardarDingNoticeProp extends LinkedHashMap<String, Conf> implements InitializingBean {
+public class SlardarDingNoticeProp extends LinkedHashMap<String, DingTalkConf> implements InitializingBean {
 
     public static final String Key = "wings.slardar.ding-notice";
 
+    public static final String KeyDefault = "default";
 
     /**
      * 默认属性
@@ -27,12 +28,12 @@ public class SlardarDingNoticeProp extends LinkedHashMap<String, Conf> implement
      * @see #Key$default
      */
     @Getter
-    private Conf Default;
-    public static final String Key$default = Key + ".default";
+    private DingTalkConf Default;
+    public static final String Key$default = Key + "." + KeyDefault;
 
     @Override
     public void afterPropertiesSet() {
-        Default = get("default");
+        Default = get(KeyDefault);
         if (Default == null) {
             throw new IllegalStateException("must have 'default' define");
         }

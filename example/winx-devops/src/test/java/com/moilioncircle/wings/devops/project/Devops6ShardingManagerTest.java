@@ -20,7 +20,7 @@ import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
         "spring.datasource.password=" + Devops0ProjectConstant.JDBC_PASS,
         "debug = true"
 })
-@Disabled("手动执行，版本更新时处理")
+@Disabled("分表分库")
 public class Devops6ShardingManagerTest {
 
     @Setter(onMethod_ = {@Autowired})

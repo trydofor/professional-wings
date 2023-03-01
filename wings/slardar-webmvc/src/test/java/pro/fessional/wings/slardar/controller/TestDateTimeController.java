@@ -41,31 +41,31 @@ public class TestDateTimeController {
 
     @Data
     public static class Ldt {
-        @javax.validation.constraints.NotNull
+        @jakarta.validation.constraints.NotNull
         private LocalDateTime ldt;
     }
 
     @Data
     public static class Zdt {
-        @javax.validation.constraints.NotNull
+        @jakarta.validation.constraints.NotNull
         private ZonedDateTime zdt;
     }
 
     @Data
     public static class Odt {
-        @javax.validation.constraints.NotNull
+        @jakarta.validation.constraints.NotNull
         private OffsetDateTime odt;
     }
 
     @Data
     public static class Ld {
-        @javax.validation.constraints.NotNull
+        @jakarta.validation.constraints.NotNull
         private LocalDate ld;
     }
 
     @Data
     public static class Lt {
-        @javax.validation.constraints.NotNull
+        @jakarta.validation.constraints.NotNull
         private LocalTime lt;
     }
 
@@ -171,7 +171,7 @@ public class TestDateTimeController {
 
     @Data
     public static class Ldx {
-        @javax.validation.constraints.NotNull
+        @jakarta.validation.constraints.NotNull
         @AutoTimeZone(Auto)
         private LocalDateTime ldt;
     }

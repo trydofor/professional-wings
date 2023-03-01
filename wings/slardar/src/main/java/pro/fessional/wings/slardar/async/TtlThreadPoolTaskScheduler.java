@@ -67,12 +67,14 @@ public class TtlThreadPoolTaskScheduler extends ThreadPoolTaskScheduler {
 
     @Override
     @NotNull
+    @Deprecated
     public ListenableFuture<?> submitListenable(@NotNull Runnable task) {
         return super.submitListenable(TtlRunnable.get(task, releaseTtlValueReferenceAfterRun, idempotent));
     }
 
     @Override
     @NotNull
+    @Deprecated
     public <T> ListenableFuture<T> submitListenable(@NotNull Callable<T> task) {
         return super.submitListenable(TtlCallable.get(task, releaseTtlValueReferenceAfterRun, idempotent));
     }
@@ -84,32 +86,37 @@ public class TtlThreadPoolTaskScheduler extends ThreadPoolTaskScheduler {
 
     @Override
     @NotNull
+    @Deprecated
     public ScheduledFuture<?> schedule(@NotNull Runnable task, @NotNull Date startTime) {
-        return super.schedule(TtlRunnable.get(task, releaseTtlValueReferenceAfterRun, idempotent), startTime);
+        return schedule(task, startTime.toInstant());
     }
 
     @Override
     @NotNull
+    @Deprecated
     public ScheduledFuture<?> scheduleAtFixedRate(@NotNull Runnable task, @NotNull Date startTime, long period) {
-        return super.scheduleAtFixedRate(TtlRunnable.get(task, releaseTtlValueReferenceAfterRun, idempotent), startTime, period);
+        return scheduleAtFixedRate(task, startTime.toInstant(), Duration.ofMillis(period));
     }
 
     @Override
     @NotNull
+    @Deprecated
     public ScheduledFuture<?> scheduleAtFixedRate(@NotNull Runnable task, long period) {
-        return super.scheduleAtFixedRate(TtlRunnable.get(task, releaseTtlValueReferenceAfterRun, idempotent), period);
+        return scheduleAtFixedRate(task, Duration.ofMillis(period));
     }
 
     @Override
     @NotNull
+    @Deprecated
     public ScheduledFuture<?> scheduleWithFixedDelay(@NotNull Runnable task, @NotNull Date startTime, long delay) {
-        return super.scheduleWithFixedDelay(TtlRunnable.get(task, releaseTtlValueReferenceAfterRun, idempotent), startTime, delay);
+        return scheduleWithFixedDelay(task, startTime.toInstant(), Duration.ofMillis(delay));
     }
 
     @Override
     @NotNull
+    @Deprecated
     public ScheduledFuture<?> scheduleWithFixedDelay(@NotNull Runnable task, long delay) {
-        return super.scheduleWithFixedDelay(TtlRunnable.get(task, releaseTtlValueReferenceAfterRun, idempotent), delay);
+        return scheduleWithFixedDelay(task, Duration.ofMillis(delay));
     }
 
     @Override

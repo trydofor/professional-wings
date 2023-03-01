@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless.database.jooq;
 
 import com.google.common.collect.Lists;
+import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +34,7 @@ import pro.fessional.mirana.cast.TypedCastUtil;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.U;
 import pro.fessional.mirana.pain.IORuntimeException;
+import pro.fessional.wings.faceless.database.helper.DatabaseChecker;
 import pro.fessional.wings.faceless.database.jooq.helper.JournalDiffHelper;
 import pro.fessional.wings.faceless.service.journal.JournalDiff;
 
@@ -74,7 +76,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
 
     protected final T table;
     protected final Field<?>[] pkeys;
-    protected volatile int tableExist = -1; // -1:未检出 | 0:不存：1:存在
+    protected volatile int tableExist = -1;
 
     protected WingsJooqDaoAliasImpl(T table, Class<P> type) {
         this(table, type, null);
@@ -87,16 +89,16 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * -1:未检出 | 0:不存：1:存在
+     * -1:未检查 | 0:不存：1:存在
      *
      * @param type -1|0|1
      */
-    public void setTableExist(int type) {
+    public void setTableExist(@MagicConstant(intValues = {-1, 0, 1}) int type) {
         tableExist = type;
     }
 
     /**
-     * 默认以select count(*) from table where 1 = 0检查数据库中是否存在此表
+     * 以 SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME=? AND TABLE_SCHEMA=SCHEMA() 检查数据库中是否存在此表
      *
      * @return 存在与否
      */
@@ -105,11 +107,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
             synchronized (this) {
                 if (tableExist < 0) {
                     try {
-                        ctx().selectCount()
-                             .from(table)
-                             .where(DSL.falseCondition())
-                             .execute();
-                        tableExist = 1;
+                        ctx().connection(conn -> tableExist = DatabaseChecker.existTable(conn, table.getName()) ? 1 : 0);
                     }
                     catch (Exception e) {
                         tableExist = 0;
@@ -276,8 +274,8 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
         final DSLContext dsl = ctx();
         final R record = dsl.newRecord(table, pojo);
         final int rc;
-        final @NotNull Field<?>[] fields = table.fields();
-        final @NotNull Object[] values = record.intoArray();
+        final Field<?>[] fields = table.fields();
+        final Object[] values = record.intoArray();
         if (ignoreOrReplace) {
             // insert ignore
             rc = dsl.insertInto(table)
@@ -432,9 +430,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     private final BiPredicate<Object, Object> caseIgnore = (o1, o2) -> {
-        if (o1 instanceof String && o2 instanceof String) {
-            String s1 = (String) o1;
-            String s2 = (String) o2;
+        if (o1 instanceof String s1 && o2 instanceof String s2) {
             return s1.equalsIgnoreCase(s2);
         }
         else {

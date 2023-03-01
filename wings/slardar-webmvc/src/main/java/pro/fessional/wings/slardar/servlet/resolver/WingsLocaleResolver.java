@@ -1,5 +1,8 @@
 package pro.fessional.wings.slardar.servlet.resolver;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.i18n.LocaleContext;
@@ -13,9 +16,6 @@ import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneId;
 import java.util.Collection;
 import java.util.LinkedHashSet;

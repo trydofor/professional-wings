@@ -1,10 +1,10 @@
 package pro.fessional.wings.slardar.servlet.response.view;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 
 import static pro.fessional.wings.slardar.servlet.response.ResponseHelper.getDownloadContentType;

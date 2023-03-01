@@ -12,7 +12,8 @@ import org.jooq.Param;
 import org.jooq.QueryPart;
 import org.jooq.TableField;
 import org.jooq.VisitContext;
-import org.jooq.impl.DefaultVisitListener;
+import org.jooq.VisitListener;
+import org.jooq.impl.QOM;
 import org.jooq.impl.TableImpl;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler;
@@ -38,8 +39,9 @@ import static pro.fessional.wings.faceless.database.WingsTableCudHandler.Cud;
  * @author trydofor
  * @since 2021-01-14
  */
+@SuppressWarnings("removal")
 @Slf4j
-public class TableCudListener extends DefaultVisitListener {
+public class TableCudListener implements VisitListener {
 
     public static boolean WarnVisit = false;
 
@@ -69,7 +71,6 @@ public class TableCudListener extends DefaultVisitListener {
     private static final String WHERE_IN = "in";
 
     @Override
-    @SuppressWarnings("deprecation")
     public void clauseStart(VisitContext context) {
         if (WarnVisit) {
             final String clz = scn(context.queryPart());
@@ -116,7 +117,7 @@ public class TableCudListener extends DefaultVisitListener {
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "deprecation"})
+    @SuppressWarnings({"unchecked"})
     public void clauseEnd(VisitContext context) {
 
         if (WarnVisit) {
@@ -201,7 +202,6 @@ public class TableCudListener extends DefaultVisitListener {
         }
     }
 
-    @SuppressWarnings({"deprecation"})
     private void handleDelete(VisitContext context) {
         final Clause clause = context.clause();
         final QueryPart query = context.queryPart();
@@ -217,7 +217,7 @@ public class TableCudListener extends DefaultVisitListener {
         }
     }
 
-    @SuppressWarnings({"deprecation", "unchecked"})
+    @SuppressWarnings({"unchecked"})
     private void handleUpdate(VisitContext context) {
         final Clause clause = context.clause();
         final QueryPart query = context.queryPart();
@@ -226,7 +226,7 @@ public class TableCudListener extends DefaultVisitListener {
         if (clause == Clause.TABLE_REFERENCE && query instanceof TableImpl) {
             handleTable(context, (TableImpl<?>) query);
         }
-        else if (clause == Clause.UPDATE_SET && query instanceof Map) {
+        else if (clause == Clause.UPDATE_SET && query instanceof final Map<?, ?> updSet) {
             final Set<String> fds = (Set<String>) context.data(ContextKey.EXECUTING_FIELD_KEY);
             if (fds == null) {
                 log.debug("should not be here, update-table without key");
@@ -239,7 +239,6 @@ public class TableCudListener extends DefaultVisitListener {
                 return;
             }
 
-            final Map<?, ?> updSet = (Map<?, ?>) query;
             for (Map.Entry<?, ?> en : updSet.entrySet()) {
                 final Object ky = en.getKey();
                 final Object vl = en.getValue();
@@ -265,7 +264,7 @@ public class TableCudListener extends DefaultVisitListener {
         }
     }
 
-    @SuppressWarnings({"deprecation", "unchecked"})
+    @SuppressWarnings({"unchecked", "UnstableApiUsage"})
     private void handleWhere(VisitContext context, Clause clause, QueryPart query) {
         if (clause == Clause.FIELD_REFERENCE && query instanceof TableField) {
             if (context.data(ContextKey.EXECUTING_WHERE_CMP) == null) {
@@ -288,24 +287,35 @@ public class TableCudListener extends DefaultVisitListener {
                 context.data(ContextKey.EXECUTING_WHERE_KEY, null);
             }
         }
-        // 3.16后使用QOM，3.14为query instanceof Keyword
-        else if ((clause == Clause.CONDITION_COMPARISON || clause == Clause.CONDITION_IN) && query instanceof Keyword) {
-            if (context.data(ContextKey.EXECUTING_WHERE_KEY) == null) {
-                log.debug("skip comparison without where-key or careless");
-                return;
-            }
-
-            final String cmp = query.toString();
-            if (cmp.equals("=") || cmp.equals(">=") || cmp.equals("<=")) {
-                log.debug("handle comparison. key={}", cmp);
+        // 3.14为query instanceof Keyword
+//        else if ((clause == Clause.CONDITION_COMPARISON || clause == Clause.CONDITION_IN) && query instanceof Keyword) {
+//            if (context.data(ContextKey.EXECUTING_WHERE_KEY) == null) {
+//                log.debug("skip comparison without where-key or careless");
+//                return;
+//            }
+//
+//            final String cmp = query.toString();
+//            if (cmp.equals("=") || cmp.equals(">=") || cmp.equals("<=")) {
+//                log.debug("handle comparison. key={}", cmp);
+//                context.data(ContextKey.EXECUTING_WHERE_CMP, WHERE_EQ);
+//            }
+//            else if (cmp.equalsIgnoreCase("in")) {
+//                log.debug("handle comparison. key=in");
+//                context.data(ContextKey.EXECUTING_WHERE_CMP, WHERE_IN);
+//            }
+//            else {
+//                log.debug("skip comparison. key={}", cmp);
+//            }
+//        }
+        // 3.16 使用QOM
+        else if ((clause == Clause.CONDITION_COMPARISON || clause == Clause.CONDITION_IN)) {
+            if (query instanceof QOM.Eq || query instanceof QOM.Ge || query instanceof QOM.Le) {
+                log.debug("handle comparison. key={}", query);
                 context.data(ContextKey.EXECUTING_WHERE_CMP, WHERE_EQ);
             }
-            else if (cmp.equalsIgnoreCase("in")) {
+            else if (query instanceof QOM.In || query instanceof QOM.InList) {
                 log.debug("handle comparison. key=in");
                 context.data(ContextKey.EXECUTING_WHERE_CMP, WHERE_IN);
-            }
-            else {
-                log.debug("skip comparison. key={}", cmp);
             }
         }
         else if (clause == Clause.FIELD_VALUE && query instanceof Param) {
@@ -350,7 +360,7 @@ public class TableCudListener extends DefaultVisitListener {
         }
     }
 
-    @SuppressWarnings({"deprecation", "unchecked"})
+    @SuppressWarnings({"unchecked"})
     private void handleInsert(VisitContext context) {
         final Clause clause = context.clause();
         final QueryPart query = context.queryPart();
@@ -359,14 +369,13 @@ public class TableCudListener extends DefaultVisitListener {
             handleTable(context, (TableImpl<?>) query);
         }
         // QueryPartCollectionView
-        else if (clause == Clause.INSERT_INSERT_INTO && query instanceof Collection) {
+        else if (clause == Clause.INSERT_INSERT_INTO && query instanceof final Collection<?> col) {
             final Set<String> fds = (Set<String>) context.data(ContextKey.EXECUTING_FIELD_KEY);
             if (fds == null) {
                 log.debug("should not be here, insert-table without key");
                 return;
             }
 
-            final Collection<?> col = (Collection<?>) query;
             int cnt = 0;
             final Map<Integer, String> idx = new HashMap<>();
             for (Object o : col) {
@@ -415,26 +424,22 @@ public class TableCudListener extends DefaultVisitListener {
     }
 
     @Nullable
-    private String scn(Object obj) {
+    private String scn(QueryPart obj) {
         if (obj == null) return null;
 
-        if (obj instanceof TableImpl) {
-            TableImpl<?> f = (TableImpl<?>) obj;
+        if (obj instanceof TableImpl<?> f) {
             return obj.getClass().getSimpleName() + ":" + f.getName();
         }
 
-        if (obj instanceof TableField) {
-            TableField<?, ?> f = (TableField<?, ?>) obj;
+        if (obj instanceof TableField<?, ?> f) {
             return obj.getClass().getSimpleName() + ":" + f.getName();
         }
 
-        if (obj instanceof Param) {
-            Param<?> p = (Param<?>) obj;
+        if (obj instanceof Param<?> p) {
             return obj.getClass().getSimpleName() + ":name=" + p.getParamName() + ",value=" + p.getValue();
         }
 
-        if (obj instanceof Keyword) {
-            Keyword k = (Keyword) obj;
+        if (obj instanceof Keyword k) {
             return obj.getClass().getSimpleName() + ":" + k;
         }
 

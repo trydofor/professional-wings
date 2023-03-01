@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Batrider::Test</name>
-    <description>蝙蝠骑士之测试</description>
+    <description>Testing of Servicecomb</description>
 
     <dependencies>
         <dependency>

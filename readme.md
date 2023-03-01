@@ -2,15 +2,17 @@
 
 > WingsBoot(代号神翼)=BKB+飞鞋+SpringBoot，若你也喜欢过Dota，你懂的。  
 > 我们主张防御式编程，May The `false` Be With You !
+> 
+> 中文 🇨🇳 | [English 🇺🇸](readme.en.md)
 
-* [![SpringBoot-2.6](https://img.shields.io/badge/springboot-2.6-green?logo=springboot)](https://spring.io/projects/spring-boot) 框架哲学和约定下的无入侵性增强 🌱 [Apache2]
-* [![Java-11](https://img.shields.io/badge/java-11-gold)](https://adoptium.net/temurin/releases/?version=11) 主要业务语言，OpenJDK长期运行 ☕️ [GPLv2+CE]
-* [![Kotlin-1.6](https://img.shields.io/badge/kotlin-1.6-gold)](https://kotlinlang.org/docs/reference/) 辅助语音，做更好的Java [Apache2]
-* [![Jooq-3.14](https://img.shields.io/badge/jooq-3.14-cyan)](https://www.jooq.org/download/)  主要的强类型SqlMapping 🏅 [Apache2]
-* [![Mysql-8](https://img.shields.io/badge/mysql-8.0-blue)](https://dev.mysql.com/downloads/mysql/) 主要的业务数据库，支持5.7，推荐8体系 💡 [GPLv2]
+* [![SpringBoot-3.0](https://img.shields.io/badge/springboot-3.0-green?logo=springboot)](https://spring.io/projects/spring-boot) 框架哲学和约定下的无入侵性增强 🌱 [Apache2]
+* [![Java-17](https://img.shields.io/badge/java-17-gold)](https://adoptium.net/temurin/releases/?version=11) 主要业务语言，OpenJDK长期运行 ☕️ [GPLv2+CE]
+* [![Kotlin-1.7](https://img.shields.io/badge/kotlin-1.7-gold)](https://kotlinlang.org/docs/reference/) 辅助语言，做更好的Java [Apache2]
+* [![Jooq-3.17](https://img.shields.io/badge/jooq-3.17-cyan)](https://www.jooq.org/download/)  主要的强类型SqlMapping 🏅 [Apache2]
+* [![Mysql-8](https://img.shields.io/badge/mysql-8.0-blue)](https://dev.mysql.com/downloads/mysql/) 主要的业务数据库，推荐8，兼容5.7 💡 [GPLv2]
 * [![H2Database-2.1](https://img.shields.io/badge/h2db-2.1-blue)](https://h2database.com/html/main.html) 单机数据库，以离线及断线业务 [MPL2]或[EPL1]
-* [![Hazelcast-4.2](https://img.shields.io/badge/hazelcast-4.2-violet)](https://hazelcast.org/imdg/) IMDG，分布式缓存，消息，流等 [Apache2]
-* [![ServiceComb-2.8](https://img.shields.io/badge/servicecomb-2.8-violet)](https://servicecomb.apache.org) 更工程化和紧凑的Cloud方案 [Apache2]
+* [![Hazelcast-5.1](https://img.shields.io/badge/hazelcast-5.1-violet)](https://hazelcast.org/imdg/) IMDG，分布式缓存，消息，流等 [Apache2]
+* [![ServiceComb-2.8](https://img.shields.io/badge/servicecomb-2.8-violet)](https://servicecomb.apache.org) 更工程化和紧凑的微服务方案 [Apache2]
 
 [Apache2]: https://www.apache.org/licenses/LICENSE-2.0
 [GPLv2+CE]: https://openjdk.org/legal/gplv2+ce.html
@@ -32,12 +34,12 @@
 git clone --depth 1 https://github.com/\
 trydofor/pro.fessional.wings.git
 # ② 安装依赖，可跳过，支持java8编译
-# sdk use java 8.0.332-zulu
+# sdk use java 8.0.352-tem
 git submodule update --remote --init
 (cd observe/meepo && mvn package install)
 (cd observe/mirana && mvn package install)
-# ③ 安装wings，java-11
-sdk use java 11.0.2-open
+# ③ 安装wings，java-17
+sdk use java 17.0.6-tem
 mvn package install
 ```
 
@@ -48,7 +50,7 @@ mvn package install
 
 代码及文档管理，以github作主站，以gitee作镜像，基本同步推送。
 
-* issues - 任务类，有bug和feature两个模板，可并入discuss
+* issues - 任务类，如bug和feature等，有些会转入discuss
 * discussions - 文档类，交流技术话题，不得讨论政治，宗教。
 * PR及Review - 代码手谈，PR会经过调整后进入gitflow流程
 

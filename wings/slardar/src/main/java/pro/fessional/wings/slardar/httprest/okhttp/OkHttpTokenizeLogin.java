@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.Call;
 import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
@@ -87,7 +87,7 @@ public class OkHttpTokenizeLogin implements OkHttpTokenClient.Tokenize {
 
     @SneakyThrows
     @Override
-    public boolean initToken(@NotNull OkHttpClient client) {
+    public boolean initToken(@NotNull Call.Factory callFactory) {
         final FormBody.Builder builder = buildForm(new FormBody.Builder())
                 .add(keyUsername, username)
                 .add(keyPassword, password);
@@ -99,7 +99,7 @@ public class OkHttpTokenizeLogin implements OkHttpTokenClient.Tokenize {
                 .post(builder.build())
                 .build();
 
-        final Response res = OkHttpClientHelper.execute(client, request, false);
+        final Response res = OkHttpClientHelper.execute(callFactory, request, false);
 
         if (cookieAuto) return true;
 

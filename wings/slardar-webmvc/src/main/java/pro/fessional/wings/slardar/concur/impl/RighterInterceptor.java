@@ -1,5 +1,8 @@
 package pro.fessional.wings.slardar.concur.impl;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -13,19 +16,16 @@ import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.slardar.concur.Righter;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.serialize.KryoSimple;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarRighterProp;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.function.Function;
 
 /**
- * https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-handlermapping-interceptor
+ * <a href="https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-handlermapping-interceptor">Interception</a>
  *
  * @author trydofor
  * @since 2019-11-16
@@ -39,7 +39,7 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
     private final SlardarRighterProp prop;
 
     @Getter @Setter
-    private int order = SlardarOrderConst.MvcRighterInterceptor;
+    private int order = OrderedSlardarConst.MvcRighterInterceptor;
 
     /**
      * 根据 HttpSession 获得用户加密的密码

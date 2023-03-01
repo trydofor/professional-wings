@@ -8,6 +8,7 @@ import java.util.function.Function;
  * @author trydofor
  * @since 2020-07-07
  */
+@SuppressWarnings("CanBeFinal")
 public class FlywaveInteractiveTty {
 
     public static Function<String, Boolean> askYes = it -> true;

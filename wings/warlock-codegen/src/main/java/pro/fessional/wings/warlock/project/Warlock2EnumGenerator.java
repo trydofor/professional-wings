@@ -14,14 +14,14 @@ import java.util.function.Consumer;
 public class Warlock2EnumGenerator extends ProjectEnumGenerator {
 
     public Warlock2EnumGenerator() {
-        targetDir = "./wings-warlock/src/main/java/";
+        targetDir = "../warlock-autogen/src/main/java/";
         targetPkg = "pro.fessional.wings.warlock.enums.autogen";
     }
 
     public static Consumer<Builder> excludeWarlock() {
         return builder -> builder
-                .excludeType("grant_type")
-                .excludeType("user_gender")
-                .excludeType("user_status");
+                .excludeType(warlockEnums);
     }
+
+    public static final String[] warlockEnums = {"grant_type", "user_gender", "user_status"};
 }

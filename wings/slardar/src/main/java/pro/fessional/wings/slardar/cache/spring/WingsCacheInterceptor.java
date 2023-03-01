@@ -12,8 +12,7 @@ public class WingsCacheInterceptor extends CacheInterceptor {
 
     @Override
     protected void doEvict(@NotNull Cache cache, @NotNull Object key, boolean immediate) {
-        if (key instanceof CacheEvictResult) {
-            CacheEvictResult r = (CacheEvictResult) key;
+        if (key instanceof CacheEvictMultiKeys r) {
             if (r.isEvictAll()) {
                 super.doClear(cache, immediate);
             }

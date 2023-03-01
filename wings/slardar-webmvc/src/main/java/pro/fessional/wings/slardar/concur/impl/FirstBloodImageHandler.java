@@ -1,9 +1,12 @@
 package pro.fessional.wings.slardar.concur.impl;
 
-import com.github.benmanes.caffeine.cache.Cache;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.cache2k.Cache;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -13,14 +16,11 @@ import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.concur.FirstBlood;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.servlet.request.RequestHelper;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
@@ -37,7 +37,7 @@ import java.util.function.Supplier;
 @Getter
 public class FirstBloodImageHandler implements FirstBloodHandler {
 
-    private int order = SlardarOrderConst.MvcFirstBloodImageHandler;
+    private int order = OrderedSlardarConst.MvcFirstBloodImageHandler;
 
     private String clientTicketKey = "Client-Ticket";
     private String questCaptchaKey = "quest-captcha-image";
@@ -71,14 +71,13 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
         final Tkn tkn;
         if (uk.isEmpty()) {
             key = new Key(uri, makeClientTicket(request));
-            tkn = (Tkn) cache.get(key, k -> new Tkn(now));
+            tkn = (Tkn) cache.computeIfAbsent(key, k -> new Tkn(now));
             sendClientTicket(response, key.clientCode);
         }
         else {
             key = new Key(uri, uk);
-            tkn = (Tkn) cache.get(key, k -> new Tkn(now));
+            tkn = (Tkn) cache.computeIfAbsent(key, k -> new Tkn(now));
         }
-        assert tkn != null;
 
         // 获取验证图，或验证
         final String ck = getKeyCode(request, questCaptchaKey);

@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.spring.consts.NamingSlardarConst;
 
 import java.time.Instant;
 import java.util.concurrent.ScheduledFuture;
@@ -29,7 +30,7 @@ public class TaskSchedulerHelper {
     }
 
     /**
-     * @see pro.fessional.wings.slardar.constants.SlardarNameConst#SlardarHeavySchedulerBean
+     * @see NamingSlardarConst#slardarHeavyScheduler
      */
     @NotNull
     public static ThreadPoolTaskScheduler Heavy() {

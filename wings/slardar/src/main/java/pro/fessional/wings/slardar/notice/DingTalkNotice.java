@@ -1,12 +1,10 @@
 package pro.fessional.wings.slardar.notice;
 
-import lombok.Data;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
+import okhttp3.Call;
 import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -14,87 +12,111 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import pro.fessional.mirana.best.ArgsAssert;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.JsonTemplate;
 import pro.fessional.mirana.time.ThreadNow;
-import pro.fessional.wings.silencer.encrypt.SecretProvider;
 import pro.fessional.wings.silencer.notice.SmallNotice;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
-import pro.fessional.wings.slardar.jackson.AesString;
+import pro.fessional.wings.slardar.spring.prop.SlardarDingNoticeProp;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.net.URLEncoder;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME;
-import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue;
 
 /**
- * https://open.dingtalk.com/document/robots/custom-robot-access
+ * <a href="https://open.dingtalk.com/document/robots/custom-robot-access">custom-robot-access</a>
  *
  * @author trydofor
  * @since 2022-09-29
  */
 @RequiredArgsConstructor
 @Slf4j
-public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf>, InitializingBean {
+public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBean {
 
     @NotNull
-    private final OkHttpClient okHttpClient;
+    private final Call.Factory callFactory;
     @NotNull
-    private final Conf defaultConfig;
+    private final SlardarDingNoticeProp configProp;
+
+    private final ConcurrentHashMap<String, DingTalkConf> dynamicConfig = new ConcurrentHashMap<>();
 
     @Setter(onMethod_ = {@Autowired(required = false), @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME)})
     private Executor executor;
 
-    @Setter @Getter
-    private Map<String, Conf> configs = Collections.emptyMap();
-
     @Override
     @NotNull
-    public DingTalkNotice.Conf defaultConfig() {
-        return defaultConfig;
+    public DingTalkConf defaultConfig() {
+        return configProp.getDefault();
     }
 
     @Override
-    public DingTalkNotice.Conf combineConfig(@Nullable Conf that) {
-        final Conf conf = new Conf();
-
-        conf.webhookUrl = that == null || notValue(that.webhookUrl) ? defaultConfig.webhookUrl : that.webhookUrl;
-        conf.digestSecret = that == null || notValue(that.digestSecret) ? defaultConfig.digestSecret : that.digestSecret;
-        conf.accessToken = that == null || notValue(that.accessToken) ? defaultConfig.accessToken : that.accessToken;
-        conf.noticeKeyword = that == null || notValue(that.noticeKeyword) ? defaultConfig.noticeKeyword : that.noticeKeyword;
-        conf.noticeMobiles = that == null || that.noticeMobiles == null ? defaultConfig.noticeMobiles : that.noticeMobiles;
-        conf.msgType = that == null || notValue(that.msgType) ? defaultConfig.msgType : that.msgType;
-
-        return conf;
+    public DingTalkConf combineConfig(@Nullable DingTalkConf that) {
+        final DingTalkConf newConf = new DingTalkConf();
+        newConf.adopt(that);
+        newConf.merge(configProp.getDefault());
+        return newConf;
     }
 
     @Override
     @Contract("_,true->!null")
-    public Conf provideConfig(@Nullable String name, boolean combine) {
-        final Conf conf = configs.get(name);
+    public DingTalkConf provideConfig(@Nullable String name, boolean combine) {
+        if (name == null || name.isEmpty()) {
+            return defaultConfig();
+        }
+
+        DingTalkConf conf = dynamicConfig.get(name);
+        if (conf == null) {
+            conf = configProp.get(name);
+        }
+
         if (combine) {
-            return combineConfig(conf == null ? defaultConfig : conf);
+            return combineConfig(conf);
         }
         else {
             return conf;
         }
     }
 
+    /**
+     * dynamic put a config, and its name can not be null
+     *
+     * @param config dynamic config
+     * @param name  config name
+     */
+    public void putMailConfig(@NotNull DingTalkConf config, @NotNull String name) {
+        ArgsAssert.notNull(name, "config.name");
+
+        final DingTalkConf st = configProp.get(name);
+        if (st != null) {
+            config.merge(st);
+        }
+
+        dynamicConfig.put(name, config);
+    }
+
+    /**
+     * delete dynamic config by name
+     *
+     * @param name name
+     */
+    public void delMailConfig(@NotNull String name) {
+        dynamicConfig.remove(name);
+    }
+
     @SneakyThrows
     @Override
-    public boolean send(Conf config, String subject, String content) {
+    public boolean send(DingTalkConf config, String subject, String content) {
         if (subject == null && content == null) return false;
 
         if (config == null) {
-            config = defaultConfig;
+            config = defaultConfig();
         }
 
         /*
@@ -106,7 +128,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf>, Initial
              "text": " \n"
          },"at":{"isAtAll":true}}'
          */
-        final String accessToken = config.accessToken;
+        final String accessToken = config.getAccessToken();
         if (accessToken == null || accessToken.isEmpty()) {
             return false;
         }
@@ -141,13 +163,13 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf>, Initial
         }
 
         log.debug("ding-talk post message, host={}, text={}", host, message);
-        final String s = OkHttpClientHelper.postJson(okHttpClient, host, message);
+        final String s = OkHttpClientHelper.postJson(callFactory, host, message);
         log.debug("ding-talk result={}", s);
         return s.contains("\"errcode\":0,");
     }
 
     @Override
-    public boolean post(Conf config, String subject, String content) {
+    public boolean post(DingTalkConf config, String subject, String content) {
         try {
             return send(config, subject, content);
         }
@@ -158,12 +180,12 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf>, Initial
     }
 
     @Override
-    public void emit(Conf config, String subject, String content) {
+    public void emit(DingTalkConf config, String subject, String content) {
         executor.execute(() -> send(config, subject, content));
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         if (executor == null) {
             log.warn("should reuse autowired thread pool");
             executor = Executors.newSingleThreadExecutor();
@@ -184,7 +206,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf>, Initial
      * }
      * }
      */
-    public String buildText(Conf conf, String subject, String content) {
+    public String buildText(DingTalkConf conf, String subject, String content) {
         if (subject == null) subject = Null.Str;
         if (content == null) content = Null.Str;
         final String message = subject + content;
@@ -196,6 +218,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf>, Initial
     }
 
     /**
+     * <pre>
      * {
      * "msgtype": "markdown",
      * "markdown": {
@@ -203,8 +226,10 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf>, Initial
      * "text": "#### 杭州天气 @150XXXXXXXX \n > 9度，西北风1级，空气良89，相对温度73%\n > ![screenshot](https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png)\n > ###### 10点20分发布 [天气](https://www.dingtalk.com) \n"
      * }
      * }
+     * </pre>
      */
-    public String buildMarkdown(Conf conf, String subject, String content) {
+    @SuppressWarnings("JavadocLinkAsPlainText")
+    public String buildMarkdown(DingTalkConf conf, String subject, String content) {
         return JsonTemplate.obj(t -> t
                 .putVal("msgtype", "markdown")
                 .putObj("markdown", o -> o
@@ -214,7 +239,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf>, Initial
         );
     }
 
-    private String buildContent(Conf conf, String main, String... kws) {
+    private String buildContent(DingTalkConf conf, String main, String... kws) {
         if (main == null) main = Null.Str;
 
         StringBuilder sb = new StringBuilder();
@@ -233,7 +258,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf>, Initial
                 sb.append(kw);
             }
         }
-        for (String mb : conf.getNoticeMobiles()) {
+        for (String mb : conf.getNoticeMobiles().values()) {
             if (!main.contains(mb)) {
                 sb.append(" @").append(mb);
             }
@@ -242,44 +267,13 @@ public class DingTalkNotice implements SmallNotice<DingTalkNotice.Conf>, Initial
         return sb.length() == 0 ? main : main + "\n\n" + sb;
     }
 
-    private void buildNotice(Conf conf, JsonTemplate.Obj obj) {
+    private void buildNotice(DingTalkConf conf, JsonTemplate.Obj obj) {
         if (conf.getNoticeMobiles().isEmpty()) {
             obj.putVal("isAtAll", true);
         }
         else {
-            obj.putArr("atMobiles", conf.getNoticeMobiles());
+            obj.putArr("atMobiles", conf.getNoticeMobiles().values());
         }
     }
 
-    @Data
-    public static class Conf {
-        private String webhookUrl = "";
-
-        /**
-         * 消息签名，空表示不使用
-         */
-        @AesString(SecretProvider.Config)
-        private String digestSecret = "";
-
-        /**
-         * 警报时，使用钉钉通知的access_token，空表示不使用。
-         */
-        @AesString(SecretProvider.Config)
-        private String accessToken = "";
-
-        /**
-         * 自定义关键词：最多可以设置10个关键词，消息中至少包含其中1个关键词才可以发送成功
-         */
-        private String noticeKeyword = "";
-
-        /**
-         * 在text内容里要有@人的手机号，只有在群内的成员才可被@，非群内成员手机号会被脱敏。
-         */
-        private Set<String> noticeMobiles = Collections.emptySet();
-
-        /**
-         * 消息类型，支持 text, markdown
-         */
-        private String msgType = "markdown";
-    }
 }

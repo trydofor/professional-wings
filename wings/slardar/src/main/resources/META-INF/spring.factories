@@ -1,3 +1,0 @@
-#
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  pro.fessional.wings.slardar.spring.boot.WingsAutoConfiguration

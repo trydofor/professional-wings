@@ -13,7 +13,7 @@ import static pro.fessional.wings.warlock.project.Warlock0CodegenConstant.USER;
  * @author trydofor
  * @since 2021-02-22
  */
-@Disabled("手动执行")
+@Disabled("生成代码，已有devs统一管理")
 class Warlock2CodeGeneratorTest {
 
     @Test
@@ -29,7 +29,8 @@ class Warlock2CodeGeneratorTest {
         Warlock3JooqGenerator generator = new Warlock3JooqGenerator();
         generator.setTargetDir(JAVA);
         generator.gen(JDBC, USER, PASS,
-                Warlock3JooqGenerator.includeWarlock(),
+                Warlock3JooqGenerator.includeWarlockBase(false),
+                Warlock3JooqGenerator.includeWarlockBond(true),
                 bd -> bd.setGlobalSuffix("Warlock"));
     }
 

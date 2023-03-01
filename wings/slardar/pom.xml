@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Slardar</name>
-    <description>鱼人守卫：缓存，事件，序列化等基本功能</description>
+    <description>Caching, Event, Serialization/Json and other basic feathers</description>
 
     <dependencies>
         <dependency>
@@ -67,16 +67,13 @@
         </dependency>
         <!-- cache -->
         <dependency>
-            <groupId>javax.cache</groupId>
-            <artifactId>cache-api</artifactId>
+            <groupId>org.cache2k</groupId>
+            <artifactId>cache2k-spring</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>guava</artifactId>
+            <groupId>org.cache2k</groupId>
+            <artifactId>cache2k-jmx</artifactId>
+            <version>${cache2k.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -107,7 +104,7 @@
         <!-- sentry -->
         <dependency>
             <groupId>io.sentry</groupId>
-            <artifactId>sentry-spring-boot-starter</artifactId>
+            <artifactId>sentry-spring-boot-starter-jakarta</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>

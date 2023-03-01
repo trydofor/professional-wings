@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,9 @@ import pro.fessional.wings.slardar.concur.impl.RighterExceptionResolver;
 import pro.fessional.wings.slardar.concur.impl.RighterInterceptor;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarRighterProp;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
+
+import static pro.fessional.wings.spring.consts.NamingSlardarConst.righterExceptionResolver;
 
 /**
  * @author trydofor
@@ -21,6 +25,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarRighterProp;
 @RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$righter, havingValue = "true")
+@AutoConfigureOrder(OrderedSlardarConst.RighterConfiguration)
 public class SlardarRighterConfiguration {
 
     private final static Log log = LogFactory.getLog(SlardarRighterConfiguration.class);
@@ -35,11 +40,11 @@ public class SlardarRighterConfiguration {
         return bean;
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "righterExceptionResolver")
+    @Bean(name = righterExceptionResolver)
+    @ConditionalOnMissingBean(name = righterExceptionResolver)
     @ConditionalOnProperty(name = SlardarEnabledProp.Key$righter, havingValue = "true")
     public HandlerExceptionResolver righterExceptionResolver() {
-        log.info("SlardarWebmvc spring-bean righterExceptionResolver");
+        log.info("SlardarWebmvc spring-bean " + righterExceptionResolver);
         return new RighterExceptionResolver(slardarRighterProp);
     }
 }

@@ -17,7 +17,6 @@ import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Ta
 import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao;
 import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
-import pro.fessional.wings.faceless.spring.prop.FacelessJooqEnabledProp;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
@@ -44,9 +43,6 @@ public class JooqMapperCompatibleTest {
     private SchemaRevisionManager schemaRevisionManager;
 
     @Setter(onMethod_ = {@Autowired})
-    private FacelessJooqEnabledProp facelessJooqEnabledProp;
-
-    @Setter(onMethod_ = {@Autowired})
     private WingsTestHelper wingsTestHelper;
 
     @Setter(onMethod_ = {@Autowired})
@@ -58,6 +54,12 @@ public class JooqMapperCompatibleTest {
         val sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
         schemaRevisionManager.publishRevision(REVISION_TEST_V2, 0);
+    }
+
+    @Test
+    public void test1Exist() {
+        final boolean b = dao.notTableExist();
+        Assertions.assertFalse(b);
     }
 
     // 同名

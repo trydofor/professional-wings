@@ -25,7 +25,7 @@ import java.util.List;
         "spring.datasource.password=" + Devops0ProjectConstant.JDBC_PASS,
         "debug = true"
 })
-@Disabled("手动执行，版本更新时处理")
+@Disabled("日志表管理")
 @Slf4j
 public class Devops5JournalManagerTest {
 

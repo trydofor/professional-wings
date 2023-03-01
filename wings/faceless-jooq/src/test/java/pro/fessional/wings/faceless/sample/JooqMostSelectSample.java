@@ -70,6 +70,7 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 @SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Slf4j
+@SuppressWarnings("NewClassNamingConvention")
 public class JooqMostSelectSample {
 
     @Setter(onMethod_ = {@Autowired})
@@ -114,9 +115,9 @@ public class JooqMostSelectSample {
 
         testcaseNotice("分组Pojo到Map");
         Map<Long, List<Tst中文也分表>> grps = ctx.selectFrom(t)
-                                            .where(c)
-                                            .fetch()
-                                            .intoGroups(t.Id, dao.mapper());
+                                                 .where(c)
+                                                 .fetch()
+                                                 .intoGroups(t.Id, dao.mapper());
 
         testcaseNotice("多个字段到2维数组");
         Object[][] arrs = ctx.select(t.Id, t.LoginInfo)
@@ -268,7 +269,7 @@ public class JooqMostSelectSample {
                                 .fetch()
                                 .into(SameName.class);
 
-        log.info("rc2", rc2);
+        log.info("rc2={}", rc2);
     }
 
     @Test
@@ -281,11 +282,12 @@ public class JooqMostSelectSample {
         bd1.put("idMax", 105L);
         bd1.put("offset", 0);
         bd1.put("count", 10);
-        List<SameName> bv1 = ctx.fetch("SELECT id, login_info\n" +
-                                       "FROM tst_中文也分表\n" +
-                                       "WHERE id >=:idMin AND id <=:idMax\n" +
-                                       "ORDER BY login_info DESC,id\n" +
-                                       "LIMIT :offset, :count",
+        List<SameName> bv1 = ctx.fetch("""
+                                                SELECT id, login_info
+                                                FROM tst_中文也分表
+                                                WHERE id >=:idMin AND id <=:idMax
+                                                ORDER BY login_info DESC,id
+                                                LIMIT :offset, :count""",
                                         WingsJooqUtil.bindNamed(bd1))
                                 .into(SameName.class);
 
@@ -294,11 +296,12 @@ public class JooqMostSelectSample {
         // SELECT id, login_info FROM tst_中文也分表 WHERE id >=4 AND id <=105 ORDER BY login_info DESC,id LIMIT 0, 10
         testcaseNotice("按数组绑定");
         Object[] bd2 = {4L, 105L, 0, 10};
-        List<SameName> bv2 = ctx.fetch("SELECT id, login_info\n" +
-                                       "FROM tst_中文也分表\n" +
-                                       "WHERE id >={0} AND id <={1}\n" +
-                                       "ORDER BY login_info DESC, id\n" +
-                                       "LIMIT {2}, {3}", bd2)
+        List<SameName> bv2 = ctx.fetch("""
+                                        SELECT id, login_info
+                                        FROM tst_中文也分表
+                                        WHERE id >={0} AND id <={1}
+                                        ORDER BY login_info DESC, id
+                                        LIMIT {2}, {3}""", bd2)
                                 .into(SameName.class);
 
         // 按pojo绑定
@@ -310,10 +313,11 @@ public class JooqMostSelectSample {
         testcaseNotice("按pojo绑定, 通过record转一下，必须字段同名");
         Tst中文也分表Record rc = dao.newRecord(bd3);
         rc.from(bd3);
-        List<SameName> bv3 = ctx.fetch("SELECT id, login_info\n" +
-                                       "FROM tst_中文也分表\n" +
-                                       "WHERE id = :id OR login_info=:loginInfo\n" +
-                                       "ORDER BY login_info DESC,id", WingsJooqUtil.bindNamed(rc))
+        List<SameName> bv3 = ctx.fetch("""
+                                        SELECT id, login_info
+                                        FROM tst_中文也分表
+                                        WHERE id = :id OR login_info=:loginInfo
+                                        ORDER BY login_info DESC,id""", WingsJooqUtil.bindNamed(rc))
                                 .into(SameName.class);
 
         log.info("");
@@ -443,58 +447,58 @@ public class JooqMostSelectSample {
                 "select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ? order by `id` asc limit ?");
         PageQuery page = new PageQuery().setSize(5).setPage(1).setSort("d");
         Map<String, Field<?>> order = new HashMap<>();
-        order.put("d", t.Id);
+        order.put("d", t1.Id);
         PageResult<Tst中文也分表> pr1 = PageJooqHelper.use(dao, page)
-                                                 .count()
-                                                 .from(t1)
-                                                 .where(t1.Id.ge(1L))
-                                                 .order(order)
-                                                 .fetch(t1.Id, t1.CommitId)
-                                                 .into(Tst中文也分表.class);
+                                                      .count()
+                                                      .from(t1)
+                                                      .where(t1.Id.ge(1L))
+                                                      .order(order)
+                                                      .fetch(t1.Id, t1.CommitId)
+                                                      .into(Tst中文也分表.class);
 
         PageResult<Tst中文也分表> pr2 = PageJooqHelper.use(dao.ctx(), page)
-                                                 .count()
-                                                 .from(t1)
-                                                 .where(t1.Id.ge(1L))
-                                                 .order(order)
-                                                 .fetch(t1.Id, t1.CommitId)
-                                                 .into(it -> {
-                                                     Tst中文也分表 po = new Tst中文也分表();
-                                                     po.setId(it.get(t1.Id));
-                                                     po.setCommitId(it.get(t1.CommitId));
-                                                     return po;
-                                                 });
+                                                      .count()
+                                                      .from(t1)
+                                                      .where(t1.Id.ge(1L))
+                                                      .order(order)
+                                                      .fetch(t1.Id, t1.CommitId)
+                                                      .into(it -> {
+                                                          Tst中文也分表 po = new Tst中文也分表();
+                                                          po.setId(it.get(t1.Id));
+                                                          po.setCommitId(it.get(t1.CommitId));
+                                                          return po;
+                                                      });
 
         testcaseNotice("使用helperJooq简化",
                 "缓存的total，使页面不执行count操作",
                 "select * from `tst_中文也分表` limit ?");
         PageResult<Tst中文也分表> pr3 = PageJooqHelper.use(dao, page, 10)
-                                                 .count()
-                                                 .from(t)
-                                                 .whereTrue()
-                                                 .orderNone()
-                                                 .fetch()
-                                                 .into(Tst中文也分表.class);
+                                                      .count()
+                                                      .from(t)
+                                                      .whereTrue()
+                                                      .orderNone()
+                                                      .fetch()
+                                                      .into(Tst中文也分表.class);
         //
         testcaseNotice("使用helperJooq包装",
                 "select count(*) as `c` from (select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ?) as `q`",
                 "select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ? order by `id` asc limit ?");
         val qry4 = dsl.select(t1.asterisk()).from(t1).where(t1.Id.ge(1L));
         PageResult<Tst中文也分表> pr4 = PageJooqHelper.use(dao, page)
-                                                 .wrap(qry4, order)
-                                                 .fetch()
-                                                 .into(Tst中文也分表.class);
+                                                      .wrap(qry4, order)
+                                                      .fetch()
+                                                      .into(Tst中文也分表.class);
 
         val qry5 = dsl.select(t1.Id, t1.CommitId).from(t1).where(t1.Id.ge(1L));
         PageResult<Tst中文也分表> pr5 = PageJooqHelper.use(dao, page)
-                                                 .wrap(qry5, order)
-                                                 .fetch()
-                                                 .into(it -> {
-                                                     Tst中文也分表 po = new Tst中文也分表();
-                                                     po.setId(it.get(t1.Id));
-                                                     po.setCommitId(it.get(t1.CommitId));
-                                                     return po;
-                                                 });
+                                                      .wrap(qry5, order)
+                                                      .fetch()
+                                                      .into(it -> {
+                                                          Tst中文也分表 po = new Tst中文也分表();
+                                                          po.setId(it.get(t1.Id));
+                                                          po.setCommitId(it.get(t1.CommitId));
+                                                          return po;
+                                                      });
         /////////////////////
 
         // 包装count
@@ -516,12 +520,12 @@ public class JooqMostSelectSample {
                           .fetchOptionalInto(Integer.class)
                           .orElse(0);
         List<Tst中文也分表> lst1 = dsl.select()
-                                 .from(t)
-                                 .where(t.Id.gt(1L))
-                                 .orderBy(t.Id.asc())
-                                 .limit(0, 10)
-                                 .fetch()
-                                 .into(Tst中文也分表.class);
+                                      .from(t)
+                                      .where(t.Id.gt(1L))
+                                      .orderBy(t.Id.asc())
+                                      .limit(0, 10)
+                                      .fetch()
+                                      .into(Tst中文也分表.class);
         log.info("cnt1={}", cnt1);
         log.info("lst1={}", lst1.size());
 
@@ -558,10 +562,10 @@ public class JooqMostSelectSample {
         Map<String, String> order = new HashMap<>();
         order.put("d", "t1.Id");
         PageResult<Tst中文也分表> pr1 = PageJooqHelper.use(jdbcTemplate, page)
-                                                 .wrap("select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ?")
-                                                 .order(order)
-                                                 .bind(1L)
-                                                 .fetchInto(Tst中文也分表.class, WingsEnumConverters.Id2Language);
+                                                      .wrap("select `t1`.* from `tst_中文也分表` as `t1` where `t1`.`id` >= ?")
+                                                      .order(order)
+                                                      .bind(1L)
+                                                      .fetchInto(Tst中文也分表.class, WingsEnumConverters.Id2Language);
 
         log.info("pr1={}", pr1.getData().size());
 
@@ -570,12 +574,12 @@ public class JooqMostSelectSample {
                 "SELECT id,login_info,other_info from `tst_中文也分表` where id >= ? order by id limit 5");
 
         PageResult<Tst中文也分表> pr2 = PageJooqHelper.use(jdbcTemplate, page)
-                                                 .count("count(*)")
-                                                 .fromWhere("from `tst_中文也分表` where id >= ?")
-                                                 .order("id")
-                                                 .bind(1L)
-                                                 .fetch("id,login_info,other_info")
-                                                 .into(Tst中文也分表.class, WingsEnumConverters.Id2Language);
+                                                      .count("count(*)")
+                                                      .fromWhere("from `tst_中文也分表` where id >= ?")
+                                                      .order("id")
+                                                      .bind(1L)
+                                                      .fetch("id,login_info,other_info")
+                                                      .into(Tst中文也分表.class, WingsEnumConverters.Id2Language);
 
         log.info("pr2={}", pr2.getData().size());
     }

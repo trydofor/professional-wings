@@ -8,7 +8,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.core.annotation.Order;
 import pro.fessional.mirana.time.StopWatch.Watch;
-import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
+import pro.fessional.wings.spring.consts.WingsBeanOrdered;
 
 /**
  * 基于AOP，对方法进行Watching

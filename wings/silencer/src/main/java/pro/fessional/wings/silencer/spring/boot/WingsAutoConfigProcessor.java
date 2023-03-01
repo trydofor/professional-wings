@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
 /**
  * 自动加载配置路径中的 /wings-conf/*.{yml,yaml,properties}配置。
  * <pre>
- * [参考资料 docs.spring.io](https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/)
+ * <a href="https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/">参考资料docs.spring.io</a>
  *  - #boot-features-application-events-and-listeners
  *  - #boot-features-external-config
  *  - #howto-change-the-location-of-external-properties
@@ -74,8 +74,8 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     public static final String PROMO_PROP_KEY = "wings.boot.promo";
 
     @Override
-    public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        final String en = environment.getProperty("spring.wings.silencer.enabled");
+    public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication ignored) {
+        final String en = environment.getProperty(SilencerEnabledProp.Key$autoconf);
         if ("false".equalsIgnoreCase(en)) {
             log.info("🦁 Wings AutoConfig is disabled, skip it.");
         }
@@ -356,7 +356,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
         // 按名字分组，排序
         LinkedHashMap<String, List<ConfResource>> groups = new LinkedHashMap<>(confResources.size());
-        Function<String, List<ConfResource>> newList = k -> new ArrayList<>();
+        Function<String, List<ConfResource>> newList = ignored -> new ArrayList<>();
         for (ConfResource cr : confResources) {
             String blocked = isBlockedBy(blockList, cr.location);
             if (blocked != null) {
@@ -599,8 +599,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj instanceof ConfResource) {
-                final ConfResource ot = (ConfResource) obj;
+            if (obj instanceof final ConfResource ot) {
                 return more ? location.equals(ot.location) : fullName.equals(ot.fullName);
             }
             else {
@@ -610,7 +609,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
         @Override
         public String toString() {
-            return String.format("[%02d] %s🦁%s", order, fullName, location);
+            return String.format("[%03d] %s🦁%s", order, fullName, location);
         }
     }
 

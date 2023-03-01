@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Faceless</name>
-    <description>虚空假面：数据库基本功能和定义，锁/类型/枚举/多国语等</description>
+    <description>basic database features and definitions, e.g. locks/types/enum/i18n</description>
 
     <dependencies>
         <!-- enum-i18n, wings-conf -->
@@ -33,8 +33,8 @@
         </dependency>
         <!-- other -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
         </dependency>
         <!-- test -->
         <dependency>

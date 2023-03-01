@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.security.impl;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.server.PathContainer;
 import org.springframework.web.util.pattern.PathPattern;
@@ -8,7 +9,6 @@ import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.WingsAuthTypeSource;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**

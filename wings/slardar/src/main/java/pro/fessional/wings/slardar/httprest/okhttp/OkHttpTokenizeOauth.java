@@ -6,9 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
@@ -21,7 +21,7 @@ import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.jackson.JacksonHelper;
 
 /**
- * https://developer.fedex.com/api/en-us/catalog/authorization/v1/docs.html
+ * <a href="https://developer.fedex.com/api/en-us/catalog/authorization/v1/docs.html">fedex authorization v1</a>
  *
  * @author trydofor
  * @since 2022-11-26
@@ -90,23 +90,24 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
     }
 
     @Override
-    public boolean initToken(@NotNull OkHttpClient client) {
+    public boolean initToken(@NotNull Call.Factory callFactory) {
         final Token tkn = token;
 
         Token newTkn = null;
         if (tkn != null && tkn.refresh != null) {
-            newTkn = fetchByRefresh(client, tkn.refresh);
+            newTkn = fetchByRefresh(callFactory, tkn.refresh);
         }
 
         if (newTkn == null) {
-            newTkn = fetchByGrantType(client);
+            newTkn = fetchByGrantType(callFactory);
         }
 
         token = newTkn;
         return newTkn != null;
     }
 
-    protected Token fetchByRefresh(@NotNull OkHttpClient client, @NotNull String refresh) {
+    @SuppressWarnings("DuplicatedCode")
+    protected Token fetchByRefresh(@NotNull Call.Factory callFactory, @NotNull String refresh) {
         // POST https://gitee.com/oauth/token?grant_type=refresh_token&refresh_token={refresh_token}
         final FormBody.Builder builder = buildRefresh(new FormBody.Builder())
                 .add(keyGrantType, valRefreshToken)
@@ -120,7 +121,7 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
                 .post(builder.build())
                 .build();
 
-        final String body = OkHttpClientHelper.executeString(client, request, false);
+        final String body = OkHttpClientHelper.executeString(callFactory, request, false);
         return parseToken(body);
     }
 
@@ -129,7 +130,7 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
         return builder;
     }
 
-    protected Token fetchByGrantType(@NotNull OkHttpClient client) {
+    protected Token fetchByGrantType(@NotNull Call.Factory callFactory) {
         final String code;
         final boolean notnull;
         if (ClientCredentials.equals(valAccessToken)) {
@@ -137,7 +138,7 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
             notnull = false;
         }
         else if (AuthorizationCode.equals(valAccessToken)) {
-            code = fetchAuthorizationCode(client);
+            code = fetchAuthorizationCode(callFactory);
             notnull = true;
         }
         else {
@@ -149,11 +150,12 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
             return null;
         }
 
-        return fetchAccessToken(client, code);
+        return fetchAccessToken(callFactory, code);
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @Nullable
-    protected Token fetchAccessToken(@NotNull OkHttpClient client, String code) {
+    protected Token fetchAccessToken(@NotNull Call.Factory callFactory, String code) {
         // POST https://gitee.com/oauth/token
         // ?grant_type=authorization_code
         // &code={code}
@@ -168,6 +170,7 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
         if (redirectUri != null) {
             builder.add(keyRedirectUri, redirectUri);
         }
+
         if (code != null) {
             builder.add(keyCode, code);
         }
@@ -177,7 +180,7 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
                 .post(builder.build())
                 .build();
 
-        final String body = OkHttpClientHelper.executeString(client, request, false);
+        final String body = OkHttpClientHelper.executeString(callFactory, request, false);
         return parseToken(body);
     }
 
@@ -188,7 +191,7 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
 
     @SneakyThrows
     @Nullable
-    protected String fetchAuthorizationCode(@NotNull OkHttpClient client) {
+    protected String fetchAuthorizationCode(@NotNull Call.Factory callFactory) {
         // GET https://gitee.com/oauth/authorize
         // ?client_id={client_id}
         // &redirect_uri={redirect_uri}
@@ -214,7 +217,7 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
                 .get()
                 .build();
 
-        final Response response = OkHttpClientHelper.execute(client, request, false);
+        final Response response = OkHttpClientHelper.execute(callFactory, request, false);
         return parseAuthorizationCode(response, state);
     }
 

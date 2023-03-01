@@ -43,27 +43,19 @@ public class JacksonZonedDateTimeSerializer extends ZonedDateTimeSerializer impl
     }
 
     ///
-    protected JacksonZonedDateTimeSerializer(ZonedDateTimeSerializer base, Boolean useTimestamp, DateTimeFormatter formatter, Boolean writeZoneId, AutoZoneType auto) {
-        super(base, useTimestamp, formatter, writeZoneId);
-        this.autoZone = auto;
-    }
-
-    protected JacksonZonedDateTimeSerializer(ZonedDateTimeSerializer base, Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter formatter, Boolean writeZoneId, AutoZoneType auto) {
-        // TODO when 2.14
-        super(base, useTimestamp, useNanoseconds, formatter, writeZoneId);
+    protected JacksonZonedDateTimeSerializer(ZonedDateTimeSerializer base, Boolean useTimestamp, Boolean useNanoseconds, DateTimeFormatter formatter, JsonFormat.Shape shape, Boolean writeZoneId, AutoZoneType auto) {
+        super(base, useTimestamp, useNanoseconds, formatter, shape, writeZoneId);
         this.autoZone = auto;
     }
 
     @Override
     protected JacksonZonedDateTimeSerializer withFormat(Boolean useTimestamp, DateTimeFormatter formatter, JsonFormat.Shape shape) {
-        return new JacksonZonedDateTimeSerializer(this, useTimestamp, formatter, _writeZoneId, autoZone);
-        // TODO when 2.14
-        //  return new ZonedDateTimeSerializer(this, useTimestamp, _useNanoseconds, formatter, shape, _writeZoneId, autoZone);
+        return new JacksonZonedDateTimeSerializer(this, useTimestamp, _useNanoseconds, formatter, shape, _writeZoneId, autoZone);
     }
 
     @Override
     protected JacksonZonedDateTimeSerializer withFeatures(Boolean writeZoneId, Boolean writeNanoseconds) {
-        return new JacksonZonedDateTimeSerializer(this, _useTimestamp, writeNanoseconds, _formatter, writeZoneId, autoZone);
+        return new JacksonZonedDateTimeSerializer(this, _useTimestamp, writeNanoseconds, _formatter, this._shape, writeZoneId, autoZone);
     }
 
     @Override

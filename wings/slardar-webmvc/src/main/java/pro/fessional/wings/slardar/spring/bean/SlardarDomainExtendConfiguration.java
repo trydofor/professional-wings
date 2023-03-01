@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.web.servlet.HandlerMapping;
 import pro.fessional.mirana.text.Wildcard;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.domainx.DefaultDomainRequestMatcher;
 import pro.fessional.wings.slardar.domainx.WingsDomainExtendFilter;
 import pro.fessional.wings.slardar.spring.prop.DomainExtendProp;
@@ -28,6 +30,7 @@ import java.util.function.Supplier;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$domainExtend, havingValue = "true")
+@AutoConfigureOrder(OrderedSlardarConst.DomainExtendConfiguration)
 public class SlardarDomainExtendConfiguration {
 
     private final static Log log = LogFactory.getLog(SlardarDomainExtendConfiguration.class);

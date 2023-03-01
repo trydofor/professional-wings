@@ -1,11 +1,17 @@
 package pro.fessional.wings.slardar.servlet.response;
 
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -20,11 +26,6 @@ import pro.fessional.wings.slardar.servlet.ContentTypeHelper;
 import pro.fessional.wings.slardar.servlet.stream.ReuseStreamResponseWrapper;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -236,7 +237,7 @@ public class ResponseHelper {
     }
 
     public static void renderModelAndView(ModelAndView mav, HttpServletResponse res, HttpServletRequest req) {
-        final HttpStatus status = mav.getStatus();
+        final HttpStatusCode status = mav.getStatus();
         if (status != null) {
             res.setStatus(status.value());
         }

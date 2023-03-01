@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.TtlMDCAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggerGroups;
@@ -18,10 +19,10 @@ import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.evil.ThreadLocalAttention;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.time.ThreadNow;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
-import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
+import pro.fessional.wings.silencer.runner.CommandLineRunnerOrdered;
 import pro.fessional.wings.silencer.spring.prop.SilencerTweakProp;
 import pro.fessional.wings.silencer.tweak.TweakLogger;
+import pro.fessional.wings.spring.consts.OrderedSilencerConst;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -31,6 +32,7 @@ import java.time.Duration;
  * @since 2022-10-27
  */
 @Configuration(proxyBeanMethods = false)
+@AutoConfigureOrder(OrderedSilencerConst.TweakConfiguration)
 public class SilencerTweakConfiguration {
     private static final Log log = LogFactory.getLog(SilencerTweakConfiguration.class);
 
@@ -53,6 +55,7 @@ public class SilencerTweakConfiguration {
         }
     }
 
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean
     @ConditionalOnClass(FilterReply.class)
     public CommandLineRunnerOrdered runnerLogbackTweak(SilencerTweakProp prop,
@@ -63,7 +66,7 @@ public class SilencerTweakConfiguration {
     ) {
         log.info("SilencerCurse spring-runs runnerLogbackTweak, init TtlMDC");
         TtlMDCAdapter.initMdc();// 尽早初始化
-        return new CommandLineRunnerOrdered(WingsBeanOrdered.Lv5Supervisor, args -> {
+        return new CommandLineRunnerOrdered(OrderedSilencerConst.RunnerLogbackTweak, ignored -> {
             if (prop.isMdcThreshold()) {
                 log.info("SilencerCurse spring-conf runnerLogbackTweak WingsMdcThresholdFilter");
                 LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();

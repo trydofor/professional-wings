@@ -113,6 +113,7 @@ public class JournalJooqHelper extends JournalJdbcHelper {
     }
 
 
+    @SuppressWarnings("DuplicatedCode")
     public static String[] extractColumn(Field<?>[] fields, String... name) {
         String[] result = new String[name.length];
         for (Field<?> fd : fields) {
@@ -126,6 +127,7 @@ public class JournalJooqHelper extends JournalJdbcHelper {
         return result;
     }
 
+    @SuppressWarnings("DuplicatedCode")
     public static Field<?>[] extractField(Field<?>[] fields, String... name) {
         Field<?>[] result = new Field<?>[name.length];
         for (Field<?> fd : fields) {

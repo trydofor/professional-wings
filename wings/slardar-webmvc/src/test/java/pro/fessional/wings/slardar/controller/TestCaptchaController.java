@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -7,8 +8,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.slardar.concur.FirstBlood;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
-
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author trydofor

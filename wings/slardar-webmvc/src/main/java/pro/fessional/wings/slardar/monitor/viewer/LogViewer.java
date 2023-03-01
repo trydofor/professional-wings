@@ -1,23 +1,23 @@
 package pro.fessional.wings.slardar.monitor.viewer;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.cache2k.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.id.Ulid;
+import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 import pro.fessional.wings.slardar.monitor.WarnFilter;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.spring.prop.SlardarMonitorProp;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,25 +49,20 @@ public class LogViewer implements WarnFilter {
 
     public LogViewer(LogConf conf) {
         this.conf = conf;
-        this.cache = Caffeine
-                .newBuilder()
-                .maximumSize(2_000)
-                .expireAfterWrite(conf.getAlive())
-                .expireAfterAccess(conf.getAlive())
-                .build();
+        this.cache = WingsCache2k.builder(LogViewer.class, "cache", 2_000, conf.getAlive(), null, String.class, String.class).build();
     }
 
-    @Operation(summary = "开启自身监控时，配合警报通知，可查看警报日志", description =
-            "# Usage \n"
-            + "alias优先于perms检测，check失败时会自动登出logout。\n"
-            + "## Params \n"
-            + "* @param id - 日志id，最多缓存2k个，36H\n"
-            + "## Returns \n"
-            + "* @return {200 | string} 对应的日志信息或empty")
+    @Operation(summary = "开启自身监控时，配合警报通知，可查看警报日志", description = """
+            # Usage
+            alias优先于perms检测，check失败时会自动登出logout。
+            ## Params
+            * @param id - 日志id，最多缓存2k个，36H
+            ## Returns
+            * @return {200 | string} 对应的日志信息或empty""")
     @GetMapping(value = "${" + LogConf.Key$mapping + "}")
     public void view(@RequestParam("id") String id, HttpServletResponse res) throws IOException {
         if (id == null) return;
-        final String log = cache.getIfPresent(id);
+        final String log = cache.get(id);
         if (log == null) return;
         File file = new File(log);
         if (!file.canRead()) return;

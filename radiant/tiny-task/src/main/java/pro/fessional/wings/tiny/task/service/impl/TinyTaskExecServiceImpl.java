@@ -39,6 +39,7 @@ import pro.fessional.wings.tiny.task.schedule.exec.TaskerExec;
 import pro.fessional.wings.tiny.task.service.TinyTaskExecService;
 import pro.fessional.wings.tiny.task.spring.prop.TinyTaskEnabledProp;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -504,13 +505,13 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         final SimpleTriggerContext context = makeContext(td, zone, now);
 
         while (true) {
-            Date next = trigger.nextExecutionTime(context);
+            Instant next = trigger.nextExecution(context);
             if (next == null) {
                 log.info("skip task for trigger not fire, id={}", id);
                 return -1;
             }
 
-            final long nxt = next.getTime();
+            final long nxt = next.toEpochMilli();
             if (nxt < now) {
                 if (timingMiss > 0 && nxt + timingMiss >= now) {
                     log.info("launch task for misfire={}, id={}", next, id);
@@ -555,7 +556,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         final int idle = td.getTimingIdle();
         if (idle > 0) {
             log.info("use trigger idle={}, id={}", idle, td.getId());
-            PeriodicTrigger trg = new PeriodicTrigger(idle * 1000L);
+            PeriodicTrigger trg = new PeriodicTrigger(Duration.ofSeconds(idle));
             trg.setFixedRate(false);
             return trg;
         }
@@ -563,7 +564,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         final int rate = td.getTimingRate();
         if (rate > 0) {
             log.info("use trigger rate={}, id={}", rate, td.getId());
-            PeriodicTrigger trg = new PeriodicTrigger(rate * 1000L);
+            PeriodicTrigger trg = new PeriodicTrigger(Duration.ofSeconds(rate));
             trg.setFixedRate(true);
             return trg;
         }

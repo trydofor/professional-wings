@@ -10,7 +10,7 @@ import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
-import pro.fessional.wings.warlock.constants.WarlockOrderConst;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.event.auth.WarlockAutoRegisterEvent;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
@@ -29,7 +29,7 @@ import java.util.Set;
 public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Combo<DefaultWingsUserDetails> {
 
     @Getter @Setter
-    private int order = WarlockOrderConst.DefaultUserDetailsCombo;
+    private int order = OrderedWarlockConst.DefaultUserDetailsCombo;
 
     @Getter @Setter
     private Set<Enum<?>> autoRegisterType = new HashSet<>();

@@ -1,5 +1,5 @@
 -- 时区统一(GMT+8)，编码统一(utf8mb4)
--- CREATE DATABASE `wings_0` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+-- CREATE DATABASE `wings` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 
 CREATE TABLE `sys_schema_version` (
     `revision`  BIGINT(20)   NOT NULL COMMENT '版本号+修订号',

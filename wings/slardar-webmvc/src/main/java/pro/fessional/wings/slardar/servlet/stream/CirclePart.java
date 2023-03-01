@@ -1,9 +1,9 @@
 package pro.fessional.wings.slardar.servlet.stream;
 
+import jakarta.servlet.http.Part;
 import lombok.SneakyThrows;
 import pro.fessional.mirana.io.CircleInputStream;
 
-import javax.servlet.http.Part;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;

@@ -1,5 +1,7 @@
 package pro.fessional.wings.slardar.security.bind;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -7,9 +9,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.util.Assert;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.WingsAuthTypeSource;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author trydofor
@@ -52,8 +51,7 @@ public class WingsBindAuthFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     protected Object buildAuthDetails(HttpServletRequest request, WingsBindAuthToken winTkn) {
-        if (authenticationDetailsSource instanceof WingsAuthDetailsSource<?>) {
-            WingsAuthDetailsSource<?> winAds = (WingsAuthDetailsSource<?>) authenticationDetailsSource;
+        if (authenticationDetailsSource instanceof WingsAuthDetailsSource<?> winAds) {
             return winAds.buildDetails(winTkn.getAuthType(), request);
         }
         else {

@@ -1,5 +1,6 @@
 package pro.fessional.wings.tiny.mail.sender;
 
+import jakarta.mail.Session;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
@@ -7,7 +8,6 @@ import org.springframework.jndi.JndiLocatorDelegate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import javax.mail.Session;
 import javax.naming.NamingException;
 import java.util.Map;
 import java.util.Properties;
@@ -16,6 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import static pro.fessional.wings.tiny.mail.spring.prop.TinyMailConfigProp.KeyDefault;
 
 /**
+ * provide sender by config's name
+ *
  * @author trydofor
  * @since 2022-12-31
  */
@@ -36,16 +38,23 @@ public class MailSenderProvider {
         return defaultSender;
     }
 
+    /**
+     * get singleton sender by config's name
+     */
     @NotNull
     public JavaMailSender singletonSender(@NotNull TinyMailConfig config) {
         final String name = config.getName();
         return name == null || name.isEmpty()
                ? defaultSender
-               : senders.computeIfAbsent(name, k -> newSender(config));
+               : senders.computeIfAbsent(name, ignored -> newSender(config));
+    }
+
+    public JavaMailSender removeCaching(String name) {
+        return senders.remove(name);
     }
 
     @NotNull
-    protected JavaMailSender newSender(MailProperties prop) {
+    public JavaMailSender newSender(MailProperties prop) {
         final JavaMailSenderImpl sender = new JavaMailSenderImpl();
 
         final String jndiName = prop.getJndiName();

@@ -29,6 +29,7 @@ buildNumber.properties
 *.gc
 *.heap
 *.bak
+*.jfr
 
 # BlueJ files
 *.ctxt

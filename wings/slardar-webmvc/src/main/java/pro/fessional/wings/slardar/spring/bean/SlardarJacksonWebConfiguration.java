@@ -11,6 +11,7 @@ import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -23,7 +24,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
 import pro.fessional.wings.slardar.autozone.AutoZoneType;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeDeserializer;
@@ -33,7 +34,6 @@ import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeDeserializ
 import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeSerializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeSerializer;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.jackson.AutoRegisterPropertyFilter;
 import pro.fessional.wings.slardar.jackson.EmptyValuePropertyFilter;
 import pro.fessional.wings.slardar.jackson.FormatNumberSerializer;
@@ -46,6 +46,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarJacksonProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarNumberProp;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -60,7 +61,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author trydofor
- * @link https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#howto-customize-the-jackson-objectmapper
+ * @link <a href="https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/#howto.spring-mvc.customize-jackson-objectmapper">Customize the Jackson ObjectMapper</a>
  * @see InstantDeserializer#ZONED_DATE_TIME
  * @since 2019-06-26
  */
@@ -69,6 +70,7 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$jackson, havingValue = "true")
 @RequiredArgsConstructor
 @AutoConfigureAfter(SlardarJacksonConfiguration.class)
+@AutoConfigureOrder(OrderedSlardarConst.JacksonWebConfiguration)
 public class SlardarJacksonWebConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarJacksonWebConfiguration.class);
@@ -167,9 +169,7 @@ public class SlardarJacksonWebConfiguration {
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer customizerObjectMapperResource() {
         log.info("SlardarWebmvc spring-bean customizerObjectMapperResource");
-        return builder -> {
-            builder.serializerByType(Resource.class, new ResourceSerializer());
-        };
+        return builder -> builder.serializerByType(Resource.class, new ResourceSerializer());
     }
 
     @Bean
@@ -246,9 +246,9 @@ public class SlardarJacksonWebConfiguration {
     }
 
     @Bean
-    public CommandLineRunnerOrdered runnerJacksonHelper(Jackson2ObjectMapperBuilder builder) {
+    public ApplicationStartedEventRunner runnerJacksonHelper(Jackson2ObjectMapperBuilder builder) {
         log.info("SlardarWebmvc spring-runs runnerJacksonHelper");
-        return new CommandLineRunnerOrdered(SlardarOrderConst.RunnerJacksonHelper, args -> {
+        return new ApplicationStartedEventRunner(OrderedSlardarConst.RunnerJacksonHelper, ignored -> {
             log.info("SlardarWebmvc spring-conf JacksonHelper.initGlobal");
             JacksonHelper.initGlobal(
                     builder.createXmlMapper(false).build(),

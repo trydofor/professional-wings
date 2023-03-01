@@ -19,7 +19,7 @@ import java.util.Map;
  */
 
 @SpringBootTest
-@Disabled("手动执行，版本更新时处理")
+@Disabled("枚举类导出")
 public class Devops7EnumsDumperTest {
 
     @Setter(onMethod_ = {@Autowired})

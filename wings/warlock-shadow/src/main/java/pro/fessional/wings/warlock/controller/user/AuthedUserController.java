@@ -2,6 +2,8 @@ package pro.fessional.wings.warlock.controller.user;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +23,6 @@ import pro.fessional.wings.slardar.session.WingsSessionHelper;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -66,15 +66,15 @@ public class AuthedUserController {
         private String token;
     }
 
-    @Operation(summary = "获得登录用户的基本信息", description =
-            "# Usage \n"
-            + "只有登录用户才有信息\n"
-            + "## Params \n"
-            + "无\n"
-            + "## Returns \n"
-            + "* @return {200 | Result(Dto)} 登录用户，成功返回用户基本信息；\n"
-            + "* @return {200 | Result(false)} 未登录用户，且无URL权限；\n"
-            + "* @return {401} 若设置了URL访问权限且用户未登录；")
+    @Operation(summary = "获得登录用户的基本信息", description = """
+            # Usage
+            只有登录用户才有信息
+            ## Params
+            无
+            ## Returns
+            * @return {200 | Result(Dto)} 登录用户，成功返回用户基本信息；
+            * @return {200 | Result(false)} 未登录用户，且无URL权限；
+            * @return {401} 若设置了URL访问权限且用户未登录；""")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedUser + "}")
     public R<Dto> authedUser(HttpServletRequest request) {
         final WingsUserDetails wd = SecurityContextUtil.getUserDetails(false);
@@ -113,18 +113,18 @@ public class AuthedUserController {
         private Set<String> check;
     }
 
-    @Operation(summary = "检查登录用户的权限，不区分大小写比较，返回存在的权限；", description =
-            "# Usage \n"
-            + "alias优先于perms检测，check失败时会自动登出logout。\n"
-            + "## Params \n"
-            + "* @param ins.alias - 以本名为key，别名为value，返回别名，以兼容历史遗留\n"
-            + "* @param ins.perms - 权限或角色的本名\n"
-            + "* @param ins.check - 需要检查的权限或角色的本名\n"
-            + "## Returns \n"
-            + "* @return {200 | Result(string[])} 登录用户，成功返回用户基本信息；\n"
-            + "* @return {200 | Result(false)} 未登录用户，且无URL权限；\n"
-            + "* @return {200 | Result(false,string[])} check失败，返回失败的权限且invalidate session；\n"
-            + "* @return {401} 若设置了URL访问权限且用户未登录；")
+    @Operation(summary = "检查登录用户的权限，不区分大小写比较，返回存在的权限；", description = """
+            # Usage
+            alias优先于perms检测，check失败时会自动登出logout。
+            ## Params
+            * @param ins.alias - 以本名为key，别名为value，返回别名，以兼容历史遗留
+            * @param ins.perms - 权限或角色的本名
+            * @param ins.check - 需要检查的权限或角色的本名
+            ## Returns
+            * @return {200 | Result(string[])} 登录用户，成功返回用户基本信息；
+            * @return {200 | Result(false)} 未登录用户，且无URL权限；
+            * @return {200 | Result(false,string[])} check失败，返回失败的权限且invalidate session；
+            * @return {401} 若设置了URL访问权限且用户未登录；""")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedPerm + "}")
     public R<Set<String>> authedPerm(HttpServletRequest request, @RequestBody Ins ins) {
         final WingsUserDetails wd = SecurityContextUtil.getUserDetails(false);
@@ -187,15 +187,15 @@ public class AuthedUserController {
         private ZonedDateTime lastAccess;
     }
 
-    @Operation(summary = "获得登录用户的所有会话", description =
-            "# Usage \n"
-            + "只有登录用户才有信息\n"
-            + "## Params \n"
-            + "无\n"
-            + "## Returns \n"
-            + "* @return {200 | Result(Dto)} 登录用户，成功返回用户会话信息；\n"
-            + "* @return {200 | Result(false)} 未登录用户，且无URL权限；\n"
-            + "* @return {401} 若设置了URL访问权限且用户未登录；")
+    @Operation(summary = "获得登录用户的所有会话", description = """
+            # Usage
+            只有登录用户才有信息
+            ## Params
+            无
+            ## Returns
+            * @return {200 | Result(Dto)} 登录用户，成功返回用户会话信息；
+            * @return {200 | Result(false)} 未登录用户，且无URL权限；
+            * @return {401} 若设置了URL访问权限且用户未登录；""")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userListSession + "}")
     public R<List<Ses>> listSession() {
         final WingsUserDetails details = SecurityContextUtil.getUserDetails(false);
@@ -225,15 +225,15 @@ public class AuthedUserController {
         private String sid;
     }
 
-    @Operation(summary = "踢掉一个登录用户的会话", description =
-            "# Usage \n"
-            + "只有登录用户才有信息\n"
-            + "## Params \n"
-            + "* @param sid - 要踢掉的会话Id/token\n"
-            + "## Returns \n"
-            + "* @return {200 | Result} 登录用户，成功返回用户会话信息；\n"
-            + "* @return {200 | Result(false)} 未登录用户，且无URL权限；\n"
-            + "* @return {401} 若设置了URL访问权限且用户未登录；")
+    @Operation(summary = "踢掉一个登录用户的会话", description = """
+            # Usage
+            只有登录用户才有信息
+            ## Params
+            * @param sid - 要踢掉的会话Id/token
+            ## Returns
+            * @return {200 | Result} 登录用户，成功返回用户会话信息；
+            * @return {200 | Result(false)} 未登录用户，且无URL权限；
+            * @return {401} 若设置了URL访问权限且用户未登录；""")
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userDropSession + "}")
     public R<Boolean> dropSession(@RequestBody Sid sid) {
         final boolean b = wingsSessionHelper.dropSession(sid.sid);

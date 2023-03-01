@@ -1,6 +1,7 @@
 package pro.fessional.wings.tiny.mail.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.mail.MessagingException;
 import lombok.Data;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -45,7 +46,6 @@ import pro.fessional.wings.tiny.mail.service.TinyMailPlain;
 import pro.fessional.wings.tiny.mail.service.TinyMailService;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailServiceProp;
 
-import javax.mail.MessagingException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -57,7 +57,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME;
 import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue;
@@ -164,6 +163,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     }
 
     @Override
+    @SuppressWarnings("DuplicatedCode")
     public long save(@NotNull TinyMailPlain message) {
         final String conf = message.getConf();
         final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
@@ -249,7 +249,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                 .stream()
                 .filter(po -> !notMatchProp(po))
                 .map(it -> new AsyncMail(it.getId(), DateLocaling.sysEpoch(it.getNextSend()), true, true, it, null))
-                .collect(Collectors.toList());
+                .toList();
 
         //
         final int size = pos.size();
@@ -443,8 +443,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                     log.info("done mail by max-fail id={}, subject={}", po.getId(), po.getMailSubj());
                 }
                 else if (retry) {
-                    if (exception instanceof MailWaitException) {
-                        MailWaitException mwe = ((MailWaitException) exception);
+                    if (exception instanceof MailWaitException mwe) {
                         if (mwe.isStopRetry()) {
                             setter.put(t.NextSend, EmptyValue.DATE_TIME);
                             log.error("stop stop-retry mail, id=" + po.getId(), exception);

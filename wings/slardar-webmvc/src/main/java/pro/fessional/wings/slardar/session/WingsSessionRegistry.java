@@ -39,8 +39,7 @@ public class WingsSessionRegistry<S extends Session> implements SessionRegistry,
     public List<SessionInformation> getAllSessions(Object principal, boolean includeExpiredSessions) {
         final String name;
         long userId = DefaultUserId.Guest;
-        if (principal instanceof WingsUserDetails) {
-            final WingsUserDetails dt = (WingsUserDetails) principal;
+        if (principal instanceof final WingsUserDetails dt) {
             name = dt.getUsername();
             userId = dt.getUserId();
         }

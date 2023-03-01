@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -17,12 +18,13 @@ import pro.fessional.wings.slardar.jackson.EmptyValuePropertyFilter;
 import pro.fessional.wings.slardar.jackson.I18nResultPropertyFilter;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarJacksonProp;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.time.LocalDate;
 
 /**
  * @author trydofor
- * @link https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#howto-customize-the-jackson-objectmapper
+ * @link <a href="https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/#howto.spring-mvc.customize-jackson-objectmapper">Customize the Jackson ObjectMapper</a>
  * @see InstantDeserializer#ZONED_DATE_TIME
  * @since 2019-06-26
  */
@@ -30,6 +32,7 @@ import java.time.LocalDate;
 @ConditionalOnClass(DateSerializer.class)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$jackson, havingValue = "true")
 @RequiredArgsConstructor
+@AutoConfigureOrder(OrderedSlardarConst.JacksonConfiguration)
 public class SlardarJacksonConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarJacksonConfiguration.class);

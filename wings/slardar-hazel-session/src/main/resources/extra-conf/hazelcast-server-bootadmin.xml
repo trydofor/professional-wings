@@ -3,7 +3,7 @@
 <hazelcast xmlns="http://www.hazelcast.com/schema/config"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.hazelcast.com/schema/config
-           http://www.hazelcast.com/schema/config/hazelcast-config-4.2.xsd">
+           http://www.hazelcast.com/schema/config/hazelcast-config-5.1.xsd">
 
     <map name="${spring.boot.admin.hazelcast.event-store}">
         <in-memory-format>OBJECT</in-memory-format>

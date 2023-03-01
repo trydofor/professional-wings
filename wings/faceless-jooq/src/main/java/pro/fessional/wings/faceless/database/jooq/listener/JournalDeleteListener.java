@@ -5,10 +5,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Delete;
 import org.jooq.ExecuteContext;
+import org.jooq.ExecuteListener;
 import org.jooq.Param;
 import org.jooq.Query;
 import org.jooq.conf.ParamType;
-import org.jooq.impl.DefaultExecuteListener;
 import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelper;
 
 import java.util.LinkedHashMap;
@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  * @since 2021-01-14
  */
 @Slf4j
-public class JournalDeleteListener extends DefaultExecuteListener {
+public class JournalDeleteListener implements ExecuteListener {
 
     @Override
     public void renderEnd(ExecuteContext ctx) {
@@ -118,9 +118,9 @@ public class JournalDeleteListener extends DefaultExecuteListener {
     // delete from `tst_中文也分表` where (`id` = ? and `commit_id` = ?)
     // commit_id = :commit_id and `id` = ?
     private final Pattern ptnCommitId = Pattern
-            .compile("\\band\\s+([`'\"]?commit_id[`'\"]?[\\s]*=[\\s]*([^()=\\s]+))" +
+            .compile("\\band\\s+([`'\"]?commit_id[`'\"]?\\s*=\\s*([^()=\\s]+))" +
                      "|" +
-                     "([`'\"]?commit_id[`'\"]?[\\s]*=[\\s]*([^()=\\s]+))\\s+and\\b"
+                     "([`'\"]?commit_id[`'\"]?\\s*=\\s*([^()=\\s]+))\\s+and\\b"
                     , Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     private String buildUpdateSql(DSLContext dsl, String del, String table, Map<String, Param<?>> params) {

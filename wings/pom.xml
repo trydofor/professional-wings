@@ -15,16 +15,19 @@
     <packaging>pom</packaging>
 
     <name>Wings::</name>
-    <description>WingsBoot=BKB+飞鞋+SpringBoot</description>
+    <description>WingsBoot=BKB + BootsOfTravel + SpringBoot</description>
 
     <modules>
+        <module>aegis</module>
         <module>silencer</module>
         <module>silencer-curse</module>
         <module>silencer-test</module>
         <module>faceless</module>
+        <module>faceless-autogen</module>
+        <module>faceless-awesome</module>
         <module>faceless-flywave</module>
         <module>faceless-jooq</module>
-        <module>faceless-jooqgen</module>
+        <module>faceless-codegen</module>
         <module>faceless-shard</module>
         <module>faceless-test</module>
         <module>slardar</module>
@@ -34,6 +37,8 @@
         <module>slardar-sprint</module>
         <module>slardar-test</module>
         <module>warlock</module>
+        <module>warlock-autogen</module>
+        <module>warlock-awesome</module>
         <module>warlock-bond</module>
         <module>warlock-codegen</module>
         <module>warlock-shadow</module>
@@ -49,10 +54,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.google.errorprone</groupId>
-            <artifactId>error_prone_annotations</artifactId>
-        </dependency>
         <!-- dev tools-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -117,8 +118,8 @@
                 <artifactId>build-helper-maven-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>pl.project13.maven</groupId>
-                <artifactId>git-commit-id-plugin</artifactId>
+                <groupId>io.github.git-commit-id</groupId>
+                <artifactId>git-commit-id-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

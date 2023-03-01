@@ -1,6 +1,5 @@
 package pro.fessional.wings.faceless.concur;
 
-import com.google.errorprone.annotations.DoNotCall;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -96,23 +95,23 @@ public class MysqlServerLock implements Lock {
                 lockName);
         if (rc == null) {
             log.warn("unlock not existed lock, name={}", lockName);
-        } else if (rc == 0) {
+        }
+        else if (rc == 0) {
             log.warn("unlock not owned lock, name={}", lockName);
-        } else {
+        }
+        else {
             log.info("unlock lock, name={}", lockName);
         }
     }
 
     @Override
-    @DoNotCall
-    public void lockInterruptibly() {
+    public void lockInterruptibly() throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
-    @DoNotCall
-    public Condition newCondition() {
+    public Condition newCondition() throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
 }

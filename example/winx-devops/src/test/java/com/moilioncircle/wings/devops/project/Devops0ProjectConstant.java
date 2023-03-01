@@ -9,7 +9,10 @@ package com.moilioncircle.wings.devops.project;
  * @since 2021-02-22
  */
 public interface Devops0ProjectConstant {
-    String JDBC_URL = "jdbc:mysql://localhost:3306/wings_example";
+    String JDBC_URL = "jdbc:mysql://localhost:3306/wings_example?autoReconnect=true"
+                      + "&useSSL=false&allowPublicKeyRetrieval=true"
+                      + "&useUnicode=true&characterEncoding=UTF-8"
+                      + "&connectionTimeZone=%2B08:00&forceConnectionTimeZoneToSession=true";
     //String JDBC_URL = "jdbc:h2:~/winx;MODE=MySQL";
     String JDBC_USER = "trydofor";
     String JDBC_PASS = "moilioncircle";

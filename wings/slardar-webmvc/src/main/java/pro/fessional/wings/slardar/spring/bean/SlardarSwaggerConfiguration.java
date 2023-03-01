@@ -11,10 +11,11 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import lombok.Data;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springdoc.api.annotations.ParameterObject;
-import org.springdoc.core.SpringDocConfiguration;
-import org.springdoc.core.SpringDocUtils;
-import org.springdoc.core.customizers.OpenApiCustomiser;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springdoc.core.configuration.SpringDocConfiguration;
+import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springdoc.core.utils.SpringDocUtils;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,7 @@ import pro.fessional.mirana.page.PageQuery;
 import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarPagequeryProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarSwaggerProp;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.util.Map;
 
@@ -32,12 +34,13 @@ import java.util.Map;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(OpenAPI.class)
+@AutoConfigureOrder(OrderedSlardarConst.SwaggerConfiguration)
 public class SlardarSwaggerConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarSwaggerConfiguration.class);
 
     @Bean
-    public OpenApiCustomiser slardarOpenApiCustomizer(SlardarSwaggerProp slardarSwaggerProp) {
+    public OpenApiCustomizer slardarOpenApiCustomizer(SlardarSwaggerProp slardarSwaggerProp) {
         log.info("SlardarWebmvc spring-bean slardarOpenApiCustomizer");
 
         if (slardarSwaggerProp.isFlatPagequery()) {
@@ -89,7 +92,7 @@ public class SlardarSwaggerConfiguration {
     }
 
     /**
-     * https://springdoc.org/#how-can-i-map-pageable-spring-data-commons-object-to-correct-url-parameter-in-swagger-ui
+     * <a href="https://springdoc.org/#how-can-i-map-pageable-spring-data-commons-object-to-correct-url-parameter-in-swagger-ui">pageable-correct-url-parameter</a>
      * 12.42. Can I use spring property with swagger annotations?
      * The support of spring property resolver for @Info: title * description * version * termsOfService
      * <p>

@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.springframework.boot.logging.LoggingSystem.ROOT_LOGGER_NAME;
 
 /**
- * https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.logging
+ * <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.logging">Logging</a>
  *
  * @author trydofor
  * @since 2022-10-27

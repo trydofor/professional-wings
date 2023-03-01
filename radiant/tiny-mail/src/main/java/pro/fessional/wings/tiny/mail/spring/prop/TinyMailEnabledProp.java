@@ -14,7 +14,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(TinyMailEnabledProp.Key)
 public class TinyMailEnabledProp {
 
-    public static final String Key = "wings.tiny.mail.enabled";
+    public static final String Key = "spring.wings.tiny.mail.enabled";
+
+    /**
+     * 是否启动自动配置
+     *
+     * @see #Key$autoconf
+     */
+    private boolean autoconf = true;
+    public static final String Key$autoconf = Key + ".autoconf";
 
     /**
      * 是否干跑，仅记录日志不真正执行任务

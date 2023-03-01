@@ -1,15 +1,15 @@
 package pro.fessional.wings.slardar.domainx;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.cache2k.Cache;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import org.springframework.web.util.ServletRequestPathUtils;
+import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -36,8 +36,8 @@ public class DefaultDomainRequestMatcher implements DomainRequestMatcher {
     public DefaultDomainRequestMatcher(String pathPrefix, Collection<String> otherUrl, int cacheSize, Supplier<List<HandlerMapping>> supplier) {
         this.pathPrefix = pathPrefix;
         this.otherUrl.addAll(otherUrl);
-        this.matchedUrl = Caffeine.newBuilder().maximumSize(cacheSize).build();
-        this.notfoundUrl = Caffeine.newBuilder().maximumSize(cacheSize).build();
+        this.matchedUrl = WingsCache2k.builder(DefaultDomainRequestMatcher.class, "matchedUrl", cacheSize, -1, -1, String.class, Boolean.class).build();
+        this.notfoundUrl = WingsCache2k.builder(DefaultDomainRequestMatcher.class, "notfoundUrl", cacheSize, -1, -1, String.class, Boolean.class).build();
         this.handlerMappingSupplier = supplier;
     }
 
@@ -49,7 +49,7 @@ public class DefaultDomainRequestMatcher implements DomainRequestMatcher {
         DomainRequestWrapper wrapper = new DomainRequestWrapper(request);
         wrapper.setRequestURI(domainUrl);
 
-        Boolean b = matchedUrl.getIfPresent(domainUrl);
+        Boolean b = matchedUrl.get(domainUrl);
         if (b != null && b) {
             return wrapper;
         }
@@ -61,7 +61,7 @@ public class DefaultDomainRequestMatcher implements DomainRequestMatcher {
             }
         }
 
-        if (notfoundUrl.getIfPresent(domainUrl) != null) {
+        if (notfoundUrl.get(domainUrl) != null) {
             return request;
         }
 
@@ -71,9 +71,7 @@ public class DefaultDomainRequestMatcher implements DomainRequestMatcher {
             try {
                 HandlerExecutionChain hdc = hm.getHandler(wrapper);
                 if (hdc != null) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("find handler={}, in {}", hdc.getClass(), hm.getClass());
-                    }
+                    log.debug("find handler={}, in {}", hdc.getClass(), hm.getClass());
                     Object hd = hdc.getHandler();
                     if (hd instanceof ResourceHttpRequestHandler) {
                         if (existResource((ResourceHttpRequestHandler) hd, wrapper)) {

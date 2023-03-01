@@ -144,9 +144,12 @@ public class FlywaveInteractiveGui {
         if (hooked.isEmpty()) {
             hooked.add(fun);
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                int res = showConfirmDialog(null, "程序退出了，要看的赶紧看!"
-                                                  + "\n重点关注ERROR内容，logger中更全\n"
-                                                  + "\n[yes] 直接退出 \n[no] 控制台<回车>退出",
+                int res = showConfirmDialog(null, """
+                                程序退出了，要看的赶紧看!
+                                重点关注ERROR内容，logger中更全
+
+                                [yes] 直接退出
+                                [no] 控制台<回车>退出""",
                         "😺😸😹😻😼😽🙀😿😾😺",
                         JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (res != 0) {

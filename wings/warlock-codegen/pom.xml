@@ -14,16 +14,16 @@
     <packaging>jar</packaging>
 
     <name>Wings::Warlock::Codegen</name>
-    <description>术士大叔之代码生成</description>
+    <description>Code Generator of Warlock</description>
 
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>warlock</artifactId>
+            <artifactId>warlock-awesome</artifactId>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-jooqgen</artifactId>
+            <artifactId>faceless-codegen</artifactId>
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>

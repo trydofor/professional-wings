@@ -3,11 +3,13 @@
 <hazelcast xmlns="http://www.hazelcast.com/schema/config"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.hazelcast.com/schema/config
-           http://www.hazelcast.com/schema/config/hazelcast-config-4.2.xsd">
+           http://www.hazelcast.com/schema/config/hazelcast-config-5.1.xsd">
 
     <!-- hazelcast-full-example.xml -->
     <cluster-name>${wings.slardar.hazelcast.cluster-name}</cluster-name>
-
+    <!-- https://docs.hazelcast.com/hazelcast/5.1/management/cluster-utilities#integrity-checker -->
+    <integrity-checker enabled="true"/>
+    
     <network>
         <port auto-increment="true" port-count="100">5701</port>
         <outbound-ports>

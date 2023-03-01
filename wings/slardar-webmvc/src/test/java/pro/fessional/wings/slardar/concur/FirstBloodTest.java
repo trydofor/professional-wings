@@ -2,7 +2,7 @@ package pro.fessional.wings.slardar.concur;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
+import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ class FirstBloodTest {
     private String firstBloodUrl30;
 
     @Setter(onMethod_ = {@Autowired})
-    private OkHttpClient okHttpClient;
+    private Call.Factory okHttpClient;
 
     @Test
     public void testFirstBlood0() {
@@ -51,36 +51,42 @@ class FirstBloodTest {
     @Test
     public void testFirstBlood30() throws InterruptedException {
         new Thread(() -> {
-            final Response r1 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(firstBloodUrl30), false);
-            assertEquals(HttpStatus.OK.value(), r1.code());
+            try (Response r1 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(firstBloodUrl30), false)) {
+                assertEquals(HttpStatus.OK.value(), r1.code());
+            }
         }).start();
         Thread.sleep(1000);
         checkFirstBlood(firstBloodUrl30);
     }
 
     public void checkFirstBlood(String url) {
-        final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(url), false);
-        assertEquals(202, r2.code());
-        final String ct = r2.header("Content-Type");
-        final String tk = r2.header("Client-Ticket");
-        final String ck = r2.header("Set-Cookie");
-        assertNotNull(ct);
-        assertNotNull(tk);
-        assertNotNull(ck);
-        assertTrue(ct.contains("text/plain"));
-        assertEquals("first-blood", OkHttpClientHelper.extractString(r2, false));
-        assertTrue(ck.contains(tk));
-        log.warn("get client-ticket = " + tk);
+        try (Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(url), false)) {
+            assertEquals(202, r2.code());
+            final String ct = r2.header("Content-Type");
+            final String tk = r2.header("Client-Ticket");
+            final String ck = r2.header("Set-Cookie");
+            assertNotNull(ct);
+            assertNotNull(tk);
+            assertNotNull(ck);
+            assertTrue(ct.contains("text/plain"));
+            assertEquals("first-blood", OkHttpClientHelper.extractString(r2, false));
+            assertTrue(ck.contains(tk));
+            log.warn("get client-ticket = " + tk);
+        }
 
-        final Response r3 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(url + "?quest-captcha-image=1234567890"), false);
-        String code = OkHttpClientHelper.extractString(r3, false);
-        log.warn("get captcha code = " + code);
-        assertEquals(200, r3.code());
+        final String code;
+        try (Response r3 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(url + "?quest-captcha-image=1234567890"), false)) {
+            code = OkHttpClientHelper.extractString(r3, false);
+            log.warn("get captcha code = " + code);
+            assertEquals(200, r3.code());
+        }
 
-        final Response r4 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(url + "?check-captcha-image=" + code), false);
-        assertEquals(200, r4.code());
+        try (Response r4 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(url + "?check-captcha-image=" + code), false)) {
+            assertEquals(200, r4.code());
+        }
 
-        final Response r5 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(url + "?check-captcha-image=" + code), false);
-        assertEquals(202, r5.code());
+        try (Response r5 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(url + "?check-captcha-image=" + code), false)) {
+            assertEquals(202, r5.code());
+        }
     }
 }

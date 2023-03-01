@@ -19,7 +19,7 @@ import java.util.List;
 
 
 @SpringBootTest
-@Disabled("手动执行，版本更新时处理")
+@Disabled("数据库导出")
 @Slf4j
 public class Devops7SchemaDumperTest {
 

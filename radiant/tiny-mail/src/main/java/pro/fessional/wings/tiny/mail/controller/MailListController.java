@@ -77,12 +77,12 @@ public class MailListController {
         return tinyMailListService.listBySubject(q.getQ(), pq);
     }
 
-    @Operation(summary = "获取邮件详情", description =
-            "# Usage \n"
-            + "获取邮件详情。\n"
-            + "## Params \n"
-            + "* @param id - 必填，Mailid\n"
-            + "")
+    @Operation(summary = "获取邮件详情", description = """
+            # Usage
+            获取邮件详情。
+            ## Params
+            * @param id - 必填，Mailid
+            """)
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$loadDetail + "}")
     @ResponseBody
     public R<TinyMailPlain> loadDetail(@RequestBody Q.Id ins) {

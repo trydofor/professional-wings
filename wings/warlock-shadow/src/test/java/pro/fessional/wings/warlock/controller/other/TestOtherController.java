@@ -1,5 +1,8 @@
 package pro.fessional.wings.warlock.controller.other;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -12,10 +15,6 @@ import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
 import pro.fessional.wings.warlock.service.watching.WatchingService;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 
 /**
  * @author trydofor

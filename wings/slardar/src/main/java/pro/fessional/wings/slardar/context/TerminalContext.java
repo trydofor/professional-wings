@@ -27,8 +27,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * 注：无 WeakReference Leak，因static及Interceptor清理。
  *
  * @author trydofor
- * @since 2019-11-25
  * @see <a href="https://github.com/alibaba/transmittable-thread-local/blob/master/docs/developer-guide.md#-%E6%A1%86%E6%9E%B6%E4%B8%AD%E9%97%B4%E4%BB%B6%E9%9B%86%E6%88%90ttl%E4%BC%A0%E9%80%92">框架中间件集成ttl传递</a>
+ * @since 2019-11-25
  */
 public class TerminalContext {
 
@@ -292,8 +292,7 @@ public class TerminalContext {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof Context)) return false;
-            Context context = (Context) o;
+            if (!(o instanceof Context context)) return false;
             return userId == context.userId &&
                    Objects.equals(locale, context.locale) &&
                    Objects.equals(timeZone, context.timeZone) &&

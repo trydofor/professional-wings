@@ -3,10 +3,12 @@ package pro.fessional.wings.warlock.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultDaoAuthnCombo;
 import pro.fessional.wings.warlock.service.grant.WarlockGrantService;
 import pro.fessional.wings.warlock.service.grant.impl.WarlockGrantServiceImpl;
@@ -30,6 +32,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityBean, havingValue = "true")
 @AutoConfigureBefore(WarlockSecurityBeanConfiguration.class)
+@AutoConfigureOrder(OrderedWarlockConst.BondBeanConfiguration)
 public class WarlockBondBeanConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockBondBeanConfiguration.class);

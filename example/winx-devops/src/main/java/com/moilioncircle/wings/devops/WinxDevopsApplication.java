@@ -9,7 +9,8 @@ import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
+import org.springframework.core.metrics.jfr.FlightRecorderApplicationStartup;
+import pro.fessional.wings.silencer.runner.ApplicationInspectRunner;
 import pro.fessional.wings.slardar.webmvc.RequestMappingHelper;
 
 import java.util.Arrays;
@@ -26,13 +27,17 @@ public class WinxDevopsApplication {
     private final static Log log = LogFactory.getLog(WinxDevopsApplication.class);
 
     public static void main(String[] args) {
-        SpringApplication.run(WinxDevopsApplication.class, args);
+        SpringApplication application = new SpringApplication(WinxDevopsApplication.class);
+        // https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/#features.spring-application.application-events-and-listeners
+//        application.setApplicationStartup(new BufferingApplicationStartup(8192));
+        application.setApplicationStartup(new FlightRecorderApplicationStartup()); // java -XX:StartFlightRecording:filename=recording.jfr,duration=10s -jar demo.jar
+        application.run(args);
     }
 
     @Bean
     @Lazy
-    public CommandLineRunnerOrdered runnerListAllBeans(ApplicationContext ctx) {
-        return new CommandLineRunnerOrdered(-1, args -> {
+    public ApplicationInspectRunner runnerListAllBeans(ApplicationContext ctx) {
+        return new ApplicationInspectRunner(-1, ignored -> {
             log.info("===============");
             String[] beanNames = ctx.getBeanDefinitionNames();
             Arrays.sort(beanNames);
@@ -43,7 +48,7 @@ public class WinxDevopsApplication {
             log.info("===============");
 
             String[] cacheManager = ctx.getBeanNamesForType(CacheManager.class);
-            log.info("=============== CacheManager count={}" + cacheManager.length);
+            log.info("=============== CacheManager count=" + cacheManager.length);
 
             final List<RequestMappingHelper.Info> infos = RequestMappingHelper.infoAllMapping(ctx);
             log.info("=============== RequestMappingHelper infos=" + infos.size());

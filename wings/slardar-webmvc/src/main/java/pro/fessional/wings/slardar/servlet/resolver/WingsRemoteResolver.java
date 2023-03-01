@@ -1,9 +1,9 @@
 package pro.fessional.wings.slardar.servlet.resolver;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;

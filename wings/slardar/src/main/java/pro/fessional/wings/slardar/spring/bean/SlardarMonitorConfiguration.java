@@ -8,6 +8,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.unit.DataSize;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.monitor.MonitorTask;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.monitor.metric.JvmMetric;
@@ -39,6 +41,7 @@ import java.util.Map;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$monitor, havingValue = "true")
 @EnableScheduling
+@AutoConfigureOrder(OrderedSlardarConst.MonitorConfiguration)
 public class SlardarMonitorConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarMonitorConfiguration.class);
@@ -55,7 +58,7 @@ public class SlardarMonitorConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(DingTalkReport.class)
     public DingTalkReport dingTalkReport(DingTalkNotice dingTalkNotice) {
         final String name = slardarMonitorProp.getDingNotice();
         log.info("Slardar spring-bean dingTalkReport, conf=" + name);
@@ -63,7 +66,7 @@ public class SlardarMonitorConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(MonitorTask.class)
     @ConditionalOnBean(WarnMetric.class)
     public MonitorTask monitorTask() {
         log.info("Slardar spring-bean monitorTask");
@@ -72,6 +75,7 @@ public class SlardarMonitorConfiguration {
         return bean;
     }
 
+    // 动态注册Bean，LogMetric
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnExpression("${" + SlardarEnabledProp.Key$monitor + ":false} && ${" + SlardarEnabledProp.Key$monitorLog + ":false}")
     @ComponentScan(basePackageClasses = MonitorTask.class)
@@ -106,7 +110,7 @@ public class SlardarMonitorConfiguration {
                     if (new File(rf).exists()) {
                         LogMetric bean = new LogMetric(key, rule);
                         beanFactory.registerSingleton(key, bean);
-                        log.info("Slardar spring-bean LogMetric bean=" + key);
+                        log.info("Slardar spring-bean register dynamic LogMetric bean=" + key);
                     }
                     else {
                         log.warn("Wings skip LogMetric bean for file not exist, file=" + rf);

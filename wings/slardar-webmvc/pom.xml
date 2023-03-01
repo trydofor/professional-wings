@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Slardar::Webmvc</name>
-    <description>鱼人守卫之艾末微细：webmvc/session/security-web</description>
+    <description>Integration of webmvc/session/security-web</description>
 
     <dependencies>
         <dependency>
@@ -62,11 +62,7 @@
         <!-- doc -->
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-javadoc</artifactId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
         <!-- test -->
         <dependency>

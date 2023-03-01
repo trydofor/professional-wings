@@ -22,8 +22,8 @@ import pro.fessional.wings.warlock.service.auth.help.AuthnDetailsMapper;
 import java.util.Collections;
 import java.util.List;
 
-import static pro.fessional.wings.warlock.caching.CacheConst.WarlockAuthnService.CacheManager;
 import static pro.fessional.wings.warlock.caching.CacheConst.WarlockAuthnService.CacheName;
+import static pro.fessional.wings.warlock.caching.CacheConst.WarlockAuthnService.CacheResolver;
 import static pro.fessional.wings.warlock.caching.CacheConst.WarlockAuthnService.EventTables;
 import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.DELETE;
 import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.UPDATE;
@@ -33,7 +33,7 @@ import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.UPDATE;
  * @since 2021-02-23
  */
 @Slf4j
-@CacheConfig(cacheNames = CacheName, cacheManager = CacheManager)
+@CacheConfig(cacheNames = CacheName, cacheResolver = CacheResolver)
 public class ComboWarlockAuthnService implements WarlockAuthnService {
 
     @Setter(onMethod_ = {@Autowired(required = false)})
@@ -87,23 +87,21 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
         AuthnDetailsMapper.into(details, userDetails);
 
         switch (details.getStatus()) {
-            case UNINIT:
-            case ACTIVE:
-            case INFIRM:
-            case UNSAFE:
+            case UNINIT, ACTIVE, INFIRM, UNSAFE -> {
                 userDetails.setEnabled(true);
                 userDetails.setAccountNonExpired(true);
                 userDetails.setAccountNonLocked(true);
-                break;
-            case DANGER:
+            }
+            case DANGER -> {
                 userDetails.setEnabled(true);
                 userDetails.setAccountNonExpired(true);
                 userDetails.setAccountNonLocked(false);
-                break;
-            default:
+            }
+            default -> {
                 userDetails.setEnabled(false);
                 userDetails.setAccountNonExpired(false);
                 userDetails.setAccountNonLocked(false);
+            }
         }
 
         userDetails.setCredentialsNonExpired(details.getExpiredDt().isAfter(Now.localDateTime()));

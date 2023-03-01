@@ -6,6 +6,7 @@ import io.undertow.server.DefaultByteBufferPool;
 import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -15,6 +16,7 @@ import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.unit.DataSize;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 /**
@@ -24,6 +26,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(Undertow.class)
+@AutoConfigureOrder(OrderedSlardarConst.UndertowConfiguration)
 public class SlardarUndertowConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarUndertowConfiguration.class);

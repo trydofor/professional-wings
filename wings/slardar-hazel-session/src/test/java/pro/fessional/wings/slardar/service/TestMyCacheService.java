@@ -16,8 +16,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @CacheConfig(cacheNames = Level.General + "MyCacheService")
 @Service
 public class TestMyCacheService {
-    public static ConcurrentHashMap<String, AtomicInteger> innerCount = new ConcurrentHashMap<>();
-    public static ConcurrentHashMap<String, AtomicInteger> outerCount = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, AtomicInteger> innerCount = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, AtomicInteger> outerCount = new ConcurrentHashMap<>();
 
     @Cacheable(cacheManager = Manager.Memory)
     public int cacheMemory(String email) {

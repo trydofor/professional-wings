@@ -3,6 +3,7 @@ package pro.fessional.wings.warlock.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.mirana.lock.JvmStaticGlobalLock;
 import pro.fessional.wings.faceless.concur.DatabaseGlobalLock;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 
 
@@ -19,6 +21,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
  */
 @Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
+@AutoConfigureOrder(OrderedWarlockConst.LockBeanConfiguration)
 public class WarlockLockBeanConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockLockBeanConfiguration.class);

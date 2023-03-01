@@ -14,12 +14,12 @@
     <packaging>jar</packaging>
 
     <name>Wings::Faceless::Shard</name>
-    <description>虚空假面之时间膨胀：ShardingSphere的分表分库配置</description>
+    <description>Database Splitting and Sharding with ShardingSphere</description>
 
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless</artifactId>
+            <artifactId>faceless-awesome</artifactId>
         </dependency>
         <!--sharding sphere-->
         <dependency>
@@ -34,7 +34,7 @@
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-jooqgen</artifactId>
+            <artifactId>faceless-codegen</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

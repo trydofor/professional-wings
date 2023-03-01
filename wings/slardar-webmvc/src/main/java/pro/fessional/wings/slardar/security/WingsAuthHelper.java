@@ -1,6 +1,6 @@
 package pro.fessional.wings.slardar.security;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author trydofor

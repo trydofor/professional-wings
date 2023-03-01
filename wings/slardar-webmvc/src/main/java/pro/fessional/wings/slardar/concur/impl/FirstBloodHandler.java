@@ -1,13 +1,12 @@
 package pro.fessional.wings.slardar.concur.impl;
 
-import com.github.benmanes.caffeine.cache.Cache;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.cache2k.Cache;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.Ordered;
 import org.springframework.web.method.HandlerMethod;
 import pro.fessional.wings.slardar.concur.FirstBlood;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author trydofor

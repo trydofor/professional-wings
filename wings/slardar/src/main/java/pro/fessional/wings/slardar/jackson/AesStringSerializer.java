@@ -2,7 +2,6 @@ package pro.fessional.wings.slardar.jackson;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
@@ -36,7 +35,7 @@ public class AesStringSerializer extends JsonSerializer<String> implements Conte
     }
 
     @Override
-    public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) throws JsonMappingException {
+    public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) {
         final AesString anno = property.getAnnotation(AesString.class);
         if (anno == null) return this;
 

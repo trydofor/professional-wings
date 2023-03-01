@@ -17,14 +17,12 @@ public class SecurityConfigHelper {
 
     /**
      * <pre>
-     * public class Config extends WebSecurityConfigurerAdapter {
-     *     protected void configure(HttpSecurity http) throws Exception {
-     *         http
-     *             .apply(wingsPermit())
-     *                 .permitAllCors(true)
-     *                 .and()
-     *             ...;
-     *     }
+     * protected void configure(HttpSecurity http) throws Exception {
+     *     http
+     *         .apply(wingsPermit())
+     *             .permitAllCors(true)
+     *             .and()
+     *         ...;
      * }
      * </pre>
      *

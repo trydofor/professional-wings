@@ -21,7 +21,7 @@ class WarlockPermCacheListenerTest {
     private WarlockRoleService warlockRoleService;
 
     @Test
-    @Disabled("手动看日志")
+    @Disabled("模拟慢处理，观察缓存变化")
     void cleanCache() throws InterruptedException {
         log.warn("无缓存，从数据库加载Perm");
         warlockPermServer.loadPermAll();

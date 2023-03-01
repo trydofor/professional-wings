@@ -1,12 +1,11 @@
 package pro.fessional.wings.slardar.security;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import pro.fessional.mirana.data.Null;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 构造用于进一步验证的details

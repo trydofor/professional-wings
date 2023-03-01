@@ -86,8 +86,8 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
 
         Set<Conf> result = new HashSet<>();
         for (Method method : map.keySet()) {
-            final Conf id = config(claz, bean, method, null);
-            result.add(id);
+            final Conf cnf = config(claz, bean, method, null);
+            result.add(cnf);
         }
         return result;
     }

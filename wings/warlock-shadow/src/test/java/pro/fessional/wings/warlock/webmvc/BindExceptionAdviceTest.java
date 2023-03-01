@@ -58,6 +58,7 @@ public class BindExceptionAdviceTest {
                .andExpect(content().string("{\"success\":false,\"message\":\"name=test name is empty\"}"));
     }
 
+    @SuppressWarnings("all")
     @Test
     public void bindingErrorJsonBad() throws Exception {
         mockMvc.perform(post("/test/binding-error-json.json")

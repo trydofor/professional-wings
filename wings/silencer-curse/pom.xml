@@ -14,9 +14,13 @@
     <packaging>jar</packaging>
 
     <name>Wings::Silencer::Curse</name>
-    <description>沉默术士之磕死：WingsBoot的基本功能和能力</description>
+    <description>WingsBoot basic Features and Capabilities</description>
 
     <dependencies>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>aegis</artifactId>
+        </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>silencer</artifactId>

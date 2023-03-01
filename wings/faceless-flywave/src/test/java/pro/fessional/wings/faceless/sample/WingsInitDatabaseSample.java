@@ -19,7 +19,8 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.scan;
  */
 
 @SpringBootTest
-@Disabled("手动执行，JavaMainJooqGenSample 需要 ")
+@Disabled("初始化数据库，已有devs统一管理")
+@SuppressWarnings("NewClassNamingConvention")
 public class WingsInitDatabaseSample {
 
     @Setter(onMethod_ = {@Autowired})

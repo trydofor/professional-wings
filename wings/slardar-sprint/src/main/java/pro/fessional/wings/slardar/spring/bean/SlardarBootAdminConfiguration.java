@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,6 +29,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.monitor.report.DingTalkReport;
 import pro.fessional.wings.slardar.security.pass.BasicPasswordEncoder;
@@ -47,6 +49,7 @@ import java.util.Objects;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
+@AutoConfigureOrder(OrderedSlardarConst.BootAdminConfiguration)
 public class SlardarBootAdminConfiguration {
     private final static Log log = LogFactory.getLog(SlardarBootAdminConfiguration.class);
 

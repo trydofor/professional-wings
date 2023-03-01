@@ -1,29 +1,28 @@
 package pro.fessional.wings.slardar.concur.impl;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.cache2k.Cache;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import pro.fessional.mirana.bits.Md5;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 import pro.fessional.wings.slardar.concur.Debounce;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
 import pro.fessional.wings.slardar.servlet.request.RequestHelper;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.servlet.stream.ReuseStreamResponseWrapper;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -40,13 +39,10 @@ public class DebounceInterceptor implements AutoRegisterInterceptor {
     private final ModelAndView modelAndView;
 
     @Getter @Setter
-    private int order = SlardarOrderConst.MvcDebounceInterceptor;
+    private int order = OrderedSlardarConst.MvcDebounceInterceptor;
 
-    public DebounceInterceptor(long capacity, int maxWait, ModelAndView res) {
-        this.cache = Caffeine.newBuilder()
-                             .maximumSize(capacity)
-                             .expireAfterWrite(maxWait, TimeUnit.SECONDS)
-                             .build();
+    public DebounceInterceptor(int capacity, int maxWait, ModelAndView res) {
+        this.cache = WingsCache2k.builder(DebounceInterceptor.class, "cache", capacity, maxWait, -1, String.class, Dto.class).build();
         this.modelAndView = res;
     }
 
@@ -56,9 +52,8 @@ public class DebounceInterceptor implements AutoRegisterInterceptor {
                              @NotNull HttpServletResponse response,
                              @NotNull Object handler) {
 
-        if (!(handler instanceof HandlerMethod)) return true;
+        if (!(handler instanceof final HandlerMethod handlerMethod)) return true;
 
-        final HandlerMethod handlerMethod = (HandlerMethod) handler;
         final Method method = handlerMethod.getMethod();
         final Debounce anno = method.getAnnotation(Debounce.class);
 
@@ -72,7 +67,7 @@ public class DebounceInterceptor implements AutoRegisterInterceptor {
 
         final Dto dto;
         synchronized (cache) {
-            Dto d = cache.getIfPresent(key);
+            Dto d = cache.get(key);
             if (d == null || d.ttl < bgn) {
                 d = new Dto(bgn + anno.waiting(), cur, anno.reuse());
                 cache.put(key, d);
@@ -126,12 +121,12 @@ public class DebounceInterceptor implements AutoRegisterInterceptor {
                                 @NotNull HttpServletResponse response,
                                 @NotNull Object handler, Exception ex) {
         // not handle exception
-        if(ex != null) return;
+        if (ex != null) return;
 
         // normal return or handled exception
         final String key = (String) request.getAttribute(DebounceKey);
         if (key == null) return;
-        final Dto dto = cache.getIfPresent(key);
+        final Dto dto = cache.get(key);
         if (dto == null || !dto.ruz) return;
 
         final ReuseStreamResponseWrapper inf = ReuseStreamResponseWrapper.infer(response);

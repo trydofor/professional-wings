@@ -21,10 +21,10 @@ import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerTest, havingValue = "true")
 public class TestEnvsController {
 
-    @Operation(summary = "获取 RunMode", description =
-            "# Usage \n"
-            + "无参数Get取得 Product, Test, Develop, Local\n"
-            + "")
+    @Operation(summary = "获取 RunMode", description = """
+            # Usage
+            无参数Get取得 Product, Test, Develop, Local
+            """)
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$testRunMode + "}", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public R<String> testRunMode() {
@@ -32,10 +32,10 @@ public class TestEnvsController {
         return R.okData(rm.name());
     }
 
-    @Operation(summary = "获取系统 Timestamp", description =
-            "# Usage \n"
-            + "无参数Get取得 1970毫秒数的Timestamp\n"
-            + "")
+    @Operation(summary = "获取系统 Timestamp", description = """
+            # Usage
+            无参数Get取得 1970毫秒数的Timestamp
+            """)
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$testSystemMills + "}", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public R<Long> testSystemMills() {
@@ -43,10 +43,10 @@ public class TestEnvsController {
         return R.okData(ms);
     }
 
-    @Operation(summary = "获取线程 Timestamp", description =
-            "# Usage \n"
-            + "无参数Get取得 1970毫秒数的Timestamp\n"
-            + "")
+    @Operation(summary = "获取线程 Timestamp", description = """
+            # Usage
+            无参数Get取得 1970毫秒数的Timestamp
+            """)
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$testThreadMills + "}", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public R<Long> testThreadMills() {

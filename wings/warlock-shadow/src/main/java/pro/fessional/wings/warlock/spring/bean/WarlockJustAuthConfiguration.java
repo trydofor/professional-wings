@@ -6,16 +6,18 @@ import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.security.justauth.AuthConfigWrapper;
 import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
 import pro.fessional.wings.warlock.security.justauth.JustAuthRequestBuilder;
-import pro.fessional.wings.warlock.security.justauth.JustAuthStateCaffeine;
+import pro.fessional.wings.warlock.security.justauth.JustAuthStateCache;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockJustAuthProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
@@ -35,6 +37,7 @@ import static java.net.Proxy.Type.DIRECT;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$justAuth, havingValue = "true")
 @RequiredArgsConstructor
+@AutoConfigureOrder(OrderedWarlockConst.JustAuthConfiguration)
 public class WarlockJustAuthConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockJustAuthConfiguration.class);
@@ -46,7 +49,7 @@ public class WarlockJustAuthConfiguration {
     @ConditionalOnMissingBean(AuthStateCache.class)
     public AuthStateCache authStateCache() {
         log.info("WarlockShadow spring-bean authStateCache");
-        return new JustAuthStateCaffeine(justAuthProp.getCacheSize(), justAuthProp.getCacheLive());
+        return new JustAuthStateCache(justAuthProp.getCacheSize(), justAuthProp.getCacheLive());
     }
 
     @Bean

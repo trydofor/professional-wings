@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.spring.conf;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
@@ -16,7 +17,6 @@ import pro.fessional.wings.slardar.security.bind.WingsBindAuthFilter;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeParser;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeSource;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;

@@ -3,10 +3,12 @@ package pro.fessional.wings.slardar.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.silencer.encrypt.SecretProvider;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.servlet.cookie.WingsCookieFilter;
 import pro.fessional.wings.slardar.servlet.cookie.WingsCookieInterceptor;
 import pro.fessional.wings.slardar.servlet.cookie.impl.WingsCookieInterceptorImpl;
@@ -27,6 +29,7 @@ import static pro.fessional.wings.slardar.servlet.cookie.WingsCookieInterceptor.
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$cookie, havingValue = "true")
 @RequiredArgsConstructor
+@AutoConfigureOrder(OrderedSlardarConst.CookieConfiguration)
 public class SlardarCookieConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarCookieConfiguration.class);

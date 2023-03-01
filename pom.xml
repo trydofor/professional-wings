@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.6</version>
+        <version>3.0.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -16,7 +16,7 @@
     <packaging>pom</packaging>
 
     <name>Ancient::</name>
-    <description>万物生长靠日</description>
+    <description>万物生长靠日 ☀️ Growing Need the F^king Sun</description>
 
     <url>https://wings.fessional.pro</url>
 
@@ -46,61 +46,54 @@
 
     <properties>
         <!-- https://github.com/spring-projects/spring-boot/releases -->
-        <revision>2.6.6</revision>
+        <revision>3.0.3</revision>
         <!-- https://maven.apache.org/maven-ci-friendly.html -->
-        <changelist>210-SNAPSHOT</changelist>
-        <!-- https://docs.spring.io/spring-boot/docs/2.6.6/reference/html/dependency-versions.html -->
+        <changelist>300-SNAPSHOT</changelist>
+        <!-- https://docs.spring.io/spring-boot/docs/3.0.3/reference/html/dependency-versions.html -->
         <spring-boot.version>${revision}</spring-boot.version>
         <wings.version>${revision}.${changelist}</wings.version>
         <!-- project -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- override spring boot default -->
-        <java.version>11</java.version>
-        <kotlin.version>1.6.21</kotlin.version>
-        <jooq.version>3.14.16</jooq.version>
-        <h2.version>2.1.214</h2.version>
-        <okhttp3.version>4.9.3</okhttp3.version> <!-- just auth need 4, spring use 3 https://square.github.io/okhttp/changelog/ FIXME in boot2.7-->
-        <jackson-jsr310.version>2.14.1</jackson-jsr310.version> <!-- https://github.com/FasterXML/jackson-modules-java8/issues/230 FIXME in 2.14 -->
-        <snakeyaml.version>1.33</snakeyaml.version> <!-- https://github.com/apache/shardingsphere/issues/21476 FIXME -->
+        <java.version>17</java.version>
+        <!-- <kotlin.version>1.7.22</kotlin.version> -->
         <!-- mvn boot -->
         <maven.test.skip>false</maven.test.skip>
         <maven.deploy.skip>false</maven.deploy.skip>
         <maven.install.skip>false</maven.install.skip>
         <spring-boot.repackage.skip>false</spring-boot.repackage.skip>
         <spring-boot.repackage.executable>false</spring-boot.repackage.executable>
+        <gpg.skip>true</gpg.skip>
         <!-- common quality-->
-        <errorprone.version>2.16</errorprone.version> <!-- https://github.com/google/error-prone/releases -->
-        <annotations.version>23.0.0</annotations.version> <!-- https://github.com/JetBrains/java-annotations -->
+        <annotations.version>24.0.0</annotations.version> <!-- https://github.com/JetBrains/java-annotations/releases -->
         <!-- common utils-->
         <mapstruct.version>1.5.3.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
         <guava.version>31.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
         <commons-io.version>2.11.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
         <!-- wings project -->
-        <mirana.version>2.4.0-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
+        <mirana.version>2.4.4-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <meepo.version>1.4.1-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <shardingsphere.version>5.2.1</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
-        <fastjson2.version>2.0.20</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
+        <fastjson2.version>2.0.24</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
         <fastjson.version>${fastjson2.version}</fastjson.version> <!-- https://github.com/alibaba/fastjson/releases -->
-        <kryo.version>5.3.0</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
+        <kryo.version>5.4.0</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
         <transmittable.version>2.14.2</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
         <bouncycastle.version>1.72</bouncycastle.version> <!-- https://bouncycastle.org/releasenotes.html -->
         <justauth.version>1.16.5</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
         <!-- servicecomb -->
-        <servicecomb.version>2.8.0</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
+        <servicecomb.version>2.8.6</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
         <!-- others -->
-        <springdoc.version>1.6.8</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases  boot-starter 2.6.7 -->
+        <springdoc.version>2.0.2</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases-->
         <therapi.version>0.15.0</therapi.version> <!-- https://github.com/dnault/therapi-runtime-javadoc  springdoc Javadoc support -->
-        <boot-admin.version>2.6.7</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases spring-boot.version 2.6.7-->
-        <sentry.version>6.4.0</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases  springBootVersion = "2.6.8"-->
+        <boot-admin.version>3.0.0</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases-->
+        <sentry.version>6.14.0</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases buildSrc/src/main/java/Config.kt -->
         <retrofit.version>2.9.0</retrofit.version> <!-- https://github.com/square/retrofit/tags -->
-        <jdbi.version>3.34.0</jdbi.version> <!-- https://github.com/jdbi/jdbi/releases -->
         <!-- mvn-build-plugin -->
-        <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version> <!-- https://search.maven.org/search?q=flatten-maven-plugin -->
-        <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version> <!-- https://search.maven.org/search?q=maven-gpg-plugin -->
+        <flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version> <!-- https://github.com/mojohaus/flatten-maven-plugin/releases/tag -->
+        <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version> <!-- https://github.com/apache/maven-gpg-plugin/tags -->
         <wings.java-opens>
-            --illegal-access=debug
             --add-modules=java.se <!-- Hazelcast -->
             --add-opens=java.base/java.io=ALL-UNNAMED <!-- FastJson -->
             --add-opens=java.base/java.nio=ALL-UNNAMED <!-- Hazelcast -->
@@ -134,6 +127,11 @@
             <!-- pro.fessional.wings -->
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
+                <artifactId>aegis</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
                 <artifactId>silencer</artifactId>
                 <version>${wings.version}</version>
             </dependency>
@@ -154,6 +152,16 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
+                <artifactId>faceless-autogen</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>faceless-awesome</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
                 <artifactId>faceless-flywave</artifactId>
                 <version>${wings.version}</version>
             </dependency>
@@ -164,7 +172,7 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
-                <artifactId>faceless-jooqgen</artifactId>
+                <artifactId>faceless-codegen</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>
@@ -214,6 +222,16 @@
             </dependency>
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
+                <artifactId>warlock-autogen</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>warlock-awesome</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
                 <artifactId>warlock-bond</artifactId>
                 <version>${wings.version}</version>
             </dependency>
@@ -250,6 +268,11 @@
             <!-- pro.fessional.wings radiant -->
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
+                <artifactId>tiny-autogen</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
                 <artifactId>tiny-task</artifactId>
                 <version>${wings.version}</version>
             </dependency>
@@ -269,18 +292,13 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
                 <version>${spring-boot.version}</version>
-                <!-- 测试上看 undertow 新能最好 -->
+                <!-- undertow has a better benchmark -->
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-starter-tomcat</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jsr310</artifactId>
-                <version>${jackson-jsr310.version}</version>
             </dependency>
             <!-- sharding sphere -->
             <dependency>
@@ -299,6 +317,32 @@
                 <groupId>com.hazelcast</groupId>
                 <artifactId>hazelcast-spring</artifactId>
                 <version>${hazelcast.version}</version>
+            </dependency>
+            <!-- servicecomb -->
+            <dependency>
+                <groupId>org.apache.servicecomb</groupId>
+                <artifactId>java-chassis-spring-boot-starter-servlet</artifactId>
+                <version>${servicecomb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.servicecomb</groupId>
+                <artifactId>swagger-invocation-validator</artifactId>
+                <version>${servicecomb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.servicecomb</groupId>
+                <artifactId>handler-publickey-auth</artifactId>
+                <version>${servicecomb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.servicecomb</groupId>
+                <artifactId>handler-loadbalance</artifactId>
+                <version>${servicecomb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.servicecomb</groupId>
+                <artifactId>registry-zero-config</artifactId>
+                <version>${servicecomb.version}</version>
             </dependency>
             <!-- utils -->
             <dependency>
@@ -322,7 +366,7 @@
                 <version>${fastjson2.version}</version>
             </dependency>
             <dependency>
-                <!-- wings内禁用，为间接引用的第三方定义安全的版本号 -->
+                <!-- DENIED by wings，define safe version numbers for indirectly 3rd lib -->
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
@@ -350,11 +394,6 @@
             </dependency>
             <!-- http rest -->
             <dependency>
-                <groupId>com.squareup.okhttp3</groupId>
-                <artifactId>logging-interceptor</artifactId>
-                <version>${okhttp3.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.squareup.retrofit2</groupId>
                 <artifactId>retrofit</artifactId>
                 <version>${retrofit.version}</version>
@@ -377,7 +416,7 @@
             </dependency>
             <dependency>
                 <groupId>io.sentry</groupId>
-                <artifactId>sentry-spring-boot-starter</artifactId>
+                <artifactId>sentry-spring-boot-starter-jakarta</artifactId>
                 <version>${sentry.version}</version>
             </dependency>
             <dependency>
@@ -392,11 +431,6 @@
                 <version>${annotations.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.google.errorprone</groupId>
-                <artifactId>error_prone_annotations</artifactId>
-                <version>${errorprone.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>
                 <version>${mapstruct.version}</version>
@@ -408,19 +442,14 @@
             </dependency>
             <dependency>
                 <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-ui</artifactId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${springdoc.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-javadoc</artifactId>
-                <version>${springdoc.version}</version>
-            </dependency>
-            <dependency>
-                <!-- 未曾使用，但因安全漏洞，避免误用，显示移除 -->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-logging</artifactId>
                 <version>${spring-boot.version}</version>
+                <!-- NOT used, explicitly removed for security reasons to prevent misuse -->
                 <exclusions>
                     <exclusion>
                         <groupId>org.apache.logging.log4j</groupId>
@@ -432,21 +461,7 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>org.apache.servicecomb</groupId>
-                <artifactId>java-chassis-dependencies</artifactId>
-                <version>${servicecomb.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <!-- 其他数据源，非业务主干功能，如ETL等外部操作 -->
-                <groupId>org.jdbi</groupId>
-                <artifactId>jdbi3-bom</artifactId>
-                <type>pom</type>
-                <version>${jdbi.version}</version>
-                <scope>import</scope>
-            </dependency>
+            <!-- do NOT import any BOM -->
         </dependencies>
     </dependencyManagement>
 
@@ -462,13 +477,15 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
                     <configuration>
-                        <argLine>${wings.java-opens}</argLine>
+                        <argLine>@{wings.java-opens}</argLine>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
                     <configuration>
                         <!-- avoid /build/resources/resource/filtering=true -->
                         <nonFilteredFileExtensions>
@@ -499,12 +516,13 @@
                         <source>${java.version}</source>
                         <target>${java.version}</target>
                         <compilerArgs>
+                            <arg>-parameters</arg>
                             <arg>--add-modules=java.se</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/java.io=ALL-UNNAMED</arg> <!-- FastJson -->
                             <arg>--add-exports=java.base/java.nio=ALL-UNNAMED</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/java.lang=ALL-UNNAMED</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/java.lang.invoke=ALL-UNNAMED</arg> <!-- FastJson2 -->
-                            <arg>--add-opens=java.base/java.util=ALL-UNNAMED</arg> <!-- Boot Collections$EmptySet -->
+                            <arg>--add-exports=java.base/java.util=ALL-UNNAMED</arg> <!-- Boot Collections$EmptySet -->
                             <arg>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/sun.security.x509=ALL-UNNAMED</arg> <!-- Boot -->
@@ -515,7 +533,7 @@
                             <arg>--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg> <!-- Boot -->
                         </compilerArgs>
                         <annotationProcessorPaths>
-                            <!--  从以下 path 查找annotationProcessor，class paths -->
+                            <!--  find annotationProcessors in the following paths -->
                             <path>
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
@@ -573,6 +591,7 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${revision}</version>
                     <configuration>
                         <skip>${spring-boot.repackage.skip}</skip>
                         <executable>${spring-boot.repackage.executable}</executable>
@@ -587,12 +606,10 @@
                 </plugin>
                 <!--  deploy  -->
                 <plugin>
+                    <!-- https://maven.apache.org/plugins/maven-gpg-plugin/sign-mojo.html -->
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>${maven-gpg-plugin.version}</version>
-                    <configuration>
-                        <skip>${deploy.private.repository}</skip>
-                    </configuration>
                     <executions>
                         <execution>
                             <id>sign-artifacts</id>
@@ -661,41 +678,6 @@
                         <jvmTarget>${java.version}</jvmTarget>
                         <javaParameters>true</javaParameters>
                     </configuration>
-                    <executions>
-                        <execution>
-                            <id>compile</id>
-                            <goals>
-                                <goal>compile</goal>
-                            </goals>
-                            <configuration>
-                                <sourceDirs>
-                                    <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
-                                    <sourceDir>${project.basedir}/src/main/java</sourceDir>
-                                </sourceDirs>
-                                <args>
-                                    <arg>-Xjsr305=strict</arg>
-                                </args>
-                                <compilerPlugins>
-                                    <plugin>spring</plugin>
-                                </compilerPlugins>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>test-compile</id>
-                            <goals>
-                                <goal>test-compile</goal>
-                            </goals>
-                            <configuration>
-                                <sourceDirs>
-                                    <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
-                                    <sourceDir>${project.basedir}/src/test/java</sourceDir>
-                                </sourceDirs>
-                                <compilerPlugins>
-                                    <plugin>spring</plugin>
-                                </compilerPlugins>
-                            </configuration>
-                        </execution>
-                    </executions>
                     <dependencies>
                         <dependency>
                             <groupId>org.jetbrains.kotlin</groupId>
@@ -706,8 +688,8 @@
                 </plugin>
                 <!-- build info -->
                 <plugin>
-                    <groupId>pl.project13.maven</groupId>
-                    <artifactId>git-commit-id-plugin</artifactId>
+                    <groupId>io.github.git-commit-id</groupId>
+                    <artifactId>git-commit-id-maven-plugin</artifactId>
                     <version>${git-commit-id-plugin.version}</version>
                     <executions>
                         <execution>
@@ -759,4 +741,133 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
+    <profiles>
+        <profile>
+            <id>wings-kotlin-1test</id>
+            <activation>
+                <file>
+                    <exists>src/test/kotlin</exists>
+                </file>
+            </activation>
+            <properties>
+                <wings-kotlin-scope>test</wings-kotlin-scope>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-stdlib-jdk8</artifactId>
+                    <scope>${wings-kotlin-scope}</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <!-- https://kotlinlang.org/docs/maven.html#compile-kotlin-and-java-sources -->
+                    <plugin>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>test-compile</id>
+                                <goals>
+                                    <goal>test-compile</goal>
+                                </goals>
+                                <configuration>
+                                    <sourceDirs>
+                                        <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
+                                        <sourceDir>${project.basedir}/src/test/java</sourceDir>
+                                    </sourceDirs>
+                                    <compilerPlugins>
+                                        <plugin>spring</plugin>
+                                    </compilerPlugins>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <!-- Replacing default-testCompile as it is treated specially by maven -->
+                            <execution>
+                                <id>default-testCompile</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>java-test-compile</id>
+                                <phase>test-compile</phase>
+                                <goals>
+                                    <goal>testCompile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>wings-kotlin-2main</id>
+            <activation>
+                <file>
+                    <exists>src/main/kotlin</exists>
+                </file>
+            </activation>
+            <properties>
+                <wings-kotlin-scope>compile</wings-kotlin-scope>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-stdlib-jdk8</artifactId>
+                    <scope>${wings-kotlin-scope}</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <!-- https://kotlinlang.org/docs/maven.html#compile-kotlin-and-java-sources -->
+                    <plugin>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>compile</id>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                                <configuration>
+                                    <sourceDirs>
+                                        <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                                        <sourceDir>${project.basedir}/src/main/java</sourceDir>
+                                    </sourceDirs>
+                                    <args>
+                                        <arg>-Xjsr305=strict</arg>
+                                    </args>
+                                    <compilerPlugins>
+                                        <plugin>spring</plugin>
+                                    </compilerPlugins>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <!-- Replacing default-compile as it is treated specially by maven -->
+                            <execution>
+                                <id>default-compile</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>java-compile</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

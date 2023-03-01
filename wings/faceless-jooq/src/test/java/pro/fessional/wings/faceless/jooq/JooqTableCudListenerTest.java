@@ -44,10 +44,12 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
  * @since 2019-09-27
  */
 
+@SuppressWarnings("CanBeFinal")
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @ActiveProfiles("init")
 @SpringBootTest(properties = {
         "debug = true",
+        "logging.level.root=DEBUG",
         "wings.faceless.jooq.cud.table[tst_中文也分表]=id,login_info",
         "spring.wings.faceless.jooq.enabled.listen-table-cud=true"
 })
@@ -138,6 +140,7 @@ public class JooqTableCudListenerTest {
     public void test2Update() {
 
         final Tst中文也分表Table t = testDao.getTable();
+
         Tst中文也分表 pojo = new Tst中文也分表();
         pojo.setId(301L);
         pojo.setCommitId(-301L);

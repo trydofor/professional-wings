@@ -62,7 +62,7 @@ import java.util.Map;
  * </pre>
  *
  * @author trydofor
- * @link https://blog.jooq.org/2019/09/19/whats-faster-count-or-count1/
+ * @link <a href="https://blog.jooq.org/2019/09/19/whats-faster-count-or-count1/">whats-faster-count-or-count1</a>
  * @since 2020-09-30
  */
 public class PageJooqHelper extends PageJdbcHelper {
@@ -139,8 +139,7 @@ public class PageJooqHelper extends PageJdbcHelper {
                     @SuppressWarnings("unchecked")
                     Map<String, Field<?>> wtm = (Map<String, Field<?>>) bys;
                     for (OrderField<?> s : dft) {
-                        if (s instanceof Field) {
-                            Field<?> f = (Field<?>) s;
+                        if (s instanceof Field<?> f) {
                             wtm.putIfAbsent(f.getName(), f);
                         }
                     }
@@ -161,7 +160,7 @@ public class PageJooqHelper extends PageJdbcHelper {
         private final ContextJooq<R> context;
 
         /**
-         * https://blog.jooq.org/2019/09/19/whats-faster-count-or-count1/
+         * <a href="https://blog.jooq.org/2019/09/19/whats-faster-count-or-count1/">whats-faster-count-or-count1</a>
          */
         public FromJooq<R> count() {
             context.count = DSL.count();

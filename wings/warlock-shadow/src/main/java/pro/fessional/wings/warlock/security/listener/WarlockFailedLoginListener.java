@@ -21,11 +21,10 @@ public class WarlockFailedLoginListener implements ApplicationListener<Authentic
     @Override
     public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent event) {
         final Object source = event.getSource();
-        if (!(source instanceof WingsBindAuthToken)) {
+        if (!(source instanceof WingsBindAuthToken src)) {
             log.info("skip non-wings-source, type={}", source.getClass().getName());
             return;
         }
-        WingsBindAuthToken src = (WingsBindAuthToken) source;
         warlockAuthnService.onFailure(src.getAuthType(), src.getName());
     }
 }

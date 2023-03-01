@@ -8,6 +8,7 @@ import pro.fessional.wings.slardar.servlet.filter.WingsOverloadFilter;
  * @since 2021-02-14
  */
 @ConfigurationProperties(SlardarOverloadProp.Key)
+@Deprecated
 public class SlardarOverloadProp extends WingsOverloadFilter.Config {
     public static final String Key = "wings.slardar.overload";
 

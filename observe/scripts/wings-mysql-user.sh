@@ -1,14 +1,14 @@
 #!/bin/bash
-THIS_VERSION=2022-02-14
+THIS_VERSION=2023-02-14
 
 cat << EOF
 #################################################
 # Version $THIS_VERSION # test on Mac and Lin
 # 创建database以及和访问的用户
-- {user_pre}.raw SELECT, TEMPORARY TABLE
-- {user_pre}.app {raw} + INSERT, UPDATE, DELETE, EXECUTE
-- {user_pre}.dev ALL - Drop
-- {user_pre}.dba ALL + SELECT on mysql/sys
+- {user_pre}{name_pre}raw SELECT, TEMPORARY TABLE
+- {user_pre}{name_pre}app {raw} + INSERT, UPDATE, DELETE, EXECUTE
+- {user_pre}{name_pre}dev ALL - Drop
+- {user_pre}{name_pre}dba ALL + SELECT on mysql/sys
 
 # Usage $0 {create|grant|passwd|help} userenv [option]
 - create/grant/passwd - 创建/授权/改密码
@@ -26,6 +26,7 @@ function passwd24() {
 
 #####
 execute=false
+name_pre=_
 command="$1"
 userenv="$2"
 option="$3"
@@ -37,6 +38,8 @@ cat << 'EOF'
 execute=false
 # 用户名前缀
 user_pre=devall
+# 默认的名字分隔符
+name_pre=_
 # 授权db，空格分隔。其中`_`和`%`是通配符，可`\`转义
 grant_db='%'
 # passwd 空为忽略
@@ -102,10 +105,10 @@ fi
 
 echo -e '\033[37;42;1mNOTE: users and passwd\033[m'
 grep -v '^#' << EOF
-${user_raw}$user_pre.raw  $pass_raw
-${user_app}$user_pre.app  $pass_app
-${user_dev}$user_pre.dev  $pass_dev
-${user_dba}$user_pre.dba  $pass_dba
+${user_raw}${user_pre}${name_pre}raw  $pass_raw
+${user_app}${user_pre}${name_pre}app  $pass_app
+${user_dev}${user_pre}${name_pre}dev  $pass_dev
+${user_dba}${user_pre}${name_pre}dba  $pass_dba
 EOF
 
 echo -e '\033[37;42;1mNOTE: sql script to execute\033[m'
@@ -113,10 +116,10 @@ echo -e '\033[37;42;1mNOTE: sql script to execute\033[m'
 if [[ "$command" == "create" ]]; then
 grep -v '^#' << EOF | tee /dev/tty | $exec_cmd
 -- create
-${user_raw}CREATE USER '$user_pre.raw'@'$host_raw' IDENTIFIED BY '$pass_raw';
-${user_app}CREATE USER '$user_pre.app'@'$host_app' IDENTIFIED BY '$pass_app';
-${user_dev}CREATE USER '$user_pre.dev'@'$host_dev' IDENTIFIED BY '$pass_dev';
-${user_dba}CREATE USER '$user_pre.dba'@'$host_dba' IDENTIFIED BY '$pass_dba';
+${user_raw}CREATE USER '${user_pre}${name_pre}raw'@'$host_raw' IDENTIFIED BY '$pass_raw';
+${user_app}CREATE USER '${user_pre}${name_pre}app'@'$host_app' IDENTIFIED BY '$pass_app';
+${user_dev}CREATE USER '${user_pre}${name_pre}dev'@'$host_dev' IDENTIFIED BY '$pass_dev';
+${user_dba}CREATE USER '${user_pre}${name_pre}dba'@'$host_dba' IDENTIFIED BY '$pass_dba';
 EOF
 fi
 
@@ -124,16 +127,16 @@ if [[ "$command" == "grant" ]]; then
 for db_main in $grant_db; do
 grep -v '^#' << EOF | tee /dev/tty | $exec_cmd
 -- grant
-${user_raw}GRANT SELECT, CREATE TEMPORARY TABLES ON \`$db_main\`.* TO '$user_pre.raw'@'$host_raw';
-${user_app}GRANT SELECT, CREATE TEMPORARY TABLES, INSERT, UPDATE, DELETE, EXECUTE ON \`$db_main\`.* TO '$user_pre.app'@'$host_app';
-${user_dev}GRANT ALL ON \`$db_main\`.* TO '$user_pre.dev'@'$host_dev';
-${user_dev}REVOKE DROP ON \`$db_main\`.* FROM '$user_pre.dev'@'$host_dev';
-${user_dba}GRANT ALL ON \`$db_main\`.* TO '$user_pre.dba'@'$host_dba';
-${user_dba}GRANT RELOAD,SHOW VIEW,EXECUTE,FILE,PROCESS,REPLICATION CLIENT,REPLICATION SLAVE ON *.* TO '$user_pre.dba'@'$host_dba';
+${user_raw}GRANT SELECT, CREATE TEMPORARY TABLES ON \`$db_main\`.* TO '${user_pre}${name_pre}raw'@'$host_raw';
+${user_app}GRANT SELECT, CREATE TEMPORARY TABLES, INSERT, UPDATE, DELETE, EXECUTE ON \`$db_main\`.* TO '${user_pre}${name_pre}app'@'$host_app';
+${user_dev}GRANT ALL ON \`$db_main\`.* TO '${user_pre}${name_pre}dev'@'$host_dev';
+${user_dev}REVOKE DROP ON \`$db_main\`.* FROM '${user_pre}${name_pre}dev'@'$host_dev';
+${user_dba}GRANT ALL ON \`$db_main\`.* TO '${user_pre}${name_pre}dba'@'$host_dba';
+${user_dba}GRANT RELOAD,SHOW VIEW,EXECUTE,PROCESS,REPLICATION CLIENT,REPLICATION SLAVE ON *.* TO '${user_pre}${name_pre}dba'@'$host_dba';
 EOF
 for mb in $more_dba; do
 grep -v '^#' << EOF | tee /dev/tty | $exec_cmd
-${user_dba}GRANT SELECT ON \`$mb\`.* TO '$user_pre.dba'@'$host_dba';
+${user_dba}GRANT SELECT ON \`$mb\`.* TO '${user_pre}${name_pre}dba'@'$host_dba';
 EOF
 done
 done
@@ -142,10 +145,10 @@ fi
 if [[ "$command" == "passwd" ]]; then
 grep -v '^#' << EOF | tee /dev/tty | $exec_cmd
 -- change passwd
-${user_raw}ALTER USER '$user_pre.raw'@'$host_raw' IDENTIFIED BY '$pass_raw';
-${user_app}ALTER USER '$user_pre.app'@'$host_app' IDENTIFIED BY '$pass_app';
-${user_dev}ALTER USER '$user_pre.dev'@'$host_dev' IDENTIFIED BY '$pass_dev';
-${user_dba}ALTER USER '$user_pre.dba'@'$host_dba' IDENTIFIED BY '$pass_dba';
+${user_raw}ALTER USER '${user_pre}${name_pre}raw'@'$host_raw' IDENTIFIED BY '$pass_raw';
+${user_app}ALTER USER '${user_pre}${name_pre}app'@'$host_app' IDENTIFIED BY '$pass_app';
+${user_dev}ALTER USER '${user_pre}${name_pre}dev'@'$host_dev' IDENTIFIED BY '$pass_dev';
+${user_dba}ALTER USER '${user_pre}${name_pre}dba'@'$host_dba' IDENTIFIED BY '$pass_dba';
 EOF
 fi
 

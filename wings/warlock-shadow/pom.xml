@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Warlock::Shadow</name>
-    <description>术士大叔之暗言术法：集成SlardarSprint</description>
+    <description>Integration of SlardarSprint and Auth/Perm/Admin Features</description>
 
     <dependencies>
         <dependency>
@@ -23,7 +23,7 @@
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>warlock</artifactId>
+            <artifactId>warlock-awesome</artifactId>
         </dependency>
         <dependency>
             <groupId>me.zhyd.oauth</groupId>

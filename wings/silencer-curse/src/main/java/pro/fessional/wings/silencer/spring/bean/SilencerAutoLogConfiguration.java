@@ -8,14 +8,16 @@ import ch.qos.logback.core.ConsoleAppender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.silencer.spring.help.CommandLineRunnerOrdered;
-import pro.fessional.wings.silencer.spring.help.WingsBeanOrdered;
+import pro.fessional.wings.silencer.runner.ApplicationReadyEventRunner;
 import pro.fessional.wings.silencer.spring.prop.SilencerAutoLogProp;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
+import pro.fessional.wings.spring.consts.OrderedSilencerConst;
+import pro.fessional.wings.spring.consts.WingsBeanOrdered;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,15 +29,19 @@ import java.util.Set;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SilencerEnabledProp.Key$autoLog, havingValue = "true")
+@AutoConfigureOrder(OrderedSilencerConst.AutoLogConfiguration)
 public class SilencerAutoLogConfiguration {
 
     private static final Log log = LogFactory.getLog(SilencerAutoLogConfiguration.class);
 
+    /**
+     * 配置结束，服务开始之前，切换日志
+     */
     @Bean
     @ConditionalOnClass(ConsoleAppender.class)
-    public CommandLineRunnerOrdered runnerSilenceLogbackConsole(SilencerAutoLogProp autoLog) {
+    public ApplicationReadyEventRunner runnerSilenceLogbackConsole(SilencerAutoLogProp autoLog) {
         log.info("SilencerCurse spring-runs runnerSilenceLogbackConsole");
-        return new CommandLineRunnerOrdered(WingsBeanOrdered.Lv1Config, args -> {
+        return new ApplicationReadyEventRunner(WingsBeanOrdered.Lv1Config, ignored -> {
             final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
             final Set<String> targets = autoLog.getTarget();
             final Set<String> exists = autoLog.getExists();
@@ -64,18 +70,18 @@ public class SilencerAutoLogConfiguration {
             }
 
             final String level = autoLog.getLevel();
-            log.info("Wings conf LogbackFilter to ConsoleAppender");
             log.info("================= Silencer =================");
             log.info("Auto Switch the following Appender Level to " + level);
             for (Appender<ILoggingEvent> appender : appenders) {
                 log.info("- " + appender.getName() + " : " + appender.getClass().getName());
             }
-            log.info("================= Silencer =================");
             final ThresholdFilter tft = new ThresholdFilter();
             tft.setLevel(level);
             for (Appender<ILoggingEvent> appender : appenders) {
                 appender.addFilter(tft);
             }
+            log.info("================= Silencer =================");
+            tft.start();
         });
     }
 }

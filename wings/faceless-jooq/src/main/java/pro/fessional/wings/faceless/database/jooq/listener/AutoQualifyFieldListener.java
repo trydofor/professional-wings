@@ -6,8 +6,8 @@ import org.jooq.QueryPart;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.VisitContext;
+import org.jooq.VisitListener;
 import org.jooq.impl.DSL;
-import org.jooq.impl.DefaultVisitListener;
 import org.jooq.impl.TableImpl;
 
 /**
@@ -15,7 +15,8 @@ import org.jooq.impl.TableImpl;
  * @author trydofor
  * @since 2021-01-14
  */
-public class AutoQualifyFieldListener extends DefaultVisitListener {
+@SuppressWarnings("removal")
+public class AutoQualifyFieldListener implements VisitListener {
 
     @Override
     public void visitStart(VisitContext context) {
@@ -23,21 +24,18 @@ public class AutoQualifyFieldListener extends DefaultVisitListener {
         if(context.renderContext() == null) return;
 
         QueryPart qp = context.queryPart();
-        if (qp instanceof TableField) {
-            TableField<?, ?> field = (TableField<?, ?>) qp;
+        if (qp instanceof TableField<?, ?> field) {
             if (notAlias(field.getTable(), context.context()) == 0) {
                 context.queryPart(DSL.field(field.getUnqualifiedName(), field.getDataType()));
             }
         }
-        else if (qp instanceof QualifiedAsterisk) {
-            QualifiedAsterisk asterisk = (QualifiedAsterisk) qp;
+        else if (qp instanceof QualifiedAsterisk asterisk) {
             if (notAlias(asterisk.qualifier(), context.context()) == 0) {
                 context.queryPart(DSL.sql("*"));
             }
         }
     }
 
-    @SuppressWarnings("deprecation")
     private int notAlias(Table<?> table, Context<?> ctx) {
         if (!(table instanceof TableImpl)) return -1;
 

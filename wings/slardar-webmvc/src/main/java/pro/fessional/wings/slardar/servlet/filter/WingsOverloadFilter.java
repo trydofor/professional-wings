@@ -1,31 +1,29 @@
 package pro.fessional.wings.slardar.servlet.filter;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.cache2k.Cache;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
 import pro.fessional.mirana.time.ThreadNow;
-import pro.fessional.wings.slardar.constants.SlardarOrderConst;
+import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
  * 不建议使用，因实现过于简单，未考虑复杂情况。
@@ -38,7 +36,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 public class WingsOverloadFilter implements OrderedFilter {
 
     @Setter @Getter
-    private int order = SlardarOrderConst.WebFilterOverload;
+    private int order = OrderedSlardarConst.WebFilterOverload;
 
     private final AtomicInteger requestCapacity = new AtomicInteger(0);
     private final AtomicInteger requestProcess = new AtomicInteger(0);
@@ -65,17 +63,13 @@ public class WingsOverloadFilter implements OrderedFilter {
         else {
             int capacity = initCapacity(config);
             requestCapacity.set(capacity);
-
-            this.spiderCache = Caffeine.newBuilder()
-                                       .maximumSize(capacity)
-                                       .expireAfterAccess(config.requestInterval * config.requestCalmdown * 2, MILLISECONDS)
-                                       .build();
+            final Duration ttl = Duration.ofMillis(config.requestInterval * config.requestCalmdown * 2);
+            this.spiderCache = WingsCache2k.builder(WingsOverloadFilter.class, "spiderCache", capacity, ttl, null, String.class, CalmDown.class)
+                                           .build();
         }
 
-        lastWarnSlow = Caffeine.newBuilder()
-                               .maximumSize(2000)
-                               .expireAfterAccess(Duration.ofHours(2))
-                               .build();
+        lastWarnSlow = WingsCache2k.builder(WingsOverloadFilter.class, "lastWarnSlow", 2000, Duration.ofHours(2), null, String.class, Long.class)
+                                   .build();
 
         if (config.responseInfoStat <= 0) {
             responseCost = new AtomicLong[0];
@@ -95,14 +89,13 @@ public class WingsOverloadFilter implements OrderedFilter {
             return;
         }
 
-        if (!(request instanceof HttpServletRequest)) {
+        if (!(request instanceof final HttpServletRequest httpReq)) {
             chain.doFilter(request, response);
             return;
         }
 
         // 只能处理http的，目前的情况
         final long now = ThreadNow.millis();
-        final HttpServletRequest httpReq = (HttpServletRequest) request;
         final CalmDown calmDown = letCalmDown(httpReq);
 
         // 快请求，累积后清零
@@ -112,7 +105,7 @@ public class WingsOverloadFilter implements OrderedFilter {
             final boolean isFst = now - calmDown.firstRequest.get() < config.requestInterval;
             if (isCnt && isFst) {
                 fallBack.fallback(request, response);
-                final Long lw = lastWarnSlow.getIfPresent(calmDown.ip);
+                final Long lw = lastWarnSlow.get(calmDown.ip);
                 final long lwl = lw == null ? 0L : lw;
                 if (log.isWarnEnabled() && now > config.getLogInterval() + lwl) {
                     log.warn("wings-clam-request, now={}, ip={}, uri={}", rqs, calmDown.ip, httpReq.getRequestURI());
@@ -214,7 +207,7 @@ public class WingsOverloadFilter implements OrderedFilter {
             }
         }
 
-        return spiderCache.get(ip, CalmDown::new);
+        return spiderCache.computeIfAbsent(ip, CalmDown::new);
     }
 
     private int initCapacity(Config config) {
@@ -227,9 +220,8 @@ public class WingsOverloadFilter implements OrderedFilter {
 
     private void checkAndStats(HttpServletRequest request, ServletResponse response, long bgn, long end) {
         // 只处理成功的，其他的忽略。
-        if (!(response instanceof HttpServletResponse)) return;
+        if (!(response instanceof HttpServletResponse res)) return;
 
-        HttpServletResponse res = (HttpServletResponse) response;
         if (res.getStatus() != 200) return;
 
         // 慢响应
@@ -237,7 +229,7 @@ public class WingsOverloadFilter implements OrderedFilter {
         final long warnSlow = config.responseWarnSlow;
         if (log.isWarnEnabled() && warnSlow > 0 && cost > warnSlow) {
             String uri = request.getRequestURI();
-            final Long lw = lastWarnSlow.getIfPresent(uri);
+            final Long lw = lastWarnSlow.get(uri);
             final long lwl = lw == null ? 0L : lw;
             if (end > config.getLogInterval() + lwl) {
                 log.warn("wings-slow-response, slow={}, cost={}, uri={}", warnSlow, cost, uri);

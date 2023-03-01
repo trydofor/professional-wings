@@ -1,5 +1,8 @@
 package pro.fessional.wings.warlock.controller.api;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -19,9 +22,6 @@ import pro.fessional.wings.slardar.httprest.okhttp.OkHttpTokenizeOauth;
 import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
 import pro.fessional.wings.warlock.service.watching.WatchingService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -34,6 +34,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @author trydofor
  * @since 2022-11-12
  */
+@SuppressWarnings("UastIncorrectHttpHeaderInspection")
 @RestController
 @Slf4j
 public class TestToyApiController extends AbstractApiAuthController {
@@ -51,7 +52,6 @@ public class TestToyApiController extends AbstractApiAuthController {
             @RequestParam Map<String, String> para,
             @RequestBody String body
     ) {
-
         return ResponseEntity.ok("ok");
     }
 

@@ -19,7 +19,7 @@ import static com.moilioncircle.wings.devops.project.Devops0ProjectConstant.PKG_
  * @author trydofor
  * @since 2021-02-22
  */
-@Disabled("手动执行")
+@Disabled("生成代码")
 public class Devops2CodeGeneratorTest {
 
     @Test

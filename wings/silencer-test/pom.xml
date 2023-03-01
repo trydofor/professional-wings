@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Wings::Silencer::Test</name>
-    <description>沉默术士之测试</description>
+    <description>Testing of Silencer</description>
 
     <dependencies>
         <dependency>

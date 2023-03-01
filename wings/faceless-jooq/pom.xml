@@ -14,12 +14,12 @@
     <packaging>jar</packaging>
 
     <name>Wings::Faceless::Jooq</name>
-    <description>虚空假面之时间漫游：Jooq的数据库访问层</description>
+    <description>Database access with Jooq</description>
 
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless</artifactId>
+            <artifactId>faceless-awesome</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -32,14 +32,6 @@
         <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>jooq</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.persistence</groupId>
-            <artifactId>jakarta.persistence-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
         </dependency>
         <!-- test -->
         <dependency>

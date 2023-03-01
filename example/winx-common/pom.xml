@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Example::Winx::Common</name>
-    <description>样板间之业务包</description>
+    <description>Common business</description>
 
     <properties>
         <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
@@ -31,15 +31,11 @@
         </dependency>
         <dependency>
             <groupId>pro.fessional.wings</groupId>
-            <artifactId>warlock</artifactId>
+            <artifactId>warlock-awesome</artifactId>
         </dependency>
         <dependency>
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-starter-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jolokia</groupId>
-            <artifactId>jolokia-core</artifactId>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
@@ -47,7 +43,7 @@
         </dependency>
         <dependency>
             <groupId>io.sentry</groupId>
-            <artifactId>sentry-spring-boot-starter</artifactId>
+            <artifactId>sentry-spring-boot-starter-jakarta</artifactId>
         </dependency>
         <dependency>
             <groupId>io.sentry</groupId>
