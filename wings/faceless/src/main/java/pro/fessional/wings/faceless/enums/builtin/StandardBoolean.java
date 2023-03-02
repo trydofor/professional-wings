@@ -90,14 +90,14 @@ public enum StandardBoolean implements ConstantEnum {
     @Contract("_, !null -> !null")
     public static StandardBoolean codeOf(String code, StandardBoolean elz) {
         if (code == null) return elz;
-        if (code.equalsIgnoreCase("true") || code.equalsIgnoreCase("t")
-            || code.equalsIgnoreCase("yes") || code.equalsIgnoreCase("y")
-            || code.equalsIgnoreCase("on")) {
+        if ("true".equalsIgnoreCase(code) || "t".equalsIgnoreCase(code)
+            || "yes".equalsIgnoreCase(code) || "y".equalsIgnoreCase(code)
+            || "on".equalsIgnoreCase(code)) {
             return True;
         }
-        if (code.equalsIgnoreCase("false") || code.equalsIgnoreCase("f")
-            || code.equalsIgnoreCase("no") || code.equalsIgnoreCase("n")
-            || code.equalsIgnoreCase("off")) {
+        if ("false".equalsIgnoreCase(code) || "f".equalsIgnoreCase(code)
+            || "no".equalsIgnoreCase(code) || "n".equalsIgnoreCase(code)
+            || "off".equalsIgnoreCase(code)) {
             return False;
         }
         return elz;

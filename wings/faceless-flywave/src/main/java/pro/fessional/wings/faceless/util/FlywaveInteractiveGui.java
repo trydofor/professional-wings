@@ -106,10 +106,10 @@ public class FlywaveInteractiveGui {
                     parts.put(line.substring(off, matcher.start()), at1);
                     Color color;
                     String key = matcher.group(1);
-                    if (key.equalsIgnoreCase("ERROR")) {
+                    if ("ERROR".equalsIgnoreCase(key)) {
                         color = Color.PINK;
                     }
-                    else if (key.equalsIgnoreCase("WARN")) {
+                    else if ("WARN".equalsIgnoreCase(key)) {
                         color = Color.ORANGE;
                     }
                     else {

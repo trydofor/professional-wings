@@ -242,7 +242,7 @@ public class FlywaveRevisionScanner {
                     log.info("[FlywaveRevisionScanner]🐝 skip unsupported resource=" + file);
                     continue;
                 }
-                boolean undo = m.group(2).equalsIgnoreCase("u");
+                boolean undo = "u".equalsIgnoreCase(m.group(2));
                 StringBuilder sb = new StringBuilder(10);
                 String g1 = m.group(1);
                 for (int i = 0; i < g1.length(); i++) {

@@ -44,6 +44,6 @@ public class WingsJooqGenHelper {
             name = name.substring(p + 1);
         }
 
-        return name.equalsIgnoreCase("id") && it.getDefinedType().getType().toLowerCase().contains("bigint");
+        return "id".equalsIgnoreCase(name) && it.getDefinedType().getType().toLowerCase().contains("bigint");
     };
 }

@@ -62,13 +62,13 @@ public class WingsJavaGenerator extends JavaGenerator {
             InvocationHandler han = (ignoredProxy, method, args) -> {
                 Object obj = method.invoke(wrapper, args);
                 final String methodName = method.getName();
-                if (methodName.equals("getJavaClassName") || methodName.equals("getFullJavaIdentifier")) {
+                if ("getJavaClassName".equals(methodName) || "getFullJavaIdentifier".equals(methodName)) {
                     final Object arg = args[0];
                     if (arg instanceof CatalogDefinition || arg instanceof SchemaDefinition) {
                         return WingsCodeGenConf.tryGlobalSuffix((String) obj, defs);
                     }
                 }
-                if (methodName.equals("getFile")) {
+                if ("getFile".equals(methodName)) {
                     final Object arg = args[0];
                     if (arg instanceof CatalogDefinition || arg instanceof SchemaDefinition) {
                         return WingsCodeGenConf.tryGlobalSuffix((File) obj, defs);

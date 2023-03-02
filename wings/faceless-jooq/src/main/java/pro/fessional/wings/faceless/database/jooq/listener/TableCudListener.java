@@ -104,7 +104,7 @@ public class TableCudListener implements VisitListener {
 
         for (Map.Entry<Object, Object> ent : context.data().entrySet()) {
             final Object key = ent.getKey();
-            if (key instanceof Enum<?> && ((Enum<?>) key).name().equals("DATA_COUNT_BIND_VALUES")) {
+            if (key instanceof Enum<?> && "DATA_COUNT_BIND_VALUES".equals(((Enum<?>) key).name())) {
                 if (WarnVisit) {
                     log.warn(">>> got DATA_COUNT_BIND_VALUES");
                 }

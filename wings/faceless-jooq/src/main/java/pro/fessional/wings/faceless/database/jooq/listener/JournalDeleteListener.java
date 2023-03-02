@@ -138,7 +138,7 @@ public class JournalDeleteListener implements ExecuteListener {
         if (!params.isEmpty()) {
             String cidVal = matcher.group(off + 2).trim();
             Param<?> para;
-            if (cidVal.equals("?")) {
+            if ("?".equals(cidVal)) {
                 int cn = 1;
                 for (int i = 0; i < matcher.start(); i++) {
                     char c = del.charAt(i);
