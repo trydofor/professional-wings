@@ -85,6 +85,9 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     protected TinyMailServiceProp tinyMailServiceProp;
     @Setter(onMethod_ = {@Autowired})
     protected ResourceLoader resourceLoader;
+    @Setter(onMethod_ = {@Autowired})
+    protected List<StatusHook> statusHooks;
+
     @Setter(onMethod_ = {@Autowired, @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME)})
     private ThreadPoolTaskScheduler taskScheduler;
 
@@ -411,6 +414,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
     private void saveStatusAndRetry(@NotNull WinMailSender po, TinyMailMessage message, long cost, long now, Exception exception, boolean retry, boolean check, boolean rethrow) {
         long nextSend = -1;
+        boolean notHookStop = true;
         try {
             final WinMailSenderTable t = winMailSenderDao.getTable();
             final Map<Object, Object> setter = new HashMap<>();
@@ -473,6 +477,24 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                 setter.put(t.SumFail, t.SumFail.add(1));
             }
 
+            if (statusHooks != null) {
+                for (StatusHook sh : statusHooks) {
+                    try {
+                        if (sh.stop(po, cost, exception)) {
+                            notHookStop = false;
+                        }
+                    }
+                    catch (Exception e) {
+                        log.error("should NOT throw in hook, hook-class=" + sh.getClass().getName(), e);
+                    }
+                }
+            }
+
+            if (!notHookStop) {
+                setter.put(t.NextSend, EmptyValue.DATE_TIME);
+                log.info("hook stop mail, id={}", po.getId());
+            }
+
             journalService.commit(Jane.Update, journal -> {
                 setter.put(t.CommitId, journal.getCommitId());
                 setter.put(t.ModifyDt, journal.getCommitDt());
@@ -489,14 +511,14 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         }
 
         if (exception == null) {
-            if (nextSend > 0) {
+            if (notHookStop && nextSend > 0) {
                 asyncMails.add(new AsyncMail(po.getId(), nextSend, retry, check, null, message));
                 taskScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(nextSend));
                 log.info("schedule done-mail send, id={}, subject={}", po.getId(), po.getMailSubj());
             }
         }
         else {
-            if (retry && nextSend > 0 && nextSend - now < tinyMailServiceProp.getMaxNext().toMillis()) {
+            if (notHookStop && retry && nextSend > 0 && nextSend - now < tinyMailServiceProp.getMaxNext().toMillis()) {
                 asyncMails.add(new AsyncMail(po.getId(), nextSend, retry, check, null, message));
                 taskScheduler.schedule(this::doAsyncBatchSend, Instant.ofEpochMilli(nextSend));
                 log.info("schedule fail-mail send, id=" + po.getId() + ", subject=" + po.getMailSubj());
