@@ -77,7 +77,7 @@ public class JooqDslAndDaoSample {
         testcaseNotice("select id, commit_id  from `tst_中文也分表` as `y8` where (`y8`.`id` = ? and `y8`.`commit_id` = ?) limit ?");
         val ft2 = dao.fetch(0, 2, (t, w) -> w
                 .where(t.Id.gt(1L).and(t.CommitId.lt(200L)))
-                .order(t.Id, t.CommitId, t.Id.desc()));
+                .query(t.Id, t.CommitId, t.Id.desc()));
         log.info("============count {}, ft2'size={}", i, ft2.size());
 
         // table
