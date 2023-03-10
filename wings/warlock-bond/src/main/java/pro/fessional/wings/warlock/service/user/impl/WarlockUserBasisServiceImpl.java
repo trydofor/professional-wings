@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.Z;
-import pro.fessional.wings.faceless.database.helper.ModifyAssert;
+import pro.fessional.wings.faceless.database.helper.DaoAssert;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
@@ -125,6 +125,6 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, Ini
             return winUserBasisDao.update(tu, setter, tu.Id.eq(userId), true);
         });
 
-        ModifyAssert.one(rc, CommonErrorEnum.DataNotFound);
+        DaoAssert.assertEq1(rc, CommonErrorEnum.DataNotFound);
     }
 }
