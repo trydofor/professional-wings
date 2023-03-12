@@ -29,6 +29,9 @@ public class SlowSqlListener implements ExecuteListener {
     @Getter @Setter
     private long thresholdMillis = -1;
 
+    @Getter @Setter
+    private String token = "SlowSqlListener";
+
     /**
      * 取代日志，自行处理耗时与SQL
      */
@@ -63,7 +66,7 @@ public class SlowSqlListener implements ExecuteListener {
             }
         }
         finally {
-            Watches.release(true, slow ? "SlowSqlListener" : null);
+            Watches.release(true, slow ? token : null);
         }
     }
 }
