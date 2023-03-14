@@ -10,7 +10,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -26,11 +25,9 @@ class DataSourceContextTest {
     @Test
     void test() {
         assertNotNull(sourceContext);
-        final DataSource primary = sourceContext.getPrimary();
+        final DataSource primary = sourceContext.getCurrent();
         assertNotNull(primary);
-        final DataSource sharding = sourceContext.getSharding();
-        assertNull(sharding);
-        final Map<String, DataSource> plains = sourceContext.getPlains();
+        final Map<String, DataSource> plains = sourceContext.getBackends();
         assertEquals(1, plains.size());
         assertTrue(plains.containsValue(primary));
     }

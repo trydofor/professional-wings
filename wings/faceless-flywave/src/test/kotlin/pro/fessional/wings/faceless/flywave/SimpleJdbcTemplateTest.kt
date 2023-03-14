@@ -18,7 +18,7 @@ class SimpleJdbcTemplateTest {
 
     @Test
     fun metadata() {
-        val tmpl = SimpleJdbcTemplate(dataSources.primary, "first")
+        val tmpl = SimpleJdbcTemplate(dataSources.current, "first")
         tmpl.execute("show tables")
     }
 }

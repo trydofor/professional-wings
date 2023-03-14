@@ -11,69 +11,48 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 获得全部原始数据源`plains`
- * 当前数据源  `primary`
- * shard数据源`sharding`
- * 是否读写分离`separate`
+ * <pre>
+ * current - current datasource
+ * backend - all backend datasource.
+ * </pre>
  *
  * @author trydofor
  * @since 2019-05-24
  */
 public class DataSourceContext {
 
-    private DataSource primary = null;
-    private DataSource sharding = null;
-    private boolean separate = false;
+    private DataSource current = null;
 
-    private final LinkedHashMap<String, DataSource> plainMap = new LinkedHashMap<>();
+    private final LinkedHashMap<String, DataSource> backendMap = new LinkedHashMap<>();
     private final HashMap<DataSource, String> dataSourceUrls = new HashMap<>();
 
-    public DataSource getPrimary() {
-        return primary;
+    public DataSource getCurrent() {
+        return current;
     }
 
-    public DataSourceContext setPrimary(DataSource primary) {
-        this.primary = primary;
+    public DataSourceContext setCurrent(DataSource current) {
+        this.current = current;
         return this;
     }
 
-    public DataSource getSharding() {
-        return sharding;
-    }
-
-    public DataSourceContext setSharding(DataSource sharding) {
-        this.sharding = sharding;
+    public DataSourceContext clearBackend() {
+        backendMap.clear();
         return this;
     }
 
-    public boolean isSeparate() {
-        return separate;
-    }
-
-    public DataSourceContext setSeparate(boolean separate) {
-        this.separate = separate;
-        return this;
-    }
-
-    public DataSourceContext cleanPlain() {
-        plainMap.clear();
-        return this;
-    }
-
-    public DataSourceContext addPlain(String name, DataSource ds) {
+    public DataSourceContext addBackend(String name, DataSource ds) {
         if (name != null && ds != null) {
-            plainMap.put(name, ds);
+            backendMap.put(name, ds);
         }
         return this;
     }
 
-    public DataSourceContext addPlain(Map<String, DataSource> map) {
+    public DataSourceContext addBackend(Map<String, DataSource> map) {
         if (map != null) {
-            plainMap.putAll(map);
+            backendMap.putAll(map);
         }
         return this;
     }
-
 
     /**
      * 获得所有原始数据源
@@ -81,8 +60,8 @@ public class DataSourceContext {
      * @return 数据源
      */
     @NotNull
-    public Map<String, DataSource> getPlains() {
-        return new LinkedHashMap<>(plainMap);
+    public Map<String, DataSource> getBackends() {
+        return new LinkedHashMap<>(backendMap);
     }
 
     /**
@@ -92,8 +71,8 @@ public class DataSourceContext {
      * @return jdbc url
      */
     @NotNull
-    public String plainJdbcUrl(String name) {
-        return cacheJdbcUrl(plainMap.get(name));
+    public String backendJdbcUrl(String name) {
+        return cacheJdbcUrl(backendMap.get(name));
     }
 
     /**
@@ -119,11 +98,13 @@ public class DataSourceContext {
             return JdbcUtils.extractDatabaseMetaData(ds, it -> {
                 try {
                     return (String) DatabaseMetaData.class.getMethod("getURL").invoke(it);
-                } catch (Exception ex) {
+                }
+                catch (Exception ex) {
                     throw new MetaDataAccessException("No method named 'getURL' found on DatabaseMetaData instance [" + it + "]", ex);
                 }
             });
-        } catch (MetaDataAccessException e) {
+        }
+        catch (MetaDataAccessException e) {
             return "unknown";
         }
     }
@@ -131,16 +112,9 @@ public class DataSourceContext {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\ninuse=").append(cacheJdbcUrl(primary));
-        sb.append("\nshard=");
-        if (sharding != null) {
-            sb.append(cacheJdbcUrl(sharding));
-        } else {
-            sb.append("null");
-        }
-        sb.append("\nsplit=").append(separate);
-        for (Map.Entry<String, DataSource> entry : plainMap.entrySet()) {
-            sb.append("\n  plain ")
+        sb.append("\ncurrent=").append(cacheJdbcUrl(current));
+        for (Map.Entry<String, DataSource> entry : backendMap.entrySet()) {
+            sb.append("\n  backend ")
               .append(entry.getKey()).append("=").append(cacheJdbcUrl(entry.getValue()));
         }
 

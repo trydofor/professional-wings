@@ -35,7 +35,7 @@ public class JooqCodeAutoGenSample {
                           // 支持 pattern的注释写法
                           .databaseIncludes("sys_constant_enum" +
                                             "|sys_standard_i18n" +
-                                            "|tst_中文也分表")
+                                            "|tst_sharding")
                           .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
                           .targetPackage("pro.fessional.wings.faceless.database.autogen")
                           .targetDirectory("wings/faceless-jooq/src/test/java/")
@@ -45,9 +45,9 @@ public class JooqCodeAutoGenSample {
 //                          .forcedType(new ForcedType()
 //                                  .withUserType("pro.fessional.wings.faceless.enums.auto.StandardLanguage")
 //                                  .withConverter("pro.fessional.wings.faceless.database.jooq.converter.JooqConsEnumConverter.of(StandardLanguage.class)")
-//                                  .withExpression("tst_中文也分表.language")
+//                                  .withExpression("tst_sharding.language")
 //                          )
-                          .forcedIntConsEnum(StandardLanguage.class, "tst_中文也分表.language")
+                          .forcedIntConsEnum(StandardLanguage.class, "tst_sharding.language")
                           .buildAndGenerate();
     }
 
@@ -59,7 +59,7 @@ public class JooqCodeAutoGenSample {
                           .jdbcPassword(pass)
                           .databaseSchema(database)
                           // 支持 pattern的注释写法
-                          .databaseIncludes("tst_中文也分表")
+                          .databaseIncludes("tst_sharding")
                           .databaseVersionProvider(null)
                           .targetPackage("pro.fessional.wings.faceless.database.autogen")
                           .targetDirectory("wings/faceless-shard/src/test/java/")

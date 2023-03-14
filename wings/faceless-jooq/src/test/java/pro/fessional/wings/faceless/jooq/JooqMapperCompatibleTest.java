@@ -13,9 +13,9 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.WingsTestHelper;
-import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
-import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao;
-import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
+import pro.fessional.wings.faceless.database.autogen.tables.TstShardingTable;
+import pro.fessional.wings.faceless.database.autogen.tables.daos.TstShardingDao;
+import pro.fessional.wings.faceless.database.autogen.tables.records.TstShardingRecord;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
@@ -46,7 +46,7 @@ public class JooqMapperCompatibleTest {
     private WingsTestHelper wingsTestHelper;
 
     @Setter(onMethod_ = {@Autowired})
-    private Tst中文也分表Dao dao;
+    private TstShardingDao dao;
 
     @Test
     public void test0Init() {
@@ -72,7 +72,7 @@ public class JooqMapperCompatibleTest {
     @Test
     public void test1Lower() {
         DSLContext ctx = dao.ctx();
-        Tst中文也分表Table t = dao.getTable();
+        TstShardingTable t = dao.getTable();
         Condition c = t.Id.gt(1L).and(t.Id.le(105L));
 
         testcaseNotice("采用区分大小写的别名，jooq不支持，sfm支持");
@@ -89,7 +89,7 @@ public class JooqMapperCompatibleTest {
     @Test
     public void test1Snake() {
         DSLContext ctx = dao.ctx();
-        Tst中文也分表Table t = dao.getTable();
+        TstShardingTable t = dao.getTable();
         Condition c = t.Id.gt(1L).and(t.Id.le(105L));
 
         testcaseNotice("采用下划线的别名，jooq和sfm都支持");
@@ -111,7 +111,7 @@ public class JooqMapperCompatibleTest {
         vo.setId(101L);
         vo.setLoginInfo("login-info test");
 
-        final Tst中文也分表Record rd = dao.newRecord(vo);
+        final TstShardingRecord rd = dao.newRecord(vo);
         final Field<?>[] fld = dao.getTable().fields();
         final Object[] arr = rd.intoArray();
 
@@ -121,9 +121,9 @@ public class JooqMapperCompatibleTest {
 
     @Test
     public void test2Array() {
-        Tst中文也分表Table t = dao.getTable();
+        TstShardingTable t = dao.getTable();
         Condition c = t.Id.eq(105L);
-        final Tst中文也分表Record rd = dao.ctx()
+        final TstShardingRecord rd = dao.ctx()
                                      .selectFrom(t)
                                      .where(c)
                                      .fetchOne();

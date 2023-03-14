@@ -1,5 +1,5 @@
 -- apply@tst_.* error@stop
-CREATE TABLE `tst_中文也分表` (
+CREATE TABLE `tst_sharding` (
     `id`         BIGINT(20)  NOT NULL COMMENT '主键',
     `create_dt`  DATETIME(3) NOT NULL DEFAULT NOW(3) COMMENT '创建日时',
     `modify_dt`  DATETIME(3) NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时',
@@ -12,7 +12,7 @@ CREATE TABLE `tst_中文也分表` (
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='201/奇葩测试';
 
-CREATE TABLE `tst_中文也分表_postfix` (
+CREATE TABLE `tst_sharding_postfix` (
     `id`         BIGINT(20)  NOT NULL COMMENT '主键',
     `create_dt`  DATETIME(3) NOT NULL DEFAULT NOW(3) COMMENT '创建日时',
     `modify_dt`  DATETIME(3) NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时',

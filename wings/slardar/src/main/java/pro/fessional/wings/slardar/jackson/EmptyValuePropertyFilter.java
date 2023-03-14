@@ -148,7 +148,7 @@ public class EmptyValuePropertyFilter implements AutoRegisterPropertyFilter {
             return false;
         }
         else {
-            return dt.compareTo(emptyDateMin) >= 0 && dt.compareTo(emptyDateMax) <= 0;
+            return !dt.isBefore(emptyDateMin) && !dt.isAfter(emptyDateMax);
         }
     }
 

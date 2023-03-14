@@ -60,7 +60,7 @@ public class WingsFlywaveConfiguration {
                 properties.getTriggerDelete()
         );
         log.info("FacelessFlywave spring-bean schemaJournalManager");
-        return new SchemaJournalManager(facelessDs.getPlains(), statementParser, schemaDefinitionLoader, ddl, properties.getSchemaJournalTable());
+        return new SchemaJournalManager(facelessDs.getBackends(), statementParser, schemaDefinitionLoader, ddl, properties.getSchemaJournalTable());
     }
 
     @Bean
@@ -72,7 +72,7 @@ public class WingsFlywaveConfiguration {
             SchemaDefinitionLoader schemaDefinitionLoader,
             FlywaveVerProp properties) {
         DefaultRevisionManager bean = new DefaultRevisionManager(
-                sources.getPlains(), sources.getSharding(),
+                sources.getBackends(), sources.getCurrent(),
                 statementParser, segmentProcessor, schemaDefinitionLoader,
                 properties.getSchemaVersionTable());
         for (String s : new TreeSet<>(properties.getDropReg().values())) {
@@ -91,7 +91,7 @@ public class WingsFlywaveConfiguration {
             SqlStatementParser statementParser,
             SchemaDefinitionLoader schemaDefinitionLoader) {
         log.info("FacelessFlywave spring-bean schemaShardingManager");
-        return new SchemaShardingManager(sources.getPlains(), sources.getSharding(),
+        return new SchemaShardingManager(sources.getBackends(), sources.getCurrent(),
                 statementParser, schemaDefinitionLoader);
     }
 

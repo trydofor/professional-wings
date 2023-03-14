@@ -332,6 +332,7 @@ class SchemaJournalManager(
                 WHERE table_name = ?
                 """.trimIndent()
             }
+
             isUpdate -> {
                 """
                 SELECT
@@ -342,6 +343,7 @@ class SchemaJournalManager(
                 WHERE table_name = ?
                 """.trimIndent()
             }
+
             isDelete -> {
                 """
                 SELECT
@@ -352,6 +354,7 @@ class SchemaJournalManager(
                 WHERE table_name = ?
                 """.trimIndent()
             }
+
             else -> {
                 throw RuntimeException("unsupported event $event")
             }
@@ -584,7 +587,7 @@ class SchemaJournalManager(
 
     private fun notApply(str: String?): Boolean {
         if (str.isNullOrEmpty()) return true
-        return str.startsWith("1000-01-01")
+        return str.startsWith("1000-01-01") || str.startsWith("999-01-01")
     }
 
     private val trgNameRegex = """\s+TRIGGER\s+[`'"]*([^`'"]+)[`'"]*"""

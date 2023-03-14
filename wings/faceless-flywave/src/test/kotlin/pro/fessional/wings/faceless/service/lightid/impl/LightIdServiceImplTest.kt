@@ -50,13 +50,13 @@ open class LightIdServiceImplTest {
     private val seqName = "sys_commit_journal"
 
     @Test
-    fun `test0🦁清表重置`() {
+    fun test0CleanTables() {
         wingsTestHelper.cleanTable()
         schemaRevisionManager.checkAndInitSql(FlywaveRevisionScanner.scanMaster(), 0, true)
     }
 
     @Test
-    fun `test1🦁获取ID`() {
+    fun test1FetchId() {
         schemaRevisionManager.publishRevision(WingsRevision.V01_19_0520_01_IdLog.revision(), 0)
 
         val bgn = AtomicLong(0)
@@ -72,7 +72,7 @@ open class LightIdServiceImplTest {
     }
 
     @Test
-    fun `test2🦁获取ID`() {
+    fun test2FetchId() {
         // consumer
         journalService.commit(this.javaClass) {
             print(it.commitDt)
@@ -83,7 +83,7 @@ open class LightIdServiceImplTest {
     }
 
     @Test
-    fun `test3🦁竞争ID`() {
+    fun test3CompeteId() {
         val threadCnt = 100
         val loopCount = 5000
         val idCache = ConcurrentHashMap<Long, Long>()
@@ -104,8 +104,8 @@ open class LightIdServiceImplTest {
     }
 
     @Test
-    fun `test4🦁区间ID`() {
-        val rg = 999_000_000_000L;
+    fun test4RangeId() {
+        val rg = 999_000_000_000L
         val id = lightIdService.getId(seqName, 0)
         lightIdBufferedProvider.setSequenceHandler { seq -> seq + rg }
         val id1 = lightIdService.getId(seqName, 0)

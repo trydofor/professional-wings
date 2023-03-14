@@ -5,7 +5,7 @@ package pro.fessional.wings.faceless.database.autogen;
 
 
 import pro.fessional.wings.faceless.database.autogen.tables.TstNormalTableTable;
-import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
+import pro.fessional.wings.faceless.database.autogen.tables.TstShardingTable;
 
 import javax.annotation.processing.Generated;
 
@@ -30,7 +30,7 @@ public class Tables {
     public static final TstNormalTableTable TstNormalTable = TstNormalTableTable.TstNormalTable;
 
     /**
-     * The table <code>tst_中文也分表</code>.
+     * The table <code>tst_sharding</code>.
      */
-    public static final Tst中文也分表Table Tst中文也分表 = Tst中文也分表Table.Tst中文也分表;
+    public static final TstShardingTable TstSharding = TstShardingTable.TstSharding;
 }

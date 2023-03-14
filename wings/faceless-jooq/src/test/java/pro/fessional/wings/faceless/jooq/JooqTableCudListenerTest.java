@@ -15,10 +15,10 @@ import org.springframework.test.context.ActiveProfiles;
 import pro.fessional.wings.faceless.WingsTestHelper;
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler.Cud;
-import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
-import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao;
-import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
-import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
+import pro.fessional.wings.faceless.database.autogen.tables.TstShardingTable;
+import pro.fessional.wings.faceless.database.autogen.tables.daos.TstShardingDao;
+import pro.fessional.wings.faceless.database.autogen.tables.pojos.TstSharding;
+import pro.fessional.wings.faceless.database.autogen.tables.records.TstShardingRecord;
 import pro.fessional.wings.faceless.database.jooq.listener.TableCudListener;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.service.WingsTableCudHandlerTest;
@@ -50,7 +50,7 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
 @SpringBootTest(properties = {
         "debug = true",
         "logging.level.root=DEBUG",
-        "wings.faceless.jooq.cud.table[tst_中文也分表]=id,login_info",
+        "wings.faceless.jooq.cud.table[tst_sharding]=id,login_info",
         "spring.wings.faceless.jooq.enabled.listen-table-cud=true"
 })
 @Tag("init")
@@ -64,7 +64,7 @@ public class JooqTableCudListenerTest {
     };
 
     @Setter(onMethod_ = {@Autowired})
-    private Tst中文也分表Dao testDao;
+    private TstShardingDao testDao;
 
     @Setter(onMethod_ = {@Autowired})
     private WingsTestHelper wingsTestHelper;
@@ -87,7 +87,7 @@ public class JooqTableCudListenerTest {
     public void test1Create() {
 
         final LocalDateTime now = LocalDateTime.now();
-        Tst中文也分表 pojo = new Tst中文也分表();
+        TstSharding pojo = new TstSharding();
         pojo.setId(301L);
         pojo.setCommitId(-1L);
         pojo.setCreateDt(now);
@@ -110,14 +110,14 @@ public class JooqTableCudListenerTest {
         assertCud(false, Cud.Create, singletonList(singletonList(301L)), () -> testDao.insertInto(pojo, false),
                 "duplicate key update");
 
-        final Tst中文也分表Table t = testDao.getTable();
+        final TstShardingTable t = testDao.getTable();
         final long c1 = testDao.count(t, t.Id.eq(301L));
         Assertions.assertEquals(1L, c1);
 
         val rds = Arrays.asList(
-                new Tst中文也分表Record(302L, now, now, now, 9L, "login-info-302", "", ZH_CN),
-                new Tst中文也分表Record(303L, now, now, now, 9L, "login-info-303", "", ZH_CN),
-                new Tst中文也分表Record(304L, now, now, now, 9L, "login-info-304", "", ZH_CN)
+                new TstShardingRecord(302L, now, now, now, 9L, "login-info-302", "", ZH_CN),
+                new TstShardingRecord(303L, now, now, now, 9L, "login-info-303", "", ZH_CN),
+                new TstShardingRecord(304L, now, now, now, 9L, "login-info-304", "", ZH_CN)
         );
 
         testcaseNotice("批量插入 normal");
@@ -139,9 +139,9 @@ public class JooqTableCudListenerTest {
     @Test
     public void test2Update() {
 
-        final Tst中文也分表Table t = testDao.getTable();
+        final TstShardingTable t = testDao.getTable();
 
-        Tst中文也分表 pojo = new Tst中文也分表();
+        TstSharding pojo = new TstSharding();
         pojo.setId(301L);
         pojo.setCommitId(-301L);
 
@@ -168,7 +168,7 @@ public class JooqTableCudListenerTest {
 
     @Test
     public void test4Delete() {
-        final Tst中文也分表Table t = testDao.getTable();
+        final TstShardingTable t = testDao.getTable();
         testcaseNotice("单个删除");
         assertCud(false, Cud.Delete, singletonList(singletonList(301L)), () -> testDao
                 .ctx()
@@ -212,7 +212,7 @@ public class JooqTableCudListenerTest {
         else {
             for (int i = 0, l = ids.size(); i < l; i++) {
                 Assertions.assertEquals(cud, d.get(i));
-                Assertions.assertEquals("tst_中文也分表", t.get(i));
+                Assertions.assertEquals("tst_sharding", t.get(i));
                 Assertions.assertEquals(ids.get(i), f.get(i).get("id"));
             }
             Assertions.assertEquals(ids.size(), f.size());

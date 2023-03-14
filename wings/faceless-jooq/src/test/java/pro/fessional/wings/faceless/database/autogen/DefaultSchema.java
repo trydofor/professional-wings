@@ -10,7 +10,7 @@ import org.jooq.impl.SchemaImpl;
 import pro.fessional.wings.faceless.database.autogen.tables.SysConstantEnumTable;
 import pro.fessional.wings.faceless.database.autogen.tables.SysStandardI18nTable;
 import pro.fessional.wings.faceless.database.autogen.tables.TstNormalTableTable;
-import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
+import pro.fessional.wings.faceless.database.autogen.tables.TstShardingTable;
 
 import javax.annotation.processing.Generated;
 import java.util.Arrays;
@@ -54,9 +54,9 @@ public class DefaultSchema extends SchemaImpl {
     public final TstNormalTableTable TstNormalTable = TstNormalTableTable.TstNormalTable;
 
     /**
-     * The table <code>tst_中文也分表</code>.
+     * The table <code>tst_sharding</code>.
      */
-    public final Tst中文也分表Table Tst中文也分表 = Tst中文也分表Table.Tst中文也分表;
+    public final TstShardingTable TstSharding = TstShardingTable.TstSharding;
 
     /**
      * No further instances allowed
@@ -77,7 +77,7 @@ public class DefaultSchema extends SchemaImpl {
             SysConstantEnumTable.SysConstantEnum,
             SysStandardI18nTable.SysStandardI18n,
             TstNormalTableTable.TstNormalTable,
-            Tst中文也分表Table.Tst中文也分表
+            TstShardingTable.TstSharding
         );
     }
 }

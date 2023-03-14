@@ -132,7 +132,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
-    fun `test0🦁清表`() {
+    fun test0CleanTables() {
         wingsTestHelper.cleanTable()
         val sqls = FlywaveRevisionScanner
             .helper()
@@ -149,7 +149,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
-    fun `test1🦁建表`() {
+    fun test1CreateTables() {
         schemaRevisionManager.publishRevision(WingsRevision.V01_19_0520_01_IdLog.revision(), 0)
         wingsTestHelper.assertSame(
             WingsTestHelper.Type.Table,
@@ -166,209 +166,210 @@ class SchemaJournalManagerTest {
             "sys_light_sequence",
             "${schemaPrefix}journal",
             "${schemaPrefix}version",
-            "tst_中文也分表",
-            "tst_中文也分表_postfix",
+            "tst_sharding",
+            "tst_sharding_postfix",
+            "tst_normal_table",
         )
         testcaseNotice("可检查日志或debug观察，wing0和wing1表名")
     }
 
     @Test
-    fun `test2🦁分表`() {
-        schemaJournalManager.checkAndInitDdl("tst_中文也分表", 0)
+    fun test2Sharding() {
+        schemaJournalManager.checkAndInitDdl("tst_sharding", 0)
         wingsTestHelper.assertNot(
             WingsTestHelper.Type.Table,
-            "tst_中文也分表_0",
-            "tst_中文也分表_1",
-            "tst_中文也分表_2",
-            "tst_中文也分表_3",
-            "tst_中文也分表_4"
+            "tst_sharding_0",
+            "tst_sharding_1",
+            "tst_sharding_2",
+            "tst_sharding_3",
+            "tst_sharding_4"
         )
         breakpointDebug("分表测试表💰，观察数据库所有表")
-        shcemaShardingManager.publishShard("tst_中文也分表", 5)
+        shcemaShardingManager.publishShard("tst_sharding", 5)
         wingsTestHelper.assertHas(
-            WingsTestHelper.Type.Table, "tst_中文也分表_0",
-            "tst_中文也分表_1",
-            "tst_中文也分表_2",
-            "tst_中文也分表_3",
-            "tst_中文也分表_4"
+            WingsTestHelper.Type.Table, "tst_sharding_0",
+            "tst_sharding_1",
+            "tst_sharding_2",
+            "tst_sharding_3",
+            "tst_sharding_4"
         )
         testcaseNotice("可检查日志或debug观察，wing_test，多出分表0-5")
     }
 
     @Test
-    fun `test4🦁AI触发器`() {
+    fun test4AiTrigger() {
         if (wingsTestHelper.isH2) {
             testcaseNotice("h2 database skip")
             return
         }
 
         breakpointDebug("分表触发器💰，观察数据库所有表")
-        schemaJournalManager.publishInsert("tst_中文也分表", true, 0)
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "ai__tst_中文也分表")
+        schemaJournalManager.publishInsert("tst_sharding", true, 0)
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "ai__tst_sharding")
 
         jdbcTemplate.execute(
             """
-            INSERT INTO `tst_中文也分表_1`
+            INSERT INTO `tst_sharding_1`
             (`id`, `create_dt`, `modify_dt`, `delete_dt`, `commit_id`, `login_info`, `other_info`)
             VALUES (1,NOW(3),NOW(3),'1000-01-01',0,'赵四','老张');
         """
         )
-        val del = jdbcTemplate.update("DELETE FROM `${traceTable("tst_中文也分表_1")}` WHERE id = 1")
+        val del = jdbcTemplate.update("DELETE FROM `${traceTable("tst_sharding_1")}` WHERE id = 1")
         assertEquals(1, del, "如果失败，单独运行整个类，消除分表干扰")
         breakpointDebug("清楚数据🐵，因为trace表不会删除有数据表")
 
-        schemaJournalManager.publishInsert("tst_中文也分表", false, 0)
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "ai__tst_中文也分表")
+        schemaJournalManager.publishInsert("tst_sharding", false, 0)
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "ai__tst_sharding")
         testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
     }
 
     @Test
-    fun `test4🦁AU触发器`() {
+    fun test4AuTrigger() {
         if (wingsTestHelper.isH2) {
             testcaseNotice("h2 database skip")
             return
         }
 
         breakpointDebug("分表触发器💰，观察数据库所有表")
-        schemaJournalManager.publishUpdate("tst_中文也分表", true, 0)
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "au__tst_中文也分表")
+        schemaJournalManager.publishUpdate("tst_sharding", true, 0)
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "au__tst_sharding")
 
-        jdbcTemplate.execute("UPDATE `tst_中文也分表_1` SET login_info='赵思', commit_id=1 WHERE id = 1")
+        jdbcTemplate.execute("UPDATE `tst_sharding_1` SET login_info='赵思', commit_id=1 WHERE id = 1")
         breakpointDebug("更新数据🐵，查询数据库各表及数据")
 
-        val del = jdbcTemplate.update("DELETE FROM `${traceTable("tst_中文也分表_1")}` WHERE id = 1")
+        val del = jdbcTemplate.update("DELETE FROM `${traceTable("tst_sharding_1")}` WHERE id = 1")
 
         assertEquals(1, del, "如果失败，单独运行整个类，消除分表干扰")
         breakpointDebug("清楚数据🐵，因为trace表不会删除有数据表")
 
-        schemaJournalManager.publishUpdate("tst_中文也分表", false, 0)
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "au__tst_中文也分表")
+        schemaJournalManager.publishUpdate("tst_sharding", false, 0)
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "au__tst_sharding")
         testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
     }
 
     @Test
-    fun `test5🦁BD触发器`() {
+    fun test5BdTrigger() {
         if (wingsTestHelper.isH2) {
             testcaseNotice("h2 database skip")
             return
         }
         breakpointDebug("分表触发器💰，观察数据库所有表")
-        schemaJournalManager.publishDelete("tst_中文也分表", true, 0)
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "bd__tst_中文也分表")
+        schemaJournalManager.publishDelete("tst_sharding", true, 0)
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "bd__tst_sharding")
 
-        jdbcTemplate.execute("DELETE FROM `tst_中文也分表_1` WHERE id = 1")
+        jdbcTemplate.execute("DELETE FROM `tst_sharding_1` WHERE id = 1")
         breakpointDebug("删除数据🐵，查询数据库各表及数据")
 
-        val del = jdbcTemplate.update("DELETE FROM `${traceTable("tst_中文也分表_1")}` WHERE id = 1")
+        val del = jdbcTemplate.update("DELETE FROM `${traceTable("tst_sharding_1")}` WHERE id = 1")
 
         assertEquals(1, del)
         breakpointDebug("清楚数据🐵，因为trace表不会删除有数据表")
 
-        schemaJournalManager.publishDelete("tst_中文也分表", false, 0)
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "bd__tst_中文也分表")
+        schemaJournalManager.publishDelete("tst_sharding", false, 0)
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "bd__tst_sharding")
         testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
     }
 
     @Test
-    fun `test6🦁全触发器`() {
+    fun test6Trigger() {
         if (wingsTestHelper.isH2) {
             testcaseNotice("h2 database skip")
             return
         }
 
         breakpointDebug("分表触发器💰，观察数据库所有表")
-        schemaJournalManager.publishInsert("tst_中文也分表", true, 0)
-        schemaJournalManager.publishUpdate("tst_中文也分表", true, 0)
-        schemaJournalManager.publishDelete("tst_中文也分表", true, 0)
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_中文也分表"))
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "ai__tst_中文也分表")
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "au__tst_中文也分表")
-        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "bd__tst_中文也分表")
+        schemaJournalManager.publishInsert("tst_sharding", true, 0)
+        schemaJournalManager.publishUpdate("tst_sharding", true, 0)
+        schemaJournalManager.publishDelete("tst_sharding", true, 0)
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "ai__tst_sharding")
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "au__tst_sharding")
+        wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "bd__tst_sharding")
 
         jdbcTemplate.execute(
             """
-            INSERT INTO `tst_中文也分表_2`
+            INSERT INTO `tst_sharding_2`
             (`id`, `create_dt`, `modify_dt`, `delete_dt`, `commit_id`, `login_info`, `other_info`)
             VALUES (1,NOW(3),NOW(3),'1000-01-01',0,'赵四','老张');
         """
         )
-        jdbcTemplate.execute("UPDATE `tst_中文也分表_2` SET login_info='赵思', commit_id=1 WHERE id = 1")
-        jdbcTemplate.execute("DELETE FROM `tst_中文也分表_2` WHERE id = 1")
+        jdbcTemplate.execute("UPDATE `tst_sharding_2` SET login_info='赵思', commit_id=1 WHERE id = 1")
+        jdbcTemplate.execute("DELETE FROM `tst_sharding_2` WHERE id = 1")
         breakpointDebug("删除数据🐵，查询数据库各表及数据")
 
-        val tps = jdbcTemplate.queryForList("SELECT _tp FROM `${traceTable("tst_中文也分表_2")}` WHERE id = 1 ORDER BY _id", String::class.java)
+        val tps = jdbcTemplate.queryForList("SELECT _tp FROM `${traceTable("tst_sharding_2")}` WHERE id = 1 ORDER BY _id", String::class.java)
 
         assertEquals(listOf("C", "U", "D"), tps)
         breakpointDebug("清楚数据🐵，因为trace表不会删除有数据表")
 
-        schemaJournalManager.publishInsert("tst_中文也分表", false, 0)
-        schemaJournalManager.publishUpdate("tst_中文也分表", false, 0)
-        schemaJournalManager.publishDelete("tst_中文也分表", false, 0)
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "ai__tst_中文也分表")
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "au__tst_中文也分表")
-        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "bd__tst_中文也分表")
+        schemaJournalManager.publishInsert("tst_sharding", false, 0)
+        schemaJournalManager.publishUpdate("tst_sharding", false, 0)
+        schemaJournalManager.publishDelete("tst_sharding", false, 0)
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "ai__tst_sharding")
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "au__tst_sharding")
+        wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "bd__tst_sharding")
 
         testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
     }
 
     @Test
-    fun `test7🦁表结构变更`() {
+    fun test7AltTable() {
         if (wingsTestHelper.isH2) {
             testcaseNotice("h2 database skip")
             return
         }
 
         breakpointDebug("分表触发器💰，观察数据库所有表")
-        schemaJournalManager.publishInsert("tst_中文也分表", true, 0)
-        schemaJournalManager.publishUpdate("tst_中文也分表", true, 0)
-        schemaJournalManager.publishDelete("tst_中文也分表", true, 0)
+        schemaJournalManager.publishInsert("tst_sharding", true, 0)
+        schemaJournalManager.publishUpdate("tst_sharding", true, 0)
+        schemaJournalManager.publishDelete("tst_sharding", true, 0)
         wingsTestHelper.assertHas(
             WingsTestHelper.Type.Table,
-            "tst_中文也分表",
-            "tst_中文也分表_0",
-            "tst_中文也分表_1",
-            "tst_中文也分表_2",
-            "tst_中文也分表_3",
-            "tst_中文也分表_4",
-            traceTable("tst_中文也分表"),
-            traceTable("tst_中文也分表_0"),
-            traceTable("tst_中文也分表_1"),
-            traceTable("tst_中文也分表_2"),
-            traceTable("tst_中文也分表_3"),
-            traceTable("tst_中文也分表_4")
+            "tst_sharding",
+            "tst_sharding_0",
+            "tst_sharding_1",
+            "tst_sharding_2",
+            "tst_sharding_3",
+            "tst_sharding_4",
+            traceTable("tst_sharding"),
+            traceTable("tst_sharding_0"),
+            traceTable("tst_sharding_1"),
+            traceTable("tst_sharding_2"),
+            traceTable("tst_sharding_3"),
+            traceTable("tst_sharding_4")
         )
 
         schemaRevisionManager.forceExecuteSql(
             """
-            ALTER TABLE `tst_中文也分表` 
+            ALTER TABLE `tst_sharding` 
             DROP COLUMN `other_info`,
             DROP COLUMN `login_info`;
         """.trimIndent()
         )
 
-        assertHasColumn("tst_中文也分表", "id", "create_dt", "modify_dt", "delete_dt", "commit_id", "language")
-        assertHasColumn(traceTable("tst_中文也分表"), "_id", "_dt", "_tp", "id", "create_dt", "modify_dt", "delete_dt", "commit_id", "language")
+        assertHasColumn("tst_sharding", "id", "create_dt", "modify_dt", "delete_dt", "commit_id", "language")
+        assertHasColumn(traceTable("tst_sharding"), "_id", "_dt", "_tp", "id", "create_dt", "modify_dt", "delete_dt", "commit_id", "language")
 
-        assertNotColumn("tst_中文也分表", "other_info", "login_info")
-        assertNotColumn(traceTable("tst_中文也分表"), "other_info", "login_info")
+        assertNotColumn("tst_sharding", "other_info", "login_info")
+        assertNotColumn(traceTable("tst_sharding"), "other_info", "login_info")
 
 
-        assertSameColumn("tst_中文也分表", "tst_中文也分表_0")
-        assertSameColumn("tst_中文也分表", "tst_中文也分表_1")
-        assertSameColumn("tst_中文也分表", "tst_中文也分表_2")
-        assertSameColumn("tst_中文也分表", "tst_中文也分表_3")
-        assertSameColumn("tst_中文也分表", "tst_中文也分表_4")
-        assertSameColumn(traceTable("tst_中文也分表"), traceTable("tst_中文也分表_0"))
-        assertSameColumn(traceTable("tst_中文也分表"), traceTable("tst_中文也分表_1"))
-        assertSameColumn(traceTable("tst_中文也分表"), traceTable("tst_中文也分表_2"))
-        assertSameColumn(traceTable("tst_中文也分表"), traceTable("tst_中文也分表_3"))
-        assertSameColumn(traceTable("tst_中文也分表"), traceTable("tst_中文也分表_4"))
+        assertSameColumn("tst_sharding", "tst_sharding_0")
+        assertSameColumn("tst_sharding", "tst_sharding_1")
+        assertSameColumn("tst_sharding", "tst_sharding_2")
+        assertSameColumn("tst_sharding", "tst_sharding_3")
+        assertSameColumn("tst_sharding", "tst_sharding_4")
+        assertSameColumn(traceTable("tst_sharding"), traceTable("tst_sharding_0"))
+        assertSameColumn(traceTable("tst_sharding"), traceTable("tst_sharding_1"))
+        assertSameColumn(traceTable("tst_sharding"), traceTable("tst_sharding_2"))
+        assertSameColumn(traceTable("tst_sharding"), traceTable("tst_sharding_3"))
+        assertSameColumn(traceTable("tst_sharding"), traceTable("tst_sharding_4"))
 
         testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
     }

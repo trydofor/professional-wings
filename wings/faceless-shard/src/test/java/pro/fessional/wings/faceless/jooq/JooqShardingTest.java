@@ -12,13 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import pro.fessional.wings.faceless.WingsTestHelper;
 import pro.fessional.wings.faceless.convention.EmptyValue;
-import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
-import pro.fessional.wings.faceless.database.autogen.tables.daos.Tst中文也分表Dao;
-import pro.fessional.wings.faceless.database.autogen.tables.pojos.Tst中文也分表;
-import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
+import pro.fessional.wings.faceless.database.autogen.tables.TstShardingTable;
+import pro.fessional.wings.faceless.database.autogen.tables.daos.TstShardingDao;
+import pro.fessional.wings.faceless.database.autogen.tables.pojos.TstSharding;
+import pro.fessional.wings.faceless.database.autogen.tables.records.TstShardingRecord;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
@@ -39,7 +38,6 @@ import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
 
 @SuppressWarnings({"FieldMayBeFinal", "CanBeFinal"})
 @SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
-@ActiveProfiles("shard")
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Slf4j
 public class JooqShardingTest {
@@ -51,33 +49,33 @@ public class JooqShardingTest {
     private SchemaShardingManager schemaShardingManager;
 
     @Setter(onMethod_ = {@Autowired})
-    private Tst中文也分表Dao dao;
+    private TstShardingDao dao;
 
     @Setter(onMethod_ = {@Autowired})
     private WingsTestHelper wingsTestHelper;
 
     @Test
-    public void test0𓃬清表重置() {
+    public void test0CleanTables() {
         wingsTestHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
     }
 
     @Test
-    public void test1𓃬发测试版() {
+    public void test1PublishTest() {
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0);
     }
 
     @Test
-    public void test3𓃬分五张表() {
-        schemaShardingManager.publishShard("tst_中文也分表", 5);
+    public void test3SplitTable5() {
+        schemaShardingManager.publishShard("tst_sharding", 5);
     }
 
-    private Long id = 1L;//lightIdService.getId(Tst中文也分表Table.class);
+    private Long id = 1L;//lightIdService.getId(TstShardingTable.class);
 
     @Test
-    public void test4𓃬插入𓃬查日志() {
-        val rd = new Tst中文也分表(id,
+    public void test4InsertSeeLog() {
+        val rd = new TstSharding(id,
                 LocalDateTime.now(),
                 EmptyValue.DATE_TIME,
                 EmptyValue.DATE_TIME,
@@ -86,28 +84,28 @@ public class JooqShardingTest {
                 EmptyValue.VARCHAR,
                 ZH_CN.getId()
         );
-        // insert into `tst_中文也分表` (`id`, `create_dt`, `modify_dt`, `commit_id`, `login_info`, `other_info`) values (?, ?, ?, ?, ?, ?)
+        // insert into `tst_sharding` (`id`, `create_dt`, `modify_dt`, `commit_id`, `login_info`, `other_info`) values (?, ?, ?, ?, ?, ?)
         dao.insert(rd);
 
         testcaseNotice(
                 "==== 检查 sql 日志 ====",
-                "[OK] insert into `tst_中文也分表_0` (`ID`, `CREATE_DT`, `MODIFY_DT`, `COMMIT_ID`, `LOGIN_INFO`, `OTHER_INFO`) values (?, ?, ?, ?, ?, ?)",
-                "[NG] insert into `TST_中文也分表` as `t1` (`ID`, `CREATE_DT`, `MODIFY_DT`, `COMMIT_ID`, `LOGIN_INFO`, `OTHER_INFO`) values (?, ?, ?, ?, ?, ?)"
+                "[OK] insert into `tst_sharding_0` (`ID`, `CREATE_DT`, `MODIFY_DT`, `COMMIT_ID`, `LOGIN_INFO`, `OTHER_INFO`) values (?, ?, ?, ?, ?, ?)",
+                "[NG] insert into `tst_sharding` as `t1` (`ID`, `CREATE_DT`, `MODIFY_DT`, `COMMIT_ID`, `LOGIN_INFO`, `OTHER_INFO`) values (?, ?, ?, ?, ?, ?)"
         );
-//        dsl.newRecord(Tst中文也分表Table.TST_中文也分表, rd).insert()
+//        dsl.newRecord(TstShardingTable.TST_中文也分表, rd).insert()
     }
 
     @Test
-    public void test5𓃬更新𓃬查日志() {
-        val tp = Tst中文也分表Table.Tst中文也分表;
-        // update `tst_中文也分表` set `modify_dt` = ?, `login_info` = ? where `id` <= ?
+    public void test5UpdateSeeLog() {
+        val tp = TstShardingTable.TstSharding;
+        // update `tst_sharding` set `modify_dt` = ?, `login_info` = ? where `id` <= ?
         val rp = dao.ctx().update(tp)
                     .set(tp.ModifyDt, LocalDateTime.now())
                     .set(tp.LoginInfo, "update 5")
                     .where(tp.Id.eq(id))
                     .execute();
         testcaseNotice("plain updated= $rp");
-        testcaseNotice("update `tst_中文也分表_1` set `modify_dt` = ?, `login_info` = ? where `id` = ?");
+        testcaseNotice("update `tst_sharding_1` set `modify_dt` = ?, `login_info` = ? where `id` = ?");
 
         val tw = dao.getTable();
         val rw = dao.ctx().update(tw)
@@ -116,7 +114,7 @@ public class JooqShardingTest {
                     .where(tw.Id.eq(id))
                     .execute();
         testcaseNotice("write updated= $rw");
-        testcaseNotice("update `tst_中文也分表_1` set `modify_dt` = ?, `login_info` = ? where `id` = ?");
+        testcaseNotice("update `tst_sharding_1` set `modify_dt` = ?, `login_info` = ? where `id` = ?");
 
         val tr = dao.getAlias();
         val rr = dao.ctx().update(tr)
@@ -125,22 +123,22 @@ public class JooqShardingTest {
                     .where(tr.Id.eq(id))
                     .execute();
         testcaseNotice("read  updated= $rr");
-        testcaseNotice("update `tst_中文也分表_1` as `y8` set `y8`.`modify_dt` = ?, `y8`.`login_info` = ? where `y8`.`id` = ?");
+        testcaseNotice("update `tst_sharding_1` as `y8` set `y8`.`modify_dt` = ?, `y8`.`login_info` = ? where `y8`.`id` = ?");
 
 
         testcaseNotice(
                 "==== 检查 sql 日志 ====",
-                "[OK] update `TST_中文也分表` set `MODIFY_DT` = ?, `LOGIN_INFO` = ? where `ID` <= ?",
-                "[OK] update `TST_中文也分表` as `t1` set `t1`.`MODIFY_DT` = ?, `t1`.`LOGIN_INFO` = ? where `t1`.`ID` <= ?",
-                "[NG] update `TST_中文也分表` set `TST_中文也分表`.`MODIFY_DT` = ?, `TST_中文也分表`.`LOGIN_INFO` = ? where `TST_中文也分表`.`ID` <= ?"
+                "[OK] update `tst_sharding` set `MODIFY_DT` = ?, `LOGIN_INFO` = ? where `ID` <= ?",
+                "[OK] update `tst_sharding` as `t1` set `t1`.`MODIFY_DT` = ?, `t1`.`LOGIN_INFO` = ? where `t1`.`ID` <= ?",
+                "[NG] update `tst_sharding` set `TST_中文也分表`.`MODIFY_DT` = ?, `TST_中文也分表`.`LOGIN_INFO` = ? where `TST_中文也分表`.`ID` <= ?"
         );
     }
 
     @Test
-    public void test6𓃬查询𓃬查日志() {
+    public void test6SelectSeeLog() {
         try (HintManager it = HintManager.getInstance()) {
             it.setWriteRouteOnly();
-            val ta = Tst中文也分表Table.asY8;
+            val ta = TstShardingTable.asP1;
             val ra = dao.ctx().select(ta.Id)
                         .from(ta)
                         .where(ta.Id.le(id))
@@ -148,9 +146,9 @@ public class JooqShardingTest {
                         .getSQL();
 //                .fetchOne().into(Long::class.java)
             testcaseNotice("alias select", ra);
-            testcaseNotice("select `y8`.`id` from `tst_中文也分表` as `y8` where `y8`.`id` <= ?");
+            testcaseNotice("select `y8`.`id` from `tst_sharding` as `y8` where `y8`.`id` <= ?");
 
-            val tp = Tst中文也分表Table.Tst中文也分表;
+            val tp = TstShardingTable.TstSharding;
             val rp = dao.ctx().select(tp.Id)
                         .from(tp)
                         .where(tp.Id.le(id))
@@ -158,55 +156,55 @@ public class JooqShardingTest {
                         .getSQL();
 //                .fetchOne().into(Long::class.java)
             testcaseNotice("plain select", rp);
-            testcaseNotice("select `id` from `tst_中文也分表` where `id` <= ?");
+            testcaseNotice("select `id` from `tst_sharding` where `id` <= ?");
 
             val da = dao.getAlias();
             val rd = dao.fetch(da, da.Id.eq(id));
             testcaseNotice("dao select= $rd");
-            testcaseNotice("select `y8`.`id`, `y8`.`create_dt`, ... from `tst_中文也分表` as `y8` where `y8`.`id` = ?");
+            testcaseNotice("select `y8`.`id`, `y8`.`create_dt`, ... from `tst_sharding` as `y8` where `y8`.`id` = ?");
 
             testcaseNotice(
                     "==== 检查 sql 日志 ====",
-                    "[OK] select `ID` from `TST_中文也分表` where `ID` <= ? limit ?",
-                    "[OK] select `t1`.`ID` from `TST_中文也分表` as `t1` where `t1`.`ID` <= ? limit ?",
-                    "[NG] select `TST_中文也分表`.`ID` from `TST_中文也分表` where `TST_中文也分表`.`ID` <= ? limit ?"
+                    "[OK] select `ID` from `tst_sharding` where `ID` <= ? limit ?",
+                    "[OK] select `t1`.`ID` from `tst_sharding` as `t1` where `t1`.`ID` <= ? limit ?",
+                    "[NG] select `tst_sharding`.`ID` from `tst_sharding` where `tst_sharding`.`ID` <= ? limit ?"
             );
         }
     }
 
     @Test
-    public void test7𓃬删除𓃬查日志() {
-        val tp = Tst中文也分表Table.Tst中文也分表;
+    public void test7DeleteSeeLog() {
+        val tp = TstShardingTable.TstSharding;
         val rp = dao.ctx().delete(tp)
                     .where(tp.Id.eq(id)) // Inline strategy cannot support range sharding.
                     .and(tp.CommitId.isNotNull())
                     .getSQL();
 //                .execute()
         testcaseNotice("plain delete= $rp");
-        testcaseNotice("delete from `tst_中文也分表` where (`id` <= ? and `commit_id` is not null)");
+        testcaseNotice("delete from `tst_sharding` where (`id` <= ? and `commit_id` is not null)");
 
         val dw = dao.getTable();
         val rw = dao.delete(dw, dw.Id.eq(id));
         testcaseNotice("dao delete= $rw");
-        testcaseNotice("delete from `tst_中文也分表_3` where `id` = ? ");
+        testcaseNotice("delete from `tst_sharding_3` where `id` = ? ");
 
         testcaseNotice(
                 "==== 检查 sql 日志 ====",
-                "[OK] delete from `TST_中文也分表` where `ID` <= ?",
-                "[NG] delete from `TST_中文也分表` where `TST_中文也分表`.`ID` <= ?",
-                "[NG] delete `t1` from `TST_中文也分表` as `t1` where `t1`.`ID` <= ?"
+                "[OK] delete from `tst_sharding` where `ID` <= ?",
+                "[NG] delete from `tst_sharding` where `tst_sharding`.`ID` <= ?",
+                "[NG] delete `t1` from `tst_sharding` as `t1` where `t1`.`ID` <= ?"
         );
     }
 
     private LocalDateTime now = LocalDateTime.now();
-    private Tst中文也分表Table tbl = Tst中文也分表Table.Tst中文也分表;
+    private TstShardingTable tbl = TstShardingTable.TstSharding;
 
     @Test
-    public void test8𓃬批量𓃬查日志() {
+    public void test8BatchSeeLog() {
         val rds = Arrays.asList(
-                new Tst中文也分表Record(119L, now, now, now, 9L, "批量合并119", "test8", ZH_CN.getId()),
-                new Tst中文也分表Record(308L, now, now, now, 9L, "批量合并308", "test8", ZH_CN.getId()),
-                new Tst中文也分表Record(309L, now, now, now, 9L, "批量合并309", "test8", ZH_CN.getId())
+                new TstShardingRecord(119L, now, now, now, 9L, "批量合并119", "test8", ZH_CN.getId()),
+                new TstShardingRecord(308L, now, now, now, 9L, "批量合并308", "test8", ZH_CN.getId()),
+                new TstShardingRecord(309L, now, now, now, 9L, "批量合并309", "test8", ZH_CN.getId())
         );
         testcaseNotice("批量Insert，查看日志,ignore, 分2批次， 119 ignore; 308，309 insert");
         val rs1 = dao.batchInsert(rds, 2, true);
@@ -214,41 +212,43 @@ public class JooqShardingTest {
 
         testcaseNotice("先select在insert 310，或update 308，309");
         val rs3 = dao.batchMerge(tbl, new Field[]{tbl.Id}, Arrays.asList(
-                new Tst中文也分表Record(310L, now, now, now, 9L, "批量合并310", "其他310", ZH_CN.getId()),
-                new Tst中文也分表Record(308L, now, now, now, 9L, "批量合并308", "其他308", ZH_CN.getId()),
-                new Tst中文也分表Record(309L, now, now, now, 9L, "批量合并309", "其他309", ZH_CN.getId())
+                new TstShardingRecord(310L, now, now, now, 9L, "批量合并310", "其他310", ZH_CN.getId()),
+                new TstShardingRecord(308L, now, now, now, 9L, "批量合并308", "其他308", ZH_CN.getId()),
+                new TstShardingRecord(309L, now, now, now, 9L, "批量合并309", "其他309", ZH_CN.getId())
         ), 2, tbl.LoginInfo, tbl.OtherInfo);
         Assertions.assertArrayEquals(new int[]{1, 1, 1}, rs3);
     }
 
     @Test
-    public void test9𓃬批量𓃬有bug() {
+    public void test9BatchSeeLog() {
         val rds = Arrays.asList(
-                new Tst中文也分表Record(119L, now, now, now, 9L, "批量加载307", "test9", ZH_CN.getId()),
-                new Tst中文也分表Record(318L, now, now, now, 9L, "批量加载318", "test9", ZH_CN.getId()),
-                new Tst中文也分表Record(319L, now, now, now, 9L, "批量加载319", "test9", ZH_CN.getId())
+                new TstShardingRecord(119L, now, now, now, 9L, "批量加载307", "test9", ZH_CN.getId()),
+                new TstShardingRecord(318L, now, now, now, 9L, "批量加载318", "test9", ZH_CN.getId()),
+                new TstShardingRecord(319L, now, now, now, 9L, "批量加载319", "test9", ZH_CN.getId())
         );
-        testcaseNotice("批量Insert，查看日志,replace, 307-309，分2批，replace into");
+        testcaseNotice("批量Insert，查看日志, replace 119, new318,319，分2批，replace into");
         try {
             val rs2 = dao.batchInsert(rds, 2, false);
-            log.info("{}", Arrays.toString(rs2));
-            //assertArrayEquals(intArrayOf(2, 2, 2), rs2)
-        } catch (Exception e) {
+            log.info(Arrays.toString(rs2));
+            Assertions.assertArrayEquals(new int[]{2, 1, 1}, rs2);
+        }
+        catch (Exception e) {
             testcaseNotice("Sharding 不支持，replace into https://github.com/apache/shardingsphere/issues/5330");
             e.printStackTrace();
         }
 
-        testcaseNotice("批量Merge，查看日志,on dupkey, 307-309，分2批，duplicate");
-        testcaseNotice("insert into `tst_中文也分表` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?");
+        testcaseNotice("批量Merge，查看日志, new 320, on dupkey 318,319，分2批，duplicate");
+        testcaseNotice("insert into `tst_sharding` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?");
         try {
             val rs3 = dao.batchMerge(tbl, Arrays.asList(
-                    new Tst中文也分表Record(320L, now, now, now, 9L, "批量合并320", "其他320", ZH_CN.getId()),
-                    new Tst中文也分表Record(318L, now, now, now, 9L, "批量合并318", "其他318", ZH_CN.getId()),
-                    new Tst中文也分表Record(319L, now, now, now, 9L, "批量合并319", "其他319", ZH_CN.getId())
+                    new TstShardingRecord(320L, now, now, now, 9L, "批量合并320", "其他320", ZH_CN.getId()),
+                    new TstShardingRecord(318L, now, now, now, 9L, "批量合并318", "其他318", ZH_CN.getId()),
+                    new TstShardingRecord(319L, now, now, now, 9L, "批量合并319", "其他319", ZH_CN.getId())
             ), 2, tbl.LoginInfo, tbl.OtherInfo);
-            log.info("{}", Arrays.toString(rs3));
-            //assertArrayEquals(intArrayOf(1, 1, 1), rs3)
-        } catch (Exception e) {
+            log.info(Arrays.toString(rs3));
+            Assertions.assertArrayEquals(new int[]{1, 2, 2}, rs3);
+        }
+        catch (Exception e) {
             testcaseNotice("Sharding 不支持，on duplicate key update https://github.com/apache/shardingsphere/issues/5210");
             testcaseNotice("Sharding 不支持，https://github.com/apache/shardingsphere/pull/5423");
             e.printStackTrace();

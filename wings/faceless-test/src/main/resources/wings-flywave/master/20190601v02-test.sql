@@ -1,5 +1,5 @@
 -- @plain error@skip
-REPLACE INTO `tst_中文也分表`(`id`, `commit_id`, `login_info`, `other_info`)
+REPLACE INTO `tst_sharding`(`id`, `commit_id`, `login_info`, `other_info`)
 VALUES (100, -1, 'LOGIN_INFO-00', 'OTHER_INFO-00'),
        (101, -1, 'LOGIN_INFO-01', 'OTHER_INFO-01'),
        (102, -1, 'LOGIN_INFO-02', 'OTHER_INFO-02'),
