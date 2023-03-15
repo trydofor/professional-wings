@@ -28,4 +28,6 @@ public interface TransactionalClauseService {
 
     @Nullable
     Integer selectInt(long id);
+
+    long getNextSequence();
 }

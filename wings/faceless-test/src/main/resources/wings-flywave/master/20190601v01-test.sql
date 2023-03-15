@@ -43,3 +43,5 @@ CREATE TABLE `tst_normal_table` (
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='202/正常测试';
 
+REPLACE INTO `sys_light_sequence` (`seq_name`, `block_id`, `next_val`, `step_val`, `comments`)
+VALUES ('tst_normal_table', 0, 1000, 1, 'for test step 1');

@@ -100,4 +100,14 @@ public class TransactionalClauseServiceImpl implements TransactionalClauseServic
     public Integer selectInt(long id) {
         return tstNormalTableDao.fetchOne(Integer.class, (t, w) -> w.where(t.Id.eq(id)).query(t.ValueInt));
     }
+
+    @Override
+    public long getNextSequence() {
+        final TstNormalTableTable t = tstNormalTableDao.getTable();
+        final Long seq = tstNormalTableDao
+                .ctx()
+                .fetchOne("SELECT next_val FROM sys_light_sequence WHERE seq_name=?", t.getSeqName())
+                .into(Long.class);
+        return seq == null ? -1 : seq;
+    }
 }

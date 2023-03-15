@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import pro.fessional.mirana.id.LightIdBufferedProvider;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.service.TransactionalBusinessService;
 import pro.fessional.wings.faceless.service.TransactionalClauseService;
@@ -36,6 +37,9 @@ public class TransactionalServiceTest {
     @Setter(onMethod_ = {@Autowired})
     protected TransactionalBusinessService transactionalBusinessService;
 
+    @Setter(onMethod_ = {@Autowired})
+    protected LightIdBufferedProvider lightIdBufferedProvider;
+
     @Test
     public void test0Init() {
         val sqls = FlywaveRevisionScanner.scanMaster();
@@ -46,6 +50,7 @@ public class TransactionalServiceTest {
     @Test
     public void testDeclarativeTx() {
         final AtomicLong id = new AtomicLong(-1);
+        lightIdBufferedProvider.setFixCount(1);
         // insert
         try {
             transactionalBusinessService.declarativeTx(id, true, false, false);
@@ -55,7 +60,8 @@ public class TransactionalServiceTest {
             log.info("insert failure", e);
         }
         final long ild = id.get();
-        Assertions.assertNotEquals(-1L, ild);
+        final long nxt = transactionalClauseService.getNextSequence();
+        Assertions.assertEquals(nxt, ild + 1);
 
         final Integer ic = transactionalClauseService.selectInt(id.get());
         Assertions.assertNull(ic);
@@ -96,10 +102,12 @@ public class TransactionalServiceTest {
 
         final Integer ac = transactionalClauseService.selectInt(id.get());
         Assertions.assertNull(ac);
+        lightIdBufferedProvider.setFixCount(0);
     }
 
     @Test
     public void testWithoutTx() {
+        lightIdBufferedProvider.setFixCount(1);
         final AtomicLong id = new AtomicLong(-1);
         // insert
         try {
@@ -110,7 +118,8 @@ public class TransactionalServiceTest {
             log.info("insert failure", e);
         }
         final long ild = id.get();
-        Assertions.assertNotEquals(-1L, ild);
+        final long nxt = transactionalClauseService.getNextSequence();
+        Assertions.assertEquals(nxt, ild + 1);
 
         final Integer ic = transactionalClauseService.selectInt(id.get());
         Assertions.assertEquals(1, ic);
@@ -149,12 +158,15 @@ public class TransactionalServiceTest {
 
         final Integer ac = transactionalClauseService.selectInt(id.get());
         Assertions.assertNull(ac);
+        lightIdBufferedProvider.setFixCount(0);
     }
 
     @Test
     public void testProgrammaticTx() {
+        lightIdBufferedProvider.setFixCount(1);
         testProgrammaticTx(false);
         testProgrammaticTx(true);
+        lightIdBufferedProvider.setFixCount(0);
     }
 
     public void testProgrammaticTx(boolean rollback) {
@@ -168,7 +180,8 @@ public class TransactionalServiceTest {
             log.info("insert failure", e);
         }
         final long ild = id.get();
-        Assertions.assertNotEquals(-1L, ild);
+        final long nxt = transactionalClauseService.getNextSequence();
+        Assertions.assertEquals(nxt, ild + 1);
 
         // rollback
         final Integer ic = transactionalClauseService.selectInt(id.get());
