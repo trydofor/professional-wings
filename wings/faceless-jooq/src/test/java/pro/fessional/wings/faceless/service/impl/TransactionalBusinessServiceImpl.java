@@ -62,6 +62,7 @@ public class TransactionalBusinessServiceImpl implements TransactionalBusinessSe
             }
         }
         catch (Exception ex) {
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.info("rollback programmatic exception");
             transactionManager.rollback(programmaticTx);
             throw ex;

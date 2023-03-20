@@ -64,6 +64,6 @@ such as @author comments, code comments, commit information, etc.
 
 WingsBoot and its submodule project are licensed under [Apache2]. but I am,
 
-* Not responsible for any damage caused by the code or doc.
+* No responsibility for any damages caused by misuse of the code or doc.
 * No obligation to provide consulting, development, etc.
-* Non-free Consulting is available, about 3K CNY/H
+* Non-free Consulting is available, 59 USD/H
