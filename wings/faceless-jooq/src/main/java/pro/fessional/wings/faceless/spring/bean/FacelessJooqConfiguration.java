@@ -56,6 +56,7 @@ public class FacelessJooqConfiguration {
      * @link https://github.com/jOOQ/jOOQ/issues/8893
      * @link https://github.com/jOOQ/jOOQ/issues/9055
      * @link https://github.com/jOOQ/jOOQ/issues/7258
+     * @link https://github.com/jOOQ/jOOQ/issues/12092
      */
     @Bean
     @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$autoQualify, havingValue = "true")
@@ -105,8 +106,9 @@ public class FacelessJooqConfiguration {
 
             final Settings settings = configuration.settings();
             WingsJooqEnv.daoBatchMysql = config.isBatchMysql();
-            settings.withRenderCatalog(false)
-                    .withRenderSchema(false)
+            settings.withRenderCatalog(config.isRenderCatalog())
+                    .withRenderSchema(config.isRenderSchema())
+                    .withRenderGroupConcatMaxLenSessionVariable(config.isRenderGroupConcat())
 //                  .withParseDialect(SQLDialect.MYSQL)
 //                .withRenderTable(false)
             ;

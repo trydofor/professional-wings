@@ -85,7 +85,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     protected TinyMailServiceProp tinyMailServiceProp;
     @Setter(onMethod_ = {@Autowired})
     protected ResourceLoader resourceLoader;
-    @Setter(onMethod_ = {@Autowired})
+    @Setter(onMethod_ = {@Autowired(required = false)})
     protected List<StatusHook> statusHooks;
 
     @Setter(onMethod_ = {@Autowired, @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME)})
