@@ -2,6 +2,8 @@ package pro.fessional.wings.tiny.mail.sender;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 
 import java.util.Arrays;
@@ -14,6 +16,9 @@ import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue
  * hashCode and equals with
  * host, port, username, protocol from MailProperties, and
  * TinyMailConfig without name
+ *
+ * @author trydofor
+ * @since 2022-12-31
  */
 @Getter
 @Setter
@@ -155,5 +160,13 @@ public class TinyMailConfig extends MailProperties {
         if (bcc == null) bcc = that.bcc;
         if (notValue(reply)) reply = that.reply;
         if (html == null) html = that.html;
+    }
+
+    public interface Loader {
+        /**
+         * load config by its name (non-empty)
+         */
+        @Nullable
+        TinyMailConfig load(@NotNull String name);
     }
 }

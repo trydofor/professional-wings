@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.time.StopWatch;
 
+import java.util.Collections;
+
 /**
  * @author trydofor
  * @since 2022-12-28
@@ -64,13 +66,13 @@ public class MailNoticeTest {
     @Disabled("gmail")
     public void testGmail() {
         // dynamic config
-        final String name = "gmail";
+        final String name = "gmailx";
         TinyMailConfig conf = new TinyMailConfig();
         conf.setName(name);
         conf.setHost("smtp.gmail.com");
         conf.setPort(587);
-        mailConfigProvider.putMailConfig(conf);
-
+        final TinyMailConfig.Loader loader = n -> name.equals(n) ? conf : null;
+        mailConfigProvider.setConfigLoader(Collections.singletonList(loader));
         final TinyMailConfig gmail = mailNotice.provideConfig(name, true);
         mailNotice.send(gmail, "test tiny mail gmail", "test gmail");
     }

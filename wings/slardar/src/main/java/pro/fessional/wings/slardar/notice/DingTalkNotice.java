@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.notice;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -12,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import pro.fessional.mirana.best.ArgsAssert;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.JsonTemplate;
 import pro.fessional.mirana.time.ThreadNow;
@@ -23,7 +23,8 @@ import pro.fessional.wings.slardar.spring.prop.SlardarDingNoticeProp;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.net.URLEncoder;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -45,10 +46,12 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
     @NotNull
     private final SlardarDingNoticeProp configProp;
 
-    private final ConcurrentHashMap<String, DingTalkConf> dynamicConfig = new ConcurrentHashMap<>();
-
     @Setter(onMethod_ = {@Autowired(required = false), @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME)})
     private Executor executor;
+
+    @Setter(onMethod_ = {@Autowired(required = false)})
+    @Getter
+    private List<DingTalkConf.Loader> configLoader = Collections.emptyList();
 
     @Override
     @NotNull
@@ -71,9 +74,15 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
             return defaultConfig();
         }
 
-        DingTalkConf conf = dynamicConfig.get(name);
-        if (conf == null) {
-            conf = configProp.get(name);
+        DingTalkConf conf = configProp.get(name);
+        if (conf == null && configLoader != null) {
+            for (DingTalkConf.Loader ld : configLoader) {
+                final DingTalkConf cf = ld.load(name);
+                if (cf != null) {
+                    conf = cf;
+                    break;
+                }
+            }
         }
 
         if (combine) {
@@ -82,32 +91,6 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
         else {
             return conf;
         }
-    }
-
-    /**
-     * dynamic put a config, and its name can not be null
-     *
-     * @param config dynamic config
-     * @param name  config name
-     */
-    public void putMailConfig(@NotNull DingTalkConf config, @NotNull String name) {
-        ArgsAssert.notNull(name, "config.name");
-
-        final DingTalkConf st = configProp.get(name);
-        if (st != null) {
-            config.merge(st);
-        }
-
-        dynamicConfig.put(name, config);
-    }
-
-    /**
-     * delete dynamic config by name
-     *
-     * @param name name
-     */
-    public void delMailConfig(@NotNull String name) {
-        dynamicConfig.remove(name);
     }
 
     @SneakyThrows

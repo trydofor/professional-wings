@@ -1,6 +1,8 @@
 package pro.fessional.wings.slardar.notice;
 
 import lombok.Data;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.silencer.encrypt.SecretProvider;
 import pro.fessional.wings.slardar.jackson.AesString;
 
@@ -72,5 +74,13 @@ public class DingTalkConf {
         if (notValue(noticeKeyword)) noticeKeyword = that.noticeKeyword;
         if (notValue(msgType)) msgType = that.msgType;
         mergeNotValue(noticeMobiles, that.noticeMobiles);
+    }
+
+    public interface Loader {
+        /**
+         * load config by its name (non-empty)
+         */
+        @Nullable
+        DingTalkConf load(@NotNull String name);
     }
 }

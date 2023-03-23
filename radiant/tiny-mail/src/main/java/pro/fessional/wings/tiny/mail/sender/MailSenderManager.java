@@ -59,10 +59,19 @@ public class MailSenderManager {
     protected final ConcurrentHashMap<String, Long> mailHostIdle = new ConcurrentHashMap<>();
 
     /**
-     * 清除host的等待
+     * remove host waiting by host
      */
-    public void cleanHostWait(String host) {
+    public void removeHostWait(String host) {
         mailHostWait.remove(host);
+    }
+
+    /**
+     * remove cached sender by its config.name
+     *
+     * @param name config.name
+     */
+    public void removeCachingSender(String name) {
+        senderProvider.removeCaching(name);
     }
 
     /**
@@ -183,7 +192,7 @@ public class MailSenderManager {
 
             results.add(temp);
             if (temp.mimeMessage != null) {
-                senderGroup.computeIfAbsent(temp.mailSender, k -> new ArrayList<>())
+                senderGroup.computeIfAbsent(temp.mailSender, ignored -> new ArrayList<>())
                            .add(temp);
             }
         }

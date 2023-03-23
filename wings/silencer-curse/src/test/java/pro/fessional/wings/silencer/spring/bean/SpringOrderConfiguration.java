@@ -11,6 +11,7 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
+import pro.fessional.wings.silencer.other.CollectionInjectTest;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 
 /**
@@ -35,6 +36,12 @@ public class SpringOrderConfiguration implements InitializingBean {
 
     public SpringOrderConfiguration(SilencerEnabledProp prop) {
         log.info(">>>>> constructor 可自动注入参数 AutoLog=" + prop.isAutoLog());
+    }
+
+
+    @Bean
+    public CollectionInjectTest.Dto dto2() {
+        return new CollectionInjectTest.Dto(2);
     }
 
     @Bean
