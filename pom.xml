@@ -61,7 +61,6 @@
         <servicecomb.version>2.8.6</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
         <!-- others -->
         <springdoc.version>2.0.3</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases -->
-        <therapi.version>0.15.0</therapi.version> <!-- https://github.com/dnault/therapi-runtime-javadoc  springdoc Javadoc support -->
         <boot-admin.version>3.0.1</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
         <sentry.version>6.15.0</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases buildSrc/src/main/java/Config.kt -->
         <retrofit.version>2.9.0</retrofit.version> <!-- https://github.com/square/retrofit/tags -->
@@ -553,11 +552,7 @@
                                 <artifactId>spring-boot-autoconfigure-processor</artifactId>
                                 <version>${spring-boot.version}</version>
                             </path>
-                            <path>
-                                <groupId>com.github.therapi</groupId>
-                                <artifactId>therapi-runtime-javadoc-scribe</artifactId>
-                                <version>${therapi.version}</version>
-                            </path>
+
                         </annotationProcessorPaths>
                     </configuration>
                 </plugin>
