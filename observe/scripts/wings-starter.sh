@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2023-01-29
+THIS_VERSION=2023-03-03
 ################ modify the following params ################
 WORK_DIR=''      # 脚本生成文件，日志的目录，默认空（脚本位置）
 TAIL_LOG='log'   # 默认tail的日志，"log|out|new|ask"
@@ -96,6 +96,7 @@ function print_help() {
     echo -e '\033[32m stops [snd=30]\033[m stop but Not confirm'
     echo -e '\033[32m status \033[m show the {boot-jar} runtime status'
     echo -e '\033[32m warn \033[m monitor the {boot-jar} and log'
+    echo -e '\033[32m live \033[m monitor the {boot-jar} and auto restart if lost pid'
     echo -e '\033[32m clean [days=30] [y] \033[m clean up log-file {days} ago but newest'
     echo -e '\033[32m clean-jar [days=30] [y] \033[m clean up boot-jar {days} ago but newest'
     echo -e '\033[32m cron \033[m show the {boot-jar} crontab usage'
@@ -181,6 +182,28 @@ function check_boot() {
     fi
 }
 
+function safe_start() {
+    # safe backup
+    md5sum "$BOOT_JAR" >"$file_md5"
+    BOOT_MD5=$(awk '{print $1}' <"$file_md5")
+    # `_` as delimiter
+    safe_jar="${BOOT_JAR}_${BOOT_MD5}"
+    if [[ ! -f "$safe_jar" ]]; then
+        echo -e "\033[33mNOTE: copy safe_jar  $safe_jar \033[0m"
+        # do Not use link (soft and hard), as it can overwrite source
+        cp "$BOOT_JAR" "$safe_jar"
+    fi
+
+    #
+    print_args
+    touch "$BOOT_OUT"
+    real_out=$(realpath "$BOOT_OUT")
+    # shellcheck disable=SC2086
+    nohup java $JAVA_OPT -Dwings.console.out=$real_out -jar $safe_jar $BOOT_ARG >$BOOT_OUT 2>&1 &
+    echo "$! ${BOOT_TKN}" >"$BOOT_PID"
+    sleep 2
+}
+
 ################ script body ################
 # load env
 this_file="$0"
@@ -202,11 +225,14 @@ else
 fi
 
 # change workdir
-if [[ ! -d "$WORK_DIR" ]]; then
+if [[ "$WORK_DIR" == "" ]]; then
     WORK_DIR=$(dirname "$this_file")
+else
+    # shellcheck disable=SC2164,SC2046
+    cd $(dirname "$this_file")
 fi
 cd "$WORK_DIR" || exit
-WORK_DIR=$(realpath -s "$WORK_DIR")
+WORK_DIR=$(realpath -s .)
 
 # check arg
 if [[ -L "$1" || -f "$1" ]]; then
@@ -303,27 +329,8 @@ case "$ARGS_RUN" in
             exit
         fi
 
-        # safe backup
-        md5sum "$BOOT_JAR" >"$file_md5"
-        BOOT_MD5=$(awk '{print $1}' <"$file_md5")
-        # `_` as delimiter
-        safe_jar="${BOOT_JAR}_${BOOT_MD5}"
-        if [[ ! -f "$safe_jar" ]]; then
-            echo -e "\033[33mNOTE: copy safe_jar  $safe_jar \033[0m"
-            # do Not use link (soft and hard), as it can overwrite source
-            cp "$BOOT_JAR" "$safe_jar"
-        fi
-
-        #
-        print_args
         check_user
-
-        touch "$BOOT_OUT"
-        real_out=$(realpath "$BOOT_OUT")
-        # shellcheck disable=SC2086
-        nohup java $JAVA_OPT -Dwings.console.out=$real_out -jar $safe_jar $BOOT_ARG >$BOOT_OUT 2>&1 &
-        echo "$! ${BOOT_TKN}" >"$BOOT_PID"
-        sleep 2
+        safe_start
 
         cid=$(pgrep -f "$grep_key" | tr '\n' ' ')
         if [[ "$cid" == "" ]]; then
@@ -424,6 +431,7 @@ case "$ARGS_RUN" in
             if ! ps $pid >/dev/null; then
                 echo ""
                 echo -e "\033[33mNOTE: successfully stop in $i seconds, pid=$pid of $BOOT_JAR \033[0m"
+                rm -rf "$BOOT_PID"
                 exit
             fi
         done
@@ -434,6 +442,7 @@ case "$ARGS_RUN" in
         fi
         # shellcheck disable=SC2086
         kill -9 $pid
+        rm -rf "$BOOT_PID"
         ;;
     status)
         print_envs
@@ -526,6 +535,20 @@ case "$ARGS_RUN" in
         else
             echo -e "\033[37;42;1mNOTE: $BOOT_JAR good status in PID and LOG \033[0m"
         fi
+        ;;
+    live)
+        if [[ $count -ne 0 ]]; then
+            echo -e "\033[33mNOTE: skip $count running $BOOT_JAR \033[0m"
+            exit
+        fi
+        if [[ ! -f "$BOOT_PID" ]]; then
+            echo -e "\033[33mNOTE: skip manually stopped $BOOT_JAR \033[0m"
+            exit
+        fi
+
+        check_java
+        check_user
+        safe_start
         ;;
     clean)
         dys="$2"
