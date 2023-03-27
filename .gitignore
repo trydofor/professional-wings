@@ -56,3 +56,7 @@ hs_err_pid*
 ###
 *~
 .DS_Store
+
+###
+.cache
+.temp
