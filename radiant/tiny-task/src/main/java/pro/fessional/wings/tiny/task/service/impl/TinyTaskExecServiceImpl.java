@@ -55,6 +55,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.locks.Lock;
 
+import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.arrayOrNull;
 import static pro.fessional.wings.tiny.task.schedule.exec.NoticeExec.WhenDone;
 import static pro.fessional.wings.tiny.task.schedule.exec.NoticeExec.WhenExec;
 import static pro.fessional.wings.tiny.task.schedule.exec.NoticeExec.WhenFail;
@@ -303,7 +304,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     private boolean notApps(String apps, long id) {
         if (StringUtils.isEmpty(apps)) return false;
 
-        for (String s : StringUtils.split(apps, ',')) {
+        for (String s : arrayOrNull(apps, true)) {
             if (s.trim().equals(appName)) return false;
         }
         log.info("skip task for not apps={}, cur={}, id={}", apps, appName, id);
@@ -319,7 +320,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             return true;
         }
 
-        if (!RuntimeMode.hasRunMode(StringUtils.split(runs, ','))) {
+        if (!RuntimeMode.hasRunMode(arrayOrNull(runs, true))) {
             log.info("skip task for not runs={}, cur={}, id={}", runs, rmd, id);
             return true;
         }
@@ -330,7 +331,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     private Set<String> noticeWhen(String nw) {
         if (nw == null || nw.isEmpty()) return Collections.emptySet();
         Set<String> rs = new HashSet<>();
-        for (String s : StringUtils.split(nw, ',')) {
+        for (String s : arrayOrNull(nw, true)) {
             rs.add(s.trim().toLowerCase());
         }
         return rs;
@@ -474,7 +475,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
 
         final int duringBoot = td.getDuringBoot();
         if (duringBoot > 0) {
-            final int bct = Booted.compute(id, (k, v) -> v == null ? 1 : v + 1);
+            final int bct = Booted.compute(id, (ignored, v) -> v == null ? 1 : v + 1);
             if (bct >= duringBoot) {
                 log.info("remove task for duringBoot={}, id={}", bct, id);
                 return false;

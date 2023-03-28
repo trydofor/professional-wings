@@ -59,6 +59,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME;
+import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.arrayOrNull;
 import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue;
 
 /**
@@ -279,9 +280,9 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 
         if (msg == null) {
             message.setFrom(po.getMailFrom());
-            message.setTo(toArrOrNull(po.getMailTo()));
-            message.setCc(toArrOrNull(po.getMailCc()));
-            message.setBcc(toArrOrNull(po.getMailBcc()));
+            message.setTo(arrayOrNull(po.getMailTo(), true));
+            message.setCc(arrayOrNull(po.getMailCc(), true));
+            message.setBcc(arrayOrNull(po.getMailBcc(), true));
             message.setReply(toStrOrNull(po.getMailReply()));
             message.setHtml(po.getMailHtml());
             message.setSubject(po.getMailSubj());
@@ -370,7 +371,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
                     log.info("skip only send run-mail, run={}, id={}", mrs, po.getId());
                     return true;
                 }
-                if (!RuntimeMode.hasRunMode(StringUtils.split(mrs, ','))) {
+                if (!RuntimeMode.hasRunMode(arrayOrNull(mrs, true))) {
                     log.info("skip only send run-mail, run={}, cur={}, id={}", mrs, rmd, po.getId());
                     return true;
                 }
@@ -719,11 +720,6 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     private String toStringMap(Map<String, String> file) {
         if (file == null || file.isEmpty()) return Null.Str;
         return JacksonHelper.string(file, true);
-    }
-
-    @Nullable
-    private String[] toArrOrNull(String str) {
-        return (str == null || str.isEmpty()) ? Null.StrArr : StringUtils.split(str, ',');
     }
 
     @Nullable
