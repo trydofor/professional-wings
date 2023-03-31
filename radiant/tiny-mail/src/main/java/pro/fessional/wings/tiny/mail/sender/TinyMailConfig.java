@@ -53,6 +53,17 @@ public class TinyMailConfig extends MailProperties {
      */
     protected Boolean html;
 
+    public void setTo(String... to) {
+        this.to = to;
+    }
+
+    public void setCc(String... cc) {
+        this.cc = cc;
+    }
+
+    public void setBcc(String... bcc) {
+        this.bcc = bcc;
+    }
 
     @Override
     public boolean equals(Object o) {
