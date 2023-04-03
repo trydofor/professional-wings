@@ -15,7 +15,7 @@ public class SlardarSessionProp {
     public static final String Key = "wings.slardar.session";
 
     /**
-     * 使用header解析session的name，空表示不解析
+     * Use header (e.g. X-Auth-Token) to hold the session id. empty means disabled
      *
      * @see #Key$headerName
      */
@@ -23,7 +23,7 @@ public class SlardarSessionProp {
     public static final String Key$headerName = Key + ".header-name";
 
     /**
-     * 使用cookie解析的cookie的name
+     * Use cookie to hold the session id. empty means disabled. reuse server.servlet.session
      *
      * @see #Key$cookieName
      */
@@ -31,7 +31,7 @@ public class SlardarSessionProp {
     public static final String Key$cookieName = Key + ".cookie-name";
 
     /**
-     * 是否对session进行base64编码，默认false
+     * Whether to base64 encode the cookie, default false
      *
      * @see #Key$cookieBase64
      */
@@ -39,7 +39,7 @@ public class SlardarSessionProp {
     public static final String Key$cookieBase64 = Key + ".cookie-base64";
 
     /**
-     * 增加session的jvm route，空表示否
+     * Append jvm route to cookie, empty means disabled
      *
      * @see #Key$cookieRoute
      */

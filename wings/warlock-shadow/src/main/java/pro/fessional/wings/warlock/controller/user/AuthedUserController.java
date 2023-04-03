@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
+import pro.fessional.wings.slardar.session.SessionTokenEncoder;
 import pro.fessional.wings.slardar.session.WingsSessionHelper;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
@@ -48,6 +49,8 @@ public class AuthedUserController {
 
     @Setter(onMethod_ = {@Autowired})
     private WingsSessionHelper wingsSessionHelper;
+    @Setter(onMethod_ = {@Autowired(required = false)})
+    private SessionTokenEncoder sessionTokenEncoder;
 
     @Schema(description = "登录用户基本信息")
     @Data
@@ -84,7 +87,11 @@ public class AuthedUserController {
         fillDetail(wd, dto);
         final HttpSession session = request.getSession(false);
         if (session != null) {
-            dto.setToken(session.getId());
+            String sid = session.getId();
+            if (sessionTokenEncoder != null) {
+                sid = sessionTokenEncoder.encode(sid, request);
+            }
+            dto.setToken(sid);
         }
         return R.okData(dto);
     }
