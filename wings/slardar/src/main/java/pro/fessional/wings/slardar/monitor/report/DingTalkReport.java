@@ -3,7 +3,6 @@ package pro.fessional.wings.slardar.monitor.report;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.monitor.WarnReport;
@@ -35,13 +34,13 @@ public class DingTalkReport implements WarnReport {
     @Override
     public Sts report(String appName, String jvmName, Map<String, List<WarnMetric.Warn>> warn) {
         final DingTalkConf conf = dingTalkNotice.provideConfig(dingConfig, true);
-        final String atk = conf.getAccessToken();
-        if (!StringUtils.hasText(atk)) {
-            log.info("accessToken is empty, skip");
+        final String host = conf.getValidWebhook();
+        if (host == null) {
+            log.info("bad webhook, skip");
             return Sts.Skip;
         }
 
-        if (atk.contains("${")) {
+        if (host.contains("${")) {
             log.info("accessToken has placeholder, skip");
             return Sts.Skip;
         }

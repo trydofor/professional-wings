@@ -47,6 +47,18 @@ public class DingTalkConf {
      */
     private Map<String, String> noticeMobiles = new HashMap<>();
 
+    @Nullable
+    public String getValidWebhook() {
+        if (webhookUrl == null || webhookUrl.isEmpty()) return null;
+
+        if (webhookUrl.endsWith("=")) {
+            return (accessToken == null || accessToken.isEmpty()) ? null : webhookUrl + accessToken;
+        }
+        else {
+            return webhookUrl;
+        }
+    }
+
     /**
      * use all properties from that
      */

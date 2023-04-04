@@ -111,18 +111,11 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
              "text": " \n"
          },"at":{"isAtAll":true}}'
          */
-        final String accessToken = config.getAccessToken();
-        if (accessToken == null || accessToken.isEmpty()) {
-            return false;
-        }
 
-        String host;
-        final String webhookUrl = config.getWebhookUrl();
-        if (webhookUrl.contains(accessToken)) {
-            host = webhookUrl;
-        }
-        else {
-            host = webhookUrl + accessToken;
+        String host = config.getValidWebhook();
+        if (host == null) {
+            log.warn("skip bad webhookUrl={}, AccessToken={}", config.getWebhookUrl(), config.getAccessToken());
+            return false;
         }
 
         final String digestSecret = config.getDigestSecret();
@@ -192,7 +185,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
     public String buildText(DingTalkConf conf, String subject, String content) {
         if (subject == null) subject = Null.Str;
         if (content == null) content = Null.Str;
-        final String message = subject + content;
+        final String message = subject.isEmpty() ? content : subject + "\r\n" + content;
         return JsonTemplate.obj(t -> t
                 .putVal("msgtype", "text")
                 .putObj("text", o -> o.putVal("content", buildContent(conf, message)))
