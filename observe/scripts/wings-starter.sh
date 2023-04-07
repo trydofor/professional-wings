@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2023-03-03
+THIS_VERSION=2023-04-04
 ################ modify the following params ################
 WORK_DIR=''      # 脚本生成文件，日志的目录，默认空（脚本位置）
 TAIL_LOG='log'   # 默认tail的日志，"log|out|new|ask"
@@ -89,6 +89,7 @@ function print_envs() {
 }
 
 function print_help() {
+    echo
     echo -e '\033[32m docker \033[m start in docker with console log'
     echo -e '\033[32m start \033[m start the {boot-jar} and tail the log'
     echo -e '\033[32m starts \033[m start but Not wait log'
@@ -99,12 +100,15 @@ function print_help() {
     echo -e '\033[32m live \033[m monitor the {boot-jar} and auto restart if lost pid'
     echo -e '\033[32m clean [days=30] [y] \033[m clean up log-file {days} ago but newest'
     echo -e '\033[32m clean-jar [days=30] [y] \033[m clean up boot-jar {days} ago but newest'
+    echo -e '\033[32m config \033[m print config envs'
+    echo -e '\033[32m tail \033[m tail boot log or out'
+    echo
     echo -e '\033[32m cron \033[m show the {boot-jar} crontab usage'
     echo -e '\033[32m free \033[m check memory free'
     echo -e '\033[32m check \033[m check shell command'
-    echo -e '\033[32m config \033[m print config envs'
-    echo -e '\033[32m tail \033[m tail boot log or out'
-    echo -e '\033[37;43;1m default is start, for example\033[m'
+    echo -e '\033[32m help \033[m print help message'
+    echo
+    echo -e 'default is \033[37;43;1m start \033[m, for example'
     echo -e './wings-starter.sh'
     echo -e './wings-starter.sh status'
     echo -e './wings-starter.sh boot.jar start'
@@ -133,8 +137,10 @@ function check_cmd() {
 }
 
 function check_user() {
-    if [[ "$USER_RUN" != "$USER" ]]; then
-        echo -e "\033[37;41;1mERROR: need user $USER_RUN to run \033[0m"
+    user=$(id -un) # no $USER in crontab, use id -un instead
+    if [[ "$USER_RUN" != "$user" ]]; then
+        echo -e "\033[37;41;1mERROR: need user $USER_RUN to run, but $user \033[0m"
+        id -un
         exit
     fi
 }
@@ -242,6 +248,78 @@ fi
 if [[ "$1" != "" ]]; then
     ARGS_RUN="$1"
 fi
+
+# command without check boot
+case "$ARGS_RUN" in
+    cron)
+        this_path=$(realpath -s "$this_file")
+        echo -e "\033[37;43;1mNOTE: ==== crontab usage ==== \033[0m"
+        echo -e "\033[32m crontab -e -u $USER_RUN \033[m"
+        echo -e "\033[32m crontab -l -u $USER_RUN \033[m"
+        echo -e "\033[32m */5 * * * * $this_path warn \033[m"
+        echo -e "\033[32m */5 * * * * $this_path live >> $this_path.cron \033[m"
+        echo -e "\033[32m 0 0 * * * $this_path clean 30 y \033[m"
+        exit
+        ;;
+    free)
+        echo -e "\033[37;42;1mINFO: ==== system memory ==== \033[0m"
+        if [[ -f "/proc/meminfo" ]]; then # in linux
+            mem_tot=$(head /proc/meminfo | grep MemTotal | awk '{print $2"K"}' | numfmt --from=auto --to-unit=1M)
+            mem_fre=$(head /proc/meminfo | grep MemFree | awk '{print $2"K"}' | numfmt --from=auto --to-unit=1M)
+            mem_avl=$(head /proc/meminfo | grep MemAvailable | awk '{print $2"K"}' | numfmt --from=auto --to-unit=1M)
+            mem_min=$(numfmt --from=auto --to-unit=1M $JAVA_XMS)
+            mem_max=$(numfmt --from=auto --to-unit=1M $JAVA_XMX)
+            if [[ "$mem_avl" -lt "$mem_min" ]]; then
+                echo -e "\033[33mNOTE: Available=${mem_avl}Mb < JAVA_XMS=${mem_min}Mb, Total=${mem_tot}Mb, Free=${mem_fre}Mb \033[0m"
+            fi
+            if [[ "$mem_avl" -lt "$mem_max" ]]; then
+                echo -e "\033[33mNOTE: Available=${mem_avl}Mb < JAVA_XMX=${mem_max}Mb, Total=${mem_tot}Mb, Free=${mem_fre}Mb \033[0m"
+            fi
+            head /proc/meminfo
+        else
+            vm_stat
+        fi
+        exit
+        ;;
+    check)
+        echo -e "\033[37;42;1mINFO: ==== check command ==== \033[0m"
+        check_cmd awk
+        check_cmd basename
+        check_cmd cat
+        check_cmd date
+        check_cmd find
+        check_cmd grep
+        check_cmd head
+        check_cmd id
+        check_cmd java
+        check_cmd jstat
+        check_cmd kill
+        check_cmd ln
+        check_cmd ls
+        check_cmd md5sum
+        check_cmd mv
+        check_cmd nohup
+        check_cmd numfmt
+        check_cmd pgrep
+        check_cmd printf
+        check_cmd ps
+        check_cmd realpath
+        check_cmd tail
+        check_cmd timeout
+        check_cmd touch
+        check_cmd tr
+        check_cmd wc
+        check_cmd which
+        check_cmd xargs
+        exit
+        ;;
+    help)
+        echo -e '\033[37;42;1mNOTE: help info, use the following\033[m'
+        print_help
+        print_envs
+        exit
+        ;;
+esac
 
 # check boot jar
 check_boot
@@ -617,63 +695,6 @@ case "$ARGS_RUN" in
             echo -e "\033[37;42;1mNOTE: few ${dys}-days ago jars, pwd=$jrt \033[0m"
         fi
         ;;
-    cron)
-        this_path=$(realpath -s "$this_file")
-        echo -e "\033[37;43;1mNOTE: ==== crontab usage ==== \033[0m"
-        echo -e "\033[32m crontab -e -u $USER_RUN \033[m"
-        echo -e "\033[32m crontab -l -u $USER_RUN \033[m"
-        echo -e "\033[32m */5 * * * * $this_path warn \033[m"
-        echo -e "\033[32m 0 0 * * * $this_path clean 30 y \033[m"
-        ;;
-    free)
-        echo -e "\033[37;42;1mINFO: ==== system memory ==== \033[0m"
-        if [[ -f "/proc/meminfo" ]]; then # in linux
-            mem_tot=$(head /proc/meminfo | grep MemTotal | awk '{print $2"K"}' | numfmt --from=auto --to-unit=1M)
-            mem_fre=$(head /proc/meminfo | grep MemFree | awk '{print $2"K"}' | numfmt --from=auto --to-unit=1M)
-            mem_avl=$(head /proc/meminfo | grep MemAvailable | awk '{print $2"K"}' | numfmt --from=auto --to-unit=1M)
-            mem_min=$(numfmt --from=auto --to-unit=1M $JAVA_XMS)
-            mem_max=$(numfmt --from=auto --to-unit=1M $JAVA_XMX)
-            if [[ "$mem_avl" -lt "$mem_min" ]]; then
-                echo -e "\033[33mNOTE: Available=${mem_avl}Mb < JAVA_XMS=${mem_min}Mb, Total=${mem_tot}Mb, Free=${mem_fre}Mb \033[0m"
-            fi
-            if [[ "$mem_avl" -lt "$mem_max" ]]; then
-                echo -e "\033[33mNOTE: Available=${mem_avl}Mb < JAVA_XMX=${mem_max}Mb, Total=${mem_tot}Mb, Free=${mem_fre}Mb \033[0m"
-            fi
-            head /proc/meminfo
-        else
-            vm_stat
-        fi
-        ;;
-    check)
-        echo -e "\033[37;42;1mINFO: ==== check command ==== \033[0m"
-        check_cmd awk
-        check_cmd basename
-        check_cmd cat
-        check_cmd date
-        check_cmd find
-        check_cmd grep
-        check_cmd head
-        check_cmd java
-        check_cmd jstat
-        check_cmd kill
-        check_cmd ln
-        check_cmd ls
-        check_cmd md5sum
-        check_cmd mv
-        check_cmd nohup
-        check_cmd numfmt
-        check_cmd pgrep
-        check_cmd printf
-        check_cmd ps
-        check_cmd realpath
-        check_cmd tail
-        check_cmd timeout
-        check_cmd touch
-        check_cmd tr
-        check_cmd wc
-        check_cmd which
-        check_cmd xargs
-        ;;
     config)
         echo -e '\033[37;42;1mNOTE: ==== conf env ==== \033[m'
         echo "WORK_DIR=$WORK_DIR"
@@ -699,11 +720,7 @@ case "$ARGS_RUN" in
         echo "WARN_RUN=$WARN_RUN"
         ;;
     *)
-        if [[ "$ARGS_RUN" == "help" ]]; then
-            echo -e '\033[37;42;1mNOTE: help info, use the following\033[m'
-        else
-            echo -e '\033[37;41;1mERROR: unsupported command, use the following\033[m'
-        fi
+        echo -e '\033[37;41;1mERROR: unsupported command, use the following\033[m'
         print_help
         print_envs
         ;;
