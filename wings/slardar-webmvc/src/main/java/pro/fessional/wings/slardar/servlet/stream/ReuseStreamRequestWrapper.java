@@ -122,9 +122,7 @@ public class ReuseStreamRequestWrapper extends HttpServletRequestWrapper {
             }
         }
 
-        return new
-
-                CircleServletInputStream(req.getInputStream(), bos);
+        return new CircleServletInputStream(req.getInputStream(), bos);
     }
 
     @Override

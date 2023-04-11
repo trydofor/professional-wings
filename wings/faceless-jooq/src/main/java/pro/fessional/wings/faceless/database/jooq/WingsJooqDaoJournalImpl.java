@@ -121,6 +121,45 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
         return fetch(table, offset, limit, table.onlyLive(soc.getWhere()), soc.getParts());
     }
 
+    @NotNull
+    public <E> List<E> fetchLive(Class<E> claz, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetchLive(claz, table, table.onlyLive(soc.getWhere()), soc.getParts());
+    }
+
+    @NotNull
+    public <E> List<E> fetchLive(Class<E> claz, int limit, BiConsumer<T, SelectWhereOrder> fun) {
+        return fetchLive(claz, 0, limit, fun);
+    }
+
+    @NotNull
+    public <E> List<E> fetchLive(Class<E> claz, int offset, int limit, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetch(claz, offset, limit, table, table.onlyLive(soc.getWhere()), soc.getParts());
+    }
+
+
+    @NotNull
+    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetchLive(mapper, table, table.onlyLive(soc.getWhere()), soc.getParts());
+    }
+
+    @NotNull
+    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, int limit, BiConsumer<T, SelectWhereOrder> fun) {
+        return fetchLive(mapper, 0, limit, fun);
+    }
+
+    @NotNull
+    public <E> List<E> fetchLive(RecordMapper<? super Record, E> mapper, int offset, int limit, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetch(mapper, offset, limit, table, table.onlyLive(soc.getWhere()), soc.getParts());
+    }
+
     ////////
     @NotNull
     public List<P> fetchLive(T table, Condition cond) {
@@ -259,6 +298,54 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     @NotNull
     public Optional<P> fetchLimitOptionalLive(BiConsumer<T, SelectWhereOrder> fun) {
         return Optional.ofNullable(fetchLimitOne(fun));
+    }
+
+    @Nullable
+    public <E> E fetchOneLive(Class<E> claz, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetchOne(claz, table, table.onlyLive(soc.getWhere()), soc.getParts());
+    }
+
+    @Nullable
+    public <E> E fetchLimitOneLive(Class<E> claz, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetchLimitOne(claz, table, table.onlyLive(soc.getWhere()), soc.getParts());
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchOptionalLive(Class<E> claz, BiConsumer<T, SelectWhereOrder> fun) {
+        return Optional.ofNullable(fetchOne(claz, fun));
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchLimitOptionalLive(Class<E> claz, BiConsumer<T, SelectWhereOrder> fun) {
+        return Optional.ofNullable(fetchLimitOne(claz, fun));
+    }
+
+    @Nullable
+    public <E> E fetchOneLive(RecordMapper<? super Record, E> mapper, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetchOne(mapper, table, table.onlyLive(soc.getWhere()), soc.getParts());
+    }
+
+    @Nullable
+    public <E> E fetchLimitOneLive(RecordMapper<? super Record, E> mapper, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetchLimitOne(mapper, table, table.onlyLive(soc.getWhere()), soc.getParts());
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchOptionalLive(RecordMapper<? super Record, E> mapper, BiConsumer<T, SelectWhereOrder> fun) {
+        return Optional.ofNullable(fetchOne(mapper, fun));
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchLimitOptionalLive(RecordMapper<? super Record, E> mapper, BiConsumer<T, SelectWhereOrder> fun) {
+        return Optional.ofNullable(fetchLimitOne(mapper, fun));
     }
 
     /////////////////

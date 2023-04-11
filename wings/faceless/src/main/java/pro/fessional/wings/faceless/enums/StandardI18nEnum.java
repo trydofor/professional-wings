@@ -20,6 +20,7 @@ public interface StandardI18nEnum extends CodeEnum {
     @NotNull
     String getUkey();
 
+    @Override
     @NotNull
     default String getI18nCode() {
         return getBase() + "." + getKind() + "." + getUkey();

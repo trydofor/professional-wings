@@ -2,6 +2,8 @@ package pro.fessional.wings.slardar.session;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.HttpSessionIdResolver;
@@ -21,6 +23,9 @@ public class WingsSessionIdResolver implements HttpSessionIdResolver {
 
     private final List<HttpSessionIdResolver> httpSessionIdResolvers;
 
+    @Setter(onMethod_ = {@Autowired(required = false)})
+    private SessionTokenEncoder sessionTokenEncoder;
+
     public WingsSessionIdResolver(List<HttpSessionIdResolver> httpSessionIdResolvers) {
         this.httpSessionIdResolvers = httpSessionIdResolvers;
     }
@@ -37,7 +42,9 @@ public class WingsSessionIdResolver implements HttpSessionIdResolver {
     public List<String> resolveSessionIds(HttpServletRequest request) {
         for (HttpSessionIdResolver resolver : httpSessionIdResolvers) {
             final List<String> ids = resolver.resolveSessionIds(request);
-            if (ids != null && ids.size() > 0) return ids;
+            if (ids != null && ids.size() > 0) {
+                return sessionTokenEncoder == null ? ids : sessionTokenEncoder.decode(ids, request);
+            }
         }
 
         return Collections.emptyList();
@@ -45,6 +52,10 @@ public class WingsSessionIdResolver implements HttpSessionIdResolver {
 
     @Override
     public void setSessionId(HttpServletRequest request, HttpServletResponse response, String sessionId) {
+        if (sessionTokenEncoder != null) {
+            sessionId = sessionTokenEncoder.encode(sessionId, request);
+        }
+
         for (HttpSessionIdResolver resolver : httpSessionIdResolvers) {
             resolver.setSessionId(request, response, sessionId);
         }

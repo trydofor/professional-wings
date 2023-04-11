@@ -43,7 +43,7 @@ class WingsFlywaveShardJournalSample {
         schemaRevisionManager.forceApplyBreak(REVISION_TEST_V2, 2, true, "master")
 
         // 分表
-        val table = "tst_中文也分表"
+        val table = "tst_sharding"
 
         schemaShardingManager.publishShard(table, 5)
         // 需要sharding数据源，在shard中测试

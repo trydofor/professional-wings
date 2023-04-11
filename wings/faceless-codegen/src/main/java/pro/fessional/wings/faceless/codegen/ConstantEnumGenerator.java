@@ -191,7 +191,7 @@ public class ConstantEnumGenerator {
         Map<String, List<ConstantEnum>> enums = new TreeMap<>(temp);
         final Map<String, List<ConstantEnum>> incs = new TreeMap<>();
         for (Map.Entry<String, Boolean> en : filter.entrySet()) {
-            if (en.getValue() == Boolean.TRUE) {
+            if (Boolean.TRUE.equals(en.getValue())) {
                 final List<ConstantEnum> vs = enums.get(en.getKey());
                 if (vs != null) {
                     incs.put(en.getKey(), vs);
@@ -275,7 +275,7 @@ public class ConstantEnumGenerator {
             ctx.put("enum-package", pkg);
             ctx.put("enum-class", enumClass);
             ctx.put("enum-type", type);
-            ctx.put("enum-idkey", String.valueOf(root.code.equalsIgnoreCase("id")));
+            ctx.put("enum-idkey", String.valueOf("id".equalsIgnoreCase(root.code)));
             ctx.put("enum-items", items);
             String text = Meepo.merge(ctx, root.info);
             javaFiles.put(enumClass, text);

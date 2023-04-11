@@ -11,8 +11,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.faceless.database.jooq.listener.SlowSqlListener;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.silencer.watch.WatchingAround;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockWatchingProp;
 
@@ -46,7 +46,7 @@ public class WarlockWatchingConfiguration {
     @ConditionalOnExpression("${" + WarlockWatchingProp.Key$jooqThreshold + ":-1} >=0")
     public ExecuteListenerProvider slowSqlJooqListener(WarlockWatchingProp prop) {
         final long ms = prop.getJooqThreshold();
-        log.info("Warlock spring-bean "+slowSqlJooqListener+", threshold=" + ms);
+        log.info("Warlock spring-bean " + slowSqlJooqListener + ", threshold=" + ms);
         final SlowSqlListener bean = new SlowSqlListener();
         bean.setThresholdMillis(ms);
         return new DefaultExecuteListenerProvider(bean);

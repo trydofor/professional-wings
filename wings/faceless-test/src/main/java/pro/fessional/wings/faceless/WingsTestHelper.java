@@ -38,7 +38,7 @@ public class WingsTestHelper {
     private final HashMap<DataSource, Boolean> isH2Map = new HashMap<>();
 
     public boolean isH2() {
-        for (DataSource ds : dataSourceContext.getPlains().values()) {
+        for (DataSource ds : dataSourceContext.getBackends().values()) {
             Boolean h2 = isH2Map.computeIfAbsent(ds, dataSource -> {
                 String s = dataSourceContext.cacheJdbcUrl(dataSource);
                 return s.contains(":h2:") || s.contains(":H2:");
@@ -53,7 +53,7 @@ public class WingsTestHelper {
          DROP DATABASE IF EXISTS wings;
          CREATE DATABASE `wings` DEFAULT CHARACTER SET utf8mb4;
          */
-        dataSourceContext.getPlains().forEach((k, v) -> {
+        dataSourceContext.getBackends().forEach((k, v) -> {
             testcaseNotice("clean database " + k);
             JdbcTemplate tmpl = new JdbcTemplate(v);
             tmpl.query("SHOW TABLES", rs -> {
@@ -127,7 +127,7 @@ public class WingsTestHelper {
 
     private Map<String, Set<String>> fetchAllColumn1(String sql) {
         return dataSourceContext
-                .getPlains().entrySet().stream()
+                .getBackends().entrySet().stream()
                 .collect(
                         Collectors.toMap(
                                 Map.Entry::getKey,

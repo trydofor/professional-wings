@@ -49,7 +49,13 @@ public class MailSenderProvider {
                : senders.computeIfAbsent(name, ignored -> newSender(config));
     }
 
+    public JavaMailSender removeCaching(TinyMailConfig config) {
+        if (config == null) return null;
+        return senders.remove(config.getName());
+    }
+
     public JavaMailSender removeCaching(String name) {
+        if (name == null) return null;
         return senders.remove(name);
     }
 

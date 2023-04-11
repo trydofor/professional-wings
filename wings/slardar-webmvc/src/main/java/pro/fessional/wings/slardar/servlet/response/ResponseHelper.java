@@ -38,6 +38,7 @@ import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 import static pro.fessional.wings.slardar.servlet.ContentTypeHelper.findByFileName;
 
@@ -147,6 +148,41 @@ public class ResponseHelper {
             for (InputStream is : files.values()) {
                 IOUtils.closeQuietly(is, null);
             }
+        }
+    }
+
+
+    /**
+     * 直接以HttpServletResponse预览PDF文件
+     *
+     * @param response HttpServletResponse
+     * @param fileName 要预览的PDF文件名
+     * @param stream   流
+     */
+    @SneakyThrows
+    public static void previewPDF(@NotNull HttpServletResponse response, @Nullable String fileName, @NotNull InputStream stream) {
+        final String contentType = getDownloadContentType(fileName);
+        if (!APPLICATION_PDF_VALUE.equals(contentType)) {
+            throw new IllegalArgumentException("The parameter 'fileName' must be a pdf file");
+        }
+        response.setContentType(contentType);
+
+        StringBuilder disposition = new StringBuilder("inline;");
+        if (fileName != null) {
+            disposition.append("filename=\"")
+                       .append(URLEncoder.encode(fileName, StandardCharsets.UTF_8))
+                       .append("\"");
+        }
+        response.setHeader("Content-Disposition", disposition.toString());
+
+        try {
+            IOUtils.copy(stream, response.getOutputStream(), 1024);
+        }
+        catch (IOException e) {
+            throw new IORuntimeException(e);
+        }
+        finally {
+            IOUtils.closeQuietly(stream, null);
         }
     }
 

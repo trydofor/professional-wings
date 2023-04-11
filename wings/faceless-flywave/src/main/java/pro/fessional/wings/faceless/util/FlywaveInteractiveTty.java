@@ -22,10 +22,10 @@ public class FlywaveInteractiveTty {
             System.out.print("=== 😺😸😹😻😼😽🙀 continue or not ? [y|n]>");
             while (scanner.hasNext()) {
                 String ans = scanner.next();
-                if (ans.equalsIgnoreCase("y")) {
+                if ("y".equalsIgnoreCase(ans)) {
                     return true;
                 }
-                else if (ans.equalsIgnoreCase("n")) {
+                else if ("n".equalsIgnoreCase(ans)) {
                     return false;
                 }
             }

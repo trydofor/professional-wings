@@ -13,8 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import pro.fessional.wings.faceless.WingsTestHelper;
-import pro.fessional.wings.faceless.database.autogen.tables.Tst中文也分表Table;
-import pro.fessional.wings.faceless.database.autogen.tables.records.Tst中文也分表Record;
+import pro.fessional.wings.faceless.database.autogen.tables.TstShardingTable;
+import pro.fessional.wings.faceless.database.autogen.tables.records.TstShardingRecord;
 import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelper;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
@@ -54,7 +54,7 @@ public class JooqDeleteListenerTest {
     private SchemaRevisionManager schemaRevisionManager;
 
     @Test
-    public void test0𓃬清表重置() {
+    public void test0CleanTables() {
         wingsTestHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER);
         schemaRevisionManager.checkAndInitSql(sqls, 0, true);
@@ -63,35 +63,35 @@ public class JooqDeleteListenerTest {
     //  🦁🦁🦁<=<<
 
     @Test
-    public void test2𓃬Helper𓃬查日志() {
-        JournalJooqHelper.deleteByIds(dsl, Tst中文也分表Table.Tst中文也分表, 12L, 1L, 2L);
-        JournalJooqHelper.deleteByIds(tmpl, "`tst_中文也分表`", 34L, 3L, 4L);
+    public void test2HelperSeeLog() {
+        JournalJooqHelper.deleteByIds(dsl, TstShardingTable.TstSharding, 12L, 1L, 2L);
+        JournalJooqHelper.deleteByIds(tmpl, "`tst_sharding`", 34L, 3L, 4L);
         testcaseNotice(
                 "检查日志，在delete前update，如下",
-                "UPDATE `tst_中文也分表` SET commit_id=34, delete_dt=NOW(3)  WHERE id IN (3,4)",
-                "DELETE FROM `tst_中文也分表`  WHERE id IN (3,4)"
+                "UPDATE `tst_sharding` SET commit_id=34, delete_dt=NOW(3)  WHERE id IN (3,4)",
+                "DELETE FROM `tst_sharding`  WHERE id IN (3,4)"
         );
     }
 
     @Test
-    public void test3𓃬JooqDsl𓃬查日志() {
+    public void test3JooqDslSeeLog() {
         // 有效
-        dsl.execute("DELETE FROM `tst_中文也分表` WHERE ID =5 AND COMMIT_ID = 5");
-        dsl.execute("DELETE FROM `tst_中文也分表` WHERE commit_id = 6 AND id = 6");
-        dsl.execute("DELETE FROM `tst_中文也分表` WHERE commit_id = 7 AND id = ?", 7L);
+        dsl.execute("DELETE FROM `tst_sharding` WHERE ID =5 AND COMMIT_ID = 5");
+        dsl.execute("DELETE FROM `tst_sharding` WHERE commit_id = 6 AND id = 6");
+        dsl.execute("DELETE FROM `tst_sharding` WHERE commit_id = 7 AND id = ?", 7L);
 
-        Tst中文也分表Table t = Tst中文也分表Table.Tst中文也分表;
+        TstShardingTable t = TstShardingTable.TstSharding;
         dsl.deleteFrom(t).where(t.Id.eq(8L).and(t.CommitId.eq(8L))).execute();
         testcaseNotice(
                 "检查日志，id 等于 (5,6,7,8)的sql，先delete，再update，如下",
-                "DELETE FROM `tst_中文也分表` WHERE ID =5 AND COMMIT_ID = 5",
-                "UPDATE `tst_中文也分表` SET COMMIT_ID = 5 ,delete_dt = NOW(3) WHERE ID =5"
+                "DELETE FROM `tst_sharding` WHERE ID =5 AND COMMIT_ID = 5",
+                "UPDATE `tst_sharding` SET COMMIT_ID = 5 ,delete_dt = NOW(3) WHERE ID =5"
         );
 
         // 无效
         LocalDateTime now = LocalDateTime.now();
         dsl.batchDelete(
-                new Tst中文也分表Record(9L, now, DATE_TIME, DATE_TIME, 9L, "", "", ZH_CN)
+                new TstShardingRecord(9L, now, DATE_TIME, DATE_TIME, 9L, "", "", ZH_CN)
         ).execute();
 
         BatchBindStep batch = dsl.batch(
@@ -105,7 +105,7 @@ public class JooqDeleteListenerTest {
         log.info(Arrays.toString(rs));
         testcaseNotice(
                 "检查日志，id >= 9的sql，只有delete，如下",
-                "delete from `tst_中文也分表` where `id` = ?"
+                "delete from `tst_sharding` where `id` = ?"
         );
     }
 }

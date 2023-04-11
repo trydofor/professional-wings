@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.faceless.convention.EmptyValue;
-import pro.fessional.wings.faceless.database.helper.ModifyAssert;
+import pro.fessional.wings.faceless.database.helper.DaoAssert;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
@@ -47,7 +47,7 @@ public class DefaultJournalService implements JournalService {
             );
 
             int rc = journalModify.insert(journal);
-            ModifyAssert.one(rc, "failed to insert Journal={}", journal);
+            DaoAssert.assertEq1(rc, "failed to insert Journal={}", journal);
 
             // 谁创建谁销毁，谁分配谁回收
             context.set(journal);

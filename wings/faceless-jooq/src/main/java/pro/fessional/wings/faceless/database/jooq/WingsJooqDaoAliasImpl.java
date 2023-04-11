@@ -542,7 +542,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
      * @return 执行结果，使用 ModifyAssert判断
      * @see DSLContext#mergeInto(Table)
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "ResultOfMethodCallIgnored"})
     public int @NotNull [] batchInsert(Collection<R> records, int size, boolean ignoreOrReplace) {
         if (records == null || records.isEmpty()) return Null.Ints;
 
@@ -762,6 +762,44 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
         return fetch(table, offset, limit, soc.getWhere(), soc.getParts());
     }
 
+    @NotNull
+    public <E> List<E> fetch(Class<E> claz, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetch(claz, table, soc.getWhere(), soc.getParts());
+    }
+
+    @NotNull
+    public <E> List<E> fetch(Class<E> claz, int limit, BiConsumer<T, SelectWhereOrder> fun) {
+        return fetch(claz, 0, limit, fun);
+    }
+
+    @NotNull
+    public <E> List<E> fetch(Class<E> claz, int offset, int limit, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetch(claz, offset, limit, table, soc.getWhere(), soc.getParts());
+    }
+
+    @NotNull
+    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetch(mapper, table, soc.getWhere(), soc.getParts());
+    }
+
+    @NotNull
+    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, int limit, BiConsumer<T, SelectWhereOrder> fun) {
+        return fetch(mapper, 0, limit, fun);
+    }
+
+    @NotNull
+    public <E> List<E> fetch(RecordMapper<? super Record, E> mapper, int offset, int limit, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetch(mapper, offset, limit, table, soc.getWhere(), soc.getParts());
+    }
+
     ////////
     @NotNull
     public List<P> fetch(T table, Condition cond) {
@@ -951,6 +989,55 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     public Optional<P> fetchLimitOptional(BiConsumer<T, SelectWhereOrder> fun) {
         return Optional.ofNullable(fetchLimitOne(fun));
     }
+
+    @Nullable
+    public <E> E fetchOne(Class<E> claz, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetchOne(claz, table, soc.getWhere(), soc.getParts());
+    }
+
+    @Nullable
+    public <E> E fetchLimitOne(Class<E> claz, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetchLimitOne(claz, table, soc.getWhere(), soc.getParts());
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchOptional(Class<E> claz, BiConsumer<T, SelectWhereOrder> fun) {
+        return Optional.ofNullable(fetchOne(claz, fun));
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchLimitOptional(Class<E> claz, BiConsumer<T, SelectWhereOrder> fun) {
+        return Optional.ofNullable(fetchLimitOne(claz, fun));
+    }
+
+    @Nullable
+    public <E> E fetchOne(RecordMapper<? super Record, E> mapper, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetchOne(mapper, table, soc.getWhere(), soc.getParts());
+    }
+
+    @Nullable
+    public <E> E fetchLimitOne(RecordMapper<? super Record, E> mapper, BiConsumer<T, SelectWhereOrder> fun) {
+        final SelectWhereOrder soc = new SelectWhereOrder();
+        fun.accept(table, soc);
+        return fetchLimitOne(mapper, table, soc.getWhere(), soc.getParts());
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchOptional(RecordMapper<? super Record, E> mapper, BiConsumer<T, SelectWhereOrder> fun) {
+        return Optional.ofNullable(fetchOne(mapper, fun));
+    }
+
+    @NotNull
+    public <E> Optional<E> fetchLimitOptional(RecordMapper<? super Record, E> mapper, BiConsumer<T, SelectWhereOrder> fun) {
+        return Optional.ofNullable(fetchLimitOne(mapper, fun));
+    }
+
 
     /////////////////
     @Nullable
@@ -1399,7 +1486,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
          * @return this
          */
         @Contract("_ -> this")
-        public SelectWhereOrder order(QueryPart... part) {
+        public SelectWhereOrder query(QueryPart... part) {
             parts = part;
             return this;
         }

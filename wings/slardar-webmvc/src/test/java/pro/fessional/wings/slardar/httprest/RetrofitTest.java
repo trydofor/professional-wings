@@ -15,10 +15,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.io.InputStreams;
 import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
-import pro.fessional.wings.slardar.httprest.retrofit.FastJsonConverterFactory;
+import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
+import pro.fessional.wings.slardar.httprest.retrofit.RetrofitHelper;
 import retrofit2.Call;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.io.FileInputStream;
 import java.util.Collections;
@@ -54,25 +53,14 @@ public class RetrofitTest {
             Request request = chain.request();
             return chain.proceed(request);
         });
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(host)
-                .client(bd.build())
-                .addConverterFactory(JacksonConverterFactory.create())
-                .build();
 
-        RetrofitCaller caller = retrofit.create(RetrofitCaller.class);
+        RetrofitCaller caller = RetrofitHelper.jacksonPlain(RetrofitCaller.class, host, bd.build());
         testAll(caller);
     }
 
     @Test
     public void testFastjson() {
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(host)
-                .client(okHttpClient)
-                .addConverterFactory(FastJsonConverterFactory.create())
-                .build();
-
-        RetrofitCaller caller = retrofit.create(RetrofitCaller.class);
+        RetrofitCaller caller = RetrofitHelper.jacksonPlain(RetrofitCaller.class, host, okHttpClient);
         testAll(caller);
     }
 
@@ -89,9 +77,9 @@ public class RetrofitTest {
         assertEquals(ins, b1);
 
         final Call<ResponseBody> c2 = caller.download();
-        byte[] bytes = c2.execute().body().bytes();
+        final String body = OkHttpClientHelper.extractString(c2.execute().body());
         String pom = InputStreams.readText(new FileInputStream("./pom.xml"));
-        assertEquals(pom, new String(bytes));
+        assertEquals(pom, body);
 
         String txt = "123456\nasdfgh";
 
@@ -102,12 +90,12 @@ public class RetrofitTest {
                 )
         );
         final Call<ResponseBody> c3 = caller.upload(bd);
-        String j3 = c3.execute().body().string();
+        String j3 = OkHttpClientHelper.extractString(c3.execute().body());
         assertEquals(txt, j3);
 
         final RequestBody rb = RequestBody.create(txt.getBytes(), MULTIPART_FORM_DATA_VALUE);
         final Call<ResponseBody> c4 = caller.upload(rb);
-        String j4 = c4.execute().body().string();
+        String j4 = OkHttpClientHelper.extractString(c4.execute().body());
         assertEquals(txt, j4);
     }
 

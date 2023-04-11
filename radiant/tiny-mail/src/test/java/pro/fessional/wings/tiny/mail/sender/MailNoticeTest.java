@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.time.StopWatch;
 
+import java.util.Collections;
+
 /**
  * @author trydofor
  * @since 2022-12-28
@@ -17,11 +19,6 @@ import pro.fessional.mirana.time.StopWatch;
 @SpringBootTest(properties = {
         "debug = true",
         "wings.tiny.mail.service.boot-scan=0",
-//        "wings.tiny.mail.config.gmail.host=smtp.gmail.com",
-        "wings.tiny.mail.config.gmail.username=${GMAIL_USER:}",
-        "wings.tiny.mail.config.gmail.password=${GMAIL_PASS:}",
-//        "wings.tiny.mail.config.gmail.port=587",
-//        "wings.tiny.mail.notice.default.file[application.properties]=classpath:./application.properties"
 })
 @Slf4j
 public class MailNoticeTest {
@@ -33,15 +30,21 @@ public class MailNoticeTest {
     protected MailConfigProvider mailConfigProvider;
 
     @Setter(onMethod_ = {@Value("${QQ_MAIL_USER}")})
-    protected String mailTo;
+    protected String mailUser;
 
     @Setter(onMethod_ = {@Value("${QQ_MAIL_PASS}")})
     protected String mailPass;
 
+    @Setter(onMethod_ = {@Value("${GMAIL_USER}")})
+    protected String gmailUser;
+
+    @Setter(onMethod_ = {@Value("${GMAIL_PASS}")})
+    protected String gmailPass;
+
     @Test
     public void testPost() {
         final boolean snd = mailNotice.post("test tiny mail send", "test send");
-        Assertions.assertTrue(snd, "need env QQ_MAIL_USER, QQ_MAIL_PASS, current user=" + mailTo + ", pass=" + mailPass);
+        Assertions.assertTrue(snd, "need env QQ_MAIL_USER, QQ_MAIL_PASS, current user=" + mailUser + ", pass=" + mailPass);
     }
 
     @Test
@@ -64,13 +67,22 @@ public class MailNoticeTest {
     @Disabled("gmail")
     public void testGmail() {
         // dynamic config
-        final String name = "gmail";
+        final String name = "gmailx";
         TinyMailConfig conf = new TinyMailConfig();
         conf.setName(name);
         conf.setHost("smtp.gmail.com");
         conf.setPort(587);
-        mailConfigProvider.putMailConfig(conf);
+        conf.setUsername(gmailUser);
+        conf.setPassword(gmailPass);
+        conf.setTo(gmailUser);
 
+        conf.getProperties().put("mail.smtp.auth", "true");
+        conf.getProperties().put("mail.smtp.starttls.enable", "true");
+        conf.getProperties().put("mail.smtp.socks.host", "127.0.0.1");
+        conf.getProperties().put("mail.smtp.socks.port", "1081");
+
+        final TinyMailConfig.Loader loader = n -> name.equals(n) ? conf : null;
+        mailConfigProvider.setConfigLoader(Collections.singletonList(loader));
         final TinyMailConfig gmail = mailNotice.provideConfig(name, true);
         mailNotice.send(gmail, "test tiny mail gmail", "test gmail");
     }

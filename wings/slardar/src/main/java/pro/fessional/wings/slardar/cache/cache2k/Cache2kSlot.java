@@ -12,6 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Cache2kSlot {
 
+    public static final Cache2kSlot H24M5 = new Cache2kSlot(24 * 3600, 5 * 60);
+
     private final Map<Integer, Cache<Object, Object>> slot;
     private final int step;
     private final int max;
@@ -57,6 +59,6 @@ public class Cache2kSlot {
             slot = max;
         }
 
-        return this.slot.computeIfAbsent(slot, k -> WingsCache2k.builder(Cache2kSlot.class, "step" + (k * step), -1, k * step, -1).build());
+        return this.slot.computeIfAbsent(slot, k -> WingsCache2k.builder(Cache2kSlot.class, "slot" + (k * step), -1, k * step, -1).build());
     }
 }

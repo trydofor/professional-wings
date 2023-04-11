@@ -43,7 +43,6 @@ public class LoginSuccessHandler extends NonceLoginSuccessHandler implements Ini
                               @Nullable String sid, long uid, @Nullable String state) throws IOException, ServletException {
 
         if (state != null && !state.isEmpty()) {
-            writeSidHeader(res, sid);
             if (state.startsWith("/") || isSafeRedirect(state)) {
                 log.info("redirect to {}", state);
                 res.sendRedirect(state);
@@ -57,17 +56,7 @@ public class LoginSuccessHandler extends NonceLoginSuccessHandler implements Ini
                 super.onResponse(req, res, aun, sid, uid, state);
             }
             else {
-                writeSidHeader(res, sid);
                 writeResponseBody(warlockSecurityProp.getLoginSuccessBody(), req, res, aun, sid, uid, state);
-            }
-        }
-    }
-
-    private void writeSidHeader(@NotNull HttpServletResponse res, @Nullable String sid) {
-        if (slardarSessionProp != null) {
-            final String hn = slardarSessionProp.getHeaderName();
-            if (hn != null) {
-                res.setHeader(hn, sid);
             }
         }
     }

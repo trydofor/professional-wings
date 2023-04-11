@@ -1,7 +1,7 @@
 package pro.fessional.wings.slardar.httprest;
 
 import lombok.Setter;
-import okhttp3.Call;
+import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +28,7 @@ public class OkHttpClientHelperTest {
     private String host;
 
     @Setter(onMethod_ = {@Autowired})
-    private Call.Factory okHttpClient;
+    private OkHttpClient okHttpClient;
 
 
     @Test

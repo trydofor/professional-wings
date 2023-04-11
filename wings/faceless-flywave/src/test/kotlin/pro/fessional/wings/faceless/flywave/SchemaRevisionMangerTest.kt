@@ -37,7 +37,7 @@ open class SchemaRevisionMangerTest {
     private val schemaVersion = "win_schema_version"
 
     @Test
-    fun `test0🦁清表重置`() {
+    fun test0CleanTables() {
         wingsTestHelper.cleanTable()
         val sqls = FlywaveRevisionScanner.helper()
             .master()
@@ -54,13 +54,13 @@ open class SchemaRevisionMangerTest {
     }
 
     @Test
-    fun `test1🦁发布520版`() {
+    fun test1Publish520() {
         breakpointDebug("发布REVISION_2ND_IDLOGS💰")
         schemaRevisionManager.publishRevision(revi2IdLog, 0)
     }
 
     @Test
-    fun `test2🦁当前版本`() {
+    fun test2CurrentRevi() {
         breakpointDebug("查看当前版本💰")
         val databaseVersion = schemaRevisionManager.currentRevision()
         for ((_, u) in databaseVersion) {
@@ -69,7 +69,7 @@ open class SchemaRevisionMangerTest {
     }
 
     @Test
-    fun `test2🦁版本线状`() {
+    fun test2ReviLine() {
         breakpointDebug("查看版本线状💰")
         val databaseVersion = schemaRevisionManager.statusRevisions()
         for ((d, u) in databaseVersion) {
@@ -85,7 +85,7 @@ open class SchemaRevisionMangerTest {
     }
 
     @Test
-    fun `test3🦁回滚再发`() {
+    fun test3DownThenUp() {
         breakpointDebug("降级到1st版本💰")
         schemaRevisionManager.publishRevision(revi1Schema, -1)
         breakpointDebug("升级到2st版本💰")
@@ -97,7 +97,7 @@ open class SchemaRevisionMangerTest {
     private val test3rdRevision = 20190615_01L
 
     @Test
-    fun `test4🦁强加版本`() {
+    fun test4Force615() {
         breakpointDebug("强制增加版本615💰，但未执行")
         schemaRevisionManager.forceUpdateSql(
             test3rdRevision, """
@@ -123,7 +123,7 @@ open class SchemaRevisionMangerTest {
     }
 
     @Test
-    fun `test5🦁强发断版`() {
+    fun test5ForceBreak() {
         breakpointDebug("发布615💰")
         wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
         schemaRevisionManager.forceApplyBreak(test3rdRevision, -3, true)
@@ -135,7 +135,7 @@ open class SchemaRevisionMangerTest {
 
 
     @Test
-    fun `test6🦁重置520版`() {
+    fun test6Republish520() {
         breakpointDebug("发布520💰")
         schemaRevisionManager.publishRevision(revi2IdLog, 0)
         breakpointDebug("降级520💰")
@@ -145,7 +145,7 @@ open class SchemaRevisionMangerTest {
     }
 
     @Test
-    fun `test7🦁强制执行Sql`() {
+    fun test7ForceExecSql() {
         breakpointDebug("强制执行Sql💰")
         schemaRevisionManager.forceExecuteSql(
             """
@@ -161,7 +161,7 @@ open class SchemaRevisionMangerTest {
     }
 
     @Test
-    fun `test8🦁发布分支`() {
+    fun test8PublishBranch() {
         breakpointDebug("扫描分支feature/01-enum-i18n💰")
         val sqls = FlywaveRevisionScanner.scanBranch("feature/01-enum-i18n")
         schemaRevisionManager.checkAndInitSql(sqls, 0, true)
@@ -170,7 +170,7 @@ open class SchemaRevisionMangerTest {
     }
 
     @Test
-    fun `test9🦁断版维护`() {
+    fun test9MaintainBreak() {
         breakpointDebug("制作执行失败的断裂版本💰")
         schemaRevisionManager.forceExecuteSql(
             """

@@ -11,7 +11,7 @@ import pro.fessional.mirana.time.StopWatch.Watch;
 import pro.fessional.wings.spring.consts.WingsBeanOrdered;
 
 /**
- * 基于AOP，对方法进行Watching
+ * AOP-based, stopwatch timing of methods
  *
  * @author trydofor
  * @since 2022-11-21
@@ -25,7 +25,10 @@ public class WatchingAround {
 
     @Around(value = "@annotation(watching)", argNames = "joinPoint, watching")
     public Object watchAround(ProceedingJoinPoint joinPoint, Watching watching) throws Throwable {
-        final long maxm = Math.max(thresholdMillis, watching.threshold());
+        long maxm = watching.threshold();
+        if (maxm == 0) {
+            maxm = thresholdMillis;
+        }
         if (maxm < 0) {
             return joinPoint.proceed();
         }

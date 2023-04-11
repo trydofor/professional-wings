@@ -80,13 +80,13 @@ public class SlardarSecurityConfiguration {
         log.info("SlardarSprint spring-bean passsaltEncoder, default encoder=" + encoder);
 
         MdHelp md;
-        if (encoder.equalsIgnoreCase("sha256")) {
+        if ("sha256".equalsIgnoreCase(encoder)) {
             md = MdHelp.sha256;
         }
-        else if (encoder.equalsIgnoreCase("sha1")) {
+        else if ("sha1".equalsIgnoreCase(encoder)) {
             md = MdHelp.sha1;
         }
-        else if (encoder.equalsIgnoreCase("md5")) {
+        else if ("md5".equalsIgnoreCase(encoder)) {
             md = MdHelp.md5;
         }
         else {

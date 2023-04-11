@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 /**
  * 仅支持单表执行，不支持batch处理
  * <p>
- * delete from `tst_中文也分表` where (`id` = ? and `commit_id` = ?)
+ * delete from `tst_sharding` where (`id` = ? and `commit_id` = ?)
  * commit_id = :commit_id and `id` = ?
  *
  * @author trydofor
@@ -115,7 +115,7 @@ public class JournalDeleteListener implements ExecuteListener {
         return null;
     }
 
-    // delete from `tst_中文也分表` where (`id` = ? and `commit_id` = ?)
+    // delete from `tst_sharding` where (`id` = ? and `commit_id` = ?)
     // commit_id = :commit_id and `id` = ?
     private final Pattern ptnCommitId = Pattern
             .compile("\\band\\s+([`'\"]?commit_id[`'\"]?\\s*=\\s*([^()=\\s]+))" +
@@ -138,7 +138,7 @@ public class JournalDeleteListener implements ExecuteListener {
         if (!params.isEmpty()) {
             String cidVal = matcher.group(off + 2).trim();
             Param<?> para;
-            if (cidVal.equals("?")) {
+            if ("?".equals(cidVal)) {
                 int cn = 1;
                 for (int i = 0; i < matcher.start(); i++) {
                     char c = del.charAt(i);

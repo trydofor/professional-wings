@@ -29,7 +29,7 @@ public class LightSequenceSelectJdbc implements LightSequenceSelect {
     private final String selectAll;
     private final String adjustTbl;
 
-    private final RowMapper<NextStep> mapperNextStep = (rs, rowNum) -> {
+    private final RowMapper<NextStep> mapperNextStep = (rs, ignored) -> {
         NextStep one = new NextStep();
         final long nextVal = rs.getLong("next_val");
         one.setNextVal(nextVal);
@@ -55,7 +55,7 @@ public class LightSequenceSelectJdbc implements LightSequenceSelect {
         }
     }
 
-    private final RowMapper<NameNextStep> mapperNameNextStep = (rs, rowNum) -> {
+    private final RowMapper<NameNextStep> mapperNameNextStep = (rs, ignored) -> {
         NameNextStep one = new NameNextStep();
         one.setSeqName(rs.getString("seq_name"));
         one.setStepVal(rs.getInt("step_val"));
@@ -88,7 +88,7 @@ public class LightSequenceSelectJdbc implements LightSequenceSelect {
     private NameNextStep checkTableAndAdjust(NextStep step, String name) {
         if (adjustTbl == null || adjustTbl.isEmpty()) return null;
 
-        final long dbMax = adjusted.computeIfAbsent(name, k -> {
+        final long dbMax = adjusted.computeIfAbsent(name, ignored -> {
             try {
                 final U.Two<String, String> two = jdbcTemplate.query(adjustTbl, headTableKey, name);
                 if (two == null) {

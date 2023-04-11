@@ -63,4 +63,26 @@ public class FacelessJooqEnabledProp {
      */
     private boolean listenTableCud = false;
     public static final String Key$listenTableCud = Key + ".listen-table-cud";
+
+    /**
+     * Whether the jOOQ <code>GROUP_CONCAT</code> function should be overflow-protected by setting
+     * the <code>@@group_concat_max_len</code> session variable in MySQL style database systems.
+     * <a href="https://github.com/jOOQ/jOOQ/issues/12092">RenderGroupConcatMaxLenSessionVariable</a>
+     *
+     * @see #Key$renderGroupConcat
+     */
+    private boolean renderGroupConcat = false;
+    public static final String Key$renderGroupConcat = Key + ".render-group-concat";
+
+    /**
+     * @see #Key$renderCatalog
+     */
+    private boolean renderCatalog = false;
+    public static final String Key$renderCatalog = Key + ".render-catalog";
+
+    /**
+     * @see #Key$renderSchema
+     */
+    private boolean renderSchema = false;
+    public static final String Key$renderSchema = Key + ".render-schema";
 }

@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 基于AOP，对方法进行Watching
+ * AOP-based, stopwatch timing of methods
  *
  * @author trydofor
  * @see pro.fessional.mirana.time.StopWatch
@@ -16,12 +16,12 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Watching {
     /**
-     * 名字，为空时，AOP自动设置
+     * watch name. when empty, AOP automatically set
      */
     String value() default "";
 
     /**
-     * 阈值的毫秒数，-1表示关闭此功能
+     * milliseconds of the threshold, -1 means turn off, 0 is automatically config
      */
-    long threshold() default -1;
+    long threshold() default 0;
 }

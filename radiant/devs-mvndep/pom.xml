@@ -51,7 +51,7 @@
         <!-- Keep the version in test scope, get easy search and IDE hint -->
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>shardingsphere-sharding-api</artifactId>
+            <artifactId>shardingsphere-jdbc-core</artifactId>
             <version>${shardingsphere.version}</version>
             <scope>test</scope>
         </dependency>

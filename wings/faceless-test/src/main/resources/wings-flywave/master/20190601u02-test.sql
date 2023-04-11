@@ -1,2 +1,2 @@
 -- @plain
-TRUNCATE `tst_中文也分表`;
+TRUNCATE `tst_sharding`;

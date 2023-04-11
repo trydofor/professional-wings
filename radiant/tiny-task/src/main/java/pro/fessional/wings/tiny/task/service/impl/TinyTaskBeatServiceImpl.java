@@ -112,7 +112,7 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
             if (beat <= 0) continue;
 
             final long last = DateLocaling.sysEpoch(r.getLastExec());
-            if (warmed && last + beat * beatTimes * 1000L < now) {
+            if (warmed && last + 1000L * beat * beatTimes  < now) {
                 log.info("misfired task id={}, name={}", r.getId(), r.getTaskerName());
                 mis.append(r.getId()).append('@').append(r.getTaskerName()).append('\n');
             }

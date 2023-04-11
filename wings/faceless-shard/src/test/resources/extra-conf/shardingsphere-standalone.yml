@@ -1,0 +1,68 @@
+# https://shardingsphere.apache.org/document/current/cn/user-manual/shardingsphere-jdbc/yaml-config/mode/
+databaseName: wings_shard
+mode:
+  type: Standalone
+  repository:
+    type: JDBC
+
+# https://shardingsphere.apache.org/document/current/cn/user-manual/shardingsphere-jdbc/yaml-config/data-source/
+dataSources:
+  writer:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    #    driverClassName: org.h2.Driver
+    #    jdbcUrl: jdbc:h2:~/wings_shard_0;USER=trydofor;PASSWORD=moilioncircle;MODE=MySQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE;AUTO_RECONNECT=TRUE;AUTO_SERVER=TRUE
+    driverClassName: com.mysql.jdbc.Driver
+    jdbcUrl: jdbc:mysql://localhost:3306/wings_shard_0
+    username: trydofor
+    password: moilioncircle
+    connection-timeout-milliseconds: 30000
+    idle-timeout-milliseconds: 60000
+    max-lifetime-milliseconds: 1800000
+    max-pool-size: 65
+    min-pool-size: 1
+    maintenance-interval-milliseconds: 30000
+  reader:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    #    driverClassName: org.h2.Driver
+    #    jdbcUrl: jdbc:h2:~/wings_shard_1;USER=trydofor;PASSWORD=moilioncircle;MODE=MySQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE;AUTO_RECONNECT=TRUE;AUTO_SERVER=TRUE
+    driverClassName: com.mysql.jdbc.Driver
+    jdbcUrl: jdbc:mysql://localhost:3306/wings_shard_1
+    username: trydofor
+    password: moilioncircle
+    connection-timeout-milliseconds: 30000
+    idle-timeout-milliseconds: 60000
+    max-lifetime-milliseconds: 1800000
+    max-pool-size: 65
+    min-pool-size: 1
+    maintenance-interval-milliseconds: 30000
+
+props:
+  sql-show: true
+  sql-simple: false
+  sql-federation-enabled: true
+
+rules:
+  #- !READWRITE_SPLITTING
+  #  dataSources:
+  #    wings_rwp:
+  #      staticStrategy:
+  #        writeDataSourceName: writer
+  #        readDataSourceNames: reader
+  #      loadBalancerName: random
+  #  loadBalancers:
+  #    random:
+  #      type: RANDOM
+  - !SHARDING
+    tables:
+      tst_sharding:
+        actualDataNodes: writer.tst_sharding_$->{0..4}
+        tableStrategy:
+          standard:
+            shardingColumn: id
+            shardingAlgorithmName: tst_sharding_inline
+
+    shardingAlgorithms:
+      tst_sharding_inline:
+        type: INLINE
+        props:
+          algorithm-expression: tst_sharding_$->{id % 5}

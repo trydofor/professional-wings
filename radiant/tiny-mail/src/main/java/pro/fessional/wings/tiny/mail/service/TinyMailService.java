@@ -3,6 +3,7 @@ package pro.fessional.wings.tiny.mail.service;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.cast.BoxedCastUtil;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.tiny.mail.database.autogen.tables.pojos.WinMailSender;
 
 import java.time.LocalDateTime;
 
@@ -106,5 +107,21 @@ public interface TinyMailService {
         else {
             return emit(id, BoxedCastUtil.orFalse(message.getRetry()), BoxedCastUtil.orFalse(message.getCheck()));
         }
+    }
+
+    /**
+     * hook the sending result (success/failure), and can stop the next send.
+     * should not throw exception in the hook.
+     */
+    interface StatusHook {
+        /**
+         * hook status, return true will stop mail next send
+         *
+         * @param po        mail info
+         * @param cost      send cost
+         * @param exception error if fail
+         * @return whether stop next send
+         */
+        boolean stop(@NotNull WinMailSender po, long cost, Exception exception);
     }
 }

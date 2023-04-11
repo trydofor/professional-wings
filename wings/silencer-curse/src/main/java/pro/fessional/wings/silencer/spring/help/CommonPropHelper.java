@@ -1,11 +1,13 @@
 package pro.fessional.wings.silencer.spring.help;
 
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ResourceUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -54,7 +56,7 @@ public class CommonPropHelper {
     }
 
     /**
-     * 对 ClassPathResource 使用 'classpath:'格式，其他使用getURL().toExternalForm()
+     * Use 'classpath:' format for ClassPathResource and getURL().toExternalForm() for the rest
      *
      * @see ResourceUtils
      */
@@ -87,6 +89,22 @@ public class CommonPropHelper {
                     en.setValue(tv);
                 }
             }
+        }
+    }
+
+    /**
+     * comma-separated values to StringArray
+     *
+     * @see StringUtils#commaDelimitedListToStringArray(String)
+     */
+    @Contract("_,true->!null")
+    public static String[] arrayOrNull(String str, boolean nonnull) {
+        final String[] arr = StringUtils.commaDelimitedListToStringArray(str);
+        if (nonnull) {
+            return arr;
+        }
+        else {
+            return arr.length == 0 ? null : arr;
         }
     }
 }

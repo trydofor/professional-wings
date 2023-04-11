@@ -55,9 +55,9 @@ public class NonceLoginSuccessHandler extends SavedRequestAwareAuthenticationSuc
      * @param req   HttpServletRequest
      * @param res   HttpServletResponse
      * @param aun   Authentication
-     * @param sid   session id, 无session登录时，可能为null
+     * @param sid   session id, null if no-login
      * @param uid   user id
-     * @param state oauth2 state中包含的客户端设置的state
+     * @param state The state set by the client contained in the oauth2 state
      */
     protected void onResponse(@NotNull HttpServletRequest req, @NotNull HttpServletResponse res, @NotNull Authentication aun,
                               @Nullable String sid, long uid, @Nullable String state) throws ServletException, IOException {

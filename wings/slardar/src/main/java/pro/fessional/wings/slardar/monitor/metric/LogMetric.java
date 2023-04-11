@@ -47,7 +47,9 @@ public class LogMetric implements WarnMetric {
         return rule;
     }
 
-    public @NotNull String getKey() {
+    @Override
+    @NotNull
+    public String getKey() {
         return key;
     }
 

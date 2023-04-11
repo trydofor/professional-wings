@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * 使用基本类型，与外部交换数据
+ * Using basic business types, exchanging data with external
  *
  * @author trydofor
  * @since 2023-01-13
@@ -16,157 +16,157 @@ import java.util.Map;
 public class TinyMailPlain {
 
     /**
-     * 新建时为null，更新时为目标id
+     * null when creating, target id when updating
      */
     private Long id;
 
     /**
-     * 所属app，空时使用当前spring.application.name
+     * The app it belongs to, using spring.application.name when empty
      */
     private String apps;
 
     /**
-     * 所需RunMode，空时使用当前RuntimeMode.getRunMode
+     * Required RunMode, current RuntimeMode.getRunMode when empty
      */
     private String runs;
 
     /**
-     * 邮件配置的名字
+     * the name of the config
      */
     private String conf;
 
     /**
-     * 发件人，空时使用conf默认配置
+     * mail from, use the default config when empty
      */
     private String from;
 
     /**
-     * 收件人，空时使用conf默认配置
+     * mail to, use the default config when empty, comma separated
      */
     private String to;
 
     /**
-     * 抄送，空时使用conf默认配置
+     * mail cc, use the default config when empty, comma separated
      */
     private String cc;
 
     /**
-     * 暗送，空时使用conf默认配置
+     * mail bcc, use the default config when empty, comma separated
      */
     private String bcc;
 
     /**
-     * 回复，空时使用conf默认配置
+     * mail reply, use the default config when empty
      */
     private String reply;
 
     /**
-     * 邮件标题，空时使用conf默认配置
+     * mail subject, use the default config when empty
      */
     private String subject;
 
     /**
-     * 邮件正文，空时使用conf默认配置
+     * mail content, use the default config when empty
      */
     private String content;
 
     /**
-     * 邮件附件，显示名和Resource的Map，其中Resource支持classpath，file，url格式
+     * mail attachment, display name and Resource of Map, where Resource supports classpath, file, url format
      */
     private Map<String, String> attachment = Collections.emptyMap();
 
     /**
-     * 是否为html邮件，空时使用conf默认配置
+     * whether it is html mail, use the default config when empty
      */
     private Boolean html;
 
     /**
-     * 业务标记，主要用了失败业务
+     * business markers, mainly used for failed operations
      */
     private String mark;
 
     /**
-     * 邮件定时发送时间，系统时区
+     * Mail timed delivery time, system time zone
      */
     private LocalDateTime date;
 
     /**
-     * 下次发送时间，系统时区，非null时更新
+     * Next send time, system time zone, update when non-null
      */
     private LocalDateTime nextSend;
 
     /**
-     * 最大失败次数，系统时区，非null时更新
+     * Maximum number of failures, update on non-null
      */
     private Integer maxFail;
 
     /**
-     * 最大成功次数，系统时区，非null时更新
+     * Maximum number of successes, update when non-null
      */
     private Integer maxDone;
 
     /**
-     * 引用类型，标记key1，key2用途
+     * Reference type, indicates key1, key2 use
      */
     private Integer refType;
 
     /**
-     * 引用key1，一般为主键
+     * Reference key1, generally the primary key
      */
     private Long refKey1;
 
     /**
-     * 引用key2，一般为符合类型
+     * Reference key2, generally composite type
      */
     private String refKey2;
 
     /**
-     * 邮件创建的系统时间，只读，仅用来显示
+     * System time of mail creation, read-only, for display only
      */
     private LocalDateTime createDt;
 
     /**
-     * 邮件上次发送的系统时间，只读，仅用来显示
+     * The system time when the message was last sent, read-only, used only to display
      */
     private LocalDateTime lastSend;
 
     /**
-     * 邮件上次发送失败原因，null为未失败，只读，仅用来显示
+     * The reason why the email failed to be sent last time, null is not failed, read only, only used to display
      */
     private String lastFail;
 
     /**
-     * 邮件上次发送成功的系统时间，只读，仅用来显示
+     * The system time when the message was last sent successfully, read-only, used only to display
      */
     private LocalDateTime lastDone;
 
     /**
-     * 邮件上次发送耗时毫秒数，只读，仅用来显示
+     * Number of milliseconds since the last message was sent, read-only, for display only
      */
     private Integer lastCost;
 
     /**
-     * 邮件总计发送次数，只读，仅用来显示
+     * Total number of emails sent, read-only, for display only
      */
     private Integer sumSend;
 
     /**
-     * 邮件总计失败次数，只读，仅用来显示
+     * Total number of failed emails, read-only, for display only
      */
     private Integer sumFail;
 
     /**
-     * 邮件总计成功次数，只读，仅用来显示
+     * Total number of successful emails, read-only, for display only
      */
     private Integer sumDone;
 
     /**
-     * 发送参数，发送失败时，是否重试
+     * Sending parameters, whether to retry when sending fails
      */
     private Boolean retry;
 
     /**
-     * 发送参数，是否检查发送条件，否则为强制发送
+     * Send parameter, whether to check the sending condition, otherwise it is forced to send
      */
     private Boolean check;
 }

@@ -39,13 +39,13 @@ class SchemaFulldumpManagerTest {
     lateinit var wingsTestHelper: WingsTestHelper
 
     @Test
-    fun `test0🦁清表重置`() {
+    fun test0CleanTables() {
         wingsTestHelper.cleanTable()
         schemaRevisionManager.checkAndInitSql(FlywaveRevisionScanner.scanMaster(), 0, true)
     }
 
     @Test
-    fun `test1🦁DumpDdl🦁查文件`() {
+    fun test1DumpDdlSeeFile() {
         File(fold).mkdirs()
         val dlls = schemaFulldumpManager.dumpDdl(dataSource, groupedRegexp(false,
                 "SYS_LIGHT_SEQUENCE",
@@ -62,7 +62,7 @@ class SchemaFulldumpManagerTest {
     }
 
     @Test
-    fun `test2🦁DumpRec🦁查文件`() {
+    fun test2DumpRecSeeFile() {
         File(fold).mkdirs()
         val recs = schemaFulldumpManager.dumpRec(dataSource, groupedTable(true,
                 "SYS_LIGHT_SEQUENCE",

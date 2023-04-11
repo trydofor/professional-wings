@@ -100,8 +100,10 @@ public class AutogenDependencyTest {
         generator.setTargetDir(projectRoot + "wings/faceless-jooq/src/test/java/");
         generator.setTargetPkg("pro.fessional.wings.faceless.database.autogen");
         generator.gen(jdbcUrl, jdbcUser, jdbcPass,
-                h -> h.databaseIncludes("sys_constant_enum", "sys_standard_i18n", "tst_中文也分表")
-                      .forcedIntConsEnum(StandardLanguage.class, "tst_中文也分表.language"));
+                h -> h.databaseIncludes("sys_constant_enum", "sys_standard_i18n", "tst_sharding", "tst_normal_table")
+                      .forcedIntConsEnum(StandardLanguage.class, "tst_sharding.language")
+                      .forcedIntConsEnum(StandardLanguage.class, "tst_normal_table.value_lang")
+        );
     }
 
     @Test
@@ -110,7 +112,7 @@ public class AutogenDependencyTest {
         generator.setTargetDir(projectRoot + "wings/faceless-shard/src/test/java/");
         generator.setTargetPkg("pro.fessional.wings.faceless.database.autogen");
         generator.gen(jdbcUrl, jdbcUser, jdbcPass,
-                h -> h.databaseIncludes("tst_中文也分表"));
+                h -> h.databaseIncludes("tst_sharding", "tst_normal_table"));
     }
 
     @Test

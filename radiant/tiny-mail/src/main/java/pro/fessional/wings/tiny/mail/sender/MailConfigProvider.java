@@ -1,13 +1,16 @@
 package pro.fessional.wings.tiny.mail.sender;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pro.fessional.mirana.best.ArgsAssert;
+import org.springframework.beans.factory.annotation.Autowired;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailConfigProp;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author trydofor
@@ -19,7 +22,9 @@ public class MailConfigProvider {
     @NotNull
     private final TinyMailConfigProp configProp;
 
-    private final ConcurrentHashMap<String, TinyMailConfig> dynamicConfig = new ConcurrentHashMap<>();
+    @Setter(onMethod_ = {@Autowired(required = false)})
+    @Getter
+    private List<TinyMailConfig.Loader> configLoader = Collections.emptyList();
 
     @NotNull
     public TinyMailConfig defaultConfig() {
@@ -32,12 +37,18 @@ public class MailConfigProvider {
             return defaultConfig();
         }
 
-        final TinyMailConfig conf = dynamicConfig.get(name);
-        if (conf != null) {
-            return conf;
+        TinyMailConfig conf = configProp.get(name);
+        if (conf == null && configLoader != null) {
+            for (TinyMailConfig.Loader ld : configLoader) {
+                final TinyMailConfig cf = ld.load(name);
+                if (cf != null) {
+                    conf = cf;
+                    break;
+                }
+            }
         }
 
-        return configProp.get(name);
+        return conf;
     }
 
     @Contract("_->new")
@@ -46,32 +57,5 @@ public class MailConfigProvider {
         newConf.adopt(that);
         newConf.merge(configProp.getDefault());
         return newConf;
-    }
-
-    /**
-     * dynamic put a config, and its name can not be null
-     *
-     * @param config dynamic config
-     */
-    public void putMailConfig(@NotNull TinyMailConfig config) {
-        final String name = config.getName();
-        ArgsAssert.notNull(name, "config.name");
-
-
-        final TinyMailConfig st = configProp.get(name);
-        if (st != null) {
-            config.merge(st);
-        }
-
-        dynamicConfig.put(name, config);
-    }
-
-    /**
-     * delete dynamic config by name
-     *
-     * @param name name
-     */
-    public void delMailConfig(@NotNull String name) {
-        dynamicConfig.remove(name);
     }
 }

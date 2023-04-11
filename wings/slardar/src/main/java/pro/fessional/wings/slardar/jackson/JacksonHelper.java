@@ -22,11 +22,11 @@ import pro.fessional.mirana.text.WhiteUtil;
  */
 public class JacksonHelper {
 
-    public static final ObjectMapper JsonDefault = new ObjectMapper();
-    public static final XmlMapper XmlDefault = new XmlMapper();
+    public static final ObjectMapper JsonPlain = new ObjectMapper();
+    public static final XmlMapper XmlPlain = new XmlMapper();
 
-    private static ObjectMapper JsonWings = JsonDefault;
-    private static XmlMapper XmlWings = XmlDefault;
+    private static ObjectMapper JsonWings = JsonPlain;
+    private static XmlMapper XmlWings = XmlPlain;
 
     /**
      * 初始化Wings配置的ObjectMapper
