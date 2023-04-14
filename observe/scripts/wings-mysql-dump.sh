@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2022-02-14
+THIS_VERSION=2023-04-14
 
 cat << EOF
 #################################################
@@ -10,22 +10,26 @@ cat << EOF
 - {db-ts}-tbl.log dump的表及结果信息
 - {db-ts}-tip.txt scp及restore手册
 
-# Usage $0 db [cnf] [opt]
-- db - 需要dump的database，必填
+# Usage $0 cnf [db] [opt]
 - cnf - 配置文件，参考'--defaults-extra-file'
+- db - 需要dump的database，空时显示所有db
 - opt - dump参数，如 '--no-data'
 # option 详细参考client和mysqldump段
 - https://dev.mysql.com/doc/refman/8.0/en/option-files.html
 #################################################
 EOF
 
-database=$1
-extracnf=$2
+extracnf=$1
+database=$2
 dumpopts=${*:3}
-if [[ "$database" == "" ]]; then
-  echo -e "\033[0;31mWARN: need param-1=database to dump\033[m"
-  echo "./wings-mysql-dump.sh database wings-mysql-client.cnf --no-data"
-  echo "defaults-extra-file example"
+
+confopts=""
+if [[ -f "$extracnf" ]]; then
+  echo -e "\033[0;33mNOTE: defaults-extra-file \033[m"
+  grep -E "^(host|port|user)" "$extracnf"
+  confopts=--defaults-extra-file=$extracnf
+else
+  echo -e "\033[0;31mERROR: should specific mysql config(at param-1), eg. ~/my.cnf\033[m"
 cat << 'EOF'
 [client]
 protocol=tcp
@@ -44,13 +48,15 @@ EOF
   exit
 fi
 
-confopts=""
-if [[ -f "$extracnf" ]]; then
-  echo -e "\033[0;33mNOTE: defaults-extra-file \033[m"
-  grep -E "^(host|port|user)" "$extracnf"
-  confopts=--defaults-extra-file=$extracnf
-else
-  echo -e "\033[0;31mNOTE: use mysql default(my.cnf), something like\033[m"
+unalias mysql >/dev/null 2>&1
+unalias mysqldump >/dev/null 2>&1
+
+if [[ "$database" == "" ]]; then
+  echo -e "\033[0;31mWARN: need database(at param-2) to dump, eg.\033[m"
+  echo "./wings-mysql-dump.sh wings-mysql-client.cnf database  --no-data"
+  echo -e "\033[0;33mNOTE:current databases \033[m"
+  mysql $confopts -N -e "show databases;"
+  exit
 fi
 
 ###
@@ -61,9 +67,6 @@ dump_tbl_file="$dump_head-tbl.log"
 dump_tip_file="$dump_head.tip"
 dump_tar_file="$dump_head.tgz"
 dump_md5_file="$dump_head.md5"
-
-unalias mysql >/dev/null 2>&1
-unalias mysqldump >/dev/null 2>&1
 
 # shellcheck disable=SC2086
 if ! mysql $confopts -D "$database" -N -e "show tables" > "$dump_tbl_file"; then
@@ -117,7 +120,6 @@ md5sum -c $dump_md5_file
 
 tar -tzf $dump_tar_file
 tar -xzf $dump_tar_file
-tar -xzf $dump_tar_file $dump_tip_file
 
 scp ${dump_head}.* trydofor@moilioncircle:/data/mysql-dump/
 
