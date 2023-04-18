@@ -23,11 +23,11 @@ extracnf=$1
 database=$2
 dumpopts=${*:3}
 
-confopts=""
+logxopts="--no-data"
+confopts=--defaults-extra-file=$extracnf
 if [[ -f "$extracnf" ]]; then
   echo -e "\033[0;33mNOTE: defaults-extra-file \033[m"
   grep -E "^(host|port|user)" "$extracnf"
-  confopts=--defaults-extra-file=$extracnf
 else
   echo -e "\033[0;31mERROR: should specific mysql config(at param-1), eg. ~/my.cnf\033[m"
 cat << 'EOF'
@@ -83,7 +83,7 @@ else
   echo -e "\033[0;33mNOTE: dump logs tables without data, count=$logs_cnt\033[m"
 
   # shellcheck disable=SC2046,SC2086
-  if mysqldump $confopts $dumpopts --no-data \
+  if mysqldump $confopts $dumpopts $logxopts \
   "$database" $(grep -E '\$|__' "$dump_tbl_file") > "$dump_logs_file"; then
     echo "successfully dump logs"
   else
@@ -146,4 +146,3 @@ echo -e "\033[0;33mNOTE: tar files into $dump_tar_file \033[m"
 tar -czf "$dump_tar_file" "$dump_tip_file" "$dump_tbl_file" "$dump_logs_file" "$dump_main_file" \
 && md5sum "$dump_tar_file" | tee "$dump_md5_file" \
 && rm -f "$dump_tbl_file" "$dump_logs_file" "$dump_main_file"
-

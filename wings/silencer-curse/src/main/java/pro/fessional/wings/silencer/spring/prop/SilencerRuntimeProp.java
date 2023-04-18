@@ -6,6 +6,7 @@ import pro.fessional.wings.silencer.modulate.ApiMode;
 import pro.fessional.wings.silencer.modulate.RunMode;
 
 /**
+ * Runtime Mode of the Application.
  * wings-warlock-runtime-77.properties
  *
  * @author trydofor
@@ -19,12 +20,16 @@ public class SilencerRuntimeProp {
     public static final String Key = "wings.silencer.runtime";
 
     /**
+     * RunMode of the application
+     *
      * @see #Key$runMode
      */
     private RunMode runMode = RunMode.Local;
     public static final String Key$runMode = Key + ".run-mode";
 
     /**
+     * ApiMode of the application
+     *
      * @see #Key$apiMode
      */
     private ApiMode apiMode = ApiMode.Nothing;

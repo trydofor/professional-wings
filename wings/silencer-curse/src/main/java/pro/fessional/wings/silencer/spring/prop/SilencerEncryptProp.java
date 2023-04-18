@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
+ * Automatic configuration of encryption features.
  * wings-encrypt-79.properties
  *
  * @author trydofor
@@ -19,7 +20,7 @@ public class SilencerEncryptProp {
     public static final String Key = "wings.silencer.encrypt";
 
     /**
-     * LeapCode seed，安全有关，需要修改
+     * LeapCode's default seed, should change for security requirements.
      *
      * @see #Key$leapCode
      */
@@ -27,7 +28,7 @@ public class SilencerEncryptProp {
     public static final String Key$leapCode = Key + ".leap-code";
 
     /**
-     * Crc8Long seed，安全有关，需要修改
+     * Default seed of Crc8Long, should change for security requirements.
      *
      * @see #Key$crc8Long
      */
@@ -35,7 +36,7 @@ public class SilencerEncryptProp {
     public static final String Key$crc8Long = Key + ".crc8-long";
 
     /**
-     * 全局AesKey，安全有关，需要修改
+     * the default Aes256 encryption name and password
      *
      * @see #Key$aesKey
      */

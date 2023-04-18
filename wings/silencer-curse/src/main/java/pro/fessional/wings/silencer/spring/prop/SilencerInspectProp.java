@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * Inspect and audit the Application
+ *
  * @author trydofor
  * @see #Key
  * @since 2021-02-14
@@ -15,7 +17,7 @@ public class SilencerInspectProp {
     public static final String Key = "wings.silencer.inspect";
 
     /**
-     * 是否审视properties的key,value,所在文件及层叠关系
+     * Whether to audit the file and cascading relationship of properties key/value
      *
      * @see #Key$properties
      */
