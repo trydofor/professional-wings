@@ -69,7 +69,7 @@ public class LogMetric implements WarnMetric {
         if (stat.getTimeDone() - lastClean > 24 * 3600 * 1000L) {
             final List<String> cln = LogStat.clean(file, rule.clean);
             log.info("LogStat clean {} days scanned file count={}", rule.clean, cln.size());
-            lastClean = stat.getByteDone();
+            lastClean = stat.getTimeDone();
         }
 
         final List<Warn> result = new ArrayList<>();
