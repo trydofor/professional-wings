@@ -116,12 +116,14 @@ ls -lsh |grep "$dump_head" | tee -a "$dump_tbl_file"
 
 echo -e "\033[0;33mNOTE: tips for zip, scp, restore \033[m"
 tee -a "$dump_tip_file" << EOF
-md5sum -c $dump_md5_file
+md5sum -c $dump_md5_file # checksum
 
-tar -tzf $dump_tar_file
-tar -xzf $dump_tar_file
+tar -tzf $dump_tar_file # list files
+tar -xzf $dump_tar_file # extract files
+tar -xzf $dump_tar_file $dump_tip_file # extract tips
 
-scp ${dump_head}.* trydofor@moilioncircle:/data/mysql-dump/
+scp -P 2022 ${dump_head}.* trydofor@moilioncircle:/data/mysql-dump/
+rsync -azP -e "ssh -p 2022" ${dump_head}.* trydofor@moilioncircle:/data/mysql-dump/
 
 unalias mysql
 newdb="$dump_head"
