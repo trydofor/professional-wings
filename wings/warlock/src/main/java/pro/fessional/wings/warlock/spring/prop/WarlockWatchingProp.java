@@ -4,7 +4,15 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * <pre>
  * wings-warlock-watching-77.properties
+ *
+ * code tracking , default `-1` means disable; `0` means fully enable.
+ *
+ * - Controller layer is implemented by Interceptor
+ * - Service dependency annotation @Watching
+ * - Jooq layer, depends on listener
+ * </pre>
  *
  * @author trydofor
  * @see #Key
@@ -17,7 +25,7 @@ public class WarlockWatchingProp {
     public static final String Key = "wings.warlock.watching";
 
     /**
-     * jooq执行的阈值毫秒
+     * threshold millis for jooq execution.
      *
      * @see #Key$jooqThreshold
      */
@@ -25,7 +33,7 @@ public class WarlockWatchingProp {
     public static final String Key$jooqThreshold = Key + ".jooq-threshold";
 
     /**
-     * Watching注解的阈值毫秒
+     * threshold millis for Watching annotation.
      *
      * @see #Key$serviceThreshold
      */
@@ -33,7 +41,7 @@ public class WarlockWatchingProp {
     public static final String Key$serviceThreshold = Key + ".service-threshold";
 
     /**
-     * controller的阈值毫秒
+     * threshold millis for Controller.
      *
      * @see #Key$controllerThreshold
      */
