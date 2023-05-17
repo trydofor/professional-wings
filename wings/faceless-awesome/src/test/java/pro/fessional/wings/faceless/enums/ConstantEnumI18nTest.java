@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 2020-06-10
  */
 
-@SpringBootTest(properties = {"debug = true", "spring.wings.faceless.enabled.enumi18n=true"})
+@SpringBootTest(properties = {"spring.wings.faceless.enabled.enumi18n=true"})
 @TestMethodOrder(MethodName.class)
 public class ConstantEnumI18nTest {
 

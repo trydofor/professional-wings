@@ -61,7 +61,7 @@ import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgen
  * @author trydofor
  * @since 2019-06-26
  */
-@SpringBootTest(properties = {"debug = true",
+@SpringBootTest(properties = {
                               "wings.slardar.datetime.zoned.auto=true",
                               "spring.wings.slardar.enabled.number=true",
                               "wings.slardar.jackson.empty-date=1970-01-01",

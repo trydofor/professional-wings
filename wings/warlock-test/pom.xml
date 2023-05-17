@@ -25,5 +25,9 @@
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-jooq</artifactId>
         </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>testing-database</artifactId>
+        </dependency>
     </dependencies>
 </project>

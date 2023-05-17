@@ -22,7 +22,7 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
  * @author trydofor
  * @since 2021-01-18
  */
-@SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
+@SpringBootTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class FlywaveShardingTest {
 

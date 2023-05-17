@@ -67,6 +67,7 @@
         <!-- mvn-build-plugin -->
         <flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version> <!-- https://github.com/mojohaus/flatten-maven-plugin/releases/tag -->
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version> <!-- https://github.com/apache/maven-gpg-plugin/tags -->
+        <testing-json>{"debug":true}</testing-json>
         <wings.java-opens>
             --add-modules=java.se <!-- Hazelcast -->
             --add-opens=java.base/java.io=ALL-UNNAMED <!-- FastJson -->
@@ -261,6 +262,11 @@
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
                 <artifactId>batrider-zero</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>testing-database</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <!-- pro.fessional.wings radiant -->
@@ -477,7 +483,7 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
                     <configuration>
-                        <argLine>@{wings.java-opens}</argLine>
+                        <argLine>-Dspring.application.json='${testing-json}' @{wings.java-opens}</argLine>
                     </configuration>
                 </plugin>
                 <plugin>

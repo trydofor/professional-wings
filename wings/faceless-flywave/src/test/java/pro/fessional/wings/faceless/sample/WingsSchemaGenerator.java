@@ -19,15 +19,13 @@ import java.util.SortedMap;
  * @since 2019-06-22
  */
 
-@SpringBootTest(properties =
-        {"debug = true",
-         "spring.wings.faceless.flywave.enabled.module=true",
+@SpringBootTest(properties = {"spring.wings.faceless.flywave.enabled.module=true",
 //         "spring.wings.faceless.enabled.enumi18n=true",
 //         "spring.shardingsphere.datasource.names=writer",
 //         "spring.shardingsphere.datasource.writer.jdbc-url=jdbc:mysql://127.0.0.1:3306/wings?autoReconnect=true&useSSL=false",
 //         "spring.shardingsphere.datasource.writer.username=trydofor",
 //         "spring.shardingsphere.datasource.writer.password=moilioncircle",
-        })
+})
 @Disabled("初始化数据库，已有devs统一管理")
 @SuppressWarnings("NewClassNamingConvention")
 public class WingsSchemaGenerator {

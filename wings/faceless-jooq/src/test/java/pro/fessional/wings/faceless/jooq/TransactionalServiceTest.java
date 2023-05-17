@@ -23,7 +23,7 @@ import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1;
  * @author trydofor
  * @since 2023-03-09
  */
-@SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
+@SpringBootTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Slf4j
 public class TransactionalServiceTest {

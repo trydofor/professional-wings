@@ -67,7 +67,7 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
  * @since 2020-08-14
  */
 
-@SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
+@SpringBootTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Slf4j
 @SuppressWarnings("NewClassNamingConvention")

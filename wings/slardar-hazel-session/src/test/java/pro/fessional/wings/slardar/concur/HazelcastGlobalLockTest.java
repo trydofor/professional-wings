@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author trydofor
  * @since 2021-03-08
  */
-@SpringBootTest(properties = {"debug = true"})
+@SpringBootTest
 class HazelcastGlobalLockTest {
 
     @Setter(onMethod_ = {@Autowired})

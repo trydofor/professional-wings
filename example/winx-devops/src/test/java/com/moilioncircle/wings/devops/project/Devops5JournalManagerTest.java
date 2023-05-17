@@ -23,7 +23,6 @@ import java.util.List;
         "spring.datasource.url=" + Devops0ProjectConstant.JDBC_URL,
         "spring.datasource.username=" + Devops0ProjectConstant.JDBC_USER,
         "spring.datasource.password=" + Devops0ProjectConstant.JDBC_PASS,
-        "debug = true"
 })
 @Disabled("日志表管理")
 @Slf4j

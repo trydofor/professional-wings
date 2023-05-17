@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 2020-08-10
  */
 
-@SpringBootTest(properties = {"debug = true", "wings.slardar.cache.level.general.maxLive=10"})
+@SpringBootTest(properties = {"wings.slardar.cache.level.general.maxLive=10"})
 @Slf4j
 public class SlardarCacheConfigurationTest {
 

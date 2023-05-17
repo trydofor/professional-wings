@@ -31,6 +31,9 @@ buildNumber.properties
 *.bak
 *.jfr
 
+# local db
+*.db
+
 # BlueJ files
 *.ctxt
 

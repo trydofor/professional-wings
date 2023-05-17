@@ -19,7 +19,6 @@ import static pro.fessional.wings.tiny.task.service.TinyTaskServiceTest.timingCr
  * @since 2022-12-13
  */
 @SpringBootTest(properties = {
-        "debug = true",
         "wings.tiny.task.define[pro.fessional.wings.tiny.task.service.TestServiceManual#strStr].enabled=" + enabled,
         "wings.tiny.task.define[pro.fessional.wings.tiny.task.service.TestServiceManual#strStr].autorun=" + autorun,
         "wings.tiny.task.define[pro.fessional.wings.tiny.task.service.TestServiceManual#strStr].timing-cron=" + timingCron,

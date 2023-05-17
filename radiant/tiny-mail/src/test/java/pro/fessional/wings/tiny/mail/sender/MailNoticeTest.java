@@ -17,7 +17,6 @@ import java.util.Collections;
  * @since 2022-12-28
  */
 @SpringBootTest(properties = {
-        "debug = true",
         "wings.tiny.mail.service.boot-scan=0",
 })
 @Slf4j

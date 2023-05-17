@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-                "debug = true",
                 "wings.slardar.double-kill.http-status=202",
                 "wings.slardar.double-kill.content-type=text/plain",
                 "wings.slardar.double-kill.response-body=double-killed ttl=${ttl}, key=${key}",

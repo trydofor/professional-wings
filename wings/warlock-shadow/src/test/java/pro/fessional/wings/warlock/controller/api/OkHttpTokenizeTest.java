@@ -22,8 +22,6 @@ import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-                "debug = true",
-                "logging.level.org.springframework.web=DEBUG",
                 "wings.warlock.apiauth.must-signature=false",
         })
 @Slf4j

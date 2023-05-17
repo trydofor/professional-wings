@@ -21,9 +21,10 @@ import java.util.Map;
  * @author trydofor
  * @since 2022-10-29
  */
-@SpringBootTest(properties = {"debug = true",
-                              "wings.silencer.tweak.code-stack=true",
-                              "wings.silencer.tweak.mdc-threshold=true"})
+@SpringBootTest(properties = {
+        "wings.silencer.tweak.code-stack=true",
+        "wings.silencer.tweak.mdc-threshold=true"
+})
 @Slf4j
 public class SilenceDebugTest {
 

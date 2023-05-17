@@ -46,6 +46,7 @@
         <module>batrider</module>
         <module>batrider-test</module>
         <module>batrider-zero</module>
+        <module>testing-database</module>
     </modules>
 
     <properties>

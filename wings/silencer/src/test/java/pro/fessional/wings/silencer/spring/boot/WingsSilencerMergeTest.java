@@ -16,7 +16,7 @@ import java.util.Set;
  * @since 2019-06-25
  */
 
-@SpringBootTest(properties = {"debug = true"})
+@SpringBootTest
 public class WingsSilencerMergeTest {
 
     @Setter(onMethod_ = {@Autowired})

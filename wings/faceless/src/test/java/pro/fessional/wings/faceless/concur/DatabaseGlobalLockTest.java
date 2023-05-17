@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author trydofor
  * @since 2021-03-09
  */
-@SpringBootTest(properties = {"debug = true"})
+@SpringBootTest
 class DatabaseGlobalLockTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -37,7 +37,8 @@ class DatabaseGlobalLockTest {
                 lockFail(latch);
                 latch.await();
             }
-        } finally {
+        }
+        finally {
             lock.unlock();
         }
     }
@@ -50,7 +51,8 @@ class DatabaseGlobalLockTest {
             try {
                 b = lock.tryLock(1, TimeUnit.MILLISECONDS);
                 assertFalse(b);
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 e.printStackTrace();
             }
             latch.countDown();

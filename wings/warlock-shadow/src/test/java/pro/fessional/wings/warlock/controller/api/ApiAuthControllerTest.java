@@ -57,8 +57,6 @@ import static pro.fessional.wings.warlock.controller.api.TestToyApiController.Te
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-                "debug = true",
-                "logging.level.org.springframework.web=DEBUG",
                 "wings.warlock.apiauth.must-signature=false",
         })
 @Slf4j

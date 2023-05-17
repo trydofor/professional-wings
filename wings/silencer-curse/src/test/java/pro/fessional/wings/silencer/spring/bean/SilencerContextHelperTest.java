@@ -20,7 +20,6 @@ import static pro.fessional.wings.silencer.spring.help.ApplicationContextHelper.
  */
 
 @SpringBootTest(properties = {
-        "debug = true",
         "spring.application.name=curse",
         "wings.silencer.inspect.properties=true",
 })

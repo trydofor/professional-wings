@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-                "debug = true",
                 "wings.slardar.debounce.http-status=202",
                 "wings.slardar.debounce.content-type=text/plain",
                 "wings.slardar.debounce.response-body=debounced",

@@ -18,7 +18,6 @@ import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
         "spring.datasource.url=" + Devops0ProjectConstant.JDBC_URL,
         "spring.datasource.username=" + Devops0ProjectConstant.JDBC_USER,
         "spring.datasource.password=" + Devops0ProjectConstant.JDBC_PASS,
-        "debug = true"
 })
 @Disabled("分表分库")
 public class Devops6ShardingManagerTest {

@@ -13,7 +13,6 @@ import pro.fessional.wings.slardar.context.Now;
  * @since 2023-01-10
  */
 @SpringBootTest(properties = {
-        "debug = true",
         "wings.tiny.mail.service.boot-scan=0",
 })
 @Disabled("邮件测试，手动执行")

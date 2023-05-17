@@ -44,7 +44,7 @@ import static pro.fessional.wings.faceless.service.journal.JournalService.Journa
  */
 
 
-@SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
+@SpringBootTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Slf4j
 public class JooqDslAndDaoSample {
