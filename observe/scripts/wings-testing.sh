@@ -53,11 +53,21 @@ module_h2db="wings/faceless-awesome\
   ,wings/warlock-shadow"
 
 ## ##############
-echo "use mvn -X | grep 'Forking command line' to debug"
-echo "use $0 init auto h2db to install and testing"
+echo "usage: $0 [init] [auto=*] [h2db=*]"
+
+for arg in "$@"; do
+  # 使用等号分割参数，取得 arg 和 value
+  IFS='=' read -r -a parts <<<"$arg"
+  # 检查参数名是否匹配
+  if [[ "${parts[0]}" == "auto" && "${parts[1]}" != "" ]]; then
+    module_auto=${parts[1]}
+  elif [[ "${parts[0]}" == "h2db" && "${parts[1]}" != "" ]]; then
+    module_h2db=${parts[1]}
+  fi
+done
 
 ## install
-[[ "$*" =~ .*init.* ]] && mvn clean install -Dmaven.test.skip=true
+[[ "$*" =~ .*init.* ]] && mvn -U clean install -Dmaven.test.skip=true
 
 ## auto test
 [[ "$*" =~ .*auto.* ]] && (mvn test -ff -Dmaven.test.skip=false \
@@ -69,7 +79,7 @@ echo "use $0 init auto h2db to install and testing"
   "logging.level.org.jooq":"WARN"}' \
   -pl "$module_auto" || exit)
 
-## h2 test
+## h2db test
 [[ "$*" =~ .*h2db.* ]] && (mvn test -ff -Dmaven.test.skip=false \
   -Dtesting-json='{"spring.profiles.active":"h2",
   "debug":"false",

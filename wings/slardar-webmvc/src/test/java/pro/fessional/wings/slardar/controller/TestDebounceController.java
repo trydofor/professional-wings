@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.View;
 import pro.fessional.mirana.data.Q;
 import pro.fessional.mirana.data.R;
+import pro.fessional.mirana.pain.DebugException;
 import pro.fessional.wings.slardar.concur.Debounce;
 import pro.fessional.wings.slardar.servlet.response.view.PlainTextView;
 
@@ -43,7 +44,7 @@ public class TestDebounceController {
     @PostMapping("/test/debounce-error.json")
     @Debounce(waiting = 600, header = {"User-Agent"}, reuse = true)
     public View debounceError() {
-        throw new RuntimeException("error-seq:" + seq.getAndIncrement());
+        throw new DebugException("error-seq:" + seq.getAndIncrement());
     }
 
     @PostMapping("/test/debounce-body.json")

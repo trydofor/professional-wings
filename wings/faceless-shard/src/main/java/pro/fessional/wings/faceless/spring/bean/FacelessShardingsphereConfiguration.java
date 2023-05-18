@@ -2,7 +2,7 @@ package pro.fessional.wings.faceless.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.shardingsphere.driver.jdbc.core.driver.ShardingSphereDriverURL;
+import org.apache.shardingsphere.driver.jdbc.core.driver.ShardingSphereDriverURLManager;
 import org.apache.shardingsphere.infra.util.yaml.YamlEngine;
 import org.apache.shardingsphere.infra.yaml.config.pojo.YamlRootConfiguration;
 import org.apache.shardingsphere.infra.yaml.config.swapper.resource.YamlDataSourceConfigurationSwapper;
@@ -45,8 +45,7 @@ public class FacelessShardingsphereConfiguration {
             return ignored -> false;
         }
 
-        final ShardingSphereDriverURL driverUrl = new ShardingSphereDriverURL(jdbcUrl);
-        final byte[] yamlBytes = driverUrl.toConfigurationBytes();
+        final byte[] yamlBytes = ShardingSphereDriverURLManager.getContent(jdbcUrl);
         YamlRootConfiguration rootConfig = YamlEngine.unmarshal(yamlBytes, YamlRootConfiguration.class);
         final YamlDataSourceConfigurationSwapper configurationSwapper = new YamlDataSourceConfigurationSwapper();
         final Map<String, DataSource> dsMap = configurationSwapper.swapToDataSources(rootConfig.getDataSources());
