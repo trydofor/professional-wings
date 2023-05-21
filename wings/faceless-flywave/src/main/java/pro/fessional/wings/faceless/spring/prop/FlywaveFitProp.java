@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
+ * Flywave checks for dependent `flywave-init` versions.
+ *
  * @author trydofor
  * @since 2022-03-15
  */
@@ -17,7 +19,7 @@ public class FlywaveFitProp {
     public static final String Key = "wings.faceless.flywave";
 
     /**
-     * 是否允许自动初始化，非空数据库，最好手工初始化
+     * whether to allow auto init, non-empty database, preferably manual init
      *
      * @see #Key$autoInit
      */

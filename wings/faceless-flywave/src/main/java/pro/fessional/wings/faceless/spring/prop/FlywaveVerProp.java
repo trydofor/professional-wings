@@ -7,6 +7,14 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
+ * <pre>
+ * set version and journal table for Flywave.
+ * - `{{PLAIN_NAME}}` The `plain` table name of the target table
+ * - `{{TABLE_NAME}}` Target table name, can be plain, shard, trace table
+ * - `{{TABLE_BONE}}` Target table field (at least name, type, comments), without indexes and constraints
+ * - `{{TABLE_PKEY}}` The field name in PK of the target table, used to create a normal index copy from the original PK
+ * </pre>
+ *
  * @author trydofor
  * @see #Key
  * @since 2019-05-30
@@ -18,7 +26,7 @@ public class FlywaveVerProp {
     public static final String Key = "wings.faceless.flywave.ver";
 
     /**
-     * 版本管理表
+     * table name of schema version.
      *
      * @see #Key$schemaVersionTable
      */
@@ -26,7 +34,7 @@ public class FlywaveVerProp {
     public static final String Key$schemaVersionTable = Key + ".schema-version-table";
 
     /**
-     * 变更跟踪表
+     * table name of journal.
      *
      * @see #Key$schemaJournalTable
      */
@@ -34,19 +42,15 @@ public class FlywaveVerProp {
     public static final String Key$schemaJournalTable = Key + ".schema-journal-table";
 
     /**
-     * Drop语句的正则
+     * RegExp is treated as drop statements for dangerous confirm.
      *
      * @see #Key$dropReg
      */
-    private Map<String,String> dropReg = Collections.emptyMap();
+    private Map<String, String> dropReg = Collections.emptyMap();
     public static final String Key$dropReg = Key + ".drop-reg";
 
     /**
-     * insert journal table。支持一下变量
-     * - PLAIN_NAME 目标表的`本表`名字
-     * - TABLE_NAME 目标表名字，可能是本表，分表，跟踪表
-     * - TABLE_BONE 目标表字段(至少包含名字，类型，注释)，不含索引和约束
-     * - TABLE_PKEY 目标表的主键中字段名，用来创建原主键的普通索引。
+     * Trace table for AfterInsert (create the original PK index)
      *
      * @see #Key$journalInser
      */
@@ -54,8 +58,7 @@ public class FlywaveVerProp {
     public static final String Key$journalInser = Key + ".journal-insert";
 
     /**
-     * insert journal trigger。
-     * # before update trigger，独自跟踪表，不需要增加原主键索引
+     * AfterInsert Trigger
      *
      * @see #Key$triggerInsert
      */
@@ -63,11 +66,7 @@ public class FlywaveVerProp {
     public static final String Key$triggerInsert = Key + ".trigger-insert";
 
     /**
-     * update journal table。支持一下变量
-     * - PLAIN_NAME 目标表的`本表`名字
-     * - TABLE_NAME 目标表名字，可能是本表，分表，跟踪表
-     * - TABLE_BONE 目标表字段(至少包含名字，类型，注释)，不含索引和约束
-     * - TABLE_PKEY 目标表的主键中字段名，用来创建原主键的普通索引。
+     * Trace table for AfterUpdate (create the original PK index)
      *
      * @see #Key$journalUpdate
      */
@@ -75,8 +74,7 @@ public class FlywaveVerProp {
     public static final String Key$journalUpdate = Key + ".journal-update";
 
     /**
-     * update journal trigger。
-     * # before update trigger，独自跟踪表，不需要增加原主键索引
+     * AfterUpdate Trigger
      *
      * @see #Key$triggerUpdate
      */
@@ -84,11 +82,7 @@ public class FlywaveVerProp {
     public static final String Key$triggerUpdate = Key + ".trigger-update";
 
     /**
-     * delete journal table。支持一下变量
-     * - PLAIN_NAME 目标表的`本表`名字
-     * - TABLE_NAME 目标表名字，可能是本表，分表，跟踪表
-     * - TABLE_BONE 目标表字段(至少包含名字，类型，注释)，不含索引和约束
-     * - TABLE_PKEY 目标表的主键中字段名，用来创建原主键的普通索引。
+     * Trace table for BeforeDelete (create the original PK index)`
      *
      * @see #Key$journalDelete
      */
@@ -96,8 +90,7 @@ public class FlywaveVerProp {
     public static final String Key$journalDelete = Key + ".journal-delete";
 
     /**
-     * delete journal trigger。
-     * # before update trigger，独自跟踪表，不需要增加原主键索引
+     * BeforeDelete Trigger
      *
      * @see #Key$triggerDelete
      */

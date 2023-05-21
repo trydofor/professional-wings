@@ -15,7 +15,7 @@ public class FlywaveSqlProp {
     public static final String Key = "wings.faceless.flywave.sql";
 
     /**
-     * sql类型，当前只支持"mysql"
+     * sql dialect, currently only supports `mysql`.
      *
      * @see #Key$dialect
      */
@@ -23,7 +23,7 @@ public class FlywaveSqlProp {
     public static final String Key$dialect = Key + ".dialect";
 
     /**
-     * 原始分隔符，必须存在，默认";"。
+     * the original delimiter, required.
      *
      * @see #Key$delimiterDefault
      */
@@ -31,7 +31,7 @@ public class FlywaveSqlProp {
     public static final String Key$delimiterDefault = Key + ".delimiter-default";
 
     /**
-     * 重定义的分隔符的命令，默认"DELIMITER"
+     * the command to redefine the delimiter.
      *
      * @see #Key$delimiterCommand
      */
@@ -39,7 +39,7 @@ public class FlywaveSqlProp {
     public static final String Key$delimiterCommand = Key + ".delimiter-command";
 
     /**
-     * 单行注释，默认 "--"
+     * single line comment
      *
      * @see #Key$commentSingle
      */
@@ -47,7 +47,7 @@ public class FlywaveSqlProp {
     public static final String Key$commentSingle = Key + ".comment-single";
 
     /**
-     * 多行注释，开头和结束以空格分开表示
+     * multi-line comments, start and end with a space
      *
      * @see #Key$commentMultiple
      */
@@ -55,7 +55,7 @@ public class FlywaveSqlProp {
     public static final String Key$commentMultiple = Key + ".comment-multiple";
 
     /**
-     * 设置分表格式
+     * set the shard table format. see SqlSegmentProcessor.setShardFormat.
      *
      * @see #Key$formatShard
      */
@@ -63,7 +63,7 @@ public class FlywaveSqlProp {
     public static final String Key$formatShard = Key + ".format-shard";
 
     /**
-     * 设置跟踪表格式
+     * set the trace table format. see SqlSegmentProcessor.setTraceFormat
      *
      * @see #Key$formatTrace
      */

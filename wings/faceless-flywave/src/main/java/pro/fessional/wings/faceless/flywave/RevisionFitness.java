@@ -253,28 +253,38 @@ public class RevisionFitness {
 
     public enum Act {
         /**
-         * 跳过检查
+         * skip checking
          */
         SKIP,
         /**
-         * 在日志中WARN
+         * only warn in log
          */
         WARN,
         /**
-         * 程序异常终止
+         * stop with exception
          */
         FAIL,
         /**
-         * 强制执行
-         * forceUpdateSql and forceApplyBreak
+         * force to exec. forceUpdateSql and forceApplyBreak
          */
         EXEC,
     }
 
     @Data
     public static class Fit {
+        /**
+         * sql scan pattern, comma separated. PathMatchingResourcePatternResolver format
+         */
         private Set<String> path = Collections.emptySet();
+        /**
+         * revision, comma separated
+         */
         private Set<String> revi = Collections.emptySet();
+
+        /**
+         * Post check, if the specified revi is not applied,
+         * only upgrade can be performed, not downgrade to avoid dangerous delete.
+         */
         private Act lost = Act.WARN;
     }
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * CUD listener settings for jooq.
  * spring-wings-enabled-79.properties
  *
  * @author trydofor
@@ -21,7 +22,7 @@ public class FacelessJooqCudProp {
     public static final String Key = "wings.faceless.jooq.cud";
 
     /**
-     * 是否监听insert
+     * Whether to listen to insert
      *
      * @see #Key$insert
      */
@@ -29,7 +30,7 @@ public class FacelessJooqCudProp {
     public static final String Key$insert = Key + ".insert";
 
     /**
-     * 是否监听update
+     * Whether to listen to update
      *
      * @see #Key$update
      */
@@ -37,7 +38,7 @@ public class FacelessJooqCudProp {
     public static final String Key$update = Key + ".update";
 
     /**
-     * 是否监听delete
+     * Whether to listen to delete
      *
      * @see #Key$delete
      */
@@ -45,7 +46,8 @@ public class FacelessJooqCudProp {
     public static final String Key$delete = Key + ".delete";
 
     /**
-     * cud 关系的表及字段，区分大小写
+     * Listening tables and their fields.
+     * CUD listens to tables and fields, both tables and fields are case-sensitive.
      *
      * @see #Key$table
      */
@@ -53,7 +55,8 @@ public class FacelessJooqCudProp {
     public static final String Key$table = Key + ".table";
 
     /**
-     * JournalDiff中忽略的字段, default表示所有表，否则为具体表
+     * default fields to be ignored by JournalDiff.
+     * Tables are case-sensitive, fields are case-insensitive, `default` means all tables, otherwise specific tables.
      *
      * @see #Key$diff
      */
