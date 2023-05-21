@@ -11,6 +11,8 @@ import java.util.Set;
 import static pro.fessional.wings.slardar.servlet.cookie.WingsCookieInterceptor.Coder.Aes;
 
 /**
+ * All the following name settings are the original, that is, without prefix and alias.
+ *
  * @author trydofor
  * @see #Key
  * @since 2021-02-14
@@ -22,7 +24,7 @@ public class SlardarCookieProp {
     public static final String Key = "wings.slardar.cookie";
 
     /**
-     * cookie前缀，默认空
+     * Cookie prefix, empty by default.
      *
      * @see #Key$prefix
      */
@@ -30,7 +32,8 @@ public class SlardarCookieProp {
     public static final String Key$prefix = Key + ".prefix";
 
     /**
-     * cookie别名，受前缀影响
+     * cookie alias, affected by the prefix, eg.
+     * `session`=`o_0`, `session` eventually is `${prefix}o_0`
      *
      * @see #Key$alias
      */
@@ -38,7 +41,13 @@ public class SlardarCookieProp {
     public static final String Key$alias = Key + ".alias";
 
     /**
-     * cookie编码，默认b64(base64)，可选aes(aes256)和noop(不加密)
+     * <pre>
+     * cookie encoding, default
+     * - `aes` - aes256
+     * - `b64` - base64
+     * - `nop` - no encoding
+     * For the same config name, the encoding priority `aes` > `b64` > `nop`
+     * </pre>
      *
      * @see #Key$coder
      */
@@ -64,7 +73,7 @@ public class SlardarCookieProp {
     public static final String Key$aes = Key + ".aes";
 
     /**
-     * http only，js不可读取
+     * HttpOnly, js cannot be read, do not process if not set
      *
      * @see #Key$httpOnly
      */
@@ -72,7 +81,7 @@ public class SlardarCookieProp {
     public static final String Key$httpOnly = Key + ".http-only";
 
     /**
-     * https 下发送
+     * transfer by https, do not process if not set
      *
      * @see #Key$secure
      */
@@ -80,12 +89,20 @@ public class SlardarCookieProp {
     public static final String Key$secure = Key + ".secure";
 
     /**
+     * bind domain to cookie,
+     * eg. `wings.slardar.cookie.domain[a.com]`=`b,c`,
+     * means cookie with `name` of `b` or `c`, its `domain` is `a.com`
+     *
      * @see #Key$domain
      */
     private Map<String, Set<String>> domain = Collections.emptyMap();
     public static final String Key$domain = Key + ".domain";
 
     /**
+     * bind cookie to path,
+     * eg. `wings.slardar.cookie.path[/admin]`=`b,c`,
+     * means cookie with `name` of `b` or `c`, its `path` is `/admin`
+     *
      * @see #Key$path
      */
     private Map<String, Set<String>> path = Collections.emptyMap();

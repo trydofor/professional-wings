@@ -16,7 +16,7 @@ public class SlardarAsyncProp {
     public static final String Key = "wings.slardar.async";
 
     /**
-     * 事件配置
+     * event thread pool
      *
      * @see #Key$event
      */
@@ -25,7 +25,7 @@ public class SlardarAsyncProp {
 
 
     /**
-     * 重任务线程池
+     * heavy thread pool
      *
      * @see #Key$heavy
      */

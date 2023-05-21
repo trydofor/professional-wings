@@ -41,7 +41,7 @@ public class SlardarSwaggerProp {
     public static final String Key$description = Key + ".description";
 
     /**
-     * 需要开启 build info
+     * need enable build info
      *
      * @see #Key$version
      */
@@ -49,7 +49,8 @@ public class SlardarSwaggerProp {
     public static final String Key$version = Key + ".version";
 
     /**
-     * key采用java命名,作为$ref使用，in支持cookie|header|query|path
+     * key in java naming rule, used as `$ref`,
+     * `in` support `cookie`|`header`|`query`|`path`.
      *
      * @see #Key$param
      */
@@ -57,7 +58,7 @@ public class SlardarSwaggerProp {
     public static final String Key$param = Key + ".param";
 
     /**
-     * Accept/MediaType复制，以出现多个请求方式
+     * copy Accept/MediaType to make multiple requests.
      *
      * @see #Key$accept
      */
@@ -65,7 +66,7 @@ public class SlardarSwaggerProp {
     public static final String Key$accept = Key + ".accept";
 
     /**
-     * 是否把PageQuery扁平化，作为querystring参数
+     * whether to flatten the PageQuery, as querystring parameter.
      *
      * @see #Key$flatPagequery
      */

@@ -18,6 +18,9 @@ import pro.fessional.mirana.text.StringTemplate;
 public class MessageResponse extends SimpleResponse {
     public static final String MessageToken = "{message}";
 
+    /**
+     * response this if there are message, otherwise response responseBody
+     */
     @NotNull
     protected String messageBody = "";
 

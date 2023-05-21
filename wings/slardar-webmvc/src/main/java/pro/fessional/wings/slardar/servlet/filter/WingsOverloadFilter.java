@@ -148,45 +148,49 @@ public class WingsOverloadFilter implements OrderedFilter {
     @Data
     public static class Config {
         /**
-         * 日志的记录间隔（毫秒）
+         * Logging interval in millis.
          */
         private long logInterval = 3000;
 
         /**
-         * 过载时，默认http status code
+         * http status of response when overload
          */
         private int fallbackCode = 200;
         /**
-         * 过载时，默认http body 内容
+         * body of response when overload
          */
         private String fallbackBody = "";
 
         /**
-         * 注意，共享ip的容易误判
-         * 处理中的的最大请求数量，`<0`表示无限制；
-         * `>0`表示用户根据压力测试结果推算的值。
-         * `0`表示自动调整，初始值为 cpu核心数*300
+         * <pre>
+         * fast request capacity, note that shared IP's can be easily misjudged.
+         * `<0` - unlimited, max number of requests to process
+         * `>0` - user defined value based on stress test results
+         * `0` - auto-tuning, initial value is cpu cores x 300
+         * </pre>
          */
         private int requestCapacity = 9000;
         /**
-         * 在`interval`毫秒内，同ip的处理中的请求不能超过`calmdown`个。`<=0`表示无限制
+         * within `interval` milliseconds, no more than `calmdown` requests
+         * can be processed for the same ip. `<=0` means no limit.
          */
         private long requestInterval = 1000;
         /**
-         * 在`interval`毫秒内，同ip的处理中的请求不能超过`calmdown`个。`<=0`表示无限制
+         * within `interval` milliseconds, no more than `calmdown` requests
+         * can be processed for the same ip. `<=0` means no limit.
          */
         private int requestCalmdown = 50;
         /**
-         * 请求ip白名单，分号分割，前部匹配 127. 192.
+         * request ip whitelist, match by start-with
          */
         private Map<String, String> requestPermit = Collections.emptyMap();
 
         /**
-         * 满响应（毫秒数），超过时，记录WARN日志，小于0表示关闭
+         * slow response in millis, if exceeded, log WARN, `<0` means disable
          */
         private long responseWarnSlow = 5000;
         /**
-         * 每多少个请求记录一次INFO日志，小于0表示关闭
+         * log INFO once for each number of requests, `<0` means disable
          */
         private long responseInfoStat = 1000;
     }

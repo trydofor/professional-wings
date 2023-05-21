@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * In json and bind, more relaxed date, time and timezone formats are supported.
+ *
  * @author trydofor
  * @see #Key
  * @since 2021-02-14
@@ -63,15 +65,15 @@ public class SlardarDatetimeProp {
     @Data
     public static class Df {
         /**
-         * 是否支持自动转换时区
+         * whether to auto switch timezones
          */
         private boolean auto = false;
         /**
-         * 格式化输出的格式
+         * output format
          */
         private String format;
         /**
-         * 解析时支持的格式
+         * input format of parsing
          */
         private List<String> parser = Collections.emptyList();
 

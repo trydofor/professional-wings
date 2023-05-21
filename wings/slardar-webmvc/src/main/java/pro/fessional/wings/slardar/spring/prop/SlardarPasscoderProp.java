@@ -17,7 +17,8 @@ public class SlardarPasscoderProp {
     public static final String Key = "wings.slardar.passcoder";
 
     /**
-     * 默认加密算法  never|noop|bcrypt|pbkdf2|scrypt|argon2
+     * default password encoder id.
+     * support never|noop|bcrypt|pbkdf2|scrypt|argon2
      *
      * @see #Key$passEncoder
      */
@@ -25,16 +26,18 @@ public class SlardarPasscoderProp {
     public static final String Key$passEncoder = Key + ".pass-encoder";
 
     /**
-     * 默认解密算法  never|noop|bcrypt|pbkdf2|scrypt|argon2
+     * default password decoder id.
+     * support never|noop|bcrypt|pbkdf2|scrypt|argon2
+     * setDefaultPasswordEncoderForMatches, If id does not match, use the default decoder.
      *
      * @see #Key$passDecoder
      */
-    private String passDecoder = "noop";
+    private String passDecoder = "never";
     public static final String Key$passDecoder = Key + ".pass-decoder";
 
 
     /**
-     * 默认加盐算法 sha256|sha1|md5
+     *  default salting algorithm. support sha256|sha1|md5
      *
      * @see #Key$saltEncoder
      */
@@ -42,7 +45,7 @@ public class SlardarPasscoderProp {
     public static final String Key$saltEncoder = Key + ".salt-encoder";
 
     /**
-     * BasicPasswordEncoder 时间戳偏差秒数，正数
+     * The max seconds of timestamp deviation of BasicPasswordEncoder.
      *
      * @see #Key$timeDeviation
      */

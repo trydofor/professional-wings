@@ -81,42 +81,48 @@ public class JvmMetric implements WarnMetric {
         public static final String Key = "wings.slardar.monitor.jvm";
 
         /**
-         * 系统Cpu load 按核数折算成整个系统的百分比，范围[0，100]
+         * alarm threshold, system Cpu Load with percentage to
+         * the entire system with all cores, range `[0, 100]`
          */
         private int systemCent = 90;
         public static final String Key$systemCent = Key + ".system-cent";
 
         /**
-         * 系统Cpu load 未折算，范围[0，100*核数]
+         * System Cpu Load without percentage, range `[0, 100*cores]`
          */
         private int systemLoad = -1;
         public static final String Key$systemLoad = Key + ".system-load";
 
         /**
-         * 进程Cpu load 按核数折算成整个系统的百分比，范围[0，100]
+         * process system Cpu Load with percentage to
+         * the entire system with all cores, range `[0, 100]`
          */
         private int processCent = -1;
         public static final String Key$processCent = Key + ".process-cent";
 
         /**
-         * 进程Cpu load 未折算，范围[0，100*核数]
+         * process Cpu Load without percentage, range `[0, 100*cores]`
          */
         private int processLoad = 150;
         public static final String Key$processLoad = Key + ".process-load";
 
         /**
-         * 进程Mem load，范围[0,100]
+         * process Mem Load, range `[0,100]`
          */
         private int memoryLoad = 90;
         public static final String Key$memoryLoad = Key + ".memory-load";
 
         /**
-         * jvm内线程总数
+         * total threads in jvm.
+         * formula: threads = `Available Cores` / (1 - `Blocking Coefficient`),
+         * `Blocking Coefficient` = Blocking time / (blocking time + calculation time)
          */
         private int threadCount = -1;
         public static final String Key$threadCount = Key + ".thread-count";
 
         /**
+         * total jvm threads divided by total cores
+         *
          * @see #Key$threadLoad
          */
         private int threadLoad = -1;

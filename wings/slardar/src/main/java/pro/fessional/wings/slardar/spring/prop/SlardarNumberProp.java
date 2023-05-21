@@ -11,7 +11,8 @@ import java.text.DecimalFormatSymbols;
 import static pro.fessional.wings.slardar.jackson.FormatNumberSerializer.Digital;
 
 /**
- * 可定制Number的精度和格式
+ * Customizable precision and format of Number, support JsonFormat pattern.
+ * Must use BigDecimal instead of Float and Double to avoid precision loss.
  *
  * @author trydofor
  * @see #Key
@@ -24,7 +25,9 @@ public class SlardarNumberProp {
     public static final String Key = "wings.slardar.number";
 
     /**
-     * Integer,Long 类型
+     * format of Integer, Long. `empty` means disable.
+     * The thousandth separator uses `,`, which can be replaced to other
+     * at runtime according to the separator setting.
      */
     private Nf integer = new Nf();
 
@@ -41,20 +44,32 @@ public class SlardarNumberProp {
     @Data
     public static class Nf {
         /*
-         * 千分位用`,`占位，在separator替换，空表示无效
+         * format of Integer, Long. `empty` means disable.
+         * The thousandth separator uses `,`, which can be replaced to other
+         * at runtime according to the separator setting.
          */
         private DecimalFormat format = null;
         /*
-         * 舍入模式，默认RoundingMode.FLOOR
+         * RoundingMode.FLOOR
          */
         private RoundingMode round = null;
         /*
-         * 当Shape==ANY时，整数位分隔符，如千分位，可替换format中的`,`
+         * When Shape==ANY, integer separator, eg. thousandths.
          */
         private String separator = ",";
 
         /**
-         * 是否忽略WRITE_NUMBERS_AS_STRINGS，强制写number，需要注意format
+         * <pre>
+         * whether the value is output as a string or a number in js
+         *
+         * `auto` - auto-match, number below 52bit, string above
+         * `true` - force number, ignore WRITE_NUMBERS_AS_STRINGS
+         * `false` - force string, avoid loss of precision.
+         *
+         * Whether to ignore WRITE_NUMBERS_AS_STRINGS, force to write number, need to pay attention to the
+         * format compatibility. For example, using bigint in js and setting is auto, the boundary (inclusive)
+         * will automatically switch between number and string.
+         * </pre>
          */
         private Digital digital = Digital.False;
 

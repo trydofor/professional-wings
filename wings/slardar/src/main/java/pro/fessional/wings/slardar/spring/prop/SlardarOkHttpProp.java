@@ -17,7 +17,7 @@ public class SlardarOkHttpProp {
     public static final String Key = "wings.slardar.okhttp";
 
     /**
-     * 链接超时秒数
+     * connect timeout in seconds.
      *
      * @see #Key$timeoutConn
      */
@@ -25,7 +25,7 @@ public class SlardarOkHttpProp {
     public static final String Key$timeoutConn = Key + ".timeout-conn";
 
     /**
-     * 读取超时秒数
+     * read timeout in seconds.
      *
      * @see #Key$timeoutRead
      */
@@ -33,7 +33,7 @@ public class SlardarOkHttpProp {
     public static final String Key$timeoutRead = Key + ".timeout-read";
 
     /**
-     * 写入超时秒数
+     * write timeout in seconds.
      *
      * @see #Key$timeoutWrite
      */
@@ -41,7 +41,7 @@ public class SlardarOkHttpProp {
     public static final String Key$timeoutWrite = Key + ".timeout-write";
 
     /**
-     * ping的间隔秒数，0为关闭
+     * ping interval in seconds, `0` means disable
      *
      * @see #Key$pingInterval
      */
@@ -49,7 +49,7 @@ public class SlardarOkHttpProp {
     public static final String Key$pingInterval = Key + ".ping-interval";
 
     /**
-     * 缓存大小，0表示不缓存
+     * cache size in `Mb`, `0` means disable
      *
      * @see #Key$cacheMegabyte
      */
@@ -57,7 +57,7 @@ public class SlardarOkHttpProp {
     public static final String Key$cacheMegabyte = Key + ".cache-megabyte";
 
     /**
-     * 缓存目录，默认在temp下创建 `wings-okhttp-cache`
+     * Cache directory, created under temp by default, `wings-okhttp-cache`
      *
      * @see #Key$cacheDirectory
      */
@@ -65,7 +65,7 @@ public class SlardarOkHttpProp {
     public static final String Key$cacheDirectory = Key + ".cache-directory";
 
     /**
-     * 是否跟着跳转
+     * whether to follow the https redirect.
      *
      * @see #Key$followRedirectSsl
      */
@@ -73,7 +73,7 @@ public class SlardarOkHttpProp {
     public static final String Key$followRedirectSsl = Key + ".follow-redirect-ssl";
 
     /**
-     * 是否跟着跳转
+     * whether to follow the http redirect.
      *
      * @see #Key$followRedirect
      */
@@ -81,7 +81,7 @@ public class SlardarOkHttpProp {
     public static final String Key$followRedirect = Key + ".follow-redirect";
 
     /**
-     * conn失败是否重试
+     * whether to retry if connect failed.
      *
      * @see #Key$retryFailure
      */
@@ -89,7 +89,7 @@ public class SlardarOkHttpProp {
     public static final String Key$retryFailure = Key + ".retry-failure";
 
     /**
-     * 最大空闲conn数量
+     * max count of idle connection.
      *
      * @see #Key$maxIdle
      */
@@ -97,7 +97,7 @@ public class SlardarOkHttpProp {
     public static final String Key$maxIdle = Key + ".max-idle";
 
     /**
-     * conn keep-alive秒数
+     * keep-alive in seconds.
      *
      * @see #Key$keepAlive
      */
@@ -105,7 +105,7 @@ public class SlardarOkHttpProp {
     public static final String Key$keepAlive = Key + ".keep-alive";
 
     /**
-     * trust all ssl
+     * whether to trust all ssl certs.
      *
      * @see #Key$sslTrustAll
      */
@@ -113,7 +113,7 @@ public class SlardarOkHttpProp {
     public static final String Key$sslTrustAll = Key + ".ssl-trust-all";
 
     /**
-     * 是否以host为单位保留cookie
+     * whether to keep cookies by host.
      *
      * @see #Key$hostCookie
      */
@@ -121,7 +121,7 @@ public class SlardarOkHttpProp {
     public static final String Key$hostCookie = Key + ".host-cookie";
 
     /**
-     * 是否在follow-redirect时，暂时不follow
+     * whether to temporarily do nothing when follow-redirect.
      *
      * @see #Key$redirectNop
      */

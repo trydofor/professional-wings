@@ -8,6 +8,8 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 
 /**
+ * Get the language/timezone by key from param, cookie and header respectively
+ *
  * @author trydofor
  * @see #Key
  * @since 2021-02-14
@@ -19,42 +21,48 @@ public class SlardarLocaleProp {
     public static final String Key = "wings.slardar.locale";
 
     /**
-     * 获得locale,language参数的param key
+     * Get the language by key from param
+     *
      * @see #Key$localeParam
      */
     private List<String> localeParam = emptyList();
     public static final String Key$localeParam = Key + ".locale-param";
 
     /**
-     * 获得locale,language参数的cookie name
+     * Get the language by key from cookie
+     *
      * @see #Key$localeCookie
      */
     private List<String> localeCookie = emptyList();
     public static final String Key$localeCookie = Key + ".locale-cookie";
 
     /**
-     * 获得locale,language参数的header name
+     * Get the language by key from header
+     *
      * @see #Key$localeHeader
      */
     private List<String> localeHeader = emptyList();
     public static final String Key$localeHeader = Key + ".locale-header";
 
     /**
-     * 获得ltimezone, zoneid，获得param key
+     * Get the timezone by key from param
+     *
      * @see #Key$zoneidParam
      */
     private List<String> zoneidParam = emptyList();
     public static final String Key$zoneidParam = Key + ".zoneid-param";
 
     /**
-     * 获得ltimezone, zoneid的cookie name
+     * Get the timezone by key from cookie
+     *
      * @see #Key$zoneidCookie
      */
     private List<String> zoneidCookie = emptyList();
     public static final String Key$zoneidCookie = Key + ".zoneid-cookie";
 
     /**
-     * 获得ltimezone, zoneid的header name
+     * Get the timezone by key from header
+     *
      * @see #Key$zoneidHeader
      */
     private List<String> zoneidHeader = emptyList();

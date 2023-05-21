@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 可定制Number的精度和格式
+ * Setting of app builtin simple monitoring, `-1` in the threshold value means ignore.
  *
  * @author trydofor
  * @see #Key
@@ -23,16 +23,7 @@ public class SlardarMonitorProp {
     public static final String Key = "wings.slardar.monitor";
 
     /**
-     * monitor 自身设置
-     *
-     * @see #Key$conf
-     */
-
-    public static final String Key$conf = Key + ".conf";
-    private Map<String, String> conf = new HashMap<>();
-
-    /**
-     * monitor自身的cron，默认每10分钟启动一次
+     * Monitor its own cron, `-` means stop this cron, default 10 minutes.
      *
      * @see #Key$cron
      */
@@ -40,7 +31,7 @@ public class SlardarMonitorProp {
     private String cron = "0 */10 * * * ?";
 
     /**
-     * 是否对jvm的启动和停止增加hook通知
+     * whether to send notice for the start and stop of its own jvm hook
      *
      * @see #Key$hook
      */
@@ -48,7 +39,7 @@ public class SlardarMonitorProp {
     public static final String Key$hook = Key + ".hook";
 
     /**
-     * 日志监控配置
+     * log monitor config
      *
      * @see #Key$log
      */
@@ -56,7 +47,7 @@ public class SlardarMonitorProp {
     private Map<String, LogMetric.Rule> log = new HashMap<>();
 
     /**
-     * 进程监控配置
+     * jvm monitor config
      *
      * @see #Key$jvm
      */
@@ -64,12 +55,17 @@ public class SlardarMonitorProp {
     private JvmMetric.Rule jvm = new JvmMetric.Rule();
 
     /**
+     * alert file viewer
+     *
      * @see #Key$view
      */
     private LogConf view = null;
     public static final String Key$view = LogConf.Key;
 
     /**
+     * use DingTalk bot by default with the key `monitor`.
+     * See wings-dingnotice-79.properties for details
+     *
      * @see #Key$dingNotice
      */
     private String dingNotice = "monitor";

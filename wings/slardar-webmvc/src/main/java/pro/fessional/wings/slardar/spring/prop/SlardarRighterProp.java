@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import pro.fessional.wings.slardar.webmvc.SimpleResponse;
 
 /**
+ * Anti forgery editing, prevent editor privilege upgrade.
  * wings-righter-79.properties
  *
  * @author trydofor
@@ -20,7 +21,7 @@ public class SlardarRighterProp extends SimpleResponse {
     public static final String Key = "wings.slardar.righter";
 
     /**
-     * 埋点header中的key
+     * key in header.
      *
      * @see #Key$header
      */

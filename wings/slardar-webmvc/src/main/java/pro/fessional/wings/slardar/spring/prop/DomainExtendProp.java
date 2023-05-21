@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 构造 prefix+host+url的新路径
+ * Host Extend and URL Override.
+ * wings-domain-extend-79.properties
  *
  * @author trydofor
  * @see #Key
@@ -22,7 +23,7 @@ public class DomainExtendProp {
     public static final String Key = "wings.slardar.domain-extend";
 
     /**
-     * 匹配和未匹配的url缓存size，restfull 慎用
+     * cache size of matched and unmatched url, caution when RESTful
      *
      * @see #Key$cacheSize
      */
@@ -30,7 +31,7 @@ public class DomainExtendProp {
     public static final String Key$cacheSize = Key + ".cache-size";
 
     /**
-     * mapping和resource的URL统一的domain的前缀
+     * the uniform domain prefix of  the mapping and resource Url.
      *
      * @see #Key$prefix
      */
@@ -38,7 +39,7 @@ public class DomainExtendProp {
     public static final String Key$prefix = Key + ".prefix";
 
     /**
-     * host映射关系，FilenameUtils.wildcardMatch
+     * host mapping, FilenameUtils.wildcardMatch, eg. `trydofor`=`*.trydofor.com, trydofor.com`
      *
      * @see #Key$host
      */
@@ -46,7 +47,8 @@ public class DomainExtendProp {
     public static final String Key$host = Key + ".host";
 
     /**
-     * 指定domain url 不自动探测，支持ant风格。
+     * specified domain url that is not automatically detected.
+     * ant match style, eg. `other-url`=`/trydofor/b/c.html`
      *
      * @see #Key$otherUrl
      */

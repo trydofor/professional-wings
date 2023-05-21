@@ -14,9 +14,20 @@ import org.jetbrains.annotations.NotNull;
 @RequiredArgsConstructor
 public class SimpleResponse {
 
+    /**
+     * http-status of response.
+     */
     protected int httpStatus = 0;
+
+    /**
+     * content-type of response.
+     */
     @NotNull
     protected String contentType = "";
+
+    /**
+     * body of response.
+     */
     @NotNull
     protected String responseBody = "";
 
