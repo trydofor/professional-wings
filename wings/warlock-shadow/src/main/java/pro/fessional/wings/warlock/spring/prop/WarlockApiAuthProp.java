@@ -54,7 +54,7 @@ public class WarlockApiAuthProp {
     public static final String Key$digestHeader = Key + ".digest-header";
 
     /**
-     * 超过此大小则不做Digest，默认5MB
+     * no digest over this size, default 5M.
      *
      * @see #Key$digestMax
      */
@@ -62,7 +62,7 @@ public class WarlockApiAuthProp {
     public static final String Key$digestMax = Key + ".digest-max";
 
     /**
-     * 是否一定要签名，可兼容旧api
+     * whether it must be signed, compatible with the old api.
      *
      * @see #Key$mustSignature
      */
@@ -71,7 +71,8 @@ public class WarlockApiAuthProp {
 
 
     /**
-     * 既又文件又有json的时候，以此命名json body作为File提交
+     * if there is both a file and a json,
+     * use this name for the json body and submit it as a File.
      *
      * @see #Key$fileJsonBody
      */
@@ -79,18 +80,24 @@ public class WarlockApiAuthProp {
     public static final String Key$fileJsonBody = Key + ".file-json-body";
 
     /**
+     * response of client error
+     *
      * @see #Key$errorClient
      */
     private MessageResponse errorClient = new MessageResponse();
     public static final String Key$errorClient = Key + ".error-client";
 
     /**
+     * response of signature error
+     *
      * @see #Key$errorSignature
      */
     private MessageResponse errorSignature = new MessageResponse();
     public static final String Key$errorSignature = Key + ".error-signature";
 
     /**
+     * response of unhandled error
+     *
      * @see #Key$errorUnhandled
      */
     private MessageResponse errorUnhandled = new MessageResponse();

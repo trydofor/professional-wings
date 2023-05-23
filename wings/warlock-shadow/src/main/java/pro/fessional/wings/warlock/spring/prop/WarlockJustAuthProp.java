@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Oauth login support, use just-auth.
  * wings-warlock-justauth-77.properties
  *
  * @author trydofor
@@ -41,7 +42,7 @@ public class WarlockJustAuthProp {
     public static final String Key = "wings.warlock.just-auth";
 
     /**
-     * 缓存大小
+     * cache capacity
      *
      * @see #Key$cacheSize
      */
@@ -49,7 +50,7 @@ public class WarlockJustAuthProp {
     public static final String Key$cacheSize = Key + ".cache-size";
 
     /**
-     * ttl秒数
+     * ttl seconds, expireAfterWrite
      *
      * @see #Key$cacheLive
      */
@@ -57,7 +58,11 @@ public class WarlockJustAuthProp {
     public static final String Key$cacheLive = Key + ".cache-live";
 
     /**
-     * 设定安全的state，通过key获取内容，执行重定向(`http`或`/`开头)或回写
+     * default `/login`=`{1}/#{0}{2}`
+     * <p>
+     * Set secure state, get content by key, perform redirects (starting with `http` or `/`) or write-back.
+     * The content supports a placeholder template in `MessageFormat` format, with `{0}` as the key.
+     * If it starts with `http`, then it detects if it is safe-host.
      *
      * @see #Key$safeState
      */
@@ -66,7 +71,7 @@ public class WarlockJustAuthProp {
 
 
     /**
-     * 设定安全的host，通过key获取内容，减少dev时的跨域
+     * Set secure host, reduce cross-domain when dev, can raise `redirect_uri_mismatch` error.
      *
      * @see #Key$safeHost
      */
@@ -74,7 +79,8 @@ public class WarlockJustAuthProp {
     public static final String Key$safeHost = Key + ".safe-host";
 
     /**
-     * 验证类型，同bind auth的key相同
+     * key use `wings.warlock.security.auth-type.*`,
+     * support `{host}`,`{scheme}`,`{authType}`,`{authZone}` variables, according to request.
      *
      * @see WarlockSecurityProp#Key$authType
      * @see #Key$authType
@@ -84,7 +90,7 @@ public class WarlockJustAuthProp {
 
 
     /**
-     * http 相关的配置，可设置请求超时时间和代理配置
+     * if you don't need a proxy, just set proxy-type=DIRECT or host=null.
      *
      * @see WarlockSecurityProp#Key$authType
      * @see #Key$httpConf
@@ -96,19 +102,19 @@ public class WarlockJustAuthProp {
     @Data
     public static class Http {
         /**
-         * 超时时长，单位秒
+         * in seconds, NOT just-auth's millis.
          */
         private int timeout;
         /**
-         * 代理类型
+         * proxy type
          */
         private String proxyType = Proxy.Type.HTTP.name();
         /**
-         * 代理主机
+         * proxy host
          */
         private String proxyHost;
         /**
-         * 代理端口
+         * proxy port
          */
         private int proxyPort;
     }

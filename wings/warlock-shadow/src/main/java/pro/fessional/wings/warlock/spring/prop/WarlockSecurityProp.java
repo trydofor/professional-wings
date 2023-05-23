@@ -22,6 +22,11 @@ import static pro.fessional.mirana.cast.EnumConvertor.str2Enum;
 import static pro.fessional.wings.warlock.enums.autogen.UserStatus.ACTIVE;
 
 /**
+ * The order of config is from loose to strict.
+ * `webIgnore` > `PermitAll` > `Authenticated` > `Authority` > `AnyRequest` at the end.
+ * if value is `-` or `empty`, means ignore this key.
+ * <p>
+ * Spring Security setting.
  * wings-warlock-security-77.properties
  *
  * @author trydofor
@@ -35,13 +40,15 @@ public class WarlockSecurityProp {
     public static final String Key = "wings.warlock.security";
 
     /**
+     * whether to enable WebSecurity.debug
+     *
      * @see #Key$webDebug
      */
     private boolean webDebug = false;
     public static final String Key$webDebug = Key + ".web-debug";
 
     /**
-     * 权限是否使用Role
+     * whether to use Role in AuthX.
      *
      * @see #Key$authorityRole
      */
@@ -49,7 +56,7 @@ public class WarlockSecurityProp {
     public static final String Key$authorityRole = Key + ".authority-role";
 
     /**
-     * 权限是否使用Perm
+     * whether to use Perm in AuthX.
      *
      * @see #Key$authorityPerm
      */
@@ -57,7 +64,7 @@ public class WarlockSecurityProp {
     public static final String Key$authorityPerm = Key + ".authority-perm";
 
     /**
-     * true以servlet的forward进行，否则redirect(302)跳转
+     * true to forward in servlet, otherwise redirect(302)
      *
      * @see #Key$loginForward
      */
@@ -65,7 +72,7 @@ public class WarlockSecurityProp {
     public static final String Key$loginForward = Key + ".login-forward";
 
     /**
-     * 未登录时跳转的页面，需要有controller处理
+     * the redirect page when not login, need to have controller to handle.
      *
      * @see #Key$loginPage
      */
@@ -73,8 +80,8 @@ public class WarlockSecurityProp {
     public static final String Key$loginPage = Key + ".login-page";
 
     /**
-     * 处理登录的Ant格式URL，由filter处理，不需要controller
-     * 支持变量`authType`和`authZone`，可以通过param或path获得（PathPattern）
+     * loginProcessingUrl, the Ant style URL for processing login, handled by filter, no controller required.
+     * Support `authType` and `authZone` variables, which can be obtained via param or path (PathPattern)
      *
      * @see #Key$loginProcUrl
      */
@@ -82,13 +89,15 @@ public class WarlockSecurityProp {
     public static final String Key$loginProcUrl = Key + ".login-proc-url";
 
     /**
+     * Spring is POST only to better follow RESTful, but Oauth has Get.
+     *
      * @see #Key$loginProcMethod
      */
     private Set<String> loginProcMethod = Collections.emptySet();
     public static final String Key$loginProcMethod = Key + ".login-proc-method";
 
     /**
-     * 登出地址，由filter处理，不需要controller
+     * logout url, handled by filter, no controller required.
      *
      * @see #Key$logoutUrl
      */
@@ -96,7 +105,7 @@ public class WarlockSecurityProp {
     public static final String Key$logoutUrl = Key + ".logout-url";
 
     /**
-     * 登录成功后是否重定向
+     * whether to redirect after successful login.
      *
      * @see #Key$loginSuccessRedirect
      */
@@ -104,7 +113,7 @@ public class WarlockSecurityProp {
     public static final String Key$loginSuccessRedirect = Key + ".login-success-redirect";
 
     /**
-     * 登录成功的重定向参数
+     * redirect parameters if redirect after successful login.
      *
      * @see #Key$loginSuccessRedirectParam
      */
@@ -112,7 +121,7 @@ public class WarlockSecurityProp {
     public static final String Key$loginSuccessRedirectParam = Key + ".login-success-redirect-param";
 
     /**
-     * 登录成功的重定向默认地址
+     * default address if redirect after successful login.
      *
      * @see #Key$loginSuccessRedirectDefault
      */
@@ -120,7 +129,7 @@ public class WarlockSecurityProp {
     public static final String Key$loginSuccessRedirectDefault = Key + ".login-success-redirect-default";
 
     /**
-     * 登录成功返回的body
+     * the response body if no redirect after successful login.
      *
      * @see #Key$loginSuccessBody
      */
@@ -128,7 +137,7 @@ public class WarlockSecurityProp {
     public static final String Key$loginSuccessBody = Key + ".login-success-body";
 
     /**
-     * 登录失败返回的body
+     * the response body if login fail.
      *
      * @see #Key$loginFailureBody
      */
@@ -136,9 +145,7 @@ public class WarlockSecurityProp {
     public static final String Key$loginFailureBody = Key + ".login-failure-body";
 
     /**
-     * 登出成功返回的body
-     * <p>
-     * logout-success-body
+     * the response body after successful logout, no handler is injected when empty.
      *
      * @see #Key$logoutSuccessBody
      */
@@ -146,7 +153,7 @@ public class WarlockSecurityProp {
     public static final String Key$logoutSuccessBody = Key + ".logout-success-body";
 
     /**
-     * 同时登陆的session数
+     * the response body after successful logout, no handler is injected when empty.
      *
      * @see #Key$sessionMaximum
      */
@@ -154,7 +161,7 @@ public class WarlockSecurityProp {
     public static final String Key$sessionMaximum = Key + ".session-maximum";
 
     /**
-     * 过期时返回的内容
+     * the response body when session expired.
      *
      * @see #Key$sessionExpiredBody
      */
@@ -162,7 +169,7 @@ public class WarlockSecurityProp {
     public static final String Key$sessionExpiredBody = Key + ".session-expired-body";
 
     /**
-     * usernameParameter 名字
+     * username Parameter
      *
      * @see #Key$usernamePara
      */
@@ -170,7 +177,7 @@ public class WarlockSecurityProp {
     public static final String Key$usernamePara = Key + ".username-para";
 
     /**
-     * passwordParameter 名字
+     * password Parameter
      *
      * @see #Key$passwordPara
      */
@@ -178,35 +185,15 @@ public class WarlockSecurityProp {
     public static final String Key$passwordPara = Key + ".password-para";
 
     /**
+     * GrantedAuthorityDefaults, suggest keeping the same with spring, do not edit.
+     *
      * @see #Key$rolePrefix
      */
     private String rolePrefix = "ROLE_";
     public static final String Key$rolePrefix = Key + ".role-prefix";
 
     /**
-     * @see #Key$authority
-     */
-    private Map<String, Set<String>> authority = Collections.emptyMap();
-    public static final String Key$authority = Key + ".authority";
-
-    /**
-     * 需要权限访问的路径，antMatcher，逗号分隔，斜杠换行
-     *
-     * @see #Key$authenticated
-     */
-    private Map<String, String> authenticated = Collections.emptyMap();
-    public static final String Key$authenticated = Key + ".authenticated";
-
-    /**
-     * 都允许访问的路径，antMatcher，逗号分隔，斜杠换行
-     *
-     * @see #Key$permitAll
-     */
-    private Map<String, String> permitAll = Collections.emptyMap();
-    public static final String Key$permitAll = Key + ".permit-all";
-
-    /**
-     * 忽略项，无SecurityFilter流程及功能，如静态资源。
+     * ①ignored items, antMatcher, no need of SecurityFilter, such as static resources.
      *
      * @see #Key$webIgnore
      */
@@ -214,8 +201,37 @@ public class WarlockSecurityProp {
     public static final String Key$webIgnore = Key + ".web-ignore";
 
     /**
-     * 空为忽略，支持【permitAll|authenticated|anonymous|fullyAuthenticated】
-     * 任意非空，非以上字符串，任务是Authority，逗号或空白分割。
+     * ②allow all, `Map<String, String>`, antMatcher.
+     *
+     * @see #Key$permitAll
+     */
+    private Map<String, String> permitAll = Collections.emptyMap();
+    public static final String Key$permitAll = Key + ".permit-all";
+
+    /**
+     * ③authed only, antMatcher.
+     *
+     * @see #Key$authenticated
+     */
+    private Map<String, String> authenticated = Collections.emptyMap();
+    public static final String Key$authenticated = Key + ".authenticated";
+
+    /**
+     * ④has authority, antMatcher.
+     * merge authority by URL grouping, and finally set the URL in reverse ASCII order,
+     * i.e., the English number comes before the `*`, and the loose rule comes after.
+     *
+     * @see #Key$authority
+     */
+    private Map<String, Set<String>> authority = Collections.emptyMap();
+    public static final String Key$authority = Key + ".authority";
+
+    /**
+     * <pre>
+     * ⑤defaults, `String`, support the followings.
+     * - `permitAll`|`authenticated`|`anonymous`|`fullyAuthenticated`
+     * - any non-empty, non-above string, considered as `Authority`, use `comma` or `blank` to separate multiple ones.
+     * </pre>
      *
      * @see #Key$anyRequest
      */
@@ -223,15 +239,8 @@ public class WarlockSecurityProp {
     public static final String Key$anyRequest = Key + ".any-request";
 
     /**
-     * 支持的验证类型， enum全路径，一对一，否则反向解析有问题
-     *
-     * @see #Key$authType
-     */
-    private Map<String, String> authType = new HashMap<>();
-    public static final String Key$authType = Key + ".auth-type";
-
-    /**
-     * 默认auth-type
+     * Supported validation types, enum full path, one-to-one, otherwise reverse parsing problem;
+     * no `-`, `default` is a special value used when there is no match.
      *
      * @see #Key$authTypeDefault
      */
@@ -239,7 +248,16 @@ public class WarlockSecurityProp {
     public static final String Key$authTypeDefault = Key + ".auth-type-default";
 
     /**
-     * 设置authZone对应的权限，若非全部满足，则不可登录，以用户名密码错误返回
+     * login auth-type and enum mapping, must be one-to-one.
+     *
+     * @see #Key$authType
+     */
+    private Map<String, String> authType = new HashMap<>();
+    public static final String Key$authType = Key + ".auth-type";
+
+    /**
+     * Map permissions to authZone, if you have one of them, you can login,
+     * otherwise, it will fail with wrong username and password.
      *
      * @see #Key$zonePerm
      */
@@ -247,8 +265,9 @@ public class WarlockSecurityProp {
     public static final String Key$zonePerm = Key + ".zone-perm";
 
     /**
-     * 设置spring.application.name对应的权限，若非全部满足，则不可登录，以用户名密码错误返回
-     * 支持AntPath，如`wings-*`，合并所有匹配的权限设置项，wings默认程序为`wings-default`
+     * Map permissions to spring.application.name, if you have one of them, you can login,
+     * otherwise, it will fail with wrong username and password. Support AntPath, eg. `wings-*`,
+     * merge all matching permissions, wings default app is `wings-default`.
      *
      * @see #Key$appPerm
      */
@@ -256,7 +275,7 @@ public class WarlockSecurityProp {
     public static final String Key$appPerm = Key + ".app-perm";
 
     /**
-     * 支持Nonce的验证类型
+     * which auth-type support Nonce auth.
      *
      * @see #Key$nonceAuthType
      */
@@ -264,7 +283,7 @@ public class WarlockSecurityProp {
     public static final String Key$nonceAuthType = Key + ".nonce-auth-type";
 
     /**
-     * 默认的cache-manager bean name，同wings.slardar.cache.primary
+     * bean name of cache-manager, same as `wings.slardar.cache.primary`.
      *
      * @see #Key$nonceCacheManager
      * @see pro.fessional.wings.slardar.cache.WingsCache.Manager
@@ -273,7 +292,7 @@ public class WarlockSecurityProp {
     public static final String Key$nonceCacheManager = Key + ".nonce-cache-manager";
 
     /**
-     * 默认使用的缓存leve
+     * cache level, see `wings.slardar.cache.level.`
      *
      * @see #Key$nonceCacheLevel
      */
@@ -282,7 +301,7 @@ public class WarlockSecurityProp {
 
 
     /**
-     * 支持自动注册用户的验证类型
+     * which auth-type support to auto register new user. eg. `github,weibo`
      *
      * @see #Key$autoregAuthType
      */
@@ -290,7 +309,7 @@ public class WarlockSecurityProp {
     public static final String Key$autoregAuthType = Key + ".autoreg-auth-type";
 
     /**
-     * 最大连续失败次数，到达后锁账户
+     * max mumber of consecutive failures for auto-registering users, and locking the account when reached.
      *
      * @see #Key$autoregMaxFailed
      */
@@ -298,7 +317,7 @@ public class WarlockSecurityProp {
     public static final String Key$autoregMaxFailed = Key + ".autoreg-max-failed";
 
     /**
-     * 创建用户时，默认凭证过期时间
+     * credential expiration time for auto-registering users, default 3652 days (10 years)
      *
      * @see #Key$autoregExpired
      */
@@ -307,9 +326,12 @@ public class WarlockSecurityProp {
 
 
     /**
-     * 内存用户，key用户说明，重复时覆盖，建议为`username`+[`/`+`auth-type`]
-     * auth-type=""或null时，为匹配全部auth-type，而"null"为Null类型
-     * 其他设置，参考WarlockAuthnService.Details 的类型及默认值
+     * <pre>
+     * Configure memory user, usually used for special user login.
+     * - key is the description, override if duplicate, suggest `username`+(`/`+`auth-type`)?
+     * - auth-type=`∅`, to match all auth-type.
+     * - For other settings, see WarlockAuthnService.Details and its defaults.
+     * </pre>
      *
      * @see #Key$memUser
      */
@@ -317,7 +339,8 @@ public class WarlockSecurityProp {
     public static final String Key$memUser = Key + ".mem-user";
 
     /**
-     * 内存用户权限，key授权说明，重复时覆盖，建议以类型和用途
+     * Memory user permissions, key is the description,
+     * override if duplicate, suggest naming by type and usage.
      *
      * @see #Key$memAuth
      */
