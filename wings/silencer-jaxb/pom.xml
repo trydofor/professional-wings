@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>pro.fessional</groupId>
+        <artifactId>wings</artifactId>
+        <version>${revision}.${changelist}</version>
+    </parent>
+
+    <groupId>pro.fessional.wings</groupId>
+    <artifactId>silencer-jaxb</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Wings::Silencer::Jaxb</name>
+    <description>Jakarta Xml Binding</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>pro.fessional</groupId>
+            <artifactId>mirana</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+        </dependency>
+    </dependencies>
+</project>

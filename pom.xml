@@ -28,9 +28,6 @@
         <spring-boot.version>${revision}</spring-boot.version>
         <wings.version>${revision}.${changelist}</wings.version>
         <!-- project -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <!-- override spring boot default -->
         <java.version>17</java.version>
         <!-- <kotlin.version>1.7.22</kotlin.version> -->
         <!-- mvn boot -->
@@ -48,7 +45,7 @@
         <guava.version>31.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
         <commons-io.version>2.12.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
         <!-- wings project -->
-        <mirana.version>2.4.4-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
+        <mirana.version>2.4.5-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <meepo.version>1.4.1-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <shardingsphere.version>5.3.2</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
@@ -138,6 +135,11 @@
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
                 <artifactId>silencer-curse</artifactId>
+                <version>${wings.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>pro.fessional.wings</groupId>
+                <artifactId>silencer-jaxb</artifactId>
                 <version>${wings.version}</version>
             </dependency>
             <dependency>

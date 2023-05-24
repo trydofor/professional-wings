@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
-import pro.fessional.mirana.jaxb.StringMapXmlWriter;
+import pro.fessional.wings.silencer.jaxb.StringMapXmlWriter;
 
 import java.io.IOException;
 import java.util.Map;
