@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2023-05-12
+THIS_VERSION=2023-05-25
 
 cat <<EOF
 #################################################
@@ -218,6 +218,7 @@ case "$1" in
         git pull
         echo -e "\033[37;42;1m ==== DONE $WORK_DIR ==== \033[0m"
         git status
+        git log --pretty=format:'%H - %an, %ad %d : %s' --graph -10
         ;;
     pack)
         echo -e "\033[37;42;1m ==== BUILD $WORK_DIR ==== \033[0m"
