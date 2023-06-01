@@ -62,7 +62,7 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
             log.debug("loading auth-user, username={}, auth-type={}, class={}", username, authType, this.getClass());
         }
 
-        final DefaultWingsUserDetails wud = new DefaultWingsUserDetails();
+        final DefaultWingsUserDetails wud = newUserDetails(dt);
         warlockAuthnService.auth(wud, dt);
         warlockAuthzService.auth(wud);
         if (!wud.isPreAuthed()) {
@@ -71,6 +71,10 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
         }
 
         return wud;
+    }
+
+    protected DefaultWingsUserDetails newUserDetails(@NotNull Details dt){
+        return new DefaultWingsUserDetails();
     }
 
     protected Details autoreg(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {
