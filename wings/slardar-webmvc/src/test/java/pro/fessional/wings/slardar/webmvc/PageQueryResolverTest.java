@@ -1,5 +1,7 @@
 package pro.fessional.wings.slardar.webmvc;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +9,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.client.RestTemplate;
 import pro.fessional.mirana.page.PageQuery;
+import pro.fessional.wings.slardar.controller.TestPageQueryController;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author trydofor
@@ -91,5 +93,33 @@ public class PageQueryResolverTest {
         assertEquals(2, pq.getPage());
         assertEquals(22, pq.getSize());
         assertEquals(sort, pq.getSort());
+    }
+
+    @Test
+    public void testPageBody3() {
+        TestPageQueryController.Ins ins = new TestPageQueryController.Ins();
+        ins.setPage(2);
+        ins.setSize(22);
+        ins.setName("name");
+        ins.setSort("k1,-k2");
+        TestPageQueryController.Ins pq = restTemplate.postForObject(host + "/test/page-request-3.html",ins, TestPageQueryController.Ins.class);
+        assertEquals(pq, ins);
+    }
+
+    @Data
+    public static class Is{
+        private String name;
+    }
+    @Test
+    public void testPageBody4() {
+        Is is = new Is();
+        is.setName("name");
+
+        TestPageQueryController.Ins pq = restTemplate.postForObject(host + "/test/page-request-4.html", is, TestPageQueryController.Ins.class);
+        TestPageQueryController.Ins ins = new TestPageQueryController.Ins();
+        ins.setName("name");
+        ins.setPage(2);
+        ins.setSize(22);
+        assertNotEquals(pq, ins);
     }
 }

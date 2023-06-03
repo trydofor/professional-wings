@@ -1,7 +1,10 @@
 package pro.fessional.wings.slardar.controller;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pro.fessional.mirana.page.PageDefault;
@@ -38,4 +41,23 @@ public class TestPageQueryController {
         return page;
     }
 
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class Ins extends PageQuery{
+        private String name;
+    }
+
+    @RequestMapping({"/test/page-request-3.html"})
+    @ResponseBody
+    // 不能享有 别名加持，仅Jackson转换
+    public Ins pageQuery3(@RequestBody Ins ins) {
+        return ins;
+    }
+
+    @RequestMapping({"/test/page-request-4.html"})
+    @ResponseBody
+    // MessageConvertor无法处理 @PageDefault
+    public Ins pageQuery4(@RequestBody @PageDefault(size = 22, page = 2) Ins ins) {
+        return ins;
+    }
 }
