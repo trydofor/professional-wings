@@ -17,10 +17,9 @@ public class MessageExceptionResolver<T extends Exception> extends WingsExceptio
     @Override
     protected SimpleResponse resolve(T ce) {
         log.error("uncaught exception", ce);
-        final String msg = resolveMessage(ce);
-        final String txt = resolveBody(msg);
         final int sts = resolveStatus(ce);
         final String ctt = resolveContentType(ce);
+        final String txt = resolveBody(ce);
         return new SimpleResponse(sts, ctt, txt);
     }
 
@@ -32,7 +31,8 @@ public class MessageExceptionResolver<T extends Exception> extends WingsExceptio
         return defaultResponse.getContentType();
     }
 
-    protected String resolveBody(String msg) {
+    protected String resolveBody(T ce) {
+        final String msg = resolveMessage(ce);
         return defaultResponse.responseBody(msg);
     }
 

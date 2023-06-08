@@ -27,16 +27,32 @@ public class CodeExceptionHandlerTest {
     @Test
     public void testCodeExceptionEn() throws Exception {
         mockMvc.perform(get("/test/code-exception.json")
-                .header("Accept-Language", "en_US"))
-               .andDo(print())
-               .andExpect(content().string("test should NOT empty"));
+                        .header("Accept-Language", "en_US"))
+                .andDo(print())
+                .andExpect(content().json("{\"success\":false,\"code\":\"error.common.assert.empty\",\"message\":\"test should NOT empty\"}"));
     }
 
     @Test
     public void testCodeExceptionCn() throws Exception {
         mockMvc.perform(get("/test/code-exception.json")
-                .header("Accept-Language", "zh_CN"))
-               .andDo(print())
-               .andExpect(content().string("test不能为空"));
+                        .header("Accept-Language", "zh_CN"))
+                .andDo(print())
+                .andExpect(content().json("{\"success\":false,\"code\":\"error.common.assert.empty\",\"message\":\"test不能为空\"}"));
+    }
+
+    @Test
+    public void testMessageExceptionEn() throws Exception {
+        mockMvc.perform(get("/test/message-exception.json")
+                        .header("Accept-Language", "en_US"))
+                .andDo(print())
+                .andExpect(content().string("test should NOT empty"));
+    }
+
+    @Test
+    public void testMessageExceptionCn() throws Exception {
+        mockMvc.perform(get("/test/message-exception.json")
+                        .header("Accept-Language", "zh_CN"))
+                .andDo(print())
+                .andExpect(content().string("test不能为空"));
     }
 }
