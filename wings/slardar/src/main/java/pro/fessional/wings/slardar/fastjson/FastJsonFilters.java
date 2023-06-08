@@ -2,12 +2,13 @@ package pro.fessional.wings.slardar.fastjson;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.alibaba.fastjson2.filter.ContextValueFilter;
+import com.alibaba.fastjson2.filter.ValueFilter;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 /**
- * https://github.com/alibaba/fastjson2/blob/0c2d4a8e83879e990a990ffaf57bf2e5a8d6f723/docs/fastjson_1_upgrade_cn.md
+ * <a href="https://github.com/alibaba/fastjson2/blob/0c2d4a8e83879e990a990ffaf57bf2e5a8d6f723/docs/fastjson_1_upgrade_cn.md">fastjson_1_upgrade_cn</a>
  *
  * @author trydofor
  * @since 2022-10-25
@@ -19,7 +20,7 @@ public class FastJsonFilters {
      * 注意：序列化时支持JSONField.format作为DecimalFormat。
      * 但是发序列化时，不支持format
      */
-    public static final ContextValueFilter NumberAsString = (context, object, name, value) -> {
+    public static final ValueFilter NumberAsString = (object, name, value) -> {
         if (value instanceof BigDecimal) {
             return ((BigDecimal) value).toPlainString();
         }
@@ -33,7 +34,7 @@ public class FastJsonFilters {
     /**
      * Number类型全以String输出。
      * 注意：序列化时支持JSONField.format作为DecimalFormat。
-     * 但是发序列化时，不支持format
+     * 但是反序列化时，不支持format
      */
     public static final ContextValueFilter NumberFormatString = (context, object, name, value) -> {
         final JSONField anno = context.getAnnotation(JSONField.class);
