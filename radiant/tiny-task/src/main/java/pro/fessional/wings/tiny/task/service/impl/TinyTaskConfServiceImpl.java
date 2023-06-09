@@ -16,7 +16,7 @@ import org.springframework.core.MethodIntrospector;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ClassUtils;
-import pro.fessional.mirana.best.ArgsAssert;
+import pro.fessional.mirana.best.AssertArgs;
 import pro.fessional.mirana.cast.BoxedCastUtil;
 import pro.fessional.mirana.data.Diff;
 import pro.fessional.wings.faceless.service.journal.JournalService;
@@ -37,11 +37,7 @@ import pro.fessional.wings.tiny.task.service.TinyTaskConfService;
 import pro.fessional.wings.tiny.task.spring.prop.TinyTaskDefineProp;
 
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -163,7 +159,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         }
 
         final TinyTasker anno = referAnno(r2.value2());
-        ArgsAssert.notNull(anno, "database without TinyTasker, id={}", id);
+        AssertArgs.notNull(anno, "database without TinyTasker, id={}", id);
 
         return property(r2.value1(), anno);
     }
@@ -172,10 +168,10 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
     @NotNull
     public LinkedHashMap<String, Diff.V<?>> diffProp(long id) {
         final WinTaskDefine po = fetchProp(WinTaskDefine.class, t -> t.Id.eq(id));
-        ArgsAssert.notNull(po, "database tasker is null, id={}", id);
+        AssertArgs.notNull(po, "database tasker is null, id={}", id);
 
         final TinyTasker anno = referAnno(po.getTaskerBean());
-        ArgsAssert.notNull(anno, "database without TinyTasker, id={}", id);
+        AssertArgs.notNull(anno, "database without TinyTasker, id={}", id);
 
         final TaskerProp prop = property(po.getPropkey(), anno);
         return diff(po, prop);

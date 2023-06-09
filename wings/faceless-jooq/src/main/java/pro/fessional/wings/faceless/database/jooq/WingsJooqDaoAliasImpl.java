@@ -5,31 +5,12 @@ import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jooq.BatchBindStep;
-import org.jooq.Condition;
-import org.jooq.Configuration;
-import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.InsertOnDuplicateSetMoreStep;
-import org.jooq.InsertOnDuplicateSetStep;
-import org.jooq.InsertReturningStep;
-import org.jooq.Loader;
-import org.jooq.LoaderOptionsStep;
-import org.jooq.OrderField;
-import org.jooq.QueryPart;
 import org.jooq.Record;
-import org.jooq.RecordMapper;
-import org.jooq.Result;
-import org.jooq.SelectConditionStep;
-import org.jooq.SelectFieldOrAsterisk;
-import org.jooq.SelectSelectStep;
-import org.jooq.Table;
-import org.jooq.TableRecord;
-import org.jooq.UpdatableRecord;
+import org.jooq.*;
 import org.jooq.impl.DAOImpl;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
-import pro.fessional.mirana.best.StateAssert;
+import pro.fessional.mirana.best.AssertState;
 import pro.fessional.mirana.cast.TypedCastUtil;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.U;
@@ -39,14 +20,7 @@ import pro.fessional.wings.faceless.database.jooq.helper.JournalDiffHelper;
 import pro.fessional.wings.faceless.service.journal.JournalDiff;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -308,7 +282,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
             rs2 = dsl.selectFrom(table)
                      .where(cond)
                      .fetch();
-            StateAssert.aEqb(1, rs2.size(), "should find 1 record after insert");
+            AssertState.aEqb(1, rs2.size(), "should find 1 record after insert");
             JournalDiffHelper.helpInsert(diff, rs2);
         }
 
@@ -1254,7 +1228,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
                     .where(cond)
                     .execute();
 
-        StateAssert.aEqb(rc, size, "delete mismatched records. cond={}", cond);
+        AssertState.aEqb(rc, size, "delete mismatched records. cond={}", cond);
         JournalDiffHelper.helpDelete(diff, rs1);
         return diff;
     }
@@ -1286,7 +1260,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
                     .where(cond)
                     .execute();
 
-        StateAssert.aEqb(rc, size, "update mismatched records. cond={}", cond);
+        AssertState.aEqb(rc, size, "update mismatched records. cond={}", cond);
         final Result<Record> rs2 = select.fetch();
 
         JournalDiffHelper.helpUpdate(diff, rs1, rs2);
