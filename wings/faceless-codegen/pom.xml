@@ -26,10 +26,6 @@
             <artifactId>jooq-codegen</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-test</artifactId>
             <scope>test</scope>
