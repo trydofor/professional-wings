@@ -22,9 +22,9 @@ import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 在service层使用，TransmittableThreadLocal有自动的线程继承性。
- * 由 TerminalInterceptor.preHandle 设值，afterCompletion清理。
- * 注：无 WeakReference Leak，因static及Interceptor清理。
+ * Used at the service level, TransmittableThreadLocal has automatic thread inheritance.
+ * Set by TerminalInterceptor.preHandle, cleaned up by afterCompletion.
+ * Note: No WeakReference Leak due to static and Interceptor cleanup.
  *
  * @author trydofor
  * @see <a href="https://github.com/alibaba/transmittable-thread-local/blob/master/docs/developer-guide.md#-%E6%A1%86%E6%9E%B6%E4%B8%AD%E9%97%B4%E4%BB%B6%E9%9B%86%E6%88%90ttl%E4%BC%A0%E9%80%92">框架中间件集成ttl传递</a>
@@ -34,7 +34,9 @@ public class TerminalContext {
 
     public static final Context Null = new Context(DefaultUserId.Null, null, null, null, null, null);
 
-    /** no leak, for static and Interceptor clean */
+    /**
+     * no leak, for static and Interceptor clean
+     */
     private static final TransmittableThreadLocal<Context> ContextLocal = new TransmittableThreadLocal<>();
     private static final ConcurrentHashMap<String, Listener> ContextListeners = new ConcurrentHashMap<>();
 
@@ -45,14 +47,14 @@ public class TerminalContext {
     private static volatile Locale DefaultLocale = Locale.getDefault();
 
     /**
-     * 是否处于激活状态，可以正确使用
+     * whether context is active and can be used correctly.
      */
     public static boolean isActive() {
         return Active;
     }
 
     /**
-     * 初始激活状态，标记功能是否能够正常使用。
+     * active context, default is false
      */
 
     public static void initActive(boolean b) {
@@ -60,14 +62,14 @@ public class TerminalContext {
     }
 
     /**
-     * 设置默认时区
+     * init default zoneId
      */
     public static void initTimeZone(@NotNull TimeZone zoneId) {
         DefaultTimeZone = zoneId;
     }
 
     /**
-     * 设置默认语言
+     * init default locale
      */
     public static void initLocale(@NotNull Locale locale) {
         DefaultLocale = locale;
@@ -75,7 +77,7 @@ public class TerminalContext {
 
 
     /**
-     * 默认时区
+     * get default zoneId
      */
     @NotNull
     public static ZoneId defaultZoneId() {
@@ -83,7 +85,7 @@ public class TerminalContext {
     }
 
     /**
-     * 默认时区
+     * get default timezone
      */
     @NotNull
     public static TimeZone defaultTimeZone() {
@@ -92,37 +94,66 @@ public class TerminalContext {
 
 
     /**
-     * 默认语言
+     * get default locale
      */
     @NotNull
     public static Locale defaultLocale() {
         return DefaultLocale;
     }
 
+    /**
+     * get current use or system zoneId
+     *
+     * @return zoneId
+     */
+    @NotNull
+    public static ZoneId currentZoneId() {
+        return currentTimeZone().toZoneId();
+    }
 
     /**
-     * 设置的login和logout的THreadLocal监听，context为null时，为logout，否则为login
+     * get current use or system timezone
+     */
+    @NotNull
+    public static TimeZone currentTimeZone() {
+        final Context context = get(false);
+        return context.getTimeZone();
+    }
+
+    /**
+     * get current use or system locale
      *
-     * @param name     名字
-     * @param listener 监听器
-     * @return null或旧值
+     * @return locale
+     */
+    @NotNull
+    public static Locale currentLocale() {
+        final Context context = get(false);
+        return context.getLocale();
+    }
+
+    /**
+     * set login and logout listener. context is null for logout, else for login.
+     *
+     * @param name     name of listener
+     * @param listener the listener
+     * @return null or old value
      */
     public static Listener registerListener(String name, Listener listener) {
         return ContextListeners.put(name, listener);
     }
 
     /**
-     * 移除监听器
+     * remove login and logout listener by name
      *
-     * @param name 名字
-     * @return null或旧值
+     * @param name name of listener
+     * @return null or old value
      */
     public static Listener removeListener(String name) {
         return ContextListeners.remove(name);
     }
 
     /**
-     * 仅登录的上下文，若未登录则抛异常
+     * only login user, throw exception if not login
      */
     @NotNull
     public static Context get() {
@@ -130,10 +161,9 @@ public class TerminalContext {
     }
 
     /**
-     * 未登录用户以Guest返回，还是抛异常，
+     * unlogined user as Guest or throw exception
      *
-     * @param onlyLogin 是否仅登录用户，否则包括Guest
-     * @return 上下文
+     * @param onlyLogin only login user or guest
      */
     @NotNull
     public static Context get(boolean onlyLogin) {
@@ -146,9 +176,7 @@ public class TerminalContext {
     }
 
     /**
-     * login，当ctx为null时，执行为logout
-     *
-     * @param ctx 上下文
+     * login if ctx is not null, else logout
      */
     public static void login(Context ctx) {
         if (ctx == null || ctx == Null) {
@@ -182,10 +210,10 @@ public class TerminalContext {
 
     public interface Listener {
         /**
-         * 赋新值或删除旧值，新值为NotNull，旧值可能为Null
+         * set new value or delete old value, new value is NotNull, old value maybe Null
          *
-         * @param del 是否为删除，否则为赋值
-         * @param ctx del时为Nullable，否则为NotNull
+         * @param del whether to delete, else set value
+         * @param ctx Nullable when del, else NotNull
          */
         @Contract("false,!null->_")
         void onChange(boolean del, Context ctx);
@@ -225,7 +253,7 @@ public class TerminalContext {
         }
 
         /**
-         * userId >= DefaultUserId#Guest
+         * <pre>userId >= DefaultUserId#Guest</pre>
          */
         public boolean asLogin() {
             return userId >= DefaultUserId.Guest;
