@@ -67,20 +67,20 @@
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version> <!-- https://github.com/apache/maven-gpg-plugin/tags -->
         <testing-json>{}</testing-json>
         <wings.java-opens>
-            --add-modules=java.se <!-- Hazelcast -->
-            --add-opens=java.base/java.io=ALL-UNNAMED <!-- FastJson -->
-            --add-opens=java.base/java.nio=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens=java.base/java.lang=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens=java.base/java.lang.invoke=ALL-UNNAMED <!-- FastJson2 -->
-            --add-opens=java.base/java.util=ALL-UNNAMED <!-- Boot Collections$EmptySet -->
-            --add-opens=java.base/sun.nio.ch=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens=java.base/sun.security.x509=ALL-UNNAMED <!-- Boot -->
-            --add-opens=java.management/sun.management=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens=jdk.unsupported/sun.misc=ALL-UNNAMED <!-- Boot -->
-            --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED <!-- Boot -->
-            --add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED <!-- Boot -->
+            --add-modules java.se <!-- Hazelcast -->
+            --add-opens java.base/java.io=ALL-UNNAMED <!-- FastJson -->
+            --add-opens java.base/java.nio=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens java.base/java.lang=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens java.base/java.lang.invoke=ALL-UNNAMED <!-- FastJson2 -->
+            --add-opens java.base/java.util=ALL-UNNAMED <!-- Boot Collections$EmptySet -->
+            --add-opens java.base/sun.nio.ch=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens java.base/jdk.internal.ref=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens java.base/sun.security.x509=ALL-UNNAMED <!-- Boot -->
+            --add-opens java.management/sun.management=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens jdk.unsupported/sun.misc=ALL-UNNAMED <!-- Boot -->
+            --add-opens jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED <!-- Boot -->
+            --add-opens jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED <!-- Boot -->
         </wings.java-opens>
     </properties>
 
