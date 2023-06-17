@@ -37,7 +37,11 @@ import pro.fessional.wings.tiny.task.service.TinyTaskConfService;
 import pro.fessional.wings.tiny.task.spring.prop.TinyTaskDefineProp;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -90,43 +94,47 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
 
     @NotNull
     private TaskerProp property(@NotNull String key, @NotNull TinyTasker anno) {
-        TaskerProp pp = tinyTaskDefineProp.get(key);
+        final TaskerProp pp = tinyTaskDefineProp.get(key);
+        final TaskerProp df = tinyTaskDefineProp.getDefault();
+        final TaskerProp rp = new TaskerProp();
+
         if (pp == null) {
-            pp = new TaskerProp();
-            pp.setTimingZone(anno.zone());
-            pp.setTimingCron(anno.cron());
-            pp.setTimingIdle(anno.idle());
-            pp.setTimingRate(anno.rate());
+            rp.setTimingZone(anno.zone());
+            rp.setTimingCron(anno.cron());
+            rp.setTimingIdle(anno.idle());
+            rp.setTimingRate(anno.rate());
             log.info("no prop, use annotation, key={}", key);
         }
         else {
             if (pp.notTimingZone()) {
-                pp.setTimingZone(anno.zone());
+                rp.setTimingZone(anno.zone());
+            }
+            else {
+                rp.setTimingZone(pp.getTimingZone());
             }
             if (pp.notTimingPlan()) {
                 log.info("no prop timingplan, use annotation, key={}", key);
-                pp.setTimingCron(anno.cron());
-                pp.setTimingIdle(anno.idle());
-                pp.setTimingRate(anno.rate());
+                rp.setTimingCron(anno.cron());
+                rp.setTimingIdle(anno.idle());
+                rp.setTimingRate(anno.rate());
+            }
+            else {
+                rp.setTimingCron(pp.getTimingCron());
+                rp.setTimingIdle(pp.getTimingIdle());
+                rp.setTimingRate(pp.getTimingRate());
             }
         }
 
-        final TaskerProp.TaskerPropBuilder bd = pp.toBuilder();
-        final TaskerProp df = tinyTaskDefineProp.getDefault();
+        rp.setTaskerApps(pp == null || pp.notTaskerApps() ? df.getTaskerApps() : pp.getTaskerApps());
+        rp.setTaskerRuns(pp == null || pp.notTaskerRuns() ? df.getTaskerRuns() : pp.getTaskerRuns());
+        rp.setNoticeBean(pp == null || pp.notNoticeBean() ? df.getNoticeBean() : pp.getNoticeBean());
+        rp.setNoticeWhen(pp == null || pp.notNoticeWhen() ? df.getNoticeWhen() : pp.getNoticeWhen());
+        rp.setNoticeConf(pp == null || pp.notNoticeConf() ? df.getNoticeConf() : pp.getNoticeConf());
+        rp.setTimingZone(pp == null || pp.notTimingZone() ? df.getTimingZone() : pp.getTimingZone());
+        rp.setTimingType(pp == null || pp.notTimingType() ? df.getTimingType() : pp.getTimingType());
+        rp.setResultKeep(pp == null || pp.notResultKeep() ? df.getResultKeep() : pp.getResultKeep());
 
-        if (pp.notTaskerApps()) bd.taskerApps(df.getTaskerApps());
-        if (pp.notTaskerRuns()) bd.taskerRuns(df.getTaskerRuns());
-
-        if (pp.notNoticeBean()) bd.noticeBean(df.getNoticeBean());
-        if (pp.notNoticeWhen()) bd.noticeWhen(df.getNoticeWhen());
-        if (pp.notNoticeConf()) bd.noticeConf(df.getNoticeConf());
-
-        if (pp.notTimingZone()) bd.timingZone(df.getTimingZone());
-        if (pp.notTimingType()) bd.timingType(df.getTimingType());
-
-        if (pp.notResultKeep()) bd.resultKeep(df.getResultKeep());
-
-        return bd.build();
+        return rp;
     }
 
     @Override

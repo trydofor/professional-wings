@@ -3,7 +3,7 @@ package pro.fessional.wings.warlock.spring.prop;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.unit.DataSize;
-import pro.fessional.wings.slardar.webmvc.MessageResponse;
+import pro.fessional.wings.slardar.webmvc.SimpleResponse;
 
 /**
  * wings-warlock-apiauth-77.properties
@@ -84,7 +84,7 @@ public class WarlockApiAuthProp {
      *
      * @see #Key$errorClient
      */
-    private MessageResponse errorClient = new MessageResponse();
+    private SimpleResponse errorClient = new SimpleResponse();
     public static final String Key$errorClient = Key + ".error-client";
 
     /**
@@ -92,7 +92,7 @@ public class WarlockApiAuthProp {
      *
      * @see #Key$errorSignature
      */
-    private MessageResponse errorSignature = new MessageResponse();
+    private SimpleResponse errorSignature = new SimpleResponse();
     public static final String Key$errorSignature = Key + ".error-signature";
 
     /**
@@ -100,6 +100,6 @@ public class WarlockApiAuthProp {
      *
      * @see #Key$errorUnhandled
      */
-    private MessageResponse errorUnhandled = new MessageResponse();
+    private SimpleResponse errorUnhandled = new SimpleResponse();
     public static final String Key$errorUnhandled = Key + ".error-unhandled";
 }

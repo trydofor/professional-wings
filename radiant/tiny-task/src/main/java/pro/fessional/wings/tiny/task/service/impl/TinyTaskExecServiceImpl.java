@@ -46,7 +46,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -540,16 +539,16 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     @SuppressWarnings("all")
     private SimpleTriggerContext makeContext(WinTaskDefine td, ZoneId zone, long now) {
         // can Not replace util.Date with Instance
-        Date lastActual = null;
+        Instant lastActual = null;
         final LocalDateTime lastExec = td.getLastExec();
         if (!EmptySugar.asEmptyValue(lastExec)) {
-            lastActual = new Date(DateLocaling.sysEpoch(lastExec));
+            lastActual = Instant.ofEpochMilli(DateLocaling.sysEpoch(lastExec));
         }
 
-        Date lastCompletion = null;
+        Instant lastCompletion = null;
         final LocalDateTime lastDone = td.getLastDone();
         if (!EmptySugar.asEmptyValue(lastDone)) {
-            lastCompletion = new Date(DateLocaling.sysEpoch(lastDone));
+            lastCompletion = Instant.ofEpochMilli(DateLocaling.sysEpoch(lastDone));
         }
 
         return new SimpleTriggerContext(lastActual, lastActual, lastCompletion);

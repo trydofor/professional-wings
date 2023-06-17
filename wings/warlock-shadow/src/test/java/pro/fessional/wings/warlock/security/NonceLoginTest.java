@@ -23,16 +23,14 @@ import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class NonceLoginTest {
 
-    @Setter(onMethod_ = {@Value("${local.server.port}")})
-    private int port;
+    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
+    private String host;
 
     @Setter(onMethod_ = {@Autowired})
     private OkHttpClient okHttpClient;
 
     @Test
     public void testTestNyLogin() {
-        final String host = "http://127.0.0.1:" + port;
-//        final String host = "http://localhost:" + port;
 
         final Response r1 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/console-nonce.json?username=test_ny"), false);
         String nonce = OkHttpClientHelper.extractString(r1, false);

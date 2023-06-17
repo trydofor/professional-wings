@@ -10,12 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pro.fessional.mirana.best.AssertArgs;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.pain.MessageException;
 import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
 import pro.fessional.wings.warlock.service.watching.WatchingService;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author trydofor
@@ -27,13 +28,19 @@ public class TestOtherController {
 
     @RequestMapping("/test/code-exception.json")
     public String codeException() {
-        AssertArgs.isTrue(true, CommonErrorEnum.AssertEmpty1, "args");
         throw new CodeException(false, CommonErrorEnum.AssertEmpty1, "test");
     }
 
     @RequestMapping("/test/message-exception.json")
     public String messageException() {
         throw new MessageException(CommonErrorEnum.AssertEmpty1, "test");
+    }
+
+    @RequestMapping("/test/future-exception.json")
+    public String futureException() throws Exception {
+        CompletableFuture<String> future = new CompletableFuture<>();
+        future.completeExceptionally(new MessageException(CommonErrorEnum.AssertEmpty1, "test"));
+        return future.get();
     }
 
     @Data

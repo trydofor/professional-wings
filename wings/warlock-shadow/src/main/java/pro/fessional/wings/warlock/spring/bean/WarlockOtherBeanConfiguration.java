@@ -13,15 +13,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import pro.fessional.wings.slardar.concur.impl.RighterInterceptor;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
-import pro.fessional.wings.slardar.webmvc.MessageResponse;
 import pro.fessional.wings.spring.consts.OrderedWarlockConst;
-import pro.fessional.wings.warlock.errorhandle.CodeExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.DefaultExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.auto.BindExceptionAdvice;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockErrorProp;
 
-import static pro.fessional.wings.spring.consts.NamingWarlockConst.codeExceptionResolver;
 import static pro.fessional.wings.spring.consts.NamingWarlockConst.defaultExceptionResolver;
 
 
@@ -42,23 +39,12 @@ public class WarlockOtherBeanConfiguration {
     public static class BindingErrorConfig {
     }
 
-    @Bean(name = codeExceptionResolver)
-    @ConditionalOnMissingBean(name = codeExceptionResolver)
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$codeExceptionHandler, havingValue = "true")
-    public HandlerExceptionResolver codeExceptionResolver(MessageSource messageSource, WarlockErrorProp prop, ObjectMapper objectMapper) {
-        log.info("WarlockShadow spring-bean " + codeExceptionResolver);
-        final MessageResponse cp = prop.getCodeException();
-        prop.fillAbsent(cp);
-        return new CodeExceptionResolver(cp, messageSource, objectMapper);
-    }
-
     @Bean(name = defaultExceptionResolver)
     @ConditionalOnMissingBean(name = defaultExceptionResolver)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$defaultExceptionHandler, havingValue = "true")
-    public HandlerExceptionResolver defaultExceptionResolver(WarlockErrorProp prop) {
+    public HandlerExceptionResolver defaultExceptionResolver(WarlockErrorProp prop, MessageSource messageSource, ObjectMapper objectMapper) {
         log.info("WarlockShadow spring-bean " + defaultExceptionResolver);
-        final MessageResponse cp = prop.getDefaultException();
-        return new DefaultExceptionResolver(cp);
+        return new DefaultExceptionResolver(prop.getDefaultException(), messageSource, objectMapper);
     }
 
     @Bean

@@ -41,11 +41,13 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
             msg = "login failed";
         }
 
+        // TODO 更优化的提示信息
+        log.debug(msg, exception);
+
         final String mess = StringTemplate.dyn(warlockSecurityProp.getLoginFailureBody())
                                           .bindStr("{message}", msg)
                                           .toString();
         ResponseHelper.writeBodyUtf8(response, mess);
-        log.info(msg, exception);
     }
 
     @EventListener

@@ -110,6 +110,7 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
         }
     }
 
+    @SuppressWarnings("deprecation")
     public AuthRequest buildRequest(Enum<?> authType, HttpServletRequest request) {
         if (!(authType instanceof AuthSource)) return null;
 
@@ -128,9 +129,7 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
             case BAIDU -> new AuthBaiduRequest(config, authStateCache);
             case CODING -> new AuthCodingRequest(config, authStateCache);
             case OSCHINA -> new AuthOschinaRequest(config, authStateCache);
-            case ALIPAY ->
-                //noinspection deprecation
-                    new AuthAlipayRequest(config, authStateCache);
+            case ALIPAY -> new AuthAlipayRequest(config, authStateCache);
             case QQ -> new AuthQqRequest(config, authStateCache);
             case WECHAT_MP -> new AuthWeChatMpRequest(config, authStateCache);
             case WECHAT_OPEN -> new AuthWeChatOpenRequest(config, authStateCache);

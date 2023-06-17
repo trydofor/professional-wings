@@ -10,7 +10,6 @@ import org.cache2k.extra.spring.SpringCache2kCache;
 import org.cache2k.extra.spring.SpringCache2kCacheManager;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import pro.fessional.mirana.best.DummyBlock;
 import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
 
@@ -32,18 +31,16 @@ import static pro.fessional.wings.slardar.spring.prop.SlardarCacheProp.inLevel;
 @Slf4j
 public class WingsCache2k {
 
-    public static Class<? extends ToggleFeature> FeatureJmx;
+    public static Class<? extends ToggleFeature> FeatureJmx = initFeatureJmx();
 
-    static {
-        Class<? extends ToggleFeature> clz = null;
+    @SuppressWarnings("unchecked")
+    private static Class<? extends ToggleFeature> initFeatureJmx() {
         try {
-            //noinspection unchecked
-            clz = (Class<? extends ToggleFeature>) Class.forName("org.cache2k.extra.jmx.JmxSupport");
+            return (Class<? extends ToggleFeature>) Class.forName("org.cache2k.extra.jmx.JmxSupport");
         }
         catch (ClassNotFoundException e) {
-            DummyBlock.ignore(e);
+            return null;
         }
-        FeatureJmx = clz;
     }
 
     private static final AtomicLong NameCounter = new AtomicLong(1);

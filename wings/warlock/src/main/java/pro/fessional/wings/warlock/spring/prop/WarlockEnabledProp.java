@@ -177,13 +177,6 @@ public class WarlockEnabledProp {
     private boolean defaultExceptionHandler = true;
     public static final String Key$defaultExceptionHandler = Key + ".default-exception-handler";
 
-    /**
-     * whether to inject CodeExceptionResolver.
-     *
-     * @see #Key$codeExceptionHandler
-     */
-    private boolean codeExceptionHandler = true;
-    public static final String Key$codeExceptionHandler = Key + ".code-exception-handler";
 
     /**
      * whether to inject BindExceptionAdvice.

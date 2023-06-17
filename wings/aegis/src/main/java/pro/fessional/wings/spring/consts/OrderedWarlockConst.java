@@ -52,7 +52,6 @@ public interface OrderedWarlockConst extends WingsBeanOrdered {
     int SecurityAutoHttp = Lv4Application + 400;
     int SecurityFilterChain = Lv4Application + 900;
 
-    int CodeExceptionResolver = WebSimpleExceptionResolver + 100;
     int DefaultExceptionResolver = WebSimpleExceptionResolver + 900;
 
     int BindExceptionAdvice = Lv4Application;

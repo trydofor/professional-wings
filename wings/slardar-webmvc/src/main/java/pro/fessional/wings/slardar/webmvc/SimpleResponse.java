@@ -31,7 +31,7 @@ public class SimpleResponse {
     @NotNull
     protected String responseBody = "";
 
-    public void fillAbsent(SimpleResponse other) {
+    public void fillIfAbsent(SimpleResponse other) {
         if (other == null) return;
 
         if (httpStatus == 0) {
