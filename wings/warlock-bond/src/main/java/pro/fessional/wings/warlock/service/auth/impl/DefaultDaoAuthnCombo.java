@@ -17,9 +17,9 @@ import pro.fessional.wings.warlock.database.autogen.tables.WinUserAuthnTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAuthnDao;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasisDao;
-import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.event.auth.WarlockMaxFailedEvent;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
+import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
 import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
 
 /**
@@ -43,6 +43,9 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
 
     @Setter(onMethod_ = {@Autowired})
     protected WarlockUserLoginService warlockUserLoginService;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected WarlockUserAuthnService warlockUserAuthnService;
 
     @Setter(onMethod_ = {@Autowired})
     protected JournalService journalService;
@@ -139,31 +142,16 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
         }
 
         if (cnt > max) {
-            log.info("ignore login failure by reach max-count={}, auth-type={}, username={}", auth.value3(), at, username);
+            log.info("ignore login failure by reach max-count={}, auth-type={}, username={}", max, at, username);
             return;
         }
 
         journalService.commit(WarlockAuthnService.Jane.Failure, uid, "failed login auth-id=" + aid, commit -> {
             // 锁账号
-            if (cnt >= max && !winUserBasisDao.notTableExist()) {
-                final WinUserBasisTable tu = winUserBasisDao.getTable();
-                winUserBasisDao
-                        .ctx()
-                        .update(tu)
-                        .set(tu.Status, UserStatus.DANGER)
-                        .set(tu.CommitId, commit.getCommitId())
-                        .set(tu.ModifyDt, commit.getCommitDt())
-                        .set(tu.Remark, "locked by reach the max failure count=" + max)
-                        .where(tu.Id.eq(uid))
-                        .execute();
+            if (cnt >= max) {
+                log.info("danger user by reach max-count={}, auth-type={}, username={}", max, at, username);
+                warlockUserAuthnService.dander(uid, true);
             }
-
-            WarlockUserLoginService.Auth la = new WarlockUserLoginService.Auth();
-            la.setAuthType(authType);
-            la.setUserId(uid);
-            la.setDetails("");
-            la.setFailed(true);
-            warlockUserLoginService.auth(la);
 
             winUserAuthnDao
                     .ctx()
@@ -173,6 +161,13 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
                     .set(ta.ModifyDt, commit.getCommitDt())
                     .where(ta.Id.eq(aid))
                     .execute();
+
+            WarlockUserLoginService.Auth la = new WarlockUserLoginService.Auth();
+            la.setAuthType(authType);
+            la.setUserId(uid);
+            la.setDetails("");
+            la.setFailed(true);
+            warlockUserLoginService.auth(la);
         });
     }
 

@@ -186,4 +186,13 @@ public class WarlockUrlmapProp {
      */
     private String adminTweakClock = "";
     public static final String Key$adminTweakClock = Key + ".admin-tweak-clock";
+
+    /**
+     * toggle user danger status, and reset failed count
+     *
+     * @see #Key$adminAuthnDanger
+     */
+    private String adminAuthnDanger = "";
+    public static final String Key$adminAuthnDanger = Key + ".admin-authn-danger";
+
 }

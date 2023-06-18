@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * 用户登录验证
+ * user login authn
  *
  * @author trydofor
  * @since 2021-03-25
@@ -22,7 +22,8 @@ public interface WarlockUserAuthnService {
     enum Jane {
         Create,
         Modify,
-        Renew
+        Renew,
+        Danger
     }
 
     @Data
@@ -43,36 +44,45 @@ public interface WarlockUserAuthnService {
     }
 
     /**
-     * 创建
+     * create an auth for user, and return the authn id
      *
-     * @param userId   所属用户
-     * @param authn    数据
+     * @param userId user id
+     * @param authn  authn
      * @return id
      */
     long create(long userId, @NotNull Authn authn);
 
     /**
-     * 修改，如果是null，则忽略
+     * modify items(if not null) of authn
      *
-     * @param userId   所属用户
-     * @param authn    数据
-     * @throws CodeException 数据不存在
+     * @param userId user id
+     * @param authn  items
+     * @throws CodeException data not exised
      */
     void modify(long userId, @NotNull Authn authn);
 
     /**
-     * 重置密码，有效期，错误计数，连错上限，如果是null，使用默认值
+     * renew password, expired, failedCount, etc. use default if null.
      *
-     * @param userId   user id
-     * @param renew    修改项
+     * @param userId user id
+     * @param renew  item to renew
      */
     void renew(long userId, @NotNull Renew renew);
 
+
     /**
-     * 关闭该验证
+     * set user status to danger or not
+     *
+     * @param userId user
+     * @param danger danger or not
+     */
+    void dander(long userId, boolean danger);
+
+    /**
+     * disable auth by type
      *
      * @param userId   user id
-     * @param authType 验证类型
+     * @param authType auth type
      */
     default void disable(long userId, @NotNull Enum<?> authType) {
         Renew renew = new Renew();
@@ -82,11 +92,11 @@ public interface WarlockUserAuthnService {
     }
 
     /**
-     * 启用该验证
+     * enable auth by type
      *
      * @param userId   user id
-     * @param authType 验证类型
-     * @param expireIn 有效期
+     * @param authType auth type
+     * @param expireIn expired duration from now
      */
     default void enable(long userId, @NotNull Enum<?> authType, Duration expireIn) {
         Renew renew = new Renew();
@@ -104,10 +114,10 @@ public interface WarlockUserAuthnService {
     }
 
     /**
-     * 列出用户所有登录信息
+     * list auth info of user
      *
-     * @param userId 用户
-     * @return 登录信息
+     * @param userId user
+     * @return auth info
      */
     @NotNull
     List<Item> list(long userId);
