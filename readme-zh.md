@@ -23,7 +23,7 @@
 
 ## 1.关联文档
 
-* Official Doc - <https://wings.fessional.pro>
+* Official Doc - <https://wings.fessional.pro/zh>
 * NotBad Review - <https://java-code-review.moilioncircle.com>
 * Doc GitHub - <https://github.com/fessionalpro/wings-doc>
 * [Gitee](https://gitee.com/trydofor) is the mirror site 

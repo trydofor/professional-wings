@@ -35,4 +35,4 @@ Help Yourself, Check [Commits]
 [History]: https://github.com/trydofor/pro.fessional.wings/tags
 [Temporary]: https://github.com/trydofor/pro.fessional.wings/tags
 [Commits]: https://github.com/trydofor/pro.fessional.wings/commits/develop
-[Changes]: https://wings.fessional.pro/en/9-example/9a.wings-change/
+[Changes]: https://wings.fessional.pro/9-example/9a.wings-change/
