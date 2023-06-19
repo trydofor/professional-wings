@@ -1,6 +1,5 @@
 package pro.fessional.wings.warlock.spring.bean;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -42,9 +41,9 @@ public class WarlockOtherBeanConfiguration {
     @Bean(name = defaultExceptionResolver)
     @ConditionalOnMissingBean(name = defaultExceptionResolver)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$defaultExceptionHandler, havingValue = "true")
-    public HandlerExceptionResolver defaultExceptionResolver(WarlockErrorProp prop, MessageSource messageSource, ObjectMapper objectMapper) {
+    public HandlerExceptionResolver defaultExceptionResolver(WarlockErrorProp prop, MessageSource messageSource) {
         log.info("WarlockShadow spring-bean " + defaultExceptionResolver);
-        return new DefaultExceptionResolver(prop.getDefaultException(), messageSource, objectMapper);
+        return new DefaultExceptionResolver(prop.getDefaultException(), messageSource);
     }
 
     @Bean
