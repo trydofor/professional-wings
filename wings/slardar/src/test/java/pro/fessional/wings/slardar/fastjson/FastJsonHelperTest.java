@@ -91,10 +91,10 @@ class FastJsonHelperTest {
         Assertions.assertEquals("\"123\"", JSON.toJSONString(Integer.valueOf("123"), Feature.WriteNonStringValueAsString));
         Assertions.assertEquals("\"3.14\"", JSON.toJSONString(3.14, Feature.WriteNonStringValueAsString));
         Assertions.assertEquals("\"3.14\"", JSON.toJSONString(Double.valueOf("3.14"), Feature.WriteNonStringValueAsString));
-        // BUG 期望是同Integer一致，得到`"3"`，而不是`3`
-//        Assertions.assertEquals("\"3\"", JSON.toJSONString(new BigDecimal("3"), Feature.WriteNonStringValueAsString));
+        // BUG 期望是同Integer一致，得到`"3"`，而不是`3` Fixed 2.0.34
+        Assertions.assertEquals("\"3\"", JSON.toJSONString(new BigDecimal("3"), Feature.WriteNonStringValueAsString));
         // BUG 期望是同Double一致，得到`"3.14"`，而不是`3.14`
-//        Assertions.assertEquals("\"3.14\"", JSON.toJSONString(new BigDecimal("3.14"), Feature.WriteNonStringValueAsString));
+        Assertions.assertEquals("\"3.14\"", JSON.toJSONString(new BigDecimal("3.14"), Feature.WriteNonStringValueAsString));
     }
 
 }
