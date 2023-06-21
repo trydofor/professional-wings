@@ -32,10 +32,7 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
  * @since 2020-08-14
  */
 
-@SpringBootTest(properties = {
-        "debug = true",
-        "logging.level.org.jooq.tools.LoggerListener=debug"
-})
+@SpringBootTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class JooqMapperCompatibleTest {
 
@@ -124,9 +121,9 @@ public class JooqMapperCompatibleTest {
         TstShardingTable t = dao.getTable();
         Condition c = t.Id.eq(105L);
         final TstShardingRecord rd = dao.ctx()
-                                     .selectFrom(t)
-                                     .where(c)
-                                     .fetchOne();
+                                        .selectFrom(t)
+                                        .where(c)
+                                        .fetchOne();
         Assertions.assertNotNull(rd);
         Assertions.assertNotNull(rd.getLoginInfo());
         final Object[] arr = rd.intoArray();

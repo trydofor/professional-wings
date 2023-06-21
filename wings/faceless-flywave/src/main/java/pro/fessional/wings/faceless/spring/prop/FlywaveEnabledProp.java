@@ -17,7 +17,7 @@ public class FlywaveEnabledProp {
     public static final String Key = "spring.wings.faceless.flywave.enabled";
 
     /**
-     * 是否注入flywave
+     * whether to inject Flywave related beans.
      *
      * @see #Key$module
      * @see #Key$module
@@ -26,7 +26,7 @@ public class FlywaveEnabledProp {
     public static final String Key$module = Key + ".module";
 
     /**
-     * flywave是否进行数据库的版本检查
+     * whether flywave performs version checking for database.
      *
      * @see #Key$checker
      */

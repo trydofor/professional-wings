@@ -27,6 +27,11 @@ public class WarlockUserAuthnServiceDummy implements WarlockUserAuthnService {
     }
 
     @Override
+    public void dander(long userId, boolean danger) {
+        throw new UnsupportedOperationException("Dummy Service");
+    }
+
+    @Override
     public @NotNull List<Item> list(long userId) {
         return Collections.emptyList();
     }

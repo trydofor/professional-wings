@@ -22,6 +22,10 @@
             <artifactId>silencer-curse</artifactId>
         </dependency>
         <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>silencer-jaxb</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.esotericsoftware</groupId>
             <artifactId>kryo</artifactId>
         </dependency>
@@ -85,14 +89,6 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <!-- utils -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>

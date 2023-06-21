@@ -368,7 +368,7 @@ class SqlSegmentProcessor(
 
         /**
          * 设置跟踪格式表达式，以`XXX`表示主表。
-         * @param reg 正则，默认`XXX(_[0-9]+)?\$\w+`
+         * @param reg 正则，默认`XXX(_[0-9]+)?__+[a-z]*`
          */
         @JvmStatic
         fun setTraceFormat(reg: String) {

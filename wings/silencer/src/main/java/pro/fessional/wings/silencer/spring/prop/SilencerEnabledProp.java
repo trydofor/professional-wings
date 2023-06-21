@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * The default switch for toggling the Silencer feature, as follows:
  * spring-wings-enabled-79.properties
  *
  * @author trydofor
@@ -17,7 +18,7 @@ public class SilencerEnabledProp {
     public static final String Key = "spring.wings.silencer.enabled";
 
     /**
-     * 是否启动自动配置
+     * Whether to automatically configure, default true
      *
      * @see #Key$autoconf
      */
@@ -25,7 +26,7 @@ public class SilencerEnabledProp {
     public static final String Key$autoconf = Key + ".autoconf";
 
     /**
-     * 是否显示wings的conditional信息
+     * Whether to display the conditional information of wings, default false
      *
      * @see #Key$verbose
      */
@@ -33,7 +34,7 @@ public class SilencerEnabledProp {
     public static final String Key$verbose = Key + ".verbose";
 
     /**
-     * 是否自动加载 /wings-i18n/
+     * Whether to automatically load /wings-i18n/ messages, default true
      *
      * @see #Key$message
      */
@@ -41,7 +42,7 @@ public class SilencerEnabledProp {
     public static final String Key$message = Key + ".message";
 
     /**
-     * 是否自动载所有classpath*下的 ** /spring/bean/ **
+     * Whether to automatically load all classpaths ** /spring/bean/**, default true
      *
      * @see #Key$scanner
      */
@@ -49,7 +50,7 @@ public class SilencerEnabledProp {
     public static final String Key$scanner = Key + ".scanner";
 
     /**
-     * 是否在有log-file时，console自动ERROR
+     * Whether to automatically switch the console log level when a log file is available, default true
      *
      * @see #Key$autoLog
      */
@@ -57,7 +58,7 @@ public class SilencerEnabledProp {
     public static final String Key$autoLog = Key + ".autolog";
 
     /**
-     * 是否在自动配置encrypt
+     * Whether to automatically config encrypt, default true
      *
      * @see #Key$encrypt
      */

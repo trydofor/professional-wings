@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import pro.fessional.wings.slardar.webmvc.SimpleResponse;
 
 /**
+ * backend debounce.
  * wings-debounce-79.properties
  *
  * @author trydofor
@@ -20,7 +21,7 @@ public class SlardarDebounceProp extends SimpleResponse {
     public static final String Key = "wings.slardar.debounce";
 
     /**
-     * 等待区大小
+     * waiting capacity.
      *
      * @see #Key$capacity
      */
@@ -28,7 +29,7 @@ public class SlardarDebounceProp extends SimpleResponse {
     public static final String Key$capacity = Key + ".capacity";
 
     /**
-     * 最大等待秒
+     * max waiting seconds.
      *
      * @see #Key$maxWait
      */

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 2019-10-05
  */
 
-@SpringBootTest(properties = {"debug = true", "spring.application.name=curse"})
+@SpringBootTest(properties = {"spring.application.name=curse"})
 @Slf4j
 public class SilencerEncryptConfigurationTest {
 

@@ -15,10 +15,12 @@ public class LightIdProviderProp {
     public static final String Key = "wings.faceless.lightid.provider";
 
     /**
-     * blockId提供方法，默认sql。
-     * sql - 查询数据库，唯一返回值为id。
-     * fix - 固定数字，int。
-     * biz - 使用自定义的业务Bean
+     * <pre>
+     * method to provide blockId
+     * - `sql` - query database, return the id
+     * - `fix` - fixed number, int
+     * - `biz` - use a custom business bean
+     * </pre>
      *
      * @see #Key$blockType
      */
@@ -26,7 +28,7 @@ public class LightIdProviderProp {
     public static final String Key$blockType = Key + ".block-type";
 
     /**
-     * 提供方式的参数，sql时为select
+     * parameters of the provide method, select for sql, and number for fix.
      *
      * @see #Key$blockPara
      */
@@ -34,8 +36,15 @@ public class LightIdProviderProp {
     public static final String Key$blockPara = Key + ".block-para";
 
     /**
-     * 插入语句。jdbc template sql 类型SysLightSequence
-     * String seq_name, int block_id, long next_val, int step_val, String comments
+     * <pre>
+     * insert statement for JdbcTemplate.
+     * See `LightSequenceModifyJdbc` for details, the parameters are,
+     * - `String` seq_name - sequence name
+     * - `int` block_id - data block id
+     * - `long` next_val - next seq
+     * - `int` step_val - step value
+     * - `String` comments - description
+     * </pre>
      *
      * @see #Key$sequenceInsert
      */
@@ -43,8 +52,15 @@ public class LightIdProviderProp {
     public static final String Key$sequenceInsert = Key + ".sequence-insert";
 
     /**
-     * 更新语句。jdbc template sql 类型SysLightSequence
-     * String seq_name, int block_id, long next_val, int step_val, String comments
+     * <pre>
+     * update statement for JdbcTemplate.
+     * See `LightSequenceModifyJdbc` for details, the parameters are,
+     * - `String` seq_name - sequence name
+     * - `int` block_id - data block id
+     * - `long` next_val - next seq
+     * - `int` step_val - step value
+     * - `String` comments - description
+     * </pre>
      *
      * @see #Key$sequenceUpdate
      */
@@ -52,8 +68,15 @@ public class LightIdProviderProp {
     public static final String Key$sequenceUpdate = Key + ".sequence-update";
 
     /**
-     * 获取单个。jdbc template sql 类型SysLightSequence
-     * String seq_name, int block_id, long next_val, int step_val, String comments
+     * <pre>
+     * fetch one sql for JdbcTemplate.
+     * See `LightSequenceModifyJdbc` for details, the parameters are,
+     * - `String` seq_name - sequence name
+     * - `int` block_id - data block id
+     * - `long` next_val - next seq
+     * - `int` step_val - step value
+     * - `String` comments - description
+     * </pre>
      *
      * @see #Key$sequenceGetOne
      */
@@ -61,8 +84,15 @@ public class LightIdProviderProp {
     public static final String Key$sequenceGetOne = Key + ".sequence-get-one";
 
     /**
-     * 获取全部。jdbc template sql 类型SysLightSequence
-     * String seq_name, int block_id, long next_val, int step_val, String comments
+     * <pre>
+     * fetch all sql for JdbcTemplate.
+     * See `LightSequenceModifyJdbc` for details, the parameters are,
+     * - `String` seq_name - sequence name
+     * - `int` block_id - data block id
+     * - `long` next_val - next seq
+     * - `int` step_val - step value
+     * - `String` comments - description
+     * </pre>
      *
      * @see #Key$sequenceGetAll
      */
@@ -70,7 +100,8 @@ public class LightIdProviderProp {
     public static final String Key$sequenceGetAll = Key + ".sequence-get-all";
 
     /**
-     * 从数据库获取可以校验和调整的表名和自动，第一列表名，第二列主键名
+     * try to verify and adjust the id in the database to make it correct. Set to `∅` to ignore this feature.
+     * Enter `table name` (as sequence name), return `table name` and `column name` in the database.
      *
      * @see #Key$sequenceAdjust
      */

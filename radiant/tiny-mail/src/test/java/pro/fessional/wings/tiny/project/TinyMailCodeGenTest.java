@@ -19,7 +19,6 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
         "spring.wings.faceless.flywave.enabled.module=true",
         "spring.wings.faceless.flywave.enabled.checker=false",
         "wings.tiny.mail.service.boot-scan=0",
-        "debug = true"
 })
 @Disabled("生成代码，已有devs统一管理")
 public class TinyMailCodeGenTest {

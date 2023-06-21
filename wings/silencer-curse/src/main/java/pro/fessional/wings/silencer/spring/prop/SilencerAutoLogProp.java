@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
+ * Automatically switch log levels for appender.
  * wings-autolog-79.properties
  *
  * @author trydofor
@@ -19,7 +20,8 @@ public class SilencerAutoLogProp {
     public static final String Key = "wings.silencer.autolog";
 
     /**
-     * 自动设置日志的级别
+     * Slf4j format, default WARN.
+     * Automatically set the log level, such as ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF
      *
      * @see #Key$level
      */
@@ -27,7 +29,7 @@ public class SilencerAutoLogProp {
     public static final String Key$level = Key + ".level";
 
     /**
-     * 被调整的appender名字，逗号分隔
+     * The names of the appender to adjust, commas separated, default CONSOLE,STDOUT
      *
      * @see #Key$target
      */
@@ -35,7 +37,7 @@ public class SilencerAutoLogProp {
     public static final String Key$target = Key + ".target";
 
     /**
-     * 当以下appender出现的时候
+     * If the following appenders exist, the above log level is automatically adjusted
      *
      * @see #Key$exists
      */

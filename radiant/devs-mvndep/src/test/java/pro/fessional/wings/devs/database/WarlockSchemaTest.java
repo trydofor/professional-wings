@@ -14,14 +14,7 @@ import pro.fessional.wings.warlock.project.Warlock1SchemaManager;
  * @since 2021-02-22
  */
 @Disabled("初始化数据库，已有devs统一管理")
-@SpringBootTest(properties = {
-        "spring.datasource.url=jdbc:mysql://localhost:3306/wings_warlock"
-        + "?autoReconnect=true"
-        + "&useSSL=false&allowPublicKeyRetrieval=true"
-        + "&useUnicode=true&characterEncoding=UTF-8"
-        + "&connectionTimeZone=%2B08:00&forceConnectionTimeZoneToSession=true",
-        "debug = true"
-})
+@SpringBootTest
 public class WarlockSchemaTest {
 
     @Setter(onMethod_ = {@Autowired})

@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2023-04-04
+THIS_VERSION=2023-06-16
 ################ modify the following params ################
 WORK_DIR=''      # 脚本生成文件，日志的目录，默认空（脚本位置）
 TAIL_LOG='log'   # 默认tail的日志，"log|out|new|ask"
@@ -10,15 +10,16 @@ BOOT_JAR=''      # 主程序。可通过$1覆盖，绝对路径或相对WORK_DIR
 BOOT_OUT=''      # 控制台日志，默认 $BOOT_JAR-*.out
 BOOT_LOG=''      # 程序日志，需要外部指定，用来tail
 BOOT_PID=''      # 主程序pid，默认 $BOOT_JAR.pid
-BOOT_CNF=''      # 外部配置。通过env覆盖
-BOOT_ARG=''      # 启动参数。通过env覆盖
-JAVA_XMS='1G'    # 启动参数。通过env覆盖
-JAVA_XMX='3G'    # 启动参数。通过env覆盖
+BOOT_CNF=''      # 外部配置。
+BOOT_ARG=''      # 启动参数。可延时求值
+JAVA_XMS='1G'    # 启动参数
+JAVA_XMX='3G'    # 启动参数
 WARN_TXT=''      # 预设的警告词
 WARN_AGO=''      # 日志多少秒不更新，则警报，空表示忽略
 WARN_RUN=''      # 若pid消失或日志无更新则执行
 # shellcheck disable=SC2153
 JDK_HOME='' # 指定jdk版本
+# 可延时求值
 # shellcheck disable=SC2016
 JDK8_ARG='
 -Xloggc:${BOOT_TKN}.gc
@@ -26,22 +27,24 @@ JDK8_ARG='
 -XX:+PrintGCDetails
 -XX:+PrintGCDateStamps
 '
+# 可延时求值
 # shellcheck disable=SC2016
 JDK9_ARG='
 --add-modules java.se
 --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
 --add-opens java.base/java.lang=ALL-UNNAMED
---add-opens=java.base/java.lang.invoke=ALL-UNNAMED
---add-opens=java.base/java.util=ALL-UNNAMED
+--add-opens java.base/java.lang.invoke=ALL-UNNAMED
+--add-opens java.base/java.util=ALL-UNNAMED
 --add-opens java.base/java.io=ALL-UNNAMED
 --add-opens java.base/java.nio=ALL-UNNAMED
 --add-opens java.base/sun.nio.ch=ALL-UNNAMED
 --add-opens java.management/sun.management=ALL-UNNAMED
 --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
---add-opens=java.base/sun.security.x509=ALL-UNNAMED
---add-opens=jdk.unsupported/sun.misc=ALL-UNNAMED
+--add-opens java.base/sun.security.x509=ALL-UNNAMED
+--add-opens jdk.unsupported/sun.misc=ALL-UNNAMED
 -Xlog:gc*=info:file=${BOOT_TKN}.gc:time,tid,tags:filecount=5,filesize=100m
 '
+# 可延时求值
 # shellcheck disable=SC2016
 JAVA_ARG='
 -server
@@ -78,7 +81,7 @@ function print_envs() {
     echo -e "# 使用'ln -s'把此脚本软连接到'执行目录/workdir'，"
     echo -e "# 链接源及链接的同名'env'，文件会被自动载入，当前覆盖源配置项。"
     echo -e "# 同一主机环境，同一boot.jar只能执行一份，多份需更名。"
-    echo -e "# 'BOOT_CNF|BOOT_ARG|JAVA_ARG' 内变量可被延时求值，"
+    echo -e "# 'BOOT_ARG|JAVA_ARG|JDK8_ARG|JDK9_ARG' 内变量可被延时求值，"
     echo -e "# 使用 ' 为延时求值，使用 \" 为立即求值。 默认Java 11 G1"
     echo -e "#################################################"
     echo -e "\033[37;42;1mINFO: ==== boot env ==== \033[0m"
@@ -357,8 +360,7 @@ if [[ "$JDK_HOME" != "" && "$JDK_HOME" != "$JAVA_HOME" ]]; then
     echo -e "\033[37;42;1mINFO: ==== JAVA_HOME=$JAVA_HOME ==== \033[0m"
 fi
 
-# lazy env
-BOOT_CNF=$(eval "echo \"$BOOT_CNF\"")
+# lazy env eval
 BOOT_ARG=$(eval "echo \"$BOOT_ARG\"")
 JAVA_ARG=$(eval "echo \"$JAVA_ARG\"")
 JDK8_ARG=$(eval "echo \"$JDK8_ARG\"")

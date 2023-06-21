@@ -2,9 +2,8 @@ package pro.fessional.wings.warlock.controller.admin;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.logging.LogLevel;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
@@ -36,12 +35,9 @@ public class AdminTweakController {
             """)
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$adminTweakLogger + "}")
     @ResponseBody
-    public R<Void> adminTweakLogger(@RequestParam("userId") long uid, @RequestParam("level") LogLevel level) {
-        TweakLoggerEvent ev = new TweakLoggerEvent();
-        ev.setUserId(uid);
-        ev.setLevel(level);
+    public R<Void> adminTweakLogger(@RequestBody TweakLoggerEvent ev) {
         SyncSpring.publishEvent(ev);
-        return R.ok();
+        return R.OK;
     }
 
     @Operation(summary = "线程级设置时钟级别", description = """
@@ -60,12 +56,9 @@ public class AdminTweakController {
             """)
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$adminTweakClock + "}")
     @ResponseBody
-    public R<Void> adminTweakClock(@RequestParam("userId") long uid, @RequestParam("mills") long mills) {
-        TweakClockEvent ev = new TweakClockEvent();
-        ev.setUserId(uid);
-        ev.setMills(mills);
+    public R<Void> adminTweakClock(@RequestBody TweakClockEvent ev) {
         SyncSpring.publishEvent(ev);
-        return R.ok();
+        return R.OK;
     }
 
     @Operation(summary = "线程级设置时钟级别", description = """
@@ -80,11 +73,8 @@ public class AdminTweakController {
             """)
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$adminTweakStack + "}")
     @ResponseBody
-    public R<Void> adminTweakStack(@RequestParam("userId") long uid, @RequestParam(value = "stack", required = false) Boolean stack) {
-        TweakStackEvent ev = new TweakStackEvent();
-        ev.setUserId(uid);
-        ev.setStack(stack);
+    public R<Void> adminTweakStack(@RequestBody TweakStackEvent ev) {
         SyncSpring.publishEvent(ev);
-        return R.ok();
+        return R.OK;
     }
 }

@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * Tweaking of the Application.
+ *
  * @author trydofor
  * @see #Key
  * @since 2021-02-14
@@ -15,7 +17,7 @@ public class SilencerTweakProp {
     public static final String Key = "wings.silencer.tweak";
 
     /**
-     * 初始CodeException的Global有栈或无栈
+     * Whether the Global of CodeException has a stack. default false
      *
      * @see #Key$codeStack
      */
@@ -23,7 +25,7 @@ public class SilencerTweakProp {
     public static final String Key$codeStack = Key + ".code-stack";
 
     /**
-     * 初始系统时钟 offset ms
+     * Initial system clock with offset ms, default 0, means ignore
      *
      * @see #Key$clockOffset
      */
@@ -32,7 +34,7 @@ public class SilencerTweakProp {
 
 
     /**
-     * 是否配置WingsMdcThresholdFilter
+     * Whether to configure WingsMdcThresholdFilter, default true
      *
      * @see #Key$mdcThreshold
      */

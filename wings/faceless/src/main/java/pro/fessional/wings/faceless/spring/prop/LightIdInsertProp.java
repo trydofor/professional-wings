@@ -15,7 +15,7 @@ public class LightIdInsertProp {
     public static final String Key = "wings.faceless.lightid.insert";
 
     /**
-     * 不存在当前name和block的id时，是插入还是抛异常
+     * If the current ID of name and block does not exist, insert new one or throw an exception.
      *
      * @see #Key$auto
      */
@@ -23,7 +23,7 @@ public class LightIdInsertProp {
     public static final String Key$auto = Key + ".auto";
 
     /**
-     * 起始ID，自动生成1000起，以下为手动生成。
+     * The first value when auto-insert, recommended to start with 1000, as the  value below is used manually.
      *
      * @see #Key$next
      */
@@ -31,7 +31,7 @@ public class LightIdInsertProp {
     public static final String Key$next = Key + ".next";
 
     /**
-     * 默认步长
+     * The step value when auto-insert.
      *
      * @see #Key$step
      */

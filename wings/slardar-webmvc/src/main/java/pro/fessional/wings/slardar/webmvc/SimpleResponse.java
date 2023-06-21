@@ -14,13 +14,24 @@ import org.jetbrains.annotations.NotNull;
 @RequiredArgsConstructor
 public class SimpleResponse {
 
+    /**
+     * http-status of response.
+     */
     protected int httpStatus = 0;
+
+    /**
+     * content-type of response.
+     */
     @NotNull
     protected String contentType = "";
+
+    /**
+     * body of response.
+     */
     @NotNull
     protected String responseBody = "";
 
-    public void fillAbsent(SimpleResponse other) {
+    public void fillIfAbsent(SimpleResponse other) {
         if (other == null) return;
 
         if (httpStatus == 0) {

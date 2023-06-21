@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.jooq.TableField;
-import pro.fessional.mirana.best.ArgsAssert;
+import pro.fessional.mirana.best.AssertArgs;
 import pro.fessional.wings.warlock.event.cache.TableChangeEvent;
 
 import java.util.HashMap;
@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.singletonMap;
-import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.DELETE;
-import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.INSERT;
-import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.UPDATE;
+import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.*;
 
 /**
  * 发送表记录变更（insert, update, delete）事件（默认并建议异步）
@@ -78,7 +76,7 @@ public interface TableChangePublisher {
     //
     default <R extends Record, F> void publish(int cud, @NotNull Class<?> source, @NotNull TableField<R, F> field, @NotNull List<F> value) {
         final Table<R> table = field.getTable();
-        ArgsAssert.notNull(table, "field's table is null. field=" + field);
+        AssertArgs.notNull(table, "field's table is null. field=" + field);
         publish(cud, source, table.getName(), singletonMap(field.getName(), value));
     }
 

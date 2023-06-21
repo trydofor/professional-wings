@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * Swagger document.
+ *
  * @author trydofor
  * @see #Key
  * @since 2021-02-14

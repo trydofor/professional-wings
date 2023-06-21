@@ -18,32 +18,36 @@ import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue
  */
 @Data
 public class DingTalkConf {
+    /**
+     * template of DingTalk webhook URL.
+     */
     private String webhookUrl = "";
 
     /**
-     * 消息签名，空表示不使用
+     * secret of message digest, `empty` means disable.
      */
     @AesString(SecretProvider.Config)
     private String digestSecret = "";
 
     /**
-     * 警报时，使用钉钉通知的access_token，空表示不使用。
+     * the DingTalk access_token used to send the alert, `empty` means disable.
      */
     @AesString(SecretProvider.Config)
     private String accessToken = "";
 
     /**
-     * 自定义关键词：最多可以设置10个关键词，消息中至少包含其中1个关键词才可以发送成功
+     * custom keywords, to successfully send  message must contain at least 1 keyword.
      */
     private String noticeKeyword = "";
 
     /**
-     * 消息类型，支持 text, markdown
+     * message type, support `text`|`markdown`
      */
     private String msgType = "markdown";
 
     /**
-     * 在text内容里要有@人的手机号，只有在群内的成员才可被@，非群内成员手机号会被脱敏。
+     * notified person and his phone number, non-member's phone number will be desensitized.
+     * It is automatically added to the text eg. @155xxxx
      */
     private Map<String, String> noticeMobiles = new HashMap<>();
 

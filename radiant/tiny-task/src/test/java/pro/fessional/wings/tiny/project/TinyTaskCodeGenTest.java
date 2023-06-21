@@ -18,7 +18,6 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
         "spring.wings.faceless.flywave.enabled.module=true",
         "spring.wings.faceless.flywave.enabled.checker=false",
         "spring.wings.tiny.task.enabled.autorun=false",
-        "debug = true"
 })
 @Disabled("生成代码，已有devs统一管理")
 public class TinyTaskCodeGenTest {

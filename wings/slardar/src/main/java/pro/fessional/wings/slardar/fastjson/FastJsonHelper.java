@@ -1,10 +1,6 @@
 package pro.fessional.wings.slardar.fastjson;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONFactory;
-import com.alibaba.fastjson2.JSONReader;
-import com.alibaba.fastjson2.JSONWriter;
-import com.alibaba.fastjson2.TypeReference;
+import com.alibaba.fastjson2.*;
 import com.alibaba.fastjson2.filter.Filter;
 import com.alibaba.fastjson2.reader.ObjectReaderProvider;
 import org.jetbrains.annotations.Contract;
@@ -55,7 +51,8 @@ public class FastJsonHelper {
             JSONReader.Feature.SupportSmartMatch,
             JSONReader.Feature.UseNativeObject,
             JSONReader.Feature.IgnoreSetNullValue,
-            JSONReader.Feature.ErrorOnNotSupportAutoType
+            JSONReader.Feature.ErrorOnNotSupportAutoType,
+            JSONReader.Feature.AllowUnQuotedFieldNames
     );
 
     /**
@@ -88,7 +85,8 @@ public class FastJsonHelper {
     private static final EnumSet<JSONWriter.Feature> WriterEnum = EnumSet.of(
             JSONWriter.Feature.WriteEnumsUsingName,
             JSONWriter.Feature.WriteBigDecimalAsPlain,
-            JSONWriter.Feature.WriteNonStringValueAsString
+            JSONWriter.Feature.WriteNonStringValueAsString,
+            JSONWriter.Feature.BrowserCompatible
     );
 
     /**

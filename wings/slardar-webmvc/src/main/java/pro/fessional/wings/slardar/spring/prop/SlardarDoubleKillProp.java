@@ -4,6 +4,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import pro.fessional.wings.slardar.webmvc.SimpleResponse;
 
 /**
+ * config for double-kill, DoubleKillExceptionResolver, support `{key}` and `{ttl}`
+ * <p>
  * wings-doublekill-79.properties
  *
  * @author trydofor

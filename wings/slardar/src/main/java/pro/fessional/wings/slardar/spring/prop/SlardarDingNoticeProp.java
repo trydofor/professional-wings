@@ -23,7 +23,7 @@ public class SlardarDingNoticeProp extends LinkedHashMap<String, DingTalkConf> i
     public static final String KeyDefault = "default";
 
     /**
-     * 默认属性
+     * default config for ding talk
      *
      * @see #Key$default
      */

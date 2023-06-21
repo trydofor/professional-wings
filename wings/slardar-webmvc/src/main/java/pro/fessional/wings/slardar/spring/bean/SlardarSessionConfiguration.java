@@ -13,13 +13,9 @@ import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.boot.web.servlet.server.Session.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.session.web.http.CookieHttpSessionIdResolver;
-import org.springframework.session.web.http.CookieSerializer;
-import org.springframework.session.web.http.DefaultCookieSerializer;
-import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
-import org.springframework.session.web.http.HttpSessionIdResolver;
+import org.springframework.session.web.http.*;
 import org.springframework.util.StringUtils;
-import pro.fessional.mirana.best.ArgsAssert;
+import pro.fessional.mirana.best.AssertArgs;
 import pro.fessional.wings.slardar.session.WingsSessionIdResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
@@ -73,7 +69,7 @@ public class SlardarSessionConfiguration {
         final List<HttpSessionIdResolver> resolvers = new ArrayList<>();
         if (StringUtils.hasText(slardarSessionProp.getCookieName())) {
             final ServerProperties server = serverProperties.getIfAvailable();
-            ArgsAssert.notNull(server, "need `server.servlet.session.*` config");
+            AssertArgs.notNull(server, "need `server.servlet.session.*` config");
             Cookie cookie = server.getServlet().getSession().getCookie();
             final String propName = slardarSessionProp.getCookieName();
             final String servName = cookie.getName();

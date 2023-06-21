@@ -21,7 +21,6 @@ import static pro.fessional.wings.warlock.project.Warlock1SchemaManager.includeW
         "spring.datasource.url=" + Devops0ProjectConstant.JDBC_URL,
         "spring.datasource.username=" + Devops0ProjectConstant.JDBC_USER,
         "spring.datasource.password=" + Devops0ProjectConstant.JDBC_PASS,
-        "debug = true"
 })
 class Devops1SchemaManagerTest {
 

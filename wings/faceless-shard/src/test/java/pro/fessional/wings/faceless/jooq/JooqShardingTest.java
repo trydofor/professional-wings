@@ -37,7 +37,7 @@ import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
 
 
 @SuppressWarnings({"FieldMayBeFinal", "CanBeFinal"})
-@SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
+@SpringBootTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Slf4j
 public class JooqShardingTest {

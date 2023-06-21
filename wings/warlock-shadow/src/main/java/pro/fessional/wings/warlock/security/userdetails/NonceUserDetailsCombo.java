@@ -11,7 +11,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pro.fessional.mirana.best.StateAssert;
+import pro.fessional.mirana.best.AssertState;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
@@ -87,7 +87,7 @@ public class NonceUserDetailsCombo extends DefaultUserDetailsCombo {
 
     private Cache getCache() {
         final Cache cache = cacheManager.getCache(cacheName);
-        StateAssert.notNull(cache, "can not find cache={}", cacheName);
+        AssertState.notNull(cache, "can not find cache={}", cacheName);
         return cache;
     }
 }

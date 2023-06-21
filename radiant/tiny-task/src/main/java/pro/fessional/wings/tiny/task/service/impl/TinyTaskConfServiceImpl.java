@@ -16,7 +16,7 @@ import org.springframework.core.MethodIntrospector;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ClassUtils;
-import pro.fessional.mirana.best.ArgsAssert;
+import pro.fessional.mirana.best.AssertArgs;
 import pro.fessional.mirana.cast.BoxedCastUtil;
 import pro.fessional.mirana.data.Diff;
 import pro.fessional.wings.faceless.service.journal.JournalService;
@@ -94,43 +94,47 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
 
     @NotNull
     private TaskerProp property(@NotNull String key, @NotNull TinyTasker anno) {
-        TaskerProp pp = tinyTaskDefineProp.get(key);
+        final TaskerProp pp = tinyTaskDefineProp.get(key);
+        final TaskerProp df = tinyTaskDefineProp.getDefault();
+        final TaskerProp rp = new TaskerProp();
+
         if (pp == null) {
-            pp = new TaskerProp();
-            pp.setTimingZone(anno.zone());
-            pp.setTimingCron(anno.cron());
-            pp.setTimingIdle(anno.idle());
-            pp.setTimingRate(anno.rate());
+            rp.setTimingZone(anno.zone());
+            rp.setTimingCron(anno.cron());
+            rp.setTimingIdle(anno.idle());
+            rp.setTimingRate(anno.rate());
             log.info("no prop, use annotation, key={}", key);
         }
         else {
             if (pp.notTimingZone()) {
-                pp.setTimingZone(anno.zone());
+                rp.setTimingZone(anno.zone());
+            }
+            else {
+                rp.setTimingZone(pp.getTimingZone());
             }
             if (pp.notTimingPlan()) {
                 log.info("no prop timingplan, use annotation, key={}", key);
-                pp.setTimingCron(anno.cron());
-                pp.setTimingIdle(anno.idle());
-                pp.setTimingRate(anno.rate());
+                rp.setTimingCron(anno.cron());
+                rp.setTimingIdle(anno.idle());
+                rp.setTimingRate(anno.rate());
+            }
+            else {
+                rp.setTimingCron(pp.getTimingCron());
+                rp.setTimingIdle(pp.getTimingIdle());
+                rp.setTimingRate(pp.getTimingRate());
             }
         }
 
-        final TaskerProp.TaskerPropBuilder bd = pp.toBuilder();
-        final TaskerProp df = tinyTaskDefineProp.getDefault();
+        rp.setTaskerApps(pp == null || pp.notTaskerApps() ? df.getTaskerApps() : pp.getTaskerApps());
+        rp.setTaskerRuns(pp == null || pp.notTaskerRuns() ? df.getTaskerRuns() : pp.getTaskerRuns());
+        rp.setNoticeBean(pp == null || pp.notNoticeBean() ? df.getNoticeBean() : pp.getNoticeBean());
+        rp.setNoticeWhen(pp == null || pp.notNoticeWhen() ? df.getNoticeWhen() : pp.getNoticeWhen());
+        rp.setNoticeConf(pp == null || pp.notNoticeConf() ? df.getNoticeConf() : pp.getNoticeConf());
+        rp.setTimingZone(pp == null || pp.notTimingZone() ? df.getTimingZone() : pp.getTimingZone());
+        rp.setTimingType(pp == null || pp.notTimingType() ? df.getTimingType() : pp.getTimingType());
+        rp.setResultKeep(pp == null || pp.notResultKeep() ? df.getResultKeep() : pp.getResultKeep());
 
-        if (pp.notTaskerApps()) bd.taskerApps(df.getTaskerApps());
-        if (pp.notTaskerRuns()) bd.taskerRuns(df.getTaskerRuns());
-
-        if (pp.notNoticeBean()) bd.noticeBean(df.getNoticeBean());
-        if (pp.notNoticeWhen()) bd.noticeWhen(df.getNoticeWhen());
-        if (pp.notNoticeConf()) bd.noticeConf(df.getNoticeConf());
-
-        if (pp.notTimingZone()) bd.timingZone(df.getTimingZone());
-        if (pp.notTimingType()) bd.timingType(df.getTimingType());
-
-        if (pp.notResultKeep()) bd.resultKeep(df.getResultKeep());
-
-        return bd.build();
+        return rp;
     }
 
     @Override
@@ -163,7 +167,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         }
 
         final TinyTasker anno = referAnno(r2.value2());
-        ArgsAssert.notNull(anno, "database without TinyTasker, id={}", id);
+        AssertArgs.notNull(anno, "database without TinyTasker, id={}", id);
 
         return property(r2.value1(), anno);
     }
@@ -172,10 +176,10 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
     @NotNull
     public LinkedHashMap<String, Diff.V<?>> diffProp(long id) {
         final WinTaskDefine po = fetchProp(WinTaskDefine.class, t -> t.Id.eq(id));
-        ArgsAssert.notNull(po, "database tasker is null, id={}", id);
+        AssertArgs.notNull(po, "database tasker is null, id={}", id);
 
         final TinyTasker anno = referAnno(po.getTaskerBean());
-        ArgsAssert.notNull(anno, "database without TinyTasker, id={}", id);
+        AssertArgs.notNull(anno, "database without TinyTasker, id={}", id);
 
         final TaskerProp prop = property(po.getPropkey(), anno);
         return diff(po, prop);

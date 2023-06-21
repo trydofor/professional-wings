@@ -23,7 +23,7 @@ import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanP
  * @since 2022-12-03
  */
 @Slf4j
-@SpringBootTest(properties = {"debug = true"})
+@SpringBootTest
 public class TaskSchedulerTest {
 
     @Setter(onMethod_ = {@Autowired, @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME)})

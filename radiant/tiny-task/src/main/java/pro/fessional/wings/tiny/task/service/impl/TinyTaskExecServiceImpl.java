@@ -8,6 +8,7 @@ import org.jooq.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.Trigger;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import org.springframework.scheduling.support.SimpleTriggerContext;
@@ -45,7 +46,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -214,7 +214,14 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             saveNextExec(next, td);
 
             final boolean fast = BoxedCastUtil.orTrue(td.getTaskerFast());
-            final ScheduledFuture<?> handle = TaskSchedulerHelper.referScheduler(fast).schedule(() -> {
+            final ThreadPoolTaskScheduler taskScheduler = TaskSchedulerHelper.referScheduler(fast);
+
+            if (taskScheduler.getScheduledExecutor().isShutdown()) {
+                log.error("TaskScheduler={} is shutdown, name={} id={}", fast, td.getTaskerName(), td.getId());
+                return false;
+            }
+
+            final ScheduledFuture<?> handle = taskScheduler.schedule(() -> {
                 long execTms = ThreadNow.millis();
                 try {
                     if (notNextLock(td, execTms)) {
@@ -532,16 +539,16 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     @SuppressWarnings("all")
     private SimpleTriggerContext makeContext(WinTaskDefine td, ZoneId zone, long now) {
         // can Not replace util.Date with Instance
-        Date lastActual = null;
+        Instant lastActual = null;
         final LocalDateTime lastExec = td.getLastExec();
         if (!EmptySugar.asEmptyValue(lastExec)) {
-            lastActual = new Date(DateLocaling.sysEpoch(lastExec));
+            lastActual = Instant.ofEpochMilli(DateLocaling.sysEpoch(lastExec));
         }
 
-        Date lastCompletion = null;
+        Instant lastCompletion = null;
         final LocalDateTime lastDone = td.getLastDone();
         if (!EmptySugar.asEmptyValue(lastDone)) {
-            lastCompletion = new Date(DateLocaling.sysEpoch(lastDone));
+            lastCompletion = Instant.ofEpochMilli(DateLocaling.sysEpoch(lastDone));
         }
 
         return new SimpleTriggerContext(lastActual, lastActual, lastCompletion);

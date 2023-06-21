@@ -61,7 +61,7 @@ import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgen
  * @author trydofor
  * @since 2019-06-26
  */
-@SpringBootTest(properties = {"debug = true",
+@SpringBootTest(properties = {
                               "wings.slardar.datetime.zoned.auto=true",
                               "spring.wings.slardar.enabled.number=true",
                               "wings.slardar.jackson.empty-date=1970-01-01",
@@ -414,7 +414,7 @@ public class WingsJacksonMapperTest {
 
         assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, ikey=ival, longIgnore=0, textAuto=textAuto can not be empty}", j1.toString());
         assertEquals("{Map=1, bool-val=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, instantVal=2020-06-01T12:34:46Z, intVal=2147483646, listVal=列表, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, longVal=9223372036854775806, zonedDateTimeVal=2020-06-01 13:34:46 Asia/Tokyo, zonedDateTimeValV=2020-06-01 13:34:46.000 Asia/Tokyo, zonedDateTimeValZ=2020-06-01 13:34:46.000 +0900}", j2.toString());
-        assertEquals("{codeIgnore=base.not-empty, codeManual=base.not-empty, hint=, key=ikey, longIgnore=0, value=ival}", x1.toString());
+        assertEquals("{codeIgnore=base.not-empty, codeManual=base.not-empty, key=ikey, longIgnore=0, value=ival}", x1.toString());
         assertEquals("{boolVal=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, intVal=2147483646, key=Map, listVal=列表, longVal=9223372036854775806, value=1}", x2.toString());
     }
 

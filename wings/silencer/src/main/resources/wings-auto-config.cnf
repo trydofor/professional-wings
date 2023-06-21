@@ -1,9 +1,13 @@
-# 字符串列表，不支持协议头，因在多协议路径下查找
-# 同名可多次加载，分层覆盖
+## Silencer's entry configuration, which defines the path and mode of Silencer's autoload.
+
+## Scan path under multi-protocol, so no protocol header, same name can be loaded multiple times, override by priority.
 wings.boot.more=application*.*, wings-conf/**/*.*
-# 同名仅加载一次，不会覆盖
+
+## Scan path under multi-protocol, so no protocol header, same name loaded only once by priority, no subsequent override.
 wings.boot.once=git.properties, META-INF/build-info.properties
 
-# 字符串，文件名
+## Filename of the block-list config
 wings.boot.block=wings-conf-block-list.cnf
+
+## Filename of the promotion config
 wings.boot.promo=wings-prop-promotion.cnf

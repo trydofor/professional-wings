@@ -16,19 +16,23 @@ public class LogConf {
     public static final String Key = "wings.slardar.monitor.view";
 
     /**
+     * whether to enable the alert file viewer
+     *
      * @see #Key$enable
      */
     private boolean enable = true;
     public static final String Key$enable = Key + ".enable";
 
     /**
+     * UrlMapping, GET request, one `id` parameter only.
+     *
      * @see #Key$mapping
      */
     private String mapping = "";
     public static final String Key$mapping = Key + ".mapping";
 
     /**
-     * 默认存活时间，36小时
+     * default alive time.
      *
      * @see #Key$alive
      */
@@ -36,7 +40,7 @@ public class LogConf {
     public static final String Key$alive = Key + ".alive";
 
     /**
-     * 默认输出日志前多少byte，默认1MB。主要日志中不要记录敏感信息
+     * how many bytes before current log is output by default, do not record sensitive data in the log.
      *
      * @see #Key$length
      */
@@ -44,7 +48,7 @@ public class LogConf {
     public static final String Key$length = Key + ".length";
 
     /**
-     * 外部访问的主机,ip等
+     * host or ip for external access.
      *
      * @see #Key$domain
      */
@@ -52,7 +56,7 @@ public class LogConf {
     public static final String Key$domain = Key + ".domain";
 
     /**
-     * 可以排除的日志中的警报，不用设置空值
+     * ignored alert string in logs.
      *
      * @see #Key$ignore
      */

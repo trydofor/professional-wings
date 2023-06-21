@@ -17,7 +17,7 @@ public class FacelessEnabledProp {
     public static final String Key = "spring.wings.faceless.enabled";
 
     /**
-     * 是否启动自动配置
+     * Whether to start auto config
      *
      * @see #Key$autoconf
      */
@@ -25,7 +25,7 @@ public class FacelessEnabledProp {
     public static final String Key$autoconf = Key + ".autoconf";
 
     /**
-     * 是否注入lingthid
+     * Whether to inject lingthid
      *
      * @see #Key$lightid
      */
@@ -33,7 +33,7 @@ public class FacelessEnabledProp {
     public static final String Key$lightid = Key + ".lightid";
 
     /**
-     * 是否注入journal
+     * Whether to inject journal
      *
      * @see #Key$journal
      */
@@ -41,7 +41,7 @@ public class FacelessEnabledProp {
     public static final String Key$journal = Key + ".journal";
 
     /**
-     * 是否注入StandardI18nService
+     * Whether to inject StandardI18nService
      *
      * @see #Key$enumi18n
      */

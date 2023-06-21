@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2022-07-07
+THIS_VERSION=2023-05-25
 
 cat <<EOF
 #################################################
@@ -89,6 +89,8 @@ function build_mvn() {
     echo -e "\033[32m ==== git status ==== \033[0m"
     rm -f "$_git_log" "$_res_log"
     git status
+    echo -e "\033[32m ==== mvn version ==== \033[0m"
+    mvn --version
 }
 
 function build_web() {
@@ -141,6 +143,11 @@ function build_web() {
             echo "skip append git hash to $_jar"
         fi
     done
+
+    echo -e "\033[32m ==== node version ==== \033[0m"
+    node --version
+    echo -e "\033[32m ==== $_cmd version ==== \033[0m"
+    $_cmd --version
 }
 
 function build_auto() {
@@ -211,6 +218,7 @@ case "$1" in
         git pull
         echo -e "\033[37;42;1m ==== DONE $WORK_DIR ==== \033[0m"
         git status
+        git log --pretty=format:'%H - %an, %ad %d : %s' --graph -10
         ;;
     pack)
         echo -e "\033[37;42;1m ==== BUILD $WORK_DIR ==== \033[0m"
@@ -273,7 +281,7 @@ case "$1" in
                 _tgt=$_dst
                 if [[ ! -d "$_dst" ]]; then
                     _cmd="scp -r $SCP_ARGS"
-                    # scp://[user@]host[:port][/path]
+                    # [user@]host:[path] scp://[user@]host[:port][/path]
                     if [[ $_dst =~ scp:// && "$(man scp | grep scp://)" == "" ]]; then
                         pt=$(echo "$_dst" | sed -E 's=scp://([^:]*:)([0-9]*)(.*)=\2=')
                         if [[ $pt =~ ^[0-9]+$ ]]; then

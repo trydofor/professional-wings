@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author trydofor
  * @since 2021-01-16
  */
-@SpringBootTest(properties = {"debug = true"})
+@SpringBootTest
 class DataSourceContextTest {
 
     @Setter(onMethod_ = {@Autowired})

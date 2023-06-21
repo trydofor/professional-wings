@@ -21,6 +21,7 @@
         <module>aegis</module>
         <module>silencer</module>
         <module>silencer-curse</module>
+        <module>silencer-jaxb</module>
         <module>silencer-test</module>
         <module>faceless</module>
         <module>faceless-autogen</module>
@@ -46,6 +47,7 @@
         <module>batrider</module>
         <module>batrider-test</module>
         <module>batrider-zero</module>
+        <module>testing-database</module>
     </modules>
 
     <properties>

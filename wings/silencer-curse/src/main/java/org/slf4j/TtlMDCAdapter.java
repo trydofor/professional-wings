@@ -138,6 +138,7 @@ public class TtlMDCAdapter implements MDCAdapter {
      * null.
      */
     public Map getCopyOfContextMap() {
+        @SuppressWarnings("unckecked")
         Map<String, String> readOnlyMap = getPropertyMap();
         if (readOnlyMap == null) {
             return null;

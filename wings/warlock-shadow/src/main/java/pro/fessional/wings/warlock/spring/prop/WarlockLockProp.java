@@ -17,7 +17,7 @@ public class WarlockLockProp {
     public static final String Key = "wings.warlock.lock";
 
     /**
-     * 在global lock中，是否使用 useCpIfSafe
+     * whether to use useCpIfSafe in hazelcast GlobalLock.
      *
      * @see #Key$hazelcastCp
      */

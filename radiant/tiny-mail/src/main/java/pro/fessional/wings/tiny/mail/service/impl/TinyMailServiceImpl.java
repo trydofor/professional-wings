@@ -19,7 +19,7 @@ import org.springframework.mail.MailParseException;
 import org.springframework.mail.MailSendException;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
-import pro.fessional.mirana.best.ArgsAssert;
+import pro.fessional.mirana.best.AssertArgs;
 import pro.fessional.mirana.cast.BoxedCastUtil;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.pain.ThrowableUtil;
@@ -35,12 +35,8 @@ import pro.fessional.wings.slardar.jackson.JacksonHelper;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.WinMailSenderTable;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.daos.WinMailSenderDao;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.pojos.WinMailSender;
-import pro.fessional.wings.tiny.mail.sender.MailConfigProvider;
-import pro.fessional.wings.tiny.mail.sender.MailSenderManager;
+import pro.fessional.wings.tiny.mail.sender.*;
 import pro.fessional.wings.tiny.mail.sender.MailSenderManager.BatchResult;
-import pro.fessional.wings.tiny.mail.sender.MailWaitException;
-import pro.fessional.wings.tiny.mail.sender.TinyMailConfig;
-import pro.fessional.wings.tiny.mail.sender.TinyMailMessage;
 import pro.fessional.wings.tiny.mail.service.TinyMail;
 import pro.fessional.wings.tiny.mail.service.TinyMailPlain;
 import pro.fessional.wings.tiny.mail.service.TinyMailService;
@@ -48,13 +44,7 @@ import pro.fessional.wings.tiny.mail.spring.prop.TinyMailServiceProp;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -99,7 +89,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     public boolean send(@NotNull TinyMail message, boolean retry) {
         final String conf = message.getConf();
         final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
-        ArgsAssert.notNull(config, "mail conf={} not found", conf);
+        AssertArgs.notNull(config, "mail conf={} not found", conf);
 
         final WinMailSender po = saveMailSender(config, message);
         final TinyMailMessage mailMessage = makeMailMessage(config, po, message);
@@ -121,7 +111,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     public long emit(@NotNull TinyMail message, boolean retry) {
         final String conf = message.getConf();
         final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
-        ArgsAssert.notNull(config, "mail conf={} not found", conf);
+        AssertArgs.notNull(config, "mail conf={} not found", conf);
         final WinMailSender po = saveMailSender(config, message);
         final TinyMailMessage mailMessage = makeMailMessage(config, po, message);
         return doAsyncFreshSend(po, mailMessage, retry, true);
@@ -171,7 +161,7 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
     public long save(@NotNull TinyMailPlain message) {
         final String conf = message.getConf();
         final TinyMailConfig config = mailConfigProvider.bynamedConfig(conf);
-        ArgsAssert.notNull(config, "mail conf={} not found", conf);
+        AssertArgs.notNull(config, "mail conf={} not found", conf);
 
         final WinMailSender po = new WinMailSender();
         final boolean isNew = message.getId() == null || message.getId() <= 0;

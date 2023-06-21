@@ -19,8 +19,11 @@ import pro.fessional.wings.slardar.security.PasswordHelper;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.warlock.constants.WarlockGlobalAttribute;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAuthnTable;
+import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserAuthnDao;
+import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasisDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserAuthn;
+import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
 import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
@@ -42,16 +45,19 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
     protected WinUserAuthnDao winUserAuthnDao;
 
     @Setter(onMethod_ = {@Autowired})
-    protected WingsAuthTypeParser wingsAuthTypeParser;
+    protected WinUserBasisDao winUserBasisDao;
 
     @Setter(onMethod_ = {@Autowired})
-    protected JournalService journalService;
+    protected WingsAuthTypeParser wingsAuthTypeParser;
 
     @Setter(onMethod_ = {@Autowired})
     protected PasswordEncoder passwordEncoder;
 
     @Setter(onMethod_ = {@Autowired})
     protected PasssaltEncoder passsaltEncoder;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected JournalService journalService;
 
     @Setter(onMethod_ = {@Autowired})
     protected LightIdService lightIdService;
@@ -87,7 +93,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             else {
                 auth.setExpiredDt(authn.getExpiredDt());
             }
-            auth.setFailedCnt(Z.notNullSafe(0,authn.getFailedCnt()));
+            auth.setFailedCnt(Z.notNullSafe(0, authn.getFailedCnt()));
             auth.setFailedMax(Z.notNullSafe(warlockSecurityProp.getAutoregMaxFailed(), authn.getFailedMax()));
 
             commit.create(auth);
@@ -188,6 +194,35 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             if (rc != 1) {
                 log.warn("failed to renew {}, key={}, affect={}", otherInfo, userId, rc);
                 throw new CodeException(CommonErrorEnum.DataNotFound);
+            }
+        });
+    }
+
+    @Override
+    public void dander(long userId, boolean danger) {
+        if (winUserBasisDao.notTableExist()) return;
+
+        journalService.commit(Jane.Danger, userId, danger, commit -> {
+            final WinUserBasisTable tu = winUserBasisDao.getTable();
+            winUserBasisDao
+                    .ctx()
+                    .update(tu)
+                    .set(tu.Status, danger ? UserStatus.DANGER : UserStatus.ACTIVE)
+                    .set(tu.CommitId, commit.getCommitId())
+                    .set(tu.ModifyDt, commit.getCommitDt())
+                    .where(tu.Id.eq(userId))
+                    .execute();
+
+            if (!danger && !winUserAuthnDao.notTableExist()) {
+                final WinUserAuthnTable ta = winUserAuthnDao.getTable();
+                winUserAuthnDao
+                        .ctx()
+                        .update(ta)
+                        .set(ta.FailedCnt, 0)
+                        .set(ta.CommitId, commit.getCommitId())
+                        .set(ta.ModifyDt, commit.getCommitDt())
+                        .where(ta.UserId.eq(userId))
+                        .execute();
             }
         });
     }

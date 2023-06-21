@@ -18,7 +18,7 @@ public class SlardarPagequeryProp {
     public static final String Key = "wings.slardar.pagequery";
 
     /**
-     * 默认页数，第一页
+     * page number, default 1st page.
      *
      * @see #Key$page
      */
@@ -26,7 +26,7 @@ public class SlardarPagequeryProp {
     public static final String Key$page = Key + ".page";
 
     /**
-     * 默认每页大小
+     * page size
      *
      * @see #Key$size
      */
@@ -34,7 +34,7 @@ public class SlardarPagequeryProp {
     public static final String Key$size = Key + ".size";
 
     /**
-     * page参数别名
+     * alias of page number
      *
      * @see #Key$pageAlias
      */
@@ -42,7 +42,7 @@ public class SlardarPagequeryProp {
     public static final String Key$pageAlias = Key + ".page-alias";
 
     /**
-     * size参数别名
+     * alias of page size
      *
      * @see #Key$sizeAlias
      */
@@ -51,7 +51,7 @@ public class SlardarPagequeryProp {
     public static final String Key$sizeAlias = Key + ".size-alias";
 
     /**
-     * sort参数别名
+     * alias of sort
      *
      * @see #Key$sortAlias
      */

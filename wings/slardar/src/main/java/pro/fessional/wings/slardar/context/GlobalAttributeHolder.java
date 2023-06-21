@@ -204,18 +204,18 @@ public class GlobalAttributeHolder {
      *
      * @param reg 类型
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static void ridAttrAll(Collection<? extends TypedReg<?, ?>> reg) {
         if (reg == null || reg.isEmpty()) return;
         final Set<TypedReg<?, ?>> rgs;
         if (reg instanceof Set) {
-            //noinspection unchecked
             rgs = (Set<TypedReg<?, ?>>) reg;
         }
         else {
             rgs = new HashSet<>(reg);
         }
 
-        @SuppressWarnings("rawtypes") final Set<Key> keys = CACHE
+        final Set<Key> keys = CACHE
                 .asMap()
                 .keySet()
                 .stream()

@@ -6,15 +6,11 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.interceptor.CacheOperation;
-import pro.fessional.mirana.best.StateAssert;
+import pro.fessional.mirana.best.AssertState;
 import pro.fessional.mirana.data.Null;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Collections.emptyMap;
@@ -57,14 +53,14 @@ public class WingsCacheHelper {
     @NotNull
     public static Cache getMemoryCache(String name) {
         final Cache cache = memory.getCache(name);
-        StateAssert.notNull(cache, "memory cache is null, name={}", name);
+        AssertState.notNull(cache, "memory cache is null, name={}", name);
         return cache;
     }
 
     @NotNull
     public static Cache getServerCache(String name) {
         final Cache cache = server.getCache(name);
-        StateAssert.notNull(cache, "server cache is null, name={}", name);
+        AssertState.notNull(cache, "server cache is null, name={}", name);
         return cache;
     }
 
@@ -85,13 +81,13 @@ public class WingsCacheHelper {
 
     @NotNull
     public static CacheManager getMemory() {
-        StateAssert.notNull(memory, "Memory CacheManager is null");
+        AssertState.notNull(memory, "Memory CacheManager is null");
         return memory;
     }
 
     @NotNull
     public static CacheManager getServer() {
-        StateAssert.notNull(server, "Server CacheManager is null");
+        AssertState.notNull(server, "Server CacheManager is null");
         return server;
     }
 
@@ -117,7 +113,7 @@ public class WingsCacheHelper {
             if (objManager.isEmpty()) {
                 for (String nm : metaMap.keySet()) {
                     final CacheManager m = getCacheManager(nm);
-                    StateAssert.notNull(m, "no CacheManager for {}", nm);
+                    AssertState.notNull(m, "no CacheManager for {}", nm);
                     objManager.put(m, getManagerNames(m));
                 }
             }
@@ -130,7 +126,7 @@ public class WingsCacheHelper {
                 for (Map.Entry<String, Set<String>> en : metaMap.entrySet()) {
                     String k = en.getKey();
                     final CacheManager m = getCacheManager(k);
-                    StateAssert.notNull(m, "no CacheManager for {}", k);
+                    AssertState.notNull(m, "no CacheManager for {}", k);
                     Set<Cache> st = new HashSet<>();
                     for (String c : en.getValue()) {
                         st.add(m.getCache(c));

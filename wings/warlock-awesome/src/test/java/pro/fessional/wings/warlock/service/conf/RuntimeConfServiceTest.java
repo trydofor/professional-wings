@@ -27,7 +27,7 @@ import java.util.Set;
  * @author trydofor
  * @since 2022-03-09
  */
-@SpringBootTest(properties = {"debug = true", "logging.level.pro.fessional=DEBUG"})
+@SpringBootTest
 class RuntimeConfServiceTest {
 
     @Setter(onMethod_ = {@Autowired})

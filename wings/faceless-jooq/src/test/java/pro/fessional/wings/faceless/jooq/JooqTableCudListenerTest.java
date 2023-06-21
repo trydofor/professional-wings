@@ -48,8 +48,6 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @ActiveProfiles("init")
 @SpringBootTest(properties = {
-        "debug = true",
-        "logging.level.root=DEBUG",
         "wings.faceless.jooq.cud.table[tst_sharding]=id,login_info",
         "spring.wings.faceless.jooq.enabled.listen-table-cud=true"
 })
@@ -171,19 +169,19 @@ public class JooqTableCudListenerTest {
         final TstShardingTable t = testDao.getTable();
         testcaseNotice("单个删除");
         assertCud(false, Cud.Delete, singletonList(singletonList(301L)), () -> testDao
-                .ctx()
-                .delete(t)
-                .where(t.Id.eq(301L))
-                .execute(),
+                        .ctx()
+                        .delete(t)
+                        .where(t.Id.eq(301L))
+                        .execute(),
                 "delete from"
         );
 
         testcaseNotice("范围删除");
         assertCud(false, Cud.Delete, singletonList(Arrays.asList(302L, 304L)), () -> testDao
-                .ctx()
-                .delete(t)
-                .where(t.Id.ge(302L).and(t.Id.le(304L)))
-                .execute(),
+                        .ctx()
+                        .delete(t)
+                        .where(t.Id.ge(302L).and(t.Id.le(304L)))
+                        .execute(),
                 "delete from"
         );
 

@@ -4,7 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator;
 import pro.fessional.wings.faceless.codegen.ConstantEnumJdbcLoader;
 import pro.fessional.wings.faceless.codegen.JdbcDataLoadHelper;
-import pro.fessional.wings.faceless.util.ExecSql;
+import pro.fessional.wings.testing.database.ExecSql;
 
 import java.util.List;
 

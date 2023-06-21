@@ -15,7 +15,7 @@ public class LightIdLayoutProp {
     public static final String Key = "wings.faceless.lightid.layout";
 
     /**
-     * 设置block字节数，范围[3,23]，配置项默认空。LightId默认为9，2^9=512个区
+     * the number of block bytes, in the range [3,23], empty by default. LightId is 9 by default, so 2^9=512 zones.
      *
      * @see #Key$blockBits
      */
@@ -23,7 +23,7 @@ public class LightIdLayoutProp {
     public static final String Key$blockBits = Key + ".block-bits";
 
     /**
-     * 序列布局，是否Block先于Sequence，配置项默认空。LightId默认为true
+     * sequence layout, whether Block precedes Sequence, empty by default. LightId is true by default
      *
      * @see #Key$blockFirst
      */

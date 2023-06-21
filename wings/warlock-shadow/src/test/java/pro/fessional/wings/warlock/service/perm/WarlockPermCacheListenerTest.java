@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since 2021-06-19
  */
 @Slf4j
-@SpringBootTest(properties = "logging.level.root=DEBUG")
+@SpringBootTest
 class WarlockPermCacheListenerTest {
 
     @Setter(onMethod_ = {@Autowired})

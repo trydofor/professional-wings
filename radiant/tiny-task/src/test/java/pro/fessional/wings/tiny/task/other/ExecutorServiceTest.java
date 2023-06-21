@@ -14,9 +14,7 @@ import java.util.concurrent.ScheduledFuture;
  * @author trydofor
  * @since 2022-12-13
  */
-@SpringBootTest(properties = {
-        "debug = true"
-})
+@SpringBootTest
 @Slf4j
 @Disabled("模拟批处理，人工观察")
 class ExecutorServiceTest {

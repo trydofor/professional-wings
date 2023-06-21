@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * Set default language and timezone for the app, as well as i18n messages.
  * wings-i18n-79.properties
  *
  * @author trydofor
@@ -17,8 +18,8 @@ public class SilencerI18nProp {
     public static final String Key = "wings.silencer.i18n";
 
     /**
-     * 系统默认语言，空表示系统默认: en_US, zh_CN，
-     * system properties: user.language, user.country
+     * in the format `en_US`, `zh_CN`. Default system language.
+     * Corresponds to `user.language`, `user.country` of the system variable
      *
      * @see #Key$locale
      */
@@ -26,15 +27,16 @@ public class SilencerI18nProp {
     public static final String Key$locale = Key + ".locale";
 
     /**
-     * 系统时区，默认使用系统: UTC, GMT+8, Asia/Shanghai,
-     * system properties: user.timezone
+     * such as `UTC`, `GMT+8,` `Asia/Shanghai`. Default system timezone.
+     * corresponding to `user.timezone` of the system variable
      *
      * @see #Key$zoneid
      */
     private String zoneid = "";
     public static final String Key$zoneid = Key + ".zoneid";
+
     /**
-     * 默认的resource配置，逗号分隔，
+     * The default resource configuration, in comma-separated AntPath format.
      *
      * @see #Key$bundle
      */

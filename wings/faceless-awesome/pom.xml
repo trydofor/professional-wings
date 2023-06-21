@@ -21,5 +21,10 @@
             <groupId>pro.fessional.wings</groupId>
             <artifactId>faceless-autogen</artifactId>
         </dependency>
+        <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>faceless-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

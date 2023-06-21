@@ -16,7 +16,6 @@ import java.util.List;
  * @since 2023-01-06
  */
 @SpringBootTest(properties = {
-        "debug = true",
         "wings.tiny.mail.service.boot-scan=0",
 })
 @Disabled("批量发邮件，手动执行")

@@ -12,7 +12,7 @@ import java.util.Map;
  * @author trydofor
  * @since 2021-01-08
  */
-@SpringBootTest(properties = {"debug = true"})
+@SpringBootTest
 @Slf4j
 public class DruidStatTest {
     @Test

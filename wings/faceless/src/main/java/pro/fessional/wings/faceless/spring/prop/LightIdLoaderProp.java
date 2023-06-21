@@ -15,7 +15,7 @@ public class LightIdLoaderProp {
     public static final String Key = "wings.faceless.lightid.loader";
 
     /**
-     * 超时毫秒数
+     * timeout millis of loading.
      *
      * @see #Key$timeout
      */
@@ -23,7 +23,7 @@ public class LightIdLoaderProp {
     public static final String Key$timeout = Key + ".timeout";
 
     /**
-     * 错误时最大尝试次数
+     * max error count of loading.
      *
      * @see #Key$maxError
      */
@@ -31,7 +31,7 @@ public class LightIdLoaderProp {
     public static final String Key$maxError = Key + ".max-error";
 
     /**
-     * 加载最大数量
+     * max id count of per loading.
      *
      * @see #Key$maxCount
      */
@@ -39,7 +39,7 @@ public class LightIdLoaderProp {
     public static final String Key$maxCount = Key + ".max-count";
 
     /**
-     * 错误存在毫秒数
+     * no attempt in number of millis if error exists.
      *
      * @see #Key$errAlive
      */

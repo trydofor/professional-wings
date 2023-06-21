@@ -20,7 +20,6 @@ import java.util.SortedMap;
         "spring.datasource.url=" + Warlock0CodegenConstant.JDBC,
         "spring.datasource.username=" + Warlock0CodegenConstant.USER,
         "spring.datasource.password=" + Warlock0CodegenConstant.PASS,
-        "debug = true"
 })
 class Warlock1SchemaManagerTest {
 

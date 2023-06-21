@@ -28,7 +28,7 @@ import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgen
  * @author trydofor
  * @since 2022-10-06
  */
-@SpringBootTest(properties = {"debug = true"})
+@SpringBootTest
 @Slf4j
 class AutoDtoHelperTest {
 

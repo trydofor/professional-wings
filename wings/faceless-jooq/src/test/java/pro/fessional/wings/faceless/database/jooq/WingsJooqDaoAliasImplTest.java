@@ -36,7 +36,7 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
  * @since 2020-05-31
  */
 
-@SpringBootTest(properties = {"debug = true", "logging.level.org.jooq.tools.LoggerListener=DEBUG"})
+@SpringBootTest
 @ActiveProfiles("init")
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Tag("init")

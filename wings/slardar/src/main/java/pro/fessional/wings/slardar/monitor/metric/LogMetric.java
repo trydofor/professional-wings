@@ -69,7 +69,7 @@ public class LogMetric implements WarnMetric {
         if (stat.getTimeDone() - lastClean > 24 * 3600 * 1000L) {
             final List<String> cln = LogStat.clean(file, rule.clean);
             log.info("LogStat clean {} days scanned file count={}", rule.clean, cln.size());
-            lastClean = stat.getByteDone();
+            lastClean = stat.getTimeDone();
         }
 
         final List<Warn> result = new ArrayList<>();
@@ -158,40 +158,42 @@ public class LogMetric implements WarnMetric {
         public static final String Key = "wings.slardar.monitor.log";
 
         /**
+         * whether to turn on, log file monitoring.
+         * `default` provides default value for other rules.
+         *
          * @see #Key$enable
          */
         private boolean enable = true;
         public static final String Key$enable = Key + ".enable";
 
         /**
-         * 监控的文件
-         */
-        private String file;
-        /**
+         * Monitored log file, no monitoring if file not found.
+         *
          * @see #Key$file
          */
+        private String file;
         public static final String Key$file = Key + ".file";
 
         /**
-         * 每扫描周期最小增长量
+         * min growth per scan cycle, can be inherited
          */
         private DataSize minGrow = null;
         public static final String Key$minGrow = Key + ".min-grow";
 
         /**
-         * 每扫描周期最大增长量
+         * max growth per scan cycle, can be inherited
          */
         private DataSize maxGrow = null;
         public static final String Key$maxGrow = Key + ".max-grow";
 
         /**
-         * 每扫描周期最大增长量
+         * max file size of log (archived daily), can be inherited
          */
         private DataSize maxSize = null;
         public static final String Key$maxSize = Key + ".max-size";
 
         /**
-         * 日志基本和内容的大概分隔线，分隔byte数（ascii等于char数）
+         * approximate separator of log header and content, separating byte numbers (char numbers if ASCII)
          *
          * @see #Key$bound
          */
@@ -199,25 +201,29 @@ public class LogMetric implements WarnMetric {
         public static final String Key$bound = Key + ".bound";
 
         /**
+         * log level keyword.
+         * keywords will automatically trim a pair of leading and trailing quotes when executed.
+         * For example, `' ERROR '` becomes ` ERROR `, `'' WARN ''` becomes `' WARN '`.
+         *
          * @see #Key$level
          */
         private Set<String> level = Collections.emptySet();
         public static final String Key$level = Key + ".level";
 
         /**
-         * 监控的关键词
+         * log content (after level) keywords
          */
         private Set<String> keyword = Collections.emptySet();
         public static final String Key$keyword = Key + ".keyword";
 
         /**
-         * 默认字符集
+         * log charset
          */
         private String charset = "UTF8";
         public static final String Key$charset = Key + ".charset";
 
         /**
-         * 清除N天以上的扫描文件，-1 表示不清理
+         * delete scanned files older than N days, `-1` means no cleaning
          *
          * @see #Key$clean
          */

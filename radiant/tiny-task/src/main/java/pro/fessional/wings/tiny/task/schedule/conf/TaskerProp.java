@@ -1,7 +1,5 @@
 package pro.fessional.wings.tiny.task.schedule.conf;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,9 +10,7 @@ import lombok.NoArgsConstructor;
  * @since 2022-12-09
  */
 @Data
-@Builder(toBuilder = true)
 @NoArgsConstructor
-@AllArgsConstructor
 public class TaskerProp {
     /**
      * 是否可以注册及执行，不会使用Default配置

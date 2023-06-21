@@ -22,9 +22,7 @@ import java.util.Map;
  * @since 2023-03-22
  */
 
-@SpringBootTest(properties = {
-        "debug = true",
-})
+@SpringBootTest
 @Slf4j
 @Setter(onMethod_ = {@Autowired})
 @Getter

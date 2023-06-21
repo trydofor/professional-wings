@@ -18,7 +18,7 @@ public class SlardarTerminalProp {
     public static final String Key = "wings.slardar.terminal";
 
     /**
-     * 不需要TerminalInterceptor处理的URL
+     * URLs not processed by TerminalInterceptor.
      *
      * @see #Key$excludePatterns
      */
@@ -26,7 +26,7 @@ public class SlardarTerminalProp {
     public static final String Key$excludePatterns = Key + ".exclude-patterns";
 
     /**
-     * exclude优先于include
+     * exclude takes precedence over include
      *
      * @see #Key$includePatterns
      */

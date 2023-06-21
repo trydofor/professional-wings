@@ -1,4 +1,4 @@
-package pro.fessional.wings.faceless.util;
+package pro.fessional.wings.testing.database;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.mirana.io.InputStreams;

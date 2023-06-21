@@ -11,7 +11,7 @@ import java.util.Map;
  * @author trydofor
  * @since 2022-11-30
  */
-@SpringBootTest(properties = {"debug = true"})
+@SpringBootTest
 class JacksonHelperTest {
 
     @Test

@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.ResolvableType;
-import pro.fessional.mirana.best.StateAssert;
+import pro.fessional.mirana.best.AssertState;
 
 import java.util.concurrent.Executor;
 
@@ -87,7 +87,7 @@ public class EventPublishHelper {
 
         @Override
         public void publishEvent(@NotNull Object event) {
-            StateAssert.notNull(globalPublisher, "no globalPublisher, use #hasAsyncGlobal to test");
+            AssertState.notNull(globalPublisher, "no globalPublisher, use #hasAsyncGlobal to test");
             executor.execute(() -> globalPublisher.publishEvent(event));
         }
     }

@@ -29,13 +29,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 2021-07-05
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties =
-                {"debug = true",
-                 "spring.wings.slardar.enabled.number=true",
-                 "wings.slardar.number.decimal.separator=_",
-                 "wings.slardar.number.floats.format=#.00",
-                 "wings.slardar.number.decimal.format=#.00",
-                })
+        properties = {
+                "spring.wings.slardar.enabled.number=true",
+                "wings.slardar.number.decimal.separator=_",
+                "wings.slardar.number.floats.format=#.00",
+                "wings.slardar.number.decimal.format=#.00",
+        })
 @Slf4j
 public class DecimalFormatTest {
 

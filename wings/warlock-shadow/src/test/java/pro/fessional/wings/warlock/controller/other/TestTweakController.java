@@ -24,13 +24,13 @@ public class TestTweakController {
         log.info("loggerLevel >>>>> info");
         log.warn("loggerLevel >>>>> warn");
         log.error("loggerLevel >>>>> error");
-        return R.ok();
+        return R.OK;
     }
 
     @GetMapping("/test/tweak/code-stack.json")
     public R<Void> codeStack() {
         log.error("codeStack >>>>>", new CodeException("test code"));
-        return R.ok();
+        return R.OK;
     }
 
     @GetMapping("/test/tweak/clock-now.json")

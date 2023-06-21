@@ -19,7 +19,7 @@ public class SlardarRemoteProp {
     public static final String Key = "wings.slardar.remote";
 
     /**
-     * 不作为remote ip考虑的内网网段
+     * intranet segments not considered as remote ip
      *
      * @see #Key$innerIp
      */
@@ -27,7 +27,7 @@ public class SlardarRemoteProp {
     public static final String Key$innerIp = Key + ".inner-ip";
 
     /**
-     * 使用代理时，通过哪些header获得真实ip，选择不是ignore的第一个即可
+     * which header to get the real ip when behind proxy.
      *
      * @see #Key$ipHeader
      */
@@ -35,7 +35,7 @@ public class SlardarRemoteProp {
     public static final String Key$ipHeader = Key + ".ip-header";
 
     /**
-     * 用户设备信息头，选择所有信息
+     * which headers (use all) to get device info.
      *
      * @see #Key$agentHeader
      */

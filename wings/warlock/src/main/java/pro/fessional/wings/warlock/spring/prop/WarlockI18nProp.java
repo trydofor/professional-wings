@@ -20,12 +20,16 @@ public class WarlockI18nProp {
     public static final String Key = "wings.warlock.i18n";
 
     /**
+     * init ZoneId by StandardTimezoneEnum.
+     *
      * @see #Key$zoneidEnum
      */
     private Set<String> zoneidEnum = Collections.emptySet();
     public static final String Key$zoneidEnum = Key + ".zoneid-enum";
 
     /**
+     * init Locale by StandardLanguageEnum.
+     *
      * @see #Key$localeEnum
      */
     private Set<String> localeEnum = Collections.emptySet();

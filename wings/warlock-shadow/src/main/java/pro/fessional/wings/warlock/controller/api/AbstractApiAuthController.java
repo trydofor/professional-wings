@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import pro.fessional.mirana.bits.HmacHelp;
@@ -23,7 +24,7 @@ import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.context.TerminalContext.Context;
 import pro.fessional.wings.slardar.context.TerminalInterceptor;
 import pro.fessional.wings.slardar.servlet.stream.CirclePart;
-import pro.fessional.wings.slardar.webmvc.MessageResponse;
+import pro.fessional.wings.slardar.webmvc.SimpleResponse;
 import pro.fessional.wings.warlock.service.auth.WarlockTicketService;
 import pro.fessional.wings.warlock.service.auth.WarlockTicketService.Pass;
 import pro.fessional.wings.warlock.service.auth.WarlockTicketService.Term;
@@ -41,6 +42,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 import static pro.fessional.wings.slardar.servlet.response.ResponseHelper.downloadFile;
+import static pro.fessional.wings.warlock.controller.api.AbstractApiAuthController.ApiError.DigestBodyInvalid;
 
 /**
  * 完成消息签名验证，Terminal登录登出
@@ -54,7 +56,7 @@ public abstract class AbstractApiAuthController {
     public static final int SHA1_LEN = MdHelp.LEN_SHA1_HEX;
     public static final int HMAC_LEN = 64;
 
-    protected final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
+    protected final Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
     /**
      * 是否兼容直传clientId，还是仅支持ticket体系
@@ -91,13 +93,13 @@ public abstract class AbstractApiAuthController {
         }
 
         if (pass == null) {
-            responseText(response, apiAuthProp.getErrorClient(), null);
+            responseText(response, apiAuthProp.getErrorClient());
             return;
         }
 
         //
         final ApiEntity entity = validate(request, pass.getSecret());
-        if (!entity.error.isEmpty()) {
+        if (entity.error != null) {
             responseText(response, apiAuthProp.getErrorSignature(), entity.error);
             return;
         }
@@ -123,7 +125,7 @@ public abstract class AbstractApiAuthController {
         }
 
         if (!handled) {
-            responseText(response, apiAuthProp.getErrorUnhandled(), null);
+            responseText(response, apiAuthProp.getErrorUnhandled());
         }
     }
 
@@ -198,8 +200,17 @@ public abstract class AbstractApiAuthController {
     }
 
     @SneakyThrows
-    protected void responseText(@NotNull HttpServletResponse response, @NotNull MessageResponse body, String message) {
-        responseText(response, body.getHttpStatus(), body.responseBody(message));
+    protected void responseText(@NotNull HttpServletResponse response, @NotNull SimpleResponse body) {
+        responseText(response, body.getHttpStatus(), body.getResponseBody());
+    }
+
+    @SneakyThrows
+    protected void responseText(@NotNull HttpServletResponse response, @NotNull SimpleResponse body, @Nullable ApiError code) {
+        String responseBody = body.getResponseBody();
+        if (code != null) {
+            responseBody = responseBody.replace("{code}", code.name());
+        }
+        responseText(response, body.getHttpStatus(), responseBody);
     }
 
     @SneakyThrows
@@ -217,7 +228,7 @@ public abstract class AbstractApiAuthController {
         final String sgn = request.getHeader(apiAuthProp.getSignatureHeader());
         if (sgn == null || sgn.isEmpty()) {
             if (mustSign) {
-                entity.error = "signature-miss";
+                entity.error = ApiError.SignatureMissing;
                 return entity;
             }
         }
@@ -287,7 +298,7 @@ public abstract class AbstractApiAuthController {
     public ApiEntity validate(@NotNull HttpServletRequest request, @NotNull String secret) {
         final boolean mustSign = apiAuthProp.isMustSignature();
         final ApiEntity entity = parse(request, mustSign);
-        if (!entity.error.isEmpty()) return entity;
+        if (entity.error != null) return entity;
 
         final String para = FormatUtil.sortParam(entity.reqPara);
         //
@@ -301,7 +312,7 @@ public abstract class AbstractApiAuthController {
                 final Part pt = en.getValue();
                 final Part cpt = checkDigest(entity.reqPara.get(name + ".sum"), pt);
                 if (cpt == null) {
-                    entity.error = "digest-file";
+                    entity.error = ApiError.DigestFileInvalid;
                     return entity;
                 }
                 else if (cpt != pt) {
@@ -315,7 +326,7 @@ public abstract class AbstractApiAuthController {
         if (sumLen > 0) {
             final String sum = digest(entity.reqBody, sumLen);
             if (!entity.digest.equalsIgnoreCase(sum)) {
-                entity.error = "digest-body";
+                entity.error = DigestBodyInvalid;
                 return entity;
             }
         }
@@ -323,7 +334,7 @@ public abstract class AbstractApiAuthController {
         // 验证签名
         final String sign = signature(data, entity.signature.length(), secret);
         if (mustSign && !sign.equalsIgnoreCase(entity.signature)) {
-            entity.error = "signature-fail";
+            entity.error = ApiError.SignatureInvalid;
         }
         return entity;
     }
@@ -395,6 +406,13 @@ public abstract class AbstractApiAuthController {
      */
     public abstract boolean handle(@NotNull HttpServletRequest request, @NotNull ApiEntity entity) throws Exception;
 
+    public enum ApiError {
+        SignatureMissing,
+        SignatureInvalid,
+        DigestFileInvalid,
+        DigestBodyInvalid,
+    }
+
     @Data
     public static class ApiEntity {
 
@@ -448,8 +466,7 @@ public abstract class AbstractApiAuthController {
         /**
          * 以错误的形式回复
          */
-        @NotNull
-        private String error = Null.Str;
+        private ApiError error = null;
 
         /**
          * resFile=null时为应答文本，否则为文件名
