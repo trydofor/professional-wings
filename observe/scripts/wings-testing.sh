@@ -66,6 +66,9 @@ for arg in "$@"; do
   fi
 done
 
+echo -e "\033[32m ==== mvn version ==== \033[0m"
+mvn --version || exit
+
 ## install
 [[ "$*" =~ .*init.* ]] && mvn -U clean install -Dmaven.test.skip=true
 

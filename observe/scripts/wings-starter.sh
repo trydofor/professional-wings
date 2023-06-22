@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2023-06-16
+THIS_VERSION=2023-06-22
 ################ modify the following params ################
 WORK_DIR=''      # 脚本生成文件，日志的目录，默认空（脚本位置）
 TAIL_LOG='log'   # 默认tail的日志，"log|out|new|ask"
@@ -30,18 +30,19 @@ JDK8_ARG='
 # 可延时求值
 # shellcheck disable=SC2016
 JDK9_ARG='
---add-modules java.se
---add-exports java.base/jdk.internal.ref=ALL-UNNAMED
---add-opens java.base/java.lang=ALL-UNNAMED
---add-opens java.base/java.lang.invoke=ALL-UNNAMED
---add-opens java.base/java.util=ALL-UNNAMED
---add-opens java.base/java.io=ALL-UNNAMED
---add-opens java.base/java.nio=ALL-UNNAMED
---add-opens java.base/sun.nio.ch=ALL-UNNAMED
---add-opens java.management/sun.management=ALL-UNNAMED
---add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
---add-opens java.base/sun.security.x509=ALL-UNNAMED
---add-opens jdk.unsupported/sun.misc=ALL-UNNAMED
+--add-modules=java.se
+--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED
+--add-opens=java.base/java.io=ALL-UNNAMED
+--add-opens=java.base/java.lang.invoke=ALL-UNNAMED
+--add-opens=java.base/java.lang=ALL-UNNAMED
+--add-opens=java.base/java.net=ALL-UNNAMED
+--add-opens=java.base/java.nio=ALL-UNNAMED
+--add-opens=java.base/java.util=ALL-UNNAMED
+--add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+--add-opens=java.base/sun.security.x509=ALL-UNNAMED
+--add-opens=java.management/sun.management=ALL-UNNAMED
+--add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED
+--add-opens=jdk.unsupported/sun.misc=ALL-UNNAMED
 -Xlog:gc*=info:file=${BOOT_TKN}.gc:time,tid,tags:filecount=5,filesize=100m
 '
 # 可延时求值

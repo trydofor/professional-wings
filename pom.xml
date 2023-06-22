@@ -38,12 +38,12 @@
         <spring-boot.repackage.executable>false</spring-boot.repackage.executable>
         <gpg.skip>true</gpg.skip>
         <!-- common quality Checker Framework and ErrorProne -->
-        <errorprone.version>2.19.1</errorprone.version> <!-- https://github.com/google/error-prone/releases -->
+        <errorprone.version>2.20.0</errorprone.version> <!-- https://github.com/google/error-prone/releases -->
         <annotations.version>24.0.1</annotations.version> <!-- https://github.com/JetBrains/java-annotations/releases -->
         <!-- common utils-->
         <mapstruct.version>1.5.5.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
-        <guava.version>31.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
-        <commons-io.version>2.12.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
+        <guava.version>32.0.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
+        <commons-io.version>2.13.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
         <!-- wings project -->
         <mirana.version>2.4.5-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <meepo.version>1.4.1-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
@@ -53,34 +53,35 @@
         <fastjson.version>${fastjson2.version}</fastjson.version> <!-- https://github.com/alibaba/fastjson/releases -->
         <kryo.version>5.5.0</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
         <transmittable.version>2.14.2</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
-        <bouncycastle.version>1.73</bouncycastle.version> <!-- https://bouncycastle.org/releasenotes.html -->
+        <bouncycastle.version>1.74</bouncycastle.version> <!-- https://bouncycastle.org/releasenotes.html -->
         <justauth.version>1.16.5</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
         <!-- servicecomb -->
-        <servicecomb.version>2.8.7</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
+        <servicecomb.version>2.8.8</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
         <!-- others -->
         <springdoc.version>2.1.0</springdoc.version> <!-- https://github.com/springdoc/springdoc-openapi/releases -->
         <boot-admin.version>3.0.4</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
-        <sentry.version>6.19.0</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases buildSrc/src/main/java/Config.kt -->
+        <sentry.version>6.23.0</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases buildSrc/src/main/java/Config.kt -->
         <retrofit.version>2.9.0</retrofit.version> <!-- https://github.com/square/retrofit/tags -->
         <!-- mvn-build-plugin -->
         <flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version> <!-- https://github.com/mojohaus/flatten-maven-plugin/releases/tag -->
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version> <!-- https://github.com/apache/maven-gpg-plugin/tags -->
         <testing-json>{}</testing-json>
         <wings.java-opens>
-            --add-modules java.se <!-- Hazelcast -->
-            --add-opens java.base/java.io=ALL-UNNAMED <!-- FastJson -->
-            --add-opens java.base/java.nio=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens java.base/java.lang=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens java.base/java.lang.invoke=ALL-UNNAMED <!-- FastJson2 -->
-            --add-opens java.base/java.util=ALL-UNNAMED <!-- Boot Collections$EmptySet -->
-            --add-opens java.base/sun.nio.ch=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens java.base/jdk.internal.ref=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens java.base/sun.security.x509=ALL-UNNAMED <!-- Boot -->
-            --add-opens java.management/sun.management=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED <!-- Hazelcast -->
-            --add-opens jdk.unsupported/sun.misc=ALL-UNNAMED <!-- Boot -->
-            --add-opens jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED <!-- Boot -->
-            --add-opens jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED <!-- Boot -->
+            --add-modules=java.se <!-- Hazelcast -->
+            --add-opens=java.base/java.io=ALL-UNNAMED <!-- FastJson -->
+            --add-opens=java.base/java.lang.invoke=ALL-UNNAMED <!-- FastJson2 -->
+            --add-opens=java.base/java.lang=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=java.base/java.net=ALL-UNNAMED <!-- Gson -->
+            --add-opens=java.base/java.nio=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=java.base/java.util=ALL-UNNAMED <!-- Boot Collections$EmptySet -->
+            --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=java.base/sun.nio.ch=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=java.base/sun.security.x509=ALL-UNNAMED <!-- Boot -->
+            --add-opens=java.management/sun.management=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED <!-- Boot -->
+            --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED <!-- Boot -->
+            --add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED <!-- Hazelcast -->
+            --add-opens=jdk.unsupported/sun.misc=ALL-UNNAMED <!-- Boot -->
         </wings.java-opens>
     </properties>
 
@@ -530,22 +531,23 @@
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
+                        <parameters>true</parameters>
                         <compilerArgs>
-                            <arg>-parameters</arg>
                             <arg>--add-modules=java.se</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/java.io=ALL-UNNAMED</arg> <!-- FastJson -->
-                            <arg>--add-exports=java.base/java.nio=ALL-UNNAMED</arg> <!-- Hazelcast -->
-                            <arg>--add-exports=java.base/java.lang=ALL-UNNAMED</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/java.lang.invoke=ALL-UNNAMED</arg> <!-- FastJson2 -->
+                            <arg>--add-exports=java.base/java.lang=ALL-UNNAMED</arg> <!-- Hazelcast -->
+                            <arg>--add-exports=java.base/java.net=ALL-UNNAMED</arg> <!-- Gson -->
+                            <arg>--add-exports=java.base/java.nio=ALL-UNNAMED</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/java.util=ALL-UNNAMED</arg> <!-- Boot Collections$EmptySet -->
-                            <arg>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED</arg> <!-- Hazelcast -->
+                            <arg>--add-exports=java.base/sun.nio.ch=ALL-UNNAMED</arg> <!-- Hazelcast -->
                             <arg>--add-exports=java.base/sun.security.x509=ALL-UNNAMED</arg> <!-- Boot -->
                             <arg>--add-exports=java.management/sun.management=ALL-UNNAMED</arg> <!-- Hazelcast -->
+                            <arg>--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg> <!-- Boot -->
+                            <arg>--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg> <!-- Boot -->
                             <arg>--add-exports=jdk.management/com.sun.management.internal=ALL-UNNAMED</arg> <!-- Hazelcast -->
                             <arg>--add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED</arg> <!-- Boot -->
-                            <arg>--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg> <!-- Boot -->
-                            <arg>--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg> <!-- Boot -->
                         </compilerArgs>
                         <annotationProcessorPaths>
                             <!--  find annotationProcessors in the following paths -->
