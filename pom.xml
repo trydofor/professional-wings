@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.6</version> <!-- https://github.com/spring-projects/spring-boot/releases -->
+        <version>3.0.7</version> <!-- https://github.com/spring-projects/spring-boot/releases -->
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -21,7 +21,7 @@
 
     <properties>
         <!-- https://github.com/spring-projects/spring-boot/releases -->
-        <revision>3.0.6</revision>
+        <revision>3.0.7</revision>
         <!-- https://maven.apache.org/maven-ci-friendly.html -->
         <changelist>300-SNAPSHOT</changelist>
         <!-- https://docs.spring.io/spring-boot/docs/3.0.3/reference/html/dependency-versions.html -->
