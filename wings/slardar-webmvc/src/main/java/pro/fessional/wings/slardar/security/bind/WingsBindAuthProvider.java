@@ -17,6 +17,8 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
 import pro.fessional.mirana.bits.MdHelp;
+import pro.fessional.mirana.code.RandCode;
+import pro.fessional.wings.slardar.enums.errcode.AuthnErrorEnum;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.PasswordHelper;
 import pro.fessional.wings.slardar.security.WingsAuthCheckService;
@@ -37,9 +39,6 @@ import pro.fessional.wings.slardar.security.pass.DefaultPasssaltEncoder;
 public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProvider {
 
     private final static Log log = LogFactory.getLog(WingsBindAuthProvider.class);
-
-    private static final String BadCredentialsCode = "AbstractUserDetailsAuthenticationProvider.badCredentials";
-    private static final String USER_NOT_FOUND_PASSWORD = "TimingAttackProtectionUserNotFoundPassword";
 
     private volatile String userNotFoundEncodedPassword = null;
     private boolean onlyWingsBindAuthnToken = false;
@@ -68,7 +67,7 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
         if (wingsAuthCheckService != null && isWingsUserDetails && authentication instanceof WingsBindAuthToken) {
             if (!wingsAuthCheckService.check((WingsUserDetails) userDetails, (WingsBindAuthToken) authentication)) {
                 log.debug("Failed to post check userDetails and authentication");
-                throw new BadCredentialsException(messages.getMessage(BadCredentialsCode, "Bad credentials"));
+                throw new BadCredentialsException(messages.getMessage(AuthnErrorEnum.BadCredentials.getCode(), "Bad credentials"));
             }
         }
     }
@@ -151,30 +150,30 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
     protected void checkPassword(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) {
         if (authentication.getCredentials() == null) {
             log.debug("Failed to authenticate since no credentials provided");
-            throw new BadCredentialsException(messages.getMessage(BadCredentialsCode, "Bad credentials"));
+            throw new BadCredentialsException(messages.getMessage(AuthnErrorEnum.BadCredentials.getCode(), "Bad credentials"));
         }
 
         String presentedPassword = presentPassword(userDetails, authentication);
 
         if (!passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
             log.debug("Failed to authenticate since password does not match stored value");
-            throw new BadCredentialsException(messages.getMessage(BadCredentialsCode, "Bad credentials"));
+            throw new BadCredentialsException(messages.getMessage(AuthnErrorEnum.BadCredentials.getCode(), "Bad credentials"));
         }
     }
 
     protected String presentPassword(UserDetails details, Authentication auth) {
         String presentedPassword = auth.getCredentials().toString();
         // 加盐处理
-        if (passsaltEncoder != null && details instanceof WingsUserDetails) {
+        if (passsaltEncoder != null && details instanceof WingsUserDetails dtl) {
             PasswordHelper helper = new PasswordHelper(passwordEncoder, passsaltEncoder);
-            presentedPassword = helper.salt(presentedPassword, ((WingsUserDetails) details).getPasssalt());
+            presentedPassword = helper.salt(presentedPassword, dtl.getPasssalt());
         }
         return presentedPassword;
     }
 
     protected void prepareTimingAttackProtection() {
         if (userNotFoundEncodedPassword == null) {
-            userNotFoundEncodedPassword = passwordEncoder.encode(USER_NOT_FOUND_PASSWORD);
+            userNotFoundEncodedPassword = passwordEncoder.encode(RandCode.strong(20));
         }
     }
 
@@ -186,7 +185,6 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
     }
 
     // setter & getter
-
 
     public PasssaltEncoder getPasssaltEncoder() {
         return this.passsaltEncoder;
