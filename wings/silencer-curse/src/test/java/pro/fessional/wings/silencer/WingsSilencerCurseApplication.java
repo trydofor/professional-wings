@@ -19,6 +19,7 @@ public class WingsSilencerCurseApplication {
         return new InnerFace() {};
     }
 
+
     public static void main(String[] args) {
         SpringApplication.run(WingsSilencerCurseApplication.class, args);
     }

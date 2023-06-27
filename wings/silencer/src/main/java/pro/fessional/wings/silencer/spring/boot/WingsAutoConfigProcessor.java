@@ -48,9 +48,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * 自动加载配置路径中的 /wings-conf/*.{yml,yaml,properties}配置。
+ * Automatically load the configuration that matches `/wings-conf/*.{yml,yaml,properties}`
  * <pre>
- * <a href="https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/">参考资料docs.spring.io</a>
+ * <a href="https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/">docs.spring.io</a>
  *  - #boot-features-application-events-and-listeners
  *  - #boot-features-external-config
  *  - #howto-change-the-location-of-external-properties
@@ -317,7 +317,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         return prop;
     }
 
-    // 移除非活动profile，basename相同，application-{profile}由spring自身管理
+    // Remove the inactive profile, with the same basename, application-{profile} is managed by spring itself
     private List<ConfResource> profileBlockSort(LinkedHashSet<ConfResource> confResources,
                                                 HashMap<String, String> blockList,
                                                 String[] activeProfs) {
@@ -337,7 +337,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             }
             else {
                 HashSet<String> prof = new HashSet<>(Arrays.asList(activeProfs));
-                // 移除所有非活动，empty以低优先级加载
+                // Remove all inactivity, empty is loaded with low priority
                 final Set<ConfResource> actProf = new HashSet<>();
                 for (ConfResource cr : profiledConf) {
                     if (cr.profile.isEmpty() || prof.contains(cr.profile)) {
@@ -354,7 +354,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
             }
         }
 
-        // 按名字分组，排序
+        // group by name, and sort
         LinkedHashMap<String, List<ConfResource>> groups = new LinkedHashMap<>(confResources.size());
         Function<String, List<ConfResource>> newList = ignored -> new ArrayList<>();
         for (ConfResource cr : confResources) {
@@ -392,7 +392,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         return sortedConf;
     }
 
-    // 按路径优先级扫描
+    // Scan by path priority
     private LinkedHashSet<ConfResource> scanWingsResource(MutablePropertySources sources, PathMatchingResourcePatternResolver resolver, AutoConf autoConf) {
         LinkedHashSet<String> sortedPath = new LinkedHashSet<>();
         for (PropertySource<?> next : sources) {
@@ -418,7 +418,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
         final LinkedHashSet<ConfResource> confResources = new LinkedHashSet<>();
         for (String path : sortedPath) {
-            // 5. `classpath:/`会被以`classpath*:/`扫描
+            // 5. `classpath:/` is scanned as `classpath*:/`
             if (path.startsWith("classpath:")) {
                 path = path.replace("classpath:", "classpath*:");
             }
@@ -426,14 +426,14 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
                 // skip
             }
             else {
-                // 6. 任何非`classpath:`,`classpath*:`的，都以`file:`扫描
+                // 6. any non-`classpath:`,`classpath*:` will be scanned as `file:`
                 path = "file:" + path;
             }
 
             log.info("🦁 Wings scan classpath, path=" + path);
-            //  7. 以`/`结尾的当做目录，否则作为文件
+            //  7. ending with `/` as dir, otherwirse as file
             if (path.endsWith("/") || path.endsWith("\\")) {
-                // 8. 从以上路径，优先加载`application.*`，次之`wings-conf/**/*.*`
+                // 8. From the above path, `application.*` is loaded first, then `wings-conf/**/*.*`
                 for (String auto : autoConf.onces) {
                     putConfIfValid(false, confResources, resolver, path + auto, autoConf);
                 }

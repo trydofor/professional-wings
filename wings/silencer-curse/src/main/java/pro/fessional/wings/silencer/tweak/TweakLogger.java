@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.MDC;
 import org.slf4j.Marker;
+import org.springframework.boot.context.logging.LoggingApplicationListener;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggerConfiguration;
 import org.springframework.boot.logging.LoggerGroup;
@@ -26,6 +27,7 @@ import static org.springframework.boot.logging.LoggingSystem.ROOT_LOGGER_NAME;
  * <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.logging">Logging</a>
  *
  * @author trydofor
+ * @see LoggingApplicationListener
  * @since 2022-10-27
  */
 public class TweakLogger {
@@ -138,6 +140,9 @@ public class TweakLogger {
 
     @NotNull
     public static LogLevel globalLevel(@NotNull String name) {
+        if (loggingSystem == null) {
+            throw new IllegalStateException("must initLogging first");
+        }
         return GlobalLevel.computeIfAbsent(name, k -> {
             if (loggerGroups != null) {
                 LoggerGroup group = loggerGroups.get(name);

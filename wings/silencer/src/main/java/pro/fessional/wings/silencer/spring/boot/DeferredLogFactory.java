@@ -8,7 +8,9 @@ import org.springframework.context.ApplicationListener;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 日志系统未初始化之前记录日志信息，当ApplicationPreparedEvent时定向到日志系统。
+ * Logging information is recorded before the logging system is initialized,
+ * and redirected to the logging system when ApplicationPreparedEvent.
+ *
  * @author trydofor
  * @since 2019-05-30
  */

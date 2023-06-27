@@ -6,8 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.boot.context.event.SpringApplicationEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
@@ -15,6 +14,9 @@ import pro.fessional.wings.silencer.other.CollectionInjectTest;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 
 /**
+ * ApplicationEnvironmentPreparedEvent(spring.factories)
+ * ApplicationContextInitializedEvent(spring.factories)
+ * ApplicationPreparedEvent(spring.factories)
  * constructor
  * testAutowired1
  * postConstruct1
@@ -22,10 +24,12 @@ import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
  * afterPropertiesSet
  * testBean1
  * testBean2
- * testApplicationStartedEvent
+ * ContextRefreshedEvent(spring.factories)
+ * ApplicationStartedEvent
  * CommandLineRunner1
  * CommandLineRunner2
  * ApplicationReadyEvent
+ * ContextClosedEvent(spring.factories)
  *
  * @author trydofor
  * @since 2022-11-02
@@ -71,14 +75,9 @@ public class SpringOrderConfiguration implements InitializingBean {
         return ignored -> log.info(">>>>> CommandLineRunner2 AutoLog=" + prop.isAutoLog());
     }
 
-    @EventListener(ApplicationStartedEvent.class)
-    public void testApplicationStartedEvent() {
-        log.info(">>>>> testApplicationStartedEvent 事件参数");
-    }
-
     @EventListener
-    public void testApplicationReadyEvent(ApplicationReadyEvent event) {
-        log.info(">>>>> ApplicationReadyEvent timestamp=" + event.getTimestamp());
+    public void testApplicationReadyEvent(SpringApplicationEvent event) {
+        log.info(">>>>> " + event.getClass().getSimpleName() + " timestamp=" + event.getTimestamp());
     }
 
     @Override

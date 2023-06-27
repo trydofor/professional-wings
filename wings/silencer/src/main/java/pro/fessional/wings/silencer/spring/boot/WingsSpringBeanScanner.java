@@ -18,7 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 自动加载配置路径中的/spring/bean/下的*.class配置
+ * Automatically load the configuration that matches `*&#42;/spring/bean/*&#42;/*.class`
  *
  * @author trydofor
  * @since 2019-07-11
@@ -107,9 +107,8 @@ public class WingsSpringBeanScanner implements ApplicationListener<ApplicationPr
 
         // common path
         int off = ps - 1;
-        int p3 = ps;
-        while (off > 0 && p3 > 0) {
-            p3 = path.lastIndexOf('/', off);
+        while (off > 0) {
+            int p3 = path.lastIndexOf('/', off);
             if (p3 > 0 && packageName(map, loader, path, p3 + 1, ps, px)) {
                 return;
             }

@@ -48,7 +48,7 @@ public class WatchingService {
         final WinConfRuntimeTable t = winConfRuntimeDao.getTable();
         winConfRuntimeDao.ctx()
                          .selectFrom(t)
-                         .where("aaa=bbb")
+                         .where("ignore_this_error=true")
                          .fetch();
     }
 
@@ -68,7 +68,7 @@ public class WatchingService {
             log.warn("AsyncWatch={}", WatchOwner);
             asyncLatch.countDown();
             asyncLatch = new CountDownLatch(1);
-            try (Watch w0 = stopWatch.start("AsyncWatch.fetchLatch")) {
+            try (Watch ignored = stopWatch.start("AsyncWatch.fetchLatch")) {
                 fetchLatch.await(); // 等待sql执行，交叉时间线
             }
             catch (InterruptedException e) {

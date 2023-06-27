@@ -17,7 +17,7 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 自己先处理，然后[兄弟连]处理，然后父类
+ * Handles itself first, then handles [brother]  it, then the parent
  *
  * @author trydofor
  * @since 2019-09-15
@@ -52,7 +52,8 @@ public class CombinableMessageSource extends AbstractMessageSource {
         if (locale == null) {
             codeLocaleString.remove(code);
             codeLocaleFormat.remove(code);
-        } else {
+        }
+        else {
             remove(codeLocaleString, code, locale);
             remove(codeLocaleFormat, code, locale);
         }
@@ -100,18 +101,19 @@ public class CombinableMessageSource extends AbstractMessageSource {
             final int size = orderedBrotherSources.size();
             if (size == 0) {
                 super.setParentMessageSource(parent);
-            } else {
+            }
+            else {
                 orderedBrotherSources.get(size - 1).source.setParentMessageSource(parent);
             }
         }
     }
 
     /**
-     * 按order顺序，组合其他messageSource，序号小的优先解析message。
-     * 当order==Integer.MIN_VALUE时，表示移除该message
+     * Combine other messageSource in order, and the one with the smaller order number will be resolved first.
+     * If order equals Integer.MIN_VALUE, it means that the message will be removed.
      *
-     * @param messageSource 其他messageSource
-     * @param order         顺序，#Integer.MIN_VALUE时表示移除
+     * @param messageSource other messageSource
+     * @param order         order Integer#MIN_VALUE means remove
      */
     public void addMessages(HierarchicalMessageSource messageSource, int order) {
         Assert.notNull(messageSource, "messageSource must not be null");
@@ -120,7 +122,8 @@ public class CombinableMessageSource extends AbstractMessageSource {
             MessageSource thatParent;
             if (size == 0) {
                 thatParent = getParentMessageSource();
-            } else {
+            }
+            else {
                 thatParent = orderedBrotherSources.get(size - 1).source.getParentMessageSource();
             }
 
@@ -141,9 +144,9 @@ public class CombinableMessageSource extends AbstractMessageSource {
     }
 
     /**
-     * 移除组合的messageSource
+     * remove messageSource
      *
-     * @param messageSource 被移除对象
+     * @param messageSource to be removed
      */
     public void removeMessages(HierarchicalMessageSource messageSource) {
         addMessages(messageSource, Integer.MIN_VALUE);
