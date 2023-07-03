@@ -30,6 +30,8 @@ import java.util.concurrent.Executors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.DEFAULT_TASK_SCHEDULER_BEAN_NAME;
+import static pro.fessional.wings.slardar.notice.DingTalkConf.MsgMarkdown;
+import static pro.fessional.wings.slardar.notice.DingTalkConf.MsgText;
 
 /**
  * <a href="https://open.dingtalk.com/document/robots/custom-robot-access">custom-robot-access</a>
@@ -131,7 +133,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
         }
 
         final String message;
-        if ("markdown".equalsIgnoreCase(config.getMsgType())) {
+        if (MsgMarkdown.equalsIgnoreCase(config.getMsgType())) {
             message = buildMarkdown(config, subject, content);
         }
         else {
@@ -183,12 +185,9 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
      * }
      */
     public String buildText(DingTalkConf conf, String subject, String content) {
-        if (subject == null) subject = Null.Str;
-        if (content == null) content = Null.Str;
-        final String message = subject.isEmpty() ? content : subject + "\r\n" + content;
         return JsonTemplate.obj(t -> t
-                .putVal("msgtype", "text")
-                .putObj("text", o -> o.putVal("content", buildContent(conf, message)))
+                .putVal("msgtype", MsgText)
+                .putObj("text", o -> o.putVal("content", buildContent(conf, content, subject)))
                 .putObj("at", o -> buildNotice(conf, o))
         );
     }
@@ -207,7 +206,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
     @SuppressWarnings("JavadocLinkAsPlainText")
     public String buildMarkdown(DingTalkConf conf, String subject, String content) {
         return JsonTemplate.obj(t -> t
-                .putVal("msgtype", "markdown")
+                .putVal("msgtype", MsgMarkdown)
                 .putObj("markdown", o -> o
                         .putVal("title", subject != null ? subject : "untitled")
                         .putVal("text", buildContent(conf, content, subject)))
@@ -215,32 +214,29 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
         );
     }
 
-    private String buildContent(DingTalkConf conf, String main, String... kws) {
+    private String buildContent(DingTalkConf conf, String main, String title) {
         if (main == null) main = Null.Str;
 
-        StringBuilder sb = new StringBuilder();
-        final String kw = conf.getNoticeKeyword();
-        if (kw != null && !kw.isEmpty()) {
-            boolean ng = !main.contains(kw);
-            if (ng && kws != null) {
-                for (String s : kws) {
-                    if (s != null && s.contains(kw)) {
-                        ng = false;
-                        break;
-                    }
-                }
-            }
-            if (ng) {
-                sb.append(kw);
-            }
+        StringBuilder buff = new StringBuilder();
+        // title
+        if (title != null && !main.contains(title)) {
+            buff.append("# ").append(title).append("\n\n")
+                .append(main);
         }
+
+        // key word
+        final String kw = conf.getNoticeKeyword();
+        if (kw != null && !kw.isEmpty() && !main.contains(kw)) {
+            buff.append('\n').append(kw);
+        }
+        // notice
         for (String mb : conf.getNoticeMobiles().values()) {
             if (!main.contains(mb)) {
-                sb.append(" @").append(mb);
+                buff.append(" @").append(mb);
             }
         }
 
-        return sb.length() == 0 ? main : main + "\n\n" + sb;
+        return buff.length() == 0 ? main : buff.toString();
     }
 
     private void buildNotice(DingTalkConf conf, JsonTemplate.Obj obj) {

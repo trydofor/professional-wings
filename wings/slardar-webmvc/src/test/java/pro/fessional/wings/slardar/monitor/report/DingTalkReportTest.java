@@ -49,6 +49,8 @@ class DingTalkReportTest {
     void postNotice() {
         final DingTalkConf conf = dingTalkNotice.provideConfig("monitor", true);
         conf.setNoticeMobiles(Map.of("a9", "155XXXX1992"));
-        dingTalkNotice.post(conf, "测试标题", "##测试正文\n\n- **列表** 正常");
+        dingTalkNotice.post(conf, "MARKDOWN标题", "## 测试正文\n\n- **列表** 正常");
+        conf.setMsgType(DingTalkConf.MsgText);
+        dingTalkNotice.post(conf, "文本标题", "## 测试正文\n\n- **列表** 正常");
     }
 }

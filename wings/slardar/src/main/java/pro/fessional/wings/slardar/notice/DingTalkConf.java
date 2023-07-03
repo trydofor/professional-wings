@@ -18,6 +18,10 @@ import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue
  */
 @Data
 public class DingTalkConf {
+
+    public static final String MsgText = "text";
+    public static final String MsgMarkdown = "markdown";
+
     /**
      * template of DingTalk webhook URL.
      */
@@ -43,7 +47,7 @@ public class DingTalkConf {
     /**
      * message type, support `text`|`markdown`
      */
-    private String msgType = "markdown";
+    private String msgType = MsgMarkdown;
 
     /**
      * notified person and his phone number, non-member's phone number will be desensitized.
