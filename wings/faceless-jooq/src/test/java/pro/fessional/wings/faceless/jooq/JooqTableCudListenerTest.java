@@ -105,7 +105,7 @@ public class JooqTableCudListenerTest {
                 "insert ignore into");
 
         testcaseNotice("单个插入 replace");
-        assertCud(false, Cud.Create, singletonList(singletonList(301L)), () -> testDao.insertInto(pojo, false),
+        assertCud(false, Cud.Update, singletonList(singletonList(301L)), () -> testDao.insertInto(pojo, false),
                 "duplicate key update");
 
         final TstShardingTable t = testDao.getTable();

@@ -4,36 +4,23 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
-import pro.fessional.wings.warlock.caching.CacheEventHelper;
-import pro.fessional.wings.warlock.event.cache.TableChangeEvent;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 import pro.fessional.wings.warlock.service.auth.help.AuthnDetailsMapper;
 
 import java.util.Collections;
 import java.util.List;
 
-import static pro.fessional.wings.warlock.caching.CacheConst.WarlockAuthnService.CacheName;
-import static pro.fessional.wings.warlock.caching.CacheConst.WarlockAuthnService.CacheResolver;
-import static pro.fessional.wings.warlock.caching.CacheConst.WarlockAuthnService.EventTables;
-import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.DELETE;
-import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.UPDATE;
-
 /**
  * @author trydofor
  * @since 2021-02-23
  */
 @Slf4j
-@CacheConfig(cacheNames = CacheName, cacheResolver = CacheResolver)
 public class ComboWarlockAuthnService implements WarlockAuthnService {
 
     @Setter(onMethod_ = {@Autowired(required = false)})
@@ -43,7 +30,6 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     private List<AutoReg> authAutoRegs = Collections.emptyList();
 
     @Override
-    @Cacheable
     public Details load(@NotNull Enum<?> authType, String username) {
         Details dtl = null;
         for (Combo cmb : combos) {
@@ -54,7 +40,6 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     }
 
     @Override
-    @Cacheable
     public Details load(@NotNull Enum<?> authType, long userId) {
         Details dtl = null;
         for (Combo cmb : combos) {
@@ -62,22 +47,6 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
             if (dtl != null) break;
         }
         return dtl;
-    }
-
-    /**
-     * 异步清理缓存，event可以为null
-     *
-     * @param event 可以为null
-     */
-    @EventListener
-    @CacheEvict(allEntries = true, condition = "#result")
-    public boolean evictAllAuthnCache(TableChangeEvent event) {
-        final String tb = CacheEventHelper.fire(event, EventTables, DELETE | UPDATE);
-        if (tb != null) {
-            log.info("evictAllAuthnCache by {}, {}", tb, event == null ? -1 : event.getChange());
-            return true;
-        }
-        return false;
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
+import pro.fessional.mirana.time.Sleep;
 import pro.fessional.wings.silencer.modulate.RunMode;
 import pro.fessional.wings.slardar.cache.WingsCacheHelper;
 import pro.fessional.wings.warlock.caching.CacheConst;
@@ -27,7 +28,9 @@ import java.util.Set;
  * @author trydofor
  * @since 2022-03-09
  */
-@SpringBootTest
+@SpringBootTest(properties = {
+        "wings.faceless.jooq.cud.table[win_conf_runtime]=key,current,handler",
+        "logging.level.root=debug"})
 class RuntimeConfServiceTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -50,13 +53,13 @@ class RuntimeConfServiceTest {
         Assertions.assertTrue(names.contains(CacheConst.RuntimeConfService.CacheManager));
         Assertions.assertTrue(names.contains(CacheConst.RuntimeConfService.CacheResolver));
 
-        final Map<String, Set<String>> cas = WingsCacheHelper.getCacheMeta(RuntimeConfServiceImpl.class, "getObject");
-        final Set<String> v = cas.get(CacheConst.RuntimeConfService.CacheResolver);
+        final Map<String, Set<String>> cas = WingsCacheHelper.getCacheMeta(RuntimeConfServiceImpl.class, "getObjectCache");
+        final Set<String> v = cas.get(CacheConst.RuntimeConfService.CacheManager);
         Assertions.assertNotNull(v);
         Assertions.assertTrue(v.contains(CacheConst.RuntimeConfService.CacheName));
     }
 
-    <T> void assertSimple(Class<T> clz, T obj) {
+    private <T> void assertSimple(Class<T> clz, T obj) {
         runtimeConfService.newObject(clz, obj, "test " + clz.getSimpleName());
         final T obj1 = runtimeConfService.getSimple(clz, clz);
         Assertions.assertEquals(obj, obj1);
@@ -88,6 +91,7 @@ class RuntimeConfServiceTest {
     void testJson() {
         Dto dto = new Dto();
         runtimeConfService.newObject(Dto.class, dto, "需要先初始化数据库 Warlock1SchemaCreator#init0Schema");
+        Sleep.ignoreInterrupt(1000);
         final Dto dto1 = runtimeConfService.getSimple(Dto.class, Dto.class);
         Assertions.assertEquals(dto, dto1);
     }
@@ -97,6 +101,7 @@ class RuntimeConfServiceTest {
         Dto dto = new Dto();
         dto.setLdt(LocalDateTime.now());
         runtimeConfService.newObject(Dto.class, dto, "test dto", RuntimeConfServiceImpl.KryoHandler);
+        Sleep.ignoreInterrupt(1000);
         final Dto dto1 = runtimeConfService.getSimple(Dto.class, Dto.class);
         Assertions.assertEquals(dto, dto1);
     }
@@ -104,12 +109,34 @@ class RuntimeConfServiceTest {
     @Test
     void testMode() {
         final List<RunMode> arm = List.of(RunMode.Develop, RunMode.Local);
-        runtimeConfService.newObject(RunMode.class, arm, "test RunMode");
-        final List<RunMode> arm1 = runtimeConfService.getEnums(RunMode.class);
+        final String key = "RuntimeConfServiceTest.testMode";
+        runtimeConfService.newObject(key, arm, "test RunMode");
+        final List<RunMode> arm1 = runtimeConfService.getList(key, RunMode.class);
         Assertions.assertEquals(arm, arm1);
 
-        runtimeConfService.setObject(RunMode.class, RunMode.Develop);
-        final RunMode rm1 = runtimeConfService.getEnum(RunMode.class);
+        runtimeConfService.setObject(key, RunMode.Develop);
+        final RunMode rm1 = runtimeConfService.getSimple(key, RunMode.class);
         Assertions.assertEquals(RunMode.Develop, rm1);
+    }
+
+    @Test
+    void testCache() {
+        final List<RunMode> arm = List.of(RunMode.Develop, RunMode.Local);
+        final String key = "RuntimeConfCacheTest.testCache";
+        runtimeConfService.newObject(key, arm, "test RunMode");
+        final List<RunMode> arm1 = runtimeConfService.getList(key, RunMode.class);
+        final List<RunMode> arm2 = runtimeConfService.getList(key, RunMode.class);
+
+        runtimeConfService.setObject(key, arm);
+        Sleep.ignoreInterrupt(2_000);
+        // check log TableChangeEvent(source=[pro.fessional.wings.warlock.service.event.impl.WingsTableCudHandlerImpl]
+
+        final List<RunMode> rm1 = runtimeConfService.getList(key, RunMode.class);
+        final List<RunMode> rm2 = runtimeConfService.getList(key, RunMode.class);
+
+        Assertions.assertEquals(arm, arm1);
+        Assertions.assertSame(arm1, arm2);
+        Assertions.assertNotSame(arm1, rm1);
+        Assertions.assertSame(rm1, rm2);
     }
 }

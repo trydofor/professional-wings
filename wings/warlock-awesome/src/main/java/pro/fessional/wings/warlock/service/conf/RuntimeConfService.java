@@ -170,14 +170,14 @@ public interface RuntimeConfService {
      * @param value   初始值
      * @param comment 注释
      */
-    void newObject(String key, Object value, String comment);
+    boolean newObject(String key, Object value, String comment);
 
-    default void newObject(Class<?> key, Object value, String comment) {
-        newObject(key.getName(), value, comment);
+    default boolean newObject(Class<?> key, Object value, String comment) {
+        return newObject(key.getName(), value, comment);
     }
 
-    default void newObject(Enum<?> key, Object value, String comment) {
-        newObject(EnumConvertor.enum2Str(key), value, comment);
+    default boolean newObject(Enum<?> key, Object value, String comment) {
+        return newObject(EnumConvertor.enum2Str(key), value, comment);
     }
 
 }

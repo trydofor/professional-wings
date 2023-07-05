@@ -14,7 +14,6 @@ public interface OrderedWarlockConst extends WingsBeanOrdered {
     int LockBeanConfiguration = Lv4Application + PriorityD;
     int TableChangeConfiguration = Lv4Application + PriorityD;
     int WatchingConfiguration = Lv4Application + PriorityD;
-    int BondAutoRunConfiguration = Lv4Application + PriorityD;
     int BondBeanConfiguration = Lv4Application + PriorityD;
     int JustAuthConfiguration = Lv4Application + PriorityD;
     int UnionAuthConfiguration = Lv4Application + PriorityD;

@@ -69,13 +69,17 @@ public class FacelessJooqConfiguration {
     @Bean
     @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$listenTableCud, havingValue = "true")
     @Order(OrderedFacelessConst.JooqTableCudListener)
-    public VisitListenerProvider jooqTableCudListener(ObjectProvider<WingsTableCudHandler> handlers, FacelessJooqCudProp prop) {
-        final List<WingsTableCudHandler> hdl = handlers.orderedStream().collect(Collectors.toList());
-        final String names = hdl.stream().map(it -> it.getClass().getName()).collect(Collectors.joining(","));
-        log.info("FacelessJooq spring-bean jooqTableCudListener with handler=" + names);
+    public VisitListenerProvider jooqTableCudListener(FacelessJooqCudProp prop, List<WingsTableCudHandler> handlers) {
         final TableCudListener listener = new TableCudListener();
-        listener.setHandlers(hdl);
-        listener.setInsert(prop.isInsert());
+
+        final String names = handlers.stream().map(it -> it.getClass().getName()).collect(Collectors.joining(","));
+        log.info("FacelessJooq spring-bean jooqTableCudListener with handler=" + names);
+        for (WingsTableCudHandler handler : handlers) {
+            handler.register(listener);
+        }
+
+        listener.setHandlers(handlers);
+        listener.setCreate(prop.isCreate());
         listener.setUpdate(prop.isUpdate());
         listener.setDelete(prop.isDelete());
         listener.setTableField(prop.getTable());

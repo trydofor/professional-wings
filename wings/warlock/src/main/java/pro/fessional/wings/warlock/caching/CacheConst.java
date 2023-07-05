@@ -22,13 +22,6 @@ public interface CacheConst {
         Set<String> EventTables = new HashSet<>(singletonList("win_conf_runtime"));
     }
 
-    interface WarlockAuthnService {
-        String CacheName = WingsCache.Level.Service + "WarlockAuthnService" + WingsCache.Extend;
-        String CacheManager = WingsCache.Manager.Memory;
-        String CacheResolver = WingsCache.Resolver.Memory;
-        Set<String> EventTables = new HashSet<>();
-    }
-
     interface WarlockPermService {
         String CacheName = WingsCache.Level.Service + "WarlockPermService" + WingsCache.Extend;
         String CacheManager = WingsCache.Manager.Memory;
