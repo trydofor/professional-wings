@@ -1,5 +1,7 @@
 package pro.fessional.wings.warlock.controller.other;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -7,6 +9,8 @@ import lombok.Data;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +29,20 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @Slf4j
 public class TestOtherController {
+
+    @RequestMapping("/test/guest-session.json")
+    public String guestSession(HttpServletRequest request) {
+        final HttpSession session = request.getSession(true);
+        final Authentication authn = SecurityContextHolder.getContext().getAuthentication();
+        log.info("guest Authentication={}", authn);
+        return session.getId();
+    }
+
+    @RequestMapping("/user/guest-401.json")
+    public String guest401(HttpServletRequest request) {
+        final HttpSession session = request.getSession(true);
+        return session.getId();
+    }
 
     @RequestMapping("/test/code-exception.json")
     public String codeException() {

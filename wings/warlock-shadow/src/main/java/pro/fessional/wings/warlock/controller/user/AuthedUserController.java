@@ -57,6 +57,8 @@ public class AuthedUserController {
     public static class Dto {
         @Schema(description = "昵称", example = "trydofor")
         private String nickname;
+        @Schema(description = "用户名", example = "trydofor")
+        private String username;
         @Schema(description = "语言，参考java.util.Locale", example = "zh-CN")
         private String locale;
         @Schema(description = "时区，参考java.time.ZoneId", example = "Asia/Shanghai")
@@ -102,6 +104,7 @@ public class AuthedUserController {
             dto.setAuthtype(at.name());
         }
         dto.setNickname(wd.getNickname());
+        dto.setUsername(wd.getUsername());
         dto.setLocale(wd.getLocale().toLanguageTag());
         final ZoneId zid = wd.getZoneId();
         dto.setZoneid(zid.getId());

@@ -6,8 +6,10 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -72,6 +74,8 @@ public class TestLoginController {
      */
     @GetMapping("/auth/current-principal.json")
     public R<WingsUserDetails> currentPrincipal(@Parameter(hidden = true) @AuthenticationPrincipal WingsUserDetails principal) {
+        final Authentication authn = SecurityContextHolder.getContext().getAuthentication();
+        log.info("current Authentication={}", authn);
         return R.okData(principal);
     }
 

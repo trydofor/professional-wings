@@ -12,10 +12,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.session.FindByIndexNameSessionRepository;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
+import org.springframework.session.Session;
+import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 import pro.fessional.wings.slardar.session.HazelcastSessionHelper;
 import pro.fessional.wings.slardar.session.WingsSessionHelper;
-import pro.fessional.wings.slardar.session.WingsSessionRegistry;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 /**
  * @author trydofor
@@ -30,14 +31,14 @@ public class HazelcastSessionConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(SessionRegistry.class)
-    public SessionRegistry sessionRegistry(FindByIndexNameSessionRepository<?> repository, WingsSessionHelper helper) {
+    public SessionRegistry sessionRegistry(FindByIndexNameSessionRepository<?> repository) {
         log.info("SlardarHazelSession spring-bean sessionRegistry");
-        return new WingsSessionRegistry<>(repository, helper);
+        return new SpringSessionBackedSessionRegistry<>(repository);
     }
 
     @Bean
     public WingsSessionHelper wingsSessionHelper(
-            FindByIndexNameSessionRepository<?> sessionRepository,
+            FindByIndexNameSessionRepository<Session> sessionRepository,
             HazelcastInstance hzInstance,
             @Value("${spring.session.hazelcast.map-name:spring:session:sessions}") String mapName) {
 

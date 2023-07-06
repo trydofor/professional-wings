@@ -29,12 +29,11 @@ import pro.fessional.wings.warlock.service.watching.WatchingService;
 @Slf4j
 public class WarlockWatchingTest {
 
-    @Setter(onMethod_ = {@Value("${local.server.port}")})
-    private int port;
+    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
+    private String host;
 
     @Setter(onMethod_ = {@Autowired})
     private OkHttpClient okHttpClient;
-
 
     /**
      * 查看日志输出
@@ -42,7 +41,6 @@ public class WarlockWatchingTest {
     @Test
     public void testWatching() {
         final StopWatch.Watch watch = Watches.acquire("testWatching");
-        final String host = "http://localhost:" + port;
         final Request.Builder body = new Request.Builder().url(host + "/test/watching.json");
         final Response r1 = OkHttpClientHelper.execute(okHttpClient, body, false);
         Assertions.assertEquals(200, r1.code());
