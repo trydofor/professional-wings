@@ -75,5 +75,5 @@ public interface WarlockAuthnService {
 
     void onSuccess(@NotNull Enum<?> authType, long userId, String details);
 
-    void onFailure(@NotNull Enum<?> authType, String username);
+    void onFailure(@NotNull Enum<?> authType, String username, String details);
 }

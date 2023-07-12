@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.web.servlet.LocaleResolver;
 import pro.fessional.mirana.bits.Aes;
 import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
 import pro.fessional.wings.slardar.cache.WingsCache;
@@ -382,7 +383,9 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(WingsAuthDetailsSource.class)
     public WingsAuthDetailsSource<?> wingsAuthDetailsSource(ObjectProvider<ComboWingsAuthDetailsSource.Combo<?>> combos,
-                                                            ObjectProvider<WingsRemoteResolver> rrs) {
+                                                            ObjectProvider<WingsRemoteResolver> rrs,
+                                                            ObjectProvider<LocaleResolver> lrp
+                                                            ) {
         log.info("WarlockShadow spring-bean wingsAuthDetailsSource");
         final ComboWingsAuthDetailsSource uds = new ComboWingsAuthDetailsSource();
 
@@ -396,6 +399,7 @@ public class WarlockSecurityBeanConfiguration {
         uds.setIgnoredMetaKey(set);
 
         rrs.ifAvailable(uds::setWingsRemoteResolver);
+        lrp.ifAvailable(uds::setLocaleResolver);
 
         return uds;
     }

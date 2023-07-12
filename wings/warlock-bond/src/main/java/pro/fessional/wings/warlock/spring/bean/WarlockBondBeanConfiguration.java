@@ -13,7 +13,9 @@ import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.caching.CacheConst;
 import pro.fessional.wings.warlock.database.autogen.tables.WinPermEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinRoleEntryTable;
+import pro.fessional.wings.warlock.service.auth.WarlockDangerService;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultDaoAuthnCombo;
+import pro.fessional.wings.warlock.service.auth.impl.WarlockDangerServiceImpl;
 import pro.fessional.wings.warlock.service.grant.WarlockGrantService;
 import pro.fessional.wings.warlock.service.grant.impl.WarlockGrantServiceImpl;
 import pro.fessional.wings.warlock.service.perm.WarlockPermService;
@@ -26,6 +28,7 @@ import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
 import pro.fessional.wings.warlock.service.user.impl.WarlockUserAuthnServiceImpl;
 import pro.fessional.wings.warlock.service.user.impl.WarlockUserBasisServiceImpl;
 import pro.fessional.wings.warlock.service.user.impl.WarlockUserLoginServiceImpl;
+import pro.fessional.wings.warlock.spring.prop.WarlockDangerProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 
 
@@ -50,6 +53,13 @@ public class WarlockBondBeanConfiguration {
         log.info("WarlockBond spring-conf WinRoleEntryTable.EventTables");
     }
     ///////// AuthZ & AuthN /////////
+
+    @Bean
+    @ConditionalOnMissingBean(WarlockDangerService.class)
+    public WarlockDangerService warlockDangerService(WarlockDangerProp warlockDangerProp) {
+        log.info("WarlockBond spring-bean warlockDangerService");
+        return new WarlockDangerServiceImpl(warlockDangerProp.getCacheSize(), (int) warlockDangerProp.getCacheTtl().toSeconds());
+    }
 
     @Bean
     @ConditionalOnMissingBean(DefaultDaoAuthnCombo.class)

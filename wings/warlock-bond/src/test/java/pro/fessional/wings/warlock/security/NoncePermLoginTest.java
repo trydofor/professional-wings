@@ -13,6 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 
+import java.util.Locale;
+
 import static pro.fessional.wings.warlock.security.NoncePermLoginTest.DangerUrl;
 
 /**
@@ -59,12 +61,14 @@ class NoncePermLoginTest {
 
     @Test
     public void testDanger() {
+        log.warn("current locale = {}", Locale.getDefault());
         OkHttpClientHelper.postJson(okHttpClient, host + DangerUrl, "{\"userId\":1,\"danger\":true}");
         {
-            final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/username/login.json?username=root&password=BAD"), false);
+            final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/username/login.json?username=root&password=BAD&locale=zh"), false);
             String login = OkHttpClientHelper.extractString(r2, false);
             log.warn("testDanger-a get login res = " + login);
             Assertions.assertTrue(login.contains("false"), "需要先初始化数据库 Warlock1SchemaCreator#init0Schema");
+            Assertions.assertTrue(login.contains("账号已锁定"), "确认i18n设置");
         }
 
         OkHttpClientHelper.postJson(okHttpClient, host + DangerUrl, "{\"userId\":1,\"danger\":false}");
@@ -81,10 +85,16 @@ class NoncePermLoginTest {
         }
 
         for (int i = 0; i < 6; i++) {
-            final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/username/login.json?username=root&password=BAD"), false);
+            final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/username/login.json?username=root&password=BAD&locale=en"), false);
             String login = OkHttpClientHelper.extractString(r2, false);
             log.warn("testDanger-c " + i + " get login res = " + login);
+            Assertions.assertTrue(login.contains("false"), "需要先初始化数据库 Warlock1SchemaCreator#init0Schema");
+            if (i > 2) {
+                Assertions.assertTrue(login.contains("error.authn.failureWaiting"), "需要先初始化数据库 Warlock1SchemaCreator#init0Schema");
+                Assertions.assertTrue(login.contains("retry after"), "确认i18n设置");
+            }
         }
+
         OkHttpClientHelper.postJson(okHttpClient, host + DangerUrl, "{\"userId\":1,\"danger\":false}");
         {
             final Response r1 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/console-nonce.json?username=root"), false);

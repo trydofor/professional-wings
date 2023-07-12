@@ -28,12 +28,13 @@ import static pro.fessional.wings.slardar.context.TerminalAttribute.LocaleByUid;
 import static pro.fessional.wings.slardar.context.TerminalAttribute.ZoneIdByUid;
 
 /**
- * 按以下优先顺序获得用户语言和时区设置。
- * ① request中被设置的`WINGS.I18N_CONTEXT`
+ * get current Locale and ZoneId in the following order:
+ * ① request `WINGS.I18N_CONTEXT`
  * ② query string `locale`, `zoneid`
  * ③ http header `Accept-Language`,`Zone-Id`
  * ④ cookie `WINGS_LOCALE`, `WINGS_ZONEID`
- * ⑤ 登录用户的SecurityContext中获得wings设置
+ * ⑤ login user's SecurityContext to get Wings settings
+ * ⑥ system default value
  *
  * @author trydofor
  * @since 2019-06-30

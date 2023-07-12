@@ -32,7 +32,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class TerminalContext {
 
-    public static final Context Null = new Context(DefaultUserId.Null, null, null, null, null, null);
+    public static final Context Null = new Context(
+            DefaultUserId.Null,
+            Locale.getDefault(),
+            TimeZone.getDefault(),
+            Collections.emptyMap(),
+            pro.fessional.mirana.data.Null.Enm,
+            pro.fessional.mirana.data.Null.Str,
+            Collections.emptySet());
 
     /**
      * no leak, for static and Interceptor clean
@@ -169,8 +176,8 @@ public class TerminalContext {
     public static Context get(boolean onlyLogin) {
         Context ctx = TerminalContext.ContextLocal.get();
         if (ctx == null) ctx = Null;
-        if (onlyLogin && ctx.isGuest()) {
-            throw new IllegalStateException("must login user");
+        if (onlyLogin && !ctx.asLogin()) {
+            throw new IllegalStateException("must login user or guest");
         }
         return ctx;
     }
@@ -188,7 +195,6 @@ public class TerminalContext {
             ContextLocal.set(ctx);
             fireContextChange(false, ctx);
         }
-        Active = true;
     }
 
     public static void logout() {
@@ -225,16 +231,18 @@ public class TerminalContext {
         private final Locale locale;
         private final TimeZone timeZone;
         private final Enum<?> authType;
+        private final String username;
         private final Set<String> authPerm;
         private final Map<TypedKey<?>, Object> terminal;
 
         public Context(long userId, Locale locale, TimeZone timeZone, Map<TypedKey<?>,
-                Object> params, Enum<?> authType, Set<String> authPerm) {
+                Object> params, Enum<?> authType, String username, Set<String> authPerm) {
             this.userId = userId;
             this.locale = locale != null ? locale : DefaultLocale;
             this.timeZone = timeZone != null ? timeZone : DefaultTimeZone;
             this.terminal = params != null ? params : Collections.emptyMap();
             this.authType = authType != null ? authType : pro.fessional.mirana.data.Null.Enm;
+            this.username = username != null ? username : pro.fessional.mirana.data.Null.Str;
             this.authPerm = authPerm != null ? authPerm : Collections.emptySet();
         }
 
@@ -250,6 +258,13 @@ public class TerminalContext {
          */
         public boolean isGuest() {
             return userId == DefaultUserId.Guest;
+        }
+
+        /**
+         * <pre>userId > DefaultUserId#Guest </pre>
+         */
+        public boolean isLogin() {
+            return userId > DefaultUserId.Guest;
         }
 
         /**
@@ -281,6 +296,11 @@ public class TerminalContext {
         @NotNull
         public Enum<?> getAuthType() {
             return authType;
+        }
+
+        @NotNull
+        public String getUsername() {
+            return username;
         }
 
         @NotNull
@@ -348,6 +368,7 @@ public class TerminalContext {
         private Locale locale;
         private TimeZone timeZone;
         private Enum<?> authType;
+        private String username;
         private final Set<String> authPerm = new HashSet<>();
         private final Map<TypedKey<?>, Object> terminal = new HashMap<>();
 
@@ -389,6 +410,11 @@ public class TerminalContext {
 
         public Builder authType(Enum<?> at) {
             authType = at;
+            return this;
+        }
+
+        public Builder username(String un) {
+            username = un;
             return this;
         }
 
@@ -441,7 +467,7 @@ public class TerminalContext {
             if (userId == Null.userId) {
                 throw new IllegalArgumentException("invalid userid");
             }
-            return new Context(userId, locale, timeZone, terminal, authType, authPerm);
+            return new Context(userId, locale, timeZone, terminal, authType, username, authPerm);
         }
     }
 }

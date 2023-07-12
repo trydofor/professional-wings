@@ -67,6 +67,7 @@ public class WarlockSuccessLoginListener implements ApplicationListener<Authenti
                     .terminal(TerminalAgent, meta.get(WingsAuthHelper.AuthAgent))
                     .user(userId)
                     .authType(authType)
+                    .username(ud.getUsername())
                     .authPerm(ud.getAuthorities().stream()
                                 .map(GrantedAuthority::getAuthority)
                                 .collect(Collectors.toSet()));

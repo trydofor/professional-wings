@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.Record2;
+import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,10 +27,12 @@ import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasisDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserAuthn;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
+import pro.fessional.wings.warlock.service.auth.WarlockDangerService;
 import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +68,9 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
     @Setter(onMethod_ = {@Autowired})
     protected WarlockSecurityProp warlockSecurityProp;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected WarlockDangerService warlockDangerService;
 
     @Override
     @Transactional
@@ -199,7 +206,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
     }
 
     @Override
-    public void dander(long userId, boolean danger) {
+    public void dander(long userId, boolean danger, @NotNull Enum<?>... authType) {
         if (winUserBasisDao.notTableExist()) return;
 
         journalService.commit(Jane.Danger, userId, danger, commit -> {
@@ -215,14 +222,34 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
             if (!danger && !winUserAuthnDao.notTableExist()) {
                 final WinUserAuthnTable ta = winUserAuthnDao.getTable();
+                Condition cond = ta.UserId.eq(userId);
+                if (authType.length != 0) {
+                    List<String> ats = new ArrayList<>(authType.length);
+                    for (Enum<?> en : authType) {
+                        ats.add(wingsAuthTypeParser.parse(en));
+                    }
+                    cond = cond.and(ta.AuthType.in(ats));
+                }
                 winUserAuthnDao
                         .ctx()
                         .update(ta)
                         .set(ta.FailedCnt, 0)
                         .set(ta.CommitId, commit.getCommitId())
                         .set(ta.ModifyDt, commit.getCommitDt())
-                        .where(ta.UserId.eq(userId))
+                        .where(cond)
                         .execute();
+
+                // allow
+                final Result<Record2<String, String>> r2 = winUserAuthnDao
+                        .ctx()
+                        .select(ta.AuthType, ta.Username)
+                        .from(ta)
+                        .where(cond)
+                        .fetch();
+
+                for (Record2<String, String> r : r2) {
+                    warlockDangerService.allow(wingsAuthTypeParser.parse(r.value1()), r.value2());
+                }
             }
         });
     }

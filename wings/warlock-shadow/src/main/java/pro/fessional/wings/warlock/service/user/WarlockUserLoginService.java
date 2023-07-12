@@ -18,6 +18,7 @@ public interface WarlockUserLoginService {
     @Data
     class Item {
         private String authType;
+        private String username;
         private String loginIp;
         private LocalDateTime loginDt;
         private String terminal;
@@ -38,6 +39,7 @@ public interface WarlockUserLoginService {
     @Data
     class Auth {
         private Enum<?> authType;
+        private String username;
         private long userId;
         private String details;
         private boolean failed;

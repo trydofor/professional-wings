@@ -8,10 +8,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarLocaleProp;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
+
+import static org.springframework.web.servlet.DispatcherServlet.LOCALE_RESOLVER_BEAN_NAME;
 
 /**
  * @author trydofor
@@ -24,7 +26,7 @@ public class SlardarLocaleConfiguration {
 
     private final Log log = LogFactory.getLog(SlardarLocaleConfiguration.class);
 
-    @Bean
+    @Bean(LOCALE_RESOLVER_BEAN_NAME)
     @ConditionalOnClass(LocaleResolver.class)
     public WingsLocaleResolver wingsLocaleResolver(SlardarLocaleProp conf) {
         log.info("SlardarWebmvc spring-bean wingsLocaleResolver");
