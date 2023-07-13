@@ -16,6 +16,10 @@
     <name>Wings::Warlock</name>
     <description>Integration of Database(FacelessJooq) and WebMvc(Slardar)</description>
 
+    <properties>
+        <start-class>pro.fessional.wings.WhoAmI</start-class>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>pro.fessional.wings</groupId>

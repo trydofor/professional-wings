@@ -31,17 +31,19 @@
 ## 2.Useful commands
 
 ```bash
-# ① get source code
+## ① get source code
 git clone --depth 1 https://github.com/\
 trydofor/pro.fessional.wings.git
-# ② install dependency using java8
-# sdk use java 8.0.352-tem
+## ② install dependency using java8
+sdk use java 8.0.352-tem
 git submodule update --remote --init
 (cd observe/meepo && mvn package install)
 (cd observe/mirana && mvn package install)
-# ③ install wings using java-17
+## ③ install wings using java-17
 sdk use java 17.0.6-tem
 mvn package install
+## ④ report issue
+java -jar silencer-*-SNAPSHOT.jar
 ```
 
 ## 3.Powered by Love
