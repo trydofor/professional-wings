@@ -70,7 +70,7 @@ class DebounceTest {
         log.info(">>r2>>" + r2.getBody());
         if (reuse) {
             assertEquals(HttpStatus.OK, r2.getStatusCode());
-            assertEquals(r1.getBody(), r2.getBody());
+            assertEquals(r1.getBody(), r2.getBody(),"may be waiting more than 600ms");
         }
         else {
             assertEquals(202, r2.getStatusCode().value());
