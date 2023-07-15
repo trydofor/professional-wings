@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -84,7 +85,7 @@ public class FormatNumberSerializer extends NumberSerializer {
         if (format != null || digital != Digital.False
             || value instanceof Long || value instanceof Integer
             || value instanceof Float || value instanceof Double
-            || value instanceof BigDecimal) {
+            || value instanceof BigDecimal || value instanceof BigInteger) {
             final String str = format == null ? String.valueOf(value) : this.format.format(value);
             if (digital == Digital.True) {
                 g.writeRawValue(str);

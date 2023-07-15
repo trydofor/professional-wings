@@ -32,12 +32,12 @@ public class SlardarNumberProp {
     private Nf integer = new Nf();
 
     /**
-     * Float,Double 类型
+     * Float, Double
      */
     private Nf floats = new Nf();
 
     /**
-     * BigDecimal 类型
+     * BigDecimal, BigInteger
      */
     private Nf decimal = new Nf();
 

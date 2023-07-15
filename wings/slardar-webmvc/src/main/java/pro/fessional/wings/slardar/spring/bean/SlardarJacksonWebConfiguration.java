@@ -26,22 +26,9 @@ import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
 import pro.fessional.wings.slardar.autozone.AutoZoneType;
-import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateDeserializer;
-import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeDeserializer;
-import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeSerializer;
-import pro.fessional.wings.slardar.autozone.json.JacksonLocalTimeDeserializer;
-import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeDeserializer;
-import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeSerializer;
-import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeDeserializer;
-import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeSerializer;
-import pro.fessional.wings.slardar.jackson.AutoRegisterPropertyFilter;
-import pro.fessional.wings.slardar.jackson.EmptyValuePropertyFilter;
-import pro.fessional.wings.slardar.jackson.FormatNumberSerializer;
+import pro.fessional.wings.slardar.autozone.json.*;
+import pro.fessional.wings.slardar.jackson.*;
 import pro.fessional.wings.slardar.jackson.FormatNumberSerializer.Digital;
-import pro.fessional.wings.slardar.jackson.I18nResultPropertyFilter;
-import pro.fessional.wings.slardar.jackson.I18nStringSerializer;
-import pro.fessional.wings.slardar.jackson.JacksonHelper;
-import pro.fessional.wings.slardar.jackson.ResourceSerializer;
 import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarJacksonProp;
@@ -49,12 +36,9 @@ import pro.fessional.wings.slardar.spring.prop.SlardarNumberProp;
 import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -203,8 +187,9 @@ public class SlardarJacksonWebConfiguration {
             final SlardarNumberProp.Nf decimal = slardarNumberProp.getDecimal();
             if (decimal.isEnable()) {
                 final DecimalFormat df = decimal.getWellFormat();
-                log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer BigDecimal serializer");
+                log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer BigDecimal/BigInteger serializer");
                 builder.serializerByType(BigDecimal.class, new FormatNumberSerializer(BigDecimal.class, df, decimal.getDigital()));
+                builder.serializerByType(BigInteger.class, new FormatNumberSerializer(BigInteger.class, df, decimal.getDigital()));
             }
         };
     }
