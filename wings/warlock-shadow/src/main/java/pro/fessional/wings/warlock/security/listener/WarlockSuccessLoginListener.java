@@ -9,6 +9,7 @@ import org.springframework.security.authentication.event.AuthenticationSuccessEv
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import pro.fessional.wings.slardar.context.TerminalContext;
+import pro.fessional.wings.slardar.context.TerminalSecurityAttribute;
 import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
@@ -38,39 +39,42 @@ public class WarlockSuccessLoginListener implements ApplicationListener<Authenti
         if (!(source instanceof final Authentication authn)) return;
 
         final Object principal = authn.getPrincipal();
-        if (!(principal instanceof final WingsUserDetails ud)) {
+        if (!(principal instanceof final WingsUserDetails userDetails)) {
             log.debug("skip non-WingsUserDetails, type={}", source.getClass().getName());
             return;
         }
 
-        Enum<?> authType = ud.getAuthType();
-        long userId = ud.getUserId();
+        Enum<?> authType = userDetails.getAuthType();
+        long userId = userDetails.getUserId();
         if (authType == null) {
             log.warn("authType should NOT null, userId={}", userId);
             return;
         }
         final Map<String, Object> dtlMap = new HashMap<>();
         dtlMap.put("authType", authType.name());
-        dtlMap.put("locale", ud.getLocale());
-        dtlMap.put("zoneid", ud.getZoneId());
-        dtlMap.put("nickname", ud.getNickname());
-        dtlMap.put("username", ud.getUsername());
+        dtlMap.put("locale", userDetails.getLocale());
+        dtlMap.put("zoneid", userDetails.getZoneId());
+        dtlMap.put("nickname", userDetails.getNickname());
+        dtlMap.put("username", userDetails.getUsername());
 
         final Object dtl = authn.getDetails();
         if (dtl instanceof WingsAuthDetails authDetails) {
             final Map<String, String> meta = authDetails.getMetaData();
             dtlMap.putAll(meta);
             TerminalContext.Builder builder = new TerminalContext.Builder()
-                    .locale(ud.getLocale())
-                    .timeZone(ud.getZoneId())
+                    .locale(userDetails.getLocale())
+                    .timeZone(userDetails.getZoneId())
                     .terminal(TerminalAddr, meta.get(WingsAuthHelper.AuthAddr))
                     .terminal(TerminalAgent, meta.get(WingsAuthHelper.AuthAgent))
                     .user(userId)
                     .authType(authType)
-                    .username(ud.getUsername())
-                    .authPerm(ud.getAuthorities().stream()
-                                .map(GrantedAuthority::getAuthority)
-                                .collect(Collectors.toSet()));
+                    .username(userDetails.getUsername())
+                    .authPerm(userDetails.getAuthorities().stream()
+                                         .map(GrantedAuthority::getAuthority)
+                                         .collect(Collectors.toSet()))
+                    .terminal(TerminalSecurityAttribute.UserDetails, userDetails)
+                    .terminal(TerminalSecurityAttribute.AuthDetails, authDetails);
+
             TerminalContext.login(builder.build());
         }
 

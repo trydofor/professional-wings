@@ -16,11 +16,9 @@ public class LocaleZoneIdUtil {
      * Get the ZoneId of the current thread with priority logined TerminalContext, LocaleContextHolder
      */
     public static final Supplier<ZoneId> ZoneIdNullable = () -> {
-        if (TerminalContext.isActive()) {
-            final TerminalContext.Context ctx = TerminalContext.get(false);
-            if (!ctx.isNull()) {
-                return ctx.getZoneId();
-            }
+        final TerminalContext.Context ctx = TerminalContext.get(false);
+        if (!ctx.isNull()) {
+            return ctx.getZoneId();
         }
         return LocaleContextHolder.getTimeZone().toZoneId();
     };
@@ -29,11 +27,9 @@ public class LocaleZoneIdUtil {
      * Get the Locale of the current thread with priority logined TerminalContext, LocaleContextHolder
      */
     public static final Supplier<Locale> LocaleNullable = () -> {
-        if (TerminalContext.isActive()) {
-            final TerminalContext.Context ctx = TerminalContext.get(false);
-            if (!ctx.isNull()) {
-                return ctx.getLocale();
-            }
+        final TerminalContext.Context ctx = TerminalContext.get(false);
+        if (!ctx.isNull()) {
+            return ctx.getLocale();
         }
         return LocaleContextHolder.getLocale();
     };

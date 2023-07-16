@@ -40,7 +40,6 @@ class AutoDtoHelperTest {
      */
     @Test
     void autoRequest() {
-        TerminalContext.initActive(true);
         TerminalContext.Builder builder = new TerminalContext.Builder()
                 .locale(Locale.CHINA)
                 .timeZone(ZONE_JP)
@@ -88,7 +87,6 @@ class AutoDtoHelperTest {
      */
     @Test
     void autoResponse() {
-        TerminalContext.initActive(true);
         TerminalContext.Builder builder = new TerminalContext.Builder()
                 .locale(Locale.US)
                 .timeZone(ZONE_JP)

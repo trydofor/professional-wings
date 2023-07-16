@@ -15,8 +15,4 @@ public interface TerminalContextAware {
     default TerminalContext.Context getTerminalContext() {
         return TerminalContext.get();
     }
-
-    default boolean isTerminalActive() {
-        return TerminalContext.isActive();
-    }
 }

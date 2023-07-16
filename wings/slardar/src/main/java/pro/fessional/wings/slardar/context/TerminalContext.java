@@ -48,25 +48,11 @@ public class TerminalContext {
     private static final ConcurrentHashMap<String, Listener> ContextListeners = new ConcurrentHashMap<>();
 
     private static volatile boolean Active;
+
     @NotNull
     private static volatile TimeZone DefaultTimeZone = ThreadNow.sysTimeZone();
     @NotNull
     private static volatile Locale DefaultLocale = Locale.getDefault();
-
-    /**
-     * whether context is active and can be used correctly.
-     */
-    public static boolean isActive() {
-        return Active;
-    }
-
-    /**
-     * active context, default is false
-     */
-
-    public static void initActive(boolean b) {
-        Active = b;
-    }
 
     /**
      * init default zoneId
@@ -174,24 +160,32 @@ public class TerminalContext {
      */
     @NotNull
     public static Context get(boolean onlyLogin) {
-        Context ctx = TerminalContext.ContextLocal.get();
-        if (ctx == null) ctx = Null;
-        if (onlyLogin && !ctx.asLogin()) {
-            throw new IllegalStateException("must login user or guest");
+        Context ctx = null;
+        if (Active) {
+            ctx = ContextLocal.get();
+        }
+        if (ctx == null) {
+            ctx = Null;
+        }
+        if (onlyLogin && ctx.isNull()) {
+            throw new NullPointerException("find null context, must be user or guest");
         }
         return ctx;
     }
 
     /**
-     * login if ctx is not null, else logout
+     * login if ctx is not null/Null, else logout
      */
-    public static void login(Context ctx) {
-        if (ctx == null || ctx == Null) {
+    public static void login(@Nullable Context ctx) {
+        if (ctx == null || ctx.isNull()) {
             final Context old = ContextLocal.get();
-            ContextLocal.remove();
-            fireContextChange(true, old);
+            if (old != null) {
+                ContextLocal.remove();
+                fireContextChange(true, old);
+            }
         }
         else {
+            Active = true;
             ContextLocal.set(ctx);
             fireContextChange(false, ctx);
         }
@@ -201,9 +195,7 @@ public class TerminalContext {
         login(Null);
     }
 
-    private static void fireContextChange(boolean del, Context ctx) {
-        if (ContextListeners.isEmpty()) return;
-
+    private static void fireContextChange(boolean del, @NotNull Context ctx) {
         for (Listener listener : ContextListeners.values()) {
             try {
                 listener.onChange(del, ctx);
@@ -219,10 +211,9 @@ public class TerminalContext {
          * set new value or delete old value, new value is NotNull, old value maybe Null
          *
          * @param del whether to delete, else set value
-         * @param ctx Nullable when del, else NotNull
+         * @param ctx new to set, or old to delete
          */
-        @Contract("false,!null->_")
-        void onChange(boolean del, Context ctx);
+        void onChange(boolean del, @NotNull Context ctx);
     }
 
     public static class Context {
@@ -258,20 +249,6 @@ public class TerminalContext {
          */
         public boolean isGuest() {
             return userId == DefaultUserId.Guest;
-        }
-
-        /**
-         * <pre>userId > DefaultUserId#Guest </pre>
-         */
-        public boolean isLogin() {
-            return userId > DefaultUserId.Guest;
-        }
-
-        /**
-         * <pre>userId >= DefaultUserId#Guest</pre>
-         */
-        public boolean asLogin() {
-            return userId >= DefaultUserId.Guest;
         }
 
         public long getUserId() {
@@ -327,11 +304,35 @@ public class TerminalContext {
             return authPerm.containsAll(auths);
         }
 
+        /**
+         * key must be defined by TerminalAttribute or its subclasses
+         *
+         * @see TerminalAttribute
+         */
         @Nullable
         public <T> T getTerminal(@NotNull TypedKey<T> key) {
             return key.get(terminal);
         }
 
+        /**
+         * key must be defined by TerminalAttribute or its subclasses
+         *
+         * @see TerminalAttribute
+         */
+        @Contract("_,true->!null")
+        public <T> T getTerminal(@NotNull TypedKey<T> key, boolean notnull) {
+            final T t = key.get(terminal);
+            if (t == null && notnull) {
+                throw new NullPointerException("Terminal Key " + key + " returned null");
+            }
+            return t;
+        }
+
+        /**
+         * key must be defined by TerminalAttribute or its subclasses
+         *
+         * @see TerminalAttribute
+         */
         @Contract("_,!null->!null")
         public <T> T tryTerminal(@NotNull TypedKey<T> key, T elze) {
             return key.tryOr(terminal, elze);
@@ -352,13 +353,13 @@ public class TerminalContext {
             return Objects.hash(userId, locale, timeZone, terminal);
         }
 
-        @Override
-        public String toString() {
+        @Override public String toString() {
             return "Context{" +
                    "userId=" + userId +
                    ", locale=" + locale +
                    ", timeZone=" + timeZone +
-                   ", terminal=" + terminal +
+                   ", authType=" + authType +
+                   ", username='" + username + '\'' +
                    '}';
         }
     }

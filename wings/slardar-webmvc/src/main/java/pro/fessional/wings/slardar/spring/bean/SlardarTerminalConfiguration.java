@@ -10,11 +10,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import pro.fessional.wings.slardar.constants.SlardarServletConst;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
-import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.context.TerminalInterceptor;
+import pro.fessional.wings.slardar.context.TerminalSecurityAttribute;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
@@ -54,7 +55,8 @@ public class SlardarTerminalConfiguration {
     public TerminalInterceptor.TerminalBuilder securityTerminalBuilder(WingsLocaleResolver resolver) {
         log.info("SlardarWebmvc spring-bean securityTerminalBuilder");
         return (builder, request) -> {
-            final WingsUserDetails details = SecurityContextUtil.getUserDetails(false);
+            final Authentication authn = SecurityContextUtil.getAuthentication(false);
+            final WingsUserDetails details = SecurityContextUtil.getUserDetails(authn);
             if (details == null) {
                 final Long userId = (Long) request.getAttribute(SlardarServletConst.AttrUserId);
                 if (userId != null) {
@@ -70,7 +72,6 @@ public class SlardarTerminalConfiguration {
                            .timeZoneIfAbsent(locale.getTimeZone())
                            .guest();
                 }
-
             }
             else {
                 builder.locale(details.getLocale())
@@ -80,7 +81,9 @@ public class SlardarTerminalConfiguration {
                        .username(details.getUsername())
                        .authPerm(details.getAuthorities().stream()
                                         .map(GrantedAuthority::getAuthority)
-                                        .collect(Collectors.toSet()));
+                                        .collect(Collectors.toSet()))
+                       .terminal(TerminalSecurityAttribute.UserDetails, details)
+                       .terminal(TerminalSecurityAttribute.AuthDetails, SecurityContextUtil.getAuthDetails(authn));
             }
         };
     }
@@ -89,7 +92,7 @@ public class SlardarTerminalConfiguration {
     @ConditionalOnMissingBean(TerminalInterceptor.class)
     public TerminalInterceptor terminalInterceptor(SlardarTerminalProp prop, ObjectProvider<TerminalInterceptor.TerminalBuilder> builders) {
         log.info("SlardarWebmvc spring-bean terminalInterceptor");
-        TerminalContext.initActive(true);
+
         final TerminalInterceptor bean = new TerminalInterceptor();
         builders.orderedStream().forEach(bean::addTerminalBuilder);
         //

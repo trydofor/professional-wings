@@ -15,7 +15,7 @@ public class ScheduleService {
 
     @Scheduled(fixedRate = 1000)
     public void scheduleRate() {
-        final TerminalContext.Context ctx = TerminalContext.get();
+        final TerminalContext.Context ctx = TerminalContext.get(false);
         log.info("ScheduleService userId={}", ctx.getUserId());
     }
 }
