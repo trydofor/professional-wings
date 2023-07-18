@@ -14,7 +14,7 @@ import java.util.concurrent.locks.Lock;
  * @since 2021-03-09
  */
 @RequiredArgsConstructor
-public class HazelcastIMapLock implements Lock {
+public class HazelcastMapLock implements Lock {
     private final IMap<Object, Object> imap;
     private final String name;
 
