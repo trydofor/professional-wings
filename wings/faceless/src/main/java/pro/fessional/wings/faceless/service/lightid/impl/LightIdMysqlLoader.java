@@ -13,7 +13,6 @@ import pro.fessional.wings.faceless.spring.prop.LightIdInsertProp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import static pro.fessional.mirana.id.LightIdProvider.Loader;
 import static pro.fessional.mirana.id.LightIdProvider.Segment;
@@ -37,10 +36,9 @@ public class LightIdMysqlLoader implements Loader {
     @Override
     @WriteRouteOnly
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Segment require(@NotNull String name, int block, int count) {
-        Optional<NextStep> one = select.selectOneLock(block, name);
-        final NextStep vo;
-        if (one.isEmpty()) {
+    public Segment require(@NotNull String name, int block, int count, boolean exact) {
+        NextStep one = select.selectOneLock(block, name);
+        if (one == null) {
             if (properties.isAuto()) {
                 log.warn("not found and insert name={}, block={}", name, block);
                 SysLightSequence po = new SysLightSequence();
@@ -51,29 +49,33 @@ public class LightIdMysqlLoader implements Loader {
                 po.setComments("Auto insert if Not found");
                 int cnt = modify.insert(po);
                 if (cnt != 1) {
-                    throw new NoSuchElementException("not found and failed to insert. name=" + name + ",block=" + block);
+                    throw new NoSuchElementException("not found and failed to insert. name=" + name + ", block=" + block);
                 }
 
                 log.warn("inserted and retry, name={}, block={}", name, block);
-                vo = new NextStep(properties.getNext(), properties.getStep());
+                one = new NextStep(properties.getNext(), properties.getStep());
             }
             else {
-                throw new NoSuchElementException("not existed name=" + name + ",block=" + block);
+                throw new NoSuchElementException("not existed name=" + name + ", block=" + block);
             }
         }
+
+        final long newNext;
+        final long curNext = one.getNextVal();
+        if (exact) {
+            newNext = curNext + count;
+        }
         else {
-            vo = one.get();
+            long page = (count - 1) / one.getStepVal() + 1;
+            newNext = curNext + one.getStepVal() * page;
         }
 
-        int page = (count - 1) / vo.getStepVal() + 1;
-
-        long newNext = vo.getNextVal() + (long) vo.getStepVal() * page;
-        int upd = modify.updateNextVal(newNext, block, name, vo.getLastVal());
+        int upd = modify.updateNextVal(newNext, block, name, one.getOldNext());
         if (upd != 1) {
-            throw new IllegalStateException("failed to require, name=" + name + ",block=" + block);
+            throw new IllegalStateException("failed to require, name=" + name + ", block=" + block);
         }
 
-        return new Segment(name, block, vo.getNextVal(), newNext - 1);
+        return new Segment(name, block, curNext, newNext - 1);
     }
 
     @NotNull

@@ -15,21 +15,21 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.mirana.id.LightIdBufferedProvider;
 import pro.fessional.mirana.id.LightIdProvider;
 import pro.fessional.mirana.id.LightIdUtil;
-import pro.fessional.wings.spring.consts.OrderedFacelessConst;
 import pro.fessional.wings.faceless.database.manual.single.modify.lightsequence.LightSequenceModify;
 import pro.fessional.wings.faceless.database.manual.single.modify.lightsequence.impl.LightSequenceModifyJdbc;
 import pro.fessional.wings.faceless.database.manual.single.select.lightsequence.LightSequenceSelect;
 import pro.fessional.wings.faceless.database.manual.single.select.lightsequence.impl.LightSequenceSelectJdbc;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
+import pro.fessional.wings.faceless.service.lightid.impl.BlockingLightIdProvider;
 import pro.fessional.wings.faceless.service.lightid.impl.DefaultBlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.impl.LightIdMysqlLoader;
 import pro.fessional.wings.faceless.service.lightid.impl.LightIdServiceImpl;
 import pro.fessional.wings.faceless.spring.prop.FacelessEnabledProp;
 import pro.fessional.wings.faceless.spring.prop.LightIdInsertProp;
 import pro.fessional.wings.faceless.spring.prop.LightIdLayoutProp;
-import pro.fessional.wings.faceless.spring.prop.LightIdLoaderProp;
 import pro.fessional.wings.faceless.spring.prop.LightIdProviderProp;
+import pro.fessional.wings.spring.consts.OrderedFacelessConst;
 
 /**
  * @author trydofor
@@ -55,47 +55,61 @@ public class FacelessLightIdConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(LightSequenceModify.class)
-    public LightSequenceModify lightSequenceModify(LightIdProviderProp provider, JdbcTemplate jdbcTemplate) {
+    public LightSequenceModify lightSequenceModify(LightIdProviderProp providerProp, JdbcTemplate jdbcTemplate) {
         log.info("Faceless spring-bean lightSequenceModify");
-        return new LightSequenceModifyJdbc(jdbcTemplate, provider.getSequenceInsert(), provider.getSequenceUpdate());
+        return new LightSequenceModifyJdbc(jdbcTemplate, providerProp.getSequenceInsert(), providerProp.getSequenceUpdate());
     }
 
     @Bean
     @ConditionalOnMissingBean(LightIdProvider.Loader.class)
     public LightIdProvider.Loader lightIdLoader(LightSequenceSelect lightSequenceSelect,
                                                 LightSequenceModify lightSequenceModify,
-                                                LightIdInsertProp properties) {
+                                                LightIdInsertProp insertProp) {
         log.info("Faceless spring-bean lightIdLoader");
-        return new LightIdMysqlLoader(lightSequenceSelect, lightSequenceModify, properties);
+        return new LightIdMysqlLoader(lightSequenceSelect, lightSequenceModify, insertProp);
     }
 
     @Bean
     @ConditionalOnMissingBean(LightIdProvider.class)
     public LightIdProvider lightIdProvider(LightIdProvider.Loader lightIdLoader,
-                                           LightIdLoaderProp properties,
+                                           LightIdProviderProp providerProp,
                                            ObjectProvider<LightIdBufferedProvider.SequenceHandler> sequenceHandler) {
-        log.info("Faceless spring-bean lightIdProvider");
-        LightIdBufferedProvider provider = new LightIdBufferedProvider(lightIdLoader);
-        provider.setTimeout(properties.getTimeout());
-        provider.setErrAlive(properties.getErrAlive());
-        provider.setMaxError(properties.getMaxError());
-        provider.setMaxCount(properties.getMaxCount());
-        sequenceHandler.ifAvailable(provider::setSequenceHandler);
-        return provider;
+        final String mono = providerProp.getMonotonic();
+        log.info("Faceless spring-bean lightIdProvider in " + mono);
+        if ("jvm".equalsIgnoreCase(mono)) {
+            // avg=0.039ms
+            LightIdBufferedProvider provider = new LightIdBufferedProvider(lightIdLoader);
+            provider.setTimeout(providerProp.getTimeout());
+            provider.setErrAlive(providerProp.getErrAlive());
+            provider.setMaxError(providerProp.getMaxError());
+            provider.setMaxCount(providerProp.getMaxCount());
+            sequenceHandler.ifAvailable(provider::setSequenceHandler);
+            return provider;
+        }
+        else if ("db".equalsIgnoreCase(mono)) {
+            // avg=10.723ms
+            log.warn("the BlockingLightIdProvider is slow, about 10ms per id");
+            final BlockingLightIdProvider provider = new BlockingLightIdProvider(lightIdLoader);
+            provider.setTimeout(providerProp.getTimeout());
+            return provider;
+        }
+        else {
+            throw new IllegalArgumentException("unsupported monotonic type=" + mono);
+        }
     }
 
     @Bean
     @ConditionalOnMissingBean(BlockIdProvider.class)
     @ConditionalOnExpression("!'${" + LightIdProviderProp.Key$blockType + "}'.equals('biz')")
-    public BlockIdProvider blockProvider(LightIdProviderProp provider,
+    public BlockIdProvider blockProvider(LightIdProviderProp providerProp,
                                          ObjectProvider<JdbcTemplate> jdbcTemplate) {
-        final String blockType = provider.getBlockType();
+        final String blockType = providerProp.getBlockType();
         log.info("Faceless spring-bean lightIdProvider" + blockType);
         if ("sql".equalsIgnoreCase(blockType)) {
-            return new DefaultBlockIdProvider(provider.getBlockPara(), jdbcTemplate.getIfAvailable());
+            return new DefaultBlockIdProvider(providerProp.getBlockPara(), jdbcTemplate.getIfAvailable());
         }
         else if ("fix".equalsIgnoreCase(blockType)) {
-            final int id = Integer.parseInt(provider.getBlockPara());
+            final int id = Integer.parseInt(providerProp.getBlockPara());
             return () -> id;
         }
         else if ("biz".equalsIgnoreCase(blockType)) {

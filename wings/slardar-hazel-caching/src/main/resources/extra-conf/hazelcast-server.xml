@@ -9,7 +9,7 @@
     <cluster-name>${wings.slardar.hazelcast.cluster-name}</cluster-name>
     <!-- https://docs.hazelcast.com/hazelcast/5.1/management/cluster-utilities#integrity-checker -->
     <integrity-checker enabled="true"/>
-    
+
     <network>
         <port auto-increment="true" port-count="100">5701</port>
         <outbound-ports>

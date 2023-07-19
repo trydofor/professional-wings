@@ -8,6 +8,8 @@ import pro.fessional.wings.slardar.concur.impl.HazelcastMapLock;
 
 import java.util.concurrent.locks.Lock;
 
+import static pro.fessional.wings.slardar.constants.HazelcastConst.MapGlobalLock;
+
 /**
  * <pre>
  * <a href="https://docs.hazelcast.com/hazelcast/5.1/data-structures/locking-maps">Pessimistic Locking IMap.lock/unlock</a>
@@ -21,15 +23,15 @@ import java.util.concurrent.locks.Lock;
  * </pre>
  *
  * @author trydofor
+ * @see pro.fessional.wings.slardar.constants.HazelcastConst#MapGlobalLock
  * @since 2021-03-08
  */
 public class HazelcastGlobalLock implements GlobalLock {
 
-    public static final String IMapKey = "wings:global:lock";
     private final IMap<Object, Object> hazelcastMap;
 
     public HazelcastGlobalLock(HazelcastInstance hazelcastInstance) {
-        hazelcastMap = hazelcastInstance.getMap(IMapKey);
+        hazelcastMap = hazelcastInstance.getMap(MapGlobalLock);
     }
 
     @Override

@@ -10,6 +10,8 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.UUID;
 
+import static pro.fessional.wings.slardar.constants.HazelcastConst.TopicApplicationEvent;
+
 /**
  * ApplicationEventPublisher is a helper. Generally used for non-transactional Event processing, with the following main functions:
  * ① Asynchronous publishing.
@@ -17,13 +19,11 @@ import java.util.UUID;
  * ③ Hazelcast topic (#HazelcastTopic) in the SpringEvent pattern.
  *
  * @author trydofor
- * @see #HazelcastTopic
+ * @see pro.fessional.wings.slardar.constants.HazelcastConst#TopicApplicationEvent
  * @since 2021-06-07
  */
 @Slf4j
 public class HazelcastSyncPublisher implements ApplicationEventPublisher, MessageListener<Object> {
-
-    public static final String HazelcastTopic = "SlardarApplicationEvent";
 
     private final ApplicationEventPublisher publisher;
     private final ITopic<Object> topic;
@@ -31,7 +31,7 @@ public class HazelcastSyncPublisher implements ApplicationEventPublisher, Messag
 
     public HazelcastSyncPublisher(@NotNull HazelcastInstance instance, @NotNull ApplicationEventPublisher publisher) {
         this.publisher = publisher;
-        topic = instance.getTopic(HazelcastTopic);
+        topic = instance.getTopic(TopicApplicationEvent);
         uuid = topic.addMessageListener(this);
     }
 

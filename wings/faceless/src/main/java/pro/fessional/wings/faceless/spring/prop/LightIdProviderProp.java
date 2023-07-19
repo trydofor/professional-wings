@@ -15,6 +15,38 @@ public class LightIdProviderProp {
     public static final String Key = "wings.faceless.lightid.provider";
 
     /**
+     * timeout millis of loading.
+     *
+     * @see #Key$timeout
+     */
+    private long timeout = 1000;
+    public static final String Key$timeout = Key + ".timeout";
+
+    /**
+     * max error count of loading.
+     *
+     * @see #Key$maxError
+     */
+    private int maxError = 5;
+    public static final String Key$maxError = Key + ".max-error";
+
+    /**
+     * max id count of per loading.
+     *
+     * @see #Key$maxCount
+     */
+    private int maxCount = 10000;
+    public static final String Key$maxCount = Key + ".max-count";
+
+    /**
+     * no attempt in number of millis if error exists.
+     *
+     * @see #Key$errAlive
+     */
+    private long errAlive = 120000;
+    public static final String Key$errAlive = Key + ".err-alive";
+
+    /**
      * <pre>
      * method to provide blockId
      * - `sql` - query database, return the id
@@ -107,4 +139,15 @@ public class LightIdProviderProp {
      */
     private String sequenceAdjust = "";
     public static final String Key$sequenceAdjust = Key + ".sequence-adjust";
+
+    /**
+     * the LightId monotonic increasing type, jvm|db|hz
+     * - jvm, monotonic in the jvm
+     * - db, monotonic in the database
+     * - hz, monotonic in the hazelcast
+     *
+     * @see #Key$monotonic
+     */
+    private String monotonic = "jvm";
+    public static final String Key$monotonic = Key + ".monotonic";
 }

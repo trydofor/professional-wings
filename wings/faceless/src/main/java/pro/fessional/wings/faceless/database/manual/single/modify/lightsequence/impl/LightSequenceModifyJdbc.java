@@ -49,7 +49,7 @@ public class LightSequenceModifyJdbc implements LightSequenceModify {
                 ps.setLong(1, obj.getNextVal() + obj.getStepVal());
                 ps.setInt(2, block);
                 ps.setString(3, obj.getSeqName());
-                ps.setLong(4, obj.getLastVal());
+                ps.setLong(4, obj.getOldNext());
             }
 
             @Override
