@@ -11,7 +11,7 @@
 * [![Jooq-3.17](https://img.shields.io/badge/jooq-3.17-cyan)](https://www.jooq.org/download/)  主要的强类型SqlMapping 🏅 [Apache2]
 * [![Mysql-8](https://img.shields.io/badge/mysql-8.0-blue)](https://dev.mysql.com/downloads/mysql/) 主要的业务数据库，推荐8，兼容5.7 💡 [GPLv2]
 * [![H2Database-2.1](https://img.shields.io/badge/h2db-2.1-blue)](https://h2database.com/html/main.html) 单机数据库，以离线及断线业务 [MPL2]或[EPL1]
-* [![Hazelcast-5.1](https://img.shields.io/badge/hazelcast-5.1-violet)](https://hazelcast.org/imdg/) IMDG，分布式缓存，消息，流等 [Apache2]
+* [![Hazelcast-5.1](https://img.shields.io/badge/hazelcast-5.1-violet)](https://docs.hazelcast.com/hazelcast/) 分布式缓存，消息，流等 [Apache2]
 * [![ServiceComb-2.8](https://img.shields.io/badge/servicecomb-2.8-violet)](https://servicecomb.apache.org) 更工程化和紧凑的微服务方案 [Apache2]
 * [![ShardingSphere-5.3](https://img.shields.io/badge/shardingsphere-5.3-violet)](https://shardingsphere.apache.org) 数据库的分表分片弹性伸缩方案 [Apache2]
 

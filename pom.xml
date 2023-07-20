@@ -42,17 +42,17 @@
         <annotations.version>24.0.1</annotations.version> <!-- https://github.com/JetBrains/java-annotations/releases -->
         <!-- common utils-->
         <mapstruct.version>1.5.5.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
-        <guava.version>32.0.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
+        <guava.version>32.1.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
         <commons-io.version>2.13.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
         <!-- wings project -->
         <mirana.version>2.6.0-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <meepo.version>1.4.1-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <shardingsphere.version>5.3.2</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
-        <fastjson2.version>2.0.34</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
+        <fastjson2.version>2.0.36</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
         <fastjson.version>${fastjson2.version}</fastjson.version> <!-- https://github.com/alibaba/fastjson/releases -->
         <kryo.version>5.5.0</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
-        <transmittable.version>2.14.2</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
+        <transmittable.version>2.14.3</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
         <bouncycastle.version>1.74</bouncycastle.version> <!-- https://bouncycastle.org/releasenotes.html -->
         <justauth.version>1.16.5</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
         <!-- servicecomb -->
