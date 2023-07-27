@@ -8,7 +8,7 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import pro.fessional.mirana.data.Null;
 
 /**
- * 构造用于进一步验证的details
+ * Construct details for further validation
  *
  * @author trydofor
  * @see Authentication#getDetails()

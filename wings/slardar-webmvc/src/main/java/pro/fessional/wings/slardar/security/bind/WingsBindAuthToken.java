@@ -7,7 +7,7 @@ import java.io.Serial;
 import java.util.Collection;
 
 /**
- * 认证用token，中间状态
+ * UsernamePassword Token with AuthType
  *
  * @author trydofor
  * @since 2021-02-07

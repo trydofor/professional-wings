@@ -29,9 +29,15 @@ import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthDetails;
 import pro.fessional.wings.slardar.security.pass.DefaultPasssaltEncoder;
 
 /**
- * 兼容DaoAuthenticationProvider，可替换之。如果设置onlyWingsBindAuthnToken=true，则只处理 WingsBindAuthnToken。
- * 需要注意的是，WingsBindAuthnToken 继承UsernamePasswordAuthenticationToken，可能会被其他Provider处理。
- * 不能继承DaoAuthenticationProvider，因为final retrieveUser，但mitigateAgainstTimingAttack很好，全部复制。
+ * <pre>
+ * Compatible with DaoAuthenticationProvider and can be replaced.
+ * If onlyWingsBindAuthnToken=true, only WingsBindAuthnToken is processed.
+ *
+ * Note that WingsBindAuthnToken inherits UsernamePasswordAuthenticationToken
+ * and may be processed by other Providers.
+ * Can't inherit DaoAuthenticationProvider because final `retrieveUser`,
+ * but `mitigateAgainstTimingAttack` is fine, copy all.
+ * </pre>
  *
  * @author trydofor
  * @since 2021-02-08
@@ -163,7 +169,7 @@ public class WingsBindAuthProvider extends AbstractUserDetailsAuthenticationProv
 
     protected String presentPassword(UserDetails details, Authentication auth) {
         String presentedPassword = auth.getCredentials().toString();
-        // 加盐处理
+        // salt
         if (passsaltEncoder != null && details instanceof WingsUserDetails dtl) {
             PasswordHelper helper = new PasswordHelper(passwordEncoder, passsaltEncoder);
             presentedPassword = helper.salt(presentedPassword, dtl.getPasssalt());

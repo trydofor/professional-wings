@@ -11,6 +11,7 @@ import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.mirana.code.RandCode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -25,6 +26,7 @@ class DefaultPasssaltEncoderTest {
     private final PasswordEncoder scrypt = SCryptPasswordEncoder.defaultsForSpringSecurity_v4_1();
     private final PasswordEncoder argon2 = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_2();
     private final DefaultPasssaltEncoder sha256 = new DefaultPasssaltEncoder(MdHelp.sha256);
+    private final MysqlPasswordEncoder mysql = new MysqlPasswordEncoder();
 
     /**
      * BCryptPasswordEncoder ms/100 =7745
@@ -67,5 +69,25 @@ class DefaultPasssaltEncoderTest {
         log.info(salt);
         log.info(p1);
         assertEquals(p1, p2);
+    }
+
+    /**
+     * SELECT password("wingsboot"); -- *470398BC6EA62F5FB5BFE1EA5FAD13A28EE432DE
+     * SELECT password("milioncircle"); -- *48E834F2D5A6762230DF2DC976FD1712793ED6D8
+     */
+    @Test
+    void testMysql() {
+        String text1 = "wingsboot";
+        String text2 = "milioncircle";
+        String code1 = "*470398BC6EA62F5FB5BFE1EA5FAD13A28EE432DE";
+        String code2 = "*48E834F2D5A6762230DF2DC976FD1712793ED6D8";
+
+        final String pass1 = mysql.encode(text1);
+        final String pass2 = mysql.encode(text2);
+
+        assertEquals("*" + pass1, code1);
+        assertEquals("*" + pass2, code2);
+        assertTrue(mysql.matches(text1, code1));
+        assertTrue(mysql.matches(text2, code2));
     }
 }

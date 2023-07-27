@@ -1,17 +1,19 @@
 package pro.fessional.wings.slardar.security;
 
 /**
+ * Password salting
+ *
  * @author trydofor
  * @since 2021-02-25
  */
 public interface PasssaltEncoder {
 
     /**
-     * 根据算法组合salt和pass
+     * encode pass with salt
      *
-     * @param pass 原始密码
+     * @param pass plain password
      * @param salt salt
-     * @return 新密码
+     * @return new password with salt
      */
     String salt(String pass, String salt);
 }

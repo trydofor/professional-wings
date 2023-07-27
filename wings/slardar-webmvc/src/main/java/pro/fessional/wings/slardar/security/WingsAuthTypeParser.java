@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.security;
 
 import org.jetbrains.annotations.NotNull;
+import pro.fessional.mirana.data.Null;
 
 import java.util.Map;
 
@@ -11,26 +12,27 @@ import java.util.Map;
 public interface WingsAuthTypeParser {
 
     /**
-     * 获取通过字符串别名，解析成enum类，null返回Null.Enm
+     * Convert the string alias to enum, return Null.Enm instead of null
      *
      * @param authType authType
-     * @return 枚举类
+     * @return strong type of authType
+     * @see Null#Enm
      */
     @NotNull
     Enum<?> parse(String authType);
 
     /**
-     * 把enum类，变成字符串别名，无法转换时PC异常
+     * Convert the enum to string alias, throws if fail
      *
      * @param authType authType
-     * @return 字符串型
-     * @throws IllegalArgumentException 无法转换时
+     * @return string alias
+     * @throws IllegalArgumentException if fail
      */
     @NotNull
     String parse(Enum<?> authType);
 
     /**
-     * 获取全部映射关系
+     * Get all the string alias and enum one-to-one mapping
      */
     @NotNull
     Map<String, Enum<?>> types();

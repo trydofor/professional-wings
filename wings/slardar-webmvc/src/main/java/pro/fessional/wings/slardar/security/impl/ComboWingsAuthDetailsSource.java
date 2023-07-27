@@ -102,7 +102,7 @@ public class ComboWingsAuthDetailsSource implements WingsAuthDetailsSource<Wings
 
     public interface Combo<T extends WingsAuthDetails> extends Ordered {
         /**
-         * 不接受或无法构造返回null
+         * Return null if not accepted or cant be constructed
          *
          * @param authType authType
          * @param request  request

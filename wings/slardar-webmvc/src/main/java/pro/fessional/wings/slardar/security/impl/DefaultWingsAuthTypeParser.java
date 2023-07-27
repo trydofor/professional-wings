@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 使用HashMap构建，除default值外，一对一映射。
+ * Construct the  one-to-one (except for the default value) mapping with  HashMap.
  *
  * @author trydofor
  * @since 2021-02-22
