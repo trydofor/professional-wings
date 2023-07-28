@@ -37,8 +37,7 @@
         <spring-boot.repackage.skip>false</spring-boot.repackage.skip>
         <spring-boot.repackage.executable>false</spring-boot.repackage.executable>
         <gpg.skip>true</gpg.skip>
-        <!-- common quality Checker Framework and ErrorProne -->
-        <errorprone.version>2.20.0</errorprone.version> <!-- https://github.com/google/error-prone/releases -->
+        <!-- common quality checker: jetbrains/findbugs-jsr305(guava)/errorprone(guava) -->
         <annotations.version>24.0.1</annotations.version> <!-- https://github.com/JetBrains/java-annotations/releases -->
         <!-- common utils-->
         <mapstruct.version>1.5.5.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
@@ -437,11 +436,6 @@
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
                 <version>${annotations.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.errorprone</groupId>
-                <artifactId>error_prone_annotations</artifactId>
-                <version>${errorprone.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mapstruct</groupId>
