@@ -16,7 +16,7 @@ public class BatriderHandlerProp {
     public static final String Key = "wings.batrider.handler";
 
     /**
-     * 不需要验证的schemaId
+     * SchemaId that can skip auth
      *
      * @see #Key$authSkipSchema
      */

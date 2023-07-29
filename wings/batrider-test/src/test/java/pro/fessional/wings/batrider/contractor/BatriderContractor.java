@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import pro.fessional.wings.batrider.contract.HelloContract;
 
 /**
- * Mvc风格，自定义SchemaId，basePath不带SchemaId
+ * Mvc Style, Customize SchemaId, basePath without SchemaId
  *
  * @author trydofor
  * @since 2022-08-04
