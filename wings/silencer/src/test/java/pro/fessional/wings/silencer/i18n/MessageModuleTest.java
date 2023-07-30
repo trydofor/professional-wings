@@ -27,7 +27,7 @@ public class MessageModuleTest {
 
     @Test
     void testModule() {
-        assertEquals("沉默术士", module);
+        assertEquals("Silencer", module);
         assertEquals(Locale.forLanguageTag("en-US"), Locale.getDefault());
     }
 

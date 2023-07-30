@@ -35,9 +35,9 @@ public class WingsSilencerProfile1Test {
 
     @Test
     public void profile() {
-        assertEquals("沉默术士-dev", module);
+        assertEquals("Silencer-dev", module);
         assertEquals("wings-silencer-dev", name);
-        assertEquals("沉默术士-dev", moduleDev);
+        assertEquals("Silencer-dev", moduleDev);
         assertEquals("wings-silencer-dev", nameDev);
         assertEquals("empty", moduleTest);
         assertEquals("empty", nameTest);

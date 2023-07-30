@@ -10,6 +10,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
+import pro.fessional.mirana.best.Param;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -20,7 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * init on ApplicationPreparedEvent
+ * Init on ApplicationPreparedEvent
  *
  * @author trydofor
  * @since 2022-08-12
@@ -36,7 +37,7 @@ public class ApplicationContextHelper {
     }
 
     /**
-     * 获取spring.application.name属性 或 context#getApplicationName
+     * Get the value of spring.application.name (if not empty) or context#getApplicationName by default.
      */
     @NotNull
     public static String getApplicationName() {
@@ -66,7 +67,7 @@ public class ApplicationContextHelper {
     }
 
     /**
-     * 获取所有key和有效值，按key的出现顺序显示
+     * Get all keys and valid values in order of appearance.
      */
     @NotNull
     public static Map<String, String> listProperties() {
@@ -89,7 +90,7 @@ public class ApplicationContextHelper {
 
 
     /**
-     * 显示keys及对应的层叠后的来源
+     * Show keys and its properties
      */
     @NotNull
     public static Map<String, String> listPropertiesKeys() {
@@ -106,7 +107,7 @@ public class ApplicationContextHelper {
     }
 
     /**
-     * 获取PropertySources及其内keys，keys可重复，因文件可层叠
+     * Get the PropertySources and the keys within them, the keys can be duplicated as the files can be cascaded.
      */
     @NotNull
     public static Map<String, List<String>> listPropertySource() {
@@ -125,9 +126,9 @@ public class ApplicationContextHelper {
     public static final String PropertySourceDelimiter = ":";
 
     /**
-     * 用于调查source和key的关系，返回 source:source2#key - key的map
+     * Use to investigate the relationship between source and key, return source:source2#key to key mapping
      */
-    public static void walkPropertySource(String root, Map<String, List<String>> srcKey, PropertySource<?> src) {
+    public static void walkPropertySource(String root, @Param.Out Map<String, List<String>> srcKey, PropertySource<?> src) {
         // EnvironmentEndpoint
         if (ConfigurationPropertySources.isAttachedConfigurationPropertySource(src)) return;
         String prefix = root == null || root.isEmpty() ? "" : root + PropertySourceDelimiter;

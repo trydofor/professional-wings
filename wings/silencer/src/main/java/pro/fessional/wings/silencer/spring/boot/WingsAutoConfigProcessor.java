@@ -190,7 +190,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         private String promo = "wings-prop-promotion.cnf";
     }
 
-    private void processWingsConf(ConfigurableEnvironment environment) {
+    public void processWingsConf(ConfigurableEnvironment environment) {
 
         final MutablePropertySources propertySources = environment.getPropertySources();
         final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
@@ -371,7 +371,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         Comparator<ConfResource> sorter = (r1, r2) -> {
             if (r1.profile.isEmpty() && !r2.profile.isEmpty()) return 1;
             if (!r1.profile.isEmpty() && r2.profile.isEmpty()) return -1;
-            final int p0 = r2.profile.compareTo(r1.profile); // spring 后者优先
+            final int p0 = r2.profile.compareTo(r1.profile); // spring the latter takes precedence.
             if (p0 != 0) return p0;
 
             final int n0 = Integer.compare(r1.nameSeq, r2.nameSeq);
@@ -449,7 +449,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
         return confResources;
     }
 
-    public AutoConf processWingsAuto(PathMatchingResourcePatternResolver resolver) {
+    private AutoConf processWingsAuto(PathMatchingResourcePatternResolver resolver) {
         final Resource resource = resolver.getResource(WINGS_AUTO);
         AutoConf autoConf = new AutoConf();
         if (resource.isReadable()) {

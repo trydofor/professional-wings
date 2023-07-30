@@ -24,7 +24,7 @@ public class WingsSilencerMergeTest {
 
     @Test
     public void merge() {
-        // 替换
+        // replace
         Assertions.assertEquals(List.of("a"), mergingProp.getLst1());
         Assertions.assertEquals(List.of("a"), mergingProp.getLst2());
         Assertions.assertEquals(Set.of("a"), mergingProp.getSet1());
@@ -34,10 +34,10 @@ public class WingsSilencerMergeTest {
         Assertions.assertArrayEquals(new String[]{"a"}, mergingProp.getArr1());
         Assertions.assertArrayEquals(new String[]{"a"}, mergingProp.getArr2());
 
-        // 合并
+        // merge
         Assertions.assertEquals(Map.of("a","a","b","b"), mergingProp.getMap2());
         Assertions.assertEquals(Map.of("a","a","b","b"), mergingProp.getMap2());
-        // 合并
+        // merge
         MergingProp.Pojo po = new MergingProp.Pojo();
         po.setStr1("a");
         po.setStr2("b");
