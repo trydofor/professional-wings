@@ -7,7 +7,7 @@ import pro.fessional.mirana.code.RandCode;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 系统密码提供者，默认256bit，32字符
+ * System password provider, default 256bit, 32 characters
  *
  * @author trydofor
  * @since 2022-12-05
@@ -15,32 +15,32 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SecretProvider {
 
     /**
-     * 默认密码的字符串长度
+     * Default password length
      */
     public static final int Length = 32;
 
     /**
-     * 系统默认，每次系统启动时随机生成，停机后消失。
+     * System default, randomly generated each time the system starts, disappears after downtime.
      */
     public static final String System = "system";
 
     /**
-     * 用于Api Ticket，建议集群内统一
+     * Used for Api Tickets, should be the same within the cluster
      */
     public static final String Ticket = "ticket";
 
     /**
-     * 用于 Http Cookie，建议集群内统一
+     * Used for Http Cookie, should be the same within the cluster
      */
     public static final String Cookie = "cookie";
     /**
-     * 用于 配置文件中敏感数据，建议固定
+     * Used for sensitive data in profiles, it is recommended to fix value
      */
     public static final String Config = "config";
 
 
     /**
-     * 生成len长度的字母大小写和数字符号密码
+     * Generate `len` length passwords of alphabetic, case-sensitive and numeric
      *
      * @see RandCode#strong(int)
      */
@@ -50,7 +50,8 @@ public class SecretProvider {
     }
 
     /**
-     * 生成len长度的字母大小写和数字可读性好的密码。 供32个英数，去掉了30个(0oO,1il,cC,j,kK,mM,nN,pP,sS,uU,vV,wW,xX,y,zZ)
+     * Generate `len` length passwords with good readability of case-sensitive letters and numbers.
+     * total 32 Letter and Numbers, removing 30 (0oO,1il,cC,j,kK,mM,nN,pP,sS,uU,vV,wW,xX,y,zZ)
      *
      * @see RandCode#human(int)
      */
@@ -60,19 +61,15 @@ public class SecretProvider {
     }
 
     /**
-     * 获取name对应的secret，若没有则生成并保存一个默认Length的密码
+     * Get the secret by name, if not found, generate a default length strong password and cache it.
      */
     @NotNull
     public static String get(String name) {
-        if (name == null || name.isEmpty()) {
-            name = System;
-        }
-
-        return Secrets.computeIfAbsent(name, k -> RandCode.strong(Length));
+        return get(name, true);
     }
 
     /**
-     * 获取name对应的secret，指定非空时，若没有则生成并保存一个默认Length的密码
+     * Get the secret by name, if not found and computeIfAbsent, generate a default length strong password and cache it.
      */
     @Contract("_,true->!null")
     public static String get(String name, boolean computeIfAbsent) {
@@ -92,7 +89,7 @@ public class SecretProvider {
     protected static final ConcurrentHashMap<String, String> Secrets = new ConcurrentHashMap<>();
 
     /**
-     * 初始一个name的secret
+     * put the secret by name
      */
     protected static void put(@NotNull String name, @NotNull String secret, boolean replace) {
         if (replace) {

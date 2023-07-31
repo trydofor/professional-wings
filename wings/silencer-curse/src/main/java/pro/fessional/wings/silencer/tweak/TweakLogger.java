@@ -157,16 +157,17 @@ public class TweakLogger {
     // thread
 
     /**
-     * value为Level的文字明，大写
+     * The string value of Level, capitalized
      */
     public static final String LevelKey = "WINGS_DEBUG_LEVEL";
     /**
-     * value为logger名，区分大小写。比较逻辑为互相contains即可。
+     * the string value of logger name, case-insensitive.
+     * Comparison logic is A.contains(B) or B.contains(A)
      */
     public static final String LoggerKey = "WINGS_DEBUG_LOGGER";
 
     /**
-     * 根据MDC中的logger name和 level过滤
+     * Filter by logger name and level in the MDC
      *
      * @see DynamicThresholdFilter
      */
@@ -191,15 +192,15 @@ public class TweakLogger {
     };
 
     /**
-     * level为null或OFF时，为reset
+     * Set the new log level for root, but if level is null or OFF, reset to the original level.
      */
     public static void tweakThread(@Nullable LogLevel level) {
         tweakThread(ROOT_LOGGER_NAME, level);
     }
 
     /**
-     * level为null或OFF时，为reset。
-     * name为ROOT或空为全局
+     * Set the new log level for logger, but if level is null or OFF, reset to the original level.
+     * tweak root level if the name is ROOT or empty.
      */
     public static void tweakThread(@NotNull String name, @Nullable LogLevel level) {
         if (level == null || level == LogLevel.OFF) {

@@ -39,7 +39,7 @@ public class SpringOrderConfiguration implements InitializingBean {
     private static final Log log = LogFactory.getLog(SpringOrderConfiguration.class);
 
     public SpringOrderConfiguration(SilencerEnabledProp prop) {
-        log.info(">>>>> constructor 可自动注入参数 AutoLog=" + prop.isAutoLog());
+        log.info(">>>>> constructor can inject parameter AutoLog=" + prop.isAutoLog());
     }
 
 
@@ -50,18 +50,18 @@ public class SpringOrderConfiguration implements InitializingBean {
 
     @Bean
     public CommandLineRunner testBean1(SilencerEnabledProp prop) {
-        log.info(">>>>> testBean1 可自动注入参数 AutoLog=" + prop.isAutoLog());
+        log.info(">>>>> testBean1 can inject parameter AutoLog=" + prop.isAutoLog());
         return ignored -> log.info(">>>>> CommandLineRunner1 " + prop.isAutoLog());
     }
 
     @PostConstruct
     public void postConstruct1() {
-        log.info(">>>>> postConstruct1 不可注入参数");
+        log.info(">>>>> postConstruct1 can NOT inject parameter");
     }
 
     @Autowired
     public void testAutowired1(SilencerEnabledProp prop) {
-        log.info(">>>>> testAutowired1 可自动注入参数 AutoLog=" + prop.isAutoLog());
+        log.info(">>>>> testAutowired1 can inject parameter AutoLog=" + prop.isAutoLog());
     }
 
     @PostConstruct

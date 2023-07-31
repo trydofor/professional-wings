@@ -60,14 +60,14 @@ public class SilencerTweakConfiguration {
                                      @Value("${trace:false}") boolean trace
     ) {
         log.info("SilencerCurse spring-auto autowireLogbackTweak, init TtlMDC");
-        TtlMDCAdapter.initMdc();// 尽早初始化
+        TtlMDCAdapter.initMdc();// init as early as possible
 
         if (prop.isMdcThreshold()) {
             log.info("SilencerCurse spring-conf autowireLogbackTweak WingsMdcThresholdFilter");
             LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
             lc.getTurboFilterList().add(0, TweakLogger.MdcThresholdFilter);
         }
-        // 尽晚初始化
+        // init as late as possible
         final LogLevel core;
         if (debug) {
             core = LogLevel.DEBUG;

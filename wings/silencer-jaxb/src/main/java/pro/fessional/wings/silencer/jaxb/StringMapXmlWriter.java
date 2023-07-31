@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * 只把顶层元素变成key-value的map，用来做参数签名
+ * Turn only top-level elements into key-value maps for parameter signatures
  *
  * @author trydofor
  * @since 2019-12-31
@@ -18,18 +18,14 @@ public class StringMapXmlWriter implements XMLStreamWriter {
     private String currentKey;
 
     /**
-     * 按key的ascii（unicode）的值排序
-     *
-     * @return key值排序
+     * Order key by ascii (unicode) code
      */
     public static StringMapXmlWriter treeMap() {
         return new StringMapXmlWriter(new TreeMap<>());
     }
 
     /**
-     * 按key的顺序排序
-     *
-     * @return key顺序排序
+     * Sort key by its insertion
      */
     public static StringMapXmlWriter linkMap() {
         return new StringMapXmlWriter(new LinkedHashMap<>());
