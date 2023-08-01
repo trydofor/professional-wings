@@ -8,7 +8,7 @@ import java.util.Locale;
  */
 public interface StandardLanguageEnum extends ConstantEnum, StandardI18nEnum {
     /**
-     * 转变为Locale
+     * Get or Convert to Locale
      */
     Locale toLocale();
 }

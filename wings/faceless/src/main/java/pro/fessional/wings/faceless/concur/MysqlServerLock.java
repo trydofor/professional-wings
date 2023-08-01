@@ -11,8 +11,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
 /**
- * 基于Mysql IS_FREE_LOCK和GET_LOCK 实现的锁。
- * mysql实例级，跨实例中的数据库。
+ * Locks based on the Mysql IS_FREE_LOCK and GET_LOCK at mysql instance level.
  *
  * @author trydofor
  * @since 2021-03-08

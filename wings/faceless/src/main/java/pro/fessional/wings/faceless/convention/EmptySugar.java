@@ -7,7 +7,7 @@ import java.time.LocalTime;
 import java.util.function.Consumer;
 
 /**
- * isXxx为精确比较，asXxx为范围比较
+ * `isXxx` for exact comparison, `asXxx` for range comparison
  *
  * @author trydofor
  * @since 2019-05-13
@@ -80,7 +80,7 @@ public class EmptySugar {
     }
 
     /**
-     * 考虑时区，±24H
+     * Consider time zone, ±24H
      */
     public static boolean asEmptyValue(LocalDate v) {
         return v == null ||
@@ -90,7 +90,7 @@ public class EmptySugar {
     }
 
     /**
-     * 仅比较时分秒，不考虑秒以下时间
+     * Compare hour, minute and second only, without the time below the second
      */
     public static boolean asEmptyValue(LocalTime v) {
         return v == null ||
@@ -100,7 +100,7 @@ public class EmptySugar {
     }
 
     /**
-     * 仅比较日期，不比较时间
+     * Compare date only, without time
      */
     public static boolean asEmptyValue(LocalDateTime v) {
         return v == null || asEmptyValue(v.toLocalDate());

@@ -13,7 +13,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * 提交任务，如果上下文中存在Journal，则复用
+ * Submit/Commit the operation with a Journal.
+ * If a Journal exists in the context, then reuse it,
+ * otherwise create a new one in the context.
  *
  * @author trydofor
  * @since 2019-06-05
@@ -77,26 +79,26 @@ public interface JournalService {
     }
 
     /**
-     * 构建一个日志，并返回任务结果
+     * Submit the operation (event) with journal and return some result
      *
-     * @param eventName 事件名
-     * @param loginInfo 登陆信息，用户id，ip等，自定义
-     * @param targetKey 目标key或id
-     * @param otherInfo 其他信息
-     * @param commitSet 提交任务集
-     * @return 任务集结果
+     * @param eventName event name
+     * @param loginInfo login info ,eg. userId, ip
+     * @param targetKey key/id of target
+     * @param otherInfo other info of operation
+     * @param commitSet operations
+     * @return the result
      */
     @NotNull <R> R submit(@NotNull String eventName, @Nullable String loginInfo, @Nullable String targetKey, @Nullable String otherInfo, @NotNull Function<Journal, R> commitSet);
 
     /**
-     * 构建一个日志，返回改日志
+     * Commit the operation (event) with journal and return the journal.
      *
-     * @param eventName 事件名
-     * @param loginInfo 登陆信息，用户id，ip等，自定义
-     * @param targetKey 目标key或id
-     * @param otherInfo 其他信息
-     * @param commitSet 提交任务集
-     * @return Journal
+     * @param eventName event name
+     * @param loginInfo login info ,eg. userId, ip
+     * @param targetKey key/id of target
+     * @param otherInfo other info of operation
+     * @param commitSet operations
+     * @return the journal
      */
     default Journal commit(@NotNull String eventName, @Nullable String loginInfo, @Nullable String targetKey, @Nullable String otherInfo, @NotNull Consumer<Journal> commitSet) {
         return submit(eventName, loginInfo, targetKey, otherInfo, journal -> {
@@ -106,15 +108,15 @@ public interface JournalService {
     }
 
     /**
-     * 构建一个日志
-     * 建议Override，通过Json构造targetKey或OtherInfo
+     * Submit the operation (event) with journal and return some result.
+     * It is recommended to `Override` to create targetKey/OtherInfo in Json
      *
-     * @param eventClass 事件类，使用类的全路径
-     * @param loginInfo  登陆信息，用户id，ip等，自定义
-     * @param targetKey  目标key或id
-     * @param otherInfo  其他信息
-     * @param commitSet  提交任务集
-     * @return 任务集结果
+     * @param eventClass use Class.getName as eventName
+     * @param loginInfo  login info ,eg. userId, ip
+     * @param targetKey  key/id of target
+     * @param otherInfo  other info of operation
+     * @param commitSet  operations
+     * @return the result
      */
     @NotNull
     default <R> R submit(@NotNull Class<?> eventClass, @Nullable String loginInfo, @Nullable Object targetKey, @Nullable Object otherInfo, @NotNull Function<Journal, R> commitSet) {
@@ -125,15 +127,15 @@ public interface JournalService {
     }
 
     /**
-     * 构建一个日志
-     * 建议Override，通过Json构造targetKey或OtherInfo
+     * Commit the operation (event) with journal and return the journal.
+     * It is recommended to `Override` to create targetKey/OtherInfo in Json
      *
-     * @param eventClass 事件类，使用类的全路径
-     * @param loginInfo  登陆信息，用户id，ip等，自定义
-     * @param targetKey  目标key或id
-     * @param otherInfo  其他信息
-     * @param commitSet  提交任务集
-     * @return Journal
+     * @param eventClass use Class.getName as eventName
+     * @param loginInfo  login info ,eg. userId, ip
+     * @param targetKey  key/id of target
+     * @param otherInfo  other info of operation
+     * @param commitSet  operations
+     * @return the journal
      */
     default Journal commit(@NotNull Class<?> eventClass, @Nullable String loginInfo, @Nullable Object targetKey, @Nullable Object otherInfo, @NotNull Consumer<Journal> commitSet) {
         return submit(eventClass, loginInfo, targetKey, otherInfo, journal -> {
@@ -143,14 +145,14 @@ public interface JournalService {
     }
 
     /**
-     * 构建一个日志。
-     * 建议Override，通过SecurityContext获得 loginInfo
+     * Submit the operation (event) with journal and return some result.
+     * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
-     * @param eventClass 事件类，使用类的全路径
-     * @param targetKey  目标key或id
-     * @param otherInfo  其他信息
-     * @param commitSet  提交任务集
-     * @return 任务集结果
+     * @param eventClass use Class.getName as eventName
+     * @param targetKey  key/id of target
+     * @param otherInfo  other info of operation
+     * @param commitSet  operations
+     * @return the result
      */
     @NotNull
     default <R> R submit(@NotNull Class<?> eventClass, @Nullable Object targetKey, @Nullable Object otherInfo, @NotNull Function<Journal, R> commitSet) {
@@ -158,27 +160,27 @@ public interface JournalService {
     }
 
     /**
-     * 构建一个日志。
-     * 建议Override，通过SecurityContext获得 loginInfo
+     * Commit the operation (event) with journal and return the journal.
+     * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
-     * @param eventClass 事件类，使用类的全路径
-     * @param targetKey  目标key或id
-     * @param otherInfo  其他信息
-     * @param commitSet  提交任务集
-     * @return Journal
+     * @param eventClass use Class.getName as eventName
+     * @param targetKey  key/id of target
+     * @param otherInfo  other info of operation
+     * @param commitSet  operations
+     * @return the journal
      */
     default Journal commit(@NotNull Class<?> eventClass, @Nullable Object targetKey, @Nullable Object otherInfo, @NotNull Consumer<Journal> commitSet) {
         return commit(eventClass, null, targetKey, otherInfo, commitSet);
     }
 
     /**
-     * 构建一个日志。
-     * 建议Override，通过SecurityContext获得 loginInfo
+     * Submit the operation (event) with journal and return some result.
+     * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
-     * @param eventClass 事件类，使用类的全路径
-     * @param targetKey  目标key或id
-     * @param commitSet  提交任务集
-     * @return 任务集结果
+     * @param eventClass use Class.getName as eventName
+     * @param targetKey  key/id of target
+     * @param commitSet  operations
+     * @return the result
      */
     @NotNull
     default <R> R submit(@NotNull Class<?> eventClass, @Nullable Object targetKey, @NotNull Function<Journal, R> commitSet) {
@@ -186,25 +188,25 @@ public interface JournalService {
     }
 
     /**
-     * 构建一个日志。
-     * 建议Override，通过SecurityContext获得 loginInfo
+     * Commit the operation (event) with journal and return the journal.
+     * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
-     * @param eventClass 事件类，使用类的全路径
-     * @param targetKey  目标key或id
-     * @param commitSet  提交任务集
-     * @return Journal
+     * @param eventClass use Class.getName as eventName
+     * @param targetKey  key/id of target
+     * @param commitSet  operations
+     * @return the journal
      */
     default Journal commit(@NotNull Class<?> eventClass, @Nullable Object targetKey, @NotNull Consumer<Journal> commitSet) {
         return commit(eventClass, null, targetKey, null, commitSet);
     }
 
     /**
-     * 构建一个日志。
-     * 建议Override，通过SecurityContext获得 loginInfo
+     * Submit the operation (event) with journal and return some result.
+     * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
-     * @param eventClass 事件类，使用类的全路径
-     * @param commitSet  提交任务集
-     * @return 任务集结果
+     * @param eventClass use Class.getName as eventName
+     * @param commitSet  operations
+     * @return the result
      */
     @NotNull
     default <R> R submit(@NotNull Class<?> eventClass, @NotNull Function<Journal, R> commitSet) {
@@ -212,27 +214,27 @@ public interface JournalService {
     }
 
     /**
-     * 构建一个日志。
-     * 建议Override，通过SecurityContext获得 loginInfo
+     * Commit the operation (event) with journal and return the journal.
+     * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
-     * @param eventClass 事件类，使用类的全路径
-     * @param commitSet  提交任务集
-     * @return Journal
+     * @param eventClass use Class.getName as eventName
+     * @param commitSet  operations
+     * @return the journal
      */
     default Journal commit(@NotNull Class<?> eventClass, @NotNull Consumer<Journal> commitSet) {
         return commit(eventClass, null, null, null, commitSet);
     }
 
     /**
-     * 构建一个日志
-     * 建议Override，通过Json构造targetKey或OtherInfo
+     * Submit the operation (event) with journal and return some result.
+     * It is recommended to `Override` to create targetKey/OtherInfo in Json
      *
-     * @param eventEnum 事件类，使用类的全路径，通常内部类命名为Jane
-     * @param loginInfo 登陆信息，用户id，ip等，自定义
-     * @param targetKey 目标key或id
-     * @param otherInfo 其他信息
-     * @param commitSet 提交任务集
-     * @return 任务集结果
+     * @param eventEnum convert enum with EnumConvertor
+     * @param loginInfo login info ,eg. userId, ip
+     * @param targetKey key/id of target
+     * @param otherInfo other info of operation
+     * @param commitSet operations
+     * @return the result
      */
     @NotNull
     default <R> R submit(@NotNull Enum<?> eventEnum, @Nullable String loginInfo, @Nullable Object targetKey, @Nullable Object otherInfo, @NotNull Function<Journal, R> commitSet) {
@@ -243,15 +245,15 @@ public interface JournalService {
     }
 
     /**
-     * 构建一个日志
-     * 建议Override，通过Json构造targetKey或OtherInfo
+     * Commit the operation (event) with journal and return the journal.
+     * It is recommended to `Override` to create targetKey/OtherInfo in Json
      *
-     * @param eventEnum 事件类，使用类的全路径，通常内部类命名为Jane
-     * @param loginInfo 登陆信息，用户id，ip等，自定义
-     * @param targetKey 目标key或id
-     * @param otherInfo 其他信息
-     * @param commitSet 提交任务集
-     * @return Journal
+     * @param eventEnum convert enum with EnumConvertor
+     * @param loginInfo login info ,eg. userId, ip
+     * @param targetKey key/id of target
+     * @param otherInfo other info of operation
+     * @param commitSet operations
+     * @return the journal
      */
     default Journal commit(@NotNull Enum<?> eventEnum, @Nullable String loginInfo, @Nullable Object targetKey, @Nullable Object otherInfo, @NotNull Consumer<Journal> commitSet) {
         return submit(eventEnum, loginInfo, targetKey, otherInfo, journal -> {
@@ -261,14 +263,14 @@ public interface JournalService {
     }
 
     /**
-     * 构建一个日志。
-     * 建议Override，通过SecurityContext获得 loginInfo
+     * Submit the operation (event) with journal and return some result.
+     * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
-     * @param eventEnum 事件类，使用类的全路径
-     * @param targetKey 目标key或id
-     * @param otherInfo 其他信息
-     * @param commitSet 提交任务集
-     * @return 任务集结果
+     * @param eventEnum convert enum with EnumConvertor
+     * @param targetKey key/id of target
+     * @param otherInfo other info of operation
+     * @param commitSet operations
+     * @return the result
      */
     @NotNull
     default <R> R submit(@NotNull Enum<?> eventEnum, @Nullable Object targetKey, @Nullable Object otherInfo, @NotNull Function<Journal, R> commitSet) {
@@ -276,27 +278,27 @@ public interface JournalService {
     }
 
     /**
-     * 构建一个日志。
-     * 建议Override，通过SecurityContext获得 loginInfo
+     * Commit the operation (event) with journal and return the journal.
+     * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
-     * @param eventEnum 事件类，使用类的全路径
-     * @param targetKey 目标key或id
-     * @param otherInfo 其他信息
-     * @param commitSet 提交任务集
-     * @return Journal
+     * @param eventEnum convert enum with EnumConvertor
+     * @param targetKey key/id of target
+     * @param otherInfo other info of operation
+     * @param commitSet operations
+     * @return the journal
      */
     default Journal commit(@NotNull Enum<?> eventEnum, @Nullable Object targetKey, @Nullable Object otherInfo, @NotNull Consumer<Journal> commitSet) {
         return commit(eventEnum, null, targetKey, otherInfo, commitSet);
     }
 
     /**
-     * 构建一个日志。
-     * 建议Override，通过SecurityContext获得 loginInfo
+     * Submit the operation (event) with journal and return some result.
+     * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
-     * @param eventEnum 事件类，使用类的全路径
-     * @param targetKey 目标key或id
-     * @param commitSet 提交任务集
-     * @return 任务集结果
+     * @param eventEnum convert enum with EnumConvertor
+     * @param targetKey key/id of target
+     * @param commitSet operations
+     * @return the result
      */
     @NotNull
     default <R> R submit(@NotNull Enum<?> eventEnum, @Nullable Object targetKey, @NotNull Function<Journal, R> commitSet) {
@@ -304,25 +306,25 @@ public interface JournalService {
     }
 
     /**
-     * 构建一个日志。
-     * 建议Override，通过SecurityContext获得 loginInfo
+     * Commit the operation (event) with journal and return the journal.
+     * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
-     * @param eventEnum 事件类，使用类的全路径
-     * @param targetKey 目标key或id
-     * @param commitSet 提交任务集
-     * @return Journal
+     * @param eventEnum convert enum with EnumConvertor
+     * @param targetKey key/id of target
+     * @param commitSet operations
+     * @return the journal
      */
     default Journal commit(@NotNull Enum<?> eventEnum, @Nullable Object targetKey, @NotNull Consumer<Journal> commitSet) {
         return commit(eventEnum, null, targetKey, null, commitSet);
     }
 
     /**
-     * 构建一个日志。
-     * 建议Override，通过SecurityContext获得 loginInfo
+     * Submit the operation (event) with journal and return some result.
+     * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
-     * @param eventEnum 事件类，使用类的全路径
-     * @param commitSet 提交任务集
-     * @return 任务集结果
+     * @param eventEnum convert enum with EnumConvertor
+     * @param commitSet operations
+     * @return the result
      */
     @NotNull
     default <R> R submit(@NotNull Enum<?> eventEnum, @NotNull Function<Journal, R> commitSet) {
@@ -330,12 +332,12 @@ public interface JournalService {
     }
 
     /**
-     * 构建一个日志。
-     * 建议Override，通过SecurityContext获得 loginInfo
+     * Commit the operation (event) with journal and return the journal.
+     * It is recommended to `Override` to get loginInfo in TerminalContext/SecurityContext
      *
-     * @param eventEnum 事件类，使用类的全路径
-     * @param commitSet 提交任务集
-     * @return Journal
+     * @param eventEnum convert enum with EnumConvertor
+     * @param commitSet operations
+     * @return the journal
      */
     default Journal commit(@NotNull Enum<?> eventEnum, @NotNull Consumer<Journal> commitSet) {
         return commit(eventEnum, null, null, null, commitSet);

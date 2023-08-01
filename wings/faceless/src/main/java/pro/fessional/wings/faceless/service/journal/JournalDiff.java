@@ -11,13 +11,18 @@ import java.util.Objects;
 
 /**
  * <pre>
- * 对数据表的CUD进行diff。存在以下3种状态，value1表示前值，value2表示后值
- * - insert - value1 == empty, value2 != empty
- * - update - value1 != empty, value2 != empty
- * - delete - value1 != empty, value2 == empty
+ * Perform a diff on the CUD of the table. There are 3 states,
+ * `value1` is the old value and `value2` is the new value
  *
- * 此外，column.size * count == value#.size，可表示多条记录。
- * 生成时携带类型，但JSON序列化后会类型丢失，JSON反序列化时，value仅有String和Number类型
+ * * insert - value1 == empty, value2 != empty
+ * * update - value1 != empty, value2 != empty
+ * * delete - value1 != empty, value2 == empty
+ *
+ * In addition, `column.size` x `count` == `value#.size`,
+ * which can represent multiple records.
+ *
+ * Strong type when generated, but type is lost after JSON serialization,
+ * when JSON deserialized, value only has String and Number type
  * </pre>
  *
  * @author trydofor
@@ -39,7 +44,7 @@ public class JournalDiff {
     private transient boolean typed = false;
 
     /**
-     * values是否存在类型，jooq生成存在类型
+     * Whether value is typed. jooq-generated code has type
      */
     @Transient
     public boolean isTyped() {
@@ -47,7 +52,7 @@ public class JournalDiff {
     }
 
     /**
-     * 是否有记录
+     * Whether it has record
      */
     @Transient
     public boolean hasRecord() {
@@ -55,7 +60,7 @@ public class JournalDiff {
     }
 
     /**
-     * 是否有效，Insert,Update,Delete
+     * Whether valid (Insert,Update, or Delete)
      */
     @Transient
     public boolean isValid() {
@@ -63,7 +68,7 @@ public class JournalDiff {
     }
 
     /**
-     * 是否为插入
+     * Whether an insert
      */
     @Transient
     public boolean isInsert() {
@@ -73,7 +78,7 @@ public class JournalDiff {
     }
 
     /**
-     * 是否为删除
+     * Whether a delete
      */
     @Transient
     public boolean isDelete() {
@@ -83,7 +88,7 @@ public class JournalDiff {
     }
 
     /**
-     * 是否为更新
+     * Whether an update
      */
     @Transient
     public boolean isUpdate() {

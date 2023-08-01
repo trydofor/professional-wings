@@ -3,12 +3,14 @@ package pro.fessional.wings.faceless.enums;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * sys_constant_enum 常量枚举，方便编程，要与数据库一致。
- * <p>
- * SUPER，是约定值，代表本组，特征有3个
- * - 名字为SUPER
- * - id以00结尾
- * - code为id或code
+ * <pre>
+ * Constant enum for programming convenience, to be consistent with sys_constant_enum in database.
+ *
+ * `SUPER`, a convention value, represents this group and has 3 characteristics
+ * - the name is `SUPER`
+ * - `id` ends with `00`
+ * - `code` is either `id` or `code`
+ * </pre>
  *
  * @author trydofor
  * @since 2019-09-17
@@ -16,16 +18,14 @@ import org.jetbrains.annotations.NotNull;
 public interface ConstantEnum {
 
     /**
-     * id:动态9位数起，静态8位以下；建议3-2-2分段（表-组-值）；00结尾为SUPER
-     *
-     * @return id
+     * dynamic id has 9+ digits, static id has 8 digits;
+     * `3-2-2` segmentation recommended (table-group-value);
+     * `00` ending is SUPER
      */
     int getId();
 
     /**
-     * enum分组:相同type为同一Enum，自动Pascal命名
-     *
-     * @return type
+     * Enum grouping: same type for same enum, auto Pascal naming
      */
     @NotNull
     default String getType() {
@@ -38,19 +38,14 @@ public interface ConstantEnum {
     }
 
     /**
-     * 00 结尾的是组别
-     *
-     * @return 是否00结尾
+     * Whether end with `00`
      */
     default boolean isSuper() {
         return getId() % 100 == 0;
     }
 
     /**
-     * 是否统一组别
-     *
-     * @param id 其他id
-     * @return 是否统一组别
+     * Whether in same Super (same group)
      */
     default boolean sameSuper(long id) {
         return id % 100 == getId() % 100;
@@ -65,9 +60,7 @@ public interface ConstantEnum {
     }
 
     /**
-     * 是否为标致的数据库兼容的x-2-2格式
-     *
-     * @return 是否标准
+     * Whether a standard database compatible x-2-2 format
      */
     default boolean isStandard() {
         return getId() >= 100_00_00;

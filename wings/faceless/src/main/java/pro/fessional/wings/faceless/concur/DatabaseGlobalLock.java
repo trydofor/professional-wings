@@ -8,8 +8,8 @@ import pro.fessional.mirana.lock.GlobalLock;
 import java.util.concurrent.locks.Lock;
 
 /**
- * 基于DataSource的全局锁，用于数据库级锁。
- * 当读写分离或分库时，注意数据源切换。
+ * DataSource-based global lock for database-level locking.
+ * When read/write separation or data sharding, pay attention to data source switching.
  *
  * @author trydofor
  * @since 2021-03-08

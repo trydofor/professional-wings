@@ -132,7 +132,7 @@ public class LightIdProviderProp {
     public static final String Key$sequenceGetAll = Key + ".sequence-get-all";
 
     /**
-     * try to verify and adjust the id in the database to make it correct. Set to `∅` to ignore this feature.
+     * try to verify and adjust the id in the database to make it correct. Set to `empty` to ignore this feature.
      * Enter `table name` (as sequence name), return `table name` and `column name` in the database.
      *
      * @see #Key$sequenceAdjust

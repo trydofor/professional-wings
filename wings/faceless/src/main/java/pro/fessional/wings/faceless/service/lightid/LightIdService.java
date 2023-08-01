@@ -10,51 +10,35 @@ import org.jetbrains.annotations.NotNull;
 public interface LightIdService {
 
     /**
-     * 获得默认的BlockId
-     *
-     * @return 默认的BlockId
+     * Get the default BlockId
      */
     default int geBlockId() {
         return 0;
     }
 
     /**
-     * 按名字获得id，不区分大小写，默认全小写。
-     *
-     * @param name 名字
-     * @return id
+     * Get id by name, may be case-insensitive, all lowercase by default.
      */
     default long getId(@NotNull String name) {
         return getId(name, geBlockId());
     }
 
     /**
-     * 按Jooq的Table命名获得，去掉结尾的`Table`后缀，按 小写_小写命名。
-     *
-     * @param table 标记的对象
-     * @param block 区块
-     * @return id
+     * Get id by Jooq table name and block. e.g. removing the `Table` suffix and name it in lowercase_lowercase.
      */
     default long getId(@NotNull LightIdAware table, int block) {
         return getId(table.getSeqName(), block);
     }
 
     /**
-     * 按Jooq的Table命名获得，去掉结尾的`Table`后缀，按 小写_小写命名。
-     *
-     * @param table 标记的对象
-     * @return id
+     * Get id by Jooq table name. e.g. removing the `Table` suffix and name it in lowercase_lowercase.
      */
     default long getId(@NotNull LightIdAware table) {
         return getId(table, geBlockId());
     }
 
     /**
-     * 按名字获得id，不区分大小写，默认全小写。
-     *
-     * @param name  名字
-     * @param block 区块
-     * @return id
+     * Get id by name and block, may be case-insensitive, all lowercase by default.
      */
     long getId(@NotNull String name, int block);
 }

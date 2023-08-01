@@ -3,7 +3,7 @@ package pro.fessional.wings.faceless.service.lightid;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * 标记使用lightid的类，建议只标记表。
+ * Used to mark Class that support LightId, it is recommended to mark only tables.
  *
  * @author trydofor
  * @since 2019-05-31

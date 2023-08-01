@@ -7,7 +7,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 耦合查询，多表或关联多表，一般为join查询或子查询，包名以主表命名
+ * Coupling select, multiple tables or associated multiple tables.
+ * Generally join query or sub-query, package should be named by the main table
  *
  * @author trydofor
  * @since 2023-02-03

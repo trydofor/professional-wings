@@ -16,15 +16,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 提供基于jdbc和jooq的分页查询工具。
  * <pre>
- * total < 0，DB执行count和select
- * total = 0，DB不count，不select
- * total > 0，DB不count，但select
+ * Pagination Util for jdbc and jooq.
+ *
+ * * total < 0 - run count, run select
+ * * total = 0 - no count, no select
+ * * total > 0 - no count, run select
  * </pre>
  *
  * @author trydofor
- * @link https://blog.jooq.org/2019/09/19/whats-faster-count-or-count1/
+ * @link <a href="https://blog.jooq.org/2019/09/19/whats-faster-count-or-count1/">whats-faster-count-or-count1</a>
  * @since 2020-09-30
  */
 public class PageJdbcHelper {
@@ -35,12 +36,11 @@ public class PageJdbcHelper {
     }
 
     /**
-     * 分页查询
+     * Page query by jdbc
      *
-     * @param tpl   dsl
-     * @param page  页
-     * @param total service层缓存的count计数
-     * @return 结果
+     * @param tpl   jdbc template
+     * @param page  query info
+     * @param total the count cached in service level
      */
     @NotNull
     public static CountJdbc use(JdbcTemplate tpl, PageQuery page, int total) {
@@ -204,7 +204,7 @@ public class PageJdbcHelper {
         private int total = -1;
 
         /**
-         * 以 PageQuery.sort为主，以bys作为映射，以dft作为default为辅
+         * `PageQuery.sort` as the primary, `bys` as the mapping, and `dft` as the default
          */
         private void orderBy(Map<String, String> bys, String... dft) {
             final List<PageUtil.By> srt = PageUtil.sort(page.getSort());
@@ -274,7 +274,7 @@ public class PageJdbcHelper {
         }
 
         /**
-         * 指定字段或排序语句，等效于field:field的map关系
+         * Specify a field or sort statement that is equivalent to the field to field mapping.
          */
         public BindJdbc1 order(String bys) {
             context.orderBy(Collections.emptyMap(), bys);
@@ -282,7 +282,7 @@ public class PageJdbcHelper {
         }
 
         /**
-         * 根据alias:filed的map关系，到PageQuery的sort中匹配排序
+         * Based on the mapping of alias to filed, use PageQuery's sort to match the ordering
          */
         public BindJdbc1 order(Map<String, String> bys, String... dft) {
             context.orderBy(bys, dft);

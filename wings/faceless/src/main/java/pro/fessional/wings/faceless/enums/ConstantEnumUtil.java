@@ -219,7 +219,7 @@ public class ConstantEnumUtil {
     }
 
     /**
-     * 根据el.info中的最后一个`:`的字符串相等分组，如果没有则全字符串相等
+     * Group by the string after the last `:` in `el.info`, or the string if no `:`
      */
     @SafeVarargs
     @NotNull
@@ -233,9 +233,9 @@ public class ConstantEnumUtil {
     };
 
     /**
-     * 根据.info分组
+     * Group by `el.info`
      *
-     * @param fun 如何提前info的字符串
+     * @param fun provide the grouping string
      */
     @SafeVarargs
     @NotNull
