@@ -25,6 +25,7 @@ import pro.fessional.wings.slardar.jackson.JacksonHelper;
 import pro.fessional.wings.slardar.servlet.ContentTypeHelper;
 import pro.fessional.wings.slardar.servlet.stream.ReuseStreamResponseWrapper;
 
+import javax.annotation.WillClose;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -32,6 +33,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -50,10 +52,10 @@ public class ResponseHelper {
 
 
     /**
-     * 为下载文件 fileName，获得正确的ContentType
+     * Get the correct ContentType for the download filename.
      *
-     * @param fileName 文件名
-     * @return ContentType，默认 APPLICATION_OCTET_STREAM_VALUE
+     * @param fileName File name prompted during download
+     * @return ContentType, default APPLICATION_OCTET_STREAM_VALUE
      */
     @NotNull
     public static String getDownloadContentType(String fileName) {
@@ -61,10 +63,10 @@ public class ResponseHelper {
     }
 
     /**
-     * 为下载文件 fileName，获得正确的ContentDisposition
-     * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
+     * Get the correct ContentDisposition for the download filename.
+     * see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition">Content-Disposition</a>
      *
-     * @param fileName 文件名
+     * @param fileName File name prompted during download
      * @return ContentDisposition
      */
     @NotNull
@@ -82,37 +84,37 @@ public class ResponseHelper {
     }
 
     /**
-     * 为下载文件的Response设置ContentType
+     * Set the correct ContentType to Response for the download filename.
      *
      * @param response HttpServletResponse
-     * @param fileName fileName
+     * @param fileName File name prompted during download
      */
     public static void setDownloadContentType(@NotNull HttpServletResponse response, @Nullable String fileName) {
         response.setContentType(getDownloadContentType(fileName));
     }
 
     /**
-     * 为下载文件的Response设置Content-Disposition
+     * Set the correct Content-Disposition to Response for the download filename.
      *
      * @param response HttpServletResponse
-     * @param fileName fileName
+     * @param fileName File name prompted during download
      */
     public static void setDownloadContentDisposition(@NotNull HttpServletResponse response, @Nullable String fileName) {
         response.setHeader("Content-Disposition", getDownloadContentDisposition(fileName));
     }
 
     /**
-     * 直接以HttpServletResponse下载名为fileName的流，并关闭流
+     * Directly download file with filename by HttpServletResponse,
+     * use stream as the content and close the stream.
      *
      * @param response HttpServletResponse
-     * @param fileName 下载时提示的文件名
-     * @param stream   流
+     * @param fileName File name prompted during download
+     * @param stream   input stream
      */
-    public static void downloadFile(@NotNull HttpServletResponse response, @Nullable String fileName, @NotNull InputStream stream) {
-        setDownloadContentType(response, fileName);
-        setDownloadContentDisposition(response, fileName);
+    public static void downloadFile(@NotNull HttpServletResponse response, @Nullable String fileName, @NotNull @WillClose InputStream stream) {
         try {
-            IOUtils.copy(stream, response.getOutputStream(), 1024);
+            OutputStream outputStream = downloadFile(response, fileName);
+            IOUtils.copy(stream, outputStream, 1024);
         }
         catch (IOException e) {
             throw new IORuntimeException(e);
@@ -123,17 +125,30 @@ public class ResponseHelper {
     }
 
     /**
-     * 直接以HttpServletResponse下载文件
+     * Set the download filename to HttpServletResponse and return the output stream for user to write the content.
      *
      * @param response HttpServletResponse
-     * @param file     下载的文件
+     * @param fileName File name prompted during download
+     */
+    public static OutputStream downloadFile(@NotNull HttpServletResponse response, @Nullable String fileName) throws IOException {
+        setDownloadContentType(response, fileName);
+        setDownloadContentDisposition(response, fileName);
+        return response.getOutputStream();
+    }
+
+
+    /**
+     * Directly download the file with its filename by HttpServletResponse
+     *
+     * @param response HttpServletResponse
+     * @param file     file and filename to download
      */
     @SneakyThrows
     public static void downloadFile(@NotNull HttpServletResponse response, @NotNull File file) {
         downloadFile(response, file.getName(), new FileInputStream(file));
     }
 
-    public static void downloadFileWithZip(@NotNull HttpServletResponse response, @NotNull Map<String, InputStream> files, @Nullable String fileName) {
+    public static void downloadFileWithZip(@NotNull HttpServletResponse response, @NotNull @WillClose Map<String, InputStream> files, @Nullable String fileName) {
         if (fileName == null) fileName = "download.zip";
 
         try {
@@ -153,14 +168,14 @@ public class ResponseHelper {
 
 
     /**
-     * 直接以HttpServletResponse预览PDF文件
+     * Directly preview the PDF by HttpServletResponse
      *
      * @param response HttpServletResponse
-     * @param fileName 要预览的PDF文件名
-     * @param stream   流
+     * @param fileName the PDF filename to preview
+     * @param stream   input stream
      */
     @SneakyThrows
-    public static void previewPDF(@NotNull HttpServletResponse response, @Nullable String fileName, @NotNull InputStream stream) {
+    public static void previewPDF(@NotNull HttpServletResponse response, @Nullable String fileName, @NotNull @WillClose InputStream stream) {
         final String contentType = getDownloadContentType(fileName);
         if (!APPLICATION_PDF_VALUE.equals(contentType)) {
             throw new IllegalArgumentException("The parameter 'fileName' must be a pdf file");
@@ -188,9 +203,9 @@ public class ResponseHelper {
 
 
     /**
-     * 输出图片验证码
+     * Output the image/jpeg captcha
      *
-     * @param code     文本，6字
+     * @param code     captcha
      * @param response response
      */
     public static void showCaptcha(HttpServletResponse response, String code) {
@@ -211,10 +226,10 @@ public class ResponseHelper {
     }
 
     /**
-     * 输出图片验证码
+     * Output the base64 image captcha in text/plain.
      *
-     * @param code     文本，6字
-     * @param fmt      模板，以{base64}为占位符
+     * @param code     captcha
+     * @param fmt      format, `{base64}` is placeholder
      * @param response response
      */
     public static void showCaptcha(HttpServletResponse response, String code, String fmt) {
@@ -290,10 +305,14 @@ public class ResponseHelper {
     }
 
     /**
-     * 那以下顺序执行，并返回3种形式，Accept头严格匹配，因浏览器发送多头
-     * ① 200 xml,  accept=application/xml
-     * ② 200 json, accept=application/json 或 uri=null 或③未命中
-     * ③ 302 uri, uri != null
+     * <pre>
+     * Execute in the following order and return 3 forms, the Accept header strictly matches,
+     * as the browser sends multiple headers.
+     *
+     * (1) 200 xml,  accept=application/xml
+     * (2) 200 json, accept=application/json or uri=null or (3) if not match
+     * (3) 302 uri, uri != null
+     * </pre>
      */
     @SneakyThrows
     @NotNull
