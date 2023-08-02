@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * 生成导航类
+ * Generate Navigation Class
  *
  * @author trydofor
  * @since 2019-09-24
@@ -47,7 +47,7 @@ public class ConstantNaviGenerator {
         log.info("generate java={}, prefix={}, entry-count={}", javaName, prefixCode, entries.size());
         List<Entry> list = new ArrayList<>(entries);
 
-        // 初始
+        //
         File dst = new File(targetDir, packageName.replace('.', '/'));
         dst.mkdirs();
 

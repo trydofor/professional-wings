@@ -13,7 +13,7 @@ import java.util.Locale;
 // RNA:USE /2019-09-17/now.date/
 
 /**
- * language + "_" + country，使用`_`分隔，zh_CN，在解析中，也支持zh-CN
+ * language + `_` + country, `_` delimited, `zh_CN`. For parsing, `zh-CN` is also supported.
  *
  * @author trydofor
  * @see Locale#toString()
@@ -26,9 +26,9 @@ public enum StandardLanguageTemplate implements StandardLanguageEnum {
     // RNA:USE /SUPER/enum.name/*
     // RNA:USE /1020100/enum.id/
     // RNA:USE /standard_language/enum.code/fd
-    // RNA:USE /标准语言/enum.hint/
-    // RNA:USE /模板路径/enum.info/
-    SUPER(1020100, "standard_language", "标准语言", "模板路径"),
+    // RNA:USE /Standard Language/enum.hint/
+    // RNA:USE /Template Path/enum.info/
+    SUPER(1020100, "standard_language", "Standard Language", "Template Path"),
     // RNA:DONE enum
     ;
     // RNA:EACH /1/enum-items/enum
