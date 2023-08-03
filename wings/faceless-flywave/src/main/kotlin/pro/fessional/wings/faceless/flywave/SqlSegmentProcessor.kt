@@ -26,20 +26,20 @@ class SqlSegmentProcessor(
     }
 
     class Segment(
-        val dbsType: DbsType, // 数据源类型
-        val lineBgn: Int, // 开始行，含
-        val lineEnd: Int, // 结束行，含
-        val tblName: String, // 主表
-        val tblIdx2: SortedMap<Int, Pair<Int, String>>, // 要替换的启止坐标位置
-        val sqlText: String,  // SQL文本
-        val errType: ErrType = ErrType.Stop, // 错误处理
-        val askText: String, // 确认语句
-        val tblRegx: Regex?, // 应用表正则
-        val trgJour: Boolean, // 是否影响trigger
-        val dicName: Map<String, String> = emptyMap() // 名字替换
+        val dbsType: DbsType, // Datasource type
+        val lineBgn: Int, // begin line(include)
+        val lineEnd: Int, // end line(include)
+        val tblName: String, // plain table
+        val tblIdx2: SortedMap<Int, Pair<Int, String>>, // start and stop indexes to be replaced
+        val sqlText: String,  // SQL text
+        val errType: ErrType = ErrType.Stop, // error handle
+        val askText: String, // confirm text
+        val tblRegx: Regex?, // regexp of apply table
+        val trgJour: Boolean, // whether affects trigger
+        val dicName: Map<String, String> = emptyMap() // name replacing
     ) {
         /**
-         * 筛选出可以被应用的table以及替换的关键词
+         * Filter out tables that can be applied as well as replacement keywords
          */
         fun applyTbl(tables: List<String>?): Map<String, Map<String, String>> {
             if (tables.isNullOrEmpty() || tblIdx2.isEmpty() || tblName.isEmpty()) return emptyMap()
@@ -55,9 +55,11 @@ class SqlSegmentProcessor(
                         val tp = hasType(tblName, it)
                         tp == TYPE_PLAIN || tp == TYPE_SHARD
                     }
+
                     ptn.equals("log", true) -> tables.filter {
                         hasType(tblName, it) == TYPE_TRACE
                     }
+
                     else -> tables.filter {
                         tblRegx.matches(it)
                     }
@@ -76,7 +78,7 @@ class SqlSegmentProcessor(
         }
 
         /**
-         * 是否是 Plain 数据源
+         * Whether is plain datasource
          */
         fun isPlain() = dbsType == DbsType.Plain
     }
@@ -127,9 +129,10 @@ class SqlSegmentProcessor(
     }
 
     /**
-     * 解析SQL文本，变成可以执行和替换的SQL片段
-     * @param statementParser 语法解析器
-     * @param text SQL文本
+     * Parse the SQL text to the sql segment that can be replaced and executed.
+     *
+     * @param statementParser simple statement parser
+     * @param text SQL text
      */
     fun parse(statementParser: SqlStatementParser, text: String): List<Segment> {
         if (text.isBlank()) {
@@ -279,10 +282,12 @@ class SqlSegmentProcessor(
                                 trgJour = true
                                 if (dbsAnot == 0) dbsAnot = -1
                             }
+
                             is SqlStatementParser.SqlType.Shard -> {
                                 tblName = st.table
                                 if (dbsAnot == 0) dbsAnot = 1
                             }
+
                             SqlStatementParser.SqlType.Other ->
                                 log.warn("[parse] unsupported type, use shard datasource to run, sql=$sql")
                         }
@@ -315,9 +320,9 @@ class SqlSegmentProcessor(
 
 
     /**
-     * 使用新表名，合并sql片段。
-     * @param segment 解析过的sql片段
-     * @param newTbl 新表
+     * Merge the segment with new table.
+     * @param segment parsed sql segment
+     * @param newTbl new table
      */
     fun merge(segment: Segment, newTbl: Map<String, String>) = TemplateUtil.merge(segment.sqlText, segment.tblIdx2, newTbl)
 
@@ -329,27 +334,27 @@ class SqlSegmentProcessor(
         const val TYPE_SHARD = 2
 
         /**
-         * 本表占位符，XXX
+         * Table placeholder, default `XXX`
          */
         const val PLAIN_TABLE = "XXX"
 
         /**
-         * XXX_01形式的shard表达式
+         * RegExp of shard table in `XXX_01`
          */
         const val SHARD_LINE_SEQ = "${PLAIN_TABLE}_[0-9]+"
 
         /**
-         * XXX$log形式的trace表达式
+         * RegExp of trace table in `XXX$log`
          */
         const val TRACE_DOLLAR = "${PLAIN_TABLE}(_[0-9]+)?\\\$[a-z]*"
 
         /**
-         * XXX__log形式的trace表达式
+         * RegExp of trace table in XXX__log
          */
         const val TRACE_SU2_LINE = "${PLAIN_TABLE}(_[0-9]+)?__+[a-z]*"
 
         /**
-         * _log_XXX形式的trace表达式
+         * RegExp of trace table in _log_XXX
          */
         const val TRACE_PRE_LINE = "_+([a-z]+_+)?${PLAIN_TABLE}(_[0-9]+)?"
 
@@ -357,8 +362,9 @@ class SqlSegmentProcessor(
         private var regTrace = TRACE_SU2_LINE.toRegex(RegexOption.IGNORE_CASE)
 
         /**
-         * 设置分表格式表达式，以`XXX`表示主表。
-         * @param reg 正则，默认 `XXX_[0-9]+`
+         * Set the RegExp of shard table, `XXX` is placeholder of plain table
+         * @param reg Regexp of shard table
+         * @see PLAIN_TABLE
          */
         @JvmStatic
         fun setShardFormat(reg: String) {
@@ -367,8 +373,9 @@ class SqlSegmentProcessor(
         }
 
         /**
-         * 设置跟踪格式表达式，以`XXX`表示主表。
-         * @param reg 正则，默认`XXX(_[0-9]+)?__+[a-z]*`
+         * Set the RegExp of trace table, `XXX` is placeholder of plain table
+         * @param reg Regexp of shard table
+         * @see PLAIN_TABLE
          */
         @JvmStatic
         fun setTraceFormat(reg: String) {
@@ -377,14 +384,16 @@ class SqlSegmentProcessor(
         }
 
         /**
-         * 判断两表关系，忽略大小写
-         * @param table 主表
-         * @param other 其他表
-         * @return
-         * -1:没有关系
-         * 0:自己
-         * 1:trace表
-         * 2:shard表
+         * Determine the relationship type of `other` to `table` (case-insensitive)
+         *
+         * -1: no relation,
+         * 0: table itself,
+         * 1: other is trace,
+         * 2: other is shard,
+         *
+         * @param table plain table
+         * @param other other table
+         * @return the type
          */
         fun hasType(table: String, other: String): Int {
             val pos = other.indexOf(table, 0, true)
@@ -396,9 +405,11 @@ class SqlSegmentProcessor(
                 regShard.matches(suf) -> {
                     TYPE_SHARD
                 }
+
                 regTrace.matches(suf) -> {
                     TYPE_TRACE
                 }
+
                 else -> {
                     TYPE_OTHER
                 }

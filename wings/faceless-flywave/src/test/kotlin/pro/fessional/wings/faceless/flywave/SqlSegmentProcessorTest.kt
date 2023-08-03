@@ -77,7 +77,7 @@ class SqlSegmentProcessorTest {
                     @plain 
                     apply@ctr_clerk[_0-0]* 
                     error@skip ask@danger 
-                    // 其他注释 
+                    // other comment
                     @trigger
                     */""","/*")
         assertNotNull(mt)
@@ -92,7 +92,7 @@ class SqlSegmentProcessorTest {
 
     @Test
     fun parseCmd1() {
-        val mt = SqlSegmentProcessor.parseCmd("-- @plain apply@ctr_clerk[_0-0]* error@skip // 其他注释","--")
+        val mt = SqlSegmentProcessor.parseCmd("-- @plain apply@ctr_clerk[_0-0]* error@skip // other comment","--")
         assertNotNull(mt)
         mt!!
         assertEquals("",  mt.tbl)
@@ -105,7 +105,7 @@ class SqlSegmentProcessorTest {
 
     @Test
     fun parseCmd2() {
-        val mt = SqlSegmentProcessor.parseCmd("-- apply@ctr_clerk[_0-0]* error@skip // 其他注释","--")
+        val mt = SqlSegmentProcessor.parseCmd("-- apply@ctr_clerk[_0-0]* error@skip // other comment","--")
         assertNotNull(mt)
         mt!!
         assertEquals("", mt.tbl)
@@ -117,7 +117,7 @@ class SqlSegmentProcessorTest {
 
     @Test
     fun parseCmd3() {
-        val mt = SqlSegmentProcessor.parseCmd("-- error@skip // 其他注释","--")
+        val mt = SqlSegmentProcessor.parseCmd("-- error@skip // other comment","--")
         assertNotNull(mt)
         mt!!
         assertEquals("", mt.tbl)
@@ -129,7 +129,7 @@ class SqlSegmentProcessorTest {
 
     @Test
     fun parseCmd4() {
-        val mt = SqlSegmentProcessor.parseCmd("/* ask@danger // 其他注释 */","/*")
+        val mt = SqlSegmentProcessor.parseCmd("/* ask@danger // other comment */","/*")
         assertNotNull(mt)
         mt!!
         assertEquals("", mt.tbl)

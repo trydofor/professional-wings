@@ -28,7 +28,7 @@ class MySqlStatementParser : SqlStatementParser {
     private val ddlCreateTrigger = "^CREATE\\s+(?:DEFINER\\s*=\\s*\\S+\\s+)?TRIGGER\\s+(?:\\S+\\s+)*ON\\s+([^(\\s]+)".toPattern(options)
     private val ddlDropIndex = "^DROP\\s+INDEX\\s+\\S+\\s+ON\\s+([^(\\s]+)".toPattern(options)
     private val ddlDropTable = "^DROP\\s+(?:TEMPORARY\\s+)?TABLE\\s+(?:IF\\s+EXISTS\\s+)?([^(\\s]+)".toPattern(options)
-    private val ddlDropTrigger = "^DROP\\s+TRIGGER\\s+(?:IF\\s+EXISTS\\s+)?\\S+\\s".toPattern(options) // 没有table
+    private val ddlDropTrigger = "^DROP\\s+TRIGGER\\s+(?:IF\\s+EXISTS\\s+)?\\S+\\s".toPattern(options) // without table
     private val ddlTruncateTable = "^TRUNCATE\\s+(?:TABLE\\s+)?([^(\\s]+)".toPattern(options)
 
     private val dmlDelete = "^DELETE\\s+(?:\\S+\\s)*FROM\\s+([^(\\s]+)".toPattern(options)
@@ -119,7 +119,7 @@ class MySqlStatementParser : SqlStatementParser {
             }
         }
 
-        // 备用方案，一般不会到达。
+        // plain B, never here.
         log.warn("unmatched sql type, return Other. sql=[$sql]")
         return SqlStatementParser.SqlType.Other
     }

@@ -14,8 +14,7 @@ import java.util.TreeSet;
 import java.util.function.Consumer;
 
 /**
- * 按常见的版本管理场景提供便捷方式。
- * <p>
+ * Provides a convenient version management of common scenarios.
  * spring.wings.faceless.flywave.enabled.module=true
  *
  * @author trydofor
@@ -39,27 +38,28 @@ public class ProjectSchemaManager {
     }
 
     /**
-     * 适用于项目的线性升级，初始化warlock及项目第一版，以时间戳负值作为commitId，表示手动执行。
+     * For linear upgrade or downgrade. using negative timestamp as commitId means manual execution.
      *
-     * @param revi      publish的目标版本
-     * @param customize 路径helper
+     * @param revision  revision to publish to
+     * @param customize path helper
+     * @see #mergePublish(SortedMap, long, long)
      */
     @SafeVarargs
-    public final void mergePublish(long revi, Consumer<Helper>... customize) {
+    public final void mergePublish(long revision, Consumer<Helper>... customize) {
         final Helper helper = FlywaveRevisionScanner.helper();
         for (Consumer<Helper> consumer : customize) {
             consumer.accept(helper);
         }
-        mergePublish(helper.scan(), -ThreadNow.millis(), revi);
+        mergePublish(helper.scan(), -ThreadNow.millis(), revision);
     }
 
     /**
-     * 适用于线性的升级或降级。①checkAndInitSql合并(插入或更新)脚本；②publishRevision到指定版本。
-     * 注意：若降级且降级脚本被更新，可能导致降级失败，此时应该使用 forceDownThenMergePub
+     * For linear upgrade or downgrade. (1) checkAndInitSql merge (insert or update) script; (2) publishRevision to the specified version.
+     * Note: If you downgrade and the downgrade script is updated, it may cause the downgrade to fail, then you should use downThenMergePublish
      *
-     * @param sqls     revi脚本
-     * @param commitId cid
-     * @param revision 目标版本
+     * @param sqls     revision script
+     * @param commitId commit id
+     * @param revision revision to publish to
      */
     public void mergePublish(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls, long commitId, long revision) {
         schemaRevisionManager.checkAndInitSql(sqls, commitId, true);
@@ -76,11 +76,11 @@ public class ProjectSchemaManager {
     }
 
     /**
-     * 适用于断点发布，先合并脚本，然后发布未apply的合并进来的版本。
-     * ①checkAndInitSql合并脚本；②forceApplyBreak合并进来的脚本。
+     * To fix the breakpoint, first merge the script, then release the unapply merge-in version.
+     * (1) checkAndInitSql merge script; (2)forceApplyBreak merge-in script.
      *
-     * @param sqls     脚本
-     * @param commitId cid
+     * @param sqls     revision script
+     * @param commitId commit id
      */
     public void mergeForceApply(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls, long commitId, boolean isUpto) {
         schemaRevisionManager.checkAndInitSql(sqls, commitId, true);
@@ -91,12 +91,13 @@ public class ProjectSchemaManager {
 
 
     /**
-     * 适用于降级脚本变化的重新发布，先排序版本，强制倒序降级，合并脚本，正序升级版本。
-     * ①forceApplyBreak降级脚本；②checkAndInitSql合并；③publishRevision到指定版本
+     * To republish changes in downgrade script, sort version first,
+     * force downgrade in reverse order, merge scripts, and upgrade version in ascending order.
+     * (1) forceApplyBreak downgrade script; (2) checkAndInitSql merge; (3) publishRevision to specified version
      *
-     * @param sqls     脚本
-     * @param commitId cid
-     * @param revision 目标版本
+     * @param sqls     revision script
+     * @param commitId commit id
+     * @param revision revision to publish to
      */
     public void downThenMergePublish(SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls, long commitId, Collection<Long> revision) {
         final TreeSet<Long> tree = new TreeSet<>(revision);

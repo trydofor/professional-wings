@@ -13,7 +13,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 import java.util.SortedMap;
 
 /**
- * ① 使用wings的flywave管理数据库版本
+ * Use flywave to manage database version
  *
  * @author trydofor
  * @since 2019-06-22
@@ -26,7 +26,7 @@ import java.util.SortedMap;
 //         "spring.shardingsphere.datasource.writer.username=trydofor",
 //         "spring.shardingsphere.datasource.writer.password=moilioncircle",
 })
-@Disabled("初始化数据库，已有devs统一管理")
+@Disabled("Init database, have handled by devs")
 @SuppressWarnings("NewClassNamingConvention")
 public class WingsSchemaGenerator {
 

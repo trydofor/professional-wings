@@ -31,73 +31,84 @@ interface SchemaRevisionManager : InteractiveManager<SchemaRevisionManager.AskTy
     }
 
     /**
-     * 获得所有真实数据源的版本
+     * Get name and revision of each datasource
      */
     fun currentRevision(): Map<String, Long>
 
     /**
-     * 获得所有真实数据源的版本状态，从低到高排序。null表示未初始化
+     * Get the revision and its status of each datasource,
+     * sorted from lowest to highest. `null` means uninitialized.
      */
     fun statusRevisions(): Map<String, SortedMap<Long, Status>?>
 
     /**
-     * 指定数据库版本，可能级联升级或降级。
-     * 如果存在起点终点不一致或有断点的时候，记录日志，跳过执行。
-     * 断点，指不连续的APPLY状态，属于不正常或插入状态。
-     * 升级时，起点必须为APPLY过的，到终点间都是未APPLY的。
-     * 降级时，起点终点必须APPLY过，忽略中间未APPLY的断点。
-     * 降级时，注意备份数据，可能会删除表。
-     * @param revision 到此版本，即数据库是此版本
-     * @param commitId 提交ID，参见Journal
+     * Publish the given revision to the database, possibly cascading upgrades or downgrades.
+     * If there is an inconsistency between the start and end points or a breakpoint, write to the log and skip the execution.
+     *
+     * A breakpoint, a discontinuous APPLY state, is an abnormal or inserting state.
+     * When upgrading, the start point must be `APPLY` and the end point must NOT be `APPLY`.
+     * When downgrading, the start point and the end points must be `APPLY`, ignoring the un-APPLY breakpoints in between.
+     *
+     * Be careful with backup data when downgrading, the data or table may be deleted.
+     *
+     * @param revision To this version, i.e. the database is this version
+     * @param commitId commit id of Journal
      */
     fun publishRevision(revision: Long, commitId: Long)
 
     /**
-     * 强制执行一个断点脚本（仅该脚本，不会级联升级或降级），通常为不正常操作。
-     * @param revision 到此版本，即数据库是此版本
-     * @param commitId 提交ID，参见Journal
-     * @param isUpto 执行upto，还是undo，默认true
-     * @param dataSource 要执行的datasource名字，null时为全部执行
+     * Force to run a breakpoint script (script only, no cascading upgrades or downgrades),
+     * usually to fix an abnormal operation.
+     *
+     * @param revision To this version, i.e. the database is this version
+     * @param commitId commit id of Journal
+     * @param isUpto upto or undo, default upto(true).
+     * @param dataSource name of datasource to execute, `null` means all
      */
     fun forceApplyBreak(revision: Long, commitId: Long, isUpto: Boolean = true, dataSource: String? = null)
 
     /**
-     * 对比本地和数据库中的SQL。
-     * 当未初始化时，执行 REVISION_1ST_SCHEMA 版
-     * 当不存在时，则把本地保存到数据库。
-     * 当存在但内容不一致，已APPLY则log error，否则更新
-     * @param sqls 本地脚本
-     * @param commitId 提交ID，参见Journal
-     * @param updateDiff 是否自动更新不一致的 sql，默认false
+     * Compare the SQL between in local and in database.
+     * If not initialized, run the `REVISION_1ST_SCHEMA` revision.
+     * If it does not exist, then save local to database.
+     * If it exists but the contents are not the same and has been `APPLY`
+     * then log error, otherwise update it.
+     *
+     * @param sqls sql in local
+     * @param commitId commit id of Journal
+     * @param updateDiff Whether to auto update inconsistent sql, default false.
      */
     fun checkAndInitSql(sqls: SortedMap<Long, RevisionSql>, commitId: Long, updateDiff: Boolean = false)
 
     /**
-     * 不一致时，强制把本地SQL插入或更新到管理表，一致时忽略。
-     * @param revision 版本号
-     * @param commitId 提交ID，参见Journal
+     * Force to insert/update the local SQL to the management table if inconsistent (do nothing if consistent)
+     *
+     * @param revision revision sql
+     * @param commitId commit id of Journal
      */
     fun forceUpdateSql(revision: RevisionSql, commitId: Long)
 
     /**
-     * 不一致时，强制把本地SQL插入或更新到管理表，一致时忽略。
-     * @param revision 版本号
-     * @param upto 升级脚本
-     * @param undo 降级脚本
-     * @param commitId 提交ID，参见Journal
+     * Force to insert/update the local SQL to the management table if inconsistent (do nothing if consistent)
+     * @param revision revision
+     * @param upto upgrade sql text
+     * @param undo downgrade sql text
+     * @param commitId commit id of Journal
      */
     fun forceUpdateSql(revision: Long, upto: String, undo: String, commitId: Long)
 
     /**
-     * 强制执行一个flywave语法的sql，不使用版本管理，无状态记录和检查
-     * @param text sql文本
+     * Force to execute a sql with flywave syntax, but no versioning, no stateful logging and checking.
+     *
+     * @param text sql text
      */
     fun forceExecuteSql(text: String)
 
     /**
-     * 强制执行一个系列RevisionSql，不使用版本管理，无状态记录和检查
-     * @param sqls 本地脚本
-     * @param isUpto 执行upto，还是undo，默认true
+     * Force to execute the sqls with flywave syntax, but no versioning, no stateful logging and checking.
+     *
+     * @param sqls sql in local
+     * @param isUpto upto or undo, default true
      */
     fun forceExecuteSql(sqls: SortedMap<Long, RevisionSql>, isUpto: Boolean = true)
 }

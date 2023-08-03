@@ -107,7 +107,7 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
             return diff.toString()
         }
 
-        // 对比列
+        // diff column
         if (types and TYPE_TBL != 0) {
             val cols = if (bone) {
                 "COLUMN_NAME, COLUMN_TYPE, COLUMN_COMMENT, ORDINAL_POSITION"
@@ -144,7 +144,7 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
             }
         }
 
-        // 对比索引
+        // diff index
         if (types and TYPE_IDX != 0) {
             tmpl.query(
                 """
@@ -171,7 +171,7 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
             }
         }
 
-        // 对比触发器
+        // diff trigger
         if (types and TYPE_TRG != 0) {
             tmpl.query(
                 """
@@ -206,7 +206,7 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
             SimpleJdbcTemplate(dataSource).query("SHOW COLUMNS FROM $table") {
                 val n = it.getString("FIELD")
                 val t = it.getString("TYPE")
-                rst.add("`$n` $t COMMENT ''") // `EVENT_NAME` varchar(100) NOT NULL COMMENT '事件名称'
+                rst.add("`$n` $t COMMENT ''") // `EVENT_NAME` varchar(100) NOT NULL COMMENT 'event name'
             }
             return rst
         }
@@ -229,7 +229,7 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
             val n = it.getString("COLUMN_NAME")
             val t = it.getString("COLUMN_TYPE")
             val c = it.getString("COLUMN_COMMENT").replace("'", "\\'")
-            rst.add("`$n` $t COMMENT '$c'") // `EVENT_NAME` varchar(100) NOT NULL COMMENT '事件名称'
+            rst.add("`$n` $t COMMENT '$c'") // `EVENT_NAME` varchar(100) NOT NULL COMMENT 'event name'
         }
 
         return rst

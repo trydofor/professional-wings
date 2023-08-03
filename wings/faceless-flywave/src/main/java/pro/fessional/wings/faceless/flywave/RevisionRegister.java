@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 /**
- * 标记已存在的版本
+ * Mark the existed revision
  *
  * @author trydofor
  * @since 2021-03-17
@@ -12,33 +12,26 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 public interface RevisionRegister {
 
     /**
-     * 版本
-     *
-     * @return 版本
+     * the revision number
      */
     long revision();
 
     /**
-     * 信息
-     *
-     * @return 信息
+     * description of this revision
      */
     @NotNull
     String description();
 
     /**
-     * flywave的路径，前后不必有`/`
+     * path of flywave, no `/` before and after
      *
-     * @return 路径
      * @see FlywaveRevisionScanner#REVISION_PATH_FLYWAVE_HEAD
      */
     @NotNull
     String flywave();
 
     /**
-     * classpath路径
-     *
-     * @return 路径
+     * classpath of flywave
      */
     @NotNull
     default String classpath() {

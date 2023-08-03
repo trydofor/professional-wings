@@ -29,13 +29,13 @@ open class WingsShardingTests {
         val statement = datasource.connection.prepareStatement("""
             create table `wg_order`
             (
-              `id`         bigint(20)   not null comment '主键',
-              `create_dt`  datetime(3)     not null default now(3) comment '创建日时',
-              `modify_dt`  datetime(3)     not null default '1000-01-01' on update now(3) comment '修改日时',
-              `commit_id`  bigint(20)   not null comment '提交id',
+              `id`         bigint(20)   not null comment 'PK',
+              `create_dt`  datetime(3)     not null default now(3) comment 'created datetime',
+              `modify_dt`  datetime(3)     not null default '1000-01-01' on update now(3) comment 'modified datetime',
+              `commit_id`  bigint(20)   not null comment 'commit id',
               primary key (`id`)
             ) engine = innodb
-              default charset = utf8mb4 comment ='202/测试订单';
+              default charset = utf8mb4 comment ='202/test order';
         """.trimIndent())
 
         val result = statement.executeUpdate()
@@ -70,16 +70,16 @@ open class WingsShardingTests {
         val sts1 = datasource.connection.prepareStatement("""
             create table `wg_order${"$"}log`
             (
-              `id`         bigint(20)   not null comment '主键',
-              `create_dt`  datetime(3)     not null comment '创建日时',
-              `modify_dt`  datetime(3)     not null comment '修改日时',
-              `commit_id`  bigint(20)   not null comment '提交id',
+              `id`         bigint(20)   not null comment 'PK',
+              `create_dt`  datetime(3)     not null comment 'created datetime',
+              `modify_dt`  datetime(3)     not null comment 'modified datetime',
+              `commit_id`  bigint(20)   not null comment 'commit id',
               `_du` int(11) null,
               `_dt` datetime(3) default now(3),
               `_id` int(11) not null auto_increment,
               primary key (`_id`)
             ) engine = innodb
-              default charset = utf8mb4 comment ='测试订单';
+              default charset = utf8mb4 comment ='test order';
         """.trimIndent())
 
         val rst1 = sts1.executeUpdate()

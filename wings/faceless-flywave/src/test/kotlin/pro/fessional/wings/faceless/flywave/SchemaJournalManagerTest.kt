@@ -19,7 +19,8 @@ import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.T
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 
 /**
- * 包括了分表，跟踪表的综合测试
+ * Shard and trace table test
+ *
  * @author trydofor
  * @since 2019-06-20
  */
@@ -137,7 +138,7 @@ class SchemaJournalManagerTest {
         val sqls = FlywaveRevisionScanner
             .helper()
             .master()
-            .modify("更名win_schema_version") { _, sql ->
+            .modify("rename win_schema_version") { _, sql ->
                 if (sql.revision == WingsRevision.V00_19_0512_01_Schema.revision()) {
                     sql.undoText = sql.undoText.replace("sys_schema_", schemaPrefix)
                     sql.uptoText = sql.uptoText.replace("sys_schema_", schemaPrefix)
@@ -145,7 +146,7 @@ class SchemaJournalManagerTest {
             }
             .scan()
         schemaRevisionManager.checkAndInitSql(sqls, 0, true)
-        breakpointDebug("清楚所有表，发布 REVISION_1ST_SCHEMA 版，新建 flywave 版本表")
+        breakpointDebug("drop all tables, publish REVISION_1ST_SCHEMA, create flywave tables")
     }
 
     @Test
@@ -158,7 +159,7 @@ class SchemaJournalManagerTest {
             "${schemaPrefix}journal",
             "${schemaPrefix}version"
         )
-        breakpointDebug("生成测试表💰，观察数据库所有表")
+        breakpointDebug("Create test table💰, check all tables in the database")
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
         wingsTestHelper.assertSame(
             WingsTestHelper.Type.Table,
@@ -170,7 +171,7 @@ class SchemaJournalManagerTest {
             "tst_sharding_postfix",
             "tst_normal_table",
         )
-        testcaseNotice("可检查日志或debug观察，wing0和wing1表名")
+        testcaseNotice("Check the logs or debug to see the wing0 and wing1 table names")
     }
 
     @Test
@@ -184,7 +185,7 @@ class SchemaJournalManagerTest {
             "tst_sharding_3",
             "tst_sharding_4"
         )
-        breakpointDebug("分表测试表💰，观察数据库所有表")
+        breakpointDebug("Sharding test💰, check all tables in the database")
         shcemaShardingManager.publishShard("tst_sharding", 5)
         wingsTestHelper.assertHas(
             WingsTestHelper.Type.Table, "tst_sharding_0",
@@ -193,7 +194,7 @@ class SchemaJournalManagerTest {
             "tst_sharding_3",
             "tst_sharding_4"
         )
-        testcaseNotice("可检查日志或debug观察，wing_test，多出分表0-5")
+        testcaseNotice("Check logs or debug, wing_test, extra shard-table 0-5 will be created")
     }
 
     @Test
@@ -203,7 +204,7 @@ class SchemaJournalManagerTest {
             return
         }
 
-        breakpointDebug("分表触发器💰，观察数据库所有表")
+        breakpointDebug("Trigger on shard💰, check all tables in the database")
         schemaJournalManager.publishInsert("tst_sharding", true, 0)
         wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
         wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "ai__tst_sharding")
@@ -212,17 +213,17 @@ class SchemaJournalManagerTest {
             """
             INSERT INTO `tst_sharding_1`
             (`id`, `create_dt`, `modify_dt`, `delete_dt`, `commit_id`, `login_info`, `other_info`)
-            VALUES (1,NOW(3),NOW(3),'1000-01-01',0,'赵四','老张');
+            VALUES (1,NOW(3),NOW(3),'1000-01-01',0,'Zhao4','OldZhang');
         """
         )
         val del = jdbcTemplate.update("DELETE FROM `${traceTable("tst_sharding_1")}` WHERE id = 1")
-        assertEquals(1, del, "如果失败，单独运行整个类，消除分表干扰")
-        breakpointDebug("清楚数据🐵，因为trace表不会删除有数据表")
+        assertEquals(1, del, "If it fails, run the entire class individually to avoid shard table interference")
+        breakpointDebug("Clear data🐵, because trace table will NOT delete if its has data")
 
         schemaJournalManager.publishInsert("tst_sharding", false, 0)
         wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
         wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "ai__tst_sharding")
-        testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
+        testcaseNotice("Check logs and database changes, best done by debug, wing0 and wing1, synchronized update table structure")
     }
 
     @Test
@@ -232,23 +233,23 @@ class SchemaJournalManagerTest {
             return
         }
 
-        breakpointDebug("分表触发器💰，观察数据库所有表")
+        breakpointDebug("Trigger on shard💰, check all tables in the database")
         schemaJournalManager.publishUpdate("tst_sharding", true, 0)
         wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
         wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "au__tst_sharding")
 
-        jdbcTemplate.execute("UPDATE `tst_sharding_1` SET login_info='赵思', commit_id=1 WHERE id = 1")
-        breakpointDebug("更新数据🐵，查询数据库各表及数据")
+        jdbcTemplate.execute("UPDATE `tst_sharding_1` SET login_info='ZhaoSi', commit_id=1 WHERE id = 1")
+        breakpointDebug("Update data🐵, select data and check table")
 
         val del = jdbcTemplate.update("DELETE FROM `${traceTable("tst_sharding_1")}` WHERE id = 1")
 
-        assertEquals(1, del, "如果失败，单独运行整个类，消除分表干扰")
-        breakpointDebug("清楚数据🐵，因为trace表不会删除有数据表")
+        assertEquals(1, del, "If it fails, run the entire class individually to avoid shard table interference")
+        breakpointDebug("Clear data🐵, because trace table will NOT delete if its has data")
 
         schemaJournalManager.publishUpdate("tst_sharding", false, 0)
         wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
         wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "au__tst_sharding")
-        testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
+        testcaseNotice("Check logs and database changes, best done by debug, wing0 and wing1, synchronized update table structure")
     }
 
     @Test
@@ -257,23 +258,23 @@ class SchemaJournalManagerTest {
             testcaseNotice("h2 database skip")
             return
         }
-        breakpointDebug("分表触发器💰，观察数据库所有表")
+        breakpointDebug("Trigger on shard💰, check all tables in the database")
         schemaJournalManager.publishDelete("tst_sharding", true, 0)
         wingsTestHelper.assertHas(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
         wingsTestHelper.assertHas(WingsTestHelper.Type.Trigger, "bd__tst_sharding")
 
         jdbcTemplate.execute("DELETE FROM `tst_sharding_1` WHERE id = 1")
-        breakpointDebug("删除数据🐵，查询数据库各表及数据")
+        breakpointDebug("Delete data🐵, select data and check table")
 
         val del = jdbcTemplate.update("DELETE FROM `${traceTable("tst_sharding_1")}` WHERE id = 1")
 
         assertEquals(1, del)
-        breakpointDebug("清楚数据🐵，因为trace表不会删除有数据表")
+        breakpointDebug("Clear data🐵, because trace table will NOT delete if its has data")
 
         schemaJournalManager.publishDelete("tst_sharding", false, 0)
         wingsTestHelper.assertNot(WingsTestHelper.Type.Table, traceTable("tst_sharding"))
         wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "bd__tst_sharding")
-        testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
+        testcaseNotice("Check logs and database changes, best done by debug, wing0 and wing1, synchronized update table structure")
     }
 
     @Test
@@ -283,7 +284,7 @@ class SchemaJournalManagerTest {
             return
         }
 
-        breakpointDebug("分表触发器💰，观察数据库所有表")
+        breakpointDebug("Trigger on shard💰, check all tables in the database")
         schemaJournalManager.publishInsert("tst_sharding", true, 0)
         schemaJournalManager.publishUpdate("tst_sharding", true, 0)
         schemaJournalManager.publishDelete("tst_sharding", true, 0)
@@ -296,17 +297,17 @@ class SchemaJournalManagerTest {
             """
             INSERT INTO `tst_sharding_2`
             (`id`, `create_dt`, `modify_dt`, `delete_dt`, `commit_id`, `login_info`, `other_info`)
-            VALUES (1,NOW(3),NOW(3),'1000-01-01',0,'赵四','老张');
+            VALUES (1,NOW(3),NOW(3),'1000-01-01',0,'Zhao4','OldZhang');
         """
         )
-        jdbcTemplate.execute("UPDATE `tst_sharding_2` SET login_info='赵思', commit_id=1 WHERE id = 1")
+        jdbcTemplate.execute("UPDATE `tst_sharding_2` SET login_info='ZhaoSi', commit_id=1 WHERE id = 1")
         jdbcTemplate.execute("DELETE FROM `tst_sharding_2` WHERE id = 1")
-        breakpointDebug("删除数据🐵，查询数据库各表及数据")
+        breakpointDebug("Delete data🐵, select data and check table")
 
         val tps = jdbcTemplate.queryForList("SELECT _tp FROM `${traceTable("tst_sharding_2")}` WHERE id = 1 ORDER BY _id", String::class.java)
 
         assertEquals(listOf("C", "U", "D"), tps)
-        breakpointDebug("清楚数据🐵，因为trace表不会删除有数据表")
+        breakpointDebug("Clear data🐵, because trace table will NOT delete if its has data")
 
         schemaJournalManager.publishInsert("tst_sharding", false, 0)
         schemaJournalManager.publishUpdate("tst_sharding", false, 0)
@@ -315,7 +316,7 @@ class SchemaJournalManagerTest {
         wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "au__tst_sharding")
         wingsTestHelper.assertNot(WingsTestHelper.Type.Trigger, "bd__tst_sharding")
 
-        testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
+        testcaseNotice("Check logs and database changes, best done by debug, wing0 and wing1, synchronized update table structure")
     }
 
     @Test
@@ -325,7 +326,7 @@ class SchemaJournalManagerTest {
             return
         }
 
-        breakpointDebug("分表触发器💰，观察数据库所有表")
+        breakpointDebug("Trigger on shard💰, check all tables in the database")
         schemaJournalManager.publishInsert("tst_sharding", true, 0)
         schemaJournalManager.publishUpdate("tst_sharding", true, 0)
         schemaJournalManager.publishDelete("tst_sharding", true, 0)
@@ -371,7 +372,7 @@ class SchemaJournalManagerTest {
         assertSameColumn(traceTable("tst_sharding"), traceTable("tst_sharding_3"))
         assertSameColumn(traceTable("tst_sharding"), traceTable("tst_sharding_4"))
 
-        testcaseNotice("检查日志和数据库变化，最好debug进行，wing0和wing1，同步更新表结构")
+        testcaseNotice("Check logs and database changes, best done by debug, wing0 and wing1, synchronized update table structure")
     }
 
 

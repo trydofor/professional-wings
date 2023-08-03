@@ -17,7 +17,7 @@ import java.util.List;
  */
 
 @SpringBootTest
-@Disabled("日志表个管理，数据维护使用")
+@Disabled("Manage trace table, use to maintain data")
 @Slf4j
 @SuppressWarnings("NewClassNamingConvention")
 public class WingsSchemaJournal {

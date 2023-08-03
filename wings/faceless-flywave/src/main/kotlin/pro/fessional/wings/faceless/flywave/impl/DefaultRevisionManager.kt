@@ -26,7 +26,7 @@ import javax.sql.DataSource
 
 
 /**
- * 根据数据库中表（含分表）的名字，进行版本管理。
+ * Manage database version based on the names of the tables (including shard tables).
  *
  * @author trydofor
  * @since 2019-06-05
@@ -62,8 +62,8 @@ class DefaultRevisionManager(
     }
 
     /**
-     * 增加一个识别drop语句的表达式
-     * @param regexp 正则表达式
+     * Add a RegExp to match drop statement.
+     * @param regexp RegExp
      */
     fun addDropRegexp(regexp: String) {
         dropReg[regexp] = regexp.toRegex(RegexOption.IGNORE_CASE)
@@ -123,10 +123,10 @@ class DefaultRevisionManager(
             }
 
             val isUptoSql = revision > plainRevi
-            val reviQuery = if (isUptoSql) { // 升级
+            val reviQuery = if (isUptoSql) {
                 interactive.log(INFO, here, "upgrade,   db-revi=$plainRevi, to-revi=$revision, db=$plainName")
                 selectUpto
-            } else { // 降级
+            } else {
                 interactive.log(INFO, here, "downgrade, db-revi=$plainRevi, to-revi=$revision")
                 selectUndo
             }
@@ -152,33 +152,33 @@ class DefaultRevisionManager(
                 continue
             }
 
-            // 检测和处理边界
-            if (isUptoSql) { // 版本从低到高，重点不一致，或不存在
+            // check and handle boundary
+            if (isUptoSql) { // revision is from low to high, inconsistent and non-exist are important
                 if (reviText.last.first != revision) {
                     interactive.log(WARN, here, "skip the diff upgrade end point, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
                     continue
                 }
-                // 检测apply情况，应该全都未APPLY
+                // check apply, should all NOT APPLY
                 if (reviText.count { isUnapply(it.third) } != reviText.size) {
                     interactive.log(WARN, here, "skip broken un-apply_dt upgrade, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
                     continue
                 }
-            } else {  // 版本从高到低
+            } else {  // revision is from high to low
                 if (reviText.last.first != revision) {
                     interactive.log(WARN, here, "skip the diff downgrade end point, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
                     continue
                 }
-                // 检测apply情况
+                // check apply
                 if (reviText.count { isUnapply(it.third) } != 0) {
                     interactive.log(WARN, here, "skip broken apply_dt-ed downgrade, db-revi=$plainRevi, to-revi=$revision, db=$plainName")
                     continue
                 }
 
-                // 去掉终点脚本，不需要执行
+                // Remove the endpoint script, which does not need to be executed
                 reviText.removeLast()
             }
 
-            // 检查部分执行
+            // check partially executed
             val partUndo = LinkedList<Triple<Long, String, String>>()
             val partRedo = LinkedList<Triple<Long, String, String>>()
             plainTmpl.query(
@@ -219,7 +219,7 @@ class DefaultRevisionManager(
                 interactive.log(INFO, here, "done for revi=$revi, db=$plainName")
             }
 
-            // 后置检查
+            // post check
             interactive.log(INFO, here, "post check revi=$revision, db=$plainName")
             val newRevi = getRevision(plainTmpl)
             if (revision != newRevi) {
@@ -485,8 +485,7 @@ class DefaultRevisionManager(
             interactive.log(INFO, here, "ready force update revi=$revision, on db=$plainName")
             val tmpl = SimpleJdbcTemplate(plainDs, plainName)
 
-            // 不要使用msyql的REPLACE INTO，使用标准SQL
-
+            // Don't use `REPLACE INTO` of msyql, use standard SQL
             val cnt = tmpl.count("SELECT COUNT(1) FROM $schemaVersionTable WHERE revision= ?", revision)
             if (cnt == 0) {
                 val rst = tmpl.update(insertSql, revision, commitId, upto, undo)
@@ -513,7 +512,7 @@ class DefaultRevisionManager(
                 if (seg.sqlText.isBlank()) {
                     continue
                 }
-                // 不使用事务，出错时，根据日志进行回滚或数据清理
+                // No transaction, should rollback data based on logs when something wrong
                 if (seg.isPlain() || shardTmpl == null) {
                     interactive.log(INFO, here, "use plain to run sql-line from ${seg.lineBgn} to ${seg.lineEnd}, db=$plainName")
                     runSegment(plainTmpl, plainTbls, seg)
@@ -551,7 +550,7 @@ class DefaultRevisionManager(
             askSegment(revi, "apply undo sqls")
         }
 
-        // 记录部分执行情况。
+        // Record partial execute
         if (check) {
             interactive.log(INFO, here, "parse revi-sql, revi=$revi, isUpto=$isUpto, mark as '$runningMark'")
             plainTmpl.update("UPDATE $schemaVersionTable SET apply_dt='$runningMark', commit_id=? WHERE revision=?", commitId, revi)
@@ -563,7 +562,7 @@ class DefaultRevisionManager(
             if (seg.sqlText.isBlank()) {
                 continue
             }
-            // 不使用事务，出错时，根据日志进行回滚或数据清理
+            // No transaction, should rollback data based on logs when something wrong
             if (seg.isPlain() || shardTmpl == null) {
                 interactive.log(INFO, here, "use plain to run revi=$revi, sql-line from ${seg.lineBgn} to ${seg.lineEnd}, db=$plainName")
                 runSegment(plainTmpl, plainTbls, seg, revi)
@@ -573,7 +572,7 @@ class DefaultRevisionManager(
             }
         }
 
-        // update apply datetime，避免时区问题，使用SQL语法
+        // update apply datetime, use sql literal to avoid timezone offset
         val applyDt = if (isUpto) {
             "NOW(3)"
         } else {
@@ -591,7 +590,7 @@ class DefaultRevisionManager(
             interactive.log(WARN, here, "skip un-init-1st, revi={}, applyDt=$revi, db=$plainName")
             return
         }
-        // 执行了，必须一条，因为上面不会出现语法错误
+        // Executed, must be one, as there will be no syntax error above
         if (cnt == 1) {
             interactive.log(INFO, here, "update revi=$revi, applyDt=$applyDt, db=$plainName")
         } else {
@@ -640,6 +639,7 @@ class DefaultRevisionManager(
                         last = r
                         Status.Running
                     }
+
                     isUnapply(d) -> Status.Future
                     else -> {
                         last = r
@@ -669,7 +669,7 @@ class DefaultRevisionManager(
         val dbName = tmpl.name
         val tblApply = seg.applyTbl(tables)
 
-        val ask = if (seg.askText.isNotEmpty() && interactive.needAsk(AskType.Mark)) "强制确认：${seg.sqlText}" else Null.Str
+        val ask = if (seg.askText.isNotEmpty() && interactive.needAsk(AskType.Mark)) "Must confirm:${seg.sqlText}" else Null.Str
 
         askSegment(revi, ask, dangerous(seg.sqlText))
 
@@ -684,6 +684,7 @@ class DefaultRevisionManager(
                     ErrType.Skip -> {
                         // skip
                     }
+
                     else -> {
                         throw e
                     }
@@ -731,6 +732,7 @@ class DefaultRevisionManager(
                         ErrType.Skip -> {
                             // skip
                         }
+
                         else -> {
                             throw e
                         }
@@ -747,7 +749,7 @@ class DefaultRevisionManager(
 
     private fun isRunning(str: String?): Boolean {
         if (str.isNullOrEmpty()) return false
-        // 可能受到时区影响
+        // may affect by timezone
         return str.startsWith(unapplyMark) && str.endsWith(runningFlag)
     }
 
@@ -762,10 +764,10 @@ class DefaultRevisionManager(
             val tables = schemaDefinitionLoader.showTables(ds)
             if (tables.find { it.equals(schemaVersionTable, true) } != null) {
                 log.error("exist $schemaVersionTable without any records, need manual fixed: drop empty table or insert records")
-                throw er // 存在 $schemaVersionTable 表，报出原异常
+                throw er // throw, there is $schemaVersionTable table
             }
         } catch (e: Exception) {
-            // 报出原异常
+            // throw the original exception
             throw er
         }
     }
@@ -798,7 +800,7 @@ class DefaultRevisionManager(
             ask.append("\n")
         }
 
-        val pr = interactive.lastMessage.get() // 获取上一个信息，必须 interactive.log 之前
+        val pr = interactive.lastMessage.get() // Get previous message, must be before interactive.log
         interactive.log(WARN, "askSegment", ask.toString())
 
         if (pr != null) {

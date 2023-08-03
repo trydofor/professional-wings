@@ -4,9 +4,9 @@ import java.util.SortedMap
 import java.util.TreeMap
 
 /**
- * SQL模板解析和合并。 解析时，
- * (1)忽略引号内文字，避免错误
- * (2)判断字符边界，避免截断
+ * SQL template parsing and merging. When parsing.
+ * (1) Ignore text in quotes to avoid errors
+ * (2) Judge character boundaries to avoid truncation
  *
  * @author trydofor
  * @since 2019-06-20
@@ -15,12 +15,13 @@ object TemplateUtil {
 
 
     /**
-     * 直接完成 parse和merge
-     * @param txt 文本
-     * @param sub 查找文本
-     * @param rpl 替换文本
-     * @param qto 引号字符，默认`'`
-     * @param bnd 是否检查边界，默认检查
+     * Parse and merge are done directly
+     *
+     * @param txt text
+     * @param sub string to find
+     * @param rpl string to replace
+     * @param qto quotation mark character, default `'`
+     * @param bnd whether to check boundaries, default check
      */
     fun replace(txt: String, sub: String, rpl: String, qto: String = "'", bnd: Boolean = true): String {
         val idx = parse(txt, sub, qto, bnd)
@@ -29,11 +30,12 @@ object TemplateUtil {
 
 
     /**
-     * 直接完成 parse和merge
-     * @param txt 文本
-     * @param rep 查找文本, 替换文本
-     * @param qto 引号字符，默认`'`
-     * @param bnd 是否检查边界，默认检查
+     * Parse and merge are done directly
+     *
+     * @param txt text
+     * @param rep map of find and replace
+     * @param qto quotation mark character, default `'`
+     * @param bnd whether to check boundaries, default check
      */
     fun replace(txt: String, rep: Map<String, String>, qto: String = "'", bnd: Boolean = true): String {
         val key = rep.keys.toList()
@@ -42,11 +44,12 @@ object TemplateUtil {
     }
 
     /**
-     * 使用新表名，合并sql片段。
+     * Merge the sql segment with new table
+     *
      * @see parse
-     * @param txt 目标文本
-     * @param idx 解析过的坐标.`<index1,index2>`
-     * @param tbl 新表
+     * @param txt text
+     * @param idx parsed indexes `<index1,index2>`
+     * @param tbl new table
      */
     fun merge(txt: String, idx: SortedMap<Int, Int>, tbl: String): String {
         if (idx.isEmpty()) return txt
@@ -68,11 +71,12 @@ object TemplateUtil {
     }
 
     /**
-     * 处理多个token的模板
+     * Merge template with multiple token
+     *
      * @see parse
-     * @param txt 目标文本
-     * @param idx 解析过的坐标。`<index1, Pair<index2, token>>`
-     * @param map 替换值。`<token, value>` token区分大小写
+     * @param txt text
+     * @param idx parsed indexes `<index1, Pair<index2, token>>`
+     * @param map map of find and replace `<token, value>` token is case-sensitive
      */
     fun merge(txt: String, idx: SortedMap<Int, Pair<Int, String>>, map: Map<String, String>): String {
         if (idx.isEmpty()) return txt
@@ -95,12 +99,14 @@ object TemplateUtil {
     }
 
     /**
-     * 忽略大小写解析多个token在文本中的开始和结束坐标。
-     * 会处理多个token之间的包含关系，即两个坐标有交叉，舍去后面的，直到没有交叉。
-     * @param txt 目标文本
-     * @param tkn 单个token
-     * @param qto 引号字符，默认`'`
-     * @param bnd 是否检查边界，默认检查
+     * Parse the start and end coordinates of multiple tokens in the text (case-insensitive).
+     * Containment relationships between multiple tokens are handled, i.e.
+     * two coordinates are crossed and the later one is rounded off until there is no crossing.
+     *
+     * @param txt text
+     * @param tkn single token
+     * @param qto quotation mark character, default `'`
+     * @param bnd whether to check boundaries, default check
      * @see maskQuote
      * @see isBoundary
      */
@@ -112,7 +118,7 @@ object TemplateUtil {
         val msk = maskQuote(txt, qto)
         val ix = TreeMap<Int, Int>()
         for (tk in tkn) {
-            if(tk.isEmpty()) continue
+            if (tk.isEmpty()) continue
             parse(msk, tk, ix, bnd)
             for ((p1, p2) in ix) {
                 idx[p1] = Pair(p2, tk)
@@ -120,7 +126,7 @@ object TemplateUtil {
             ix.clear()
         }
 
-        // 处理交叉
+        // handle crossing
         var e2 = -1
         val iter = idx.entries.iterator()
         while (iter.hasNext()) {
@@ -136,11 +142,12 @@ object TemplateUtil {
     }
 
     /**
-     * 忽略大小写解析单个token在文本中的开始和结束坐标。
-     * @param txt 目标文本
-     * @param tkn 单个token
-     * @param qto 引号字符，默认`'`
-     * @param bnd 是否检查边界，默认检查
+     * Parse the start and end coordinates of single token in the text (case-insensitive).
+     *
+     * @param txt text
+     * @param tkn single token
+     * @param qto quotation mark character, default `'`
+     * @param bnd whether to check boundaries, default check
      * @see maskQuote
      * @see isBoundary
      */
@@ -181,9 +188,10 @@ object TemplateUtil {
     }
 
     /**
-     * 把引号内字符全部用等数量的空格替换掉，按char数量，不是byte
-     * @param txt 目标文本
-     * @param qto 引号字符，默认`'`
+     * Replace all the chars inside the quotes with an equal number of spaces, by char, not byte.
+     *
+     * @param txt text
+     * @param qto quotation mark character, default `'`
      */
     fun maskQuote(txt: String, qto: String = "'"): String {
         if (txt.isBlank() || qto.isBlank()) {
@@ -218,10 +226,10 @@ object TemplateUtil {
     }
 
     /**
-     * 找到跟当前quote字符对应的结束位置。
-     * 处理`\`转义情况。
-     * @param txt 目标文本
-     * @param idx 起始quote的位置
+     * Find the end index corresponding to the current quote character. Handles the `\` escape case.
+     *
+     * @param txt text
+     * @param idx index of the start quote
      */
     fun findQuoteEnd(txt: String, idx: Int): Int {
         if (idx < 0 || idx >= txt.length - 1) return -1
@@ -249,10 +257,12 @@ object TemplateUtil {
     }
 
     /**
-     * 是不是字符边界。连续的`[A-Z0-9_]`和非ASCII字符认为是连续的。
-     * @param txt 目标文本
-     * @param idx 起始位置
-     * @param dollar `$`是否认为边界
+     * Whether is a character boundary.
+     * Consecutive `[A-Z0-9_]` and non-ASCII characters are considered consecutive.
+     *
+     * @param txt text
+     * @param idx index of starting
+     * @param dollar whether `$` is the boundary
      */
     fun isBoundary(txt: String, idx: Int, dollar: Boolean = true): Boolean {
         if (idx <= 0 || idx >= txt.length - 1) return true
@@ -264,18 +274,19 @@ object TemplateUtil {
             c in '0'..'9' -> false
             c == '_' -> false
             c == '$' -> dollar
-            // 非ascii命名
+            // non-ascii naming
             c.code > Byte.MAX_VALUE && idx > 0 && txt[idx - 1].code > Byte.MAX_VALUE -> false
             else -> true
         }
     }
 
     /**
-     * 忽略大小写检测sub字串是不是完整存在于文本txt。
+     * Whether the sub-string is complete in the text (case-insensitive).
+     *
      * @see isBoundary
-     * @param txt 文本
-     * @param sub 子串
-     * @param dollar `$`是否认为边界
+     * @param txt text
+     * @param sub substring
+     * @param dollar whether `$` is the boundary
      */
     fun isBoundary(txt: String, sub: String, dollar: Boolean = true): Boolean {
         if (txt.isEmpty() || sub.isEmpty()) return false

@@ -21,7 +21,7 @@ class SqlSegmentParserTest {
     lateinit var sqlStatementParser: SqlStatementParser
 
     @Test
-    @Disabled("遇到解析问题是，用于人工识别")
+    @Disabled("Use for debugging in case of parsing problems")
     fun test1ManualCheck() {
         val scan = FlywaveRevisionScanner.scanMaster()
         for ((k, v) in scan) {

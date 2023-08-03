@@ -14,7 +14,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
  * @since 2019-06-22
  */
 @SpringBootTest
-@Disabled("手动执行，以有SchemaRevisionMangerTest覆盖测试 ")
+@Disabled("Manually, tested by SchemaRevisionMangerTest")
 class WingsFlywaveInitDatabaseSample {
 
     @Autowired

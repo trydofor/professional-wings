@@ -3,8 +3,8 @@ package pro.fessional.wings.faceless.flywave
 import javax.sql.DataSource
 
 /**
- * 提供当前数据库的结构信息。
- * 用来做分表和触发器
+ * Provides information about the table structure of the current database. Used for data sharding and triggers.
+ *
  * @author trydofor
  * @since 2019-06-12
  */
@@ -17,67 +17,77 @@ interface SchemaDefinitionLoader {
     }
 
     /**
-     * 列出当前datasource中的所有表
-     * @param dataSource 当前数据源
+     * list all tables of current datasource
+     *
+     * @param dataSource current datasource
      */
     fun showTables(dataSource: DataSource): List<String>
 
     /**
-     * 列出，可以创建当前表（字段，约束，索引，触发器）的所有DDL
-     * 不应该不考虑外键约束，范式已经符合现代软件开发节奏。
-     * @param dataSource 当前数据源
-     * @param table 目标表名，不要包含`` ` ``
+     * List all DDLs that can create the current table with fields, constraints, indexes and triggers.
+     * Foreign Key should not be considered, some normalization is no longer good in modern software development.
+     *
+     * @param dataSource current datasource
+     * @param table the plain table name, do NOT include any quote.
      */
     fun showFullDdl(dataSource: DataSource, table: String): List<String>
 
     /**
-     * 检测两个表的是否骨架相同，包括字段，索引，触发器
-     * @param dataSource 当前数据源
-     * @param table 目标表名，不要包含`` ` ``
-     * @param other 其他表名，不要包含`` ` ``
-     * @return 不一致的信息，空表示完全一致
+     * Whether two tables have the same skeleton, including field (NAME, TYPE, COMMENT, POSITION), index and trigger.
+     *
+     * @param dataSource current datasource
+     * @param table the plain table name, do NOT include any quote.
+     * @param other other plain table name, do NOT include any quote.
+     * @return diff info, empty mean the same
      */
     fun diffBoneSame(dataSource: DataSource, table: String, other: String, types: Int = TYPE_TBL or TYPE_IDX or TYPE_TRG): String
 
     /**
-     * 检测两个表的是否完全相同，包括字段，索引，触发器
-     * @param dataSource 当前数据源
-     * @param table 目标表名，不要包含`` ` ``
-     * @param other 其他表名，不要包含`` ` ``
-     * @return 不一致的信息，空表示完全一致
+     * Whether two tables have the same struct, including field (NAME, TYPE, COMMENT, POSITION, NULLABLE, DEFAULT), index and trigger.
+     *
+     * @param dataSource current datasource
+     * @param table the plain table name, do NOT include any quote.
+     * @param other other plain table name, do NOT include any quote.
+     * @return diff info, empty mean the same
      */
     fun diffFullSame(dataSource: DataSource, table: String, other: String, types: Int = TYPE_TBL or TYPE_IDX or TYPE_TRG): String
 
     /**
-     * 至少列出当前表的`字段名`，`类型`，`注释`三项的DDL部分
-     * 用来填充 `TABLE_BONE` 环境变量。各字段逗号分隔后，符合SQL语法（末行无逗号）
+     * A DDL section that lists at least the `Name`, `Type`, and `Comment` of field in the table.
+     * Used to populate the `TABLE_BONE` environment variable. Fields are comma-separated in SQL syntax
+     * (no comma at the end of the line)
+     *
      * ```sql
      *   `LOGIN_INFO` text COMMENT 'login info',
      *   `OTHER_INFO` text COMMENT 'other info'
      * ```
-     * @param dataSource 当前数据源
-     * @param table 目标表名。
+     *
+     * @param dataSource current datasource
+     * @param table the plain table name, do NOT include any quote.
      */
     fun showBoneCol(dataSource: DataSource, table: String): List<String>
 
     /**
-     * 获得当前表的主键字段名
-     * @param table 目标表名。
+     * Get the field name of primary key in the table.
+     *
+     * @param table the plain table name, do NOT include any quote.
      */
     fun showPkeyCol(dataSource: DataSource, table: String): List<String>
 
     data class Trg(val name: String, val timing: String, val action: String, val event: String, val table: String)
 
     /**
-     * 获得当前表触发器的名字和`EVENT`内容
-     * @param table 目标表名。
+     * Get the name and `EVENT` content of trigger in the table.
+     *
+     * @param table the plain table name, do NOT include any quote.
      */
     fun showBoneTrg(dataSource: DataSource, table: String): List<Trg>
 
     /**
-     * 根据 Trg定义，创建trigger ddl
-     * @param trg 定义
-     * @param drop 是drop还是create
+     * Create trigger DDL via trigger definition
+     *
+     * @param trg trigger definition
+     * @param drop drop or create
      */
     fun makeDdlTrg(trg: Trg, drop: Boolean): String
 }
