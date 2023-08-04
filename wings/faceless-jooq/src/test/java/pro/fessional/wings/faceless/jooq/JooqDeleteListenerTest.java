@@ -67,7 +67,7 @@ public class JooqDeleteListenerTest {
         JournalJooqHelper.deleteByIds(dsl, TstShardingTable.TstSharding, 12L, 1L, 2L);
         JournalJooqHelper.deleteByIds(tmpl, "`tst_sharding`", 34L, 3L, 4L);
         testcaseNotice(
-                "检查日志，在delete前update，如下",
+                "check logs, update before delete, as follows",
                 "UPDATE `tst_sharding` SET commit_id=34, delete_dt=NOW(3)  WHERE id IN (3,4)",
                 "DELETE FROM `tst_sharding`  WHERE id IN (3,4)"
         );
@@ -75,7 +75,7 @@ public class JooqDeleteListenerTest {
 
     @Test
     public void test3JooqDslSeeLog() {
-        // 有效
+        // handle
         dsl.execute("DELETE FROM `tst_sharding` WHERE ID =5 AND COMMIT_ID = 5");
         dsl.execute("DELETE FROM `tst_sharding` WHERE commit_id = 6 AND id = 6");
         dsl.execute("DELETE FROM `tst_sharding` WHERE commit_id = 7 AND id = ?", 7L);
@@ -83,12 +83,12 @@ public class JooqDeleteListenerTest {
         TstShardingTable t = TstShardingTable.TstSharding;
         dsl.deleteFrom(t).where(t.Id.eq(8L).and(t.CommitId.eq(8L))).execute();
         testcaseNotice(
-                "检查日志，id 等于 (5,6,7,8)的sql，先delete，再update，如下",
+                "check logs, id = (5,6,7,8) sql, and delete first, then update as follows",
                 "DELETE FROM `tst_sharding` WHERE ID =5 AND COMMIT_ID = 5",
                 "UPDATE `tst_sharding` SET COMMIT_ID = 5 ,delete_dt = NOW(3) WHERE ID =5"
         );
 
-        // 无效
+        // can not handle
         LocalDateTime now = LocalDateTime.now();
         dsl.batchDelete(
                 new TstShardingRecord(9L, now, DATE_TIME, DATE_TIME, 9L, "", "", ZH_CN)
@@ -104,7 +104,7 @@ public class JooqDeleteListenerTest {
         int[] rs = batch.execute();
         log.info(Arrays.toString(rs));
         testcaseNotice(
-                "检查日志，id >= 9的sql，只有delete，如下",
+                "check logs, id >= 9 sql, only delete as follow",
                 "delete from `tst_sharding` where `id` = ?"
         );
     }

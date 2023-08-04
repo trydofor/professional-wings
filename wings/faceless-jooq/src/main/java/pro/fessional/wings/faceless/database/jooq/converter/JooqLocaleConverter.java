@@ -6,7 +6,7 @@ import pro.fessional.mirana.i18n.LocaleResolver;
 import java.util.Locale;
 
 /**
- * 统一成 en_US格式
+ * Standard to en_US format
  *
  * @author trydofor
  * @since 2021-01-18
@@ -24,7 +24,7 @@ public class JooqLocaleConverter extends AbstractConverter<String, Locale> {
 
     @Override
     public String to(Locale lcl) {
-        // FastJson使用sun.util.BaseLocale，为`_`分隔
+        // FastJson use sun.util.BaseLocale, `_` delimited.
         String lt = lcl.getLanguage();
         String ct = lcl.getCountry();
         final int ln = lt.length();

@@ -6,8 +6,19 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.DataType;
+import org.jooq.DatePart;
+import org.jooq.Field;
+import org.jooq.Param;
 import org.jooq.Record;
-import org.jooq.*;
+import org.jooq.Record1;
+import org.jooq.Record2;
+import org.jooq.Row2;
+import org.jooq.SelectConditionStep;
+import org.jooq.SelectOrderByStep;
+import org.jooq.TableOnConditionStep;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.junit.jupiter.api.Assertions;
@@ -37,7 +48,11 @@ import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.jooq.Operator.AND;
 import static org.jooq.Operator.OR;
@@ -46,9 +61,11 @@ import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
 import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 
 /**
- * Jooq的编程能力十分强大，远高于 mybatis系列(mybatis plus)
- * https://www.jooq.org/doc/latest/manual/sql-execution/fetching/
- * https://www.jooq.org/doc/3.12/manual/sql-building/plain-sql-templating/
+ * <pre>
+ * Jooq programming is more powerful than the mybatis series (mybatis plus), see
+ * <a href="https://www.jooq.org/doc/latest/manual/sql-execution/fetching/">fetching</a> and
+ * <a href="https://www.jooq.org/doc/3.12/manual/sql-building/plain-sql-templating/">plain-sql-templating</a>
+ * </pre>
  *
  * @author trydofor
  * @since 2020-08-14
@@ -79,34 +96,34 @@ public class JooqMostSelectSample {
         TstShardingTable t = dao.getTable();
         Condition c = t.Id.gt(1L).and(t.Id.le(105L));
 
-        testcaseNotice("1个字段，到List");
+        testcaseNotice("1 field to List");
         List<Long> ones = ctx.select(t.Id)
                              .from(t)
                              .where(c)
                              .fetch()
                              .into(Long.class);
 
-        testcaseNotice("1个字段，到List");
+        testcaseNotice("1 field to object");
         Long one = ctx.select(t.Id)
                       .from(t)
                       .where(t.Id.lt(0L))
                       .fetchOneInto(Long.class);
         Assertions.assertNull(one);
 
-        testcaseNotice("2个字段，到Map");
+        testcaseNotice("2 fields to Map");
         Map<Long, String> maps = ctx.select(t.Id, t.LoginInfo)
                                     .from(t)
                                     .where(c)
                                     .fetch()
                                     .intoMap(t.Id, t.LoginInfo);
 
-        testcaseNotice("分组Pojo到Map");
+        testcaseNotice("group Pojo to Map");
         Map<Long, List<TstSharding>> grps = ctx.selectFrom(t)
                                                .where(c)
                                                .fetch()
                                                .intoGroups(t.Id, dao.mapper());
 
-        testcaseNotice("多个字段到2维数组");
+        testcaseNotice("2 fields to 2D array");
         Object[][] arrs = ctx.select(t.Id, t.LoginInfo)
                              .from(t)
                              .where(c)
@@ -115,14 +132,12 @@ public class JooqMostSelectSample {
     }
 
 
-    // 同名
     @Data
     public static class SameName {
         private Long id;
         private String loginInfo;
     }
 
-    // 不同名
     @Data
     public static class DiffName {
         private Long uid;
@@ -159,28 +174,28 @@ public class JooqMostSelectSample {
         TstShardingTable t = dao.getTable();
         Condition c = t.Id.gt(1L).and(t.Id.le(105L));
 
-        testcaseNotice("多个字段(同名子集)到List  *推荐使用*");
+        testcaseNotice("Multiple fields (subsets of the same name) to List *Recommended*");
         List<SameName> sames = ctx.select(t.Id, t.LoginInfo)
                                   .from(t)
                                   .where(c)
                                   .fetch()
                                   .into(SameName.class);
 
-        testcaseNotice("多个字段(不同名，使用字段别名)到List  *推荐使用*");
+        testcaseNotice("Multiple fields (with different names, using field aliases) to List  *Recommended*");
         List<DiffName> alias = ctx.select(t.Id.as("uid"), t.LoginInfo.as("str"))
                                   .from(t)
                                   .where(c)
                                   .fetch()
                                   .into(DiffName.class);
 
-        testcaseNotice("多个字段(同名子集)到List，使用Mapstruct");
+        testcaseNotice("Multiple fields (subsets of the same name) to List, use Mapstruct");
         List<DiffName> diffs = ctx.select(t.Id, t.LoginInfo)
                                   .from(t)
                                   .where(c)
                                   .fetch()
                                   .map(Record2ToDiffName::into);
 
-        testcaseNotice("多个字段(同名子集)到List，使用 lambda");
+        testcaseNotice("Multiple fields (subsets of the same name) to List, use lambda");
         List<DiffName> lambs = ctx.select(t.Id, t.LoginInfo)
                                   .from(t)
                                   .where(c)
@@ -198,8 +213,8 @@ public class JooqMostSelectSample {
 
     @Test
     public void test3MixingSql() {
-        //////////////////////// 说明部分 ////////////////////////
-        testcaseNotice("其中的 {0}是，0-base的，直接字符串替换的。使用不当会构成sql注入");
+        //////////////////////// description ////////////////////////
+        testcaseNotice("where {0} is, for 0-base, a direct string replacement. If used incorrectly, this can lead to SQL Injection.");
         Param<Integer> count = DSL.val(3);
         Param<String> string = DSL.val("abc");
         DSL.field("replace(substr(quote(zeroblob(({0} + 1) / 2)), 3, {0}), '0', {1})", String.class, count, string);
@@ -208,7 +223,7 @@ public class JooqMostSelectSample {
         // argument "count" is repeated twice: \------------------+----------|---------------------/       |
         // argument "string" is used only once:                              \-----------------------------/
 
-        testcaseNotice("模板中支持，java和sql注释，placeholder和variable-binding");
+        testcaseNotice("the template support java and sql comment, placeholder and variable-binding");
         DSL.query(
                 "SELECT /* In a comment, this is not a placeholder: {0}. And this is not a bind variable: ? */ title AS `title {1} ?` " +
                 "-- Another comment without placeholders: {2} nor bind variables: ?" +
@@ -216,7 +231,7 @@ public class JooqMostSelectSample {
                 "WHERE title = 'In a string literal, this is not a placeholder: {3}. And this is not a bind variable: ?'"
         );
 
-        //////////////////////// 执行部分 ////////////////////////
+        //////////////////////// execution ////////////////////////
         DSLContext ctx = dao.ctx();
         TstShardingTable t = dao.getTable();
 
@@ -253,7 +268,7 @@ public class JooqMostSelectSample {
     public void test3BindSql() {
         DSLContext ctx = dao.ctx();
 
-        testcaseNotice("按map绑定，或者通过 jackson pojo to map");
+        testcaseNotice("Binding by map or jackson pojo to map");
         Map<String, Object> bd1 = new HashMap<>();
         bd1.put("idMin", 3L);
         bd1.put("idMax", 105L);
@@ -268,10 +283,10 @@ public class JooqMostSelectSample {
                                         WingsJooqUtil.bindNamed(bd1))
                                 .into(SameName.class);
 
-        // 按数组绑定
+        // Binding by array
         // SELECT id, login_info FROM tst_sharding WHERE id >=? AND id <=? ORDER BY login_info DESC,id LIMIT ?, ?
         // SELECT id, login_info FROM tst_sharding WHERE id >=4 AND id <=105 ORDER BY login_info DESC,id LIMIT 0, 10
-        testcaseNotice("按数组绑定");
+        testcaseNotice("Binding by array");
         Object[] bd2 = {4L, 105L, 0, 10};
         List<SameName> bv2 = ctx.fetch("""
                                         SELECT id, login_info
@@ -281,13 +296,13 @@ public class JooqMostSelectSample {
                                         LIMIT {2}, {3}""", bd2)
                                 .into(SameName.class);
 
-        // 按pojo绑定
+        // Binding by pojo
         SameName bd3 = new SameName();
         bd3.setId(5L);
         bd3.setLoginInfo("LOGIN_INFO-05");
 
-        // 通过record转一下，必须字段同名
-        testcaseNotice("按pojo绑定, 通过record转一下，必须字段同名");
+        // Convert by record, Must have fields with the same name
+        testcaseNotice("Binding by pojo, Convert by record, Must have fields with the same name");
         TstShardingRecord rc = dao.newRecord(bd3);
         rc.from(bd3);
         List<SameName> bv3 = ctx.fetch("""
@@ -302,10 +317,10 @@ public class JooqMostSelectSample {
 
     @Test
     public void test3DynamicSql() {
-        // 条件构造，多参加 condition和cond*方法
+        // condition and `cond*`
         TstShardingTable t = dao.getTable();
 
-        // 通过builder建立，对null友好
+        // by builder, null friendly
         Condition d1 = WingsJooqUtil.condition("1=1");
         Condition d2 = WingsJooqUtil.condition("2=2");
         Condition d3 = WingsJooqUtil.condition("3=3");
@@ -329,7 +344,7 @@ public class JooqMostSelectSample {
         assertEquals(c0.toString(), c1.toString());
 
 
-        testcaseNotice("通过页面过来的pojo构造and条码");
+        testcaseNotice("by passed pojo and `AND`");
         SameName bd1 = new SameName();
         bd1.setId(105L);
         bd1.setLoginInfo("LOGIN_INFO-05");
@@ -337,32 +352,32 @@ public class JooqMostSelectSample {
 
         // where (`id` = ? and `login_info` = ?)
         // (`id` = 105 and `login_info` = 'LOGIN_INFO-05')
-        testcaseNotice("通过Record和condChain AND");
+        testcaseNotice("by Record and condChain `AND`");
         Condition cd1 = WingsJooqUtil.condChain(AND, rc1);
         List<TstSharding> rs1 = dao.fetch(dao.getTable(), cd1);
 
-        // 通过页面过来的pojo构造Or条码
+        //
         SameName bd2 = new SameName();
         bd2.setId(105L);
         bd2.setLoginInfo("LOGIN_INFO-06");
         TstShardingRecord rc2 = dao.newRecord(bd2);
         // where (`id` = ? or `login_info` = ?)
         // where (`id` = 105 or `login_info` = 'LOGIN_INFO-06')
-        testcaseNotice("通过Record和condChain OR");
+        testcaseNotice("by Record and condChain `OR`");
         Condition cd2 = WingsJooqUtil.condChain(OR, rc2);
         List<TstSharding> rs2 = dao.fetch(dao.getTable(), cd2);
 
-        // 只取id
+        // only id
         // where `id` = ?
         // where `id` = 105
-        testcaseNotice("通过Record和condChain 单字段");
+        testcaseNotice("by Record and condChain single field");
         List<Condition> cds = WingsJooqUtil.condField(rc2, t.Id);
         List<TstSharding> rs3 = dao.fetch(t, DSL.condition(OR, cds));
 
-        // 通过字符串map构造条件，如用户数据隔离
-        testcaseNotice("通过字符串map构造条件，如用户数据隔离");
+        //
+        testcaseNotice("by string-value map");
         Map<String, Object> map = new HashMap<>();
-        map.put("id", Collections.singletonList(105L));// 当做 in ()处理
+        map.put("id", Collections.singletonList(105L));// use `in()`
 //        map.put("id", 105L);
         map.put("login_info", "LOGIN_INFO-05");
 
@@ -371,12 +386,12 @@ public class JooqMostSelectSample {
         List<TstSharding> rc4 = dao.fetch(t, cd4);
 
         // from `tst_sharding` as `y8` where (`y8`.`login_info` = ? and `y8`.`id` = ?)
-        testcaseNotice("通过字符串map构造条件，别名");
+        testcaseNotice("by string-value map, and alias");
         TstShardingTable a = dao.getAlias();
         Condition cd5 = WingsJooqUtil.condChain(map, true, a);
         List<TstSharding> rc5 = dao.fetch(a, cd5);
 
-        // 更新字段，可以直接使用dao.update()
+        // use dao.update() to update
 
         log.info("");
     }
@@ -386,7 +401,7 @@ public class JooqMostSelectSample {
 
     @Test
     public void test4JdbcTemplate() {
-        // 单字段查询
+        // single field select
         Integer cnt = jdbcTemplate.queryForObject(
                 "SELECT COUNT(1) FROM tst_sharding WHERE id > ?",
                 Integer.class, 1);
@@ -419,7 +434,7 @@ public class JooqMostSelectSample {
         TstShardingTable t2 = dao.getAlias("t2");
 
         //
-        testcaseNotice("使用helperJooq正常",
+        testcaseNotice("use helperJooq, normal",
                 "select count(*) from `tst_sharding` as `t1` where `t1`.`id` >= ?",
                 "select `t1`.* from `tst_sharding` as `t1` where `t1`.`id` >= ? order by `id` asc limit ?");
         PageQuery page = new PageQuery().setSize(5).setPage(1).setSort("d");
@@ -446,8 +461,8 @@ public class JooqMostSelectSample {
                                                         return po;
                                                     });
 
-        testcaseNotice("使用helperJooq简化",
-                "缓存的total，使页面不执行count操作",
+        testcaseNotice("use helperJooq, simple",
+                "cached total to ignore `select count` in db",
                 "select * from `tst_sharding` limit ?");
         PageResult<TstSharding> pr3 = PageJooqHelper.use(dao, page, 10)
                                                     .count()
@@ -457,7 +472,7 @@ public class JooqMostSelectSample {
                                                     .fetch()
                                                     .into(TstSharding.class);
         //
-        testcaseNotice("使用helperJooq包装",
+        testcaseNotice("use helperJooq wrap",
                 "select count(*) as `c` from (select `t1`.* from `tst_sharding` as `t1` where `t1`.`id` >= ?) as `q`",
                 "select `t1`.* from `tst_sharding` as `t1` where `t1`.`id` >= ? order by `id` asc limit ?");
         val qry4 = dsl.select(t1.asterisk()).from(t1).where(t1.Id.ge(1L));
@@ -478,8 +493,7 @@ public class JooqMostSelectSample {
                                                     });
         /////////////////////
 
-        // 包装count
-        testcaseNotice("包装count",
+        testcaseNotice("wrap count",
                 "select count(*) as `c` from (select `id` from `tst_sharding` where `id` > ?) as `q`",
                 "select `id` from `tst_sharding` where `id` > ?");
         SelectConditionStep<Record1<Long>> qry1 = dsl.select(t.Id).from(t).where(t.Id.gt(1L));
@@ -488,8 +502,7 @@ public class JooqMostSelectSample {
         int cnt00 = dsl.fetchCount(qry1);
         List<TstSharding> lst0 = qry.fetch().into(TstSharding.class);
 
-        // 单表count
-        testcaseNotice("单表count",
+        testcaseNotice("single table count",
                 "select count(*) from `tst_sharding` where `id` > ?");
         Integer cnt1 = dsl.selectCount()
                           .from(t)
@@ -506,9 +519,8 @@ public class JooqMostSelectSample {
         log.info("cnt1={}", cnt1);
         log.info("lst1={}", lst1.size());
 
-        // 联表count
         // DSL.countDistinct()
-        testcaseNotice("内联count",
+        testcaseNotice("joined table count",
                 "select count(`t1`.`id`) from `tst_sharding` as `t1`, `tst_sharding` as `t2` where (`t1`.`id` = `t2`.`id` and `t1`.`id` > ?)");
         int cnt2 = dsl.select(DSL.count(t1.Id))
                       .from(t1, t2)
@@ -517,7 +529,7 @@ public class JooqMostSelectSample {
                       .orElse(0);
         log.info("cnt2={}", cnt2);
 
-        testcaseNotice("左联查询",
+        testcaseNotice("left join",
                 "select count(`t1`.`id`) from `tst_sharding` as `t1` left outer join `tst_sharding` as `t2` on `t1`.`id` = `t2`.`id` where `t1`.`id` > ?");
         TableOnConditionStep<Record> jt = t1.leftJoin(t2).on(t1.Id.eq(t2.Id));
         int cnt3 = dsl.select(DSL.count(t1.Id))
@@ -531,7 +543,7 @@ public class JooqMostSelectSample {
     @Test
     public void test5PaginateJdbc() {
         //
-        testcaseNotice("使用helperJdbc包装",
+        testcaseNotice("use helperJdbc wrap",
                 "SELECT count(*) FROM (select `t1`.* from `tst_sharding` as `t1` where `t1`.`id` >= ?) WINGS_WRAP",
                 "select `t1`.* from `tst_sharding` as `t1` where `t1`.`id` >= ? order by t1.Id ASC limit 5");
 
@@ -546,7 +558,7 @@ public class JooqMostSelectSample {
 
         log.info("pr1={}", pr1.getData().size());
 
-        testcaseNotice("使用helperJdbc正常",
+        testcaseNotice("use helperJdbc normal",
                 "SELECT count(*) from `tst_sharding` where id >= ?",
                 "SELECT id,login_info,other_info from `tst_sharding` where id >= ? order by id limit 5");
 
@@ -561,7 +573,7 @@ public class JooqMostSelectSample {
         log.info("pr2={}", pr2.getData().size());
     }
 
-    // 同名，自动转换
+    // Same name, auto convert
     @Data
     public static class EnumDto {
         private Long id;
@@ -580,7 +592,7 @@ public class JooqMostSelectSample {
                                     .into(EnumDto.class);
         log.info("sn={}", sn);
 
-        // 全局注入的
+        // Global injected
         final List<EnumDto> sn2 = dao.ctx()
                                      .select(t.Id, t.Language)
                                      .from(t)
@@ -591,7 +603,7 @@ public class JooqMostSelectSample {
 
     @Test
     public void test7Function() {
-        testcaseNotice("通过DSL，获取特定函数，DSL特别大，各种方言函数都有的",
+        testcaseNotice("by DSL, get function of dialect",
                 "select `id` from `tst_sharding` where (`modify_dt` > date_add(?, interval ? day) and substring(`other_info`, ?, ?) like ?)");
 
         final TstShardingTable t = dao.getTable();
@@ -604,7 +616,7 @@ public class JooqMostSelectSample {
                 .getSQL();
         log.info("sql1={}", sql1);
 
-        testcaseNotice("通过DSL，元组条件查询 https://www.jooq.org/doc/3.14/manual/sql-building/column-expressions/row-value-expressions/",
+        testcaseNotice("by DSL, query tuple https://www.jooq.org/doc/3.14/manual/sql-building/column-expressions/row-value-expressions/",
                 "select `id` from `tst_sharding` where (`id`, `login_info`) in ((?, ?), (?, ?))");
 
         final List<Row2<Long, String>> rw2 = new ArrayList<>();

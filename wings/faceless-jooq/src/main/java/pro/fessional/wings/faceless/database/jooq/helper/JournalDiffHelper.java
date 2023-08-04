@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.database.jooq.helper;
 
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -25,6 +26,7 @@ import java.util.Set;
 public class JournalDiffHelper {
 
     public static final String Default = "default";
+    @Getter
     private static final Map<String, Set<String>> DefaultIgnore = new HashMap<>();
 
     public static void putDefaultIgnore(String... field) {
@@ -38,10 +40,6 @@ public class JournalDiffHelper {
 
     public static void putDefaultIgnore(Map<String, Set<String>> map) {
         DefaultIgnore.putAll(map);
-    }
-
-    public static Map<String, Set<String>> getDefaultIgnore() {
-        return DefaultIgnore;
     }
 
     public static JournalDiff diffInsert(Table<?> table, ResultQuery<?> query, Runnable exec) {
@@ -84,14 +82,14 @@ public class JournalDiffHelper {
     // ////
 
     /**
-     * 精简差分结果，去掉相同的数据，去掉忽略的字段
+     * Refine the diff results by removing duplicate data and removing ignored fields
      */
     public static void tidy(@NotNull JournalDiff diff, Field<?>... ignore) {
         tidy(true, diff, ignore);
     }
 
     /**
-     * 精简差分结果，去掉相同的数据，去掉忽略的字段
+     * Refine the diff results by removing duplicate data and removing ignored fields
      */
     public static void tidy(boolean withDefault, @NotNull JournalDiff diff, Field<?>... ignore) {
         if (!diff.isValid()) return;
@@ -102,7 +100,7 @@ public class JournalDiffHelper {
         final ArrayList<Object> vs2 = arrayList(diff.getValue2());
 
         final Object delFlag = new Object();
-        // remove same value，if update
+        // remove same value, if update
         if (diff.isUpdate()) {
             for (int i = 0, len = col.size(); i < len; i++) {
                 boolean sm = true;
@@ -161,7 +159,7 @@ public class JournalDiffHelper {
 
     // ////
     /**
-     * 生成除了table之外的信息，包括记录数，字段和前后数据
+     * Generate information about record count, field name, and data before and after the update.
      */
     public static void help(@NotNull JournalDiff diff, Result<? extends Record> before, Result<? extends Record> after) {
         final ArrayList<String> column;

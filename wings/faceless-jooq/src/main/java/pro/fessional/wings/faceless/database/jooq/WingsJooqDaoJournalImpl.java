@@ -25,14 +25,15 @@ import static org.jooq.impl.DSL.row;
 
 /**
  * <pre>
- * 原则上，不希望Record携带的数据库信息扩散，因此建议Dao之外使用pojo
+ * In principle, the database information carried by Record should not be spread,
+ * so it's recommended to use Pojo instead of Record outside of Dao.
  *
- * 对于read方法，一律返回Pojo；对于write，同时支持 Record和Pojo。
- * 为了编码的便捷和减少数据拷贝，可以使用Record进行操作。
- * 批量处理中，一律使用了new Record，为了提升性能。
+ * For read method, it always returns Pojo; for write method, it supports both Record and Pojo.
+ * For the convenience of coding and to reduce data copying, you can use Record for operation.
+ * In batch processing, new Record is always used to improve performance.
  *
- * 注意，alias 用在多表查询，filed和table需要同源，否则出现语法错误。
- * 即，不能是表名和字段不能一个是table，一个是alias的。
+ * Note that alias is used in multi-table query, filed/condition and table must have the same name,
+ * otherwise there will be a syntax error. I.e., fields that are in different alias from the table.
  * </pre>
  *
  * @param <T> Table
@@ -475,12 +476,12 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     }
 
     /**
-     * 按条件逻辑删除
+     * Delete record by condition
      *
      * @param commit journal
-     * @param table  表
-     * @param cond   条件
-     * @return 影响的数据条数
+     * @param table  count table by condition, requires table with the same name as condition
+     * @param cond   condition
+     * @return affected records
      */
     public int delete(JournalService.Journal commit, T table, Condition cond) {
         return ctx()
@@ -491,11 +492,11 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     }
 
     /**
-     * 按id逻辑删除
+     * Logic delete record by ids
      *
      * @param commit journal
      * @param ids    ids
-     * @return 影响的数据条数
+     * @return affected records
      */
     @SafeVarargs
     public final int deleteById(JournalService.Journal commit, K... ids) {
@@ -505,14 +506,14 @@ public abstract class WingsJooqDaoJournalImpl<T extends Table<R> & WingsJournalT
     private static final Record[] EMPTY_RECORD = {};
 
     /**
-     * 按id逻辑删除
+     * Logic delete record by ids
      *
      * @param commit journal
      * @param ids    ids
-     * @return 影响的数据条数
+     * @return affected records
      */
     public int deleteById(JournalService.Journal commit, Collection<K> ids) {
-        // 参考DAOImpl deleteById
+        // see DAOImpl deleteById
         final Condition cond;
         if (pkeys.length == 1) {
             @SuppressWarnings("unchecked") final Field<Object> pk = (Field<Object>) pkeys[0];

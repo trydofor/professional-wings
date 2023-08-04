@@ -95,16 +95,16 @@ public class JooqTableCudListenerTest {
         pojo.setLoginInfo("login-info-301");
         pojo.setOtherInfo("other-info-301");
 
-        testcaseNotice("单个插入 normal");
+        testcaseNotice("single insert normal");
         assertCud(false, Cud.Create, singletonList(singletonList(301L)), () -> testDao.insert(pojo),
                 "insert into");
 
 
-        testcaseNotice("单个插入 ignore");
+        testcaseNotice("single insert ignore");
         assertCud(false, Cud.Create, singletonList(singletonList(301L)), () -> testDao.insertInto(pojo, true),
                 "insert ignore into");
 
-        testcaseNotice("单个插入 replace");
+        testcaseNotice("single insert replace");
         assertCud(false, Cud.Update, singletonList(singletonList(301L)), () -> testDao.insertInto(pojo, false),
                 "duplicate key update");
 
@@ -118,15 +118,15 @@ public class JooqTableCudListenerTest {
                 new TstShardingRecord(304L, now, now, now, 9L, "login-info-304", "", ZH_CN)
         );
 
-        testcaseNotice("批量插入 normal");
+        testcaseNotice("batch insert normal");
         assertCud(false, Cud.Create, Arrays.asList(singletonList(302L), singletonList(303L), singletonList(304L)), () -> testDao.batchInsert(rds, 10),
                 "insert into");
 
-        testcaseNotice("批量插入 ignore");
+        testcaseNotice("batch insert ignore");
         assertCud(false, null, Collections.emptyList(), () -> testDao.batchInsert(rds, 10, true),
                 "insert ignore into");
 
-        testcaseNotice("批量插入 replace");
+        testcaseNotice("batch insert replace");
         assertCud(false, null, Collections.emptyList(), () -> testDao.batchInsert(rds, 10, false),
                 "duplicate key update");
 
@@ -143,7 +143,7 @@ public class JooqTableCudListenerTest {
         pojo.setId(301L);
         pojo.setCommitId(-301L);
 
-        testcaseNotice("单个更新");
+        testcaseNotice("single update");
         assertCud(true, Cud.Update, singletonList(singletonList(301L)), () -> testDao.update(pojo, true),
                 "update");
 
@@ -151,7 +151,7 @@ public class JooqTableCudListenerTest {
         Assertions.assertTrue(StringUtils.containsIgnoreCase(LastSql.get(), "select count"));
         Assertions.assertEquals(1L, c1);
 
-        testcaseNotice("批量更新");
+        testcaseNotice("batch update");
         assertCud(false, Cud.Update, singletonList(Arrays.asList(302L, 303L, 302L, 304L)), () -> testDao
                         .ctx()
                         .update(t)
@@ -167,7 +167,7 @@ public class JooqTableCudListenerTest {
     @Test
     public void test4Delete() {
         final TstShardingTable t = testDao.getTable();
-        testcaseNotice("单个删除");
+        testcaseNotice("single delete");
         assertCud(false, Cud.Delete, singletonList(singletonList(301L)), () -> testDao
                         .ctx()
                         .delete(t)
@@ -176,7 +176,7 @@ public class JooqTableCudListenerTest {
                 "delete from"
         );
 
-        testcaseNotice("范围删除");
+        testcaseNotice("batch delete");
         assertCud(false, Cud.Delete, singletonList(Arrays.asList(302L, 304L)), () -> testDao
                         .ctx()
                         .delete(t)

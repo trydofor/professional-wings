@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.database.jooq;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Condition;
@@ -76,7 +77,7 @@ public class WingsJooqUtil extends DSL {
     ///////////////// replace into /////////////////////
 
     /**
-     * 不受CUD listener管理
+     * CUD listener does not trigger
      */
     public static RowCountQuery replaceInto(TableRecord<?> record) {
         Table<?> table = record.getTable();
@@ -85,7 +86,7 @@ public class WingsJooqUtil extends DSL {
     }
 
     /**
-     * 不受CUD listener管理
+     * CUD listener does not trigger
      */
     public static RowCountQuery replaceInto(Table<?> table, Field<?>... fields) {
         if (fields == null || fields.length == 0) {
@@ -125,12 +126,12 @@ public class WingsJooqUtil extends DSL {
     }
 
     /**
-     * 若 value.isEmpty，则返回NoCondition，否则返回eq NotNull
+     * Return NoCondition if value is null, otherwise return eq(NotNull)
      *
-     * @param filed 字段
-     * @param value 数据
-     * @param <Z>   类型
-     * @return 条件
+     * @param filed field
+     * @param value field value
+     * @param <Z>   field type
+     * @return Condition
      */
     @NotNull
     public static <Z> Condition condEqSkip(Field<Z> filed, Collection<Z> value) {
@@ -138,13 +139,13 @@ public class WingsJooqUtil extends DSL {
     }
 
     /**
-     * 若 value.isEmpty，则返回NoCondition，否则返回eq NotNull
+     * Return NoCondition if filter is true, otherwise return eq(NotNull)
      *
-     * @param filed  字段
-     * @param value  数据
-     * @param filter 过滤
-     * @param <Z>    类型
-     * @return 条件
+     * @param filed  field
+     * @param value  field value
+     * @param filter filter
+     * @param <Z>    field type
+     * @return Condition
      */
     @NotNull
     public static <Z> Condition condEqSkip(Field<Z> filed, Collection<Z> value, Predicate<Z> filter) {
@@ -158,12 +159,12 @@ public class WingsJooqUtil extends DSL {
     }
 
     /**
-     * 若 value.isEmpty，则返回NoCondition，否则返回in
+     * Return NoCondition if value is null, otherwise return in(NotNull)
      *
-     * @param filed 字段
-     * @param value 数据
-     * @param <Z>   类型
-     * @return 条件
+     * @param filed field
+     * @param value field value
+     * @param <Z>   field type
+     * @return Condition
      */
     @NotNull
     public static <Z> Condition condInSkip(Field<Z> filed, Collection<Z> value) {
@@ -171,13 +172,13 @@ public class WingsJooqUtil extends DSL {
     }
 
     /**
-     * 若 value.isEmpty，则返回NoCondition，否则返回in
+     * Return NoCondition if filter is true, otherwise return in(NotNull)
      *
-     * @param filed  字段
-     * @param value  数据
-     * @param filter 过滤
-     * @param <Z>    类型
-     * @return 条件
+     * @param filed  field
+     * @param value  field value
+     * @param filter filter
+     * @param <Z>    field type
+     * @return Condition
      */
     @NotNull
     public static <Z> Condition condInSkip(Field<Z> filed, Collection<Z> value, Predicate<Z> filter) {
@@ -187,13 +188,13 @@ public class WingsJooqUtil extends DSL {
     }
 
     /**
-     * 构造一个between的条件
+     * Return a between condition
      *
-     * @param field          字段
-     * @param lowerInclusive 小值，包含
-     * @param upperInclusive 大值，包含
-     * @param <Z>            类型
-     * @return 条件
+     * @param field          field
+     * @param lowerInclusive lower (min) value (include)
+     * @param upperInclusive upper (max) value (include)
+     * @param <Z>            field type
+     * @return Condition
      */
     @NotNull
     public static <Z> Condition condRange(Field<Z> field, Z lowerInclusive, Z upperInclusive) {
@@ -240,11 +241,12 @@ public class WingsJooqUtil extends DSL {
     }
 
     /**
-     * 构造一个 and 级联的条件， type=1 and name='dog'
+     * Return a condition join by and/or with the record, e.g. type=1 and name='dog'
      *
-     * @param record     条件
-     * @param ignoreNull 是否忽略null
-     * @return 条件
+     * @param andOr      operator (and/or)
+     * @param record     table record
+     * @param ignoreNull whether to ignore null
+     * @return condition
      */
     @NotNull
     public static Condition condChain(Operator andOr, TableRecord<?> record, boolean ignoreNull) {
@@ -285,14 +287,14 @@ public class WingsJooqUtil extends DSL {
     }
 
     /**
-     * 根据 map中的值，生成and条件，比如统一的用户数据隔离条件。
-     * value是collection时翻译为f.in(v)，否则为 f.eq(v)
+     * Return a condition join by and/or with the field map
+     * use `f.in(v)` if value is collection, otherwise `f.eq(v)`
      *
-     * @param andOr      链接操作
-     * @param fieldValue 字段名和值
-     * @param ignoreNull 是否忽略null
-     * @param alias      表名或别名
-     * @return 条件
+     * @param andOr      operator (and/or)
+     * @param fieldValue filed name and value
+     * @param ignoreNull whether to ignore null
+     * @param alias      table name or alias
+     * @return condition
      */
     @NotNull
     public static Condition condChain(Operator andOr, Map<String, Object> fieldValue, boolean ignoreNull, TableImpl<?> alias) {
@@ -340,8 +342,8 @@ public class WingsJooqUtil extends DSL {
      *
      * @param field      filed
      * @param ignoreNull filed
-     * @param value      值
-     * @return 条件
+     * @param value      value
+     * @return condition
      */
     @Nullable
     public static Condition condField(Field<?> field, boolean ignoreNull, Object value) {
@@ -398,18 +400,18 @@ public class WingsJooqUtil extends DSL {
     }
 
     /**
-     * 构造一个 and 级联的条件， type=1 and name='dog'
+     * Return a condition by record and specified fileds. eg. type=1 and name='dog'
      *
-     * @param record     条件
-     * @param ignoreNull 是否忽略null
-     * @param includes   包含的字段，默认全包含
-     * @return 条件
+     * @param record     record
+     * @param ignoreNull whether to ignore null
+     * @param includes   included fields, all if empty
+     * @return condition
      */
     @NotNull
     @SuppressWarnings("unchecked")
     public static List<Condition> condField(TableRecord<?> record, boolean ignoreNull, Field<?>... includes) {
         Field<?>[] fields = record.fields();
-        // 按include赋值，其他为null
+        // handle include if not empty
         if (includes != null && includes.length > 0) {
             Field<?>[] temp = new Field<?>[fields.length];
             for (Field<?> fld : includes) {
@@ -437,27 +439,26 @@ public class WingsJooqUtil extends DSL {
     }
 
     /**
-     * 判断友好的链式条件builder
-     *
-     * @return builder
+     * Friendly chained condition builder
      */
+    @NotNull
     public static CondBuilder condBuilder() {
         return new CondBuilder();
     }
 
     /**
-     * 判断友好的链式条件builder
-     *
-     * @return builder
+     * Friendly chained condition builder
      */
+    @NotNull
     public static CondBuilder condBuilder(Condition cond) {
         return new CondBuilder().and(cond);
     }
 
     /**
+     * Friendly chained condition builder
      * <pre>
      * (1=1) and ((2=2 or 3=3) or (4=4 and 5=5))
-     * 可以通过以下 grp-end，构造括号条件
+     * can be done by grp-end as follows
      * (1=1).and()
      * .grp()
      *    .grp(2=2).or(3=3).end()
@@ -465,7 +466,6 @@ public class WingsJooqUtil extends DSL {
      *    .grp(4=4).or(5=5).end()
      * .end()
      * </pre>
-     * 判断友好的链式条件builder
      */
     public static class CondBuilder {
 
@@ -475,7 +475,7 @@ public class WingsJooqUtil extends DSL {
         /**
          * @see #and(Condition, boolean)
          */
-        @NotNull
+        @Contract("->this")
         public CondBuilder and() {
             return cond(Operator.AND, null, true);
         }
@@ -483,7 +483,7 @@ public class WingsJooqUtil extends DSL {
         /**
          * @see #and(Condition, boolean)
          */
-        @NotNull
+        @Contract("_->this")
         public CondBuilder and(Condition cond) {
             return cond(Operator.AND, cond, cond != null);
         }
@@ -491,7 +491,7 @@ public class WingsJooqUtil extends DSL {
         /**
          * @see #and(Condition, boolean)
          */
-        @NotNull
+        @Contract("_,_->this")
         public CondBuilder andNotNull(Condition cond, Object... value) {
             final boolean vd = cond != null && Z.notNull(value) != null;
             return cond(Operator.AND, cond, vd);
@@ -500,20 +500,16 @@ public class WingsJooqUtil extends DSL {
         /**
          * @see #and(Condition, boolean)
          */
-        @NotNull
+        @Contract("_,_->this")
         public CondBuilder andNotEmpty(Condition cond, Collection<?> value) {
             final boolean vd = cond != null && value != null && !value.isEmpty();
             return cond(Operator.AND, cond, vd);
         }
 
         /**
-         * 当 valid且cond != null时，and cond
-         *
-         * @param cond  目标
-         * @param valid 判定
-         * @return builder
+         * and cond if valid and cond != null
          */
-        @NotNull
+        @Contract("_,_->this")
         public CondBuilder and(Condition cond, boolean valid) {
             return cond(Operator.AND, cond, valid);
         }
@@ -521,7 +517,7 @@ public class WingsJooqUtil extends DSL {
         /**
          * @see #or(Condition, boolean)
          */
-        @NotNull
+        @Contract("->this")
         public CondBuilder or() {
             return cond(Operator.OR, null, true);
         }
@@ -529,7 +525,7 @@ public class WingsJooqUtil extends DSL {
         /**
          * @see #or(Condition, boolean)
          */
-        @NotNull
+        @Contract("_->this")
         public CondBuilder or(Condition cond) {
             return cond(Operator.OR, cond, cond != null);
         }
@@ -537,7 +533,7 @@ public class WingsJooqUtil extends DSL {
         /**
          * @see #and(Condition, boolean)
          */
-        @NotNull
+        @Contract("_,_->this")
         public CondBuilder orNotNull(Condition cond, Object... value) {
             final boolean vd = cond != null && Z.notNull(value) != null;
             return cond(Operator.OR, cond, vd);
@@ -546,20 +542,16 @@ public class WingsJooqUtil extends DSL {
         /**
          * @see #and(Condition, boolean)
          */
-        @NotNull
+        @Contract("_,_->this")
         public CondBuilder orNotEmpty(Condition cond, Collection<?> value) {
             final boolean vd = cond != null && value != null && !value.isEmpty();
             return cond(Operator.OR, cond, vd);
         }
 
         /**
-         * 当 valid且cond != null时，or cond
-         *
-         * @param cond  目标
-         * @param valid 判定
-         * @return builder
+         * or cond if valid and cond != null
          */
-        @NotNull
+        @Contract("_,_->this")
         public CondBuilder or(Condition cond, boolean valid) {
             return cond(Operator.OR, cond, valid);
         }
@@ -567,7 +559,7 @@ public class WingsJooqUtil extends DSL {
         /**
          * @see #grp(Condition, boolean)
          */
-        @NotNull
+        @Contract("->this")
         public CondBuilder grp() {
             return grp(null, true);
         }
@@ -575,17 +567,15 @@ public class WingsJooqUtil extends DSL {
         /**
          * @see #grp(Condition, boolean)
          */
-        @NotNull
+        @Contract("_->this")
         public CondBuilder grp(Condition cond) {
             return grp(cond, true);
         }
 
         /**
-         * 开启一个括号条件组 (....)
-         *
-         * @return builder
+         * Open a bracketed condition group (....)
          */
-        @NotNull
+        @Contract("_,_->this")
         public CondBuilder grp(Condition cond, boolean valid) {
             calcStack.add(BGN);
             if (valid && cond != null) calcStack.add(cond);
@@ -593,14 +583,9 @@ public class WingsJooqUtil extends DSL {
         }
 
         /**
-         * 当 valid且cond != null时，and/or cond
-         *
-         * @param opr   操作
-         * @param cond  目标
-         * @param valid 判定
-         * @return builder
+         * and/or `cond` if `valid` and `cond` != null
          */
-        @NotNull
+        @Contract("_,_,_->this")
         public CondBuilder cond(Operator opr, Condition cond, boolean valid) {
             if (!valid || opr == null) return this;
 
@@ -610,21 +595,21 @@ public class WingsJooqUtil extends DSL {
             else {
                 for (int i = calcStack.size() - 1; i >= 0; i--) {
                     Object obj = calcStack.get(i);
-                    if (obj instanceof Condition) { // Condition -> 计算
+                    if (obj instanceof Condition) { // Condition -> calculate
                         if (cond == null) { // only opr (group)
                             calcStack.add(opr);
                         }
-                        else { // 如果错误，抛出异常
+                        else { // throw if error
                             calcStack.set(i, eval((Condition) obj, opr, cond));
                         }
                         break;
                     }
                     else if (obj instanceof Operator) {
                         if (cond == null) {
-                            break; // 忽略当前操作符
+                            break; // ignore
                         }
                         else {
-                            // Operator -> 移除，找上一个
+                            // Operator -> remove, lookup parent
                             calcStack.remove(i);
                         }
                     }
@@ -639,11 +624,9 @@ public class WingsJooqUtil extends DSL {
         }
 
         /**
-         * 结束上一个括号条件组，并求值。
-         *
-         * @return 条件
+         * End the last bracketed condition group and evaluate the value.
          */
-        @NotNull
+        @Contract("->this")
         public CondBuilder end() {
             final int size = calcStack.size();
             if (size <= 1) return this;
@@ -665,8 +648,8 @@ public class WingsJooqUtil extends DSL {
                 else if (obj instanceof Operator) {
                     op = (Operator) obj;
                 }
-                else { // 括号
-                    if (grp < 0) { // 结束当前，继续求值
+                else { // bracketed
+                    if (grp < 0) { // finish, continue
                         grp = cur;
                     }
                     else {
@@ -684,12 +667,7 @@ public class WingsJooqUtil extends DSL {
         }
 
         /**
-         * null友好的条件求值
-         *
-         * @param h1 条件1
-         * @param op 操作
-         * @param h2 条件2
-         * @return 条件
+         * null-friendly condition evaluation
          */
         @NotNull
         public Condition eval(Condition h1, Operator op, Condition h2) {
@@ -699,6 +677,7 @@ public class WingsJooqUtil extends DSL {
             return condition(op, h1, h2);
         }
 
+        @NotNull
         public Condition build() {
             for (int i = calcStack.size(); i > 1 && calcStack.size() > 1; i--) {
                 end();

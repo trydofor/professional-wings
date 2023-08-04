@@ -17,10 +17,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 仅支持单表执行，不支持batch处理
- * <p>
+ * <pre>
+ * Only supports single table execution, does not support batch processing
+ *
  * delete from `tst_sharding` where (`id` = ? and `commit_id` = ?)
  * commit_id = :commit_id and `id` = ?
+ * </pre>
  *
  * @author trydofor
  * @since 2021-01-14
@@ -47,7 +49,7 @@ public class JournalDeleteListener implements ExecuteListener {
         if (!params.isEmpty()) {
             for (Param<?> value : params.values()) {
                 ParamType type = value.getParamType();
-                // 只处理indexed的
+                // only handle indexed
                 if (!(type == ParamType.INDEXED || type == ParamType.FORCE_INDEXED)) {
                     return;
                 }
@@ -64,7 +66,7 @@ public class JournalDeleteListener implements ExecuteListener {
                 ctx.dsl().execute(updateSql);
             }
             else {
-                // 保证顺序
+                // make sure the order
                 Object[] pms = new Object[params.size()];
                 int i = 0;
                 for (Param<?> pm : params.values()) {

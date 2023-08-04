@@ -55,7 +55,7 @@ class WingsJooqUtilTest {
                                     .build();
         assertEquals(c0.toString(), c1.toString());
 
-        // 省略结尾
+        // omit the end
         Condition c2 = WingsJooqUtil.condBuilder()
                                     .and(d1).and()
                                     .grp()
@@ -65,7 +65,7 @@ class WingsJooqUtilTest {
                                     .build();
         assertEquals(c0.toString(), c2.toString());
 
-        // 多个操作
+        // multiple opr
         Condition c3 = WingsJooqUtil.condBuilder()
                                     .and(d1).and().or()
                                     .grp().and()
