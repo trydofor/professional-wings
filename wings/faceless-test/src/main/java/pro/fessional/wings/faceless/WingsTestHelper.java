@@ -81,16 +81,16 @@ public class WingsTestHelper {
         fetchAllColumn1(type.sql).forEach((k, aSet) -> {
             Diff.S<String> diff = Diff.of(aSet, bSet);
             if (!diff.bNotA.isEmpty()) {
-                testcaseNotice(k + " 数据库少：" + type + ":" + String.join(",", diff.bNotA));
+                testcaseNotice(k + " less in db " + type + ":" + String.join(",", diff.bNotA));
                 good.set(false);
             }
             if (!diff.aNotB.isEmpty()) {
-                testcaseNotice(k + " 数据库多：" + type + ":" + String.join(",", diff.aNotB));
+                testcaseNotice(k + " more in db " + type + ":" + String.join(",", diff.aNotB));
                 good.set(false);
             }
         });
 
-        Assertions.assertTrue(good.get(), type.name() + "不一致，查看日志，");
+        Assertions.assertTrue(good.get(), type.name() + " difference, check the logs.");
     }
 
     public void assertHas(Type type, String... str) {
@@ -99,12 +99,12 @@ public class WingsTestHelper {
         fetchAllColumn1(type.sql).forEach((k, aSet) -> {
             Diff.S<String> diff = Diff.of(aSet, bSet);
             if (!diff.bNotA.isEmpty()) {
-                testcaseNotice(k + " 数据库少：" + type + ":" + String.join(",", diff.bNotA));
+                testcaseNotice(k + " less in db " + type + ":" + String.join(",", diff.bNotA));
                 good.set(false);
             }
         });
 
-        Assertions.assertTrue(good.get(), type.name() + "不一致，查看日志，");
+        Assertions.assertTrue(good.get(), type.name() + " difference, check the logs.");
     }
 
     public void assertNot(Type type, String... str) {
@@ -113,12 +113,12 @@ public class WingsTestHelper {
         fetchAllColumn1(type.sql).forEach((k, aSet) -> {
             Diff.S<String> diff = Diff.of(aSet, bSet);
             if (diff.bNotA.size() != bSet.size()) {
-                testcaseNotice(k + " 数据库不能有：" + type + ": " + String.join(",", diff.bNotA));
+                testcaseNotice(k + " cant in db " + type + ":" + String.join(",", diff.bNotA));
                 good.set(false);
             }
         });
 
-        Assertions.assertTrue(good.get(), type.name() + "不一致，查看日志，");
+        Assertions.assertTrue(good.get(), type.name() + " difference, check the logs.");
     }
 
     private List<String> lowerCase(String... str) {
