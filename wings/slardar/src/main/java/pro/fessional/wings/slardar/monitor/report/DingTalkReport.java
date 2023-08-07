@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * 钉钉机器人 https://developers.dingtalk.com/document/app/custom-robot-access
+ * <a href="https://developers.dingtalk.com/document/app/custom-robot-access">Dingtalk robot</a>
  *
  * @author trydofor
  * @since 2021-07-14

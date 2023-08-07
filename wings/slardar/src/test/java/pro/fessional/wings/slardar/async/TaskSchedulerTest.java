@@ -45,8 +45,8 @@ public class TaskSchedulerTest {
         final AtomicInteger cnt1 = new AtomicInteger(0);
         final AtomicInteger eqs1 = new AtomicInteger(0);
         Thread.sleep(500);
-        // 若非TtlThreadPoolTaskScheduler设置，却用了ttlExecutor，
-        // 则仅一个线程能会TTL成功，其会失败，
+        // If a non-TtlThreadPoolTaskScheduler is set up, but a ttlExecutor is used.
+        // then only one thread will succeed in TTL, others will fail
         final ScheduledFuture<?> task1 = threadPoolTaskScheduler.scheduleWithFixedDelay(() -> delayUid("TaskSchedulerTest Default", userId, cnt1, eqs1), Duration.ofMillis(1_000));
         Thread.sleep(5_000);
         task1.cancel(false);

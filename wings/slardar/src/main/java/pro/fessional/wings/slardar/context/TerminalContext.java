@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Note: No WeakReference Leak due to static and Interceptor cleanup.
  *
  * @author trydofor
- * @see <a href="https://github.com/alibaba/transmittable-thread-local/blob/master/docs/developer-guide.md#-%E6%A1%86%E6%9E%B6%E4%B8%AD%E9%97%B4%E4%BB%B6%E9%9B%86%E6%88%90ttl%E4%BC%A0%E9%80%92">框架中间件集成ttl传递</a>
+ * @see <a href="https://github.com/alibaba/transmittable-thread-local/blob/master/docs/developer-guide-en.md#-frameworkmiddleware-integration-to-ttl-transmittance">Framework/Middleware integration to TTL transmittance</a>
  * @since 2019-11-25
  */
 public class TerminalContext {

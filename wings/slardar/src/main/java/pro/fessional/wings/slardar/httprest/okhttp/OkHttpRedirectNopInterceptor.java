@@ -9,10 +9,10 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 /**
- * 当followRedirects时，根据request的header设置，把Location头改为Nop-Location，
- * 从而阻断此请求的Redirect
+ * When followingRedirects, change the Location header to Nop-Location according to the request's header setting,
+ * thus can stop the Redirects for this request.
  * <p>
- * 参考 RetryAndFollowUpInterceptor#followUpRequest
+ * see RetryAndFollowUpInterceptor#followUpRequest
  *
  * @author trydofor
  * @since 2022-11-01

@@ -83,7 +83,7 @@ public class LogMetric implements WarnMetric {
             Warn warn = new Warn();
             warn.setKey(keyKeyword);
             warn.setType(Type.File);
-            // 转换keyword，避免记入日志，触发监控
+            // Convert keyword to avoid logging and triggering monitoring
             warn.setRule(maskKeyword());
             warn.setWarn(stat.getPathOut());
             result.add(warn);
@@ -136,7 +136,7 @@ public class LogMetric implements WarnMetric {
             sb.append(",");
             sb.append(rule.maskKey(k));
         }
-        return sb.length() == 0 ? "" : sb.substring(1);
+        return sb.isEmpty() ? "" : sb.substring(1);
     }
 
     private void check(List<Warn> result, String key, DataSize ruleValue, long warnValue, boolean less) {
@@ -231,7 +231,7 @@ public class LogMetric implements WarnMetric {
         public static final String Key$clean = Key + ".clean";
 
         /**
-         * 脱外层单引号，及是否处理后续空白
+         * Remove the outer single quotes, and whether to handle subsequent whitespace
          */
         public String trimKey(String kw, boolean white) {
             final int kl = kw.length();
@@ -239,7 +239,7 @@ public class LogMetric implements WarnMetric {
                 final int il = kl - 1;
                 if (kw.charAt(0) == '\'' && kw.charAt(il) == '\'') {
                     kw = kw.substring(1, il);
-                    // 不用记录高级别日志，否则每次都会警报
+                    // No need a high-level log or alert every time!
                     log.trace("trim quoted doubl-quote={} to key={}", kw, kw);
                 }
             }
@@ -254,7 +254,7 @@ public class LogMetric implements WarnMetric {
         }
 
         /**
-         * 避免日志中记录key，引发扫描报警
+         * Do NOT log the key. This will trigger scan alarms.
          */
         public String maskKey(String kw) {
             final String s = trimKey(kw, true);
@@ -262,9 +262,7 @@ public class LogMetric implements WarnMetric {
         }
 
         /**
-         * 会自动trim掉一组成对的收尾双引号，按charset构造bytes
-         *
-         * @return 按字符集构造的byte
+         * Auto remove a pair of quotes, construct bytes by charset
          */
         @SneakyThrows
         public List<LogStat.Word> getRuntimeKeys() {

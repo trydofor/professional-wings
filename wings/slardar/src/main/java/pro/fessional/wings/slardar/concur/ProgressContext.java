@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.code.LeapCode;
 import pro.fessional.mirana.time.ThreadNow;
 
-
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -23,10 +22,7 @@ public class ProgressContext {
     private static final LeapCode leapCode = new LeapCode();
 
     /**
-     * 通过内建的key，获得Bar
-     *
-     * @param key 内建key
-     * @return bar
+     * Get the progress bar by inside key
      */
     @Nullable
     public static Bar get(String key) {
@@ -39,10 +35,7 @@ public class ProgressContext {
     }
 
     /**
-     * 通过外部的key，获得Bar
-     *
-     * @param key 外部key
-     * @return bar
+     * Get the progress bar by outside key and ttl second.
      */
     @Nullable
     public static Bar get(Object key, int second) {
@@ -59,28 +52,23 @@ public class ProgressContext {
     }
 
     /**
-     * 通过 ttl获得对应的Cache
-     *
-     * @param second ttl
-     * @return cache
+     * Get cache by ttl second
      */
     @NotNull
     public static Cache<Object, Object> get(int second) {
         return H24M5.getCache(second);
     }
 
+    /**
+     * Generate a progress bar by outside key and ttl second
+     */
     @NotNull
     public static Bar gen(Object key, int second) {
         return gen(key, ThreadNow.millis(), second);
     }
 
     /**
-     * 生成个Bar
-     *
-     * @param key     外部Key，可以用来获取 Bar
-     * @param started 开始毫秒数
-     * @param second  ttl秒数
-     * @return Bar
+     * Generate a progress bar by outside key, started time and  ttl second
      */
     @NotNull
     public static Bar gen(Object key, long started, int second) {
@@ -94,11 +82,7 @@ public class ProgressContext {
     }
 
     /**
-     * 内建key
-     *
-     * @param started 开始毫秒数
-     * @param second  ttl秒数
-     * @return 内建key
+     * build an inside key by started time and  ttl second
      */
     @NotNull
     public static String key(long started, int second) {

@@ -10,7 +10,11 @@ import pro.fessional.mirana.best.AssertState;
 import pro.fessional.mirana.data.Null;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Collections.emptyMap;
@@ -65,7 +69,7 @@ public class WingsCacheHelper {
     }
 
     /**
-     * 设置 CacheManager 名字及Resolver对应关系
+     * Set CacheManager name and its Resolver
      */
     public static void putManagers(Map<String, CacheManager> mngs) {
         managers.putAll(mngs);

@@ -75,7 +75,7 @@ public class TweakEventListener implements TerminalContext.Listener {
 
     @Override
     public void onChange(boolean del, TerminalContext.@NotNull Context ctx) {
-        final Conf cur = debugs.getOrDefault(ctx.getUserId(), Null); // 当前用户
+        final Conf cur = debugs.getOrDefault(ctx.getUserId(), Null); // current user
 
         final Clock cc = cur.clock;
         final LogLevel cl = cur.logger;

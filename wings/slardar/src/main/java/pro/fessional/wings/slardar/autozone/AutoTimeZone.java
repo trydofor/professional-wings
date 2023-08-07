@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 标记到LocalDateTime，ZonedDatetime，OffsetDateTime，明确其自动转换的行为
+ * How to auto convert LocalDateTime, ZonedDatetime and OffsetDateTime.
  *
  * @author trydofor
  * @since 2021-03-22
@@ -16,9 +16,9 @@ import java.lang.annotation.Target;
 public @interface AutoTimeZone {
 
     /**
-     * 自动转换的目标Zone
+     * Auto convert to target TimeZone
      *
-     * @return 目标Zone
+     * @return target TimeZone
      */
     AutoZoneType value() default AutoZoneType.Auto;
 }

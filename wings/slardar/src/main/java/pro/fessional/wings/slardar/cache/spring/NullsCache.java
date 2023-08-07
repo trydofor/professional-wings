@@ -7,8 +7,12 @@ import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 import java.util.concurrent.Callable;
 
 /**
- * 对nulls进行统一处理的缓存，支持weak及skip处理。
- * 正数:缓存大小，默认ttl=3600s; 0:不缓存null；其他值则不统一处理
+ * <pre>
+ * Unified processing cache for nulls, supports weak and skip.
+ * * &gt;0 : cache size, default ttl=3600s;
+ * * 0 : no nulls cached;
+ * * other values are not handled uniformly.
+ * </pre>
  *
  * @author trydofor
  * @since 2022-03-13

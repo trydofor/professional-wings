@@ -6,9 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 对I18nString和CharSequence进行国际化转换
- * `I18nString`类型会自动转换，使用@JsonI18nString关闭
- * `CharSequence`如果内部是i18nCode，使用@JsonI18nString开启。
+ * <pre>
+ * Auto I18n Convert for I18nString and CharSequence
+ * `I18nString` - auto convert, use @JsonI18nString to disable.
+ * `CharSequence` - If contains i18nCode, use @JsonI18nString to enable.
+ * </pre>
  *
  * @author trydofor
  * @since 2019-09-19

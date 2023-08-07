@@ -19,21 +19,21 @@ public class Cache2kSlot {
     private final int max;
 
     /**
-     * 以ConcurrentHashMap构造一个按ttl分片的缓存
+     * Construct a cache slot by ttl with ConcurrentHashMap
      *
-     * @param ttl  最大ttl秒
-     * @param step 分片步长秒
+     * @param ttl  max ttl in second
+     * @param step slot step in second
      */
     public Cache2kSlot(int ttl, int step) {
         this(new ConcurrentHashMap<>(), ttl, step);
     }
 
     /**
-     * 构造一个按ttl分片的缓存
+     * Construct a cache slot by ttl with specified Map
      *
-     * @param slot slot
-     * @param ttl  最大ttl秒
-     * @param step 分片步长秒
+     * @param slot slot map
+     * @param ttl  max ttl in second
+     * @param step slot step in second
      */
     public Cache2kSlot(Map<Integer, Cache<Object, Object>> slot, int ttl, int step) {
         this.slot = slot;
@@ -42,10 +42,10 @@ public class Cache2kSlot {
     }
 
     /**
-     * 根据秒数，获得最大24小时，误差step秒的无界缓存
+     * Get an unbounded cache with a max ttl of 24 hours and a precision of `step` seconds, based on `second`.
      *
      * @param second ttl
-     * @return 缓存
+     * @return the cache
      */
     @NotNull
     public Cache<Object, Object> getCache(int second) {

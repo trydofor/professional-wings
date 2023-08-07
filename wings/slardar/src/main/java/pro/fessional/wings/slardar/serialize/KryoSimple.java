@@ -59,9 +59,9 @@ public class KryoSimple {
     }
 
     /**
-     * 增加 用户Serializer，大部分Kryo自己实现了
+     * Add User Serializer, mostly implemented by Kryo itself
      *
-     * @param kryo 需要注册的类型
+     * @param kryo type to register
      * @see DefaultArraySerializers
      */
     public static void register(Kryo kryo) {

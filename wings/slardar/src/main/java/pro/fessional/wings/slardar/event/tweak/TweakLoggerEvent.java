@@ -10,12 +10,12 @@ import org.springframework.boot.logging.LogLevel;
 @Data
 public class TweakLoggerEvent {
     /**
-     * userId为Long.MAX_VALUE时，为全部用户
+     * Long.MAX_VALUE means all user
      */
     private long userId;
     /**
-     * OFF为reset设定，恢复系统原设定
-     * FATAL等同于ERROR（slf4j无fatal级别）
+     * OFF means reset setting, restores the original system settings.
+     * FATAL is equivalent to ERROR (slf4j has no fatal level)
      */
     private LogLevel level;
 }

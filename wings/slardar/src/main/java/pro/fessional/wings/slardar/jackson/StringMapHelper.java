@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * 辅助生成签名
+ * Signature generation help
  *
  * @author trydofor
  * @since 2019-12-31

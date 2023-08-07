@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.ANY;
 
 /**
- * 直接JsonFormat和DecimalFormat来格式化数字
+ * Directly use JsonFormat and DecimalFormat to format numbers
  *
  * @author trydofor
  * @since 2021-07-06
@@ -40,10 +40,6 @@ public class FormatNumberSerializer extends NumberSerializer {
     private final Map<String, DecimalFormat> poolsAuto = new ConcurrentHashMap<>();
     private final Map<String, DecimalFormat> poolsNoop = new ConcurrentHashMap<>();
 
-    /**
-     * @param rawType 类型
-     * @since 2.5
-     */
     public FormatNumberSerializer(Class<? extends Number> rawType, DecimalFormat format, Digital digital) {
         super(rawType);
         this.format = format;

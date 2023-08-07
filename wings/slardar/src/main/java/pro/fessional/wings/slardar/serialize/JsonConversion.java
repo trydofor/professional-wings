@@ -7,8 +7,11 @@ import org.springframework.core.convert.TypeDescriptor;
 import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 
 /**
- * 底层实现为FastJson，仅限于信任服务的简单类型，在非信任领域可能存在安全问题。
- * 对于有泛型的复杂类型，fastjson正确解析，此外有点注意js中number的精度问题。
+ * The underlying implementation is FastJson,
+ * which is limited to simple types of trusted services,
+ * and may have security issues in non-trusted domains.
+ * For complex types with generalizations, fastjson parses them correctly,
+ * in addition to paying more attention to the precision of number in js.
  *
  * @author trydofor
  * @since 2022-03-09

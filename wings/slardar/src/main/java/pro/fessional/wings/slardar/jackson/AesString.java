@@ -21,28 +21,28 @@ import java.lang.annotation.Target;
 @JsonDeserialize(using = AesStringDeserializer.class)
 public @interface AesString {
     /**
-     * 使用Aes的name，默认的系统的Aes
+     * The name of the Aes to use, default `system` Aes.
      */
     @NotNull
     String value() default "";
 
     /**
-     * 当value的key找不到时的策略，默认报错
+     * Misfire policy, default Error
      */
     @NotNull
     Misfire misfire() default Misfire.Error;
 
     enum Misfire {
         /**
-         * 报错
+         * throw exception
          */
         Error,
         /**
-         * 置空
+         * set empty
          */
         Empty,
         /**
-         * 以ValueMask'*****'代替
+         * set ValueMask ('*****')
          */
         Masks,
     }

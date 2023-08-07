@@ -16,9 +16,8 @@ import java.text.DecimalFormat;
 public class FastJsonFilters {
 
     /**
-     * Number类型全以String输出。
-     * 注意：序列化时支持JSONField.format作为DecimalFormat。
-     * 但是发序列化时，不支持format
+     * Number types are all output as String.
+     * Note: JSONField.format is supported as DecimalFormat for serialization, but not for deserialization.
      */
     public static final ValueFilter NumberAsString = (object, name, value) -> {
         if (value instanceof BigDecimal) {
@@ -32,9 +31,8 @@ public class FastJsonFilters {
     };
 
     /**
-     * Number类型全以String输出。
-     * 注意：序列化时支持JSONField.format作为DecimalFormat。
-     * 但是反序列化时，不支持format
+     * Number types are all output as String.
+     * Note: JSONField.format is supported as DecimalFormat for serialization, but not for deserialization.
      */
     public static final ContextValueFilter NumberFormatString = (context, object, name, value) -> {
         final JSONField anno = context.getAnnotation(JSONField.class);

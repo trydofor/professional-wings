@@ -21,7 +21,7 @@ import java.util.TreeMap;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * 只把顶层元素变成key-value的map，用来做参数签名
+ * Turn only top-level elements into key-value maps for parameter signatures
  *
  * @author trydofor
  * @since 2019-12-30
@@ -37,37 +37,28 @@ public class StringMapGenerator extends JsonGenerator {
     private String currentKey;
 
     /**
-     * 按key的ascii（unicode）的值排序
-     *
-     * @return key值排序
+     * Use TreeMap to sort key by ascii (unicode) order.
      */
     public static StringMapGenerator treeMap() {
         return new StringMapGenerator(new TreeMap<>());
     }
 
     /**
-     * 按key的顺序排序
-     *
-     * @return key顺序排序
+     * Use LinkedHashMap to sort key by insertion order.
      */
     public static StringMapGenerator linkMap() {
         return new StringMapGenerator(new LinkedHashMap<>());
     }
 
     /**
-     * 无序
-     *
-     * @return 无序
+     * Use HashMap without order
      */
     public static StringMapGenerator hashMap() {
         return new StringMapGenerator(new HashMap<>());
     }
 
     /**
-     * 用户字定义
-     *
-     * @param map 自定义map
-     * @return 字定义
+     * Use specified map
      */
     public static StringMapGenerator userMap(Map<String, String> map) {
         return new StringMapGenerator(map);

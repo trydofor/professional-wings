@@ -36,12 +36,12 @@ class AutoDtoHelperTest {
     public static final ZoneId ZONE_JP = ZoneId.of("Asia/Tokyo");
 
     /**
-     * 自动转换语言和时间，JP到CN
+     * Auto convert lange and time, JP to CN
      */
     @Test
     void autoRequest() {
         TerminalContext.Builder builder = new TerminalContext.Builder()
-                .locale(Locale.CHINA)
+                .locale(Locale.ENGLISH)
                 .timeZone(ZONE_JP)
                 .terminal(TerminalAddr, "localhost")
                 .terminal(TerminalAgent, "SpringTest")
@@ -69,10 +69,10 @@ class AutoDtoHelperTest {
         final List<I18nString> in1 = it.i18nStringList;
         Assertions.assertSame(in, in1);
 
-        Assertions.assertEquals("{0} 不能为空", it1.i18nCode);
-        Assertions.assertEquals("{0} 不能为空", it1.i18nCodeList.get(0));
-        Assertions.assertEquals("User 不能为空", it1.i18nString.toString());
-        Assertions.assertEquals("Name 不能为空", it1.i18nStringList.get(0).toString());
+        Assertions.assertEquals("{0} can not be empty", it1.i18nCode);
+        Assertions.assertEquals("{0} can not be empty", it1.i18nCodeList.get(0));
+        Assertions.assertEquals("User can not be empty", it1.i18nString.toString());
+        Assertions.assertEquals("Name can not be empty", it1.i18nStringList.get(0).toString());
 
         final LocalDateTime sldt = LocalDateTime.of(2022, 10, 10, 11, 34, 56);
         Assertions.assertEquals(sldt, it.getLocalDateTime());
@@ -83,7 +83,7 @@ class AutoDtoHelperTest {
     }
 
     /**
-     * 自动转换语言和时间，CN到JP
+     * Auto convert lange and time, CN to JP
      */
     @Test
     void autoResponse() {

@@ -115,7 +115,7 @@ public class SlardarCacheConfiguration {
                 resolverMap.put(en.getKey(), en.getValue().getCacheManager());
             }
 
-            // 动态注册Bean，cacheResolver
+            // Dynamic register Bean cacheResolver
             for (Map.Entry<String, CacheManager> en : managers.entrySet()) {
                 final String key = en.getKey() + WingsCache.Resolver.Suffix;
                 final CacheManager cm = en.getValue();

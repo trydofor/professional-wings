@@ -11,12 +11,13 @@ import java.util.concurrent.Executor;
 
 /**
  * <pre>
- * ApplicationEventPublisher辅助类。一般用于非事务Event处理，主要功能：
- * ①异步发布。
- * ②IDE提示导航。
- * ③hazelcast的topic(#HazelcastTopic)按SpringEvent模式。
+ * ApplicationEventPublisher helper. Generally used for non-transactional Event, the main function:
+ * (1) async publish event
+ * (2) IDE hit and navigation
+ * (3) wrap hazelcast topic(#HazelcastTopic) to SpringEvent
  *
- * 注意，不要为ApplicationEventMulticaster变为异步，或处理异常，会破坏Spring默认的同步机制。
+ * Note, do NOT use ApplicationEventMulticaster in async, or handle exception,
+ * that would break Spring's default synchronization mechanism.
  * </pre>
  *
  * @author trydofor
@@ -30,18 +31,19 @@ import java.util.concurrent.Executor;
 public class EventPublishHelper {
 
     /**
-     * ApplicationEventPublisher 的封装，默认sync，建议不要修改
+     * Wrapper of ApplicationEventPublisher, default sync, Recommended not to modify.
      */
     public static final ApplicationEventPublisher SyncSpring = new SyncPub();
 
     /**
-     * 使用Executor(默认SLARDAR_EVENT_EXECUTOR)包装的异步无序ApplicationEventPublisher
+     * Async and unordered ApplicationEventPublisher wrapped with Executor (default SLARDAR_EVENT_EXECUTOR)
      */
     public static final ApplicationEventPublisher AsyncSpring = new AsyncPub();
 
     /**
-     * 包装Hazelcast的(HazelcastTopic)topic转成SpringEvent。
-     * 默认异步无序, fire and forget。若需要有序，自行设置globalOrderEnabled=true
+     * Wrap Hazelcast (HazelcastTopic)topic to SpringEvent.
+     * fire and forget, async and unordered by default.
+     * If the event needs to be ordered, set globalOrderEnabled=true.
      *
      * @see #hasAsyncGlobal
      */

@@ -1,6 +1,10 @@
 package pro.fessional.wings.slardar.fastjson;
 
-import com.alibaba.fastjson2.*;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONFactory;
+import com.alibaba.fastjson2.JSONReader;
+import com.alibaba.fastjson2.JSONWriter;
+import com.alibaba.fastjson2.TypeReference;
 import com.alibaba.fastjson2.filter.Filter;
 import com.alibaba.fastjson2.reader.ObjectReaderProvider;
 import org.jetbrains.annotations.Contract;
@@ -16,8 +20,9 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * FastJson的工具类，不推荐在复杂类型中使用，兼容性问题较大，推荐是用JacksonHelper
+ * FastJson Util, not recommended for use in complex types.
  *
+ * @see pro.fessional.wings.slardar.jackson.JacksonHelper
  * @author trydofor
  * @since 2022-04-22
  */
@@ -26,9 +31,7 @@ public class FastJsonHelper {
     private static final ConcurrentHashMap<Object, Boolean> Inited = new ConcurrentHashMap<>();
 
     /**
-     * 初始或移除全局的默认配置
-     *
-     * @param init 初始还是移除
+     * init or remove the global default setting
      */
     public static void initGlobal(boolean init) {
         final ObjectReaderProvider readerProvider = JSONFactory.getDefaultObjectReaderProvider();
@@ -56,7 +59,7 @@ public class FastJsonHelper {
     );
 
     /**
-     * 添加或移除默认的Feature
+     * enable/disable the Feature
      */
     public void enableFeature(@NotNull JSONReader.Feature f, boolean enable) {
         synchronized (ReaderEnum) {
@@ -90,7 +93,7 @@ public class FastJsonHelper {
     );
 
     /**
-     * 添加或移除默认的Feature
+     * enable/disable the Feature
      */
     public void enableFeature(@NotNull JSONWriter.Feature f, boolean enable) {
         synchronized (WriterEnum) {
@@ -125,10 +128,10 @@ public class FastJsonHelper {
     private static Filter[] FilterCache = null;
 
     /**
-     * 添加或删除默认的Filter，按添加顺序排序。
+     * enable/disable the Filter by name, sort by adding order
      *
-     * @param name   名字
-     * @param filter null时remove，否则put
+     * @param name   filter name
+     * @param filter `null` to disable, otherwise to enable
      */
     public static void enableFilter(@NotNull String name, @Nullable Filter filter) {
         synchronized (FilterList) {
@@ -155,7 +158,7 @@ public class FastJsonHelper {
     ////
 
     /**
-     * 采用wings约定反序列化
+     * Deserialization with the wings convention
      */
     @Contract("!null,_->!null")
     public static <T> T object(@Nullable String json, @NotNull ResolvableType targetType) {
@@ -164,7 +167,7 @@ public class FastJsonHelper {
     }
 
     /**
-     * 采用wings约定反序列化
+     * Deserialization with the wings convention
      */
     @Contract("!null,_->!null")
     public static <T> T object(@Nullable String json, @NotNull TypeDescriptor targetType) {
@@ -173,7 +176,7 @@ public class FastJsonHelper {
     }
 
     /**
-     * 采用wings约定反序列化
+     * Deserialization with the wings convention
      */
     @Contract("!null,_->!null")
     public static <T> T object(@Nullable String json, @NotNull TypeReference<T> targetType) {
@@ -182,7 +185,7 @@ public class FastJsonHelper {
     }
 
     /**
-     * 采用wings约定反序列化
+     * Deserialization with the wings convention
      */
     @Contract("!null,_->!null")
     public static <T> T object(@Nullable String json, @NotNull Type targetType) {
@@ -191,7 +194,7 @@ public class FastJsonHelper {
     }
 
     /**
-     * 采用wings约定反序列化
+     * Deserialization with the wings convention
      */
     @Contract("!null,_->!null")
     public static <T> T object(@Nullable String json, @NotNull Class<T> targetType) {
@@ -200,7 +203,9 @@ public class FastJsonHelper {
     }
 
     /**
-     * 采用wings约定序列化，尽可能以字符串输出，保证数据精度，但不影响Java类型反解析
+     * Serialization using the wings convention,
+     * output as string wherever possible to ensure data precision,
+     * but not affecting Java type inverse parsing
      */
     @Contract("!null->!null")
     public static String string(@Nullable Object obj) {

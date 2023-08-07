@@ -109,7 +109,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
          -H 'Content-Type: application/json' \
          -d '
          {"msgtype":"markdown","markdown":{
-             "title":"杭州天气",
+             "title":"HangZhou",
              "text": " \n"
          },"at":{"isAtAll":true}}'
          */
@@ -173,7 +173,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
     /**
      * {
      * "text": {
-     * "content":"我就是我, @XXX 是不一样的烟火"
+     * "content":"I am who I am, @XXX a different kind of firework."
      * },
      * "msgtype":"text",
      * "at": {
@@ -197,8 +197,8 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
      * {
      * "msgtype": "markdown",
      * "markdown": {
-     * "title":"杭州天气",
-     * "text": "#### 杭州天气 @150XXXXXXXX \n > 9度，西北风1级，空气良89，相对温度73%\n > ![screenshot](https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png)\n > ###### 10点20分发布 [天气](https://www.dingtalk.com) \n"
+     * "title":"Hangzhou Weather",
+     * "text": "#### Hangzhou Weather @150XXXXXXXX \n > northwest wind force 1\n > ![screenshot](https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png)\n > ###### 10:20 [weather](https://www.dingtalk.com) \n"
      * }
      * }
      * </pre>
@@ -236,7 +236,7 @@ public class DingTalkNotice implements SmallNotice<DingTalkConf>, InitializingBe
             }
         }
 
-        return buff.length() == 0 ? main : buff.toString();
+        return buff.isEmpty() ? main : buff.toString();
     }
 
     private void buildNotice(DingTalkConf conf, JsonTemplate.Obj obj) {

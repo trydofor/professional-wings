@@ -6,10 +6,9 @@ import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * 自动完成基于Header Token验证功能的Client，比如Oauth2
- * <p>
- * 采用继承的方式实现，因为Interceptor及Authenticator方式不够轻便
- * <a href="https://medium.com/@sumon.v0.0/okhttp-how-to-refresh-access-token-efficiently-6dece4d271c0">okhttp-how-to-refresh-access-token-efficiently</a>
+ * Clients that auto send Header Token-based authentication, such as Oauth2.
+ * Implements Call.Factory, because the Interceptor and Authenticator are not lightweight enough.
+ * See <a href="https://medium.com/@sumon.v0.0/okhttp-how-to-refresh-access-token-efficiently-6dece4d271c0">okhttp-how-to-refresh-access-token-efficiently</a>
  *
  * @author trydofor
  * @since 2022-11-25
@@ -78,18 +77,18 @@ public class OkHttpTokenClient implements Call.Factory, OkHttpBuildableClient {
 
     public interface Tokenize {
         /**
-         * 是否需要设置token
+         * Whether to need token
          */
         boolean needToken(@NotNull Request request);
 
         /**
-         * 设置有效的token，一般在header。
-         * false表示token无效，应该尝试init
+         * Set a valid token, usually in the header.
+         * `false` means the token is not valid, should try init
          */
         boolean fillToken(Request.Builder builder);
 
         /**
-         * 尝试获取有效token
+         * try init token
          */
         boolean initToken(@NotNull Call.Factory callFactory);
     }

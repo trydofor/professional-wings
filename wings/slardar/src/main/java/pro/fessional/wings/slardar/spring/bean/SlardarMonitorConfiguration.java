@@ -21,7 +21,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.unit.DataSize;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.monitor.MonitorTask;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.monitor.metric.JvmMetric;
@@ -30,6 +29,7 @@ import pro.fessional.wings.slardar.monitor.report.DingTalkReport;
 import pro.fessional.wings.slardar.notice.DingTalkNotice;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarMonitorProp;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.io.File;
 import java.util.Map;
@@ -75,7 +75,7 @@ public class SlardarMonitorConfiguration {
         return bean;
     }
 
-    // 动态注册Bean，LogMetric
+    // Dynamic register Bean LogMetric
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnExpression("${" + SlardarEnabledProp.Key$monitor + ":false} && ${" + SlardarEnabledProp.Key$monitorLog + ":false}")
     @ComponentScan(basePackageClasses = MonitorTask.class)

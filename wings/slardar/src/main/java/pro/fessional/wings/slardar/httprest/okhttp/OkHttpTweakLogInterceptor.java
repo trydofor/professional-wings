@@ -24,10 +24,12 @@ import static org.springframework.boot.logging.LogLevel.TRACE;
 import static org.springframework.boot.logging.LogLevel.WARN;
 
 /**
- * 关联日志级别
+ * <pre>
+ * Default mapping of Log-level and data-level
  * DEBUG- : BODY
  * INFO : BASIC
  * WARN+ : NONE
+ * </pre>
  *
  * @author trydofor
  * @since 2022-11-01
@@ -48,10 +50,7 @@ public class OkHttpTweakLogInterceptor implements OkHttpInterceptor {
     }
 
     /**
-     * 改变映射关系，如 DEBUG - BODY
-     *
-     * @param lg 日志级别
-     * @param ok 请求日志级别
+     * Change the mapping to Log-level and data-level, e.g. DEBUG - BODY
      */
     public void levelMapping(@NotNull LogLevel lg, @NotNull Level ok) {
         final HttpLoggingInterceptor.Logger okl;
@@ -71,10 +70,7 @@ public class OkHttpTweakLogInterceptor implements OkHttpInterceptor {
     }
 
     /**
-     * 重置映射关系，默认关系
-     * DEBUG- : BODY
-     * INFO : BASIC
-     * WARN+ : NONE
+     * reset to the default mapping
      */
     public void resetMapping() {
         HttpLoggingInterceptor none = new HttpLoggingInterceptor(LoggerWarn);

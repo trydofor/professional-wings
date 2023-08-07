@@ -12,10 +12,12 @@ import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.text.WhiteUtil;
 
 /**
- * [XML limitation](https://github.com/FasterXML/jackson-dataformat-xml#known-limitations)
- * 常见的有：
- * ①单个元素的节点，XML不能区分是单值还是数组中只有一个值，除非嵌套了wrap。
- * ②Xml无法识别数据类型，而Json有string,number,boolean,object,array
+ * <pre>
+ * <a href="https://github.com/FasterXML/jackson-dataformat-xml#known-limitations">XML limitation</a>
+ * The common uses are:
+ * (1) single element node, XML can not distinguish between a single value or only one value in the array, unless nested wrap.
+ * (2) Xml can not recognize the data type, while Json has string, number, boolean, object, array
+ * </pre>
  *
  * @author trydofor
  * @since 2022-11-05
@@ -29,10 +31,10 @@ public class JacksonHelper {
     private static XmlMapper XmlWings = XmlPlain;
 
     /**
-     * 初始化Wings配置的ObjectMapper
+     * Init the ObjectMapper for Wings configuration
      *
-     * @param jsonMapper 负责json
-     * @param xmlMapper  负责xml
+     * @param jsonMapper handle json
+     * @param xmlMapper  handle xml
      */
     public static void initGlobal(ObjectMapper jsonMapper, XmlMapper xmlMapper) {
         if (jsonMapper != null) {
@@ -61,7 +63,7 @@ public class JacksonHelper {
     }
 
     /**
-     * 根据text是否有xml特征，自动选择Wings读取Xml/Json
+     * Auto read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
     @Contract("!null,_->!null")
@@ -75,7 +77,7 @@ public class JacksonHelper {
     }
 
     /**
-     * 根据text是否有xml特征，自动选择Wings读取Xml/Json
+     * Auto read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
     @Contract("!null,_->!null")
@@ -89,7 +91,7 @@ public class JacksonHelper {
     }
 
     /**
-     * 根据text是否有xml特征，自动选择Wings读取Xml/Json
+     * Auto read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
     @Contract("!null,_->!null")
@@ -103,7 +105,7 @@ public class JacksonHelper {
     }
 
     /**
-     * 根据text是否有xml特征，自动选择Wings读取Xml/Json
+     * Auto read text to object, if text asXml, read as xml, otherwise as json
      */
     @SneakyThrows
     @Contract("!null->!null")
@@ -117,7 +119,7 @@ public class JacksonHelper {
     }
 
     /**
-     * str是否具有xml特征，即，首尾的字符是否为尖角括号
+     * whether `str` has xml characteristics, i.e. the first and last characters are angle brackets or not
      */
     public static boolean asXml(@Nullable String str) {
         if (str == null) return false;
@@ -152,7 +154,8 @@ public class JacksonHelper {
     }
 
     /**
-     * 采用wings约定序列化(json)，尽可能以字符串输出
+     * Serialization (json) using the wings convention,
+     * output as string wherever possible to ensure data precision
      */
     @SneakyThrows
     @Contract("!null->!null")
@@ -161,7 +164,8 @@ public class JacksonHelper {
     }
 
     /**
-     * 采用wings约定序列化(json或xml)，尽可能以字符串输出
+     * Serialization (json or xml) using the wings convention,
+     * output as string wherever possible to ensure data precision
      */
     @SneakyThrows
     @Contract("!null,_->!null")

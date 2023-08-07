@@ -61,8 +61,8 @@ class JsonConversionTest {
     void convert() {
         Dto dto = new Dto();
         Map<String, String> map = new HashMap<>();
-        map.put("one", "一");
-        map.put("tow", "二");
+        map.put("one", "1");
+        map.put("two", "2");
         List<String> lst = new ArrayList<>();
         lst.add("Mon");
         lst.add("Tur");

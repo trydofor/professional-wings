@@ -30,7 +30,7 @@
         },
         {
           "value": "session",
-          "description": "session，10 minutes."
+          "description": "session, 10 minutes."
         }
       ]
     },

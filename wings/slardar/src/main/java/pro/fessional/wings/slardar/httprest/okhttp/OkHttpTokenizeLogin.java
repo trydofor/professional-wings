@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import pro.fessional.wings.slardar.jackson.JacksonHelper;
 
 /**
- * 传统的Form登录
+ * Traditional Post-Form Login
  *
  * @author trydofor
  * @since 2022-11-26
@@ -25,39 +25,40 @@ import pro.fessional.wings.slardar.jackson.JacksonHelper;
 public class OkHttpTokenizeLogin implements OkHttpTokenClient.Tokenize {
 
     /**
-     * 登录用户的参数名
+     * Parameter name of username.
      */
     private String keyUsername = "username";
     /**
-     * 登录密码的参数名
+     * Parameter name of password.
      */
     private String keyPassword = "password";
     /**
-     * 解析token时，使用的key，默认等于headerAuth
+     * The key used when parsing the token, which by default is equal to headerAuth
      */
     private String keyToken;
 
     /**
-     * 登录网址
+     * Url to login
      */
     private String loginUrl;
     /**
-     * 登录的用户名
+     * login username
      */
     private String username;
     /**
-     * 登录的密码
+     * login password
      */
     private String password;
 
     /**
-     * 设置token的header名。注意不是cookie，cookie会按cookie自动完成
+     * Set the header name of token. Note, it's not a cookie, cookie will be auto-completed
      */
     private String headerAuth;
 
     /**
-     * 是否为自动的Cookie模式，默认false。
-     * true时，仅401进行login，而其他动作交给cookie机制处理
+     * Whether to use auto cookie mode, default false.
+     * If true, do auto login only if only response is 401,
+     * other actions are handled by the cookie mechanism.
      */
     private boolean cookieAuto = false;
 
