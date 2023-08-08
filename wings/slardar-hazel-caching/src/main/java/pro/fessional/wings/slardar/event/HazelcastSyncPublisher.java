@@ -14,9 +14,9 @@ import static pro.fessional.wings.slardar.constants.HazelcastConst.TopicApplicat
 
 /**
  * ApplicationEventPublisher is a helper. Generally used for non-transactional Event processing, with the following main functions:
- * ① Asynchronous publishing.
- * ② IDE prompt navigation.
- * ③ Hazelcast topic (#HazelcastTopic) in the SpringEvent pattern.
+ * (1) Asynchronous publishing.
+ * (2) IDE prompt navigation.
+ * (3) Hazelcast topic (#HazelcastTopic) in the SpringEvent pattern.
  *
  * @author trydofor
  * @see pro.fessional.wings.slardar.constants.HazelcastConst#TopicApplicationEvent
