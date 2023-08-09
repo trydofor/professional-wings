@@ -44,8 +44,8 @@ public class TestSecurityConfiguration {
                     .permitTest()
             )
             .bindLogin(conf -> conf
-                    .loginPage("/user/login.json") // 无权限时返回的页面，
-                    .loginProcessingUrl("/*/login-proc.json") // filter处理，不需要controller
+                    .loginPage("/user/login.json")
+                    .loginProcessingUrl("/*/login-proc.json")
                     .usernameParameter("username")
                     .passwordParameter("password")
                     .successHandler((request, response, authentication) -> log.info("successHandler"))
@@ -57,8 +57,8 @@ public class TestSecurityConfiguration {
                     .requestMatchers("/authed/*").authenticated()
             )
 //            .formLogin(conf -> conf
-//                    .loginPage("/user/login.json") // 无权限时返回的页面，
-//                    .loginProcessingUrl("/user/login-proc.json") // filter处理，不需要controller
+//                    .loginPage("/user/login.json")
+//                    .loginProcessingUrl("/user/login-proc.json")
 //                    .usernameParameter("username")
 //                    .passwordParameter("password")
 //                    .successHandler(testLoginHandler.loginSuccess)

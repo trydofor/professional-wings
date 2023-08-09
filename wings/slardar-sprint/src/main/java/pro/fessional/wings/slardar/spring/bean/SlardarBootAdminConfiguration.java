@@ -29,12 +29,12 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
 import pro.fessional.wings.slardar.monitor.report.DingTalkReport;
 import pro.fessional.wings.slardar.security.pass.BasicPasswordEncoder;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarPasscoderProp;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -57,10 +57,13 @@ public class SlardarBootAdminConfiguration {
     @ConditionalOnClass(BlockingRegistrationClient.class)
     @ConditionalOnExpression("${" + SlardarEnabledProp.Key$bootAdmin + ":false} && ${spring.boot.admin.client.enabled:false}")
     public static class ClientConfiguration {
-        /*
+        /**
+         * <pre>
          * org.apache.http.client.protocol.ResponseProcessCookies : Invalid cookie header: "Set-Cookie: ...".
          * Invalid 'expires' attribute: Sat, 19 Mar 2022 06:03:21 GMT
-         * 因其默认采用 'EEE, dd-MMM-yy HH:mm:ss z'格式验证cookie，导致不能保持session
+          *
+         * As it use 'EEE, dd-MMM-yyy HH:mm:ss z' format to validate cookie, cause faile
+         * </pre>
          */
         @Bean
         @Conditional(SpringBootAdminClientEnabledCondition.class)

@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 同 FormLoginConfigurer（final无法继承）
+ * Same as FormLoginConfigurer (for can not extend `final`)
  *
  * @author trydofor
  * @since 2021-02-07
