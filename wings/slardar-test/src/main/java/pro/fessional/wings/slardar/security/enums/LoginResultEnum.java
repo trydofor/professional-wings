@@ -8,8 +8,8 @@ import pro.fessional.mirana.data.CodeEnum;
  * @since 2021-02-01
  */
 public enum LoginResultEnum implements CodeEnum {
-    Success("200", "登录成功"),
-    Failure("401", "登录失败");
+    Success("200", "Login Success"),
+    Failure("401", "Login Failure");
 
     private final String code;
     private final String hint;

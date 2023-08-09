@@ -8,8 +8,8 @@ import pro.fessional.mirana.data.CodeEnum;
  * @since 2021-02-01
  */
 public enum LoginTypeEnum implements CodeEnum {
-    User("200", "用户名密码"),
-    Sms("401", "短信验证码");
+    User("200", "Password"),
+    Sms("401", "Sms Code");
 
     private final String code;
     private final String hint;
