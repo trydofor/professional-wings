@@ -22,7 +22,7 @@ import java.util.TreeMap;
         "wings.slardar.ding-notice.default.access-token=${DING_TALK_TOKEN:}",
         "wings.slardar.ding-notice.default.notice-mobiles.god9=155XXXX1991",
 })
-@Disabled("钉钉通知，避免频繁调用")
+@Disabled("Avoid frequent calls")
 class DingTalkReportTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -49,8 +49,8 @@ class DingTalkReportTest {
     void postNotice() {
         final DingTalkConf conf = dingTalkNotice.provideConfig("monitor", true);
         conf.setNoticeMobiles(Map.of("a9", "155XXXX1992"));
-        dingTalkNotice.post(conf, "MARKDOWN标题", "## 测试正文\n\n- **列表** 正常");
+        dingTalkNotice.post(conf, "MARKDOWN Title", "## Test context\n\n- **List** Text");
         conf.setMsgType(DingTalkConf.MsgText);
-        dingTalkNotice.post(conf, "文本标题", "## 测试正文\n\n- **列表** 正常");
+        dingTalkNotice.post(conf, "Text Title", "## Test context\n\n- **List** Text");
     }
 }

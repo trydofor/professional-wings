@@ -26,9 +26,22 @@ import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
 import pro.fessional.wings.slardar.autozone.AutoZoneType;
-import pro.fessional.wings.slardar.autozone.json.*;
-import pro.fessional.wings.slardar.jackson.*;
+import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateDeserializer;
+import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeDeserializer;
+import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeSerializer;
+import pro.fessional.wings.slardar.autozone.json.JacksonLocalTimeDeserializer;
+import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeDeserializer;
+import pro.fessional.wings.slardar.autozone.json.JacksonOffsetDateTimeSerializer;
+import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeDeserializer;
+import pro.fessional.wings.slardar.autozone.json.JacksonZonedDateTimeSerializer;
+import pro.fessional.wings.slardar.jackson.AutoRegisterPropertyFilter;
+import pro.fessional.wings.slardar.jackson.EmptyValuePropertyFilter;
+import pro.fessional.wings.slardar.jackson.FormatNumberSerializer;
 import pro.fessional.wings.slardar.jackson.FormatNumberSerializer.Digital;
+import pro.fessional.wings.slardar.jackson.I18nResultPropertyFilter;
+import pro.fessional.wings.slardar.jackson.I18nStringSerializer;
+import pro.fessional.wings.slardar.jackson.JacksonHelper;
+import pro.fessional.wings.slardar.jackson.ResourceSerializer;
 import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarJacksonProp;
@@ -38,7 +51,11 @@ import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -65,10 +82,10 @@ public class SlardarJacksonWebConfiguration {
     private final MessageSource messageSource;
 
     /**
-     * The context’s Jackson2ObjectMapperBuilder can be customized by one or more
+     * The context's Jackson2ObjectMapperBuilder can be customized by one or more
      * Jackson2ObjectMapperBuilderCustomizer beans. Such customizer beans can be ordered
-     * (Boot’s own customizer has an order of 0), letting additional
-     * customization be applied both before and after Boot’s customization.
+     * (Boot's own customizer has an order of 0), letting additional
+     * customization be applied both before and after Boot's customization.
      * <p>
      * If you provide any @Beans of type MappingJackson2HttpMessageConverter,
      * they replace the default value in the MVC configuration. Also,

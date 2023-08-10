@@ -29,7 +29,7 @@ public interface RetrofitCaller {
 
     @Data
     class Bad {
-        @JSONField(name = "sstr") // 增加注解，使fastjson和jackson兼容
+        @JSONField(name = "sstr") // annotation to make fastjson and jackson compatible
         private String sStr; // bad naming
         private String ssStr;
     }
@@ -46,12 +46,12 @@ public interface RetrofitCaller {
     @POST("/test/rest-template-helper-file.htm")
     Call<ResponseBody> upload(@Part MultipartBody.Part up);
 
-    // 官方issue，没有提供固定name的动态文件名的强类型方案，
-    // MultipartBody.Part 属于动态name，破坏了retrofit2的注解约定
+    // Official issue, there is no strongly typed scheme for dynamic filenames with fixed names.
+    // MultipartBody.Part is a dynamic name, breaking the annotation convention of retrofit2
     // https://github.com/square/retrofit/issues/1063
     // https://github.com/square/retrofit/issues/1140
     // https://github.com/square/retrofit/pull/1188
-    // RequestFactory 构造header的不推荐的hack技巧
+    // RequestFactory, not recommended to use hack trick for constructing headers
     @Multipart
     @POST("/test/rest-template-helper-file.htm")
     Call<ResponseBody> upload(@Part("up\"; filename=\"test.txt") RequestBody up);

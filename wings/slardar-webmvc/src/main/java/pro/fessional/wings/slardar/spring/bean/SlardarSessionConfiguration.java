@@ -13,7 +13,11 @@ import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.boot.web.servlet.server.Session.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.session.web.http.*;
+import org.springframework.session.web.http.CookieHttpSessionIdResolver;
+import org.springframework.session.web.http.CookieSerializer;
+import org.springframework.session.web.http.DefaultCookieSerializer;
+import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
+import org.springframework.session.web.http.HttpSessionIdResolver;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.best.AssertArgs;
 import pro.fessional.wings.slardar.session.WingsSessionIdResolver;
@@ -25,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 通过 session-hazelcast.xml 配置好 spring session用的map，主要是index和serial
+ * Configure the IMap for spring session via session-hazelcast.xml, mainly index and serial.
  * <a href="https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/#web.spring-session">Spring Session</a>
  * <a href="https://docs.spring.io/spring-session/reference/spring-security.html">spring-security</a>
  * <a href="https://docs.hazelcast.com/tutorials/spring-session-hazelcast">spring-session-hazelcast</a>

@@ -66,7 +66,7 @@ public class SlardarTerminalConfiguration {
                            .user(userId);
                 }
                 else {
-                    // 默认值的优先级最低
+                    // The default value has the lowest priority
                     TimeZoneAwareLocaleContext locale = resolver.resolveI18nContext(request, null);
                     builder.localeIfAbsent(locale.getLocale())
                            .timeZoneIfAbsent(locale.getTimeZone())

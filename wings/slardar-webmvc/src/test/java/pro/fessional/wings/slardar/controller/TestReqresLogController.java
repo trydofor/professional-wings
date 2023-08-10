@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 手动看日志，reqres-log.http，或swagger
+ * Manually check the log, reqres-log.http, or swagger
  *
  * @author trydofor
  * @since 2021-02-01

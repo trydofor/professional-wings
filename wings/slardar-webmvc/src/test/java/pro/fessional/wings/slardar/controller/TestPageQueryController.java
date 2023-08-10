@@ -49,14 +49,14 @@ public class TestPageQueryController {
 
     @RequestMapping({"/test/page-request-3.html"})
     @ResponseBody
-    // 不能享有 别名加持，仅Jackson转换
+    // no alias enchantment, Jackson conversion only.
     public Ins pageQuery3(@RequestBody Ins ins) {
         return ins;
     }
 
     @RequestMapping({"/test/page-request-4.html"})
     @ResponseBody
-    // MessageConvertor无法处理 @PageDefault
+    // MessageConvertor can NOT handle @PageDefault
     public Ins pageQuery4(@RequestBody @PageDefault(size = 22, page = 2) Ins ins) {
         return ins;
     }

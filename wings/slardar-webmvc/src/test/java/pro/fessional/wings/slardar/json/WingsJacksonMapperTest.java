@@ -180,7 +180,7 @@ public class WingsJacksonMapperTest {
         @JsonFormat(pattern = DateTimePattern.PTN_FULL_23Z)
         private ZonedDateTime zonedDateTimeValZ = zonedDateTimeVal.withZoneSameInstant(userTz.toZoneId());
         private Instant instantVal = Instant.parse("2020-06-01T12:34:46.000Z");
-        private List<String> listVal = Arrays.asList("字符串", "列表");
+        private List<String> listVal = Arrays.asList("String", "List");
         private Map<String, Long> mapVal = new HashMap<>() {{put("Map", 1L);}};
         // empty
         private LocalDateTime localDateTimeEmpty = LocalDateTime.parse("1970-01-01T00:00:00");
@@ -235,20 +235,20 @@ public class WingsJacksonMapperTest {
     @Data
     @XmlRootElement
     public static class I18nJson {
-        @AutoI18nString // 有效
+        @AutoI18nString // valid
         private String codeManual = "base.not-empty";
         private String codeIgnore = "base.not-empty";
-        // 自动
+        // auto
         private I18nString textAuto = new I18nString("base.not-empty", "", "textAuto");
-        @AutoI18nString(false) //禁用
+        @AutoI18nString(false) // disable
         private I18nString textDisabled = new I18nString("base.not-empty", "", "textDisabled");
-        @AutoI18nString // 无效
+        @AutoI18nString // invalid
         private Long longIgnore = 0L;
-        @AutoI18nString // 无效
+        @AutoI18nString // invalid
         private Map<String, String> mapIgnore = Collections.singletonMap("ikey", "ival");
-        @AutoI18nString(false) //禁用
+        @AutoI18nString(false) //disable
         private Map<String, I18nString> mapDisabled = Collections.singletonMap("i18n", textDisabled);
-        // 自动
+        // auto
         private Map<String, I18nString> mapAuto = Collections.singletonMap("i18n", textAuto);
     }
 
@@ -257,12 +257,12 @@ public class WingsJacksonMapperTest {
     public void testI18nResult() throws IOException {
         ObjectWriter jackson = objectMapper.writerWithDefaultPrettyPrinter();
 
-        R<I18nJson> r1 = R.ok("这是一个消息", new I18nJson());
+        R<I18nJson> r1 = R.ok("This is a message", new I18nJson());
         String j1 = jackson.writeValueAsString(r1);
         assertEquals("""
                 {
                   "success" : true,
-                  "message" : "这是一个消息",
+                  "message" : "This is a message",
                   "data" : {
                     "codeManual" : "{0} can not be empty",
                     "codeIgnore" : "base.not-empty",
@@ -289,12 +289,12 @@ public class WingsJacksonMapperTest {
                   }
                 }""", j1);
 
-        R<I18nJson> r2 = r1.setI18nMessage("base.not-empty", "第一个参数");
+        R<I18nJson> r2 = r1.setI18nMessage("base.not-empty", "Param1");
         String j2 = jackson.writeValueAsString(r2);
         assertEquals("""
                 {
                   "success" : true,
-                  "message" : "第一个参数 can not be empty",
+                  "message" : "Param1 can not be empty",
                   "data" : {
                     "codeManual" : "{0} can not be empty",
                     "codeIgnore" : "base.not-empty",
@@ -375,8 +375,8 @@ public class WingsJacksonMapperTest {
                                 <zonedDateTimeValZ>2020-06-01 13:34:46.000 +0900</zonedDateTimeValZ>
                                 <instantVal>2020-06-01T12:34:46Z</instantVal>
                                 <listVal>
-                                  <listVal>字符串</listVal>
-                                  <listVal>列表</listVal>
+                                  <listVal>String</listVal>
+                                  <listVal>List</listVal>
                                 </listVal>
                                 <mapVal>
                                   <Map>1</Map>
@@ -399,7 +399,7 @@ public class WingsJacksonMapperTest {
         assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, ikey=ival, longIgnore=0, textAuto=textAuto can not be empty}", t1.getResultTree()
                                                                                                                                                                                                                 .toString()
                                                                                                                                                                                                                 .trim());
-        assertEquals("{intVal=2147483646, longVal=9223372036854775806, floatVal=1.1, doubleVal=2.2, decimalVal=3.3, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, zonedDateTimeVal=2020-06-01 13:34:46 Asia/Tokyo, zonedDateTimeValV=2020-06-01 13:34:46.000 Asia/Tokyo, zonedDateTimeValZ=2020-06-01 13:34:46.000 +0900, instantVal=2020-06-01T12:34:46Z, listVal=列表, Map=1, bool-val=false}", t2.getResultTree().toString().trim());
+        assertEquals("{intVal=2147483646, longVal=9223372036854775806, floatVal=1.1, doubleVal=2.2, decimalVal=3.3, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, zonedDateTimeVal=2020-06-01 13:34:46 Asia/Tokyo, zonedDateTimeValV=2020-06-01 13:34:46.000 Asia/Tokyo, zonedDateTimeValZ=2020-06-01 13:34:46.000 +0900, instantVal=2020-06-01T12:34:46Z, listVal=List, Map=1, bool-val=false}", t2.getResultTree().toString().trim());
     }
 
     @Test
@@ -413,9 +413,9 @@ public class WingsJacksonMapperTest {
         Map<String, String> x2 = StringMapHelper.jaxb(jsonIt);
 
         assertEquals("{code=base.not-empty, codeIgnore=base.not-empty, codeManual={0} can not be empty, hint=, i18n=textAuto can not be empty, ikey=ival, longIgnore=0, textAuto=textAuto can not be empty}", j1.toString());
-        assertEquals("{Map=1, bool-val=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, instantVal=2020-06-01T12:34:46Z, intVal=2147483646, listVal=列表, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, longVal=9223372036854775806, zonedDateTimeVal=2020-06-01 13:34:46 Asia/Tokyo, zonedDateTimeValV=2020-06-01 13:34:46.000 Asia/Tokyo, zonedDateTimeValZ=2020-06-01 13:34:46.000 +0900}", j2.toString());
+        assertEquals("{Map=1, bool-val=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, instantVal=2020-06-01T12:34:46Z, intVal=2147483646, listVal=List, localDateTimeVal=2020-06-01 12:34:46, localDateVal=2020-06-01, localTimeVal=12:34:46, longVal=9223372036854775806, zonedDateTimeVal=2020-06-01 13:34:46 Asia/Tokyo, zonedDateTimeValV=2020-06-01 13:34:46.000 Asia/Tokyo, zonedDateTimeValZ=2020-06-01 13:34:46.000 +0900}", j2.toString());
         assertEquals("{codeIgnore=base.not-empty, codeManual=base.not-empty, key=ikey, longIgnore=0, value=ival}", x1.toString());
-        assertEquals("{boolVal=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, intVal=2147483646, key=Map, listVal=列表, longVal=9223372036854775806, value=1}", x2.toString());
+        assertEquals("{boolVal=false, decimalVal=3.3, doubleVal=2.2, floatVal=1.1, intVal=2147483646, key=Map, listVal=List, longVal=9223372036854775806, value=1}", x2.toString());
     }
 
     //

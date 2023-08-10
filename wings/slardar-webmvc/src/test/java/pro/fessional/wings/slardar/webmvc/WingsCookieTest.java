@@ -86,9 +86,9 @@ public class WingsCookieTest {
 
     @Test
     public void test2Cookie() throws Exception {
-        // 必须用 client，mock不执行
+        // Must use client, do NOT mock
         httpClient("/test/cookie-forward.json");
-        // mock mvc 并不真正执行 mapping方法
+        // mock mvc do NOT really execute the mapping method
 //        mockMvcCookie("/test/cookie-forward.json");
     }
 

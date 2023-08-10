@@ -1,7 +1,7 @@
 ### login-page
 GET {{host}}/user/login.json
 
-# wings-slardar-pass 的 复制一次，然后MD5，即md5(pass+pass)
+## repeat wings-slardar-pass and then MD5, that is md5(pass+pass)
 #
 ### login-proc
 POST {{host}}/user/login-proc.json

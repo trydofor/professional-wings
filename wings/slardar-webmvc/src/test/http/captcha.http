@@ -6,17 +6,17 @@
 # * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
 # * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
 
-# 输出 code=null
+# Output code=null
 GET {{host}}/test/captcha.json
 
-# 输出 captcha
+# Output captcha
 GET {{host}}/test/captcha.json?quest-captcha-image=12345678
 Client-Ticket:127.0.0.1
 
-### 验证码
-# 输出 captcha
+### captcha
+# Output captcha
 GET {{host}}/test/captcha.json?check-captcha-image=
 Client-Ticket:127.0.0.1
 
-# 输出 code=null
+# Output code=null
 GET {{host}}/test/captcha-30.json

@@ -31,7 +31,7 @@ public class TestJsonController {
         private String str = "string";
     }
 
-    // 继承并override
+    // extends and override
     public static class Sub extends Dec {
         @JsonFormat(pattern = "#,###.##", shape = JsonFormat.Shape.STRING)
         @Override
@@ -77,7 +77,7 @@ public class TestJsonController {
         }
     }
 
-    // 自己控制，分作不同的view
+    // Control yourself, split into different views
     @Data
     public static class Vi {
         private BigDecimal dec = new BigDecimal("12345.67");
