@@ -47,7 +47,7 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
     }
 
     /**
-     * 登录terminal，必须和logoutTerminal 以 try-finally形式出现。
+     * Login terminal, which must appear as a try-finally with logoutTerminal.
      */
     public Context loginTerminal(@NotNull HttpServletRequest request, @NotNull Builder builder) {
         try {
@@ -64,7 +64,7 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
     }
 
     /**
-     * 登出，返回之前是否成功login
+     * Logout terminal, and return whether the previous login was successful
      */
     public boolean logoutTerminal(@NotNull HttpServletRequest request) {
         if (request.getAttribute(AttrTerminalLogin) == Boolean.TRUE) {

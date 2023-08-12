@@ -42,13 +42,13 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
     private int order = OrderedSlardarConst.MvcRighterInterceptor;
 
     /**
-     * 根据 HttpSession 获得用户加密的密码
+     * Get the encryption password by HttpSession
      */
     @Setter @Getter
     private SecretProvider secretProvider = null;
 
     /**
-     * 若返回null，则使用 RighterInterceptor.Secret
+     * Use RighterInterceptor.Secret if return `null`
      */
     public interface SecretProvider extends Function<HttpSession, String> {
     }
@@ -63,7 +63,7 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
         final Righter anno = ((HandlerMethod) handler).getMethod().getAnnotation(Righter.class);
         if (anno == null) return true;
 
-        // 使用前清空
+        // Delete before use
         RighterContext.delAudit();
 
         final HttpSession session = request.getSession(false);
@@ -87,11 +87,12 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
             }
         }
 
-        // 一般只有登录用户才有权限修改，使用用户slat作为密码
+        // Generally only the login user has permission to change it,
+        // using the user slat as the password
 
         if (session == null) return true;
 
-        // 检查签名
+        // check signature
         final String key = getKey(session);
         byte[] bytes = decodeAudit(key, audit);
         if (bytes == null) {
@@ -100,7 +101,7 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
             return false;
         }
 
-        // 反序列化对象
+        // deserialize object
         try {
             final Object obj = KryoSimple.readClassAndObject(bytes);
             RighterContext.setAudit(obj);
@@ -157,9 +158,9 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
     }
 
     private String encodeAllow(String key, Object obj) {
-        // 序列化对象
+        // serialize
         final byte[] bytes = KryoSimple.writeClassAndObject(obj);
-        // 加密
+        // encrypt
         final Aes aes = genAesKey(key);
         final String b64 = Base64.encode(aes.encode(bytes));
         final String sum = MdHelp.sha1.sum(b64 + key); // 40c

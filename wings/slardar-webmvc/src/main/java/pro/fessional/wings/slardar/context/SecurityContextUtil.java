@@ -15,13 +15,15 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
+ * <pre>
  * Wrapper fo SecurityContextHolder.
- * <p>
- * 尽量在controller层使用，当异步时，context会失效。
- * 因为spring的threadlocal仅支持手动inherit。
- * <p>
- * wings中Authentication为UsernamePasswordAuthenticationToken类型；
- * details为WingsAuthDetails类型；principal为WingsUserDetails类型；
+ *
+ * Try to use it in controller layer, if in async thread, the context will fail.
+ * Because spring's threadlocal only supports manual inheritance.
+ *
+ * In wings, the Authentication is UsernamePasswordAuthenticationToken;
+ * details is WingsAuthDetails; principal is WingsUserDetails
+ * </pre>
  *
  * @author trydofor
  * @since 2019-07-09
@@ -94,7 +96,7 @@ public class SecurityContextUtil {
     }
 
     /**
-     * wings中，登录前为用户名，登录成功后为WingsUserDetails
+     * In wings, it is the username before login and WingsUserDetails after successful login.
      */
     @NotNull
     public static <T> T getPrincipal() {
@@ -113,9 +115,9 @@ public class SecurityContextUtil {
     }
 
     /**
-     * 一般为 UserDetailsService 放入的 UserDetails
+     * Generally, it is UserDetails provided by UserDetailsService
      *
-     * @param <T> UserDetails 类型
+     * @param <T> UserDetails type
      * @return UserDetails
      */
     @Nullable

@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 组合的HttpSessionIdResolver
+ * Combined HttpSessionIdResolver
  *
  * @author trydofor
  * @since 2021-02-03

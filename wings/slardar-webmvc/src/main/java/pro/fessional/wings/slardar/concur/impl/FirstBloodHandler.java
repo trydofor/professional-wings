@@ -15,20 +15,12 @@ import pro.fessional.wings.slardar.concur.FirstBlood;
 public interface FirstBloodHandler extends Ordered {
 
     /**
-     * 是否能够处理当前请求，如果accept就必须处理
-     *
-     * @param request HttpServletRequest
-     * @param anno    FirstBlood
-     * @return true 如果可以
+     * Whether the request can be handled, if accept it must be handled.
      */
     boolean accept(@NotNull HttpServletRequest request, @NotNull FirstBlood anno);
 
     /**
-     * 处理请求，告知通过验证
-     *
-     * @param request  request
-     * @param response response
-     * @return 是否通过验证
+     * Handle the request and response, return whether the Captcha is successful
      */
     boolean handle(@NotNull HttpServletRequest request,
                    @NotNull HttpServletResponse response,

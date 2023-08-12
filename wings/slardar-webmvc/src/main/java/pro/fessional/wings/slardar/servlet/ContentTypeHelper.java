@@ -7,8 +7,8 @@ import org.springframework.http.MediaType;
 import java.util.HashMap;
 
 /**
- * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
- * https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type">Content-Type</a>
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types">Common_types</a>
  *
  * @author trydofor
  * @since 2021-03-20
@@ -207,7 +207,7 @@ public class ContentTypeHelper {
     }
 
     /**
-     * 通过截断文件名中的小写扩展名获得类型。
+     * Get the type by truncating the lowercase extension in the filename.
      *
      * @param fileName `file.txt`
      * @return ContentType
@@ -219,10 +219,10 @@ public class ContentTypeHelper {
     }
 
     /**
-     * 通过截断文件名中的小写扩展名获得类型。
+     * Get the type by truncating the lowercase extension in the filename.
      *
      * @param fileName `file.txt`
-     * @param elseType 默认值，未找到时返回
+     * @param elseType else value if not found.
      * @return ContentType
      */
     @NotNull

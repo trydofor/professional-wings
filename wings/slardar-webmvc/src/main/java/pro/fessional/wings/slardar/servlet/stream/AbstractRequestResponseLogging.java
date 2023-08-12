@@ -17,8 +17,10 @@ import java.util.List;
 import java.util.function.Predicate;
 
 /**
- * Prefix - 使用特征字符，比如jvmId等。
- * Body - 需要开启流复用或缓存功能。
+ * <rpe>
+ * Prefix - feature token, such as jvmId.
+ * Body - Must enable reuse Stream or caching.
+ * </rpe>
  *
  * @author trydofor
  * @since 2022-06-07

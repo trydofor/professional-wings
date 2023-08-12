@@ -21,10 +21,7 @@ public interface RequestResponseLogging {
     }
 
     /**
-     * 日志配置，null为不记录
-     *
-     * @param req 请求
-     * @return 日志配置
+     * Get the config of request logging, `null` means no log
      */
     @Nullable
     default Conf loggingConfig(@NotNull ReuseStreamRequestWrapper req) {
@@ -32,20 +29,20 @@ public interface RequestResponseLogging {
     }
 
     /**
-     * 在doFilter之前，未执行dispatch
+     * handle log before doFilter, that do Not run `dispatch`
      *
-     * @param cnf 配置
-     * @param req 请求
+     * @param cnf the config
+     * @param req the request wrapper
      */
     default void beforeRequest(@NotNull Conf cnf, @NotNull ReuseStreamRequestWrapper req) {
     }
 
     /**
-     * 在doFilter之后，完成response，未输出到客户端
+     * handle log after doFilter, that completed response, not output to client
      *
-     * @param cnf 配置
-     * @param req 请求
-     * @param res 回复
+     * @param cnf the config
+     * @param req the request wrapper
+     * @param res the response wrapper
      */
     default void afterResponse(@NotNull Conf cnf, @NotNull ReuseStreamRequestWrapper req, @NotNull ReuseStreamResponseWrapper res) {
     }

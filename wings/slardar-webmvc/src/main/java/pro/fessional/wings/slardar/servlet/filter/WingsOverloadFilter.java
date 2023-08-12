@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 不建议使用，因实现过于简单，未考虑复杂情况。
+ * Not recommended. Implementation is too simple for complexity.
  *
  * @author trydofor
  * @since 2019-11-14
@@ -94,13 +94,13 @@ public class WingsOverloadFilter implements OrderedFilter {
             return;
         }
 
-        // 只能处理http的，目前的情况
+        // Only handle http
         final long now = ThreadNow.millis();
         final CalmDown calmDown = letCalmDown(httpReq);
 
-        // 快请求，累积后清零
+        // fast request, reset after calmdown
         if (calmDown != null) {
-            final int rqs = calmDown.heardRequest.incrementAndGet(); // 等待处理的请求
+            final int rqs = calmDown.heardRequest.incrementAndGet(); // request waiting to handle
             final boolean isCnt = rqs >= config.requestCalmdown;
             final boolean isFst = now - calmDown.firstRequest.get() < config.requestInterval;
             if (isCnt && isFst) {
@@ -111,7 +111,7 @@ public class WingsOverloadFilter implements OrderedFilter {
                     log.warn("wings-clam-request, now={}, ip={}, uri={}", rqs, calmDown.ip, httpReq.getRequestURI());
                     lastWarnSlow.put(calmDown.ip, now);
                 }
-                return; // 直接返回
+                return; //
             }
             else {
                 if (!isFst) calmDown.firstRequest.set(now);
@@ -201,13 +201,13 @@ public class WingsOverloadFilter implements OrderedFilter {
 
     //
     private CalmDown letCalmDown(HttpServletRequest httpReq) {
-        if (spiderCache == null) return null; // 不需要处理ip问题
+        if (spiderCache == null) return null; // ip without handle
 
         final String ip = terminalResolver.resolveRemoteIp(httpReq);
 
         for (String p : config.requestPermit.values()) {
             if (ip.startsWith(p) && !p.isEmpty()) {
-                return null; // 白名单，不需要处理。
+                return null; // allow list
             }
         }
 
@@ -223,12 +223,12 @@ public class WingsOverloadFilter implements OrderedFilter {
     }
 
     private void checkAndStats(HttpServletRequest request, ServletResponse response, long bgn, long end) {
-        // 只处理成功的，其他的忽略。
+        // Only handle response OK, ignore others
         if (!(response instanceof HttpServletResponse res)) return;
 
         if (res.getStatus() != 200) return;
 
-        // 慢响应
+        // slow response
         final long cost = end - bgn;
         final long warnSlow = config.responseWarnSlow;
         if (log.isWarnEnabled() && warnSlow > 0 && cost > warnSlow) {
@@ -241,7 +241,7 @@ public class WingsOverloadFilter implements OrderedFilter {
             }
         }
 
-        // 统计，已完成的请求，忽略并发误差。
+        // Statistics, completed requests, ignoring concurrency errors.
         if (responseCost.length > 0) {
             int idx = (int) (cost % costStep);
             if (idx >= responseCost.length) {

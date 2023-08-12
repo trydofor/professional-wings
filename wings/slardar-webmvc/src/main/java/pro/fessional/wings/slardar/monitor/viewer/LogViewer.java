@@ -52,13 +52,13 @@ public class LogViewer implements WarnFilter {
         this.cache = WingsCache2k.builder(LogViewer.class, "cache", 2_000, conf.getAlive(), null, String.class, String.class).build();
     }
 
-    @Operation(summary = "开启自身监控时，配合警报通知，可查看警报日志", description = """
+    @Operation(summary = "Alarm logs can be viewed in conjunction with alarm notifications when self-monitoring is enabled.", description = """
             # Usage
-            alias优先于perms检测，check失败时会自动登出logout。
+            Pass the log id to view the log.
             ## Params
-            * @param id - 日志id，最多缓存2k个，36H
+            * @param id - log id, max 2k caches in 36H
             ## Returns
-            * @return {200 | string} 对应的日志信息或empty""")
+            * @return {200 | string} log context or empty""")
     @GetMapping(value = "${" + LogConf.Key$mapping + "}")
     public void view(@RequestParam("id") String id, HttpServletResponse res) throws IOException {
         if (id == null) return;
@@ -134,7 +134,7 @@ public class LogViewer implements WarnFilter {
                     continue;
                 }
                 //
-                max -= line.length(); // 不精确计算
+                max -= line.length(); // loose calculation
                 tol++;
                 for (String s : ign) {
                     if (line.contains(s)) {

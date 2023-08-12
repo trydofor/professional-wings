@@ -14,9 +14,9 @@ import java.lang.annotation.Target;
 public @interface Righter {
 
     /**
-     * 提交方法建议true，无header时审查失败。读取方法建议false，以提供审查数据
-     *
-     * @return 是否强制验证
+     * Whether to force audit.
+     * Write method suggests true, audit fails if header is missing.
+     * Read method suggests false to provide data.
      */
     boolean value() default true;
 }

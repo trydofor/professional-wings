@@ -25,7 +25,7 @@ public interface WingsSessionHelper {
     String ExpiredKey = "WingsSession.EXPIRED";
 
     /**
-     * 返回登录用户的UserId或者DefaultUserId.Unknown
+     * Get the login UserId or DefaultUserId.Unknown
      */
     default long getUserId(@NotNull Session session) {
         final Long uid = session.getAttribute(UserIdKey);
@@ -43,7 +43,7 @@ public interface WingsSessionHelper {
     }
 
     /**
-     * 默认判断ExpiredKey是否存在bool或string类型的true
+     * Determine if ExpiredKey exists `true` value in `bool` or `String` type by default.
      */
     default boolean isExpired(@NotNull Session session) {
         final Object obj = session.getAttribute(ExpiredKey);
@@ -61,7 +61,7 @@ public interface WingsSessionHelper {
     }
 
     /**
-     * 默认获取 SPRING_SECURITY_CONTEXT_KEY内的Spring SecurityContext
+     * Get the Spring SecurityContext within SPRING_SECURITY_CONTEXT_KEY by default.
      */
     @Nullable
     default SecurityContext getSecurityContext(@NotNull Session session) {
@@ -69,13 +69,13 @@ public interface WingsSessionHelper {
     }
 
     /**
-     * 获得一个用户id下的所有用户
+     * Get all session of userId
      */
     @NotNull
     List<MapSession> findByUserId(Long userId);
 
     /**
-     * 移除session
+     * Drop the session by sessionId
      */
     boolean dropSession(String sessionId);
 }

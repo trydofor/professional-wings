@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 先调用后等待的防抖，默认同一session防抖时间内只能被执行一次。
+ * Execute first and debounce later, the same session can have only one executing call in the debouncing time.
  *
  * @author trydofor
  * @since 2022-05-29
@@ -16,52 +16,38 @@ import java.lang.annotation.Target;
 public @interface Debounce {
 
     /**
-     * 是否复用之前的请求，还是直接返回。
-     *
-     * @return 是否复用
+     * Whether to wait and reuse the previous request result or return it directly.
      */
     boolean reuse() default false;
 
     /**
-     * 防抖的等待间隔，毫秒
-     *
-     * @return 防抖间隔
+     * Interval of debounce waiting in ms
      */
     long waiting() default 500;
 
     /**
-     * 组合key中是否包含sessionId
-     *
-     * @return 是否包含
+     * Whether the combination key contains the sessionId
      */
     boolean session() default true;
 
     /**
-     * 组合key中是否包含method
-     *
-     * @return 是否包含
+     * Whether the combination key contains method
      */
     boolean method() default true;
 
     /**
-     * 组合key中是否包含querystring
-     *
-     * @return 是否包含
+     * Whether the combination key contains querystring
      */
     boolean query() default true;
 
     /**
-     * 组合key中包含的header name
-     *
-     * @return header数组
+     * Header names contained in the combination key
      */
     String[] header() default {};
 
     /**
-     * 组合key中包含的body的md5sum或length。
-     * 如果request支wings流复用，则采用md5，否则取length
-     *
-     * @return 是否包含
+     * Whether the combination key contains the md5sum or length of the body.
+     * If request support wings reuse stream, then use md5, otherwise take length
      */
     boolean body() default false;
 }

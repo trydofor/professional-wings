@@ -29,12 +29,12 @@ import static pro.fessional.wings.slardar.context.TerminalAttribute.ZoneIdByUid;
 
 /**
  * get current Locale and ZoneId in the following order:
- * ① request `WINGS.I18N_CONTEXT`
- * ② query string `locale`, `zoneid`
- * ③ http header `Accept-Language`,`Zone-Id`
- * ④ cookie `WINGS_LOCALE`, `WINGS_ZONEID`
- * ⑤ login user's SecurityContext to get Wings settings
- * ⑥ system default value
+ * (1) request `WINGS.I18N_CONTEXT`
+ * (2) query string `locale`, `zoneid`
+ * (3) http header `Accept-Language`,`Zone-Id`
+ * (4) cookie `WINGS_LOCALE`, `WINGS_ZONEID`
+ * (5) login user's SecurityContext to get Wings settings
+ * (6) system default value
  *
  * @author trydofor
  * @since 2019-06-30

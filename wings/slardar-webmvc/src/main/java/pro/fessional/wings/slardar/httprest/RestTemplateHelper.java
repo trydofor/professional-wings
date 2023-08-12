@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.InputStream;
 
 /**
- * 你搜到的大部分 post file的资料，都不标准，或不对。
+ * Do NOT use CSDN or Baidu to search for technical knowledge.
  *
  * @author trydofor
  * @since 2020-06-02

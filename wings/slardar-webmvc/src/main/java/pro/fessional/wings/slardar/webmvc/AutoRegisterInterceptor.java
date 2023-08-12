@@ -9,7 +9,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 标记接口，实现此接口的Bean，会被按order自动注册mvc环境
+ * The marker interface, the bean that implements it,
+ * will be auto registered with the mvc environment by its order.
  *
  * @author trydofor
  * @see MappedInterceptor

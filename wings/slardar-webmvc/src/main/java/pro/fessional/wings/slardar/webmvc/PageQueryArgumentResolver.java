@@ -27,7 +27,7 @@ public class PageQueryArgumentResolver implements HandlerMethodArgumentResolver 
     private String[] sortAlias = Null.StrArr;
 
     /**
-     * 精确匹配PageQuery，避免污染子类
+     * Exactly match PageQuery to avoid pollution of subclasses
      *
      * @param parameter MethodParameter
      * @return supports

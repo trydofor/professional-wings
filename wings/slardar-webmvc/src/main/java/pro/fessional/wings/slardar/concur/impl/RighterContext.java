@@ -6,9 +6,11 @@ import pro.fessional.wings.slardar.concur.RighterException;
 import java.util.function.Consumer;
 
 /**
- * 在Controller层通过interceptor，防止数据权限提升。
- * 原则是谁杀谁埋，埋点的数据会以header形式response
- * 请求编辑时，设置allow，提交修改时，检查audit
+ * <pre>
+ * In the Controller layer through the interceptor to prevent data privilege elevation.
+ * The principle is who create and who destroy, audit data will respond in the form of header.
+ * When requesting edits, set allow, and when submitting changes, check and audit.
+ * </pre>
  *
  * @author trydofor
  * @since 2021-03-27
@@ -21,7 +23,7 @@ public class RighterContext {
     private static final ThreadLocal<Object> ReqAudit = new ThreadLocal<>();
 
     /**
-     * 设置允许项，在response前由controller使用
+     * Set the `allow` items. Used in the controller, before response
      */
     public static void setAllow(Object obj) {
         final Consumer<Object> fun = ResAllow.get();
@@ -32,21 +34,21 @@ public class RighterContext {
     }
 
     /**
-     * 获得允许项，在拦截器内部使用
+     * Set the `allow` items. Used in the interceptor.
      */
     public static void funAllow(Consumer<Object> fun) {
         ResAllow.set(fun);
     }
 
     /**
-     * 移除允许项，在拦截器内部使用
+     * Delete the `allow` items. Used in the interceptor.
      */
     public static void delAllow() {
         ResAllow.remove();
     }
 
     /**
-     * 获得审查项，在controller中，业务前使用
+     * Get the `audit` items. Used in the controller, before business
      */
     @SuppressWarnings("unchecked")
     @Contract("true ->!null")
@@ -59,14 +61,14 @@ public class RighterContext {
     }
 
     /**
-     * 设置审查项，在拦截器中内部使用
+     * Get the `audit` items. Used in the interceptor.
      */
     public static void setAudit(Object json) {
         ReqAudit.set(json);
     }
 
     /**
-     * 移除审查项，在拦截器中内部使用
+     * Delete the `audit` items. Used in the interceptor.
      */
     public static void delAudit() {
         ReqAudit.remove();

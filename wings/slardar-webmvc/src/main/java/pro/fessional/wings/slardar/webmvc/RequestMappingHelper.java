@@ -20,8 +20,8 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 /**
- * 列出所有RequestMapping标记的URL，
- * 注意，不是容器内所有 mapping
+ * Lists all RequestMapping annotated URLs.
+ * Note, not all mapping in the container
  *
  * @see DispatcherServlet#getHandlerMappings()
  */
@@ -81,10 +81,7 @@ public class RequestMappingHelper {
         private final String javaMethod;
 
         /**
-         * 是否包含以下 http method，空表示包含。
-         *
-         * @param method 指定
-         * @return 包含true，否则false
+         * Whether contains the specified http method, empty method means true
          */
         public boolean hasMethod(RequestMethod method) {
             if (method == null || httpMethod.isEmpty()) return true;
