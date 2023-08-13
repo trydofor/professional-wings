@@ -1,7 +1,7 @@
 package pro.fessional.wings.warlock.event;
 
 /**
- * 事件中包括了callback的引用，不一定可序列化
+ * The event includes a reference to the callback, which may not serializable
  *
  * @author trydofor
  * @since 2021-02-27

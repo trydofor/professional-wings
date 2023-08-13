@@ -12,10 +12,12 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.singletonMap;
-import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.*;
+import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.DELETE;
+import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.INSERT;
+import static pro.fessional.wings.warlock.event.cache.TableChangeEvent.UPDATE;
 
 /**
- * 发送表记录变更（insert, update, delete）事件（默认并建议异步）
+ * Publish table record change (insert, update, delete) events (default and recommended asynchronous)
  *
  * @author trydofor
  * @since 2021-06-10

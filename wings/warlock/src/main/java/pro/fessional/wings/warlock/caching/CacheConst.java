@@ -8,7 +8,7 @@ import java.util.Set;
 import static java.util.Collections.singletonList;
 
 /**
- * 统一注册和管理缓存的信息，包括类和方法
+ * Unified registration and management of cached information, including classes and methods
  *
  * @author trydofor
  * @since 2022-04-20
