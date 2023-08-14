@@ -15,7 +15,7 @@ import java.util.SortedMap;
  * @author trydofor
  * @since 2021-02-22
  */
-@Disabled("初始化数据库，工程模板，已有devs统一管理")
+@Disabled("Init database, project template, managed by devops")
 @SpringBootTest(properties = {
         "spring.datasource.url=" + Warlock0CodegenConstant.JDBC,
         "spring.datasource.username=" + Warlock0CodegenConstant.USER,

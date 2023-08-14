@@ -8,8 +8,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner.Helper;
 import java.util.function.Consumer;
 
 /**
- * 按常见的版本管理场景提供便捷方式。
- * <p>
+ * Provides a convenient version management of common scenarios.
  * spring.wings.faceless.flywave.enabled.module=true
  *
  * @author trydofor

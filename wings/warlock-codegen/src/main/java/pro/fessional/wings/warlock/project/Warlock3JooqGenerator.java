@@ -9,7 +9,7 @@ import pro.fessional.wings.warlock.enums.autogen.UserStatus;
 import java.util.function.Consumer;
 
 /**
- * idea中，main函数执行和spring执行，workdir不同
+ * In IDEA, run from `main` and spring test, they are different in workdir
  *
  * @author trydofor
  * @since 2021-02-20
@@ -25,7 +25,7 @@ public class Warlock3JooqGenerator extends ProjectJooqGenerator {
     ///
     public static Consumer<Builder> includeWarlockBase(boolean append) {
         return builder -> builder
-                // 支持 pattern的注释写法
+                // support Pattern comment
                 .databaseIncludes(append, warlockBase);
     }
 
@@ -37,7 +37,7 @@ public class Warlock3JooqGenerator extends ProjectJooqGenerator {
 
     public static Consumer<Builder> includeWarlockBond(boolean append) {
         return builder -> builder
-                // 支持 pattern的注释写法
+                // support Pattern comment
                 .databaseIncludes(append, warlockBond)
                 .forcedIntConsEnum(UserGender.class, ".*\\.gender")
                 .forcedIntConsEnum(UserStatus.class, "win_user_basis\\.status")
