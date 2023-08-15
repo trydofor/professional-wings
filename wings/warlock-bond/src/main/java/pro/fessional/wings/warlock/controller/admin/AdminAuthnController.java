@@ -42,14 +42,14 @@ public class AdminAuthnController {
 
     @Operation(summary = "set/unset user danger status and failed count", description = """
             # Usage
-            根据userId设时钟志级别，stack==null时，为关闭线程设定，复原系统原设置。
+            set/unset user danger status and failed count
             ## Params
             * @param userId - the user
             * @param danger - set danger or unset
             * @param authType - auth type to reset
             ## Returns
-            * @return {401} 权限不够时
-            * @return {200} 直接访问或redirect时
+            * @return {401} if not authed
+            * @return {200} ok or redirect
             """)
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$adminAuthnDanger + "}")
     @ResponseBody

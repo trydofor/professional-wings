@@ -101,9 +101,7 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
         }
 
         /**
-         * 异步清理缓存，event可以为null
-         *
-         * @param event 可以为null
+         * Async evict all cache, event can be null
          */
         @EventListener
         @CacheEvict(allEntries = true, condition = "#result")

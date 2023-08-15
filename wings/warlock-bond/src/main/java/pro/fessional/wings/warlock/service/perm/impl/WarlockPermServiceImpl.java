@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jooq.Record3;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -96,13 +97,11 @@ public class WarlockPermServiceImpl implements WarlockPermService {
         }
 
         /**
-         * 异步清理缓存，event可以为null
-         *
-         * @param event 可以为null
+         * Async evict all cache, event can be null
          */
         @EventListener
         @CacheEvict(allEntries = true, condition = "#result")
-        public boolean evictPermAllCache(TableChangeEvent event) {
+        public boolean evictPermAllCache(@Nullable TableChangeEvent event) {
             final String tb = CacheEventHelper.receiveTable(event, EventTables);
             if (tb != null) {
                 log.info("evictPermAllCache by {}, {}", tb, event);

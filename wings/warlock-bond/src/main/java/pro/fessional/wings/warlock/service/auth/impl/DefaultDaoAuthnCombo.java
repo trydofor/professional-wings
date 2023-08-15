@@ -168,7 +168,7 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
         }
 
         journalService.commit(WarlockAuthnService.Jane.Failure, uid, "failed login auth-id=" + aid, commit -> {
-            // 锁账号
+            // lock user
             if (warlockDangerProp.isMaxFailure() && cnt >= max) {
                 log.info("danger user by reach max-count={}, auth-type={}, username={}", max, at, username);
                 warlockUserAuthnService.dander(uid, true);

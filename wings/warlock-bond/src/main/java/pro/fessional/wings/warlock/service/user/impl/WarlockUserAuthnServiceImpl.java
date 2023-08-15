@@ -110,7 +110,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             }
             catch (Exception e) {
                 log.error("failed to insert authn " + authn, e);
-                // 可能唯一约束或字段超长
+                // Possibly unique key or value is oversize
                 throw new CodeException(e, CommonErrorEnum.DataExisted);
             }
             return id;

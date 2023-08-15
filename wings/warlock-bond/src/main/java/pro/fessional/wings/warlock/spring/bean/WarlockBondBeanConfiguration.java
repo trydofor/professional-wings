@@ -71,7 +71,7 @@ public class WarlockBondBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(WarlockGrantService.class)
     public WarlockGrantService warlockGrantService() {
-        // 存在子类，则不需要此bean，如JustAuthUserAuthnAutoReg
+        // not needed if subclass bean exists e.g. JustAuthUserAuthnAutoReg
         log.info("WarlockBond spring-bean warlockGrantService");
         return new WarlockGrantServiceImpl();
     }
