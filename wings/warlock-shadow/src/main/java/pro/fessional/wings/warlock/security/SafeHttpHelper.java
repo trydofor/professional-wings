@@ -12,7 +12,7 @@ import java.util.Set;
 public class SafeHttpHelper {
 
     /**
-     * 区分大小写，确认uri的host是否在hosts中
+     * Whether the host of uri is in the `hosts`, case-sensitive
      */
     public static boolean isSafeRedirect(@NotNull String uri, Set<String> hosts) {
         if (hosts == null || hosts.isEmpty()) return true;
@@ -31,9 +31,9 @@ public class SafeHttpHelper {
 
     /**
      * <pre>
-     * 仅支持http,https的解析，解析host和port
+     * Only parse http/https, get host and port
      *
-     * https://www.rfc-editor.org/rfc/rfc3986
+     * <a href="https://www.rfc-editor.org/rfc/rfc3986">rfc3986</a>
      *
      * The authority component is preceded by a double slash ("//") and is
      * terminated by the next slash ("/"), question mark ("?"), or number

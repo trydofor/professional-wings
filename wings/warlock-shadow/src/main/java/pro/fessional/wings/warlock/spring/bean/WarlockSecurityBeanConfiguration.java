@@ -191,7 +191,6 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(DefaultUserAuthnAutoReg.class)
     public DefaultUserAuthnAutoReg defaultUserAuthnAutoReg() {
-        // 存在子类，则不需要此bean，如JustAuthUserAuthnAutoReg
         log.info("WarlockShadow spring-bean defaultUserAuthnAutoReg");
         return new DefaultUserAuthnAutoReg();
     }
@@ -199,7 +198,6 @@ public class WarlockSecurityBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(WarlockGrantService.class)
     public WarlockGrantService warlockGrantService() {
-        // 存在子类，则不需要此bean，如JustAuthUserAuthnAutoReg
         log.info("WarlockShadow spring-bean WarlockGrantServiceDummy");
         return new WarlockGrantServiceDummy();
     }

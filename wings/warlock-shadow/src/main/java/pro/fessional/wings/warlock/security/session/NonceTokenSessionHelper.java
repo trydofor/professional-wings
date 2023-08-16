@@ -3,15 +3,18 @@ package pro.fessional.wings.warlock.security.session;
 
 import org.cache2k.Cache;
 import org.cache2k.Cache2kBuilder;
+import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.data.Null;
 
 import java.util.concurrent.TimeUnit;
 
 
 /**
- * 提供5分钟内有效的一次性token关联验证。
- * ①initNonce:发型一次性token
- * ②bindNonceSid:登录成功后，通过uid，绑定token和sessionId
+ * <pre>
+ * Provides a one-time token that valid for 5 minutes to authn.
+ * (1) initNonce: Init one-time token
+ * (2) bindNonceSid: after successful login, bind token and sessionId by uid.
+ * </pre>
  *
  * @author trydofor
  * @since 2021-07-01
@@ -30,7 +33,7 @@ public class NonceTokenSessionHelper {
     }
 
     /**
-     * 初始化一次性token
+     * Init one-time token
      */
     public static void initNonce(String token, String ip) {
         if (token == null) return;
@@ -40,7 +43,7 @@ public class NonceTokenSessionHelper {
     }
 
     /**
-     * 绑定token和sid
+     * bind token to sessionId
      */
     public static void bindNonceSid(String token, String sid) {
         final Sf s = cache.get(token);
@@ -50,20 +53,23 @@ public class NonceTokenSessionHelper {
     }
 
     /**
-     * 无效掉token
+     * invalid the token
      */
     public static void invalidNonce(String token) {
         cache.remove(token);
     }
 
     /**
-     * null-为不存在验证
-     * empty-验证进行中
-     * sid-验证成功（如果成功，则自动移除，仅返回一次）
+     * <pre>
+     * null - authn not exist
+     * empty - authn in action
+     * sid - authn success, (auto remove and return only once)
+     * </pre>
      *
-     * @param token 一次性token
+     * @param token one-time token
      * @return null|empty|sid
      */
+    @Nullable
     public static String authNonce(String token, String ip) {
         if (token == null || token.isEmpty()) return null;
 

@@ -69,7 +69,7 @@ public class WatchingService {
             asyncLatch.countDown();
             asyncLatch = new CountDownLatch(1);
             try (Watch ignored = stopWatch.start("AsyncWatch.fetchLatch")) {
-                fetchLatch.await(); // 等待sql执行，交叉时间线
+                fetchLatch.await(); // wait for sql executing, cross timeline
             }
             catch (InterruptedException e) {
                 DummyBlock.ignore(e);

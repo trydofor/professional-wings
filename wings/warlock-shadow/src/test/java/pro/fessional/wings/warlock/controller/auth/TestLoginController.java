@@ -70,7 +70,7 @@ public class TestLoginController {
     }
 
     /**
-     * 需要设置 @Parameter(hidden = true)
+     * Need to set @Parameter(hidden = true)
      */
     @GetMapping("/auth/current-principal.json")
     public R<WingsUserDetails> currentPrincipal(@Parameter(hidden = true) @AuthenticationPrincipal WingsUserDetails principal) {

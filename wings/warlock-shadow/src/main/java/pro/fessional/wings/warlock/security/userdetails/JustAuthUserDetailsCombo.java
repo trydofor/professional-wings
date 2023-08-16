@@ -10,7 +10,7 @@ import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
 
 /**
- * JustAuth UserDetailsService，不存在用户时，自动创建
+ * JustAuth UserDetailsService, auto create use if not exists
  *
  * @author trydofor
  * @since 2021-02-22

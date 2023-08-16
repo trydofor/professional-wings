@@ -36,7 +36,7 @@ public class WarlockWatchingTest {
     private OkHttpClient okHttpClient;
 
     /**
-     * 查看日志输出
+     * Check the log
      */
     @Test
     public void testWatching() {
@@ -50,6 +50,6 @@ public class WarlockWatchingTest {
         Assertions.assertTrue(del);
         // async in async task pool
         Assertions.assertTrue(2 <= WatchingService.AsyncWatch.size());
-        Assertions.assertTrue(WatchingService.WatchOwner.getWatches().isEmpty(),"需要先初始化数据库 Warlock1SchemaCreator#init0Schema");
+        Assertions.assertTrue(WatchingService.WatchOwner.getWatches().isEmpty(),"Need init database by Warlock1SchemaCreator#init0Schema");
     }
 }

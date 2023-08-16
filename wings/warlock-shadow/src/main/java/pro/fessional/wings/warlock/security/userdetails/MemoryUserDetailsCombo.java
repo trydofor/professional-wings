@@ -18,11 +18,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * 通过配置等，在内存中一直有效的预设用户验证信息。
- * 如果autoEncode且password不是以'{'和'}'的代理模式，会自动加密。
- * 注意事项：
- * ①自行确保username与userid对应关系，此处不做验证。
- * ②验证时，无盐，即便db中存在passslat。
+ * <pre>
+ * Predefined user auth info is loaded into memory by config, etc.
+ * If autoEncode and password is not in `{` and `}` proxy mode, it is auto encrypted.
+ * Notes:
+ * (1) Make sure the mapping of username and userid, no verification here.
+ * (2) Verify without salt, even if `passslat` exists in db.
+ * </pre>
  *
  * @author trydofor
  * @since 2021-06-03
@@ -30,13 +32,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Slf4j
 public class MemoryUserDetailsCombo extends DefaultUserDetailsCombo {
 
-    // 以 username+authType去重
+    // distinct by username and authType
     private final Map<String, List<Details>> typedUser = new ConcurrentHashMap<>();
 
     /**
-     * 添加一个内存用户, AuthType=null表示所有类型
+     * Add a memory user, AuthType=null for all types
      *
-     * @param dtl 会被改变，自动加密密码
+     * @param dtl can be modified, e.g. auto encrypt password
      */
     public void addUser(@NotNull Details dtl) {
         final List<Details> set = typedUser.computeIfAbsent(dtl.getUsername(), k -> new CopyOnWriteArrayList<>());

@@ -26,7 +26,7 @@ class PasswordEncoderTest {
     private PasssaltEncoder passsaltEncoder;
 
     @Test
-    @Disabled("手动设置密码，控制台输出密文")
+    @Disabled("Output password to the log")
     void printPassword() {
         final String md5h = Md5.sum("moilioncircle");
         log.info("md5={}", md5h);
