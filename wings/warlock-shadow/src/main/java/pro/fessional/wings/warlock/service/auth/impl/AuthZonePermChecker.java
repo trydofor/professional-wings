@@ -14,7 +14,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 通过 authZone 参数做权限检查，可做中心检验
+ * Check Permission via param `authZone`.
+ * Can be used for center authentication
  *
  * @author trydofor
  * @since 2022-01-18

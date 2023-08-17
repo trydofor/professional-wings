@@ -6,15 +6,15 @@ package pro.fessional.wings.warlock.service.auth;
  */
 public enum WarlockAuthType {
     /**
-     * 通常的用户名登录
+     * login by username, generally.
      */
     USERNAME,
     /**
-     * 以手机为用户名
+     * use mobile number as username
      */
     MOBILE,
     /**
-     * 以邮件为用户名
+     * use email as username
      */
     EMAIL,
 }

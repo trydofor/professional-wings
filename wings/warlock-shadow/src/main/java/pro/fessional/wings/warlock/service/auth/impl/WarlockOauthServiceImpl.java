@@ -71,7 +71,7 @@ public class WarlockOauthServiceImpl implements WarlockOauthService {
     private final Pattern scopeSplitter = Pattern.compile("[ ,;]+");
 
     /**
-     * 检查 scope是否合法
+     * Whether the scope is valid
      */
     protected boolean checkScope(Set<String> scopes, String scope) {
         if (scopes.isEmpty()) return true;

@@ -3,7 +3,7 @@ package pro.fessional.wings.warlock.service.auth;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 
 /**
- * 授权
+ * Authorization (Authz)
  *
  * @author trydofor
  * @since 2021-02-23

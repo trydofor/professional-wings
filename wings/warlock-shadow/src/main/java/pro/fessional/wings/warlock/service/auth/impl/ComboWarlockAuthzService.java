@@ -123,7 +123,7 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
             else if (ro instanceof final GrantedAuthority gt) {
                 final String au = permNormalizer.role(gt.getAuthority());
                 log.debug("add role by aut={}", au);
-                auth.put(au, gt);  // 以存在值优先
+                auth.put(au, gt);  // the existed value has high priority
                 roleStr.add(au);
             }
             else {
@@ -143,17 +143,17 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
             }
         }
 
-        // 递归前移除
+        // remove before recursion
         auth.keySet().removeAll(denyStr);
 
-        // 递归找到所有授权Role，N+1操作，直到size不增加
+        // recursively find all authed Role, N+1 loop until no size change
         Set<Long> sub = new HashSet<>(roleIds);
         while (true) {
             sub = warlockGrantService.entryRole(ROLE, sub).keySet();
             int bs = roleIds.size();
             roleIds.addAll(sub);
             if (bs == roleIds.size()) {
-                // size无变化，说明全遍历
+                // no size change, loop done
                 roleIds.removeAll(excIds);
                 break;
             }
@@ -193,7 +193,7 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
             }
             else if (po instanceof final GrantedAuthority gt) {
                 final String au = gt.getAuthority();
-                auth.put(au, gt); // 以存在值优先
+                auth.put(au, gt); // existed value has high priority
                 permStr.add(au);
             }
             else {
@@ -211,11 +211,11 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
             }
         }
 
-        // 子扩展
+        // sub-extension
         for (String str : permStr) {
             final Set<String> ps = PermGrantHelper.inheritPerm(str, permAll);
             for (String s : ps) {
-                // 去掉`*`权限
+                // remove `*` perm
                 if (!s.contains(PermGrantHelper.ALL) && !denyStr.contains(s)) {
                     auth.putIfAbsent(s, new SimpleGrantedAuthority(s));
                 }
@@ -226,26 +226,27 @@ public class ComboWarlockAuthzService implements WarlockAuthzService {
     }
 
     /**
-     * 对用户进行组合授权，可直接修改 details 或 增加role，perm，以便统一处理递归。
-     * 统一处理包括，①递归载入，扁平化处理，②移除排除项（以`-`开头）
+     * Apply combo auth to user. e.g. change the details directly or add roles/perm before th unified processing.
+     * Unified processing includes (1) recursive loading, flattening (2) removing exclusions (starting with `-`).
      */
     public interface Combo extends Ordered {
         /**
-         * 为统一处理role和perm准备数据，初步增加或移除。
-         * 返回true，为独断式处理，停止后续的其他Combo，如直接指定权限，不需要后续补充，需要主要Order顺序。
+         * Prepare data for unified processing of roles and perm, e.g. modify role and perm.
+         * Return `true` for solo processing, stopping any subsequent Combo (sort by Order),
+         * such as directly specify the permissions, no subsequent additions,
          *
          * @param details details with/without GrantedAuthority
          * @param role    id(Long), name(String) or Auth(GrantedAuthority)
          * @param perm    id(Long), name(String) or Auth(GrantedAuthority)
-         * @return 是否中断后继续处理，默认false
+         * @return Whether to stop any subsequent Combo, default false.
          */
         boolean preAuth(@NotNull DefaultWingsUserDetails details, @NotNull HashSet<Object> role, @NotNull HashSet<Object> perm);
 
         /**
-         * 对统一处理后的权限进行过滤，最终的添加或移除
+         * Filter, add or remove auths after Unified processing
          *
          * @param details details with/without GrantedAuthority
-         * @param auths   已经扁平化及排除项的权限
+         * @param auths   Flattened and exclusions removed permissions
          */
         default void postAuth(@NotNull DefaultWingsUserDetails details, @NotNull HashMap<String, GrantedAuthority> auths) {
         }

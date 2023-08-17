@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.faceless.service.journal.JournalService;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.constants.WarlockGlobalAttribute;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
@@ -75,7 +75,7 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
             authn.setFailedCnt(0);
             authn.setFailedMax(warlockSecurityProp.getAutoregMaxFailed());
 
-            // 明文，有WarlockUserAuthnService加密
+            // Plain text, encrypt in WarlockUserAuthnService later.
             authn.setPassword(RandCode.human(16));
 
             beforeSave(authn, username, details, uid);

@@ -19,9 +19,9 @@ public interface WarlockPermService {
     }
 
     /**
-     * 一次性获得所有id和权限码(scopes + '.' + action)
+     * Load all Perm id and code (scopes + `.` + action) on time
      *
-     * @return 权限码
+     * @return map of id and code
      */
     Map<Long, String> loadPermAll();
 
@@ -32,10 +32,10 @@ public interface WarlockPermService {
     }
 
     /**
-     * 级联创建多个权限
+     * Create multiple perm at scopes from actions
      *
-     * @param scopes 范围
-     * @param acts   动作
+     * @param scopes scopes
+     * @param acts   action
      */
     void create(@NotNull String scopes, @NotNull Collection<Act> acts);
 
@@ -51,10 +51,10 @@ public interface WarlockPermService {
     }
 
     /**
-     * 修改权限码备注
+     * Modify the remark/comment of Perm
      *
      * @param permId id
-     * @param remark 备注
+     * @param remark comment
      */
     void modify(long permId, @NotNull String remark);
 }

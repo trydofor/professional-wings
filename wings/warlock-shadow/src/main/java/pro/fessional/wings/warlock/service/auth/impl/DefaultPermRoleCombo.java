@@ -5,8 +5,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.enums.autogen.GrantType;
 import pro.fessional.wings.warlock.service.grant.WarlockGrantService;
 
@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 /**
- * 通过user和permit的map关系构造 GrantedAuthority
+ * Create GrantedAuthority by the mapping of user and permit
  *
  * @author trydofor
  * @since 2021-03-05

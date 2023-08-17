@@ -151,7 +151,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
     // /////
     public interface AutoReg extends Ordered {
         /**
-         * 不需要事务,在外层事务内调用
+         * No transaction required, called within an outer transaction.
          */
         Details create(@NotNull Enum<?> authType, String username, WingsAuthDetails details);
 

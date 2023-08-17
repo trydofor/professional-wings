@@ -21,9 +21,9 @@ import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerTest, havingValue = "true")
 public class TestEnvsController {
 
-    @Operation(summary = "获取 RunMode", description = """
+    @Operation(summary = "Get RunMode", description = """
             # Usage
-            无参数Get取得 Product, Test, Develop, Local
+            Return Product, Test, Develop, Local
             """)
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$testRunMode + "}", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
@@ -32,9 +32,9 @@ public class TestEnvsController {
         return R.okData(rm.name());
     }
 
-    @Operation(summary = "获取系统 Timestamp", description = """
+    @Operation(summary = "Get system Timestamp", description = """
             # Usage
-            无参数Get取得 1970毫秒数的Timestamp
+            Get the Timestamp from 1970 in mills
             """)
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$testSystemMills + "}", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
@@ -43,9 +43,9 @@ public class TestEnvsController {
         return R.okData(ms);
     }
 
-    @Operation(summary = "获取线程 Timestamp", description = """
+    @Operation(summary = "Get thread Timestamp", description = """
             # Usage
-            无参数Get取得 1970毫秒数的Timestamp
+            Get the Timestamp from 1970 in mills
             """)
     @RequestMapping(value = "${" + WarlockUrlmapProp.Key$testThreadMills + "}", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody

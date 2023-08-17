@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import pro.fessional.mirana.data.Null;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
+import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.service.perm.WarlockPermNormalizer;
 
 import java.util.Arrays;
@@ -19,8 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * 根据username和authType等对授权进行增减。
- * Role和Perm不进行区分，需要自行指定Role前缀。
+ * Add/remove auth by username and authType.
+ * Role and Perm are not distinguished, and the Role need a fixed prefix.
  *
  * @author trydofor
  * @since 2021-03-05
@@ -39,20 +39,20 @@ public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
     private final Map<String, Map<Enum<?>, Set<String>>> typedAuthz = new ConcurrentHashMap<>();
 
     /**
-     * 按userId，授予权限和角色
+     * Add Perm/Role to userId
      *
-     * @param userId 用户id
-     * @param authz  权限和角色
+     * @param userId user id
+     * @param authz  Perm/Role
      */
     public void addAuthz(long userId, @NotNull String... authz) {
         addAuthz(userId, Arrays.asList(authz));
     }
 
     /**
-     * 按userId，授予权限和角色
+     * Add Perm/Role to userId
      *
-     * @param userId 用户id
-     * @param authz  权限和角色
+     * @param userId user id
+     * @param authz  Perm/Role
      */
     public void addAuthz(long userId, @NotNull Collection<String> authz) {
         final Set<String> set = userAuthz.computeIfAbsent(userId, k -> new CopyOnWriteArraySet<>());
@@ -60,42 +60,42 @@ public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
     }
 
     /**
-     * 按登录名，授予权限和角色
+     * Add Perm/Role to user by username
      *
-     * @param username 登录名
-     * @param authz    权限和角色
+     * @param username login username
+     * @param authz    Perm/Role
      */
     public void addAuthz(@NotNull String username, @NotNull String... authz) {
         addAuthz(username, Arrays.asList(authz));
     }
 
     /**
-     * 按登录名，授予权限和角色
+     * Add Perm/Role to user by username
      *
-     * @param username 登录名
-     * @param authz    权限和角色
+     * @param username login username
+     * @param authz    Perm/Role
      */
     public void addAuthz(@NotNull String username, @NotNull Collection<String> authz) {
         addAuthz(username, null, authz);
     }
 
     /**
-     * 按登录名和类型，授予权限和角色
+     * Add Perm/Role to user by username and authType
      *
-     * @param username 登录名
-     * @param authType 类型, null时，仅按登录名
-     * @param authz    权限和角色
+     * @param username login username
+     * @param authType only username if null
+     * @param authz    Perm/Role
      */
     public void addAuthz(@NotNull String username, Enum<?> authType, @NotNull String... authz) {
         addAuthz(username, authType, Arrays.asList(authz));
     }
 
     /**
-     * 按登录名和类型，授予权限和角色
+     * Add Perm/Role to user by username and authType
      *
-     * @param username 登录名
-     * @param authType 类型, null时，仅按登录名
-     * @param authz    权限和角色
+     * @param username login username
+     * @param authType only username if null
+     * @param authz    Perm/Role
      */
     public void addAuthz(@NotNull String username, Enum<?> authType, @NotNull Collection<String> authz) {
         if (authType == null || authType == Null.Enm) {
@@ -110,19 +110,17 @@ public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
     }
 
     /**
-     * 按userId，删除所有授权
-     *
-     * @param userId 用户id
+     * delete all Perm/Role of userId
      */
     public void delAuthz(long userId) {
         userAuthz.remove(userId);
     }
 
     /**
-     * 按userId，删除指定授权
+     * delete given Perm/Role of userId
      *
-     * @param userId 用户id
-     * @param authz  指定类型
+     * @param userId userid
+     * @param authz  given Perm/Role
      */
     public void delAuthz(long userId, @NotNull Collection<String> authz) {
         final Set<String> set = userAuthz.get(userId);
@@ -132,17 +130,17 @@ public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
     }
 
     /**
-     * 按登录名，删除所有授权
+     * delete all Perm/Role of user by login username
      */
     public void delAuthz(@NotNull String username) {
         namedAuthz.remove(username);
     }
 
     /**
-     * 按登录名，删除指定授权
+     * delete given Perm/Role of user by login username
      *
-     * @param username 登录名
-     * @param authz    指定类型
+     * @param username login username
+     * @param authz    given Perm/Role
      */
     public void delAuthz(@NotNull String username, @NotNull Collection<String> authz) {
         final Set<String> set = namedAuthz.get(username);
@@ -152,10 +150,10 @@ public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
     }
 
     /**
-     * 按登录名和类型，删除所有授权
+     * delete all Perm/Role of user by login username and authType
      *
-     * @param username 登录名
-     * @param authType 登录类型, null时，按登录名授权
+     * @param username login username
+     * @param authType only username if null
      */
     public void delAuthz(@NotNull String username, Enum<?> authType) {
         if (authType == null) {
@@ -170,11 +168,11 @@ public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
     }
 
     /**
-     * 按登录名和类型，删除指定授权
+     * delete given Perm/Role of user by login username and authType
      *
-     * @param username 登录名
-     * @param authType 登录类型, null时，按登录名授权
-     * @param authz    指定类型
+     * @param username login username
+     * @param authType only username if null
+     * @param authz    given Perm/Role
      */
     public void delAuthz(@NotNull String username, Enum<?> authType, @NotNull Collection<String> authz) {
         if (authType == null) {

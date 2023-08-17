@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 简单实现，实际业务中，建议基于数据库和Hazelcast构建
+ * Simple Ticket implement, in product, it is recommended to use database or Hazelcast
  *
  * @author trydofor
  * @since 2022-11-05
@@ -80,7 +80,8 @@ public class SimpleTicketServiceImpl implements WarlockTicketService {
     @Override
     public boolean checkSeq(long uid, int type, int seq) {
         if (seq < 0) return false;
-        // 不存在时，可能应用重启，token未过期，以当前验证通过的合法值设置
+        // If it does not exist, the application may have been restarted.
+        // If the token has not expired, set the current validated value.
         final int cur = getSeqMap(type)
                 .computeIfAbsent(uid, k -> new AtomicInteger(seq)).get();
 
