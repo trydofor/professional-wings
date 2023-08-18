@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 需要先初始化数据库 Warlock1SchemaCreator#init0Schema
+ * Need init database via Warlock1SchemaCreator#init0Schema
  *
  * @author trydofor
  * @since 2022-03-09
@@ -40,7 +40,7 @@ class RuntimeConfServiceTest {
     void testSimple() {
         assertSimple(BigDecimal.class, new BigDecimal("10.00"));
         assertSimple(String.class, "string");
-        // 注意，丢失精度 SSS
+        // Note, lost precision, SSS
         final LocalDateTime ldt = LocalDateTime.of(2022, 2, 1, 12, 34, 56);
         assertSimple(LocalDateTime.class, ldt);
         assertSimple(ZonedDateTime.class, ZonedDateTime.of(ldt, ZoneId.of("Asia/Shanghai")));
@@ -90,7 +90,7 @@ class RuntimeConfServiceTest {
     @Test
     void testJson() {
         Dto dto = new Dto();
-        runtimeConfService.newObject(Dto.class, dto, "需要先初始化数据库 Warlock1SchemaCreator#init0Schema");
+        runtimeConfService.newObject(Dto.class, dto, "Need init database via Warlock1SchemaCreator#init0Schema");
         Sleep.ignoreInterrupt(1000);
         final Dto dto1 = runtimeConfService.getSimple(Dto.class, Dto.class);
         Assertions.assertEquals(dto, dto1);

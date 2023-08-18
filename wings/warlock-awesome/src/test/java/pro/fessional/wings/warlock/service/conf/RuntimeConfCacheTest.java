@@ -11,7 +11,7 @@ import pro.fessional.wings.silencer.modulate.RunMode;
 import java.util.List;
 
 /**
- * 需要先初始化数据库 Warlock1SchemaCreator#init0Schema
+ * Need init database via Warlock1SchemaCreator#init0Schema
  *
  * @author trydofor
  * @since 2022-03-09

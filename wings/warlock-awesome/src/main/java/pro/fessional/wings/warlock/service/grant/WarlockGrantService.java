@@ -8,11 +8,13 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * 授权与撤销，涉及到权限提升，必须结合GrantChecker使用
- * - role拥有的perm
- * - role拥有的role
- * - user拥有的perm
- * - user拥有的role
+ * <pre>
+ * Authorization and revocation, which involves elevation of privilege, must be used with GrantChecker
+ * - Role-owned perm
+ * - Role-owned role
+ * - User-owned perm
+ * - user-owned role
+ * </pre>
  *
  * @author trydofor
  * @since 2021-03-05
@@ -25,10 +27,10 @@ public interface WarlockGrantService {
     }
 
     /**
-     * 把grant赋予refer，使refer拥有grant权限
+     * Grant role/perm to role to give the `grant` privilege.
      *
      * @param roleId roleId
-     * @param type   类型
+     * @param type   grant type
      * @param grant  RoleId or PermId
      */
     void grantRole(long roleId, @NotNull GrantType type, @NotNull Collection<Long> grant);
@@ -42,10 +44,10 @@ public interface WarlockGrantService {
 
 
     /**
-     * 撤销refer的grant，使refer不在拥有grant权限
+     * Revoke role/perm to role to remove the `grant` privilege.
      *
      * @param roleId roleId
-     * @param type   类型
+     * @param type   grant type
      * @param grant  RoleId or PermId
      */
     void purgeRole(long roleId, @NotNull GrantType type, @NotNull Collection<Long> grant);
@@ -58,10 +60,10 @@ public interface WarlockGrantService {
     }
 
     /**
-     * 把grant赋予refer，使refer拥有grant权限
+     * Grant role/perm to user to give the `grant` privilege.
      *
      * @param userId userId
-     * @param type   类型
+     * @param type   grant type
      * @param grant  RoleId or PermId
      */
     void grantUser(long userId, @NotNull GrantType type, @NotNull Collection<Long> grant);
@@ -74,10 +76,10 @@ public interface WarlockGrantService {
     }
 
     /**
-     * 撤销refer的grant，使refer不在拥有grant权限
+     * Revoke role/perm to user to remove the `grant` privilege.
      *
      * @param userId userId
-     * @param type   类型
+     * @param type   grant type
      * @param grant  RoleId or PermId
      */
     void purgeUser(long userId, @NotNull GrantType type, @NotNull Collection<Long> grant);
@@ -90,9 +92,9 @@ public interface WarlockGrantService {
     }
 
     /**
-     * 获取用户的授权，返回key=授权，value=userId
+     * Get user granted privileges. return the map of RoleId/PermId to UserId
      *
-     * @param type   类型
+     * @param type   grant type
      * @param userId userId
      * @return RoleId/PermId - UserId
      */
@@ -106,9 +108,9 @@ public interface WarlockGrantService {
     }
 
     /**
-     * 获取角色的授权，返回key=授权，value=roleId
+     * Get role granted privileges. return the map of RoleId/PermId to UserId
      *
-     * @param type   类型
+     * @param type   grant type
      * @param roleId roleId
      * @return RoleId/PermId - roleId
      */
