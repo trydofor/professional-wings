@@ -373,7 +373,7 @@
                 <version>${fastjson2.version}</version>
             </dependency>
             <dependency>
-                <!-- DENIED by wings，define safe version numbers for indirectly 3rd lib -->
+                <!-- DENIED by wings, define safe version numbers for indirectly 3rd lib -->
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
