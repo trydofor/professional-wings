@@ -13,7 +13,7 @@ import pro.fessional.wings.warlock.project.Warlock1SchemaManager;
  * @author trydofor
  * @since 2021-02-22
  */
-@Disabled("初始化数据库，已有devs统一管理")
+@Disabled("Init database")
 @SpringBootTest
 public class WarlockSchemaTest {
 
