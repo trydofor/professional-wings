@@ -1,25 +1,25 @@
 #!/bin/bash
 THIS_VERSION=2023-06-22
 ################ modify the following params ################
-WORK_DIR=''      # 脚本生成文件，日志的目录，默认空（脚本位置）
-TAIL_LOG='log'   # 默认tail的日志，"log|out|new|ask"
-USER_RUN=$USER   # 用来启动程序的用户
-PORT_RUN=''      # 默认端口，空时
-ARGS_RUN='start' # 默认参数。若$1或$2指定
-BOOT_JAR=''      # 主程序。可通过$1覆盖，绝对路径或相对WORK_DIR
-BOOT_OUT=''      # 控制台日志，默认 $BOOT_JAR-*.out
-BOOT_LOG=''      # 程序日志，需要外部指定，用来tail
-BOOT_PID=''      # 主程序pid，默认 $BOOT_JAR.pid
-BOOT_CNF=''      # 外部配置。
-BOOT_ARG=''      # 启动参数。可延时求值
-JAVA_XMS='1G'    # 启动参数
-JAVA_XMX='3G'    # 启动参数
-WARN_TXT=''      # 预设的警告词
-WARN_AGO=''      # 日志多少秒不更新，则警报，空表示忽略
-WARN_RUN=''      # 若pid消失或日志无更新则执行
+WORK_DIR=''      # directory of script-generated files and logs. default empty (script location)
+TAIL_LOG='log'   # the log to tail, (log|out|new|ask)
+USER_RUN=$USER   # the user to execute the script (ubuntu)
+PORT_RUN=''      # default server port (10086)
+ARGS_RUN='start' # default args (start) use `$1` if empty
+BOOT_JAR=''      # path of boot jar (/data/boot/wings.jar), can be overridden by $1, absolute or relative to WORK_DIR
+BOOT_OUT=''      # console output (/data/boot/wings.out), default $BOOT_JAR.out
+BOOT_LOG=''      # app log (/data/logs/wings.log) specified externally, used for `tail`
+BOOT_PID=''      # app pid (/data/logs/wings.pid) default $BOOT_JAR.pid
+BOOT_CNF=''      # external config (/data/conf/wings/common/,/data/conf/wings/front/)
+BOOT_ARG=''      # args of boot jar (--app.test=one) can lazily evaluate
+JAVA_XMS='1G'    # args of JVM
+JAVA_XMX='3G'    # args of JVM
+WARN_TXT=''      # keyword of warning
+WARN_AGO=''      # alert if the log is not updated for N seconds, empty for disable
+WARN_RUN=''      # execute if the no PID or no log update
 # shellcheck disable=SC2153
-JDK_HOME='' # 指定jdk版本
-# 可延时求值
+JDK_HOME='' # specified jdk version (/data/java/jdk-11.0.2)
+# args of Java8, can lazily evaluate
 # shellcheck disable=SC2016
 JDK8_ARG='
 -Xloggc:${BOOT_TKN}.gc
@@ -27,7 +27,7 @@ JDK8_ARG='
 -XX:+PrintGCDetails
 -XX:+PrintGCDateStamps
 '
-# 可延时求值
+# args of Java9+, can lazily evaluate
 # shellcheck disable=SC2016
 JDK9_ARG='
 --add-modules=java.se
@@ -45,7 +45,7 @@ JDK9_ARG='
 --add-opens=jdk.unsupported/sun.misc=ALL-UNNAMED
 -Xlog:gc*=info:file=${BOOT_TKN}.gc:time,tid,tags:filecount=5,filesize=100m
 '
-# 可延时求值
+# args of JVM, can lazily evaluate
 # shellcheck disable=SC2016
 JAVA_ARG='
 -server
@@ -63,27 +63,27 @@ JAVA_ARG='
 -XX:ConcGCThreads=8
 '
 # -XX:+ExitOnOutOfMemoryError #docker
-TIME_ZID='' # java时区，如UTC, GMT+8, Asia/Shanghai
+TIME_ZID='' # java timezone (UTC|GMT+8|Asia/Shanghai)
 
 # ext args
 JAVA_EXT=''
 BOOT_EXT=''
 
 ################ NO NEED to modify the following ################
-BOOT_DTM=$(date '+%y%m%d%H%M%S') # 启动日时
-BOOT_TKN=''                      # 启动token，由jar+dtm构成
-BOOT_MD5=''                      # 以safe模式执行的文件md5sum
-JAR_NAME=''                      # boot-jar本名
-JAVA_OPT=''                      # java 实际启动参加
+BOOT_DTM=$(date '+%y%m%d%H%M%S') # datetime of boot
+BOOT_TKN=''                      # boot token, Composed of jar+dtm
+BOOT_MD5=''                      # execute md5+jar in safe mode
+JAR_NAME=''                      # basename of boot-jar
+JAVA_OPT=''                      # real args of java
 #
 function print_envs() {
     echo -e "#################################################"
     echo -e "# Version \033[32m$THIS_VERSION\033[m # for Mac&Lin / BusyBox&Bash"
-    echo -e "# 使用'ln -s'把此脚本软连接到'执行目录/workdir'，"
-    echo -e "# 链接源及链接的同名'env'，文件会被自动载入，当前覆盖源配置项。"
-    echo -e "# 同一主机环境，同一boot.jar只能执行一份，多份需更名。"
-    echo -e "# 'BOOT_ARG|JAVA_ARG|JDK8_ARG|JDK9_ARG' 内变量可被延时求值，"
-    echo -e "# 使用 ' 为延时求值，使用 \" 为立即求值。 默认Java 11 G1"
+    echo -e "# use 'ln -s' to link this script to the execution 'target/workdir',"
+    echo -e "# the same basename '.env' (wings-release.env) will be auto loaded."
+    echo -e "# only one boot.jar run on one host, rename it to run more copies."
+    echo -e "# 'BOOT_ARG|JAVA_ARG|JDK8_ARG|JDK9_ARG' can be lazily evaluated"
+    echo -e "# in evaluation, ' for delayed, \" for immediate. default Java 11 G1"
     echo -e "#################################################"
     echo -e "\033[37;42;1mINFO: ==== boot env ==== \033[0m"
     echo "work-dir=$WORK_DIR"

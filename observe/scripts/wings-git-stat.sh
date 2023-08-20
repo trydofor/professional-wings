@@ -2,7 +2,7 @@
 THIS_VERSION=2021-12-21
 echo -e "\033[37;42;1mScript-Version $THIS_VERSION \033[0m"
 
-# 统计提交行数
+# Statistics the commit lines
 echo "name   : $(git config --get user.name)"
 echo "email  : $(git config --get user.email)"
 echo "remote : $(git config --get remote.origin.url)"

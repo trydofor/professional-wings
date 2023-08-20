@@ -4,7 +4,7 @@ THIS_VERSION=2023-04-14
 cat <<EOF
 #################################################
 # Version $THIS_VERSION # test on Mac and Lin
-# 创建database以及和访问的用户
+# Create User and grant privileges to database
 - {user_pre}{name_pre}raw SELECT, TEMPORARY TABLE
 - {user_pre}{name_pre}app {raw} + INSERT, UPDATE, DELETE, EXECUTE
 - {user_pre}{name_pre}dev ALL - Drop
@@ -12,10 +12,10 @@ cat <<EOF
 - FLUSH PRIVILEGES;
 
 # Usage $0 userenv {create|grant|passwd|help} [option]
-- userenv - 环境脚本(bash语法)，wings-mysql-user.env
-- create/grant/passwd - 创建/授权/改密码
-- option - 存在时，使用'--defaults-extra-file'
-# option 详细参考client段
+- userenv - Env script (bash syntax), wings-mysql-user.env
+- create/grant/passwd - create user/grant privileges/ change password
+- option - use '--defaults-extra-file' if exist
+# option details in client help
 - https://dev.mysql.com/doc/refman/8.0/en/option-files.html
 ./wings-mysql-user.sh wings-mysql-user.env wings-mysql-client.cnf
 #################################################
@@ -37,18 +37,18 @@ if [[ "$command" == "" || "$command" == "help" || ! -f "$userenv" ]]; then
   # https://dev.mysql.com/doc/refman/8.0/en/account-management-statements.html
   cat <<'EOF'
 execute=false
-# 用户名前缀
+## prefix of username
 user_pre=devall
-# 默认的名字分隔符
+## default name separator
 name_pre=_
-# 授权db，空格分隔。其中`_`和`%`是通配符，可`\`转义
+## the database to grant, separated by spaces. The `_` and `%` are wildcards and can be escaped with `\`.
 grant_db='%'
-# passwd 空为忽略
+## passwd, empty means ignore it
 pass_raw=$(passwd24)
 pass_app=$(passwd24)
 pass_dev=$(passwd24)
 pass_dba=$(passwd24)
-# host 默认，%
+## host, default `%`
 host_raw=%
 host_app=10.11.%
 host_dev=%
