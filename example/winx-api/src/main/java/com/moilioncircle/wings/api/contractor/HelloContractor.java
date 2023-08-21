@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * Rpc风格，接口定义SchemaId，basePath指定SchemaId
+ * Rpc style, interface define SchemaId , basePath specify SchemaId
  *
  * @author trydofor
  * @since 2022-08-04

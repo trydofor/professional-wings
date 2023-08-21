@@ -19,7 +19,7 @@ import java.util.List;
 
 
 @SpringBootTest
-@Disabled("数据库导出")
+@Disabled("Dump database")
 @Slf4j
 public class Devops7SchemaDumperTest {
 
@@ -32,22 +32,22 @@ public class Devops7SchemaDumperTest {
     @Test
     public void dumpSchema() {
         Function1<List<String>, List<String>> ddl = SchemaFulldumpManager.groupedTable(false,
-                "-- ==================== Basement-4(B4/10#):基础 =======================",
-                "sys_schema_version", // 101/表结构版本
-                "sys_schema_journal", // 102/数据触发器
-                "sys_light_sequence", // 103/序号生成器
-                "sys_commit_journal", // 104/数据变更集
-                "sys_constant_enum",  // 105/常量枚举:自动生成enum类
-                "sys_standard_i18n",  // 106/标准多国语
-                "-- ==================== Floor-1(F1/12#-13#):用户 =======================",
-                "win_user_basis",  // 120/用户基本表
-                "win_user_authn",  // 121/用户验证表
-                "win_user_login",  // 122/用户登录表
-                "win_perm_entry",  // 130/权限条目表
-                "win_role_entry",  // 131/角色条目表
-                "win_role_grant",  // 134/角色权限映射表
-                "win_user_grant",  // 135/角色权限映射表
-                "-- ==================== Floor-10(F11/90#):辅助 ======================="
+                "-- ==================== Basement-4(B4/10#): Base =======================",
+                "sys_schema_version", // 101/schema version
+                "sys_schema_journal", // 102/schema journal
+                "sys_light_sequence", // 103/sequence
+                "sys_commit_journal", // 104/data changeset
+                "sys_constant_enum",  // 105/enum const: auto gen enum
+                "sys_standard_i18n",  // 106/i18n message
+                "-- ==================== Floor-1(F1/12#-13#): User =======================",
+                "win_user_basis",  // 120/user basis
+                "win_user_authn",  // 121/user authn
+                "win_user_login",  // 122/user login
+                "win_perm_entry",  // 130/perm entry
+                "win_role_entry",  // 131/role entry
+                "win_role_grant",  // 134/grant to role
+                "win_user_grant",  // 135/grant to user
+                "-- ==================== Floor-10(F11/90#): Help ======================="
         );
         String root = Devops0ProjectConstant.DUMP_PATH + Devops0ProjectConstant.DUMP_TYPE;
         log.info("===== dump ddl to " + root);
@@ -62,14 +62,14 @@ public class Devops7SchemaDumperTest {
                 "sys_light_.*",
                 "sys_constant_.*",
                 "sys_standard_.*",
-                "win_user_basis",  // 120/用户基本表
-                "win_user_authn",  // 121/用户验证表
-                "win_user_login",  // 122/用户登录表
-                "win_perm_entry",  // 130/权限条目表
-                "win_role_entry",  // 131/角色条目表
-                "win_role_grant",  // 134/角色权限映射表
-                "win_user_grant"  // 135/角色权限映射表
-                );
+                "win_user_basis",
+                "win_user_authn",
+                "win_user_login",
+                "win_perm_entry",
+                "win_role_entry",
+                "win_role_grant",
+                "win_user_grant"
+        );
 
         String root = Devops0ProjectConstant.DUMP_PATH + Devops0ProjectConstant.DUMP_TYPE;
         log.info("===== dump rec to " + root);

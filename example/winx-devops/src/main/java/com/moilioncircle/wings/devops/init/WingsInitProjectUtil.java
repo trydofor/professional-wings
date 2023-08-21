@@ -40,11 +40,11 @@ public class WingsInitProjectUtil {
         String dstAbsPath = info.dstDir.getAbsolutePath();
 
         if (dstAbsPath.contains(srcAbsPath) || srcAbsPath.contains(dstAbsPath)) {
-            throw new IOException("新工程路径和wings-example有重合，重选");
+            throw new IOException("Path overlaps with wings-example, please choose a different one.");
         }
 
         if (!info.srcDir.exists()) {
-            message.accept("创建新工程目录");
+            message.accept("Create new project dir.");
             info.srcDir.mkdirs();
         }
 
@@ -113,7 +113,7 @@ public class WingsInitProjectUtil {
     private static void copyTree(Info info, File src, Predicate<String> exc, Consumer<String> message) throws IOException {
 
         final String path = src.getAbsolutePath();
-        // 忽略
+        // ignore
         if (exc.test(path)) {
             return;
         }
@@ -163,14 +163,14 @@ public class WingsInitProjectUtil {
         }
 
         if (bytes.length > 0) {
-            message.accept("写入 " + dstName);
+            message.accept("Write to " + dstName);
             FileOutputStream fos = new FileOutputStream(dstFile);
             fos.write(bytes);
             fos.flush();
             fos.close();
         }
         else {
-            message.accept("新建 " + dstName);
+            message.accept("Create New " + dstName);
             dstFile.createNewFile();
         }
     }
