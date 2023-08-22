@@ -7,12 +7,12 @@ package pro.fessional.wings.tiny.task.service;
 public interface TinyTaskBeatService {
 
     /**
-     * 清理task历史result
+     * Clean the history result of task
      */
     int cleanResult();
 
     /**
-     * 检查任务健康状态，非空时发生通知
+     * Check task health, should notice if return non-empty
      */
     String checkHealth();
 }

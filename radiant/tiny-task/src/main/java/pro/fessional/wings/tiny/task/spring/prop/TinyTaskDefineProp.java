@@ -18,7 +18,7 @@ public class TinyTaskDefineProp extends LinkedHashMap<String, TaskerProp> implem
     public static final String Key = "wings.tiny.task.define";
 
     /**
-     * 默认属性
+     * Default Config
      *
      * @see #Key$default
      */

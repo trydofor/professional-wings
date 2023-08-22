@@ -16,7 +16,7 @@ import java.util.concurrent.ScheduledFuture;
  */
 @SpringBootTest
 @Slf4j
-@Disabled("模拟批处理，人工观察")
+@Disabled("Simulate batch, check manually")
 class ExecutorServiceTest {
 
     @Test

@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * TinyTask的配置项，一个taskerBean只能存在一条
+ * TinyTask Config, A taskerBean can have only one
  *
  * @author trydofor
  * @since 2022-12-09
@@ -13,40 +13,44 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TaskerProp {
     /**
-     * 是否可以注册及执行，不会使用Default配置
+     * whether to register and execute, not use Default config.
      */
     protected boolean enabled = true;
     /**
-     * 是否可以自动注册并启动，不会使用Default配置
+     * whether to auto register and start, not use Default config.
      */
     protected boolean autorun = true;
     /**
-     * 版本号，版本高的配置覆盖版本低的，不会使用Default配置
+     * version number, higher version config overrides lower one, not use Default config.
      */
     protected int version = 0;
 
     /**
-     * 由TinyTasker注解的Bean，格式为Class#method，默认自动识别，不会使用Default配置
+     * Beans annotated by TinyTasker, formatted as Class#method,
+     * automatically recognized by default, not use Default config.
      */
     protected String taskerBean = null;
 
     /**
-     * 任务的参数，对象数组的json格式，默认null或空无参数，不会使用Default配置
+     * Parameters of the task, object array in json format,
+     * default null or no parameters, not use Default config.
      */
     protected String taskerPara = null;
 
     /**
-     * 任务名字，用于通知和日志，可读性好一些，默认为'[全类名#方法名]'，不会使用Default配置
+     * Task name, used for notice and log, better readability,
+     * default is `[shortClassName#method]`, not use Default config.
      */
     protected String taskerName = null;
 
     /**
-     * 是否为轻任务，执行快，秒级完成，不会使用Default配置
+     * Whether it is a light task, fast execution, completed in seconds, not use Default config.
      */
     protected boolean taskerFast = true;
 
     /**
-     * 所属程序，逗号分隔，推荐一个，使用spring.application.name，空时使用Default配置
+     * The app it belongs to, comma separated,
+     * use Default config if null or empty.
      */
     protected String taskerApps = null;
 
@@ -55,7 +59,8 @@ public class TaskerProp {
     }
 
     /**
-     * 执行模式，RunMode(product|test|develop|local)，逗号分隔忽略大小写，空表示所有。空时使用Default配置
+     * RunMode(product|test|develop|local), Comma separated, ignore case, default all,
+     * use Default config if null or empty.
      *
      * @see pro.fessional.wings.silencer.modulate.RunMode
      */
@@ -66,7 +71,8 @@ public class TaskerProp {
     }
 
     /**
-     * 通知Bean，SmallNotice类型，格式为Class，默认无通知。空时使用Default配置
+     * Notice bean, SmallNotice type, fullpath of Class, no notice by default.
+     * use Default config if null or empty.
      */
     protected String noticeBean = "";
 
@@ -76,11 +82,11 @@ public class TaskerProp {
 
     /**
      * <pre>
-     * 通知的时机，exec|fail|done，逗号分隔忽略大小写，默认fail。空时使用Default配置
-     * 时机大概表述为：exec;try{run...;done}catch{fail}
-     * exec - 初始任务
-     * done - 执行成功
-     * fail - 执行失败
+     * Timing of notice, exec|fail|done|feed, comma separated ignoring case, default fail.
+     * use Default config if null or empty.
+     *
+     * * timing is roughly expressed: exec;try{run...;done}catch{fail}
+     * * exec - init task; done - success; fail - failed; feed - non-empty return.
      * </pre>
      */
     protected String noticeWhen = "";
@@ -90,7 +96,7 @@ public class TaskerProp {
     }
 
     /**
-     * 通知Bean的配置文件名字，默认自动，空时使用Default配置
+     * The config name of the notice bean, automatic by default. use Default config if empty.
      */
     protected String noticeConf = "";
 
@@ -99,7 +105,7 @@ public class TaskerProp {
     }
 
     /**
-     * 调度时区的ZoneId格式，默认系统时区，空时使用Default配置，null为自动替换
+     * timezone of scheduling , default system timezone, use Default config if null or empty.
      */
     protected String timingZone = null;
 
@@ -108,7 +114,8 @@ public class TaskerProp {
     }
 
     /**
-     * 调度表达式类型，影响timingCron的解析方式，默认为spring的cron格式，空时使用Default配置
+     * scheduling expression type, affects how timingCron is parsed,
+     * defaults to spring cron format, use Default config if null or empty.
      */
     protected String timingType = "";
 
@@ -117,7 +124,8 @@ public class TaskerProp {
     }
 
     /**
-     * 调度表达式内容，最高优先级，受timingType影响，默认spring cron格式（秒分时日月周），不会使用Default配置
+     * Scheduling expression content, highest priority, affected by timingType,
+     * default spring cron format (second minute hour day month week), not use Default config.
      *
      * @see org.springframework.scheduling.annotation.Scheduled
      * @see org.springframework.scheduling.support.CronTrigger
@@ -129,7 +137,8 @@ public class TaskerProp {
     }
 
     /**
-     * 固定空闲相连（秒），优先级次于timingCron，相当于fixedDelay，结束到开始，0为无效，不会使用Default配置
+     * Fixed idle interval (seconds), lower priority than timingCron,
+     * equal to fixedDelay, end to start, 0 means disable, not use Default config.
      *
      * @see org.springframework.scheduling.annotation.Scheduled
      * @see org.springframework.scheduling.support.PeriodicTrigger
@@ -141,7 +150,8 @@ public class TaskerProp {
     }
 
     /**
-     * 固定频率开始（秒），优先级次于timingIdle，相当于fixedRate，开始到开始，0为无效，不会使用Default配置
+     * Fixed frequency interval (seconds), lower priority than timingIdle,
+     * equal to fixedRate, start to start, 0 means disable, not use Default config.
      *
      * @see org.springframework.scheduling.annotation.Scheduled
      * @see org.springframework.scheduling.support.PeriodicTrigger
@@ -153,48 +163,55 @@ public class TaskerProp {
     }
 
     /**
-     * 是否 hasTimingCron或hasTimingIdle或hasTimingRate
+     * Whether no hasTimingCron, hasTimingIdle or hasTimingRate
      */
     public boolean notTimingPlan() {
         return !hasTimingCron() && !hasTimingIdle() && !hasTimingRate();
     }
 
     /**
-     * 错过调度（misfire）多少秒内，需要补救执行，0表示不补救，不会使用Default配置
+     * Within how many seconds of a misfire, execution is required,
+     * 0 means no execution. not use Default config.
      */
     protected int timingMiss = 0;
 
     /**
-     * 心跳间隔秒数，last_exec距今超过2个心态任务task异常，默认自动。取rate或idle最大值，cron需要自行指定，不会使用Default配置
+     * the interval seconds of heartbeat, if the task's last_exec is more
+     * than 2 heartbeats away from now, it is considered as an exception. default auto to
+     * take rate or idle maximum, cron needs to specify it by itself, not use Default config.
      */
     protected int timingBeat = 0;
     /**
-     * 调度开始的日期时间，timingZone时区，yyyy-MM-dd HH:mm:ss，0表示无效，不会使用Default配置
+     * schedule start datetime at timingZone, in yyyy-MM-dd HH:mm:ss format,
+     * 0 means disable, not use Default config.
      */
     protected String duringFrom = "";
     /**
-     * 调度结束的日期时间，timingZone时区，yyyy-MM-dd HH:mm:ss，0表示无效，不会使用Default配置
+     * schedule stop datetime at timingZone, in yyyy-MM-dd HH:mm:ss format,
+     * 0 means disable, not use Default config.
      */
     protected String duringStop = "";
     /**
-     * 总计初始执行多少次后，结束调度，不会使用Default配置
+     * stop schedule after how many total executions, not use Default config.
      */
     protected int duringExec = 0;
     /**
-     * 连续失败多少次后，结束调度，不会使用Default配置
+     * stop schedule after how many consecutive failures, not use Default config.
      */
     protected int duringFail = 0;
     /**
-     * 总计成功执行多少次后，结束调度，不会使用Default配置
+     * stop schedule after how many successful executions, not use Default config.
      */
     protected int duringDone = 0;
     /**
-     * 每应用每启动时重新计数，总计成功执行多少次后，结束调度，默认无效，不会使用Default配置
+     * recount each time the app is started, and stop schedule after how many
+     * successful executions, disable by default, not use Default config.
      */
     protected int duringBoot = 0;
 
     /**
-     * 执行结果保存的天数，负数为不保存，0为使用Default配置
+     * how many days to save the execution results, default 60 days,
+     * 0 means not save, use Default configuration if null.
      */
     protected int resultKeep = 0;
 

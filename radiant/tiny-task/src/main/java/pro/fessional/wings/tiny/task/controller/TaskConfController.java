@@ -38,7 +38,7 @@ public class TaskConfController {
         private boolean enable;
     }
 
-    @Operation(summary = "启动或禁用任务")
+    @Operation(summary = "enable or disable a task.")
     @PostMapping(value = "${" + TinyTaskUrlmapProp.Key$taskEnable + "}")
     @ResponseBody
     public R<Boolean> taskEnable(@RequestBody In1 ins) {
@@ -52,7 +52,7 @@ public class TaskConfController {
         private long id;
     }
 
-    @Operation(summary = "更新任务配置")
+    @Operation(summary = "update the task config.")
     @PostMapping(value = "${" + TinyTaskUrlmapProp.Key$taskPropSave + "}")
     @ResponseBody
     public R<Boolean> taskPropSave(@RequestBody In2 ins) {
@@ -60,7 +60,7 @@ public class TaskConfController {
         return R.okData(ok);
     }
 
-    @Operation(summary = "任务载入属性")
+    @Operation(summary = "load the task config.")
     @PostMapping(value = "${" + TinyTaskUrlmapProp.Key$taskPropLoad + "}")
     @ResponseBody
     public R<TaskerProp> taskPropLoad(@RequestBody Q.Id ins) {
@@ -68,7 +68,7 @@ public class TaskConfController {
         return R.okData(pp);
     }
 
-    @Operation(summary = "任务配置属性")
+    @Operation(summary = "show the prop of task conf.")
     @PostMapping(value = "${" + TinyTaskUrlmapProp.Key$taskPropConf + "}")
     @ResponseBody
     public R<TaskerProp> taskPropConf(@RequestBody Q.Id ins) {
@@ -76,7 +76,7 @@ public class TaskConfController {
         return R.okData(pp);
     }
 
-    @Operation(summary = "任务配置属性")
+    @Operation(summary = "show the diff of task conf.")
     @PostMapping(value = "${" + TinyTaskUrlmapProp.Key$taskPropDiff + "}")
     @ResponseBody
     public R<Map<String, Diff.V<?>>> taskPropDiff(@RequestBody Q.Id ins) {

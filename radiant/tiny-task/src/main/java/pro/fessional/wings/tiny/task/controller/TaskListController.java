@@ -27,25 +27,25 @@ public class TaskListController {
     @Setter(onMethod_ = {@Autowired})
     protected TinyTaskListService tinyTaskListService;
 
-    @Operation(summary = "列出当前运行中的任务")
+    @Operation(summary = "list of running tasks.")
     @PostMapping(value = "${" + TinyTaskUrlmapProp.Key$taskRunning + "}")
     @ResponseBody
     public PageResult<TinyTaskListService.Item> taskRunning(PageQuery pq) {
         return tinyTaskListService.listRunning(pq);
     }
 
-    @Operation(summary = "列出已定义的任务")
+    @Operation(summary = "list of defined tasks.")
     @PostMapping(value = "${" + TinyTaskUrlmapProp.Key$taskDefined + "}")
     @ResponseBody
     public PageResult<TinyTaskListService.Item> taskDefined(PageQuery pq) {
         return tinyTaskListService.listDefined(pq);
     }
 
-    @Operation(summary = "列出任务的结果", description = """
+    @Operation(summary = "list of task results.", description = """
             # Usage
-            列出任务的结果。
+            list of task results.
             ## Params
-            * @param id - 必填，任务id
+            * @param id - required, task id
             """)
     @PostMapping(value = "${" + TinyTaskUrlmapProp.Key$taskResult + "}")
     @ResponseBody

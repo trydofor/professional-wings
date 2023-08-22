@@ -31,21 +31,21 @@ public class NoticeExec<C> {
     }
 
     /**
-     * 格式为name:Class，优先匹配name，然后Class
+     * The format is name:Class, which matches name first, then Class.
      */
     public boolean accept(String token) {
         return TaskerHelper.acceptToken(beanClass, null, token);
     }
 
     /**
-     * 判断Bean是否一致
+     * Whether the bean is accepted
      */
     public boolean accept(SmallNotice<C> bean) {
         return TaskerHelper.acceptBean(beanClass, beanObject, bean);
     }
 
     /**
-     * 组合decode的配置，post一个notice
+     * Post a notice with combined the config
      */
     public void postNotice(String config, String subject, String content) {
         try {

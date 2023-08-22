@@ -26,7 +26,7 @@ public class TaskExecController {
     protected TinyTaskExecService tinyTaskExecService;
 
 
-    @Operation(summary = "取消任务")
+    @Operation(summary = "cancel a task.")
     @PostMapping(value = "${" + TinyTaskUrlmapProp.Key$taskCancel + "}")
     @ResponseBody
     public R<Boolean> taskCancel(@RequestBody Q.Id ins) {
@@ -34,7 +34,7 @@ public class TaskExecController {
         return R.okData(cancel);
     }
 
-    @Operation(summary = "启动任务")
+    @Operation(summary = "start a task.")
     @PostMapping(value = "${" + TinyTaskUrlmapProp.Key$taskLaunch + "}")
     @ResponseBody
     public R<Boolean> taskLaunch(@RequestBody Q.Id ins) {
@@ -42,7 +42,7 @@ public class TaskExecController {
         return R.okData(cancel);
     }
 
-    @Operation(summary = "强制执行任务")
+    @Operation(summary = "force to start a task.")
     @PostMapping(value = "${" + TinyTaskUrlmapProp.Key$taskForce + "}")
     @ResponseBody
     public R<Boolean> taskForce(@RequestBody Q.Id ins) {

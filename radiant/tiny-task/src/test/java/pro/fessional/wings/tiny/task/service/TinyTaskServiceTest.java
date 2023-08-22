@@ -54,7 +54,7 @@ class TinyTaskServiceTest {
     }
 
     @Test
-    @Disabled("模拟慢处理，sleep 180s")
+    @Disabled("Simulate slow process,sleep 180s")
     void sleep180() throws InterruptedException {
         Thread.sleep(180 * 1000L);
     }

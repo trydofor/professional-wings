@@ -284,7 +284,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                         log.error("failed to save result, id=" + id, e);
                     }
 
-                    if (canRelaunch(id, doneTms, failTms, td)) { // 被取消
+                    if (canRelaunch(id, doneTms, failTms, td)) { // canceled
                         relaunch(id);
                     }
                 }
@@ -475,7 +475,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             return false;
         }
 
-        if (Cancel.containsKey(id)) { // 被取消
+        if (Cancel.containsKey(id)) { // canceled
             log.info("remove task for canceled, id={}", id);
             return false;
         }
@@ -502,7 +502,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         final Long id = td.getId();
 
         final long timingMiss = td.getTimingMiss() * 1000L;
-        // 规划中，但执行结束前程序killed
+        // Planned, program waw killed before execution ends
         final long nextMs = DateLocaling.sysEpoch(td.getNextExec());
         if (nextMs + timingMiss >= now) {
             log.info("launch misfire task, id={}", id);
