@@ -10,42 +10,42 @@ import pro.fessional.mirana.page.PageResult;
 public interface TinyMailListService {
 
     /**
-     * 获取全部邮件的简要信息，默认倒序
+     * list summary of all messages, in reverse order by default.
      */
     PageResult<TinyMailPlain> listAll(PageQuery pq);
 
     /**
-     * 获取失败邮件的简要信息，默认倒序
+     * list summary of failed emails, in reverse order by default.
      */
     PageResult<TinyMailPlain> listFailed(PageQuery pq);
 
     /**
-     * 获取未成功邮件的简要信息，默认倒序
+     * list summary of unsuccessful emails, in reverse order by default.
      */
     PageResult<TinyMailPlain> listUndone(PageQuery pq);
 
     /**
-     * 根据Biz-Mark获取邮件的简要信息，默认倒序
+     * find summary of the email by Biz-Mark, in reverse order by default.
      */
     PageResult<TinyMailPlain> listByBizMark(String mark, PageQuery pq);
 
     /**
-     * 根据正则比较收件人to/cc/bcc获取邮件的简要信息，默认倒序
+     * find summary of the email by RegExp of to/cc/bcc, reverse order by default.
      */
     PageResult<TinyMailPlain> listByRecipient(String mailRegex, PageQuery pq);
 
     /**
-     * 根据收件人from获取邮件的简要信息，默认倒序
+     * find summary of the email by from, in reverse order by default.
      */
     PageResult<TinyMailPlain> listBySender(String mail, PageQuery pq);
 
     /**
-     * 根据正则比较邮件标题获取邮件的简要信息，默认倒序
+     * find summary of the email by RegExp of subject, reverse order by default.
      */
     PageResult<TinyMailPlain> listBySubject(String subjRegex, PageQuery pq);
 
     /**
-     * 获取邮件详情
+     * get mail detail
      */
     TinyMailPlain loadDetail(long id);
 }

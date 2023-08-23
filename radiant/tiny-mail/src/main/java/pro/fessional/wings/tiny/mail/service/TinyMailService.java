@@ -8,7 +8,7 @@ import pro.fessional.wings.tiny.mail.database.autogen.tables.pojos.WinMailSender
 import java.time.LocalDateTime;
 
 /**
- * 可选择同步或异步发送邮件，首先存入database，保证邮件一定发送。
+ * Send mail sync or async, save to database first to ensure mail must be sent.
  *
  * @author trydofor
  * @since 2022-12-29
@@ -16,22 +16,27 @@ import java.time.LocalDateTime;
 public interface TinyMailService {
 
     /**
-     * 同步发送，发送成功或失败，或异常。失败时，可进行异步retry
+     * Sync send, return success or not, or throw exception.
+     * If not success, async retry
      */
     boolean send(@NotNull TinyMail message, boolean retry);
 
     /**
-     * 同步发送 fire and forget，不会抛出异常。失败时，可进行异步retry
+     * Sync send, fire and forget, no exception throw.
+     * If not success, async retry
      */
     boolean post(@NotNull TinyMail message, boolean retry);
 
     /**
-     * 异步发送，忽略异常，自动进行批量处理。失败时，可进行异步retry，返回预计发送时间，-1为失败
+     * Async, no exception throw. auto batch send.
+     * Return the estimated sending time, `-1` for failure
+     * If not success, async retry.
      */
     long emit(@NotNull TinyMail message, boolean retry);
 
     /**
-     * 同步发送，发送成功或失败，或异常。失败时，可进行异步retry
+     * Sync send, return success or not, or throw exception.
+     * If not success, async retry
      */
     default boolean send(@NotNull TinyMailPlain message) {
         final long id = save(message);
@@ -39,7 +44,8 @@ public interface TinyMailService {
     }
 
     /**
-     * 同步发送 fire and forget，不会抛出异常。失败时，可进行异步retry
+     * Sync send, fire and forget, no exception throw.
+     * If not success, async retry
      */
     default boolean post(@NotNull TinyMailPlain message) {
         final long id = save(message);
@@ -47,7 +53,9 @@ public interface TinyMailService {
     }
 
     /**
-     * 异步发送，忽略异常，自动进行批量处理。失败时，可进行异步retry，返回预计发送时间，-1为失败
+     * Async, no exception throw. auto batch send.
+     * Return the estimated sending time, `-1` for failure
+     * If not success, async retry.
      */
     default long emit(@NotNull TinyMailPlain message) {
         final long id = save(message);
@@ -55,33 +63,39 @@ public interface TinyMailService {
     }
 
     /**
-     * 同步发送，发送成功或失败，或异常。失败时，可进行异步retry，发送前是否check状态
+     * Sync send, fire and forget, no exception throw.
+     * If not success, async retry, whether to check state before sending
      */
     boolean send(long id, boolean retry, boolean check);
 
     /**
-     * 同步发送 fire and forget，不会抛出异常。失败时，可进行异步retry，发送前是否check状态
+     * Sync send, fire and forget, no exception throw.
+     * If not success, async retry, whether to check state before sending
      */
     boolean post(long id, boolean retry, boolean check);
 
     /**
-     * 异步发送，忽略异常，自动进行批量处理。失败时，可进行异步retry，发送前是否check状态，返回预计发送时间，-1为失败
+     * Async, no exception throw. auto batch send.
+     * Return the estimated sending time, `-1` for failure
+     * If not success, async retry, whether to check state before sending
      */
     long emit(long id, boolean retry, boolean check);
 
     /**
-     * 新建(id为空)或编辑一个邮件，返回id
+     * Create(id is empty) or edit a mail, return the id
      */
     long save(@NotNull TinyMailPlain message);
 
     /**
-     * 同步扫描补发的邮件，返回补发的件数
+     * Sync scan the mail to resend, return the count, and send them async
      */
     int scan();
 
 
     /**
-     * 自动发送，根据时间自行决定同步还是异步发送，-1为发送失败，0为同步发送，否则为异步发送时间
+     * Create the mail, and auto send it in sync or async way.
+     * `-1` means failure, `0` means sync send,
+     * otherwise means async send at estimated sending time
      */
     default long auto(@NotNull TinyMail message, boolean retry) {
         final LocalDateTime md = message.getDate();
@@ -95,7 +109,9 @@ public interface TinyMailService {
     }
 
     /**
-     * 自动发送，根据时间自行决定同步还是异步发送，-1为发送失败，0为同步发送，否则为异步发送时间
+     * Create the mail, and auto send it in sync or async way.
+     * `-1` means failure, `0` means sync send,
+     * otherwise means async send at estimated sending time
      */
     default long auto(@NotNull TinyMailPlain message) {
         final long id = save(message);

@@ -47,7 +47,7 @@ public class MailNoticeTest {
     }
 
     @Test
-    @Disabled("统计耗时")
+    @Disabled("Statistics time cost")
     public void testDefault() {
         final StopWatch stopWatch = new StopWatch();
         try (final StopWatch.Watch ignored = stopWatch.start("emit")) {

@@ -19,26 +19,26 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 public class TinyMailMessage extends TinyMailConfig {
 
     /**
-     * 邮件的业务ID
+     * Business id of the mail
      */
     protected Long bizId;
 
     /**
-     * 邮件的业务标记
+     * Business mark of the mail
      */
     protected String bizMark;
 
     /**
-     * 邮件标题
+     * Mail subject
      */
     protected String subject;
     /**
-     * 邮件正文
+     * Mail content
      */
     protected String content;
 
     /**
-     * 邮件附件
+     * Mail attachments and its names
      */
     protected Map<String, Resource> attachment = null;
 
@@ -61,7 +61,7 @@ public class TinyMailMessage extends TinyMailConfig {
     }
 
     /**
-     * 全部使用that值
+     * Use all `that` values
      */
     public void adopt(TinyMailMessage that) {
         if (that == null) return;
@@ -74,7 +74,7 @@ public class TinyMailMessage extends TinyMailConfig {
     }
 
     /**
-     * this值无效时，使用that值
+     * Use `that` value if `this` is invalid
      */
     public void merge(TinyMailMessage that) {
         if (that == null) return;

@@ -10,18 +10,18 @@ import org.springframework.mail.MailException;
 public class MailWaitException extends MailException {
 
     /**
-     * 等待的epoch毫秒数
+     * Epoch mills to wait
      */
     @Getter
     private final long waitEpoch;
     /**
-     * 是否为host级别的等待
+     * Whether it is a host-level wait
      */
     @Getter
     private final boolean hostLevel;
 
     /**
-     * 相比于等待，更建议停止发送
+     * Whether to stop sending than to wait
      */
     @Getter
     private final boolean stopRetry;
