@@ -71,7 +71,7 @@ public class I18nStringSerializer extends JsonSerializer<Object> implements Cont
         if (ann == null || ann.value() == enabled) return this;
 
         I18nStringSerializer that = oppositeOne.get();
-        // 不需要同步，不影响结果
+        // No sync required, no impact on results
         if (that == null) {
             that = new I18nStringSerializer(messageSource, !enabled);
             oppositeOne.set(that);

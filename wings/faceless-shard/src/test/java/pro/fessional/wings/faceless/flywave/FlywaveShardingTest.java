@@ -53,7 +53,7 @@ public class FlywaveShardingTest {
         assertEquals(20, countRecords("writer", "tst_sharding"));
         assertEquals(0, countRecords("reader", "tst_sharding"));
 
-        testcaseNotice("在writer强制插入数据，用SQL查询，只有writer有数据，reader上没有");
+        testcaseNotice("Force to insert data in the writer. Select by SQL, only the writer has the data, not the reader.");
     }
 
     @Test
@@ -62,7 +62,7 @@ public class FlywaveShardingTest {
         wingsTestHelper.assertHas(WingsTestHelper.Type.Table, "sys_schema_journal_0", "sys_schema_journal_1");
         schemaShardingManager.publishShard("sys_schema_journal", 0);
         wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "sys_schema_journal_0", "sys_schema_journal_1");
-        testcaseNotice("writer 和reader上，同时多出2个sys_schema_journal_[0-1]表");
+        testcaseNotice("2 sys_schema_journal_[0-1] tables on writer and reader at the same time");
     }
 
     @Test
@@ -76,18 +76,18 @@ public class FlywaveShardingTest {
                 "tst_sharding_4");
         assertEquals(20, countRecords("writer", "tst_sharding"));
         schemaShardingManager.shardingData("tst_sharding", true);
-        // 主表移除
-        assertEquals(0, countRecords("writer", "tst_sharding"), "如果失败，单独运行整个类，消除分表干扰");
-        // 分表平分
+        // delete from main table
+        assertEquals(0, countRecords("writer", "tst_sharding"), "If it fails, run the entire class individually to avoid interference.");
+        // insert into the sharding by hash
         assertEquals(4, countRecords("writer", "tst_sharding_0"));
         assertEquals(4, countRecords("writer", "tst_sharding_1"));
         assertEquals(4, countRecords("writer", "tst_sharding_2"));
         assertEquals(4, countRecords("writer", "tst_sharding_3"));
         assertEquals(4, countRecords("writer", "tst_sharding_4"));
 
-        // 5.x起，shardingsphere 会 SELECT count(*) FROM tst_sharding_0 UNION ALL SELECT count(*) FROM tst_sharding_#
+        // form 5.x, shardingsphere will SELECT count(*) FROM tst_sharding_0 UNION ALL SELECT count(*) FROM tst_sharding_#
         Integer cnt = shardingJdbcTemplate.queryForObject("SELECT count(*) FROM tst_sharding", Integer.class);
-//        testcaseNotice("writer和reader实际未配置同步，所以从库读取为0");
+//        testcaseNotice("The writer and reader are not actually configured to synchronize, so reading from db is 0");
         assertEquals(20, cnt);
     }
 

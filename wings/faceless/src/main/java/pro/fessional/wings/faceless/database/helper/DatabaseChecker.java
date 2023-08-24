@@ -24,8 +24,8 @@ import java.util.TimeZone;
 import static java.time.ZoneOffset.UTC;
 
 /**
- * mysql服务器，程序，会话时区
- * <a href="https://dev.mysql.com/doc/refman/8.0/en/time-zone-support.html#time-zone-variables">time-zone-variables</a>
+ * check the timezone between mysql server, application, and jdbc session.
+ * see <a href="https://dev.mysql.com/doc/refman/8.0/en/time-zone-support.html#time-zone-variables">time-zone-variables</a>
  *
  * @author trydofor
  * @since 2021-04-14
@@ -34,14 +34,14 @@ import static java.time.ZoneOffset.UTC;
 public class DatabaseChecker {
 
     /**
-     * 自动释放链接
+     * Whether in H2database
      */
     public static boolean isH2(DataSource ds) {
         return extractJdbcUrl(ds).contains(":h2:");
     }
 
     /**
-     * 自动释放链接
+     * Extract the jdbc-url from the datasource
      */
     @SneakyThrows
     @NotNull
@@ -58,18 +58,21 @@ public class DatabaseChecker {
     }
 
     /**
-     * 自动释放链接
+     * Check timezone with off=5, fail=true
+     *
+     * @see #timezone(DataSource, int, boolean)
      */
     public static void timezone(DataSource ds) {
         timezone(ds, 5, true);
     }
 
     /**
-     * 自动释放链接，判断数据库和jvm时差，根据其绝对值的最大值，判断是否终止或log
+     * Check the database and jvm time difference,
+     * in the absolute `off` second, throw or log as ERROR if `fail`.
      *
      * @param ds   datasource
-     * @param off  时差绝对值的最大值
-     * @param fail IllegalStateException还是仅log.ERROR
+     * @param off  max abs time tolerance in second
+     * @param fail throw IllegalStateException or log.ERROR
      */
     public static void timezone(DataSource ds, int off, boolean fail) {
         if (isH2(ds)) {
@@ -134,7 +137,7 @@ public class DatabaseChecker {
     }
 
     /**
-     * 自动释放链接，在日志中输出数据库版本信息
+     * output the database version in the log
      */
 
     public static void version(DataSource ds) {
@@ -157,7 +160,8 @@ public class DatabaseChecker {
     }
 
     /**
-     * 手工关闭链接，SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME=? AND TABLE_SCHEMA=SCHEMA()
+     * Whether the table exist, need close the `conn` manually.
+     * `SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME=? AND TABLE_SCHEMA=SCHEMA()`
      * <a href="https://www.jooq.org/doc/latest/manual/sql-building/column-expressions/system-functions/current-schema-function/">current-schema-function</a>
      */
     @SneakyThrows

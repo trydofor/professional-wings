@@ -16,8 +16,8 @@ class TemplateUtilTest {
         val txt = """CREATE TABLE `SYS_LIGHT_SEQUENCE` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'"""
         val tkn = "SYS_LIGHT_SEQUENCE"
         val idx = TemplateUtil.parse(txt, tkn, "'\"")
-        val mrg = TemplateUtil.merge(txt, idx, "中文表也是表")
-        assertEquals("""CREATE TABLE `中文表也是表` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'""", mrg)
+        val mrg = TemplateUtil.merge(txt, idx, "SHARD_TABLE")
+        assertEquals("""CREATE TABLE `SHARD_TABLE` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'""", mrg)
     }
 
     @Test
@@ -25,8 +25,8 @@ class TemplateUtilTest {
         val txt = """CREATE TABLE `SYS_LIGHT_SEQUENCE_01` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'"""
         val tkn = "SYS_LIGHT_SEQUENCE"
         val idx = TemplateUtil.parse(txt, tkn, "'\"",false)
-        val mrg = TemplateUtil.merge(txt, idx, "中文表也是表")
-        assertEquals("""CREATE TABLE `中文表也是表_01` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'""", mrg)
+        val mrg = TemplateUtil.merge(txt, idx, "SHARD_TABLE")
+        assertEquals("""CREATE TABLE `SHARD_TABLE_01` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'""", mrg)
     }
 
     @Test
@@ -34,11 +34,11 @@ class TemplateUtilTest {
         val txt = """CREATE TABLE `SYS_LIGHT_SEQUENCE` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'"""
         val tkn = listOf("SYS_LIGHT_SEQUENCE","LIGHT_SEQUENCE","SEQUENCE`")
         val idx = TemplateUtil.parse(txt, tkn, "'\"")
-        val map = mapOf("SYS_LIGHT_SEQUENCE" to "中文表也是表",
+        val map = mapOf("SYS_LIGHT_SEQUENCE" to "SHARD_TABLE",
                 "LIGHT_SEQUENCE" to "XXX",
                 "SEQUENCE`" to "ZZZ")
         val mrg = TemplateUtil.merge(txt, idx, map)
-        assertEquals("""CREATE TABLE `中文表也是表` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'""", mrg)
+        assertEquals("""CREATE TABLE `SHARD_TABLE` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'""", mrg)
     }
 
     @Test

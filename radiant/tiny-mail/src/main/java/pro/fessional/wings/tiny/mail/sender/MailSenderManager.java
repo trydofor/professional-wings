@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
- * 支持force替换，DayLimitException
+ * Support dryrun, replacement and DayLimitException
  *
  * @author trydofor
  * @since 2023-01-03
@@ -59,14 +59,14 @@ public class MailSenderManager {
     protected final ConcurrentHashMap<String, Long> mailHostIdle = new ConcurrentHashMap<>();
 
     /**
-     * remove host waiting by host
+     * Remove host from waiting
      */
     public void removeHostWait(String host) {
         mailHostWait.remove(host);
     }
 
     /**
-     * remove cached sender by its config.name
+     * Remove cached sender by its config.name
      *
      * @param name config.name
      */
@@ -75,7 +75,7 @@ public class MailSenderManager {
     }
 
     /**
-     * 列出当前等待的host
+     * List all hosts waiting for frequency limit
      */
     public Map<String, Long> listHostWait() {
         return new HashMap<>(mailHostWait);
@@ -101,9 +101,9 @@ public class MailSenderManager {
     }
 
     /**
-     * 支持dryrun，一次链接验证，发送一个邮件，MailException会被转为MailWaitException
+     * Supports dryrun, send one mail per connect login, MailException is wrapped to MailWaitException
      *
-     * @throws MailWaitException 需要处理waitMillis及cause非null时的原始异常
+     * @throws MailWaitException need handle the waitMillis and non-null cause (original exception)
      */
     @SneakyThrows
     public void singleSend(@NotNull TinyMailMessage message, long maxWait, @Nullable MimeMessagePrepareHelper preparer) {
@@ -154,7 +154,7 @@ public class MailSenderManager {
     }
 
     /**
-     * 支持dryrun，一次链接验证，发送批量邮件，需要单个处理结果
+     * Supports dryrun, batch send mails per connect login, need to handle the batch result
      */
     public List<BatchResult> batchSend(Collection<? extends TinyMailMessage> messages, long maxWait, @Nullable MimeMessagePrepareHelper preparer) {
         if (messages.isEmpty()) return Collections.emptyList();
@@ -220,7 +220,7 @@ public class MailSenderManager {
                 now = ThreadNow.millis();
                 final Wait wt = dealErrorWait(me, now);
                 if (wt != null) {
-                    // 一个sender应该只有一个host，因以按sender分组
+                    // group by sender. one sender should have only one host
                     for (String host : hosts) {
                         mailHostWait.put(host, wt.wait);
                     }

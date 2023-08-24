@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 统计git代码，按年月和作者
+ * Statistics Git code, grouping it by year, month, and author.
  *
  * @author trydofor
  * @since 2019-12-26

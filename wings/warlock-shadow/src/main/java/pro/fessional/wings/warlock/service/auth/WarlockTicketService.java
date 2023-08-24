@@ -27,33 +27,36 @@ public interface WarlockTicketService {
     String encode(@NotNull Term term, @NotNull Duration ttl);
 
     /**
-     * 获取ClientId对应的信息，null为不存在
+     * Find Pass Info by ClientId, null if not exist
      */
     @Nullable
     Pass findPass(@NotNull String clientId);
 
     /**
-     * 获取用户下的发行序号，分为accessToken和code
+     * Get the next serial number under the user by type
+     *
+     * @see Term#TypeAuthorizeCode
+     * @see Term#TypeAccessToken
      */
     int nextSeq(long uid, int type);
 
     /**
-     * 吊销用户下所有Code或Token
+     * revoke the code and token under the user
      */
     void revokeAll(long uid);
 
 
     /**
-     * 获取凭证的过期时间戳
+     * Calculate the expired timestamp
      *
-     * @param ttl 存活时间
+     * @param ttl time to live
      */
     default long calcDue(@NotNull Duration ttl) {
         return Now.millis() / 1000 + ttl.toSeconds();
     }
 
     /**
-     * 当前凭证的序号是否有效，默认不检查，返回true
+     * Whether the serial number is valid.
      */
     default boolean checkSeq(long uid, int type, int seq) {
         return seq >= 0;
@@ -66,7 +69,7 @@ public interface WarlockTicketService {
         protected String secret = Null.Str;
         protected Set<String> scopes = Collections.emptySet();
         /**
-         * 302的主机名，不要使用ipv6
+         * the hostname of http status code=302, should not use ipv6
          */
         protected Set<String> hosts = Collections.emptySet();
     }
@@ -78,14 +81,14 @@ public interface WarlockTicketService {
         int TypeAccessToken = 2;
 
         /**
-         * 能否精确解析，完全匹配
+         * Whether it can decode and match exactly.
          */
         default boolean decode(String str) {
             return decode(str, true);
         }
 
         /**
-         * 能否成功的以term解析字符串，并赋值
+         * Whether the string can decode into Term and its value
          */
         default boolean decode(String str, boolean exactly) {
             final int size = getSize();
@@ -102,6 +105,9 @@ public interface WarlockTicketService {
         }
 
 
+        /**
+         * encode term to string
+         */
         static String encode(Term term) {
             BarString buff = new BarString();
             buff.append(term.getType());
@@ -113,57 +119,64 @@ public interface WarlockTicketService {
         }
 
         /**
-         * 包含的字段数
+         * Number of field to encode and decode.
+         *
+         * @see #encode(Term)
+         * @see #decode(String)
          */
-        int getSize();
+        default int getSize() {
+            return 5; // type,userId,scope,clientId,sessionId
+        }
 
         /**
-         * 类别，AuthCode或AccessToken，非enum以备扩展
+         * @see #TypeAccessToken
+         * @see #TypeAuthorizeCode
          */
         int getType();
 
         /**
-         * 类别，AuthCode或AccessToken，非enum以备扩展
+         * @see #TypeAccessToken
+         * @see #TypeAuthorizeCode
          */
         void setType(int type);
 
         /**
-         * 资源访问者对应的user
+         * the userid of the resource visitor
          */
         long getUserId();
 
         /**
-         * 资源访问者对应的user
+         * the userid of the resource visitor
          */
         void setUserId(long userId);
 
         /**
-         * 资源对应的scope，空格分割，对应于权限
+         * the scope of resource, space seperated (corresponds to the permissions)
          */
         String getScopes();
 
         /**
-         * 资源对应的scope，空格分割，对应于权限
+         * the scope of resource, space seperated (corresponds to the permissions)
          */
         void setScopes(String scopes);
 
         /**
-         * 资源访问者的client id，支持一对多的场景
+         * the clientId of the resource visitor, Support for one-to-many scenarios
          */
         String getClientId();
 
         /**
-         * 资源访问者的client id，支持一对多的场景
+         * the clientId of the resource visitor, Support for one-to-many scenarios
          */
         void setClientId(String clientId);
 
         /**
-         * 资源拥有者的session，api不需要session
+         * the sessionId of the resource owner, no session in api
          */
         String getSessionId();
 
         /**
-         * 资源拥有者的session，api不需要session
+         * the sessionId of the resource owner, no session in api
          */
         void setSessionId(String sessionId);
     }
@@ -175,10 +188,5 @@ public interface WarlockTicketService {
         protected String scopes = Null.Str;
         protected String clientId = Null.Str;
         protected String sessionId = Null.Str;
-
-        @Override
-        public int getSize() {
-            return 5;
-        }
     }
 }

@@ -10,14 +10,14 @@ import lombok.Data;
 public class TweakClockEvent {
 
     /**
-     * userId为Long.MAX_VALUE时，为全部用户
+     * Long.MAX_VALUE means all user
      */
     private long userId;
     /**
-     * 判断条件，mills在未来3650天(315360000000)，约1980前
-     * ①与系统时钟相差的毫秒数
-     * ②固定时间(1970-01-01)
-     * ③0表示reset
+     * Condition, mills in the next 3650 days (315360000000), before 1980
+     * (1) milliseconds difference from the system clock
+     * (2) fixed time (from 1970-01-01, after 1980)
+     * (3) 0 means reset setting, restores the original system settings.
      */
     private long mills;
 

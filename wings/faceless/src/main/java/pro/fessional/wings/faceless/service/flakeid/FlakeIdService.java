@@ -10,20 +10,16 @@ import pro.fessional.wings.faceless.service.lightid.LightIdAware;
 public interface FlakeIdService {
 
     /**
-     * 按Jooq的Table命名获得，去掉结尾的`Table`后缀，按 小写_小写命名。
-     *
-     * @param table 标记的对象
-     * @return id
+     * Get FlackId by Table name.
+     * eg. in Jooq, removing the `Table` suffix at the end
+     * and naming it in lowercase_lowercase.
      */
     default long getId(@NotNull LightIdAware table) {
         return getId(table.getSeqName());
     }
 
     /**
-     * 按名字获得id，不区分大小写，默认全小写。
-     *
-     * @param name  名字
-     * @return id
+     * Get FlackId by name, may be case-insensitive, all lowercase is recommended.
      */
     long getId(@NotNull String name);
 }

@@ -4,17 +4,17 @@ THIS_VERSION=2023-04-14
 cat << EOF
 #################################################
 # Version $THIS_VERSION # test on Mac and Lin
-# 通过 mysqldump 生成 'db-ts' 开头的以下文件，
-- {db-ts}-main.sql 主表
-- {db-ts}-logs.sql log表
-- {db-ts}-tbl.log dump的表及结果信息
-- {db-ts}-tip.txt scp及restore手册
+# Generate the following files starting with 'db-ts' using mysqldump.
+- {db-ts}-main.sql main table
+- {db-ts}-logs.sql trac table
+- {db-ts}-tbl.log log of dump table
+- {db-ts}-tip.txt tip of scp and restore
 
 # Usage $0 cnf [db] [opt]
-- cnf - 配置文件，参考'--defaults-extra-file'
-- db - 需要dump的database，空时显示所有db
-- opt - dump参数，如 '--no-data'
-# option 详细参考client和mysqldump段
+- cnf - config file, see '--defaults-extra-file'
+- db - database to dump, empty means all
+- opt - dump args, e.g. '--no-data'
+# option details in client/mysqldump help
 - https://dev.mysql.com/doc/refman/8.0/en/option-files.html
 #################################################
 EOF

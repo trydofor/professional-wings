@@ -27,7 +27,7 @@ import java.util.Locale;
 @Slf4j
 public class TestWingsUserDetailsService implements WingsUserDetailsService {
 
-    public final String origPassword = "大翅挺好吃";
+    public final String origPassword = "WingsBoot is Good";
     //F9EC9CF4EA9EEEE69FC01AA44638087F
     public final String sendPassword = Md5.sum(origPassword + ":" + origPassword);
     private final String hashPassword = "{bcrypt}" + new BCryptPasswordEncoder().encode(sendPassword);
@@ -57,7 +57,7 @@ public class TestWingsUserDetailsService implements WingsUserDetailsService {
     }
 
     public static void main(String[] args) {
-        final String origPassword = "大翅挺好吃";
+        final String origPassword = "WingsBoot is Good";
         //
         final String sendPassword = Md5.sum(origPassword + ":" + origPassword);
         log.info("password={}", sendPassword);

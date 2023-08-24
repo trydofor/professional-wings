@@ -65,29 +65,29 @@ public class WingsJooqDaoAliasImplTest {
     @Test
     public void test1BatchLoadSeeLog() {
         if (WingsJooqEnv.daoBatchMysql) {
-            testcaseNotice("跳过低效的SQL，使用mysql replace into 语法，见 batchMerge");
+            testcaseNotice("Skip the inefficient SQL and use mysql `replace into` syntax, see batchMerge");
             return;
         }
 
         val rds = Arrays.asList(
-                new TstShardingRecord(301L, now, now, now, 9L, "批量加载301", "", ZH_CN),
-                new TstShardingRecord(302L, now, now, now, 9L, "批量加载302", "", ZH_CN),
-                new TstShardingRecord(303L, now, now, now, 9L, "批量加载303", "", ZH_CN)
+                new TstShardingRecord(301L, now, now, now, 9L, "batch load 301", "", ZH_CN),
+                new TstShardingRecord(302L, now, now, now, 9L, "batch load 302", "", ZH_CN),
+                new TstShardingRecord(303L, now, now, now, 9L, "batch load 303", "", ZH_CN)
         );
-        testcaseNotice("批量Load，查看日志，ignore, 301-303，使用了from dual where exists先查再插");
+        testcaseNotice("batch load, check log, ignore, 301-303, use `from dual where exists` check, then insert");
         dao.batchLoad(rds, true);
-        testcaseNotice("批量Load，查看日志，replace, 301-303，使用了on duplicate key update");
+        testcaseNotice("batch load, check log, replace, 301-303, use on duplicate key update");
         dao.batchLoad(rds, false);
     }
 
     @Test
     public void test2BatchInsertSeeLog() {
         val rds = Arrays.asList(
-                new TstShardingRecord(304L, now, now, now, 9L, "批量加载304", "", ZH_CN),
-                new TstShardingRecord(305L, now, now, now, 9L, "批量加载305", "", ZH_CN),
-                new TstShardingRecord(306L, now, now, now, 9L, "批量加载306", "", ZH_CN)
+                new TstShardingRecord(304L, now, now, now, 9L, "batch load 304", "", ZH_CN),
+                new TstShardingRecord(305L, now, now, now, 9L, "batch load 305", "", ZH_CN),
+                new TstShardingRecord(306L, now, now, now, 9L, "batch load 306", "", ZH_CN)
         );
-        testcaseNotice("批量Insert，查看日志, 304-306，分2批插入");
+        testcaseNotice("batch Insert, check log, 304-306, in 2 batch");
         val rs = dao.batchInsert(rds, 2);
         assertArrayEquals(new int[]{1, 1, 1}, rs);
     }
@@ -95,19 +95,19 @@ public class WingsJooqDaoAliasImplTest {
     @Test
     public void test3BatchMergeSeeLog() {
         val rds = Arrays.asList(
-                new TstShardingRecord(307L, now, now, now, 9L, "批量加载307", "", ZH_CN),
-                new TstShardingRecord(308L, now, now, now, 9L, "批量加载308", "", ZH_CN),
-                new TstShardingRecord(309L, now, now, now, 9L, "批量加载309", "", ZH_CN)
+                new TstShardingRecord(307L, now, now, now, 9L, "batch load 307", "", ZH_CN),
+                new TstShardingRecord(308L, now, now, now, 9L, "batch load 308", "", ZH_CN),
+                new TstShardingRecord(309L, now, now, now, 9L, "batch load 309", "", ZH_CN)
         );
-        testcaseNotice("批量Insert，查看日志,ignore, 307-309，分2批次， insert ignore");
+        testcaseNotice("batch Insert, check log, ignore, 307-309, in 2 batch, insert ignore");
         val rs1 = dao.batchInsert(rds, 2, true);
         assertArrayEquals(new int[]{1, 1, 1}, rs1);
 
-        testcaseNotice("批量Insert，查看日志,replace, 307-309，分2批，replace into", "BUG https://github.com/apache/shardingsphere/issues/8226\n");
+        testcaseNotice("batch Insert, check log, replace, 307-309, in 2 batch, replace into", "BUG https://github.com/apache/shardingsphere/issues/8226\n");
         val rs2 = dao.batchInsert(rds, 2, false);
         assertArrayEquals(new int[]{1, 1, 1}, rs2);
 
-        testcaseNotice("批量Merge，查看日志,on dupkey, 307-309，分2批，duplicate");
+        testcaseNotice("batch Merge, check log, on dupkey, 307-309, in 2 batch, duplicate");
         testcaseNotice("insert into `tst_sharding` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?");
         val rs3 = dao.batchMerge(tbl, rds, 2, tbl.LoginInfo, tbl.OtherInfo);
         assertArrayEquals(new int[]{1, 1, 1}, rs3);
@@ -116,11 +116,11 @@ public class WingsJooqDaoAliasImplTest {
     @Test
     public void test4BatchStoreSeeLog() {
         val rds = Arrays.asList(
-                new TstShardingRecord(310L, now, now, now, 9L, "批量加载310", "", ZH_CN),
-                new TstShardingRecord(311L, now, now, now, 9L, "批量加载311", "", ZH_CN),
-                new TstShardingRecord(312L, now, now, now, 9L, "批量加载312", "merge", ZH_CN)
+                new TstShardingRecord(310L, now, now, now, 9L, "batch load 310", "", ZH_CN),
+                new TstShardingRecord(311L, now, now, now, 9L, "batch load 311", "", ZH_CN),
+                new TstShardingRecord(312L, now, now, now, 9L, "batch load 312", "merge", ZH_CN)
         );
-        testcaseNotice("批量Insert，查看日志,ignore, 307-309，分2批插入");
+        testcaseNotice("batch Insert, check log, ignore, 307-309, in 2 batch");
         val rs = dao.batchStore(rds, 2);
         assertArrayEquals(new int[]{1, 1, 1}, rs);
     }
@@ -128,11 +128,11 @@ public class WingsJooqDaoAliasImplTest {
     @Test
     public void test5BatchUpdateSeeLog() {
         val rds = Arrays.asList(
-                new TstShardingRecord(309L, now, now, now, 9L, "批量加载309", "update", ZH_CN),
-                new TstShardingRecord(310L, now, now, now, 9L, "批量加载310", "update", ZH_CN),
-                new TstShardingRecord(311L, now, now, now, 9L, "批量加载311", "update", ZH_CN)
+                new TstShardingRecord(309L, now, now, now, 9L, "batch load 309", "update", ZH_CN),
+                new TstShardingRecord(310L, now, now, now, 9L, "batch load 310", "update", ZH_CN),
+                new TstShardingRecord(311L, now, now, now, 9L, "batch load 311", "update", ZH_CN)
         );
-        testcaseNotice("批量Update，查看日志 307-309，分2批更新");
+        testcaseNotice("batch Update, check log, 307-309, in 2 batch");
         val rs1 = dao.batchUpdate(rds, 2);
         assertArrayEquals(new int[]{1, 1, 1}, rs1);
 
@@ -143,7 +143,7 @@ public class WingsJooqDaoAliasImplTest {
     @Test
     public void test6SingleMergeSeeLog() {
         testcaseNotice("insert into `tst_sharding` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?");
-        TstSharding pojo = new TstSharding(312L, now, now, now, 9L, "批量加载312", "update-bymerge", ZH_CN);
+        TstSharding pojo = new TstSharding(312L, now, now, now, 9L, "batch load 312", "update-bymerge", ZH_CN);
         val rs = dao.mergeInto(tbl, pojo, tbl.LoginInfo, tbl.OtherInfo);
         assertEquals(2, rs);
     }
@@ -151,9 +151,9 @@ public class WingsJooqDaoAliasImplTest {
     @Test
     public void test7BatchMergeSeeLog() {
         val rds = Arrays.asList(
-                new TstShardingRecord(313L, now, now, now, 9L, "批量合并313-merge", "update-merge", ZH_CN),
-                new TstShardingRecord(310L, now, now, now, 9L, "批量合并310-merge", "update-merge", ZH_CN),
-                new TstShardingRecord(311L, now, now, now, 9L, "批量合并311-merge", "update-merge", ZH_CN)
+                new TstShardingRecord(313L, now, now, now, 9L, "batch 313-merge", "update-merge", ZH_CN),
+                new TstShardingRecord(310L, now, now, now, 9L, "batch 310-merge", "update-merge", ZH_CN),
+                new TstShardingRecord(311L, now, now, now, 9L, "batch 311-merge", "update-merge", ZH_CN)
         );
         testcaseNotice("313 insert, 310,311 update");
         val rs = dao.batchMerge(tbl, new Field[]{tbl.Id}, rds, 2, tbl.LoginInfo, tbl.OtherInfo);

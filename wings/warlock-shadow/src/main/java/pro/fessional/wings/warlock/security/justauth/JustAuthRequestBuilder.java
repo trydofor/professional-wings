@@ -93,6 +93,7 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
             if (data instanceof AuthUser) {
                 final DefaultWingsAuthDetails detail = new DefaultWingsAuthDetails(data);
                 final Map<String, String> meta = detail.getMetaData();
+                meta.put(WingsAuthHelper.AuthType, authType.name());
                 meta.put(WingsAuthHelper.AuthZone, authStateBuilder.parseAuthZone(request));
                 meta.put(WingsAuthHelper.AuthAddr, remoteResolver.resolveRemoteIp(request));
                 meta.put(WingsAuthHelper.AuthAgent, remoteResolver.resolveAgentInfo(request));

@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * ⑤ 使用wings的flywave，生成trigger和跟踪表
+ * Generate trigger and trace table by wings flywave
  *
  * @author trydofor
  * @since 2019-12-26
@@ -24,7 +24,7 @@ import java.util.List;
         "spring.datasource.username=" + Devops0ProjectConstant.JDBC_USER,
         "spring.datasource.password=" + Devops0ProjectConstant.JDBC_PASS,
 })
-@Disabled("日志表管理")
+@Disabled("Journal Manage")
 @Slf4j
 public class Devops5JournalManagerTest {
 

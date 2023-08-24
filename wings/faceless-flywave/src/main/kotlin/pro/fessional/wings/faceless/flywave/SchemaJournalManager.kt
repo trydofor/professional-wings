@@ -18,8 +18,8 @@ import java.util.function.Function
 import javax.sql.DataSource
 
 /**
- * 控制`$schemaJournalTable`中的`log_update`和`log_delete`，
- * 进而实现自动的Trigger创建和删除。
+ * Mange `log_update` and `log_delete` of `$schemaJournalTable`
+ * to auto create or delete Trigger.
  *
  * @author trydofor
  * @since 2019-06-13
@@ -68,48 +68,52 @@ class SchemaJournalManager(
     }
 
     /**
-     * 根据DDL模板应用跟踪表和触发器
-     * 跟踪表，如果存在，没有数据，则重建。
-     * 跟踪表，如果存在，且有数据，结构相同时，忽略，否则报错。
-     * 触发器，如果触发器存在，删除重建。
-     * 如果跟踪表和触发器都不存在，新建。
-     * @param table 主表
-     * @param enable 允许或禁止
-     * @param commitId 提交ID，参见Journal
+     * Apply trace table and its Update Trigger based on DDL templates.
+     * Trace table, if it exists and has no data, recreate it.
+     * Trace table, if it exists and has data, ignore if the structure is the same, otherwise throw an error.
+     * Trigger, if trigger exists, delete and recreate it.
+     * If neither trace table nor trigger exists, create new one.
+     *
+     * @param table plain table
+     * @param enable enable or disable
+     * @param commitId commit id of Journal
      */
     fun publishUpdate(table: String, enable: Boolean, commitId: Long) =
         publishJournal(table, enable, commitId, "update")
 
     /**
-     * 根据DDL模板应用跟踪表和触发器
-     * 跟踪表，如果存在，没有数据，则重建。
-     * 跟踪表，如果存在，且有数据，结构相同时，忽略，否则报错。
-     * 触发器，如果触发器存在，删除重建。
-     * 如果跟踪表和触发器都不存在，新建。
-     * @param table 主表
-     * @param enable 允许或禁止
-     * @param commitId 提交ID，参见Journal
+     * Apply trace table and its Delete Trigger based on DDL templates.
+     * Trace table, if it exists and has no data, recreate it.
+     * Trace table, if it exists and has data, ignore if the structure is the same, otherwise throw an error.
+     * Trigger, if trigger exists, delete and recreate it.
+     * If neither trace table nor trigger exists, create new one.
+     *
+     * @param table plain table
+     * @param enable enable or disable
+     * @param commitId commit id of Journal
      */
     fun publishDelete(table: String, enable: Boolean, commitId: Long) =
         publishJournal(table, enable, commitId, "delete")
 
     /**
-     * 根据DDL模板应用跟踪表和触发器
-     * 跟踪表，如果存在，没有数据，则重建。
-     * 跟踪表，如果存在，且有数据，结构相同时，忽略，否则报错。
-     * 触发器，如果触发器存在，删除重建。
-     * 如果跟踪表和触发器都不存在，新建。
-     * @param table 主表
-     * @param enable 允许或禁止
-     * @param commitId 提交ID，参见Journal
+     * Apply trace table and its Insert Trigger based on DDL templates.
+     * Trace table, if it exists and has no data, recreate it.
+     * Trace table, if it exists and has data, ignore if the structure is the same, otherwise throw an error.
+     * Trigger, if trigger exists, delete and recreate it.
+     * If neither trace table nor trigger exists, create new one.
+     *
+     * @param table plain table
+     * @param enable enable or disable
+     * @param commitId commit id of Journal
      */
     fun publishInsert(table: String, enable: Boolean, commitId: Long) =
         publishJournal(table, enable, commitId, "insert")
 
     /**
-     * 检查所有trigger，可以选择是否删除
-     * @param table 主表
-     * @param drop 是否询问删除，默认false
+     * Check all triggers, and can ask whether to delete.
+     *
+     * @param table plain table
+     * @param drop Whether to ask for drop, default false
      */
     fun manageTriggers(table: String, drop: Boolean = false) {
         val here = "manageTriggers"
@@ -130,11 +134,13 @@ class SchemaJournalManager(
     }
 
     /**
-     * 对比本地和数据库中的SQL。
-     * 当不存在时，则把本地保存到数据库。
-     * 当存在但内容不一致，已APPLY则log error，否则更新
-     * @param table 主表
-     * @param commitId 提交ID，参见Journal
+     * Compare the SQL between in local and in database.
+     * If it does not exist, then save local to database.
+     * If it exists but the contents are not the same and has been `APPLY`
+     * then log error, otherwise update it.
+     *
+     * @param table plain table
+     * @param commitId commit id of Journal
      */
     fun checkAndInitDdl(table: String, commitId: Long) {
         val here = "checkAndInitDdl"
@@ -443,7 +449,7 @@ class SchemaJournalManager(
                 }
             }
 
-            // 跟踪表，删除存在的，非空的
+            // trace table, delete existed and non-empty
             for ((_, tblRaw) in staffs) {
                 val ddlTbl = mergeDdl(tmplTbl, model, tblRaw)
                 val ddlTrg = mergeDdl(tmplTrg, model, tblRaw)
@@ -454,11 +460,11 @@ class SchemaJournalManager(
                     continue
                 }
 
-                // 检查触发器
-                val furTrg = parseTrgName(ddlTrg) // 新trigger名字
-                var refTrc = false // 有引用
+                // check trigger
+                val furTrg = parseTrgName(ddlTrg) // new trigger name
+                var refTrc = false // has ref
                 for (trg in schemaDefinitionLoader.showBoneTrg(plainDs, tblRaw)) {
-                    // 删除同名
+                    // delete same name
                     if (trg.name.equals(furTrg, true)) {
                         interactive.log(WARN, here, "drop trigger=${trg.name}, existed same name, table=$tblRaw, db=$plainName")
                         if (interactive.needAsk(AskType.DropTrigger)) {
@@ -466,7 +472,7 @@ class SchemaJournalManager(
                         }
                         tmpl.execute(schemaDefinitionLoader.makeDdlTrg(trg, true))
                     } else {
-                        // 保留trigger使用的trac表
+                        // keep trace table used by trigger
                         if (TemplateUtil.isBoundary(trg.event, curTac, false)) {
                             interactive.log(INFO, here, "trigger=${trg.name}, with same trace-table=$curTac, db=$plainName")
                             refTrc = true
@@ -474,7 +480,7 @@ class SchemaJournalManager(
                     }
                 }
 
-                // 检查跟踪表
+                // check trace table
                 var newTrc = true
                 if (tables.containsKey(curTac.lowercase())) {
                     interactive.log(INFO, here, "existed trace-table=$curTac, table=$tblRaw, db=$plainName")
@@ -494,7 +500,7 @@ class SchemaJournalManager(
                 trgDdl[ddlTrg] = tblRaw
             }
 
-            // 检测已存在的，所有跟踪表应该结构一致
+            // check existed, all trace tables have same structure.
             if (trcChk.isNotEmpty()) {
                 val tmpTrc = "$table$tmpTkn"
                 val tmpDdl = mergeDdl(tmplTbl, model, tmpTrc)
@@ -525,7 +531,7 @@ class SchemaJournalManager(
                         continue
                     }
                 } finally {
-                    // 如创建，则删除
+                    // delete if created
                     tmpl.execute("DROP TABLE IF EXISTS $safeTmp")
                     interactive.log(INFO, here, "remove temp-trace-table=$tmpTbl, db=$plainName")
                 }
@@ -553,7 +559,7 @@ class SchemaJournalManager(
                 interactive.log(INFO, here, "execute disable journal, plain-table=table=$table, db=$plainName")
             }
 
-            // 更新状态
+            // update status
             val rst = tmpl.update(updateSql, commitId, table)
             if (rst != 1) {
                 throw IllegalStateException("update journal $rst records, table=$table, db=$plainName")
@@ -594,7 +600,7 @@ class SchemaJournalManager(
         .toRegex(setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE))
 
     private fun parseTrgName(ddl: String): String {
-        return trgNameRegex.find(ddl)?.groupValues?.get(1) ?: Null.Str // 名字
+        return trgNameRegex.find(ddl)?.groupValues?.get(1) ?: Null.Str
     }
 
     private fun parseTblName(ddl: String) = when (val st = sqlStatementParser.parseTypeAndTable(ddl)) {

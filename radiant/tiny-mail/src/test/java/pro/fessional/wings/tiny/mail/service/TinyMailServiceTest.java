@@ -15,7 +15,7 @@ import pro.fessional.wings.slardar.context.Now;
 @SpringBootTest(properties = {
         "wings.tiny.mail.service.boot-scan=0",
 })
-@Disabled("邮件测试，手动执行")
+@Disabled("Mail test, manual")
 class TinyMailServiceTest {
 
     @Setter(onMethod_ = {@Autowired})

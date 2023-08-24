@@ -12,7 +12,7 @@ import pro.fessional.wings.faceless.WingsTestHelper.breakpointDebug
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 
 /**
- * 默认profile，有writer和reader数据源，但只使用writer
+ * Default profile, there are writer and reader datasource, use the writer only.
  * @author trydofor
  * @since 2019-06-05
  */
@@ -43,7 +43,7 @@ open class SchemaRevisionMangerTest {
             .master()
             .replace(revi1Schema, revi1Schema + 1, true)
             .modify(revi1Schema + 1, "sys_schema_version", schemaVersion)
-//                .modify("更名win_schema_version") { _, sql ->
+//                .modify("rename win_schema_version") { _, sql ->
 //                    if (sql.revision == REVISION_1ST_SCHEMA) {
 //                        sql.undoText = sql.undoText.replace("sys_schema_version", schemaVersion)
 //                        sql.uptoText = sql.uptoText.replace("sys_schema_version", schemaVersion)
@@ -55,13 +55,13 @@ open class SchemaRevisionMangerTest {
 
     @Test
     fun test1Publish520() {
-        breakpointDebug("发布REVISION_2ND_IDLOGS💰")
+        breakpointDebug("Publish to REVISION_2ND_IDLOGS💰")
         schemaRevisionManager.publishRevision(revi2IdLog, 0)
     }
 
     @Test
     fun test2CurrentRevi() {
-        breakpointDebug("查看当前版本💰")
+        breakpointDebug("Check current revision💰")
         val databaseVersion = schemaRevisionManager.currentRevision()
         for ((_, u) in databaseVersion) {
             assertEquals(revi2IdLog, u)
@@ -70,7 +70,7 @@ open class SchemaRevisionMangerTest {
 
     @Test
     fun test2ReviLine() {
-        breakpointDebug("查看版本线状💰")
+        breakpointDebug("Check current revision line💰")
         val databaseVersion = schemaRevisionManager.statusRevisions()
         for ((d, u) in databaseVersion) {
             if (u == null) {
@@ -86,11 +86,11 @@ open class SchemaRevisionMangerTest {
 
     @Test
     fun test3DownThenUp() {
-        breakpointDebug("降级到1st版本💰")
+        breakpointDebug("Downgrade to 1st💰")
         schemaRevisionManager.publishRevision(revi1Schema, -1)
-        breakpointDebug("升级到2st版本💰")
+        breakpointDebug("Upgrade to 2st💰")
         schemaRevisionManager.publishRevision(revi2IdLog, -1)
-        breakpointDebug("再次降级到1st版本💰")
+        breakpointDebug("Again downgrade to 1st💰")
         schemaRevisionManager.publishRevision(revi1Schema, -1)
     }
 
@@ -98,21 +98,21 @@ open class SchemaRevisionMangerTest {
 
     @Test
     fun test4Force615() {
-        breakpointDebug("强制增加版本615💰，但未执行")
+        breakpointDebug("Force to add 615💰, but do NOT publish")
         schemaRevisionManager.forceUpdateSql(
             test3rdRevision, """
             CREATE TABLE `test_temp`(
-              `SEQ_NAME` varchar(100) NOT NULL COMMENT '序列名'
+              `SEQ_NAME` varchar(100) NOT NULL COMMENT 'sequence name'
             ) ENGINE = InnoDB
               DEFAULT CHARSET = utf8mb4 COMMENT ='test_temp';
 
             CREATE TABLE `test_temp_0`(
-              `SEQ_NAME` varchar(100) NOT NULL COMMENT '序列名'
+              `SEQ_NAME` varchar(100) NOT NULL COMMENT 'sequence name'
             ) ENGINE = InnoDB
               DEFAULT CHARSET = utf8mb4 COMMENT ='test_temp';
 
             CREATE TABLE `test_temp_1`(
-              `SEQ_NAME` varchar(100) NOT NULL COMMENT '序列名'
+              `SEQ_NAME` varchar(100) NOT NULL COMMENT 'sequence name'
             ) ENGINE = InnoDB
               DEFAULT CHARSET = utf8mb4 COMMENT ='test_temp';
             """.trimIndent(),
@@ -124,11 +124,11 @@ open class SchemaRevisionMangerTest {
 
     @Test
     fun test5ForceBreak() {
-        breakpointDebug("发布615💰")
+        breakpointDebug("Publish 615💰")
         wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
         schemaRevisionManager.forceApplyBreak(test3rdRevision, -3, true)
         wingsTestHelper.assertHas(WingsTestHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
-        breakpointDebug("取消615版💰")
+        breakpointDebug("Cancel 615💰")
         schemaRevisionManager.forceApplyBreak(test3rdRevision, -4, false)
         wingsTestHelper.assertNot(WingsTestHelper.Type.Table, "test_temp", "test_temp_0", "test_temp_1")
     }
@@ -136,21 +136,21 @@ open class SchemaRevisionMangerTest {
 
     @Test
     fun test6Republish520() {
-        breakpointDebug("发布520💰")
+        breakpointDebug("Publish 520💰")
         schemaRevisionManager.publishRevision(revi2IdLog, 0)
-        breakpointDebug("降级520💰")
+        breakpointDebug("Downgrade 520💰")
         schemaRevisionManager.forceApplyBreak(revi2IdLog, 0, false)
-        breakpointDebug("重发520💰")
+        breakpointDebug("Re-publish 520💰")
         schemaRevisionManager.publishRevision(revi2IdLog, 0)
     }
 
     @Test
     fun test7ForceExecSql() {
-        breakpointDebug("强制执行Sql💰")
+        breakpointDebug("Force to execute the Sql💰")
         schemaRevisionManager.forceExecuteSql(
             """
             CREATE TABLE `test_temp_x`(
-              `SEQ_NAME` varchar(100) NOT NULL COMMENT '序列名'
+              `SEQ_NAME` varchar(100) NOT NULL COMMENT 'sequence name'
             ) ENGINE = InnoDB
               DEFAULT CHARSET = utf8mb4 COMMENT ='test_temp';
 
@@ -162,29 +162,29 @@ open class SchemaRevisionMangerTest {
 
     @Test
     fun test8PublishBranch() {
-        breakpointDebug("扫描分支feature/01-enum-i18n💰")
+        breakpointDebug("scan branch feature/01-enum-i18n💰")
         val sqls = FlywaveRevisionScanner.scanBranch("feature/01-enum-i18n")
         schemaRevisionManager.checkAndInitSql(sqls, 0, true)
-        breakpointDebug("发布分支feature/01-enum-i18n💰")
+        breakpointDebug("publish branch feature/01-enum-i18n💰")
         schemaRevisionManager.publishRevision(WingsRevision.V01_19_0521_01_EnumI18n.revision(), 0)
     }
 
     @Test
     fun test9MaintainBreak() {
-        breakpointDebug("制作执行失败的断裂版本💰")
+        breakpointDebug("Prepare a breakpoint revision to mock a failure💰")
         schemaRevisionManager.forceExecuteSql(
             """
             UPDATE `$schemaVersion` SET `apply_dt` = '1000-01-01 00:00:17' WHERE `revision` = '$REVISION_TEST_V1';
             """.trimIndent()
         )
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
-        breakpointDebug("因断裂版本不能执行，看日志💰")
+        breakpointDebug("Can't execute due to broken version, see logs💰")
         schemaRevisionManager.forceExecuteSql(
             """
             UPDATE `$schemaVersion` SET `apply_dt` = '1000-01-01 00:00:00' WHERE `revision` = '$REVISION_TEST_V1';
             """.trimIndent()
         )
-        breakpointDebug("修复断裂，降级版本💰")
+        breakpointDebug("Fix breakpoint, and downgrade💰")
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
     }
 }

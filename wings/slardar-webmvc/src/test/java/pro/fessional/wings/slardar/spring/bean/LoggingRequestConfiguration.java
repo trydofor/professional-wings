@@ -15,7 +15,7 @@ import pro.fessional.wings.slardar.servlet.stream.ReuseStreamRequestWrapper;
 import java.util.Collection;
 
 /**
- * 由 reqres-log.http 测试，人工识别。
+ * Test by reqres-log.http, check manually
  *
  * @author trydofor
  * @since 2019-12-03

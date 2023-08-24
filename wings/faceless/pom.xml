@@ -16,6 +16,10 @@
     <name>Wings::Faceless</name>
     <description>basic database features and definitions, e.g. locks/types/enum/i18n</description>
 
+    <properties>
+        <start-class>pro.fessional.wings.WhoAmI</start-class>
+    </properties>
+
     <dependencies>
         <!-- enum-i18n, wings-conf -->
         <dependency>

@@ -10,9 +10,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * 根权限是空，这样unite之后是 `.*`。
- * inherit指，使用`.`分隔的scope，存在隐式的继承关系。
- * grant值，绑定授权。
+ * <pre>
+ * Root permission is empty, so the unite result is followed by `. *`.
+ * `inherit` means the scopes separated by `.` is an implicit inheritance relationship.
+ * `grant` means binding authorization.
+ * </pre>
  *
  * @author trydofor
  * @since 2021-03-07
@@ -41,25 +43,23 @@ public class PermGrantHelper {
     }
 
     /**
-     * top 是否包括了 sub.
-     * `*` 包括所有，同名的action作比较
+     * Whether the `top` include `sub` (sub inherit top, case-insensitive)
+     * `*` means all, Compare actions with the same name
      *
-     * @param top system.*
-     * @param sub system.menu.read
-     * @return 包含
+     * @param top e.g. `system.*`
+     * @param sub e.g. `system.menu.read`
      */
     public static boolean canInherit(String top, String sub) {
         return canInherit(top, sub, SPL);
     }
 
     /**
-     * 不区分大小写，top 是否包括了 sub.
-     * `*` 包括所有，同名的action作比较
+     * Whether the `top` include `sub` (sub inherit top, case-insensitive)
+     * `*` means all, Compare actions with the same name
      *
-     * @param top system.*
-     * @param sub system.menu.read
-     * @param spl 分隔符，默认`.`
-     * @return 包含
+     * @param top e.g. `system.*`
+     * @param sub e.g. `system.menu.read`
+     * @param spl separator, default `.`
      */
     public static boolean canInherit(String top, String sub, String spl) {
         if (top == null || sub == null) return false;
@@ -93,11 +93,11 @@ public class PermGrantHelper {
     }
 
     /**
-     * 通过id，获得继承的权限码，system.menu 继承于 system
+     * Get the inherited permission by code. e.g. `system.menu` inherits from `system`
      *
-     * @param permCode code
-     * @param permAll  所有权限id-code
-     * @return 包括当前id的继承权限码
+     * @param permCode top perm code
+     * @param permAll  all perms id-code map
+     * @return inherited perms
      */
     @NotNull
     public static Set<String> inheritPerm(String permCode, Map<Long, String> permAll) {
@@ -109,11 +109,11 @@ public class PermGrantHelper {
     }
 
     /**
-     * 通过id，获得继承的权限码，system.menu 继承于 system
+     * Get the inherited permission by id. e.g. `system.menu` inherits from `system`
      *
-     * @param permId  id
-     * @param permAll 所有权限id-code
-     * @return 包括当前id的继承权限码
+     * @param permId  top perm id
+     * @param permAll  all perms id-code map
+     * @return inherited perms
      */
     @NotNull
     public static Set<String> inheritPerm(long permId, Map<Long, String> permAll) {
@@ -121,12 +121,12 @@ public class PermGrantHelper {
     }
 
     /**
-     * 通过id，获得授权的角色
+     * Get authorized roles by id
      *
-     * @param roleId    role
-     * @param roleAll   所有角色id-name
-     * @param roleGrant 拥有权限继承id-Set[id]
-     * @return 包括当前id的继承角色码
+     * @param roleId    top role id
+     * @param roleAll   all roles id-name map
+     * @param roleGrant id-Set[id] map with inheritance
+     * @return inherited roles
      */
     @NotNull
     public static Set<String> grantRole(long roleId, Map<Long, String> roleAll, Map<Long, Set<Long>> roleGrant) {

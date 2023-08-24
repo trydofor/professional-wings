@@ -13,15 +13,15 @@ import java.util.Map;
 @Data
 public class TinyMail {
     /**
-     * 配置的名字，空时使用默认值
+     * Config name, use default if empty
      */
     protected String conf;
     /**
-     * 默认发件人，空时使用默认值
+     * Mail from, use default if empty
      */
     protected String from;
     /**
-     * 默认收件人，仅null时使用默认值
+     * Mail to, use default if null
      */
     protected String[] to;
 
@@ -30,7 +30,7 @@ public class TinyMail {
     }
 
     /**
-     * 默认抄送，仅null时使用默认值
+     * Mail cc, use default if null
      */
     protected String[] cc;
 
@@ -39,7 +39,7 @@ public class TinyMail {
     }
 
     /**
-     * 默认暗送，仅null时使用默认值
+     * Mail bcc, use default if null
      */
     protected String[] bcc;
 
@@ -48,56 +48,57 @@ public class TinyMail {
     }
 
     /**
-     * 默认回复，空时使用默认值
+     * Mail reply, use default if empty
      */
     protected String reply;
     /**
-     * 默认是否发送html邮件(text/html)，否则纯文本(text/plain)，仅null时使用默认值
+     * Whether to send html mail (text/html), otherwise text mail(text/plain).
+     * use default if null
      */
     protected Boolean html;
     /**
-     * 邮件标题，空时使用默认值
+     * Mail subject, use default if empty
      */
     protected String subject;
     /**
-     * 邮件正文，空时使用默认值
+     * Mail content, use default if empty
      */
     protected String content;
     /**
-     * 邮件附件，仅null时使用默认值
+     * Mail attachment, use default if null
      */
     protected Map<String, Resource> attachment = null;
     /**
-     * 标记关键词，空格分隔业务key，仅null时使用默认值
+     * Business keyword ot mark, space seperated, use default if null
      */
     protected String mark;
 
     /**
-     * 邮件定时发送时间（系统时区）
+     * Schedule to send mail (system time zone)
      */
     protected LocalDateTime date;
 
     /**
-     * 最大失败次数，默认为系统配置
+     * Max count of fail, defaults to system configuration
      */
     protected Integer maxFail = 0;
     /**
-     * 最大成功次数，默认为系统配置
+     * Max count of done (successfully send), defaults to system configuration
      */
     protected Integer maxDone = 0;
 
     /**
-     * 引用类型，标记key1，key2用途
+     * Reference Type to Tag key1, key2 usage
      */
     private Integer refType;
 
     /**
-     * 引用key1，一般为主键
+     * Reference key1, Generally the PK
      */
     private Long refKey1;
 
     /**
-     * 引用key2，一般为符合类型
+     * Reference key2, Generally the composite type
      */
     private String refKey2;
 

@@ -20,7 +20,7 @@ import java.util.List;
 
 @Slf4j
 @SpringBootTest
-@Disabled("导出数据库表结构，备份数据时使用")
+@Disabled("Dump schema structure, used to backup and restore")
 @SuppressWarnings("NewClassNamingConvention")
 public class WingsSchemaDumper {
 
@@ -33,15 +33,15 @@ public class WingsSchemaDumper {
     @Test
     public void dump() {
         Function1<List<String>, List<String>> ddl = SchemaFulldumpManager.groupedTable(false,
-                "-- ==================== Basement-4(B4/10#):基础 =======================",
-                "sys_schema_version", // 101/表结构版本
-                "sys_schema_journal", // 102/数据触发器
-                "sys_light_sequence", // 103/序号生成器
-                "sys_commit_journal", // 104/数据变更集
-                "-- ==================== Basement-3(B3/15#):多语言，多时区，多货币 =======================",
-                "sys_constant_enum", // 105/常量枚举:自动生成enum类
-                "sys_standard_i18n", // 106/标准多国语
-                "-- ==================== Floor-10(F11/90#):辅助 ======================="
+                "-- ==================== Basement-4(B4/10#):basic =======================",
+                "sys_schema_version", // 101/table structure
+                "sys_schema_journal", // 102/data trigger
+                "sys_light_sequence", // 103/id and sequence
+                "sys_commit_journal", // 104/commit log
+                "-- ==================== Basement-3(B3/15#):multiple lang/time/money =======================",
+                "sys_constant_enum", // 105/enum const: auto code gen
+                "sys_standard_i18n", // 106/i18n message
+                "-- ==================== Floor-10(F11/90#):helper ======================="
         );
         Function1<List<String>, List<String>> rec = SchemaFulldumpManager.includeRegexp(
                 "sys_light_.*",

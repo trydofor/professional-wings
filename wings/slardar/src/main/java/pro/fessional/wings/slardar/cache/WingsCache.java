@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 不使用enum或interface，可继承使用
- *
  * @author trydofor
  * @since 2020-07-30
  */
@@ -19,61 +17,82 @@ public interface WingsCache {
     String Joiner = "~";
 
     /**
-     * 以此结尾表示扩展为实现类
+     * suffix can be expanded to its implement qualified name
      */
     String Extend = "!";
 
+    /**
+     * use wildcard like `program~*` to match cache name prefix.
+     */
+    String Wildcard = "*";
+
     class Manager {
         /**
-         * 内存缓存，默认 cache2k
+         * cache in current jvm, default cache2k
          */
         public static final String Memory = "MemoryCacheManager";
         /**
-         * 外部服务缓存，默认hazelcast，可选用redis
+         * cache in standalone server, default hazelcast. (or redis)
          */
         public static final String Server = "ServerCacheManager";
     }
 
     class Resolver {
 
-        public static final String _Suffix = "Resolver";
+        public static final String Suffix = "Resolver";
 
         /**
-         * 内存缓存，默认 cache2k
+         * cache in current jvm, default cache2k
          */
-        public static final String Memory = Manager.Memory + _Suffix;
+        public static final String Memory = Manager.Memory + Suffix;
         /**
-         * 外部服务缓存，默认hazelcast，可选用redis
+         * cache in standalone server, default hazelcast. (or redis)
          */
-        public static final String Server = Manager.Server + _Suffix;
+        public static final String Server = Manager.Server + Suffix;
     }
 
     class Level {
         /**
-         * 程序级，程序或服务运行期间
+         * Program level, during program or service operation
          */
         public static final String Forever = "program" + Joiner;
         /**
-         * 通常，1天
+         * General, 1 day
          */
         public static final String General = "general" + Joiner;
         /**
-         * 服务级，1小时
+         * Service, 1 hour
          */
         public static final String Service = "service" + Joiner;
         /**
-         * 会话级，10分钟
+         * Session, 10 minutes
          */
         public static final String Session = "session" + Joiner;
 
         public static String join(String... part) {
             return String.join(Joiner, part);
         }
+
+        public static String forever(String... part) {
+            return Forever + String.join(Joiner, part);
+        }
+
+        public static String general(String... part) {
+            return General + String.join(Joiner, part);
+        }
+
+        public static String service(String... part) {
+            return Service + String.join(Joiner, part);
+        }
+
+        public static String session(String... part) {
+            return Session + String.join(Joiner, part);
+        }
     }
 
     interface State {
         /**
-         * 获得 缓存的name及size
+         * get name and size of cache
          *
          * @return name-size
          */
@@ -81,9 +100,9 @@ public interface WingsCache {
         Map<String, Integer> statsCacheSize();
 
         /**
-         * 获得缓存keys
+         * get keys in cache
          *
-         * @param name 名字
+         * @param name cache name
          * @return keys
          */
         @NotNull

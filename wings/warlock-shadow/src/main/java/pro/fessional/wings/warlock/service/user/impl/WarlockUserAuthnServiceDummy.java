@@ -27,7 +27,7 @@ public class WarlockUserAuthnServiceDummy implements WarlockUserAuthnService {
     }
 
     @Override
-    public void dander(long userId, boolean danger) {
+    public void dander(long userId, boolean danger, @NotNull Enum<?>... authType) {
         throw new UnsupportedOperationException("Dummy Service");
     }
 

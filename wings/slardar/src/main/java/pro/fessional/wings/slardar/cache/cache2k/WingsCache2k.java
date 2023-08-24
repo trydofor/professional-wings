@@ -113,7 +113,7 @@ public class WingsCache2k {
                     final Cache2kBuilder<K, V> bld = ctx.getConfig().builder();
 
                     for (Map.Entry<String, SlardarCacheProp.Conf> entry : slardarCacheProp.getLevel().entrySet()) {
-                        // 前缀同
+                        // same prefix
                         final String key = entry.getKey();
                         if (inLevel(name, key)) {
                             final SlardarCacheProp.Conf level = entry.getValue();

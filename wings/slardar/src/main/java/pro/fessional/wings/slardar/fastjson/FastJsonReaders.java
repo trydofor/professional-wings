@@ -7,8 +7,8 @@ import pro.fessional.mirana.time.DateFormatter;
 import java.time.OffsetDateTime;
 
 /**
- * 预设值的 fastjson2 Reader
- * https://alibaba.github.io/fastjson2/register_custom_reader_writer_cn
+ * Preset fastjson2 Reader
+ * <a href="https://alibaba.github.io/fastjson2/register_custom_reader_writer_cn">register_custom_reader_writer_cn</a>
  *
  * @author trydofor
  * @since 2022-10-25

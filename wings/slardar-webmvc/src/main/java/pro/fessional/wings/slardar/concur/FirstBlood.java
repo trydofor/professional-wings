@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 用来注解需要验证码支持的RequestMapping
+ * Annotate RequestMapping that requires CAPTCHA support
  *
  * @author trydofor
  * @since 2021-03-10
@@ -16,32 +16,24 @@ import java.lang.annotation.Target;
 public @interface FirstBlood {
 
     /**
-     * 两次请求触发验证的间隔秒数，默认0，表示每次都验证。
-     *
-     * @return 计数秒数
+     * The seconds between two requests triggering CAPTCHA, default 0, means CAPTCHA every time.
      */
     int first() default 0;
 
 
     /**
-     * 验证或禁用的持续秒数。以10秒为一个阶梯，建议不超过1天。
-     *
-     * @return 掉血秒数
+     * The seconds of CAPTCHA or disable the duration. In increments of 10s, no more than 1 day is recommended.
      */
     int blood() default 300;
 
     /**
-     * 试错的次数，超过时重发验证码或禁用
-     *
-     * @return 试错的次数
+     * Number of CAPTCHA retry, resend CAPTCHA when exceeded
      */
     int retry() default 1;
 
 
     /**
-     * 验证场景，会传递给interceptor
-     *
-     * @return 验证场景
+     * CAPTCHA scenarios, which are passed to the interceptor
      */
     String scene() default "";
 }

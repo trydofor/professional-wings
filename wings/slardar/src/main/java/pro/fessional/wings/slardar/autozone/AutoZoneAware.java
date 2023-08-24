@@ -9,8 +9,8 @@ import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAccessor;
 
 /**
- * Request时，自动把用户时间调至系统时区。
- * Response时，自动把系统时间调至用户时区。
+ * When request, auto convert timezone from client to system.
+ * When response, auto convert timezone from system to client
  *
  * @author trydofor
  * @since 2022-10-02

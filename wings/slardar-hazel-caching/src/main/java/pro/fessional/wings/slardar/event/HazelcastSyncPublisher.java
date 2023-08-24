@@ -4,25 +4,26 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.topic.ITopic;
 import com.hazelcast.topic.Message;
 import com.hazelcast.topic.MessageListener;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.UUID;
 
+import static pro.fessional.wings.slardar.constants.HazelcastConst.TopicApplicationEvent;
+
 /**
- * ApplicationEventPublisher辅助类。一般用于非事务Event处理，主要功能：
- * ①异步发布。
- * ②IDE提示导航。
- * ③hazelcast的topic(#HazelcastTopic)按SpringEvent模式。
+ * ApplicationEventPublisher is a helper. Generally used for non-transactional Event processing, with the following main functions:
+ * (1) Asynchronous publishing.
+ * (2) IDE prompt navigation.
+ * (3) Hazelcast topic (#HazelcastTopic) in the SpringEvent pattern.
  *
  * @author trydofor
- * @see #HazelcastTopic
+ * @see pro.fessional.wings.slardar.constants.HazelcastConst#TopicApplicationEvent
  * @since 2021-06-07
  */
-
+@Slf4j
 public class HazelcastSyncPublisher implements ApplicationEventPublisher, MessageListener<Object> {
-
-    public static final String HazelcastTopic = "SlardarApplicationEvent";
 
     private final ApplicationEventPublisher publisher;
     private final ITopic<Object> topic;
@@ -30,7 +31,7 @@ public class HazelcastSyncPublisher implements ApplicationEventPublisher, Messag
 
     public HazelcastSyncPublisher(@NotNull HazelcastInstance instance, @NotNull ApplicationEventPublisher publisher) {
         this.publisher = publisher;
-        topic = instance.getTopic(HazelcastTopic);
+        topic = instance.getTopic(TopicApplicationEvent);
         uuid = topic.addMessageListener(this);
     }
 
@@ -45,6 +46,8 @@ public class HazelcastSyncPublisher implements ApplicationEventPublisher, Messag
 
     @Override
     public void onMessage(Message<Object> message) {
-        publisher.publishEvent(message.getMessageObject());
+        final Object event = message.getMessageObject();
+        log.debug("publish event from hazelcast topic, event={}", event);
+        publisher.publishEvent(event);
     }
 }

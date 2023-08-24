@@ -42,7 +42,7 @@ public class SlardarCacheConfigurationTest {
     }
 
     @Test
-    @Disabled("模拟慢处理 ttl=20")
+    @Disabled("Mock slow handling ttl=20")
     public void testTtl() throws InterruptedException {
         int c1 = cacheService.cacheMemory("cacheCall");
         assertEquals(1, c1);

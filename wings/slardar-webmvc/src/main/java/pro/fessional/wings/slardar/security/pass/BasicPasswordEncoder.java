@@ -5,10 +5,13 @@ import pro.fessional.mirana.bits.Md5;
 import pro.fessional.mirana.time.ThreadNow;
 
 /**
- * 折中BasicAuthentication与DigestAuthentication，仅避免明文传递密码。
  * <pre>
- * 使用密码对时间戳Md5，以时间戳和md5值代替密码传送。要求时间戳与服务器相差在正负3分钟内。
- * timestamp - 1970 ms
+ * A compromise between BasicAuthentication and DigestAuthentication  to avoid sending plaintext password.
+ * Use the password to md5sum the current timestamp, then send the timestamp and md5sum instead of a password.
+ *
+ * Requires the timestamp to be within 3 minutes of the server.
+ *
+ * timestamp - form 1970 in ms
  * password - user password
  * md5_hash = md5($timestamp + "#" + $password)
  * token =  $timestamp + "#" + $md5_hash

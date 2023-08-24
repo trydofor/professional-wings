@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * 支持自动展开为实现类
+ * Support for auto-expansion to implementation class
  *
  * @author trydofor
  * @see SimpleCacheResolver

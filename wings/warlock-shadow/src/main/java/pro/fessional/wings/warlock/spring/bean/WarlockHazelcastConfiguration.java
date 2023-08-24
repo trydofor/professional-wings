@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.slardar.concur.HazelcastGlobalLock;
 import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
-import pro.fessional.wings.warlock.spring.prop.WarlockLockProp;
 
 
 /**
@@ -29,9 +28,8 @@ public class WarlockHazelcastConfiguration {
     @Bean
     @ConditionalOnMissingBean(HazelcastGlobalLock.class)
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$globalLock, havingValue = "true")
-    public HazelcastGlobalLock hazelcastGlobalLock(HazelcastInstance hazelcastInstance, WarlockLockProp warlockLockProp) {
-        final boolean hcp = warlockLockProp.isHazelcastCp();
-        log.info("WarlockShadow spring-bean hazelcastGlobalLock, useCpIfSafe=" + hcp);
-        return new HazelcastGlobalLock(hazelcastInstance, hcp);
+    public HazelcastGlobalLock hazelcastGlobalLock(HazelcastInstance hazelcastInstance) {
+        log.info("WarlockShadow spring-bean hazelcastGlobalLock");
+        return new HazelcastGlobalLock(hazelcastInstance);
     }
 }

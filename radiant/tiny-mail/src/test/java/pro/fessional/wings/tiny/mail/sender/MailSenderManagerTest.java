@@ -18,7 +18,7 @@ import java.util.List;
 @SpringBootTest(properties = {
         "wings.tiny.mail.service.boot-scan=0",
 })
-@Disabled("批量发邮件，手动执行")
+@Disabled("Batch send mails, manual")
 @Slf4j
 public class MailSenderManagerTest {
 
@@ -31,7 +31,7 @@ public class MailSenderManagerTest {
 
     /**
      * <pre>
-     * single连续发送10个，javax.mail.AuthenticationFailedException: 535 Login Fail. Please enter your authorization code to login
+     * send 10 mails, javax.mail.AuthenticationFailedException: 535 Login Fail. Please enter your authorization code to login
      * 1-single vs batch-5
      * +--s--ms------ns-+---%-+--------+---------------
      * |  5,403,675,738 | 100 | thread | task and timing

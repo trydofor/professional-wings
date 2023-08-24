@@ -13,35 +13,29 @@ import java.util.function.Supplier;
 public class LocaleZoneIdUtil {
 
     /**
-     * 获得当前线程的ZoneId，优先级为TerminalContext，LocaleContextHolder
+     * Get the ZoneId of the current thread with priority logined TerminalContext, LocaleContextHolder
      */
     public static final Supplier<ZoneId> ZoneIdNullable = () -> {
-        final ZoneId zid;
-        if (TerminalContext.isActive()) {
-            zid = TerminalContext.get(false).getZoneId();
+        final TerminalContext.Context ctx = TerminalContext.get(false);
+        if (!ctx.isNull()) {
+            return ctx.getZoneId();
         }
-        else {
-            zid = LocaleContextHolder.getTimeZone().toZoneId();
-        }
-        return zid;
+        return LocaleContextHolder.getTimeZone().toZoneId();
     };
 
     /**
-     * 获得当前线程的Locale，优先级为TerminalContext，LocaleContextHolder
+     * Get the Locale of the current thread with priority logined TerminalContext, LocaleContextHolder
      */
     public static final Supplier<Locale> LocaleNullable = () -> {
-        final Locale lcl;
-        if (TerminalContext.isActive()) {
-            lcl = TerminalContext.get(false).getLocale();
+        final TerminalContext.Context ctx = TerminalContext.get(false);
+        if (!ctx.isNull()) {
+            return ctx.getLocale();
         }
-        else {
-            lcl = LocaleContextHolder.getLocale();
-        }
-        return lcl;
+        return LocaleContextHolder.getLocale();
     };
 
     /**
-     * 获得当前线程的ZoneId，优先级为TerminalContext，LocaleContextHolder，systemDefault
+     * Get the ZoneId of the current thread with priority logined TerminalContext, LocaleContextHolder, systemDefault
      */
     public static final Supplier<ZoneId> ZoneIdNonnull = () -> {
         final ZoneId zid = ZoneIdNullable.get();
@@ -49,7 +43,7 @@ public class LocaleZoneIdUtil {
     };
 
     /**
-     * 获得当前线程的Locale，优先级为TerminalContext，LocaleContextHolder，systemDefault
+     * Get the Locale of the current thread with priority logined TerminalContext, LocaleContextHolder, systemDefault
      */
     public static final Supplier<Locale> LocaleNonnull = () -> {
         final Locale lcl = LocaleNullable.get();

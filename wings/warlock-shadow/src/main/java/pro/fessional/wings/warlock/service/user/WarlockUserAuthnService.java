@@ -75,8 +75,9 @@ public interface WarlockUserAuthnService {
      *
      * @param userId user
      * @param danger danger or not
+     * @param authType auth type to reset
      */
-    void dander(long userId, boolean danger);
+    void dander(long userId, boolean danger, @NotNull Enum<?>... authType);
 
     /**
      * disable auth by type

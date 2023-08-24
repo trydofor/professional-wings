@@ -119,7 +119,7 @@ public class WarlockUserBasisServiceImpl implements WarlockUserBasisService, Ini
             setter.put(tu.Zoneid, user.getZoneId());
             setter.put(tu.Remark, user.getRemark());
             setter.put(tu.Status, user.getStatus());
-            // 一定会更新，除非不存在
+            // Must update, unless not found
             setter.put(tu.CommitId, commit.getCommitId());
             setter.put(tu.ModifyDt, commit.getCommitDt());
             return winUserBasisDao.update(tu, setter, tu.Id.eq(userId), true);

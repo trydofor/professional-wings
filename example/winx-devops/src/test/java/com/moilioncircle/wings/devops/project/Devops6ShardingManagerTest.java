@@ -8,8 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
 
 /**
- * ⑥ 使用wings的flywave，生成trigger和跟踪表
- *
  * @author trydofor
  * @since 2019-12-26
  */
@@ -19,7 +17,7 @@ import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
         "spring.datasource.username=" + Devops0ProjectConstant.JDBC_USER,
         "spring.datasource.password=" + Devops0ProjectConstant.JDBC_PASS,
 })
-@Disabled("分表分库")
+@Disabled("Sharding table")
 public class Devops6ShardingManagerTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -30,7 +28,7 @@ public class Devops6ShardingManagerTest {
         schemaShardingManager.publishShard("win_user", 2);
     }
 
-    // 需要 sharding config
+    // need sharding config
 //    @Test
 //    public void test2MoveDate() {
 //        schemaShardingManager.shardingData("win_user", true);

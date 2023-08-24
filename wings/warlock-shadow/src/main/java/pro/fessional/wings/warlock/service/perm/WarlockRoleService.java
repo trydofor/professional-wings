@@ -16,27 +16,26 @@ public interface WarlockRoleService {
     }
 
     /**
-     * 一次性获得所有id和角色码name，并进行变准化处理
+     * Load all Role id and its Normalized code
      *
-     * @return 角色码
+     * @return map of id and code
      */
     Map<Long, String> loadRoleAll();
 
     /**
-     * 创建role，如果同名存在则失败
+     * Create role, fail if exist the same name
      *
-     * @param name   名字
-     * @param remark 备注
+     * @param name   name
+     * @param remark comment
      * @return id
      */
     long create(@NotNull String name, String remark);
 
     /**
-     * 修改备注
-     * 备注不能同时为空
+     * Modify the remark/comment of ROle
      *
      * @param roleId id
-     * @param remark 备注
+     * @param remark comment
      */
     void modify(long roleId, String remark);
 }

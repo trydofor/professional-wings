@@ -4,9 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 
 
 /**
@@ -17,9 +18,18 @@ public interface LightSequenceSelect {
 
     @Data
     class NextStep {
+        /**
+         * current next value
+         */
         private long nextVal;
+        /**
+         * suggest step
+         */
         private int stepVal;
-        private long lastVal;
+        /**
+         * next value for update
+         */
+        private long oldNext;
 
         public NextStep() {
         }
@@ -28,14 +38,15 @@ public interface LightSequenceSelect {
             this(nextVal, stepVal, nextVal);
         }
 
-        public NextStep(long nextVal, int stepVal, long lastVal) {
+        public NextStep(long nextVal, int stepVal, long oldNext) {
             this.nextVal = nextVal;
             this.stepVal = stepVal;
-            this.lastVal = lastVal;
+            this.oldNext = oldNext;
         }
     }
 
-    Optional<NextStep> selectOneLock(int block, String name);
+    @Nullable
+    NextStep selectOneLock(int block, @NotNull String name);
 
     @Data
     @EqualsAndHashCode(callSuper = true)

@@ -34,9 +34,9 @@ public interface WingsJournalTable<T> extends WingsAliasTable<T> {
     }
 
     /**
-     * 组合其他条件 and onlyDiedData
+     * Combine other condition with `and onlyDiedData`
      *
-     * @param cond 其他条件
+     * @param cond other condition
      * @return Condition
      */
     @NotNull
@@ -45,9 +45,9 @@ public interface WingsJournalTable<T> extends WingsAliasTable<T> {
     }
 
     /**
-     * 组合其他条件 and onlyLiveData
+     * Combine other condition with `and onlyLiveData`
      *
-     * @param cond 其他条件
+     * @param cond other condition
      * @return Condition
      */
     @NotNull

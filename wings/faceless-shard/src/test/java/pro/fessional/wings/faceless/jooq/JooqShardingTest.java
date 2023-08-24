@@ -88,11 +88,11 @@ public class JooqShardingTest {
         dao.insert(rd);
 
         testcaseNotice(
-                "==== 检查 sql 日志 ====",
+                "==== check sql log ====",
                 "[OK] insert into `tst_sharding_0` (`ID`, `CREATE_DT`, `MODIFY_DT`, `COMMIT_ID`, `LOGIN_INFO`, `OTHER_INFO`) values (?, ?, ?, ?, ?, ?)",
                 "[NG] insert into `tst_sharding` as `t1` (`ID`, `CREATE_DT`, `MODIFY_DT`, `COMMIT_ID`, `LOGIN_INFO`, `OTHER_INFO`) values (?, ?, ?, ?, ?, ?)"
         );
-//        dsl.newRecord(TstShardingTable.TST_中文也分表, rd).insert()
+//        dsl.newRecord(TstShardingTable.TstSharding, rd).insert()
     }
 
     @Test
@@ -127,10 +127,10 @@ public class JooqShardingTest {
 
 
         testcaseNotice(
-                "==== 检查 sql 日志 ====",
+                "==== check sql log ====",
                 "[OK] update `tst_sharding` set `MODIFY_DT` = ?, `LOGIN_INFO` = ? where `ID` <= ?",
                 "[OK] update `tst_sharding` as `t1` set `t1`.`MODIFY_DT` = ?, `t1`.`LOGIN_INFO` = ? where `t1`.`ID` <= ?",
-                "[NG] update `tst_sharding` set `TST_中文也分表`.`MODIFY_DT` = ?, `TST_中文也分表`.`LOGIN_INFO` = ? where `TST_中文也分表`.`ID` <= ?"
+                "[NG] update `tst_sharding` set `tst_sharding`.`MODIFY_DT` = ?, `tst_sharding`.`LOGIN_INFO` = ? where `tst_sharding`.`ID` <= ?"
         );
     }
 
@@ -164,7 +164,7 @@ public class JooqShardingTest {
             testcaseNotice("select `y8`.`id`, `y8`.`create_dt`, ... from `tst_sharding` as `y8` where `y8`.`id` = ?");
 
             testcaseNotice(
-                    "==== 检查 sql 日志 ====",
+                    "==== check sql log ====",
                     "[OK] select `ID` from `tst_sharding` where `ID` <= ? limit ?",
                     "[OK] select `t1`.`ID` from `tst_sharding` as `t1` where `t1`.`ID` <= ? limit ?",
                     "[NG] select `tst_sharding`.`ID` from `tst_sharding` where `tst_sharding`.`ID` <= ? limit ?"
@@ -189,7 +189,7 @@ public class JooqShardingTest {
         testcaseNotice("delete from `tst_sharding_3` where `id` = ? ");
 
         testcaseNotice(
-                "==== 检查 sql 日志 ====",
+                "==== check sql log ====",
                 "[OK] delete from `tst_sharding` where `ID` <= ?",
                 "[NG] delete from `tst_sharding` where `tst_sharding`.`ID` <= ?",
                 "[NG] delete `t1` from `tst_sharding` as `t1` where `t1`.`ID` <= ?"
@@ -202,19 +202,19 @@ public class JooqShardingTest {
     @Test
     public void test8BatchSeeLog() {
         val rds = Arrays.asList(
-                new TstShardingRecord(119L, now, now, now, 9L, "批量合并119", "test8", ZH_CN.getId()),
-                new TstShardingRecord(308L, now, now, now, 9L, "批量合并308", "test8", ZH_CN.getId()),
-                new TstShardingRecord(309L, now, now, now, 9L, "批量合并309", "test8", ZH_CN.getId())
+                new TstShardingRecord(119L, now, now, now, 9L, "Batch merge 119", "test8", ZH_CN.getId()),
+                new TstShardingRecord(308L, now, now, now, 9L, "Batch merge 308", "test8", ZH_CN.getId()),
+                new TstShardingRecord(309L, now, now, now, 9L, "Batch merge 309", "test8", ZH_CN.getId())
         );
-        testcaseNotice("批量Insert，查看日志,ignore, 分2批次， 119 ignore; 308，309 insert");
+        testcaseNotice("Batch Insert, check log, ignore in 2 batch, 119 ignore; 308, 309 insert");
         val rs1 = dao.batchInsert(rds, 2, true);
         Assertions.assertArrayEquals(new int[]{1, 1, 1}, rs1);
 
-        testcaseNotice("先select在insert 310，或update 308，309");
+        testcaseNotice("select first, then insert 310, or update 308, 309");
         val rs3 = dao.batchMerge(tbl, new Field[]{tbl.Id}, Arrays.asList(
-                new TstShardingRecord(310L, now, now, now, 9L, "批量合并310", "其他310", ZH_CN.getId()),
-                new TstShardingRecord(308L, now, now, now, 9L, "批量合并308", "其他308", ZH_CN.getId()),
-                new TstShardingRecord(309L, now, now, now, 9L, "批量合并309", "其他309", ZH_CN.getId())
+                new TstShardingRecord(310L, now, now, now, 9L, "Batch merge 310", "Other 310", ZH_CN.getId()),
+                new TstShardingRecord(308L, now, now, now, 9L, "Batch merge 308", "Other 308", ZH_CN.getId()),
+                new TstShardingRecord(309L, now, now, now, 9L, "Batch merge 309", "Other 309", ZH_CN.getId())
         ), 2, tbl.LoginInfo, tbl.OtherInfo);
         Assertions.assertArrayEquals(new int[]{1, 1, 1}, rs3);
     }
@@ -222,35 +222,35 @@ public class JooqShardingTest {
     @Test
     public void test9BatchSeeLog() {
         val rds = Arrays.asList(
-                new TstShardingRecord(119L, now, now, now, 9L, "批量加载307", "test9", ZH_CN.getId()),
-                new TstShardingRecord(318L, now, now, now, 9L, "批量加载318", "test9", ZH_CN.getId()),
-                new TstShardingRecord(319L, now, now, now, 9L, "批量加载319", "test9", ZH_CN.getId())
+                new TstShardingRecord(119L, now, now, now, 9L, "Batch load 307", "test9", ZH_CN.getId()),
+                new TstShardingRecord(318L, now, now, now, 9L, "Batch load 318", "test9", ZH_CN.getId()),
+                new TstShardingRecord(319L, now, now, now, 9L, "Batch load 319", "test9", ZH_CN.getId())
         );
-        testcaseNotice("批量Insert，查看日志, replace 119, new318,319，分2批，replace into");
+        testcaseNotice("Batch Insert, check log, replace 119, new318,319, in 2 batch, replace into");
         try {
             val rs2 = dao.batchInsert(rds, 2, false);
             log.info(Arrays.toString(rs2));
             Assertions.assertArrayEquals(new int[]{2, 1, 1}, rs2);
         }
         catch (Exception e) {
-            testcaseNotice("Sharding 不支持，replace into https://github.com/apache/shardingsphere/issues/5330");
+            testcaseNotice("Sharding unsupported, replace into https://github.com/apache/shardingsphere/issues/5330");
             e.printStackTrace();
         }
 
-        testcaseNotice("批量Merge，查看日志, new 320, on dupkey 318,319，分2批，duplicate");
+        testcaseNotice("Batch Merge, check log, new 320, on dupkey 318,319, in 2 batch, duplicate");
         testcaseNotice("insert into `tst_sharding` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?");
         try {
             val rs3 = dao.batchMerge(tbl, Arrays.asList(
-                    new TstShardingRecord(320L, now, now, now, 9L, "批量合并320", "其他320", ZH_CN.getId()),
-                    new TstShardingRecord(318L, now, now, now, 9L, "批量合并318", "其他318", ZH_CN.getId()),
-                    new TstShardingRecord(319L, now, now, now, 9L, "批量合并319", "其他319", ZH_CN.getId())
+                    new TstShardingRecord(320L, now, now, now, 9L, "Batch merge 320", "Other 320", ZH_CN.getId()),
+                    new TstShardingRecord(318L, now, now, now, 9L, "Batch merge 318", "Other 318", ZH_CN.getId()),
+                    new TstShardingRecord(319L, now, now, now, 9L, "Batch merge 319", "Other 319", ZH_CN.getId())
             ), 2, tbl.LoginInfo, tbl.OtherInfo);
             log.info(Arrays.toString(rs3));
             Assertions.assertArrayEquals(new int[]{1, 2, 2}, rs3);
         }
         catch (Exception e) {
-            testcaseNotice("Sharding 不支持，on duplicate key update https://github.com/apache/shardingsphere/issues/5210");
-            testcaseNotice("Sharding 不支持，https://github.com/apache/shardingsphere/pull/5423");
+            testcaseNotice("Sharding unsupported, on duplicate key update https://github.com/apache/shardingsphere/issues/5210");
+            testcaseNotice("Sharding unsupported, https://github.com/apache/shardingsphere/pull/5423");
             e.printStackTrace();
         }
     }

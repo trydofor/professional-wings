@@ -20,7 +20,7 @@ import java.util.Set;
 import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue;
 
 /**
- * 设计目的为非运行时调整，故不提供写保护
+ * Designed for non-runtime tuning, so no write protection is provided.
  *
  * @author trydofor
  * @since 2021-10-08
@@ -65,20 +65,20 @@ public class WingsCookieInterceptorImpl implements WingsCookieInterceptor {
 
         boolean did = false;
         String name = cookie.getName();
-        // name 脱前缀
+        // handle prefix of name
         if (prefix != null && name.startsWith(prefix)) {
             name = name.substring(prefix.length());
             did = true;
         }
 
-        // name 脱别名
+        // handle alias of name
         final String n = aliasDec.get(name);
         if (n != null) {
             name = n;
             did = true;
         }
 
-        // value 解码
+        // decode value
         String value = cookie.getValue();
         if (codeAes.contains(name)) {
             value = aes.decode64(value);
@@ -111,7 +111,7 @@ public class WingsCookieInterceptorImpl implements WingsCookieInterceptor {
         boolean did = false;
         String name = cookie.getName();
 
-        // value 编码
+        // decode value
         String value = cookie.getValue();
         if (codeAes.contains(name)) {
             value = aes.encode64(value);
@@ -135,7 +135,7 @@ public class WingsCookieInterceptorImpl implements WingsCookieInterceptor {
             }
         }
 
-        // 处理属性
+        // handle attrs
         final Boolean ho = httpOnly.get(name);
         if (ho != null) {
             cookie.setHttpOnly(ho);
@@ -153,14 +153,14 @@ public class WingsCookieInterceptorImpl implements WingsCookieInterceptor {
             cookie.setPath(ph);
         }
 
-        // name 设别名
+        // handle alias of name
         final String n = aliasEnc.get(name);
         if (n != null) {
             name = n;
             did = true;
         }
 
-        // name 设前缀
+        // handle prefix of name
         if (prefix != null) {
             name = prefix + name;
             did = true;

@@ -20,8 +20,10 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * 当LocalDate，LocalDateTime，ZonedDateTime，OffsetDateTime为empty时不输出
- * 当Array, Collection，Map为empty时，不输出
+ * <pre>
+ * no output if LocalDate, LocalDateTime, ZonedDateTime or OffsetDateTime is `empty`.
+ * no output if Array, Collection or Map is `empty`.
+ * </pre>
  *
  * @author trydofor
  * @since 2021-10-28
@@ -141,7 +143,7 @@ public class EmptyValuePropertyFilter implements AutoRegisterPropertyFilter {
         return emptyDateTime(ldt);
     }
 
-    // 考虑时区，相差在 offset 小时内
+    // Considering timezone, the difference is considered equal within `offset` hours.
     private boolean emptyDateTime(LocalDateTime dt) {
         if (emptyDate.equals(dt.toLocalDate())) return true;
         if (emptyDateMin == null || emptyDateMax == null) {

@@ -5,7 +5,7 @@
            xsi:schemaLocation="http://www.hazelcast.com/schema/config
            http://www.hazelcast.com/schema/config/hazelcast-config-5.1.xsd">
 
-    <!-- 不要使用classpath: 参考 https://github.com/hazelcast/hazelcast/issues/22245 -->
+    <!-- do NOT use classpath, see https://github.com/hazelcast/hazelcast/issues/22245 -->
     <import resource="extra-conf/hazelcast-server.xml"/>
     <import resource="extra-conf/hazelcast-server-bootadmin.xml"/>
     <import resource="extra-conf/hazelcast-server-session.xml"/>

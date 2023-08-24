@@ -13,7 +13,7 @@ import static pro.fessional.wings.warlock.project.Warlock0CodegenConstant.USER;
  * @author trydofor
  * @since 2021-02-22
  */
-@Disabled("生成代码，已有devs统一管理")
+@Disabled("Code generation, managed by devops")
 class Warlock2CodeGeneratorTest {
 
     @Test

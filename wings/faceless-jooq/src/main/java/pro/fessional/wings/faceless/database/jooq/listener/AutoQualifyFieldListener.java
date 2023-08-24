@@ -11,7 +11,8 @@ import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
 
 /**
- * visit可能触发多次，任何需要render的地方，如toString, getSQL0
+ * `visit` may be triggered multiple times, anywhere a render is needed, e.g. toString, getSQL0
+ *
  * @author trydofor
  * @since 2021-01-14
  */

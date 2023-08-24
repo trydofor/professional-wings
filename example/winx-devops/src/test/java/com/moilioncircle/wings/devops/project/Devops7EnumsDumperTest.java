@@ -12,14 +12,12 @@ import pro.fessional.wings.silencer.spring.help.SubclassSpringLoader;
 import java.util.Map;
 
 /**
- * ⑥ 使用wings的flywave，生成trigger和跟踪表
- *
  * @author trydofor
  * @since 2019-12-26
  */
 
 @SpringBootTest
-@Disabled("枚举类导出")
+@Disabled("Dump Enums")
 public class Devops7EnumsDumperTest {
 
     @Setter(onMethod_ = {@Autowired})

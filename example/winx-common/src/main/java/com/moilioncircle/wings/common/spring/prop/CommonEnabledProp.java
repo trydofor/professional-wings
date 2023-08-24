@@ -17,7 +17,7 @@ public class CommonEnabledProp {
     public static final String Key = "spring.winx.common.enabled";
 
     /**
-     * 是否默认配置 fedex
+     * Whether to config fedex
      *
      * @see #Key$fedex
      */

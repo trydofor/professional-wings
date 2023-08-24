@@ -7,7 +7,7 @@ import org.springframework.core.convert.TypeDescriptor;
 import pro.fessional.mirana.bits.Base64;
 
 /**
- * 数据精度高于Json，但数据结构可能不准，比如TreeMap|HashMap等
+ * Data accuracy is higher than Json, but the data structure may not, such as TreeMap or HashMap.
  *
  * @author trydofor
  * @since 2022-03-09

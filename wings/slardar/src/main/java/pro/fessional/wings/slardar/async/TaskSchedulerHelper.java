@@ -42,7 +42,7 @@ public class TaskSchedulerHelper {
     }
 
     /**
-     * 获取Light或Heavy
+     * Get Light Scheduler if fast, otherwise Heavy.
      */
     @NotNull
     public static ThreadPoolTaskScheduler referScheduler(boolean fast) {
@@ -50,7 +50,7 @@ public class TaskSchedulerHelper {
     }
 
     /**
-     * 异步立即执行一个任务，fast表示此任务很快会结束，如10s
+     * Execute an async task immediately, `fast` means that the task will be finished soon, e.g. 10s.
      *
      * @see ThreadPoolTaskScheduler#execute(Runnable)
      */
@@ -59,7 +59,7 @@ public class TaskSchedulerHelper {
     }
 
     /**
-     * 在delayMs毫秒（ThreadNow）后，异步执行一个任务，fast表示此任务很快会结束，如10s
+     * Execute an async task after delayMs millis (ThreadNow), `fast` means that the task will be finished soon, e.g. 10s.
      *
      * @see ThreadPoolTaskScheduler#schedule(Runnable, Instant)
      */
@@ -68,7 +68,7 @@ public class TaskSchedulerHelper {
     }
 
     /**
-     * 在指定时间（fastTime构建，系统默认时区），异步执行一个任务，fast表示此任务很快会结束，如10s
+     * Execute an async task at specified instant, `fast` means that the task will be finished soon, e.g. 10s.
      *
      * @see ThreadPoolTaskScheduler#schedule(Runnable, Instant)
      */
@@ -77,8 +77,8 @@ public class TaskSchedulerHelper {
     }
 
     /**
-     * 指定trigger，异步执行一个任务，fast表示此任务很快会结束，如10s，
-     * errorHandler不同于其他方法，不识别DelegatingErrorHandlingRunnable
+     * Execute an async task by given trigger, `fast` means that the task will be finished soon, e.g. 10s.
+     * Note, errorHandler, unlike other methods, does not handle DelegatingErrorHandlingRunnable.
      *
      * @see ThreadPoolTaskScheduler#schedule(Runnable, Trigger)
      */

@@ -2,9 +2,9 @@ package pro.fessional.wings.slardar.autozone;
 
 /**
  * <pre>
- * 转换在Controller层发生
- * ① request时，从string到DateTime，从CLient到System，spring或jackson完成
- * ② response时，从DateTime到string，从System到Client，jackson完成。
+ * The conversion should occur at the Controller level
+ * (1) when request, form string to DateTime, form Client to System, by spring or jackson
+ * (2) when response, from DateTime to string, from System to Client, by jackson
  * </pre>
  *
  * @author trydofor
@@ -12,19 +12,19 @@ package pro.fessional.wings.slardar.autozone;
  */
 public enum AutoZoneType {
     /**
-     * 转到系统时区
+     * To System timezone
      */
     System,
     /**
-     * 转到客户时区，仅限于Controller层
+     * to Client timezone, should convert at Controller level
      */
     Client,
     /**
-     * 按request和response自动转换到目的地时区
+     * Auto convert to target timezone by request and response
      */
     Auto,
     /**
-     * 关闭转换功能
+     * disable convert
      */
     Off,
 

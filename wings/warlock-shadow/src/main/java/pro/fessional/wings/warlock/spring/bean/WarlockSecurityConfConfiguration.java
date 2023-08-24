@@ -100,10 +100,10 @@ public class WarlockSecurityConfConfiguration {
 
             http.apply(SecurityConfigHelper.http())
                 .bindLogin(conf -> {
-                            conf.loginPage(securityProp.getLoginPage()) // 初始authenticationEntryPoint，无权限时返回的页面。
-                                // 初始filter.RequestMatcher
-                                .loginProcessingUrl(securityProp.getLoginProcUrl(), securityProp.getLoginProcMethod()) // filter处理，不需要controller
-                                .loginForward(securityProp.isLoginForward()) // 无权限时返回的页面，
+                            conf.loginPage(securityProp.getLoginPage()) // init authenticationEntryPoint, 401 page
+                                // init filter.RequestMatcher
+                                .loginProcessingUrl(securityProp.getLoginProcUrl(), securityProp.getLoginProcMethod()) // by filter,no controller
+                                .loginForward(securityProp.isLoginForward()) // forward or redirect
                                 .usernameParameter(securityProp.getUsernamePara())
                                 .passwordParameter(securityProp.getPasswordPara())
                                 .authenticationDetailsSource(authDetailSource)

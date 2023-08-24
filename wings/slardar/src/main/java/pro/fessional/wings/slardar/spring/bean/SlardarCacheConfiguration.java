@@ -111,13 +111,13 @@ public class SlardarCacheConfiguration {
         public CacheManager cacheManager() {
             final Map<String, CacheManager> resolverMap = new HashMap<>(managers);
             for (Map.Entry<String, AbstractCacheResolver> en : resolvers.entrySet()) {
-                log.info("Slardar find cacheResolver bean=" + en.getKey() + "");
+                log.info("Slardar find cacheResolver bean=" + en.getKey());
                 resolverMap.put(en.getKey(), en.getValue().getCacheManager());
             }
 
-            // 动态注册Bean，cacheResolver
+            // Dynamic register Bean cacheResolver
             for (Map.Entry<String, CacheManager> en : managers.entrySet()) {
-                final String key = en.getKey() + WingsCache.Resolver._Suffix;
+                final String key = en.getKey() + WingsCache.Resolver.Suffix;
                 final CacheManager cm = en.getValue();
                 resolverMap.put(key, cm);
                 if (beanFactory.containsBean(key)) {

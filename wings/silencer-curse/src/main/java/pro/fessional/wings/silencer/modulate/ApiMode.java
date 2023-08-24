@@ -6,19 +6,19 @@ package pro.fessional.wings.silencer.modulate;
  */
 public enum ApiMode {
     /**
-     * alive 正式
+     * Alive, production
      */
     Online,
     /**
-     * 测试，沙盒
+     * Sandbox, testing
      */
     Sandbox,
     /**
-     * 跑通测试，最后rollback
+     * Dry running, rollback at the end
      */
     Dryrun,
     /**
-     * 未定义，不执行任何动作
+     * Undefined, no action is performed
      */
     Nothing
 }

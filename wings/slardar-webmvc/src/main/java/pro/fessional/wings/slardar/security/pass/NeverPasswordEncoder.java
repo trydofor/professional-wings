@@ -3,7 +3,7 @@ package pro.fessional.wings.slardar.security.pass;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * always not match
+ * never match, return false always.
  *
  * @author trydofor
  * @since 2021-02-27

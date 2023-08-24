@@ -19,8 +19,8 @@ public class Md5HmacSha256Test {
     @Test
     public void postJson() {
         final TreeMap<String, Object> queryString = new TreeMap<>();
-        queryString.put("query", "string"); // 普通参数
-        queryString.put("null", null); // 忽略null
+        queryString.put("query", "string"); // normal param
+        queryString.put("null", null); // ignore null
 
         final String para = queryString
                 .entrySet().stream()
@@ -28,14 +28,14 @@ public class Md5HmacSha256Test {
                 .map(e -> e.getKey() + '=' + e.getValue())
                 .reduce((s1, s2) -> s1 + '&' + s2)
                 .orElse("");
-        // 字典序，忽略null
+        // ascii order, ignore null
         assertEquals("query=string", para);
 
         final String secret = "高密级";
         final String body = "{\"try\":\"dofor\"}";
-        final long timestamp = 1668167709172L; // 时间戳，有则签名
+        final long timestamp = 1668167709172L; // signature with timestamp if exists
 
-        // 直接拼接字符串
+        // concat string
         final String signData = para + body + secret + timestamp;
         assertEquals("query=string{\"try\":\"dofor\"}高密级1668167709172", signData);
         // echo -n 'query=string{"try":"dofor"}高密级1668167709172' > trydofor.txt
@@ -60,9 +60,9 @@ public class Md5HmacSha256Test {
     @Test
     public void postFile() {
         final TreeMap<String, Object> queryString = new TreeMap<>();
-        queryString.put("query", "string"); // 普通参数
-        queryString.put("null", null); // 忽略null
-        queryString.put("file1.sum", "EE048AF1B8AB675654DDB522F6575909"); // 文件签名
+        queryString.put("query", "string"); // normal param
+        queryString.put("null", null); // ignore null
+        queryString.put("file1.sum", "EE048AF1B8AB675654DDB522F6575909"); // file signature
 
         final String para = queryString
                 .entrySet().stream()
@@ -70,13 +70,13 @@ public class Md5HmacSha256Test {
                 .map(e -> e.getKey() + '=' + e.getValue())
                 .reduce((s1, s2) -> s1 + '&' + s2)
                 .orElse("");
-        // 字典序，忽略null
+        // ascii order, ignore null
         assertEquals("file1.sum=EE048AF1B8AB675654DDB522F6575909&query=string", para);
 
         final String secret = "高密级";
-        final long timestamp = 1668167709172L; // 时间戳，有则签名
+        final long timestamp = 1668167709172L; // signature with timestamp if exists
 
-        // 直接拼接字符串
+        // concat string
         final String signData = para + secret + timestamp;
         assertEquals("file1.sum=EE048AF1B8AB675654DDB522F6575909&query=string高密级1668167709172", signData);
         // echo -n 'file1.sum=EE048AF1B8AB675654DDB522F6575909&query=string高密级1668167709172' > goodman.txt

@@ -20,7 +20,7 @@ import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
 import java.util.Map;
 
 /**
- * 当前在SpringApplication#callRunners中，applicationRunner先于commandLineRunner执行
+ * applicationRunner are executed before commandLineRunner in SpringApplication#callRunners
  *
  * @author trydofor
  * @link <a href="https://docs.spring.io/spring-boot/docs/3.0.3/reference/htmlsingle/#features.spring-application.application-events-and-listeners">Application Events and Listeners</a>

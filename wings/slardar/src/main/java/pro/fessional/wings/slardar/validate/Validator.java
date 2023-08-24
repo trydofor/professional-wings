@@ -4,7 +4,7 @@ import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.hibernate.validator.internal.util.DomainNameUtil;
 
 /**
- * 是对javax.validation工具的静态化提取
+ * static use of the `javax.validation`
  *
  * @author trydofor
  * @since 2021-06-22

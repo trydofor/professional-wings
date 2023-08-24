@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 支持ConversionService和Json解析配置
+ * Support for ConversionService and Json parsing configuration
  *
  * @author trydofor
  * @since 2022-03-09
@@ -118,21 +118,21 @@ public interface RuntimeConfService {
     }
 
     /**
-     * 按类型读取配置项
+     * Read the value of config by type
      *
      * @param key  key
-     * @param type 类型描述
-     * @param <T>  类型
-     * @return 配置
+     * @param type type descriptor
+     * @param <T>  Type of value
+     * @return value
      */
     <T> T getObject(String key, TypeDescriptor type);
 
 
     /**
-     * 写入配置项
+     * set value of config
      *
      * @param key   key
-     * @param value 配置
+     * @param value config
      */
     void setObject(String key, Object value);
 
@@ -145,13 +145,13 @@ public interface RuntimeConfService {
     }
 
     /**
-     * 新建一个配置项
+     * create new config
      *
-     * @param key     key
-     * @param value   初始值
-     * @param comment 注释
-     * @param handler 处理器
-     * @return 是否被处理
+     * @param key     config key
+     * @param value   config value
+     * @param comment config comment
+     * @param handler type handler name
+     * @return whether handled
      */
     boolean newObject(String key, Object value, String comment, String handler);
 
@@ -164,20 +164,20 @@ public interface RuntimeConfService {
     }
 
     /**
-     * 新建一个配置项，自动选择handler，一定成功，否异常。
+     * create new config with auto selected handler, success or throw an error.
      *
-     * @param key     key
-     * @param value   初始值
-     * @param comment 注释
+     * @param key     config key
+     * @param value   config value
+     * @param comment config comment
      */
-    void newObject(String key, Object value, String comment);
+    boolean newObject(String key, Object value, String comment);
 
-    default void newObject(Class<?> key, Object value, String comment) {
-        newObject(key.getName(), value, comment);
+    default boolean newObject(Class<?> key, Object value, String comment) {
+        return newObject(key.getName(), value, comment);
     }
 
-    default void newObject(Enum<?> key, Object value, String comment) {
-        newObject(EnumConvertor.enum2Str(key), value, comment);
+    default boolean newObject(Enum<?> key, Object value, String comment) {
+        return newObject(EnumConvertor.enum2Str(key), value, comment);
     }
 
 }

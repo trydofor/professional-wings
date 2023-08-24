@@ -7,17 +7,18 @@ import java.io.File
 import java.util.LinkedList
 import javax.sql.DataSource
 
+
+typealias FilterSorter = (List<String>) -> List<String>
+
 /**
- * 进行表结构dump
+ * Dump table structure
  *
  * @author trydofor
  * @since 2019-12-15
  */
-typealias FilterSorter = (List<String>) -> List<String>
-
 class SchemaFulldumpManager(
-        private val sqlStatementParser: SqlStatementParser,
-        private val schemaDefinitionLoader: SchemaDefinitionLoader
+    private val sqlStatementParser: SqlStatementParser,
+    private val schemaDefinitionLoader: SchemaDefinitionLoader
 ) {
     private val log = LoggerFactory.getLogger(SchemaFulldumpManager::class.java)
 
@@ -25,7 +26,7 @@ class SchemaFulldumpManager(
         const val prefix = "--"
 
         /**
-         * 满足正则（全匹配matches，忽略大小写）的会被移除，按ascii自燃顺序排序
+         * Exclude Those that satisfy the RegExp (matches all, case-insensitive) and sorted in ascii order
          */
         @JvmStatic
         fun excludeRegexp(vararg regex: String): FilterSorter {
@@ -36,7 +37,7 @@ class SchemaFulldumpManager(
         }
 
         /**
-         * 不满足正则（全匹配matches，忽略大小写）的会被移除，按ascii自燃顺序排序
+         * Include Those that satisfy the RegExp (matches all, case-insensitive) and sorted in ascii order
          */
         @JvmStatic
         fun includeRegexp(vararg regex: String): FilterSorter {
@@ -47,8 +48,9 @@ class SchemaFulldumpManager(
         }
 
         /**
-         * 按字符串相等（不区分大小写）过滤和排序。其中，`--` 开头表示分组分割线
-         * @param only true表示只包匹配的，false把未匹配的放最后，按ascii自燃顺序排序
+         * Filter and sort by string equality (case-insensitive).
+         * Where `--` at the beginning denotes a grouping divider.
+         * @param only sort by ascii order. `true` means include only the matched ones, `false` means include the unmatched ones but put them at last.
          */
         @JvmStatic
         fun groupedTable(only: Boolean = true, vararg table: String): FilterSorter {
@@ -79,8 +81,9 @@ class SchemaFulldumpManager(
         }
 
         /**
-         * 按正则（全匹配matches，忽略大小写）过滤和排序。其中，`--` 开头表示分组分割线
-         * @param only true表示只包匹配的，false把未匹配的放最后，按ascii自燃顺序排序
+         * Filter and sort by Regexp (matches all, case-insensitive)
+         * Where `--` at the beginning denotes a grouping divider.
+         * @param only sort by ascii order. `true` means include only the matched ones, `false` means include the unmatched ones but put them at last.
          */
         @JvmStatic
         fun groupedRegexp(only: Boolean = true, vararg regexp: String): FilterSorter {
@@ -131,9 +134,9 @@ class SchemaFulldumpManager(
     }
 
     data class SqlString(
-            val table: String,
-            val sqlType: SqlType,
-            val sqlText: String
+        val table: String,
+        val sqlType: SqlType,
+        val sqlText: String
     )
 
     fun saveFile(path: String, sqls: List<SqlString>) = saveFile(File(path), sqls)
@@ -148,9 +151,11 @@ class SchemaFulldumpManager(
                         buf.write(sql.sqlText)
                         buf.write("\n\n")
                     }
+
                     SqlType.DdlTrigger -> {
                         trgs.add(sql)
                     }
+
                     else -> {
                         buf.write("$prefix ${sql.table} ${sql.sqlType}")
                         buf.write("\n")
@@ -174,12 +179,12 @@ class SchemaFulldumpManager(
     }
 
     /**
-     * dump 指定数据库的DDL (table,index和trigger)
-     * 如果元素以`--`开头，表示注释
+     * Dump DDL for the database (table, index and trigger),
+     * the element starting with `--` is a comment.
      *
-     * @param database 数据库
-     * @param filterSorter 过滤并排序
-     * @return table_name :sql的map
+     * @param database database
+     * @param filterSorter filter and sorter
+     * @return table and sql string
      */
     fun dumpDdl(database: DataSource, filterSorter: FilterSorter = excludeShadow): List<SqlString> {
 
@@ -205,9 +210,11 @@ class SchemaFulldumpManager(
                     ddlTableReg.containsMatchIn(sql) -> {
                         result.add(SqlString(table, SqlType.DdlTable, sql))
                     }
+
                     ddlTriggerReg.containsMatchIn(sql) -> {
                         result.add(SqlString(table, SqlType.DdlTrigger, sql))
                     }
+
                     else -> {
                         result.add(SqlString(table, SqlType.SqlUnknown, sql))
                     }
@@ -219,12 +226,12 @@ class SchemaFulldumpManager(
     }
 
     /**
-     * dump指定数据库的数据，INSERT语句
-     * 如果元素以`--`开头，表示注释
+     * Dump data in insert statement for the database,
+     * the element starting with `--` is a comment.
      *
-     * @param database 数据库
-     * @param filterSorter 过滤并排序
-     * @return table_name:sql的map
+     * @param database database
+     * @param filterSorter filter and sorter
+     * @return table and sql string
      */
     fun dumpRec(database: DataSource, filterSorter: FilterSorter = excludeShadow): List<SqlString> {
 

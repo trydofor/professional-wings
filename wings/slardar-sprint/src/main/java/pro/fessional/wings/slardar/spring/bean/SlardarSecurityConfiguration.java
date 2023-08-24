@@ -42,16 +42,18 @@ public class SlardarSecurityConfiguration {
     private final SlardarPasscoderProp slardarPasscoderProp;
 
     /**
+     * <pre>
      * #@Async
      * #spring.security.strategy=MODE_INHERITABLETHREADLOCAL
-     * <p>
+     *
      * #{bcrypt}$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG
      * #{noop}password
      * #{pbkdf2}5d923b44a6d129f3ddf3e3c8d29412723dcbde72445e8ef6bf3b508fbf17fa4ed4d6b99ca763d8dc
      * #{scrypt}$e0801$8bWJaSu2IKSn9Z9kM+TPXfOc/9bdYSrN1oD9qfVThWEwdRTnO7re7Ei+fUZRJ68k9lTyuTeUp4of4g24hHnazw==$OAOec05+bXxvuu/1qZ6NUR+xQYvYv7BeL1QxwRpY5Pc=
-     * <p>
-     * # 在 2019 年，我建议你以后不要使用 PBKDF2 或 BCrypt，并强烈建议将 Argon2（最好是 Argon2id）用于最新系统。
-     * # BScrypt 是当 Argon2 不可用时的不二选择，但要记住，它在侧信道泄露方面也存在相同的问题。
+     *
+     * # strongly recommend Argon2 (preferably Argon2id) for up-to-date systems.
+     * # BScrypt is good choice when Argon2 is not available
+     * </pre>
      *
      * @return PasswordEncoder
      */
@@ -95,9 +97,6 @@ public class SlardarSecurityConfiguration {
         return new DefaultPasssaltEncoder(md);
     }
 
-    /**
-     * 使用wings配置，提到spring默认配置
-     */
     @Bean
     public WingsSecBeanInitConfigurer wingsSecBeanInitConfigurer(ApplicationContext context) {
         log.info("SlardarSprint spring-bean wingsSecBeanInitConfigurer");
@@ -118,7 +117,7 @@ public class SlardarSecurityConfiguration {
     }
 
     /**
-     * 与TerminalContext同步处理Locale和TimeZone
+     * Sync Locale and TimeZone with TerminalContext
      */
     @Bean
     public CommandLineRunnerOrdered runnerTerminalContextListener(Map<String, TerminalContext.Listener> listeners) {

@@ -82,7 +82,7 @@ public class WarlockJustAuthConfiguration {
                 log.info("WarlockShadow conf justAuthRequestFactory auth-type " + k + ", proxy=" + hc.getProxyType());
             }
 
-            // 处理动态redirect-uri
+            // handle dynamic redirect-uri
             map.put(em, AuthConfigWrapper.tryWrap(ac, justAuthProp.getSafeHost()));
         }
 

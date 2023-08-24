@@ -10,9 +10,7 @@ import java.util.Map;
 public interface WarnFilter {
 
     /**
-     * 修改warns
-     *
-     * @param warns 内容
+     * filter warns
      */
     void filter(Map<String, List<WarnMetric.Warn>> warns);
 }

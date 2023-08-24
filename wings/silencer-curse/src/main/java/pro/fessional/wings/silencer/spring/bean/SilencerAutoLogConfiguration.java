@@ -35,7 +35,7 @@ public class SilencerAutoLogConfiguration {
     private static final Log log = LogFactory.getLog(SilencerAutoLogConfiguration.class);
 
     /**
-     * 配置结束，服务开始之前，切换日志
+     * Configuration is complete and the log is switched before the service starts
      */
     @Bean
     @ConditionalOnClass(ConsoleAppender.class)

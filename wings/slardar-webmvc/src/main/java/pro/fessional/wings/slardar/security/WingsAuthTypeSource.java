@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface WingsAuthTypeSource {
     /**
-     * 获取 auth type
+     * Build the AuthType from the request
      *
      * @param request HttpServletRequest
      * @return auth type

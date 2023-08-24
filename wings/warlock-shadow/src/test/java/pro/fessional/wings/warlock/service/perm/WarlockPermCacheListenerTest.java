@@ -21,23 +21,23 @@ class WarlockPermCacheListenerTest {
     private WarlockRoleService warlockRoleService;
 
     @Test
-    @Disabled("模拟慢处理，观察缓存变化")
+    @Disabled("Simulate slow processing and observe cache changes")
     void cleanCache() throws InterruptedException {
-        log.warn("无缓存，从数据库加载Perm");
+        log.warn("No cache, select Perm from Db");
         warlockPermServer.loadPermAll();
-        log.warn("无缓存，从数据库加载Role");
+        log.warn("No cache, select Role from Db");
         warlockRoleService.loadRoleAll();
-        log.warn("有缓存，无任何数据库");
+        log.warn("Cache, no Db select");
         warlockPermServer.loadPermAll();
         warlockRoleService.loadRoleAll();
-        log.warn("修改Perm=1，触发jooq CUD事件");
+        log.warn("Modify Perm=1, trigger jooq CUD event");
         warlockPermServer.modify(1, "test cleanCache");
-        log.info("睡眠3秒，等待async事件");
+        log.info("Sleep 3s, Wait async event");
         Thread.sleep(3000);
-        log.warn("无缓存，从数据库加载Perm");
+        log.warn("No cache, select Perm from Db");
         warlockPermServer.loadPermAll();
-        log.warn("有缓存，不从数据库加载Role");
+        log.warn("Cache, no Db select");
         warlockRoleService.loadRoleAll();
-        log.warn("查看日志");
+        log.warn("Check the log");
     }
 }

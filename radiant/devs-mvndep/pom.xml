@@ -87,7 +87,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- DENIED by wings，define safe version numbers for indirectly 3rd lib -->
+            <!-- DENIED by wings, define safe version numbers for indirectly 3rd lib -->
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
@@ -143,11 +143,6 @@
             <artifactId>annotations</artifactId>
             <version>${annotations.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.errorprone</groupId>
-            <artifactId>error_prone_annotations</artifactId>
-            <version>${errorprone.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>

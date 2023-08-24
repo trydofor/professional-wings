@@ -1,6 +1,9 @@
 package pro.fessional.wings.slardar.httprest.okhttp;
 
 import okhttp3.Call;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -18,10 +21,11 @@ import pro.fessional.mirana.pain.IORuntimeException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.function.BiFunction;
 
 /**
- * 保持，谁用response谁关闭，采用 try-close模式
+ * Who uses it, who should close it, in a try-close pattern.
  *
  * @author trydofor
  * @since 2020-06-02
@@ -34,7 +38,7 @@ public class OkHttpClientHelper {
     }
 
     /**
-     * 静态全局的默认初始化的
+     * global static client
      */
     @NotNull
     public static OkHttpClient staticClient() {
@@ -44,7 +48,7 @@ public class OkHttpClientHelper {
     protected static OkHttpClient SpringClient;
 
     /**
-     * 注入的Spring Bean
+     * inject Spring Configured client
      */
     @NotNull
     public static OkHttpClient springClient() {
@@ -55,61 +59,61 @@ public class OkHttpClientHelper {
     public static final RequestBody EMPTY = RequestBody.create("", OkHttpMediaType.ALL_VALUE);
 
     @NotNull
-    public static MultipartBody.Builder postFile(String key, File file) {
+    public static MultipartBody.Builder postFile(@NotNull String key, @NotNull File file) {
         return new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart(key, file.getName(), RequestBody.create(file, OkHttpMediaType.MULTIPART_FORM_DATA_VALUE));
     }
 
     @NotNull
-    public static MultipartBody.Builder postFile(String key, byte[] file, String fileName) {
+    public static MultipartBody.Builder postFile(@NotNull String key, byte @NotNull [] file, @NotNull String fileName) {
         return new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart(key, fileName, RequestBody.create(file, OkHttpMediaType.MULTIPART_FORM_DATA_VALUE));
     }
 
     @NotNull
-    public static MultipartBody.Builder postFile(String key, InputStream file, String fileName) {
+    public static MultipartBody.Builder postFile(@NotNull String key, @NotNull InputStream file, @NotNull String fileName) {
         return postFile(key, InputStreams.readBytes(file), fileName);
     }
 
     @NotNull
-    public static String postFile(OkHttpClient client, String url, String key, File file) {
+    public static String postFile(@NotNull OkHttpClient client, @NotNull String url, @NotNull String key, @NotNull File file) {
         return postFile((Call.Factory) client, url, postFile(key, file).build());
     }
 
     @NotNull
-    public static String postFile(Call.Factory callFactory, String url, String key, File file) {
+    public static String postFile(@NotNull Call.Factory callFactory, @NotNull String url, @NotNull String key, @NotNull File file) {
         return postFile(callFactory, url, postFile(key, file).build());
     }
 
     @NotNull
-    public static String postFile(OkHttpClient client, String url, String key, byte[] file, String fileName) {
+    public static String postFile(@NotNull OkHttpClient client, @NotNull String url, @NotNull String key, byte @NotNull [] file, @NotNull String fileName) {
         return postFile((Call.Factory) client, url, postFile(key, file, fileName).build());
     }
 
     @NotNull
-    public static String postFile(Call.Factory callFactory, String url, String key, byte[] file, String fileName) {
+    public static String postFile(@NotNull Call.Factory callFactory, @NotNull String url, @NotNull String key, byte @NotNull [] file, @NotNull String fileName) {
         return postFile(callFactory, url, postFile(key, file, fileName).build());
     }
 
     @NotNull
-    public static String postFile(OkHttpClient client, String url, String key, InputStream file, String fileName) {
+    public static String postFile(@NotNull OkHttpClient client, @NotNull String url, @NotNull String key, @NotNull InputStream file, @NotNull String fileName) {
         return postFile((Call.Factory) client, url, postFile(key, file, fileName).build());
     }
 
     @NotNull
-    public static String postFile(Call.Factory callFactory, String url, String key, InputStream file, String fileName) {
+    public static String postFile(@NotNull Call.Factory callFactory, @NotNull String url, @NotNull String key, @NotNull InputStream file, @NotNull String fileName) {
         return postFile(callFactory, url, postFile(key, file, fileName).build());
     }
 
     @NotNull
-    public static String postFile(OkHttpClient client, String url, MultipartBody body) {
+    public static String postFile(@NotNull OkHttpClient client, @NotNull String url, @NotNull MultipartBody body) {
         return postFile((Call.Factory) client, url, body);
     }
 
     @NotNull
-    public static String postFile(Call.Factory callFactory, String url, MultipartBody body) {
+    public static String postFile(@NotNull Call.Factory callFactory, @NotNull String url, @NotNull MultipartBody body) {
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .post(body);
@@ -122,17 +126,17 @@ public class OkHttpClientHelper {
     }
 
     @NotNull
-    public static String postJson(OkHttpClient client, String url, CharSequence json) {
+    public static String postJson(@NotNull OkHttpClient client, @NotNull String url, @Nullable CharSequence json) {
         return executeJson(client, url, json, "POST");
     }
 
     @NotNull
-    public static String postJson(Call.Factory callFactory, String url, CharSequence json) {
+    public static String postJson(@NotNull Call.Factory callFactory, @NotNull String url, @Nullable CharSequence json) {
         return executeJson(callFactory, url, json, "POST");
     }
 
     @Nullable
-    public static ResponseBody extract(Response response) {
+    public static ResponseBody extract(@Nullable Response response) {
         if (response != null && response.isSuccessful()) {
             return response.body();
         }
@@ -140,27 +144,27 @@ public class OkHttpClientHelper {
     }
 
     @NotNull
-    public static String extractString(Response response) throws IOException {
+    public static String extractString(@Nullable Response response) throws IOException {
         ResponseBody body = extract(response);
         return extractString(body);
     }
 
     @Nullable
     @Contract("_,false->!null")
-    public static String extractString(Response response, boolean nullWhenThrow) {
+    public static String extractString(@Nullable Response response, boolean nullWhenThrow) {
         ResponseBody body = extract(response);
         return extractString(body, nullWhenThrow);
     }
 
     @NotNull
-    public static String extractString(ResponseBody body) throws IOException {
+    public static String extractString(@Nullable ResponseBody body) throws IOException {
         if (body == null) return Null.Str;
         return body.string();
     }
 
     @Nullable
     @Contract("_,false->!null")
-    public static String extractString(ResponseBody body, boolean nullWhenThrow) {
+    public static String extractString(@Nullable ResponseBody body, boolean nullWhenThrow) {
         try {
             return extractString(body);
         }
@@ -174,15 +178,15 @@ public class OkHttpClientHelper {
         }
     }
 
-    public static byte @NotNull [] download(OkHttpClient client, String url) {
+    public static byte @NotNull [] download(@NotNull OkHttpClient client, @NotNull String url) {
         return download((Call.Factory) client, url, "GET");
     }
 
-    public static byte @NotNull [] download(Call.Factory callFactory, String url) {
+    public static byte @NotNull [] download(@NotNull Call.Factory callFactory, @NotNull String url) {
         return download(callFactory, url, "GET");
     }
 
-    public static byte @NotNull [] download(OkHttpClient client, String url, String method) {
+    public static byte @NotNull [] download(@NotNull OkHttpClient client, @NotNull String url, @NotNull String method) {
         return download((Call.Factory) client, url, method);
     }
 
@@ -192,11 +196,11 @@ public class OkHttpClientHelper {
      * @see HttpMethod#requiresRequestBody(String)
      */
     @Nullable
-    public static RequestBody emptyBody(String method) {
+    public static RequestBody emptyBody(@NotNull String method) {
         return HttpMethod.requiresRequestBody(method) ? EMPTY : null;
     }
 
-    public static byte @NotNull [] download(Call.Factory callFactory, String url, String method) {
+    public static byte @NotNull [] download(@NotNull Call.Factory callFactory, @NotNull String url, @NotNull String method) {
         Request.Builder builder = new Request.Builder().url(url);
         builder.method(method, emptyBody(method));
 
@@ -212,12 +216,12 @@ public class OkHttpClientHelper {
     }
 
     @NotNull
-    public static String getText(OkHttpClient client, String url) {
+    public static String getText(@NotNull OkHttpClient client, @NotNull String url) {
         return getText((Call.Factory) client, url);
     }
 
     @NotNull
-    public static String getText(Call.Factory callFactory, String url) {
+    public static String getText(@NotNull Call.Factory callFactory, @NotNull String url) {
         Request.Builder builder = new okhttp3.Request.Builder()
                 .url(url)
                 .get();
@@ -230,12 +234,12 @@ public class OkHttpClientHelper {
     }
 
     @Contract("_,_,false->!null")
-    public static String executeString(OkHttpClient client, Request request, boolean nullWhenThrow) {
+    public static String executeString(@NotNull OkHttpClient client, @NotNull Request request, boolean nullWhenThrow) {
         return executeString((Call.Factory) client, request, nullWhenThrow);
     }
 
     @Contract("_,_,false->!null")
-    public static String executeString(Call.Factory callFactory, Request request, boolean nullWhenThrow) {
+    public static String executeString(@NotNull Call.Factory callFactory, @NotNull Request request, boolean nullWhenThrow) {
 
         try (Response response = execute(callFactory, request)) {
             return extractString(response);
@@ -250,11 +254,11 @@ public class OkHttpClientHelper {
         }
     }
 
-    public static String executeJson(OkHttpClient client, String url, CharSequence json, String method) {
+    public static String executeJson(@NotNull OkHttpClient client, @NotNull String url, @Nullable CharSequence json, @NotNull String method) {
         return executeJson((Call.Factory) client, url, json, method);
     }
 
-    public static String executeJson(Call.Factory callFactory, String url, CharSequence json, String method) {
+    public static String executeJson(@NotNull Call.Factory callFactory, @NotNull String url, @Nullable CharSequence json, @NotNull String method) {
         okhttp3.RequestBody body = json == null ? null : RequestBody.create(json.toString(), OkHttpMediaType.APPLICATION_JSON_VALUE);
         Request.Builder builder = new okhttp3.Request.Builder()
                 .url(url)
@@ -268,22 +272,22 @@ public class OkHttpClientHelper {
     }
 
     @NotNull
-    public static Response execute(OkHttpClient client, Request request) throws IOException {
+    public static Response execute(@NotNull OkHttpClient client, @NotNull Request request) throws IOException {
         return execute((Call.Factory) client, request);
     }
 
     @NotNull
-    public static Response execute(Call.Factory callFactory, Request request) throws IOException {
+    public static Response execute(@NotNull Call.Factory callFactory, @NotNull Request request) throws IOException {
         return callFactory.newCall(request).execute();
     }
 
     @Contract("_,_,false->!null")
-    public static Response execute(OkHttpClient client, Request request, boolean nullWhenThrow) {
+    public static Response execute(@NotNull OkHttpClient client, @NotNull Request request, boolean nullWhenThrow) {
         return execute((Call.Factory) client, request, nullWhenThrow);
     }
 
     @Contract("_,_,false->!null")
-    public static Response execute(Call.Factory callFactory, Request request, boolean nullWhenThrow) {
+    public static Response execute(@NotNull Call.Factory callFactory, @NotNull Request request, boolean nullWhenThrow) {
         try {
             return execute(callFactory, request);
         }
@@ -298,12 +302,12 @@ public class OkHttpClientHelper {
     }
 
     @Nullable
-    public static <T> T execute(OkHttpClient client, Request request, BiFunction<Response, IOException, T> fun) {
+    public static <T> T execute(@NotNull OkHttpClient client, @NotNull Request request, @NotNull BiFunction<Response, IOException, T> fun) {
         return execute((Call.Factory) client, request, fun);
     }
 
     @Nullable
-    public static <T> T execute(Call.Factory callFactory, Request request, BiFunction<Response, IOException, T> fun) {
+    public static <T> T execute(@NotNull Call.Factory callFactory, @NotNull Request request, @NotNull BiFunction<Response, IOException, T> fun) {
         try (final Response res = execute(callFactory, request)) {
             return fun.apply(res, null);
         }
@@ -313,12 +317,12 @@ public class OkHttpClientHelper {
     }
 
     @NotNull
-    public static Response execute(OkHttpClient client, Request.Builder builder) throws IOException {
+    public static Response execute(@NotNull OkHttpClient client, @NotNull Request.Builder builder) throws IOException {
         return execute((Call.Factory) client, builder);
     }
 
     @NotNull
-    public static Response execute(Call.Factory callFactory, Request.Builder builder) throws IOException {
+    public static Response execute(@NotNull Call.Factory callFactory, @NotNull Request.Builder builder) throws IOException {
         if (callFactory instanceof OkHttpBuildableClient) {
             return ((OkHttpBuildableClient) callFactory).newCall(builder).execute();
         }
@@ -328,12 +332,12 @@ public class OkHttpClientHelper {
     }
 
     @Contract("_,_,false->!null")
-    public static Response execute(OkHttpClient client, Request.Builder builder, boolean nullWhenThrow) {
+    public static Response execute(@NotNull OkHttpClient client, @NotNull Request.Builder builder, boolean nullWhenThrow) {
         return execute((Call.Factory) client, builder, nullWhenThrow);
     }
 
     @Contract("_,_,false->!null")
-    public static Response execute(Call.Factory callFactory, Request.Builder builder, boolean nullWhenThrow) {
+    public static Response execute(@NotNull Call.Factory callFactory, @NotNull Request.Builder builder, boolean nullWhenThrow) {
         try {
             return execute(callFactory, builder);
         }
@@ -348,11 +352,11 @@ public class OkHttpClientHelper {
     }
 
     @Nullable
-    public static <T> T execute(OkHttpClient client, Request.Builder builder, BiFunction<Response, IOException, T> fun) {
+    public static <T> T execute(@NotNull OkHttpClient client, @NotNull Request.Builder builder, @NotNull BiFunction<Response, IOException, T> fun) {
         return execute((Call.Factory) client, builder, fun);
     }
 
-    public static <T> T execute(Call.Factory callFactory, Request.Builder builder, BiFunction<Response, IOException, T> fun) {
+    public static <T> T execute(@NotNull Call.Factory callFactory, @NotNull Request.Builder builder, @NotNull BiFunction<Response, IOException, T> fun) {
         try (final Response res = execute(callFactory, builder)) {
             return fun.apply(res, null);
         }
@@ -361,4 +365,19 @@ public class OkHttpClientHelper {
         }
     }
 
+    public static void clearCookie(@NotNull OkHttpClient client, @NotNull HttpUrl url) {
+        final CookieJar cookieJar = client.cookieJar();
+        final List<Cookie> list = cookieJar.loadForRequest(url).stream().map(it -> {
+            final Cookie.Builder builder = new Cookie.Builder()
+                    .name(it.name())
+                    .path(it.path())
+                    .domain(it.domain())
+                    .value(it.value())
+                    .expiresAt(0);
+            if(it.secure()) builder.secure();
+            if(it.httpOnly()) builder.httpOnly();
+            return builder.build();
+        }).toList();
+        cookieJar.saveFromResponse(url, list);
+    }
 }

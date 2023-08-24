@@ -4,7 +4,7 @@ import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.cast.BiConvertor;
 
 /**
- * Source和Target的双向转换
+ * Bidirectional conversion of Source and Target
  *
  * @author trydofor
  * @since 2021-01-17

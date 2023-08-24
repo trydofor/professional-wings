@@ -17,7 +17,7 @@ public class TinyMailEnabledProp {
     public static final String Key = "spring.wings.tiny.mail.enabled";
 
     /**
-     * 是否启动自动配置
+     * whether to enable auto config
      *
      * @see #Key$autoconf
      */
@@ -25,7 +25,7 @@ public class TinyMailEnabledProp {
     public static final String Key$autoconf = Key + ".autoconf";
 
     /**
-     * 是否干跑，仅记录日志不真正执行任务
+     * whether to dry run, log only without actually send
      *
      * @see #Key$dryrun
      */
@@ -33,7 +33,7 @@ public class TinyMailEnabledProp {
     public static final String Key$dryrun = Key + ".dryrun";
 
     /**
-     * 是否开启 MailListController
+     * whether to enable MailListController
      *
      * @see #Key$controllerList
      */
@@ -41,7 +41,7 @@ public class TinyMailEnabledProp {
     public static final String Key$controllerList = Key + ".controller-list";
 
     /**
-     * 是否开启 MailSendController
+     * whether to enable MailSendController
      *
      * @see #Key$controllerSend
      */

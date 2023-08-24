@@ -3,7 +3,7 @@ package pro.fessional.wings.warlock.event;
 import java.io.Serializable;
 
 /**
- * 纯数据事件，可以被序列化
+ * Plain data events that can be serialized
  *
  * @author trydofor
  * @since 2021-02-27

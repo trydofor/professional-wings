@@ -77,7 +77,7 @@ class ApiAuthControllerTest {
     private final String client = "wings-trydofor";
     private final String secret = "wings-trydofor-secret";
 
-    // 编码后的值 %7B%22try%22%3A%20%22dofor%22%7D
+    // after encode %7B%22try%22%3A%20%22dofor%22%7D
     private final String jsonBody = "{\"try\": \"dofor\"}";
     private final String fileKey = "file1";
     private final String fileSum = fileKey + ".sum";

@@ -24,7 +24,7 @@ import java.util.Map;
 
 
 /**
- * 用于构造和解析有意义的state
+ * Construct and parse meaningful state
  *
  * @author trydofor
  * @since 2021-07-11
@@ -63,7 +63,7 @@ public class AuthStateBuilder {
 
         buildParaMap(request, paraMap);
 
-        // 167823d90c46cd70e3961b3f070a871c 32 非性能优先
+        // 167823d90c46cd70e3961b3f070a871c 32 non-performance first
         String uuid = RandCode.numlet(RAND_LEN);
         if (paraMap.isEmpty()) {
             return uuid;

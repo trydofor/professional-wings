@@ -42,7 +42,7 @@ public class EmptyValue {
 
     public static final LocalDateTime DATE_TIME_AS_MAX = LocalDateTime.of(DATE_AS_MAX, TIME);
 
-    // 可以外部赋值，以改变asEmptyValue的范围
+    // Can be assigned externally to change the scope of asEmptyValue
     public static double DOUBLE_AS_MIN = -0.00001D;
     public static double DOUBLE_AS_MAX = 0.00001D;
     public static double FLOAT_AS_MIN = -0.00001F;

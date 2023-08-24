@@ -10,20 +10,20 @@ import java.util.function.Function
 interface InteractiveManager<T> {
 
     /**
-     * 当执行undo的时候，是否控制台确认
-     * @param ask ask类型
-     * @param yes 是否确认，默认true
-     * @return 旧值
+     * Whether  to confirm  before `undo`
+     * @param ask ask type
+     * @param yes whether to confirm, true by default
+     * @return old value
      */
     fun needAsk(ask: T, yes: Boolean): Boolean?
 
     /**
-     * 用什么方式确认，传递message，返回继续or停止
+     * How to confirm, pass message, return to continue or stop
      */
     fun askWay(func: Function<String, Boolean>): Function<String, Boolean>?
 
     /**
-     * 用什么方式处理，运行时的 token, message
+     * How to log the runtime token and message
      */
     fun logWay(func: BiConsumer<String, String>): BiConsumer<String, String>?
 }

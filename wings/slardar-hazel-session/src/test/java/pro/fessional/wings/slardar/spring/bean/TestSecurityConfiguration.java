@@ -13,7 +13,7 @@ import pro.fessional.wings.slardar.security.handler.TestLoginHandler;
 
 
 /**
- * WingsSessionTest 使用
+ * Used by WingsSessionTest
  *
  * @author trydofor
  * @since 2019-12-01
@@ -66,8 +66,8 @@ public class TestSecurityConfiguration {
                     .requestMatchers("/authed/*").authenticated()
             )
             .formLogin(conf -> conf
-                    .loginPage("/user/login.json") // 无权限时返回的页面，
-                    .loginProcessingUrl("/user/login-proc.json") // filter处理，不需要controller
+                    .loginPage("/user/login.json") // 401 page
+                    .loginProcessingUrl("/user/login-proc.json") // handle by filter, no controller
                     .usernameParameter("username")
                     .passwordParameter("password")
                     .successHandler(testLoginHandler.loginSuccess)

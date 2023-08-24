@@ -5,8 +5,27 @@ import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.BatchBindStep;
+import org.jooq.Condition;
+import org.jooq.Configuration;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.InsertOnDuplicateSetMoreStep;
+import org.jooq.InsertOnDuplicateSetStep;
+import org.jooq.InsertReturningStep;
+import org.jooq.Loader;
+import org.jooq.LoaderOptionsStep;
+import org.jooq.OrderField;
+import org.jooq.QueryPart;
 import org.jooq.Record;
-import org.jooq.*;
+import org.jooq.RecordMapper;
+import org.jooq.Result;
+import org.jooq.SelectConditionStep;
+import org.jooq.SelectFieldOrAsterisk;
+import org.jooq.SelectSelectStep;
+import org.jooq.Table;
+import org.jooq.TableRecord;
+import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
@@ -20,7 +39,14 @@ import pro.fessional.wings.faceless.database.jooq.helper.JournalDiffHelper;
 import pro.fessional.wings.faceless.service.journal.JournalDiff;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -29,14 +55,15 @@ import java.util.stream.Collectors;
 
 /**
  * <pre>
- * 原则上，不希望Record携带的数据库信息扩散，因此建议Dao之外使用pojo
+ * In principle, the database information carried by Record should not be spread,
+ * so it's recommended to use Pojo instead of Record outside of Dao.
  *
- * 对于read方法，一律返回Pojo；对于write，同时支持 Record和Pojo。
- * 为了编码的便捷和减少数据拷贝，可以使用Record进行操作。
- * 批量处理中，一律使用了new Record，为了提升性能。
+ * For read method, it always returns Pojo; for write method, it supports both Record and Pojo.
+ * For the convenience of coding and to reduce data copying, you can use Record for operation.
+ * In batch processing, new Record is always used to improve performance.
  *
- * 注意，alias 用在多表查询，filed/condition和table需要同名，否则出现语法错误。
- * 即，不能是表名和字段不能一个是table，一个是alias的。
+ * Note that alias is used in multi-table query, filed/condition and table must have the same name,
+ * otherwise there will be a syntax error. I.e., fields that are in different alias from the table.
  * </pre>
  *
  * @param <T> Table
@@ -63,7 +90,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * -1:未检查 | 0:不存：1:存在
+     * -1:Unchecked | 0:Not exist | 1:Exists
      *
      * @param type -1|0|1
      */
@@ -72,9 +99,10 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 以 SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME=? AND TABLE_SCHEMA=SCHEMA() 检查数据库中是否存在此表
+     * Use `SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME=? AND TABLE_SCHEMA=SCHEMA()`
+     * to check the table existence in the current database.
      *
-     * @return 存在与否
+     * @return Whether not exist
      */
     public boolean notTableExist() {
         if (tableExist < 0) {
@@ -94,10 +122,11 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 相同表结构，构造一个新表名，有在分表，影子表的场景
+     * Create a new table with the same table structure.
+     * Used in sharding table, shadow table scenario
      *
-     * @param name 新表名
-     * @return 新表
+     * @param name new table name
+     * @return new table
      * @see TableImpl#rename(String)
      */
     @SuppressWarnings("unchecked")
@@ -107,11 +136,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 以当前表名为基础，增加前缀，后缀
-     *
-     * @param prefix  前缀
-     * @param postfix 后缀
-     * @return 新表
+     * Based on the current table name, add prefixes, suffixes
      */
     @NotNull
     public T newTable(String prefix, String postfix) {
@@ -131,9 +156,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 获得系统默认的table别名
-     *
-     * @return 表
+     * Get the system default table alias.
      */
     @NotNull
     public T getAlias() {
@@ -141,9 +164,9 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 通过 mapping 构造一个 record
+     * Create new Record by object mapping.
      *
-     * @param obj 具有相同mapping规则
+     * @param obj object with some mapping rules.
      * @return record
      */
     @NotNull
@@ -152,9 +175,9 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 把一组 po 构造为 record，可供batch系列使用
+     * Create a list of records by pojo, usually used in batch.
      *
-     * @param pos po
+     * @param pos pojos
      * @return list of record
      */
     @NotNull
@@ -168,13 +191,15 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     ///////////////// batch /////////////////////
 
     /**
-     * 一次性导入新记录，对重复记录忽略或更新。
-     * ignore时，采用了先查询 from dual where exists select * where `id` = ?
-     * replace时，使用了 on duplicate key update
+     * <pre>
+     * Batch load records at once, and ignore/update on duplicate.
+     * ignore - check by `from dual where exists select * where `id` = ?` first,
+     * replace - use on duplicate key update statement
+     * </pre>
      *
-     * @param records         所有记录
-     * @param ignoreOrReplace 唯一冲突时，忽略还是替换
-     * @return 执行结果，使用 ModifyAssert判断
+     * @param records         all record
+     * @param ignoreOrReplace ignore or update on duplicate
+     * @return result, should use ModifyAssert to check
      * @see DSLContext#loadInto(Table)
      */
     @NotNull
@@ -201,25 +226,25 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
 
     private void checkBatchMysql() {
         if (WingsJooqEnv.daoBatchMysql) {
-            throw new IllegalStateException("请使用#batchInsert(Collection<R>, int, boolean)，以使用insert ignore 和 replace into的mysql高效语法。避免使用from dual where exists 和 on duplicate key update");
+            throw new IllegalStateException("Use #batchInsert(Collection<R>, int, boolean) instead. `insert ignore` and `replace into` are more efficient mysql statements than `from dual where exists` and `on duplicate key update`");
         }
     }
 
 
     /**
-     * 插入新记录，使用mysql的 insert ignore或 replace into。
-     * 注意 jooq的mergeInto，不完美，必须都有值，而replace不会。
+     * Insert Pojo, use mysql `insert ignore` or `replace into`,
+     * Note jooq mergeInto must all have values, and replace won't.
      *
-     * @param pojo            记录
-     * @param ignoreOrReplace 唯一冲突时，忽略还是替换
-     * @return 执行结果，使用 ModifyAssert判断
+     * @param pojo            pojo
+     * @param ignoreOrReplace ignore or update on duplicate
+     * @return result, should use ModifyAssert to check
      */
     public int insertInto(P pojo, boolean ignoreOrReplace) {
         return insertInto(pojo, ignoreOrReplace, null);
     }
 
     /**
-     * 以ignoreOrReplace=false 插入，并获取diff
+     * Insert Pojo with ignoreOrReplace=false, and return the diff.
      *
      * @see #diffInsert(Object, boolean)
      */
@@ -229,7 +254,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 插入，并获取diff
+     * Insert Pojo and return the diff.
      *
      * @see #insertInto(Object, boolean)
      */
@@ -290,11 +315,11 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * batchInsert record的语法糖
+     * batchInsert syntax sugar
      *
-     * @param pos             记录
-     * @param ignoreOrReplace 唯一冲突时，忽略还是替换
-     * @return 执行结果，使用 ModifyAssert判断
+     * @param pos             pojo records
+     * @param ignoreOrReplace ignore or replace if DuplicateKey
+     * @return array of affected records, can use ModifyAssert to check
      */
     public int @NotNull [] insertInto(Collection<P> pos, boolean ignoreOrReplace) {
         return batchInsert(newRecord(pos), 0, ignoreOrReplace);
@@ -308,13 +333,12 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 插入新记录，默认使用①insert into DuplicateKey update，
-     * 也可以②先select，在insert或update
+     * insert one record by insert into DuplicateKey update.
      *
-     * @param table        与 updateFields 同名表
-     * @param pojo         记录
-     * @param updateFields 唯一约束存在时更新的字段，确保不使用别名
-     * @return 执行结果，使用 ModifyAssert判断
+     * @param table        table with the same name as updateFields
+     * @param pojo         pojo record
+     * @param updateFields fields to update if Duplicate Key, should not use table alias
+     * @return affected records, can use ModifyAssert to check
      */
     public int mergeInto(T table, P pojo, Field<?>... updateFields) {
         Map<Field<?>, Object> map = new LinkedHashMap<>();
@@ -342,13 +366,13 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 先select，在insert或update
+     * Select first, then insert or update depending on  whether record exists.
      *
-     * @param table        与 updateFields 同名表
-     * @param records      所有记录
-     * @param size         每批的数量，小于等于0时，表示不分批
-     * @param updateFields 唯一约束存在时更新的字段
-     * @return 执行结果，使用 ModifyAssert判断
+     * @param table        table with the same name as updateFields
+     * @param records      collection of record
+     * @param size         batch size, &lt;=0 mean no batching
+     * @param updateFields fields to update if Duplicate Key, should not use table alias
+     * @return array of affected records, can use ModifyAssert to check
      */
     public int @NotNull [] batchMerge(T table, Collection<R> records, int size, Field<?>... updateFields) {
         if (records == null || records.isEmpty()) return Null.Ints;
@@ -388,16 +412,16 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 当不使用db中的唯一约束时，使用此方法
-     * 先根据keys进行分批select，再根据记录情况进行insert或update。
-     * 字符串比较忽略大小写
+     * Use this method if there are no unique constraints in the db.
+     * (1) batch SELECT based on KEYS first, (2) INSERT or UPDATE based on the records.
+     * String comparison ignores case
      *
-     * @param table        与 updateFields 同名表
-     * @param keys         唯一索引字段
-     * @param records      所有记录
-     * @param size         每批的数量，小于等于0时，表示不分批
-     * @param updateFields 唯一约束存在时更新的字段
-     * @return 执行结果，使用 ModifyAssert判断
+     * @param table        table with the same name as updateFields
+     * @param keys         keys of Duplicate Key
+     * @param records      collection of record
+     * @param size         batch size, &lt;=0 mean no batching
+     * @param updateFields fields to update if Duplicate Key, should not use table alias
+     * @return array of affected records, can use ModifyAssert to check
      */
     public int @NotNull [] batchMerge(T table, Field<?>[] keys, Collection<R> records, int size, Field<?>... updateFields) {
         return batchMerge(table, keys, caseIgnore, records, size, updateFields);
@@ -413,16 +437,16 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     };
 
     /**
-     * 当不使用db中的唯一约束时，使用此方法
-     * 先根据keys进行分批select，再根据记录情况进行insert或update
+     * Use this method if there are no unique constraints in the db.
+     * (1) batch SELECT based on KEYS first, (2) INSERT or UPDATE based on the records.
      *
-     * @param table        与 updateFields 同名表
-     * @param keys         唯一索引字段
-     * @param equals       判断字段相等的方法
-     * @param records      所有记录
-     * @param size         每批的数量，小于等于0时，表示不分批
-     * @param updateFields 唯一约束存在时更新的字段
-     * @return 执行结果，使用 ModifyAssert判断
+     * @param table        table with the same name as updateFields
+     * @param keys         keys of Duplicate Key
+     * @param equals       predicate of equals
+     * @param records      collection of record
+     * @param size         batch size, &lt;=0 mean no batching
+     * @param updateFields fields to update if Duplicate Key, should not use table alias
+     * @return array of affected records, can use ModifyAssert to check
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public int @NotNull [] batchMerge(T table, Field<?>[] keys, BiPredicate<Object, Object> equals, Collection<R> records, int size, Field<?>... updateFields) {
@@ -507,13 +531,13 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 分配批量插入新记录，使用mysql的 insert ignore或 replace into。
-     * 注意 jooq的mergeInto，不完美，必须都有值，而replace不会。
+     * Batch insert records, use mysql's `insert ignore` or `replace into`.
+     * Note that jooq mergeInto is not perfect, requires both to have values, while `replace` does not.
      *
-     * @param records         所有记录
-     * @param size            每批的数量，小于等于0时，表示不分批
-     * @param ignoreOrReplace 唯一冲突时，忽略还是替换
-     * @return 执行结果，使用 ModifyAssert判断
+     * @param records         collection of record
+     * @param size            batch size, &lt;=0 mean no batching
+     * @param ignoreOrReplace ignore or replace if Duplicate Key
+     * @return array of affected records, can use ModifyAssert to check
      * @see DSLContext#mergeInto(Table)
      */
     @SuppressWarnings({"unchecked", "ResultOfMethodCallIgnored"})
@@ -566,11 +590,11 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 分配批量插入记录
+     * Batch insert records
      *
-     * @param records 所有记录
-     * @param size    每批的数量，小于等于0时，表示不分批
-     * @return 执行结果，使用 ModifyAssert判断
+     * @param records collection of record
+     * @param size    batch size, &lt;=0 mean no batching
+     * @return array of affected records, can use ModifyAssert to check
      * @see DSLContext#batchInsert(TableRecord[])
      */
     public int @NotNull [] batchInsert(Collection<R> records, int size) {
@@ -580,11 +604,11 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     private final BiFunction<DSLContext, Collection<R>, int[]> batchInsertExec = (dsl, rs) -> dsl.batchInsert(rs).execute();
 
     /**
-     * 分配批量插入或更新记录
+     * Batch store (insert/update) record.
      *
-     * @param records 所有记录
-     * @param size    每批的数量，小于等于0时，表示不分批
-     * @return 执行结果，使用 ModifyAssert判断
+     * @param records collection of record
+     * @param size    batch size, &lt;=0 mean no batching
+     * @return array of affected records, can use ModifyAssert to check
      * @see DSLContext#batchStore(UpdatableRecord[])
      */
     public int @NotNull [] batchStore(Collection<R> records, int size) {
@@ -594,14 +618,14 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     private final BiFunction<DSLContext, Collection<R>, int[]> batchStoreExec = (dsl, rs) -> dsl.batchStore(rs).execute();
 
     /**
-     * 分配批量更新数据
+     * Batch update record.
      *
-     * @param table        与 updateFields 同名表
-     * @param whereFields  where条件
-     * @param records      记录
-     * @param size         批次大小
-     * @param updateFields 更新字段
-     * @return 执行结果，使用 ModifyAssert判断
+     * @param table        table with the same name as updateFields
+     * @param whereFields  where condition fields
+     * @param records      collection of record
+     * @param size         batch size, &lt;=0 mean no batching
+     * @param updateFields fields to update
+     * @return array of affected records, can use ModifyAssert to check
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public int @NotNull [] batchUpdate(T table, Field<?>[] whereFields, Collection<R> records, int size, Field<?>... updateFields) {
@@ -647,11 +671,11 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 分配批量更新记录
+     * Batch update record.
      *
-     * @param records 所有记录
-     * @param size    每批的数量，小于等于0时，表示不分批
-     * @return 执行结果，使用 ModifyAssert判断
+     * @param records collection of record
+     * @param size    batch size, &lt;=0 mean no batching
+     * @return array of affected records, can use ModifyAssert to check
      * @see DSLContext#batchUpdate(UpdatableRecord[])
      */
 
@@ -1193,11 +1217,11 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 按条件删除
+     * Delete by condition
      *
-     * @param table 表
-     * @param cond  条件
-     * @return 影响的数据条数
+     * @param table the table
+     * @param cond  where condition
+     * @return affected records
      */
     public int delete(T table, Condition cond) {
         return ctx().delete(table)
@@ -1206,7 +1230,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 删除一条记录，并获取Diff
+     * Delete a record and get the Diff
      */
     @NotNull
     public JournalDiff diffDelete(T table, Condition cond) {
@@ -1236,7 +1260,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     ///////////////// update /////////////////////
 
     /**
-     * 更新记录，并获取Diff
+     * Update a record and get the Diff
      */
     @NotNull
     public JournalDiff diffUpdate(T table, Map<Field<?>, ?> setter, Condition cond) {
@@ -1286,11 +1310,11 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
      * val ui = dao.update(setter, t.Id.eq(2L))
      * </pre>
      *
-     * @param table    同源表
-     * @param setter   更新的字段-值
-     * @param cond     更新条件
-     * @param skipNull 忽略null值，true时需要map可编辑
-     * @return 影响的数据条数
+     * @param table    table with the same name as condition/setter
+     * @param setter   update key and value
+     * @param cond     condition
+     * @param skipNull whether skip `null` values, true requires map to be editable.
+     * @return affected records
      * @see org.jooq.UpdateSetStep#set(Map)
      */
     public int update(T table, Map<?, ?> setter, Condition cond, boolean skipNull) {
@@ -1314,12 +1338,12 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 按对象和条件更新，null被忽略
+     * Update record by pojo key and value, skip null.
      *
-     * @param table 同源表
-     * @param pojo  对象
-     * @param cond  条件
-     * @return 更新数量
+     * @param table table with the same name as condition
+     * @param pojo  pojo
+     * @param cond  condition
+     * @return affected records
      */
     public int update(T table, P pojo, Condition cond, boolean skipNull) {
         DSLContext dsl = ctx();
@@ -1337,11 +1361,11 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 按对象和主键更新
+     * Update record by pojo key and value, by PK
      *
-     * @param pojo     对象
-     * @param skipNull null字段不被更新
-     * @return 更新数量
+     * @param pojo     pojo
+     * @param skipNull whether skip `null` values
+     * @return affected records
      */
     public int update(P pojo, boolean skipNull) {
         DSLContext dsl = ctx();
@@ -1352,17 +1376,17 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
 
 
     /**
-     * 按对象组更新
+     * Update record by pojo key and value, by PK
      *
-     * @param objects  对象组
-     * @param skipNull null字段不被更新
-     * @return 更新数量
+     * @param pojos  pojos
+     * @param skipNull whether skip `null` values
+     * @return array of affected records
      */
-    public int @NotNull [] update(Collection<P> objects, boolean skipNull) {
-        List<R> records = new ArrayList<>(objects.size());
+    public int @NotNull [] update(Collection<P> pojos, boolean skipNull) {
+        List<R> records = new ArrayList<>(pojos.size());
         DSLContext dsl = ctx();
-        for (P object : objects) {
-            R record = dsl.newRecord(table, object);
+        for (P pojo : pojos) {
+            R record = dsl.newRecord(table, pojo);
             skipPkAndNull(record, skipNull);
             records.add(record);
         }
@@ -1379,11 +1403,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     }
 
     /**
-     * 按表count，要求table和cond中的字段必须同源
-     *
-     * @param table 表
-     * @param cond  条件
-     * @return 结果
+     * count table by condition, requires table with the same name as condition
      */
     public long count(T table, Condition cond) {
         Long cnt = ctx().selectCount()

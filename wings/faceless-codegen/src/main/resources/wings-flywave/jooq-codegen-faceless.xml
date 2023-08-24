@@ -22,13 +22,13 @@
             <!--<name>org.jooq.meta.mysql.MySQLDatabase</name>-->
             <includes>.*</includes>
             <excludes>
-                spring.* # Spring 自动创建
-                |.*__[a-z]* # 日志表
-                |.*\$[a-z]* # 日志表
-                |sys_commit_journal # jdbc处理
-                |sys_light_sequence # jdbc处理
-                |sys_schema_journal # jdbc处理
-                |sys_schema_version # jdbc处理
+                spring.* # Spring table
+                |.*__[a-z]* # journal table
+                |.*\$[a-z]* # journal table
+                |sys_commit_journal # jdbc handled
+                |sys_light_sequence # jdbc handled
+                |sys_schema_journal # jdbc handled
+                |sys_schema_version # jdbc handled
             </excludes>
 
             <schemaVersionProvider>
@@ -80,7 +80,7 @@
             <pojos>true</pojos>
             <pojosEqualsAndHashCode>true</pojosEqualsAndHashCode>
             <pojosToString>true</pojosToString>
-            <!-- 不要打开，否则JournalAware接口错误，你会列编辑，不差几个引用名 -->
+            <!-- Don't open it. or the JournalAware will not work well. column editing is good for setter assignment. -->
             <fluentSetters>false</fluentSetters>
 
             <globalCatalogReferences>false</globalCatalogReferences>

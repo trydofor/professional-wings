@@ -9,11 +9,11 @@ import pro.fessional.wings.slardar.security.bind.WingsBindAuthToken;
 public interface WingsAuthCheckService {
 
     /**
-     * 在用户信息及权限加载完毕后，进行后置检查。
+     * Perform a post-check after the user information and permissions are loaded.
      *
      * @param userDetails    user detail
-     * @param authentication token
-     * @return ok
+     * @param authentication auth token
+     * @return ok or not
      */
     boolean check(WingsUserDetails userDetails, WingsBindAuthToken authentication);
 }

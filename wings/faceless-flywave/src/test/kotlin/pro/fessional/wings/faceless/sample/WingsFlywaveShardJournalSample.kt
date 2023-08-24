@@ -17,7 +17,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
  * @since 2019-06-22
  */
 @SpringBootTest(properties = ["debug = true"])
-@Disabled("手动执行，以有SchemaJournalManagerTest，SchemaShardingManagerTest覆盖测试 ")
+@Disabled("Manually, tested by SchemaJournalManagerTest, SchemaShardingManagerTest")
 class WingsFlywaveShardJournalSample {
 
     @Autowired
@@ -31,28 +31,28 @@ class WingsFlywaveShardJournalSample {
 
     @Test
     fun revisionShardJournal() {
-        // 初始
+        // init
         val sqls = FlywaveRevisionScanner.scanMaster()
         schemaRevisionManager.checkAndInitSql(sqls, 0)
 
-        // 升级
+        // upgrade
         schemaRevisionManager.publishRevision(WingsRevision.V01_19_0520_01_IdLog.revision(), 0)
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0)
 
-        // 单库强升
+        // force upgrade in master database only
         schemaRevisionManager.forceApplyBreak(REVISION_TEST_V2, 2, true, "master")
 
-        // 分表
+        // sharding
         val table = "tst_sharding"
 
         schemaShardingManager.publishShard(table, 5)
-        // 需要sharding数据源，在shard中测试
+        // need sharding datasource, tested in shard testcase
 //        schemaShardingManager.shardingData(table, true)
 
-        // 跟踪
+        // trace table
         schemaJournalManager.checkAndInitDdl(table, 0)
 
-        // 开启关闭
+        // enable / disable
         schemaJournalManager.publishUpdate(table, false, 0)
         schemaJournalManager.publishUpdate(table, true, 0)
         schemaJournalManager.publishUpdate(table, false, 0)
@@ -61,7 +61,7 @@ class WingsFlywaveShardJournalSample {
         schemaJournalManager.publishDelete(table, true, 0)
         schemaJournalManager.publishDelete(table, false, 0)
 
-        // 降级
+        // downgrade
         schemaRevisionManager.publishRevision(WingsRevision.V00_19_0512_01_Schema.revision(), 0)
     }
 }

@@ -11,7 +11,8 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * 通过 spring.application.name 检查权限。通常用于本机验证
+ * Check Permission via spring.application.name.
+ * Typically used for native authentication
  *
  * @author trydofor
  * @since 2022-01-18

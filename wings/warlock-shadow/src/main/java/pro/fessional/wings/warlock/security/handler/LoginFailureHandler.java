@@ -1,18 +1,34 @@
 package pro.fessional.wings.warlock.security.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.authentication.AccountExpiredException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.CredentialsExpiredException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import pro.fessional.mirana.best.DummyBlock;
+import pro.fessional.mirana.data.DataResult;
+import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.text.StringTemplate;
-import pro.fessional.wings.slardar.context.RequestContextUtil;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
-import pro.fessional.wings.warlock.event.auth.WarlockMaxFailedEvent;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
+
+import static pro.fessional.wings.slardar.enums.errcode.AuthnErrorEnum.BadCredentials;
+import static pro.fessional.wings.slardar.enums.errcode.AuthnErrorEnum.CredentialsExpired;
+import static pro.fessional.wings.slardar.enums.errcode.AuthnErrorEnum.Disabled;
+import static pro.fessional.wings.slardar.enums.errcode.AuthnErrorEnum.Expired;
+import static pro.fessional.wings.slardar.enums.errcode.AuthnErrorEnum.Locked;
 
 /**
  * @author trydofor
@@ -21,40 +37,77 @@ import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 @Slf4j
 public class LoginFailureHandler implements AuthenticationFailureHandler {
 
-    public final static String eventKey = "wings.WarlockMaxFailedEvent.Key";
-
     @Setter(onMethod_ = {@Autowired})
     protected WarlockSecurityProp warlockSecurityProp;
 
+    @Setter(onMethod_ = {@Autowired})
+    protected ObjectMapper objectMapper;
+
+    @Setter(onMethod_ = {@Autowired})
+    protected MessageSource messageSource;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
-
-        final String msg;
-        final Object atr = request.getAttribute(eventKey);
-        if (atr instanceof WarlockMaxFailedEvent evt) {
-            int lft = evt.getMaximum() - evt.getCurrent();
-
-            msg = lft > 0 ? "login failed, " + lft + " times left" : "login failed, and locked";
+        String body = null;
+        try {
+            if (exception instanceof DataResult<?> dre) {
+                body = handle(dre);
+            }
         }
-        else {
-            msg = "login failed";
+        catch (Exception e) {
+            DummyBlock.ignore(e);
         }
 
-        // TODO 更优化的提示信息
-        log.debug(msg, exception);
+        if (body == null) {
+            body = handle(exception);
+        }
 
-        final String mess = StringTemplate.dyn(warlockSecurityProp.getLoginFailureBody())
-                                          .bindStr("{message}", msg)
-                                          .toString();
-        ResponseHelper.writeBodyUtf8(response, mess);
+        ResponseHelper.writeBodyUtf8(response, body);
     }
 
-    @EventListener
-    public void listenWarlockMaxFailedEvent(WarlockMaxFailedEvent event) {
-        final HttpServletRequest request = RequestContextUtil.getRequest();
-        if (request != null) {
-            request.setAttribute(eventKey, event);
+    @SneakyThrows
+    protected String handle(DataResult<?> dre) {
+        final R<?> ng = R.ng(dre.getMessage(), dre.getCode(), dre.getData());
+        return objectMapper.writeValueAsString(ng);
+    }
+
+    @SneakyThrows
+    protected String handle(AuthenticationException exception) {
+        final String msg;
+        final String code;
+        if (exception instanceof BadCredentialsException) {
+            code = BadCredentials.getCode();
+            msg = messageSource.getMessage(code, Null.StrArr, LocaleContextHolder.getLocale());
+        }
+        else if (exception instanceof LockedException) {
+            code = Locked.getCode();
+            msg = messageSource.getMessage(code, Null.StrArr, LocaleContextHolder.getLocale());
+        }
+        else if (exception instanceof DisabledException) {
+            code = Disabled.getCode();
+            msg = messageSource.getMessage(code, Null.StrArr, LocaleContextHolder.getLocale());
+        }
+        else if (exception instanceof AccountExpiredException) {
+            code = Expired.getCode();
+            msg = messageSource.getMessage(code, Null.StrArr, LocaleContextHolder.getLocale());
+        }
+        else if (exception instanceof CredentialsExpiredException) {
+            code = CredentialsExpired.getCode();
+            msg = messageSource.getMessage(code, Null.StrArr, LocaleContextHolder.getLocale());
+        }
+        else {
+            code = null;
+            msg = exception.getMessage();
+        }
+
+        if (code == null) {
+            return StringTemplate.dyn(warlockSecurityProp.getLoginFailureBody())
+                                 .bindStr("{message}", msg)
+                                 .toString();
+        }
+        else {
+            final R<?> ng = R.ng(msg, code);
+            return objectMapper.writeValueAsString(ng);
         }
     }
 }

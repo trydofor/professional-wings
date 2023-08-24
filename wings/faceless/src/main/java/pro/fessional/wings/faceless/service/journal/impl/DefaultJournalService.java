@@ -49,7 +49,7 @@ public class DefaultJournalService implements JournalService {
             int rc = journalModify.insert(journal);
             DaoAssert.assertEq1(rc, "failed to insert Journal={}", journal);
 
-            // 谁创建谁销毁，谁分配谁回收
+            // Who created, who destroy
             context.set(journal);
             try {
                 return commitSet.apply(journal);

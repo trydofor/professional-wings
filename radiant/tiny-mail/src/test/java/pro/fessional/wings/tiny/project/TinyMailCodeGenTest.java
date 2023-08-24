@@ -20,7 +20,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
         "spring.wings.faceless.flywave.enabled.checker=false",
         "wings.tiny.mail.service.boot-scan=0",
 })
-@Disabled("生成代码，已有devs统一管理")
+@Disabled("Code gen, managed by devops")
 public class TinyMailCodeGenTest {
     @Setter(onMethod_ = {@Autowired})
     private SchemaRevisionManager schemaRevisionManager;

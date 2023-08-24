@@ -27,12 +27,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * Note: No WeakReference Leak due to static and Interceptor cleanup.
  *
  * @author trydofor
- * @see <a href="https://github.com/alibaba/transmittable-thread-local/blob/master/docs/developer-guide.md#-%E6%A1%86%E6%9E%B6%E4%B8%AD%E9%97%B4%E4%BB%B6%E9%9B%86%E6%88%90ttl%E4%BC%A0%E9%80%92">框架中间件集成ttl传递</a>
+ * @see <a href="https://github.com/alibaba/transmittable-thread-local/blob/master/docs/developer-guide-en.md#-frameworkmiddleware-integration-to-ttl-transmittance">Framework/Middleware integration to TTL transmittance</a>
  * @since 2019-11-25
  */
 public class TerminalContext {
 
-    public static final Context Null = new Context(DefaultUserId.Null, null, null, null, null, null);
+    public static final Context Null = new Context(
+            DefaultUserId.Null,
+            Locale.getDefault(),
+            TimeZone.getDefault(),
+            Collections.emptyMap(),
+            pro.fessional.mirana.data.Null.Enm,
+            pro.fessional.mirana.data.Null.Str,
+            Collections.emptySet());
 
     /**
      * no leak, for static and Interceptor clean
@@ -41,25 +48,11 @@ public class TerminalContext {
     private static final ConcurrentHashMap<String, Listener> ContextListeners = new ConcurrentHashMap<>();
 
     private static volatile boolean Active;
+
     @NotNull
     private static volatile TimeZone DefaultTimeZone = ThreadNow.sysTimeZone();
     @NotNull
     private static volatile Locale DefaultLocale = Locale.getDefault();
-
-    /**
-     * whether context is active and can be used correctly.
-     */
-    public static boolean isActive() {
-        return Active;
-    }
-
-    /**
-     * active context, default is false
-     */
-
-    public static void initActive(boolean b) {
-        Active = b;
-    }
 
     /**
      * init default zoneId
@@ -167,37 +160,42 @@ public class TerminalContext {
      */
     @NotNull
     public static Context get(boolean onlyLogin) {
-        Context ctx = TerminalContext.ContextLocal.get();
-        if (ctx == null) ctx = Null;
-        if (onlyLogin && ctx.isGuest()) {
-            throw new IllegalStateException("must login user");
+        Context ctx = null;
+        if (Active) {
+            ctx = ContextLocal.get();
+        }
+        if (ctx == null) {
+            ctx = Null;
+        }
+        if (onlyLogin && ctx.isNull()) {
+            throw new NullPointerException("find null context, must be user or guest");
         }
         return ctx;
     }
 
     /**
-     * login if ctx is not null, else logout
+     * login if ctx is not null/Null, else logout
      */
-    public static void login(Context ctx) {
-        if (ctx == null || ctx == Null) {
+    public static void login(@Nullable Context ctx) {
+        if (ctx == null || ctx.isNull()) {
             final Context old = ContextLocal.get();
-            ContextLocal.remove();
-            fireContextChange(true, old);
+            if (old != null) {
+                ContextLocal.remove();
+                fireContextChange(true, old);
+            }
         }
         else {
+            Active = true;
             ContextLocal.set(ctx);
             fireContextChange(false, ctx);
         }
-        Active = true;
     }
 
     public static void logout() {
         login(Null);
     }
 
-    private static void fireContextChange(boolean del, Context ctx) {
-        if (ContextListeners.isEmpty()) return;
-
+    private static void fireContextChange(boolean del, @NotNull Context ctx) {
         for (Listener listener : ContextListeners.values()) {
             try {
                 listener.onChange(del, ctx);
@@ -213,10 +211,9 @@ public class TerminalContext {
          * set new value or delete old value, new value is NotNull, old value maybe Null
          *
          * @param del whether to delete, else set value
-         * @param ctx Nullable when del, else NotNull
+         * @param ctx new to set, or old to delete
          */
-        @Contract("false,!null->_")
-        void onChange(boolean del, Context ctx);
+        void onChange(boolean del, @NotNull Context ctx);
     }
 
     public static class Context {
@@ -225,16 +222,18 @@ public class TerminalContext {
         private final Locale locale;
         private final TimeZone timeZone;
         private final Enum<?> authType;
+        private final String username;
         private final Set<String> authPerm;
         private final Map<TypedKey<?>, Object> terminal;
 
         public Context(long userId, Locale locale, TimeZone timeZone, Map<TypedKey<?>,
-                Object> params, Enum<?> authType, Set<String> authPerm) {
+                Object> params, Enum<?> authType, String username, Set<String> authPerm) {
             this.userId = userId;
             this.locale = locale != null ? locale : DefaultLocale;
             this.timeZone = timeZone != null ? timeZone : DefaultTimeZone;
             this.terminal = params != null ? params : Collections.emptyMap();
             this.authType = authType != null ? authType : pro.fessional.mirana.data.Null.Enm;
+            this.username = username != null ? username : pro.fessional.mirana.data.Null.Str;
             this.authPerm = authPerm != null ? authPerm : Collections.emptySet();
         }
 
@@ -250,13 +249,6 @@ public class TerminalContext {
          */
         public boolean isGuest() {
             return userId == DefaultUserId.Guest;
-        }
-
-        /**
-         * <pre>userId >= DefaultUserId#Guest</pre>
-         */
-        public boolean asLogin() {
-            return userId >= DefaultUserId.Guest;
         }
 
         public long getUserId() {
@@ -284,6 +276,11 @@ public class TerminalContext {
         }
 
         @NotNull
+        public String getUsername() {
+            return username;
+        }
+
+        @NotNull
         public Set<String> getAuthPerm() {
             return authPerm;
         }
@@ -307,11 +304,35 @@ public class TerminalContext {
             return authPerm.containsAll(auths);
         }
 
+        /**
+         * key must be defined by TerminalAttribute or its subclasses
+         *
+         * @see TerminalAttribute
+         */
         @Nullable
         public <T> T getTerminal(@NotNull TypedKey<T> key) {
             return key.get(terminal);
         }
 
+        /**
+         * key must be defined by TerminalAttribute or its subclasses
+         *
+         * @see TerminalAttribute
+         */
+        @Contract("_,true->!null")
+        public <T> T getTerminal(@NotNull TypedKey<T> key, boolean notnull) {
+            final T t = key.get(terminal);
+            if (t == null && notnull) {
+                throw new NullPointerException("Terminal Key " + key + " returned null");
+            }
+            return t;
+        }
+
+        /**
+         * key must be defined by TerminalAttribute or its subclasses
+         *
+         * @see TerminalAttribute
+         */
         @Contract("_,!null->!null")
         public <T> T tryTerminal(@NotNull TypedKey<T> key, T elze) {
             return key.tryOr(terminal, elze);
@@ -332,13 +353,13 @@ public class TerminalContext {
             return Objects.hash(userId, locale, timeZone, terminal);
         }
 
-        @Override
-        public String toString() {
+        @Override public String toString() {
             return "Context{" +
                    "userId=" + userId +
                    ", locale=" + locale +
                    ", timeZone=" + timeZone +
-                   ", terminal=" + terminal +
+                   ", authType=" + authType +
+                   ", username='" + username + '\'' +
                    '}';
         }
     }
@@ -348,6 +369,7 @@ public class TerminalContext {
         private Locale locale;
         private TimeZone timeZone;
         private Enum<?> authType;
+        private String username;
         private final Set<String> authPerm = new HashSet<>();
         private final Map<TypedKey<?>, Object> terminal = new HashMap<>();
 
@@ -389,6 +411,11 @@ public class TerminalContext {
 
         public Builder authType(Enum<?> at) {
             authType = at;
+            return this;
+        }
+
+        public Builder username(String un) {
+            username = un;
             return this;
         }
 
@@ -441,7 +468,7 @@ public class TerminalContext {
             if (userId == Null.userId) {
                 throw new IllegalArgumentException("invalid userid");
             }
-            return new Context(userId, locale, timeZone, terminal, authType, authPerm);
+            return new Context(userId, locale, timeZone, terminal, authType, username, authPerm);
         }
     }
 }

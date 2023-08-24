@@ -18,7 +18,7 @@ public class TinyMailSenderProp {
     public static final String Key = "wings.tiny.mail.sender";
 
     /**
-     * biz-id的Header
+     * biz-id Header to locate mail by business, default mail id.
      *
      * @see #Key$bizId
      */
@@ -26,7 +26,7 @@ public class TinyMailSenderProp {
     public static final String Key$bizId = Key + ".biz-id";
 
     /**
-     * biz-mark的Header
+     * biz-mark Header to locate data by business, eg. orderNumber.
      *
      * @see #Key$bizMark
      */
@@ -34,7 +34,7 @@ public class TinyMailSenderProp {
     public static final String Key$bizMark = Key + ".biz-mark";
 
     /**
-     * 发送失败 MailSendException 时，等待多少时间，默认5分钟
+     * how much time to wait if MailSendException, default 5 minutes.
      *
      * @see #Key$errSend
      */
@@ -42,7 +42,7 @@ public class TinyMailSenderProp {
     public static final String Key$errSend = Key + ".err-send";
 
     /**
-     * 认证失败 MailAuthenticationException 时，等待多少时间，默认1小时
+     * how much time to wait if MailAuthenticationException, default 1 hour.
      *
      * @see #Key$errAuth
      */
@@ -50,7 +50,9 @@ public class TinyMailSenderProp {
     public static final String Key$errAuth = Key + ".err-auth";
 
     /**
-     * 包括以下异常信息时，对此host进行多少秒的等待。秒为key，以小数部分仅用来区分key，负数为建议停止重发
+     * how many seconds to wait for the host if it contains the
+     * following exception message. seconds is the key, the fraction is only used to make
+     * key unique, negative number means stop resending.
      *
      * @see #Key$errHost
      */
@@ -58,15 +60,17 @@ public class TinyMailSenderProp {
     public static final String Key$errHost = Key + ".err-host";
 
     /**
-     * 包括以下异常信息时，对此邮件的重发进行多少秒的等待。秒为key，以小数部分仅用来区分key，负数为建议停止重发
-     * 如 `501001.001`的意义为，501为错误号，001为host编号，.001为区别位
+     * how many seconds to wait to resend this email if it contains the
+     * following exception message. seconds is the key, the fraction is only used to make key unique,
+     * negative number means stop resending.
+     *
      * @see #Key$errMail
      */
     private Map<BigDecimal, String> errMail = Collections.emptyMap();
     public static final String Key$errMail = Key + ".err-mail";
 
     /**
-     * 同一邮件host每次登录的间隔，避免限频，默认无视
+     * interval of each login of the same mailhost, avoid limit frequency, 0 is ignored.
      *
      * @see #Key$perIdle
      */
@@ -74,7 +78,8 @@ public class TinyMailSenderProp {
     public static final String Key$perIdle = Key + ".per-idle";
 
     /**
-     * 同一邮件host最多等待时间，小于时等待，否则抛出MailWaitException，默认无视
+     * max wait time for the same mailhost, if less then wait,
+     * otherwise throw MailWaitException, 0 is ignored.
      *
      * @see #Key$maxIdle
      */
@@ -82,7 +87,7 @@ public class TinyMailSenderProp {
     public static final String Key$maxIdle = Key + ".max-idle";
 
     /**
-     * 强制替换真实的to
+     * force to replace the real "to", string arrays, comma separated.
      *
      * @see #Key$forceTo
      */
@@ -90,7 +95,7 @@ public class TinyMailSenderProp {
     public static final String Key$forceTo = Key + ".force-to";
 
     /**
-     * 强制替换真实的cc
+     * force to replace the real "cc", string arrays, comma separated.
      *
      * @see #Key$forceCc
      */
@@ -98,7 +103,7 @@ public class TinyMailSenderProp {
     public static final String Key$forceCc = Key + ".force-cc";
 
     /**
-     * 强制替换真实的bcc
+     * force to replace the real "bcc", string arrays, comma separated.
      *
      * @see #Key$forceBcc
      */
@@ -106,6 +111,8 @@ public class TinyMailSenderProp {
     public static final String Key$forceBcc = Key + ".force-bcc";
 
     /**
+     * force to add prefix to the real subject.
+     *
      * @see #Key$forcePrefix
      */
     private String forcePrefix = "";

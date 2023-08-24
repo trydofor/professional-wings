@@ -16,9 +16,9 @@ import java.util.concurrent.ScheduledFuture;
 
 /**
  * <pre>
- * 基于 ThreadPoolTaskScheduler 和 Database 的任务。
- * execute方法仅为执行，不做通知及database
- * schedule方法会自动通知和database，通过id管理任务
+ * Task based on ThreadPoolTaskScheduler and Database.
+ * `execute` is only for execution, not involve notice or databases
+ * `schedule` auto trigger notice and database, task is managed by id
  * </pre>
  *
  * @author trydofor
@@ -27,13 +27,13 @@ import java.util.concurrent.ScheduledFuture;
 public interface TinyTaskService {
 
     /**
-     * 获取内部的ThreadPoolTaskScheduler
+     * Get the internal ThreadPoolTaskScheduler
      */
     @NotNull
     ThreadPoolTaskScheduler referScheduler(boolean fast);
 
     /**
-     * 获取内部的ScheduledExecutorService
+     * Get the internal ScheduledExecutorService
      */
     @NotNull
     default ScheduledExecutorService referExecutor(boolean fast) {
@@ -41,7 +41,8 @@ public interface TinyTaskService {
     }
 
     /**
-     * 异步立即执行一个任务，fast为轻任务，执行快，秒级完成
+     * Async execute a task immediately.
+     * `fast` means a lightweight that executes quickly and completes within seconds.
      *
      * @see ThreadPoolTaskScheduler#execute(Runnable)
      */
@@ -50,7 +51,8 @@ public interface TinyTaskService {
     }
 
     /**
-     * 在delayMs毫秒（ThreadNow）后，异步执行一个任务，fast为轻任务，执行快，秒级完成
+     * Async execute a task after `delayMs` millis (ThreadNow).
+     * `fast` means a lightweight that executes quickly and completes within seconds.
      *
      * @see ThreadPoolTaskScheduler#schedule(Runnable, Instant)
      */
@@ -59,7 +61,8 @@ public interface TinyTaskService {
     }
 
     /**
-     * 在指定时间（fastTime构建，不考虑时区），异步执行一个任务，fast为轻任务，执行快，秒级完成
+     * Async execute a task at specified time (`fastTime` without timezone),
+     * `fast` means a lightweight that executes quickly and completes within seconds.
      *
      * @see ThreadPoolTaskScheduler#schedule(Runnable, Instant)
      */
@@ -68,8 +71,9 @@ public interface TinyTaskService {
     }
 
     /**
-     * 指定trigger，异步执行一个任务，fast为轻任务，执行快，秒级完成
-     * errorHandler不同于其他方法，不识别DelegatingErrorHandlingRunnable
+     * Async execute a task by specified trigger,
+     * `fast` means a lightweight that executes quickly and completes within seconds.
+     * The `errorHandler` is different from other methods and does not recognize `DelegatingErrorHandlingRunnable`.
      *
      * @see ThreadPoolTaskScheduler#schedule(Runnable, Trigger)
      */
@@ -78,7 +82,8 @@ public interface TinyTaskService {
     }
 
     /**
-     * 把taskerBean内所有TinyTask标注的方法，作为任务初始并执行。
+     * Take all the methods annotated with TinyTask inside the taskerBean,
+     * initialize them as tasks, and execute them.
      *
      * @see ThreadPoolTaskScheduler#schedule(Runnable, Trigger)
      */
@@ -86,15 +91,17 @@ public interface TinyTaskService {
     Set<Task> schedule(@NotNull Object taskerBean);
 
     /**
-     * 把TaskerBean中TinyTask标注的方法，作为任务初始并执行，返回TaskId，-1为未启动
+     * Take all the methods annotated with TinyTask inside the taskerBean,
+     * initialize them as tasks, and execute them. taskId == `-1` means not start
      *
      * @see ThreadPoolTaskScheduler#schedule(Runnable, Trigger)
      */
     Task schedule(@NotNull Object taskerBean, @NotNull Method taskerCall, @Nullable Object taskerPara);
 
     /**
-     * 把TaskerBean中TinyTask标注的方法，作为任务初始并执行，返回TaskId，-1为未启动
-     * 通过对象引用的lambda方式获取，格式如 Lam.ref(taskerBean::method)
+     * Take all the methods annotated with TinyTask inside the taskerBean,
+     * initialize them as tasks, and execute them. taskId == `-1` means not start,
+     * `lambdaRefer` is lambda ref, get by `Lam.ref(taskerBean::method)`
      *
      * @see ThreadPoolTaskScheduler#schedule(Runnable, Trigger)
      */

@@ -65,7 +65,7 @@ public class JooqDslAndDaoSample {
     @Test
     public void test1Dao() {
 
-        testcaseNotice("使用alias");
+        testcaseNotice("Use alias");
         val a = dao.getAlias();
         val c = a.Id.gt(1L).and(a.CommitId.lt(200L));
 
@@ -81,7 +81,7 @@ public class JooqDslAndDaoSample {
         log.info("============count {}, ft2'size={}", i, ft2.size());
 
         // table
-        testcaseNotice("使用table");
+        testcaseNotice("Use table");
         val t = dao.getTable();
         val setter = new HashMap<>();
         setter.put(t.LoginInfo, "info");
@@ -100,7 +100,7 @@ public class JooqDslAndDaoSample {
 
     @Test
     public void test2Dsl() {
-        testcaseNotice("通过dao.ctx()获得dsl能力");
+        testcaseNotice("Get Dsl by dao.ctx()");
         Condition nullCond = null;
         Field<Long> nullField = null;
 //        val nullOrder: OrderField<Long>? = null
@@ -122,7 +122,7 @@ public class JooqDslAndDaoSample {
 
     @Test
     public void test3Journal() {
-        testcaseNotice("日志功能");
+        testcaseNotice("Journal Feature");
 
         val now = LocalDateTime.now();
         val journal = new Journal(1L, now, "", "", "", "");
@@ -155,7 +155,7 @@ public class JooqDslAndDaoSample {
 
     @Test
     public void test4DeleteDt() {
-        testcaseNotice("逻辑删除");
+        testcaseNotice("Logic delete");
         val c1 = dao.count();
         log.info("count1={}", c1);
         val c2 = dao.count(TstShardingTable::getOnlyDied);
@@ -164,7 +164,7 @@ public class JooqDslAndDaoSample {
 
     @Test
     public void test4Shadow() {
-        testcaseNotice("影子表");
+        testcaseNotice("Shadow table");
         TstShardingTable upd = dao.newTable("", "_postfix");
         val c1 = dao.count(upd, null);
         log.info("count1={}", c1);
@@ -172,7 +172,7 @@ public class JooqDslAndDaoSample {
 
     @Test
     public void test5DiffDao() {
-        testcaseNotice("差分数据Dao");
+        testcaseNotice("Diff Dao");
         TstSharding po = new TstSharding();
         final long id = 20221024L;
         final TstShardingTable t = dao.getTable();
@@ -219,7 +219,7 @@ public class JooqDslAndDaoSample {
 
         final JournalDiff d3 = dao.diffDelete(t, t.Id.ge(id));
         log.warn("diffDelete3={}", d3);
-        JournalDiffHelper.tidy(d3, t.Language); // 默认withDefault
+        JournalDiffHelper.tidy(d3, t.Language); // withDefault
         Assertions.assertNotNull(d3);
         Assertions.assertEquals(2, d3.getCount());
         Assertions.assertEquals(t.getName(), d3.getTable());
@@ -233,7 +233,7 @@ public class JooqDslAndDaoSample {
 
     @Test
     public void test5DiffDsl() {
-        testcaseNotice("差分数据Dsl");
+        testcaseNotice("Diff Dsl");
         TstSharding po = new TstSharding();
         final long id = 20221024L;
         final TstShardingTable t = dao.getTable();
@@ -282,7 +282,7 @@ public class JooqDslAndDaoSample {
 
         final JournalDiff d3 = JournalDiffHelper.diffDelete(t, query, () -> dsl.delete(t).where(t.Id.ge(id)));
         log.warn("diffDelete3={}", d3);
-        JournalDiffHelper.tidy(d3, t.Language); // 默认withDefault
+        JournalDiffHelper.tidy(d3, t.Language); // withDefault
         Assertions.assertNotNull(d3);
         Assertions.assertEquals(1, d3.getCount());
         Assertions.assertEquals(t.getName(), d3.getTable());

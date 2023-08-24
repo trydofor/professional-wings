@@ -17,7 +17,7 @@ import java.util.List;
  */
 
 @SpringBootTest
-@Disabled("查看Web映射关系")
+@Disabled("List Web RequestMapping")
 @Slf4j
 public class Devops7RequestMapperTest {
 

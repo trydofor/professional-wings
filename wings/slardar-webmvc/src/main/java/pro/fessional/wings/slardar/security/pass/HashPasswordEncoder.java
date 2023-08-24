@@ -4,8 +4,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import pro.fessional.mirana.bits.MdHelp;
 
 /**
- * 使用noop时，以密码的hash取代明文传递，进而后端对hash值加班noop比较。
+ * <pre>
+ * When using `noop`, the hash of the password is passed instead of plaintext,
+ * and the hash value is compared in `noop` way
+ *
  * {noop-md5}PLAIN_TEXT = {noop}md5(PLAIN_TEXT)
+ * </pre>
  *
  * @author trydofor
  * @since 2021-03-02

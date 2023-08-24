@@ -15,8 +15,8 @@ import java.util.Map;
 
 /**
  * @author trydofor
- * @since 2022-03-12
  * @see PasswordEncoderFactories
+ * @since 2022-03-12
  */
 public class PasswordEncoders {
 
@@ -39,6 +39,7 @@ public class PasswordEncoders {
     public static final String Sha256 = "SHA-256";
     public static final String Argon2V58 = "argon2@SpringSecurity_v5_8";
     public static final String Sha256s = "sha256";
+    public static final String Mysql = "mysql";
 
     private static final Map<String, PasswordEncoder> encoderMap = new HashMap<>();
 
@@ -53,11 +54,11 @@ public class PasswordEncoders {
     }
 
     /**
-     * 使用encoder加密password
+     * Encrypt the plain password into a hash
      *
-     * @param encoder  算法Id
-     * @param password 明文密码
-     * @return 加密后字符串
+     * @param encoder  encoder id
+     * @param password plain password
+     * @return crypt password
      */
     @Nullable
     public static String encode(String encoder, CharSequence password) {
@@ -66,11 +67,11 @@ public class PasswordEncoders {
     }
 
     /**
-     * 以DelegatingPasswordEncoder格式加密，如 {noop-md5}password
+     * Use DelegatingPasswordEncoder to encode the password and output it in `{noop-md5}password` style.
      *
-     * @param encoder  算法Id
-     * @param password 明文密码
-     * @return {算法名}加密后字符串
+     * @param encoder  encoder id
+     * @param password plain password
+     * @return `{id}hash`
      */
     @Nullable
     public static String delegating(String encoder, CharSequence password) {
@@ -87,11 +88,13 @@ public class PasswordEncoders {
     }
 
     /**
-     * 检查密码是delegating格式，否则使用encoder加密，若失败在使用noop-md5算法
+     * Check that the password is in delegating({id}hash`) format,
+     * otherwise use the given encoder to encrypt it,
+     * if it fails use the noop-md5 encoder by default.
      *
-     * @param password 密码
-     * @param encoder  备选算法
-     * @return delegating的密码
+     * @param password delegated or plain password
+     * @param encoder  encoder id
+     * @return `{id}hash`
      */
     @Contract("!null, _ -> !null")
     public static String delegated(String password, String encoder) {
@@ -125,6 +128,7 @@ public class PasswordEncoders {
         encoderMap.put(Sha256, new org.springframework.security.crypto.password.MessageDigestPasswordEncoder("SHA-256"));
         encoderMap.put(Sha256s, new org.springframework.security.crypto.password.StandardPasswordEncoder());
         encoderMap.put(Argon2V58, Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8());
+        encoderMap.put(Mysql, new MysqlPasswordEncoder());
         return encoderMap;
     }
 }

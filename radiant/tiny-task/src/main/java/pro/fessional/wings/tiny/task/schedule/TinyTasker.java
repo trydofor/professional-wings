@@ -9,15 +9,18 @@ import java.lang.annotation.Target;
 
 /**
  * <pre>
- * 除value外，其他属性推荐使用配置文件！
- * 标记任务Bean的执行方法。注意事项如下，
- * 无参数的方法，可被自动注册和执行，
- * 有参数的方法，只能手动注册并执行。
- * 不可使用多态，仅通过方法名定位（简化及可读性），不使用参数列表
- * 若有参数，则其必须是具体类型，无状态的，可被序列化的（默认json）
+ * A config file is recommended for all properties except `value`!
  *
- * annotation优先级低于property，高于default。
- * 合并后的配置，最终写入database，以id管理task
+ * Marks the execution method of the Task Bean. Note the following.
+ * - Methods without parameters can be registered and executed automatically.
+ * - Methods with parameters can only be registered and executed manually.
+ * - Polymorphism is not allowed, methods are located by name only
+ *   (for simplicity and readability), and parameter lists are not used.
+ * - If there is a parameter, it must be of a specific type, stateless,
+ *   and serializable (json by default).
+ *
+ * Annotation has a lower priority than property and a higher priority than default.
+ * The merged config is eventually saved to database, which manages the task with the id
  * </pre>
  *
  * @author trydofor
@@ -29,36 +32,44 @@ import java.lang.annotation.Target;
 public @interface TinyTasker {
 
     /**
-     * propkey，配置的属性名，默认为Class#method，
-     * 其属性类型为Map[String,TaskerConf]，位于前缀默认为wings.tiny.task.define下
-     * 如 wings.tiny.task.define[pro.fessional.wings.tiny.task.schedule.TaskerTest#test].enable=false
+     * `propkey`, the key of the property, which defaults to `Class#method`.
+     * Its property type is Map[String,TaskerConf], located under the prefix `wings.tiny.task.define`
+     * e.g. `wings.tiny.task.define[pro.fessional.wings.tiny.task.schedule.TaskerTest#test].enable=false`
      */
     String value() default "";
 
     /**
-     * timingZone，调度时区的ZoneId格式，默认系统时区，null及空时使用Default配置
+     * timingZone, scheduling timezone in ZoneId format, default system time zone.
+     * Use the `Default` config if null or empty.
      */
     String zone() default "";
 
 
     /**
-     * timingCron，调度表达式内容，最高优先级，受timingType影响，默认spring cron格式（秒分时日月周），不会使用Default配置
+     * timingCron, scheduling expression, highest priority, affected by timingType,
+     * default spring cron format (seconds minutes hours days months weeks).
+     * Not use the `Default` config
      */
     String cron() default "";
 
     /**
-     * timingIdle，固定空闲相连（秒），优先级次于timingCron，相当于fixedDelay，结束到开始，0为无效，不会使用Default配置
+     * timingIdle, fixed idle between (seconds),
+     * priority second to timingCron,equivalent to fixedDelay.
+     * end to start, 0 is invalid, Not use the `Default` config
+     *
      */
     int idle() default 0;
 
     /**
-     * timingRate，固定频率开始（秒），优先级次于timingIdle，相当于fixedRate，开始到开始，0为无效，不会使用Default配置
+     * timingRate, fixed frequency start (seconds),
+     * priority second to timingIdle, equivalent to fixedRate.
+     * start to start, 0 is invalid, Not use the `Default` config
      */
     int rate() default 0;
 
 
     /**
-     * 对SpringBean增加此标记类，可被Wings在启动时自动配置
+     * Adding to a SpringBean can be auto config by Wings at startup.
      */
     @Target({ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)

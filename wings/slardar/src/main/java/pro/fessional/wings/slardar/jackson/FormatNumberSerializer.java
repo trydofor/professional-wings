@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.ANY;
 
 /**
- * 直接JsonFormat和DecimalFormat来格式化数字
+ * Directly use JsonFormat and DecimalFormat to format numbers
  *
  * @author trydofor
  * @since 2021-07-06
@@ -39,10 +40,6 @@ public class FormatNumberSerializer extends NumberSerializer {
     private final Map<String, DecimalFormat> poolsAuto = new ConcurrentHashMap<>();
     private final Map<String, DecimalFormat> poolsNoop = new ConcurrentHashMap<>();
 
-    /**
-     * @param rawType 类型
-     * @since 2.5
-     */
     public FormatNumberSerializer(Class<? extends Number> rawType, DecimalFormat format, Digital digital) {
         super(rawType);
         this.format = format;
@@ -84,7 +81,7 @@ public class FormatNumberSerializer extends NumberSerializer {
         if (format != null || digital != Digital.False
             || value instanceof Long || value instanceof Integer
             || value instanceof Float || value instanceof Double
-            || value instanceof BigDecimal) {
+            || value instanceof BigDecimal || value instanceof BigInteger) {
             final String str = format == null ? String.valueOf(value) : this.format.format(value);
             if (digital == Digital.True) {
                 g.writeRawValue(str);

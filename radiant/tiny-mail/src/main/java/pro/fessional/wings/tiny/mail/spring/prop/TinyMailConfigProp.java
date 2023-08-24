@@ -25,7 +25,7 @@ public class TinyMailConfigProp extends LinkedHashMap<String, TinyMailConfig> im
     private MailProperties springMail;
 
     /**
-     * 默认属性
+     * Default Config
      */
     @Getter
     private TinyMailConfig Default;

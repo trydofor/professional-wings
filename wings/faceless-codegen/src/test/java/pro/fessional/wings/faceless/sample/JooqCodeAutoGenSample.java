@@ -4,15 +4,17 @@ import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 import pro.fessional.wings.faceless.jooqgen.WingsCodeGenerator;
 
 /**
- * 可由 FacelessAutogenTest 代替
+ * FacelessAutogenTest instead
  *
  * @author trydofor
  * @since 2019-05-31
  */
 public class JooqCodeAutoGenSample {
 
-    // 注意路径，为工程顶级目录即可
-    // 注意在目标工程中，应该注释掉.springRepository(false)，使Dao自动加载
+    /**
+     * Pay attention to the path, should be the project top-level directory.
+     * Note that in the target project, you should comment out `.springRepository(false)` to auto load the `Dao`
+     */
     public static void main(String[] args) {
         // === Must Drop And Init ===
         // WingsJooqDaoAliasImplTest#test0DropAndInit
@@ -32,16 +34,16 @@ public class JooqCodeAutoGenSample {
                           .jdbcUser(user)
                           .jdbcPassword(pass)
                           .databaseSchema(database)
-                          // 支持 pattern的注释写法
+                          // support Regexp comment
                           .databaseIncludes("sys_constant_enum" +
                                             "|sys_standard_i18n" +
                                             "|tst_sharding")
                           .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
                           .targetPackage("pro.fessional.wings.faceless.database.autogen")
                           .targetDirectory("wings/faceless-jooq/src/test/java/")
-//  不用spring自动注入
+//  Disable spring auto scan
 //                          .springRepository(false)
-//  使用enum类型
+//  use enum type
 //                          .forcedType(new ForcedType()
 //                                  .withUserType("pro.fessional.wings.faceless.enums.auto.StandardLanguage")
 //                                  .withConverter("pro.fessional.wings.faceless.database.jooq.converter.JooqConsEnumConverter.of(StandardLanguage.class)")
@@ -58,7 +60,7 @@ public class JooqCodeAutoGenSample {
                           .jdbcUser(user)
                           .jdbcPassword(pass)
                           .databaseSchema(database)
-                          // 支持 pattern的注释写法
+                          // support Regexp comment
                           .databaseIncludes("tst_sharding")
                           .databaseVersionProvider(null)
                           .targetPackage("pro.fessional.wings.faceless.database.autogen")

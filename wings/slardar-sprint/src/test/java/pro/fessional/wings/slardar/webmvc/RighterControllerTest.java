@@ -60,7 +60,7 @@ public class RighterControllerTest {
                                     .andReturn();
         final String allow = result.getResponse().getHeader(prop.getHeader());
 
-        // 通过
+        // pass
         log.info("righter .... right");
         mvc.perform(post("/test/righter.json")
                    .contentType(MediaType.APPLICATION_JSON)
@@ -68,7 +68,7 @@ public class RighterControllerTest {
            .andDo(print())
            .andExpect(content().json("{\"uid\":1,\"perms\":[\"a\",\"b\"]}"));
 
-        // 篡改，失败
+        // forgery, fail
         log.info("righter .... failed");
         mvc.perform(post("/test/righter.json")
                    .contentType(MediaType.APPLICATION_JSON)

@@ -39,9 +39,11 @@ import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL
 import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL_IS_DELETED;
 
 /**
- * 升级jooq时，需要确认Override及反射方法是否兼容
- * 『🦁>>>』和『🦁<<<』间的代码不需要确认
- * 仅支持java，不支持kotlin及scala
+ * <pre>
+ * When upgrading jooq, you need to check the compatibility of Override and Reflection methods.
+ * The code between `🦁>>>` and `🦁<<<` doesn't need to be checked.
+ * Only java is supported, kotlin and scala are not.
+ * </pre>
  *
  * @author trydofor
  * @since 2019-05-31
@@ -83,7 +85,7 @@ public class WingsJavaGenerator extends JavaGenerator {
         return proxyStrategy;
     }
 
-    @Override // 无需确认，可对比
+    @Override // No confirmation required, comparable
     public void printSingletonInstance(JavaWriter out, Definition definition) {
         super.printSingletonInstance(out, definition);
         // 🦁>>>
@@ -97,7 +99,7 @@ public class WingsJavaGenerator extends JavaGenerator {
         // 🦁<<<
     }
 
-    @Override // 无需确认，父方法empty
+    @Override // No confirmation needed, parent method is empty
     public void generateTableClassFooter(TableDefinition table, JavaWriter out) {
         // 🦁>>>
         // table is TableDefinition : SysCommitJournalTable, SysCommitJournal
@@ -211,7 +213,7 @@ public class WingsJavaGenerator extends JavaGenerator {
             out.println("}");
         }
 
-        // 缩短import
+        // import
         Set<String> import4Table = WingsCodeGenConf.getImport4Table();
         if (!import4Table.isEmpty()) {
             StringBuilder java = reflectFieldSb(out);
@@ -220,7 +222,7 @@ public class WingsJavaGenerator extends JavaGenerator {
             boolean got = false;
             for (String imp : import4Table) {
                 int p = imp.lastIndexOf('.');
-                if (p > 0 && str.contains(imp)) { // 避免import无用，先判断
+                if (p > 0 && str.contains(imp)) { // avoid useless import, check first
                     String rep = imp.substring(p + 1);
                     str = str.replace(imp, rep);
                     qts.add(imp);
@@ -241,7 +243,7 @@ public class WingsJavaGenerator extends JavaGenerator {
     private final Pattern daoFetches = Pattern.compile("\n +/[* \n]+Fetch records", Pattern.MULTILINE);
     private final Pattern daoFetchMd = Pattern.compile("(fetch[^(]*)\\(");
 
-    @Override // 确认替换后代码，diff即可
+    @Override // Confirm the replacement code and diff it
     public void generateDao(TableDefinition table, JavaWriter out) {
         super.generateDao(table, out);
         // 🦁>>>
@@ -264,7 +266,7 @@ public class WingsJavaGenerator extends JavaGenerator {
         Matcher me = daoExtends.matcher(dao);
         dao = me.replaceFirst("public class $1Dao extends " + implClass.getSimpleName() + "<$1Table, ");
 
-        // 重置内容，正则替换
+        // Reset the Content, Regexp Replacement
         java.setLength(0);
         if (implClass.equals(WingsJooqDaoJournalImpl.class)) {
             final Matcher md = daoFetches.matcher(dao);

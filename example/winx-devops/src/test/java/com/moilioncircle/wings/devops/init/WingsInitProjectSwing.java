@@ -275,8 +275,8 @@ public class WingsInitProjectSwing extends javax.swing.JFrame {
         project.initWings(args);
 
         project.pack();
-        project.setLocationRelativeTo(null); // 居中
-        // 焦点
+        project.setLocationRelativeTo(null); // center
+        // focus
         project.setState(Frame.NORMAL);
         project.toFront();
         project.requestFocus();
@@ -295,8 +295,8 @@ public class WingsInitProjectSwing extends javax.swing.JFrame {
             txtWingsVer.setText(args[2]);
         }
 
-        btnWingsPath.addActionListener(evt -> chooseDir("wings-example工程目录", txtWingsPath));
-        btnProjectPath.addActionListener(evt -> chooseDir("新建工程目录", txtProjectPath));
+        btnWingsPath.addActionListener(evt -> chooseDir("wings-example project dir", txtWingsPath));
+        btnProjectPath.addActionListener(evt -> chooseDir("new project dir", txtProjectPath));
         btnGenerate.addActionListener(evt -> generatePrj());
 
         FocusAdapter txtFocus = new FocusAdapter() {
@@ -316,7 +316,7 @@ public class WingsInitProjectSwing extends javax.swing.JFrame {
     private void chooseDir(String name, JTextField field) {
         JFileChooser jfc = new JFileChooser();
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        jfc.showDialog(new JLabel(), "选择" + name);
+        jfc.showDialog(new JLabel(), "Select" + name);
         File dir = jfc.getSelectedFile();
         if (dir != null) {
             field.setText(dir.getAbsolutePath());
@@ -327,7 +327,7 @@ public class WingsInitProjectSwing extends javax.swing.JFrame {
 
         try {
             pgbGenerate.setStringPainted(true);
-            pgbGenerate.setString("嗖一下，就完事");
+            pgbGenerate.setString("Done, so easy :)");
             pgbGenerate.setIndeterminate(true);
 
             WingsInitProjectUtil.Info info = new WingsInitProjectUtil.Info();
@@ -339,14 +339,14 @@ public class WingsInitProjectSwing extends javax.swing.JFrame {
             info.dstPackage = txtPackage.getText().trim();
             info.version = txtWingsVer.getText().trim();
 
-            WingsInitProjectUtil.initProject(info, it -> message("复制:" + it));
-            message("完成了 ¯\\_(ツ)_/¯");
-            pgbGenerate.setString("完成了，¯\\_(ツ)_/¯");
+            WingsInitProjectUtil.initProject(info, it -> message("Copy:" + it));
+            message("Done ¯\\_(\"/)_/¯");
+            pgbGenerate.setString("Done ¯\\_(\"/)_/¯");
         }
         catch (Exception e) {
             e.printStackTrace();
-            message("出错了 " + e.getMessage());
-            pgbGenerate.setString("出错了！");
+            message("Error " + e.getMessage());
+            pgbGenerate.setString("Error");
             pgbGenerate.setIndeterminate(false);
         }
     }

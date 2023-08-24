@@ -3,7 +3,7 @@ package pro.fessional.wings.faceless.service.journal;
 import lombok.Data;
 
 /**
- * 以CommitId作为乐观锁
+ * Use CommitId as optimistic lock
  *
  * @author trydofor
  * @since 2019-09-17

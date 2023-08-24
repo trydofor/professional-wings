@@ -33,8 +33,8 @@ class OkHttpTokenizeTest {
     @Setter(onMethod_ = {@Autowired})
     private SlardarSessionProp slardarSessionProp;
 
-    @Setter(onMethod_ = {@Value("${local.server.port}")})
-    private int apiPort;
+    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
+    private String host;
 
     @Setter(onMethod_ = {@Autowired})
     private OkHttpClient okHttpClient;
@@ -49,13 +49,13 @@ class OkHttpTokenizeTest {
         tokenize.setClientSecret(secret);
         tokenize.setValAccessToken(OkHttpTokenizeOauth.AuthorizationCode);
         tokenize.setScopes("api1 api2");
-        tokenize.setRedirectUri("http://localhost:" + apiPort);
-        tokenize.setAuthorizeUrl("http://localhost:" + apiPort + urlmapProp.getOauthAuthorize());
-        tokenize.setAccessTokenUrl("http://localhost:" + apiPort + urlmapProp.getOauthAccessToken());
+        tokenize.setRedirectUri(host);
+        tokenize.setAuthorizeUrl(host + urlmapProp.getOauthAuthorize());
+        tokenize.setAccessTokenUrl(host + urlmapProp.getOauthAccessToken());
 
         OkHttpTokenClient oauthClient = new OkHttpTokenClient(okHttpClient, tokenize);
         okhttp3.Request request = new okhttp3.Request.Builder()
-                .url("http://localhost:" + apiPort + "/api/oauth.json")
+                .url(host + "/api/oauth.json")
                 .post(OkHttpClientHelper.EMPTY)
                 .build();
 
@@ -69,12 +69,12 @@ class OkHttpTokenizeTest {
         OkHttpTokenizeOauth tokenize = new OkHttpTokenizeOauth();
         tokenize.setClientId(client);
         tokenize.setClientSecret(secret);
-        tokenize.setAuthorizeUrl("http://localhost:" + apiPort + urlmapProp.getOauthAuthorize());
-        tokenize.setAccessTokenUrl("http://localhost:" + apiPort + urlmapProp.getOauthAccessToken());
+        tokenize.setAuthorizeUrl(host + urlmapProp.getOauthAuthorize());
+        tokenize.setAccessTokenUrl(host + urlmapProp.getOauthAccessToken());
 
         OkHttpTokenClient oauthClient = new OkHttpTokenClient(okHttpClient, tokenize);
         okhttp3.Request request = new okhttp3.Request.Builder()
-                .url("http://localhost:" + apiPort + "/api/oauth.json")
+                .url(host + "/api/oauth.json")
                 .post(OkHttpClientHelper.EMPTY)
                 .build();
 
@@ -86,7 +86,7 @@ class OkHttpTokenizeTest {
     @Test
     public void testFormLogin() {
         OkHttpTokenizeLogin tokenize = new OkHttpTokenizeLogin();
-        tokenize.setLoginUrl("http://localhost:" + apiPort + "/auth/username/login.json");
+        tokenize.setLoginUrl(host + "/auth/username/login.json");
         tokenize.setKeyUsername("username");
         tokenize.setKeyPassword("password");
         tokenize.setUsername("trydofor");
@@ -95,7 +95,7 @@ class OkHttpTokenizeTest {
 
         OkHttpTokenClient oauthClient = new OkHttpTokenClient(okHttpClient, tokenize);
         okhttp3.Request request = new okhttp3.Request.Builder()
-                .url("http://localhost:" + apiPort + "/api/login.json")
+                .url(host + "/api/login.json")
                 .post(OkHttpClientHelper.EMPTY)
                 .build();
 

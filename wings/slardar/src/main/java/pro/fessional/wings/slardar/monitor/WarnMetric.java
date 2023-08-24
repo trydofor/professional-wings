@@ -12,9 +12,7 @@ import java.util.List;
 public interface WarnMetric {
 
     /**
-     * 获得配置所在的key
-     *
-     * @return key
+     * Get the Key of Config
      */
     @NotNull
     String getKey();

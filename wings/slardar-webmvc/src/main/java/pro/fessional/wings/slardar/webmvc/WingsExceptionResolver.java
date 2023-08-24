@@ -51,10 +51,10 @@ public abstract class WingsExceptionResolver<T extends Exception> extends Abstra
     }
 
     /**
-     * 解析异常
+     * Resolve Exception
      *
-     * @param ex 当前异常
-     * @return null 如果不支持
+     * @param ex current exception
+     * @return null if not support
      */
     protected abstract SimpleResponse resolve(T ex);
 }

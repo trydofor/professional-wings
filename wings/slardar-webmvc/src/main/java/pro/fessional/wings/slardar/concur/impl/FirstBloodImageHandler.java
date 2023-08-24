@@ -26,9 +26,11 @@ import java.util.function.Supplier;
 
 
 /**
- * 接受scene为空或以image开始的验证，
- * - 发行时，同时设置header和coolie。
- * - 取码和鉴别时，通知支持header和parameter
+ * <pre>
+ * Accepts captcha where scene is `empty` or starts with `image`.
+ * - When need captcha, set both header and coolie.
+ * - Support for header and parameter when fetching code and check
+ * </pre>
  *
  * @author trydofor
  * @since 2021-03-11
@@ -79,7 +81,7 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
             tkn = (Tkn) cache.computeIfAbsent(key, k -> new Tkn(now));
         }
 
-        // 获取验证图，或验证
+        // Get the image Captcha, or check Captcha
         final String ck = getKeyCode(request, questCaptchaKey);
         if (!ck.isEmpty()) {
             if (tkn.check(ck, caseIgnore, false)) {
@@ -93,13 +95,13 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
             return false;
         }
 
-        // 检查验证码
+        // check Captcha
         String vk = getKeyCode(request, checkCaptchaKey);
         if (!vk.isEmpty() && tkn.check(vk, caseIgnore, true)) {
             return true;
         }
 
-        // 3秒外，非连击，不用验证
+        // more than 3 seconds, not double request, no verification needed
         final int fst = anno.first();
         final long rct = tkn.recent;
         if (fst > 3 && (rct == now || rct + fst * 1000L < now)) {
@@ -107,17 +109,17 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
             return true;
         }
 
-        // 通知需要验证码，在header和cookie中设置uniqueKey
+        // CAPTCHA is required, set uniqueKey in header and cookie
         needCaptcha(request, response, key.clientCode);
         return false;
     }
 
 
     /**
-     * 告知client需要身份验证
+     * Response the client that authentication is required
      *
      * @param response response
-     * @param token    身份标记
+     * @param token    captcha token
      */
     protected void needCaptcha(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, String token) {
         ResponseHelper.bothHeadCookie(response, clientTicketKey, token, 600);
@@ -125,21 +127,21 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
     }
 
     /**
-     * 显示验证码
+     * Show Captcha image
      *
      * @param response response
-     * @param code     验证码
-     * @param fmt      模板，以{b64}为占位符
+     * @param code     Captcha code
+     * @param fmt      template, `{b64}` is placeholder
      */
     protected void showCaptcha(@NotNull HttpServletResponse response, String code, String fmt) {
         ResponseHelper.showCaptcha(response, code, fmt);
     }
 
     /**
-     * 制作client身份标记
+     * Make client ticket
      *
      * @param request request
-     * @return 身份标记
+     * @return ticket
      */
     @NotNull
     protected String makeClientTicket(HttpServletRequest request) {
@@ -160,10 +162,10 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
     }
 
     /**
-     * 为client发送身份标记
+     * Response captcha token to the client
      *
      * @param response response
-     * @param token    身份标记
+     * @param token    captcha token
      */
     protected void sendClientTicket(@NotNull HttpServletResponse response, String token) {
         ResponseHelper.bothHeadCookie(response, clientTicketKey, token, 600);
@@ -196,7 +198,7 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
 
 
     /**
-     * 鉴别内容，线程同步方法。
+     * The content to check, sync method in thread
      */
     public static class Tkn {
         private volatile long recent;
@@ -227,7 +229,7 @@ public class FirstBloodImageHandler implements FirstBloodHandler {
         public String fresh(int max, Supplier<String> supplier) {
             final String code = supplier.get();
             synchronized (retry) {
-                if (retry.get() <= 0) { // 初始或超过
+                if (retry.get() <= 0) { // init or over
                     retry.set(max);
                 }
                 token = code;

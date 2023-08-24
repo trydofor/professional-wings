@@ -20,8 +20,8 @@ import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 import java.io.IOException;
 
 /**
- * cookie和header返回sid,
- * 默认情况下 cookie是sid的base64字符串
+ * Return SessionId in cookie and header,
+ * In Spring default, the sessionId in cookie is base64 encoded
  *
  * @author trydofor
  * @since 2021-02-17

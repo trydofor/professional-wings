@@ -15,7 +15,7 @@ public class TinyMailServiceProp {
     public static final String Key = "wings.tiny.mail.service";
 
     /**
-     * 同一邮件最大失败次数
+     * max failures for the same email.
      *
      * @see #Key$maxFail
      */
@@ -23,7 +23,7 @@ public class TinyMailServiceProp {
     public static final String Key$maxFail = Key + ".max-fail";
 
     /**
-     * 同一邮件最大成功次数
+     * max success for the same email.
      *
      * @see #Key$maxDone
      */
@@ -31,7 +31,7 @@ public class TinyMailServiceProp {
     public static final String Key$maxDone = Key + ".max-done";
 
     /**
-     * 超过多少时间的邮件不需要发送，默认1天
+     * the email does not need to be sent anymore as it has been a certain amount of time. default 1 day.
      *
      * @see #Key$maxNext
      */
@@ -39,7 +39,7 @@ public class TinyMailServiceProp {
     public static final String Key$maxNext = Key + ".max-next";
 
     /**
-     * 失败后多久进行重试，默认1分钟
+     * how soon to retry after failure, default 1 minute.
      *
      * @see #Key$tryNext
      */
@@ -47,7 +47,7 @@ public class TinyMailServiceProp {
     public static final String Key$tryNext = Key + ".try-next";
 
     /**
-     * 批量发送时，一次发的最大件数
+     * max number of bulk emails sent at one time.
      *
      * @see #Key$batchSize
      */
@@ -55,7 +55,7 @@ public class TinyMailServiceProp {
     public static final String Key$batchSize = Key + ".batch-size";
 
     /**
-     * 超过此容量时，以Warn记录日志
+     * if this capacity is exceeded, log it as Warn.
      *
      * @see #Key$warnSize
      */
@@ -63,7 +63,7 @@ public class TinyMailServiceProp {
     public static final String Key$warnSize = Key + ".warn-size";
 
     /**
-     * 启动后多少秒，扫描未发送的邮件，-1为不扫描
+     * how long after start, scan for unsent mail, `0` for no scan.
      *
      * @see #Key$bootScan
      */
@@ -71,7 +71,7 @@ public class TinyMailServiceProp {
     public static final String Key$bootScan = Key + ".boot-scan";
 
     /**
-     * 是否仅发送本app的邮件
+     * whether to send emails from this app only.
      *
      * @see #Key$onlyApp
      */
@@ -79,7 +79,7 @@ public class TinyMailServiceProp {
     public static final String Key$onlyApp = Key + ".only-app";
 
     /**
-     * 是否仅发送本RumMode的邮件
+     * whether to send emails from this RumMode only.
      *
      * @see #Key$onlyRun
      */

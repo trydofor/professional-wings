@@ -45,7 +45,7 @@ import static pro.fessional.wings.slardar.servlet.response.ResponseHelper.downlo
 import static pro.fessional.wings.warlock.controller.api.AbstractApiAuthController.ApiError.DigestBodyInvalid;
 
 /**
- * 完成消息签名验证，Terminal登录登出
+ * Message signature verification, Terminal login and logout
  *
  * @author trydofor
  * @since 2022-11-09
@@ -59,7 +59,7 @@ public abstract class AbstractApiAuthController {
     protected final Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
     /**
-     * 是否兼容直传clientId，还是仅支持ticket体系
+     * Whether it is compatible mode (send clientId directly), or only the ticket mode.
      */
     @Setter @Getter
     private boolean compatible = true;
@@ -74,7 +74,7 @@ public abstract class AbstractApiAuthController {
     protected TerminalInterceptor terminalInterceptor;
 
     /**
-     * 需要子类Override，以便进行RequestMapping
+     * To annotate `@RequestMapping`, Need subclass Override
      */
     public void requestMapping(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
         //
@@ -85,7 +85,7 @@ public abstract class AbstractApiAuthController {
             if (term != null) {
                 pass = ticketService.findPass(term.getClientId());
             }
-            else { // 无效token或compatible模式
+            else { // invalid token or compatible mode
                 if (compatible) {
                     pass = ticketService.findPass(cid);
                 }
@@ -161,7 +161,7 @@ public abstract class AbstractApiAuthController {
         else {
             // response file
             final int size = entity.resFile.available();
-            int sumLen = 0; // 指纹算法
+            int sumLen = 0; // Digest Algorithm
             if (size < apiAuthProp.getDigestMax().toBytes()) {
                 for (Map.Entry<String, String> en : entity.reqPara.entrySet()) {
                     if (en.getKey().endsWith(".sum")) {
@@ -263,11 +263,11 @@ public abstract class AbstractApiAuthController {
 
         final Collection<Part> pts = request.getContentType().contains(MULTIPART_FORM_DATA_VALUE)
                                      ? request.getParts() : Collections.emptyList();
-        // json 模式
+        // json mode
         if (pts.isEmpty()) {
             entity.reqBody = InputStreams.readText(request.getInputStream());
         }
-        // file 模式
+        // file mode
         else {
             final HashMap<String, Part> prt = new HashMap<>();
             final String jbn = apiAuthProp.getFileJsonBody();
@@ -291,7 +291,8 @@ public abstract class AbstractApiAuthController {
     }
 
     /**
-     * 验签一个Api请求，若未失败（成功或未验证），则返回Entity，否则返回null
+     * Validate an Api request and returns Entity if it does not fail (successful or unvalidated),
+     * otherwise it returns null.
      */
     @SneakyThrows
     @NotNull
@@ -303,10 +304,10 @@ public abstract class AbstractApiAuthController {
         final String para = FormatUtil.sortParam(entity.reqPara);
         //
         final String data;
-        if (entity.reqFile.isEmpty()) { // json 模式
+        if (entity.reqFile.isEmpty()) { // json mode
             data = para + entity.reqBody + secret + entity.timestamp;
         }
-        else { // file 模式
+        else { // file mode
             for (Map.Entry<String, Part> en : entity.reqFile.entrySet()) {
                 final String name = en.getKey();
                 final Part pt = en.getValue();
@@ -331,7 +332,7 @@ public abstract class AbstractApiAuthController {
             }
         }
 
-        // 验证签名
+        // validate signature
         final String sign = signature(data, entity.signature.length(), secret);
         if (mustSign && !sign.equalsIgnoreCase(entity.signature)) {
             entity.error = ApiError.SignatureInvalid;
@@ -401,8 +402,9 @@ public abstract class AbstractApiAuthController {
     }
 
     /**
-     * 通过validate后，由此方法进行业务处理。
-     * true表示已被处理，可以应答，false表示未被处理。
+     * After passing validate, this method performs business logic.
+     * `true` means it has been processed and can response,
+     * `false` means it has not been processed.
      */
     public abstract boolean handle(@NotNull HttpServletRequest request, @NotNull ApiEntity entity) throws Exception;
 
@@ -417,36 +419,36 @@ public abstract class AbstractApiAuthController {
     public static class ApiEntity {
 
         /**
-         * 请求Header中的timestamp
+         * Timestamp in the Request Header
          */
         @NotNull
         private String timestamp = Null.Str;
         /**
-         * 请求Header中的signature
+         * Signature in the Request Header
          */
         @NotNull
         private String signature = Null.Str;
         /**
-         * 请求Header中的digest
+         * Digest in the Request Header
          */
         @NotNull
         private String digest = Null.Str;
 
         /**
-         * 用户信息，通过validate时一定NotNull
+         * Terminal info, NotNull if pass the validation
          */
         @NotNull
         private Context terminal = TerminalContext.Null;
 
         /**
-         * 业务参数，当value为多值时，直接拼接多值为一个value
+         * Request Param. if key with multiple values, then join them to one
          *
          * @see HttpServletRequest#getParameterMap()
          */
         @NotNull
         private Map<String, String> reqPara = Collections.emptyMap();
         /**
-         * 业务主体，如json，UTF8。除了RequestBody外，也可由文件取得
+         * Request Body, e.g. json, UTF8. can be get by @RequestBody  or file
          *
          * @see WarlockApiAuthProp#getFileJsonBody()
          * @see HttpServletRequest#getInputStream()
@@ -454,7 +456,7 @@ public abstract class AbstractApiAuthController {
         @NotNull
         private String reqBody = Null.Str;
         /**
-         * 请求文件，文件名为name
+         * Request File, filename in `name`
          *
          * @see HttpServletRequest#getParts()
          * @see Part#getName()
@@ -464,24 +466,24 @@ public abstract class AbstractApiAuthController {
         private Map<String, Part> reqFile = Collections.emptyMap();
 
         /**
-         * 以错误的形式回复
+         * Response An Error
          */
         private ApiError error = null;
 
         /**
-         * resFile=null时为应答文本，否则为文件名
+         * Response Body if resFile=null, otherwise the filename
          */
         @NotNull
         private String resText = Null.Str;
 
         /**
-         * 应答文件，
+         * Response File
          */
         @Nullable
         private InputStream resFile = null;
 
         /**
-         * 应答头
+         * Response header
          */
         @NotNull
         private Map<String, String> resHead = Collections.emptyMap();

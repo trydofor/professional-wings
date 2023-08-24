@@ -30,7 +30,7 @@ public class DateTimeConverterTest {
     private MockMvc mockMvc;
 
     /**
-     * 测试格式及补全
+     * Test for Format and Auto Completion
      */
     @Test
     public void testFmtDate() throws Exception {
@@ -46,7 +46,7 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * 测试格式及补全
+     * Test for Format and Auto Completion
      */
     @Test
     public void testFullDate() throws Exception {
@@ -66,7 +66,7 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * 测试格式及补全
+     * Test for Format and Auto Completion
      */
     @Test
     public void testLocalDate() throws Exception {
@@ -90,7 +90,7 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * 测试格式及补全
+     * Test for Format and Auto Completion
      */
     @Test
     public void testLocalTime() throws Exception {
@@ -108,8 +108,8 @@ public class DateTimeConverterTest {
 
 
     /**
-     * 用户时区GMT+9，系统时区GMT+8，使用@RequestParam输入LocalDateTime，并作为系统时时间，
-     * 希望json输出时，把系统时区自动变为用户时区，+1小时。
+     * User in GMT+9, System in GMT+8, use @RequestParam get input LocalDateTime, and treat as system local time.
+     * when response the json, auto convert system timezone to user timezone, that is +1 hour.
      *
      * @see pro.fessional.wings.slardar.json.WingsJacksonMapperTest
      */
@@ -124,10 +124,10 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * @param udt 用户的输入时间
-     * @param cdt 收到的输入时间
-     * @param zdt 把udt作为系统时间，输出为用户时间
-     * @param utz 用户时区
+     * @param udt input date time
+     * @param cdt receive date time
+     * @param zdt treat udt as system local time, output user time
+     * @param utz user time zone
      */
     private void testLdtZdt(String udt, String cdt, String zdt, String utz) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/ldt-zdt.json?d=" + udt)
@@ -142,8 +142,8 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * 用户时区GMT+9，系统时区GMT+8，使用@RequestBody输入LocalDateTime，并作为系统时时间，
-     * 希望json输出时，把系统时区自动变为用户时区，+1小时。
+     * User in GMT+9, System in GMT+8, use @RequestBody get input LocalDateTime, and treat as system local time.
+     * when response the json, auto convert system timezone to user timezone, that is +1 hour.
      */
     @Test
     public void testLdtZdtBody() throws Exception {
@@ -156,10 +156,10 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * @param udt 用户的输入时间
-     * @param cdt 收到的输入时间
-     * @param zdt 把udt作为系统时间，输出为用户时间
-     * @param utz 用户时区
+     * @param udt input date time
+     * @param cdt receive date time
+     * @param zdt treat udt as system local time, output user time
+     * @param utz user time zone
      */
     private void testLdtZdtBody(String udt, String cdt, String zdt, String utz) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/ldt-zdt-body.json")
@@ -176,8 +176,9 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * 用户时区GMT+9，系统时区GMT+8，使用@RequestParam输入ZonedDateTime，并转换一次，变为系统时区。
-     * 输出时，自动变为用户时区。（不要使用有夏令时的时区测试，以免刚好切换）
+     * User in GMT+9, System in GMT+8, use @RequestParam get input ZonedDateTime, and auto convert to system timezone.
+     * when response the json, auto convert system timezone to user timezone.
+     * Do not test with a time zone that has daylight saving time to avoid switching.
      */
     @Test
     public void testZdtLdt() throws Exception {
@@ -188,10 +189,10 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * @param udt 用户的输入时间，以ZonedDateTime接受，会变成用户时区
-     * @param zdt 收到的输入时间，自动转为系统时间，并输出时再次转为用户时区
-     * @param cdt 收到的输入时间，自动转为系统时间，以LocalDateTime显示
-     * @param utz 用户时区
+     * @param udt input date time, in ZonedDateTime type, will auto convert to user timezone
+     * @param zdt receive date time, auto convert to system timezone, and to user timezone when response
+     * @param cdt receive date time, auto convert to system timezone, output in LocalDateTime
+     * @param utz user time zone
      */
     private void testZdtLdt(String udt, String zdt, String cdt, String utz) throws Exception {
         final MockHttpServletRequestBuilder builder = get("/test/zdt-ldt.json?d=" + udt)
@@ -206,8 +207,9 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * 用户时区GMT+9，系统时区GMT+8，使用@RequestBody输入ZonedDateTime，并转换一次，变为系统时区。
-     * 输出时，自动变为用户时区。（不要使用有夏令时的时区测试，以免刚好切换）
+     * User in GMT+9, System in GMT+8, use @RequestBody get input ZonedDateTime, and auto convert to system timezone.
+     * when response the json, auto convert system timezone to user timezone.
+     * Do not test with a time zone that has daylight saving time to avoid switching.
      */
     @Test
     public void testZdtLdtBody() throws Exception {
@@ -218,10 +220,10 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * @param udt 用户的输入时间，以ZonedDateTime接受，会变成用户时区
-     * @param zdt 收到的输入时间，自动转为系统时间，并输出时再次转为用户时区
-     * @param cdt 收到的输入时间，自动转为系统时间，以LocalDateTime显示
-     * @param utz 用户时区
+     * @param udt input date time, in ZonedDateTime type, will auto convert to user timezone
+     * @param zdt receive date time, auto convert to system timezone, and to user timezone when response
+     * @param cdt receive date time, auto convert to system timezone, output in LocalDateTime
+     * @param utz user time zone
      */
     private void testZdtLdtBody(String udt, String zdt, String cdt, String utz) throws Exception {
         final MockHttpServletRequestBuilder builder = get("/test/zdt-ldt-body.json")
@@ -238,8 +240,8 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * 用户时区GMT+9，系统时区GMT+8，用@RequestParam接收LocalDateTime输入，按系统时区处理。
-     * 希望json输出时，把系统时区自动变为用户时区，+1小时。
+     * User in GMT+9, System in GMT+8, use @RequestParam get input LocalDateTime, and treat as system local time.
+     * when response the json, auto convert system timezone to user timezone, that is +1 hour.
      */
     @Test
     public void testLdtOdt() throws Exception {
@@ -252,11 +254,11 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * @param udt 用户的输入时间，以LocalDateTime接受
-     * @param ldt 收到的输入时间
-     * @param odt 以收到的udt作为系统时间，以OffsetDateTime输出
-     * @param utz 用户时区
-     * @param otz 输出的Offset
+     * @param udt input date time, use LocalDateTime type
+     * @param ldt receive date time
+     * @param odt treat udt as system local time, output in OffsetDateTime
+     * @param utz user time zone
+     * @param otz output Offset
      */
     private void testLdtOdt(String udt, String ldt, String odt, String utz, String otz) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/ldt-odt.json?d=" + udt)
@@ -271,8 +273,8 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * 用户时区GMT+9，系统时区GMT+8，用@RequestBody接收LocalDateTime输入，按系统时区处理。
-     * 希望json输出时，把系统时区自动变为用户时区，+1小时。
+     * User in GMT+9, System in GMT+8, use @RequestBody get input LocalDateTime, and treat as system local time.
+     * when response the json, auto convert system timezone to user timezone, that is +1 hour.
      */
 
     @Test
@@ -286,11 +288,11 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * @param udt 用户的输入时间，以LocalDateTime接受
-     * @param ldt 收到的输入时间
-     * @param odt 以收到的udt作为系统时间，以OffsetDateTime输出
-     * @param utz 用户时区
-     * @param otz 输出的Offset
+     * @param udt input date time, use LocalDateTime type
+     * @param ldt receive date time
+     * @param odt treat udt as system local time, output in OffsetDateTime
+     * @param utz user time zone
+     * @param otz output Offset
      */
     private void testLdtOdtBody(String udt, String ldt, String odt, String utz, String otz) throws Exception {
         final MockHttpServletRequestBuilder builder = post("/test/ldt-odt-body.json")
@@ -307,8 +309,9 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * 用户时区GMT+9，系统时区GMT+8，以@RequestParam接收OffsetDateTime输入，自动转换，并作为系统时间。
-     * 输出时，自动变为用户时区。（不要使用有夏令时的时区测试，以免刚好切换）
+     * User in GMT+9, System in GMT+8, use @RequestParam get input OffsetDateTime, and auto convert to system timezone.
+     * when response the json, auto convert system timezone to user timezone.
+     * Do not test with a time zone that has daylight saving time to avoid switching.
      */
     @Test
     public void testOdtLdt() throws Exception {
@@ -319,11 +322,11 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * @param udt 用户的输入时间，以OffsetDateTime接受，自动转为用户时区，在转为系统时间
-     * @param odt 以收到的udt，再转为系统时间
-     * @param cdt 以收到的udt，再转为系统时间，以Ldt显示
-     * @param utz 用户时区
-     * @param otz 输出的Offset
+     * @param udt input date time, use OffsetDateTime type, auto convert from user timezone to system timezone
+     * @param odt receive date time, convert to system timezone
+     * @param cdt receive date time, convert to system timezone, output in LocalDateTime
+     * @param utz user time zone
+     * @param otz output Offset
      */
     private void testOdtLdt(String udt, String odt, String cdt, String utz, String otz) throws Exception {
         final MockHttpServletRequestBuilder builder = get("/test/odt-ldt.json?d=" + udt)
@@ -338,8 +341,9 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * 用户时区GMT+9，系统时区GMT+8，以@RequestBody接收OffsetDateTime输入，自动转换，并作为系统时间。
-     * 输出时，自动变为用户时区。（不要使用有夏令时的时区测试，以免刚好切换）
+     * User in GMT+9, System in GMT+8, use @RequestBody get input OffsetDateTime, and auto convert to system timezone.
+     * when response the json, auto convert system timezone to user timezone.
+     * Do not test with a time zone that has daylight saving time to avoid switching.
      */
     @Test
     public void testOdtLdtBody() throws Exception {
@@ -350,11 +354,11 @@ public class DateTimeConverterTest {
     }
 
     /**
-     * @param udt 用户的输入时间，以OffsetDateTime接受，自动转为用户时区，在转为系统时间
-     * @param odt 以收到的udt，再转为系统时间
-     * @param cdt 以收到的udt，再转为系统时间，以Ldt显示
-     * @param utz 用户时区
-     * @param otz 输出的Offset
+     * @param udt input date time, use OffsetDateTime type, auto convert from user timezone to system timezone
+     * @param odt receive date time, convert to system timezone
+     * @param cdt receive date time, convert to system timezone, output in LocalDateTime
+     * @param utz user time zone
+     * @param otz output Offset
      */
     private void testOdtLdtBody(String udt, String odt, String cdt, String utz, String otz) throws Exception {
         final MockHttpServletRequestBuilder builder = get("/test/odt-ldt-body.json")
@@ -409,7 +413,7 @@ public class DateTimeConverterTest {
     @Test
     public void testLdxAuto1() throws Exception {
         final String utz = "Asia/Tokyo";
-        // 用户+9的12点，变为系统+8的11点
+        // User +9 zone, 12 o'clock, convert to system +8 zone, 11 o'clock
         final MockHttpServletRequestBuilder b1q = post("/test/ldx-body-req.json")
                 .header("Zone-Id", utz)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -418,7 +422,7 @@ public class DateTimeConverterTest {
                .andDo(print())
                .andExpect(content().string("2022-10-03T11:34:56"));
 
-        // 系统+8的12点，变为用户+9的13点
+        // system +8 zone, 12 o'clock, convert to user +9 zone, 13 o'clock
         final MockHttpServletRequestBuilder b1s = post("/test/ldx-body-res.json?d=2022-10-03T12:34:56")
                 .header("Zone-Id", utz);
         mockMvc.perform(b1s)
@@ -430,14 +434,16 @@ public class DateTimeConverterTest {
     public void testLdxAuto2() throws Exception {
         final String utz = "Asia/Tokyo";
 
-        // 用户+9的12点，变为系统+8的11点
+        // Use +9 zone, 12 o'clock, convert to system +8 zone, 11 o'clock
         final MockHttpServletRequestBuilder b2q = post("/test/ldt-para-req.json?d=2022-10-03T12:34:56")
                 .header("Zone-Id", utz);
         mockMvc.perform(b2q)
                .andDo(print())
                .andExpect(content().string("2022-10-03T11:34:56"));
 
-        // NOTE 注意，json无法直接获取在return上的注解，需要动用BodyAdvice，比较重。此用法不常见，因此不支持此种场景
+        // NOTE json can't get the annotation on return directly,
+        // need to use BodyAdvice, which is heavy.
+        // This usage is not common, so this scenario is not supported.
         final MockHttpServletRequestBuilder b2s = post("/test/ldt-para-res.json?d=2022-10-03T12:34:56")
                 .header("Zone-Id", utz);
         mockMvc.perform(b2s)

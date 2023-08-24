@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * 对 <a href="http://www.jooq.org/xsd/jooq-codegen-3.17.0.xsd">jooq-codegen-3.17.0.xsd</a> 的包装
+ * Wrapper for <a href="http://www.jooq.org/xsd/jooq-codegen-3.17.0.xsd">jooq-codegen-3.17.0.xsd</a>
  *
  * @author trydofor
  * @since 2019-05-31
@@ -51,11 +51,11 @@ public class WingsCodeGenerator {
     private static final Logger log = LoggerFactory.getLogger(WingsCodeGenerator.class);
 
     /**
-     * 生成 Jooq 代码
+     * Generate Jooq Code
      *
-     * @param conf        配置文件，建议使用 #Builder 生产。
-     * @param incremental 是否增量生成，即不删除本次中不存在的文件。
-     * @param suffix      为DefaultCatalog，DefaultSchema和Global对象增加后缀，以区分增量生成。
+     * @param conf        Configuration, recommended to use #Builder.
+     * @param incremental Whether to generate incrementally. That is, not to delete files that do not exist in this time.
+     * @param suffix      Add suffixes to DefaultCatalog, DefaultSchema and Global to distinguish generation.
      */
 
     @SuppressWarnings("resource") public static void generate(Configuration conf, boolean incremental, String suffix) {
@@ -145,7 +145,7 @@ public class WingsCodeGenerator {
             }
         }
 
-        // 忽略注释，import排序和serialVersionUID
+        // Ignore comments, import sort and serialVersionUID
         // The table <code>trydofor_20200515.jp_account</code>.
         // The schema <code>trydofor</code>.
         // date = "2019-09-09T01:33:51.762Z",
@@ -195,9 +195,7 @@ public class WingsCodeGenerator {
         }
 
         /**
-         * 增量生成，即不删除本次中不存在的文件
-         *
-         * @param t 是否增量生成
+         * Whether to generate incrementally. That is, not to delete files that do not exist in this time.
          */
         public Builder incremental(boolean t) {
             incr = t;
@@ -215,7 +213,7 @@ public class WingsCodeGenerator {
         }
 
         /**
-         * 直接生成代码
+         * Build Config and Generate Code
          */
         public void buildAndGenerate() {
             generate(conf, incr, suffix);
@@ -325,7 +323,7 @@ public class WingsCodeGenerator {
         }
 
         /**
-         * 注意，匹配的格式为QualifiedName，如db.table，详见 org.jooq.meta.AbstractDatabase#matches
+         * Note that the matches are in the format QualifiedName, e.g., db.table, as detailed in org.jooq.meta.AbstractDatabase#matches
          * <p>
          * replace configuration/generator/database/includes
          * <p>
@@ -340,7 +338,7 @@ public class WingsCodeGenerator {
          * <p>
          * Whitespace is ignored and comments are possible unless overridden in getRegexFlags(). default COMMENTS CASE_INSENSITIVE
          *
-         * @param reg 正则
+         * @param reg Regexp
          * @return Builder
          * @see Pattern#COMMENTS
          */
@@ -372,7 +370,7 @@ public class WingsCodeGenerator {
          * This is a Java regular expression. Use the pipe to separate several expressions.
          * Excludes match before includes, i.e. excludes have a higher priority.
          *
-         * @param reg 正则
+         * @param reg Regexp
          * @return Builder
          * @see Pattern#COMMENTS
          */
@@ -454,11 +452,11 @@ public class WingsCodeGenerator {
         }
 
         /**
-         * jooq中匹配 含`.`且&lt;&gt;或[]结尾，做 `new %s()`，否则做 %s
-         * 参考 JavaGenerator#converterTemplate
+         * Matching in jooq with `.` and ends in `&lt;&gt;` or `[]`, use `new %s()`, otherwise use `%s`.
+         * see JavaGenerator#converterTemplate
          *
          * @param ft         ForcedType
-         * @param sortImport 以import代替全限定引用，仅wingsGenerator有效
+         * @param sortImport Replacing fully qualified references with import is only valid for wingsGenerator.
          * @return this
          */
         public Builder forcedType(ForcedType ft, String sortImport) {

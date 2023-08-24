@@ -9,7 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * 可以循环读的stream
+ * Stream (reuse) that can be read recursively
  *
  * @author trydofor
  * @since 2020-09-25

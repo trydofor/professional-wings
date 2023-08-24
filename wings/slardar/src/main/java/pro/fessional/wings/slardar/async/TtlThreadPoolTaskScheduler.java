@@ -19,7 +19,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
 
 /**
- * 使用Ttl包装
+ * use Ttl ThreadPool
  *
  * @author trydofor
  * @since 2022-12-03

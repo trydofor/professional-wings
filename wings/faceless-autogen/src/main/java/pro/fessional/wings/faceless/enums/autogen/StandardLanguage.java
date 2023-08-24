@@ -9,7 +9,7 @@ import pro.fessional.wings.faceless.enums.StandardLanguageEnum;
 import java.util.Locale;
 
 /**
- * language + "_" + country，使用`_`分隔，zh_CN，在解析中，也支持zh-CN
+ * language + `_` + country, `_` delimited, `zh_CN`. For parsing, `zh-CN` is also supported.
  *
  * @author trydofor
  * @see Locale#toString()

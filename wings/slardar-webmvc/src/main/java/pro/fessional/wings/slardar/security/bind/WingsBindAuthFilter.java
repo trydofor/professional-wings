@@ -36,7 +36,7 @@ public class WingsBindAuthFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        // 同时支持post和get（主要是第三方redirect）
+        // support both POST and GET (Oauth redirect)
         String username = obtainUsername(request);
         username = (username != null) ? username.trim() : "";
 

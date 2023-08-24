@@ -35,12 +35,12 @@ public class WingsSilencerProfile2Test {
 
     @Test
     public void profile() {
-        assertEquals("沉默术士-test30", moduleTest);
+        assertEquals("Silencer-test30", moduleTest);
         assertEquals("wings-silencer-test", nameTest);
-        assertEquals("沉默术士-dev", moduleDev);
+        assertEquals("Silencer-dev", moduleDev);
         assertEquals("wings-silencer-dev", nameDev);
-        assertEquals("wings-silencer-test", name); // spring 字母顺序，后者优先
-        assertEquals("沉默术士-test30", module); // 序号顺序覆盖
+        assertEquals("wings-silencer-test", name); // spring Alphabetical order, latter taking precedence
+        assertEquals("Silencer-test30", module); // Seq override
         assertEquals("wings-silencer-empty", nameEmpty);
     }
 }

@@ -10,7 +10,7 @@ import pro.fessional.wings.faceless.codegen.JdbcDataLoadHelper;
 import java.util.List;
 
 /**
- * idea中，main函数执行和spring执行，workdir不同
+ * In IDEA, the execution of `main` is different from spring, workdir is different.
  *
  * @author trydofor
  * @since 2021-02-20

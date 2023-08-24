@@ -26,7 +26,16 @@ public class MailSendController {
     @Setter(onMethod_ = {@Autowired})
     protected TinyMailService tinyMailService;
 
-    @Operation(summary = "新建或编辑邮件，并同步立即或异步定时，-1为失败，0为同步，否则为异步")
+    @Operation(summary = "Create mail and send it sync or async", description = """
+            # Usage
+            Create the mail, and auto send it in sync or async way.
+            ## Params
+            * @param - request body
+            ## Returns
+            * @return {200 | Result(-1)} failure
+            * @return {200 | Result(0)} sync send
+            * @return {200 | Result(mills)} async send at mills time
+            """)
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$sendMail + "}")
     @ResponseBody
     public R<Long> sendMail(@RequestBody TinyMailPlain mail) {
@@ -34,7 +43,15 @@ public class MailSendController {
         return R.okData(ms);
     }
 
-    @Operation(summary = "仅新建或编辑邮件，但并不发送")
+
+    @Operation(summary = "Save the mail only, do not send", description = """
+            # Usage
+            Save the new mail, return the id.
+            ## Params
+            * @param - request body
+            ## Returns
+            * @return {200 | Result(id)} mail id
+            """)
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$sendSave + "}")
     @ResponseBody
     public R<Long> sendSave(@RequestBody TinyMailPlain mail) {
@@ -42,7 +59,13 @@ public class MailSendController {
         return R.okData(id);
     }
 
-    @Operation(summary = "同步扫需要描补发的邮件，并异步发送，返回补发的件数")
+
+    @Operation(summary = "sync scan and resend mail async", description = """
+            # Usage
+            sync scan the mail to resend, return the count, and send them async
+            ## Returns
+            * @return {200 | Result(count)} mail cou t
+            """)
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$sendScan + "}")
     @ResponseBody
     public R<Integer> sendScan() {
@@ -53,20 +76,28 @@ public class MailSendController {
     @Data
     public static class Ins {
         /**
-         * 邮件id
+         * Mail id
          */
         private long id;
         /**
-         * 若失败，是否异步重试
+         * Whether retry async if fail
          */
         private boolean retry;
         /**
-         * 是否检查发送条件，否则为强制发送
+         * Whether to check the send condition, otherwise force send
          */
         private boolean check;
     }
 
-    @Operation(summary = "同步重试失败的邮件，发送成功或失败，或异常")
+
+    @Operation(summary = "Sync resend failed mail", description = """
+            # Usage
+            Sync resend the  failed email, return success/fail, or throw exception
+            ## Params
+            * @param - request body
+            ## Returns
+            * @return {200 | Result(bool)} success or not
+            """)
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$sendRetry + "}")
     @ResponseBody
     public R<Boolean> sendRetry(@RequestBody Ins mail) {

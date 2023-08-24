@@ -12,8 +12,8 @@ import pro.fessional.wings.silencer.datetime.Epochs;
 /**
  * <pre>
  * - 41-bit(ms second)
- * - ① 21-bit(sequence), max=2M/ms
- * - ② 10-bit(block) + 12-bit(sequence), max=4K/ms
+ * - (1) 21-bit(sequence), max=2M/ms
+ * - (2) 10-bit(block) + 12-bit(sequence), max=4K/ms
  * </pre>
  *
  * @author trydofor

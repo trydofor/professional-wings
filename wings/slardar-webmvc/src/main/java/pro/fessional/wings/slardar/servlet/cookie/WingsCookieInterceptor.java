@@ -15,25 +15,23 @@ public interface WingsCookieInterceptor {
     }
 
     /**
-     * 是否对cookie有Intercept，true时短路处理，可关闭拦截功能
-     *
-     * @return 是否
+     * Whether no Intercept for cookies, true when short-circuit processing, can turn off the intercept function
      */
     boolean notIntercept();
 
     /**
-     * 读取时转换一个cookie，并转换成新的，返回null表示丢弃
+     * Convert to new cookie on read, return `null` means discard it
      *
-     * @param cookie 原始cookie
-     * @return 新
+     * @param cookie original cookie
+     * @return new / original / null
      */
     Cookie read(Cookie cookie);
 
     /**
-     * 写入时一个cookie，并转换成新的，返回null表示丢弃
+     * Convert to new cookie on write, return `null` means discard it
      *
-     * @param cookie 原始cookie
-     * @return 新
+     * @param cookie original cookie
+     * @return new / original / null
      */
     Cookie write(Cookie cookie);
 }

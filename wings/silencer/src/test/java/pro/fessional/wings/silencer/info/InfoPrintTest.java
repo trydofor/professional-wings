@@ -14,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since 2021-06-02
  */
 @SpringBootTest
-@Disabled("仅显示BuildProperties, GitProperties")
+@Disabled("Only display BuildProperties, GitProperties")
 @Slf4j
 public class InfoPrintTest {
 

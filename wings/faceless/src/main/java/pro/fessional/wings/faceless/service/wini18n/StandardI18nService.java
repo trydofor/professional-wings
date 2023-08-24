@@ -14,34 +14,29 @@ import java.util.Locale;
 public interface StandardI18nService {
 
     /**
-     * 重新加载所有数据
-     *
-     * @return 加载的数量
+     * Reload all and return the count.
      */
     int reloadAll();
 
     /**
-     * 按base重新加载
-     *
-     * @param base base
-     * @return 加载的数量
+     * Reload by base and return the count.
      */
     int reloadBase(String base);
 
     /**
-     * 同数据表 sys_standard_i18n 对应
+     * Load i18n message form sys_standard_i18n
      *
-     * @param base 基点，表名或java包名
-     * @param kind 种类，字段或java类名
-     * @param ukey 键值，唯一性值，如id.###|type.code|enum
-     * @param lang 语言
-     * @return 多国语
+     * @param base table or package
+     * @param kind column or java field
+     * @param ukey unique key eg. id.###, type.code, enum
+     * @param lang locale
+     * @return i18n message
      */
     @Nullable
     String load(String base, String kind, String ukey, Locale lang);
 
     /**
-     * 使用I18nEnum的package，className，name获取I18n
+     * Load i18n message by I18nEnum (base, kind, ukey)
      *
      * @param enu  I18nEnum
      * @param lang locale
@@ -54,7 +49,7 @@ public interface StandardI18nService {
     }
 
     /**
-     * 使用I18nEnum的base，kind，ukey获取I18n
+     * Load i18n message by I18nEnum (base, kind, ukey)
      *
      * @param enu  I18nEnum
      * @param lang locale
@@ -67,7 +62,7 @@ public interface StandardI18nService {
     }
 
     /**
-     * 使用Enum的package，className，name获取I18n
+     * Load i18n message by Enum (package, className, name)
      *
      * @param enu  enum
      * @param lang locale
@@ -80,7 +75,7 @@ public interface StandardI18nService {
     }
 
     /**
-     * 使用Enum的package，className，name获取I18n
+     * Load i18n message by Enum (package, className, name)
      *
      * @param enu  enum
      * @param lang locale
@@ -96,7 +91,7 @@ public interface StandardI18nService {
     }
 
     /**
-     * 使用CodeEnum的package，className，getCode获取I18n
+     * Load i18n message by CodeEnum (package, className, getCode)
      *
      * @param enu  CodeEnum
      * @param lang locale
@@ -109,7 +104,7 @@ public interface StandardI18nService {
     }
 
     /**
-     * 使用CodeEnum的package，className，getCode获取I18n
+     * Load i18n message by CodeEnum (package, className, getCode)
      *
      * @param enu  CodeEnum
      * @param lang locale

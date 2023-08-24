@@ -21,7 +21,7 @@ import javax.sql.DataSource
 
 @SpringBootTest
 @TestMethodOrder(MethodName::class)
-@Disabled("导出表结构和数据，避免污染Git提交文件")
+@Disabled("Export table structure and data to avoid polluting Git workspace")
 class SchemaFulldumpManagerTest {
 
     @Autowired
@@ -58,7 +58,7 @@ class SchemaFulldumpManagerTest {
         )
         val file = "$fold/schema.sql"
         schemaFulldumpManager.saveFile(file, dlls)
-        testcaseNotice("检查文件 $file")
+        testcaseNotice("Check File $file")
     }
 
     @Test
@@ -72,6 +72,6 @@ class SchemaFulldumpManagerTest {
         )
         val file = "$fold/record.sql"
         schemaFulldumpManager.saveFile(file, recs)
-        testcaseNotice("检查文件 $file")
+        testcaseNotice("Check File $file")
     }
 }

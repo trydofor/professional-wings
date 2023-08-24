@@ -11,7 +11,7 @@ import java.util.Collection;
  * @author trydofor
  * @since 2021-03-05
  */
-@Disabled("权限树Mock，生成Constant，已有数据库数据代替")
+@Disabled("Mock permission tree, generate Constant, use db instead")
 class ConstantNaviGeneratorTest {
 
     @Test

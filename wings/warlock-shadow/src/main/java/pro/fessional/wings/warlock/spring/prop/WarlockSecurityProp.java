@@ -193,7 +193,7 @@ public class WarlockSecurityProp {
     public static final String Key$rolePrefix = Key + ".role-prefix";
 
     /**
-     * ①ignored items, antMatcher, no need of SecurityFilter, such as static resources.
+     * (1) ignored items, antMatcher, no need of SecurityFilter, such as static resources.
      *
      * @see #Key$webIgnore
      */
@@ -201,7 +201,7 @@ public class WarlockSecurityProp {
     public static final String Key$webIgnore = Key + ".web-ignore";
 
     /**
-     * ②allow all, `Map<String, String>`, antMatcher.
+     * (2) allow all, `Map<String, String>`, antMatcher.
      *
      * @see #Key$permitAll
      */
@@ -209,7 +209,7 @@ public class WarlockSecurityProp {
     public static final String Key$permitAll = Key + ".permit-all";
 
     /**
-     * ③authed only, antMatcher.
+     * (3) authed only, antMatcher.
      *
      * @see #Key$authenticated
      */
@@ -217,7 +217,7 @@ public class WarlockSecurityProp {
     public static final String Key$authenticated = Key + ".authenticated";
 
     /**
-     * ④has authority, antMatcher.
+     * (4) has authority, antMatcher.
      * merge authority by URL grouping, and finally set the URL in reverse ASCII order,
      * i.e., the English number comes before the `*`, and the loose rule comes after.
      *
@@ -228,7 +228,7 @@ public class WarlockSecurityProp {
 
     /**
      * <pre>
-     * ⑤defaults, `String`, support the followings.
+     * (5) defaults, `String`, support the followings.
      * - `permitAll`|`authenticated`|`anonymous`|`fullyAuthenticated`
      * - any non-empty, non-above string, considered as `Authority`, use `comma` or `blank` to separate multiple ones.
      * </pre>
@@ -329,7 +329,7 @@ public class WarlockSecurityProp {
      * <pre>
      * Configure memory user, usually used for special user login.
      * - key is the description, override if duplicate, suggest `username`+(`/`+`auth-type`)?
-     * - auth-type=`∅`, to match all auth-type.
+     * - `auth-type=`, to match all auth-type.
      * - For other settings, see WarlockAuthnService.Details and its defaults.
      * </pre>
      *

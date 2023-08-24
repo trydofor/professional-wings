@@ -26,7 +26,8 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * 一次性凭证登录，使用后立即失效，不论验证通过与否。
+ * A one-time credential login that expires immediately after use,
+ * regardless of whether authentication passes or fails.
  *
  * @author trydofor
  * @see WarlockNonceSendEvent

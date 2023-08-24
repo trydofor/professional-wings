@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static pro.fessional.wings.slardar.cache.WingsCache.Joiner;
+import static pro.fessional.wings.slardar.cache.WingsCache.Wildcard;
 
 /**
  * LRU (Least Recently Used) default, unit is second, 0=infinitely
@@ -104,7 +105,7 @@ public class SlardarCacheProp {
     // /////////////////
 
     public static String wildcard(String level) {
-        return WingsCache.Level.join(level, "*");
+        return WingsCache.Level.join(level, Wildcard);
     }
 
     public static boolean inLevel(String name, String level) {

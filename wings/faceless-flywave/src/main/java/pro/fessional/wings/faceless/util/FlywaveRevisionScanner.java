@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.util;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +95,7 @@ public class FlywaveRevisionScanner {
             }
         }
 
-        // sql 文件
+        // sql file
         final int dot = sb.length() - REVISION_PATH_REVIFILE_EXTN.length() - 1;
         if (dot > 0) {
             final int lst = sb.length() - 1;
@@ -104,7 +105,7 @@ public class FlywaveRevisionScanner {
             }
         }
 
-        // 目录
+        // dir
         sb.append(REVISION_PATH_REVIFILE_TAIL);
         return sb.toString();
     }
@@ -182,8 +183,10 @@ public class FlywaveRevisionScanner {
     }
 
     /**
+     * scan revision-sql from RevisionRegister
+     *
      * @param path FlywaveRevisionRegister
-     * @return 按版本号升序排列的TreeMap
+     * @return TreeMap in ascending order by version number
      * @see PathMatchingResourcePatternResolver
      */
     @NotNull
@@ -196,13 +199,16 @@ public class FlywaveRevisionScanner {
     }
 
     /**
-     * 把指定或默认位置的*.sql文件都加载进来，并按文件名的字母顺序排序。
-     * String path = "classpath*:/wings-flywave/master/"; // 全部类路径
-     * String path = "classpath:/wings-flywave/master/";  // 当前类路径
-     * String path = "file:src/main/resources/wings-flywave/master/"; // 具体文件
+     * <pre>
+     * Load all `*.sql` files from the specified or default location and sorts them alphabetically by filename.
      *
-     * @param path 按Spring的格式写，classpath*:,classpath:等，默认[REVISIONSQL_PATH]
-     * @return 按版本号升序排列的TreeMap
+     * String path = "classpath*:/wings-flywave/master/"; // all classpath, include dependence
+     * String path = "classpath:/wings-flywave/master/";  // current project classpath, exclude dependence.
+     * String path = "file:src/main/resources/wings-flywave/master/"; // file system
+     * </pre>
+     *
+     * @param path in Spring's format, `classpath*:`, `classpath:`, etc.
+     * @return TreeMap in ascending order by revision number
      * @see PathMatchingResourcePatternResolver
      */
     @NotNull
@@ -220,8 +226,10 @@ public class FlywaveRevisionScanner {
     }
 
     /**
-     * @param result 排序map
-     * @param path   扫描路径
+     * scan revision-sql to result
+     *
+     * @param result sorted map
+     * @param path   path to scan
      * @see #scan(String...)
      */
     public static void scan(SortedMap<Long, RevisionSql> result, String path) {
@@ -290,10 +298,10 @@ public class FlywaveRevisionScanner {
     }
 
     /**
-     * 读取所有降级脚本
+     * Join all undo (downgrade) sql script by '\n'
      *
-     * @param sqls sqls
-     * @return sql
+     * @param sqls revision sqls
+     * @return sql undo sql
      */
     @NotNull
     public static String undo(SortedMap<Long, RevisionSql> sqls) {
@@ -305,10 +313,10 @@ public class FlywaveRevisionScanner {
     }
 
     /**
-     * 读取所有升级脚本
+     * Join all upto (upgrade) sql script by '\n'
      *
-     * @param sqls sqls
-     * @return sql
+     * @param sqls revision sqls
+     * @return sql upto sql
      */
     @NotNull
     public static String upto(SortedMap<Long, RevisionSql> sqls) {
@@ -320,9 +328,8 @@ public class FlywaveRevisionScanner {
     }
 
     /**
-     * 可应用版本过滤器和重命名
+     * New a helper to filter and handle revision
      *
-     * @return 构造器
      * @see Helper
      */
     public static Helper helper() {
@@ -330,12 +337,12 @@ public class FlywaveRevisionScanner {
     }
 
     /**
-     * 执行以下步骤
-     * ①scan全路径
-     * ②replace版本
-     * ③include过滤器
-     * ④exclude过滤器
-     * ⑤modifier调整
+     * Perform the following steps,
+     * (1) scan all path
+     * (2) replace revision
+     * (3) include filter
+     * (4) exclude filter
+     * (5) modifier
      */
     public static class Helper {
         private final LinkedHashMap<Predicate<Long>, String> includes = new LinkedHashMap<>();
@@ -344,6 +351,7 @@ public class FlywaveRevisionScanner {
         private final LinkedHashMap<BiConsumer<Long, RevisionSql>, String> modifier = new LinkedHashMap<>();
         private final LinkedHashSet<String> paths = new LinkedHashSet<>();
 
+        @Contract("_->this")
         public Helper path(RevisionRegister... path) {
             for (RevisionRegister s : path) {
                 paths.add(s.classpath());
@@ -351,11 +359,13 @@ public class FlywaveRevisionScanner {
             return this;
         }
 
+        @Contract("_->this")
         public Helper path(String... path) {
             Collections.addAll(paths, path);
             return this;
         }
 
+        @Contract("_->this")
         public Helper flywave(String... path) {
             for (String s : path) {
                 paths.add(FlywaveRevisionScanner.flywavePath(s));
@@ -363,11 +373,13 @@ public class FlywaveRevisionScanner {
             return this;
         }
 
+        @Contract("->this")
         public Helper master() {
             paths.add(REVISION_PATH_MASTER);
             return this;
         }
 
+        @Contract("_->this")
         public Helper master(String... path) {
             for (String s : path) {
                 paths.add(FlywaveRevisionScanner.masterPath(s));
@@ -375,6 +387,7 @@ public class FlywaveRevisionScanner {
             return this;
         }
 
+        @Contract("_->this")
         public Helper branch(String... path) {
             for (String s : path) {
                 paths.add(FlywaveRevisionScanner.branchPath(s));
@@ -382,6 +395,7 @@ public class FlywaveRevisionScanner {
             return this;
         }
 
+        @Contract("_->this")
         public Helper feature(String... path) {
             for (String s : path) {
                 paths.add(FlywaveRevisionScanner.featurePath(s));
@@ -389,6 +403,7 @@ public class FlywaveRevisionScanner {
             return this;
         }
 
+        @Contract("_->this")
         public Helper somefix(String... path) {
             for (String s : path) {
                 paths.add(FlywaveRevisionScanner.somefixPath(s));
@@ -396,6 +411,7 @@ public class FlywaveRevisionScanner {
             return this;
         }
 
+        @Contract("_->this")
         public Helper support(String... path) {
             for (String s : path) {
                 paths.add(FlywaveRevisionScanner.supportPath(s));
@@ -404,24 +420,26 @@ public class FlywaveRevisionScanner {
         }
 
         /**
-         * 把from版替换为to版，新版不存在时创建。
+         * Replace the revision from `from` to `to`, create if not exist.
          *
-         * @param from 旧版本
-         * @param to   新版本
-         * @return builder
+         * @param from old revision
+         * @param to   new revision
+         * @return this
          */
+        @Contract("_,_->this")
         public Helper replace(long from, long to) {
             return replace(from, to, false);
         }
 
         /**
-         * 把from版替换为to版，新版不存在时创建。同时使用fn处理from和to版
+         * Replace the version from `from` to `to`, create if not exist.
          *
-         * @param from 旧版本
-         * @param to   新版本
-         * @param sql  同时replace undo和upto脚本中的版本号
-         * @return builder
+         * @param from old revision
+         * @param to   new revision
+         * @param sql  whether to replace in the sql text
+         * @return this
          */
+        @Contract("_,_,_->this")
         public Helper replace(long from, long to, boolean sql) {
             if (sql) {
                 final Pattern op = Pattern.compile("\\b" + from + "\\b");
@@ -434,13 +452,15 @@ public class FlywaveRevisionScanner {
         }
 
         /**
-         * 把from版替换为to版，新版不存在时创建。同时使用fn处理from和to版
+         * Replace the version from `from` to `to`, create if not exist.
+         * And modify the sql text by `mod`
          *
-         * @param from 旧版本
-         * @param to   新版本
-         * @param mod  同时replace undo和upto脚本中的方法
-         * @return builder
+         * @param from old revision
+         * @param to   new revision
+         * @param mod  modify the sql text
+         * @return this
          */
+        @Contract("_,_,_->this")
         public Helper replace(long from, long to, Function<String, String> mod) {
             if (from < 0 || to < 0) throw new IllegalArgumentException("revi must >0");
             replaces.put(from, to);
@@ -455,14 +475,15 @@ public class FlywaveRevisionScanner {
         }
 
         /**
-         * 调整RevisionSql内容
+         * Modify the RevisionSql content
          *
-         * @param revi 声明版本
-         * @param str  查找字符串
-         * @param rpl  替换字符串
-         * @return builder
+         * @param revi revision to modify
+         * @param str  the string to find
+         * @param rpl  the string to replace
+         * @return this
          * @see #modify(String, BiConsumer)
          */
+        @Contract("_,_,_->this")
         public Helper modify(long revi, String str, String rpl) {
             return modify("replace " + str + " to " + rpl + " at revi=" + revi, revi, it -> {
                 it.setUptoText(it.getUptoText().replace(str, rpl));
@@ -471,62 +492,68 @@ public class FlywaveRevisionScanner {
         }
 
         /**
-         * 调整RevisionSql内容
+         * Modify the RevisionSql content
          *
-         * @param revi 声明版本
-         * @param mod  调整函数 Consumer(实际SQL)
-         * @return builder
+         * @param revi revision to modify
+         * @param mod  Consumer of RevisionSql
+         * @return this
          * @see #modify(String, BiConsumer)
          */
+        @Contract("_,_->this")
         public Helper modify(long revi, Consumer<RevisionSql> mod) {
             return modify("", revi, mod);
         }
 
         /**
-         * 调整RevisionSql内容
+         * Modify the RevisionSql content
          *
-         * @param info 用途说明
-         * @param revi 声明版本
-         * @param mod  调整函数 Consumer(实际SQL)
-         * @return builder
+         * @param info info of modify
+         * @param revi revision to modify
+         * @param mod  Consumer of RevisionSql
+         * @return this
          * @see #modify(String, BiConsumer)
          */
+        @Contract("_,_,_->this")
         public Helper modify(String info, long revi, Consumer<RevisionSql> mod) {
             modifier.put((r, s) -> {if (r == revi) mod.accept(s);}, info);
             return this;
         }
 
         /**
-         * 调整RevisionSql内容
+         * Modify the RevisionSql content
          *
-         * @param mod 调整函数 BiConsumer(声明版本, 实际SQL)
-         * @return builder
+         * @param mod BiConsumer of revision and RevisionSql
+         * @return this
          */
+        @Contract("_->this")
         public Helper modify(BiConsumer<Long, RevisionSql> mod) {
             return modify("", mod);
         }
 
         /**
-         * 调整RevisionSql内容
+         * Modify the RevisionSql content
          *
-         * @param info 用途说明
-         * @param mod  调整函数 BiConsumer(声明版本, 实际SQL)
-         * @return builder
+         * @param info info of modify
+         * @param mod BiConsumer of revision and RevisionSql
+         * @return this
          */
+        @Contract("_,_->this")
         public Helper modify(String info, BiConsumer<Long, RevisionSql> mod) {
             modifier.put(mod, info);
             return this;
         }
 
-
+        @Contract("_->this")
         public Helper include(RevisionRegister revi) {
             return include(revi.description(), revi.revision());
         }
 
+        @Contract("_->this")
         public Helper include(long... revi) {
             return include("", revi);
         }
 
+        @Contract("_,_->this")
         public Helper include(String info, long... revi) {
             final HashSet<Long> rvs = new HashSet<>();
             for (Long l : revi) {
@@ -535,24 +562,29 @@ public class FlywaveRevisionScanner {
             return include(info, rvs::contains);
         }
 
+        @Contract("_->this")
         public Helper include(Predicate<Long> inc) {
             return include("", inc);
         }
 
+        @Contract("_,_->this")
         public Helper include(String info, Predicate<Long> inc) {
             includes.put(inc, info);
             return this;
         }
 
 
+        @Contract("_->this")
         public Helper exclude(RevisionRegister revi) {
             return exclude(revi.description(), revi.revision());
         }
 
+        @Contract("_->this")
         public Helper exclude(long... revi) {
             return exclude("", revi);
         }
 
+        @Contract("_,_->this")
         public Helper exclude(String info, long... revi) {
             final HashSet<Long> rvs = new HashSet<>();
             for (Long l : revi) {
@@ -561,10 +593,12 @@ public class FlywaveRevisionScanner {
             return exclude(info, rvs::contains);
         }
 
+        @Contract("_->this")
         public Helper exclude(Predicate<Long> exc) {
             return exclude("", exc);
         }
 
+        @Contract("_,_->this")
         public Helper exclude(String info, Predicate<Long> exc) {
             excludes.put(exc, info);
             return this;

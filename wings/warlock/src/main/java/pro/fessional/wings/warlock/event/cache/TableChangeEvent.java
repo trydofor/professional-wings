@@ -19,9 +19,21 @@ public class TableChangeEvent implements WarlockMetadataEvent {
     public static final int UPDATE = 1 << 2;
     public static final int DELETE = 1 << 3;
 
+    /**
+     * event source, something like publisher chain
+     */
     private List<String> source = new LinkedList<>();
+    /**
+     * change type {@link #INSERT} {@link #DELETE} {@link #UPDATE}
+     */
     private int change = 0;
+    /**
+     * the table name
+     */
     private String table;
+    /**
+     * the filed(column) and its values. VALUES of INSERT; SET and WHERE of UPDATE; WHERE of DELETE;
+     */
     private Map<String, List<?>> field = Collections.emptyMap();
 
     public boolean isInsert() {

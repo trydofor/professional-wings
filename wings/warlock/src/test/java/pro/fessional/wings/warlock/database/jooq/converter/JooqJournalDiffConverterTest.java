@@ -26,8 +26,8 @@ class JooqJournalDiffConverterTest {
         JooqJournalDiffConverter c = new JooqJournalDiffConverter();
         final String s = c.to(d0);
         log.warn("JournalDiff JSON ={}", s);
-        // 类型丢失
-        d0.setValue1(List.of("10086", "trydofor", new BigDecimal("3.14"), "2022-10-24 12:34:56"));
+        // Type missing
+        d0.setValue1(List.of("10086", "trydofor", "3.14", "2022-10-24 12:34:56"));
         final JournalDiff d1 = c.from(s);
         Assertions.assertEquals(d0, d1);
     }

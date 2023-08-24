@@ -29,20 +29,18 @@ import pro.fessional.wings.warlock.service.watching.WatchingService;
 @Slf4j
 public class WarlockWatchingTest {
 
-    @Setter(onMethod_ = {@Value("${local.server.port}")})
-    private int port;
+    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
+    private String host;
 
     @Setter(onMethod_ = {@Autowired})
     private OkHttpClient okHttpClient;
 
-
     /**
-     * 查看日志输出
+     * Check the log
      */
     @Test
     public void testWatching() {
         final StopWatch.Watch watch = Watches.acquire("testWatching");
-        final String host = "http://localhost:" + port;
         final Request.Builder body = new Request.Builder().url(host + "/test/watching.json");
         final Response r1 = OkHttpClientHelper.execute(okHttpClient, body, false);
         Assertions.assertEquals(200, r1.code());
@@ -52,6 +50,6 @@ public class WarlockWatchingTest {
         Assertions.assertTrue(del);
         // async in async task pool
         Assertions.assertTrue(2 <= WatchingService.AsyncWatch.size());
-        Assertions.assertTrue(WatchingService.WatchOwner.getWatches().isEmpty(),"需要先初始化数据库 Warlock1SchemaCreator#init0Schema");
+        Assertions.assertTrue(WatchingService.WatchOwner.getWatches().isEmpty(),"Need init database by Warlock1SchemaCreator#init0Schema");
     }
 }

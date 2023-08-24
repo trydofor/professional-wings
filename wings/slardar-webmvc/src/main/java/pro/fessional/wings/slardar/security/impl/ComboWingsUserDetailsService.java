@@ -71,10 +71,11 @@ public class ComboWingsUserDetailsService implements WingsUserDetailsService {
 
     public interface Combo<T extends UserDetails> extends Ordered {
         /**
-         * 不接受或无法构造返回null，非null时，表示加载成功，直接返回用去验证。
+         * Do not accept or can not be constructed to return null.
+         * Non-null means the loading is successful, can be used to verify.
          *
-         * @param username   type下身份唯一辨识，用户名，手机号，邮箱，userId等
-         * @param authType   验证类型，默认null
+         * @param username   Unique Key under authType. eg. username, email, userId, etc.
+         * @param authType   null by default
          * @param authDetail Authentication.getDetails
          * @return UserDetails
          * @throws UsernameNotFoundException UsernameNotFound
@@ -86,13 +87,13 @@ public class ComboWingsUserDetailsService implements WingsUserDetailsService {
         }
 
         /**
-         * 对加载的useDetail后置审查，返回null等同于load失败
+         * Post-audit the loaded useDetail, returning null equals `loadOrNull` null
          *
-         * @param useDetail  已加载的useDetail
-         * @param username   原始 username
-         * @param authType   原始 authType
-         * @param authDetail 原始 authDetail
-         * @return 加工后的useDetail
+         * @param useDetail  loaded useDetail
+         * @param username   original username
+         * @param authType   original authType
+         * @param authDetail original authDetail
+         * @return audited useDetail
          */
         @Nullable
         default UserDetails postAudit(@NotNull UserDetails useDetail, String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {

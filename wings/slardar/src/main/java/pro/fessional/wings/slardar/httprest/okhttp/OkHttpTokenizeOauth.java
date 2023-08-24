@@ -46,7 +46,7 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
     private String headerUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36";
 
     /**
-     * 仅支持 AuthorizationCode ClientCredentials
+     * Only support AuthorizationCode ClientCredentials
      */
     private String keyGrantType = "grant_type";
     private String valRefreshToken = RefreshToken;
@@ -66,7 +66,7 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
     private String keyExpiresIn = "expires_in";
 
     /**
-     * 过期的缓冲ms，以便提前获取，避免过期
+     * expiration (ms) of buffer, should avoid expiration
      */
     private int expireBuff = 30_000;
     private transient Token token;
@@ -281,7 +281,7 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
     }
 
     @Data
-    private static class Token {
+    public static class Token {
         private final long expired;
         private final String access;
         private final String refresh;

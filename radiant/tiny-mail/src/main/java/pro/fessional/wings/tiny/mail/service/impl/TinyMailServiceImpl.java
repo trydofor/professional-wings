@@ -35,8 +35,12 @@ import pro.fessional.wings.slardar.jackson.JacksonHelper;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.WinMailSenderTable;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.daos.WinMailSenderDao;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.pojos.WinMailSender;
-import pro.fessional.wings.tiny.mail.sender.*;
+import pro.fessional.wings.tiny.mail.sender.MailConfigProvider;
+import pro.fessional.wings.tiny.mail.sender.MailSenderManager;
 import pro.fessional.wings.tiny.mail.sender.MailSenderManager.BatchResult;
+import pro.fessional.wings.tiny.mail.sender.MailWaitException;
+import pro.fessional.wings.tiny.mail.sender.TinyMailConfig;
+import pro.fessional.wings.tiny.mail.sender.TinyMailMessage;
 import pro.fessional.wings.tiny.mail.service.TinyMail;
 import pro.fessional.wings.tiny.mail.service.TinyMailPlain;
 import pro.fessional.wings.tiny.mail.service.TinyMailService;
@@ -44,7 +48,13 @@ import pro.fessional.wings.tiny.mail.spring.prop.TinyMailServiceProp;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -172,10 +182,10 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         final LocalDateTime md = message.getDate();
         if (isNew) {
             id = lightIdService.getId(winMailSenderDao.getTable());
-            // 乐观锁
+            // Optimist Lock
             po.setNextLock(0);
             po.setNextSend(md != null ? md : ThreadNow.localDateTime());
-            // 检查结束
+            // Count the result
             po.setSumSend(0);
             po.setSumFail(0);
             po.setSumDone(0);
@@ -329,11 +339,11 @@ public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
         Null.notNull(msg.getRefKey1(), po::setRefKey1);
         Null.notNull(msg.getRefKey2(), po::setRefKey2);
 
-        // 乐观锁
+        // Optimist lock
         po.setNextLock(0);
         po.setNextSend(md != null ? md : ThreadNow.localDateTime());
 
-        // 检查结束
+        // Count the result
         po.setSumSend(0);
         po.setSumFail(0);
         po.setSumDone(0);

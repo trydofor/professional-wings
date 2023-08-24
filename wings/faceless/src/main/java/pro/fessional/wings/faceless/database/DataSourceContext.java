@@ -55,9 +55,7 @@ public class DataSourceContext {
     }
 
     /**
-     * 获得所有原始数据源
-     *
-     * @return 数据源
+     * Get all DataSource and its name
      */
     @NotNull
     public Map<String, DataSource> getBackends() {
@@ -65,10 +63,7 @@ public class DataSourceContext {
     }
 
     /**
-     * 根据数据源名字获得jdbc url
-     *
-     * @param name 名字
-     * @return jdbc url
+     * Get the jdbc-url by the name of datasource
      */
     @NotNull
     public String backendJdbcUrl(String name) {
@@ -76,10 +71,7 @@ public class DataSourceContext {
     }
 
     /**
-     * 根据数据源获得jdbc url，放入缓存
-     *
-     * @param ds 数据源
-     * @return jdbc url
+     * Obtain the jdbc-url by the name of datasource, and cache it
      */
     @NotNull
     public String cacheJdbcUrl(DataSource ds) {
@@ -87,10 +79,7 @@ public class DataSourceContext {
     }
 
     /**
-     * 提取数据源的jdbc url，不放入缓存
-     *
-     * @param ds 数据源
-     * @return jdbc url
+     * Extract the jdbc-url of the data source, not cached
      */
     @NotNull
     public static String extractUrl(DataSource ds) {
@@ -123,10 +112,7 @@ public class DataSourceContext {
 
     public interface Customizer {
         /**
-         * 修改 context，是否停止其他modifier修改
-         *
-         * @param ctx context
-         * @return 是否排他
+         * Modify the context, return whether to stop other modifiers from modifying.
          */
         boolean customize(DataSourceContext ctx);
     }

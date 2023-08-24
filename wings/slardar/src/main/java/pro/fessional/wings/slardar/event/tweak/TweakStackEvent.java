@@ -9,11 +9,11 @@ import lombok.Data;
 @Data
 public class TweakStackEvent {
     /**
-     * userId为Long.MAX_VALUE时，为全部用户
+     * Long.MAX_VALUE means all user
      */
     private long userId;
     /**
-     * null表示reset
+     * `null` means reset setting, restores the original system settings.
      */
     private Boolean stack;
 }

@@ -11,31 +11,29 @@ import pro.fessional.wings.silencer.watch.Watches;
 import java.util.function.BiConsumer;
 
 /**
- * 慢查询日志
+ * Log the Slow Sql
  *
  * @author trydofor
  * @since 2021-01-14
  */
-
+@Getter @Setter
 public class SlowSqlListener implements ExecuteListener {
 
     public enum ContextKey {
         EXECUTING_STOP_WATCH
     }
 
-    /**
-     * slow阈值的毫秒数，-1表示关闭此功能
-     */
-    @Getter @Setter
-    private long thresholdMillis = -1;
 
-    @Getter @Setter
     private String token = "SlowSqlListener";
 
     /**
-     * 取代日志，自行处理耗时与SQL
+     * threshold of slow in mills, `-1` means disable
      */
-    @Getter @Setter
+    private long thresholdMillis = -1;
+
+    /**
+     * Handle time-consuming and SQL instead of logger
+     */
     private BiConsumer<Long, String> costAndSqlConsumer = (c, s) -> Watches.log.warn("SLOW-SQL cost={}ms, sql={}", c, s);
 
     @Override

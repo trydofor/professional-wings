@@ -28,60 +28,60 @@ public class MailListController {
     @Setter(onMethod_ = {@Autowired})
     protected TinyMailListService tinyMailListService;
 
-    @Operation(summary = "获取全部邮件的简要信息，默认倒序")
+    @Operation(summary = "list summary of all messages, in reverse order by default.")
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$listAll + "}")
     @ResponseBody
     public PageResult<TinyMailPlain> listAll(PageQuery pq) {
         return tinyMailListService.listAll(pq);
     }
 
-    @Operation(summary = "获取失败邮件的简要信息，默认倒序")
+    @Operation(summary = "list summary of failed emails, in reverse order by default.")
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$listFailed + "}")
     @ResponseBody
     public PageResult<TinyMailPlain> listFailed(PageQuery pq) {
         return tinyMailListService.listFailed(pq);
     }
 
-    @Operation(summary = "获取未成功邮件的简要信息，默认倒序")
+    @Operation(summary = "list summary of unsuccessful emails, in reverse order by default.")
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$listUndone + "}")
     @ResponseBody
     public PageResult<TinyMailPlain> listUndone(PageQuery pq) {
         return tinyMailListService.listUndone(pq);
     }
 
-    @Operation(summary = "根据Biz-Mark获取邮件的简要信息，默认倒序")
+    @Operation(summary = "find summary of the email by Biz-Mark, in reverse order by default.")
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$byBizmark + "}")
     @ResponseBody
     public PageResult<TinyMailPlain> byBizMark(@RequestBody Q<String> q, PageQuery pq) {
         return tinyMailListService.listByBizMark(q.getQ(), pq);
     }
 
-    @Operation(summary = "根据正则比较收件人to/cc/bcc获取邮件的简要信息，默认倒序")
+    @Operation(summary = "find summary of the email by RegExp of to/cc/bcc, reverse order by default.")
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$byRecipient + "}")
     @ResponseBody
     public PageResult<TinyMailPlain> byRecipient(@RequestBody Q<String> q, PageQuery pq) {
         return tinyMailListService.listByRecipient(q.getQ(), pq);
     }
 
-    @Operation(summary = "根据收件人from获取邮件的简要信息，默认倒序")
+    @Operation(summary = "find summary of the email by from, in reverse order by default.")
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$bySender + "}")
     @ResponseBody
     public PageResult<TinyMailPlain> bySender(@RequestBody Q<String> q, PageQuery pq) {
         return tinyMailListService.listBySender(q.getQ(), pq);
     }
 
-    @Operation(summary = "根据正则比较邮件标题获取邮件的简要信息，默认倒序")
+    @Operation(summary = "find summary of the email by RegExp of subject, reverse order by default.")
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$bySubject + "}")
     @ResponseBody
     public PageResult<TinyMailPlain> bySubject(@RequestBody Q<String> q, PageQuery pq) {
         return tinyMailListService.listBySubject(q.getQ(), pq);
     }
 
-    @Operation(summary = "获取邮件详情", description = """
+    @Operation(summary = "get mail detail", description = """
             # Usage
-            获取邮件详情。
+            get mail detail
             ## Params
-            * @param id - 必填，Mailid
+            * @param id - required, Mailid
             """)
     @PostMapping(value = "${" + TinyMailUrlmapProp.Key$loadDetail + "}")
     @ResponseBody

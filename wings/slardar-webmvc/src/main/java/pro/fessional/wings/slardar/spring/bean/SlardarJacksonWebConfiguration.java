@@ -49,6 +49,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarNumberProp;
 import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -81,10 +82,10 @@ public class SlardarJacksonWebConfiguration {
     private final MessageSource messageSource;
 
     /**
-     * The context’s Jackson2ObjectMapperBuilder can be customized by one or more
+     * The context's Jackson2ObjectMapperBuilder can be customized by one or more
      * Jackson2ObjectMapperBuilderCustomizer beans. Such customizer beans can be ordered
-     * (Boot’s own customizer has an order of 0), letting additional
-     * customization be applied both before and after Boot’s customization.
+     * (Boot's own customizer has an order of 0), letting additional
+     * customization be applied both before and after Boot's customization.
      * <p>
      * If you provide any @Beans of type MappingJackson2HttpMessageConverter,
      * they replace the default value in the MVC configuration. Also,
@@ -203,8 +204,9 @@ public class SlardarJacksonWebConfiguration {
             final SlardarNumberProp.Nf decimal = slardarNumberProp.getDecimal();
             if (decimal.isEnable()) {
                 final DecimalFormat df = decimal.getWellFormat();
-                log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer BigDecimal serializer");
+                log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer BigDecimal/BigInteger serializer");
                 builder.serializerByType(BigDecimal.class, new FormatNumberSerializer(BigDecimal.class, df, decimal.getDigital()));
+                builder.serializerByType(BigInteger.class, new FormatNumberSerializer(BigInteger.class, df, decimal.getDigital()));
             }
         };
     }

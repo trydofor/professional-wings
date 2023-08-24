@@ -21,13 +21,13 @@ import java.util.function.BiConsumer;
 public class SlowResponseInterceptor implements AutoRegisterInterceptor {
 
     /**
-     * slow阈值的毫秒数，-1表示关闭此功能
+     * The slow threshold in ms, `-1` means disable
      */
     @Getter @Setter
     private long thresholdMillis = -1;
 
     /**
-     * 取代日志，自行处理耗时与SQL
+     * Instead of logging, handle time-consuming and SQL yourself
      */
     @Getter @Setter
     private BiConsumer<Long, HttpServletRequest> costAndReqConsumer = (c, r) -> log.warn("SLOW-RES cost={}ms, uri={}", c, r.getRequestURI());

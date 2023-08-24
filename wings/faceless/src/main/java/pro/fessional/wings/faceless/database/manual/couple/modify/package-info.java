@@ -1,5 +1,5 @@
 /**
- * 增，改，删
+ * Create, Update, Delete
  *
  * @author trydofor
  * @since 2019-09-17

@@ -6,7 +6,8 @@ import java.util.concurrent.ConcurrentHashMap
 import javax.sql.DataSource
 
 /**
- * flywave 有可能分离出去，尽量与spring解藕
+ * flywave may stand alone, uncouple with spring
+ *
  * @author trydofor
  * @since 2019-06-16
  */
@@ -23,7 +24,7 @@ class SimpleJdbcTemplate(val dataSource: DataSource, val name: String = "unnamed
     }
 
     /**
-     * 处理每一条数据
+     * handle each record of result
      * @param handler org.springframework.jdbc.core.RowCallbackHandler
      */
     fun query(sql: String, vararg args: Any?, handler: (ResultSet) -> Unit) {

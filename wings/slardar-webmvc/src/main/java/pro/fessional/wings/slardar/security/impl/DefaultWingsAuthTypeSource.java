@@ -12,7 +12,7 @@ import pro.fessional.wings.slardar.security.WingsAuthTypeSource;
 import java.util.Map;
 
 /**
- * 支持 header，param，AntPath (/login/*.json)
+ * Parse AuthType form header, param and path (PathPattern)
  *
  * @author trydofor
  * @see org.springframework.web.util.pattern.PathPattern
@@ -26,10 +26,8 @@ public class DefaultWingsAuthTypeSource implements WingsAuthTypeSource {
     private final boolean hasZonePath;
 
     /**
-     * 如果不支持对应的类型，设置为null，antPath中，支持authType路径参数
-     *
-     * @param pathPattern 路径参数，参考PathPattern
-     * @param typeParser  enums.name
+     * @param pathPattern Path variable in PathPattern
+     * @param typeParser  AuthType Parser
      */
     public DefaultWingsAuthTypeSource(String pathPattern, WingsAuthTypeParser typeParser) {
         this.pathPattern = pathPattern;

@@ -17,7 +17,7 @@ public class BatriderEnabledProp {
     public static final String Key = "spring.wings.batrider.enabled";
 
     /**
-     * 是否启动自动配置
+     * Whether to enable auto config.
      *
      * @see #Key$autoconf
      */

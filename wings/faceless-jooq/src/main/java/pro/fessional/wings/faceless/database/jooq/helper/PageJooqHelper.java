@@ -54,11 +54,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 提供基于jdbc和jooq的分页查询工具。
  * <pre>
- * total < 0，DB执行count和select
- * total = 0，DB不count，不select
- * total > 0，DB不count，但select
+ * Pagination Util for jdbc and jooq.
+ *
+ * * total < 0 - run count, run select
+ * * total = 0 - no count, no select
+ * * total > 0 - no count, run select
  * </pre>
  *
  * @author trydofor
@@ -73,13 +74,15 @@ public class PageJooqHelper extends PageJdbcHelper {
     }
 
     /**
+     * Page query by jooq
+     *
      * @param dao   jooq Dao
-     * @param page  页
-     * @param total service层缓存的count计数
+     * @param page  query info
+     * @param total the count cached in service level
      * @param <R>   Record
      * @param <P>   pojo
-     * @param <K>   主键
-     * @return 结果
+     * @param <K>   pk
+     * @return step
      */
     @NotNull
     public static <R extends UpdatableRecord<R>, P, K> CountJooq<R> use(DAOImpl<R, P, K> dao, PageQuery page, int total) {
@@ -92,12 +95,12 @@ public class PageJooqHelper extends PageJdbcHelper {
     }
 
     /**
-     * 分页查询
+     * Page query by jooq
      *
      * @param dsl   dsl
-     * @param page  页
-     * @param total service层缓存的count计数
-     * @return 结果
+     * @param page  query info
+     * @param total the count cached in service level
+     * @return step
      */
     @NotNull
     public static <R extends Record> CountJooq<R> use(DSLContext dsl, PageQuery page, int total) {
@@ -124,7 +127,7 @@ public class PageJooqHelper extends PageJdbcHelper {
         private int total = -1;
 
         /**
-         * 以 PageQuery.sort为主，以bys作为映射，以dft作为default为辅
+         * `PageQuery.sort` as the primary, `bys` as the mapping, and `dft` as the default
          */
         private void orderBy(Map<String, ? extends Field<?>> bys, OrderField<?>... dft) {
             final List<PageUtil.By> srt = PageUtil.sort(page.getSort());
@@ -235,7 +238,7 @@ public class PageJooqHelper extends PageJdbcHelper {
         }
 
         /**
-         * 指定字段或排序语句，等效于field:field的map关系
+         * Specify a field or sort statement that is equivalent to the field to field mapping.
          */
         public FetchJooq<R> order(OrderField<?>... bys) {
             context.orderBy(Collections.emptyMap(), bys);
@@ -243,7 +246,7 @@ public class PageJooqHelper extends PageJdbcHelper {
         }
 
         /**
-         * 根据alias:filed的map关系，到PageQuery的sort中匹配排序
+         * Based on the mapping of alias to filed, use PageQuery's sort to match the ordering
          */
         public FetchJooq<R> order(Map<String, Field<?>> bys, OrderField<?>... dft) {
             context.orderBy(bys, dft);

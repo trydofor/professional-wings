@@ -9,7 +9,7 @@ import org.springframework.web.servlet.view.AbstractView;
 import java.util.Map;
 
 /**
- * 忽略Model，直接render view
+ * Ignore Model, directly render view
  *
  * @author trydofor
  * @since 2021-03-10

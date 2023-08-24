@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * 区分大小写，检查权限
+ * Case-sensitive permission checking
  *
  * @author trydofor
  * @since 2022-01-19

@@ -24,8 +24,8 @@ import static pro.fessional.wings.slardar.httprest.RestTemplateHelper.NopErrorHa
 @Slf4j
 class AccessDeny401Test {
 
-    @Setter(onMethod_ = {@Value("${local.server.port}")})
-    private int port;
+    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
+    private String host;
 
     final RestTemplate tmpl = new RestTemplateBuilder()
             .errorHandler(NopErrorHandler)
@@ -33,7 +33,7 @@ class AccessDeny401Test {
 
     @Test
     public void test401Form() {
-        final String url = "http://localhost:" + port + "/user/authed-user.json";
+        final String url = host + "/user/authed-user.json";
         RequestEntity<?> entity = RequestEntity
                 .post(url)
                 .accept(MediaType.TEXT_HTML)
@@ -47,7 +47,7 @@ class AccessDeny401Test {
     }
     @Test
     public void test401Basic() {
-        final String url = "http://localhost:" + port + "/user/authed-user.json";
+        final String url = host + "/user/authed-user.json";
         RequestEntity<?> entity = RequestEntity
                 .post(url)
                 .accept(MediaType.APPLICATION_JSON)

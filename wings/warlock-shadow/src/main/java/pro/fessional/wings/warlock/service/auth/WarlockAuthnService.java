@@ -17,7 +17,7 @@ import java.time.ZoneId;
 import java.util.Locale;
 
 /**
- * 验证
+ * Authentication (AuthN)
  *
  * @author trydofor
  * @since 2021-02-23
@@ -43,7 +43,7 @@ public interface WarlockAuthnService {
         private String passsalt;
         private LocalDateTime expiredDt;
 
-        public boolean isUninit(){
+        public boolean isUninit() {
             return EmptySugar.asEmptyValue(expiredDt);
         }
     }
@@ -61,12 +61,12 @@ public interface WarlockAuthnService {
     Details load(@NotNull Enum<?> authType, long userId);
 
     /**
-     * 自动创建用户
+     * create the user automatically
      *
-     * @param authType 类型
-     * @param username 登录用户名
-     * @param details  用户和验证信息
-     * @return 如果成功，返回用户信息
+     * @param authType authn type
+     * @param username username to login
+     * @param details  user and auth info
+     * @return user details if success
      */
     @Nullable
     Details register(@NotNull Enum<?> authType, String username, WingsAuthDetails details);
@@ -75,5 +75,5 @@ public interface WarlockAuthnService {
 
     void onSuccess(@NotNull Enum<?> authType, long userId, String details);
 
-    void onFailure(@NotNull Enum<?> authType, String username);
+    void onFailure(@NotNull Enum<?> authType, String username, String details);
 }

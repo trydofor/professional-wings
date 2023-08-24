@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.cache.spring;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.interceptor.SimpleKeyGenerator;
 
@@ -10,7 +11,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * 可evict单key，多key，全部，或跳过。写入时非线程安全
+ * Can evict single key, multiple keys, all keys, or skip.
+ * Non-thread-safe on write
  *
  * @author trydofor
  * @see SimpleKeyGenerator#generateKey(Object...)
@@ -39,7 +41,7 @@ public class CacheEvictMultiKeys {
     }
 
     /**
-     * 兼容非wings版，获得key
+     * get key, compatible with non-wings style
      */
     public Object getKey() {
         if (wingsSupport) {
@@ -50,6 +52,7 @@ public class CacheEvictMultiKeys {
         }
     }
 
+    @Contract("_->this")
     public CacheEvictMultiKeys addKey(Object... arg) {
         if (evictKey.isEmpty()) {
             evictKey = new LinkedList<>();

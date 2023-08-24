@@ -9,7 +9,7 @@ import pro.fessional.wings.testing.database.ExecSql;
 import java.util.List;
 
 /**
- * 可以自己设置配置文件
+ * Customize Config
  *
  * @author trydofor
  * @since 2020-06-10

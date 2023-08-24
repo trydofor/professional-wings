@@ -67,14 +67,14 @@ public class TaskerExec {
     }
 
     /**
-     * 格式为name:Class，优先匹配name，然后Class
+     * The format is name:Class, which matches name first, then Class.
      */
     public boolean accept(String token) {
         return TaskerHelper.acceptToken(beanClass, beanMethod, token);
     }
 
     /**
-     * 判断Bean是否一致
+     * Whether the bean is accepted
      */
     public boolean accept(Object bean) {
         return TaskerHelper.acceptBean(beanClass, beanObject, bean);

@@ -20,7 +20,7 @@ import javax.sql.DataSource
 import kotlin.concurrent.thread
 
 /**
- * clone主表实现自动分表，及初始化时的数据导入。
+ * Clone the plain table structure to auto create shard table, and auto sharing data.
  *
  * @author trydofor
  * @since 2019-06-06
@@ -52,22 +52,23 @@ class SchemaShardingManager(
     }
 
     /**
-     * 检查并执行分表，分表为table_0, table_${number -1}，共number个表。。
-     * 分表脚标不连续或数量高于number时，显示警告。
-     * 如果已存在分表，但都没有记录，则全部删除重建。
-     * 如果都不存在，新建。
-     * 否则，报错。需要人工介入
-     * @param table 主表表名
-     * @param number 分表数量，0表示不分表。
+     * Check and shard table with table_0 to table_${NUMBER - 1}, total NUMBER tables.
+     * A warning is displayed if the footer is not consecutive or if the total is greater than the NUMBER.
+     * If shard table already exist, but none of them have records, delete them all and recreate.
+     * If none exist, create new ones.
+     * Otherwise, an error will throw. Manual intervention is required
+     *
+     * @param table plain table
+     * @param number count of sharding, `0` means no sharding.
      */
     fun publishShard(table: String, number: Int) {
         val here = "publishShard"
-        interactive.log(INFO, here,"start publishShard table=$table, number=$number")
+        interactive.log(INFO, here, "start publishShard table=$table, number=$number")
 
         for ((plainName, plainDs) in plainDataSources) {
-            interactive.log(INFO, here,"ready publishShard table=$table, db=$plainName")
+            interactive.log(INFO, here, "ready publishShard table=$table, db=$plainName")
             val allTables = schemaDefinitionLoader.showTables(plainDs)
-            val shardAll = HashMap<String, Int>() // 可能存在不同的编号风格，key-val不能对调
+            val shardAll = HashMap<String, Int>() // may different numbering styles, key-val can NOT swap
 
             val shardBgn = table.length + 1
             for (tbl in allTables) {
@@ -76,7 +77,7 @@ class SchemaShardingManager(
                 }
             }
 
-            // 检查连续性
+            // check consecutive
             val shardReb = HashMap<Int, String>()
             val shardNew = HashMap<Int, String>()
             for (i in 0 until number) {
@@ -90,41 +91,41 @@ class SchemaShardingManager(
             }
 
             val tmpl = SimpleJdbcTemplate(plainDs, plainName)
-            // 多余的表
+            // redundant table
             var hasError = false
             for ((tbl, _) in shardAll) {
                 val cnt = tmpl.count("SELECT COUNT(1) FROM $tbl")
                 val drop = "DROP TABLE " + sqlStatementParser.safeName(tbl)
                 if (cnt == 0) {
-                    interactive.log(INFO, here,"drop unused empty shard table=$table, db=$plainName")
+                    interactive.log(INFO, here, "drop unused empty shard table=$table, db=$plainName")
                     if (interactive.needAsk(AskType.DropTable)) {
                         interactive.ask("continue?\ndrop unused empty shard table=$table")
                     }
                     tmpl.execute(drop)
                 } else {
                     hasError = true
-                    interactive.log(ERROR, here,"ignore drop table with $cnt records, table=$table, db=$plainName, sql=$drop")
+                    interactive.log(ERROR, here, "ignore drop table with $cnt records, table=$table, db=$plainName, sql=$drop")
                 }
             }
-            // 重建的表
+            // recreate table
             for ((idx, tbl) in shardReb) {
                 val cnt = tmpl.count("SELECT COUNT(1) FROM $tbl")
                 val canDrop = if (cnt == 0) {
                     true
                 } else {
-                    // 检查全DDL（表结构，索引，触发器）是否一样
+                    // check full DDL (field detail, index, trigger)
                     val diff = schemaDefinitionLoader.diffFullSame(plainDs, table, tbl)
                     if (diff.isEmpty()) {
                         true
                     } else {
                         hasError = true
-                        interactive.log(ERROR, here,"ignore existed diff shard=$tbl, db=$plainName , diff=$diff")
+                        interactive.log(ERROR, here, "ignore existed diff shard=$tbl, db=$plainName , diff=$diff")
                         false
                     }
                 }
                 if (canDrop) {
                     val drop = "DROP TABLE " + sqlStatementParser.safeName(tbl)
-                    interactive.log(INFO, here,"drop empty shard table then recreate it, table=$table, db=$plainName")
+                    interactive.log(INFO, here, "drop empty shard table then recreate it, table=$table, db=$plainName")
                     if (interactive.needAsk(AskType.DropTable)) {
                         interactive.ask("continue?\ndrop empty shard table then recreate it, table=$table")
                     }
@@ -134,39 +135,42 @@ class SchemaShardingManager(
             }
 
             if (hasError) {
-                interactive.log(ERROR, here,"need manually handle above errors to continue, table=$table, db=$plainName")
+                interactive.log(ERROR, here, "need manually handle above errors to continue, table=$table, db=$plainName")
                 if (interactive.needAsk(AskType.ManualCheck)) {
                     interactive.ask("continue?\nskip above errors and continue next, table=$table")
                 }
                 continue
             }
 
-            // 新建的表
+            // create new table
             val ddls = schemaDefinitionLoader.showFullDdl(plainDs, table).map {
                 it to TemplateUtil.parse(it, table)
             }
 
             for ((_, tbl) in shardNew) {
-                interactive.log(INFO, here,"create shard table, table=$table, db=$plainName")
+                interactive.log(INFO, here, "create shard table, table=$table, db=$plainName")
                 for ((ddl, idx) in ddls) {
                     val sql = TemplateUtil.merge(ddl, idx, tbl)
-                    interactive.log(INFO, here,"running db=$plainName, ddl=$sql")
+                    interactive.log(INFO, here, "running db=$plainName, ddl=$sql")
                     tmpl.execute(sql)
                 }
             }
         }
-        interactive.log(INFO, here,"done publishShard table=$table, number=$number")
+        interactive.log(INFO, here, "done publishShard table=$table, number=$number")
     }
 
     /**
-     * 从原主表，按shard数据源，迁移数据，百万以上数据不建议使用。
-     * 使用时，建议取消触发器，避免产生大量无用数据。
-     * 执行过程中使用3线程:select, insert, delete。
-     * 2阻塞队列：insert，delete。默认大小1024。
-     * 执行没有事务。目标数据成功插入一条，则源数据删除该条。
-     * 如果失败可能存在脏数据，需要人工加入，根据日志处理
-     * @param table 主表表名
-     * @param stopOnError 插入或删除失败时是否停止，默认不停止，只记录error。
+     * Migrate small size data from the plain table to the shard datasource,
+     * it is not recommended to use it for more than one million data.
+     * When migrating data, it is recommended to disable triggers to avoid generating a lot of useless data.
+     * The execution process uses 3 threads: select, insert and delete.
+     * 2 blocking queue: insert, delete. default size 1024.
+     * Execute without transaction.
+     * If the target data is successfully inserted, then the source data is deleted.
+     * If it fails, there may be dirty data, you need to  insert manually, according to the log processing
+     *
+     * @param table plain table
+     * @param stopOnError Whether to stop when insertion or deletion fails, the default is not to stop, only record error.
      */
     fun shardingData(table: String, stopOnError: Boolean = false) {
         if (shardDataSource == null) {

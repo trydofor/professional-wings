@@ -1,5 +1,5 @@
 /**
- * 表示单表，可含简单的条件子查询，一个包名一个表。
+ * Single tables or can contain simple conditional sub-query, one table for one package.
  *
  * @author trydofor
  * @since 2019-09-17

@@ -10,18 +10,19 @@ import java.util.Map;
  * @since 2022-01-18
  */
 public interface WingsAuthDetails {
+
     /**
-     * 获取验证的元信息，辅助验证，如request内参数
+     * Get meta-info to help with validation, such as the parameters within a request.
      *
-     * @return 可变map，非线程安全
+     * @return mutable, not thread-safe Map
      */
     @NotNull
     Map<String, String> getMetaData();
 
     /**
-     * 获取build后的实体信息
+     * Get the detail data after build
      *
-     * @return 实体信息，如Oauth
+     * @return detail data, eg. Oauth
      */
     @Nullable
     Object getRealData();

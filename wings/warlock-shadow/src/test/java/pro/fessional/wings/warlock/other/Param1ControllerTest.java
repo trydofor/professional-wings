@@ -25,8 +25,8 @@ import java.time.LocalDateTime;
 @Slf4j
 public class Param1ControllerTest {
 
-    @Setter(onMethod_ = {@Value("${local.server.port}")})
-    private int port;
+    @Setter(onMethod_ = {@Value("http://localhost:${local.server.port}")})
+    private String host;
 
     @Setter(onMethod_ = {@Autowired})
     private OkHttpClient okHttpClient;
@@ -95,7 +95,6 @@ public class Param1ControllerTest {
     }
 
     private void testMvc(String uri, String body, String... acc) {
-        final String host = "http://localhost:" + port;
         final String str1 = OkHttpClientHelper.postJson(okHttpClient, host + uri, body);
         boolean ok = false;
         for (String s : acc) {

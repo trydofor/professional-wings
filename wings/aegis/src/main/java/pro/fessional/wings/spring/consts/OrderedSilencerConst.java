@@ -13,5 +13,4 @@ public interface OrderedSilencerConst extends WingsBeanOrdered {
     int TweakConfiguration = Lv5Supervisor;
     //
     int RunnerInspectCommandLine = Lv5Supervisor + PriorityD;
-    int RunnerLogbackTweak = Lv5Supervisor;
 }

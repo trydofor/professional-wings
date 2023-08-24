@@ -26,8 +26,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * 自动计算单线程和全局请求数。
- * 收到TERM信号时，阻止所有请求。
+ * Auto count the number of single-threaded and global requests.
+ * Block all requests when TERM signal is received.
  *
  * @author trydofor
  * @since 2019-07-23
@@ -55,7 +55,7 @@ public class SlardarOverloadConfiguration {
             log.warn("SlardarWebmvc shutting down, deny new request, current=" + overloadFilter.getRequestProcess());
             for (long breaks = 60 * 1000, step = 30; overloadFilter.getRequestProcess() > 0 && breaks > 0; ) {
                 try {
-                    Thread.sleep(step); // 忙等
+                    Thread.sleep(step); // busy wait
                     breaks -= step;
                 }
                 catch (InterruptedException e) {

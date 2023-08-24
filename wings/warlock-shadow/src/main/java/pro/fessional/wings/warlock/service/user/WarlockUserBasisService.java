@@ -10,7 +10,7 @@ import java.time.ZoneId;
 import java.util.Locale;
 
 /**
- * 创建和修改基本用户
+ * Create or modify basis user
  *
  * @author trydofor
  * @since 2021-02-23
@@ -34,21 +34,15 @@ public interface WarlockUserBasisService {
     }
 
     /**
-     * 插入用户，并返回Uid。
-     * 对应自动为null时，系统设置默认值
-     *
-     * @param user user
-     * @return userId
+     * Create a user and return the userId.
      */
     long create(@NotNull Basis user);
 
     /**
-     * 修改用户，只修改不为null的字段。
-     * userId不存在未修改失败
+     * Modify the user, only change non-null value.
+     * fail if userId not found.
      *
-     * @param userId 对应的userId
-     * @param user   需要调整的值
-     * @throws CodeException 数据不存在
+     * @throws CodeException data not exist
      */
     void modify(long userId, @NotNull Basis user);
 

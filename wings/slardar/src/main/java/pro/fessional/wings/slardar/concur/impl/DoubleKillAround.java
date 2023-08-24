@@ -23,12 +23,12 @@ import org.springframework.util.StringUtils;
 import pro.fessional.mirana.lock.ArrayKey;
 import pro.fessional.mirana.lock.JvmStaticGlobalLock;
 import pro.fessional.mirana.time.ThreadNow;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.concur.DoubleKill;
 import pro.fessional.wings.slardar.concur.DoubleKillException;
 import pro.fessional.wings.slardar.concur.ProgressContext;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.DefaultUserId;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -38,7 +38,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Lock;
 
 /**
- * 单JVM内，key无序列化反序列化时使用
+ * Use in single JVM and the key without serialization/deserialization
  *
  * @author trydofor
  * @since 2021-03-09
@@ -119,7 +119,7 @@ public class DoubleKillAround {
         else {
             final ProgressContext.Bar bar = ProgressContext.get(arrKey, ttl);
             if (bar == null) {
-                throw new DoubleKillException("", 0); // 不会到这，防御性写法
+                throw new DoubleKillException("", 0); // Never here, Defensive
             }
             else {
                 throw new DoubleKillException(bar.getKey(), bar.getStarted(), now);

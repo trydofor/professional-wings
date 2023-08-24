@@ -28,7 +28,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
- * 名字转换中，`-`变成`_`，ascii中非java字符，用狮子替换
+ * In name conversion, `-` becomes `_`, non-java characters are replaced with #deerChar.
  *
  * @author trydofor
  * @since 2019-09-24
@@ -38,7 +38,7 @@ public class ConstantEnumGenerator {
     private static final Logger log = LoggerFactory.getLogger(ConstantEnumGenerator.class);
 
     /**
-     * 对java中非合法命名的字符进行替换，设置为空，以忽略非命名字符
+     * Replacement for non-java characters, empty means ignore
      */
     @SuppressWarnings("CanBeFinal")
     public static String deerChar = "_";
@@ -131,12 +131,11 @@ public class ConstantEnumGenerator {
      *
      * @param src    ./src/main/java/
      * @param pkg    pro.fessional.wings.faceless.enums.constant
-     * @param pojos  对象数据
-     * @param filter 过滤type组，true为包含，false为排除
+     * @param pojos  data objects
+     * @param filter filter by type, true for include, false for exclude
      * @see ConstantEnumTemplate
      */
     public static void generate(File src, String pkg, Collection<? extends ConstantEnum> pojos, Map<String, Boolean> filter) {
-        // 初始
 
         Set<File> nowFiles = new HashSet<>();
         File dst = new File(src, pkg.replace('.', '/'));

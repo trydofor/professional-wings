@@ -20,8 +20,7 @@ import java.util.Map;
 
 
 /**
- * 依照 shardingsphere-jdbc-core-spring-boot-starter 配置，构造数据源，
- * 如果有多个数据源，使用sharding数据源，同时expose原始出来，可以独立使用。
+ * Config sharding datasource to DataSourceContext
  *
  * @author trydofor
  */

@@ -27,7 +27,7 @@ public class FlywaveFitProp {
     public static final String Key$autoInit = Key + ".auto-init";
 
     /**
-     * 具体依赖项目
+     * Specific dependencies
      *
      * @see #Key$fit
      */

@@ -24,47 +24,55 @@ cd $(dirname "$this_file")
 cd ../.. # to wings project dir
 
 module_auto="wings/silencer\
-  ,wings/silencer-curse\
-  ,wings/faceless\
-  ,wings/faceless-awesome\
-  ,wings/faceless-flywave\
-  ,wings/faceless-jooq\
-  ,wings/faceless-shard\
-  ,wings/slardar\
-  ,wings/slardar-hazel-session\
-  ,wings/slardar-sprint\
-  ,wings/slardar-webmvc\
-  ,wings/warlock\
-  ,wings/warlock-awesome\
-  ,wings/warlock-bond\
-  ,wings/warlock-shadow\
-  ,radiant/tiny-mail\
-  ,radiant/tiny-task"
+,wings/silencer-curse\
+,wings/faceless\
+,wings/faceless-awesome\
+,wings/faceless-flywave\
+,wings/faceless-jooq\
+,wings/faceless-shard\
+,wings/slardar\
+,wings/slardar-hazel-session\
+,wings/slardar-sprint\
+,wings/slardar-webmvc\
+,wings/warlock\
+,wings/warlock-awesome\
+,wings/warlock-bond\
+,wings/warlock-shadow\
+,radiant/tiny-mail\
+,radiant/tiny-task"
 
 module_h2db="wings/faceless-awesome\
-  ,wings/faceless-jooq\
-  ,wings/slardar\
-  ,wings/slardar-hazel-session\
-  ,wings/slardar-sprint\
-  ,wings/slardar-webmvc\
-  ,wings/warlock\
-  ,wings/warlock-awesome\
-  ,wings/warlock-bond\
-  ,wings/warlock-shadow"
+,wings/faceless-jooq\
+,wings/slardar\
+,wings/slardar-hazel-session\
+,wings/slardar-sprint\
+,wings/slardar-webmvc\
+,wings/warlock\
+,wings/warlock-awesome\
+,wings/warlock-bond\
+,wings/warlock-shadow"
 
 ## ##############
-echo "usage: $0 [init] [auto=*] [h2db=*]"
+echo "usage: $0 [init] [auto=p1,...,pn] [h2db=p1,...,pn]"
 
 for arg in "$@"; do
-  # 使用等号分割参数，取得 arg 和 value
+  # split arguments then get arg and value
   IFS='=' read -r -a parts <<<"$arg"
-  # 检查参数名是否匹配
+  # match arg type
   if [[ "${parts[0]}" == "auto" && "${parts[1]}" != "" ]]; then
     module_auto=${parts[1]}
   elif [[ "${parts[0]}" == "h2db" && "${parts[1]}" != "" ]]; then
     module_h2db=${parts[1]}
   fi
 done
+
+echo "auto=$module_auto"
+echo "h2db=$module_h2db"
+echo -e "\033[32m ==== mvn version ==== \033[0m"
+mvn --version || exit
+
+# shellcheck disable=SC2034
+MAVEN_OPTS="-Xmx2048m"
 
 ## install
 [[ "$*" =~ .*init.* ]] && mvn -U clean install -Dmaven.test.skip=true

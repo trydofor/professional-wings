@@ -13,7 +13,7 @@ public class TinyMailUrlmapProp {
     public static final String Key = "wings.tiny.mail.urlmap";
 
     /**
-     * 获取全部邮件的简要信息，默认倒序
+     * list summary of all messages, in reverse order by default.
      *
      * @see #Key$listAll
      */
@@ -21,7 +21,7 @@ public class TinyMailUrlmapProp {
     public static final String Key$listAll = Key + ".list-all";
 
     /**
-     * 获取失败邮件的简要信息，默认倒序
+     * list summary of failed emails, in reverse order by default.
      *
      * @see #Key$listFailed
      */
@@ -29,7 +29,7 @@ public class TinyMailUrlmapProp {
     public static final String Key$listFailed = Key + ".list-failed";
 
     /**
-     * 获取未成功邮件的简要信息，默认倒序
+     * list summary of unsuccessful emails, in reverse order by default.
      *
      * @see #Key$listUndone
      */
@@ -37,7 +37,7 @@ public class TinyMailUrlmapProp {
     public static final String Key$listUndone = Key + ".list-undone";
 
     /**
-     * 根据Biz-Mark获取邮件的简要信息，默认倒序
+     * find summary of the email by Biz-Mark, in reverse order by default.
      *
      * @see #Key$byBizmark
      */
@@ -45,7 +45,7 @@ public class TinyMailUrlmapProp {
     public static final String Key$byBizmark = Key + ".by-bizmark";
 
     /**
-     * 根据正则比较收件人to/cc/bcc获取邮件的简要信息，默认倒序
+     * find summary of the email by RegExp of to/cc/bcc, reverse order by default.
      *
      * @see #Key$byRecipient
      */
@@ -53,7 +53,7 @@ public class TinyMailUrlmapProp {
     public static final String Key$byRecipient = Key + ".by-recipient";
 
     /**
-     * 根据收件人from获取邮件的简要信息，默认倒序
+     * find summary of the email by from, in reverse order by default.
      *
      * @see #Key$bySender
      */
@@ -61,7 +61,7 @@ public class TinyMailUrlmapProp {
     public static final String Key$bySender = Key + ".by-sender";
 
     /**
-     * 根据正则比较邮件标题获取邮件的简要信息，默认倒序
+     * find summary of the email by RegExp of subject, reverse order by default.
      *
      * @see #Key$bySubject
      */
@@ -69,7 +69,7 @@ public class TinyMailUrlmapProp {
     public static final String Key$bySubject = Key + ".by-subject";
 
     /**
-     * 获取邮件详情
+     * get mail detail.
      *
      * @see #Key$loadDetail
      */
@@ -77,7 +77,7 @@ public class TinyMailUrlmapProp {
     public static final String Key$loadDetail = Key + ".load-detail";
 
     /**
-     * 新建或编辑邮件，并同步立即或异步定时发送
+     * create or save an email, and send it immediately or asynchronously
      *
      * @see #Key$sendMail
      */
@@ -85,7 +85,7 @@ public class TinyMailUrlmapProp {
     public static final String Key$sendMail = Key + ".send-mail";
 
     /**
-     * 仅新建或编辑邮件，但并不发送
+     * only save messages, but do not send them.
      *
      * @see #Key$sendSave
      */
@@ -93,7 +93,7 @@ public class TinyMailUrlmapProp {
     public static final String Key$sendSave = Key + ".send-save";
 
     /**
-     * 同步重试失败的邮件，发送成功或失败，或异常
+     * sync retry failed emails, send success or failure, or exceptions
      *
      * @see #Key$sendRetry
      */
@@ -101,7 +101,8 @@ public class TinyMailUrlmapProp {
     public static final String Key$sendRetry = Key + ".send-retry";
 
     /**
-     * 同步扫需要描补发的邮件，并异步发送，返回补发的件数
+     * sync scan the emails that need to resend,
+     * and send them async, return the number of resend emails.
      *
      * @see #Key$sendScan
      */

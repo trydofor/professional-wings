@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.convert.ApplicationConversionService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.autozone.spring.LocalDate2StringConverter;
 import pro.fessional.wings.slardar.autozone.spring.LocalDateTime2StringConverter;
 import pro.fessional.wings.slardar.autozone.spring.LocalTime2StringConverter;
@@ -22,12 +21,13 @@ import pro.fessional.wings.slardar.autozone.spring.String2ZonedDateTimeConverter
 import pro.fessional.wings.slardar.autozone.spring.ZonedDateTime2StringConverter;
 import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
 /**
- * 通过 ApplicationConversionService#addBeans 自动注入
+ * Auto inject by ApplicationConversionService#addBeans
  *
  * @author trydofor
  * @see ApplicationConversionService#addBeans

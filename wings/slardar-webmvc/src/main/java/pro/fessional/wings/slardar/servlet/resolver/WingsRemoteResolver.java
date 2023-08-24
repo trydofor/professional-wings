@@ -35,7 +35,7 @@ public class WingsRemoteResolver {
     }
 
     /**
-     * 组合remote的ip,agent,及header，构造唯一key
+     * Construct a unique key by remote ip, agent and header
      */
     @NotNull
     public String resolveRemoteKey(HttpServletRequest request, String... header) {

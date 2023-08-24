@@ -12,22 +12,38 @@ import java.util.Collection;
  */
 public class CacheEventHelper {
 
-    public static String fire(TableChangeEvent event, Collection<? extends CharSequence> tables) {
-        if (event == null) return "NULL";
+
+    /**
+     * Check if the table name of event is in the tables collection
+     *
+     * @param event  Get the table name
+     * @param tables Check if the table name is in the tables collection
+     * @return table name
+     */
+    public static String receiveTable(TableChangeEvent event, Collection<? extends CharSequence> tables) {
+        if (event == null) return null;
 
         final String tb = event.getTable();
-        if (EqualsUtil.inNoCase(tb, tables)) {
+        if (EqualsUtil.inCaseless(tb, tables)) {
             return tb;
         }
 
         return null;
     }
 
-    public static String fire(TableChangeEvent event, Collection<? extends CharSequence> tables, int change) {
-        if (event == null) return "NULL";
+    /**
+     * Check if the table name of event is in the tables collection, and the change type must match.
+     *
+     * @param event  Get the table name
+     * @param tables Check if the table name is in the tables collection
+     * @param change change type {@link TableChangeEvent#DELETE}
+     * @return table name
+     */
+    public static String receiveTable(TableChangeEvent event, Collection<? extends CharSequence> tables, int change) {
+        if (event == null) return null;
 
         final String tb = event.getTable();
-        if (event.hasChange(change) && EqualsUtil.inNoCase(tb, tables)) {
+        if (event.hasChange(change) && EqualsUtil.inCaseless(tb, tables)) {
             return tb;
         }
 

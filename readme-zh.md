@@ -11,7 +11,7 @@
 * [![Jooq-3.17](https://img.shields.io/badge/jooq-3.17-cyan)](https://www.jooq.org/download/)  主要的强类型SqlMapping 🏅 [Apache2]
 * [![Mysql-8](https://img.shields.io/badge/mysql-8.0-blue)](https://dev.mysql.com/downloads/mysql/) 主要的业务数据库，推荐8，兼容5.7 💡 [GPLv2]
 * [![H2Database-2.1](https://img.shields.io/badge/h2db-2.1-blue)](https://h2database.com/html/main.html) 单机数据库，以离线及断线业务 [MPL2]或[EPL1]
-* [![Hazelcast-5.1](https://img.shields.io/badge/hazelcast-5.1-violet)](https://hazelcast.org/imdg/) IMDG，分布式缓存，消息，流等 [Apache2]
+* [![Hazelcast-5.1](https://img.shields.io/badge/hazelcast-5.1-violet)](https://docs.hazelcast.com/hazelcast/) 分布式缓存，消息，流等 [Apache2]
 * [![ServiceComb-2.8](https://img.shields.io/badge/servicecomb-2.8-violet)](https://servicecomb.apache.org) 更工程化和紧凑的微服务方案 [Apache2]
 * [![ShardingSphere-5.3](https://img.shields.io/badge/shardingsphere-5.3-violet)](https://shardingsphere.apache.org) 数据库的分表分片弹性伸缩方案 [Apache2]
 
@@ -23,25 +23,27 @@
 
 ## 1.关联文档
 
-* Official Doc - <https://wings.fessional.pro/zh>
-* NotBad Review - <https://java-code-review.moilioncircle.com>
-* Doc GitHub - <https://github.com/fessionalpro/wings-doc>
-* [Gitee](https://gitee.com/trydofor) is the mirror site 
+* 官方手册 - <https://wings.fessional.pro/zh>
+* 代码审查 - <https://java-code-review.moilioncircle.com>
+* 文档项目 - <https://github.com/fessionalpro/wings-doc>
+* 镜像站点 - <https://gitee.com/trydofor>
 
 ## 2.常用命令
 
 ```bash
-# ① 国内镜像，成功后进入项目目录
+## ① 获取源码，成功后进入项目目录
 git clone --depth 1 https://github.com/\
 trydofor/pro.fessional.wings.git
-# ② 安装依赖，可跳过，支持java8编译
-# sdk use java 8.0.352-tem
+## ② 安装依赖，可跳过，支持java8编译
+sdk use java 8.0.352-tem
 git submodule update --remote --init
 (cd observe/meepo && mvn package install)
 (cd observe/mirana && mvn package install)
-# ③ 安装wings，java-17
+## ③ 安装wings，java-17
 sdk use java 17.0.6-tem
 mvn package install
+## ④ 报告Issue
+java -jar silencer-*-SNAPSHOT.jar
 ```
 
 ## 3.用爱发电
@@ -59,8 +61,9 @@ mvn package install
 
 ## 4.免责声明
 
-WingsBoot及其submodule项目，均以Apache2授权。但本人，
+WingsBoot及其submodule项目，均以[Apache2]授权。请注意，
 
-* 不对滥用技术或手册造成的任何损失负责。
-* 没有义务提供咨询，答疑，开发等服务。
-* 可付费咨询，404 CNY/H
+* 项目是基于现有技术，资源和团队实践的自愿贡献，没有任何明示或暗示的保证或条件。
+* 项目的开发者已经尽力确保代码的质量和功能性，但不保证完全没有缺陷或错误。
+* 在使用项目时，你应该自行评估其适用性，并承担使用该项目的所有风险。
+* 在任何情况下，项目的开发者都不对因使用该项目而导致的任何损失、损害或其他责任承担责任。

@@ -6,11 +6,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 注意：异步执行时且同@Cacheable等AOP功能注解一起使用时，要保证DK最先被执行。
- * 否则异步执行的结果，不能被正确处理。若是不能保证最先执行，不要同时使用。
- * <p>
- * JVM内重复执行拦截，以抛出无栈异常终止执行，需要调用者自行catch。
- * - DoubleKillException 除同步执行中的调用，其他调用都throw。
+ * <pre>
+ * Note: When executing async and using with AOP annotations such as @Cacheable,
+ * make sure that DK is executed first. Otherwise, the result of the async execution
+ * cannot be processed correctly. If you can not guarantee the first execution,
+ * do not use at the same time.
+ *
+ * Repeated interception within the JVM will throw a no-stack exception to stop the execution,
+ * the caller needs to `catch` their own.
+ * - DoubleKillException will `throw` except those in sync execution.
+ *
+ * </pre>
  *
  * @author trydofor
  * @see DoubleKillException
@@ -22,15 +28,14 @@ import java.lang.annotation.Target;
 public @interface DoubleKill {
 
     /**
-     * static key，保证方法内唯一即可。优先级高于expression key
-     *
-     * @return key
+     * static key, just make sure it is unique within the method. higher priority than `expression` key
      */
     String value() default "";
 
     /**
-     * 使用方法同`@Cacheable`的`key`，默认空，使用全部参数。当有static-key时，expression无效。
-     * 可以使用`@beanName`获得Bean
+     * Used in the same way as `key` of `@Cacheable`, empty by default, with all arguments.
+     * If a static-key exists, the expression is omitted.
+     * Beans can be obtained using `@beanName`.
      * <p>
      * Spring Expression Language (SpEL) expression for computing the key dynamically
      * <ul>
@@ -48,25 +53,19 @@ public @interface DoubleKill {
     String expression() default "";
 
     /**
-     * 是否使用spring SecurityContextHolder.context.authentication.principal参与鉴别
-     *
-     * @return 是否参与
+     * Whether to use spring SecurityContextHolder.context.authentication.principal in keys
      */
     boolean principal() default true;
 
     /**
-     * 是否异步执行该方法，默认同步。
-     * 异步执行时，执行中都以ReturnOrException任务进度。
-     * 默认使用spring @Async线程池
-     *
-     * @return 是否异步
+     * Whether to execute the method async, default sync.
+     * If async, the execution progresses with the ReturnOrException.
+     * Use spring @Async thread pool by default.
      */
     boolean async() default false;
 
     /**
-     * 执行信息在 ProgressContext 中存活的秒数
-     *
-     * @return 默认300秒
+     * The seconds of the execution message remain in the ProgressContext. default 300s
      */
     int progress() default 300;
 }

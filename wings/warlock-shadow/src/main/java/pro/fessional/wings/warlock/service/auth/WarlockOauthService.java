@@ -23,13 +23,13 @@ public interface WarlockOauthService {
     String AccessToken = "access_token";
 
     /**
-     * 需要检查scope和redirectUri，session 第三方用户的sessionId
+     * Need to check scope, redirectUri and session (3rd user's sessionId)
      */
     @NotNull
     OAuth authorizeCode(@NotNull String clientId, String scope, String redirectUri, String session);
 
     /**
-     * token为empty时，为client_credentials模式，否则为authorization_code
+     * client_credentials if token is empty, otherwise authorization_code
      */
     @NotNull
     OAuth accessToken(@NotNull String clientId, @NotNull String clientSecret, String token);

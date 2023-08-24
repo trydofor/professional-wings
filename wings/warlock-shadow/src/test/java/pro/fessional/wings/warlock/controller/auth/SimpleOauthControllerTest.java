@@ -62,7 +62,7 @@ class SimpleOauthControllerTest {
         Assertions.assertEquals(state, json0.getString(WarlockOauthService.State));
 
         final String code = json0.getString(WarlockOauthService.Code);
-        // scopes 是否正确
+        // Whether scopes is correct
         Assertions.assertNotNull(code);
 
         final String code1 = accessToken(clientId, clientSecret, code, null);

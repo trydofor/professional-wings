@@ -51,7 +51,10 @@ public class WarlockAwesomeConfiguration {
     }
 
 
-    @Bean    // 数据库值覆盖工程配置
+    /**
+     * Database values override project config
+     */
+    @Bean
     public CommandLineRunnerOrdered runnerRegisterRuntimeMode(ObjectProvider<RuntimeConfService> provider) {
         log.info("Warlock spring-runs runnerRegisterRuntimeMode");
         return new CommandLineRunnerOrdered(OrderedWarlockConst.RunnerRegisterRuntimeMode, ignored -> {

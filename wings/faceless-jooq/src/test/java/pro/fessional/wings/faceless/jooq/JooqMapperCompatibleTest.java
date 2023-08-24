@@ -23,11 +23,6 @@ import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
 import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 
 /**
- * SimpleFlatMapper 比较不错，但有intoArray的bug
- * https://github.com/arnaudroger/SimpleFlatMapper/issues/764
- * <p>
- * SimpleFlatMapper 不支持 int.class, 仅Integer.class
- *
  * @author trydofor
  * @since 2020-08-14
  */
@@ -59,7 +54,6 @@ public class JooqMapperCompatibleTest {
         Assertions.assertFalse(b);
     }
 
-    // 同名
     @Data
     public static class SameName {
         private Long id;
@@ -72,7 +66,7 @@ public class JooqMapperCompatibleTest {
         TstShardingTable t = dao.getTable();
         Condition c = t.Id.gt(1L).and(t.Id.le(105L));
 
-        testcaseNotice("采用区分大小写的别名，jooq不支持，sfm支持");
+        testcaseNotice("Case-sensitive alias, not supported by jooq, supported by sfm");
         SameName vo1 = ctx.select(t.Id, t.LoginInfo.as("logininfo"))
                           .from(t)
                           .where(c)
@@ -80,7 +74,7 @@ public class JooqMapperCompatibleTest {
                           .fetchOneInto(SameName.class);
 
         Assertions.assertNotNull(vo1);
-        Assertions.assertNull(vo1.getLoginInfo(), "Jooq区分大小写");
+        Assertions.assertNull(vo1.getLoginInfo(), "Jooq is case-sensitive");
     }
 
     @Test
@@ -89,7 +83,7 @@ public class JooqMapperCompatibleTest {
         TstShardingTable t = dao.getTable();
         Condition c = t.Id.gt(1L).and(t.Id.le(105L));
 
-        testcaseNotice("采用下划线的别名，jooq和sfm都支持");
+        testcaseNotice("Underscore alias, supported by both jooq and sfm");
         SameName vo2 = ctx.select(t.Id, t.LoginInfo.as("login_info"))
                           .from(t)
                           .where(c)
@@ -103,7 +97,7 @@ public class JooqMapperCompatibleTest {
     @Test
     public void test1Array() {
 
-        testcaseNotice("sfm有bug");
+        testcaseNotice("sfm has bug");
         SameName vo = new SameName();
         vo.setId(101L);
         vo.setLoginInfo("login-info test");

@@ -18,7 +18,7 @@ import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 import java.io.IOException;
 
 /**
- * 实现了一次性token换session，需要自行覆盖onResponse
+ * UUse the one-time token to obtain the session, `onResponse` need to be Override
  *
  * @author trydofor
  * @see SavedRequestAwareAuthenticationSuccessHandler

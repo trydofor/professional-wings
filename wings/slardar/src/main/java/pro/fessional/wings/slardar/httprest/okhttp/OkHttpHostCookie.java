@@ -23,12 +23,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class OkHttpHostCookie implements CookieJar {
 
     /**
-     * 默认的一个host下cookie数量
+     * default max cookie stored at host
      */
-    public static final int MaxCookiePerHost = 16;
+    public static final int MaxCookiePerHost = 64;
 
     // ups, fedex has many cookies....
-    private int maxCookiePerHost = 64;
+    private int maxCookiePerHost = MaxCookiePerHost;
 
     public int getMaxCookiePerHost() {
         return maxCookiePerHost;
@@ -68,7 +68,8 @@ public class OkHttpHostCookie implements CookieJar {
             try {
                 final long now = ThreadNow.millis();
                 if (cookies.size() >= maxCookies) {
-                    // 没有Expires或Max-Age的默认是9999-12-31，等于Client关闭时过期。
+                    // The default without Expires or Max-Age is 9999-12-31,
+                    // which equals expiration when the Client closes.
                     cookies.entrySet().removeIf(it -> it.getValue().expiresAt() < now);
                 }
                 for (Cookie ck : cks) {

@@ -20,8 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * JustAuth UserDetailsService，不存在用户时，自动创建
- *
  * @author trydofor
  * @since 2021-02-22
  */
@@ -66,7 +64,7 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
         warlockAuthnService.auth(wud, dt);
         warlockAuthzService.auth(wud);
         if (!wud.isPreAuthed()) {
-            // 无前置验证时，自动注册认为可登录
+            // If there is no pre-authentication, auto register consider as logged in.
             wud.setPreAuthed(at || authed(authType));
         }
 
@@ -82,17 +80,14 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
     }
 
     /**
-     * 是否验证过，默认false
-     *
-     * @param authType 类型
-     * @return false
+     * Whether pass the auth, default false
      */
     public boolean authed(Enum<?> authType) {
         return false;
     }
 
     /**
-     * 加载信息
+     * Load details
      */
     @Nullable
     public Details doLoad(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {

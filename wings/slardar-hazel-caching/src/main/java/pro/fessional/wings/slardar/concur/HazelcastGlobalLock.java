@@ -1,50 +1,42 @@
 package pro.fessional.wings.slardar.concur;
 
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.map.IMap;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.lock.GlobalLock;
-import pro.fessional.wings.slardar.concur.impl.HazelcastIMapLock;
+import pro.fessional.wings.slardar.concur.impl.HazelcastMapLock;
 
 import java.util.concurrent.locks.Lock;
 
+import static pro.fessional.wings.slardar.constants.HazelcastConst.MapGlobalLock;
+
 /**
- * 默认使用IMap.lock实现，可配置使用CPSubsystem实现锁。
- * 当CpSubsystem可用时(CPMemberCount>0)，可选用Raft的lock锁
+ * <pre>
+ * <a href="https://docs.hazelcast.com/hazelcast/5.1/data-structures/locking-maps">Pessimistic Locking IMap.lock/unlock</a>
+ * The lock will automatically be collected by the garbage collector when the lock is released and no other waiting conditions exist on the lock.
+ *
+ * <a href="https://docs.hazelcast.com/hazelcast/5.1/data-structures/fencedlock">FencedLock</a> -
+ * Locks are not automatically removed. If a lock is not used anymore,
+ * Hazelcast does not automatically perform garbage collection in the lock.
+ * This can lead to an OutOfMemoryError.
+ * If you create locks on the fly, make sure they are destroyed.
+ * </pre>
  *
  * @author trydofor
+ * @see pro.fessional.wings.slardar.constants.HazelcastConst#MapGlobalLock
  * @since 2021-03-08
  */
 public class HazelcastGlobalLock implements GlobalLock {
 
-    private static final String IMapKey = "wings:global:lock";
-    private final HazelcastInstance hazelcastInstance;
-    private final boolean useCpIfSafe;
+    private final IMap<Object, Object> hazelcastMap;
 
-    /**
-     * 默认使用Imap实现
-     *
-     * @param hazelcastInstance 实例
-     */
     public HazelcastGlobalLock(HazelcastInstance hazelcastInstance) {
-        this.hazelcastInstance = hazelcastInstance;
-        this.useCpIfSafe = false;
-    }
-
-    /**
-     * @param hazelcastInstance 实例
-     * @param useCpIfSafe       当CPMemberCount>0时，使用CP
-     */
-    public HazelcastGlobalLock(HazelcastInstance hazelcastInstance, boolean useCpIfSafe) {
-        this.hazelcastInstance = hazelcastInstance;
-        this.useCpIfSafe = useCpIfSafe && hazelcastInstance.getConfig().getCPSubsystemConfig().getCPMemberCount() > 0;
+        hazelcastMap = hazelcastInstance.getMap(MapGlobalLock);
     }
 
     @Override
-    public @NotNull Lock getLock(@NotNull String name) {
-        if (useCpIfSafe) {
-            return hazelcastInstance.getCPSubsystem().getLock(name);
-        } else {
-            return new HazelcastIMapLock(hazelcastInstance.getMap(IMapKey), name);
-        }
+    @NotNull
+    public Lock getLock(@NotNull String name) {
+        return new HazelcastMapLock(hazelcastMap, name);
     }
 }
