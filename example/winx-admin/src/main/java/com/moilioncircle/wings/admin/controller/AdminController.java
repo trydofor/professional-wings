@@ -22,9 +22,9 @@ public class AdminController {
     private WarlockUserAuthnService authnService;
 
     @PostMapping("/admin/disable-root.json")
-    public R<Boolean> rootNeverLogin() {
+    public R<Void> rootNeverLogin() {
         authnService.disable(DefaultUserId.Root, WarlockAuthType.USERNAME);
         log.info("disable root");
-        return R.ok();
+        return R.OK;
     }
 }

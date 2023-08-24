@@ -81,7 +81,7 @@ public class AuthedUserController {
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedUser + "}")
     public R<Dto> authedUser(HttpServletRequest request) {
         final WingsUserDetails wd = SecurityContextUtil.getUserDetails(false);
-        if (wd == null) return R.ng();
+        if (wd == null) return R.NG();
 
         Dto dto = new Dto();
         fillDetail(wd, dto);
@@ -136,7 +136,7 @@ public class AuthedUserController {
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userAuthedPerm + "}")
     public R<Set<String>> authedPerm(HttpServletRequest request, @RequestBody Ins ins) {
         final WingsUserDetails wd = SecurityContextUtil.getUserDetails(false);
-        if (wd == null) return R.ng();
+        if (wd == null) return R.NG();
 
         final Set<String> ck = ins.getCheck();
         final Set<String> pm = wd.getAuthorities().stream()
@@ -163,7 +163,7 @@ public class AuthedUserController {
         if (alias == null) alias = Collections.emptyMap();
 
         if (perms.isEmpty() && alias.isEmpty()) {
-            return R.ok();
+            return R.OK();
         }
 
         // alias over perms
@@ -205,7 +205,7 @@ public class AuthedUserController {
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$userListSession + "}")
     public R<List<Ses>> listSession() {
         final WingsUserDetails details = SecurityContextUtil.getUserDetails(false);
-        if (details == null) return R.ng();
+        if (details == null) return R.NG();
 
         final List<MapSession> sessions = wingsSessionHelper.findByUserId(details.getUserId());
         final List<Ses> sess = sessions.stream().map(it -> {

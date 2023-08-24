@@ -93,6 +93,6 @@ public class TestOtherController {
         watchingService.asyncAwait();
         watchingService.normalFetch();
         watchingService.errorFetch();
-        return R.ok();
+        return R.OK;
     }
 }

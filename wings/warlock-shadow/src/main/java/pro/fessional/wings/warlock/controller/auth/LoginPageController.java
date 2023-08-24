@@ -143,7 +143,7 @@ public class LoginPageController {
         if (sid == null) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body(R.ng());
+                    .body(R.NG);
         }
         else {
             final R<?> r;
