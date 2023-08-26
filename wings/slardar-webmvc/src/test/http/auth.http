@@ -7,13 +7,13 @@ GET {{host}}/user/login.json
 POST {{host}}/user/login-proc.json
 Content-Type: application/x-www-form-urlencoded;charset=UTF-8
 
-username=wings-slardar-user2&password=F9EC9CF4EA9EEEE69FC01AA44638087F
+username=wings-slardar-user2&password=5DDEEB6C6F9812EE9C7CCF6FC82A50DD
 
 ### login-proc
 POST {{host}}/sms/login-proc.json
 Content-Type: application/x-www-form-urlencoded;charset=UTF-8
 
-username=wings-slardar-user2&password=F9EC9CF4EA9EEEE69FC01AA44638087F
+username=wings-slardar-user2&password=5DDEEB6C6F9812EE9C7CCF6FC82A50DD
 
 ###
 GET {{host}}/authed/see-user.json
