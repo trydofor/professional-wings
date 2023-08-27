@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.concur;
 
 import com.hazelcast.core.HazelcastInstance;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 2021-03-08
  */
 @SpringBootTest
+@Slf4j
 class HazelcastGlobalLockTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -48,7 +50,7 @@ class HazelcastGlobalLockTest {
                 b = lock.tryLock(1, TimeUnit.MILLISECONDS);
                 assertFalse(b);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.error("lock fail",e);
             }
             latch.countDown();
         }).start();

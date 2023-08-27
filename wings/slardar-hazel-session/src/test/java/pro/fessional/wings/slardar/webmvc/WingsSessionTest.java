@@ -16,6 +16,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
+ * bug in boot 3.0.8, fixed in 3.0.9
+ * <a href="https://github.com/spring-projects/spring-framework/issues/30747">
+ * io.micrometer:micrometer-observation:1.10.8 or higher and io.micrometer:context-propagation:1.0.3 or higher
+ * </a>
+ *
  * @author trydofor
  * @since 2020-06-03
  */

@@ -44,7 +44,7 @@ class GuestSessionTest {
     public void guest401() {
         OkHttpClientHelper.clearCookie(okHttpClient, HttpUrl.get(host));
         try (final Response r1 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/user/guest-401.json"), false)) {
-            Assertions.assertEquals(401, r1.code(), "try to run a standalone");
+            Assertions.assertEquals(401, r1.code(), "retry standalone to avoid cookies");
         }
     }
 }

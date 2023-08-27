@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 
@@ -54,7 +55,7 @@ public class TestSecurityConfiguration {
             )
             .and()
             .authorizeHttpRequests(conf -> conf
-                    .requestMatchers("/authed/*").authenticated()
+                    .requestMatchers(new AntPathRequestMatcher("/authed/*", null)).authenticated()
             )
 //            .formLogin(conf -> conf
 //                    .loginPage("/user/login.json")

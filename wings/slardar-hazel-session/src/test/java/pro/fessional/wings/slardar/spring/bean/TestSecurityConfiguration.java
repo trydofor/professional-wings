@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import pro.fessional.wings.slardar.security.handler.TestLoginHandler;
 
 
@@ -29,20 +30,6 @@ public class TestSecurityConfiguration {
     @Setter(onMethod_ = {@Autowired})
     private SessionRegistry sessionRegistry;
 
-/*
-    @Setter(onMethod_ = {@Autowired})
-    private WingsUserDetailsService wingsUserDetailsService;
-
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.apply(SecurityConfigHelper.auth())
-            .userDetailsService(wingsUserDetailsService)
-        .and()
-        ;
-    }
-*/
-
     /**
      * The URL paths provided by the framework are
      * /oauth/authorize (the authorization endpoint),
@@ -60,10 +47,10 @@ public class TestSecurityConfiguration {
      * only non-API resources in the WebSecurityConfigurer above.
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, MvcRequestMatcher.Builder mvcMatcher) throws Exception {
         log.info("config HttpSecurity");
         http.authorizeHttpRequests(conf -> conf
-                    .requestMatchers("/authed/*").authenticated()
+                    .requestMatchers(mvcMatcher.pattern("/authed/*")).authenticated()
             )
             .formLogin(conf -> conf
                     .loginPage("/user/login.json") // 401 page
