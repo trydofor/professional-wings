@@ -27,7 +27,6 @@ import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
-import pro.fessional.wings.slardar.spring.conf.WingsHttpPermitConfigurer;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.spring.conf.HttpSecurityCustomizer;
@@ -208,7 +207,7 @@ public class WarlockSecurityConfConfiguration {
         log.info("WarlockShadow spring-bean warlockSecurityAutoHttpConfigure");
         return http -> {
             // cors
-            http.cors().configurationSource(WingsHttpPermitConfigurer.corsPermitAll());
+            http.cors().configurationSource(SecurityConfigHelper.corsPermitAll());
 
             // cache
             final RequestCache rc = cache.getIfAvailable();
