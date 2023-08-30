@@ -137,10 +137,7 @@ public class OkHttpClientHelper {
 
     @Nullable
     public static ResponseBody extract(@Nullable Response response) {
-        if (response != null && response.isSuccessful()) {
-            return response.body();
-        }
-        return null;
+        return response == null ? null : response.body();
     }
 
     @NotNull
@@ -374,8 +371,8 @@ public class OkHttpClientHelper {
                     .domain(it.domain())
                     .value(it.value())
                     .expiresAt(0);
-            if(it.secure()) builder.secure();
-            if(it.httpOnly()) builder.httpOnly();
+            if (it.secure()) builder.secure();
+            if (it.httpOnly()) builder.httpOnly();
             return builder.build();
         }).toList();
         cookieJar.saveFromResponse(url, list);

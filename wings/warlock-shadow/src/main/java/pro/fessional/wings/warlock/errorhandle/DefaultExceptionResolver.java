@@ -5,6 +5,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import pro.fessional.mirana.best.DummyBlock;
 import pro.fessional.mirana.data.DataResult;
 import pro.fessional.mirana.data.Null;
@@ -13,6 +15,7 @@ import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.pain.HttpStatusException;
 import pro.fessional.mirana.text.JsonTemplate;
 import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
+import pro.fessional.wings.slardar.enums.errcode.AuthzErrorEnum;
 import pro.fessional.wings.slardar.webmvc.SimpleExceptionResolver;
 import pro.fessional.wings.slardar.webmvc.SimpleResponse;
 import pro.fessional.wings.spring.consts.OrderedWarlockConst;
@@ -54,6 +57,9 @@ public class DefaultExceptionResolver extends SimpleExceptionResolver<Exception>
                 else if (tmp instanceof DataResult<?> ex) {
                     return handle(ex);
                 }
+                else if (tmp instanceof AccessDeniedException ex) {
+                    return handle(ex);
+                }
             }
         }
         catch (Exception e) {
@@ -89,14 +95,25 @@ public class DefaultExceptionResolver extends SimpleExceptionResolver<Exception>
         return new SimpleResponse(defaultResponse.getHttpStatus(), defaultResponse.getContentType(), body);
     }
 
+    protected SimpleResponse handle(AccessDeniedException cex) {
+        final String body = JsonTemplate.obj(obj -> {
+            obj.putVal("success", false);
+            String code = AuthzErrorEnum.accessDenied.getCode();
+            obj.putVal("code", code);
+            obj.putVal("message", resolveMessage(code));
+        });
+        return new SimpleResponse(HttpStatus.FORBIDDEN.value(), defaultResponse.getContentType(), body);
+    }
+
     protected String resolveMessage(CodeException ce) {
         String code = ce.getI18nCode();
         if (code == null) code = ce.getMessage();
-
         if (code == null || code.isEmpty()) return null;
+        return resolveMessage(code, Null.notNull(ce.getI18nArgs()));
+    }
 
+    protected String resolveMessage(String code, Object... args) {
         Locale locale = LocaleZoneIdUtil.LocaleNonnull.get();
-        final Object[] args = ce.getI18nArgs();
-        return messageSource.getMessage(code, Null.notNull(args), locale);
+        return messageSource.getMessage(code, args, locale);
     }
 }

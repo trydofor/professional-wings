@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +20,7 @@ import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.pain.MessageException;
 import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
+import pro.fessional.wings.warlock.security.autogen.PermConstant;
 import pro.fessional.wings.warlock.service.watching.WatchingService;
 
 import java.util.concurrent.CompletableFuture;
@@ -81,6 +84,34 @@ public class TestOtherController {
     public R<?> bindingErrorJson(@Valid @RequestBody Ins ins) {
         log.info(">>>" + ins.toString());
         return R.okData(ins);
+    }
+
+    @RequestMapping("/test/secured-create.json")
+    @Secured(PermConstant.System.Perm.create)
+    public String securedCreate() {
+        log.info(">>> /test/secured-create.json");
+        return "OK";
+    }
+
+    @RequestMapping("/test/secured-update.json")
+    @Secured(PermConstant.System.Perm.update)
+    public String securedUpdate() {
+        log.info(">>> /test/secured-update.json");
+        return "OK";
+    }
+
+    @RequestMapping("/test/prepost-create.json")
+    @PreAuthorize("hasAuthority('" + PermConstant.System.Perm.create + "')")
+    public String prePostCreate() {
+        log.info(">>> /test/secured-create.json");
+        return "OK";
+    }
+
+    @RequestMapping("/test/prepost-update.json")
+    @PreAuthorize("hasAuthority('" + PermConstant.System.Perm.update + "')")
+    public String prePostUpdate() {
+        log.info(">>> /test/secured-update.json");
+        return "OK";
     }
 
 

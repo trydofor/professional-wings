@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -34,6 +35,7 @@ import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeParser;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.spring.consts.OrderedWarlockConst;
+import pro.fessional.wings.warlock.security.handler.AccessFailureHandler;
 import pro.fessional.wings.warlock.security.handler.LoginFailureHandler;
 import pro.fessional.wings.warlock.security.handler.LoginSuccessHandler;
 import pro.fessional.wings.warlock.security.handler.LogoutOkHandler;
@@ -131,6 +133,14 @@ public class WarlockSecurityBeanConfiguration {
     public LogoutSuccessHandler logoutSuccessHandler() {
         log.info("WarlockShadow spring-bean logoutSuccessHandler");
         return new LogoutOkHandler();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(AccessDeniedHandler.class)
+    @ConditionalOnExpression("!'${" + WarlockSecurityProp.Key$logoutSuccessBody + "}'.isEmpty()")
+    public AccessDeniedHandler accessDeniedHandler() {
+        log.info("WarlockShadow spring-bean accessDeniedHandler");
+        return new AccessFailureHandler();
     }
 
     ///////// AuthZ & AuthN /////////

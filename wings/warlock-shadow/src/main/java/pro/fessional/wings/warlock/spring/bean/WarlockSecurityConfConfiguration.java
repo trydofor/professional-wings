@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -89,7 +90,8 @@ public class WarlockSecurityConfConfiguration {
             ObjectProvider<AuthenticationSuccessHandler> authenticationSuccessHandler,
             ObjectProvider<AuthenticationFailureHandler> authenticationFailureHandler,
             ObjectProvider<WingsAuthDetailsSource<?>> wingsAuthDetailsSource,
-            ObjectProvider<LogoutSuccessHandler> logoutSuccessHandler
+            ObjectProvider<LogoutSuccessHandler> logoutSuccessHandler,
+            ObjectProvider<AccessDeniedHandler> accessDeniedHandler
     ) {
         log.info("WarlockShadow spring-bean warlockSecurityBindHttpConfigure");
         return http -> {
@@ -141,6 +143,12 @@ public class WarlockSecurityConfConfiguration {
                             ResponseHelper.writeBodyUtf8(response, securityProp.getSessionExpiredBody());
                         })
                 );
+
+            final AccessDeniedHandler deniedHandler = accessDeniedHandler.getIfAvailable();
+            if(deniedHandler != null){
+                log.info("WarlockShadow conf exceptionHandling, accessDeniedHandler=" + deniedHandler.getClass());
+                http.exceptionHandling().accessDeniedHandler(deniedHandler);
+            }
         };
     }
 
