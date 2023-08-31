@@ -116,32 +116,40 @@ ls -lsh |grep "$dump_head" | tee -a "$dump_tbl_file"
 
 echo -e "\033[0;33mNOTE: tips for zip, scp, restore \033[m"
 tee -a "$dump_tip_file" << EOF
+## checksum
 md5sum -c $dump_md5_file # checksum
 
+## extract
 tar -tzf $dump_tar_file # list files
 tar -xzf $dump_tar_file # extract files
 tar -xzf $dump_tar_file $dump_tip_file # extract tips
 
+## transfer
 scp -P 2022 ${dump_head}.* trydofor@moilioncircle:/data/mysql-dump/
 rsync -azP -e "ssh -p 2022" ${dump_head}.* trydofor@moilioncircle:/data/mysql-dump/
 
+## restore
 unalias mysql
 newdb="$dump_head"
+mycnf="$extracnf"
 
-# with progress
+## with progress
 cat $dump_logs_file $dump_main_file \\
 | pv -Ipert \\
 | sed -E 's/DEFINER=[^*]+/DEFINER=CURRENT_USER/g' \\
-| mysql $confopts \\
+| mysql --defaults-extra-file=\$mycnf \\
 --init-command="CREATE DATABASE IF NOT EXISTS \$newdb; use \$newdb;"
 
-# nohup
+## nohup
 nohup \\
 cat $dump_logs_file $dump_main_file \\
 | sed -E 's/DEFINER=[^*]+/DEFINER=CURRENT_USER/g' \\
-| mysql $confopts \\
+| mysql --defaults-extra-file=\$mycnf \\
 --init-command="CREATE DATABASE IF NOT EXISTS \$newdb; use \$newdb;" \\
 &
+
+## masking
+./reset-password.sh \$mycnf \$newdb;
 EOF
 
 echo -e "\033[0;33mNOTE: tar files into $dump_tar_file \033[m"
