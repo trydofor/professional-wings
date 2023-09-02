@@ -11,17 +11,17 @@ import pro.fessional.mirana.data.CodeEnum;
 @RequiredArgsConstructor
 public enum CommonErrorEnum implements CodeEnum {
 
-    AssertEmpty1("error.common.assert.empty", "{0}不能为空"),
-    AssertFormat1("error.common.assert.format", "{0}格式不正确"),
-    AssertNotFound1("error.common.assert.notfound", "{0}不存在"),
-    AssertExisted1("error.common.assert.existed", "{0}已存在"),
-    AssertState2("error.common.assert.state", "状态不正确，名字={0}，值={1}"),
-    AssertParam2("error.common.assert.param", "参数不正确，名字={0}，值={1}"),
+    AssertEmpty1("error.common.assert.empty", "{0} should not empty"),
+    AssertFormat1("error.common.assert.format", "{0} is bad format"),
+    AssertNotFound1("error.common.assert.notfound", "{0} not found"),
+    AssertExisted1("error.common.assert.existed", "{0} existed"),
+    AssertState2("error.common.assert.state", "bad state, name={0}, value={1}"),
+    AssertParam2("error.common.assert.param", "bad parameter, name={0}, value={1}"),
 
-    DataNotFound("error.common.data.notfound", "数据不存在"),
-    DataExisted("error.common.data.existed", "数据已存在"),
+    DataNotFound("error.common.data.notfound", "data not found"),
+    DataExisted("error.common.data.existed", "data existed"),
 
-    MessageUnreadable("error.common.message.unreadable", "请求数据格式错误"),
+    MessageUnreadable("error.common.message.unreadable", "message not readable"),
     ;
 
     private final String code;

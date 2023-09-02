@@ -15,13 +15,13 @@ import pro.fessional.mirana.data.CodeEnum;
 @RequiredArgsConstructor
 public enum AuthnErrorEnum implements CodeEnum {
 
-    OnlySupports("error.authn.onlySupports", "仅支持账号密码方式登录"),
-    BadCredentials("error.authn.badCredentials", "密码错误"),
-    Locked("error.authn.locked", "账号已锁定"),
-    Disabled("error.authn.disabled", "账号已禁用"),
-    Expired("error.authn.expired", "账号已过期"),
-    CredentialsExpired("error.authn.credentialsExpired", "密码已过期"),
-    FailureWaiting("error.authn.failureWaiting", "密码错误，请{0}秒后重试"),
+    OnlyUserPass("error.authn.onlyUserPass", "Support username password only"),
+    BadCredentials("error.authn.badCredentials", "Bad credentials"),
+    Locked("error.authn.locked", "User account is locked"),
+    Disabled("error.authn.disabled", "User account is disabled"),
+    Expired("error.authn.expired", "User account has expired"),
+    CredentialsExpired("error.authn.credentialsExpired", "User credentials have expired"),
+    FailureWaiting("error.authn.failureWaiting", "Bad credentials, retry after {0}s"),
     ;
 
     private final String code;

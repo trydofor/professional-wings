@@ -17,16 +17,16 @@ class ConstantNaviGeneratorTest {
     @Test
     void generate() {
         Collection<Entry> entries = new ArrayList<>();
-        entries.add(create(1L, "root", "顶级权限，不对外使用"));
-        entries.add(create(1L, ".*", "顶级权限，不对外使用"));
-        entries.add(create(1L, ".read", "顶级权限，read"));
-        entries.add(create(10L, "system.user.*", "用户全部"));
-        entries.add(create(11L, "system.user.read", "用户读取"));
-        entries.add(create(12L, "system.user.search", "用户搜索"));
-        entries.add(create(21L, "system.perm.read", "权限读取"));
-        entries.add(create(22L, "system.perm.search", "权限搜索"));
-        entries.add(create(31L, "system.menu.navi.read", "菜单导航读取"));
-        entries.add(create(32L, "system.menu.navi.search", "菜单导航搜索"));
+        entries.add(create(1L, "root", "super privilege, NOT for external use"));
+        entries.add(create(1L, ".*", "super privilege, NOT for external use"));
+        entries.add(create(1L, ".read", "super privilege, read"));
+        entries.add(create(10L, "system.user.*", "all"));
+        entries.add(create(11L, "system.user.read", "read user"));
+        entries.add(create(12L, "system.user.search", "search user"));
+        entries.add(create(21L, "system.perm.read", "read perm"));
+        entries.add(create(22L, "system.perm.search", "search perm"));
+        entries.add(create(31L, "system.menu.navi.read", "read menu navi"));
+        entries.add(create(32L, "system.menu.navi.search", "search menu navi"));
 
 
         ConstantNaviGenerator generator = new ConstantNaviGenerator();
