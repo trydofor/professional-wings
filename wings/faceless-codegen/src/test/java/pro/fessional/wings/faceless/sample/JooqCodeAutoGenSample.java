@@ -4,7 +4,7 @@ import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
 import pro.fessional.wings.faceless.jooqgen.WingsCodeGenerator;
 
 /**
- * FacelessAutogenTest instead
+ * AutogenDependencyTest instead
  *
  * @author trydofor
  * @since 2019-05-31
@@ -12,7 +12,7 @@ import pro.fessional.wings.faceless.jooqgen.WingsCodeGenerator;
 public class JooqCodeAutoGenSample {
 
     /**
-     * Pay attention to the path, should be the project top-level directory.
+     * Pay attention to the path, should be the project top-level directory (pro.fessional.wings).
      * Note that in the target project, you should comment out `.springRepository(false)` to auto load the `Dao`
      */
     public static void main(String[] args) {
@@ -37,6 +37,7 @@ public class JooqCodeAutoGenSample {
                           // support Regexp comment
                           .databaseIncludes("sys_constant_enum" +
                                             "|sys_standard_i18n" +
+                                            "|tst_normal_table" +
                                             "|tst_sharding")
                           .databaseVersionProvider("SELECT MAX(revision) FROM sys_schema_version WHERE apply_dt > '1000-01-01'")
                           .targetPackage("pro.fessional.wings.faceless.database.autogen")
@@ -49,7 +50,7 @@ public class JooqCodeAutoGenSample {
 //                                  .withConverter("pro.fessional.wings.faceless.database.jooq.converter.JooqConsEnumConverter.of(StandardLanguage.class)")
 //                                  .withExpression("tst_sharding.language")
 //                          )
-                          .forcedIntConsEnum(StandardLanguage.class, "tst_sharding.language")
+                          .forcedIntConsEnum(StandardLanguage.class, "tst_normal_table.value_lang", "tst_sharding.language")
                           .buildAndGenerate();
     }
 
@@ -61,7 +62,7 @@ public class JooqCodeAutoGenSample {
                           .jdbcPassword(pass)
                           .databaseSchema(database)
                           // support Regexp comment
-                          .databaseIncludes("tst_sharding")
+                          .databaseIncludes("tst_sharding", "tst_normal_table")
                           .databaseVersionProvider(null)
                           .targetPackage("pro.fessional.wings.faceless.database.autogen")
                           .targetDirectory("wings/faceless-shard/src/test/java/")

@@ -1,7 +1,7 @@
 package pro.fessional.wings.warlock.security.autogen;
 
 /**
- * @since 2023-09-01
+ * @since 2023-09-08
  */
 public interface RoleConstant {
 

@@ -26,13 +26,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL_COMMIT_ID;
 import static pro.fessional.wings.faceless.database.helper.JournalJdbcHelper.COL_DELETE_DT;
@@ -239,54 +238,29 @@ public class WingsJavaGenerator extends JavaGenerator {
         // 🦁<<<
     }
 
-    private final Pattern daoExtends = Pattern.compile("public class (\\S+)Dao extends (DAOImpl<)");
-    private final Pattern daoFetches = Pattern.compile("\n +/[* \n]+Fetch records", Pattern.MULTILINE);
-    private final Pattern daoFetchMd = Pattern.compile("(fetch[^(]*)\\(");
-
     @Override // Confirm the replacement code and diff it
     public void generateDao(TableDefinition table, JavaWriter out) {
         super.generateDao(table, out);
         // 🦁>>>
-        Set<String> impt = reflectFieldQt(out);
-        impt.remove(DAOImpl.class.getName());
-
         final Class<?> implClass;
-
         if (table.getColumns().stream().anyMatch(WingsJooqGenHelper.JournalAware)) {
             implClass = WingsJooqDaoJournalImpl.class;
         }
         else {
             implClass = WingsJooqDaoAliasImpl.class;
         }
-        impt.add(implClass.getName());
 
-        StringBuilder java = reflectFieldSb(out);
-        String dao = java.toString();
-        // "public class SysStandardI18nDao extends DAOImpl"
-        Matcher me = daoExtends.matcher(dao);
-        dao = me.replaceFirst("public class $1Dao extends " + implClass.getSimpleName() + "<$1Table, ");
+        final Set<String> imports = reflectFieldQt(out);
+        imports.remove(DAOImpl.class.getName());
+        imports.add(implClass.getName());
+        imports.add(Collection.class.getName());
 
-        // Reset the Content, Regexp Replacement
-        java.setLength(0);
-        if (implClass.equals(WingsJooqDaoJournalImpl.class)) {
-            final Matcher md = daoFetches.matcher(dao);
-            if (md.find()) {
-                final int p1 = md.start();
-                final int p2 = dao.lastIndexOf("}");
-                java.append(dao, 0, p2);
-                final Matcher mr = daoFetchMd.matcher(dao.substring(p1, p2));
-                final String live = mr.replaceAll("$1Live(");
-                java.append("\n");
-                java.append(live);
-                java.append(dao.substring(p2));
-            }
-        }
-
-        if (java.length() == 0) {
-            java.append(dao);
-        }
+        final StringBuilder java = reflectFieldSb(out);
+        WingsJooqGenHelper.replaceDaoJava(java, implClass);
         // 🦁<<<
     }
+
+
     /////////////////
 
     private String genAlias(String id) {
