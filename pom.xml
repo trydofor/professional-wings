@@ -43,6 +43,9 @@
         <mapstruct.version>1.5.5.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
         <guava.version>32.1.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
         <commons-io.version>2.13.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
+        <commons-collections4.version>4.4</commons-collections4.version> <!-- https://commons.apache.org/proper/commons-collections/ -->
+        <commons-text.version>1.10.0</commons-text.version> <!-- https://commons.apache.org/proper/commons-text/ -->
+        <joda-convert.version>2.2.3</joda-convert.version> <!-- https://github.com/JodaOrg/joda-convert/releases -->
         <!-- wings project -->
         <mirana.version>2.6.0-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
         <meepo.version>1.4.1-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
@@ -361,6 +364,21 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons-io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collections4.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons-text.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.joda</groupId>
+                <artifactId>joda-convert</artifactId>
+                <version>${joda-convert.version}</version>
             </dependency>
             <dependency>
                 <groupId>pro.fessional</groupId>

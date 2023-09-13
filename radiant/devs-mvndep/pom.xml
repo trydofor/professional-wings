@@ -80,6 +80,24 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${commons-collections4.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${commons-text.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.joda</groupId>
+            <artifactId>joda-convert</artifactId>
+            <version>${joda-convert.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>pro.fessional</groupId>
             <artifactId>kaptcha</artifactId>
             <version>${kaptcha.version}</version>
