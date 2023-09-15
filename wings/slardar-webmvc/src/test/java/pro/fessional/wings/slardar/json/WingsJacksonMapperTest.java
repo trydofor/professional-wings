@@ -2,10 +2,14 @@ package pro.fessional.wings.slardar.json;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -62,11 +66,11 @@ import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgen
  * @since 2019-06-26
  */
 @SpringBootTest(properties = {
-                              "wings.slardar.datetime.zoned.auto=true",
-                              "spring.wings.slardar.enabled.number=true",
-                              "wings.slardar.jackson.empty-date=1970-01-01",
-                              "wings.slardar.jackson.empty-list=true",
-                              "wings.slardar.jackson.empty-map=true",
+        "wings.slardar.datetime.zoned.auto=true",
+        "spring.wings.slardar.enabled.number=true",
+        "wings.slardar.jackson.empty-date=1970-01-01",
+        "wings.slardar.jackson.empty-list=true",
+        "wings.slardar.jackson.empty-map=true",
 })
 @Slf4j
 public class WingsJacksonMapperTest {
@@ -451,7 +455,6 @@ public class WingsJacksonMapperTest {
     }
 
 
-
     @Test
     public void testResource() throws JsonProcessingException {
         Map<String, Resource> res = new HashMap<>();
@@ -498,5 +501,45 @@ public class WingsJacksonMapperTest {
         aes.setAes256Mask(MaskingValue);
         aes.setAes256Empty(Null.Str);
         assertEquals(aes, aes2);
+    }
+
+    @Data
+    @JacksonXmlRootElement(localName = "XmlRoot") // set RootName
+    @JsonPropertyOrder(alphabetic = true) // make sure order
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES) // case ignore
+    public static class MsNamingXml {
+        @JsonProperty("Amount") // specify Upper name
+        private BigDecimal Amount;
+        private String Soap; // default lower name
+    }
+
+    @Test
+    public void testMsNamingXml() throws JsonProcessingException {
+        final XmlMapper xmlMapper = jackson2ObjectMapperBuilder
+                .createXmlMapper(true)
+                .build();
+        xmlMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+
+        final MsNamingXml xmlOri = new MsNamingXml();
+        xmlOri.setSoap("str");
+        xmlOri.setAmount(new BigDecimal("3.14"));
+
+        final String xmlHead = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+        final String xmlStr = xmlMapper.writeValueAsString(xmlOri);
+        log.info("testMsNamingXml={}", xmlStr);
+
+        final String xmlStrUpper = """
+                <XmlRoot>
+                    <Amount>3.14</Amount>
+                    <Soap>str</Soap>
+                </XmlRoot>
+                """.replaceAll("\\s", "");
+        final String xmlStrLower = xmlStrUpper.replace("Soap", "soap");
+        assertEquals(xmlStrLower, xmlStr); // filed name is lowercase by getter naming
+
+        MsNamingXml xmlObjLower = xmlMapper.readValue(xmlHead + xmlStrLower, MsNamingXml.class);
+        MsNamingXml xmlObjUpper = xmlMapper.readValue(xmlHead + xmlStrUpper, MsNamingXml.class);
+        assertEquals(xmlOri, xmlObjUpper);
+        assertEquals(xmlOri, xmlObjLower);
     }
 }
