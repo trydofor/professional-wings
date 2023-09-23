@@ -76,6 +76,13 @@ class AccessDeny403Test {
         }
     }
 
+    /**
+     * warlock-test wings-warlock-user-77.properties
+     * ROLE SYSTEM
+     * user-perm
+     * ROLE ADMIN
+     * system.perm.create
+     */
     @Test
     public void testLogin() {
         OkHttpClientHelper.clearCookie(okHttpClient, HttpUrl.get(host));

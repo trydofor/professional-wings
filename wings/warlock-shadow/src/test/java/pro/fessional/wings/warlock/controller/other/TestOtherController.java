@@ -25,6 +25,9 @@ import pro.fessional.wings.warlock.service.watching.WatchingService;
 
 import java.util.concurrent.CompletableFuture;
 
+import static pro.fessional.wings.slardar.constants.SecuritySpelConst.End;
+import static pro.fessional.wings.slardar.constants.SecuritySpelConst.hasAuthority;
+
 /**
  * @author trydofor
  * @since 2021-02-27
@@ -101,7 +104,7 @@ public class TestOtherController {
     }
 
     @RequestMapping("/test/prepost-create.json")
-    @PreAuthorize("hasAuthority('" + PermConstant.System.Perm.create + "')")
+    @PreAuthorize(hasAuthority + PermConstant.System.Perm.create + End)
     public String prePostCreate() {
         log.info(">>> /test/secured-create.json");
         return "OK";
