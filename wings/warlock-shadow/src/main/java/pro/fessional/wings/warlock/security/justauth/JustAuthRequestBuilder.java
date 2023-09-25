@@ -48,15 +48,20 @@ import me.zhyd.oauth.request.AuthWeChatOpenRequest;
 import me.zhyd.oauth.request.AuthWeiboRequest;
 import me.zhyd.oauth.request.AuthXmlyRequest;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.core.Ordered;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
-import pro.fessional.wings.slardar.security.WingsAuthHelper;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import pro.fessional.mirana.flow.FlowEnum;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthDetails;
-import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -64,14 +69,18 @@ import java.util.Map;
  * @since 2021-02-17
  */
 @Slf4j
-@Setter @Getter
+@Getter
 public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo<DefaultWingsAuthDetails> {
 
+    @Setter
     private Map<Enum<?>, AuthConfig> authConfigMap = Collections.emptyMap();
-    private AuthStateCache authStateCache;
-    private AuthStateBuilder authStateBuilder;
-    private WingsRemoteResolver remoteResolver;
+    @Setter
     private int order = OrderedWarlockConst.SecJustAuthRequestBuilder;
+
+    @Setter(onMethod_ = {@Autowired})
+    private AuthStateCache authStateCache;
+    @Setter(onMethod_ = {@Autowired, @Lazy})
+    private List<SuccessHandler> successHandlers = new ArrayList<>();
 
     @Override
     public DefaultWingsAuthDetails buildDetails(@NotNull Enum<?> authType, @NotNull HttpServletRequest request) {
@@ -90,20 +99,29 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
         try {
             AuthResponse<?> response = ar.login(callback);
             final Object data = response.getData();
-            if (data instanceof AuthUser) {
+            if (data instanceof AuthUser authUser) {
                 final DefaultWingsAuthDetails detail = new DefaultWingsAuthDetails(data);
-                final Map<String, String> meta = detail.getMetaData();
-                meta.put(WingsAuthHelper.AuthType, authType.name());
-                meta.put(WingsAuthHelper.AuthZone, authStateBuilder.parseAuthZone(request));
-                meta.put(WingsAuthHelper.AuthAddr, remoteResolver.resolveRemoteIp(request));
-                meta.put(WingsAuthHelper.AuthAgent, remoteResolver.resolveAgentInfo(request));
+                for (SuccessHandler hdl : successHandlers) {
+                    final FlowEnum flw = hdl.handle(authType, request, authUser, detail);
+                    if (flw == FlowEnum.Break) {
+                        break;
+                    }
+                    else if (flw == FlowEnum.Return) {
+                        return detail;
+                    }
+                    else if (flw == FlowEnum.Throw) {
+                        throw new InternalAuthenticationServiceException(hdl.getClass().getName() + " want throw");
+                    }
+                }
                 return detail;
             }
             else {
-                NonceTokenSessionHelper.invalidNonce(state);
                 log.warn("failed to Oauth authType={}, response type={}", authType, data == null ? "null" : data.getClass().getName());
                 throw new InsufficientAuthenticationException("failed to Oauth authType=" + authType);
             }
+        }
+        catch (InternalAuthenticationServiceException e) {
+            throw e;
         }
         catch (Exception e) {
             NonceTokenSessionHelper.invalidNonce(state);
@@ -160,5 +178,19 @@ public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo
             case XMLY -> new AuthXmlyRequest(config, authStateCache);
             default -> null;
         };
+    }
+
+    public interface SuccessHandler extends Ordered {
+        @Override
+        default int getOrder() {
+            return Ordered.LOWEST_PRECEDENCE;
+        }
+
+        /**
+         * handle AuthUser to set detail.
+         *
+         * @throws InternalAuthenticationServiceException will not NonceTokenSessionHelper.invalidNonce
+         */
+        FlowEnum handle(@NotNull Enum<?> authType, @NotNull HttpServletRequest request, AuthUser authUser, DefaultWingsAuthDetails detail);
     }
 }

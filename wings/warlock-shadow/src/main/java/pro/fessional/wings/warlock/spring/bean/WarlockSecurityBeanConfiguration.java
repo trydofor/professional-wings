@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -118,10 +119,16 @@ public class WarlockSecurityBeanConfiguration {
         log.info("WarlockShadow spring-bean loginSuccessHandler");
         return new LoginSuccessHandler();
     }
+    @Bean
+    @ConditionalOnExpression("!'${" + WarlockSecurityProp.Key$loginFailureBody + "}'.isEmpty()")
+    public LoginFailureHandler.Handler loginFailureHandlerDefault() {
+        log.info("WarlockShadow spring-bean loginFailureHandlerDefault");
+        return new LoginFailureHandler.DefaultHandler();
+    }
 
     @Bean
     @ConditionalOnMissingBean(AuthenticationFailureHandler.class)
-    @ConditionalOnExpression("!'${" + WarlockSecurityProp.Key$loginFailureBody + "}'.isEmpty()")
+    @ConditionalOnBean(LoginFailureHandler.Handler.class)
     public AuthenticationFailureHandler loginFailureHandler() {
         log.info("WarlockShadow spring-bean loginFailureHandler");
         return new LoginFailureHandler();
