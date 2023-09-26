@@ -7,6 +7,7 @@ import pro.fessional.wings.warlock.service.grant.WarlockGrantService;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author trydofor
@@ -34,12 +35,12 @@ public class WarlockGrantServiceDummy implements WarlockGrantService {
     }
 
     @Override
-    public Map<Long, Long> entryUser(@NotNull GrantType type, @NotNull Collection<Long> userId) {
+    public Map<Long, Set<Long>> entryUser(@NotNull GrantType type, @NotNull Collection<Long> userId) {
         return Collections.emptyMap();
     }
 
     @Override
-    public Map<Long, Long> entryRole(@NotNull GrantType type, @NotNull Collection<Long> roleId) {
+    public Map<Long, Set<Long>> entryRole(@NotNull GrantType type, @NotNull Collection<Long> roleId) {
         return Collections.emptyMap();
     }
 }
