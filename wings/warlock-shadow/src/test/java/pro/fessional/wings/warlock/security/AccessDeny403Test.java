@@ -119,4 +119,29 @@ class AccessDeny403Test {
         String ok5 = OkHttpClientHelper.extractString(r5, false);
         Assertions.assertTrue(ok5.contains("error.authz.accessDenied"));
     }
+
+    @Test
+    public void testLogout() {
+        OkHttpClientHelper.clearCookie(okHttpClient, HttpUrl.get(host));
+        final Response r0 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder()
+                .url(host + "/auth/username/login.json?username=trydofor&password=moMxVKXxA8Pe9XX9"), false);
+        String login = OkHttpClientHelper.extractString(r0, false);
+        log.info("get login res = " + login);
+        Assertions.assertTrue(login.contains("true"));
+
+        final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder()
+                .url(host + "/test/secured-create.json"), false);
+        String ok2 = OkHttpClientHelper.extractString(r2, false);
+        Assertions.assertEquals("OK", ok2);
+
+        final Response r6 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder()
+                .url(host + "/auth/logout.json"), false);
+        String ok6 = OkHttpClientHelper.extractString(r6, false);
+        Assertions.assertTrue(ok6.contains("logout success"));
+
+        final Response r7 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder()
+                .url(host + "/test/secured-create.json"), false);
+        String ok7 = OkHttpClientHelper.extractString(r7, false);
+        Assertions.assertTrue(ok7.contains("error.authz.accessDenied"));
+    }
 }
