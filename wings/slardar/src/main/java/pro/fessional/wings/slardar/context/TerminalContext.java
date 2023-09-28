@@ -178,11 +178,7 @@ public class TerminalContext {
      */
     public static void login(@Nullable Context ctx) {
         if (ctx == null || ctx.isNull()) {
-            final Context old = ContextLocal.get();
-            if (old != null) {
-                ContextLocal.remove();
-                fireContextChange(true, old);
-            }
+            logout();
         }
         else {
             Active = true;
@@ -191,8 +187,26 @@ public class TerminalContext {
         }
     }
 
+    /**
+     * logout and fireContextChange
+     */
     public static void logout() {
-        login(Null);
+        logout(true);
+    }
+
+    /**
+     * logout and whether to fireContextChange
+     *
+     * @param fire whether to fireContextChange
+     */
+    public static void logout(boolean fire) {
+        final Context old = ContextLocal.get();
+        if (old != null) {
+            ContextLocal.remove();
+            if (fire) {
+                fireContextChange(true, old);
+            }
+        }
     }
 
     private static void fireContextChange(boolean del, @NotNull Context ctx) {

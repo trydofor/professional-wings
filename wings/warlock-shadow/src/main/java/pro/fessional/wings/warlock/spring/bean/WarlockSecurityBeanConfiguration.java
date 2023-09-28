@@ -5,15 +5,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -28,6 +31,7 @@ import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.WingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
+import pro.fessional.wings.slardar.security.WingsAuthenticationEventPublisher;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthCheckService;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
@@ -95,12 +99,20 @@ import static org.springframework.util.StringUtils.hasText;
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityBean, havingValue = "true")
 @RequiredArgsConstructor
 @AutoConfigureOrder(OrderedWarlockConst.SecurityBeanConfiguration)
+@AutoConfigureBefore(SecurityAutoConfiguration.class)
 public class WarlockSecurityBeanConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockSecurityBeanConfiguration.class);
 
     private final WarlockSecurityProp securityProp;
     private final ApplicationContext applicationContext;
+
+    @Bean
+    @ConditionalOnMissingBean({AuthenticationEventPublisher.class})
+    public WingsAuthenticationEventPublisher  authenticationEventPublisher(){
+        log.info("WarlockShadow spring-bean authenticationEventPublisher");
+        return new WingsAuthenticationEventPublisher(applicationContext);
+    }
 
     @Bean
     @ConditionalOnMissingBean(WingsAuthTypeParser.class)
