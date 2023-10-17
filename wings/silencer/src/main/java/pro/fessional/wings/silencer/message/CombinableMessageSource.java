@@ -4,8 +4,8 @@ package pro.fessional.wings.silencer.message;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.AbstractMessageSource;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
 
 import java.text.MessageFormat;
@@ -30,14 +30,14 @@ public class CombinableMessageSource extends AbstractMessageSource {
 
     @Override
     @Nullable
-    protected String resolveCodeWithoutArguments(@NonNull String code, @NonNull Locale locale) {
+    protected String resolveCodeWithoutArguments(@NotNull String code, @NotNull Locale locale) {
         ConcurrentHashMap<Locale, String> cache = codeLocaleString.get(code);
         return cache == null ? null : cache.get(locale);
     }
 
     @Override
     @Nullable
-    protected MessageFormat resolveCode(@NonNull String code, @NonNull Locale locale) {
+    protected MessageFormat resolveCode(@NotNull String code, @NotNull Locale locale) {
         ConcurrentHashMap<Locale, MessageFormat> cache = codeLocaleFormat.get(code);
         return cache == null ? null : cache.get(locale);
     }

@@ -2,7 +2,6 @@ package pro.fessional.wings.slardar.cache.cache2k;
 
 import lombok.extern.slf4j.Slf4j;
 import org.cache2k.Cache2kBuilder;
-import org.cache2k.annotation.NonNull;
 import org.cache2k.config.CacheBuildContext;
 import org.cache2k.config.Feature;
 import org.cache2k.config.ToggleFeature;
@@ -14,7 +13,6 @@ import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
 
 import java.time.Duration;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -135,13 +133,13 @@ public class WingsCache2k {
 
         @Override
         @NotNull
-        public SpringCache2kCacheManager defaultSetup(Function<Cache2kBuilder<?, ?>, Cache2kBuilder<?, ?>> f) {
+        public SpringCache2kCacheManager defaultSetup(@NotNull Function<Cache2kBuilder<?, ?>, Cache2kBuilder<?, ?>> f) {
             defaultSetup = f;
             return this;
         }
 
         @Override
-        @NonNull
+        @NotNull
         public SpringCache2kCache getCache(@NotNull String name) {
             final int size = slardarCacheProp.getNullSize();
             if (size < 0) {
@@ -190,8 +188,6 @@ public class WingsCache2k {
         @NotNull
         public Set<Object> statsCacheKeys(String name) {
             final SpringCache2kCache cache = getCache(name);
-//            CacheControl.of(cache.getNativeCache()).sampleStatistics();
-            if (cache == null) return Collections.emptySet();
             return cache.getNativeCache().keys();
         }
     }
