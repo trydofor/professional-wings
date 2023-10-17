@@ -17,16 +17,16 @@ class ConstantNaviGeneratorTest {
     @Test
     void generate() {
         Collection<Entry> entries = new ArrayList<>();
-        entries.add(create(1L, "root", "super privilege, NOT for external use"));
-        entries.add(create(1L, ".*", "super privilege, NOT for external use"));
-        entries.add(create(1L, ".read", "super privilege, read"));
-        entries.add(create(10L, "system.user.*", "all"));
-        entries.add(create(11L, "system.user.read", "read user"));
-        entries.add(create(12L, "system.user.search", "search user"));
-        entries.add(create(21L, "system.perm.read", "read perm"));
-        entries.add(create(22L, "system.perm.search", "search perm"));
-        entries.add(create(31L, "system.menu.navi.read", "read menu navi"));
-        entries.add(create(32L, "system.menu.navi.search", "search menu navi"));
+        entries.add(create(1000L, "root", "super privilege, NOT for external use"));
+        entries.add(create(1000L, ".*", "super privilege, NOT for external use"));
+        entries.add(create(1000L, ".read", "super privilege, read"));
+        entries.add(create(10000L, "system.user.*", "all"));
+        entries.add(create(10001L, "system.user.read", "read user"));
+        entries.add(create(10002L, "system.user.search", "search user"));
+        entries.add(create(20001L, "system.perm.read", "read perm"));
+        entries.add(create(20002L, "system.perm.search", "search perm"));
+        entries.add(create(30001L, "system.menu.navi.read", "read menu navi"));
+        entries.add(create(30002L, "system.menu.navi.search", "search menu navi"));
 
 
         ConstantNaviGenerator generator = new ConstantNaviGenerator();
