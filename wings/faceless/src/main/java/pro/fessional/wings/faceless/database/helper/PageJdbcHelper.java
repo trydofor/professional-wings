@@ -236,13 +236,13 @@ public class PageJdbcHelper {
                 }
             }
 
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 order = sb.substring(1);
             }
         }
 
         private void orderLimit(StringBuilder sql) {
-            if (order.length() > 0) {
+            if (!order.isEmpty()) {
                 sql.append(" order by ");
                 sql.append(order);
             }

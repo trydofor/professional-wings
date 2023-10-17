@@ -29,7 +29,7 @@ public class Utf8ResourceDecorator {
         String line;
         while ((line = br.readLine()) != null) {
             String tl = line.trim();
-            if (tl.length() == 0) {
+            if (tl.isEmpty()) {
                 continue;
             }
             char m = tl.charAt(0);

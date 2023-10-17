@@ -118,7 +118,7 @@ public class RestTemplateHelper {
     }
 
     /**
-     * @link https://medium.com/red6-es/uploading-a-file-with-a-filename-with-spring-resttemplate-8ec5e7dc52ca
+     * @link <a href="https://medium.com/red6-es/uploading-a-file-with-a-filename-with-spring-resttemplate-8ec5e7dc52ca">RestTemplate Upload File</a>
      */
     @NotNull
     public static MultiValueMap<String, Object> addFile(HttpEntity<MultiValueMap<String, Object>> entity, String key, Resource res, String fileName) {

@@ -53,10 +53,10 @@ public class FacelessJooqConfiguration {
      * workaround before Version 3.14.0
      * still opening, maybe 3.18.0 checked on 2023-01-18
      *
-     * @link https://github.com/jOOQ/jOOQ/issues/8893
-     * @link https://github.com/jOOQ/jOOQ/issues/9055
-     * @link https://github.com/jOOQ/jOOQ/issues/7258
-     * @link https://github.com/jOOQ/jOOQ/issues/12092
+     * @link <a href="https://github.com/jOOQ/jOOQ/issues/8893">Add Settings.renderTable</a>
+     * @link <a href="https://github.com/jOOQ/jOOQ/issues/9055">should NO table qualify if NO table alias</a>
+     * @link <a href="https://github.com/jOOQ/jOOQ/issues/7258">Deprecate org.jooq.Clause</a>
+     * @link <a href="https://github.com/jOOQ/jOOQ/issues/12092">group_concat_max_len</a>
      */
     @Bean
     @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$autoQualify, havingValue = "true")

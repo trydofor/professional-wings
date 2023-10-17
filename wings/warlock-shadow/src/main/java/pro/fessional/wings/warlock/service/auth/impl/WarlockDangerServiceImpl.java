@@ -13,7 +13,7 @@ import pro.fessional.wings.warlock.service.auth.WarlockDangerService;
 public class WarlockDangerServiceImpl implements WarlockDangerService {
 
     @Data
-    private static class Ck {
+    protected static class Ck {
         private final Enum<?> authType;
         private final String username;
     }

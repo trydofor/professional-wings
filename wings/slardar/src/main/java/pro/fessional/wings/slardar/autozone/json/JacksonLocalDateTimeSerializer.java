@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * https://github.com/FasterXML/jackson-modules-java8/issues/230
+ * <a href="https://github.com/FasterXML/jackson-modules-java8/issues/230">LocalDateTimeSerializer constructor protected</a>
  *
  * @author trydofor
  * @since 2022-10-01

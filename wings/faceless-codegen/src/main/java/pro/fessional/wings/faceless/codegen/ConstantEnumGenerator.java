@@ -251,7 +251,7 @@ public class ConstantEnumGenerator {
                             buff.append(c);
                         }
                         else {
-                            if (buff.length() > 0 && canDeer) {
+                            if (!buff.isEmpty() && canDeer) {
                                 canDeer = false;
                                 buff.append(deerChar);
                                 continue;

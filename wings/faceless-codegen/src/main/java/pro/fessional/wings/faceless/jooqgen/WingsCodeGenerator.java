@@ -134,7 +134,7 @@ public class WingsCodeGenerator {
         val from = walkDir(tmp, pkg);
         val dest = walkDir(src, pkg);
 
-        if (!inc && dest.size() > 0) {
+        if (!inc && !dest.isEmpty()) {
             log.info("not incremental, Removing excess files in {}", new File(src, pkg).getCanonicalPath());
             for (Map.Entry<String, File> entry : dest.entrySet()) {
                 String key = entry.getKey();

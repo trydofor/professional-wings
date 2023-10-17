@@ -177,7 +177,7 @@ function build_auto() {
 echo -e "\033[37;42;1mINFO: ==== boot env ==== \033[0m"
 this_file="$0"
 if [[ -L "$this_file" ]]; then
-    link_file=$(realpath $this_file)
+    link_file=$(realpath "$this_file")
     link_envs=${link_file%.*}.env
     if [[ -f "$link_envs" ]]; then
         echo "env-link=$link_envs"

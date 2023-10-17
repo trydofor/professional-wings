@@ -55,6 +55,7 @@ if [[ "$database" == "" ]]; then
   echo -e "\033[0;31mWARN: need database(at param-2) to dump, eg.\033[m"
   echo "./wings-mysql-dump.sh wings-mysql-client.cnf database  --no-data"
   echo -e "\033[0;33mNOTE:current databases \033[m"
+  # shellcheck disable=SC2086
   mysql $confopts -N -e "show databases;"
   exit
 fi

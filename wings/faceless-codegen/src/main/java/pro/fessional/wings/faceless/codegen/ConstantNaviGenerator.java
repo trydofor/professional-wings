@@ -60,7 +60,7 @@ public class ConstantNaviGenerator {
                          */
                         public interface %s {""",
                 packageName, LocalDate.now(), javaName));
-        if(prefixCode.length()>0){
+        if (!prefixCode.isEmpty()) {
             String indent = indent(1);
             out.append(MessageFormat.format("\n\n" +
                                             indent + "/**\n" +
@@ -121,7 +121,7 @@ public class ConstantNaviGenerator {
                                             indent + "long ID${2} = {0};",
                     en.id, en.remark, n, tkn));
 
-            if (prefixCode.length() > 0) {
+            if (!prefixCode.isEmpty()) {
                 String jf = prefixCode;
                 final char c = jf.charAt(jf.length() - 1);
                 if ((c < '0' || c > '9') && (c < 'a' || c > 'z') && (c < 'A' || c > 'Z')) {

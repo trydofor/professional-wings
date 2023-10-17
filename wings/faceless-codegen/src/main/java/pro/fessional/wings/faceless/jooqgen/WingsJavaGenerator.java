@@ -268,7 +268,7 @@ public class WingsJavaGenerator extends JavaGenerator {
         val ix = id.hashCode() % chr.length();
         val cd = ix < 0 ? chr.charAt(-ix) : chr.charAt(ix);
         val sq = id.length() % 10;
-        return "as" + cd + "" + sq;
+        return ("as" + cd) + sq;
     }
 
     private int colRefSegments(TypedElementDefinition<?> column) {
