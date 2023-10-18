@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.enums.errcode;
+package pro.fessional.wings.slardar.errcode;
 
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +13,7 @@ import pro.fessional.mirana.data.CodeEnum;
 @RequiredArgsConstructor
 public enum AuthzErrorEnum implements CodeEnum {
 
-    accessDenied("error.authz.accessDenied", "Access is denied"),
+    AccessDenied("error.authz.accessDenied", "Access is denied"),
     ;
 
     private final String code;

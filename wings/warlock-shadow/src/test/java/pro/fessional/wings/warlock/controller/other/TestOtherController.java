@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.pain.MessageException;
-import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
+import pro.fessional.wings.warlock.errcode.CommonErrorEnum;
 import pro.fessional.wings.warlock.security.autogen.PermConstant;
 import pro.fessional.wings.warlock.service.watching.WatchingService;
 

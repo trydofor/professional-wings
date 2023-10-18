@@ -27,7 +27,7 @@ import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthDetails;
 import pro.fessional.wings.slardar.security.pass.DefaultPasssaltEncoder;
 
-import static pro.fessional.wings.slardar.enums.errcode.AuthnErrorEnum.BadCredentials;
+import static pro.fessional.wings.slardar.errcode.AuthnErrorEnum.BadCredentials;
 
 /**
  * <pre>

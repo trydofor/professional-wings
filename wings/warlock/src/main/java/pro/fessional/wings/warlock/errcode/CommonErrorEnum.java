@@ -1,4 +1,4 @@
-package pro.fessional.wings.warlock.enums.errcode;
+package pro.fessional.wings.warlock.errcode;
 
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;

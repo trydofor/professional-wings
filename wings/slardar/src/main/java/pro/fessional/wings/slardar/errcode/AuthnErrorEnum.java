@@ -1,20 +1,20 @@
-package pro.fessional.wings.slardar.enums.errcode;
+package pro.fessional.wings.slardar.errcode;
 
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
-import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import pro.fessional.mirana.data.CodeEnum;
 
 /**
+ * org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider
+ * org.springframework.security.authentication.AccountStatusUserDetailsChecker
+ *
  * @author trydofor
- * @see AbstractUserDetailsAuthenticationProvider
- * @see AccountStatusUserDetailsChecker
  * @since 2021-03-25
  */
 @RequiredArgsConstructor
 public enum AuthnErrorEnum implements CodeEnum {
 
+    Unauthorized("error.authn.unauthorized", "Unauthorized request"),
     OnlyUserPass("error.authn.onlyUserPass", "Support username password only"),
     BadCredentials("error.authn.badCredentials", "Bad credentials"),
     Locked("error.authn.locked", "User account is locked"),

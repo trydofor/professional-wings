@@ -14,7 +14,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.R;
-import pro.fessional.wings.slardar.enums.errcode.AuthzErrorEnum;
+import pro.fessional.wings.slardar.errcode.AuthzErrorEnum;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class AccessFailureHandler implements AccessDeniedHandler {
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setContentType(APPLICATION_JSON_VALUE);
 
-        String code = AuthzErrorEnum.accessDenied.getCode();
+        String code = AuthzErrorEnum.AccessDenied.getCode();
         String msg = messageSource.getMessage(code, Null.StrArr, LocaleContextHolder.getLocale());
         String body = objectMapper.writeValueAsString(R.ng(msg, code));
         ResponseHelper.writeBodyUtf8(response, body);

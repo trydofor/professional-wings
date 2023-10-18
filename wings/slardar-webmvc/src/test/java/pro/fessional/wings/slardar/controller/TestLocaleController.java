@@ -6,7 +6,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.wings.slardar.context.TerminalContext;
-import pro.fessional.wings.slardar.enums.errcode.AuthnErrorEnum;
+import pro.fessional.wings.slardar.errcode.AuthnErrorEnum;
 import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 
 import java.util.Locale;

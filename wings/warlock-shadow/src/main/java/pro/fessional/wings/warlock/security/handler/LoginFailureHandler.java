@@ -29,11 +29,11 @@ import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 import java.util.ArrayList;
 import java.util.List;
 
-import static pro.fessional.wings.slardar.enums.errcode.AuthnErrorEnum.BadCredentials;
-import static pro.fessional.wings.slardar.enums.errcode.AuthnErrorEnum.CredentialsExpired;
-import static pro.fessional.wings.slardar.enums.errcode.AuthnErrorEnum.Disabled;
-import static pro.fessional.wings.slardar.enums.errcode.AuthnErrorEnum.Expired;
-import static pro.fessional.wings.slardar.enums.errcode.AuthnErrorEnum.Locked;
+import static pro.fessional.wings.slardar.errcode.AuthnErrorEnum.BadCredentials;
+import static pro.fessional.wings.slardar.errcode.AuthnErrorEnum.CredentialsExpired;
+import static pro.fessional.wings.slardar.errcode.AuthnErrorEnum.Disabled;
+import static pro.fessional.wings.slardar.errcode.AuthnErrorEnum.Expired;
+import static pro.fessional.wings.slardar.errcode.AuthnErrorEnum.Locked;
 
 /**
  * @author trydofor

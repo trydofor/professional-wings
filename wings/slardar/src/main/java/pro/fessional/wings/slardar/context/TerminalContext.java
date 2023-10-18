@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.best.DummyBlock;
 import pro.fessional.mirana.best.TypedKey;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.slardar.errcode.AuthnErrorEnum;
 import pro.fessional.wings.slardar.security.DefaultUserId;
 
 import java.time.ZoneId;
@@ -146,20 +147,23 @@ public class TerminalContext {
     }
 
     /**
-     * only login user, throw exception if not login
+     * only login user, throw TerminalException if not login
+     *
+     * @throws TerminalContextException if not login
      */
     @NotNull
-    public static Context get() {
+    public static Context get() throws TerminalContextException {
         return get(true);
     }
 
     /**
-     * unlogined user as Guest or throw exception
+     * unlogined user as Guest or throw TerminalException
      *
      * @param onlyLogin only login user or guest
+     * @throws TerminalContextException if onlyLogin and not login
      */
     @NotNull
-    public static Context get(boolean onlyLogin) {
+    public static Context get(boolean onlyLogin) throws TerminalContextException {
         Context ctx = null;
         if (Active) {
             ctx = ContextLocal.get();
@@ -168,7 +172,7 @@ public class TerminalContext {
             ctx = Null;
         }
         if (onlyLogin && ctx.isNull()) {
-            throw new NullPointerException("find null context, must be user or guest");
+            throw new TerminalContextException(AuthnErrorEnum.Unauthorized, "find null context, must be user or guest");
         }
         return ctx;
     }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.slardar.servlet.MessageHelper;
 import pro.fessional.wings.spring.consts.OrderedWarlockConst;
-import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
+import pro.fessional.wings.warlock.errcode.CommonErrorEnum;
 
 import static pro.fessional.wings.slardar.servlet.request.RequestHelper.allErrors;
 
