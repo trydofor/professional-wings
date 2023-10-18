@@ -75,10 +75,10 @@ mvn --version || exit
 MAVEN_OPTS="-Xmx2048m"
 
 ## install
-[[ "$*" =~ .*init.* ]] && mvn -U clean install -Dmaven.test.skip=true
+[[ "$*" == "" || "$*" =~ .*init.* ]] && mvn -U clean install -Dmaven.test.skip=true
 
 ## auto test
-[[ "$*" =~ .*auto.* ]] && (mvn test -ff -Dmaven.test.skip=false \
+[[ "$*" == "" || "$*" =~ .*auto.* ]] && (mvn test -ff -Dmaven.test.skip=false \
   -Dtesting-json='{"debug":"false",
   "sentry.logging.enabled":"false",
   "spring.wings.silencer.enabled.verbose":"false",
