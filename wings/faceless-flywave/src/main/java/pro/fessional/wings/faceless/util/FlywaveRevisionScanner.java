@@ -604,6 +604,7 @@ public class FlywaveRevisionScanner {
             return this;
         }
 
+        @NotNull
         public SortedMap<Long, RevisionSql> scan() {
 
             TreeMap<Long, RevisionSql> result = new TreeMap<>();

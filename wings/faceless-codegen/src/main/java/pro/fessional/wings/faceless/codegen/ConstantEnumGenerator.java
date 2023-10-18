@@ -3,6 +3,7 @@ package pro.fessional.wings.faceless.codegen;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pro.fessional.meepo.Meepo;
@@ -87,21 +88,25 @@ public class ConstantEnumGenerator {
         private String pkg;
         private final Map<String, Boolean> flt = new HashMap<>();
 
+        @Contract("_->this")
         public Builder targetDirectory(File src) {
             this.src = src;
             return this;
         }
 
+        @Contract("_->this")
         public Builder targetDirectory(String src) {
             this.src = new File(src);
             return this;
         }
 
+        @Contract("_->this")
         public Builder targetPackage(String pkg) {
             this.pkg = pkg;
             return this;
         }
 
+        @Contract("_->this")
         public Builder excludeType(String... typ) {
             for (String s : typ) {
                 this.flt.put(s, Boolean.FALSE);
@@ -109,6 +114,7 @@ public class ConstantEnumGenerator {
             return this;
         }
 
+        @Contract("_->this")
         public Builder includeType(String... typ) {
             for (String s : typ) {
                 this.flt.put(s, Boolean.TRUE);

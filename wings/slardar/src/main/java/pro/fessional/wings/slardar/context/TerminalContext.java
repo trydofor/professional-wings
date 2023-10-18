@@ -192,18 +192,20 @@ public class TerminalContext {
     }
 
     /**
-     * logout and fireContextChange
+     * logout the context and fireContextChange
      */
-    public static void logout() {
-        logout(true);
+    @Nullable
+    public static Context logout() {
+        return logout(true);
     }
 
     /**
-     * logout and whether to fireContextChange
+     * logout the context and whether to fireContextChange
      *
      * @param fire whether to fireContextChange
      */
-    public static void logout(boolean fire) {
+    @Nullable
+    public static Context logout(boolean fire) {
         final Context old = ContextLocal.get();
         if (old != null) {
             ContextLocal.remove();
@@ -211,6 +213,7 @@ public class TerminalContext {
                 fireContextChange(true, old);
             }
         }
+        return old;
     }
 
     private static void fireContextChange(boolean del, @NotNull Context ctx) {
@@ -371,7 +374,8 @@ public class TerminalContext {
             return Objects.hash(userId, locale, timeZone, terminal);
         }
 
-        @Override public String toString() {
+        @Override
+        public String toString() {
             return "Context{" +
                    "userId=" + userId +
                    ", locale=" + locale +
@@ -391,11 +395,13 @@ public class TerminalContext {
         private final Set<String> authPerm = new HashSet<>();
         private final Map<TypedKey<?>, Object> terminal = new HashMap<>();
 
+        @Contract("_->this")
         public Builder locale(Locale lcl) {
             locale = lcl;
             return this;
         }
 
+        @Contract("_->this")
         public Builder localeIfAbsent(Locale lcl) {
             if (locale == null) {
                 locale = lcl;
@@ -403,11 +409,13 @@ public class TerminalContext {
             return this;
         }
 
+        @Contract("_->this")
         public Builder timeZone(TimeZone tz) {
             timeZone = tz;
             return this;
         }
 
+        @Contract("_->this")
         public Builder timeZoneIfAbsent(TimeZone tz) {
             if (timeZone == null) {
                 timeZone = tz;
@@ -415,11 +423,13 @@ public class TerminalContext {
             return this;
         }
 
+        @Contract("_->this")
         public Builder timeZone(ZoneId tz) {
             timeZone = TimeZone.getTimeZone(tz);
             return this;
         }
 
+        @Contract("_->this")
         public Builder timeZoneIfAbsent(ZoneId tz) {
             if (timeZone == null) {
                 timeZone = TimeZone.getTimeZone(tz);
@@ -427,36 +437,59 @@ public class TerminalContext {
             return this;
         }
 
+        @Contract("_->this")
         public Builder authType(Enum<?> at) {
             authType = at;
             return this;
         }
 
+        @Contract("_->this")
+        public Builder authTypeIfAbsent(Enum<?> at) {
+            if (authType == null) {
+                authType = at;
+            }
+            return this;
+        }
+
+        @Contract("_->this")
         public Builder username(String un) {
             username = un;
             return this;
         }
 
+        @Contract("_->this")
+        public Builder usernameIfAbsent(String un) {
+            if (username == null) {
+                username = un;
+            }
+            return this;
+        }
+
+        @Contract("_->this")
         public Builder authPerm(String pm) {
             authPerm.add(pm);
             return this;
         }
 
+        @Contract("_->this")
         public Builder authPerm(Collection<String> pm) {
             authPerm.addAll(pm);
             return this;
         }
 
+        @Contract("_,_->this")
         public <V> Builder terminal(TypedKey<V> key, V value) {
             terminal.put(key, value);
             return this;
         }
 
+        @Contract("_,_->this")
         public <V> Builder terminalIfAbsent(TypedKey<V> key, V value) {
             terminal.putIfAbsent(key, value);
             return this;
         }
 
+        @Contract("_->this")
         public Builder terminal(Map<TypedKey<?>, Object> kvs) {
             if (kvs != null) {
                 terminal.putAll(kvs);
@@ -464,6 +497,7 @@ public class TerminalContext {
             return this;
         }
 
+        @Contract("_->this")
         public Builder terminalIfAbsent(Map<TypedKey<?>, Object> kvs) {
             if (kvs != null) {
                 for (Map.Entry<TypedKey<?>, Object> en : kvs.entrySet()) {
@@ -473,15 +507,32 @@ public class TerminalContext {
             return this;
         }
 
+        @Contract("_->this")
         public Builder user(long uid) {
             userId = uid;
             return this;
         }
 
+        @Contract("_->this")
+        public Builder userIfAbsent(Long uid) {
+            if (userId == Null.userId && uid != null) {
+                userId = uid;
+            }
+            return this;
+        }
+
+        @Contract("_->this")
+        public Builder userOrGuest(Long uid) {
+            userId = uid == null ? DefaultUserId.Guest : uid;
+            return this;
+        }
+
+        @Contract("->this")
         public Builder guest() {
             return user(DefaultUserId.Guest);
         }
 
+        @NotNull
         public Context build() {
             if (userId == Null.userId) {
                 throw new IllegalArgumentException("invalid userid");

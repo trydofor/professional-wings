@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.database;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.jdbc.support.MetaDataAccessException;
@@ -30,16 +31,19 @@ public class DataSourceContext {
         return current;
     }
 
+    @Contract("_->this")
     public DataSourceContext setCurrent(DataSource current) {
         this.current = current;
         return this;
     }
 
+    @Contract("->this")
     public DataSourceContext clearBackend() {
         backendMap.clear();
         return this;
     }
 
+    @Contract("_,_->this")
     public DataSourceContext addBackend(String name, DataSource ds) {
         if (name != null && ds != null) {
             backendMap.put(name, ds);
@@ -47,6 +51,7 @@ public class DataSourceContext {
         return this;
     }
 
+    @Contract("_->this")
     public DataSourceContext addBackend(Map<String, DataSource> map) {
         if (map != null) {
             backendMap.putAll(map);

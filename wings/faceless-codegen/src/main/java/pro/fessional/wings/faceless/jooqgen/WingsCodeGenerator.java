@@ -1,6 +1,8 @@
 package pro.fessional.wings.faceless.jooqgen;
 
 import lombok.val;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.Converter;
 import org.jooq.codegen.GenerationTool;
 import org.jooq.meta.TableDefinition;
@@ -90,18 +92,22 @@ public class WingsCodeGenerator {
     }
 
 
+    @NotNull
     public static Builder builder() {
         return builder(config());
     }
 
+    @NotNull
     public static Builder builder(Configuration conf) {
         return new Builder(conf == null ? config() : conf);
     }
 
+    @NotNull
     public static Configuration config() {
         return config(WingsCodeGenerator.class.getResourceAsStream(JOOQ_XML));
     }
 
+    @NotNull
     public static Configuration config(InputStream ins) {
         Objects.requireNonNull(ins);
         try (ins) {
@@ -197,16 +203,19 @@ public class WingsCodeGenerator {
         /**
          * Whether to generate incrementally. That is, not to delete files that do not exist in this time.
          */
+        @Contract("_->this")
         public Builder incremental(boolean t) {
             incr = t;
             return this;
         }
 
+        @Contract("_->this")
         public Builder setGlobalSuffix(String suffix) {
             this.suffix = suffix;
             return this;
         }
 
+        @Contract("_->this")
         public Builder setLiveDataByMax(boolean asMax) {
             WingsCodeGenConf.setLiveDataByMax(asMax);
             return this;
@@ -223,11 +232,13 @@ public class WingsCodeGenerator {
             return conf;
         }
 
+        @Contract("_->this")
         public Builder springRepository(boolean b) {
             this.conf.getGenerator().getGenerate().withSpringAnnotations(b);
             return this;
         }
 
+        @Contract("->this")
         public Builder h2() {
             jdbcDriver("org.h2.Driver");
             databaseName("org.jooq.meta.h2.H2Database");
@@ -235,11 +246,13 @@ public class WingsCodeGenerator {
             return this;
         }
 
+        @Contract("_->this")
         public Builder jdbcDriver(String str) {
             this.conf.getJdbc().setDriver(str);
             return this;
         }
 
+        @Contract("_->this")
         public Builder jdbcUrl(String str) {
             this.conf.getJdbc().setUrl(str);
             if (str.contains(":h2:")) {
@@ -258,26 +271,31 @@ public class WingsCodeGenerator {
             return this;
         }
 
+        @Contract("_->this")
         public Builder jdbcUser(String str) {
             this.conf.getJdbc().setUser(str);
             return this;
         }
 
+        @Contract("_->this")
         public Builder jdbcPassword(String str) {
             this.conf.getJdbc().setPassword(str);
             return this;
         }
 
+        @Contract("_->this")
         public Builder targetPackage(String str) {
             this.conf.getGenerator().getTarget().setPackageName(str);
             return this;
         }
 
+        @Contract("_->this")
         public Builder targetDirectory(String str) {
             this.conf.getGenerator().getTarget().setDirectory(str);
             return this;
         }
 
+        @Contract("_->this")
         public Builder databaseSchema(String str) {
             this.conf.getGenerator().getDatabase().setInputSchema(str);
             return this;
@@ -317,6 +335,7 @@ public class WingsCodeGenerator {
          * @param str AbstractDatabase
          * @return Builder
          */
+        @Contract("_->this")
         public Builder databaseName(String str) {
             this.conf.getGenerator().getDatabase().setName(str);
             return this;
@@ -349,6 +368,7 @@ public class WingsCodeGenerator {
         /**
          * append or replace configuration/generator/database/includes
          */
+        @Contract("_,_->this")
         public Builder databaseIncludes(boolean append, String... reg) {
             final String join = String.join("|", reg);
             final Database db = this.conf.getGenerator().getDatabase();
@@ -374,6 +394,7 @@ public class WingsCodeGenerator {
          * @return Builder
          * @see Pattern#COMMENTS
          */
+        @Contract("_->this")
         public Builder databaseExcludes(String... reg) {
             return databaseExcludes(false, reg);
         }
@@ -381,6 +402,7 @@ public class WingsCodeGenerator {
         /**
          * append or replace configuration/generator/database/excludes
          */
+        @Contract("_,_->this")
         public Builder databaseExcludes(boolean append, String... reg) {
             final String join = String.join("|", reg);
             final Database db = this.conf.getGenerator().getDatabase();
@@ -415,6 +437,7 @@ public class WingsCodeGenerator {
          * @param str sql
          * @return Builder
          */
+        @Contract("_->this")
         public Builder databaseVersionProvider(String str) {
             this.conf.getGenerator().getDatabase().setSchemaVersionProvider(str);
             return this;
@@ -425,11 +448,13 @@ public class WingsCodeGenerator {
          *
          * @return Builder
          */
+        @Contract("->this")
         public Builder forceRegenerate() {
             this.conf.getGenerator().getDatabase().setSchemaVersionProvider(Null.Str);
             return this;
         }
 
+        @Contract("_,_->this")
         public Builder forcedType(String name, String type) {
             ForcedType ft = new ForcedType();
             ft.setName(name);
@@ -437,12 +462,14 @@ public class WingsCodeGenerator {
             return forcedType(ft);
         }
 
+        @Contract("_->this")
         public Builder forcedType(ForcedType... ft) {
             final List<ForcedType> fts = this.conf.getGenerator().getDatabase().getForcedTypes();
             fts.addAll(Arrays.asList(ft));
             return this;
         }
 
+        @Contract("_,_,_->this")
         public Builder forcedType(Class<?> userType, Class<? extends Converter<?, ?>> converter, String... reg) {
             ForcedType ft = new ForcedType()
                     .withUserType(userType.getName())
@@ -459,23 +486,28 @@ public class WingsCodeGenerator {
          * @param sortImport Replacing fully qualified references with import is only valid for wingsGenerator.
          * @return this
          */
+        @Contract("_,_->this")
         public Builder forcedType(ForcedType ft, String sortImport) {
             WingsCodeGenConf.shortImport4Table(sortImport);
             return forcedType(ft);
         }
 
+        @Contract("_,_->this")
         public <E extends Enum<E> & CodeEnum> Builder forcedStrCodeEnum(Class<E> en, String... reg) {
             return forcedJooqEnum(en, JooqCodeEnumConverter.class, reg);
         }
 
+        @Contract("_,_->this")
         public <E extends Enum<E> & ConstantEnum> Builder forcedIntConsEnum(Class<E> en, String... reg) {
             return forcedJooqEnum(en, JooqConsEnumConverter.class, reg);
         }
 
+        @Contract("_->this")
         public Builder forcedLocale(String... reg) {
             return forcedType(Locale.class, JooqLocaleConverter.class, reg);
         }
 
+        @Contract("_->this")
         public Builder forcedZoneId(String... reg) {
             final String zid = ZoneId.class.getName();
             final String exp = String.join("|", reg);
@@ -492,12 +524,14 @@ public class WingsCodeGenerator {
             return forcedType(ft1, ft2);
         }
 
+        @Contract("_->this")
         public Builder funSeqName(Function<TableDefinition, String> fn) {
             WingsJooqGenHelper.funSeqName.set(fn);
             return this;
         }
 
         //
+        @Contract("_,_,_->this")
         private <E extends Enum<E>> Builder forcedJooqEnum(Class<E> userType, Class<?> converter, String... reg) {
             final String cv = converter.getName();
             ForcedType ft = new ForcedType()
