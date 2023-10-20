@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.9</version> <!-- https://github.com/spring-projects/spring-boot/releases -->
+        <version>3.0.12</version> <!-- https://github.com/spring-projects/spring-boot/releases -->
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -21,7 +21,7 @@
 
     <properties>
         <!-- https://github.com/spring-projects/spring-boot/releases -->
-        <revision>3.0.9</revision>
+        <revision>3.0.12</revision>
         <!-- https://maven.apache.org/maven-ci-friendly.html -->
         <changelist>300-SNAPSHOT</changelist>
         <!-- https://docs.spring.io/spring-boot/docs/3.0.3/reference/html/dependency-versions.html -->
@@ -41,8 +41,8 @@
         <annotations.version>24.0.1</annotations.version> <!-- https://github.com/JetBrains/java-annotations/releases -->
         <!-- common utils-->
         <mapstruct.version>1.5.5.Final</mapstruct.version> <!-- https://github.com/mapstruct/mapstruct/releases -->
-        <guava.version>32.1.1-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
-        <commons-io.version>2.13.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
+        <guava.version>32.1.3-jre</guava.version> <!-- https://github.com/google/guava/releases/ -->
+        <commons-io.version>2.14.0</commons-io.version> <!-- https://commons.apache.org/proper/commons-io/ -->
         <commons-collections4.version>4.4</commons-collections4.version> <!-- https://commons.apache.org/proper/commons-collections/ -->
         <commons-text.version>1.10.0</commons-text.version> <!-- https://commons.apache.org/proper/commons-text/ -->
         <joda-convert.version>2.2.3</joda-convert.version> <!-- https://github.com/JodaOrg/joda-convert/releases -->
@@ -51,11 +51,11 @@
         <meepo.version>1.4.1-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <shardingsphere.version>5.3.2</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
-        <fastjson2.version>2.0.36</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
+        <fastjson2.version>2.0.41</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
         <fastjson.version>${fastjson2.version}</fastjson.version> <!-- https://github.com/alibaba/fastjson/releases -->
         <kryo.version>5.5.0</kryo.version> <!-- https://github.com/EsotericSoftware/kryo/releases -->
         <transmittable.version>2.14.3</transmittable.version> <!-- https://github.com/alibaba/transmittable-thread-local/releases -->
-        <bouncycastle.version>1.74</bouncycastle.version> <!-- https://bouncycastle.org/releasenotes.html -->
+        <bouncycastle.version>1.76</bouncycastle.version> <!-- https://bouncycastle.org/releasenotes.html -->
         <justauth.version>1.16.5</justauth.version> <!-- https://github.com/justauth/JustAuth/releases -->
         <!-- servicecomb -->
         <servicecomb.version>2.8.8</servicecomb.version> <!-- https://github.com/apache/servicecomb-java-chassis/releases -->
