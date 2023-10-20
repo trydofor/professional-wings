@@ -9,20 +9,20 @@ import pro.fessional.wings.faceless.enums.StandardI18nEnum;
 
 /**
  * @author trydofor
- * @since 2022-10-03
+ * @since 2023-09-01
  */
 public enum UserStatus implements ConstantEnum, StandardI18nEnum {
 
-    SUPER(1200200, "user_status", "用户状态", "classpath:/wings-tmpl/ConstantEnumTemplate.java"),
-    UNINIT(1200201, "uninit", "新建", "未初始化，有信息不完善"),
-    ACTIVE(1200202, "active", "正常", "正常活动，通常的账号状态"),
-    INFIRM(1200203, "infirm", "薄弱", "薄弱账户，弱密码，密码临期"),
-    UNSAFE(1200204, "unsafe", "异动", "异动账户，有可疑迹象，如频繁操作"),
-    DANGER(1200205, "danger", "危险", "危险账户，不可登录，如失败过多"),
-    FROZEN(1200206, "frozen", "冻结", "冻结账户，不可登录，如资金危险"),
-    LOCKED(1200207, "locked", "锁定", "锁定账户，不可登录，人为锁定"),
-    CLOSED(1200208, "closed", "关闭", "关闭账户，不可登录，人为关闭"),
-    HIDDEN(1200299, "hidden", "隐藏", "隐藏账户，不可登录，特殊用途"),
+    SUPER(1200200, "user_status", "user status", "classpath:/wings-tmpl/ConstantEnumTemplate.java"),
+    UNINIT(1200201, "uninit", "uninitialized", "created but incomplete"),
+    ACTIVE(1200202, "active", "normal account", "normal account"),
+    INFIRM(1200203, "infirm", "weak account", "weak or expired password"),
+    UNSAFE(1200204, "unsafe", "unsafe account", "suspicious or frequent operation"),
+    DANGER(1200205, "danger", "danger account", "deny login, eg. too much fail"),
+    FROZEN(1200206, "frozen", "frozen account", "deny login, eg. funds in danger"),
+    LOCKED(1200207, "locked", "locked account", "deny login, manually locked"),
+    CLOSED(1200208, "closed", "closed account", "deny login, manually closed"),
+    HIDDEN(1200299, "hidden", "hidden account", "deny login, special purpose"),
     ;
     public static final String $SUPER = "user_status";
     public static final String $UNINIT = "uninit";

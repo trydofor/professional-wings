@@ -43,4 +43,9 @@ public class TestRighterController {
         log.info("audit={}", audit);
         return audit;
     }
+
+    @GetMapping("/test/Cve2023T34035Test.json")
+    public String getCve2023T34035Test() {
+        return "OK";
+    }
 }

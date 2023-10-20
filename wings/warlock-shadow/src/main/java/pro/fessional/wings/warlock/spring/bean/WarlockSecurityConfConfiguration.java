@@ -15,18 +15,19 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
-import pro.fessional.wings.slardar.spring.conf.WingsHttpPermitConfigurer;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.spring.conf.HttpSecurityCustomizer;
@@ -56,8 +57,9 @@ public class WarlockSecurityConfConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityWebAutos, havingValue = "true")
-    public WebSecurityCustomizer warlockWebCustomizer(ObjectProvider<HttpFirewall> httpFirewall) {
+    public WebSecurityCustomizer warlockWebCustomizer(ObjectProvider<HttpFirewall> httpFirewall, ObjectProvider<MvcRequestMatcher.Builder> mvcMatcher) {
         log.info("WarlockShadow spring-bean warlockWebCustomizer");
+        MvcRequestMatcher.Builder mvc = mvcMatcher.getIfAvailable();
         return web -> {
             if (securityProp.isWebDebug()) {
                 log.info("WarlockShadow conf WebSecurity, WebDebug=true");
@@ -70,7 +72,7 @@ public class WarlockSecurityConfConfiguration {
             if (!webIgnore.isEmpty()) {
                 final Set<String> ignores = CommonPropHelper.onlyValue(webIgnore.values());
                 log.info("WarlockShadow conf WebSecurity, ignoring=" + String.join("\n,", ignores));
-                web.ignoring().requestMatchers(ignores.toArray(Null.StrArr));
+                web.ignoring().requestMatchers(SecurityConfigHelper.requestMatchers(mvc, ignores));
             }
 
             final HttpFirewall firewall = httpFirewall.getIfAvailable();
@@ -88,7 +90,8 @@ public class WarlockSecurityConfConfiguration {
             ObjectProvider<AuthenticationSuccessHandler> authenticationSuccessHandler,
             ObjectProvider<AuthenticationFailureHandler> authenticationFailureHandler,
             ObjectProvider<WingsAuthDetailsSource<?>> wingsAuthDetailsSource,
-            ObjectProvider<LogoutSuccessHandler> logoutSuccessHandler
+            ObjectProvider<LogoutSuccessHandler> logoutSuccessHandler,
+            ObjectProvider<AccessDeniedHandler> accessDeniedHandler
     ) {
         log.info("WarlockShadow spring-bean warlockSecurityBindHttpConfigure");
         return http -> {
@@ -140,28 +143,35 @@ public class WarlockSecurityConfConfiguration {
                             ResponseHelper.writeBodyUtf8(response, securityProp.getSessionExpiredBody());
                         })
                 );
+
+            final AccessDeniedHandler deniedHandler = accessDeniedHandler.getIfAvailable();
+            if(deniedHandler != null){
+                log.info("WarlockShadow conf exceptionHandling, accessDeniedHandler=" + deniedHandler.getClass());
+                http.exceptionHandling().accessDeniedHandler(deniedHandler);
+            }
         };
     }
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpAuth, havingValue = "true")
     @Order(OrderedWarlockConst.SecurityAuthHttp)
-    public HttpSecurityCustomizer warlockSecurityAuthHttpConfigure() {
+    public HttpSecurityCustomizer warlockSecurityAuthHttpConfigure(ObjectProvider<MvcRequestMatcher.Builder> mvcMatcher) {
         log.info("WarlockShadow spring-bean warlockSecurityAuthHttpConfigure");
+        MvcRequestMatcher.Builder mvc = mvcMatcher.getIfAvailable();
         return http -> {
             val conf = http.authorizeHttpRequests();
             // 1 PermitAll
             final Set<String> permed = CommonPropHelper.onlyValue(securityProp.getPermitAll().values());
             if (!permed.isEmpty()) {
                 log.info("WarlockShadow conf HttpSecurity, bind PermitAll=" + String.join("\n,", permed));
-                conf.requestMatchers(permed.toArray(Null.StrArr)).permitAll();
+                conf.requestMatchers(SecurityConfigHelper.requestMatchers(mvc, permed)).permitAll();
             }
 
             // 2 Authenticated
             final Set<String> authed = CommonPropHelper.onlyValue(securityProp.getAuthenticated().values());
             if (!authed.isEmpty()) {
                 log.info("WarlockShadow conf HttpSecurity, bind Authenticated=" + String.join("\n,", authed));
-                conf.requestMatchers(authed.toArray(Null.StrArr)).authenticated();
+                conf.requestMatchers(SecurityConfigHelper.requestMatchers(mvc, authed)).authenticated();
             }
 
             // 3 Authority
@@ -182,7 +192,7 @@ public class WarlockSecurityConfConfiguration {
                     final String url = en.getKey();
                     final Set<String> pms = CommonPropHelper.onlyValue(en.getValue());
                     log.info("WarlockShadow conf HttpSecurity, bind url=" + url + ", any-permit=[" + String.join(",", pms) + "]");
-                    conf.requestMatchers(url).hasAnyAuthority(pms.toArray(Null.StrArr));
+                    conf.requestMatchers(SecurityConfigHelper.requestMatchers(mvc, url)).hasAnyAuthority(pms.toArray(Null.StrArr));
                 }
             }
         };
@@ -205,7 +215,7 @@ public class WarlockSecurityConfConfiguration {
         log.info("WarlockShadow spring-bean warlockSecurityAutoHttpConfigure");
         return http -> {
             // cors
-            http.cors().configurationSource(WingsHttpPermitConfigurer.corsPermitAll());
+            http.cors().configurationSource(SecurityConfigHelper.corsPermitAll());
 
             // cache
             final RequestCache rc = cache.getIfAvailable();

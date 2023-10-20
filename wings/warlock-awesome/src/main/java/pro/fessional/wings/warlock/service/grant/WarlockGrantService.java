@@ -6,6 +6,7 @@ import pro.fessional.wings.warlock.enums.autogen.GrantType;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * <pre>
@@ -98,12 +99,12 @@ public interface WarlockGrantService {
      * @param userId userId
      * @return RoleId/PermId - UserId
      */
-    Map<Long, Long> entryUser(@NotNull GrantType type, @NotNull Collection<Long> userId);
+    Map<Long, Set<Long>> entryUser(@NotNull GrantType type, @NotNull Collection<Long> userId);
 
     /**
      * @see #entryUser(GrantType, Collection)
      */
-    default Map<Long, Long> entryUser(@NotNull GrantType type, @NotNull Long... userId) {
+    default Map<Long, Set<Long>> entryUser(@NotNull GrantType type, @NotNull Long... userId) {
         return entryUser(type, Arrays.asList(userId));
     }
 
@@ -114,12 +115,12 @@ public interface WarlockGrantService {
      * @param roleId roleId
      * @return RoleId/PermId - roleId
      */
-    Map<Long, Long> entryRole(@NotNull GrantType type, @NotNull Collection<Long> roleId);
+    Map<Long, Set<Long>> entryRole(@NotNull GrantType type, @NotNull Collection<Long> roleId);
 
     /**
      * @see #entryRole(GrantType, Collection)
      */
-    default Map<Long, Long> entryRole(@NotNull GrantType type, @NotNull Long... roleId) {
+    default Map<Long, Set<Long>> entryRole(@NotNull GrantType type, @NotNull Long... roleId) {
         return entryRole(type, Arrays.asList(roleId));
     }
 }

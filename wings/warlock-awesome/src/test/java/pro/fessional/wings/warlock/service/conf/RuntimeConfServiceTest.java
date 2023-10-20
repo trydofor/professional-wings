@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Need init database via Warlock1SchemaCreator#init0Schema
+ * Need init database via BootDatabaseTest
  *
  * @author trydofor
  * @since 2022-03-09
@@ -90,7 +90,7 @@ class RuntimeConfServiceTest {
     @Test
     void testJson() {
         Dto dto = new Dto();
-        runtimeConfService.newObject(Dto.class, dto, "Need init database via Warlock1SchemaCreator#init0Schema");
+        runtimeConfService.newObject(Dto.class, dto, "Need init database via BootDatabaseTest");
         Sleep.ignoreInterrupt(1000);
         final Dto dto1 = runtimeConfService.getSimple(Dto.class, Dto.class);
         Assertions.assertEquals(dto, dto1);

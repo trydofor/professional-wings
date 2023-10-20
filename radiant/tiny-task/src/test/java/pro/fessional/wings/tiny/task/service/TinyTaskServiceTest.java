@@ -22,6 +22,7 @@ import static pro.fessional.wings.tiny.task.service.TinyTaskServiceTest.timingCr
         "wings.tiny.task.define[pro.fessional.wings.tiny.task.service.TestServiceManual#strStr].enabled=" + enabled,
         "wings.tiny.task.define[pro.fessional.wings.tiny.task.service.TestServiceManual#strStr].autorun=" + autorun,
         "wings.tiny.task.define[pro.fessional.wings.tiny.task.service.TestServiceManual#strStr].timing-cron=" + timingCron,
+        "wings.tiny.task.define[pro.fessional.wings.tiny.task.service.TestServiceManual#strStr].version=1",
 //        "wings.tiny.task.enabled.dryrun=true",
         "wings.slardar.ding-notice.default.access-token=${DING_TALK_TOKEN:}"
 })
@@ -49,7 +50,7 @@ class TinyTaskServiceTest {
         Assertions.assertEquals("TestServiceManual#strStr", prop.getTaskerName());
         Assertions.assertEquals("pro.fessional.wings.tiny.task.service.TestServiceManual#strStr", prop.getTaskerBean());
         Assertions.assertEquals(timingCron, prop.getTimingCron());
-        Assertions.assertEquals(enabled, prop.isEnabled());
+        Assertions.assertEquals(enabled, prop.isEnabled(),"should use higher version, conf=1,db=0");
         Assertions.assertEquals(autorun, prop.isAutorun());
     }
 

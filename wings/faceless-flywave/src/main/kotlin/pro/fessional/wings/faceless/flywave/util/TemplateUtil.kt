@@ -175,7 +175,7 @@ object TemplateUtil {
             } else {
                 val end = i + len
                 if (bnd) {
-                    val bgn = (i == 0 || (i > 0 && isBoundary(msk, i - 1)))
+                    val bgn = (i == 0 || isBoundary(msk, i - 1))
                     if (bgn && isBoundary(msk, end)) {
                         idx[i] = end
                     }
@@ -275,7 +275,7 @@ object TemplateUtil {
             c == '_' -> false
             c == '$' -> dollar
             // non-ascii naming
-            c.code > Byte.MAX_VALUE && idx > 0 && txt[idx - 1].code > Byte.MAX_VALUE -> false
+            c.code > Byte.MAX_VALUE && txt[idx - 1].code > Byte.MAX_VALUE -> false
             else -> true
         }
     }

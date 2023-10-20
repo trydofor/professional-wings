@@ -4,7 +4,7 @@ package pro.fessional.wings.warlock.security.session;
 import org.cache2k.Cache;
 import org.cache2k.Cache2kBuilder;
 import org.jetbrains.annotations.Nullable;
-import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.data.R;
 
 import java.util.concurrent.TimeUnit;
 
@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * <pre>
  * Provides a one-time token that valid for 5 minutes to authn.
- * (1) initNonce: Init one-time token
- * (2) bindNonceSid: after successful login, bind token and sessionId by uid.
+ * (1) initNonce: Init one-time token, result = R.NG
+ * (2) bindNonceResult: after successful login, bind result.
  * </pre>
  *
  * @author trydofor
@@ -29,7 +29,7 @@ public class NonceTokenSessionHelper {
 
     private static class Sf {
         private String ip = null;
-        private String sid = null;
+        private R<?> result = null;
     }
 
     /**
@@ -45,10 +45,19 @@ public class NonceTokenSessionHelper {
     /**
      * bind token to sessionId
      */
-    public static void bindNonceSid(String token, String sid) {
+    public static void bindNonceSession(String token, String sid) {
+        final SidData data = () -> sid;
+        final R<?> result = R.okData(data);
+        bindNonceResult(token, result);
+    }
+
+    /**
+     * bind token to result
+     */
+    public static void bindNonceResult(String token, R<?> result) {
         final Sf s = cache.get(token);
         if (s != null) {
-            s.sid = sid;
+            s.result = result;
         }
     }
 
@@ -70,14 +79,18 @@ public class NonceTokenSessionHelper {
      * @return null|empty|sid
      */
     @Nullable
-    public static String authNonce(String token, String ip) {
+    public static R<?> authNonce(String token, String ip) {
         if (token == null || token.isEmpty()) return null;
 
         final Sf s = cache.get(token);
         if (s == null) return null;
-        if (s.sid == null) return Null.Str;
+        if (s.result == null) return R.NG;
 
         invalidNonce(token);
-        return s.ip.equals(ip) ? s.sid : null;
+        return s.ip.equals(ip) ? s.result : null;
+    }
+
+    public interface SidData {
+        String getSid();
     }
 }

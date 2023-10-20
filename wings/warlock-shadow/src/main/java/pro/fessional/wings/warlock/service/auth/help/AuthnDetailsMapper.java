@@ -26,6 +26,9 @@ public interface AuthnDetailsMapper {
     @Mapping(target = "accountNonLocked", ignore = true)
     @Mapping(target = "accountNonExpired", ignore = true)
     void mapping(WarlockAuthnService.Details source, @MappingTarget DefaultWingsUserDetails target);
+
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "expiredDt", ignore = true)
     @InheritInverseConfiguration
     void mapping(DefaultWingsUserDetails source, @MappingTarget WarlockAuthnService.Details target);
 

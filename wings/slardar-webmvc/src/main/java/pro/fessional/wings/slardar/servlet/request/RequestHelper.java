@@ -58,7 +58,7 @@ public class RequestHelper {
     @Nullable
     public static String getCookieValue(HttpServletRequest request, String name) {
         final Cookie[] cookies = request.getCookies();
-        if (cookies == null || cookies.length == 0) return null;
+        if (cookies == null) return null;
         for (Cookie ck : cookies) {
             if (ck.getName().equals(name)) return ck.getValue();
         }

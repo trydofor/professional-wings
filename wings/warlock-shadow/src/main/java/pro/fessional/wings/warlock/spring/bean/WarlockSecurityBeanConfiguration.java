@@ -5,16 +5,21 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -26,6 +31,7 @@ import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.WingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
+import pro.fessional.wings.slardar.security.WingsAuthenticationEventPublisher;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthCheckService;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
@@ -34,6 +40,7 @@ import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeParser;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.spring.consts.OrderedWarlockConst;
+import pro.fessional.wings.warlock.security.handler.AccessFailureHandler;
 import pro.fessional.wings.warlock.security.handler.LoginFailureHandler;
 import pro.fessional.wings.warlock.security.handler.LoginSuccessHandler;
 import pro.fessional.wings.warlock.security.handler.LogoutOkHandler;
@@ -92,12 +99,20 @@ import static org.springframework.util.StringUtils.hasText;
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityBean, havingValue = "true")
 @RequiredArgsConstructor
 @AutoConfigureOrder(OrderedWarlockConst.SecurityBeanConfiguration)
+@AutoConfigureBefore(SecurityAutoConfiguration.class)
 public class WarlockSecurityBeanConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockSecurityBeanConfiguration.class);
 
     private final WarlockSecurityProp securityProp;
     private final ApplicationContext applicationContext;
+
+    @Bean
+    @ConditionalOnMissingBean({AuthenticationEventPublisher.class})
+    public WingsAuthenticationEventPublisher  authenticationEventPublisher(){
+        log.info("WarlockShadow spring-bean authenticationEventPublisher");
+        return new WingsAuthenticationEventPublisher(applicationContext);
+    }
 
     @Bean
     @ConditionalOnMissingBean(WingsAuthTypeParser.class)
@@ -116,10 +131,16 @@ public class WarlockSecurityBeanConfiguration {
         log.info("WarlockShadow spring-bean loginSuccessHandler");
         return new LoginSuccessHandler();
     }
+    @Bean
+    @ConditionalOnExpression("!'${" + WarlockSecurityProp.Key$loginFailureBody + "}'.isEmpty()")
+    public LoginFailureHandler.Handler loginFailureHandlerDefault() {
+        log.info("WarlockShadow spring-bean loginFailureHandlerDefault");
+        return new LoginFailureHandler.DefaultHandler();
+    }
 
     @Bean
     @ConditionalOnMissingBean(AuthenticationFailureHandler.class)
-    @ConditionalOnExpression("!'${" + WarlockSecurityProp.Key$loginFailureBody + "}'.isEmpty()")
+    @ConditionalOnBean(LoginFailureHandler.Handler.class)
     public AuthenticationFailureHandler loginFailureHandler() {
         log.info("WarlockShadow spring-bean loginFailureHandler");
         return new LoginFailureHandler();
@@ -131,6 +152,14 @@ public class WarlockSecurityBeanConfiguration {
     public LogoutSuccessHandler logoutSuccessHandler() {
         log.info("WarlockShadow spring-bean logoutSuccessHandler");
         return new LogoutOkHandler();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(AccessDeniedHandler.class)
+    @ConditionalOnExpression("!'${" + WarlockSecurityProp.Key$logoutSuccessBody + "}'.isEmpty()")
+    public AccessDeniedHandler accessDeniedHandler() {
+        log.info("WarlockShadow spring-bean accessDeniedHandler");
+        return new AccessFailureHandler();
     }
 
     ///////// AuthZ & AuthN /////////

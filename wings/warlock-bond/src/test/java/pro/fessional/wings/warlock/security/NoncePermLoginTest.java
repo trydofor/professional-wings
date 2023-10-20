@@ -46,12 +46,12 @@ class NoncePermLoginTest {
         final Response r1 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/console-nonce.json?username=root"), false);
         String nonce = OkHttpClientHelper.extractString(r1, false);
         log.warn("get nonce for root, nonce=" + nonce);
-        Assertions.assertEquals(200, r1.code(), "Need init database via Warlock1SchemaCreator#init0Schema");
+        Assertions.assertEquals(200, r1.code(), "Need init database via BootDatabaseTest");
 
         final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/username/login.json?username=root&password=" + nonce), false);
         String login = OkHttpClientHelper.extractString(r2, false);
         log.warn("get login res = " + login);
-        Assertions.assertTrue(login.contains("true"), "Need init database via Warlock1SchemaCreator#init0Schema");
+        Assertions.assertTrue(login.contains("true"), "Need init database via BootDatabaseTest");
 
         final Response r3 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/list-auth.json"), false);
         String auths = OkHttpClientHelper.extractString(r3, false);
@@ -67,7 +67,7 @@ class NoncePermLoginTest {
             final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/username/login.json?username=root&password=BAD&locale=zh"), false);
             String login = OkHttpClientHelper.extractString(r2, false);
             log.warn("testDanger-a get login res = " + login);
-            Assertions.assertTrue(login.contains("false"), "Need init database via Warlock1SchemaCreator#init0Schema");
+            Assertions.assertTrue(login.contains("error.authn.locked"), "Need init database via BootDatabaseTest");
             Assertions.assertTrue(login.contains("账号已锁定"), "check i18n config");
         }
 
@@ -76,21 +76,21 @@ class NoncePermLoginTest {
             final Response r1 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/console-nonce.json?username=root"), false);
             String nonce = OkHttpClientHelper.extractString(r1, false);
             log.warn("testDanger-b get nonce for root, nonce=" + nonce);
-            Assertions.assertEquals(200, r1.code(), "Need init database via Warlock1SchemaCreator#init0Schema");
+            Assertions.assertEquals(200, r1.code(), "Need init database via BootDatabaseTest");
 
             final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/username/login.json?username=root&password=" + nonce), false);
             String login = OkHttpClientHelper.extractString(r2, false);
             log.warn("testDanger-b get login res = " + login);
-            Assertions.assertTrue(login.contains("true"), "Need init database via Warlock1SchemaCreator#init0Schema");
+            Assertions.assertTrue(login.contains("true"), "Need init database via BootDatabaseTest");
         }
 
         for (int i = 0; i < 6; i++) {
             final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/username/login.json?username=root&password=BAD&locale=en"), false);
             String login = OkHttpClientHelper.extractString(r2, false);
             log.warn("testDanger-c " + i + " get login res = " + login);
-            Assertions.assertTrue(login.contains("false"), "Need init database via Warlock1SchemaCreator#init0Schema");
+            Assertions.assertTrue(login.contains("error.authn."), "Need init database via BootDatabaseTest");
             if (i > 2) {
-                Assertions.assertTrue(login.contains("error.authn.failureWaiting"), "Need init database via Warlock1SchemaCreator#init0Schema");
+                Assertions.assertTrue(login.contains("error.authn.failureWaiting"), "Need init database via BootDatabaseTest");
                 Assertions.assertTrue(login.contains("retry after"), "check i18n config");
             }
         }
@@ -100,12 +100,12 @@ class NoncePermLoginTest {
             final Response r1 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/console-nonce.json?username=root"), false);
             String nonce = OkHttpClientHelper.extractString(r1, false);
             log.warn("testDanger-d get nonce for root, nonce=" + nonce);
-            Assertions.assertEquals(200, r1.code(), "Need init database via Warlock1SchemaCreator#init0Schema");
+            Assertions.assertEquals(200, r1.code(), "Need init database via BootDatabaseTest");
 
             final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/auth/username/login.json?username=root&password=" + nonce), false);
             String login = OkHttpClientHelper.extractString(r2, false);
             log.warn("testDanger-d get login res = " + login);
-            Assertions.assertTrue(login.contains("true"), "Need init database via Warlock1SchemaCreator#init0Schema");
+            Assertions.assertTrue(login.contains("true"), "Need init database via BootDatabaseTest");
         }
     }
 }

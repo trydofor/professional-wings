@@ -19,8 +19,11 @@ import pro.fessional.wings.warlock.service.grant.WarlockGrantService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author trydofor
@@ -101,30 +104,43 @@ public class WarlockGrantServiceImpl implements WarlockGrantService {
     }
 
     @Override
-    public Map<Long, Long> entryUser(@NotNull GrantType type, @NotNull Collection<Long> userId) {
+    public Map<Long, Set<Long>> entryUser(@NotNull GrantType type, @NotNull Collection<Long> userId) {
         if (winUserGrantDao.notTableExist()) return Collections.emptyMap();
 
+        final Map<Long, Set<Long>> result = new HashMap<>();
         final WinUserGrantTable t = winUserGrantDao.getTable();
-        return winUserGrantDao
+        final var rs = winUserGrantDao
                 .ctx()
                 .select(t.GrantEntry, t.ReferUser)
                 .from(t)
                 .where(t.GrantType.eq(type).and(t.ReferUser.in(userId)))
-                .fetch()
-                .intoMap(Record2::value1, Record2::value2);
+                .fetch();
+        for (Record2<Long, Long> r2 : rs) {
+            Set<Long> set = result.computeIfAbsent(r2.value1(), (k) -> new HashSet<>());
+            set.add(r2.value2());
+        }
+
+        return result;
     }
 
     @Override
-    public Map<Long, Long> entryRole(@NotNull GrantType type, @NotNull Collection<Long> roleId) {
+    public Map<Long, Set<Long>> entryRole(@NotNull GrantType type, @NotNull Collection<Long> roleId) {
         if (winRoleGrantDao.notTableExist()) return Collections.emptyMap();
 
+        final Map<Long, Set<Long>> result = new HashMap<>();
         final WinRoleGrantTable t = winRoleGrantDao.getTable();
-        return winRoleGrantDao
+        final var rs = winRoleGrantDao
                 .ctx()
                 .select(t.GrantEntry, t.ReferRole)
                 .from(t)
                 .where(t.GrantType.eq(type).and(t.ReferRole.in(roleId)))
-                .fetch()
-                .intoMap(Record2::value1, Record2::value2);
+                .fetch();
+
+        for (Record2<Long, Long> r2 : rs) {
+            Set<Long> set = result.computeIfAbsent(r2.value1(), (k) -> new HashSet<>());
+            set.add(r2.value2());
+        }
+
+        return result;
     }
 }

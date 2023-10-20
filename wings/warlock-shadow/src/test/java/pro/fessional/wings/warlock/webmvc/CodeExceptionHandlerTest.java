@@ -27,7 +27,7 @@ public class CodeExceptionHandlerTest {
         mockMvc.perform(get("/test/code-exception.json")
                        .header("Accept-Language", "en_US"))
                .andDo(print())
-               .andExpect(content().json("{\"success\":false,\"code\":\"error.common.assert.empty\",\"message\":\"test should NOT empty\"}"));
+               .andExpect(content().json("{\"success\":false,\"code\":\"error.common.assert.empty\",\"message\":\"test should not empty\"}"));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class CodeExceptionHandlerTest {
         mockMvc.perform(get("/test/message-exception.json")
                        .header("Accept-Language", "en_US"))
                .andDo(print())
-               .andExpect(content().json("{\"success\":false,\"code\":\"error.common.assert.empty\",\"message\":\"test should NOT empty\"}"));
+               .andExpect(content().json("{\"success\":false,\"code\":\"error.common.assert.empty\",\"message\":\"test should not empty\"}"));
     }
 
     @Test

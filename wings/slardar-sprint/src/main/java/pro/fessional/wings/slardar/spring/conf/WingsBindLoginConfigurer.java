@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.spring.conf;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.jetbrains.annotations.Contract;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
@@ -44,27 +45,31 @@ public class WingsBindLoginConfigurer extends
         return super.loginPage(loginPage);
     }
 
+    @Contract("_->this")
     public WingsBindLoginConfigurer loginForward(boolean forward) {
         ((LoginUrlAuthenticationEntryPoint) getAuthenticationEntryPoint()).setUseForward(forward);
         return this;
     }
 
+    @Contract("_->this")
     public WingsBindLoginConfigurer usernameParameter(String usernameParameter) {
         getAuthenticationFilter().setUsernameParameter(usernameParameter);
         return this;
     }
 
-
+    @Contract("_->this")
     public WingsBindLoginConfigurer passwordParameter(String passwordParameter) {
         getAuthenticationFilter().setPasswordParameter(passwordParameter);
         return this;
     }
 
+    @Contract("_->this")
     public WingsBindLoginConfigurer failureForwardUrl(String forwardUrl) {
         failureHandler(new ForwardAuthenticationFailureHandler(forwardUrl));
         return this;
     }
 
+    @Contract("_->this")
     public WingsBindLoginConfigurer successForwardUrl(String forwardUrl) {
         successHandler(new ForwardAuthenticationSuccessHandler(forwardUrl));
         return this;
@@ -77,26 +82,31 @@ public class WingsBindLoginConfigurer extends
     private Enum<?> defaultAuthType = null;
     private final Map<String, Enum<?>> authTypes = new HashMap<>();
 
+    @Contract("_,_->this")
     public WingsBindLoginConfigurer bindAuthTypeToEnums(String type, Enum<?> authType) {
         this.authTypes.put(type, authType);
         return this;
     }
 
+    @Contract("_->this")
     public WingsBindLoginConfigurer bindAuthTypeToEnums(Map<String, Enum<?>> authType) {
         this.authTypes.putAll(authType);
         return this;
     }
 
+    @Contract("_->this")
     public WingsBindLoginConfigurer bindAuthTypeDefault(Enum<?> authType) {
         this.defaultAuthType = authType;
         return this;
     }
 
+    @Contract("_->this")
     public WingsBindLoginConfigurer bindAuthTypeSource(WingsAuthTypeSource wingsAuthTypeSource) {
         this.wingsAuthTypeSource = wingsAuthTypeSource;
         return this;
     }
 
+    @Contract("_->this")
     public WingsBindLoginConfigurer bindAuthDetailsSource(WingsAuthDetailsSource<?> wingsAuthDetailsSource) {
         this.wingsAuthDetailsSource = wingsAuthDetailsSource;
         return this;

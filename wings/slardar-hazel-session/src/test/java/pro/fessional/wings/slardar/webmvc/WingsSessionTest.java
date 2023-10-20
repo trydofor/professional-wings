@@ -16,6 +16,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
+ * bug in boot 3.0.8, fixed in 3.0.9
+ * <a href="https://github.com/spring-projects/spring-framework/issues/30747">
+ * io.micrometer:micrometer-observation:1.10.8 or higher and io.micrometer:context-propagation:1.0.3 or higher
+ * </a>
+ *
  * @author trydofor
  * @since 2020-06-03
  */
@@ -36,7 +41,7 @@ public class WingsSessionTest {
                 post("/user/login-proc.json")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("username", "wings-slardar-user2")
-                        .param("password", "F9EC9CF4EA9EEEE69FC01AA44638087F")
+                        .param("password", "5DDEEB6C6F9812EE9C7CCF6FC82A50DD")
         )
                .andDo(print())
                .andExpect(status().isOk())
@@ -55,7 +60,7 @@ public class WingsSessionTest {
                         .header("Accept-Language", "zh-CN")
                         .header("Zone-Id", "Asia/Shanghai")
                         .param("username", "wings-slardar-user2")
-                        .param("password", "F9EC9CF4EA9EEEE69FC01AA44638087F")
+                        .param("password", "5DDEEB6C6F9812EE9C7CCF6FC82A50DD")
         )
                .andDo(print())
                .andExpect(status().isOk())

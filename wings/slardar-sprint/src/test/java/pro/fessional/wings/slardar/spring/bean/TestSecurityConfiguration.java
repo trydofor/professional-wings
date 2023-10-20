@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 
@@ -36,7 +38,7 @@ public class TestSecurityConfiguration {
      * only non-API resources in the WebSecurityConfigurer above.
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, MvcRequestMatcher.Builder mvcMatcher) throws Exception {
         log.info("config HttpSecurity");
         http.apply(SecurityConfigHelper.http())
             .httpPermit(conf -> conf
@@ -54,7 +56,7 @@ public class TestSecurityConfiguration {
             )
             .and()
             .authorizeHttpRequests(conf -> conf
-                    .requestMatchers("/authed/*").authenticated()
+                    .requestMatchers(new AntPathRequestMatcher("/authed/*", null)).authenticated()
             )
 //            .formLogin(conf -> conf
 //                    .loginPage("/user/login.json")

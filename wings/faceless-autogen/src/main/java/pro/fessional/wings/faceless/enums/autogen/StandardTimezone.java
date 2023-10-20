@@ -13,32 +13,32 @@ import java.util.TimeZone;
 /**
  * @author trydofor
  * @see ZoneId#getAvailableZoneIds()
- * @since 2022-10-03
+ * @since 2023-09-01
  */
 public enum StandardTimezone implements StandardTimezoneEnum {
 
-    SUPER(1010100, "standard_timezone", "标准时区", "classpath:/wings-tmpl/StandardTimezoneTemplate.java"),
-    GMT(1010101, "GMT", "格林威治时间(零时区)", ""),
-    ASIA_SHANGHAI(1010201, "Asia/Shanghai", "北京时间：北京、上海、香港", "中国"),
-    AMERICA_CHICAGO(1010301, "America/Chicago", "中部时(CST)：芝加哥、休斯顿", "美国"),
-    AMERICA_LOS_ANGELES(1010302, "America/Los_Angeles", "西部时间(PST)：西雅图、洛杉矶", "美国"),
-    AMERICA_NEW_YORK(1010303, "America/New_York", "东部时(EST)：纽约、华盛顿", "美国"),
-    AMERICA_PHOENIX(1010304, "America/Phoenix", "山地时(MST)：丹佛、凤凰城", "美国"),
-    US_ALASKA(1010305, "US/Alaska", "阿拉斯加时间(AKST)：安克雷奇", "美国"),
-    US_HAWAII(1010306, "US/Hawaii", "夏威夷时间(HST)：火鲁奴奴", "美国"),
-    ASIA_JAKARTA(1010401, "Asia/Jakarta", "雅加达、泗水、棉兰", "印度尼西亚"),
-    ASIA_JAYAPURA(1010402, "Asia/Jayapura", "查亚普拉、马诺夸里", "印度尼西亚"),
-    ASIA_MAKASSAR(1010403, "Asia/Makassar", "望加锡、万鸦老、阿克", "印度尼西亚"),
-    ASIA_KUALA_LUMPUR(1010501, "Asia/Kuala_Lumpur", "马来西亚：吉隆坡", "马来西亚"),
-    ASIA_SEOUL(1010601, "Asia/Seoul", "韩国时间：首尔", "韩国"),
-    ASIA_SINGAPORE(1010701, "Asia/Singapore", "新加坡时间", "新加坡"),
-    ASIA_TOKYO(1010801, "Asia/Tokyo", "日本时间：东京", "日本"),
-    CANADA_ATLANTIC(1010901, "Canada/Atlantic", "大西洋时(AST)：哈利法克斯", "加拿大"),
-    CANADA_CENTRAL(1010902, "Canada/Central", "中部时(CST)：温尼伯", "加拿大"),
-    CANADA_EASTERN(1010903, "Canada/Eastern", "东部时(EST)：多伦多、渥太华、魁北克城", "加拿大"),
-    CANADA_MOUNTAIN(1010904, "Canada/Mountain", "山地时(MST)：埃德蒙顿、卡尔加里", "加拿大"),
-    CANADA_NEWFOUNDLAND(1010905, "Canada/Newfoundland", "纽芬兰时(NST)：圣约翰斯", "加拿大"),
-    CANADA_PACIFIC(1010906, "Canada/Pacific", "太平洋时(PST)：温哥华", "加拿大"),
+    SUPER(1010100, "standard_timezone", "standard timezone", "classpath:/wings-tmpl/StandardTimezoneTemplate.java"),
+    GMT(1010101, "GMT", "Greenwich Mean Time (Zero)", ""),
+    ASIA_SHANGHAI(1010201, "Asia/Shanghai", "China: BeiJing, ShangHai, HongKong", "China"),
+    AMERICA_CHICAGO(1010301, "America/Chicago", "CST: Chicago, Houston", "USA"),
+    AMERICA_LOS_ANGELES(1010302, "America/Los_Angeles", "PST: L.A., Seattle", "USA"),
+    AMERICA_NEW_YORK(1010303, "America/New_York", "EST: NewYork, D.C.", "USA"),
+    AMERICA_PHOENIX(1010304, "America/Phoenix", "MST: Denver, Phoenix", "USA"),
+    US_ALASKA(1010305, "US/Alaska", "AKST: Alaska, Fairbanks", "USA"),
+    US_HAWAII(1010306, "US/Hawaii", "HST: Hawaii, Honolulu", "USA"),
+    ASIA_JAKARTA(1010401, "Asia/Jakarta", "Indonesia: Jakarta, Surabaya, Medan", "Indonesia"),
+    ASIA_JAYAPURA(1010402, "Asia/Jayapura", "Indonesia: Jayapura, Manokwari", "Indonesia"),
+    ASIA_MAKASSAR(1010403, "Asia/Makassar", "Indonesia: Makassar, Manado, Balikpapan", "Indonesia"),
+    ASIA_KUALA_LUMPUR(1010501, "Asia/Kuala_Lumpur", "Malaysia: KualaLumpur", "Malaysia"),
+    ASIA_SEOUL(1010601, "Asia/Seoul", "Korea: Seoul", "Korea"),
+    ASIA_SINGAPORE(1010701, "Asia/Singapore", "Singapore", "Singapore"),
+    ASIA_TOKYO(1010801, "Asia/Tokyo", "Japan: Tokyo", "Japan"),
+    CANADA_ATLANTIC(1010901, "Canada/Atlantic", "AST: Halifax", "Canada"),
+    CANADA_CENTRAL(1010902, "Canada/Central", "CST: Winnipeg", "Canada"),
+    CANADA_EASTERN(1010903, "Canada/Eastern", "EST: Toronto, Ottawa, Quebec", "Canada"),
+    CANADA_MOUNTAIN(1010904, "Canada/Mountain", "MST: Edmonton, Calgary", "Canada"),
+    CANADA_NEWFOUNDLAND(1010905, "Canada/Newfoundland", "NST: St.John", "Canada"),
+    CANADA_PACIFIC(1010906, "Canada/Pacific", "PST: Vancouver", "Canada"),
     ;
     public static final String $SUPER = SUPER.code;
     public static final String $GMT = GMT.code;

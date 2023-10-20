@@ -42,7 +42,7 @@ public class WingsSessionIdResolver implements HttpSessionIdResolver {
     public List<String> resolveSessionIds(HttpServletRequest request) {
         for (HttpSessionIdResolver resolver : httpSessionIdResolvers) {
             final List<String> ids = resolver.resolveSessionIds(request);
-            if (ids != null && ids.size() > 0) {
+            if (ids != null && !ids.isEmpty()) {
                 return sessionTokenEncoder == null ? ids : sessionTokenEncoder.decode(ids, request);
             }
         }

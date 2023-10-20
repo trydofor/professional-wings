@@ -105,10 +105,8 @@ public abstract class AbstractApiAuthController {
         }
 
         request.setAttribute(SlardarServletConst.AttrUserId, pass.getUserId());
-        //
-        final TerminalContext.Builder builder = terminalInterceptor.buildTerminal(request);
         // NOTE can build authPerm by scope
-        final Context ctx = terminalInterceptor.loginTerminal(request, builder);
+        final Context ctx = terminalInterceptor.loginTerminal(request);
         boolean handled = false;
         try {
             entity.terminal = ctx;

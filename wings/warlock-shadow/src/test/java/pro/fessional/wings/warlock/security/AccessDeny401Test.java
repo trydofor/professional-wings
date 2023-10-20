@@ -41,6 +41,7 @@ class AccessDeny401Test {
         final ResponseEntity<String> res = tmpl.exchange(entity, String.class);
 
         final String body = res.getBody();
+        log.info("test401Form, body={}", body);
         Assertions.assertEquals(401, res.getStatusCode().value());
         Assertions.assertNotNull(body);
         Assertions.assertTrue(body.contains("success"));
@@ -56,6 +57,7 @@ class AccessDeny401Test {
         final ResponseEntity<String> res = tmpl.exchange(entity, String.class);
 
         final String body = res.getBody();
+        log.info("test401Basic, body={}", body);
         Assertions.assertEquals(401, res.getStatusCode().value());
         Assertions.assertNull(body);
     }

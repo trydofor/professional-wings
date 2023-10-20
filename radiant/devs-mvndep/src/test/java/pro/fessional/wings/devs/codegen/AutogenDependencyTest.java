@@ -8,16 +8,12 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.wings.faceless.codegen.ConstantEnumGenerator;
 import pro.fessional.wings.faceless.codegen.ConstantEnumJdbcLoader;
 import pro.fessional.wings.faceless.codegen.JdbcDataLoadHelper;
 import pro.fessional.wings.faceless.enums.autogen.StandardLanguage;
-import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
-import pro.fessional.wings.faceless.flywave.WingsRevision;
 import pro.fessional.wings.faceless.project.ProjectEnumGenerator;
 import pro.fessional.wings.faceless.project.ProjectJooqGenerator;
-import pro.fessional.wings.warlock.project.Warlock1SchemaManager;
 import pro.fessional.wings.warlock.project.Warlock2EnumGenerator;
 import pro.fessional.wings.warlock.project.Warlock3JooqGenerator;
 import pro.fessional.wings.warlock.project.Warlock4AuthGenerator;
@@ -33,12 +29,8 @@ import java.util.List;
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class AutogenDependencyTest {
-
     @Setter(onMethod_ = {@Autowired})
     private DataSource dataSource;
-    @Setter(onMethod_ = {@Autowired})
-    private SchemaRevisionManager schemaRevisionManager;
-
     @Setter(onMethod_ = {@Value("${spring.datasource.url}")})
     private String jdbcUrl;
     @Setter(onMethod_ = {@Value("${spring.datasource.username}")})
@@ -47,21 +39,6 @@ public class AutogenDependencyTest {
     private String jdbcPass;
 
     private final String projectRoot = "../../";
-
-    @Test
-    void test00DropAllAndInit() {
-        JdbcTemplate tmpl = new JdbcTemplate(dataSource);
-        tmpl.query("SHOW TABLES", rs -> {
-            String tbl = rs.getString(1);
-            tmpl.execute("DROP TABLE `" + tbl + "`");
-        });
-
-        final Warlock1SchemaManager manager = new Warlock1SchemaManager(schemaRevisionManager);
-        manager.mergeForceApply(true,
-                h -> h.master()
-                      .path(WingsRevision.V01_19_0521_01_EnumI18n)
-        );
-    }
 
     @Test
     void test01AllTestCode() {
