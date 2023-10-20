@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * <a href="https://docs.spring.io/spring-security/reference/features/authentication/password-storage.html">Password Storage</a>
+ *
  * @author trydofor
  * @see PasswordEncoderFactories
  * @since 2022-03-12
@@ -33,11 +35,11 @@ public class PasswordEncoders {
     public static final String Ldap = "ldap";
     public static final String Md4 = "MD4";
     public static final String Md5 = "MD5";
-    public static final String Pbkdf2V58 = "pbkdf2@SpringSecurity_v5_8";
-    public static final String ScryptV58 = "scrypt@SpringSecurity_v5_8";
+    public static final String Pbkdf2V58 = "pbkdf2-58";
+    public static final String ScryptV58 = "scrypt-58";
     public static final String Sha1 = "SHA-1";
     public static final String Sha256 = "SHA-256";
-    public static final String Argon2V58 = "argon2@SpringSecurity_v5_8";
+    public static final String Argon2V58 = "argon2-58";
     public static final String Sha256s = "sha256";
     public static final String Mysql = "mysql";
 

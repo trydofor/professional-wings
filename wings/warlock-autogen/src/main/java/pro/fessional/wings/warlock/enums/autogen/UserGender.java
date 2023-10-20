@@ -9,14 +9,14 @@ import pro.fessional.wings.faceless.enums.StandardI18nEnum;
 
 /**
  * @author trydofor
- * @since 2022-10-03
+ * @since 2023-09-01
  */
 public enum UserGender implements ConstantEnum, StandardI18nEnum {
 
-    SUPER(1200100, "user_gender", "性别", "classpath:/wings-tmpl/ConstantEnumTemplate.java"),
-    MALE(1200101, "male", "男", "通常"),
-    FEMALE(1200102, "female", "女", "通常"),
-    UNKNOWN(1200103, "unknown", "未知", "通常"),
+    SUPER(1200100, "user_gender", "gender", "classpath:/wings-tmpl/ConstantEnumTemplate.java"),
+    MALE(1200101, "male", "male", "normal"),
+    FEMALE(1200102, "female", "female", "normal"),
+    UNKNOWN(1200103, "unknown", "unknown", "normal"),
     ;
     public static final String $SUPER = "user_gender";
     public static final String $MALE = "male";

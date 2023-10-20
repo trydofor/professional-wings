@@ -19,7 +19,7 @@ import pro.fessional.wings.warlock.database.autogen.tables.daos.WinUserBasisDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinUserBasis;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
-import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
+import pro.fessional.wings.warlock.errcode.CommonErrorEnum;
 import pro.fessional.wings.warlock.service.user.WarlockUserBasisService;
 
 import java.time.ZoneId;

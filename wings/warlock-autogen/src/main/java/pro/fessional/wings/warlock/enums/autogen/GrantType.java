@@ -9,13 +9,13 @@ import pro.fessional.wings.faceless.enums.StandardI18nEnum;
 
 /**
  * @author trydofor
- * @since 2022-10-03
+ * @since 2023-09-01
  */
 public enum GrantType implements ConstantEnum, StandardI18nEnum {
 
-    SUPER(1330100, "grant_type", "授权类别", "classpath:/wings-tmpl/ConstantEnumTemplate.java"),
-    PERM(1330101, "perm", "权限", "权限"),
-    ROLE(1330102, "role", "角色", "角色"),
+    SUPER(1330100, "grant_type", "grant type", "classpath:/wings-tmpl/ConstantEnumTemplate.java"),
+    PERM(1330101, "perm", "permit", "permit"),
+    ROLE(1330102, "role", "role", "role"),
     ;
     public static final String $SUPER = "grant_type";
     public static final String $PERM = "perm";

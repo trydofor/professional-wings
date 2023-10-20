@@ -5,9 +5,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.util.StringUtils;
+import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
 import pro.fessional.wings.slardar.context.Now;
 
 import java.lang.management.ManagementFactory;
@@ -23,9 +22,6 @@ import java.util.Map;
 @Slf4j
 @Setter @Getter
 public class MonitorTask implements InitializingBean {
-
-    @Setter(onMethod_ = {@Autowired})
-    private Environment environment;
 
     @Setter(onMethod_ = {@Autowired})
     private List<WarnMetric> warnMetrics = Collections.emptyList();
@@ -74,8 +70,13 @@ public class MonitorTask implements InitializingBean {
     public void report(Map<String, List<WarnMetric.Warn>> warns) {
         if (warnReports.isEmpty()) return;
 
-        final String app = StringUtils.hasText(applicationName) ? applicationName : environment.getProperty("spring.application.name");
-        final String jvm = ManagementFactory.getRuntimeMXBean().getName();
+        final String app = applicationName != null ? applicationName : ApplicationContextHelper.getApplicationName();
+        if (app.isBlank()) {
+            log.warn("the app name of report should NOT blank");
+        }
+
+        String jvm = ManagementFactory.getRuntimeMXBean().getName();
+        if (jvm != null) jvm = jvm.replace("@", "_");
 
         for (WarnReport report : warnReports) {
             final String rpt = report.getClass().getName();

@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.spring.conf;
 
+import org.jetbrains.annotations.Contract;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configurers.userdetails.UserDetailsAwareConfigurer;
@@ -21,31 +22,37 @@ public class WingsBindAuthnConfigurer<U extends UserDetailsService> extends User
     private WingsAuthCheckService wingsAuthCheckService;
     private boolean wingsBindAuthnProvider = true;
 
+    @Contract("_->this")
     public WingsBindAuthnConfigurer<U> userDetailsService(U userDetailsService) {
         this.userDetailsService = userDetailsService;
         return this;
     }
 
+    @Contract("_->this")
     public WingsBindAuthnConfigurer<U> withObjectPostProcessor(ObjectPostProcessor<?> objectPostProcessor) {
         addObjectPostProcessor(objectPostProcessor);
         return this;
     }
 
+    @Contract("_->this")
     public WingsBindAuthnConfigurer<U> passwordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
         return this;
     }
 
+    @Contract("_->this")
     public WingsBindAuthnConfigurer<U> userDetailsPasswordManager(UserDetailsPasswordService passwordManager) {
         this.userDetailsPasswordService = passwordManager;
         return this;
     }
 
+    @Contract("_->this")
     public WingsBindAuthnConfigurer<U> wingsBindAuthnProvider(boolean bool) {
         this.wingsBindAuthnProvider = bool;
         return this;
     }
 
+    @Contract("_->this")
     public WingsBindAuthnConfigurer<U> wingsAuthCheckService(WingsAuthCheckService wingsAuthCheckService) {
         this.wingsAuthCheckService = wingsAuthCheckService;
         return this;

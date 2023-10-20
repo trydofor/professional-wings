@@ -125,6 +125,27 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             }
         }
 
+        // not default
+        if(pp != null){
+            rp.setEnabled(pp.isEnabled());
+            rp.setAutorun(pp.isAutorun());
+            rp.setVersion(pp.getVersion());
+            rp.setTaskerBean(pp.getTaskerBean());
+            rp.setTaskerPara(pp.getTaskerPara());
+            rp.setTaskerName(pp.getTaskerName());
+            rp.setTaskerFast(pp.isTaskerFast());
+            //
+            rp.setTimingMiss(pp.getTimingMiss());
+            rp.setTimingBeat(pp.getTimingBeat());
+            rp.setDuringFrom(pp.getDuringFrom());
+            rp.setDuringStop(pp.getDuringStop());
+            rp.setDuringExec(pp.getDuringExec());
+            rp.setDuringFail(pp.getDuringFail());
+            rp.setDuringDone(pp.getDuringDone());
+            rp.setDuringBoot(pp.getDuringBoot());
+        }
+
+        // use default
         rp.setTaskerApps(pp == null || pp.notTaskerApps() ? df.getTaskerApps() : pp.getTaskerApps());
         rp.setTaskerRuns(pp == null || pp.notTaskerRuns() ? df.getTaskerRuns() : pp.getTaskerRuns());
         rp.setNoticeBean(pp == null || pp.notNoticeBean() ? df.getNoticeBean() : pp.getNoticeBean());
@@ -132,6 +153,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         rp.setNoticeConf(pp == null || pp.notNoticeConf() ? df.getNoticeConf() : pp.getNoticeConf());
         rp.setTimingZone(pp == null || pp.notTimingZone() ? df.getTimingZone() : pp.getTimingZone());
         rp.setTimingType(pp == null || pp.notTimingType() ? df.getTimingType() : pp.getTimingType());
+        //
         rp.setResultKeep(pp == null || pp.notResultKeep() ? df.getResultKeep() : pp.getResultKeep());
 
         return rp;

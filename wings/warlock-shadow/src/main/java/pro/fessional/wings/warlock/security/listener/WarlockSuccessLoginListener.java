@@ -7,21 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import pro.fessional.wings.slardar.context.TerminalContext;
-import pro.fessional.wings.slardar.context.TerminalSecurityAttribute;
 import pro.fessional.wings.slardar.fastjson.FastJsonHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
-import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAddr;
-import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgent;
 
 /**
  * @author trydofor
@@ -35,12 +27,12 @@ public class WarlockSuccessLoginListener implements ApplicationListener<Authenti
 
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
-        final Object source = event.getSource();
-        if (!(source instanceof final Authentication authn)) return;
+
+        if (!(event.getSource() instanceof final Authentication authn)) return;
 
         final Object principal = authn.getPrincipal();
         if (!(principal instanceof final WingsUserDetails userDetails)) {
-            log.debug("skip non-WingsUserDetails, type={}", source.getClass().getName());
+            log.debug("skip non-WingsUserDetails, type={}", principal.getClass().getName());
             return;
         }
 
@@ -50,34 +42,19 @@ public class WarlockSuccessLoginListener implements ApplicationListener<Authenti
             log.warn("authType should NOT null, userId={}", userId);
             return;
         }
-        final Map<String, Object> dtlMap = new HashMap<>();
-        dtlMap.put("authType", authType.name());
-        dtlMap.put("locale", userDetails.getLocale());
-        dtlMap.put("zoneid", userDetails.getZoneId());
-        dtlMap.put("nickname", userDetails.getNickname());
-        dtlMap.put("username", userDetails.getUsername());
 
-        final Object dtl = authn.getDetails();
-        if (dtl instanceof WingsAuthDetails authDetails) {
+        final Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("authType", authType.name());
+        dataMap.put("locale", userDetails.getLocale());
+        dataMap.put("zoneid", userDetails.getZoneId());
+        dataMap.put("nickname", userDetails.getNickname());
+        dataMap.put("username", userDetails.getUsername());
+
+        if (authn.getDetails() instanceof WingsAuthDetails authDetails) {
             final Map<String, String> meta = authDetails.getMetaData();
-            dtlMap.putAll(meta);
-            TerminalContext.Builder builder = new TerminalContext.Builder()
-                    .locale(userDetails.getLocale())
-                    .timeZone(userDetails.getZoneId())
-                    .terminal(TerminalAddr, meta.get(WingsAuthHelper.AuthAddr))
-                    .terminal(TerminalAgent, meta.get(WingsAuthHelper.AuthAgent))
-                    .user(userId)
-                    .authType(authType)
-                    .username(userDetails.getUsername())
-                    .authPerm(userDetails.getAuthorities().stream()
-                                         .map(GrantedAuthority::getAuthority)
-                                         .collect(Collectors.toSet()))
-                    .terminal(TerminalSecurityAttribute.UserDetails, userDetails)
-                    .terminal(TerminalSecurityAttribute.AuthDetails, authDetails);
-
-            TerminalContext.login(builder.build());
+            dataMap.putAll(meta);
         }
 
-        warlockAuthnService.onSuccess(authType, userId, JSON.toJSONString(dtlMap, FastJsonHelper.DefaultWriter()));
+        warlockAuthnService.onSuccess(authType, userId, JSON.toJSONString(dataMap, FastJsonHelper.DefaultWriter()));
     }
 }

@@ -2,6 +2,7 @@ package pro.fessional.wings.warlock.security;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -41,8 +42,9 @@ class GuestSessionTest {
 
     @Test
     public void guest401() {
+        OkHttpClientHelper.clearCookie(okHttpClient, HttpUrl.get(host));
         try (final Response r1 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/user/guest-401.json"), false)) {
-            Assertions.assertEquals(401, r1.code());
+            Assertions.assertEquals(401, r1.code(), "retry standalone to avoid cookies");
         }
     }
 }

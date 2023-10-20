@@ -1,81 +1,82 @@
 CREATE TABLE `win_perm_entry` (
-    `id`        BIGINT(20)   NOT NULL COMMENT '主键',
-    `create_dt` DATETIME(3)  NOT NULL DEFAULT NOW(3) COMMENT '创建日时(系统)',
-    `modify_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时(系统)',
-    `delete_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT '标记删除',
-    `commit_id` BIGINT(20)   NOT NULL COMMENT '提交id',
-    `scopes`    VARCHAR(200) NOT NULL COMMENT '范围:全小写，英句号分隔',
-    `action`    VARCHAR(50)  NOT NULL COMMENT '动作:全小写',
-    `remark`    VARCHAR(500) NOT NULL DEFAULT '' COMMENT '备注',
+    `id`        BIGINT(20)   NOT NULL COMMENT 'primary key',
+    `create_dt` DATETIME(3)  NOT NULL DEFAULT NOW(3) COMMENT 'created datetime(sys)',
+    `modify_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT 'modified datetime(sys)',
+    `delete_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT 'logic deleted datetime',
+    `commit_id` BIGINT(20)   NOT NULL COMMENT 'commit id',
+    `scopes`    VARCHAR(200) NOT NULL COMMENT 'all lowercase, period-separated',
+    `action`    VARCHAR(50)  NOT NULL COMMENT 'all lowercase',
+    `remark`    VARCHAR(500) NOT NULL DEFAULT '' COMMENT 'comment',
     PRIMARY KEY (`id`),
     UNIQUE INDEX (`scopes`, `action`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4 COMMENT ='130/权限条目表';
+  DEFAULT CHARSET = utf8mb4 COMMENT ='130/Perm Entry';
 
 CREATE TABLE `win_role_entry` (
-    `id`        BIGINT(20)   NOT NULL COMMENT '主键',
-    `create_dt` DATETIME(3)  NOT NULL DEFAULT NOW(3) COMMENT '创建日时(系统)',
-    `modify_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT '修改日时(系统)',
-    `delete_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT '标记删除',
-    `commit_id` BIGINT(20)   NOT NULL COMMENT '提交id',
-    `name`      VARCHAR(50)  NOT NULL COMMENT '名称:全大写，不分割，无需ROLE_前缀',
-    `remark`    VARCHAR(500) NOT NULL DEFAULT '' COMMENT '备注',
+    `id`        BIGINT(20)   NOT NULL COMMENT 'primary key',
+    `create_dt` DATETIME(3)  NOT NULL DEFAULT NOW(3) COMMENT 'created datetime(sys)',
+    `modify_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' ON UPDATE NOW(3) COMMENT 'modified datetime(sys)',
+    `delete_dt` DATETIME(3)  NOT NULL DEFAULT '1000-01-01' COMMENT 'logic deleted datetime',
+    `commit_id` BIGINT(20)   NOT NULL COMMENT 'commit id',
+    `name`      VARCHAR(50)  NOT NULL COMMENT 'all uppercase, no separated, no ROLE_ prefix',
+    `remark`    VARCHAR(500) NOT NULL DEFAULT '' COMMENT 'comment',
     PRIMARY KEY (`id`),
     UNIQUE INDEX (`name`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4 COMMENT ='131/角色条目表';
+  DEFAULT CHARSET = utf8mb4 COMMENT ='131/Role Entry';
 
 CREATE TABLE `win_role_grant` (
-    `refer_role`  BIGINT(20)  NOT NULL COMMENT '当前角色/win_role_entry.id',
-    `grant_type`  INT(11)     NOT NULL COMMENT '授权类别/13301##:Role,Perm',
-    `grant_entry` BIGINT(20)  NOT NULL COMMENT '授予id/win_role_entry.id或win_perm_entry.id',
-    `create_dt`   DATETIME(3) NOT NULL DEFAULT NOW(3) COMMENT '创建日时(系统)',
-    `commit_id`   BIGINT(20)  NOT NULL COMMENT '提交id',
+    `refer_role`  BIGINT(20)  NOT NULL COMMENT 'current role/win_role_entry.id',
+    `grant_type`  INT(11)     NOT NULL COMMENT 'grant type/13301##:Role,Perm',
+    `grant_entry` BIGINT(20)  NOT NULL COMMENT 'entry to grant: id/win_role_entry.id, win_perm_entry.id',
+    `create_dt`   DATETIME(3) NOT NULL DEFAULT NOW(3) COMMENT 'created datetime(sys)',
+    `commit_id`   BIGINT(20)  NOT NULL COMMENT 'commit id',
     PRIMARY KEY (`refer_role`, `grant_type`, `grant_entry`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4 COMMENT ='134/角色权限映射表';
+  DEFAULT CHARSET = utf8mb4 COMMENT ='134/Role Grant';
 
 CREATE TABLE `win_user_grant` (
-    `refer_user`  BIGINT(20)  NOT NULL COMMENT '当前角色/win_user_basis.id',
-    `grant_type`  INT(11)     NOT NULL COMMENT '授权类别/13301##:Role,Perm',
-    `grant_entry` BIGINT(20)  NOT NULL COMMENT '授予id/win_role_entry.id或win_perm_entry.id',
-    `create_dt`   DATETIME(3) NOT NULL DEFAULT NOW(3) COMMENT '创建日时(系统)',
-    `commit_id`   BIGINT(20)  NOT NULL COMMENT '提交id',
+    `refer_user`  BIGINT(20)  NOT NULL COMMENT 'current user/win_user_basis.id',
+    `grant_type`  INT(11)     NOT NULL COMMENT 'grant type/13301##:Role,Perm',
+    `grant_entry` BIGINT(20)  NOT NULL COMMENT 'entry to grant: id/win_role_entry.id, win_perm_entry.id',
+    `create_dt`   DATETIME(3) NOT NULL DEFAULT NOW(3) COMMENT 'created datetime(sys)',
+    `commit_id`   BIGINT(20)  NOT NULL COMMENT 'commit id',
     PRIMARY KEY (`refer_user`, `grant_type`, `grant_entry`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4 COMMENT ='135/角色权限映射表';
+  DEFAULT CHARSET = utf8mb4 COMMENT ='135/User Grant';
 
 -- ----
 INSERT IGNORE INTO `sys_light_sequence` (`seq_name`, `block_id`, `next_val`, `step_val`, `comments`)
-VALUES ('win_perm_entry', 0, 10000, 100, '动态插入5位起，静态5位'),
-       ('win_role_entry', 0, 10000, 100, '动态插入5位起，静态5位');
+VALUES ('win_perm_entry', 0, 10000, 100, 'dynamic 5+ digits, static 5 digits'),
+       ('win_role_entry', 0, 10000, 100, 'dynamic 5+ digits, static 5 digits');
 
 REPLACE INTO `win_perm_entry`(`id`, `create_dt`, `commit_id`, `scopes`, `action`, `remark`)
-VALUES (1, NOW(3), 0, '', '*', '顶级权限，不对外使用'),
+VALUES (1, NOW(3), 0, '', '*', 'super privilege, NOT for external use'),
        -- User
-       (10, NOW(3), 0, 'system.user', '*', '用户全部'),
-       (11, NOW(3), 0, 'system.user', 'create', '用户创建'),
-       (12, NOW(3), 0, 'system.user', 'update', '用户编辑'),
-       (13, NOW(3), 0, 'system.user', 'delete', '用户删除'),
+       (10, NOW(3), 0, 'system.user', '*', 'all'),
+       (11, NOW(3), 0, 'system.user', 'create', 'create user'),
+       (12, NOW(3), 0, 'system.user', 'update', 'update user'),
+       (13, NOW(3), 0, 'system.user', 'delete', 'delete user'),
        -- Perm
-       (20, NOW(3), 0, 'system.perm', '*', '权限全部'),
-       (21, NOW(3), 0, 'system.perm', 'create', '权限创建'),
-       (22, NOW(3), 0, 'system.perm', 'update', '权限编辑'),
-       (23, NOW(3), 0, 'system.perm', 'delete', '权限删除'),
-       (24, NOW(3), 0, 'system.perm', 'assign', '角色指派，给用户或角色'),
+       (20, NOW(3), 0, 'system.perm', '*', 'all'),
+       (21, NOW(3), 0, 'system.perm', 'create', 'create perm'),
+       (22, NOW(3), 0, 'system.perm', 'update', 'update perm'),
+       (23, NOW(3), 0, 'system.perm', 'delete', 'delete perm'),
+       (24, NOW(3), 0, 'system.perm', 'assign', 'assign perm to user/role'),
        -- Role
-       (30, NOW(3), 0, 'system.role', '*', '角色全部'),
-       (31, NOW(3), 0, 'system.role', 'create', '角色创建'),
-       (32, NOW(3), 0, 'system.role', 'update', '角色编辑'),
-       (33, NOW(3), 0, 'system.role', 'delete', '角色删除'),
-       (34, NOW(3), 0, 'system.role', 'assign', '角色指派，给用户或角色');
+       (30, NOW(3), 0, 'system.role', '*', 'all'),
+       (31, NOW(3), 0, 'system.role', 'create', 'create role'),
+       (32, NOW(3), 0, 'system.role', 'update', 'update role'),
+       (33, NOW(3), 0, 'system.role', 'delete', 'delete role'),
+       (34, NOW(3), 0, 'system.role', 'assign', 'assign role to user/role');
 
 REPLACE INTO `win_role_entry`(`id`, `create_dt`, `commit_id`, `name`, `remark`)
-VALUES (1, NOW(3),  0, 'ROOT', '超级管理员，全部权限'),
-       (9, NOW(3),  0, 'SYSTEM', '系统管理员，系统权限'),
-       (10, NOW(3), 0, 'ADMIN', '普通管理员，业务权限');
+VALUES (1, NOW(3),  0, 'ROOT', 'Super Admin, full privileges'),
+       (9, NOW(3),  0, 'SYSTEM', 'System Admin, system privileges'),
+       (10, NOW(3), 0, 'ADMIN', 'Normal Admin, business privileges');
 
--- 授予root角色，根权限；admin基本权限；注意role不继承，需要指定，ROOT默认用于SYSTEM和ADMIN
+-- Grant root role and perm; admin basic perm;
+-- Note that role is not inherited and needs to be specified, ROOT is used by default for SYSTEM and ADMIN
 REPLACE INTO `win_role_grant`(`refer_role`, `grant_type`, `grant_entry`, `create_dt`, `commit_id`)
 VALUES (1, 1330101, 1, NOW(3), 0),
        (1, 1330102, 9, NOW(3), 0),
@@ -84,6 +85,6 @@ VALUES (1, 1330101, 1, NOW(3), 0),
        (10, 1330101, 20, NOW(3), 0),
        (10, 1330101, 30, NOW(3), 0);
 
--- 授予root用户，根权限
+-- Grant super perm to root user
 REPLACE INTO `win_user_grant`(`refer_user`, `grant_type`, `grant_entry`, `create_dt`, `commit_id`)
 VALUES (1, 1330102, 1, NOW(3), 0);

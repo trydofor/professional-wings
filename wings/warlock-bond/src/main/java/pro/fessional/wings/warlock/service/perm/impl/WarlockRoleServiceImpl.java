@@ -21,7 +21,7 @@ import pro.fessional.wings.warlock.caching.CacheEventHelper;
 import pro.fessional.wings.warlock.database.autogen.tables.WinRoleEntryTable;
 import pro.fessional.wings.warlock.database.autogen.tables.daos.WinRoleEntryDao;
 import pro.fessional.wings.warlock.database.autogen.tables.pojos.WinRoleEntry;
-import pro.fessional.wings.warlock.enums.errcode.CommonErrorEnum;
+import pro.fessional.wings.warlock.errcode.CommonErrorEnum;
 import pro.fessional.wings.warlock.event.cache.TableChangeEvent;
 import pro.fessional.wings.warlock.service.perm.WarlockPermNormalizer;
 import pro.fessional.wings.warlock.service.perm.WarlockRoleService;

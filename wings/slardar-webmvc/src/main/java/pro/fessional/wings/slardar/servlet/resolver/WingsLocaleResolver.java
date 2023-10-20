@@ -126,7 +126,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
                     timeZone = TimeZone.getTimeZone(details.getZoneId());
                 }
 
-                if (details == null) {
+                if (timeZone == null) {
                     timeZone = TerminalContext.defaultTimeZone();
                 }
             }

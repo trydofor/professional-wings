@@ -12,7 +12,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.context.TerminalContext;
-import pro.fessional.wings.slardar.enums.errcode.AuthnErrorEnum;
+import pro.fessional.wings.slardar.errcode.AuthnErrorEnum;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.constants.WarlockGlobalAttribute;

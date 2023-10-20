@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2023-06-22
+THIS_VERSION=2023-10-18
 ################ modify the following params ################
 WORK_DIR=''      # directory of script-generated files and logs. default empty (script location)
 TAIL_LOG='log'   # the log to tail, (log|out|new|ask)
@@ -296,7 +296,6 @@ case "$ARGS_RUN" in
         check_cmd head
         check_cmd id
         check_cmd java
-        check_cmd jstat
         check_cmd kill
         check_cmd ln
         check_cmd ls
@@ -419,13 +418,13 @@ case "$ARGS_RUN" in
             cat "$BOOT_OUT"
             exit
         else
-            echo -e "\033[37;43;1mNOTE: current PID=$cid of $BOOT_JAR \033[0m"
+            echo -e "\033[37;42;1mINFO: current PID=$cid of $BOOT_JAR \033[0m"
             # shellcheck disable=SC2086
             ps -fwww $cid
         fi
 
         if [[ "$ARGS_RUN" != "start" ]]; then
-            echo -e "\033[37;43;1mNOTE: tail -f $BOOT_OUT \033[0m"
+            echo -e "\033[37;42;1mINFO: tail -f $BOOT_OUT \033[0m"
             timeout -s 9 10 tail -f "$BOOT_OUT"
             echo -e "\033[37;43;1m====== ${BOOT_JAR//?/=} ======\033[0m"
             echo -e "\033[37;43;1m====== $BOOT_JAR ======\033[0m"
@@ -464,7 +463,7 @@ case "$ARGS_RUN" in
         fi
 
         if [[ -f "$tail_log" ]]; then
-            echo -e "\033[37;43;1mNOTE: tail -f $tail_log, Ctrl-C to break \033[0m"
+            echo -e "\033[37;42;1mINFO: tail -f $tail_log, Ctrl-C to break \033[0m"
             tail -f "$tail_log"
         fi
         ;;
@@ -537,17 +536,17 @@ case "$ARGS_RUN" in
 
         tail_num=20
         if [[ -f "$BOOT_OUT" ]]; then
-            echo -e "\033[37;43;1mNOTE: tail -n $tail_num $BOOT_OUT \033[0m"
+            echo -e "\033[37;42;1mINFO: tail -n $tail_num $BOOT_OUT \033[0m"
             tail -n $tail_num "$BOOT_OUT"
         fi
         if [[ -f "$BOOT_LOG" ]]; then
-            echo -e "\033[37;43;1mNOTE: tail -n $tail_num $BOOT_LOG \033[0m"
+            echo -e "\033[37;42;1mINFO: tail -n $tail_num $BOOT_LOG \033[0m"
             tail -n $tail_num "$BOOT_LOG"
         fi
         pid=$(awk '{print $1}' "$BOOT_PID")
         cid=$(pgrep -f "$grep_key")
-        echo -e "\033[37;43;1mNOTE: boot.pid=$pid \033[0m"
-        echo -e "\033[33mNOTE: current PID=$cid of $BOOT_JAR \033[0m"
+        echo -e "\033[37;42;1mINFO: boot.pid=$pid \033[0m"
+        echo -e "\033[32m current PID=$cid of $BOOT_JAR \033[0m"
         ps -fwww "$cid" || exit
 
         if [[ $pid -ne $cid ]]; then
@@ -558,20 +557,40 @@ case "$ARGS_RUN" in
         mrs=$(ps -o rss "$cid" | grep -v RSS | numfmt --grouping)
         # shellcheck disable=SC2009
         mvs=$(ps -o vsz "$cid" | grep -v VSZ | numfmt --grouping)
-        echo -e "\033[37;43;1mNOTE: ps -o rss -o vsz $cid \033[0m"
-        echo -e "\033[32m Resident= $mrs Kb\033[m"
-        echo -e "\033[32m Virtual=  $mvs Kb\033[m"
+        echo -e "\033[37;42;1mINFO: ps -o rss -o vsz $cid \033[0m"
+        echo -e "Resident (RSS) = $(printf "%*s" 12 $mrs) Kb"
+        echo -e "Virtual  (VSZ) = $(printf "%*s" 12 $mvs) Kb"
 
-        echo -e "\033[37;43;1mNOTE: ==== other useful command ==== \033[0m"
-        echo -e "\033[32m jmap -heap $cid \033[m mac's bug=8161164, lin's ptrace_scope"
+        if [[ "$USER_RUN" == "$USER" ]]; then
+            echo -e "\033[37;42;1mINFO: $(which jstat) -gcutil $cid 1000 3 \033[0m"
+            jstat -gcutil "$cid" 1000 3
+            echo -e "\033[37;42;1mINFO: $(which jstat) -gc $cid 1000 3 \033[0m"
+            jstat -gc "$cid" 1000 3
+        else
+            echo -e "\033[37;43;1mNOTE: sudo $(which jstat) -gcutil $cid 1000 3 \033[0m"
+            echo -e "\033[37;43;1mNOTE: sudo $(which jstat) -gc $cid 1000 3 \033[0m"
+        fi
+
+
+        if id | grep -q '(sudo)'; then
+            if which jhsdb &> /dev/null; then
+                echo -e "\033[37;42;1mINFO: sudo $(which jhsdb) jmap --heap --pid $cid \033[m"
+                sudo jhsdb jmap --heap --pid "$cid"
+            else
+                echo -e "\033[37;42;1mINFO: sudo $(which jmap) -heap $cid \033[m"
+                sudo jmap -heap "$cid"
+            fi
+        else
+            if which jhsdb &> /dev/null; then
+                echo -e "\033[37;43;1mNOTE: sudo $(which jhsdb) jmap --heap --pid $cid \033[m"
+            else
+                echo -e "\033[37;43;1mNOTE: sudo $(which jmap) -heap $cid \033[m"
+            fi
+        fi
+
+        echo -e "\033[37;43;1mNOTE: ==== useful tool ==== \033[0m"
         echo -e "\033[32m profiler.sh -d 30 -f profile.svg $cid \033[m https://github.com/jvm-profiling-tools/async-profiler"
-        echo -e "\033[32m java -jar arthas-boot.jar $cid \033[m https://github.com/alibaba/arthas"
-
-        check_user
-        echo -e "\033[37;43;1mNOTE: jstat -gcutil $cid 1000 1 \033[0m"
-        jstat -gcutil "$cid" 1000 1
-        echo -e "\033[37;43;1mNOTE: jstat -gc $cid 1000 1 \033[0m"
-        jstat -gc "$cid" 1000 1
+        echo -e "\033[32m $(which java) -jar arthas-boot.jar $cid \033[m https://github.com/alibaba/arthas"
         ;;
     tail)
         file_log=$BOOT_LOG

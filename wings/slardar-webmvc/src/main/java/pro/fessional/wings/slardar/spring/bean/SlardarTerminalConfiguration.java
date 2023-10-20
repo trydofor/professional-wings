@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import pro.fessional.wings.slardar.constants.SlardarServletConst;
@@ -59,19 +58,10 @@ public class SlardarTerminalConfiguration {
             final WingsUserDetails details = SecurityContextUtil.getUserDetails(authn);
             if (details == null) {
                 final Long userId = (Long) request.getAttribute(SlardarServletConst.AttrUserId);
-                if (userId != null) {
-                    TimeZoneAwareLocaleContext locale = resolver.resolveI18nContext(request, userId);
-                    builder.locale(locale.getLocale())
-                           .timeZone(locale.getTimeZone())
-                           .user(userId);
-                }
-                else {
-                    // The default value has the lowest priority
-                    TimeZoneAwareLocaleContext locale = resolver.resolveI18nContext(request, null);
-                    builder.localeIfAbsent(locale.getLocale())
-                           .timeZoneIfAbsent(locale.getTimeZone())
-                           .guest();
-                }
+                final var locale = resolver.resolveI18nContext(request, userId);
+                builder.locale(locale.getLocale())
+                       .timeZone(locale.getTimeZone())
+                       .userOrGuest(userId);
             }
             else {
                 builder.locale(details.getLocale())
@@ -90,11 +80,13 @@ public class SlardarTerminalConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(TerminalInterceptor.class)
-    public TerminalInterceptor terminalInterceptor(SlardarTerminalProp prop, ObjectProvider<TerminalInterceptor.TerminalBuilder> builders) {
+    public TerminalInterceptor terminalInterceptor(SlardarTerminalProp prop, ObjectProvider<TerminalInterceptor.TerminalBuilder> builders, ObjectProvider<TerminalInterceptor.TerminalLogger> loggers) {
         log.info("SlardarWebmvc spring-bean terminalInterceptor");
 
         final TerminalInterceptor bean = new TerminalInterceptor();
         builders.orderedStream().forEach(bean::addTerminalBuilder);
+        loggers.orderedStream().forEach(bean::addTerminalLogger);
+
         //
         final Map<String, String> ex = prop.getExcludePatterns();
         if (!ex.isEmpty()) {

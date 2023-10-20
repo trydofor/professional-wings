@@ -113,7 +113,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
             final String taskerName = td.getTaskerName() + " force";
             final String noticeConf = td.getNoticeConf();
 
-            String taskMsg = null;
+            String taskMsg = "force task id=" + id;
             NoticeExec<?> notice = null;
             Set<String> ntcWhen = Collections.emptySet();
             try {
@@ -241,7 +241,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 final String taskerName = td.getTaskerName();
                 final String noticeConf = td.getNoticeConf();
 
-                String taskMsg = null;
+                String taskMsg = "relaunch task id=" + id;
                 NoticeExec<?> notice = null;
                 Set<String> ntcWhen = Collections.emptySet();
                 try {

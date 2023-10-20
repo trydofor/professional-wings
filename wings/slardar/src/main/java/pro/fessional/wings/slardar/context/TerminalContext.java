@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.best.DummyBlock;
 import pro.fessional.mirana.best.TypedKey;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.slardar.errcode.AuthnErrorEnum;
 import pro.fessional.wings.slardar.security.DefaultUserId;
 
 import java.time.ZoneId;
@@ -146,20 +147,23 @@ public class TerminalContext {
     }
 
     /**
-     * only login user, throw exception if not login
+     * only login user, throw TerminalException if not login
+     *
+     * @throws TerminalContextException if not login
      */
     @NotNull
-    public static Context get() {
+    public static Context get() throws TerminalContextException {
         return get(true);
     }
 
     /**
-     * unlogined user as Guest or throw exception
+     * unlogined user as Guest or throw TerminalException
      *
      * @param onlyLogin only login user or guest
+     * @throws TerminalContextException if onlyLogin and not login
      */
     @NotNull
-    public static Context get(boolean onlyLogin) {
+    public static Context get(boolean onlyLogin) throws TerminalContextException {
         Context ctx = null;
         if (Active) {
             ctx = ContextLocal.get();
@@ -168,7 +172,7 @@ public class TerminalContext {
             ctx = Null;
         }
         if (onlyLogin && ctx.isNull()) {
-            throw new NullPointerException("find null context, must be user or guest");
+            throw new TerminalContextException(AuthnErrorEnum.Unauthorized, "find null context, must be user or guest");
         }
         return ctx;
     }
@@ -178,11 +182,7 @@ public class TerminalContext {
      */
     public static void login(@Nullable Context ctx) {
         if (ctx == null || ctx.isNull()) {
-            final Context old = ContextLocal.get();
-            if (old != null) {
-                ContextLocal.remove();
-                fireContextChange(true, old);
-            }
+            logout();
         }
         else {
             Active = true;
@@ -191,8 +191,29 @@ public class TerminalContext {
         }
     }
 
-    public static void logout() {
-        login(Null);
+    /**
+     * logout the context and fireContextChange
+     */
+    @Nullable
+    public static Context logout() {
+        return logout(true);
+    }
+
+    /**
+     * logout the context and whether to fireContextChange
+     *
+     * @param fire whether to fireContextChange
+     */
+    @Nullable
+    public static Context logout(boolean fire) {
+        final Context old = ContextLocal.get();
+        if (old != null) {
+            ContextLocal.remove();
+            if (fire) {
+                fireContextChange(true, old);
+            }
+        }
+        return old;
     }
 
     private static void fireContextChange(boolean del, @NotNull Context ctx) {
@@ -353,7 +374,8 @@ public class TerminalContext {
             return Objects.hash(userId, locale, timeZone, terminal);
         }
 
-        @Override public String toString() {
+        @Override
+        public String toString() {
             return "Context{" +
                    "userId=" + userId +
                    ", locale=" + locale +
@@ -373,11 +395,13 @@ public class TerminalContext {
         private final Set<String> authPerm = new HashSet<>();
         private final Map<TypedKey<?>, Object> terminal = new HashMap<>();
 
+        @Contract("_->this")
         public Builder locale(Locale lcl) {
             locale = lcl;
             return this;
         }
 
+        @Contract("_->this")
         public Builder localeIfAbsent(Locale lcl) {
             if (locale == null) {
                 locale = lcl;
@@ -385,11 +409,13 @@ public class TerminalContext {
             return this;
         }
 
+        @Contract("_->this")
         public Builder timeZone(TimeZone tz) {
             timeZone = tz;
             return this;
         }
 
+        @Contract("_->this")
         public Builder timeZoneIfAbsent(TimeZone tz) {
             if (timeZone == null) {
                 timeZone = tz;
@@ -397,11 +423,13 @@ public class TerminalContext {
             return this;
         }
 
+        @Contract("_->this")
         public Builder timeZone(ZoneId tz) {
             timeZone = TimeZone.getTimeZone(tz);
             return this;
         }
 
+        @Contract("_->this")
         public Builder timeZoneIfAbsent(ZoneId tz) {
             if (timeZone == null) {
                 timeZone = TimeZone.getTimeZone(tz);
@@ -409,36 +437,59 @@ public class TerminalContext {
             return this;
         }
 
+        @Contract("_->this")
         public Builder authType(Enum<?> at) {
             authType = at;
             return this;
         }
 
+        @Contract("_->this")
+        public Builder authTypeIfAbsent(Enum<?> at) {
+            if (authType == null) {
+                authType = at;
+            }
+            return this;
+        }
+
+        @Contract("_->this")
         public Builder username(String un) {
             username = un;
             return this;
         }
 
+        @Contract("_->this")
+        public Builder usernameIfAbsent(String un) {
+            if (username == null) {
+                username = un;
+            }
+            return this;
+        }
+
+        @Contract("_->this")
         public Builder authPerm(String pm) {
             authPerm.add(pm);
             return this;
         }
 
+        @Contract("_->this")
         public Builder authPerm(Collection<String> pm) {
             authPerm.addAll(pm);
             return this;
         }
 
+        @Contract("_,_->this")
         public <V> Builder terminal(TypedKey<V> key, V value) {
             terminal.put(key, value);
             return this;
         }
 
+        @Contract("_,_->this")
         public <V> Builder terminalIfAbsent(TypedKey<V> key, V value) {
             terminal.putIfAbsent(key, value);
             return this;
         }
 
+        @Contract("_->this")
         public Builder terminal(Map<TypedKey<?>, Object> kvs) {
             if (kvs != null) {
                 terminal.putAll(kvs);
@@ -446,6 +497,7 @@ public class TerminalContext {
             return this;
         }
 
+        @Contract("_->this")
         public Builder terminalIfAbsent(Map<TypedKey<?>, Object> kvs) {
             if (kvs != null) {
                 for (Map.Entry<TypedKey<?>, Object> en : kvs.entrySet()) {
@@ -455,15 +507,32 @@ public class TerminalContext {
             return this;
         }
 
+        @Contract("_->this")
         public Builder user(long uid) {
             userId = uid;
             return this;
         }
 
+        @Contract("_->this")
+        public Builder userIfAbsent(Long uid) {
+            if (userId == Null.userId && uid != null) {
+                userId = uid;
+            }
+            return this;
+        }
+
+        @Contract("_->this")
+        public Builder userOrGuest(Long uid) {
+            userId = uid == null ? DefaultUserId.Guest : uid;
+            return this;
+        }
+
+        @Contract("->this")
         public Builder guest() {
             return user(DefaultUserId.Guest);
         }
 
+        @NotNull
         public Context build() {
             if (userId == Null.userId) {
                 throw new IllegalArgumentException("invalid userid");

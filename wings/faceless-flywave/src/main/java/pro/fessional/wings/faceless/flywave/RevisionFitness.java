@@ -223,7 +223,7 @@ public class RevisionFitness {
             }
         }
 
-        if (diffWarn.length() > 0) {
+        if (!diffWarn.isEmpty()) {
             if (needFail) {
                 throw new IllegalStateException("Wings Revision Diff Schemas Found:" + diffWarn);
             }

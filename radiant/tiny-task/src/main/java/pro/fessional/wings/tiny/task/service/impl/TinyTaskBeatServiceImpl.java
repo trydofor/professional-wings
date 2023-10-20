@@ -119,6 +119,6 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
         }
 
         warmed = true;
-        return mis.length() == 0 ? null : "misfired task id@name\n" + mis;
+        return mis.isEmpty() ? null : "misfired task id@name\n" + mis;
     }
 }

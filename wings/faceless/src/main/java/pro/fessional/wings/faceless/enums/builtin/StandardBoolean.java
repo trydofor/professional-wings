@@ -2,7 +2,7 @@ package pro.fessional.wings.faceless.enums.builtin;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.lang.Nullable;
+import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.faceless.enums.ConstantEnum;
 
 /**

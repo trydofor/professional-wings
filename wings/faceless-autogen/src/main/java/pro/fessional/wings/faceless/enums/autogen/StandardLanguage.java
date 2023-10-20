@@ -13,23 +13,23 @@ import java.util.Locale;
  *
  * @author trydofor
  * @see Locale#toString()
- * @since 2022-10-03
+ * @since 2023-09-01
  */
 public enum StandardLanguage implements StandardLanguageEnum {
 
-    SUPER(1020100, "standard_language", "标准语言", "classpath:/wings-tmpl/StandardLanguageTemplate.java"),
-    AR_AE(1020101, "ar_AE", "阿拉伯联合酋长国", ""),
-    DE_DE(1020102, "de_DE", "德语", ""),
-    EN_US(1020103, "en_US", "美国英语", ""),
-    ES_ES(1020104, "es_ES", "西班牙语", ""),
-    FR_FR(1020105, "fr_FR", "法语", ""),
-    IT_IT(1020106, "it_IT", "意大利语", ""),
-    JA_JP(1020107, "ja_JP", "日语", ""),
-    KO_KR(1020108, "ko_KR", "韩语", ""),
-    RU_RU(1020109, "ru_RU", "俄语", ""),
-    TH_TH(1020110, "th_TH", "泰国语", ""),
-    ZH_CN(1020111, "zh_CN", "简体中文", ""),
-    ZH_HK(1020112, "zh_HK", "繁体中文", ""),
+    SUPER(1020100, "standard_language", "standard language", "classpath:/wings-tmpl/StandardLanguageTemplate.java"),
+    AR_AE(1020101, "ar_AE", "Arabic", ""),
+    DE_DE(1020102, "de_DE", "German", ""),
+    EN_US(1020103, "en_US", "English(US)", ""),
+    ES_ES(1020104, "es_ES", "Spanish", ""),
+    FR_FR(1020105, "fr_FR", "French", ""),
+    IT_IT(1020106, "it_IT", "Italian", ""),
+    JA_JP(1020107, "ja_JP", "Japanese", ""),
+    KO_KR(1020108, "ko_KR", "Korean", ""),
+    RU_RU(1020109, "ru_RU", "Russian", ""),
+    TH_TH(1020110, "th_TH", "Thai", ""),
+    ZH_CN(1020111, "zh_CN", "Simplified Chinese", ""),
+    ZH_HK(1020112, "zh_HK", "Traditional Chinese", ""),
     ;
     public static final String $SUPER = "standard_language";
     public static final String $AR_AE = "ar_AE";

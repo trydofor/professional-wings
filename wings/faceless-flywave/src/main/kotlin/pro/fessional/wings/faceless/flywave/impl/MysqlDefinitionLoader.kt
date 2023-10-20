@@ -87,17 +87,17 @@ class MysqlDefinitionLoader : SchemaDefinitionLoader {
 
         if (isH2Database(dataSource)) {
             if (types and TYPE_TBL != 0) {
-                val t1 = showBoneCol(dataSource, table)
-                val t2 = showBoneCol(dataSource, other)
+                val t1 = showBoneCol(dataSource, table).toSet()
+                val t2 = showBoneCol(dataSource, other).toSet()
 
-                val s12 = t1.toSet() - t2
+                val s12 = t1 - t2
                 if (s12.isNotEmpty()) {
                     diff.append("\nCOL@")
                     diff.append(table).append(".")
                     diff.append(s12.joinToString(","))
                 }
 
-                val s21 = t2.toSet() - t1
+                val s21 = t2 - t1
                 if (s21.isNotEmpty()) {
                     diff.append("\nCOL@")
                     diff.append(other).append(".")

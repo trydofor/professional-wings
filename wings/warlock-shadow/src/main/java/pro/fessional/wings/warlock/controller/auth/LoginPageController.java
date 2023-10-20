@@ -134,30 +134,29 @@ public class LoginPageController {
             * @param token - RequestHeader Oauth2 state as token
             ## Returns
             * @return {401} token is not-found, expired, or failed
-            * @return {200 | Result(false, message='authing')} in verifying
+            * @return {200 | Result(false, message='authing')} in authing
             * @return {200 | Result(true, data=sessionId)} success
+            * @return {200 | Result(true, code='xxx', data=object)} other code/object
             """)
     @PostMapping(value = "${" + WarlockUrlmapProp.Key$authNonceCheck + "}")
     public ResponseEntity<R<?>> nonceCheck(@RequestHeader("token") String token, HttpServletRequest request, HttpServletResponse response) {
-        final String sid = NonceTokenSessionHelper.authNonce(token, wingsRemoteResolver.resolveRemoteKey(request));
-        if (sid == null) {
+        final R<?> result = NonceTokenSessionHelper.authNonce(token, wingsRemoteResolver.resolveRemoteKey(request));
+        if (result == null) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(R.NG);
         }
-        else {
-            final R<?> r;
-            if (sid.isEmpty()) {
-                r = R.ng("authing");
-            }
-            else {
-                r = R.okData(sid);
-                if (httpSessionIdResolver != null) {
-                    httpSessionIdResolver.setSessionId(request, response, sid);
-                }
-            }
 
-            return ResponseEntity.ok(r);
+        R<?> body = result;
+        if (result.isSuccess()) {
+            if (httpSessionIdResolver != null && body.getData() instanceof NonceTokenSessionHelper.SidData sd) {
+                httpSessionIdResolver.setSessionId(request, response, sd.getSid());
+            }
+            return ResponseEntity.ok(body);
         }
+        else {
+            body = R.ng("authing");
+        }
+        return ResponseEntity.ok(body);
     }
 }

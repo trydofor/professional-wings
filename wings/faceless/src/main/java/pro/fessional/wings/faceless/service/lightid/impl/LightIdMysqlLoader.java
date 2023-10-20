@@ -99,7 +99,7 @@ public class LightIdMysqlLoader implements Loader {
                 result.add(new Segment(e.getSeqName(), block, e.getNextVal(), e.getNextVal() + e.getStepVal() - 1));
             }
         }
-        if (err.length() > 0) {
+        if (!err.isEmpty()) {
             throw new IllegalStateException("failed to preload, error=" + err);
         }
         else {

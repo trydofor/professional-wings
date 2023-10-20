@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static java.text.MessageFormat.format;
+
 /**
  * Generate Navigation Class
  *
@@ -60,13 +62,13 @@ public class ConstantNaviGenerator {
                          */
                         public interface %s {""",
                 packageName, LocalDate.now(), javaName));
-        if(prefixCode.length()>0){
+        if (!prefixCode.isEmpty()) {
             String indent = indent(1);
-            out.append(MessageFormat.format("\n\n" +
-                                            indent + "/**\n" +
-                                            indent + " * prefix={0}\n" +
-                                            indent + " */\n" +
-                                            indent + "String $PREFIX = \"{0}\";\n",
+            out.append(format("\n\n" +
+                              indent + "/**\n" +
+                              indent + " * prefix={0}\n" +
+                              indent + " */\n" +
+                              indent + "String $PREFIX = \"{0}\";\n",
                     prefixCode));
         }
         genField(1, ROOT, list, out, prefixCode);
@@ -106,30 +108,30 @@ public class ConstantNaviGenerator {
 
         String indent = indent(level);
         for (Entry en : list) {
-            final String nm = en.name;
-            int p = nm.lastIndexOf(delimiter);
-            final String n = p >= 0 ? nm.substring(p + 1) : nm;
-            if (n.contains("*")) continue;
+            final String tn = en.name;
+            final int p = tn.lastIndexOf(delimiter);
+            final String nm = p >= 0 ? tn.substring(p + 1) : tn;
+            if (nm.contains("*")) continue;
 
-            String tkn = nm.startsWith(delimiter) ? nm.substring(delimiter.length()) : nm;
+            final String tkn = tn.startsWith(delimiter) ? tn.substring(delimiter.length()) : tn;
 
-            out.append(MessageFormat.format("\n\n" +
-                                            indent + "/**\n" +
-                                            indent + " * id={0}, remark={1}\n" +
-                                            indent + " */\n" +
-                                            indent + "String {2} = \"{3}\";\n" +
-                                            indent + "long ID${2} = {0};",
-                    en.id, en.remark, n, tkn));
+            out.append(format("\n\n" +
+                              indent + "/**\n" +
+                              indent + " * id={0}, remark={1}\n" +
+                              indent + " */\n" +
+                              indent + "String {2} = \"{3}\";\n" +
+                              indent + "long ID${2} = {0};",
+                    String.valueOf(en.id), en.remark, nm, tkn));
 
-            if (prefixCode.length() > 0) {
+            if (!prefixCode.isEmpty()) {
                 String jf = prefixCode;
                 final char c = jf.charAt(jf.length() - 1);
                 if ((c < '0' || c > '9') && (c < 'a' || c > 'z') && (c < 'A' || c > 'Z')) {
                     jf = jf.substring(0, jf.length() - 1) + "$";
                 }
 
-                out.append(MessageFormat.format("\n" +
-                                                indent + "String {2}{0} = \"{1}{0}\";",
+                out.append(format("\n" +
+                                  indent + "String {2}{0} = \"{1}{0}\";",
                         tkn, prefixCode, jf
                 ));
             }

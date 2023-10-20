@@ -6,16 +6,19 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
 import pro.fessional.wings.slardar.webmvc.PageQueryArgumentResolver;
+import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.util.List;
 
@@ -78,5 +81,11 @@ public class SlardarWebMvcConfiguration implements WebMvcConfigurer {
         if (applicationTaskExecutor != null) {
             configurer.setTaskExecutor(applicationTaskExecutor);
         }
+    }
+
+    @Bean
+    public MvcRequestMatcher.Builder mvcRequestMatcherBuilder(HandlerMappingIntrospector introspector) {
+        log.info("SlardarWebmvc conf mvcRequestMatcherBuilder");
+        return new MvcRequestMatcher.Builder(introspector);
     }
 }

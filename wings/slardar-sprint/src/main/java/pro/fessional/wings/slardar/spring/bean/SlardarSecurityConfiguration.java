@@ -107,10 +107,7 @@ public class SlardarSecurityConfiguration {
     public TerminalContext.Listener LocaleContextHolderTerminalContextListener() {
         log.info("SlardarSprint spring-bean LocaleContextHolder");
         return (del, ctx) -> {
-            if (del) {
-                LocaleContextHolder.resetLocaleContext();
-            }
-            else {
+            if (!del) {
                 LocaleContextHolder.setLocaleContext(new SimpleTimeZoneAwareLocaleContext(ctx.getLocale(), ctx.getTimeZone()));
             }
         };

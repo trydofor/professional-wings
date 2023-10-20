@@ -28,7 +28,7 @@ import java.util.Locale;
 public class TestWingsUserDetailsService implements WingsUserDetailsService {
 
     public final String origPassword = "WingsBoot is Good";
-    //F9EC9CF4EA9EEEE69FC01AA44638087F
+    //5DDEEB6C6F9812EE9C7CCF6FC82A50DD
     public final String sendPassword = Md5.sum(origPassword + ":" + origPassword);
     private final String hashPassword = "{bcrypt}" + new BCryptPasswordEncoder().encode(sendPassword);
 
