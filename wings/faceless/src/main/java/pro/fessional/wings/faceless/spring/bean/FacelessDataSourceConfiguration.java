@@ -3,11 +3,9 @@ package pro.fessional.wings.faceless.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.faceless.database.DataSourceContext;
-import pro.fessional.wings.spring.consts.OrderedFacelessConst;
 
 import javax.sql.DataSource;
 import java.util.Map;
@@ -20,7 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2019-06-25
  */
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureOrder(OrderedFacelessConst.DataSourceConfiguration)
 public class FacelessDataSourceConfiguration {
 
     private static final Log log = LogFactory.getLog(FacelessDataSourceConfiguration.class);

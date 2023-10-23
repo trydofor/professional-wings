@@ -5,10 +5,10 @@ import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,7 +29,6 @@ import pro.fessional.wings.faceless.spring.prop.FacelessEnabledProp;
 import pro.fessional.wings.faceless.spring.prop.LightIdInsertProp;
 import pro.fessional.wings.faceless.spring.prop.LightIdLayoutProp;
 import pro.fessional.wings.faceless.spring.prop.LightIdProviderProp;
-import pro.fessional.wings.spring.consts.OrderedFacelessConst;
 
 /**
  * @author trydofor
@@ -37,7 +36,7 @@ import pro.fessional.wings.spring.consts.OrderedFacelessConst;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = FacelessEnabledProp.Key$lightid, havingValue = "true")
-@AutoConfigureOrder(OrderedFacelessConst.LightIdConfiguration)
+@EnableConfigurationProperties({LightIdInsertProp.class, LightIdLayoutProp.class, LightIdProviderProp.class,})
 public class FacelessLightIdConfiguration {
 
     private static final Log log = LogFactory.getLog(FacelessLightIdConfiguration.class);

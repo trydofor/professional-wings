@@ -17,7 +17,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V1;
 
 /**
  * @author trydofor

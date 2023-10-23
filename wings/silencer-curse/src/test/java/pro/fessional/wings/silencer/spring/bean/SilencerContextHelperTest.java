@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pro.fessional.wings.silencer.WingsSilencerCurseApplication;
+import pro.fessional.wings.silencer.app.WingsSilencerCurseApplication;
 import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
 
 import java.util.List;

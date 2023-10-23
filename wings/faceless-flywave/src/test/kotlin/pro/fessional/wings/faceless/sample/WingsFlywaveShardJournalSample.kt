@@ -4,12 +4,12 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
-import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2
 import pro.fessional.wings.faceless.flywave.SchemaJournalManager
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager
 import pro.fessional.wings.faceless.flywave.WingsRevision
+import pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V1
+import pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V2
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 
 /**

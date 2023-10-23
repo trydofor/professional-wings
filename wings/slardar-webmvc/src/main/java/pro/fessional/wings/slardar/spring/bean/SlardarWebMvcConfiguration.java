@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.AsyncTaskExecutor;
@@ -18,7 +17,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
 import pro.fessional.wings.slardar.webmvc.PageQueryArgumentResolver;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.util.List;
 
@@ -29,7 +27,6 @@ import static org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfi
  * @since 2019-12-03
  */
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureOrder(OrderedSlardarConst.WebMvcConfiguration)
 public class SlardarWebMvcConfiguration implements WebMvcConfigurer {
     private static final Log log = LogFactory.getLog(SlardarWebMvcConfiguration.class);
 

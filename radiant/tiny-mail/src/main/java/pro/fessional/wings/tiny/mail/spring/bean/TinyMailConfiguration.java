@@ -3,23 +3,23 @@ package pro.fessional.wings.tiny.mail.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.RestController;
-import pro.fessional.wings.spring.consts.WingsBeanOrdered;
 import pro.fessional.wings.tiny.mail.sender.MailConfigProvider;
 import pro.fessional.wings.tiny.mail.sender.MailNotice;
 import pro.fessional.wings.tiny.mail.sender.MailSenderManager;
 import pro.fessional.wings.tiny.mail.sender.MailSenderProvider;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailConfigProp;
+import pro.fessional.wings.tiny.mail.spring.prop.TinyMailEnabledProp;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailSenderProp;
+import pro.fessional.wings.tiny.mail.spring.prop.TinyMailServiceProp;
+import pro.fessional.wings.tiny.mail.spring.prop.TinyMailUrlmapProp;
 
 /**
  * @author trydofor
@@ -27,11 +27,18 @@ import pro.fessional.wings.tiny.mail.spring.prop.TinyMailSenderProp;
  */
 
 @Configuration(proxyBeanMethods = false)
-@ComponentScan({"pro.fessional.wings.tiny.mail.database",
-                "pro.fessional.wings.tiny.mail.service"})
-@AutoConfigureAfter(MailSenderAutoConfiguration.class)
+@EnableConfigurationProperties({
+        TinyMailConfigProp.class,
+        TinyMailEnabledProp.class,
+        TinyMailSenderProp.class,
+        TinyMailServiceProp.class,
+        TinyMailUrlmapProp.class,
+})
+@ComponentScan({
+        "pro.fessional.wings.tiny.mail.database",
+        "pro.fessional.wings.tiny.mail.service"
+})
 @RequiredArgsConstructor
-@AutoConfigureOrder(WingsBeanOrdered.Lv3Service)
 public class TinyMailConfiguration {
 
     private static final Log log = LogFactory.getLog(TinyMailConfiguration.class);

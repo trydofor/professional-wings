@@ -3,8 +3,8 @@ package pro.fessional.wings.warlock.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.faceless.database.helper.DatabaseChecker;
@@ -14,7 +14,7 @@ import pro.fessional.wings.faceless.enums.StandardTimezoneEnum;
 import pro.fessional.wings.faceless.enums.TimezoneEnumUtil;
 import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
 import pro.fessional.wings.silencer.runner.CommandLineRunnerOrdered;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.warlock.spring.prop.WarlockCheckProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockI18nProp;
@@ -26,7 +26,7 @@ import javax.sql.DataSource;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureOrder(OrderedWarlockConst.AutoRunConfiguration)
+@EnableConfigurationProperties({WarlockCheckProp.class, WarlockI18nProp.class})
 public class WarlockAutoRunConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockAutoRunConfiguration.class);
@@ -34,7 +34,7 @@ public class WarlockAutoRunConfiguration {
     @Bean
     public ApplicationStartedEventRunner runnerRegisterEnumUtil(ObjectProvider<WarlockI18nProp> provider) {
         log.info("Warlock spring-runs runnerRegisterEnumUtil");
-        return new ApplicationStartedEventRunner(OrderedWarlockConst.RunnerRegisterEnumUtil, ignored -> {
+        return new ApplicationStartedEventRunner(WingsOrdered.Lv4Application, ignored -> {
             final WarlockI18nProp warlockI18nProp = provider.getIfAvailable();
             if (warlockI18nProp == null) {
                 log.info("Warlock conf skip registerEnumUtil for NULL ");
@@ -69,7 +69,7 @@ public class WarlockAutoRunConfiguration {
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$checkDatabase, havingValue = "true")
     public CommandLineRunnerOrdered runnerDatabaseChecker(DataSource dataSource, WarlockCheckProp prop) {
         log.info("Warlock spring-runs runnerDatabaseChecker");
-        return new CommandLineRunnerOrdered(OrderedWarlockConst.RunnerDatabaseChecker, ignored -> {
+        return new CommandLineRunnerOrdered(WingsOrdered.Lv2Resource, ignored -> {
             DatabaseChecker.version(dataSource);
             DatabaseChecker.timezone(dataSource, prop.getTzOffset(), prop.isTzFail());
         });

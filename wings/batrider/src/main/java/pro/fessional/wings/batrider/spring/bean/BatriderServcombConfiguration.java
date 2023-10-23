@@ -1,9 +1,9 @@
 package pro.fessional.wings.batrider.spring.bean;
 
 import org.apache.servicecomb.springboot2.starter.EnableServiceComb;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.spring.consts.OrderedBatriderConst;
+import pro.fessional.wings.batrider.spring.prop.BatriderHandlerProp;
 
 /**
  * @author trydofor
@@ -11,6 +11,6 @@ import pro.fessional.wings.spring.consts.OrderedBatriderConst;
  */
 @Configuration
 @EnableServiceComb
-@AutoConfigureOrder(OrderedBatriderConst.ServcombBaseline)
+@EnableConfigurationProperties(BatriderHandlerProp.class)
 public class BatriderServcombConfiguration {
 }

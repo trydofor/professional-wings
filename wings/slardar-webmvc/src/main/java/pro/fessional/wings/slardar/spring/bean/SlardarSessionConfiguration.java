@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.session.DefaultCookieSerializerCustomizer;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -23,7 +22,6 @@ import pro.fessional.mirana.best.AssertArgs;
 import pro.fessional.wings.slardar.session.WingsSessionIdResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,9 +37,8 @@ import java.util.List;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$session, havingValue = "true")
-@EnableConfigurationProperties(ServerProperties.class)
+@EnableConfigurationProperties({ServerProperties.class,SlardarSessionProp.class})
 @RequiredArgsConstructor
-@AutoConfigureOrder(OrderedSlardarConst.SessionConfiguration)
 public class SlardarSessionConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarSessionConfiguration.class);

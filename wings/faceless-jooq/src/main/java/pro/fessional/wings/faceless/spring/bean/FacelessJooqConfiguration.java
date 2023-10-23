@@ -11,15 +11,14 @@ import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.jooq.impl.DefaultVisitListenerProvider;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jooq.DefaultConfigurationCustomizer;
 import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqEnv;
 import pro.fessional.wings.faceless.database.jooq.converter.JooqConverterDelegate;
@@ -29,12 +28,9 @@ import pro.fessional.wings.faceless.database.jooq.listener.JournalDeleteListener
 import pro.fessional.wings.faceless.database.jooq.listener.TableCudListener;
 import pro.fessional.wings.faceless.spring.prop.FacelessJooqCudProp;
 import pro.fessional.wings.faceless.spring.prop.FacelessJooqEnabledProp;
-import pro.fessional.wings.spring.consts.OrderedFacelessConst;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static pro.fessional.wings.spring.consts.NamingFacelessConst.jooqWingsConfigCustomizer;
 
 /**
  * @author trydofor
@@ -44,9 +40,10 @@ import static pro.fessional.wings.spring.consts.NamingFacelessConst.jooqWingsCon
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$module, havingValue = "true")
 @ConditionalOnClass(name = "org.jooq.conf.Settings")
-@AutoConfigureOrder(OrderedFacelessConst.JooqConfiguration)
+@EnableConfigurationProperties({FacelessJooqEnabledProp.class, FacelessJooqCudProp.class})
 public class FacelessJooqConfiguration {
 
+    public static final String jooqWingsConfigCustomizer = "jooqWingsConfigCustomizer";
     private static final Log log = LogFactory.getLog(FacelessJooqConfiguration.class);
 
     /**
@@ -60,7 +57,6 @@ public class FacelessJooqConfiguration {
      */
     @Bean
     @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$autoQualify, havingValue = "true")
-    @Order(OrderedFacelessConst.JooqQualifyListener)
     public VisitListenerProvider jooqAutoQualifyFieldListener() {
         log.info("FacelessJooq spring-bean jooqAutoQualifyFieldListener");
         return new DefaultVisitListenerProvider(new AutoQualifyFieldListener());
@@ -68,7 +64,6 @@ public class FacelessJooqConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$listenTableCud, havingValue = "true")
-    @Order(OrderedFacelessConst.JooqTableCudListener)
     public VisitListenerProvider jooqTableCudListener(FacelessJooqCudProp prop, List<WingsTableCudHandler> handlers) {
         final TableCudListener listener = new TableCudListener();
 

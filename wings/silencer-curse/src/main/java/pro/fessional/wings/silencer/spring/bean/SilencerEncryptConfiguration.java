@@ -3,8 +3,8 @@ package pro.fessional.wings.silencer.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.bits.Aes256;
@@ -14,7 +14,6 @@ import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.silencer.encrypt.SecretProvider;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 import pro.fessional.wings.silencer.spring.prop.SilencerEncryptProp;
-import pro.fessional.wings.spring.consts.OrderedSilencerConst;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -25,8 +24,8 @@ import java.util.Map;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SilencerEnabledProp.Key$encrypt, havingValue = "true")
+@EnableConfigurationProperties(SilencerEncryptProp.class)
 @RequiredArgsConstructor
-@AutoConfigureOrder(OrderedSilencerConst.EncryptConfiguration)
 public class SilencerEncryptConfiguration {
 
     private static final Log log = LogFactory.getLog(SilencerEncryptConfiguration.class);

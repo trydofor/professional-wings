@@ -3,10 +3,10 @@ package pro.fessional.wings.slardar.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
@@ -20,7 +20,6 @@ import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarTerminalProp;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -35,7 +34,7 @@ import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgen
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$terminal, havingValue = "true")
-@AutoConfigureOrder(OrderedSlardarConst.TerminalConfiguration)
+@EnableConfigurationProperties(SlardarTerminalProp.class)
 public class SlardarTerminalConfiguration {
 
     private final Log log = LogFactory.getLog(SlardarTerminalConfiguration.class);

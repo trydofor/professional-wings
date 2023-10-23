@@ -5,8 +5,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.enums.autogen.GrantType;
 import pro.fessional.wings.warlock.service.grant.WarlockGrantService;
 
@@ -19,10 +19,11 @@ import java.util.HashSet;
  * @since 2021-03-05
  */
 @Slf4j
+@Getter @Setter
 public class DefaultPermRoleCombo implements ComboWarlockAuthzService.Combo {
 
-    @Getter @Setter
-    private int order = OrderedWarlockConst.DefaultPermRoleCombo;
+    public static final int ORDER = WingsOrdered.Lv3Service;
+    private int order = ORDER;
 
     @Setter(onMethod_ = {@Autowired})
     protected WarlockGrantService warlockGrantService;

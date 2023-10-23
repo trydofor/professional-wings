@@ -2,14 +2,13 @@ package pro.fessional.wings.warlock.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.mirana.tk.TicketHelp;
 import pro.fessional.wings.silencer.encrypt.SecretProvider;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.service.auth.WarlockOauthService;
 import pro.fessional.wings.warlock.service.auth.WarlockTicketService;
 import pro.fessional.wings.warlock.service.auth.impl.SimpleTicketServiceImpl;
@@ -24,7 +23,7 @@ import java.util.Map;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureOrder(OrderedWarlockConst.OauthTicketConfiguration)
+@EnableConfigurationProperties(WarlockTicketProp.class)
 public class WarlockOauthTicketConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockOauthTicketConfiguration.class);

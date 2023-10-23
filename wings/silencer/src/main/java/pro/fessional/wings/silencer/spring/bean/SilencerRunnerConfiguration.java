@@ -3,7 +3,6 @@ package pro.fessional.wings.silencer.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationContext;
@@ -27,7 +26,6 @@ import java.util.Map;
  * @since 2023-02-06
  */
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 public class SilencerRunnerConfiguration {
 
     private static final Log log = LogFactory.getLog(SilencerRunnerConfiguration.class);

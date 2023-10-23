@@ -8,11 +8,11 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +29,6 @@ import pro.fessional.wings.slardar.monitor.report.DingTalkReport;
 import pro.fessional.wings.slardar.notice.DingTalkNotice;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarMonitorProp;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.io.File;
 import java.util.Map;
@@ -38,10 +37,10 @@ import java.util.Map;
  * @author trydofor
  * @since 2019-06-29
  */
+@EnableScheduling
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$monitor, havingValue = "true")
-@EnableScheduling
-@AutoConfigureOrder(OrderedSlardarConst.MonitorConfiguration)
+@EnableConfigurationProperties(SlardarMonitorProp.class)
 public class SlardarMonitorConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarMonitorConfiguration.class);

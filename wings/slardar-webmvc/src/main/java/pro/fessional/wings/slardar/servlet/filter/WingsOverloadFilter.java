@@ -14,9 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.cache2k.Cache;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -32,11 +32,11 @@ import java.util.concurrent.atomic.AtomicLong;
  * @since 2019-11-14
  */
 @Slf4j
+@Setter @Getter
 @Deprecated
 public class WingsOverloadFilter implements OrderedFilter {
 
-    @Setter @Getter
-    private int order = OrderedSlardarConst.WebFilterOverload;
+    private int order = WingsOrdered.Lv4Application + 4_000;
 
     private final AtomicInteger requestCapacity = new AtomicInteger(0);
     private final AtomicInteger requestProcess = new AtomicInteger(0);

@@ -10,15 +10,16 @@ import okhttp3.OkHttpClient.Builder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.silencer.runner.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientBuilder;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpHostCookie;
@@ -26,7 +27,6 @@ import pro.fessional.wings.slardar.httprest.okhttp.OkHttpInterceptor;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpRedirectNopInterceptor;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarOkHttpProp;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(OkHttpClient.class)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$okhttp, havingValue = "true")
-@AutoConfigureOrder(OrderedSlardarConst.OkhttpConfiguration)
+@EnableConfigurationProperties(SlardarOkHttpProp.class)
 public class SlardarOkhttpConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarOkhttpConfiguration.class);
@@ -158,7 +158,7 @@ public class SlardarOkhttpConfiguration {
     @Bean
     public CommandLineRunnerOrdered runnerOkHttpHelper(ObjectProvider<Builder> opb, ObjectProvider<OkHttpClient> ohc) {
         log.info("Slardar spring-runs runnerOkHttpHelper");
-        return new CommandLineRunnerOrdered(OrderedSlardarConst.RunnerOkHttpHelper, ignored -> {
+        return new CommandLineRunnerOrdered(WingsOrdered.Lv3Service, ignored -> {
             final Builder ob = opb.getIfAvailable();
             if (ob != null) {
                 log.info("Slardar spring-conf OkHttpClientBuilder");

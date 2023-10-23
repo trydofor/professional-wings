@@ -9,13 +9,13 @@ import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
-import pro.fessional.wings.faceless.WingsTestHelper
-import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
-import pro.fessional.wings.faceless.WingsTestHelper.breakpointDebug
-import pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.HEAD
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.TAIL
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.TFMT
+import pro.fessional.wings.faceless.helper.WingsTestHelper
+import pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V1
+import pro.fessional.wings.faceless.helper.WingsTestHelper.breakpointDebug
+import pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 
 /**

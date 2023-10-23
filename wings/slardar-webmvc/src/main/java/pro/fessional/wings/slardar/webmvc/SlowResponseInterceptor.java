@@ -7,9 +7,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import pro.fessional.mirana.time.StopWatch.Watch;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.watch.Watches;
 import pro.fessional.wings.slardar.constants.SlardarServletConst;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.util.function.BiConsumer;
 
@@ -18,22 +18,22 @@ import java.util.function.BiConsumer;
  * @since 2019-11-16
  */
 @Slf4j
+@Getter @Setter
 public class SlowResponseInterceptor implements AutoRegisterInterceptor {
+
+    public static final int ORDER = WingsOrdered.Lv5Supervisor + 1_000;
+
+    private int order = ORDER;
 
     /**
      * The slow threshold in ms, `-1` means disable
      */
-    @Getter @Setter
     private long thresholdMillis = -1;
 
     /**
      * Instead of logging, handle time-consuming and SQL yourself
      */
-    @Getter @Setter
     private BiConsumer<Long, HttpServletRequest> costAndReqConsumer = (c, r) -> log.warn("SLOW-RES cost={}ms, uri={}", c, r.getRequestURI());
-
-    @Getter @Setter
-    private int order = OrderedSlardarConst.MvcSlowResponseInterceptor;
 
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request,

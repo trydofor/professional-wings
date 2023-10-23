@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,10 +17,11 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import pro.fessional.mirana.best.DummyBlock;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.servlet.filter.WingsOverloadFilter;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
+import pro.fessional.wings.slardar.spring.prop.SlardarOverloadProp;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -36,14 +37,14 @@ import java.io.PrintWriter;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$overload, havingValue = "true")
 @ConditionalOnClass(Filter.class)
-@AutoConfigureOrder(OrderedSlardarConst.OverloadConfiguration)
+@EnableConfigurationProperties(SlardarOverloadProp.class)
 @Deprecated
 public class SlardarOverloadConfiguration {
 
     private final Log log = LogFactory.getLog(SlardarOverloadConfiguration.class);
 
     @Component
-    @Order(OrderedSlardarConst.AppSafelyShutdownListener)
+    @Order(WingsOrdered.Lv4Application)
     @RequiredArgsConstructor
     public class SafelyShutdown implements ApplicationListener<ContextClosedEvent> {
         private final WingsOverloadFilter overloadFilter;

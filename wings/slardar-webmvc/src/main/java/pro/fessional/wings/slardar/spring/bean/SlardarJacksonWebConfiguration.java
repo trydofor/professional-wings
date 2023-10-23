@@ -10,12 +10,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +24,7 @@ import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.R;
 import pro.fessional.mirana.i18n.I18nString;
 import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.autozone.AutoZoneType;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateDeserializer;
 import pro.fessional.wings.slardar.autozone.json.JacksonLocalDateTimeDeserializer;
@@ -46,7 +46,6 @@ import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarJacksonProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarNumberProp;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -69,9 +68,8 @@ import java.util.stream.Collectors;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(DateSerializer.class)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$jackson, havingValue = "true")
+@EnableConfigurationProperties({SlardarJacksonProp.class, SlardarDatetimeProp.class, SlardarNumberProp.class})
 @RequiredArgsConstructor
-@AutoConfigureAfter(SlardarJacksonConfiguration.class)
-@AutoConfigureOrder(OrderedSlardarConst.JacksonWebConfiguration)
 public class SlardarJacksonWebConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarJacksonWebConfiguration.class);
@@ -250,7 +248,7 @@ public class SlardarJacksonWebConfiguration {
     @Bean
     public ApplicationStartedEventRunner runnerJacksonHelper(Jackson2ObjectMapperBuilder builder) {
         log.info("SlardarWebmvc spring-runs runnerJacksonHelper");
-        return new ApplicationStartedEventRunner(OrderedSlardarConst.RunnerJacksonHelper, ignored -> {
+        return new ApplicationStartedEventRunner(WingsOrdered.Lv1Config, ignored -> {
             log.info("SlardarWebmvc spring-conf JacksonHelper.initGlobal");
             JacksonHelper.initGlobal(
                     builder.createXmlMapper(false).build(),

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.core.Ordered;
 import org.springframework.web.filter.OncePerRequestFilter;
 import pro.fessional.mirana.text.Wildcard;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,10 +24,12 @@ import static pro.fessional.wings.slardar.constants.SlardarServletConst.AttrDoma
  * @since 2019-11-16
  */
 @RequiredArgsConstructor
+@Setter @Getter
 public class WingsDomainExtendFilter extends OncePerRequestFilter implements Ordered {
 
-    @Setter @Getter
-    private int order = OrderedSlardarConst.WebFilterDomainEx;
+    public static final int ORDER = WingsOrdered.Lv4Application + 3_000;
+
+    private int order = ORDER;
 
     private final Map<String, List<String[]>> hostWildcard;
     private final DomainRequestMatcher domainRequestMatcher;

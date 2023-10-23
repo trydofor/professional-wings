@@ -3,7 +3,6 @@ package pro.fessional.wings.warlock.spring.bean;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.MessageSource;
@@ -13,13 +12,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import pro.fessional.wings.slardar.concur.impl.RighterInterceptor;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.errorhandle.DefaultExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.auto.BindExceptionAdvice;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockErrorProp;
 
-import static pro.fessional.wings.spring.consts.NamingWarlockConst.defaultExceptionResolver;
 
 
 /**
@@ -28,9 +25,9 @@ import static pro.fessional.wings.spring.consts.NamingWarlockConst.defaultExcept
  */
 @Configuration(proxyBeanMethods = false)
 @ComponentScan("pro.fessional.wings.warlock.controller")
-@AutoConfigureOrder(OrderedWarlockConst.OtherBeanConfiguration)
 public class WarlockOtherBeanConfiguration {
 
+    public static final String defaultExceptionResolver = "defaultExceptionResolver";
     private final static Log log = LogFactory.getLog(WarlockOtherBeanConfiguration.class);
 
     @Configuration(proxyBeanMethods = false)

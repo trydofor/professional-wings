@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pro.fessional.wings.faceless.WingsTestHelper;
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.autogen.tables.TstShardingTable;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.TstShardingDao;
@@ -20,15 +19,16 @@ import pro.fessional.wings.faceless.database.autogen.tables.pojos.TstSharding;
 import pro.fessional.wings.faceless.database.autogen.tables.records.TstShardingRecord;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
+import pro.fessional.wings.faceless.helper.WingsTestHelper;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.SortedMap;
 
-import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1;
-import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V1;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice;
 
 /**
  * @author trydofor
@@ -234,7 +234,7 @@ public class JooqShardingTest {
         }
         catch (Exception e) {
             testcaseNotice("Sharding unsupported, replace into https://github.com/apache/shardingsphere/issues/5330");
-            e.printStackTrace();
+            log.info("Sharding unsupported", e);
         }
 
         testcaseNotice("Batch Merge, check log, new 320, on dupkey 318,319, in 2 batch, duplicate");
@@ -251,7 +251,7 @@ public class JooqShardingTest {
         catch (Exception e) {
             testcaseNotice("Sharding unsupported, on duplicate key update https://github.com/apache/shardingsphere/issues/5210");
             testcaseNotice("Sharding unsupported, https://github.com/apache/shardingsphere/pull/5423");
-            e.printStackTrace();
+            log.info("Sharding unsupported", e);
         }
     }
 }

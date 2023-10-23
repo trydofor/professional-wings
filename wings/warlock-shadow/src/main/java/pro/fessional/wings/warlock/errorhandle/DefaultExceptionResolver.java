@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
@@ -21,7 +20,6 @@ import pro.fessional.wings.slardar.errcode.AuthnErrorEnum;
 import pro.fessional.wings.slardar.errcode.AuthzErrorEnum;
 import pro.fessional.wings.slardar.webmvc.SimpleExceptionResolver;
 import pro.fessional.wings.slardar.webmvc.SimpleResponse;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 
 import java.util.Locale;
 
@@ -34,7 +32,6 @@ import java.util.Locale;
  * @since 2021-03-25
  */
 @Slf4j
-@Order(OrderedWarlockConst.DefaultExceptionResolver)
 public class DefaultExceptionResolver extends SimpleExceptionResolver<Exception> {
 
     protected final MessageSource messageSource;

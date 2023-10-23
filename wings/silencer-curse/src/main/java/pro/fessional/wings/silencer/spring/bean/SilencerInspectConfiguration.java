@@ -2,14 +2,14 @@ package pro.fessional.wings.silencer.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.silencer.runner.ApplicationInspectRunner;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
 import pro.fessional.wings.silencer.spring.prop.SilencerInspectProp;
-import pro.fessional.wings.spring.consts.OrderedSilencerConst;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -21,15 +21,15 @@ import java.util.Map;
  * @since 2022-10-27
  */
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureOrder(OrderedSilencerConst.InspectConfiguration)
+@ConditionalOnProperty(name = SilencerInspectProp.Key$properties, havingValue = "true")
+@EnableConfigurationProperties(SilencerInspectProp.class)
 public class SilencerInspectConfiguration {
     private static final Log log = LogFactory.getLog(SilencerInspectConfiguration.class);
 
     @Bean
-    @ConditionalOnProperty(name = SilencerInspectProp.Key$properties, havingValue = "true")
     public ApplicationInspectRunner inspectApplicationRunner() {
         log.info("SilencerCurse spring-bean inspectApplicationRunner");
-        return new ApplicationInspectRunner(OrderedSilencerConst.Lv5Supervisor, ignored -> {
+        return new ApplicationInspectRunner(WingsOrdered.Lv5Supervisor, ignored -> {
             final Map<String, List<String>> map = ApplicationContextHelper.listPropertySource();
             final Map<String, List<String>> key = new LinkedHashMap<>();
 

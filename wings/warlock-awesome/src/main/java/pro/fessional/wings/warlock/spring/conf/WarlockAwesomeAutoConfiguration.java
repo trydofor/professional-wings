@@ -1,0 +1,15 @@
+package pro.fessional.wings.warlock.spring.conf;
+
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import pro.fessional.wings.warlock.spring.bean.WarlockAwesomeConfiguration;
+
+
+/**
+ * @author trydofor
+ * @since 2019-12-01
+ */
+@AutoConfiguration
+@ImportAutoConfiguration(WarlockAwesomeConfiguration.class)
+public class WarlockAwesomeAutoConfiguration {
+}

@@ -127,11 +127,6 @@
             <!-- pro.fessional.wings -->
             <dependency>
                 <groupId>pro.fessional.wings</groupId>
-                <artifactId>aegis</artifactId>
-                <version>${wings.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>pro.fessional.wings</groupId>
                 <artifactId>silencer</artifactId>
                 <version>${wings.version}</version>
             </dependency>
@@ -583,7 +578,11 @@
                                 <artifactId>spring-boot-autoconfigure-processor</artifactId>
                                 <version>${spring-boot.version}</version>
                             </path>
-
+                            <path>
+                                <groupId>org.springframework</groupId>
+                                <artifactId>spring-context-indexer</artifactId>
+                                <version>${spring-framework.version}</version>
+                            </path>
                         </annotationProcessorPaths>
                     </configuration>
                 </plugin>

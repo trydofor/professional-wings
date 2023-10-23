@@ -6,10 +6,10 @@ import org.apache.commons.logging.LogFactory;
 import org.cache2k.extra.spring.SpringCache2kCacheManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.AbstractCachingConfiguration;
 import org.springframework.cache.annotation.CachingConfigurer;
@@ -32,7 +32,6 @@ import pro.fessional.wings.slardar.cache.spring.WingsCacheInterceptor;
 import pro.fessional.wings.slardar.cache.spring.WingsCacheResolver;
 import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,10 +43,10 @@ import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
  * @see ProxyCachingConfiguration
  * @since 2019-12-03
  */
+@EnableCaching
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$caching, havingValue = "true")
-@EnableCaching
-@AutoConfigureOrder(OrderedSlardarConst.CacheConfiguration)
+@EnableConfigurationProperties(SlardarCacheProp.class)
 public class SlardarCacheConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarCacheConfiguration.class);
@@ -98,7 +97,6 @@ public class SlardarCacheConfiguration {
     // //////////////////// cache ////////////////////
     @Configuration(proxyBeanMethods = false)
     @RequiredArgsConstructor
-    @AutoConfigureOrder(OrderedSlardarConst.CachingConfigurerSupport)
     public static class SlardarCachingConfigurerSupport implements CachingConfigurer {
         private final Map<String, CacheManager> managers;
         private final Map<String, AbstractCacheResolver> resolvers;

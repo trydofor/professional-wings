@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import pro.fessional.wings.slardar.context.TerminalContext;
+import pro.fessional.wings.slardar.service.AsyncService;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;

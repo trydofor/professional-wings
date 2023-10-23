@@ -5,15 +5,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import pro.fessional.mirana.code.RandCode;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.concur.impl.FirstBloodHandler;
 import pro.fessional.wings.slardar.concur.impl.FirstBloodImageHandler;
 import pro.fessional.wings.slardar.concur.impl.FirstBloodInterceptor;
@@ -30,9 +29,9 @@ import java.util.stream.Collectors;
  * @since 2019-12-03
  */
 @Configuration(proxyBeanMethods = false)
-@RequiredArgsConstructor
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$firstBlood, havingValue = "true")
-@AutoConfigureOrder(OrderedSlardarConst.FirstBloodConfiguration)
+@EnableConfigurationProperties(SlardarFirstBloodProp.class)
+@RequiredArgsConstructor
 public class SlardarFirstBloodConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarFirstBloodConfiguration.class);

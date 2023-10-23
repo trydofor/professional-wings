@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import pro.fessional.wings.faceless.WingsTestHelper
-import pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedRegexp
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedTable
+import pro.fessional.wings.faceless.helper.WingsTestHelper
+import pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 import java.io.File
 import javax.sql.DataSource

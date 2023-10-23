@@ -6,7 +6,6 @@ import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,11 +24,11 @@ import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.Null;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.spring.conf.HttpSecurityCustomizer;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
@@ -47,7 +46,6 @@ import java.util.TreeMap;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityAuto, havingValue = "true")
 @RequiredArgsConstructor
-@AutoConfigureOrder(OrderedWarlockConst.SecurityConfConfiguration)
 public class WarlockSecurityConfConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockSecurityConfConfiguration.class);
@@ -85,7 +83,7 @@ public class WarlockSecurityConfConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpBind, havingValue = "true")
-    @Order(OrderedWarlockConst.SecurityBindHttp)
+    @Order(WingsOrdered.Lv4Application + 200)
     public HttpSecurityCustomizer warlockSecurityBindHttpConfigure(
             ObjectProvider<AuthenticationSuccessHandler> authenticationSuccessHandler,
             ObjectProvider<AuthenticationFailureHandler> authenticationFailureHandler,
@@ -154,7 +152,7 @@ public class WarlockSecurityConfConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpAuth, havingValue = "true")
-    @Order(OrderedWarlockConst.SecurityAuthHttp)
+    @Order(WingsOrdered.Lv4Application + 300)
     public HttpSecurityCustomizer warlockSecurityAuthHttpConfigure(ObjectProvider<MvcRequestMatcher.Builder> mvcMatcher) {
         log.info("WarlockShadow spring-bean warlockSecurityAuthHttpConfigure");
         MvcRequestMatcher.Builder mvc = mvcMatcher.getIfAvailable();
@@ -200,7 +198,7 @@ public class WarlockSecurityConfConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpBase, havingValue = "true")
-    @Order(OrderedWarlockConst.SecurityHttpBase)
+    @Order(WingsOrdered.Lv4Application + 100)
     public HttpSecurityCustomizer warlockSecurityHttpBaseConfigure() {
         log.info("WarlockShadow spring-bean warlockSecurityHttpBaseConfigure");
         return HttpSecurity::httpBasic;
@@ -208,7 +206,7 @@ public class WarlockSecurityConfConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpAuto, havingValue = "true")
-    @Order(OrderedWarlockConst.SecurityAutoHttp)
+    @Order(WingsOrdered.Lv4Application + 400)
     public HttpSecurityCustomizer warlockSecurityAutoHttpConfigure(
             ObjectProvider<CsrfTokenRepository> csrf,
             ObjectProvider<RequestCache> cache) {
@@ -259,7 +257,7 @@ public class WarlockSecurityConfConfiguration {
      */
     @Bean
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpChain, havingValue = "true")
-    @Order(OrderedWarlockConst.SecurityFilterChain)
+    @Order(WingsOrdered.Lv4Application + 900)
     public SecurityFilterChain securityFilterChain(HttpSecurity http, Map<String, HttpSecurityCustomizer> configures) throws Exception {
         log.info("WarlockShadow conf securityFilterChain, begin");
         for (Map.Entry<String, HttpSecurityCustomizer> en : configures.entrySet()) {

@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.faceless.service.journal.JournalService;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.constants.WarlockGlobalAttribute;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
@@ -29,10 +29,11 @@ import static pro.fessional.wings.warlock.service.user.WarlockUserBasisService.B
  * @since 2021-02-25
  */
 @Slf4j
+@Getter @Setter
 public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg {
 
-    @Getter @Setter
-    private int order = OrderedWarlockConst.DefaultUserAuthnAutoReg;
+    public static final int ORDER = WingsOrdered. Lv3Service + 10;
+    private int order = ORDER;
 
     @Setter(onMethod_ = {@Autowired})
     protected WarlockUserBasisService warlockUserBasisService;

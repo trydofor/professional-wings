@@ -7,10 +7,10 @@ import lombok.Setter;
 import org.cache2k.Cache;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.method.HandlerMethod;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.concur.FirstBlood;
 import pro.fessional.wings.slardar.concur.ProgressContext;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -21,10 +21,12 @@ import java.util.List;
  */
 public class FirstBloodInterceptor implements AutoRegisterInterceptor {
 
+    public static final int ORDER = WingsOrdered.Lv4Application + 3_000;
+
     private final List<FirstBloodHandler> handlers;
 
     @Getter @Setter
-    private int order = OrderedSlardarConst.MvcFirstBloodInterceptor;
+    private int order = ORDER;
 
     public FirstBloodInterceptor(List<FirstBloodHandler> handlers) {
         this.handlers = handlers;

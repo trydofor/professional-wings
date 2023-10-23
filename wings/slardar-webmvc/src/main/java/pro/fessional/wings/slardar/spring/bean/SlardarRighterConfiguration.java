@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -14,21 +14,20 @@ import pro.fessional.wings.slardar.concur.impl.RighterExceptionResolver;
 import pro.fessional.wings.slardar.concur.impl.RighterInterceptor;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarRighterProp;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
-
-import static pro.fessional.wings.spring.consts.NamingSlardarConst.righterExceptionResolver;
 
 /**
  * @author trydofor
  * @since 2019-06-29
  */
-@RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$righter, havingValue = "true")
-@AutoConfigureOrder(OrderedSlardarConst.RighterConfiguration)
+@EnableConfigurationProperties(SlardarRighterProp.class)
+@RequiredArgsConstructor
 public class SlardarRighterConfiguration {
 
+    public static final String righterExceptionResolver = "righterExceptionResolver";
     private final static Log log = LogFactory.getLog(SlardarRighterConfiguration.class);
+    
     private final SlardarRighterProp slardarRighterProp;
 
     @Bean

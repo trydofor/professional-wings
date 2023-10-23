@@ -4,17 +4,15 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.spring.cache.HazelcastCacheManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.hazelcast.HazelcastConfigCustomizer;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.slardar.cache.hazelcast.WingsHazelcastCacheCustomizer;
 import pro.fessional.wings.slardar.cache.hazelcast.WingsHazelcastCacheManager;
 import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
 
@@ -23,9 +21,8 @@ import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
  * @since 2019-12-03
  */
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureBefore(SlardarCacheConfiguration.class)
-@AutoConfigureOrder(OrderedSlardarConst.HazelcastCacheConfiguration)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$caching, havingValue = "true")
+@EnableConfigurationProperties(SlardarCacheProp.class)
 public class HazelcastCacheConfiguration {
 
     private static final Log log = LogFactory.getLog(HazelcastCacheConfiguration.class);

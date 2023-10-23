@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.TtlMDCAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggerGroups;
 import org.springframework.boot.logging.LoggingSystem;
@@ -18,7 +18,6 @@ import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.silencer.spring.prop.SilencerTweakProp;
 import pro.fessional.wings.silencer.tweak.TweakLogger;
-import pro.fessional.wings.spring.consts.OrderedSilencerConst;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -28,7 +27,7 @@ import java.time.Duration;
  * @since 2022-10-27
  */
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureOrder(OrderedSilencerConst.TweakConfiguration)
+@EnableConfigurationProperties(SilencerTweakProp.class)
 public class SilencerTweakConfiguration {
     private static final Log log = LogFactory.getLog(SilencerTweakConfiguration.class);
 

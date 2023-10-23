@@ -32,10 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1;
-import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V1;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice;
 import static pro.fessional.wings.faceless.service.journal.JournalService.Journal;
 
 /**

@@ -3,12 +3,11 @@ package pro.fessional.wings.slardar.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.data.Null;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarPagequeryProp;
 import pro.fessional.wings.slardar.webmvc.PageQueryArgumentResolver;
@@ -19,8 +18,8 @@ import pro.fessional.wings.slardar.webmvc.PageQueryArgumentResolver;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$pagequery, havingValue = "true")
+@EnableConfigurationProperties(SlardarPagequeryProp.class)
 @RequiredArgsConstructor
-@AutoConfigureOrder(OrderedSlardarConst.PageQueryConfiguration)
 public class SlardarPageQueryConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarPageQueryConfiguration.class);

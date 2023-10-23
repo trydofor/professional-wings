@@ -6,12 +6,12 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +26,7 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.LocaleResolver;
 import pro.fessional.mirana.bits.Aes;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
 import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
@@ -39,7 +40,6 @@ import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.impl.ComboWingsUserDetailsService;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthTypeParser;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.security.handler.AccessFailureHandler;
 import pro.fessional.wings.warlock.security.handler.LoginFailureHandler;
 import pro.fessional.wings.warlock.security.handler.LoginSuccessHandler;
@@ -97,9 +97,9 @@ import static org.springframework.util.StringUtils.hasText;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityBean, havingValue = "true")
-@RequiredArgsConstructor
-@AutoConfigureOrder(OrderedWarlockConst.SecurityBeanConfiguration)
 @AutoConfigureBefore(SecurityAutoConfiguration.class)
+@EnableConfigurationProperties(WarlockSecurityProp.class)
+@RequiredArgsConstructor
 public class WarlockSecurityBeanConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockSecurityBeanConfiguration.class);
@@ -213,7 +213,7 @@ public class WarlockSecurityBeanConfiguration {
     public JustAuthUserAuthnAutoReg justAuthUserAuthnAutoReg() {
         log.info("WarlockShadow spring-bean justAuthUserAuthnAutoReg");
         final JustAuthUserAuthnAutoReg bean = new JustAuthUserAuthnAutoReg();
-        bean.setOrder(OrderedWarlockConst.JustAuthUserAuthnAutoReg);
+        bean.setOrder(WingsOrdered.Lv3Service);
         return bean;
     }
 
@@ -267,7 +267,7 @@ public class WarlockSecurityBeanConfiguration {
     public NonceUserDetailsCombo nonceUserDetailsCombo() {
         log.info("WarlockShadow spring-bean nonceUserDetailsCombo");
         final NonceUserDetailsCombo bean = new NonceUserDetailsCombo();
-        bean.setOrder(OrderedWarlockConst.NonceUserDetailsCombo);
+        bean.setOrder(WingsOrdered.Lv3Service + 200);
         bean.setAcceptNonceType(securityProp.mapNonceAuthEnum());
         final String cn = WingsCache.Level.join(securityProp.getNonceCacheLevel(), NonceUserDetailsCombo.class.getName());
         bean.setCacheName(cn);
@@ -281,7 +281,7 @@ public class WarlockSecurityBeanConfiguration {
     public MemoryUserDetailsCombo memoryUserDetailsCombo(@SuppressWarnings("all") WingsAuthTypeParser typeParser) {
         log.info("WarlockShadow spring-bean memoryUserDetailsCombo");
         final MemoryUserDetailsCombo bean = new MemoryUserDetailsCombo();
-        bean.setOrder(OrderedWarlockConst.MemoryUserDetailsCombo);
+        bean.setOrder(WingsOrdered.Lv3Service + 100);
         for (Map.Entry<String, Mu> en : securityProp.getMemUser().entrySet()) {
             log.info("WarlockShadow conf add MemUser=" + en.getKey());
             final Mu mu = en.getValue();
@@ -354,7 +354,7 @@ public class WarlockSecurityBeanConfiguration {
     public JustAuthUserDetailsCombo justAuthUserDetailsCombo() {
         log.info("WarlockShadow spring-bean justAuthUserDetailsCombo");
         final JustAuthUserDetailsCombo bean = new JustAuthUserDetailsCombo();
-        bean.setOrder(OrderedWarlockConst.JustAuthUserDetailsCombo);
+        bean.setOrder(WingsOrdered.Lv3Service + 300);
         return bean;
     }
 

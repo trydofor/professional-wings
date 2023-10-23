@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import pro.fessional.mirana.id.LightIdBufferedProvider
-import pro.fessional.wings.faceless.WingsTestHelper
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.WingsRevision
+import pro.fessional.wings.faceless.helper.WingsTestHelper
 import pro.fessional.wings.faceless.service.journal.JournalService
 import pro.fessional.wings.faceless.service.lightid.LightIdService
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner

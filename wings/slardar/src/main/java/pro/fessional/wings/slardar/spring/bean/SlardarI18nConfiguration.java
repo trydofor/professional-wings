@@ -4,17 +4,16 @@ import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.autodto.AutoDtoHelper;
 import pro.fessional.wings.slardar.autodto.AutoZoneVisitor;
 import pro.fessional.wings.slardar.autodto.I18nStringVisitor;
 import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 /**
  * @author trydofor
@@ -24,7 +23,6 @@ import pro.fessional.wings.spring.consts.OrderedSlardarConst;
  */
 @Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
-@AutoConfigureOrder(OrderedSlardarConst.I18nConfiguration)
 public class SlardarI18nConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarI18nConfiguration.class);
@@ -40,7 +38,7 @@ public class SlardarI18nConfiguration {
     @Bean
     public ApplicationStartedEventRunner runnerAutoDtoHelper(MessageSource messageSource) {
         log.info("Slardar spring-runs runnerAutoDtoHelper");
-        return new ApplicationStartedEventRunner(OrderedSlardarConst.RunnerAutoDtoHelper, ignored -> new AutoDtoHelper() {{
+        return new ApplicationStartedEventRunner(WingsOrdered.Lv1Config, ignored -> new AutoDtoHelper() {{
             final I18nStringVisitor i18nStringVisitor = new I18nStringVisitor(messageSource, LocaleZoneIdUtil.LocaleNonnull);
 
             RequestVisitor.add(AutoDtoHelper.AutoDtoVisitor);

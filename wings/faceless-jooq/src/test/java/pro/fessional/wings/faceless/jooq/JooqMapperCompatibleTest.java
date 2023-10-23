@@ -12,15 +12,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pro.fessional.wings.faceless.WingsTestHelper;
 import pro.fessional.wings.faceless.database.autogen.tables.TstShardingTable;
 import pro.fessional.wings.faceless.database.autogen.tables.daos.TstShardingDao;
 import pro.fessional.wings.faceless.database.autogen.tables.records.TstShardingRecord;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
+import pro.fessional.wings.faceless.helper.WingsTestHelper;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
-import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
-import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V2;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice;
 
 /**
  * @author trydofor

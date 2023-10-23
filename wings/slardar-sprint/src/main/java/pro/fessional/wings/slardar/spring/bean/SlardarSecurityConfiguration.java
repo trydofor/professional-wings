@@ -3,9 +3,9 @@ package pro.fessional.wings.slardar.spring.bean;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,13 +17,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.wings.silencer.runner.CommandLineRunnerOrdered;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.pass.DefaultPasssaltEncoder;
 import pro.fessional.wings.slardar.security.pass.PasswordEncoders;
 import pro.fessional.wings.slardar.spring.conf.WingsSecBeanInitConfigurer;
 import pro.fessional.wings.slardar.spring.prop.SlardarPasscoderProp;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.util.Map;
 
@@ -32,9 +32,9 @@ import java.util.Map;
  * @since 2020-08-10
  */
 @Configuration(proxyBeanMethods = false)
-@RequiredArgsConstructor
 @ConditionalOnClass(SecurityConfigurer.class)
-@AutoConfigureOrder(OrderedSlardarConst.SecurityConfiguration)
+@EnableConfigurationProperties(SlardarPasscoderProp.class)
+@RequiredArgsConstructor
 public class SlardarSecurityConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarSecurityConfiguration.class);
@@ -119,7 +119,7 @@ public class SlardarSecurityConfiguration {
     @Bean
     public CommandLineRunnerOrdered runnerTerminalContextListener(Map<String, TerminalContext.Listener> listeners) {
         log.info("SlardarSprint spring-runs runnerTerminalContextListener");
-        return new CommandLineRunnerOrdered(OrderedSlardarConst.RunnerTerminalContextListener, ignored -> {
+        return new CommandLineRunnerOrdered(WingsOrdered.Lv5Supervisor, ignored -> {
             for (Map.Entry<String, TerminalContext.Listener> en : listeners.entrySet()) {
                 final String name = en.getKey();
                 log.info("SlardarSprint spring-conf runnerTerminalContextListener, name=" + name);
