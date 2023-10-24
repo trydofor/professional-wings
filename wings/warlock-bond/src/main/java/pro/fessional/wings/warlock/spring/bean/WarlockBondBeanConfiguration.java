@@ -1,8 +1,8 @@
 package pro.fessional.wings.warlock.spring.bean;
 
+import jakarta.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,7 +41,7 @@ public class WarlockBondBeanConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockBondBeanConfiguration.class);
 
-    @Autowired
+    @PostConstruct
     public void autoRegisterCacheConst() {
         CacheConst.WarlockPermService.EventTables.add(WinPermEntryTable.WinPermEntry.getName());
         log.info("WarlockBond spring-conf WarlockPermService.EventTables");

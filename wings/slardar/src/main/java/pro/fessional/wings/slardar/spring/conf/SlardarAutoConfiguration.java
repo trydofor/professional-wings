@@ -3,10 +3,6 @@ package pro.fessional.wings.slardar.spring.conf;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
-import org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import pro.fessional.wings.slardar.spring.bean.SlardarAsyncConfiguration;
 import pro.fessional.wings.slardar.spring.bean.SlardarCacheConfiguration;
 import pro.fessional.wings.slardar.spring.bean.SlardarDateTimeConfiguration;
 import pro.fessional.wings.slardar.spring.bean.SlardarDingNoticeConfiguration;
@@ -22,11 +18,9 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
  * @author trydofor
  * @since 2019-07-11
  */
-@AutoConfiguration(before = {TaskExecutionAutoConfiguration.class, TaskSchedulingAutoConfiguration.class})
+@AutoConfiguration
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$autoconf, havingValue = "true")
-@EnableConfigurationProperties(SlardarEnabledProp.class)
 @ImportAutoConfiguration({
-        SlardarAsyncConfiguration.class,
         SlardarCacheConfiguration.class,
         SlardarDateTimeConfiguration.class,
         SlardarDingNoticeConfiguration.class,

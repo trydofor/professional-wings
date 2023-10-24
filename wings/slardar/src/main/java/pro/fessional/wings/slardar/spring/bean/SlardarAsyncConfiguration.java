@@ -5,7 +5,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
@@ -52,10 +51,9 @@ import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanP
  * @since 2019-12-03
  */
 @EnableAsync
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$async, havingValue = "true")
 @EnableConfigurationProperties(SlardarAsyncProp.class)
-@AutoConfigureBefore({TaskExecutionAutoConfiguration.class, TaskSchedulingAutoConfiguration.class}) // mark
 public class SlardarAsyncConfiguration {
 
     public static final String slardarEventExecutor = "slardarEventExecutor";

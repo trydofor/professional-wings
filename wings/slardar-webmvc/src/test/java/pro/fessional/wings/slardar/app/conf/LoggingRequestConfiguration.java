@@ -5,13 +5,11 @@ import lombok.SneakyThrows;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.slardar.servlet.stream.AbstractRequestResponseLogging;
 import pro.fessional.wings.slardar.servlet.stream.RequestResponseLogging;
 import pro.fessional.wings.slardar.servlet.stream.ReuseStreamRequestWrapper;
-import pro.fessional.wings.slardar.spring.bean.SlardarRestreamConfiguration;
 
 import java.util.Collection;
 
@@ -22,7 +20,6 @@ import java.util.Collection;
  * @since 2019-12-03
  */
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureBefore(SlardarRestreamConfiguration.class)
 public class LoggingRequestConfiguration {
 
     private static final Log log = LogFactory.getLog(LoggingRequestConfiguration.class);

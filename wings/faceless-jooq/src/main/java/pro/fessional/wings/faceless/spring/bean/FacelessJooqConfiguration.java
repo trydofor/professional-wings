@@ -40,7 +40,10 @@ import java.util.stream.Collectors;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = FacelessJooqEnabledProp.Key$module, havingValue = "true")
 @ConditionalOnClass(name = "org.jooq.conf.Settings")
-@EnableConfigurationProperties({FacelessJooqEnabledProp.class, FacelessJooqCudProp.class})
+@EnableConfigurationProperties({
+        FacelessJooqCudProp.class,
+        FacelessJooqEnabledProp.class,
+})
 public class FacelessJooqConfiguration {
 
     public static final String jooqWingsConfigCustomizer = "jooqWingsConfigCustomizer";

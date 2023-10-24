@@ -11,7 +11,7 @@ import pro.fessional.wings.tiny.mail.service.TinyMailService;
  * @author trydofor
  * @since 2023-03-07
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @Slf4j
 public class StatusHookConfiguration {
 

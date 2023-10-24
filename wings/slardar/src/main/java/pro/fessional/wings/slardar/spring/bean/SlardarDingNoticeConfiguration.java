@@ -25,6 +25,7 @@ public class SlardarDingNoticeConfiguration {
     @Setter(onMethod_ = {@Autowired})
     private SlardarDingNoticeProp slardarDingNoticeProp;
 
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean
     @ConditionalOnMissingBean(DingTalkNotice.class)
     public DingTalkNotice dingTalkNotice(OkHttpClient okHttpClient) {

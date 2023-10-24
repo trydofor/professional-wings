@@ -1,4 +1,4 @@
-package pro.fessional.wings.tiny;
+package pro.fessional.wings.tiny.project;
 
 import lombok.Setter;
 import org.junit.jupiter.api.Disabled;

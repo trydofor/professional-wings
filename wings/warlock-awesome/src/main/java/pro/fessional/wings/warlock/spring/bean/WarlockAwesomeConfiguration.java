@@ -48,7 +48,6 @@ public class WarlockAwesomeConfiguration {
         return bean;
     }
 
-
     /**
      * Database values override project config
      */

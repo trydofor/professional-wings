@@ -26,7 +26,7 @@ import javax.sql.DataSource;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties({WarlockCheckProp.class, WarlockI18nProp.class})
+@EnableConfigurationProperties({WarlockEnabledProp.class, WarlockCheckProp.class, WarlockI18nProp.class})
 public class WarlockAutoRunConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockAutoRunConfiguration.class);

@@ -18,7 +18,7 @@ import pro.fessional.wings.silencer.message.CombinableMessageSource;
  * @author trydofor
  * @since 2019-06-01
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = FacelessEnabledProp.Key$enumi18n, havingValue = "true")
 @ConditionalOnClass(name = "pro.fessional.wings.silencer.message.CombinableMessageSource")
 public class FacelessEnumI18nConfiguration {

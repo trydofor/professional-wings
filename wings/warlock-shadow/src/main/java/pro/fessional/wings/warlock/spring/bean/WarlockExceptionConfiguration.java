@@ -11,8 +11,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import pro.fessional.wings.warlock.errorhandle.DefaultExceptionResolver;
+import pro.fessional.wings.warlock.spring.prop.WarlockApiAuthProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockErrorProp;
+import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
 
 /**
@@ -20,7 +22,7 @@ import pro.fessional.wings.warlock.spring.prop.WarlockErrorProp;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(WarlockErrorProp.class)
+@EnableConfigurationProperties({WarlockApiAuthProp.class, WarlockUrlmapProp.class, WarlockErrorProp.class})
 public class WarlockExceptionConfiguration {
 
     public static final String defaultExceptionResolver = "defaultExceptionResolver";

@@ -39,7 +39,12 @@ import static pro.fessional.wings.faceless.flywave.SchemaJournalManager.JournalD
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(name = "pro.fessional.wings.faceless.database.DataSourceContext")
 @ConditionalOnProperty(name = FlywaveEnabledProp.Key$module, havingValue = "true")
-@EnableConfigurationProperties({FlywaveFitProp.class, FlywaveSqlProp.class, FlywaveVerProp.class})
+@EnableConfigurationProperties({
+        FlywaveEnabledProp.class,
+        FlywaveFitProp.class,
+        FlywaveSqlProp.class,
+        FlywaveVerProp.class,
+})
 @Import(FacelessDataSourceConfiguration.class)
 public class WingsFlywaveConfiguration {
 

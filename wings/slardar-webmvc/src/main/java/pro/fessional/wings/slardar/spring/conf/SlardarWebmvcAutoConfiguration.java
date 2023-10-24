@@ -28,7 +28,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
  * @author trydofor
  * @since 2019-07-11
  */
-@AutoConfiguration(before = WebMvcAutoConfiguration.class)
+@AutoConfiguration(before = {SlardarAutoConfiguration.class, WebMvcAutoConfiguration.class})
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$autoconf, havingValue = "true")
 @ImportAutoConfiguration({
         SlardarCookieConfiguration.class,

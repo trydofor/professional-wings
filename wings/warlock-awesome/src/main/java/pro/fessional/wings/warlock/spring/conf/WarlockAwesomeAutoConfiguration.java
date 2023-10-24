@@ -9,7 +9,7 @@ import pro.fessional.wings.warlock.spring.bean.WarlockAwesomeConfiguration;
  * @author trydofor
  * @since 2019-12-01
  */
-@AutoConfiguration
+@AutoConfiguration(before = WarlockAutoConfiguration.class)
 @ImportAutoConfiguration(WarlockAwesomeConfiguration.class)
 public class WarlockAwesomeAutoConfiguration {
 }

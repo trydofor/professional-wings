@@ -4,6 +4,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ import pro.fessional.wings.slardar.autodto.AutoDtoHelper;
 import pro.fessional.wings.slardar.autodto.AutoZoneVisitor;
 import pro.fessional.wings.slardar.autodto.I18nStringVisitor;
 import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
+import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 /**
  * @author trydofor
@@ -22,6 +24,7 @@ import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
  * @since 2019-06-26
  */
 @Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties(SlardarEnabledProp.class)
 @RequiredArgsConstructor
 public class SlardarI18nConfiguration {
 

@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -52,7 +51,6 @@ import java.util.Objects;
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(SlardarPasscoderProp.class)
 @ConditionalOnClass(SpringBootAdminClientAutoConfiguration.class)
-@AutoConfigureBefore(SpringBootAdminClientAutoConfiguration.class) // mark
 public class SlardarBootAdminConfiguration {
     private final static Log log = LogFactory.getLog(SlardarBootAdminConfiguration.class);
 

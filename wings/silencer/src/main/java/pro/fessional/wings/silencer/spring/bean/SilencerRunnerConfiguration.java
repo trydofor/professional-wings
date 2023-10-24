@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,8 @@ import pro.fessional.wings.silencer.runner.ApplicationInspectRunner;
 import pro.fessional.wings.silencer.runner.ApplicationReadyEventRunner;
 import pro.fessional.wings.silencer.runner.ApplicationRunnerOrdered;
 import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
+import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
+import pro.fessional.wings.silencer.spring.prop.SilencerI18nProp;
 
 import java.util.Map;
 
@@ -26,6 +29,10 @@ import java.util.Map;
  * @since 2023-02-06
  */
 @Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties({
+        SilencerEnabledProp.class,
+        SilencerI18nProp.class,
+})
 public class SilencerRunnerConfiguration {
 
     private static final Log log = LogFactory.getLog(SilencerRunnerConfiguration.class);
