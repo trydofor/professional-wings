@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import io.qameta.allure.TmsLink;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -108,6 +109,7 @@ public class WingsJacksonMapperTest {
         }
     }
 
+    @SuppressWarnings("LombokGetterMayBeUsed")
     public static class NamingManual {
         private boolean primaryType = true;
         private Boolean objectType = true;
@@ -130,6 +132,7 @@ public class WingsJacksonMapperTest {
     }
 
     @Test
+    @TmsLink("C13067")
     public void testNaming() throws JsonProcessingException {
         NamingManual n1 = new NamingManual();
         String s1 = objectMapper.writeValueAsString(n1);
@@ -140,6 +143,7 @@ public class WingsJacksonMapperTest {
     }
 
     @Test
+    @TmsLink("C13068")
     public void testEquals() throws IOException {
         log.info("=== ZoneId= " + ThreadNow.sysZoneId());
         JsonIt it = new JsonIt();
@@ -205,6 +209,7 @@ public class WingsJacksonMapperTest {
     }
 
     @Test
+    @TmsLink("C13069")
     public void testI18nString() throws IOException {
         I18nJson obj = new I18nJson();
         ObjectWriter jackson = objectMapper.writerWithDefaultPrettyPrinter();
@@ -258,6 +263,7 @@ public class WingsJacksonMapperTest {
 
 
     @Test
+    @TmsLink("C13070")
     public void testI18nResult() throws IOException {
         ObjectWriter jackson = objectMapper.writerWithDefaultPrettyPrinter();
 
@@ -327,6 +333,7 @@ public class WingsJacksonMapperTest {
     }
 
     @Test
+    @TmsLink("C13071")
     public void testXml() throws IOException {
         ObjectMapper xmlMapper = jackson2ObjectMapperBuilder
                 .createXmlMapper(true)
@@ -393,6 +400,7 @@ public class WingsJacksonMapperTest {
     }
 
     @Test
+    @TmsLink("C13072")
     public void testTreeMapGenerator() throws IOException {
         I18nJson i18nJson = new I18nJson();
         JsonIt jsonIt = new JsonIt();
@@ -407,6 +415,7 @@ public class WingsJacksonMapperTest {
     }
 
     @Test
+    @TmsLink("C13073")
     public void testHelper() {
         I18nJson i18nJson = new I18nJson();
         JsonIt jsonIt = new JsonIt();
@@ -444,6 +453,7 @@ public class WingsJacksonMapperTest {
     }
 
     @Test
+    @TmsLink("C13074")
     public void testNumber() throws JsonProcessingException {
         NumberAsString nas = new NumberAsString();
         NumberAsNumber nan = new NumberAsNumber();
@@ -456,6 +466,7 @@ public class WingsJacksonMapperTest {
 
 
     @Test
+    @TmsLink("C13075")
     public void testResource() throws JsonProcessingException {
         Map<String, Resource> res = new HashMap<>();
         res.put("wings-jackson-79.properties", new ClassPathResource("wings-conf/wings-jackson-79.properties"));
@@ -477,6 +488,7 @@ public class WingsJacksonMapperTest {
 
 
     @Test
+    @TmsLink("C13076")
     public void testAes256String() throws JsonProcessingException {
         Aes256String aes = new Aes256String();
         final String txt = "1234567890";
@@ -514,6 +526,7 @@ public class WingsJacksonMapperTest {
     }
 
     @Test
+    @TmsLink("C13077")
     public void testMsNamingXml() throws JsonProcessingException {
         final XmlMapper xmlMapper = jackson2ObjectMapperBuilder
                 .createXmlMapper(true)

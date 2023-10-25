@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.jooq;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.BatchBindStep;
@@ -12,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import pro.fessional.wings.faceless.database.autogen.tables.TstShardingTable;
-import pro.fessional.wings.faceless.database.autogen.tables.records.TstShardingRecord;
+import pro.fessional.wings.faceless.app.database.autogen.tables.TstShardingTable;
+import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShardingRecord;
 import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelper;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.helper.WingsTestHelper;
@@ -54,6 +55,7 @@ public class JooqDeleteListenerTest {
     private SchemaRevisionManager schemaRevisionManager;
 
     @Test
+    @TmsLink("C12095")
     public void test0CleanTables() {
         wingsTestHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER);
@@ -63,6 +65,7 @@ public class JooqDeleteListenerTest {
     //  🦁🦁🦁<=<<
 
     @Test
+    @TmsLink("C12096")
     public void test2HelperSeeLog() {
         JournalJooqHelper.deleteByIds(dsl, TstShardingTable.TstSharding, 12L, 1L, 2L);
         JournalJooqHelper.deleteByIds(tmpl, "`tst_sharding`", 34L, 3L, 4L);
@@ -74,6 +77,7 @@ public class JooqDeleteListenerTest {
     }
 
     @Test
+    @TmsLink("C12097")
     public void test3JooqDslSeeLog() {
         // handle
         dsl.execute("DELETE FROM `tst_sharding` WHERE ID =5 AND COMMIT_ID = 5");

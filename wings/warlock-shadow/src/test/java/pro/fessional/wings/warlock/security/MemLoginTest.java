@@ -2,6 +2,7 @@ package pro.fessional.wings.warlock.security;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.HttpUrl;
@@ -41,6 +42,7 @@ class MemLoginTest {
 
     @Test
     @Order(1)
+    @TmsLink("C14047")
     public void testUsernameLogin() {
         OkHttpClientHelper.clearCookie(okHttpClient, HttpUrl.get(host));
         final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder()
@@ -76,6 +78,7 @@ class MemLoginTest {
 
     @Test
     @Order(2)
+    @TmsLink("C14048")
     public void testEmailLogin() {
         OkHttpClientHelper.clearCookie(okHttpClient, HttpUrl.get(host));
         final Response r2 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder()
@@ -109,6 +112,7 @@ class MemLoginTest {
 
     @Test
     @Order(3)
+    @TmsLink("C14049")
     public void testListSession() {
         final String r4 = OkHttpClientHelper.postJson(okHttpClient, host + "/user/list-session.json", "");
         log.info("list-session auth4={}", r4);

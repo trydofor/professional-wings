@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.flywave
 
+import io.qameta.allure.TmsLink
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -17,6 +18,7 @@ class SimpleJdbcTemplateTest {
     lateinit var dataSources: DataSourceContext
 
     @Test
+    @TmsLink("C12058")
     fun metadata() {
         val tmpl = SimpleJdbcTemplate(dataSources.current, "first")
         tmpl.execute("show tables")

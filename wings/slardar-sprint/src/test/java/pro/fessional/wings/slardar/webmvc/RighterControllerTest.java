@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.webmvc;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,8 +50,8 @@ public class RighterControllerTest {
                       .build();
     }
 
-
     @Test
+    @TmsLink("C13030")
     @WithMockUser("wings-admin")
     public void righter() throws Exception {
         final MvcResult result = mvc.perform(get("/test/righter.json")

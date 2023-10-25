@@ -1,7 +1,7 @@
 package pro.fessional.wings.slardar.webmvc;
 
+import io.qameta.allure.TmsLink;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.client.RestTemplate;
 import pro.fessional.mirana.page.PageQuery;
-import pro.fessional.wings.slardar.controller.TestPageQueryController;
+import pro.fessional.wings.slardar.app.controller.TestPageQueryController;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author trydofor
@@ -31,6 +33,7 @@ public class PageQueryResolverTest {
     private RestTemplate restTemplate;
 
     @Test
+    @TmsLink("C13105")
     public void testModelAttribute() {
         int page = 44;
         int size = 55;
@@ -45,6 +48,7 @@ public class PageQueryResolverTest {
     }
 
     @Test
+    @TmsLink("C13106")
     public void testPageQuery() {
         int page = 44;
         int size = 55;
@@ -59,6 +63,7 @@ public class PageQueryResolverTest {
     }
 
     @Test
+    @TmsLink("C13107")
     public void testPageDefault1() {
         int page = 33;
         int size = 44;
@@ -72,6 +77,7 @@ public class PageQueryResolverTest {
         assertEquals(sort, pq.getSort());
     }
     @Test
+    @TmsLink("C13108")
     public void testPageDefault2() {
         int page = 33;
         int size = 44;
@@ -86,6 +92,7 @@ public class PageQueryResolverTest {
     }
 
     @Test
+    @TmsLink("C13109")
     public void testPageDefault3() {
         String sort = "k1,-k2";
         PageQuery pq = restTemplate.getForObject(host + "/test/page-request-2.html?sb=" + sort, PageQuery.class);
@@ -96,6 +103,7 @@ public class PageQueryResolverTest {
     }
 
     @Test
+    @TmsLink("C13110")
     public void testPageBody3() {
         TestPageQueryController.Ins ins = new TestPageQueryController.Ins();
         ins.setPage(2);
@@ -111,6 +119,7 @@ public class PageQueryResolverTest {
         private String name;
     }
     @Test
+    @TmsLink("C13111")
     public void testPageBody4() {
         Is is = new Is();
         is.setName("name");

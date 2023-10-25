@@ -1,6 +1,7 @@
 package pro.fessional.wings.warlock.controller.api;
 
 import com.alibaba.fastjson2.JSON;
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.HttpUrl;
@@ -22,7 +23,7 @@ import pro.fessional.mirana.text.FormatUtil;
 import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
 import pro.fessional.wings.warlock.service.auth.WarlockOauthService;
-import pro.fessional.wings.warlock.service.watching.WatchingService;
+import pro.fessional.wings.warlock.app.service.WatchingService;
 import pro.fessional.wings.warlock.spring.prop.WarlockApiAuthProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
@@ -36,19 +37,19 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 import static pro.fessional.wings.slardar.httprest.okhttp.OkHttpMediaType.APPLICATION_JSON_VALUE;
 import static pro.fessional.wings.slardar.httprest.okhttp.OkHttpMediaType.MULTIPART_FORM_DATA_VALUE;
-import static pro.fessional.wings.warlock.controller.api.TestToyApiController.ApiSimple;
-import static pro.fessional.wings.warlock.controller.api.TestToyApiController.ModFileFile;
-import static pro.fessional.wings.warlock.controller.api.TestToyApiController.ModJsonFile;
-import static pro.fessional.wings.warlock.controller.api.TestToyApiController.ModJsonJson;
-import static pro.fessional.wings.warlock.controller.api.TestToyApiController.ReqFileBody;
-import static pro.fessional.wings.warlock.controller.api.TestToyApiController.ReqFileKey;
-import static pro.fessional.wings.warlock.controller.api.TestToyApiController.ReqFileName;
-import static pro.fessional.wings.warlock.controller.api.TestToyApiController.ReqJsonBody;
-import static pro.fessional.wings.warlock.controller.api.TestToyApiController.ReqMethod;
-import static pro.fessional.wings.warlock.controller.api.TestToyApiController.ResFileBody;
-import static pro.fessional.wings.warlock.controller.api.TestToyApiController.ResFileName;
-import static pro.fessional.wings.warlock.controller.api.TestToyApiController.ResJsonBody;
-import static pro.fessional.wings.warlock.controller.api.TestToyApiController.TerUserId;
+import static pro.fessional.wings.warlock.app.controller.TestToyApiController.ApiSimple;
+import static pro.fessional.wings.warlock.app.controller.TestToyApiController.ModFileFile;
+import static pro.fessional.wings.warlock.app.controller.TestToyApiController.ModJsonFile;
+import static pro.fessional.wings.warlock.app.controller.TestToyApiController.ModJsonJson;
+import static pro.fessional.wings.warlock.app.controller.TestToyApiController.ReqFileBody;
+import static pro.fessional.wings.warlock.app.controller.TestToyApiController.ReqFileKey;
+import static pro.fessional.wings.warlock.app.controller.TestToyApiController.ReqFileName;
+import static pro.fessional.wings.warlock.app.controller.TestToyApiController.ReqJsonBody;
+import static pro.fessional.wings.warlock.app.controller.TestToyApiController.ReqMethod;
+import static pro.fessional.wings.warlock.app.controller.TestToyApiController.ResFileBody;
+import static pro.fessional.wings.warlock.app.controller.TestToyApiController.ResFileName;
+import static pro.fessional.wings.warlock.app.controller.TestToyApiController.ResJsonBody;
+import static pro.fessional.wings.warlock.app.controller.TestToyApiController.TerUserId;
 
 /**
  * @author trydofor
@@ -125,6 +126,7 @@ class ApiAuthControllerTest {
     }
 
     @Test
+    @TmsLink("C14024")
     public void testJsonJson() throws IOException {
         String[] clients = {client, getToken()};
         String[] timestamps = {String.valueOf(Now.millis()), Null.Str};
@@ -196,6 +198,7 @@ class ApiAuthControllerTest {
     }
 
     @Test
+    @TmsLink("C14025")
     public void testFileJson() throws IOException {
         String[] clients = {client, getToken()};
         String[] timestamps = {String.valueOf(Now.millis()), Null.Str};
@@ -277,6 +280,7 @@ class ApiAuthControllerTest {
 
 
     @Test
+    @TmsLink("C14026")
     public void testJsonFile() throws IOException {
         String[] clients = {client, getToken()};
         String[] timestamps = {String.valueOf(Now.millis()), Null.Str};
@@ -362,6 +366,7 @@ class ApiAuthControllerTest {
     }
 
     @Test
+    @TmsLink("C14027")
     public void testFileFile() throws IOException {
         String[] clients = {client, getToken()};
         String[] timestamps = {String.valueOf(Now.millis()), Null.Str};

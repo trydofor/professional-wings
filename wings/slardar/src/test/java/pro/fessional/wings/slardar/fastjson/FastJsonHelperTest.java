@@ -3,6 +3,7 @@ package pro.fessional.wings.slardar.fastjson;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONWriter.Feature;
 import com.alibaba.fastjson2.annotation.JSONField;
+import io.qameta.allure.TmsLink;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -17,7 +18,7 @@ import java.time.ZonedDateTime;
 import static pro.fessional.wings.slardar.fastjson.FastJsonHelper.DefaultWriter;
 
 /**
- * https://alibaba.github.io/fastjson2/register_custom_reader_writer_cn
+ * <a href="https://alibaba.github.io/fastjson2/register_custom_reader_writer_cn">register_custom_reader_writer_cn</a>
  *
  * @author trydofor
  * @since 2022-10-25
@@ -43,6 +44,7 @@ class FastJsonHelperTest {
     }
 
     @Test
+    @TmsLink("C13010")
     public void testDefault() {
         Dto d0 = new Dto();
         final String s0 = JSON.toJSONString(d0, DefaultWriter());
@@ -52,6 +54,7 @@ class FastJsonHelperTest {
     }
 
     @Test
+    @TmsLink("C13011")
     public void testString() {
         Dto d0 = new Dto();
         final String s0 = FastJsonHelper.string(d0);
@@ -62,6 +65,7 @@ class FastJsonHelperTest {
     }
 
     @Test
+    @TmsLink("C13012")
     public void testFormatString() {
         Dto d0 = new Dto();
         final String s0 = JSON.toJSONString(d0, FastJsonFilters.NumberFormatString, DefaultWriter());
@@ -75,6 +79,7 @@ class FastJsonHelperTest {
      * <a href="https://github.com/alibaba/fastjson2/issues/1537">WriteNonStringValueAsString format Number</a>
      */
     @Test
+    @TmsLink("C13013")
     public void testSingle() {
         // default
         Assertions.assertEquals("true", JSON.toJSONString(true));

@@ -73,7 +73,7 @@ public class AutogenDependencyTest {
     void test11FacelessJooqTest() {
         Warlock3JooqGenerator generator = new Warlock3JooqGenerator();
         generator.setTargetDir(projectRoot + "wings/faceless-jooq/src/test/java/");
-        generator.setTargetPkg("pro.fessional.wings.faceless.database.autogen");
+        generator.setTargetPkg("pro.fessional.wings.faceless.app.database.autogen");
         generator.gen(jdbcUrl, jdbcUser, jdbcPass,
                 h -> h.databaseIncludes("sys_constant_enum", "sys_standard_i18n", "tst_sharding", "tst_normal_table")
                       .forcedIntConsEnum(StandardLanguage.class, "tst_sharding.language")
@@ -85,7 +85,7 @@ public class AutogenDependencyTest {
     void test11FacelessShardTest() {
         Warlock3JooqGenerator generator = new Warlock3JooqGenerator();
         generator.setTargetDir(projectRoot + "wings/faceless-shard/src/test/java/");
-        generator.setTargetPkg("pro.fessional.wings.faceless.database.autogen");
+        generator.setTargetPkg("pro.fessional.wings.faceless.app.database.autogen");
         generator.gen(jdbcUrl, jdbcUser, jdbcPass,
                 h -> h.databaseIncludes("tst_sharding", "tst_normal_table"));
     }

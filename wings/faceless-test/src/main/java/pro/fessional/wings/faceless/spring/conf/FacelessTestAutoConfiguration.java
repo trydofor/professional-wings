@@ -1,18 +1,19 @@
 package pro.fessional.wings.faceless.spring.conf;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Bean;
+import pro.fessional.wings.faceless.helper.WingsTestHelper;
 
 /**
  * @author trydofor
  * @since 2023-10-23
  */
-@SuppressWarnings("SpringComponentScan")
 @AutoConfiguration
-@ComponentScan({
-        "pro.fessional.wings.faceless.helper",
-        "pro.fessional.wings.faceless.service",
-        "pro.fessional.wings.faceless.database.autogen",
-})
 public class FacelessTestAutoConfiguration {
+
+    @Bean
+    public WingsTestHelper wingsTestHelper() {
+        return new WingsTestHelper();
+    }
+
 }

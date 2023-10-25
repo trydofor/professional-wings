@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.concur;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Call;
@@ -43,11 +44,13 @@ class FirstBloodTest {
     private Call.Factory okHttpClient;
 
     @Test
+    @TmsLink("C13040")
     public void testFirstBlood0() {
         checkFirstBlood(firstBloodUrl0);
     }
 
     @Test
+    @TmsLink("C13041")
     public void testFirstBlood30() throws InterruptedException {
         new Thread(() -> {
             try (Response r1 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(firstBloodUrl30), false)) {

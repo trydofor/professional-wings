@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.jackson;
 
+import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +16,7 @@ import java.util.Map;
 class JacksonHelperTest {
 
     @Test
+    @TmsLink("C13014")
     void testObject() {
         final String jsonText = InputStreams.readText(JacksonHelperTest.class.getResourceAsStream("/complex.json"));
         final Map<?, ?> jsonMap = JacksonHelper.object(jsonText, Map.class);

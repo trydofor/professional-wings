@@ -1,5 +1,6 @@
 package pro.fessional.wings.silencer.spring.bean;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -30,6 +31,7 @@ public class SilencerContextHelperTest {
     private WingsSilencerCurseApplication.InnerFace innerFace;
 
     @Test
+    @TmsLink("C11015")
     public void testInnerFace() throws Exception {
         final String app = ApplicationContextHelper.getApplicationName();
         Assertions.assertEquals("curse", app);
@@ -52,6 +54,7 @@ public class SilencerContextHelperTest {
     }
 
     @Test
+    @TmsLink("C11016")
     public void testListProperties() {
         final Map<String, String> prop = ApplicationContextHelper.listProperties();
         log.info("=== properties size={} ===", prop.size());
@@ -62,6 +65,7 @@ public class SilencerContextHelperTest {
     }
 
     @Test
+    @TmsLink("C11017")
     public void testListPropertySource() {
         final Map<String, List<String>> prop = ApplicationContextHelper.listPropertySource();
         log.info("=== properties size={} ===", prop.size());
@@ -73,6 +77,7 @@ public class SilencerContextHelperTest {
     }
 
     @Test
+    @TmsLink("C11018")
     public void testListPropertiesKeys() {
         final Map<String, String> prop = ApplicationContextHelper.listPropertiesKeys();
         log.info("=== properties size={} ===", prop.size());

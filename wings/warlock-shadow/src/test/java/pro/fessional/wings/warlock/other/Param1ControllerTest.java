@@ -2,6 +2,7 @@ package pro.fessional.wings.warlock.other;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -37,6 +38,7 @@ public class Param1ControllerTest {
     final LocalDateTime ldt = LocalDateTime.of(2021, 6, 6, 6, 6, 6);
 
     @Test
+    @TmsLink("C14035")
     public void testMvc() throws JsonProcessingException {
         testMvc("/test/param1/str.json", objectMapper.writeValueAsString("string"), "\"string\"");
         testMvc("/test/param1/str.json", "\"string\"", "\"string\"");
@@ -69,6 +71,7 @@ public class Param1ControllerTest {
      * fastjson=["2021-06-06 06:06:06"], jackson=["2021-06-06 06:06:06"]
      */
     @Test
+    @TmsLink("C14036")
     public void testObj() throws JsonProcessingException {
         testObj("string", "\"string\"");
         testObj(123, "123", "\"123\"");

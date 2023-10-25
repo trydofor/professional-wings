@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.flywave
 
+import io.qameta.allure.TmsLink
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -21,6 +22,7 @@ class SqlSegmentParserTest {
     lateinit var sqlStatementParser: SqlStatementParser
 
     @Test
+    @TmsLink("C12059")
     @Disabled("Use for debugging in case of parsing problems")
     fun test1ManualCheck() {
         val scan = FlywaveRevisionScanner.scanMaster()
@@ -53,6 +55,7 @@ class SqlSegmentParserTest {
     }
 
     @Test
+    @TmsLink("C12060")
     fun test2RenameShadow() {
         val segs = sqlSegmentProcessor.parse(sqlStatementParser, "ALTER TABLE `table_a` RENAME TO `table_b`")
         val segment = segs[0]

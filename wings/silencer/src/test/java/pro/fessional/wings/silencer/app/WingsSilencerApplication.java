@@ -3,7 +3,7 @@ package pro.fessional.wings.silencer.app;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import pro.fessional.wings.silencer.spring.prop.MergingProp;
+import pro.fessional.wings.silencer.app.conf.MergingProp;
 
 /**
  * @author trydofor

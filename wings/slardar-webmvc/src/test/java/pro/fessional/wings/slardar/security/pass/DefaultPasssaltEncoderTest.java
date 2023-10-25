@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.security.pass;
 
+import io.qameta.allure.TmsLink;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
@@ -39,6 +40,7 @@ class DefaultPasssaltEncoderTest {
      * $argon2id$v=19$m=4096,t=3,p=1$N6bHhzVC9cZEWvhvy9n6pQ$3LgBEM5Hu/6KFjX1WXKxrxWTZRpL0ayZWuBFd5dp3IM
      */
     @Test
+    @TmsLink("C13082")
     void print() {
         final String str = RandCode.strong(100);
         time(bcrypt, str);
@@ -60,6 +62,7 @@ class DefaultPasssaltEncoderTest {
     }
 
     @Test
+    @TmsLink("C13083")
     void testSalt() {
         final String pass = RandCode.strong(5);
         final String salt = RandCode.strong(100);
@@ -76,6 +79,7 @@ class DefaultPasssaltEncoderTest {
      * SELECT password("milioncircle"); -- *48E834F2D5A6762230DF2DC976FD1712793ED6D8
      */
     @Test
+    @TmsLink("C13084")
     void testMysql() {
         String text1 = "wingsboot";
         String text2 = "milioncircle";

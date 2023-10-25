@@ -1,6 +1,7 @@
 package pro.fessional.wings.faceless.service.lightid.impl
 
 
+import io.qameta.allure.TmsLink
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test
@@ -50,12 +51,14 @@ open class LightIdServiceImplTest {
     private val seqName = "sys_commit_journal"
 
     @Test
+    @TmsLink("C12075")
     fun test0CleanTables() {
         wingsTestHelper.cleanTable()
         schemaRevisionManager.checkAndInitSql(FlywaveRevisionScanner.scanMaster(), 0, true)
     }
 
     @Test
+    @TmsLink("C12076")
     fun test1FetchId() {
         schemaRevisionManager.publishRevision(WingsRevision.V01_19_0520_01_IdLog.revision(), 0)
 
@@ -72,6 +75,7 @@ open class LightIdServiceImplTest {
     }
 
     @Test
+    @TmsLink("C12077")
     fun test2FetchId() {
         // consumer
         journalService.commit(this.javaClass) {
@@ -83,6 +87,7 @@ open class LightIdServiceImplTest {
     }
 
     @Test
+    @TmsLink("C12078")
     fun test3CompeteId() {
         val threadCnt = 100
         val loopCount = 5000
@@ -104,6 +109,7 @@ open class LightIdServiceImplTest {
     }
 
     @Test
+    @TmsLink("C12079")
     fun test4RangeId() {
         val rg = 999_000_000_000L
         val id = lightIdService.getId(seqName, 0)

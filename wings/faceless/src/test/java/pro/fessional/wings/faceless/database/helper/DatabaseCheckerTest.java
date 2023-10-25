@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.database.helper;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,7 @@ class DatabaseCheckerTest {
 
 
     @Test
+    @TmsLink("C12002")
     void timezone() {
         log.warn("spring.datasource.url={}", jdbcUrl);
         DatabaseChecker.version(dataSource);

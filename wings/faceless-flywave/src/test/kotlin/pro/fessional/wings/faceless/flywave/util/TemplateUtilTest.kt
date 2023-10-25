@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.flywave.util
 
+import io.qameta.allure.TmsLink
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test
 class TemplateUtilTest {
 
     @Test
+    @TmsLink("C12032")
     fun one() {
         val txt = """CREATE TABLE `SYS_LIGHT_SEQUENCE` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'"""
         val tkn = "SYS_LIGHT_SEQUENCE"
@@ -21,6 +23,7 @@ class TemplateUtilTest {
     }
 
     @Test
+    @TmsLink("C12033")
     fun bnd() {
         val txt = """CREATE TABLE `SYS_LIGHT_SEQUENCE_01` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'"""
         val tkn = "SYS_LIGHT_SEQUENCE"
@@ -30,6 +33,7 @@ class TemplateUtilTest {
     }
 
     @Test
+    @TmsLink("C12034")
     fun more() {
         val txt = """CREATE TABLE `SYS_LIGHT_SEQUENCE` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'"""
         val tkn = listOf("SYS_LIGHT_SEQUENCE","LIGHT_SEQUENCE","SEQUENCE`")
@@ -42,6 +46,7 @@ class TemplateUtilTest {
     }
 
     @Test
+    @TmsLink("C12035")
     fun isb(){
         val txt = """CREATE TABLE `SYS_LIGHT_SEQUENCE` "SYS_LIGHT_SEQUENCE is \" good" 'SYS_LIGHT_SEQUENCE \'is ''good'"""
         assertTrue(TemplateUtil.isBoundary(txt,"SYS_LIGHT_SEQUENCE"))

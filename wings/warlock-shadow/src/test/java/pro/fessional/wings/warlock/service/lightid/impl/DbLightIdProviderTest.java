@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.service.lightid.impl;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -21,6 +22,7 @@ public class DbLightIdProviderTest {
     protected LightIdProvider lightIdProvider;
 
     @Test
+    @TmsLink("C14061")
     public void test() {
         Assertions.assertInstanceOf(BlockingLightIdProvider.class, lightIdProvider);
     }

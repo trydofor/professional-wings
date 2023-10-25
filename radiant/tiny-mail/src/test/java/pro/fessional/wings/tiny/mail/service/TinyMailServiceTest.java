@@ -1,5 +1,6 @@
 package pro.fessional.wings.tiny.mail.service;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,7 @@ class TinyMailServiceTest {
     protected TinyMailService tinyMailService;
 
     @Test
+    @TmsLink("C15006")
     void sendOk() {
         TinyMail message = new TinyMail();
         message.setSubject("Mail Service Test");
@@ -31,6 +33,7 @@ class TinyMailServiceTest {
     }
 
     @Test
+    @TmsLink("C15007")
     void sendNxt() {
         TinyMail message = new TinyMail();
         message.setSubject("Mail Service Test");
@@ -43,6 +46,7 @@ class TinyMailServiceTest {
 
     // 501 Mail from address must be same as authorization user.
     @Test
+    @TmsLink("C15008")
     void sendNgFrom() {
         TinyMail message = new TinyMail();
         message.setSubject("Mail Service Test");
@@ -53,6 +57,7 @@ class TinyMailServiceTest {
 
     // javax.mail.internet.AddressException: Local address contains dot-dot
     @Test
+    @TmsLink("C15009")
     void sendBadTo() {
         TinyMail message = new TinyMail();
         message.setSubject("Mail Service Test");

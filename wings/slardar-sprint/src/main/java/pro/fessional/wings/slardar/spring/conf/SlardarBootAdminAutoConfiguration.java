@@ -12,7 +12,7 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
  * @author trydofor
  * @since 2019-07-11
  */
-@AutoConfiguration(before = {SlardarHazelSessionAutoConfiguration.class, SpringBootAdminClientAutoConfiguration.class})
+@AutoConfiguration(before = {SlardarSprintAutoConfiguration.class, SpringBootAdminClientAutoConfiguration.class})
 @ConditionalOnClass(SpringBootAdminClientAutoConfiguration.class)
 @ConditionalOnProperty(name = SlardarEnabledProp.Key$autoconf, havingValue = "true")
 @ImportAutoConfiguration(SlardarBootAdminConfiguration.class)

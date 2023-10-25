@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.security;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -32,6 +33,7 @@ class AccessDeny401Test {
             .build();
 
     @Test
+    @TmsLink("C14040")
     public void test401Form() {
         final String url = host + "/user/authed-user.json";
         RequestEntity<?> entity = RequestEntity
@@ -46,7 +48,9 @@ class AccessDeny401Test {
         Assertions.assertNotNull(body);
         Assertions.assertTrue(body.contains("success"));
     }
+
     @Test
+    @TmsLink("C14041")
     public void test401Basic() {
         final String url = host + "/user/authed-user.json";
         RequestEntity<?> entity = RequestEntity

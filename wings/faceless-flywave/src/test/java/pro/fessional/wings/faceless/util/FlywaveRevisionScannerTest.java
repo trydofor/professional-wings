@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.util;
 
+import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Test;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 
@@ -17,6 +18,7 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
 public class FlywaveRevisionScannerTest {
 
     @Test
+    @TmsLink("C12028")
     public void branchPath() {
         String path = REVISION_PATH_BRANCH_HEAD + "feature/01-enum-i18n/" + REVISION_PATH_REVIFILE_TAIL;
         assertEquals(path, FlywaveRevisionScanner.branchPath("feature/01-enum-i18n"));
@@ -32,6 +34,7 @@ public class FlywaveRevisionScannerTest {
     }
 
     @Test
+    @TmsLink("C12029")
     public void commentPath() {
         assertEquals("master/2019-0601_01-test.sql", FlywaveRevisionScanner.commentInfo(
                 "/Users/trydofor/Workspace/github.com/pro.fessional.wings/wings/faceless/src/test/resources/wings-flywave/master/20190601u01-test.sql",
@@ -40,6 +43,7 @@ public class FlywaveRevisionScannerTest {
     }
 
     @Test
+    @TmsLink("C12030")
     public void builder() {
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sql = FlywaveRevisionScanner
                 .helper()
@@ -54,6 +58,7 @@ public class FlywaveRevisionScannerTest {
     }
 
     @Test
+    @TmsLink("C12031")
     void formatRevi() {
         assertEquals("1234-5678-9", FlywaveRevisionScanner.formatRevi("123456789-"));
         assertEquals("1234-5678-9", FlywaveRevisionScanner.formatRevi("1234-56-78-9"));

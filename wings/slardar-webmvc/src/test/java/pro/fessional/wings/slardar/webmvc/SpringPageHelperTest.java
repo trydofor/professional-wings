@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.webmvc;
 
+import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SpringPageHelperTest {
 
     @Test
+    @TmsLink("C13113")
     void from() {
         PageQuery pq = new PageQuery(2, 3, "id,-name");
         final PageRequest pr = SpringPageHelper.from(pq);
@@ -25,6 +27,7 @@ public class SpringPageHelperTest {
     }
 
     @Test
+    @TmsLink("C13114")
     void into() {
         final List<Sort.Order> ods = Arrays.asList(Sort.Order.asc("id"), Sort.Order.desc("name"));
         PageRequest pr = PageRequest.of(3, 4, Sort.by(ods));

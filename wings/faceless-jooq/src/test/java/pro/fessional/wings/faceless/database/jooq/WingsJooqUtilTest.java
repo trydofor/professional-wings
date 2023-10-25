@@ -1,8 +1,9 @@
 package pro.fessional.wings.faceless.database.jooq;
 
+import io.qameta.allure.TmsLink;
 import org.jooq.Condition;
 import org.junit.jupiter.api.Test;
-import pro.fessional.wings.faceless.database.autogen.tables.SysStandardI18nTable;
+import pro.fessional.wings.faceless.app.database.autogen.tables.SysStandardI18nTable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class WingsJooqUtilTest {
 
     @Test
+    @TmsLink("C12090")
     public void condMap() {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("id", new int[]{1, 2, 3});
@@ -32,6 +34,7 @@ class WingsJooqUtilTest {
 
 
     @Test
+    @TmsLink("C12091")
     public void builderNormal() {
         Condition d1 = WingsJooqUtil.condition("1=1");
         Condition d2 = WingsJooqUtil.condition("2=2");
@@ -78,6 +81,7 @@ class WingsJooqUtilTest {
     }
 
     @Test
+    @TmsLink("C12092")
     public void builderIfFalse() {
         Condition d1 = WingsJooqUtil.condition("1=1");
         Condition d2 = WingsJooqUtil.condition("2=2");
@@ -108,6 +112,7 @@ class WingsJooqUtilTest {
     }
 
     @Test
+    @TmsLink("C12093")
     void condEqSkip() {
         SysStandardI18nTable t = SysStandardI18nTable.SysStandardI18n;
         final Condition c1 = WingsJooqUtil.condEqSkip(t.Base, Arrays.asList("a", "b", null));
@@ -130,6 +135,7 @@ class WingsJooqUtilTest {
     }
 
     @Test
+    @TmsLink("C12094")
     void condInSkip() {
         SysStandardI18nTable t = SysStandardI18nTable.SysStandardI18n;
         final Condition c1 = WingsJooqUtil.condInSkip(t.Base, Arrays.asList("a", "b", null));

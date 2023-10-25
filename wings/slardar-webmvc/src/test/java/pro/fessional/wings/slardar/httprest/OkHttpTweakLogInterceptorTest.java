@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.httprest;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Call;
@@ -23,6 +24,7 @@ class OkHttpTweakLogInterceptorTest {
     private Call.Factory okHttpClient;
 
     @Test
+    @TmsLink("C13051")
     void intercept() {
         final String name = log.getName();
         log.warn(">>>> default");

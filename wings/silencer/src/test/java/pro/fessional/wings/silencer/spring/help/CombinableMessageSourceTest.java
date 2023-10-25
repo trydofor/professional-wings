@@ -1,5 +1,6 @@
 package pro.fessional.wings.silencer.spring.help;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ public class CombinableMessageSourceTest {
     private CombinableMessageSource combinableMessageSource;
 
     @Test
+    @TmsLink("C11010")
     public void combine() {
 
         Object[] args = {};

@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.httprest;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ public class OkHttpClientHelperTest {
 
 
     @Test
+    @TmsLink("C13047")
     public void testPostJson() {
         String j1 = "{}";
         String j2 = postJson(okHttpClient, host + "/test/rest-template-helper-body.htm", j1);
@@ -39,6 +41,7 @@ public class OkHttpClientHelperTest {
     }
 
     @Test
+    @TmsLink("C13048")
     public void testPostBad() {
         String j1 = "{\"bad\":[{\"ssStr\":\"ssStr\",\"sStr\":\"sStr\"}]}";
         String j2 = postJson(okHttpClient, host + "/test/rest-bad-json.htm", j1);
@@ -46,6 +49,7 @@ public class OkHttpClientHelperTest {
     }
 
     @Test
+    @TmsLink("C13049")
     public void testPostFile() {
         String txt = "123456\nasdfgh";
         String j2 = postFile(okHttpClient, host + "/test/rest-template-helper-file.htm", "up", txt.getBytes(), "test.txt");
@@ -53,6 +57,7 @@ public class OkHttpClientHelperTest {
     }
 
     @Test
+    @TmsLink("C13050")
     public void testDownload() throws IOException {
         byte[] bytes = download(okHttpClient, host + "/test/rest-template-helper-down.htm");
         String pom = InputStreams.readText(new FileInputStream("./pom.xml"));

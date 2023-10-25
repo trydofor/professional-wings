@@ -8,7 +8,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
 import pro.fessional.mirana.bits.Md5;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.slardar.security.WingsUserDetailsService;
@@ -23,7 +22,6 @@ import java.util.Locale;
  * @author trydofor
  * @since 2019-11-14
  */
-@Service
 @Slf4j
 public class TestWingsUserDetailsService implements WingsUserDetailsService {
 

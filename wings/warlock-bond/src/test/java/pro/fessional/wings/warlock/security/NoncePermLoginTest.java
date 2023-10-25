@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.security;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -40,6 +41,7 @@ class NoncePermLoginTest {
     private OkHttpClient okHttpClient;
 
     @Test
+    @TmsLink("C14014")
     public void testRootLogin() {
         OkHttpClientHelper.postJson(okHttpClient, host + DangerUrl, "{\"userId\":1,\"danger\":false}");
 
@@ -60,6 +62,7 @@ class NoncePermLoginTest {
     }
 
     @Test
+    @TmsLink("C14015")
     public void testDanger() {
         log.warn("current locale = {}", Locale.getDefault());
         OkHttpClientHelper.postJson(okHttpClient, host + DangerUrl, "{\"userId\":1,\"danger\":true}");

@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.flywave
 
+import io.qameta.allure.TmsLink
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -133,6 +134,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
+    @TmsLink("C12039")
     fun test0CleanTables() {
         wingsTestHelper.cleanTable()
         val sqls = FlywaveRevisionScanner
@@ -150,6 +152,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
+    @TmsLink("C12040")
     fun test1CreateTables() {
         schemaRevisionManager.publishRevision(WingsRevision.V01_19_0520_01_IdLog.revision(), 0)
         wingsTestHelper.assertSame(
@@ -175,6 +178,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
+    @TmsLink("C12041")
     fun test2Sharding() {
         schemaJournalManager.checkAndInitDdl("tst_sharding", 0)
         wingsTestHelper.assertNot(
@@ -198,6 +202,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
+    @TmsLink("C12042")
     fun test4AiTrigger() {
         if (wingsTestHelper.isH2) {
             testcaseNotice("h2 database skip")
@@ -227,6 +232,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
+    @TmsLink("C12043")
     fun test4AuTrigger() {
         if (wingsTestHelper.isH2) {
             testcaseNotice("h2 database skip")
@@ -253,6 +259,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
+    @TmsLink("C12044")
     fun test5BdTrigger() {
         if (wingsTestHelper.isH2) {
             testcaseNotice("h2 database skip")
@@ -278,6 +285,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
+    @TmsLink("C12045")
     fun test6Trigger() {
         if (wingsTestHelper.isH2) {
             testcaseNotice("h2 database skip")
@@ -320,6 +328,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
+    @TmsLink("C12046")
     fun test7AltTable() {
         if (wingsTestHelper.isH2) {
             testcaseNotice("h2 database skip")

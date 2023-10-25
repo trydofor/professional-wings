@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.jooq;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -13,10 +14,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.convention.EmptyValue;
-import pro.fessional.wings.faceless.database.autogen.tables.TstShardingTable;
-import pro.fessional.wings.faceless.database.autogen.tables.daos.TstShardingDao;
-import pro.fessional.wings.faceless.database.autogen.tables.pojos.TstSharding;
-import pro.fessional.wings.faceless.database.autogen.tables.records.TstShardingRecord;
+import pro.fessional.wings.faceless.app.database.autogen.tables.TstShardingTable;
+import pro.fessional.wings.faceless.app.database.autogen.tables.daos.TstShardingDao;
+import pro.fessional.wings.faceless.app.database.autogen.tables.pojos.TstSharding;
+import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShardingRecord;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
 import pro.fessional.wings.faceless.helper.WingsTestHelper;
@@ -55,6 +56,7 @@ public class JooqShardingTest {
     private WingsTestHelper wingsTestHelper;
 
     @Test
+    @TmsLink("C12135")
     public void test0CleanTables() {
         wingsTestHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scanMaster();
@@ -62,11 +64,13 @@ public class JooqShardingTest {
     }
 
     @Test
+    @TmsLink("C12136")
     public void test1PublishTest() {
         schemaRevisionManager.publishRevision(REVISION_TEST_V1, 0);
     }
 
     @Test
+    @TmsLink("C12137")
     public void test3SplitTable5() {
         schemaShardingManager.publishShard("tst_sharding", 5);
     }
@@ -74,6 +78,7 @@ public class JooqShardingTest {
     private Long id = 1L;//lightIdService.getId(TstShardingTable.class);
 
     @Test
+    @TmsLink("C12138")
     public void test4InsertSeeLog() {
         val rd = new TstSharding(id,
                 LocalDateTime.now(),
@@ -96,6 +101,7 @@ public class JooqShardingTest {
     }
 
     @Test
+    @TmsLink("C12139")
     public void test5UpdateSeeLog() {
         val tp = TstShardingTable.TstSharding;
         // update `tst_sharding` set `modify_dt` = ?, `login_info` = ? where `id` <= ?
@@ -135,6 +141,7 @@ public class JooqShardingTest {
     }
 
     @Test
+    @TmsLink("C12140")
     public void test6SelectSeeLog() {
         try (HintManager it = HintManager.getInstance()) {
             it.setWriteRouteOnly();
@@ -173,6 +180,7 @@ public class JooqShardingTest {
     }
 
     @Test
+    @TmsLink("C12141")
     public void test7DeleteSeeLog() {
         val tp = TstShardingTable.TstSharding;
         val rp = dao.ctx().delete(tp)
@@ -200,6 +208,7 @@ public class JooqShardingTest {
     private TstShardingTable tbl = TstShardingTable.TstSharding;
 
     @Test
+    @TmsLink("C12142")
     public void test8BatchSeeLog() {
         val rds = Arrays.asList(
                 new TstShardingRecord(119L, now, now, now, 9L, "Batch merge 119", "test8", ZH_CN.getId()),
@@ -220,6 +229,7 @@ public class JooqShardingTest {
     }
 
     @Test
+    @TmsLink("C12143")
     public void test9BatchSeeLog() {
         val rds = Arrays.asList(
                 new TstShardingRecord(119L, now, now, now, 9L, "Batch load 307", "test9", ZH_CN.getId()),

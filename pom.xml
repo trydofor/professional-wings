@@ -64,6 +64,7 @@
         <boot-admin.version>3.0.4</boot-admin.version> <!-- https://github.com/codecentric/spring-boot-admin/releases -->
         <sentry.version>6.23.0</sentry.version> <!-- https://github.com/getsentry/sentry-java/releases buildSrc/src/main/java/Config.kt -->
         <retrofit.version>2.9.0</retrofit.version> <!-- https://github.com/square/retrofit/tags -->
+        <allure.version>2.24.0</allure.version> <!-- https://github.com/allure-framework/allure-java/releases -->
         <!-- mvn-build-plugin -->
         <flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version> <!-- https://github.com/mojohaus/flatten-maven-plugin/releases/tag -->
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version> <!-- https://github.com/apache/maven-gpg-plugin/tags -->
@@ -480,6 +481,11 @@
                         <artifactId>log4j-to-slf4j</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-java-commons</artifactId>
+                <version>${allure.version}</version>
             </dependency>
             <!-- do NOT import any BOM -->
         </dependencies>

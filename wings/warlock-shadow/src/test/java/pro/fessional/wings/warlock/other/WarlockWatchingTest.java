@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.other;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -13,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.time.StopWatch;
 import pro.fessional.wings.silencer.watch.Watches;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
-import pro.fessional.wings.warlock.service.watching.WatchingService;
+import pro.fessional.wings.warlock.app.service.WatchingService;
 
 /**
  * @author trydofor
@@ -39,6 +40,7 @@ public class WarlockWatchingTest {
      * Check the log
      */
     @Test
+    @TmsLink("C14037")
     public void testWatching() {
         final StopWatch.Watch watch = Watches.acquire("testWatching");
         final Request.Builder body = new Request.Builder().url(host + "/test/watching.json");

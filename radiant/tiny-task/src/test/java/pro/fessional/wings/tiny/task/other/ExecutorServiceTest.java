@@ -1,5 +1,6 @@
 package pro.fessional.wings.tiny.task.other;
 
+import io.qameta.allure.TmsLink;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import java.util.concurrent.ScheduledFuture;
 class ExecutorServiceTest {
 
     @Test
+    @TmsLink("C15012")
     void schedule() throws InterruptedException {
         final ThreadPoolTaskScheduler scheduler = TaskSchedulerHelper.referScheduler(false);
         final ScheduledFuture<?> f1 = scheduler.schedule(() -> log.info("-1 run={}", System.currentTimeMillis()),

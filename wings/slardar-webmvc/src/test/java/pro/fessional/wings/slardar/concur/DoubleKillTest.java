@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.concur;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import pro.fessional.wings.slardar.service.DoubleKillService;
+import pro.fessional.wings.slardar.app.service.DoubleKillService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -41,6 +42,7 @@ class DoubleKillTest {
     private RestTemplate restTemplate;
 
     @Test
+    @TmsLink("C13035")
     void doubleKillUrl() throws InterruptedException {
         final String url = this.doubleKillHost + "/test/double-kill.json";
         new Thread(() -> {
@@ -64,6 +66,7 @@ class DoubleKillTest {
     }
 
     @Test
+    @TmsLink("C13036")
     void doubleKillAsync() throws InterruptedException {
         final String url = this.doubleKillHost + "/test/double-kill-async.json";
         new Thread(() -> {
@@ -87,6 +90,7 @@ class DoubleKillTest {
     }
 
     @Test
+    @TmsLink("C13037")
     void doubleKillArg() throws InterruptedException {
         new Thread(() -> {
             log.info("before thread call");
@@ -106,6 +110,7 @@ class DoubleKillTest {
     }
 
     @Test
+    @TmsLink("C13038")
     void doubleKillStr() throws InterruptedException {
         new Thread(() -> {
             log.info("before thread call");
@@ -125,6 +130,7 @@ class DoubleKillTest {
     }
 
     @Test
+    @TmsLink("C13039")
     void doubleKillExp() throws InterruptedException {
         new Thread(() -> {
             log.info("before thread call");

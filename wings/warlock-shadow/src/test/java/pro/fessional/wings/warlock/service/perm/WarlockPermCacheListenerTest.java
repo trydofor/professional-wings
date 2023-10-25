@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.service.perm;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
@@ -21,6 +22,7 @@ class WarlockPermCacheListenerTest {
     private WarlockRoleService warlockRoleService;
 
     @Test
+    @TmsLink("C14064")
     @Disabled("Simulate slow processing and observe cache changes")
     void cleanCache() throws InterruptedException {
         log.warn("No cache, select Perm from Db");

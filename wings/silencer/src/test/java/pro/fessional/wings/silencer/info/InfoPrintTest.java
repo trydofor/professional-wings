@@ -1,5 +1,6 @@
 package pro.fessional.wings.silencer.info;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
@@ -25,6 +26,7 @@ public class InfoPrintTest {
     private GitProperties gitProperties;
 
     @Test
+    @TmsLink("C11004")
     public void printTest() {
         log.info("{}", buildProperties);
         log.info("{}", gitProperties);

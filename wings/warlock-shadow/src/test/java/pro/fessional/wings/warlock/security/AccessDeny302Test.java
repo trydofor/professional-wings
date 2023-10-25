@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.security;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -25,6 +26,7 @@ class AccessDeny302Test {
     private String host;
 
     @Test
+    @TmsLink("C14039")
     public void test302() {
         RestTemplate tmpl = new RestTemplate();
         RequestEntity<?> entity = RequestEntity

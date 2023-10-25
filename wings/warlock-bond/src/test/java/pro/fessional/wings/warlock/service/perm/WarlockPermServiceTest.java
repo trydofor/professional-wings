@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.service.perm;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ class WarlockPermServiceTest {
     protected WarlockPermService warlockPermService;
 
     @Test
+    @TmsLink("C14016")
     void loadPermAll() {
         final Map<Long, String> a1 = warlockPermService.loadPermAll();
         final Map<Long, String> a2 = warlockPermService.loadPermAll();

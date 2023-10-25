@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
 import pro.fessional.mirana.data.Diff;
 import pro.fessional.wings.faceless.database.DataSourceContext;
 
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
  * @author trydofor
  * @since 2020-05-22
  */
-@Component
 public class WingsTestHelper {
 
     public static final long REVISION_TEST_V1 = 2019_0601_01L;

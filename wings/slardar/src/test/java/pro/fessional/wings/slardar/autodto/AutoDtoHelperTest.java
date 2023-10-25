@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.autodto;
 
+import io.qameta.allure.TmsLink;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -39,6 +40,7 @@ class AutoDtoHelperTest {
      * Auto convert lange and time, JP to CN
      */
     @Test
+    @TmsLink("C13002")
     void autoRequest() {
         TerminalContext.Builder builder = new TerminalContext.Builder()
                 .locale(Locale.ENGLISH)
@@ -86,6 +88,7 @@ class AutoDtoHelperTest {
      * Auto convert lange and time, CN to JP
      */
     @Test
+    @TmsLink("C13003")
     void autoResponse() {
         TerminalContext.Builder builder = new TerminalContext.Builder()
                 .locale(Locale.US)

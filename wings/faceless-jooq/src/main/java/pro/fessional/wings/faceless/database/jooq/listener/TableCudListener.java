@@ -47,6 +47,7 @@ import static pro.fessional.wings.faceless.database.WingsTableCudHandler.Cud;
  */
 @SuppressWarnings("removal")
 @Slf4j
+@Setter @Getter
 public class TableCudListener implements VisitListener, WingsTableCudHandler.Auto {
 
     /**
@@ -54,15 +55,10 @@ public class TableCudListener implements VisitListener, WingsTableCudHandler.Aut
      */
     public static boolean WarnVisit = false;
 
-    @Setter @Getter
     private boolean create = true;
-    @Setter @Getter
     private boolean update = true;
-    @Setter @Getter
     private boolean delete = true;
-    @Setter @Getter
     private List<WingsTableCudHandler> handlers = Collections.emptyList();
-    @Setter @Getter
     private Map<String, Set<String>> tableField = new HashMap<>();
 
     public enum ContextKey {

@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.security;
 
+import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +14,7 @@ import java.util.Set;
 class SafeHttpHelperTest {
 
     @Test
+    @TmsLink("C14051")
     void isSafeRedirect() {
         Set<String> hosts = Set.of("localhost", "[107:0:0:0:200:7051]");
         Assertions.assertFalse(SafeHttpHelper.isSafeRedirect("", hosts));
@@ -34,6 +36,7 @@ class SafeHttpHelperTest {
     }
 
     @Test
+    @TmsLink("C14052")
     void parseHostPort() {
         Assertions.assertNull(SafeHttpHelper.parseHostPort("localhost"));
         Assertions.assertEquals("localhost", SafeHttpHelper.parseHostPort("http://localhost"));

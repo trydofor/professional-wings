@@ -1,6 +1,8 @@
 package pro.fessional.wings.faceless.concur;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 2021-03-09
  */
 @SpringBootTest
+@Slf4j
 class DatabaseGlobalLockTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -27,6 +30,7 @@ class DatabaseGlobalLockTest {
     // private JdbcTemplate jdbcTemplate;
 
     @Test
+    @TmsLink("C12001")
     void lock() throws InterruptedException {
         DatabaseGlobalLock globalLock = new DatabaseGlobalLock(namedJdbcTemplate.getJdbcTemplate());
         Lock lock = globalLock.getLock("test-lock");
@@ -53,7 +57,7 @@ class DatabaseGlobalLockTest {
                 assertFalse(b);
             }
             catch (InterruptedException e) {
-                e.printStackTrace();
+                log.info("ignore", e);
             }
             latch.countDown();
         }).start();

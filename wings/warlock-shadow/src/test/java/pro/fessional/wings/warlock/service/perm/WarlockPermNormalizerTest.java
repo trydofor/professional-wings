@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.service.perm;
 
+import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 class WarlockPermNormalizerTest {
 
     @Test
+    @TmsLink("C14065")
     void normalize() {
         WarlockPermNormalizer normalizer = new WarlockPermNormalizer();
         Assertions.assertEquals("ROLE_root", normalizer.role("root"));

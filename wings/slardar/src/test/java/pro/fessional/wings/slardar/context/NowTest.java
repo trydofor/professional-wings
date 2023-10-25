@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.context;
 
+import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +27,7 @@ class NowTest {
     public static final long Offset = 60_000;
 
     @Test
+    @TmsLink("C13005")
     void initClock() {
         long sysMs = System.currentTimeMillis();
         long nowMs = Now.millis();
@@ -35,6 +37,7 @@ class NowTest {
     }
 
     @Test
+    @TmsLink("C13006")
     void clientClock() {
         ZoneId jp = ZoneId.of("Asia/Tokyo");
         TerminalContext.Builder builder = new TerminalContext.Builder()

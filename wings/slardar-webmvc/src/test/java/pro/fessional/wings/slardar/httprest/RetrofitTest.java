@@ -2,6 +2,7 @@ package pro.fessional.wings.slardar.httprest;
 
 import com.alibaba.fastjson2.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import okhttp3.MultipartBody;
@@ -47,7 +48,8 @@ public class RetrofitTest {
 
 
     @Test
-    public void testJackson() {
+    @TmsLink("C13056")
+    public void testJacksonBuilder() {
         final OkHttpClient.Builder bd = okHttpClient.newBuilder();
         bd.addInterceptor(chain -> {
             Request request = chain.request();
@@ -59,7 +61,8 @@ public class RetrofitTest {
     }
 
     @Test
-    public void testFastjson() {
+    @TmsLink("C13057")
+    public void testJacksonAutowired() {
         RetrofitCaller caller = RetrofitHelper.jacksonPlain(RetrofitCaller.class, host, okHttpClient);
         testAll(caller);
     }
@@ -101,7 +104,8 @@ public class RetrofitTest {
 
     @SneakyThrows
     @Test
-    public void test() {
+    @TmsLink("C13058")
+    public void printFastjsonAndJackson() {
         Bad bad = new Bad();
         bad.setSsStr("ssStr");
         bad.setSStr("sStr");

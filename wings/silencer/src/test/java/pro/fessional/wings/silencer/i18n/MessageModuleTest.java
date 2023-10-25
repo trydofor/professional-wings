@@ -1,5 +1,6 @@
 package pro.fessional.wings.silencer.i18n;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +27,14 @@ public class MessageModuleTest {
     private String module;
 
     @Test
+    @TmsLink("C11001")
     void testModule() {
         assertEquals("Silencer", module);
         assertEquals(Locale.forLanguageTag("en-US"), Locale.getDefault());
     }
 
     @Test
+    @TmsLink("C11002")
     void testMessageStandard() {
         // use lang
         String cn = messageSource.getMessage("base.not-empty", Arr.of("姓名"), Locale.CHINA);
@@ -49,6 +52,7 @@ public class MessageModuleTest {
     }
 
     @Test
+    @TmsLink("C11003")
     void testMessagePartial() {
         // use lang
         String zh = messageSource.getMessage("base.not-empty", Arr.of("姓名"), Locale.forLanguageTag("zh"));

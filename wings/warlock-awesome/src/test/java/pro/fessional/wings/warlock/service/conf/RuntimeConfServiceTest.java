@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.service.conf;
 
+import io.qameta.allure.TmsLink;
 import lombok.Data;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
@@ -37,6 +38,7 @@ class RuntimeConfServiceTest {
     private RuntimeConfService runtimeConfService;
 
     @Test
+    @TmsLink("C14008")
     void testSimple() {
         assertSimple(BigDecimal.class, new BigDecimal("10.00"));
         assertSimple(String.class, "string");
@@ -66,6 +68,7 @@ class RuntimeConfServiceTest {
     }
 
     @Test
+    @TmsLink("C14009")
     void testCollection() {
         List<String> ls = List.of("Jan", "Fer");
         runtimeConfService.newObject(List.class, ls, "test list");
@@ -88,6 +91,7 @@ class RuntimeConfServiceTest {
     }
 
     @Test
+    @TmsLink("C14010")
     void testJson() {
         Dto dto = new Dto();
         runtimeConfService.newObject(Dto.class, dto, "Need init database via BootDatabaseTest");
@@ -97,6 +101,7 @@ class RuntimeConfServiceTest {
     }
 
     @Test
+    @TmsLink("C14011")
     void testKryo() {
         Dto dto = new Dto();
         dto.setLdt(LocalDateTime.now());
@@ -107,6 +112,7 @@ class RuntimeConfServiceTest {
     }
 
     @Test
+    @TmsLink("C14012")
     void testMode() {
         final List<RunMode> arm = List.of(RunMode.Develop, RunMode.Local);
         final String key = "RuntimeConfServiceTest.testMode";
@@ -120,16 +126,19 @@ class RuntimeConfServiceTest {
     }
 
     @Test
-    void testCache() {
+    @TmsLink("C14013")
+    void testCacheWithCud() {
         final List<RunMode> arm = List.of(RunMode.Develop, RunMode.Local);
         final String key = "RuntimeConfCacheTest.testCache";
+        // insert on duplicated key
         runtimeConfService.newObject(key, arm, "test RunMode");
         final List<RunMode> arm1 = runtimeConfService.getList(key, RunMode.class);
         final List<RunMode> arm2 = runtimeConfService.getList(key, RunMode.class);
 
+        // check log update
+        // evictAllConfCache by win_conf_runtime, TableChangeEvent
         runtimeConfService.setObject(key, arm);
         Sleep.ignoreInterrupt(2_000);
-        // check log TableChangeEvent(source=[pro.fessional.wings.warlock.service.event.impl.WingsTableCudHandlerImpl]
 
         final List<RunMode> rm1 = runtimeConfService.getList(key, RunMode.class);
         final List<RunMode> rm2 = runtimeConfService.getList(key, RunMode.class);

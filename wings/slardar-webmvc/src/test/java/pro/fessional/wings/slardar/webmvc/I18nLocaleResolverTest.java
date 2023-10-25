@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.webmvc;
 
+import io.qameta.allure.TmsLink;
 import jakarta.servlet.http.Cookie;
 import lombok.Setter;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ public class I18nLocaleResolverTest {
     private MockMvc mockMvc;
 
     @Test
+    @TmsLink("C13102")
     public void testHeader() throws Exception {
         testHeader("en", "Bad credentials|en");
         testHeader("en_US", "Bad credentials|en-US");
@@ -50,6 +52,7 @@ public class I18nLocaleResolverTest {
     }
 
     @Test
+    @TmsLink("C13103")
     public void testCookie() throws Exception {
         testCookie("en", "Bad credentials|en");
         testCookie("en_US", "Bad credentials|en-US");
@@ -70,6 +73,7 @@ public class I18nLocaleResolverTest {
     }
 
     @Test
+    @TmsLink("C13104")
     public void testParam() throws Exception {
         testParam("en", "Bad credentials|en");
         testParam("en_US", "Bad credentials|en-US");

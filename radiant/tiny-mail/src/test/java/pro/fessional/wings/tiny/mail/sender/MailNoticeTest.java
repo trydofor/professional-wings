@@ -1,5 +1,6 @@
 package pro.fessional.wings.tiny.mail.sender;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -41,6 +42,7 @@ public class MailNoticeTest {
     protected String gmailPass;
 
     @Test
+    @TmsLink("C15001")
     public void testPost() {
         final boolean snd = mailNotice.post("test tiny mail send", "test send");
         Assertions.assertTrue(snd, "need env QQ_MAIL_USER, QQ_MAIL_PASS, current user=" + mailUser + ", pass=" + mailPass);
@@ -48,6 +50,7 @@ public class MailNoticeTest {
 
     @Test
     @Disabled("Statistics time cost")
+    @TmsLink("C15002")
     public void testDefault() {
         final StopWatch stopWatch = new StopWatch();
         try (final StopWatch.Watch ignored = stopWatch.start("emit")) {
@@ -64,6 +67,7 @@ public class MailNoticeTest {
 
     @Test
     @Disabled("gmail")
+    @TmsLink("C15003")
     public void testGmail() {
         // dynamic config
         final String name = "gmailx";

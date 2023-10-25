@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,7 @@ public class BootDatabaseTest {
     private SchemaRevisionManager schemaRevisionManager;
 
     @Test
+    @TmsLink("C14007")
     void testDropAndInit() {
         JdbcTemplate tmpl = new JdbcTemplate(dataSource);
         tmpl.query("SHOW TABLES", rs -> {

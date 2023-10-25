@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.database.jooq.converter;
 
+import io.qameta.allure.TmsLink;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import java.util.List;
 class JooqJournalDiffConverterTest {
 
     @Test
+    @TmsLink("C14001")
     void to() {
         JournalDiff d0 = new JournalDiff();
         d0.setTable("test_table");

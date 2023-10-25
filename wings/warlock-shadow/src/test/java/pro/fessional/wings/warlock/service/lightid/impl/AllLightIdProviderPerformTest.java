@@ -1,6 +1,7 @@
 package pro.fessional.wings.warlock.service.lightid.impl;
 
 import com.hazelcast.core.HazelcastInstance;
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -31,18 +32,21 @@ public class AllLightIdProviderPerformTest {
     private HazelcastInstance hazelcastInstance;
 
     @Test
+    @TmsLink("C14058")
     public void testJvm() {
         // avg=0.039ms
         test(new LightIdBufferedProvider(lightIdLoader), 1000);
     }
 
     @Test
+    @TmsLink("C14059")
     public void testHz() {
         // avg=1.065ms
         test(new HazelcastLightIdProvider(lightIdLoader, hazelcastInstance), 1000);
     }
 
     @Test
+    @TmsLink("C14060")
     public void testDb() {
         // avg=10.723ms, 5ms per sql
         test(new BlockingLightIdProvider(lightIdLoader), 1000);

@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.concur;
 
 import com.hazelcast.core.HazelcastInstance;
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ class HazelcastGlobalLockTest {
     private HazelcastInstance hazelcastInstance;
 
     @Test
+    @TmsLink("C13018")
     void lock() throws InterruptedException {
         HazelcastGlobalLock globalLock = new HazelcastGlobalLock(hazelcastInstance);
         Lock lock = globalLock.getLock("test-lock");

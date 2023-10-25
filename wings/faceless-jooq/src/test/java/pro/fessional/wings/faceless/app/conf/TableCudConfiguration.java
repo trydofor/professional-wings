@@ -2,7 +2,7 @@ package pro.fessional.wings.faceless.app.conf;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pro.fessional.wings.faceless.service.WingsTableCudHandlerTest;
+import pro.fessional.wings.faceless.app.service.TestingTableCudHandler;
 
 /**
  * @author trydofor
@@ -12,8 +12,8 @@ import pro.fessional.wings.faceless.service.WingsTableCudHandlerTest;
 public class TableCudConfiguration {
 
     @Bean
-    public WingsTableCudHandlerTest wingsTableCudHandler() {
-        return new WingsTableCudHandlerTest();
+    public TestingTableCudHandler wingsTableCudHandler() {
+        return new TestingTableCudHandler();
     }
 
 }
