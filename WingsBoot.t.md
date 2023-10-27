@@ -28,6 +28,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 11022 SilenceDebugTest: tweak logback logger
 * 11023 StringMapXmlWriterTest: jaxb object to Map object
 * 11024 StringMapXmlWriterTest: jaxb object to xml string
+* 11025 WingsSpringBeanScannerTest: with/without scanning
 
 ## 12 Faceless
 

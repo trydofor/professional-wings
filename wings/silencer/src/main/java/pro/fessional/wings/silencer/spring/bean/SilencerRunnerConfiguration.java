@@ -18,6 +18,7 @@ import pro.fessional.wings.silencer.runner.ApplicationRunnerOrdered;
 import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 import pro.fessional.wings.silencer.spring.prop.SilencerI18nProp;
+import pro.fessional.wings.silencer.spring.prop.SilencerScannerProp;
 
 import java.util.Map;
 
@@ -32,6 +33,7 @@ import java.util.Map;
 @EnableConfigurationProperties({
         SilencerEnabledProp.class,
         SilencerI18nProp.class,
+        SilencerScannerProp.class,
 })
 public class SilencerRunnerConfiguration {
 
