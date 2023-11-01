@@ -181,7 +181,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 13001 TaskSchedulerTest: TtlScheduler and TtlExecutor
 * 13002 AutoDtoHelperTest: AutoDto in request
 * 13003 AutoDtoHelperTest: AutoDto in response
-* 13004 GlobalAttributeHolderTest: try attr with loader
+* 13004 AttributeHolderTest: try attr with loader
 * 13005 NowTest: tweak system clock-offset
 * 13006 NowTest: tweak client clock and timezone
 * 13007 SmartFormatterTest: print date format of pattern
@@ -294,6 +294,8 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 13114 SpringPageHelperTest: PageRequest to PageQuery to PageRequest
 * 13115 WingsCookieTest: encrypt cookie in request
 * 13116 WingsCookieTest: encrypt cookie by forward
+* 13117 AttributeHolderTest: Attribute expiry
+* 13118 EventPublishHelperTest: async global AttributeRidEvent
 
 ## 14 Warlock
 

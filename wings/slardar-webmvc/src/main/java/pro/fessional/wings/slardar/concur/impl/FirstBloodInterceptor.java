@@ -8,8 +8,8 @@ import org.cache2k.Cache;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.method.HandlerMethod;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
+import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 import pro.fessional.wings.slardar.concur.FirstBlood;
-import pro.fessional.wings.slardar.concur.ProgressContext;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
 
 import java.lang.reflect.Method;
@@ -22,6 +22,8 @@ import java.util.List;
 public class FirstBloodInterceptor implements AutoRegisterInterceptor {
 
     public static final int ORDER = WingsOrdered.Lv4Application + 3_000;
+
+    private static final Cache<Object, Object> Cache = WingsCache2k.builder(FirstBloodInterceptor.class, "handler", 100_000, 3600, -1).build();
 
     private final List<FirstBloodHandler> handlers;
 
@@ -48,8 +50,7 @@ public class FirstBloodInterceptor implements AutoRegisterInterceptor {
 
         for (FirstBloodHandler hd : handlers) {
             if (hd.accept(request, anno)) {
-                final Cache<Object, Object> cache = ProgressContext.get(anno.blood());
-                return hd.handle(request, response, handlerMethod, cache, anno);
+                return hd.handle(request, response, handlerMethod, Cache, anno);
             }
         }
 

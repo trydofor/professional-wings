@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Primary;
 import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.cache.WingsCacheHelper;
 import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
+import pro.fessional.wings.slardar.cache.cache2k.WingsCache2kManager;
 import pro.fessional.wings.slardar.cache.spring.CacheEvictMultiKeys;
 import pro.fessional.wings.slardar.cache.spring.WingsCacheAnnoOprSource;
 import pro.fessional.wings.slardar.cache.spring.WingsCacheInterceptor;
@@ -66,7 +67,7 @@ public class SlardarCacheConfiguration {
     public SpringCache2kCacheManager cache2kCacheManager(SlardarCacheProp conf) {
         log.info("Slardar spring-bean cache2kCacheManager as " + Manager.Memory);
         // https://github.com/cache2k/cache2k/issues/123
-        return new WingsCache2k.Manager("spring-wings-" + hashCode(), conf);
+        return new WingsCache2kManager("spring-wings-" + hashCode(), conf);
     }
 
     // //////////////////// aop ////////////////////

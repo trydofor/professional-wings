@@ -11,7 +11,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
-import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
+import pro.fessional.wings.slardar.context.AttributeHolder;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.errcode.AuthnErrorEnum;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
@@ -207,7 +207,7 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
 
         if (details != null) {
             details.setAuthType(authType);
-            final String passsalt = GlobalAttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, details.getUserId());
+            final String passsalt = AttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, details.getUserId());
             details.setPasssalt(passsalt);
         }
         return details;

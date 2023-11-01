@@ -118,7 +118,7 @@ public class DoubleKillAround {
             }
         }
         else {
-            final ProgressContext.Bar bar = ProgressContext.get(arrKey, ttl);
+            final ProgressContext.Bar bar = ProgressContext.get(arrKey);
             if (bar == null) {
                 throw new DoubleKillException("", 0); // Never here, Defensive
             }

@@ -1,4 +1,4 @@
-package pro.fessional.wings.slardar.event;
+package pro.fessional.wings.slardar.event.tweak;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.logging.LogLevel;
@@ -8,9 +8,6 @@ import pro.fessional.wings.silencer.tweak.TweakClock;
 import pro.fessional.wings.silencer.tweak.TweakLogger;
 import pro.fessional.wings.silencer.tweak.TweakStack;
 import pro.fessional.wings.slardar.context.TerminalContext;
-import pro.fessional.wings.slardar.event.tweak.TweakClockEvent;
-import pro.fessional.wings.slardar.event.tweak.TweakLoggerEvent;
-import pro.fessional.wings.slardar.event.tweak.TweakStackEvent;
 
 import java.time.Clock;
 import java.time.Duration;

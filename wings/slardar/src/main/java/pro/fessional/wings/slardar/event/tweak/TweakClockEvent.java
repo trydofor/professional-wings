@@ -2,13 +2,18 @@ package pro.fessional.wings.slardar.event.tweak;
 
 import lombok.Data;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
  * @author trydofor
  * @since 2022-10-31
  */
 @Data
-public class TweakClockEvent {
+public class TweakClockEvent implements Serializable {
 
+    @Serial
+    private static final long serialVersionUID = 7710834456093042523L;
     /**
      * Long.MAX_VALUE means all user
      */

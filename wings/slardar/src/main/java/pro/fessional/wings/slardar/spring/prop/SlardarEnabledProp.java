@@ -88,6 +88,14 @@ public class SlardarEnabledProp {
     public static final String Key$async = Key + ".async";
 
     /**
+     * whether to enable slardar event utils
+     *
+     * @see #Key$async
+     */
+    private boolean event = true;
+    public static final String Key$event = Key + ".event";
+
+    /**
      * whether to prevent forgery editing
      *
      * @see #Key$righter

@@ -15,7 +15,7 @@ import pro.fessional.mirana.data.Z;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
-import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
+import pro.fessional.wings.slardar.context.AttributeHolder;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.PasswordHelper;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
@@ -87,7 +87,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             auth.setAuthType(wingsAuthTypeParser.parse(authType));
             auth.setUsername(authn.getUsername());
 
-            final String salt = GlobalAttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, userId);
+            final String salt = AttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, userId);
             PasswordHelper helper = new PasswordHelper(passwordEncoder, passsaltEncoder);
             auth.setPassword(helper.hash(authn.getPassword(), salt));
 
@@ -129,7 +129,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
 
             if (authn.getPassword() != null) {
                 PasswordHelper helper = new PasswordHelper(passwordEncoder, passsaltEncoder);
-                final String slat = GlobalAttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, userId);
+                final String slat = AttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, userId);
                 setter.put(t.Password, helper.hash(authn.getPassword(), slat));
             }
 
@@ -166,7 +166,7 @@ public class WarlockUserAuthnServiceImpl implements WarlockUserAuthnService {
             Map<Field<?>, Object> setter = new HashMap<>();
 
             if (renew.getPassword() != null) {
-                final String slat = GlobalAttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, userId);
+                final String slat = AttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, userId);
                 PasswordHelper helper = new PasswordHelper(passwordEncoder, passsaltEncoder);
                 setter.put(t.Password, helper.hash(renew.getPassword(), slat));
             }

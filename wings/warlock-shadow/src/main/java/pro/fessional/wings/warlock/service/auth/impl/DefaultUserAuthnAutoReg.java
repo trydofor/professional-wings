@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
-import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
+import pro.fessional.wings.slardar.context.AttributeHolder;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
 import pro.fessional.wings.warlock.constants.WarlockGlobalAttribute;
@@ -94,7 +94,7 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
 
             result.setUsername(authn.getUsername());
             result.setPassword(authn.getPassword());
-            result.setPasssalt(GlobalAttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, uid));
+            result.setPasssalt(AttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, uid));
             result.setExpiredDt(authn.getExpiredDt());
 
             return result;
