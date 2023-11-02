@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import pro.fessional.mirana.time.Sleep;
 import pro.fessional.wings.silencer.modulate.RunMode;
+import pro.fessional.wings.silencer.testing.AssertionLogger;
 import pro.fessional.wings.slardar.cache.WingsCacheHelper;
 import pro.fessional.wings.warlock.caching.CacheConst;
 import pro.fessional.wings.warlock.service.conf.impl.RuntimeConfServiceImpl;
@@ -128,6 +129,12 @@ class RuntimeConfServiceTest {
     @Test
     @TmsLink("C14013")
     void testCacheWithCud() {
+        final AssertionLogger al = AssertionLogger.install();
+        al.rule("insert", event -> event.getFormattedMessage().contains("insert into `win_conf_runtime`"));
+        al.rule("update", event -> event.getFormattedMessage().contains("update `win_conf_runtime`"));
+        al.rule("evictAllConfCache", event -> event.getFormattedMessage().contains("evictAllConfCache by win_conf_runtime, TableChangeEvent"));
+        al.start();
+
         final List<RunMode> arm = List.of(RunMode.Develop, RunMode.Local);
         final String key = "RuntimeConfCacheTest.testCache";
         // insert on duplicated key
@@ -135,10 +142,15 @@ class RuntimeConfServiceTest {
         final List<RunMode> arm1 = runtimeConfService.getList(key, RunMode.class);
         final List<RunMode> arm2 = runtimeConfService.getList(key, RunMode.class);
 
-        // check log update
+        // update `win_conf_runtime`
         // evictAllConfCache by win_conf_runtime, TableChangeEvent
         runtimeConfService.setObject(key, arm);
         Sleep.ignoreInterrupt(2_000);
+
+        Assertions.assertTrue(al.getAssertCount("insert") > 0);
+        Assertions.assertTrue(al.getAssertCount("update") > 0);
+        Assertions.assertEquals(2, al.getAssertCount("evictAllConfCache"));
+        al.uninstall();
 
         final List<RunMode> rm1 = runtimeConfService.getList(key, RunMode.class);
         final List<RunMode> rm2 = runtimeConfService.getList(key, RunMode.class);

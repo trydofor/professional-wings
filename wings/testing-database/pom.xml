@@ -22,6 +22,10 @@
             <artifactId>silencer-curse</artifactId>
         </dependency>
         <dependency>
+            <groupId>pro.fessional.wings</groupId>
+            <artifactId>silencer-test</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>

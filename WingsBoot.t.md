@@ -29,6 +29,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 11023 StringMapXmlWriterTest: jaxb object to Map object
 * 11024 StringMapXmlWriterTest: jaxb object to xml string
 * 11025 WingsSpringBeanScannerTest: with/without scanning
+* 11026 AssertionLoggerTest: install, assert and uninstall
 
 ## 12 Faceless
 
@@ -68,8 +69,8 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 12034 TemplateUtilTest: merge more partial token
 * 12035 TemplateUtilTest: is boundary
 * 12036 SchemaFulldumpManagerTest: clean and init schema itself
-* 12037 SchemaFulldumpManagerTest: dump DDL to file
-* 12038 SchemaFulldumpManagerTest: dump record to file
+* 12037 SchemaFulldumpManagerTest: dump DDL, check file
+* 12038 SchemaFulldumpManagerTest: dump record, check file
 * 12039 SchemaJournalManagerTest: clean and init schema itself
 * 12040 SchemaJournalManagerTest: create table with prefix
 * 12041 SchemaJournalManagerTest: create sharding
@@ -113,22 +114,22 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 12079 LightIdServiceImplTest: check lightId range
 * 12080 JooqLocaleConverterTest: jooq locale converter
 * 12081 WingsJooqDaoAliasImplTest: clean and init schema itself
-* 12082 WingsJooqDaoAliasImplTest: print batch load
-* 12083 WingsJooqDaoAliasImplTest: batch insert
+* 12082 WingsJooqDaoAliasImplTest: batch load, check log
+* 12083 WingsJooqDaoAliasImplTest: batch insert, check log
 * 12084 WingsJooqDaoAliasImplTest: batch merge
 * 12085 WingsJooqDaoAliasImplTest: batch store
 * 12086 WingsJooqDaoAliasImplTest: batch update
 * 12087 WingsJooqDaoAliasImplTest: single merge
 * 12088 WingsJooqDaoAliasImplTest: batch merge 3
-* 12089 WingsJooqDaoAliasImplTest: logic delete
+* 12089 WingsJooqDaoAliasImplTest: logic delete, check log
 * 12090 WingsJooqUtilTest: jooq condition with map
 * 12091 WingsJooqUtilTest: jooq condition builder
 * 12092 WingsJooqUtilTest: jooq condition if or false
 * 12093 WingsJooqUtilTest: jooq condition eq or skip
 * 12094 WingsJooqUtilTest: jooq condition in or skip
 * 12095 JooqDeleteListenerTest: clean and init schema itself
-* 12096 JooqDeleteListenerTest: print JournalJooqHelper delete listener
-* 12097 JooqDeleteListenerTest: print dsl DELETE/UPDATE listener
+* 12096 JooqDeleteListenerTest: JournalJooqHelper delete listener, check log
+* 12097 JooqDeleteListenerTest: dsl DELETE/UPDATE listener, check log
 * 12098 JooqMapperCompatibleTest: clean and init schema itself
 * 12099 JooqMapperCompatibleTest: jooq table exist
 * 12100 JooqMapperCompatibleTest: jooq case-sensitive alias
@@ -362,7 +363,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 14061 DbLightIdProviderTest: database impl instance
 * 14062 HzLightIdProviderTest: hazelcast impl instance
 * 14063 JvmLightIdProviderTest: jvm impl instance
-* 14064 WarlockPermCacheListenerTest: load perm and role caching, check log
+* 14064 WarlockPermCacheTest: load perm and role caching, check log
 * 14065 WarlockPermNormalizerTest: normalize role naming prefix
 * 14066 WarlockJournalConfigurationTest: assert TerminalJournalService overriding
 * 14067 BindExceptionAdviceTest: name binding error via post form
