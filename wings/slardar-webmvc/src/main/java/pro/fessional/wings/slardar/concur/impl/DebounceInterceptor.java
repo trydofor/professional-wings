@@ -43,7 +43,7 @@ public class DebounceInterceptor implements AutoRegisterInterceptor {
     private int order = ORDER;
 
     public DebounceInterceptor(int capacity, int maxWait, ModelAndView res) {
-        this.cache = WingsCache2k.builder(DebounceInterceptor.class, "cache", capacity, maxWait, -1, String.class, Dto.class).build();
+        this.cache = WingsCache2k.builder(DebounceInterceptor.class, "cache", capacity, maxWait, 0, String.class, Dto.class).build();
         this.modelAndView = res;
     }
 

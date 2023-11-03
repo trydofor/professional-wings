@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author trydofor
@@ -25,6 +26,49 @@ public interface WingsCache {
      * use wildcard like `program~*` to match cache name prefix.
      */
     String Wildcard = "*";
+
+
+    class Naming {
+        private static final AtomicLong Counter = new AtomicLong(1);
+
+        /**
+         * format the cache name
+         */
+        @NotNull
+        public static String use(@NotNull Class<?> owner, @NotNull String use) {
+            return owner.getName() + Joiner + use + "-" + Counter.getAndIncrement();
+        }
+
+        /**
+         * format the cache name
+         */
+        @NotNull
+        public static String use(@NotNull Class<?> clz, @NotNull Class<?> use) {
+            return use(clz, use.getName().substring(use.getPackageName().length() + 1));
+        }
+
+        /**
+         * join the parts with Joiner
+         */
+        public static String join(String... part) {
+            return String.join(Joiner, part);
+        }
+
+        /**
+         * append Wildcard to the end
+         */
+        @NotNull
+        public static String wildcard(String level) {
+            return level + Joiner + Wildcard;
+        }
+
+        public static boolean inLevel(String name, String level) {
+            if (name == null || level == null) return false;
+            final int len = level.length();
+            return name.regionMatches(true, 0, level, 0, len)
+                   && name.regionMatches(true, len, Joiner, 0, Joiner.length());
+        }
+    }
 
     class Manager {
         /**
@@ -68,10 +112,6 @@ public interface WingsCache {
          * Session, 10 minutes
          */
         public static final String Session = "session" + Joiner;
-
-        public static String join(String... part) {
-            return String.join(Joiner, part);
-        }
 
         public static String forever(String... part) {
             return Forever + String.join(Joiner, part);

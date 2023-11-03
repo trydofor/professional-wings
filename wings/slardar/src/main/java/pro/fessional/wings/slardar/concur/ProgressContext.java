@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ProgressContext {
 
     private static final Cache<Object, Bar> Cache = WingsCache2k
-            .builder(ProgressContext.class, "bar", -1, 24 * 3600, -1, Object.class, Bar.class)
+            .builder(ProgressContext.class, "bar", 0, 24 * 3600, 0, Object.class, Bar.class)
             .build();
 
     private static final AtomicLong Counter = new AtomicLong(0);

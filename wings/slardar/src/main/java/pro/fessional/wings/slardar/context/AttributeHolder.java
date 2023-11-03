@@ -1,11 +1,9 @@
 package pro.fessional.wings.slardar.context;
 
-import org.cache2k.Cache;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.best.TypedReg;
-import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 import pro.fessional.wings.slardar.event.attr.AttributeRidEvent;
 
 import java.util.Arrays;
@@ -18,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 /**
- * App level, default ttl=12H, unbounded cache.
+ * App level, default ttl=12H, unbounded thread safe cache.
  * Need manually register and remove (or publish {@link AttributeRidEvent})
  *
  * @author trydofor
@@ -30,27 +28,21 @@ public class AttributeHolder {
      * default ttl = 12H
      */
     public static final int TtlDefault = 12 * 3600;
-    private static final ConcurrentHashMap<TypedReg<?, ?>, Function<Object, Object>> LOADER = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<TypedReg<?, ?>, AttributeCache<?, ?>> Holder = new ConcurrentHashMap<>();
 
-    private static final ConcurrentHashMap<TypedReg<?, ?>, Cache<Object, Object>> HOLDER = new ConcurrentHashMap<>();
-
+    @SuppressWarnings("unchecked")
     @NotNull
-    private static Cache<Object, Object> getCache(@NotNull TypedReg<?, ?> reg) {
-        return HOLDER.computeIfAbsent(reg, k ->
-                WingsCache2k.builder(AttributeHolder.class,
-                        reg.regType.getName().substring(reg.regType.getPackageName().length() + 1),
-                        -1, TtlDefault, -1
-                ).build());
+    public static <K, V> AttributeCache<K, V> getCache(@NotNull TypedReg<K, V> reg) {
+        return (AttributeCache<K, V>) Holder.computeIfAbsent(reg, k -> {
+            var cache = new AttributeCache<>(AttributeHolder.class, reg, 0, TtlDefault, 0);
+            cache.register();
+            return cache;
+        });
     }
 
     @NotNull
     public static Set<TypedReg<?, ?>> holders() {
-        return new HashSet<>(HOLDER.keySet());
-    }
-
-    @NotNull
-    public static Set<TypedReg<?, ?>> loaders() {
-        return new HashSet<>(LOADER.keySet());
+        return new HashSet<>(Holder.keySet());
     }
 
     /**
@@ -61,9 +53,8 @@ public class AttributeHolder {
      * @param <K>    key type
      * @param <V>    value type
      */
-    @SuppressWarnings("unchecked")
     public static <K, V> void regLoader(@NotNull TypedReg<K, V> reg, @NotNull Function<K, V> loader) {
-        LOADER.put(reg, (Function<Object, Object>) loader);
+        getCache(reg).setLoader(loader);
     }
 
     /**
@@ -76,7 +67,7 @@ public class AttributeHolder {
      * @param <V>   value type
      */
     public static <K, V> void putAttr(@NotNull TypedReg<K, V> reg, @NotNull K key, @NotNull V value) {
-        putAttr(reg, key, value, TtlDefault);
+        getCache(reg).putAttr(key, value);
     }
 
     /**
@@ -90,10 +81,7 @@ public class AttributeHolder {
      * @param <V>   value type
      */
     public static <K, V> void putAttr(@NotNull TypedReg<K, V> reg, @NotNull K key, @NotNull V value, int ttl) {
-        getCache(reg).mutate(key, entry -> {
-            entry.setValue(value);
-            entry.setExpiryTime(entry.getStartTime() + ttl * 1000L);
-        });
+        getCache(reg).putAttr(key, value, ttl);
     }
 
     /**
@@ -105,7 +93,7 @@ public class AttributeHolder {
      * @param <V> value type
      */
     public static <K, V> void putAttrs(@NotNull TypedReg<K, V> reg, @NotNull Map<K, V> map) {
-        putAttrs(reg, map, TtlDefault);
+        getCache(reg).putAttrs(map);
     }
 
     /**
@@ -118,15 +106,7 @@ public class AttributeHolder {
      * @param <V> value type
      */
     public static <K, V> void putAttrs(@NotNull TypedReg<K, V> reg, @NotNull Map<K, V> map, int ttl) {
-        if (map.isEmpty()) return;
-
-        final Cache<Object, Object> cache = getCache(reg);
-        for (Map.Entry<K, V> en : map.entrySet()) {
-            cache.mutate(en.getKey(), entry -> {
-                entry.setValue(en.getValue());
-                entry.setExpiryTime(entry.getStartTime() + ttl * 1000L);
-            });
-        }
+        getCache(reg).putAttrs(map, ttl);
     }
 
     /**
@@ -140,7 +120,7 @@ public class AttributeHolder {
      */
     @Contract("_,_,!null->!null")
     public static <K, V> V tryAttr(@NotNull TypedReg<K, V> reg, @NotNull K key, V elze) {
-        return tryAttr(reg, key, elze, TtlDefault);
+        return getCache(reg).tryAttr(key, elze);
     }
 
     /**
@@ -155,8 +135,7 @@ public class AttributeHolder {
      */
     @Contract("_,_,!null,_->!null")
     public static <K, V> V tryAttr(@NotNull TypedReg<K, V> reg, @NotNull K key, V elze, int ttl) {
-        final V obj = tryAttr(reg, key, false, ttl);
-        return obj == null ? elze : obj;
+        return getCache(reg).tryAttr(key, elze, ttl);
     }
 
     /**
@@ -169,7 +148,7 @@ public class AttributeHolder {
      */
     @NotNull
     public static <K, V> V tryAttr(@NotNull TypedReg<K, V> reg, @NotNull K key) {
-        return tryAttr(reg, key, true, TtlDefault);
+        return getCache(reg).tryAttr(key);
     }
 
     /**
@@ -183,7 +162,7 @@ public class AttributeHolder {
      */
     @NotNull
     public static <K, V> V tryAttr(@NotNull TypedReg<K, V> reg, @NotNull K key, int ttl) {
-        return tryAttr(reg, key, true, ttl);
+        return getCache(reg).tryAttr(key, ttl);
     }
 
     /**
@@ -197,7 +176,7 @@ public class AttributeHolder {
      */
     @Contract("_,_,true ->!null")
     public static <K, V> V tryAttr(@NotNull TypedReg<K, V> reg, @NotNull K key, boolean notnull) {
-        return tryAttr(reg, key, notnull, TtlDefault);
+        return getCache(reg).tryAttr(key, notnull);
     }
 
     /**
@@ -210,32 +189,9 @@ public class AttributeHolder {
      * @param <K>     key type
      * @param <V>     value type
      */
-    @SuppressWarnings("unchecked")
     @Contract("_,_,true,_ ->!null")
     public static <K, V> V tryAttr(@NotNull TypedReg<K, V> reg, @NotNull K key, boolean notnull, int ttl) {
-
-        final Object rst = getCache(reg).invoke(key, entry -> {
-            Object t = null;
-            if (entry.exists()) {
-                t = entry.getValue();
-            }
-            else {
-                Function<Object, Object> ld = LOADER.get(reg);
-                if (ld != null) {
-                    t = ld.apply(key);
-                    entry.setValue(t);
-                    entry.setExpiryTime(entry.getStartTime() + ttl * 1000L);
-                }
-            }
-            return t;
-        });
-
-        if (rst == null && notnull) {
-            throw new NullPointerException("aware=" + reg + ",key=" + key);
-        }
-        else {
-            return (V) rst;
-        }
+        return getCache(reg).tryAttr(key, notnull, ttl);
     }
 
     /**
@@ -249,8 +205,8 @@ public class AttributeHolder {
     @SuppressWarnings("unchecked")
     @Nullable
     public static <K, V> V getAttr(@NotNull TypedReg<K, V> reg, @NotNull K key) {
-        Cache<Object, Object> cache = HOLDER.get(reg);
-        return cache == null ? null : (V) cache.get(key);
+        AttributeCache<K, V> cache = (AttributeCache<K, V>) Holder.get(reg);
+        return cache == null ? null : cache.getAttr(key);
     }
 
     /**
@@ -264,9 +220,8 @@ public class AttributeHolder {
     @SuppressWarnings("unchecked")
     @NotNull
     public static <K, V> Map<K, V> getAttrs(@NotNull TypedReg<K, V> reg, @NotNull Collection<K> key) {
-        Cache<Object, Object> cache = HOLDER.get(reg);
-        if (cache == null) return Collections.emptyMap();
-        return (Map<K, V>) cache.getAll(key);
+        AttributeCache<K, V> cache = (AttributeCache<K, V>) Holder.get(reg);
+        return cache == null ? Collections.emptyMap() : cache.getAttrs(key);
     }
 
     /**
@@ -276,10 +231,11 @@ public class AttributeHolder {
      * @param key unique key, e.g. userId
      * @param <K> key type
      */
+    @SuppressWarnings("unchecked")
     public static <K> void ridAttr(TypedReg<K, ?> reg, K key) {
-        Cache<Object, Object> cache = HOLDER.get(reg);
+        AttributeCache<K, ?> cache = (AttributeCache<K, ?>) Holder.get(reg);
         if (cache != null) {
-            cache.remove(key);
+            cache.ridAttr(key);
         }
     }
 
@@ -290,24 +246,12 @@ public class AttributeHolder {
      * @param key unique key, e.g. userId
      * @param <K> key type
      */
-    @SafeVarargs
-    public static <K> void ridAttrs(TypedReg<K, ?> reg, K... key) {
-        if (key == null || key.length == 0) return;
-        ridAttrs(reg, Arrays.asList(key));
-    }
-
-    /**
-     * remove all attribute by keys
-     *
-     * @param reg Type to register
-     * @param key unique key, e.g. userId
-     * @param <K> key type
-     */
+    @SuppressWarnings("unchecked")
     public static <K> void ridAttrs(TypedReg<K, ?> reg, Collection<? extends K> key) {
         if (key == null || key.isEmpty()) return;
-        Cache<Object, Object> cache = HOLDER.get(reg);
+        AttributeCache<K, ?> cache = (AttributeCache<K, ?>) Holder.get(reg);
         if (cache != null) {
-            cache.removeAll(key);
+            cache.ridAttrs(key);
         }
     }
 
@@ -328,10 +272,11 @@ public class AttributeHolder {
      */
     public static void ridAttrAll(Collection<? extends TypedReg<?, ?>> reg) {
         if (reg == null || reg.isEmpty()) return;
+
         for (TypedReg<?, ?> tr : reg) {
-            Cache<Object, Object> cache = HOLDER.get(tr);
+            AttributeCache<?, ?> cache = Holder.get(tr);
             if (cache != null) {
-                cache.removeAll();
+                cache.ridAttrAll();
             }
         }
     }
@@ -353,8 +298,24 @@ public class AttributeHolder {
      */
     public static void ridLoader(Collection<? extends TypedReg<?, ?>> reg) {
         if (reg == null || reg.isEmpty()) return;
-        for (TypedReg<?, ?> r : reg) {
-            LOADER.remove(r);
+
+        for (TypedReg<?, ?> tr : reg) {
+            AttributeCache<?, ?> cache = Holder.get(tr);
+            if (cache != null) {
+                cache.setLoader(null);
+            }
+        }
+    }
+
+    /**
+     * unregister from the event
+     */
+    public static void unregister(TypedReg<?, ?>... reg) {
+        for (TypedReg<?, ?> tr : reg) {
+            AttributeCache<?, ?> cache = Holder.get(tr);
+            if (cache != null) {
+                cache.unregister();
+            }
         }
     }
 }

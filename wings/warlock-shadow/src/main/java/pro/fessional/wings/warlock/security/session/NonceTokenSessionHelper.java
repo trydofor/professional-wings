@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class NonceTokenSessionHelper {
 
     private static final Cache<String, Sf> cache = WingsCache2k
-            .builder(NonceTokenSessionHelper.class, "nonce", 100_000, 300, -1, String.class, Sf.class)
+            .builder(NonceTokenSessionHelper.class, "nonce", 100_000, 300, 0, String.class, Sf.class)
             .build();
 
     private static class Sf {

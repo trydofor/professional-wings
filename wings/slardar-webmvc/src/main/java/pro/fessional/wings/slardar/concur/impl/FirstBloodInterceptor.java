@@ -23,7 +23,7 @@ public class FirstBloodInterceptor implements AutoRegisterInterceptor {
 
     public static final int ORDER = WingsOrdered.Lv4Application + 3_000;
 
-    private static final Cache<Object, Object> Cache = WingsCache2k.builder(FirstBloodInterceptor.class, "handler", 100_000, 3600, -1).build();
+    private static final Cache<Object, Object> Cache = WingsCache2k.builder(FirstBloodInterceptor.class, "handler", 100_000, 3600, 0).build();
 
     private final List<FirstBloodHandler> handlers;
 

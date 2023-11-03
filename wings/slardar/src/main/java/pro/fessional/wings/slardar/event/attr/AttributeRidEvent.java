@@ -3,7 +3,6 @@ package pro.fessional.wings.slardar.event.attr;
 import lombok.Data;
 import org.jetbrains.annotations.Contract;
 import pro.fessional.mirana.best.TypedReg;
-import pro.fessional.wings.slardar.context.AttributeHolder;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -46,19 +45,5 @@ public class AttributeRidEvent implements Serializable {
         Set<Object> keys = typedReg.computeIfAbsent(reg.serialize(), k -> new HashSet<>());
         keys.addAll(key);
         return this;
-    }
-
-    public void handleEvent() {
-        for (Map.Entry<String, Set<Object>> ent : typedReg.entrySet()) {
-            String s = ent.getKey();
-            TypedReg<Object, Object> reg = TypedReg.deserialize(s);
-            Set<Object> ks = ent.getValue();
-            if (ks == null || ks.isEmpty()) {
-                AttributeHolder.ridAttrAll(reg);
-            }
-            else {
-                AttributeHolder.ridAttrs(reg, ks);
-            }
-        }
     }
 }

@@ -4,10 +4,9 @@ import org.cache2k.Cache2kBuilder;
 import org.cache2k.config.ToggleFeature;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import pro.fessional.wings.slardar.cache.WingsCache;
+import pro.fessional.wings.slardar.cache.WingsCache.Naming;
 
 import java.time.Duration;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author trydofor
@@ -27,40 +26,88 @@ public class WingsCache2k {
         }
     }
 
-    private static final AtomicLong NameCounter = new AtomicLong(1);
-
-    public static String name(Class<?> clz, String use) {
-        if (clz == null) return null;
-        return clz.getName() + WingsCache.Joiner + use + "-" + NameCounter.getAndIncrement();
+    /**
+     * construct UnknownTypes builder with max size, ttl and tti in second
+     *
+     * @param owner owner part of name
+     * @param use   usage part of name
+     * @param max   capacity, max size
+     * @param ttl   time to live in second, skip if le 0
+     * @param tti   time to idle in second, skip if le 0
+     */
+    @NotNull
+    public static Cache2kBuilder<Object, Object> builder(Class<?> owner, String use, int max, int ttl, int tti) {
+        return builder(Cache2kBuilder.forUnknownTypes().name(Naming.use(owner, use)), max, ttl, tti, true);
     }
+
+    /**
+     * construct K-V type builder with max size, ttl and tti in second
+     *
+     * @param owner owner part of name
+     * @param use   usage part of name
+     * @param max   capacity, max size
+     * @param ttl   time to live in second, skip if le 0
+     * @param tti   time to idle in second, skip if le 0
+     */
 
     @NotNull
-    public static Cache2kBuilder<Object, Object> builder(Class<?> clz, String use, int max, int ttl, int tti) {
-        return build(Cache2kBuilder.forUnknownTypes().name(name(clz, use)), max, ttl, tti, true);
+    public static <K, V> Cache2kBuilder<K, V> builder(Class<?> owner, String use, int max, int ttl, int tti, Class<K> k, Class<V> v) {
+        return builder(Cache2kBuilder.of(k, v).name(Naming.use(owner, use)), max, ttl, tti, true);
     }
 
+    /**
+     * construct UnknownTypes builder with max size, ttl and tti in second
+     *
+     * @param owner owner part of name
+     * @param use   usage part of name
+     * @param max   capacity, max size
+     * @param ttl   time to live, skip if null
+     * @param tti   time to idle, skip if null
+     */
     @NotNull
-    public static <K, V> Cache2kBuilder<K, V> builder(Class<?> clz, String use, int max, int ttl, int tti, Class<K> k, Class<V> v) {
-        return build(Cache2kBuilder.of(k, v).name(name(clz, use)), max, ttl, tti, true);
+    public static Cache2kBuilder<Object, Object> builder(Class<?> owner, String use, int max, Duration ttl, Duration tti) {
+        return builder(Cache2kBuilder.forUnknownTypes().name(Naming.use(owner, use)), max, ttl, tti, true);
     }
 
+    /**
+     * construct K-V type builder with max size, ttl and tti in second
+     *
+     * @param owner owner part of name
+     * @param use   usage part of name
+     * @param max   capacity, max size
+     * @param ttl   time to live, skip if null
+     * @param tti   time to idle, skip if null
+     */
     @NotNull
-    public static Cache2kBuilder<Object, Object> builder(Class<?> clz, String use, int max, Duration ttl, Duration tti) {
-        return build(Cache2kBuilder.forUnknownTypes().name(name(clz, use)), max, ttl, tti, true);
+    public static <K, V> Cache2kBuilder<K, V> builder(Class<?> owner, String use, int max, Duration ttl, Duration tti, Class<K> k, Class<V> v) {
+        return builder(Cache2kBuilder.of(k, v).name(Naming.use(owner, use)), max, ttl, tti, true);
     }
 
-    @NotNull
-    public static <K, V> Cache2kBuilder<K, V> builder(Class<?> clz, String use, int max, Duration ttl, Duration tti, Class<K> k, Class<V> v) {
-        return build(Cache2kBuilder.of(k, v).name(name(clz, use)), max, ttl, tti, true);
-    }
-
+    /**
+     * builder with max size, ttl and tti in second, and feather
+     *
+     * @param bld     the builder
+     * @param max     capacity, max size
+     * @param ttl     time to live in second, skip if null
+     * @param tti     time to idle in second, skip if null
+     * @param feature whether enable feather
+     */
     @Contract("_,_,_,_,_->param1")
-    public static <K, V> Cache2kBuilder<K, V> build(Cache2kBuilder<K, V> bld, int max, int ttl, int tti, boolean feature) {
-        return build(bld, max, ttl > 0 ? Duration.ofSeconds(ttl) : null, tti > 0 ? Duration.ofSeconds(tti) : null, feature);
+    public static <K, V> Cache2kBuilder<K, V> builder(Cache2kBuilder<K, V> bld, int max, int ttl, int tti, boolean feature) {
+        return builder(bld, max, ttl > 0 ? Duration.ofSeconds(ttl) : null, tti > 0 ? Duration.ofSeconds(tti) : null, feature);
     }
 
+    /**
+     * builder with max size, ttl and tti in second, and feather
+     *
+     * @param bld     the builder
+     * @param max     capacity, max size
+     * @param ttl     time to live, skip if null
+     * @param tti     time to idle, skip if null
+     * @param feature whether enable feather
+     */
     @Contract("_,_,_,_,_->param1")
-    public static <K, V> Cache2kBuilder<K, V> build(Cache2kBuilder<K, V> bld, int max, Duration ttl, Duration tti, boolean feature) {
+    public static <K, V> Cache2kBuilder<K, V> builder(Cache2kBuilder<K, V> bld, int max, Duration ttl, Duration tti, boolean feature) {
 
         if (feature && FeatureJmx != null) {
             bld.enable(FeatureJmx);

@@ -16,8 +16,6 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-import static pro.fessional.wings.slardar.spring.prop.SlardarCacheProp.inLevel;
-
 /**
  * @author trydofor
  * @since 2023-11-01
@@ -43,16 +41,16 @@ public class WingsCache2kManager extends SpringCache2kCacheManager implements Wi
                 for (Map.Entry<String, SlardarCacheProp.Conf> entry : slardarCacheProp.getLevel().entrySet()) {
                     // same prefix
                     final String key = entry.getKey();
-                    if (inLevel(name, key)) {
+                    if (WingsCache.Naming.inLevel(name, key)) {
                         final SlardarCacheProp.Conf level = entry.getValue();
-                        WingsCache2k.build(bld, level.getMaxSize(), level.getMaxLive(), level.getMaxIdle(), false);
+                        WingsCache2k.builder(bld, level.getMaxSize(), level.getMaxLive(), level.getMaxIdle(), false);
                         log.info("Wings Cache2k name={}, level={}", name, key);
                         return;
                     }
                 }
 
                 final SlardarCacheProp.Conf common = slardarCacheProp.getCommon();
-                WingsCache2k.build(bld, common.getMaxSize(), common.getMaxLive(), common.getMaxIdle(), false);
+                WingsCache2k.builder(bld, common.getMaxSize(), common.getMaxLive(), common.getMaxIdle(), false);
                 log.info("Wings Cache2k name={}, level=default", name);
             }
         };

@@ -55,5 +55,18 @@ public class EventPublishHelperTest {
         EventPublishHelper.AsyncGlobal.publishEvent(event);
         Sleep.ignoreInterrupt(1000);
         Assertions.assertNull(AttributeHolder.getAttr(Test1, 1));
+
+        //
+        AttributeHolder.putAttr(Test1, 1, "1");
+        Assertions.assertEquals("1", AttributeHolder.getAttr(Test1, 1));
+
+        // unregister, no listener affect
+        AttributeHolder.unregister(Test1);
+
+        AttributeRidEvent event2 = new AttributeRidEvent();
+        event2.rid(Test1, 1);
+        EventPublishHelper.AsyncGlobal.publishEvent(event2);
+        Sleep.ignoreInterrupt(1000);
+        Assertions.assertEquals("1", AttributeHolder.getAttr(Test1, 1));
     }
 }

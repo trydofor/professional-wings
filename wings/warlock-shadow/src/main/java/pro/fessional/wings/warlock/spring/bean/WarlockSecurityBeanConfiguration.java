@@ -266,7 +266,7 @@ public class WarlockSecurityBeanConfiguration {
         final NonceUserDetailsCombo bean = new NonceUserDetailsCombo();
         bean.setOrder(WingsOrdered.Lv3Service + 200);
         bean.setAcceptNonceType(securityProp.mapNonceAuthEnum());
-        final String cn = WingsCache.Level.join(securityProp.getNonceCacheLevel(), NonceUserDetailsCombo.class.getName());
+        final String cn = WingsCache.Naming.join(securityProp.getNonceCacheLevel(), NonceUserDetailsCombo.class.getName());
         bean.setCacheName(cn);
         final CacheManager cm = applicationContext.getBean(securityProp.getNonceCacheManager(), CacheManager.class);
         bean.setCacheManager(cm);
