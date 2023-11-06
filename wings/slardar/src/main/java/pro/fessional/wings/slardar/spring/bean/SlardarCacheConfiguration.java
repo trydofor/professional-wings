@@ -54,11 +54,9 @@ public class SlardarCacheConfiguration {
 
     public SlardarCacheConfiguration(@Value("${spring.jmx.enabled:false}") boolean jmx) {
         log.info("Slardar spring.jmx.enabled=" + jmx + ", if can NOT disable, check IDEA 'Disable JMX agent' options");
-        if (!jmx) {
-            if (WingsCache2k.FeatureJmx != null) {
-                log.info("Slardar cache2k jmx=false");
-                WingsCache2k.FeatureJmx = null;
-            }
+        if (!jmx && WingsCache2k.FeatureJmx != null) {
+            log.info("Slardar cache2k FeatureJmx but spring.jmx.enabled=false");
+            WingsCache2k.FeatureJmx = null;
         }
     }
 

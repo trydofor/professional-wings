@@ -40,7 +40,7 @@ public class JustAuthUserAuthnAutoReg extends DefaultUserAuthnAutoReg {
         }
         basis.setRemark(user.getRemark());
         basis.setStatus(UserStatus.ACTIVE);
-        log.info("nickName={}, Gender={}", user.getNickname(), aug);
+        log.debug("nickName={}, Gender={}", user.getNickname(), aug);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class JustAuthUserAuthnAutoReg extends DefaultUserAuthnAutoReg {
         authn.setUsername(user.getUuid());
         authn.setExtraPara(JSON.toJSONString(user.getToken(), FastJsonHelper.DefaultWriter()));
         authn.setExtraUser(JSON.toJSONString(user.getRawUserInfo(), FastJsonHelper.DefaultWriter()));
-        log.info("uuid={}, userId={}", user.getUuid(), userId);
+        log.debug("uuid={}, userId={}", user.getUuid(), userId);
     }
 
     @Override

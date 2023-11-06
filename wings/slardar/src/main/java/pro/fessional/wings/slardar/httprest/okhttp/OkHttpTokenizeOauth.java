@@ -142,7 +142,7 @@ public class OkHttpTokenizeOauth implements OkHttpTokenClient.Tokenize {
             notnull = true;
         }
         else {
-            log.info("valAccessToken must is {} or {}", ClientCredentials, AuthorizationCode);
+            log.warn("AccessToken must is {} or {}", ClientCredentials, AuthorizationCode);
             return null;
         }
 

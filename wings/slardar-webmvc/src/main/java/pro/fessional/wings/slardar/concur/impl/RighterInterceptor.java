@@ -98,7 +98,7 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
         final String key = getKey(session);
         byte[] bytes = decodeAudit(key, audit);
         if (bytes == null) {
-            log.info("failed to check digest. session={}, audit={}", session.getId(), audit);
+            log.debug("failed to check digest. session={}, audit={}", session.getId(), audit);
             responseError(response);
             return false;
         }
@@ -110,7 +110,7 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
             return true;
         }
         catch (Exception e) {
-            log.warn("failed to deserialize. session=" + session + ", audit=" + audit, e);
+            log.info("failed to deserialize. session=" + session + ", audit=" + audit, e);
             responseError(response);
             return false;
         }

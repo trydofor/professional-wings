@@ -54,7 +54,7 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
                 .from(tr)
                 .fetchInto(Long.class);
         if (tid.isEmpty()) {
-            log.info("no task result to clean");
+            log.debug("no task result to clean");
             return 0;
         }
 
@@ -73,7 +73,7 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
                 .collect(Collectors.toList());
 
         if (cond.isEmpty()) {
-            log.info("no task condition to clean");
+            log.debug("no task condition to clean");
             return 0;
         }
 
@@ -104,7 +104,7 @@ public class TinyTaskBeatServiceImpl implements TinyTaskBeatService {
         final StringBuilder mis = new StringBuilder();
 
         for (WinTaskDefine r : tks) {
-            log.info("check health task id={}, name={}", r.getId(), r.getTaskerName());
+            log.debug("check health task id={}, name={}", r.getId(), r.getTaskerName());
             int beat = r.getTimingBeat();
             if (beat <= 0) {
                 beat = Math.max(r.getTimingRate(), r.getTimingIdle());

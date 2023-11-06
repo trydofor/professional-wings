@@ -57,13 +57,13 @@ public class LogMetric implements WarnMetric {
     public @NotNull List<Warn> check() {
         final String file = rule.getFile();
         if (file == null || file.isEmpty() || !rule.isEnable()) {
-            log.info("skip un-conf file or disable");
+            log.debug("skip un-conf file or disable");
             return Collections.emptyList();
         }
 
         final long from = readLastForm();
         final LogStat.Stat stat = LogStat.stat(rule.file, from, rule.getRuntimeKeys());
-        log.info("LogStat-{}, stat={}", key, stat);
+        log.debug("LogStat-{}, stat={}", key, stat);
         writeLastFrom(stat);
 
         if (stat.getTimeDone() - lastClean > 24 * 3600 * 1000L) {

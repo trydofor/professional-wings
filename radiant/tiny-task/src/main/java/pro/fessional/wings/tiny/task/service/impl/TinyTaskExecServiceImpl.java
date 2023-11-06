@@ -123,7 +123,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 if (notice != null) ntcWhen = noticeWhen(td.getNoticeWhen());
 
                 postNotice(notice, noticeConf, ntcWhen, taskerName, taskMsg, execTms, WhenExec);
-                log.info("task force exec, id={}", id);
+                log.debug("task force exec, id={}", id);
 
                 final Object result;
                 if (dryrun) {
@@ -200,7 +200,6 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 return false;
             }
 
-            log.info("prepare task name={}, id={}", td.getTaskerName(), td.getId());
             if (notEnable(td.getEnabled(), id)
                 || notApps(td.getTaskerApps(), id)
                 || notRuns(td.getTaskerRuns(), id)) {
@@ -221,6 +220,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 return false;
             }
 
+            log.info("prepare task name={}, id={}", td.getTaskerName(), td.getId());
             final ScheduledFuture<?> handle = taskScheduler.schedule(() -> {
                 long execTms = ThreadNow.millis();
                 try {

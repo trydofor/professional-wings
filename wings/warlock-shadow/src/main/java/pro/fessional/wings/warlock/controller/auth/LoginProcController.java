@@ -53,7 +53,7 @@ public class LoginProcController {
                          @RequestParam(value = WingsAuthHelper.AuthZone, required = false) String authZone,
                          @RequestParam("username") String username,
                          @RequestParam("password") String password) {
-        log.info("authType={}, authZone={}, username={}, password={}", authType, authZone, username, password);
+        log.debug("authType={}, authZone={}, username={}, password={}", authType, authZone, username, password);
         return R.ng("handler by filter, never here");
     }
 }

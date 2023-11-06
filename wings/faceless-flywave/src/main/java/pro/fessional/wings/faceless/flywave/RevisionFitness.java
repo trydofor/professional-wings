@@ -161,7 +161,7 @@ public class RevisionFitness {
         boolean unInit = false;
         for (Map.Entry<String, SortedMap<Long, Status>> en : manager.statusRevisions().entrySet()) {
             final String nextDb = en.getKey();
-            log.info("Wings Revision Check Database={}", nextDb);
+            log.debug("Wings Revision Check Database={}", nextDb);
             Map<Long, Status> sts = en.getValue();
             if (sts == null) {
                 unInit = true;

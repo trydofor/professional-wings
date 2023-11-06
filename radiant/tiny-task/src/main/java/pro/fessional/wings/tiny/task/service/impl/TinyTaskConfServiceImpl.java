@@ -103,7 +103,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             rp.setTimingCron(anno.cron());
             rp.setTimingIdle(anno.idle());
             rp.setTimingRate(anno.rate());
-            log.info("no prop, use annotation, key={}", key);
+            log.debug("no prop, use annotation, key={}", key);
         }
         else {
             if (pp.notTimingZone()) {
@@ -113,7 +113,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
                 rp.setTimingZone(pp.getTimingZone());
             }
             if (pp.notTimingPlan()) {
-                log.info("no prop timingplan, use annotation, key={}", key);
+                log.debug("no prop timingplan, use annotation, key={}", key);
                 rp.setTimingCron(anno.cron());
                 rp.setTimingIdle(anno.idle());
                 rp.setTimingRate(anno.rate());
@@ -255,7 +255,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         }
 
         String tkn = TaskerHelper.tokenize(claz, method.getName());
-        log.info("find tiny task, prop={}, ref={}", key, tkn);
+        log.debug("find tiny task, prop={}, ref={}", key, tkn);
 
         if (isEmpty(prop.getTaskerName())) {
             prop.setTaskerName(claz.getSimpleName() + TaskerHelper.MethodPrefix + method.getName());
@@ -279,7 +279,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             enabled = prop.isEnabled();
             autorun = prop.isAutorun();
             noticeBean = prop.getNoticeBean();
-            log.info("insert prop to database, version={}, id={}", prop.getVersion(), id);
+            log.debug("insert prop to database, version={}, id={}", prop.getVersion(), id);
         }
         else if (po.getVersion() < prop.getVersion()) {
             id = po.getId();
@@ -287,14 +287,14 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             autorun = prop.isAutorun();
             noticeBean = prop.getNoticeBean();
             updateProp(prop, key, id);
-            log.info("replace prop to database, version={}, id={}", prop.getVersion(), id);
+            log.debug("replace prop to database, version={}, id={}", prop.getVersion(), id);
         }
         else {
             id = po.getId();
             enabled = BoxedCastUtil.orTrue(po.getEnabled());
             autorun = BoxedCastUtil.orTrue(po.getAutorun());
             noticeBean = po.getNoticeBean();
-            log.info("use database config, version={}, id={}", prop.getVersion(), id);
+            log.debug("use database config, version={}, id={}", prop.getVersion(), id);
             // diff
             final LinkedHashMap<String, Diff.V<?>> df = diff(po, prop);
             if (!df.isEmpty()) {

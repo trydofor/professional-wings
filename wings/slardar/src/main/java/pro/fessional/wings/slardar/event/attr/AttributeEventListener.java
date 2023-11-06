@@ -25,11 +25,11 @@ public class AttributeEventListener {
 
             final Set<Object> ks = ent.getValue();
             if (ks == null || ks.isEmpty()) {
-                log.info("ridAttrAll, type={}", reg);
+                log.debug("ridAttrAll, type={}", reg);
                 AttributeCache.forEach(reg, AttributeCache::ridAttrAll);
             }
             else {
-                log.info("ridAttrAll, type={}, key-size={}", reg, ks.size());
+                log.debug("ridAttrAll, type={}, key-size={}", reg, ks.size());
                 AttributeCache.forEach(reg, cache -> cache.ridAttrs(ks));
             }
         }

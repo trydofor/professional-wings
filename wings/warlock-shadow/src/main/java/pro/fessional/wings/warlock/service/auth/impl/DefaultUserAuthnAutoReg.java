@@ -64,7 +64,7 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
 
             beforeSave(user, username, details);
             long uid = warlockUserBasisService.create(user);
-            log.info("auto register user authType={}, username={}, userId={}", authType, username, uid);
+            log.debug("auto register user authType={}, username={}, userId={}", authType, username, uid);
             afterSave(user, username, details, uid);
             //
             Authn authn = new Authn();
@@ -81,7 +81,7 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
 
             beforeSave(authn, username, details, uid);
             long aid = warlockUserAuthnService.create(uid, authn);
-            log.info("auto register auth authType={}, username={}, authId={}", authType, username, aid);
+            log.debug("auto register auth authType={}, username={}, authId={}", authType, username, aid);
             afterSave(authn, username, details, uid, aid);
 
             final Details result = new Details();

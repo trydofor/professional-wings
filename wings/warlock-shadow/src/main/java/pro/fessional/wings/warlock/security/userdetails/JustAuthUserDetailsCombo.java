@@ -30,7 +30,7 @@ public class JustAuthUserDetailsCombo extends DefaultUserDetailsCombo {
         final Object authUser = authDetail.getRealData();
         if (username.isEmpty() && authUser instanceof AuthUser) {
             username = ((AuthUser) authUser).getUuid();
-            log.info("load auth-user by {} use uuid={}", authType, username);
+            log.debug("load auth-user by {} use uuid={}", authType, username);
         }
         return super.doLoad(username, authType, authDetail);
     }

@@ -57,7 +57,7 @@ class DatabaseGlobalLockTest {
                 assertFalse(b);
             }
             catch (InterruptedException e) {
-                log.info("ignore", e);
+                log.warn("ignore", e);
             }
             latch.countDown();
         }).start();

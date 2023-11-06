@@ -42,7 +42,7 @@ public class NonceLoginSuccessHandler extends SavedRequestAwareAuthenticationSuc
             sid = session.getId();
             if (state != null) {
                 NonceTokenSessionHelper.bindNonceSession(state, sid);
-                log.info("parse client state={}, uid={}", state, uid);
+                log.debug("parse client state={}, uid={}", state, uid);
             }
         }
 

@@ -96,7 +96,7 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
                     .where(t.getOnlyLive())
                     .fetch()
                     .intoMap(Record2::value1, it -> permNormalizer.role(it.value2()));
-            log.info("loadRoleAll size={}", all.size());
+            log.debug("loadRoleAll size={}", all.size());
             return all;
         }
 
@@ -108,7 +108,7 @@ public class WarlockRoleServiceImpl implements WarlockRoleService {
         public boolean evictRoleAllCache(TableChangeEvent event) {
             final String tb = CacheEventHelper.receiveTable(event, EventTables);
             if (tb != null) {
-                log.info("evictRoleAllCache by {}, {}", tb, event);
+                log.debug("evictRoleAllCache by {}, {}", tb, event);
                 return true;
             }
 

@@ -165,9 +165,9 @@ public class SlardarBootAdminConfiguration {
 //        @Bean
 //        public InstanceExchangeFilterFunction bootAdminSessionFilter() {
 //            return (instance, request, next) -> next.exchange(request).doOnSubscribe((s) -> {
-//                log.info(">>>" + request.url());
-//                log.info(">>>" + request.headers());
-//                log.info(">>>" + request.cookies());
+//                log.debug(">>>" + request.url());
+//                log.debug(">>>" + request.headers());
+//                log.debug(">>>" + request.cookies());
 //            });
 //        }
     }

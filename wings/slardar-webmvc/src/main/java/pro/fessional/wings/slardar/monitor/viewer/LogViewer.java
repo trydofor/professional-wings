@@ -86,7 +86,7 @@ public class LogViewer implements WarnFilter {
                 WarnMetric.Warn next = iter.next();
                 if (next.getType() == WarnMetric.Type.File) {
                     if (canIgnoreHead(next.getWarn())) {
-                        log.info("remove ignored warning");
+                        log.debug("remove ignored warning");
                         iter.remove();
                     }
                     else {

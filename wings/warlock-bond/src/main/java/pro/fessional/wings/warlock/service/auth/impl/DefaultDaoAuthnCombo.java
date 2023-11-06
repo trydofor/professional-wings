@@ -151,7 +151,7 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
                 .fetchOne();
 
         if (auth == null) {
-            log.info("ignore login failure by not found auth-type={}, username={}", at, username);
+            log.debug("ignore login failure by not found auth-type={}, username={}", at, username);
             return;
         }
 
@@ -164,7 +164,7 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
         warlockDangerService.block(authType, username, second);
 
         if (cnt > max) {
-            log.info("ignore login failure by reach max-count={}, auth-type={}, username={}", max, at, username);
+            log.debug("ignore login failure by reach max-count={}, auth-type={}, username={}", max, at, username);
             return;
         }
 

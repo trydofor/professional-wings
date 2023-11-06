@@ -67,7 +67,7 @@ public class LoginPageController {
                                        HttpServletRequest request,
                                        HttpServletResponse response) {
         final MediaType mt = ContentTypeHelper.mediaTypeByUri(extName);
-        log.info("default login-page media-type={}", mt);
+        log.debug("default login-page media-type={}", mt);
         return wingsAuthPageHandler.response(Null.Enm, mt, request, response);
     }
 
@@ -102,7 +102,7 @@ public class LoginPageController {
                                        HttpServletResponse response) {
         final Enum<?> em = wingsAuthTypeParser.parse(authType);
         final MediaType mt = ContentTypeHelper.mediaTypeByUri(extName, MediaType.APPLICATION_JSON);
-        log.info("login-page authType={}, authZone={}, mediaType={}, state={}, host={}", authType, authZone, mt, state, host);
+        log.debug("login-page authType={}, authZone={}, mediaType={}, state={}, host={}", authType, authZone, mt, state, host);
         return wingsAuthPageHandler.response(em, mt, request, response);
     }
 
@@ -121,7 +121,7 @@ public class LoginPageController {
                                         HttpServletResponse response) {
         final Enum<?> em = wingsAuthTypeParser.parse(authType);
         final MediaType mt = ContentTypeHelper.mediaTypeByUri(extName, MediaType.APPLICATION_JSON);
-        log.info("login-page authType={}, authZone={}, mediaType={}, state={}, host={}", authType, authZone, mt, state, host);
+        log.debug("login-page authType={}, authZone={}, mediaType={}, state={}, host={}", authType, authZone, mt, state, host);
         return wingsAuthPageHandler.response(em, mt, request, response);
     }
 

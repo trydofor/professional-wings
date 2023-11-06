@@ -44,7 +44,7 @@ public class LoginSuccessHandler extends NonceLoginSuccessHandler implements Ini
 
         if (state != null && !state.isEmpty()) {
             if (state.startsWith("/") || isSafeRedirect(state)) {
-                log.info("redirect to {}", state);
+                log.debug("redirect to {}", state);
                 res.sendRedirect(state);
             }
             else {
