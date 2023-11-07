@@ -62,7 +62,7 @@ public class LogMetric implements WarnMetric {
         }
 
         final long from = readLastForm();
-        final LogStat.Stat stat = LogStat.stat(rule.file, from, rule.getRuntimeKeys());
+        final LogStat.Stat stat = LogStat.stat(rule.file, from, rule.getPreview(), rule.getRuntimeKeys());
         log.debug("LogStat-{}, stat={}", key, stat);
         writeLastFrom(stat);
 
@@ -215,6 +215,14 @@ public class LogMetric implements WarnMetric {
          */
         private Set<String> keyword = Collections.emptySet();
         public static final String Key$keyword = Key + ".keyword";
+
+        /**
+         * preview lines after found keyword
+         *
+         * @see #Key$preview
+         */
+        private int preview = 10;
+        public static final String Key$preview = Key + ".preview";
 
         /**
          * log charset
