@@ -48,7 +48,7 @@
         <joda-convert.version>2.2.3</joda-convert.version> <!-- https://github.com/JodaOrg/joda-convert/releases -->
         <!-- wings project -->
         <mirana.version>2.6.4-SNAPSHOT</mirana.version> <!-- https://github.com/trydofor/pro.fessional.mirana -->
-        <meepo.version>1.4.1-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
+        <meepo.version>1.4.14-SNAPSHOT</meepo.version> <!-- https://github.com/trydofor/pro.fessional.meepo -->
         <shardingsphere.version>5.3.2</shardingsphere.version> <!-- https://github.com/apache/shardingsphere/releases -->
         <kaptcha.version>2.3.3</kaptcha.version> <!-- https://github.com/trydofor/kaptcha -->
         <fastjson2.version>2.0.41</fastjson2.version> <!-- https://github.com/alibaba/fastjson2/releases -->
