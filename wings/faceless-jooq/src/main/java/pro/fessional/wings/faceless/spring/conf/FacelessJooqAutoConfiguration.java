@@ -3,6 +3,7 @@ package pro.fessional.wings.faceless.spring.conf;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
 import pro.fessional.wings.faceless.spring.bean.FacelessJooqConfiguration;
 import pro.fessional.wings.faceless.spring.prop.FacelessEnabledProp;
 
@@ -11,7 +12,7 @@ import pro.fessional.wings.faceless.spring.prop.FacelessEnabledProp;
  * @since 2019-06-01
  */
 
-@AutoConfiguration(before = FacelessAutoConfiguration.class)
+@AutoConfiguration(before = {FacelessAutoConfiguration.class, JooqAutoConfiguration.class})
 @ConditionalOnProperty(name = FacelessEnabledProp.Key$autoconf, havingValue = "true")
 @ImportAutoConfiguration(FacelessJooqConfiguration.class)
 public class FacelessJooqAutoConfiguration {

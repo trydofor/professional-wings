@@ -176,6 +176,8 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 12141 JooqShardingTest: print sprint sharding delete
 * 12142 JooqShardingTest: print sprint sharding batch insert
 * 12143 JooqShardingTest: print sprint sharding batch merge
+* 12144 MockTstNormalTableTest: mock ConnectionProvider by spring
+* 12145 MockTstNormalTableTest: mock DSLContext to Dao instance
 
 ## 13 Slardar
 
