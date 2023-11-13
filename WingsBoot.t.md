@@ -377,6 +377,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 14073 CodeExceptionHandlerTest: message exception in english
 * 14074 CodeExceptionHandlerTest: message exception in chinese
 * 14075 CodeExceptionHandlerTest: CompletableFuture exception in chinese
+* 14076 JvmLightIdProviderTest: 50 instances compete for 1 db by tx
 
 ## 15 Tiny
 
