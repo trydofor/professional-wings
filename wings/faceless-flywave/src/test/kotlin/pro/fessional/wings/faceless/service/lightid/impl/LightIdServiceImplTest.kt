@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import pro.fessional.mirana.id.LightIdBufferedProvider
+import pro.fessional.mirana.id.LightIdUtil
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.WingsRevision
 import pro.fessional.wings.faceless.helper.WingsTestHelper
@@ -113,10 +114,10 @@ open class LightIdServiceImplTest {
     fun test4RangeId() {
         val rg = 999_000_000_000L
         val id = lightIdService.getId(seqName, 0)
-        lightIdBufferedProvider.setSequenceHandler { seq -> seq + rg }
+        lightIdBufferedProvider.setGenerator { _, b, s -> LightIdUtil.toId(b, s + rg) }
         val id1 = lightIdService.getId(seqName, 0)
         assertEquals(rg + 1, id1 - id)
-        lightIdBufferedProvider.sequenceHandler = null
+        lightIdBufferedProvider.generator = LightIdBufferedProvider.GENERATOR
         val id2 = lightIdService.getId(seqName, 0)
         assertEquals(2, id2 - id)
     }

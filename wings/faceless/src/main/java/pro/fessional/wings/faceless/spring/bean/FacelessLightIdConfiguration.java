@@ -72,7 +72,7 @@ public class FacelessLightIdConfiguration {
     @ConditionalOnMissingBean(LightIdProvider.class)
     public LightIdProvider lightIdProvider(LightIdProvider.Loader lightIdLoader,
                                            LightIdProviderProp providerProp,
-                                           ObjectProvider<LightIdBufferedProvider.SequenceHandler> sequenceHandler) {
+                                           ObjectProvider<LightIdProvider.Generator> generator) {
         final String mono = providerProp.getMonotonic();
         log.info("Faceless spring-bean lightIdProvider in " + mono);
         if ("jvm".equalsIgnoreCase(mono)) {
@@ -82,7 +82,8 @@ public class FacelessLightIdConfiguration {
             provider.setErrAlive(providerProp.getErrAlive());
             provider.setMaxError(providerProp.getMaxError());
             provider.setMaxCount(providerProp.getMaxCount());
-            sequenceHandler.ifAvailable(provider::setSequenceHandler);
+            // default LightIdUtil.toId
+            generator.ifAvailable(provider::setGenerator);
             return provider;
         }
         else if ("db".equalsIgnoreCase(mono)) {
