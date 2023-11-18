@@ -1,18 +1,18 @@
 package pro.fessional.wings.faceless.spring.conf;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import pro.fessional.wings.faceless.spring.bean.FacelessShardingsphereConfiguration;
-import pro.fessional.wings.faceless.spring.prop.FacelessEnabledProp;
+import org.springframework.context.annotation.Import;
+import pro.fessional.wings.faceless.spring.bean.FacelessShardingSphereConfiguration;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
+
 
 /**
  * @author trydofor
  * @since 2019-06-01
  */
 
-@AutoConfiguration(before = FacelessAutoConfiguration.class)
-@ConditionalOnProperty(name = FacelessEnabledProp.Key$autoconf, havingValue = "true")
-@ImportAutoConfiguration(FacelessShardingsphereConfiguration.class)
+@AutoConfiguration
+@ConditionalWingsEnabled
+@Import(FacelessShardingSphereConfiguration.class)
 public class FacelessShardAutoConfiguration {
 }

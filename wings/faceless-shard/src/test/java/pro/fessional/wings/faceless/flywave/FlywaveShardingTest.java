@@ -6,6 +6,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.wings.faceless.database.DataSourceContext;
@@ -24,6 +25,7 @@ import static pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice
  * @since 2021-01-18
  */
 @SpringBootTest
+@DependsOnDatabaseInitialization
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class FlywaveShardingTest {
 

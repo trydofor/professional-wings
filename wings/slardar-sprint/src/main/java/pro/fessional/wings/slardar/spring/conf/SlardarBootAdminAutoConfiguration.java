@@ -2,19 +2,22 @@ package pro.fessional.wings.slardar.spring.conf;
 
 import de.codecentric.boot.admin.client.config.SpringBootAdminClientAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import pro.fessional.wings.slardar.spring.bean.SlardarBootAdminConfiguration;
-import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
+import org.springframework.context.annotation.Import;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
+import pro.fessional.wings.slardar.spring.bean.SlardarBootAdminClientConfiguration;
+import pro.fessional.wings.slardar.spring.bean.SlardarBootAdminServerConfiguration;
 
 /**
  * @author trydofor
  * @since 2019-07-11
  */
-@AutoConfiguration(before = {SlardarSprintAutoConfiguration.class, SpringBootAdminClientAutoConfiguration.class})
+@AutoConfiguration(before = SpringBootAdminClientAutoConfiguration.class)
 @ConditionalOnClass(SpringBootAdminClientAutoConfiguration.class)
-@ConditionalOnProperty(name = SlardarEnabledProp.Key$autoconf, havingValue = "true")
-@ImportAutoConfiguration(SlardarBootAdminConfiguration.class)
+@ConditionalWingsEnabled
+@Import({
+        SlardarBootAdminClientConfiguration.class,
+        SlardarBootAdminServerConfiguration.class
+})
 public class SlardarBootAdminAutoConfiguration {
 }

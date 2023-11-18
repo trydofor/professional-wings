@@ -1,10 +1,8 @@
 package pro.fessional.wings.slardar.spring.bean;
 
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +16,7 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.wings.silencer.runner.CommandLineRunnerOrdered;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.PasssaltEncoder;
 import pro.fessional.wings.slardar.security.pass.DefaultPasssaltEncoder;
@@ -32,14 +31,12 @@ import java.util.Map;
  * @since 2020-08-10
  */
 @Configuration(proxyBeanMethods = false)
+@ConditionalWingsEnabled
 @ConditionalOnClass(SecurityConfigurer.class)
 @EnableConfigurationProperties(SlardarPasscoderProp.class)
-@RequiredArgsConstructor
 public class SlardarSecurityConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarSecurityConfiguration.class);
-
-    private final SlardarPasscoderProp slardarPasscoderProp;
 
     /**
      * <pre>
@@ -58,27 +55,22 @@ public class SlardarSecurityConfiguration {
      * @return PasswordEncoder
      */
     @Bean
-    @ConditionalOnMissingBean(PasswordEncoder.class)
-    public PasswordEncoder passwordEncoder() {
-        final String encoder = slardarPasscoderProp.getPassEncoder();
-        final String decoder = slardarPasscoderProp.getPassDecoder();
+    @ConditionalWingsEnabled
+    public PasswordEncoder passwordEncoder(SlardarPasscoderProp prop) {
+        final String encoder = prop.getPassEncoder();
+        final String decoder = prop.getPassDecoder();
         log.info("SlardarSprint spring-bean passwordEncoder, default encoder=" + encoder + ", decoder is " + decoder);
-        Map<String, PasswordEncoder> encoders = PasswordEncoders.initEncoders(slardarPasscoderProp.getTimeDeviationMs());
+        Map<String, PasswordEncoder> encoders = PasswordEncoders.initEncoders(prop.getTimeDeviationMs());
         DelegatingPasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(encoder, encoders);
         passwordEncoder.setDefaultPasswordEncoderForMatches(encoders.get(decoder));
         return passwordEncoder;
     }
 
-    @Bean
-    public HttpSessionEventPublisher httpSessionEventPublisher() {
-        log.info("SlardarSprint spring-bean httpSessionEventPublisher");
-        return new HttpSessionEventPublisher();
-    }
 
     @Bean
-    @ConditionalOnMissingBean(PasssaltEncoder.class)
-    public PasssaltEncoder passsaltEncoder() {
-        final String encoder = slardarPasscoderProp.getSaltEncoder();
+    @ConditionalWingsEnabled
+    public PasssaltEncoder passsaltEncoder(SlardarPasscoderProp prop) {
+        final String encoder = prop.getSaltEncoder();
         log.info("SlardarSprint spring-bean passsaltEncoder, default encoder=" + encoder);
 
         MdHelp md;
@@ -98,12 +90,21 @@ public class SlardarSecurityConfiguration {
     }
 
     @Bean
+    @ConditionalWingsEnabled
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        log.info("SlardarSprint spring-bean httpSessionEventPublisher");
+        return new HttpSessionEventPublisher();
+    }
+
+    @Bean
+    @ConditionalWingsEnabled
     public WingsSecBeanInitConfigurer wingsSecBeanInitConfigurer(ApplicationContext context) {
         log.info("SlardarSprint spring-bean wingsSecBeanInitConfigurer");
         return new WingsSecBeanInitConfigurer(context);
     }
 
     @Bean
+    @ConditionalWingsEnabled
     public TerminalContext.Listener LocaleContextHolderTerminalContextListener() {
         log.info("SlardarSprint spring-bean LocaleContextHolder");
         return (del, ctx) -> {
@@ -117,8 +118,9 @@ public class SlardarSecurityConfiguration {
      * Sync Locale and TimeZone with TerminalContext
      */
     @Bean
-    public CommandLineRunnerOrdered runnerTerminalContextListener(Map<String, TerminalContext.Listener> listeners) {
-        log.info("SlardarSprint spring-runs runnerTerminalContextListener");
+    @ConditionalWingsEnabled
+    public CommandLineRunnerOrdered terminalContextListenerRunner(Map<String, TerminalContext.Listener> listeners) {
+        log.info("SlardarSprint spring-runs terminalContextListenerRunner");
         return new CommandLineRunnerOrdered(WingsOrdered.Lv5Supervisor, ignored -> {
             for (Map.Entry<String, TerminalContext.Listener> en : listeners.entrySet()) {
                 final String name = en.getKey();

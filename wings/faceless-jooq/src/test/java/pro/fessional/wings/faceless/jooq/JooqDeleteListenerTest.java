@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
@@ -35,9 +36,10 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
  * @since 2019-09-27
  */
 
+@SpringBootTest(properties = {"spring.wings.faceless.jooq.enabled.journal-delete=true"})
+@DependsOnDatabaseInitialization
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @ActiveProfiles("init")
-@SpringBootTest(properties = {"spring.wings.faceless.jooq.enabled.journal-delete=true"})
 @Tag("init")
 @Slf4j
 public class JooqDeleteListenerTest {

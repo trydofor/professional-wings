@@ -64,7 +64,7 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
 
     private static final DeferredLog log = DeferredLogFactory.getLog(WingsAutoConfigProcessor.class);
 
-    public static final String WINGS_AUTO = "wings-auto-config.cnf";
+    public static final String WINGS_AUTO = "wings-auto-config*.cnf";
     public static final int NAKED_SEQ = 70;
     public static final String WINGS_I18N = "wings-i18n/**/*.properties";
 
@@ -450,7 +450,36 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     }
 
     private AutoConf processWingsAuto(PathMatchingResourcePatternResolver resolver) {
-        final Resource resource = resolver.getResource(WINGS_AUTO);
+        Resource resource = null;
+        try {
+            final Resource[] rss = resolver.getResources("classpath*:/" + WINGS_AUTO);
+            int len = rss.length;
+            if (len == 1) {
+                resource = rss[0];
+            }
+            else if (len > 1) {
+                Arrays.sort(rss, (o1, o2) -> {
+                    // 1. readable > unreadable
+                    if (!o1.isReadable()) return -1;
+                    if (!o2.isReadable()) return 1;
+                    String f1 = o1.getFilename();
+                    if (f1 == null) return -1;
+                    String f2 = o2.getFilename();
+                    if (f2 == null) return 1;
+                    return f1.compareTo(f2);
+                });
+                // take the last
+                resource = rss[len - 1];
+            }
+        }
+        catch (IOException e) {
+            log.warn("failed to get " + WINGS_AUTO + " from classpath*:/", e);
+        }
+
+        if (resource == null) {
+            resource = resolver.getResource(WINGS_AUTO);
+        }
+
         AutoConf autoConf = new AutoConf();
         if (resource.isReadable()) {
             try {

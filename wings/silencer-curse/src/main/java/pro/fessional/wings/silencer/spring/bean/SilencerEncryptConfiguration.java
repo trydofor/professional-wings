@@ -1,9 +1,7 @@
 package pro.fessional.wings.silencer.spring.bean;
 
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +10,7 @@ import pro.fessional.mirana.code.Crc8Long;
 import pro.fessional.mirana.code.LeapCode;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.silencer.encrypt.SecretProvider;
-import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.silencer.spring.prop.SilencerEncryptProp;
 
 import java.util.Arrays;
@@ -23,17 +21,15 @@ import java.util.Map;
  * @since 2019-06-26
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(name = SilencerEnabledProp.Key$encrypt, havingValue = "true")
+@ConditionalWingsEnabled
 @EnableConfigurationProperties(SilencerEncryptProp.class)
-@RequiredArgsConstructor
 public class SilencerEncryptConfiguration {
 
     private static final Log log = LogFactory.getLog(SilencerEncryptConfiguration.class);
 
-    private final SilencerEncryptProp prop;
-
     @Bean
-    public Crc8Long crc8Long() {
+    @ConditionalWingsEnabled
+    public Crc8Long crc8Long(SilencerEncryptProp prop) {
         int[] seed = prop.getCrc8Long();
         if (seed == null || seed.length == 0) {
             log.warn("SilencerCurse spring-bean crc8Long, should NOT use default");
@@ -46,7 +42,8 @@ public class SilencerEncryptConfiguration {
     }
 
     @Bean
-    public LeapCode leapCode() {
+    @ConditionalWingsEnabled
+    public LeapCode leapCode(SilencerEncryptProp prop) {
         String seed = prop.getLeapCode();
         if (seed == null) {
             log.warn("SilencerCurse spring-bean leapCode, should NOT use default");
@@ -59,7 +56,8 @@ public class SilencerEncryptConfiguration {
     }
 
     @Bean
-    public Aes256 aes256() {
+    @ConditionalWingsEnabled
+    public Aes256 aes256(SilencerEncryptProp prop) {
         String key = prop.getAesKey().get(SecretProvider.System);
         if (key == null || key.isEmpty()) {
             log.warn("SilencerCurse spring-bean aes256, should NOT use random");
@@ -72,7 +70,8 @@ public class SilencerEncryptConfiguration {
     }
 
     @Bean
-    public SecretProvider secretProvider() {
+    @ConditionalWingsEnabled
+    public SecretProvider secretProvider(SilencerEncryptProp prop) {
         log.info("SilencerCurse spring-bean secretProvider");
         return new SecretProvider() {{
             for (Map.Entry<String, String> en : prop.getAesKey().entrySet()) {

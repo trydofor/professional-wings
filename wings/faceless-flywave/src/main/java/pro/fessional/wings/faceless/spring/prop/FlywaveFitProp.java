@@ -27,6 +27,14 @@ public class FlywaveFitProp {
     public static final String Key$autoInit = Key + ".auto-init";
 
     /**
+     * whether flywave performs version checking for database.
+     *
+     * @see #Key$checker
+     */
+    private boolean checker = true;
+    public static final String Key$checker = Key + ".checker";
+
+    /**
      * Specific dependencies
      *
      * @see #Key$fit

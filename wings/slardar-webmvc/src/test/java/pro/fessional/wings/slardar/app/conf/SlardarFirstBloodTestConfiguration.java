@@ -5,12 +5,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import pro.fessional.mirana.code.RandCode;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.concur.impl.FirstBloodImageHandler;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
@@ -22,12 +22,13 @@ import pro.fessional.wings.slardar.spring.prop.SlardarFirstBloodProp;
  * @since 2019-12-03
  */
 @Configuration(proxyBeanMethods = false)
+@ConditionalWingsEnabled(false)
 public class SlardarFirstBloodTestConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarFirstBloodTestConfiguration.class);
 
     @Bean
-    @ConditionalOnProperty(value = "spring.wings.slardar.enabled.first-blood-image-test", havingValue = "true")
+    @ConditionalWingsEnabled
     public FirstBloodImageHandler firstBloodImageHandler(@Autowired(required = false) WingsRemoteResolver remoteResolver,
                                                          SlardarFirstBloodProp firstBloodProp) {
         log.info("Wings conf firstBloodImageHandler for test");

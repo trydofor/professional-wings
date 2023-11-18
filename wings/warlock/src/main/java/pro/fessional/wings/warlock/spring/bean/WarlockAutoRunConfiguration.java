@@ -3,7 +3,6 @@ package pro.fessional.wings.warlock.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +14,7 @@ import pro.fessional.wings.faceless.enums.TimezoneEnumUtil;
 import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
 import pro.fessional.wings.silencer.runner.CommandLineRunnerOrdered;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.warlock.spring.prop.WarlockCheckProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockI18nProp;
@@ -26,14 +26,16 @@ import javax.sql.DataSource;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
+@ConditionalWingsEnabled
 @EnableConfigurationProperties({WarlockEnabledProp.class, WarlockCheckProp.class, WarlockI18nProp.class})
 public class WarlockAutoRunConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockAutoRunConfiguration.class);
 
     @Bean
-    public ApplicationStartedEventRunner runnerRegisterEnumUtil(ObjectProvider<WarlockI18nProp> provider) {
-        log.info("Warlock spring-runs runnerRegisterEnumUtil");
+    @ConditionalWingsEnabled
+    public ApplicationStartedEventRunner registerEnumUtilRunner(ObjectProvider<WarlockI18nProp> provider) {
+        log.info("Warlock spring-runs registerEnumUtilRunner");
         return new ApplicationStartedEventRunner(WingsOrdered.Lv4Application, ignored -> {
             final WarlockI18nProp warlockI18nProp = provider.getIfAvailable();
             if (warlockI18nProp == null) {
@@ -66,9 +68,9 @@ public class WarlockAutoRunConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$checkDatabase, havingValue = "true")
-    public CommandLineRunnerOrdered runnerDatabaseChecker(DataSource dataSource, WarlockCheckProp prop) {
-        log.info("Warlock spring-runs runnerDatabaseChecker");
+    @ConditionalWingsEnabled
+    public CommandLineRunnerOrdered databaseCheckerRunner(DataSource dataSource, WarlockCheckProp prop) {
+        log.info("Warlock spring-runs databaseCheckerRunner");
         return new CommandLineRunnerOrdered(WingsOrdered.Lv2Resource, ignored -> {
             DatabaseChecker.version(dataSource);
             DatabaseChecker.timezone(dataSource, prop.getTzOffset(), prop.isTzFail());

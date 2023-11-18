@@ -3,14 +3,12 @@ package pro.fessional.wings.slardar.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.constants.SlardarServletConst;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.context.TerminalInterceptor;
@@ -18,7 +16,6 @@ import pro.fessional.wings.slardar.context.TerminalSecurityAttribute;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
-import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarTerminalProp;
 
 import java.util.ArrayList;
@@ -33,14 +30,14 @@ import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgen
  * @since 2019-06-29
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(name = SlardarEnabledProp.Key$terminal, havingValue = "true")
+@ConditionalWingsEnabled
 @EnableConfigurationProperties(SlardarTerminalProp.class)
 public class SlardarTerminalConfiguration {
 
     private final Log log = LogFactory.getLog(SlardarTerminalConfiguration.class);
 
     @Bean
-    @ConditionalOnBean({WingsRemoteResolver.class})
+    @ConditionalWingsEnabled
     public TerminalInterceptor.TerminalBuilder remoteTerminalBuilder(WingsRemoteResolver resolver) {
         log.info("SlardarWebmvc spring-bean remoteTerminalBuilder");
         return (builder, request) -> builder
@@ -49,7 +46,7 @@ public class SlardarTerminalConfiguration {
     }
 
     @Bean
-    @ConditionalOnBean({WingsRemoteResolver.class})
+    @ConditionalWingsEnabled
     public TerminalInterceptor.TerminalBuilder securityTerminalBuilder(WingsLocaleResolver resolver) {
         log.info("SlardarWebmvc spring-bean securityTerminalBuilder");
         return (builder, request) -> {
@@ -78,7 +75,7 @@ public class SlardarTerminalConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(TerminalInterceptor.class)
+    @ConditionalWingsEnabled
     public TerminalInterceptor terminalInterceptor(SlardarTerminalProp prop, ObjectProvider<TerminalInterceptor.TerminalBuilder> builders, ObjectProvider<TerminalInterceptor.TerminalLogger> loggers) {
         log.info("SlardarWebmvc spring-bean terminalInterceptor");
 

@@ -15,6 +15,7 @@ import pro.fessional.mirana.page.PageQuery;
 import pro.fessional.mirana.page.PageResult;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqUtil;
 import pro.fessional.wings.faceless.database.jooq.helper.PageJooqHelper;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.jackson.JacksonHelper;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.WinMailSenderTable;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.daos.WinMailSenderDao;
@@ -30,6 +31,7 @@ import java.util.Map;
  * @since 2023-01-13
  */
 @Service
+@ConditionalWingsEnabled
 @Slf4j
 public class TinyMailListServiceImpl implements TinyMailListService, InitializingBean {
 

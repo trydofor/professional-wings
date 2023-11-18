@@ -15,6 +15,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistration
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
 import pro.fessional.wings.slardar.webmvc.PageQueryArgumentResolver;
 
@@ -27,6 +28,7 @@ import static org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfi
  * @since 2019-12-03
  */
 @Configuration(proxyBeanMethods = false)
+@ConditionalWingsEnabled
 public class SlardarWebMvcConfiguration implements WebMvcConfigurer {
     private static final Log log = LogFactory.getLog(SlardarWebMvcConfiguration.class);
 
@@ -81,6 +83,7 @@ public class SlardarWebMvcConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    @ConditionalWingsEnabled
     public MvcRequestMatcher.Builder mvcRequestMatcherBuilder(HandlerMappingIntrospector introspector) {
         log.info("SlardarWebmvc conf mvcRequestMatcherBuilder");
         return new MvcRequestMatcher.Builder(introspector);

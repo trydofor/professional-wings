@@ -32,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-                "spring.wings.slardar.enabled.number=true",
                 "wings.slardar.number.decimal.separator=_",
                 "wings.slardar.number.floats.format=#.00",
                 "wings.slardar.number.decimal.format=#.00",

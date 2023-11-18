@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization
 import org.springframework.boot.test.context.SpringBootTest
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 
@@ -13,6 +14,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
  * @since 2019-06-10
  */
 @SpringBootTest(properties = ["debug = true"])
+@DependsOnDatabaseInitialization
 class SqlSegmentParserTest {
 
     @Autowired
@@ -39,7 +41,7 @@ class SqlSegmentParserTest {
             }
         }
 
-        val trg = sqlSegmentProcessor.parse(sqlStatementParser, SqlSegmentParserTest::class.java.getResourceAsStream("/sql/ddl-dml.sql").bufferedReader().readText())
+        val trg = sqlSegmentProcessor.parse(sqlStatementParser, SqlSegmentParserTest::class.java.getResourceAsStream("/sql/ddl-dml.sql")!!.bufferedReader().readText())
         println("1009===========")
         for (stm in trg) {
             printSegment(1009, stm)

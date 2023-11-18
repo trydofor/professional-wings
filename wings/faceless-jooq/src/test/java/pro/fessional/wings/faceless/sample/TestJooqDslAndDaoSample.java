@@ -14,6 +14,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.wings.faceless.app.database.autogen.tables.TstShardingTable;
 import pro.fessional.wings.faceless.app.database.autogen.tables.daos.TstShardingDao;
@@ -46,6 +47,7 @@ import static pro.fessional.wings.faceless.service.journal.JournalService.Journa
 
 
 @SpringBootTest
+@DependsOnDatabaseInitialization
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Slf4j
 public class TestJooqDslAndDaoSample {

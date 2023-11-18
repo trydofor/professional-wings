@@ -16,7 +16,7 @@ import pro.fessional.wings.silencer.scanner.noscan.TestBeanNoScan;
  * @since 2023-10-27
  */
 @SpringBootTest(properties = {
-        "spring.wings.silencer.enabled.scanner=true",
+        "spring.wings.enabled.silencer.scanner=true",
         "wings.silencer.scanner.bean=scanner/bean, /ti12/lgd /ti12/ar//",
 })
 class WingsSpringBeanScannerTest {

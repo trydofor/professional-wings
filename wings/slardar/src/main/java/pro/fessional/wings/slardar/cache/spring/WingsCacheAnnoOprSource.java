@@ -16,8 +16,8 @@ public class WingsCacheAnnoOprSource extends AnnotationCacheOperationSource {
 
     @Override
     protected Collection<CacheOperation> findCacheOperations(@NotNull Method method) {
-        final Collection<CacheOperation> oprs = super.findCacheOperations(method);
-        WingsCacheHelper.setOperation(method, oprs);
-        return oprs;
+        final Collection<CacheOperation> ops = super.findCacheOperations(method);
+        WingsCacheHelper.setOperation(method, ops);
+        return ops;
     }
 }

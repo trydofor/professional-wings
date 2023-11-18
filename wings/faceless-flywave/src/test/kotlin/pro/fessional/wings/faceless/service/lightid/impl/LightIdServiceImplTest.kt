@@ -7,6 +7,7 @@ import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import pro.fessional.mirana.id.LightIdBufferedProvider
@@ -29,6 +30,7 @@ import java.util.concurrent.atomic.AtomicLong
  */
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.MethodName::class)
+@DependsOnDatabaseInitialization
 open class LightIdServiceImplTest {
 
     @Autowired

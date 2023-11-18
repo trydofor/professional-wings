@@ -39,7 +39,7 @@ public class SpringOrderConfiguration implements InitializingBean {
     private static final Log log = LogFactory.getLog(SpringOrderConfiguration.class);
 
     public SpringOrderConfiguration(SilencerEnabledProp prop) {
-        log.info(">>>>> constructor can inject parameter AutoLog=" + prop.isAutoLog());
+        log.info(">>>>> constructor can inject parameter Autoconf=" + prop.isAutoconf());
     }
 
 
@@ -50,8 +50,8 @@ public class SpringOrderConfiguration implements InitializingBean {
 
     @Bean
     public CommandLineRunner testBean1(SilencerEnabledProp prop) {
-        log.info(">>>>> testBean1 can inject parameter AutoLog=" + prop.isAutoLog());
-        return ignored -> log.info(">>>>> CommandLineRunner1 " + prop.isAutoLog());
+        log.info(">>>>> testBean1 can inject parameter autoconf=" + prop.isAutoconf());
+        return ignored -> log.info(">>>>> CommandLineRunner1 " + prop.isAutoconf());
     }
 
     @PostConstruct
@@ -61,7 +61,7 @@ public class SpringOrderConfiguration implements InitializingBean {
 
     @Autowired
     public void testAutowired1(SilencerEnabledProp prop) {
-        log.info(">>>>> testAutowired1 can inject parameter AutoLog=" + prop.isAutoLog());
+        log.info(">>>>> testAutowired1 can inject parameter autoconf=" + prop.isAutoconf());
     }
 
     @PostConstruct
@@ -71,8 +71,8 @@ public class SpringOrderConfiguration implements InitializingBean {
 
     @Bean
     public CommandLineRunner testBean2(SilencerEnabledProp prop) {
-        log.info(">>>>> testBean2 AutoLog=" + prop.isAutoLog());
-        return ignored -> log.info(">>>>> CommandLineRunner2 AutoLog=" + prop.isAutoLog());
+        log.info(">>>>> testBean2 autoconf=" + prop.isAutoconf());
+        return ignored -> log.info(">>>>> CommandLineRunner2 autoconf=" + prop.isAutoconf());
     }
 
     @EventListener

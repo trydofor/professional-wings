@@ -2,14 +2,12 @@ package pro.fessional.wings.silencer.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.silencer.runner.ApplicationInspectRunner;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
-import pro.fessional.wings.silencer.spring.prop.SilencerInspectProp;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -17,15 +15,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * audit the file and cascading relationship of properties key/value
+ *
  * @author trydofor
  * @since 2022-10-27
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(name = SilencerInspectProp.Key$properties, havingValue = "true")
-@EnableConfigurationProperties(SilencerInspectProp.class)
+@ConditionalWingsEnabled(false)
 public class SilencerInspectConfiguration {
     private static final Log log = LogFactory.getLog(SilencerInspectConfiguration.class);
 
+    /**
+     * audit the file and cascading relationship of properties key/value
+     */
     @Bean
     public ApplicationInspectRunner inspectApplicationRunner() {
         log.info("SilencerCurse spring-bean inspectApplicationRunner");

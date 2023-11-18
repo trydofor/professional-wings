@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-                "spring.wings.slardar.enabled.domain-extend=true",
+                "spring.wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarDomainExtendConfiguration=true",
                 "spring.boot.admin.server.enabled=false"
         })
 public class DomainExtendTest {

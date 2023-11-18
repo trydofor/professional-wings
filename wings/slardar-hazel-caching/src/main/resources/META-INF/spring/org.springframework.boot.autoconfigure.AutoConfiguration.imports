@@ -1,2 +1,1 @@
-pro.fessional.wings.slardar.spring.conf.SlardarHazelCachingAutoConfiguration
-pro.fessional.wings.slardar.spring.conf.SlardarHazelDistIdAutoConfiguration
+pro.fessional.wings.slardar.spring.conf.SlardarHazelcastAutoConfiguration

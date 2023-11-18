@@ -1,21 +1,19 @@
 package pro.fessional.wings.slardar.spring.bean;
 
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import pro.fessional.wings.silencer.runner.ApplicationStartedEventRunner;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.autodto.AutoDtoHelper;
 import pro.fessional.wings.slardar.autodto.AutoZoneVisitor;
 import pro.fessional.wings.slardar.autodto.I18nStringVisitor;
 import pro.fessional.wings.slardar.context.LocaleZoneIdUtil;
-import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 /**
  * @author trydofor
@@ -24,13 +22,13 @@ import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
  * @since 2019-06-26
  */
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(SlardarEnabledProp.class)
-@RequiredArgsConstructor
+@ConditionalWingsEnabled
 public class SlardarI18nConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarI18nConfiguration.class);
 
     @Bean
+    @ConditionalWingsEnabled
     public LocalValidatorFactoryBean localValidatorFactoryBean(MessageSource messageSource) {
         log.info("Slardar spring-bean localValidatorFactoryBean");
         LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
@@ -39,8 +37,9 @@ public class SlardarI18nConfiguration {
     }
 
     @Bean
-    public ApplicationStartedEventRunner runnerAutoDtoHelper(MessageSource messageSource) {
-        log.info("Slardar spring-runs runnerAutoDtoHelper");
+    @ConditionalWingsEnabled
+    public ApplicationStartedEventRunner autoDtoHelperRunner(MessageSource messageSource) {
+        log.info("Slardar spring-runs autoDtoHelperRunner");
         return new ApplicationStartedEventRunner(WingsOrdered.Lv1Config, ignored -> new AutoDtoHelper() {{
             final I18nStringVisitor i18nStringVisitor = new I18nStringVisitor(messageSource, LocaleZoneIdUtil.LocaleNonnull);
 

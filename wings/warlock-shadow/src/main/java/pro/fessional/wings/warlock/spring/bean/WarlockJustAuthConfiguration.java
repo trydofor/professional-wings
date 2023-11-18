@@ -1,18 +1,16 @@
 package pro.fessional.wings.warlock.spring.bean;
 
 import com.xkcoding.http.config.HttpConfig;
-import lombok.RequiredArgsConstructor;
 import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.flow.FlowEnum;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.warlock.security.justauth.AuthConfigWrapper;
@@ -20,7 +18,6 @@ import pro.fessional.wings.warlock.security.justauth.AuthStateBuilder;
 import pro.fessional.wings.warlock.security.justauth.JustAuthRequestBuilder;
 import pro.fessional.wings.warlock.security.justauth.JustAuthRequestBuilder.SuccessHandler;
 import pro.fessional.wings.warlock.security.justauth.JustAuthStateCache;
-import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockJustAuthProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
@@ -37,24 +34,24 @@ import static java.net.Proxy.Type.DIRECT;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(name = WarlockEnabledProp.Key$justAuth, havingValue = "true")
+@ConditionalWingsEnabled
 @EnableConfigurationProperties(WarlockJustAuthProp.class)
-@RequiredArgsConstructor
 public class WarlockJustAuthConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockJustAuthConfiguration.class);
 
     @Bean
-    @ConditionalOnMissingBean(AuthStateCache.class)
+    @ConditionalWingsEnabled
     public AuthStateCache authStateCache(WarlockJustAuthProp justAuthProp) {
         log.info("WarlockShadow spring-bean authStateCache");
         return new JustAuthStateCache(justAuthProp.getCacheSize(), justAuthProp.getCacheLive());
     }
 
     @Bean
-    public SuccessHandler justAuthRequestBuilderMetaDataSuccessHandler(
+    @ConditionalWingsEnabled
+    public SuccessHandler justAuthRequestSuccessHandler(
             AuthStateBuilder authStateBuilder, WingsRemoteResolver remoteResolver) {
-        log.info("WarlockShadow spring-bean justAuthRequestBuilderMetaDataSuccessHandler");
+        log.info("WarlockShadow spring-bean justAuthRequestSuccessHandler");
         return (authType, request, authUser, detail) -> {
             final Map<String, String> meta = detail.getMetaData();
             meta.put(WingsAuthHelper.AuthType, authType.name());
@@ -66,7 +63,7 @@ public class WarlockJustAuthConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(JustAuthRequestBuilder.class)
+    @ConditionalWingsEnabled
     public JustAuthRequestBuilder justAuthRequestBuilder(WarlockJustAuthProp justAuthProp, WarlockSecurityProp securityProp) {
         log.info("WarlockShadow spring-bean justAuthRequestFactory");
         JustAuthRequestBuilder bean = new JustAuthRequestBuilder();

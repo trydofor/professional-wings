@@ -7,8 +7,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
@@ -18,9 +16,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import pro.fessional.mirana.best.DummyBlock;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.servlet.filter.WingsOverloadFilter;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
-import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarOverloadProp;
 
 import java.io.IOException;
@@ -35,7 +33,7 @@ import java.io.PrintWriter;
  */
 
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(name = SlardarEnabledProp.Key$overload, havingValue = "true")
+@ConditionalWingsEnabled(false)
 @ConditionalOnClass(Filter.class)
 @EnableConfigurationProperties(SlardarOverloadProp.class)
 @Deprecated
@@ -45,6 +43,7 @@ public class SlardarOverloadConfiguration {
 
     @Component
     @Order(WingsOrdered.Lv4Application)
+    @ConditionalWingsEnabled
     @RequiredArgsConstructor
     public class SafelyShutdown implements ApplicationListener<ContextClosedEvent> {
         private final WingsOverloadFilter overloadFilter;
@@ -68,7 +67,7 @@ public class SlardarOverloadConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(WingsOverloadFilter.FallBack.class)
+    @ConditionalWingsEnabled
     public WingsOverloadFilter.FallBack overloadFallback(WingsOverloadFilter.Config config) {
         log.info("SlardarWebmvc spring-bean overloadFallback");
         return (request, response) -> {
@@ -88,6 +87,7 @@ public class SlardarOverloadConfiguration {
     }
 
     @Bean
+    @ConditionalWingsEnabled
     public WingsOverloadFilter wingsOverloadFilter(WingsOverloadFilter.Config config,
                                                    WingsOverloadFilter.FallBack fallBack,
                                                    WingsRemoteResolver resolver) {

@@ -2,6 +2,7 @@ package pro.fessional.wings.silencer.spring.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import pro.fessional.wings.silencer.spring.boot.WingsEnabledCondition;
 
 /**
  * The default switch for toggling the Silencer feature, as follows:
@@ -15,7 +16,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(SilencerEnabledProp.Key)
 public class SilencerEnabledProp {
 
-    public static final String Key = "spring.wings.silencer.enabled";
+    public static final String Key = WingsEnabledCondition.Prefix + ".silencer";
 
     /**
      * Whether to automatically configure, default true
@@ -34,34 +35,10 @@ public class SilencerEnabledProp {
     public static final String Key$verbose = Key + ".verbose";
 
     /**
-     * Whether to automatically load /wings-i18n/ messages, default true
-     *
-     * @see #Key$message
-     */
-    private boolean message = true;
-    public static final String Key$message = Key + ".message";
-
-    /**
      * Whether to automatically load all classpaths ** /spring/bean/**, default true
      *
      * @see #Key$scanner
      */
     private boolean scanner = true;
     public static final String Key$scanner = Key + ".scanner";
-
-    /**
-     * Whether to automatically switch the console log level when a log file is available, default true
-     *
-     * @see #Key$autoLog
-     */
-    private boolean autoLog = true;
-    public static final String Key$autoLog = Key + ".autolog";
-
-    /**
-     * Whether to automatically config encrypt, default true
-     *
-     * @see #Key$encrypt
-     */
-    private boolean encrypt = true;
-    public static final String Key$encrypt = Key + ".encrypt";
 }

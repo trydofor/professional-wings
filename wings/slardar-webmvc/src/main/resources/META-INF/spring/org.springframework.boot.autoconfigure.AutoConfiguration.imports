@@ -1,1 +1,2 @@
-pro.fessional.wings.slardar.spring.conf.SlardarWebmvcAutoConfiguration
+pro.fessional.wings.slardar.spring.conf.SlardarWebMvcAutoConfiguration
+pro.fessional.wings.slardar.spring.conf.SlardarWebFunAutoConfiguration

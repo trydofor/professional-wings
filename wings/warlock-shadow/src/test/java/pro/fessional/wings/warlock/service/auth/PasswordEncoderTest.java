@@ -17,7 +17,7 @@ import pro.fessional.wings.slardar.security.PasswordHelper;
  * @since 2021-06-19
  */
 @Slf4j
-@SpringBootTest(properties = "spring.wings.slardar.enabled.mock-hazelcast=true")
+@SpringBootTest
 class PasswordEncoderTest {
 
     @Setter(onMethod_ = {@Autowired})

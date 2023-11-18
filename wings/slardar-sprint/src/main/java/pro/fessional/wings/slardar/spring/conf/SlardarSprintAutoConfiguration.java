@@ -1,19 +1,18 @@
 package pro.fessional.wings.slardar.spring.conf;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Import;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.spring.bean.SlardarActuatorConfiguration;
 import pro.fessional.wings.slardar.spring.bean.SlardarSecurityConfiguration;
-import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 /**
  * @author trydofor
  * @since 2019-07-11
  */
-@AutoConfiguration(before = SlardarHazelSessionAutoConfiguration.class)
-@ConditionalOnProperty(name = SlardarEnabledProp.Key$autoconf, havingValue = "true")
-@ImportAutoConfiguration({
+@AutoConfiguration
+@ConditionalWingsEnabled
+@Import({
         SlardarActuatorConfiguration.class,
         SlardarSecurityConfiguration.class,
 })

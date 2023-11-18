@@ -6,11 +6,13 @@ import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization
 import org.springframework.boot.test.context.SpringBootTest
 import javax.sql.DataSource
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.MethodName::class)
+@DependsOnDatabaseInitialization
 open class WingsShardingTest {
 
     @Autowired

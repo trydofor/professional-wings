@@ -31,6 +31,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import pro.fessional.mirana.page.PageQuery;
@@ -73,6 +74,7 @@ import static pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice
  */
 
 @SpringBootTest
+@DependsOnDatabaseInitialization
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Slf4j
 public class TestJooqMostSelectSample {

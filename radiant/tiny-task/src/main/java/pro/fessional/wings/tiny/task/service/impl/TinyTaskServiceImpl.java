@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.async.TaskSchedulerHelper;
 import pro.fessional.wings.tiny.task.service.TinyTaskConfService;
 import pro.fessional.wings.tiny.task.service.TinyTaskConfService.Conf;
@@ -22,6 +23,7 @@ import java.util.Set;
  * @since 2022-12-13
  */
 @Service
+@ConditionalWingsEnabled
 @Slf4j
 public class TinyTaskServiceImpl implements TinyTaskService {
 

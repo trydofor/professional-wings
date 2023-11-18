@@ -23,7 +23,7 @@ import static pro.fessional.wings.testing.database.ExecSql.execWingsSql;
  * @since 2020-06-10
  */
 
-@SpringBootTest(properties = {"spring.wings.faceless.enabled.enumi18n=true"})
+@SpringBootTest
 @TestMethodOrder(MethodName.class)
 public class ConstantEnumI18nTest {
 

@@ -24,6 +24,7 @@ import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.silencer.modulate.RunMode;
 import pro.fessional.wings.silencer.modulate.RuntimeMode;
 import pro.fessional.wings.silencer.notice.SmallNotice;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskDefineTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.daos.WinTaskDefineDao;
 import pro.fessional.wings.tiny.task.database.autogen.tables.pojos.WinTaskDefine;
@@ -53,6 +54,7 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.findMerg
  * @since 2022-12-14
  */
 @Service
+@ConditionalWingsEnabled
 @Slf4j
 public class TinyTaskConfServiceImpl implements TinyTaskConfService {
 

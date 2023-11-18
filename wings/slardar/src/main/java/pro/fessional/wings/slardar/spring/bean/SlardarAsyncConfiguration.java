@@ -4,8 +4,6 @@ import com.alibaba.ttl.threadpool.TtlExecutors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskSchedulingProperties;
@@ -19,10 +17,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.async.TaskSchedulerHelper;
 import pro.fessional.wings.slardar.async.TtlThreadPoolTaskScheduler;
 import pro.fessional.wings.slardar.spring.prop.SlardarAsyncProp;
-import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 import java.util.concurrent.Executor;
 
@@ -43,7 +41,7 @@ import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanP
  */
 @EnableAsync
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(name = SlardarEnabledProp.Key$async, havingValue = "true")
+@ConditionalWingsEnabled
 @EnableConfigurationProperties(SlardarAsyncProp.class)
 public class SlardarAsyncConfiguration {
     public static final String slardarHeavyScheduler = "slardarHeavyScheduler";
@@ -51,7 +49,7 @@ public class SlardarAsyncConfiguration {
     private static final Log log = LogFactory.getLog(SlardarAsyncConfiguration.class);
 
     @Bean(name = DEFAULT_TASK_EXECUTOR_BEAN_NAME)
-    @ConditionalOnMissingBean(name = DEFAULT_TASK_EXECUTOR_BEAN_NAME)
+    @ConditionalWingsEnabled
     public Executor taskExecutor(TaskExecutorBuilder builder) {
         final ThreadPoolTaskExecutor executor = builder.build();
         executor.initialize();
@@ -60,7 +58,7 @@ public class SlardarAsyncConfiguration {
     }
 
     @Bean(name = APPLICATION_TASK_EXECUTOR_BEAN_NAME)
-    @ConditionalOnMissingBean(name = APPLICATION_TASK_EXECUTOR_BEAN_NAME)
+    @ConditionalWingsEnabled
     public AsyncTaskExecutor applicationTaskExecutor(TaskExecutorBuilder builder) {
         final ThreadPoolTaskExecutor executor = builder.build();
         executor.initialize();
@@ -71,7 +69,7 @@ public class SlardarAsyncConfiguration {
 
     // Do NOT use @Primary to avoid overwriting the @Async thread pool.
     @Bean(name = DEFAULT_TASK_SCHEDULER_BEAN_NAME)
-    @ConditionalOnMissingBean(name = DEFAULT_TASK_SCHEDULER_BEAN_NAME)
+    @ConditionalWingsEnabled
     public ThreadPoolTaskScheduler taskScheduler(TaskSchedulerBuilder builder) {
         final TtlThreadPoolTaskScheduler scheduler = new TtlThreadPoolTaskScheduler();
         final TtlThreadPoolTaskScheduler bean = builder.configure(scheduler);
@@ -81,7 +79,7 @@ public class SlardarAsyncConfiguration {
 
 
     @Bean(name = slardarHeavyScheduler)
-    @ConditionalOnMissingBean(name = slardarHeavyScheduler)
+    @ConditionalWingsEnabled
     public ThreadPoolTaskScheduler slardarHeavyScheduler(SlardarAsyncProp prop) {
         final TtlThreadPoolTaskScheduler scheduler = new TtlThreadPoolTaskScheduler();
         TaskSchedulerBuilder builder = new TaskSchedulerBuilder();
@@ -96,7 +94,7 @@ public class SlardarAsyncConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalWingsEnabled
     public TaskSchedulerHelper taskSchedulerHelper(
             @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME) ThreadPoolTaskScheduler light,
             @Qualifier(slardarHeavyScheduler) ThreadPoolTaskScheduler heavy) {

@@ -27,6 +27,7 @@ import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.silencer.modulate.RunMode;
 import pro.fessional.wings.silencer.modulate.RuntimeMode;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.async.TaskSchedulerHelper;
 import pro.fessional.wings.slardar.jackson.JacksonHelper;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskDefineTable;
@@ -38,7 +39,7 @@ import pro.fessional.wings.tiny.task.schedule.exec.ExecHolder;
 import pro.fessional.wings.tiny.task.schedule.exec.NoticeExec;
 import pro.fessional.wings.tiny.task.schedule.exec.TaskerExec;
 import pro.fessional.wings.tiny.task.service.TinyTaskExecService;
-import pro.fessional.wings.tiny.task.spring.prop.TinyTaskEnabledProp;
+import pro.fessional.wings.tiny.task.spring.prop.TinyTaskExecProp;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -66,6 +67,7 @@ import static pro.fessional.wings.tiny.task.schedule.exec.NoticeExec.WhenFeed;
  * @since 2022-12-21
  */
 @Service
+@ConditionalWingsEnabled
 @Slf4j
 public class TinyTaskExecServiceImpl implements TinyTaskExecService {
 
@@ -88,8 +90,8 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
     @Setter(onMethod_ = {@Autowired})
     protected JournalService journalService;
 
-    @Setter(onMethod_ = {@Value("${" + TinyTaskEnabledProp.Key$dryrun + "}")})
-    protected boolean dryrun = false;
+    @Setter(onMethod_ = {@Autowired})
+    protected TinyTaskExecProp execProp;
 
     @Override
     public boolean launch(long id) {
@@ -126,7 +128,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                 log.debug("task force exec, id={}", id);
 
                 final Object result;
-                if (dryrun) {
+                if (execProp.isDryrun()) {
                     final int slp = RandomUtils.nextInt(10, 2000);
                     result = "dryrun and sleep " + slp;
                     Sleep.ignoreInterrupt(slp);
@@ -254,7 +256,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
                     log.info("task exec, id={}", id);
 
                     final Object result;
-                    if (dryrun) {
+                    if (execProp.isDryrun()) {
                         final int slp = RandomUtils.nextInt(10, 2000);
                         result = "dryrun and sleep " + slp;
                         Sleep.ignoreInterrupt(slp);
@@ -361,7 +363,7 @@ public class TinyTaskExecServiceImpl implements TinyTaskExecService {
         for (String w : wh) {
             if (whs.contains(w)) {
                 if (w.equals(WhenFeed)) {
-                    if (!dryrun && StringUtils.isNotEmpty(msg)) {
+                    if (!execProp.isDryrun() && StringUtils.isNotEmpty(msg)) {
                         ntc.postNotice(cnf, tn + " " + w.toUpperCase(), zdt + "\n\n" + msg);
                         return;
                     }

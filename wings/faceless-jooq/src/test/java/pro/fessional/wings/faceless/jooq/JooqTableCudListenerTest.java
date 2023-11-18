@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import pro.fessional.wings.faceless.convention.EmptyValue;
@@ -46,12 +47,13 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
  */
 
 @SuppressWarnings("CanBeFinal")
-@TestMethodOrder(MethodOrderer.MethodName.class)
-@ActiveProfiles("init")
 @SpringBootTest(properties = {
         "wings.faceless.jooq.cud.table[tst_sharding]=id,login_info",
         "spring.wings.faceless.jooq.enabled.listen-table-cud=true"
 })
+@DependsOnDatabaseInitialization
+@TestMethodOrder(MethodOrderer.MethodName.class)
+@ActiveProfiles("init")
 @Tag("init")
 @Slf4j
 public class JooqTableCudListenerTest {

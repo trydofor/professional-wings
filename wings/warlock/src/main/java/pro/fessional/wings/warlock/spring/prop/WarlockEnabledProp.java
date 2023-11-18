@@ -88,15 +88,6 @@ public class WarlockEnabledProp {
     private boolean securityBean = true;
     public static final String Key$securityBean = Key + ".security-bean";
 
-
-    /**
-     * whether to inject wings global lock.
-     *
-     * @see #Key$globalLock
-     */
-    private boolean globalLock = true;
-    public static final String Key$globalLock = Key + ".global-lock";
-
     /**
      * whether to inject jooq dao.
      *

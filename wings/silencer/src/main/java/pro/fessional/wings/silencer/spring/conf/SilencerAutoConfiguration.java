@@ -1,12 +1,11 @@
 package pro.fessional.wings.silencer.spring.conf;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.core.Ordered;
-import pro.fessional.wings.silencer.spring.bean.SilencerMessageConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Import;
+import pro.fessional.wings.silencer.spring.bean.SilencerConfiguration;
 import pro.fessional.wings.silencer.spring.bean.SilencerRunnerConfiguration;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 
 /**
@@ -14,10 +13,10 @@ import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
  * @since 2019-07-11
  */
 @AutoConfiguration
-@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-@ConditionalOnProperty(name = SilencerEnabledProp.Key$autoconf, havingValue = "true")
-@ImportAutoConfiguration({
-        SilencerMessageConfiguration.class,
+@ConditionalWingsEnabled
+@EnableConfigurationProperties(SilencerEnabledProp.class)
+@Import({
+        SilencerConfiguration.class,
         SilencerRunnerConfiguration.class,
 })
 public class SilencerAutoConfiguration {

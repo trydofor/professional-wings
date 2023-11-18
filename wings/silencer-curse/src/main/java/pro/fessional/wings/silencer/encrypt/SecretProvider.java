@@ -2,6 +2,7 @@ package pro.fessional.wings.silencer.encrypt;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.code.RandCode;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -83,6 +84,14 @@ public class SecretProvider {
         else {
             return Secrets.get(name);
         }
+    }
+
+    /**
+     * used for `@Bean` method
+     */
+    @Nullable
+    public String tryGet(String name) {
+        return get(name, false);
     }
 
     //

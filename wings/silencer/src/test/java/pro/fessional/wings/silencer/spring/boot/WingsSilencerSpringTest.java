@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 2019-06-25
  */
 
-@SpringBootTest(properties = {"spring.wings.silencer.enabled.autoconf=false"})
+@SpringBootTest(properties = {"spring.wings.enabled.silencer.autoconf=false"})
 @ActiveProfiles("dev")
 public class WingsSilencerSpringTest {
 

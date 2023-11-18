@@ -25,8 +25,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-                "spring.wings.slardar.enabled.first-blood-image=false",
-                "spring.wings.slardar.enabled.first-blood-image-test=true",
+                "spring.wings.enabled.pro.fessional.wings.slardar.app.conf.SlardarFirstBloodTestConfiguration=true",
+                "spring.wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarFirstBloodConfiguration=true",
+                "spring.wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarFirstBloodConfiguration.firstBloodImageHandler=false",
                 "wings.slardar.first-blood.http-status=202",
                 "wings.slardar.first-blood.content-type=text/plain",
                 "wings.slardar.first-blood.response-body=first-blood",
@@ -72,8 +73,8 @@ class FirstBloodTest {
             assertNotNull(ck);
             assertTrue(ct.contains("text/plain"));
             assertEquals("first-blood", OkHttpClientHelper.extractString(r2, false));
-            assertTrue(ck.contains(tk));
             log.warn("get client-ticket = " + tk);
+            assertTrue(ck.contains(tk));
         }
 
         final String code;

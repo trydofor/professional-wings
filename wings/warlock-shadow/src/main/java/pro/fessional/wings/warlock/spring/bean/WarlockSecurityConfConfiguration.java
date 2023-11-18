@@ -25,6 +25,7 @@ import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.util.StringUtils;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
 import pro.fessional.wings.slardar.security.WingsAuthDetailsSource;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
@@ -44,7 +45,7 @@ import java.util.TreeMap;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(name = WarlockEnabledProp.Key$securityAuto, havingValue = "true")
+@ConditionalWingsEnabled
 @RequiredArgsConstructor
 public class WarlockSecurityConfConfiguration {
 
@@ -54,6 +55,7 @@ public class WarlockSecurityConfConfiguration {
     private final WarlockSecurityProp securityProp;
 
     @Bean
+    @ConditionalWingsEnabled
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityWebAutos, havingValue = "true")
     public WebSecurityCustomizer warlockWebCustomizer(ObjectProvider<HttpFirewall> httpFirewall, ObjectProvider<MvcRequestMatcher.Builder> mvcMatcher) {
         log.info("WarlockShadow spring-bean warlockWebCustomizer");
@@ -82,6 +84,7 @@ public class WarlockSecurityConfConfiguration {
     }
 
     @Bean
+    @ConditionalWingsEnabled
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpBind, havingValue = "true")
     @Order(WingsOrdered.Lv4Application + 200)
     public HttpSecurityCustomizer warlockSecurityBindHttpConfigure(
@@ -151,6 +154,7 @@ public class WarlockSecurityConfConfiguration {
     }
 
     @Bean
+    @ConditionalWingsEnabled
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpAuth, havingValue = "true")
     @Order(WingsOrdered.Lv4Application + 300)
     public HttpSecurityCustomizer warlockSecurityAuthHttpConfigure(ObjectProvider<MvcRequestMatcher.Builder> mvcMatcher) {
@@ -197,6 +201,7 @@ public class WarlockSecurityConfConfiguration {
     }
 
     @Bean
+    @ConditionalWingsEnabled
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpBase, havingValue = "true")
     @Order(WingsOrdered.Lv4Application + 100)
     public HttpSecurityCustomizer warlockSecurityHttpBaseConfigure() {
@@ -205,6 +210,7 @@ public class WarlockSecurityConfConfiguration {
     }
 
     @Bean
+    @ConditionalWingsEnabled
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpAuto, havingValue = "true")
     @Order(WingsOrdered.Lv4Application + 400)
     public HttpSecurityCustomizer warlockSecurityAutoHttpConfigure(
@@ -256,6 +262,7 @@ public class WarlockSecurityConfConfiguration {
      * only non-API resources in the WebSecurityConfigurer above.
      */
     @Bean
+    @ConditionalWingsEnabled
     @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpChain, havingValue = "true")
     @Order(WingsOrdered.Lv4Application + 900)
     public SecurityFilterChain securityFilterChain(HttpSecurity http, Map<String, HttpSecurityCustomizer> configures) throws Exception {

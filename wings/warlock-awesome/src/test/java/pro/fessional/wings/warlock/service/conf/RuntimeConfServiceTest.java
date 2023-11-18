@@ -32,7 +32,8 @@ import java.util.Set;
  */
 @SpringBootTest(properties = {
         "wings.faceless.jooq.cud.table[win_conf_runtime]=key,current,handler",
-        "logging.level.root=debug"})
+        "logging.level.root=debug"
+})
 class RuntimeConfServiceTest {
 
     @Setter(onMethod_ = {@Autowired})

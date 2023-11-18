@@ -1,9 +1,8 @@
 package pro.fessional.wings.slardar.spring.conf;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import pro.fessional.wings.slardar.spring.bean.SlardarCacheConfiguration;
+import org.springframework.context.annotation.Import;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.spring.bean.SlardarDateTimeConfiguration;
 import pro.fessional.wings.slardar.spring.bean.SlardarDingNoticeConfiguration;
 import pro.fessional.wings.slardar.spring.bean.SlardarDoubleKillConfiguration;
@@ -13,16 +12,14 @@ import pro.fessional.wings.slardar.spring.bean.SlardarJacksonConfiguration;
 import pro.fessional.wings.slardar.spring.bean.SlardarMonitorConfiguration;
 import pro.fessional.wings.slardar.spring.bean.SlardarOkhttpConfiguration;
 import pro.fessional.wings.slardar.spring.bean.SlardarTweakConfiguration;
-import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 /**
  * @author trydofor
  * @since 2019-07-11
  */
 @AutoConfiguration
-@ConditionalOnProperty(name = SlardarEnabledProp.Key$autoconf, havingValue = "true")
-@ImportAutoConfiguration({
-        SlardarCacheConfiguration.class,
+@ConditionalWingsEnabled
+@Import({
         SlardarDateTimeConfiguration.class,
         SlardarDingNoticeConfiguration.class,
         SlardarDoubleKillConfiguration.class,

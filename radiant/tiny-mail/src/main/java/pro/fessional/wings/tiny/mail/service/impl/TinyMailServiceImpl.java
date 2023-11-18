@@ -30,6 +30,7 @@ import pro.fessional.wings.faceless.service.journal.JournalService;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.silencer.modulate.RunMode;
 import pro.fessional.wings.silencer.modulate.RuntimeMode;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
 import pro.fessional.wings.slardar.jackson.JacksonHelper;
 import pro.fessional.wings.tiny.mail.database.autogen.tables.WinMailSenderTable;
@@ -67,6 +68,7 @@ import static pro.fessional.wings.silencer.spring.help.CommonPropHelper.notValue
  * @since 2023-01-06
  */
 @Service
+@ConditionalWingsEnabled
 @Slf4j
 public class TinyMailServiceImpl implements TinyMailService, InitializingBean {
 

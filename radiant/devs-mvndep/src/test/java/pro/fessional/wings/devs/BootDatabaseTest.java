@@ -27,8 +27,8 @@ import static pro.fessional.wings.faceless.flywave.WingsRevision.V07_20_1027_01_
  * @since 2021-02-22
  */
 @SpringBootTest(properties = {
-        "spring.wings.faceless.flywave.enabled.module=true",
-        "spring.wings.faceless.flywave.enabled.checker=false",
+        "spring.wings.enabled.pro.fessional.wings.faceless.spring.conf.FlywaveAutoConfiguration=true",
+        "wings.faceless.flywave.checker=false",
 })
 @Disabled("manual initialization")
 public class BootDatabaseTest {

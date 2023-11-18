@@ -41,7 +41,7 @@ import static pro.fessional.wings.slardar.httprest.okhttp.OkHttpMediaType.APPLIC
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-                "spring.wings.slardar.enabled.cookie=true",
+                "spring.wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarCookieConfiguration=true",
                 "wings.slardar.cookie.prefix=" + WingsCookieTest.PREFIX,
                 "wings.slardar.cookie.coder=aes",
                 "wings.slardar.cookie.alias[ck2]=" + WingsCookieTest.CK2OTH,

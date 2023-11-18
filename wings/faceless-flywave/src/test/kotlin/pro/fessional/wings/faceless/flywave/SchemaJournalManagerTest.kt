@@ -8,6 +8,7 @@ import org.junit.jupiter.api.MethodOrderer.MethodName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.HEAD
@@ -84,6 +85,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
                 "END"
     ]
 )
+@DependsOnDatabaseInitialization
 @TestMethodOrder(MethodName::class)
 class SchemaJournalManagerTest {
 

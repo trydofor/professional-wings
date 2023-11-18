@@ -4,13 +4,11 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.mail.MailAuthenticationException;
@@ -20,7 +18,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import pro.fessional.mirana.time.Sleep;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.faceless.convention.EmptySugar;
-import pro.fessional.wings.tiny.mail.spring.prop.TinyMailEnabledProp;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailSenderProp;
 
 import java.math.BigDecimal;
@@ -51,10 +48,6 @@ public class MailSenderManager {
     protected final TinyMailSenderProp senderProp;
     @Getter
     protected final MailSenderProvider senderProvider;
-    @Getter
-    @Setter(onMethod_ = {@Value("${" + TinyMailEnabledProp.Key$dryrun + "}")})
-    protected boolean dryrun = false;
-
     protected final ConcurrentHashMap<String, Long> mailHostWait = new ConcurrentHashMap<>();
     protected final ConcurrentHashMap<String, Long> mailHostIdle = new ConcurrentHashMap<>();
 
@@ -107,7 +100,7 @@ public class MailSenderManager {
      */
     @SneakyThrows
     public void singleSend(@NotNull TinyMailMessage message, long maxWait, @Nullable MimeMessagePrepareHelper preparer) {
-        if (dryrun) {
+        if (senderProp.isDryrun()) {
             final int slp = RandomUtils.nextInt(10, 2000);
             Sleep.ignoreInterrupt(slp);
             log.info("single mail dryrun and sleep {} ms", slp);
@@ -160,7 +153,7 @@ public class MailSenderManager {
         if (messages.isEmpty()) return Collections.emptyList();
 
         final List<BatchResult> results = new ArrayList<>(messages.size());
-        if (dryrun) {
+        if (senderProp.isDryrun()) {
             final int slp = RandomUtils.nextInt(10, 2000);
             Sleep.ignoreInterrupt(slp);
             log.info("batch mail dryrun and sleep {} ms", slp);

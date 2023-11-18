@@ -6,6 +6,7 @@ import org.junit.jupiter.api.MethodOrderer.MethodName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization
 import org.springframework.boot.test.context.SpringBootTest
 import pro.fessional.wings.faceless.helper.WingsTestHelper
 import pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V1
@@ -23,6 +24,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
         "wings.faceless.flywave.ver.schema-version-table=win_schema_version",
     ]
 )
+@DependsOnDatabaseInitialization
 @TestMethodOrder(MethodName::class)
 open class SchemaRevisionMangerTest {
 

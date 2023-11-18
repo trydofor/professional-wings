@@ -30,6 +30,9 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 11024 StringMapXmlWriterTest: jaxb object to xml string
 * 11025 WingsSpringBeanScannerTest: with/without scanning
 * 11026 AssertionLoggerTest: install, assert and uninstall
+* 11027 WingsEnabledDefaultTest: default enabled config and bean
+* 11028 WingsEnabledFalseTest: disable config and bean
+* 11029 WingsEnabledTopFalseTest: disable top config
 
 ## 12 Faceless
 
@@ -378,6 +381,7 @@ Use `t.md` as local [Test Management](https://www.jetbrains.com/help/idea/test-m
 * 14074 CodeExceptionHandlerTest: message exception in chinese
 * 14075 CodeExceptionHandlerTest: CompletableFuture exception in chinese
 * 14076 JvmLightIdProviderTest: 50 instances compete for 1 db by tx
+* 14077 WarlockJournalDisableTest: disable TerminalJournalService
 
 ## 15 Tiny
 

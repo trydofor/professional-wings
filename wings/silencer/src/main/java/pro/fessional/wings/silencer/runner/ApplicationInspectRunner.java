@@ -1,7 +1,6 @@
 package pro.fessional.wings.silencer.runner;
 
 import lombok.Data;
-import lombok.Getter;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -15,7 +14,7 @@ import org.springframework.core.Ordered;
  */
 @Data
 public class ApplicationInspectRunner implements Ordered, BeanNameAware {
-    @Getter
+
     private final int order;
     private final ApplicationRunner runner;
 

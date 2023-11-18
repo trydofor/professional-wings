@@ -21,9 +21,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
                 "spring.mvc.servlet.path=/mvc",
-                "server.servlet.register-default-servlet=true"
+                "server.servlet.register-default-servlet=true",
         })
 @AutoConfigureMockMvc
+//@EnableAutoConfiguration(exclude = {
+//        HazelcastAutoConfiguration.class,
+//        SlardarHazelAutoConfiguration.class,
+//})
 @Slf4j
 public class Cve2023T34035Test {
 

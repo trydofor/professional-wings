@@ -9,14 +9,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.silencer.runner.ApplicationReadyEventRunner;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.silencer.spring.prop.SilencerAutoLogProp;
-import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,7 +26,8 @@ import java.util.Set;
  * @since 2019-06-26
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(name = SilencerEnabledProp.Key$autoLog, havingValue = "true")
+@ConditionalWingsEnabled
+@ConditionalOnClass(ConsoleAppender.class)
 @EnableConfigurationProperties(SilencerAutoLogProp.class)
 public class SilencerAutoLogConfiguration {
 
@@ -37,8 +37,8 @@ public class SilencerAutoLogConfiguration {
      * Configuration is complete and the log is switched before the service starts
      */
     @Bean
-    @ConditionalOnClass(ConsoleAppender.class)
-    public ApplicationReadyEventRunner runnerSilenceLogbackConsole(SilencerAutoLogProp autoLog) {
+    @ConditionalWingsEnabled
+    public ApplicationReadyEventRunner silenceLogbackConsoleRunner(SilencerAutoLogProp autoLog) {
         log.info("SilencerCurse spring-runs runnerSilenceLogbackConsole");
         return new ApplicationReadyEventRunner(WingsOrdered.Lv1Config, ignored -> {
             final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);

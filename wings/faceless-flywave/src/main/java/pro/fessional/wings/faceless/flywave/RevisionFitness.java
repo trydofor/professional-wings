@@ -74,7 +74,7 @@ public class RevisionFitness {
                     throw new IllegalStateException("""
 
                             Wings `flywave revision` do NOT exist, and Auto Init is dangerous, you can,
-                            1.stop checker: `spring.wings.faceless.flywave.enabled.checker=false`
+                            1.stop checker: `wings.faceless.flywave.checker=false`
                             2.revision fitness do NOT contain `EXEC`
                             3.init `flywave revision` manually
                             4.auto-init: `wings.faceless.flywave.auto-init=true` At Your Own Risk

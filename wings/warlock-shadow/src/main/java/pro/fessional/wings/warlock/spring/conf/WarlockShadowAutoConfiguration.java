@@ -1,10 +1,9 @@
 package pro.fessional.wings.warlock.spring.conf;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import pro.fessional.wings.slardar.spring.conf.SlardarSprintAutoConfiguration;
+import org.springframework.context.annotation.Import;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.warlock.spring.bean.WarlockExceptionConfiguration;
-import pro.fessional.wings.warlock.spring.bean.WarlockHazelcastConfiguration;
 import pro.fessional.wings.warlock.spring.bean.WarlockJournalConfiguration;
 import pro.fessional.wings.warlock.spring.bean.WarlockJustAuthConfiguration;
 import pro.fessional.wings.warlock.spring.bean.WarlockOauthTicketConfiguration;
@@ -16,13 +15,10 @@ import pro.fessional.wings.warlock.spring.bean.WarlockWatching2Configuration;
  * @author trydofor
  * @since 2019-12-01
  */
-@AutoConfiguration(before = {
-        SlardarSprintAutoConfiguration.class,
-        WarlockAutoConfiguration.class,
-})
-@ImportAutoConfiguration({
+@AutoConfiguration
+@ConditionalWingsEnabled
+@Import({
         WarlockExceptionConfiguration.class,
-        WarlockHazelcastConfiguration.class,
         WarlockJournalConfiguration.class,
         WarlockJustAuthConfiguration.class,
         WarlockOauthTicketConfiguration.class,

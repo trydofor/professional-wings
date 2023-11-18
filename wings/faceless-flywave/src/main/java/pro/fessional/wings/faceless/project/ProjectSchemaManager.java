@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 /**
  * Provides a convenient version management of common scenarios.
- * spring.wings.faceless.flywave.enabled.module=true
+ * spring.wings.enabled.pro.fessional.wings.faceless.spring.conf.FlywaveAutoConfiguration=true
  *
  * @author trydofor
  * @since 2021-02-20

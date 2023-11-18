@@ -9,6 +9,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.id.LightIdBufferedProvider;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
@@ -25,6 +26,7 @@ import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_
  * @since 2023-03-09
  */
 @SpringBootTest
+@DependsOnDatabaseInitialization
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Slf4j
 public class TransactionalServiceTest {
