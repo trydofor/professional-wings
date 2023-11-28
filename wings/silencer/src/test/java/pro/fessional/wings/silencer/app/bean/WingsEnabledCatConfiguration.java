@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author trydofor
  * @since 2023-11-17
  */
-@ConditionalWingsEnabled(prefix = "spring.catty.enabled")
+@ConditionalWingsEnabled(prefix = "catty.enabled")
 @Configuration(proxyBeanMethods = false)
 public class WingsEnabledCatConfiguration {
 
@@ -63,7 +63,7 @@ public class WingsEnabledCatConfiguration {
     }
 
     @Bean
-    @ConditionalWingsEnabled(absKey = "wings.cat.key-bean")
+    @ConditionalWingsEnabled(abs = "wings.cat.key-bean")
     public KeyBean keyBean() {
         return new KeyBean();
     }
@@ -101,7 +101,7 @@ public class WingsEnabledCatConfiguration {
     }
 
     @Configuration(proxyBeanMethods = false)
-    @ConditionalWingsEnabled(prefix = "spring.kitty.enabled") // no inherit
+    @ConditionalWingsEnabled(prefix = "kitty.enabled") // no inherit
     public static class ComponentScan {
         public ComponentScan() {
             log.info("Silencer spring-scan Component");
@@ -109,7 +109,7 @@ public class WingsEnabledCatConfiguration {
     }
 
     @Configuration(proxyBeanMethods = false)
-    public static class InnerDefault{
+    public static class InnerCatConfigDefault {
     }
 
     public static class CatBean {

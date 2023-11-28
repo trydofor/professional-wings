@@ -5,12 +5,12 @@ import lombok.Data;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
 import pro.fessional.wings.warlock.service.user.WarlockUserAuthnService;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
@@ -23,8 +23,8 @@ import java.util.List;
  * @since 2022-10-31
  */
 @RestController
+@ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$mvcAuth)
 @Slf4j
-@ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerAuth, havingValue = "true")
 public class AdminAuthnController {
 
     @Setter(onMethod_ = {@Autowired})

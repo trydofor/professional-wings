@@ -10,7 +10,7 @@ import pro.fessional.wings.warlock.spring.bean.WarlockBondBeanConfiguration;
  * @author trydofor
  * @since 2019-12-01
  */
-@AutoConfiguration(before = WarlockSecurityAutoConfiguration.class)
+@AutoConfiguration
 @ConditionalWingsEnabled
 @Import(WarlockBondBeanConfiguration.class)
 public class WarlockBondAutoConfiguration {

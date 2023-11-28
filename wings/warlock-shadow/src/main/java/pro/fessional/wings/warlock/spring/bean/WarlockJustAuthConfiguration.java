@@ -5,7 +5,6 @@ import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -35,7 +34,6 @@ import static java.net.Proxy.Type.DIRECT;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties(WarlockJustAuthProp.class)
 public class WarlockJustAuthConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockJustAuthConfiguration.class);

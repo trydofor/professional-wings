@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.async;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -17,12 +18,17 @@ public class TaskSchedulerHelper {
     protected static ThreadPoolTaskScheduler LightTasker;
     protected static ThreadPoolTaskScheduler HeavyTasker;
 
+    protected TaskSchedulerHelper(ThreadPoolTaskScheduler light, ThreadPoolTaskScheduler heavy) {
+        LightTasker = light;
+        HeavyTasker = heavy;
+    }
+
     /**
      * @see org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor#DEFAULT_TASK_SCHEDULER_BEAN_NAME
      */
-    @NotNull
-    public static ThreadPoolTaskScheduler Light() {
-        if (LightTasker == null) {
+    @Contract("true->!null")
+    public static ThreadPoolTaskScheduler Light(boolean nonnull) {
+        if (nonnull && LightTasker == null) {
             throw new IllegalStateException("LightTasker must init before using");
         }
         return LightTasker;
@@ -31,9 +37,9 @@ public class TaskSchedulerHelper {
     /**
      * see NamingSlardarConst#slardarHeavyScheduler
      */
-    @NotNull
-    public static ThreadPoolTaskScheduler Heavy() {
-        if (HeavyTasker == null) {
+    @Contract("true->!null")
+    public static ThreadPoolTaskScheduler Heavy(boolean nonnull) {
+        if (nonnull && HeavyTasker == null) {
             throw new IllegalStateException("HeavyTasker must init before using");
         }
 
@@ -45,7 +51,7 @@ public class TaskSchedulerHelper {
      */
     @NotNull
     public static ThreadPoolTaskScheduler referScheduler(boolean fast) {
-        return fast ? Light() : Heavy();
+        return fast ? Light(true) : Heavy(true);
     }
 
     /**

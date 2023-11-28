@@ -2,7 +2,6 @@ package pro.fessional.wings.warlock.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.code.RandCode;
@@ -24,10 +23,20 @@ import java.util.Map;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties(WarlockTicketProp.class)
 public class WarlockOauthTicketConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockOauthTicketConfiguration.class);
+
+    @Bean
+    @ConditionalWingsEnabled
+    public WarlockOauthService warlockOauthService(WarlockTicketProp warlockTicketProp) {
+        log.info("WarlockShadow spring-bean warlockOauthService");
+        WarlockOauthServiceImpl bean = new WarlockOauthServiceImpl();
+        bean.setAuthCodeTtl(warlockTicketProp.getCodeTtl());
+        bean.setAccessTokenTtl(warlockTicketProp.getTokenTtl());
+
+        return bean;
+    }
 
     @Bean
     @ConditionalWingsEnabled
@@ -56,17 +65,6 @@ public class WarlockOauthTicketConfiguration {
             log.info("WarlockShadow spring-conf warlockTicketService.client=" + client);
             bean.addClient(pass);
         }
-        return bean;
-    }
-
-    @Bean
-    @ConditionalWingsEnabled
-    public WarlockOauthService warlockOauthService(WarlockTicketProp warlockTicketProp) {
-        log.info("WarlockShadow spring-bean warlockOauthService");
-        WarlockOauthServiceImpl bean = new WarlockOauthServiceImpl();
-        bean.setAuthCodeTtl(warlockTicketProp.getCodeTtl());
-        bean.setAccessTokenTtl(warlockTicketProp.getTokenTtl());
-
         return bean;
     }
 }

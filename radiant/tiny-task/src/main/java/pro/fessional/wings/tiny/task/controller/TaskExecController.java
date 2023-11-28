@@ -11,6 +11,7 @@ import pro.fessional.mirana.data.Q;
 import pro.fessional.mirana.data.R;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.tiny.task.service.TinyTaskExecService;
+import pro.fessional.wings.tiny.task.spring.prop.TinyTaskEnabledProp;
 import pro.fessional.wings.tiny.task.spring.prop.TinyTaskUrlmapProp;
 
 /**
@@ -18,7 +19,7 @@ import pro.fessional.wings.tiny.task.spring.prop.TinyTaskUrlmapProp;
  * @since 2022-12-26
  */
 @RestController
-@ConditionalWingsEnabled
+@ConditionalWingsEnabled(abs = TinyTaskEnabledProp.Key$mvcExec)
 public class TaskExecController {
 
     @Setter(onMethod_ = {@Autowired})

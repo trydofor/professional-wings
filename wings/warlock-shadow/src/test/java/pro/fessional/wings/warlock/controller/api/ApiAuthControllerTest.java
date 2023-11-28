@@ -22,8 +22,8 @@ import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.text.FormatUtil;
 import pro.fessional.wings.slardar.context.Now;
 import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
-import pro.fessional.wings.warlock.service.auth.WarlockOauthService;
 import pro.fessional.wings.warlock.app.service.WatchingService;
+import pro.fessional.wings.warlock.service.auth.WarlockOauthService;
 import pro.fessional.wings.warlock.spring.prop.WarlockApiAuthProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
@@ -59,6 +59,7 @@ import static pro.fessional.wings.warlock.app.controller.TestToyApiController.Te
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
                 "wings.warlock.apiauth.must-signature=false",
+                "wings.enabled.slardar.restream=false",
         })
 @Slf4j
 class ApiAuthControllerTest {

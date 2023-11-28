@@ -2,11 +2,11 @@ package pro.fessional.wings.slardar.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
+import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarPagequeryProp;
 import pro.fessional.wings.slardar.webmvc.PageQueryArgumentResolver;
 
@@ -15,8 +15,7 @@ import pro.fessional.wings.slardar.webmvc.PageQueryArgumentResolver;
  * @since 2019-12-03
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalWingsEnabled
-@EnableConfigurationProperties(SlardarPagequeryProp.class)
+@ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$pagequery)
 public class SlardarPageQueryConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarPageQueryConfiguration.class);

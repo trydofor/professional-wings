@@ -7,7 +7,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +18,6 @@ import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.servlet.filter.WingsOverloadFilter;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
-import pro.fessional.wings.slardar.spring.prop.SlardarOverloadProp;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -35,7 +33,6 @@ import java.io.PrintWriter;
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled(false)
 @ConditionalOnClass(Filter.class)
-@EnableConfigurationProperties(SlardarOverloadProp.class)
 @Deprecated
 public class SlardarOverloadConfiguration {
 

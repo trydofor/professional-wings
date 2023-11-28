@@ -2,10 +2,8 @@ package pro.fessional.wings.silencer.spring.conf;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
-import pro.fessional.wings.silencer.spring.bean.SilencerAutoLogConfiguration;
+import pro.fessional.wings.silencer.spring.bean.SilencerCurseConfiguration;
 import pro.fessional.wings.silencer.spring.bean.SilencerEncryptConfiguration;
-import pro.fessional.wings.silencer.spring.bean.SilencerInspectConfiguration;
-import pro.fessional.wings.silencer.spring.bean.SilencerModeWiredConfiguration;
 import pro.fessional.wings.silencer.spring.bean.SilencerTweakConfiguration;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 
@@ -16,10 +14,8 @@ import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 @AutoConfiguration
 @ConditionalWingsEnabled
 @Import({
-        SilencerAutoLogConfiguration.class,
+        SilencerCurseConfiguration.class,
         SilencerEncryptConfiguration.class,
-        SilencerInspectConfiguration.class,
-        SilencerModeWiredConfiguration.class,
         SilencerTweakConfiguration.class,
 })
 public class SilencerCurseAutoConfiguration {

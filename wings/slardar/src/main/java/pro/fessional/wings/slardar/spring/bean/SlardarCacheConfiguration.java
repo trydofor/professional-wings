@@ -6,7 +6,6 @@ import org.apache.commons.logging.LogFactory;
 import org.cache2k.extra.spring.SpringCache2kCacheManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.AbstractCachingConfiguration;
 import org.springframework.cache.annotation.CachingConfigurer;
@@ -44,12 +43,11 @@ import static pro.fessional.wings.slardar.cache.WingsCache.Manager;
 @EnableCaching
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties(SlardarCacheProp.class)
 public class SlardarCacheConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarCacheConfiguration.class);
 
-    // set FeatureJmx first
+    // set FeatureJmx early
     public SlardarCacheConfiguration(@Value("${spring.jmx.enabled:false}") boolean jmx) {
         log.info("Slardar spring.jmx.enabled=" + jmx + ", if can NOT disable, check IDEA 'Disable JMX agent' options");
         if (!jmx && WingsCache2k.FeatureJmx != null) {

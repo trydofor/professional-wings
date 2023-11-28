@@ -5,7 +5,6 @@ import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +26,6 @@ import java.time.LocalDate;
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
 @ConditionalOnClass(DateSerializer.class)
-@EnableConfigurationProperties(SlardarJacksonProp.class)
 public class SlardarJacksonConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarJacksonConfiguration.class);

@@ -9,23 +9,24 @@ import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.util.StringUtils;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
  * <pre>
- * enable or disable `@Configuration` or `@Bean` by dynamic properties
+ * disable `@Configuration`, `@Bean` and any `@Component` by properties
  *
- * key = Prefix + "." + ClassName + ("." + beanMethod)
- * value = true/false
+ * `qualified-key` = `Prefix.` + `ClassName` + `.beanMethod`? = `true|false`
  *
- * Prefix = ConditionalWingsEnabled#Prefix, eg. "spring.wings.enabled"
- * ClassName = ConditionalWingsEnabled class, eg. "pro.fessional.wings.silencer.spring.boot.WingsEnabledCondition"
- * Method = ConditionalWingsEnabled method, eg. "beanMethod"
+ * - Prefix - default {@link #Prefix}
+ * - ClassName - {@link Class#getName()} eg. pro.fessional.wings.silencer.spring.bean.SilencerConfiguration
+ * - beanMethod - {@link Method#getName()} eg. applicationInspectRunner
  *
  * #example properties:
  *
@@ -37,9 +38,9 @@ import java.util.Map;
  *
  * ## @Conditional(WingsEnabledCondition.class) or @ConditionalWingsEnabled
  * ## disable @Bean dogBean in WingsEnabledDogConfiguration
- * spring.wings.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration.dogBean=false
+ * wings.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration.dogBean=false
  * ## disable InnerDogConfiguration and its Bean
- * spring.wings.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration$InnerDogConfiguration=false
+ * wings.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration$InnerDogConfiguration=false
  * </pre>
  *
  * @author trydofor
@@ -52,7 +53,7 @@ public class WingsEnabledCondition extends SpringBootCondition {
     /**
      * the default prefix
      */
-    public static final String Prefix = "spring.wings.enabled";
+    public static final String Prefix = "wings.enabled";
 
     @Override
     public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
@@ -124,39 +125,35 @@ public class WingsEnabledCondition extends SpringBootCondition {
 
     @NotNull
     private ConditionOutcome thisConditionOutcome(@NotNull ConditionContext context, @NotNull AnnotatedTypeMetadata metadata, @Nullable Map<String, Object> attrs) {
-        final String propKey;
-        if (attrs != null && attrs.get("absKey") instanceof String abs && !abs.isBlank()) {
-            propKey = abs;
+        String pre = null;
+        if (attrs != null && attrs.get("prefix") instanceof String p && !p.isBlank()) {
+            pre = p;
+        }
+
+        final String[] keys = new String[3];
+        // on @Component class
+        if (metadata instanceof ClassMetadata conf) {
+            if (pre == null) pre = buildEnclosingPrefix(conf.getEnclosingClassName());
+            keys[0] = pre + "." + conf.getClassName();
+        }
+        // on @Bean method
+        else if (metadata instanceof MethodMetadata bean) {
+            if (pre == null) pre = buildEnclosingPrefix(bean.getDeclaringClassName());
+            keys[0] = pre + "." + bean.getDeclaringClassName() + "." + bean.getMethodName();
         }
         else {
-            String pre = null;
-            if (attrs != null && attrs.get("prefix") instanceof String p && !p.isBlank()) {
-                pre = p;
-            }
-
-            String key = null;
-            if (attrs != null && attrs.get("key") instanceof String k && !k.isBlank()) {
-                key = k;
-            }
-
-            // on @Component class
-            if (metadata instanceof ClassMetadata conf) {
-                if (pre == null) pre = buildEnclosingPrefix(conf.getEnclosingClassName());
-                if (key == null) key = conf.getClassName();
-            }
-            // on @Bean method
-            else if (metadata instanceof MethodMetadata bean) {
-                if (pre == null) pre = buildEnclosingPrefix(bean.getDeclaringClassName());
-                if (key == null) key = bean.getDeclaringClassName() + "." + bean.getMethodName();
-            }
-            else {
-                throw new IllegalArgumentException("should use on @Bean or @Configuration");
-            }
-
-            propKey = pre + "." + key;
+            throw new IllegalArgumentException("should use on @Bean or @Configuration");
         }
 
-        var result = conditionOutcome(context, propKey);
+        if (attrs != null) {
+            if (attrs.get("abs") instanceof String abs && !abs.isBlank()) {
+                keys[1] = abs;
+            }
+            else if (attrs.get("key") instanceof String key && !key.isBlank()) {
+                keys[2] = pre + "." + key;
+            }
+        }
+        var result = conditionOutcome(context, keys);
         if (result != null) return result;
 
         boolean falsy = attrs != null && attrs.get("value") instanceof Boolean value && !value;
@@ -165,28 +162,27 @@ public class WingsEnabledCondition extends SpringBootCondition {
 
     @NotNull
     private ConditionOutcome thisConditionOutcome(@NotNull ConditionContext context, @NotNull Class<?> meta, @Nullable ConditionalWingsEnabled anno) {
-        final String propKey;
-        if (anno != null && StringUtils.hasText(anno.absKey())) {
-            propKey = anno.absKey();
+        final String pre;
+        if (anno != null && StringUtils.hasText(anno.prefix())) {
+            pre = anno.prefix();
         }
         else {
-            final String pre;
-            if (anno != null && StringUtils.hasText(anno.prefix())) {
-                pre = anno.prefix();
-            }
-            else {
-                pre = buildEnclosingPrefix(meta.getEnclosingClass());
-            }
+            pre = buildEnclosingPrefix(meta.getEnclosingClass());
+        }
 
-            if (anno != null && StringUtils.hasText(anno.key())) {
-                propKey = pre + "." + anno.key();
+        final String[] keys = new String[3];
+        keys[0] = pre + "." + meta.getName();
+
+        if (anno != null) {
+            if (StringUtils.hasText(anno.abs())) {
+                keys[1] = anno.abs();
             }
-            else {
-                propKey = pre + "." + meta.getName();
+            else if (StringUtils.hasText(anno.key())) {
+                keys[2] = pre + "." + anno.key();
             }
         }
 
-        var result = conditionOutcome(context, propKey);
+        var result = conditionOutcome(context, keys);
         if (result != null) return result;
 
         boolean falsy = anno != null && !anno.value();
@@ -218,21 +214,23 @@ public class WingsEnabledCondition extends SpringBootCondition {
     }
 
     @Nullable
-    private ConditionOutcome conditionOutcome(@NotNull ConditionContext context, @NotNull String key) {
-        final String value = context.getEnvironment().getProperty(key);
+    private ConditionOutcome conditionOutcome(@NotNull ConditionContext context, String @NotNull [] keys) {
 
-        if ("false".equalsIgnoreCase(value)) {
-            return ConditionOutcome.noMatch(ConditionMessage
+        final Environment environment = context.getEnvironment();
+        for (String key : keys) {
+            if (key == null) continue;
+            Boolean enabled = asBool(environment.getProperty(key));
+            if (enabled == null) continue;
+
+            return enabled
+                   ? ConditionOutcome.match(ConditionMessage
                     .forCondition(ConditionalWingsEnabled.class)
                     .found(key)
-                    .items(value));
-        }
-
-        if ("true".equalsIgnoreCase(value)) {
-            return ConditionOutcome.match(ConditionMessage
+                    .items(true))
+                   : ConditionOutcome.noMatch(ConditionMessage
                     .forCondition(ConditionalWingsEnabled.class)
                     .found(key)
-                    .items(value));
+                    .items(false));
         }
 
         return null;
@@ -248,5 +246,11 @@ public class WingsEnabledCondition extends SpringBootCondition {
                : ConditionOutcome.match(ConditionMessage
                 .forCondition(ConditionalWingsEnabled.class)
                 .because("default true"));
+    }
+
+    private Boolean asBool(String value) {
+        if ("false".equalsIgnoreCase(value)) return Boolean.FALSE;
+        if ("true".equalsIgnoreCase(value)) return Boolean.TRUE;
+        return null;
     }
 }

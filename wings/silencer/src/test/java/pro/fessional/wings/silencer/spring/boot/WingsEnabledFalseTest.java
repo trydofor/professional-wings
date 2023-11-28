@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration;
 import pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration;
 import pro.fessional.wings.silencer.app.service.ScanService;
@@ -16,21 +15,21 @@ import pro.fessional.wings.silencer.app.service.ScanService;
  * @since 2023-11-17
  */
 @SpringBootTest(properties = {
-        "spring.catty.enabled.catBean=false",
-        "spring.catty.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration.autowire=false",
-        "spring.catty.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration.listener=false",
-        "spring.catty.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration$InnerCatConfiguration=false",
-        "spring.kitty.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration$ComponentScan=false",
+        "catty.enabled.catBean=true",
+        "catty.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration.catBean=false",
+        "catty.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration.autowire=false",
+        "catty.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration.listener=false",
+        "catty.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration$InnerCatConfiguration=false",
+        "kitty.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration$ComponentScan=false",
 
-        "spring.wings.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration.dogBean=false",
-        "spring.wings.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration.autowire=false",
-        "spring.wings.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration.listener=false",
-        "spring.wings.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration$InnerDogConfiguration=false",
-        "spring.wings.enabled.pro.fessional.wings.silencer.app.service.ScanService=false",
+        "wings.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration.dogBean=false",
+        "wings.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration.autowire=false",
+        "wings.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration.listener=false",
+        "wings.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration$InnerDogConfiguration=false",
+        "wings.enabled.pro.fessional.wings.silencer.app.service.ScanService=false",
 
         "wings.cat.key-bean=false",
 })
-@DirtiesContext
 public class WingsEnabledFalseTest {
 
     @Setter(onMethod_ = {@Autowired(required = false)})

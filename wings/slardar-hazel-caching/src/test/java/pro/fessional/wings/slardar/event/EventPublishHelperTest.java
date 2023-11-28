@@ -15,7 +15,7 @@ import pro.fessional.wings.slardar.event.attr.AttributeRidEvent;
  * @author trydofor
  * @since 2021-06-09
  */
-@SpringBootTest(properties = "spring.wings.enabled.pro.fessional.wings.slardar.spring.bean.HazelcastConfigConfiguration.wingsHazelcastAloneCustomizer=false")
+@SpringBootTest(properties = "wings.enabled.slardar.hazelcast-standalone=false")
 @Slf4j
 public class EventPublishHelperTest {
 

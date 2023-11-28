@@ -3,12 +3,12 @@ package pro.fessional.wings.slardar.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.hazelcast.HazelcastConfigCustomizer;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.cache.hazelcast.WingsHazelcastCacheCustomizer;
 import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
+import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 /**
  * @author trydofor
@@ -16,13 +16,12 @@ import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties(SlardarCacheProp.class)
 public class HazelcastConfigConfiguration {
 
     private static final Log log = LogFactory.getLog(HazelcastConfigConfiguration.class);
 
     @Bean
-    @ConditionalWingsEnabled(false)
+    @ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$hazelcastStandalone, value = false)
     public HazelcastConfigCustomizer wingsHazelcastAloneCustomizer() {
         log.info("SlardarHazelCaching spring-bean simulator hazelcastInstance standalone");
         return config -> {

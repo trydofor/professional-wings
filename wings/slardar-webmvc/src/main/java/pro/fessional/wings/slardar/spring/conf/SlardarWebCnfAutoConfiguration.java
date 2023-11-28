@@ -17,5 +17,5 @@ import pro.fessional.wings.slardar.spring.bean.SlardarOkhttpWebConfiguration;
         SlardarLocaleConfiguration.class,
         SlardarOkhttpWebConfiguration.class,
 })
-public class SlardarWebMvcAutoConfiguration {
+public class SlardarWebCnfAutoConfiguration {
 }

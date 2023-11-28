@@ -1,10 +1,8 @@
 package pro.fessional.wings.tiny.mail.spring.bean;
 
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +18,6 @@ import pro.fessional.wings.tiny.mail.sender.MailSenderProvider;
 import pro.fessional.wings.tiny.mail.service.TinyMailService;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailConfigProp;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailSenderProp;
-import pro.fessional.wings.tiny.mail.spring.prop.TinyMailServiceProp;
-import pro.fessional.wings.tiny.mail.spring.prop.TinyMailUrlmapProp;
 
 /**
  * @author trydofor
@@ -30,13 +26,6 @@ import pro.fessional.wings.tiny.mail.spring.prop.TinyMailUrlmapProp;
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties({
-        TinyMailConfigProp.class,
-        TinyMailSenderProp.class,
-        TinyMailServiceProp.class,
-        TinyMailUrlmapProp.class,
-})
-@RequiredArgsConstructor
 public class TinyMailConfiguration {
 
     private static final Log log = LogFactory.getLog(TinyMailConfiguration.class);
@@ -63,16 +52,16 @@ public class TinyMailConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public MailSenderProvider mailSenderProvider(JavaMailSender defaultSender) {
-        log.info("TinyMail spring-bean mailSenderProvider");
-        return new MailSenderProvider(defaultSender);
+    public MailConfigProvider mailConfigProvider(TinyMailConfigProp tinyMailConfigProp) {
+        log.info("TinyMail spring-bean mailConfigProvider");
+        return new MailConfigProvider(tinyMailConfigProp);
     }
 
     @Bean
     @ConditionalWingsEnabled
-    public MailConfigProvider mailConfigProvider(TinyMailConfigProp tinyMailConfigProp) {
-        log.info("TinyMail spring-bean mailConfigProvider");
-        return new MailConfigProvider(tinyMailConfigProp);
+    public MailNotice mailNotice(MailConfigProvider configProvider, MailSenderManager senderManager) {
+        log.info("TinyMail spring-bean mailNotice");
+        return new MailNotice(configProvider, senderManager);
     }
 
     @Bean
@@ -84,8 +73,8 @@ public class TinyMailConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public MailNotice mailNotice(MailConfigProvider configProvider, MailSenderManager senderManager) {
-        log.info("TinyMail spring-bean mailNotice");
-        return new MailNotice(configProvider, senderManager);
+    public MailSenderProvider mailSenderProvider(JavaMailSender defaultSender) {
+        log.info("TinyMail spring-bean mailSenderProvider");
+        return new MailSenderProvider(defaultSender);
     }
 }

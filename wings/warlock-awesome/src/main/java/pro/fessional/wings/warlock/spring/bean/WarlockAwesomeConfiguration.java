@@ -15,7 +15,7 @@ import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.serialize.JsonConversion;
 import pro.fessional.wings.slardar.serialize.KryoConversion;
-import pro.fessional.wings.warlock.database.autogen.tables.daos.SysConstantEnumDao;
+import pro.fessional.wings.warlock.database.WarlockDatabase;
 import pro.fessional.wings.warlock.service.conf.RuntimeConfService;
 import pro.fessional.wings.warlock.service.conf.impl.RuntimeConfServiceImpl;
 
@@ -32,22 +32,11 @@ public class WarlockAwesomeConfiguration {
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalWingsEnabled
-    @ComponentScan(basePackageClasses = SysConstantEnumDao.class)
+    @ComponentScan(basePackageClasses = WarlockDatabase.class)
     public static class JooqDaoScan {
         public JooqDaoScan() {
             log.info("Warlock spring-scan SysConstantEnumDao");
         }
-    }
-
-    @Bean
-    @ConditionalWingsEnabled
-    public RuntimeConfService runtimeConfService(ObjectProvider<ConversionService> conversionProvider) {
-        log.info("Warlock spring-bean runtimeConfService");
-        final RuntimeConfServiceImpl bean = new RuntimeConfServiceImpl();
-        conversionProvider.ifAvailable(it -> bean.addHandler(RuntimeConfServiceImpl.PropHandler, it));
-        bean.addHandler(RuntimeConfServiceImpl.JsonHandler, new JsonConversion());
-        bean.addHandler(RuntimeConfServiceImpl.KryoHandler, new KryoConversion());
-        return bean;
     }
 
     /**
@@ -66,15 +55,19 @@ public class WarlockAwesomeConfiguration {
 
             final RunMode dbRunMode = confService.getEnum(RunMode.class);
             final ApiMode dbApiMode = confService.getEnum(ApiMode.class);
-
-            new RuntimeMode() {{
-                if (dbRunMode != null) {
-                    runMode = dbRunMode;
-                }
-                if (dbApiMode != null) {
-                    apiMode = dbApiMode;
-                }
-            }};
+            log.info("Warlock conf RuntimeMode, runMode=" + dbRunMode + ", apiMode=" + dbApiMode);
+            new RuntimeMode(dbRunMode, dbApiMode) {};
         });
+    }
+
+    @Bean
+    @ConditionalWingsEnabled
+    public RuntimeConfService runtimeConfService(ObjectProvider<ConversionService> conversionProvider) {
+        log.info("Warlock spring-bean runtimeConfService");
+        final RuntimeConfServiceImpl bean = new RuntimeConfServiceImpl();
+        conversionProvider.ifAvailable(it -> bean.addHandler(RuntimeConfServiceImpl.PropHandler, it));
+        bean.addHandler(RuntimeConfServiceImpl.JsonHandler, new JsonConversion());
+        bean.addHandler(RuntimeConfServiceImpl.KryoHandler, new KryoConversion());
+        return bean;
     }
 }

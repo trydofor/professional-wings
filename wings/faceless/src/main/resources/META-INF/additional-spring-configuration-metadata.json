@@ -1,0 +1,27 @@
+{
+  "groups": [
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.conf"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean"}
+  ],
+  "properties": [
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.conf.FacelessAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessConfiguration.commitJournalModify", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessConfiguration.dataSourceContext", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessConfiguration.flakeIdService", "type": "java.lang.Boolean", "description": "wings.enabled.faceless.simple-flakeid for short."},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessConfiguration.journalService", "type": "java.lang.Boolean", "description": "wings.enabled.faceless.simple-journal for short."},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessConfiguration.standardI18nService", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessLightIdConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessLightIdConfiguration$LayoutWired", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessLightIdConfiguration.blockProvider", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessLightIdConfiguration.dbLightIdProvider", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessLightIdConfiguration.jvmLightIdProvider", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessLightIdConfiguration.lightIdLoader", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessLightIdConfiguration.lightIdService", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessLightIdConfiguration.lightSequenceModify", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessLightIdConfiguration.lightSequenceSelect", "type": "java.lang.Boolean"}
+  ],
+  "hints": []
+}

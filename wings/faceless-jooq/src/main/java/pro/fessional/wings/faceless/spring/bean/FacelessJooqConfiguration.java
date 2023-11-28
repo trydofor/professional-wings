@@ -10,7 +10,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.jooq.DefaultConfigurationCustomizer;
 import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqEnv;
@@ -27,7 +26,6 @@ import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
 @ConditionalOnClass(Settings.class)
-@EnableConfigurationProperties(FacelessJooqConfProp.class)
 public class FacelessJooqConfiguration {
 
     private static final Log log = LogFactory.getLog(FacelessJooqConfiguration.class);
@@ -44,13 +42,12 @@ public class FacelessJooqConfiguration {
      * @link <a href="https://github.com/jOOQ/jOOQ/issues/12092">group_concat_max_len</a>
      */
     @Bean
-    @ConditionalWingsEnabled(absKey = FacelessJooqConfProp.Key$autoQualify)
+    @ConditionalWingsEnabled(abs = FacelessJooqConfProp.Key$autoQualify)
     public VisitListenerProvider jooqAutoQualifyFieldListener() {
         log.info("FacelessJooq spring-bean jooqAutoQualifyFieldListener");
         return new DefaultVisitListenerProvider(new AutoQualifyFieldListener());
     }
-
-
+    
     @Bean
     @ConditionalWingsEnabled
     public DefaultConfigurationCustomizer jooqWingsConfigCustomizer(

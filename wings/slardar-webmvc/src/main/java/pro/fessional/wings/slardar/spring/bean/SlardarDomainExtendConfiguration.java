@@ -3,7 +3,6 @@ package pro.fessional.wings.slardar.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +13,7 @@ import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.domainx.DefaultDomainRequestMatcher;
 import pro.fessional.wings.slardar.domainx.WingsDomainExtendFilter;
 import pro.fessional.wings.slardar.spring.prop.DomainExtendProp;
+import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,8 +27,7 @@ import java.util.function.Supplier;
  * @since 2019-06-29
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalWingsEnabled(false)
-@EnableConfigurationProperties(DomainExtendProp.class)
+@ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$domainx, value = false)
 public class SlardarDomainExtendConfiguration {
 
     private final static Log log = LogFactory.getLog(SlardarDomainExtendConfiguration.class);
@@ -36,7 +35,7 @@ public class SlardarDomainExtendConfiguration {
     @Bean
     @ConditionalWingsEnabled
     public WingsDomainExtendFilter wingsDomainExtendFilter(DomainExtendProp config, ApplicationContext context) {
-        log.info("SlardarWebmvc spring-bean wingsDomainFilter");
+        log.info("SlardarWebmvc spring-bean wingsDomainExtendFilter");
         Map<String, List<String[]>> hostMatcher = new HashMap<>();
         for (Map.Entry<String, Set<String>> entry : config.getHost().entrySet()) {
             Set<String> vs = entry.getValue();

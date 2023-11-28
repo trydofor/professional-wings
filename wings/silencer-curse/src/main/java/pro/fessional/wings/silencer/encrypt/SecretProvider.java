@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.code.RandCode;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -39,6 +40,9 @@ public class SecretProvider {
      */
     public static final String Config = "config";
 
+    protected SecretProvider(@NotNull Map<String, String> keys) {
+        Secrets.putAll(keys);
+    }
 
     /**
      * Generate `len` length passwords of alphabetic, case-sensitive and numeric
@@ -100,7 +104,7 @@ public class SecretProvider {
     /**
      * put the secret by name
      */
-    protected static void put(@NotNull String name, @NotNull String secret, boolean replace) {
+    public static void put(@NotNull String name, @NotNull String secret, boolean replace) {
         if (replace) {
             Secrets.put(name, secret);
         }

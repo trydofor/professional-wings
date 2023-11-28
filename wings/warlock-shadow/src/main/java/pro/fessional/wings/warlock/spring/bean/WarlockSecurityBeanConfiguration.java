@@ -5,8 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -57,7 +55,6 @@ import pro.fessional.wings.warlock.service.auth.impl.DefaultUserAuthnAutoReg;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
 import pro.fessional.wings.warlock.service.auth.impl.MemoryTypedAuthzCombo;
 import pro.fessional.wings.warlock.service.perm.WarlockPermNormalizer;
-import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockJustAuthProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp.Ma;
@@ -79,7 +76,6 @@ import static org.springframework.util.StringUtils.hasText;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties(WarlockSecurityProp.class)
 public class WarlockSecurityBeanConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockSecurityBeanConfiguration.class);
@@ -184,9 +180,7 @@ public class WarlockSecurityBeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnExpression("${" + WarlockEnabledProp.Key$justAuth + ":false} "
-                             + " && ${" + WarlockEnabledProp.Key$comboJustAuthAutoreg + ":false}")
-    @ConditionalWingsEnabled
+    @ConditionalWingsEnabled(and = WarlockJustAuthConfiguration.class)
     public JustAuthUserAuthnAutoReg justAuthUserAuthnAutoReg() {
         log.info("WarlockShadow spring-bean justAuthUserAuthnAutoReg");
         final JustAuthUserAuthnAutoReg bean = new JustAuthUserAuthnAutoReg();
@@ -287,9 +281,7 @@ public class WarlockSecurityBeanConfiguration {
     }
 
     @Bean
-    @ConditionalWingsEnabled
-    @ConditionalOnExpression("${" + WarlockEnabledProp.Key$justAuth + ":false} "
-                             + " && ${" + WarlockEnabledProp.Key$comboJustAuthUserDetails + ":false}")
+    @ConditionalWingsEnabled(and = WarlockJustAuthConfiguration.class)
     public JustAuthUserDetailsCombo justAuthUserDetailsCombo() {
         log.info("WarlockShadow spring-bean justAuthUserDetailsCombo");
         final JustAuthUserDetailsCombo bean = new JustAuthUserDetailsCombo();
@@ -404,16 +396,13 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$comboListAllLoginPage, havingValue = "true")
     public ListAllLoginPageCombo listAllLoginPageCombo() {
         log.info("WarlockShadow spring-bean listAllLoginPageCombo");
         return new ListAllLoginPageCombo();
     }
 
     @Bean
-    @ConditionalWingsEnabled
-    @ConditionalOnExpression("${" + WarlockEnabledProp.Key$justAuth + ":false} "
-                             + " && ${" + WarlockEnabledProp.Key$comboJustAuthLoginPage + ":false}")
+    @ConditionalWingsEnabled(and = WarlockJustAuthConfiguration.class)
     public JustAuthLoginPageCombo justAuthLoginPageCombo() {
         log.info("WarlockShadow spring-bean justAuthLoginPageCombo");
         return new JustAuthLoginPageCombo();

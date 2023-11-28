@@ -2,7 +2,6 @@ package pro.fessional.wings.slardar.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -11,14 +10,14 @@ import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.concur.impl.DebounceInterceptor;
 import pro.fessional.wings.slardar.servlet.response.view.PlainTextView;
 import pro.fessional.wings.slardar.spring.prop.SlardarDebounceProp;
+import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 /**
  * @author trydofor
  * @since 2019-12-03
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalWingsEnabled
-@EnableConfigurationProperties(SlardarDebounceProp.class)
+@ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$debounce)
 public class SlardarDebounceConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarDebounceConfiguration.class);

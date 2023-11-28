@@ -1,12 +1,10 @@
 package pro.fessional.wings.warlock.spring.bean;
 
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -46,20 +44,14 @@ import java.util.TreeMap;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@RequiredArgsConstructor
 public class WarlockSecurityConfConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockSecurityConfConfiguration.class);
 
-    private final SessionRegistry sessionRegistry;
-    private final WarlockSecurityProp securityProp;
-
     @Bean
-    @ConditionalWingsEnabled
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityWebAutos, havingValue = "true")
-    public WebSecurityCustomizer warlockWebCustomizer(ObjectProvider<HttpFirewall> httpFirewall, ObjectProvider<MvcRequestMatcher.Builder> mvcMatcher) {
+    @ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$secWebAuto)
+    public WebSecurityCustomizer warlockWebCustomizer(WarlockSecurityProp securityProp, ObjectProvider<HttpFirewall> httpFirewall, ObjectProvider<MvcRequestMatcher.Builder> mvcMatcher) {
         log.info("WarlockShadow spring-bean warlockWebCustomizer");
-        MvcRequestMatcher.Builder mvc = mvcMatcher.getIfAvailable();
         return web -> {
             if (securityProp.isWebDebug()) {
                 log.info("WarlockShadow conf WebSecurity, WebDebug=true");
@@ -72,6 +64,7 @@ public class WarlockSecurityConfConfiguration {
             if (!webIgnore.isEmpty()) {
                 final Set<String> ignores = CommonPropHelper.onlyValue(webIgnore.values());
                 log.info("WarlockShadow conf WebSecurity, ignoring=" + String.join("\n,", ignores));
+                MvcRequestMatcher.Builder mvc = mvcMatcher.getIfAvailable();
                 web.ignoring().requestMatchers(SecurityConfigHelper.requestMatchers(mvc, ignores));
             }
 
@@ -84,10 +77,11 @@ public class WarlockSecurityConfConfiguration {
     }
 
     @Bean
-    @ConditionalWingsEnabled
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpBind, havingValue = "true")
+    @ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$secHttpBind)
     @Order(WingsOrdered.Lv4Application + 200)
     public HttpSecurityCustomizer warlockSecurityBindHttpConfigure(
+            WarlockSecurityProp securityProp,
+            SessionRegistry sessionRegistry,
             ObjectProvider<AuthenticationSuccessHandler> authenticationSuccessHandler,
             ObjectProvider<AuthenticationFailureHandler> authenticationFailureHandler,
             ObjectProvider<WingsAuthDetailsSource<?>> wingsAuthDetailsSource,
@@ -146,7 +140,7 @@ public class WarlockSecurityConfConfiguration {
                 );
 
             final AccessDeniedHandler deniedHandler = accessDeniedHandler.getIfAvailable();
-            if(deniedHandler != null){
+            if (deniedHandler != null) {
                 log.info("WarlockShadow conf exceptionHandling, accessDeniedHandler=" + deniedHandler.getClass());
                 http.exceptionHandling().accessDeniedHandler(deniedHandler);
             }
@@ -154,10 +148,9 @@ public class WarlockSecurityConfConfiguration {
     }
 
     @Bean
-    @ConditionalWingsEnabled
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpAuth, havingValue = "true")
+    @ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$secHttpAuth)
     @Order(WingsOrdered.Lv4Application + 300)
-    public HttpSecurityCustomizer warlockSecurityAuthHttpConfigure(ObjectProvider<MvcRequestMatcher.Builder> mvcMatcher) {
+    public HttpSecurityCustomizer warlockSecurityAuthHttpConfigure(WarlockSecurityProp securityProp, ObjectProvider<MvcRequestMatcher.Builder> mvcMatcher) {
         log.info("WarlockShadow spring-bean warlockSecurityAuthHttpConfigure");
         MvcRequestMatcher.Builder mvc = mvcMatcher.getIfAvailable();
         return http -> {
@@ -201,8 +194,7 @@ public class WarlockSecurityConfConfiguration {
     }
 
     @Bean
-    @ConditionalWingsEnabled
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpBase, havingValue = "true")
+    @ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$secHttpBase)
     @Order(WingsOrdered.Lv4Application + 100)
     public HttpSecurityCustomizer warlockSecurityHttpBaseConfigure() {
         log.info("WarlockShadow spring-bean warlockSecurityHttpBaseConfigure");
@@ -210,8 +202,7 @@ public class WarlockSecurityConfConfiguration {
     }
 
     @Bean
-    @ConditionalWingsEnabled
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpAuto, havingValue = "true")
+    @ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$secHttpAuto)
     @Order(WingsOrdered.Lv4Application + 400)
     public HttpSecurityCustomizer warlockSecurityAutoHttpConfigure(
             ObjectProvider<CsrfTokenRepository> csrf,
@@ -262,10 +253,9 @@ public class WarlockSecurityConfConfiguration {
      * only non-API resources in the WebSecurityConfigurer above.
      */
     @Bean
-    @ConditionalWingsEnabled
-    @ConditionalOnProperty(name = WarlockEnabledProp.Key$securityHttpChain, havingValue = "true")
+    @ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$secHttpChain)
     @Order(WingsOrdered.Lv4Application + 900)
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, Map<String, HttpSecurityCustomizer> configures) throws Exception {
+    public SecurityFilterChain securityFilterChain(WarlockSecurityProp securityProp, HttpSecurity http, Map<String, HttpSecurityCustomizer> configures) throws Exception {
         log.info("WarlockShadow conf securityFilterChain, begin");
         for (Map.Entry<String, HttpSecurityCustomizer> en : configures.entrySet()) {
             log.info("WarlockShadow conf securityFilterChain, bean=" + en.getKey());

@@ -2,8 +2,6 @@ package pro.fessional.wings.silencer.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -13,8 +11,6 @@ import pro.fessional.wings.silencer.message.MessageSourceHelper;
 import pro.fessional.wings.silencer.runner.ApplicationInspectRunner;
 import pro.fessional.wings.silencer.runner.ApplicationRunnerOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
-import pro.fessional.wings.silencer.spring.prop.SilencerI18nProp;
-import pro.fessional.wings.silencer.spring.prop.SilencerScannerProp;
 
 import java.util.Map;
 
@@ -24,10 +20,6 @@ import java.util.Map;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties({
-        SilencerI18nProp.class,
-        SilencerScannerProp.class,
-})
 public class SilencerConfiguration {
 
     private static final Log log = LogFactory.getLog(SilencerConfiguration.class);
@@ -37,20 +29,17 @@ public class SilencerConfiguration {
      * @see org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration
      */
 
-    @Configuration(proxyBeanMethods = false)
+    @Bean
     @ConditionalWingsEnabled
-    public static class MessageSourceHelperWired {
-        @Autowired
-        public void auto(MessageSource messageSource) {
-            new MessageSourceHelper(messageSource) {};
-
-            if (MessageSourceHelper.getCombinableMessageSource(false) != null) {
-                log.info("Silencer spring-auto MessageSourceHelper parent to CombinableMessageSource");
-            }
-            else {
-                log.info("Silencer spring-auto MessageSourceHelper skip CombinableMessageSource");
-            }
+    public MessageSourceHelper messageSourceHelper(MessageSource messageSource) {
+        var bean = new MessageSourceHelper(messageSource) {};
+        if (MessageSourceHelper.hasCombine) {
+            log.info("Silencer spring-auto MessageSourceHelper parent to CombinableMessageSource");
         }
+        else {
+            log.info("Silencer spring-auto MessageSourceHelper skip CombinableMessageSource");
+        }
+        return bean;
     }
 
     /**

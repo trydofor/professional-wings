@@ -1,0 +1,19 @@
+{
+  "groups": [
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.conf"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean"}
+  ],
+  "properties": [
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.conf.FacelessJooqAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessJooqConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessJooqConfiguration.jooqAutoQualifyFieldListener", "type": "java.lang.Boolean", "description": "wings.faceless.jooq.conf.auto-qualify for short."},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessJooqConfiguration.jooqWingsConfigCustomizer", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessJooqCudConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessJooqCudConfiguration$CudListenerBean", "type": "java.lang.Boolean", "description": "wings.faceless.jooq.conf.listen-cud for short."},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessJooqCudConfiguration$JournalDiffWired", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.faceless.spring.bean.FacelessJooqCudConfiguration.jooqJournalDeleteListener", "type": "java.lang.Boolean", "description": "wings.faceless.jooq.conf.journal-delete for short."}
+  ],
+  "hints": []
+}

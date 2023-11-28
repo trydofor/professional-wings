@@ -6,13 +6,11 @@ import de.codecentric.boot.admin.client.registration.BlockingRegistrationClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
-import pro.fessional.wings.slardar.spring.prop.SlardarPasscoderProp;
 
 
 /**
@@ -23,7 +21,6 @@ import pro.fessional.wings.slardar.spring.prop.SlardarPasscoderProp;
 @ConditionalWingsEnabled
 @ConditionalOnClass(SpringBootAdminClientEnabledCondition.class)
 @Conditional(SpringBootAdminClientEnabledCondition.class)
-@EnableConfigurationProperties(SlardarPasscoderProp.class)
 public class SlardarBootAdminClientConfiguration {
     private final static Log log = LogFactory.getLog(SlardarBootAdminClientConfiguration.class);
 

@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler;
+import pro.fessional.wings.faceless.spring.bean.FacelessJooqCudConfiguration;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.event.EventPublishHelper;
 import pro.fessional.wings.warlock.service.event.TableChangePublisher;
@@ -18,7 +19,7 @@ import pro.fessional.wings.warlock.service.event.impl.WingsTableCudHandlerImpl;
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalWingsEnabled
+@ConditionalWingsEnabled(and = FacelessJooqCudConfiguration.CudListenerBean.class)
 public class WarlockTableChangeConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockTableChangeConfiguration.class);

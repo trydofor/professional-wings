@@ -11,7 +11,6 @@ import org.jooq.impl.DefaultVisitListenerProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler;
@@ -33,10 +32,33 @@ import java.util.stream.Collectors;
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
 @ConditionalOnClass(Settings.class)
-@EnableConfigurationProperties(FacelessJooqCudProp.class)
 public class FacelessJooqCudConfiguration {
     private static final Log log = LogFactory.getLog(FacelessJooqCudConfiguration.class);
 
+    /**
+     * listen to table's create/update/delete.
+     */
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalWingsEnabled(abs = FacelessJooqConfProp.Key$listenCud)
+    public static class CudListenerBean {
+        @Bean
+        public VisitListenerProvider jooqTableCudListener(FacelessJooqCudProp prop, List<WingsTableCudHandler> handlers) {
+            final TableCudListener listener = new TableCudListener();
+
+            final String names = handlers.stream().map(it -> it.getClass().getName()).collect(Collectors.joining(","));
+            log.info("FacelessJooq spring-bean jooqTableCudListener with handler=" + names);
+            for (WingsTableCudHandler handler : handlers) {
+                handler.register(listener);
+            }
+
+            listener.setHandlers(handlers);
+            listener.setCreate(prop.isCreate());
+            listener.setUpdate(prop.isUpdate());
+            listener.setDelete(prop.isDelete());
+            listener.setTableField(prop.getTable());
+            return new DefaultVisitListenerProvider(listener);
+        }
+    }
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalWingsEnabled
@@ -49,35 +71,12 @@ public class FacelessJooqCudConfiguration {
     }
 
     /**
-     * listen to table's create/update/delete.
-     */
-    @Bean
-    @ConditionalWingsEnabled(absKey = FacelessJooqConfProp.Key$listenTableCud)
-    public VisitListenerProvider jooqTableCudListener(FacelessJooqCudProp prop, List<WingsTableCudHandler> handlers) {
-        final TableCudListener listener = new TableCudListener();
-
-        final String names = handlers.stream().map(it -> it.getClass().getName()).collect(Collectors.joining(","));
-        log.info("FacelessJooq spring-bean jooqTableCudListener with handler=" + names);
-        for (WingsTableCudHandler handler : handlers) {
-            handler.register(listener);
-        }
-
-        listener.setHandlers(handlers);
-        listener.setCreate(prop.isCreate());
-        listener.setUpdate(prop.isUpdate());
-        listener.setDelete(prop.isDelete());
-        listener.setTableField(prop.getTable());
-        return new DefaultVisitListenerProvider(listener);
-    }
-
-    /**
      * when deleting with commit_id, whether to update first and then delete.
      */
     @Bean
-    @ConditionalWingsEnabled(absKey = FacelessJooqConfProp.Key$journalDelete)
+    @ConditionalWingsEnabled(abs = FacelessJooqConfProp.Key$journalDelete, value = false)
     public ExecuteListenerProvider jooqJournalDeleteListener() {
         log.info("FacelessJooq spring-bean jooqJournalDeleteListener");
         return new DefaultExecuteListenerProvider(new JournalDeleteListener());
     }
-
 }

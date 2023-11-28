@@ -9,10 +9,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * use `@Conditional(WingsEnabledCondition.class)` to dynamically
- * enable or disable `@Configuration`, `@Bean` and `@Component` by properties.
- * <p>
- * true only if `this && and1 && and2 && !not1 && !not2`
+ * <pre>
+ * enhanced `@Conditional(WingsEnabledCondition.class)` to dynamically
+ * disable `@Configuration`, `@Bean` and `@Component` by properties.
+ *
+ * `true` only if `this && and1 && and2 && !not1 && !not2`
+ *
+ * the key priority from high to low
+ * - qualified-key = `prefix()` + `ClassName` + `methodName`?
+ * - absolute-key = `abs()`
+ * - relative-key = `prefix()` + `key()`
+ * - default = `value()`
+ * </pre>
  *
  * @author trydofor
  * @see WingsEnabledCondition
@@ -31,17 +39,17 @@ public @interface ConditionalWingsEnabled {
     String prefix() default "";
 
     /**
-     * without prefix, absolute key of properties
+     * absolute-key, without prefix, priority lower then qualified-key
      */
-    String absKey() default "";
+    String abs() default "";
 
     /**
-     * with prefix, customize key instead of ClassName-qualified
+     * relative-key, with prefix, priority lower then absolute-key
      */
     String key() default "";
 
     /**
-     * default value, if no property found
+     * default value, the lowest priority, if no property found
      */
     boolean value() default true;
 

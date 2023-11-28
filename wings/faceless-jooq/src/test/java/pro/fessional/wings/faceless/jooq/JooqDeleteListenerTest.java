@@ -36,7 +36,7 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
  * @since 2019-09-27
  */
 
-@SpringBootTest(properties = {"spring.wings.faceless.jooq.enabled.journal-delete=true"})
+@SpringBootTest(properties = {"wings.faceless.jooq.conf.journal-delete=true"})
 @DependsOnDatabaseInitialization
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @ActiveProfiles("init")

@@ -2,7 +2,6 @@ package pro.fessional.wings.slardar.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
@@ -16,7 +15,6 @@ import pro.fessional.wings.slardar.spring.prop.SlardarRemoteProp;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties(SlardarRemoteProp.class)
 public class SlardarRemoteConfiguration {
 
     private final Log log = LogFactory.getLog(SlardarRemoteConfiguration.class);

@@ -2,7 +2,6 @@ package pro.fessional.wings.silencer.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.bits.Aes256;
@@ -14,7 +13,6 @@ import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.silencer.spring.prop.SilencerEncryptProp;
 
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  * @author trydofor
@@ -22,10 +20,23 @@ import java.util.Map;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties(SilencerEncryptProp.class)
 public class SilencerEncryptConfiguration {
 
     private static final Log log = LogFactory.getLog(SilencerEncryptConfiguration.class);
+
+    @Bean
+    @ConditionalWingsEnabled
+    public Aes256 aes256(SilencerEncryptProp prop) {
+        String key = prop.getAesKey().get(SecretProvider.System);
+        if (key == null || key.isEmpty()) {
+            log.warn("SilencerCurse spring-bean aes256, should NOT use random");
+            return Aes256.of(RandCode.strong(32));
+        }
+        else {
+            log.info("SilencerCurse spring-bean aes256 with system");
+            return Aes256.of(key);
+        }
+    }
 
     @Bean
     @ConditionalWingsEnabled
@@ -55,30 +66,11 @@ public class SilencerEncryptConfiguration {
         }
     }
 
-    @Bean
-    @ConditionalWingsEnabled
-    public Aes256 aes256(SilencerEncryptProp prop) {
-        String key = prop.getAesKey().get(SecretProvider.System);
-        if (key == null || key.isEmpty()) {
-            log.warn("SilencerCurse spring-bean aes256, should NOT use random");
-            return Aes256.of(RandCode.strong(32));
-        }
-        else {
-            log.info("SilencerCurse spring-bean aes256 with system");
-            return Aes256.of(key);
-        }
-    }
 
     @Bean
     @ConditionalWingsEnabled
     public SecretProvider secretProvider(SilencerEncryptProp prop) {
         log.info("SilencerCurse spring-bean secretProvider");
-        return new SecretProvider() {{
-            for (Map.Entry<String, String> en : prop.getAesKey().entrySet()) {
-                final String name = en.getKey();
-                log.info("SilencerCurse spring-conf secretProvider, name=" + name);
-                SecretProvider.put(name, en.getValue(), false);
-            }
-        }};
+        return new SecretProvider(prop.getAesKey()) {};
     }
 }

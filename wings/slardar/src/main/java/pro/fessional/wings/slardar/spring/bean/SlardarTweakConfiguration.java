@@ -20,15 +20,15 @@ public class SlardarTweakConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public TweakEventListener tweakEventListener() {
-        log.info("Slardar spring-bean tweakEventListener");
-        return new TweakEventListener();
+    public OkHttpTweakLogInterceptor okhttpTweakLogInterceptor() {
+        log.info("Slardar spring-bean okhttpTweakLogInterceptor");
+        return new OkHttpTweakLogInterceptor();
     }
 
     @Bean
     @ConditionalWingsEnabled
-    public OkHttpTweakLogInterceptor okhttpTweakLogInterceptor() {
-        log.info("Slardar spring-bean okhttpTweakLogInterceptor");
-        return new OkHttpTweakLogInterceptor();
+    public TweakEventListener tweakEventListener() {
+        log.info("Slardar spring-bean tweakEventListener");
+        return new TweakEventListener();
     }
 }

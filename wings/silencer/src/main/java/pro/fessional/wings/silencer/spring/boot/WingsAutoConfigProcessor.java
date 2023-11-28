@@ -77,12 +77,17 @@ public class WingsAutoConfigProcessor implements EnvironmentPostProcessor {
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication ignored) {
         final String en = environment.getProperty(SilencerEnabledProp.Key$autoconf);
         if ("false".equalsIgnoreCase(en)) {
-            log.info("🦁 Wings AutoConfig is disabled, skip it.");
+            log.info("🦁 Wings AutoConfig is disabled by property, skip it.");
+            return;
         }
-        else {
-            processWingsConf(environment);
-            processWingsI18n(environment);
+
+        if (!"true".equalsIgnoreCase(en) && !new SilencerEnabledProp().isAutoconf()) {
+            log.info("🦁 Wings AutoConfig is disabled by default, skip it.");
+            return;
         }
+
+        processWingsConf(environment);
+        processWingsI18n(environment);
     }
 
     // ///////////////////////////////////////////////////////

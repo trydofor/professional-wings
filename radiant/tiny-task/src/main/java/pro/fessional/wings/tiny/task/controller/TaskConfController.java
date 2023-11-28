@@ -15,6 +15,7 @@ import pro.fessional.mirana.data.R;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.tiny.task.schedule.conf.TaskerProp;
 import pro.fessional.wings.tiny.task.service.TinyTaskConfService;
+import pro.fessional.wings.tiny.task.spring.prop.TinyTaskEnabledProp;
 import pro.fessional.wings.tiny.task.spring.prop.TinyTaskUrlmapProp;
 
 import java.util.LinkedHashMap;
@@ -25,7 +26,7 @@ import java.util.Map;
  * @since 2022-12-26
  */
 @RestController
-@ConditionalWingsEnabled
+@ConditionalWingsEnabled(abs = TinyTaskEnabledProp.Key$mvcConf)
 public class TaskConfController {
 
     @Setter(onMethod_ = {@Autowired})

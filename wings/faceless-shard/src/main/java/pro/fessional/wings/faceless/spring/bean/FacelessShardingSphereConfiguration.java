@@ -7,7 +7,6 @@ import org.apache.shardingsphere.infra.util.yaml.YamlEngine;
 import org.apache.shardingsphere.infra.yaml.config.pojo.YamlRootConfiguration;
 import org.apache.shardingsphere.infra.yaml.config.swapper.resource.YamlDataSourceConfigurationSwapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.faceless.database.DataSourceContext;
@@ -31,32 +30,28 @@ public class FacelessShardingSphereConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
+    public DataSourceContext.Customizer shardingDataSourceContext(@Value("${spring.datasource.url}") String jdbcUrl) throws Exception {
+        if (!jdbcUrl.startsWith("jdbc:shardingsphere:")) {
+            log.info("FacelessShard skip shardingSphereCustomizer jdbcUrl=" + jdbcUrl);
+            return ignored -> false;
+        }
+
+        final byte[] yamlBytes = ShardingSphereDriverURLManager.getContent(jdbcUrl);
+        YamlRootConfiguration rootConfig = YamlEngine.unmarshal(yamlBytes, YamlRootConfiguration.class);
+        final YamlDataSourceConfigurationSwapper configurationSwapper = new YamlDataSourceConfigurationSwapper();
+        final Map<String, DataSource> dsMap = configurationSwapper.swapToDataSources(rootConfig.getDataSources());
+        log.info("FacelessShard spring-bean shardingSphereCustomizer backends size=" + dsMap.size());
+
+        return (ctx) -> {
+            ctx.clearBackend().addBackend(dsMap);
+            return true;
+        };
+    }
+
+    @Bean
+    @ConditionalWingsEnabled
     public WriteRouteOnlyAround writeRouteOnlyAround() {
         log.info("FacelessShard spring-bean writeRouteOnlyAround");
         return new WriteRouteOnlyAround();
-    }
-
-
-    @ConditionalWingsEnabled
-    @ConditionalOnClass(DataSourceContext.class)
-    public static class DataSourceContextBean {
-        @Bean
-        public DataSourceContext.Customizer shardingSphereCustomizer(@Value("${spring.datasource.url}") String jdbcUrl) throws Exception {
-            if (!jdbcUrl.startsWith("jdbc:shardingsphere:")) {
-                log.info("FacelessShard skip shardingSphereCustomizer jdbcUrl=" + jdbcUrl);
-                return ignored -> false;
-            }
-
-            final byte[] yamlBytes = ShardingSphereDriverURLManager.getContent(jdbcUrl);
-            YamlRootConfiguration rootConfig = YamlEngine.unmarshal(yamlBytes, YamlRootConfiguration.class);
-            final YamlDataSourceConfigurationSwapper configurationSwapper = new YamlDataSourceConfigurationSwapper();
-            final Map<String, DataSource> dsMap = configurationSwapper.swapToDataSources(rootConfig.getDataSources());
-            log.info("FacelessShard spring-bean shardingSphereCustomizer backends size=" + dsMap.size());
-
-            return (ctx) -> {
-                ctx.clearBackend().addBackend(dsMap);
-                return true;
-            };
-        }
     }
 }

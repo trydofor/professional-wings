@@ -13,7 +13,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.silencer.runner.CommandLineRunnerOrdered;
@@ -40,7 +39,6 @@ import java.util.concurrent.TimeUnit;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(OkHttpClient.class)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties(SlardarOkhttpProp.class)
 public class SlardarOkhttpConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarOkhttpConfiguration.class);

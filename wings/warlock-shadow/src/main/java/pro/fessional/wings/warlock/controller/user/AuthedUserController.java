@@ -10,13 +10,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.session.MapSession;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.slardar.session.SessionTokenEncoder;
@@ -42,9 +42,9 @@ import java.util.stream.Collectors;
  */
 // @PreAuthorize("isAuthenticated()")
 @RestController
+@ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$mvcUser)
 @RequiredArgsConstructor
 @Slf4j
-@ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerUser, havingValue = "true")
 public class AuthedUserController {
 
     @Setter(onMethod_ = {@Autowired})

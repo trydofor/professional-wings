@@ -18,6 +18,7 @@ import pro.fessional.wings.warlock.service.user.WarlockUserLoginService;
 import pro.fessional.wings.warlock.service.user.impl.WarlockUserAuthnServiceDummy;
 import pro.fessional.wings.warlock.service.user.impl.WarlockUserBasisServiceDummy;
 import pro.fessional.wings.warlock.service.user.impl.WarlockUserLoginServiceDummy;
+import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 
 
 /**
@@ -25,7 +26,7 @@ import pro.fessional.wings.warlock.service.user.impl.WarlockUserLoginServiceDumm
  * @since 2019-12-01
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalWingsEnabled
+@ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$dummyService, value = false)
 public class WarlockSecurityDummyConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockSecurityDummyConfiguration.class);

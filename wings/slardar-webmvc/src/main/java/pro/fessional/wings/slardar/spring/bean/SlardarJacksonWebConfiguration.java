@@ -11,7 +11,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,6 +40,7 @@ import pro.fessional.wings.slardar.jackson.I18nStringSerializer;
 import pro.fessional.wings.slardar.jackson.JacksonHelper;
 import pro.fessional.wings.slardar.jackson.ResourceSerializer;
 import pro.fessional.wings.slardar.spring.prop.SlardarDatetimeProp;
+import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarJacksonProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarNumberProp;
 
@@ -65,7 +65,6 @@ import java.util.stream.Collectors;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(DateSerializer.class)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties({SlardarJacksonProp.class, SlardarDatetimeProp.class, SlardarNumberProp.class})
 public class SlardarJacksonWebConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarJacksonWebConfiguration.class);
@@ -83,7 +82,7 @@ public class SlardarJacksonWebConfiguration {
      * It has some useful methods to access the default and user-enhanced message converters.
      */
     @Bean
-    @ConditionalWingsEnabled
+    @ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$jacksonDatetime)
     public Jackson2ObjectMapperBuilderCustomizer customizeJacksonDatetime(SlardarDatetimeProp prop) {
         log.info("SlardarWebmvc spring-bean customizeJacksonDatetime");
         return builder -> {
@@ -158,17 +157,19 @@ public class SlardarJacksonWebConfiguration {
     }
 
     @Bean
-    @ConditionalWingsEnabled
-    public Jackson2ObjectMapperBuilderCustomizer customizeJacksonResource() {
-        log.info("SlardarWebmvc spring-bean customizeJacksonResource");
+    @ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$jacksonEmpty)
+    public Jackson2ObjectMapperBuilderCustomizer customizeJacksonEmpty(SlardarJacksonProp prop) {
+        log.info("SlardarWebmvc spring-bean customizeJacksonEmpty");
         return builder -> {
-            log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer Resource");
-            builder.serializerByType(Resource.class, new ResourceSerializer());
+            if (StringUtils.hasText(prop.getEmptyDate()) || prop.isEmptyMap() || prop.isEmptyList()) {
+                log.info("SlardarWebmvc conf EmptyValuePropertyFilter's EmptyDateMixin");
+                builder.mixIn(Object.class, EmptyValuePropertyFilter.EmptyDateMixin.class);
+            }
         };
     }
 
     @Bean
-    @ConditionalWingsEnabled
+    @ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$jacksonNumber)
     public Jackson2ObjectMapperBuilderCustomizer customizeJacksonNumber(SlardarNumberProp prop) {
         log.info("SlardarWebmvc spring-bean customizeJacksonNumber");
         return builder -> {
@@ -206,19 +207,17 @@ public class SlardarJacksonWebConfiguration {
     }
 
     @Bean
-    @ConditionalWingsEnabled
-    public Jackson2ObjectMapperBuilderCustomizer customizeJacksonEmpty(SlardarJacksonProp prop) {
-        log.info("SlardarWebmvc spring-bean customizeJacksonEmpty");
+    @ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$jacksonResource)
+    public Jackson2ObjectMapperBuilderCustomizer customizeJacksonResource() {
+        log.info("SlardarWebmvc spring-bean customizeJacksonResource");
         return builder -> {
-            if (StringUtils.hasText(prop.getEmptyDate()) || prop.isEmptyMap() || prop.isEmptyList()) {
-                log.info("SlardarWebmvc conf EmptyValuePropertyFilter's EmptyDateMixin");
-                builder.mixIn(Object.class, EmptyValuePropertyFilter.EmptyDateMixin.class);
-            }
+            log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer Resource");
+            builder.serializerByType(Resource.class, new ResourceSerializer());
         };
     }
 
     @Bean
-    @ConditionalWingsEnabled
+    @ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$jacksonResult)
     public Jackson2ObjectMapperBuilderCustomizer customizeJacksonResult(SlardarJacksonProp prop, MessageSource source) {
         log.info("SlardarWebmvc spring-bean customizerObjectMapperJackson");
         return builder -> {
@@ -233,23 +232,23 @@ public class SlardarJacksonWebConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public FilterProvider slardarFilterProvider(List<AutoRegisterPropertyFilter> filters) {
-        log.info("SlardarWebmvc spring-bean slardarFilterProvider");
+    public Jackson2ObjectMapperBuilderCustomizer jacksonCustomizerFilter(FilterProvider filterProvider) {
+        log.info("SlardarWebmvc spring-bean jacksonCustomizerFilter");
+        return builder -> {
+            log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer filters");
+            builder.filters(filterProvider);
+        };
+    }
+
+    @Bean
+    @ConditionalWingsEnabled
+    public FilterProvider jacksonFilterProvider(List<AutoRegisterPropertyFilter> filters) {
+        log.info("SlardarWebmvc spring-bean jacksonFilterProvider");
         final SimpleFilterProvider bean = new SimpleFilterProvider();
         for (AutoRegisterPropertyFilter filter : filters) {
             bean.addFilter(filter.getId(), filter);
         }
         return bean;
-    }
-
-    @Bean
-    @ConditionalWingsEnabled
-    public Jackson2ObjectMapperBuilderCustomizer customizeJacksonFilter(FilterProvider filterProvider) {
-        log.info("SlardarWebmvc spring-bean customizeJacksonFilter");
-        return builder -> {
-            log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer filters");
-            builder.filters(filterProvider);
-        };
     }
 
     @Bean

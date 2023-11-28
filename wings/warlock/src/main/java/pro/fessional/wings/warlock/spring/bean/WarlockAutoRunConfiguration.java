@@ -3,7 +3,6 @@ package pro.fessional.wings.warlock.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.faceless.database.helper.DatabaseChecker;
@@ -16,7 +15,6 @@ import pro.fessional.wings.silencer.runner.CommandLineRunnerOrdered;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.warlock.spring.prop.WarlockCheckProp;
-import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockI18nProp;
 
 import javax.sql.DataSource;
@@ -27,10 +25,22 @@ import javax.sql.DataSource;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties({WarlockEnabledProp.class, WarlockCheckProp.class, WarlockI18nProp.class})
 public class WarlockAutoRunConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockAutoRunConfiguration.class);
+
+    /**
+     * check database version and timezone
+     */
+    @Bean
+    @ConditionalWingsEnabled
+    public CommandLineRunnerOrdered databaseCheckerRunner(DataSource dataSource, WarlockCheckProp prop) {
+        log.info("Warlock spring-runs databaseCheckerRunner");
+        return new CommandLineRunnerOrdered(WingsOrdered.Lv2Resource, ignored -> {
+            DatabaseChecker.version(dataSource);
+            DatabaseChecker.timezone(dataSource, prop.getTzOffset(), prop.isTzFail());
+        });
+    }
 
     @Bean
     @ConditionalWingsEnabled
@@ -64,16 +74,6 @@ public class WarlockAutoRunConfiguration {
                     TimezoneEnumUtil.register((StandardTimezoneEnum) o);
                 }
             }
-        });
-    }
-
-    @Bean
-    @ConditionalWingsEnabled
-    public CommandLineRunnerOrdered databaseCheckerRunner(DataSource dataSource, WarlockCheckProp prop) {
-        log.info("Warlock spring-runs databaseCheckerRunner");
-        return new CommandLineRunnerOrdered(WingsOrdered.Lv2Resource, ignored -> {
-            DatabaseChecker.version(dataSource);
-            DatabaseChecker.timezone(dataSource, prop.getTzOffset(), prop.isTzFail());
         });
     }
 }

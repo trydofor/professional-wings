@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.TtlMDCAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggerGroups;
 import org.springframework.boot.logging.LoggingSystem;
@@ -17,6 +16,7 @@ import pro.fessional.mirana.evil.ThreadLocalAttention;
 import pro.fessional.mirana.pain.CodeException;
 import pro.fessional.mirana.time.ThreadNow;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
+import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
 import pro.fessional.wings.silencer.spring.prop.SilencerTweakProp;
 import pro.fessional.wings.silencer.tweak.TweakLogger;
 
@@ -29,12 +29,11 @@ import java.time.Duration;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties(SilencerTweakProp.class)
 public class SilencerTweakConfiguration {
     private static final Log log = LogFactory.getLog(SilencerTweakConfiguration.class);
 
     @Configuration(proxyBeanMethods = false)
-    @ConditionalWingsEnabled
+    @ConditionalWingsEnabled(abs = SilencerEnabledProp.Key$tweakClock)
     public static class ClockWired {
         @Autowired
         public void auto(SilencerTweakProp prop) throws ThreadLocalAttention {
@@ -50,7 +49,7 @@ public class SilencerTweakConfiguration {
     }
 
     @Configuration(proxyBeanMethods = false)
-    @ConditionalWingsEnabled
+    @ConditionalWingsEnabled(abs = SilencerEnabledProp.Key$tweakLogback)
     public static class LogbackWired {
         @Autowired
         @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
@@ -85,7 +84,7 @@ public class SilencerTweakConfiguration {
     }
 
     @Configuration(proxyBeanMethods = false)
-    @ConditionalWingsEnabled
+    @ConditionalWingsEnabled(abs = SilencerEnabledProp.Key$tweakStack)
     public static class StackWired {
         @Autowired
         public void auto(SilencerTweakProp prop) throws ThreadLocalAttention {

@@ -1,0 +1,24 @@
+{
+  "groups": [
+    {"name": "wings.enabled.pro.fessional.wings.tiny.mail.spring.conf"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.mail.spring.bean"}
+  ],
+  "properties": [
+    {"name": "wings.enabled.pro.fessional.wings.tiny.mail.spring.conf.TinyMailAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.tiny.mail.spring.bean.TinyMailConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.mail.spring.bean.TinyMailConfiguration$DaoServScan", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.mail.spring.bean.TinyMailConfiguration$MvcRestScan", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.mail.spring.bean.TinyMailConfiguration.mailConfigProvider", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.mail.spring.bean.TinyMailConfiguration.mailNotice", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.mail.spring.bean.TinyMailConfiguration.mailSenderManager", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.mail.spring.bean.TinyMailConfiguration.mailSenderProvider", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.tiny.mail.controller.MailListController", "type": "java.lang.Boolean", "description": "wings.enabled.tiny.mail.mvc-list for short."},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.mail.controller.MailSendController", "type": "java.lang.Boolean", "description": "wings.enabled.tiny.mail.mvc-send for short."},
+
+    {"name": "wings.enabled.pro.fessional.wings.tiny.mail.service.impl.TinyMailListServiceImpl", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.mail.service.impl.TinyMailServiceImpl", "type": "java.lang.Boolean"}
+  ],
+  "hints": []
+}

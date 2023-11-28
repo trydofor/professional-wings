@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.session.DefaultCookieSerializerCustomizer;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.boot.web.servlet.server.Session.Cookie;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +18,7 @@ import org.springframework.util.StringUtils;
 import pro.fessional.mirana.best.AssertArgs;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.session.WingsSessionIdResolver;
+import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarSessionProp;
 
 import java.util.ArrayList;
@@ -34,28 +34,10 @@ import java.util.List;
  * @since 2019-06-26
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalWingsEnabled
-@EnableConfigurationProperties({ServerProperties.class, SlardarSessionProp.class})
+@ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$session)
 public class SlardarSessionConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarSessionConfiguration.class);
-
-
-    @Bean
-    @ConditionalWingsEnabled
-    public DefaultCookieSerializerCustomizer slardarCookieSerializerCustomizer(SlardarSessionProp prop) {
-        log.info("SlardarWebmvc spring-bean slardarCookieSerializerCustomizer");
-        return it -> {
-            final boolean base64 = prop.isCookieBase64();
-            log.info("SlardarWebmvc conf Session Cookie Base64=" + base64);
-            it.setUseBase64Encoding(base64);
-            final String jvmRoute = prop.getCookieRoute();
-            if (StringUtils.hasText(jvmRoute)) {
-                log.info("SlardarWebmvc conf Session Cookie jvmRoute=" + jvmRoute);
-                it.setJvmRoute(jvmRoute);
-            }
-        };
-    }
 
     @Bean
     @ConditionalWingsEnabled
@@ -107,5 +89,21 @@ public class SlardarSessionConfiguration {
         }
 
         return new WingsSessionIdResolver(resolvers);
+    }
+
+    @Bean
+    @ConditionalWingsEnabled
+    public DefaultCookieSerializerCustomizer slardarCookieSerializerCustomizer(SlardarSessionProp prop) {
+        log.info("SlardarWebmvc spring-bean slardarCookieSerializerCustomizer");
+        return it -> {
+            final boolean base64 = prop.isCookieBase64();
+            log.info("SlardarWebmvc conf Session Cookie Base64=" + base64);
+            it.setUseBase64Encoding(base64);
+            final String jvmRoute = prop.getCookieRoute();
+            if (StringUtils.hasText(jvmRoute)) {
+                log.info("SlardarWebmvc conf Session Cookie jvmRoute=" + jvmRoute);
+                it.setJvmRoute(jvmRoute);
+            }
+        };
     }
 }

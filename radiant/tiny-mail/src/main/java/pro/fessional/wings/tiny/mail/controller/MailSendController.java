@@ -12,6 +12,7 @@ import pro.fessional.mirana.data.R;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.tiny.mail.service.TinyMailPlain;
 import pro.fessional.wings.tiny.mail.service.TinyMailService;
+import pro.fessional.wings.tiny.mail.spring.prop.TinyMailEnabledProp;
 import pro.fessional.wings.tiny.mail.spring.prop.TinyMailUrlmapProp;
 
 /**
@@ -19,7 +20,7 @@ import pro.fessional.wings.tiny.mail.spring.prop.TinyMailUrlmapProp;
  * @since 2023-01-13
  */
 @RestController
-@ConditionalWingsEnabled
+@ConditionalWingsEnabled(abs = TinyMailEnabledProp.Key$mvcSend)
 public class MailSendController {
 
     @Setter(onMethod_ = {@Autowired})

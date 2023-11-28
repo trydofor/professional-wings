@@ -45,9 +45,9 @@ public class RighterControllerTest {
     @BeforeEach
     public void setup() {
         mvc = MockMvcBuilders
-                      .webAppContextSetup(context)
-                      .apply(springSecurity())
-                      .build();
+                .webAppContextSetup(context)
+                .apply(springSecurity())
+                .build();
     }
 
     @Test

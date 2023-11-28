@@ -7,7 +7,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -35,14 +34,12 @@ import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties({LightIdInsertProp.class, LightIdProviderProp.class,})
 public class FacelessLightIdConfiguration {
 
     private static final Log log = LogFactory.getLog(FacelessLightIdConfiguration.class);
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalWingsEnabled
-    @EnableConfigurationProperties(LightIdLayoutProp.class)
     public static class LayoutWired {
         @Autowired
         public void auto(@NotNull LightIdLayoutProp prop) {

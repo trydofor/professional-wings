@@ -13,7 +13,10 @@ import pro.fessional.wings.warlock.service.other.TerminalJournalService;
  * @author trydofor
  * @since 2023-01-25
  */
-@SpringBootTest(properties = "spring.wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockJournalConfiguration.terminalJournalService=false")
+@SpringBootTest(properties = {
+        "wings.enabled.faceless.simple-journal=true",
+        "wings.enabled.pro.fessional.wings.warlock.spring.bean.WarlockJournalConfiguration.terminalJournalService=false"
+})
 class WarlockJournalDisableTest {
 
     @Setter(onMethod_ = {@Autowired})

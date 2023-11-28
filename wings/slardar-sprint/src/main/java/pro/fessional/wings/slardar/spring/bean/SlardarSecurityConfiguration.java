@@ -3,7 +3,6 @@ package pro.fessional.wings.slardar.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +32,6 @@ import java.util.Map;
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
 @ConditionalOnClass(SecurityConfigurer.class)
-@EnableConfigurationProperties(SlardarPasscoderProp.class)
 public class SlardarSecurityConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarSecurityConfiguration.class);
@@ -105,8 +103,8 @@ public class SlardarSecurityConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public TerminalContext.Listener LocaleContextHolderTerminalContextListener() {
-        log.info("SlardarSprint spring-bean LocaleContextHolder");
+    public TerminalContext.Listener localeContextHolderTerminalContextListener() {
+        log.info("SlardarSprint spring-bean localeContextHolderTerminalContextListener");
         return (del, ctx) -> {
             if (!del) {
                 LocaleContextHolder.setLocaleContext(new SimpleTimeZoneAwareLocaleContext(ctx.getLocale(), ctx.getTimeZone()));

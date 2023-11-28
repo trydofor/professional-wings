@@ -28,17 +28,16 @@ public class SlardarOkhttpWebConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public RestTemplateBuilder restTemplateBuilder(RestTemplateBuilderConfigurer configurer, OkHttpClient client) {
-        log.info("SlardarWebmvc spring-bean restTemplateBuilder");
-        final RestTemplateBuilder builder = configurer.configure(new RestTemplateBuilder());
-        return builder.requestFactory(() -> new OkHttp3ClientHttpRequestFactory(client));
-    }
-
-    @Bean
-    @ConditionalWingsEnabled
     public RestTemplate okhttpRestTemplate(RestTemplateBuilder builder) {
         log.info("SlardarWebmvc spring-bean okRestTemplate");
         return builder.build();
     }
 
+    @Bean
+    @ConditionalWingsEnabled
+    public RestTemplateBuilder restTemplateBuilder(RestTemplateBuilderConfigurer configurer, OkHttpClient client) {
+        log.info("SlardarWebmvc spring-bean restTemplateBuilder");
+        final RestTemplateBuilder builder = configurer.configure(new RestTemplateBuilder());
+        return builder.requestFactory(() -> new OkHttp3ClientHttpRequestFactory(client));
+    }
 }

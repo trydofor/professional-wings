@@ -3,7 +3,6 @@ package pro.fessional.wings.slardar.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
@@ -16,6 +15,7 @@ import pro.fessional.wings.slardar.context.TerminalSecurityAttribute;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.slardar.servlet.resolver.WingsLocaleResolver;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
+import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarTerminalProp;
 
 import java.util.ArrayList;
@@ -30,8 +30,7 @@ import static pro.fessional.wings.slardar.context.TerminalAttribute.TerminalAgen
  * @since 2019-06-29
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalWingsEnabled
-@EnableConfigurationProperties(SlardarTerminalProp.class)
+@ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$terminal)
 public class SlardarTerminalConfiguration {
 
     private final Log log = LogFactory.getLog(SlardarTerminalConfiguration.class);

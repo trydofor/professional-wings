@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import pro.fessional.wings.faceless.database.manual.single.modify.commitjournal.CommitJournalModify;
 import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
@@ -21,8 +20,10 @@ public class WarlockJournalConfiguration {
 
     private static final Log log = LogFactory.getLog(WarlockJournalConfiguration.class);
 
+    /**
+     * terminal journal instead of the simple
+     */
     @Bean
-    @Primary
     @ConditionalWingsEnabled
     public TerminalJournalService terminalJournalService(
             @SuppressWarnings("all") LightIdService lightIdService,

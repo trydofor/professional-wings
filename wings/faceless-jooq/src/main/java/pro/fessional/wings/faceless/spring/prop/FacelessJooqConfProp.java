@@ -21,7 +21,7 @@ public class FacelessJooqConfProp {
      *
      * @see #Key$autoQualify
      */
-    private String autoQualify = "";
+    private boolean autoQualify = true;
     public static final String Key$autoQualify = Key + ".auto-qualify";
 
 
@@ -46,16 +46,16 @@ public class FacelessJooqConfProp {
      *
      * @see #Key$journalDelete
      */
-    private String journalDelete = "";
+    private boolean journalDelete = false;
     public static final String Key$journalDelete = Key + ".journal-delete";
 
     /**
      * whether to listen to table's create/update/delete.
      *
-     * @see #Key$listenTableCud
+     * @see #Key$listenCud
      */
-    private String listenTableCud = "";
-    public static final String Key$listenTableCud = Key + ".listen-table-cud";
+    private boolean listenCud = true;
+    public static final String Key$listenCud = Key + ".listen-cud";
 
     /**
      * <pre>

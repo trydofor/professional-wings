@@ -3,7 +3,6 @@ package pro.fessional.wings.warlock.spring.bean;
 import jakarta.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
@@ -34,7 +33,6 @@ import pro.fessional.wings.warlock.spring.prop.WarlockDangerProp;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties(WarlockDangerProp.class)
 public class WarlockBondBeanConfiguration {
 
     private final static Log log = LogFactory.getLog(WarlockBondBeanConfiguration.class);

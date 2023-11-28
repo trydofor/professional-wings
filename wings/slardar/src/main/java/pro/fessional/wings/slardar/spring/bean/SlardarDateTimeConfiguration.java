@@ -3,7 +3,6 @@ package pro.fessional.wings.slardar.spring.bean;
 import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.convert.ApplicationConversionService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +31,6 @@ import java.util.stream.Collectors;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties(SlardarDatetimeProp.class)
 public class SlardarDateTimeConfiguration {
     private static final Log log = LogFactory.getLog(SlardarDateTimeConfiguration.class);
 

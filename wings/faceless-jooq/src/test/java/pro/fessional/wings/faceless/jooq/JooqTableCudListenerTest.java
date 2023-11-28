@@ -14,16 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import pro.fessional.wings.faceless.convention.EmptyValue;
-import pro.fessional.wings.faceless.database.WingsTableCudHandler.Cud;
 import pro.fessional.wings.faceless.app.database.autogen.tables.TstShardingTable;
 import pro.fessional.wings.faceless.app.database.autogen.tables.daos.TstShardingDao;
 import pro.fessional.wings.faceless.app.database.autogen.tables.pojos.TstSharding;
 import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShardingRecord;
+import pro.fessional.wings.faceless.app.service.TestingTableCudHandler;
+import pro.fessional.wings.faceless.convention.EmptyValue;
+import pro.fessional.wings.faceless.database.WingsTableCudHandler.Cud;
 import pro.fessional.wings.faceless.database.jooq.listener.TableCudListener;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.helper.WingsTestHelper;
-import pro.fessional.wings.faceless.app.service.TestingTableCudHandler;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.time.LocalDateTime;
@@ -49,7 +49,7 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
 @SuppressWarnings("CanBeFinal")
 @SpringBootTest(properties = {
         "wings.faceless.jooq.cud.table[tst_sharding]=id,login_info",
-        "spring.wings.faceless.jooq.enabled.listen-table-cud=true"
+        "wings.faceless.jooq.conf.listen-cud=true"
 })
 @DependsOnDatabaseInitialization
 @TestMethodOrder(MethodOrderer.MethodName.class)

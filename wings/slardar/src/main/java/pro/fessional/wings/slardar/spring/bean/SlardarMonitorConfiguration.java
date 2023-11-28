@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +20,7 @@ import pro.fessional.wings.slardar.monitor.metric.JvmMetric;
 import pro.fessional.wings.slardar.monitor.metric.LogMetric;
 import pro.fessional.wings.slardar.monitor.report.DingTalkReport;
 import pro.fessional.wings.slardar.notice.DingTalkNotice;
+import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarMonitorProp;
 
 import java.io.File;
@@ -33,7 +33,6 @@ import java.util.Map;
 @EnableScheduling
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties(SlardarMonitorProp.class)
 public class SlardarMonitorConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarMonitorConfiguration.class);
@@ -41,9 +40,9 @@ public class SlardarMonitorConfiguration {
 
     // Dynamic register Bean LogMetric
     @Configuration(proxyBeanMethods = false)
-    @ConditionalWingsEnabled
+    @ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$monitorLog)
     @ComponentScan(basePackageClasses = MonitorTask.class)
-    public static class LogMetricRegister implements BeanFactoryPostProcessor, EnvironmentAware {
+    public static class LogMonitor implements BeanFactoryPostProcessor, EnvironmentAware {
 
         private SlardarMonitorProp slardarMonitorProp;
 
@@ -52,7 +51,7 @@ public class SlardarMonitorConfiguration {
          */
         @Override
         public void setEnvironment(@NotNull Environment environment) {
-            log.info("Slardar spring-scan MonitorTask");
+            log.info("Slardar spring-bind SlardarMonitorProp");
             slardarMonitorProp = Binder
                     .get(environment)
                     .bind(SlardarMonitorProp.Key, SlardarMonitorProp.class)
@@ -61,14 +60,14 @@ public class SlardarMonitorConfiguration {
 
         @Override
         public void postProcessBeanFactory(@NotNull ConfigurableListableBeanFactory beanFactory) throws BeansException {
-            log.info("Slardar spring-proc LogMetric beans");
+            log.info("Slardar spring-proc LogMonitor beans");
             final Map<String, LogMetric.Rule> logs = slardarMonitorProp.getLog();
             LogMetric.Rule defaults = logs.get("default");
 
             for (Map.Entry<String, LogMetric.Rule> entry : logs.entrySet()) {
                 String key = LogMetric.Rule.Key + "." + entry.getKey();
                 if (beanFactory.containsBean(key)) {
-                    log.info("Slardar skip LogMetric bean=" + key + ", for existed");
+                    log.info("Slardar skip LogMonitor bean=" + key + ", for existed");
                     continue;
                 }
 
@@ -79,14 +78,14 @@ public class SlardarMonitorConfiguration {
                     if (new File(rf).exists()) {
                         LogMetric bean = new LogMetric(key, rule);
                         beanFactory.registerSingleton(key, bean);
-                        log.info("Slardar spring-bean register dynamic LogMetric bean=" + key);
+                        log.info("Slardar spring-bean register dynamic LogMonitor bean=" + key);
                     }
                     else {
-                        log.warn("Wings skip LogMetric bean for file not exist, file=" + rf);
+                        log.warn("Wings skip LogMonitor bean for file not exist, file=" + rf);
                     }
                 }
                 else {
-                    log.info("Wings skip LogMetric bean=" + key + ", for disabled");
+                    log.info("Wings skip LogMonitor bean=" + key + ", for disabled");
                 }
             }
         }
@@ -108,9 +107,9 @@ public class SlardarMonitorConfiguration {
     }
 
     @Bean
-    @ConditionalWingsEnabled
-    public JvmMetric jvmMetric(SlardarMonitorProp prop) {
-        log.info("Slardar spring-bean jvmMetric");
+    @ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$monitorJvm)
+    public JvmMetric jvmMonitor(SlardarMonitorProp prop) {
+        log.info("Slardar spring-bean jvmMonitor");
         final JvmMetric.Rule rule = prop.getJvm();
         return new JvmMetric(rule);
     }

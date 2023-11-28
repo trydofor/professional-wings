@@ -17,6 +17,7 @@ import pro.fessional.wings.faceless.service.lightid.BlockIdProvider;
 import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.faceless.service.wini18n.StandardI18nService;
 import pro.fessional.wings.faceless.service.wini18n.impl.StandardI18nServiceJdbc;
+import pro.fessional.wings.faceless.spring.prop.FacelessEnabledProp;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 
 import javax.sql.DataSource;
@@ -95,7 +96,7 @@ public class FacelessConfiguration {
     }
 
     @Bean
-    @ConditionalWingsEnabled
+    @ConditionalWingsEnabled(abs = FacelessEnabledProp.Key$simpleFlakeid)
     public FlakeIdService flakeIdService(LightIdService lightIdService) {
         log.info("Faceless spring-bean flakeIdService");
         return new FlakeIdLightIdImpl(lightIdService);
@@ -109,7 +110,7 @@ public class FacelessConfiguration {
     }
 
     @Bean
-    @ConditionalWingsEnabled
+    @ConditionalWingsEnabled(abs = FacelessEnabledProp.Key$simpleJournal)
     public JournalService journalService(LightIdService lightIdService, BlockIdProvider blockIdProvider, CommitJournalModify journalModify) {
         log.info("Faceless spring-bean journalService");
         return new DefaultJournalService(lightIdService, blockIdProvider, journalModify);

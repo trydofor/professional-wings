@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration;
 import pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration;
 import pro.fessional.wings.silencer.app.service.ScanService;
@@ -16,7 +15,6 @@ import pro.fessional.wings.silencer.app.service.ScanService;
  * @since 2023-11-17
  */
 @SpringBootTest
-@DirtiesContext
 public class WingsEnabledDefaultTest {
 
     @Setter(onMethod_ = {@Autowired(required = false)})

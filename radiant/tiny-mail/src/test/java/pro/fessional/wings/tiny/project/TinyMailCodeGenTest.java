@@ -14,7 +14,7 @@ import pro.fessional.wings.faceless.flywave.SchemaJournalManager;
  * @since 2021-02-22
  */
 @SpringBootTest(properties = {
-        "spring.wings.enabled.pro.fessional.wings.faceless.spring.conf.FlywaveAutoConfiguration=true",
+        "wings.enabled.faceless.flywave=true",
         "wings.faceless.flywave.checker=false",
         "wings.tiny.mail.service.boot-scan=0",
 })

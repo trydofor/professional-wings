@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,9 +17,7 @@ import pro.fessional.wings.tiny.task.controller.TaskConfController;
 import pro.fessional.wings.tiny.task.database.TinyTaskDatabase;
 import pro.fessional.wings.tiny.task.schedule.TinyTasker;
 import pro.fessional.wings.tiny.task.service.TinyTaskService;
-import pro.fessional.wings.tiny.task.spring.prop.TinyTaskDefineProp;
-import pro.fessional.wings.tiny.task.spring.prop.TinyTaskExecProp;
-import pro.fessional.wings.tiny.task.spring.prop.TinyTaskUrlmapProp;
+import pro.fessional.wings.tiny.task.spring.prop.TinyTaskEnabledProp;
 
 import java.util.Map;
 
@@ -31,11 +28,6 @@ import java.util.Map;
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties({
-        TinyTaskDefineProp.class,
-        TinyTaskExecProp.class,
-        TinyTaskUrlmapProp.class
-})
 public class TinyTaskConfiguration {
 
     private static final Log log = LogFactory.getLog(TinyTaskConfiguration.class);
@@ -62,7 +54,7 @@ public class TinyTaskConfiguration {
      * auto start TinyTask.Auto
      */
     @Bean
-    @ConditionalWingsEnabled
+    @ConditionalWingsEnabled(abs = TinyTaskEnabledProp.Key$autorun)
     public ApplicationReadyEventRunner tinyTaskerAutoRunner(@NotNull ApplicationContext context, ObjectProvider<TinyTaskService> tinyTaskService) {
         log.info("TinyTask spring-runs tinyTaskerAutoRunner");
         return new ApplicationReadyEventRunner(WingsOrdered.Lv3Service, ignored -> {

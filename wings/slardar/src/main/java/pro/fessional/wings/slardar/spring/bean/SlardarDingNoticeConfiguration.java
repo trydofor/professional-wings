@@ -3,7 +3,6 @@ package pro.fessional.wings.slardar.spring.bean;
 import okhttp3.OkHttpClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
@@ -16,7 +15,6 @@ import pro.fessional.wings.slardar.spring.prop.SlardarDingNoticeProp;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties(SlardarDingNoticeProp.class)
 public class SlardarDingNoticeConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarDingNoticeConfiguration.class);

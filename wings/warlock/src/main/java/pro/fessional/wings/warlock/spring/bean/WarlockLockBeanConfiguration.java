@@ -22,15 +22,15 @@ public class WarlockLockBeanConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    public JvmStaticGlobalLock jvmStaticGlobalLock() {
-        log.info("Warlock spring-bean jvmStaticGlobalLock");
-        return new JvmStaticGlobalLock();
+    public DatabaseGlobalLock databaseGlobalLock(JdbcTemplate jdbcTemplate) {
+        log.info("Warlock spring-bean databaseGlobalLock");
+        return new DatabaseGlobalLock(jdbcTemplate);
     }
 
     @Bean
     @ConditionalWingsEnabled
-    public DatabaseGlobalLock databaseGlobalLock(JdbcTemplate jdbcTemplate) {
-        log.info("Warlock spring-bean databaseGlobalLock");
-        return new DatabaseGlobalLock(jdbcTemplate);
+    public JvmStaticGlobalLock jvmStaticGlobalLock() {
+        log.info("Warlock spring-bean jvmStaticGlobalLock");
+        return new JvmStaticGlobalLock();
     }
 }

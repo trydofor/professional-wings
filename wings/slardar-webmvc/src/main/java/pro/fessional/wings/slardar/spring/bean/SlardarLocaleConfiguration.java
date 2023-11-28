@@ -3,7 +3,7 @@ package pro.fessional.wings.slardar.spring.bean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
@@ -15,12 +15,12 @@ import static org.springframework.web.servlet.DispatcherServlet.LOCALE_RESOLVER_
 
 /**
  * @author trydofor
+ * @see WebMvcAutoConfiguration.EnableWebMvcConfiguration
  * @since 2019-06-29
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
 @ConditionalOnClass(LocaleResolver.class)
-@EnableConfigurationProperties({SlardarLocaleProp.class})
 public class SlardarLocaleConfiguration {
 
     private final Log log = LogFactory.getLog(SlardarLocaleConfiguration.class);

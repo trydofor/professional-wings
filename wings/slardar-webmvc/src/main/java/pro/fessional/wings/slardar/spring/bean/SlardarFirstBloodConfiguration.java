@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -16,6 +15,7 @@ import pro.fessional.wings.slardar.concur.impl.FirstBloodImageHandler;
 import pro.fessional.wings.slardar.concur.impl.FirstBloodInterceptor;
 import pro.fessional.wings.slardar.servlet.resolver.WingsRemoteResolver;
 import pro.fessional.wings.slardar.servlet.response.view.PlainTextView;
+import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarFirstBloodProp;
 
 import java.util.List;
@@ -26,14 +26,13 @@ import java.util.stream.Collectors;
  * @since 2019-12-03
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalWingsEnabled(false)
-@EnableConfigurationProperties(SlardarFirstBloodProp.class)
+@ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$firstBlood, value = false)
 public class SlardarFirstBloodConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarFirstBloodConfiguration.class);
 
     @Bean
-    @ConditionalWingsEnabled
+    @ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$firstBloodImage)
     public FirstBloodImageHandler firstBloodImageHandler(@Autowired(required = false) WingsRemoteResolver remoteResolver, SlardarFirstBloodProp prop) {
         log.info("SlardarWebmvc spring-bean firstBloodImageHandler");
         final FirstBloodImageHandler handler = new FirstBloodImageHandler();

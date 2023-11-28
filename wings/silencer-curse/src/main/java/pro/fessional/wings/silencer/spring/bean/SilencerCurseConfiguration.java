@@ -9,16 +9,24 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pro.fessional.wings.silencer.modulate.RuntimeMode;
+import pro.fessional.wings.silencer.runner.ApplicationInspectRunner;
 import pro.fessional.wings.silencer.runner.ApplicationReadyEventRunner;
 import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
+import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
 import pro.fessional.wings.silencer.spring.prop.SilencerAutoLogProp;
+import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
+import pro.fessional.wings.silencer.spring.prop.SilencerRuntimeProp;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -27,19 +35,53 @@ import java.util.Set;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@ConditionalOnClass(ConsoleAppender.class)
-@EnableConfigurationProperties(SilencerAutoLogProp.class)
-public class SilencerAutoLogConfiguration {
+public class SilencerCurseConfiguration {
 
-    private static final Log log = LogFactory.getLog(SilencerAutoLogConfiguration.class);
+    private static final Log log = LogFactory.getLog(SilencerCurseConfiguration.class);
+
+    /**
+     * audit the file and cascading relationship of properties key/value
+     */
+    @Bean
+    @ConditionalWingsEnabled(abs = SilencerEnabledProp.Key$auditProp, value = false)
+    public ApplicationInspectRunner auditPropRunner() {
+        log.info("SilencerCurse spring-bean auditPropRunner");
+        return new ApplicationInspectRunner(WingsOrdered.Lv5Supervisor, ignored -> {
+            final Map<String, List<String>> map = ApplicationContextHelper.listPropertySource();
+            final Map<String, List<String>> key = new LinkedHashMap<>();
+
+            for (Map.Entry<String, List<String>> en : map.entrySet()) {
+                for (String k : en.getValue()) {
+                    key.computeIfAbsent(k, ignoreK -> new ArrayList<>()).add(en.getKey());
+                }
+            }
+
+            for (Map.Entry<String, List<String>> en : key.entrySet()) {
+                final List<String> vs = en.getValue();
+                final String k = en.getKey();
+                log.info(k + "=" + ApplicationContextHelper.getProperties(k));
+
+                int c = 0;
+                for (String v : vs) {
+                    if (c++ == 0) {
+                        log.info("+ " + v);
+                    }
+                    else {
+                        log.info("- " + v);
+                    }
+                }
+            }
+        });
+    }
 
     /**
      * Configuration is complete and the log is switched before the service starts
      */
     @Bean
-    @ConditionalWingsEnabled
-    public ApplicationReadyEventRunner silenceLogbackConsoleRunner(SilencerAutoLogProp autoLog) {
-        log.info("SilencerCurse spring-runs runnerSilenceLogbackConsole");
+    @ConditionalWingsEnabled(abs = SilencerEnabledProp.Key$muteConsole)
+    @ConditionalOnClass(ConsoleAppender.class)
+    public ApplicationReadyEventRunner muteConsoleRunner(SilencerAutoLogProp autoLog) {
+        log.info("SilencerCurse spring-runs muteConsoleRunner");
         return new ApplicationReadyEventRunner(WingsOrdered.Lv1Config, ignored -> {
             final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
             final Set<String> targets = autoLog.getTarget();
@@ -82,5 +124,13 @@ public class SilencerAutoLogConfiguration {
             log.info("================= Silencer =================");
             tft.start();
         });
+    }
+
+    @Bean
+    @ConditionalWingsEnabled
+    public RuntimeMode runtimeMode(SilencerRuntimeProp prop) {
+
+        log.info("Silencer spring-auto runtimeMode");
+        return new RuntimeMode(prop.getRunMode(), prop.getApiMode()) {};
     }
 }

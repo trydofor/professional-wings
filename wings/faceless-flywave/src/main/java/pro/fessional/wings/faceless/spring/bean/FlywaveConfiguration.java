@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -37,11 +36,6 @@ import static pro.fessional.wings.faceless.flywave.SchemaJournalManager.JournalD
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
 @ConditionalOnClass(DataSourceContext.class)
-@EnableConfigurationProperties({
-        FlywaveFitProp.class,
-        FlywaveSqlProp.class,
-        FlywaveVerProp.class,
-})
 public class FlywaveConfiguration {
 
     private static final Log log = LogFactory.getLog(FlywaveConfiguration.class);
@@ -160,7 +154,7 @@ public class FlywaveConfiguration {
     }
 
     @Bean
-    @ConditionalWingsEnabled(absKey = FlywaveFitProp.Key$checker)
+    @ConditionalWingsEnabled(abs = FlywaveFitProp.Key$checker)
     public ApplicationRunnerOrdered revisionCheckerRunner(DefaultRevisionManager manager, FlywaveFitProp prop) {
         log.info("FacelessFlywave spring-runs runnerRevisionChecker");
         return new ApplicationRunnerOrdered(WingsOrdered.Lv5Supervisor, ignored -> {

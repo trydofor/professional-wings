@@ -1,6 +1,7 @@
 package pro.fessional.wings.silencer.modulate;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -11,6 +12,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public class RuntimeMode {
 
     private static final AtomicReference<Boolean> unitTest = new AtomicReference<>(null);
+
+    protected RuntimeMode(@Nullable RunMode run, @Nullable ApiMode api) {
+        if (run != null) runMode = run;
+        if (api != null) apiMode = api;
+    }
 
     public static boolean isUnitTest() {
         Boolean b = unitTest.get();
@@ -28,7 +34,7 @@ public class RuntimeMode {
     }
 
     @NotNull
-    protected static RunMode runMode = RunMode.Nothing;
+    private static RunMode runMode = RunMode.Nothing;
 
 
     @NotNull
@@ -61,7 +67,7 @@ public class RuntimeMode {
     }
 
     @NotNull
-    protected static ApiMode apiMode = ApiMode.Nothing;
+    private static ApiMode apiMode = ApiMode.Nothing;
 
     @NotNull
     public static ApiMode getApiMode() {

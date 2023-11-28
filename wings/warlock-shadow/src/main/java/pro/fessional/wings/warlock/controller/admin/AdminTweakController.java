@@ -10,6 +10,7 @@ import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.event.tweak.TweakClockEvent;
 import pro.fessional.wings.slardar.event.tweak.TweakLoggerEvent;
 import pro.fessional.wings.slardar.event.tweak.TweakStackEvent;
+import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
 
 import static pro.fessional.wings.slardar.event.EventPublishHelper.SyncSpring;
@@ -19,7 +20,7 @@ import static pro.fessional.wings.slardar.event.EventPublishHelper.SyncSpring;
  * @since 2022-10-31
  */
 @RestController
-@ConditionalWingsEnabled(false)
+@ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$mvcTweak, value = false)
 public class AdminTweakController {
 
     @Operation(summary = "Tweak the logging level at the thread level", description = """

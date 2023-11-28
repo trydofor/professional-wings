@@ -1,0 +1,26 @@
+{
+  "groups": [
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.conf"},
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean"}
+  ],
+  "properties": [
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.conf.SilencerCurseAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerCurseConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerCurseConfiguration.auditPropRunner", "type": "java.lang.Boolean", "description": "wings.enabled.silencer.audit-prop for short."},
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerCurseConfiguration.muteConsoleRunner", "type": "java.lang.Boolean", "description": "wings.enabled.silencer.mute-console for short."},
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerCurseConfiguration.runtimeMode", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerEncryptConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerEncryptConfiguration.aes256", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerEncryptConfiguration.crc8Long", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerEncryptConfiguration.leapCode", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerEncryptConfiguration.secretProvider", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerTweakConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerTweakConfiguration$ClockWired", "type": "java.lang.Boolean", "description": "wings.enabled.silencer.tweak-clock for short."},
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerTweakConfiguration$LogbackWired", "type": "java.lang.Boolean", "description": "wings.enabled.silencer.tweak-logback for short."},
+    {"name": "wings.enabled.pro.fessional.wings.silencer.spring.bean.SilencerTweakConfiguration$StackWired", "type": "java.lang.Boolean", "description": "wings.enabled.silencer.tweak-stack for short."}
+  ],
+  "hints": []
+}

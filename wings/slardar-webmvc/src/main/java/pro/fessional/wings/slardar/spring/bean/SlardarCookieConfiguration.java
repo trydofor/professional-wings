@@ -2,7 +2,6 @@ package pro.fessional.wings.slardar.spring.bean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.silencer.encrypt.SecretProvider;
@@ -11,6 +10,7 @@ import pro.fessional.wings.slardar.servlet.cookie.WingsCookieFilter;
 import pro.fessional.wings.slardar.servlet.cookie.WingsCookieInterceptor;
 import pro.fessional.wings.slardar.servlet.cookie.impl.WingsCookieInterceptorImpl;
 import pro.fessional.wings.slardar.spring.prop.SlardarCookieProp;
+import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 
 import java.util.Map;
 import java.util.Set;
@@ -24,8 +24,7 @@ import static pro.fessional.wings.slardar.servlet.cookie.WingsCookieInterceptor.
  * @since 2021-10-07
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalWingsEnabled(false)
-@EnableConfigurationProperties(SlardarCookieProp.class)
+@ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$cookie, value = false)
 public class SlardarCookieConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarCookieConfiguration.class);

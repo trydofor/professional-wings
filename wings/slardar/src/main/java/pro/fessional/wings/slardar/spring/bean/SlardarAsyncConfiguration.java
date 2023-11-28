@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskSchedulingProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.task.TaskExecutorBuilder;
 import org.springframework.boot.task.TaskSchedulerBuilder;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +41,6 @@ import static org.springframework.scheduling.annotation.ScheduledAnnotationBeanP
 @EnableAsync
 @Configuration(proxyBeanMethods = false)
 @ConditionalWingsEnabled
-@EnableConfigurationProperties(SlardarAsyncProp.class)
 public class SlardarAsyncConfiguration {
     public static final String slardarHeavyScheduler = "slardarHeavyScheduler";
 
@@ -99,10 +97,6 @@ public class SlardarAsyncConfiguration {
             @Qualifier(DEFAULT_TASK_SCHEDULER_BEAN_NAME) ThreadPoolTaskScheduler light,
             @Qualifier(slardarHeavyScheduler) ThreadPoolTaskScheduler heavy) {
         log.info("Slardar spring-bean taskSchedulerHelper");
-        return new TaskSchedulerHelper() {{
-            log.info("Slardar conf TaskSchedulerHelper");
-            LightTasker = light;
-            HeavyTasker = heavy;
-        }};
+        return new TaskSchedulerHelper(light, heavy) {};
     }
 }

@@ -13,6 +13,7 @@ import pro.fessional.mirana.page.PageResult;
 import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.tiny.task.database.autogen.tables.pojos.WinTaskResult;
 import pro.fessional.wings.tiny.task.service.TinyTaskListService;
+import pro.fessional.wings.tiny.task.spring.prop.TinyTaskEnabledProp;
 import pro.fessional.wings.tiny.task.spring.prop.TinyTaskUrlmapProp;
 
 /**
@@ -20,7 +21,7 @@ import pro.fessional.wings.tiny.task.spring.prop.TinyTaskUrlmapProp;
  * @since 2022-12-26
  */
 @RestController
-@ConditionalWingsEnabled
+@ConditionalWingsEnabled(abs = TinyTaskEnabledProp.Key$mvcList)
 public class TaskListController {
 
     @Setter(onMethod_ = {@Autowired})

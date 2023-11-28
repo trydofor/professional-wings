@@ -19,7 +19,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -45,7 +44,6 @@ import java.util.Objects;
 @ConditionalWingsEnabled
 @ConditionalOnClass(SpringBootAdminServerEnabledCondition.class)
 @Conditional(SpringBootAdminServerEnabledCondition.class)
-@EnableConfigurationProperties(SlardarPasscoderProp.class)
 public class SlardarBootAdminServerConfiguration {
     private final static Log log = LogFactory.getLog(SlardarBootAdminServerConfiguration.class);
 
