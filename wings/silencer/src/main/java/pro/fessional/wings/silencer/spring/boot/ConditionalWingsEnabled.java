@@ -16,9 +16,9 @@ import java.lang.annotation.Target;
  * `true` only if `this && and1 && and2 && !not1 && !not2`
  *
  * the key priority from high to low
- * - qualified-key = `prefix()` + `ClassName` + `methodName`?
+ * - qualified-key = `prefix` + `ClassName` + `methodName`?
  * - absolute-key = `abs()`
- * - relative-key = `prefix()` + `key()`
+ * - relative-key = `prefix` + `key()`
  * - default = `value()`
  * </pre>
  *
@@ -31,12 +31,6 @@ import java.lang.annotation.Target;
 @Documented
 @Conditional(WingsEnabledCondition.class)
 public @interface ConditionalWingsEnabled {
-
-    /**
-     * A prefix that should be applied to the property.
-     * inherit from the EnclosingClass non-empty prefix
-     */
-    String prefix() default "";
 
     /**
      * absolute-key, without prefix, priority lower then qualified-key

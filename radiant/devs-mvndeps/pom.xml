@@ -9,50 +9,13 @@
         <version>${revision}.${changelist}</version>
     </parent>
 
-    <artifactId>devs-mvndep</artifactId>
+    <artifactId>devs-mvndeps</artifactId>
     <packaging>jar</packaging>
 
-    <name>Radiant::Devs::Mvndep</name>
-    <description>check dependency's version by maven-dependency-checker, generate the code automatically</description>
+    <name>Radiant::Devs::Mvndeps</name>
+    <description>check dependency's version by maven-dependency-checker</description>
 
     <dependencies>
-        <!-- codegen  -->
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>faceless-codegen</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>warlock-codegen</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>warlock-bond</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>pro.fessional.wings</groupId>
-                    <artifactId>warlock-shadow</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>tiny-mail</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>pro.fessional.wings</groupId>
-            <artifactId>tiny-task</artifactId>
-            <scope>test</scope>
-        </dependency>
         <!-- Keep the version in test scope, get easy search and IDE hint -->
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>

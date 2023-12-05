@@ -1,4 +1,4 @@
-package pro.fessional.wings.devs.codegen;
+package pro.fessional.wings.devs;
 
 import lombok.Setter;
 import org.junit.jupiter.api.Disabled;
@@ -41,19 +41,25 @@ public class AutogenDependencyTest {
     private final String projectRoot = "../../";
 
     @Test
-    void test01AllTestCode() {
+    void test01AllTestJooq() {
         test11FacelessJooqTest();// faceless-jooq
         test11FacelessShardTest();// faceless-shard
     }
 
     @Test
-    void test01AllMainCode() {
-        test10FacelessAutogen();// faceless-autogen/enums
-        test20WarlockAutogenEnum();// warlock-autogen/enums
-        test20WarlockAutogenAuth();// warlock-autogen/security
+    void test01AllMainJooq() {
         test21WarlockAutogenJooq();// warlock-autogen/database
         test31TinyMailAutogenJooq();// tiny-autogen/mail
         test31TinyTaskAutogenJooq();// tiny-autogen/task
+    }
+
+    @Test
+    void test01AllMainCode() {
+        test01AllMainJooq();
+
+        test10FacelessAutogen();// faceless-autogen/enums
+        test20WarlockAutogenEnum();// warlock-autogen/enums
+        test20WarlockAutogenAuth();// warlock-autogen/security
     }
 
     // ////////////////// individual test  //////////////////

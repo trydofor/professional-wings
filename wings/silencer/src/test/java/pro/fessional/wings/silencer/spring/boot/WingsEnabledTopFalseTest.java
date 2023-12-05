@@ -14,8 +14,8 @@ import pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration;
  * @since 2023-11-17
  */
 @SpringBootTest(properties = {
-        "catty.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration=false",
-        "wings.enabled.pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration=false",
+        "wings.silencer.conditional.enable[pro.fessional.wings.silencer.app.bean.WingsEnabledCatConfiguration]=false",
+        "wings.silencer.conditional.enable[pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration]=false",
 })
 public class WingsEnabledTopFalseTest {
 
@@ -44,6 +44,8 @@ public class WingsEnabledTopFalseTest {
     @Test
     @TmsLink("C11029")
     public void test() {
+        Assertions.assertNull(innerCatConfigDefault,"comment/unconment this to recompile");
+
         Assertions.assertNull(wingsEnabledCatConfiguration);
         Assertions.assertNull(catBean);
         Assertions.assertNull(innerCatConfiguration);
@@ -53,8 +55,5 @@ public class WingsEnabledTopFalseTest {
         Assertions.assertNull(dogBean);
         Assertions.assertNull(innerDogConfiguration);
         Assertions.assertNull(innerDogBean);
-
-        // most good, sometime wrong :D
-//        Assertions.assertNull(innerCatConfigDefault);
     }
 }

@@ -20,6 +20,7 @@ import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoAliasImpl;
 import pro.fessional.wings.faceless.database.jooq.WingsJooqDaoJournalImpl;
 import pro.fessional.wings.faceless.service.journal.JournalService;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -241,6 +242,9 @@ public class WingsJavaGenerator extends JavaGenerator {
     @Override // Confirm the replacement code and diff it
     public void generateDao(TableDefinition table, JavaWriter out) {
         super.generateDao(table, out);
+        if (generateSpringAnnotations()) {
+            out.ref(ConditionalWingsEnabled.class);
+        }
         // 🦁>>>
         final Class<?> implClass;
         if (table.getColumns().stream().anyMatch(WingsJooqGenHelper.JournalAware)) {

@@ -55,7 +55,7 @@ public class SlardarMonitorConfiguration {
             slardarMonitorProp = Binder
                     .get(environment)
                     .bind(SlardarMonitorProp.Key, SlardarMonitorProp.class)
-                    .get();
+                    .orElseGet(SlardarMonitorProp::new);
         }
 
         @Override

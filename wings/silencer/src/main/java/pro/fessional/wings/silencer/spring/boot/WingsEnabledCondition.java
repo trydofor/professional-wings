@@ -1,11 +1,11 @@
 package pro.fessional.wings.silencer.spring.boot;
 
-import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
+import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -13,9 +13,12 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.MethodMetadata;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
+import pro.fessional.wings.silencer.spring.prop.SilencerConditionalProp;
 
 import java.lang.reflect.Method;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -50,13 +53,48 @@ import java.util.Map;
 @Order(Ordered.HIGHEST_PRECEDENCE + 70)
 public class WingsEnabledCondition extends SpringBootCondition {
 
-    /**
-     * the default prefix
-     */
     public static final String Prefix = "wings.enabled";
+
+    private static final AntPathMatcher DotMatcher = new AntPathMatcher();
+    private static final Map<String, Boolean> ErrorMap = new LinkedHashMap<>();
+    private static final Map<String, String> PrefixMap = new LinkedHashMap<>();
+    private static final Map<String, Boolean> EnableMap = new LinkedHashMap<>();
+
+    private static boolean Uninit = true;
+
+    public static void reset() {
+        Uninit = true;
+        ErrorMap.clear();
+        ErrorMap.clear();
+        EnableMap.clear();
+    }
+
+    public static void mappingOnce(Environment env) {
+        if (Uninit) {
+            Uninit = false;
+            var prop = Binder.get(env).bind(SilencerConditionalProp.Key, SilencerConditionalProp.class)
+                             .orElseGet(SilencerConditionalProp::new);
+            for (Map.Entry<String, Boolean> en : prop.getError().entrySet()) {
+                if (StringUtils.hasText(en.getKey()) && en.getValue() != null) {
+                    ErrorMap.put(en.getKey(), en.getValue());
+                }
+            }
+            for (Map.Entry<String, String> en : prop.getPrefix().entrySet()) {
+                if (StringUtils.hasText(en.getKey()) && StringUtils.hasText(en.getValue())) {
+                    PrefixMap.put(en.getKey(), en.getValue());
+                }
+            }
+            for (Map.Entry<String, Boolean> en : prop.getEnable().entrySet()) {
+                if (StringUtils.hasText(en.getKey()) && en.getValue() != null) {
+                    EnableMap.put(en.getKey(), en.getValue());
+                }
+            }
+        }
+    }
 
     @Override
     public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        mappingOnce(context.getEnvironment());
         return conditionOutcome(context, metadata);
     }
 
@@ -125,96 +163,113 @@ public class WingsEnabledCondition extends SpringBootCondition {
 
     @NotNull
     private ConditionOutcome thisConditionOutcome(@NotNull ConditionContext context, @NotNull AnnotatedTypeMetadata metadata, @Nullable Map<String, Object> attrs) {
-        String pre = null;
-        if (attrs != null && attrs.get("prefix") instanceof String p && !p.isBlank()) {
-            pre = p;
-        }
 
-        final String[] keys = new String[3];
+        final String id;
         // on @Component class
         if (metadata instanceof ClassMetadata conf) {
-            if (pre == null) pre = buildEnclosingPrefix(conf.getEnclosingClassName());
-            keys[0] = pre + "." + conf.getClassName();
+            id = conf.getClassName();
         }
         // on @Bean method
         else if (metadata instanceof MethodMetadata bean) {
-            if (pre == null) pre = buildEnclosingPrefix(bean.getDeclaringClassName());
-            keys[0] = pre + "." + bean.getDeclaringClassName() + "." + bean.getMethodName();
+            id = bean.getDeclaringClassName() + "." + bean.getMethodName();
         }
         else {
-            throw new IllegalArgumentException("should use on @Bean or @Configuration");
+            throw new IllegalArgumentException("should use on @Bean or @Configuration, metadata=" + metadata);
         }
 
-        if (attrs != null) {
-            if (attrs.get("abs") instanceof String abs && !abs.isBlank()) {
-                keys[1] = abs;
-            }
-            else if (attrs.get("key") instanceof String key && !key.isBlank()) {
-                keys[2] = pre + "." + key;
-            }
-        }
-        var result = conditionOutcome(context, keys);
-        if (result != null) return result;
+        try {
+            final String pre = buildPrefix(id);
+            final String[] keys = new String[3];
+            keys[0] = pre + "." + id;
 
-        boolean falsy = attrs != null && attrs.get("value") instanceof Boolean value && !value;
-        return conditionOutcome(falsy);
+            if (attrs != null) {
+                if (attrs.get("abs") instanceof String abs && !abs.isBlank()) {
+                    keys[1] = abs;
+                }
+                else if (attrs.get("key") instanceof String key && !key.isBlank()) {
+                    keys[2] = pre + "." + key;
+                }
+            }
+
+            var result = conditionOutcome(context, id, keys);
+            if (result != null) return result;
+
+            boolean falsy = attrs != null && attrs.get("value") instanceof Boolean value && !value;
+            return conditionOutcome(falsy);
+        }
+        catch (Throwable t) {
+            return handleException(id, t);
+        }
     }
 
     @NotNull
     private ConditionOutcome thisConditionOutcome(@NotNull ConditionContext context, @NotNull Class<?> meta, @Nullable ConditionalWingsEnabled anno) {
-        final String pre;
-        if (anno != null && StringUtils.hasText(anno.prefix())) {
-            pre = anno.prefix();
-        }
-        else {
-            pre = buildEnclosingPrefix(meta.getEnclosingClass());
-        }
+        final String id = meta.getName();
+        try {
+            final String pre = buildPrefix(id);
+            final String[] keys = new String[3];
+            keys[0] = pre + "." + id;
 
-        final String[] keys = new String[3];
-        keys[0] = pre + "." + meta.getName();
-
-        if (anno != null) {
-            if (StringUtils.hasText(anno.abs())) {
-                keys[1] = anno.abs();
+            if (anno != null) {
+                if (StringUtils.hasText(anno.abs())) {
+                    keys[1] = anno.abs();
+                }
+                else if (StringUtils.hasText(anno.key())) {
+                    keys[2] = pre + "." + anno.key();
+                }
             }
-            else if (StringUtils.hasText(anno.key())) {
-                keys[2] = pre + "." + anno.key();
-            }
+
+            var result = conditionOutcome(context, id, keys);
+            if (result != null) return result;
+
+            boolean falsy = anno != null && !anno.value();
+            return conditionOutcome(falsy);
         }
-
-        var result = conditionOutcome(context, keys);
-        if (result != null) return result;
-
-        boolean falsy = anno != null && !anno.value();
-        return conditionOutcome(falsy);
+        catch (Throwable t) {
+            return handleException(id, t);
+        }
     }
 
-    @SneakyThrows
     @NotNull
-    private String buildEnclosingPrefix(@Nullable String ecn) {
-        if (ecn != null) {
-            Class<?> clz = Class.forName(ecn);
-            return buildEnclosingPrefix(clz);
+    private String buildPrefix(String key) {
+        for (Map.Entry<String, String> en : PrefixMap.entrySet()) {
+            if (DotMatcher.match(en.getKey(), key)) {
+                return en.getValue();
+            }
         }
-
         return Prefix;
     }
 
     @NotNull
-    private String buildEnclosingPrefix(@Nullable Class<?> clz) {
-        while (clz != null) {
-            final var ann = clz.getAnnotation(ConditionalWingsEnabled.class);
-            if (ann != null && StringUtils.hasText(ann.prefix())) {
-                return ann.prefix();
+    private ConditionOutcome handleException(String id, Throwable t) {
+        for (Map.Entry<String, Boolean> en : ErrorMap.entrySet()) {
+            if (DotMatcher.match(en.getKey(), id)) {
+                return en.getValue() == Boolean.TRUE
+                       ? ConditionOutcome.match(t.getMessage())
+                       : ConditionOutcome.noMatch(t.getMessage());
             }
-            clz = clz.getEnclosingClass();
         }
 
-        return Prefix;
+        throw new IllegalStateException("set " + SilencerConditionalProp.Key$error + "[" + id + "]=true/false to skip error by match/no-match", t);
     }
+
 
     @Nullable
-    private ConditionOutcome conditionOutcome(@NotNull ConditionContext context, String @NotNull [] keys) {
+    private ConditionOutcome conditionOutcome(@NotNull ConditionContext context, String id, String @NotNull [] keys) {
+        for (Map.Entry<String, Boolean> en : EnableMap.entrySet()) {
+            String ek = en.getKey();
+            if (DotMatcher.match(ek, id)) {
+                return en.getValue() == Boolean.TRUE
+                       ? ConditionOutcome.match(ConditionMessage
+                        .forCondition(ConditionalWingsEnabled.class)
+                        .found(ek)
+                        .items(true))
+                       : ConditionOutcome.noMatch(ConditionMessage
+                        .forCondition(ConditionalWingsEnabled.class)
+                        .found(ek)
+                        .items(false));
+            }
+        }
 
         final Environment environment = context.getEnvironment();
         for (String key : keys) {

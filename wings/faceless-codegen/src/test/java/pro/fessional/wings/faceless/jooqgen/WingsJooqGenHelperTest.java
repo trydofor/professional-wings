@@ -96,6 +96,7 @@ class WingsJooqGenHelperTest {
                 )
                 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
                 @Repository
+                @ConditionalWingsEnabled
                 public class TstShardingDao extends WingsJooqDaoAliasImpl<TstShardingTable, TstShardingRecord, TstSharding, Long> {
 
                     /**
@@ -228,6 +229,7 @@ class WingsJooqGenHelperTest {
                 )
                 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
                 @Repository
+                @ConditionalWingsEnabled
                 public class TstShardingDao extends WingsJooqDaoAliasImpl<TstShardingTable, TstShardingRecord, TstSharding, Long> {
 
                     /**
