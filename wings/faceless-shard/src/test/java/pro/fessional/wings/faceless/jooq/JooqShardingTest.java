@@ -3,7 +3,6 @@ package pro.fessional.wings.faceless.jooq;
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apache.shardingsphere.infra.hint.HintManager;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
@@ -14,11 +13,11 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
-import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.app.database.autogen.tables.TstShardingTable;
 import pro.fessional.wings.faceless.app.database.autogen.tables.daos.TstShardingDao;
 import pro.fessional.wings.faceless.app.database.autogen.tables.pojos.TstSharding;
 import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShardingRecord;
+import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
 import pro.fessional.wings.faceless.flywave.SchemaShardingManager;
 import pro.fessional.wings.faceless.helper.WingsTestHelper;
@@ -82,7 +81,7 @@ public class JooqShardingTest {
     @Test
     @TmsLink("C12138")
     public void test4InsertSeeLog() {
-        val rd = new TstSharding(id,
+        var rd = new TstSharding(id,
                 LocalDateTime.now(),
                 EmptyValue.DATE_TIME,
                 EmptyValue.DATE_TIME,
@@ -105,9 +104,9 @@ public class JooqShardingTest {
     @Test
     @TmsLink("C12139")
     public void test5UpdateSeeLog() {
-        val tp = TstShardingTable.TstSharding;
+        var tp = TstShardingTable.TstSharding;
         // update `tst_sharding` set `modify_dt` = ?, `login_info` = ? where `id` <= ?
-        val rp = dao.ctx().update(tp)
+        var rp = dao.ctx().update(tp)
                     .set(tp.ModifyDt, LocalDateTime.now())
                     .set(tp.LoginInfo, "update 5")
                     .where(tp.Id.eq(id))
@@ -115,8 +114,8 @@ public class JooqShardingTest {
         testcaseNotice("plain updated= $rp");
         testcaseNotice("update `tst_sharding_1` set `modify_dt` = ?, `login_info` = ? where `id` = ?");
 
-        val tw = dao.getTable();
-        val rw = dao.ctx().update(tw)
+        var tw = dao.getTable();
+        var rw = dao.ctx().update(tw)
                     .set(tw.ModifyDt, LocalDateTime.now())
                     .set(tw.LoginInfo, "update 5")
                     .where(tw.Id.eq(id))
@@ -124,8 +123,8 @@ public class JooqShardingTest {
         testcaseNotice("write updated= $rw");
         testcaseNotice("update `tst_sharding_1` set `modify_dt` = ?, `login_info` = ? where `id` = ?");
 
-        val tr = dao.getAlias();
-        val rr = dao.ctx().update(tr)
+        var tr = dao.getAlias();
+        var rr = dao.ctx().update(tr)
                     .set(tr.ModifyDt, LocalDateTime.now())
                     .set(tr.LoginInfo, "update 5")
                     .where(tr.Id.eq(id))
@@ -147,8 +146,8 @@ public class JooqShardingTest {
     public void test6SelectSeeLog() {
         try (HintManager it = HintManager.getInstance()) {
             it.setWriteRouteOnly();
-            val ta = TstShardingTable.asP1;
-            val ra = dao.ctx().select(ta.Id)
+            var ta = TstShardingTable.asP1;
+            var ra = dao.ctx().select(ta.Id)
                         .from(ta)
                         .where(ta.Id.le(id))
                         .limit(DSL.inline(1)) // RC3
@@ -157,8 +156,8 @@ public class JooqShardingTest {
             testcaseNotice("alias select", ra);
             testcaseNotice("select `y8`.`id` from `tst_sharding` as `y8` where `y8`.`id` <= ?");
 
-            val tp = TstShardingTable.TstSharding;
-            val rp = dao.ctx().select(tp.Id)
+            var tp = TstShardingTable.TstSharding;
+            var rp = dao.ctx().select(tp.Id)
                         .from(tp)
                         .where(tp.Id.le(id))
 //                .limit(1) // https://github.com/apache/incubator-shardingsphere/issues/3330
@@ -167,8 +166,8 @@ public class JooqShardingTest {
             testcaseNotice("plain select", rp);
             testcaseNotice("select `id` from `tst_sharding` where `id` <= ?");
 
-            val da = dao.getAlias();
-            val rd = dao.fetch(da, da.Id.eq(id));
+            var da = dao.getAlias();
+            var rd = dao.fetch(da, da.Id.eq(id));
             testcaseNotice("dao select= $rd");
             testcaseNotice("select `y8`.`id`, `y8`.`create_dt`, ... from `tst_sharding` as `y8` where `y8`.`id` = ?");
 
@@ -184,8 +183,8 @@ public class JooqShardingTest {
     @Test
     @TmsLink("C12141")
     public void test7DeleteSeeLog() {
-        val tp = TstShardingTable.TstSharding;
-        val rp = dao.ctx().delete(tp)
+        var tp = TstShardingTable.TstSharding;
+        var rp = dao.ctx().delete(tp)
                     .where(tp.Id.eq(id)) // Inline strategy cannot support range sharding.
                     .and(tp.CommitId.isNotNull())
                     .getSQL();
@@ -193,8 +192,8 @@ public class JooqShardingTest {
         testcaseNotice("plain delete= $rp");
         testcaseNotice("delete from `tst_sharding` where (`id` <= ? and `commit_id` is not null)");
 
-        val dw = dao.getTable();
-        val rw = dao.delete(dw, dw.Id.eq(id));
+        var dw = dao.getTable();
+        var rw = dao.delete(dw, dw.Id.eq(id));
         testcaseNotice("dao delete= $rw");
         testcaseNotice("delete from `tst_sharding_3` where `id` = ? ");
 
@@ -212,17 +211,17 @@ public class JooqShardingTest {
     @Test
     @TmsLink("C12142")
     public void test8BatchSeeLog() {
-        val rds = Arrays.asList(
+        var rds = Arrays.asList(
                 new TstShardingRecord(119L, now, now, now, 9L, "Batch merge 119", "test8", ZH_CN.getId()),
                 new TstShardingRecord(308L, now, now, now, 9L, "Batch merge 308", "test8", ZH_CN.getId()),
                 new TstShardingRecord(309L, now, now, now, 9L, "Batch merge 309", "test8", ZH_CN.getId())
         );
         testcaseNotice("Batch Insert, check log, ignore in 2 batch, 119 ignore; 308, 309 insert");
-        val rs1 = dao.batchInsert(rds, 2, true);
+        var rs1 = dao.batchInsert(rds, 2, true);
         Assertions.assertArrayEquals(new int[]{1, 1, 1}, rs1);
 
         testcaseNotice("select first, then insert 310, or update 308, 309");
-        val rs3 = dao.batchMerge(tbl, new Field[]{tbl.Id}, Arrays.asList(
+        var rs3 = dao.batchMerge(tbl, new Field[]{tbl.Id}, Arrays.asList(
                 new TstShardingRecord(310L, now, now, now, 9L, "Batch merge 310", "Other 310", ZH_CN.getId()),
                 new TstShardingRecord(308L, now, now, now, 9L, "Batch merge 308", "Other 308", ZH_CN.getId()),
                 new TstShardingRecord(309L, now, now, now, 9L, "Batch merge 309", "Other 309", ZH_CN.getId())
@@ -233,14 +232,14 @@ public class JooqShardingTest {
     @Test
     @TmsLink("C12143")
     public void test9BatchSeeLog() {
-        val rds = Arrays.asList(
+        var rds = Arrays.asList(
                 new TstShardingRecord(119L, now, now, now, 9L, "Batch load 307", "test9", ZH_CN.getId()),
                 new TstShardingRecord(318L, now, now, now, 9L, "Batch load 318", "test9", ZH_CN.getId()),
                 new TstShardingRecord(319L, now, now, now, 9L, "Batch load 319", "test9", ZH_CN.getId())
         );
         testcaseNotice("Batch Insert, check log, replace 119, new318,319, in 2 batch, replace into");
         try {
-            val rs2 = dao.batchInsert(rds, 2, false);
+            var rs2 = dao.batchInsert(rds, 2, false);
             log.info(Arrays.toString(rs2));
             Assertions.assertArrayEquals(new int[]{2, 1, 1}, rs2);
         }
@@ -252,7 +251,7 @@ public class JooqShardingTest {
         testcaseNotice("Batch Merge, check log, new 320, on dupkey 318,319, in 2 batch, duplicate");
         testcaseNotice("insert into `tst_sharding` (`id`, .., `other_info`) values (?,..., ?) on duplicate key update `login_info` = ?, `other_info` = ?");
         try {
-            val rs3 = dao.batchMerge(tbl, Arrays.asList(
+            var rs3 = dao.batchMerge(tbl, Arrays.asList(
                     new TstShardingRecord(320L, now, now, now, 9L, "Batch merge 320", "Other 320", ZH_CN.getId()),
                     new TstShardingRecord(318L, now, now, now, 9L, "Batch merge 318", "Other 318", ZH_CN.getId()),
                     new TstShardingRecord(319L, now, now, now, 9L, "Batch merge 319", "Other 319", ZH_CN.getId())

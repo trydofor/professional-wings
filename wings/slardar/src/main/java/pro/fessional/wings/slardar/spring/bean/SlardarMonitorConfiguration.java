@@ -81,7 +81,7 @@ public class SlardarMonitorConfiguration {
                         log.info("Slardar spring-bean register dynamic LogMonitor bean=" + key);
                     }
                     else {
-                        log.warn("Wings skip LogMonitor bean for file not exist, file=" + rf);
+                        log.warn("Slardar skip LogMonitor bean for file not exist, bean=" + key + ", file=" + rf);
                     }
                 }
                 else {

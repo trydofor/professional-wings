@@ -3,11 +3,9 @@ package pro.fessional.wings.slardar.spring.conf;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import pro.fessional.wings.slardar.spring.help.SecurityConfigHelper;
 
 /**
@@ -46,17 +44,10 @@ public class WingsHttpPermitConfigurer extends AbstractHttpConfigurer<WingsHttpP
         return this;
     }
 
-    /**
-     * user mvcMatcher if exist MvcRequestMatcher.Builder, otherwise antMatcher
-     *
-     * @see SecurityConfigHelper#requestMatchers(MvcRequestMatcher.Builder, String...)
-     */
     @SneakyThrows
     @NotNull
     public AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizedUrl requestMatchers(String... paths) {
         final HttpSecurity http = getBuilder();
-        final ApplicationContext ctx = http.getSharedObject(ApplicationContext.class);
-        final MvcRequestMatcher.Builder mat = ctx == null ? null : ctx.getBean(MvcRequestMatcher.Builder.class);
-        return http.authorizeHttpRequests().requestMatchers(SecurityConfigHelper.requestMatchers(mat, paths));
+        return http.authorizeHttpRequests().requestMatchers(paths);
     }
 }

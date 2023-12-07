@@ -25,6 +25,15 @@ public class WarlockEnabledProp {
     private boolean watching = false;
     public static final String Key$watching = Key + ".watching";
 
+
+    /**
+     * whether to check security url conflict
+     *
+     * @see #Key$secCheckUrl
+     */
+    private boolean secCheckUrl = true;
+    public static final String Key$secCheckUrl = Key + ".sec-check-url";
+
     /**
      * whether to enable Web auto config, eg. firewall, debug, etc.
      *

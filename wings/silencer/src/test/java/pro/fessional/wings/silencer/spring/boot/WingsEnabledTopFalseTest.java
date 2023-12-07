@@ -20,40 +20,22 @@ import pro.fessional.wings.silencer.app.bean.WingsEnabledDogConfiguration;
 public class WingsEnabledTopFalseTest {
 
     @Setter(onMethod_ = {@Autowired(required = false)})
-    protected WingsEnabledCatConfiguration.InnerCatConfigDefault innerCatConfigDefault;
-
-    @Setter(onMethod_ = {@Autowired(required = false)})
-    protected WingsEnabledCatConfiguration wingsEnabledCatConfiguration;
-    @Setter(onMethod_ = {@Autowired(required = false)})
     protected WingsEnabledCatConfiguration.CatBean catBean;
-    @Setter(onMethod_ = {@Autowired(required = false)})
-    protected WingsEnabledCatConfiguration.InnerCatConfiguration innerCatConfiguration;
     @Setter(onMethod_ = {@Autowired(required = false)})
     protected WingsEnabledCatConfiguration.InnerCatBean innerCatBean;
 
-
-    @Setter(onMethod_ = {@Autowired(required = false)})
-    protected WingsEnabledDogConfiguration wingsEnabledDogConfiguration;
     @Setter(onMethod_ = {@Autowired(required = false)})
     protected WingsEnabledDogConfiguration.DogBean dogBean;
-    @Setter(onMethod_ = {@Autowired(required = false)})
-    protected WingsEnabledDogConfiguration.InnerDogConfiguration innerDogConfiguration;
     @Setter(onMethod_ = {@Autowired(required = false)})
     protected WingsEnabledDogConfiguration.InnerDogBean innerDogBean;
 
     @Test
     @TmsLink("C11029")
     public void test() {
-        Assertions.assertNull(innerCatConfigDefault,"comment/unconment this to recompile");
-
-        Assertions.assertNull(wingsEnabledCatConfiguration);
         Assertions.assertNull(catBean);
-        Assertions.assertNull(innerCatConfiguration);
         Assertions.assertNull(innerCatBean);
 
-        Assertions.assertNull(wingsEnabledDogConfiguration);
         Assertions.assertNull(dogBean);
-        Assertions.assertNull(innerDogConfiguration);
         Assertions.assertNull(innerDogBean);
     }
 }

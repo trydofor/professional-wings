@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
  * Note, not all mapping in the container
  *
  * @see DispatcherServlet#getHandlerMappings()
+ * @see HandlerMappingIntrospector#getHandlerMappings()
  */
 public class RequestMappingHelper {
 

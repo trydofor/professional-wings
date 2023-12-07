@@ -23,7 +23,8 @@ import pro.fessional.wings.slardar.httprest.okhttp.OkHttpClientHelper;
  * @since 2023-08-28
  */
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = "wings.warlock.security.anonymous=true")
 @Slf4j
 class AccessDeny403Test {
 

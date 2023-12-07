@@ -1,6 +1,5 @@
 package pro.fessional.wings.faceless.jooqgen;
 
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.jooq.codegen.GeneratorStrategy;
@@ -92,8 +91,8 @@ public class WingsJavaGenerator extends JavaGenerator {
         // table is TableDefinition : SysCommitJournalTable, SysCommitJournal
         final String className = getStrategy().getJavaClassName(definition);
         final String identifier = getStrategy().getJavaIdentifier(definition);
-        val aliasName = genAlias(identifier); // N6
-        val aliasLower = "pro.fessional.wings.faceless.database.jooq.WingsJooqEnv.uniqueAlias()"; // n6
+        var aliasName = genAlias(identifier); // N6
+        var aliasLower = "pro.fessional.wings.faceless.database.jooq.WingsJooqEnv.uniqueAlias()"; // n6
         // public static final SysCommitJournalTable asN6 = SysCommitJournal.as(WingsJooqEnv.uniqueRuntimeAlias());
         out.println("public static final %s %s = %s.as(%s);", className, aliasName, identifier, aliasLower);
         // 🦁<<<
@@ -105,7 +104,7 @@ public class WingsJavaGenerator extends JavaGenerator {
         // table is TableDefinition : SysCommitJournalTable, SysCommitJournal
         final String className = getStrategy().getJavaClassName(table);
         final String identifier = getStrategy().getJavaIdentifier(table);
-        val aliasName = genAlias(identifier); // N6
+        var aliasName = genAlias(identifier); // N6
 
         out.ref(NotNull.class);
         final List<ColumnDefinition> columns = table.getColumns();
@@ -130,8 +129,8 @@ public class WingsJavaGenerator extends JavaGenerator {
         out.println("return %s;", aliasName);
         out.println("}");
 
-        val logicCol = columns.stream().filter(it -> {
-            val col = it.getOutputName();
+        var logicCol = columns.stream().filter(it -> {
+            var col = it.getOutputName();
             return col.equalsIgnoreCase(COL_DELETE_DT) || col.equalsIgnoreCase(COL_IS_DELETED);
         }).findFirst();
 
@@ -142,14 +141,14 @@ public class WingsJavaGenerator extends JavaGenerator {
             out.ref(Map.class);
             out.ref(HashMap.class);
             out.ref(JournalService.class);
-            val fldDel = reflectMethodRef(out, getStrategy().getJavaIdentifier(colDel), colRefSegments(colDel));
+            var fldDel = reflectMethodRef(out, getStrategy().getJavaIdentifier(colDel), colRefSegments(colDel));
 
-            val namDel = colDel.getOutputName();
+            var namDel = colDel.getOutputName();
             out.println("");
             out.javadoc("The colDel <code>%s</code> condition", namDel);
             final String markDelete;
             if (namDel.equalsIgnoreCase(COL_DELETE_DT)) {
-                val colType = colDel.getDefinedType().getType().toLowerCase();
+                var colType = colDel.getDefinedType().getType().toLowerCase();
                 if (colType.contains("time")) {
                     markDelete = "commit.getCommitDt()";
                     if (WingsCodeGenConf.isLiveDataByMax()) {
@@ -202,11 +201,11 @@ public class WingsJavaGenerator extends JavaGenerator {
             out.println("Map<org.jooq.Field<?>, Object> map = new HashMap<>();");
             out.println("map.put(%s, %s);", fldDel, markDelete);
 
-            val commitCol = columns.stream().filter(it ->
+            var commitCol = columns.stream().filter(it ->
                     it.getOutputName().equalsIgnoreCase(COL_COMMIT_ID)).findFirst();
             if (commitCol.isPresent()) {
                 final ColumnDefinition colCid = commitCol.get();
-                val fldCid = reflectMethodRef(out, getStrategy().getJavaIdentifier(colCid), colRefSegments(colCid));
+                var fldCid = reflectMethodRef(out, getStrategy().getJavaIdentifier(colCid), colRefSegments(colCid));
                 out.println("map.put(%s, commit.getCommitId());", fldCid);
             }
             out.println("return map;");
@@ -269,9 +268,9 @@ public class WingsJavaGenerator extends JavaGenerator {
 
     private String genAlias(String id) {
         final String chr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        val ix = id.hashCode() % chr.length();
-        val cd = ix < 0 ? chr.charAt(-ix) : chr.charAt(ix);
-        val sq = id.length() % 10;
+        var ix = id.hashCode() % chr.length();
+        var cd = ix < 0 ? chr.charAt(-ix) : chr.charAt(ix);
+        var sq = id.length() % 10;
         return ("as" + cd) + sq;
     }
 

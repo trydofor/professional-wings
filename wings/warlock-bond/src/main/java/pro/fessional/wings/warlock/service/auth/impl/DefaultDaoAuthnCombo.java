@@ -3,7 +3,6 @@ package pro.fessional.wings.warlock.service.auth.impl;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,7 +142,7 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
 
         final String at = wingsAuthTypeParser.parse(authType);
         final WinUserAuthnTable ta = winUserAuthnDao.getTable();
-        val auth = winUserAuthnDao
+        var auth = winUserAuthnDao
                 .ctx()
                 .select(ta.UserId, ta.FailedCnt, ta.FailedMax, ta.Id)
                 .from(ta)

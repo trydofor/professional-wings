@@ -1,6 +1,5 @@
 package pro.fessional.wings.faceless.jooqgen;
 
-import lombok.val;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Converter;
@@ -66,11 +65,11 @@ public class WingsCodeGenerator {
         }
 
         try {
-            val src = conf.getGenerator().getTarget().getDirectory();
-            val pkg = conf.getGenerator().getTarget().getPackageName().replace('.', '/');
+            var src = conf.getGenerator().getTarget().getDirectory();
+            var pkg = conf.getGenerator().getTarget().getPackageName().replace('.', '/');
             // tmp dir
-            val tmp = Files.createTempDirectory("jooq-safe-gen").toFile();
-            val tdr = tmp.getAbsolutePath();
+            var tmp = Files.createTempDirectory("jooq-safe-gen").toFile();
+            var tdr = tmp.getAbsolutePath();
             conf.getGenerator().getTarget().setDirectory(tdr);
             log.info("safely generate, tmp-dir={}", tdr);
 
@@ -137,8 +136,8 @@ public class WingsCodeGenerator {
 
     private static void safeCopy(String tmp, String src, String pkg, boolean inc) throws IOException {
 
-        val from = walkDir(tmp, pkg);
-        val dest = walkDir(src, pkg);
+        var from = walkDir(tmp, pkg);
+        var dest = walkDir(src, pkg);
 
         if (!inc && !dest.isEmpty()) {
             log.info("not incremental, Removing excess files in {}", new File(src, pkg).getCanonicalPath());
@@ -157,7 +156,7 @@ public class WingsCodeGenerator {
         // date = "2019-09-09T01:33:51.762Z",
         // schema version:2019090903
         // serialVersionUID = 319604016;
-        val ignoreRegex = Pattern.compile(String.join("|",
+        var ignoreRegex = Pattern.compile(String.join("|",
                 "(import +[^\r\n]+;[\r\n ]+)+",
                 "The\\s+table\\s+<code>[^.]+",
                 "The\\s+schema\\s+<code>[^<]+",
@@ -166,19 +165,19 @@ public class WingsCodeGenerator {
                 "[\r\n]+"), Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
         for (Map.Entry<String, File> entry : from.entrySet()) {
-            val k = entry.getKey();
-            val f = entry.getValue();
-            val d = dest.get(k);
+            var k = entry.getKey();
+            var f = entry.getValue();
+            var d = dest.get(k);
             if (d == null) {
-                val t = new File(src, k);
+                var t = new File(src, k);
                 //noinspection ResultOfMethodCallIgnored
                 t.getParentFile().mkdirs();
                 Files.copy(f.toPath(), t.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 log.info("create new file={}", k);
             }
             else {
-                val ft = ignoreRegex.matcher(InputStreams.readText(new FileInputStream(f))).replaceAll(Null.Str);
-                val dt = ignoreRegex.matcher(InputStreams.readText(new FileInputStream(d))).replaceAll(Null.Str);
+                var ft = ignoreRegex.matcher(InputStreams.readText(new FileInputStream(f))).replaceAll(Null.Str);
+                var dt = ignoreRegex.matcher(InputStreams.readText(new FileInputStream(d))).replaceAll(Null.Str);
                 if (ft.equals(dt)) {
                     log.info("skip main same file={}", k);
                 }

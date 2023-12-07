@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import pro.fessional.wings.slardar.security.handler.TestLoginHandler;
 
 
@@ -47,10 +46,10 @@ public class TestSecurityConfiguration {
      * only non-API resources in the WebSecurityConfigurer above.
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, MvcRequestMatcher.Builder mvcMatcher) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         log.info("config HttpSecurity");
         http.authorizeHttpRequests(conf -> conf
-                    .requestMatchers(mvcMatcher.pattern("/authed/*")).authenticated()
+                    .requestMatchers("/authed/*").authenticated()
             )
             .formLogin(conf -> conf
                     .loginPage("/user/login.json") // 401 page

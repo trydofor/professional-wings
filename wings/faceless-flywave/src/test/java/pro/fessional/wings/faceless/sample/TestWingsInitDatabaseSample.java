@@ -2,7 +2,6 @@ package pro.fessional.wings.faceless.sample;
 
 import io.qameta.allure.TmsLink;
 import lombok.Setter;
-import lombok.val;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,7 @@ public class TestWingsInitDatabaseSample {
     @TmsLink("C12024")
     public void init0601() {
         // init
-        val sqls = scan(REVISION_PATH_MASTER, WingsRevision.V01_19_0521_01_EnumI18n.classpath());
+        var sqls = scan(REVISION_PATH_MASTER, WingsRevision.V01_19_0521_01_EnumI18n.classpath());
         schemaRevisionManager.publishRevision(WingsRevision.V00_19_0512_01_Schema.revision(), 0);
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
 

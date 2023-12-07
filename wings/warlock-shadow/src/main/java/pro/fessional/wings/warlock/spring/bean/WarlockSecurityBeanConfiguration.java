@@ -129,7 +129,6 @@ public class WarlockSecurityBeanConfiguration {
 
     @Bean
     @ConditionalWingsEnabled
-    @ConditionalOnExpression("!'${" + WarlockSecurityProp.Key$logoutSuccessBody + "}'.isEmpty()")
     public AccessDeniedHandler accessDeniedHandler() {
         log.info("WarlockShadow spring-bean accessDeniedHandler");
         return new AccessFailureHandler();

@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import lombok.val;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -87,8 +86,8 @@ public class SlardarJacksonWebConfiguration {
         log.info("SlardarWebmvc spring-bean customizeJacksonDatetime");
         return builder -> {
             // local
-            val date = DateTimeFormatter.ofPattern(prop.getDate().getFormat());
-            val datePsr = prop.getDate()
+            var date = DateTimeFormatter.ofPattern(prop.getDate().getFormat());
+            var datePsr = prop.getDate()
                               .getSupport()
                               .stream()
                               .map(DateTimeFormatter::ofPattern)
@@ -97,8 +96,8 @@ public class SlardarJacksonWebConfiguration {
             builder.deserializerByType(LocalDate.class, new JacksonLocalDateDeserializer(date, datePsr));
             log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer LocalDate");
 
-            val time = DateTimeFormatter.ofPattern(prop.getTime().getFormat());
-            val timePsr = prop.getTime()
+            var time = DateTimeFormatter.ofPattern(prop.getTime().getFormat());
+            var timePsr = prop.getTime()
                               .getSupport()
                               .stream()
                               .map(DateTimeFormatter::ofPattern)
@@ -108,13 +107,13 @@ public class SlardarJacksonWebConfiguration {
             log.info("SlardarWebmvc conf Jackson2ObjectMapperBuilderCustomizer LocalTime");
 
             // auto local
-            val full = DateTimeFormatter.ofPattern(prop.getDatetime().getFormat());
+            var full = DateTimeFormatter.ofPattern(prop.getDatetime().getFormat());
             final AutoZoneType autoLocal = AutoZoneType.valueOf(prop.getDatetime().isAuto());
             JacksonLocalDateTimeSerializer.defaultFormatter = full;
             JacksonLocalDateTimeSerializer.defaultAutoZone = autoLocal;
             builder.serializerByType(LocalDateTime.class, new JacksonLocalDateTimeSerializer(full, autoLocal));
 
-            val fullPsr = prop.getDatetime()
+            var fullPsr = prop.getDatetime()
                               .getSupport()
                               .stream()
                               .map(DateTimeFormatter::ofPattern)
@@ -129,7 +128,7 @@ public class SlardarJacksonWebConfiguration {
             JacksonZonedDateTimeSerializer.defaultAutoZone = autoZone;
             builder.serializerByType(ZonedDateTime.class, new JacksonZonedDateTimeSerializer(zoned, autoZone));
 
-            val zonePsr = prop.getZoned()
+            var zonePsr = prop.getZoned()
                               .getSupport()
                               .stream()
                               .map(DateTimeFormatter::ofPattern)
@@ -145,7 +144,7 @@ public class SlardarJacksonWebConfiguration {
             JacksonOffsetDateTimeSerializer.defaultAutoZone = autoOffset;
             builder.serializerByType(OffsetDateTime.class, new JacksonOffsetDateTimeSerializer(offset, autoOffset));
 
-            val offPsr = prop.getZoned()
+            var offPsr = prop.getZoned()
                              .getSupport()
                              .stream()
                              .map(DateTimeFormatter::ofPattern)
