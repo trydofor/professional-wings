@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.flywave
 
+import io.qameta.allure.TmsLink
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -7,15 +8,16 @@ import org.junit.jupiter.api.MethodOrderer.MethodName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
-import pro.fessional.wings.faceless.WingsTestHelper
-import pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1
-import pro.fessional.wings.faceless.WingsTestHelper.breakpointDebug
-import pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.HEAD
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.TAIL
 import pro.fessional.wings.faceless.flywave.SchemaJournalManagerTest.Companion.TFMT
+import pro.fessional.wings.faceless.helper.WingsTestHelper
+import pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V1
+import pro.fessional.wings.faceless.helper.WingsTestHelper.breakpointDebug
+import pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 
 /**
@@ -83,6 +85,7 @@ import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
                 "END"
     ]
 )
+@DependsOnDatabaseInitialization
 @TestMethodOrder(MethodName::class)
 class SchemaJournalManagerTest {
 
@@ -133,6 +136,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
+    @TmsLink("C12039")
     fun test0CleanTables() {
         wingsTestHelper.cleanTable()
         val sqls = FlywaveRevisionScanner
@@ -150,6 +154,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
+    @TmsLink("C12040")
     fun test1CreateTables() {
         schemaRevisionManager.publishRevision(WingsRevision.V01_19_0520_01_IdLog.revision(), 0)
         wingsTestHelper.assertSame(
@@ -175,6 +180,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
+    @TmsLink("C12041")
     fun test2Sharding() {
         schemaJournalManager.checkAndInitDdl("tst_sharding", 0)
         wingsTestHelper.assertNot(
@@ -198,6 +204,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
+    @TmsLink("C12042")
     fun test4AiTrigger() {
         if (wingsTestHelper.isH2) {
             testcaseNotice("h2 database skip")
@@ -227,6 +234,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
+    @TmsLink("C12043")
     fun test4AuTrigger() {
         if (wingsTestHelper.isH2) {
             testcaseNotice("h2 database skip")
@@ -253,6 +261,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
+    @TmsLink("C12044")
     fun test5BdTrigger() {
         if (wingsTestHelper.isH2) {
             testcaseNotice("h2 database skip")
@@ -278,6 +287,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
+    @TmsLink("C12045")
     fun test6Trigger() {
         if (wingsTestHelper.isH2) {
             testcaseNotice("h2 database skip")
@@ -320,6 +330,7 @@ class SchemaJournalManagerTest {
     }
 
     @Test
+    @TmsLink("C12046")
     fun test7AltTable() {
         if (wingsTestHelper.isH2) {
             testcaseNotice("h2 database skip")

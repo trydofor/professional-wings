@@ -1,1 +1,3 @@
-pro.fessional.wings.slardar.spring.boot.WingsAutoConfiguration
+pro.fessional.wings.slardar.spring.conf.SlardarAsyncAutoConfiguration
+pro.fessional.wings.slardar.spring.conf.SlardarAutoConfiguration
+pro.fessional.wings.slardar.spring.conf.SlardarCacheAutoConfiguration

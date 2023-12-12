@@ -6,13 +6,13 @@ import jakarta.servlet.http.HttpSession;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.warlock.service.auth.WarlockOauthService;
 import pro.fessional.wings.warlock.service.auth.WarlockOauthService.OAuth;
@@ -27,9 +27,9 @@ import pro.fessional.wings.warlock.spring.prop.WarlockUrlmapProp;
  * @author trydofor
  * @since 2022-11-04
  */
-@Slf4j
 @Controller
-@ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerOauth, havingValue = "true")
+@ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$mvcOauth)
+@Slf4j
 public class SimpleOauthController {
 
     @Setter(onMethod_ = {@Autowired})

@@ -16,7 +16,7 @@ public class NullsCache2k extends SpringCache2kCache {
 
     public NullsCache2k(Cache<Object, Object> cache, int size, int live) {
         super(cache);
-        this.nulls = size > 0 ? WingsCache2k.builder(NullsCache2k.class, "nulls", size, live, -1).build() : null;
+        this.nulls = size > 0 ? WingsCache2k.builder(NullsCache2k.class, "nulls", size, live, 0).build() : null;
     }
 
     @Override

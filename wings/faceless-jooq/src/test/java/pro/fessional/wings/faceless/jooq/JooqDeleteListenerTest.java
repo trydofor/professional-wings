@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.jooq;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.BatchBindStep;
@@ -9,24 +10,25 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import pro.fessional.wings.faceless.WingsTestHelper;
-import pro.fessional.wings.faceless.database.autogen.tables.TstShardingTable;
-import pro.fessional.wings.faceless.database.autogen.tables.records.TstShardingRecord;
+import pro.fessional.wings.faceless.app.database.autogen.tables.TstShardingTable;
+import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShardingRecord;
 import pro.fessional.wings.faceless.database.jooq.helper.JournalJooqHelper;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
+import pro.fessional.wings.faceless.helper.WingsTestHelper;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.SortedMap;
 
-import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
-import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 import static pro.fessional.wings.faceless.convention.EmptyValue.DATE_TIME;
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V2;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
 
 /**
@@ -34,9 +36,10 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
  * @since 2019-09-27
  */
 
+@SpringBootTest(properties = {"wings.faceless.jooq.conf.journal-delete=true"})
+@DependsOnDatabaseInitialization
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @ActiveProfiles("init")
-@SpringBootTest(properties = {"spring.wings.faceless.jooq.enabled.journal-delete=true"})
 @Tag("init")
 @Slf4j
 public class JooqDeleteListenerTest {
@@ -54,6 +57,7 @@ public class JooqDeleteListenerTest {
     private SchemaRevisionManager schemaRevisionManager;
 
     @Test
+    @TmsLink("C12095")
     public void test0CleanTables() {
         wingsTestHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER);
@@ -63,6 +67,7 @@ public class JooqDeleteListenerTest {
     //  🦁🦁🦁<=<<
 
     @Test
+    @TmsLink("C12096")
     public void test2HelperSeeLog() {
         JournalJooqHelper.deleteByIds(dsl, TstShardingTable.TstSharding, 12L, 1L, 2L);
         JournalJooqHelper.deleteByIds(tmpl, "`tst_sharding`", 34L, 3L, 4L);
@@ -74,6 +79,7 @@ public class JooqDeleteListenerTest {
     }
 
     @Test
+    @TmsLink("C12097")
     public void test3JooqDslSeeLog() {
         // handle
         dsl.execute("DELETE FROM `tst_sharding` WHERE ID =5 AND COMMIT_ID = 5");

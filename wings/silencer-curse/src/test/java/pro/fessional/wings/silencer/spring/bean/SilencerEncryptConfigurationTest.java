@@ -1,5 +1,6 @@
 package pro.fessional.wings.silencer.spring.bean;
 
+import io.qameta.allure.TmsLink;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,7 @@ public class SilencerEncryptConfigurationTest {
     }
 
     @Test
+    @TmsLink("C11019")
     public void testCode() {
         long number = 1979L;
         long encode = crc8Long.encode(number);

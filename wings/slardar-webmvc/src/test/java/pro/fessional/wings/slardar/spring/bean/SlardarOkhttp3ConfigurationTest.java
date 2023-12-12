@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.spring.bean;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,7 @@ public class SlardarOkhttp3ConfigurationTest {
     private OkHttpClient okHttpClient;
 
     @Test
+    @TmsLink("C13085")
     public void test() throws Exception {
 
         ClientHttpRequestFactory requestFactory = restTemplate.getRequestFactory();

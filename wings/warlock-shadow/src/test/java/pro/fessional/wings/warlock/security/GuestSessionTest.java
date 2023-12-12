@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.security;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.HttpUrl;
@@ -31,6 +32,7 @@ class GuestSessionTest {
     private OkHttpClient okHttpClient;
 
     @Test
+    @TmsLink("C14045")
     public void guestSession() {
         final Response r1 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/test/guest-session.json"), false);
         String s1 = OkHttpClientHelper.extractString(r1, false);
@@ -41,6 +43,7 @@ class GuestSessionTest {
     }
 
     @Test
+    @TmsLink("C14046")
     public void guest401() {
         OkHttpClientHelper.clearCookie(okHttpClient, HttpUrl.get(host));
         try (final Response r1 = OkHttpClientHelper.execute(okHttpClient, new Request.Builder().url(host + "/user/guest-401.json"), false)) {

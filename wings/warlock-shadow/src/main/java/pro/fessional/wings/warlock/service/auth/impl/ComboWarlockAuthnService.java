@@ -83,7 +83,7 @@ public class ComboWarlockAuthnService implements WarlockAuthnService {
             if (autoReg.accept(authType, username, details)) {
                 final Details dt = autoReg.create(authType, username, details);
                 if (dt != null) {
-                    log.info("register by AutoReg={}", autoReg.getClass());
+                    log.debug("register by AutoReg={}", autoReg.getClass());
                     return dt;
                 }
             }

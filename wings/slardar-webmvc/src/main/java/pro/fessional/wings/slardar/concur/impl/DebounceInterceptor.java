@@ -12,13 +12,13 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import pro.fessional.mirana.bits.Md5;
 import pro.fessional.mirana.time.ThreadNow;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 import pro.fessional.wings.slardar.concur.Debounce;
 import pro.fessional.wings.slardar.servlet.request.RequestHelper;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.servlet.stream.ReuseStreamResponseWrapper;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 public class DebounceInterceptor implements AutoRegisterInterceptor {
 
+    public static final int ORDER = WingsOrdered.Lv4Application + 2_000;
     public static final String DebounceKey = DebounceInterceptor.class.getName() + "::DebounceKey";
 
     private final AtomicLong seq = new AtomicLong(0);
@@ -39,10 +40,10 @@ public class DebounceInterceptor implements AutoRegisterInterceptor {
     private final ModelAndView modelAndView;
 
     @Getter @Setter
-    private int order = OrderedSlardarConst.MvcDebounceInterceptor;
+    private int order = ORDER;
 
     public DebounceInterceptor(int capacity, int maxWait, ModelAndView res) {
-        this.cache = WingsCache2k.builder(DebounceInterceptor.class, "cache", capacity, maxWait, -1, String.class, Dto.class).build();
+        this.cache = WingsCache2k.builder(DebounceInterceptor.class, "cache", capacity, maxWait, 0, String.class, Dto.class).build();
         this.modelAndView = res;
     }
 

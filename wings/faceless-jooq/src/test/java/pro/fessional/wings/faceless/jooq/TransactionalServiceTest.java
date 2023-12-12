@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.jooq;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -8,22 +9,24 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import pro.fessional.mirana.id.LightIdBufferedProvider;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
-import pro.fessional.wings.faceless.service.TransactionalBusinessService;
-import pro.fessional.wings.faceless.service.TransactionalClauseService;
+import pro.fessional.wings.faceless.app.service.TransactionalBusinessService;
+import pro.fessional.wings.faceless.app.service.TransactionalClauseService;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V1;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V1;
 
 /**
  * @author trydofor
  * @since 2023-03-09
  */
 @SpringBootTest
+@DependsOnDatabaseInitialization
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @Slf4j
 public class TransactionalServiceTest {
@@ -41,6 +44,7 @@ public class TransactionalServiceTest {
     protected LightIdBufferedProvider lightIdBufferedProvider;
 
     @Test
+    @TmsLink("C12108")
     public void test0Init() {
         val sqls = FlywaveRevisionScanner.scanMaster();
         schemaRevisionManager.checkAndInitSql(sqls, 0, false);
@@ -48,6 +52,7 @@ public class TransactionalServiceTest {
     }
 
     @Test
+    @TmsLink("C12109")
     public void testDeclarativeTx() {
         final AtomicLong id = new AtomicLong(-1);
         lightIdBufferedProvider.setFixCount(1);
@@ -106,6 +111,7 @@ public class TransactionalServiceTest {
     }
 
     @Test
+    @TmsLink("C12110")
     public void testWithoutTx() {
         lightIdBufferedProvider.setFixCount(1);
         final AtomicLong id = new AtomicLong(-1);
@@ -162,6 +168,7 @@ public class TransactionalServiceTest {
     }
 
     @Test
+    @TmsLink("C12111")
     public void testProgrammaticTx() {
         lightIdBufferedProvider.setFixCount(1);
         testProgrammaticTx(false);

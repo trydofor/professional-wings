@@ -1,5 +1,6 @@
 package pro.fessional.wings.silencer.spring.boot;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +35,7 @@ public class WingsSilencerProfile2Test {
     private String moduleTest;
 
     @Test
+    @TmsLink("C11008")
     public void profile() {
         assertEquals("Silencer-test30", moduleTest);
         assertEquals("wings-silencer-test", nameTest);

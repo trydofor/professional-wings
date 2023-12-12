@@ -18,7 +18,6 @@
     <description>WingsBoot=BKB + BootsOfTravel + SpringBoot</description>
 
     <modules>
-        <module>aegis</module>
         <module>silencer</module>
         <module>silencer-curse</module>
         <module>silencer-jaxb</module>
@@ -93,6 +92,11 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-java-commons</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

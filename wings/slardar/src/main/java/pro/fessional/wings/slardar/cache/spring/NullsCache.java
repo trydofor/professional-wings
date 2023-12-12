@@ -24,7 +24,7 @@ public class NullsCache implements Cache {
 
     public NullsCache(Cache cache, int size, int live) {
         this.backend = cache;
-        this.nulls = size > 0 ? WingsCache2k.builder(NullsCache.class, "nulls", size, live, -1).build() : null;
+        this.nulls = size > 0 ? WingsCache2k.builder(NullsCache.class, "nulls", size, live, 0).build() : null;
     }
 
     @Override

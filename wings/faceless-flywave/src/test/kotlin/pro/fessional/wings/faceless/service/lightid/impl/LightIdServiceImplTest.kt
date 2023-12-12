@@ -1,17 +1,20 @@
 package pro.fessional.wings.faceless.service.lightid.impl
 
 
+import io.qameta.allure.TmsLink
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
 import pro.fessional.mirana.id.LightIdBufferedProvider
-import pro.fessional.wings.faceless.WingsTestHelper
+import pro.fessional.mirana.id.LightIdUtil
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager
 import pro.fessional.wings.faceless.flywave.WingsRevision
+import pro.fessional.wings.faceless.helper.WingsTestHelper
 import pro.fessional.wings.faceless.service.journal.JournalService
 import pro.fessional.wings.faceless.service.lightid.LightIdService
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
@@ -27,6 +30,7 @@ import java.util.concurrent.atomic.AtomicLong
  */
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.MethodName::class)
+@DependsOnDatabaseInitialization
 open class LightIdServiceImplTest {
 
     @Autowired
@@ -50,12 +54,14 @@ open class LightIdServiceImplTest {
     private val seqName = "sys_commit_journal"
 
     @Test
+    @TmsLink("C12075")
     fun test0CleanTables() {
         wingsTestHelper.cleanTable()
         schemaRevisionManager.checkAndInitSql(FlywaveRevisionScanner.scanMaster(), 0, true)
     }
 
     @Test
+    @TmsLink("C12076")
     fun test1FetchId() {
         schemaRevisionManager.publishRevision(WingsRevision.V01_19_0520_01_IdLog.revision(), 0)
 
@@ -72,6 +78,7 @@ open class LightIdServiceImplTest {
     }
 
     @Test
+    @TmsLink("C12077")
     fun test2FetchId() {
         // consumer
         journalService.commit(this.javaClass) {
@@ -83,6 +90,7 @@ open class LightIdServiceImplTest {
     }
 
     @Test
+    @TmsLink("C12078")
     fun test3CompeteId() {
         val threadCnt = 100
         val loopCount = 5000
@@ -104,13 +112,14 @@ open class LightIdServiceImplTest {
     }
 
     @Test
+    @TmsLink("C12079")
     fun test4RangeId() {
         val rg = 999_000_000_000L
         val id = lightIdService.getId(seqName, 0)
-        lightIdBufferedProvider.setSequenceHandler { seq -> seq + rg }
+        lightIdBufferedProvider.setGenerator { _, b, s -> LightIdUtil.toId(b, s + rg) }
         val id1 = lightIdService.getId(seqName, 0)
         assertEquals(rg + 1, id1 - id)
-        lightIdBufferedProvider.sequenceHandler = null
+        lightIdBufferedProvider.generator = LightIdBufferedProvider.GENERATOR
         val id2 = lightIdService.getId(seqName, 0)
         assertEquals(2, id2 - id)
     }

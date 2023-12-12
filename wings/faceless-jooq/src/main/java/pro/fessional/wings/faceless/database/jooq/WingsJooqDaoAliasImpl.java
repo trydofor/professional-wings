@@ -51,6 +51,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -79,6 +80,8 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     protected final Field<?>[] pkeys;
     protected volatile int tableExist = -1;
 
+    protected volatile Supplier<DSLContext> dslSup = null;
+
     protected WingsJooqDaoAliasImpl(T table, Class<P> type) {
         this(table, type, null);
     }
@@ -87,6 +90,25 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
         super(table, type, conf);
         this.table = table;
         this.pkeys = WingsJooqUtil.primaryKeys(table);
+    }
+
+    @Override
+    @NotNull
+    public DSLContext ctx() {
+        if (dslSup == null) return super.ctx();
+
+        DSLContext dsl = dslSup.get();
+        return dsl != null ? dsl : super.ctx();
+    }
+
+    /**
+     * set/remove dsl Supplier to current instance, e.g. mocking DSL.
+     * if Supplier or its result is null, return the original Dsl.
+     *
+     * @param sup to supply Dsl.
+     */
+    public void setDslContext(@Nullable Supplier<DSLContext> sup) {
+        this.dslSup = sup;
     }
 
     /**
@@ -864,6 +886,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
     public <E> List<E> fetch(Class<E> claz, T table, QueryPart... selectsOrders) {
         return fetch(claz, table, null, selectsOrders);
     }
+
     @NotNull
     public <E> List<E> fetch(Class<E> claz, T table, Collection<? extends QueryPart> selectsOrders) {
         return fetch(claz, table, null, selectsOrders);
@@ -1148,7 +1171,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
         return Optional.ofNullable(fetchOne(table, null, selectsOrders));
     }
 
-     @NotNull
+    @NotNull
     public Optional<P> fetchOptional(T table, Collection<? extends QueryPart> selectsOrders) {
         return Optional.ofNullable(fetchOne(table, null, selectsOrders));
     }
@@ -1158,7 +1181,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
         return Optional.ofNullable(fetchLimitOne(table, null, selectsOrders));
     }
 
-     @NotNull
+    @NotNull
     public Optional<P> fetchLimitOptional(T table, Collection<? extends QueryPart> selectsOrders) {
         return Optional.ofNullable(fetchLimitOne(table, null, selectsOrders));
     }
@@ -1246,7 +1269,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
         return Optional.ofNullable(fetchLimitOne(claz, table, null, selectsOrders));
     }
 
-     @NotNull
+    @NotNull
     public <E> Optional<E> fetchLimitOptional(Class<E> claz, T table, Collection<? extends QueryPart> selectsOrders) {
         return Optional.ofNullable(fetchLimitOne(claz, table, null, selectsOrders));
     }
@@ -1255,6 +1278,7 @@ public abstract class WingsJooqDaoAliasImpl<T extends Table<R> & WingsAliasTable
         final var two = selectAndOrders(List.of(selectsOrders));
         return fetchOne(claz, table, cond, two.one(), two.two(), false);
     }
+
     public <E> E fetchOne(Class<E> claz, T table, Condition cond, Collection<? extends QueryPart> selectsOrders) {
         final var two = selectAndOrders(selectsOrders);
         return fetchOne(claz, table, cond, two.one(), two.two(), false);

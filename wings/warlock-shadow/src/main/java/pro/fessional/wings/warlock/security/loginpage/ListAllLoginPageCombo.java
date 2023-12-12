@@ -11,18 +11,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthPageHandler;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
 
 /**
  * @author trydofor
  * @since 2021-02-19
  */
+@Setter @Getter
 public class ListAllLoginPageCombo implements ComboWingsAuthPageHandler.Combo {
 
-    @Setter @Getter
-    private int order = OrderedWarlockConst.SecListAllLoginPageCombo;
+    public static final int ORDER = WingsOrdered.Lv4Application + 100;
+    private int order = ORDER;
 
     @Setter(onMethod_ = {@Autowired})
     protected WarlockSecurityProp warlockSecurityProp;

@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.async;
 
 import com.alibaba.ttl.TtlRunnable;
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import pro.fessional.wings.slardar.context.TerminalContext;
+import pro.fessional.wings.slardar.app.service.AsyncService;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
@@ -33,6 +35,7 @@ public class TaskSchedulerTest {
     protected AsyncService asyncService;
 
     @Test
+    @TmsLink("C13001")
     void testTask() throws Exception {
         final TerminalContext.Builder builder = new TerminalContext.Builder();
         final long userId = 1L;

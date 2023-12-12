@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.jooq;
 
+import io.qameta.allure.TmsLink;
 import lombok.Data;
 import lombok.Setter;
 import lombok.val;
@@ -11,16 +12,17 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
-import pro.fessional.wings.faceless.WingsTestHelper;
-import pro.fessional.wings.faceless.database.autogen.tables.TstShardingTable;
-import pro.fessional.wings.faceless.database.autogen.tables.daos.TstShardingDao;
-import pro.fessional.wings.faceless.database.autogen.tables.records.TstShardingRecord;
+import pro.fessional.wings.faceless.app.database.autogen.tables.TstShardingTable;
+import pro.fessional.wings.faceless.app.database.autogen.tables.daos.TstShardingDao;
+import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShardingRecord;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
+import pro.fessional.wings.faceless.helper.WingsTestHelper;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
-import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
-import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V2;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice;
 
 /**
  * @author trydofor
@@ -28,6 +30,7 @@ import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
  */
 
 @SpringBootTest
+@DependsOnDatabaseInitialization
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class JooqMapperCompatibleTest {
 
@@ -41,6 +44,7 @@ public class JooqMapperCompatibleTest {
     private TstShardingDao dao;
 
     @Test
+    @TmsLink("C12098")
     public void test0Init() {
         wingsTestHelper.cleanTable();
         val sqls = FlywaveRevisionScanner.scanMaster();
@@ -49,6 +53,7 @@ public class JooqMapperCompatibleTest {
     }
 
     @Test
+    @TmsLink("C12099")
     public void test1Exist() {
         final boolean b = dao.notTableExist();
         Assertions.assertFalse(b);
@@ -61,6 +66,7 @@ public class JooqMapperCompatibleTest {
     }
 
     @Test
+    @TmsLink("C12100")
     public void test1Lower() {
         DSLContext ctx = dao.ctx();
         TstShardingTable t = dao.getTable();
@@ -78,6 +84,7 @@ public class JooqMapperCompatibleTest {
     }
 
     @Test
+    @TmsLink("C12101")
     public void test1Snake() {
         DSLContext ctx = dao.ctx();
         TstShardingTable t = dao.getTable();
@@ -95,6 +102,7 @@ public class JooqMapperCompatibleTest {
     }
 
     @Test
+    @TmsLink("C12102")
     public void test1Array() {
 
         testcaseNotice("sfm has bug");
@@ -111,6 +119,7 @@ public class JooqMapperCompatibleTest {
     }
 
     @Test
+    @TmsLink("C12103")
     public void test2Array() {
         TstShardingTable t = dao.getTable();
         Condition c = t.Id.eq(105L);

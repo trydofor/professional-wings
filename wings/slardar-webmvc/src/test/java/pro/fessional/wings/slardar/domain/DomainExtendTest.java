@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.domain;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-                "spring.wings.slardar.enabled.domain-extend=true",
-                "spring.boot.admin.server.enabled=false"
+                "wings.enabled.slardar.domainx=true",
         })
 public class DomainExtendTest {
 
@@ -30,6 +30,7 @@ public class DomainExtendTest {
     private RestTemplate restTemplate;
 
     @Test
+    @TmsLink("C13043")
     public void testDomainA() {
         String json = restTemplate.getForObject(domainA + "/user-list.json", String.class);
         assertEquals("a.com/user-list.json", json);
@@ -42,6 +43,7 @@ public class DomainExtendTest {
     }
 
     @Test
+    @TmsLink("C13044")
     public void testDomainBA() {
         String json = restTemplate.getForObject(domainA + "/domain/b/user-list.json", String.class);
         assertEquals("b.com/user-list.json", json);
@@ -54,6 +56,7 @@ public class DomainExtendTest {
     }
 
     @Test
+    @TmsLink("C13045")
     public void testDomainBB() {
         String json = restTemplate.getForObject(domainB + "/domain/b/user-list.json", String.class);
         assertEquals("b.com/user-list.json", json);
@@ -66,6 +69,7 @@ public class DomainExtendTest {
     }
 
     @Test
+    @TmsLink("C13046")
     public void testDomainBE() {
         String json = restTemplate.getForObject(domainB + "/user-list.json", String.class);
         assertEquals("b.com/user-list.json", json);

@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * spring-wings-enabled-79.properties
+ * wings-enabled-79.properties
  *
  * @author trydofor
  * @see #Key

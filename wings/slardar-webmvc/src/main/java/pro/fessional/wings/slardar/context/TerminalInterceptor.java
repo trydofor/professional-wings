@@ -8,10 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.best.DummyBlock;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.context.TerminalContext.Builder;
 import pro.fessional.wings.slardar.context.TerminalContext.Context;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,8 +27,13 @@ import static pro.fessional.wings.slardar.constants.SlardarServletConst.AttrTerm
 @Getter
 public class TerminalInterceptor implements AutoRegisterInterceptor {
 
+    public static final int ORDER = WingsOrdered.Lv4Application + 5_000;
+
     private final List<TerminalBuilder> terminalBuilders = new ArrayList<>();
     private final List<TerminalLogger> terminalLoggers = new ArrayList<>();
+
+    @Setter
+    private int order = ORDER;
 
     @Setter
     @NotNull
@@ -89,9 +94,6 @@ public class TerminalInterceptor implements AutoRegisterInterceptor {
             return null;
         }
     }
-
-    @Setter
-    private int order = OrderedSlardarConst.MvcTerminalInterceptor;
 
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request,

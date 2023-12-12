@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.security.justauth;
 
+import io.qameta.allure.TmsLink;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ public class AuthStateBuilderTest {
     }
 
     @Test
+    @TmsLink("C14038")
     public void test() {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getParameterMap()).thenReturn(Map.of(ParamState, new String[] {"/login", "http://localhost:8080"}));

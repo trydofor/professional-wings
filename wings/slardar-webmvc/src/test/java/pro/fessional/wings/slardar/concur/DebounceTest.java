@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.concur;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -36,23 +37,27 @@ class DebounceTest {
     private RestTemplate restTemplate;
 
     @Test
+    @TmsLink("C13031")
     void debounceNore() throws InterruptedException {
         debounce(false, "/test/debounce-nore.json?p=p1");
         debounce(false, "/test/debounce-nore.json?p=p2");
     }
 
     @Test
+    @TmsLink("C13032")
     void debounceView() throws InterruptedException {
         debounce(true, "/test/debounce-view.json?p=p1");
         debounce(true, "/test/debounce-view.json?p=p2");
     }
 
     @Test
+    @TmsLink("C13033")
     void debounceError() throws InterruptedException {
         debounce(true, "/test/debounce-error.json?p=seq");
     }
 
     @Test
+    @TmsLink("C13034")
     void debounceBody() throws InterruptedException {
         debounce(true, "/test/debounce-body.json?p=p1");
         debounce(true, "/test/debounce-body.json?p=p2");

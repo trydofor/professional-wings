@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.slardar.security.WingsAuthPageHandler;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
@@ -38,9 +38,9 @@ import java.util.List;
  * @since 2021-02-16
  */
 @RestController
+@ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$mvcLogin)
 @RequiredArgsConstructor
 @Slf4j
-@ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerAuth, havingValue = "true")
 public class LoginPageController {
 
     private final WingsAuthPageHandler wingsAuthPageHandler;
@@ -67,7 +67,7 @@ public class LoginPageController {
                                        HttpServletRequest request,
                                        HttpServletResponse response) {
         final MediaType mt = ContentTypeHelper.mediaTypeByUri(extName);
-        log.info("default login-page media-type={}", mt);
+        log.debug("default login-page media-type={}", mt);
         return wingsAuthPageHandler.response(Null.Enm, mt, request, response);
     }
 
@@ -102,7 +102,7 @@ public class LoginPageController {
                                        HttpServletResponse response) {
         final Enum<?> em = wingsAuthTypeParser.parse(authType);
         final MediaType mt = ContentTypeHelper.mediaTypeByUri(extName, MediaType.APPLICATION_JSON);
-        log.info("login-page authType={}, authZone={}, mediaType={}, state={}, host={}", authType, authZone, mt, state, host);
+        log.debug("login-page authType={}, authZone={}, mediaType={}, state={}, host={}", authType, authZone, mt, state, host);
         return wingsAuthPageHandler.response(em, mt, request, response);
     }
 
@@ -121,7 +121,7 @@ public class LoginPageController {
                                         HttpServletResponse response) {
         final Enum<?> em = wingsAuthTypeParser.parse(authType);
         final MediaType mt = ContentTypeHelper.mediaTypeByUri(extName, MediaType.APPLICATION_JSON);
-        log.info("login-page authType={}, authZone={}, mediaType={}, state={}, host={}", authType, authZone, mt, state, host);
+        log.debug("login-page authType={}, authZone={}, mediaType={}, state={}, host={}", authType, authZone, mt, state, host);
         return wingsAuthPageHandler.response(em, mt, request, response);
     }
 

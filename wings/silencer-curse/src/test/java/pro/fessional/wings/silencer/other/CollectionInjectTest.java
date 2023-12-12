@@ -1,5 +1,6 @@
 package pro.fessional.wings.silencer.other;
 
+import io.qameta.allure.TmsLink;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,6 +49,7 @@ public class CollectionInjectTest {
     }
 
     @Test
+    @TmsLink("C11013")
     public void testList() {
         Assertions.assertEquals(1, listEmpty.size());
         Assertions.assertEquals(1, listValue0.size());
@@ -58,6 +60,7 @@ public class CollectionInjectTest {
     }
 
     @Test
+    @TmsLink("C11014")
     public void testMap() {
         Assertions.assertEquals(1, mapEmpty.size());
         Assertions.assertEquals(1, mapValue0.size());

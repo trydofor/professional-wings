@@ -6,11 +6,10 @@ import com.hazelcast.config.MapConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.hazelcast.HazelcastConfigCustomizer;
+import pro.fessional.wings.slardar.cache.WingsCache;
 import pro.fessional.wings.slardar.spring.prop.SlardarCacheProp;
 
 import java.util.Map;
-
-import static pro.fessional.wings.slardar.spring.prop.SlardarCacheProp.wildcard;
 
 /**
  * @author trydofor
@@ -35,7 +34,7 @@ public class WingsHazelcastCacheCustomizer implements HazelcastConfigCustomizer 
         // check level
         for (Map.Entry<String, SlardarCacheProp.Conf> entry : cacheProp.getLevel().entrySet()) {
             final SlardarCacheProp.Conf lvl = entry.getValue();
-            final String name = wildcard(entry.getKey());
+            final String name = WingsCache.Naming.wildcard(entry.getKey());
             checkMapConf(config, mapCnf, name, lvl.getMaxLive(), lvl.getMaxIdle(), lvl.getMaxSize());
         }
     }

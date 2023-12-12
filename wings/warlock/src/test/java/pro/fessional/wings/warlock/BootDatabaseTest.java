@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -25,8 +26,8 @@ import static pro.fessional.wings.faceless.flywave.WingsRevision.V05_20_1025_01_
  * @since 2021-02-22
  */
 @SpringBootTest(properties = {
-        "spring.wings.faceless.flywave.enabled.module=true",
-        "spring.wings.faceless.flywave.enabled.checker=false",
+        "wings.enabled.faceless.flywave=true",
+        "wings.faceless.flywave.checker=false",
 })
 @Disabled("manual initialization")
 public class BootDatabaseTest {
@@ -36,6 +37,7 @@ public class BootDatabaseTest {
     private SchemaRevisionManager schemaRevisionManager;
 
     @Test
+    @TmsLink("C14007")
     void testDropAndInit() {
         JdbcTemplate tmpl = new JdbcTemplate(dataSource);
         tmpl.query("SHOW TABLES", rs -> {

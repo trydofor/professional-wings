@@ -3,6 +3,7 @@ package pro.fessional.wings.silencer.tweak;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
+import io.qameta.allure.TmsLink;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ import java.util.Map;
 public class SilenceDebugTest {
 
     @Test
+    @TmsLink("C11020")
     public void testNow() {
         final LocalDateTime n0 = ThreadNow.localDateTime();
         TweakClock.tweakThread(Duration.ofSeconds(60));
@@ -40,6 +42,7 @@ public class SilenceDebugTest {
     }
 
     @Test
+    @TmsLink("C11021")
     public void testStack() {
         TweakStack.tweakGlobal(true);
         final MessageException me0 = new MessageException("test message");
@@ -59,6 +62,7 @@ public class SilenceDebugTest {
     }
 
     @Test
+    @TmsLink("C11022")
     public void testLogger() {
         final Map<Integer, Boolean> map = new HashMap<>();
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);

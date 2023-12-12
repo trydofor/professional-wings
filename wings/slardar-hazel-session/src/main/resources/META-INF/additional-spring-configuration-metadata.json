@@ -1,0 +1,14 @@
+{
+  "groups": [
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean"}
+  ],
+  "properties": [
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.conf.SlardarHazelSessionAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarHazelSessionConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarHazelSessionConfiguration.sessionRegistry", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.slardar.spring.bean.SlardarHazelSessionConfiguration.wingsSessionHelper", "type": "java.lang.Boolean"}
+  ],
+  "hints": []
+}

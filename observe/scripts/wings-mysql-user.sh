@@ -1,5 +1,5 @@
 #!/bin/bash
-THIS_VERSION=2023-04-14
+THIS_VERSION=2023-11-09
 
 cat <<EOF
 #################################################
@@ -91,17 +91,6 @@ fi
 [[ "$host_dev" == "" ]] && host_dev=%
 [[ "$host_dba" == "" ]] && host_dba=%
 
-exec_cmd=":"
-if [[ "$execute" == "true" ]]; then
-  unalias mysql >/dev/null 2>&1
-  exec_cmd="mysql -vvv -f "
-  if [[ -f "$option" ]]; then
-    echo -e "\033[0;33mNOTE: current option file \033[m"
-    cat "$option"
-    exec_cmd="mysql --defaults-extra-file=$option -vvv -f "
-  fi
-fi
-
 echo -e '\033[37;42;1mNOTE: users and passwd\033[m'
 grep -v '^#' <<EOF
 ${user_raw}${user_pre}${name_pre}raw  $pass_raw
@@ -110,10 +99,12 @@ ${user_dev}${user_pre}${name_pre}dev  $pass_dev
 ${user_dba}${user_pre}${name_pre}dba  $pass_dba
 EOF
 
-echo -e '\033[37;42;1mNOTE: sql script to execute\033[m'
+temp_sql="$userenv.sql"
+echo -e "\033[37;42;1mNOTE: sql script $temp_sql\033[m"
+rm "$temp_sql" >/dev/null 2>&1
 
 if [[ "$command" == "create" ]]; then
-  grep -v '^#' <<EOF | tee /dev/tty | $exec_cmd
+  grep -v '^#' >> "$temp_sql" <<EOF
 -- create
 ${user_raw}CREATE USER '${user_pre}${name_pre}raw'@'$host_raw' IDENTIFIED BY '$pass_raw';
 ${user_app}CREATE USER '${user_pre}${name_pre}app'@'$host_app' IDENTIFIED BY '$pass_app';
@@ -124,7 +115,7 @@ fi
 
 if [[ "$command" == "grant" ]]; then
   for db_main in $grant_db; do
-    grep -v '^#' <<EOF | tee /dev/tty | $exec_cmd
+    grep -v '^#' >> "$temp_sql" <<EOF
 -- grant
 ${user_raw}GRANT SELECT, CREATE TEMPORARY TABLES ON \`$db_main\`.* TO '${user_pre}${name_pre}raw'@'$host_raw';
 ${user_app}GRANT SELECT, CREATE TEMPORARY TABLES, INSERT, UPDATE, DELETE, EXECUTE ON \`$db_main\`.* TO '${user_pre}${name_pre}app'@'$host_app';
@@ -134,7 +125,7 @@ ${user_dba}GRANT ALL ON \`$db_main\`.* TO '${user_pre}${name_pre}dba'@'$host_dba
 ${user_dba}GRANT RELOAD,SHOW VIEW,EXECUTE,PROCESS,REPLICATION CLIENT,REPLICATION SLAVE ON *.* TO '${user_pre}${name_pre}dba'@'$host_dba';
 EOF
     for mb in $more_dba; do
-      grep -v '^#' <<EOF | tee /dev/tty | $exec_cmd
+      grep -v '^#' >> "$temp_sql" <<EOF
 ${user_dba}GRANT SELECT ON \`$mb\`.* TO '${user_pre}${name_pre}dba'@'$host_dba';
 EOF
     done
@@ -142,11 +133,25 @@ EOF
 fi
 
 if [[ "$command" == "passwd" ]]; then
-  grep -v '^#' <<EOF | tee /dev/tty | $exec_cmd
+  grep -v '^#' >> "$temp_sql" <<EOF
 -- change passwd
 ${user_raw}ALTER USER '${user_pre}${name_pre}raw'@'$host_raw' IDENTIFIED BY '$pass_raw';
 ${user_app}ALTER USER '${user_pre}${name_pre}app'@'$host_app' IDENTIFIED BY '$pass_app';
 ${user_dev}ALTER USER '${user_pre}${name_pre}dev'@'$host_dev' IDENTIFIED BY '$pass_dev';
 ${user_dba}ALTER USER '${user_pre}${name_pre}dba'@'$host_dba' IDENTIFIED BY '$pass_dba';
 EOF
+fi
+
+cat "$temp_sql"
+
+if [[ "$execute" == "true" ]]; then
+  unalias mysql >/dev/null 2>&1
+
+  if [[ -f "$option" ]]; then
+    echo -e "\033[0;33mNOTE: current option file \033[m"
+    cat "$option"
+    mysql --defaults-extra-file="$option" -vvv --force < "$temp_sql"
+  else
+    mysql -vvv --force < "$temp_sql"
+  fi
 fi

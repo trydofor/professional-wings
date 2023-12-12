@@ -7,18 +7,23 @@ import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import pro.fessional.mirana.cast.StringCastUtil;
+import pro.fessional.mirana.data.Null;
+import pro.fessional.mirana.text.WhiteUtil;
 import pro.fessional.wings.silencer.spring.help.ApplicationContextHelper;
 import pro.fessional.wings.silencer.spring.prop.SilencerEnabledProp;
+import pro.fessional.wings.silencer.spring.prop.SilencerScannerProp;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 /**
- * Automatically load the configuration that matches `*&#42;/spring/bean/*&#42;/*.class`
+ * Automatically scan component from `*&#42;/spring/bean/*&#42;/*.class` on ApplicationPreparedEvent
  *
  * @author trydofor
  * @since 2019-07-11
@@ -26,8 +31,6 @@ import java.util.Map;
 public class WingsSpringBeanScanner implements ApplicationListener<ApplicationPreparedEvent> {
 
     private static final Log log = LogFactory.getLog(WingsSpringBeanScanner.class);
-
-    public static final String WINGS_BEAN = "**/spring/bean/**/*.class";
 
     @Override
     public void onApplicationEvent(ApplicationPreparedEvent event) {
@@ -38,53 +41,75 @@ public class WingsSpringBeanScanner implements ApplicationListener<ApplicationPr
 
         if (!(context instanceof BeanDefinitionRegistry)) return;
 
-        String enable = context.getEnvironment().getProperty(SilencerEnabledProp.Key$scanner);
+        final ConfigurableEnvironment env = context.getEnvironment();
+        String enable = env.getProperty(SilencerEnabledProp.Key$scanner);
         if (!StringCastUtil.asTrue(enable)) {
             log.info("Wings bean scanner is disabled, skip it.");
+            return;
+        }
+
+        final String pts = env.getProperty(SilencerScannerProp.Key$bean);
+        final String[] bns = pts == null ? Null.StrArr : pts.split("[, \t]+");
+
+        final LinkedHashSet<String> pks = new LinkedHashSet<>();
+        for (String s : bns) {
+            s = WhiteUtil.trim(s, '/');
+            if (s.isBlank()) continue;
+            if (s.contains("*")) throw new IllegalArgumentException("Wings bean MUST be plain path, NOT contain `*`, path=" + s);
+            pks.add(s);
+        }
+
+        if (pks.isEmpty()) {
+            log.info("Wings bean scanner is empty, skip it.");
             return;
         }
 
         final LinkedHashMap<String, String> pathPackage = new LinkedHashMap<>();
         final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         final ClassLoader loader = resolver.getClassLoader();
+        long start = System.currentTimeMillis();
+        String curPkg = null;
         try {
-            Resource[] resources = resolver.getResources("classpath*:/" + WINGS_BEAN);
-            log.info("Wings scanned " + resources.length + " resources of */spring/bean/*");
-            for (Resource res : resources) {
-                try {
-                    String path = res.getURL().getPath();
-                    guessClassPackage(pathPackage, path, loader);
+            long stt = start;
+            for (String pk : pks) {
+                curPkg = pk;
+                Resource[] resources = resolver.getResources("classpath*:/**/" + pk + "/**/*.class");
+                for (Resource res : resources) {
+                    try {
+                        String path = res.getURL().getPath();
+                        guessClassPackage(pathPackage, path, loader, pk);
+                    }
+                    catch (IOException e) {
+                        log.warn("failed to parse package name of res=" + res.getDescription());
+                    }
                 }
-                catch (IOException e) {
-                    log.warn("failed to parse package name of res=" + res.getDescription());
-                }
+                long end = System.currentTimeMillis();
+                log.info("Wings scanned " + resources.length + " resources of /**/" + pk + "/**/, cost " + (end - stt) + " ms");
+                stt = end;
             }
         }
         catch (IOException e) {
-            log.warn("failed to scan /spring/bean/*.class", e);
+            log.warn("failed to scan " + curPkg, e);
         }
 
         if (pathPackage.isEmpty()) {
             return;
         }
 
-        String[] basePackages = new String[pathPackage.size()];
-        int idx = 0;
-        for (String pkg : pathPackage.values()) {
-            log.info("Wings add scan component base package=" + pkg);
-            basePackages[idx++] = pkg;
-        }
+        String[] basePackages = pathPackage.values().toArray(String[]::new);
 
         //
+        log.info("Wings scan component base-package = " + String.join(",", basePackages));
         ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner((BeanDefinitionRegistry) context);
         scanner.scan(basePackages);
+        log.info("Wings scanned component, total cost " + (System.currentTimeMillis() - start) + " ms");
     }
 
 
     // ///////////////
-    private void guessClassPackage(Map<String, String> map, String path, ClassLoader loader) {
+    private void guessClassPackage(Map<String, String> map, String path, ClassLoader loader, String pkg) {
 
-        int ps = path.lastIndexOf("/spring/bean/");
+        int ps = path.lastIndexOf(pkg);
         for (String s : map.keySet()) {
             if (path.startsWith(s)) {
                 return;

@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.servlet.MessageHelper;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.errcode.CommonErrorEnum;
 
 import static pro.fessional.wings.slardar.servlet.request.RequestHelper.allErrors;
@@ -24,8 +24,10 @@ import static pro.fessional.wings.slardar.servlet.request.RequestHelper.allError
  */
 
 @ControllerAdvice(annotations = RestController.class)
-@Order(OrderedWarlockConst.BindExceptionAdvice)
+@Order(BindExceptionAdvice.ORDER)
 public class BindExceptionAdvice {
+
+    public static final int ORDER = WingsOrdered.Lv4Application;
 
     @Setter(onMethod_ = {@Autowired})
     protected MessageSource messageSource;

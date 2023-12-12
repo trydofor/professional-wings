@@ -23,7 +23,7 @@ import static pro.fessional.wings.warlock.service.user.WarlockUserBasisService.B
 public class JustAuthUserAuthnAutoReg extends DefaultUserAuthnAutoReg {
 
     @Override
-    protected void beforeSave(Basis basis, String username, WingsAuthDetails details) {
+    protected Long beforeSave(Basis basis, String username, WingsAuthDetails details) {
         AuthUser user = (AuthUser) details.getRealData();
         AssertArgs.notNull(user, "need JustAuth User");
         basis.setNickname(user.getNickname());
@@ -40,17 +40,20 @@ public class JustAuthUserAuthnAutoReg extends DefaultUserAuthnAutoReg {
         }
         basis.setRemark(user.getRemark());
         basis.setStatus(UserStatus.ACTIVE);
-        log.info("nickName={}, Gender={}", user.getNickname(), aug);
+        log.debug("nickName={}, Gender={}", user.getNickname(), aug);
+
+        return null;
     }
 
     @Override
-    protected void beforeSave(Authn authn, String username, WingsAuthDetails details, long userId) {
+    protected Long beforeSave(Authn authn, String username, WingsAuthDetails details, long userId) {
         AuthUser user = (AuthUser) details.getRealData();
         AssertArgs.notNull(user, "need JustAuth User");
         authn.setUsername(user.getUuid());
         authn.setExtraPara(JSON.toJSONString(user.getToken(), FastJsonHelper.DefaultWriter()));
         authn.setExtraUser(JSON.toJSONString(user.getRawUserInfo(), FastJsonHelper.DefaultWriter()));
-        log.info("uuid={}, userId={}", user.getUuid(), userId);
+        log.debug("uuid={}, userId={}", user.getUuid(), userId);
+        return null;
     }
 
     @Override

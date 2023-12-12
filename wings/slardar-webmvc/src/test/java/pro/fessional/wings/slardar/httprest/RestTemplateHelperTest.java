@@ -1,5 +1,6 @@
 package pro.fessional.wings.slardar.httprest;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import pro.fessional.mirana.io.InputStreams;
-import pro.fessional.wings.slardar.controller.TestRestTmplController;
+import pro.fessional.wings.slardar.app.controller.TestRestTmplController;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pro.fessional.wings.slardar.controller.TestRestTmplController.json;
+import static pro.fessional.wings.slardar.app.controller.TestRestTmplController.json;
 
 /**
  * @author trydofor
@@ -34,6 +35,7 @@ public class RestTemplateHelperTest {
 
 
     @Test
+    @TmsLink("C13052")
     public void jsonEntity() {
         TestRestTmplController.Json j1 = json();
         HttpEntity<TestRestTmplController.Json> entity = RestTemplateHelper.jsonEntity(j1);
@@ -42,6 +44,7 @@ public class RestTemplateHelperTest {
     }
 
     @Test
+    @TmsLink("C13053")
     public void formEntity() {
         HttpEntity<MultiValueMap<String, String>> form = RestTemplateHelper.formEntity();
         RestTemplateHelper.body(form).add("k1", "v1");
@@ -50,6 +53,7 @@ public class RestTemplateHelperTest {
     }
 
     @Test
+    @TmsLink("C13054")
     public void fileEntity() {
         HttpEntity<MultiValueMap<String, Object>> form = RestTemplateHelper.fileEntity();
         String txt = "123456\nasdfgh";
@@ -59,6 +63,7 @@ public class RestTemplateHelperTest {
     }
 
     @Test
+    @TmsLink("C13055")
     public void download() throws IOException {
         byte[] bytes = RestTemplateHelper.download(restTemplate, host + "/test/rest-template-helper-down.htm");
         String pom = InputStreams.readText(new FileInputStream("./pom.xml"));

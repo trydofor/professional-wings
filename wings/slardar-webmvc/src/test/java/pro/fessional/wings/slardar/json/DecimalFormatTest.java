@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.qameta.allure.TmsLink;
 import lombok.Data;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-                "spring.wings.slardar.enabled.number=true",
                 "wings.slardar.number.decimal.separator=_",
                 "wings.slardar.number.floats.format=#.00",
                 "wings.slardar.number.decimal.format=#.00",
@@ -50,6 +50,7 @@ public class DecimalFormatTest {
 
 
     @Test
+    @TmsLink("C13059")
     public void testFloat() {
         DecimalFormat df = new DecimalFormat("￥,####.00");
         DecimalFormatSymbols customSymbols = new DecimalFormatSymbols();
@@ -61,6 +62,7 @@ public class DecimalFormatTest {
     }
 
     @Test
+    @TmsLink("C13060")
     public void testInteger() {
         DecimalFormat df = new DecimalFormat("#");
         DecimalFormatSymbols customSymbols = new DecimalFormatSymbols();
@@ -142,6 +144,7 @@ public class DecimalFormatTest {
     }
 
     @Test
+    @TmsLink("C13061")
     public void testDecStr() throws JsonProcessingException {
         final String decStr = objectMapper.writeValueAsString(new DecStr());
         log.info(decStr);
@@ -159,6 +162,7 @@ public class DecimalFormatTest {
     }
 
     @Test
+    @TmsLink("C13062")
     public void testDecRaw() throws JsonProcessingException {
         final String decRaw = objectMapper.writeValueAsString(new DecRaw());
         log.info(decRaw);
@@ -177,6 +181,7 @@ public class DecimalFormatTest {
     }
 
     @Test
+    @TmsLink("C13063")
     public void testDecFmt() throws JsonProcessingException {
         final String decFmt = objectMapper.writeValueAsString(new DecFmt());
         log.info(decFmt);
@@ -196,6 +201,7 @@ public class DecimalFormatTest {
     }
 
     @Test
+    @TmsLink("C13064")
     public void testJsSafe() throws JsonProcessingException {
         TreeMap<String, Long> js = new TreeMap<>();
         js.put("maxSafe0", 9007199254740990L);
@@ -232,6 +238,7 @@ public class DecimalFormatTest {
     }
 
     @Test
+    @TmsLink("C13065")
     public void testDateFmt() throws JsonProcessingException {
         final DateFmt df = new DateFmt();
         Assertions.assertEquals("{\"ldt\":\"2022-02-02\",\"str\":\"string\"}", objectMapper.writeValueAsString(df));
@@ -241,6 +248,7 @@ public class DecimalFormatTest {
     }
 
     @Test
+    @TmsLink("C13066")
     public void testViewDec() {
         final String dec = restTemplate.getForObject(domain + "/test/json-dec.json", String.class);
         final String sub = restTemplate.getForObject(domain + "/test/json-sub.json", String.class);

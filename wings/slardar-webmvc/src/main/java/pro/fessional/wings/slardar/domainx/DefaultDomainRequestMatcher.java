@@ -36,8 +36,8 @@ public class DefaultDomainRequestMatcher implements DomainRequestMatcher {
     public DefaultDomainRequestMatcher(String pathPrefix, Collection<String> otherUrl, int cacheSize, Supplier<List<HandlerMapping>> supplier) {
         this.pathPrefix = pathPrefix;
         this.otherUrl.addAll(otherUrl);
-        this.matchedUrl = WingsCache2k.builder(DefaultDomainRequestMatcher.class, "matchedUrl", cacheSize, -1, -1, String.class, Boolean.class).build();
-        this.notfoundUrl = WingsCache2k.builder(DefaultDomainRequestMatcher.class, "notfoundUrl", cacheSize, -1, -1, String.class, Boolean.class).build();
+        this.matchedUrl = WingsCache2k.builder(DefaultDomainRequestMatcher.class, "matchedUrl", cacheSize, 0, 0, String.class, Boolean.class).build();
+        this.notfoundUrl = WingsCache2k.builder(DefaultDomainRequestMatcher.class, "notfoundUrl", cacheSize, 0, 0, String.class, Boolean.class).build();
         this.handlerMappingSupplier = supplier;
     }
 

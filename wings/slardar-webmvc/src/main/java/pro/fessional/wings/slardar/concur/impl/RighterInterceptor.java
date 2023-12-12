@@ -15,12 +15,12 @@ import pro.fessional.mirana.bits.Aes256;
 import pro.fessional.mirana.bits.Base64;
 import pro.fessional.mirana.bits.MdHelp;
 import pro.fessional.mirana.code.RandCode;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.concur.Righter;
 import pro.fessional.wings.slardar.serialize.KryoSimple;
 import pro.fessional.wings.slardar.servlet.response.ResponseHelper;
 import pro.fessional.wings.slardar.spring.prop.SlardarRighterProp;
 import pro.fessional.wings.slardar.webmvc.AutoRegisterInterceptor;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.util.function.Function;
 
@@ -34,12 +34,14 @@ import java.util.function.Function;
 @Slf4j
 public class RighterInterceptor implements AutoRegisterInterceptor {
 
+    public static final int ORDER = WingsOrdered.Lv4Application + 1_000;
+
     public static final String Secret = RandCode.strong(20);
 
     private final SlardarRighterProp prop;
 
     @Getter @Setter
-    private int order = OrderedSlardarConst.MvcRighterInterceptor;
+    private int order = ORDER;
 
     /**
      * Get the encryption password by HttpSession
@@ -96,7 +98,7 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
         final String key = getKey(session);
         byte[] bytes = decodeAudit(key, audit);
         if (bytes == null) {
-            log.info("failed to check digest. session={}, audit={}", session.getId(), audit);
+            log.debug("failed to check digest. session={}, audit={}", session.getId(), audit);
             responseError(response);
             return false;
         }
@@ -108,7 +110,7 @@ public class RighterInterceptor implements AutoRegisterInterceptor {
             return true;
         }
         catch (Exception e) {
-            log.warn("failed to deserialize. session=" + session + ", audit=" + audit, e);
+            log.info("failed to deserialize. session=" + session + ", audit=" + audit, e);
             responseError(response);
             return false;
         }

@@ -5,6 +5,7 @@ import org.cache2k.Cache;
 import org.cache2k.Cache2kBuilder;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 
 import java.util.concurrent.TimeUnit;
 
@@ -21,10 +22,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class NonceTokenSessionHelper {
 
-    private static final Cache<String, Sf> cache = Cache2kBuilder
-            .of(String.class, Sf.class)
-            .entryCapacity(100_000)
-            .expireAfterWrite(300, TimeUnit.SECONDS)
+    private static final Cache<String, Sf> cache = WingsCache2k
+            .builder(NonceTokenSessionHelper.class, "nonce", 100_000, 300, 0, String.class, Sf.class)
             .build();
 
     private static class Sf {

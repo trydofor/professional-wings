@@ -2,10 +2,10 @@ package pro.fessional.wings.silencer.spring.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import pro.fessional.wings.silencer.spring.boot.WingsEnabledCondition;
 
 /**
- * The default switch for toggling the Silencer feature, as follows:
- * spring-wings-enabled-79.properties
+ * toggling the Silencer feature, wings-enabled-79.properties
  *
  * @author trydofor
  * @see #Key
@@ -15,10 +15,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(SilencerEnabledProp.Key)
 public class SilencerEnabledProp {
 
-    public static final String Key = "spring.wings.silencer.enabled";
+    public static final String Key = WingsEnabledCondition.Prefix + ".silencer";
 
     /**
-     * Whether to automatically configure, default true
+     * Whether to automatically configure `wings-conf` and `wings-i18n`
      *
      * @see #Key$autoconf
      */
@@ -26,7 +26,7 @@ public class SilencerEnabledProp {
     public static final String Key$autoconf = Key + ".autoconf";
 
     /**
-     * Whether to display the conditional information of wings, default false
+     * Whether to display the conditional information of wings
      *
      * @see #Key$verbose
      */
@@ -34,34 +34,52 @@ public class SilencerEnabledProp {
     public static final String Key$verbose = Key + ".verbose";
 
     /**
-     * Whether to automatically load /wings-i18n/ messages, default true
-     *
-     * @see #Key$message
-     */
-    private boolean message = true;
-    public static final String Key$message = Key + ".message";
-
-    /**
-     * Whether to automatically load all classpaths ** /spring/bean/**, default true
+     * Whether to Automatically scan component from `*&#42;/spring/bean/*&#42;/*.class` on ApplicationPreparedEvent before `@AutoConfiguration
      *
      * @see #Key$scanner
      */
-    private boolean scanner = true;
+    private boolean scanner = false;
     public static final String Key$scanner = Key + ".scanner";
 
-    /**
-     * Whether to automatically switch the console log level when a log file is available, default true
-     *
-     * @see #Key$autoLog
-     */
-    private boolean autoLog = true;
-    public static final String Key$autoLog = Key + ".autolog";
+    ////// abs-key for short /////////
 
     /**
-     * Whether to automatically config encrypt, default true
+     * Whether to audit the file and cascading relationship of properties key/value
      *
-     * @see #Key$encrypt
+     * @see #Key$auditProp
      */
-    private boolean encrypt = true;
-    public static final String Key$encrypt = Key + ".encrypt";
+    private boolean auditProp = false;
+    public static final String Key$auditProp = Key + ".audit-prop";
+
+    /**
+     * Whether to automatically switch the console log level when a log file is available
+     *
+     * @see #Key$muteConsole
+     */
+    private boolean muteConsole = true;
+    public static final String Key$muteConsole = Key + ".mute-console";
+
+    /**
+     * Whether to tweak the clock in global or thread
+     *
+     * @see #Key$tweakClock
+     */
+    private boolean tweakClock = true;
+    public static final String Key$tweakClock = Key + ".tweak-clock";
+
+    /**
+     * Whether to tweak log level of logback in global or thread
+     *
+     * @see #Key$tweakLogback
+     */
+    private boolean tweakLogback = true;
+    public static final String Key$tweakLogback = Key + ".tweak-logback";
+
+    /**
+     * Whether to tweak the CodeException stack in global or thread
+     *
+     * @see #Key$tweakStack
+     */
+    private boolean tweakStack = true;
+    public static final String Key$tweakStack = Key + ".tweak-stack";
 }

@@ -24,6 +24,7 @@ import pro.fessional.wings.faceless.service.lightid.LightIdService;
 import pro.fessional.wings.silencer.modulate.RunMode;
 import pro.fessional.wings.silencer.modulate.RuntimeMode;
 import pro.fessional.wings.silencer.notice.SmallNotice;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.tiny.task.database.autogen.tables.WinTaskDefineTable;
 import pro.fessional.wings.tiny.task.database.autogen.tables.daos.WinTaskDefineDao;
 import pro.fessional.wings.tiny.task.database.autogen.tables.pojos.WinTaskDefine;
@@ -53,6 +54,7 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.findMerg
  * @since 2022-12-14
  */
 @Service
+@ConditionalWingsEnabled
 @Slf4j
 public class TinyTaskConfServiceImpl implements TinyTaskConfService {
 
@@ -103,7 +105,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             rp.setTimingCron(anno.cron());
             rp.setTimingIdle(anno.idle());
             rp.setTimingRate(anno.rate());
-            log.info("no prop, use annotation, key={}", key);
+            log.debug("no prop, use annotation, key={}", key);
         }
         else {
             if (pp.notTimingZone()) {
@@ -113,7 +115,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
                 rp.setTimingZone(pp.getTimingZone());
             }
             if (pp.notTimingPlan()) {
-                log.info("no prop timingplan, use annotation, key={}", key);
+                log.debug("no prop timingplan, use annotation, key={}", key);
                 rp.setTimingCron(anno.cron());
                 rp.setTimingIdle(anno.idle());
                 rp.setTimingRate(anno.rate());
@@ -255,7 +257,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
         }
 
         String tkn = TaskerHelper.tokenize(claz, method.getName());
-        log.info("find tiny task, prop={}, ref={}", key, tkn);
+        log.debug("find tiny task, prop={}, ref={}", key, tkn);
 
         if (isEmpty(prop.getTaskerName())) {
             prop.setTaskerName(claz.getSimpleName() + TaskerHelper.MethodPrefix + method.getName());
@@ -279,7 +281,7 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             enabled = prop.isEnabled();
             autorun = prop.isAutorun();
             noticeBean = prop.getNoticeBean();
-            log.info("insert prop to database, version={}, id={}", prop.getVersion(), id);
+            log.debug("insert prop to database, version={}, id={}", prop.getVersion(), id);
         }
         else if (po.getVersion() < prop.getVersion()) {
             id = po.getId();
@@ -287,14 +289,14 @@ public class TinyTaskConfServiceImpl implements TinyTaskConfService {
             autorun = prop.isAutorun();
             noticeBean = prop.getNoticeBean();
             updateProp(prop, key, id);
-            log.info("replace prop to database, version={}, id={}", prop.getVersion(), id);
+            log.debug("replace prop to database, version={}, id={}", prop.getVersion(), id);
         }
         else {
             id = po.getId();
             enabled = BoxedCastUtil.orTrue(po.getEnabled());
             autorun = BoxedCastUtil.orTrue(po.getAutorun());
             noticeBean = po.getNoticeBean();
-            log.info("use database config, version={}, id={}", prop.getVersion(), id);
+            log.debug("use database config, version={}, id={}", prop.getVersion(), id);
             // diff
             final LinkedHashMap<String, Diff.V<?>> df = diff(po, prop);
             if (!df.isEmpty()) {

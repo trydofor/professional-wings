@@ -3,18 +3,17 @@ package pro.fessional.wings.warlock.service.auth.impl;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import pro.fessional.wings.faceless.service.journal.JournalService;
-import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
+import pro.fessional.wings.slardar.context.AttributeHolder;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.errcode.AuthnErrorEnum;
 import pro.fessional.wings.slardar.security.WingsAuthTypeParser;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.constants.WarlockGlobalAttribute;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserAuthnTable;
 import pro.fessional.wings.warlock.database.autogen.tables.WinUserBasisTable;
@@ -34,10 +33,11 @@ import java.util.Locale;
  * @since 2022-07-11
  */
 @Slf4j
+@Getter @Setter
 public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
 
-    @Getter @Setter
-    private int order = OrderedWarlockConst.DefaultDaoAuthnCombo;
+    public static final int ORDER = WingsOrdered.Lv4Application;
+    private int order = ORDER;
 
     @Setter(onMethod_ = {@Autowired})
     protected WinUserBasisDao winUserBasisDao;
@@ -142,7 +142,7 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
 
         final String at = wingsAuthTypeParser.parse(authType);
         final WinUserAuthnTable ta = winUserAuthnDao.getTable();
-        val auth = winUserAuthnDao
+        var auth = winUserAuthnDao
                 .ctx()
                 .select(ta.UserId, ta.FailedCnt, ta.FailedMax, ta.Id)
                 .from(ta)
@@ -150,7 +150,7 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
                 .fetchOne();
 
         if (auth == null) {
-            log.info("ignore login failure by not found auth-type={}, username={}", at, username);
+            log.debug("ignore login failure by not found auth-type={}, username={}", at, username);
             return;
         }
 
@@ -163,7 +163,7 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
         warlockDangerService.block(authType, username, second);
 
         if (cnt > max) {
-            log.info("ignore login failure by reach max-count={}, auth-type={}, username={}", max, at, username);
+            log.debug("ignore login failure by reach max-count={}, auth-type={}, username={}", max, at, username);
             return;
         }
 
@@ -206,7 +206,7 @@ public class DefaultDaoAuthnCombo implements ComboWarlockAuthnService.Combo {
 
         if (details != null) {
             details.setAuthType(authType);
-            final String passsalt = GlobalAttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, details.getUserId());
+            final String passsalt = AttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, details.getUserId());
             details.setPasssalt(passsalt);
         }
         return details;

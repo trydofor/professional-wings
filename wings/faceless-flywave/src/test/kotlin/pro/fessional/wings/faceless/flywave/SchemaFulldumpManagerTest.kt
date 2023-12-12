@@ -1,15 +1,16 @@
 package pro.fessional.wings.faceless.flywave
 
+import io.qameta.allure.TmsLink
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.MethodOrderer.MethodName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import pro.fessional.wings.faceless.WingsTestHelper
-import pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedRegexp
 import pro.fessional.wings.faceless.flywave.SchemaFulldumpManager.Companion.groupedTable
+import pro.fessional.wings.faceless.helper.WingsTestHelper
+import pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner
 import java.io.File
 import javax.sql.DataSource
@@ -39,12 +40,14 @@ class SchemaFulldumpManagerTest {
     lateinit var wingsTestHelper: WingsTestHelper
 
     @Test
+    @TmsLink("C12036")
     fun test0CleanTables() {
         wingsTestHelper.cleanTable()
         schemaRevisionManager.checkAndInitSql(FlywaveRevisionScanner.scanMaster(), 0, true)
     }
 
     @Test
+    @TmsLink("C12037")
     fun test1DumpDdlSeeFile() {
         File(fold).mkdirs()
         val dlls = schemaFulldumpManager.dumpDdl(dataSource, groupedRegexp(false,
@@ -62,6 +65,7 @@ class SchemaFulldumpManagerTest {
     }
 
     @Test
+    @TmsLink("C12038")
     fun test2DumpRecSeeFile() {
         File(fold).mkdirs()
         val recs = schemaFulldumpManager.dumpRec(dataSource, groupedTable(true,

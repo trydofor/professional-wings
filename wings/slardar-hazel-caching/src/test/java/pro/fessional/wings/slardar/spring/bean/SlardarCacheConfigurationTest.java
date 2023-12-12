@@ -1,12 +1,13 @@
 package pro.fessional.wings.slardar.spring.bean;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pro.fessional.wings.slardar.service.TestMyCacheService;
+import pro.fessional.wings.slardar.app.service.TestMyCacheService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,6 +25,7 @@ public class SlardarCacheConfigurationTest {
     private TestMyCacheService cacheService;
 
     @Test
+    @TmsLink("C13022")
     public void cacheCall() {
         int c1 = cacheService.cacheMemory("cacheCall");
         assertEquals(1, c1);
@@ -42,6 +44,7 @@ public class SlardarCacheConfigurationTest {
     }
 
     @Test
+    @TmsLink("C13023")
     @Disabled("Mock slow handling ttl=20")
     public void testTtl() throws InterruptedException {
         int c1 = cacheService.cacheMemory("cacheCall");
@@ -66,6 +69,7 @@ public class SlardarCacheConfigurationTest {
     }
 
     @Test
+    @TmsLink("C13024")
     public void directCall() {
         int c1 = cacheService.directMemory("directCall");
         assertEquals(1, c1);

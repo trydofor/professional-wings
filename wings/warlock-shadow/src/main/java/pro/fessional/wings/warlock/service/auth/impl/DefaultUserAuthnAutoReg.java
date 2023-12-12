@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import pro.fessional.mirana.code.RandCode;
 import pro.fessional.wings.faceless.service.journal.JournalService;
-import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
+import pro.fessional.wings.slardar.context.AttributeHolder;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.constants.WarlockGlobalAttribute;
 import pro.fessional.wings.warlock.enums.autogen.UserGender;
 import pro.fessional.wings.warlock.enums.autogen.UserStatus;
@@ -29,10 +29,11 @@ import static pro.fessional.wings.warlock.service.user.WarlockUserBasisService.B
  * @since 2021-02-25
  */
 @Slf4j
+@Getter @Setter
 public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg {
 
-    @Getter @Setter
-    private int order = OrderedWarlockConst.DefaultUserAuthnAutoReg;
+    public static final int ORDER = WingsOrdered.Lv3Service + 10;
+    private int order = ORDER;
 
     @Setter(onMethod_ = {@Autowired})
     protected WarlockUserBasisService warlockUserBasisService;
@@ -61,10 +62,12 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
             user.setRemark("auto register");
             user.setStatus(UserStatus.UNINIT);
 
-            beforeSave(user, username, details);
-            long uid = warlockUserBasisService.create(user);
-            log.info("auto register user authType={}, username={}, userId={}", authType, username, uid);
-            afterSave(user, username, details, uid);
+            Long uid = beforeSave(user, username, details);
+            if (uid == null) {
+                uid = warlockUserBasisService.create(user);
+                log.debug("auto register user authType={}, username={}, userId={}", authType, username, uid);
+                afterSave(user, username, details, uid);
+            }
             //
             Authn authn = new Authn();
             authn.setAuthType(authType);
@@ -78,10 +81,12 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
             // Plain text, encrypt in WarlockUserAuthnService later.
             authn.setPassword(RandCode.human(16));
 
-            beforeSave(authn, username, details, uid);
-            long aid = warlockUserAuthnService.create(uid, authn);
-            log.info("auto register auth authType={}, username={}, authId={}", authType, username, aid);
-            afterSave(authn, username, details, uid, aid);
+            Long aid = beforeSave(authn, username, details, uid);
+            if (aid == null) {
+                aid = warlockUserAuthnService.create(uid, authn);
+                log.debug("auto register auth authType={}, username={}, authId={}", authType, username, aid);
+                afterSave(authn, username, details, uid, aid);
+            }
 
             final Details result = new Details();
             result.setUserId(uid);
@@ -93,20 +98,28 @@ public class DefaultUserAuthnAutoReg implements ComboWarlockAuthnService.AutoReg
 
             result.setUsername(authn.getUsername());
             result.setPassword(authn.getPassword());
-            result.setPasssalt(GlobalAttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, uid));
+            result.setPasssalt(AttributeHolder.tryAttr(WarlockGlobalAttribute.SaltByUid, uid));
             result.setExpiredDt(authn.getExpiredDt());
 
             return result;
         });
     }
 
-    protected void beforeSave(Basis basis, String username, WingsAuthDetails details) {
+    /**
+     * nonnull return value means existed user
+     */
+    protected Long beforeSave(Basis basis, String username, WingsAuthDetails details) {
+        return null;
     }
 
     protected void afterSave(Basis basis, String username, WingsAuthDetails details, long userId) {
     }
 
-    protected void beforeSave(Authn authn, String username, WingsAuthDetails details, long userId) {
+    /**
+     * nonnull return value means existed authn
+     */
+    protected Long beforeSave(Authn authn, String username, WingsAuthDetails details, long userId) {
+        return null;
     }
 
     protected void afterSave(Authn authn, String username, WingsAuthDetails details, long userId, long authId) {

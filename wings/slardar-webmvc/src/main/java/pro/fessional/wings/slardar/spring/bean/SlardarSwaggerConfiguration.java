@@ -15,15 +15,15 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springdoc.core.configuration.SpringDocConfiguration;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.utils.SpringDocUtils;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.mirana.page.PageQuery;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.silencer.spring.help.CommonPropHelper;
+import pro.fessional.wings.slardar.spring.prop.SlardarEnabledProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarPagequeryProp;
 import pro.fessional.wings.slardar.spring.prop.SlardarSwaggerProp;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
 
 import java.util.Map;
 
@@ -33,13 +33,14 @@ import java.util.Map;
  * @since 2019-10-30
  */
 @Configuration(proxyBeanMethods = false)
+@ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$swagger)
 @ConditionalOnClass(OpenAPI.class)
-@AutoConfigureOrder(OrderedSlardarConst.SwaggerConfiguration)
 public class SlardarSwaggerConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarSwaggerConfiguration.class);
 
     @Bean
+    @ConditionalWingsEnabled
     public OpenApiCustomizer slardarOpenApiCustomizer(SlardarSwaggerProp slardarSwaggerProp) {
         log.info("SlardarWebmvc spring-bean slardarOpenApiCustomizer");
 

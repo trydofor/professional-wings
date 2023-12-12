@@ -1,14 +1,11 @@
 package pro.fessional.wings.slardar.spring.bean;
 
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pro.fessional.wings.silencer.encrypt.SecretProvider;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.servlet.cookie.WingsCookieFilter;
 import pro.fessional.wings.slardar.servlet.cookie.WingsCookieInterceptor;
 import pro.fessional.wings.slardar.servlet.cookie.impl.WingsCookieInterceptorImpl;
@@ -27,21 +24,20 @@ import static pro.fessional.wings.slardar.servlet.cookie.WingsCookieInterceptor.
  * @since 2021-10-07
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(name = SlardarEnabledProp.Key$cookie, havingValue = "true")
-@RequiredArgsConstructor
-@AutoConfigureOrder(OrderedSlardarConst.CookieConfiguration)
+@ConditionalWingsEnabled(abs = SlardarEnabledProp.Key$cookie, value = false)
 public class SlardarCookieConfiguration {
 
     private static final Log log = LogFactory.getLog(SlardarCookieConfiguration.class);
 
     @Bean
-    public WingsCookieInterceptor wingsCookieInterceptor(SlardarCookieProp slardarCookieProp) {
-        final String aesKey = SecretProvider.get(SecretProvider.Cookie, false);
+    @ConditionalWingsEnabled
+    public WingsCookieInterceptor wingsCookieInterceptor(SlardarCookieProp slardarCookieProp, SecretProvider secretProvider) {
+        final String aesKey = secretProvider.tryGet(SecretProvider.Cookie);
         if (aesKey != null && aesKey.length() > 5) {
-            log.info("SlardarWebmvc spring-bean wingsCookieInterceptor, key=" + aesKey.substring(0, 5) + "...");
+            log.info("SlardarWebmvc spring-bean wingsCookieInterceptor, key=" + aesKey.substring(0, 5) + "..., len=" + aesKey.length());
         }
         else {
-            log.info("SlardarWebmvc spring-bean wingsCookieInterceptor");
+            log.warn("SlardarWebmvc spring-bean wingsCookieInterceptor, no key");
         }
 
         WingsCookieInterceptorImpl interceptor = new WingsCookieInterceptorImpl(aesKey);
@@ -78,6 +74,7 @@ public class SlardarCookieConfiguration {
     }
 
     @Bean
+    @ConditionalWingsEnabled
     public WingsCookieFilter wingsCookieFilter(WingsCookieInterceptor wingsCookieInterceptor) {
         log.info("SlardarWebmvc spring-bean wingsCookieFilter");
         return new WingsCookieFilter(wingsCookieInterceptor);

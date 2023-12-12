@@ -3,13 +3,13 @@ package pro.fessional.wings.warlock.controller.auth;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.security.WingsAuthHelper;
 import pro.fessional.wings.warlock.spring.prop.WarlockEnabledProp;
 import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
@@ -19,9 +19,9 @@ import pro.fessional.wings.warlock.spring.prop.WarlockSecurityProp;
  * @since 2021-02-16
  */
 @RestController
+@ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$mvcProc)
 @RequiredArgsConstructor
 @Slf4j
-@ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerProc, havingValue = "true")
 public class LoginProcController {
 
     @Operation(summary = "Logout entry, handled by filter, used for document only", description = """
@@ -53,7 +53,7 @@ public class LoginProcController {
                          @RequestParam(value = WingsAuthHelper.AuthZone, required = false) String authZone,
                          @RequestParam("username") String username,
                          @RequestParam("password") String password) {
-        log.info("authType={}, authZone={}, username={}, password={}", authType, authZone, username, password);
+        log.debug("authType={}, authZone={}, username={}, password={}", authType, authZone, username, password);
         return R.ng("handler by filter, never here");
     }
 }

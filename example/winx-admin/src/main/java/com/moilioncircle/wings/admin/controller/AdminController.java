@@ -24,7 +24,7 @@ public class AdminController {
     @PostMapping("/admin/disable-root.json")
     public R<Void> rootNeverLogin() {
         authnService.disable(DefaultUserId.Root, WarlockAuthType.USERNAME);
-        log.info("disable root");
+        log.debug("disable root");
         return R.OK;
     }
 }

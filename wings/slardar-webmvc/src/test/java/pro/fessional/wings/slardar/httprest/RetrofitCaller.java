@@ -5,7 +5,7 @@ import lombok.Data;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import pro.fessional.wings.slardar.controller.TestRestTmplController;
+import pro.fessional.wings.slardar.app.controller.TestRestTmplController;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;

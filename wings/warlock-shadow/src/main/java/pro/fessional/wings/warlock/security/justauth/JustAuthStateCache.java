@@ -14,7 +14,7 @@ public class JustAuthStateCache implements AuthStateCache {
     private final Cache<String, String> cache;
 
     public JustAuthStateCache(int max, int ttl) {
-        this.cache = WingsCache2k.builder(JustAuthStateCache.class, "cache", max, ttl, -1, String.class, String.class)
+        this.cache = WingsCache2k.builder(JustAuthStateCache.class, "cache", max, ttl, 0, String.class, String.class)
                                  .build();
     }
 

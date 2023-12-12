@@ -1,7 +1,7 @@
 package pro.fessional.wings.slardar.concur.impl;
 
 import org.springframework.core.annotation.Order;
-import pro.fessional.wings.spring.consts.OrderedSlardarConst;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.concur.RighterException;
 import pro.fessional.wings.slardar.webmvc.SimpleExceptionResolver;
 import pro.fessional.wings.slardar.webmvc.SimpleResponse;
@@ -11,8 +11,10 @@ import pro.fessional.wings.slardar.webmvc.SimpleResponse;
  * @since 2021-03-10
  */
 
-@Order(OrderedSlardarConst.WebRighterExceptionResolver)
+@Order(RighterExceptionResolver.ORDER)
 public class RighterExceptionResolver extends SimpleExceptionResolver<RighterException> {
+
+    public static final int ORDER = WingsOrdered.Lv4Application + 7_200;
 
     public RighterExceptionResolver(SimpleResponse defaultResponse) {
         super(defaultResponse);

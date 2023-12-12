@@ -11,7 +11,7 @@ import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
 import org.springframework.web.servlet.i18n.AbstractLocaleContextResolver;
 import pro.fessional.mirana.i18n.LocaleResolver;
 import pro.fessional.mirana.i18n.ZoneIdResolver;
-import pro.fessional.wings.slardar.context.GlobalAttributeHolder;
+import pro.fessional.wings.slardar.context.AttributeHolder;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.context.TerminalContext;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
@@ -101,7 +101,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
             if (locale == null) {
                 if (details == null) {
                     if (userId != null) {
-                        locale = GlobalAttributeHolder.tryAttr(LocaleByUid, userId, false);
+                        locale = AttributeHolder.tryAttr(LocaleByUid, userId, false);
                     }
                 }
                 else {
@@ -116,7 +116,7 @@ public class WingsLocaleResolver extends AbstractLocaleContextResolver {
             if (timeZone == null) {
                 if (details == null) {
                     if (userId != null) {
-                        final ZoneId zid = GlobalAttributeHolder.tryAttr(ZoneIdByUid, userId, false);
+                        final ZoneId zid = AttributeHolder.tryAttr(ZoneIdByUid, userId, false);
                         if (zid != null) {
                             timeZone = TimeZone.getTimeZone(zid);
                         }

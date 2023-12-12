@@ -1,5 +1,6 @@
 package pro.fessional.wings.tiny.mail.sender;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
@@ -46,6 +47,7 @@ public class MailSenderManagerTest {
      * </pre>
      */
     @Test
+    @TmsLink("C15004")
     public void testBatch() {
         final TinyMailConfig config = mailConfigProvider.defaultConfig();
         final StopWatch stopWatch = new StopWatch();

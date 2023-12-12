@@ -2,6 +2,7 @@ package pro.fessional.wings.tiny.mail.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -21,6 +22,7 @@ import java.util.Map;
 public class ResourceMapTest {
 
     @Test
+    @TmsLink("C15005")
     public void testString() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         ResourceLoader resourceLoader = new DefaultResourceLoader();

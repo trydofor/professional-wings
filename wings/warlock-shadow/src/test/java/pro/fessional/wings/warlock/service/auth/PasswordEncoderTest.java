@@ -1,5 +1,6 @@
 package pro.fessional.wings.warlock.service.auth;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
@@ -16,7 +17,7 @@ import pro.fessional.wings.slardar.security.PasswordHelper;
  * @since 2021-06-19
  */
 @Slf4j
-@SpringBootTest(properties = "spring.wings.slardar.enabled.mock-hazelcast=true")
+@SpringBootTest
 class PasswordEncoderTest {
 
     @Setter(onMethod_ = {@Autowired})
@@ -26,6 +27,7 @@ class PasswordEncoderTest {
     private PasssaltEncoder passsaltEncoder;
 
     @Test
+    @TmsLink("C14053")
     @Disabled("Output password to the log")
     void printPassword() {
         final String md5h = Md5.sum("moilioncircle");

@@ -2,6 +2,7 @@ package pro.fessional.wings.warlock.controller.auth;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -46,6 +47,7 @@ class SimpleOauthControllerTest {
     final String state = RandCode.human(16);
 
     @Test
+    @TmsLink("C14031")
     void authorizationCode() throws Exception {
         final MvcResult authResult = mvc.perform(get(warlockUrlmapProp.getOauthAuthorize())
                                                 .contentType(MediaType.APPLICATION_JSON)
@@ -87,6 +89,7 @@ class SimpleOauthControllerTest {
     }
 
     @Test
+    @TmsLink("C14032")
     void clientCredentials() throws Exception {
         final String code1 = accessToken(clientId, clientSecret, null, null);
         Assertions.assertNotNull(code1);

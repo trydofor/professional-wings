@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import pro.fessional.mirana.i18n.LocaleResolver;
 import pro.fessional.wings.faceless.service.wini18n.StandardI18nService;
-import pro.fessional.wings.silencer.message.CombinableMessageSource;
+import pro.fessional.wings.silencer.message.MessageSourceHelper;
 
 import java.util.List;
 import java.util.Locale;
@@ -21,8 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class StandardI18nServiceJdbc implements StandardI18nService {
 
     private final JdbcTemplate jdbcTemplate;
-    private final CombinableMessageSource combinableMessageSource;
-
     private final ConcurrentHashMap<String, String> cache = new ConcurrentHashMap<>();
 
     @Override
@@ -52,8 +50,8 @@ public class StandardI18nServiceJdbc implements StandardI18nService {
                     strExtractor,
                     base, kind, ukey, lan);
             String hint = txt == null ? "" : txt;
-            if (combinableMessageSource != null && !hint.isEmpty()) {
-                combinableMessageSource.addMessage(code(base, kind, ukey), lang, hint);
+            if (!hint.isEmpty()) {
+                MessageSourceHelper.Combine.addMessage(code(base, kind, ukey), lang, hint);
             }
             return hint;
         });
@@ -64,11 +62,10 @@ public class StandardI18nServiceJdbc implements StandardI18nService {
             String key = key(po.base, po.kind, po.ukey, po.lang);
             String txt = po.hint;
             cache.put(key, txt);
-            if (combinableMessageSource != null) {
-                String code = code(po.base, po.kind, po.ukey);
-                Locale lang = LocaleResolver.locale(po.lang);
-                combinableMessageSource.addMessage(code, lang, txt);
-            }
+
+            String code = code(po.base, po.kind, po.ukey);
+            Locale lang = LocaleResolver.locale(po.lang);
+            MessageSourceHelper.Combine.addMessage(code, lang, txt);
         }
         return pos.size();
     }

@@ -8,7 +8,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.core.annotation.Order;
 import pro.fessional.mirana.time.StopWatch.Watch;
-import pro.fessional.wings.spring.consts.WingsBeanOrdered;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 
 /**
  * AOP-based, stopwatch timing of methods
@@ -17,10 +17,10 @@ import pro.fessional.wings.spring.consts.WingsBeanOrdered;
  * @since 2022-11-21
  */
 @Aspect
-@Order(WingsBeanOrdered.Lv5Supervisor)
+@Order(WingsOrdered.Lv5Supervisor)
+@Getter @Setter
 public class WatchingAround {
 
-    @Getter @Setter
     private long thresholdMillis = -1;
 
     @Around(value = "@annotation(watching)", argNames = "joinPoint, watching")

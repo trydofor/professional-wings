@@ -1,0 +1,29 @@
+{
+  "groups": [
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.spring.conf"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.spring.bean"}
+  ],
+  "properties": [
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.spring.conf.TinyTaskAutoConfiguration", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.spring.bean.TinyTaskConfiguration", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.spring.bean.TinyTaskConfiguration$DaoServScan", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.spring.bean.TinyTaskConfiguration$MvcRestScan", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.spring.bean.TinyTaskConfiguration.tinyTaskerAutoRunner", "type": "java.lang.Boolean", "description": "wings.enabled.tiny.task.autorun for short."},
+
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.spring.bean.TinyTaskConfiguration.mailNotice", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.spring.bean.TinyTaskConfiguration.mailSenderManager", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.spring.bean.TinyTaskConfiguration.mailSenderProvider", "type": "java.lang.Boolean"},
+
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.controller.TaskConfController", "type": "java.lang.Boolean", "description": "wings.enabled.tiny.task.mvc-conf for short."},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.controller.TaskExecController", "type": "java.lang.Boolean", "description": "wings.enabled.tiny.task.mvc-exec for short."},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.controller.TaskListController", "type": "java.lang.Boolean", "description": "wings.enabled.tiny.task.mvc-list for short."},
+
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.service.impl.TinyTaskBeatServiceImpl", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.service.impl.TinyTaskConfServiceImpl", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.service.impl.TinyTaskExecServiceImpl", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.service.impl.TinyTaskListServiceImpl", "type": "java.lang.Boolean"},
+    {"name": "wings.enabled.pro.fessional.wings.tiny.task.service.impl.TinyTaskServiceImpl", "type": "java.lang.Boolean"}
+  ],
+  "hints": []
+}

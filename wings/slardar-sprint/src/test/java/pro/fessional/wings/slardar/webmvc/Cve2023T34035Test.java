@@ -1,6 +1,7 @@
 package pro.fessional.wings.slardar.webmvc;
 
 
+import io.qameta.allure.TmsLink;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
                 "spring.mvc.servlet.path=/mvc",
-                "server.servlet.register-default-servlet=true"
+                "server.servlet.register-default-servlet=true",
         })
 @AutoConfigureMockMvc
+//@EnableAutoConfiguration(exclude = {
+//        HazelcastAutoConfiguration.class,
+//        SlardarHazelAutoConfiguration.class,
+//})
 @Slf4j
 public class Cve2023T34035Test {
 
@@ -30,6 +35,7 @@ public class Cve2023T34035Test {
     private MockMvc mockMvc;
 
     @Test
+    @TmsLink("C13027")
     void withServletPath() throws Exception {
         // get /test/Cve2023T34035Test.json
         this.mockMvc.perform(get("/mvc/test/Cve2023T34035Test.json").servletPath("/mvc"))
@@ -39,6 +45,7 @@ public class Cve2023T34035Test {
     }
 
     @Test
+    @TmsLink("C13028")
     void withoutServletPath() throws Exception {
         // get /test/Cve2023T34035Test.json
         this.mockMvc.perform(get("/test/Cve2023T34035Test.json"))
@@ -48,6 +55,7 @@ public class Cve2023T34035Test {
     }
 
     @Test
+    @TmsLink("C13029")
     void withoutServletPath1() throws Exception {
         // get /mvc/test/Cve2023T34035Test.json
         this.mockMvc.perform(get("/mvc/test/Cve2023T34035Test.json"))

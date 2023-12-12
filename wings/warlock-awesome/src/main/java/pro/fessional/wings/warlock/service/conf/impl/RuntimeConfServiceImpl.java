@@ -163,7 +163,7 @@ public class RuntimeConfServiceImpl implements RuntimeConfService {
     public boolean evictAllConfCache(TableChangeEvent event) {
         final String tb = CacheEventHelper.receiveTable(event, EventTables, DELETE | UPDATE);
         if (tb != null) {
-            log.info("evictAllConfCache by {}, {}", tb, event);
+            log.debug("evictAllConfCache by {}, {}", tb, event);
             return true;
         }
 

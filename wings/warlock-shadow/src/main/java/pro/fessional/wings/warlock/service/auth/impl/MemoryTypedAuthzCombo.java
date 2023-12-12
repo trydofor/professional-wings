@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import pro.fessional.mirana.data.Null;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.service.perm.WarlockPermNormalizer;
 
 import java.util.Arrays;
@@ -26,10 +25,12 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @since 2021-03-05
  */
 @Slf4j
+@Getter @Setter
 public class MemoryTypedAuthzCombo implements ComboWarlockAuthzService.Combo {
 
-    @Getter @Setter
-    private int order = OrderedWarlockConst.MemoryTypedAuthzCombo;
+    public static final int ORDER = DefaultPermRoleCombo.ORDER + 100;
+
+    private int order = ORDER;
 
     @Setter(onMethod_ = {@Autowired})
     protected WarlockPermNormalizer permNormalizer;

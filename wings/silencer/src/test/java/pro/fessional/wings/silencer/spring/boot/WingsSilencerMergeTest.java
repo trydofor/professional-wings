@@ -1,11 +1,12 @@
 package pro.fessional.wings.silencer.spring.boot;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pro.fessional.wings.silencer.spring.prop.MergingProp;
+import pro.fessional.wings.silencer.app.conf.MergingProp;
 
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ public class WingsSilencerMergeTest {
     private MergingProp mergingProp;
 
     @Test
+    @TmsLink("C11005")
     public void merge() {
         // replace
         Assertions.assertEquals(List.of("a"), mergingProp.getLst1());

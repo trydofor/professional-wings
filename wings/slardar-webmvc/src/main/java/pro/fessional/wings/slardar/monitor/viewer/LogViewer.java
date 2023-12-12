@@ -8,11 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.cache2k.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.id.Ulid;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.cache.cache2k.WingsCache2k;
 import pro.fessional.wings.slardar.monitor.WarnFilter;
 import pro.fessional.wings.slardar.monitor.WarnMetric;
@@ -35,7 +35,7 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@ConditionalOnProperty(name = LogConf.Key$enable, havingValue = "true")
+@ConditionalWingsEnabled(abs = LogConf.Key$enable)
 public class LogViewer implements WarnFilter {
 
     @Getter
@@ -86,7 +86,7 @@ public class LogViewer implements WarnFilter {
                 WarnMetric.Warn next = iter.next();
                 if (next.getType() == WarnMetric.Type.File) {
                     if (canIgnoreHead(next.getWarn())) {
-                        log.info("remove ignored warning");
+                        log.debug("remove ignored warning");
                         iter.remove();
                     }
                     else {

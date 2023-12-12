@@ -10,13 +10,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.session.MapSession;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import pro.fessional.mirana.data.R;
+import pro.fessional.wings.silencer.spring.boot.ConditionalWingsEnabled;
 import pro.fessional.wings.slardar.context.SecurityContextUtil;
 import pro.fessional.wings.slardar.security.WingsUserDetails;
 import pro.fessional.wings.slardar.session.SessionTokenEncoder;
@@ -42,9 +42,9 @@ import java.util.stream.Collectors;
  */
 // @PreAuthorize("isAuthenticated()")
 @RestController
+@ConditionalWingsEnabled(abs = WarlockEnabledProp.Key$mvcUser)
 @RequiredArgsConstructor
 @Slf4j
-@ConditionalOnProperty(name = WarlockEnabledProp.Key$controllerUser, havingValue = "true")
 public class AuthedUserController {
 
     @Setter(onMethod_ = {@Autowired})
@@ -117,8 +117,10 @@ public class AuthedUserController {
         private Map<String, String> alias;
         @Schema(description = "set of perm/role", example = "[\"ROLE_ADMIN\",\"ROLE_SYSTEM\"]")
         private Set<String> perms;
-        @Schema(description = "perm/role to check, if not fully contain, then invalidate session", example = "[\"ROLE_ADMIN\"]")
+        @Schema(description = "perm/role to check, if not contain (all/any), then invalidate session", example = "[\"ROLE_ADMIN\"]")
         private Set<String> check;
+        @Schema(description = "check any or all", example = "true")
+        private boolean any = false;
     }
 
     @Operation(summary = "Check the perm/role (case-insensitive) of the current user and returns the existing", description = """
@@ -128,6 +130,7 @@ public class AuthedUserController {
             * @param ins.alias - alias as map value for historical legacy
             * @param ins.perms - perm/role original name
             * @param ins.check - perm/role to check
+            * @param ins.any - check any or all
             ## Returns
             * @return {200 | Result(string[])} logined and perms
             * @return {200 | Result(false)} not logined and the URL without perm
@@ -144,15 +147,17 @@ public class AuthedUserController {
                                  .collect(Collectors.toSet());
 
         if (ck != null && !ck.isEmpty()) {
-            final Set<String> lt = new HashSet<>();
+            final Set<String> ng = new HashSet<>();
             for (String s : ck) {
                 if (!pm.contains(s.toLowerCase())) {
-                    lt.add(s);
+                    ng.add(s);
                 }
             }
-            if (!lt.isEmpty()) {
+
+            int ns = ng.size();
+            if ((ns > 0 && !ins.any) || (ins.any && ns == ck.size())) {
                 request.getSession().invalidate();
-                return R.ngData(lt);
+                return R.ngData(ng);
             }
         }
 

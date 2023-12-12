@@ -59,7 +59,7 @@ public class JournalDeleteListener implements ExecuteListener {
         String updateSql = buildUpdateSql(ctx.dsl(), sql, table, params);
         if (updateSql == null) return;
 
-        log.info("Wings journal-delete, sql={}", updateSql);
+        log.debug("Wings journal-delete, sql={}", updateSql);
 
         try {
             if (params.isEmpty()) {

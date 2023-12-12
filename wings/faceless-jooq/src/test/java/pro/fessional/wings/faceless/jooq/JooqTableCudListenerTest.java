@@ -1,5 +1,6 @@
 package pro.fessional.wings.faceless.jooq;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -10,18 +11,19 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import pro.fessional.wings.faceless.WingsTestHelper;
+import pro.fessional.wings.faceless.app.database.autogen.tables.TstShardingTable;
+import pro.fessional.wings.faceless.app.database.autogen.tables.daos.TstShardingDao;
+import pro.fessional.wings.faceless.app.database.autogen.tables.pojos.TstSharding;
+import pro.fessional.wings.faceless.app.database.autogen.tables.records.TstShardingRecord;
+import pro.fessional.wings.faceless.app.service.TestingTableCudHandler;
 import pro.fessional.wings.faceless.convention.EmptyValue;
 import pro.fessional.wings.faceless.database.WingsTableCudHandler.Cud;
-import pro.fessional.wings.faceless.database.autogen.tables.TstShardingTable;
-import pro.fessional.wings.faceless.database.autogen.tables.daos.TstShardingDao;
-import pro.fessional.wings.faceless.database.autogen.tables.pojos.TstSharding;
-import pro.fessional.wings.faceless.database.autogen.tables.records.TstShardingRecord;
 import pro.fessional.wings.faceless.database.jooq.listener.TableCudListener;
 import pro.fessional.wings.faceless.flywave.SchemaRevisionManager;
-import pro.fessional.wings.faceless.service.WingsTableCudHandlerTest;
+import pro.fessional.wings.faceless.helper.WingsTestHelper;
 import pro.fessional.wings.faceless.util.FlywaveRevisionScanner;
 
 import java.time.LocalDateTime;
@@ -34,9 +36,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
 import static java.util.Collections.singletonList;
-import static pro.fessional.wings.faceless.WingsTestHelper.REVISION_TEST_V2;
-import static pro.fessional.wings.faceless.WingsTestHelper.testcaseNotice;
 import static pro.fessional.wings.faceless.enums.autogen.StandardLanguage.ZH_CN;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.REVISION_TEST_V2;
+import static pro.fessional.wings.faceless.helper.WingsTestHelper.testcaseNotice;
 import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_PATH_MASTER;
 
 /**
@@ -45,12 +47,13 @@ import static pro.fessional.wings.faceless.util.FlywaveRevisionScanner.REVISION_
  */
 
 @SuppressWarnings("CanBeFinal")
-@TestMethodOrder(MethodOrderer.MethodName.class)
-@ActiveProfiles("init")
 @SpringBootTest(properties = {
         "wings.faceless.jooq.cud.table[tst_sharding]=id,login_info",
-        "spring.wings.faceless.jooq.enabled.listen-table-cud=true"
+        "wings.faceless.jooq.conf.listen-cud=true"
 })
+@DependsOnDatabaseInitialization
+@TestMethodOrder(MethodOrderer.MethodName.class)
+@ActiveProfiles("init")
 @Tag("init")
 @Slf4j
 public class JooqTableCudListenerTest {
@@ -71,9 +74,10 @@ public class JooqTableCudListenerTest {
     private SchemaRevisionManager schemaRevisionManager;
 
     @Setter(onMethod_ = {@Autowired})
-    private WingsTableCudHandlerTest wingsTableCudHandlerTest;
+    private TestingTableCudHandler testingTableCudHandler;
 
     @Test
+    @TmsLink("C12104")
     public void test0Init() {
         wingsTestHelper.cleanTable();
         final SortedMap<Long, SchemaRevisionManager.RevisionSql> sqls = FlywaveRevisionScanner.scan(REVISION_PATH_MASTER);
@@ -82,6 +86,7 @@ public class JooqTableCudListenerTest {
     }
 
     @Test
+    @TmsLink("C12105")
     public void test1Create() {
 
         final LocalDateTime now = LocalDateTime.now();
@@ -135,6 +140,7 @@ public class JooqTableCudListenerTest {
     }
 
     @Test
+    @TmsLink("C12106")
     public void test2Update() {
 
         final TstShardingTable t = testDao.getTable();
@@ -165,6 +171,7 @@ public class JooqTableCudListenerTest {
     }
 
     @Test
+    @TmsLink("C12107")
     public void test4Delete() {
         final TstShardingTable t = testDao.getTable();
         testcaseNotice("single delete");
@@ -191,16 +198,16 @@ public class JooqTableCudListenerTest {
     }
 
     private void assertCud(boolean wv, Cud cud, List<List<Long>> ids, Runnable run, String sqlPart) {
-        wingsTableCudHandlerTest.reset();
+        testingTableCudHandler.reset();
         TableCudListener.WarnVisit = wv;
         run.run();
         final String sql = LastSql.get();
         Assertions.assertTrue(StringUtils.containsIgnoreCase(sql, sqlPart));
 
         TableCudListener.WarnVisit = false;
-        final List<Cud> d = wingsTableCudHandlerTest.getCud();
-        final List<String> t = wingsTableCudHandlerTest.getTable();
-        List<Map<String, List<?>>> f = wingsTableCudHandlerTest.getField();
+        final List<Cud> d = testingTableCudHandler.getCud();
+        final List<String> t = testingTableCudHandler.getTable();
+        List<Map<String, List<?>>> f = testingTableCudHandler.getField();
 
         if (cud == null) {
             Assertions.assertTrue(d.isEmpty());

@@ -1,5 +1,6 @@
 package pro.fessional.wings.silencer.spring.boot;
 
+import io.qameta.allure.TmsLink;
 import lombok.Setter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 2019-06-25
  */
 
-@SpringBootTest(properties = {"spring.wings.silencer.enabled.autoconf=false"})
+@SpringBootTest(properties = {"wings.enabled.silencer.autoconf=false"})
 @ActiveProfiles("dev")
 public class WingsSilencerSpringTest {
 
@@ -34,6 +35,7 @@ public class WingsSilencerSpringTest {
     private String moduleTest;
 
     @Test
+    @TmsLink("C11009")
     public void profile() {
         assertEquals("empty", module);
         assertEquals("wings-silencer-dev", name);

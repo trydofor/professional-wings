@@ -64,6 +64,14 @@ public class WarlockSecurityProp {
     public static final String Key$authorityPerm = Key + ".authority-perm";
 
     /**
+     * whether to enable anonymous
+     *
+     * @see #Key$anonymous
+     */
+    private boolean anonymous = false;
+    public static final String Key$anonymous = Key + ".anonymous";
+
+    /**
      * true to forward in servlet, otherwise redirect(302)
      *
      * @see #Key$loginForward

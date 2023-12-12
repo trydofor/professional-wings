@@ -2,9 +2,10 @@ package pro.fessional.wings.tiny.mail.spring.prop;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import pro.fessional.wings.silencer.spring.boot.WingsEnabledCondition;
 
 /**
- * spring-wings-enabled-79.properties
+ * wings-enabled-79.properties
  *
  * @author trydofor
  * @see #Key
@@ -14,38 +15,22 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(TinyMailEnabledProp.Key)
 public class TinyMailEnabledProp {
 
-    public static final String Key = "spring.wings.tiny.mail.enabled";
+    public static final String Key = WingsEnabledCondition.Prefix + ".tiny.mail";
 
-    /**
-     * whether to enable auto config
-     *
-     * @see #Key$autoconf
-     */
-    private boolean autoconf = true;
-    public static final String Key$autoconf = Key + ".autoconf";
-
-    /**
-     * whether to dry run, log only without actually send
-     *
-     * @see #Key$dryrun
-     */
-    private boolean dryrun = false;
-    public static final String Key$dryrun = Key + ".dryrun";
 
     /**
      * whether to enable MailListController
      *
-     * @see #Key$controllerList
+     * @see #Key$mvcList
      */
-    private boolean controllerList = true;
-    public static final String Key$controllerList = Key + ".controller-list";
+    private boolean mvcList = true;
+    public static final String Key$mvcList = Key + ".mvc-list";
 
     /**
      * whether to enable MailSendController
      *
-     * @see #Key$controllerSend
+     * @see #Key$mvcSend
      */
-    private boolean controllerSend = true;
-    public static final String Key$controllerSend = Key + ".controller-send";
-
+    private boolean mvcSend = true;
+    public static final String Key$mvcSend = Key + ".mvc-send";
 }

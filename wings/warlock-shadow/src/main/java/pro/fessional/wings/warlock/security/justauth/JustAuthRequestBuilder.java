@@ -54,9 +54,9 @@ import org.springframework.core.Ordered;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import pro.fessional.mirana.flow.FlowEnum;
+import pro.fessional.wings.silencer.spring.WingsOrdered;
 import pro.fessional.wings.slardar.security.impl.ComboWingsAuthDetailsSource;
 import pro.fessional.wings.slardar.security.impl.DefaultWingsAuthDetails;
-import pro.fessional.wings.spring.consts.OrderedWarlockConst;
 import pro.fessional.wings.warlock.security.session.NonceTokenSessionHelper;
 
 import java.util.ArrayList;
@@ -72,10 +72,11 @@ import java.util.Map;
 @Getter
 public class JustAuthRequestBuilder implements ComboWingsAuthDetailsSource.Combo<DefaultWingsAuthDetails> {
 
+    public static final int ORDER = WingsOrdered.Lv4Application;
+    @Setter
+    private int order = ORDER;
     @Setter
     private Map<Enum<?>, AuthConfig> authConfigMap = Collections.emptyMap();
-    @Setter
-    private int order = OrderedWarlockConst.SecJustAuthRequestBuilder;
 
     @Setter(onMethod_ = {@Autowired})
     private AuthStateCache authStateCache;
