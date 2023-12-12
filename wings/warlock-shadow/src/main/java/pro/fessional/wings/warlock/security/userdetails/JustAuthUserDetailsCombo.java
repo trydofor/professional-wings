@@ -6,6 +6,7 @@ import me.zhyd.oauth.model.AuthUser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fessional.wings.slardar.security.WingsAuthDetails;
+import pro.fessional.wings.slardar.security.impl.DefaultWingsUserDetails;
 import pro.fessional.wings.warlock.service.auth.WarlockAuthnService.Details;
 import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
 
@@ -19,7 +20,7 @@ import pro.fessional.wings.warlock.service.auth.impl.DefaultUserDetailsCombo;
 public class JustAuthUserDetailsCombo extends DefaultUserDetailsCombo {
 
     @Override
-    public boolean authed(Enum<?> authType) {
+    public boolean asAuthed(@NotNull DefaultWingsUserDetails details) {
         return true;
     }
 

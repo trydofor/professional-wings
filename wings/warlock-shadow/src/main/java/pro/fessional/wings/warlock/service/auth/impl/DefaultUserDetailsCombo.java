@@ -44,8 +44,8 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
 
         Details dt = doLoad(username, authType, authDetail);
         boolean at = false;
-        if (dt == null && autoRegisterType.contains(authType)) {
-            dt = autoreg(username, authType, authDetail);
+        if (dt == null && canRegister(username, authType, authDetail)) {
+            dt = doRegister(username, authType, authDetail);
             if (dt != null) {
                 at = true;
                 EventPublishHelper.SyncSpring.publishEvent(new WarlockAutoRegisterEvent(dt));
@@ -66,7 +66,7 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
         warlockAuthzService.auth(wud);
         if (!wud.isPreAuthed()) {
             // If there is no pre-authentication, auto register consider as logged in.
-            wud.setPreAuthed(at || authed(authType));
+            wud.setPreAuthed(at || asAuthed(wud));
         }
 
         return wud;
@@ -76,14 +76,26 @@ public class DefaultUserDetailsCombo implements ComboWingsUserDetailsService.Com
         return new DefaultWingsUserDetails();
     }
 
-    protected Details autoreg(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {
+    /**
+     * register user if it can be registered
+     *
+     * @see #canRegister(String, Enum, WingsAuthDetails)
+     */
+    protected Details doRegister(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {
         return warlockAuthnService.register(authType, username, authDetail);
     }
 
     /**
-     * Whether pass the auth, default false
+     * can register if load null.
      */
-    public boolean authed(Enum<?> authType) {
+    protected boolean canRegister(String username, @NotNull Enum<?> authType, @Nullable WingsAuthDetails authDetail) {
+        return autoRegisterType.contains(authType);
+    }
+
+    /**
+     * Whether to pass the auth (preAuth), default false
+     */
+    public boolean asAuthed(@NotNull DefaultWingsUserDetails details) {
         return false;
     }
 
